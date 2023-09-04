@@ -146,6 +146,11 @@ public enum MessageDKIM: String, Codable, PersistableEnum {
 }
 
 public final class Message: Object, Decodable, Identifiable {
+    public enum ErrorDomain: Error {
+        /// Unable to create a date from the input data
+        case dateParsingFailed
+    }
+
     @Persisted(primaryKey: true) public var uid = ""
     @Persisted public var messageId: String?
     @Persisted public var subject: String?
@@ -318,13 +323,28 @@ public final class Message: Object, Decodable, Identifiable {
             self.date = date
         } else {
             date = Date()
-            SentrySDK
-                .addBreadcrumb(SentryDebug.createBreadcrumb(
-                    level: .warning,
-                    category: "Thread algo",
-                    message: "Nil message date decoded",
-                    data: ["uid": uid]
-                ))
+            let dateParsingError = Event(level: .error)
+
+            let breadcrumb = SentryDebug.createBreadcrumb(
+                level: .warning,
+                category: "Thread algo",
+                message: "Nil message date decoded",
+                data: ["uid": uid]
+            )
+
+            SentrySDK.capture(error: ErrorDomain.dateParsingFailed) { scope in
+                if let date = try? values.decode(String.self, forKey: .date) {
+                    scope.setExtra(value: date, key: "dateString")
+                }
+
+                if let date = try? values.decode(Data.self, forKey: .date) {
+                    scope.setExtra(value: date, key: "dateRaw")
+                }
+
+                scope.addBreadcrumb(breadcrumb)
+            }
+
+            SentrySDK.addBreadcrumb(breadcrumb)
         }
         size = try values.decode(Int.self, forKey: .size)
         from = try values.decode(List<Recipient>.self, forKey: .from)
