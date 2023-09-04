@@ -21,71 +21,8 @@ import Foundation
 import InfomaniakCore
 import InfomaniakDI
 import InfomaniakLogin
-import MachO
 import Sentry
 import UIKit
-
-// TODO: move to Core and share with kDrive
-/// Something to construct a standard Infomaniak User-Agent
-public struct UserAgentBuilder {
-    func modelIdentifier() -> String? {
-        if let simulatorModelIdentifier = ProcessInfo()
-            .environment["SIMULATOR_MODEL_IDENTIFIER"] { return simulatorModelIdentifier }
-        var sysinfo = utsname()
-        uname(&sysinfo) // ignore return value
-        return String(bytes: Data(bytes: &sysinfo.machine,
-                                  count: Int(_SYS_NAMELEN)), encoding: .ascii)?
-            .trimmingCharacters(in: .controlCharacters)
-    }
-
-    func microarchitecture() -> String? {
-        guard let archRaw = NXGetLocalArchInfo().pointee.name else {
-            return nil
-        }
-        return String(cString: archRaw)
-    }
-
-    /// The standard infomaniak app user agent
-    public var userAgent: String {
-        let release = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "x.x.x"
-        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "x"
-
-        let executableName = Bundle.main.bundleIdentifier ?? "com.infomaniak.x"
-        let appVersion = "\(release)-\(build)"
-        let hardwareDevice = modelIdentifier() ?? "unknownModel"
-
-        let operatingSystemVersion = ProcessInfo.processInfo.operatingSystemVersion
-        let OSNameAndVersion =
-            "\(UIDevice.current.systemName) \(operatingSystemVersion.majorVersion).\(operatingSystemVersion.minorVersion).\(operatingSystemVersion.patchVersion)"
-
-        let cpuArchitecture = microarchitecture() ?? "unknownArch"
-
-        /// Something like:
-        /// `com.infomaniak.mail/1.0.5-1 (iPhone15,2; iOS16.4.0; arm64e)`
-        /// `com.infomaniak.mail.ShareExtension/1.0.5-1 (iPhone15,2; iOS16.4.0; arm64e)`
-        let userAgent = "\(executableName)/\(appVersion) (\(hardwareDevice); \(OSNameAndVersion); \(cpuArchitecture))"
-        return userAgent
-    }
-}
-
-/// Something to set the user agent for AF requests
-public class UserAgentAdapter: RequestAdapter {
-    public static let userAgentKey = "User-Agent"
-
-    public init() {}
-
-    public func adapt(
-        _ urlRequest: URLRequest,
-        for session: Alamofire.Session,
-        completion: @escaping (Result<URLRequest, Error>) -> Void
-    ) {
-        var adaptedRequest = urlRequest
-        adaptedRequest.headers.remove(name: Self.userAgentKey)
-        adaptedRequest.headers.add(name: Self.userAgentKey, value: UserAgentBuilder().userAgent)
-
-        completion(.success(adaptedRequest))
-    }
-}
 
 public extension ApiFetcher {
     convenience init(token: ApiToken, delegate: RefreshTokenDelegate) {
