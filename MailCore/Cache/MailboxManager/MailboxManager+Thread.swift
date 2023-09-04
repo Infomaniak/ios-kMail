@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreUI
 import RealmSwift
 
 // MARK: - Thread
@@ -51,6 +52,7 @@ public extension MailboxManager {
     internal func deleteMessages(uids: [String]) async {
         guard !uids.isEmpty && !Task.isCancelled else { return }
 
+        let backgroundTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
         await backgroundRealm.execute { realm in
             let batchSize = 100
             for index in stride(from: 0, to: uids.count, by: batchSize) {
@@ -96,6 +98,7 @@ public extension MailboxManager {
                 }
             }
         }
+        await backgroundTracker.end()
     }
 
     internal func saveThreads(result: ThreadResult, parent: Folder) async {

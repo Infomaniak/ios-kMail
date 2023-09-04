@@ -109,6 +109,7 @@ public class Thread: Object, Decodable, Identifiable {
         answered = messages.map(\.answered).contains(true)
         forwarded = messages.map(\.forwarded).contains(true)
 
+        // Re-ordering of messages in a thread
         messages = messages.sorted {
             $0.date.compare($1.date) == .orderedAscending
         }.toRealmList()
