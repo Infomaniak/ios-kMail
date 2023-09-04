@@ -75,6 +75,7 @@ struct CreateAccountView: View {
                 isPresentingCreateAccount.toggle()
             }
             .mailButtonFullWidth(true)
+            .mailButtonLoading(loginHandler.isLoading)
             .padding(.bottom, 24)
         }
         .padding(.horizontal, 24)

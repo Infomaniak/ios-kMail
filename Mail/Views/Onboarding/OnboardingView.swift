@@ -150,10 +150,9 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 }
 
 struct OnboardingView: View {
-    @Environment(\.dismiss) private var dismiss
-
     @LazyInjectService var orientationManager: OrientationManageable
 
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var navigationState: NavigationState
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -161,6 +160,7 @@ struct OnboardingView: View {
     @State private var selection: Int
     @State private var isPresentingCreateAccount = false
     @StateObject private var loginHandler = LoginHandler()
+
     private var isScrollEnabled: Bool
     private var slides = Slide.onBoardingSlides
 
@@ -172,74 +172,59 @@ struct OnboardingView: View {
     }
 
     var body: some View {
-        NavigationView {
-            VStack(spacing: 0) {
-                Group {
-                    if !isScrollEnabled,
-                       let slide = slides.first(where: { $0.id == selection }) {
-                        SlideView(slide: slide, updateAnimationColors: updateAnimationColors)
-                    } else {
-                        TabView(selection: $selection) {
-                            ForEach(slides) { slide in
-                                SlideView(slide: slide, updateAnimationColors: updateAnimationColors)
-                                    .tag(slide.id)
-                            }
-                        }
-                        .tabViewStyle(.page)
-                        .ignoresSafeArea(edges: .top)
-                    }
+        VStack(spacing: 0) {
+            TabView(selection: $selection) {
+                ForEach(slides) { slide in
+                    SlideView(slide: slide, updateAnimationColors: updateAnimationColors)
+                        .tag(slide.id)
                 }
-                .overlay(alignment: .top) {
-                    MailResourcesAsset.logoText.swiftUIImage
+            }
+            .tabViewStyle(.page)
+            .ignoresSafeArea(edges: .top)
+            .overlay(alignment: .top) {
+                MailResourcesAsset.logoText.swiftUIImage
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: UIConstants.onboardingLogoHeight)
+                    .padding(.top, UIConstants.onboardingLogoPaddingTop)
+            }
+
+            VStack(spacing: 24) {
+                if selection == slides.count {
+                    MailButton(label: MailResourcesStrings.Localizable.buttonLogin) {
+                        loginHandler.login()
+                    }
+                    .mailButtonFullWidth(true)
+                    .mailButtonLoading(loginHandler.isLoading)
+
+                    MailButton(label: MailResourcesStrings.Localizable.buttonCreateAccount) {
+                        isPresentingCreateAccount = true
+                    }
+                    .mailButtonStyle(.link)
+                } else {
+                    MailButton(icon: MailResourcesAsset.fullArrowRight)  {
+                        withAnimation {
+                            selection += 1
+                        }
+                    }
+                    .mailButtonIconSize(UIConstants.onboardingArrowIconSize)
+                }
+            }
+            .frame(height: UIConstants.onboardingButtonHeight + UIConstants.onboardingBottomButtonPadding, alignment: .top)
+            .padding(.horizontal, 24)
+        }
+        .overlay(alignment: .topLeading) {
+            if !isScrollEnabled {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
                         .resizable()
-                        .scaledToFit()
-                        .frame(height: UIConstants.onboardingLogoHeight)
-                        .padding(.top, UIConstants.onboardingLogoPaddingTop)
                 }
-
-                VStack(spacing: 24) {
-                    if selection == slides.count {
-                        MailButton(label: MailResourcesStrings.Localizable.buttonLogin) {
-                            loginHandler.login()
-                        }
-                        .mailButtonFullWidth(true)
-                        .mailButtonLoading(loginHandler.isLoading)
-
-                        NavigationLink(isActive: $isPresentingCreateAccount) {
-                            CreateAccountView()
-                        } label: {
-                            MailButton(label: MailResourcesStrings.Localizable.buttonCreateAccount) {
-                                isPresentingCreateAccount = true
-                            }
-                            .mailButtonStyle(.link)
-                            .disabled(false)
-                        }
-                    } else {
-                        MailButton(icon: MailResourcesAsset.fullArrowRight) {
-                            withAnimation {
-                                selection += 1
-                            }
-                        }
-                        .mailButtonIconSize(UIConstants.onboardingArrowIconSize)
-                    }
-                }
-                .frame(height: UIConstants.onboardingButtonHeight + UIConstants.onboardingBottomButtonPadding, alignment: .top)
-                .padding(.horizontal, 24)
+                .frame(width: 24, height: 24)
+                .padding(.top, 16)
+                .padding(.leading, 24)
             }
-            .overlay(alignment: .topLeading) {
-                if !isScrollEnabled {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .resizable()
-                    }
-                    .frame(width: 24, height: 24)
-                    .padding(.top, 16)
-                    .padding(.leading, 24)
-                }
-            }
-            .navigationBarTitle("")
         }
         .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $loginHandler.isPresentingErrorAlert) {
             // Use default button
@@ -260,6 +245,9 @@ struct OnboardingView: View {
             }
         }
         .matomoView(view: [MatomoUtils.View.onboarding.displayName, "Main"])
+        .sheet(isPresented: $isPresentingCreateAccount) {
+            CreateAccountView()
+        }
     }
 
     // MARK: - Private methods
