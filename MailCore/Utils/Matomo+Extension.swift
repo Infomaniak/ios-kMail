@@ -77,8 +77,8 @@ public extension MatomoUtils {
         track(eventWithCategory: .newMessage, name: "sendMail")
 
         track(eventWithCategory: .newMessage, action: .data, name: "numberOfTo", value: Float(draft.to.count))
-        track(eventWithCategory: .newMessage, action: .data, name: "numberOfCC", value: Float(draft.cc.count))
-        track(eventWithCategory: .newMessage, action: .data, name: "numberOfBCC", value: Float(draft.bcc.count))
+        track(eventWithCategory: .newMessage, action: .data, name: "numberOfCc", value: Float(draft.cc.count))
+        track(eventWithCategory: .newMessage, action: .data, name: "numberOfBcc", value: Float(draft.bcc.count))
 
         track(eventWithCategory: .externals, action: .data, name: "emailSentWithExternals", value: sentWithExternals)
     }
