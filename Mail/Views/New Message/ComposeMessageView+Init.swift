@@ -36,6 +36,7 @@ extension ComposeMessageView {
     static func edit(draft: Draft, mailboxManager: MailboxManager) -> ComposeMessageView {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .newMessage, name: "openFromDraft")
+        matomo.track(eventWithCategory: .newMessage, action: .data, name: "openLocalDraft", value: !draft.isLoadedRemotely)
         return ComposeMessageView(draft: draft, mailboxManager: mailboxManager)
     }
 

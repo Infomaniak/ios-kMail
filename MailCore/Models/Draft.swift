@@ -99,6 +99,10 @@ public final class Draft: Object, Codable, Identifiable {
         to.isEmpty && cc.isEmpty && bcc.isEmpty
     }
 
+    public var isLoadedRemotely: Bool {
+        messageUid != nil && remoteUUID.isEmpty
+    }
+
     private enum CodingKeys: String, CodingKey {
         case remoteUUID = "uuid"
         case date

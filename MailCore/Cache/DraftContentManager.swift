@@ -110,7 +110,7 @@ public class DraftContentManager: ObservableObject {
             completeDraftBody = try await completeDraftReplyingBody
             attachments = try await replyingAttachments
             shouldAddSignatureText = true
-        } else if incompleteDraft.messageUid != nil && incompleteDraft.remoteUUID.isEmpty {
+        } else if incompleteDraft.isLoadedRemotely {
             // Draft loaded remotely
             completeDraftBody = try await loadCompleteDraftIfNeeded()
             shouldAddSignatureText = false
