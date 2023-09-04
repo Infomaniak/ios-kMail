@@ -29,7 +29,7 @@ public extension ApiFetcher {
         self.init()
         createAuthenticatedSession(token,
                                    authenticator: SyncedAuthenticator(refreshTokenDelegate: delegate),
-                                   additionalAdapters: [RequestContextIdAdaptor()])
+                                   additionalAdapters: [RequestContextIdAdaptor(), UserAgentAdapter()])
     }
 }
 
