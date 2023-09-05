@@ -110,7 +110,7 @@ struct UnreadToggleStyle: ToggleStyle {
             HStack(spacing: 8) {
                 configuration.label
                 if configuration.isOn {
-                    MailResourcesAsset.closeSmall.swiftUIImage
+                    MailResourcesAsset.close.swiftUIImage
                         .resizable()
                         .frame(width: 12, height: 12)
                 }

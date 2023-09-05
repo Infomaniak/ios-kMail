@@ -37,7 +37,7 @@ struct AttachmentUploadCell: View {
                     attachmentRemoved(attachment)
                 }
             } label: {
-                MailResourcesAsset.closeSmall.swiftUIImage
+                MailResourcesAsset.close.swiftUIImage
                     .resizable()
                     .foregroundColor(MailResourcesAsset.textSecondaryColor)
                     .frame(width: 12, height: 12)

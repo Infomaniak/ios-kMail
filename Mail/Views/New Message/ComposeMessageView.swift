@@ -270,7 +270,7 @@ struct ComposeMessageView: View {
                             matomo.track(eventWithCategory: .externals, name: "bannerManuallyClosed")
                             isShowingExternalTag = false
                         } label: {
-                            MailResourcesAsset.closeSmall.swiftUIImage
+                            MailResourcesAsset.close.swiftUIImage
                                 .resizable()
                                 .foregroundColor(MailResourcesAsset.onTagColor)
                                 .frame(width: 16, height: 16)
