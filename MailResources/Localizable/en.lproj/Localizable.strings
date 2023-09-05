@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: en, English
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Mon, 28 Aug 2023 09:59:22 +0200
+ * Exported by: elena willen
+ * Exported at: Thu, 31 Aug 2023 13:09:24 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1273,3 +1273,6 @@
 
 /* loco:64e7615fcdd6976491020982 */
 "externalDialogDescriptionRecipient-plural-many" = "";
+
+/* loco:64edf250cb0c86ab3001d1b2 */
+"buttonStart" = "Start";

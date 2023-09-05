@@ -93,7 +93,6 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 
     func loginAfterAccountCreation(from viewController: UIViewController) {
         isLoading = true
-        matomo.track(eventWithCategory: .account, name: "openCreationWebview")
         loginService.setupWebviewNavbar(
             title: MailResourcesStrings.Localizable.buttonLogin,
             titleColor: nil,
@@ -151,10 +150,9 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 }
 
 struct OnboardingView: View {
-    @Environment(\.dismiss) private var dismiss
-
     @LazyInjectService var orientationManager: OrientationManageable
 
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var navigationState: NavigationState
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -162,6 +160,7 @@ struct OnboardingView: View {
     @State private var selection: Int
     @State private var isPresentingCreateAccount = false
     @StateObject private var loginHandler = LoginHandler()
+
     private var isScrollEnabled: Bool
     private var slides = Slide.onBoardingSlides
 
@@ -175,10 +174,7 @@ struct OnboardingView: View {
     var body: some View {
         VStack(spacing: 0) {
             Group {
-                if !isScrollEnabled,
-                   let slide = slides.first(where: { $0.id == selection }) {
-                    SlideView(slide: slide, updateAnimationColors: updateAnimationColors)
-                } else {
+                if isScrollEnabled {
                     TabView(selection: $selection) {
                         ForEach(slides) { slide in
                             SlideView(slide: slide, updateAnimationColors: updateAnimationColors)
@@ -187,6 +183,8 @@ struct OnboardingView: View {
                     }
                     .tabViewStyle(.page)
                     .ignoresSafeArea(edges: .top)
+                } else if let slide = slides.first(where: { $0.id == selection }) {
+                    SlideView(slide: slide)
                 }
             }
             .overlay(alignment: .top) {
@@ -206,7 +204,7 @@ struct OnboardingView: View {
                     .mailButtonLoading(loginHandler.isLoading)
 
                     MailButton(label: MailResourcesStrings.Localizable.buttonCreateAccount) {
-                        isPresentingCreateAccount.toggle()
+                        isPresentingCreateAccount = true
                     }
                     .mailButtonStyle(.link)
                     .disabled(loginHandler.isLoading)
@@ -240,12 +238,6 @@ struct OnboardingView: View {
         } message: {
             Text(MailResourcesStrings.Localizable.errorLoginDescription)
         }
-        .sheet(isPresented: $isPresentingCreateAccount) {
-            RegisterView(registrationProcess: .mail) { viewController in
-                guard let viewController else { return }
-                loginHandler.loginAfterAccountCreation(from: viewController)
-            }
-        }
         .onAppear {
             if UIDevice.current.userInterfaceIdiom == .phone {
                 UIDevice.current
@@ -258,6 +250,10 @@ struct OnboardingView: View {
             if shouldShowEmptyMailboxesView {
                 navigationState.transitionToRootViewDestination(.noMailboxes)
             }
+        }
+        .matomoView(view: [MatomoUtils.View.onboarding.displayName, "Main"])
+        .sheet(isPresented: $isPresentingCreateAccount) {
+            CreateAccountView(loginHandler: loginHandler)
         }
     }
 
