@@ -36,7 +36,7 @@ private struct SwipeActionView: View {
 
     var body: some View {
         Button(role: action.isDestructive ? .destructive : nil) {
-            matomo.track(eventWithCategory: .swipeActions, name: action.matomoName)
+            matomo.track(eventWithCategory: .swipeActions, action: .drag, name: action.matomoName)
             Task {
                 await tryOrDisplayError {
                     try await actionsManager.performAction(
