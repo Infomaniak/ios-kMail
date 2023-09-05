@@ -77,9 +77,7 @@ struct SearchFilterFolderCell: View {
                 }
                 Text(selectedFolderName)
                     .font(MailTextStyle.bodyMedium.font)
-                MailResourcesAsset.arrowDown.swiftUIImage
-                    .resizable()
-                    .frame(width: 12, height: 12)
+                ChevronIcon(style: .down)
             }
         }
         .filterCellStyle(isSelected: isSelected)

@@ -96,7 +96,8 @@ struct SearchView: View {
                     Constants.globallyResignFirstResponder()
                     splitViewManager.showSearch = false
                 } label: {
-                    Image(isCompactWindow ? MailResourcesAsset.arrowLeft.name : MailResourcesAsset.closeBig.name)
+                    Image(systemName: isCompactWindow ? "chevron.left" : "xmark")
+                        .font(.body.weight(isCompactWindow ? .semibold : .regular))
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonBack)
             }

@@ -40,7 +40,7 @@ struct SearchHistorySectionView: View {
                     Button {
                         deleteSearchTapped(searchItem: searchItem)
                     } label: {
-                        MailResourcesAsset.closeSmall.swiftUIImage
+                        MailResourcesAsset.close.swiftUIImage
                             .resizable()
                             .foregroundColor(MailResourcesAsset.textSecondaryColor.swiftUIColor)
                             .frame(width: 16, height: 16)
