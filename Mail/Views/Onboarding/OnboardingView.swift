@@ -207,6 +207,7 @@ struct OnboardingView: View {
                         isPresentingCreateAccount = true
                     }
                     .mailButtonStyle(.link)
+                    .disabled(loginHandler.isLoading)
                 } else {
                     MailButton(icon: MailResourcesAsset.fullArrowRight) {
                         withAnimation {

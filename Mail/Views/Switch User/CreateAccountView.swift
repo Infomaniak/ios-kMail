@@ -73,7 +73,7 @@ struct CreateAccountView: View {
             MailButton(label: MailResourcesStrings.Localizable.buttonStart) {
                 @InjectService var matomo: MatomoUtils
                 matomo.track(eventWithCategory: .account, name: "openCreationWebview")
-                isPresentingCreateAccount.toggle()
+                isPresentingCreateAccount = true
             }
             .mailButtonFullWidth(true)
             .mailButtonLoading(loginHandler.isLoading)
