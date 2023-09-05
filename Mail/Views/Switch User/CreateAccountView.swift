@@ -28,7 +28,8 @@ struct CreateAccountView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @State private var isPresentingCreateAccount = false
-    @StateObject private var loginHandler = LoginHandler()
+
+    @ObservedObject var loginHandler: LoginHandler
 
     var body: some View {
         VStack(spacing: 0) {
@@ -91,6 +92,6 @@ struct CreateAccountView: View {
 
 struct CreateAccountView_Previews: PreviewProvider {
     static var previews: some View {
-        CreateAccountView()
+        CreateAccountView(loginHandler: LoginHandler())
     }
 }

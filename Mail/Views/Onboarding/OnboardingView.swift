@@ -173,14 +173,20 @@ struct OnboardingView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            TabView(selection: $selection) {
-                ForEach(slides) { slide in
-                    SlideView(slide: slide, updateAnimationColors: updateAnimationColors)
-                        .tag(slide.id)
+            Group {
+                if isScrollEnabled {
+                    TabView(selection: $selection) {
+                        ForEach(slides) { slide in
+                            SlideView(slide: slide, updateAnimationColors: updateAnimationColors)
+                                .tag(slide.id)
+                        }
+                    }
+                    .tabViewStyle(.page)
+                    .ignoresSafeArea(edges: .top)
+                } else if let slide = slides.first(where: { $0.id == selection }) {
+                    SlideView(slide: slide)
                 }
             }
-            .tabViewStyle(.page)
-            .ignoresSafeArea(edges: .top)
             .overlay(alignment: .top) {
                 MailResourcesAsset.logoText.swiftUIImage
                     .resizable()
@@ -202,7 +208,7 @@ struct OnboardingView: View {
                     }
                     .mailButtonStyle(.link)
                 } else {
-                    MailButton(icon: MailResourcesAsset.fullArrowRight)  {
+                    MailButton(icon: MailResourcesAsset.fullArrowRight) {
                         withAnimation {
                             selection += 1
                         }
@@ -246,7 +252,7 @@ struct OnboardingView: View {
         }
         .matomoView(view: [MatomoUtils.View.onboarding.displayName, "Main"])
         .sheet(isPresented: $isPresentingCreateAccount) {
-            CreateAccountView()
+            CreateAccountView(loginHandler: loginHandler)
         }
     }
 
