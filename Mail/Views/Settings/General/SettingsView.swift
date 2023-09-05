@@ -38,119 +38,113 @@ struct SettingsView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                Text(MailResourcesStrings.Localizable.settingsSectionEmailAddresses)
-                    .textStyle(.bodySmallSecondary)
+            VStack(alignment: .leading, spacing: 0) {
+                Group {
+                    SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsSectionEmailAddresses)
 
-                ForEachMailboxView(userId: mailboxManager.account.userId) { mailbox in
-                    if let mailboxManager = accountManager.getMailboxManager(for: mailbox) {
-                        SettingsSubMenuCell(title: mailbox.email) {
-                            MailboxSettingsView(mailboxManager: mailboxManager)
+                    ForEachMailboxView(userId: mailboxManager.account.userId) { mailbox in
+                        if let mailboxManager = accountManager.getMailboxManager(for: mailbox) {
+                            SettingsSubMenuCell(title: mailbox.email) {
+                                MailboxSettingsView(mailboxManager: mailboxManager)
+                            }
                         }
                     }
+
+                    IKDivider()
                 }
 
-                IKDivider()
-            }
-            .padding(.horizontal, 16)
+                Group {
+                    SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsSectionGeneral)
 
-            VStack(alignment: .leading, spacing: 24) {
-                Text(MailResourcesStrings.Localizable.settingsSectionGeneral)
-                    .textStyle(.bodySmallSecondary)
+                    if appLockHelper.isAvailable {
+                        SettingsToggleCell(
+                            title: MailResourcesStrings.Localizable.settingsAppLock,
+                            userDefaults: \.isAppLockEnabled,
+                            matomoCategory: .settingsGeneral,
+                            matomoName: "lock"
+                        )
+                        .settingCellModifier()
+                    }
 
-                if appLockHelper.isAvailable {
-                    SettingsToggleCell(
-                        title: MailResourcesStrings.Localizable.settingsAppLock,
-                        userDefaults: \.isAppLockEnabled,
-                        matomoCategory: .settingsGeneral,
-                        matomoName: "lock"
-                    )
-                    .settingCellModifier()
+                    SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications) {
+                        SettingsNotificationsView()
+                    }
+
+                    IKDivider()
                 }
 
-                SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications) {
-                    SettingsNotificationsView()
-                }
+                Group {
+                    SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsSectionAppearance)
 
-                IKDivider()
-            }
-            .padding(.horizontal, 16)
+                    // MARK: - Thread Density
 
-            VStack(alignment: .leading, spacing: 24) {
-                Text(MailResourcesStrings.Localizable.settingsSectionAppearance)
-                    .textStyle(.bodySmallSecondary)
-                    .padding(.top, 16)
+                    SettingsSubMenuCell(
+                        title: MailResourcesStrings.Localizable.settingsThreadListDensityTitle,
+                        subtitle: density.title
+                    ) {
+                        SettingsThreadDensityOptionView()
+                    }
 
-                // MARK: - Thread Density
+                    // MARK: - Theme
 
-                SettingsSubMenuCell(
-                    title: MailResourcesStrings.Localizable.settingsThreadListDensityTitle,
-                    subtitle: density.title
-                ) {
-                    SettingsThreadDensityOptionView()
-                }
-
-                // MARK: - Theme
-
-                SettingsSubMenuCell(
-                    title: MailResourcesStrings.Localizable.settingsThemeTitle,
-                    subtitle: theme.title
-                ) {
-                    SettingsOptionView<Theme>(
+                    SettingsSubMenuCell(
                         title: MailResourcesStrings.Localizable.settingsThemeTitle,
-                        subtitle: MailResourcesStrings.Localizable.settingsThemeDescription,
-                        keyPath: \.theme,
-                        matomoCategory: .settingsTheme,
-                        matomoName: \.rawValue
-                    )
-                }
+                        subtitle: theme.title
+                    ) {
+                        SettingsOptionView<Theme>(
+                            title: MailResourcesStrings.Localizable.settingsThemeTitle,
+                            subtitle: MailResourcesStrings.Localizable.settingsThemeDescription,
+                            keyPath: \.theme,
+                            matomoCategory: .settingsTheme,
+                            matomoName: \.rawValue
+                        )
+                    }
 
-                // MARK: - Accent Color
+                    // MARK: - Accent Color
 
-                SettingsSubMenuCell(
-                    title: MailResourcesStrings.Localizable.settingsAccentColor,
-                    subtitle: accentColor.title
-                ) {
-                    SettingsOptionView(
+                    SettingsSubMenuCell(
                         title: MailResourcesStrings.Localizable.settingsAccentColor,
-                        keyPath: \.accentColor,
-                        matomoCategory: .settingsAccentColor,
-                        matomoName: \.rawValue
-                    )
-                }
+                        subtitle: accentColor.title
+                    ) {
+                        SettingsOptionView(
+                            title: MailResourcesStrings.Localizable.settingsAccentColor,
+                            keyPath: \.accentColor,
+                            matomoCategory: .settingsAccentColor,
+                            matomoName: \.rawValue
+                        )
+                    }
 
-                // MARK: - Swipe Actions
+                    // MARK: - Swipe Actions
 
-                SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsSwipeActionsTitle) {
-                    SettingsSwipeActionsView()
-                }
+                    SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsSwipeActionsTitle) {
+                        SettingsSwipeActionsView()
+                    }
 
-                // MARK: - Thread Mode
+                    // MARK: - Thread Mode
 
-                SettingsSubMenuCell(
-                    title: MailResourcesStrings.Localizable.settingsThreadModeTitle,
-                    subtitle: threadMode.title
-                ) {
-                    SettingsThreadModeView()
-                }
+                    SettingsSubMenuCell(
+                        title: MailResourcesStrings.Localizable.settingsThreadModeTitle,
+                        subtitle: threadMode.title
+                    ) {
+                        SettingsThreadModeView()
+                    }
 
-                // MARK: - External Content
+                    // MARK: - External Content
 
-                SettingsSubMenuCell(
-                    title: MailResourcesStrings.Localizable.settingsExternalContentTitle,
-                    subtitle: externalContent.title
-                ) {
-                    SettingsOptionView(
+                    SettingsSubMenuCell(
                         title: MailResourcesStrings.Localizable.settingsExternalContentTitle,
-                        subtitle: MailResourcesStrings.Localizable.settingsExternalContentDescription,
-                        keyPath: \.displayExternalContent,
-                        matomoCategory: .settingsDisplayExternalContent,
-                        matomoName: \.rawValue
-                    )
+                        subtitle: externalContent.title
+                    ) {
+                        SettingsOptionView(
+                            title: MailResourcesStrings.Localizable.settingsExternalContentTitle,
+                            subtitle: MailResourcesStrings.Localizable.settingsExternalContentDescription,
+                            keyPath: \.displayExternalContent,
+                            matomoCategory: .settingsDisplayExternalContent,
+                            matomoName: \.rawValue
+                        )
+                    }
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 16)
         }
         .onChange(of: threadMode) { _ in
             AccountManager.instance.updateConversationSettings()
