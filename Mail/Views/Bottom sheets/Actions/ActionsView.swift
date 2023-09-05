@@ -27,12 +27,12 @@ struct ActionsView: View {
     private let quickActions: [Action]
     private let listActions: [Action]
     private let origin: ActionOrigin
-    private let completionHandler: (() -> Void)?
+    private let completionHandler: ((Action) -> Void)?
 
     init(mailboxManager: MailboxManager,
          target messages: [Message],
          origin: ActionOrigin,
-         completionHandler: (() -> Void)? = nil) {
+         completionHandler: ((Action) -> Void)? = nil) {
         let userIsStaff = mailboxManager.account.user.isStaff ?? false
         let actions = Action.actionsForMessages(messages, originFolder: origin.folder, userIsStaff: userIsStaff)
         quickActions = actions.quickActions
@@ -98,7 +98,7 @@ struct QuickActionView: View {
     let targetMessages: [Message]
     let action: Action
     let origin: ActionOrigin
-    var completionHandler: (() -> Void)?
+    var completionHandler: ((Action) -> Void)?
 
     var body: some View {
         Button {
@@ -110,7 +110,7 @@ struct QuickActionView: View {
                         action: action,
                         origin: origin
                     )
-                    completionHandler?()
+                    completionHandler?(action)
                 }
             }
         } label: {
@@ -143,7 +143,7 @@ struct MessageActionView: View {
     let targetMessages: [Message]
     let action: Action
     let origin: ActionOrigin
-    var completionHandler: (() -> Void)?
+    var completionHandler: ((Action) -> Void)?
 
     var body: some View {
         Button {
@@ -155,7 +155,7 @@ struct MessageActionView: View {
                         action: action,
                         origin: origin
                     )
-                    completionHandler?()
+                    completionHandler?(action)
                 }
             }
         } label: {

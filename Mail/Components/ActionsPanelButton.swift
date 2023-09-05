@@ -22,6 +22,8 @@ import MailResources
 import SwiftUI
 
 struct ActionsPanelButton<Content: View>: View {
+    @Environment(\.dismiss) private var dismiss
+
     @State private var actionMessages: [Message]?
 
     let messages: [Message]
@@ -34,6 +36,10 @@ struct ActionsPanelButton<Content: View>: View {
         } label: {
             label()
         }
-        .actionsPanel(messages: $actionMessages, originFolder: originFolder)
+        .actionsPanel(messages: $actionMessages, originFolder: originFolder) { action in
+            if action == .markAsUnread {
+                dismiss()
+            }
+        }
     }
 }

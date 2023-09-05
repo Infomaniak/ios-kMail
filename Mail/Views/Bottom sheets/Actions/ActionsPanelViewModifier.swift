@@ -22,7 +22,7 @@ import SwiftUI
 
 extension View {
     func actionsPanel(messages: Binding<[Message]?>, originFolder: Folder?,
-                      completionHandler: (() -> Void)? = nil) -> some View {
+                      completionHandler: ((Action) -> Void)? = nil) -> some View {
         return modifier(ActionsPanelViewModifier(
             messages: messages,
             originFolder: originFolder,
@@ -42,7 +42,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     @Binding var messages: [Message]?
     let originFolder: Folder?
 
-    var completionHandler: (() -> Void)?
+    var completionHandler: ((Action) -> Void)?
 
     private var origin: ActionOrigin {
         .floatingPanel(
