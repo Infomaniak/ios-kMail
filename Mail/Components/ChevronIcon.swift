@@ -25,13 +25,13 @@ struct ChevronIcon: View {
 
         var rotationAngle: Angle {
             switch self {
-            case .down:
-                return .zero
-            case .left:
-                return .radians(.pi / 2)
             case .up:
-                return .radians(.pi)
+                return .zero
             case .right:
+                return .radians(.pi / 2)
+            case .down:
+                return .radians(.pi)
+            case .left:
                 return .radians(3 * .pi / 2)
             }
         }
@@ -41,7 +41,7 @@ struct ChevronIcon: View {
     var color = MailResourcesAsset.textSecondaryColor
 
     var body: some View {
-        MailResourcesAsset.arrowDown.swiftUIImage
+        MailResourcesAsset.chevronUp.swiftUIImage
             .resizable()
             .frame(width: 12, height: 12)
             .foregroundColor(color)
