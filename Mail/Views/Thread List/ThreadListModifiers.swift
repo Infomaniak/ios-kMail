@@ -176,7 +176,7 @@ struct ThreadListToolbar: ViewModifier {
                 }
                 .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
             }
-            .actionsPanel(messages: $multipleSelectedMessages, originFolder: viewModel.folder) {
+            .actionsPanel(messages: $multipleSelectedMessages, originFolder: viewModel.folder) { _ in
                 multipleSelectionViewModel.isEnabled = false
             }
             .navigationTitle(
