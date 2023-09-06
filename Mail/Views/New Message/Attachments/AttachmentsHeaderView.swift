@@ -28,7 +28,7 @@ struct AttachmentsHeaderView: View {
         ZStack {
             if !attachmentsManager.attachments.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: UIPadding.small) {
                         ForEach(attachmentsManager.attachments) { attachment in
                             AttachmentUploadCell(
                                 uploadTask: attachmentsManager.attachmentUploadTaskOrFinishedTask(for: attachment.uuid),
@@ -38,10 +38,9 @@ struct AttachmentsHeaderView: View {
                             }
                         }
                     }
-                    .padding(.vertical, 1)
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, value: .regular)
                 }
-                .padding(.top, 16)
+                .padding(.top, value: .regular)
             }
         }
         .customAlert(item: $attachmentsManager.globalError) { error in

@@ -61,12 +61,16 @@ public extension UIPadding {
     static let menuDrawerCellChevronSpacing = intermediate
     static let menuDrawerSubFolder = medium
 
+    // MARK: Compose Message
+
+    static let composeViewHeaderCellLargeVertical = intermediate + recipientChip.top
+    static let composeViewHeaderHorizontal = regular
+
     // MARK: Misc
 
     static let floatingButtonBottom = medium
     static let bottomSheetHorizontal = medium
     static let recipientChip = UIEdgeInsets(top: verySmall, left: small, bottom: verySmall, right: small)
-    static let composeViewHeaderCellLargeVertical = intermediate + recipientChip.top
     static let searchFolderCellSpacing = small
 }
 

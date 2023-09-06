@@ -59,7 +59,7 @@ struct ComposeMessageBodyView: View {
             )
             .ignoresSafeArea(.all, edges: .bottom)
             .frame(height: editorModel.height + 20)
-            .padding(.vertical, 8)
+            .padding(.vertical, value: .verySmall)
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
             CameraPicker { data in

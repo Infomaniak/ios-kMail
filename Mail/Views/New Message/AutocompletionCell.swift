@@ -28,7 +28,7 @@ struct AutocompletionCell: View {
     let unknownRecipient: Bool
 
     var body: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: UIPadding.intermediate) {
             Button {
                 addRecipient(recipient)
             } label: {

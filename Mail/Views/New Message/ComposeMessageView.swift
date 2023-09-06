@@ -249,7 +249,7 @@ struct ComposeMessageView: View {
                 let externalTag = draft.displayExternalTag(mailboxManager: mailboxManager)
                 switch externalTag {
                 case .many, .one:
-                    HStack(spacing: 24) {
+                    HStack(spacing: UIPadding.medium) {
                         Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
                             .foregroundColor(MailResourcesAsset.onTagColor)
                             .textStyle(.bodySmall)
@@ -277,7 +277,7 @@ struct ComposeMessageView: View {
                         }
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(16)
+                    .padding(value: .regular)
                     .background(MailResourcesAsset.yellowColor.swiftUIColor)
                 case .none:
                     EmptyView()

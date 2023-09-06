@@ -73,6 +73,7 @@ struct ComposeMessageSenderMenu: View {
                     }
                 }
                 .padding(.vertical, UIPadding.composeViewHeaderCellLargeVertical)
+                .padding(.horizontal, UIPadding.composeViewHeaderHorizontal)
 
                 IKDivider()
             }

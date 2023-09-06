@@ -40,6 +40,7 @@ struct ComposeMessageCellTextField: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, UIPadding.composeViewHeaderCellLargeVertical)
+                .padding(.horizontal, UIPadding.composeViewHeaderHorizontal)
 
                 IKDivider()
             }
