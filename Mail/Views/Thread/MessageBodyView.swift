@@ -39,7 +39,7 @@ struct MessageBodyView: View {
                 if let body = presentableBody.body {
                     if body.type == "text/plain" {
                         SelectableTextView(textPlainHeight: $textPlainHeight, text: body.value)
-                            .padding(.horizontal, 16)
+                            .padding(.horizontal, value: .regular)
                             .frame(height: textPlainHeight)
                             .onAppear {
                                 withAnimation {
@@ -70,7 +70,7 @@ struct MessageBodyView: View {
                                 }
                                 .mailButtonStyle(.smallLink)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.horizontal, 16)
+                                .padding(.horizontal, value: .regular)
                         }
                     }
                 }

@@ -63,7 +63,7 @@ struct MessageView: View {
                     isHeaderExpanded: $isHeaderExpanded,
                     isMessageExpanded: $isMessageExpanded
                 )
-                .padding(.horizontal, 16)
+                .padding(.horizontal, value: .regular)
 
                 if isMessageExpanded {
                     if isRemoteContentBlocked && displayContentBlockedActionView {
@@ -82,7 +82,7 @@ struct MessageView: View {
 
                     if !message.attachments.filter({ $0.disposition == .attachment || $0.contentId == nil }).isEmpty {
                         AttachmentsView(message: message)
-                            .padding(.top, 24)
+                            .padding(.top, value: .medium)
                     }
 
                     MessageBodyView(
@@ -92,10 +92,10 @@ struct MessageView: View {
                         displayContentBlockedActionView: $displayContentBlockedActionView,
                         messageUid: message.uid
                     )
-                    .padding(.top, 16)
+                    .padding(.top, value: .regular)
                 }
             }
-            .padding(.vertical, 16)
+            .padding(.vertical, value: .regular)
             .task {
                 if message.shouldComplete {
                     await fetchMessage()

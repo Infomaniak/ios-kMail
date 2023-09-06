@@ -38,7 +38,7 @@ struct AttachmentView<Content: View>: View {
                     .resizable()
                     .frame(width: 24, height: 24)
 
-                HStack(spacing: 8) {
+                HStack(spacing: UIPadding.small) {
                     VStack(alignment: .leading, spacing: 0) {
                         Text(attachment.name)
                             .textStyle(.bodySmall)
@@ -52,8 +52,8 @@ struct AttachmentView<Content: View>: View {
                     accessory()
                 }
             }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .padding(.horizontal, value: .small)
+            .padding(.vertical, value: .verySmall)
         }
         .background(
             RoundedRectangle(cornerRadius: 6)

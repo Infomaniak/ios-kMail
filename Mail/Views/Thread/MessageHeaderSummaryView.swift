@@ -62,12 +62,12 @@ struct MessageHeaderSummaryView: View {
                     }
                 }
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: UIPadding.verySmall) {
                     if message.isDraft {
                         Text(MailResourcesStrings.Localizable.messageIsDraftOption)
                             .textStyle(.bodyMediumError)
                     } else {
-                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                        HStack(alignment: .firstTextBaseline, spacing: UIPadding.small) {
                             VStack {
                                 ForEach(message.from) { recipient in
                                     Text(CommonContact(recipient: recipient, contextMailboxManager: mailboxManager),
