@@ -19,14 +19,6 @@
 import MailResources
 import SwiftUI
 
-struct SettingCellModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .frame(minHeight: 40)
-            .listRowSeparator(.hidden)
-    }
-}
-
 struct SettingsItemModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
@@ -44,10 +36,6 @@ struct SettingsCellModifier: ViewModifier {
 }
 
 extension View {
-    func settingCellModifier() -> some View {
-        modifier(SettingCellModifier())
-    }
-
     func settingsItem() -> some View {
         modifier(SettingsItemModifier())
     }

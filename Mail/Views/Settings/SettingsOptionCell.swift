@@ -20,28 +20,43 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct SettingsOptionCell<OptionEnum>: View where OptionEnum: SettingsOptionEnum {
-    let value: OptionEnum
+struct SettingsOptionCell: View {
+    let title: String
+    let icon: Image?
     let isSelected: Bool
     let isLast: Bool
     let action: () -> Void
+
+    init(title: String, icon: Image? = nil, isSelected: Bool = false, isLast: Bool, action: @escaping () -> Void) {
+        self.title = title
+        self.icon = icon
+        self.isSelected = isSelected
+        self.isLast = isLast
+        self.action = action
+    }
+
+    init(value: any SettingsOptionEnum, isSelected: Bool, isLast: Bool, action: @escaping () -> Void) {
+        self.init(title: value.title, icon: value.image, isSelected: isSelected, isLast: isLast, action: action)
+    }
 
     var body: some View {
         Button(action: action) {
             VStack(spacing: 0) {
                 HStack(spacing: UIPadding.regular) {
-                    value.image?
+                    icon?
                         .resizable()
                         .scaledToFit()
                         .frame(width: 24, height: 24)
                         .foregroundColor(MailResourcesAsset.textTertiaryColor)
 
-                    Text(value.title)
+                    Text(title)
                         .textStyle(.body)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     if isSelected {
-                        Image(systemName: "checkmark")
+                        MailResourcesAsset.check.swiftUIImage
+                            .resizable()
+                            .frame(width: 16, height: 16)
                             .foregroundColor(.accentColor)
                     }
                 }

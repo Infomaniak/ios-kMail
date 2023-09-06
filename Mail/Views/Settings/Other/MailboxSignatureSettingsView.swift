@@ -40,26 +40,8 @@ struct MailboxSignatureSettingsView: View {
                     .settingsCell()
 
                 ForEach(signatures) { signature in
-                    Button {
+                    SettingsOptionCell(title: signature.name, isLast: signature == signatures.last) {
                         setAsDefault(signature)
-                    } label: {
-                        VStack(spacing: 0) {
-                            HStack(spacing: UIPadding.regular) {
-                                Text(signature.name)
-                                    .textStyle(.body)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                                if signature.isDefault {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(.accentColor)
-                                }
-                            }
-                            .settingsItem()
-
-                            if signature != signatures.last {
-                                IKDivider()
-                            }
-                        }
                     }
                 }
                 .settingsCell()
@@ -67,8 +49,6 @@ struct MailboxSignatureSettingsView: View {
             .listStyle(.plain)
             .environment(\.defaultMinListRowHeight, 0)
         }
-
-
         .navigationTitle(MailResourcesStrings.Localizable.settingsSignatureTitle)
         .navigationBarTitleDisplayMode(.inline)
         .backButtonDisplayMode(.minimal)
