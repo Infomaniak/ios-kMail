@@ -92,8 +92,7 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
                     }
                 }
             }
-            .listStyle(.plain)
-            .environment(\.defaultMinListRowHeight, 0)
+            .plainList()
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(title, displayMode: .inline)

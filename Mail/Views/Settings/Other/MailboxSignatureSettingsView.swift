@@ -46,8 +46,7 @@ struct MailboxSignatureSettingsView: View {
                 }
                 .settingsCell()
             }
-            .listStyle(.plain)
-            .environment(\.defaultMinListRowHeight, 0)
+            .plainList()
         }
         .navigationTitle(MailResourcesStrings.Localizable.settingsSignatureTitle)
         .navigationBarTitleDisplayMode(.inline)

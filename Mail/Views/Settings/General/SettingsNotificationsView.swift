@@ -102,8 +102,7 @@ struct SettingsNotificationsView: View {
                     .settingsCell()
                 }
             }
-            .listStyle(.plain)
-            .environment(\.defaultMinListRowHeight, 0)
+            .plainList()
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications, displayMode: .inline)

@@ -147,7 +147,7 @@ struct ThreadListView: View {
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
-                .environment(\.defaultMinListRowHeight, 4)
+                .plainList()
                 .emptyState(isEmpty: shouldDisplayEmptyView) {
                     switch viewModel.folder.role {
                     case .inbox:
@@ -162,7 +162,6 @@ struct ThreadListView: View {
                     EmptyStateView.noNetwork
                 }
                 .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-                .listStyle(.plain)
                 .onAppear {
                     viewModel.scrollViewProxy = proxy
                 }

@@ -48,8 +48,7 @@ struct SettingsThreadModeView: View {
                 }
             }
         }
-        .listStyle(.plain)
-        .environment(\.defaultMinListRowHeight, 0)
+        .plainList()
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsThreadModeTitle, displayMode: .inline)
         .customAlert(item: $threadModeSettingUpdate) { threadModeUpdate in
