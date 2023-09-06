@@ -72,6 +72,8 @@ struct SwipeConfigCell: View {
                 .cornerRadius(15)
                 .shadow(radius: 4)
         )
+        .padding(.horizontal, value: .regular)
+        .padding(.vertical, value: .small)
     }
 }
 

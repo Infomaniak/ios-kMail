@@ -25,13 +25,9 @@ import SwiftUI
 import UIKit
 
 struct SettingsThreadDensityOptionView: View {
-    @State private var selectedValue: ThreadDensity
-
     @LazyInjectService private var matomo: MatomoUtils
 
-    init() {
-        _selectedValue = State(wrappedValue: UserDefaults.shared.threadDensity)
-    }
+    @State private var selectedValue = UserDefaults.shared.threadDensity
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
