@@ -22,7 +22,7 @@ import SwiftUI
 
 struct IKDivider: View {
     enum DividerType {
-        case menu, item
+        case menu, item, full
 
         var insets: EdgeInsets {
             switch self {
@@ -30,6 +30,8 @@ struct IKDivider: View {
                 return EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0)
             case .item:
                 return EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
+            case .full:
+                return EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
             }
         }
     }

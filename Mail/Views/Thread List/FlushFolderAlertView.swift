@@ -49,7 +49,7 @@ struct FlushFolderAlertView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: UIPadding.medium) {
             Text(title)
                 .textStyle(.bodyMedium)
             Text(description)

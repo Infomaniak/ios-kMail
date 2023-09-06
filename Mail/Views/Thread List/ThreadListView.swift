@@ -97,7 +97,7 @@ struct ThreadListView: View {
                     }
 
                     if threadDensity == .compact {
-                        ListVerticalInsetView(height: 4)
+                        ListVerticalInsetView(height: UIPadding.verySmall)
                     }
 
                     ForEach(viewModel.sections) { section in
