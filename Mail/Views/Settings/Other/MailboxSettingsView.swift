@@ -26,15 +26,13 @@ struct MailboxSettingsView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                Text(MailResourcesStrings.Localizable.settingsSectionGeneral)
-                    .textStyle(.bodySmallSecondary)
+            VStack(alignment: .leading, spacing: 0) {
+                SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsSectionGeneral)
 
                 SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsMailboxGeneralSignature) {
                     MailboxSignatureSettingsView(mailboxManager: mailboxManager)
                 }
             }
-            .padding(.horizontal, 16)
         }
         .navigationTitle(mailboxManager.mailbox.email)
         .navigationBarTitleDisplayMode(.inline)

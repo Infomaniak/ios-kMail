@@ -63,7 +63,6 @@ struct SettingsView: View {
                             matomoCategory: .settingsGeneral,
                             matomoName: "lock"
                         )
-                        .settingCellModifier()
                     }
 
                     SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications) {

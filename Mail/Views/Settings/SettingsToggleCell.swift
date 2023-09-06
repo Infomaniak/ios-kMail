@@ -83,6 +83,7 @@ struct SettingsToggleCell: View {
                 enableAppLock()
             }
         }
+        .settingsItem()
     }
 
     private func enableAppLock() {

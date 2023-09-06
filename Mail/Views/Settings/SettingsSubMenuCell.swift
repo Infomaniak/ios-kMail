@@ -49,7 +49,7 @@ struct SettingsSubMenuCell<Content: View>: View {
                 Spacer()
                 ChevronIcon(style: .right)
             }
-            .padding(value: .regular)
+            .settingsItem()
         }
     }
 }

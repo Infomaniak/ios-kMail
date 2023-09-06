@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailResources
 import SwiftUI
 
 struct SettingCellModifier: ViewModifier {
@@ -26,11 +27,19 @@ struct SettingCellModifier: ViewModifier {
     }
 }
 
-struct SettingSectionHeaderModifier: ViewModifier {
+struct SettingsItemModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .padding(value: .regular)
+    }
+}
+
+struct SettingsCellModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .listRowSeparator(.hidden)
-            .listRowInsets(.init(top: 12, leading: 8, bottom: 4, trailing: 8))
+            .listRowInsets(.init())
+            .background(MailResourcesAsset.backgroundColor.swiftUIColor)
     }
 }
 
@@ -39,7 +48,11 @@ extension View {
         modifier(SettingCellModifier())
     }
 
-    func settingSectionHeaderModifier() -> some View {
-        modifier(SettingSectionHeaderModifier())
+    func settingsItem() -> some View {
+        modifier(SettingsItemModifier())
+    }
+
+    func settingsCell() -> some View {
+        modifier(SettingsCellModifier())
     }
 }
