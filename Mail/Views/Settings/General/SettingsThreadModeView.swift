@@ -34,48 +34,22 @@ struct SettingsThreadModeView: View {
     }
 
     var body: some View {
-        List {
-            Section {
+        VStack(alignment: .leading, spacing: 0) {
+            List {
+                SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsSelectDisplayModeDescription)
+                    .settingsCell()
+
                 ForEach(ThreadMode.allCases, id: \.rawValue) { value in
-                    Button {
+                    SettingsOptionCell(value: value, isSelected: value == selectedValue, isLast: value == ThreadMode.allCases.last) {
                         if value != selectedValue {
                             threadModeSettingUpdate = ThreadModeSettingUpdate(newSetting: value)
                         }
-                    } label: {
-                        VStack(spacing: 0) {
-                            HStack(spacing: 16) {
-                                value.image?
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 24, height: 24)
-                                    .foregroundColor(MailResourcesAsset.textTertiaryColor)
-                                Text(value.title)
-                                    .textStyle(.body)
-                                Spacer()
-                                if value == selectedValue {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(.accentColor)
-                                }
-                            }
-                            .padding(.vertical, 16)
-                            .padding(.horizontal, 24)
-
-                            if value != ThreadMode.allCases.last {
-                                IKDivider()
-                                    .padding(.horizontal, 8)
-                            }
-                        }
                     }
                 }
-                .listRowSeparator(.hidden)
-                .listRowInsets(.init())
-                .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-            } header: {
-                Text(MailResourcesStrings.Localizable.settingsSelectDisplayModeDescription)
-                    .textStyle(.bodySmallSecondary)
             }
         }
         .listStyle(.plain)
+        .environment(\.defaultMinListRowHeight, 0)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsThreadModeTitle, displayMode: .inline)
         .customAlert(item: $threadModeSettingUpdate) { threadModeUpdate in

@@ -76,53 +76,25 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
     }
 
     var body: some View {
-        List {
-            Section {
+        VStack {
+            List {
+                if let subtitle {
+                    SettingsSectionTitleView(title: subtitle)
+                        .settingsCell()
+                }
+
                 ForEach(values, id: \.rawValue) { value in
-                    Button {
+                    SettingsOptionCell(value: value, isSelected: value == selectedValue, isLast: value == values.last) {
                         if let matomoCategory, let matomoName {
                             matomo.track(eventWithCategory: matomoCategory, name: value[keyPath: matomoName], value: matomoValue)
                         }
                         selectedValue = value
-                    } label: {
-                        VStack(spacing: 0) {
-                            HStack(spacing: 16) {
-                                value.image?
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 24, height: 24)
-                                    .foregroundColor(MailResourcesAsset.textTertiaryColor)
-                                Text(value.title)
-                                    .textStyle(.body)
-                                Spacer()
-                                if value == selectedValue {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(.accentColor)
-                                }
-                            }
-                            .padding(.vertical, 16)
-                            .padding(.horizontal, 24)
-
-                            if value != values.last {
-                                IKDivider()
-                                    .padding(.horizontal, 8)
-                            }
-                        }
                     }
                 }
-                .listRowSeparator(.hidden)
-                .listRowInsets(.init())
-                .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-            } header: {
-                if let subtitle {
-                    Text(subtitle)
-                        .textStyle(.bodySmallSecondary)
-                } else {
-                    EmptyView()
-                }
             }
+            .listStyle(.plain)
+            .environment(\.defaultMinListRowHeight, 0)
         }
-        .listStyle(.plain)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(title, displayMode: .inline)
         .onAppear {

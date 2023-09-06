@@ -107,6 +107,7 @@ struct SettingsView: View {
                     ) {
                         SettingsOptionView(
                             title: MailResourcesStrings.Localizable.settingsAccentColor,
+                            subtitle: MailResourcesStrings.Localizable.settingsAccentColorDescription,
                             keyPath: \.accentColor,
                             matomoCategory: .settingsAccentColor,
                             matomoName: \.rawValue
