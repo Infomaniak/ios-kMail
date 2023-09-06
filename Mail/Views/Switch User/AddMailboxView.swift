@@ -47,11 +47,11 @@ struct AddMailboxView: View {
             VStack(alignment: .leading, spacing: 0) {
                 Text(MailResourcesStrings.Localizable.attachMailboxDescription1)
                     .textStyle(.bodySecondary)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, value: .small)
 
                 Text(MailResourcesStrings.Localizable.attachMailboxDescription2)
                     .textStyle(.bodySecondary)
-                    .padding(.bottom, 16)
+                    .padding(.bottom, value: .regular)
 
                 TextField(
                     MailResourcesStrings.Localizable.attachMailboxInputHint,
@@ -67,7 +67,7 @@ struct AddMailboxView: View {
                 .textContentType(.emailAddress)
                 .keyboardType(.emailAddress)
                 .autocorrectionDisabled()
-                .padding(12)
+                .padding(value: .intermediate)
                 .overlay {
                     RoundedRectangle(cornerRadius: 4, style: .continuous)
                         .stroke(
@@ -77,23 +77,23 @@ struct AddMailboxView: View {
                             lineWidth: 1
                         )
                 }
-                .padding(.bottom, 4)
+                .padding(.bottom, value: .verySmall)
 
-                if showInvalidEmailError {
-                    Text(MailResourcesStrings.Localizable.errorInvalidEmailAddress)
-                        .textStyle(.labelError)
-                        .padding(.bottom, 16)
-                } else {
-                    Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
-                        .textStyle(.labelError)
-                        .opacity(showError ? 1 : 0)
-                        .padding(.bottom, 16)
+                Group {
+                    if showInvalidEmailError {
+                        Text(MailResourcesStrings.Localizable.errorInvalidEmailAddress)
+                    } else {
+                        Text(MailResourcesStrings.Localizable.errorInvalidCredentials)
+                            .opacity(showError ? 1 : 0)
+                    }
                 }
+                .textStyle(.labelError)
+                .padding(.bottom, value: .regular)
 
                 SecureField(MailResourcesStrings.Localizable.attachMailboxPasswordInputHint, text: $password)
                     .textContentType(.password)
-                    .padding([.vertical, .leading], 12)
-                    .padding(.trailing, 16)
+                    .padding([.vertical, .leading], value: .intermediate)
+                    .padding(.trailing, value: .regular)
                     .overlay {
                         RoundedRectangle(cornerRadius: 4, style: .continuous)
                             .stroke(
@@ -107,7 +107,7 @@ struct AddMailboxView: View {
                     .textStyle(.labelError)
                     .opacity(showError ? 1 : 0)
             }
-            .padding(16)
+            .padding(value: .regular)
         }
         .safeAreaInset(edge: .bottom) {
             MailButton(label: MailResourcesStrings.Localizable.buttonAttachMailbox) {
@@ -117,7 +117,7 @@ struct AddMailboxView: View {
             .mailButtonLoading(isButtonLoading)
             .mailButtonFullWidth(true)
             .disabled(buttonDisabled)
-            .padding(24)
+            .padding(value: .medium)
         }
         .navigationBarTitle(MailResourcesStrings.Localizable.attachMailboxTitle, displayMode: .inline)
     }
