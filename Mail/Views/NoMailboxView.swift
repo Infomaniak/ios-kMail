@@ -42,7 +42,7 @@ struct NoMailboxView: View {
                         .padding(.top, UIPadding.onBoardingLogoTop)
                 }
 
-            VStack(spacing: 24) {
+            VStack(spacing: UIPadding.medium) {
                 MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.buttonAddEmailAddress) {
                     isShowingAddMailboxView = true
                 }
