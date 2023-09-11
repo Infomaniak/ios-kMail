@@ -123,4 +123,15 @@ public enum SentryDebug {
         }
         return true
     }
+    
+    static func castToShortUidFailed(firstUid: String, secondUid:String) {
+        SentrySDK.capture(message: "Failed casting to short Uid") { scope in
+            scope.setLevel(.error)
+            scope.setContext(
+                value: ["firstUid": firstUid,
+                        "secondUid": secondUid],
+                key: "Uids"
+            )
+        }
+    }
 }
