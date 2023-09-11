@@ -26,7 +26,7 @@ enum BackgroundExecutor {
         let taskName = "executeWithBackgroundTask \(UUID().uuidString)"
         DDLogDebug("Starting task \(taskName)")
         let processInfos = ProcessInfo()
-        let group = DispatchGroup()
+        let group = TolerantDispatchGroup()
         group.enter()
         processInfos.performExpiringActivity(withReason: taskName) { expired in
             if expired {
