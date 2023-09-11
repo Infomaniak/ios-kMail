@@ -26,7 +26,6 @@ import Sentry
 // MARK: - Message
 
 public extension MailboxManager {
-
     func messages(folder: Folder) async throws {
         guard !Task.isCancelled else { return }
 
@@ -125,10 +124,16 @@ public extension MailboxManager {
 
         if let offset = realm.objects(Message.self).where({ $0.folderId == folder.id })
             .sorted(by: {
-                if direction == .following {
-                    return $0.shortUid! > $1.shortUid!
+                guard let firstMessageShortUid = $0.shortUid,
+                      let secondMessageShortUid = $1.shortUid else {
+                    SentryDebug.castToShortUidFailed(firstUid: $0.uid, secondUid: $1.uid)
+                    return false
                 }
-                return $0.shortUid! < $1.shortUid!
+
+                if direction == .following {
+                    return firstMessageShortUid > secondMessageShortUid
+                }
+                return firstMessageShortUid < secondMessageShortUid
             }).first?.shortUid?.toString(),
             let direction {
             paginationInfo = PaginationInfo(offsetUid: offset, direction: direction)
