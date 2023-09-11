@@ -31,6 +31,8 @@ struct SettingsSectionTitleView: View {
     }
 }
 
-#Preview {
-    SettingsSectionTitleView(title: "Général")
+struct SettingsSectionTitleView_Previews: PreviewProvider {
+    static var previews: some View {
+        SettingsSectionTitleView(title: "Général")
+    }
 }

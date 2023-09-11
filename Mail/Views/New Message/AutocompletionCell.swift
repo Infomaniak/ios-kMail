@@ -48,6 +48,7 @@ struct AutocompletionCell: View {
                     .foregroundColor(MailResourcesAsset.textTertiaryColor.swiftUIColor)
             }
         }
+        .padding(.horizontal, value: .regular)
     }
 }
 

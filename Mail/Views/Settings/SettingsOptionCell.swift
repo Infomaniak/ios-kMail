@@ -71,8 +71,10 @@ struct SettingsOptionCell: View {
     }
 }
 
-#Preview {
-    SettingsOptionCell(value: ThreadMode.conversation, isSelected: false, isLast: false) {
-        /* Preview */
+struct SettingsOptionCell_Previews: PreviewProvider {
+    static var previews: some View {
+        SettingsOptionCell(value: ThreadMode.conversation, isSelected: false, isLast: false) {
+            /* Preview */
+        }
     }
 }

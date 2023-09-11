@@ -38,7 +38,7 @@ struct ChevronIcon: View {
     }
 
     let style: Style
-    var color = MailResourcesAsset.textSecondaryColor
+    var color = MailResourcesAsset.textSecondaryColor.swiftUIColor
 
     var body: some View {
         MailResourcesAsset.chevronUp.swiftUIImage
@@ -52,13 +52,15 @@ struct ChevronIcon: View {
 struct ChevronButton: View {
     @Binding var isExpanded: Bool
 
+    var color = MailResourcesAsset.textSecondaryColor.swiftUIColor
+
     var body: some View {
         Button {
             withAnimation {
                 isExpanded.toggle()
             }
         } label: {
-            ChevronIcon(style: isExpanded ? .up : .down)
+            ChevronIcon(style: isExpanded ? .up : .down, color: color)
         }
     }
 }

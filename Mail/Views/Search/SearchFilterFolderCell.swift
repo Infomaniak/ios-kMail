@@ -77,7 +77,7 @@ struct SearchFilterFolderCell: View {
                 }
                 Text(selectedFolderName)
                     .font(MailTextStyle.bodyMedium.font)
-                ChevronIcon(style: .down)
+                ChevronIcon(style: .down, color: .accentColor)
             }
         }
         .filterCellStyle(isSelected: isSelected)
