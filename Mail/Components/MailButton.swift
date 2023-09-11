@@ -100,7 +100,7 @@ struct MailButton: View {
     var body: some View {
         Button(role: style == .destructive ? .destructive : nil, action: action) {
             ZStack {
-                HStack(spacing: 8) {
+                HStack(spacing: UIPadding.small) {
                     if let icon {
                         icon.swiftUIImage
                             .resizable()

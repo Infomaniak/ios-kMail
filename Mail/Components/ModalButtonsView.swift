@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
@@ -29,7 +30,7 @@ struct ModalButtonsView: View {
     var secondaryButtonAction: (() -> Void)?
 
     var body: some View {
-        HStack(spacing: 24) {
+        HStack(spacing: UIPadding.medium) {
             if let secondaryButtonTitle {
                 MailButton(label: secondaryButtonTitle) {
                     secondaryButtonAction?()

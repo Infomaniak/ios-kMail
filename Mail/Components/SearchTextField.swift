@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
@@ -28,7 +29,7 @@ struct SearchTextField: View {
     public var onDelete: () -> Void
 
     var body: some View {
-        HStack(spacing: 10) {
+        HStack(spacing: UIPadding.small) {
             Button(action: onSubmit) {
                 MailResourcesAsset.search.swiftUIImage
                     .resizable()
@@ -51,7 +52,7 @@ struct SearchTextField: View {
                         initialFocusDone = true
                     }
                 }
-                .padding(.vertical, 11)
+                .padding(.vertical, value: .intermediate)
 
             Button(action: onDelete) {
                 MailResourcesAsset.remove.swiftUIImage
@@ -61,7 +62,7 @@ struct SearchTextField: View {
             .foregroundColor(MailResourcesAsset.textTertiaryColor)
             .opacity(value.isEmpty ? 0 : 1)
         }
-        .padding(.horizontal, 12)
+        .padding(.horizontal, value: .intermediate)
         .background {
             RoundedRectangle(cornerRadius: 27)
                 .foregroundColor(MailResourcesAsset.textFieldColor)
