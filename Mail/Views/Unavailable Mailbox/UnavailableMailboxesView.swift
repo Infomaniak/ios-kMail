@@ -31,9 +31,9 @@ struct UnavailableMailboxesView: View {
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 16) {
+            VStack(spacing: UIPadding.regular) {
                 ScrollView {
-                    VStack(spacing: 16) {
+                    VStack(spacing: UIPadding.regular) {
                         MailResourcesAsset.logoText.swiftUIImage
                             .resizable()
                             .scaledToFit()
@@ -50,11 +50,12 @@ struct UnavailableMailboxesView: View {
                         Text(MailResourcesStrings.Localizable.lockedMailboxDescriptionPlural)
                             .textStyle(.bodySecondary)
                             .multilineTextAlignment(.center)
-                            .padding(.top, 24)
+                            .padding(.top, value: .medium)
 
                         UnavailableMailboxListView()
                     }
                 }
+
                 Spacer()
 
                 NavigationLink(isActive: $isShowingAddMailboxView) {
@@ -82,7 +83,7 @@ struct UnavailableMailboxesView: View {
                         }
                 )
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, value: .regular)
             .frame(maxWidth: 900)
             .matomoView(view: ["UnavailableMailboxesView"])
         }

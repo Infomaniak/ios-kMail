@@ -25,7 +25,7 @@ struct LockedMailboxView: View {
 
     let lockedMailbox: Mailbox
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: UIPadding.regular) {
             MailResourcesAsset.mailboxError.swiftUIImage
                 .resizable()
                 .scaledToFit()
@@ -36,7 +36,7 @@ struct LockedMailboxView: View {
             Text(MailResourcesStrings.Localizable.lockedMailboxDescription)
                 .textStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
-                .padding(.vertical, 24)
+                .padding(.vertical, value: .medium)
 
             MailButton(label: MailResourcesStrings.Localizable.buttonClose) {
                 dismiss()
@@ -44,8 +44,8 @@ struct LockedMailboxView: View {
             .mailButtonStyle(.link)
             .mailButtonFullWidth(true)
         }
-        .padding(.horizontal, UIPadding.bottomSheetHorizontal)
-        .padding(.top, 16)
+        .padding(.horizontal, value: .medium)
+        .padding(.top, value: .regular)
         .matomoView(view: ["LockedMailboxView"])
     }
 }
