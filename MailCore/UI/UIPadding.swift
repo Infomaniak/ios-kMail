@@ -66,6 +66,11 @@ public extension UIPadding {
     static let composeViewHeaderCellLargeVertical = intermediate + recipientChip.top
     static let composeViewHeaderHorizontal = regular
 
+    // MARK: Alerts
+
+    static let alertTitleBottom = regular
+    static let alertDescriptionBottom = medium
+
     // MARK: Misc
 
     static let floatingButtonBottom = medium

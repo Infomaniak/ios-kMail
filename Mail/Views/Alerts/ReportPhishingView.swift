@@ -28,14 +28,15 @@ struct ReportPhishingView: View {
     let message: Message
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 0) {
             Text(MailResourcesStrings.Localizable.reportPhishingTitle)
                 .textStyle(.bodyMedium)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, UIPadding.alertTitleBottom)
             Text(MailResourcesStrings.Localizable.reportPhishingDescription)
                 .textStyle(.bodySecondary)
+                .padding(.bottom, UIPadding.alertDescriptionBottom)
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm, primaryButtonAction: report)
-                .padding(.top, 8)
         }
     }
 

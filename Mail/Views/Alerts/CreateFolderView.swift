@@ -66,14 +66,14 @@ struct CreateFolderView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.newFolderDialogTitle)
                 .textStyle(.bodyMedium)
-                .padding(.bottom, 24)
+                .padding(.bottom, UIPadding.alertTitleBottom)
 
             TextField(MailResourcesStrings.Localizable.createFolderName, text: $folderName)
                 .onChange(of: folderName, perform: checkFolderName)
-                .padding(12)
+                .padding(value: .intermediate)
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
                         .stroke(error == nil ? MailResourcesAsset.textFieldBorder.swiftUIColor : MailResourcesAsset.redColor
@@ -85,8 +85,9 @@ struct CreateFolderView: View {
 
             Text(error?.localizedDescription ?? "None")
                 .textStyle(.labelError)
-                .padding(.top, 4)
+                .padding(.top, value: .verySmall)
                 .opacity(error == nil ? 0 : 1)
+                .padding(.bottom, value: .small)
 
             ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: buttonIsEnabled) {
                 @InjectService var matomo: MatomoUtils
@@ -101,7 +102,6 @@ struct CreateFolderView: View {
                     }
                 }
             }
-            .padding(.top, 24)
         }
         .onAppear {
             isFocused = true

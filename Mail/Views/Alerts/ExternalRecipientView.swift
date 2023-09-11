@@ -29,24 +29,31 @@ struct ExternalRecipientView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            isDraft ? Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
-                .textStyle(.bodyMedium) : Text(MailResourcesStrings.Localizable.externalDialogTitleExpeditor)
+            Text(isDraft ? MailResourcesStrings.Localizable.externalDialogTitleRecipient : MailResourcesStrings.Localizable
+                .externalDialogTitleExpeditor)
                 .textStyle(.bodyMedium)
+                .padding(.bottom, UIPadding.alertTitleBottom)
 
             switch externalTagSate {
             case .none:
                 EmptyView()
             case .one(let recipient):
-                isDraft ? Text(MailResourcesStrings.Localizable.externalDialogDescriptionRecipient(recipient.email))
-                    .textStyle(.bodySecondary) : Text(MailResourcesStrings.Localizable.externalDialogDescriptionExpeditor(recipient.email))
+                Text(isDraft ? MailResourcesStrings.Localizable
+                    .externalDialogDescriptionRecipient(recipient.email) : MailResourcesStrings.Localizable
+                    .externalDialogDescriptionExpeditor(recipient.email))
                     .textStyle(.bodySecondary)
+                    .padding(.bottom, UIPadding.alertDescriptionBottom)
             case .many:
-                isDraft ? Text(MailResourcesStrings.Localizable.externalDialogDescriptionRecipientPlural)
-                    .textStyle(.bodySecondary) : Text(MailResourcesStrings.Localizable.externalDialogDescriptionExpeditorPlural)
+                Text(isDraft ? MailResourcesStrings.Localizable.externalDialogDescriptionRecipientPlural : MailResourcesStrings
+                    .Localizable.externalDialogDescriptionExpeditorPlural)
                     .textStyle(.bodySecondary)
+                    .padding(.bottom, UIPadding.alertDescriptionBottom)
             }
 
-            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.externalDialogConfirmButton, secondaryButtonTitle: nil) {
+            ModalButtonsView(
+                primaryButtonTitle: MailResourcesStrings.Localizable.externalDialogConfirmButton,
+                secondaryButtonTitle: nil
+            ) {
                 dismiss()
             }
         }

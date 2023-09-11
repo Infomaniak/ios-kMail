@@ -33,9 +33,11 @@ struct AddLinkView: View {
     var actionHandler: ((String) -> Void)?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.urlEntryTitle)
                 .textStyle(.bodyMedium)
+                .padding(.bottom, UIPadding.alertTitleBottom)
+
             TextField(MailResourcesStrings.Localizable.urlPlaceholder, text: $url)
                 .textFieldStyle(.roundedBorder)
                 .focused($isFocused)
@@ -44,6 +46,8 @@ struct AddLinkView: View {
                 .autocapitalization(.none)
                 .textContentType(.URL)
                 .textStyle(.body)
+                .padding(.bottom, UIPadding.alertDescriptionBottom)
+
             ModalButtonsView(
                 primaryButtonTitle: MailResourcesStrings.Localizable.buttonValid,
                 primaryButtonEnabled: !url.isEmpty
