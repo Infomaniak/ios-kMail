@@ -43,9 +43,6 @@ class NavigationDrawerState: ObservableObject {
 }
 
 struct NavigationDrawer: View {
-    private let maxWidth = 350.0
-    private let spacing = 60.0
-
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
@@ -70,8 +67,8 @@ struct NavigationDrawer: View {
                 GeometryReader { geometryProxy in
                     HStack {
                         MenuDrawerView()
-                            .frame(maxWidth: maxWidth)
-                            .padding(.trailing, spacing)
+                            .frame(maxWidth: UIConstants.menuDrawerMaxWidth)
+                            .padding(.trailing, UIConstants.menuDrawerTrailingSpacing)
                             .offset(x: navigationDrawerState.isOpen ? offsetWidth : -geometryProxy.size.width)
                         Spacer()
                     }
@@ -139,30 +136,32 @@ struct MenuDrawerView: View {
                 VStack(spacing: 0) {
                     MailboxesManagementView()
 
-                    IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+                    IKDivider(type: .menu)
 
                     FolderListView(mailboxManager: mailboxManager)
 
-                    IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+                    IKDivider(type: .menu)
 
                     MenuDrawerItemsAdvancedListView(
                         mailboxCanRestoreEmails: mailboxManager.mailbox.permissions?.canRestoreEmails == true
                     )
 
-                    IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+                    IKDivider(type: .menu)
 
                     MenuDrawerItemsHelpListView()
+
                     if mailboxManager.mailbox.isLimited, let quotas = mailboxManager.mailbox.quotas {
-                        IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+                        IKDivider(type: .menu)
 
                         MailboxQuotaView(quotas: quotas)
                     }
 
-                    IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
+                    IKDivider(type: .menu)
 
                     AppVersionView()
                 }
-                .padding(.vertical, 16)
+                .padding(.vertical, value: .small)
+                .padding(.leading, value: .small)
             }
         }
         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor.ignoresSafeArea())

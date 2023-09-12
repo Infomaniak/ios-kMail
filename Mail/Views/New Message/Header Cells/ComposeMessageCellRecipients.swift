@@ -83,7 +83,8 @@ struct ComposeMessageCellRecipients: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, UIConstants.composeViewHeaderCellVerticalSpacing)
+                .padding(.vertical, value: .intermediate)
+                .padding(.horizontal, UIPadding.composeViewHeaderHorizontal)
 
                 IKDivider()
             }
@@ -95,7 +96,7 @@ struct ComposeMessageCellRecipients: View {
                     addedRecipients: $recipients,
                     addRecipient: addNewRecipient
                 )
-                .padding(.top, 8)
+                .padding(.top, value: .small)
             }
         }
         .contentShape(Rectangle())

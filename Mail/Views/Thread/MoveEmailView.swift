@@ -57,7 +57,7 @@ struct MoveEmailView: View {
             LazyVStack(spacing: 0) {
                 listOfFolders(nestableFolders: filteredFolders.filter { $0.content.role != nil })
                 if searchFilter.isEmpty {
-                    IKDivider(horizontalPadding: 8)
+                    IKDivider()
                 }
                 listOfFolders(nestableFolders: filteredFolders.filter { $0.content.role == nil })
             }

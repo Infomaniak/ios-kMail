@@ -35,15 +35,17 @@ struct SearchContactsSectionView: View {
                         viewModel.searchThreadsForContact(contact)
                     }
             }
-            .padding(.horizontal, 4)
             .padding(.vertical, threadDensity.cellVerticalPadding)
+            .padding(.leading, UIPadding.small + UIConstants.unreadIconSize + UIPadding.small)
+            .padding(.trailing, value: .regular)
         } header: {
             if !viewModel.contacts.isEmpty {
                 Text(MailResourcesStrings.Localizable.contactsSearch)
                     .textStyle(.bodySmallSecondary)
+                    .padding(.horizontal, value: .regular)
             }
         }
-        .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
+        .listRowInsets(.init())
         .listRowSeparator(.hidden)
         .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
     }

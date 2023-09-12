@@ -62,7 +62,7 @@ struct ThreadView: View {
                 }
                 .frame(width: 0, height: 0)
 
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: UIPadding.small) {
                     Text(thread.formattedSubject)
                         .textStyle(.header2)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -79,7 +79,7 @@ struct ThreadView: View {
                             Text(MailResourcesStrings.Localizable.externalTag)
                                 .foregroundColor(MailResourcesAsset.onTagColor)
                                 .textStyle(.labelMedium)
-                                .padding(4)
+                                .padding(value: .verySmall)
                                 .background(MailResourcesAsset.yellowColor.swiftUIColor)
                                 .cornerRadius(2)
                         }
@@ -87,9 +87,9 @@ struct ThreadView: View {
                         EmptyView()
                     }
                 }
-                .padding(.top, 8)
-                .padding(.bottom, 16)
-                .padding(.horizontal, 16)
+                .padding(.top, value: .small)
+                .padding(.bottom, value: .regular)
+                .padding(.horizontal, value: .regular)
 
                 MessageListView(messages: thread.messages)
             }

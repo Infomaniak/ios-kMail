@@ -50,7 +50,7 @@ struct SelectionBackground: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     let selectionType: SelectionBackgroundKind
-    var paddingLeading = UIConstants.selectionBackgroundDefaultLeadingPadding
+    var paddingLeading = UIPadding.small
     var withAnimation = true
 
     var body: some View {
@@ -58,7 +58,7 @@ struct SelectionBackground: View {
             .fill(selectionType == .single ? MailResourcesAsset.elementsColor.swiftUIColor : accentColor.secondary.swiftUIColor)
             .clipShape(RoundedCorner(radius: 8, corners: [.topLeft, .bottomLeft]))
             .padding(.leading, paddingLeading)
-            .padding(.vertical, UIConstants.selectionBackgroundVerticalPadding)
+            .padding(.vertical, 2)
             .opacity(selectionType.opacity)
             .animation(withAnimation ? .default : nil, value: selectionType.opacity)
     }
@@ -66,6 +66,6 @@ struct SelectionBackground: View {
 
 struct SelectionBackground_Previews: PreviewProvider {
     static var previews: some View {
-        SelectionBackground(selectionType: SelectionBackgroundKind.single, paddingLeading: 10)
+        SelectionBackground(selectionType: SelectionBackgroundKind.single, paddingLeading: 8)
     }
 }

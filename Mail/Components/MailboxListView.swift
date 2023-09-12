@@ -29,12 +29,12 @@ struct MailboxListView: View {
     let currentMailbox: Mailbox?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack(alignment: .center) {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .center, spacing: 0) {
                 Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
                     .textStyle(.bodySmallSecondary)
 
-                Spacer()
+                Spacer(minLength: UIPadding.regular)
 
                 NavigationLink {
                     AddMailboxView()
@@ -45,11 +45,12 @@ struct MailboxListView: View {
                         .frame(width: 16, height: 16)
                 }
             }
-            .padding(.bottom, 16)
+            .padding(value: .regular)
 
             if let currentMailbox {
                 MailboxCell(mailbox: currentMailbox, isSelected: true)
                     .mailboxCellStyle(.account)
+                    .padding(value: .regular)
             }
 
             ForEachMailboxView(
@@ -58,9 +59,9 @@ struct MailboxListView: View {
             ) { mailbox in
                 MailboxCell(mailbox: mailbox)
                     .mailboxCellStyle(.account)
+                    .padding(value: .regular)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.top, 24)
     }
 }

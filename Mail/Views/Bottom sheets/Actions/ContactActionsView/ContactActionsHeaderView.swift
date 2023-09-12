@@ -35,7 +35,7 @@ struct ContactActionsHeaderView: View {
                     .textStyle(.bodySecondary)
             }
         }
-        .padding(.bottom, 8)
         .accessibilityElement(children: .combine)
+        .padding(.horizontal, value: .regular)
     }
 }

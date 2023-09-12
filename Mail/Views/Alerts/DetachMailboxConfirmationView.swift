@@ -30,11 +30,13 @@ struct DetachMailboxConfirmationView: View {
     let mailbox: Mailbox
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.popupDetachMailboxTitle)
                 .textStyle(.bodyMedium)
+                .padding(.bottom, UIPadding.alertTitleBottom)
             Text(attributedString())
                 .textStyle(.bodySecondary)
+                .padding(.bottom, UIPadding.alertDescriptionBottom)
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm, primaryButtonAction: detach)
         }
     }

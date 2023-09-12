@@ -69,7 +69,7 @@ struct LargePicker<SelectionValue, ButtonType>: View where SelectionValue: Hasha
                     Spacer()
                     ChevronIcon(style: .down)
                 }
-                .padding(12)
+                .padding(value: .intermediate)
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
                         .stroke(Color(hex: "#E0E0E0"))

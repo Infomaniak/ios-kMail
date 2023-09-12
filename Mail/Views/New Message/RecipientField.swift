@@ -70,9 +70,9 @@ struct RecipientField: View {
             HStack {
                 RecipientsTextField(text: $currentText, onSubmit: onSubmit, onBackspace: handleBackspaceTextField)
                     .focused($focusedField, equals: type)
-                    .padding(.top, isCurrentFieldFocused && !recipients.isEmpty ? 4 : 0)
-                    .padding(.top, UIConstants.chipInsets.top)
-                    .padding(.bottom, UIConstants.chipInsets.bottom)
+                    .padding(.top, isCurrentFieldFocused && !recipients.isEmpty ? UIPadding.verySmall : 0)
+                    .padding(.top, UIPadding.recipientChip.top)
+                    .padding(.bottom, UIPadding.recipientChip.bottom)
                     .frame(width: isExpanded ? nil : 0, height: isExpanded ? nil : 0)
 
                 Button {

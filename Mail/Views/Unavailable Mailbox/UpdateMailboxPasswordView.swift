@@ -46,7 +46,7 @@ struct UpdateMailboxPasswordView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 32) {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: UIPadding.small) {
                     Text(MailResourcesStrings.Localizable.enterPasswordDescription1)
                         .textStyle(.bodySecondary)
                     Text(MailResourcesStrings.Localizable.enterPasswordDescription2(mailbox.email))
@@ -62,8 +62,8 @@ struct UpdateMailboxPasswordView: View {
                 VStack(alignment: .leading) {
                     SecureField(MailResourcesStrings.Localizable.enterPasswordTitle, text: $updatedMailboxPassword)
                         .textContentType(.password)
-                        .padding(.vertical, 12)
-                        .padding(.horizontal, 16)
+                        .padding(.vertical, value: .intermediate)
+                        .padding(.horizontal, value: .regular)
                         .overlay {
                             RoundedRectangle(cornerRadius: 4, style: .continuous)
                                 .stroke(
@@ -92,7 +92,7 @@ struct UpdateMailboxPasswordView: View {
             }
             .mailButtonFullWidth(true)
             .disabled(disableButton)
-            .padding(24)
+            .padding(value: .medium)
 
             MailButton(label: MailResourcesStrings.Localizable.buttonRequestPassword) {
                 // Empty for now, WIP

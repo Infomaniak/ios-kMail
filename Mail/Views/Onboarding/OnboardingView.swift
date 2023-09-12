@@ -150,10 +150,10 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 }
 
 struct OnboardingView: View {
-    @LazyInjectService var orientationManager: OrientationManageable
-
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var navigationState: NavigationState
+
+    @LazyInjectService var orientationManager: OrientationManageable
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
@@ -163,6 +163,10 @@ struct OnboardingView: View {
 
     private var isScrollEnabled: Bool
     private var slides = Slide.onBoardingSlides
+
+    private var isLastSlide: Bool {
+        selection == slides.count
+    }
 
     init(page: Int = 1, isScrollEnabled: Bool = true) {
         _selection = State(initialValue: page)
@@ -192,33 +196,36 @@ struct OnboardingView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(height: UIConstants.onboardingLogoHeight)
-                    .padding(.top, UIConstants.onboardingLogoPaddingTop)
+                    .padding(.top, UIPadding.onBoardingLogoTop)
             }
 
-            VStack(spacing: 24) {
-                if selection == slides.count {
-                    MailButton(label: MailResourcesStrings.Localizable.buttonLogin) {
-                        loginHandler.login()
-                    }
-                    .mailButtonFullWidth(true)
-                    .mailButtonLoading(loginHandler.isLoading)
+            VStack(spacing: UIPadding.medium) {
+                MailButton(label: MailResourcesStrings.Localizable.buttonLogin) {
+                    loginHandler.login()
+                }
+                .mailButtonFullWidth(true)
+                .mailButtonLoading(loginHandler.isLoading)
 
-                    MailButton(label: MailResourcesStrings.Localizable.buttonCreateAccount) {
-                        isPresentingCreateAccount = true
-                    }
-                    .mailButtonStyle(.link)
-                    .disabled(loginHandler.isLoading)
-                } else {
+                MailButton(label: MailResourcesStrings.Localizable.buttonCreateAccount) {
+                    isPresentingCreateAccount.toggle()
+                }
+                .mailButtonStyle(.link)
+                .mailButtonStyle(.link)
+                .disabled(loginHandler.isLoading)
+            }
+            .opacity(isLastSlide ? 1 : 0)
+            .overlay {
+                if !isLastSlide {
                     MailButton(icon: MailResourcesAsset.fullArrowRight) {
                         withAnimation {
                             selection += 1
                         }
                     }
-                    .mailButtonIconSize(UIConstants.onboardingArrowIconSize)
+                    .mailButtonIconSize(24)
                 }
             }
-            .frame(height: UIConstants.onboardingButtonHeight + UIConstants.onboardingBottomButtonPadding, alignment: .top)
-            .padding(.horizontal, 24)
+            .padding(.horizontal, value: .medium)
+            .padding(.bottom, UIPadding.onBoardingBottomButtons)
         }
         .overlay(alignment: .topLeading) {
             if !isScrollEnabled {
@@ -227,10 +234,13 @@ struct OnboardingView: View {
                 } label: {
                     Image(systemName: "xmark")
                         .resizable()
+                        .scaledToFit()
+                        .frame(height: UIConstants.onboardingLogoHeight)
+                        .padding(.top, UIPadding.onBoardingLogoTop)
                 }
                 .frame(width: 24, height: 24)
-                .padding(.top, 16)
-                .padding(.leading, 24)
+                .padding(.top, value: .regular)
+                .padding(.leading, value: .medium)
             }
         }
         .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $loginHandler.isPresentingErrorAlert) {

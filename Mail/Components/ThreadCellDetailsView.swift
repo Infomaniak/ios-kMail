@@ -16,13 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
 struct ThreadCellDetailsView: View {
     let thread: Thread
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: UIPadding.small) {
             if thread.hasAttachments {
                 MailResourcesAsset.attachment.swiftUIImage
                     .resizable()

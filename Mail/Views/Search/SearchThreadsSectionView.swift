@@ -40,7 +40,6 @@ struct SearchThreadsSectionView: View {
                         paddingLeading: 4,
                         withAnimation: false
                     ))
-                    .threadListCellAppearance()
                     .onAppear {
                         viewModel.loadNextPageIfNeeded(currentItem: thread)
                     }
@@ -49,6 +48,7 @@ struct SearchThreadsSectionView: View {
             if threadDensity != .compact && !viewModel.threads.isEmpty {
                 Text(MailResourcesStrings.Localizable.searchAllMessages)
                     .textStyle(.bodySmallSecondary)
+                    .padding(.horizontal, value: .regular)
             }
         } footer: {
             if viewModel.isLoading {
@@ -58,6 +58,7 @@ struct SearchThreadsSectionView: View {
                     .threadListCellAppearance()
             }
         }
+        .threadListCellAppearance()
     }
 
     private func didTapCell(thread: Thread) {

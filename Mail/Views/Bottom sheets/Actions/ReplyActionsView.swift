@@ -26,15 +26,14 @@ struct ReplyActionsView: View {
     let message: Message
 
     var body: some View {
-        HStack(alignment: .top, spacing: 28) {
+        HStack(alignment: .top, spacing: UIPadding.regular) {
             ForEach(quickActions) { action in
                 QuickActionView(targetMessages: [message], action: action, origin: .floatingPanel())
-                    .frame(width: 70)
             }
 
             Spacer()
         }
-        .padding(.horizontal, 24)
+        .padding(.horizontal, value: .medium)
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ReplyActionsView"])
     }
 }

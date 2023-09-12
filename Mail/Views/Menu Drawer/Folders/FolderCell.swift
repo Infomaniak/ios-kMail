@@ -134,7 +134,7 @@ struct FolderCellContent: View {
 
     init(folder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false) {
         self.folder = folder
-        self.level = min(level, UIConstants.menuDrawerMaximumSubfolderLevel)
+        self.level = min(level, UIConstants.menuDrawerMaximumSubFolderLevel)
         self.isCurrentFolder = isCurrentFolder
         self.canCollapseSubFolders = canCollapseSubFolders
     }
@@ -147,7 +147,7 @@ struct FolderCellContent: View {
     }
 
     var body: some View {
-        HStack(spacing: UIConstants.menuDrawerHorizontalItemSpacing) {
+        HStack(spacing: UIPadding.menuDrawerCellChevronSpacing) {
             if canCollapseSubFolders && cellType == .menuDrawer {
                 Button(action: collapseFolder) {
                     ChevronIcon(style: folder.isExpanded ? .up : .down)
@@ -156,23 +156,24 @@ struct FolderCellContent: View {
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandFolder(folder.name))
             }
 
-            folder.icon
-                .resizable()
-                .scaledToFit()
-                .frame(width: 24, height: 24)
-                .foregroundColor(.accentColor)
+            HStack(spacing: UIPadding.menuDrawerCellSpacing) {
+                folder.icon
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+                    .foregroundColor(.accentColor)
 
-            Text(folder.localizedName)
-                .textStyle(textStyle)
-                .lineLimit(1)
+                Text(folder.localizedName)
+                    .textStyle(textStyle)
+                    .lineLimit(1)
 
-            Spacer()
+                Spacer(minLength: UIPadding.regular)
 
-            accessory
+                accessory
+            }
         }
-        .padding(.vertical, 14)
-        .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
-        .padding(.leading, UIConstants.menuDrawerSubFolderPadding * CGFloat(level))
+        .padding(.leading, UIPadding.menuDrawerSubFolder * CGFloat(level))
+        .padding(UIPadding.menuDrawerCell)
         .background(background)
     }
 
@@ -198,7 +199,7 @@ struct FolderCellContent: View {
     @ViewBuilder
     private var background: some View {
         if cellType == .menuDrawer {
-            SelectionBackground(selectionType: isCurrentFolder ? .folder : .none)
+            SelectionBackground(selectionType: isCurrentFolder ? .folder : .none, paddingLeading: 0)
         }
     }
 

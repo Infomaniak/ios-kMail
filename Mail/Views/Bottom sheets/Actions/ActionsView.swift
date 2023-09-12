@@ -44,8 +44,8 @@ struct ActionsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: UIConstants.actionsViewSpacing) {
-            HStack(alignment: .top, spacing: 16) {
+        VStack(alignment: .leading, spacing: UIPadding.small) {
+            HStack(alignment: .top, spacing: UIPadding.regular) {
                 ForEach(quickActions) { action in
                     QuickActionView(
                         targetMessages: targetMessages,
@@ -56,24 +56,23 @@ struct ActionsView: View {
                     .frame(maxWidth: .infinity)
                 }
             }
-            .padding(.bottom, 16)
-            .padding(.horizontal, 16)
+            .padding(.horizontal, UIPadding.regular)
 
-            ForEach(listActions) { action in
-                if action != listActions.first {
-                    IKDivider()
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(listActions) { action in
+                    if action != listActions.first {
+                        IKDivider()
+                    }
+
+                    MessageActionView(
+                        targetMessages: targetMessages,
+                        action: action,
+                        origin: origin,
+                        completionHandler: completionHandler
+                    )
                 }
-
-                MessageActionView(
-                    targetMessages: targetMessages,
-                    action: action,
-                    origin: origin,
-                    completionHandler: completionHandler
-                )
-                .padding(.horizontal, UIConstants.actionsViewCellHorizontalPadding)
             }
         }
-        .padding(.horizontal, UIConstants.actionsViewHorizontalPadding)
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ActionsView"])
     }
 }
@@ -114,7 +113,7 @@ struct QuickActionView: View {
                 }
             }
         } label: {
-            VStack(spacing: 8) {
+            VStack(spacing: UIPadding.small) {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(accentColor.secondary.swiftUIColor)
                     .frame(maxWidth: 56, maxHeight: 56)
@@ -123,9 +122,8 @@ struct QuickActionView: View {
                         action.icon
                             .resizable()
                             .scaledToFit()
-                            .padding(16)
+                            .padding(value: .regular)
                     }
-                    .padding(.horizontal, 8)
 
                 let title = action.shortTitle ?? action.title
                 Text(title)
@@ -167,7 +165,7 @@ struct MessageActionView: View {
 struct ActionButtonLabel: View {
     let action: Action
     var body: some View {
-        HStack(spacing: 24) {
+        HStack(spacing: UIPadding.regular) {
             action.icon
                 .resizable()
                 .scaledToFit()
@@ -179,5 +177,6 @@ struct ActionButtonLabel: View {
                 .textStyle(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .padding(value: .regular)
     }
 }

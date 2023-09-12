@@ -43,9 +43,9 @@ struct MessageHeaderActionView<Content: View>: View {
                 HStack {
                     actions()
                 }
-                .padding(.leading, iconSize + 8)
+                .padding(.leading, iconSize + UIPadding.small)
             }
-            .padding(.vertical, 4)
+            .padding(.vertical, value: .verySmall)
             .padding(.horizontal)
             IKDivider()
         }

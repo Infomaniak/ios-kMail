@@ -34,42 +34,20 @@ struct MailboxSignatureSettingsView: View {
     }
 
     var body: some View {
-        List {
-            Section {
-                ForEach(signatures) { signature in
-                    Button {
-                        setAsDefault(signature)
-                    } label: {
-                        VStack(spacing: 0) {
-                            HStack(spacing: 16) {
-                                Text(signature.name)
-                                    .textStyle(.body)
-                                Spacer()
-                                if signature.isDefault {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(.accentColor)
-                                }
-                            }
-                            .padding(.vertical, 16)
-                            .padding(.horizontal, 24)
+        VStack(alignment: .leading, spacing: 0) {
+            List {
+                SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsSignatureDescription)
+                    .settingsCell()
 
-                            if signature.position != .beforeReplyMessage,
-                               signature.position != .afterReplyMessage {
-                                IKDivider()
-                                    .padding(.horizontal, 8)
-                            }
-                        }
+                ForEach(signatures) { signature in
+                    SettingsOptionCell(title: signature.name, isLast: signature == signatures.last) {
+                        setAsDefault(signature)
                     }
                 }
-                .listRowSeparator(.hidden)
-                .listRowInsets(.init())
-                .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-            } header: {
-                Text(MailResourcesStrings.Localizable.settingsSignatureDescription)
-                    .textStyle(.bodySmallSecondary)
+                .settingsCell()
             }
+            .plainList()
         }
-        .listStyle(.plain)
         .navigationTitle(MailResourcesStrings.Localizable.settingsSignatureTitle)
         .navigationBarTitleDisplayMode(.inline)
         .backButtonDisplayMode(.minimal)

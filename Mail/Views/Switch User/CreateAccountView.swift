@@ -36,36 +36,36 @@ struct CreateAccountView: View {
             accentColor.createAccountImage.swiftUIImage
                 .resizable()
                 .scaledToFit()
-                .padding(.top, 24)
-                .padding(.bottom, 48)
+                .padding(.top, value: .medium)
+                .padding(.bottom, value: .large)
 
             Text(MailResourcesStrings.Localizable.newAccountTitle)
                 .textStyle(.header1)
                 .multilineTextAlignment(.center)
-                .padding(.bottom, 24)
+                .padding(.bottom, value: .medium)
 
             HStack {
                 Text(MailResourcesStrings.Localizable.newAccountStorageMail)
                     .textStyle(.labelMediumAccent)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(8)
+                    .padding(value: .small)
                     .background(accentColor.secondary.swiftUIColor)
                     .clipShape(Capsule())
                     .multilineTextAlignment(.center)
                 Text(MailResourcesStrings.Localizable.newAccountStorageDrive)
                     .textStyle(.labelMediumAccent)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(8)
+                    .padding(value: .small)
                     .background(accentColor.secondary.swiftUIColor)
                     .clipShape(Capsule())
                     .multilineTextAlignment(.center)
             }
             .fixedSize(horizontal: false, vertical: true)
-            .padding(.bottom, 24)
+            .padding(.bottom, value: .medium)
 
             Text(MailResourcesStrings.Localizable.newAccountDescription)
                 .textStyle(.bodySmallSecondary)
-                .padding(.bottom, 24)
+                .padding(.bottom, value: .medium)
                 .multilineTextAlignment(.center)
 
             Spacer()
@@ -77,9 +77,9 @@ struct CreateAccountView: View {
             }
             .mailButtonFullWidth(true)
             .mailButtonLoading(loginHandler.isLoading)
-            .padding(.bottom, 24)
+            .padding(.bottom, value: .medium)
         }
-        .padding(.horizontal, 24)
+        .padding(.horizontal, value: .medium)
         .sheet(isPresented: $isPresentingCreateAccount) {
             RegisterView(registrationProcess: .mail) { viewController in
                 guard let viewController else { return }

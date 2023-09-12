@@ -17,6 +17,7 @@
  */
 
 import InfomaniakDI
+import MailCore
 import MailResources
 import SwiftUI
 
@@ -25,7 +26,7 @@ struct SettingsNotificationsInstructionsView: View {
     @Environment(\.openURL) var openURL
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: UIPadding.medium) {
             Text(MailResourcesStrings.Localizable.alertNotificationsDisabledTitle)
                 .textStyle(.bodyMedium)
             Text(LocalizedStringKey(MailResourcesStrings.Localizable.alertNotificationsDisabledDescription))

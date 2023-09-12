@@ -41,10 +41,10 @@ struct SettingsNotificationsView: View {
     @State private var showWarning = false
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: 0) {
+            List {
                 if showWarning {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: UIPadding.small) {
                         Text(MailResourcesStrings.Localizable.warningNotificationsDisabledDescription)
                             .textStyle(.bodySecondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -57,28 +57,31 @@ struct SettingsNotificationsView: View {
                         }
                         .mailButtonStyle(.link)
                     }
-                    .padding(16)
+                    .padding(value: .regular)
                     .frame(maxWidth: .infinity)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
                             .fill(MailResourcesAsset.backgroundBlueNavBarColor.swiftUIColor)
                     )
-                    .padding(.vertical, 16)
+                    .settingsItem()
+                    .settingsCell()
                 }
 
-                Text(Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String)
-                    .textStyle(.bodySmallSecondary)
+                SettingsSectionTitleView(title: Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String)
+                    .settingsCell()
 
-                Toggle(isOn: $notificationsEnabled) {
-                    Text(MailResourcesStrings.Localizable.settingsEnableNotifications)
-                        .textStyle(.body)
-                }
-                .onChange(of: notificationsEnabled) { newValue in
-                    matomo.track(eventWithCategory: .settingsNotifications, name: "allNotifications", value: newValue)
-                }
+                SettingsToggleCell(
+                    title: MailResourcesStrings.Localizable.settingsEnableNotifications,
+                    userDefaults: \.isNotificationEnabled,
+                    matomoCategory: .settingsNotifications,
+                    matomoName: "allNotifications"
+                )
+                .settingsCell()
 
                 if subscribedTopics != nil && notificationsEnabled {
                     IKDivider()
+                        .settingsCell()
+
                     ForEachMailboxView(userId: mailboxManager.account.userId) { mailbox in
                         Toggle(isOn: Binding(get: {
                             notificationsEnabled && subscribedTopics?.contains(mailbox.notificationTopicName) == true
@@ -93,12 +96,13 @@ struct SettingsNotificationsView: View {
                             Text(mailbox.email)
                                 .textStyle(.body)
                         }
+                        .tint(.accentColor)
                     }
+                    .settingsItem()
+                    .settingsCell()
                 }
-
-                Spacer()
             }
-            .padding(.horizontal, 16)
+            .plainList()
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications, displayMode: .inline)

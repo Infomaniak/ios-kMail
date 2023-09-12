@@ -66,17 +66,17 @@ struct AccountView: View {
         VStack(spacing: 0) {
             ScrollView {
                 AvatarView(mailboxManager: mailboxManager, displayablePerson: CommonContact(user: account.user), size: 104)
-                    .padding(.top, 24)
-                    .padding(.bottom, 16)
+                    .padding(.bottom, value: .regular)
+                    .padding(.top, value: .medium)
 
                 VStack(spacing: 0) {
                     Text(account.user.displayName)
                         .textStyle(.header2)
-                        .padding(.bottom, 4)
+                        .padding(.bottom, value: .verySmall)
 
                     Text(account.user.email)
                         .textStyle(.bodySmallSecondary)
-                        .padding(.bottom, 16)
+                        .padding(.bottom, value: .regular)
 
                     NavigationLink {
                         AccountListView(mailboxManager: mailboxManager)
@@ -85,27 +85,29 @@ struct AccountView: View {
                             .textStyle(.bodyMediumAccent)
                     }
                 }
+                .padding(.horizontal, value: .regular)
 
                 MailboxListView(currentMailbox: mailboxManager.mailbox)
 
                 Spacer()
             }
 
-            // Buttons
-            MailButton(label: MailResourcesStrings.Localizable.buttonAccountDisconnect) {
-                matomo.track(eventWithCategory: .account, name: "logOut")
-                isShowingLogoutAlert.toggle()
+            VStack(spacing: UIPadding.medium) {
+                MailButton(label: MailResourcesStrings.Localizable.buttonAccountDisconnect) {
+                    matomo.track(eventWithCategory: .account, name: "logOut")
+                    isShowingLogoutAlert.toggle()
+                }
+                .mailButtonFullWidth(true)
+
+                MailButton(label: MailResourcesStrings.Localizable.buttonAccountDelete) {
+                    matomo.track(eventWithCategory: .account, name: "deleteAccount")
+                    presentedDeletedToken = tokenStore.removeTokenFor(account: account)
+                }
+                .mailButtonStyle(.destructive)
             }
-            .mailButtonFullWidth(true)
-            .padding(.bottom, 24)
-            MailButton(label: MailResourcesStrings.Localizable.buttonAccountDelete) {
-                matomo.track(eventWithCategory: .account, name: "deleteAccount")
-                presentedDeletedToken = tokenStore.removeTokenFor(account: account)
-            }
-            .mailButtonStyle(.destructive)
-            .padding(.bottom, 24)
+            .padding(.horizontal, value: .medium)
+            .padding(.bottom, value: .medium)
         }
-        .padding(.horizontal, 16)
         .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccount, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
         .sheet(item: $presentedDeletedToken) { deletedToken in

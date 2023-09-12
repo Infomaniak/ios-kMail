@@ -25,20 +25,13 @@ import SwiftUI
 import UIKit
 
 struct SettingsThreadDensityOptionView: View {
-    @State private var selectedValue: ThreadDensity
-
     @LazyInjectService private var matomo: MatomoUtils
 
-    init() {
-        _selectedValue = State(wrappedValue: UserDefaults.shared.threadDensity)
-    }
+    @State private var selectedValue = UserDefaults.shared.threadDensity
 
     var body: some View {
-        VStack(spacing: 16) {
-            Text(MailResourcesStrings.Localizable.settingsSelectDisplayModeDescription)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .textStyle(.bodySmallSecondary)
-                .padding(.bottom, 8)
+        VStack(alignment: .leading, spacing: 0) {
+            SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsSelectDisplayModeDescription)
 
             Picker("Display mode", selection: $selectedValue.animation()) {
                 ForEach(ThreadDensity.allCases, id: \.rawValue) { value in
@@ -51,11 +44,14 @@ struct SettingsThreadDensityOptionView: View {
             .onChange(of: selectedValue) { newValue in
                 matomo.track(eventWithCategory: .settingsDensity, name: newValue.rawValue)
             }
+            .padding([.horizontal, .top], value: .regular)
+            .padding(.bottom, value: .medium)
 
             selectedValue.image?
                 .resizable()
                 .scaledToFit()
                 .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 0)
+                .padding(.horizontal, value: .regular)
 
             Spacer()
         }
@@ -63,8 +59,6 @@ struct SettingsThreadDensityOptionView: View {
             UserDefaults.shared.threadDensity = selectedValue
         }
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsThreadListDensityTitle, displayMode: .inline)
-        .padding(.horizontal, 16)
-        .padding(.top, 30)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "ThreadDensity"])
     }

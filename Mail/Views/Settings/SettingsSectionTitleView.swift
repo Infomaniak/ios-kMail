@@ -16,31 +16,23 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailResources
+import MailCore
 import SwiftUI
 
-struct SettingsItemModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .padding(value: .regular)
+struct SettingsSectionTitleView: View {
+    let title: String
+
+    var body: some View {
+        Text(title)
+            .textStyle(.bodySmallSecondary)
+            .padding(.horizontal, value: .regular)
+            .padding(.top, value: .regular)
+            .padding(.bottom, value: .small)
     }
 }
 
-struct SettingsCellModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .listRowSeparator(.hidden)
-            .listRowInsets(.init())
-            .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-    }
-}
-
-extension View {
-    func settingsItem() -> some View {
-        modifier(SettingsItemModifier())
-    }
-
-    func settingsCell() -> some View {
-        modifier(SettingsCellModifier())
+struct SettingsSectionTitleView_Previews: PreviewProvider {
+    static var previews: some View {
+        SettingsSectionTitleView(title: "Général")
     }
 }

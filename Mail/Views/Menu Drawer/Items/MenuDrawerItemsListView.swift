@@ -25,9 +25,9 @@ import MailResources
 import SwiftUI
 
 struct MenuDrawerItemsAdvancedListView: View {
-    @State private var isShowingRestoreMails = false
-
     @Environment(\.openURL) private var openURL
+
+    @State private var isShowingRestoreMails = false
 
     let mailboxCanRestoreEmails: Bool
 
@@ -56,9 +56,8 @@ struct MenuDrawerItemsAdvancedListView: View {
 }
 
 struct MenuDrawerItemsHelpListView: View {
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
     @Environment(\.openURL) private var openURL
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingHelp = false
     @State private var isShowingBugTracker = false
@@ -95,12 +94,12 @@ struct MenuDrawerItemsHelpListView: View {
 }
 
 struct MenuDrawerItemsListView<Content: View>: View {
+    @State private var isExpanded = false
+
     var title: String?
     var matomoName: String?
 
     @ViewBuilder let content: () -> Content
-
-    @State private var isExpanded = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -114,21 +113,20 @@ struct MenuDrawerItemsListView<Content: View>: View {
                         }
                     }
                 } label: {
-                    HStack(spacing: 12) {
+                    HStack(spacing: UIPadding.menuDrawerCellChevronSpacing) {
                         ChevronIcon(style: isExpanded ? .up : .down)
                         Text(title)
                             .textStyle(.bodySmallSecondary)
                         Spacer()
                     }
                 }
-                .padding(.vertical, UIConstants.menuDrawerVerticalPadding)
+                .padding(value: .regular)
             }
 
             if title == nil || isExpanded {
                 content()
             }
         }
-        .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
     }
 }
 

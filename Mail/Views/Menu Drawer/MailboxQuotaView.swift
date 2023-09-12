@@ -23,7 +23,8 @@ import SwiftUI
 
 struct MailboxQuotaView: View {
     let quotas: Quotas
-    var progressString: String {
+
+    private var progressString: String {
         return MailResourcesStrings.Localizable.menuDrawerMailboxStorage(
             Int64(quotas.size * 1000).formatted(.defaultByteCount),
             Constants.sizeLimit.formatted(.defaultByteCount)
@@ -31,20 +32,15 @@ struct MailboxQuotaView: View {
     }
 
     var body: some View {
-        HStack {
+        HStack(spacing: UIPadding.menuDrawerCellSpacing) {
             ProgressView(value: quotas.progression)
                 .progressViewStyle(QuotaCircularProgressViewStyle())
-                .padding(.trailing, 7)
 
-            VStack(alignment: .leading, spacing: 6) {
-                Text(progressString)
-                    .textStyle(.bodyMedium)
-            }
-
-            Spacer()
+            Text(progressString)
+                .textStyle(.bodyMedium)
         }
-        .padding(.vertical, 12)
-        .padding(.horizontal, UIConstants.menuDrawerHorizontalPadding)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(UIPadding.menuDrawerCell)
     }
 }
 
@@ -55,20 +51,20 @@ private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
                 .trim(from: 0, to: 1)
                 .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 4)
                 .rotationEffect(.degrees(-90))
-                .frame(width: 46)
+                .frame(width: UIConstants.menuDrawerQuotaSize)
 
             Circle()
                 .trim(from: 0, to: configuration.fractionCompleted ?? 0)
                 .stroke(Color.accentColor, lineWidth: 4)
                 .rotationEffect(.degrees(-90))
-                .frame(width: 46)
+                .frame(width: UIConstants.menuDrawerQuotaSize)
 
             MailResourcesAsset.drawer.swiftUIImage
                 .resizable()
                 .scaledToFit()
-                .frame(width: 18)
+                .frame(width: 16, height: 16)
                 .foregroundColor(.accentColor)
         }
-        .frame(height: 42)
+        .frame(height: UIConstants.menuDrawerQuotaSize)
     }
 }

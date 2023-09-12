@@ -31,7 +31,7 @@ struct MenuHeaderView: View {
             MailResourcesAsset.logoText.swiftUIImage
                 .resizable()
                 .scaledToFit()
-                .frame(height: 48)
+                .frame(height: UIConstants.menuDrawerLogoHeight)
 
             Spacer()
 
@@ -41,15 +41,16 @@ struct MenuHeaderView: View {
                 MailResourcesAsset.cog.swiftUIImage
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 24)
-                    .padding() // Some added padding for a nice touchable zone
+                    .frame(width: 24, height: 24)
             }
             .buttonStyle(.borderless)
             .accessibilityLabel(MailResourcesStrings.Localizable.settingsTitle)
+            .frame(width: UIConstants.menuDrawerLogoHeight, height: UIConstants.menuDrawerLogoHeight)
+            .contentShape(Rectangle())
         }
-        .padding(.top, 12)
-        .padding(.bottom, 15)
-        .padding(.horizontal, 17)
+        .padding(.vertical, value: .regular)
+        .padding(.leading, value: .medium)
+        .padding(.trailing, value: .verySmall)
         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
         .clipped()
         .shadow(color: MailResourcesAsset.menuDrawerShadowColor.swiftUIColor, radius: 1, x: 0, y: 2)

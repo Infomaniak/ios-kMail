@@ -34,17 +34,17 @@ struct EmptyStateView: View {
     var body: some View {
         VStack(spacing: 0) {
             image
-                .padding(.bottom, 24)
+                .padding(.bottom, value: .medium)
 
             Text(title)
                 .textStyle(.header2)
-                .padding(.bottom, 4)
+                .padding(.bottom, value: .verySmall)
             Text(description)
                 .textStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
         }
-        .padding(.horizontal, 48)
-        .padding(.bottom, withFABPadding ? UIConstants.floatingButtonBottomPadding + 56 : 0)
+        .padding(.horizontal, value: .large)
+        .padding(.bottom, withFABPadding ? UIPadding.floatingButtonBottom + 56 : 0)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Empty\(matomoName)View"])
     }

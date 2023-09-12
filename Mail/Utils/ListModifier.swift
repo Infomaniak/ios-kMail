@@ -16,31 +16,18 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailResources
 import SwiftUI
 
-struct SettingsItemModifier: ViewModifier {
+struct PlainListModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .padding(value: .regular)
-    }
-}
-
-struct SettingsCellModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .listRowSeparator(.hidden)
-            .listRowInsets(.init())
-            .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+            .listStyle(.plain)
+            .environment(\.defaultMinListRowHeight, 0)
     }
 }
 
 extension View {
-    func settingsItem() -> some View {
-        modifier(SettingsItemModifier())
-    }
-
-    func settingsCell() -> some View {
-        modifier(SettingsCellModifier())
+    func plainList() -> some View {
+        modifier(PlainListModifier())
     }
 }

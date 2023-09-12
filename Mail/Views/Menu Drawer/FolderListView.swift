@@ -111,9 +111,7 @@ struct FolderListView: View {
     var body: some View {
         Group {
             RoleFoldersListView(folders: viewModel.roleFolders)
-
-            IKDivider(hasVerticalPadding: true, horizontalPadding: UIConstants.menuDrawerHorizontalPadding)
-
+            IKDivider(type: .menu)
             UserFoldersListView(folders: viewModel.userFolders)
         }
         .onChange(of: mailboxManager) { newMailboxManager in

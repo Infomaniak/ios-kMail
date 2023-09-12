@@ -28,44 +28,41 @@ import SwiftUI
 struct AccountCellView: View {
     @LazyInjectService private var accountManager: AccountManager
 
-    @Environment(\.dismissModal) var dismissModal
+    @Environment(\.dismissModal) private var dismissModal
+
+    @Binding var selectedUserId: Int?
 
     let mailboxManager: MailboxManager?
-
     let account: Account
-    @Binding var selectedUserId: Int?
 
     private var isSelected: Bool {
         return selectedUserId == account.userId
     }
 
     var body: some View {
-        ZStack {
+        Button {
+            guard !isSelected else { return }
+
+            @InjectService var matomo: MatomoUtils
+            matomo.track(eventWithCategory: .account, name: "switch")
+            dismissModal()
+            accountManager.switchAccount(newAccount: account)
+        } label: {
+            AccountHeaderCell(account: account, mailboxManager: mailboxManager, isSelected: Binding(get: {
+                isSelected
+            }, set: {
+                selectedUserId = $0 ? account.userId : nil
+            }))
+        }
+        .padding([.leading, .vertical], value: .small)
+        .padding(.trailing, value: .regular)
+        .background {
             RoundedRectangle(cornerRadius: 10)
                 .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
-
+        }
+        .overlay {
             RoundedRectangle(cornerRadius: 10)
                 .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
-
-            VStack {
-                Button {
-                    guard !isSelected else { return }
-
-                    @InjectService var matomo: MatomoUtils
-                    matomo.track(eventWithCategory: .account, name: "switch")
-                    dismissModal()
-                    accountManager.switchAccount(newAccount: account)
-                } label: {
-                    AccountHeaderCell(account: account, mailboxManager: mailboxManager, isSelected: Binding(get: {
-                        isSelected
-                    }, set: {
-                        selectedUserId = $0 ? account.userId : nil
-                    }))
-                    .padding(.leading, 8)
-                    .padding(.trailing, 16)
-                }
-            }
-            .padding(.vertical, 8)
         }
     }
 }
@@ -79,9 +76,10 @@ struct AccountHeaderCell: View {
     @Binding var isSelected: Bool
 
     var body: some View {
-        HStack(spacing: 8) {
-            AvatarView(mailboxManager: mailboxManager, displayablePerson: CommonContact(user: account.user), size: 38)
-            VStack(alignment: .leading, spacing: 2) {
+        HStack(spacing: UIPadding.small) {
+            AvatarView(mailboxManager: mailboxManager, displayablePerson: CommonContact(user: account.user), size: 40)
+
+            VStack(alignment: .leading, spacing: 0) {
                 Text(account.user.displayName)
                     .textStyle(.bodyMedium)
                 Text(account.user.email)
@@ -89,7 +87,7 @@ struct AccountHeaderCell: View {
             }
             .lineLimit(1)
 
-            Spacer()
+            Spacer(minLength: 0)
 
             if isSelected {
                 MailResourcesAsset.check.swiftUIImage
@@ -104,6 +102,7 @@ struct AccountHeaderCell: View {
 struct AccountCellView_Previews: PreviewProvider {
     static var previews: some View {
         AccountCellView(
+            selectedUserId: .constant(nil),
             mailboxManager: nil,
             account: Account(apiToken: ApiToken(
                 accessToken: "",
@@ -113,8 +112,7 @@ struct AccountCellView_Previews: PreviewProvider {
                 tokenType: "",
                 userId: 0,
                 expirationDate: .distantFuture
-            )),
-            selectedUserId: .constant(nil)
+            ))
         )
     }
 }

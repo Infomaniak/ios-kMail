@@ -39,7 +39,6 @@ struct SendSettingsView: View {
                     matomoName: \.matomoName
                 )
             }
-            .settingCellModifier()
 
             // Forward mode
             SettingsSubMenuCell(
@@ -53,7 +52,6 @@ struct SendSettingsView: View {
                     matomoName: \.rawValue
                 )
             }
-            .settingCellModifier()
 
             // Include in reply
             SettingsToggleCell(
@@ -62,7 +60,6 @@ struct SendSettingsView: View {
                 matomoCategory: .settingsSend,
                 matomoName: "includeOriginalInReply"
             )
-            .settingCellModifier()
 
             // Acknowledgement
             SettingsToggleCell(
@@ -71,7 +68,6 @@ struct SendSettingsView: View {
                 matomoCategory: .settingsSend,
                 matomoName: "acknowledgement"
             )
-            .settingCellModifier()
         }
         .listStyle(.plain)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsSendTitle, displayMode: .inline)

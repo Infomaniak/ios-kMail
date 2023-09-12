@@ -24,7 +24,7 @@ struct UnknownRecipientView: View {
     let size: CGFloat
 
     private var iconSize: CGFloat {
-        return size - 2 * UIConstants.unknownRecipientHorizontalPadding
+        return size - 2 * UIPadding.small
     }
 
     var body: some View {

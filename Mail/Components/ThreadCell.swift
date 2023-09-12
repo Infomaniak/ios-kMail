@@ -116,7 +116,7 @@ struct ThreadCell: View {
     // MARK: - Views
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: UIPadding.small) {
             UnreadIndicatorView(hidden: !thread.hasUnseenMessages)
                 .accessibilityLabel(additionalAccessibilityLabel)
                 .accessibilityHidden(additionalAccessibilityLabel.isEmpty)
@@ -141,12 +141,12 @@ struct ThreadCell: View {
                         .animation(.default.speed(1.5), value: shouldDisplayCheckbox)
                 }
             }
-            .padding(.trailing, 4)
+            .padding(.trailing, value: .verySmall)
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: UIPadding.verySmall) {
                 ThreadCellHeaderView(thread: thread)
 
-                HStack(alignment: .top, spacing: 3) {
+                HStack(alignment: .top, spacing: UIPadding.verySmall) {
                     ThreadCellInfoView(dataHolder: dataHolder, density: density)
                     Spacer()
                     ThreadCellDetailsView(thread: thread)
@@ -157,8 +157,8 @@ struct ThreadCell: View {
                 value: isMultipleSelectionEnabled
             )
         }
-        .padding(.leading, 8)
-        .padding(.trailing, 16)
+        .padding(.leading, value: .small)
+        .padding(.trailing, value: .regular)
         .padding(.vertical, density.cellVerticalPadding)
         .clipped()
         .accessibilityElement(children: .combine)

@@ -81,8 +81,8 @@ struct ThreadListHeader: View {
                 }
             }
         }
-        .padding(.top, 8)
-        .padding([.leading, .trailing, .bottom], 16)
+        .padding(.top, value: .small)
+        .padding([.leading, .trailing, .bottom], value: .regular)
         .background(accentColor.navBarBackground.swiftUIColor)
         .onChange(of: lastUpdate) { newValue in
             lastUpdateText = formatLastUpdate(date: newValue)

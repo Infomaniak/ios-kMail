@@ -37,18 +37,17 @@ enum SwipeSettingsSection: CaseIterable {
 }
 
 struct SettingsSwipeActionsView: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) var accentColor = DefaultPreferences.accentColor
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
-    @AppStorage(UserDefaults.shared.key(.swipeLeading)) var leading = DefaultPreferences.swipeLeading
-    @AppStorage(UserDefaults.shared.key(.swipeFullLeading)) var fullLeading = DefaultPreferences.swipeFullLeading
-    @AppStorage(UserDefaults.shared.key(.swipeTrailing)) var trailing = DefaultPreferences.swipeTrailing
-    @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) var fullTrailing = DefaultPreferences.swipeFullTrailing
+    @AppStorage(UserDefaults.shared.key(.swipeLeading)) private var leading = DefaultPreferences.swipeLeading
+    @AppStorage(UserDefaults.shared.key(.swipeFullLeading)) private var fullLeading = DefaultPreferences.swipeFullLeading
+    @AppStorage(UserDefaults.shared.key(.swipeTrailing)) private var trailing = DefaultPreferences.swipeTrailing
+    @AppStorage(UserDefaults.shared.key(.swipeFullTrailing)) private var fullTrailing = DefaultPreferences.swipeFullTrailing
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                Text(MailResourcesStrings.Localizable.settingsSwipeDescription)
-                    .textStyle(.bodySmallSecondary)
+        VStack(alignment: .leading, spacing: 0) {
+            ScrollView {
+                SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsSwipeDescription)
 
                 ForEach(SwipeSettingsSection.allCases, id: \.self) { section in
                     ForEach(section.items, id: \.self) { item in
@@ -65,15 +64,14 @@ struct SettingsSwipeActionsView: View {
                             .frame(minHeight: 40)
                         }
                     }
-                    VStack(alignment: .leading, spacing: 16) {
-                        SwipeConfigCell(section: section)
-                        if section != SwipeSettingsSection.allCases.last {
-                            IKDivider()
-                        }
+
+                    SwipeConfigCell(section: section)
+
+                    if section != SwipeSettingsSection.allCases.last {
+                        IKDivider()
                     }
                 }
             }
-            .padding(.horizontal, 16)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsSwipeActionsTitle, displayMode: .inline)

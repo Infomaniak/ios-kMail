@@ -26,7 +26,7 @@ struct SearchHistorySectionView: View {
     var body: some View {
         Section {
             ForEach(viewModel.searchHistory.history, id: \.self) { searchItem in
-                HStack(spacing: 16) {
+                HStack(spacing: UIPadding.regular) {
                     MailResourcesAsset.clock.swiftUIImage
                         .resizable()
                         .frame(width: 24, height: 24)
@@ -57,14 +57,16 @@ struct SearchHistorySectionView: View {
                         await viewModel.fetchThreads()
                     }
                 }
+                .padding(value: .regular)
             }
         } header: {
             Text(MailResourcesStrings.Localizable.recentSearchesTitle)
                 .textStyle(.bodySmallSecondary)
+                .padding(.horizontal, value: .regular)
         }
         .listRowSeparator(.hidden)
         .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .listRowInsets(.init(top: 0, leading: 16, bottom: 0, trailing: 16))
+        .listRowInsets(.init())
     }
 
     @MainActor

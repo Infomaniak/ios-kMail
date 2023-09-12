@@ -19,6 +19,7 @@
 import Foundation
 import InfomaniakCoreUI
 import InfomaniakDI
+import MailCore
 import MailResources
 import SwiftUI
 
@@ -26,12 +27,14 @@ struct EmptySubjectView: View {
     let actionHandler: () -> Void
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.emailWithoutSubjectTitle)
                 .textStyle(.bodyMedium)
+                .padding(.bottom, UIPadding.alertTitleBottom)
 
             Text(MailResourcesStrings.Localizable.emailWithoutSubjectDescription)
                 .textStyle(.body)
+                .padding(.bottom, UIPadding.alertDescriptionBottom)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonContinue) {
                 @InjectService var matomo: MatomoUtils

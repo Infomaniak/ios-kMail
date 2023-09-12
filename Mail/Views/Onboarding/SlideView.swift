@@ -47,7 +47,7 @@ struct SlideView: View {
                     .ignoresSafeArea(edges: .top)
 
                 VStack(spacing: 0) {
-                    Spacer(minLength: UIConstants.onboardingLogoHeight + UIConstants.onboardingVerticalTopPadding)
+                    Spacer(minLength: UIConstants.onboardingLogoHeight + UIPadding.large)
 
                     Group {
                         if let asset = slide.asset {
@@ -64,7 +64,7 @@ struct SlideView: View {
                     }
                     .frame(height: 0.43 * proxy.size.height)
 
-                    Spacer(minLength: 8)
+                    Spacer(minLength: UIPadding.small)
 
                     Text(slide.title)
                         .textStyle(.header2)
@@ -88,13 +88,13 @@ struct SlideView: View {
                     } else if let description = slide.description {
                         Text(description)
                             .textStyle(.bodySecondary)
-                            .padding(.top, 24)
+                            .padding(.top, value: .medium)
                     }
 
-                    Spacer(minLength: 48)
+                    Spacer(minLength: UIPadding.large)
                 }
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 32)
+                .padding(.horizontal, value: .medium)
             }
             .onAppear {
                 isVisible = true

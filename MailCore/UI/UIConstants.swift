@@ -56,8 +56,12 @@ public enum BarAppearanceConstants {
     }()
 }
 
-public enum UIConstants {
-    public static let avatarColors = [
+public enum UIConstants {}
+
+// MARK: - Color sets
+
+public extension UIConstants {
+    static let avatarColors = [
         MailResourcesAsset.yellowColor,
         MailResourcesAsset.coralColor,
         MailResourcesAsset.grassColor,
@@ -68,62 +72,51 @@ public enum UIConstants {
         MailResourcesAsset.mauveColor,
         MailResourcesAsset.princeColor
     ].map(\.color)
+}
 
-    public static let navbarIconSize: CGFloat = 24
+// MARK: - Elements sizing
 
-    public static let onboardingLogoPaddingTop: CGFloat = 24
-    public static let onboardingLogoHeight: CGFloat = 56
-    public static let onboardingButtonHeight: CGFloat = 104
-    public static let onboardingVerticalTopPadding: CGFloat = 48
-    public static let onboardingBottomButtonPadding: CGFloat = 32
-    public static let onboardingArrowIconSize: CGFloat = 24
+public extension UIConstants {
+    static let navbarIconSize: CGFloat = 24
 
-    public static let menuDrawerHorizontalPadding: CGFloat = 24
-    public static let menuDrawerVerticalPadding: CGFloat = 14
-    public static let menuDrawerSubFolderPadding: CGFloat = 16
-    public static let menuDrawerHorizontalItemSpacing: CGFloat = 16
-    public static let menuDrawerMaximumSubfolderLevel = 2
+    static let onboardingLogoHeight: CGFloat = 56
+    static let onboardingButtonHeight: CGFloat = 104
 
-    public static let floatingButtonBottomPadding: CGFloat = 24
+    static let menuDrawerMaxWidth: CGFloat = 352
+    static let menuDrawerTrailingSpacing: CGFloat = 64
+    static let menuDrawerLogoHeight: CGFloat = 48
+    static let menuDrawerQuotaSize: CGFloat = 40
 
-    public static let progressItemsVerticalPadding: CGFloat = 8
-    public static let unreadIconSize: CGFloat = 8
-    public static let checkboxSize: CGFloat = 32
-    public static let checkmarkSize: CGFloat = 14
-    public static let checkboxLargeSize: CGFloat = 40
+    static let unreadIconSize: CGFloat = 8
+    static let checkboxSize: CGFloat = 32
+    static let checkmarkSize: CGFloat = 14
+    static let checkboxLargeSize: CGFloat = 40
 
-    public static let checkboxAppearDelay = 0.2
-    public static let checkboxDisappearOffsetDelay = 0.35
+    static let bottomBarHorizontalMinimumSpace: CGFloat = 8
 
-    public static let selectionBackgroundDefaultLeadingPadding: CGFloat = 8
-    public static let selectionBackgroundVerticalPadding: CGFloat = 2
+    static let buttonsRadius: CGFloat = 16
+    static let buttonsIconSize: CGFloat = 16
 
-    public static let buttonsRadius: CGFloat = 16
-    public static let buttonsIconSize: CGFloat = 16
+    static let componentsMaxWidth: CGFloat = 496
+}
 
-    public static let composeViewHeaderCellVerticalSpacing: CGFloat = 12
-    public static let composeViewHeaderCellLargeVerticalSpacing = composeViewHeaderCellVerticalSpacing + chipInsets.top
+// MARK: - Animations
 
-    public static let bottomBarVerticalPadding: CGFloat = 8
-    public static let bottomBarSmallVerticalPadding: CGFloat = 4
-    public static let bottomBarHorizontalMinimumSpace: CGFloat = 8
+public extension UIConstants {
+    static let checkboxAppearDelay = 0.2
+    static let checkboxDisappearOffsetDelay = 0.35
+}
 
-    public static let bottomSheetHorizontalPadding: CGFloat = 24
+// MARK: - Utils
 
-    public static let actionsViewSpacing: CGFloat = 12
-    public static let actionsViewHorizontalPadding: CGFloat = 8
-    public static let actionsViewCellHorizontalPadding: CGFloat = 24
-
-    public static let unknownRecipientHorizontalPadding: CGFloat = 8
-
-    public static let autocompletionVerticalPadding: CGFloat = 8
-
-    public static let componentsMaxWidth: CGFloat = 496
-
-    public static let chipInsets = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
-
-    public static func isCompact(horizontalSizeClass: UserInterfaceSizeClass?,
-                                 verticalSizeClass: UserInterfaceSizeClass?) -> Bool {
+public extension UIConstants {
+    static func isCompact(horizontalSizeClass: UserInterfaceSizeClass?, verticalSizeClass: UserInterfaceSizeClass?) -> Bool {
         return horizontalSizeClass == .compact || verticalSizeClass == .compact
     }
+}
+
+// MARK: - Misc
+
+public extension UIConstants {
+    static let menuDrawerMaximumSubFolderLevel = 2
 }

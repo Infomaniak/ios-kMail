@@ -91,12 +91,12 @@ struct ThreadListView: View {
                         ProgressView()
                             .id(UUID())
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, UIConstants.progressItemsVerticalPadding)
+                            .padding(.vertical, value: .small)
                             .threadListCellAppearance()
                     }
 
                     if threadDensity == .compact {
-                        ListVerticalInsetView(height: 4)
+                        ListVerticalInsetView(height: UIPadding.verySmall)
                     }
 
                     ForEach(viewModel.sections) { section in
@@ -142,11 +142,11 @@ struct ThreadListView: View {
                             .frame(alignment: .leading)
                         }
                     }
-                    .padding(.vertical, UIConstants.progressItemsVerticalPadding)
+                    .padding(.vertical, value: .small)
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
-                .environment(\.defaultMinListRowHeight, 4)
+                .plainList()
                 .emptyState(isEmpty: shouldDisplayEmptyView) {
                     switch viewModel.folder.role {
                     case .inbox:
@@ -161,7 +161,6 @@ struct ThreadListView: View {
                     EmptyStateView.noNetwork
                 }
                 .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-                .listStyle(.plain)
                 .onAppear {
                     viewModel.scrollViewProxy = proxy
                 }

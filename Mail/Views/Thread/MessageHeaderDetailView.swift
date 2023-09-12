@@ -31,7 +31,7 @@ struct MessageHeaderDetailView: View {
     @State private var labelWidth: CGFloat = 100
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: UIPadding.small) {
             RecipientLabel(
                 labelWidth: $labelWidth,
                 title: MailResourcesStrings.Localizable.fromTitle,
@@ -60,7 +60,7 @@ struct MessageHeaderDetailView: View {
                 MailResourcesAsset.calendar.swiftUIImage
                     .resizable()
                     .scaledToFit()
-                    .frame(width: labelWidth, height: 17, alignment: .leading)
+                    .frame(width: labelWidth, height: 16, alignment: .leading)
                     .foregroundColor(MailResourcesAsset.textSecondaryColor)
                 Text(message.date.formatted(date: .long, time: .shortened))
                     .textStyle(.bodySmallSecondary)

@@ -43,7 +43,7 @@ struct AttachmentsView: View {
     var body: some View {
         VStack(spacing: 16) {
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
+                HStack(spacing: UIPadding.small) {
                     ForEach(attachments) { attachment in
                         Button {
                             matomo.track(eventWithCategory: .attachmentActions, name: "open")
@@ -58,11 +58,10 @@ struct AttachmentsView: View {
                         }
                     }
                 }
-                .padding(.vertical, 1)
-                .padding(.horizontal, 15)
+                .padding(.horizontal, value: .regular)
             }
 
-            HStack(spacing: 8) {
+            HStack(spacing: UIPadding.small) {
                 Label {
                     Text(
                         "\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) (\(message.attachmentsSize, format: .defaultByteCount))"
@@ -91,7 +90,7 @@ struct AttachmentsView: View {
 
                 Spacer()
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, value: .regular)
         }
         .sheet(item: $previewedAttachment) { previewedAttachment in
             AttachmentPreview(attachment: previewedAttachment)

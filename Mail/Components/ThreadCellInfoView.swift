@@ -23,7 +23,7 @@ struct ThreadCellInfoView: View {
     let dataHolder: ThreadCellDataHolder
     let density: ThreadDensity
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: UIPadding.verySmall) {
             Text(dataHolder.subject)
                 .textStyle(.body)
                 .lineLimit(1)

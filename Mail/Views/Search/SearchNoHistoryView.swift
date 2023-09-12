@@ -16,18 +16,18 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
 struct SearchNoHistoryView: View {
     var body: some View {
         Text(MailResourcesStrings.Localizable.emptyStateHistoryDescription)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .padding(.top, 16)
             .textStyle(.bodySmallSecondary)
+            .padding(value: .regular)
             .listRowSeparator(.hidden)
             .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
-            .listRowInsets(.init(top: 0, leading: 12, bottom: 0, trailing: 12))
+            .listRowInsets(.init())
     }
 }
 

@@ -25,7 +25,7 @@ struct ThreadCellHeaderView: View {
     let thread: Thread
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: UIPadding.small) {
             if thread.hasDrafts {
                 Text("\(MailResourcesStrings.Localizable.draftPrefix)")
                     .textStyle(.bodyMediumError)

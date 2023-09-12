@@ -47,7 +47,7 @@ struct FlushFolderView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            VStack(alignment: .leading, spacing: 8) {
+            VStack(alignment: .leading, spacing: UIPadding.small) {
                 Text(label)
                     .textStyle(.bodySmall)
 
@@ -60,7 +60,7 @@ struct FlushFolderView: View {
                         }
                     }
                 } label: {
-                    HStack {
+                    HStack(spacing: UIPadding.small) {
                         MailResourcesAsset.bin.swiftUIImage
                             .resizable()
                             .scaledToFit()
@@ -71,9 +71,9 @@ struct FlushFolderView: View {
                 }
                 .buttonStyle(.borderless)
             }
-            .padding(16)
+            .padding(value: .regular)
 
-            IKDivider()
+            IKDivider(type: .full)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

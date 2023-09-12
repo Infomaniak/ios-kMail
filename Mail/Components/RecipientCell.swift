@@ -42,7 +42,7 @@ struct RecipientCell: View {
     var highlight: String?
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: UIPadding.small) {
             AvatarView(
                 mailboxManager: mailboxManager,
                 displayablePerson: CommonContact(
