@@ -277,6 +277,7 @@ class MailEditorView: SQTextEditorView {
             )
             item.tag = action.rawValue
             item.isSelected = action.isSelected(textAttribute: selectedTextAttribute)
+            item.tintColor = action.tint
             if action == .editText && style == .textEdition {
                 item.tintColor = UserDefaults.shared.accentColor.primary.color
             }
@@ -290,7 +291,6 @@ class MailEditorView: SQTextEditorView {
 
     public func getToolbar() -> UIToolbar {
         let newToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 320, height: 48))
-        newToolbar.tintColor = MailResourcesAsset.textSecondaryColor.color
         newToolbar.barTintColor = MailResourcesAsset.backgroundSecondaryColor.color
         newToolbar.isTranslucent = false
 
@@ -326,6 +326,9 @@ class MailEditorView: SQTextEditorView {
             makeUnorderedList()
         case .editText:
             updateToolbarItems(style: toolbarStyle == .main ? .textEdition : .main)
+        case .ai:
+            // TODO: Show AI prompt
+            print("Open AI drawer")
         case .addFile:
             isShowingFileSelection.wrappedValue.toggle()
         case .addPhoto:
@@ -355,7 +358,7 @@ enum ToolbarStyle {
     var actions: [ToolbarAction] {
         switch self {
         case .main:
-            return [.editText, .addFile, .addPhoto, .takePhoto, .link]
+            return [.editText, .ai, .addFile, .addPhoto, .takePhoto, .link]
         case .textEdition:
             return [.editText, .bold, .italic, .underline, .strikeThrough, .unorderedList]
         }
@@ -369,6 +372,7 @@ enum ToolbarAction: Int {
     case strikeThrough
     case unorderedList
     case editText
+    case ai
     case addFile
     case addPhoto
     case takePhoto
@@ -389,6 +393,8 @@ enum ToolbarAction: Int {
             return MailResourcesAsset.unorderedList.image
         case .editText:
             return MailResourcesAsset.textModes.image
+        case .ai:
+            return MailResourcesAsset.aiWriter.image
         case .addFile:
             return MailResourcesAsset.folder.image
         case .addPhoto:
@@ -399,6 +405,15 @@ enum ToolbarAction: Int {
             return MailResourcesAsset.hyperlink.image
         case .programMessage:
             return MailResourcesAsset.waitingMessage.image
+        }
+    }
+
+    var tint: UIColor {
+        switch self {
+        case .ai:
+            return MailResourcesAsset.aiColor.color
+        default:
+            return MailResourcesAsset.textSecondaryColor.color
         }
     }
 
@@ -414,6 +429,8 @@ enum ToolbarAction: Int {
             return "strikeThrough"
         case .unorderedList:
             return "unorderedList"
+        case .ai:
+            return "aiWriter"
         case .addFile:
             return "importFile"
         case .addPhoto:
@@ -441,7 +458,7 @@ enum ToolbarAction: Int {
             return textAttribute.format.hasStrikethrough
         case .link:
             return textAttribute.format.hasLink
-        case .unorderedList, .editText, .addFile, .addPhoto, .takePhoto, .programMessage:
+        case .unorderedList, .editText, .ai, .addFile, .addPhoto, .takePhoto, .programMessage:
             return false
         }
     }
