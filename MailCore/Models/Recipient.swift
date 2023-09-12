@@ -94,7 +94,9 @@ public final class Recipient: EmbeddedObject, Codable {
     private static let mailerDeamonRegex = Regex(pattern: "mailer-daemon@(?:.+.)?infomaniak.ch")
 
     public func isExternal(mailboxManager: MailboxManager) -> Bool {
-        ///if the email adress is added manually by me, it's not considered as an external
+        guard mailboxManager.mailbox.externalMailFlagEnabled else { return false }
+
+        // if the email address is added manually by me, it's not considered as an extern
         guard !isAddedByMe else { return false }
 
         let trustedDomains = ["@infomaniak.com", "@infomaniak.event", "@swisstransfer.com"]
