@@ -37,6 +37,7 @@ struct RichTextEditor: UIViewRepresentable {
     @Binding var isShowingPhotoLibrary: Bool
     @Binding var becomeFirstResponder: Bool
     @Binding var currentSignature: Signature?
+    @Binding var isShowingAIPrompt: Bool
 
     let blockRemoteContent: Bool
     var alert: ObservedObject<NewMessageAlert>.Wrapper
@@ -46,6 +47,7 @@ struct RichTextEditor: UIViewRepresentable {
          isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>,
          becomeFirstResponder: Binding<Bool>,
          currentSignature: Binding<Signature?>,
+         isShowingAIPrompt: Binding<Bool>,
          blockRemoteContent: Bool) {
         _model = model
         _body = body
@@ -55,6 +57,7 @@ struct RichTextEditor: UIViewRepresentable {
         _isShowingPhotoLibrary = isShowingPhotoLibrary
         _becomeFirstResponder = becomeFirstResponder
         _currentSignature = currentSignature
+        _isShowingAIPrompt = isShowingAIPrompt
         self.blockRemoteContent = blockRemoteContent
         _editorCurrentSignature = State(wrappedValue: currentSignature.wrappedValue)
     }
@@ -126,7 +129,8 @@ struct RichTextEditor: UIViewRepresentable {
         let richTextEditor = MailEditorView(alert: alert,
                                             isShowingCamera: $isShowingCamera,
                                             isShowingFileSelection: $isShowingFileSelection,
-                                            isShowingPhotoLibrary: $isShowingPhotoLibrary)
+                                            isShowingPhotoLibrary: $isShowingPhotoLibrary,
+                                            isShowingAIPrompt: $isShowingAIPrompt)
         richTextEditor.delegate = context.coordinator
         return richTextEditor
     }
@@ -176,15 +180,17 @@ class MailEditorView: SQTextEditorView {
     var isShowingCamera: Binding<Bool>
     var isShowingFileSelection: Binding<Bool>
     var isShowingPhotoLibrary: Binding<Bool>
+    var isShowingAIPrompt: Binding<Bool>
 
     var toolbarStyle = ToolbarStyle.main
 
     init(alert: ObservedObject<NewMessageAlert>.Wrapper,
-         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>) {
+         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>, isShowingAIPrompt: Binding<Bool>) {
         self.alert = alert
         self.isShowingCamera = isShowingCamera
         self.isShowingFileSelection = isShowingFileSelection
         self.isShowingPhotoLibrary = isShowingPhotoLibrary
+        self.isShowingAIPrompt = isShowingAIPrompt
         super.init()
     }
 
@@ -327,14 +333,13 @@ class MailEditorView: SQTextEditorView {
         case .editText:
             updateToolbarItems(style: toolbarStyle == .main ? .textEdition : .main)
         case .ai:
-            // TODO: Show AI prompt
-            print("Open AI drawer")
+            isShowingAIPrompt.wrappedValue = true
         case .addFile:
-            isShowingFileSelection.wrappedValue.toggle()
+            isShowingFileSelection.wrappedValue = true
         case .addPhoto:
-            isShowingPhotoLibrary.wrappedValue.toggle()
+            isShowingPhotoLibrary.wrappedValue = true
         case .takePhoto:
-            isShowingCamera.wrappedValue.toggle()
+            isShowingCamera.wrappedValue = true
         case .link:
             if selectedTextAttribute.format.hasLink {
                 removeLink()
