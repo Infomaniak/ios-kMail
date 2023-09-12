@@ -127,13 +127,11 @@ struct MessageHeaderSummaryView: View {
                         if message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
                             replyOrReplyAllMessage = message
                         } else {
-                            let draft = Draft.replying(
+                            navigationState.editedDraft = EditedDraft.replying(
                                 reply: MessageReply(message: message, replyMode: .reply),
                                 currentMailboxEmail: mailboxManager.mailbox.email
                             )
-                            navigationState.editedMessageDraft = draft
                         }
-
                     } label: {
                         MailResourcesAsset.emailActionReply.swiftUIImage
                             .resizable()

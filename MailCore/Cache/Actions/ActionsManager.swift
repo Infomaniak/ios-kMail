@@ -240,11 +240,10 @@ public class ActionsManager: ObservableObject {
         }
 
         Task { @MainActor in
-            let draft = Draft.replying(
+            navigationState?.editedDraft = EditedDraft.replying(
                 reply: MessageReply(message: replyingMessage, replyMode: mode),
                 currentMailboxEmail: mailboxManager.mailbox.email
             )
-            navigationState?.editedMessageDraft = draft
         }
     }
 

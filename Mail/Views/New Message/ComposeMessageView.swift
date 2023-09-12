@@ -104,20 +104,21 @@ struct ComposeMessageView: View {
 
     // MARK: - Init
 
-    init(draft: Draft, mailboxManager: MailboxManager, messageReply: MessageReply? = nil, attachments: [Attachable] = []) {
-        self.messageReply = messageReply
+    init(editedDraft: EditedDraft, mailboxManager: MailboxManager, attachments: [Attachable] = []) {
+        messageReply = editedDraft.messageReply
 
-        Self.writeDraftToRealm(mailboxManager.getRealm(), draft: draft)
-        _draft = StateRealmObject(wrappedValue: draft)
+        Self.writeDraftToRealm(mailboxManager.getRealm(), draft: editedDraft.draft)
+        _draft = StateRealmObject(wrappedValue: editedDraft.draft)
 
         draftContentManager = DraftContentManager(
-            incompleteDraft: draft,
-            messageReply: messageReply,
+            incompleteDraft: editedDraft.draft,
+            messageReply: editedDraft.messageReply,
             mailboxManager: mailboxManager
         )
 
         self.mailboxManager = mailboxManager
-        _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: draft, mailboxManager: mailboxManager))
+        _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: editedDraft.draft,
+                                                                           mailboxManager: mailboxManager))
         _initialAttachments = State(wrappedValue: attachments)
     }
 
@@ -348,6 +349,9 @@ struct ComposeMessageView: View {
 
 struct ComposeMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageView(draft: Draft(), mailboxManager: PreviewHelper.sampleMailboxManager)
+        ComposeMessageView(
+            editedDraft: EditedDraft.new(),
+            mailboxManager: PreviewHelper.sampleMailboxManager
+        )
     }
 }

@@ -60,7 +60,7 @@ struct ContactActionView: View {
     }
 
     private func writeEmail() {
-        navigationState.editedMessageDraft = Draft.writing(to: recipient)
+        navigationState.editedDraft = EditedDraft.writing(to: recipient)
     }
 
     private func addToContacts() {

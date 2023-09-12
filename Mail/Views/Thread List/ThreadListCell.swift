@@ -69,7 +69,7 @@ struct ThreadListCell: View {
                 DraftUtils.editDraft(
                     from: thread,
                     mailboxManager: viewModel.mailboxManager,
-                    editedMessageDraft: $navigationState.editedMessageDraft
+                    editedDraft: $navigationState.editedDraft
                 )
             } else {
                 splitViewManager.adaptToProminentThreadView()

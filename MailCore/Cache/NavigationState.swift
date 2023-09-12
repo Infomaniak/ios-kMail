@@ -64,7 +64,7 @@ public class NavigationState: ObservableObject {
     private var accountManagerObservation: AnyCancellable?
 
     @Published public private(set) var rootViewState: RootViewState
-    @Published public var editedMessageDraft: Draft?
+    @Published public var editedDraft: EditedDraft?
     @Published public var messagesToMove: [Message]?
 
     /// Represents the state of navigation
