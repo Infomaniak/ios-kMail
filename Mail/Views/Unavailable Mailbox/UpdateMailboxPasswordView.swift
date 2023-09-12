@@ -96,7 +96,7 @@ struct UpdateMailboxPasswordView: View {
                 .disabled(disableButton)
 
                 MailButton(label: MailResourcesStrings.Localizable.buttonRequestPassword) {
-                    //TODO: 
+                    askMailboxPassword()
                 }
                 .mailButtonStyle(.link)
                 .mailButtonFullWidth(true)
@@ -136,6 +136,15 @@ struct UpdateMailboxPasswordView: View {
                 snackbarPresenter.show(message: error.localizedDescription)
             }
             isLoading = false
+        }
+    }
+
+    func askMailboxPassword() {
+        Task {
+            await tryOrDisplayError {
+                try await accountManager.askMailboxPassword(mailbox: mailbox)
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarMailboxPasswordRequested)
+            }
         }
     }
 }
