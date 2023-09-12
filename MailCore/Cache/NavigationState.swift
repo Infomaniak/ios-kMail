@@ -64,7 +64,6 @@ public class NavigationState: ObservableObject {
     private var accountManagerObservation: AnyCancellable?
 
     @Published public private(set) var rootViewState: RootViewState
-    @Published public var messageReply: MessageReply?
     @Published public var editedMessageDraft: Draft?
     @Published public var messagesToMove: [Message]?
 

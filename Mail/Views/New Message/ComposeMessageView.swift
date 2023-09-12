@@ -107,7 +107,7 @@ struct ComposeMessageView: View {
     init(draft: Draft, mailboxManager: MailboxManager, messageReply: MessageReply? = nil, attachments: [Attachable] = []) {
         self.messageReply = messageReply
 
-        Self.saveNewDraftInRealm(mailboxManager.getRealm(), draft: draft)
+        Self.writeDraftToRealm(mailboxManager.getRealm(), draft: draft)
         _draft = StateRealmObject(wrappedValue: draft)
 
         draftContentManager = DraftContentManager(
@@ -336,7 +336,7 @@ struct ComposeMessageView: View {
         dismissMessageView()
     }
 
-    private static func saveNewDraftInRealm(_ realm: Realm, draft: Draft) {
+    private static func writeDraftToRealm(_ realm: Realm, draft: Draft) {
         try? realm.write {
             draft.action = draft.action == nil && draft.remoteUUID.isEmpty ? .initialSave : .save
             draft.delay = UserDefaults.shared.cancelSendDelay.rawValue
@@ -348,6 +348,6 @@ struct ComposeMessageView: View {
 
 struct ComposeMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageView.newMessage(Draft(), mailboxManager: PreviewHelper.sampleMailboxManager)
+        ComposeMessageView(draft: Draft(), mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }

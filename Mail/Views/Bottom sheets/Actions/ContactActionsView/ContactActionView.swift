@@ -29,8 +29,7 @@ struct ContactActionView: View {
     @Environment(\.dismiss) private var dismiss
 
     @EnvironmentObject private var mailboxManager: MailboxManager
-
-    @State private var writtenToRecipient: Recipient?
+    @EnvironmentObject private var navigationState: NavigationState
 
     let recipient: Recipient
     let action: Action
@@ -40,9 +39,6 @@ struct ContactActionView: View {
             handleAction(action)
         } label: {
             ActionButtonLabel(action: action)
-        }
-        .sheet(item: $writtenToRecipient) { writtenToRecipient in
-            ComposeMessageView.writingTo(recipient: writtenToRecipient, mailboxManager: mailboxManager)
         }
     }
 
@@ -64,7 +60,7 @@ struct ContactActionView: View {
     }
 
     private func writeEmail() {
-        writtenToRecipient = recipient
+        navigationState.editedMessageDraft = Draft.writing(to: recipient)
     }
 
     private func addToContacts() {

@@ -127,7 +127,11 @@ struct MessageHeaderSummaryView: View {
                         if message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
                             replyOrReplyAllMessage = message
                         } else {
-                            navigationState.messageReply = MessageReply(message: message, replyMode: .reply)
+                            let draft = Draft.replying(
+                                reply: MessageReply(message: message, replyMode: .reply),
+                                currentMailboxEmail: mailboxManager.mailbox.email
+                            )
+                            navigationState.editedMessageDraft = draft
                         }
 
                     } label: {

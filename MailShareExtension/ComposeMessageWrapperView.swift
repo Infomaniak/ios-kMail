@@ -41,7 +41,7 @@ struct ComposeMessageWrapperView: View {
 
     var body: some View {
         if let mailboxManager = accountManager.currentMailboxManager {
-            ComposeMessageView.newMessage(draft, mailboxManager: mailboxManager, itemProviders: itemProviders)
+            ComposeMessageView(draft: draft, mailboxManager: mailboxManager, attachments: itemProviders)
                 .environmentObject(mailboxManager)
                 .environment(\.dismissModal) {
                     dismissHandler(())
