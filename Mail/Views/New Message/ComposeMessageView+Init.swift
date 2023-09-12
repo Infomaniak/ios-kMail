@@ -30,11 +30,6 @@ extension ComposeMessageView {
         return ComposeMessageView(draft: draft, mailboxManager: mailboxManager)
     }
 
-    static func writingTo(recipient: Recipient, mailboxManager: MailboxManager) -> ComposeMessageView {
-        let draft = Draft.writing(to: recipient)
-        return ComposeMessageView(draft: draft, mailboxManager: mailboxManager)
-    }
-
     static func mailTo(urlComponents: URLComponents, mailboxManager: MailboxManager) -> ComposeMessageView {
         let draft = Draft.mailTo(urlComponents: urlComponents)
         return ComposeMessageView(draft: draft, mailboxManager: mailboxManager)
