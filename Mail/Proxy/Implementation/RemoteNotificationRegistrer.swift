@@ -24,4 +24,8 @@ public final class RemoteNotificationRegistrer: RemoteNotificationRegistrable {
     public func register() {
         UIApplication.shared.registerForRemoteNotifications()
     }
+
+    public func unregister() {
+        UIApplication.shared.unregisterForRemoteNotifications()
+    }
 }

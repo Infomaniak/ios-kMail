@@ -21,4 +21,5 @@ import Foundation
 /// Something that can register remote notifications
 public protocol RemoteNotificationRegistrable {
     func register()
+    func unregister()
 }

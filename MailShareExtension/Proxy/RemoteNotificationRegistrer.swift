@@ -24,4 +24,8 @@ public final class RemoteNotificationRegistrer: RemoteNotificationRegistrable {
     public func register() {
         // NOOP in share extension
     }
+
+    public func unregister() {
+        // NOOP in share extension
+    }
 }
