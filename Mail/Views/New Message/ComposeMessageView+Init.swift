@@ -29,9 +29,4 @@ extension ComposeMessageView {
         matomo.track(eventWithCategory: .newMessage, action: .data, name: "openLocalDraft", value: !draft.isLoadedRemotely)
         return ComposeMessageView(draft: draft, mailboxManager: mailboxManager)
     }
-
-    static func mailTo(urlComponents: URLComponents, mailboxManager: MailboxManager) -> ComposeMessageView {
-        let draft = Draft.mailTo(urlComponents: urlComponents)
-        return ComposeMessageView(draft: draft, mailboxManager: mailboxManager)
-    }
 }

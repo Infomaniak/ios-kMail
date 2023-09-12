@@ -53,7 +53,6 @@ struct SplitView: View {
     @EnvironmentObject private var navigationState: NavigationState
 
     @State private var splitViewController: UISplitViewController?
-    @State private var mailToURLComponents: IdentifiableURLComponents?
 
     @StateObject private var navigationDrawerController = NavigationDrawerState()
     @StateObject private var splitViewManager = SplitViewManager()
@@ -94,9 +93,6 @@ struct SplitView: View {
                     }
                 }
             }
-        }
-        .sheet(item: $mailToURLComponents) { identifiableURLComponents in
-            ComposeMessageView.mailTo(urlComponents: identifiableURLComponents.urlComponents, mailboxManager: mailboxManager)
         }
         .sheet(item: $navigationState.editedMessageDraft) { editedMessageDraft in
             ComposeMessageView.edit(draft: editedMessageDraft, mailboxManager: mailboxManager)
@@ -148,9 +144,6 @@ struct SplitView: View {
                 } else {
                     snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
                 }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .onOpenedMailTo)) { identifiableURLComponents in
-            mailToURLComponents = identifiableURLComponents.object as? IdentifiableURLComponents
         }
         .onAppear {
             orientationManager.setOrientationLock(.all)
@@ -220,7 +213,7 @@ struct SplitView: View {
         guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return }
 
         if Constants.isMailTo(url) {
-            mailToURLComponents = IdentifiableURLComponents(urlComponents: urlComponents)
+            navigationState.editedMessageDraft = Draft.mailTo(urlComponents: urlComponents)
         }
     }
 }
