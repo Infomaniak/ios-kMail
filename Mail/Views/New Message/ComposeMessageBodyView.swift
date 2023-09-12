@@ -31,6 +31,7 @@ struct ComposeMessageBodyView: View {
     @Binding var editorModel: RichTextEditorModel
     @Binding var editorFocus: Bool
     @Binding var currentSignature: Signature?
+    @Binding var isShowingAIPrompt: Bool
 
     @ObservedObject var attachmentsManager: AttachmentsManager
     @ObservedObject var alert: NewMessageAlert
@@ -55,6 +56,7 @@ struct ComposeMessageBodyView: View {
                 isShowingPhotoLibrary: $isShowingPhotoLibrary,
                 becomeFirstResponder: $editorFocus,
                 currentSignature: $currentSignature,
+                isShowingAIPrompt: $isShowingAIPrompt,
                 blockRemoteContent: isRemoteContentBlocked
             )
             .ignoresSafeArea(.all, edges: .bottom)
@@ -90,6 +92,7 @@ struct ComposeMessageBodyView_Previews: PreviewProvider {
                                editorModel: .constant(RichTextEditorModel()),
                                editorFocus: .constant(false),
                                currentSignature: .constant(nil),
+                               isShowingAIPrompt: .constant(false),
                                attachmentsManager: AttachmentsManager(
                                    draft: Draft(),
                                    mailboxManager: PreviewHelper.sampleMailboxManager
