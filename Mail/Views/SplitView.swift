@@ -94,8 +94,8 @@ struct SplitView: View {
                 }
             }
         }
-        .sheet(item: $navigationState.editedMessageDraft) { editedMessageDraft in
-            ComposeMessageView(draft: editedMessageDraft, mailboxManager: mailboxManager)
+        .sheet(item: $navigationState.editedDraft) { editedDraft in
+            ComposeMessageView(editedDraft: editedDraft, mailboxManager: mailboxManager)
         }
         .onChange(of: scenePhase) { newScenePhase in
             guard newScenePhase == .active else { return }
@@ -136,11 +136,10 @@ struct SplitView: View {
                 let tappedNotificationMessage = realm.object(ofType: Message.self, forPrimaryKey: notificationPayload.messageId)?
                     .freezeIfNeeded()
                 if let tappedNotificationMessage {
-                    let draft = Draft.replying(
+                    navigationState.editedDraft = EditedDraft.replying(
                         reply: MessageReply(message: tappedNotificationMessage, replyMode: .reply),
                         currentMailboxEmail: mailboxManager.mailbox.email
                     )
-                    navigationState.editedMessageDraft = draft
                 } else {
                     snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
                 }
@@ -213,7 +212,7 @@ struct SplitView: View {
         guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return }
 
         if Constants.isMailTo(url) {
-            navigationState.editedMessageDraft = Draft.mailTo(urlComponents: urlComponents)
+            navigationState.editedDraft = EditedDraft.mailTo(urlComponents: urlComponents)
         }
     }
 }

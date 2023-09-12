@@ -41,11 +41,15 @@ struct ComposeMessageWrapperView: View {
 
     var body: some View {
         if let mailboxManager = accountManager.currentMailboxManager {
-            ComposeMessageView(draft: draft, mailboxManager: mailboxManager, attachments: itemProviders)
-                .environmentObject(mailboxManager)
-                .environment(\.dismissModal) {
-                    dismissHandler(())
-                }
+            ComposeMessageView(
+                editedDraft: EditedDraft.existing(draft: draft),
+                mailboxManager: mailboxManager,
+                attachments: itemProviders
+            )
+            .environmentObject(mailboxManager)
+            .environment(\.dismissModal) {
+                dismissHandler(())
+            }
         } else {
             PleaseLoginView(tapHandler: dismissHandler)
         }

@@ -191,7 +191,7 @@ struct ThreadListView: View {
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
-            navigationState.editedMessageDraft = Draft(localUUID: UUID().uuidString)
+            navigationState.editedDraft = EditedDraft.new()
         }
         .onAppear {
             networkMonitor.start()

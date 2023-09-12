@@ -52,14 +52,14 @@ struct MessageHeaderView: View {
                 DraftUtils.editDraft(
                     from: message,
                     mailboxManager: mailboxManager,
-                    editedMessageDraft: $navigationState.editedMessageDraft
+                    editedDraft: $navigationState.editedDraft
                 )
                 matomo.track(eventWithCategory: .newMessage, name: "openFromDraft")
                 matomo.track(
                     eventWithCategory: .newMessage,
                     action: .data,
                     name: "openLocalDraft",
-                    value: !(navigationState.editedMessageDraft?.isLoadedRemotely ?? false)
+                    value: !(navigationState.editedDraft?.draft.isLoadedRemotely ?? false)
                 )
             } else if message.originalThread?.messages.isEmpty == false {
                 withAnimation {
