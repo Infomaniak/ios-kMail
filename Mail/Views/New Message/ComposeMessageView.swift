@@ -74,6 +74,7 @@ struct ComposeMessageView: View {
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
     @State private var isShowingExternalTag = true
+    @State private var isShowingAIPrompt = false
 
     @State private var editorModel = RichTextEditorModel()
     @Weak private var scrollView: UIScrollView?
@@ -173,6 +174,9 @@ struct ComposeMessageView: View {
                 dismissMessageView()
             }
         }
+        .floatingPanel(isPresented: $isShowingAIPrompt) {
+            AIPromptView()
+        }
         .matomoView(view: ["ComposeMessage"])
     }
 
@@ -194,6 +198,7 @@ struct ComposeMessageView: View {
                         editorModel: $editorModel,
                         editorFocus: $editorFocus,
                         currentSignature: $currentSignature,
+                        isShowingAIPrompt: $isShowingAIPrompt,
                         attachmentsManager: attachmentsManager,
                         alert: alert,
                         dismiss: dismiss,
