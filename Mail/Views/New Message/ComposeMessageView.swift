@@ -19,11 +19,11 @@
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
-import Introspect
 import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
+@_spi(Advanced) import SwiftUIIntrospect
 
 enum ComposeViewFieldType: Hashable {
     case from, to, cc, bcc, subject, editor, autocomplete
@@ -76,7 +76,7 @@ struct ComposeMessageView: View {
     @State private var isShowingExternalTag = true
 
     @State private var editorModel = RichTextEditorModel()
-    @State private var scrollView: UIScrollView?
+    @Weak private var scrollView: UIScrollView?
 
     @StateObject private var attachmentsManager: AttachmentsManager
     @StateObject private var alert = NewMessageAlert()
@@ -208,8 +208,7 @@ struct ComposeMessageView: View {
                 progressView
             }
         }
-        .introspectScrollView { scrollView in
-            guard self.scrollView != scrollView else { return }
+        .introspect(.scrollView, on: .iOS(.v15, .v16, .v17)) { scrollView in
             self.scrollView = scrollView
             scrollView.keyboardDismissMode = .interactive
         }

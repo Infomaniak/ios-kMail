@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Introspect
+import SwiftUIIntrospect
 import SwiftUI
 
 struct BackButtonDisplayModeModifier: ViewModifier {
@@ -24,7 +24,7 @@ struct BackButtonDisplayModeModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .introspectViewController { viewController in
+            .introspect(.viewController, on: .iOS(.v15, .v16, .v17)) { viewController in
                 viewController.navigationItem.backButtonDisplayMode = displayMode
             }
     }

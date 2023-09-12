@@ -19,7 +19,7 @@
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
-import Introspect
+import SwiftUIIntrospect
 import Lottie
 import MailCore
 import MailResources
@@ -77,7 +77,7 @@ struct SlideView: View {
                             }
                         }
                         .pickerStyle(.segmented)
-                        .introspectSegmentedControl { segmentedControl in
+                        .introspect(.picker(style: .segmented), on: .iOS(.v15, .v16, .v17)) { segmentedControl in
                             setSegmentedControlStyle(segmentedControl)
                         }
                         .padding(.top, 32)

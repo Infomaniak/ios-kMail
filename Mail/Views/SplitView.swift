@@ -20,12 +20,12 @@ import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
-import Introspect
 import MailCore
 import MailResources
 import NavigationBackport
 import RealmSwift
 import SwiftUI
+@_spi(Advanced) import SwiftUIIntrospect
 
 public class SplitViewManager: ObservableObject {
     @LazyInjectService private var platformDetector: PlatformDetectable
@@ -52,7 +52,7 @@ struct SplitView: View {
 
     @EnvironmentObject private var navigationState: NavigationState
 
-    @State private var splitViewController: UISplitViewController?
+    @Weak private var splitViewController: UISplitViewController?
 
     @StateObject private var navigationDrawerController = NavigationDrawerState()
     @StateObject private var splitViewManager = SplitViewManager()
@@ -158,9 +158,8 @@ struct SplitView: View {
             guard let interfaceOrientation = orientation else { return }
             setupBehaviour(orientation: interfaceOrientation)
         }
-        .introspectSplitViewController { splitViewController in
-            guard let interfaceOrientation = splitViewController.view.window?.windowScene?.interfaceOrientation,
-                  self.splitViewController != splitViewController else { return }
+        .introspect(.navigationView(style: .columns), on: .iOS(.v15, .v16, .v17)) { splitViewController in
+            guard let interfaceOrientation = splitViewController.view.window?.windowScene?.interfaceOrientation else { return }
             self.splitViewController = splitViewController
             splitViewManager.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)
