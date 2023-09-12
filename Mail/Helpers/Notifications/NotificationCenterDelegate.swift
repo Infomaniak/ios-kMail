@@ -32,19 +32,26 @@ final class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var messageActions: MessageActionHandlable
     @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
+    @LazyInjectService private var remoteNotificationRegistrer: RemoteNotificationRegistrable
+    @LazyInjectService private var tokenStore: TokenStore
 
     /// Handles the actions related to mail notifications
     /// - Parameters:
     ///   - identifier: the notification type string identifier
     ///   - content: the notification content
-    internal func handleMailAction(for identifier: String, content: UNNotificationContent) async {
-        // precond for mail actions
+    func handleMailAction(for identifier: String, content: UNNotificationContent) async {
         guard let mailboxId = content.userInfo[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
               let userId = content.userInfo[NotificationsHelper.UserInfoKeys.userId] as? Int,
               let mailbox = mailboxInfosManager.getMailbox(id: mailboxId, userId: userId),
               let mailboxManager = accountManager.getMailboxManager(for: mailbox),
               let messageUid = content.userInfo[NotificationsHelper.UserInfoKeys.messageUid] as? String,
               !messageUid.isEmpty else {
+            return
+        }
+
+        let isUserConnected = tokenStore.tokenFor(userId: userId) != nil
+        guard isUserConnected else {
+            remoteNotificationRegistrer.unregister()
             return
         }
 
