@@ -48,7 +48,7 @@ extension View {
         if #available(iOS 16.4, *) {
             return presentationCornerRadius(cornerRadius)
         } else {
-            return introspectViewController { viewController in
+            return introspect(.viewController, on: .iOS(.v15)) { viewController in
                 viewController.sheetPresentationController?.preferredCornerRadius = cornerRadius
             }
         }
@@ -66,7 +66,7 @@ struct SelfSizingPanelBackportViewModifier: ViewModifier {
                 .padding(.bottom, 16)
         }
         .padding(.top, topPadding)
-        .introspectScrollView { scrollView in
+        .introspect(.scrollView, on: .iOS(.v15)) { scrollView in
             guard !currentDetents.contains(.large) else { return }
             let totalPanelContentHeight = scrollView.contentSize.height + topPadding
 
@@ -93,7 +93,7 @@ struct SelfSizingPanelViewModifier: ViewModifier {
                 .padding(.bottom, 16)
         }
         .padding(.top, topPadding)
-        .introspectScrollView { scrollView in
+        .introspect(.scrollView, on: .iOS(.v16, .v17)) { scrollView in
             let totalPanelContentHeight = scrollView.contentSize.height + topPadding
             guard selection != .height(totalPanelContentHeight) else { return }
 

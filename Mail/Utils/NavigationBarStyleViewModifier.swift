@@ -18,9 +18,10 @@
 
 import SwiftUI
 import UIKit
+@_spi(Advanced) import SwiftUIIntrospect
 
 struct NavigationBarStyleViewModifier: ViewModifier {
-    @State private var navigationViewController: UINavigationController?
+    @Weak private var navigationViewController: UINavigationController?
     let standardAppearance: UINavigationBarAppearance
     let scrollEdgeAppearance: UINavigationBarAppearance?
     let compactAppearance: UINavigationBarAppearance?
@@ -31,11 +32,8 @@ struct NavigationBarStyleViewModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .introspectNavigationController { navigationViewController in
-                guard self.navigationViewController != navigationViewController else {
-                    return
-                }
-                self.navigationViewController = navigationViewController
+            .introspect(.viewController, on: .iOS(.v15, .v16, .v17)) { viewController in
+                self.navigationViewController = viewController.navigationController
                 updateAppearanceNavigationController()
             }
             .onAppear {
