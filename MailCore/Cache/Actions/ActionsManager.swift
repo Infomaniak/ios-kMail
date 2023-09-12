@@ -48,7 +48,7 @@ extension RandomAccessCollection where Element == Message {
     /// - For a list of messages all coming from the same thread: `lastMessageToExecuteAction`
     func lastMessagesAndDuplicatesToExecuteAction(currentMailboxEmail: String, currentFolder: Folder?) -> [Message] {
         if isSingleMessage(currentFolder: currentFolder) {
-            return self.addingDuplicates()
+            return addingDuplicates()
         } else {
             return uniqueThreadsInFolder(currentFolder)
                 .compactMap { $0.lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail)
@@ -240,7 +240,11 @@ public class ActionsManager: ObservableObject {
         }
 
         Task { @MainActor in
-            navigationState?.messageReply = MessageReply(message: replyingMessage, replyMode: mode)
+            let draft = Draft.replying(
+                reply: MessageReply(message: replyingMessage, replyMode: mode),
+                currentMailboxEmail: mailboxManager.mailbox.email
+            )
+            navigationState?.editedMessageDraft = draft
         }
     }
 
