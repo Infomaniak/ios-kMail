@@ -87,20 +87,22 @@ struct UpdateMailboxPasswordView: View {
         }
         .padding()
         .safeAreaInset(edge: .bottom) {
-            MailButton(label: MailResourcesStrings.Localizable.buttonConfirm) {
-                matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "updatePassword")
-                updateMailboxPassword()
-            }
-            .mailButtonFullWidth(true)
-            .disabled(disableButton)
-            .padding(value: .medium)
+            VStack(spacing: UIPadding.medium) {
+                MailButton(label: MailResourcesStrings.Localizable.buttonConfirm) {
+                    matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "updatePassword")
+                    updateMailboxPassword()
+                }
+                .mailButtonFullWidth(true)
+                .disabled(disableButton)
 
-            MailButton(label: MailResourcesStrings.Localizable.buttonRequestPassword) {
-                // Empty for now, WIP
+                MailButton(label: MailResourcesStrings.Localizable.buttonRequestPassword) {
+                    //TODO: 
+                }
+                .mailButtonStyle(.link)
+                .mailButtonFullWidth(true)
             }
-            .mailButtonStyle(.link)
-            .mailButtonFullWidth(true)
-            .hidden()
+            .padding(.horizontal, value: .medium)
+            .padding(.bottom, value: .medium)
         }
         .onChange(of: updatedMailboxPassword) { newValue in
             if !newValue.isEmpty {
