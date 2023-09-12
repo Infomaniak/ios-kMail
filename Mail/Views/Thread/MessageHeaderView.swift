@@ -30,8 +30,6 @@ struct MessageHeaderView: View {
     @EnvironmentObject private var navigationState: NavigationState
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var editedDraft: Draft?
-
     @ObservedRealmObject var message: Message
 
     @Binding var isHeaderExpanded: Bool
@@ -51,7 +49,18 @@ struct MessageHeaderView: View {
         .contentShape(Rectangle())
         .onTapGesture {
             if message.isDraft {
-                DraftUtils.editDraft(from: message, mailboxManager: mailboxManager, editedMessageDraft: $editedDraft)
+                DraftUtils.editDraft(
+                    from: message,
+                    mailboxManager: mailboxManager,
+                    editedMessageDraft: $navigationState.editedMessageDraft
+                )
+                matomo.track(eventWithCategory: .newMessage, name: "openFromDraft")
+                matomo.track(
+                    eventWithCategory: .newMessage,
+                    action: .data,
+                    name: "openLocalDraft",
+                    value: !(navigationState.editedMessageDraft?.isLoadedRemotely ?? false)
+                )
             } else if message.originalThread?.messages.isEmpty == false {
                 withAnimation {
                     isHeaderExpanded = false
@@ -59,9 +68,6 @@ struct MessageHeaderView: View {
                     matomo.track(eventWithCategory: .message, name: "openMessage", value: isMessageExpanded)
                 }
             }
-        }
-        .sheet(item: $editedDraft) { editedDraft in
-            ComposeMessageView.edit(draft: editedDraft, mailboxManager: mailboxManager)
         }
     }
 

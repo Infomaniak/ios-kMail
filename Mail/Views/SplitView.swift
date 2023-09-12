@@ -95,7 +95,7 @@ struct SplitView: View {
             }
         }
         .sheet(item: $navigationState.editedMessageDraft) { editedMessageDraft in
-            ComposeMessageView.edit(draft: editedMessageDraft, mailboxManager: mailboxManager)
+            ComposeMessageView(draft: editedMessageDraft, mailboxManager: mailboxManager)
         }
         .onChange(of: scenePhase) { newScenePhase in
             guard newScenePhase == .active else { return }
