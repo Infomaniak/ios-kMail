@@ -106,7 +106,7 @@ struct AccountView: View {
                 .mailButtonStyle(.destructive)
             }
             .padding(.horizontal, value: .medium)
-            .padding(.bottom, value: .medium)
+            .padding(.bottom, value: .regular)
         }
         .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccount, displayMode: .inline)
         .backButtonDisplayMode(.minimal)

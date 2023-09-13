@@ -52,7 +52,7 @@ public extension UIPadding {
     // MARK: OnBoarding
 
     static let onBoardingLogoTop = medium
-    static let onBoardingBottomButtons = medium
+    static let onBoardingBottomButtons = regular
 
     // MARK: Menu
 

@@ -117,7 +117,8 @@ struct AddMailboxView: View {
             .mailButtonLoading(isButtonLoading)
             .mailButtonFullWidth(true)
             .disabled(buttonDisabled)
-            .padding(value: .medium)
+            .padding(.horizontal, value: .medium)
+            .padding(.bottom, value: .regular)
         }
         .navigationBarTitle(MailResourcesStrings.Localizable.attachMailboxTitle, displayMode: .inline)
     }
