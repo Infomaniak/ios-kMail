@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: de, German
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Wed, 13 Sep 2023 10:20:38 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Wed, 13 Sep 2023 13:20:22 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1279,3 +1279,15 @@
 
 /* loco:65016e82bd99726dde081533 */
 "noConnection" = "Keine Verbindung";
+
+/* loco:65017fa44f4fa3e3b902d043 */
+"aiPromptTitle" = "Schreibassistent";
+
+/* loco:6501834aa4abf8d77708b7b5 */
+"aiPromptTag" = "Beta";
+
+/* loco:6501840ef58ecb8b620adb23 */
+"aiPromptPlaceholder" = "Sagen Sie dem Schreibassistenten, was Sie schreiben wollen. Zum Beispiel: \"eine Dankes-E-Mail für ein Willkommensgeschenk\".";
+
+/* loco:65019254a2948ddd0d0e0ca3 */
+"aiPromptValidateButton" = "Erzeugen Sie";
