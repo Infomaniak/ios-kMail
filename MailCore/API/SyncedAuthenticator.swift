@@ -31,7 +31,7 @@ final class SyncedAuthenticator: OAuthAuthenticator {
             SentrySDK
                 .addBreadcrumb(oldToken.generateBreadcrumb(level: .error,
                                                            message: "Refreshing token failed - Other \(error.debugDescription)"))
-            return .success(oldToken)
+            return .failure(error ?? MailError.unknownError)
         }
 
         // Couldn't refresh the token, API says it's invalid
