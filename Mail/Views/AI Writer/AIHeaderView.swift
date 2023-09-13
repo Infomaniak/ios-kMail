@@ -31,6 +31,7 @@ struct AIHeaderView: View {
             Text("Assistant à la rédaction")
 
             Text("Beta")
+                .tagModifier(foregroundColor: MailResourcesAsset.onAIColor, backgroundColor: MailResourcesAsset.aiColor)
         }
     }
 }
