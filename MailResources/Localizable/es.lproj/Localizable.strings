@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: elena willen
- * Exported at: Thu, 31 Aug 2023 13:09:24 +0200
+ * Exported by: Philippe Weidmann
+ * Exported at: Wed, 13 Sep 2023 10:20:38 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1276,3 +1276,6 @@
 
 /* loco:64edf250cb0c86ab3001d1b2 */
 "buttonStart" = "Empezar";
+
+/* loco:65016e82bd99726dde081533 */
+"noConnection" = "Sin conexión";

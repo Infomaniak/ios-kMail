@@ -26,6 +26,10 @@ class NetworkMonitor: ObservableObject {
     private var monitor: NWPathMonitor?
     private let queue = DispatchQueue.global()
 
+    public static let shared = NetworkMonitor()
+
+    private init() {}
+
     public func start() {
         if monitor == nil {
             monitor = NWPathMonitor()

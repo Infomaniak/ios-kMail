@@ -71,6 +71,10 @@ public class MailError: LocalizedError {
                                                               shouldDisplay: true)
     public static let incoherentThreadDate = MailError(code: "incoherentThreadDate")
 
+    public static let noConnection = MailError(code: "noConnection",
+                                               localizedDescription: MailResourcesStrings.Localizable.noConnection,
+                                               shouldDisplay: true)
+
     /// After an update from the server we are still without a default signature
     public static let defaultSignatureMissing = MailError(code: "defaultSignatureMissing")
 
