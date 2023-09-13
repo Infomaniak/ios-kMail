@@ -43,13 +43,10 @@ struct AIPromptView: View {
                 }
             }
 
-            TextField(
-                "Dites à l’assistant de rédaction ce que vous souhaitez écrire. Par exemple “un mail de remerciement pour un cadeau de bienvenue”.",
-                text: $userPrompt
-            )
-            .focused($textFieldFocused)
+            TextField(MailResourcesStrings.Localizable.aiPromptPlaceholder, text: $userPrompt)
+                .focused($textFieldFocused)
 
-            MailButton(label: "Générer") {
+            MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton) {
                 // TODO: j'imagine qu'il faut générer
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
