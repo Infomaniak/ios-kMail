@@ -41,7 +41,6 @@ struct AIPromptView: View {
                         .frame(width: 16, height: 16)
                         .foregroundColor(MailResourcesAsset.textSecondaryColor)
                 }
-
             }
 
             TextField(
