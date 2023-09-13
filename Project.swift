@@ -38,7 +38,7 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/realm/realm-swift", .upToNextMajor(from: "10.41.0")),
                           .package(url: "https://github.com/flowbe/SwiftRegex", .upToNextMajor(from: "1.0.0")),
                           .package(url: "https://github.com/matomo-org/matomo-sdk-ios", .upToNextMajor(from: "7.5.1")),
-                          .package(url: "https://github.com/siteline/SwiftUI-Introspect", .upToNextMajor(from: "0.12.0")),
+                          .package(url: "https://github.com/siteline/SwiftUI-Introspect", .upToNextMajor(from: "1.0.0")),
                           .package(
                               url: "https://github.com/Ambrdctr/SQRichTextEditor",
                               .revision("04737b7694ecc6cfd78631bce5fc370f310e7e14")
