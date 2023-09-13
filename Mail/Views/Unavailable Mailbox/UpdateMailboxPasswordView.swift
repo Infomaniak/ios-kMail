@@ -33,6 +33,7 @@ struct UpdateMailboxPasswordView: View {
     @State private var isShowingError = false
     @State private var isLoading = false
     @State private var isShowingDetachMailboxAlertView = false
+    @State private var snackBarAwareModifier = SnackBarAwareModifier(inset: 0)
 
     private var disableButton: Bool {
         return isLoading || showPasswordLengthWarning
@@ -101,6 +102,7 @@ struct UpdateMailboxPasswordView: View {
                 }
                 .mailButtonStyle(.link)
                 .mailButtonFullWidth(true)
+                .modifier(snackBarAwareModifier)
             }
             .padding(.horizontal, value: .medium)
             .padding(.bottom, value: .medium)
