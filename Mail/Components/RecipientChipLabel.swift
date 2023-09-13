@@ -112,7 +112,7 @@ class RecipientChipLabel: UILabel, UIKeyInput {
 
     public func updateColors(isFirstResponder: Bool) {
         if isExternal {
-            textColor = isFirstResponder ? MailResourcesAsset.onTagColor.color : MailResourcesAsset.textPrimaryColor.color
+            textColor = isFirstResponder ? MailResourcesAsset.onTagExternalColor.color : MailResourcesAsset.textPrimaryColor.color
             borderColor = MailResourcesAsset.yellowColor.color
             backgroundColor = isFirstResponder ? MailResourcesAsset.yellowColor.color : MailResourcesAsset.textFieldColor.color
         } else {

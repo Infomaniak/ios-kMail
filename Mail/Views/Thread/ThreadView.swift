@@ -80,11 +80,10 @@ struct ThreadView: View {
                             alert.state = .externalRecipient(state: externalTag)
                         } label: {
                             Text(MailResourcesStrings.Localizable.externalTag)
-                                .foregroundColor(MailResourcesAsset.onTagColor)
-                                .textStyle(.labelMedium)
-                                .padding(value: .verySmall)
-                                .background(MailResourcesAsset.yellowColor.swiftUIColor)
-                                .cornerRadius(2)
+                                .tagModifier(
+                                    foregroundColor: MailResourcesAsset.onTagExternalColor,
+                                    backgroundColor: MailResourcesAsset.yellowColor
+                                )
                         }
                     case .none:
                         EmptyView()
