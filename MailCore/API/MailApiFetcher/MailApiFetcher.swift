@@ -71,7 +71,11 @@ public final class MailApiFetcher: ApiFetcher, MailApiFetchable {
                                          "Decoded type": String(describing: T.self),
                                          "Raw JSON": rawJson])
                     }
+                } else if case .sessionTaskFailed(let error) = afError,
+                          (error as NSError).code == NSURLErrorNotConnectedToInternet {
+                    throw MailError.noConnection
                 }
+
                 throw AFErrorWithContext(request: request, afError: afError)
             } else {
                 throw error
