@@ -69,7 +69,10 @@ struct ThreadView: View {
                         .multilineTextAlignment(.leading)
                         .lineSpacing(8)
 
-                    let externalTag = thread.displayExternalRecipientState(mailboxManager: mailboxManager, recipientsList: thread.from)
+                    let externalTag = thread.displayExternalRecipientState(
+                        mailboxManager: mailboxManager,
+                        recipientsList: thread.from
+                    )
                     switch externalTag {
                     case .many, .one:
                         Button {
@@ -121,11 +124,13 @@ struct ThreadView: View {
                     let messages = thread.messages.freeze().toArray()
                     let originFolder = thread.folder?.freezeIfNeeded()
                     Task {
-                        try await actionsManager.performAction(
-                            target: messages,
-                            action: thread.flagged ? .unstar : .star,
-                            origin: .toolbar(originFolder: originFolder)
-                        )
+                        await tryOrDisplayError {
+                            try await actionsManager.performAction(
+                                target: messages,
+                                action: thread.flagged ? .unstar : .star,
+                                origin: .toolbar(originFolder: originFolder)
+                            )
+                        }
                     }
                 } label: {
                     (thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star).swiftUIImage
@@ -177,7 +182,7 @@ struct ThreadView: View {
 
     private func markThreadAsReadIfNeeded(thread: Thread) async {
         guard thread.hasUnseenMessages else { return }
-        
+
         let originFolder = thread.folder?.freezeIfNeeded()
         try? await actionsManager.performAction(
             target: thread.messages.toArray(),
@@ -200,13 +205,15 @@ struct ThreadView: View {
 
         let originFolder = thread.folder?.freezeIfNeeded()
         Task {
-            try await actionsManager.performAction(
-                target: messages,
-                action: action,
-                origin: .toolbar(originFolder: originFolder)
-            )
-            if action == .archive || action == .delete {
-                dismiss()
+            await tryOrDisplayError {
+                try await actionsManager.performAction(
+                    target: messages,
+                    action: action,
+                    origin: .toolbar(originFolder: originFolder)
+                )
+                if action == .archive || action == .delete {
+                    dismiss()
+                }
             }
         }
     }
