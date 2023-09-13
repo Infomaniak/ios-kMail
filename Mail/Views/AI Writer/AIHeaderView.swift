@@ -28,9 +28,9 @@ struct AIHeaderView: View {
                 .frame(width: 16, height: 16)
                 .foregroundColor(MailResourcesAsset.aiColor)
 
-            Text("Assistant à la rédaction")
+            Text(MailResourcesStrings.Localizable.aiPromptTitle)
 
-            Text("Beta")
+            Text(MailResourcesStrings.Localizable.aiPromptTag)
                 .tagModifier(foregroundColor: MailResourcesAsset.onAIColor, backgroundColor: MailResourcesAsset.aiColor)
         }
     }
