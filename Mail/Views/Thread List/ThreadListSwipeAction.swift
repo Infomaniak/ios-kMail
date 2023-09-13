@@ -28,6 +28,8 @@ private struct SwipeActionView: View {
 
     @EnvironmentObject private var actionsManager: ActionsManager
 
+    @ObservedObject private var networkMonitor = NetworkMonitor.shared
+
     @Binding var actionPanelMessages: [Message]?
     @Binding var moveSheetMessages: [Message]?
 
@@ -35,7 +37,7 @@ private struct SwipeActionView: View {
     let action: Action
 
     var body: some View {
-        Button(role: action.isDestructive ? .destructive : nil) {
+        Button(role: action.isDestructive && networkMonitor.isConnected ? .destructive : nil) {
             matomo.track(eventWithCategory: .swipeActions, action: .drag, name: action.matomoName)
             Task {
                 await tryOrDisplayError {

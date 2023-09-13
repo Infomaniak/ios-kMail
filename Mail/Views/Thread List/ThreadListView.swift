@@ -42,7 +42,7 @@ struct ThreadListView: View {
 
     @StateObject var viewModel: ThreadListViewModel
     @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
-    @StateObject private var networkMonitor = NetworkMonitor()
+    @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
     private var shouldDisplayEmptyView: Bool {
         viewModel.folder.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage
