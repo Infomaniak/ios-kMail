@@ -30,6 +30,10 @@ struct MailButtonFullWidthKey: EnvironmentKey {
     static var defaultValue = false
 }
 
+struct MailButtonFloatingActionButtonKey: EnvironmentKey {
+    static var defaultValue = false
+}
+
 struct MailButtonIconSizeKey: EnvironmentKey {
     static var defaultValue: CGFloat = UIConstants.buttonsIconSize
 }
@@ -47,6 +51,11 @@ extension EnvironmentValues {
     var mailButtonFullWidth: Bool {
         get { self[MailButtonFullWidthKey.self] }
         set { self[MailButtonFullWidthKey.self] = newValue }
+    }
+
+    var mailButtonFloatingActionButton: Bool {
+        get { self[MailButtonFloatingActionButtonKey.self] }
+        set { self[MailButtonFloatingActionButtonKey.self] = newValue }
     }
 
     var mailButtonIconSize: CGFloat {
@@ -69,6 +78,10 @@ extension View {
         environment(\.mailButtonFullWidth, fullWidth)
     }
 
+    func mailButtonFloatingActionButton(_ floatingActionButton: Bool) -> some View {
+        environment(\.mailButtonFloatingActionButton, floatingActionButton)
+    }
+
     func mailButtonIconSize(_ size: CGFloat) -> some View {
         environment(\.mailButtonIconSize, size)
     }
@@ -85,6 +98,7 @@ struct MailButton: View {
 
     @Environment(\.mailButtonStyle) private var style: Style
     @Environment(\.mailButtonFullWidth) private var fullWidth: Bool
+    @Environment(\.mailButtonFloatingActionButton) private var floatingActionButton: Bool
     @Environment(\.mailButtonIconSize) private var iconSize: CGFloat
     @Environment(\.mailButtonLoading) private var loading: Bool
 
@@ -106,7 +120,6 @@ struct MailButton: View {
                             .resizable()
                             .scaledToFit()
                             .frame(width: iconSize, height: iconSize)
-                            .padding(.vertical, 2)
                     }
                     if let label {
                         Text(label)
@@ -118,6 +131,7 @@ struct MailButton: View {
                     .opacity(loading ? 1 : 0)
             }
             .frame(maxWidth: fullWidth ? UIConstants.componentsMaxWidth : nil)
+            .frame(height: fullWidth || floatingActionButton ? 56 : 40)
         }
         .disabled(loading || !isEnabled)
         .buttonStyle(MailButtonStyle(style: style))

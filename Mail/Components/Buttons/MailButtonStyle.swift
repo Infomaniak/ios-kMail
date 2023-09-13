@@ -38,8 +38,7 @@ struct MailButtonStyle: ButtonStyle {
     @ViewBuilder private func largeStyle(configuration: Configuration) -> some View {
         configuration.label
             .textStyle(isEnabled ? .bodyMediumOnAccent : .bodyMediumOnDisabled)
-            .padding(.vertical, 18)
-            .padding(.horizontal, 20)
+            .padding(.horizontal, value: .medium)
             .background(largeBackground(configuration: configuration))
             .clipShape(RoundedRectangle(cornerRadius: UIConstants.buttonsRadius))
             .brightness(largeBrightness(configuration: configuration))
