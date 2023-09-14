@@ -24,13 +24,12 @@ import SwiftUIBackports
 
 extension View {
     func floatingPanel<Content: View>(isPresented: Binding<Bool>,
-                                      dragIndicator: Visibility = .visible,
                                       @ViewBuilder content: @escaping () -> Content) -> some View {
         sheet(isPresented: isPresented) {
             if #available(iOS 16.0, *) {
-                content().modifier(SelfSizingPanelViewModifier(dragIndicator: dragIndicator))
+                content().modifier(SelfSizingPanelViewModifier())
             } else {
-                content().modifier(SelfSizingPanelBackportViewModifier(dragIndicator: dragIndicator))
+                content().modifier(SelfSizingPanelBackportViewModifier())
             }
         }
     }
