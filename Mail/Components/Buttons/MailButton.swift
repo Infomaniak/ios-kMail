@@ -42,6 +42,14 @@ struct MailButtonLoadingKey: EnvironmentKey {
     static var defaultValue = false
 }
 
+struct MailButtonCustomTextStyleKey: EnvironmentKey {
+    static var defaultValue: MailTextStyle? = nil
+}
+
+struct MailButtonCustomBackgroundKey: EnvironmentKey {
+    static var defaultValue: Color? = nil
+}
+
 extension EnvironmentValues {
     var mailButtonStyle: MailButton.Style {
         get { self[MailButtonStyleKey.self] }
@@ -67,6 +75,16 @@ extension EnvironmentValues {
         get { self[MailButtonLoadingKey.self] }
         set { self[MailButtonLoadingKey.self] = newValue }
     }
+
+    var mailButtonCustomTextStyle: MailTextStyle? {
+        get { self[MailButtonCustomTextStyleKey.self] }
+        set { self[MailButtonCustomTextStyleKey.self] = newValue }
+    }
+
+    var mailButtonCustomBackground: Color? {
+        get { self[MailButtonCustomBackgroundKey.self] }
+        set { self[MailButtonCustomBackgroundKey.self] = newValue }
+    }
 }
 
 extension View {
@@ -88,6 +106,14 @@ extension View {
 
     func mailButtonLoading(_ loading: Bool) -> some View {
         environment(\.mailButtonLoading, loading)
+    }
+
+    func mailButtonCustomTextStyle(_ textStyle: MailTextStyle?) -> some View {
+        environment(\.mailButtonCustomTextStyle, textStyle)
+    }
+
+    func mailButtonCustomBackground(_ background: Color?) -> some View {
+        environment(\.mailButtonCustomBackground, background)
     }
 }
 
