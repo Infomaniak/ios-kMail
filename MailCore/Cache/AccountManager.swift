@@ -411,6 +411,11 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         try await updateUser(for: currentAccount)
     }
 
+    public func askMailboxPassword(mailbox: Mailbox) async throws {
+        guard let apiFetcher = currentApiFetcher else { return }
+        _ = try await apiFetcher.askMailboxPassword(mailbox: mailbox)
+    }
+
     public func detachMailbox(mailbox: Mailbox) async throws {
         guard let apiFetcher = currentApiFetcher else { return }
         _ = try await apiFetcher.detachMailbox(mailbox: mailbox)

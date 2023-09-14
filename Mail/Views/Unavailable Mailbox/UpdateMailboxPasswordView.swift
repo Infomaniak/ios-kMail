@@ -33,6 +33,7 @@ struct UpdateMailboxPasswordView: View {
     @State private var isShowingError = false
     @State private var isLoading = false
     @State private var isShowingDetachMailboxAlertView = false
+    @State private var snackBarAwareModifier = SnackBarAwareModifier(inset: 0)
 
     private var disableButton: Bool {
         return isLoading || showPasswordLengthWarning
@@ -51,13 +52,17 @@ struct UpdateMailboxPasswordView: View {
                         .textStyle(.bodySecondary)
                     Text(MailResourcesStrings.Localizable.enterPasswordDescription2(mailbox.email))
                         .textStyle(.bodySecondary)
-                    MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
-                        matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailbox")
-                        isShowingDetachMailboxAlertView = true
+
+                    HStack(spacing: UIPadding.verySmall) {
+                        Text(MailResourcesStrings.Localizable.enterPasswordOrDescription)
+                            .textStyle(.bodySecondary)
+                        MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
+                            matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailbox")
+                            isShowingDetachMailboxAlertView = true
+                        }
+                        .mailButtonStyle(.link)
+                        .disabled(isLoading)
                     }
-                    .mailButtonStyle(.link)
-                    .mailButtonMinimizeHeight(true)
-                    .disabled(isLoading)
                 }
 
                 VStack(alignment: .leading) {
@@ -87,20 +92,30 @@ struct UpdateMailboxPasswordView: View {
         }
         .padding()
         .safeAreaInset(edge: .bottom) {
-            MailButton(label: MailResourcesStrings.Localizable.buttonConfirm) {
-                matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "updatePassword")
-                updateMailboxPassword()
-            }
-            .mailButtonFullWidth(true)
-            .disabled(disableButton)
-            .padding(value: .medium)
+            VStack(spacing: UIPadding.medium) {
+                MailButton(label: MailResourcesStrings.Localizable.buttonConfirm) {
+                    matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "updatePassword")
+                    updateMailboxPassword()
+                }
+                .mailButtonFullWidth(true)
+                .disabled(disableButton)
 
-            MailButton(label: MailResourcesStrings.Localizable.buttonRequestPassword) {
-                // Empty for now, WIP
+                MailButton(label: MailResourcesStrings.Localizable.buttonRequestPassword) {
+                    matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "requestPassword")
+                    askMailboxPassword()
+                }
+                .mailButtonStyle(.link)
+                .mailButtonFullWidth(true)
             }
-            .mailButtonStyle(.link)
-            .mailButtonFullWidth(true)
-            .hidden()
+            .padding(.horizontal, value: .medium)
+            .padding(.bottom, value: .regular)
+        }
+        .modifier(snackBarAwareModifier)
+        .overlay {
+            ViewGeometry(key: BottomSafeAreaKey.self, property: \.safeAreaInsets.bottom)
+        }
+        .onPreferenceChange(BottomSafeAreaKey.self) { value in
+            snackBarAwareModifier.inset = value
         }
         .onChange(of: updatedMailboxPassword) { newValue in
             if !newValue.isEmpty {
@@ -134,6 +149,15 @@ struct UpdateMailboxPasswordView: View {
                 snackbarPresenter.show(message: error.localizedDescription)
             }
             isLoading = false
+        }
+    }
+
+    func askMailboxPassword() {
+        Task {
+            await tryOrDisplayError {
+                try await accountManager.askMailboxPassword(mailbox: mailbox)
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarMailboxPasswordRequested)
+            }
         }
     }
 }
