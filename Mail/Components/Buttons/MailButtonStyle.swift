@@ -26,6 +26,8 @@ struct MailButtonStyle: ButtonStyle {
 
     @Environment(\.mailButtonFullWidth) private var fullWidth: Bool
     @Environment(\.mailButtonMinimizeHeight) private var minimizeHeight: Bool
+    @Environment(\.mailButtonCustomTextStyle) private var customTextStyle: MailTextStyle?
+    @Environment(\.mailButtonCustomBackground) private var customBackground: Color?
 
     let style: MailButton.Style
     let iconOnlyButton: Bool
@@ -57,22 +59,19 @@ struct MailButtonStyle: ButtonStyle {
             linkStyle(configuration: configuration)
         }
     }
+}
 
+// MARK: - Large style helpers
+
+extension MailButtonStyle {
     @ViewBuilder private func largeStyle(configuration: Configuration) -> some View {
         configuration.label
-            .textStyle(isEnabled ? .bodyMediumOnAccent : .bodyMediumOnDisabled)
+            .textStyle(largeTextStyle())
             .padding(.horizontal, value: .medium)
             .frame(width: buttonWidth, height: buttonHeight)
             .background(largeBackground(configuration: configuration))
             .clipShape(RoundedRectangle(cornerRadius: UIConstants.buttonsRadius))
             .brightness(largeBrightness(configuration: configuration))
-    }
-
-    @ViewBuilder private func linkStyle(configuration: Configuration) -> some View {
-        configuration.label
-            .textStyle(linkTextStyle())
-            .opacity(configuration.isPressed ? 0.7 : 1)
-            .frame(width: buttonWidth, height: buttonHeight)
     }
 
     private func largeBackground(configuration: Configuration) -> Color {
@@ -82,7 +81,14 @@ struct MailButtonStyle: ButtonStyle {
         if colorScheme == .light {
             opacity = configuration.isPressed ? 0.8 : 1
         }
-        return .accentColor.opacity(opacity)
+
+        let backgroundColor: Color
+        if let customBackground {
+            backgroundColor = customBackground
+        } else {
+            backgroundColor = .accentColor
+        }
+        return backgroundColor.opacity(opacity)
     }
 
     private func largeBrightness(configuration: Configuration) -> Double {
@@ -90,7 +96,32 @@ struct MailButtonStyle: ButtonStyle {
         return configuration.isPressed ? 0.1 : 0
     }
 
+    private func largeTextStyle() -> MailTextStyle {
+        guard isEnabled else { return .bodyMediumOnDisabled }
+
+        if let customTextStyle {
+            return customTextStyle
+        } else {
+            return .bodyMediumOnAccent
+        }
+    }
+}
+
+// MARK: - Link style helpers
+
+extension MailButtonStyle {
+    @ViewBuilder private func linkStyle(configuration: Configuration) -> some View {
+        configuration.label
+            .textStyle(linkTextStyle())
+            .opacity(configuration.isPressed ? 0.7 : 1)
+            .frame(width: buttonWidth, height: buttonHeight)
+    }
+
     private func linkTextStyle() -> MailTextStyle {
+        if let customTextStyle {
+            return customTextStyle
+        }
+
         switch style {
         case .link:
             return .bodyMediumAccent
