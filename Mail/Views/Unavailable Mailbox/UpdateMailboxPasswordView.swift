@@ -56,7 +56,7 @@ struct UpdateMailboxPasswordView: View {
                     HStack(spacing: UIPadding.verySmall) {
                         Text(MailResourcesStrings.Localizable.enterPasswordOrDescription)
                             .textStyle(.bodySecondary)
-                    	MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
+                        MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
                             matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailbox")
                             isShowingDetachMailboxAlertView = true
                         }
@@ -108,7 +108,7 @@ struct UpdateMailboxPasswordView: View {
                 .mailButtonFullWidth(true)
             }
             .padding(.horizontal, value: .medium)
-            .padding(.bottom, value: .medium)
+            .padding(.bottom, value: .regular)
         }
         .modifier(snackBarAwareModifier)
         .overlay {
