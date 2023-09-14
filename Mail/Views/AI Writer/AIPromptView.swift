@@ -49,6 +49,8 @@ struct AIPromptView: View {
             MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton) {
                 // TODO: j'imagine qu'il faut générer
             }
+            .mailButtonCustomTextStyle(.bodyMediumOnAI)
+            .mailButtonCustomBackground(MailResourcesAsset.aiColor.swiftUIColor)
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .padding(value: .regular)
