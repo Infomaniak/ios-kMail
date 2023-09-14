@@ -52,13 +52,17 @@ struct UpdateMailboxPasswordView: View {
                         .textStyle(.bodySecondary)
                     Text(MailResourcesStrings.Localizable.enterPasswordDescription2(mailbox.email))
                         .textStyle(.bodySecondary)
-                    MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
-                        matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailbox")
-                        isShowingDetachMailboxAlertView = true
+
+                    HStack(spacing: UIPadding.verySmall) {
+                        Text(MailResourcesStrings.Localizable.enterPasswordOrDescription)
+                            .textStyle(.bodySecondary)
+                    	MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
+                            matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailbox")
+                            isShowingDetachMailboxAlertView = true
+                        }
+                        .mailButtonStyle(.link)
+                        .disabled(isLoading)
                     }
-                    .mailButtonStyle(.link)
-                    .mailButtonMinimizeHeight(true)
-                    .disabled(isLoading)
                 }
 
                 VStack(alignment: .leading) {
