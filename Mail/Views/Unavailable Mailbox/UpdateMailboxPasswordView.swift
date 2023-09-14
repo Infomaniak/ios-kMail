@@ -102,10 +102,16 @@ struct UpdateMailboxPasswordView: View {
                 }
                 .mailButtonStyle(.link)
                 .mailButtonFullWidth(true)
-                .modifier(snackBarAwareModifier)
             }
             .padding(.horizontal, value: .medium)
             .padding(.bottom, value: .medium)
+        }
+        .modifier(snackBarAwareModifier)
+        .overlay {
+            ViewGeometry(key: BottomSafeAreaKey.self, property: \.safeAreaInsets.bottom)
+        }
+        .onPreferenceChange(BottomSafeAreaKey.self) { value in
+            snackBarAwareModifier.inset = value
         }
         .onChange(of: updatedMailboxPassword) { newValue in
             if !newValue.isEmpty {
