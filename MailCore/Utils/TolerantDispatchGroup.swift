@@ -39,7 +39,7 @@ public class TolerantDispatchGroup {
             }
 
             dispatchGroup.leave()
-            callBalancer -= 0
+            callBalancer -= 1
         }
     }
 
