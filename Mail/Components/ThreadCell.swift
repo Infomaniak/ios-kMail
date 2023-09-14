@@ -47,15 +47,17 @@ struct ThreadCellDataHolder {
 
     init(thread: Thread) {
         let lastMessageNotFromSent = thread.messages.last { $0.folder?.role != .sent } ?? thread.messages.last
-        recipientToDisplay = lastMessageNotFromSent?.from.last
-
         date = thread.date.customRelativeFormatted
 
         subject = thread.formattedSubject
 
-        var content = thread.messages.last?.preview
-        if thread.folder?.role == .sent {
+        let content: String?
+        if FolderRole.writtenByMeFolders.contains(where: { $0 == thread.folder?.role }) {
+            recipientToDisplay = lastMessageNotFromSent?.to.first
             content = (thread.lastMessageFromFolder ?? thread.messages.last)?.preview
+        } else {
+            recipientToDisplay = lastMessageNotFromSent?.from.first
+            content = thread.messages.last?.preview
         }
 
         if let content, !content.isEmpty {

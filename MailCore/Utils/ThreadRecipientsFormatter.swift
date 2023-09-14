@@ -73,7 +73,7 @@ public extension Thread {
         }
 
         private func formattedTo(thread: Thread) -> String {
-            guard let to = thread.to.last else { return MailResourcesStrings.Localizable.unknownRecipientTitle }
+            guard let to = thread.to.first else { return MailResourcesStrings.Localizable.unknownRecipientTitle }
             return CommonContact(recipient: to, contextMailboxManager: contextMailboxManager).formatted()
         }
 

@@ -94,6 +94,8 @@ public enum FolderRole: String, Codable, PersistableEnum {
             return MailResourcesAsset.bin
         }
     }
+
+    public static let writtenByMeFolders: [FolderRole] = [.sent, .draft]
 }
 
 public enum ToolFolderType: String, PersistableEnum {

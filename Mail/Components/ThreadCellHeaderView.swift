@@ -35,7 +35,8 @@ struct ThreadCellHeaderView: View {
             Text(
                 thread,
                 format: .recipientNameList(contextMailboxManager: mailboxManager,
-                                           style: thread.folder?.role == .draft ? .to : .from)
+                                           style: FolderRole.writtenByMeFolders
+                                               .contains { $0 == thread.folder?.role } ? .to : .from)
             )
             .textStyle(.bodyMedium)
             .lineLimit(1)
