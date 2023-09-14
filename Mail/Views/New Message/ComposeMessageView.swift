@@ -174,7 +174,7 @@ struct ComposeMessageView: View {
                 dismissMessageView()
             }
         }
-        .floatingPanel(isPresented: $isShowingAIPrompt, dragIndicator: .hidden) {
+        .aiPromptPresenter(isPresenter: $isShowingAIPrompt) {
             AIPromptView()
         }
         .matomoView(view: ["ComposeMessage"])
