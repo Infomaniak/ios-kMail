@@ -222,6 +222,7 @@ struct OnboardingView: View {
                         }
                     }
                     .mailButtonIconSize(24)
+                    .mailButtonStyle(.floatingActionButton)
                 }
             }
             .padding(.horizontal, value: .medium)

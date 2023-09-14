@@ -77,7 +77,7 @@ struct CreateAccountView: View {
             }
             .mailButtonFullWidth(true)
             .mailButtonLoading(loginHandler.isLoading)
-            .padding(.bottom, value: .medium)
+            .padding(.bottom, value: .regular)
         }
         .padding(.horizontal, value: .medium)
         .sheet(isPresented: $isPresentingCreateAccount) {

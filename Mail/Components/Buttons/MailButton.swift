@@ -30,6 +30,10 @@ struct MailButtonFullWidthKey: EnvironmentKey {
     static var defaultValue = false
 }
 
+struct MailButtonMinimizeHeightKey: EnvironmentKey {
+    static var defaultValue = false
+}
+
 struct MailButtonIconSizeKey: EnvironmentKey {
     static var defaultValue: CGFloat = UIConstants.buttonsIconSize
 }
@@ -47,6 +51,11 @@ extension EnvironmentValues {
     var mailButtonFullWidth: Bool {
         get { self[MailButtonFullWidthKey.self] }
         set { self[MailButtonFullWidthKey.self] = newValue }
+    }
+
+    var mailButtonMinimizeHeight: Bool {
+        get { self[MailButtonMinimizeHeightKey.self] }
+        set { self[MailButtonMinimizeHeightKey.self] = newValue }
     }
 
     var mailButtonIconSize: CGFloat {
@@ -67,6 +76,10 @@ extension View {
 
     func mailButtonFullWidth(_ fullWidth: Bool) -> some View {
         environment(\.mailButtonFullWidth, fullWidth)
+    }
+
+    func mailButtonMinimizeHeight(_ minimize: Bool) -> some View {
+        environment(\.mailButtonMinimizeHeight, minimize)
     }
 
     func mailButtonIconSize(_ size: CGFloat) -> some View {
@@ -94,7 +107,11 @@ struct MailButton: View {
     let action: () -> Void
 
     enum Style {
-        case large, link, smallLink, destructive
+        case floatingActionButton, large, link, smallLink, destructive
+    }
+
+    private var iconOnlyButton: Bool {
+        return label == nil
     }
 
     var body: some View {
@@ -106,7 +123,6 @@ struct MailButton: View {
                             .resizable()
                             .scaledToFit()
                             .frame(width: iconSize, height: iconSize)
-                            .padding(.vertical, 2)
                     }
                     if let label {
                         Text(label)
@@ -120,7 +136,7 @@ struct MailButton: View {
             .frame(maxWidth: fullWidth ? UIConstants.componentsMaxWidth : nil)
         }
         .disabled(loading || !isEnabled)
-        .buttonStyle(MailButtonStyle(style: style))
+        .buttonStyle(MailButtonStyle(style: style, iconOnlyButton: iconOnlyButton))
         .animation(.easeOut(duration: 0.25), value: isEnabled)
     }
 }

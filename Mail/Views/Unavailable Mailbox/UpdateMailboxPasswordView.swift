@@ -56,6 +56,7 @@ struct UpdateMailboxPasswordView: View {
                         isShowingDetachMailboxAlertView = true
                     }
                     .mailButtonStyle(.link)
+                    .mailButtonMinimizeHeight(true)
                     .disabled(isLoading)
                 }
 
