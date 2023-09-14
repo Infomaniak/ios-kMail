@@ -34,7 +34,7 @@ struct FloatingActionButtonModifier: ViewModifier {
 
             if isEnabled {
                 MailButton(icon: icon, label: title, action: action)
-                    .mailButtonFloatingActionButton(true)
+                    .mailButtonStyle(.floatingActionButton)
                     .padding(.trailing, value: .medium)
                     .padding(.bottom, UIPadding.floatingButtonBottom)
                     .modifier(snackBarAwareModifier)

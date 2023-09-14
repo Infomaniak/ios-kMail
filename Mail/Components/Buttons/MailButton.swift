@@ -30,7 +30,7 @@ struct MailButtonFullWidthKey: EnvironmentKey {
     static var defaultValue = false
 }
 
-struct MailButtonFloatingActionButtonKey: EnvironmentKey {
+struct MailButtonMinimizeHeightKey: EnvironmentKey {
     static var defaultValue = false
 }
 
@@ -53,9 +53,9 @@ extension EnvironmentValues {
         set { self[MailButtonFullWidthKey.self] = newValue }
     }
 
-    var mailButtonFloatingActionButton: Bool {
-        get { self[MailButtonFloatingActionButtonKey.self] }
-        set { self[MailButtonFloatingActionButtonKey.self] = newValue }
+    var mailButtonMinimizeHeight: Bool {
+        get { self[MailButtonMinimizeHeightKey.self] }
+        set { self[MailButtonMinimizeHeightKey.self] = newValue }
     }
 
     var mailButtonIconSize: CGFloat {
@@ -78,8 +78,8 @@ extension View {
         environment(\.mailButtonFullWidth, fullWidth)
     }
 
-    func mailButtonFloatingActionButton(_ floatingActionButton: Bool) -> some View {
-        environment(\.mailButtonFloatingActionButton, floatingActionButton)
+    func mailButtonMinimizeHeight(_ minimize: Bool) -> some View {
+        environment(\.mailButtonMinimizeHeight, minimize)
     }
 
     func mailButtonIconSize(_ size: CGFloat) -> some View {
@@ -98,7 +98,6 @@ struct MailButton: View {
 
     @Environment(\.mailButtonStyle) private var style: Style
     @Environment(\.mailButtonFullWidth) private var fullWidth: Bool
-    @Environment(\.mailButtonFloatingActionButton) private var floatingActionButton: Bool
     @Environment(\.mailButtonIconSize) private var iconSize: CGFloat
     @Environment(\.mailButtonLoading) private var loading: Bool
 
@@ -108,7 +107,11 @@ struct MailButton: View {
     let action: () -> Void
 
     enum Style {
-        case large, link, smallLink, destructive
+        case floatingActionButton, large, link, smallLink, destructive
+    }
+
+    private var iconOnlyButton: Bool {
+        return label == nil
     }
 
     var body: some View {
@@ -131,10 +134,9 @@ struct MailButton: View {
                     .opacity(loading ? 1 : 0)
             }
             .frame(maxWidth: fullWidth ? UIConstants.componentsMaxWidth : nil)
-            .frame(height: fullWidth || floatingActionButton ? 56 : 40)
         }
         .disabled(loading || !isEnabled)
-        .buttonStyle(MailButtonStyle(style: style))
+        .buttonStyle(MailButtonStyle(style: style, iconOnlyButton: iconOnlyButton))
         .animation(.easeOut(duration: 0.25), value: isEnabled)
     }
 }
