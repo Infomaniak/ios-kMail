@@ -24,7 +24,9 @@ public enum MessageBodyUtils {
     private static let blockquote = "blockquote"
 
     private static var quoteDescriptors = [
-        "#divRplyFwdMsg", // Outlook
+        // Do not detect this quote as long as we can't detect siblings quotes or else a single reply will be missing among the
+        // many replies of an Outlook reply "chain", which is worst than simply ignoring it
+//        "#divRplyFwdMsg", // Outlook
         "#isForwardContent",
         "#isReplyContent",
         "#mailcontent:not(table)",
@@ -76,10 +78,7 @@ public enum MessageBodyUtils {
     private static func findFirstKnownParentQuoteDescriptor(htmlDocumentWithoutQuote: Document) throws -> String {
         var currentQuoteDescriptor = ""
         for quoteDescriptor in quoteDescriptors {
-            let quotedContentElement = try selectElementAndFollowingSiblings(
-                document: htmlDocumentWithoutQuote,
-                quoteDescriptor: quoteDescriptor
-            )
+            let quotedContentElement = try htmlDocumentWithoutQuote.select(quoteDescriptor)
             if !quotedContentElement.isEmpty() {
                 try quotedContentElement.remove()
                 currentQuoteDescriptor = quoteDescriptor
@@ -99,10 +98,7 @@ public enum MessageBodyUtils {
             }
             return try (htmlDocumentWithQuote.outerHtml(), blockquoteElement?.outerHtml())
         } else if !currentQuoteDescriptor.isEmpty {
-            let quotedContentElements = try selectElementAndFollowingSiblings(
-                document: htmlDocumentWithQuote,
-                quoteDescriptor: currentQuoteDescriptor
-            )
+            let quotedContentElements = try htmlDocumentWithQuote.select(currentQuoteDescriptor)
             try quotedContentElements.remove()
             return try (htmlDocumentWithQuote.outerHtml(), quotedContentElements.outerHtml())
         } else {
@@ -117,13 +113,6 @@ public enum MessageBodyUtils {
     /// - Returns: A new cssQuery
     private static func anyCssClassContaining(cssClass: String) -> String {
         return "[class*=\(cssClass)]"
-    }
-
-    /// Some mail clients add the history in a new block, at the same level as the old one.
-    /// And so we match the current block, as well as all those that follow and that are at the same level
-    /// - Returns: [Elements] containing all the blocks that have been matched
-    private static func selectElementAndFollowingSiblings(document: Document, quoteDescriptor: String) throws -> Elements {
-        return try document.select("\(quoteDescriptor), \(quoteDescriptor) ~ *")
     }
 
     private static func selectLastParentBlockQuote(document: Document) throws -> Element? {
