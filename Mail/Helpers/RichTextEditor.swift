@@ -414,10 +414,9 @@ enum ToolbarAction: Int {
     }
 
     var tint: UIColor {
-        switch self {
-        case .ai:
+        if self == .ai {
             return MailResourcesAsset.aiColor.color
-        default:
+        } else {
             return MailResourcesAsset.textSecondaryColor.color
         }
     }
