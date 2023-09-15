@@ -83,6 +83,8 @@ struct AIPromptView: View {
     }
 }
 
-#Preview {
-    AIPromptView()
+struct AIPromptView_Previews: PreviewProvider {
+    static var previews: some View {
+        AIPromptView()
+    }
 }
