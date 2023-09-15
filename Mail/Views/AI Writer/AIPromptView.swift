@@ -73,7 +73,10 @@ struct AIPromptView: View {
             }
 
             MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton) {
-                // TODO: j'imagine qu'il faut générer
+                Task {
+                    let message = AIMessage(type: .user, content: userPrompt)
+                    try await accountManager.currentApiFetcher?.createAIConversation(messages: [message])
+                }
             }
             .mailButtonCustomTextStyle(.bodyMediumOnAI)
             .mailButtonCustomBackground(MailResourcesAsset.aiColor.swiftUIColor)
