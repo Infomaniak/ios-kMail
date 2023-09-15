@@ -23,7 +23,8 @@ import InfomaniakCore
 
 public extension ApiEnvironment {
     var mailHost: String {
-        return "mail.\(host)"
+//        return "mail.\(host)"
+        return "mail-mr-4462.preprod.dev.infomaniak.ch"
     }
 }
 
@@ -89,6 +90,10 @@ public extension Endpoint {
     static func updateMailboxPassword(mailboxId: Int) -> Endpoint {
         return .base
             .appending(path: "/securedProxy/cache/invalidation/profile/workspace/mailbox/\(mailboxId)/update_password")
+    }
+
+    static func ai() -> Endpoint {
+        return .base.appending(path: "/ia")
     }
 
     static func askMailboxPassword(hostingId: Int, mailboxName: String) -> Endpoint {
