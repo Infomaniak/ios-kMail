@@ -18,6 +18,7 @@
  */
 
 import SwiftUI
+import SwiftUIBackports
 
 extension View {
     func aiPromptPresenter<ModalContent: View>(isPresenter: Binding<Bool>, @ViewBuilder modalContent: @escaping () -> ModalContent) -> some View {
@@ -37,23 +38,20 @@ struct AIPromptPresenter<ModalContent: View>: ViewModifier {
             .sheet(isPresented: Binding(get: {
                 guard isCompactWindow else { return false }
                 return isPresented
-            }, set: { newValue in
-                isPresented = newValue
-            })) {
+            }, set: { isPresented = $0 })) {
                 if #available(iOS 16.0, *) {
                     modalContent()
-                        .modifier(SelfSizingPanelViewModifier(dragIndicator: .hidden))
+                        .background(ViewGeometry(key: ViewHeightKey.self, property: \.size.height))
+                        .presentationDetents([.height(224)])
                 } else {
                     modalContent()
-                        .modifier(SelfSizingPanelBackportViewModifier(dragIndicator: .hidden))
+                        .backport.presentationDetents([.medium])
                 }
             }
             .customAlert(isPresented: Binding(get: {
                 guard !isCompactWindow else { return false }
                 return isPresented
-            }, set: { newValue in
-                isPresented = newValue
-            })) {
+            }, set: { isPresented = $0 })) {
                 modalContent()
             }
     }
