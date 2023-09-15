@@ -31,4 +31,9 @@ public enum AIMessageType: Codable {
 public struct AIMessage: Codable {
     let type: AIMessageType
     let content: String
+
+    public init(type: AIMessageType, content: String) {
+        self.type = type
+        self.content = content
+    }
 }
