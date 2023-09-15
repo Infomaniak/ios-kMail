@@ -136,7 +136,7 @@ public enum NotificationsHelper {
             content.title = MailResourcesStrings.Localizable.unknownRecipientTitle
         }
         content.subtitle = message.formattedSubject
-        content.body = getCleanBodyFrom(message: message)
+        content.body = await getCleanBodyFrom(message: message)
         content.threadIdentifier = "\(mailboxId)_\(userId)"
         content.targetContentIdentifier = "\(userId)_\(mailboxId)_\(message.uid)"
         content.badge = await getUnreadCount() as NSNumber
@@ -148,12 +148,13 @@ public enum NotificationsHelper {
         return content
     }
 
-    private static func getCleanBodyFrom(message: Message) -> String {
+    private static func getCleanBodyFrom(message: Message) async -> String {
         guard let fullBody = message.body?.value,
-              let bodyType = message.body?.type,
-              let body = MessageBodyUtils.splitBodyAndQuote(messageBody: fullBody)?.messageBody else {
+              let bodyType = message.body?.type else {
             return message.preview
         }
+
+        let body = await MessageBodyUtils.splitBodyAndQuote(messageBody: fullBody).messageBody
 
         guard bodyType != "text/plain" else {
             return body.trimmingCharacters(in: .whitespacesAndNewlines)

@@ -73,20 +73,11 @@ extension MessageView {
         presentableBody.body = detachedMessage
         let bodyValue = detachedMessage.value ?? ""
 
-        // Heuristic to give up on mail too large for "perfect" preprocessing.
-        guard bodyValue.lengthOfBytes(using: String.Encoding.utf8) < Self.bodySizeThreshold else {
-            DDLogInfo("give up on processing, file too large")
-            mutate(compactBody: bodyValue, quote: nil)
-            return
-        }
-
         let task = Task.detached {
-            guard let messageBodyQuote = MessageBodyUtils.splitBodyAndQuote(messageBody: bodyValue) else {
-                return
-            }
-
+            let messageBodyQuote = await MessageBodyUtils.splitBodyAndQuote(messageBody: bodyValue)
             await mutate(compactBody: messageBodyQuote.messageBody, quote: messageBodyQuote.quote)
         }
+
         await task.finish()
     }
 

@@ -44,29 +44,41 @@ public enum MessageBodyUtils {
         "blockquote[type=\"cite\"]"
     ]
 
-    public static func splitBodyAndQuote(messageBody: String) -> MessageBodyQuote? {
-        do {
-            let htmlDocumentWithQuote = try SwiftSoup.parse(messageBody)
-            let htmlDocumentWithoutQuote = try SwiftSoup.parse(messageBody)
+    public static func splitBodyAndQuote(messageBody: String) async -> MessageBodyQuote {
+        let task = Task {
+            do {
+                let htmlDocumentWithQuote = try SwiftSoup.parse(messageBody)
+                let htmlDocumentWithoutQuote = try SwiftSoup.parse(messageBody)
 
-            let blockquoteElement = try findAndRemoveLastParentBlockQuote(htmlDocumentWithoutQuote: htmlDocumentWithoutQuote)
-            var currentQuoteDescriptor =
-                try findFirstKnownParentQuoteDescriptor(htmlDocumentWithoutQuote: htmlDocumentWithoutQuote)
+                let blockquoteElement = try findAndRemoveLastParentBlockQuote(htmlDocumentWithoutQuote: htmlDocumentWithoutQuote)
+                var currentQuoteDescriptor =
+                    try findFirstKnownParentQuoteDescriptor(htmlDocumentWithoutQuote: htmlDocumentWithoutQuote)
 
-            if currentQuoteDescriptor.isEmpty {
-                currentQuoteDescriptor = blockquoteElement == nil ? "" : blockquote
+                if currentQuoteDescriptor.isEmpty {
+                    currentQuoteDescriptor = blockquoteElement == nil ? "" : blockquote
+                }
+
+                let (body, quote) = try await splitBodyAndQuote(
+                    blockquoteElement: blockquoteElement,
+                    htmlDocumentWithQuote: htmlDocumentWithQuote,
+                    currentQuoteDescriptor: currentQuoteDescriptor
+                )
+                return MessageBodyQuote(messageBody: quote?.isEmpty ?? true ? messageBody : body, quote: quote)
+            } catch {
+                DDLogError("Error splitting blockquote \(error)")
             }
-
-            let (body, quote) = try splitBodyAndQuote(
-                blockquoteElement: blockquoteElement,
-                htmlDocumentWithQuote: htmlDocumentWithQuote,
-                currentQuoteDescriptor: currentQuoteDescriptor
-            )
-            return MessageBodyQuote(messageBody: quote?.isEmpty ?? true ? messageBody : body, quote: quote)
-        } catch {
-            DDLogError("Error splitting blockquote \(error)")
+            return MessageBodyQuote(messageBody: messageBody, quote: nil)
         }
-        return nil
+
+        let timeoutTask = Task {
+            try await Task.sleep(nanoseconds: UInt64(1.5) * NSEC_PER_SEC)
+            task.cancel()
+        }
+
+        let result = await task.value
+        timeoutTask.cancel()
+
+        return result
     }
 
     private static func findAndRemoveLastParentBlockQuote(htmlDocumentWithoutQuote: Document) throws -> Element? {
@@ -88,9 +100,9 @@ public enum MessageBodyUtils {
     }
 
     private static func splitBodyAndQuote(blockquoteElement: Element?, htmlDocumentWithQuote: Document,
-                                          currentQuoteDescriptor: String) throws -> (String, String?) {
+                                          currentQuoteDescriptor: String) async throws -> (String, String?) {
         if currentQuoteDescriptor == blockquote {
-            for quotedContentElement in try htmlDocumentWithQuote.select(currentQuoteDescriptor) {
+            for quotedContentElement in try await htmlDocumentWithQuote.select(currentQuoteDescriptor) {
                 if try quotedContentElement.outerHtml() == blockquoteElement?.outerHtml() {
                     try quotedContentElement.remove()
                     break
@@ -98,7 +110,7 @@ public enum MessageBodyUtils {
             }
             return try (htmlDocumentWithQuote.outerHtml(), blockquoteElement?.outerHtml())
         } else if !currentQuoteDescriptor.isEmpty {
-            let quotedContentElements = try htmlDocumentWithQuote.select(currentQuoteDescriptor)
+            let quotedContentElements = try await htmlDocumentWithQuote.select(currentQuoteDescriptor)
             try quotedContentElements.remove()
             return try (htmlDocumentWithQuote.outerHtml(), quotedContentElements.outerHtml())
         } else {
