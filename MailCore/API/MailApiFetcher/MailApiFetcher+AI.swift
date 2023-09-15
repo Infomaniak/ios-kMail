@@ -19,7 +19,7 @@
 import Foundation
 
 public extension MailApiFetcher {
-    func createConversation(message: AIMessage) async throws -> AIResponse {
-        try await perform(request: authenticatedRequest(.ai(), method: .post, parameters: message)).data
+    func createAIConversation(messages: [AIMessage]) async throws -> AIResponse {
+        try await perform(request: authenticatedRequest(.ai(), method: .post, parameters: AIRequest(messages: messages))).data
     }
 }

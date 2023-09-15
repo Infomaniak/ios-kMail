@@ -18,13 +18,17 @@
 
 import Foundation
 
+public struct AIRequest: Codable {
+    let messages: [AIMessage]
+}
+
 public struct AIResponse: Codable {
     let contextId: String?
     let tokensUser: Int
     let content: String
 }
 
-public enum AIMessageType: Codable {
+public enum AIMessageType: String, Codable {
     case user, context
 }
 
