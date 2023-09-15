@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -23,6 +24,8 @@ import SwiftUI
 struct AIPromptView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.isCompactWindow) private var isCompactWindow
+
+    @InjectService private var accountManager: AccountManager
 
     @State private var userPrompt = ""
 
