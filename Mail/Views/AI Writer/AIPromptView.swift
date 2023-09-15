@@ -22,6 +22,7 @@ import SwiftUI
 
 struct AIPromptView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.isCompactWindow) private var isCompactWindow
 
     @State private var userPrompt = ""
 
@@ -43,8 +44,30 @@ struct AIPromptView: View {
                 }
             }
 
-            TextField(MailResourcesStrings.Localizable.aiPromptPlaceholder, text: $userPrompt)
-                .focused($textFieldFocused)
+            ZStack(alignment: .topLeading) {
+                if userPrompt.isEmpty {
+                    Text(MailResourcesStrings.Localizable.aiPromptPlaceholder)
+                        .foregroundColor(Color(UIColor.placeholderText))
+                        .textStyle(.body)
+                        .padding(.horizontal, 5)
+                }
+
+                TextEditor(text: $userPrompt)
+                    .textStyle(.body)
+                    .introspect(.textEditor, on: .iOS(.v15, .v16, .v17)) { textField in
+                        textField.backgroundColor = .clear
+                        textField.textContainerInset = .zero
+                        textField.font = .systemFont(ofSize: 16)
+                    }
+                    .focused($textFieldFocused)
+                    .tint(MailResourcesAsset.aiColor.swiftUIColor)
+                    .frame(maxHeight: isCompactWindow ? nil : 128)
+            }
+            .padding(value: .small)
+            .overlay {
+                RoundedRectangle(cornerRadius: 4)
+                    .stroke(MailResourcesAsset.textFieldBorder.swiftUIColor, lineWidth: 1)
+            }
 
             MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton) {
                 // TODO: j'imagine qu'il faut générer
