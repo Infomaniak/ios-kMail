@@ -162,7 +162,7 @@ public enum NotificationsHelper {
 
         do {
             let basicHtml = try SwiftSoup.clean(body, Whitelist.basic())!
-            let parsedBody = try SwiftSoup.parse(basicHtml)
+            let parsedBody = try await SwiftSoup.parse(basicHtml)
 
             let rawText = try parsedBody.text(trimAndNormaliseWhitespace: false)
             return rawText.trimmingCharacters(in: .whitespacesAndNewlines)

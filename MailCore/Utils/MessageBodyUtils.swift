@@ -47,8 +47,8 @@ public enum MessageBodyUtils {
     public static func splitBodyAndQuote(messageBody: String) async -> MessageBodyQuote {
         let task = Task {
             do {
-                let htmlDocumentWithQuote = try SwiftSoup.parse(messageBody)
-                let htmlDocumentWithoutQuote = try SwiftSoup.parse(messageBody)
+                let htmlDocumentWithQuote = try await SwiftSoup.parse(messageBody)
+                let htmlDocumentWithoutQuote = try await SwiftSoup.parse(messageBody)
 
                 let blockquoteElement = try findAndRemoveLastParentBlockQuote(htmlDocumentWithoutQuote: htmlDocumentWithoutQuote)
                 var currentQuoteDescriptor =
