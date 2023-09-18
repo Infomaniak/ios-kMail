@@ -27,12 +27,18 @@ public struct AIRequest: Codable {
     public let output: AIOutputFormat
 }
 
-public struct AIResponse: Codable, Identifiable {
+public struct AIResponse: Codable, Identifiable, Equatable {
     public let id = UUID()
 
     public let contextId: String?
-    public let tokensUser: Int
+    public let tokensUsed: Int
     public let content: String
+
+    enum CodingKeys: CodingKey {
+        case contextId
+        case tokensUsed
+        case content
+    }
 }
 
 public enum AIMessageType: String, Codable {
