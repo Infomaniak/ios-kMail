@@ -40,6 +40,7 @@ struct ThreadView: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
+    @EnvironmentObject private var navigationState: NavigationState
 
     @State private var headerHeight: CGFloat = 0
     @State private var displayNavigationTitle = false
@@ -177,6 +178,9 @@ struct ThreadView: View {
                 EmptyView()
             }
         }
+        .customAlert(item: $navigationState.presentedFlushAlert) { item in
+            FlushFolderAlertView(flushAlert: item, folder: thread.folder)
+        }
         .matomoView(view: [MatomoUtils.View.threadView.displayName, "Main"])
     }
 
@@ -209,9 +213,10 @@ struct ThreadView: View {
                 try await actionsManager.performAction(
                     target: messages,
                     action: action,
-                    origin: .toolbar(originFolder: originFolder)
+                    origin: .toolbar(originFolder: originFolder, nearestFlushAlert: $navigationState.presentedFlushAlert)
                 )
-                if action == .archive || action == .delete {
+
+                if action == .archive || (action == .delete && originFolder?.permanentlyDeleteContent != true) {
                     dismiss()
                 }
             }

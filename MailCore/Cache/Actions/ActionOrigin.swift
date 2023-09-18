@@ -36,8 +36,9 @@ public struct ActionOrigin {
     private(set) var nearestReportedForPhishingMessageAlert: Binding<Message?>?
     private(set) var nearestReportedForDisplayProblemMessageAlert: Binding<Message?>?
 
-    public static func toolbar(originFolder: Folder? = nil) -> ActionOrigin {
-        return ActionOrigin(type: .toolbar, folder: originFolder)
+    public static func toolbar(originFolder: Folder? = nil,
+                               nearestFlushAlert: Binding<FlushAlertState?>? = nil) -> ActionOrigin {
+        return ActionOrigin(type: .toolbar, folder: originFolder, nearestFlushAlert: nearestFlushAlert)
     }
 
     public static func floatingPanel(originFolder: Folder? = nil,
