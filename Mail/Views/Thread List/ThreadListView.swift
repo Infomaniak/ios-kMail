@@ -37,7 +37,6 @@ struct ThreadListView: View {
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
     @State private var firstLaunch = true
-    @State private var flushAlert: FlushAlertState?
     @State private var isLoadingMore = false
 
     @StateObject var viewModel: ThreadListViewModel
@@ -81,8 +80,7 @@ struct ThreadListView: View {
                        viewModel.folder.role == .trash || viewModel.folder.role == .spam {
                         FlushFolderView(
                             folder: viewModel.folder,
-                            mailboxManager: viewModel.mailboxManager,
-                            flushAlert: $flushAlert
+                            mailboxManager: viewModel.mailboxManager
                         )
                         .threadListCellAppearance()
                     }
@@ -184,8 +182,7 @@ struct ThreadListView: View {
                 isRefreshing = false
             }
         }
-        .threadListToolbar(flushAlert: $flushAlert,
-                           viewModel: viewModel,
+        .threadListToolbar(viewModel: viewModel,
                            multipleSelectionViewModel: multipleSelectionViewModel)
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
@@ -221,7 +218,7 @@ struct ThreadListView: View {
                 firstLaunch = false
             }
         }
-        .customAlert(item: $flushAlert) { item in
+        .customAlert(item: $navigationState.presentedFlushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: viewModel.folder)
         }
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Main"])

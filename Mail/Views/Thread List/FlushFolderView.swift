@@ -23,6 +23,8 @@ import MailResources
 import SwiftUI
 
 struct FlushFolderView: View {
+    @EnvironmentObject private var navigationState: NavigationState
+
     private static let labels: [FolderRole: String] = [
         .spam: MailResourcesStrings.Localizable.threadListSpamHint,
         .trash: MailResourcesStrings.Localizable.threadListTrashHint
@@ -34,8 +36,6 @@ struct FlushFolderView: View {
 
     let folder: Folder
     let mailboxManager: MailboxManager
-
-    @Binding var flushAlert: FlushAlertState?
 
     private var label: String {
         Self.labels[folder.role ?? .trash] ?? ""
@@ -54,7 +54,7 @@ struct FlushFolderView: View {
                 Button {
                     @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .threadList, name: "empty\(folder.matomoName)")
-                    flushAlert = FlushAlertState {
+                    navigationState.presentedFlushAlert = FlushAlertState {
                         await tryOrDisplayError {
                             _ = try await mailboxManager.flushFolder(folder: folder.freezeIfNeeded())
                         }
@@ -82,7 +82,6 @@ struct FlushFolderView: View {
 struct FlushFolderView_Previews: PreviewProvider {
     static var previews: some View {
         FlushFolderView(folder: PreviewHelper.sampleFolder,
-                        mailboxManager: PreviewHelper.sampleMailboxManager,
-                        flushAlert: .constant(nil))
+                        mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }

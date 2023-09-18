@@ -63,11 +63,13 @@ public struct ActionOrigin {
     public static func swipe(
         originFolder: Folder? = nil,
         nearestMessagesActionsPanel: Binding<[Message]?>? = nil,
-        nearestMessagesToMoveSheet: Binding<[Message]?>? = nil
+        nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
+        nearestFlushAlert: Binding<FlushAlertState?>? = nil
     ) -> ActionOrigin {
         return ActionOrigin(type: .swipe,
                             folder: originFolder,
                             nearestMessagesActionsPanel: nearestMessagesActionsPanel,
+                            nearestFlushAlert: nearestFlushAlert,
                             nearestMessagesToMoveSheet: nearestMessagesToMoveSheet)
     }
 }

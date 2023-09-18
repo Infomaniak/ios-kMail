@@ -27,6 +27,7 @@ private struct SwipeActionView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @EnvironmentObject private var actionsManager: ActionsManager
+    @EnvironmentObject private var navigationState: NavigationState
 
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
@@ -47,7 +48,8 @@ private struct SwipeActionView: View {
                         origin: .swipe(
                             originFolder: thread.folder,
                             nearestMessagesActionsPanel: $actionPanelMessages,
-                            nearestMessagesToMoveSheet: $moveSheetMessages
+                            nearestMessagesToMoveSheet: $moveSheetMessages,
+                            nearestFlushAlert: $navigationState.presentedFlushAlert
                         )
                     )
                 }
