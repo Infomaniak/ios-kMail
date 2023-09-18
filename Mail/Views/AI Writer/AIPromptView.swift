@@ -26,6 +26,7 @@ struct AIPromptView: View {
     @Environment(\.isCompactWindow) private var isCompactWindow
 
     @State private var userPrompt = ""
+    @State private var isLoading = false
 
     @Binding var aiMessage: AIResponse?
 
@@ -72,18 +73,16 @@ struct AIPromptView: View {
                     .stroke(MailResourcesAsset.textFieldBorder.swiftUIColor, lineWidth: 1)
             }
 
-            MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton) {
-                Task {
-                    let message = AIMessage(type: .user, content: userPrompt)
-                    try await accountManager.currentApiFetcher?.createAIConversation(messages: [message])
+            ZStack(alignment: .trailing) {
                 MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton, action: askAI)
                     .mailButtonCustomTextStyle(.bodyMediumOnAI)
                     .mailButtonCustomBackground(MailResourcesAsset.aiColor.swiftUIColor)
+                    .disabled(userPrompt.isEmpty)
                     .opacity(isLoading ? 0 : 1)
-                }
+
+                AIProgressView()
+                    .opacity(isLoading ? 1 : 0)
             }
-            .mailButtonCustomTextStyle(.bodyMediumOnAI)
-            .mailButtonCustomBackground(MailResourcesAsset.aiColor.swiftUIColor)
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .padding(value: .regular)

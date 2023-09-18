@@ -5,7 +5,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Wed, 13 Sep 2023 13:20:22 +0200
+ * Exported at: Mon, 18 Sep 2023 15:44:25 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1291,3 +1291,18 @@
 
 /* loco:65019254a2948ddd0d0e0ca3 */
 "aiPromptValidateButton" = "Erzeugen Sie";
+
+/* loco:6502bdf0d8ec8382d70de1c7 */
+"errorLoadingMessage" = "Diese Nachricht konnte nicht vom Server heruntergeladen werden.";
+
+/* loco:6502fd61e3b907c3db020f92 */
+"snackbarDeletedConversation" = "Das Gespräch existiert nicht mehr";
+
+/* loco:65042259ab599c0ca6094172 */
+"aiPromptGenerationLoader" = "Der Assistent schreibt";
+
+/* loco:65081ae6a237c4d16909e463 */
+"aiButtonAdjust" = "Anpassen";
+
+/* loco:65081b4d5787de874c0dec32 */
+"aiButtonInsert" = "Einfügen";
