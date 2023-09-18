@@ -20,25 +20,19 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct AIHeaderView: View {
+struct AIProgressView: View {
     var body: some View {
         HStack(spacing: UIPadding.small) {
-            MailResourcesAsset.aiWriter.swiftUIImage
-                .resizable()
-                .frame(width: 16, height: 16)
-                .foregroundColor(MailResourcesAsset.aiColor)
+            Text(MailResourcesStrings.Localizable.aiPromptGenerationLoader)
+                .textStyle(.bodyMediumTertiary)
 
-            Text(MailResourcesStrings.Localizable.aiPromptTitle)
-                .textStyle(.header2)
-
-            Text(MailResourcesStrings.Localizable.aiPromptTag)
-                .tagModifier(foregroundColor: MailResourcesAsset.onAIColor, backgroundColor: MailResourcesAsset.aiColor)
+            ProgressView()
+                .progressViewStyle(.circular)
+                .tint(MailResourcesAsset.aiColor.swiftUIColor)
         }
     }
 }
 
-struct AIHeaderView_Previews: PreviewProvider {
-    static var previews: some View {
-        AIHeaderView()
-    }
+#Preview {
+    AIProgressView()
 }
