@@ -209,9 +209,8 @@ public class ActionsManager: ObservableObject {
     }
 
     private func shouldDisplayDeleteAlert(messages: [Message], origin: ActionOrigin) -> Bool {
-        if origin.type == .multipleSelection,
-           let firstFolderRole = messages.first?.folder?.role,
-           [FolderRole.draft, FolderRole.spam, FolderRole.trash].contains(firstFolderRole) {
+        if let folderRole = origin.folder?.role,
+           [FolderRole.draft, FolderRole.spam, FolderRole.trash].contains(folderRole) {
             return true
         }
 
