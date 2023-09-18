@@ -75,6 +75,11 @@ public struct MailTextStyle {
         color: MailResourcesAsset.textPrimaryColor
     )
 
+    public static let bodyMediumTertiary = MailTextStyle(
+        font: .system(size: 16, weight: .medium),
+        color: MailResourcesAsset.textTertiaryColor
+    )
+
     public static let bodyMediumAccent = MailTextStyle(
         font: .system(size: 16, weight: .medium),
         color: .accentColor
