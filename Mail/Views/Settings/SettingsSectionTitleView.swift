@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailResources
 import MailCore
 import SwiftUI
 
@@ -28,6 +29,8 @@ struct SettingsSectionTitleView: View {
             .padding(.horizontal, value: .regular)
             .padding(.top, value: .regular)
             .padding(.bottom, value: .small)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(MailResourcesAsset.backgroundColor.swiftUIColor)
     }
 }
 
