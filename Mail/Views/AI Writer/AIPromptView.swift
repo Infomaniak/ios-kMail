@@ -28,7 +28,7 @@ struct AIPromptView: View {
     @State private var userPrompt = ""
     @State private var isLoading = false
 
-    @Binding var aiMessage: AIResponse?
+    @Binding var aiResponse: AIResponse?
 
     let mailboxManager: MailboxManager
 
@@ -86,6 +86,9 @@ struct AIPromptView: View {
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .padding(value: .regular)
+        .onDisappear {
+            userPrompt = ""
+        }
     }
 
     private func askAI() {
@@ -95,19 +98,14 @@ struct AIPromptView: View {
             let result = try await mailboxManager.apiFetcher.createAIConversation(messages: [message])
             isLoading = false
 
-            dismissView()
-            aiMessage = result
+            dismiss()
+            aiResponse = result
         }
-    }
-
-    private func dismissView() {
-        userPrompt = ""
-        dismiss()
     }
 }
 
 struct AIPromptView_Previews: PreviewProvider {
     static var previews: some View {
-        AIPromptView(aiMessage: .constant(nil), mailboxManager: PreviewHelper.sampleMailboxManager)
+        AIPromptView(aiResponse: .constant(nil), mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }

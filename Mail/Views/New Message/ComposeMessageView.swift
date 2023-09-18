@@ -76,7 +76,7 @@ struct ComposeMessageView: View {
     @State private var isShowingExternalTag = true
     @State private var isShowingAIPrompt = false
 
-    @State private var aiMessage: AIResponse? = nil
+    @State private var aiResponse: AIResponse?
 
     @State private var editorModel = RichTextEditorModel()
     @Weak private var scrollView: UIScrollView?
@@ -177,9 +177,9 @@ struct ComposeMessageView: View {
             }
         }
         .aiPromptPresenter(isPresenter: $isShowingAIPrompt) {
-            AIPromptView(aiMessage: $aiMessage, mailboxManager: mailboxManager)
+            AIPromptView(aiResponse: $aiResponse, mailboxManager: mailboxManager)
         }
-        .sheet(item: $aiMessage) { response in
+        .sheet(item: $aiResponse) { response in
             Text(response.content)
         }
         .matomoView(view: ["ComposeMessage"])
