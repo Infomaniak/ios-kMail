@@ -18,14 +18,21 @@
 
 import Foundation
 
-public struct AIRequest: Codable {
-    let messages: [AIMessage]
+public enum AIOutputFormat: String, Codable {
+    case `default`, mail
 }
 
-public struct AIResponse: Codable {
-    let contextId: String?
-    let tokensUser: Int
-    let content: String
+public struct AIRequest: Codable {
+    public let messages: [AIMessage]
+    public let output: AIOutputFormat
+}
+
+public struct AIResponse: Codable, Identifiable {
+    public let id = UUID()
+
+    public let contextId: String?
+    public let tokensUser: Int
+    public let content: String
 }
 
 public enum AIMessageType: String, Codable {
@@ -33,8 +40,8 @@ public enum AIMessageType: String, Codable {
 }
 
 public struct AIMessage: Codable {
-    let type: AIMessageType
-    let content: String
+    public let type: AIMessageType
+    public let content: String
 
     public init(type: AIMessageType, content: String) {
         self.type = type
