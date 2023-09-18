@@ -25,11 +25,11 @@ struct AIPromptView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.isCompactWindow) private var isCompactWindow
 
-    @InjectService private var accountManager: AccountManager
-
     @State private var userPrompt = ""
 
-    @FocusState private var textFieldFocused: Bool
+    @Binding var aiMessage: AIResponse?
+
+    let mailboxManager: MailboxManager
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
@@ -61,8 +61,8 @@ struct AIPromptView: View {
                         textField.backgroundColor = .clear
                         textField.textContainerInset = .zero
                         textField.font = .systemFont(ofSize: 16)
+                        textField.becomeFirstResponder()
                     }
-                    .focused($textFieldFocused)
                     .tint(MailResourcesAsset.aiColor.swiftUIColor)
                     .frame(maxHeight: isCompactWindow ? nil : 128)
             }
@@ -76,6 +76,10 @@ struct AIPromptView: View {
                 Task {
                     let message = AIMessage(type: .user, content: userPrompt)
                     try await accountManager.currentApiFetcher?.createAIConversation(messages: [message])
+                MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton, action: askAI)
+                    .mailButtonCustomTextStyle(.bodyMediumOnAI)
+                    .mailButtonCustomBackground(MailResourcesAsset.aiColor.swiftUIColor)
+                    .opacity(isLoading ? 0 : 1)
                 }
             }
             .mailButtonCustomTextStyle(.bodyMediumOnAI)
@@ -83,14 +87,28 @@ struct AIPromptView: View {
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .padding(value: .regular)
-        .onAppear {
-            textFieldFocused = true
+    }
+
+    private func askAI() {
+        Task {
+            isLoading = true
+            let message = AIMessage(type: .user, content: userPrompt)
+            let result = try await mailboxManager.apiFetcher.createAIConversation(messages: [message])
+            isLoading = false
+
+            dismissView()
+            aiMessage = result
         }
+    }
+
+    private func dismissView() {
+        userPrompt = ""
+        dismiss()
     }
 }
 
 struct AIPromptView_Previews: PreviewProvider {
     static var previews: some View {
-        AIPromptView()
+        AIPromptView(aiMessage: .constant(nil), mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }
