@@ -93,7 +93,7 @@ public extension Endpoint {
     }
 
     static func ai() -> Endpoint {
-        return .base.appending(path: "/ia")
+        return .base.appending(path: "/ai")
     }
 
     static func askMailboxPassword(hostingId: Int, mailboxName: String) -> Endpoint {
