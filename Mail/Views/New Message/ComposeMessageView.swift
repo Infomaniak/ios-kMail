@@ -180,7 +180,7 @@ struct ComposeMessageView: View {
             AIPromptView(aiResponse: $aiResponse, mailboxManager: mailboxManager)
         }
         .sheet(item: $aiResponse) { response in
-            Text(response.content)
+            AIPropositionView(aiResponse: $aiResponse)
         }
         .matomoView(view: ["ComposeMessage"])
     }
