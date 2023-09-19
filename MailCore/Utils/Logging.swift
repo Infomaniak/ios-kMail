@@ -65,6 +65,7 @@ public enum Logging {
 
     private static func initSentry() {
         SentrySDK.start { options in
+            options.tracePropagationTargets = []
             options.dsn = "https://b7e4f5e8fd464659a8e83ead7015e070@sentry-mobile.infomaniak.com/5"
             options.beforeSend = { event in
                 // if the application is in debug mode discard the events
