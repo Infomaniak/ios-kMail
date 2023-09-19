@@ -235,10 +235,10 @@
     {
       "identity" : "swiftsoup",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/scinfu/SwiftSoup",
+      "location" : "https://github.com/Ambrdctr/SwiftSoup",
       "state" : {
-        "revision" : "8b6cf29eead8841a1fa7822481cb3af4ddaadba6",
-        "version" : "2.6.1"
+        "branch" : "master",
+        "revision" : "56ce9d740ef9ea53bba13386ebdc460b6f4fe36c"
       }
     },
     {
