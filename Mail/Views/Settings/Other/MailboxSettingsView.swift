@@ -34,6 +34,7 @@ struct MailboxSettingsView: View {
                 }
             }
         }
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationTitle(mailboxManager.mailbox.email)
         .navigationBarTitleDisplayMode(.inline)
         .backButtonDisplayMode(.minimal)
