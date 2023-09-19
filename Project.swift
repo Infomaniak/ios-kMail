@@ -47,7 +47,7 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0")),
                           .package(url: "https://github.com/kean/Nuke", .upToNextMajor(from: "12.1.3")),
                           .package(url: "https://github.com/airbnb/lottie-ios", .exact("3.5.0")),
-                          .package(url: "https://github.com/scinfu/SwiftSoup", .upToNextMajor(from: "2.6.1")),
+                          .package(url: "https://github.com/Ambrdctr/SwiftSoup", .branch("master")),
                           .package(url: "https://github.com/johnpatrickmorgan/NavigationBackport", .upToNextMajor(from: "0.8.1")),
                           .package(url: "https://github.com/aheze/Popovers", .upToNextMajor(from: "1.3.2")),
                           .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1"))
