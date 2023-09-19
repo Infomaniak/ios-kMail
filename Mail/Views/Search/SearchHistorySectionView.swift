@@ -18,51 +18,67 @@
 
 import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
 
 struct SearchHistorySectionView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @ObservedResults(SearchHistory.self) private var searchHistories
+    private var searchHistory: SearchHistory? {
+        return searchHistories.first
+    }
+
     let viewModel: SearchViewModel
 
     var body: some View {
         Section {
-            ForEach(viewModel.searchHistory.history, id: \.self) { searchItem in
-                HStack(spacing: UIPadding.regular) {
-                    MailResourcesAsset.clock.swiftUIImage
-                        .resizable()
-                        .frame(width: 24, height: 24)
-                        .foregroundColor(.accentColor)
+            if let history = searchHistory?.history {
+                if history.isEmpty {
+                    SearchNoHistoryView()
+                }
 
-                    Text(searchItem)
-                        .textStyle(.bodyMedium)
-
-                    Spacer()
-
-                    Button {
-                        deleteSearchTapped(searchItem: searchItem)
-                    } label: {
-                        MailResourcesAsset.close.swiftUIImage
+                ForEach(history, id: \.self) { searchItem in
+                    HStack(spacing: UIPadding.regular) {
+                        MailResourcesAsset.clock.swiftUIImage
                             .resizable()
-                            .foregroundColor(MailResourcesAsset.textSecondaryColor.swiftUIColor)
-                            .frame(width: 16, height: 16)
+                            .frame(width: 24, height: 24)
+                            .foregroundColor(.accentColor)
+
+                        Text(searchItem)
+                            .textStyle(.bodyMedium)
+
+                        Spacer()
+
+                        Button {
+                            deleteSearchTapped(searchItem: searchItem)
+                        } label: {
+                            MailResourcesAsset.close.swiftUIImage
+                                .resizable()
+                                .foregroundColor(MailResourcesAsset.textSecondaryColor.swiftUIColor)
+                                .frame(width: 16, height: 16)
+                        }
+                        .buttonStyle(BorderlessButtonStyle())
+                        .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonDeleteHistory)
                     }
-                    .buttonStyle(BorderlessButtonStyle())
-                    .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonDeleteHistory)
-                }
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    viewModel.matomo.track(eventWithCategory: .search, name: "fromHistory")
-                    Constants.globallyResignFirstResponder()
-                    viewModel.searchValue = searchItem
-                    Task {
-                        await viewModel.fetchThreads()
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        viewModel.matomo.track(eventWithCategory: .search, name: "fromHistory")
+                        Constants.globallyResignFirstResponder()
+                        viewModel.searchValue = searchItem
+                        Task {
+                            await viewModel.fetchThreads()
+                        }
                     }
+                    .padding(value: .regular)
                 }
-                .padding(value: .regular)
             }
         } header: {
-            Text(MailResourcesStrings.Localizable.recentSearchesTitle)
-                .textStyle(.bodySmallSecondary)
-                .padding(.horizontal, value: .regular)
+            if searchHistory?.history.isEmpty == false {
+                Text(MailResourcesStrings.Localizable.recentSearchesTitle)
+                    .textStyle(.bodySmallSecondary)
+                    .padding(.horizontal, value: .regular)
+            }
         }
         .listRowSeparator(.hidden)
         .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
@@ -72,12 +88,10 @@ struct SearchHistorySectionView: View {
     @MainActor
     private func deleteSearchTapped(searchItem: String) {
         viewModel.matomo.track(eventWithCategory: .search, name: "deleteFromHistory")
-        Task {
-            await tryOrDisplayError {
-                viewModel.searchHistory = await viewModel.mailboxManager.delete(
-                    searchHistory: viewModel.searchHistory,
-                    with: searchItem
-                )
+        if let history = searchHistory?.history.thaw(),
+           let searchItemIndex = history.firstIndex(where: { $0 == searchItem }) {
+            try? history.realm?.write {
+                history.remove(at: searchItemIndex)
             }
         }
     }

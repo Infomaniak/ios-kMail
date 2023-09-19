@@ -19,6 +19,8 @@
 import Foundation
 import RealmSwift
 
-public class SearchHistory: Object {
+public class SearchHistory: Object, Identifiable {
+    /// ID returned is always 1 because we only have one search history
+    @Persisted(primaryKey: true) public var id = 1
     @Persisted public var history: List<String>
 }
