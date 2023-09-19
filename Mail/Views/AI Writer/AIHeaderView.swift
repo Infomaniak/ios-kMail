@@ -21,24 +21,36 @@ import MailResources
 import SwiftUI
 
 struct AIHeaderView: View {
+    enum Style {
+        case bottomSheet, sheet
+    }
+
+    let style: Style
+
     var body: some View {
         HStack(spacing: UIPadding.small) {
-            MailResourcesAsset.aiWriter.swiftUIImage
-                .resizable()
-                .frame(width: 16, height: 16)
-                .foregroundColor(MailResourcesAsset.aiColor)
+            if style == .bottomSheet {
+                MailResourcesAsset.aiWriter.swiftUIImage
+                    .resizable()
+                    .frame(width: 16, height: 16)
+                    .foregroundColor(MailResourcesAsset.aiColor)
+            }
 
             Text(MailResourcesStrings.Localizable.aiPromptTitle)
-                .textStyle(.header2)
+                .font(style == .bottomSheet ? MailTextStyle.header2.font : .headline)
+                .foregroundColor(MailTextStyle.header2.color)
 
             Text(MailResourcesStrings.Localizable.aiPromptTag)
                 .tagModifier(foregroundColor: MailResourcesAsset.onAIColor, backgroundColor: MailResourcesAsset.aiColor)
+        }
+        .onAppear {
+            dump(Font.headline)
         }
     }
 }
 
 struct AIHeaderView_Previews: PreviewProvider {
     static var previews: some View {
-        AIHeaderView()
+        AIHeaderView(style: .bottomSheet)
     }
 }
