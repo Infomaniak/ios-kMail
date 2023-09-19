@@ -33,14 +33,12 @@ enum SearchFieldValueType: String {
 
 enum SearchState {
     case history
-    case noHistory
     case results
     case noResults
 }
 
 @MainActor class SearchViewModel: ObservableObject {
     let mailboxManager: MailboxManager
-    @Published var searchHistory: SearchHistory
 
     public let filters: [SearchFilter] = [.read, .unread, .favorite, .attachment, .folder]
     @Published var selectedFilters: [SearchFilter] = [] {
@@ -56,7 +54,7 @@ enum SearchState {
     @Published var searchValue = ""
     var searchState: SearchState {
         if selectedFilters.isEmpty && searchValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            return searchHistory.history.isEmpty ? .noHistory : .history
+            return .history
         } else if (threads.isEmpty && !isLoading) && contacts.isEmpty {
             return .noResults
         } else {
@@ -108,7 +106,6 @@ enum SearchState {
     init(mailboxManager: MailboxManager, folder: Folder) {
         self.mailboxManager = mailboxManager
 
-        searchHistory = mailboxManager.searchHistory()
         realFolder = folder.freezeIfNeeded()
         searchFolder = mailboxManager.initSearchFolder().freezeIfNeeded()
         folderList = mailboxManager.getFolders()
@@ -128,7 +125,7 @@ enum SearchState {
     }
 
     func updateContactSuggestion() {
-        let autocompleteContacts = mailboxManager.contactManager.contacts(matching: searchValue) ?? []
+        let autocompleteContacts = mailboxManager.contactManager.contacts(matching: searchValue)
         var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
         // Append typed email
         if Constants.isEmailAddress(searchValue) && !contacts
@@ -178,7 +175,7 @@ enum SearchState {
         observeSearch()
 
         if searchValue.trimmingCharacters(in: .whitespacesAndNewlines).count >= 3 {
-            searchHistory = await mailboxManager.update(searchHistory: searchHistory, with: searchValue)
+           await mailboxManager.addToSearchHistory(value: searchValue)
         }
     }
 

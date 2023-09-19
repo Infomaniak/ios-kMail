@@ -58,9 +58,7 @@ struct SearchView: View {
             }
 
             List {
-                if viewModel.searchState == .noHistory {
-                    SearchNoHistoryView()
-                } else if viewModel.searchState == .history {
+                if viewModel.searchState == .history {
                     SearchHistorySectionView(viewModel: viewModel)
                 } else if viewModel.searchState == .results {
                     SearchContactsSectionView(viewModel: viewModel)

@@ -166,40 +166,22 @@ public extension MailboxManager {
         }
     }
 
-    func searchHistory(using realm: Realm? = nil) -> SearchHistory {
-        let realm = realm ?? getRealm()
-        if let searchHistory = realm.objects(SearchHistory.self).first {
-            return searchHistory.freeze()
-        }
-        let newSearchHistory = SearchHistory()
-        try? realm.uncheckedSafeWrite {
-            realm.add(newSearchHistory)
-        }
-        return newSearchHistory
-    }
-
-    func update(searchHistory: SearchHistory, with value: String) async -> SearchHistory {
+    func addToSearchHistory(value: String) async {
         return await backgroundRealm.execute { realm in
-            guard let liveSearchHistory = realm.objects(SearchHistory.self).first else { return searchHistory }
             try? realm.safeWrite {
-                if let indexToRemove = liveSearchHistory.history.firstIndex(of: value) {
-                    liveSearchHistory.history.remove(at: indexToRemove)
+                let searchHistory: SearchHistory
+                if let existingSearchHistory = realm.objects(SearchHistory.self).first {
+                    searchHistory = existingSearchHistory
+                } else {
+                    searchHistory = SearchHistory()
+                    realm.add(searchHistory)
                 }
-                liveSearchHistory.history.insert(value, at: 0)
-            }
-            return liveSearchHistory.freeze()
-        }
-    }
 
-    func delete(searchHistory: SearchHistory, with value: String) async -> SearchHistory {
-        return await backgroundRealm.execute { realm in
-            guard let liveSearchHistory = realm.objects(SearchHistory.self).first else { return searchHistory }
-            try? realm.safeWrite {
-                if let indexToRemove = liveSearchHistory.history.firstIndex(of: value) {
-                    liveSearchHistory.history.remove(at: indexToRemove)
+                if let indexToRemove = searchHistory.history.firstIndex(of: value) {
+                    searchHistory.history.remove(at: indexToRemove)
                 }
+                searchHistory.history.insert(value, at: 0)
             }
-            return liveSearchHistory.freeze()
         }
     }
 }
