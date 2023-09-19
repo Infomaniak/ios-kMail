@@ -17,16 +17,47 @@
  */
 
 import MailCore
+import MailResources
 import SwiftUI
+import SwiftUIIntrospect
 
 struct AIPropositionView: View {
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var textPlainHeight = CGFloat.zero
+
     @Binding var aiResponse: AIResponse?
 
     var body: some View {
-        Text(aiResponse?.content ?? "")
+        NavigationView {
+            ScrollView {
+                SelectableTextView(textPlainHeight: $textPlainHeight, text: aiResponse?.content)
+                    .frame(height: textPlainHeight)
+                    .padding(.horizontal, value: .regular)
+                    .tint(MailResourcesAsset.aiColor.swiftUIColor)
+            }
+            .matomoView(view: ["AI", "Prompt"])
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .foregroundColor(MailResourcesAsset.textSecondaryColor)
+                    }
+                }
+
+                ToolbarItem(placement: .principal) {
+                    AIHeaderView(style: .sheet)
+                }
+            }
+        }
     }
 }
 
-#Preview {
-    AIPropositionView(aiResponse: .constant(nil))
+struct AIPropositionView_Previews: PreviewProvider {
+    static var previews: some View {
+        AIPropositionView(aiResponse: .constant(nil))
+    }
 }
