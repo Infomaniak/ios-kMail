@@ -178,9 +178,6 @@ struct ThreadView: View {
                 EmptyView()
             }
         }
-        .customAlert(item: $navigationState.presentedFlushAlert) { item in
-            FlushFolderAlertView(flushAlert: item, folder: thread.folder)
-        }
         .matomoView(view: [MatomoUtils.View.threadView.displayName, "Main"])
     }
 

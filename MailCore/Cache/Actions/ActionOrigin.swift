@@ -42,6 +42,7 @@ public struct ActionOrigin {
     }
 
     public static func floatingPanel(originFolder: Folder? = nil,
+                                     nearestFlushAlert: Binding<FlushAlertState?>? = nil,
                                      nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
                                      nearestReportJunkMessageActionsPanel: Binding<Message?>? = nil,
                                      nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
@@ -49,6 +50,7 @@ public struct ActionOrigin {
         return ActionOrigin(
             type: .floatingPanel,
             folder: originFolder,
+            nearestFlushAlert: nearestFlushAlert,
             nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
             nearestReportJunkMessageActionsPanel: nearestReportJunkMessageActionsPanel,
             nearestReportedForPhishingMessageAlert: nearestReportedForPhishingMessageAlert,
