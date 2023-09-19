@@ -35,7 +35,7 @@ struct AIPromptView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
             HStack(spacing: UIPadding.regular) {
-                AIHeaderView()
+                AIHeaderView(style: .bottomSheet)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 Button {
@@ -89,6 +89,7 @@ struct AIPromptView: View {
         .onDisappear {
             userPrompt = ""
         }
+        .matomoView(view: ["AI", "Prompt"])
     }
 
     private func askAI() {
