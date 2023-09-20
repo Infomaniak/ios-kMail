@@ -53,7 +53,7 @@ struct AIPropositionView: View {
                 }
 
                 ToolbarItemGroup(placement: .bottomBar) {
-                    Text("Ajuster")
+                    AIPropositionMenu()
 
                     Spacer()
 
