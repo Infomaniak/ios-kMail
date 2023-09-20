@@ -43,9 +43,6 @@ struct AIHeaderView: View {
             Text(MailResourcesStrings.Localizable.aiPromptTag)
                 .tagModifier(foregroundColor: MailResourcesAsset.onAIColor, backgroundColor: MailResourcesAsset.aiColor)
         }
-        .onAppear {
-            dump(Font.headline)
-        }
     }
 }
 

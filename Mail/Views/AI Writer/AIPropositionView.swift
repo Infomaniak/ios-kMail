@@ -24,6 +24,8 @@ import SwiftUIIntrospect
 struct AIPropositionView: View {
     @Environment(\.dismiss) private var dismiss
 
+    @EnvironmentObject private var draftContentManager: DraftContentManager
+
     @State private var textPlainHeight = CGFloat.zero
 
     @Binding var aiResponse: AIResponse?
