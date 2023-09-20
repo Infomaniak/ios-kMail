@@ -51,6 +51,21 @@ struct AIPropositionView: View {
                 ToolbarItem(placement: .principal) {
                     AIHeaderView(style: .sheet)
                 }
+
+                ToolbarItemGroup(placement: .bottomBar) {
+                    Text("Ajuster")
+
+                    Spacer()
+
+                    MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
+                        // TODO: Insert data
+                    }
+                    .mailButtonCustomBackground(MailResourcesAsset.aiColor.swiftUIColor)
+                }
+            }
+            .introspect(.viewController, on: .iOS(.v15, .v16, .v17)) { viewController in
+                guard let toolbar = viewController.navigationController?.toolbar else { return }
+                UIConstants.applyComposeViewStyle(to: toolbar)
             }
         }
     }
