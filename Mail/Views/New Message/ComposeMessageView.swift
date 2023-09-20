@@ -182,6 +182,7 @@ struct ComposeMessageView: View {
         .sheet(item: $aiResponse) { response in
             AIPropositionView(aiResponse: $aiResponse)
         }
+        .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
     }
 
@@ -195,7 +196,6 @@ struct ComposeMessageView: View {
                     autocompletionType: $autocompletionType,
                     currentSignature: $currentSignature
                 )
-                .environmentObject(draftContentManager)
 
                 if autocompletionType == nil && !isLoadingContent {
                     ComposeMessageBodyView(
