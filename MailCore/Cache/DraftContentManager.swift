@@ -44,6 +44,22 @@ public class DraftContentManager: ObservableObject {
     let mailboxManager: MailboxManager
     let incompleteDraft: Draft
 
+    public var draftIsEmpty: Bool {
+        let realm = mailboxManager.getRealm()
+        guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID) else {
+            return false
+        }
+
+        guard let parsedMessage = try? SwiftSoup.parse(liveDraft.body) else { return false }
+
+        if let foundSignature = try? parsedMessage.select(".\(Constants.signatureWrapperIdentifier)").first() {
+            try? parsedMessage.body()?.removeChild(foundSignature)
+        }
+
+        let content = (try? parsedMessage.body()?.text()) ?? ""
+        return content.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
     public init(incompleteDraft: Draft, messageReply: MessageReply?, mailboxManager: MailboxManager) {
         self.incompleteDraft = incompleteDraft.freezeIfNeeded()
         self.messageReply = messageReply
