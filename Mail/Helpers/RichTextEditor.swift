@@ -297,17 +297,7 @@ class MailEditorView: SQTextEditorView {
 
     public func getToolbar() -> UIToolbar {
         let newToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 320, height: 48))
-        newToolbar.barTintColor = MailResourcesAsset.backgroundSecondaryColor.color
-        newToolbar.isTranslucent = false
-
-        // Shadow
-        newToolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
-        newToolbar.layer.shadowColor = UIColor.black.cgColor
-        newToolbar.layer.shadowOpacity = 0.1
-        newToolbar.layer.shadowOffset = CGSize(width: 1, height: 1)
-        newToolbar.layer.shadowRadius = 2
-        newToolbar.layer.masksToBounds = false
-
+        UIConstants.applyComposeViewStyle(to: newToolbar)
         return newToolbar
     }
 
