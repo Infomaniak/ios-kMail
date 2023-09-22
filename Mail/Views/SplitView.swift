@@ -82,7 +82,7 @@ struct SplitView: View {
             } else {
                 NavigationView {
                     MenuDrawerView()
-                        .navigationBarHidden(true)
+                        .navigationBarHidden(!(platformDetector.isMacCatalyst || platformDetector.isiOSAppOnMac))
 
                     ThreadListManagerView()
 
