@@ -87,7 +87,7 @@ extension ContactManager {
     /// This will merge InfomaniakContact with local iPhone ones in a coherent DB.
     /// Removed contacts from both datasets will be cleaned also
     /// - Parameter remote: a list of remote infomaniak contacts
-    internal func updateContactDB(_ remote: [InfomaniakContact]) async {
+    func updateContactDB(_ remote: [InfomaniakContact]) async {
         defer {
             DDLogInfo("Done merging remote and local contacts in DB…")
         }

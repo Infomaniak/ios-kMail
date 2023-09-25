@@ -20,7 +20,7 @@ import Foundation
 import RealmSwift
 
 /// An abstract interface on the `MailboxManager`
-public typealias MailboxManageable = MailBoxManagerMessageable & MailBoxManagerDraftable
+public typealias MailboxManageable = MailBoxManagerDraftable & MailBoxManagerMessageable
 
 /// An abstract interface on the `MailboxManager` related to messages
 public protocol MailBoxManagerMessageable {
@@ -49,4 +49,4 @@ public protocol MailBoxManagerDraftable {
     func deleteOrphanDrafts() async
 }
 
-// TODO write a dedicated protocol for each MailboxManager+<>
+// TODO: write a dedicated protocol for each MailboxManager+<>

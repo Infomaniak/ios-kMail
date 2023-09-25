@@ -40,8 +40,8 @@ public extension String {
     /// - Parameter input: an input string
     /// - Returns: The output string truncated if needed
     static func truncatedForRealmIfNeeded(_ input: String) -> String {
-        if input.utf8.count > Self.closeToMaxRealmSize {
-            let index = input.index(input.startIndex, offsetBy: Self.closeToMaxRealmSize)
+        if input.utf8.count > closeToMaxRealmSize {
+            let index = input.index(input.startIndex, offsetBy: closeToMaxRealmSize)
             let truncatedValue = String(input[...index]) + " [truncated]"
             return truncatedValue
         } else {

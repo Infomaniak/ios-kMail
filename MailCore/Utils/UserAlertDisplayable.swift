@@ -85,7 +85,7 @@ public final class UserAlertDisplayer: UserAlertDisplayable {
     // MARK: Private
 
     private func presentInSnackbar(message: String, action: UserAlertAction?) {
-        guard let action = action else {
+        guard let action else {
             snackbarPresenter.show(message: message)
             return
         }

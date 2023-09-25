@@ -35,7 +35,7 @@ struct SenderMenuCell: View {
             matomo.track(eventWithCategory: .newMessage, name: "switchIdentity")
 
             withAnimation {
-                self.currentSignature = signature
+                currentSignature = signature
             }
             draftContentManager.updateSignature(with: signature)
         } label: {

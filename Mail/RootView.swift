@@ -16,8 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
 import MailCore
+import SwiftUI
 
 struct RootView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass

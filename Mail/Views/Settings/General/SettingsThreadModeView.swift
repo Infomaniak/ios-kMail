@@ -40,7 +40,11 @@ struct SettingsThreadModeView: View {
                     .settingsCell()
 
                 ForEach(ThreadMode.allCases, id: \.rawValue) { value in
-                    SettingsOptionCell(value: value, isSelected: value == selectedValue, isLast: value == ThreadMode.allCases.last) {
+                    SettingsOptionCell(
+                        value: value,
+                        isSelected: value == selectedValue,
+                        isLast: value == ThreadMode.allCases.last
+                    ) {
                         if value != selectedValue {
                             threadModeSettingUpdate = ThreadModeSettingUpdate(newSetting: value)
                         }

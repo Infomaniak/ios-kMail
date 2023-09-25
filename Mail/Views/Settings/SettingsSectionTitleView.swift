@@ -16,8 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailResources
 import MailCore
+import MailResources
 import SwiftUI
 
 struct SettingsSectionTitleView: View {

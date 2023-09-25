@@ -24,11 +24,11 @@ import RealmSwift
 import SwiftRegex
 
 public final class MailboxManager: ObservableObject, MailboxManageable {
-    @LazyInjectService internal var snackbarPresenter: SnackBarPresentable
-    @LazyInjectService internal var mailboxInfosManager: MailboxInfosManager
+    @LazyInjectService var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService var mailboxInfosManager: MailboxInfosManager
 
-    internal lazy var refreshActor = RefreshActor(mailboxManager: self)
-    internal let backgroundRealm: BackgroundRealm
+    lazy var refreshActor = RefreshActor(mailboxManager: self)
+    let backgroundRealm: BackgroundRealm
 
     public static let constants = MailboxManagerConstants()
 
@@ -133,7 +133,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         static let standard: MessagePropertiesOptions = [.fullyDownloaded, .body, .attachments, .localSafeDisplay]
     }
 
-    internal func keepCacheAttributes(
+    func keepCacheAttributes(
         for message: Message,
         keepProperties: MessagePropertiesOptions,
         using realm: Realm? = nil
@@ -157,7 +157,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         }
     }
 
-    internal func keepCacheAttributes(
+    func keepCacheAttributes(
         for folder: Folder,
         using realm: Realm
     ) {
@@ -170,7 +170,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         folder.isExpanded = savedFolder.isExpanded
     }
 
-    internal func getSubFolders(from folders: [Folder], oldResult: [Folder] = []) -> [Folder] {
+    func getSubFolders(from folders: [Folder], oldResult: [Folder] = []) -> [Folder] {
         var result = oldResult
         for folder in folders {
             result.append(folder)

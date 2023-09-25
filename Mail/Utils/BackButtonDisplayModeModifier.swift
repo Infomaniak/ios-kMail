@@ -16,8 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUIIntrospect
 import SwiftUI
+import SwiftUIIntrospect
 
 struct BackButtonDisplayModeModifier: ViewModifier {
     let displayMode: UINavigationItem.BackButtonDisplayMode

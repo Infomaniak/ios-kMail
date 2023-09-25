@@ -235,7 +235,7 @@ public final class DraftManager {
     }
 
     /// Check if once the Signature node is removed, we still have content
-    internal func isDraftBodyEmptyOfChanges(_ body: String) throws -> Bool {
+    func isDraftBodyEmptyOfChanges(_ body: String) throws -> Bool {
         guard !body.isEmpty else {
             return true
         }
