@@ -43,6 +43,7 @@ public extension UserDefaults.Keys {
     static let acknowledgement = UserDefaults.Keys(rawValue: "acknowledgement")
     static let includeOriginalInReply = UserDefaults.Keys(rawValue: "includeOriginalInReply")
     static let threadMode = UserDefaults.Keys(rawValue: "threadMode")
+    static let showAIReplaceContentAlert = UserDefaults.Keys(rawValue: "showAIReplaceContentAlert")
 }
 
 public extension UserDefaults {
@@ -210,6 +211,18 @@ public extension UserDefaults {
         }
         set {
             set(newValue.rawValue, forKey: key(.threadMode))
+        }
+    }
+
+    var showAIReplaceContentAlert: Bool {
+        get {
+            if bool(forKey: key(.showAIReplaceContentAlert)) == nil {
+                set(DefaultPreferences.showAIReplaceContentAlert, forKey: key(.showAIReplaceContentAlert))
+            }
+            return bool(forKey: key(.showAIReplaceContentAlert))
+        }
+        set {
+            set(newValue, forKey: key(.showAIReplaceContentAlert))
         }
     }
 }
