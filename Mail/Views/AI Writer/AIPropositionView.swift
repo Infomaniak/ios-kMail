@@ -64,7 +64,6 @@ struct AIPropositionView: View {
                         isShowingReplaceContentAlert = true
                         // TODO: Insert data
                     }
-                    .mailButtonCustomBackground(MailResourcesAsset.aiColor.swiftUIColor)
                 }
             }
             .introspect(.viewController, on: .iOS(.v15, .v16, .v17)) { viewController in
@@ -76,6 +75,8 @@ struct AIPropositionView: View {
                     // TODO: Replace text
                 }
             }
+            .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
+            .mailButtonSecondaryColor(MailResourcesAsset.onAIColor.swiftUIColor)
         }
     }
 }
