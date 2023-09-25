@@ -41,7 +41,7 @@ struct AIPromptPresenter<ModalContent: View>: ViewModifier {
                 if #available(iOS 16.0, *) {
                     modalContent()
                         .background(ViewGeometry(key: ViewHeightKey.self, property: \.size.height))
-                        .presentationDetents([.height(224)])
+                        .presentationDetents([.height(UIScreen.mainScreen.bounds.height / 4)])
                 } else {
                     modalContent()
                         .backport.presentationDetents([.medium])
