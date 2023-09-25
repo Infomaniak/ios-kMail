@@ -61,8 +61,14 @@ struct AIPropositionView: View {
                     Spacer()
 
                     MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
-                        isShowingReplaceContentAlert = true
-                        // TODO: Insert data
+                        guard let aiResponse else { return }
+
+                        if draftContentManager.hasContent {
+                            isShowingReplaceContentAlert = true
+                        } else {
+                            draftContentManager.replaceBodyContent(with: aiResponse.content)
+                            dismiss()
+                        }
                     }
                 }
             }
@@ -72,7 +78,9 @@ struct AIPropositionView: View {
             }
             .customAlert(isPresented: $isShowingReplaceContentAlert) {
                 ReplaceMessageContentView {
-                    // TODO: Replace text
+                    guard let aiResponse else { return }
+                    draftContentManager.replaceBodyContent(with: aiResponse.content)
+                    dismiss()
                 }
             }
             .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
