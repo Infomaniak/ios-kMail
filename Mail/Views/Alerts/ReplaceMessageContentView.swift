@@ -42,8 +42,6 @@ struct ReplaceMessageContentView: View {
             .padding(.bottom, UIPadding.alertDescriptionBottom)
 
             ModalButtonsView(primaryButtonTitle: "Remplacer", primaryButtonAction: action)
-                .primaryMailButtonCustomBackground(MailResourcesAsset.aiColor.swiftUIColor)
-                .primaryMailButtonCustomTextStyle(.bodyMediumOnAI)
         }
     }
 }

@@ -75,8 +75,8 @@ struct AIPromptView: View {
 
             ZStack(alignment: .trailing) {
                 MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton, action: askAI)
-                    .mailButtonCustomTextStyle(.bodyMediumOnAI)
-                    .mailButtonCustomBackground(MailResourcesAsset.aiColor.swiftUIColor)
+                    .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
+                    .mailButtonSecondaryColor(MailResourcesAsset.onAIColor.swiftUIColor)
                     .disabled(userPrompt.isEmpty)
                     .opacity(isLoading ? 0 : 1)
 
