@@ -26,6 +26,14 @@ struct MailButtonStyleKey: EnvironmentKey {
     static var defaultValue = MailButton.Style.large
 }
 
+struct MailButtonPrimaryColorKey: EnvironmentKey {
+    static var defaultValue = Color.accentColor
+}
+
+struct MailButtonSecondaryColorKey: EnvironmentKey {
+    static var defaultValue = UserDefaults.shared.accentColor.onAccent.swiftUIColor
+}
+
 struct MailButtonFullWidthKey: EnvironmentKey {
     static var defaultValue = false
 }
@@ -42,18 +50,20 @@ struct MailButtonLoadingKey: EnvironmentKey {
     static var defaultValue = false
 }
 
-struct MailButtonCustomTextStyleKey: EnvironmentKey {
-    static var defaultValue: MailTextStyle?
-}
-
-struct MailButtonCustomBackgroundKey: EnvironmentKey {
-    static var defaultValue: Color?
-}
-
 extension EnvironmentValues {
     var mailButtonStyle: MailButton.Style {
         get { self[MailButtonStyleKey.self] }
         set { self[MailButtonStyleKey.self] = newValue }
+    }
+
+    var mailButtonPrimaryColor: Color {
+        get { self[MailButtonPrimaryColorKey.self] }
+        set { self[MailButtonPrimaryColorKey.self] = newValue }
+    }
+
+    var mailButtonSecondaryColor: Color {
+        get { self[MailButtonSecondaryColorKey.self] }
+        set { self[MailButtonSecondaryColorKey.self] = newValue }
     }
 
     var mailButtonFullWidth: Bool {
@@ -75,21 +85,19 @@ extension EnvironmentValues {
         get { self[MailButtonLoadingKey.self] }
         set { self[MailButtonLoadingKey.self] = newValue }
     }
-
-    var mailButtonCustomTextStyle: MailTextStyle? {
-        get { self[MailButtonCustomTextStyleKey.self] }
-        set { self[MailButtonCustomTextStyleKey.self] = newValue }
-    }
-
-    var mailButtonCustomBackground: Color? {
-        get { self[MailButtonCustomBackgroundKey.self] }
-        set { self[MailButtonCustomBackgroundKey.self] = newValue }
-    }
 }
 
 extension View {
     func mailButtonStyle(_ style: MailButton.Style) -> some View {
         environment(\.mailButtonStyle, style)
+    }
+
+    func mailButtonPrimaryColor(_ color: Color) -> some View {
+        environment(\.mailButtonPrimaryColor, color)
+    }
+
+    func mailButtonSecondaryColor(_ color: Color) -> some View {
+        environment(\.mailButtonSecondaryColor, color)
     }
 
     func mailButtonFullWidth(_ fullWidth: Bool) -> some View {
@@ -106,14 +114,6 @@ extension View {
 
     func mailButtonLoading(_ loading: Bool) -> some View {
         environment(\.mailButtonLoading, loading)
-    }
-
-    func mailButtonCustomTextStyle(_ textStyle: MailTextStyle?) -> some View {
-        environment(\.mailButtonCustomTextStyle, textStyle)
-    }
-
-    func mailButtonCustomBackground(_ background: Color?) -> some View {
-        environment(\.mailButtonCustomBackground, background)
     }
 }
 
