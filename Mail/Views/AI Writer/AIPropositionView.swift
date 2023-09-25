@@ -27,6 +27,7 @@ struct AIPropositionView: View {
     @EnvironmentObject private var draftContentManager: DraftContentManager
 
     @State private var textPlainHeight = CGFloat.zero
+    @State private var isShowingReplaceContentAlert = false
 
     @Binding var aiResponse: AIResponse?
 
@@ -60,6 +61,7 @@ struct AIPropositionView: View {
                     Spacer()
 
                     MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
+                        isShowingReplaceContentAlert = true
                         // TODO: Insert data
                     }
                     .mailButtonCustomBackground(MailResourcesAsset.aiColor.swiftUIColor)
@@ -68,6 +70,11 @@ struct AIPropositionView: View {
             .introspect(.viewController, on: .iOS(.v15, .v16, .v17)) { viewController in
                 guard let toolbar = viewController.navigationController?.toolbar else { return }
                 UIConstants.applyComposeViewStyle(to: toolbar)
+            }
+            .customAlert(isPresented: $isShowingReplaceContentAlert) {
+                ReplaceMessageContentView {
+                    // TODO: Replace text
+                }
             }
         }
     }
