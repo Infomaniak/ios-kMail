@@ -55,13 +55,19 @@ struct SplitView: View {
     @Weak private var splitViewController: UISplitViewController?
 
     @StateObject private var navigationDrawerController = NavigationDrawerState()
-    @StateObject private var splitViewManager = SplitViewManager()
+    @StateObject private var splitViewManager: SplitViewManager
 
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     let mailboxManager: MailboxManager
+    init(mailboxManager: MailboxManager) {
+        self.mailboxManager = mailboxManager
+        let splitViewManager = SplitViewManager()
+        splitViewManager.selectedFolder = mailboxManager.getFolder(with: .inbox)
+        _splitViewManager = StateObject(wrappedValue: splitViewManager)
+    }
 
     var body: some View {
         Group {
@@ -152,7 +158,11 @@ struct SplitView: View {
         }
         .task(id: mailboxManager.mailbox.objectId) {
             await fetchFolders()
-            splitViewManager.selectedFolder = getInbox()
+
+            let newInbox = getInbox()
+            if newInbox?.id != splitViewManager.selectedFolder?.id {
+                splitViewManager.selectedFolder = newInbox
+            }
         }
         .onRotate { orientation in
             guard let interfaceOrientation = orientation else { return }
