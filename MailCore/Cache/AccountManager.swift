@@ -229,18 +229,21 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     public func createAndSetCurrentAccount(code: String, codeVerifier: String) async throws -> Account {
         let token = try await networkLoginService.apiToken(using: code, codeVerifier: codeVerifier)
-        return try await createAndSetCurrentAccount(token: token)
+        do {
+            return try await createAndSetCurrentAccount(token: token)
+        } catch {
+            let partiallyCreatedAccount = Account(apiToken: token)
+            removeTokenAndAccount(account: partiallyCreatedAccount)
+            throw error
+        }
     }
 
-    public func createAndSetCurrentAccount(token: ApiToken) async throws -> Account {
+    private func createAndSetCurrentAccount(token: ApiToken) async throws -> Account {
         let apiFetcher = MailApiFetcher(token: token, delegate: self)
         let user = try await apiFetcher.userProfile()
 
         let mailboxesResponse = try await apiFetcher.mailboxes()
         guard !mailboxesResponse.isEmpty else {
-            networkLoginService.deleteApiToken(token: token) { error in
-                DDLogError("Failed to delete api token: \(error.localizedDescription)")
-            }
             throw MailError.noMailbox
         }
 
@@ -469,7 +472,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     public func removeTokenAndAccount(account: Account) {
-        let removedToken = tokenStore.removeTokenFor(userId: account.userId)
+        let removedToken = tokenStore.removeTokenFor(userId: account.userId) ?? account.token
         removeAccount(toDeleteAccount: account)
 
         guard let removedToken else { return }
