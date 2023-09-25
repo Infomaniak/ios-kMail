@@ -218,7 +218,7 @@ struct OnboardingView: View {
                 if !isLastSlide {
                     MailButton(icon: MailResourcesAsset.fullArrowRight) {
                         withAnimation {
-                            selection += 1
+                            selection = min(slides.count, selection + 1)
                         }
                     }
                     .mailButtonIconSize(24)
