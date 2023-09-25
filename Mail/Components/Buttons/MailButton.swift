@@ -43,11 +43,11 @@ struct MailButtonLoadingKey: EnvironmentKey {
 }
 
 struct MailButtonCustomTextStyleKey: EnvironmentKey {
-    static var defaultValue: MailTextStyle? = nil
+    static var defaultValue: MailTextStyle?
 }
 
 struct MailButtonCustomBackgroundKey: EnvironmentKey {
-    static var defaultValue: Color? = nil
+    static var defaultValue: Color?
 }
 
 extension EnvironmentValues {
