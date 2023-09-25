@@ -20,6 +20,14 @@ import Foundation
 import MailResources
 
 extension Action: CaseIterable {
+    public static let rightClickActions: [Action] = [
+        .reply,
+        .replyAll,
+        .forward,
+        .delete,
+        .archive,
+        .openMovePanel
+    ]
     public static let quickActions: [Action] = [.reply, .replyAll, .forward, .delete]
     public static let swipeActions: [Action] = [
         .delete,
