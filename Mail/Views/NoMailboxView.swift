@@ -21,7 +21,8 @@ import MailResources
 import SwiftUI
 
 struct NoMailboxView: View {
-    @State private var isShowingAddMailboxView = false
+    @Environment(\.openURL) private var openURL
+
     @State private var isShowingLoginView = false
     let slide = Slide(
         id: 1,
@@ -44,7 +45,7 @@ struct NoMailboxView: View {
 
             VStack(spacing: UIPadding.medium) {
                 MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.buttonAddEmailAddress) {
-                    isShowingAddMailboxView = true
+                    openURL(URLConstants.ikMe.url)
                 }
                 .mailButtonFullWidth(true)
 
@@ -57,10 +58,6 @@ struct NoMailboxView: View {
             .padding(.bottom, UIPadding.onBoardingBottomButtons)
         }
         .matomoView(view: ["NoMailboxView"])
-        .sheet(isPresented: $isShowingAddMailboxView) {
-            AddMailboxView()
-                .sheetViewStyle()
-        }
         .fullScreenCover(isPresented: $isShowingLoginView) {
             OnboardingView(page: 4, isScrollEnabled: false)
         }
