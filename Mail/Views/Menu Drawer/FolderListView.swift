@@ -48,7 +48,7 @@ struct NestableFolder: Identifiable {
         for folder in folders {
             parentFolders.append(NestableFolder(
                 content: folder,
-                children: Self.createFoldersHierarchy(from: Array(folder.children))
+                children: createFoldersHierarchy(from: Array(folder.children))
             ))
         }
 

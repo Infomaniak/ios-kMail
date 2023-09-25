@@ -16,10 +16,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUIIntrospect
 import MailCore
 import MailResources
 import SwiftUI
+import SwiftUIIntrospect
 
 struct SegmentedControlModifier: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor

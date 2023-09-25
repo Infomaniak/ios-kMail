@@ -175,7 +175,7 @@ enum SearchState {
         observeSearch()
 
         if searchValue.trimmingCharacters(in: .whitespacesAndNewlines).count >= 3 {
-           await mailboxManager.addToSearchHistory(value: searchValue)
+            await mailboxManager.addToSearchHistory(value: searchValue)
         }
     }
 

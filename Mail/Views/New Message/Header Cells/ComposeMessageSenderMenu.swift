@@ -16,17 +16,18 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
-import InfomaniakDI
 
 struct ComposeMessageSenderMenu: View {
     @EnvironmentObject private var draftContentManager: DraftContentManager
 
     /// Note:
-    /// ObservedResults will invoke a `default.realm` store, and break (no migration block) while a migration is needed in share extension.
+    /// ObservedResults will invoke a `default.realm` store, and break (no migration block) while a migration is needed in share
+    /// extension.
     ///
     /// Therefore, I have to pass the correct realm configuration for `Signature.self`, so it can function correctly.
     @ObservedResults(Signature.self, configuration: {

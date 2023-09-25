@@ -19,11 +19,11 @@
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
-import SwiftUIIntrospect
 import Lottie
 import MailCore
 import MailResources
 import SwiftUI
+import SwiftUIIntrospect
 
 struct SlideView: View {
     let slide: Slide

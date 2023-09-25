@@ -62,7 +62,7 @@ public enum NotificationsHelper {
         @InjectService var notificationService: InfomaniakNotifications
         @InjectService var accountManager: AccountManager
         @InjectService var mailboxInfosManager: MailboxInfosManager
-        
+
         for account in accountManager.accounts {
             let currentSubscription = await notificationService.subscriptionForUser(id: account.userId)
 

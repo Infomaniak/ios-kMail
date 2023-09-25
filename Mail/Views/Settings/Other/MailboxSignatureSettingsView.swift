@@ -40,7 +40,11 @@ struct MailboxSignatureSettingsView: View {
                     .settingsCell()
 
                 ForEach(signatures) { signature in
-                    SettingsOptionCell(title: signature.name, isSelected: signature.isDefault, isLast: signature == signatures.last) {
+                    SettingsOptionCell(
+                        title: signature.name,
+                        isSelected: signature.isDefault,
+                        isLast: signature == signatures.last
+                    ) {
                         setAsDefault(signature)
                     }
                 }

@@ -74,8 +74,8 @@ public final class ContactManager: ObservableObject {
         backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
     }
 
-    internal let localContactsHelper = LocalContactsHelper()
-    internal var currentMergeRequest: Task<Void, Never>?
+    let localContactsHelper = LocalContactsHelper()
+    var currentMergeRequest: Task<Void, Never>?
 
     // Entry point to refresh all contacts in base
     public func refreshContactsAndAddressBooks() async throws {

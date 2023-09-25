@@ -25,12 +25,11 @@ public struct EditedDraft: Identifiable {
 
     public let draft: Draft
     public let messageReply: MessageReply?
-    
-    
+
     public static func new() -> EditedDraft {
         return EditedDraft(draft: Draft(localUUID: UUID().uuidString), messageReply: nil)
     }
-    
+
     public static func existing(draft: Draft) -> EditedDraft {
         return EditedDraft(draft: draft, messageReply: nil)
     }

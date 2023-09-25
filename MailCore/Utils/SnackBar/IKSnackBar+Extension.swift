@@ -62,7 +62,7 @@ public extension IKSnackBar {
         @LazyInjectService var avoider: IKSnackBarAvoider
 
         let snackbar: IKSnackBar?
-        if let contextView = contextView {
+        if let contextView {
             snackbar = IKSnackBar.make(
                 in: contextView,
                 message: message,
@@ -78,7 +78,7 @@ public extension IKSnackBar {
             )
         }
 
-        guard let snackbar = snackbar else {
+        guard let snackbar else {
             return nil
         }
 

@@ -313,7 +313,8 @@ public extension Draft {
         return displayExternalRecipientState(mailboxManager: mailboxManager, recipientsList: recipientsList)
     }
 
-    func displayExternalRecipientState(mailboxManager: MailboxManager, recipientsList: List<Recipient>) -> DisplayExternalRecipientStatus.State {
+    func displayExternalRecipientState(mailboxManager: MailboxManager,
+                                       recipientsList: List<Recipient>) -> DisplayExternalRecipientStatus.State {
         let externalDisplayStatus = DisplayExternalRecipientStatus(mailboxManager: mailboxManager, recipientsList: recipientsList)
         return externalDisplayStatus.state
     }

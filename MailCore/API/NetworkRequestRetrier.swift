@@ -16,8 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
 import Alamofire
+import Foundation
 
 final class NetworkRequestRetrier: RequestInterceptor {
     let maxRetry: Int

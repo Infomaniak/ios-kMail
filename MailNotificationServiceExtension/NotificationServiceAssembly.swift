@@ -27,7 +27,7 @@ import MailCore
 private let realmRootPath = "mailboxes"
 private let appGroupIdentifier = "group.com.infomaniak.mail"
 
-extension Array where Element == Factory {
+extension [Factory] {
     func registerFactoriesInDI() {
         forEach { SimpleResolver.sharedResolver.store(factory: $0) }
     }
