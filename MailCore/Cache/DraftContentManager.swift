@@ -44,7 +44,8 @@ public class DraftContentManager: ObservableObject {
     let mailboxManager: MailboxManager
     let incompleteDraft: Draft
 
-    public var draftIsEmpty: Bool {
+    /// Returns `true` if the draft body contains content (excluding signature)
+    public var hasContent: Bool {
         let realm = mailboxManager.getRealm()
         guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID) else {
             return false
@@ -57,7 +58,7 @@ public class DraftContentManager: ObservableObject {
         }
 
         let content = (try? parsedMessage.body()?.text()) ?? ""
-        return content.trimmingCharacters(in: .whitespaces).isEmpty
+        return !content.trimmingCharacters(in: .whitespaces).isEmpty
     }
 
     public init(incompleteDraft: Draft, messageReply: MessageReply?, mailboxManager: MailboxManager) {
@@ -145,6 +146,25 @@ public class DraftContentManager: ObservableObject {
             attachments: attachments,
             shouldAddSignatureText: shouldAddSignatureText
         )
+    }
+
+    public func replaceBodyContent(with content: String) {
+        let realm = mailboxManager.getRealm()
+        guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID) else {
+            return
+        }
+
+        guard let parsedMessage = try? SwiftSoup.parse(liveDraft.body) else { return }
+
+        var signatureContent = ""
+        if let foundSignature = try? parsedMessage.select(".\(Constants.signatureWrapperIdentifier)").first(),
+           let signatureHTML = try? foundSignature.outerHtml() {
+            signatureContent = signatureHTML
+        }
+
+        try? realm.write {
+            liveDraft.body = "<p>\(content.replacingOccurrences(of: "\n", with: "<br>"))</p>\(signatureContent)"
+        }
     }
 
     private func writeCompleteDraft(
