@@ -179,7 +179,7 @@ struct ComposeMessageView: View {
         .aiPromptPresenter(isPresenter: $isShowingAIPrompt) {
             AIPromptView(aiResponse: $aiResponse, mailboxManager: mailboxManager)
         }
-        .sheet(item: $aiResponse) { response in
+        .sheet(item: $aiResponse) { _ in
             AIPropositionView(aiResponse: $aiResponse)
         }
         .environmentObject(draftContentManager)

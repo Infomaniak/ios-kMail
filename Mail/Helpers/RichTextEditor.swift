@@ -26,9 +26,7 @@ import SwiftUI
 import WebKit
 
 struct RichTextEditor: UIViewRepresentable {
-    typealias UIViewType = MailEditorView
-
-    @State private var editorCurrentSignature: Signature?
+    @State private var mustUpdateBody = false
 
     @Binding var model: RichTextEditorModel
     @Binding var body: String
@@ -36,7 +34,6 @@ struct RichTextEditor: UIViewRepresentable {
     @Binding var isShowingFileSelection: Bool
     @Binding var isShowingPhotoLibrary: Bool
     @Binding var becomeFirstResponder: Bool
-    @Binding var currentSignature: Signature?
     @Binding var isShowingAIPrompt: Bool
 
     let blockRemoteContent: Bool
@@ -46,7 +43,6 @@ struct RichTextEditor: UIViewRepresentable {
          alert: ObservedObject<NewMessageAlert>.Wrapper,
          isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>,
          becomeFirstResponder: Binding<Bool>,
-         currentSignature: Binding<Signature?>,
          isShowingAIPrompt: Binding<Bool>,
          blockRemoteContent: Bool) {
         _model = model
@@ -56,17 +52,21 @@ struct RichTextEditor: UIViewRepresentable {
         _isShowingFileSelection = isShowingFileSelection
         _isShowingPhotoLibrary = isShowingPhotoLibrary
         _becomeFirstResponder = becomeFirstResponder
-        _currentSignature = currentSignature
         _isShowingAIPrompt = isShowingAIPrompt
         self.blockRemoteContent = blockRemoteContent
-        _editorCurrentSignature = State(wrappedValue: currentSignature.wrappedValue)
     }
 
     class Coordinator: SQTextEditorDelegate {
         var parent: RichTextEditor
 
         init(_ parent: RichTextEditor) {
-            self.parent = parent // tell the coordinator what its parent is, so it can modify values there directly
+            self.parent = parent
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(requireBodyUpdate),
+                name: Notification.Name.updateComposeMessageBody,
+                object: nil
+            )
         }
 
         @MainActor
@@ -119,6 +119,10 @@ struct RichTextEditor: UIViewRepresentable {
                 parent.body = content
             }
         }
+
+        @objc func requireBodyUpdate() {
+            parent.mustUpdateBody = true
+        }
     }
 
     func makeCoordinator() -> Coordinator {
@@ -142,9 +146,9 @@ struct RichTextEditor: UIViewRepresentable {
                 becomeFirstResponder = false
             }
         }
-        if currentSignature != editorCurrentSignature {
+        if mustUpdateBody {
             Task {
-                editorCurrentSignature = currentSignature
+                mustUpdateBody = false
                 try await context.coordinator.insertBody(editor: uiView)
             }
         }
@@ -185,7 +189,8 @@ class MailEditorView: SQTextEditorView {
     var toolbarStyle = ToolbarStyle.main
 
     init(alert: ObservedObject<NewMessageAlert>.Wrapper,
-         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>, isShowingAIPrompt: Binding<Bool>) {
+         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>,
+         isShowingAIPrompt: Binding<Bool>) {
         self.alert = alert
         self.isShowingCamera = isShowingCamera
         self.isShowingFileSelection = isShowingFileSelection
