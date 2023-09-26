@@ -37,6 +37,7 @@ struct ThreadListView: View {
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
     @State private var firstLaunch = true
+    @State private var flushAlert: FlushAlertState?
     @State private var isLoadingMore = false
 
     @StateObject var viewModel: ThreadListViewModel
@@ -80,7 +81,8 @@ struct ThreadListView: View {
                        viewModel.folder.role == .trash || viewModel.folder.role == .spam {
                         FlushFolderView(
                             folder: viewModel.folder,
-                            mailboxManager: viewModel.mailboxManager
+                            mailboxManager: viewModel.mailboxManager,
+                            flushAlert: $flushAlert
                         )
                         .threadListCellAppearance()
                     }
@@ -106,7 +108,8 @@ struct ThreadListView: View {
                                                threadDensity: threadDensity,
                                                isSelected: viewModel.selectedThread?.uid == thread.uid,
                                                isMultiSelected: multipleSelectionViewModel.selectedItems
-                                                   .contains { $0.id == thread.id })
+                                                   .contains { $0.id == thread.id },
+                                               flushAlert: $flushAlert)
                             }
                         } header: {
                             if threadDensity != .compact {
@@ -182,7 +185,8 @@ struct ThreadListView: View {
                 isRefreshing = false
             }
         }
-        .threadListToolbar(viewModel: viewModel,
+        .threadListToolbar(flushAlert: $flushAlert,
+                           viewModel: viewModel,
                            multipleSelectionViewModel: multipleSelectionViewModel)
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
@@ -218,7 +222,7 @@ struct ThreadListView: View {
                 firstLaunch = false
             }
         }
-        .customAlert(item: $navigationState.presentedFlushAlert) { item in
+        .customAlert(item: $flushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: viewModel.folder)
         }
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Main"])

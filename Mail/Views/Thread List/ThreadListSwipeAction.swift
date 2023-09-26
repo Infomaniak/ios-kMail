@@ -27,18 +27,23 @@ private struct SwipeActionView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @EnvironmentObject private var actionsManager: ActionsManager
-    @EnvironmentObject private var navigationState: NavigationState
 
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
     @Binding var actionPanelMessages: [Message]?
     @Binding var moveSheetMessages: [Message]?
+    @Binding var flushAlert: FlushAlertState?
 
     let thread: Thread
     let action: Action
 
+    var isDestructive: Bool {
+        let folderPermanentlyDeleteContent = thread.folder?.permanentlyDeleteContent ?? false
+        return action.isDestructive && networkMonitor.isConnected && !folderPermanentlyDeleteContent
+    }
+
     var body: some View {
-        Button(role: action.isDestructive && networkMonitor.isConnected ? .destructive : nil) {
+        Button(role: isDestructive ? .destructive : nil) {
             matomo.track(eventWithCategory: .swipeActions, action: .drag, name: action.matomoName)
             Task {
                 await tryOrDisplayError {
@@ -49,7 +54,7 @@ private struct SwipeActionView: View {
                             originFolder: thread.folder,
                             nearestMessagesActionsPanel: $actionPanelMessages,
                             nearestMessagesToMoveSheet: $moveSheetMessages,
-                            nearestFlushAlert: $navigationState.presentedFlushAlert
+                            nearestFlushAlert: $flushAlert
                         )
                     )
                 }
@@ -76,6 +81,8 @@ struct ThreadListSwipeActions: ViewModifier {
     let viewModel: ThreadListViewModel
     let multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
+    @Binding var flushAlert: FlushAlertState?
+
     func body(content: Content) -> some View {
         content
             .swipeActions(edge: .leading) {
@@ -100,6 +107,7 @@ struct ThreadListSwipeActions: ViewModifier {
                 SwipeActionView(
                     actionPanelMessages: $actionPanelMessages,
                     moveSheetMessages: $moveSheetMessages,
+                    flushAlert: $flushAlert,
                     thread: thread,
                     action: action
                 )
@@ -111,10 +119,12 @@ struct ThreadListSwipeActions: ViewModifier {
 extension View {
     func swipeActions(thread: Thread,
                       viewModel: ThreadListViewModel,
-                      multipleSelectionViewModel: ThreadListMultipleSelectionViewModel) -> some View {
+                      multipleSelectionViewModel: ThreadListMultipleSelectionViewModel,
+                      nearestFlushAlert: Binding<FlushAlertState?>) -> some View {
         modifier(ThreadListSwipeActions(thread: thread,
                                         viewModel: viewModel,
-                                        multipleSelectionViewModel: multipleSelectionViewModel))
+                                        multipleSelectionViewModel: multipleSelectionViewModel,
+                                        flushAlert: nearestFlushAlert))
     }
 }
 
@@ -123,6 +133,7 @@ struct ThreadListSwipeAction_Previews: PreviewProvider {
         SwipeActionView(
             actionPanelMessages: .constant(nil),
             moveSheetMessages: .constant(nil),
+            flushAlert: .constant(nil),
             thread: PreviewHelper.sampleThread,
             action: .delete
         )
