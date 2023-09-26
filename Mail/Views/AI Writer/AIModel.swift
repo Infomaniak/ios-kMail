@@ -18,31 +18,18 @@
 
 import Foundation
 
-public enum AIOutputFormat: String, Codable {
-    case `default`, mail
-}
+final class AIModel: ObservableObject {
+    enum State {
+        case prompt, proposition
+    }
 
-public struct AIRequest: Codable {
-    public let messages: [AIMessage]
-    public let output: AIOutputFormat
-}
+    @Published var userPrompt = ""
+    @Published var isShowingPrompt = false
+    @Published var isShowingProposition = false
+    @Published var isLoading = false
 
-public struct AIResponse: Codable {
-    public let contextId: String?
-    public let tokensUsed: Int
-    public let content: String
-}
-
-public enum AIMessageType: String, Codable {
-    case user, context
-}
-
-public struct AIMessage: Codable {
-    public let type: AIMessageType
-    public let content: String
-
-    public init(type: AIMessageType, content: String) {
-        self.type = type
-        self.content = content
+    func displayView(_ state: AIModel.State) {
+        isShowingPrompt = state == .prompt
+        isShowingProposition = state == .proposition
     }
 }

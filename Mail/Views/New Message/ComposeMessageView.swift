@@ -74,15 +74,13 @@ struct ComposeMessageView: View {
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
     @State private var isShowingExternalTag = true
-    @State private var isShowingAIPrompt = false
-
-    @State private var aiResponse: AIResponse?
 
     @State private var editorModel = RichTextEditorModel()
     @Weak private var scrollView: UIScrollView?
 
     @StateObject private var attachmentsManager: AttachmentsManager
     @StateObject private var alert = NewMessageAlert()
+    @StateObject private var aiModel = AIModel()
 
     @StateRealmObject private var draft: Draft
 
@@ -176,11 +174,11 @@ struct ComposeMessageView: View {
                 dismissMessageView()
             }
         }
-        .aiPromptPresenter(isPresenter: $isShowingAIPrompt) {
-            AIPromptView(aiResponse: $aiResponse, mailboxManager: mailboxManager)
+        .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {
+            AIPromptView(aiModel: aiModel)
         }
-        .sheet(item: $aiResponse) { _ in
-            AIPropositionView(aiResponse: $aiResponse)
+        .sheet(isPresented: $aiModel.isShowingProposition) {
+            AIPropositionView(aiModel: aiModel, mailboxManager: mailboxManager)
         }
         .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
@@ -203,7 +201,7 @@ struct ComposeMessageView: View {
                         editorModel: $editorModel,
                         editorFocus: $editorFocus,
                         currentSignature: $currentSignature,
-                        isShowingAIPrompt: $isShowingAIPrompt,
+                        isShowingAIPrompt: $aiModel.isShowingPrompt,
                         attachmentsManager: attachmentsManager,
                         alert: alert,
                         messageReply: messageReply

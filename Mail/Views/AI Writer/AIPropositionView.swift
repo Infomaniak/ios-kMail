@@ -28,18 +28,42 @@ struct AIPropositionView: View {
 
     @State private var textPlainHeight = CGFloat.zero
     @State private var isShowingReplaceContentAlert = false
+    @State private var contextId: String?
+    @State private var content = ""
 
-    @Binding var aiResponse: AIResponse?
+    @ObservedObject var aiModel: AIModel
+
+    let mailboxManager: MailboxManager
 
     var body: some View {
         NavigationView {
             ScrollView {
-                SelectableTextView(textPlainHeight: $textPlainHeight, text: aiResponse?.content)
+                SelectableTextView(textPlainHeight: $textPlainHeight, text: content)
                     .frame(height: textPlainHeight)
                     .padding(.horizontal, value: .regular)
                     .tint(MailResourcesAsset.aiColor.swiftUIColor)
             }
             .matomoView(view: ["AI", "Prompt"])
+            .onAppear {
+                content = aiModel.userPrompt
+            }
+            .task {
+                do {
+                    let message = AIMessage(type: .user, content: aiModel.userPrompt)
+                    let result = try await mailboxManager.apiFetcher.createAIConversation(messages: [message])
+
+                    withAnimation {
+                        aiModel.isLoading = false
+                        contextId = result.contextId
+                        content = result.content
+                    }
+                } catch {
+                    // TODO: Handle error (next PR)
+                }
+            }
+            .onDisappear {
+                aiModel.userPrompt = ""
+            }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -57,17 +81,19 @@ struct AIPropositionView: View {
 
                 ToolbarItemGroup(placement: .bottomBar) {
                     AIPropositionMenu()
+                        .opacity(aiModel.isLoading ? 0 : 1)
 
                     Spacer()
 
-                    MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
-                        guard let aiResponse else { return }
-
-                        if draftContentManager.hasContent {
-                            isShowingReplaceContentAlert = true
-                        } else {
-                            draftContentManager.replaceBodyContent(with: aiResponse.content)
-                            dismiss()
+                    if aiModel.isLoading {
+                        AIProgressView()
+                    } else {
+                        MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
+                            if draftContentManager.hasContent {
+                                isShowingReplaceContentAlert = true
+                            } else {
+                                insertResult()
+                            }
                         }
                     }
                 }
@@ -77,20 +103,23 @@ struct AIPropositionView: View {
                 UIConstants.applyComposeViewStyle(to: toolbar)
             }
             .customAlert(isPresented: $isShowingReplaceContentAlert) {
-                ReplaceMessageContentView {
-                    guard let aiResponse else { return }
-                    draftContentManager.replaceBodyContent(with: aiResponse.content)
-                    dismiss()
-                }
+                ReplaceMessageContentView(action: insertResult)
             }
             .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
             .mailButtonSecondaryColor(MailResourcesAsset.onAIColor.swiftUIColor)
+            .matomoView(view: ["AI", "Prompt"])
         }
+    }
+
+    private func insertResult() {
+        guard aiModel.isLoading else { return }
+        draftContentManager.replaceBodyContent(with: content)
+        dismiss()
     }
 }
 
 struct AIPropositionView_Previews: PreviewProvider {
     static var previews: some View {
-        AIPropositionView(aiResponse: .constant(nil))
+        AIPropositionView(aiModel: AIModel(), mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }

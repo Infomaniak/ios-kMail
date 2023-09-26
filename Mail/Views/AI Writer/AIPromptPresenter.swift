@@ -20,8 +20,8 @@ import SwiftUI
 import SwiftUIBackports
 
 extension View {
-    func aiPromptPresenter<ModalContent: View>(isPresenter: Binding<Bool>, @ViewBuilder modalContent: @escaping () -> ModalContent) -> some View {
-        modifier(AIPromptPresenter(isPresented: isPresenter, modalContent: modalContent))
+    func aiPromptPresenter<ModalContent: View>(isPresented: Binding<Bool>, @ViewBuilder modalContent: @escaping () -> ModalContent) -> some View {
+        modifier(AIPromptPresenter(isPresented: isPresented, modalContent: modalContent))
     }
 }
 
