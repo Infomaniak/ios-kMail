@@ -25,12 +25,7 @@ struct AIPromptView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.isCompactWindow) private var isCompactWindow
 
-    @State private var userPrompt = ""
-    @State private var isLoading = false
-
-    @Binding var aiResponse: AIResponse?
-
-    let mailboxManager: MailboxManager
+    @ObservedObject var aiModel: AIModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
@@ -49,14 +44,14 @@ struct AIPromptView: View {
             }
 
             ZStack(alignment: .topLeading) {
-                if userPrompt.isEmpty {
+                if aiModel.userPrompt.isEmpty {
                     Text(MailResourcesStrings.Localizable.aiPromptPlaceholder)
                         .foregroundColor(Color(UIColor.placeholderText))
                         .textStyle(.body)
                         .padding(.horizontal, 5)
                 }
 
-                TextEditor(text: $userPrompt)
+                TextEditor(text: $aiModel.userPrompt)
                     .textStyle(.body)
                     .introspect(.textEditor, on: .iOS(.v15, .v16, .v17)) { textField in
                         textField.backgroundColor = .clear
@@ -73,40 +68,27 @@ struct AIPromptView: View {
                     .stroke(MailResourcesAsset.textFieldBorder.swiftUIColor, lineWidth: 1)
             }
 
-            ZStack(alignment: .trailing) {
-                MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton, action: askAI)
-                    .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
-                    .mailButtonSecondaryColor(MailResourcesAsset.onAIColor.swiftUIColor)
-                    .disabled(userPrompt.isEmpty)
-                    .opacity(isLoading ? 0 : 1)
-
-                AIProgressView()
-                    .opacity(isLoading ? 1 : 0)
+            MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton) {
+                aiModel.isLoading = true
+                aiModel.displayView(.proposition)
             }
+            .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
+            .mailButtonSecondaryColor(MailResourcesAsset.onAIColor.swiftUIColor)
+            .disabled(aiModel.userPrompt.isEmpty || aiModel.isLoading)
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .padding(value: .regular)
         .onDisappear {
-            userPrompt = ""
+            if !aiModel.isLoading {
+                aiModel.userPrompt = ""
+            }
         }
         .matomoView(view: ["AI", "Prompt"])
-    }
-
-    private func askAI() {
-        Task {
-            isLoading = true
-            let message = AIMessage(type: .user, content: userPrompt)
-            let result = try await mailboxManager.apiFetcher.createAIConversation(messages: [message])
-            isLoading = false
-
-            dismiss()
-            aiResponse = result
-        }
     }
 }
 
 struct AIPromptView_Previews: PreviewProvider {
     static var previews: some View {
-        AIPromptView(aiResponse: .constant(nil), mailboxManager: PreviewHelper.sampleMailboxManager)
+        AIPromptView(aiModel: AIModel())
     }
 }
