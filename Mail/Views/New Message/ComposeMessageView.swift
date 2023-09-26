@@ -141,7 +141,7 @@ struct ComposeMessageView: View {
             } catch {
                 // Unable to get signatures, "An error occurred" and close modal.
                 snackbarPresenter.show(message: MailError.unknownError.localizedDescription)
-                dismiss()
+                dismissMessageView()
             }
         }
         .onAppear {
@@ -206,7 +206,6 @@ struct ComposeMessageView: View {
                         isShowingAIPrompt: $isShowingAIPrompt,
                         attachmentsManager: attachmentsManager,
                         alert: alert,
-                        dismiss: dismiss,
                         messageReply: messageReply
                     )
                 }
