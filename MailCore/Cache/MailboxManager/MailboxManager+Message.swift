@@ -118,7 +118,7 @@ public extension MailboxManager {
         }
     }
 
-    func fetchOnePage(folder: Folder, direction: NewMessagesDirection? = nil) async throws -> Bool {
+    func messageUidsWithBackOff(folder: Folder, direction: NewMessagesDirection? = nil) async throws -> MessageUidsResult {
         let realm = getRealm()
         var paginationInfo: PaginationInfo?
 
@@ -144,6 +144,13 @@ public extension MailboxManager {
             folderId: folder.id,
             paginationInfo: paginationInfo
         )
+
+        return messageUidsResult
+    }
+
+    func fetchOnePage(folder: Folder, direction: NewMessagesDirection? = nil) async throws -> Bool {
+        let messageUidsResult = try await messageUidsWithBackOff(folder: folder, direction: direction)
+
         let messagesUids = MessagesUids(
             addedShortUids: messageUidsResult.messageShortUids,
             cursor: messageUidsResult.cursor
@@ -151,7 +158,7 @@ public extension MailboxManager {
 
         try await handleMessagesUids(messageUids: messagesUids, folder: folder)
 
-        switch paginationInfo?.direction {
+        switch direction {
         case .previous:
             return await backgroundRealm.execute { realm in
                 let freshFolder = folder.fresh(using: realm)
