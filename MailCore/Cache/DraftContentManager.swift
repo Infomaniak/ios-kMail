@@ -103,6 +103,7 @@ public class DraftContentManager: ObservableObject {
                 liveIncompleteDraft.identityId = "\(newSignature.id)"
                 liveIncompleteDraft.body = try parsedMessage.outerHtml()
             }
+            NotificationCenter.default.post(name: .updateComposeMessageBody, object: nil)
         } catch {
             DDLogError("An error occurred while transforming the DOM of the draft: \(error)")
         }
@@ -165,6 +166,7 @@ public class DraftContentManager: ObservableObject {
         try? realm.write {
             liveDraft.body = "<p>\(content.replacingOccurrences(of: "\n", with: "<br>"))</p>\(signatureContent)"
         }
+        NotificationCenter.default.post(name: .updateComposeMessageBody, object: nil)
     }
 
     private func writeCompleteDraft(
