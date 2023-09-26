@@ -36,7 +36,6 @@ struct ComposeMessageBodyView: View {
     @ObservedObject var attachmentsManager: AttachmentsManager
     @ObservedObject var alert: NewMessageAlert
 
-    let dismiss: DismissAction
     let messageReply: MessageReply?
 
     private var isRemoteContentBlocked: Bool {
@@ -86,8 +85,6 @@ struct ComposeMessageBodyView: View {
 
 struct ComposeMessageBodyView_Previews: PreviewProvider {
     static var previews: some View {
-        @Environment(\.dismiss) var dismiss
-
         ComposeMessageBodyView(draft: Draft(),
                                editorModel: .constant(RichTextEditorModel()),
                                editorFocus: .constant(false),
@@ -98,7 +95,6 @@ struct ComposeMessageBodyView_Previews: PreviewProvider {
                                    mailboxManager: PreviewHelper.sampleMailboxManager
                                ),
                                alert: NewMessageAlert(),
-                               dismiss: dismiss,
                                messageReply: nil)
     }
 }
