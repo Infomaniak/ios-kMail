@@ -97,7 +97,7 @@ struct CreateFolderView: View {
                         let folder = try await mailboxManager.createFolder(name: folderName)
                         if case .move(let moveHandler) = mode {
                             moveHandler(folder)
-                            NotificationCenter.default.post(Notification(name: .dismissMoveSheetNotificationName))
+                            NotificationCenter.default.post(name: .dismissMoveSheet, object: nil)
                         }
                     }
                 }

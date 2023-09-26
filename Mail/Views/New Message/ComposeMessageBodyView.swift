@@ -54,7 +54,6 @@ struct ComposeMessageBodyView: View {
                 isShowingFileSelection: $isShowingFileSelection,
                 isShowingPhotoLibrary: $isShowingPhotoLibrary,
                 becomeFirstResponder: $editorFocus,
-                currentSignature: $currentSignature,
                 isShowingAIPrompt: $isShowingAIPrompt,
                 blockRemoteContent: isRemoteContentBlocked
             )
