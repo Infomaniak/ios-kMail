@@ -488,27 +488,7 @@ public extension MailboxManager {
         try await refreshFolder(from: messages)
 
         // TODO: Remove after fix
-        Task {
-            for message in messages {
-                if let liveMessage = message.thaw(),
-                   liveMessage.seen != seen {
-                    SentrySDK.capture(message: "Found incoherent message update") { scope in
-                        scope.setContext(value: ["Message": ["uid": message.uid,
-                                                             "messageId": message.messageId,
-                                                             "date": message.date,
-                                                             "seen": message.seen,
-                                                             "duplicates": message.duplicates.compactMap(\.messageId),
-                                                             "references": message.references],
-                                                 "Seen": ["Expected": seen, "Actual": liveMessage.seen],
-                                                 "Folder": ["id": message.folder?._id,
-                                                            "name": message.folder?.name,
-                                                            "last update": message.folder?.lastUpdate,
-                                                            "cursor": message.folder?.cursor]],
-                                         key: "Message context")
-                    }
-                }
-            }
-        }
+        SentryDebug.listIncoherentMessageUpdate(messages: messages, actualSeen: seen)
     }
 
     /// Set starred the given messages.
