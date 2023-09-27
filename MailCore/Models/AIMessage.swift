@@ -34,7 +34,7 @@ public struct AIResponse: Codable {
 }
 
 public enum AIMessageType: String, Codable {
-    case user, context
+    case user, context, assistant
 }
 
 public struct AIMessage: Codable {

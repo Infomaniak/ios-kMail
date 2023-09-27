@@ -27,6 +27,9 @@ struct AIPropositionMenu: View {
         } label: {
             HStack(spacing: UIPadding.small) {
                 MailResourcesAsset.pencil.swiftUIImage
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 16, height: 16)
                 Text(MailResourcesStrings.Localizable.aiButtonAdjust)
             }
         }
