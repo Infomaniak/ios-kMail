@@ -21,9 +21,6 @@ import MailResources
 import SwiftUI
 
 struct CheckmarkToggleStyle: ToggleStyle {
-    let tintColor: Color
-    let textColor: Color
-
     func makeBody(configuration: Configuration) -> some View {
         Button {
             configuration.isOn.toggle()
@@ -35,7 +32,7 @@ struct CheckmarkToggleStyle: ToggleStyle {
 
                     Group {
                         RoundedRectangle(cornerRadius: 2)
-                            .fill(tintColor)
+                            .fill(.tint)
 
                         MailResourcesAsset.check.swiftUIImage
                             .resizable()
@@ -47,7 +44,6 @@ struct CheckmarkToggleStyle: ToggleStyle {
                 .frame(width: 16, height: 16)
 
                 configuration.label
-                    .foregroundColor(textColor)
             }
         }
     }
