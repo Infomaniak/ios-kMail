@@ -44,11 +44,7 @@ struct AttachmentPreview: View {
             .navigationBarTitle(attachment.name, displayMode: .inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
-                    }
+                    CloseButton(dismissAction: dismiss)
                 }
 
                 ToolbarItemGroup(placement: .bottomBar) {
