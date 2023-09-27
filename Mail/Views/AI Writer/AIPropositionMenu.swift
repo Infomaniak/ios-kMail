@@ -23,7 +23,9 @@ import SwiftUI
 struct AIPropositionMenu: View {
     var body: some View {
         Menu {
-            Text("TODO: Display menu options")
+            Button {} {
+                Text("TODO: Add UI buttons")
+            }
         } label: {
             HStack(spacing: UIPadding.small) {
                 MailResourcesAsset.pencil.swiftUIImage
