@@ -5,7 +5,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Mon, 18 Sep 2023 15:44:25 +0200
+ * Exported at: Wed, 27 Sep 2023 13:59:18 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1302,7 +1302,28 @@
 "aiPromptGenerationLoader" = "The assistant is writing";
 
 /* loco:65081ae6a237c4d16909e463 */
-"aiButtonAdjust" = "Adjust";
+"aiButtonRefine" = "Refine";
 
 /* loco:65081b4d5787de874c0dec32 */
 "aiButtonInsert" = "Insert";
+
+/* loco:650af993aaf29390e1022692 */
+"aiReplacementDialogTitle" = "Replace already existing content?";
+
+/* loco:650afa5b0b0204386e077c94 */
+"aiReplacementDialogDescription" = "Do you want to replace existing content by the assistant’s proposition?";
+
+/* loco:650afb3b15bedc19200ab182 */
+"aiReplacementDialogPositiveButton" = "Replace";
+
+/* loco:650afca41010feb5710a0b45 */
+"aiReplacementDialogDoNotShowAgain" = "Do not show this again";
+
+/* loco:65129af16ad732b0790e61c2 */
+"aiErrorTooManyRequests" = "It seems you’ve made too many requests in a short amount of time.\n\nPlease wait a few moments.";
+
+/* loco:65129ba24376b5dd8c04b6a2 */
+"aiErrorMaxTokenReached" = "Your request is too long, please try again in a shorter format.";
+
+/* loco:65129c4db1cb64db900f6a02 */
+"aiErrorUnknown" = "An error has occurred. If this error persists, please contact our helpdesk.\n\nThank you for your patience.";
