@@ -17,16 +17,16 @@
  */
 
 import Foundation
+import MailCore
 
 final class AIModel: ObservableObject {
     enum State {
         case prompt, proposition
     }
 
-    @Published var userPrompt = ""
+    @Published var conversation = [AIMessage]()
     @Published var isShowingPrompt = false
     @Published var isShowingProposition = false
-    @Published var isLoading = false
 
     func displayView(_ state: AIModel.State) {
         isShowingPrompt = state == .prompt
