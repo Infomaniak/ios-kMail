@@ -81,16 +81,17 @@ struct AIPropositionView: View {
 
                     Spacer()
 
-                    if isLoading {
+                    ZStack(alignment: .trailing) {
                         AIProgressView()
-                    } else {
+                            .opacity(isLoading ? 1 : 0)
                         MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
-                            if draftContentManager.hasContent {
+                            guard !draftContentManager.hasContent else {
                                 isShowingReplaceContentAlert = true
-                            } else {
-                                insertResult()
+                                return
                             }
+                            insertResult()
                         }
+                        .opacity(isLoading ? 0 : 1)
                     }
                 }
             }
@@ -103,6 +104,7 @@ struct AIPropositionView: View {
             }
             .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
             .mailButtonSecondaryColor(MailResourcesAsset.onAIColor.swiftUIColor)
+            .tint(MailResourcesAsset.aiColor.swiftUIColor)
             .matomoView(view: ["AI", "Proposition"])
         }
     }

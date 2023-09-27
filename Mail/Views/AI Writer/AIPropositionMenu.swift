@@ -30,7 +30,7 @@ struct AIPropositionMenu: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 16, height: 16)
-                Text(MailResourcesStrings.Localizable.aiButtonAdjust)
+                Text(MailResourcesStrings.Localizable.aiButtonRefine)
             }
         }
         .tint(MailResourcesAsset.textSecondaryColor.swiftUIColor)

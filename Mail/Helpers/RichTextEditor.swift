@@ -328,6 +328,7 @@ class MailEditorView: SQTextEditorView {
         case .editText:
             updateToolbarItems(style: toolbarStyle == .main ? .textEdition : .main)
         case .ai:
+            webView.resignFirstResponder()
             isShowingAIPrompt.wrappedValue = true
         case .addFile:
             isShowingFileSelection.wrappedValue = true
