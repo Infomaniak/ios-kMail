@@ -126,10 +126,13 @@ public extension MailboxManager {
         } catch let error as MailError where error == MailApiError.lostOffsetMessage {
             guard !isRetrying else {
                 DDLogError("We couldn't rebuild folder history even after retrying from scratch")
+                SentryDebug.failedResetingAfterBackoff(folder: folder)
                 throw MailError.unknownError
             }
 
             DDLogWarn("resetHistoryInfo because of lostOffsetMessageError")
+            SentryDebug.addResetingFolderBreadcrumb(folder: folder)
+
             await backgroundRealm.execute { realm in
                 guard let folder = folder.fresh(using: realm) else { return }
 
@@ -152,6 +155,8 @@ public extension MailboxManager {
         guard backoffIndex < backoffSequence.count else {
             throw MailError.lostOffsetMessage
         }
+
+        SentryDebug.addBackoffBreadcrumb(folder: folder, index: backoffIndex)
 
         let realm = getRealm()
         var paginationInfo: PaginationInfo?
