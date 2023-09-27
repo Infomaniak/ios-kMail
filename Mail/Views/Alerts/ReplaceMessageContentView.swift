@@ -31,12 +31,14 @@ struct ReplaceMessageContentView: View {
                 .textStyle(.bodyMedium)
                 .padding(.bottom, UIPadding.alertTitleBottom)
 
-            VStack(spacing: UIPadding.medium) {
+            VStack(alignment: .leading, spacing: UIPadding.medium) {
                 Text("Voulez-vous remplacer le contenu existant par la proposition de l’assistant ?")
                     .textStyle(.bodySecondary)
 
                 Toggle("Ne plus afficher ce message", isOn: $showAIReplaceContentAlert)
-                    .toggleStyle(CheckmarkToggleStyle(tintColor: MailResourcesAsset.aiColor.swiftUIColor, textColor: MailResourcesAsset.textSecondaryColor.swiftUIColor))
+                    .toggleStyle(CheckmarkToggleStyle())
+                    .tint(MailResourcesAsset.aiColor.swiftUIColor)
+                    .textStyle(.bodySecondary)
             }
             .padding(.bottom, UIPadding.alertDescriptionBottom)
 
