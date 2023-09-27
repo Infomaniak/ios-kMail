@@ -30,7 +30,6 @@ struct AIPropositionView: View {
     @State private var isShowingReplaceContentAlert = false
     @State private var contextId: String?
     @State private var isLoading = true
-    @State private var content = ""
 
     @ObservedObject var aiModel: AIModel
 
@@ -39,10 +38,15 @@ struct AIPropositionView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                SelectableTextView(textPlainHeight: $textPlainHeight, text: aiModel.conversation.last?.content ?? "")
-                    .frame(height: textPlainHeight)
-                    .padding(.horizontal, value: .regular)
-                    .tint(MailResourcesAsset.aiColor.swiftUIColor)
+                SelectableTextView(
+                    textPlainHeight: $textPlainHeight,
+                    text: aiModel.conversation.last?.content ?? "",
+                    foregroundColor: isLoading ? MailResourcesAsset.textTertiaryColor.swiftUIColor : MailResourcesAsset
+                        .textPrimaryColor.swiftUIColor
+                )
+                .frame(height: textPlainHeight)
+                .padding(.horizontal, value: .regular)
+                .tint(MailResourcesAsset.aiColor.swiftUIColor)
             }
             .task {
                 do {
@@ -104,7 +108,7 @@ struct AIPropositionView: View {
     }
 
     private func insertResult() {
-        guard !isLoading else { return }
+        guard !isLoading, let content = aiModel.conversation.last?.content else { return }
         draftContentManager.replaceBodyContent(with: content)
         dismiss()
     }
