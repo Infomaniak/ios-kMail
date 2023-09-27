@@ -104,17 +104,16 @@ public extension MailboxManager {
         }
 
         let realmPrevious = getRealm()
-        if let folderPrevious = folder.fresh(using: realmPrevious) {
-            var remainingOldMessagesToFetch = folderPrevious.remainingOldMessagesToFetch
-            while remainingOldMessagesToFetch > 0 {
-                guard !Task.isCancelled else { return }
+        guard let folderPrevious = folder.fresh(using: realmPrevious) else { return }
+        var remainingOldMessagesToFetch = folderPrevious.remainingOldMessagesToFetch
+        while remainingOldMessagesToFetch > 0 {
+            guard !Task.isCancelled else { return }
 
-                if try await !fetchOnePage(folder: folder, direction: .previous) {
-                    break
-                }
-
-                remainingOldMessagesToFetch -= Constants.pageSize
+            if try await !fetchOnePage(folder: folder, direction: .previous) {
+                break
             }
+
+            remainingOldMessagesToFetch -= Constants.pageSize
         }
     }
 
