@@ -5,7 +5,7 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Mon, 18 Sep 2023 15:44:25 +0200
+ * Exported at: Wed, 27 Sep 2023 13:59:18 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1302,7 +1302,28 @@
 "aiPromptGenerationLoader" = "L’assistente sta scrivendo";
 
 /* loco:65081ae6a237c4d16909e463 */
-"aiButtonAdjust" = "Regola";
+"aiButtonRefine" = "Affinare";
 
 /* loco:65081b4d5787de874c0dec32 */
 "aiButtonInsert" = "Inserisci";
+
+/* loco:650af993aaf29390e1022692 */
+"aiReplacementDialogTitle" = "Sostituire i contenuti esistenti?";
+
+/* loco:650afa5b0b0204386e077c94 */
+"aiReplacementDialogDescription" = "Vuoi sostituire il contenuto esistente con la proposta della procedura guidata?";
+
+/* loco:650afb3b15bedc19200ab182 */
+"aiReplacementDialogPositiveButton" = "Sostituisci";
+
+/* loco:650afca41010feb5710a0b45 */
+"aiReplacementDialogDoNotShowAgain" = "Non visualizzare più questo messaggio";
+
+/* loco:65129af16ad732b0790e61c2 */
+"aiErrorTooManyRequests" = "Sembra che abbia fatto troppe richieste in un breve lasso di tempo.\n\nSi prega di attendere qualche istante.";
+
+/* loco:65129ba24376b5dd8c04b6a2 */
+"aiErrorMaxTokenReached" = "La richiesta è troppo lunga. Riprova con un formato più breve.";
+
+/* loco:65129c4db1cb64db900f6a02 */
+"aiErrorUnknown" = "Si è verificato un errore. Se l’errore persiste, contatta il nostro helpdesk.\n\nGrazie per la vostra pazienza.";

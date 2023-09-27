@@ -35,7 +35,7 @@ struct CloseButton: View {
 
     init(size: Size? = nil, dismissAction: DismissAction) {
         self.size = size
-        self.dismissHandler = dismissAction.callAsFunction
+        dismissHandler = dismissAction.callAsFunction
     }
 
     var body: some View {
