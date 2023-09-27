@@ -51,11 +51,7 @@ struct SheetViewModifier: ViewModifier {
             content
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button {
-                            dismiss()
-                        } label: {
-                            Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
-                        }
+                        CloseButton(dismissAction: dismiss)
                     }
                 }
         }

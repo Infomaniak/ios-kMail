@@ -67,12 +67,7 @@ struct AIPropositionView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .foregroundColor(MailResourcesAsset.textSecondaryColor)
-                    }
+                    CloseButton(dismissAction: dismiss)
                 }
 
                 ToolbarItem(placement: .principal) {
@@ -97,6 +92,10 @@ struct AIPropositionView: View {
                         }
                     }
                 }
+            }
+            .onDisappear {
+                aiModel.isLoading = false
+                aiModel.userPrompt = ""
             }
             .introspect(.viewController, on: .iOS(.v15, .v16, .v17)) { viewController in
                 guard let toolbar = viewController.navigationController?.toolbar else { return }

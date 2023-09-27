@@ -239,9 +239,7 @@ struct ComposeMessageView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: didTouchDismiss) {
-                    Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
-                }
+                CloseButton(dismissHandler: didTouchDismiss)
             }
 
             ToolbarItem(placement: .navigationBarTrailing) {
