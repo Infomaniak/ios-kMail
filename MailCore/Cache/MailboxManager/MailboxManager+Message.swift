@@ -118,7 +118,14 @@ public extension MailboxManager {
         }
     }
 
-    func messageUidsWithBackOff(folder: Folder, direction: NewMessagesDirection? = nil) async throws -> MessageUidsResult {
+    func messageUidsWithBackOff(folder: Folder,
+                                direction: NewMessagesDirection? = nil,
+                                backoffIndex: Int = 0) async throws -> MessageUidsResult {
+        let backoffSequence = [1, 1, 2, 8, 34, 144]
+        guard backoffIndex < backoffSequence.count else {
+            throw MailError.lostOffsetMessage
+        }
+
         let realm = getRealm()
         var paginationInfo: PaginationInfo?
 
@@ -134,18 +141,34 @@ public extension MailboxManager {
                     return firstMessageShortUid > secondMessageShortUid
                 }
                 return firstMessageShortUid < secondMessageShortUid
-            }).first?.shortUid?.toString(),
-            let direction {
+            }
+
+        let backoffOffset = backoffSequence[backoffIndex] - 1
+        let currentOffset = min(backoffOffset, sortedMessages.count - 1)
+
+        if currentOffset >= 0,
+           let offset = sortedMessages[currentOffset].shortUid?.toString(),
+           let direction {
             paginationInfo = PaginationInfo(offsetUid: offset, direction: direction)
         }
 
-        let messageUidsResult = try await apiFetcher.messagesUids(
-            mailboxUuid: mailbox.uuid,
-            folderId: folder.id,
-            paginationInfo: paginationInfo
-        )
+        do {
+            let result = try await apiFetcher.messagesUids(
+                mailboxUuid: mailbox.uuid,
+                folderId: folder.id,
+                paginationInfo: paginationInfo
+            )
+            return result
+        } catch let error as MailError where error == MailApiError.apiMessageNotFound {
+            try await Task.sleep(nanoseconds: UInt64(0.5 * Double(NSEC_PER_SEC)))
+            let result = try await messageUidsWithBackOff(
+                folder: folder,
+                direction: direction,
+                backoffIndex: backoffIndex + 1
+            )
 
-        return messageUidsResult
+            return result
+        }
     }
 
     func fetchOnePage(folder: Folder, direction: NewMessagesDirection? = nil) async throws -> Bool {

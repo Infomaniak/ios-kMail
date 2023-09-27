@@ -74,6 +74,7 @@ public class MailError: LocalizedError {
     public static let noConnection = MailError(code: "noConnection",
                                                localizedDescription: MailResourcesStrings.Localizable.noConnection,
                                                shouldDisplay: true)
+    static let lostOffsetMessage = MailError(code: "lostOffsetMessage")
 
     /// After an update from the server we are still without a default signature
     public static let defaultSignatureMissing = MailError(code: "defaultSignatureMissing")
