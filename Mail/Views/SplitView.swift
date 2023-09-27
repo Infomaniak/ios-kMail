@@ -160,7 +160,7 @@ struct SplitView: View {
             await fetchFolders()
 
             let newInbox = getInbox()
-            if newInbox?.id != splitViewManager.selectedFolder?.id {
+            if newInbox != splitViewManager.selectedFolder {
                 splitViewManager.selectedFolder = newInbox
             }
         }
