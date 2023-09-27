@@ -21,28 +21,32 @@ import MailResources
 import SwiftUI
 
 struct ReplaceMessageContentView: View {
-    @AppStorage(UserDefaults.shared.key(.showAIReplaceContentAlert)) private var showAIReplaceContentAlert = DefaultPreferences.showAIReplaceContentAlert
+    @AppStorage(UserDefaults.shared.key(.showAIReplaceContentAlert)) private var showAIReplaceContentAlert = DefaultPreferences
+        .showAIReplaceContentAlert
 
     let action: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Détection d’un contenu déjà existant")
+            Text(MailResourcesStrings.Localizable.aiReplacementDialogTitle)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, UIPadding.alertTitleBottom)
 
             VStack(alignment: .leading, spacing: UIPadding.medium) {
-                Text("Voulez-vous remplacer le contenu existant par la proposition de l’assistant ?")
+                Text(MailResourcesStrings.Localizable.aiReplacementDialogDescription)
                     .textStyle(.bodySecondary)
 
-                Toggle("Ne plus afficher ce message", isOn: $showAIReplaceContentAlert)
+                Toggle(MailResourcesStrings.Localizable.aiReplacementDialogDoNotShowAgain, isOn: $showAIReplaceContentAlert)
                     .toggleStyle(CheckmarkToggleStyle())
                     .tint(MailResourcesAsset.aiColor.swiftUIColor)
                     .textStyle(.bodySecondary)
             }
             .padding(.bottom, UIPadding.alertDescriptionBottom)
 
-            ModalButtonsView(primaryButtonTitle: "Remplacer", primaryButtonAction: action)
+            ModalButtonsView(
+                primaryButtonTitle: MailResourcesStrings.Localizable.aiReplacementDialogPositiveButton,
+                primaryButtonAction: action
+            )
         }
     }
 }
