@@ -29,6 +29,7 @@ struct AIPropositionView: View {
     @State private var textPlainHeight = CGFloat.zero
     @State private var isShowingReplaceContentAlert = false
     @State private var contextId: String?
+    @State private var isLoading = true
     @State private var content = ""
 
     @ObservedObject var aiModel: AIModel
@@ -38,36 +39,32 @@ struct AIPropositionView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                SelectableTextView(textPlainHeight: $textPlainHeight, text: content)
+                SelectableTextView(textPlainHeight: $textPlainHeight, text: aiModel.conversation.last?.content ?? "")
                     .frame(height: textPlainHeight)
                     .padding(.horizontal, value: .regular)
                     .tint(MailResourcesAsset.aiColor.swiftUIColor)
             }
-            .matomoView(view: ["AI", "Prompt"])
-            .onAppear {
-                content = aiModel.userPrompt
-            }
             .task {
                 do {
-                    let message = AIMessage(type: .user, content: aiModel.userPrompt)
-                    let result = try await mailboxManager.apiFetcher.createAIConversation(messages: [message])
+                    let result = try await mailboxManager.apiFetcher.createAIConversation(messages: aiModel.conversation)
 
                     withAnimation {
-                        aiModel.isLoading = false
+                        isLoading = false
+                        aiModel.conversation.append(AIMessage(type: .assistant, content: result.content))
                         contextId = result.contextId
-                        content = result.content
                     }
                 } catch {
                     // TODO: Handle error (next PR)
                 }
             }
             .onDisappear {
-                aiModel.userPrompt = ""
+                aiModel.conversation = []
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     CloseButton(dismissAction: dismiss)
+                        .tint(MailResourcesAsset.textSecondaryColor)
                 }
 
                 ToolbarItem(placement: .principal) {
@@ -76,11 +73,11 @@ struct AIPropositionView: View {
 
                 ToolbarItemGroup(placement: .bottomBar) {
                     AIPropositionMenu()
-                        .opacity(aiModel.isLoading ? 0 : 1)
+                        .opacity(isLoading ? 0 : 1)
 
                     Spacer()
 
-                    if aiModel.isLoading {
+                    if isLoading {
                         AIProgressView()
                     } else {
                         MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
@@ -93,10 +90,6 @@ struct AIPropositionView: View {
                     }
                 }
             }
-            .onDisappear {
-                aiModel.isLoading = false
-                aiModel.userPrompt = ""
-            }
             .introspect(.viewController, on: .iOS(.v15, .v16, .v17)) { viewController in
                 guard let toolbar = viewController.navigationController?.toolbar else { return }
                 UIConstants.applyComposeViewStyle(to: toolbar)
@@ -106,12 +99,12 @@ struct AIPropositionView: View {
             }
             .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
             .mailButtonSecondaryColor(MailResourcesAsset.onAIColor.swiftUIColor)
-            .matomoView(view: ["AI", "Prompt"])
+            .matomoView(view: ["AI", "Proposition"])
         }
     }
 
     private func insertResult() {
-        guard aiModel.isLoading else { return }
+        guard !isLoading else { return }
         draftContentManager.replaceBodyContent(with: content)
         dismiss()
     }
