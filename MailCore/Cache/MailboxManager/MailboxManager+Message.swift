@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCoreUI
 import InfomaniakDI
@@ -26,7 +27,7 @@ import Sentry
 // MARK: - Message
 
 public extension MailboxManager {
-    func messages(folder: Folder) async throws {
+    func messages(folder: Folder, isRetrying: Bool = false) async throws {
         guard !Task.isCancelled else { return }
 
         let realm = getRealm()
@@ -93,8 +94,10 @@ public extension MailboxManager {
         }
 
         if previousCursor != nil {
-            while try await fetchOnePage(folder: folder, direction: .following) {
-                guard !Task.isCancelled else { return }
+            try await catchLostOffsetMessageError(folder: folder, isRetrying: isRetrying) {
+                while try await fetchOnePage(folder: folder, direction: .following) {
+                    guard !Task.isCancelled else { return }
+                }
             }
         }
 
@@ -114,6 +117,31 @@ public extension MailboxManager {
             }
 
             remainingOldMessagesToFetch -= Constants.pageSize
+        }
+    }
+
+    private func catchLostOffsetMessageError(folder: Folder, isRetrying: Bool, block: () async throws -> Void) async throws {
+        do {
+            try await block()
+        } catch let error as MailError where error == MailApiError.lostOffsetMessage {
+            guard !isRetrying else {
+                DDLogError("We couldn't rebuild folder history even after retrying from scratch")
+                throw MailError.unknownError
+            }
+
+            DDLogWarn("resetHistoryInfo because of lostOffsetMessageError")
+            await backgroundRealm.execute { realm in
+                guard let folder = folder.fresh(using: realm) else { return }
+
+                try? realm.write {
+                    folder.lastUpdate = nil
+                    folder.unreadCount = 0
+                    folder.remainingOldMessagesToFetch = Constants.messageQuantityLimit
+                    folder.isHistoryComplete = false
+                    folder.cursor = nil
+                }
+            }
+            try await messages(folder: folder, isRetrying: true)
         }
     }
 

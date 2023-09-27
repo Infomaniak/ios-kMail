@@ -24,7 +24,7 @@ public typealias MailboxManageable = MailBoxManagerDraftable & MailBoxManagerMes
 
 /// An abstract interface on the `MailboxManager` related to messages
 public protocol MailBoxManagerMessageable {
-    func messages(folder: Folder) async throws
+    func messages(folder: Folder, isRetrying: Bool) async throws
     func fetchOnePage(folder: Folder, direction: NewMessagesDirection?) async throws -> Bool
     func message(message: Message) async throws
     func attachmentData(attachment: Attachment) async throws -> Data
