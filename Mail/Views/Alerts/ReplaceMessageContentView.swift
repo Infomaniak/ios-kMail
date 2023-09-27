@@ -34,13 +34,11 @@ struct ReplaceMessageContentView: View {
 
             VStack(alignment: .leading, spacing: UIPadding.medium) {
                 Text(MailResourcesStrings.Localizable.aiReplacementDialogDescription)
-                    .textStyle(.bodySecondary)
 
                 Toggle(MailResourcesStrings.Localizable.aiReplacementDialogDoNotShowAgain, isOn: $showAIReplaceContentAlert)
                     .toggleStyle(CheckmarkToggleStyle())
-                    .tint(MailResourcesAsset.aiColor.swiftUIColor)
-                    .textStyle(.bodySecondary)
             }
+            .textStyle(.bodySecondary)
             .padding(.bottom, UIPadding.alertDescriptionBottom)
 
             ModalButtonsView(
