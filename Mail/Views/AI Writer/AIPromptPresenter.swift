@@ -35,23 +35,16 @@ struct AIPromptPresenter<ModalContent: View>: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .sheet(isPresented: Binding(get: {
-                guard isCompactWindow else { return false }
-                return isPresented
-            }, set: { isPresented = $0 })) {
+            .sheet(isPresented: Binding(get: { isCompactWindow && isPresented }, set: { isPresented = $0 })) {
                 if #available(iOS 16.0, *) {
                     modalContent()
-                        .background(ViewGeometry(key: ViewHeightKey.self, property: \.size.height))
                         .presentationDetents([.height(UIScreen.mainScreen.bounds.height / 4)])
                 } else {
                     modalContent()
                         .backport.presentationDetents([.medium])
                 }
             }
-            .customAlert(isPresented: Binding(get: {
-                guard !isCompactWindow else { return false }
-                return isPresented
-            }, set: { isPresented = $0 })) {
+            .customAlert(isPresented: Binding(get: { !isCompactWindow && isPresented }, set: { isPresented = $0 })) {
                 modalContent()
             }
     }
