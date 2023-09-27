@@ -25,6 +25,8 @@ struct AIPromptView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.isCompactWindow) private var isCompactWindow
 
+    @State private var prompt = ""
+
     @ObservedObject var aiModel: AIModel
 
     var body: some View {
@@ -34,17 +36,18 @@ struct AIPromptView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 CloseButton(size: .small, dismissAction: dismiss)
+                    .tint(MailResourcesAsset.textSecondaryColor)
             }
 
             ZStack(alignment: .topLeading) {
-                if aiModel.userPrompt.isEmpty {
+                if prompt.isEmpty {
                     Text(MailResourcesStrings.Localizable.aiPromptPlaceholder)
                         .foregroundColor(Color(UIColor.placeholderText))
                         .textStyle(.body)
                         .padding(.horizontal, 5)
                 }
 
-                TextEditor(text: $aiModel.userPrompt)
+                TextEditor(text: $prompt)
                     .textStyle(.body)
                     .introspect(.textEditor, on: .iOS(.v15, .v16, .v17)) { textField in
                         textField.backgroundColor = .clear
@@ -62,18 +65,18 @@ struct AIPromptView: View {
             }
 
             MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton) {
-                aiModel.isLoading = true
+                aiModel.conversation.append(AIMessage(type: .user, content: prompt))
                 aiModel.displayView(.proposition)
             }
             .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
             .mailButtonSecondaryColor(MailResourcesAsset.onAIColor.swiftUIColor)
-            .disabled(aiModel.userPrompt.isEmpty || aiModel.isLoading)
+            .disabled(prompt.isEmpty)
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .padding(value: .regular)
-        .onDisappear {
-            if !aiModel.isLoading {
-                aiModel.userPrompt = ""
+        .onAppear {
+            if let initialPrompt = aiModel.conversation.first {
+                prompt = initialPrompt.content
             }
         }
         .matomoView(view: ["AI", "Prompt"])
