@@ -33,14 +33,7 @@ struct AIPromptView: View {
                 AIHeaderView(style: .bottomSheet)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "xmark")
-                        .resizable()
-                        .frame(width: 16, height: 16)
-                        .foregroundColor(MailResourcesAsset.textSecondaryColor)
-                }
+                CloseButton(size: .small, dismissAction: dismiss)
             }
 
             ZStack(alignment: .topLeading) {

@@ -86,12 +86,9 @@ struct SearchView: View {
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button {
+                CloseButton {
                     Constants.globallyResignFirstResponder()
                     splitViewManager.showSearch = false
-                } label: {
-                    Image(systemName: isCompactWindow ? "chevron.left" : "xmark")
-                        .font(.body.weight(isCompactWindow ? .semibold : .regular))
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonBack)
             }
