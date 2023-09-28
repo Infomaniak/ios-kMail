@@ -36,11 +36,11 @@ struct MailButtonStyle: ButtonStyle {
         guard !minimizeHeight else { return nil }
 
         if style == .floatingActionButton {
-            return iconOnlyButton ? 64 : 56
+            return iconOnlyButton ? UIConstants.buttonLargeHeight : UIConstants.buttonMediumHeight
         } else if fullWidth {
-            return 56
+            return UIConstants.buttonMediumHeight
         } else {
-            return 40
+            return UIConstants.buttonSmallHeight
         }
     }
 
