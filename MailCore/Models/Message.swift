@@ -20,7 +20,6 @@ import Foundation
 import InfomaniakCore
 import MailResources
 import RealmSwift
-import Sentry
 
 // TODO: move to core
 public extension String {
@@ -318,13 +317,7 @@ public final class Message: Object, Decodable, Identifiable {
             self.date = date
         } else {
             date = Date()
-            SentrySDK
-                .addBreadcrumb(SentryDebug.createBreadcrumb(
-                    level: .warning,
-                    category: "Thread algo",
-                    message: "Nil message date decoded",
-                    data: ["uid": uid]
-                ))
+            SentryDebug.nilDateParsingBreadcrumb(uid: uid)
         }
         size = try values.decode(Int.self, forKey: .size)
         from = try values.decode(List<Recipient>.self, forKey: .from)
@@ -353,9 +346,7 @@ public final class Message: Object, Decodable, Identifiable {
         if let inReplyTo = try? values.decodeIfPresent(String.self, forKey: .inReplyTo) {
             self.inReplyTo = inReplyTo
         } else if let inReplyToList = try values.decodeIfPresent([String].self, forKey: .inReplyTo) {
-            SentrySDK.capture(message: "Found an array of inReplyTo") { scope in
-                scope.setContext(value: ["ids": inReplyToList.joined(separator: ", ")], key: "inReplyToList")
-            }
+            SentryDebug.messageHasInReplyTo(inReplyToList)
             inReplyTo = inReplyToList.first
         }
 
