@@ -98,6 +98,12 @@ public extension UIConstants {
     static let buttonsIconSize: CGFloat = 16
 
     static let componentsMaxWidth: CGFloat = 496
+
+    static let buttonLargeHeight: CGFloat = 64
+    static let buttonMediumHeight: CGFloat = 56
+    static let buttonSmallHeight: CGFloat = 40
+
+    static let aiPromptSheetHeight: CGFloat = 232
 }
 
 // MARK: - Animations
