@@ -5,7 +5,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Wed, 27 Sep 2023 13:59:18 +0200
+ * Exported at: Thu, 28 Sep 2023 11:54:42 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1327,3 +1327,21 @@
 
 /* loco:65129c4db1cb64db900f6a02 */
 "aiErrorUnknown" = "An error has occurred. If this error persists, please contact our helpdesk.\n\nThank you for your patience.";
+
+/* loco:651549fc352ff768af054453 */
+"aiMenuEditRequest" = "Edit my request";
+
+/* loco:65154a444e2a92186f026aa3 */
+"aiMenuRegenerate" = "Regenerate a response";
+
+/* loco:65154a5b5740266cf70c84a2 */
+"aiMenuShorten" = "Shorten";
+
+/* loco:65154a780b64dfbdde02ac45 */
+"aiMenuExpand" = "Expand";
+
+/* loco:65154b23fc895ced1501cde2 */
+"aiMenuSeriousWriting" = "Serious writing";
+
+/* loco:65154b39664dcac1df0d7492 */
+"aiMenuFriendlyWriting" = "Friendly writing";
