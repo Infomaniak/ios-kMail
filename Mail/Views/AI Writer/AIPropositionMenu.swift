@@ -21,10 +21,34 @@ import MailResources
 import SwiftUI
 
 struct AIPropositionMenu: View {
+    struct AIAction: Identifiable {
+        let id: Int
+        let label: String
+        let icon: MailResourcesImages
+
+        static let modify = AIAction(id: 1, label: "Modifier ma demande", icon: MailResourcesAsset.pencil)
+        static let regenerate = AIAction(id: 2, label: "Regénérer une réponse", icon: MailResourcesAsset.fileRegenerate)
+        static let shorten = AIAction(id: 3, label: "Raccourcir", icon: MailResourcesAsset.shortenParagraph)
+        static let extend = AIAction(id: 4, label: "Rallonger", icon: MailResourcesAsset.expandParagraph)
+        static let seriousWriting = AIAction(id: 5, label: "Rédaction sériseuse", icon: MailResourcesAsset.briefcase)
+        static let friendlyWriting = AIAction(id: 6, label: "Rédaction amicale", icon: MailResourcesAsset.smiley)
+
+        static let allActions: [[Self]] = [[.modify, .regenerate], [.shorten, .extend], [.seriousWriting, .friendlyWriting]]
+    }
+
     var body: some View {
         Menu {
-            Button {} {
-                Text("TODO: Add UI buttons")
+            ForEach(AIAction.allActions.indices, id: \.self) { actionsGroupIndex in
+                let actionsGroup = AIAction.allActions[actionsGroupIndex]
+                Section {
+                    ForEach(actionsGroup) { action in
+                        Button {
+                            handleAction(action)
+                        } label: {
+                            Label(action.label, image: action.icon.name)
+                        }
+                    }
+                }
             }
         } label: {
             HStack(spacing: UIPadding.small) {
@@ -37,10 +61,26 @@ struct AIPropositionMenu: View {
             .frame(height: UIConstants.buttonMediumHeight)
         }
         .tint(MailResourcesAsset.textSecondaryColor.swiftUIColor)
+        .modifier(FixedMenuOrderModifier())
+    }
+
+    private func handleAction(_ action: AIAction) {
+        // TODO: Handle action
     }
 }
 
-struct AIMenu_Preview: PreviewProvider {
+struct FixedMenuOrderModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 16.0, *) {
+            content
+                .menuOrder(.fixed)
+        } else {
+            content
+        }
+    }
+}
+
+struct AIPropositionMenu_Preview: PreviewProvider {
     static var previews: some View {
         AIPropositionMenu()
     }
