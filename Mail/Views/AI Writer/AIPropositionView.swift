@@ -76,23 +76,26 @@ struct AIPropositionView: View {
                 }
 
                 ToolbarItemGroup(placement: .bottomBar) {
-                    AIPropositionMenu()
-                        .opacity(isLoading ? 0 : 1)
-
-                    Spacer()
-
-                    ZStack(alignment: .trailing) {
-                        AIProgressView()
-                            .opacity(isLoading ? 1 : 0)
-                        MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
-                            guard !draftContentManager.hasContent else {
-                                isShowingReplaceContentAlert = true
-                                return
-                            }
-                            insertResult()
+                    Group {
+                        if !isLoading {
+                            AIPropositionMenu()
                         }
-                        .opacity(isLoading ? 0 : 1)
+
+                        Spacer()
+
+                        if isLoading {
+                            AIProgressView()
+                        } else {
+                            MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
+                                guard !draftContentManager.hasContent else {
+                                    isShowingReplaceContentAlert = true
+                                    return
+                                }
+                                insertResult()
+                            }
+                        }
                     }
+                    .padding(.bottom, value: .verySmall)
                 }
             }
             .introspect(.viewController, on: .iOS(.v15, .v16, .v17)) { viewController in
