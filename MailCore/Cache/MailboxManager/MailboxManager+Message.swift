@@ -137,6 +137,8 @@ public extension MailboxManager {
                 guard let folder = folder.fresh(using: realm) else { return }
 
                 try? realm.write {
+                    realm.delete(folder.messages)
+                    realm.delete(folder.threads)
                     folder.lastUpdate = nil
                     folder.unreadCount = 0
                     folder.remainingOldMessagesToFetch = Constants.messageQuantityLimit
