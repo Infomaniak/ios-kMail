@@ -61,6 +61,7 @@ struct MenuDrawerItemsHelpListView: View {
 
     @State private var isShowingHelp = false
     @State private var isShowingBugTracker = false
+    @State private var isShowingSyncProfile = false
 
     var body: some View {
         MenuDrawerItemsListView {
@@ -74,6 +75,11 @@ struct MenuDrawerItemsHelpListView: View {
                                matomoName: "help") {
                 isShowingHelp = true
             }
+            MenuDrawerItemCell(icon: MailResourcesAsset.help,
+                               label: "!sync",
+                               matomoName: "sync") {
+                isShowingSyncProfile = true
+            }
         }
         .sheet(isPresented: $isShowingHelp) {
             HelpView()
@@ -81,6 +87,9 @@ struct MenuDrawerItemsHelpListView: View {
         }
         .sheet(isPresented: $isShowingBugTracker) {
             BugTrackerView(isPresented: $isShowingBugTracker)
+        }
+        .sheet(isPresented: $isShowingSyncProfile) {
+            SyncProfileNavigationView()
         }
     }
 
