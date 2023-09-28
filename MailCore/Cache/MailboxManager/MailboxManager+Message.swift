@@ -163,8 +163,8 @@ public extension MailboxManager {
         let realm = getRealm()
         var paginationInfo: PaginationInfo?
 
-        if let offset = realm.objects(Message.self).where({ $0.folderId == folder.id && $0.fromSearch == false })
-            .sorted(by: {
+        let sortedMessages = realm.objects(Message.self).where { $0.folderId == folder.id }
+            .sorted {
                 guard let firstMessageShortUid = $0.shortUid,
                       let secondMessageShortUid = $1.shortUid else {
                     SentryDebug.castToShortUidFailed(firstUid: $0.uid, secondUid: $1.uid)
@@ -179,6 +179,11 @@ public extension MailboxManager {
 
         let backoffOffset = backoffSequence[backoffIndex] - 1
         let currentOffset = min(backoffOffset, sortedMessages.count - 1)
+
+        // We already did one call and last call was already above sortedMessages.count so we stop wasting more calls
+        if backoffIndex > 0 && backoffSequence[backoffIndex - 1] - 1 > sortedMessages.count - 1 {
+            throw MailError.lostOffsetMessage
+        }
 
         if currentOffset >= 0,
            let offset = sortedMessages[currentOffset].shortUid?.toString(),
