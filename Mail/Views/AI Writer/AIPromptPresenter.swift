@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import SwiftUI
 import SwiftUIBackports
 
@@ -38,7 +39,7 @@ struct AIPromptPresenter<ModalContent: View>: ViewModifier {
             .sheet(isPresented: Binding(get: { isCompactWindow && isPresented }, set: { isPresented = $0 })) {
                 if #available(iOS 16.0, *) {
                     modalContent()
-                        .presentationDetents([.height(UIScreen.mainScreen.bounds.height / 4)])
+                        .presentationDetents([.height(UIConstants.aiPromptSheetHeight)])
                 } else {
                     modalContent()
                         .backport.presentationDetents([.medium])
