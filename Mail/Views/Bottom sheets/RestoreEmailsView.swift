@@ -71,13 +71,11 @@ struct RestoreEmailsView: View {
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "RestoreEmailsView"])
     }
 
-    private func restoreEmails() {
+    private func restoreEmails() async {
         matomo.track(eventWithCategory: .restoreEmailsBottomSheet, name: "restore")
-        Task {
-            await tryOrDisplayError {
-                try await mailboxManager.apiFetcher.restoreBackup(mailbox: mailboxManager.mailbox, date: selectedDate)
-                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarRestorationLaunched)
-            }
+        await tryOrDisplayError {
+            try await mailboxManager.apiFetcher.restoreBackup(mailbox: mailboxManager.mailbox, date: selectedDate)
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarRestorationLaunched)
         }
     }
 

@@ -45,20 +45,18 @@ struct ReportDisplayProblemView: View {
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ReportDisplayProblemView"])
     }
 
-    private func report() {
-        Task {
-            await tryOrDisplayError {
-                // Download message
-                let fileURL = try await mailboxManager.apiFetcher.download(message: message)
-                // Send it via Sentry
-                let fileAttachment = Attachment(path: fileURL.path,
-                                                filename: fileURL.lastPathComponent,
-                                                contentType: "message/rfc822")
-                _ = SentrySDK.capture(message: "Message display problem reported") { scope in
-                    scope.add(fileAttachment)
-                }
-                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarDisplayProblemReported)
+    private func report() async {
+        await tryOrDisplayError {
+            // Download message
+            let fileURL = try await mailboxManager.apiFetcher.download(message: message)
+            // Send it via Sentry
+            let fileAttachment = Attachment(path: fileURL.path,
+                                            filename: fileURL.lastPathComponent,
+                                            contentType: "message/rfc822")
+            _ = SentrySDK.capture(message: "Message display problem reported") { scope in
+                scope.add(fileAttachment)
             }
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarDisplayProblemReported)
         }
     }
 }

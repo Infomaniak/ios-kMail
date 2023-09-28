@@ -56,15 +56,12 @@ struct DetachMailboxConfirmationView: View {
         }
     }
 
-    private func detach() {
+    private func detach() async {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailboxConfirm")
-
-        Task {
-            await tryOrDisplayError {
-                try await accountManager.detachMailbox(mailbox: mailbox)
-                navigationState.transitionToRootViewDestination(.mainView)
-            }
+        await tryOrDisplayError {
+            try await accountManager.detachMailbox(mailbox: mailbox)
+            navigationState.transitionToRootViewDestination(.mainView)
         }
     }
 }

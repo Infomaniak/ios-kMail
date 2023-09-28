@@ -92,13 +92,11 @@ struct CreateFolderView: View {
             ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: buttonIsEnabled) {
                 @InjectService var matomo: MatomoUtils
                 matomo.track(eventWithCategory: .createFolder, name: "confirm")
-                Task {
-                    await tryOrDisplayError {
-                        let folder = try await mailboxManager.createFolder(name: folderName)
-                        if case .move(let moveHandler) = mode {
-                            moveHandler(folder)
-                            NotificationCenter.default.post(Notification(name: .dismissMoveSheetNotificationName))
-                        }
+                await tryOrDisplayError {
+                    let folder = try await mailboxManager.createFolder(name: folderName)
+                    if case .move(let moveHandler) = mode {
+                        moveHandler(folder)
+                        NotificationCenter.default.post(Notification(name: .dismissMoveSheetNotificationName))
                     }
                 }
             }
