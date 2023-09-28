@@ -18,6 +18,7 @@
 
 import CocoaLumberjackSwift
 import InfomaniakCore
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -25,6 +26,8 @@ import SwiftUI
 
 /// Something that can display an email
 struct MessageView: View {
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
     @EnvironmentObject var mailboxManager: MailboxManager
 
     @State var presentableBody: PresentableBody
@@ -132,6 +135,7 @@ struct MessageView: View {
             do {
                 try await mailboxManager.message(message: message)
             } catch let error as MailApiError where error == .apiMessageNotFound {
+                snackbarPresenter.show(message: error.localizedDescription)
                 try await mailboxManager.refreshFolder(from: [message])
             }
         }
