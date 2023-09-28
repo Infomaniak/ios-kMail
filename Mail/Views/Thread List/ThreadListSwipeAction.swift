@@ -37,7 +37,7 @@ private struct SwipeActionView: View {
     let thread: Thread
     let action: Action
 
-    var isDestructive: Bool {
+    private var isDestructive: Bool {
         let folderPermanentlyDeleteContent = thread.folder?.permanentlyDeleteContent ?? false
         return action.isDestructive && networkMonitor.isConnected && !folderPermanentlyDeleteContent
     }
