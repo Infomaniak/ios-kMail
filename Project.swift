@@ -50,7 +50,8 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/Ambrdctr/SwiftSoup", .branch("master")),
                           .package(url: "https://github.com/johnpatrickmorgan/NavigationBackport", .upToNextMajor(from: "0.8.1")),
                           .package(url: "https://github.com/aheze/Popovers", .upToNextMajor(from: "1.3.2")),
-                          .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1"))
+                          .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1")),
+                          .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0"))
                       ],
                       targets: [
                           Target(name: "Mail",
@@ -209,7 +210,8 @@ let project = Project(name: "Mail",
                                   .package(product: "SwiftRegex"),
                                   .package(product: "Nuke"),
                                   .package(product: "NukeUI"),
-                                  .package(product: "SwiftSoup")
+                                  .package(product: "SwiftSoup"),
+                                  .package(product: "Swifter")
                               ],
                               settings: .settings(base: Constants.baseSettings)
                           )

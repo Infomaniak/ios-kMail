@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailResources
 import NavigationBackport
 import SwiftUI
 
@@ -26,21 +27,36 @@ enum SyncProfileStep {
 }
 
 struct SyncProfileNavigationView: View {
+    @Environment(\.dismiss) private var dismiss
+
     @State private var navigationPath: [SyncProfileStep] = []
 
     var body: some View {
         NBNavigationStack(path: $navigationPath) {
-            SyncWelcomeView()
+            SyncWelcomeView(navigationPath: $navigationPath)
                 .nbNavigationDestination(for: SyncProfileStep.self) { step in
-                    switch step {
-                    case .downloadProfile:
-                        SyncDownloadProfileView()
-                    case .copyPassword:
-                        SyncCopyPasswordView()
-                    case .installProfile:
-                        SyncInstallProfileTutorialView()
+                    Group {
+                        switch step {
+                        case .downloadProfile:
+                            SyncDownloadProfileView(navigationPath: $navigationPath)
+                        case .copyPassword:
+                            SyncCopyPasswordView()
+                        case .installProfile:
+                            SyncInstallProfileTutorialView()
+                        }
+                    }
+                    .backButtonDisplayMode(.minimal)
+                }
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button {
+                            dismiss()
+                        } label: {
+                            Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
+                        }
                     }
                 }
+                .backButtonDisplayMode(.minimal)
         }
         .nbUseNavigationStack(.whenAvailable)
     }

@@ -16,14 +16,37 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
+import MailResources
 import SwiftUI
 
 struct SyncWelcomeView: View {
+    @Binding var navigationPath: [SyncProfileStep]
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            SlideView(slide: Slide(
+                id: 1,
+                backgroundImage: MailResourcesAsset.onboardingBackground1.swiftUIImage,
+                title: "!Consultez vos calendriers et contacts Infomaniak sur votre téléphone",
+                description: "!Consultez vos calendriers et carnets d’adresses sur vos applications Calendrier et Contacts de votre iPhone/iPad.",
+                asset: MailResourcesAsset.illuSync.swiftUIImage
+            ))
+            .ignoresSafeArea(edges: .top)
+        }
+        .safeAreaInset(edge: .bottom) {
+            VStack(spacing: UIPadding.medium) {
+                MailButton(label: "!Commencer") {
+                    navigationPath.append(.downloadProfile)
+                }
+                .mailButtonFullWidth(true)
+            }
+            .padding(.horizontal, value: .medium)
+            .padding(.bottom, UIPadding.onBoardingBottomButtons)
+        }
     }
 }
 
 #Preview {
-    SyncWelcomeView()
+    SyncWelcomeView(navigationPath: .constant([]))
 }

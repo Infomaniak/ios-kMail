@@ -16,14 +16,88 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
+import MailCore
+import MailResources
 import SwiftUI
 
 struct SyncDownloadProfileView: View {
+    @LazyInjectService private var server: ConfigWebServer
+
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @State private var isConfigWebViewPresented = false
+    @State private var isDownloadingConfig = false
+
+    @Binding var navigationPath: [SyncProfileStep]
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack(spacing: UIPadding.regular) {
+            Text("Télécharger le profil de configuration")
+                .textStyle(.header2)
+                .multilineTextAlignment(.center)
+            VStack(alignment: .leading, spacing: UIPadding.regular) {
+                Text("1. Cliquez sur “Télécharger”")
+                    .multilineTextAlignment(.leading)
+                Text("2. Autorisez le téléchargement")
+                    .multilineTextAlignment(.leading)
+            }
+            .textStyle(.bodySecondary)
+
+            Spacer(minLength: 16)
+            DeviceFrameView()
+            Spacer()
+        }
+        .padding(value: .medium)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                SyncStepToolbarItem(step: 1, totalSteps: 3)
+            }
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .safeAreaInset(edge: .bottom) {
+            VStack(spacing: UIPadding.medium) {
+                MailButton(label: "!Télécharger") {
+                    downloadProfile()
+                }
+                .mailButtonFullWidth(true)
+                .mailButtonLoading(isDownloadingConfig)
+            }
+            .padding(.horizontal, value: .medium)
+            .padding(.bottom, UIPadding.onBoardingBottomButtons)
+        }
+        .sheet(isPresented: $isConfigWebViewPresented) {
+            navigationPath.append(.copyPassword)
+            server.stop()
+        } content: {
+            DownloadConfigSafariView()
+                .ignoresSafeArea()
+        }
+        .onOpenURL { url in
+            if url.scheme == "com.infomaniak.mail.profile-callback" {
+                isConfigWebViewPresented = false
+            }
+        }
+    }
+
+    func downloadProfile() {
+        Task {
+            isDownloadingConfig = true
+            await tryOrDisplayError {
+                let downloadedConfigURL = try await mailboxManager.apiFetcher.downloadSyncProfile(
+                    syncContacts: true,
+                    syncCalendar: true
+                )
+                server.start(configURL: downloadedConfigURL)
+                isDownloadingConfig = false
+                isConfigWebViewPresented = true
+            }
+        }
     }
 }
 
 #Preview {
-    SyncDownloadProfileView()
+    NavigationView {
+        SyncDownloadProfileView(navigationPath: .constant([]))
+    }
 }

@@ -115,6 +115,9 @@ enum ApplicationAssembly {
             },
             Factory(type: LocalContactsHelpable.self) { _, _ in
                 LocalContactsHelper()
+            },
+            Factory(type: ConfigWebServer.self) { _, _ in
+                ConfigWebServer()
             }
         ]
 
