@@ -112,6 +112,9 @@ enum ApplicationAssembly {
             },
             Factory(type: LocalContactsHelpable.self) { _, _ in
                 LocalContactsHelper()
+            },
+            Factory(type: FeatureFlagsManageable.self) { _, _ in
+                FeatureFlagsManager()
             }
         ]
 
