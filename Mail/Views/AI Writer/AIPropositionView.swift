@@ -18,6 +18,7 @@
 
 import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
 import SwiftUIIntrospect
 
@@ -32,6 +33,8 @@ struct AIPropositionView: View {
     @State private var isLoading = true
 
     @ObservedObject var aiModel: AIModel
+
+    @ObservedRealmObject var draft: Draft
 
     let mailboxManager: MailboxManager
 
@@ -87,7 +90,7 @@ struct AIPropositionView: View {
                             AIProgressView()
                         } else {
                             MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
-                                guard !draftContentManager.hasContent else {
+                                guard draft.isBodyEmpty else {
                                     isShowingReplaceContentAlert = true
                                     return
                                 }
@@ -121,6 +124,6 @@ struct AIPropositionView: View {
 
 struct AIPropositionView_Previews: PreviewProvider {
     static var previews: some View {
-        AIPropositionView(aiModel: AIModel(), mailboxManager: PreviewHelper.sampleMailboxManager)
+        AIPropositionView(aiModel: AIModel(), draft: Draft(), mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }
