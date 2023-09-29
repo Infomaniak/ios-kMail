@@ -41,7 +41,7 @@ public final class MailboxInfosManager {
                     }
                 }
             },
-            objectTypes: [Mailbox.self, MailboxPermissions.self, Quotas.self]
+            objectTypes: [Mailbox.self, MailboxPermissions.self, Quotas.self, FeatureFlags.self]
         )
     }
 

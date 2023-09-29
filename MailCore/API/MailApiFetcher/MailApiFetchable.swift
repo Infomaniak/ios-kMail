@@ -21,7 +21,7 @@ import Foundation
 import InfomaniakCore
 
 /// Public interface of `MailApiFetcher`
-public typealias MailApiFetchable = MailApiCommonFetchable & MailApiExtendedFetchable
+public typealias MailApiFetchable = MailApiAIFetchable & MailApiCommonFetchable & MailApiExtendedFetchable
 
 /// Main interface of the `MailApiFetcher`
 public protocol MailApiCommonFetchable {
@@ -74,6 +74,8 @@ public protocol MailApiCommonFetchable {
 /// Extended capabilities of the `MailApiFetcher`
 public protocol MailApiExtendedFetchable {
     func permissions(mailbox: Mailbox) async throws -> MailboxPermissions
+
+    func featureFlag() async throws -> FeatureFlags
 
     /// All the remote contacts
     func contacts() async throws -> [InfomaniakContact]
