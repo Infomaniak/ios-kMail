@@ -122,3 +122,7 @@ public protocol MailApiExtendedFetchable {
 
     func deleteDraft(draftResource: String) async throws -> Empty?
 }
+
+public protocol MailApiAIFetchable {
+    func createAIConversation(messages: [AIMessage], output: AIOutputFormat) async throws -> AIResponse
+}
