@@ -37,6 +37,8 @@ struct MessageView: View {
     /// True once we finished preprocessing the content
     @State var isMessagePreprocessed = false
 
+    @State private var isShowingErrorLoading = false
+
     /// The cancellable task used to preprocess the content
     @State var preprocessing: Task<Void, Never>?
 
@@ -88,14 +90,23 @@ struct MessageView: View {
                             .padding(.top, value: .medium)
                     }
 
-                    MessageBodyView(
-                        isMessagePreprocessed: isMessagePreprocessed,
-                        presentableBody: $presentableBody,
-                        blockRemoteContent: isRemoteContentBlocked,
-                        displayContentBlockedActionView: $displayContentBlockedActionView,
-                        messageUid: message.uid
-                    )
-                    .padding(.top, value: .regular)
+                    if isShowingErrorLoading {
+                        Text(MailResourcesStrings.Localizable.errorLoadingMessage)
+                            .italic()
+                            .textStyle(.bodySmallSecondary)
+                            .padding(.top, value: .regular)
+                            .padding(.horizontal, value: .regular)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    } else {
+                        MessageBodyView(
+                            isMessagePreprocessed: isMessagePreprocessed,
+                            presentableBody: $presentableBody,
+                            blockRemoteContent: isRemoteContentBlocked,
+                            displayContentBlockedActionView: $displayContentBlockedActionView,
+                            messageUid: message.uid
+                        )
+                        .padding(.top, value: .regular)
+                    }
                 }
             }
             .padding(.vertical, value: .regular)
@@ -137,6 +148,8 @@ struct MessageView: View {
             } catch let error as MailApiError where error == .apiMessageNotFound {
                 snackbarPresenter.show(message: error.localizedDescription)
                 try await mailboxManager.refreshFolder(from: [message])
+            } catch {
+                isShowingErrorLoading = true
             }
         }
     }
