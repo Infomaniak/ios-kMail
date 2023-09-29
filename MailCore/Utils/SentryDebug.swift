@@ -21,6 +21,8 @@ import RealmSwift
 import Sentry
 
 public enum SentryDebug {
+    // MARK: - Errors
+
     public static let knownDebugDate = Date(timeIntervalSince1970: 1_893_456_000)
     static func sendMissingMessagesSentry(sentUids: [String], receivedMessages: [Message], folder: Folder, newCursor: String?) {
         if receivedMessages.count != sentUids.count {
@@ -85,17 +87,6 @@ public enum SentryDebug {
         }
     }
 
-    static func createBreadcrumb(level: SentryLevel,
-                                 category: String,
-                                 message: String,
-                                 data: [String: Any]? = nil) -> Breadcrumb {
-        let crumb = Breadcrumb(level: level, category: category)
-        crumb.type = level == .info ? "info" : "error"
-        crumb.message = message
-        crumb.data = data
-        return crumb
-    }
-
     static func captureWrongDate(step: String, startDate: Date, folder: Folder, alreadyWrongIds: [String], realm: Realm) -> Bool {
         guard let freshFolder = folder.fresh(using: realm) else { return false }
 
@@ -133,5 +124,36 @@ public enum SentryDebug {
                 key: "Uids"
             )
         }
+    }
+
+    static func messageHasInReplyTo(_ inReplyToList: [String]) {
+        SentrySDK.capture(message: "Found an array of inReplyTo") { scope in
+            scope.setContext(value: ["ids": inReplyToList.joined(separator: ", ")], key: "inReplyToList")
+        }
+    }
+
+    // MARK: - Breadcrumb
+
+    enum Category {
+        static let ThreadAlgorithm = "Thread algo"
+    }
+
+    private static func createBreadcrumb(level: SentryLevel,
+                                         category: String,
+                                         message: String,
+                                         data: [String: Any]? = nil) -> Breadcrumb {
+        let crumb = Breadcrumb(level: level, category: category)
+        crumb.type = level == .info ? "info" : "error"
+        crumb.message = message
+        crumb.data = data
+        return crumb
+    }
+
+    static func nilDateParsingBreadcrumb(uid: String) {
+        let breadcrumb = createBreadcrumb(level: .warning,
+                                          category: Category.ThreadAlgorithm,
+                                          message: "Nil message date decoded",
+                                          data: ["uid": uid])
+        SentrySDK.addBreadcrumb(breadcrumb)
     }
 }
