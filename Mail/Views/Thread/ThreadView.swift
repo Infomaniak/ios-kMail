@@ -49,6 +49,8 @@ struct ThreadView: View {
 
     @ObservedRealmObject var thread: Thread
 
+    @State private var nearestFlushAlert: FlushAlertState?
+
     private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
 
     var body: some View {
@@ -177,6 +179,9 @@ struct ThreadView: View {
                 EmptyView()
             }
         }
+        .customAlert(item: $nearestFlushAlert) { item in
+            FlushFolderAlertView(flushAlert: item)
+        }
         .matomoView(view: [MatomoUtils.View.threadView.displayName, "Main"])
     }
 
@@ -209,9 +214,10 @@ struct ThreadView: View {
                 try await actionsManager.performAction(
                     target: messages,
                     action: action,
-                    origin: .toolbar(originFolder: originFolder)
+                    origin: .toolbar(originFolder: originFolder, nearestFlushAlert: $nearestFlushAlert)
                 )
-                if action == .archive || action == .delete {
+
+                if action == .archive || (action == .delete && originFolder?.permanentlyDeleteContent != true) {
                     dismiss()
                 }
             }

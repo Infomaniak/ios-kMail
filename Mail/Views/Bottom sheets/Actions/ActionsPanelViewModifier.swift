@@ -38,6 +38,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     @State private var reportedForDisplayProblemMessage: Message?
     @State private var reportedForPhishingMessage: Message?
     @State private var messagesToMove: [Message]?
+    @State private var flushAlert: FlushAlertState?
 
     @Binding var messages: [Message]?
     let originFolder: Folder?
@@ -47,6 +48,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     private var origin: ActionOrigin {
         .floatingPanel(
             originFolder: originFolder?.freezeIfNeeded(),
+            nearestFlushAlert: $flushAlert,
             nearestMessagesToMoveSheet: $messagesToMove,
             nearestReportJunkMessageActionsPanel: $reportForJunkMessage,
             nearestReportedForPhishingMessageAlert: $reportedForPhishingMessage,
@@ -70,6 +72,9 @@ struct ActionsPanelViewModifier: ViewModifier {
         }
         .customAlert(item: $reportedForPhishingMessage) { message in
             ReportPhishingView(message: message)
+        }
+        .customAlert(item: $flushAlert) { item in
+            FlushFolderAlertView(flushAlert: item, folder: originFolder)
         }
     }
 }

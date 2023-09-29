@@ -37,6 +37,8 @@ struct ThreadListCell: View {
     let isSelected: Bool
     let isMultiSelected: Bool
 
+    @Binding var flushAlert: FlushAlertState?
+
     private var selectionType: SelectionBackgroundKind {
         if multipleSelectionViewModel.isEnabled {
             return isMultiSelected ? .multiple : .none
@@ -55,8 +57,12 @@ struct ThreadListCell: View {
         .contentShape(Rectangle())
         .onTapGesture { didTapCell() }
         .onLongPressGesture { didLongPressCell() }
-        .actionsContextMenu(thread: thread)
-        .swipeActions(thread: thread, viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
+        .swipeActions(
+            thread: thread,
+            viewModel: viewModel,
+            multipleSelectionViewModel: multipleSelectionViewModel,
+            nearestFlushAlert: $flushAlert
+        )
         .threadListCellAppearance()
     }
 
@@ -104,7 +110,8 @@ struct ThreadListCell_Previews: PreviewProvider {
             thread: PreviewHelper.sampleThread,
             threadDensity: .large,
             isSelected: false,
-            isMultiSelected: false
+            isMultiSelected: false,
+            flushAlert: .constant(nil)
         )
     }
 }

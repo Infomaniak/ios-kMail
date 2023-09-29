@@ -160,7 +160,10 @@ struct ThreadListToolbar: ViewModifier {
                                 try await actionsManager.performAction(
                                     target: allMessages,
                                     action: action,
-                                    origin: .multipleSelection(originFolder: originFolder, nearestFlushAlert: $flushAlert)
+                                    origin: .multipleSelection(
+                                        originFolder: originFolder,
+                                        nearestFlushAlert: $flushAlert
+                                    )
                                 )
                             }
                         }

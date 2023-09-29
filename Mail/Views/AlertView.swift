@@ -40,22 +40,23 @@ struct AlertView<Content>: View where Content: View {
         .opacity(isShowing ? 1 : 0)
         .background(ClearFullScreenView())
         .onAppear {
-            // Re-enable animations after the ViewController is presented
-            UIView.setAnimationsEnabled(true)
-            withAnimation(.easeInOut(duration: 0.25)) {
-                isShowing = true
+            guard !isShowing else { return }
+            Task {
+                try await Task.sleep(nanoseconds: UInt64(0.25 * Double(NSEC_PER_SEC)))
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    isShowing = true
+                }
             }
         }
-        .onDisappear {
-            // Re-enable animations after the ViewController is dismissed
-            UIView.setAnimationsEnabled(true)
+        .introspect(.viewController, on: .iOS(.v15, .v16, .v17)) { viewController in
+            viewController.modalTransitionStyle = .crossDissolve
         }
     }
 }
 
 struct CustomAlertModifier<AlertContent>: ViewModifier where AlertContent: View {
     @Binding var isPresented: Bool
-    let alertView: AlertContent
+    @ViewBuilder let alertView: AlertContent
 
     func body(content: Content) -> some View {
         content
@@ -63,10 +64,6 @@ struct CustomAlertModifier<AlertContent>: ViewModifier where AlertContent: View 
                 AlertView {
                     alertView
                 }
-            }
-            .onChange(of: isPresented) { _ in
-                // Disable the default slide over animation when presenting / dismissing the ViewController
-                UIView.setAnimationsEnabled(false)
             }
     }
 }
@@ -81,9 +78,6 @@ struct CustomAlertItemModifier<Item, AlertContent>: ViewModifier where Item: Ide
                 AlertView {
                     alertView(item)
                 }
-            }
-            .onChange(of: item?.id) { _ in
-                UIView.setAnimationsEnabled(false)
             }
     }
 }
@@ -115,7 +109,7 @@ private struct ClearFullScreenView: UIViewRepresentable {
 
 extension View {
     func customAlert<Content: View>(isPresented: Binding<Bool>, @ViewBuilder content: () -> Content) -> some View {
-        modifier(CustomAlertModifier(isPresented: isPresented, alertView: content()))
+        modifier(CustomAlertModifier(isPresented: isPresented, alertView: content))
     }
 
     func customAlert<Item, Content>(item: Binding<Item?>, @ViewBuilder content: @escaping (Item) -> Content) -> some View

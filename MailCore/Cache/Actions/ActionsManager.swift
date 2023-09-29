@@ -98,7 +98,7 @@ public class ActionsManager: ObservableObject {
 
         switch action {
         case .delete:
-            guard !shouldDisplayDeleteAlert(messages: messagesWithDuplicates, origin: origin) else {
+            guard origin.folder?.permanentlyDeleteContent != true else {
                 Task { @MainActor in
                     origin.nearestFlushAlert?
                         .wrappedValue = FlushAlertState(deletedMessages: messagesWithDuplicates
@@ -206,16 +206,6 @@ public class ActionsManager: ObservableObject {
         } else {
             try await performMove(messages: messages, from: originFolder, to: .trash)
         }
-    }
-
-    private func shouldDisplayDeleteAlert(messages: [Message], origin: ActionOrigin) -> Bool {
-        if origin.type == .multipleSelection,
-           let firstFolderRole = messages.first?.folder?.role,
-           [FolderRole.draft, FolderRole.spam, FolderRole.trash].contains(firstFolderRole) {
-            return true
-        }
-
-        return false
     }
 
     @MainActor

@@ -108,7 +108,8 @@ struct ThreadListView: View {
                                                threadDensity: threadDensity,
                                                isSelected: viewModel.selectedThread?.uid == thread.uid,
                                                isMultiSelected: multipleSelectionViewModel.selectedItems
-                                                   .contains { $0.id == thread.id })
+                                                   .contains { $0.id == thread.id },
+                                               flushAlert: $flushAlert)
                             }
                         } header: {
                             if threadDensity != .compact {
