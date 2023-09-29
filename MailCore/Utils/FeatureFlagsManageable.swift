@@ -17,8 +17,11 @@
  */
 
 import Foundation
-import RealmSwift
 
-public final class FeatureFlags: Object, Codable {
-    @Persisted public var aiMailComposer: Bool
+public protocol FeatureFlagsManageable {
+    func isEnabled(_ feature: AppFeature) -> Bool
+
+    func feature(_ feature: AppFeature, on: () -> Void, off: () -> Void)
+
+    func fetchFlags() async throws
 }
