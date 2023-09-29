@@ -178,7 +178,7 @@ struct ComposeMessageView: View {
             AIPromptView(aiModel: aiModel)
         }
         .sheet(isPresented: $aiModel.isShowingProposition) {
-            AIPropositionView(aiModel: aiModel, mailboxManager: mailboxManager)
+            AIPropositionView(aiModel: aiModel, draft: draft, mailboxManager: mailboxManager)
         }
         .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
