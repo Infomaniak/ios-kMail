@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: en, English
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Wed, 13 Sep 2023 10:20:38 +0200
+ * Exported by: Ambroise Decouttere
+ * Exported at: Fri, 29 Sep 2023 10:01:40 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1279,3 +1279,78 @@
 
 /* loco:65016e82bd99726dde081533 */
 "noConnection" = "No connection";
+
+/* loco:65017fa44f4fa3e3b902d043 */
+"aiPromptTitle" = "Writing assistant";
+
+/* loco:6501834aa4abf8d77708b7b5 */
+"aiPromptTag" = "Beta";
+
+/* loco:6501840ef58ecb8b620adb23 */
+"aiPromptPlaceholder" = "Tell the writing assistant what you want to write. For example, \"a thank-you email for a welcome gift\".";
+
+/* loco:65019254a2948ddd0d0e0ca3 */
+"aiPromptValidateButton" = "Generate";
+
+/* loco:6502bdf0d8ec8382d70de1c7 */
+"errorLoadingMessage" = "This message could not be downloaded from the server.";
+
+/* loco:6502fd61e3b907c3db020f92 */
+"snackbarDeletedConversation" = "Conversation no longer exists";
+
+/* loco:65042259ab599c0ca6094172 */
+"aiPromptGenerationLoader" = "The assistant is writing";
+
+/* loco:65081ae6a237c4d16909e463 */
+"aiButtonRefine" = "Refine";
+
+/* loco:65081b4d5787de874c0dec32 */
+"aiButtonInsert" = "Insert";
+
+/* loco:650af993aaf29390e1022692 */
+"aiReplacementDialogTitle" = "Replace already existing content?";
+
+/* loco:650afa5b0b0204386e077c94 */
+"aiReplacementDialogDescription" = "Do you want to replace existing content by the assistant’s proposition?";
+
+/* loco:650afb3b15bedc19200ab182 */
+"aiReplacementDialogPositiveButton" = "Replace";
+
+/* loco:650afca41010feb5710a0b45 */
+"aiReplacementDialogDoNotShowAgain" = "Do not show this again";
+
+/* loco:65129af16ad732b0790e61c2 */
+"aiErrorTooManyRequests" = "It seems you’ve made too many requests in a short amount of time.\n\nPlease wait a few moments.";
+
+/* loco:65129ba24376b5dd8c04b6a2 */
+"aiErrorMaxTokenReached" = "Your request is too long, please try again in a shorter format.";
+
+/* loco:65129c4db1cb64db900f6a02 */
+"aiErrorUnknown" = "An error has occurred. If this error persists, please contact our helpdesk.\n\nThank you for your patience.";
+
+/* loco:65129d1caf62abf5d40d9082 */
+"aiButtonRetry" = "Retry";
+
+/* loco:651549fc352ff768af054453 */
+"aiMenuEditRequest" = "Edit my request";
+
+/* loco:65154a444e2a92186f026aa3 */
+"aiMenuRegenerate" = "Regenerate a response";
+
+/* loco:65154a5b5740266cf70c84a2 */
+"aiMenuShorten" = "Shorten";
+
+/* loco:65154a780b64dfbdde02ac45 */
+"aiMenuExpand" = "Expand";
+
+/* loco:65154b23fc895ced1501cde2 */
+"aiMenuSeriousWriting" = "Serious writing";
+
+/* loco:65154b39664dcac1df0d7492 */
+"aiMenuFriendlyWriting" = "Friendly writing";
+
+/* loco:651584a40e0b9f6c680ced32 */
+"aiDiscoveryTitle" = "Write your emails using AI";
+
+/* loco:651587be8ddc30b025013c52 */
+"aiDiscoveryDescription" = "Simplify your message writing with Artificial Intelligence.";

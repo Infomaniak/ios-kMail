@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: de, German
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Wed, 13 Sep 2023 10:20:38 +0200
+ * Exported by: Ambroise Decouttere
+ * Exported at: Fri, 29 Sep 2023 10:01:40 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -468,7 +468,7 @@
 "createFolderNoParent" = "Keine";
 
 /* loco:62b1c2566ff2923a1a5b0832 */
-"buttonCreate" = "erstellen.";
+"buttonCreate" = "Erstellen";
 
 /* loco:62b1d1ee36cd805389679933 */
 "contentDescriptionIconStorage" = "Speicherstatus";
@@ -1279,3 +1279,78 @@
 
 /* loco:65016e82bd99726dde081533 */
 "noConnection" = "Keine Verbindung";
+
+/* loco:65017fa44f4fa3e3b902d043 */
+"aiPromptTitle" = "Schreibassistent";
+
+/* loco:6501834aa4abf8d77708b7b5 */
+"aiPromptTag" = "Beta";
+
+/* loco:6501840ef58ecb8b620adb23 */
+"aiPromptPlaceholder" = "Sagen Sie dem Schreibassistenten, was Sie schreiben wollen. Zum Beispiel: \"eine Dankes-E-Mail für ein Willkommensgeschenk\".";
+
+/* loco:65019254a2948ddd0d0e0ca3 */
+"aiPromptValidateButton" = "Erzeugen Sie";
+
+/* loco:6502bdf0d8ec8382d70de1c7 */
+"errorLoadingMessage" = "Diese Nachricht konnte nicht vom Server heruntergeladen werden.";
+
+/* loco:6502fd61e3b907c3db020f92 */
+"snackbarDeletedConversation" = "Das Gespräch existiert nicht mehr";
+
+/* loco:65042259ab599c0ca6094172 */
+"aiPromptGenerationLoader" = "Der Assistent schreibt";
+
+/* loco:65081ae6a237c4d16909e463 */
+"aiButtonRefine" = "Verfeinern";
+
+/* loco:65081b4d5787de874c0dec32 */
+"aiButtonInsert" = "Einfügen";
+
+/* loco:650af993aaf29390e1022692 */
+"aiReplacementDialogTitle" = "Bestehende Inhalte ersetzen?";
+
+/* loco:650afa5b0b0204386e077c94 */
+"aiReplacementDialogDescription" = "Möchten Sie den vorhandenen Inhalt durch den Vorschlag des Assistenten ersetzen?";
+
+/* loco:650afb3b15bedc19200ab182 */
+"aiReplacementDialogPositiveButton" = "Ersetzen";
+
+/* loco:650afca41010feb5710a0b45 */
+"aiReplacementDialogDoNotShowAgain" = "Diese Nachricht nicht mehr anzeigen";
+
+/* loco:65129af16ad732b0790e61c2 */
+"aiErrorTooManyRequests" = "Es scheint, dass Sie in kurzer Zeit zu viele Suchanfragen gestellt haben.\n\nBitte haben Sie einen Moment Geduld.";
+
+/* loco:65129ba24376b5dd8c04b6a2 */
+"aiErrorMaxTokenReached" = "Ihre Anfrage ist zu lang, bitte versuchen Sie es noch einmal in einem kürzeren Format.";
+
+/* loco:65129c4db1cb64db900f6a02 */
+"aiErrorUnknown" = "Es ist ein Fehler aufgetreten. Wenn dieser Fehler weiterhin auftritt, wenden Sie sich bitte an unseren Support.\n\nVielen Dank für Ihre Geduld.";
+
+/* loco:65129d1caf62abf5d40d9082 */
+"aiButtonRetry" = "Wiederholen";
+
+/* loco:651549fc352ff768af054453 */
+"aiMenuEditRequest" = "Meine Anfrage bearbeiten";
+
+/* loco:65154a444e2a92186f026aa3 */
+"aiMenuRegenerate" = "Eine Antwort neu generieren";
+
+/* loco:65154a5b5740266cf70c84a2 */
+"aiMenuShorten" = "Kürzen Sie";
+
+/* loco:65154a780b64dfbdde02ac45 */
+"aiMenuExpand" = "Erweitern Sie";
+
+/* loco:65154b23fc895ced1501cde2 */
+"aiMenuSeriousWriting" = "Seriöses Schreiben";
+
+/* loco:65154b39664dcac1df0d7492 */
+"aiMenuFriendlyWriting" = "Freundliches Schreiben";
+
+/* loco:651584a40e0b9f6c680ced32 */
+"aiDiscoveryTitle" = "Schreiben Sie Ihre E-Mails mit AI";
+
+/* loco:651587be8ddc30b025013c52 */
+"aiDiscoveryDescription" = "Vereinfachen Sie das Schreiben von Nachrichten mit künstlicher Intelligenz.";
