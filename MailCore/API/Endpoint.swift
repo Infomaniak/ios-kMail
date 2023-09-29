@@ -67,6 +67,10 @@ public extension Endpoint {
                                             URLQueryItem(name: "product_id", value: "\(mailbox.hostingId)")])
     }
 
+    static var featureFlag: Endpoint {
+        return .base.appending(path: "/feature-flag/check")
+    }
+
     static var addressBooks: Endpoint {
         return .base.appending(path: "/pim/addressbook")
     }
