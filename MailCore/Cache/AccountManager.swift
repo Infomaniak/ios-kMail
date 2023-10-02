@@ -66,6 +66,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     @LazyInjectService var notificationService: InfomaniakNotifications
     @LazyInjectService var matomo: MatomoUtils
     @LazyInjectService var mailboxInfosManager: MailboxInfosManager
+    @LazyInjectService var featureFlagsManager: FeatureFlagsManageable
 
     private static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
     private static let group = "com.infomaniak.mail"
@@ -254,6 +255,8 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         addAccount(account: newAccount, token: token)
         setCurrentAccount(account: newAccount)
 
+        await featureFlagsManager.fetchFlags()
+
         for mailbox in mailboxesResponse {
             mailbox.permissions = try await apiFetcher.permissions(mailbox: mailbox)
             if mailbox.isLimited {
@@ -284,6 +287,8 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         let apiFetcher = getApiFetcher(for: account.userId, token: token)
         let user = try await apiFetcher.userProfile(dateFormat: .iso8601)
         account.user = user
+
+        await featureFlagsManager.fetchFlags()
 
         let fetchedMailboxes = try await apiFetcher.mailboxes()
         guard !fetchedMailboxes.isEmpty else {
