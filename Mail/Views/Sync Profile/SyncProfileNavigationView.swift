@@ -40,7 +40,7 @@ struct SyncProfileNavigationView: View {
                         case .downloadProfile:
                             SyncDownloadProfileView(navigationPath: $navigationPath)
                         case .copyPassword:
-                            SyncCopyPasswordView()
+                            SyncCopyPasswordView(navigationPath: $navigationPath)
                         case .installProfile:
                             SyncInstallProfileTutorialView()
                         }

@@ -39,4 +39,8 @@ public extension Endpoint {
                                      queryItems: [URLQueryItem(name: "carddav", value: "\(syncContacts ? 1 : 0)"),
                                                   URLQueryItem(name: "caldav", value: "\(syncCalendar ? 1 : 0)")])
     }
+
+    static var applicationPassword: Endpoint {
+        return .baseConfig.appending(path: "/securedProxy/profile/password")
+    }
 }

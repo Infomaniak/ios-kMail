@@ -32,4 +32,12 @@ public extension MailApiFetcher {
         )
         return try await download.serializingDownloadedFileURL().value
     }
+
+    func applicationPassword() async throws -> ApplicationPassword {
+        /* try await perform(request: authenticatedRequest(
+             .applicationPassword,
+             method: .post
+         )).data */
+        return ApplicationPassword(password: "test")
+    }
 }

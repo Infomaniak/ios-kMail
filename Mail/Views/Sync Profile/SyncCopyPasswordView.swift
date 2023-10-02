@@ -16,14 +16,95 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
+import MailCore
+import MailResources
 import SwiftUI
 
 struct SyncCopyPasswordView: View {
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @State private var applicationPassword: String?
+
+    @Binding var navigationPath: [SyncProfileStep]
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack(spacing: UIPadding.regular) {
+            Text("Copier le mot de passe de validation")
+                .textStyle(.header2)
+                .multilineTextAlignment(.center)
+
+            VStack(spacing: UIPadding.large) {
+                MailResourcesAsset.emptyStateInbox.swiftUIImage
+
+                if let applicationPassword {
+                    HStack {
+                        SecureField("", text: .constant(applicationPassword))
+                            .textContentType(.password)
+                            .disabled(true)
+                            .padding([.vertical, .leading], value: .intermediate)
+                            .padding(.trailing, value: .regular)
+                        MailButton(icon: MailResourcesAsset.duplicate) {
+                            copyPassword()
+                        }
+                        .mailButtonStyle(.link)
+                        .padding(.trailing, value: .regular)
+                    }
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 4, style: .continuous)
+                            .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
+                    }
+                } else {
+                    ProgressView()
+                }
+
+                VStack(alignment: .leading, spacing: UIPadding.regular) {
+                    Text("!Copiez le mot de passe, vous en aurez besoin pour valider l’étape suivante.")
+                        .multilineTextAlignment(.leading)
+                }
+                .textStyle(.bodySecondary)
+            }
+            .padding(value: .medium)
+
+            Spacer()
+        }
+        .padding(value: .medium)
+        .safeAreaInset(edge: .bottom) {
+            VStack(spacing: UIPadding.medium) {
+                MailButton(label: "!Copier le mot de passer") {
+                    copyPassword()
+                }
+                .mailButtonFullWidth(true)
+                .mailButtonLoading(applicationPassword == nil)
+            }
+            .padding(.horizontal, value: .medium)
+            .padding(.bottom, UIPadding.onBoardingBottomButtons)
+        }
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                SyncStepToolbarItem(step: 2, totalSteps: 3)
+            }
+        }
+        .onAppear {
+            Task {
+                guard applicationPassword == nil else { return }
+                await tryOrDisplayError {
+                    applicationPassword = try await mailboxManager.apiFetcher.applicationPassword().password
+                }
+            }
+        }
+    }
+
+    func copyPassword() {
+        guard let applicationPassword else { return }
+        UIPasteboard.general.string = applicationPassword
+        snackbarPresenter.show(message: "!Le mot de passe a bien été copié")
+        navigationPath.append(.installProfile)
     }
 }
 
 #Preview {
-    SyncCopyPasswordView()
+    SyncCopyPasswordView(navigationPath: .constant([]))
 }
