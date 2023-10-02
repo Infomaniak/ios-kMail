@@ -122,7 +122,7 @@ public extension MailboxManager {
         let realm = getRealm()
         var paginationInfo: PaginationInfo?
 
-        if let offset = realm.objects(Message.self).where({ $0.folderId == folder.id })
+        if let offset = realm.objects(Message.self).where({ $0.folderId == folder.id && $0.fromSearch == false })
             .sorted(by: {
                 guard let firstMessageShortUid = $0.shortUid,
                       let secondMessageShortUid = $1.shortUid else {
