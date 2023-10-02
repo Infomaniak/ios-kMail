@@ -15,8 +15,10 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 import Combine
 import Foundation
+import InfomaniakCore
 import InfomaniakDI
 import Sentry
 import SwiftUI
@@ -45,14 +47,14 @@ public enum FeatureFlag: String, Codable {
 public final class FeatureFlagsManager: FeatureFlagsManageable {
     @InjectService private var accountManager: AccountManager
 
-    private var enabledFeatures: AppFeatureFlags
+    private var enabledFeatures: SendableDictionary<AppFeatureFlags.Key, AppFeatureFlags.Value>
 
     public init() {
-        enabledFeatures = UserDefaults.shared.featureFlags
+        enabledFeatures = SendableDictionary(content: UserDefaults.shared.featureFlags)
     }
 
     public func isEnabled(_ feature: FeatureFlag) -> Bool {
-        guard let userFeatures = UserDefaults.shared.featureFlags[accountManager.currentUserId] else { return false }
+        guard let userFeatures = enabledFeatures.value(for: accountManager.currentUserId) else { return false }
         return userFeatures.contains(feature)
     }
 
@@ -65,12 +67,14 @@ public final class FeatureFlagsManager: FeatureFlagsManageable {
     }
 
     public func fetchFlags() async throws {
-        if enabledFeatures[accountManager.currentUserId] == nil {
-            enabledFeatures[accountManager.currentUserId] = Constants.defaultFeatureFlags
+        if enabledFeatures.value(for: accountManager.currentUserId) == nil {
+            enabledFeatures.setValue(Constants.defaultFeatureFlags, for: accountManager.currentUserId)
         }
 
         guard let apiFetcher = accountManager.currentApiFetcher else { return }
-        enabledFeatures[accountManager.currentUserId] = try await apiFetcher.featureFlag()
-        UserDefaults.shared.featureFlags = enabledFeatures
+        let enabledFlags = try await apiFetcher.featureFlag()
+
+        enabledFeatures.setValue(enabledFlags, for: accountManager.currentUserId)
+        UserDefaults.shared.featureFlags[accountManager.currentUserId] = enabledFlags
     }
 }
