@@ -55,7 +55,7 @@ final class AIModel: ObservableObject {
                 contextId = result.contextId
             }
         } catch {
-            // TODO: Handle error (next PR)
+            handleError(error)
         }
     }
 
@@ -71,10 +71,26 @@ final class AIModel: ObservableObject {
                 let response = try await mailboxManager.apiFetcher.aiShortcut(contextId: contextId, shortcut: shortcut.apiName)
                 conversation.append(contentsOf: [response.action, AIMessage(type: .assistant, content: response.content)])
                 isLoading = false
+            } catch let error as MailApiError where error == .apiAIContextIdExpired {
+                await executeShortcutAndRecreateConversation(shortcut)
             } catch {
-                print("Coucou")
-                isLoading = false
+                handleError(error)
             }
         }
+    }
+
+    @MainActor private func executeShortcutAndRecreateConversation(_ shortcut: AIShortcutAction) async {
+        do {
+            let response = try await mailboxManager.apiFetcher.aiShortcut(shortcut: shortcut.apiName, messages: conversation)
+            contextId = response.contextId
+            conversation.append(contentsOf: [response.action, AIMessage(type: .assistant, content: response.content)])
+            isLoading = false
+        } catch {
+            handleError(error)
+        }
+    }
+
+    private func handleError(_ error: Error) {
+        // TODO: Handle error (next PR)
     }
 }
