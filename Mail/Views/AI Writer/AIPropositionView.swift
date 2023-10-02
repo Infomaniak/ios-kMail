@@ -34,8 +34,6 @@ struct AIPropositionView: View {
 
     @ObservedRealmObject var draft: Draft
 
-    let mailboxManager: MailboxManager
-
     var body: some View {
         NavigationView {
             ScrollView {
@@ -50,18 +48,7 @@ struct AIPropositionView: View {
                 .tint(MailResourcesAsset.aiColor.swiftUIColor)
             }
             .task {
-                do {
-                    aiModel.isLoading = true
-                    let result = try await mailboxManager.apiFetcher.aiCreateConversation(messages: aiModel.conversation)
-
-                    withAnimation {
-                        aiModel.isLoading = false
-                        aiModel.conversation.append(AIMessage(type: .assistant, content: result.content))
-                        aiModel.contextId = result.contextId
-                    }
-                } catch {
-                    // TODO: Handle error (next PR)
-                }
+                await aiModel.createConversation()
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -77,7 +64,7 @@ struct AIPropositionView: View {
                 ToolbarItemGroup(placement: .bottomBar) {
                     Group {
                         if !aiModel.isLoading {
-                            AIPropositionMenu(aiModel: aiModel, mailboxManager: mailboxManager)
+                            AIPropositionMenu(aiModel: aiModel)
                         }
 
                         Spacer()
@@ -120,6 +107,6 @@ struct AIPropositionView: View {
 
 struct AIPropositionView_Previews: PreviewProvider {
     static var previews: some View {
-        AIPropositionView(aiModel: AIModel(), draft: Draft(), mailboxManager: PreviewHelper.sampleMailboxManager)
+        AIPropositionView(aiModel: AIModel(mailboxManager: PreviewHelper.sampleMailboxManager), draft: Draft())
     }
 }
