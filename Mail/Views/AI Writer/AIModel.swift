@@ -55,6 +55,11 @@ final class AIModel: ObservableObject {
         }
     }
 
+    func resetConversation() {
+        conversation = []
+        isLoading = false
+    }
+
     func executeShortcut(_ shortcut: AIShortcutAction) async {
         if shortcut == .edit {
             withAnimation {
