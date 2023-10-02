@@ -81,7 +81,10 @@ final class AIModel: ObservableObject {
 
     @MainActor private func executeShortcutAndRecreateConversation(_ shortcut: AIShortcutAction) async {
         do {
-            let response = try await mailboxManager.apiFetcher.aiShortcut(shortcut: shortcut.apiName, messages: conversation)
+            let response = try await mailboxManager.apiFetcher.aiShortcutAndRecreateConversation(
+                shortcut: shortcut.apiName,
+                messages: conversation
+            )
             contextId = response.contextId
             conversation.append(contentsOf: [response.action, AIMessage(type: .assistant, content: response.content)])
             isLoading = false
