@@ -21,7 +21,7 @@ import InfomaniakDI
 import Sentry
 import SwiftUI
 
-public enum AppFeature: String, Codable {
+public enum FeatureFlag: String, Codable {
     case aiMailComposer = "ai-mail-composer"
     case bimi
 }
@@ -35,12 +35,12 @@ public final class FeatureFlagsManager: FeatureFlagsManageable {
         enabledFeatures = UserDefaults.shared.featureFlags
     }
 
-    public func isEnabled(_ feature: AppFeature) -> Bool {
+    public func isEnabled(_ feature: FeatureFlag) -> Bool {
         guard let userFeatures = UserDefaults.shared.featureFlags[accountManager.currentUserId] else { return false }
         return userFeatures.contains(feature)
     }
 
-    public func feature(_ feature: AppFeature, on: () -> Void, off: (() -> Void)?) {
+    public func feature(_ feature: FeatureFlag, on: () -> Void, off: (() -> Void)?) {
         if isEnabled(feature) {
             on()
         } else {
