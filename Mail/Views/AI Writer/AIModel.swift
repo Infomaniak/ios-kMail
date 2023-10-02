@@ -21,6 +21,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
+@MainActor
 final class AIModel: ObservableObject {
     enum State {
         case prompt, proposition
@@ -44,7 +45,7 @@ final class AIModel: ObservableObject {
         isShowingProposition = state == .proposition
     }
 
-    @MainActor func createConversation() async {
+    func createConversation() async {
         do {
             isLoading = true
             let result = try await mailboxManager.apiFetcher.aiCreateConversation(messages: conversation)
@@ -59,7 +60,7 @@ final class AIModel: ObservableObject {
         }
     }
 
-    @MainActor func executeShortcut(_ shortcut: AIShortcutAction) async {
+    func executeShortcut(_ shortcut: AIShortcutAction) async {
         switch shortcut {
         case .edit:
             conversation.append(AIMessage(type: .assistant, content: MailResourcesStrings.Localizable.aiMenuEditRequest))
@@ -79,7 +80,7 @@ final class AIModel: ObservableObject {
         }
     }
 
-    @MainActor private func executeShortcutAndRecreateConversation(_ shortcut: AIShortcutAction) async {
+    private func executeShortcutAndRecreateConversation(_ shortcut: AIShortcutAction) async {
         do {
             let response = try await mailboxManager.apiFetcher.aiShortcutAndRecreateConversation(
                 shortcut: shortcut.apiName,
