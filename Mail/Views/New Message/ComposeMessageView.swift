@@ -80,7 +80,7 @@ struct ComposeMessageView: View {
 
     @StateObject private var attachmentsManager: AttachmentsManager
     @StateObject private var alert = NewMessageAlert()
-    @StateObject private var aiModel = AIModel()
+    @StateObject private var aiModel: AIModel
 
     @StateRealmObject private var draft: Draft
 
@@ -121,6 +121,8 @@ struct ComposeMessageView: View {
         _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: editedDraft.draft,
                                                                            mailboxManager: mailboxManager))
         _initialAttachments = State(wrappedValue: attachments)
+
+        _aiModel = StateObject(wrappedValue: AIModel(mailboxManager: mailboxManager))
     }
 
     // MARK: - View
@@ -178,7 +180,7 @@ struct ComposeMessageView: View {
             AIPromptView(aiModel: aiModel)
         }
         .sheet(isPresented: $aiModel.isShowingProposition) {
-            AIPropositionView(aiModel: aiModel, draft: draft, mailboxManager: mailboxManager)
+            AIPropositionView(aiModel: aiModel, draft: draft)
         }
         .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])

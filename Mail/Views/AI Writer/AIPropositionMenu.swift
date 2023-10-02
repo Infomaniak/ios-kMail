@@ -77,8 +77,6 @@ struct AIPropositionMenu: View {
 
     @ObservedObject var aiModel: AIModel
 
-    let mailboxManager: MailboxManager
-
     var body: some View {
         Menu {
             ForEach(Self.allShortcuts.indices, id: \.self) { actionsGroupIndex in
@@ -86,7 +84,9 @@ struct AIPropositionMenu: View {
                 Section {
                     ForEach(actionsGroup) { action in
                         Button {
-                            handleShortcut(action)
+                            Task {
+                                await aiModel.executeShortcut(action)
+                            }
                         } label: {
                             Label(action.label, image: action.icon.name)
                         }
@@ -106,22 +106,6 @@ struct AIPropositionMenu: View {
         .tint(MailResourcesAsset.textSecondaryColor.swiftUIColor)
         .modifier(FixedMenuOrderModifier())
     }
-
-    private func handleShortcut(_ shortcut: AIShortcutAction) {
-        switch shortcut {
-        case .edit:
-            aiModel.conversation.append(AIMessage(type: .assistant, content: MailResourcesStrings.Localizable.aiMenuEditRequest))
-            aiModel.displayView(.prompt)
-        default:
-            aiModel.isLoading = true
-            Task {
-                guard let contextId = aiModel.contextId else { return }
-                let response = try await mailboxManager.apiFetcher.aiShortcut(contextId: contextId, shortcut: shortcut.apiName)
-                aiModel.conversation.append(contentsOf: [response.action, AIMessage(type: .assistant, content: response.content)])
-                aiModel.isLoading = false
-            }
-        }
-    }
 }
 
 struct FixedMenuOrderModifier: ViewModifier {
@@ -137,6 +121,6 @@ struct FixedMenuOrderModifier: ViewModifier {
 
 struct AIPropositionMenu_Preview: PreviewProvider {
     static var previews: some View {
-        AIPropositionMenu(aiModel: AIModel(), mailboxManager: PreviewHelper.sampleMailboxManager)
+        AIPropositionMenu(aiModel: AIModel(mailboxManager: PreviewHelper.sampleMailboxManager))
     }
 }
