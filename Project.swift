@@ -26,9 +26,9 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "1.1.6")),
                           .package(
                               url: "https://github.com/Infomaniak/ios-core",
-                              .revision("025c5dffa801d0ffe4e55730897466784f42564f")
+                              .revision("1c741dfd8096fcd0c83200d958917d246ad9e6f2")
                           ),
-                          .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "2.5.3")),
+                          .package(url: "https://github.com/Infomaniak/ios-core-ui", .branch("floating-panel")),
                           .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "3.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "1.1.0")),
                           .package(url: "https://github.com/Infomaniak/ios-bug-tracker", .upToNextMajor(from: "2.0.0")),
@@ -49,8 +49,7 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/airbnb/lottie-ios", .exact("3.5.0")),
                           .package(url: "https://github.com/Ambrdctr/SwiftSoup", .branch("master")),
                           .package(url: "https://github.com/johnpatrickmorgan/NavigationBackport", .upToNextMajor(from: "0.8.1")),
-                          .package(url: "https://github.com/aheze/Popovers", .upToNextMajor(from: "1.3.2")),
-                          .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1"))
+                          .package(url: "https://github.com/aheze/Popovers", .upToNextMajor(from: "1.3.2"))
                       ],
                       targets: [
                           Target(name: "Mail",
@@ -81,8 +80,7 @@ let project = Project(name: "Mail",
                                      .package(product: "WrappingHStack"),
                                      .package(product: "Lottie"),
                                      .package(product: "NavigationBackport"),
-                                     .package(product: "Popovers"),
-                                     .package(product: "SwiftUIBackports")
+                                     .package(product: "Popovers")
                                  ],
                                  settings: .settings(base: Constants.baseSettings),
                                  environment: ["hostname": "\(ProcessInfo.processInfo.hostName)."]),
@@ -140,8 +138,7 @@ let project = Project(name: "Mail",
                                   .package(product: "WrappingHStack"),
                                   .package(product: "Lottie"),
                                   .package(product: "NavigationBackport"),
-                                  .package(product: "Popovers"),
-                                  .package(product: "SwiftUIBackports")
+                                  .package(product: "Popovers")
                               ],
                               settings: .settings(base: Constants.baseSettings)
                           ),

@@ -41,7 +41,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "025c5dffa801d0ffe4e55730897466784f42564f"
+        "revision" : "1c741dfd8096fcd0c83200d958917d246ad9e6f2"
       }
     },
     {
@@ -49,8 +49,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "0ad5402a235540e4d4f340137f4708a0601bdac9",
-        "version" : "2.5.3"
+        "branch" : "floating-panel",
+        "revision" : "afba1dac2e569ef517f1e3c453dbbfe18c5b66a2"
       }
     },
     {
