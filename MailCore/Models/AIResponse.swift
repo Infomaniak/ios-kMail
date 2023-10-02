@@ -18,16 +18,27 @@
 
 import Foundation
 
-public enum AIMessageType: String, Codable {
-    case user, context, assistant
+public enum AIOutputFormat: String, Codable {
+    case `default`, mail
 }
 
-public struct AIMessage: Codable {
-    public let type: AIMessageType
-    public let content: String
+public struct AIConversationRequest: Codable {
+    public let messages: [AIMessage]
+    public let output: AIOutputFormat
+}
 
-    public init(type: AIMessageType, content: String) {
-        self.type = type
-        self.content = content
-    }
+public protocol AIResponse {
+    var contextId: String? { get }
+}
+
+public struct AIConversationResponse: AIResponse, Codable {
+    public let contextId: String?
+    public let tokensUsed: Int
+    public let content: String
+}
+
+public struct AIShortcutResponse: AIResponse, Codable {
+    public let contextId: String?
+    public let content: String
+    public let action: AIMessage
 }
