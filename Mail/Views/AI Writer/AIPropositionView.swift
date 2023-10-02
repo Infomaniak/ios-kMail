@@ -29,8 +29,6 @@ struct AIPropositionView: View {
 
     @State private var textPlainHeight = CGFloat.zero
     @State private var isShowingReplaceContentAlert = false
-    @State private var contextId: String?
-    @State private var isLoading = true
 
     @ObservedObject var aiModel: AIModel
 
@@ -44,7 +42,7 @@ struct AIPropositionView: View {
                 SelectableTextView(
                     textPlainHeight: $textPlainHeight,
                     text: aiModel.conversation.last?.content ?? "",
-                    foregroundColor: isLoading ? MailResourcesAsset.textTertiaryColor.swiftUIColor : MailResourcesAsset
+                    foregroundColor: aiModel.isLoading ? MailResourcesAsset.textTertiaryColor.swiftUIColor : MailResourcesAsset
                         .textPrimaryColor.swiftUIColor
                 )
                 .frame(height: textPlainHeight)
@@ -56,16 +54,13 @@ struct AIPropositionView: View {
                     let result = try await mailboxManager.apiFetcher.createAIConversation(messages: aiModel.conversation)
 
                     withAnimation {
-                        isLoading = false
+                        aiModel.isLoading = false
                         aiModel.conversation.append(AIMessage(type: .assistant, content: result.content))
-                        contextId = result.contextId
+                        aiModel.contextId = result.contextId
                     }
                 } catch {
                     // TODO: Handle error (next PR)
                 }
-            }
-            .onDisappear {
-                aiModel.conversation = []
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -80,13 +75,13 @@ struct AIPropositionView: View {
 
                 ToolbarItemGroup(placement: .bottomBar) {
                     Group {
-                        if !isLoading {
-                            AIPropositionMenu()
+                        if !aiModel.isLoading {
+                            AIPropositionMenu(aiModel: aiModel)
                         }
 
                         Spacer()
 
-                        if isLoading {
+                        if aiModel.isLoading {
                             AIProgressView()
                         } else {
                             MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
@@ -116,7 +111,7 @@ struct AIPropositionView: View {
     }
 
     private func insertResult() {
-        guard !isLoading, let content = aiModel.conversation.last?.content else { return }
+        guard !aiModel.isLoading, let content = aiModel.conversation.last?.content else { return }
         draftContentManager.replaceBodyContent(with: content)
         dismiss()
     }
