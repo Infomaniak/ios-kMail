@@ -27,5 +27,5 @@ public protocol FeatureFlagsManageable {
 
     func feature(_ feature: FeatureFlag, on: () -> Void, off: (() -> Void)?)
 
-    func fetchFlags() async
+    func fetchFlags() async throws
 }
