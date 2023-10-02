@@ -25,6 +25,9 @@ final class AIModel: ObservableObject {
     }
 
     @Published var conversation = [AIMessage]()
+    @Published var isLoading = false
+    @Published var contextId: String?
+
     @Published var isShowingPrompt = false
     @Published var isShowingProposition = false
 
