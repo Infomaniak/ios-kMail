@@ -29,12 +29,13 @@ public struct AIConversationRequest: Codable {
 
 public protocol AIResponse {
     var contextId: String? { get }
+    var content: String { get }
 }
 
 public struct AIConversationResponse: AIResponse, Codable {
     public let contextId: String?
-    public let tokensUsed: Int
     public let content: String
+    public let tokensUsed: Int
 }
 
 public struct AIShortcutResponse: AIResponse, Codable {
