@@ -67,7 +67,7 @@ final class AIModel: ObservableObject {
                 isLoading = true
             }
             do {
-                let response = try await mailboxManager.apiFetcher.aiShortcut(contextId: contextId, shortcut: shortcut.apiName)
+                let response = try await mailboxManager.apiFetcher.aiShortcut(contextId: contextId, shortcut: shortcut)
                 handleAIResponse(response)
             } catch let error as MailApiError where error == .apiAIContextIdExpired {
                 await executeShortcutAndRecreateConversation(shortcut)
@@ -80,7 +80,7 @@ final class AIModel: ObservableObject {
     private func executeShortcutAndRecreateConversation(_ shortcut: AIShortcutAction) async {
         do {
             let response = try await mailboxManager.apiFetcher.aiShortcutAndRecreateConversation(
-                shortcut: shortcut.apiName,
+                shortcut: shortcut,
                 messages: conversation
             )
             handleAIResponse(response)
