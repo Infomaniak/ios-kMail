@@ -360,11 +360,11 @@ enum ToolbarStyle {
         switch self {
         case .main:
             @InjectService var featureFlagsManageable: FeatureFlagsManageable
-            var actions: [ToolbarAction] = [.editText, .addFile, .addPhoto, .takePhoto, .link]
+            var mainActions: [ToolbarAction] = [.editText, .addFile, .addPhoto, .takePhoto, .link]
             featureFlagsManageable.feature(.aiMailComposer, on: {
-                actions.insert(.ai, at: 1)
+                mainActions.insert(.ai, at: 1)
             }, off: nil)
-            return actions
+            return mainActions
         case .textEdition:
             return [.editText, .bold, .italic, .underline, .strikeThrough, .unorderedList]
         }
