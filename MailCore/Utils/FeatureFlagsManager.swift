@@ -18,52 +18,49 @@
 import Combine
 import Foundation
 import InfomaniakDI
+import Sentry
+import SwiftUI
 
 public enum AppFeature: String, Codable {
+    case aiMailComposer = "ai-mail-composer"
     case bimi
-    case aiMailComposer
-    case unknown
-
-    // TODO: Write init with unknown case
 }
 
 public final class FeatureFlagsManager: FeatureFlagsManageable {
-    private static let defaultFeatures: [AppFeature] = []
-
     @InjectService private var accountManager: AccountManager
 
-    private var userDefaultsSubscription: AnyCancellable?
-    private var enabledFeatures = [Int: [AppFeature]]()
+    private var enabledFeatures: AppFeatureFlags
 
     public init() {
-        enabledFeatures[accountManager.currentUserId] = Self.defaultFeatures
-
-        userDefaultsSubscription = UserDefaults.shared.publisher(for: \.featureFlags).sink { flags in
-            self.enabledFeatures = flags
-        }
-
-        Task {
-            try await fetchFlags()
-        }
+        enabledFeatures = UserDefaults.shared.featureFlags
     }
 
     public func isEnabled(_ feature: AppFeature) -> Bool {
-        guard let userFeatures = enabledFeatures[accountManager.currentUserId] else { return false }
-        return userFeatures.contains(feature) == true
+        guard let userFeatures = UserDefaults.shared.featureFlags[accountManager.currentUserId] else { return false }
+        return userFeatures.contains(feature)
     }
 
-    public func feature(_ feature: AppFeature, on: () -> Void, off: () -> Void) {
+    public func feature(_ feature: AppFeature, on: () -> Void, off: (() -> Void)? = nil) {
         if isEnabled(feature) {
             on()
         } else {
-            off()
+            off?()
         }
     }
 
-    public func fetchFlags() async throws {
-        guard let apiFetcher = accountManager.currentApiFetcher else { return }
-        enabledFeatures[accountManager.currentUserId] = try await apiFetcher.featureFlag()
+    public func fetchFlags() async {
+        if enabledFeatures[accountManager.currentUserId] == nil {
+            enabledFeatures[accountManager.currentUserId] = Constants.defaultFeatureFlags
+        }
 
-        UserDefaults.shared.featureFlags = enabledFeatures
+        do {
+            guard let apiFetcher = accountManager.currentApiFetcher else { return }
+            enabledFeatures[accountManager.currentUserId] = try await apiFetcher.featureFlag()
+            UserDefaults.shared.featureFlags = enabledFeatures
+        } catch {
+            SentrySDK.capture(error: error) { scope in
+                scope.setLevel(.info)
+            }
+        }
     }
 }

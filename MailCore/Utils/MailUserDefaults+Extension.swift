@@ -227,12 +227,18 @@ public extension UserDefaults {
         }
     }
 
-    var featureFlags: [Int: [AppFeature]] {
+    var featureFlags: FeatureFlagsManageable.AppFeatureFlags {
         get {
-            return (object(forKey: key(.featureFlags)) as? [Int: [AppFeature]]) ?? DefaultPreferences.featureFlags
+            guard let storedValue = object(forKey: key(.featureFlags)) as? Data,
+                  let decodedValue = try? JSONDecoder().decode(FeatureFlagsManageable.AppFeatureFlags.self, from: storedValue)
+            else {
+                return DefaultPreferences.featureFlags
+            }
+            return decodedValue
         }
         set {
-            set(newValue, forKey: key(.featureFlags))
+            guard let encodedValue = try? JSONEncoder().encode(newValue) else { return }
+            set(encodedValue, forKey: key(.featureFlags))
         }
     }
 }

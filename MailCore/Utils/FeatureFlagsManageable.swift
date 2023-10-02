@@ -17,11 +17,15 @@
  */
 
 import Foundation
+import SwiftUI
 
 public protocol FeatureFlagsManageable {
+    typealias UserId = Int
+    typealias AppFeatureFlags = [UserId: [AppFeature]]
+
     func isEnabled(_ feature: AppFeature) -> Bool
 
-    func feature(_ feature: AppFeature, on: () -> Void, off: () -> Void)
+    func feature(_ feature: AppFeature, on: () -> Void, off: (() -> Void)?)
 
-    func fetchFlags() async throws
+    func fetchFlags() async
 }
