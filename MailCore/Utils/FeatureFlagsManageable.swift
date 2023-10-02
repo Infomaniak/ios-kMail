@@ -19,13 +19,17 @@
 import Foundation
 import SwiftUI
 
+/// Something that can managed feature flags
 public protocol FeatureFlagsManageable {
     typealias UserId = Int
     typealias AppFeatureFlags = [UserId: [FeatureFlag]]
 
+    /// Check if a given feature is enabled for the current user
     func isEnabled(_ feature: FeatureFlag) -> Bool
 
+    /// Execute the correct closure depending if a given feature is enabled or not for the current user
     func feature(_ feature: FeatureFlag, on: () -> Void, off: (() -> Void)?)
 
+    /// Refresh the flags for the current user
     func fetchFlags() async throws
 }

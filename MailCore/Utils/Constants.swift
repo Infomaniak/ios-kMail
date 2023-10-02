@@ -71,6 +71,7 @@ public enum Constants {
         return "const MESSAGE_SELECTOR = \"#\(divWrapperId)\"; \(mungeScript)"
     }()
 
+    /// List of feature flags enabled by default (before getting API data)
     public static let defaultFeatureFlags: [FeatureFlag] = []
 
     public static func isEmailAddress(_ mail: String) -> Bool {
