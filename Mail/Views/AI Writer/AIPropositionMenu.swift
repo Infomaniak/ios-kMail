@@ -26,12 +26,36 @@ struct AIPropositionMenu: View {
         let label: String
         let icon: MailResourcesImages
 
-        static let modify = AIAction(id: 1, label: "Modifier ma demande", icon: MailResourcesAsset.pencil)
-        static let regenerate = AIAction(id: 2, label: "Regénérer une réponse", icon: MailResourcesAsset.fileRegenerate)
-        static let shorten = AIAction(id: 3, label: "Raccourcir", icon: MailResourcesAsset.shortenParagraph)
-        static let extend = AIAction(id: 4, label: "Rallonger", icon: MailResourcesAsset.expandParagraph)
-        static let seriousWriting = AIAction(id: 5, label: "Rédaction sériseuse", icon: MailResourcesAsset.briefcase)
-        static let friendlyWriting = AIAction(id: 6, label: "Rédaction amicale", icon: MailResourcesAsset.smiley)
+        static let modify = AIAction(
+            id: 1,
+            label: MailResourcesStrings.Localizable.aiMenuEditRequest,
+            icon: MailResourcesAsset.pencil
+        )
+        static let regenerate = AIAction(
+            id: 2,
+            label: MailResourcesStrings.Localizable.aiMenuRegenerate,
+            icon: MailResourcesAsset.fileRegenerate
+        )
+        static let shorten = AIAction(
+            id: 3,
+            label: MailResourcesStrings.Localizable.aiMenuShorten,
+            icon: MailResourcesAsset.shortenParagraph
+        )
+        static let extend = AIAction(
+            id: 4,
+            label: MailResourcesStrings.Localizable.aiMenuExpand,
+            icon: MailResourcesAsset.expandParagraph
+        )
+        static let seriousWriting = AIAction(
+            id: 5,
+            label: MailResourcesStrings.Localizable.aiMenuSeriousWriting,
+            icon: MailResourcesAsset.briefcase
+        )
+        static let friendlyWriting = AIAction(
+            id: 6,
+            label: MailResourcesStrings.Localizable.aiMenuFriendlyWriting,
+            icon: MailResourcesAsset.smiley
+        )
 
         static let allActions: [[Self]] = [[.modify, .regenerate], [.shorten, .extend], [.seriousWriting, .friendlyWriting]]
     }
