@@ -52,7 +52,7 @@ struct ComposeMessageWrapperView: View {
                 dismissHandler(())
             }
             .task {
-                await featureFlagsManager.fetchFlags()
+                try? await featureFlagsManager.fetchFlags()
             }
         } else {
             PleaseLoginView(tapHandler: dismissHandler)

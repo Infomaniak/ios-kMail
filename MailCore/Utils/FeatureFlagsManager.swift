@@ -24,6 +24,22 @@ import SwiftUI
 public enum FeatureFlag: String, Codable {
     case aiMailComposer = "ai-mail-composer"
     case bimi
+    case unknown
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawString = try container.decode(String.self)
+
+        if let featureFlag = FeatureFlag(rawValue: rawString) {
+            self = featureFlag
+        } else {
+            self = .unknown
+            SentrySDK.capture(message: "FeatureFlag: Unknown feature") { scope in
+                scope.setLevel(.info)
+                scope.setExtra(value: rawString, key: "Feature name")
+            }
+        }
+    }
 }
 
 public final class FeatureFlagsManager: FeatureFlagsManageable {
@@ -48,19 +64,13 @@ public final class FeatureFlagsManager: FeatureFlagsManageable {
         }
     }
 
-    public func fetchFlags() async {
+    public func fetchFlags() async throws {
         if enabledFeatures[accountManager.currentUserId] == nil {
             enabledFeatures[accountManager.currentUserId] = Constants.defaultFeatureFlags
         }
 
-        do {
-            guard let apiFetcher = accountManager.currentApiFetcher else { return }
-            enabledFeatures[accountManager.currentUserId] = try await apiFetcher.featureFlag()
-            UserDefaults.shared.featureFlags = enabledFeatures
-        } catch {
-            SentrySDK.capture(error: error) { scope in
-                scope.setLevel(.info)
-            }
-        }
+        guard let apiFetcher = accountManager.currentApiFetcher else { return }
+        enabledFeatures[accountManager.currentUserId] = try await apiFetcher.featureFlag()
+        UserDefaults.shared.featureFlags = enabledFeatures
     }
 }
