@@ -34,6 +34,7 @@ public struct AIConversationResponse: Codable {
 }
 
 public struct AIShortcutResponse: Codable {
+    public let contextId: String?
     public let content: String
     public let action: AIMessage
 }
