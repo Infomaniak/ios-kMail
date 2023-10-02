@@ -18,11 +18,15 @@
 
 import Foundation
 import MailCore
+import MailResources
+import SwiftUI
 
 final class AIModel: ObservableObject {
     enum State {
         case prompt, proposition
     }
+
+    private let mailboxManager: MailboxManager
 
     @Published var conversation = [AIMessage]()
     @Published var isLoading = false
@@ -31,8 +35,46 @@ final class AIModel: ObservableObject {
     @Published var isShowingPrompt = false
     @Published var isShowingProposition = false
 
+    init(mailboxManager: MailboxManager) {
+        self.mailboxManager = mailboxManager
+    }
+
     func displayView(_ state: AIModel.State) {
         isShowingPrompt = state == .prompt
         isShowingProposition = state == .proposition
+    }
+
+    @MainActor func createConversation() async {
+        do {
+            isLoading = true
+            let result = try await mailboxManager.apiFetcher.aiCreateConversation(messages: conversation)
+
+            withAnimation {
+                isLoading = false
+                conversation.append(AIMessage(type: .assistant, content: result.content))
+                contextId = result.contextId
+            }
+        } catch {
+            // TODO: Handle error (next PR)
+        }
+    }
+
+    @MainActor func executeShortcut(_ shortcut: AIShortcutAction) async {
+        switch shortcut {
+        case .edit:
+            conversation.append(AIMessage(type: .assistant, content: MailResourcesStrings.Localizable.aiMenuEditRequest))
+            displayView(.prompt)
+        default:
+            guard let contextId else { return }
+            isLoading = true
+            do {
+                let response = try await mailboxManager.apiFetcher.aiShortcut(contextId: contextId, shortcut: shortcut.apiName)
+                conversation.append(contentsOf: [response.action, AIMessage(type: .assistant, content: response.content)])
+                isLoading = false
+            } catch {
+                print("Coucou")
+                isLoading = false
+            }
+        }
     }
 }
