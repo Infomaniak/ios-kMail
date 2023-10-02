@@ -40,7 +40,7 @@ public final class FeatureFlagsManager: FeatureFlagsManageable {
         return userFeatures.contains(feature)
     }
 
-    public func feature(_ feature: AppFeature, on: () -> Void, off: (() -> Void)? = nil) {
+    public func feature(_ feature: AppFeature, on: () -> Void, off: (() -> Void)?) {
         if isEnabled(feature) {
             on()
         } else {
