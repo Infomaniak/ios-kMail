@@ -51,7 +51,8 @@ struct AIPropositionView: View {
             }
             .task {
                 do {
-                    let result = try await mailboxManager.apiFetcher.createAIConversation(messages: aiModel.conversation)
+                    aiModel.isLoading = true
+                    let result = try await mailboxManager.apiFetcher.aiCreateConversation(messages: aiModel.conversation)
 
                     withAnimation {
                         aiModel.isLoading = false
@@ -76,7 +77,7 @@ struct AIPropositionView: View {
                 ToolbarItemGroup(placement: .bottomBar) {
                     Group {
                         if !aiModel.isLoading {
-                            AIPropositionMenu(aiModel: aiModel)
+                            AIPropositionMenu(aiModel: aiModel, mailboxManager: mailboxManager)
                         }
 
                         Spacer()

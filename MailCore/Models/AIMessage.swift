@@ -22,15 +22,20 @@ public enum AIOutputFormat: String, Codable {
     case `default`, mail
 }
 
-public struct AIRequest: Codable {
+public struct AIConversationRequest: Codable {
     public let messages: [AIMessage]
     public let output: AIOutputFormat
 }
 
-public struct AIResponse: Codable {
+public struct AIConversationResponse: Codable {
     public let contextId: String?
     public let tokensUsed: Int
     public let content: String
+}
+
+public struct AIShortcutResponse: Codable {
+    public let content: String
+    public let action: AIMessage
 }
 
 public enum AIMessageType: String, Codable {
