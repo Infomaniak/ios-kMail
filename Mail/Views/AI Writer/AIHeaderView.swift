@@ -32,7 +32,7 @@ struct AIHeaderView: View {
             if style == .bottomSheet {
                 MailResourcesAsset.aiWriter.swiftUIImage
                     .resizable()
-                    .frame(width: 16, height: 16)
+                    .frame(width: 24, height: 24)
                     .foregroundColor(MailResourcesAsset.aiColor)
             }
 
