@@ -16,14 +16,83 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
+import MailResources
 import SwiftUI
 
 struct SyncInstallProfileTutorialView: View {
+    @Environment(\.dismissModal) private var dismiss
+    @Environment(\.openURL) private var openURL
+
+    @State private var userCameBackFromSettings = false
+
+    private let steps = [
+        "Dans vos réglages, ouvrez l’onglet “Profil téléchargé” puis cliquer sur installer.",
+        "Saisissez le code : renseigner le **code PIN** de votre téléphone",
+        "Cliquer sur **Installer**.",
+        "Coller le mot de passe de validation de l’étape précédente.",
+        "Revenir sur votre application Mail."
+    ]
+
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ScrollView {
+            VStack(spacing: UIPadding.regular) {
+                Text("!Installer le profil")
+                    .textStyle(.header2)
+                    .multilineTextAlignment(.center)
+                VStack(alignment: .leading, spacing: UIPadding.regular) {
+                    ForEach(steps.indices, id: \.self) { index in
+                        if let stepMarkdown = try? AttributedString(markdown: "\(index + 1)\\. \(steps[index])") {
+                            Text(stepMarkdown)
+                        }
+                        if index == 0 {
+                            TipView(
+                                message: "Tapez “Profil téléchargé” dans la recherche de vos réglages pour trouver facilement l’onglet !"
+                            )
+                        }
+                    }
+                }
+                .textStyle(.bodySecondary)
+
+                Spacer(minLength: 16)
+                DeviceFrameView()
+                Spacer()
+            }
+            .padding(value: .medium)
+        }
+        .padding(.bottom, value: .verySmall)
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                SyncStepToolbarItem(step: 3, totalSteps: 3)
+            }
+        }
+        .safeAreaInset(edge: .bottom) {
+            VStack {
+                MailButton(label: "!Accéder aux réglages") {
+                    openURL(URL(string: "App-prefs:")!)
+                }
+                .mailButtonFullWidth(true)
+                if userCameBackFromSettings {
+                    MailButton(label: "!J'ai terminé") {
+                        dismiss()
+                    }
+                    .mailButtonFullWidth(true)
+                    .mailButtonStyle(.link)
+                }
+            }
+            .padding(.horizontal, value: .medium)
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                withAnimation {
+                    userCameBackFromSettings = true
+                }
+            }
+        }
     }
 }
 
 #Preview {
-    SyncInstallProfileTutorialView()
+    NavigationView {
+        SyncInstallProfileTutorialView()
+    }
+    .navigationViewStyle(.stack)
 }

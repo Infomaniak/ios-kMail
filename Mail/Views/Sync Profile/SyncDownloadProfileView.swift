@@ -51,7 +51,6 @@ struct SyncDownloadProfileView: View {
                 SyncStepToolbarItem(step: 1, totalSteps: 3)
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: UIPadding.medium) {
                 MailButton(label: "!Télécharger") {

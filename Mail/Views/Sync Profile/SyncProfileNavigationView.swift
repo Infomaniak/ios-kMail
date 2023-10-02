@@ -46,6 +46,8 @@ struct SyncProfileNavigationView: View {
                         }
                     }
                     .backButtonDisplayMode(.minimal)
+                    .navigationBarTitleDisplayMode(.inline)
+                    .environment(\.dismissModal) { dismiss() }
                 }
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
