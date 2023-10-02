@@ -48,30 +48,27 @@ final class AIModel: ObservableObject {
     func createConversation() async {
         do {
             isLoading = true
-            let result = try await mailboxManager.apiFetcher.aiCreateConversation(messages: conversation)
-
-            withAnimation {
-                isLoading = false
-                conversation.append(AIMessage(type: .assistant, content: result.content))
-                contextId = result.contextId
-            }
+            let response = try await mailboxManager.apiFetcher.aiCreateConversation(messages: conversation)
+            handleAIResponse(response)
         } catch {
             handleError(error)
         }
     }
 
     func executeShortcut(_ shortcut: AIShortcutAction) async {
-        switch shortcut {
-        case .edit:
-            conversation.append(AIMessage(type: .assistant, content: MailResourcesStrings.Localizable.aiMenuEditRequest))
+        if shortcut == .edit {
+            withAnimation {
+                conversation.append(AIMessage(type: .assistant, content: MailResourcesStrings.Localizable.aiMenuEditRequest))
+            }
             displayView(.prompt)
-        default:
+        } else {
             guard let contextId else { return }
-            isLoading = true
+            withAnimation {
+                isLoading = true
+            }
             do {
                 let response = try await mailboxManager.apiFetcher.aiShortcut(contextId: contextId, shortcut: shortcut.apiName)
-                conversation.append(contentsOf: [response.action, AIMessage(type: .assistant, content: response.content)])
-                isLoading = false
+                handleAIResponse(response)
             } catch let error as MailApiError where error == .apiAIContextIdExpired {
                 await executeShortcutAndRecreateConversation(shortcut)
             } catch {
@@ -86,11 +83,23 @@ final class AIModel: ObservableObject {
                 shortcut: shortcut.apiName,
                 messages: conversation
             )
-            contextId = response.contextId
-            conversation.append(contentsOf: [response.action, AIMessage(type: .assistant, content: response.content)])
-            isLoading = false
+            handleAIResponse(response)
         } catch {
             handleError(error)
+        }
+    }
+
+    private func handleAIResponse(_ response: AIResponse) {
+        if let newContextId = response.contextId {
+            contextId = newContextId
+        }
+
+        withAnimation {
+            if let shortcutResponse = response as? AIShortcutResponse {
+                conversation.append(shortcutResponse.action)
+            }
+            conversation.append(AIMessage(type: .assistant, content: response.content))
+            isLoading = false
         }
     }
 
