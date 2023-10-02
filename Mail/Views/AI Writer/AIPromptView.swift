@@ -81,7 +81,7 @@ struct AIPromptView: View {
                 prompt = initialMessage.content
             }
 
-            aiModel.conversation = []
+            aiModel.resetConversation()
         }
         .matomoView(view: ["AI", "Prompt"])
     }
