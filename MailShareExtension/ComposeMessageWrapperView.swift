@@ -32,6 +32,7 @@ struct ComposeMessageWrapperView: View {
     @State private var draft: Draft
 
     @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
 
     init(dismissHandler: @escaping SimpleClosure, itemProviders: [NSItemProvider], draft: Draft = Draft()) {
         _draft = State(wrappedValue: draft)
@@ -49,6 +50,9 @@ struct ComposeMessageWrapperView: View {
             .environmentObject(mailboxManager)
             .environment(\.dismissModal) {
                 dismissHandler(())
+            }
+            .task {
+                await featureFlagsManager.fetchFlags()
             }
         } else {
             PleaseLoginView(tapHandler: dismissHandler)
