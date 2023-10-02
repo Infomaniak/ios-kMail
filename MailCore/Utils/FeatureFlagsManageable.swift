@@ -21,11 +21,11 @@ import SwiftUI
 
 public protocol FeatureFlagsManageable {
     typealias UserId = Int
-    typealias AppFeatureFlags = [UserId: [AppFeature]]
+    typealias AppFeatureFlags = [UserId: [FeatureFlag]]
 
-    func isEnabled(_ feature: AppFeature) -> Bool
+    func isEnabled(_ feature: FeatureFlag) -> Bool
 
-    func feature(_ feature: AppFeature, on: () -> Void, off: (() -> Void)?)
+    func feature(_ feature: FeatureFlag, on: () -> Void, off: (() -> Void)?)
 
     func fetchFlags() async
 }

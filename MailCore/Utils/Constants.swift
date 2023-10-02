@@ -71,7 +71,7 @@ public enum Constants {
         return "const MESSAGE_SELECTOR = \"#\(divWrapperId)\"; \(mungeScript)"
     }()
 
-    public static let defaultFeatureFlags: [AppFeature] = []
+    public static let defaultFeatureFlags: [FeatureFlag] = []
 
     public static func isEmailAddress(_ mail: String) -> Bool {
         return emailPredicate.evaluate(with: mail.lowercased())
