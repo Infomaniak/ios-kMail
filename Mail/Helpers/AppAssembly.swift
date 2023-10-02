@@ -61,6 +61,9 @@ enum ApplicationAssembly {
             Factory(type: InfomaniakNotifications.self) { _, _ in
                 InfomaniakNotifications(appGroup: AccountManager.appGroup)
             },
+            Factory(type: FeatureFlagsManageable.self) { _, _ in
+                FeatureFlagsManager()
+            },
             Factory(type: AppLockHelper.self) { _, _ in
                 AppLockHelper()
             },
@@ -112,9 +115,6 @@ enum ApplicationAssembly {
             },
             Factory(type: LocalContactsHelpable.self) { _, _ in
                 LocalContactsHelper()
-            },
-            Factory(type: FeatureFlagsManageable.self) { _, _ in
-                FeatureFlagsManager()
             }
         ]
 
