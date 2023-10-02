@@ -96,8 +96,16 @@ public extension Endpoint {
             .appending(path: "/securedProxy/cache/invalidation/profile/workspace/mailbox/\(mailboxId)/update_password")
     }
 
-    static func ai() -> Endpoint {
+    static var ai: Endpoint {
         return .base.appending(path: "/ai")
+    }
+
+    static func aiShortcut(contextId: String? = nil, shortcut: String) -> Endpoint {
+        var mobileAIEndpoint = Endpoint.ai.appending(path: "/mobile")
+        if let contextId {
+            mobileAIEndpoint = mobileAIEndpoint.appending(path: "/\(contextId)")
+        }
+        return mobileAIEndpoint.appending(path: "/\(shortcut)")
     }
 
     static func askMailboxPassword(hostingId: Int, mailboxName: String) -> Endpoint {

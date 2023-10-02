@@ -126,5 +126,5 @@ public protocol MailApiExtendedFetchable {
 }
 
 public protocol MailApiAIFetchable {
-    func createAIConversation(messages: [AIMessage], output: AIOutputFormat) async throws -> AIResponse
+    func aiCreateConversation(messages: [AIMessage], output: AIOutputFormat) async throws -> AIConversationResponse
 }
