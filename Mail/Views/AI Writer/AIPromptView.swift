@@ -75,9 +75,13 @@ struct AIPromptView: View {
         }
         .padding(value: .regular)
         .onAppear {
-            if let initialPrompt = aiModel.conversation.first {
-                prompt = initialPrompt.content
+            if let lastMessage = aiModel.conversation.last,
+               lastMessage.type == .assistant && lastMessage.content == MailResourcesStrings.Localizable.aiMenuEditRequest,
+               let initialMessage = aiModel.conversation.first {
+                prompt = initialMessage.content
             }
+
+            aiModel.conversation = []
         }
         .matomoView(view: ["AI", "Prompt"])
     }
