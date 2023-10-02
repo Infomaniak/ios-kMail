@@ -44,6 +44,7 @@ public extension UserDefaults.Keys {
     static let includeOriginalInReply = UserDefaults.Keys(rawValue: "includeOriginalInReply")
     static let threadMode = UserDefaults.Keys(rawValue: "threadMode")
     static let showAIReplaceContentAlert = UserDefaults.Keys(rawValue: "showAIReplaceContentAlert")
+    static let featureFlags = UserDefaults.Keys(rawValue: "featureFlags")
 }
 
 public extension UserDefaults {
@@ -216,13 +217,28 @@ public extension UserDefaults {
 
     var showAIReplaceContentAlert: Bool {
         get {
-            if bool(forKey: key(.showAIReplaceContentAlert)) == nil {
+            if object(forKey: key(.showAIReplaceContentAlert)) == nil {
                 set(DefaultPreferences.showAIReplaceContentAlert, forKey: key(.showAIReplaceContentAlert))
             }
             return bool(forKey: key(.showAIReplaceContentAlert))
         }
         set {
             set(newValue, forKey: key(.showAIReplaceContentAlert))
+        }
+    }
+
+    var featureFlags: FeatureFlagsManageable.AppFeatureFlags {
+        get {
+            guard let storedValue = object(forKey: key(.featureFlags)) as? Data,
+                  let decodedValue = try? JSONDecoder().decode(FeatureFlagsManageable.AppFeatureFlags.self, from: storedValue)
+            else {
+                return DefaultPreferences.featureFlags
+            }
+            return decodedValue
+        }
+        set {
+            guard let encodedValue = try? JSONEncoder().encode(newValue) else { return }
+            set(encodedValue, forKey: key(.featureFlags))
         }
     }
 }

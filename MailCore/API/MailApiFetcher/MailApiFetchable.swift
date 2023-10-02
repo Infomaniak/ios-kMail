@@ -21,7 +21,7 @@ import Foundation
 import InfomaniakCore
 
 /// Public interface of `MailApiFetcher`
-public typealias MailApiFetchable = MailApiCommonFetchable & MailApiExtendedFetchable
+public typealias MailApiFetchable = MailApiAIFetchable & MailApiCommonFetchable & MailApiExtendedFetchable
 
 /// Main interface of the `MailApiFetcher`
 public protocol MailApiCommonFetchable {
@@ -75,6 +75,8 @@ public protocol MailApiCommonFetchable {
 public protocol MailApiExtendedFetchable {
     func permissions(mailbox: Mailbox) async throws -> MailboxPermissions
 
+    func featureFlag() async throws -> [FeatureFlag]
+
     /// All the remote contacts
     func contacts() async throws -> [InfomaniakContact]
 
@@ -121,4 +123,8 @@ public protocol MailApiExtendedFetchable {
     func deleteDraft(mailbox: Mailbox, draftId: String) async throws -> Empty?
 
     func deleteDraft(draftResource: String) async throws -> Empty?
+}
+
+public protocol MailApiAIFetchable {
+    func createAIConversation(messages: [AIMessage], output: AIOutputFormat) async throws -> AIResponse
 }

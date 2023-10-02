@@ -35,4 +35,5 @@ public enum DefaultPreferences {
     public static let includeOriginalInReply = false
     public static let threadMode = ThreadMode.conversation
     public static let showAIReplaceContentAlert = true
+    public static let featureFlags: FeatureFlagsManageable.AppFeatureFlags = [:]
 }
