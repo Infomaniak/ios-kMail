@@ -33,7 +33,8 @@ public extension MailApiFetcher {
             .data
     }
 
-    func aiShortcut(shortcut: String, messages: [AIMessage], output: AIOutputFormat = .mail) async throws -> AIShortcutResponse {
+    func aiShortcutAndRecreateConversation(shortcut: String, messages: [AIMessage],
+                                           output: AIOutputFormat = .mail) async throws -> AIShortcutResponse {
         try await perform(request: authenticatedRequest(
             .aiShortcut(shortcut: shortcut),
             method: .post,
