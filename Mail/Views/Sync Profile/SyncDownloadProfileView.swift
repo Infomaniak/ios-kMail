@@ -37,10 +37,7 @@ struct SyncDownloadProfileView: View {
                 .textStyle(.header2)
                 .multilineTextAlignment(.center)
             VStack(alignment: .leading, spacing: UIPadding.regular) {
-                Text("1. Cliquez sur “Télécharger”")
-                    .multilineTextAlignment(.leading)
-                Text("2. Autorisez le téléchargement")
-                    .multilineTextAlignment(.leading)
+                Text("Pour télécharger le profil, cliquez sur “Télécharger” puis autorisez le téléchargement.")
             }
             .textStyle(.bodySecondary)
 
@@ -100,4 +97,5 @@ struct SyncDownloadProfileView: View {
     NavigationView {
         SyncDownloadProfileView(navigationPath: .constant([]))
     }
+    .navigationViewStyle(.stack)
 }

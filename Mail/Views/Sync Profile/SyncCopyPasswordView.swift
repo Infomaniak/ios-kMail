@@ -106,5 +106,9 @@ struct SyncCopyPasswordView: View {
 }
 
 #Preview {
-    SyncCopyPasswordView(navigationPath: .constant([]))
+    NavigationView {
+        SyncCopyPasswordView(navigationPath: .constant([]))
+    }
+    .navigationViewStyle(.stack)
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }
