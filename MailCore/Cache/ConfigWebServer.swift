@@ -16,15 +16,34 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import Foundation
 import Swifter
+import UIKit
 
 public class ConfigWebServer {
     private let server = HttpServer()
     private var firstLoad = true
+
+    public static let syncProfileBackToAppHTML: String = Bundle.main.load(
+        filename: "SyncProfileBackToApp",
+        withExtension: "html"
+    ) ?? ""
+
+    public static let syncProfileIndexHTML: String = Bundle.main.load(
+        filename: "SyncProfileIndex",
+        withExtension: "html"
+    ) ?? ""
+
     public init() {}
 
-    public func start(configURL: URL) {
+    public func start(
+        configURL: URL,
+        buttonTitle: String,
+        buttonBackgroundColor: UIColor,
+        buttonForegroundColor: UIColor,
+        backgroundColor: UIColor
+    ) {
         firstLoad = true
         server["/install"] = { [weak self] _ in
             if self?.firstLoad == true {
@@ -34,72 +53,56 @@ public class ConfigWebServer {
                         let configData = try Data(contentsOf: configURL)
                         try writer.write(configData)
                     } catch {
-                        print("Failed to write response data")
+                        DDLogError("Failed to write config \(error)")
                     }
                 }
             } else {
-                return .ok(.html("""
-                <html>
-                  <head>
-                    <meta charset="UTF-8">
-                    <title>Profile Install</title>
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <style>
-                      .custom-button {
-                        font-family: -apple-system, Arial, sans-serif;
-                        font-size: 16pt;
-                        display: inline-block;
-                        padding: 20pt;
-                        border-radius: 15pt;
-                        background-color: #0097FF;
-                        color: white;
-                        text-decoration: none;
-                        font-weight: bold;
-                        width: 100%;
-                        margin: 32pt;
-                        text-align: center;
-                      }
-                      .whole-body {
-                        position: absolute;
-                        width: 100%;
-                        height: 100%;
-                      }
-                      body {
-                        background-color: #F4F6FD;
-                     }
-                    </style>
-                  </head>
-                  <body>
-                    <a class="whole-body" href="com.infomaniak.mail.profile-callback://">
-                      <a class="custom-button" href="com.infomaniak.mail.profile-callback://">
-                        !Revenir sur l’application Mail
-                      </a>
-                    </a>
-                  </body>
-                </html>
-                """))
+                return .ok(.html(ConfigWebServer.syncProfileBackToAppHTML
+                        .replacingOccurrences(of: "{buttonTitle}", with: buttonTitle)
+                        .replacingOccurrences(of: "{backgroundColor}", with: backgroundColor.hexString)
+                        .replacingOccurrences(of: "{buttonBackgroundColor}", with: buttonBackgroundColor.hexString)
+                        .replacingOccurrences(of: "{buttonForegroundColor}", with: buttonForegroundColor.hexString)))
             }
         }
 
         server["/index"] = { [weak self] _ in
             self?.firstLoad = true
-            return .ok(.html("""
-                             <HTML><HEAD><title>Profile Install</title>\
-                             </HEAD><script> \
-                             function load() { window.location.href='http://localhost:8080/install'; } \
-                var int=self.setInterval(function(){load()},400); \
-                </script><BODY></BODY></HTML>
-            """))
+            return .ok(.html(ConfigWebServer.syncProfileIndexHTML))
         }
 
         do {
             try server.start()
         } catch {
-            print(error)
+            DDLogError("Error starting config server \(error)")
         }
     }
 
     public func stop() {
         server.stop()
+    }
+}
+
+private extension UIColor {
+    var hexString: String {
+        guard let cgColorInRGB = cgColor.converted(
+            to: CGColorSpace(name: CGColorSpace.sRGB)!,
+            intent: .defaultIntent,
+            options: nil
+        ) else {
+            return ""
+        }
+        let colorRef = cgColorInRGB.components
+        let r = colorRef?[0] ?? 0
+        let g = colorRef?[1] ?? 0
+        let b = ((colorRef?.count ?? 0) > 2 ? colorRef?[2] : g) ?? 0
+        let a = cgColor.alpha
+
+        var color = String(format: "#%02lX%02lX%02lX", lroundf(Float(r * 255)), lroundf(Float(g * 255)), lroundf(Float(b * 255)))
+
+        if a < 1 {
+            color += String(format: "%02lX", lroundf(Float(a * 255)))
+        }
+
+        return color
     }
 }

@@ -24,6 +24,8 @@ import SwiftUI
 struct SyncDownloadProfileView: View {
     @LazyInjectService private var server: ConfigWebServer
 
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isConfigWebViewPresented = false
@@ -84,7 +86,13 @@ struct SyncDownloadProfileView: View {
                     syncContacts: true,
                     syncCalendar: true
                 )
-                server.start(configURL: downloadedConfigURL)
+                server.start(
+                    configURL: downloadedConfigURL,
+                    buttonTitle: "!Revenir à l'application",
+                    buttonBackgroundColor: accentColor.primary.color,
+                    buttonForegroundColor: accentColor.onAccent.color,
+                    backgroundColor: accentColor.secondary.color
+                )
                 isDownloadingConfig = false
                 isConfigWebViewPresented = true
             }

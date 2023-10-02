@@ -68,7 +68,8 @@ let project = Project(name: "Mail",
                                      "MailResources/**/*.stringsdict",
                                      "MailResources/**/*.json",
                                      "MailResources/**/*.css",
-                                     "MailResources/**/*.js"
+                                     "MailResources/**/*.js",
+                                     "MailResources/**/*.html"
                                  ],
                                  entitlements: "MailResources/Mail.entitlements",
                                  scripts: [Constants.swiftlintScript],

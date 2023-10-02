@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+            <title>Profile Install</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <style>
+                    #custom-button {
+                        font-family: -apple-system, Arial, sans-serif;
+                        font-size: 16pt;
+                        display: inline-block;
+                        padding: 20pt;
+                        border-radius: 15pt;
+                        background-color: {buttonBackgroundColor};
+                        color: {buttonForegroundColor};
+                        text-decoration: none;
+                        font-weight: bold;
+                        width: 100%;
+                        margin: 32pt;
+                        text-align: center;
+                    }
+                    #whole-body {
+                        position: absolute;
+                        width: 100%;
+                        height: 100%;
+                    }
+                    body {
+                        background-color: {backgroundColor};
+                    }
+                </style>
+            </head>
+    <body id="body">
+        <a id="whole-body" href="com.infomaniak.mail.profile-callback://">
+            <a id="custom-button" href="com.infomaniak.mail.profile-callback://">{buttonTitle}</a>
+        </a>
+    </body>
+</html>

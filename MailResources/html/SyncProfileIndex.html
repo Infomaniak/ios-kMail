@@ -1,0 +1,16 @@
+<html>
+<head>
+    <title>Profile Install</title>
+</head>
+<script>
+    function load() {
+        window.location.href = 'http://localhost:8080/install';
+    }
+
+    var selfRefresh = self.setInterval(function () {
+        load()
+    }, 400);
+
+</script>
+<body></body>
+</html>
