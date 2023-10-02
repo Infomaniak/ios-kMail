@@ -20,54 +20,6 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct AIShortcutAction: Identifiable, Equatable {
-    let id: Int
-    let label: String
-    let icon: MailResourcesImages
-    let apiName: String
-
-    static let edit = AIShortcutAction(
-        id: 1,
-        label: MailResourcesStrings.Localizable.aiMenuEditRequest,
-        icon: MailResourcesAsset.pencil,
-        apiName: "edit"
-    )
-    static let regenerate = AIShortcutAction(
-        id: 2,
-        label: MailResourcesStrings.Localizable.aiMenuRegenerate,
-        icon: MailResourcesAsset.fileRegenerate,
-        apiName: "redraw"
-    )
-    static let shorten = AIShortcutAction(
-        id: 3,
-        label: MailResourcesStrings.Localizable.aiMenuShorten,
-        icon: MailResourcesAsset.shortenParagraph,
-        apiName: "shorten"
-    )
-    static let expand = AIShortcutAction(
-        id: 4,
-        label: MailResourcesStrings.Localizable.aiMenuExpand,
-        icon: MailResourcesAsset.expandParagraph,
-        apiName: "develop"
-    )
-    static let seriousWriting = AIShortcutAction(
-        id: 5,
-        label: MailResourcesStrings.Localizable.aiMenuSeriousWriting,
-        icon: MailResourcesAsset.briefcase,
-        apiName: "tune-professional"
-    )
-    static let friendlyWriting = AIShortcutAction(
-        id: 6,
-        label: MailResourcesStrings.Localizable.aiMenuFriendlyWriting,
-        icon: MailResourcesAsset.smiley,
-        apiName: "tune-friendly"
-    )
-
-    static func == (lhs: AIShortcutAction, rhs: AIShortcutAction) -> Bool {
-        return lhs.id == rhs.id
-    }
-}
-
 struct AIPropositionMenu: View {
     static let allShortcuts: [[AIShortcutAction]] = [
         [.edit, .regenerate],

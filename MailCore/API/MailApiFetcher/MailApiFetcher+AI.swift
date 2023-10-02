@@ -28,15 +28,17 @@ public extension MailApiFetcher {
         )).data
     }
 
-    func aiShortcut(contextId: String, shortcut: String) async throws -> AIShortcutResponse {
-        try await perform(request: authenticatedRequest(.aiShortcut(contextId: contextId, shortcut: shortcut), method: .patch))
-            .data
+    func aiShortcut(contextId: String, shortcut: AIShortcutAction) async throws -> AIShortcutResponse {
+        try await perform(request: authenticatedRequest(
+            .aiShortcut(contextId: contextId, shortcut: shortcut.apiName),
+            method: .patch
+        )).data
     }
 
-    func aiShortcutAndRecreateConversation(shortcut: String, messages: [AIMessage],
+    func aiShortcutAndRecreateConversation(shortcut: AIShortcutAction, messages: [AIMessage],
                                            output: AIOutputFormat = .mail) async throws -> AIShortcutResponse {
         try await perform(request: authenticatedRequest(
-            .aiShortcut(shortcut: shortcut),
+            .aiShortcut(shortcut: shortcut.apiName),
             method: .post,
             parameters: AIConversationRequest(messages: messages, output: output)
         )).data
