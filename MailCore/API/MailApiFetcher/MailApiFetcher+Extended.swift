@@ -27,7 +27,7 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(.permissions(mailbox: mailbox))).data
     }
 
-    func featureFlag() async throws -> [AppFeature] {
+    func featureFlag() async throws -> [FeatureFlag] {
         try await perform(request: authenticatedRequest(.featureFlag)).data
     }
 
