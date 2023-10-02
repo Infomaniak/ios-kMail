@@ -20,11 +20,16 @@ import Foundation
 
 /// implementing `MailApiAIFetchable`
 public extension MailApiFetcher {
-    func createAIConversation(messages: [AIMessage], output: AIOutputFormat = .mail) async throws -> AIResponse {
+    func aiCreateConversation(messages: [AIMessage], output: AIOutputFormat = .mail) async throws -> AIConversationResponse {
         try await perform(request: authenticatedRequest(
-            .ai(),
+            .ai,
             method: .post,
-            parameters: AIRequest(messages: messages, output: output)
+            parameters: AIConversationRequest(messages: messages, output: output)
         )).data
+    }
+
+    func aiShortcut(contextId: String, shortcut: String) async throws -> AIShortcutResponse {
+        try await perform(request: authenticatedRequest(.aiShortcut(contextId: contextId, shortcut: shortcut), method: .patch))
+            .data
     }
 }

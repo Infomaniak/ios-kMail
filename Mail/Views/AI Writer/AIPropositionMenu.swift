@@ -20,54 +20,73 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct AIPropositionMenu: View {
-    struct AIAction: Identifiable {
-        let id: Int
-        let label: String
-        let icon: MailResourcesImages
+struct AIShortcutAction: Identifiable, Equatable {
+    let id: Int
+    let label: String
+    let icon: MailResourcesImages
+    let apiName: String
 
-        static let modify = AIAction(
-            id: 1,
-            label: MailResourcesStrings.Localizable.aiMenuEditRequest,
-            icon: MailResourcesAsset.pencil
-        )
-        static let regenerate = AIAction(
-            id: 2,
-            label: MailResourcesStrings.Localizable.aiMenuRegenerate,
-            icon: MailResourcesAsset.fileRegenerate
-        )
-        static let shorten = AIAction(
-            id: 3,
-            label: MailResourcesStrings.Localizable.aiMenuShorten,
-            icon: MailResourcesAsset.shortenParagraph
-        )
-        static let extend = AIAction(
-            id: 4,
-            label: MailResourcesStrings.Localizable.aiMenuExpand,
-            icon: MailResourcesAsset.expandParagraph
-        )
-        static let seriousWriting = AIAction(
-            id: 5,
-            label: MailResourcesStrings.Localizable.aiMenuSeriousWriting,
-            icon: MailResourcesAsset.briefcase
-        )
-        static let friendlyWriting = AIAction(
-            id: 6,
-            label: MailResourcesStrings.Localizable.aiMenuFriendlyWriting,
-            icon: MailResourcesAsset.smiley
-        )
+    static let edit = AIShortcutAction(
+        id: 1,
+        label: MailResourcesStrings.Localizable.aiMenuEditRequest,
+        icon: MailResourcesAsset.pencil,
+        apiName: "edit"
+    )
+    static let regenerate = AIShortcutAction(
+        id: 2,
+        label: MailResourcesStrings.Localizable.aiMenuRegenerate,
+        icon: MailResourcesAsset.fileRegenerate,
+        apiName: "redraw"
+    )
+    static let shorten = AIShortcutAction(
+        id: 3,
+        label: MailResourcesStrings.Localizable.aiMenuShorten,
+        icon: MailResourcesAsset.shortenParagraph,
+        apiName: "shorten"
+    )
+    static let expand = AIShortcutAction(
+        id: 4,
+        label: MailResourcesStrings.Localizable.aiMenuExpand,
+        icon: MailResourcesAsset.expandParagraph,
+        apiName: "develop"
+    )
+    static let seriousWriting = AIShortcutAction(
+        id: 5,
+        label: MailResourcesStrings.Localizable.aiMenuSeriousWriting,
+        icon: MailResourcesAsset.briefcase,
+        apiName: "tune-professional"
+    )
+    static let friendlyWriting = AIShortcutAction(
+        id: 6,
+        label: MailResourcesStrings.Localizable.aiMenuFriendlyWriting,
+        icon: MailResourcesAsset.smiley,
+        apiName: "tune-friendly"
+    )
 
-        static let allActions: [[Self]] = [[.modify, .regenerate], [.shorten, .extend], [.seriousWriting, .friendlyWriting]]
+    static func == (lhs: AIShortcutAction, rhs: AIShortcutAction) -> Bool {
+        return lhs.id == rhs.id
     }
+}
+
+struct AIPropositionMenu: View {
+    static let allShortcuts: [[AIShortcutAction]] = [
+        [.edit, .regenerate],
+        [.shorten, .expand],
+        [.seriousWriting, .friendlyWriting]
+    ]
+
+    @ObservedObject var aiModel: AIModel
+
+    let mailboxManager: MailboxManager
 
     var body: some View {
         Menu {
-            ForEach(AIAction.allActions.indices, id: \.self) { actionsGroupIndex in
-                let actionsGroup = AIAction.allActions[actionsGroupIndex]
+            ForEach(Self.allShortcuts.indices, id: \.self) { actionsGroupIndex in
+                let actionsGroup = Self.allShortcuts[actionsGroupIndex]
                 Section {
                     ForEach(actionsGroup) { action in
                         Button {
-                            handleAction(action)
+                            handleShortcut(action)
                         } label: {
                             Label(action.label, image: action.icon.name)
                         }
@@ -88,8 +107,20 @@ struct AIPropositionMenu: View {
         .modifier(FixedMenuOrderModifier())
     }
 
-    private func handleAction(_ action: AIAction) {
-        // TODO: Handle action
+    private func handleShortcut(_ shortcut: AIShortcutAction) {
+        switch shortcut {
+        case .edit:
+            aiModel.conversation.append(AIMessage(type: .assistant, content: MailResourcesStrings.Localizable.aiMenuEditRequest))
+            aiModel.displayView(.prompt)
+        default:
+            aiModel.isLoading = true
+            Task {
+                guard let contextId = aiModel.contextId else { return }
+                let response = try await mailboxManager.apiFetcher.aiShortcut(contextId: contextId, shortcut: shortcut.apiName)
+                aiModel.conversation.append(contentsOf: [response.action, AIMessage(type: .assistant, content: response.content)])
+                aiModel.isLoading = false
+            }
+        }
     }
 }
 
@@ -106,6 +137,6 @@ struct FixedMenuOrderModifier: ViewModifier {
 
 struct AIPropositionMenu_Preview: PreviewProvider {
     static var previews: some View {
-        AIPropositionMenu()
+        AIPropositionMenu(aiModel: AIModel(), mailboxManager: PreviewHelper.sampleMailboxManager)
     }
 }
