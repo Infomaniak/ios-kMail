@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: fr, French
  * Tagged: ios
- * Exported by: Ambroise Decouttere
- * Exported at: Fri, 29 Sep 2023 10:01:40 +0200
+ * Exported by: elena willen
+ * Exported at: Tue, 03 Oct 2023 10:41:32 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1287,7 +1287,7 @@
 "aiPromptTag" = "Beta";
 
 /* loco:6501840ef58ecb8b620adb23 */
-"aiPromptPlaceholder" = "Dites à l’assistant à la rédaction ce que vous souhaitez écrire. Par exemple \"un mail de remerciement pour un cadeau de bienvenue\".";
+"aiPromptPlaceholder" = "Dites à l’assistant à la rédaction ce que vous souhaitez écrire. Par exemple \"%@\".";
 
 /* loco:65019254a2948ddd0d0e0ca3 */
 "aiPromptValidateButton" = "Générer";
@@ -1354,3 +1354,18 @@
 
 /* loco:651587be8ddc30b025013c52 */
 "aiDiscoveryDescription" = "Simplifier la rédaction de vos messages à l’aide de l’Intelligence Artificielle.";
+
+/* loco:651bc83def57493b22006342 */
+"aiPromptExample1" = "un mail de remerciement pour un cadeau de bienvenue";
+
+/* loco:651bc8e313db1595d10ed172 */
+"aiPromptExample2" = "un mail de confirmation de réservation d’hôtel";
+
+/* loco:651bc902eecf2c30a70e51e2 */
+"aiPromptExample3" = "un mail de remerciement pour une invitation à un événement";
+
+/* loco:651bc92b603aebc1b205b522 */
+"aiPromptExample4" = "un mail d’invitation à un événement d’entreprise";
+
+/* loco:651bc96abf48bc251603add2 */
+"aiPromptExample5" = "un mail de demande de rendez-vous avec un client important";
