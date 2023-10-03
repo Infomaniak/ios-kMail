@@ -21,6 +21,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import Popovers
 import RealmSwift
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
@@ -74,6 +75,8 @@ struct ComposeMessageView: View {
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
     @State private var isShowingExternalTag = true
+
+    @State private var isShowingAIPopover = false
 
     @State private var editorModel = RichTextEditorModel()
     @Weak private var scrollView: UIScrollView?
@@ -236,6 +239,18 @@ struct ComposeMessageView: View {
 
             let rectTop = CGRect(x: 0, y: 0, width: 1, height: 1)
             scrollView?.scrollRectToVisible(rectTop, animated: true)
+        }
+        .onChange(of: focusedField) { newFocusedField in
+            if newFocusedField == .editor || newFocusedField == nil {
+                isShowingAIPopover = true
+            }
+        }
+        .popover(present: $isShowingAIPopover) { attributes in
+            attributes.blocksBackgroundTouches = true
+        } view: {
+            AIDiscoveryPopover(isShowing: $isShowingAIPopover)
+        } background: {
+            Color.black.opacity(0.6)
         }
         .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)
         .navigationBarTitleDisplayMode(.inline)
