@@ -230,18 +230,10 @@ struct OnboardingView: View {
         }
         .overlay(alignment: .topLeading) {
             if !isScrollEnabled {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "xmark")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: UIConstants.onboardingLogoHeight)
-                        .padding(.top, UIPadding.onBoardingLogoTop)
-                }
-                .frame(width: 24, height: 24)
-                .padding(.top, value: .regular)
-                .padding(.leading, value: .medium)
+                CloseButton(size: .medium, dismissAction: dismiss)
+                    .padding(.top, UIPadding.onBoardingLogoTop)
+                    .padding(.top, value: .verySmall)
+                    .padding(.leading, value: .medium)
             }
         }
         .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $loginHandler.isPresentingErrorAlert) {

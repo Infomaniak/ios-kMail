@@ -75,6 +75,11 @@ public struct MailTextStyle {
         color: MailResourcesAsset.textPrimaryColor
     )
 
+    public static let bodyMediumTertiary = MailTextStyle(
+        font: .system(size: 16, weight: .medium),
+        color: MailResourcesAsset.textTertiaryColor
+    )
+
     public static let bodyMediumAccent = MailTextStyle(
         font: .system(size: 16, weight: .medium),
         color: .accentColor
@@ -83,6 +88,11 @@ public struct MailTextStyle {
     public static let bodyMediumOnAccent = MailTextStyle(
         font: .system(size: 16, weight: .medium),
         color: UserDefaults.shared.accentColor.onAccent.swiftUIColor
+    )
+
+    public static let bodyMediumOnAI = MailTextStyle(
+        font: .system(size: 16, weight: .medium),
+        color: MailResourcesAsset.onAIColor
     )
 
     public static let bodyMediumOnDisabled = MailTextStyle(

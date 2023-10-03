@@ -71,6 +71,9 @@ public enum Constants {
         return "const MESSAGE_SELECTOR = \"#\(divWrapperId)\"; \(mungeScript)"
     }()
 
+    /// List of feature flags enabled by default (before getting API data)
+    public static let defaultFeatureFlags: [FeatureFlag] = []
+
     public static func isEmailAddress(_ mail: String) -> Bool {
         return emailPredicate.evaluate(with: mail.lowercased())
     }
@@ -168,4 +171,12 @@ public enum Constants {
     public static let searchFolderId = "search_folder_id"
 
     public static let backgroundRefreshTaskIdentifier = "com.infomaniak.mail.background-refresh"
+
+    public static let aiPromptExamples: Set = [
+        MailResourcesStrings.Localizable.aiPromptExample1,
+        MailResourcesStrings.Localizable.aiPromptExample2,
+        MailResourcesStrings.Localizable.aiPromptExample3,
+        MailResourcesStrings.Localizable.aiPromptExample4,
+        MailResourcesStrings.Localizable.aiPromptExample5
+    ]
 }

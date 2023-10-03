@@ -86,6 +86,7 @@ public class DraftContentManager: ObservableObject {
                 liveIncompleteDraft.identityId = "\(newSignature.id)"
                 liveIncompleteDraft.body = try parsedMessage.outerHtml()
             }
+            NotificationCenter.default.post(name: .updateComposeMessageBody, object: nil)
         } catch {
             DDLogError("An error occurred while transforming the DOM of the draft: \(error)")
         }
@@ -129,6 +130,26 @@ public class DraftContentManager: ObservableObject {
             attachments: attachments,
             shouldAddSignatureText: shouldAddSignatureText
         )
+    }
+
+    public func replaceBodyContent(with content: String) {
+        let realm = mailboxManager.getRealm()
+        guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID) else {
+            return
+        }
+
+        guard let parsedMessage = try? SwiftSoup.parse(liveDraft.body) else { return }
+
+        var signatureContent = ""
+        if let foundSignature = try? parsedMessage.select(".\(Constants.signatureWrapperIdentifier)").first(),
+           let signatureHTML = try? foundSignature.outerHtml() {
+            signatureContent = signatureHTML
+        }
+
+        try? realm.write {
+            liveDraft.body = "<p>\(content.replacingOccurrences(of: "\n", with: "<br>"))</p>\(signatureContent)"
+        }
+        NotificationCenter.default.post(name: .updateComposeMessageBody, object: nil)
     }
 
     private func writeCompleteDraft(

@@ -25,6 +25,7 @@ struct SelectableTextView: UIViewRepresentable {
     @Binding var textPlainHeight: CGFloat
 
     let text: String?
+    var foregroundColor = MailTextStyle.body.color
 
     func makeUIView(context: Context) -> UITextView {
         let textView = UITextView()
@@ -33,7 +34,7 @@ struct SelectableTextView: UIViewRepresentable {
         textView.isEditable = false
         textView.textContainer.lineFragmentPadding = 0
         textView.font = .systemFont(ofSize: 16)
-        textView.textColor = UIColor(MailTextStyle.body.color)
+        textView.textColor = UIColor(foregroundColor)
         textView.linkTextAttributes = [.underlineStyle: 1, .foregroundColor: UIColor.tintColor]
         textView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
@@ -43,6 +44,7 @@ struct SelectableTextView: UIViewRepresentable {
     func updateUIView(_ uiView: UITextView, context: Context) {
         Task {
             uiView.text = text
+            uiView.textColor = UIColor(foregroundColor)
 
             await MainActor.run {
                 let sizeThatFits = uiView.sizeThatFits(CGSize(width: uiView.frame.width, height: CGFloat.greatestFiniteMagnitude))

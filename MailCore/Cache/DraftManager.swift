@@ -199,7 +199,7 @@ public final class DraftManager {
     /// Present a message with a `delete draft`  action
     @discardableResult
     public func initialSaveRemotely(draft: Draft, mailboxManager: MailboxManager) async -> Bool {
-        guard !isDraftEmpty(draft: draft) else {
+        guard !draft.isCompletelyEmpty else {
             deleteEmptyDraft(draft: draft, for: mailboxManager)
             return false
         }
@@ -213,44 +213,6 @@ public final class DraftManager {
         alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarDraftSaved, action: messageAction)
 
         return true
-    }
-
-    /// Check multiple conditions to infer if a draft is empty or not
-    private func isDraftEmpty(draft: Draft) -> Bool {
-        guard isDraftBodyEmptyOfAttachments(draft: draft) else {
-            return false
-        }
-
-        guard (try? isDraftBodyEmptyOfChanges(draft.body)) ?? true else {
-            return false
-        }
-
-        return true
-    }
-
-    /// Check that the draft has some Attachments of not
-    private func isDraftBodyEmptyOfAttachments(draft: Draft) -> Bool {
-        // This excludes the signature attachments that are present in Draft.attachments
-        return draft.attachments.filter { $0.contentId == nil }.isEmpty
-    }
-
-    /// Check if once the Signature node is removed, we still have content
-    func isDraftBodyEmptyOfChanges(_ body: String) throws -> Bool {
-        guard !body.isEmpty else {
-            return true
-        }
-
-        // Load DOM structure
-        let document = try SwiftSoup.parse(body)
-
-        // Remove the signature node
-        guard let signatureNode = try document.getElementsByClass(Constants.signatureWrapperIdentifier).first() else {
-            return !document.hasText()
-        }
-        try signatureNode.remove()
-
-        // Do we still have text ?
-        return !document.hasText()
     }
 
     private func refreshDraftFolder(latestSendDate: Date?, mailboxManager: MailboxManager) async throws {
@@ -294,13 +256,5 @@ public final class DraftManager {
             }
             realm.delete(object)
         }
-    }
-
-    private func defaultSignature(for mailboxManager: MailboxManager) -> Signature? {
-        guard let signature = mailboxManager.getStoredSignatures().defaultSignature else {
-            return nil
-        }
-
-        return signature
     }
 }

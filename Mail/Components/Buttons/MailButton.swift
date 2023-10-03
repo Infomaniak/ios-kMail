@@ -26,6 +26,14 @@ struct MailButtonStyleKey: EnvironmentKey {
     static var defaultValue = MailButton.Style.large
 }
 
+struct MailButtonPrimaryColorKey: EnvironmentKey {
+    static var defaultValue = Color.accentColor
+}
+
+struct MailButtonSecondaryColorKey: EnvironmentKey {
+    static var defaultValue = UserDefaults.shared.accentColor.onAccent.swiftUIColor
+}
+
 struct MailButtonFullWidthKey: EnvironmentKey {
     static var defaultValue = false
 }
@@ -46,6 +54,16 @@ extension EnvironmentValues {
     var mailButtonStyle: MailButton.Style {
         get { self[MailButtonStyleKey.self] }
         set { self[MailButtonStyleKey.self] = newValue }
+    }
+
+    var mailButtonPrimaryColor: Color {
+        get { self[MailButtonPrimaryColorKey.self] }
+        set { self[MailButtonPrimaryColorKey.self] = newValue }
+    }
+
+    var mailButtonSecondaryColor: Color {
+        get { self[MailButtonSecondaryColorKey.self] }
+        set { self[MailButtonSecondaryColorKey.self] = newValue }
     }
 
     var mailButtonFullWidth: Bool {
@@ -72,6 +90,14 @@ extension EnvironmentValues {
 extension View {
     func mailButtonStyle(_ style: MailButton.Style) -> some View {
         environment(\.mailButtonStyle, style)
+    }
+
+    func mailButtonPrimaryColor(_ color: Color) -> some View {
+        environment(\.mailButtonPrimaryColor, color)
+    }
+
+    func mailButtonSecondaryColor(_ color: Color) -> some View {
+        environment(\.mailButtonSecondaryColor, color)
     }
 
     func mailButtonFullWidth(_ fullWidth: Bool) -> some View {

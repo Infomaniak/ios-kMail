@@ -66,6 +66,10 @@ public extension Endpoint {
                                             URLQueryItem(name: "product_id", value: "\(mailbox.hostingId)")])
     }
 
+    static var featureFlag: Endpoint {
+        return .base.appending(path: "/feature-flag/check")
+    }
+
     static var addressBooks: Endpoint {
         return .base.appending(path: "/pim/addressbook")
     }
@@ -89,6 +93,18 @@ public extension Endpoint {
     static func updateMailboxPassword(mailboxId: Int) -> Endpoint {
         return .base
             .appending(path: "/securedProxy/cache/invalidation/profile/workspace/mailbox/\(mailboxId)/update_password")
+    }
+
+    static var ai: Endpoint {
+        return .base.appending(path: "/ai")
+    }
+
+    static func aiShortcut(contextId: String? = nil, shortcut: String) -> Endpoint {
+        var mobileAIEndpoint = Endpoint.ai.appending(path: "/mobile")
+        if let contextId {
+            mobileAIEndpoint = mobileAIEndpoint.appending(path: "/\(contextId)")
+        }
+        return mobileAIEndpoint.appending(path: "/\(shortcut)")
     }
 
     static func askMailboxPassword(hostingId: Int, mailboxName: String) -> Endpoint {

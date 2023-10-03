@@ -19,6 +19,7 @@
 import Foundation
 import MailResources
 import RealmSwift
+import SwiftSoup
 import UniformTypeIdentifiers
 
 public enum SaveDraftOption: String, Codable, PersistableEnum {
@@ -317,5 +318,31 @@ public extension Draft {
                                        recipientsList: List<Recipient>) -> DisplayExternalRecipientStatus.State {
         let externalDisplayStatus = DisplayExternalRecipientStatus(mailboxManager: mailboxManager, recipientsList: recipientsList)
         return externalDisplayStatus.state
+    }
+}
+
+public extension Draft {
+    /// Check that the draft has some Attachments of not
+    var hasAttachments: Bool {
+        return !attachments.filter { $0.contentId == nil }.isEmpty
+    }
+
+    /// Check if once the Signature node is removed, we still have content
+    var isBodyEmpty: Bool {
+        guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else {
+            return true
+        }
+
+        guard let signatureNode = try? document.getElementsByClass(Constants.signatureWrapperIdentifier).first() else {
+            return !document.hasText()
+        }
+        try? signatureNode.remove()
+
+        return !document.hasText()
+    }
+
+    var isCompletelyEmpty: Bool {
+        guard !hasAttachments, isBodyEmpty else { return false }
+        return true
     }
 }

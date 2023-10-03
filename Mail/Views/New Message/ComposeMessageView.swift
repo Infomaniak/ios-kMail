@@ -80,6 +80,7 @@ struct ComposeMessageView: View {
 
     @StateObject private var attachmentsManager: AttachmentsManager
     @StateObject private var alert = NewMessageAlert()
+    @StateObject private var aiModel: AIModel
 
     @StateRealmObject private var draft: Draft
 
@@ -120,6 +121,8 @@ struct ComposeMessageView: View {
         _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: editedDraft.draft,
                                                                            mailboxManager: mailboxManager))
         _initialAttachments = State(wrappedValue: attachments)
+
+        _aiModel = StateObject(wrappedValue: AIModel(mailboxManager: mailboxManager))
     }
 
     // MARK: - View
@@ -138,7 +141,7 @@ struct ComposeMessageView: View {
             } catch {
                 // Unable to get signatures, "An error occurred" and close modal.
                 snackbarPresenter.show(message: MailError.unknownError.localizedDescription)
-                dismiss()
+                dismissMessageView()
             }
         }
         .onAppear {
@@ -173,6 +176,13 @@ struct ComposeMessageView: View {
                 dismissMessageView()
             }
         }
+        .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {
+            AIPromptView(aiModel: aiModel)
+        }
+        .sheet(isPresented: $aiModel.isShowingProposition) {
+            AIPropositionView(aiModel: aiModel, draft: draft)
+        }
+        .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
     }
 
@@ -186,7 +196,6 @@ struct ComposeMessageView: View {
                     autocompletionType: $autocompletionType,
                     currentSignature: $currentSignature
                 )
-                .environmentObject(draftContentManager)
 
                 if autocompletionType == nil && !isLoadingContent {
                     ComposeMessageBodyView(
@@ -194,9 +203,9 @@ struct ComposeMessageView: View {
                         editorModel: $editorModel,
                         editorFocus: $editorFocus,
                         currentSignature: $currentSignature,
+                        isShowingAIPrompt: $aiModel.isShowingPrompt,
                         attachmentsManager: attachmentsManager,
                         alert: alert,
-                        dismiss: dismiss,
                         messageReply: messageReply
                     )
                 }
@@ -232,9 +241,7 @@ struct ComposeMessageView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: didTouchDismiss) {
-                    Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
-                }
+                CloseButton(dismissHandler: didTouchDismiss)
             }
 
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -251,7 +258,7 @@ struct ComposeMessageView: View {
                 case .many, .one:
                     HStack(spacing: UIPadding.medium) {
                         Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
-                            .foregroundColor(MailResourcesAsset.onTagColor)
+                            .foregroundColor(MailResourcesAsset.onTagExternalColor)
                             .textStyle(.bodySmall)
 
                         Spacer()
@@ -262,7 +269,7 @@ struct ComposeMessageView: View {
                         } label: {
                             MailResourcesAsset.info.swiftUIImage
                                 .resizable()
-                                .foregroundColor(MailResourcesAsset.onTagColor)
+                                .foregroundColor(MailResourcesAsset.onTagExternalColor)
                                 .frame(width: 16, height: 16)
                         }
 
@@ -272,7 +279,7 @@ struct ComposeMessageView: View {
                         } label: {
                             MailResourcesAsset.close.swiftUIImage
                                 .resizable()
-                                .foregroundColor(MailResourcesAsset.onTagColor)
+                                .foregroundColor(MailResourcesAsset.onTagExternalColor)
                                 .frame(width: 16, height: 16)
                         }
                     }

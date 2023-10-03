@@ -57,6 +57,9 @@ enum NotificationServiceAssembly {
             Factory(type: InfomaniakNotifications.self) { _, _ in
                 InfomaniakNotifications(appGroup: AccountManager.appGroup)
             },
+            Factory(type: FeatureFlagsManageable.self) { _, _ in
+                FeatureFlagsManager()
+            },
             Factory(type: DraftManager.self) { _, _ in
                 DraftManager()
             },

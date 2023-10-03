@@ -24,6 +24,8 @@ struct MailButtonStyle: ButtonStyle {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.isEnabled) private var isEnabled
 
+    @Environment(\.mailButtonPrimaryColor) private var mailButtonPrimaryColor: Color
+    @Environment(\.mailButtonSecondaryColor) private var mailButtonSecondaryColor: Color
     @Environment(\.mailButtonFullWidth) private var fullWidth: Bool
     @Environment(\.mailButtonMinimizeHeight) private var minimizeHeight: Bool
 
@@ -34,11 +36,11 @@ struct MailButtonStyle: ButtonStyle {
         guard !minimizeHeight else { return nil }
 
         if style == .floatingActionButton {
-            return iconOnlyButton ? 64 : 56
+            return iconOnlyButton ? UIConstants.buttonLargeHeight : UIConstants.buttonMediumHeight
         } else if fullWidth {
-            return 56
+            return UIConstants.buttonMediumHeight
         } else {
-            return 40
+            return UIConstants.buttonSmallHeight
         }
     }
 
@@ -57,22 +59,20 @@ struct MailButtonStyle: ButtonStyle {
             linkStyle(configuration: configuration)
         }
     }
+}
 
+// MARK: - Large style helpers
+
+extension MailButtonStyle {
     @ViewBuilder private func largeStyle(configuration: Configuration) -> some View {
         configuration.label
-            .textStyle(isEnabled ? .bodyMediumOnAccent : .bodyMediumOnDisabled)
+            .foregroundColor(largeTextColor())
+            .textStyle(.bodyMedium)
             .padding(.horizontal, value: .medium)
             .frame(width: buttonWidth, height: buttonHeight)
             .background(largeBackground(configuration: configuration))
             .clipShape(RoundedRectangle(cornerRadius: UIConstants.buttonsRadius))
             .brightness(largeBrightness(configuration: configuration))
-    }
-
-    @ViewBuilder private func linkStyle(configuration: Configuration) -> some View {
-        configuration.label
-            .textStyle(linkTextStyle())
-            .opacity(configuration.isPressed ? 0.7 : 1)
-            .frame(width: buttonWidth, height: buttonHeight)
     }
 
     private func largeBackground(configuration: Configuration) -> Color {
@@ -82,24 +82,50 @@ struct MailButtonStyle: ButtonStyle {
         if colorScheme == .light {
             opacity = configuration.isPressed ? 0.8 : 1
         }
-        return .accentColor.opacity(opacity)
+
+        return mailButtonPrimaryColor.opacity(opacity)
+    }
+
+    private func largeTextColor() -> Color {
+        guard isEnabled else { return MailTextStyle.bodyMediumOnDisabled.color }
+        return mailButtonSecondaryColor
     }
 
     private func largeBrightness(configuration: Configuration) -> Double {
         guard colorScheme == .dark else { return 0 }
         return configuration.isPressed ? 0.1 : 0
     }
+}
+
+// MARK: - Link style helpers
+
+extension MailButtonStyle {
+    @ViewBuilder private func linkStyle(configuration: Configuration) -> some View {
+        configuration.label
+            .foregroundColor(linkTextColor())
+            .textStyle(linkTextStyle())
+            .opacity(configuration.isPressed ? 0.7 : 1)
+            .frame(width: buttonWidth, height: buttonHeight)
+    }
 
     private func linkTextStyle() -> MailTextStyle {
         switch style {
-        case .link:
-            return .bodyMediumAccent
+        case .link, .destructive:
+            return .bodyMedium
         case .smallLink:
-            return .bodySmallAccent
-        case .destructive:
-            return .bodyMediumError
+            return .bodySmall
         default:
             return .body
+        }
+    }
+
+    private func linkTextColor() -> Color {
+        guard isEnabled else { return MailTextStyle.bodyMediumOnDisabled.color }
+
+        if style == .destructive {
+            return MailTextStyle.bodyMediumError.color
+        } else {
+            return mailButtonPrimaryColor
         }
     }
 }

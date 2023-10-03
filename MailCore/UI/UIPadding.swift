@@ -68,7 +68,7 @@ public extension UIPadding {
 
     // MARK: Alerts
 
-    static let alertTitleBottom = regular
+    static let alertTitleBottom = medium
     static let alertDescriptionBottom = medium
 
     // MARK: Misc

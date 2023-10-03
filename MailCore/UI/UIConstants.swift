@@ -98,6 +98,12 @@ public extension UIConstants {
     static let buttonsIconSize: CGFloat = 16
 
     static let componentsMaxWidth: CGFloat = 496
+
+    static let buttonLargeHeight: CGFloat = 64
+    static let buttonMediumHeight: CGFloat = 56
+    static let buttonSmallHeight: CGFloat = 40
+
+    static let aiPromptSheetHeight: CGFloat = 232
 }
 
 // MARK: - Animations
@@ -112,6 +118,17 @@ public extension UIConstants {
 public extension UIConstants {
     static func isCompact(horizontalSizeClass: UserInterfaceSizeClass?, verticalSizeClass: UserInterfaceSizeClass?) -> Bool {
         return horizontalSizeClass == .compact || verticalSizeClass == .compact
+    }
+
+    static func applyComposeViewStyle(to toolbar: UIToolbar) {
+        toolbar.isTranslucent = false
+
+        toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
+        toolbar.layer.shadowColor = UIColor.black.cgColor
+        toolbar.layer.shadowOpacity = 0.1
+        toolbar.layer.shadowOffset = CGSize(width: 1, height: 1)
+        toolbar.layer.shadowRadius = 2
+        toolbar.layer.masksToBounds = false
     }
 }
 

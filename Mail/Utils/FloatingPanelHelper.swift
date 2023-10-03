@@ -17,6 +17,7 @@
  */
 
 import Combine
+import MailCore
 import MailResources
 import SwiftUI
 import SwiftUIBackports
@@ -57,13 +58,26 @@ extension View {
 
 @available(iOS, introduced: 15, deprecated: 16, message: "Use native way")
 struct SelfSizingPanelBackportViewModifier: ViewModifier {
-    @State var currentDetents: Set<Backport.PresentationDetent> = [.medium]
-    private let topPadding: CGFloat = 24
+    @State private var currentDetents: Set<Backport.PresentationDetent> = [.medium]
+
+    var dragIndicator = Visibility.visible
+
+    private let topPadding: CGFloat = UIPadding.medium
+    private var backportDragIndicator: Backport<Any>.Visibility {
+        switch dragIndicator {
+        case .automatic:
+            return .automatic
+        case .visible:
+            return .visible
+        case .hidden:
+            return .hidden
+        }
+    }
 
     func body(content: Content) -> some View {
         ScrollView {
             content
-                .padding(.bottom, 16)
+                .padding(.bottom, value: .regular)
         }
         .padding(.top, topPadding)
         .introspect(.scrollView, on: .iOS(.v15)) { scrollView in
@@ -75,7 +89,7 @@ struct SelfSizingPanelBackportViewModifier: ViewModifier {
                 currentDetents = [.medium, .large]
             }
         }
-        .backport.presentationDragIndicator(.visible)
+        .backport.presentationDragIndicator(backportDragIndicator)
         .backport.presentationDetents(currentDetents)
         .ikPresentationCornerRadius(20)
     }
@@ -83,14 +97,17 @@ struct SelfSizingPanelBackportViewModifier: ViewModifier {
 
 @available(iOS 16.0, *)
 struct SelfSizingPanelViewModifier: ViewModifier {
-    @State var currentDetents: Set<PresentationDetent> = [.height(0)]
-    @State var selection: PresentationDetent = .height(0)
-    private let topPadding: CGFloat = 24
+    @State private var currentDetents: Set<PresentationDetent> = [.height(0)]
+    @State private var selection: PresentationDetent = .height(0)
+
+    var dragIndicator = Visibility.visible
+
+    private let topPadding: CGFloat = UIPadding.medium
 
     func body(content: Content) -> some View {
         ScrollView {
             content
-                .padding(.bottom, 16)
+                .padding(.bottom, value: .regular)
         }
         .padding(.top, topPadding)
         .introspect(.scrollView, on: .iOS(.v16, .v17)) { scrollView in
@@ -110,7 +127,7 @@ struct SelfSizingPanelViewModifier: ViewModifier {
             }
         }
         .presentationDetents(currentDetents, selection: $selection)
-        .presentationDragIndicator(.visible)
+        .presentationDragIndicator(dragIndicator)
         .ikPresentationCornerRadius(20)
     }
 }

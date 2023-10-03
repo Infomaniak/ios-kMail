@@ -50,6 +50,21 @@ public class MailApiError: MailError {
     /// The server does not know bout the identity used in the request
     public static let apiIdentityNotFound = MailApiError(code: MailApiErrorCode.identityNotFound, shouldDisplay: false)
 
+    /// The context id for the conversation with the AI has expired
+    public static let apiAIContextIdExpired = MailApiError(code: "object_not_found")
+
+    /// Maximum number of syntax tokens for a conversation with the AI reached
+    public static let apiAIMaxSyntaxTokensReached = MailApiError(
+        code: "max_token_reached",
+        localizedDescription: MailResourcesStrings.Localizable.aiErrorMaxTokenReached
+    )
+
+    /// Too many requests made to AI
+    public static let apiAITooManyRequests = MailApiError(
+        code: "too_many_request",
+        localizedDescription: MailResourcesStrings.Localizable.aiErrorTooManyRequests
+    )
+
     static let allErrors: [MailApiError] = [
         // General
         MailApiError(code: "not_authorized"),
@@ -139,7 +154,12 @@ public class MailApiError: MailError {
         MailApiError(code: "message__uid_is_not_valid"),
 
         // Signatures / Identity
-        apiIdentityNotFound
+        apiIdentityNotFound,
+
+        // AI Writer
+        apiAIContextIdExpired,
+        apiAIMaxSyntaxTokensReached,
+        apiAITooManyRequests
     ]
 
     static func mailApiErrorFromCode(_ code: String) -> MailApiError? {

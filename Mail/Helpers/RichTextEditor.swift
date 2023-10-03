@@ -26,9 +26,7 @@ import SwiftUI
 import WebKit
 
 struct RichTextEditor: UIViewRepresentable {
-    typealias UIViewType = MailEditorView
-
-    @State private var editorCurrentSignature: Signature?
+    @State private var mustUpdateBody = false
 
     @Binding var model: RichTextEditorModel
     @Binding var body: String
@@ -36,7 +34,7 @@ struct RichTextEditor: UIViewRepresentable {
     @Binding var isShowingFileSelection: Bool
     @Binding var isShowingPhotoLibrary: Bool
     @Binding var becomeFirstResponder: Bool
-    @Binding var currentSignature: Signature?
+    @Binding var isShowingAIPrompt: Bool
 
     let blockRemoteContent: Bool
     var alert: ObservedObject<NewMessageAlert>.Wrapper
@@ -45,7 +43,7 @@ struct RichTextEditor: UIViewRepresentable {
          alert: ObservedObject<NewMessageAlert>.Wrapper,
          isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>,
          becomeFirstResponder: Binding<Bool>,
-         currentSignature: Binding<Signature?>,
+         isShowingAIPrompt: Binding<Bool>,
          blockRemoteContent: Bool) {
         _model = model
         _body = body
@@ -54,16 +52,21 @@ struct RichTextEditor: UIViewRepresentable {
         _isShowingFileSelection = isShowingFileSelection
         _isShowingPhotoLibrary = isShowingPhotoLibrary
         _becomeFirstResponder = becomeFirstResponder
-        _currentSignature = currentSignature
+        _isShowingAIPrompt = isShowingAIPrompt
         self.blockRemoteContent = blockRemoteContent
-        _editorCurrentSignature = State(wrappedValue: currentSignature.wrappedValue)
     }
 
     class Coordinator: SQTextEditorDelegate {
         var parent: RichTextEditor
 
         init(_ parent: RichTextEditor) {
-            self.parent = parent // tell the coordinator what its parent is, so it can modify values there directly
+            self.parent = parent
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(requireBodyUpdate),
+                name: Notification.Name.updateComposeMessageBody,
+                object: nil
+            )
         }
 
         @MainActor
@@ -116,6 +119,10 @@ struct RichTextEditor: UIViewRepresentable {
                 parent.body = content
             }
         }
+
+        @objc func requireBodyUpdate() {
+            parent.mustUpdateBody = true
+        }
     }
 
     func makeCoordinator() -> Coordinator {
@@ -126,7 +133,8 @@ struct RichTextEditor: UIViewRepresentable {
         let richTextEditor = MailEditorView(alert: alert,
                                             isShowingCamera: $isShowingCamera,
                                             isShowingFileSelection: $isShowingFileSelection,
-                                            isShowingPhotoLibrary: $isShowingPhotoLibrary)
+                                            isShowingPhotoLibrary: $isShowingPhotoLibrary,
+                                            isShowingAIPrompt: $isShowingAIPrompt)
         richTextEditor.delegate = context.coordinator
         return richTextEditor
     }
@@ -138,9 +146,9 @@ struct RichTextEditor: UIViewRepresentable {
                 becomeFirstResponder = false
             }
         }
-        if currentSignature != editorCurrentSignature {
+        if mustUpdateBody {
             Task {
-                editorCurrentSignature = currentSignature
+                mustUpdateBody = false
                 try await context.coordinator.insertBody(editor: uiView)
             }
         }
@@ -176,15 +184,18 @@ class MailEditorView: SQTextEditorView {
     var isShowingCamera: Binding<Bool>
     var isShowingFileSelection: Binding<Bool>
     var isShowingPhotoLibrary: Binding<Bool>
+    var isShowingAIPrompt: Binding<Bool>
 
     var toolbarStyle = ToolbarStyle.main
 
     init(alert: ObservedObject<NewMessageAlert>.Wrapper,
-         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>) {
+         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>,
+         isShowingAIPrompt: Binding<Bool>) {
         self.alert = alert
         self.isShowingCamera = isShowingCamera
         self.isShowingFileSelection = isShowingFileSelection
         self.isShowingPhotoLibrary = isShowingPhotoLibrary
+        self.isShowingAIPrompt = isShowingAIPrompt
         super.init()
     }
 
@@ -277,6 +288,7 @@ class MailEditorView: SQTextEditorView {
             )
             item.tag = action.rawValue
             item.isSelected = action.isSelected(textAttribute: selectedTextAttribute)
+            item.tintColor = action.tint
             if action == .editText && style == .textEdition {
                 item.tintColor = UserDefaults.shared.accentColor.primary.color
             }
@@ -290,18 +302,7 @@ class MailEditorView: SQTextEditorView {
 
     public func getToolbar() -> UIToolbar {
         let newToolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 320, height: 48))
-        newToolbar.tintColor = MailResourcesAsset.textSecondaryColor.color
-        newToolbar.barTintColor = MailResourcesAsset.backgroundSecondaryColor.color
-        newToolbar.isTranslucent = false
-
-        // Shadow
-        newToolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
-        newToolbar.layer.shadowColor = UIColor.black.cgColor
-        newToolbar.layer.shadowOpacity = 0.1
-        newToolbar.layer.shadowOffset = CGSize(width: 1, height: 1)
-        newToolbar.layer.shadowRadius = 2
-        newToolbar.layer.masksToBounds = false
-
+        UIConstants.applyComposeViewStyle(to: newToolbar)
         return newToolbar
     }
 
@@ -326,12 +327,15 @@ class MailEditorView: SQTextEditorView {
             makeUnorderedList()
         case .editText:
             updateToolbarItems(style: toolbarStyle == .main ? .textEdition : .main)
+        case .ai:
+            webView.resignFirstResponder()
+            isShowingAIPrompt.wrappedValue = true
         case .addFile:
-            isShowingFileSelection.wrappedValue.toggle()
+            isShowingFileSelection.wrappedValue = true
         case .addPhoto:
-            isShowingPhotoLibrary.wrappedValue.toggle()
+            isShowingPhotoLibrary.wrappedValue = true
         case .takePhoto:
-            isShowingCamera.wrappedValue.toggle()
+            isShowingCamera.wrappedValue = true
         case .link:
             if selectedTextAttribute.format.hasLink {
                 removeLink()
@@ -355,7 +359,12 @@ enum ToolbarStyle {
     var actions: [ToolbarAction] {
         switch self {
         case .main:
-            return [.editText, .addFile, .addPhoto, .takePhoto, .link]
+            @InjectService var featureFlagsManageable: FeatureFlagsManageable
+            var mainActions: [ToolbarAction] = [.editText, .addFile, .addPhoto, .takePhoto, .link]
+            featureFlagsManageable.feature(.aiMailComposer, on: {
+                mainActions.insert(.ai, at: 1)
+            }, off: nil)
+            return mainActions
         case .textEdition:
             return [.editText, .bold, .italic, .underline, .strikeThrough, .unorderedList]
         }
@@ -369,6 +378,7 @@ enum ToolbarAction: Int {
     case strikeThrough
     case unorderedList
     case editText
+    case ai
     case addFile
     case addPhoto
     case takePhoto
@@ -389,6 +399,8 @@ enum ToolbarAction: Int {
             return MailResourcesAsset.unorderedList.image
         case .editText:
             return MailResourcesAsset.textModes.image
+        case .ai:
+            return MailResourcesAsset.aiWriter.image
         case .addFile:
             return MailResourcesAsset.folder.image
         case .addPhoto:
@@ -399,6 +411,14 @@ enum ToolbarAction: Int {
             return MailResourcesAsset.hyperlink.image
         case .programMessage:
             return MailResourcesAsset.waitingMessage.image
+        }
+    }
+
+    var tint: UIColor {
+        if self == .ai {
+            return MailResourcesAsset.aiColor.color
+        } else {
+            return MailResourcesAsset.textSecondaryColor.color
         }
     }
 
@@ -414,6 +434,8 @@ enum ToolbarAction: Int {
             return "strikeThrough"
         case .unorderedList:
             return "unorderedList"
+        case .ai:
+            return "aiWriter"
         case .addFile:
             return "importFile"
         case .addPhoto:
@@ -441,7 +463,7 @@ enum ToolbarAction: Int {
             return textAttribute.format.hasStrikethrough
         case .link:
             return textAttribute.format.hasLink
-        case .unorderedList, .editText, .addFile, .addPhoto, .takePhoto, .programMessage:
+        case .unorderedList, .editText, .ai, .addFile, .addPhoto, .takePhoto, .programMessage:
             return false
         }
     }
