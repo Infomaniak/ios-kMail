@@ -73,7 +73,8 @@ struct AIPropositionView: View {
                             AIProgressView()
                         } else {
                             MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
-                                guard draft.isBodyEmpty else {
+                                guard draft.isBodyEmpty || !draft.isBodyEmpty && UserDefaults.shared
+                                    .doNotShowAIReplaceMessageAgain else {
                                     isShowingReplaceContentAlert = true
                                     return
                                 }
