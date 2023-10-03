@@ -58,6 +58,7 @@ final class AIModel: ObservableObject {
     func resetConversation() {
         conversation = []
         isLoading = false
+        error = nil
     }
 
     func executeShortcut(_ shortcut: AIShortcutAction) async {
@@ -112,11 +113,11 @@ final class AIModel: ObservableObject {
         withAnimation {
             isLoading = false
 
-            self.error = if let mailApiError = error as? MailApiError,
-                            mailApiError == .apiAIMaxSyntaxTokensReached || mailApiError == .apiAITooManyRequests {
-                mailApiError.localizedDescription
+            if let mailApiError = error as? MailApiError,
+               mailApiError == .apiAIMaxSyntaxTokensReached || mailApiError == .apiAITooManyRequests {
+                self.error = mailApiError.localizedDescription
             } else {
-                MailResourcesStrings.Localizable.aiErrorUnknown
+                self.error = MailResourcesStrings.Localizable.aiErrorUnknown
             }
         }
     }
