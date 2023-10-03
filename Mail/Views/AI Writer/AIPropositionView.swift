@@ -37,15 +37,23 @@ struct AIPropositionView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                SelectableTextView(
-                    textPlainHeight: $textPlainHeight,
-                    text: aiModel.conversation.last?.content ?? "",
-                    foregroundColor: aiModel.isLoading ? MailResourcesAsset.textTertiaryColor.swiftUIColor : MailResourcesAsset
-                        .textPrimaryColor.swiftUIColor
-                )
-                .frame(height: textPlainHeight)
+                Group {
+                    if let error = aiModel.error {
+                        Text(error)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    } else {
+                        SelectableTextView(
+                            textPlainHeight: $textPlainHeight,
+                            text: aiModel.conversation.last?.content ?? "",
+                            foregroundColor: aiModel.isLoading ? MailResourcesAsset.textTertiaryColor
+                                .swiftUIColor : MailResourcesAsset
+                                .textPrimaryColor.swiftUIColor
+                        )
+                        .frame(height: textPlainHeight)
+                        .tint(MailResourcesAsset.aiColor.swiftUIColor)
+                    }
+                }
                 .padding(.horizontal, value: .regular)
-                .tint(MailResourcesAsset.aiColor.swiftUIColor)
             }
             .task {
                 await aiModel.createConversation()
@@ -63,7 +71,7 @@ struct AIPropositionView: View {
 
                 ToolbarItemGroup(placement: .bottomBar) {
                     Group {
-                        if !aiModel.isLoading {
+                        if !aiModel.isLoading && aiModel.error == nil {
                             AIPropositionMenu(aiModel: aiModel)
                         }
 
@@ -71,6 +79,10 @@ struct AIPropositionView: View {
 
                         if aiModel.isLoading {
                             AIProgressView()
+                        } else if aiModel.error != nil {
+                            MailButton(label: MailResourcesStrings.Localizable.aiButtonRetry) {
+                                aiModel.displayView(.prompt)
+                            }
                         } else {
                             MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
                                 guard draft.isBodyEmpty || !draft.isBodyEmpty && UserDefaults.shared
