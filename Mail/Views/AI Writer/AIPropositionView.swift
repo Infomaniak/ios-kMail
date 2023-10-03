@@ -55,6 +55,11 @@ struct AIPropositionView: View {
                 }
                 .padding(.horizontal, value: .regular)
             }
+            .onAppear {
+                withAnimation {
+                    aiModel.isLoading = true
+                }
+            }
             .task {
                 await aiModel.createConversation()
             }
