@@ -150,6 +150,11 @@ public struct MailTextStyle {
         color: MailResourcesAsset.textSecondaryColor
     )
 
+    public static let bodySmallItalicSecondary = MailTextStyle(
+        font: .system(size: 14).italic(),
+        color: MailResourcesAsset.textSecondaryColor
+    )
+
     public static let bodySmallTertiary = MailTextStyle(
         font: .system(size: 14),
         color: MailResourcesAsset.textTertiaryColor

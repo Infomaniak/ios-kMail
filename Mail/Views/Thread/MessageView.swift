@@ -92,8 +92,7 @@ struct MessageView: View {
 
                     if isShowingErrorLoading {
                         Text(MailResourcesStrings.Localizable.errorLoadingMessage)
-                            .italic()
-                            .textStyle(.bodySmallSecondary)
+                            .textStyle(.bodySmallItalicSecondary)
                             .padding(.top, value: .regular)
                             .padding(.horizontal, value: .regular)
                             .frame(maxWidth: .infinity, alignment: .leading)
