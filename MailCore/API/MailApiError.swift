@@ -51,11 +51,7 @@ public class MailApiError: MailError {
     public static let apiIdentityNotFound = MailApiError(code: MailApiErrorCode.identityNotFound, shouldDisplay: false)
 
     /// The context id for the conversation with the AI has expired
-    public static let apiAIContextIdExpired = MailApiError(
-        code: "object_not_found",
-        localizedDescription: MailResourcesStrings.Localizable.aiErrorUnknown,
-        shouldDisplay: false
-    )
+    public static let apiAIContextIdExpired = MailApiError(code: "object_not_found", shouldDisplay: false)
 
     static let allErrors: [MailApiError] = [
         // General
