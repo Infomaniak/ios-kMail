@@ -156,4 +156,51 @@ public enum SentryDebug {
                                           data: ["uid": uid])
         SentrySDK.addBreadcrumb(breadcrumb)
     }
+
+    static func listIncoherentMessageUpdate(messages: [Message], actualSeen: Bool) {
+        Task {
+            for message in messages {
+                guard let liveMessage = message.thaw(),
+                      liveMessage.seen != actualSeen else { continue }
+
+                SentrySDK.capture(message: "Found incoherent message update") { scope in
+                    scope.setContext(value: ["Message": ["uid": message.uid,
+                                                         "messageId": message.messageId ?? "nil",
+                                                         "date": message.date,
+                                                         "seen": message.seen,
+                                                         "duplicates": message.duplicates.compactMap(\.messageId),
+                                                         "references": message.references ?? "nil"],
+                                             "Seen": ["Expected": actualSeen, "Actual": liveMessage.seen],
+                                             "Folder": ["id": message.folder?._id ?? "nil",
+                                                        "name": message.folder?.name ?? "nil",
+                                                        "last update": message.folder?.lastUpdate,
+                                                        "cursor": message.folder?.cursor ?? "nil"]],
+                                     key: "Message context")
+                }
+            }
+        }
+    }
+
+    static func addBackoffBreadcrumb(folder: Folder, index: Int) {
+        let breadcrumb = Breadcrumb()
+        breadcrumb.message = "Backoff \(index) for folder \(folder.name) - \(folder.id)"
+        breadcrumb.level = .warning
+        breadcrumb.type = "debug"
+        SentrySDK.addBreadcrumb(breadcrumb)
+    }
+
+    static func addResetingFolderBreadcrumb(folder: Folder) {
+        let breadcrumb = Breadcrumb()
+        breadcrumb.message = "Reseting folder after failed backoff \(folder.name) - \(folder.id)"
+        breadcrumb.level = .warning
+        breadcrumb.type = "debug"
+        SentrySDK.addBreadcrumb(breadcrumb)
+    }
+
+    static func failedResetingAfterBackoff(folder: Folder) {
+        SentrySDK.capture(message: "Failed reseting folder after backoff") { scope in
+            scope.setContext(value: ["Folder": ["Id": folder.id, "name": folder.name]],
+                             key: "Folder context")
+        }
+    }
 }

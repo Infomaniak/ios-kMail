@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCoreUI
 import InfomaniakDI
@@ -26,7 +27,7 @@ import Sentry
 // MARK: - Message
 
 public extension MailboxManager {
-    func messages(folder: Folder) async throws {
+    func messages(folder: Folder, isRetrying: Bool = false) async throws {
         guard !Task.isCancelled else { return }
 
         let realm = getRealm()
@@ -93,8 +94,10 @@ public extension MailboxManager {
         }
 
         if previousCursor != nil {
-            while try await fetchOnePage(folder: folder, direction: .following) {
-                guard !Task.isCancelled else { return }
+            try await catchLostOffsetMessageError(folder: folder, isRetrying: isRetrying) {
+                while try await fetchOnePage(folder: folder, direction: .following) {
+                    guard !Task.isCancelled else { return }
+                }
             }
         }
 
@@ -104,26 +107,64 @@ public extension MailboxManager {
         }
 
         let realmPrevious = getRealm()
-        if let folderPrevious = folder.fresh(using: realmPrevious) {
-            var remainingOldMessagesToFetch = folderPrevious.remainingOldMessagesToFetch
-            while remainingOldMessagesToFetch > 0 {
-                guard !Task.isCancelled else { return }
+        guard let folderPrevious = folder.fresh(using: realmPrevious) else { return }
+        var remainingOldMessagesToFetch = folderPrevious.remainingOldMessagesToFetch
+        while remainingOldMessagesToFetch > 0 {
+            guard !Task.isCancelled else { return }
 
-                if try await !fetchOnePage(folder: folder, direction: .previous) {
-                    break
-                }
-
-                remainingOldMessagesToFetch -= Constants.pageSize
+            if try await !fetchOnePage(folder: folder, direction: .previous) {
+                break
             }
+
+            remainingOldMessagesToFetch -= Constants.pageSize
         }
     }
 
-    func fetchOnePage(folder: Folder, direction: NewMessagesDirection? = nil) async throws -> Bool {
+    private func catchLostOffsetMessageError(folder: Folder, isRetrying: Bool, block: () async throws -> Void) async throws {
+        do {
+            try await block()
+        } catch let error as MailError where error == MailApiError.lostOffsetMessage {
+            guard !isRetrying else {
+                DDLogError("We couldn't rebuild folder history even after retrying from scratch")
+                SentryDebug.failedResetingAfterBackoff(folder: folder)
+                throw MailError.unknownError
+            }
+
+            DDLogWarn("resetHistoryInfo because of lostOffsetMessageError")
+            SentryDebug.addResetingFolderBreadcrumb(folder: folder)
+
+            await backgroundRealm.execute { realm in
+                guard let folder = folder.fresh(using: realm) else { return }
+
+                try? realm.write {
+                    realm.delete(folder.messages)
+                    realm.delete(folder.threads)
+                    folder.lastUpdate = nil
+                    folder.unreadCount = 0
+                    folder.remainingOldMessagesToFetch = Constants.messageQuantityLimit
+                    folder.isHistoryComplete = false
+                    folder.cursor = nil
+                }
+            }
+            try await messages(folder: folder, isRetrying: true)
+        }
+    }
+
+    func messageUidsWithBackOff(folder: Folder,
+                                direction: NewMessagesDirection? = nil,
+                                backoffIndex: Int = 0) async throws -> MessageUidsResult {
+        let backoffSequence = [1, 1, 2, 8, 34, 144]
+        guard backoffIndex < backoffSequence.count else {
+            throw MailError.lostOffsetMessage
+        }
+
+        SentryDebug.addBackoffBreadcrumb(folder: folder, index: backoffIndex)
+
         let realm = getRealm()
         var paginationInfo: PaginationInfo?
 
-        if let offset = realm.objects(Message.self).where({ $0.folderId == folder.id && $0.fromSearch == false })
-            .sorted(by: {
+        let sortedMessages = realm.objects(Message.self).where { $0.folderId == folder.id }
+            .sorted {
                 guard let firstMessageShortUid = $0.shortUid,
                       let secondMessageShortUid = $1.shortUid else {
                     SentryDebug.castToShortUidFailed(firstUid: $0.uid, secondUid: $1.uid)
@@ -134,16 +175,44 @@ public extension MailboxManager {
                     return firstMessageShortUid > secondMessageShortUid
                 }
                 return firstMessageShortUid < secondMessageShortUid
-            }).first?.shortUid?.toString(),
-            let direction {
+            }
+
+        let backoffOffset = backoffSequence[backoffIndex] - 1
+        let currentOffset = min(backoffOffset, sortedMessages.count - 1)
+
+        // We already did one call and last call was already above sortedMessages.count so we stop wasting more calls
+        if backoffIndex > 0 && backoffSequence[backoffIndex - 1] - 1 > sortedMessages.count - 1 {
+            throw MailError.lostOffsetMessage
+        }
+
+        if currentOffset >= 0,
+           let offset = sortedMessages[currentOffset].shortUid?.toString(),
+           let direction {
             paginationInfo = PaginationInfo(offsetUid: offset, direction: direction)
         }
 
-        let messageUidsResult = try await apiFetcher.messagesUids(
-            mailboxUuid: mailbox.uuid,
-            folderId: folder.id,
-            paginationInfo: paginationInfo
-        )
+        do {
+            let result = try await apiFetcher.messagesUids(
+                mailboxUuid: mailbox.uuid,
+                folderId: folder.id,
+                paginationInfo: paginationInfo
+            )
+            return result
+        } catch let error as MailError where error == MailApiError.apiMessageNotFound {
+            try await Task.sleep(nanoseconds: UInt64(0.5 * Double(NSEC_PER_SEC)))
+            let result = try await messageUidsWithBackOff(
+                folder: folder,
+                direction: direction,
+                backoffIndex: backoffIndex + 1
+            )
+
+            return result
+        }
+    }
+
+    func fetchOnePage(folder: Folder, direction: NewMessagesDirection? = nil) async throws -> Bool {
+        let messageUidsResult = try await messageUidsWithBackOff(folder: folder, direction: direction)
+
         let messagesUids = MessagesUids(
             addedShortUids: messageUidsResult.messageShortUids,
             cursor: messageUidsResult.cursor
@@ -151,7 +220,7 @@ public extension MailboxManager {
 
         try await handleMessagesUids(messageUids: messagesUids, folder: folder)
 
-        switch paginationInfo?.direction {
+        switch direction {
         case .previous:
             return await backgroundRealm.execute { realm in
                 let freshFolder = folder.fresh(using: realm)
@@ -481,27 +550,7 @@ public extension MailboxManager {
         try await refreshFolder(from: messages)
 
         // TODO: Remove after fix
-        Task {
-            for message in messages {
-                if let liveMessage = message.thaw(),
-                   liveMessage.seen != seen {
-                    SentrySDK.capture(message: "Found incoherent message update") { scope in
-                        scope.setContext(value: ["Message": ["uid": message.uid,
-                                                             "messageId": message.messageId,
-                                                             "date": message.date,
-                                                             "seen": message.seen,
-                                                             "duplicates": message.duplicates.compactMap(\.messageId),
-                                                             "references": message.references],
-                                                 "Seen": ["Expected": seen, "Actual": liveMessage.seen],
-                                                 "Folder": ["id": message.folder?._id,
-                                                            "name": message.folder?.name,
-                                                            "last update": message.folder?.lastUpdate,
-                                                            "cursor": message.folder?.cursor]],
-                                         key: "Message context")
-                    }
-                }
-            }
-        }
+        SentryDebug.listIncoherentMessageUpdate(messages: messages, actualSeen: seen)
     }
 
     /// Set starred the given messages.
