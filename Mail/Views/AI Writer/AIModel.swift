@@ -48,7 +48,6 @@ final class AIModel: ObservableObject {
 
     func createConversation() async {
         do {
-            isLoading = true
             let response = try await mailboxManager.apiFetcher.aiCreateConversation(messages: conversation)
             handleAIResponse(response)
         } catch {
@@ -110,18 +109,15 @@ final class AIModel: ObservableObject {
     }
 
     private func handleError(_ error: Error) {
-        isLoading = false
+        withAnimation {
+            isLoading = false
 
-        if let error = error as? MailApiError, error == .apiAIMaxSyntaxTokensReached {
-            self.error = error.localizedDescription
-            return
+            self.error = if let mailApiError = error as? MailApiError,
+                            mailApiError == .apiAIMaxSyntaxTokensReached || mailApiError == .apiAITooManyRequests {
+                mailApiError.localizedDescription
+            } else {
+                MailResourcesStrings.Localizable.aiErrorUnknown
+            }
         }
-
-        if let error = error as? MailApiError, error == .apiAITooManyRequests {
-            self.error = error.localizedDescription
-            return
-        }
-
-        self.error = MailResourcesStrings.Localizable.aiErrorUnknown
     }
 }
