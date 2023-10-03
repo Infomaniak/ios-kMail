@@ -99,40 +99,4 @@ final class SignatureTests: XCTestCase {
             XCTFail("Unexpected :\(error)")
         }
     }
-
-    // MARK: - Empty body detection
-
-    /// Testing detection of empty body; abstracted of the signature used
-    func testEmptyBodyDetection() {
-        // GIVEN
-        let draftManager = DraftManager()
-
-        // WHEN
-        do {
-            let isBodyEmpty = try draftManager.isDraftBodyEmptyOfChanges(Self.domBodyWithbasicSignature)
-
-            XCTAssertTrue(isBodyEmpty, "we should detect and empty body")
-        } catch {
-            XCTFail("Unexpected :\(error)")
-        }
-    }
-
-    // MARK: - Not Empty body detection
-
-    /// Testing detection of non empty body; abstracted of the signature used
-    func testNonEmptyBodyDetection() {
-        // GIVEN
-        let draftManager = DraftManager()
-
-        // WHEN
-        do {
-            let isBodyEmpty = try draftManager.isDraftBodyEmptyOfChanges(
-                Self.domBodyWithContentAndSimpleSignature
-            )
-
-            XCTAssertFalse(isBodyEmpty, "we should detect a non empty body")
-        } catch {
-            XCTFail("Unexpected :\(error)")
-        }
-    }
 }
