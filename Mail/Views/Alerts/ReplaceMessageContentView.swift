@@ -21,8 +21,7 @@ import MailResources
 import SwiftUI
 
 struct ReplaceMessageContentView: View {
-    @AppStorage(UserDefaults.shared.key(.showAIReplaceContentAlert)) private var showAIReplaceContentAlert = DefaultPreferences
-        .showAIReplaceContentAlert
+    @State private var doNotShowAIReplaceMessageAgain = UserDefaults.shared.doNotShowAIReplaceMessageAgain
 
     let action: () -> Void
 
@@ -35,16 +34,16 @@ struct ReplaceMessageContentView: View {
             VStack(alignment: .leading, spacing: UIPadding.medium) {
                 Text(MailResourcesStrings.Localizable.aiReplacementDialogDescription)
 
-                Toggle(MailResourcesStrings.Localizable.aiReplacementDialogDoNotShowAgain, isOn: $showAIReplaceContentAlert)
+                Toggle(MailResourcesStrings.Localizable.aiReplacementDialogDoNotShowAgain, isOn: $doNotShowAIReplaceMessageAgain)
                     .toggleStyle(CheckmarkToggleStyle())
             }
             .textStyle(.bodySecondary)
             .padding(.bottom, UIPadding.alertDescriptionBottom)
 
-            ModalButtonsView(
-                primaryButtonTitle: MailResourcesStrings.Localizable.aiReplacementDialogPositiveButton,
-                primaryButtonAction: action
-            )
+            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.aiReplacementDialogPositiveButton) {
+                UserDefaults.shared.doNotShowAIReplaceMessageAgain = doNotShowAIReplaceMessageAgain
+                action()
+            }
         }
     }
 }
