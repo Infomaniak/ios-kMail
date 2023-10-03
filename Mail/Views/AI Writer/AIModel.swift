@@ -32,6 +32,7 @@ final class AIModel: ObservableObject {
     @Published var conversation = [AIMessage]()
     @Published var isLoading = false
     @Published var contextId: String?
+    @Published var error: String?
 
     @Published var isShowingPrompt = false
     @Published var isShowingProposition = false
@@ -109,6 +110,18 @@ final class AIModel: ObservableObject {
     }
 
     private func handleError(_ error: Error) {
-        // TODO: Handle error (next PR)
+        isLoading = false
+
+        if let error = error as? MailApiError, error == .apiAIMaxSyntaxTokensReached {
+            self.error = error.localizedDescription
+            return
+        }
+
+        if let error = error as? MailApiError, error == .apiAITooManyRequests {
+            self.error = error.localizedDescription
+            return
+        }
+
+        self.error = MailResourcesStrings.Localizable.aiErrorUnknown
     }
 }
