@@ -106,9 +106,6 @@ struct RecipientLabel: View {
                                 .lineLimit(1)
                                 .layoutPriority(1)
                         }
-                        .adaptivePanel(item: $contactViewRecipient) { recipient in
-                            ContactActionsView(recipient: recipient)
-                        }
 
                         if !recipient.name.isEmpty {
                             Text(recipient.email)
@@ -117,6 +114,9 @@ struct RecipientLabel: View {
                         }
                     }
                 }
+            }
+            .adaptivePanel(item: $contactViewRecipient) { recipient in
+                ContactActionsView(recipient: recipient)
             }
         }
         .padding(.bottom, 2)
