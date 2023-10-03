@@ -5,7 +5,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: elena willen
- * Exported at: Tue, 03 Oct 2023 10:41:32 +0200
+ * Exported at: Tue, 03 Oct 2023 14:16:56 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1290,7 +1290,7 @@
 "aiPromptPlaceholder" = "Sagen Sie dem Schreibassistenten, was Sie schreiben wollen. Zum Beispiel: \"%@\".";
 
 /* loco:65019254a2948ddd0d0e0ca3 */
-"aiPromptValidateButton" = "Erzeugen Sie";
+"aiPromptValidateButton" = "Erzeugen";
 
 /* loco:6502bdf0d8ec8382d70de1c7 */
 "errorLoadingMessage" = "Diese Nachricht konnte nicht vom Server heruntergeladen werden.";
@@ -1338,10 +1338,10 @@
 "aiMenuRegenerate" = "Eine Antwort neu generieren";
 
 /* loco:65154a5b5740266cf70c84a2 */
-"aiMenuShorten" = "Kürzen Sie";
+"aiMenuShorten" = "Kürzen";
 
 /* loco:65154a780b64dfbdde02ac45 */
-"aiMenuExpand" = "Erweitern Sie";
+"aiMenuExpand" = "Erweitern";
 
 /* loco:65154b23fc895ced1501cde2 */
 "aiMenuSeriousWriting" = "Seriöses Schreiben";
@@ -1350,7 +1350,7 @@
 "aiMenuFriendlyWriting" = "Freundliches Schreiben";
 
 /* loco:651584a40e0b9f6c680ced32 */
-"aiDiscoveryTitle" = "Schreiben Sie Ihre E-Mails mit AI";
+"aiDiscoveryTitle" = "Schreiben Sie Ihre E-Mails mit KI";
 
 /* loco:651587be8ddc30b025013c52 */
 "aiDiscoveryDescription" = "Vereinfachen Sie das Schreiben von Nachrichten mit künstlicher Intelligenz.";
