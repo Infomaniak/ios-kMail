@@ -5,7 +5,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Thu, 28 Sep 2023 11:54:42 +0200
+ * Exported at: Tue, 03 Oct 2023 10:13:57 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -429,13 +429,13 @@
 "actionNonSpam" = "Als Nicht-Spam melden";
 
 /* loco:62ab221b4956e9775f391ca6 */
-"snackbarThreadMoved" = "Gespräch auf %@ verschoben";
+"snackbarThreadMoved" = "Unterhaltung in %@ verschoben";
 
 /* loco:62ab223f0763d104d71437f2 */
 "snackbarMessageMoved" = "Nachricht an %@ verschoben";
 
 /* loco:62ab2274c8d2fe4bb7134de4 */
-"snackbarThreadsMoved" = "Gespräche nach %@ verlegt";
+"snackbarThreadsMoved" = "Unterhaltungen in %@ verschoben";
 
 /* loco:62ab22a33a9b9314d8557222 */
 "snackbarMoveCancelled" = "Umzug abgesagt";
@@ -786,7 +786,7 @@
 "emptyStateFolderDescription" = "Hier gibt es nichts zu sehen.";
 
 /* loco:634ea0a369dac5469e1ce6d2 */
-"noConversationSelected" = "Kein Gespräch in %@ ausgewählt";
+"noConversationSelected" = "Keine Unterhaltung in %@ ausgewählt";
 
 /* loco:635fab674606bd5f944f7784 */
 "workInProgressTitle" = "Bald verfügbar";
@@ -924,7 +924,7 @@
 "messageShowQuotedText" = "Anzeigen der Konversation";
 
 /* loco:6400bb16c117ec0d866887b5 */
-"messageHideQuotedText" = "Das Gespräch ausblenden";
+"messageHideQuotedText" = "Unterhaltung verbergen";
 
 /* loco:640836aa0f09a82bfa0da572 */
 "searchAllMessages" = "Alle Meldungen";
@@ -1056,7 +1056,7 @@
 "errorMailboxLocked" = "Diese Mailbox ist gesperrt";
 
 /* loco:645b485e158c37a429012092 */
-"buttonLoadMore" = "Weitere Gespräche laden";
+"buttonLoadMore" = "Mehr Unterhaltungen laden";
 
 /* loco:645c9af969688c1b200ad4a2 */
 "errorMessageNotFound" = "Nachricht nicht gefunden";
@@ -1287,7 +1287,7 @@
 "aiPromptTag" = "Beta";
 
 /* loco:6501840ef58ecb8b620adb23 */
-"aiPromptPlaceholder" = "Sagen Sie dem Schreibassistenten, was Sie schreiben wollen. Zum Beispiel: \"eine Dankes-E-Mail für ein Willkommensgeschenk\".";
+"aiPromptPlaceholder" = "Sagen Sie dem Schreibassistenten, was Sie schreiben wollen. Zum Beispiel: \"%@\".";
 
 /* loco:65019254a2948ddd0d0e0ca3 */
 "aiPromptValidateButton" = "Erzeugen Sie";
@@ -1296,7 +1296,7 @@
 "errorLoadingMessage" = "Diese Nachricht konnte nicht vom Server heruntergeladen werden.";
 
 /* loco:6502fd61e3b907c3db020f92 */
-"snackbarDeletedConversation" = "Das Gespräch existiert nicht mehr";
+"snackbarDeletedConversation" = "Unterhaltung existiert nicht mehr";
 
 /* loco:65042259ab599c0ca6094172 */
 "aiPromptGenerationLoader" = "Der Assistent schreibt";
@@ -1328,6 +1328,9 @@
 /* loco:65129c4db1cb64db900f6a02 */
 "aiErrorUnknown" = "Es ist ein Fehler aufgetreten. Wenn dieser Fehler weiterhin auftritt, wenden Sie sich bitte an unseren Support.\n\nVielen Dank für Ihre Geduld.";
 
+/* loco:65129d1caf62abf5d40d9082 */
+"aiButtonRetry" = "Wiederholen";
+
 /* loco:651549fc352ff768af054453 */
 "aiMenuEditRequest" = "Meine Anfrage bearbeiten";
 
@@ -1345,3 +1348,24 @@
 
 /* loco:65154b39664dcac1df0d7492 */
 "aiMenuFriendlyWriting" = "Freundliches Schreiben";
+
+/* loco:651584a40e0b9f6c680ced32 */
+"aiDiscoveryTitle" = "Schreiben Sie Ihre E-Mails mit AI";
+
+/* loco:651587be8ddc30b025013c52 */
+"aiDiscoveryDescription" = "Vereinfachen Sie das Schreiben von Nachrichten mit künstlicher Intelligenz.";
+
+/* loco:651bc83def57493b22006342 */
+"aiPromptExample1" = "eine Dankesmail für ein Willkommensgeschenk";
+
+/* loco:651bc8e313db1595d10ed172 */
+"aiPromptExample2" = "eine E-Mail mit der Bestätigung der Hotelbuchung";
+
+/* loco:651bc902eecf2c30a70e51e2 */
+"aiPromptExample3" = "eine Dankesmail für eine Einladung zu einer Veranstaltung";
+
+/* loco:651bc92b603aebc1b205b522 */
+"aiPromptExample4" = "eine Einladungsmail zu einer Firmenveranstaltung";
+
+/* loco:651bc96abf48bc251603add2 */
+"aiPromptExample5" = "eine E-Mail mit der Bitte um einen Termin mit einem wichtigen Kunden";

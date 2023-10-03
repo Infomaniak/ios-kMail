@@ -26,6 +26,8 @@ struct AIPromptView: View {
     @Environment(\.isCompactWindow) private var isCompactWindow
 
     @State private var prompt = ""
+    @State private var placeholderProposition = Constants.aiPromptExamples.randomElement() ?? MailResourcesStrings.Localizable
+        .aiPromptExample1
 
     @ObservedObject var aiModel: AIModel
 
@@ -41,7 +43,7 @@ struct AIPromptView: View {
 
             ZStack(alignment: .topLeading) {
                 if prompt.isEmpty {
-                    Text(MailResourcesStrings.Localizable.aiPromptPlaceholder)
+                    Text(MailResourcesStrings.Localizable.aiPromptPlaceholder(placeholderProposition))
                         .foregroundColor(Color(UIColor.placeholderText))
                         .textStyle(.body)
                         .padding(.horizontal, 5)

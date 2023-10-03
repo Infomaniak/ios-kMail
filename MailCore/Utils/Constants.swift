@@ -171,4 +171,12 @@ public enum Constants {
     public static let searchFolderId = "search_folder_id"
 
     public static let backgroundRefreshTaskIdentifier = "com.infomaniak.mail.background-refresh"
+
+    public static let aiPromptExamples: Set = [
+        MailResourcesStrings.Localizable.aiPromptExample1,
+        MailResourcesStrings.Localizable.aiPromptExample2,
+        MailResourcesStrings.Localizable.aiPromptExample3,
+        MailResourcesStrings.Localizable.aiPromptExample4,
+        MailResourcesStrings.Localizable.aiPromptExample5
+    ]
 }
