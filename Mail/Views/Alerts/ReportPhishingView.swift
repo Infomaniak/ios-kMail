@@ -40,16 +40,14 @@ struct ReportPhishingView: View {
         }
     }
 
-    private func report() {
-        Task {
-            await tryOrDisplayError {
-                let response = try await mailboxManager.apiFetcher.reportPhishing(message: message)
-                if response {
-                    var messages = [message.freezeIfNeeded()]
-                    messages.append(contentsOf: message.duplicates)
-                    _ = try await mailboxManager.move(messages: messages, to: .spam)
-                    await snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarReportPhishingConfirmation)
-                }
+    private func report() async {
+        await tryOrDisplayError {
+            let response = try await mailboxManager.apiFetcher.reportPhishing(message: message)
+            if response {
+                var messages = [message.freezeIfNeeded()]
+                messages.append(contentsOf: message.duplicates)
+                _ = try await mailboxManager.move(messages: messages, to: .spam)
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarReportPhishingConfirmation)
             }
         }
     }

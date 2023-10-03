@@ -23,10 +23,12 @@ import SwiftUI
 struct ModalButtonsView: View {
     @Environment(\.dismiss) private var dismiss
 
+    @State var isButtonLoading = false
+
     let primaryButtonTitle: String
     var secondaryButtonTitle: String? = MailResourcesStrings.Localizable.buttonCancel
     var primaryButtonEnabled = true
-    let primaryButtonAction: () -> Void
+    let primaryButtonAction: () async -> Void
     var secondaryButtonAction: (() -> Void)?
 
     var body: some View {
@@ -40,10 +42,15 @@ struct ModalButtonsView: View {
             }
 
             MailButton(label: primaryButtonTitle) {
-                primaryButtonAction()
-                dismiss()
+                Task {
+                    isButtonLoading = true
+                    await primaryButtonAction()
+                    isButtonLoading = false
+                    dismiss()
+                }
             }
             .disabled(!primaryButtonEnabled)
+            .mailButtonLoading(isButtonLoading)
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
     }

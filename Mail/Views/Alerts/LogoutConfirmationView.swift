@@ -41,19 +41,17 @@ struct LogoutConfirmationView: View {
         }
     }
 
-    private func logout() {
+    private func logout() async {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .account, name: "logOutConfirm")
-        Task {
-            @InjectService var notificationService: InfomaniakNotifications
-            await notificationService.removeStoredTokenFor(userId: account.userId)
+        @InjectService var notificationService: InfomaniakNotifications
+        await notificationService.removeStoredTokenFor(userId: account.userId)
 
-            accountManager.removeTokenAndAccount(account: account)
-            if let nextAccount = accountManager.accounts.first {
-                accountManager.switchAccount(newAccount: nextAccount)
-            }
-            accountManager.saveAccounts()
+        accountManager.removeTokenAndAccount(account: account)
+        if let nextAccount = accountManager.accounts.first {
+            accountManager.switchAccount(newAccount: nextAccount)
         }
+        accountManager.saveAccounts()
     }
 }
 

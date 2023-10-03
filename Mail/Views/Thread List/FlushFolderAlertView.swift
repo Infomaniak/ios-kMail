@@ -60,9 +60,7 @@ struct FlushFolderAlertView: View {
                     @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .threadList, name: "empty\(folder.matomoName.capitalized)Confirm")
                 }
-                Task {
-                    await flushAlert.completion()
-                }
+                await flushAlert.completion()
             }
         }
     }

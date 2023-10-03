@@ -99,6 +99,7 @@ struct UpdateMailboxPasswordView: View {
                 }
                 .mailButtonFullWidth(true)
                 .disabled(disableButton)
+                .mailButtonLoading(isLoading)
 
                 MailButton(label: MailResourcesStrings.Localizable.buttonRequestPassword) {
                     matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "requestPassword")
