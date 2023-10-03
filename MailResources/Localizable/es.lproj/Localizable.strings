@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Wed, 13 Sep 2023 10:20:38 +0200
+ * Exported by: Ambroise Decouttere
+ * Exported at: Fri, 29 Sep 2023 10:01:40 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1279,3 +1279,78 @@
 
 /* loco:65016e82bd99726dde081533 */
 "noConnection" = "Sin conexión";
+
+/* loco:65017fa44f4fa3e3b902d043 */
+"aiPromptTitle" = "Asistente de redacción";
+
+/* loco:6501834aa4abf8d77708b7b5 */
+"aiPromptTag" = "Beta";
+
+/* loco:6501840ef58ecb8b620adb23 */
+"aiPromptPlaceholder" = "Dígale al asistente de redacción lo que quiere escribir. Por ejemplo, \"un correo electrónico de agradecimiento por un regalo de bienvenida\".";
+
+/* loco:65019254a2948ddd0d0e0ca3 */
+"aiPromptValidateButton" = "Genere";
+
+/* loco:6502bdf0d8ec8382d70de1c7 */
+"errorLoadingMessage" = "Este mensaje no se ha podido descargar del servidor.";
+
+/* loco:6502fd61e3b907c3db020f92 */
+"snackbarDeletedConversation" = "La conversación ya no existe";
+
+/* loco:65042259ab599c0ca6094172 */
+"aiPromptGenerationLoader" = "El asistente está escribiendo";
+
+/* loco:65081ae6a237c4d16909e463 */
+"aiButtonRefine" = "Afinar";
+
+/* loco:65081b4d5787de874c0dec32 */
+"aiButtonInsert" = "Inserte";
+
+/* loco:650af993aaf29390e1022692 */
+"aiReplacementDialogTitle" = "¿Reemplazar el contenido existente?";
+
+/* loco:650afa5b0b0204386e077c94 */
+"aiReplacementDialogDescription" = "¿Desea sustituir el contenido existente por la propuesta del asistente?";
+
+/* loco:650afb3b15bedc19200ab182 */
+"aiReplacementDialogPositiveButton" = "Sustituir";
+
+/* loco:650afca41010feb5710a0b45 */
+"aiReplacementDialogDoNotShowAgain" = "No volver a mostrar este mensaje";
+
+/* loco:65129af16ad732b0790e61c2 */
+"aiErrorTooManyRequests" = "Parece que ha realizado demasiadas solicitudes en un corto espacio de tiempo.\n\nPor favor, espere unos momentos.";
+
+/* loco:65129ba24376b5dd8c04b6a2 */
+"aiErrorMaxTokenReached" = "Su solicitud es demasiado larga. Por favor, inténtelo de nuevo en un formato más corto.";
+
+/* loco:65129c4db1cb64db900f6a02 */
+"aiErrorUnknown" = "Se ha producido un error. Si este error persiste, póngase en contacto con nuestro servicio de asistencia.\n\nGracias por su paciencia.";
+
+/* loco:65129d1caf62abf5d40d9082 */
+"aiButtonRetry" = "Reintentar";
+
+/* loco:651549fc352ff768af054453 */
+"aiMenuEditRequest" = "Editar mi solicitud";
+
+/* loco:65154a444e2a92186f026aa3 */
+"aiMenuRegenerate" = "Regenerar una respuesta";
+
+/* loco:65154a5b5740266cf70c84a2 */
+"aiMenuShorten" = "Acortar";
+
+/* loco:65154a780b64dfbdde02ac45 */
+"aiMenuExpand" = "Ampliar";
+
+/* loco:65154b23fc895ced1501cde2 */
+"aiMenuSeriousWriting" = "Escritura seria";
+
+/* loco:65154b39664dcac1df0d7492 */
+"aiMenuFriendlyWriting" = "Escritura amistosa";
+
+/* loco:651584a40e0b9f6c680ced32 */
+"aiDiscoveryTitle" = "Escriba sus correos electrónicos utilizando IA";
+
+/* loco:651587be8ddc30b025013c52 */
+"aiDiscoveryDescription" = "Simplifique la redacción de sus mensajes con Inteligencia Artificial.";
