@@ -23,8 +23,7 @@ import InfomaniakCore
 
 public extension ApiEnvironment {
     var mailHost: String {
-//        return "mail.\(host)"
-        return "mail-mr-4462.preprod.dev.infomaniak.ch"
+        return "mail.\(host)"
     }
 }
 
