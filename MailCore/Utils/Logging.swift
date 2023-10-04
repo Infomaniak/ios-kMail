@@ -80,7 +80,11 @@ public enum Logging {
 
     private static func initAtlantis() {
         #if DEBUG
-        Atlantis.start(hostName: ProcessInfo.processInfo.environment["hostname"])
+        guard let hostname = ProcessInfo.processInfo.environment["hostname"],
+              !hostname.isEmpty else {
+            return
+        }
+        Atlantis.start(hostName: hostname)
         #endif
     }
 }
