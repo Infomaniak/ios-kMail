@@ -24,7 +24,7 @@ struct SyncStepToolbarItem: View {
     let totalSteps: Int
     var body: some View {
         VStack {
-            Text("!\(step) sur \(totalSteps)")
+            Text(MailResourcesStrings.Localizable.syncTutorialStepCount(step, totalSteps))
                 .textStyle(.bodyMedium)
                 .padding(8)
                 .background(RoundedRectangle(cornerRadius: 8).fill(MailResourcesAsset.textFieldBorder.swiftUIColor))

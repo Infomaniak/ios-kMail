@@ -5,7 +5,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Philippe Weidmann
- * Exported at: Thu, 05 Oct 2023 16:10:35 +0200
+ * Exported at: Thu, 05 Oct 2023 16:32:13 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1423,3 +1423,6 @@
 
 /* loco:651ec1014c5a0be89406c4d4 */
 "syncTutorialInstallProfileStep5" = "Gehen Sie zurück zu Ihrem Mail-Programm.";
+
+/* loco:651ec8814a88e40c620a2f32 */
+"syncTutorialStepCount" = "%1$d von %2$d";

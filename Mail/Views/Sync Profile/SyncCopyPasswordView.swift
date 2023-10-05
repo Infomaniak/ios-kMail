@@ -52,9 +52,9 @@ struct SyncCopyPasswordView: View {
                         .mailButtonStyle(.link)
                         .padding(.trailing, value: .regular)
                     }
-                    .overlay {
+                    .background {
                         RoundedRectangle(cornerRadius: 4, style: .continuous)
-                            .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
+                            .fill(MailResourcesAsset.textFieldColor.swiftUIColor)
                     }
                 } else {
                     ProgressView()
