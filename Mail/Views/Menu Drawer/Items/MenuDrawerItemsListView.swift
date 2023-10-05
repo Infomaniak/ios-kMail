@@ -65,6 +65,11 @@ struct MenuDrawerItemsHelpListView: View {
 
     var body: some View {
         MenuDrawerItemsListView {
+            MenuDrawerItemCell(icon: MailResourcesAsset.doubleArrowsSynchronize,
+                               label: MailResourcesStrings.Localizable.buttonSyncCalendarsAndContacts,
+                               matomoName: "syncProfile") {
+                isShowingSyncProfile = true
+            }
             MenuDrawerItemCell(icon: MailResourcesAsset.feedback,
                                label: MailResourcesStrings.Localizable.buttonFeedback,
                                matomoName: "feedback") {
@@ -74,11 +79,6 @@ struct MenuDrawerItemsHelpListView: View {
                                label: MailResourcesStrings.Localizable.buttonHelp,
                                matomoName: "help") {
                 isShowingHelp = true
-            }
-            MenuDrawerItemCell(icon: MailResourcesAsset.help,
-                               label: "!sync",
-                               matomoName: "sync") {
-                isShowingSyncProfile = true
             }
         }
         .sheet(isPresented: $isShowingHelp) {
