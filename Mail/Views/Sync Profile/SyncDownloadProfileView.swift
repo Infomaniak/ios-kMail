@@ -35,11 +35,11 @@ struct SyncDownloadProfileView: View {
 
     var body: some View {
         VStack(spacing: UIPadding.regular) {
-            Text("Télécharger le profil de configuration")
+            Text(MailResourcesStrings.Localizable.syncTutorialDownloadProfileTitle)
                 .textStyle(.header2)
                 .multilineTextAlignment(.center)
             VStack(alignment: .leading, spacing: UIPadding.regular) {
-                Text("Pour télécharger le profil, cliquez sur “Télécharger” puis autorisez le téléchargement.")
+                Text(MailResourcesStrings.Localizable.syncTutorialDownloadProfileDescription)
             }
             .textStyle(.bodySecondary)
 
@@ -57,7 +57,7 @@ struct SyncDownloadProfileView: View {
         }
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: UIPadding.medium) {
-                MailButton(label: "!Télécharger") {
+                MailButton(label: MailResourcesStrings.Localizable.buttonDownload) {
                     downloadProfile()
                 }
                 .mailButtonFullWidth(true)
@@ -90,7 +90,7 @@ struct SyncDownloadProfileView: View {
                 )
                 server.start(
                     configURL: downloadedConfigURL,
-                    buttonTitle: "!Revenir à l'application",
+                    buttonTitle: MailResourcesStrings.Localizable.buttonBackToApp,
                     buttonBackgroundColor: accentColor.primary.color,
                     buttonForegroundColor: accentColor.onAccent.color,
                     backgroundColor: accentColor.secondary.color

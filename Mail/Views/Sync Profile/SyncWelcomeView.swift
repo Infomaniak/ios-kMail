@@ -40,7 +40,7 @@ struct SyncWelcomeView: View {
             VStack(spacing: UIPadding.medium) {
                 MailResourcesAsset.illuSync.swiftUIImage
                 Spacer(minLength: UIPadding.medium)
-                Text("!Consulter vos calendriers et contacts Infomaniak sur votre appareil")
+                Text(MailResourcesStrings.Localizable.syncTutorialWelcomeTitle)
                     .textStyle(.header1)
                     .multilineTextAlignment(.center)
                 HStack {
@@ -53,7 +53,7 @@ struct SyncWelcomeView: View {
         }
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: UIPadding.medium) {
-                MailButton(label: "!Commencer") {
+                MailButton(label: MailResourcesStrings.Localizable.buttonStart) {
                     navigationPath.append(.downloadProfile)
                 }
                 .mailButtonFullWidth(true)

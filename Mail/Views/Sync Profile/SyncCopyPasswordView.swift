@@ -32,7 +32,7 @@ struct SyncCopyPasswordView: View {
 
     var body: some View {
         VStack(spacing: UIPadding.regular) {
-            Text("Copier le mot de passe de validation")
+            Text(MailResourcesStrings.Localizable.syncTutorialCopyPasswordTitle)
                 .textStyle(.header2)
                 .multilineTextAlignment(.center)
 
@@ -61,7 +61,7 @@ struct SyncCopyPasswordView: View {
                 }
 
                 VStack(alignment: .leading, spacing: UIPadding.regular) {
-                    Text("!Copiez le mot de passe, vous en aurez besoin pour valider l’étape suivante.")
+                    Text(MailResourcesStrings.Localizable.syncTutorialCopyPasswordDescription)
                         .multilineTextAlignment(.leading)
                 }
                 .textStyle(.bodySecondary)
@@ -73,7 +73,7 @@ struct SyncCopyPasswordView: View {
         .padding(value: .medium)
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: UIPadding.medium) {
-                MailButton(label: "!Copier le mot de passer") {
+                MailButton(label: MailResourcesStrings.Localizable.buttonCopyPassword) {
                     copyPassword()
                 }
                 .mailButtonFullWidth(true)
@@ -100,7 +100,7 @@ struct SyncCopyPasswordView: View {
     func copyPassword() {
         guard let applicationPassword else { return }
         UIPasteboard.general.string = applicationPassword
-        snackbarPresenter.show(message: "!Le mot de passe a bien été copié")
+        snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarPasswordCopied)
         navigationPath.append(.installProfile)
     }
 }

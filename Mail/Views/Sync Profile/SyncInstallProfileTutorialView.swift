@@ -33,11 +33,11 @@ struct SyncInstallProfileTutorialView: View {
     @State private var userCameBackFromSettings = false
 
     private let steps = [
-        "Dans vos réglages, ouvrez l’onglet “Profil téléchargé” puis cliquer sur installer.",
-        "Saisissez le code : renseigner le **code PIN** de votre téléphone",
-        "Cliquer sur **Installer**.",
-        "Coller le mot de passe de validation de l’étape précédente.",
-        "Revenir sur votre application Mail."
+        MailResourcesStrings.Localizable.syncTutorialInstallProfileStep1,
+        MailResourcesStrings.Localizable.syncTutorialInstallProfileStep2,
+        MailResourcesStrings.Localizable.syncTutorialInstallProfileStep3,
+        MailResourcesStrings.Localizable.syncTutorialInstallProfileStep4,
+        MailResourcesStrings.Localizable.syncTutorialInstallProfileStep5
     ]
 
     let tutorialStepImages = [
@@ -55,7 +55,7 @@ struct SyncInstallProfileTutorialView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: UIPadding.regular) {
-                Text("!Installer le profil")
+                Text(MailResourcesStrings.Localizable.syncTutorialInstallProfileTitle)
                     .textStyle(.header2)
                     .multilineTextAlignment(.center)
                 VStack(alignment: .leading, spacing: UIPadding.regular) {
@@ -65,7 +65,7 @@ struct SyncInstallProfileTutorialView: View {
                         }
                         if index == 0 {
                             TipView(
-                                message: "Tapez “Profil téléchargé” dans la recherche de vos réglages pour trouver facilement l’onglet !"
+                                message: MailResourcesStrings.Localizable.syncTutorialInstallProfileTip
                             )
                         }
                     }
@@ -93,12 +93,12 @@ struct SyncInstallProfileTutorialView: View {
         }
         .safeAreaInset(edge: .bottom) {
             VStack {
-                MailButton(label: "!Accéder aux réglages") {
+                MailButton(label: MailResourcesStrings.Localizable.buttonGoToSettings) {
                     openURL(URL(string: "App-prefs:")!)
                 }
                 .mailButtonFullWidth(true)
                 if userCameBackFromSettings {
-                    MailButton(label: "!J'ai terminé") {
+                    MailButton(label: MailResourcesStrings.Localizable.buttonImDone) {
                         dismiss()
                     }
                     .mailButtonFullWidth(true)
