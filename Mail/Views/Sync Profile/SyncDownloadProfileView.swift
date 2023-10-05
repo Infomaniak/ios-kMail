@@ -44,7 +44,9 @@ struct SyncDownloadProfileView: View {
             .textStyle(.bodySecondary)
 
             Spacer(minLength: 16)
-            DeviceFrameView()
+            MailResourcesAsset.syncTutorial0.swiftUIImage
+                .resizable()
+                .aspectRatio(contentMode: .fit)
             Spacer()
         }
         .padding(value: .medium)

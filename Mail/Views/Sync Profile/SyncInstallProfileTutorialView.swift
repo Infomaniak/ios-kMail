@@ -20,6 +20,12 @@ import MailCore
 import MailResources
 import SwiftUI
 
+extension MailResourcesImages: Identifiable {
+    public var id: String {
+        name
+    }
+}
+
 struct SyncInstallProfileTutorialView: View {
     @Environment(\.dismissModal) private var dismiss
     @Environment(\.openURL) private var openURL
@@ -33,6 +39,18 @@ struct SyncInstallProfileTutorialView: View {
         "Coller le mot de passe de validation de l’étape précédente.",
         "Revenir sur votre application Mail."
     ]
+
+    let tutorialStepImages = [
+        MailResourcesAsset.syncTutorial1,
+        MailResourcesAsset.syncTutorial2,
+        MailResourcesAsset.syncTutorial3,
+        MailResourcesAsset.syncTutorial4
+    ]
+
+    init() {
+        UIPageControl.appearance().currentPageIndicatorTintColor = .tintColor
+        UIPageControl.appearance().pageIndicatorTintColor = MailResourcesAsset.elementsColor.color
+    }
 
     var body: some View {
         ScrollView {
@@ -54,9 +72,16 @@ struct SyncInstallProfileTutorialView: View {
                 }
                 .textStyle(.bodySecondary)
 
-                Spacer(minLength: 16)
-                DeviceFrameView()
-                Spacer()
+                TabView {
+                    ForEach(tutorialStepImages) { step in
+                        step.swiftUIImage
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .padding(.bottom, value: .large)
+                    }
+                }
+                .tabViewStyle(.page)
+                .frame(height: 256 + UIPadding.large)
             }
             .padding(value: .medium)
         }
