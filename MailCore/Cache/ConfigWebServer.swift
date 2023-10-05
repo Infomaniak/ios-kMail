@@ -35,7 +35,9 @@ public class ConfigWebServer {
         withExtension: "html"
     ) ?? ""
 
-    public init() {}
+    public init() {
+        // Empty init for DI
+    }
 
     public func start(
         configURL: URL,

@@ -28,5 +28,7 @@ struct DownloadConfigSafariView: UIViewControllerRepresentable {
         return SFSafariViewController(url: url)
     }
 
-    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
+    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {
+        // SFSafariViewController is never updated
+    }
 }
