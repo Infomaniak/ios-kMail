@@ -21,18 +21,35 @@ import MailResources
 import SwiftUI
 
 struct SyncWelcomeView: View {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
+    @Environment(\.colorScheme) private var colorScheme
+
     @Binding var navigationPath: [SyncProfileStep]
 
     var body: some View {
-        VStack {
-            SlideView(slide: Slide(
-                id: 1,
-                backgroundImage: MailResourcesAsset.onboardingBackground1.swiftUIImage,
-                title: "!Consultez vos calendriers et contacts Infomaniak sur votre téléphone",
-                description: "!Consultez vos calendriers et carnets d’adresses sur vos applications Calendrier et Contacts de votre iPhone/iPad.",
-                asset: MailResourcesAsset.illuSync.swiftUIImage
-            ))
+        ZStack {
+            GeometryReader { proxy in
+                MailResourcesAsset.onboardingBackground4.swiftUIImage
+                    .resizable()
+                    .frame(height: proxy.size.height * 0.62)
+                    .foregroundColor(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundSecondaryColor)
+            }
             .ignoresSafeArea(edges: .top)
+
+            VStack(spacing: UIPadding.medium) {
+                MailResourcesAsset.illuSync.swiftUIImage
+                Spacer(minLength: UIPadding.medium)
+                Text("!Consulter vos calendriers et contacts Infomaniak sur votre appareil")
+                    .textStyle(.header1)
+                    .multilineTextAlignment(.center)
+                HStack {
+                    ChipView(text: "iPhone")
+                    ChipView(text: "iPad")
+                }
+                Spacer(minLength: UIPadding.medium)
+            }
+            .padding(value: .medium)
         }
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: UIPadding.medium) {
