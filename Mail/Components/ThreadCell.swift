@@ -45,14 +45,18 @@ struct ThreadCellDataHolder {
     /// Last message of the thread, except for the Sent folder where we use the last message of the folder
     let preview: String
 
+    let isInWrittenByMeFolder: Bool
+
     init(thread: Thread) {
         let lastMessageNotFromSent = thread.messages.last { $0.folder?.role != .sent } ?? thread.messages.last
         date = thread.date.customRelativeFormatted
 
         subject = thread.formattedSubject
 
+        isInWrittenByMeFolder = FolderRole.writtenByMeFolders.contains { $0 == thread.folder?.role }
+
         let content: String?
-        if FolderRole.writtenByMeFolders.contains(where: { $0 == thread.folder?.role }) {
+        if isInWrittenByMeFolder {
             recipientToDisplay = lastMessageNotFromSent?.to.first
             content = (thread.lastMessageFromFolder ?? thread.messages.last)?.preview
         } else {
@@ -146,7 +150,14 @@ struct ThreadCell: View {
             .padding(.trailing, value: .verySmall)
 
             VStack(alignment: .leading, spacing: UIPadding.verySmall) {
-                ThreadCellHeaderView(thread: thread)
+                ThreadCellHeaderView(
+                    recipientsTitle: thread.formatted(contextMailboxManager: mailboxManager,
+                                                      style: dataHolder.isInWrittenByMeFolder ? .to : .from),
+                    messageCount: thread.messages.count,
+                    prominentMessageCount: thread.hasUnseenMessages,
+                    formattedDate: dataHolder.date,
+                    showDraftPrefix: thread.hasDrafts
+                )
 
                 HStack(alignment: .top, spacing: UIPadding.verySmall) {
                     ThreadCellInfoView(dataHolder: dataHolder, density: density)

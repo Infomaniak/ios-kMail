@@ -21,34 +21,33 @@ import MailResources
 import SwiftUI
 
 struct ThreadCellHeaderView: View {
-    @EnvironmentObject var mailboxManager: MailboxManager
-    let thread: Thread
+    let recipientsTitle: String
+    let messageCount: Int
+    let prominentMessageCount: Bool
+    let formattedDate: String
+    let showDraftPrefix: Bool
 
     var body: some View {
         HStack(spacing: UIPadding.small) {
-            if thread.hasDrafts {
+            if showDraftPrefix {
                 Text("\(MailResourcesStrings.Localizable.draftPrefix)")
                     .textStyle(.bodyMediumError)
                     .lineLimit(1)
                     .layoutPriority(1)
             }
-            Text(
-                thread,
-                format: .recipientNameList(contextMailboxManager: mailboxManager,
-                                           style: FolderRole.writtenByMeFolders
-                                               .contains { $0 == thread.folder?.role } ? .to : .from)
-            )
-            .textStyle(.bodyMedium)
-            .lineLimit(1)
 
-            if thread.messages.count > 1 {
-                ThreadCountIndicatorView(messagesCount: thread.messages.count, hasUnseenMessages: thread.hasUnseenMessages)
+            Text(recipientsTitle)
+                .textStyle(.bodyMedium)
+                .lineLimit(1)
+
+            if messageCount > 1 {
+                ThreadCountIndicatorView(messagesCount: messageCount, hasUnseenMessages: prominentMessageCount)
                     .accessibilityHidden(true)
             }
 
             Spacer()
 
-            Text(thread.date.customRelativeFormatted)
+            Text(formattedDate)
                 .textStyle(.bodySmallSecondary)
                 .lineLimit(1)
                 .accessibilityHidden(true)
