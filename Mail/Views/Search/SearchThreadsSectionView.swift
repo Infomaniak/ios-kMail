@@ -25,20 +25,22 @@ struct SearchThreadsSectionView: View {
     @EnvironmentObject private var splitViewManager: SplitViewManager
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     let viewModel: SearchViewModel
 
     var body: some View {
         Section {
             ForEach(viewModel.threads) { thread in
-                ThreadCell(thread: thread, density: threadDensity)
+                ThreadCell(thread: thread, density: threadDensity, accentColor: accentColor)
                     .onTapGesture {
                         didTapCell(thread: thread)
                     }
                     .background(SelectionBackground(
                         selectionType: viewModel.selectedThread == thread ? .single : .none,
                         paddingLeading: 4,
-                        withAnimation: false
+                        withAnimation: false,
+                        accentColor: accentColor
                     ))
                     .onAppear {
                         viewModel.loadNextPageIfNeeded(currentItem: thread)

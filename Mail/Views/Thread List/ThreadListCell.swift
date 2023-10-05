@@ -27,6 +27,8 @@ struct ThreadListCell: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationState: NavigationState
 
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     let viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
@@ -50,10 +52,16 @@ struct ThreadListCell: View {
         ThreadCell(
             thread: thread,
             density: threadDensity,
+            accentColor: accentColor,
             isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
             isSelected: isMultiSelected
         )
-        .background(SelectionBackground(selectionType: selectionType, paddingLeading: 4, withAnimation: false))
+        .background(SelectionBackground(
+            selectionType: selectionType,
+            paddingLeading: 4,
+            withAnimation: false,
+            accentColor: accentColor
+        ))
         .contentShape(Rectangle())
         .onTapGesture { didTapCell() }
         .onLongPressGesture { didLongPressCell() }

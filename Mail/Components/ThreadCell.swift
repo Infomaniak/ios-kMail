@@ -90,6 +90,7 @@ struct ThreadCell: View {
 
     let dataHolder: ThreadCellDataHolder
 
+    let accentColor: AccentColor
     let density: ThreadDensity
     let isMultipleSelectionEnabled: Bool
     let isSelected: Bool
@@ -109,12 +110,19 @@ struct ThreadCell: View {
         return label
     }
 
-    init(thread: Thread, density: ThreadDensity, isMultipleSelectionEnabled: Bool = false, isSelected: Bool = false) {
+    init(
+        thread: Thread,
+        density: ThreadDensity,
+        accentColor: AccentColor,
+        isMultipleSelectionEnabled: Bool = false,
+        isSelected: Bool = false
+    ) {
         self.thread = thread
 
         dataHolder = ThreadCellDataHolder(thread: thread)
 
         self.density = density
+        self.accentColor = accentColor
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
         self.isSelected = isSelected
     }
@@ -136,13 +144,13 @@ struct ThreadCell: View {
                             size: 40
                         )
                         .opacity(isSelected ? 0 : 1)
-                        CheckboxView(isSelected: isSelected, density: density)
+                        CheckboxView(isSelected: isSelected, density: density, accentColor: accentColor)
                             .opacity(isSelected ? 1 : 0)
                     }
                     .accessibility(hidden: true)
                     .animation(nil, value: isSelected)
                 } else if isMultipleSelectionEnabled {
-                    CheckboxView(isSelected: isSelected, density: density)
+                    CheckboxView(isSelected: isSelected, density: density, accentColor: accentColor)
                         .opacity(shouldDisplayCheckbox ? 1 : 0)
                         .animation(.default.speed(1.5), value: shouldDisplayCheckbox)
                 }
@@ -196,6 +204,7 @@ struct ThreadCell_Previews: PreviewProvider {
     static var previews: some View {
         ThreadCell(thread: PreviewHelper.sampleThread,
                    density: .large,
+                   accentColor: .blue,
                    isMultipleSelectionEnabled: false,
                    isSelected: false)
             .previewLayout(.sizeThatFits)

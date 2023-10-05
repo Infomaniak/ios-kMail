@@ -47,11 +47,10 @@ struct RoundedCorner: Shape {
 }
 
 struct SelectionBackground: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
     let selectionType: SelectionBackgroundKind
     var paddingLeading = UIPadding.small
     var withAnimation = true
+    let accentColor: AccentColor
 
     var body: some View {
         Rectangle()
@@ -66,6 +65,6 @@ struct SelectionBackground: View {
 
 struct SelectionBackground_Previews: PreviewProvider {
     static var previews: some View {
-        SelectionBackground(selectionType: SelectionBackgroundKind.single, paddingLeading: 8)
+        SelectionBackground(selectionType: SelectionBackgroundKind.single, paddingLeading: 8, accentColor: .blue)
     }
 }
