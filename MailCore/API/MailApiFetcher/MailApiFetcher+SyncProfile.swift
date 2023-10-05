@@ -37,7 +37,7 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(
             .applicationPassword,
             method: .post,
-            parameters: ["name": "CalDAV/CardDAV - \(Constants.appVersion())"]
+            parameters: ["name": "CalDAV/CardDAV - \(Constants.appVersion()) - \(Date().ISO8601Format())"]
         )).data
     }
 }
