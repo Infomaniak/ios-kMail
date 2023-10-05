@@ -21,13 +21,13 @@ import MailResources
 import SwiftUI
 
 struct CheckboxView: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
+    let accentColor: AccentColor
     let isSelected: Bool
     let size: CGFloat
 
-    init(isSelected: Bool, density: ThreadDensity) {
+    init(isSelected: Bool, density: ThreadDensity, accentColor: AccentColor) {
         self.isSelected = isSelected
+        self.accentColor = accentColor
         size = density == .large ? UIConstants.checkboxLargeSize : UIConstants.checkboxSize
     }
 
@@ -49,10 +49,10 @@ struct CheckboxView: View {
 struct CheckboxView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            CheckboxView(isSelected: false, density: .large)
-            CheckboxView(isSelected: true, density: .large)
-            CheckboxView(isSelected: false, density: .normal)
-            CheckboxView(isSelected: true, density: .normal)
+            CheckboxView(isSelected: false, density: .large, accentColor: .blue)
+            CheckboxView(isSelected: true, density: .large, accentColor: .blue)
+            CheckboxView(isSelected: false, density: .normal, accentColor: .blue)
+            CheckboxView(isSelected: true, density: .normal, accentColor: .blue)
         }
     }
 }

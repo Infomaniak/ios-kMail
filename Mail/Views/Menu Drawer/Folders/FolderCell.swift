@@ -125,6 +125,8 @@ struct FolderCell: View {
 }
 
 struct FolderCellContent: View {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     @Environment(\.folderCellType) var cellType
 
     private let folder: Folder
@@ -199,7 +201,7 @@ struct FolderCellContent: View {
     @ViewBuilder
     private var background: some View {
         if cellType == .menuDrawer {
-            SelectionBackground(selectionType: isCurrentFolder ? .folder : .none, paddingLeading: 0)
+            SelectionBackground(selectionType: isCurrentFolder ? .folder : .none, paddingLeading: 0, accentColor: accentColor)
         }
     }
 

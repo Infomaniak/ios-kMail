@@ -45,14 +45,18 @@ struct ThreadCellDataHolder {
     /// Last message of the thread, except for the Sent folder where we use the last message of the folder
     let preview: String
 
+    let isInWrittenByMeFolder: Bool
+
     init(thread: Thread) {
         let lastMessageNotFromSent = thread.messages.last { $0.folder?.role != .sent } ?? thread.messages.last
         date = thread.date.customRelativeFormatted
 
         subject = thread.formattedSubject
 
+        isInWrittenByMeFolder = FolderRole.writtenByMeFolders.contains { $0 == thread.folder?.role }
+
         let content: String?
-        if FolderRole.writtenByMeFolders.contains(where: { $0 == thread.folder?.role }) {
+        if isInWrittenByMeFolder {
             recipientToDisplay = lastMessageNotFromSent?.to.first
             content = (thread.lastMessageFromFolder ?? thread.messages.last)?.preview
         } else {
@@ -86,6 +90,7 @@ struct ThreadCell: View {
 
     let dataHolder: ThreadCellDataHolder
 
+    let accentColor: AccentColor
     let density: ThreadDensity
     let isMultipleSelectionEnabled: Bool
     let isSelected: Bool
@@ -105,12 +110,19 @@ struct ThreadCell: View {
         return label
     }
 
-    init(thread: Thread, density: ThreadDensity, isMultipleSelectionEnabled: Bool = false, isSelected: Bool = false) {
+    init(
+        thread: Thread,
+        density: ThreadDensity,
+        accentColor: AccentColor,
+        isMultipleSelectionEnabled: Bool = false,
+        isSelected: Bool = false
+    ) {
         self.thread = thread
 
         dataHolder = ThreadCellDataHolder(thread: thread)
 
         self.density = density
+        self.accentColor = accentColor
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
         self.isSelected = isSelected
     }
@@ -132,13 +144,13 @@ struct ThreadCell: View {
                             size: 40
                         )
                         .opacity(isSelected ? 0 : 1)
-                        CheckboxView(isSelected: isSelected, density: density)
+                        CheckboxView(isSelected: isSelected, density: density, accentColor: accentColor)
                             .opacity(isSelected ? 1 : 0)
                     }
                     .accessibility(hidden: true)
                     .animation(nil, value: isSelected)
                 } else if isMultipleSelectionEnabled {
-                    CheckboxView(isSelected: isSelected, density: density)
+                    CheckboxView(isSelected: isSelected, density: density, accentColor: accentColor)
                         .opacity(shouldDisplayCheckbox ? 1 : 0)
                         .animation(.default.speed(1.5), value: shouldDisplayCheckbox)
                 }
@@ -146,7 +158,14 @@ struct ThreadCell: View {
             .padding(.trailing, value: .verySmall)
 
             VStack(alignment: .leading, spacing: UIPadding.verySmall) {
-                ThreadCellHeaderView(thread: thread)
+                ThreadCellHeaderView(
+                    recipientsTitle: thread.formatted(contextMailboxManager: mailboxManager,
+                                                      style: dataHolder.isInWrittenByMeFolder ? .to : .from),
+                    messageCount: thread.messages.count,
+                    prominentMessageCount: thread.hasUnseenMessages,
+                    formattedDate: dataHolder.date,
+                    showDraftPrefix: thread.hasDrafts
+                )
 
                 HStack(alignment: .top, spacing: UIPadding.verySmall) {
                     ThreadCellInfoView(dataHolder: dataHolder, density: density)
@@ -185,6 +204,7 @@ struct ThreadCell_Previews: PreviewProvider {
     static var previews: some View {
         ThreadCell(thread: PreviewHelper.sampleThread,
                    density: .large,
+                   accentColor: .blue,
                    isMultipleSelectionEnabled: false,
                    isSelected: false)
             .previewLayout(.sizeThatFits)
