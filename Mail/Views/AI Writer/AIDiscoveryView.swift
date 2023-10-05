@@ -47,6 +47,7 @@ struct AIDiscoveryBottomSheetView: View {
                 .textStyle(.header2)
 
             Text(MailResourcesStrings.Localizable.aiDiscoveryDescription)
+                .multilineTextAlignment(.center)
                 .textStyle(.bodySecondary)
 
             VStack(spacing: UIPadding.medium) {
@@ -75,13 +76,16 @@ struct AIDiscoveryAlertView: View {
     var body: some View {
         VStack(spacing: 0) {
             MailResourcesAsset.aiIllustration.swiftUIImage
+                .padding(.bottom, UIPadding.alertTitleBottom)
 
             Text(MailResourcesStrings.Localizable.aiDiscoveryTitle)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, UIPadding.alertTitleBottom)
 
             Text(MailResourcesStrings.Localizable.aiDiscoveryDescription)
-                .textStyle(.body)
+                .multilineTextAlignment(.center)
+                .textStyle(.bodySecondary)
+                .padding(.bottom, UIPadding.alertDescriptionBottom)
 
             ModalButtonsView(
                 primaryButtonTitle: MailResourcesStrings.Localizable.buttonTry,
