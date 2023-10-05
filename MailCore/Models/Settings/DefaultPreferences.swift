@@ -36,4 +36,5 @@ public enum DefaultPreferences {
     public static let threadMode = ThreadMode.conversation
     public static let doNotShowAIReplaceMessageAgain = false
     public static let featureFlags: FeatureFlagsManageable.AppFeatureFlags = [:]
+    public static let shouldPresentAIFeature = true
 }

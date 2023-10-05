@@ -45,6 +45,7 @@ public extension UserDefaults.Keys {
     static let threadMode = UserDefaults.Keys(rawValue: "threadMode")
     static let doNotShowAIReplaceMessageAgain = UserDefaults.Keys(rawValue: "showAIReplaceContentAlert")
     static let featureFlags = UserDefaults.Keys(rawValue: "featureFlags")
+    static let shouldPresentAIFeature = UserDefaults.Keys(rawValue: "shouldPresentAIFeature")
 }
 
 public extension UserDefaults {
@@ -239,6 +240,18 @@ public extension UserDefaults {
         set {
             guard let encodedValue = try? JSONEncoder().encode(newValue) else { return }
             set(encodedValue, forKey: key(.featureFlags))
+        }
+    }
+
+    var shouldPresentAIFeature: Bool {
+        get {
+            if object(forKey: key(.shouldPresentAIFeature)) == nil {
+                set(DefaultPreferences.shouldPresentAIFeature, forKey: key(.shouldPresentAIFeature))
+            }
+            return bool(forKey: key(.shouldPresentAIFeature))
+        }
+        set {
+            set(newValue, forKey: key(.shouldPresentAIFeature))
         }
     }
 }
