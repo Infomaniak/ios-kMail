@@ -34,10 +34,10 @@ public extension MailApiFetcher {
     }
 
     func applicationPassword() async throws -> ApplicationPassword {
-        /* try await perform(request: authenticatedRequest(
-             .applicationPassword,
-             method: .post
-         )).data */
-        return ApplicationPassword(password: "test")
+        try await perform(request: authenticatedRequest(
+            .applicationPassword,
+            method: .post,
+            parameters: ["name": "CalDAV/CardDAV - \(Constants.appVersion())"]
+        )).data
     }
 }
