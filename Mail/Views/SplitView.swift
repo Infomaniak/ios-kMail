@@ -20,11 +20,13 @@ import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
+import ios_version_checker
 import MailCore
 import MailResources
 import NavigationBackport
 import RealmSwift
 import SwiftUI
+
 @_spi(Advanced) import SwiftUIIntrospect
 
 public class SplitViewManager: ObservableObject {
@@ -61,6 +63,8 @@ struct SplitView: View {
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var platformDetector: PlatformDetectable
+
+    @State private var isShowingUpdateAvailable = false
 
     let mailboxManager: MailboxManager
     init(mailboxManager: MailboxManager) {
@@ -101,12 +105,16 @@ struct SplitView: View {
                 }
             }
         }
+        .floatingPanel(isPresented: $isShowingUpdateAvailable) {
+            UpdateAvailableView()
+        }
         .sheet(item: $navigationState.editedDraft) { editedDraft in
             ComposeMessageView(editedDraft: editedDraft, mailboxManager: mailboxManager)
         }
         .onChange(of: scenePhase) { newScenePhase in
             guard newScenePhase == .active else { return }
             Task {
+                isShowingUpdateAvailable = try await VersionChecker.standard.showUpdateVersion()
                 async let _ = try? mailboxManager.refreshAllFolders()
                 async let _ = try? mailboxManager.refreshAllSignatures()
             }
