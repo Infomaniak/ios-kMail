@@ -58,7 +58,9 @@ struct AIDiscoveryBottomSheetView: View {
                 .mailButtonFullWidth(true)
 
                 MailButton(label: MailResourcesStrings.Localizable.buttonLater) {
+                    UserDefaults.shared.shouldPresentAIFeature = false
                     dismiss()
+                    aiModel.displayView(.prompt)
                 }
                 .mailButtonStyle(.link)
             }
@@ -91,6 +93,7 @@ struct AIDiscoveryAlertView: View {
                 primaryButtonTitle: MailResourcesStrings.Localizable.buttonTry,
                 secondaryButtonTitle: MailResourcesStrings.Localizable.buttonLater
             ) {
+                UserDefaults.shared.shouldPresentAIFeature = false
                 dismiss()
                 aiModel.displayView(.prompt)
             }
