@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -41,6 +43,12 @@ struct ReplaceMessageContentView: View {
             .padding(.bottom, UIPadding.alertDescriptionBottom)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.aiReplacementDialogPositiveButton) {
+                @LazyInjectService var matomo: MatomoUtils
+                matomo.track(eventWithCategory: .aiWriter, name: "replacePropositionDialog")
+                if doNotShowAIReplaceMessageAgain {
+                    matomo.track(eventWithCategory: .aiWriter, action: .data, name: "doNotShowAgain")
+                }
+
                 UserDefaults.shared.doNotShowAIReplaceMessageAgain = doNotShowAIReplaceMessageAgain
                 action()
             }
