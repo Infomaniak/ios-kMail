@@ -67,6 +67,7 @@ struct ComposeMessageView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var draftManager: DraftManager
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
 
     @State private var isLoadingContent = true
     @State private var isShowingCancelAttachmentsError = false
@@ -151,7 +152,7 @@ struct ComposeMessageView: View {
             attachmentsManager.importAttachments(attachments: initialAttachments, draft: draft)
             initialAttachments = []
 
-            guard !UserDefaults.shared.shouldPresentAIFeature else {
+            guard featureFlagsManager.isEnabled(.aiMailComposer), !UserDefaults.shared.shouldPresentAIFeature else {
                 isShowingAIPopover = true
                 return
             }
