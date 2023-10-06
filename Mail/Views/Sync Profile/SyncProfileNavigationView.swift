@@ -51,11 +51,7 @@ struct SyncProfileNavigationView: View {
                 }
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        Button {
-                            dismiss()
-                        } label: {
-                            Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
-                        }
+                        CloseButton(dismissAction: dismiss)
                     }
                 }
                 .backButtonDisplayMode(.minimal)
