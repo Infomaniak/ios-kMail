@@ -32,7 +32,7 @@ struct TipView: View {
             Text(message)
                 .textStyle(.body)
         }
-        .padding()
+        .padding(value: .regular)
         .background(MailResourcesAsset.textFieldColor.swiftUIColor)
         .cornerRadius(8)
     }

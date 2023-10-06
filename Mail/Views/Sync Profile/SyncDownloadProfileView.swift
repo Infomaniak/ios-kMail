@@ -38,10 +38,8 @@ struct SyncDownloadProfileView: View {
             Text(MailResourcesStrings.Localizable.syncTutorialDownloadProfileTitle)
                 .textStyle(.header2)
                 .multilineTextAlignment(.center)
-            VStack(alignment: .leading, spacing: UIPadding.regular) {
-                Text(MailResourcesStrings.Localizable.syncTutorialDownloadProfileDescription)
-            }
-            .textStyle(.bodySecondary)
+            Text(MailResourcesStrings.Localizable.syncTutorialDownloadProfileDescription)
+                .textStyle(.bodySecondary)
 
             Spacer(minLength: 16)
             MailResourcesAsset.syncTutorial0.swiftUIImage

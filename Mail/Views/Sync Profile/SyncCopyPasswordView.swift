@@ -40,12 +40,11 @@ struct SyncCopyPasswordView: View {
                 MailResourcesAsset.lockIllustration.swiftUIImage
 
                 if let applicationPassword {
-                    HStack {
+                    HStack(spacing: UIPadding.regular) {
                         SecureField("", text: .constant(applicationPassword))
                             .textContentType(.password)
                             .disabled(true)
                             .padding([.vertical, .leading], value: .intermediate)
-                            .padding(.trailing, value: .regular)
                         MailButton(icon: MailResourcesAsset.duplicate) {
                             copyPassword()
                         }
@@ -60,11 +59,9 @@ struct SyncCopyPasswordView: View {
                     ProgressView()
                 }
 
-                VStack(alignment: .leading, spacing: UIPadding.regular) {
-                    Text(MailResourcesStrings.Localizable.syncTutorialCopyPasswordDescription)
-                        .multilineTextAlignment(.leading)
-                }
-                .textStyle(.bodySecondary)
+                Text(MailResourcesStrings.Localizable.syncTutorialCopyPasswordDescription)
+                    .multilineTextAlignment(.leading)
+                    .textStyle(.bodySecondary)
             }
             .padding(value: .medium)
 
