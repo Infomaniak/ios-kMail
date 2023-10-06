@@ -50,7 +50,7 @@ struct AIPropositionMenu: View {
                 MailResourcesAsset.pencil.swiftUIImage
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 16, height: 16)
+                    .frame(width: 24, height: 24)
                 Text(MailResourcesStrings.Localizable.aiButtonRefine)
             }
             .frame(height: UIConstants.buttonMediumHeight)
