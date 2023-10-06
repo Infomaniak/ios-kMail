@@ -58,15 +58,16 @@ struct AIDiscoveryBottomSheetView: View {
                 .mailButtonFullWidth(true)
 
                 MailButton(label: MailResourcesStrings.Localizable.buttonLater) {
-                    UserDefaults.shared.shouldPresentAIFeature = false
                     dismiss()
-                    aiModel.displayView(.prompt)
                 }
                 .mailButtonStyle(.link)
             }
         }
         .padding(.horizontal, value: .medium)
-        .padding(.vertical, value: .regular)
+        .padding(.top, value: .regular)
+        .onDisappear {
+            UserDefaults.shared.shouldPresentAIFeature = false
+        }
     }
 }
 
@@ -76,27 +77,26 @@ struct AIDiscoveryAlertView: View {
     @ObservedObject var aiModel: AIModel
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: UIPadding.medium) {
             MailResourcesAsset.aiIllustration.swiftUIImage
-                .padding(.bottom, UIPadding.alertTitleBottom)
 
             Text(MailResourcesStrings.Localizable.aiDiscoveryTitle)
                 .textStyle(.bodyMedium)
-                .padding(.bottom, UIPadding.alertTitleBottom)
 
             Text(MailResourcesStrings.Localizable.aiDiscoveryDescription)
                 .multilineTextAlignment(.center)
                 .textStyle(.bodySecondary)
-                .padding(.bottom, UIPadding.alertDescriptionBottom)
 
             ModalButtonsView(
                 primaryButtonTitle: MailResourcesStrings.Localizable.buttonTry,
                 secondaryButtonTitle: MailResourcesStrings.Localizable.buttonLater
             ) {
-                UserDefaults.shared.shouldPresentAIFeature = false
                 dismiss()
                 aiModel.displayView(.prompt)
             }
+        }
+        .onDisappear {
+            UserDefaults.shared.shouldPresentAIFeature = false
         }
     }
 }
