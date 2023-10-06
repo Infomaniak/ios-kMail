@@ -54,23 +54,26 @@ struct SyncInstallProfileTutorialView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: UIPadding.regular) {
-                Text(MailResourcesStrings.Localizable.syncTutorialInstallProfileTitle)
-                    .textStyle(.header2)
-                    .multilineTextAlignment(.center)
-                VStack(alignment: .leading, spacing: UIPadding.regular) {
-                    ForEach(steps.indices, id: \.self) { index in
-                        if let stepMarkdown = try? AttributedString(markdown: "\(index + 1)\\. \(steps[index])") {
-                            Text(stepMarkdown)
-                        }
-                        if index == 0 {
-                            TipView(
-                                message: MailResourcesStrings.Localizable.syncTutorialInstallProfileTip
-                            )
+            VStack {
+                VStack(spacing: UIPadding.regular) {
+                    Text(MailResourcesStrings.Localizable.syncTutorialInstallProfileTitle)
+                        .textStyle(.header2)
+                        .multilineTextAlignment(.center)
+                    VStack(alignment: .leading, spacing: UIPadding.regular) {
+                        ForEach(steps.indices, id: \.self) { index in
+                            if let stepMarkdown = try? AttributedString(markdown: "\(index + 1)\\. \(steps[index])") {
+                                Text(stepMarkdown)
+                            }
+                            if index == 0 {
+                                TipView(
+                                    message: MailResourcesStrings.Localizable.syncTutorialInstallProfileTip
+                                )
+                            }
                         }
                     }
+                    .textStyle(.bodySecondary)
                 }
-                .textStyle(.bodySecondary)
+                .padding(value: .medium)
 
                 TabView {
                     ForEach(tutorialStepImages) { step in
@@ -83,7 +86,6 @@ struct SyncInstallProfileTutorialView: View {
                 .tabViewStyle(.page)
                 .frame(height: 256 + UIPadding.large)
             }
-            .padding(value: .medium)
         }
         .padding(.bottom, value: .verySmall)
         .toolbar {

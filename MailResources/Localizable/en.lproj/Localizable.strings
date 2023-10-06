@@ -5,7 +5,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Philippe Weidmann
- * Exported at: Thu, 05 Oct 2023 16:38:50 +0200
+ * Exported at: Fri, 06 Oct 2023 07:29:20 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1383,7 +1383,7 @@
 "syncTutorialDownloadProfileDescription" = "To download the profile, click on \"Download\" and then authorize the download.";
 
 /* loco:651ebd40ccc14ebdca0313a5 */
-"buttonBackToApp" = "Back to application";
+"buttonBackToApp" = "Back to the Mail application";
 
 /* loco:651ebdb4528e72051a098242 */
 "syncTutorialCopyPasswordTitle" = "Copy validation password";

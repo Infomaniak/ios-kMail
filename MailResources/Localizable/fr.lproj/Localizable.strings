@@ -5,7 +5,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Philippe Weidmann
- * Exported at: Thu, 05 Oct 2023 16:38:50 +0200
+ * Exported at: Fri, 06 Oct 2023 10:05:18 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1383,13 +1383,13 @@
 "syncTutorialDownloadProfileDescription" = "Pour télécharger le profil, cliquez sur \"Télécharger\" puis autorisez le téléchargement.";
 
 /* loco:651ebd40ccc14ebdca0313a5 */
-"buttonBackToApp" = "Retour à l'application";
+"buttonBackToApp" = "Retour à l’application Mail";
 
 /* loco:651ebdb4528e72051a098242 */
 "syncTutorialCopyPasswordTitle" = "Copier le mot de passe de validation";
 
 /* loco:651ebe0029cb784d2b0e1992 */
-"syncTutorialCopyPasswordDescription" = "Copiez le mot de passe, vous en aurez besoin pour valider l'étape suivante.";
+"syncTutorialCopyPasswordDescription" = "Copiez le mot de passe, vous en aurez besoin pour valider l’étape suivante.";
 
 /* loco:651ebe26c0bfc1baa10da002 */
 "buttonCopyPassword" = "Copier le mot de passe";
@@ -1407,7 +1407,7 @@
 "buttonGoToSettings" = "Accéder aux réglages";
 
 /* loco:651ec0181cd81d901b000d55 */
-"buttonImDone" = "J'ai fini";
+"buttonImDone" = "J’ai fini";
 
 /* loco:651ec05c094ca020b0060213 */
 "syncTutorialInstallProfileStep1" = "Dans vos réglages, ouvrez l’onglet \"Profil téléchargé\" puis cliquez sur installer.";
@@ -1419,7 +1419,7 @@
 "syncTutorialInstallProfileStep3" = "Cliquez sur **Installer**.";
 
 /* loco:651ec0dd115c4a32f40a2335 */
-"syncTutorialInstallProfileStep4" = "Collez le mot de passe de validation de l'étape précédente.";
+"syncTutorialInstallProfileStep4" = "Collez le mot de passe de validation de l’étape précédente.";
 
 /* loco:651ec1014c5a0be89406c4d4 */
 "syncTutorialInstallProfileStep5" = "Retournez à votre application Mail.";
