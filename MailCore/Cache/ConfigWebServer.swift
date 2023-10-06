@@ -21,7 +21,7 @@ import Foundation
 import Swifter
 import UIKit
 
-public class ConfigWebServer {
+public final class ConfigWebServer {
     private let server = HttpServer()
     private var firstLoad = true
 

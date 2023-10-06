@@ -134,3 +134,9 @@ public protocol MailApiAIFetchable {
     func aiShortcutAndRecreateConversation(shortcut: AIShortcutAction, messages: [AIMessage], output: AIOutputFormat) async throws
         -> AIShortcutResponse
 }
+
+public protocol MailApiSyncProfileFetchable {
+    func downloadSyncProfile(syncContacts: Bool, syncCalendar: Bool) async throws -> URL
+
+    func applicationPassword() async throws -> ApplicationPassword
+}

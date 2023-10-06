@@ -16,9 +16,6 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakDI
-import MailCore
-import MailResources
 import SafariServices
 import SwiftUI
 
