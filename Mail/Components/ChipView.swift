@@ -26,10 +26,10 @@ struct ChipView: View {
 
     var body: some View {
         Text(text)
-            .padding([.vertical], value: .small)
-            .padding([.horizontal], value: .intermediate)
+            .textStyle(.labelMediumAccent)
+            .padding(.vertical, value: .small)
+            .padding(.horizontal, value: .intermediate)
             .background(Capsule().fill(accentColor.secondary.swiftUIColor))
-            .foregroundColor(accentColor.primary.swiftUIColor)
     }
 }
 
