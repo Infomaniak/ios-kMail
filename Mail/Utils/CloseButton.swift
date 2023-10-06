@@ -21,7 +21,6 @@ import SwiftUI
 
 struct CloseButton: View {
     enum Size: CGFloat {
-        case tiny = 12
         case small = 16
         case medium = 24
     }

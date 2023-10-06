@@ -65,7 +65,7 @@ struct AIDiscoveryBottomSheetView: View {
         }
         .padding(.horizontal, value: .medium)
         .padding(.top, value: .regular)
-        .onDisappear {
+        .onAppear {
             UserDefaults.shared.shouldPresentAIFeature = false
         }
     }
@@ -95,7 +95,7 @@ struct AIDiscoveryAlertView: View {
                 aiModel.displayView(.prompt)
             }
         }
-        .onDisappear {
+        .onAppear {
             UserDefaults.shared.shouldPresentAIFeature = false
         }
     }

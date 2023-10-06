@@ -146,10 +146,10 @@
     {
       "identity" : "popovers",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/valentinperignon/Popovers.git",
+      "location" : "https://github.com/aheze/Popovers",
       "state" : {
-        "branch" : "fix/backgroundwitharrow-init",
-        "revision" : "69dadc65822d275b9593a647053c22c7342dd639"
+        "revision" : "de44c4dd7271ec6413fe350f7efadb14e5e18dce",
+        "version" : "1.3.2"
       }
     },
     {
