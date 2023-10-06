@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: de, German
  * Tagged: ios
- * Exported by: elena willen
- * Exported at: Tue, 03 Oct 2023 14:16:56 +0200
+ * Exported by: Philippe Weidmann
+ * Exported at: Fri, 06 Oct 2023 07:29:20 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1311,7 +1311,7 @@
 "aiReplacementDialogTitle" = "Bestehende Inhalte ersetzen?";
 
 /* loco:650afa5b0b0204386e077c94 */
-"aiReplacementDialogDescription" = "Möchten Sie den vorhandenen Inhalt durch den Vorschlag des Assistenten ersetzen?";
+"aiReplacementDialogDescription" = "Wenn Sie auf \"Ersetzen\" klicken, geht der bereits vorhandene Inhalt verloren.";
 
 /* loco:650afb3b15bedc19200ab182 */
 "aiReplacementDialogPositiveButton" = "Ersetzen";
@@ -1355,6 +1355,9 @@
 /* loco:651587be8ddc30b025013c52 */
 "aiDiscoveryDescription" = "Vereinfachen Sie das Schreiben von Nachrichten mit künstlicher Intelligenz.";
 
+/* loco:651588aec32dc5a9eb0b6c94 */
+"buttonTry" = "Probieren";
+
 /* loco:651bc83def57493b22006342 */
 "aiPromptExample1" = "eine Dankesmail für ein Willkommensgeschenk";
 
@@ -1369,3 +1372,60 @@
 
 /* loco:651bc96abf48bc251603add2 */
 "aiPromptExample5" = "eine E-Mail mit der Bitte um einen Termin mit einem wichtigen Kunden";
+
+/* loco:651eb54cfe85ef34780286a4 */
+"syncTutorialWelcomeTitle" = "Anzeigen Ihrer Infomaniak-Kalender und -Kontakte auf Ihrem Gerät";
+
+/* loco:651ebb317a265dd7c2066965 */
+"syncTutorialDownloadProfileTitle" = "Konfigurationsprofil herunterladen";
+
+/* loco:651ebbbc9d9d92b13b016333 */
+"syncTutorialDownloadProfileDescription" = "Um das Profil herunterzuladen, klicken Sie auf \"Download\" und autorisieren Sie den Download.";
+
+/* loco:651ebd40ccc14ebdca0313a5 */
+"buttonBackToApp" = "Zurück zur Anwendung Mail";
+
+/* loco:651ebdb4528e72051a098242 */
+"syncTutorialCopyPasswordTitle" = "Überprüfungskennwort kopieren";
+
+/* loco:651ebe0029cb784d2b0e1992 */
+"syncTutorialCopyPasswordDescription" = "Kopieren Sie das Passwort, Sie benötigen es für die Bestätigung des nächsten Schritts.";
+
+/* loco:651ebe26c0bfc1baa10da002 */
+"buttonCopyPassword" = "Passwort kopieren";
+
+/* loco:651ebe4a1a15bf27e204db22 */
+"snackbarPasswordCopied" = "Das Passwort wurde kopiert";
+
+/* loco:651ebf5b1a15bf27e204db25 */
+"syncTutorialInstallProfileTitle" = "Profil installieren";
+
+/* loco:651ebf9f3e95150dce005d02 */
+"syncTutorialInstallProfileTip" = "Geben Sie \"Heruntergeladenes Profil\" in die Suche in den Einstellungen ein, um die Registerkarte leicht zu finden!";
+
+/* loco:651ebfd6a9604ddb660b5e12 */
+"buttonGoToSettings" = "Zu den Einstellungen gehen";
+
+/* loco:651ec0181cd81d901b000d55 */
+"buttonImDone" = "Ich bin fertig";
+
+/* loco:651ec05c094ca020b0060213 */
+"syncTutorialInstallProfileStep1" = "Öffnen Sie in Ihren Einstellungen die Registerkarte \"Heruntergeladene Profile\" und klicken Sie auf \"Installieren\".";
+
+/* loco:651ec09a122aca6a5801fed3 */
+"syncTutorialInstallProfileStep2" = "Geben Sie den Code ein: Geben Sie den **PIN-Code** Ihres Telefons ein.";
+
+/* loco:651ec0c04c5a0be89406c4d2 */
+"syncTutorialInstallProfileStep3" = "Klicken Sie auf **Installieren**.";
+
+/* loco:651ec0dd115c4a32f40a2335 */
+"syncTutorialInstallProfileStep4" = "Fügen Sie das Validierungskennwort aus dem vorherigen Schritt ein.";
+
+/* loco:651ec1014c5a0be89406c4d4 */
+"syncTutorialInstallProfileStep5" = "Gehen Sie zurück zu Ihrem Mail-Programm.";
+
+/* loco:651ec8814a88e40c620a2f32 */
+"syncTutorialStepCount" = "%1$d von %2$d";
+
+/* loco:651eca5dc41aeaf052015d62 */
+"buttonSyncCalendarsAndContacts" = "Synchronisierung von Kalender und Kontakten";

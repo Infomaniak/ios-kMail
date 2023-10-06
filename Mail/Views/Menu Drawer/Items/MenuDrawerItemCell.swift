@@ -45,6 +45,7 @@ struct MenuDrawerItemCell: View {
 
                 Text(label)
                     .textStyle(.bodyMedium)
+                    .multilineTextAlignment(.leading)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(UIPadding.menuDrawerCell)
@@ -52,12 +53,13 @@ struct MenuDrawerItemCell: View {
     }
 }
 
-struct ItemCellView_Previews: PreviewProvider {
-    static var previews: some View {
+#Preview {
+    VStack {
         MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
                            label: "Importer des mails",
                            matomoName: "") { print("Hello") }
-            .previewLayout(.sizeThatFits)
-            .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
+        MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
+                           label: MailResourcesStrings.Localizable.buttonSyncCalendarsAndContacts,
+                           matomoName: "") { print("Hello") }
     }
 }

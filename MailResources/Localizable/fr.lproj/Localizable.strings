@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: fr, French
  * Tagged: ios
- * Exported by: elena willen
- * Exported at: Tue, 03 Oct 2023 10:41:32 +0200
+ * Exported by: Philippe Weidmann
+ * Exported at: Fri, 06 Oct 2023 10:05:18 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1311,7 +1311,7 @@
 "aiReplacementDialogTitle" = "Remplacer le contenu existant ?";
 
 /* loco:650afa5b0b0204386e077c94 */
-"aiReplacementDialogDescription" = "Voulez-vous remplacer le contenu existant par la proposition de l’assistant ?";
+"aiReplacementDialogDescription" = "En cliquant sur \"Remplacer\", le contenu pré-existant sera perdu.";
 
 /* loco:650afb3b15bedc19200ab182 */
 "aiReplacementDialogPositiveButton" = "Remplacer";
@@ -1355,6 +1355,9 @@
 /* loco:651587be8ddc30b025013c52 */
 "aiDiscoveryDescription" = "Simplifier la rédaction de vos messages à l’aide de l’Intelligence Artificielle.";
 
+/* loco:651588aec32dc5a9eb0b6c94 */
+"buttonTry" = "Essayer";
+
 /* loco:651bc83def57493b22006342 */
 "aiPromptExample1" = "un mail de remerciement pour un cadeau de bienvenue";
 
@@ -1369,3 +1372,60 @@
 
 /* loco:651bc96abf48bc251603add2 */
 "aiPromptExample5" = "un mail de demande de rendez-vous avec un client important";
+
+/* loco:651eb54cfe85ef34780286a4 */
+"syncTutorialWelcomeTitle" = "Consultez vos calendriers et contacts Infomaniak sur votre appareil";
+
+/* loco:651ebb317a265dd7c2066965 */
+"syncTutorialDownloadProfileTitle" = "Télécharger le profil de configuration";
+
+/* loco:651ebbbc9d9d92b13b016333 */
+"syncTutorialDownloadProfileDescription" = "Pour télécharger le profil, cliquez sur \"Télécharger\" puis autorisez le téléchargement.";
+
+/* loco:651ebd40ccc14ebdca0313a5 */
+"buttonBackToApp" = "Retour à l’application Mail";
+
+/* loco:651ebdb4528e72051a098242 */
+"syncTutorialCopyPasswordTitle" = "Copier le mot de passe de validation";
+
+/* loco:651ebe0029cb784d2b0e1992 */
+"syncTutorialCopyPasswordDescription" = "Copiez le mot de passe, vous en aurez besoin pour valider l’étape suivante.";
+
+/* loco:651ebe26c0bfc1baa10da002 */
+"buttonCopyPassword" = "Copier le mot de passe";
+
+/* loco:651ebe4a1a15bf27e204db22 */
+"snackbarPasswordCopied" = "Le mot de passe a bien été copié";
+
+/* loco:651ebf5b1a15bf27e204db25 */
+"syncTutorialInstallProfileTitle" = "Installer le profil";
+
+/* loco:651ebf9f3e95150dce005d02 */
+"syncTutorialInstallProfileTip" = "Tapez \"Profil téléchargé\" dans la recherche de vos réglages pour trouver facilement l’onglet !";
+
+/* loco:651ebfd6a9604ddb660b5e12 */
+"buttonGoToSettings" = "Accéder aux réglages";
+
+/* loco:651ec0181cd81d901b000d55 */
+"buttonImDone" = "J’ai fini";
+
+/* loco:651ec05c094ca020b0060213 */
+"syncTutorialInstallProfileStep1" = "Dans vos réglages, ouvrez l’onglet \"Profil téléchargé\" puis cliquez sur installer.";
+
+/* loco:651ec09a122aca6a5801fed3 */
+"syncTutorialInstallProfileStep2" = "Saisissez le code : renseignez le **code PIN** de votre téléphone";
+
+/* loco:651ec0c04c5a0be89406c4d2 */
+"syncTutorialInstallProfileStep3" = "Cliquez sur **Installer**.";
+
+/* loco:651ec0dd115c4a32f40a2335 */
+"syncTutorialInstallProfileStep4" = "Collez le mot de passe de validation de l’étape précédente.";
+
+/* loco:651ec1014c5a0be89406c4d4 */
+"syncTutorialInstallProfileStep5" = "Retournez à votre application Mail.";
+
+/* loco:651ec8814a88e40c620a2f32 */
+"syncTutorialStepCount" = "%1$d sur %2$d";
+
+/* loco:651eca5dc41aeaf052015d62 */
+"buttonSyncCalendarsAndContacts" = "Synchronisation des calendriers et des contacts";

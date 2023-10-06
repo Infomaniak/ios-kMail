@@ -19,6 +19,31 @@
 import MailCore
 import SwiftUI
 
+struct SettingsSubMenuLabel: View {
+    let title: String
+    var subtitle: String?
+    var icon: Image?
+
+    var body: some View {
+        HStack(spacing: UIPadding.regular) {
+            icon
+
+            VStack(alignment: .leading) {
+                Text(title)
+                    .textStyle(.body)
+                if let subtitle {
+                    Text(subtitle)
+                        .textStyle(.bodySmallTertiary)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            ChevronIcon(style: .right)
+        }
+        .settingsItem()
+    }
+}
+
 struct SettingsSubMenuCell<Content: View>: View {
     let title: String
     var subtitle: String?
@@ -27,22 +52,7 @@ struct SettingsSubMenuCell<Content: View>: View {
 
     var body: some View {
         NavigationLink(destination: destination) {
-            HStack(spacing: UIPadding.regular) {
-                icon
-
-                VStack(alignment: .leading) {
-                    Text(title)
-                        .textStyle(.body)
-                    if let subtitle {
-                        Text(subtitle)
-                            .textStyle(.bodySmallTertiary)
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-                ChevronIcon(style: .right)
-            }
-            .settingsItem()
+            SettingsSubMenuLabel(title: title, subtitle: subtitle, icon: icon)
         }
     }
 }

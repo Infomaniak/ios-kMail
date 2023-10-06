@@ -36,6 +36,8 @@ struct SettingsView: View {
     @AppStorage(UserDefaults.shared.key(.externalContent)) private var externalContent = DefaultPreferences.externalContent
     @AppStorage(UserDefaults.shared.key(.threadMode)) private var threadMode = DefaultPreferences.threadMode
 
+    @State private var isShowingSyncProfile = false
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -68,6 +70,13 @@ struct SettingsView: View {
                     SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications) {
                         SettingsNotificationsView()
                     }
+
+                    Button {
+                        isShowingSyncProfile = true
+                    } label: {
+                        SettingsSubMenuLabel(title: MailResourcesStrings.Localizable.buttonSyncCalendarsAndContacts)
+                    }
+                    .buttonStyle(.plain)
 
                     IKDivider()
                 }
@@ -152,6 +161,9 @@ struct SettingsView: View {
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsTitle, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
+        .sheet(isPresented: $isShowingSyncProfile) {
+            SyncProfileNavigationView()
+        }
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "General"])
     }
 }
