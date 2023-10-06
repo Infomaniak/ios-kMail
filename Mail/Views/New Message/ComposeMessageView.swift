@@ -21,6 +21,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import Popovers
 import RealmSwift
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
@@ -66,6 +67,7 @@ struct ComposeMessageView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var draftManager: DraftManager
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
 
     @State private var isLoadingContent = true
     @State private var isShowingCancelAttachmentsError = false
@@ -74,6 +76,8 @@ struct ComposeMessageView: View {
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
     @State private var isShowingExternalTag = true
+
+    @State private var isShowingAIPopover = false
 
     @State private var editorModel = RichTextEditorModel()
     @Weak private var scrollView: UIScrollView?
@@ -148,6 +152,11 @@ struct ComposeMessageView: View {
             attachmentsManager.importAttachments(attachments: initialAttachments, draft: draft)
             initialAttachments = []
 
+            guard featureFlagsManager.isEnabled(.aiMailComposer), !UserDefaults.shared.shouldPresentAIFeature else {
+                isShowingAIPopover = true
+                return
+            }
+
             switch messageReply?.replyMode {
             case .reply, .replyAll:
                 focusedField = .editor
@@ -175,6 +184,9 @@ struct ComposeMessageView: View {
             AttachmentsUploadInProgressErrorView {
                 dismissMessageView()
             }
+        }
+        .aiDiscoveryPresenter(isPresented: $isShowingAIPopover) {
+            AIDiscoveryView(aiModel: aiModel)
         }
         .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {
             AIPromptView(aiModel: aiModel)

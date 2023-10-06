@@ -75,7 +75,7 @@ struct AIPromptView: View {
             .disabled(prompt.isEmpty)
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
-        .padding(value: .regular)
+        .padding(isCompactWindow ? UIPadding.regular : 0)
         .onAppear {
             if let lastMessage = aiModel.conversation.last,
                lastMessage.type == .assistant && lastMessage.content == MailResourcesStrings.Localizable.aiMenuEditRequest,

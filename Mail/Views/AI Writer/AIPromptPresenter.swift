@@ -25,6 +25,11 @@ extension View {
                                                @ViewBuilder modalContent: @escaping () -> ModalContent) -> some View {
         modifier(AIPromptPresenter(isPresented: isPresented, modalContent: modalContent))
     }
+
+    func aiDiscoveryPresenter<ModalContent: View>(isPresented: Binding<Bool>,
+                                                  @ViewBuilder modalContent: @escaping () -> ModalContent) -> some View {
+        modifier(AIDiscoveryPresenter(isPresented: isPresented, modalContent: modalContent))
+    }
 }
 
 struct AIPromptPresenter<ModalContent: View>: ViewModifier {
@@ -43,6 +48,28 @@ struct AIPromptPresenter<ModalContent: View>: ViewModifier {
                 } else {
                     modalContent()
                         .backport.presentationDetents([.medium])
+                }
+            }
+            .customAlert(isPresented: Binding(get: { !isCompactWindow && isPresented }, set: { isPresented = $0 })) {
+                modalContent()
+            }
+    }
+}
+
+struct AIDiscoveryPresenter<ModalContent: View>: ViewModifier {
+    @Environment(\.isCompactWindow) private var isCompactWindow
+
+    @Binding var isPresented: Bool
+
+    @ViewBuilder let modalContent: () -> ModalContent
+
+    func body(content: Content) -> some View {
+        content
+            .sheet(isPresented: Binding(get: { isCompactWindow && isPresented }, set: { isPresented = $0 })) {
+                if #available(iOS 16.0, *) {
+                    modalContent().modifier(SelfSizingPanelViewModifier())
+                } else {
+                    modalContent().modifier(SelfSizingPanelBackportViewModifier())
                 }
             }
             .customAlert(isPresented: Binding(get: { !isCompactWindow && isPresented }, set: { isPresented = $0 })) {
