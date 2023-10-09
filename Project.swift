@@ -26,7 +26,7 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "1.1.6")),
                           .package(
                               url: "https://github.com/Infomaniak/ios-core",
-                              .revision("1c741dfd8096fcd0c83200d958917d246ad9e6f2")
+                              .revision("de78d240284181bb7606eeb35815b4c8f181c40e")
                           ),
                           .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "2.5.3")),
                           .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "3.0.0")),
