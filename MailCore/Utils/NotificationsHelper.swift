@@ -77,6 +77,46 @@ public enum NotificationsHelper {
         return totalUnreadCount
     }
 
+    public static func clearAlreadyReadNotifications(shouldWait: Bool = false) async {
+        let notificationCenter = UNUserNotificationCenter.current()
+        let deliveredNotifications = await notificationCenter.deliveredNotifications()
+
+        var notificationIdsToRemove = Set<String>()
+        for notification in deliveredNotifications where shouldRemoveNotification(notification) {
+            notificationIdsToRemove.insert(notification.request.identifier)
+        }
+
+        guard !notificationIdsToRemove.isEmpty else { return }
+        notificationCenter.removeDeliveredNotifications(withIdentifiers: Array(notificationIdsToRemove))
+
+        guard !shouldWait else { return }
+        // We have to wait at least 500ms if we are in the extension because removeDeliveredNotifications is executed in the
+        // background and iOS kills the extension before removeDeliveredNotifications is executed
+        try? await Task.sleep(nanoseconds: UInt64(0.5 * Double(NSEC_PER_SEC)))
+    }
+
+    private static func shouldRemoveNotification(_ notification: UNNotification) -> Bool {
+        @InjectService var accountManager: AccountManager
+        @InjectService var mailboxInfosManager: MailboxInfosManager
+
+        // Message should exist for the given mailbox, it should be in the inbox and should be unread
+        let content = notification.request.content
+        guard let mailboxId = content.userInfo[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
+              let userId = content.userInfo[NotificationsHelper.UserInfoKeys.userId] as? Int,
+              let mailbox = mailboxInfosManager.getMailbox(id: mailboxId, userId: userId),
+              let mailboxManager = accountManager.getMailboxManager(for: mailbox),
+              let messageUid = content.userInfo[NotificationsHelper.UserInfoKeys.messageUid] as? String,
+              !messageUid.isEmpty,
+              let message = mailboxManager.getRealm().object(ofType: Message.self, forPrimaryKey: messageUid),
+              message.folder?.role == .inbox,
+              !message.seen
+        else {
+            return true
+        }
+
+        return false
+    }
+
     @MainActor
     public static func updateUnreadCountBadge() async {
         // Start a background task to update the app badge when going in the background
