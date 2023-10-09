@@ -49,9 +49,7 @@ struct AIPropositionView: View {
                         SelectableTextView(
                             textPlainHeight: $textPlainHeight,
                             text: aiModel.conversation.last?.content ?? "",
-                            foregroundColor: aiModel.isLoading ? MailResourcesAsset.textTertiaryColor
-                                .swiftUIColor : MailResourcesAsset
-                                .textPrimaryColor.swiftUIColor
+                            style: aiModel.isLoading ? .loading : .standard
                         )
                         .frame(height: textPlainHeight)
                         .tint(MailResourcesAsset.aiColor.swiftUIColor)
