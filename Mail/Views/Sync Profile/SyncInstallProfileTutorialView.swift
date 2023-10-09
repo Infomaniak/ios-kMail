@@ -87,7 +87,6 @@ struct SyncInstallProfileTutorialView: View {
                 .frame(height: 256 + UIPadding.large)
             }
         }
-        .padding(.bottom, value: .verySmall)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 SyncStepToolbarItem(step: 3, totalSteps: 3)
@@ -107,7 +106,9 @@ struct SyncInstallProfileTutorialView: View {
                     .mailButtonStyle(.link)
                 }
             }
+            .padding(.top, value: .verySmall)
             .padding(.horizontal, value: .medium)
+            .background(MailResourcesAsset.backgroundColor.swiftUIColor)
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                 withAnimation {
                     userCameBackFromSettings = true
