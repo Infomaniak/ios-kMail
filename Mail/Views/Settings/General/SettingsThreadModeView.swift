@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -46,6 +48,8 @@ struct SettingsThreadModeView: View {
                         isLast: value == ThreadMode.allCases.last
                     ) {
                         if value != selectedValue {
+                            @InjectService var matomo: MatomoUtils
+                            matomo.track(eventWithCategory: .settingsThreadMode, name: value.rawValue)
                             threadModeSettingUpdate = ThreadModeSettingUpdate(newSetting: value)
                         }
                     }
