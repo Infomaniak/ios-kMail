@@ -24,6 +24,7 @@ public struct AIShortcutAction: Identifiable {
     public let label: String
     public let icon: MailResourcesImages
     public let apiName: String
+    public let matomoName: String
 }
 
 extension AIShortcutAction: Equatable {
@@ -37,36 +38,42 @@ public extension AIShortcutAction {
         id: 1,
         label: MailResourcesStrings.Localizable.aiMenuEditRequest,
         icon: MailResourcesAsset.pencil,
-        apiName: "edit"
+        apiName: "edit",
+        matomoName: "edit"
     )
     static let regenerate = AIShortcutAction(
         id: 2,
         label: MailResourcesStrings.Localizable.aiMenuRegenerate,
         icon: MailResourcesAsset.fileRegenerate,
-        apiName: "redraw"
+        apiName: "redraw",
+        matomoName: "regenerate"
     )
     static let shorten = AIShortcutAction(
         id: 3,
         label: MailResourcesStrings.Localizable.aiMenuShorten,
         icon: MailResourcesAsset.shortenParagraph,
-        apiName: "shorten"
+        apiName: "shorten",
+        matomoName: "shorten"
     )
     static let expand = AIShortcutAction(
         id: 4,
         label: MailResourcesStrings.Localizable.aiMenuExpand,
         icon: MailResourcesAsset.expandParagraph,
-        apiName: "develop"
+        apiName: "develop",
+        matomoName: "expand"
     )
     static let seriousWriting = AIShortcutAction(
         id: 5,
         label: MailResourcesStrings.Localizable.aiMenuSeriousWriting,
         icon: MailResourcesAsset.briefcase,
-        apiName: "tune-professional"
+        apiName: "tune-professional",
+        matomoName: "seriousWriting"
     )
     static let friendlyWriting = AIShortcutAction(
         id: 6,
         label: MailResourcesStrings.Localizable.aiMenuFriendlyWriting,
         icon: MailResourcesAsset.smiley,
-        apiName: "tune-friendly"
+        apiName: "tune-friendly",
+        matomoName: "friendlyWriting"
     )
 }

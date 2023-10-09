@@ -16,28 +16,52 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
 struct AIDiscoveryView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @Environment(\.isCompactWindow) private var isCompactWindow
+    @Environment(\.dismiss) private var dismiss
 
     @ObservedObject var aiModel: AIModel
 
     var body: some View {
-        if isCompactWindow {
-            AIDiscoveryBottomSheetView(aiModel: aiModel)
-        } else {
-            AIDiscoveryAlertView(aiModel: aiModel)
+        Group {
+            if isCompactWindow {
+                AIDiscoveryBottomSheetView(tryButton: didTouchTryButton, laterButton: didTouchLaterButton)
+            } else {
+                AIDiscoveryAlertView(tryButton: didTouchTryButton, laterButton: didTouchLaterButton)
+            }
         }
+        .onAppear {
+            UserDefaults.shared.shouldPresentAIFeature = false
+        }
+        .onDisappear {
+            if !aiModel.isShowingPrompt {
+                matomo.track(eventWithCategory: .aiWriter, name: "discoverLater")
+            }
+        }
+    }
+
+    private func didTouchTryButton() {
+        matomo.track(eventWithCategory: .aiWriter, name: "discoverTry")
+        dismiss()
+        aiModel.displayView(.prompt)
+    }
+
+    private func didTouchLaterButton() {
+        dismiss()
     }
 }
 
 struct AIDiscoveryBottomSheetView: View {
-    @Environment(\.dismiss) private var dismiss
-
-    @ObservedObject var aiModel: AIModel
+    let tryButton: () -> Void
+    let laterButton: () -> Void
 
     var body: some View {
         VStack(spacing: 32) {
@@ -51,30 +75,21 @@ struct AIDiscoveryBottomSheetView: View {
                 .textStyle(.bodySecondary)
 
             VStack(spacing: UIPadding.medium) {
-                MailButton(label: MailResourcesStrings.Localizable.buttonTry) {
-                    dismiss()
-                    aiModel.displayView(.prompt)
-                }
-                .mailButtonFullWidth(true)
+                MailButton(label: MailResourcesStrings.Localizable.buttonTry, action: tryButton)
+                    .mailButtonFullWidth(true)
 
-                MailButton(label: MailResourcesStrings.Localizable.buttonLater) {
-                    dismiss()
-                }
-                .mailButtonStyle(.link)
+                MailButton(label: MailResourcesStrings.Localizable.buttonLater, action: laterButton)
+                    .mailButtonStyle(.link)
             }
         }
         .padding(.horizontal, value: .medium)
         .padding(.top, value: .regular)
-        .onAppear {
-            UserDefaults.shared.shouldPresentAIFeature = false
-        }
     }
 }
 
 struct AIDiscoveryAlertView: View {
-    @Environment(\.dismiss) private var dismiss
-
-    @ObservedObject var aiModel: AIModel
+    let tryButton: () -> Void
+    let laterButton: () -> Void
 
     var body: some View {
         VStack(spacing: UIPadding.medium) {
@@ -89,21 +104,17 @@ struct AIDiscoveryAlertView: View {
 
             ModalButtonsView(
                 primaryButtonTitle: MailResourcesStrings.Localizable.buttonTry,
-                secondaryButtonTitle: MailResourcesStrings.Localizable.buttonLater
-            ) {
-                dismiss()
-                aiModel.displayView(.prompt)
-            }
-        }
-        .onAppear {
-            UserDefaults.shared.shouldPresentAIFeature = false
+                secondaryButtonTitle: MailResourcesStrings.Localizable.buttonLater,
+                primaryButtonAction: tryButton,
+                secondaryButtonAction: laterButton
+            )
         }
     }
 }
 
 #Preview {
     Group {
-        AIDiscoveryBottomSheetView(aiModel: AIModel(mailboxManager: PreviewHelper.sampleMailboxManager))
-        AIDiscoveryAlertView(aiModel: AIModel(mailboxManager: PreviewHelper.sampleMailboxManager))
+        AIDiscoveryBottomSheetView(tryButton: { /* Preview */ }, laterButton: { /* Preview */ })
+        AIDiscoveryAlertView(tryButton: { /* Preview */ }, laterButton: { /* Preview */ })
     }
 }

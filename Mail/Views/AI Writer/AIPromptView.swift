@@ -16,12 +16,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
 struct AIPromptView: View {
+    @LazyInjectService var matomo: MatomoUtils
+
     @Environment(\.dismiss) private var dismiss
     @Environment(\.isCompactWindow) private var isCompactWindow
 
@@ -67,6 +70,7 @@ struct AIPromptView: View {
             }
 
             MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton) {
+                matomo.track(eventWithCategory: .aiWriter, name: "generate")
                 aiModel.conversation.append(AIMessage(type: .user, content: prompt))
                 aiModel.displayView(.proposition)
             }
@@ -84,6 +88,11 @@ struct AIPromptView: View {
             }
 
             aiModel.resetConversation()
+        }
+        .onDisappear {
+            if aiModel.conversation.isEmpty {
+                matomo.track(eventWithCategory: .aiWriter, name: "dismissPromptWithoutGenerating")
+            }
         }
         .matomoView(view: ["AI", "Prompt"])
     }

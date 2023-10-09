@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -27,6 +29,8 @@ struct AIPropositionMenu: View {
         [.seriousWriting, .friendlyWriting]
     ]
 
+    @LazyInjectService private var matomo: MatomoUtils
+
     @ObservedObject var aiModel: AIModel
 
     var body: some View {
@@ -36,6 +40,7 @@ struct AIPropositionMenu: View {
                 Section {
                     ForEach(actionsGroup) { action in
                         Button {
+                            matomo.track(eventWithCategory: .aiWriter, name: action.matomoName)
                             Task {
                                 await aiModel.executeShortcut(action)
                             }
@@ -55,6 +60,9 @@ struct AIPropositionMenu: View {
             }
             .frame(height: UIConstants.buttonMediumHeight)
         }
+        .simultaneousGesture(TapGesture().onEnded {
+            matomo.track(eventWithCategory: .aiWriter, name: "refine")
+        })
         .tint(MailResourcesAsset.textSecondaryColor.swiftUIColor)
         .modifier(FixedMenuOrderModifier())
     }

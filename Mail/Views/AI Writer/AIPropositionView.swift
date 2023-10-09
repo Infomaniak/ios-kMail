@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -23,6 +25,8 @@ import SwiftUI
 import SwiftUIIntrospect
 
 struct AIPropositionView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @Environment(\.dismiss) private var dismiss
 
     @EnvironmentObject private var draftContentManager: DraftContentManager
@@ -66,8 +70,11 @@ struct AIPropositionView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    CloseButton(dismissAction: dismiss)
-                        .tint(MailResourcesAsset.textSecondaryColor)
+                    CloseButton {
+                        matomo.track(eventWithCategory: .aiWriter, name: "dismissProposition")
+                        dismiss()
+                    }
+                    .tint(MailResourcesAsset.textSecondaryColor)
                 }
 
                 ToolbarItem(placement: .principal) {
@@ -86,16 +93,17 @@ struct AIPropositionView: View {
                             AIProgressView()
                         } else if aiModel.error != nil {
                             MailButton(label: MailResourcesStrings.Localizable.aiButtonRetry) {
+                                matomo.track(eventWithCategory: .aiWriter, name: "retry")
                                 aiModel.displayView(.prompt)
                             }
                         } else {
                             MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
-                                guard draft.isBodyEmpty || !draft.isBodyEmpty && UserDefaults.shared
-                                    .doNotShowAIReplaceMessageAgain else {
+                                let shouldReplaceContent = !draft.isBodyEmpty
+                                guard !shouldReplaceContent || UserDefaults.shared.doNotShowAIReplaceMessageAgain else {
                                     isShowingReplaceContentAlert = true
                                     return
                                 }
-                                insertResult()
+                                insertResult(shouldReplaceContent: shouldReplaceContent)
                             }
                         }
                     }
@@ -107,7 +115,9 @@ struct AIPropositionView: View {
                 UIConstants.applyComposeViewStyle(to: toolbar)
             }
             .customAlert(isPresented: $isShowingReplaceContentAlert) {
-                ReplaceMessageContentView(action: insertResult)
+                ReplaceMessageContentView {
+                    insertResult(shouldReplaceContent: true)
+                }
             }
             .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
             .mailButtonSecondaryColor(MailResourcesAsset.onAIColor.swiftUIColor)
@@ -116,8 +126,14 @@ struct AIPropositionView: View {
         }
     }
 
-    private func insertResult() {
+    private func insertResult(shouldReplaceContent: Bool) {
         guard !aiModel.isLoading, let content = aiModel.conversation.last?.content else { return }
+        matomo.track(
+            eventWithCategory: .aiWriter,
+            action: .data,
+            name: shouldReplaceContent ? "replaceProposition" : "insertProposition"
+        )
+
         draftContentManager.replaceBodyContent(with: content)
         dismiss()
     }

@@ -33,6 +33,9 @@ public extension MatomoUtils.View {
 }
 
 public extension MatomoUtils.EventCategory {
+    // General
+
+    static let aiWriter = MatomoUtils.EventCategory(displayName: "aiWriter")
     static let createFolder = MatomoUtils.EventCategory(displayName: "createFolder")
     static let externals = MatomoUtils.EventCategory(displayName: "externals")
     static let invalidPasswordMailbox = MatomoUtils.EventCategory(displayName: "invalidPasswordMailbox")
@@ -49,6 +52,8 @@ public extension MatomoUtils.EventCategory {
     static let threadList = MatomoUtils.EventCategory(displayName: "threadList")
     static let userInfo = MatomoUtils.EventCategory(displayName: "userInfo")
 
+    // Actions
+
     static let attachmentActions = MatomoUtils.EventCategory(displayName: "attachmentActions")
     static let bottomSheetMessageActions = MatomoUtils.EventCategory(displayName: "bottomSheetMessageActions")
     static let bottomSheetThreadActions = MatomoUtils.EventCategory(displayName: "bottomSheetThreadActions")
@@ -58,6 +63,8 @@ public extension MatomoUtils.EventCategory {
     static let threadActions = MatomoUtils.EventCategory(displayName: "threadActions")
     static let swipeActions = MatomoUtils.EventCategory(displayName: "swipeActions")
     static let notificationAction = MatomoUtils.EventCategory(displayName: "notificationAction")
+
+    // Settings
 
     static let settingsGeneral = MatomoUtils.EventCategory(displayName: "settingsGeneral")
     static let settingsAccentColor = MatomoUtils.EventCategory(displayName: "settingsAccentColor")
