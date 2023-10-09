@@ -80,6 +80,7 @@ struct SyncInstallProfileTutorialView: View {
                         step.swiftUIImage
                             .resizable()
                             .aspectRatio(contentMode: .fit)
+                            .clipShape(RoundedRectangle(cornerRadius: UIConstants.buttonsRadius))
                             .padding(.bottom, value: .large)
                     }
                 }
