@@ -24,18 +24,27 @@ import SwiftUI
 struct MessageListView: View {
     var messages: RealmSwift.List<Message>
 
+    @State private var messageExpansion = [String: Bool]()
+
     var body: some View {
         ScrollViewReader { proxy in
             LazyVStack(spacing: 0) {
+                let messagesArray = messages.toArray()
                 ForEach(messages, id: \.uid) { message in
-                    MessageView(message: message, isMessageExpanded: isExpanded(message: message))
-                        .id(message.uid)
+                    MessageView(
+                        message: message,
+                        isMessageExpanded: isExpanded(message: message, from: messagesArray),
+                        threadForcedExpansion: $messageExpansion
+                    )
+                    .id(message.uid)
                     if message != messages.last {
                         IKDivider()
                     }
                 }
             }
             .onAppear {
+                computeExpansion(from: messages.toArray())
+
                 guard messages.count > 1,
                       let firstExpanded = firstExpanded() else { return }
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
@@ -44,14 +53,24 @@ struct MessageListView: View {
                     }
                 }
             }
+            .onChange(of: messages) { newValue in
+                computeExpansion(from: newValue.toArray())
+            }
         }
     }
 
-    private func isExpanded(message: Message) -> Bool {
-        return ((messages.last?.uid == message.uid) && !message.isDraft) || !message.seen
+    private func computeExpansion(from messageList: [Message]) {
+        for message in messageList {
+            guard messageExpansion[message.uid] != true else { continue }
+            messageExpansion[message.uid] = isExpanded(message: message, from: messageList)
+        }
+    }
+
+    private func isExpanded(message: Message, from messageList: [Message]) -> Bool {
+        return ((messageList.last?.uid == message.uid) && !message.isDraft) || !message.seen
     }
 
     private func firstExpanded() -> Message? {
-        return messages.first { isExpanded(message: $0) }
+        return messages.first { isExpanded(message: $0, from: messages.toArray()) }
     }
 }
