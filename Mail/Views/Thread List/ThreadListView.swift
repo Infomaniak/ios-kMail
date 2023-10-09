@@ -130,6 +130,7 @@ struct ThreadListView: View {
                                 }
                                 Task {
                                     await tryOrDisplayError {
+                                        matomo.track(eventWithCategory: .threadList, name: "loadMore")
                                         _ = try await viewModel.mailboxManager.fetchOnePage(
                                             folder: viewModel.folder.freeze(),
                                             direction: .previous
