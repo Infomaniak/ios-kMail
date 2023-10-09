@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -34,6 +36,8 @@ struct AttachmentUploadCell: View {
         ) {
             Button {
                 if let attachmentRemoved {
+                    @InjectService var matomo: MatomoUtils
+                    matomo.track(eventWithCategory: .attachmentActions, name: "delete")
                     attachmentRemoved(attachment)
                 }
             } label: {
