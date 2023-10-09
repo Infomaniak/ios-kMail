@@ -72,9 +72,7 @@ struct MailApp: App {
                             appLockHelper.setTime()
                         }
                     case .inactive:
-                        Task {
-                            await NotificationsHelper.updateUnreadCountBadge()
-                        }
+                        break
                     @unknown default:
                         break
                     }

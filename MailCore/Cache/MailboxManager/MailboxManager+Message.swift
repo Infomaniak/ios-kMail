@@ -106,6 +106,7 @@ public extension MailboxManager {
             mailboxInfosManager.updateUnseen(unseenMessages: freshFolder.unreadCount, for: mailbox)
             Task {
                 await NotificationsHelper.clearAlreadyReadNotifications()
+                await NotificationsHelper.updateUnreadCountBadge()
             }
         }
 
