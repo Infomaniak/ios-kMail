@@ -3,6 +3,16 @@
     {
       "filename" : "illu-sync.svg",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "illu-sync-dark.svg",
+      "idiom" : "universal"
     }
   ],
   "info" : {
