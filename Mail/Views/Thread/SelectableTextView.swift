@@ -42,12 +42,38 @@ struct SelectableTextView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UITextView, context: Context) {
-        Task {
-            uiView.text = text
-            uiView.textColor = UIColor(foregroundColor)
+        if !uiView.text.isEmpty && uiView.text != text {
+            replaceText(text: text ?? "", in: uiView)
+        } else {
+            insertText(text: text ?? "", in: uiView)
+        }
+    }
 
+    private func insertText(text: String, in uiView: UITextView) {
+        uiView.text = text
+        uiView.textColor = UIColor(foregroundColor)
+
+        computeViewHeight(uiView)
+    }
+
+    private func replaceText(text: String, in uiView: UITextView) {
+        UIView.animate(withDuration: 0.2) {
+            uiView.alpha = 0
+        } completion: { _ in
+            insertText(text: text, in: uiView)
+            UIView.animate(withDuration: 0.2) {
+                uiView.alpha = 1
+            }
+        }
+    }
+
+    private func computeViewHeight(_ uiView: UIView) {
+        Task {
             await MainActor.run {
-                let sizeThatFits = uiView.sizeThatFits(CGSize(width: uiView.frame.width, height: CGFloat.greatestFiniteMagnitude))
+                let sizeThatFits = uiView.sizeThatFits(CGSize(
+                    width: uiView.frame.width,
+                    height: CGFloat.greatestFiniteMagnitude
+                ))
                 textPlainHeight = sizeThatFits.height
             }
         }
