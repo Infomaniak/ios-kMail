@@ -78,6 +78,9 @@ public extension UIConstants {
 
 public extension UIConstants {
     static let navbarIconSize: CGFloat = 24
+    static let navbarIconPadding: CGFloat = 16
+    // size of 3 icons + 5 paddings between them
+    static let navbarIconsSpace: CGFloat = navbarIconSize * 3 + (navbarIconPadding * 5)
 
     static let onboardingLogoHeight: CGFloat = 56
     static let onboardingButtonHeight: CGFloat = 104

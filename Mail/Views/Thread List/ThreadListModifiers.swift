@@ -78,115 +78,120 @@ struct ThreadListToolbar: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        content
-            .toolbar {
-                ToolbarItemGroup(placement: .navigationBarLeading) {
-                    if multipleSelectionViewModel.isEnabled {
-                        Button(MailResourcesStrings.Localizable.buttonCancel) {
-                            matomo.track(eventWithCategory: .multiSelection, name: "cancel")
-                            multipleSelectionViewModel.isEnabled = false
+        GeometryReader { geometry in
+            content
+                .toolbar {
+                    ToolbarItemGroup(placement: .navigationBarLeading) {
+                        if multipleSelectionViewModel.isEnabled {
+                            Button(MailResourcesStrings.Localizable.buttonCancel) {
+                                matomo.track(eventWithCategory: .multiSelection, name: "cancel")
+                                multipleSelectionViewModel.isEnabled = false
+                            }
+                        } else {
+                            if isCompactWindow {
+                                Button {
+                                    matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
+                                    navigationDrawerState.open()
+                                } label: {
+                                    MailResourcesAsset.burger.swiftUIImage
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: UIConstants.navbarIconSize, height: UIConstants.navbarIconSize)
+                                }
+                                .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonMenu)
+                            }
+
+                            let textMaxWidth = isCompactWindow ? UIScreen.main.bounds.size.width - geometry.safeAreaInsets
+                                .leading - geometry.safeAreaInsets.trailing - UIConstants.navbarIconsSpace : 215
+                            Text(splitViewManager.selectedFolder?.localizedName ?? "")
+                                .textStyle(.header1)
+                                .frame(maxWidth: textMaxWidth, alignment: .leading)
                         }
-                    } else {
-                        if isCompactWindow {
+                    }
+
+                    ToolbarItemGroup(placement: .navigationBarTrailing) {
+                        if multipleSelectionViewModel.isEnabled {
+                            Button(selectAllButtonTitle) {
+                                withAnimation(.default.speed(2)) {
+                                    multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
+                                }
+                            }
+                            .animation(nil, value: multipleSelectionViewModel.selectedItems)
+                        } else {
                             Button {
-                                matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
-                                navigationDrawerState.open()
+                                splitViewManager.showSearch = true
                             } label: {
-                                MailResourcesAsset.burger.swiftUIImage
+                                MailResourcesAsset.search.swiftUIImage
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: UIConstants.navbarIconSize, height: UIConstants.navbarIconSize)
                             }
-                            .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonMenu)
-                        }
 
-                        Text(splitViewManager.selectedFolder?.localizedName ?? "")
-                            .textStyle(.header1)
-                    }
-                }
-
-                ToolbarItemGroup(placement: .navigationBarTrailing) {
-                    if multipleSelectionViewModel.isEnabled {
-                        Button(selectAllButtonTitle) {
-                            withAnimation(.default.speed(2)) {
-                                multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
-                            }
-                        }
-                        .animation(nil, value: multipleSelectionViewModel.selectedItems)
-                    } else {
-                        Button {
-                            splitViewManager.showSearch = true
-                        } label: {
-                            MailResourcesAsset.search.swiftUIImage
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: UIConstants.navbarIconSize, height: UIConstants.navbarIconSize)
-                        }
-
-                        Button {
-                            presentedCurrentAccount = viewModel.mailboxManager.account
-                        } label: {
-                            if let currentAccountUser = viewModel.mailboxManager.account.user {
-                                AvatarView(
-                                    mailboxManager: mailboxManager,
-                                    displayablePerson: CommonContact(user: currentAccountUser)
-                                )
-                            }
-                        }
-                        .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
-                        .sheet(item: $presentedCurrentAccount) { account in
-                            AccountView(account: account)
-                        }
-                    }
-                }
-            }
-            .bottomBar(isVisible: multipleSelectionViewModel.isEnabled) {
-                HStack(spacing: 0) {
-                    ForEach(multipleSelectionViewModel.toolbarActions) { action in
-                        ToolbarButton(
-                            text: action.shortTitle ?? action.title,
-                            icon: action.icon
-                        ) {
-                            let allMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
-                            multipleSelectionViewModel.isEnabled = false
-                            let originFolder = viewModel.folder.freezeIfNeeded()
-                            Task {
-                                matomo.trackBulkEvent(
-                                    eventWithCategory: .threadActions,
-                                    name: action.matomoName.capitalized,
-                                    numberOfItems: multipleSelectionViewModel.selectedItems.count
-                                )
-
-                                try await actionsManager.performAction(
-                                    target: allMessages,
-                                    action: action,
-                                    origin: .multipleSelection(
-                                        originFolder: originFolder,
-                                        nearestFlushAlert: $flushAlert
+                            Button {
+                                presentedCurrentAccount = viewModel.mailboxManager.account
+                            } label: {
+                                if let currentAccountUser = viewModel.mailboxManager.account.user {
+                                    AvatarView(
+                                        mailboxManager: mailboxManager,
+                                        displayablePerson: CommonContact(user: currentAccountUser)
                                     )
-                                )
+                                }
+                            }
+                            .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
+                            .sheet(item: $presentedCurrentAccount) { account in
+                                AccountView(account: account)
                             }
                         }
-                        .disabled(action == .archive && splitViewManager.selectedFolder?.role == .archive)
-                    }
-
-                    ToolbarButton(
-                        text: MailResourcesStrings.Localizable.buttonMore,
-                        icon: MailResourcesAsset.plusActions.swiftUIImage
-                    ) {
-                        multipleSelectedMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
                     }
                 }
-                .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
-            }
-            .actionsPanel(messages: $multipleSelectedMessages, originFolder: viewModel.folder) { _ in
-                multipleSelectionViewModel.isEnabled = false
-            }
-            .navigationTitle(
-                multipleSelectionViewModel.isEnabled
-                    ? MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count)
-                    : ""
-            )
-            .navigationBarTitleDisplayMode(.inline)
+                .bottomBar(isVisible: multipleSelectionViewModel.isEnabled) {
+                    HStack(spacing: 0) {
+                        ForEach(multipleSelectionViewModel.toolbarActions) { action in
+                            ToolbarButton(
+                                text: action.shortTitle ?? action.title,
+                                icon: action.icon
+                            ) {
+                                let allMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
+                                multipleSelectionViewModel.isEnabled = false
+                                let originFolder = viewModel.folder.freezeIfNeeded()
+                                Task {
+                                    matomo.trackBulkEvent(
+                                        eventWithCategory: .threadActions,
+                                        name: action.matomoName.capitalized,
+                                        numberOfItems: multipleSelectionViewModel.selectedItems.count
+                                    )
+
+                                    try await actionsManager.performAction(
+                                        target: allMessages,
+                                        action: action,
+                                        origin: .multipleSelection(
+                                            originFolder: originFolder,
+                                            nearestFlushAlert: $flushAlert
+                                        )
+                                    )
+                                }
+                            }
+                            .disabled(action == .archive && splitViewManager.selectedFolder?.role == .archive)
+                        }
+
+                        ToolbarButton(
+                            text: MailResourcesStrings.Localizable.buttonMore,
+                            icon: MailResourcesAsset.plusActions.swiftUIImage
+                        ) {
+                            multipleSelectedMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
+                        }
+                    }
+                    .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
+                }
+                .actionsPanel(messages: $multipleSelectedMessages, originFolder: viewModel.folder) { _ in
+                    multipleSelectionViewModel.isEnabled = false
+                }
+                .navigationTitle(
+                    multipleSelectionViewModel.isEnabled
+                        ? MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count)
+                        : ""
+                )
+                .navigationBarTitleDisplayMode(.inline)
+        }
     }
 }
