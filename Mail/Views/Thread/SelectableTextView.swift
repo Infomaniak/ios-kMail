@@ -56,7 +56,8 @@ struct SelectableTextView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UITextView, context: Context) {
-        if !uiView.text.isEmpty && style == .standard && uiView.textColor != style.foregroundColor {
+        // Replace text when the style is standard and the current color has not yet been changed
+        if style == .standard && uiView.textColor != style.foregroundColor {
             replaceText(text: text ?? "", in: uiView)
         } else {
             insertText(text: text ?? "", in: uiView)
