@@ -98,6 +98,7 @@ final class NotificationService: UNNotificationServiceExtension {
             let completeNotification = await NotificationsHelper.generateNotificationFor(message: fetchedMessage,
                                                                                          mailboxId: mailboxId,
                                                                                          userId: userId)
+            await NotificationsHelper.clearAlreadyReadNotifications(shouldWait: true)
             contentHandler(completeNotification)
         }
     }
