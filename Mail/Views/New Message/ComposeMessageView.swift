@@ -152,7 +152,7 @@ struct ComposeMessageView: View {
             attachmentsManager.importAttachments(attachments: initialAttachments, draft: draft)
             initialAttachments = []
 
-            guard featureFlagsManager.isEnabled(.aiMailComposer), !UserDefaults.shared.shouldPresentAIFeature else {
+            if featureFlagsManager.isEnabled(.aiMailComposer) && UserDefaults.shared.shouldPresentAIFeature {
                 isShowingAIPopover = true
                 return
             }
