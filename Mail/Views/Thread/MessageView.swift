@@ -33,6 +33,7 @@ struct MessageView: View {
     @State var presentableBody: PresentableBody
     @State var isHeaderExpanded = false
     @State var isMessageExpanded: Bool
+    @Binding private var threadForcedExpansion: [String: Bool]
 
     /// True once we finished preprocessing the content
     @State var isMessagePreprocessed = false
@@ -54,10 +55,11 @@ struct MessageView: View {
             && !message.localSafeDisplay
     }
 
-    init(message: Message, isMessageExpanded: Bool = false) {
+    init(message: Message, isMessageExpanded: Bool = false, threadForcedExpansion: Binding<[String: Bool]>) {
         self.message = message
         presentableBody = PresentableBody(message: message)
         self.isMessageExpanded = isMessageExpanded
+        _threadForcedExpansion = threadForcedExpansion
     }
 
     var body: some View {
@@ -126,6 +128,13 @@ struct MessageView: View {
                     cancelPrepareBodyIfNeeded()
                 }
             }
+            .onChange(of: threadForcedExpansion[message.uid]) { newValue in
+                if newValue == true {
+                    withAnimation {
+                        isMessageExpanded = true
+                    }
+                }
+            }
             .onAppear {
                 if message.fullyDownloaded,
                    isMessageExpanded,
@@ -174,9 +183,16 @@ struct MessageView: View {
 struct MessageView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            MessageView(message: PreviewHelper.sampleMessage)
+            MessageView(
+                message: PreviewHelper.sampleMessage,
+                threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: true])
+            )
 
-            MessageView(message: PreviewHelper.sampleMessage, isMessageExpanded: true)
+            MessageView(
+                message: PreviewHelper.sampleMessage,
+                isMessageExpanded: true,
+                threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: true])
+            )
         }
         .previewLayout(.sizeThatFits)
     }
