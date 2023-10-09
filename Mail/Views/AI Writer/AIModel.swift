@@ -63,15 +63,11 @@ final class AIModel: ObservableObject {
 
     func executeShortcut(_ shortcut: AIShortcutAction) async {
         if shortcut == .edit {
-            withAnimation {
-                conversation.append(AIMessage(type: .assistant, content: MailResourcesStrings.Localizable.aiMenuEditRequest))
-            }
+            conversation.append(AIMessage(type: .assistant, content: MailResourcesStrings.Localizable.aiMenuEditRequest))
             displayView(.prompt)
         } else {
             guard let contextId else { return }
-            withAnimation {
-                isLoading = true
-            }
+            isLoading = true
             do {
                 let response = try await mailboxManager.apiFetcher.aiShortcut(contextId: contextId, shortcut: shortcut)
                 handleAIResponse(response)
@@ -100,25 +96,21 @@ final class AIModel: ObservableObject {
             contextId = newContextId
         }
 
-        withAnimation {
-            if let shortcutResponse = response as? AIShortcutResponse {
-                conversation.append(shortcutResponse.action)
-            }
-            conversation.append(AIMessage(type: .assistant, content: response.content))
-            isLoading = false
+        if let shortcutResponse = response as? AIShortcutResponse {
+            conversation.append(shortcutResponse.action)
         }
+        conversation.append(AIMessage(type: .assistant, content: response.content))
+        isLoading = false
     }
 
     private func handleError(_ error: Error) {
-        withAnimation {
-            isLoading = false
+        isLoading = false
 
-            if let mailApiError = error as? MailApiError,
-               mailApiError == .apiAIMaxSyntaxTokensReached || mailApiError == .apiAITooManyRequests {
-                self.error = mailApiError.localizedDescription
-            } else {
-                self.error = MailResourcesStrings.Localizable.aiErrorUnknown
-            }
+        if let mailApiError = error as? MailApiError,
+           mailApiError == .apiAIMaxSyntaxTokensReached || mailApiError == .apiAITooManyRequests {
+            self.error = mailApiError.localizedDescription
+        } else {
+            self.error = MailResourcesStrings.Localizable.aiErrorUnknown
         }
     }
 }

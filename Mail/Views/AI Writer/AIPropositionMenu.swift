@@ -58,7 +58,6 @@ struct AIPropositionMenu: View {
                     .frame(width: 24, height: 24)
                 Text(MailResourcesStrings.Localizable.aiButtonRefine)
             }
-            .frame(height: UIConstants.buttonMediumHeight)
         }
         .simultaneousGesture(TapGesture().onEnded {
             matomo.track(eventWithCategory: .aiWriter, name: "refine")

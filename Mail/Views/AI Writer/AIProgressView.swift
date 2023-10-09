@@ -30,7 +30,6 @@ struct AIProgressView: View {
                 .progressViewStyle(.circular)
                 .tint(MailResourcesAsset.aiColor.swiftUIColor)
         }
-        .frame(height: UIConstants.buttonMediumHeight)
     }
 }
 

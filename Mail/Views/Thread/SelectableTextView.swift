@@ -18,14 +18,28 @@
 
 import Foundation
 import MailCore
+import MailResources
 import SwiftUI
 import UIKit
 
 struct SelectableTextView: UIViewRepresentable {
+    enum Style {
+        case loading, standard
+
+        var foregroundColor: UIColor {
+            switch self {
+            case .loading:
+                return MailResourcesAsset.textTertiaryColor.color
+            case .standard:
+                return MailResourcesAsset.textPrimaryColor.color
+            }
+        }
+    }
+
     @Binding var textPlainHeight: CGFloat
 
     let text: String?
-    var foregroundColor = MailTextStyle.body.color
+    var style = Style.standard
 
     func makeUIView(context: Context) -> UITextView {
         let textView = UITextView()
@@ -34,7 +48,7 @@ struct SelectableTextView: UIViewRepresentable {
         textView.isEditable = false
         textView.textContainer.lineFragmentPadding = 0
         textView.font = .systemFont(ofSize: 16)
-        textView.textColor = UIColor(foregroundColor)
+        textView.textColor = style.foregroundColor
         textView.linkTextAttributes = [.underlineStyle: 1, .foregroundColor: UIColor.tintColor]
         textView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
@@ -42,12 +56,39 @@ struct SelectableTextView: UIViewRepresentable {
     }
 
     func updateUIView(_ uiView: UITextView, context: Context) {
-        Task {
-            uiView.text = text
-            uiView.textColor = UIColor(foregroundColor)
+        // Replace text when the style is standard and the current color has not yet been changed
+        if style == .standard && uiView.textColor != style.foregroundColor {
+            replaceText(text: text ?? "", in: uiView)
+        } else {
+            insertText(text: text ?? "", in: uiView)
+        }
+    }
 
+    private func insertText(text: String, in uiView: UITextView) {
+        uiView.text = text
+        uiView.textColor = style.foregroundColor
+
+        computeViewHeight(uiView)
+    }
+
+    private func replaceText(text: String, in uiView: UITextView) {
+        UIView.animate(withDuration: 0.2) {
+            uiView.alpha = 0
+        } completion: { _ in
+            insertText(text: text, in: uiView)
+            UIView.animate(withDuration: 0.2) {
+                uiView.alpha = 1
+            }
+        }
+    }
+
+    private func computeViewHeight(_ uiView: UIView) {
+        Task {
             await MainActor.run {
-                let sizeThatFits = uiView.sizeThatFits(CGSize(width: uiView.frame.width, height: CGFloat.greatestFiniteMagnitude))
+                let sizeThatFits = uiView.sizeThatFits(CGSize(
+                    width: uiView.frame.width,
+                    height: CGFloat.greatestFiniteMagnitude
+                ))
                 textPlainHeight = sizeThatFits.height
             }
         }
