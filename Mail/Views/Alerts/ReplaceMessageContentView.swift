@@ -23,6 +23,8 @@ import MailResources
 import SwiftUI
 
 struct ReplaceMessageContentView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @State private var doNotShowAIReplaceMessageAgain = UserDefaults.shared.doNotShowAIReplaceMessageAgain
 
     let action: () -> Void
@@ -43,8 +45,7 @@ struct ReplaceMessageContentView: View {
             .padding(.bottom, UIPadding.alertDescriptionBottom)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.aiReplacementDialogPositiveButton) {
-                @LazyInjectService var matomo: MatomoUtils
-                matomo.track(eventWithCategory: .aiWriter, name: "replacePropositionDialog")
+                matomo.track(eventWithCategory: .aiWriter, name: "replacePropositionConfirm")
                 if doNotShowAIReplaceMessageAgain {
                     matomo.track(eventWithCategory: .aiWriter, action: .data, name: "doNotShowAgain")
                 }
@@ -52,6 +53,9 @@ struct ReplaceMessageContentView: View {
                 UserDefaults.shared.doNotShowAIReplaceMessageAgain = doNotShowAIReplaceMessageAgain
                 action()
             }
+        }
+        .onAppear {
+            matomo.track(eventWithCategory: .aiWriter, name: "replacePropositionDialog")
         }
     }
 }

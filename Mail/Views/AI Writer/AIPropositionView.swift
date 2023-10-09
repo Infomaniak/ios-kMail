@@ -99,13 +99,11 @@ struct AIPropositionView: View {
                         } else {
                             MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
                                 let shouldReplaceContent = !draft.isBodyEmpty
-                                guard !shouldReplaceContent || shouldReplaceContent && UserDefaults.shared
-                                    .doNotShowAIReplaceMessageAgain else {
-                                    matomo.track(eventWithCategory: .aiWriter, name: "replacePropositionDialog")
+                                guard !shouldReplaceContent || UserDefaults.shared.doNotShowAIReplaceMessageAgain else {
                                     isShowingReplaceContentAlert = true
                                     return
                                 }
-                                insertResult(shouldReplaceContent)
+                                insertResult(shouldReplaceContent: shouldReplaceContent)
                             }
                         }
                     }
@@ -118,7 +116,7 @@ struct AIPropositionView: View {
             }
             .customAlert(isPresented: $isShowingReplaceContentAlert) {
                 ReplaceMessageContentView {
-                    insertResult(true)
+                    insertResult(shouldReplaceContent: true)
                 }
             }
             .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
@@ -128,7 +126,7 @@ struct AIPropositionView: View {
         }
     }
 
-    private func insertResult(_ shouldReplaceContent: Bool) {
+    private func insertResult(shouldReplaceContent: Bool) {
         guard !aiModel.isLoading, let content = aiModel.conversation.last?.content else { return }
         matomo.track(
             eventWithCategory: .aiWriter,

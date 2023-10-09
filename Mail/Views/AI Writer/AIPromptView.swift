@@ -90,7 +90,7 @@ struct AIPromptView: View {
             aiModel.resetConversation()
         }
         .onDisappear {
-            if !aiModel.isShowingProposition {
+            if aiModel.conversation.isEmpty {
                 matomo.track(eventWithCategory: .aiWriter, name: "dismissPromptWithoutGenerating")
             }
         }

@@ -41,6 +41,11 @@ struct AIDiscoveryView: View {
         .onAppear {
             UserDefaults.shared.shouldPresentAIFeature = false
         }
+        .onDisappear {
+            if !aiModel.isShowingPrompt {
+                matomo.track(eventWithCategory: .aiWriter, name: "discoverLater")
+            }
+        }
     }
 
     private func didTouchTryButton() {
@@ -50,7 +55,6 @@ struct AIDiscoveryView: View {
     }
 
     private func didTouchLaterButton() {
-        matomo.track(eventWithCategory: .aiWriter, name: "discoverLater")
         dismiss()
     }
 }

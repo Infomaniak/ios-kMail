@@ -59,10 +59,10 @@ struct AIPropositionMenu: View {
                 Text(MailResourcesStrings.Localizable.aiButtonRefine)
             }
             .frame(height: UIConstants.buttonMediumHeight)
-            .simultaneousGesture(TapGesture().onEnded {
-                matomo.track(eventWithCategory: .aiWriter, name: "refine")
-            })
         }
+        .simultaneousGesture(TapGesture().onEnded {
+            matomo.track(eventWithCategory: .aiWriter, name: "refine")
+        })
         .tint(MailResourcesAsset.textSecondaryColor.swiftUIColor)
         .modifier(FixedMenuOrderModifier())
     }
