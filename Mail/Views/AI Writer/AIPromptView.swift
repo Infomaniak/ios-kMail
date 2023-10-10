@@ -52,6 +52,7 @@ struct AIPromptView: View {
                     Text(MailResourcesStrings.Localizable.aiPromptPlaceholder(placeholderProposition))
                         .foregroundColor(Color(UIColor.placeholderText))
                         .textStyle(.body)
+                        .padding([.vertical, .horizontal], value: .small)
                         .padding(.horizontal, 5)
                 }
 
@@ -63,13 +64,12 @@ struct AIPromptView: View {
                             hasFocusedEditor = true
                         }
                         textView.backgroundColor = .clear
-                        textView.textContainerInset = .zero
+                        textView.textContainerInset = UIPadding.aiTextEditor
                         textView.font = .systemFont(ofSize: 16)
                     }
                     .tint(MailResourcesAsset.aiColor.swiftUIColor)
                     .frame(maxHeight: isCompactWindow ? nil : 128)
             }
-            .padding(value: .small)
             .overlay {
                 RoundedRectangle(cornerRadius: 4)
                     .stroke(MailResourcesAsset.textFieldBorder.swiftUIColor, lineWidth: 1)
