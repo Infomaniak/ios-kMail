@@ -21,6 +21,7 @@ import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
+import SwiftUIIntrospect
 
 struct AIPromptView: View {
     @LazyInjectService var matomo: MatomoUtils
@@ -28,6 +29,8 @@ struct AIPromptView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.isCompactWindow) private var isCompactWindow
 
+    // The focus is done thanks to UIKit, this allows the keyboard to appear more quickly
+    @State private var hasFocusedEditor = false
     @State private var prompt = ""
     @State private var placeholderProposition = Constants.aiPromptExamples.randomElement() ?? MailResourcesStrings.Localizable
         .aiPromptExample1
@@ -54,11 +57,14 @@ struct AIPromptView: View {
 
                 TextEditor(text: $prompt)
                     .textStyle(.body)
-                    .introspect(.textEditor, on: .iOS(.v15, .v16, .v17)) { textField in
-                        textField.backgroundColor = .clear
-                        textField.textContainerInset = .zero
-                        textField.font = .systemFont(ofSize: 16)
-                        textField.becomeFirstResponder()
+                    .introspect(.textEditor, on: .iOS(.v15, .v16, .v17)) { textView in
+                        if !hasFocusedEditor {
+                            textView.becomeFirstResponder()
+                            hasFocusedEditor = true
+                        }
+                        textView.backgroundColor = .clear
+                        textView.textContainerInset = .zero
+                        textView.font = .systemFont(ofSize: 16)
                     }
                     .tint(MailResourcesAsset.aiColor.swiftUIColor)
                     .frame(maxHeight: isCompactWindow ? nil : 128)
