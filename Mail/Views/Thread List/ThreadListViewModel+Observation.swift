@@ -50,20 +50,14 @@ extension ThreadListViewModel {
 
                 switch changes {
                 case .initial(let results):
-                    let frozenResults = results.freezeIfNeeded()
-                    var filteredThreads = [Thread]()
-                    let sections = frozenResults.map {
-                        let sectionThreads = Array($0)
-                        filteredThreads.append(contentsOf: sectionThreads)
-                        return DateSection(sectionKey: $0.key, threads: sectionThreads)
-                    }
+                    let (filteredThreads, newSections) = mapSectionedResults(results: results.freezeIfNeeded())
 
                     resetFilterIfNeeded(filteredThreads: filteredThreads)
 
                     DispatchQueue.main.sync {
                         self.filteredThreads = filteredThreads
                         withAnimation(animateInitialThreadChanges ? .default : nil) {
-                            self.sections = sections
+                            self.sections = newSections
                         }
                     }
                 case .update(let results, _, _, _, _, _):
@@ -98,13 +92,19 @@ extension ThreadListViewModel {
         observationLastUpdateToken?.invalidate()
     }
 
-    private func updateThreadResults(results: SectionedResults<String, Thread>) {
-        var filteredThreads = [Thread]()
-        let newSections = results.map {
+    private func mapSectionedResults(results: SectionedResults<String, Thread>) -> (threads: [Thread], sections: [DateSection]) {
+        var threads = [Thread]()
+        let sections = results.map {
             let sectionThreads = Array($0)
-            filteredThreads.append(contentsOf: sectionThreads)
+            threads.append(contentsOf: sectionThreads)
             return DateSection(sectionKey: $0.key, threads: sectionThreads)
         }
+
+        return (threads: threads, sections: sections)
+    }
+
+    private func updateThreadResults(results: SectionedResults<String, Thread>) {
+        let (filteredThreads, newSections) = mapSectionedResults(results: results)
 
         resetFilterIfNeeded(filteredThreads: filteredThreads)
 
