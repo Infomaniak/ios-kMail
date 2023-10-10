@@ -31,8 +31,8 @@ public extension CommonContact {
     }
 
     struct FormatStyle: Foundation.FormatStyle, Codable, Equatable, Hashable {
-        // swiftlint:disable nesting
         // Standard API does also nested types
+        // swiftlint:disable:next nesting
         public enum Style: Codable, Equatable, Hashable {
             case shortName
             case fullName
