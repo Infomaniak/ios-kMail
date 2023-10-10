@@ -45,7 +45,7 @@ struct ThreadListView: View {
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
     private var shouldDisplayEmptyView: Bool {
-        viewModel.folder.lastUpdate != nil && viewModel.sections.isEmpty && !viewModel.isLoadingPage
+        viewModel.folder.lastUpdate != nil && viewModel.isEmpty && !viewModel.isLoadingPage
     }
 
     private var shouldDisplayNoNetworkView: Bool {
@@ -53,7 +53,7 @@ struct ThreadListView: View {
     }
 
     private var displayLoadMoreButton: Bool {
-        return !viewModel.folder.isHistoryComplete && !viewModel.sections.isEmpty
+        return !viewModel.folder.isHistoryComplete && !viewModel.isEmpty
     }
 
     init(mailboxManager: MailboxManager,
@@ -77,7 +77,7 @@ struct ThreadListView: View {
 
             ScrollViewReader { proxy in
                 List {
-                    if !viewModel.sections.isEmpty,
+                    if !viewModel.isEmpty,
                        viewModel.folder.role == .trash || viewModel.folder.role == .spam {
                         FlushFolderView(
                             folder: viewModel.folder,
@@ -99,7 +99,7 @@ struct ThreadListView: View {
                         ListVerticalInsetView(height: UIPadding.verySmall)
                     }
 
-                    ForEach(viewModel.sections) { section in
+                    ForEach(viewModel.sections ?? []) { section in
                         Section {
                             ForEach(section.threads) { thread in
                                 ThreadListCell(viewModel: viewModel,

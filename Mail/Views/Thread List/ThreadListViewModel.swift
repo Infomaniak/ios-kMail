@@ -105,7 +105,7 @@ final class DateSection: Identifiable, Equatable {
     let mailboxManager: MailboxManager
 
     @Published var folder: Folder
-    @Published var sections = [DateSection]()
+    @Published var sections: [DateSection]?
     @Published var selectedThread: Thread? {
         didSet {
             selectedThreadIndex = filteredThreads.firstIndex { $0.uid == selectedThread?.uid }
@@ -158,7 +158,7 @@ final class DateSection: Identifiable, Equatable {
 
                 observeChanges(animateInitialThreadChanges: true)
 
-                guard let topThread = sections.first?.threads.first?.id else {
+                guard let topThread = sections?.first?.threads.first?.id else {
                     return
                 }
                 withAnimation {
@@ -166,6 +166,10 @@ final class DateSection: Identifiable, Equatable {
                 }
             }
         }
+    }
+
+    var isEmpty: Bool {
+        return sections?.isEmpty == true
     }
 
     var filterUnreadOn: Bool {
