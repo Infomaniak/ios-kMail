@@ -26,6 +26,8 @@ public extension FormatStyle where Self == Signature.FormatStyle {
 
 public extension Signature {
     struct FormatStyle: Foundation.FormatStyle {
+        // Standard API does also nested types
+        // swiftlint:disable:next nesting
         public enum Style: Codable {
             case long
             case short
