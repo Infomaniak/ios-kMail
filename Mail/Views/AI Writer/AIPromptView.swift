@@ -21,6 +21,7 @@ import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
+import SwiftUIIntrospect
 
 struct AIPromptView: View {
     @LazyInjectService var matomo: MatomoUtils
@@ -28,6 +29,8 @@ struct AIPromptView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.isCompactWindow) private var isCompactWindow
 
+    // The focus is done thanks to UIKit, this allows the keyboard to appear more quickly
+    @State private var hasFocusedEditor = false
     @State private var prompt = ""
     @State private var placeholderProposition = Constants.aiPromptExamples.randomElement() ?? MailResourcesStrings.Localizable
         .aiPromptExample1
@@ -49,21 +52,24 @@ struct AIPromptView: View {
                     Text(MailResourcesStrings.Localizable.aiPromptPlaceholder(placeholderProposition))
                         .foregroundColor(Color(UIColor.placeholderText))
                         .textStyle(.body)
+                        .padding([.vertical, .horizontal], value: .small)
                         .padding(.horizontal, 5)
                 }
 
                 TextEditor(text: $prompt)
                     .textStyle(.body)
-                    .introspect(.textEditor, on: .iOS(.v15, .v16, .v17)) { textField in
-                        textField.backgroundColor = .clear
-                        textField.textContainerInset = .zero
-                        textField.font = .systemFont(ofSize: 16)
-                        textField.becomeFirstResponder()
+                    .introspect(.textEditor, on: .iOS(.v15, .v16, .v17)) { textView in
+                        if !hasFocusedEditor {
+                            textView.becomeFirstResponder()
+                            hasFocusedEditor = true
+                        }
+                        textView.backgroundColor = .clear
+                        textView.textContainerInset = UIPadding.aiTextEditor
+                        textView.font = .systemFont(ofSize: 16)
                     }
                     .tint(MailResourcesAsset.aiColor.swiftUIColor)
                     .frame(maxHeight: isCompactWindow ? nil : 128)
             }
-            .padding(value: .small)
             .overlay {
                 RoundedRectangle(cornerRadius: 4)
                     .stroke(MailResourcesAsset.textFieldBorder.swiftUIColor, lineWidth: 1)
@@ -71,8 +77,8 @@ struct AIPromptView: View {
 
             MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton) {
                 matomo.track(eventWithCategory: .aiWriter, name: "generate")
-                aiModel.conversation.append(AIMessage(type: .user, content: prompt))
-                aiModel.displayView(.proposition)
+                aiModel.addInitialPrompt(prompt)
+                dismiss()
             }
             .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
             .mailButtonSecondaryColor(MailResourcesAsset.onAIColor.swiftUIColor)
@@ -90,7 +96,9 @@ struct AIPromptView: View {
             aiModel.resetConversation()
         }
         .onDisappear {
-            if aiModel.conversation.isEmpty {
+            if aiModel.isLoading {
+                aiModel.isShowingProposition = true
+            } else {
                 matomo.track(eventWithCategory: .aiWriter, name: "dismissPromptWithoutGenerating")
             }
         }

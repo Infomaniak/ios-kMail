@@ -76,6 +76,7 @@ public extension UIPadding {
     static let floatingButtonBottom = medium
     static let bottomSheetHorizontal = medium
     static let recipientChip = UIEdgeInsets(top: verySmall, left: small, bottom: verySmall, right: small)
+    static let aiTextEditor = UIEdgeInsets(top: small, left: small, bottom: small, right: small)
     static let searchFolderCellSpacing = small
 }
 

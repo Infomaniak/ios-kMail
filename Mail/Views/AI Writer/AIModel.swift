@@ -46,6 +46,11 @@ final class AIModel: ObservableObject {
         isShowingProposition = state == .proposition
     }
 
+    func addInitialPrompt(_ prompt: String) {
+        conversation.append(AIMessage(type: .user, content: prompt))
+        isLoading = true
+    }
+
     func createConversation() async {
         do {
             let response = try await mailboxManager.apiFetcher.aiCreateConversation(messages: conversation)
@@ -64,7 +69,10 @@ final class AIModel: ObservableObject {
     func executeShortcut(_ shortcut: AIShortcutAction) async {
         if shortcut == .edit {
             conversation.append(AIMessage(type: .assistant, content: MailResourcesStrings.Localizable.aiMenuEditRequest))
-            displayView(.prompt)
+            isShowingProposition = false
+            Task { @MainActor in
+                self.isShowingPrompt = true
+            }
         } else {
             guard let contextId else { return }
             isLoading = true
