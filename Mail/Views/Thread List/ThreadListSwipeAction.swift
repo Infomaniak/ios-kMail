@@ -75,7 +75,7 @@ struct ThreadListSwipeActions: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.swipeTrailing)) private var swipeTrailing = DefaultPreferences.swipeTrailing
 
     @State private var actionPanelMessages: [Message]?
-    @State private var moveSheetMessages: [Message]?
+    @State private var messagesToMove: [Message]?
 
     let thread: Thread
     let viewModel: ThreadListViewModel
@@ -98,6 +98,10 @@ struct ThreadListSwipeActions: ViewModifier {
                 }
             }
             .actionsPanel(messages: $actionPanelMessages, originFolder: thread.folder)
+            .sheet(item: $messagesToMove) { messages in
+                MoveEmailView(movedMessages: messages, originFolder: thread.folder)
+                    .sheetViewStyle()
+            }
     }
 
     @MainActor @ViewBuilder
@@ -106,7 +110,7 @@ struct ThreadListSwipeActions: ViewModifier {
             ForEach(actions.filter { $0 != .noAction }.map { $0.inverseActionIfNeeded(for: thread) }) { action in
                 SwipeActionView(
                     actionPanelMessages: $actionPanelMessages,
-                    moveSheetMessages: $moveSheetMessages,
+                    moveSheetMessages: $messagesToMove,
                     flushAlert: $flushAlert,
                     thread: thread,
                     action: action
