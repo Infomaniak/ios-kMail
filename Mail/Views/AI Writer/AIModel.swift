@@ -70,7 +70,7 @@ final class AIModel: ObservableObject {
         if shortcut == .edit {
             conversation.append(AIMessage(type: .assistant, content: MailResourcesStrings.Localizable.aiMenuEditRequest))
             isShowingProposition = false
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 self.isShowingPrompt = true
             }
         } else {
