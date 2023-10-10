@@ -43,34 +43,33 @@ extension ThreadListViewModel {
 
     func observeChanges(animateInitialThreadChanges: Bool = false) {
         stopObserveChanges()
+        observationThreadToken = threadResults()?
+            .sectioned(by: \Thread.sectionDate, ascending: false)
+            .observe(on: observeQueue) { [weak self] changes in
+                guard let self else { return }
 
-        observationThreadToken = threadResults()?.observe(on: observeQueue) { [weak self] changes in
-            guard let self else {
-                return
-            }
+                switch changes {
+                case .initial(let results):
+                    let (filteredThreads, newSections) = mapSectionedResults(results: results.freezeIfNeeded())
 
-            switch changes {
-            case .initial(let results):
-                let filteredThreads = Array(results.freezeIfNeeded())
-                guard let newSections = sortThreadsIntoSections(threads: filteredThreads) else { return }
+                    resetFilterIfNeeded(filteredThreads: filteredThreads)
 
-                DispatchQueue.main.sync {
-                    self.filteredThreads = filteredThreads
-                    withAnimation(animateInitialThreadChanges ? .default : nil) {
-                        self.sections = newSections
+                    DispatchQueue.main.sync {
+                        self.filteredThreads = filteredThreads
+                        withAnimation(animateInitialThreadChanges ? .default : nil) {
+                            self.sections = newSections
+                        }
                     }
+                case .update(let results, _, _, _, _, _):
+                    updateThreadResults(results: results.freezeIfNeeded())
                 }
-            case .update(let results, _, _, _):
-                updateThreadResults(results: results)
-            case .error:
-                break
+
+                // We only apply the first update when in "unread" mode
+                if filter == .unseen {
+                    stopObserveChanges()
+                }
             }
 
-            // We only apply the first update when in "unread" mode
-            if filter == .unseen {
-                stopObserveChanges()
-            }
-        }
         observationLastUpdateToken = folder.observe(keyPaths: [\Folder.lastUpdate], on: observeQueue) { [weak self] changes in
             switch changes {
             case .change(let folder, _):
@@ -93,10 +92,21 @@ extension ThreadListViewModel {
         observationLastUpdateToken?.invalidate()
     }
 
-    private func updateThreadResults(results: Results<Thread>) {
-        let filteredThreads = Array(results.freezeIfNeeded())
-        guard let newSections = sortThreadsIntoSections(threads: filteredThreads)
-        else { return }
+    private func mapSectionedResults(results: SectionedResults<String, Thread>) -> (threads: [Thread], sections: [DateSection]) {
+        var threads = [Thread]()
+        let sections = results.map {
+            let sectionThreads = Array($0)
+            threads.append(contentsOf: sectionThreads)
+            return DateSection(sectionKey: $0.key, threads: sectionThreads)
+        }
+
+        return (threads: threads, sections: sections)
+    }
+
+    private func updateThreadResults(results: SectionedResults<String, Thread>) {
+        let (filteredThreads, newSections) = mapSectionedResults(results: results)
+
+        resetFilterIfNeeded(filteredThreads: filteredThreads)
 
         DispatchQueue.main.sync {
             self.nextThreadIfNeeded(from: filteredThreads)
@@ -130,20 +140,18 @@ extension ThreadListViewModel {
 
         let containAnyOf = NSPredicate(format: Self.containAnyOfUIDs, allThreadsUIDs)
         let realm = mailboxManager.getRealm()
-        let allThreads = realm.objects(Thread.self).filter(containAnyOf).sorted(by: \.date, ascending: false)
+        let allThreads = realm.objects(Thread.self).filter(containAnyOf)
+            .sorted(by: \.date, ascending: false)
+            .sectioned(by: \Thread.sectionDate, ascending: false)
 
         observeFilteredThreadsToken = allThreads.observe(on: observeQueue) { [weak self] changes in
-            guard let self else {
-                return
-            }
+            guard let self else { return }
 
             switch changes {
             case .initial:
                 break
-            case .update(let results, _, _, _):
-                updateThreadResults(results: results)
-            case .error:
-                break
+            case .update(let results, _, _, _, _, _):
+                updateThreadResults(results: results.freezeIfNeeded())
             }
         }
     }

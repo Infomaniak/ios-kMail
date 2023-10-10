@@ -26,18 +26,12 @@ import SwiftUI
 
 typealias Thread = MailCore.Thread
 
-final class DateSection: Identifiable, Equatable {
-    static func == (lhs: DateSection, rhs: DateSection) -> Bool {
-        lhs.id == rhs.id && lhs.title == rhs.title && lhs.threads == rhs.threads
-    }
-
-    enum ReferenceDate {
-        case future, today, yesterday, thisWeek, lastWeek, thisMonth, older(Date)
+extension Thread {
+    public enum ReferenceDate: String, CaseIterable {
+        case today, yesterday, thisWeek, lastWeek, thisMonth
 
         public var dateInterval: DateInterval {
             switch self {
-            case .future:
-                return DateInterval.future
             case .today:
                 return .init(start: .now.startOfDay, duration: Constants.numberOfSecondsInADay)
             case .yesterday:
@@ -48,15 +42,26 @@ final class DateSection: Identifiable, Equatable {
                 return .init(start: .lastWeek.startOfWeek, end: .lastWeek.endOfWeek)
             case .thisMonth:
                 return .init(start: .now.startOfMonth, end: .now.endOfMonth)
-            case .older(let date):
-                return .init(start: date.startOfMonth, end: date.endOfMonth)
             }
+        }
+
+        public static func titleFromRawSectionKey(_ rawKey: String) -> String {
+            if let referenceDate = ReferenceDate(rawValue: rawKey) {
+                return referenceDate.title
+            }
+
+            guard let timeInterval = Double(rawKey) else { return "" }
+            let referenceDate = Date(timeIntervalSince1970: timeInterval)
+
+            var formatStyle = Date.FormatStyle.dateTime.month(.wide)
+            if !Calendar.current.isDate(referenceDate, equalTo: .now, toGranularity: .year) {
+                formatStyle = formatStyle.year()
+            }
+            return referenceDate.formatted(formatStyle).capitalized
         }
 
         public var title: String {
             switch self {
-            case .future:
-                return MailResourcesStrings.Localizable.comingSoon
             case .today:
                 return MailResourcesStrings.Localizable.threadListSectionToday
             case .yesterday:
@@ -67,37 +72,32 @@ final class DateSection: Identifiable, Equatable {
                 return MailResourcesStrings.Localizable.threadListSectionLastWeek
             case .thisMonth:
                 return MailResourcesStrings.Localizable.threadListSectionThisMonth
-            case .older(let date):
-                let formatStyle = Calendar.current.isDate(date, equalTo: .now, toGranularity: .year)
-                    ? Constants.shortDateFormatter
-                    : Constants.longDateFormatter
-                return date.formatted(formatStyle).capitalized
             }
-        }
-
-        func contains(date: Date) -> Bool {
-            if case .future = self {
-                return date > .now
-            }
-            return dateInterval.contains(date)
         }
     }
 
-    let id: DateInterval
+    var sectionDate: String {
+        if let sectionDateInterval = (ReferenceDate.allCases.first { $0.dateInterval.contains(date) }) {
+            return sectionDateInterval.rawValue
+        } else {
+            return "\(date.startOfMonth.timeIntervalSince1970)"
+        }
+    }
+}
+
+final class DateSection: Identifiable, Equatable {
+    static func == (lhs: DateSection, rhs: DateSection) -> Bool {
+        lhs.id == rhs.id && lhs.title == rhs.title && lhs.threads == rhs.threads
+    }
+
+    let id: String
     let title: String
-    var threads = [Thread]()
+    let threads: [Thread]
 
-    private let referenceDate: ReferenceDate
-
-    init(thread: Thread) {
-        let sections: [ReferenceDate] = [.future, .today, .yesterday, .thisWeek, .lastWeek, .thisMonth]
-        referenceDate = sections.first { $0.contains(date: thread.date) } ?? .older(thread.date)
-        id = referenceDate.dateInterval
-        title = referenceDate.title
-    }
-
-    func threadBelongsToSection(thread: Thread) -> Bool {
-        return referenceDate.contains(date: thread.date)
+    init(sectionKey: String, threads: [Thread]) {
+        id = sectionKey
+        title = Thread.ReferenceDate.titleFromRawSectionKey(sectionKey)
+        self.threads = threads
     }
 }
 
@@ -245,25 +245,11 @@ final class DateSection: Identifiable, Equatable {
         selectedThread = threads[validIndex]
     }
 
-    func sortThreadsIntoSections(threads: [Thread]) -> [DateSection]? {
-        var newSections = [DateSection]()
-
-        var currentSection: DateSection?
-        if threads.isEmpty && filterUnreadOn {
+    func resetFilterIfNeeded(filteredThreads: [Thread]) {
+        if filteredThreads.isEmpty && filterUnreadOn {
             DispatchQueue.main.sync {
                 filterUnreadOn.toggle()
             }
-            return nil
-        } else {
-            for thread in threads {
-                if currentSection?.threadBelongsToSection(thread: thread) != true {
-                    currentSection = DateSection(thread: thread)
-                    newSections.append(currentSection!)
-                }
-                currentSection?.threads.append(thread)
-            }
-
-            return newSections
         }
     }
 }
