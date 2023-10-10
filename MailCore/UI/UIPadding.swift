@@ -20,7 +20,18 @@ import SwiftUI
 
 public enum UIPadding {
     public enum Options {
-        case large, medium, regular, intermediate, small, verySmall
+        /// 48pt spacing
+        case large
+        /// 24pt spacing
+        case medium
+        /// 16pt spacing
+        case regular
+        /// 12pt spacing
+        case intermediate
+        /// 8pt spacing
+        case small
+        /// 4pt spacing
+        case verySmall
 
         var value: CGFloat {
             switch self {
@@ -40,11 +51,17 @@ public enum UIPadding {
         }
     }
 
+    /// 48pt spacing
     public static let large: CGFloat = 48
+    /// 24pt spacing
     public static let medium: CGFloat = 24
+    /// 16pt spacing
     public static let regular: CGFloat = 16
+    /// 12pt spacing
     public static let intermediate: CGFloat = 12
+    /// 8pt spacing
     public static let small: CGFloat = 8
+    /// 4pt spacing
     public static let verySmall: CGFloat = 4
 }
 
