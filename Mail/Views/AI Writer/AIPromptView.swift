@@ -71,8 +71,8 @@ struct AIPromptView: View {
 
             MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton) {
                 matomo.track(eventWithCategory: .aiWriter, name: "generate")
-                aiModel.conversation.append(AIMessage(type: .user, content: prompt))
-                aiModel.displayView(.proposition)
+                aiModel.addInitialPrompt(prompt)
+                dismiss()
             }
             .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
             .mailButtonSecondaryColor(MailResourcesAsset.onAIColor.swiftUIColor)
@@ -90,7 +90,9 @@ struct AIPromptView: View {
             aiModel.resetConversation()
         }
         .onDisappear {
-            if aiModel.conversation.isEmpty {
+            if aiModel.isLoading {
+                aiModel.isShowingProposition = true
+            } else {
                 matomo.track(eventWithCategory: .aiWriter, name: "dismissPromptWithoutGenerating")
             }
         }

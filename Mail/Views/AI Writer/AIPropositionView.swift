@@ -33,6 +33,7 @@ struct AIPropositionView: View {
 
     @State private var textPlainHeight = CGFloat.zero
     @State private var isShowingReplaceContentAlert = false
+    @State private var willShowAIPrompt = false
 
     @ObservedObject var aiModel: AIModel
 
@@ -57,11 +58,13 @@ struct AIPropositionView: View {
                 }
                 .padding(.horizontal, value: .regular)
             }
-            .onAppear {
-                aiModel.isLoading = true
-            }
             .task {
                 await aiModel.createConversation()
+            }
+            .onDisappear {
+                if willShowAIPrompt {
+                    aiModel.isShowingPrompt = true
+                }
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -90,7 +93,8 @@ struct AIPropositionView: View {
                         } else if aiModel.error != nil {
                             MailButton(label: MailResourcesStrings.Localizable.aiButtonRetry) {
                                 matomo.track(eventWithCategory: .aiWriter, name: "retry")
-                                aiModel.displayView(.prompt)
+                                willShowAIPrompt = true
+                                dismiss()
                             }
                         } else {
                             MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {

@@ -28,6 +28,8 @@ struct AIDiscoveryView: View {
     @Environment(\.isCompactWindow) private var isCompactWindow
     @Environment(\.dismiss) private var dismiss
 
+    @State private var willShowAIPrompt = false
+
     @ObservedObject var aiModel: AIModel
 
     var body: some View {
@@ -42,7 +44,9 @@ struct AIDiscoveryView: View {
             UserDefaults.shared.shouldPresentAIFeature = false
         }
         .onDisappear {
-            if !aiModel.isShowingPrompt {
+            if willShowAIPrompt {
+                aiModel.isShowingPrompt = true
+            } else {
                 matomo.track(eventWithCategory: .aiWriter, name: "discoverLater")
             }
         }
@@ -50,8 +54,8 @@ struct AIDiscoveryView: View {
 
     private func didTouchTryButton() {
         matomo.track(eventWithCategory: .aiWriter, name: "discoverTry")
+        willShowAIPrompt = true
         dismiss()
-        aiModel.displayView(.prompt)
     }
 
     private func didTouchLaterButton() {
