@@ -27,6 +27,8 @@ final class AIModel: ObservableObject {
         case prompt, proposition
     }
 
+    private static let displayableErrors: [MailApiError] = [.apiAIMaxSyntaxTokensReached, .apiAITooManyRequests]
+
     private let mailboxManager: MailboxManager
 
     @Published var conversation = [AIMessage]()
@@ -114,8 +116,7 @@ final class AIModel: ObservableObject {
     private func handleError(_ error: Error) {
         isLoading = false
 
-        if let mailApiError = error as? MailApiError,
-           mailApiError == .apiAIMaxSyntaxTokensReached || mailApiError == .apiAITooManyRequests {
+        if let mailApiError = error as? MailApiError, Self.displayableErrors.contains(mailApiError) {
             self.error = mailApiError
         } else {
             self.error = .unknownError
