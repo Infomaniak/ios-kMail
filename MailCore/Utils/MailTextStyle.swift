@@ -22,7 +22,7 @@ import SwiftUI
 
 public struct MailTextStyle {
     public let font: Font
-    public var color: Color
+    public let color: Color
 
     private init(font: Font, color: Color) {
         self.font = font
