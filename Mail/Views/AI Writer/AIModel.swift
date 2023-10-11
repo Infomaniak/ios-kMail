@@ -27,12 +27,14 @@ final class AIModel: ObservableObject {
         case prompt, proposition
     }
 
+    private static let displayableErrors: [MailApiError] = [.apiAIMaxSyntaxTokensReached, .apiAITooManyRequests]
+
     private let mailboxManager: MailboxManager
 
     @Published var conversation = [AIMessage]()
     @Published var isLoading = false
     @Published var contextId: String?
-    @Published var error: String?
+    @Published var error: MailError?
 
     @Published var isShowingPrompt = false
     @Published var isShowingProposition = false
@@ -114,11 +116,10 @@ final class AIModel: ObservableObject {
     private func handleError(_ error: Error) {
         isLoading = false
 
-        if let mailApiError = error as? MailApiError,
-           mailApiError == .apiAIMaxSyntaxTokensReached || mailApiError == .apiAITooManyRequests {
-            self.error = mailApiError.localizedDescription
+        if let mailApiError = error as? MailApiError, Self.displayableErrors.contains(mailApiError) {
+            self.error = mailApiError
         } else {
-            self.error = MailResourcesStrings.Localizable.aiErrorUnknown
+            self.error = .unknownError
         }
     }
 }

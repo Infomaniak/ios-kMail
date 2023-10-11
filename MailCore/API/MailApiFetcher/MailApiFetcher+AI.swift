@@ -16,12 +16,42 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Alamofire
 import Foundation
+import InfomaniakCore
+
+// AI feature requests take longer to respond. In this case, we increase the timeout
+extension MailApiFetcher {
+    private func authenticatedAIRequest(_ endpoint: Endpoint, method: HTTPMethod = .get,
+                                        parameters: Parameters? = nil) -> DataRequest {
+        return authenticatedRequest(
+            endpoint,
+            method: method,
+            parameters: parameters
+        ) {
+            $0.timeoutInterval = Constants.longTimeout
+        }
+    }
+
+    private func authenticatedAIRequest<Parameters: Encodable>(
+        _ endpoint: Endpoint,
+        method: HTTPMethod = .get,
+        parameters: Parameters? = nil
+    ) -> DataRequest {
+        return authenticatedRequest(
+            endpoint,
+            method: method,
+            parameters: parameters
+        ) {
+            $0.timeoutInterval = Constants.longTimeout
+        }
+    }
+}
 
 /// implementing `MailApiAIFetchable`
 public extension MailApiFetcher {
     func aiCreateConversation(messages: [AIMessage], output: AIOutputFormat = .mail) async throws -> AIConversationResponse {
-        try await perform(request: authenticatedRequest(
+        try await perform(request: authenticatedAIRequest(
             .ai,
             method: .post,
             parameters: AIConversationRequest(messages: messages, output: output)
@@ -37,7 +67,7 @@ public extension MailApiFetcher {
 
     func aiShortcutAndRecreateConversation(shortcut: AIShortcutAction, messages: [AIMessage],
                                            output: AIOutputFormat = .mail) async throws -> AIShortcutResponse {
-        try await perform(request: authenticatedRequest(
+        try await perform(request: authenticatedAIRequest(
             .aiShortcut(shortcut: shortcut.apiName),
             method: .post,
             parameters: AIConversationRequest(messages: messages, output: output)
