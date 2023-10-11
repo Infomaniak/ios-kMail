@@ -21,177 +21,174 @@ import MailResources
 import SwiftUI
 
 public struct MailTextStyle {
-    public var font: Font
-    private var colorType: Color
+    public let font: Font
+    public let color: Color
 
-    public var color: SwiftUI.Color {
-        switch colorType {
-        case .staticColor(let color):
-            return color
-        case .accentColor(let colorKeyPath):
-            return UserDefaults.shared.accentColor[keyPath: colorKeyPath].swiftUIColor
-        }
-    }
-
-    private enum Color {
-        case staticColor(SwiftUI.Color)
-        case accentColor(KeyPath<AccentColor, MailResourcesColors>)
-    }
-
-    private init(font: Font, colorType: Color) {
+    private init(font: Font, color: Color) {
         self.font = font
-        self.colorType = colorType
+        self.color = color
     }
 
-    public init(font: Font, color: SwiftUI.Color) {
-        self.init(font: font, colorType: .staticColor(color))
+    private init(mailFont: MailTextStyle, color: Color) {
+        self.init(font: mailFont.font, color: color)
     }
 
-    public init(font: Font, color: MailResourcesColors) {
-        self.init(font: font, color: .init(color.color))
+    private init(mailFont: MailTextStyle, weight: Font.Weight) {
+        self.init(font: mailFont.font.weight(weight), color: mailFont.color)
     }
+}
 
-    public init(font: Font, color: KeyPath<AccentColor, MailResourcesColors>) {
-        self.init(font: font, colorType: .accentColor(color))
-    }
+public extension MailTextStyle {
+    // MARK: Header
 
-    public static let header1 = MailTextStyle(
-        font: .system(size: 22, weight: .semibold),
-        color: MailResourcesAsset.textPrimaryColor
+    static let header1 = MailTextStyle(
+        font: .system(size: UIFontMetrics.default.scaledValue(for: 22)).weight(.semibold),
+        color: MailResourcesAsset.textPrimaryColor.swiftUIColor
     )
 
-    public static let header2 = MailTextStyle(
-        font: .system(size: 18, weight: .semibold),
-        color: MailResourcesAsset.textPrimaryColor
+    static let header2 = MailTextStyle(
+        font: .system(size: UIFontMetrics.default.scaledValue(for: 18)).weight(.semibold),
+        color: MailResourcesAsset.textPrimaryColor.swiftUIColor
     )
 
-    public static let header2Error = MailTextStyle(
-        font: .system(size: 18, weight: .semibold),
-        color: MailResourcesAsset.redColor
+    static let header2Error = MailTextStyle(
+        mailFont: .header2,
+        color: MailResourcesAsset.redColor.swiftUIColor
     )
 
-    public static let bodyMedium = MailTextStyle(
-        font: .system(size: 16, weight: .medium),
-        color: MailResourcesAsset.textPrimaryColor
+    // MARK: Body
+
+    static let body = MailTextStyle(
+        font: .system(size: UIFontMetrics.default.scaledValue(for: 16)),
+        color: MailResourcesAsset.textPrimaryColor.swiftUIColor
     )
 
-    public static let bodyMediumTertiary = MailTextStyle(
-        font: .system(size: 16, weight: .medium),
-        color: MailResourcesAsset.textTertiaryColor
+    static let bodyMedium = MailTextStyle(
+        mailFont: .body,
+        weight: .medium
     )
 
-    public static let bodyMediumAccent = MailTextStyle(
-        font: .system(size: 16, weight: .medium),
+    static let bodyMediumTertiary = MailTextStyle(
+        mailFont: .bodyMedium,
+        color: MailResourcesAsset.textTertiaryColor.swiftUIColor
+    )
+
+    static let bodyMediumAccent = MailTextStyle(
+        mailFont: .bodyMedium,
         color: .accentColor
     )
 
-    public static let bodyMediumOnAccent = MailTextStyle(
-        font: .system(size: 16, weight: .medium),
+    static let bodyMediumOnAccent = MailTextStyle(
+        mailFont: .bodyMedium,
         color: UserDefaults.shared.accentColor.onAccent.swiftUIColor
     )
 
-    public static let bodyMediumOnAI = MailTextStyle(
-        font: .system(size: 16, weight: .medium),
-        color: MailResourcesAsset.onAIColor
+    static let bodyMediumOnAI = MailTextStyle(
+        mailFont: .bodyMedium,
+        color: MailResourcesAsset.onAIColor.swiftUIColor
     )
 
-    public static let bodyMediumOnDisabled = MailTextStyle(
-        font: .system(size: 16, weight: .medium),
-        color: MailResourcesAsset.backgroundSecondaryColor
+    static let bodyMediumOnDisabled = MailTextStyle(
+        mailFont: .bodyMedium,
+        color: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor
     )
 
-    public static let bodyMediumError = MailTextStyle(
-        font: .system(size: 16, weight: .medium),
-        color: MailResourcesAsset.redColor
+    static let bodyMediumError = MailTextStyle(
+        mailFont: .bodyMedium,
+        color: MailResourcesAsset.redColor.swiftUIColor
     )
 
-    public static let body = MailTextStyle(
-        font: .system(size: 16),
-        color: MailResourcesAsset.textPrimaryColor
-    )
-
-    public static let bodyAccent = MailTextStyle(
-        font: .system(size: 16),
+    static let bodyAccent = MailTextStyle(
+        mailFont: .body,
         color: .accentColor
     )
 
-    public static let bodyAccentSecondary = MailTextStyle(
-        font: .system(size: 16),
-        color: UserDefaults.shared.accentColor.secondary
+    static let bodyAccentSecondary = MailTextStyle(
+        mailFont: .body,
+        color: UserDefaults.shared.accentColor.secondary.swiftUIColor
     )
 
-    public static let bodySecondary = MailTextStyle(
-        font: .system(size: 16),
-        color: MailResourcesAsset.textSecondaryColor
+    static let bodySecondary = MailTextStyle(
+        mailFont: .body,
+        color: MailResourcesAsset.textSecondaryColor.swiftUIColor
     )
 
-    public static let bodyError = MailTextStyle(
-        font: .system(size: 16),
-        color: MailResourcesAsset.redColor
+    static let bodyError = MailTextStyle(
+        mailFont: .body,
+        color: MailResourcesAsset.redColor.swiftUIColor
     )
 
-    public static let bodySmallMedium = MailTextStyle(
-        font: .system(size: 14, weight: .medium),
-        color: MailResourcesAsset.textPrimaryColor
+    // MARK: BodySmall
+
+    static let bodySmall = MailTextStyle(
+        font: .system(size: UIFontMetrics.default.scaledValue(for: 14)),
+        color: MailResourcesAsset.textPrimaryColor.swiftUIColor
     )
 
-    public static let bodySmallMediumAccent = MailTextStyle(
-        font: .system(size: 14, weight: .medium),
+    static let bodySmallMedium = MailTextStyle(
+        mailFont: .bodySmall,
+        weight: .medium
+    )
+
+    static let bodySmallMediumAccent = MailTextStyle(
+        mailFont: .bodySmallMedium,
         color: .accentColor
     )
 
-    public static let bodySmallMediumOnAccent = MailTextStyle(
-        font: .system(size: 14, weight: .medium),
+    static let bodySmallMediumOnAccent = MailTextStyle(
+        mailFont: .bodySmallMedium,
         color: UserDefaults.shared.accentColor.onAccent.swiftUIColor
     )
 
-    public static let bodySmall = MailTextStyle(
-        font: .system(size: 14),
-        color: MailResourcesAsset.textPrimaryColor
-    )
-
-    public static let bodySmallAccent = MailTextStyle(
-        font: .system(size: 14),
+    static let bodySmallAccent = MailTextStyle(
+        mailFont: .bodySmall,
         color: .accentColor
     )
 
-    public static let bodySmallSecondary = MailTextStyle(
-        font: .system(size: 14),
-        color: MailResourcesAsset.textSecondaryColor
+    static let bodySmallSecondary = MailTextStyle(
+        mailFont: .bodySmall,
+        color: MailResourcesAsset.textSecondaryColor.swiftUIColor
     )
 
-    public static let bodySmallItalicSecondary = MailTextStyle(
-        font: .system(size: 14).italic(),
-        color: MailResourcesAsset.textSecondaryColor
+    static let bodySmallItalicSecondary = MailTextStyle(
+        font: .system(size: UIFontMetrics.default.scaledValue(for: 14)).italic(),
+        color: MailResourcesAsset.textSecondaryColor.swiftUIColor
     )
 
-    public static let bodySmallTertiary = MailTextStyle(
-        font: .system(size: 14),
-        color: MailResourcesAsset.textTertiaryColor
+    static let bodySmallTertiary = MailTextStyle(
+        mailFont: .bodySmall,
+        color: MailResourcesAsset.textTertiaryColor.swiftUIColor
     )
 
-    public static let bodySmallWarning = MailTextStyle(
-        font: .system(size: 14),
-        color: MailResourcesAsset.orangeColor
+    static let bodySmallWarning = MailTextStyle(
+        mailFont: .bodySmall,
+        color: MailResourcesAsset.orangeColor.swiftUIColor
     )
 
-    public static let labelMediumAccent = MailTextStyle(
-        font: .system(size: 12, weight: .medium),
+    // MARK: Label
+
+    static let label = MailTextStyle(
+        font: .system(size: UIFontMetrics.default.scaledValue(for: 12)),
+        color: MailResourcesAsset.textPrimaryColor.swiftUIColor
+    )
+
+    static let labelMediumAccent = MailTextStyle(
+        mailFont: .labelMedium,
         color: .accentColor
     )
 
-    public static let labelMedium = MailTextStyle(
-        font: .system(size: 12, weight: .medium),
-        color: MailResourcesAsset.textPrimaryColor
+    static let labelMedium = MailTextStyle(
+        mailFont: .label,
+        weight: .medium
     )
 
-    public static let labelSecondary = MailTextStyle(
-        font: .system(size: 12),
-        color: MailResourcesAsset.textSecondaryColor
+    static let labelSecondary = MailTextStyle(
+        mailFont: .label,
+        color: MailResourcesAsset.textSecondaryColor.swiftUIColor
     )
 
-    public static let labelError = MailTextStyle(
-        font: .system(size: 12),
-        color: MailResourcesAsset.redColor
+    static let labelError = MailTextStyle(
+        mailFont: .label,
+        color: MailResourcesAsset.redColor.swiftUIColor
     )
 }
