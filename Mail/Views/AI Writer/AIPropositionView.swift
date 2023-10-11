@@ -44,7 +44,9 @@ struct AIPropositionView: View {
             ScrollView {
                 Group {
                     if let error = aiModel.error {
-                        Text(error)
+                        Text(error == .unknownError
+                            ? MailResourcesStrings.Localizable.aiErrorUnknown
+                            : error.localizedDescription)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     } else {
                         SelectableTextView(
@@ -90,7 +92,7 @@ struct AIPropositionView: View {
 
                         if aiModel.isLoading {
                             AIProgressView()
-                        } else if aiModel.error != nil {
+                        } else if let error = aiModel.error as? MailApiError, error == .apiAIMaxSyntaxTokensReached {
                             MailButton(label: MailResourcesStrings.Localizable.aiButtonRetry) {
                                 matomo.track(eventWithCategory: .aiWriter, name: "retry")
                                 willShowAIPrompt = true
@@ -105,6 +107,7 @@ struct AIPropositionView: View {
                                 }
                                 insertResult(shouldReplaceContent: shouldReplaceContent)
                             }
+                            .disabled(aiModel.error != nil)
                         }
                     }
                     .padding(.bottom, value: .verySmall)

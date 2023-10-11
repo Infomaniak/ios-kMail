@@ -32,7 +32,7 @@ final class AIModel: ObservableObject {
     @Published var conversation = [AIMessage]()
     @Published var isLoading = false
     @Published var contextId: String?
-    @Published var error: String?
+    @Published var error: MailError?
 
     @Published var isShowingPrompt = false
     @Published var isShowingProposition = false
@@ -116,9 +116,9 @@ final class AIModel: ObservableObject {
 
         if let mailApiError = error as? MailApiError,
            mailApiError == .apiAIMaxSyntaxTokensReached || mailApiError == .apiAITooManyRequests {
-            self.error = mailApiError.localizedDescription
+            self.error = mailApiError
         } else {
-            self.error = MailResourcesStrings.Localizable.aiErrorUnknown
+            self.error = .unknownError
         }
     }
 }
