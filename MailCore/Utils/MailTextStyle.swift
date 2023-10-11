@@ -34,7 +34,7 @@ public struct MailTextStyle {
         self.color = color
     }
 
-    private init(font: MailTextStyle, weight: Font.Weight) {
+    private init(mailFont: MailTextStyle, weight: Font.Weight) {
         self.font = font.font.weight(weight)
         color = font.color
     }
