@@ -21,7 +21,7 @@ import MailResources
 import SwiftUI
 
 public struct MailTextStyle {
-    public var font: Font
+    public let font: Font
     public var color: Color
 
     private init(font: Font, color: Color) {
