@@ -26,11 +26,14 @@ struct AskForReviewView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Vous aimez l'app ?")
+            Text(MailResourcesStrings.Localizable.reviewAlertTitle)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, UIPadding.alertTitleBottom)
 
-            ModalButtonsView(primaryButtonTitle: "Oui", secondaryButtonTitle: "Non") {
+            ModalButtonsView(
+                primaryButtonTitle: MailResourcesStrings.Localizable.buttonReviewAlertYes,
+                secondaryButtonTitle: MailResourcesStrings.Localizable.buttonReviewAlertNo
+            ) {
                 UserDefaults.shared.appReview = .readyForReview
                 reviewManager.requestReview()
             } secondaryButtonAction: {
