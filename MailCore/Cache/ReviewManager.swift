@@ -27,7 +27,7 @@ public enum ReviewType: String {
 }
 
 public class ReviewManager: ObservableObject {
-    public init() {}
+    public init() { /* Empty on purpose */ }
 
     public func shouldRequestReview() -> Bool {
         switch UserDefaults.shared.appReview {
