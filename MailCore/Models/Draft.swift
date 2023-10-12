@@ -345,8 +345,7 @@ public extension Draft {
             return !document.hasText()
         }
 
-        // We check if the signature was changed. If it was edited, we do want to save the draft.
-        // User could have taped inside the signature div and started a Dostoevsky class novel.
+        // We check if the signature was changed, the user might also have written within the signature div without knowing.
         let signatureNodeText: String? = try? signatureNode.text()
         guard let rawSignature,
               let signatureNodeText,
