@@ -228,6 +228,8 @@ class MailEditorView: SQTextEditorView {
         _webView.navigationDelegate = self
         _webView.allowsLinkPreview = false
         _webView.addInputAccessoryView(toolbar: self.toolbar)
+        _webView.isOpaque = false
+        _webView.backgroundColor = .clear
         self.updateToolbarItems(style: .main)
         _webView.scrollView.keyboardDismissMode = .interactive
         return _webView
