@@ -124,6 +124,16 @@ struct FolderCell: View {
     }
 }
 
+extension FolderCellContent: Equatable {
+    static func == (lhs: FolderCellContent, rhs: FolderCellContent) -> Bool {
+        return lhs.isCurrentFolder == rhs.isCurrentFolder
+            && lhs.folder.id == rhs.folder.id
+            && lhs.folder.name == rhs.folder.name
+            && lhs.folder.unreadCount == rhs.folder.unreadCount
+            && lhs.level == rhs.level
+    }
+}
+
 struct FolderCellContent: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
