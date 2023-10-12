@@ -65,7 +65,8 @@ struct SyncInstallProfileTutorialView: View {
                                 Text(stepMarkdown)
                             }
                             if index == 0 {
-                                TipView(
+                                InformationBlockView(
+                                    icon: MailResourcesAsset.lightBulbShine.swiftUIImage,
                                     message: MailResourcesStrings.Localizable.syncTutorialInstallProfileTip
                                 )
                             }

@@ -20,24 +20,32 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct TipView: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
+struct InformationBlockView: View {
+    let icon: Image
     let message: String
+    var dismissHandler: (() -> Void)?
+
     var body: some View {
-        HStack(alignment: .top) {
-            MailResourcesAsset.lightBulbShine.swiftUIImage
-                .foregroundColor(accentColor.primary)
+        HStack(alignment: .top, spacing: UIPadding.small) {
+            icon
+                .resizable()
+                .scaledToFit()
+                .frame(width: 16, height: 16)
+                .foregroundStyle(.tint)
 
             Text(message)
                 .textStyle(.body)
+
+            if let dismissHandler {
+                CloseButton(size: .medium, dismissHandler: dismissHandler)
+            }
         }
         .padding(value: .regular)
         .background(MailResourcesAsset.textFieldColor.swiftUIColor)
-        .cornerRadius(8)
+        .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
 
 #Preview {
-    TipView(message: "Hello, World!")
+    InformationBlockView(icon: MailResourcesAsset.lightBulbShine.swiftUIImage, message: "Tip")
 }
