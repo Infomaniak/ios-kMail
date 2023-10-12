@@ -168,9 +168,9 @@ struct ThreadCell: View {
                 )
 
                 HStack(alignment: .top, spacing: UIPadding.verySmall) {
-                    ThreadCellInfoView(dataHolder: dataHolder, density: density)
+                    ThreadCellInfoView(subject: dataHolder.subject, preview: dataHolder.preview, density: density)
                     Spacer()
-                    ThreadCellDetailsView(thread: thread)
+                    ThreadCellDetailsView(hasAttachments: thread.hasAttachments, isFlagged: thread.flagged)
                 }
             }
             .animation(

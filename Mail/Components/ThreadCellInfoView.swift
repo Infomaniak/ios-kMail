@@ -20,16 +20,17 @@ import MailCore
 import SwiftUI
 
 struct ThreadCellInfoView: View {
-    let dataHolder: ThreadCellDataHolder
+    let subject: String
+    let preview: String
     let density: ThreadDensity
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.verySmall) {
-            Text(dataHolder.subject)
+            Text(subject)
                 .textStyle(.body)
                 .lineLimit(1)
 
             if density != .compact {
-                Text(dataHolder.preview)
+                Text(preview)
                     .textStyle(.bodySmallSecondary)
                     .lineLimit(1)
             }

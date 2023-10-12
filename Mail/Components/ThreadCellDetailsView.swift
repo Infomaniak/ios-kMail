@@ -21,17 +21,19 @@ import MailResources
 import SwiftUI
 
 struct ThreadCellDetailsView: View {
-    let thread: Thread
+    let hasAttachments: Bool
+    let isFlagged: Bool
+
     var body: some View {
         HStack(spacing: UIPadding.small) {
-            if thread.hasAttachments {
+            if hasAttachments {
                 MailResourcesAsset.attachment.swiftUIImage
                     .resizable()
                     .foregroundColor(MailResourcesAsset.textPrimaryColor)
                     .scaledToFit()
                     .frame(height: 16)
             }
-            if thread.flagged {
+            if isFlagged {
                 MailResourcesAsset.starFull.swiftUIImage
                     .resizable()
                     .foregroundColor(MailResourcesAsset.yellowColor)
