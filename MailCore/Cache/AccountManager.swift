@@ -269,6 +269,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             await notificationService.updateTopicsIfNeeded([mainMailbox.notificationTopicName], userApiFetcher: apiFetcher)
             setCurrentMailboxForCurrentAccount(mailbox: mainMailbox)
         }
+
         saveAccounts()
 
         Task {
@@ -382,14 +383,15 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     public func switchMailbox(newMailbox: Mailbox) {
-        setCurrentMailboxForCurrentAccount(mailbox: newMailbox)
-        saveAccounts()
+        Task {
+            setCurrentMailboxForCurrentAccount(mailbox: newMailbox, refresh: false)
+            saveAccounts()
 
-        guard let mailboxManager = getMailboxManager(for: newMailbox),
-              mailboxManager.getFolder(with: .inbox)?.cursor == nil
-        else { return }
+            guard let mailboxManager = getMailboxManager(for: newMailbox),
+                  mailboxManager.getFolder(with: .inbox)?.cursor == nil
+            else { return }
 
-        Task { [notificationTopicName = newMailbox.notificationTopicName] in
+            let notificationTopicName = newMailbox.notificationTopicName
             let currentSubscription = await notificationService.subscriptionForUser(id: currentUserId)
             guard let currentTopics = currentSubscription?.topics,
                   !currentTopics.contains(notificationTopicName)
@@ -447,9 +449,11 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         SentrySDK.setUser(user)
     }
 
-    public func setCurrentMailboxForCurrentAccount(mailbox: Mailbox) {
+    public func setCurrentMailboxForCurrentAccount(mailbox: Mailbox, refresh: Bool = true) {
         currentMailboxId = mailbox.mailboxId
-        _ = getMailboxManager(for: mailbox)
+        if refresh {
+            _ = getMailboxManager(for: mailbox)
+        }
     }
 
     public func addAccount(account: Account, token: ApiToken) {
