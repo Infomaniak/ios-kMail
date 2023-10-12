@@ -63,6 +63,8 @@ final class NewMessageAlert: SheetState<NewMessageAlert.State> {
 struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dismissModal) var dismissModal
+    @EnvironmentObject private var splitViewManager: SplitViewManager
+    @EnvironmentObject private var reviewManager: ReviewManager
 
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var draftManager: DraftManager
@@ -166,6 +168,7 @@ struct ComposeMessageView: View {
         }
         .onDisappear {
             draftManager.syncDraft(mailboxManager: mailboxManager)
+            splitViewManager.showReviewAlert = reviewManager.shouldRequestReview()
         }
         .interactiveDismissDisabled()
         .customAlert(isPresented: $alert.isShowing) {
