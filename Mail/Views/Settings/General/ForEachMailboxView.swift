@@ -43,8 +43,10 @@ struct ForEachMailboxView<Content: View>: View {
     }
 
     var body: some View {
-        ForEach(sortedMailboxes) { mailbox in
-            content(mailbox)
+        LazyVStack {
+            ForEach(sortedMailboxes) { mailbox in
+                content(mailbox)
+            }
         }
     }
 }
