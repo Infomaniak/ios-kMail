@@ -20,7 +20,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct ThreadCellHeaderView: View {
+struct ThreadCellHeaderView: View, Equatable {
     let recipientsTitle: String
     let messageCount: Int
     let prominentMessageCount: Bool

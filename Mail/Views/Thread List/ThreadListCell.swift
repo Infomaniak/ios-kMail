@@ -23,6 +23,15 @@ import MailCore
 import MailResources
 import SwiftUI
 
+extension ThreadListCell: Equatable {
+    static func == (lhs: ThreadListCell, rhs: ThreadListCell) -> Bool {
+        return lhs.thread.id == rhs.thread.id
+            && lhs.thread.messageIds == rhs.thread.messageIds
+            && lhs.isSelected == rhs.isSelected
+            && lhs.isMultiSelected == rhs.isMultiSelected
+    }
+}
+
 struct ThreadListCell: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationState: NavigationState

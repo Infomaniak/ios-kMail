@@ -19,10 +19,11 @@
 import MailCore
 import SwiftUI
 
-struct ThreadCellInfoView: View {
+struct ThreadCellInfoView: View, Equatable {
     let subject: String
     let preview: String
     let density: ThreadDensity
+
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.verySmall) {
             Text(subject)
