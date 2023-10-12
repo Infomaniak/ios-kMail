@@ -181,6 +181,7 @@ public class DraftContentManager: ObservableObject {
             if liveIncompleteDraft.identityId == nil || liveIncompleteDraft.identityId?.isEmpty == true {
                 liveIncompleteDraft.identityId = "\(signature.id)"
                 if shouldAddSignatureText {
+                    liveIncompleteDraft.rawSignature = signature.content
                     liveIncompleteDraft.body = signature.appendSignature(to: completeBody)
                 }
             } else {
