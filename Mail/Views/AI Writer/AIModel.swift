@@ -27,6 +27,10 @@ final class AIModel: ObservableObject {
         case prompt, proposition
     }
 
+    enum ToolbarStyle {
+        case loading, success, errorWithAnswers, errorWithoutAnswers
+    }
+
     private static let displayableErrors: [MailApiError] = [.apiAIMaxSyntaxTokensReached, .apiAITooManyRequests]
 
     private let mailboxManager: MailboxManager
@@ -38,6 +42,31 @@ final class AIModel: ObservableObject {
 
     @Published var isShowingPrompt = false
     @Published var isShowingProposition = false
+
+    var lastMessage: String {
+        return conversation.last?.content ?? ""
+    }
+
+    var hasProposedAnswers: Bool {
+        return conversation.count > 1
+    }
+
+    var currentStyle: SelectableTextView.Style {
+        if isLoading || (error != nil && !hasProposedAnswers) {
+            return .loading
+        }
+        return .standard
+    }
+
+    var toolbarStyle: ToolbarStyle {
+        if isLoading {
+            return .loading
+        }
+        if error != nil {
+            return hasProposedAnswers ? .errorWithAnswers : .errorWithoutAnswers
+        }
+        return .success
+    }
 
     init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
