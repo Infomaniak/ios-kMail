@@ -39,26 +39,32 @@ struct AIPropositionView: View {
 
     @ObservedRealmObject var draft: Draft
 
+    @Namespace private var errorID
+
     var body: some View {
         NavigationView {
-            ScrollView {
-                Group {
-                    if let error = aiModel.error {
-                        Text(error == .unknownError
-                            ? MailResourcesStrings.Localizable.aiErrorUnknown
-                            : error.localizedDescription)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    } else {
+            ScrollViewReader { proxy in
+                ScrollView {
+                    Group {
+                        AIDismissibleErrorView(error: aiModel.error)
+                            .id(errorID)
+
                         SelectableTextView(
                             textPlainHeight: $textPlainHeight,
-                            text: aiModel.conversation.last?.content ?? "",
-                            style: aiModel.isLoading ? .loading : .standard
+                            text: aiModel.lastMessage,
+                            style: aiModel.currentStyle
                         )
                         .frame(height: textPlainHeight)
                         .tint(MailResourcesAsset.aiColor.swiftUIColor)
                     }
+                    .padding(.horizontal, value: .regular)
                 }
-                .padding(.horizontal, value: .regular)
+                .onChange(of: aiModel.error) { error in
+                    guard error != nil else { return }
+                    withAnimation {
+                        proxy.scrollTo(errorID)
+                    }
+                }
             }
             .task {
                 await aiModel.createConversation()
@@ -84,21 +90,16 @@ struct AIPropositionView: View {
 
                 ToolbarItemGroup(placement: .bottomBar) {
                     Group {
-                        if !aiModel.isLoading && aiModel.error == nil {
+                        if aiModel.toolbarStyle == .success || aiModel.toolbarStyle == .errorWithAnswers {
                             AIPropositionMenu(aiModel: aiModel)
                         }
 
                         Spacer()
 
-                        if aiModel.isLoading {
+                        switch aiModel.toolbarStyle {
+                        case .loading:
                             AIProgressView()
-                        } else if let error = aiModel.error as? MailApiError, error == .apiAIMaxSyntaxTokensReached {
-                            MailButton(label: MailResourcesStrings.Localizable.aiButtonRetry) {
-                                matomo.track(eventWithCategory: .aiWriter, name: "retry")
-                                willShowAIPrompt = true
-                                dismiss()
-                            }
-                        } else {
+                        case .success, .errorWithAnswers:
                             MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
                                 let shouldReplaceContent = !draft.isBodyEmpty
                                 guard !shouldReplaceContent || UserDefaults.shared.doNotShowAIReplaceMessageAgain else {
@@ -107,7 +108,12 @@ struct AIPropositionView: View {
                                 }
                                 insertResult(shouldReplaceContent: shouldReplaceContent)
                             }
-                            .disabled(aiModel.error != nil)
+                        case .errorWithoutAnswers:
+                            MailButton(label: MailResourcesStrings.Localizable.aiButtonRetry) {
+                                matomo.track(eventWithCategory: .aiWriter, name: "retry")
+                                willShowAIPrompt = true
+                                dismiss()
+                            }
                         }
                     }
                     .padding(.bottom, value: .verySmall)

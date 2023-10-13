@@ -33,6 +33,13 @@ struct AIPropositionMenu: View {
 
     @ObservedObject var aiModel: AIModel
 
+    private var buttonShouldBeDisabled: Bool {
+        if let error = aiModel.error, (error as? MailApiError) != .apiAIMaxSyntaxTokensReached {
+            return true
+        }
+        return false
+    }
+
     var body: some View {
         Menu {
             ForEach(Self.allShortcuts.indices, id: \.self) { actionsGroupIndex in
@@ -47,6 +54,7 @@ struct AIPropositionMenu: View {
                         } label: {
                             Label(action.label, image: action.icon.name)
                         }
+                        .disabled(aiModel.error != nil && action != .regenerate)
                     }
                 }
             }
@@ -64,6 +72,7 @@ struct AIPropositionMenu: View {
         })
         .tint(MailResourcesAsset.textSecondaryColor.swiftUIColor)
         .modifier(FixedMenuOrderModifier())
+        .disabled(buttonShouldBeDisabled)
     }
 }
 
