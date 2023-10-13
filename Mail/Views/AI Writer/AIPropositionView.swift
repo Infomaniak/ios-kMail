@@ -33,7 +33,6 @@ struct AIPropositionView: View {
 
     @State private var textPlainHeight = CGFloat.zero
     @State private var isShowingReplaceContentAlert = false
-    @State private var isShowingError = false
     @State private var willShowAIPrompt = false
 
     @ObservedObject var aiModel: AIModel
@@ -45,18 +44,7 @@ struct AIPropositionView: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     Group {
-                        if isShowingError, let error = aiModel.error {
-                            InformationBlockView(
-                                icon: MailResourcesAsset.warning.swiftUIImage,
-                                message: error == .unknownError ? MailResourcesStrings.Localizable.aiErrorUnknown : error
-                                    .localizedDescription
-                            ) {
-                                withAnimation {
-                                    isShowingError = false
-                                }
-                            }
-                            .tint(MailResourcesAsset.orangeColor.swiftUIColor)
-                        }
+                        AIDismissibleErrorView(error: aiModel.error)
 
                         SelectableTextView(
                             textPlainHeight: $textPlainHeight,
@@ -79,7 +67,7 @@ struct AIPropositionView: View {
             }
             .onChange(of: aiModel.error) { error in
                 withAnimation {
-                    isShowingError = error != nil
+                    // TODO: Scroll at the correct location
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
