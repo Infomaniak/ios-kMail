@@ -81,13 +81,11 @@ struct UserFoldersListView: View {
                         .textStyle(.bodySmallSecondary)
                         .padding(value: .regular)
                 } else {
-                    LazyVStack {
-                        ForEach(folders) { folder in
-                            FolderCell(folder: folder,
-                                       currentFolderId: splitViewManager.selectedFolder?.id,
-                                       canCollapseSubFolders: hasSubFolders,
-                                       matomoCategory: .menuDrawer)
-                        }
+                    ForEach(folders) { folder in
+                        FolderCell(folder: folder,
+                                   currentFolderId: splitViewManager.selectedFolder?.id,
+                                   canCollapseSubFolders: hasSubFolders,
+                                   matomoCategory: .menuDrawer)
                     }
                 }
             }
