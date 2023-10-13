@@ -60,6 +60,7 @@ struct ContactActionView: View {
     }
 
     private func writeEmail() {
+        dismiss()
         navigationState.editedDraft = EditedDraft.writing(to: recipient)
     }
 
