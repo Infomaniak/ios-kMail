@@ -62,18 +62,12 @@ struct FolderCell: View {
         Group {
             if cellType == .move || isCompactWindow {
                 Button(action: didTapButton) {
-                    FolderCellContent(folderPrimaryKey: folder.content.id,
-                                      name: folder.content.name,
-                                      localizedName: folder.content.localizedName,
-                                      isExpanded: folder.content.isExpanded,
-                                      isChildrenEmpty: folder.content.children.isEmpty,
-                                      formattedUnreadCount: folder.content.formattedUnreadCount,
-                                      remoteUnreadCount: folder.content.remoteUnreadCount,
-                                      icon: folder.content.icon,
-                                      role: folder.content.role,
-                                      level: level,
-                                      isCurrentFolder: isCurrentFolder,
-                                      canCollapseSubFolders: canCollapseSubFolders)
+                    FolderCellContent(
+                        folder: folder.content,
+                        level: level,
+                        isCurrentFolder: isCurrentFolder,
+                        canCollapseSubFolders: canCollapseSubFolders
+                    )
                 }
             } else {
                 NavigationLink(isActive: $shouldTransit) {
@@ -88,18 +82,12 @@ struct FolderCell: View {
                         splitViewManager.showSearch = false
                         shouldTransit = true
                     } label: {
-                        FolderCellContent(folderPrimaryKey: folder.content.id,
-                                          name: folder.content.name,
-                                          localizedName: folder.content.localizedName,
-                                          isExpanded: folder.content.isExpanded,
-                                          isChildrenEmpty: folder.content.children.isEmpty,
-                                          formattedUnreadCount: folder.content.formattedUnreadCount,
-                                          remoteUnreadCount: folder.content.remoteUnreadCount,
-                                          icon: folder.content.icon,
-                                          role: folder.content.role,
-                                          level: level,
-                                          isCurrentFolder: isCurrentFolder,
-                                          canCollapseSubFolders: canCollapseSubFolders)
+                        FolderCellContent(
+                            folder: folder.content,
+                            level: level,
+                            isCurrentFolder: isCurrentFolder,
+                            canCollapseSubFolders: canCollapseSubFolders
+                        )
                     }
                 }
             }
@@ -133,6 +121,98 @@ struct FolderCell: View {
         }
         splitViewManager.selectedFolder = folder.content
         navigationDrawerState.close()
+    }
+}
+
+struct FolderCellContent: View {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
+    @Environment(\.folderCellType) var cellType
+
+    private let folder: Folder
+    private let level: Int
+    private let isCurrentFolder: Bool
+    private let canCollapseSubFolders: Bool
+
+    init(folder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false) {
+        self.folder = folder
+        self.level = min(level, UIConstants.menuDrawerMaximumSubFolderLevel)
+        self.isCurrentFolder = isCurrentFolder
+        self.canCollapseSubFolders = canCollapseSubFolders
+    }
+
+    private var textStyle: MailTextStyle {
+        if cellType == .menuDrawer {
+            return isCurrentFolder ? .bodyMediumAccent : .bodyMedium
+        }
+        return .body
+    }
+
+    var body: some View {
+        HStack(spacing: UIPadding.menuDrawerCellChevronSpacing) {
+            if canCollapseSubFolders && cellType == .menuDrawer {
+                Button(action: collapseFolder) {
+                    ChevronIcon(style: folder.isExpanded ? .up : .down)
+                }
+                .opacity(level == 0 && !folder.children.isEmpty ? 1 : 0)
+                .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandFolder(folder.name))
+            }
+
+            HStack(spacing: UIPadding.menuDrawerCellSpacing) {
+                folder.icon
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+                    .foregroundColor(.accentColor)
+
+                Text(folder.localizedName)
+                    .textStyle(textStyle)
+                    .lineLimit(1)
+
+                Spacer(minLength: UIPadding.regular)
+
+                accessory
+            }
+        }
+        .padding(.leading, UIPadding.menuDrawerSubFolder * CGFloat(level))
+        .padding(UIPadding.menuDrawerCell)
+        .background(background)
+    }
+
+    @ViewBuilder
+    private var accessory: some View {
+        if cellType == .menuDrawer {
+            if folder.role != .sent && folder.role != .trash {
+                if !folder.formattedUnreadCount.isEmpty {
+                    Text(folder.formattedUnreadCount)
+                        .textStyle(.bodySmallMediumAccent)
+                } else if folder.remoteUnreadCount > 0 {
+                    UnreadIndicatorView()
+                        .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUnreadPastille)
+                }
+            }
+        } else if isCurrentFolder {
+            MailResourcesAsset.check.swiftUIImage
+                .resizable()
+                .frame(width: 16, height: 16)
+        }
+    }
+
+    @ViewBuilder
+    private var background: some View {
+        if cellType == .menuDrawer {
+            SelectionBackground(selectionType: isCurrentFolder ? .folder : .none, paddingLeading: 0, accentColor: accentColor)
+        }
+    }
+
+    private func collapseFolder() {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .menuDrawer, name: "collapseFolder", value: !folder.isExpanded)
+
+        guard let liveFolder = folder.thaw() else { return }
+        try? liveFolder.realm?.write {
+            liveFolder.isExpanded = !folder.isExpanded
+        }
     }
 }
 
