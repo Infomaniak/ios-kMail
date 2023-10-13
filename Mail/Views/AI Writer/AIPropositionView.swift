@@ -33,6 +33,7 @@ struct AIPropositionView: View {
 
     @State private var textPlainHeight = CGFloat.zero
     @State private var isShowingReplaceContentAlert = false
+    @State private var isShowingError = false
     @State private var willShowAIPrompt = false
 
     @ObservedObject var aiModel: AIModel
@@ -41,28 +42,32 @@ struct AIPropositionView: View {
 
     var body: some View {
         NavigationView {
-            ScrollView {
-                Group {
-                    if let error = aiModel.error {
-                        InformationBlockView(
-                            icon: MailResourcesAsset.warning.swiftUIImage,
-                            message: error == .unknownError ? MailResourcesStrings.Localizable.aiErrorUnknown : error
-                                .localizedDescription
-                        ) {
-                            // TODO: Dismiss error
+            ScrollViewReader { proxy in
+                ScrollView {
+                    Group {
+                        if isShowingError, let error = aiModel.error {
+                            InformationBlockView(
+                                icon: MailResourcesAsset.warning.swiftUIImage,
+                                message: error == .unknownError ? MailResourcesStrings.Localizable.aiErrorUnknown : error
+                                    .localizedDescription
+                            ) {
+                                withAnimation {
+                                    isShowingError = false
+                                }
+                            }
+                            .tint(MailResourcesAsset.orangeColor.swiftUIColor)
                         }
-                        .tint(MailResourcesAsset.orangeColor.swiftUIColor)
-                    }
 
-                    SelectableTextView(
-                        textPlainHeight: $textPlainHeight,
-                        text: aiModel.conversation.last?.content ?? "",
-                        style: aiModel.isLoading || aiModel.error != nil ? .loading : .standard
-                    )
-                    .frame(height: textPlainHeight)
-                    .tint(MailResourcesAsset.aiColor.swiftUIColor)
+                        SelectableTextView(
+                            textPlainHeight: $textPlainHeight,
+                            text: aiModel.conversation.last?.content ?? "",
+                            style: aiModel.isLoading || aiModel.error != nil ? .loading : .standard
+                        )
+                        .frame(height: textPlainHeight)
+                        .tint(MailResourcesAsset.aiColor.swiftUIColor)
+                    }
+                    .padding(.horizontal, value: .regular)
                 }
-                .padding(.horizontal, value: .regular)
             }
             .task {
                 await aiModel.createConversation()
@@ -70,6 +75,11 @@ struct AIPropositionView: View {
             .onDisappear {
                 if willShowAIPrompt {
                     aiModel.isShowingPrompt = true
+                }
+            }
+            .onChange(of: aiModel.error) { error in
+                withAnimation {
+                    isShowingError = error != nil
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
