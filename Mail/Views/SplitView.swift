@@ -62,9 +62,8 @@ struct SplitView: View {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     let mailboxManager: MailboxManager
-    init(mailboxManager: MailboxManager) {
+    init(mailboxManager: MailboxManager, splitViewManager: SplitViewManager) {
         self.mailboxManager = mailboxManager
-        let splitViewManager = SplitViewManager()
         splitViewManager.selectedFolder = mailboxManager.getFolder(with: .inbox)
         _splitViewManager = StateObject(wrappedValue: splitViewManager)
     }

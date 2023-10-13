@@ -25,13 +25,15 @@ struct RootView: View {
 
     @EnvironmentObject private var navigationState: NavigationState
 
+    @State private var splitViewManager = SplitViewManager()
+
     var body: some View {
         ZStack {
             switch navigationState.rootViewState {
             case .appLocked:
                 LockedAppView()
             case .mainView(let currentMailboxManager):
-                SplitView(mailboxManager: currentMailboxManager)
+                SplitView(mailboxManager: currentMailboxManager, splitViewManager: splitViewManager)
             case .onboarding:
                 OnboardingView()
             case .noMailboxes:
