@@ -74,10 +74,9 @@ public extension MailboxManager {
     /// Get the folder with the corresponding role in Realm.
     /// - Parameters:
     ///   - role: Role of the folder.
-    ///   - realm: The Realm instance to use. If this parameter is `nil`, a new one will be created.
     /// - Returns: The folder with the corresponding role, or `nil` if no such folder has been found.
-    func getFolder(with role: FolderRole, using realm: Realm? = nil) -> Folder? {
-        let realm = realm ?? getRealm()
+    func getFolder(with role: FolderRole) -> Folder? {
+        let realm = getRealm() // Always a new realm, so access is from the correct thread
         return realm.objects(Folder.self).where { $0.role == role }.first
     }
 
