@@ -47,6 +47,7 @@ struct EmptyStateView: View {
         .padding(.bottom, withFABPadding ? UIPadding.floatingButtonBottom + 56 : 0)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Empty\(matomoName)View"])
+        .ignoresSafeArea(.keyboard)
     }
 }
 
