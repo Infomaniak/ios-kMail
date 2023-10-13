@@ -39,12 +39,15 @@ struct AIPropositionView: View {
 
     @ObservedRealmObject var draft: Draft
 
+    @Namespace private var errorID
+
     var body: some View {
         NavigationView {
             ScrollViewReader { proxy in
                 ScrollView {
                     Group {
                         AIDismissibleErrorView(error: aiModel.error)
+                            .id(errorID)
 
                         SelectableTextView(
                             textPlainHeight: $textPlainHeight,
@@ -56,6 +59,12 @@ struct AIPropositionView: View {
                     }
                     .padding(.horizontal, value: .regular)
                 }
+                .onChange(of: aiModel.error) { error in
+                    guard error != nil else { return }
+                    withAnimation {
+                        proxy.scrollTo(errorID)
+                    }
+                }
             }
             .task {
                 await aiModel.createConversation()
@@ -63,11 +72,6 @@ struct AIPropositionView: View {
             .onDisappear {
                 if willShowAIPrompt {
                     aiModel.isShowingPrompt = true
-                }
-            }
-            .onChange(of: aiModel.error) { error in
-                withAnimation {
-                    // TODO: Scroll at the correct location
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
