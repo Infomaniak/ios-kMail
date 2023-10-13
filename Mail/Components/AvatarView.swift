@@ -22,7 +22,7 @@ import MailResources
 import NukeUI
 import SwiftUI
 
-struct AvatarView: View {
+struct AvatarView: View, Equatable {
     /// Optional as this view can be displayed from a context without a mailboxManager available
     let mailboxManager: MailboxManager?
 

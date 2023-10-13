@@ -57,6 +57,11 @@ public final class ContactManager: ObservableObject {
 
     let realmConfiguration: Realm.Configuration
     let backgroundRealm: BackgroundRealm
+    public lazy var viewRealm: Realm = {
+        assert(Foundation.Thread.isMainThread, "viewRealm should only be accessed from main thread")
+        return getRealm()
+    }()
+
     let apiFetcher: MailApiFetcher
 
     public init(userId: Int, apiFetcher: MailApiFetcher) {

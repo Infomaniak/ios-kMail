@@ -65,7 +65,8 @@ public struct CommonContact {
                 avatarImageRequest = AvatarImageRequest(imageRequest: nil, shouldAuthenticate: false)
             }
         } else {
-            let contact = contextMailboxManager.contactManager.getContact(for: recipient)
+            let mainViewRealm = contextMailboxManager.contactManager.viewRealm
+            let contact = contextMailboxManager.contactManager.getContact(for: recipient, realm: mainViewRealm)
             fullName = contact?.name ?? (recipient.name.isEmpty ? recipient.email : recipient.name)
             color = contact?.color ?? UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
             avatarImageRequest = AvatarImageRequest(imageRequest: contact?.avatarImageRequest, shouldAuthenticate: true)

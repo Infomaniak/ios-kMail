@@ -80,6 +80,15 @@ struct ThreadCellDataHolder {
     }
 }
 
+extension ThreadCell: Equatable {
+    static func == (lhs: ThreadCell, rhs: ThreadCell) -> Bool {
+        return lhs.thread.id == rhs.thread.id
+            && lhs.thread.messageIds == rhs.thread.messageIds
+            && lhs.isSelected == rhs.isSelected
+            && lhs.isMultipleSelectionEnabled == rhs.isMultipleSelectionEnabled
+    }
+}
+
 struct ThreadCell: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -168,9 +177,9 @@ struct ThreadCell: View {
                 )
 
                 HStack(alignment: .top, spacing: UIPadding.verySmall) {
-                    ThreadCellInfoView(dataHolder: dataHolder, density: density)
+                    ThreadCellInfoView(subject: dataHolder.subject, preview: dataHolder.preview, density: density)
                     Spacer()
-                    ThreadCellDetailsView(thread: thread)
+                    ThreadCellDetailsView(hasAttachments: thread.hasAttachments, isFlagged: thread.flagged)
                 }
             }
             .animation(
