@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: en, English
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Fri, 06 Oct 2023 07:29:20 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Fri, 13 Oct 2023 10:27:14 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1320,13 +1320,13 @@
 "aiReplacementDialogDoNotShowAgain" = "Do not show this again";
 
 /* loco:65129af16ad732b0790e61c2 */
-"aiErrorTooManyRequests" = "It seems you’ve made too many requests in a short amount of time.\n\nPlease wait a few moments.";
+"aiErrorTooManyRequests" = "Too many requests in a short time. Please wait.";
 
 /* loco:65129ba24376b5dd8c04b6a2 */
-"aiErrorMaxTokenReached" = "Your request is too long, please try again in a shorter format.";
+"aiErrorMaxTokenReached" = "Your request is too long, please shorten it.";
 
 /* loco:65129c4db1cb64db900f6a02 */
-"aiErrorUnknown" = "An error has occurred. If this error persists, please contact our helpdesk.\n\nThank you for your patience.";
+"aiErrorUnknown" = "An error has occurred. If this error persists, please contact our helpdesk.\nThank you for your patience.";
 
 /* loco:65129d1caf62abf5d40d9082 */
 "aiButtonRetry" = "Retry";
@@ -1429,3 +1429,15 @@
 
 /* loco:651eca5dc41aeaf052015d62 */
 "buttonSyncCalendarsAndContacts" = "Calendar and contact synchronization";
+
+/* loco:6525654879f83da8670bf0e4 */
+"restoreEmailsNoBackup" = "No backup found";
+
+/* loco:6527b6ed91798bfb5d0960e2 */
+"reviewAlertTitle" = "Do you like Infomaniak Mail?";
+
+/* loco:6527b7c3bffd89453201f9e2 */
+"buttonReviewAlertYes" = "Yes";
+
+/* loco:6527b7d4882400da7d04ffd2 */
+"buttonReviewAlertNo" = "No";

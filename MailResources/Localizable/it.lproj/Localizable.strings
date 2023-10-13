@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: it, Italian
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Fri, 06 Oct 2023 10:05:18 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Fri, 13 Oct 2023 10:27:14 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1320,13 +1320,13 @@
 "aiReplacementDialogDoNotShowAgain" = "Non visualizzare più questo messaggio";
 
 /* loco:65129af16ad732b0790e61c2 */
-"aiErrorTooManyRequests" = "Sembra che abbia fatto troppe richieste in un breve lasso di tempo.\n\nSi prega di attendere qualche istante.";
+"aiErrorTooManyRequests" = "Sono state presentate troppe richieste in un breve lasso di tempo. Attendere prego.";
 
 /* loco:65129ba24376b5dd8c04b6a2 */
-"aiErrorMaxTokenReached" = "La richiesta è troppo lunga. Riprova con un formato più breve.";
+"aiErrorMaxTokenReached" = "La tua richiesta è troppo lunga, ti prego di accorciarla.";
 
 /* loco:65129c4db1cb64db900f6a02 */
-"aiErrorUnknown" = "Si è verificato un errore. Se l’errore persiste, contatta il nostro helpdesk.\n\nGrazie per la vostra pazienza.";
+"aiErrorUnknown" = "Si è verificato un errore. Se l’errore persiste, si prega di contattare il nostro helpdesk.\nGrazie per la pazienza.";
 
 /* loco:65129d1caf62abf5d40d9082 */
 "aiButtonRetry" = "Riprova";
@@ -1429,3 +1429,15 @@
 
 /* loco:651eca5dc41aeaf052015d62 */
 "buttonSyncCalendarsAndContacts" = "Sincronizzazione di calendario e contatti";
+
+/* loco:6525654879f83da8670bf0e4 */
+"restoreEmailsNoBackup" = "Nessun backup trovato";
+
+/* loco:6527b6ed91798bfb5d0960e2 */
+"reviewAlertTitle" = "Ti piace la posta di Infomaniak?";
+
+/* loco:6527b7c3bffd89453201f9e2 */
+"buttonReviewAlertYes" = "Sì";
+
+/* loco:6527b7d4882400da7d04ffd2 */
+"buttonReviewAlertNo" = "No";
