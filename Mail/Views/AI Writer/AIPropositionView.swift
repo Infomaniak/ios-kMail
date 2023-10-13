@@ -44,19 +44,23 @@ struct AIPropositionView: View {
             ScrollView {
                 Group {
                     if let error = aiModel.error {
-                        Text(error == .unknownError
-                            ? MailResourcesStrings.Localizable.aiErrorUnknown
-                            : error.localizedDescription)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    } else {
-                        SelectableTextView(
-                            textPlainHeight: $textPlainHeight,
-                            text: aiModel.conversation.last?.content ?? "",
-                            style: aiModel.isLoading ? .loading : .standard
-                        )
-                        .frame(height: textPlainHeight)
-                        .tint(MailResourcesAsset.aiColor.swiftUIColor)
+                        InformationBlockView(
+                            icon: MailResourcesAsset.warning.swiftUIImage,
+                            message: error == .unknownError ? MailResourcesStrings.Localizable.aiErrorUnknown : error
+                                .localizedDescription
+                        ) {
+                            // TODO: Dismiss error
+                        }
+                        .tint(MailResourcesAsset.orangeColor.swiftUIColor)
                     }
+
+                    SelectableTextView(
+                        textPlainHeight: $textPlainHeight,
+                        text: aiModel.conversation.last?.content ?? "",
+                        style: aiModel.isLoading || aiModel.error != nil ? .loading : .standard
+                    )
+                    .frame(height: textPlainHeight)
+                    .tint(MailResourcesAsset.aiColor.swiftUIColor)
                 }
                 .padding(.horizontal, value: .regular)
             }

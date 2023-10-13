@@ -26,7 +26,7 @@ struct InformationBlockView: View {
     var dismissHandler: (() -> Void)?
 
     var body: some View {
-        HStack(alignment: .top, spacing: UIPadding.small) {
+        HStack(alignment: .top, spacing: UIPadding.intermediate) {
             icon
                 .resizable()
                 .scaledToFit()
@@ -35,9 +35,11 @@ struct InformationBlockView: View {
 
             Text(message)
                 .textStyle(.body)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             if let dismissHandler {
-                CloseButton(size: .medium, dismissHandler: dismissHandler)
+                CloseButton(size: .small, dismissHandler: dismissHandler)
+                    .tint(MailResourcesAsset.textSecondaryColor.swiftUIColor)
             }
         }
         .padding(value: .regular)
