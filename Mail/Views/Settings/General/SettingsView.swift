@@ -24,11 +24,11 @@ import MailResources
 import SwiftUI
 
 struct SettingsView: View {
-    @InjectService private var accountManager: AccountManager
+    @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var appLockHelper: AppLockHelper
 
     @EnvironmentObject private var mailboxManager: MailboxManager
-
-    @LazyInjectService private var appLockHelper: AppLockHelper
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var density = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.theme)) private var theme = DefaultPreferences.theme
@@ -72,6 +72,7 @@ struct SettingsView: View {
                     }
 
                     Button {
+                        matomo.track(eventWithCategory: .syncAutoConfig, name: "openFromSettings")
                         isShowingSyncProfile = true
                     } label: {
                         SettingsSubMenuLabel(title: MailResourcesStrings.Localizable.buttonSyncCalendarsAndContacts)

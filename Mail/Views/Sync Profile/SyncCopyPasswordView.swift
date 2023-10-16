@@ -16,12 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
 struct SyncCopyPasswordView: View {
+    @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -71,6 +73,7 @@ struct SyncCopyPasswordView: View {
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: UIPadding.medium) {
                 MailButton(label: MailResourcesStrings.Localizable.buttonCopyPassword) {
+                    matomo.track(eventWithCategory: .syncAutoConfig, name: "copyPassword")
                     copyPassword()
                 }
                 .mailButtonFullWidth(true)
