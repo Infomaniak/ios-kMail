@@ -28,12 +28,22 @@ struct MenuDrawerItemsAdvancedListView: View {
     @Environment(\.openURL) private var openURL
 
     @State private var isShowingRestoreMails = false
+    @State private var isShowingSyncProfile = false
 
     let mailboxCanRestoreEmails: Bool
 
     var body: some View {
         MenuDrawerItemsListView(title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
                                 matomoName: "advancedActions") {
+            MenuDrawerItemCell(icon: MailResourcesAsset.doubleArrowsSynchronize,
+                               label: MailResourcesStrings.Localizable.buttonSyncCalendarsAndContacts,
+                               matomoName: "syncProfile") {
+                isShowingSyncProfile = true
+            }
+            .sheet(isPresented: $isShowingSyncProfile) {
+                SyncProfileNavigationView()
+            }
+
             MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
                                label: MailResourcesStrings.Localizable.buttonImportEmails,
                                matomoName: "importEmails") {
@@ -61,15 +71,9 @@ struct MenuDrawerItemsHelpListView: View {
 
     @State private var isShowingHelp = false
     @State private var isShowingBugTracker = false
-    @State private var isShowingSyncProfile = false
 
     var body: some View {
         MenuDrawerItemsListView {
-            MenuDrawerItemCell(icon: MailResourcesAsset.doubleArrowsSynchronize,
-                               label: MailResourcesStrings.Localizable.buttonSyncCalendarsAndContacts,
-                               matomoName: "syncProfile") {
-                isShowingSyncProfile = true
-            }
             MenuDrawerItemCell(icon: MailResourcesAsset.feedback,
                                label: MailResourcesStrings.Localizable.buttonFeedback,
                                matomoName: "feedback") {
@@ -87,9 +91,6 @@ struct MenuDrawerItemsHelpListView: View {
         }
         .sheet(isPresented: $isShowingBugTracker) {
             BugTrackerView(isPresented: $isShowingBugTracker)
-        }
-        .sheet(isPresented: $isShowingSyncProfile) {
-            SyncProfileNavigationView()
         }
     }
 
