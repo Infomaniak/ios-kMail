@@ -44,7 +44,6 @@ extension ThreadListViewModel {
     func observeChanges(animateInitialThreadChanges: Bool = false) {
         stopObserveChanges()
         observationThreadToken = threadResults()?
-            .sectioned(by: \Thread.sectionDate, ascending: false)
             .observe(on: observeQueue) { [weak self] changes in
                 guard let self else { return }
 
@@ -60,8 +59,10 @@ extension ThreadListViewModel {
                             self.sections = newSections
                         }
                     }
-                case .update(let results, _, _, _, _, _):
+                case .update(let results, _, _, _):
                     updateThreadResults(results: results.freezeIfNeeded())
+                case .error:
+                    break
                 }
 
                 // We only apply the first update when in "unread" mode
@@ -92,10 +93,18 @@ extension ThreadListViewModel {
         observationLastUpdateToken?.invalidate()
     }
 
-    private func mapSectionedResults(results: SectionedResults<String, Thread>) -> (threads: [Thread], sections: [DateSection]) {
+    private func mapSectionedResults(results: Results<Thread>) -> (threads: [Thread], sections: [DateSection]) {
+        let results = Dictionary(grouping: results.freezeIfNeeded()) { $0.sectionDate }
+            .sorted {
+                guard let firstDate = $0.value.first?.date,
+                      let secondDate = $1.value.first?.date else { return false }
+
+                return firstDate > secondDate
+            }
+
         var threads = [Thread]()
         let sections = results.map {
-            let sectionThreads = Array($0)
+            let sectionThreads = Array($0.value)
             threads.append(contentsOf: sectionThreads)
             return DateSection(sectionKey: $0.key, threads: sectionThreads)
         }
@@ -103,7 +112,7 @@ extension ThreadListViewModel {
         return (threads: threads, sections: sections)
     }
 
-    private func updateThreadResults(results: SectionedResults<String, Thread>) {
+    private func updateThreadResults(results: Results<Thread>) {
         let (filteredThreads, newSections) = mapSectionedResults(results: results)
 
         resetFilterIfNeeded(filteredThreads: filteredThreads)
@@ -140,9 +149,9 @@ extension ThreadListViewModel {
 
         let containAnyOf = NSPredicate(format: Self.containAnyOfUIDs, allThreadsUIDs)
         let realm = mailboxManager.getRealm()
-        let allThreads = realm.objects(Thread.self).filter(containAnyOf)
+        let allThreads = realm.objects(Thread.self)
+            .filter(containAnyOf)
             .sorted(by: \.date, ascending: false)
-            .sectioned(by: \Thread.sectionDate, ascending: false)
 
         observeFilteredThreadsToken = allThreads.observe(on: observeQueue) { [weak self] changes in
             guard let self else { return }
@@ -150,8 +159,10 @@ extension ThreadListViewModel {
             switch changes {
             case .initial:
                 break
-            case .update(let results, _, _, _, _, _):
+            case .update(let results, _, _, _):
                 updateThreadResults(results: results.freezeIfNeeded())
+            case .error:
+                break
             }
         }
     }
