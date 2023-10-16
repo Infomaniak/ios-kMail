@@ -43,11 +43,7 @@ struct SyncWelcomeView: View {
                 Text(MailResourcesStrings.Localizable.syncTutorialWelcomeTitle)
                     .textStyle(.header1)
                     .multilineTextAlignment(.center)
-                HStack {
-                    ChipView(text: "iPhone")
-                    ChipView(text: "iPad")
-                }
-                Spacer(minLength: UIPadding.medium)
+                Spacer()
             }
             .padding(value: .medium)
         }
