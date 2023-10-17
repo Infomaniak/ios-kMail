@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: fr, French
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Fri, 13 Oct 2023 10:27:14 +0200
+ * Exported by: Philippe Weidmann
+ * Exported at: Tue, 17 Oct 2023 09:28:05 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1374,7 +1374,7 @@
 "aiPromptExample5" = "un mail de demande de rendez-vous avec un client important";
 
 /* loco:651eb54cfe85ef34780286a4 */
-"syncTutorialWelcomeTitle" = "Consultez vos calendriers et contacts Infomaniak sur votre appareil";
+"syncTutorialWelcomeTitle" = "Consulter vos calendriers et contacts Infomaniak sur votre appareil";
 
 /* loco:651ebb317a265dd7c2066965 */
 "syncTutorialDownloadProfileTitle" = "Télécharger le profil de configuration";

@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -27,6 +29,8 @@ extension MailResourcesImages: Identifiable {
 }
 
 struct SyncInstallProfileTutorialView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @Environment(\.dismissModal) private var dismiss
     @Environment(\.openURL) private var openURL
 
@@ -97,11 +101,13 @@ struct SyncInstallProfileTutorialView: View {
         .safeAreaInset(edge: .bottom) {
             VStack {
                 MailButton(label: MailResourcesStrings.Localizable.buttonGoToSettings) {
+                    matomo.track(eventWithCategory: .syncAutoConfig, name: "openSettings")
                     openURL(URL(string: "App-prefs:")!)
                 }
                 .mailButtonFullWidth(true)
                 if userCameBackFromSettings {
                     MailButton(label: MailResourcesStrings.Localizable.buttonImDone) {
+                        matomo.track(eventWithCategory: .syncAutoConfig, name: "done")
                         dismiss()
                     }
                     .mailButtonFullWidth(true)
