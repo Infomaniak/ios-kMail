@@ -64,6 +64,7 @@ struct SearchThreadsSectionView: View {
     }
 
     private func didTapCell(thread: Thread) {
+        viewModel.addToHistoryIfNeeded()
         if thread.shouldPresentAsDraft {
             DraftUtils.editDraft(
                 from: thread,
