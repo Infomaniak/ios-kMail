@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -23,7 +22,7 @@ import SwiftUI
 import VersionChecker
 
 struct UpdateAvailableView: View {
-    @Environment(\.openURL) var openURL
+    @Environment(\.openURL) private var openURL
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
