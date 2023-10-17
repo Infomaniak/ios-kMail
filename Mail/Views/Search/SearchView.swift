@@ -96,6 +96,7 @@ struct SearchView: View {
             ToolbarItem(placement: .principal) {
                 SearchTextField(value: $viewModel.searchValue) {
                     viewModel.matomo.track(eventWithCategory: .search, name: "validateSearch")
+                    viewModel.addToHistoryIfNeeded()
                     viewModel.searchThreadsForCurrentValue()
                 } onDelete: {
                     viewModel.matomo.track(eventWithCategory: .search, name: "deleteSearch")

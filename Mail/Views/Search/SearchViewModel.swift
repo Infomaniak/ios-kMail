@@ -173,10 +173,6 @@ enum SearchState {
             }
         }
         observeSearch()
-
-        if searchValue.trimmingCharacters(in: .whitespacesAndNewlines).count >= 3 {
-            await mailboxManager.addToSearchHistory(value: searchValue)
-        }
     }
 
     func fetchNextPage() async {
@@ -203,6 +199,14 @@ enum SearchState {
         if threads.firstIndex(where: { $0.uid == currentItem.uid }) == thresholdIndex {
             Task {
                 await fetchNextPage()
+            }
+        }
+    }
+
+    func addToHistoryIfNeeded() {
+        if searchValue.trimmingCharacters(in: .whitespacesAndNewlines).count >= 3 {
+            Task {
+                await mailboxManager.addToSearchHistory(value: searchValue)
             }
         }
     }
