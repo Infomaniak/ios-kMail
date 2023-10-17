@@ -24,7 +24,7 @@ import SwiftUI
 
 public struct DiscoveryItem {
     public enum DiscoveryType {
-        case ai
+        case ai, syncCalendarsAndContacts
     }
 
     public let type: DiscoveryType
@@ -41,6 +41,14 @@ public extension DiscoveryItem {
         title: MailResourcesStrings.Localizable.aiDiscoveryTitle,
         description: MailResourcesStrings.Localizable.aiDiscoveryDescription,
         matomoCategory: .aiWriter
+    )
+
+    static let syncDiscovery = DiscoveryItem(
+        type: .syncCalendarsAndContacts,
+        image: MailResourcesAsset.syncIllustration,
+        title: MailResourcesStrings.Localizable.syncTutorialWelcomeTitle,
+        description: nil,
+        matomoCategory: .syncAutoConfig
     )
 }
 
