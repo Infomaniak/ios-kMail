@@ -90,6 +90,15 @@
       }
     },
     {
+      "identity" : "ios-version-checker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/ios-version-checker",
+      "state" : {
+        "revision" : "f160d3aaab9d8752b7bf3f7d5ea16c9035f70f5b",
+        "version" : "1.0.0"
+      }
+    },
+    {
       "identity" : "kingfisher",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher",
@@ -157,8 +166,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "e836317e8238bd32f06086dd7ce6768ef574beb6",
-        "version" : "13.22.0"
+        "revision" : "c569bec4d04da84030d94f376437bc4efda3686b",
+        "version" : "13.23.1"
       }
     },
     {
@@ -166,8 +175,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "8249489f28d36f9f37ed076c95029059c60b556d",
-        "version" : "10.43.0"
+        "revision" : "a3da8c91ee44c7610d4b1100bd3079ddca26ab84",
+        "version" : "10.43.1"
       }
     },
     {

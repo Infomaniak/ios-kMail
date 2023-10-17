@@ -20,12 +20,12 @@ import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
-import ios_version_checker
 import MailCore
 import MailResources
 import NavigationBackport
 import RealmSwift
 import SwiftUI
+import VersionChecker
 
 @_spi(Advanced) import SwiftUIIntrospect
 

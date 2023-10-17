@@ -17,10 +17,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import ios_version_checker
 import MailCore
 import MailResources
 import SwiftUI
+import VersionChecker
 
 struct UpdateAvailableView: View {
     @Environment(\.openURL) var openURL
