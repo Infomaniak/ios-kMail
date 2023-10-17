@@ -107,6 +107,7 @@ struct DiscoveryBottomSheetView: View {
             item.image.swiftUIImage
 
             Text(item.title)
+                .multilineTextAlignment(.center)
                 .textStyle(.header2)
 
             if let description = item.description {
@@ -116,8 +117,12 @@ struct DiscoveryBottomSheetView: View {
             }
 
             VStack(spacing: UIPadding.medium) {
-                MailButton(label: MailResourcesStrings.Localizable.buttonTry, action: tryButton)
-                    .mailButtonFullWidth(true)
+                MailButton(
+                    label: item.type == .ai ? MailResourcesStrings.Localizable.buttonTry : MailResourcesStrings.Localizable
+                        .buttonStart,
+                    action: tryButton
+                )
+                .mailButtonFullWidth(true)
 
                 MailButton(label: MailResourcesStrings.Localizable.buttonLater, action: laterButton)
                     .mailButtonStyle(.link)
@@ -139,6 +144,7 @@ struct DiscoveryAlertView: View {
             item.image.swiftUIImage
 
             Text(item.title)
+                .multilineTextAlignment(.center)
                 .textStyle(.bodyMedium)
 
             if let description = item.description {
@@ -148,7 +154,8 @@ struct DiscoveryAlertView: View {
             }
 
             ModalButtonsView(
-                primaryButtonTitle: MailResourcesStrings.Localizable.buttonTry,
+                primaryButtonTitle: item.type == .ai ? MailResourcesStrings.Localizable.buttonTry : MailResourcesStrings
+                    .Localizable.buttonStart,
                 secondaryButtonTitle: MailResourcesStrings.Localizable.buttonLater,
                 primaryButtonAction: tryButton,
                 secondaryButtonAction: laterButton
