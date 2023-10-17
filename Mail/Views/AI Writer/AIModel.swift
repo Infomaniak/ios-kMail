@@ -52,10 +52,13 @@ final class AIModel: ObservableObject {
     }
 
     var currentStyle: SelectableTextView.Style {
-        if isLoading || (error != nil && !hasProposedAnswers) {
+        if let error {
+            return .error(withLoadingState: !hasProposedAnswers)
+        } else if isLoading {
             return .loading
+        } else {
+            return .standard
         }
-        return .standard
     }
 
     var toolbarStyle: ToolbarStyle {
