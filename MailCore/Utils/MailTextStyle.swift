@@ -83,11 +83,6 @@ public extension MailTextStyle {
         color: UserDefaults.shared.accentColor.onAccent.swiftUIColor
     )
 
-    static let bodyMediumOnAI = MailTextStyle(
-        mailFont: .bodyMedium,
-        color: MailResourcesAsset.onAIColor.swiftUIColor
-    )
-
     static let bodyMediumOnDisabled = MailTextStyle(
         mailFont: .bodyMedium,
         color: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor
