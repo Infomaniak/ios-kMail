@@ -55,8 +55,6 @@ struct ThreadListToolbar: ViewModifier {
 
     @Environment(\.isCompactWindow) private var isCompactWindow
 
-    @EnvironmentObject private var splitViewManager: SplitViewManager
-    @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -89,21 +87,12 @@ struct ThreadListToolbar: ViewModifier {
                             }
                         } else {
                             if isCompactWindow {
-                                Button {
-                                    matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
-                                    navigationDrawerState.open()
-                                } label: {
-                                    MailResourcesAsset.burger.swiftUIImage
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: UIConstants.navbarIconSize, height: UIConstants.navbarIconSize)
-                                }
-                                .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonMenu)
+                                MenuDrawerButton()
                             }
 
                             let textMaxWidth = isCompactWindow ? UIScreen.main.bounds.size.width - geometry.safeAreaInsets
                                 .leading - geometry.safeAreaInsets.trailing - UIConstants.navbarIconsSpace : 215
-                            Text(splitViewManager.selectedFolder?.localizedName ?? "")
+                            Text(viewModel.folder.localizedName)
                                 .textStyle(.header1)
                                 .frame(maxWidth: textMaxWidth, alignment: .leading)
                         }
@@ -118,14 +107,7 @@ struct ThreadListToolbar: ViewModifier {
                             }
                             .animation(nil, value: multipleSelectionViewModel.selectedItems)
                         } else {
-                            Button {
-                                splitViewManager.showSearch = true
-                            } label: {
-                                MailResourcesAsset.search.swiftUIImage
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: UIConstants.navbarIconSize, height: UIConstants.navbarIconSize)
-                            }
+                            SearchButton()
 
                             Button {
                                 presentedCurrentAccount = viewModel.mailboxManager.account
@@ -171,7 +153,7 @@ struct ThreadListToolbar: ViewModifier {
                                     )
                                 }
                             }
-                            .disabled(action == .archive && splitViewManager.selectedFolder?.role == .archive)
+                            .disabled(action == .archive && viewModel.folder.role == .archive)
                         }
 
                         ToolbarButton(
