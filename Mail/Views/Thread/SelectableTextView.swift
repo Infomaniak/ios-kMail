@@ -24,7 +24,7 @@ import UIKit
 
 struct SelectableTextView: UIViewRepresentable {
     enum Style {
-        case loading, standard
+        case loading, standard, error(withLoadingState: Bool)
 
         var foregroundColor: UIColor {
             switch self {
@@ -32,6 +32,8 @@ struct SelectableTextView: UIViewRepresentable {
                 return MailResourcesAsset.textTertiaryColor.color
             case .standard:
                 return MailResourcesAsset.textPrimaryColor.color
+            case .error(withLoadingState: let withLoadingState):
+                return withLoadingState ? Style.loading.foregroundColor : Style.standard.foregroundColor
             }
         }
     }
@@ -51,13 +53,14 @@ struct SelectableTextView: UIViewRepresentable {
         textView.textColor = style.foregroundColor
         textView.linkTextAttributes = [.underlineStyle: 1, .foregroundColor: UIColor.tintColor]
         textView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        textView.backgroundColor = .clear
 
         return textView
     }
 
     func updateUIView(_ uiView: UITextView, context: Context) {
         // Replace text when the style is standard and the current color has not yet been changed
-        if style == .standard && uiView.textColor != style.foregroundColor {
+        if case .standard = style, uiView.textColor != style.foregroundColor {
             replaceText(text: text ?? "", in: uiView)
         } else {
             insertText(text: text ?? "", in: uiView)
