@@ -41,7 +41,10 @@ struct AIHeaderView: View {
                 .foregroundColor(MailTextStyle.header2.color)
 
             Text(MailResourcesStrings.Localizable.aiPromptTag)
-                .tagModifier(foregroundColor: MailResourcesAsset.onAIColor, backgroundColor: MailResourcesAsset.aiColor)
+                .tagModifier(
+                    foregroundColor: MailResourcesAsset.backgroundSecondaryColor,
+                    backgroundColor: MailResourcesAsset.aiColor
+                )
         }
     }
 }

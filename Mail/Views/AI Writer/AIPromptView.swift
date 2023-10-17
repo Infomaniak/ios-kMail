@@ -81,7 +81,7 @@ struct AIPromptView: View {
                 dismiss()
             }
             .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
-            .mailButtonSecondaryColor(MailResourcesAsset.onAIColor.swiftUIColor)
+            .mailButtonSecondaryColor(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
             .disabled(prompt.isEmpty)
             .frame(maxWidth: .infinity, alignment: .trailing)
         }
