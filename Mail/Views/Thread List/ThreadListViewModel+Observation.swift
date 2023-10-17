@@ -21,24 +21,6 @@ import RealmSwift
 import SwiftUI
 
 extension ThreadListViewModel {
-    private func threadResults() -> Results<Thread>? {
-        guard let folder = folder.thaw() else {
-            sections = []
-            return nil
-        }
-
-        let threadResults: Results<Thread>
-        if let predicate = filter.predicate {
-            threadResults = folder.threads
-                .filter(predicate + " OR uid == %@", selectedThread?.uid ?? "")
-                .sorted(by: \.date, ascending: false)
-        } else {
-            threadResults = folder.threads.sorted(by: \.date, ascending: false)
-        }
-
-        return threadResults
-    }
-
     // MARK: - Observe global changes
 
     func observeChanges(animateInitialThreadChanges: Bool = false) {
@@ -70,27 +52,10 @@ extension ThreadListViewModel {
                     stopObserveChanges()
                 }
             }
-
-        observationLastUpdateToken = folder.observe(keyPaths: [\Folder.lastUpdate], on: observeQueue) { [weak self] changes in
-            switch changes {
-            case .change(let folder, _):
-                let lastUpdate = folder.freezeIfNeeded().lastUpdate
-                Task {
-                    await MainActor.run {
-                        withAnimation {
-                            self?.lastUpdate = lastUpdate
-                        }
-                    }
-                }
-            default:
-                break
-            }
-        }
     }
 
     func stopObserveChanges() {
         observationThreadToken?.invalidate()
-        observationLastUpdateToken?.invalidate()
     }
 
     private func mapSectionedResults(results: Results<Thread>) -> (threads: [Thread], sections: [DateSection]) {

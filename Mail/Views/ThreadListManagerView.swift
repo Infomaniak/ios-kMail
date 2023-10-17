@@ -26,22 +26,22 @@ struct ThreadListManagerView: View {
 
     @AppStorage(UserDefaults.shared.key(.threadMode)) private var threadMode = DefaultPreferences.threadMode
 
-    @EnvironmentObject private var splitViewManager: SplitViewManager
+    @EnvironmentObject private var navigationState: NavigationState
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     var body: some View {
         Group {
-            if let selectedFolder = splitViewManager.selectedFolder {
-                if splitViewManager.showSearch {
+            if let selectedFolder = navigationState.selectedFolder {
+                if navigationState.isShowingSearch {
                     SearchView(mailboxManager: mailboxManager, folder: selectedFolder)
                 } else {
                     ThreadListView(mailboxManager: mailboxManager, folder: selectedFolder, isCompact: isCompactWindow)
-                        .id(threadMode)
+                        .id(selectedFolder)
                 }
             }
         }
         .id(mailboxManager.mailbox.id)
-        .animation(.easeInOut(duration: 0.25), value: splitViewManager.showSearch)
+        .animation(.easeInOut(duration: 0.25), value: navigationState.isShowingSearch)
     }
 }
 

@@ -30,12 +30,14 @@ extension View {
 
     func threadListToolbar(
         flushAlert: Binding<FlushAlertState?>,
-        viewModel: ThreadListViewModel,
+        folder: Folder,
+        filteredThreads: [Thread],
         multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
     ) -> some View {
         modifier(ThreadListToolbar(
             flushAlert: flushAlert,
-            viewModel: viewModel,
+            folder: folder,
+            filteredThreads: filteredThreads,
             multipleSelectionViewModel: multipleSelectionViewModel
         ))
     }
@@ -63,11 +65,12 @@ struct ThreadListToolbar: ViewModifier {
 
     @Binding var flushAlert: FlushAlertState?
 
-    @ObservedObject var viewModel: ThreadListViewModel
+    let folder: Folder
+    let filteredThreads: [Thread]
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     private var selectAllButtonTitle: String {
-        if multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count {
+        if multipleSelectionViewModel.selectedItems.count == filteredThreads.count {
             return MailResourcesStrings.Localizable.buttonUnselectAll
 
         } else {
@@ -87,12 +90,12 @@ struct ThreadListToolbar: ViewModifier {
                             }
                         } else {
                             if isCompactWindow {
-                               MenuDrawerButton()
+                                MenuDrawerButton()
                             }
 
                             let textMaxWidth = isCompactWindow ? UIScreen.main.bounds.size.width - geometry.safeAreaInsets
                                 .leading - geometry.safeAreaInsets.trailing - UIConstants.navbarIconsSpace : 215
-                            Text(splitViewManager.selectedFolder?.localizedName ?? "")
+                            Text(folder.localizedName)
                                 .textStyle(.header1)
                                 .frame(maxWidth: textMaxWidth, alignment: .leading)
                         }
@@ -102,7 +105,7 @@ struct ThreadListToolbar: ViewModifier {
                         if multipleSelectionViewModel.isEnabled {
                             Button(selectAllButtonTitle) {
                                 withAnimation(.default.speed(2)) {
-                                    multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
+                                    multipleSelectionViewModel.selectAll(threads: filteredThreads)
                                 }
                             }
                             .animation(nil, value: multipleSelectionViewModel.selectedItems)
@@ -110,9 +113,9 @@ struct ThreadListToolbar: ViewModifier {
                             SearchButton()
 
                             Button {
-                                presentedCurrentAccount = viewModel.mailboxManager.account
+                                presentedCurrentAccount = mailboxManager.account
                             } label: {
-                                if let currentAccountUser = viewModel.mailboxManager.account.user {
+                                if let currentAccountUser = mailboxManager.account.user {
                                     AvatarView(
                                         mailboxManager: mailboxManager,
                                         displayablePerson: CommonContact(user: currentAccountUser)
@@ -135,7 +138,7 @@ struct ThreadListToolbar: ViewModifier {
                             ) {
                                 let allMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
                                 multipleSelectionViewModel.isEnabled = false
-                                let originFolder = viewModel.folder.freezeIfNeeded()
+                                let originFolder = folder.freezeIfNeeded()
                                 Task {
                                     matomo.trackBulkEvent(
                                         eventWithCategory: .threadActions,
@@ -153,7 +156,7 @@ struct ThreadListToolbar: ViewModifier {
                                     )
                                 }
                             }
-                            .disabled(action == .archive && splitViewManager.selectedFolder?.role == .archive)
+                            .disabled(action == .archive && folder.role == .archive)
                         }
 
                         ToolbarButton(
@@ -165,7 +168,7 @@ struct ThreadListToolbar: ViewModifier {
                     }
                     .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
                 }
-                .actionsPanel(messages: $multipleSelectedMessages, originFolder: viewModel.folder) { _ in
+                .actionsPanel(messages: $multipleSelectedMessages, originFolder: folder) { _ in
                     multipleSelectionViewModel.isEnabled = false
                 }
                 .navigationTitle(

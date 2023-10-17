@@ -28,7 +28,7 @@ import UIKit
 struct UserFoldersListView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @EnvironmentObject private var splitViewManager: SplitViewManager
+    @EnvironmentObject private var navigationState: NavigationState
 
     @State private var isExpanded = true
     @State private var isShowingCreateFolderAlert = false
@@ -83,7 +83,7 @@ struct UserFoldersListView: View {
                 } else {
                     ForEach(folders) { folder in
                         FolderCell(folder: folder,
-                                   currentFolderId: splitViewManager.selectedFolder?.remoteId,
+                                   currentFolderId: navigationState.selectedFolder?.remoteId,
                                    canCollapseSubFolders: hasSubFolders,
                                    matomoCategory: .menuDrawer)
                     }

@@ -78,7 +78,6 @@ struct ThreadListSwipeActions: ViewModifier {
     @State private var messagesToMove: [Message]?
 
     let thread: Thread
-    let viewModel: ThreadListViewModel
     let multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     @Binding var flushAlert: FlushAlertState?
@@ -86,12 +85,12 @@ struct ThreadListSwipeActions: ViewModifier {
     func body(content: Content) -> some View {
         content
             .swipeActions(edge: .leading) {
-                if viewModel.folder.role != .draft {
+                if thread.folder?.role != .draft {
                     edgeActions([swipeFullLeading, swipeLeading])
                 }
             }
             .swipeActions(edge: .trailing) {
-                if viewModel.folder.role == .draft {
+                if thread.folder?.role == .draft {
                     edgeActions([.delete])
                 } else {
                     edgeActions([swipeFullTrailing, swipeTrailing])
@@ -122,11 +121,9 @@ struct ThreadListSwipeActions: ViewModifier {
 
 extension View {
     func swipeActions(thread: Thread,
-                      viewModel: ThreadListViewModel,
                       multipleSelectionViewModel: ThreadListMultipleSelectionViewModel,
                       nearestFlushAlert: Binding<FlushAlertState?>) -> some View {
         modifier(ThreadListSwipeActions(thread: thread,
-                                        viewModel: viewModel,
                                         multipleSelectionViewModel: multipleSelectionViewModel,
                                         flushAlert: nearestFlushAlert))
     }

@@ -71,6 +71,10 @@ public class NavigationState: ObservableObject {
     ///
     /// The selected thread is the last in collection, by convention.
     @Published public var threadPath = [Thread]()
+    @Published public var selectedFolder: Folder?
+
+    @Published public var isShowingSearch = false
+    @Published public var isShowingReviewAlert = false
 
     public private(set) var account: Account?
 

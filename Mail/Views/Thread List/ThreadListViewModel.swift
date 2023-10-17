@@ -104,7 +104,7 @@ final class DateSection: Identifiable, Equatable {
 @MainActor final class ThreadListViewModel: ObservableObject {
     let mailboxManager: MailboxManager
 
-    @Published var folder: Folder
+    private let folder: Folder
     @Published var sections: [DateSection]?
     @Published var selectedThread: Thread? {
         didSet {
@@ -113,7 +113,6 @@ final class DateSection: Identifiable, Equatable {
     }
 
     @Published var isLoadingPage = false
-    @Published var lastUpdate: Date?
 
     // Used to know thread location
     private var selectedThreadIndex: Int?
@@ -133,12 +132,11 @@ final class DateSection: Identifiable, Equatable {
     /// Observe unread count
     var observationUnreadToken: NotificationToken?
     var observationThreadToken: NotificationToken?
-    var observationLastUpdateToken: NotificationToken?
     let observeQueue = DispatchQueue(label: "com.infomaniak.observation.ThreadListViewModel", qos: .userInteractive)
 
     private let loadNextPageThreshold = 10
 
-    @Published var unreadCount = 0 {
+    var unreadCount = 0 {
         didSet {
             // Disable filter if we have no unread emails left
             if unreadCount == 0 && filterUnreadOn {
@@ -190,7 +188,6 @@ final class DateSection: Identifiable, Equatable {
     ) {
         self.mailboxManager = mailboxManager
         self.folder = folder
-        lastUpdate = folder.lastUpdate
         self.isCompact = isCompact
         observeChanges()
         observeUnreadCount()
@@ -209,21 +206,6 @@ final class DateSection: Identifiable, Equatable {
 
         withAnimation {
             isLoadingPage = false
-        }
-    }
-
-    func updateThreads(with folder: Folder) async {
-        let isNewFolder = folder.remoteId != self.folder.remoteId
-        self.folder = folder
-        withAnimation {
-            lastUpdate = folder.lastUpdate
-        }
-
-        if isNewFolder && filter != .all {
-            filter = .all
-        } else {
-            observeChanges()
-            await fetchThreads()
         }
     }
 
@@ -255,5 +237,23 @@ final class DateSection: Identifiable, Equatable {
                 filterUnreadOn.toggle()
             }
         }
+    }
+
+    func threadResults() -> Results<Thread>? {
+        guard let folder = folder.thaw() else {
+            sections = []
+            return nil
+        }
+
+        let threadResults: Results<Thread>
+        if let predicate = filter.predicate {
+            threadResults = folder.threads
+                .filter(predicate + " OR uid == %@", selectedThread?.uid ?? "")
+                .sorted(by: \.date, ascending: false)
+        } else {
+            threadResults = folder.threads.sorted(by: \.date, ascending: false)
+        }
+
+        return threadResults
     }
 }

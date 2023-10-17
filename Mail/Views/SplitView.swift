@@ -30,9 +30,6 @@ import SwiftUI
 public class SplitViewManager: ObservableObject {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
-    @Published var showSearch = false
-    @Published var showReviewAlert = false
-    @Published var selectedFolder: Folder?
     var splitViewController: UISplitViewController?
 
     func adaptToProminentThreadView() {
@@ -56,19 +53,13 @@ struct SplitView: View {
     @Weak private var splitViewController: UISplitViewController?
 
     @StateObject private var navigationDrawerController = NavigationDrawerState()
-    @StateObject private var splitViewManager: SplitViewManager
+    @StateObject private var splitViewManager = SplitViewManager()
 
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     let mailboxManager: MailboxManager
-    init(mailboxManager: MailboxManager) {
-        self.mailboxManager = mailboxManager
-        let splitViewManager = SplitViewManager()
-        splitViewManager.selectedFolder = mailboxManager.getFolder(with: .inbox)
-        _splitViewManager = StateObject(wrappedValue: splitViewManager)
-    }
 
     var body: some View {
         Group {
@@ -96,7 +87,7 @@ struct SplitView: View {
                     if let thread = navigationState.threadPath.last {
                         ThreadView(thread: thread)
                     } else {
-                        EmptyStateView.emptyThread(from: splitViewManager.selectedFolder)
+                        EmptyStateView.emptyThread(from: navigationState.selectedFolder)
                     }
                 }
             }
@@ -161,8 +152,8 @@ struct SplitView: View {
             await fetchFolders()
 
             let newInbox = getInbox()
-            if newInbox != splitViewManager.selectedFolder {
-                splitViewManager.selectedFolder = newInbox
+            if newInbox != navigationState.selectedFolder {
+                navigationState.selectedFolder = newInbox
             }
         }
         .onRotate { orientation in
@@ -175,7 +166,7 @@ struct SplitView: View {
             splitViewManager.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)
         }
-        .customAlert(isPresented: $splitViewManager.showReviewAlert) {
+        .customAlert(isPresented: $navigationState.isShowingReviewAlert) {
             AskForReviewView()
         }
         .environmentObject(splitViewManager)
@@ -191,12 +182,12 @@ struct SplitView: View {
             splitViewController?.preferredDisplayMode = .twoBesideSecondary
         } else if orientation.isLandscape {
             splitViewController?.preferredSplitBehavior = .displace
-            splitViewController?.preferredDisplayMode = splitViewManager.selectedFolder == nil
+            splitViewController?.preferredDisplayMode = navigationState.selectedFolder == nil
                 ? .twoDisplaceSecondary
                 : .oneBesideSecondary
         } else if orientation.isPortrait {
             splitViewController?.preferredSplitBehavior = .overlay
-            splitViewController?.preferredDisplayMode = splitViewManager.selectedFolder == nil
+            splitViewController?.preferredDisplayMode = navigationState.selectedFolder == nil
                 ? .twoOverSecondary
                 : .oneOverSecondary
         } else {

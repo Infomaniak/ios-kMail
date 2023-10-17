@@ -24,7 +24,7 @@ import RealmSwift
 import SwiftUI
 
 struct RoleFoldersListView: View {
-    @EnvironmentObject var splitViewManager: SplitViewManager
+    @EnvironmentObject private var navigationState: NavigationState
 
     let folders: [NestableFolder]
 
@@ -32,7 +32,7 @@ struct RoleFoldersListView: View {
         VStack(spacing: 0) {
             ForEach(folders) { folder in
                 FolderCell(folder: folder,
-                           currentFolderId: splitViewManager.selectedFolder?.remoteId,
+                           currentFolderId: navigationState.selectedFolder?.remoteId,
                            matomoCategory: .menuDrawer)
             }
         }

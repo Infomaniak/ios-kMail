@@ -63,7 +63,7 @@ final class NewMessageAlert: SheetState<NewMessageAlert.State> {
 struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dismissModal) var dismissModal
-    @EnvironmentObject private var splitViewManager: SplitViewManager
+    @EnvironmentObject private var navigationState: NavigationState
     @EnvironmentObject private var reviewManager: ReviewManager
 
     @LazyInjectService private var matomo: MatomoUtils
@@ -169,7 +169,7 @@ struct ComposeMessageView: View {
         .onDisappear {
             draftManager.syncDraft(mailboxManager: mailboxManager)
             if !Bundle.main.isExtension {
-                splitViewManager.showReviewAlert = reviewManager.shouldRequestReview()
+                navigationState.isShowingReviewAlert = reviewManager.shouldRequestReview()
             }
         }
         .interactiveDismissDisabled()

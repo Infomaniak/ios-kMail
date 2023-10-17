@@ -76,7 +76,6 @@ struct ThreadListCell: View {
         .onLongPressGesture { didLongPressCell() }
         .swipeActions(
             thread: thread,
-            viewModel: viewModel,
             multipleSelectionViewModel: multipleSelectionViewModel,
             nearestFlushAlert: $flushAlert
         )

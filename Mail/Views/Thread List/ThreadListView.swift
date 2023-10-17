@@ -28,7 +28,6 @@ struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var userActivityController: UserActivityController
 
-    @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationState: NavigationState
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
@@ -44,16 +43,22 @@ struct ThreadListView: View {
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
     private var shouldDisplayEmptyView: Bool {
-        viewModel.folder.lastUpdate != nil && viewModel.isEmpty && !viewModel.isLoadingPage
+        folder.lastUpdate != nil && viewModel.isEmpty && !viewModel.isLoadingPage
     }
 
     private var shouldDisplayNoNetworkView: Bool {
-        !networkMonitor.isConnected && viewModel.folder.lastUpdate == nil
+        !networkMonitor.isConnected && folder.lastUpdate == nil
     }
 
     private var shouldDisplayLoadMoreButton: Bool {
-        return !viewModel.folder.isHistoryComplete && viewModel.sections != nil && !viewModel.filterUnreadOn
+        return !folder.isHistoryComplete && viewModel.sections != nil && !viewModel.filterUnreadOn
     }
+
+    private var shouldDisplayFlushFolderView: Bool {
+        return !viewModel.isEmpty && folder.role == .trash || folder.role == .spam
+    }
+
+    let folder: Folder
 
     init(mailboxManager: MailboxManager,
          folder: Folder,
@@ -64,22 +69,21 @@ struct ThreadListView: View {
         _multipleSelectionViewModel = StateObject(wrappedValue: ThreadListMultipleSelectionViewModel())
 
         UITableViewCell.appearance().focusEffect = .none
+        self.folder = folder
     }
 
     var body: some View {
         VStack(spacing: 0) {
             ThreadListHeader(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
                              isConnected: networkMonitor.isConnected,
-                             lastUpdate: viewModel.lastUpdate,
-                             unreadCount: splitViewManager.selectedFolder?.unreadCount ?? 0,
+                             folder: folder,
                              unreadFilterOn: $viewModel.filterUnreadOn)
 
             ScrollViewReader { proxy in
                 List {
-                    if !viewModel.isEmpty,
-                       viewModel.folder.role == .trash || viewModel.folder.role == .spam {
+                    if shouldDisplayFlushFolderView {
                         FlushFolderView(
-                            folder: viewModel.folder,
+                            folder: folder,
                             mailboxManager: viewModel.mailboxManager,
                             flushAlert: $flushAlert
                         )
@@ -117,13 +121,13 @@ struct ThreadListView: View {
                         }
                     }
 
-                    LoadMoreButton(currentFolder: viewModel.folder.freezeIfNeeded(), shouldDisplay: shouldDisplayLoadMoreButton)
+                    LoadMoreButton(currentFolder: folder, shouldDisplay: shouldDisplayLoadMoreButton)
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
                 .plainList()
                 .emptyState(isEmpty: shouldDisplayEmptyView) {
-                    switch viewModel.folder.role {
+                    switch folder.role {
                     case .inbox:
                         EmptyStateView.emptyInbox
                     case .trash:
@@ -160,7 +164,8 @@ struct ThreadListView: View {
             }
         }
         .threadListToolbar(flushAlert: $flushAlert,
-                           viewModel: viewModel,
+                           folder: folder,
+                           filteredThreads: viewModel.filteredThreads,
                            multipleSelectionViewModel: multipleSelectionViewModel)
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
@@ -173,12 +178,7 @@ struct ThreadListView: View {
             if viewModel.isCompact {
                 viewModel.selectedThread = nil
             }
-            userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox,
-                                                      folder: splitViewManager.selectedFolder)
-        }
-        .onChange(of: splitViewManager.selectedFolder) { newFolder in
-            changeFolder(newFolder: newFolder)
-            userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox, folder: newFolder)
+            userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox, folder: folder)
         }
         .onChange(of: viewModel.selectedThread) { newThread in
             if let newThread {
@@ -197,34 +197,15 @@ struct ThreadListView: View {
             }
         }
         .customAlert(item: $flushAlert) { item in
-            FlushFolderAlertView(flushAlert: item, folder: viewModel.folder)
+            FlushFolderAlertView(flushAlert: item, folder: folder)
         }
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Main"])
     }
 
-    private func changeFolder(newFolder: Folder?) {
-        guard let folder = newFolder else { return }
-
-        viewModel.isLoadingPage = false
-
-        Task {
-            await viewModel.mailboxManager.cancelRefresh()
-
-            fetchingTask?.cancel()
-            _ = await fetchingTask?.result
-            fetchingTask = nil
-            updateFetchingTask(with: folder)
-        }
-    }
-
-    private func updateFetchingTask(with folder: Folder? = nil) {
+    private func updateFetchingTask() {
         guard fetchingTask == nil else { return }
         fetchingTask = Task {
-            if let folder {
-                await viewModel.updateThreads(with: folder)
-            } else {
-                await viewModel.fetchThreads()
-            }
+            await viewModel.fetchThreads()
             fetchingTask = nil
         }
     }
