@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -38,6 +40,9 @@ struct AIDismissibleErrorView: View {
         Group {
             if isShowingError {
                 InformationBlockView(icon: MailResourcesAsset.warning.swiftUIImage, message: message) {
+                    @InjectService var matomo: MatomoUtils
+                    matomo.track(eventWithCategory: .aiWriter, name: "dismissError")
+
                     withAnimation {
                         isShowingError = false
                     }
