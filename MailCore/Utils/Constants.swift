@@ -181,4 +181,6 @@ public enum Constants {
         MailResourcesStrings.Localizable.aiPromptExample4,
         MailResourcesStrings.Localizable.aiPromptExample5
     ]
+
+    public static let openingBeforeReview = 50
 }

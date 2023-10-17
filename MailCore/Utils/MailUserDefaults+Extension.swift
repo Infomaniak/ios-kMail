@@ -46,6 +46,8 @@ public extension UserDefaults.Keys {
     static let doNotShowAIReplaceMessageAgain = UserDefaults.Keys(rawValue: "showAIReplaceContentAlert")
     static let featureFlags = UserDefaults.Keys(rawValue: "featureFlags")
     static let shouldPresentAIFeature = UserDefaults.Keys(rawValue: "shouldPresentAIFeature")
+    static let openingUntilReview = UserDefaults.Keys(rawValue: "openingUntilReview")
+    static let appReview = UserDefaults.Keys(rawValue: "appReview")
 }
 
 public extension UserDefaults {
@@ -252,6 +254,27 @@ public extension UserDefaults {
         }
         set {
             set(newValue, forKey: key(.shouldPresentAIFeature))
+        }
+    }
+
+    var openingUntilReview: Int {
+        get {
+            if object(forKey: key(.openingUntilReview)) == nil {
+                set(Constants.openingBeforeReview, forKey: key(.openingUntilReview))
+            }
+            return integer(forKey: key(.openingUntilReview))
+        }
+        set {
+            set(newValue, forKey: key(.openingUntilReview))
+        }
+    }
+
+    var appReview: ReviewType {
+        get {
+            return ReviewType(rawValue: string(forKey: key(.appReview)) ?? "") ?? .none
+        }
+        set {
+            set(newValue.rawValue, forKey: key(.appReview))
         }
     }
 }

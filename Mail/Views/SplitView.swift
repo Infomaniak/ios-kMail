@@ -31,6 +31,7 @@ public class SplitViewManager: ObservableObject {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     @Published var showSearch = false
+    @Published var showReviewAlert = false
     @Published var selectedFolder: Folder?
     var splitViewController: UISplitViewController?
 
@@ -173,6 +174,9 @@ struct SplitView: View {
             self.splitViewController = splitViewController
             splitViewManager.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)
+        }
+        .customAlert(isPresented: $splitViewManager.showReviewAlert) {
+            AskForReviewView()
         }
         .environmentObject(splitViewManager)
         .environmentObject(navigationDrawerController)

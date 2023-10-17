@@ -44,6 +44,7 @@ struct MailApp: App {
     @AppStorage(UserDefaults.shared.key(.theme), store: .shared) private var theme = DefaultPreferences.theme
 
     @StateObject private var navigationState = NavigationState()
+    @StateObject private var reviewManager = ReviewManager()
 
     init() {
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
@@ -53,6 +54,7 @@ struct MailApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(navigationState)
+                .environmentObject(reviewManager)
                 .onAppear {
                     updateUI(accent: accentColor, theme: theme)
                 }
@@ -67,6 +69,7 @@ struct MailApp: App {
                     case .active:
                         refreshCacheData()
                         navigationState.transitionToLockViewIfNeeded()
+                        UserDefaults.shared.openingUntilReview -= 1
                     case .background:
                         if UserDefaults.shared.isAppLockEnabled && navigationState.rootViewState != .appLocked {
                             appLockHelper.setTime()
