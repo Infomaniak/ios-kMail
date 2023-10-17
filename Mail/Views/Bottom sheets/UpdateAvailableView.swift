@@ -18,10 +18,12 @@
  */
 
 import ios_version_checker
+import MailCore
 import MailResources
 import SwiftUI
 
 struct UpdateAvailableView: View {
+    @Environment(\.openURL) var openURL
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -38,16 +40,10 @@ struct UpdateAvailableView: View {
                 .multilineTextAlignment(.center)
 
             MailButton(label: MailResourcesStrings.Localizable.buttonUpdate) {
-                VersionChecker.standard.resetTimer()
                 dismiss()
-
-                // TODO: - Open update view
-//                // Ready for appStore
-//                //                let url: URLConstants = Bundle.main.isRunningInTestFlight ?
-//                /.testFlight: .appStore
-//                let url: URLConstants = .testFlight
-//                UserDefaults.shared.updateLater = false
-//                UIApplication.shared.open(url.url)
+                let url: URLConstants = Bundle.main.isRunningInTestFlight ?
+                    .testFlight : .appStore
+                openURL(url.url)
             }
             .mailButtonFullWidth(true)
 
