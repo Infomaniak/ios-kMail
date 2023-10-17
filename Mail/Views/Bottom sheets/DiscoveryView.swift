@@ -22,39 +22,64 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct AIDiscoveryView: View {
+public struct DiscoveryItem {
+    public enum DiscoveryType {
+        case ai
+    }
+
+    public let type: DiscoveryType
+    public let image: MailResourcesImages
+    public let title: String
+    public let description: String?
+    public let matomoCategory: MatomoUtils.EventCategory
+}
+
+public extension DiscoveryItem {
+    static let aiDiscovery = DiscoveryItem(
+        type: .ai,
+        image: MailResourcesAsset.aiIllustration,
+        title: MailResourcesStrings.Localizable.aiDiscoveryTitle,
+        description: MailResourcesStrings.Localizable.aiDiscoveryDescription,
+        matomoCategory: .aiWriter
+    )
+}
+
+struct DiscoveryView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.isCompactWindow) private var isCompactWindow
     @Environment(\.dismiss) private var dismiss
 
-    @State private var willShowAIPrompt = false
+    let item: DiscoveryItem
 
-    @ObservedObject var aiModel: AIModel
+    @State private var willDiscoverNewFeature = false
+
+    let completionHandler: (Bool) -> Void
 
     var body: some View {
         Group {
             if isCompactWindow {
-                AIDiscoveryBottomSheetView(tryButton: didTouchTryButton, laterButton: didTouchLaterButton)
+                DiscoveryBottomSheetView(item: item, tryButton: didTouchTryButton, laterButton: didTouchLaterButton)
             } else {
-                AIDiscoveryAlertView(tryButton: didTouchTryButton, laterButton: didTouchLaterButton)
+                DiscoveryAlertView(item: item, tryButton: didTouchTryButton, laterButton: didTouchLaterButton)
             }
         }
         .onAppear {
-            UserDefaults.shared.shouldPresentAIFeature = false
+            if item.type == .ai {
+                UserDefaults.shared.shouldPresentAIFeature = false
+            }
         }
         .onDisappear {
-            if willShowAIPrompt {
-                aiModel.isShowingPrompt = true
-            } else {
-                matomo.track(eventWithCategory: .aiWriter, name: "discoverLater")
+            completionHandler(willDiscoverNewFeature)
+            if !willDiscoverNewFeature {
+                matomo.track(eventWithCategory: item.matomoCategory, name: "discoverLater")
             }
         }
     }
 
     private func didTouchTryButton() {
-        matomo.track(eventWithCategory: .aiWriter, name: "discoverTry")
-        willShowAIPrompt = true
+        matomo.track(eventWithCategory: item.matomoCategory, name: "discoverTry")
+        willDiscoverNewFeature = true
         dismiss()
     }
 
@@ -63,20 +88,24 @@ struct AIDiscoveryView: View {
     }
 }
 
-struct AIDiscoveryBottomSheetView: View {
+struct DiscoveryBottomSheetView: View {
+    let item: DiscoveryItem
+
     let tryButton: () -> Void
     let laterButton: () -> Void
 
     var body: some View {
         VStack(spacing: 32) {
-            MailResourcesAsset.aiIllustration.swiftUIImage
+            item.image.swiftUIImage
 
-            Text(MailResourcesStrings.Localizable.aiDiscoveryTitle)
+            Text(item.title)
                 .textStyle(.header2)
 
-            Text(MailResourcesStrings.Localizable.aiDiscoveryDescription)
-                .multilineTextAlignment(.center)
-                .textStyle(.bodySecondary)
+            if let description = item.description {
+                Text(description)
+                    .multilineTextAlignment(.center)
+                    .textStyle(.bodySecondary)
+            }
 
             VStack(spacing: UIPadding.medium) {
                 MailButton(label: MailResourcesStrings.Localizable.buttonTry, action: tryButton)
@@ -91,20 +120,24 @@ struct AIDiscoveryBottomSheetView: View {
     }
 }
 
-struct AIDiscoveryAlertView: View {
+struct DiscoveryAlertView: View {
+    let item: DiscoveryItem
+
     let tryButton: () -> Void
     let laterButton: () -> Void
 
     var body: some View {
         VStack(spacing: UIPadding.medium) {
-            MailResourcesAsset.aiIllustration.swiftUIImage
+            item.image.swiftUIImage
 
-            Text(MailResourcesStrings.Localizable.aiDiscoveryTitle)
+            Text(item.title)
                 .textStyle(.bodyMedium)
 
-            Text(MailResourcesStrings.Localizable.aiDiscoveryDescription)
-                .multilineTextAlignment(.center)
-                .textStyle(.bodySecondary)
+            if let description = item.description {
+                Text(description)
+                    .multilineTextAlignment(.center)
+                    .textStyle(.bodySecondary)
+            }
 
             ModalButtonsView(
                 primaryButtonTitle: MailResourcesStrings.Localizable.buttonTry,
@@ -118,7 +151,7 @@ struct AIDiscoveryAlertView: View {
 
 #Preview {
     Group {
-        AIDiscoveryBottomSheetView(tryButton: { /* Preview */ }, laterButton: { /* Preview */ })
-        AIDiscoveryAlertView(tryButton: { /* Preview */ }, laterButton: { /* Preview */ })
+        DiscoveryBottomSheetView(item: .aiDiscovery, tryButton: { /* Preview */ }, laterButton: { /* Preview */ })
+        DiscoveryAlertView(item: .aiDiscovery, tryButton: { /* Preview */ }, laterButton: { /* Preview */ })
     }
 }

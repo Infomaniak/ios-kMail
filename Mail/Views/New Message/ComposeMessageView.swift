@@ -191,7 +191,9 @@ struct ComposeMessageView: View {
             }
         }
         .aiDiscoveryPresenter(isPresented: $isShowingAIPopover) {
-            AIDiscoveryView(aiModel: aiModel)
+            DiscoveryView(item: .aiDiscovery) { willShowAIPrompt in
+                aiModel.isShowingPrompt = willShowAIPrompt
+            }
         }
         .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {
             AIPromptView(aiModel: aiModel)
