@@ -38,7 +38,6 @@ struct ThreadListView: View {
     @State private var isRefreshing = false
     @State private var firstLaunch = true
     @State private var flushAlert: FlushAlertState?
-    @State private var isLoadingMore = false
 
     @StateObject var viewModel: ThreadListViewModel
     @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
@@ -52,8 +51,8 @@ struct ThreadListView: View {
         !networkMonitor.isConnected && viewModel.folder.lastUpdate == nil
     }
 
-    private var displayLoadMoreButton: Bool {
-        return !viewModel.folder.isHistoryComplete && !viewModel.isEmpty
+    private var shouldDisplayLoadMoreButton: Bool {
+        return !viewModel.folder.isHistoryComplete && viewModel.sections != nil && !viewModel.filterUnreadOn
     }
 
     init(mailboxManager: MailboxManager,
@@ -118,32 +117,7 @@ struct ThreadListView: View {
                         }
                     }
 
-                    Group {
-                        if isLoadingMore {
-                            ProgressView()
-                                .id(UUID())
-                                .frame(maxWidth: .infinity)
-                        } else if displayLoadMoreButton && !viewModel.filterUnreadOn {
-                            MailButton(label: MailResourcesStrings.Localizable.buttonLoadMore) {
-                                withAnimation {
-                                    isLoadingMore = true
-                                }
-                                Task {
-                                    await tryOrDisplayError {
-                                        matomo.track(eventWithCategory: .threadList, name: "loadMore")
-                                        _ = try await viewModel.mailboxManager.fetchOnePage(
-                                            folder: viewModel.folder.freeze(),
-                                            direction: .previous
-                                        )
-                                        isLoadingMore = false
-                                    }
-                                }
-                            }
-                            .mailButtonStyle(.smallLink)
-                            .frame(alignment: .leading)
-                        }
-                    }
-                    .padding(.vertical, value: .small)
+                    LoadMoreButton(currentFolder: viewModel.folder.freezeIfNeeded(), shouldDisplay: shouldDisplayLoadMoreButton)
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
