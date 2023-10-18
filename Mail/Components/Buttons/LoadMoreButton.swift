@@ -44,11 +44,12 @@ struct LoadMoreButton: View {
                         isLoadingMore = true
                     }
 
+                    let folder = currentFolder.freezeIfNeeded()
                     Task {
                         await tryOrDisplayError {
                             matomo.track(eventWithCategory: .threadList, name: "loadMore")
                             _ = try await mailboxManager.fetchOnePage(
-                                folder: currentFolder,
+                                folder: folder,
                                 direction: .previous
                             )
                             isLoadingMore = false
