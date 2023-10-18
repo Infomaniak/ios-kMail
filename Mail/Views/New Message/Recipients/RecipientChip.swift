@@ -26,7 +26,6 @@ import SwiftUI
 struct RecipientChip: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     let recipient: Recipient

@@ -24,8 +24,6 @@ import SwiftUI
 struct MailboxListView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
     let currentMailbox: Mailbox?
 
     var body: some View {
@@ -41,7 +39,7 @@ struct MailboxListView: View {
                 } label: {
                     MailResourcesAsset.addCircle.swiftUIImage
                         .resizable()
-                        .foregroundColor(accentColor.primary)
+                        .foregroundColor(.accentColor)
                         .frame(width: 16, height: 16)
                 }
             }
