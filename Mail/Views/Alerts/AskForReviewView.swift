@@ -16,11 +16,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
 struct AskForReviewView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @EnvironmentObject private var reviewManager: ReviewManager
     @Environment(\.openURL) private var openURL
 
@@ -34,15 +38,20 @@ struct AskForReviewView: View {
                 primaryButtonTitle: MailResourcesStrings.Localizable.buttonReviewAlertYes,
                 secondaryButtonTitle: MailResourcesStrings.Localizable.buttonReviewAlertNo
             ) {
+                matomo.track(eventWithCategory: .appReview, name: "like")
                 UserDefaults.shared.appReview = .readyForReview
                 reviewManager.requestReview()
             } secondaryButtonAction: {
+                matomo.track(eventWithCategory: .appReview, name: "like")
                 // Ask for feedback
                 if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
                     UserDefaults.shared.appReview = .feedback
                     openURL(userReportURL)
                 }
             }
+        }
+        .onAppear {
+            matomo.track(eventWithCategory: .appReview, action: .data, name: "alertPresented")
         }
     }
 }

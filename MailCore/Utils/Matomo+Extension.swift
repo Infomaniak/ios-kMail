@@ -36,6 +36,7 @@ public extension MatomoUtils.EventCategory {
     // General
 
     static let aiWriter = MatomoUtils.EventCategory(displayName: "aiWriter")
+    static let appReview = MatomoUtils.EventCategory(displayName: "appReview")
     static let createFolder = MatomoUtils.EventCategory(displayName: "createFolder")
     static let externals = MatomoUtils.EventCategory(displayName: "externals")
     static let invalidPasswordMailbox = MatomoUtils.EventCategory(displayName: "invalidPasswordMailbox")
@@ -49,9 +50,9 @@ public extension MatomoUtils.EventCategory {
     static let restoreEmailsBottomSheet = MatomoUtils.EventCategory(displayName: "restoreEmailsBottomSheet")
     static let search = MatomoUtils.EventCategory(displayName: "search")
     static let snackbar = MatomoUtils.EventCategory(displayName: "snackbar")
+    static let syncAutoConfig = MatomoUtils.EventCategory(displayName: "syncAutoConfig")
     static let threadList = MatomoUtils.EventCategory(displayName: "threadList")
     static let userInfo = MatomoUtils.EventCategory(displayName: "userInfo")
-    static let syncAutoConfig = MatomoUtils.EventCategory(displayName: "syncAutoConfig")
 
     // Actions
 
