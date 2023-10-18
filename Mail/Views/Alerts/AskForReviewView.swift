@@ -42,7 +42,7 @@ struct AskForReviewView: View {
                 UserDefaults.shared.appReview = .readyForReview
                 reviewManager.requestReview()
             } secondaryButtonAction: {
-                matomo.track(eventWithCategory: .appReview, name: "like")
+                matomo.track(eventWithCategory: .appReview, name: "dislike")
                 // Ask for feedback
                 if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
                     UserDefaults.shared.appReview = .feedback
