@@ -35,8 +35,8 @@ final class AccountViewDelegate: DeleteAccountDelegate {
             accountManager.removeTokenAndAccount(account: account)
             if let nextAccount = accountManager.accounts.first {
                 accountManager.switchAccount(newAccount: nextAccount)
-                snackbarPresenter.show(message: "Account deleted")
             }
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackBarAccountDeleted)
             accountManager.saveAccounts()
         }
     }
@@ -56,7 +56,7 @@ struct AccountView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingLogoutAlert = false
-    @State private var presentedDeletedToken: ApiToken?
+    @State private var presentedAccountDeletionToken: ApiToken?
     @State private var delegate = AccountViewDelegate()
 
     let account: Account
@@ -100,7 +100,7 @@ struct AccountView: View {
 
                 MailButton(label: MailResourcesStrings.Localizable.buttonAccountDelete) {
                     matomo.track(eventWithCategory: .account, name: "deleteAccount")
-                    presentedDeletedToken = tokenStore.removeTokenFor(account: account)
+                    presentedAccountDeletionToken = tokenStore.tokenFor(userId: account.userId)
                 }
                 .mailButtonStyle(.destructive)
             }
@@ -109,8 +109,8 @@ struct AccountView: View {
         }
         .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccount, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
-        .sheet(item: $presentedDeletedToken) { deletedToken in
-            DeleteAccountView(token: deletedToken, delegate: delegate)
+        .sheet(item: $presentedAccountDeletionToken) { userToken in
+            DeleteAccountView(token: userToken, delegate: delegate)
         }
         .customAlert(isPresented: $isShowingLogoutAlert) {
             LogoutConfirmationView(account: account)

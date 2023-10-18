@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Tue, 17 Oct 2023 09:28:05 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Wed, 18 Oct 2023 14:51:55 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1441,3 +1441,6 @@
 
 /* loco:6527b7d4882400da7d04ffd2 */
 "buttonReviewAlertNo" = "No";
+
+/* loco:652fd443ec75b05b000d43f2 */
+"snackBarAccountDeleted" = "Cuenta eliminada";
