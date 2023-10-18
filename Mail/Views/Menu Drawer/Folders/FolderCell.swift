@@ -43,6 +43,7 @@ struct FolderCell: View {
     @Environment(\.isCompactWindow) private var isCompactWindow
 
     @EnvironmentObject private var navigationState: NavigationState
+    @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
     let folder: NestableFolder
@@ -81,6 +82,7 @@ struct FolderCell: View {
                         navigationState.selectedFolder = folder.content
                         navigationState.isShowingSearch = false
                         shouldTransit = true
+                        splitViewManager.closeMenuDrawer()
                     } label: {
                         FolderCellContent(
                             folder: folder.content,

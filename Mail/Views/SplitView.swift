@@ -42,6 +42,30 @@ public class SplitViewManager: ObservableObject {
             splitViewController?.hide(.supplementary)
         }
     }
+
+    func closeMenuDrawer() {
+        guard !platformDetector.isMacCatalyst, !platformDetector.isiOSAppOnMac else {
+            return
+        }
+
+        splitViewController?.hide(.primary)
+    }
+
+    func setupBehaviour(orientation: UIInterfaceOrientation) {
+        if platformDetector.isMacCatalyst || platformDetector.isiOSAppOnMac {
+            splitViewController?.preferredSplitBehavior = .tile
+            splitViewController?.preferredDisplayMode = .twoBesideSecondary
+        } else if orientation.isLandscape {
+            splitViewController?.preferredSplitBehavior = .displace
+            splitViewController?.preferredDisplayMode = .oneBesideSecondary
+        } else if orientation.isPortrait {
+            splitViewController?.preferredSplitBehavior = .overlay
+            splitViewController?.preferredDisplayMode = .oneOverSecondary
+        } else {
+            splitViewController?.preferredSplitBehavior = .automatic
+            splitViewController?.preferredDisplayMode = .automatic
+        }
+    }
 }
 
 struct SplitView: View {
@@ -50,10 +74,8 @@ struct SplitView: View {
 
     @EnvironmentObject private var navigationState: NavigationState
 
-    @Weak private var splitViewController: UISplitViewController?
-
     @StateObject private var navigationDrawerController = NavigationDrawerState()
-    @StateObject private var splitViewManager = SplitViewManager()
+    @State private var splitViewManager = SplitViewManager()
 
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
@@ -156,15 +178,15 @@ struct SplitView: View {
                 navigationState.selectedFolder = newInbox
             }
         }
-        .onRotate { orientation in
-            guard let interfaceOrientation = orientation else { return }
-            setupBehaviour(orientation: interfaceOrientation)
+        .onRotate { interfaceOrientation in
+            guard let interfaceOrientation else { return }
+            splitViewManager.setupBehaviour(orientation: interfaceOrientation)
         }
         .introspect(.navigationView(style: .columns), on: .iOS(.v15, .v16, .v17)) { splitViewController in
-            guard let interfaceOrientation = splitViewController.view.window?.windowScene?.interfaceOrientation else { return }
-            self.splitViewController = splitViewController
+            guard let interfaceOrientation = splitViewController.view.window?.windowScene?.interfaceOrientation,
+                  splitViewManager.splitViewController != splitViewController else { return }
             splitViewManager.splitViewController = splitViewController
-            setupBehaviour(orientation: interfaceOrientation)
+            splitViewManager.setupBehaviour(orientation: interfaceOrientation)
         }
         .customAlert(isPresented: $navigationState.isShowingReviewAlert) {
             AskForReviewView()
@@ -174,26 +196,6 @@ struct SplitView: View {
         .environmentObject(mailboxManager)
         .environmentObject(ActionsManager(mailboxManager: mailboxManager, navigationState: navigationState))
         .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
-    }
-
-    private func setupBehaviour(orientation: UIInterfaceOrientation) {
-        if platformDetector.isMacCatalyst || platformDetector.isiOSAppOnMac {
-            splitViewController?.preferredSplitBehavior = .tile
-            splitViewController?.preferredDisplayMode = .twoBesideSecondary
-        } else if orientation.isLandscape {
-            splitViewController?.preferredSplitBehavior = .displace
-            splitViewController?.preferredDisplayMode = navigationState.selectedFolder == nil
-                ? .twoDisplaceSecondary
-                : .oneBesideSecondary
-        } else if orientation.isPortrait {
-            splitViewController?.preferredSplitBehavior = .overlay
-            splitViewController?.preferredDisplayMode = navigationState.selectedFolder == nil
-                ? .twoOverSecondary
-                : .oneOverSecondary
-        } else {
-            splitViewController?.preferredSplitBehavior = .automatic
-            splitViewController?.preferredDisplayMode = .automatic
-        }
     }
 
     private func fetchSignatures() async {
