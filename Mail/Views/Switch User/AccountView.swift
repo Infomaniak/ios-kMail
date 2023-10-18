@@ -54,7 +54,6 @@ struct AccountView: View {
     @Environment(\.dismiss) private var dismiss
 
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @State private var isShowingLogoutAlert = false
     @State private var presentedDeletedToken: ApiToken?

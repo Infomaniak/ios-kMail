@@ -155,8 +155,6 @@ struct OnboardingView: View {
 
     @LazyInjectService var orientationManager: OrientationManageable
 
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
     @State private var selection: Int
     @State private var isPresentingCreateAccount = false
     @StateObject private var loginHandler = LoginHandler()
