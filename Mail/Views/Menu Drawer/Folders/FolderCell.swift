@@ -34,6 +34,17 @@ extension EnvironmentValues {
     }
 }
 
+extension FolderCell: Equatable {
+    static func == (lhs: FolderCell, rhs: FolderCell) -> Bool {
+        guard !lhs.folder.content.isInvalidated && !rhs.folder.content.isInvalidated else { return false }
+
+        return lhs.folder.content.id == rhs.folder.content.id
+            && lhs.level == rhs.level
+            && lhs.currentFolderId == rhs.currentFolderId
+            && lhs.canCollapseSubFolders == rhs.canCollapseSubFolders
+    }
+}
+
 struct FolderCell: View {
     enum CellType {
         case menuDrawer, move
