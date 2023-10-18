@@ -67,9 +67,9 @@ struct DiscoveryView: View {
     var body: some View {
         Group {
             if isCompactWindow {
-                DiscoveryBottomSheetView(item: item, tryButton: didTouchTryButton, laterButton: didTouchLaterButton)
+                DiscoveryBottomSheetView(item: item, tryButton: didTouchNowButton, laterButton: didTouchLaterButton)
             } else {
-                DiscoveryAlertView(item: item, tryButton: didTouchTryButton, laterButton: didTouchLaterButton)
+                DiscoveryAlertView(item: item, tryButton: didTouchNowButton, laterButton: didTouchLaterButton)
             }
         }
         .onAppear {
@@ -85,8 +85,8 @@ struct DiscoveryView: View {
         }
     }
 
-    private func didTouchTryButton() {
-        matomo.track(eventWithCategory: item.matomoCategory, name: "discoverTry")
+    private func didTouchNowButton() {
+        matomo.track(eventWithCategory: item.matomoCategory, name: "discoverNow")
         willDiscoverNewFeature = true
         dismiss()
     }
