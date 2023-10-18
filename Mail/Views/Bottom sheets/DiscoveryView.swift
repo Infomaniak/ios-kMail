@@ -24,13 +24,14 @@ import SwiftUI
 
 public struct DiscoveryItem {
     public enum DiscoveryType {
-        case ai, syncCalendarsAndContacts
+        case ai, syncCalendarsAndContacts, updateApp
     }
 
     public let type: DiscoveryType
     public let image: MailResourcesImages
     public let title: String
     public let description: String?
+    public let buttonTitle: String
     public let matomoCategory: MatomoUtils.EventCategory
 }
 
@@ -40,6 +41,7 @@ public extension DiscoveryItem {
         image: MailResourcesAsset.aiIllustration,
         title: MailResourcesStrings.Localizable.aiDiscoveryTitle,
         description: MailResourcesStrings.Localizable.aiDiscoveryDescription,
+        buttonTitle: MailResourcesStrings.Localizable.buttonTry,
         matomoCategory: .aiWriter
     )
 
@@ -48,7 +50,17 @@ public extension DiscoveryItem {
         image: MailResourcesAsset.syncIllustration,
         title: MailResourcesStrings.Localizable.syncTutorialWelcomeTitle,
         description: nil,
+        buttonTitle: MailResourcesStrings.Localizable.buttonStart,
         matomoCategory: .syncAutoConfig
+    )
+
+    static let updateDiscovery = DiscoveryItem(
+        type: .updateApp,
+        image: MailResourcesAsset.logoMailWithStar,
+        title: MailResourcesStrings.Localizable.updateAvailableTitle,
+        description: MailResourcesStrings.Localizable.updateAvailableDescription,
+        buttonTitle: MailResourcesStrings.Localizable.buttonUpdate,
+        matomoCategory: .appUpdate
     )
 }
 
@@ -67,9 +79,9 @@ struct DiscoveryView: View {
     var body: some View {
         Group {
             if isCompactWindow {
-                DiscoveryBottomSheetView(item: item, tryButton: didTouchNowButton, laterButton: didTouchLaterButton)
+                DiscoveryBottomSheetView(item: item, nowButton: didTouchNowButton, laterButton: didTouchLaterButton)
             } else {
-                DiscoveryAlertView(item: item, tryButton: didTouchNowButton, laterButton: didTouchLaterButton)
+                DiscoveryAlertView(item: item, nowButton: didTouchNowButton, laterButton: didTouchLaterButton)
             }
         }
         .onAppear {
@@ -99,7 +111,7 @@ struct DiscoveryView: View {
 struct DiscoveryBottomSheetView: View {
     let item: DiscoveryItem
 
-    let tryButton: () -> Void
+    let nowButton: () -> Void
     let laterButton: () -> Void
 
     var body: some View {
@@ -118,9 +130,8 @@ struct DiscoveryBottomSheetView: View {
 
             VStack(spacing: UIPadding.medium) {
                 MailButton(
-                    label: item.type == .ai ? MailResourcesStrings.Localizable.buttonTry : MailResourcesStrings.Localizable
-                        .buttonStart,
-                    action: tryButton
+                    label: item.buttonTitle,
+                    action: nowButton
                 )
                 .mailButtonFullWidth(true)
 
@@ -136,7 +147,7 @@ struct DiscoveryBottomSheetView: View {
 struct DiscoveryAlertView: View {
     let item: DiscoveryItem
 
-    let tryButton: () -> Void
+    let nowButton: () -> Void
     let laterButton: () -> Void
 
     var body: some View {
@@ -154,10 +165,9 @@ struct DiscoveryAlertView: View {
             }
 
             ModalButtonsView(
-                primaryButtonTitle: item.type == .ai ? MailResourcesStrings.Localizable.buttonTry : MailResourcesStrings
-                    .Localizable.buttonStart,
+                primaryButtonTitle: item.buttonTitle,
                 secondaryButtonTitle: MailResourcesStrings.Localizable.buttonLater,
-                primaryButtonAction: tryButton,
+                primaryButtonAction: nowButton,
                 secondaryButtonAction: laterButton
             )
         }
@@ -166,7 +176,8 @@ struct DiscoveryAlertView: View {
 
 #Preview {
     Group {
-        DiscoveryBottomSheetView(item: .aiDiscovery, tryButton: { /* Preview */ }, laterButton: { /* Preview */ })
-        DiscoveryAlertView(item: .aiDiscovery, tryButton: { /* Preview */ }, laterButton: { /* Preview */ })
+        DiscoveryBottomSheetView(item: .aiDiscovery, nowButton: { /* Preview */ }, laterButton: { /* Preview */ })
+        DiscoveryAlertView(item: .syncDiscovery, nowButton: { /* Preview */ }, laterButton: { /* Preview */ })
+        DiscoveryAlertView(item: .updateDiscovery, nowButton: { /* Preview */ }, laterButton: { /* Preview */ })
     }
 }

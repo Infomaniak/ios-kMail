@@ -37,6 +37,7 @@ public extension MatomoUtils.EventCategory {
 
     static let aiWriter = MatomoUtils.EventCategory(displayName: "aiWriter")
     static let appReview = MatomoUtils.EventCategory(displayName: "appReview")
+    static let appUpdate = MatomoUtils.EventCategory(displayName: "appUpdate")
     static let createFolder = MatomoUtils.EventCategory(displayName: "createFolder")
     static let externals = MatomoUtils.EventCategory(displayName: "externals")
     static let invalidPasswordMailbox = MatomoUtils.EventCategory(displayName: "invalidPasswordMailbox")
