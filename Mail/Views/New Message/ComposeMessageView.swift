@@ -168,7 +168,9 @@ struct ComposeMessageView: View {
         }
         .onDisappear {
             draftManager.syncDraft(mailboxManager: mailboxManager)
-            splitViewManager.showReviewAlert = reviewManager.shouldRequestReview()
+            if !Bundle.main.isExtension {
+                splitViewManager.showReviewAlert = reviewManager.shouldRequestReview()
+            }
         }
         .interactiveDismissDisabled()
         .customAlert(isPresented: $alert.isShowing) {
