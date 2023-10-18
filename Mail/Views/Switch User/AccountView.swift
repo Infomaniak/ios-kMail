@@ -35,9 +35,9 @@ final class AccountViewDelegate: DeleteAccountDelegate {
             accountManager.removeTokenAndAccount(account: account)
             if let nextAccount = accountManager.accounts.first {
                 accountManager.switchAccount(newAccount: nextAccount)
-                snackbarPresenter.show(message: "Account deleted")
             }
             accountManager.saveAccounts()
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackBarAccountDeleted)
         }
     }
 
