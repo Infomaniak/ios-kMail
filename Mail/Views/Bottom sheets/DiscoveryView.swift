@@ -26,7 +26,7 @@ public struct DiscoveryItem {
     public let image: MailResourcesImages
     public let title: String
     public let description: String
-    public let buttonTitle: String
+    public let primaryButtonLabel: String
     public let matomoCategory: MatomoUtils.EventCategory
 }
 
@@ -35,7 +35,7 @@ public extension DiscoveryItem {
         image: MailResourcesAsset.aiIllustration,
         title: MailResourcesStrings.Localizable.aiDiscoveryTitle,
         description: MailResourcesStrings.Localizable.aiDiscoveryDescription,
-        buttonTitle: MailResourcesStrings.Localizable.buttonTry,
+        primaryButtonLabel: MailResourcesStrings.Localizable.buttonTry,
         matomoCategory: .aiWriter
     )
 
@@ -43,7 +43,7 @@ public extension DiscoveryItem {
         image: MailResourcesAsset.syncIllustration,
         title: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle,
         description: MailResourcesStrings.Localizable.syncCalendarsAndContactsDescriptioniOS,
-        buttonTitle: MailResourcesStrings.Localizable.buttonStart,
+        primaryButtonLabel: MailResourcesStrings.Localizable.buttonStart,
         matomoCategory: .syncAutoConfig
     )
 
@@ -51,7 +51,7 @@ public extension DiscoveryItem {
         image: MailResourcesAsset.logoMailWithStar,
         title: MailResourcesStrings.Localizable.updateAvailableTitle,
         description: MailResourcesStrings.Localizable.updateAvailableDescription,
-        buttonTitle: MailResourcesStrings.Localizable.buttonUpdate,
+        primaryButtonLabel: MailResourcesStrings.Localizable.buttonUpdate,
         matomoCategory: .appUpdate
     )
 }
@@ -119,7 +119,7 @@ struct DiscoveryBottomSheetView: View {
 
             VStack(spacing: UIPadding.medium) {
                 MailButton(
-                    label: item.buttonTitle,
+                    label: item.primaryButtonLabel,
                     action: nowButton
                 )
                 .mailButtonFullWidth(true)
@@ -152,7 +152,7 @@ struct DiscoveryAlertView: View {
                 .textStyle(.bodySecondary)
 
             ModalButtonsView(
-                primaryButtonTitle: item.buttonTitle,
+                primaryButtonTitle: item.primaryButtonLabel,
                 secondaryButtonTitle: MailResourcesStrings.Localizable.buttonLater,
                 primaryButtonAction: nowButton,
                 secondaryButtonAction: laterButton
