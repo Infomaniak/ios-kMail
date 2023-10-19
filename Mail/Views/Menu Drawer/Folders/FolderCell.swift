@@ -141,6 +141,7 @@ extension FolderCellContent: Equatable {
             && lhs.folder.id == rhs.folder.id
             && lhs.folder.name == rhs.folder.name
             && lhs.folder.unreadCount == rhs.folder.unreadCount
+            && lhs.folder.isExpanded == rhs.folder.isExpanded
             && lhs.level == rhs.level
     }
 }
