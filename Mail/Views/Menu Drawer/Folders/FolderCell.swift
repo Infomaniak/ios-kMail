@@ -34,17 +34,6 @@ extension EnvironmentValues {
     }
 }
 
-extension FolderCell: Equatable {
-    static func == (lhs: FolderCell, rhs: FolderCell) -> Bool {
-        guard !lhs.folder.content.isInvalidated && !rhs.folder.content.isInvalidated else { return false }
-
-        return lhs.folder.content.id == rhs.folder.content.id
-            && lhs.level == rhs.level
-            && lhs.currentFolderId == rhs.currentFolderId
-            && lhs.canCollapseSubFolders == rhs.canCollapseSubFolders
-    }
-}
-
 struct FolderCell: View {
     enum CellType {
         case menuDrawer, move
@@ -132,17 +121,6 @@ struct FolderCell: View {
         }
         splitViewManager.selectedFolder = folder.content
         navigationDrawerState.close()
-    }
-}
-
-extension FolderCellContent: Equatable {
-    static func == (lhs: FolderCellContent, rhs: FolderCellContent) -> Bool {
-        return lhs.isCurrentFolder == rhs.isCurrentFolder
-            && lhs.folder.id == rhs.folder.id
-            && lhs.folder.name == rhs.folder.name
-            && lhs.folder.unreadCount == rhs.folder.unreadCount
-            && lhs.folder.isExpanded == rhs.folder.isExpanded
-            && lhs.level == rhs.level
     }
 }
 
