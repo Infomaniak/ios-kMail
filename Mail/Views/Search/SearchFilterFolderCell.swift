@@ -31,7 +31,7 @@ struct SearchFilterFolderCell: View {
     }
 
     private var selectedFolderName: String {
-        guard let folder = (folders.first { $0.id == selectedFolderId }) else {
+        guard let folder = (folders.first { $0.remoteId == selectedFolderId }) else {
             return allFoldersItem.name
         }
         return folder.localizedName

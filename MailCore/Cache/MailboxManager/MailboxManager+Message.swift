@@ -39,7 +39,7 @@ public extension MailboxManager {
         if previousCursor == nil {
             let messageUidsResult = try await apiFetcher.messagesUids(
                 mailboxUuid: mailbox.uuid,
-                folderId: folder.id,
+                folderId: folder.remoteId,
                 paginationInfo: nil
             )
             messagesUids = MessagesUids(
@@ -49,13 +49,13 @@ public extension MailboxManager {
         } else {
             let messageDeltaResult = try await apiFetcher.messagesDelta(
                 mailboxUUid: mailbox.uuid,
-                folderId: folder.id,
+                folderId: folder.remoteId,
                 signature: previousCursor!
             )
             messagesUids = MessagesUids(
                 addedShortUids: [],
                 deletedUids: messageDeltaResult.deletedShortUids
-                    .map { Constants.longUid(from: $0, folderId: folder.id) },
+                    .map { Constants.longUid(from: $0, folderId: folder.remoteId) },
                 updated: messageDeltaResult.updated,
                 cursor: messageDeltaResult.cursor,
                 folderUnreadCount: messageDeltaResult.unreadCount
@@ -81,7 +81,7 @@ public extension MailboxManager {
             }
 
             SentryDebug.searchForOrphanMessages(
-                folderId: folder.id,
+                folderId: folder.remoteId,
                 using: realm,
                 previousCursor: previousCursor,
                 newCursor: messagesUids.cursor
@@ -167,7 +167,7 @@ public extension MailboxManager {
         let realm = getRealm()
         var paginationInfo: PaginationInfo?
 
-        let sortedMessages = realm.objects(Message.self).where { $0.folderId == folder.id }
+        let sortedMessages = realm.objects(Message.self).where { $0.folderId == folder.remoteId }
             .sorted {
                 guard let firstMessageShortUid = $0.shortUid,
                       let secondMessageShortUid = $1.shortUid else {
@@ -198,7 +198,7 @@ public extension MailboxManager {
         do {
             let result = try await apiFetcher.messagesUids(
                 mailboxUuid: mailbox.uuid,
-                folderId: folder.id,
+                folderId: folder.remoteId,
                 paginationInfo: paginationInfo
             )
             return result
@@ -317,7 +317,7 @@ public extension MailboxManager {
     }
 
     func move(messages: [Message], to folder: Folder) async throws -> UndoAction {
-        let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
+        let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder.remoteId)
         try await refreshFolder(from: messages, additionalFolder: folder)
         return undoAction(for: response, and: messages)
     }
@@ -382,7 +382,7 @@ public extension MailboxManager {
         let uniqueUids: [String] = getUniqueUids(folder: folder, remoteUids: shortUids)
         let messageByUidsResult = try await apiFetcher.messagesByUids(
             mailboxUuid: mailbox.uuid,
-            folderId: folder.id,
+            folderId: folder.remoteId,
             messageUids: uniqueUids
         )
 
@@ -409,7 +409,7 @@ public extension MailboxManager {
                     SentrySDK.capture(message: "Found already existing message") { scope in
                         scope.setContext(value: ["Message": ["uid": message.uid,
                                                              "messageId": message.messageId],
-                                                 "Folder": ["id": message.folder?._id,
+                                                 "Folder": ["id": message.folder?.remoteId,
                                                             "name": message.folder?.name,
                                                             "cursor": message.folder?.cursor]],
                                          key: "Message context")
@@ -511,7 +511,7 @@ public extension MailboxManager {
             var threadsToUpdate = Set<Thread>()
             try? realm.safeWrite {
                 for update in updates {
-                    let uid = Constants.longUid(from: String(update.shortUid), folderId: folder.id)
+                    let uid = Constants.longUid(from: String(update.shortUid), folderId: folder.remoteId)
                     if let message = realm.object(ofType: Message.self, forPrimaryKey: uid) {
                         message.answered = update.answered
                         message.flagged = update.isFavorite

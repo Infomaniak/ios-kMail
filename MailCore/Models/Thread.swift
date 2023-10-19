@@ -63,7 +63,7 @@ public class Thread: Object, Decodable, Identifiable {
 
     public var messageInFolderCount: Int {
         guard !fromSearch else { return 1 }
-        return messages.filter { $0.folderId == self.folder?.id }.count
+        return messages.filter { $0.folderId == self.folder?.remoteId }.count
     }
 
     public var lastMessageFromFolder: Message? {
@@ -72,7 +72,7 @@ public class Thread: Object, Decodable, Identifiable {
             return messages.last
         }
 
-        return messages.last { $0.folderId == folder?.id }
+        return messages.last { $0.folderId == folder?.remoteId }
     }
 
     public var formattedSubject: String {
@@ -151,7 +151,7 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     private func addDuplicatedMessage(twinMessage: Message, newMessage: Message) {
-        let isTwinTheRealMessage = twinMessage.folderId == folder?.id
+        let isTwinTheRealMessage = twinMessage.folderId == folder?.remoteId
         if isTwinTheRealMessage {
             duplicates.append(newMessage)
         } else {

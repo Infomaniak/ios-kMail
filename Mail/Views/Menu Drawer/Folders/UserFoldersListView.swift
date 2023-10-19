@@ -83,7 +83,7 @@ struct UserFoldersListView: View {
                 } else {
                     ForEach(folders) { folder in
                         FolderCell(folder: folder,
-                                   currentFolderId: splitViewManager.selectedFolder?.id,
+                                   currentFolderId: splitViewManager.selectedFolder?.remoteId,
                                    canCollapseSubFolders: hasSubFolders,
                                    matomoCategory: .menuDrawer)
                     }

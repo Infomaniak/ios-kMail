@@ -195,7 +195,7 @@ public final class Message: Object, Decodable, Identifiable {
     }
 
     public var originalThread: Thread? {
-        return threads.first { $0.folder?.id == folderId }
+        return threads.first { $0.folder?.remoteId == folderId }
     }
 
     public var folder: Folder? {

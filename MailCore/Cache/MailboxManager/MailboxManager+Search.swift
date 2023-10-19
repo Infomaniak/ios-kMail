@@ -25,7 +25,7 @@ import RealmSwift
 public extension MailboxManager {
     func initSearchFolder() -> Folder {
         let searchFolder = Folder(
-            id: Constants.searchFolderId,
+            remoteId: Constants.searchFolderId,
             path: "",
             name: "",
             isFavorite: false,
