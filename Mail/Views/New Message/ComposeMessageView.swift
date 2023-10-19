@@ -191,7 +191,7 @@ struct ComposeMessageView: View {
             }
         }
         .aiDiscoveryPresenter(isPresented: $isShowingAIPopover) {
-            DiscoveryView(item: .aiDiscovery) { willShowAIPrompt in
+            DiscoveryView(item: .aiDiscovery, shouldPresentFeature: updateUserDefault) { willShowAIPrompt in
                 aiModel.isShowingPrompt = willShowAIPrompt
             }
         }
@@ -369,6 +369,10 @@ struct ComposeMessageView: View {
 
             realm.add(draft, update: .modified)
         }
+    }
+
+    private func updateUserDefault(shouldPresentFeature: Bool) {
+        UserDefaults.shared.shouldPresentAIFeature = shouldPresentFeature
     }
 }
 

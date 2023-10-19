@@ -23,21 +23,15 @@ import MailResources
 import SwiftUI
 
 public struct DiscoveryItem {
-    public enum DiscoveryType {
-        case ai, syncCalendarsAndContacts, updateApp
-    }
-
-    public let type: DiscoveryType
     public let image: MailResourcesImages
     public let title: String
-    public let description: String?
+    public let description: String
     public let buttonTitle: String
     public let matomoCategory: MatomoUtils.EventCategory
 }
 
 public extension DiscoveryItem {
     static let aiDiscovery = DiscoveryItem(
-        type: .ai,
         image: MailResourcesAsset.aiIllustration,
         title: MailResourcesStrings.Localizable.aiDiscoveryTitle,
         description: MailResourcesStrings.Localizable.aiDiscoveryDescription,
@@ -46,16 +40,14 @@ public extension DiscoveryItem {
     )
 
     static let syncDiscovery = DiscoveryItem(
-        type: .syncCalendarsAndContacts,
         image: MailResourcesAsset.syncIllustration,
-        title: MailResourcesStrings.Localizable.syncTutorialWelcomeTitle,
-        description: nil,
+        title: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle,
+        description: MailResourcesStrings.Localizable.syncCalendarsAndContactsDescriptioniOS,
         buttonTitle: MailResourcesStrings.Localizable.buttonStart,
         matomoCategory: .syncAutoConfig
     )
 
     static let updateDiscovery = DiscoveryItem(
-        type: .updateApp,
         image: MailResourcesAsset.logoMailWithStar,
         title: MailResourcesStrings.Localizable.updateAvailableTitle,
         description: MailResourcesStrings.Localizable.updateAvailableDescription,
@@ -74,6 +66,7 @@ struct DiscoveryView: View {
 
     @State private var willDiscoverNewFeature = false
 
+    let shouldPresentFeature: (Bool) -> Void
     let completionHandler: (Bool) -> Void
 
     var body: some View {
@@ -85,9 +78,7 @@ struct DiscoveryView: View {
             }
         }
         .onAppear {
-            if item.type == .ai {
-                UserDefaults.shared.shouldPresentAIFeature = false
-            }
+            shouldPresentFeature(false)
         }
         .onDisappear {
             completionHandler(willDiscoverNewFeature)
@@ -122,11 +113,9 @@ struct DiscoveryBottomSheetView: View {
                 .multilineTextAlignment(.center)
                 .textStyle(.header2)
 
-            if let description = item.description {
-                Text(description)
-                    .multilineTextAlignment(.center)
-                    .textStyle(.bodySecondary)
-            }
+            Text(item.description)
+                .multilineTextAlignment(.center)
+                .textStyle(.bodySecondary)
 
             VStack(spacing: UIPadding.medium) {
                 MailButton(
@@ -158,11 +147,9 @@ struct DiscoveryAlertView: View {
                 .multilineTextAlignment(.center)
                 .textStyle(.bodyMedium)
 
-            if let description = item.description {
-                Text(description)
-                    .multilineTextAlignment(.center)
-                    .textStyle(.bodySecondary)
-            }
+            Text(item.description)
+                .multilineTextAlignment(.center)
+                .textStyle(.bodySecondary)
 
             ModalButtonsView(
                 primaryButtonTitle: item.buttonTitle,
