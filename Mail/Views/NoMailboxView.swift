@@ -44,7 +44,7 @@ struct NoMailboxView: View {
                 }
 
             VStack(spacing: UIPadding.medium) {
-                MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.buttonAddEmailAddress) {
+                MailButton(label: MailResourcesStrings.Localizable.buttonAddEmailAddress) {
                     openURL(URLConstants.ikMe.url)
                 }
                 .mailButtonFullWidth(true)
