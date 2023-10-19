@@ -124,6 +124,10 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     /// Date of last threads update
     @Persisted public var lastUpdate: Date?
 
+    public var id: String {
+        return remoteId + (realm?.configuration.fileURL?.lastPathComponent ?? "")
+    }
+
     public var listChildren: AnyRealmCollection<Folder>? {
         children.isEmpty ? nil : AnyRealmCollection(children)
     }

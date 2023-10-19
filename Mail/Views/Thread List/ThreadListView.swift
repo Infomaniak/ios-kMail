@@ -28,7 +28,7 @@ struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var userActivityController: UserActivityController
 
-    @EnvironmentObject var navigationState: NavigationState
+    @EnvironmentObject private var navigationState: NavigationState
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -59,10 +59,9 @@ struct ThreadListView: View {
     }
 
     let folder: Folder
+    let mailboxManager: MailboxManager
 
-    init(mailboxManager: MailboxManager,
-         folder: Folder,
-         isCompact: Bool) {
+    init(mailboxManager: MailboxManager, folder: Folder, isCompact: Bool) {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder,
                                                                    isCompact: isCompact))
@@ -70,6 +69,7 @@ struct ThreadListView: View {
 
         UITableViewCell.appearance().focusEffect = .none
         self.folder = folder
+        self.mailboxManager = mailboxManager
     }
 
     var body: some View {
@@ -84,7 +84,7 @@ struct ThreadListView: View {
                     if shouldDisplayFlushFolderView {
                         FlushFolderView(
                             folder: folder,
-                            mailboxManager: viewModel.mailboxManager,
+                            mailboxManager: mailboxManager,
                             flushAlert: $flushAlert
                         )
                         .threadListCellAppearance()
@@ -178,7 +178,7 @@ struct ThreadListView: View {
             if viewModel.isCompact {
                 viewModel.selectedThread = nil
             }
-            userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox, folder: folder)
+            userActivityController.setCurrentActivity(mailbox: mailboxManager.mailbox, folder: folder)
         }
         .onChange(of: viewModel.selectedThread) { newThread in
             if let newThread {

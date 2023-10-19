@@ -29,18 +29,25 @@ struct ThreadListManagerView: View {
     @EnvironmentObject private var navigationState: NavigationState
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    private var threadListViewHash: Int {
+        var hasher = Hasher()
+        hasher.combine(navigationState.selectedFolder?.id)
+        hasher.combine(mailboxManager.mailbox.objectId)
+        hasher.combine(threadMode)
+        return hasher.finalize()
+    }
+
     var body: some View {
-        Group {
+        VStack {
             if let selectedFolder = navigationState.selectedFolder {
                 if navigationState.isShowingSearch {
                     SearchView(mailboxManager: mailboxManager, folder: selectedFolder)
                 } else {
                     ThreadListView(mailboxManager: mailboxManager, folder: selectedFolder, isCompact: isCompactWindow)
-                        .id(selectedFolder)
                 }
             }
         }
-        .id(mailboxManager.mailbox.id)
+        .id(threadListViewHash)
         .animation(.easeInOut(duration: 0.25), value: navigationState.isShowingSearch)
     }
 }
