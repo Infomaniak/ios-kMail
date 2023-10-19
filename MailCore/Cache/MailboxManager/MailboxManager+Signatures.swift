@@ -25,7 +25,7 @@ import RealmSwift
 public extension MailboxManager {
     func refreshAllSignatures() async throws {
         // Get from API
-        let signaturesResult = try await observeAPIErrors { try await self.apiFetcher.signatures(mailbox: self.mailbox) }
+        let signaturesResult = try await apiFetcher.signatures(mailbox: mailbox)
         let updatedSignatures = Array(signaturesResult.signatures)
 
         await backgroundRealm.execute { realm in
@@ -60,7 +60,7 @@ public extension MailboxManager {
     }
 
     func updateSignature(signature: Signature) async throws {
-        try await observeAPIErrors { try await self.apiFetcher.updateSignature(mailbox: self.mailbox, signature: signature) }
+        try await apiFetcher.updateSignature(mailbox: mailbox, signature: signature)
         try await refreshAllSignatures()
     }
 

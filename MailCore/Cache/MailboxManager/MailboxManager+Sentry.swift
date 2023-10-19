@@ -17,46 +17,15 @@
  */
 
 import Foundation
-import Sentry
 
 // MARK: - Sentry
 
-public extension MailboxManager {
-    enum Category: String {
-        case APIError = "MailboxManagerAPIError"
-        case RealmError = "MailboxManagerRealmError"
+extension MailboxManager {
+    enum Category {
+        static let internalError = "MailboxManagerInternalError"
     }
 
-    /// Observe API callback errors to generate a dashboard  on sentry
-    @discardableResult
-    func observeAPIErrors<T>(_ function: String = #function, _ task: @escaping () async throws -> T) async throws -> T {
-        return try await observeErrors(category: .APIError, function: function, task: task)
-    }
-
-    /// Observe Local errors to generate a dashboard on sentry
-    func observeRealmErrors<T>(_ function: String = #function, _ task: @escaping () async throws -> T) async throws -> T {
-        try await observeErrors(category: .RealmError, function: function, task: task)
-    }
-
-    private func observeErrors<T>(category: Category, function: String, task: @escaping () async throws -> T) async throws -> T {
-        do {
-            return try await task()
-        } catch {
-            let categoryName = category.rawValue
-            let metadata: [String: Any] = ["error": error, "localizedDescription": error.localizedDescription]
-
-            // Add a breadcrumb
-            let breadcrumb = Breadcrumb(level: .error, category: categoryName)
-            breadcrumb.message = "\(function)~>|\(error)"
-            breadcrumb.data = metadata
-            SentrySDK.addBreadcrumb(breadcrumb)
-
-            // Add error
-            SentrySDK.capture(message: categoryName) { scope in
-                scope.setExtras(metadata)
-            }
-
-            throw error
-        }
+    func logError(_ error: ErrorDomain, function: String = #function) {
+        SentryDebug.logInternalErrorToSentry(category: Category.internalError, error: error, function: function)
     }
 }

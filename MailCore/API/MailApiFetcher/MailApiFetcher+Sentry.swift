@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2022 Infomaniak Network SA
+ Copyright (C) 2023 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -18,13 +18,12 @@
 
 import Foundation
 
-extension AccountManager {
+extension MailApiFetcher {
     enum Category {
-        static let internalError = "AccountManagerInternalError"
+        static let anyError = "MailApiFetcherError"
     }
 
-    /// Track a local `ErrorDomain` error in order to generate a dashboard on Sentry related to the AccountManager.
-    func logError(_ error: ErrorDomain, _ function: String = #function) {
-        SentryDebug.logInternalErrorToSentry(category: Category.internalError, error: error, function: function)
+    func logError(_ error: Error, function: String = #function) {
+        SentryDebug.logInternalErrorToSentry(category: Category.anyError, error: error, function: function)
     }
 }

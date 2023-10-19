@@ -203,4 +203,22 @@ public enum SentryDebug {
                              key: "Folder context")
         }
     }
+
+    // MARK: - Standard log
+
+    /// Process a local error  to Sentry for dashboard creation
+    static func logInternalErrorToSentry(category: String, error: Error, function: String) {
+        let metadata: [String: Any] = ["error": error, "localizedDescription": error.localizedDescription]
+
+        // Add a breadcrumb
+        let breadcrumb = Breadcrumb(level: .error, category: category)
+        breadcrumb.message = "\(function)~>|\(error)"
+        breadcrumb.data = metadata
+        SentrySDK.addBreadcrumb(breadcrumb)
+
+        // Add an error
+        SentrySDK.capture(message: category) { scope in
+            scope.setExtras(metadata)
+        }
+    }
 }

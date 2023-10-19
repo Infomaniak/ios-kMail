@@ -255,9 +255,9 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     private func createAndSetCurrentAccount(token: ApiToken) async throws -> Account {
         let apiFetcher = MailApiFetcher(token: token, delegate: self)
-        let user = try await observeAPIErrors { try await apiFetcher.userProfile() }
+        let user = try await apiFetcher.userProfile()
 
-        let mailboxesResponse = try await observeAPIErrors { try await apiFetcher.mailboxes() }
+        let mailboxesResponse = try await apiFetcher.mailboxes()
         guard !mailboxesResponse.isEmpty else {
             throw MailError.noMailbox
         }
@@ -272,9 +272,9 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         try? await featureFlagsManager.fetchFlags()
 
         for mailbox in mailboxesResponse {
-            mailbox.permissions = try await observeAPIErrors { try await apiFetcher.permissions(mailbox: mailbox) }
+            mailbox.permissions = try await apiFetcher.permissions(mailbox: mailbox)
             if mailbox.isLimited {
-                mailbox.quotas = try await observeAPIErrors { try await apiFetcher.quotas(mailbox: mailbox) }
+                mailbox.quotas = try await apiFetcher.quotas(mailbox: mailbox)
             }
         }
 
@@ -300,20 +300,20 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
 
         let apiFetcher = getApiFetcher(for: account.userId, token: token)
-        let user = try await observeAPIErrors { try await apiFetcher.userProfile(dateFormat: .iso8601) }
+        let user = try await apiFetcher.userProfile(dateFormat: .iso8601)
         account.user = user
 
         try? await featureFlagsManager.fetchFlags()
 
-        let fetchedMailboxes = try await observeAPIErrors { try await apiFetcher.mailboxes() }
+        let fetchedMailboxes = try await apiFetcher.mailboxes()
         guard !fetchedMailboxes.isEmpty else {
             removeAccount(toDeleteAccount: account)
             throw MailError.noMailbox
         }
         for mailbox in fetchedMailboxes {
-            mailbox.permissions = try await observeAPIErrors { try await apiFetcher.permissions(mailbox: mailbox) }
+            mailbox.permissions = try await apiFetcher.permissions(mailbox: mailbox)
             if mailbox.isLimited {
-                mailbox.quotas = try await observeAPIErrors { try await apiFetcher.quotas(mailbox: mailbox) }
+                mailbox.quotas = try await apiFetcher.quotas(mailbox: mailbox)
             }
         }
 
@@ -436,7 +436,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             return
         }
 
-        try await observeAPIErrors { try await apiFetcher.addMailbox(mail: mail, password: password) }
+        try await apiFetcher.addMailbox(mail: mail, password: password)
         try await updateUser(for: currentAccount)
 
         let mailboxes = mailboxInfosManager.getMailboxes(for: currentUserId)
@@ -455,7 +455,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             return
         }
 
-        try await observeAPIErrors { try await apiFetcher.updateMailboxPassword(mailbox: mailbox, password: password) }
+        try await apiFetcher.updateMailboxPassword(mailbox: mailbox, password: password)
         try await updateUser(for: currentAccount)
     }
 
@@ -464,7 +464,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             logError(.missingAPIFetcher)
             return
         }
-        try await observeAPIErrors { try await apiFetcher.askMailboxPassword(mailbox: mailbox) }
+        try await apiFetcher.askMailboxPassword(mailbox: mailbox)
     }
 
     public func detachMailbox(mailbox: Mailbox) async throws {
@@ -472,7 +472,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             logError(.missingAPIFetcher)
             return
         }
-        try await observeAPIErrors { try await apiFetcher.detachMailbox(mailbox: mailbox) }
+        try await apiFetcher.detachMailbox(mailbox: mailbox)
         try await updateUser(for: currentAccount)
     }
 

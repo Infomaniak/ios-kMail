@@ -39,6 +39,12 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     public let apiFetcher: MailApiFetcher
     public let contactManager: ContactManager
 
+    enum ErrorDomain: Error {
+        case missingMessage
+        case missingFolder
+        case missingDraft
+    }
+
     public final class MailboxManagerConstants {
         private let fileManager = FileManager.default
         public let rootDocumentsURL: URL
@@ -142,7 +148,10 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         using realm: Realm? = nil
     ) {
         let realm = realm ?? getRealm()
-        guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+        guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else {
+            logError(.missingMessage)
+            return
+        }
         message.inTrash = savedMessage.inTrash
         if keepProperties.contains(.fullyDownloaded) {
             message.fullyDownloaded = savedMessage.fullyDownloaded
@@ -164,7 +173,10 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         for folder: Folder,
         using realm: Realm
     ) {
-        guard let savedFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder._id) else { return }
+        guard let savedFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder._id) else {
+            logError(.missingFolder)
+            return
+        }
         folder.unreadCount = savedFolder.unreadCount
         folder.lastUpdate = savedFolder.lastUpdate
         folder.cursor = savedFolder.cursor

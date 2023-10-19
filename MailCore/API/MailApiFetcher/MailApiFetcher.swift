@@ -50,10 +50,13 @@ public final class MailApiFetcher: ApiFetcher, MailApiFetchable {
         do {
             return try await super.perform(request: request.validate(statusCode: handledHttpStatus))
         } catch InfomaniakError.apiError(let apiError) {
+            logError(apiError)
             throw MailApiError.mailApiErrorWithFallback(apiErrorCode: apiError.code)
         } catch InfomaniakError.serverError(statusCode: let statusCode) {
+            logError(InfomaniakError.serverError(statusCode: statusCode))
             throw MailServerError(httpStatus: statusCode)
         } catch {
+            logError(error)
             if let afError = error.asAFError {
                 if case .responseSerializationFailed(let reason) = afError,
                    case .decodingFailed(let error) = reason {
@@ -82,6 +85,7 @@ public final class MailApiFetcher: ApiFetcher, MailApiFetchable {
 
                 throw AFErrorWithContext(request: request, afError: afError)
             } else {
+                logError(error)
                 throw error
             }
         }
