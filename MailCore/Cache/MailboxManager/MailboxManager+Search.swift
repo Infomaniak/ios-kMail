@@ -43,13 +43,15 @@ public extension MailboxManager {
 
     func searchThreads(searchFolder: Folder?, filterFolderId: String, filter: Filter = .all,
                        searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
-        let threadResult = try await apiFetcher.threads(
-            mailbox: mailbox,
-            folderId: filterFolderId,
-            filter: filter,
-            searchFilter: searchFilter,
-            isDraftFolder: false
-        )
+        let threadResult = try await observeAPIErrors {
+            try await self.apiFetcher.threads(
+                mailbox: self.mailbox,
+                folderId: filterFolderId,
+                filter: filter,
+                searchFilter: searchFilter,
+                isDraftFolder: false
+            )
+        }
 
         await backgroundRealm.execute { realm in
             for thread in threadResult.threads ?? [] {
@@ -70,7 +72,10 @@ public extension MailboxManager {
 
     func searchThreads(searchFolder: Folder?, from resource: String,
                        searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
-        let threadResult = try await apiFetcher.threads(from: resource, searchFilter: searchFilter)
+        let threadResult = try await observeAPIErrors { try await self.apiFetcher.threads(
+            from: resource,
+            searchFilter: searchFilter
+        ) }
 
         let realm = getRealm()
         for thread in threadResult.threads ?? [] {

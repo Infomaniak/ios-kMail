@@ -317,13 +317,17 @@ public extension MailboxManager {
     }
 
     func move(messages: [Message], to folder: Folder) async throws -> UndoAction {
-        let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder._id)
+        let response = try await observeAPIErrors {
+            try await self.apiFetcher.move(mailbox: self.mailbox, messages: messages, destinationId: folder._id)
+        }
         try await refreshFolder(from: messages, additionalFolder: folder)
         return undoAction(for: response, and: messages)
     }
 
     func delete(messages: [Message]) async throws {
-        _ = try await apiFetcher.delete(mailbox: mailbox, messages: messages)
+        try await observeAPIErrors {
+            try await self.apiFetcher.delete(mailbox: self.mailbox, messages: messages)
+        }
         try await refreshFolder(from: messages)
     }
 
@@ -547,9 +551,9 @@ public extension MailboxManager {
 
     func markAsSeen(messages: [Message], seen: Bool) async throws {
         if seen {
-            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: messages)
+            try await observeAPIErrors { try await self.apiFetcher.markAsSeen(mailbox: self.mailbox, messages: messages) }
         } else {
-            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
+            try await observeAPIErrors { try await self.apiFetcher.markAsUnseen(mailbox: self.mailbox, messages: messages) }
         }
         try await refreshFolder(from: messages)
 
@@ -568,13 +572,13 @@ public extension MailboxManager {
     }
 
     private func star(messages: [Message]) async throws -> MessageActionResult {
-        let response = try await apiFetcher.star(mailbox: mailbox, messages: messages)
+        let response = try await observeAPIErrors { try await self.apiFetcher.star(mailbox: self.mailbox, messages: messages) }
         try await refreshFolder(from: messages)
         return response
     }
 
     private func unstar(messages: [Message]) async throws -> MessageActionResult {
-        let response = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
+        let response = try await observeAPIErrors { try await self.apiFetcher.unstar(mailbox: self.mailbox, messages: messages) }
         try await refreshFolder(from: messages)
         return response
     }

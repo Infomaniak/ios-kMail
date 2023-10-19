@@ -34,7 +34,7 @@ public extension MailboxManager {
         }
 
         // Get from API
-        let folderResult = try await apiFetcher.folders(mailbox: mailbox)
+        let folderResult = try await observeAPIErrors { try await self.apiFetcher.folders(mailbox: self.mailbox) }
         let newFolders = getSubFolders(from: folderResult)
 
         await backgroundRealm.execute { realm in
@@ -90,7 +90,13 @@ public extension MailboxManager {
     }
 
     func createFolder(name: String, parent: Folder? = nil) async throws -> Folder {
-        var folder = try await apiFetcher.create(mailbox: mailbox, folder: NewFolder(name: name, path: parent?.path))
+        var folder = try await observeAPIErrors {
+            try await self.apiFetcher.create(
+                mailbox: self.mailbox,
+                folder: NewFolder(name: name, path: parent?.path)
+            )
+        }
+
         await backgroundRealm.execute { realm in
             try? realm.safeWrite {
                 realm.add(folder)
