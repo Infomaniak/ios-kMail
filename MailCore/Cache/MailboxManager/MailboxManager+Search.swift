@@ -70,10 +70,7 @@ public extension MailboxManager {
 
     func searchThreads(searchFolder: Folder?, from resource: String,
                        searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
-        let threadResult = try await apiFetcher.threads(
-            from: resource,
-            searchFilter: searchFilter
-        )
+        let threadResult = try await apiFetcher.threads(from: resource, searchFilter: searchFilter)
 
         let realm = getRealm()
         for thread in threadResult.threads ?? [] {

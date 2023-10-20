@@ -44,10 +44,7 @@ public extension MailboxManager {
 
     func send(draft: Draft) async throws -> SendResponse {
         do {
-            let cancelableResponse = try await apiFetcher.send(
-                mailbox: mailbox,
-                draft: draft
-            )
+            let cancelableResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
             // Once the draft has been sent, we can delete it from Realm
             try await deleteLocally(draft: draft)
             return cancelableResponse

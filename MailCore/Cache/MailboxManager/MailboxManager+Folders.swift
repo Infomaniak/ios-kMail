@@ -90,10 +90,7 @@ public extension MailboxManager {
     }
 
     func createFolder(name: String, parent: Folder? = nil) async throws -> Folder {
-        var folder = try await apiFetcher.create(
-            mailbox: mailbox,
-            folder: NewFolder(name: name, path: parent?.path)
-        )
+        var folder = try await apiFetcher.create(mailbox: mailbox, folder: NewFolder(name: name, path: parent?.path))
 
         await backgroundRealm.execute { realm in
             try? realm.safeWrite {
