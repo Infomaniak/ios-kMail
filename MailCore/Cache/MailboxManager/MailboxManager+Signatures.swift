@@ -60,7 +60,7 @@ public extension MailboxManager {
     }
 
     func updateSignature(signature: Signature) async throws {
-        _ = try await apiFetcher.updateSignature(mailbox: mailbox, signature: signature)
+        try await apiFetcher.updateSignature(mailbox: mailbox, signature: signature)
         try await refreshAllSignatures()
     }
 

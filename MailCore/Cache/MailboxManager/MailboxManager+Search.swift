@@ -91,7 +91,10 @@ public extension MailboxManager {
     func searchThreadsOffline(searchFolder: Folder?, filterFolderId: String,
                               searchFilters: [SearchCondition]) async {
         await backgroundRealm.execute { realm in
-            guard let searchFolder = searchFolder?.fresh(using: realm) else { return }
+            guard let searchFolder = searchFolder?.fresh(using: realm) else {
+                self.logError(.missingFolder)
+                return
+            }
 
             try? realm.safeWrite {
                 realm.delete(realm.objects(Message.self).where { $0.fromSearch == true })

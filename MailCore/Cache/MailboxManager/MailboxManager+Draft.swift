@@ -69,7 +69,10 @@ public extension MailboxManager {
             let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
             await backgroundRealm.execute { realm in
                 // Update draft in Realm
-                guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else { return }
+                guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
+                    self.logError(.missingDraft)
+                    return
+                }
                 try? realm.safeWrite {
                     liveDraft.remoteUUID = saveResponse.uuid
                     liveDraft.messageUid = saveResponse.uid
@@ -108,7 +111,10 @@ public extension MailboxManager {
 
     func deleteLocally(draft: Draft) async throws {
         await backgroundRealm.execute { realm in
-            guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else { return }
+            guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
+                self.logError(.missingDraft)
+                return
+            }
             try? realm.safeWrite {
                 realm.delete(liveDraft)
             }
@@ -116,7 +122,10 @@ public extension MailboxManager {
     }
 
     func deleteOrphanDrafts() async {
-        guard let draftFolder = getFolder(with: .draft) else { return }
+        guard let draftFolder = getFolder(with: .draft) else {
+            logError(.missingFolder)
+            return
+        }
 
         let existingMessageUids = Set(draftFolder.threads.flatMap(\.messages).map(\.uid))
 

@@ -123,6 +123,20 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     private let contactManagers = SendableDictionary<String, ContactManager>()
     private let apiFetchers = SendableDictionary<Int, MailApiFetcher>()
 
+    /// Local error handling
+    enum ErrorDomain: Error {
+        case mailboxManagerMissing
+        case mailboxFolderMissing
+        case mailboxMissing
+        case currentSubscriptionMissing
+        case topicMismatch
+        case missingAPIFetcher
+        case failedToRemoveToken
+        case failedToDeleteAPIToken(wrapping: Error)
+        case failedToLoadAccounts(wrapping: Error)
+        case failedToSaveAccounts(wrapping: Error)
+    }
+
     public init() {
         currentMailboxId = UserDefaults.shared.currentMailboxId
         currentUserId = UserDefaults.shared.currentMailUserId
@@ -333,6 +347,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
                 let savedAccounts = try decoder.decode([Account].self, from: data)
                 loadedAccounts = savedAccounts
             } catch {
+                logError(.failedToLoadAccounts(wrapping: error))
                 DDLogError("Error loading accounts \(error)")
             }
         }
@@ -349,6 +364,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
                     try FileManager.default.createDirectory(atPath: groupDirectoryURL.path, withIntermediateDirectories: true)
                     try data.write(to: groupDirectoryURL.appendingPathComponent("accounts.json"))
                 } catch {
+                    logError(.failedToSaveAccounts(wrapping: error))
                     DDLogError("Error saving accounts \(error)")
                 }
             }
@@ -384,18 +400,30 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     public func switchMailbox(newMailbox: Mailbox) {
         Task {
-            setCurrentMailboxForCurrentAccount(mailbox: newMailbox, refresh: false)
-            saveAccounts()
+            self.setCurrentMailboxForCurrentAccount(mailbox: newMailbox, refresh: false)
+            self.saveAccounts()
 
-            guard let mailboxManager = getMailboxManager(for: newMailbox),
-                  mailboxManager.getFolder(with: .inbox)?.cursor == nil
-            else { return }
+            guard let mailboxManager = getMailboxManager(for: newMailbox) else {
+                logError(.mailboxManagerMissing)
+                return
+            }
+
+            guard mailboxManager.getFolder(with: .inbox)?.cursor == nil else {
+                logError(.mailboxFolderMissing)
+                return
+            }
 
             let notificationTopicName = newMailbox.notificationTopicName
             let currentSubscription = await notificationService.subscriptionForUser(id: currentUserId)
-            guard let currentTopics = currentSubscription?.topics,
-                  !currentTopics.contains(notificationTopicName)
-            else { return }
+            guard let currentTopics = currentSubscription?.topics else {
+                logError(.currentSubscriptionMissing)
+                return
+            }
+
+            guard !currentTopics.contains(notificationTopicName) else {
+                logError(.topicMismatch)
+                return
+            }
 
             let updatedTopics = currentTopics + [notificationTopicName]
             await notificationService.updateTopicsIfNeeded(updatedTopics, userApiFetcher: mailboxManager.apiFetcher)
@@ -403,32 +431,48 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     public func addMailbox(mail: String, password: String) async throws {
-        guard let apiFetcher = currentApiFetcher else { return }
+        guard let apiFetcher = currentApiFetcher else {
+            logError(.missingAPIFetcher)
+            return
+        }
 
-        _ = try await apiFetcher.addMailbox(mail: mail, password: password)
+        try await apiFetcher.addMailbox(mail: mail, password: password)
         try await updateUser(for: currentAccount)
 
         let mailboxes = mailboxInfosManager.getMailboxes(for: currentUserId)
-        guard let addedMailbox = mailboxes.first(where: { $0.email == mail }) else { return }
+        guard let addedMailbox = mailboxes.first(where: { $0.email == mail }) else {
+            logError(.mailboxMissing)
+            return
+        }
 
         matomo.track(eventWithCategory: .account, name: "addMailboxConfirm")
         switchMailbox(newMailbox: addedMailbox)
     }
 
     public func updateMailboxPassword(mailbox: Mailbox, password: String) async throws {
-        guard let apiFetcher = currentApiFetcher else { return }
-        _ = try await apiFetcher.updateMailboxPassword(mailbox: mailbox, password: password)
+        guard let apiFetcher = currentApiFetcher else {
+            logError(.missingAPIFetcher)
+            return
+        }
+
+        try await apiFetcher.updateMailboxPassword(mailbox: mailbox, password: password)
         try await updateUser(for: currentAccount)
     }
 
     public func askMailboxPassword(mailbox: Mailbox) async throws {
-        guard let apiFetcher = currentApiFetcher else { return }
-        _ = try await apiFetcher.askMailboxPassword(mailbox: mailbox)
+        guard let apiFetcher = currentApiFetcher else {
+            logError(.missingAPIFetcher)
+            return
+        }
+        try await apiFetcher.askMailboxPassword(mailbox: mailbox)
     }
 
     public func detachMailbox(mailbox: Mailbox) async throws {
-        guard let apiFetcher = currentApiFetcher else { return }
-        _ = try await apiFetcher.detachMailbox(mailbox: mailbox)
+        guard let apiFetcher = currentApiFetcher else {
+            logError(.missingAPIFetcher)
+            return
+        }
+        try await apiFetcher.detachMailbox(mailbox: mailbox)
         try await updateUser(for: currentAccount)
     }
 
@@ -484,8 +528,13 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         let removedToken = tokenStore.removeTokenFor(userId: account.userId) ?? account.token
         removeAccount(toDeleteAccount: account)
 
-        guard let removedToken else { return }
+        guard let removedToken else {
+            logError(.failedToRemoveToken)
+            return
+        }
+
         networkLoginService.deleteApiToken(token: removedToken) { error in
+            self.logError(.failedToDeleteAPIToken(wrapping: error))
             DDLogError("Failed to delete api token: \(error.localizedDescription)")
         }
     }

@@ -67,7 +67,10 @@ public extension MailboxManager {
         guard !Task.isCancelled else { return }
 
         await backgroundRealm.execute { realm in
-            guard let folder = folder.fresh(using: realm) else { return }
+            guard let folder = folder.fresh(using: realm) else {
+                self.logError(.missingFolder)
+                return
+            }
             try? realm.safeWrite {
                 if previousCursor == nil && messagesUids.addedShortUids.count < Constants.pageSize {
                     folder.completeHistoryInfo()
@@ -111,7 +114,10 @@ public extension MailboxManager {
         }
 
         let realmPrevious = getRealm()
-        guard let folderPrevious = folder.fresh(using: realmPrevious) else { return }
+        guard let folderPrevious = folder.fresh(using: realmPrevious) else {
+            logError(.missingFolder)
+            return
+        }
         var remainingOldMessagesToFetch = folderPrevious.remainingOldMessagesToFetch
         while remainingOldMessagesToFetch > 0 {
             guard !Task.isCancelled else { return }
@@ -138,7 +144,10 @@ public extension MailboxManager {
             SentryDebug.addResetingFolderBreadcrumb(folder: folder)
 
             await backgroundRealm.execute { realm in
-                guard let folder = folder.fresh(using: realm) else { return }
+                guard let folder = folder.fresh(using: realm) else {
+                    self.logError(.missingFolder)
+                    return
+                }
 
                 try? realm.write {
                     realm.delete(folder.messages)
@@ -323,7 +332,7 @@ public extension MailboxManager {
     }
 
     func delete(messages: [Message]) async throws {
-        _ = try await apiFetcher.delete(mailbox: mailbox, messages: messages)
+        try await apiFetcher.delete(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages)
     }
 
@@ -481,7 +490,10 @@ public extension MailboxManager {
             folder.threads.insert(thread)
             return thread
         }
-        guard !existingThreads.contains(where: { $0.folder == folder }) else { return nil }
+        guard !existingThreads.contains(where: { $0.folder == folder }) else {
+            logError(.missingFolder)
+            return nil
+        }
 
         let thread = message.toThread().detached()
         folder.threads.insert(thread)
@@ -547,9 +559,9 @@ public extension MailboxManager {
 
     func markAsSeen(messages: [Message], seen: Bool) async throws {
         if seen {
-            _ = try await apiFetcher.markAsSeen(mailbox: mailbox, messages: messages)
+            try await apiFetcher.markAsSeen(mailbox: mailbox, messages: messages)
         } else {
-            _ = try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
+            try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
         }
         try await refreshFolder(from: messages)
 
