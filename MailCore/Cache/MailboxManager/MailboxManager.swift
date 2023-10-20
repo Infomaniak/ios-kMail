@@ -73,7 +73,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 20,
+            schemaVersion: 21,
             migrationBlock: { migration, oldSchemaVersion in
                 // No migration needed from 0 to 16
                 if oldSchemaVersion < 17 {
@@ -82,6 +82,12 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 }
                 if oldSchemaVersion < 20 {
                     migration.deleteData(forType: SearchHistory.className())
+                }
+
+                if oldSchemaVersion < 21 {
+                    migration.enumerateObjects(ofType: Folder.className()) { oldObject, newObject in
+                        newObject?["remoteId"] = oldObject?["_id"]
+                    }
                 }
             },
             objectTypes: [
@@ -173,7 +179,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         for folder: Folder,
         using realm: Realm
     ) {
-        guard let savedFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder._id) else {
+        guard let savedFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder.remoteId) else {
             logError(.missingFolder)
             return
         }

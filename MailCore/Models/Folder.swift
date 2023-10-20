@@ -103,7 +103,7 @@ public enum ToolFolderType: String, PersistableEnum {
 }
 
 public class Folder: Object, Codable, Comparable, Identifiable {
-    @Persisted(primaryKey: true) public var _id: String
+    @Persisted(primaryKey: true) public var remoteId: String
     @Persisted public var path: String
     @Persisted public var name: String
     @Persisted public var role: FolderRole?
@@ -123,10 +123,6 @@ public class Folder: Object, Codable, Comparable, Identifiable {
 
     /// Date of last threads update
     @Persisted public var lastUpdate: Date?
-
-    public var id: String {
-        return _id
-    }
 
     public var listChildren: AnyRealmCollection<Folder>? {
         children.isEmpty ? nil : AnyRealmCollection(children)
@@ -191,10 +187,6 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         }
     }
 
-    public static func == (lhs: Folder, rhs: Folder) -> Bool {
-        return lhs.id == rhs.id
-    }
-
     public func computeUnreadCount() {
         unreadCount = threads.where { $0.unseenMessages > 0 }.count
     }
@@ -224,7 +216,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     enum CodingKeys: String, CodingKey {
-        case _id = "id"
+        case remoteId = "id"
         case path
         case name
         case role
@@ -235,7 +227,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     public convenience init(
-        id: String,
+        remoteId: String,
         path: String,
         name: String,
         role: FolderRole? = nil,
@@ -247,7 +239,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     ) {
         self.init()
 
-        _id = id
+        self.remoteId = remoteId
         self.path = path
         self.name = name
         self.role = role

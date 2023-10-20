@@ -32,7 +32,7 @@ public enum SentryDebug {
                 SentrySDK.capture(message: "We tried to download some Messages, but they were nowhere to be found") { scope in
                     scope.setLevel(.error)
                     scope.setContext(
-                        value: ["uids": "\(missingUids.map { Constants.longUid(from: $0, folderId: folder.id) })",
+                        value: ["uids": "\(missingUids.map { Constants.longUid(from: $0, folderId: folder.remoteId) })",
                                 "previousCursor": folder.cursor ?? "No cursor",
                                 "newCursor": newCursor ?? "No cursor"],
                         key: "missingMessages"
@@ -171,7 +171,7 @@ public enum SentryDebug {
                                                          "duplicates": message.duplicates.compactMap(\.messageId),
                                                          "references": message.references ?? "nil"],
                                              "Seen": ["Expected": actualSeen, "Actual": liveMessage.seen],
-                                             "Folder": ["id": message.folder?._id ?? "nil",
+                                             "Folder": ["id": message.folder?.remoteId ?? "nil",
                                                         "name": message.folder?.name ?? "nil",
                                                         "last update": message.folder?.lastUpdate,
                                                         "cursor": message.folder?.cursor ?? "nil"]],
@@ -183,7 +183,7 @@ public enum SentryDebug {
 
     static func addBackoffBreadcrumb(folder: Folder, index: Int) {
         let breadcrumb = Breadcrumb()
-        breadcrumb.message = "Backoff \(index) for folder \(folder.name) - \(folder.id)"
+        breadcrumb.message = "Backoff \(index) for folder \(folder.name) - \(folder.remoteId)"
         breadcrumb.level = .warning
         breadcrumb.type = "debug"
         SentrySDK.addBreadcrumb(breadcrumb)
@@ -191,7 +191,7 @@ public enum SentryDebug {
 
     static func addResetingFolderBreadcrumb(folder: Folder) {
         let breadcrumb = Breadcrumb()
-        breadcrumb.message = "Reseting folder after failed backoff \(folder.name) - \(folder.id)"
+        breadcrumb.message = "Reseting folder after failed backoff \(folder.name) - \(folder.remoteId)"
         breadcrumb.level = .warning
         breadcrumb.type = "debug"
         SentrySDK.addBreadcrumb(breadcrumb)

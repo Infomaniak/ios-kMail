@@ -64,7 +64,7 @@ extension RandomAccessCollection where Element == Message {
 
     /// - Returns: An array of unique threads to which the given messages belong in a given folder
     func uniqueThreadsInFolder(_ folder: Folder?) -> [Thread] {
-        return Set(flatMap(\.threads)).filter { $0.folder?.id == folder?.id }.toArray()
+        return Set(flatMap(\.threads)).filter { $0.folder?.remoteId == folder?.remoteId }.toArray()
     }
 
     /// Check if the given list is only composed of one message.
@@ -119,7 +119,7 @@ public class ActionsManager: ObservableObject {
         case .forward:
             try replyOrForward(messages: messagesWithDuplicates, mode: .forward)
         case .archive:
-            let messagesFromFolder = messagesWithDuplicates.filter { $0.folderId == origin.folder?.id }
+            let messagesFromFolder = messagesWithDuplicates.filter { $0.folderId == origin.folder?.remoteId }
             try await performMove(messages: messagesFromFolder, from: origin.folder, to: .archive)
         case .markAsRead:
             try await mailboxManager.markAsSeen(messages: messagesWithDuplicates, seen: true)
@@ -153,7 +153,7 @@ public class ActionsManager: ObservableObject {
                 origin.nearestReportJunkMessageActionsPanel?.wrappedValue = messagesWithDuplicates.first
             }
         case .spam:
-            let messagesFromFolder = messagesWithDuplicates.filter { $0.folderId == origin.folder?.id }
+            let messagesFromFolder = messagesWithDuplicates.filter { $0.folderId == origin.folder?.remoteId }
             try await performMove(messages: messagesFromFolder, from: origin.folder, to: .spam)
         case .phishing:
             Task { @MainActor in
@@ -184,7 +184,7 @@ public class ActionsManager: ObservableObject {
     }
 
     public func performMove(messages: [Message], from originFolder: Folder?, to destinationFolder: Folder) async throws {
-        let messagesFromFolder = messages.filter { $0.folderId == originFolder?.id }
+        let messagesFromFolder = messages.filter { $0.folderId == originFolder?.remoteId }
         let undoAction = try await mailboxManager.move(messages: messagesFromFolder, to: destinationFolder)
 
         let snackbarMessage = snackbarMoveMessage(

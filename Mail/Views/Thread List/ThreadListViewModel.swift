@@ -213,7 +213,7 @@ final class DateSection: Identifiable, Equatable {
     }
 
     func updateThreads(with folder: Folder) async {
-        let isNewFolder = folder.id != self.folder.id
+        let isNewFolder = folder.remoteId != self.folder.remoteId
         self.folder = folder
         withAnimation {
             lastUpdate = folder.lastUpdate

@@ -147,7 +147,7 @@ enum SearchState {
         stopObserveSearch()
         threads = []
 
-        var folderToSearch = realFolder.id
+        var folderToSearch = realFolder.remoteId
 
         if selectedFilters.contains(.folder) {
             folderToSearch = selectedSearchFolderId

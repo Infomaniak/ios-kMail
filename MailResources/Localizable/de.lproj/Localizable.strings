@@ -5,7 +5,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Wed, 18 Oct 2023 14:51:55 +0200
+ * Exported at: Fri, 20 Oct 2023 10:45:15 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1373,9 +1373,6 @@
 /* loco:651bc96abf48bc251603add2 */
 "aiPromptExample5" = "eine E-Mail mit der Bitte um einen Termin mit einem wichtigen Kunden";
 
-/* loco:651eb54cfe85ef34780286a4 */
-"syncTutorialWelcomeTitle" = "Anzeigen Ihrer Infomaniak-Kalender und -Kontakte auf Ihrem Gerät";
-
 /* loco:651ebb317a265dd7c2066965 */
 "syncTutorialDownloadProfileTitle" = "Konfigurationsprofil herunterladen";
 
@@ -1428,13 +1425,13 @@
 "syncTutorialStepCount" = "%1$d von %2$d";
 
 /* loco:651eca5dc41aeaf052015d62 */
-"buttonSyncCalendarsAndContacts" = "Synchronisierung von Kalender und Kontakten";
+"syncCalendarsAndContactsTitle" = "Synchronisierung von Kalendern und Kontakten";
 
 /* loco:6525654879f83da8670bf0e4 */
 "restoreEmailsNoBackup" = "Kein Backup gefunden";
 
 /* loco:6527b6ed91798bfb5d0960e2 */
-"reviewAlertTitle" = "Gefällt Ihnen Infomaniak Mail?";
+"reviewAlertTitle" = "Möchten Sie Infomaniak Mail?";
 
 /* loco:6527b7c3bffd89453201f9e2 */
 "buttonReviewAlertYes" = "Ja";
@@ -1444,3 +1441,12 @@
 
 /* loco:652fd443ec75b05b000d43f2 */
 "snackBarAccountDeleted" = "Gelöschtes Konto";
+
+/* loco:653112b14b84af451706ef56 */
+"syncCalendarsAndContactsDescription" = "Sehen Sie sich Ihre Kontakte und Kalender direkt auf Ihrem Gerät an.";
+
+/* loco:65323a4677722095b50538e2 */
+"aiReplaceSubjectTitle" = "Ersetzen Sie den aktuellen Betreff durch den Vorschlag des Assistenten";
+
+/* loco:65323d14fd2982f3ff080382 */
+"aiReplaceSubjectDescription" = "Der Betreff wird zu:\\n%@";

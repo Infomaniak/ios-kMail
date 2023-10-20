@@ -52,7 +52,7 @@ final class MailboxManagerTests: XCTestCase {
             .folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
         try await MailboxManagerTests.mailboxManager.apiFetcher.threads(
             mailbox: MailboxManagerTests.mailboxManager.mailbox,
-            folderId: folders[0]._id
+            folderId: folders[0].remoteId
         )
     }
 
@@ -61,7 +61,7 @@ final class MailboxManagerTests: XCTestCase {
             .folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
         let threadResult = try await MailboxManagerTests.mailboxManager.apiFetcher.threads(
             mailbox: MailboxManagerTests.mailboxManager.mailbox,
-            folderId: folders[0]._id
+            folderId: folders[0].remoteId
         )
         try await MailboxManagerTests.mailboxManager.message(message: threadResult.threads![0].messages[0])
     }
