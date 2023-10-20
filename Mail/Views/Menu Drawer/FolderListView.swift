@@ -24,12 +24,12 @@ import RealmSwift
 import SwiftUI
 
 struct NestableFolder: Identifiable {
-    var id: String {
+    var id: Int {
         guard !content.isInvalidated else {
-            return UUID().uuidString
+            return UUID().hashValue
         }
 
-        return content.remoteId
+        return children.reduce(content.remoteId.hashValue) { $0 ^ $1.id }
     }
 
     let content: Folder
