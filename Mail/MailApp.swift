@@ -67,6 +67,8 @@ struct MailApp: App {
                 .onChange(of: scenePhase) { newScenePhase in
                     switch newScenePhase {
                     case .active:
+                        @LazyInjectService var appLaunchCounter: AppLaunchCounter
+                        appLaunchCounter.increase()
                         refreshCacheData()
                         navigationState.transitionToLockViewIfNeeded()
                         UserDefaults.shared.openingUntilReview -= 1

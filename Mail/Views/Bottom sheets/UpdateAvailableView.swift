@@ -47,7 +47,6 @@ struct UpdateAvailableView: View {
             .mailButtonFullWidth(true)
 
             MailButton(label: MailResourcesStrings.Localizable.buttonLater) {
-                VersionChecker.standard.updateLater()
                 dismiss()
             }
             .mailButtonStyle(.link)

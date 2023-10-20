@@ -26,7 +26,7 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "1.1.6")),
                           .package(
                               url: "https://github.com/Infomaniak/ios-core",
-                              .revision("d81d4d62b07f1d3cef0aacd5cc275e09c2bd5949")
+                              .revision("03fd15ba3a21caeb88e1bef9970c084deb11a62b")
                           ),
                           .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "2.5.3")),
                           .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "3.0.0")),
@@ -52,7 +52,10 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/aheze/Popovers", .upToNextMajor(from: "1.3.2")),
                           .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1")),
                           .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0")),
-                          .package(url: "https://github.com/Infomaniak/ios-version-checker", .upToNextMajor(from: "1.0.0"))
+                          .package(
+                              url: "https://github.com/Infomaniak/ios-version-checker",
+                              .revision("f1967da194e758653b4decdc11c676e472932a3b")
+                          )
                       ],
                       targets: [
                           Target(name: "Mail",
