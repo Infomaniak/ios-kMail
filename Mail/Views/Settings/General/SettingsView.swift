@@ -75,7 +75,7 @@ struct SettingsView: View {
                         matomo.track(eventWithCategory: .syncAutoConfig, name: "openFromSettings")
                         isShowingSyncProfile = true
                     } label: {
-                        SettingsSubMenuLabel(title: MailResourcesStrings.Localizable.buttonSyncCalendarsAndContacts)
+                        SettingsSubMenuLabel(title: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle)
                     }
                     .buttonStyle(.plain)
 
