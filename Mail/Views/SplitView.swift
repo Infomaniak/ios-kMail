@@ -50,6 +50,7 @@ public class SplitViewManager: ObservableObject {
 }
 
 struct SplitView: View {
+    @Environment(\.openURL) private var openURL
     @Environment(\.isCompactWindow) private var isCompactWindow
     @Environment(\.scenePhase) private var scenePhase
 
@@ -106,7 +107,11 @@ struct SplitView: View {
             }
         }
         .floatingPanel(isPresented: $isShowingUpdateAvailable) {
-            UpdateAvailableView()
+            DiscoveryView(item: .updateDiscovery) { _ in } completionHandler: { update in
+                guard update else { return }
+                let url: URLConstants = Bundle.main.isRunningInTestFlight ? .testFlight : .appStore
+                openURL(url.url)
+            }
         }
         .sheet(item: $navigationState.editedDraft) { editedDraft in
             ComposeMessageView(editedDraft: editedDraft, mailboxManager: mailboxManager)
