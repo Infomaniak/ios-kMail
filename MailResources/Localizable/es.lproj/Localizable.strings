@@ -5,7 +5,7 @@
  * Locale: es, Spanish
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Wed, 18 Oct 2023 14:51:55 +0200
+ * Exported at: Fri, 20 Oct 2023 10:45:15 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1373,9 +1373,6 @@
 /* loco:651bc96abf48bc251603add2 */
 "aiPromptExample5" = "un correo electrónico solicitando una reunión con un cliente importante";
 
-/* loco:651eb54cfe85ef34780286a4 */
-"syncTutorialWelcomeTitle" = "Visualice sus calendarios y contactos de Infomaniak en su dispositivo";
-
 /* loco:651ebb317a265dd7c2066965 */
 "syncTutorialDownloadProfileTitle" = "Descargar perfil de configuración";
 
@@ -1428,7 +1425,7 @@
 "syncTutorialStepCount" = "%1$d de %2$d";
 
 /* loco:651eca5dc41aeaf052015d62 */
-"buttonSyncCalendarsAndContacts" = "Sincronización de calendarios y contactos";
+"syncCalendarsAndContactsTitle" = "Sincronización de calendarios y contactos";
 
 /* loco:6525654879f83da8670bf0e4 */
 "restoreEmailsNoBackup" = "No se ha encontrado copia de seguridad";
@@ -1444,3 +1441,12 @@
 
 /* loco:652fd443ec75b05b000d43f2 */
 "snackBarAccountDeleted" = "Cuenta eliminada";
+
+/* loco:653112b14b84af451706ef56 */
+"syncCalendarsAndContactsDescription" = "Consulta tus contactos y tu calendario directamente desde tu dispositivo.";
+
+/* loco:65323a4677722095b50538e2 */
+"aiReplaceSubjectTitle" = "Sustituir el tema actual por la propuesta del asistente";
+
+/* loco:65323d14fd2982f3ff080382 */
+"aiReplaceSubjectDescription" = "El tema será:\\n%@";

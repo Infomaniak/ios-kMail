@@ -54,12 +54,7 @@ struct MenuDrawerItemCell: View {
 }
 
 #Preview {
-    VStack {
-        MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
-                           label: "Importer des mails",
-                           matomoName: "") { print("Hello") }
-        MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
-                           label: MailResourcesStrings.Localizable.buttonSyncCalendarsAndContacts,
-                           matomoName: "") { print("Hello") }
-    }
+    MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
+                       label: "Importer des mails",
+                       matomoName: "") { print("Hello") }
 }

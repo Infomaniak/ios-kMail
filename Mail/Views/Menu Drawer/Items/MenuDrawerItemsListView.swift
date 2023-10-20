@@ -38,7 +38,7 @@ struct MenuDrawerItemsAdvancedListView: View {
         MenuDrawerItemsListView(title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
                                 matomoName: "advancedActions") {
             MenuDrawerItemCell(icon: MailResourcesAsset.doubleArrowsSynchronize,
-                               label: MailResourcesStrings.Localizable.buttonSyncCalendarsAndContacts,
+                               label: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle,
                                matomoName: "syncProfile") {
                 matomo.track(eventWithCategory: .syncAutoConfig, name: "openFromMenuDrawer")
                 isShowingSyncProfile = true
