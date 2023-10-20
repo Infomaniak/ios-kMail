@@ -24,6 +24,12 @@ import RealmSwift
 import SwiftUI
 import SwiftUIIntrospect
 
+struct AIProposition: Identifiable {
+    let id = UUID()
+    let subject: String?
+    let content: String
+}
+
 struct AIPropositionView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
@@ -33,6 +39,7 @@ struct AIPropositionView: View {
 
     @State private var textPlainHeight = CGFloat.zero
     @State private var isShowingReplaceContentAlert = false
+    @State private var isShowingReplaceSubjectAlert: AIProposition?
     @State private var willShowAIPrompt = false
 
     @ObservedObject var aiModel: AIModel
@@ -106,7 +113,7 @@ struct AIPropositionView: View {
                                     isShowingReplaceContentAlert = true
                                     return
                                 }
-                                insertResult(shouldReplaceContent: shouldReplaceContent)
+                                extractSubjectAndBody(shouldReplaceContent: shouldReplaceContent)
                             }
                         case .errorWithoutAnswers:
                             MailButton(label: MailResourcesStrings.Localizable.aiButtonRetry) {
@@ -125,7 +132,16 @@ struct AIPropositionView: View {
             }
             .customAlert(isPresented: $isShowingReplaceContentAlert) {
                 ReplaceMessageContentView {
-                    insertResult(shouldReplaceContent: true)
+                    extractSubjectAndBody(shouldReplaceContent: true)
+                }
+            }
+            .customAlert(item: $isShowingReplaceSubjectAlert) { proposition in
+                ReplaceMessageSubjectView(subject: proposition.subject ?? "") { shouldReplace in
+                    insertResult(
+                        subject: shouldReplace ? proposition.subject : nil,
+                        content: proposition.content,
+                        shouldReplaceContent: true
+                    )
                 }
             }
             .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
@@ -135,15 +151,49 @@ struct AIPropositionView: View {
         }
     }
 
-    private func insertResult(shouldReplaceContent: Bool) {
-        guard !aiModel.isLoading, let content = aiModel.conversation.last?.content else { return }
+    private func extractSubjectAndBody(shouldReplaceContent: Bool) {
+        guard let contentRegex = try? NSRegularExpression(
+            pattern: "^[^:]+:(?<subject>.+?)\n\\s*(?<content>.+)",
+            options: .dotMatchesLineSeparators
+        ) else {
+            insertResult(content: aiModel.lastMessage, shouldReplaceContent: shouldReplaceContent)
+            return
+        }
+
+        let lastMessage = aiModel.lastMessage
+        guard let result = contentRegex.firstMatch(
+            in: lastMessage,
+            range: NSRange(lastMessage.startIndex ..< lastMessage.endIndex, in: lastMessage)
+        ) else {
+            insertResult(content: aiModel.lastMessage, shouldReplaceContent: shouldReplaceContent)
+            return
+        }
+
+        guard let subjectRange = Range(result.range(withName: "subject"), in: lastMessage),
+              let contentRange = Range(result.range(withName: "content"), in: lastMessage),
+              !subjectRange.isEmpty && !contentRange.isEmpty else {
+            insertResult(content: aiModel.lastMessage, shouldReplaceContent: shouldReplaceContent)
+            return
+        }
+
+        let subject = lastMessage[subjectRange].trimmingCharacters(in: .whitespacesAndNewlines)
+        let content = String(lastMessage[contentRange])
+
+        if draft.subject.isEmpty {
+            insertResult(subject: subject, content: content, shouldReplaceContent: shouldReplaceContent)
+        } else {
+            isShowingReplaceSubjectAlert = AIProposition(subject: subject, content: content)
+        }
+    }
+
+    private func insertResult(subject: String? = nil, content: String, shouldReplaceContent: Bool) {
         matomo.track(
             eventWithCategory: .aiWriter,
             action: .data,
             name: shouldReplaceContent ? "replaceProposition" : "insertProposition"
         )
 
-        draftContentManager.replaceBodyContent(with: content)
+        draftContentManager.replaceBodyContent(subject: subject, with: aiModel.lastMessage)
         dismiss()
     }
 }
