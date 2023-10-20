@@ -29,7 +29,7 @@ public actor RefreshActor {
     }
 
     public func flushFolder(folder: Folder, mailbox: Mailbox, apiFetcher: MailApiFetcher) async throws -> Bool {
-        let response = try await apiFetcher.flushFolder(mailbox: mailbox, folderId: folder.id)
+        let response = try await apiFetcher.flushFolder(mailbox: mailbox, folderId: folder.remoteId)
         await refreshFolderContent(folder)
         return response
     }

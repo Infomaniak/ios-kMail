@@ -29,7 +29,7 @@ struct NestableFolder: Identifiable {
             return UUID().uuidString
         }
 
-        return content.id
+        return content.remoteId
     }
 
     let content: Folder

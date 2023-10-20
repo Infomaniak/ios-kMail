@@ -37,7 +37,9 @@ public class UserActivityController {
 
         currentActivity?.invalidate()
         currentActivity = activity
-        currentActivity?.webpageURL = URL(string: "https://\(ApiEnvironment.current.mailHost)/\(mailboxIndex);fid=\(folder.id)")
+
+        let webpageURL = URL(string: "https://\(ApiEnvironment.current.mailHost)/\(mailboxIndex);fid=\(folder.remoteId)")
+        currentActivity?.webpageURL = webpageURL
         currentActivity?.becomeCurrent()
     }
 

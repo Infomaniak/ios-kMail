@@ -32,7 +32,7 @@ struct RoleFoldersListView: View {
         VStack(spacing: 0) {
             ForEach(folders) { folder in
                 FolderCell(folder: folder,
-                           currentFolderId: splitViewManager.selectedFolder?.id,
+                           currentFolderId: splitViewManager.selectedFolder?.remoteId,
                            matomoCategory: .menuDrawer)
             }
         }
