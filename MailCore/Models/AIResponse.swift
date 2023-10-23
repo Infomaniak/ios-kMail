@@ -35,7 +35,6 @@ public protocol AIResponse {
 public struct AIConversationResponse: AIResponse, Codable {
     public let contextId: String?
     public let content: String
-    public let tokensUsed: Int
 }
 
 public struct AIShortcutResponse: AIResponse, Codable {
