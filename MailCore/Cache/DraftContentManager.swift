@@ -132,7 +132,7 @@ public class DraftContentManager: ObservableObject {
         )
     }
 
-    public func replaceContent(subject: String? = nil, content: String) {
+    public func replaceContent(subject: String? = nil, body: String) {
         let realm = mailboxManager.getRealm()
         guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID) else {
             return
@@ -150,7 +150,7 @@ public class DraftContentManager: ObservableObject {
             if let subject {
                 liveDraft.subject = subject
             }
-            liveDraft.body = "<p>\(content.replacingOccurrences(of: "\n", with: "<br>"))</p>\(signatureContent)"
+            liveDraft.body = "<p>\(body.replacingOccurrences(of: "\n", with: "<br>"))</p>\(signatureContent)"
         }
         NotificationCenter.default.post(name: .updateComposeMessageBody, object: nil)
     }

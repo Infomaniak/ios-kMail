@@ -65,6 +65,8 @@ public enum Constants {
         try! NSRegularExpression(pattern: ">\\s*<|>?\\s+<?")
     }()
 
+    public static let aiRegex = "^[^:]+:(?<subject>.+?)\n\\s*(?<content>.+)"
+
     public static let sizeChangeThreshold = 3
     public static let viewportContent = "width=device-width, initial-scale=1.0"
     public static let divWrapperId = "kmail-message-content"

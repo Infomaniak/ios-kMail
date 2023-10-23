@@ -128,6 +128,26 @@ final class AIModel: ObservableObject {
         }
     }
 
+    func splitSubjectAndBody() -> (subject: String?, body: String) {
+        guard let contentRegex = try? NSRegularExpression(pattern: Constants.aiRegex, options: .dotMatchesLineSeparators) else {
+            return (nil, lastMessage)
+        }
+
+        let messageRange = NSRange(lastMessage.startIndex ..< lastMessage.endIndex, in: lastMessage)
+        guard let result = contentRegex.firstMatch(in: lastMessage, range: messageRange) else {
+            return (nil, lastMessage)
+        }
+
+        guard let subjectRange = Range(result.range(withName: "subject"), in: lastMessage),
+              let contentRange = Range(result.range(withName: "content"), in: lastMessage) else {
+            return (nil, lastMessage)
+        }
+
+        let subject = lastMessage[subjectRange].trimmingCharacters(in: .whitespacesAndNewlines)
+        let content = String(lastMessage[contentRange])
+        return (subject, content)
+    }
+
     private func executeShortcutAndRecreateConversation(_ shortcut: AIShortcutAction) async {
         do {
             let response = try await mailboxManager.apiFetcher.aiShortcutAndRecreateConversation(

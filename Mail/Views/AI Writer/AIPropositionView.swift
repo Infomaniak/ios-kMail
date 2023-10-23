@@ -26,8 +26,8 @@ import SwiftUIIntrospect
 
 struct AIProposition: Identifiable {
     let id = UUID()
-    let subject: String?
-    let content: String
+    let subject: String
+    let body: String
     let shouldReplaceContent: Bool
 }
 
@@ -114,7 +114,17 @@ struct AIPropositionView: View {
                                     isShowingReplaceContentAlert = true
                                     return
                                 }
-                                extractSubjectAndBody(shouldReplaceContent: shouldReplaceContent)
+
+                                let (subject, body) = aiModel.splitSubjectAndBody()
+                                if let subject, !draft.subject.isEmpty {
+                                    isShowingReplaceSubjectAlert = AIProposition(
+                                        subject: subject,
+                                        body: body,
+                                        shouldReplaceContent: false
+                                    )
+                                } else {
+                                    insertResult(subject: subject, content: body, shouldReplaceContent: true)
+                                }
                             }
                         case .errorWithoutAnswers:
                             MailButton(label: MailResourcesStrings.Localizable.aiButtonRetry) {
@@ -133,14 +143,19 @@ struct AIPropositionView: View {
             }
             .customAlert(isPresented: $isShowingReplaceContentAlert) {
                 ReplaceMessageContentView {
-                    extractSubjectAndBody(shouldReplaceContent: true)
+                    let (subject, body) = aiModel.splitSubjectAndBody()
+                    if let subject, !draft.subject.isEmpty {
+                        isShowingReplaceSubjectAlert = AIProposition(subject: subject, body: body, shouldReplaceContent: true)
+                    } else {
+                        insertResult(subject: subject, content: body, shouldReplaceContent: true)
+                    }
                 }
             }
             .customAlert(item: $isShowingReplaceSubjectAlert) { proposition in
-                ReplaceMessageSubjectView(subject: proposition.subject ?? "") { shouldReplace in
+                ReplaceMessageSubjectView(subject: proposition.subject) { shouldReplaceSubject in
                     insertResult(
-                        subject: shouldReplace ? proposition.subject : nil,
-                        content: proposition.content,
+                        subject: shouldReplaceSubject ? proposition.subject : nil,
+                        content: proposition.body,
                         shouldReplaceContent: proposition.shouldReplaceContent
                     )
                 }
@@ -152,45 +167,6 @@ struct AIPropositionView: View {
         }
     }
 
-    private func extractSubjectAndBody(shouldReplaceContent: Bool) {
-        let message = aiModel.lastMessage
-
-        guard let contentRegex = try? NSRegularExpression(
-            pattern: "^[^:]+:(?<subject>.+?)\n\\s*(?<content>.+)",
-            options: .dotMatchesLineSeparators
-        ) else {
-            insertResult(content: message, shouldReplaceContent: shouldReplaceContent)
-            return
-        }
-
-        let messageRange = NSRange(message.startIndex ..< message.endIndex, in: message)
-        guard let result = contentRegex.firstMatch(in: message, range: messageRange) else {
-            insertResult(content: message, shouldReplaceContent: shouldReplaceContent)
-            return
-        }
-
-        guard let subjectRange = Range(result.range(withName: "subject"), in: message),
-              let contentRange = Range(result.range(withName: "content"), in: message) else {
-            insertResult(content: message, shouldReplaceContent: shouldReplaceContent)
-            return
-        }
-
-        let subject = message[subjectRange].trimmingCharacters(in: .whitespacesAndNewlines)
-        let content = String(message[contentRange])
-
-        print("CONTENT", content)
-
-        if subject.isEmpty || draft.subject.isEmpty {
-            insertResult(subject: subject, content: content, shouldReplaceContent: shouldReplaceContent)
-        } else {
-            isShowingReplaceSubjectAlert = AIProposition(
-                subject: subject,
-                content: content,
-                shouldReplaceContent: shouldReplaceContent
-            )
-        }
-    }
-
     private func insertResult(subject: String? = nil, content: String, shouldReplaceContent: Bool) {
         matomo.track(
             eventWithCategory: .aiWriter,
@@ -198,7 +174,7 @@ struct AIPropositionView: View {
             name: shouldReplaceContent ? "replaceProposition" : "insertProposition"
         )
 
-        draftContentManager.replaceContent(subject: subject, content: content)
+        draftContentManager.replaceContent(subject: subject, body: content)
         dismiss()
     }
 }
