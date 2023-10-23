@@ -249,6 +249,20 @@ final class DateSection: Identifiable, Equatable {
         selectedThread = threads[validIndex]
     }
 
+    func nextThread() {
+        guard !filteredThreads.isEmpty, let oldIndex = selectedThreadIndex, oldIndex < filteredThreads.count - 1 else { return }
+        let newIndex = oldIndex + 1
+        selectedThread = filteredThreads[newIndex]
+        selectedThreadIndex = newIndex
+    }
+
+    func previousThread() {
+        guard !filteredThreads.isEmpty, let oldIndex = selectedThreadIndex, oldIndex > 0 else { return }
+        let newIndex = oldIndex - 1
+        selectedThread = filteredThreads[newIndex]
+        selectedThreadIndex = newIndex
+    }
+
     func resetFilterIfNeeded(filteredThreads: [Thread]) {
         if filteredThreads.isEmpty && filterUnreadOn {
             DispatchQueue.main.sync {

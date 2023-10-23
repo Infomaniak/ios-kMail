@@ -30,8 +30,22 @@ struct ShortcutModifier: ViewModifier {
         ZStack {
             VStack {
                 Button("Delete shortcut", action: shortcutDelete)
-                    .keyboardShortcut(.delete)
+                    .keyboardShortcut(.delete, modifiers: [])
+
+                Button("Reply shortcut", action: shortcutReply)
+                    .keyboardShortcut("r")
+
+                Button("Refresh shortcut", action: shortcutRefresh)
+                    .keyboardShortcut("n", modifiers: [.shift, .command])
+
+                Button("Next thread", action: shortcutNext)
+                    .keyboardShortcut(.downArrow, modifiers: [])
+
+                Button("Previous thread", action: shortcutPrevious)
+                    .keyboardShortcut(.upArrow, modifiers: [])
             }
+            .frame(width: 0, height: 0)
+            .hidden()
 
             content
         }
@@ -52,6 +66,33 @@ struct ShortcutModifier: ViewModifier {
                 origin: .shortcut(originFolder: viewModel.folder.freezeIfNeeded())
             )
         }
+    }
+
+    private func shortcutReply() {
+        guard !multipleSelectionViewModel.isEnabled,
+              let message = viewModel.selectedThread?
+              .lastMessageToExecuteAction(currentMailboxEmail: viewModel.mailboxManager.mailbox.email) else { return }
+        Task {
+            try await actionsManager.performAction(
+                target: [message],
+                action: .reply,
+                origin: .shortcut(originFolder: viewModel.folder.freezeIfNeeded())
+            )
+        }
+    }
+
+    private func shortcutRefresh() {
+        Task {
+            await viewModel.fetchThreads()
+        }
+    }
+
+    private func shortcutNext() {
+        viewModel.nextThread()
+    }
+
+    private func shortcutPrevious() {
+        viewModel.previousThread()
     }
 }
 
