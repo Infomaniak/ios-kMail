@@ -30,7 +30,7 @@ struct SyncWelcomeView: View {
         backgroundImage: MailResourcesAsset.onboardingBackground4.swiftUIImage,
         title: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle,
         description: MailResourcesStrings.Localizable.syncCalendarsAndContactsDescription,
-        asset: MailResourcesAsset.illuSync.swiftUIImage
+        asset: MailResourcesAsset.syncIllustration.swiftUIImage
     )
 
     var body: some View {

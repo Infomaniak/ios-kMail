@@ -42,7 +42,7 @@ public extension DiscoveryItem {
     static let syncDiscovery = DiscoveryItem(
         image: MailResourcesAsset.syncIllustration,
         title: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle,
-        description: MailResourcesStrings.Localizable.syncCalendarsAndContactsDescriptioniOS,
+        description: MailResourcesStrings.Localizable.syncCalendarsAndContactsDescription,
         primaryButtonLabel: MailResourcesStrings.Localizable.buttonStart,
         matomoCategory: .syncAutoConfig
     )
