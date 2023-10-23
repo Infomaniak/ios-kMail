@@ -66,7 +66,7 @@ struct DiscoveryView: View {
 
     @State private var willDiscoverNewFeature = false
 
-    let shouldPresentFeature: (Bool) -> Void
+    let onAppear: () -> Void
     let completionHandler: (Bool) -> Void
 
     var body: some View {
@@ -78,7 +78,7 @@ struct DiscoveryView: View {
             }
         }
         .onAppear {
-            shouldPresentFeature(false)
+            onAppear()
         }
         .onDisappear {
             completionHandler(willDiscoverNewFeature)
