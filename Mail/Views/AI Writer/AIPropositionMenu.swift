@@ -87,8 +87,8 @@ struct FixedMenuOrderModifier: ViewModifier {
     }
 }
 
-struct AIPropositionMenu_Preview: PreviewProvider {
-    static var previews: some View {
-        AIPropositionMenu(aiModel: AIModel(mailboxManager: PreviewHelper.sampleMailboxManager))
-    }
-}
+// struct AIPropositionMenu_Preview: PreviewProvider {
+//    static var previews: some View {
+//        AIPropositionMenu(aiModel: AIModel(mailboxManager: PreviewHelper.sampleMailboxManager, draftContentManager: <#DraftContentManager#>))
+//    }
+// }

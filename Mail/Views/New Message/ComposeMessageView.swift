@@ -117,18 +117,19 @@ struct ComposeMessageView: View {
         Self.writeDraftToRealm(mailboxManager.getRealm(), draft: editedDraft.draft)
         _draft = StateRealmObject(wrappedValue: editedDraft.draft)
 
-        draftContentManager = DraftContentManager(
+        let _draftContentManager = DraftContentManager(
             incompleteDraft: editedDraft.draft,
             messageReply: editedDraft.messageReply,
             mailboxManager: mailboxManager
         )
+        draftContentManager = _draftContentManager
 
         self.mailboxManager = mailboxManager
         _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: editedDraft.draft,
                                                                            mailboxManager: mailboxManager))
         _initialAttachments = State(wrappedValue: attachments)
 
-        _aiModel = StateObject(wrappedValue: AIModel(mailboxManager: mailboxManager))
+        _aiModel = StateObject(wrappedValue: AIModel(mailboxManager: mailboxManager, draftContentManager: _draftContentManager))
     }
 
     // MARK: - View

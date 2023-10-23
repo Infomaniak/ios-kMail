@@ -109,22 +109,7 @@ struct AIPropositionView: View {
                             AIProgressView()
                         case .standard, .error:
                             MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
-                                let shouldReplaceContent = !draft.isBodyEmpty
-                                guard !shouldReplaceContent || UserDefaults.shared.doNotShowAIReplaceMessageAgain else {
-                                    isShowingReplaceContentAlert = true
-                                    return
-                                }
-
-                                let (subject, body) = aiModel.splitSubjectAndBody()
-                                if let subject, !draft.subject.isEmpty {
-                                    isShowingReplaceSubjectAlert = AIProposition(
-                                        subject: subject,
-                                        body: body,
-                                        shouldReplaceContent: false
-                                    )
-                                } else {
-                                    insertResult(subject: subject, content: body, shouldReplaceContent: true)
-                                }
+                                aiModel.didTapInsert()
                             }
                         case .loadingError:
                             MailButton(label: MailResourcesStrings.Localizable.aiButtonRetry) {
@@ -143,20 +128,15 @@ struct AIPropositionView: View {
             }
             .customAlert(isPresented: $isShowingReplaceContentAlert) {
                 ReplaceMessageContentView {
-                    let (subject, body) = aiModel.splitSubjectAndBody()
-                    if let subject, !draft.subject.isEmpty {
-                        isShowingReplaceSubjectAlert = AIProposition(subject: subject, body: body, shouldReplaceContent: true)
-                    } else {
-                        insertResult(subject: subject, content: body, shouldReplaceContent: true)
-                    }
+                    aiModel.splitPropositionAndInsert(shouldReplaceBody: true)
                 }
             }
             .customAlert(item: $isShowingReplaceSubjectAlert) { proposition in
                 ReplaceMessageSubjectView(subject: proposition.subject) { shouldReplaceSubject in
-                    insertResult(
+                    aiModel.insertProposition(
                         subject: shouldReplaceSubject ? proposition.subject : nil,
-                        content: proposition.body,
-                        shouldReplaceContent: proposition.shouldReplaceContent
+                        body: proposition.body,
+                        shouldReplaceBody: proposition.shouldReplaceContent
                     )
                 }
             }
@@ -166,21 +146,10 @@ struct AIPropositionView: View {
             .matomoView(view: ["AI", "Proposition"])
         }
     }
-
-    private func insertResult(subject: String? = nil, content: String, shouldReplaceContent: Bool) {
-        matomo.track(
-            eventWithCategory: .aiWriter,
-            action: .data,
-            name: shouldReplaceContent ? "replaceProposition" : "insertProposition"
-        )
-
-        draftContentManager.replaceContent(subject: subject, body: content)
-        dismiss()
-    }
 }
 
-struct AIPropositionView_Previews: PreviewProvider {
-    static var previews: some View {
-        AIPropositionView(aiModel: AIModel(mailboxManager: PreviewHelper.sampleMailboxManager), draft: Draft())
-    }
-}
+// struct AIPropositionView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        AIPropositionView(aiModel: AIModel(mailboxManager: PreviewHelper.sampleMailboxManager, draftContentManager: <#DraftContentManager#>), draft: Draft())
+//    }
+// }

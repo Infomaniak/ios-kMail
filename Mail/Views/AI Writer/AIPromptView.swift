@@ -106,8 +106,8 @@ struct AIPromptView: View {
     }
 }
 
-struct AIPromptView_Previews: PreviewProvider {
-    static var previews: some View {
-        AIPromptView(aiModel: AIModel(mailboxManager: PreviewHelper.sampleMailboxManager))
-    }
-}
+// struct AIPromptView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        AIPromptView(aiModel: AIModel(mailboxManager: PreviewHelper.sampleMailboxManager))
+//    }
+// }

@@ -17,6 +17,8 @@
  */
 
 import Foundation
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -32,7 +34,11 @@ final class AIModel: ObservableObject {
     @Published var isShowingPrompt = false
     @Published var isShowingProposition = false
 
+    @Published var isShowingReplaceBodyAlert = false
+    @Published var isShowingReplaceSubjectAlert: AIProposition?
+
     private let mailboxManager: MailboxManager
+    private var draftContentManager: DraftContentManager
     private var contextId: String?
 
     var lastMessage: String {
@@ -53,8 +59,9 @@ final class AIModel: ObservableObject {
         }
     }
 
-    init(mailboxManager: MailboxManager) {
+    init(mailboxManager: MailboxManager, draftContentManager: DraftContentManager) {
         self.mailboxManager = mailboxManager
+        self.draftContentManager = draftContentManager
     }
 }
 
@@ -147,7 +154,39 @@ extension AIModel {
 // MARK: - Insert result
 
 extension AIModel {
-    func splitSubjectAndBody() -> (subject: String?, body: String) {
+    func didTapInsert() {
+        let shouldReplaceBody = draftContentManager.shouldOverrideBody()
+        guard !shouldReplaceBody || UserDefaults.shared.doNotShowAIReplaceMessageAgain else {
+            isShowingReplaceBodyAlert = true
+            return
+        }
+        splitPropositionAndInsert(shouldReplaceBody: shouldReplaceBody)
+    }
+
+    func splitPropositionAndInsert(shouldReplaceBody: Bool) {
+        let (subject, body) = splitSubjectAndBody()
+        if let subject, !subject.isEmpty && draftContentManager.shouldOverrideSubject() {
+            isShowingReplaceSubjectAlert = AIProposition(subject: subject, body: body, shouldReplaceContent: shouldReplaceBody)
+        } else {
+            insertProposition(subject: subject, body: body, shouldReplaceBody: shouldReplaceBody)
+        }
+    }
+
+    func insertProposition(subject: String?, body: String, shouldReplaceBody: Bool) {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(
+            eventWithCategory: .aiWriter,
+            action: .data,
+            name: shouldReplaceBody ? "replaceProposition" : "insertProposition"
+        )
+
+        draftContentManager.replaceContent(subject: subject, body: body)
+        withAnimation {
+            isShowingProposition = false
+        }
+    }
+
+    private func splitSubjectAndBody() -> (subject: String?, body: String) {
         guard let contentRegex = try? NSRegularExpression(pattern: Constants.aiRegex, options: .dotMatchesLineSeparators) else {
             return (nil, lastMessage)
         }
