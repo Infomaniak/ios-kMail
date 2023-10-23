@@ -23,6 +23,13 @@ import MailCore
 import MailResources
 import SwiftUI
 
+struct AIProposition: Identifiable {
+    let id = UUID()
+    let subject: String
+    let body: String
+    let shouldReplaceContent: Bool
+}
+
 @MainActor
 final class AIModel: ObservableObject {
     private static let displayableErrors: [MailApiError] = [.apiAIMaxSyntaxTokensReached, .apiAITooManyRequests]

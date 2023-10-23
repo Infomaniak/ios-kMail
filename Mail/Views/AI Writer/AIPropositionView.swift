@@ -24,28 +24,15 @@ import RealmSwift
 import SwiftUI
 import SwiftUIIntrospect
 
-struct AIProposition: Identifiable {
-    let id = UUID()
-    let subject: String
-    let body: String
-    let shouldReplaceContent: Bool
-}
-
 struct AIPropositionView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.dismiss) private var dismiss
 
-    @EnvironmentObject private var draftContentManager: DraftContentManager
-
     @State private var textPlainHeight = CGFloat.zero
-    @State private var isShowingReplaceContentAlert = false
-    @State private var isShowingReplaceSubjectAlert: AIProposition?
     @State private var willShowAIPrompt = false
 
     @ObservedObject var aiModel: AIModel
-
-    @ObservedRealmObject var draft: Draft
 
     @Namespace private var errorID
 
@@ -126,12 +113,12 @@ struct AIPropositionView: View {
                 guard let toolbar = viewController.navigationController?.toolbar else { return }
                 UIConstants.applyComposeViewStyle(to: toolbar)
             }
-            .customAlert(isPresented: $isShowingReplaceContentAlert) {
+            .customAlert(isPresented: $aiModel.isShowingReplaceBodyAlert) {
                 ReplaceMessageContentView {
                     aiModel.splitPropositionAndInsert(shouldReplaceBody: true)
                 }
             }
-            .customAlert(item: $isShowingReplaceSubjectAlert) { proposition in
+            .customAlert(item: $aiModel.isShowingReplaceSubjectAlert) { proposition in
                 ReplaceMessageSubjectView(subject: proposition.subject) { shouldReplaceSubject in
                     aiModel.insertProposition(
                         subject: shouldReplaceSubject ? proposition.subject : nil,
@@ -148,8 +135,9 @@ struct AIPropositionView: View {
     }
 }
 
-// struct AIPropositionView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        AIPropositionView(aiModel: AIModel(mailboxManager: PreviewHelper.sampleMailboxManager, draftContentManager: <#DraftContentManager#>), draft: Draft())
-//    }
-// }
+#Preview {
+    AIPropositionView(
+        aiModel: AIModel(mailboxManager: PreviewHelper.sampleMailboxManager,
+                         draftContentManager: PreviewHelper.sampleDraftContentManager)
+    )
+}

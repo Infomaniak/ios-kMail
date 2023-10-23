@@ -132,12 +132,12 @@ public class DraftContentManager: ObservableObject {
 
     public func shouldOverrideSubject() -> Bool {
         guard let liveDraft = try? getLiveDraft() else { return false }
-        return !liveDraft.subject.isEmpty
+        return !liveDraft.subject.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     public func shouldOverrideBody() -> Bool {
         guard let liveDraft = try? getLiveDraft() else { return false }
-        return !liveDraft.body.isEmpty
+        return !liveDraft.isBodyEmpty
     }
 
     public func replaceContent(subject: String? = nil, body: String) {
