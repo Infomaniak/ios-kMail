@@ -19,22 +19,10 @@
 import Foundation
 import RealmSwift
 
+/// Conforming to `RealmAccessible` to get a standard `.getRealm` function
+extension ContactManager: RealmAccessible {}
+
 public extension ContactManager {
-    func getRealm(canRetry: Bool = true) -> Realm {
-        do {
-            let realm = try Realm(configuration: realmConfiguration)
-            realm.refresh()
-            return realm
-        } catch {
-            realmManager.handleRealmOpeningError(error, realmConfiguration: realmConfiguration)
-
-            if canRetry {
-                return getRealm(canRetry: false)
-            }
-            fatalError("Failed creating realm \(error.localizedDescription)")
-        }
-    }
-
     /// Both *case* insensitive __and__ *diacritic* (accents) insensitive
     static let searchContactInsensitivePredicate = "name contains[cd] %@ OR email contains[cd] %@"
 

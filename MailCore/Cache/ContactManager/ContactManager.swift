@@ -21,7 +21,6 @@ import Contacts
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreUI
-import InfomaniakDI
 import RealmSwift
 import SwiftRegex
 
@@ -32,8 +31,6 @@ extension Recipient: Identifiable {
 }
 
 public final class ContactManager: ObservableObject {
-    @LazyInjectService var realmManager: RealmManageable
-
     public class ContactManagerConstants {
         private let fileManager = FileManager.default
         public let rootDocumentsURL: URL
@@ -58,7 +55,7 @@ public final class ContactManager: ObservableObject {
 
     public static let constants = ContactManagerConstants()
 
-    let realmConfiguration: Realm.Configuration
+    public let realmConfiguration: Realm.Configuration
     let backgroundRealm: BackgroundRealm
     public lazy var viewRealm: Realm = {
         assert(Foundation.Thread.isMainThread, "viewRealm should only be accessed from main thread")

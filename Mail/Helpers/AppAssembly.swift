@@ -97,6 +97,9 @@ enum ApplicationAssembly {
             Factory(type: PlatformDetectable.self) { _, _ in
                 PlatformDetector()
             },
+            Factory(type: RealmManageable.self) { _, _ in
+                RealmManager()
+            },
             Factory(type: AppGroupPathProvidable.self) { _, _ in
                 guard let provider = AppGroupPathProvider(
                     realmRootPath: realmRootPath,

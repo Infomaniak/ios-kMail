@@ -20,29 +20,33 @@ import CocoaLumberjackSwift
 import Foundation
 import InfomaniakDI
 import RealmSwift
+import Sentry
 
-protocol RealmManageable {
-    func handleRealmOpeningError(_ error: Error, realmConfiguration: Realm.Configuration)
+/// Something to perform shared operation on a given Realm
+public protocol RealmManageable {
+    /// Delete all given stored data for a given configuration
+    func deleteFiles(for config: Realm.Configuration)
 }
 
-struct RealmManager: RealmManageable {
-    @LazyInjectService private var platformDetector: PlatformDetectable
+public struct RealmManager: RealmManageable {
+    enum Message {
+        static let deleteRealmFiles = "DeleteRealmFiles"
+    }
 
-    func handleRealmOpeningError(_ error: Error, realmConfiguration: Realm.Configuration) {
-        // We report this error on Sentry
-        Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration)
+    public init() {
+        // META: Keep SonarCloud happy
+    }
 
-        // If app is running on macOS (no clean on uninstall) or debug, clean DB
-        if platformDetector.isMacCatalyst || platformDetector.isiOSAppOnMac || platformDetector.isDebug {
-            DDLogError(
-                "Realm files \(realmConfiguration.fileURL?.lastPathComponent ?? "") will be deleted to prevent migration error for next launch"
-            )
-            _ = try? Realm.deleteFiles(for: realmConfiguration)
+    public func deleteFiles(for configuration: Realm.Configuration) {
+        let realmInConflict = configuration.fileURL?.lastPathComponent ?? ""
+        SentrySDK.capture(message: Message.deleteRealmFiles) { scope in
+            scope.setContext(value: [
+                "File URL": realmInConflict
+            ], key: "Realm")
         }
 
-        // Currently on iOS we terminate early if unable to migrate
-        else {
-            fatalError("Failed creating realm \(error.localizedDescription)")
-        }
+        DDLogError("Realm files \(realmInConflict) will be deleted")
+
+        _ = try? Realm.deleteFiles(for: configuration)
     }
 }

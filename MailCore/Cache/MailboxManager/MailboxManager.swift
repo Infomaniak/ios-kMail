@@ -23,10 +23,9 @@ import InfomaniakDI
 import RealmSwift
 import SwiftRegex
 
-public final class MailboxManager: ObservableObject, MailboxManageable {
+public final class MailboxManager: ObservableObject, MailboxManageable, RealmAccessible {
     @LazyInjectService var snackbarPresenter: SnackBarPresentable
     @LazyInjectService var mailboxInfosManager: MailboxInfosManager
-    @LazyInjectService private var realmManager: RealmManageable
 
     lazy var refreshActor = RefreshActor(mailboxManager: self)
     let backgroundRealm: BackgroundRealm
@@ -104,22 +103,6 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
             ]
         )
         backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
-    }
-
-    public func getRealm(canRetry: Bool = true) -> Realm {
-        do {
-            let realm = try Realm(configuration: realmConfiguration)
-            realm.refresh()
-            return realm
-        } catch {
-            realmManager.handleRealmOpeningError(error, realmConfiguration: realmConfiguration)
-
-            if canRetry {
-                return getRealm(canRetry: false)
-            }
-
-            fatalError("Failed creating realm \(error.localizedDescription)")
-        }
     }
 
     /// Delete all mailbox data cache for user
@@ -211,27 +194,6 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     public func hasUnreadMessages() -> Bool {
         let realm = getRealm()
         return realm.objects(Folder.self).contains { $0.unreadCount > 0 }
-    }
-
-    public func cleanRealm() {
-        Task {
-            await backgroundRealm.execute { realm in
-
-                let folders = realm.objects(Folder.self)
-                let threads = realm.objects(Thread.self)
-                let messages = realm.objects(Message.self)
-
-                try? realm.safeWrite {
-                    realm.delete(threads)
-                    realm.delete(messages)
-                    for folder in folders {
-                        folder.cursor = nil
-                        folder.resetHistoryInfo()
-                        folder.computeUnreadCount()
-                    }
-                }
-            }
-        }
     }
 }
 

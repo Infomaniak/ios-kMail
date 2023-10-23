@@ -17,36 +17,23 @@
  */
 
 import Foundation
-import InfomaniakDI
 import RealmSwift
 import Sentry
 
-public final class BackgroundRealm {
-    @LazyInjectService private var realmManager: RealmManageable
+/// Conforming to `RealmAccessible` to get a standard `.getRealm` function
+extension BackgroundRealm: RealmAccessible {}
 
-    private let configuration: Realm.Configuration
+public final class BackgroundRealm {
     private let queue: DispatchQueue
+
+    public let realmConfiguration: Realm.Configuration
 
     public init(configuration: Realm.Configuration) {
         guard let fileURL = configuration.fileURL else {
             fatalError("Realm configurations without file URL not supported")
         }
-        self.configuration = configuration
+        realmConfiguration = configuration
         queue = DispatchQueue(label: "com.infomaniak.mail.\(fileURL.lastPathComponent)", autoreleaseFrequency: .workItem)
-    }
-
-    private func getRealm(canRetry: Bool = true) -> Realm {
-        do {
-            return try Realm(configuration: configuration, queue: queue)
-        } catch {
-            realmManager.handleRealmOpeningError(error, realmConfiguration: configuration)
-
-            if canRetry {
-                return getRealm(canRetry: false)
-            }
-
-            fatalError("Failed creating realm \(error.localizedDescription)")
-        }
     }
 
     public func execute<T>(_ block: @escaping (Realm) -> T, completion: @escaping (T) -> Void) {

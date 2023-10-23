@@ -18,14 +18,14 @@
 
 import Foundation
 import InfomaniakCore
-import InfomaniakDI
 import Realm
 import RealmSwift
 import Sentry
 
-public final class MailboxInfosManager {
-    @LazyInjectService private var realmManager: RealmManageable
+/// Conforming to `RealmAccessible` to get a standard `.getRealm` function
+extension MailboxInfosManager: RealmAccessible {}
 
+public final class MailboxInfosManager {
     private static let currentDbVersion: UInt64 = 6
     public let realmConfiguration: Realm.Configuration
     private let dbName = "MailboxInfos.realm"
@@ -46,22 +46,6 @@ public final class MailboxInfosManager {
             },
             objectTypes: [Mailbox.self, MailboxPermissions.self, Quotas.self]
         )
-    }
-
-    public func getRealm(canRetry: Bool = true) -> Realm {
-        do {
-            let realm = try Realm(configuration: realmConfiguration)
-            realm.refresh()
-            return realm
-        } catch {
-            realmManager.handleRealmOpeningError(error, realmConfiguration: realmConfiguration)
-
-            if canRetry {
-                return getRealm(canRetry: false)
-            }
-
-            fatalError("Failed creating realm \(error.localizedDescription)")
-        }
     }
 
     private func initMailboxForRealm(mailbox: Mailbox, userId: Int) {
