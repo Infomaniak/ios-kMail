@@ -194,7 +194,10 @@ extension AIModel {
     }
 
     private func splitSubjectAndBody() -> (subject: String?, body: String) {
-        guard let contentRegex = try? NSRegularExpression(pattern: Constants.aiRegex, options: .dotMatchesLineSeparators) else {
+        guard let contentRegex = try? NSRegularExpression(
+            pattern: Constants.aiDetectPartsRegex,
+            options: .dotMatchesLineSeparators
+        ) else {
             return (nil, lastMessage)
         }
 
