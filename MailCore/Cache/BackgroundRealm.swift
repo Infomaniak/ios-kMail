@@ -17,10 +17,13 @@
  */
 
 import Foundation
+import InfomaniakDI
 import RealmSwift
 import Sentry
 
 public final class BackgroundRealm {
+    @LazyInjectService private var realmManager: RealmManageable
+
     private let configuration: Realm.Configuration
     private let queue: DispatchQueue
 
@@ -32,12 +35,17 @@ public final class BackgroundRealm {
         queue = DispatchQueue(label: "com.infomaniak.mail.\(fileURL.lastPathComponent)", autoreleaseFrequency: .workItem)
     }
 
-    private func getRealm() -> Realm {
+    private func getRealm(canRetry: Bool = true) -> Realm {
         do {
             return try Realm(configuration: configuration, queue: queue)
         } catch {
-            // We can't recover from this error but at least we report it correctly on Sentry
-            Logging.reportRealmOpeningError(error, realmConfiguration: configuration)
+            realmManager.handleRealmOpeningError(error, realmConfiguration: configuration)
+
+            if canRetry {
+                return getRealm(canRetry: false)
+            }
+
+            fatalError("Failed creating realm \(error.localizedDescription)")
         }
     }
 

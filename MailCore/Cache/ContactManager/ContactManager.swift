@@ -21,6 +21,7 @@ import Contacts
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import RealmSwift
 import SwiftRegex
 
@@ -31,6 +32,8 @@ extension Recipient: Identifiable {
 }
 
 public final class ContactManager: ObservableObject {
+    @LazyInjectService var realmManager: RealmManageable
+
     public class ContactManagerConstants {
         private let fileManager = FileManager.default
         public let rootDocumentsURL: URL

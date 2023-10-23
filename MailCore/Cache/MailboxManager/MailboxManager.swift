@@ -26,6 +26,7 @@ import SwiftRegex
 public final class MailboxManager: ObservableObject, MailboxManageable {
     @LazyInjectService var snackbarPresenter: SnackBarPresentable
     @LazyInjectService var mailboxInfosManager: MailboxInfosManager
+    @LazyInjectService private var realmManager: RealmManageable
 
     lazy var refreshActor = RefreshActor(mailboxManager: self)
     let backgroundRealm: BackgroundRealm
@@ -105,14 +106,19 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
     }
 
-    public func getRealm() -> Realm {
+    public func getRealm(canRetry: Bool = true) -> Realm {
         do {
             let realm = try Realm(configuration: realmConfiguration)
             realm.refresh()
             return realm
         } catch {
-            // We can't recover from this error but at least we report it correctly on Sentry
-            Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration)
+            realmManager.handleRealmOpeningError(error, realmConfiguration: realmConfiguration)
+
+            if canRetry {
+                return getRealm(canRetry: false)
+            }
+
+            fatalError("Failed creating realm \(error.localizedDescription)")
         }
     }
 

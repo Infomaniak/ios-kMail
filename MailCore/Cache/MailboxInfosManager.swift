@@ -18,11 +18,14 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakDI
 import Realm
 import RealmSwift
 import Sentry
 
 public final class MailboxInfosManager {
+    @LazyInjectService private var realmManager: RealmManageable
+
     private static let currentDbVersion: UInt64 = 6
     public let realmConfiguration: Realm.Configuration
     private let dbName = "MailboxInfos.realm"
@@ -45,14 +48,19 @@ public final class MailboxInfosManager {
         )
     }
 
-    public func getRealm() -> Realm {
+    public func getRealm(canRetry: Bool = true) -> Realm {
         do {
             let realm = try Realm(configuration: realmConfiguration)
             realm.refresh()
             return realm
         } catch {
-            // We can't recover from this error but at least we report it correctly on Sentry
-            Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration)
+            realmManager.handleRealmOpeningError(error, realmConfiguration: realmConfiguration)
+
+            if canRetry {
+                return getRealm(canRetry: false)
+            }
+
+            fatalError("Failed creating realm \(error.localizedDescription)")
         }
     }
 

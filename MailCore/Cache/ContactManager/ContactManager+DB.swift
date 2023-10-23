@@ -20,14 +20,18 @@ import Foundation
 import RealmSwift
 
 public extension ContactManager {
-    func getRealm() -> Realm {
+    func getRealm(canRetry: Bool = true) -> Realm {
         do {
             let realm = try Realm(configuration: realmConfiguration)
             realm.refresh()
             return realm
         } catch {
-            // We can't recover from this error but at least we report it correctly on Sentry
-            Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration)
+            realmManager.handleRealmOpeningError(error, realmConfiguration: realmConfiguration)
+
+            if canRetry {
+                return getRealm(canRetry: false)
+            }
+            fatalError("Failed creating realm \(error.localizedDescription)")
         }
     }
 
