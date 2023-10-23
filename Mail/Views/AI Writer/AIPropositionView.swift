@@ -98,16 +98,16 @@ struct AIPropositionView: View {
 
                 ToolbarItemGroup(placement: .bottomBar) {
                     Group {
-                        if aiModel.toolbarStyle == .success || aiModel.toolbarStyle == .errorWithAnswers {
+                        if aiModel.currentStyle == .standard || aiModel.currentStyle == .error {
                             AIPropositionMenu(aiModel: aiModel)
                         }
 
                         Spacer()
 
-                        switch aiModel.toolbarStyle {
+                        switch aiModel.currentStyle {
                         case .loading:
                             AIProgressView()
-                        case .success, .errorWithAnswers:
+                        case .standard, .error:
                             MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
                                 let shouldReplaceContent = !draft.isBodyEmpty
                                 guard !shouldReplaceContent || UserDefaults.shared.doNotShowAIReplaceMessageAgain else {
@@ -126,7 +126,7 @@ struct AIPropositionView: View {
                                     insertResult(subject: subject, content: body, shouldReplaceContent: true)
                                 }
                             }
-                        case .errorWithoutAnswers:
+                        case .loadingError:
                             MailButton(label: MailResourcesStrings.Localizable.aiButtonRetry) {
                                 matomo.track(eventWithCategory: .aiWriter, name: "retry")
                                 willShowAIPrompt = true

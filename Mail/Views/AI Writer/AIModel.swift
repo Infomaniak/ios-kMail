@@ -23,25 +23,17 @@ import SwiftUI
 
 @MainActor
 final class AIModel: ObservableObject {
-    enum State {
-        case prompt, proposition
-    }
-
-    enum ToolbarStyle {
-        case loading, success, errorWithAnswers, errorWithoutAnswers
-    }
-
     private static let displayableErrors: [MailApiError] = [.apiAIMaxSyntaxTokensReached, .apiAITooManyRequests]
-
-    private let mailboxManager: MailboxManager
 
     @Published var conversation = [AIMessage]()
     @Published var isLoading = false
-    @Published var contextId: String?
     @Published var error: MailError?
 
     @Published var isShowingPrompt = false
     @Published var isShowingProposition = false
+
+    private let mailboxManager: MailboxManager
+    private var contextId: String?
 
     var lastMessage: String {
         return conversation.last?.content ?? ""
@@ -52,8 +44,8 @@ final class AIModel: ObservableObject {
     }
 
     var currentStyle: SelectableTextView.Style {
-        if let error {
-            return .error(withLoadingState: !hasProposedAnswers)
+        if error != nil {
+            return hasProposedAnswers ? .error : .loadingError
         } else if isLoading {
             return .loading
         } else {
@@ -61,25 +53,14 @@ final class AIModel: ObservableObject {
         }
     }
 
-    var toolbarStyle: ToolbarStyle {
-        if isLoading {
-            return .loading
-        }
-        if error != nil {
-            return hasProposedAnswers ? .errorWithAnswers : .errorWithoutAnswers
-        }
-        return .success
-    }
-
     init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
     }
+}
 
-    func displayView(_ state: AIModel.State) {
-        isShowingPrompt = state == .prompt
-        isShowingProposition = state == .proposition
-    }
+// MARK: - Conversation
 
+extension AIModel {
     func addInitialPrompt(_ prompt: String) {
         conversation.append(AIMessage(type: .user, content: prompt))
         isLoading = true
@@ -128,26 +109,6 @@ final class AIModel: ObservableObject {
         }
     }
 
-    func splitSubjectAndBody() -> (subject: String?, body: String) {
-        guard let contentRegex = try? NSRegularExpression(pattern: Constants.aiRegex, options: .dotMatchesLineSeparators) else {
-            return (nil, lastMessage)
-        }
-
-        let messageRange = NSRange(lastMessage.startIndex ..< lastMessage.endIndex, in: lastMessage)
-        guard let result = contentRegex.firstMatch(in: lastMessage, range: messageRange) else {
-            return (nil, lastMessage)
-        }
-
-        guard let subjectRange = Range(result.range(withName: "subject"), in: lastMessage),
-              let contentRange = Range(result.range(withName: "content"), in: lastMessage) else {
-            return (nil, lastMessage)
-        }
-
-        let subject = lastMessage[subjectRange].trimmingCharacters(in: .whitespacesAndNewlines)
-        let content = String(lastMessage[contentRange])
-        return (subject, content)
-    }
-
     private func executeShortcutAndRecreateConversation(_ shortcut: AIShortcutAction) async {
         do {
             let response = try await mailboxManager.apiFetcher.aiShortcutAndRecreateConversation(
@@ -180,5 +141,29 @@ final class AIModel: ObservableObject {
         } else {
             self.error = .unknownError
         }
+    }
+}
+
+// MARK: - Insert result
+
+extension AIModel {
+    func splitSubjectAndBody() -> (subject: String?, body: String) {
+        guard let contentRegex = try? NSRegularExpression(pattern: Constants.aiRegex, options: .dotMatchesLineSeparators) else {
+            return (nil, lastMessage)
+        }
+
+        let messageRange = NSRange(lastMessage.startIndex ..< lastMessage.endIndex, in: lastMessage)
+        guard let result = contentRegex.firstMatch(in: lastMessage, range: messageRange) else {
+            return (nil, lastMessage)
+        }
+
+        guard let subjectRange = Range(result.range(withName: "subject"), in: lastMessage),
+              let contentRange = Range(result.range(withName: "content"), in: lastMessage) else {
+            return (nil, lastMessage)
+        }
+
+        let subject = lastMessage[subjectRange].trimmingCharacters(in: .whitespacesAndNewlines)
+        let content = String(lastMessage[contentRange])
+        return (subject, content)
     }
 }
