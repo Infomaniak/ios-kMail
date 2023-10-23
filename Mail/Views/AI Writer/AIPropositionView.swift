@@ -28,6 +28,7 @@ struct AIProposition: Identifiable {
     let id = UUID()
     let subject: String?
     let content: String
+    let shouldReplaceContent: Bool
 }
 
 struct AIPropositionView: View {
@@ -140,7 +141,7 @@ struct AIPropositionView: View {
                     insertResult(
                         subject: shouldReplace ? proposition.subject : nil,
                         content: proposition.content,
-                        shouldReplaceContent: true
+                        shouldReplaceContent: proposition.shouldReplaceContent
                     )
                 }
             }
@@ -152,37 +153,41 @@ struct AIPropositionView: View {
     }
 
     private func extractSubjectAndBody(shouldReplaceContent: Bool) {
+        let message = aiModel.lastMessage
+
         guard let contentRegex = try? NSRegularExpression(
             pattern: "^[^:]+:(?<subject>.+?)\n\\s*(?<content>.+)",
             options: .dotMatchesLineSeparators
         ) else {
-            insertResult(content: aiModel.lastMessage, shouldReplaceContent: shouldReplaceContent)
+            insertResult(content: message, shouldReplaceContent: shouldReplaceContent)
             return
         }
 
-        let lastMessage = aiModel.lastMessage
-        guard let result = contentRegex.firstMatch(
-            in: lastMessage,
-            range: NSRange(lastMessage.startIndex ..< lastMessage.endIndex, in: lastMessage)
-        ) else {
-            insertResult(content: aiModel.lastMessage, shouldReplaceContent: shouldReplaceContent)
+        let messageRange = NSRange(message.startIndex ..< message.endIndex, in: message)
+        guard let result = contentRegex.firstMatch(in: message, range: messageRange) else {
+            insertResult(content: message, shouldReplaceContent: shouldReplaceContent)
             return
         }
 
-        guard let subjectRange = Range(result.range(withName: "subject"), in: lastMessage),
-              let contentRange = Range(result.range(withName: "content"), in: lastMessage),
-              !subjectRange.isEmpty && !contentRange.isEmpty else {
-            insertResult(content: aiModel.lastMessage, shouldReplaceContent: shouldReplaceContent)
+        guard let subjectRange = Range(result.range(withName: "subject"), in: message),
+              let contentRange = Range(result.range(withName: "content"), in: message) else {
+            insertResult(content: message, shouldReplaceContent: shouldReplaceContent)
             return
         }
 
-        let subject = lastMessage[subjectRange].trimmingCharacters(in: .whitespacesAndNewlines)
-        let content = String(lastMessage[contentRange])
+        let subject = message[subjectRange].trimmingCharacters(in: .whitespacesAndNewlines)
+        let content = String(message[contentRange])
 
-        if draft.subject.isEmpty {
+        print("CONTENT", content)
+
+        if subject.isEmpty || draft.subject.isEmpty {
             insertResult(subject: subject, content: content, shouldReplaceContent: shouldReplaceContent)
         } else {
-            isShowingReplaceSubjectAlert = AIProposition(subject: subject, content: content)
+            isShowingReplaceSubjectAlert = AIProposition(
+                subject: subject,
+                content: content,
+                shouldReplaceContent: shouldReplaceContent
+            )
         }
     }
 
@@ -193,7 +198,7 @@ struct AIPropositionView: View {
             name: shouldReplaceContent ? "replaceProposition" : "insertProposition"
         )
 
-        draftContentManager.replaceBodyContent(subject: subject, with: aiModel.lastMessage)
+        draftContentManager.replaceContent(subject: subject, content: content)
         dismiss()
     }
 }

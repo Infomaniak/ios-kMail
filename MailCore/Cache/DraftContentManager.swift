@@ -132,7 +132,7 @@ public class DraftContentManager: ObservableObject {
         )
     }
 
-    public func replaceBodyContent(subject: String? = nil, with content: String) {
+    public func replaceContent(subject: String? = nil, content: String) {
         let realm = mailboxManager.getRealm()
         guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID) else {
             return
