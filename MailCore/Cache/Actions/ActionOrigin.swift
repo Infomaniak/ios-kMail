@@ -25,6 +25,7 @@ public struct ActionOrigin {
         case floatingPanel
         case toolbar
         case multipleSelection
+        case shortcut
     }
 
     public private(set) var type: ActionOriginType
@@ -74,5 +75,10 @@ public struct ActionOrigin {
                             nearestMessagesActionsPanel: nearestMessagesActionsPanel,
                             nearestFlushAlert: nearestFlushAlert,
                             nearestMessagesToMoveSheet: nearestMessagesToMoveSheet)
+    }
+
+    public static func shortcut(originFolder: Folder? = nil,
+                                nearestFlushAlert: Binding<FlushAlertState?>? = nil) -> ActionOrigin {
+        ActionOrigin(type: .shortcut, folder: originFolder, nearestFlushAlert: nearestFlushAlert)
     }
 }
