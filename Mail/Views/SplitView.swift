@@ -64,9 +64,11 @@ struct SplitView: View {
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var platformDetector: PlatformDetectable
+    @LazyInjectService private var appLaunchCounter: AppLaunchCounter
 
     @State private var isShowingUpdateAvailable = false
-    @State private var isShowingSync = false
+    @State private var isShowingSyncDiscovery = false
+    @State private var isShowingSyncProfile = false
 
     let mailboxManager: MailboxManager
     init(mailboxManager: MailboxManager) {
@@ -108,25 +110,32 @@ struct SplitView: View {
             }
         }
         .floatingPanel(isPresented: $isShowingUpdateAvailable) {
-            DiscoveryView(item: .updateDiscovery) {} completionHandler: { update in
+            DiscoveryView(item: .updateDiscovery) { /* Empty on purpose */ } completionHandler: { update in
                 guard update else { return }
                 let url: URLConstants = Bundle.main.isRunningInTestFlight ? .testFlight : .appStore
                 openURL(url.url)
             }
         }
-        .floatingPanel(isPresented: $isShowingSync, content: {
-            DiscoveryView(item: .syncDiscovery) {} completionHandler: { update in
-                SyncProfileNavigationView()
+        .floatingPanel(isPresented: $isShowingSyncDiscovery, content: {
+            DiscoveryView(item: .syncDiscovery) {
+                UserDefaults.shared.shouldPresentSyncDiscovery = false
+            } completionHandler: { update in
+                guard update else { return }
+                isShowingSyncProfile = true
             }
         })
+        .sheet(isPresented: $isShowingSyncProfile) {
+            SyncProfileNavigationView()
+        }
         .sheet(item: $navigationState.editedDraft) { editedDraft in
             ComposeMessageView(editedDraft: editedDraft, mailboxManager: mailboxManager)
         }
         .onChange(of: scenePhase) { newScenePhase in
             guard newScenePhase == .active else { return }
             Task {
-                isShowingSync = showSync()
+                // We don't want to show both DiscoveryView at the same time
                 isShowingUpdateAvailable = try await VersionChecker.standard.showUpdateVersion()
+                isShowingSyncDiscovery = isShowingUpdateAvailable ? false : showSync()
                 async let _ = try? mailboxManager.refreshAllFolders()
                 async let _ = try? mailboxManager.refreshAllSignatures()
             }
@@ -251,14 +260,10 @@ struct SplitView: View {
 
     private func showSync() -> Bool {
         guard UserDefaults.shared.shouldPresentSyncDiscovery,
-              !AppLaunchCounter().isFirstLaunch else {
+              !appLaunchCounter.isFirstLaunch else {
             return false
         }
 
-        if AppLaunchCounter().value > 5 {
-            UserDefaults.shared.shouldPresentSyncDiscovery = false
-            return true
-        }
-        return false
+        return appLaunchCounter.value > 5
     }
 }
