@@ -26,6 +26,8 @@ struct ShortcutModifier: ViewModifier {
     @EnvironmentObject private var actionsManager: ActionsManager
 
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var platformDetector: PlatformDetector
+
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
@@ -42,10 +44,10 @@ struct ShortcutModifier: ViewModifier {
                     .keyboardShortcut("n", modifiers: [.shift, .command])
 
                 Button("Next thread", action: shortcutNext)
-                    .keyboardShortcut(.downArrow, modifiers: [])
+                    .keyboardShortcut(.downArrow, modifiers: platformDetector.isMac ? [] : [.command])
 
                 Button("Previous thread", action: shortcutPrevious)
-                    .keyboardShortcut(.upArrow, modifiers: [])
+                    .keyboardShortcut(.upArrow, modifiers: platformDetector.isMac ? [] : [.command])
             }
             .frame(width: 0, height: 0)
             .hidden()

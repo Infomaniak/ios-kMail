@@ -50,6 +50,10 @@ public struct PlatformDetector: PlatformDetectable {
 
     public var isiOSAppOnMac: Bool = ProcessInfo().isiOSAppOnMac
 
+    public var isMac: Bool {
+        isMacCatalyst || isiOSAppOnMac
+    }
+
     public var isInExtension: Bool = {
         guard Bundle.main.bundlePath.hasSuffix(".appex") else {
             return false

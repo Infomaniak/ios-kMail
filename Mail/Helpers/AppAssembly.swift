@@ -124,6 +124,9 @@ enum ApplicationAssembly {
             },
             Factory(type: AppLaunchCounter.self) { _, _ in
                 AppLaunchCounter()
+            },
+            Factory(type: PlatformDetector.self) { _, _ in
+                PlatformDetector()
             }
         ]
 
