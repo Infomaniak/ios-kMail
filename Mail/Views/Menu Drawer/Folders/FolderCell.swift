@@ -55,7 +55,7 @@ struct FolderCell: View {
     @State private var shouldTransit = false
 
     private var isCurrentFolder: Bool {
-        folder.id == currentFolderId
+        folder.content.remoteId == currentFolderId
     }
 
     var body: some View {
