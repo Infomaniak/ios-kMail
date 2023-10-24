@@ -35,8 +35,8 @@ struct AskForReviewView: View {
                 .padding(.bottom, UIPadding.alertTitleBottom)
 
             ModalButtonsView(
-                primaryButtonTitle: MailResourcesStrings.Localizable.buttonReviewAlertYes,
-                secondaryButtonTitle: MailResourcesStrings.Localizable.buttonReviewAlertNo
+                primaryButtonTitle: MailResourcesStrings.Localizable.buttonYes,
+                secondaryButtonTitle: MailResourcesStrings.Localizable.buttonNo
             ) {
                 matomo.track(eventWithCategory: .appReview, name: "like")
                 UserDefaults.shared.appReview = .readyForReview

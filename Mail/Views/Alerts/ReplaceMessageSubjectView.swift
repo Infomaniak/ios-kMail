@@ -40,7 +40,7 @@ struct ReplaceMessageSubjectView: View {
 
             ModalButtonsView(
                 primaryButtonTitle: MailResourcesStrings.Localizable.aiReplacementDialogPositiveButton,
-                secondaryButtonTitle: MailResourcesStrings.Localizable.aiReplaceSubjectNegativeButton
+                secondaryButtonTitle: MailResourcesStrings.Localizable.buttonNo
             ) {
                 matomo.track(eventWithCategory: .aiWriter, name: "replaceSubjectConfirm")
                 action(true)

@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: en, English
  * Tagged: ios
- * Exported by: elena willen
- * Exported at: Mon, 23 Oct 2023 14:57:53 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Tue, 24 Oct 2023 09:58:47 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1434,10 +1434,10 @@
 "reviewAlertTitle" = "Do you like Infomaniak Mail?";
 
 /* loco:6527b7c3bffd89453201f9e2 */
-"buttonReviewAlertYes" = "Yes";
+"buttonYes" = "Yes";
 
 /* loco:6527b7d4882400da7d04ffd2 */
-"buttonReviewAlertNo" = "No";
+"buttonNo" = "No";
 
 /* loco:652fd443ec75b05b000d43f2 */
 "snackBarAccountDeleted" = "Account deleted";
@@ -1446,10 +1446,7 @@
 "syncCalendarsAndContactsDescription" = "View your contacts and calendar directly from your device.";
 
 /* loco:65323a4677722095b50538e2 */
-"aiReplaceSubjectTitle" = "Replace the current subject with the assistant’s proposition";
+"aiReplaceSubjectTitle" = "Replace the current subject with the assistant’s proposal?";
 
 /* loco:65323d14fd2982f3ff080382 */
 "aiReplaceSubjectDescription" = "The subject will become:\n\n%@";
-
-/* loco:65323e631be50ccd4b004912 */
-"aiReplaceSubjectNegativeButton" = "Keep";

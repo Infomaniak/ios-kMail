@@ -114,7 +114,7 @@ struct AIPropositionView: View {
                 UIConstants.applyComposeViewStyle(to: toolbar)
             }
             .customAlert(isPresented: $aiModel.isShowingReplaceBodyAlert) {
-                ReplaceMessageContentView {
+                ReplaceMessageBodyView {
                     aiModel.splitPropositionAndInsert(shouldReplaceBody: true)
                 }
             }
