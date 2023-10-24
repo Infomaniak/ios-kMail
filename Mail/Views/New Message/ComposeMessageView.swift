@@ -191,7 +191,11 @@ struct ComposeMessageView: View {
             }
         }
         .aiDiscoveryPresenter(isPresented: $isShowingAIPopover) {
-            AIDiscoveryView(aiModel: aiModel)
+            DiscoveryView(item: .aiDiscovery) {
+                UserDefaults.shared.shouldPresentAIFeature = false
+            } completionHandler: { willShowAIPrompt in
+                aiModel.isShowingPrompt = willShowAIPrompt
+            }
         }
         .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {
             AIPromptView(aiModel: aiModel)
