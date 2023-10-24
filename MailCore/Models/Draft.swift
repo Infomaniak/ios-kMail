@@ -22,6 +22,13 @@ import RealmSwift
 import SwiftSoup
 import UniformTypeIdentifiers
 
+extension String {
+    var trimmed: String {
+        let whiteSpaceSet = NSCharacterSet.whitespacesAndNewlines
+        return trimmingCharacters(in: whiteSpaceSet)
+    }
+}
+
 public enum SaveDraftOption: String, Codable, PersistableEnum {
     case initialSave
     case save
@@ -74,6 +81,7 @@ public final class Draft: Object, Codable, Identifiable {
     @Persisted public var attachments: List<Attachment>
     @Persisted public var action: SaveDraftOption?
     @Persisted public var delay: Int?
+    @Persisted public var rawSignature: String?
 
     /// Public facing "body", wrapping `bodyData`
     public var body: String {
@@ -336,13 +344,40 @@ public extension Draft {
         guard let signatureNode = try? document.getElementsByClass(Constants.signatureWrapperIdentifier).first() else {
             return !document.hasText()
         }
+
+        // Do we still have content once we removed the signature ?
         try? signatureNode.remove()
 
         return !document.hasText()
     }
 
+    /// Check if the Signature has changes or not
+    var isSignatureUnchanged: Bool {
+        guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else {
+            return true
+        }
+
+        guard let signatureNode = try? document.getElementsByClass(Constants.signatureWrapperIdentifier).first() else {
+            return true
+        }
+
+        // We check if the signature was changed, the user might also have written within the signature div without knowing.
+        let signatureNodeText = try? signatureNode.text()
+        guard let rawSignature,
+              let signatureNodeText,
+              let rawSignatureDocument = try? SwiftSoup.parse(rawSignature),
+              let rawSignatureText = try? rawSignatureDocument.text(),
+              rawSignatureText.trimmed == signatureNodeText.trimmed else {
+            return false
+        }
+
+        return true
+    }
+
     var isCompletelyEmpty: Bool {
-        guard !hasAttachments, isBodyEmpty else { return false }
+        guard !hasAttachments, isBodyEmpty, isSignatureUnchanged else {
+            return false
+        }
         return true
     }
 }
