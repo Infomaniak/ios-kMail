@@ -66,6 +66,7 @@ struct SplitView: View {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     @State private var isShowingUpdateAvailable = false
+    @State private var isShowingSync = false
 
     let mailboxManager: MailboxManager
     init(mailboxManager: MailboxManager) {
@@ -113,12 +114,18 @@ struct SplitView: View {
                 openURL(url.url)
             }
         }
+        .floatingPanel(isPresented: $isShowingSync, content: {
+            DiscoveryView(item: .syncDiscovery) {} completionHandler: { update in
+                SyncProfileNavigationView()
+            }
+        })
         .sheet(item: $navigationState.editedDraft) { editedDraft in
             ComposeMessageView(editedDraft: editedDraft, mailboxManager: mailboxManager)
         }
         .onChange(of: scenePhase) { newScenePhase in
             guard newScenePhase == .active else { return }
             Task {
+                isShowingSync = showSync()
                 isShowingUpdateAvailable = try await VersionChecker.standard.showUpdateVersion()
                 async let _ = try? mailboxManager.refreshAllFolders()
                 async let _ = try? mailboxManager.refreshAllSignatures()
@@ -240,5 +247,18 @@ struct SplitView: View {
         if Constants.isMailTo(url) {
             navigationState.editedDraft = EditedDraft.mailTo(urlComponents: urlComponents)
         }
+    }
+
+    private func showSync() -> Bool {
+        guard UserDefaults.shared.shouldPresentSyncDiscovery,
+              !AppLaunchCounter().isFirstLaunch else {
+            return false
+        }
+
+        if AppLaunchCounter().value > 5 {
+            UserDefaults.shared.shouldPresentSyncDiscovery = false
+            return true
+        }
+        return false
     }
 }
