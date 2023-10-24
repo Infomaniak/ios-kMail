@@ -29,6 +29,8 @@ struct NestableFolder: Identifiable {
             return UUID().hashValue
         }
 
+        // The id of a folder depends on its `remoteId` and the id of its children
+        // Compute the id by doing an XOR with the id of each child
         return children.reduce(content.remoteId.hashValue) { $0 ^ $1.id }
     }
 
