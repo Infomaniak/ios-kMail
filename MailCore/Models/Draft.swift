@@ -346,7 +346,7 @@ public extension Draft {
         }
 
         // We check if the signature was changed, the user might also have written within the signature div without knowing.
-        let signatureNodeText: String? = try? signatureNode.text()
+        let signatureNodeText = try? signatureNode.text()
         guard let rawSignature,
               let signatureNodeText,
               let rawSignatureDocument = try? SwiftSoup.parse(rawSignature),
