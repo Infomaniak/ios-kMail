@@ -22,6 +22,9 @@ import Realm
 import RealmSwift
 import Sentry
 
+/// Conforming to `RealmAccessible` to get a standard `.getRealm` function
+extension MailboxInfosManager: RealmAccessible {}
+
 public final class MailboxInfosManager {
     private static let currentDbVersion: UInt64 = 6
     public let realmConfiguration: Realm.Configuration
@@ -43,17 +46,6 @@ public final class MailboxInfosManager {
             },
             objectTypes: [Mailbox.self, MailboxPermissions.self, Quotas.self]
         )
-    }
-
-    public func getRealm() -> Realm {
-        do {
-            let realm = try Realm(configuration: realmConfiguration)
-            realm.refresh()
-            return realm
-        } catch {
-            // We can't recover from this error but at least we report it correctly on Sentry
-            Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration)
-        }
     }
 
     private func initMailboxForRealm(mailbox: Mailbox, userId: Int) {

@@ -37,19 +37,20 @@ public enum Logging {
         }
     }
 
-    public static func reportRealmOpeningError(_ error: Error, realmConfiguration: Realm.Configuration) -> Never {
+    /// Add a sentry for an error related to opening a realm
+    /// - Parameters:
+    ///   - error: The specific error we are dealing with
+    ///   - realmConfiguration: The configuration of the current Realm
+    public static func reportRealmOpeningError(_ error: Error, realmConfiguration: Realm.Configuration, afterRetry: Bool) {
+        let realmInConflict = realmConfiguration.fileURL?.lastPathComponent ?? ""
+        DDLogError("Unable to load Realm files \(realmInConflict) after a retry:\(afterRetry)")
+
         SentrySDK.capture(error: error) { scope in
             scope.setContext(value: [
-                "File URL": realmConfiguration.fileURL?.absoluteString ?? ""
+                "File URL": realmInConflict,
+                "after a retry": afterRetry
             ], key: "Realm")
         }
-        #if DEBUG
-        DDLogError(
-            "Realm files \(realmConfiguration.fileURL?.lastPathComponent ?? "") will be deleted to prevent migration error for next launch"
-        )
-        _ = try? Realm.deleteFiles(for: realmConfiguration)
-        #endif
-        fatalError("Failed creating realm \(error.localizedDescription)")
     }
 
     private static func initLogger() {

@@ -30,6 +30,9 @@ public protocol PlatformDetectable {
 
     /// We are running in extension mode
     var isInExtension: Bool { get }
+
+    /// We are running a debug build
+    var isDebug: Bool { get }
 }
 
 public struct PlatformDetector: PlatformDetectable {
@@ -53,5 +56,13 @@ public struct PlatformDetector: PlatformDetectable {
         }
 
         return true
+    }()
+
+    public var isDebug: Bool = {
+        #if DEBUG
+        true
+        #else
+        false
+        #endif
     }()
 }

@@ -20,25 +20,20 @@ import Foundation
 import RealmSwift
 import Sentry
 
+/// Conforming to `RealmAccessible` to get a standard `.getRealm` function
+extension BackgroundRealm: RealmAccessible {}
+
 public final class BackgroundRealm {
-    private let configuration: Realm.Configuration
     private let queue: DispatchQueue
+
+    public let realmConfiguration: Realm.Configuration
 
     public init(configuration: Realm.Configuration) {
         guard let fileURL = configuration.fileURL else {
             fatalError("Realm configurations without file URL not supported")
         }
-        self.configuration = configuration
+        realmConfiguration = configuration
         queue = DispatchQueue(label: "com.infomaniak.mail.\(fileURL.lastPathComponent)", autoreleaseFrequency: .workItem)
-    }
-
-    private func getRealm() -> Realm {
-        do {
-            return try Realm(configuration: configuration, queue: queue)
-        } catch {
-            // We can't recover from this error but at least we report it correctly on Sentry
-            Logging.reportRealmOpeningError(error, realmConfiguration: configuration)
-        }
     }
 
     public func execute<T>(_ block: @escaping (Realm) -> T, completion: @escaping (T) -> Void) {
