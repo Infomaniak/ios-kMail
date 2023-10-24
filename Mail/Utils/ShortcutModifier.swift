@@ -17,12 +17,15 @@
  */
 
 import Foundation
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import SwiftUI
 
 struct ShortcutModifier: ViewModifier {
     @EnvironmentObject private var actionsManager: ActionsManager
 
+    @LazyInjectService private var matomo: MatomoUtils
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
