@@ -107,7 +107,7 @@ struct SplitView: View {
             }
         }
         .floatingPanel(isPresented: $isShowingUpdateAvailable) {
-            DiscoveryView(item: .updateDiscovery) { _ in } completionHandler: { update in
+            DiscoveryView(item: .updateDiscovery) {} completionHandler: { update in
                 guard update else { return }
                 let url: URLConstants = Bundle.main.isRunningInTestFlight ? .testFlight : .appStore
                 openURL(url.url)

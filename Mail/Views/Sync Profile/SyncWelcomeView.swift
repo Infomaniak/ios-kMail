@@ -34,16 +34,8 @@ struct SyncWelcomeView: View {
     )
 
     var body: some View {
-        ZStack {
-            GeometryReader { proxy in
-                MailResourcesAsset.onboardingBackground4.swiftUIImage
-                    .resizable()
-                    .frame(height: proxy.size.height * 0.62)
-                    .foregroundColor(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundSecondaryColor)
-            }
         SlideView(slide: slide)
             .ignoresSafeArea(edges: .top)
-
             .safeAreaInset(edge: .bottom) {
                 VStack(spacing: UIPadding.medium) {
                     MailButton(label: MailResourcesStrings.Localizable.buttonStart) {
