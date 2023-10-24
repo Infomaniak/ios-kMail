@@ -121,6 +121,9 @@ enum ApplicationAssembly {
             },
             Factory(type: ConfigWebServer.self) { _, _ in
                 ConfigWebServer()
+            },
+            Factory(type: AppLaunchCounter.self) { _, _ in
+                AppLaunchCounter()
             }
         ]
 

@@ -26,7 +26,7 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "1.1.6")),
                           .package(
                               url: "https://github.com/Infomaniak/ios-core",
-                              .revision("d81d4d62b07f1d3cef0aacd5cc275e09c2bd5949")
+                              .revision("477ba918bf1ccabaac83ad4e5923fe5356f517ea")
                           ),
                           .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "2.5.3")),
                           .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "3.0.0")),
@@ -51,7 +51,11 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/johnpatrickmorgan/NavigationBackport", .upToNextMajor(from: "0.8.1")),
                           .package(url: "https://github.com/aheze/Popovers", .upToNextMajor(from: "1.3.2")),
                           .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1")),
-                          .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0"))
+                          .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0")),
+                          .package(
+                              url: "https://github.com/Infomaniak/ios-version-checker",
+                              .revision("4a74c15675ca96f9b8628b86e1ec01ac4772e2db")
+                          )
                       ],
                       targets: [
                           Target(name: "Mail",
@@ -212,7 +216,8 @@ let project = Project(name: "Mail",
                                   .package(product: "Nuke"),
                                   .package(product: "NukeUI"),
                                   .package(product: "SwiftSoup"),
-                                  .package(product: "Swifter")
+                                  .package(product: "Swifter"),
+                                  .package(product: "VersionChecker")
                               ],
                               settings: .settings(base: Constants.baseSettings)
                           )

@@ -25,6 +25,8 @@ import MailResources
 import NavigationBackport
 import RealmSwift
 import SwiftUI
+import VersionChecker
+
 @_spi(Advanced) import SwiftUIIntrospect
 
 public class SplitViewManager: ObservableObject {
@@ -48,6 +50,7 @@ public class SplitViewManager: ObservableObject {
 }
 
 struct SplitView: View {
+    @Environment(\.openURL) private var openURL
     @Environment(\.isCompactWindow) private var isCompactWindow
     @Environment(\.scenePhase) private var scenePhase
 
@@ -61,6 +64,11 @@ struct SplitView: View {
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var platformDetector: PlatformDetectable
+    @LazyInjectService private var appLaunchCounter: AppLaunchCounter
+
+    @State private var isShowingUpdateAvailable = false
+    @State private var isShowingSyncDiscovery = false
+    @State private var isShowingSyncProfile = false
 
     let mailboxManager: MailboxManager
     init(mailboxManager: MailboxManager) {
@@ -101,6 +109,24 @@ struct SplitView: View {
                 }
             }
         }
+        .floatingPanel(isPresented: $isShowingUpdateAvailable) {
+            DiscoveryView(item: .updateDiscovery) { /* Empty on purpose */ } completionHandler: { update in
+                guard update else { return }
+                let url: URLConstants = Bundle.main.isRunningInTestFlight ? .testFlight : .appStore
+                openURL(url.url)
+            }
+        }
+        .floatingPanel(isPresented: $isShowingSyncDiscovery) {
+            DiscoveryView(item: .syncDiscovery) {
+                UserDefaults.shared.shouldPresentSyncDiscovery = false
+            } completionHandler: { update in
+                guard update else { return }
+                isShowingSyncProfile = true
+            }
+        }
+        .sheet(isPresented: $isShowingSyncProfile) {
+            SyncProfileNavigationView()
+        }
         .sheet(item: $navigationState.editedDraft) { editedDraft in
             ComposeMessageView(editedDraft: editedDraft, mailboxManager: mailboxManager)
         }
@@ -109,6 +135,11 @@ struct SplitView: View {
             Task {
                 async let _ = try? mailboxManager.refreshAllFolders()
                 async let _ = try? mailboxManager.refreshAllSignatures()
+
+                guard !platformDetector.isDebug else { return }
+                // We don't want to show both DiscoveryView at the same time
+                isShowingUpdateAvailable = try await VersionChecker.standard.showUpdateVersion()
+                isShowingSyncDiscovery = isShowingUpdateAvailable ? false : showSync()
             }
         }
         .onOpenURL { url in
@@ -227,5 +258,14 @@ struct SplitView: View {
         if Constants.isMailTo(url) {
             navigationState.editedDraft = EditedDraft.mailTo(urlComponents: urlComponents)
         }
+    }
+
+    private func showSync() -> Bool {
+        guard UserDefaults.shared.shouldPresentSyncDiscovery,
+              !appLaunchCounter.isFirstLaunch else {
+            return false
+        }
+
+        return appLaunchCounter.value > Constants.minimumOpeningBeforeSync
     }
 }

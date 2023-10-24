@@ -48,6 +48,7 @@ public extension UserDefaults.Keys {
     static let shouldPresentAIFeature = UserDefaults.Keys(rawValue: "shouldPresentAIFeature")
     static let openingUntilReview = UserDefaults.Keys(rawValue: "openingUntilReview")
     static let appReview = UserDefaults.Keys(rawValue: "appReview")
+    static let shouldPresentSyncDiscovery = UserDefaults.Keys(rawValue: "shouldPresentSyncDiscovery")
 }
 
 public extension UserDefaults {
@@ -275,6 +276,18 @@ public extension UserDefaults {
         }
         set {
             set(newValue.rawValue, forKey: key(.appReview))
+        }
+    }
+
+    var shouldPresentSyncDiscovery: Bool {
+        get {
+            if object(forKey: key(.shouldPresentSyncDiscovery)) == nil {
+                set(true, forKey: key(.shouldPresentSyncDiscovery))
+            }
+            return bool(forKey: key(.shouldPresentSyncDiscovery))
+        }
+        set {
+            set(newValue, forKey: key(.shouldPresentSyncDiscovery))
         }
     }
 }
