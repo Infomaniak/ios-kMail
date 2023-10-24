@@ -52,6 +52,8 @@ struct ShortcutModifier: ViewModifier {
     }
 
     private func shortcutDelete() {
+        matomo.track(eventWithCategory: .shortcutAction, name: "delete")
+
         let messages: [Message]
         if multipleSelectionViewModel.isEnabled {
             messages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
@@ -69,6 +71,8 @@ struct ShortcutModifier: ViewModifier {
     }
 
     private func shortcutReply() {
+        matomo.track(eventWithCategory: .shortcutAction, name: "reply")
+
         guard !multipleSelectionViewModel.isEnabled,
               let message = viewModel.selectedThread?
               .lastMessageToExecuteAction(currentMailboxEmail: viewModel.mailboxManager.mailbox.email) else { return }
@@ -82,16 +86,22 @@ struct ShortcutModifier: ViewModifier {
     }
 
     private func shortcutRefresh() {
+        matomo.track(eventWithCategory: .shortcutAction, name: "refresh")
+
         Task {
             await viewModel.fetchThreads()
         }
     }
 
     private func shortcutNext() {
+        guard !multipleSelectionViewModel.isEnabled else { return }
+        matomo.track(eventWithCategory: .shortcutAction, name: "nextThread")
         viewModel.nextThread()
     }
 
     private func shortcutPrevious() {
+        guard !multipleSelectionViewModel.isEnabled else { return }
+        matomo.track(eventWithCategory: .shortcutAction, name: "previousThread")
         viewModel.previousThread()
     }
 }
