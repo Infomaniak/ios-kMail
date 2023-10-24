@@ -62,9 +62,9 @@ struct DiscoveryView: View {
     @Environment(\.isCompactWindow) private var isCompactWindow
     @Environment(\.dismiss) private var dismiss
 
-    let item: DiscoveryItem
-
     @State private var willDiscoverNewFeature = false
+
+    let item: DiscoveryItem
 
     let onAppear: () -> Void
     let completionHandler: (Bool) -> Void
@@ -77,9 +77,7 @@ struct DiscoveryView: View {
                 DiscoveryAlertView(item: item, nowButton: didTouchNowButton, laterButton: didTouchLaterButton)
             }
         }
-        .onAppear {
-            onAppear()
-        }
+        .onAppear(perform: onAppear)
         .onDisappear {
             completionHandler(willDiscoverNewFeature)
             if !willDiscoverNewFeature {
