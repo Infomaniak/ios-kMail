@@ -35,6 +35,7 @@ struct MailApp: App {
 
     @LazyInjectService private var appLockHelper: AppLockHelper
     @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var appLaunchCounter: AppLaunchCounter
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
@@ -67,7 +68,6 @@ struct MailApp: App {
                 .onChange(of: scenePhase) { newScenePhase in
                     switch newScenePhase {
                     case .active:
-                        @LazyInjectService var appLaunchCounter: AppLaunchCounter
                         appLaunchCounter.increase()
                         refreshCacheData()
                         navigationState.transitionToLockViewIfNeeded()

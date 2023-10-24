@@ -187,4 +187,5 @@ public enum Constants {
     ]
 
     public static let openingBeforeReview = 50
+    public static let minimumOpeningBeforeSync = 5
 }

@@ -116,14 +116,14 @@ struct SplitView: View {
                 openURL(url.url)
             }
         }
-        .floatingPanel(isPresented: $isShowingSyncDiscovery, content: {
+        .floatingPanel(isPresented: $isShowingSyncDiscovery) {
             DiscoveryView(item: .syncDiscovery) {
                 UserDefaults.shared.shouldPresentSyncDiscovery = false
             } completionHandler: { update in
                 guard update else { return }
                 isShowingSyncProfile = true
             }
-        })
+        }
         .sheet(isPresented: $isShowingSyncProfile) {
             SyncProfileNavigationView()
         }
@@ -133,11 +133,11 @@ struct SplitView: View {
         .onChange(of: scenePhase) { newScenePhase in
             guard newScenePhase == .active else { return }
             Task {
+                async let _ = try? mailboxManager.refreshAllFolders()
+                async let _ = try? mailboxManager.refreshAllSignatures()
                 // We don't want to show both DiscoveryView at the same time
                 isShowingUpdateAvailable = try await VersionChecker.standard.showUpdateVersion()
                 isShowingSyncDiscovery = isShowingUpdateAvailable ? false : showSync()
-                async let _ = try? mailboxManager.refreshAllFolders()
-                async let _ = try? mailboxManager.refreshAllSignatures()
             }
         }
         .onOpenURL { url in
@@ -264,6 +264,6 @@ struct SplitView: View {
             return false
         }
 
-        return appLaunchCounter.value > 5
+        return appLaunchCounter.value > Constants.minimumOpeningBeforeSync
     }
 }
