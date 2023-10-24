@@ -81,6 +81,8 @@ public class DraftContentManager: ObservableObject {
 
             let realm = mailboxManager.getRealm()
             try? realm.write {
+                // Keep up to date the rawSignature
+                liveIncompleteDraft.rawSignature = newSignature.content
                 liveIncompleteDraft.identityId = "\(newSignature.id)"
                 liveIncompleteDraft.body = try parsedMessage.outerHtml()
             }

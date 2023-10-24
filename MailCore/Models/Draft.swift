@@ -345,6 +345,22 @@ public extension Draft {
             return !document.hasText()
         }
 
+        // Do we still have content once we removed the signature ?
+        try? signatureNode.remove()
+
+        return !document.hasText()
+    }
+
+    /// Check if the Signature has changes or not
+    var isSignatureUnchanged: Bool {
+        guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else {
+            return true
+        }
+
+        guard let signatureNode = try? document.getElementsByClass(Constants.signatureWrapperIdentifier).first() else {
+            return true
+        }
+
         // We check if the signature was changed, the user might also have written within the signature div without knowing.
         let signatureNodeText = try? signatureNode.text()
         guard let rawSignature,
@@ -355,14 +371,11 @@ public extension Draft {
             return false
         }
 
-        // Do we still have content once we removed the signature ?
-        try? signatureNode.remove()
-
-        return !document.hasText()
+        return true
     }
 
     var isCompletelyEmpty: Bool {
-        guard !hasAttachments, isBodyEmpty else {
+        guard !hasAttachments, isBodyEmpty, isSignatureUnchanged else {
             return false
         }
         return true
