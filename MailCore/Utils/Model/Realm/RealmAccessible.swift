@@ -45,26 +45,12 @@ extension RealmAccessible {
         } catch {
             Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration, afterRetry: !canRetry)
 
-            @InjectService var platformDetector: PlatformDetectable
-            let isOnMacContext = (platformDetector.isMacCatalyst || platformDetector.isiOSAppOnMac)
-
-            guard isOnMacContext else {
-                // Delete configuration for iOS / iPadOS in debug
-                if platformDetector.isDebug {
-                    @InjectService var realmManager: RealmManageable
-                    realmManager.deleteFiles(for: realmConfiguration)
-                }
-
-                // And crash like before
-                fatalError("Failed creating realm \(error.localizedDescription)")
-            }
-
             guard canRetry else {
                 // Unable to recover after cleaning realm a first time
                 fatalError("Failed creating realm after a retry \(error.localizedDescription)")
             }
 
-            // If app is running on macOS (no clean on uninstall), seamlessly clean DB and continue
+            // Seamlessly clean DB and continue
             @InjectService var realmManager: RealmManageable
             realmManager.deleteFiles(for: realmConfiguration)
 
