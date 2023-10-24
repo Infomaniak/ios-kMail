@@ -135,6 +135,8 @@ struct SplitView: View {
             Task {
                 async let _ = try? mailboxManager.refreshAllFolders()
                 async let _ = try? mailboxManager.refreshAllSignatures()
+
+                guard !platformDetector.isDebug else { return }
                 // We don't want to show both DiscoveryView at the same time
                 isShowingUpdateAvailable = try await VersionChecker.standard.showUpdateVersion()
                 isShowingSyncDiscovery = isShowingUpdateAvailable ? false : showSync()
