@@ -54,7 +54,7 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0")),
                           .package(
                               url: "https://github.com/Infomaniak/ios-version-checker",
-                              .revision("4a74c15675ca96f9b8628b86e1ec01ac4772e2db")
+                              .revision("6bdb9536b61f26998b589e049fa8f2002aaa5d24")
                           )
                       ],
                       targets: [
