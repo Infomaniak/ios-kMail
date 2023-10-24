@@ -109,14 +109,14 @@ struct SplitView: View {
                 }
             }
         }
-        .floatingPanel(isPresented: $isShowingUpdateAvailable) {
+        .discoveryPresenter(isPresented: $isShowingUpdateAvailable) {
             DiscoveryView(item: .updateDiscovery) { /* Empty on purpose */ } completionHandler: { update in
                 guard update else { return }
                 let url: URLConstants = Bundle.main.isRunningInTestFlight ? .testFlight : .appStore
                 openURL(url.url)
             }
         }
-        .floatingPanel(isPresented: $isShowingSyncDiscovery) {
+        .discoveryPresenter(isPresented: $isShowingSyncDiscovery) {
             DiscoveryView(item: .syncDiscovery) {
                 UserDefaults.shared.shouldPresentSyncDiscovery = false
             } completionHandler: { update in

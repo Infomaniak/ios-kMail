@@ -16,37 +16,33 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
 import SwiftUI
-import SwiftUIBackports
 
 extension View {
-    func aiPromptPresenter<ModalContent: View>(isPresented: Binding<Bool>,
-                                               @ViewBuilder modalContent: @escaping () -> ModalContent) -> some View {
-        modifier(AIPromptPresenter(isPresented: isPresented, modalContent: modalContent))
+    func discoveryPresenter<ModalContent: View>(isPresented: Binding<Bool>,
+                                                @ViewBuilder modalContent: @escaping () -> ModalContent) -> some View {
+        modifier(DiscoveryPresenter(isPresented: isPresented, modalContent: modalContent))
     }
 }
 
-struct AIPromptPresenter<ModalContent: View>: ViewModifier {
+struct DiscoveryPresenter<ModalContent: View>: ViewModifier {
     @Environment(\.isCompactWindow) private var isCompactWindow
 
     @Binding var isPresented: Bool
 
-    @ViewBuilder let modalContent: () -> ModalContent
+    @ViewBuilder let modalContent: ModalContent
 
     func body(content: Content) -> some View {
         content
             .sheet(isPresented: Binding(get: { isCompactWindow && isPresented }, set: { isPresented = $0 })) {
                 if #available(iOS 16.0, *) {
-                    modalContent()
-                        .presentationDetents([.height(UIConstants.aiPromptSheetHeight)])
+                    modalContent.modifier(SelfSizingPanelViewModifier())
                 } else {
-                    modalContent()
-                        .backport.presentationDetents([.medium])
+                    modalContent.modifier(SelfSizingPanelBackportViewModifier())
                 }
             }
             .customAlert(isPresented: Binding(get: { !isCompactWindow && isPresented }, set: { isPresented = $0 })) {
-                modalContent()
+                modalContent
             }
     }
 }
