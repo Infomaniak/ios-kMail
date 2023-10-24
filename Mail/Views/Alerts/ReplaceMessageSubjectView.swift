@@ -22,40 +22,39 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct AskForReviewView: View {
+struct ReplaceMessageSubjectView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @EnvironmentObject private var reviewManager: ReviewManager
-    @Environment(\.openURL) private var openURL
+    let subject: String
+    let action: (Bool) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(MailResourcesStrings.Localizable.reviewAlertTitle)
+            Text(MailResourcesStrings.Localizable.aiReplaceSubjectTitle)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, UIPadding.alertTitleBottom)
 
+            Text(MailResourcesStrings.Localizable.aiReplaceSubjectDescription(subject))
+                .textStyle(.bodySecondary)
+                .padding(.bottom, UIPadding.alertDescriptionBottom)
+
             ModalButtonsView(
-                primaryButtonTitle: MailResourcesStrings.Localizable.buttonYes,
+                primaryButtonTitle: MailResourcesStrings.Localizable.aiReplacementDialogPositiveButton,
                 secondaryButtonTitle: MailResourcesStrings.Localizable.buttonNo
             ) {
-                matomo.track(eventWithCategory: .appReview, name: "like")
-                UserDefaults.shared.appReview = .readyForReview
-                reviewManager.requestReview()
+                matomo.track(eventWithCategory: .aiWriter, name: "replaceSubjectConfirm")
+                action(true)
             } secondaryButtonAction: {
-                matomo.track(eventWithCategory: .appReview, name: "dislike")
-                // Ask for feedback
-                if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
-                    UserDefaults.shared.appReview = .feedback
-                    openURL(userReportURL)
-                }
+                matomo.track(eventWithCategory: .aiWriter, name: "keepSubject")
+                action(false)
             }
         }
         .onAppear {
-            matomo.track(eventWithCategory: .appReview, action: .data, name: "alertPresented")
+            matomo.track(eventWithCategory: .aiWriter, name: "replaceSubjectDialog")
         }
     }
 }
 
 #Preview {
-    AskForReviewView()
+    ReplaceMessageSubjectView(subject: "My Subject") { _ in /* Preview */ }
 }

@@ -117,18 +117,22 @@ struct ComposeMessageView: View {
         Self.writeDraftToRealm(mailboxManager.getRealm(), draft: editedDraft.draft)
         _draft = StateRealmObject(wrappedValue: editedDraft.draft)
 
-        draftContentManager = DraftContentManager(
+        let currentDraftContentManager = DraftContentManager(
             incompleteDraft: editedDraft.draft,
             messageReply: editedDraft.messageReply,
             mailboxManager: mailboxManager
         )
+        draftContentManager = currentDraftContentManager
 
         self.mailboxManager = mailboxManager
         _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: editedDraft.draft,
                                                                            mailboxManager: mailboxManager))
         _initialAttachments = State(wrappedValue: attachments)
 
-        _aiModel = StateObject(wrappedValue: AIModel(mailboxManager: mailboxManager))
+        _aiModel = StateObject(wrappedValue: AIModel(
+            mailboxManager: mailboxManager,
+            draftContentManager: currentDraftContentManager
+        ))
     }
 
     // MARK: - View
@@ -201,9 +205,8 @@ struct ComposeMessageView: View {
             AIPromptView(aiModel: aiModel)
         }
         .sheet(isPresented: $aiModel.isShowingProposition) {
-            AIPropositionView(aiModel: aiModel, draft: draft)
+            AIPropositionView(aiModel: aiModel)
         }
-        .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
     }
 

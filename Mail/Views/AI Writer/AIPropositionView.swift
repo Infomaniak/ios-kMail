@@ -29,15 +29,10 @@ struct AIPropositionView: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    @EnvironmentObject private var draftContentManager: DraftContentManager
-
     @State private var textPlainHeight = CGFloat.zero
-    @State private var isShowingReplaceContentAlert = false
     @State private var willShowAIPrompt = false
 
     @ObservedObject var aiModel: AIModel
-
-    @ObservedRealmObject var draft: Draft
 
     @Namespace private var errorID
 
@@ -90,25 +85,20 @@ struct AIPropositionView: View {
 
                 ToolbarItemGroup(placement: .bottomBar) {
                     Group {
-                        if aiModel.toolbarStyle == .success || aiModel.toolbarStyle == .errorWithAnswers {
+                        if aiModel.currentStyle == .standard || aiModel.currentStyle == .error {
                             AIPropositionMenu(aiModel: aiModel)
                         }
 
                         Spacer()
 
-                        switch aiModel.toolbarStyle {
+                        switch aiModel.currentStyle {
                         case .loading:
                             AIProgressView()
-                        case .success, .errorWithAnswers:
+                        case .standard, .error:
                             MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
-                                let shouldReplaceContent = !draft.isBodyEmpty
-                                guard !shouldReplaceContent || UserDefaults.shared.doNotShowAIReplaceMessageAgain else {
-                                    isShowingReplaceContentAlert = true
-                                    return
-                                }
-                                insertResult(shouldReplaceContent: shouldReplaceContent)
+                                aiModel.didTapInsert()
                             }
-                        case .errorWithoutAnswers:
+                        case .loadingError:
                             MailButton(label: MailResourcesStrings.Localizable.aiButtonRetry) {
                                 matomo.track(eventWithCategory: .aiWriter, name: "retry")
                                 willShowAIPrompt = true
@@ -123,9 +113,18 @@ struct AIPropositionView: View {
                 guard let toolbar = viewController.navigationController?.toolbar else { return }
                 UIConstants.applyComposeViewStyle(to: toolbar)
             }
-            .customAlert(isPresented: $isShowingReplaceContentAlert) {
-                ReplaceMessageContentView {
-                    insertResult(shouldReplaceContent: true)
+            .customAlert(isPresented: $aiModel.isShowingReplaceBodyAlert) {
+                ReplaceMessageBodyView {
+                    aiModel.splitPropositionAndInsert(shouldReplaceBody: true)
+                }
+            }
+            .customAlert(item: $aiModel.isShowingReplaceSubjectAlert) { proposition in
+                ReplaceMessageSubjectView(subject: proposition.subject) { shouldReplaceSubject in
+                    aiModel.insertProposition(
+                        subject: shouldReplaceSubject ? proposition.subject : nil,
+                        body: proposition.body,
+                        shouldReplaceBody: proposition.shouldReplaceContent
+                    )
                 }
             }
             .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
@@ -134,22 +133,11 @@ struct AIPropositionView: View {
             .matomoView(view: ["AI", "Proposition"])
         }
     }
-
-    private func insertResult(shouldReplaceContent: Bool) {
-        guard !aiModel.isLoading, let content = aiModel.conversation.last?.content else { return }
-        matomo.track(
-            eventWithCategory: .aiWriter,
-            action: .data,
-            name: shouldReplaceContent ? "replaceProposition" : "insertProposition"
-        )
-
-        draftContentManager.replaceBodyContent(with: content)
-        dismiss()
-    }
 }
 
-struct AIPropositionView_Previews: PreviewProvider {
-    static var previews: some View {
-        AIPropositionView(aiModel: AIModel(mailboxManager: PreviewHelper.sampleMailboxManager), draft: Draft())
-    }
+#Preview {
+    AIPropositionView(
+        aiModel: AIModel(mailboxManager: PreviewHelper.sampleMailboxManager,
+                         draftContentManager: PreviewHelper.sampleDraftContentManager)
+    )
 }

@@ -22,7 +22,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct ReplaceMessageContentView: View {
+struct ReplaceMessageBodyView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @State private var doNotShowAIReplaceMessageAgain = UserDefaults.shared.doNotShowAIReplaceMessageAgain
@@ -62,6 +62,6 @@ struct ReplaceMessageContentView: View {
 
 struct ReplaceMessageContentView_Preview: PreviewProvider {
     static var previews: some View {
-        ReplaceMessageContentView { /* Preview */ }
+        ReplaceMessageBodyView { /* Preview */ }
     }
 }

@@ -65,12 +65,9 @@ public class DraftContentManager: ObservableObject {
     }
 
     public func updateSignature(with newSignature: Signature) {
-        let realm = mailboxManager.getRealm()
-        guard let liveIncompleteDraft = realm.object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID) else {
-            return
-        }
-
         do {
+            let liveIncompleteDraft = try getLiveDraft()
+
             let parsedMessage = try SwiftSoup.parse(liveIncompleteDraft.body)
             // If we find the previous signature, we replace it with the new one
             // otherwise we append the signature at the end of the document
@@ -82,6 +79,7 @@ public class DraftContentManager: ObservableObject {
                 try signatureDiv.html(newSignature.content)
             }
 
+            let realm = mailboxManager.getRealm()
             try? realm.write {
                 liveIncompleteDraft.identityId = "\(newSignature.id)"
                 liveIncompleteDraft.body = try parsedMessage.outerHtml()
@@ -132,12 +130,18 @@ public class DraftContentManager: ObservableObject {
         )
     }
 
-    public func replaceBodyContent(with content: String) {
-        let realm = mailboxManager.getRealm()
-        guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID) else {
-            return
-        }
+    public func shouldOverrideSubject() -> Bool {
+        guard let liveDraft = try? getLiveDraft() else { return false }
+        return !liveDraft.subject.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
 
+    public func shouldOverrideBody() -> Bool {
+        guard let liveDraft = try? getLiveDraft() else { return false }
+        return !liveDraft.isBodyEmpty
+    }
+
+    public func replaceContent(subject: String? = nil, body: String) {
+        guard let liveDraft = try? getLiveDraft() else { return }
         guard let parsedMessage = try? SwiftSoup.parse(liveDraft.body) else { return }
 
         var signatureContent = ""
@@ -146,10 +150,22 @@ public class DraftContentManager: ObservableObject {
             signatureContent = signatureHTML
         }
 
+        let realm = mailboxManager.getRealm()
         try? realm.write {
-            liveDraft.body = "<p>\(content.replacingOccurrences(of: "\n", with: "<br>"))</p>\(signatureContent)"
+            if let subject {
+                liveDraft.subject = subject
+            }
+            liveDraft.body = "<p>\(body.replacingOccurrences(of: "\n", with: "<br>"))</p>\(signatureContent)"
         }
         NotificationCenter.default.post(name: .updateComposeMessageBody, object: nil)
+    }
+
+    private func getLiveDraft() throws -> Draft {
+        let realm = mailboxManager.getRealm()
+        guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID) else {
+            throw MailError.unknownError
+        }
+        return liveDraft
     }
 
     private func writeCompleteDraft(
@@ -159,9 +175,7 @@ public class DraftContentManager: ObservableObject {
         attachments: [Attachment]
     ) throws {
         let realm = mailboxManager.getRealm()
-        guard let liveIncompleteDraft = realm.object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID) else {
-            throw MailError.unknownError
-        }
+        let liveIncompleteDraft = try getLiveDraft()
 
         try? realm.write {
             if liveIncompleteDraft.identityId == nil || liveIncompleteDraft.identityId?.isEmpty == true {

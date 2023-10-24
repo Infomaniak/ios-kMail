@@ -136,4 +136,10 @@ enum PreviewHelper {
         userId: 0,
         expirationDate: Date()
     ))
+
+    static let sampleDraftContentManager = DraftContentManager(
+        incompleteDraft: Draft(),
+        messageReply: nil,
+        mailboxManager: sampleMailboxManager
+    )
 }

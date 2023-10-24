@@ -24,16 +24,14 @@ import UIKit
 
 struct SelectableTextView: UIViewRepresentable {
     enum Style {
-        case loading, standard, error(withLoadingState: Bool)
+        case loading, standard, loadingError, error
 
         var foregroundColor: UIColor {
             switch self {
-            case .loading:
+            case .loading, .loadingError:
                 return MailResourcesAsset.textTertiaryColor.color
-            case .standard:
+            case .standard, .error:
                 return MailResourcesAsset.textPrimaryColor.color
-            case .error(withLoadingState: let withLoadingState):
-                return withLoadingState ? Style.loading.foregroundColor : Style.standard.foregroundColor
             }
         }
     }
