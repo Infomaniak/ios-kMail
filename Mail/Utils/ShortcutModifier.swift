@@ -20,6 +20,7 @@ import Foundation
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
+import MailResources
 import SwiftUI
 
 struct ShortcutModifier: ViewModifier {
@@ -34,19 +35,19 @@ struct ShortcutModifier: ViewModifier {
     func body(content: Content) -> some View {
         ZStack {
             VStack {
-                Button("Delete shortcut", action: shortcutDelete)
+                Button(MailResourcesStrings.Localizable.actionDelete, action: shortcutDelete)
                     .keyboardShortcut(.delete, modifiers: [])
 
-                Button("Reply shortcut", action: shortcutReply)
+                Button(MailResourcesStrings.Localizable.actionReply, action: shortcutReply)
                     .keyboardShortcut("r")
 
-                Button("Refresh shortcut", action: shortcutRefresh)
+                Button(MailResourcesStrings.Localizable.shortcutRefreshAction, action: shortcutRefresh)
                     .keyboardShortcut("n", modifiers: [.shift, .command])
 
-                Button("Next thread", action: shortcutNext)
+                Button(MailResourcesStrings.Localizable.shortcutNextAction, action: shortcutNext)
                     .keyboardShortcut(.downArrow, modifiers: platformDetector.isMac ? [] : [.command])
 
-                Button("Previous thread", action: shortcutPrevious)
+                Button(MailResourcesStrings.Localizable.shortcutPreviousAction, action: shortcutPrevious)
                     .keyboardShortcut(.upArrow, modifiers: platformDetector.isMac ? [] : [.command])
             }
             .frame(width: 0, height: 0)
