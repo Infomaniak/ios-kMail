@@ -30,6 +30,7 @@ struct SettingsView: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @AppStorage(UserDefaults.shared.key(.aiEngine)) private var aiEngine = DefaultPreferences.aiEngine
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var density = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.theme)) private var theme = DefaultPreferences.theme
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -71,6 +72,8 @@ struct SettingsView: View {
                         SettingsNotificationsView()
                     }
 
+                    // MARK: Sync Calendar/Contacts
+
                     Button {
                         matomo.track(eventWithCategory: .syncAutoConfig, name: "openFromSettings")
                         isShowingSyncProfile = true
@@ -78,6 +81,19 @@ struct SettingsView: View {
                         SettingsSubMenuLabel(title: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle)
                     }
                     .buttonStyle(.plain)
+
+                    // MARK: AI Writer
+
+                    SettingsSubMenuCell(
+                        title: MailResourcesStrings.Localizable.aiPromptTitle,
+                        subtitle: aiEngine.title
+                    ) {
+                        SettingsOptionView(
+                            title: MailResourcesStrings.Localizable.aiPromptTitle,
+                            subtitle: "Sélectionnez votre assistant à la rédaction par défaut",
+                            keyPath: \.aiEngine
+                        )
+                    }
 
                     IKDivider()
                 }
