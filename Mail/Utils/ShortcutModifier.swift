@@ -25,6 +25,7 @@ import SwiftUI
 
 struct ShortcutModifier: ViewModifier {
     @EnvironmentObject private var actionsManager: ActionsManager
+    @EnvironmentObject private var navigationState: NavigationState
 
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var platformDetector: PlatformDetector
@@ -40,6 +41,9 @@ struct ShortcutModifier: ViewModifier {
 
                 Button(MailResourcesStrings.Localizable.actionReply, action: shortcutReply)
                     .keyboardShortcut("r")
+
+                Button(MailResourcesStrings.Localizable.buttonNewMessage, action: shortcutNewMessage)
+                    .keyboardShortcut("n")
 
                 Button(MailResourcesStrings.Localizable.shortcutRefreshAction, action: shortcutRefresh)
                     .keyboardShortcut("n", modifiers: [.shift, .command])
@@ -89,6 +93,12 @@ struct ShortcutModifier: ViewModifier {
                 origin: .shortcut(originFolder: viewModel.folder.freezeIfNeeded())
             )
         }
+    }
+
+    private func shortcutNewMessage() {
+        matomo.track(eventWithCategory: .shortcutAction, name: "newMessage")
+
+        navigationState.editedDraft = EditedDraft.new()
     }
 
     private func shortcutRefresh() {
