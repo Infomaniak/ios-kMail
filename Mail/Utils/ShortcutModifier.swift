@@ -28,7 +28,7 @@ struct ShortcutModifier: ViewModifier {
     @EnvironmentObject private var navigationState: NavigationState
 
     @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var platformDetector: PlatformDetector
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
