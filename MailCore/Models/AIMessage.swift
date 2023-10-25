@@ -18,6 +18,10 @@
 
 import Foundation
 
+public enum AIEngine: Codable {
+    case falcon, gpt
+}
+
 public enum AIMessageType: String, Codable {
     case user, context, assistant
 }

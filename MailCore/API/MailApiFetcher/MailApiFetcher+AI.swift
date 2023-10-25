@@ -50,8 +50,12 @@ extension MailApiFetcher {
 
 /// implementing `MailApiAIFetchable`
 public extension MailApiFetcher {
-    func aiCreateConversation(messages: [AIMessage], output: AIOutputFormat = .mail,
-                              mailbox: Mailbox) async throws -> AIConversationResponse {
+    func aiCreateConversation(
+        messages: [AIMessage],
+        output: AIOutputFormat = .mail,
+        engine: AIEngine = .falcon,
+        mailbox: Mailbox
+    ) async throws -> AIConversationResponse {
         try await perform(request: authenticatedAIRequest(
             .ai(mailbox: mailbox),
             method: .post,
@@ -59,7 +63,8 @@ public extension MailApiFetcher {
         )).data
     }
 
-    func aiShortcut(contextId: String, shortcut: AIShortcutAction, mailbox: Mailbox) async throws -> AIShortcutResponse {
+    func aiShortcut(contextId: String, shortcut: AIShortcutAction, engine: AIEngine = .falcon,
+                    mailbox: Mailbox) async throws -> AIShortcutResponse {
         try await perform(request: authenticatedRequest(
             .aiShortcut(contextId: contextId, shortcut: shortcut.apiName, mailbox: mailbox),
             method: .patch
@@ -70,6 +75,7 @@ public extension MailApiFetcher {
         shortcut: AIShortcutAction,
         messages: [AIMessage],
         output: AIOutputFormat = .mail,
+        engine: AIEngine = .falcon,
         mailbox: Mailbox
     ) async throws -> AIShortcutResponse {
         try await perform(request: authenticatedAIRequest(
