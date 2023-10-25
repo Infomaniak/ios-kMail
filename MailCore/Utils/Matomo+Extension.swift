@@ -71,6 +71,7 @@ public extension MatomoUtils.EventCategory {
 
     static let settingsGeneral = MatomoUtils.EventCategory(displayName: "settingsGeneral")
     static let settingsAccentColor = MatomoUtils.EventCategory(displayName: "settingsAccentColor")
+    static let settingsAIEngine = MatomoUtils.EventCategory(displayName: "settingsAiEngine")
     static let settingsCancelPeriod = MatomoUtils.EventCategory(displayName: "settingsCancelPeriod")
     static let settingsDensity = MatomoUtils.EventCategory(displayName: "settingsDensity")
     static let settingsForwardMode = MatomoUtils.EventCategory(displayName: "settingsForwardMode")
