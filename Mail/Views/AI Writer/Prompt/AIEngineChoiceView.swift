@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -17,33 +16,31 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
 import MailResources
 import SwiftUI
 
-struct AIEngineChoiceButton: View {
-    @AppStorage(UserDefaults.shared.key(.aiEngine)) private var aiEngine = DefaultPreferences.aiEngine
-
-    @Binding var isShowingAIEngineChoice: Bool
+struct AIEngineChoiceView: View {
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        Button {
-            isShowingAIEngineChoice = true
-        } label: {
-            HStack(spacing: UIPadding.small) {
-                Text(MailResourcesStrings.Localizable.aiGenerationTitlePrompt)
-                    .foregroundColor(MailResourcesAsset.textPrimaryColor.swiftUIColor)
+        NavigationView {
+            List {
+                Text(MailResourcesStrings.Localizable.settingsAiEngineDescription)
+                    .textStyle(.bodyMedium)
 
-                if let image = aiEngine.image {
-                    image
+                // TODO: List here
+
+                Text(MailResourcesStrings.Localizable.aiEngineChangeChoice)
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    CloseButton(dismissAction: dismiss)
                 }
-
-                ChevronIcon(style: .right, color: MailResourcesAsset.textPrimaryColor.swiftUIColor)
             }
         }
     }
 }
 
 #Preview {
-    AIEngineChoiceButton(isShowingAIEngineChoice: .constant(false))
+    AIEngineChoiceView()
 }

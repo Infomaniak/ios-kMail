@@ -32,6 +32,7 @@ struct AIPromptView: View {
     // The focus is done thanks to UIKit, this allows the keyboard to appear more quickly
     @State private var hasFocusedEditor = false
     @State private var prompt = ""
+    @State private var isShowingAIEngineChoice = false
     @State private var placeholderProposition = Constants.aiPromptExamples.randomElement() ?? MailResourcesStrings.Localizable
         .aiPromptExample1
 
@@ -68,6 +69,7 @@ struct AIPromptView: View {
                         textView.font = .systemFont(ofSize: 16)
                     }
                     .frame(maxHeight: isCompactWindow ? nil : 128)
+                    .tint(MailResourcesAsset.aiColor.swiftUIColor)
             }
             .overlay {
                 RoundedRectangle(cornerRadius: 4)
@@ -75,7 +77,7 @@ struct AIPromptView: View {
             }
 
             HStack {
-                AIEngineChoiceButton(isShowingAIEngineChoice: .constant(false))
+                AIEngineChoiceButton(isShowingAIEngineChoice: $isShowingAIEngineChoice)
 
                 Spacer()
 
@@ -89,7 +91,6 @@ struct AIPromptView: View {
                 .disabled(prompt.isEmpty)
             }
         }
-        .tint(MailResourcesAsset.aiColor.swiftUIColor)
         .padding(isCompactWindow ? UIPadding.regular : 0)
         .onAppear {
             if let lastMessage = aiModel.conversation.last,
@@ -106,6 +107,9 @@ struct AIPromptView: View {
             } else {
                 matomo.track(eventWithCategory: .aiWriter, name: "dismissPromptWithoutGenerating")
             }
+        }
+        .sheet(isPresented: $isShowingAIEngineChoice) {
+            AIEngineChoiceView()
         }
         .matomoView(view: ["AI", "Prompt"])
     }

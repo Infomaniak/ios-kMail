@@ -43,7 +43,7 @@ public enum AIEngine: String, CaseIterable, SettingsOptionEnum, Codable {
             return MailResourcesAsset.aiLogo.swiftUIImage
         case .chatGPT:
             // TODO: Import correct image
-            return MailResourcesAsset.themeLight.swiftUIImage
+            return MailResourcesAsset.chatGPT.swiftUIImage
         }
     }
 }
