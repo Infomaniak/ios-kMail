@@ -26,7 +26,7 @@ import SwiftUI
 struct RoleFoldersListView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
 
-    let folders: [NestableFolder]
+    private let folders: [NestableFolder]
     private let hasSubFolders: Bool
 
     init(folders: [NestableFolder]) {
