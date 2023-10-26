@@ -5,7 +5,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Tue, 24 Oct 2023 09:58:47 +0200
+ * Exported at: Thu, 26 Oct 2023 10:33:44 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1450,3 +1450,36 @@
 
 /* loco:65323d14fd2982f3ff080382 */
 "aiReplaceSubjectDescription" = "L’objet actuel deviendra :\n\n%@";
+
+/* loco:6537b4ae2236eeafef03c882 */
+"searchFolderName" = "Recherche";
+
+/* loco:6538a4daa986575986004e72 */
+"shortcutRefreshAction" = "Rafraîchir";
+
+/* loco:6538a602e0eb783378001bb2 */
+"shortcutNextAction" = "Suivant";
+
+/* loco:6538a626e0eb783378001bb4 */
+"shortcutPreviousAction" = "Précédent";
+
+/* loco:65391d2584dd77c18b02f0e2 */
+"settingsAiEngineDescription" = "Sélectionnez votre assistant à la rédaction";
+
+/* loco:653922bdcfcd84657f033492 */
+"aiEngineChatGpt" = "ChatGPT";
+
+/* loco:6539230c9770e8ba3102c722 */
+"aiEngineFalcon" = "IA Souveraine (Falcon LLM)";
+
+/* loco:653924b9080dd61d2e016072 */
+"aiEngineWarning" = "ChatGPT est une IA développée et hébergée par OpenAI. Les données sont envoyées et analysées sur leurs serveurs et non ceux d’Infomaniak.";
+
+/* loco:653a10614077fa3f460294a2 */
+"aiEngineChangeChoice" = "Vous pourrez modifier votre choix dans les paramètres de l’application.";
+
+/* loco:653a132b3b8d3a1f740e06f2 */
+"aiGenerationTitlePrompt" = "Générer avec";
+
+/* loco:653a17180a5205632901a602 */
+"aiGenerationTitleProposition" = "Généré avec :";
