@@ -27,12 +27,19 @@ struct RoleFoldersListView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
 
     let folders: [NestableFolder]
+    private let hasSubFolders: Bool
+
+    init(folders: [NestableFolder]) {
+        self.folders = folders
+        hasSubFolders = folders.contains { !$0.children.isEmpty }
+    }
 
     var body: some View {
         VStack(spacing: 0) {
             ForEach(folders) { folder in
                 FolderCell(folder: folder,
                            currentFolderId: splitViewManager.selectedFolder?.remoteId,
+                           canCollapseSubFolders: hasSubFolders,
                            matomoCategory: .menuDrawer)
             }
         }
