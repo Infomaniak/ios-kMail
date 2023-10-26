@@ -5,7 +5,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Thu, 26 Oct 2023 10:33:44 +0200
+ * Exported at: Thu, 26 Oct 2023 16:16:10 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1281,13 +1281,13 @@
 "noConnection" = "No connection";
 
 /* loco:65017fa44f4fa3e3b902d043 */
-"aiPromptTitle" = "Writing assistant";
+"aiPromptTitle" = "Wizard writer";
 
 /* loco:6501834aa4abf8d77708b7b5 */
 "aiPromptTag" = "Beta";
 
 /* loco:6501840ef58ecb8b620adb23 */
-"aiPromptPlaceholder" = "Tell the writing assistant what you want to write. For example, \"%@\".";
+"aiPromptPlaceholder" = "Tell the wizard writer what you want to write. For example, \"%@\".";
 
 /* loco:65019254a2948ddd0d0e0ca3 */
 "aiPromptValidateButton" = "Generate";
@@ -1299,7 +1299,7 @@
 "snackbarDeletedConversation" = "Conversation no longer exists";
 
 /* loco:65042259ab599c0ca6094172 */
-"aiPromptGenerationLoader" = "The assistant is writing";
+"aiPromptGenerationLoader" = "The wizard is writing";
 
 /* loco:65081ae6a237c4d16909e463 */
 "aiButtonRefine" = "Refine";
@@ -1446,7 +1446,7 @@
 "syncCalendarsAndContactsDescription" = "View your contacts and calendar directly from your device.";
 
 /* loco:65323a4677722095b50538e2 */
-"aiReplaceSubjectTitle" = "Replace the current subject with the assistant’s proposal?";
+"aiReplaceSubjectTitle" = "Replace the current subject with the wizard’s proposal?";
 
 /* loco:65323d14fd2982f3ff080382 */
 "aiReplaceSubjectDescription" = "The subject will become:\n\n%@";
@@ -1464,7 +1464,7 @@
 "shortcutPreviousAction" = "Previous";
 
 /* loco:65391d2584dd77c18b02f0e2 */
-"settingsAiEngineDescription" = "Select your writing assistant";
+"settingsAiEngineDescription" = "Select your wizard writer";
 
 /* loco:653922bdcfcd84657f033492 */
 "aiEngineChatGpt" = "ChatGPT";
