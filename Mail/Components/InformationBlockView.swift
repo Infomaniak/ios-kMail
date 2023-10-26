@@ -35,11 +35,21 @@ extension VerticalAlignment {
 struct InformationBlock {
     let icon: Image
     let message: String
+    var iconTint: Color?
 }
 
 struct InformationBlockView: View {
     let informationBlock: InformationBlock
     var dismissHandler: (() -> Void)?
+
+    init(_ informationBlock: InformationBlock, dismissHandler: (() -> Void)? = nil) {
+        self.informationBlock = informationBlock
+        self.dismissHandler = dismissHandler
+    }
+
+    init(icon: Image, message: String, iconTint: Color? = nil, dismissHandler: (() -> Void)? = nil) {
+        self.init(InformationBlock(icon: icon, message: message, iconTint: iconTint), dismissHandler: dismissHandler)
+    }
 
     var body: some View {
         HStack(alignment: .informationBlockAlignment, spacing: UIPadding.intermediate) {
@@ -47,7 +57,7 @@ struct InformationBlockView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 16, height: 16)
-                .foregroundStyle(.tint)
+                .foregroundColor(informationBlock.iconTint)
                 .alignmentGuide(.informationBlockAlignment) { d in
                     // Center of the view is on the informationBlockAlignment guide
                     d[VerticalAlignment.center]

@@ -91,7 +91,12 @@ struct SettingsView: View {
                         SettingsOptionView(
                             title: MailResourcesStrings.Localizable.aiPromptTitle,
                             subtitle: "Sélectionnez votre assistant à la rédaction par défaut",
-                            keyPath: \.aiEngine
+                            keyPath: \.aiEngine,
+                            informationBlock: InformationBlock(
+                                icon: MailResourcesAsset.info.swiftUIImage,
+                                message: "ChatGPT est une IA développée et hébergée par OpenAI. Les données sont envoyées et analysées sur leurs serveurs et non ceux d’Infomaniak.",
+                                iconTint: MailResourcesAsset.textSecondaryColor.swiftUIColor
+                            )
                         )
                     }
 
