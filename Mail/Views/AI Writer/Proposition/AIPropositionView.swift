@@ -51,8 +51,12 @@ struct AIPropositionView: View {
                         )
                         .frame(height: textPlainHeight)
                         .tint(MailResourcesAsset.aiColor.swiftUIColor)
+
+                        if aiModel.currentStyle == .standard || aiModel.currentStyle == .error {
+                            AIEngineInfoView(engine: UserDefaults.shared.aiEngine)
+                        }
                     }
-                    .padding(.horizontal, value: .regular)
+                    .padding([.horizontal, .bottom], value: .regular)
                 }
                 .onChange(of: aiModel.error) { error in
                     guard error != nil else { return }

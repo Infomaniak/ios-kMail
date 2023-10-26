@@ -67,7 +67,6 @@ struct AIPromptView: View {
                         textView.textContainerInset = UIPadding.aiTextEditor
                         textView.font = .systemFont(ofSize: 16)
                     }
-                    .tint(MailResourcesAsset.aiColor.swiftUIColor)
                     .frame(maxHeight: isCompactWindow ? nil : 128)
             }
             .overlay {
@@ -75,16 +74,22 @@ struct AIPromptView: View {
                     .stroke(MailResourcesAsset.textFieldBorder.swiftUIColor, lineWidth: 1)
             }
 
-            MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton) {
-                matomo.track(eventWithCategory: .aiWriter, name: "generate")
-                aiModel.addInitialPrompt(prompt)
-                dismiss()
+            HStack {
+                AIEngineChoiceButton(isShowingAIEngineChoice: .constant(false))
+
+                Spacer()
+
+                MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton) {
+                    matomo.track(eventWithCategory: .aiWriter, name: "generate")
+                    aiModel.addInitialPrompt(prompt)
+                    dismiss()
+                }
+                .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
+                .mailButtonSecondaryColor(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
+                .disabled(prompt.isEmpty)
             }
-            .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
-            .mailButtonSecondaryColor(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
-            .disabled(prompt.isEmpty)
-            .frame(maxWidth: .infinity, alignment: .trailing)
         }
+        .tint(MailResourcesAsset.aiColor.swiftUIColor)
         .padding(isCompactWindow ? UIPadding.regular : 0)
         .onAppear {
             if let lastMessage = aiModel.conversation.last,
