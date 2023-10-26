@@ -18,15 +18,6 @@
 
 import Foundation
 
-public enum AIOutputFormat: String, Codable {
-    case `default`, mail
-}
-
-public struct AIConversationRequest: Codable {
-    public let messages: [AIMessage]
-    public let output: AIOutputFormat
-}
-
 public protocol AIResponse {
     var contextId: String? { get }
     var content: String { get }

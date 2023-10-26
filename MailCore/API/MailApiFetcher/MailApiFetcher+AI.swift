@@ -53,21 +53,22 @@ public extension MailApiFetcher {
     func aiCreateConversation(
         messages: [AIMessage],
         output: AIOutputFormat = .mail,
-        engine: AIEngine = .falcon,
+        engine: AIEngine,
         mailbox: Mailbox
     ) async throws -> AIConversationResponse {
         try await perform(request: authenticatedAIRequest(
             .ai(mailbox: mailbox),
             method: .post,
-            parameters: AIConversationRequest(messages: messages, output: output)
+            parameters: AIConversationRequest(messages: messages, output: output, engine: engine)
         )).data
     }
 
-    func aiShortcut(contextId: String, shortcut: AIShortcutAction, engine: AIEngine = .falcon,
+    func aiShortcut(contextId: String, shortcut: AIShortcutAction, engine: AIEngine,
                     mailbox: Mailbox) async throws -> AIShortcutResponse {
         try await perform(request: authenticatedRequest(
             .aiShortcut(contextId: contextId, shortcut: shortcut.apiName, mailbox: mailbox),
-            method: .patch
+            method: .patch,
+            parameters: AIShortcutRequest(engine: engine)
         )).data
     }
 
@@ -75,13 +76,13 @@ public extension MailApiFetcher {
         shortcut: AIShortcutAction,
         messages: [AIMessage],
         output: AIOutputFormat = .mail,
-        engine: AIEngine = .falcon,
+        engine: AIEngine,
         mailbox: Mailbox
     ) async throws -> AIShortcutResponse {
         try await perform(request: authenticatedAIRequest(
             .aiShortcut(shortcut: shortcut.apiName, mailbox: mailbox),
             method: .post,
-            parameters: AIConversationRequest(messages: messages, output: output)
+            parameters: AIConversationRequest(messages: messages, output: output, engine: engine)
         )).data
     }
 }

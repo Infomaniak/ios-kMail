@@ -17,32 +17,6 @@
  */
 
 import Foundation
-import MailResources
-import SwiftUI
-
-public enum AIEngine: String, CaseIterable, SettingsOptionEnum, Codable {
-    case falcon
-    case chatGPT = "gpt"
-
-    public var title: String {
-        switch self {
-        case .falcon:
-            return "IA Souveraine (Falcon LLM)"
-        case .chatGPT:
-            return "ChatGPT"
-        }
-    }
-
-    public var image: Image? {
-        switch self {
-        case .falcon:
-            return MailResourcesAsset.aiLogo.swiftUIImage
-        case .chatGPT:
-            // TODO: Import correct image
-            return MailResourcesAsset.themeLight.swiftUIImage
-        }
-    }
-}
 
 public enum AIMessageType: String, Codable {
     case user, context, assistant

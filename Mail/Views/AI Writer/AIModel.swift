@@ -84,6 +84,7 @@ extension AIModel {
         do {
             let response = try await mailboxManager.apiFetcher.aiCreateConversation(
                 messages: conversation,
+                engine: UserDefaults.shared.aiEngine,
                 mailbox: mailboxManager.mailbox
             )
             handleAIResponse(response)
@@ -112,6 +113,7 @@ extension AIModel {
                 let response = try await mailboxManager.apiFetcher.aiShortcut(
                     contextId: contextId,
                     shortcut: shortcut,
+                    engine: UserDefaults.shared.aiEngine,
                     mailbox: mailboxManager.mailbox
                 )
                 handleAIResponse(response)
@@ -127,7 +129,9 @@ extension AIModel {
         do {
             let response = try await mailboxManager.apiFetcher.aiShortcutAndRecreateConversation(
                 shortcut: shortcut,
-                messages: conversation, mailbox: mailboxManager.mailbox
+                messages: conversation,
+                engine: UserDefaults.shared.aiEngine,
+                mailbox: mailboxManager.mailbox
             )
             handleAIResponse(response)
         } catch {
