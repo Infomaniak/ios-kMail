@@ -5,7 +5,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Thu, 26 Oct 2023 16:16:10 +0200
+ * Exported at: Fri, 27 Oct 2023 10:02:11 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1281,13 +1281,13 @@
 "noConnection" = "No connection";
 
 /* loco:65017fa44f4fa3e3b902d043 */
-"aiPromptTitle" = "Wizard writer";
+"aiPromptTitle" = "The AI writing assistant";
 
 /* loco:6501834aa4abf8d77708b7b5 */
 "aiPromptTag" = "Beta";
 
 /* loco:6501840ef58ecb8b620adb23 */
-"aiPromptPlaceholder" = "Tell the wizard writer what you want to write. For example, \"%@\".";
+"aiPromptPlaceholder" = "Tell the AI writing assistant what you want to write. For example, \"%@\".";
 
 /* loco:65019254a2948ddd0d0e0ca3 */
 "aiPromptValidateButton" = "Generate";
@@ -1299,7 +1299,7 @@
 "snackbarDeletedConversation" = "Conversation no longer exists";
 
 /* loco:65042259ab599c0ca6094172 */
-"aiPromptGenerationLoader" = "The wizard is writing";
+"aiPromptGenerationLoader" = "The AI writing assistant is composing";
 
 /* loco:65081ae6a237c4d16909e463 */
 "aiButtonRefine" = "Refine";
@@ -1446,7 +1446,7 @@
 "syncCalendarsAndContactsDescription" = "View your contacts and calendar directly from your device.";
 
 /* loco:65323a4677722095b50538e2 */
-"aiReplaceSubjectTitle" = "Replace the current subject with the wizard’s proposal?";
+"aiReplaceSubjectTitle" = "Replace the current subject with the assistant’s proposal?";
 
 /* loco:65323d14fd2982f3ff080382 */
 "aiReplaceSubjectDescription" = "The subject will become:\n\n%@";
@@ -1464,7 +1464,7 @@
 "shortcutPreviousAction" = "Previous";
 
 /* loco:65391d2584dd77c18b02f0e2 */
-"settingsAiEngineDescription" = "Select your wizard writer";
+"settingsAiEngineDescription" = "Select your AI writing assistant";
 
 /* loco:653922bdcfcd84657f033492 */
 "aiEngineChatGpt" = "ChatGPT";
@@ -1480,6 +1480,3 @@
 
 /* loco:653a132b3b8d3a1f740e06f2 */
 "aiGenerationTitlePrompt" = "Generate with";
-
-/* loco:653a17180a5205632901a602 */
-"aiGenerationTitleProposition" = "Generated with:";
