@@ -49,6 +49,7 @@ public extension UserDefaults.Keys {
     static let openingUntilReview = UserDefaults.Keys(rawValue: "openingUntilReview")
     static let appReview = UserDefaults.Keys(rawValue: "appReview")
     static let shouldPresentSyncDiscovery = UserDefaults.Keys(rawValue: "shouldPresentSyncDiscovery")
+    static let aiEngine = UserDefaults.Keys(rawValue: "aiEngine")
 }
 
 public extension UserDefaults {
@@ -288,6 +289,15 @@ public extension UserDefaults {
         }
         set {
             set(newValue, forKey: key(.shouldPresentSyncDiscovery))
+        }
+    }
+
+    var aiEngine: AIEngine {
+        get {
+            return AIEngine(rawValue: string(forKey: key(.aiEngine)) ?? "") ?? DefaultPreferences.aiEngine
+        }
+        set {
+            setValue(newValue.rawValue, forKey: key(.aiEngine))
         }
     }
 }

@@ -30,6 +30,7 @@ struct SettingsView: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @AppStorage(UserDefaults.shared.key(.aiEngine)) private var aiEngine = DefaultPreferences.aiEngine
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var density = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.theme)) private var theme = DefaultPreferences.theme
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -41,6 +42,8 @@ struct SettingsView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
+                // MARK: - Section: Email Addresses
+
                 Group {
                     SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsSectionEmailAddresses)
 
@@ -55,8 +58,12 @@ struct SettingsView: View {
                     IKDivider()
                 }
 
+                // MARK: - Section: General
+
                 Group {
                     SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsSectionGeneral)
+
+                    // MARK: App Lock
 
                     if appLockHelper.isAvailable {
                         SettingsToggleCell(
@@ -67,9 +74,13 @@ struct SettingsView: View {
                         )
                     }
 
+                    // MARK: Notifications
+
                     SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications) {
                         SettingsNotificationsView()
                     }
+
+                    // MARK: Sync Calendar/Contacts
 
                     Button {
                         matomo.track(eventWithCategory: .syncAutoConfig, name: "openFromSettings")
@@ -79,13 +90,21 @@ struct SettingsView: View {
                     }
                     .buttonStyle(.plain)
 
+                    // MARK: AI Writer
+
+                    SettingsSubMenuCell(title: MailResourcesStrings.Localizable.aiPromptTitle, subtitle: aiEngine.title) {
+                        SettingsAIEngineOptionView()
+                    }
+
                     IKDivider()
                 }
+
+                // MARK: - Section: Appearance
 
                 Group {
                     SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsSectionAppearance)
 
-                    // MARK: - Thread Density
+                    // MARK: Thread Density
 
                     SettingsSubMenuCell(
                         title: MailResourcesStrings.Localizable.settingsThreadListDensityTitle,
@@ -94,12 +113,9 @@ struct SettingsView: View {
                         SettingsThreadDensityOptionView()
                     }
 
-                    // MARK: - Theme
+                    // MARK: Theme
 
-                    SettingsSubMenuCell(
-                        title: MailResourcesStrings.Localizable.settingsThemeTitle,
-                        subtitle: theme.title
-                    ) {
+                    SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsThemeTitle, subtitle: theme.title) {
                         SettingsOptionView<Theme>(
                             title: MailResourcesStrings.Localizable.settingsThemeTitle,
                             subtitle: MailResourcesStrings.Localizable.settingsThemeDescription,
@@ -109,7 +125,7 @@ struct SettingsView: View {
                         )
                     }
 
-                    // MARK: - Accent Color
+                    // MARK: Accent Color
 
                     SettingsSubMenuCell(
                         title: MailResourcesStrings.Localizable.settingsAccentColor,
@@ -124,13 +140,13 @@ struct SettingsView: View {
                         )
                     }
 
-                    // MARK: - Swipe Actions
+                    // MARK: Swipe Actions
 
                     SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsSwipeActionsTitle) {
                         SettingsSwipeActionsView()
                     }
 
-                    // MARK: - Thread Mode
+                    // MARK: Thread Mode
 
                     SettingsSubMenuCell(
                         title: MailResourcesStrings.Localizable.settingsThreadModeTitle,
@@ -139,7 +155,7 @@ struct SettingsView: View {
                         SettingsThreadModeView()
                     }
 
-                    // MARK: - External Content
+                    // MARK: External Content
 
                     SettingsSubMenuCell(
                         title: MailResourcesStrings.Localizable.settingsExternalContentTitle,

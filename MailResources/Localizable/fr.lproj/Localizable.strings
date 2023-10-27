@@ -5,7 +5,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Tue, 24 Oct 2023 09:58:47 +0200
+ * Exported at: Fri, 27 Oct 2023 14:16:09 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -663,10 +663,10 @@
 "settingsEnabled" = "Activé";
 
 /* loco:62c693f572adfe66fd2a82b7 */
-"settingsCancellationPeriodDescription" = "Vous avez la possibilité d’annuler l’envoi de votre mail jusqu’à 30 secondes";
+"settingsCancellationPeriodDescription" = "Vous avez la possibilité d’annuler l’envoi de votre e-mail jusqu’à 30 secondes";
 
 /* loco:62c6a408b365f734dd2c0d73 */
-"settingsTransferEmailsDescription" = "Lorsque vous transférez un mail, choisissez le mode d’affichage qui vous convient le mieux";
+"settingsTransferEmailsDescription" = "Lorsque vous transférez un e-mail, choisissez le mode d’affichage qui vous convient le mieux";
 
 /* loco:62c6b582acc973360733ab94 */
 "threadListSectionThisMonth" = "Ce mois-ci";
@@ -1359,19 +1359,19 @@
 "buttonTry" = "Essayer";
 
 /* loco:651bc83def57493b22006342 */
-"aiPromptExample1" = "un mail de remerciement pour un cadeau de bienvenue";
+"aiPromptExample1" = "un e-mail de remerciement pour un cadeau de bienvenue";
 
 /* loco:651bc8e313db1595d10ed172 */
-"aiPromptExample2" = "un mail de confirmation de réservation d’hôtel";
+"aiPromptExample2" = "un e-mail de confirmation de réservation d’hôtel";
 
 /* loco:651bc902eecf2c30a70e51e2 */
-"aiPromptExample3" = "un mail de remerciement pour une invitation à un événement";
+"aiPromptExample3" = "un e-mail de remerciement pour une invitation à un événement";
 
 /* loco:651bc92b603aebc1b205b522 */
-"aiPromptExample4" = "un mail d’invitation à un événement d’entreprise";
+"aiPromptExample4" = "un e-mail d’invitation à un événement d’entreprise";
 
 /* loco:651bc96abf48bc251603add2 */
-"aiPromptExample5" = "un mail de demande de rendez-vous avec un client important";
+"aiPromptExample5" = "un e-mail de demande de rendez-vous avec un client important";
 
 /* loco:651ebb317a265dd7c2066965 */
 "syncTutorialDownloadProfileTitle" = "Télécharger le profil de configuration";
@@ -1450,3 +1450,33 @@
 
 /* loco:65323d14fd2982f3ff080382 */
 "aiReplaceSubjectDescription" = "L’objet actuel deviendra :\n\n%@";
+
+/* loco:6537b4ae2236eeafef03c882 */
+"searchFolderName" = "Recherche";
+
+/* loco:6538a4daa986575986004e72 */
+"shortcutRefreshAction" = "Rafraîchir";
+
+/* loco:6538a602e0eb783378001bb2 */
+"shortcutNextAction" = "Suivant";
+
+/* loco:6538a626e0eb783378001bb4 */
+"shortcutPreviousAction" = "Précédent";
+
+/* loco:65391d2584dd77c18b02f0e2 */
+"settingsAiEngineDescription" = "Sélectionnez votre assistant à la rédaction";
+
+/* loco:653922bdcfcd84657f033492 */
+"aiEngineChatGpt" = "ChatGPT";
+
+/* loco:6539230c9770e8ba3102c722 */
+"aiEngineFalcon" = "IA Souveraine";
+
+/* loco:653924b9080dd61d2e016072 */
+"aiEngineWarning" = "Vos données seront traitées par la société américaine OpenAI. Nous vous conseillons de ne pas l’utiliser pour des messages sensibles.";
+
+/* loco:653a10614077fa3f460294a2 */
+"aiEngineChangeChoice" = "Vous pourrez modifier votre choix dans les paramètres de l’application.";
+
+/* loco:653a132b3b8d3a1f740e06f2 */
+"aiGenerationTitlePrompt" = "Générer avec";

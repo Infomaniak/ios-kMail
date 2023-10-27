@@ -32,6 +32,7 @@ struct AIPromptView: View {
     // The focus is done thanks to UIKit, this allows the keyboard to appear more quickly
     @State private var hasFocusedEditor = false
     @State private var prompt = ""
+    @State private var isShowingAIEngineChoice = false
     @State private var placeholderProposition = Constants.aiPromptExamples.randomElement() ?? MailResourcesStrings.Localizable
         .aiPromptExample1
 
@@ -67,23 +68,28 @@ struct AIPromptView: View {
                         textView.textContainerInset = UIPadding.aiTextEditor
                         textView.font = .systemFont(ofSize: 16)
                     }
-                    .tint(MailResourcesAsset.aiColor.swiftUIColor)
                     .frame(maxHeight: isCompactWindow ? nil : 128)
+                    .tint(MailResourcesAsset.aiColor.swiftUIColor)
             }
             .overlay {
                 RoundedRectangle(cornerRadius: 4)
                     .stroke(MailResourcesAsset.textFieldBorder.swiftUIColor, lineWidth: 1)
             }
 
-            MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton) {
-                matomo.track(eventWithCategory: .aiWriter, name: "generate")
-                aiModel.addInitialPrompt(prompt)
-                dismiss()
+            HStack {
+                AIEngineOptionButton(isShowingAIEngineChoice: $isShowingAIEngineChoice)
+
+                Spacer()
+
+                MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton) {
+                    matomo.track(eventWithCategory: .aiWriter, name: "generate")
+                    aiModel.addInitialPrompt(prompt)
+                    dismiss()
+                }
+                .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
+                .mailButtonSecondaryColor(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
+                .disabled(prompt.isEmpty)
             }
-            .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
-            .mailButtonSecondaryColor(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
-            .disabled(prompt.isEmpty)
-            .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .padding(isCompactWindow ? UIPadding.regular : 0)
         .onAppear {
@@ -101,6 +107,9 @@ struct AIPromptView: View {
             } else {
                 matomo.track(eventWithCategory: .aiWriter, name: "dismissPromptWithoutGenerating")
             }
+        }
+        .sheet(isPresented: $isShowingAIEngineChoice) {
+            PromptAIEngineOptionView()
         }
         .matomoView(view: ["AI", "Prompt"])
     }

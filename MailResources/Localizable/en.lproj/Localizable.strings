@@ -5,7 +5,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Tue, 24 Oct 2023 09:58:47 +0200
+ * Exported at: Fri, 27 Oct 2023 14:16:09 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -408,7 +408,7 @@
 "emptyStateNetworkTitle" = "You are not connected to the Internet";
 
 /* loco:62a992fdee966e51e955b6d2 */
-"emptyStateNetworkDescription" = "Please check your connection or connect to the Internet to check your e-mails.";
+"emptyStateNetworkDescription" = "Please check your connection or connect to the Internet to check your emails.";
 
 /* loco:62a9d5b4ee7aa537c701dec3 */
 "contentDescriptionButtonExpandAccountSelection" = "Expand account selection";
@@ -777,7 +777,7 @@
 "emptyStateSearchTitle" = "No results";
 
 /* loco:633163748419ac683a189ba2 */
-"emptyStateSearchDescription" = "We did not find any e-mails matching your search.";
+"emptyStateSearchDescription" = "We did not find any emails matching your search.";
 
 /* loco:63480020415e160cac510302 */
 "emptyStateFolderTitle" = "This folder is empty";
@@ -1179,7 +1179,7 @@
 "enterPasswordOrDescription" = "or";
 
 /* loco:64aba64bdb705f66d6043b03 */
-"enterPasswordDescription2" = "Please enter the new password for the e-mail address %@";
+"enterPasswordDescription2" = "Please enter the new password for the email address %@";
 
 /* loco:64abb7007886284b68017193 */
 "buttonDetachMailbox" = "detach mailbox";
@@ -1281,13 +1281,13 @@
 "noConnection" = "No connection";
 
 /* loco:65017fa44f4fa3e3b902d043 */
-"aiPromptTitle" = "Writing assistant";
+"aiPromptTitle" = "The AI writing assistant";
 
 /* loco:6501834aa4abf8d77708b7b5 */
 "aiPromptTag" = "Beta";
 
 /* loco:6501840ef58ecb8b620adb23 */
-"aiPromptPlaceholder" = "Tell the writing assistant what you want to write. For example, \"%@\".";
+"aiPromptPlaceholder" = "Tell the AI writing assistant what you want to write. For example, \"%@\".";
 
 /* loco:65019254a2948ddd0d0e0ca3 */
 "aiPromptValidateButton" = "Generate";
@@ -1299,7 +1299,7 @@
 "snackbarDeletedConversation" = "Conversation no longer exists";
 
 /* loco:65042259ab599c0ca6094172 */
-"aiPromptGenerationLoader" = "The assistant is writing";
+"aiPromptGenerationLoader" = "The AI writing assistant is composing";
 
 /* loco:65081ae6a237c4d16909e463 */
 "aiButtonRefine" = "Refine";
@@ -1450,3 +1450,33 @@
 
 /* loco:65323d14fd2982f3ff080382 */
 "aiReplaceSubjectDescription" = "The subject will become:\n\n%@";
+
+/* loco:6537b4ae2236eeafef03c882 */
+"searchFolderName" = "Search";
+
+/* loco:6538a4daa986575986004e72 */
+"shortcutRefreshAction" = "Refresh";
+
+/* loco:6538a602e0eb783378001bb2 */
+"shortcutNextAction" = "Next";
+
+/* loco:6538a626e0eb783378001bb4 */
+"shortcutPreviousAction" = "Previous";
+
+/* loco:65391d2584dd77c18b02f0e2 */
+"settingsAiEngineDescription" = "Select your AI writing assistant";
+
+/* loco:653922bdcfcd84657f033492 */
+"aiEngineChatGpt" = "ChatGPT";
+
+/* loco:6539230c9770e8ba3102c722 */
+"aiEngineFalcon" = "Sovereign AI";
+
+/* loco:653924b9080dd61d2e016072 */
+"aiEngineWarning" = "Your data will be processed by the American company OpenAI. We advise you not to use it for sensitive messages.";
+
+/* loco:653a10614077fa3f460294a2 */
+"aiEngineChangeChoice" = "You can change your choice in the application settings.";
+
+/* loco:653a132b3b8d3a1f740e06f2 */
+"aiGenerationTitlePrompt" = "Generate with";

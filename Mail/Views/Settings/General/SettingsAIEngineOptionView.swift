@@ -16,20 +16,20 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
+import MailResources
+import SwiftUI
 
-public protocol AIResponse {
-    var contextId: String? { get }
-    var content: String { get }
+struct SettingsAIEngineOptionView: View {
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsSelectDisplayModeDescription)
+                AIEngineOptionView(matomoCategory: .settingsAIEngine)
+            }
+        }
+    }
 }
 
-public struct AIConversationResponse: AIResponse, Codable {
-    public let contextId: String?
-    public let content: String
-}
-
-public struct AIShortcutResponse: AIResponse, Codable {
-    public let contextId: String?
-    public let content: String
-    public let action: AIMessage
+#Preview {
+    SettingsAIEngineOptionView()
 }
