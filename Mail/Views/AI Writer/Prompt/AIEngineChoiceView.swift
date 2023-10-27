@@ -16,27 +16,55 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
+import MailCore
 import MailResources
 import SwiftUI
+
+extension AIEngineChoiceView {
+    static let aiInformationBlock = InformationBlock(
+        icon: MailResourcesAsset.info.swiftUIImage,
+        message: MailResourcesStrings.Localizable.aiEngineWarning,
+        iconTint: MailResourcesAsset.textSecondaryColor.swiftUIColor
+    )
+}
 
 struct AIEngineChoiceView: View {
     @Environment(\.dismiss) private var dismiss
 
+    @AppStorage(UserDefaults.shared.key(.aiEngine)) private var aiEngine = DefaultPreferences.aiEngine
+
+    private let values = Array(AIEngine.allCases)
+
     var body: some View {
         NavigationView {
-            List {
-                Text(MailResourcesStrings.Localizable.settingsAiEngineDescription)
-                    .textStyle(.bodyMedium)
+            ScrollView {
+                VStack(alignment: .leading) {
+                    Text(MailResourcesStrings.Localizable.settingsAiEngineDescription)
+                        .textStyle(.bodyMedium)
 
-                // TODO: List here
+                    ForEach(values, id: \.rawValue) { value in
+                        SettingsOptionCell(value: value, isSelected: value == aiEngine, isLast: value == values.last) {
+                            @InjectService var matomo: MatomoUtils
+                            matomo.track(eventWithCategory: .promptAIEngine, name: value.matomoName)
+                            aiEngine = value
+                            dismiss()
+                        }
+                    }
 
-                Text(MailResourcesStrings.Localizable.aiEngineChangeChoice)
+                    InformationBlockView(Self.aiInformationBlock)
+
+                    Text(MailResourcesStrings.Localizable.aiEngineChangeChoice)
+                }
             }
+
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     CloseButton(dismissAction: dismiss)
                 }
             }
+            .tint(MailResourcesAsset.aiColor.swiftUIColor)
         }
     }
 }

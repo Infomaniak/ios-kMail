@@ -57,7 +57,7 @@ struct SettingsOptionCell: View {
                         MailResourcesAsset.check.swiftUIImage
                             .resizable()
                             .frame(width: 16, height: 16)
-                            .foregroundColor(.accentColor)
+                            .foregroundStyle(.tint)
                     }
                 }
                 .settingsItem()

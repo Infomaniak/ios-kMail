@@ -92,11 +92,9 @@ struct SettingsView: View {
                             title: MailResourcesStrings.Localizable.aiPromptTitle,
                             subtitle: MailResourcesStrings.Localizable.settingsAiEngineDescription,
                             keyPath: \.aiEngine,
-                            informationBlock: InformationBlock(
-                                icon: MailResourcesAsset.info.swiftUIImage,
-                                message: MailResourcesStrings.Localizable.aiEngineWarning,
-                                iconTint: MailResourcesAsset.textSecondaryColor.swiftUIColor
-                            )
+                            informationBlock: AIEngineChoiceView.aiInformationBlock,
+                            matomoCategory: .settingsAIEngine,
+                            matomoName: \.matomoName
                         )
                     }
 

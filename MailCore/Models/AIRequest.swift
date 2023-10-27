@@ -42,8 +42,16 @@ public enum AIEngine: String, CaseIterable, SettingsOptionEnum, Codable {
         case .falcon:
             return MailResourcesAsset.aiLogo.swiftUIImage
         case .chatGPT:
-            // TODO: Import correct image
             return MailResourcesAsset.chatGPT.swiftUIImage
+        }
+    }
+
+    public var matomoName: String {
+        switch self {
+        case .falcon:
+            return "falcon"
+        case .chatGPT:
+            return "chatGpt"
         }
     }
 }
