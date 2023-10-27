@@ -30,8 +30,6 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
     private let keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>
     private let excludedKeyPaths: [ReferenceWritableKeyPath<UserDefaults, OptionEnum>]?
 
-    private let informationBlock: InformationBlock?
-
     private let matomoCategory: MatomoUtils.EventCategory?
     private let matomoValue: Float?
     private let matomoName: KeyPath<OptionEnum, String>?
@@ -60,14 +58,12 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
          values: [OptionEnum] = Array(OptionEnum.allCases),
          keyPath: ReferenceWritableKeyPath<UserDefaults, OptionEnum>,
          excludedKeyPath: [ReferenceWritableKeyPath<UserDefaults, OptionEnum>]? = nil,
-         informationBlock: InformationBlock? = nil,
          matomoCategory: MatomoUtils.EventCategory? = nil,
          matomoName: KeyPath<OptionEnum, String>? = nil,
          matomoValue: Float? = nil) {
         self.title = title
         self.subtitle = subtitle
         self.keyPath = keyPath
-        self.informationBlock = informationBlock
 
         excludedKeyPaths = excludedKeyPath
         allValues = values
@@ -95,12 +91,6 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
                         }
                         selectedValue = value
                     }
-                }
-
-                if let informationBlock {
-                    InformationBlockView(informationBlock)
-                        .settingsItem()
-                        .settingsCell()
                 }
             }
             .plainList()

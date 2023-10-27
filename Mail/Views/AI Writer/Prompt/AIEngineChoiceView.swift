@@ -22,43 +22,26 @@ import MailCore
 import MailResources
 import SwiftUI
 
-extension AIEngineChoiceView {
-    static let aiInformationBlock = InformationBlock(
-        icon: MailResourcesAsset.info.swiftUIImage,
-        message: MailResourcesStrings.Localizable.aiEngineWarning,
-        iconTint: MailResourcesAsset.textSecondaryColor.swiftUIColor
-    )
-}
-
 struct AIEngineChoiceView: View {
     @Environment(\.dismiss) private var dismiss
-
-    @AppStorage(UserDefaults.shared.key(.aiEngine)) private var aiEngine = DefaultPreferences.aiEngine
-
-    private let values = Array(AIEngine.allCases)
 
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: UIPadding.regular) {
                     Text(MailResourcesStrings.Localizable.settingsAiEngineDescription)
                         .textStyle(.bodyMedium)
+                        .padding(.horizontal, value: .regular)
 
-                    ForEach(values, id: \.rawValue) { value in
-                        SettingsOptionCell(value: value, isSelected: value == aiEngine, isLast: value == values.last) {
-                            @InjectService var matomo: MatomoUtils
-                            matomo.track(eventWithCategory: .promptAIEngine, name: value.matomoName)
-                            aiEngine = value
-                            dismiss()
-                        }
+                    AIEngineOptionView(matomoCategory: .promptAIEngine) {
+                        dismiss()
                     }
 
-                    InformationBlockView(Self.aiInformationBlock)
-
                     Text(MailResourcesStrings.Localizable.aiEngineChangeChoice)
+                        .textStyle(.body)
+                        .padding(.horizontal, value: .regular)
                 }
             }
-
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     CloseButton(dismissAction: dismiss)

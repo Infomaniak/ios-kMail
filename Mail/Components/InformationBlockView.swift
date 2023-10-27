@@ -32,38 +32,25 @@ extension VerticalAlignment {
     static let informationBlockAlignment = VerticalAlignment(InformationBlockAlignment.self)
 }
 
-struct InformationBlock {
+struct InformationBlockView: View {
     let icon: Image
     let message: String
     var iconTint: Color?
-}
-
-struct InformationBlockView: View {
-    let informationBlock: InformationBlock
     var dismissHandler: (() -> Void)?
-
-    init(_ informationBlock: InformationBlock, dismissHandler: (() -> Void)? = nil) {
-        self.informationBlock = informationBlock
-        self.dismissHandler = dismissHandler
-    }
-
-    init(icon: Image, message: String, iconTint: Color? = nil, dismissHandler: (() -> Void)? = nil) {
-        self.init(InformationBlock(icon: icon, message: message, iconTint: iconTint), dismissHandler: dismissHandler)
-    }
 
     var body: some View {
         HStack(alignment: .informationBlockAlignment, spacing: UIPadding.intermediate) {
-            informationBlock.icon
+            icon
                 .resizable()
                 .scaledToFit()
                 .frame(width: 16, height: 16)
-                .foregroundColor(informationBlock.iconTint)
+                .foregroundColor(iconTint)
                 .alignmentGuide(.informationBlockAlignment) { d in
                     // Center of the view is on the informationBlockAlignment guide
                     d[VerticalAlignment.center]
                 }
 
-            Text(informationBlock.message)
+            Text(message)
                 .textStyle(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .alignmentGuide(.informationBlockAlignment) { d in
@@ -85,6 +72,10 @@ struct InformationBlockView: View {
     }
 }
 
-#Preview {
+#Preview("Without Dismiss") {
     InformationBlockView(icon: MailResourcesAsset.lightBulbShine.swiftUIImage, message: "Tip")
+}
+
+#Preview("With Dismiss") {
+    InformationBlockView(icon: MailResourcesAsset.lightBulbShine.swiftUIImage, message: "Dismissible Tip") { /* Preview */ }
 }
