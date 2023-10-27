@@ -5,7 +5,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Fri, 27 Oct 2023 13:47:15 +0200
+ * Exported at: Fri, 27 Oct 2023 14:16:09 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -408,7 +408,7 @@
 "emptyStateNetworkTitle" = "You are not connected to the Internet";
 
 /* loco:62a992fdee966e51e955b6d2 */
-"emptyStateNetworkDescription" = "Please check your connection or connect to the Internet to check your e-mails.";
+"emptyStateNetworkDescription" = "Please check your connection or connect to the Internet to check your emails.";
 
 /* loco:62a9d5b4ee7aa537c701dec3 */
 "contentDescriptionButtonExpandAccountSelection" = "Expand account selection";
@@ -777,7 +777,7 @@
 "emptyStateSearchTitle" = "No results";
 
 /* loco:633163748419ac683a189ba2 */
-"emptyStateSearchDescription" = "We did not find any e-mails matching your search.";
+"emptyStateSearchDescription" = "We did not find any emails matching your search.";
 
 /* loco:63480020415e160cac510302 */
 "emptyStateFolderTitle" = "This folder is empty";
@@ -1179,7 +1179,7 @@
 "enterPasswordOrDescription" = "or";
 
 /* loco:64aba64bdb705f66d6043b03 */
-"enterPasswordDescription2" = "Please enter the new password for the e-mail address %@";
+"enterPasswordDescription2" = "Please enter the new password for the email address %@";
 
 /* loco:64abb7007886284b68017193 */
 "buttonDetachMailbox" = "detach mailbox";
