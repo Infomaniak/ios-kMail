@@ -92,19 +92,8 @@ struct SettingsView: View {
 
                     // MARK: AI Writer
 
-                    SettingsSubMenuCell(
-                        title: MailResourcesStrings.Localizable.aiPromptTitle,
-                        subtitle: aiEngine.title
-                    ) {
+                    SettingsSubMenuCell(title: MailResourcesStrings.Localizable.aiPromptTitle, subtitle: aiEngine.title) {
                         SettingsAIEngineOptionView()
-//                        SettingsOptionView(
-//                            title: MailResourcesStrings.Localizable.aiPromptTitle,
-//                            subtitle: MailResourcesStrings.Localizable.settingsAiEngineDescription,
-//                            keyPath: \.aiEngine,
-//                            informationBlock: AIEngineChoiceView.aiInformationBlock,
-//                            matomoCategory: .settingsAIEngine,
-//                            matomoName: \.matomoName
-//                        )
                     }
 
                     IKDivider()
@@ -126,10 +115,7 @@ struct SettingsView: View {
 
                     // MARK: Theme
 
-                    SettingsSubMenuCell(
-                        title: MailResourcesStrings.Localizable.settingsThemeTitle,
-                        subtitle: theme.title
-                    ) {
+                    SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsThemeTitle, subtitle: theme.title) {
                         SettingsOptionView<Theme>(
                             title: MailResourcesStrings.Localizable.settingsThemeTitle,
                             subtitle: MailResourcesStrings.Localizable.settingsThemeDescription,

@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -24,6 +23,8 @@ import MailResources
 import SwiftUI
 
 struct AIEngineOptionView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @AppStorage(UserDefaults.shared.key(.aiEngine)) private var aiEngine = DefaultPreferences.aiEngine
 
     let matomoCategory: MatomoUtils.EventCategory
@@ -36,8 +37,7 @@ struct AIEngineOptionView: View {
             VStack(spacing: 0) {
                 ForEach(engines, id: \.rawValue) { option in
                     SettingsOptionCell(value: option, isSelected: option == aiEngine, isLast: option == engines.last) {
-                        @InjectService var matomo: MatomoUtils
-                        matomo.track(eventWithCategory: .promptAIEngine, name: option.matomoName)
+                        matomo.track(eventWithCategory: matomoCategory, name: option.matomoName)
                         aiEngine = option
                         completionHandler?()
                     }

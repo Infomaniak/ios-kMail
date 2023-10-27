@@ -77,7 +77,7 @@ struct AIPromptView: View {
             }
 
             HStack {
-                AIEngineChoiceButton(isShowingAIEngineChoice: $isShowingAIEngineChoice)
+                AIEngineOptionButton(isShowingAIEngineChoice: $isShowingAIEngineChoice)
 
                 Spacer()
 
@@ -109,7 +109,7 @@ struct AIPromptView: View {
             }
         }
         .sheet(isPresented: $isShowingAIEngineChoice) {
-            AIEngineChoiceView()
+            PromptAIEngineOptionView()
         }
         .matomoView(view: ["AI", "Prompt"])
     }

@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -17,17 +16,22 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
-struct AIEngineChoiceButton: View {
+struct AIEngineOptionButton: View {
     @AppStorage(UserDefaults.shared.key(.aiEngine)) private var aiEngine = DefaultPreferences.aiEngine
 
     @Binding var isShowingAIEngineChoice: Bool
 
     var body: some View {
         Button {
+            @InjectService var matomo: MatomoUtils
+            matomo.track(eventWithCategory: .promptAIEngine, name: "openEngineChoice")
+
             isShowingAIEngineChoice = true
         } label: {
             HStack(spacing: UIPadding.small) {
@@ -45,5 +49,5 @@ struct AIEngineChoiceButton: View {
 }
 
 #Preview {
-    AIEngineChoiceButton(isShowingAIEngineChoice: .constant(false))
+    AIEngineOptionButton(isShowingAIEngineChoice: .constant(false))
 }

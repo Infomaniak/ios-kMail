@@ -5,7 +5,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Fri, 27 Oct 2023 10:02:11 +0200
+ * Exported at: Fri, 27 Oct 2023 13:47:15 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1470,10 +1470,10 @@
 "aiEngineChatGpt" = "ChatGPT";
 
 /* loco:6539230c9770e8ba3102c722 */
-"aiEngineFalcon" = "Sovereign AI (Falcon LLM)";
+"aiEngineFalcon" = "Sovereign AI";
 
 /* loco:653924b9080dd61d2e016072 */
-"aiEngineWarning" = "ChatGPT is an AI developed and hosted by OpenAI. Data is sent and analyzed on their servers, not Infomaniak’s.";
+"aiEngineWarning" = "Your data will be processed by the American company OpenAI. We advise you not to use it for sensitive messages.";
 
 /* loco:653a10614077fa3f460294a2 */
 "aiEngineChangeChoice" = "You can change your choice in the application settings.";

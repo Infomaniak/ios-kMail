@@ -64,7 +64,6 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
         self.title = title
         self.subtitle = subtitle
         self.keyPath = keyPath
-
         excludedKeyPaths = excludedKeyPath
         allValues = values
 

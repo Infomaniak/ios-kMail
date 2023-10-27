@@ -21,7 +21,8 @@ import MailResources
 import SwiftUI
 
 public enum AIOutputFormat: String, Codable {
-    case `default`, mail
+    case standard = "default"
+    case mail
 }
 
 public enum AIEngine: String, CaseIterable, SettingsOptionEnum, Codable {

@@ -5,7 +5,7 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Fri, 27 Oct 2023 10:02:11 +0200
+ * Exported at: Fri, 27 Oct 2023 13:47:15 +0200
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1470,10 +1470,10 @@
 "aiEngineChatGpt" = "ChatGPT";
 
 /* loco:6539230c9770e8ba3102c722 */
-"aiEngineFalcon" = "AI sovrana (Falcon LLM)";
+"aiEngineFalcon" = "AI sovrana";
 
 /* loco:653924b9080dd61d2e016072 */
-"aiEngineWarning" = "ChatGPT è un’intelligenza artificiale sviluppata e ospitata da OpenAI. I dati vengono inviati e analizzati sui loro server e non su quelli di Infomaniak.";
+"aiEngineWarning" = "I vostri dati saranno trattati dalla società americana OpenAI. Vi consigliamo di non utilizzarli per messaggi sensibili.";
 
 /* loco:653a10614077fa3f460294a2 */
 "aiEngineChangeChoice" = "È possibile modificare la scelta nelle impostazioni dell’applicazione.";

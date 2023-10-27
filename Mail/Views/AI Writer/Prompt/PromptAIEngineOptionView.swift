@@ -22,7 +22,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct AIEngineChoiceView: View {
+struct PromptAIEngineOptionView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -53,5 +53,5 @@ struct AIEngineChoiceView: View {
 }
 
 #Preview {
-    AIEngineChoiceView()
+    PromptAIEngineOptionView()
 }
