@@ -36,10 +36,6 @@ struct PromptAIEngineOptionView: View {
                     AIEngineOptionView(matomoCategory: .promptAIEngine) {
                         dismiss()
                     }
-
-                    Text(MailResourcesStrings.Localizable.aiEngineChangeChoice)
-                        .textStyle(.body)
-                        .padding(.horizontal, value: .regular)
                 }
             }
             .toolbar {
