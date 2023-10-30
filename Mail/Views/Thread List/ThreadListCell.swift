@@ -73,6 +73,7 @@ struct ThreadListCell: View {
         ))
         .contentShape(Rectangle())
         .onTapGesture { didTapCell() }
+        .actionsContextMenu(thread: thread)
         .onLongPressGesture { didLongPressCell() }
         .swipeActions(
             thread: thread,
