@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: fr, French
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Fri, 27 Oct 2023 14:16:09 +0200
+ * Exported by: elena willen
+ * Exported at: Mon, 30 Oct 2023 13:05:06 +0100
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1473,10 +1473,7 @@
 "aiEngineFalcon" = "IA Souveraine";
 
 /* loco:653924b9080dd61d2e016072 */
-"aiEngineWarning" = "Vos données seront traitées par la société américaine OpenAI. Nous vous conseillons de ne pas l’utiliser pour des messages sensibles.";
-
-/* loco:653a10614077fa3f460294a2 */
-"aiEngineChangeChoice" = "Vous pourrez modifier votre choix dans les paramètres de l’application.";
+"aiEngineWarning" = "En utilisant ChatGPT, vos données seront traitées par la société américaine OpenAI. Nous vous conseillons de ne pas l’utiliser pour des messages sensibles.";
 
 /* loco:653a132b3b8d3a1f740e06f2 */
 "aiGenerationTitlePrompt" = "Générer avec";
