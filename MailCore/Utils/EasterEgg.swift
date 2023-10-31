@@ -17,6 +17,9 @@
  */
 
 import Foundation
+import InfomaniakCoreUI
+import InfomaniakDI
+import Sentry
 
 public struct EasterEgg {
     public let shouldTrigger: () -> Bool
@@ -31,5 +34,11 @@ public struct EasterEgg {
         }
 
         return (month == 10 && day >= 25) || (month == 11 && day <= 3)
-    } onTrigger: {}
+    } onTrigger: {
+        SentrySDK.capture(message: "Easter egg Halloween has been triggered! Woohoo!")
+
+        let year = Calendar(identifier: .gregorian).component(.year, from: Date())
+        @InjectService var matomoUtils: MatomoUtils
+        matomoUtils.track(eventWithCategory: .easterEgg, name: "halloween\(year)")
+    }
 }
