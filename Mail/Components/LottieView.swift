@@ -72,6 +72,16 @@ struct LottieView: UIViewRepresentable {
             animationView.heightAnchor.constraint(equalTo: view.heightAnchor)
         ])
 
+        resumePlaying(animationView: animationView)
+
+        DispatchQueue.main.async {
+            updateColors?(animationView, configuration)
+        }
+
+        return view
+    }
+
+    private func resumePlaying(animationView: LottieAnimationView) {
         animationView.play { _ in
             guard let loopFrameStart = configuration.loopFrameStart,
                   let loopFrameEnd = configuration.loopFrameEnd else { return }
@@ -82,16 +92,14 @@ struct LottieView: UIViewRepresentable {
                 loopMode: .loop
             )
         }
-
-        DispatchQueue.main.async {
-            updateColors?(animationView, configuration)
-        }
-
-        return view
     }
 
     func updateUIView(_ uiView: UIViewType, context: Context) {
         guard isVisible, let animationView = uiView.subviews.first as? LottieAnimationView else { return }
+
+        if !animationView.isAnimationPlaying {
+            resumePlaying(animationView: animationView)
+        }
 
         let newColorScheme = UITraitCollection.current.userInterfaceStyle
         let newAccentColor = UserDefaults.shared.accentColor
