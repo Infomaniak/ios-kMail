@@ -74,10 +74,12 @@ struct AccountView: View {
                     .padding(.bottom, value: .regular)
                     .padding(.top, value: .medium)
                     .background {
-                        LottieView(configuration: LottieConfiguration(id: 1, filename: "illu_easter_egg_halloween"),
-                                   isVisible: $isLottieAnimationVisible)
-                            .offset(y: AccountView.avatarViewSize)
-                            .allowsHitTesting(false)
+                        if EasterEgg.halloween.shouldTrigger() {
+                            LottieView(configuration: LottieConfiguration(id: 1, filename: "illu_easter_egg_halloween"),
+                                       isVisible: $isLottieAnimationVisible)
+                                .offset(y: AccountView.avatarViewSize)
+                                .allowsHitTesting(false)
+                        }
                     }
                     .zIndex(1)
 
@@ -123,6 +125,7 @@ struct AccountView: View {
         }
         .onAppear {
             isLottieAnimationVisible = true
+            EasterEgg.halloween.onTrigger()
         }
         .onDisappear {
             isLottieAnimationVisible = false
