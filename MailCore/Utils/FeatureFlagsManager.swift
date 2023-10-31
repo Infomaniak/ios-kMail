@@ -54,7 +54,8 @@ public final class FeatureFlagsManager: FeatureFlagsManageable {
     }
 
     public func isEnabled(_ feature: FeatureFlag) -> Bool {
-        guard let userFeatures = enabledFeatures.value(for: accountManager.currentUserId) else { return false }
+        guard let currentMailboxObjectId = accountManager.currentMailboxManager?.mailbox.objectId,
+              let userFeatures = enabledFeatures.value(for: currentMailboxObjectId) else { return false }
         return userFeatures.contains(feature)
     }
 
@@ -67,14 +68,16 @@ public final class FeatureFlagsManager: FeatureFlagsManageable {
     }
 
     public func fetchFlags() async throws {
-        if enabledFeatures.value(for: accountManager.currentUserId) == nil {
-            enabledFeatures.setValue(Constants.defaultFeatureFlags, for: accountManager.currentUserId)
+        guard let currentMailboxManager = accountManager.currentMailboxManager else { return }
+
+        let mailboxObjectId = currentMailboxManager.mailbox.objectId
+        if enabledFeatures.value(for: mailboxObjectId) == nil {
+            enabledFeatures.setValue(Constants.defaultFeatureFlags, for: mailboxObjectId)
         }
 
-        guard let apiFetcher = accountManager.currentApiFetcher else { return }
-        let enabledFlags = try await apiFetcher.featureFlag()
+        let enabledFlags = try await currentMailboxManager.apiFetcher.featureFlag(email: currentMailboxManager.mailbox.email)
 
-        enabledFeatures.setValue(enabledFlags, for: accountManager.currentUserId)
-        UserDefaults.shared.featureFlags[accountManager.currentUserId] = enabledFlags
+        enabledFeatures.setValue(enabledFlags, for: mailboxObjectId)
+        UserDefaults.shared.featureFlags[mailboxObjectId] = enabledFlags
     }
 }

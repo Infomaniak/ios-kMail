@@ -21,15 +21,15 @@ import SwiftUI
 
 /// Something that can managed feature flags
 public protocol FeatureFlagsManageable {
-    typealias UserId = Int
-    typealias AppFeatureFlags = [UserId: [FeatureFlag]]
+    typealias MailboxObjectId = String
+    typealias AppFeatureFlags = [MailboxObjectId: [FeatureFlag]]
 
-    /// Check if a given feature is enabled for the current user
+    /// Check if a given feature is enabled for the current mailbox
     func isEnabled(_ feature: FeatureFlag) -> Bool
 
-    /// Execute the correct closure depending if a given feature is enabled or not for the current user
+    /// Execute the correct closure depending if a given feature is enabled or not for the current mailbox
     func feature(_ feature: FeatureFlag, on: () -> Void, off: (() -> Void)?)
 
-    /// Refresh the flags for the current user
+    /// Refresh the flags for the current mailbox
     func fetchFlags() async throws
 }
