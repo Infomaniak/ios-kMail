@@ -173,7 +173,7 @@ struct SettingsView: View {
             }
         }
         .onChange(of: threadMode) { _ in
-            AccountManager.instance.updateConversationSettings()
+            accountManager.updateConversationSettings()
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsTitle, displayMode: .inline)
