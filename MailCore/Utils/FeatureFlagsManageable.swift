@@ -21,8 +21,8 @@ import SwiftUI
 
 /// Something that can managed feature flags
 public protocol FeatureFlagsManageable {
-    typealias MailboxObjectId = String
-    typealias AppFeatureFlags = [MailboxObjectId: [FeatureFlag]]
+    typealias MailboxUUID = String
+    typealias AppFeatureFlags = [MailboxUUID: [FeatureFlag]]
 
     /// Check if a given feature is enabled for the current mailbox
     func isEnabled(_ feature: FeatureFlag) -> Bool

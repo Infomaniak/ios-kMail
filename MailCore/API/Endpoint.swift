@@ -66,8 +66,8 @@ public extension Endpoint {
                                             URLQueryItem(name: "product_id", value: "\(mailbox.hostingId)")])
     }
 
-    static var featureFlag: Endpoint {
-        return .base.appending(path: "/feature-flag/check")
+    static func featureFlag(mailbox: Mailbox) -> Endpoint {
+        return .base.appending(path: "/feature-flag/check", queryItems: [URLQueryItem(name: "mailbox_uuid", value: mailbox.uuid)])
     }
 
     static var addressBooks: Endpoint {
@@ -98,7 +98,7 @@ public extension Endpoint {
     static func ai(mailbox: Mailbox? = nil) -> Endpoint {
         var queryItems = [URLQueryItem]()
         if let mailbox {
-            queryItems.append(URLQueryItem(name: "email", value: mailbox.emailIdn))
+            queryItems.append(URLQueryItem(name: "mailbox_uuid", value: mailbox.uuid))
         }
         return .base.appending(path: "/ai", queryItems: queryItems)
     }
@@ -110,7 +110,7 @@ public extension Endpoint {
         }
         return mobileAIEndpoint.appending(
             path: "/\(shortcut)",
-            queryItems: [URLQueryItem(name: "email", value: mailbox.emailIdn)]
+            queryItems: [URLQueryItem(name: "mailbox_uuid", value: mailbox.uuid)]
         )
     }
 

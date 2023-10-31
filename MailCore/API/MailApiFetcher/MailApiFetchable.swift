@@ -75,7 +75,7 @@ public protocol MailApiCommonFetchable {
 public protocol MailApiExtendedFetchable {
     func permissions(mailbox: Mailbox) async throws -> MailboxPermissions
 
-    func featureFlag(email: String) async throws -> [FeatureFlag]
+    func featureFlag(mailbox: Mailbox) async throws -> [FeatureFlag]
 
     /// All the remote contacts
     func contacts() async throws -> [InfomaniakContact]
