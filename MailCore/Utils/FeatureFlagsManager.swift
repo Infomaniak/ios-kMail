@@ -75,7 +75,7 @@ public final class FeatureFlagsManager: FeatureFlagsManageable {
             enabledFeatures.setValue(Constants.defaultFeatureFlags, for: mailboxUUID)
         }
 
-        let enabledFlags = try await currentMailboxManager.apiFetcher.featureFlag(mailbox: currentMailboxManager.mailbox)
+        let enabledFlags = try await currentMailboxManager.apiFetcher.featureFlag(mailboxUUID)
 
         enabledFeatures.setValue(enabledFlags, for: mailboxUUID)
         UserDefaults.shared.featureFlags[mailboxUUID] = enabledFlags

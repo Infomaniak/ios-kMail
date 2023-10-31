@@ -66,8 +66,8 @@ public extension Endpoint {
                                             URLQueryItem(name: "product_id", value: "\(mailbox.hostingId)")])
     }
 
-    static func featureFlag(mailbox: Mailbox) -> Endpoint {
-        return .base.appending(path: "/feature-flag/check", queryItems: [URLQueryItem(name: "mailbox_uuid", value: mailbox.uuid)])
+    static func featureFlag(_ mailboxUUID: String) -> Endpoint {
+        return .base.appending(path: "/feature-flag/check", queryItems: [URLQueryItem(name: "mailbox_uuid", value: mailboxUUID)])
     }
 
     static var addressBooks: Endpoint {
