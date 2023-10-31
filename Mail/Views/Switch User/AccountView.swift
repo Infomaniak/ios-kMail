@@ -20,6 +20,7 @@ import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import InfomaniakLogin
+import Lottie
 import MailCore
 import MailResources
 import Sentry
@@ -51,6 +52,8 @@ struct AccountView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var tokenStore: TokenStore
 
+    private static let avatarViewSize: CGFloat = 104
+
     @Environment(\.dismiss) private var dismiss
 
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -58,15 +61,27 @@ struct AccountView: View {
     @State private var isShowingLogoutAlert = false
     @State private var presentedAccountDeletionToken: ApiToken?
     @State private var delegate = AccountViewDelegate()
+    @State private var isLottieAnimationVisible = false
 
     let account: Account
 
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
-                AvatarView(mailboxManager: mailboxManager, displayablePerson: CommonContact(user: account.user), size: 104)
+                AvatarView(mailboxManager: mailboxManager,
+                           displayablePerson: CommonContact(user: account.user),
+                           size: AccountView.avatarViewSize)
                     .padding(.bottom, value: .regular)
                     .padding(.top, value: .medium)
+                    .background {
+                        if EasterEgg.halloween.shouldTrigger() {
+                            LottieView(configuration: LottieConfiguration(id: 1, filename: "illu_easter_egg_halloween"),
+                                       isVisible: $isLottieAnimationVisible)
+                                .offset(y: AccountView.avatarViewSize)
+                                .allowsHitTesting(false)
+                        }
+                    }
+                    .zIndex(1)
 
                 VStack(spacing: 0) {
                     Text(account.user.displayName)
@@ -84,6 +99,7 @@ struct AccountView: View {
                             .textStyle(.bodyMediumAccent)
                     }
                 }
+                .zIndex(0)
                 .padding(.horizontal, value: .regular)
 
                 MailboxListView(currentMailbox: mailboxManager.mailbox)
@@ -106,6 +122,13 @@ struct AccountView: View {
             }
             .padding(.horizontal, value: .medium)
             .padding(.bottom, value: .regular)
+        }
+        .onAppear {
+            isLottieAnimationVisible = true
+            EasterEgg.halloween.onTrigger()
+        }
+        .onDisappear {
+            isLottieAnimationVisible = false
         }
         .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccount, displayMode: .inline)
         .backButtonDisplayMode(.minimal)

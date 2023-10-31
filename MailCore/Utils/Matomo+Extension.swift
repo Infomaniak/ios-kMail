@@ -55,6 +55,7 @@ public extension MatomoUtils.EventCategory {
     static let syncAutoConfig = MatomoUtils.EventCategory(displayName: "syncAutoConfig")
     static let threadList = MatomoUtils.EventCategory(displayName: "threadList")
     static let userInfo = MatomoUtils.EventCategory(displayName: "userInfo")
+    static let easterEgg = MatomoUtils.EventCategory(displayName: "easterEgg")
 
     // Actions
 
