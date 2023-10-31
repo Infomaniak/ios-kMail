@@ -28,6 +28,9 @@ public protocol PlatformDetectable {
     /// We are running an iOS App on Mac
     var isiOSAppOnMac: Bool { get }
 
+    /// We are running on Mac
+    var isMac: Bool { get }
+
     /// We are running in extension mode
     var isInExtension: Bool { get }
 
@@ -49,6 +52,10 @@ public struct PlatformDetector: PlatformDetectable {
     }()
 
     public var isiOSAppOnMac: Bool = ProcessInfo().isiOSAppOnMac
+
+    public var isMac: Bool {
+        isMacCatalyst || isiOSAppOnMac
+    }
 
     public var isInExtension: Bool = {
         guard Bundle.main.bundlePath.hasSuffix(".appex") else {

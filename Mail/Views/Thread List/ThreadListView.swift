@@ -168,6 +168,7 @@ struct ThreadListView: View {
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
             navigationState.editedDraft = EditedDraft.new()
         }
+        .shortcutModifier(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .onAppear {
             networkMonitor.start()
             if viewModel.isCompact {
