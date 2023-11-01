@@ -38,6 +38,7 @@ struct PromptAIEngineOptionView: View {
                     }
                 }
             }
+            .background(MailResourcesAsset.backgroundColor.swiftUIColor)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     CloseButton(dismissAction: dismiss)
