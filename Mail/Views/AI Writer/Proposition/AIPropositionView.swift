@@ -54,6 +54,7 @@ struct AIPropositionView: View {
                     }
                     .padding([.horizontal, .bottom], value: .regular)
                 }
+                .background(MailResourcesAsset.backgroundColor.swiftUIColor)
                 .onChange(of: aiModel.error) { error in
                     guard error != nil else { return }
                     withAnimation {

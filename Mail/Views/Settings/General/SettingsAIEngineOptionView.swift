@@ -27,6 +27,7 @@ struct SettingsAIEngineOptionView: View {
                 AIEngineOptionView(matomoCategory: .settingsAIEngine)
             }
         }
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
     }
 }
 
