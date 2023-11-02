@@ -149,7 +149,6 @@ struct SplitView: View {
             .receive(on: RunLoop.main)) { notification in
                 guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
                 let realm = mailboxManager.getRealm()
-                realm.refresh()
 
                 navigationDrawerController.close()
 
@@ -167,7 +166,6 @@ struct SplitView: View {
             .receive(on: RunLoop.main)) { notification in
                 guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
                 let realm = mailboxManager.getRealm()
-                realm.refresh()
 
                 navigationDrawerController.close()
 
