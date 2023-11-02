@@ -37,7 +37,7 @@ struct MessageBodyView: View {
     var body: some View {
         ZStack {
             VStack {
-                if let body = presentableBody.body {
+                if presentableBody.body != nil {
                     WebView(model: model, messageUid: messageUid)
                         .frame(height: model.webViewHeight)
                         .onAppear {
