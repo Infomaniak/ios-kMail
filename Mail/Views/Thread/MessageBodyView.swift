@@ -95,7 +95,7 @@ struct MessageBodyView: View {
             guard let text else { return "" }
             let doc = try SwiftSoup.parse("")
             try doc.body()?.appendElement("pre").text(text).attr("style", "word-wrap: break-word; white-space: pre-wrap;")
-            return try doc.html()
+            return try doc.outerHtml()
         } catch {
             return text ?? ""
         }
