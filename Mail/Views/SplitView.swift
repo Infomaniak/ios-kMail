@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Combine
 import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakCoreUI
@@ -26,7 +27,6 @@ import NavigationBackport
 import RealmSwift
 import SwiftUI
 import VersionChecker
-
 @_spi(Advanced) import SwiftUIIntrospect
 
 public class SplitViewManager: ObservableObject {
@@ -145,43 +145,10 @@ struct SplitView: View {
         .onOpenURL { url in
             handleOpenUrl(url)
         }
-        .onReceive(NotificationCenter.default.publisher(for: .onUserTappedNotification)
-            .receive(on: RunLoop.main)) { notification in
-                guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
-                let realm = mailboxManager.getRealm()
-                realm.refresh()
-
-                navigationDrawerController.close()
-
-                let tappedNotificationMessage = realm.object(ofType: Message.self, forPrimaryKey: notificationPayload.messageId)?
-                    .freezeIfNeeded()
-                // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in
-                // inbox
-                if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
-                    navigationState.threadPath = [tappedNotificationThread]
-                } else {
-                    snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
-                }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: .onUserTappedReplyToNotification)
-            .receive(on: RunLoop.main)) { notification in
-                guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
-                let realm = mailboxManager.getRealm()
-                realm.refresh()
-
-                navigationDrawerController.close()
-
-                let tappedNotificationMessage = realm.object(ofType: Message.self, forPrimaryKey: notificationPayload.messageId)?
-                    .freezeIfNeeded()
-                if let tappedNotificationMessage {
-                    navigationState.editedDraft = EditedDraft.replying(
-                        reply: MessageReply(message: tappedNotificationMessage, replyMode: .reply),
-                        currentMailboxEmail: mailboxManager.mailbox.email
-                    )
-                } else {
-                    snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
-                }
-        }
+        .onReceive(NotificationCenter.default.publisher(for: .onUserTappedNotification).receive(on: DispatchQueue.main),
+                   perform: handleNotification)
+        .onReceive(NotificationCenter.default.publisher(for: .onUserTappedReplyToNotification).receive(on: DispatchQueue.main),
+                   perform: handleNotification)
         .onAppear {
             orientationManager.setOrientationLock(.all)
         }
@@ -267,5 +234,45 @@ struct SplitView: View {
         }
 
         return appLaunchCounter.value > Constants.minimumOpeningBeforeSync
+    }
+
+    private func handleNotification(_ notification: Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>.Output) {
+        guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
+
+        @InjectService var accountManager: AccountManager
+        guard let notificationMailboxManager = accountManager.getMailboxManager(for: notificationPayload.mailboxId,
+                                                                                userId: notificationPayload.userId)
+        else { return }
+        navigationDrawerController.close()
+
+        Task {
+            // We haven't switched Env yet so we wait a little bit
+            if notificationMailboxManager != mailboxManager {
+                try? await Task.sleep(nanoseconds: UInt64(0.5 * Double(NSEC_PER_SEC)))
+            }
+
+            let realm = notificationMailboxManager.getRealm()
+
+            let tappedNotificationMessage = realm.object(ofType: Message.self, forPrimaryKey: notificationPayload.messageId)?
+                .freezeIfNeeded()
+            if notification.name == .onUserTappedNotification {
+                // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in
+                // inbox
+                if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
+                    navigationState.threadPath = [tappedNotificationThread]
+                } else {
+                    snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
+                }
+            } else if notification.name == .onUserTappedReplyToNotification {
+                if let tappedNotificationMessage {
+                    navigationState.editedDraft = EditedDraft.replying(
+                        reply: MessageReply(message: tappedNotificationMessage, replyMode: .reply),
+                        currentMailboxEmail: mailboxManager.mailbox.email
+                    )
+                } else {
+                    snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
+                }
+            }
+        }
     }
 }
