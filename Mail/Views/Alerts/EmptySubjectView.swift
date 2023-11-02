@@ -24,6 +24,8 @@ import MailResources
 import SwiftUI
 
 struct EmptySubjectView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     let actionHandler: () -> Void
 
     var body: some View {
@@ -37,7 +39,6 @@ struct EmptySubjectView: View {
                 .padding(.bottom, UIPadding.alertDescriptionBottom)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonContinue) {
-                @InjectService var matomo: MatomoUtils
                 matomo.track(eventWithCategory: .newMessage, name: "sendWithoutSubjectConfirm")
                 actionHandler()
             }

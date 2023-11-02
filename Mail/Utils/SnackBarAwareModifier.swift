@@ -22,7 +22,8 @@ import MailCore
 import SwiftUI
 
 struct SnackBarAwareModifier: ViewModifier {
-    @InjectService var avoider: IKSnackBarAvoider
+    @LazyInjectService var avoider: IKSnackBarAvoider
+
     var inset: CGFloat {
         didSet {
             avoider.addAvoider(inset: inset)

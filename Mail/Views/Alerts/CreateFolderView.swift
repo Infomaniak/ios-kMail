@@ -25,6 +25,8 @@ import RealmSwift
 import SwiftUI
 
 struct CreateFolderView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @EnvironmentObject private var mailboxManager: MailboxManager
     // swiftlint:disable:next empty_count
     @ObservedResults(Folder.self, where: { $0.parents.count == 0 }) private var folders
@@ -90,7 +92,6 @@ struct CreateFolderView: View {
                 .padding(.bottom, value: .small)
 
             ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: buttonIsEnabled) {
-                @InjectService var matomo: MatomoUtils
                 matomo.track(eventWithCategory: .createFolder, name: "confirm")
                 await tryOrDisplayError {
                     let folder = try await mailboxManager.createFolder(name: folderName)

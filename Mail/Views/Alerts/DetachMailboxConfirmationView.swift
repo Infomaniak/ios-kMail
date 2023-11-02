@@ -23,6 +23,7 @@ import MailResources
 import SwiftUI
 
 struct DetachMailboxConfirmationView: View {
+    @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var accountManager: AccountManager
 
     @EnvironmentObject private var navigationState: NavigationState
@@ -57,7 +58,6 @@ struct DetachMailboxConfirmationView: View {
     }
 
     private func detach() async {
-        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailboxConfirm")
         await tryOrDisplayError {
             try await accountManager.detachMailbox(mailbox: mailbox)

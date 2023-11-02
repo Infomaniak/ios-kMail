@@ -23,6 +23,8 @@ import MailResources
 import SwiftUI
 
 struct AIDismissibleErrorView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @State private var isShowingError = false
 
     let error: MailError?
@@ -40,7 +42,6 @@ struct AIDismissibleErrorView: View {
         Group {
             if isShowingError {
                 InformationBlockView(icon: MailResourcesAsset.warning.swiftUIImage, message: message) {
-                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .aiWriter, name: "dismissError")
 
                     withAnimation {

@@ -61,6 +61,7 @@ struct SplitView: View {
     @StateObject private var navigationDrawerController = NavigationDrawerState()
     @StateObject private var splitViewManager: SplitViewManager
 
+    @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var platformDetector: PlatformDetectable
@@ -239,7 +240,6 @@ struct SplitView: View {
     private func handleNotification(_ notification: Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>.Output) {
         guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
 
-        @InjectService var accountManager: AccountManager
         guard let notificationMailboxManager = accountManager.getMailboxManager(for: notificationPayload.mailboxId,
                                                                                 userId: notificationPayload.userId)
         else { return }

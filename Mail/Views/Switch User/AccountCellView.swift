@@ -26,6 +26,7 @@ import RealmSwift
 import SwiftUI
 
 struct AccountCellView: View {
+    @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var accountManager: AccountManager
 
     @Environment(\.dismissModal) private var dismissModal
@@ -43,7 +44,6 @@ struct AccountCellView: View {
         Button {
             guard !isSelected else { return }
 
-            @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: .account, name: "switch")
             dismissModal()
             accountManager.switchAccount(newAccount: account)

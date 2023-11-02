@@ -45,7 +45,7 @@ public enum FeatureFlag: String, Codable {
 }
 
 public final class FeatureFlagsManager: FeatureFlagsManageable {
-    @InjectService private var accountManager: AccountManager
+    @LazyInjectService private var accountManager: AccountManager
 
     private var enabledFeatures: SendableDictionary<AppFeatureFlags.Key, AppFeatureFlags.Value>
 

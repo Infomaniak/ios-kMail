@@ -24,6 +24,10 @@ import InfomaniakLogin
 import Sentry
 
 final class SyncedAuthenticator: OAuthAuthenticator {
+    @LazyInjectService var keychainHelper: KeychainHelper
+    @LazyInjectService var tokenStore: TokenStore
+    @LazyInjectService var networkLoginService: InfomaniakNetworkLoginable
+
     func handleFailedRefreshingToken(oldToken: ApiToken, error: Error?) -> Result<OAuthAuthenticator.Credential, Error> {
         guard let error = error as NSError?,
               error.domain == "invalid_grant" else {
@@ -45,10 +49,6 @@ final class SyncedAuthenticator: OAuthAuthenticator {
         for session: Session,
         completion: @escaping (Result<OAuthAuthenticator.Credential, Error>) -> Void
     ) {
-        @InjectService var keychainHelper: KeychainHelper
-        @InjectService var tokenStore: TokenStore
-        @InjectService var networkLoginService: InfomaniakNetworkLoginable
-
         SentrySDK.addBreadcrumb((credential as ApiToken).generateBreadcrumb(level: .info, message: "Refreshing token - Starting"))
 
         guard keychainHelper.isKeychainAccessible else {
@@ -69,7 +69,7 @@ final class SyncedAuthenticator: OAuthAuthenticator {
 
         // It is absolutely necessary that the app stays awake while we refresh the token
         BackgroundExecutor.executeWithBackgroundTask { endBackgroundTask in
-            networkLoginService.refreshToken(token: credential) { token, error in
+            self.networkLoginService.refreshToken(token: credential) { token, error in
                 // New token has been fetched correctly
                 if let token {
                     SentrySDK

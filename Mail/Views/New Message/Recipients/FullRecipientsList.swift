@@ -24,6 +24,8 @@ import SwiftUI
 import WrappingHStack
 
 struct FullRecipientsList: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @EnvironmentObject private var mailboxManager: MailboxManager
     @Binding var recipients: RealmSwift.List<Recipient>
 
@@ -44,7 +46,6 @@ struct FullRecipientsList: View {
     }
 
     @MainActor private func remove(recipientAt: Int) {
-        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .newMessage, name: "deleteRecipient")
         if recipients[recipientAt].isExternal(mailboxManager: mailboxManager) {
             matomo.track(eventWithCategory: .externals, name: "deleteRecipient")

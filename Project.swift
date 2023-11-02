@@ -23,7 +23,7 @@ import ProjectDescriptionHelpers
 let project = Project(name: "Mail",
                       packages: [
                           .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "4.0.0")),
-                          .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "1.1.6")),
+                          .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "1.1.11")),
                           .package(
                               url: "https://github.com/Infomaniak/ios-core",
                               .revision("477ba918bf1ccabaac83ad4e5923fe5356f517ea")

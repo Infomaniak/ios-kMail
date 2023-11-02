@@ -24,6 +24,8 @@ import MailResources
 import SwiftUI
 
 struct MenuDrawerItemCell: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     let icon: MailResourcesImages
     let label: String
     let matomoName: String
@@ -32,7 +34,6 @@ struct MenuDrawerItemCell: View {
 
     var body: some View {
         Button {
-            @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: .menuDrawer, name: matomoName)
             action()
         } label: {
