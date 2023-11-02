@@ -24,6 +24,8 @@ import UIKit
 import UserNotifications
 
 public struct NotificationTappedPayload {
+    public let userId: Int
+    public let mailboxId: Int
     public let messageId: String
 }
 

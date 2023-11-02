@@ -49,7 +49,9 @@ public struct MessageActionHandler: MessageActionHandlable {
         switchAccountIfNeeded(mailbox: mailbox, mailboxManager: mailboxManager)
 
         NotificationCenter.default.post(name: .onUserTappedNotification,
-                                        object: NotificationTappedPayload(messageId: messageUid))
+                                        object: NotificationTappedPayload(userId: mailbox.userId,
+                                                                          mailboxId: mailbox.mailboxId,
+                                                                          messageId: messageUid))
     }
 
     func handleReplyOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) {
@@ -59,7 +61,9 @@ public struct MessageActionHandler: MessageActionHandlable {
         switchAccountIfNeeded(mailbox: mailbox, mailboxManager: mailboxManager)
 
         NotificationCenter.default.post(name: .onUserTappedReplyToNotification,
-                                        object: NotificationTappedPayload(messageId: messageUid))
+                                        object: NotificationTappedPayload(userId: mailbox.userId,
+                                                                          mailboxId: mailbox.mailboxId,
+                                                                          messageId: messageUid))
     }
 
     func handleArchiveOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async throws {
