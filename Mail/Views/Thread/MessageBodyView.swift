@@ -75,14 +75,14 @@ struct MessageBodyView: View {
 
     private func loadBody(blockRemoteContent: Bool) {
         Task {
-            var body = model.showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody
+            var messageBody = model.showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody
 
             if presentableBody.body?.type == "text/plain" {
-                body = createHtmlForPlainText(text: body)
+                messageBody = createHtmlForPlainText(text: messageBody)
             }
 
             let loadResult = await model.loadHTMLString(
-                value: body,
+                value: messageBody,
                 blockRemoteContent: blockRemoteContent
             )
 
