@@ -78,7 +78,7 @@ struct MessageBodyView: View {
             var messageBody = model.showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody
 
             if presentableBody.body?.type == "text/plain" {
-                messageBody = createHTMLForPlainText(text: messageBody)
+                messageBody = model.createHTMLForPlainText(text: messageBody)
             }
 
             let loadResult = await model.loadHTMLString(
@@ -87,17 +87,6 @@ struct MessageBodyView: View {
             )
 
             displayContentBlockedActionView = (loadResult == .remoteContentBlocked)
-        }
-    }
-
-    private func createHTMLForPlainText(text: String?) -> String {
-        guard let text else { return "" }
-        do {
-            let doc = SwiftSoup.Document.createShell("")
-            try doc.body()?.appendElement("pre").text(text)
-            return try doc.outerHtml()
-        } catch {
-            return text
         }
     }
 }
