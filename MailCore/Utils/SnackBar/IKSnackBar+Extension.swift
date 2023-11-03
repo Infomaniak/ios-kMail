@@ -28,6 +28,7 @@ public extension SnackBarStyle {
     static func mailStyle(withAnchor anchor: CGFloat) -> SnackBarStyle {
         var snackBarStyle = SnackBarStyle()
         snackBarStyle.anchor = anchor
+        snackBarStyle.maxWidth = 600
         snackBarStyle.padding = 16
         snackBarStyle.inViewPadding = 16
         snackBarStyle.cornerRadius = 8
