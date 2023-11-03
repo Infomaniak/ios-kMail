@@ -23,6 +23,26 @@ import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
+import SwiftUIIntrospect
+
+public final class ScrollObserver: NSObject, ObservableObject, UICollectionViewDelegate, UIScrollViewDelegate {
+    enum VerticalScrollDirection {
+        case top, bottom
+    }
+
+    @Published var scrollingDirection: VerticalScrollDirection?
+
+    private var lastContentOffset = CGFloat.zero
+
+    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if scrollView.contentOffset.y > lastContentOffset {
+            scrollingDirection = .bottom
+        } else {
+            scrollingDirection = .top
+        }
+        lastContentOffset = scrollView.contentOffset.y
+    }
+}
 
 struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
@@ -37,6 +57,8 @@ struct ThreadListView: View {
     @State private var isRefreshing = false
     @State private var firstLaunch = true
     @State private var flushAlert: FlushAlertState?
+
+    @StateObject private var scrollObserver = ScrollObserver()
 
     @StateObject var viewModel: ThreadListViewModel
     @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
@@ -116,6 +138,12 @@ struct ThreadListView: View {
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
                 .plainList()
+                .introspect(.list, on: .iOS(.v15)) { tableView in
+                    tableView.delegate = scrollObserver
+                }
+                .introspect(.list, on: .iOS(.v16, .v17)) { collectionView in
+                    collectionView.delegate = scrollObserver
+                }
                 .emptyState(isEmpty: shouldDisplayEmptyView) {
                     switch viewModel.folder.role {
                     case .inbox:
