@@ -22,8 +22,6 @@ import RealmSwift
 import SwiftUI
 
 struct ForEachMailboxView<Content: View>: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @ObservedResults private var mailboxes: Results<Mailbox>
 
     var sortedMailboxes: [Mailbox] {
@@ -35,7 +33,10 @@ struct ForEachMailboxView<Content: View>: View {
 
     init(userId: Int, excludedMailboxIds: [Int] = [], @ViewBuilder content: @escaping (Mailbox) -> Content) {
         self.content = content
-        let configuration = mailboxInfosManager.realmConfiguration
+        let configuration = {
+            @InjectService var mailboxInfosManager: MailboxInfosManager
+            return mailboxInfosManager.realmConfiguration
+        }()
         _mailboxes = ObservedResults(Mailbox.self, configuration: configuration) {
             $0.userId == userId && !$0.mailboxId.in(excludedMailboxIds)
         }
