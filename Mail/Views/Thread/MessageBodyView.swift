@@ -78,7 +78,7 @@ struct MessageBodyView: View {
             var messageBody = model.showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody
 
             if presentableBody.body?.type == "text/plain" {
-                messageBody = createHtmlForPlainText(text: messageBody)
+                messageBody = createHTMLForPlainText(text: messageBody)
             }
 
             let loadResult = await model.loadHTMLString(
