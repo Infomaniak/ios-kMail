@@ -90,11 +90,11 @@ struct MessageBodyView: View {
         }
     }
 
-    private func createHtmlForPlainText(text: String?) -> String {
+    private func createHTMLForPlainText(text: String?) -> String {
         do {
             guard let text else { return "" }
-            let doc = try SwiftSoup.parse("")
-            try doc.body()?.appendElement("pre").text(text).attr("style", "word-wrap: break-word; white-space: pre-wrap;")
+            let doc = SwiftSoup.Document.createShell("")
+            try doc.body()?.appendElement("pre").text(text)
             return try doc.outerHtml()
         } catch {
             return text ?? ""
