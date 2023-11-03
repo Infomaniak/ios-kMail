@@ -23,13 +23,14 @@ import MailResources
 import SwiftUI
 
 struct AIEngineOptionButton: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @AppStorage(UserDefaults.shared.key(.aiEngine)) private var aiEngine = DefaultPreferences.aiEngine
 
     @Binding var isShowingAIEngineChoice: Bool
 
     var body: some View {
         Button {
-            @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: .promptAIEngine, name: "openEngineChoice")
 
             isShowingAIEngineChoice = true

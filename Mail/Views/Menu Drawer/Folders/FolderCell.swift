@@ -35,6 +35,8 @@ extension EnvironmentValues {
 }
 
 struct FolderCell: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     enum CellType {
         case menuDrawer, move
     }
@@ -75,7 +77,6 @@ struct FolderCell: View {
                 } label: {
                     Button {
                         if let matomoCategory {
-                            @InjectService var matomo: MatomoUtils
                             matomo.track(eventWithCategory: matomoCategory, name: folder.content.matomoName)
                         }
                         splitViewManager.selectedFolder = folder.content
@@ -116,7 +117,6 @@ struct FolderCell: View {
 
     private func updateFolder() {
         if let matomoCategory {
-            @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: matomoCategory, name: folder.content.matomoName)
         }
         splitViewManager.selectedFolder = folder.content
@@ -125,6 +125,8 @@ struct FolderCell: View {
 }
 
 struct FolderCellContent: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @Environment(\.folderCellType) var cellType
@@ -206,7 +208,6 @@ struct FolderCellContent: View {
     }
 
     private func collapseFolder() {
-        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .menuDrawer, name: "collapseFolder", value: !folder.isExpanded)
 
         guard let liveFolder = folder.thaw() else { return }

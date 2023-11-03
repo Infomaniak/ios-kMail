@@ -178,7 +178,9 @@ struct RichTextEditorModel {
     var height: CGFloat = 0
 }
 
-class MailEditorView: SQTextEditorView {
+final class MailEditorView: SQTextEditorView {
+    @LazyInjectService var matomo: MatomoUtils
+
     lazy var toolbar = getToolbar()
     var alert: ObservedObject<NewMessageAlert>.Wrapper
     var isShowingCamera: Binding<Bool>
@@ -312,7 +314,6 @@ class MailEditorView: SQTextEditorView {
         guard let toolbarAction = ToolbarAction(rawValue: sender.tag) else { return }
 
         if let matomoName = toolbarAction.matomoName {
-            @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: .editorActions, name: matomoName)
         }
 

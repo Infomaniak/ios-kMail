@@ -32,6 +32,8 @@ struct AIProposition: Identifiable {
 
 @MainActor
 final class AIModel: ObservableObject {
+    @LazyInjectService var matomo: MatomoUtils
+
     private static let displayableErrors: [MailApiError] = [.apiAIMaxSyntaxTokensReached, .apiAITooManyRequests]
 
     @Published var conversation = [AIMessage]()
@@ -184,7 +186,6 @@ extension AIModel {
     }
 
     func insertProposition(subject: String?, body: String, shouldReplaceBody: Bool) {
-        @InjectService var matomo: MatomoUtils
         matomo.track(
             eventWithCategory: .aiWriter,
             action: .data,

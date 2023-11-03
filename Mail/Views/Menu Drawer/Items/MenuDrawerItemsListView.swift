@@ -107,6 +107,8 @@ struct MenuDrawerItemsHelpListView: View {
 }
 
 struct MenuDrawerItemsListView<Content: View>: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @State private var isExpanded = false
 
     var title: String?
@@ -121,7 +123,6 @@ struct MenuDrawerItemsListView<Content: View>: View {
                     withAnimation {
                         isExpanded.toggle()
                         if let matomoName {
-                            @InjectService var matomo: MatomoUtils
                             matomo.track(eventWithCategory: .menuDrawer, name: matomoName, value: isExpanded)
                         }
                     }

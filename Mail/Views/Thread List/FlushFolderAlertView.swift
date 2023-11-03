@@ -23,6 +23,8 @@ import MailResources
 import SwiftUI
 
 struct FlushFolderAlertView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     let flushAlert: FlushAlertState
     var folder: Folder?
 
@@ -57,7 +59,6 @@ struct FlushFolderAlertView: View {
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm) {
                 if let folder, flushAlert.deletedMessages == nil {
-                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .threadList, name: "empty\(folder.matomoName.capitalized)Confirm")
                 }
                 await flushAlert.completion()

@@ -33,6 +33,8 @@ extension ThreadListCell: Equatable {
 }
 
 struct ThreadListCell: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @EnvironmentObject var splitViewManager: SplitViewManager
     @EnvironmentObject var navigationState: NavigationState
 
@@ -110,7 +112,6 @@ struct ThreadListCell: View {
         multipleSelectionViewModel.feedbackGenerator.prepare()
         multipleSelectionViewModel.isEnabled.toggle()
         if multipleSelectionViewModel.isEnabled {
-            @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: .multiSelection, action: .longPress, name: "enable")
             multipleSelectionViewModel.feedbackGenerator.impactOccurred()
             multipleSelectionViewModel.toggleSelection(of: thread)

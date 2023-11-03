@@ -25,6 +25,8 @@ import RealmSwift
 import SwiftUI
 
 struct MailboxesManagementView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
 
@@ -50,7 +52,6 @@ struct MailboxesManagementView: View {
             Button {
                 withAnimation {
                     navigationDrawerState.showMailboxes.toggle()
-                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .menuDrawer, name: "mailboxes", value: navigationDrawerState.showMailboxes)
                 }
             } label: {

@@ -115,12 +115,13 @@ public extension MatomoUtils {
 // MARK: - Track views
 
 struct MatomoView: ViewModifier {
+    @LazyInjectService var matomo: MatomoUtils
+
     let view: [String]
 
     func body(content: Content) -> some View {
         content
             .onAppear {
-                @InjectService var matomo: MatomoUtils
                 matomo.track(view: view)
             }
     }

@@ -56,8 +56,8 @@ public enum RootViewDestination {
     case unavailableMailboxes
 }
 
-@MainActor
 /// Something that represents the state of navigation
+@MainActor
 public class NavigationState: ObservableObject {
     @LazyInjectService private var appLockHelper: AppLockHelper
 
