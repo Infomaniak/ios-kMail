@@ -70,22 +70,6 @@ extension ThreadListViewModel {
                     stopObserveChanges()
                 }
             }
-
-        observationLastUpdateToken = folder.observe(keyPaths: [\Folder.lastUpdate], on: observeQueue) { [weak self] changes in
-            switch changes {
-            case .change(let folder, _):
-                let lastUpdate = folder.freezeIfNeeded().lastUpdate
-                Task {
-                    await MainActor.run {
-                        withAnimation {
-                            self?.lastUpdate = lastUpdate
-                        }
-                    }
-                }
-            default:
-                break
-            }
-        }
     }
 
     func stopObserveChanges() {
@@ -185,9 +169,11 @@ extension ThreadListViewModel {
             switch changes {
             case .initial(let all), .update(let all, _, _, _):
                 let unreadCount = all.where { $0.unseenMessages > 0 }.count
-                Task {
-                    await MainActor.run {
-                        self.unreadCount = unreadCount
+                // Disable filter if we have no unread emails left
+                guard unreadCount == 0 && filterUnreadOn else { return }
+                Task { @MainActor in
+                    withAnimation {
+                        self.filterUnreadOn = false
                     }
                 }
 

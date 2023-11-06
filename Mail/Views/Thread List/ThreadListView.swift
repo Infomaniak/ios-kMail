@@ -69,10 +69,9 @@ struct ThreadListView: View {
     var body: some View {
         VStack(spacing: 0) {
             ThreadListHeader(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
-                             isConnected: networkMonitor.isConnected,
-                             lastUpdate: viewModel.lastUpdate,
-                             unreadCount: splitViewManager.selectedFolder?.unreadCount ?? 0,
+                             folder: viewModel.folder,
                              unreadFilterOn: $viewModel.filterUnreadOn)
+                .id(viewModel.folder.id)
 
             ScrollViewReader { proxy in
                 List {
