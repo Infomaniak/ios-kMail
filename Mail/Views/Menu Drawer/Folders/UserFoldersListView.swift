@@ -33,13 +33,7 @@ struct UserFoldersListView: View {
     @State private var isExpanded = true
     @State private var isShowingCreateFolderAlert = false
 
-    private let folders: [NestableFolder]
-    private let hasSubFolders: Bool
-
-    init(folders: [NestableFolder]) {
-        self.folders = folders
-        hasSubFolders = folders.contains { !$0.children.isEmpty }
-    }
+    let folders: [NestableFolder]
 
     var body: some View {
         VStack(spacing: 0) {
@@ -81,12 +75,7 @@ struct UserFoldersListView: View {
                         .textStyle(.bodySmallSecondary)
                         .padding(value: .regular)
                 } else {
-                    ForEach(folders) { folder in
-                        FolderCell(folder: folder,
-                                   currentFolderId: splitViewManager.selectedFolder?.remoteId,
-                                   canCollapseSubFolders: hasSubFolders,
-                                   matomoCategory: .menuDrawer)
-                    }
+                    FoldersListView(folders: folders)
                 }
             }
         }
