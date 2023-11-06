@@ -56,9 +56,7 @@ struct ThreadListToolbar: ViewModifier {
     @Environment(\.isCompactWindow) private var isCompactWindow
 
     @EnvironmentObject private var actionsManager: ActionsManager
-    @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var presentedCurrentAccount: Account?
     @State private var multipleSelectedMessages: [Message]?
 
     @Binding var flushAlert: FlushAlertState?
@@ -109,20 +107,7 @@ struct ThreadListToolbar: ViewModifier {
                         } else {
                             SearchButton()
 
-                            Button {
-                                presentedCurrentAccount = viewModel.mailboxManager.account
-                            } label: {
-                                if let currentAccountUser = viewModel.mailboxManager.account.user {
-                                    AvatarView(
-                                        mailboxManager: mailboxManager,
-                                        displayablePerson: CommonContact(user: currentAccountUser)
-                                    )
-                                }
-                            }
-                            .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
-                            .sheet(item: $presentedCurrentAccount) { account in
-                                AccountView(account: account)
-                            }
+                            AccountButton()
                         }
                     }
                 }
