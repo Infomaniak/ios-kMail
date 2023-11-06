@@ -16,31 +16,55 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Combine
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import OSLog
 import RealmSwift
 import SwiftUI
 import SwiftUIIntrospect
 
-public final class ScrollObserver: NSObject, ObservableObject, UICollectionViewDelegate, UIScrollViewDelegate {
-    enum VerticalScrollDirection {
-        case top, bottom
+struct ScrollDirectionKey: PreferenceKey {
+    static var defaultValue: ScrollObserver.ScrollDirection = .none
+
+    static func reduce(value: inout ScrollObserver.ScrollDirection, nextValue: () -> ScrollObserver.ScrollDirection) {
+        print("Env:", nextValue())
+        value = nextValue()
+    }
+}
+
+public final class ScrollObserver: ObservableObject {
+    enum ScrollDirection {
+        case none, top, bottom
     }
 
-    @Published var scrollingDirection: VerticalScrollDirection?
+    @Published var scrollDirection = ScrollDirection.none
 
+    private var cancellable: Cancellable?
     private var lastContentOffset = CGFloat.zero
 
-    public func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        if scrollView.contentOffset.y > lastContentOffset {
-            scrollingDirection = .bottom
-        } else {
-            scrollingDirection = .top
+    public func observeValue(scrollView: UIScrollView) {
+        guard cancellable == nil else { return }
+        cancellable = scrollView.publisher(for: \.contentOffset).sink { newValue in
+            self.updateScrollViewPosition(newOffset: newValue.y)
         }
-        lastContentOffset = scrollView.contentOffset.y
+    }
+
+    private func updateScrollViewPosition(newOffset: CGFloat) {
+        let newDirection: ScrollDirection = newOffset > lastContentOffset ? .bottom : .top
+        lastContentOffset = newOffset
+
+        guard scrollDirection != newDirection else { return }
+        Task {
+            await MainActor.run {
+                withAnimation {
+                    scrollDirection = newDirection
+                }
+            }
+        }
     }
 }
 
@@ -58,10 +82,9 @@ struct ThreadListView: View {
     @State private var firstLaunch = true
     @State private var flushAlert: FlushAlertState?
 
-    @StateObject private var scrollObserver = ScrollObserver()
-
     @StateObject var viewModel: ThreadListViewModel
     @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    @StateObject private var scrollObserver = ScrollObserver()
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
     private var shouldDisplayEmptyView: Bool {
@@ -138,12 +161,8 @@ struct ThreadListView: View {
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
                 .plainList()
-                .introspect(.list, on: .iOS(.v15)) { tableView in
-                    tableView.delegate = scrollObserver
-                }
-                .introspect(.list, on: .iOS(.v16, .v17)) { collectionView in
-                    collectionView.delegate = scrollObserver
-                }
+                .introspect(.list, on: .iOS(.v15)) { scrollObserver.observeValue(scrollView: $0) }
+                .introspect(.list, on: .iOS(.v16, .v17)) { scrollObserver.observeValue(scrollView: $0) }
                 .emptyState(isEmpty: shouldDisplayEmptyView) {
                     switch viewModel.folder.role {
                     case .inbox:
