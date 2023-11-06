@@ -66,7 +66,21 @@ final class WebViewModel: NSObject, ObservableObject {
         loadScripts(configuration: webView.configuration)
     }
 
-    func createHTMLForPlainText(text: String?) -> String {
+    func loadBody(presentableBody: PresentableBody, blockRemoteContent: Bool) async -> LoadResult {
+        var messageBody = showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody
+
+        if presentableBody.body?.type == "text/plain" {
+            messageBody = createHTMLForPlainText(text: messageBody)
+        }
+
+        let loadResult = await loadHTMLString(
+            value: messageBody,
+            blockRemoteContent: blockRemoteContent
+        )
+        return loadResult
+    }
+
+    private func createHTMLForPlainText(text: String?) -> String {
         guard let text else { return "" }
         do {
             let doc = SwiftSoup.Document.createShell("")
@@ -77,7 +91,7 @@ final class WebViewModel: NSObject, ObservableObject {
         }
     }
 
-    func loadHTMLString(value: String?, blockRemoteContent: Bool) async -> LoadResult {
+    private func loadHTMLString(value: String?, blockRemoteContent: Bool) async -> LoadResult {
         guard let rawHtml = value else { return .errorEmptyInputValue }
 
         do {

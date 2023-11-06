@@ -75,16 +75,7 @@ struct MessageBodyView: View {
 
     private func loadBody(blockRemoteContent: Bool) {
         Task {
-            var messageBody = model.showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody
-
-            if presentableBody.body?.type == "text/plain" {
-                messageBody = model.createHTMLForPlainText(text: messageBody)
-            }
-
-            let loadResult = await model.loadHTMLString(
-                value: messageBody,
-                blockRemoteContent: blockRemoteContent
-            )
+            let loadResult = await model.loadBody(presentableBody: presentableBody, blockRemoteContent: blockRemoteContent)
 
             displayContentBlockedActionView = (loadResult == .remoteContentBlocked)
         }
