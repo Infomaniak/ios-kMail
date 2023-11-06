@@ -79,6 +79,9 @@ struct AccountView: View {
                                        isVisible: $isLottieAnimationVisible)
                                 .offset(y: AccountView.avatarViewSize)
                                 .allowsHitTesting(false)
+                                .onAppear {
+                                    EasterEgg.halloween.onTrigger()
+                                }
                         }
                     }
                     .zIndex(1)
@@ -125,7 +128,6 @@ struct AccountView: View {
         }
         .onAppear {
             isLottieAnimationVisible = true
-            EasterEgg.halloween.onTrigger()
         }
         .onDisappear {
             isLottieAnimationVisible = false
