@@ -112,7 +112,7 @@ struct FolderListView: View {
 
     var body: some View {
         Group {
-            RoleFoldersListView(folders: viewModel.roleFolders)
+            FoldersListView(folders: viewModel.roleFolders)
             IKDivider(type: .menu)
             UserFoldersListView(folders: viewModel.userFolders)
         }

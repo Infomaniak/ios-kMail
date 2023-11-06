@@ -23,7 +23,7 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-struct RoleFoldersListView: View {
+struct FoldersListView: View {
     @EnvironmentObject var splitViewManager: SplitViewManager
 
     private let folders: [NestableFolder]
