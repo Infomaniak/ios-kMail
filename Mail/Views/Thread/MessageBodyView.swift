@@ -19,6 +19,7 @@
 import MailCore
 import MailResources
 import RealmSwift
+import SwiftSoup
 import SwiftUI
 
 struct MessageBodyView: View {
@@ -36,42 +37,31 @@ struct MessageBodyView: View {
     var body: some View {
         ZStack {
             VStack {
-                if let body = presentableBody.body {
-                    if body.type == "text/plain" {
-                        SelectableTextView(textPlainHeight: $textPlainHeight, text: body.value)
-                            .padding(.horizontal, value: .regular)
-                            .frame(height: textPlainHeight)
-                            .onAppear {
-                                withAnimation {
-                                    model.contentLoading = false
-                                }
-                            }
-                    } else {
-                        WebView(model: model, messageUid: messageUid)
-                            .frame(height: model.webViewHeight)
-                            .onAppear {
-                                loadBody(blockRemoteContent: blockRemoteContent)
-                            }
-                            .onChange(of: presentableBody) { _ in
-                                loadBody(blockRemoteContent: blockRemoteContent)
-                            }
-                            .onChange(of: model.showBlockQuote) { _ in
-                                loadBody(blockRemoteContent: blockRemoteContent)
-                            }
-                            .onChange(of: blockRemoteContent) { newValue in
-                                loadBody(blockRemoteContent: newValue)
-                            }
-
-                        if presentableBody.quote != nil {
-                            MailButton(label: model.showBlockQuote
-                                ? MailResourcesStrings.Localizable.messageHideQuotedText
-                                : MailResourcesStrings.Localizable.messageShowQuotedText) {
-                                    model.showBlockQuote.toggle()
-                                }
-                                .mailButtonStyle(.smallLink)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.horizontal, value: .regular)
+                if presentableBody.body != nil {
+                    WebView(model: model, messageUid: messageUid)
+                        .frame(height: model.webViewHeight)
+                        .onAppear {
+                            loadBody(blockRemoteContent: blockRemoteContent)
                         }
+                        .onChange(of: presentableBody) { _ in
+                            loadBody(blockRemoteContent: blockRemoteContent)
+                        }
+                        .onChange(of: model.showBlockQuote) { _ in
+                            loadBody(blockRemoteContent: blockRemoteContent)
+                        }
+                        .onChange(of: blockRemoteContent) { newValue in
+                            loadBody(blockRemoteContent: newValue)
+                        }
+
+                    if presentableBody.quote != nil {
+                        MailButton(label: model.showBlockQuote
+                            ? MailResourcesStrings.Localizable.messageHideQuotedText
+                            : MailResourcesStrings.Localizable.messageShowQuotedText) {
+                                model.showBlockQuote.toggle()
+                            }
+                            .mailButtonStyle(.smallLink)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, value: .regular)
                     }
                 }
             }
@@ -85,10 +75,7 @@ struct MessageBodyView: View {
 
     private func loadBody(blockRemoteContent: Bool) {
         Task {
-            let loadResult = await model.loadHTMLString(
-                value: model.showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody,
-                blockRemoteContent: blockRemoteContent
-            )
+            let loadResult = await model.loadBody(presentableBody: presentableBody, blockRemoteContent: blockRemoteContent)
 
             displayContentBlockedActionView = (loadResult == .remoteContentBlocked)
         }
