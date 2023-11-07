@@ -35,7 +35,7 @@ extension VerticalAlignment {
 struct InformationBlockView: View {
     let icon: Image
     let message: String
-    var iconTint: Color?
+    var iconColor: Color?
     var dismissHandler: (() -> Void)?
 
     var body: some View {
@@ -44,7 +44,7 @@ struct InformationBlockView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 16, height: 16)
-                .foregroundColor(iconTint)
+                .foregroundStyle(iconColor ?? .clear)
                 .alignmentGuide(.informationBlockAlignment) { d in
                     // Center of the view is on the informationBlockAlignment guide
                     d[VerticalAlignment.center]

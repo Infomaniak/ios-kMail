@@ -66,7 +66,7 @@ struct MailButtonStyle: ButtonStyle {
 extension MailButtonStyle {
     @ViewBuilder private func largeStyle(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundColor(largeTextColor())
+            .foregroundStyle(largeTextColor())
             .textStyle(.bodyMedium)
             .padding(.horizontal, value: .medium)
             .frame(width: buttonWidth, height: buttonHeight)
@@ -102,7 +102,7 @@ extension MailButtonStyle {
 extension MailButtonStyle {
     @ViewBuilder private func linkStyle(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundColor(linkTextColor())
+            .foregroundStyle(linkTextColor())
             .textStyle(linkTextStyle())
             .opacity(configuration.isPressed ? 0.7 : 1)
             .frame(width: buttonWidth, height: buttonHeight)

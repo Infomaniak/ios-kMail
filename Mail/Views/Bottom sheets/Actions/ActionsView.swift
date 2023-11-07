@@ -170,9 +170,9 @@ struct ActionButtonLabel: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 24, height: 24)
-                .foregroundColor(action == .reportDisplayProblem ? MailResourcesAsset.princeColor.swiftUIColor : .accentColor)
+                .foregroundStyle(action == .reportDisplayProblem ? MailResourcesAsset.princeColor.swiftUIColor : .accentColor)
             Text(action.title)
-                .foregroundColor(action == .reportDisplayProblem ? MailResourcesAsset.princeColor : MailResourcesAsset
+                .foregroundStyle(action == .reportDisplayProblem ? MailResourcesAsset.princeColor : MailResourcesAsset
                     .textPrimaryColor)
                 .textStyle(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)

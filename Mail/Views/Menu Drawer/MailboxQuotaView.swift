@@ -63,7 +63,7 @@ private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 16, height: 16)
-                .foregroundColor(.accentColor)
+                .foregroundStyle(.tint)
         }
         .frame(height: UIConstants.menuDrawerQuotaSize)
     }

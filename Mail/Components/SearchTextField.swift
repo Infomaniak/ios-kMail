@@ -35,11 +35,11 @@ struct SearchTextField: View {
                     .resizable()
                     .frame(width: 16, height: 16)
             }
-            .foregroundColor(MailResourcesAsset.textTertiaryColor)
+            .foregroundStyle(MailResourcesAsset.textTertiaryColor)
             TextField(MailResourcesStrings.Localizable.searchFieldPlaceholder, text: $value)
                 .autocorrectionDisabled()
                 .submitLabel(.search)
-                .foregroundColor(value.isEmpty
+                .foregroundStyle(value.isEmpty
                     ? MailResourcesAsset.textTertiaryColor
                     : MailResourcesAsset.textPrimaryColor)
                 .onSubmit {
@@ -59,13 +59,13 @@ struct SearchTextField: View {
                     .resizable()
                     .frame(width: 18, height: 18)
             }
-            .foregroundColor(MailResourcesAsset.textTertiaryColor)
+            .foregroundStyle(MailResourcesAsset.textTertiaryColor)
             .opacity(value.isEmpty ? 0 : 1)
         }
         .padding(.horizontal, value: .intermediate)
         .background {
             RoundedRectangle(cornerRadius: 27)
-                .foregroundColor(MailResourcesAsset.textFieldColor)
+                .foregroundStyle(MailResourcesAsset.textFieldColor)
         }
     }
 }

@@ -36,7 +36,7 @@ struct CheckmarkToggleStyle: ToggleStyle {
 
                         MailResourcesAsset.check.swiftUIImage
                             .resizable()
-                            .foregroundColor(MailResourcesAsset.backgroundColor.swiftUIColor)
+                            .foregroundStyle(MailResourcesAsset.backgroundColor)
                             .padding(2)
                     }
                     .opacity(configuration.isOn ? 1 : 0)

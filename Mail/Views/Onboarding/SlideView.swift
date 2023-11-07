@@ -43,7 +43,7 @@ struct SlideView: View {
                 slide.backgroundImage
                     .resizable()
                     .frame(height: proxy.size.height * 0.62)
-                    .foregroundColor(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundSecondaryColor)
+                    .foregroundStyle(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundSecondaryColor)
                     .ignoresSafeArea(edges: .top)
 
                 VStack(spacing: 0) {

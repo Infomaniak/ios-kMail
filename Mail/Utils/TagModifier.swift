@@ -26,7 +26,7 @@ struct TagModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .foregroundColor(foregroundColor)
+            .foregroundStyle(foregroundColor)
             .textStyle(.labelMedium)
             .padding(.horizontal, value: .verySmall)
             .padding(.vertical, 2)

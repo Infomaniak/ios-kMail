@@ -25,7 +25,7 @@ struct UnreadIndicatorView: View {
     var body: some View {
         Circle()
             .frame(width: UIConstants.unreadIconSize, height: UIConstants.unreadIconSize)
-            .foregroundColor(hidden ? .clear : .accentColor)
+            .foregroundStyle(hidden ? .clear : .accentColor)
     }
 }
 

@@ -43,7 +43,7 @@ struct SearchHistorySectionView: View {
                         MailResourcesAsset.clock.swiftUIImage
                             .resizable()
                             .frame(width: 24, height: 24)
-                            .foregroundColor(.accentColor)
+                            .foregroundStyle(.tint)
 
                         Text(searchItem)
                             .textStyle(.bodyMedium)
@@ -55,7 +55,7 @@ struct SearchHistorySectionView: View {
                         } label: {
                             MailResourcesAsset.close.swiftUIImage
                                 .resizable()
-                                .foregroundColor(MailResourcesAsset.textSecondaryColor.swiftUIColor)
+                                .foregroundStyle(MailResourcesAsset.textSecondaryColor)
                                 .frame(width: 16, height: 16)
                         }
                         .buttonStyle(BorderlessButtonStyle())

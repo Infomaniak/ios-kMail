@@ -36,7 +36,7 @@ struct MessageHeaderActionView<Content: View>: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: iconSize)
-                        .foregroundColor(MailResourcesAsset.textSecondaryColor)
+                        .foregroundStyle(MailResourcesAsset.textSecondaryColor)
                     Text(message)
                         .textStyle(.labelSecondary)
                 }

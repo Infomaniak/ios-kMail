@@ -41,7 +41,7 @@ struct MailboxListView: View {
                 } label: {
                     MailResourcesAsset.addCircle.swiftUIImage
                         .resizable()
-                        .foregroundColor(.accentColor)
+                        .foregroundStyle(.tint)
                         .frame(width: 16, height: 16)
                 }
             }

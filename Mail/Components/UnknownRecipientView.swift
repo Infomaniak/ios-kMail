@@ -34,7 +34,7 @@ struct UnknownRecipientView: View {
             .overlay {
                 MailResourcesAsset.userBold.swiftUIImage
                     .resizable()
-                    .foregroundColor(MailResourcesAsset.backgroundColor.swiftUIColor)
+                    .foregroundStyle(MailResourcesAsset.backgroundColor)
                     .frame(width: iconSize, height: iconSize)
             }
     }

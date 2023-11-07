@@ -37,7 +37,7 @@ struct AIEngineOptionButton: View {
         } label: {
             HStack(spacing: UIPadding.small) {
                 Text(MailResourcesStrings.Localizable.aiGenerationTitlePrompt)
-                    .foregroundColor(MailResourcesAsset.textPrimaryColor.swiftUIColor)
+                    .foregroundStyle(MailResourcesAsset.textPrimaryColor)
 
                 if let image = aiEngine.image {
                     image

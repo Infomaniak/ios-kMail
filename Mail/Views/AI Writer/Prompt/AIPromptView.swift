@@ -51,7 +51,7 @@ struct AIPromptView: View {
             ZStack(alignment: .topLeading) {
                 if prompt.isEmpty {
                     Text(MailResourcesStrings.Localizable.aiPromptPlaceholder(placeholderProposition))
-                        .foregroundColor(Color(UIColor.placeholderText))
+                        .foregroundStyle(Color(UIColor.placeholderText))
                         .textStyle(.body)
                         .padding([.vertical, .horizontal], value: .small)
                         .padding(.horizontal, 5)
