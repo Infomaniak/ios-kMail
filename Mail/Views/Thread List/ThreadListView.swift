@@ -175,10 +175,6 @@ struct ThreadListView: View {
             userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox,
                                                       folder: mainViewState.selectedFolder)
         }
-        .onChange(of: mainViewState.selectedFolder) { newFolder in
-            changeFolder(newFolder: newFolder)
-            userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox, folder: newFolder)
-        }
         .onChange(of: viewModel.selectedThread) { newThread in
             if let newThread {
                 mainViewState.threadPath = [newThread]
@@ -201,29 +197,10 @@ struct ThreadListView: View {
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Main"])
     }
 
-    private func changeFolder(newFolder: Folder?) {
-        guard let folder = newFolder else { return }
-
-        viewModel.isLoadingPage = false
-
-        Task {
-            await viewModel.mailboxManager.cancelRefresh()
-
-            fetchingTask?.cancel()
-            _ = await fetchingTask?.result
-            fetchingTask = nil
-            updateFetchingTask(with: folder)
-        }
-    }
-
-    private func updateFetchingTask(with folder: Folder? = nil) {
+    private func updateFetchingTask() {
         guard fetchingTask == nil else { return }
         fetchingTask = Task {
-            if let folder {
-                await viewModel.updateThreads(with: folder)
-            } else {
-                await viewModel.fetchThreads()
-            }
+            await viewModel.fetchThreads()
             fetchingTask = nil
         }
     }

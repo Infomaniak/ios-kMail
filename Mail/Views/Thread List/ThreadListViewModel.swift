@@ -104,7 +104,7 @@ final class DateSection: Identifiable, Equatable {
 @MainActor final class ThreadListViewModel: ObservableObject {
     let mailboxManager: MailboxManager
 
-    private(set) var folder: Folder
+    let folder: Folder
     @Published var sections: [DateSection]?
     @Published var selectedThread: Thread? {
         didSet {
@@ -198,18 +198,6 @@ final class DateSection: Identifiable, Equatable {
 
         withAnimation {
             isLoadingPage = false
-        }
-    }
-
-    func updateThreads(with folder: Folder) async {
-        let isNewFolder = folder.remoteId != self.folder.remoteId
-        self.folder = folder
-
-        if isNewFolder && filter != .all {
-            filter = .all
-        } else {
-            observeChanges()
-            await fetchThreads()
         }
     }
 

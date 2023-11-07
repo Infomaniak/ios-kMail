@@ -29,6 +29,14 @@ struct ThreadListManagerView: View {
     @EnvironmentObject private var mainViewState: MainViewState
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    private var threadListViewHash: Int {
+        var hasher = Hasher()
+        hasher.combine(mainViewState.selectedFolder?.id)
+        hasher.combine(mailboxManager.mailbox.id)
+        hasher.combine(threadMode)
+        return hasher.finalize()
+    }
+
     var body: some View {
         ZStack {
             if let selectedFolder = mainViewState.selectedFolder {
@@ -36,11 +44,10 @@ struct ThreadListManagerView: View {
                     SearchView(mailboxManager: mailboxManager, folder: selectedFolder)
                 } else {
                     ThreadListView(mailboxManager: mailboxManager, folder: selectedFolder, isCompact: isCompactWindow)
-                        .id(threadMode)
                 }
             }
         }
-        .id(mailboxManager.mailbox.id)
+        .id(threadListViewHash)
         .animation(.easeInOut(duration: 0.25), value: mainViewState.isShowingSearch)
     }
 }
