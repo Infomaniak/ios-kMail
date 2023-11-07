@@ -59,6 +59,7 @@ struct LoadMoreButton: View {
                 .frame(alignment: .leading)
             }
         }
-        .padding(.vertical, value: .small)
+        .padding(value: .small)
+        .threadListCellAppearance()
     }
 }
