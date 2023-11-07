@@ -28,8 +28,7 @@ struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var userActivityController: UserActivityController
 
-    @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var navigationState: NavigationState
+    @EnvironmentObject private var mainViewState: MainViewState
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -165,7 +164,7 @@ struct ThreadListView: View {
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
-            navigationState.editedDraft = EditedDraft.new()
+            mainViewState.editedDraft = EditedDraft.new()
         }
         .shortcutModifier(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .onAppear {
@@ -174,17 +173,17 @@ struct ThreadListView: View {
                 viewModel.selectedThread = nil
             }
             userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox,
-                                                      folder: splitViewManager.selectedFolder)
+                                                      folder: mainViewState.selectedFolder)
         }
-        .onChange(of: splitViewManager.selectedFolder) { newFolder in
+        .onChange(of: mainViewState.selectedFolder) { newFolder in
             changeFolder(newFolder: newFolder)
             userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox, folder: newFolder)
         }
         .onChange(of: viewModel.selectedThread) { newThread in
             if let newThread {
-                navigationState.threadPath = [newThread]
+                mainViewState.threadPath = [newThread]
             } else {
-                navigationState.threadPath = []
+                mainViewState.threadPath = []
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in

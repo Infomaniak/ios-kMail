@@ -32,6 +32,7 @@ struct RootView: View {
                 LockedAppView()
             case .mainView(let currentMailboxManager):
                 SplitView(mailboxManager: currentMailboxManager)
+                    .environmentObject(MainViewState(mailboxManager: currentMailboxManager))
             case .onboarding:
                 OnboardingView()
             case .noMailboxes:

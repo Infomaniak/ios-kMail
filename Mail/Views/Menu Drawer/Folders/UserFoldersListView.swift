@@ -28,8 +28,6 @@ import UIKit
 struct UserFoldersListView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @EnvironmentObject private var splitViewManager: SplitViewManager
-
     @State private var isExpanded = true
     @State private var isShowingCreateFolderAlert = false
 

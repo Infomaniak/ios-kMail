@@ -27,7 +27,7 @@ import SwiftUI
 struct MessageHeaderView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @EnvironmentObject private var navigationState: NavigationState
+    @EnvironmentObject private var mainViewState: MainViewState
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ObservedRealmObject var message: Message
@@ -52,14 +52,14 @@ struct MessageHeaderView: View {
                 DraftUtils.editDraft(
                     from: message,
                     mailboxManager: mailboxManager,
-                    editedDraft: $navigationState.editedDraft
+                    editedDraft: $mainViewState.editedDraft
                 )
                 matomo.track(eventWithCategory: .newMessage, name: "openFromDraft")
                 matomo.track(
                     eventWithCategory: .newMessage,
                     action: .data,
                     name: "openLocalDraft",
-                    value: !(navigationState.editedDraft?.draft.isLoadedRemotely ?? false)
+                    value: !(mainViewState.editedDraft?.draft.isLoadedRemotely ?? false)
                 )
             } else if message.originalThread?.messages.isEmpty == false {
                 withAnimation {

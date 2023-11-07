@@ -64,13 +64,6 @@ public class NavigationState: ObservableObject {
     private var accountManagerObservation: AnyCancellable?
 
     @Published public private(set) var rootViewState: RootViewState
-    @Published public var editedDraft: EditedDraft?
-    @Published public var messagesToMove: [Message]?
-
-    /// Represents the state of navigation
-    ///
-    /// The selected thread is the last in collection, by convention.
-    @Published public var threadPath = [Thread]()
 
     public private(set) var account: Account?
 

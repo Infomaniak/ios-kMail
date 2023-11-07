@@ -35,8 +35,8 @@ extension ThreadListCell: Equatable {
 struct ThreadListCell: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var navigationState: NavigationState
+    @EnvironmentObject private var splitViewManager: SplitViewManager
+    @EnvironmentObject private var mainViewState: MainViewState
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
@@ -96,14 +96,14 @@ struct ThreadListCell: View {
                 DraftUtils.editDraft(
                     from: thread,
                     mailboxManager: viewModel.mailboxManager,
-                    editedDraft: $navigationState.editedDraft
+                    editedDraft: $mainViewState.editedDraft
                 )
             } else {
                 splitViewManager.adaptToProminentThreadView()
 
                 // Update both viewModel and navigationState on the truth.
                 viewModel.selectedThread = thread
-                navigationState.threadPath = [thread]
+                mainViewState.threadPath = [thread]
             }
         }
     }

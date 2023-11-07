@@ -25,7 +25,7 @@ import SwiftUI
 struct SearchView: View {
     @Environment(\.isCompactWindow) private var isCompactWindow
 
-    @EnvironmentObject private var splitViewManager: SplitViewManager
+    @EnvironmentObject private var mainViewState: MainViewState
 
     @StateObject private var viewModel: SearchViewModel
 
@@ -88,7 +88,7 @@ struct SearchView: View {
             ToolbarItem(placement: .navigationBarLeading) {
                 CloseButton {
                     Constants.globallyResignFirstResponder()
-                    splitViewManager.showSearch = false
+                    mainViewState.isShowingSearch = false
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonBack)
             }

@@ -44,7 +44,7 @@ struct FolderCell: View {
     @Environment(\.folderCellType) private var cellType
     @Environment(\.isCompactWindow) private var isCompactWindow
 
-    @EnvironmentObject var splitViewManager: SplitViewManager
+    @EnvironmentObject var mainViewState: MainViewState
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
 
     let folder: NestableFolder
@@ -79,8 +79,8 @@ struct FolderCell: View {
                         if let matomoCategory {
                             matomo.track(eventWithCategory: matomoCategory, name: folder.content.matomoName)
                         }
-                        splitViewManager.selectedFolder = folder.content
-                        splitViewManager.showSearch = false
+                        mainViewState.selectedFolder = folder.content
+                        mainViewState.isShowingSearch = false
                         shouldTransit = true
                     } label: {
                         FolderCellContent(
@@ -119,7 +119,7 @@ struct FolderCell: View {
         if let matomoCategory {
             matomo.track(eventWithCategory: matomoCategory, name: folder.content.matomoName)
         }
-        splitViewManager.selectedFolder = folder.content
+        mainViewState.selectedFolder = folder.content
         navigationDrawerState.close()
     }
 }
