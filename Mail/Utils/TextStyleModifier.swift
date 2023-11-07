@@ -25,7 +25,7 @@ struct TextStyleModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .font(style.font)
-            .foregroundColor(style.color)
+            .foregroundStyle(style.color)
     }
 }
 

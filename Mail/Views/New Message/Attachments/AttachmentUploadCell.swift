@@ -43,7 +43,7 @@ struct AttachmentUploadCell: View {
             } label: {
                 MailResourcesAsset.close.swiftUIImage
                     .resizable()
-                    .foregroundColor(MailResourcesAsset.textSecondaryColor)
+                    .foregroundStyle(MailResourcesAsset.textSecondaryColor)
                     .frame(width: 12, height: 12)
             }
             .buttonStyle(.borderless)

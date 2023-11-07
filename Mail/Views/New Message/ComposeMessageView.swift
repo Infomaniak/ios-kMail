@@ -283,7 +283,7 @@ struct ComposeMessageView: View {
                 case .many, .one:
                     HStack(spacing: UIPadding.medium) {
                         Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
-                            .foregroundColor(MailResourcesAsset.onTagExternalColor)
+                            .foregroundStyle(MailResourcesAsset.onTagExternalColor)
                             .textStyle(.bodySmall)
 
                         Spacer()
@@ -294,7 +294,7 @@ struct ComposeMessageView: View {
                         } label: {
                             MailResourcesAsset.info.swiftUIImage
                                 .resizable()
-                                .foregroundColor(MailResourcesAsset.onTagExternalColor)
+                                .foregroundStyle(MailResourcesAsset.onTagExternalColor)
                                 .frame(width: 16, height: 16)
                         }
 
@@ -304,7 +304,7 @@ struct ComposeMessageView: View {
                         } label: {
                             MailResourcesAsset.close.swiftUIImage
                                 .resizable()
-                                .foregroundColor(MailResourcesAsset.onTagExternalColor)
+                                .foregroundStyle(MailResourcesAsset.onTagExternalColor)
                                 .frame(width: 16, height: 16)
                         }
                     }

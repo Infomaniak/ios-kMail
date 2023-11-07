@@ -44,7 +44,7 @@ struct ChevronIcon: View {
         MailResourcesAsset.chevronUp.swiftUIImage
             .resizable()
             .frame(width: 12, height: 12)
-            .foregroundColor(color)
+            .foregroundStyle(color)
             .rotationEffect(style.rotationAngle)
     }
 }

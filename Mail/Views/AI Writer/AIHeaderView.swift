@@ -33,12 +33,12 @@ struct AIHeaderView: View {
                 MailResourcesAsset.aiWriter.swiftUIImage
                     .resizable()
                     .frame(width: 24, height: 24)
-                    .foregroundColor(MailResourcesAsset.aiColor)
+                    .foregroundStyle(MailResourcesAsset.aiColor)
             }
 
             Text(MailResourcesStrings.Localizable.aiPromptTitle)
                 .font(style == .bottomSheet ? MailTextStyle.header2.font : .headline)
-                .foregroundColor(MailTextStyle.header2.color)
+                .foregroundStyle(MailTextStyle.header2.color)
 
             Text(MailResourcesStrings.Localizable.aiPromptTag)
                 .tagModifier(

@@ -45,7 +45,7 @@ struct AutocompletionCell: View {
                 MailResourcesAsset.checked.swiftUIImage
                     .resizable()
                     .frame(width: 24, height: 24)
-                    .foregroundColor(MailResourcesAsset.textTertiaryColor.swiftUIColor)
+                    .foregroundStyle(MailResourcesAsset.textTertiaryColor)
             }
         }
         .padding(.horizontal, value: .regular)

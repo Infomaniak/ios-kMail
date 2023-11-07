@@ -47,7 +47,7 @@ struct AIEngineOptionView: View {
             InformationBlockView(
                 icon: MailResourcesAsset.info.swiftUIImage,
                 message: MailResourcesStrings.Localizable.aiEngineWarning,
-                iconTint: MailResourcesAsset.textSecondaryColor.swiftUIColor
+                iconColor: MailResourcesAsset.textSecondaryColor.swiftUIColor
             )
             .padding(.horizontal, value: .regular)
         }

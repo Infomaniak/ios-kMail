@@ -134,8 +134,9 @@ struct ThreadView: View {
                         }
                     }
                 } label: {
-                    (thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star).swiftUIImage
-                        .foregroundColor(thread.flagged ? MailResourcesAsset.yellowColor.swiftUIColor : .accentColor)
+                    (thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star)
+                        .swiftUIImage
+                        .foregroundStyle(thread.flagged ? MailResourcesAsset.yellowColor.swiftUIColor : .accentColor)
                 }
             }
         }

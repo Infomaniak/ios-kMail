@@ -72,7 +72,7 @@ struct SyncInstallProfileTutorialView: View {
                                 InformationBlockView(
                                     icon: MailResourcesAsset.lightBulbShine.swiftUIImage,
                                     message: MailResourcesStrings.Localizable.syncTutorialInstallProfileTip,
-                                    iconTint: .accentColor
+                                    iconColor: .accentColor
                                 )
                             }
                         }

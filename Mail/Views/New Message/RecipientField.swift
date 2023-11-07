@@ -82,7 +82,7 @@ struct RecipientField: View {
                         .resizable()
                         .frame(width: 18, height: 18)
                 }
-                .foregroundColor(MailResourcesAsset.textTertiaryColor)
+                .foregroundStyle(MailResourcesAsset.textTertiaryColor)
                 .opacity(shouldDisplayEmptyButton ? 1 : 0)
             }
         }

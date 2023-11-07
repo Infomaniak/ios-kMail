@@ -29,14 +29,14 @@ struct ThreadCellDetailsView: View {
             if hasAttachments {
                 MailResourcesAsset.attachment.swiftUIImage
                     .resizable()
-                    .foregroundColor(MailResourcesAsset.textPrimaryColor)
+                    .foregroundStyle(MailResourcesAsset.textPrimaryColor)
                     .scaledToFit()
                     .frame(height: 16)
             }
             if isFlagged {
                 MailResourcesAsset.starFull.swiftUIImage
                     .resizable()
-                    .foregroundColor(MailResourcesAsset.yellowColor)
+                    .foregroundStyle(MailResourcesAsset.yellowColor)
                     .scaledToFit()
                     .frame(width: 16, height: 16)
             }
