@@ -17,7 +17,7 @@
  */
 
 import Combine
-import Foundation
+import MailCore
 import SwiftUI
 
 public final class ScrollObserver: ObservableObject {
@@ -25,45 +25,44 @@ public final class ScrollObserver: ObservableObject {
         case none, top, bottom
     }
 
-    public var shouldObserve = true
-
     @Published var scrollDirection = ScrollDirection.none
 
-    private var cancellable: Cancellable?
+    public var shouldObserve = true
+
+    private var subscriber: Cancellable?
     private var lastContentOffset = CGFloat.zero
 
     public func observeValue(scrollView: UIScrollView) {
-        guard cancellable == nil else { return }
-        cancellable = scrollView.publisher(for: \.contentOffset).sink { newValue in
-            self.updateScrollViewPosition(newOffset: newValue.y)
+        guard subscriber == nil else { return }
+        subscriber = scrollView.publisher(for: \.contentOffset).sink { newValue in
+            self.scrollViewDidScroll(offset: newValue.y)
         }
     }
 
-    private func updateScrollViewPosition(newOffset: CGFloat) {
+    private func scrollViewDidScroll(offset: CGFloat) {
         guard shouldObserve else { return }
 
-        let newDirection: ScrollDirection
-        defer {
-            lastContentOffset = newOffset
-            if scrollDirection != newDirection {
-                print("New Direction ->", newDirection, lastContentOffset, newOffset)
-                Task { @MainActor in
-                    withAnimation {
-                        scrollDirection = newDirection
-                    }
-                }
-            }
-        }
+        var newDirection = scrollDirection
+        defer { updateScrollDirection(offset: offset, direction: newDirection) }
 
-        guard newOffset >= 0 else {
-            newDirection = .none
+        guard offset >= 0 else {
+            newDirection = .top
             return
         }
 
-        if newOffset == lastContentOffset {
-            newDirection = .none
-        } else {
-            newDirection = newOffset > lastContentOffset ? .bottom : .top
+        let difference = lastContentOffset - offset
+        guard !UIConstants.scrollObserverThreshold.contains(difference) else { return }
+        newDirection = difference > 0 ? .top : .bottom
+    }
+
+    private func updateScrollDirection(offset: CGFloat, direction: ScrollDirection) {
+        lastContentOffset = offset
+
+        guard scrollDirection != direction else { return }
+        Task { @MainActor [direction] in
+            withAnimation {
+                scrollDirection = direction
+            }
         }
     }
 }
