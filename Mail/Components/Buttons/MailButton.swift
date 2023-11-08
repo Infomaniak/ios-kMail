@@ -38,10 +38,6 @@ struct MailButtonFullWidthKey: EnvironmentKey {
     static var defaultValue = false
 }
 
-struct MailButtonMinimizeHeightKey: EnvironmentKey {
-    static var defaultValue = false
-}
-
 struct MailButtonIconSizeKey: EnvironmentKey {
     static var defaultValue: CGFloat = UIConstants.buttonsIconSize
 }
@@ -71,11 +67,6 @@ extension EnvironmentValues {
         set { self[MailButtonFullWidthKey.self] = newValue }
     }
 
-    var mailButtonMinimizeHeight: Bool {
-        get { self[MailButtonMinimizeHeightKey.self] }
-        set { self[MailButtonMinimizeHeightKey.self] = newValue }
-    }
-
     var mailButtonIconSize: CGFloat {
         get { self[MailButtonIconSizeKey.self] }
         set { self[MailButtonIconSizeKey.self] = newValue }
@@ -102,10 +93,6 @@ extension View {
 
     func mailButtonFullWidth(_ fullWidth: Bool) -> some View {
         environment(\.mailButtonFullWidth, fullWidth)
-    }
-
-    func mailButtonMinimizeHeight(_ minimize: Bool) -> some View {
-        environment(\.mailButtonMinimizeHeight, minimize)
     }
 
     func mailButtonIconSize(_ size: CGFloat) -> some View {
