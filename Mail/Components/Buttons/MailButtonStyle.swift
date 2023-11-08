@@ -27,14 +27,11 @@ struct MailButtonStyle: ButtonStyle {
     @Environment(\.mailButtonPrimaryColor) private var mailButtonPrimaryColor: Color
     @Environment(\.mailButtonSecondaryColor) private var mailButtonSecondaryColor: Color
     @Environment(\.mailButtonFullWidth) private var fullWidth: Bool
-    @Environment(\.mailButtonMinimizeHeight) private var minimizeHeight: Bool
 
     let style: MailButton.Style
     let iconOnlyButton: Bool
 
     private var buttonHeight: CGFloat? {
-        guard !minimizeHeight else { return nil }
-
         if style == .floatingActionButton {
             return iconOnlyButton ? UIConstants.buttonLargeHeight : UIConstants.buttonMediumHeight
         } else if fullWidth {
