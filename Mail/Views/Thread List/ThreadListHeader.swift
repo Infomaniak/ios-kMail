@@ -16,62 +16,97 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Combine
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
+
+class ThreadListHeaderFolderObserver: ObservableObject {
+    private let timer = Timer.publish(
+        every: 60, // second
+        on: .main,
+        in: .common
+    ).autoconnect()
+    private var timerObservation: AnyCancellable?
+    private var folderObservation: NotificationToken?
+
+    @Published private(set) var lastUpdateText: String?
+    @Published private(set) var unreadCount: Int
+
+    init(folder: Folder) {
+        lastUpdateText = ThreadListHeaderFolderObserver.formatLastUpdate(date: folder.lastUpdate)
+        unreadCount = folder.unreadCount
+
+        timerObservation = timer
+            .receive(on: RunLoop.main)
+            .sink { [weak self] _ in
+                withAnimation {
+                    self?.lastUpdateText = ThreadListHeaderFolderObserver.formatLastUpdate(date: folder.lastUpdate)
+                }
+            }
+
+        folderObservation = folder.observe(keyPaths: [\Folder.lastUpdate, \Folder.unreadCount], on: .main) { [weak self] change in
+            switch change {
+            case .change(let folder, _):
+                withAnimation {
+                    self?.lastUpdateText = ThreadListHeaderFolderObserver.formatLastUpdate(date: folder.lastUpdate)
+                    self?.unreadCount = folder.unreadCount
+                }
+            default:
+                break
+            }
+        }
+    }
+
+    static func formatLastUpdate(date: Date?) -> String? {
+        var dateToUse = date
+        if let interval = date?.timeIntervalSinceNow, interval > -60 {
+            // Last update less than 60 seconds ago
+            dateToUse = Date()
+        }
+        return dateToUse?.formatted(Date.RelativeFormatStyle(presentation: .named, capitalizationContext: .middleOfSentence))
+    }
+}
 
 struct ThreadListHeader: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+    @StateObject private var folderObserver: ThreadListHeaderFolderObserver
+    @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
     let isMultipleSelectionEnabled: Bool
-    let isConnected: Bool
-    let lastUpdate: Date?
-    let unreadCount: Int?
 
     @Binding var unreadFilterOn: Bool
 
-    @State private var lastUpdateText: String?
-
-    let timer = Timer.publish(
-        every: 60, // second
-        on: .main,
-        in: .common
-    ).autoconnect()
-
     init(isMultipleSelectionEnabled: Bool,
-         isConnected: Bool,
-         lastUpdate: Date?,
-         unreadCount: Int?,
+         folder: Folder,
          unreadFilterOn: Binding<Bool>) {
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
-        self.isConnected = isConnected
-        self.lastUpdate = lastUpdate
-        self.unreadCount = unreadCount
         _unreadFilterOn = unreadFilterOn
-        _lastUpdateText = State(initialValue: formatLastUpdate(date: lastUpdate))
+        _folderObserver = StateObject(wrappedValue: ThreadListHeaderFolderObserver(folder: folder))
     }
 
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                if !isConnected {
+                if !networkMonitor.isConnected {
                     NoNetworkView()
                 }
-                if let lastUpdateText {
+                if let lastUpdateText = folderObserver.lastUpdateText {
                     Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
                         .textStyle(.bodySmallSecondary)
                 }
             }
             Spacer()
-            if let unreadCount, unreadCount > 0 && !isMultipleSelectionEnabled {
+            if folderObserver.unreadCount > 0 && !isMultipleSelectionEnabled {
                 Toggle(isOn: $unreadFilterOn) {
-                    Text(unreadCount < 100 ? MailResourcesStrings.Localizable
-                        .threadListHeaderUnreadCount(unreadCount) : MailResourcesStrings.Localizable
+                    Text(folderObserver.unreadCount < 100 ? MailResourcesStrings.Localizable
+                        .threadListHeaderUnreadCount(folderObserver.unreadCount) : MailResourcesStrings.Localizable
                         .threadListHeaderUnreadCountMore)
                 }
                 .toggleStyle(.unread)
@@ -85,21 +120,6 @@ struct ThreadListHeader: View {
         .padding(.top, value: .small)
         .padding([.leading, .trailing, .bottom], value: .regular)
         .background(accentColor.navBarBackground.swiftUIColor)
-        .onChange(of: lastUpdate) { newValue in
-            lastUpdateText = formatLastUpdate(date: newValue)
-        }
-        .onReceive(timer) { _ in
-            lastUpdateText = formatLastUpdate(date: lastUpdate)
-        }
-    }
-
-    func formatLastUpdate(date: Date?) -> String? {
-        var dateToUse = date
-        if let interval = date?.timeIntervalSinceNow, interval > -60 {
-            // Last update less than 60 seconds ago
-            dateToUse = Date()
-        }
-        return dateToUse?.formatted(Date.RelativeFormatStyle(presentation: .named, capitalizationContext: .middleOfSentence))
     }
 }
 
@@ -134,14 +154,10 @@ extension ToggleStyle where Self == UnreadToggleStyle {
 struct ThreadListHeader_Previews: PreviewProvider {
     static var previews: some View {
         ThreadListHeader(isMultipleSelectionEnabled: false,
-                         isConnected: true,
-                         lastUpdate: Date(),
-                         unreadCount: 2,
+                         folder: PreviewHelper.sampleFolder,
                          unreadFilterOn: .constant(false))
         ThreadListHeader(isMultipleSelectionEnabled: false,
-                         isConnected: false,
-                         lastUpdate: nil,
-                         unreadCount: 1,
+                         folder: PreviewHelper.sampleFolder,
                          unreadFilterOn: .constant(true))
     }
 }
