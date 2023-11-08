@@ -139,4 +139,6 @@ public extension UIConstants {
 
 public extension UIConstants {
     static let menuDrawerMaximumSubFolderLevel = 2
+
+    static let scrollObserverThreshold: ClosedRange<CGFloat> = -0.5 ... 0.5
 }
