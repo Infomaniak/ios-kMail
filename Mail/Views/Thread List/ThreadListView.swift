@@ -16,57 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Combine
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
-import OSLog
 import RealmSwift
 import SwiftUI
 import SwiftUIIntrospect
-
-struct ScrollDirectionKey: PreferenceKey {
-    static var defaultValue: ScrollObserver.ScrollDirection = .none
-
-    static func reduce(value: inout ScrollObserver.ScrollDirection, nextValue: () -> ScrollObserver.ScrollDirection) {
-        print("Env:", nextValue())
-        value = nextValue()
-    }
-}
-
-public final class ScrollObserver: ObservableObject {
-    enum ScrollDirection {
-        case none, top, bottom
-    }
-
-    @Published var scrollDirection = ScrollDirection.none
-
-    private var cancellable: Cancellable?
-    private var lastContentOffset = CGFloat.zero
-
-    public func observeValue(scrollView: UIScrollView) {
-        guard cancellable == nil else { return }
-        cancellable = scrollView.publisher(for: \.contentOffset).sink { newValue in
-            self.updateScrollViewPosition(newOffset: newValue.y)
-        }
-    }
-
-    private func updateScrollViewPosition(newOffset: CGFloat) {
-        let newDirection: ScrollDirection = newOffset > lastContentOffset ? .bottom : .top
-        lastContentOffset = newOffset
-
-        guard scrollDirection != newDirection else { return }
-        Task {
-            await MainActor.run {
-                withAnimation {
-                    scrollDirection = newDirection
-                }
-            }
-        }
-    }
-}
 
 struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
@@ -161,8 +118,7 @@ struct ThreadListView: View {
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
                 .plainList()
-                .introspect(.list, on: .iOS(.v15)) { scrollObserver.observeValue(scrollView: $0) }
-                .introspect(.list, on: .iOS(.v16, .v17)) { scrollObserver.observeValue(scrollView: $0) }
+                .observeScroll(with: scrollObserver)
                 .emptyState(isEmpty: shouldDisplayEmptyView) {
                     switch viewModel.folder.role {
                     case .inbox:
@@ -205,7 +161,7 @@ struct ThreadListView: View {
                            multipleSelectionViewModel: multipleSelectionViewModel)
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
-                              title: MailResourcesStrings.Localizable.buttonNewMessage) {
+                              title: MailResourcesStrings.Localizable.buttonNewMessage, isExtended: scrollObserver.scrollDirection != .bottom) {
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
             mainViewState.editedDraft = EditedDraft.new()
         }
@@ -224,6 +180,9 @@ struct ThreadListView: View {
             } else {
                 mainViewState.threadPath = []
             }
+        }
+        .onChange(of: multipleSelectionViewModel.isEnabled) { isEnabled in
+            scrollObserver.shouldObserve = !isEnabled
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             updateFetchingTask()
