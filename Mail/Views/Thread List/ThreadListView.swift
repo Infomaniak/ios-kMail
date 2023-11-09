@@ -43,15 +43,11 @@ struct ThreadListView: View {
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
     private var shouldDisplayEmptyView: Bool {
-        viewModel.folder.lastUpdate != nil && viewModel.isEmpty && !viewModel.isLoadingPage
+        viewModel.isEmpty && !viewModel.isLoadingPage
     }
 
     private var shouldDisplayNoNetworkView: Bool {
-        !networkMonitor.isConnected && viewModel.folder.lastUpdate == nil
-    }
-
-    private var shouldDisplayLoadMoreButton: Bool {
-        return !viewModel.folder.isHistoryComplete && viewModel.sections != nil && !viewModel.filterUnreadOn
+        !networkMonitor.isConnected && viewModel.sections == nil
     }
 
     init(mailboxManager: MailboxManager,
@@ -115,7 +111,7 @@ struct ThreadListView: View {
                         }
                     }
 
-                    LoadMoreButton(currentFolder: viewModel.folder, shouldDisplay: shouldDisplayLoadMoreButton)
+                    LoadMoreButton(currentFolder: viewModel.folder)
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }

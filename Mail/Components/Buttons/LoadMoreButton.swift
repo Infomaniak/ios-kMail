@@ -20,6 +20,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
 
 struct LoadMoreButton: View {
@@ -29,8 +30,11 @@ struct LoadMoreButton: View {
 
     @State private var isLoadingMore = false
 
-    let currentFolder: Folder
-    let shouldDisplay: Bool
+    @ObservedRealmObject var currentFolder: Folder
+
+    private var shouldDisplay: Bool {
+        return !currentFolder.isHistoryComplete && currentFolder.lastUpdate != nil
+    }
 
     var body: some View {
         Group {
