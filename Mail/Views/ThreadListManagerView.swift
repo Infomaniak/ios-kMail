@@ -39,7 +39,7 @@ struct ThreadListManagerView: View {
 
     var body: some View {
         ZStack {
-            if let selectedFolder = mainViewState.selectedFolder {
+            if let selectedFolder = mainViewState.selectedFolder?.freezeIfNeeded() {
                 if mainViewState.isShowingSearch {
                     SearchView(mailboxManager: mailboxManager, folder: selectedFolder)
                 } else {

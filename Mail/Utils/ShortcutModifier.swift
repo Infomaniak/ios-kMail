@@ -75,7 +75,7 @@ struct ShortcutModifier: ViewModifier {
             try await actionsManager.performAction(
                 target: messages,
                 action: .delete,
-                origin: .shortcut(originFolder: viewModel.folder.freezeIfNeeded())
+                origin: .shortcut(originFolder: viewModel.folder)
             )
         }
     }
@@ -90,7 +90,7 @@ struct ShortcutModifier: ViewModifier {
             try await actionsManager.performAction(
                 target: [message],
                 action: .reply,
-                origin: .shortcut(originFolder: viewModel.folder.freezeIfNeeded())
+                origin: .shortcut(originFolder: viewModel.folder)
             )
         }
     }

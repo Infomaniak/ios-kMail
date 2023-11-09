@@ -178,6 +178,7 @@ final class DateSection: Identifiable, Equatable {
         folder: Folder,
         isCompact: Bool
     ) {
+        assert(folder.isFrozen, "ThreadListViewModel.folder should always be frozen")
         self.mailboxManager = mailboxManager
         self.folder = folder
         self.isCompact = isCompact
@@ -194,7 +195,7 @@ final class DateSection: Identifiable, Equatable {
             isLoadingPage = true
         }
 
-        await mailboxManager.refreshFolderContent(folder.freezeIfNeeded())
+        await mailboxManager.refreshFolderContent(folder)
 
         withAnimation {
             isLoadingPage = false

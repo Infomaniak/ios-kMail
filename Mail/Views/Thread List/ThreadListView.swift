@@ -115,7 +115,7 @@ struct ThreadListView: View {
                         }
                     }
 
-                    LoadMoreButton(currentFolder: viewModel.folder.freezeIfNeeded(), shouldDisplay: shouldDisplayLoadMoreButton)
+                    LoadMoreButton(currentFolder: viewModel.folder, shouldDisplay: shouldDisplayLoadMoreButton)
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
