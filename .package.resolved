@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Alamofire/Alamofire",
       "state" : {
-        "revision" : "b2fa556e4e48cbf06cf8c63def138c98f4b811fa",
-        "version" : "5.8.0"
+        "revision" : "3dc6a42c7727c49bf26508e29b0a0b35f9c7e1ad",
+        "version" : "5.8.1"
       }
     },
     {
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ProxymanApp/atlantis",
       "state" : {
-        "revision" : "cfa72085bce2600b28e47fdbbbfa2d5b96f0392b",
-        "version" : "1.22.0"
+        "revision" : "131d757cf8e6e368ad338728379174f7cfff9326",
+        "version" : "1.23.0"
       }
     },
     {
@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack",
       "state" : {
-        "revision" : "67ec5818a757aba4d7c534e21a905d878d128dbf",
-        "version" : "3.8.1"
+        "revision" : "363ed23d19a931809ea834a7d722da830353806a",
+        "version" : "3.8.2"
       }
     },
     {
@@ -41,7 +41,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "477ba918bf1ccabaac83ad4e5923fe5356f517ea"
+        "revision" : "86fa4cda0d4c30509297afc4e7a10b1684d7d6fc"
       }
     },
     {
@@ -49,8 +49,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "0d452fd4ee3c12981c93dfb43baede8755b759ac",
-        "version" : "2.5.4"
+        "revision" : "0a6b23bc6c37d9c75033428ca07d0a2a6cf4e97b",
+        "version" : "2.5.5"
       }
     },
     {
@@ -76,8 +76,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-login",
       "state" : {
-        "revision" : "35190f66b67eb8a79cbacdbf54ee9a03ab61d7f7",
-        "version" : "4.0.0"
+        "revision" : "b9f5d87da453b52eec72fb1e0443f28209c6ac67",
+        "version" : "4.1.0"
       }
     },
     {
@@ -103,8 +103,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher",
       "state" : {
-        "revision" : "b6f62758f21a8c03cd64f4009c037cfa580a256e",
-        "version" : "7.9.1"
+        "revision" : "277f1ab2c6664b19b4a412e32b094b201e2d5757",
+        "version" : "7.10.0"
       }
     },
     {
@@ -175,8 +175,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "a3da8c91ee44c7610d4b1100bd3079ddca26ab84",
-        "version" : "10.43.1"
+        "revision" : "fd199ce07edb4db69e862f74151b95602aad3b43",
+        "version" : "10.44.0"
       }
     },
     {
@@ -184,8 +184,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "008325304ada69fa32aa7aeba967b65984f30569",
-        "version" : "8.14.2"
+        "revision" : "66e7c6921261acb1fd9461edbaf5899378711c56",
+        "version" : "8.15.1"
       }
     },
     {
@@ -264,8 +264,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "3ced72fccb284235c266c1e8a32f1bf93129fc74",
-        "version" : "1.1.0"
+        "revision" : "9e1cc02a65b22e09a8251261cccbccce02731fc5",
+        "version" : "1.1.1"
       }
     },
     {
