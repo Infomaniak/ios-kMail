@@ -24,7 +24,7 @@ extension Whitelist {
         do {
             let customWhitelist = Whitelist.none()
             try customWhitelist
-                .addTags("base", "meta", "style", "title")
+                .addTags("base", "meta", "style", "title", "wbr")
                 .addAttributes("style", "media", "type")
                 .addAttributes("meta", "charset", "content", "http-equiv", "name")
                 .addAttributes("base", "href", "target")

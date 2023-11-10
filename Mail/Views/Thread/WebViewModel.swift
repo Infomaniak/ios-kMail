@@ -99,6 +99,7 @@ final class WebViewModel: NSObject, ObservableObject {
 
             try updateHeadContent(of: safeDocument)
             try wrapBody(document: safeDocument, inID: Constants.divWrapperId)
+            try breakLongWords(of: safeDocument)
 
             let finalHtml = try safeDocument.outerHtml()
 
@@ -145,6 +146,7 @@ final class WebViewModel: NSObject, ObservableObject {
         }
     }
 
+    /// Adds a viewport if necessary or change the value of the current one to `Constants.viewportContent`
     private func updateHeadContent(of document: Document) throws {
         let head = document.head()
         if let viewport = try head?.select("meta[name=\"viewport\"]"), !viewport.isEmpty() {
@@ -155,6 +157,7 @@ final class WebViewModel: NSObject, ObservableObject {
         try head?.append(style)
     }
 
+    /// Wraps the message body in a div
     private func wrapBody(document: Document, inID id: String) throws {
         if let bodyContent = document.body()?.childNodesCopy() {
             document.body()?.empty()
@@ -163,6 +166,62 @@ final class WebViewModel: NSObject, ObservableObject {
                 .attr("id", id)
                 .insertChildren(-1, bodyContent)
         }
+    }
+
+    /// Adds breakpoints if the message contains words that are too long
+    /// Sometimes the WebView needs indication to break certain content like URLs
+    private func breakLongWords(of document: Document) throws {
+        guard let contentDiv = try document.getElementById(Constants.divWrapperId) else { return }
+        breakLongWords(of: contentDiv)
+    }
+
+    /// Walks through nodes and adds breakpoints to TextNode if necessary
+    private func breakLongWords(of node: Node) {
+        let childNodes = node.getChildNodes()
+
+        for child in childNodes {
+            guard let textChild = child as? TextNode else {
+                breakLongWords(of: child)
+                continue
+            }
+
+            let text = textChild.text()
+            guard text.count > Constants.breakStringsAtLength else { continue }
+            textChild.text(insertZeroWidthSpaces(in: text))
+        }
+    }
+
+    /// Adds a zero-width space (`Character.zeroWidthSpace`) to each word that is longer than 30 characters or to certain
+    /// specific characters (`Character.isBreakable`)
+    private func insertZeroWidthSpaces(in text: String) -> String {
+        var newText = ""
+        var counter = 0
+        var previousCharIsBreakable = false
+        for letter in text {
+            counter += 1
+
+            guard counter < Constants.breakStringsAtLength else {
+                newText.append("\(letter)\(Character.zeroWidthSpace)")
+                counter = 0
+                continue
+            }
+
+            if letter.representsBreakPoint {
+                counter = 0
+            } else if letter.isBreakable {
+                previousCharIsBreakable = true
+            } else {
+                if previousCharIsBreakable {
+                    newText.append(Character.zeroWidthSpace)
+                    previousCharIsBreakable = false
+                    counter = 0
+                }
+            }
+
+            newText.append(letter)
+        }
+
+        return newText
     }
 }
 

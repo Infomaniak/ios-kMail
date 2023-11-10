@@ -77,6 +77,8 @@ public enum Constants {
         return "const MESSAGE_SELECTOR = \"#\(divWrapperId)\"; \(mungeScript)"
     }()
 
+    public static let breakStringsAtLength = 30
+
     /// List of feature flags enabled by default (before getting API data)
     public static let defaultFeatureFlags: [FeatureFlag] = []
 
