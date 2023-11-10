@@ -118,52 +118,6 @@ final class WebViewModel: NSObject, ObservableObject {
         }
     }
 
-    private func breakLongWords(of document: Document) throws {
-        guard let divNode = try document.getElementById(Constants.divWrapperId) else { return }
-        breakLongWords(of: divNode)
-    }
-
-    private func breakLongWords(of node: Node) {
-        let childNodes = node.getChildNodes()
-
-        for child in childNodes {
-            if let textChild = child as? TextNode {
-                let text = textChild.text()
-                guard text.count > Constants.breakStringsAtLength else { return }
-                textChild.text(insertZeroWidthSpaces(in: text))
-            } else {
-                breakLongWords(of: child)
-            }
-        }
-    }
-
-    private func insertZeroWidthSpaces(in text: String) -> String {
-        var newText = ""
-        var counter = 0
-        var isInSequence = false
-        for letter in text {
-            counter += 1
-            guard counter < Constants.breakStringsAtLength else {
-                newText.append("\(letter)\(Character.zeroWidthSpace)")
-                counter = 0
-                continue
-            }
-
-            if letter.isWhitespace {
-                counter = 0
-            } else if letter.isBreakable {
-                isInSequence = true
-            } else if isInSequence {
-                newText.append(Character.zeroWidthSpace)
-                isInSequence = false
-            }
-
-            newText.append(letter)
-        }
-
-        return newText
-    }
-
     private func setUpWebViewConfiguration() {
         webView.configuration.dataDetectorTypes = .all
         webView.configuration.defaultWebpagePreferences.allowsContentJavaScript = false
@@ -192,6 +146,7 @@ final class WebViewModel: NSObject, ObservableObject {
         }
     }
 
+    /// Adds a viewport if necessary or change the value of the current one to `Constants.viewportContent`
     private func updateHeadContent(of document: Document) throws {
         let head = document.head()
         if let viewport = try head?.select("meta[name=\"viewport\"]"), !viewport.isEmpty() {
@@ -202,6 +157,7 @@ final class WebViewModel: NSObject, ObservableObject {
         try head?.append(style)
     }
 
+    /// Wraps the message body in a div
     private func wrapBody(document: Document, inID id: String) throws {
         if let bodyContent = document.body()?.childNodesCopy() {
             document.body()?.empty()
@@ -210,6 +166,57 @@ final class WebViewModel: NSObject, ObservableObject {
                 .attr("id", id)
                 .insertChildren(-1, bodyContent)
         }
+    }
+
+    /// Adds breakpoints if the message contains words that are too long
+    /// Sometimes the WebView needs indication to break certain content like URLs
+    private func breakLongWords(of document: Document) throws {
+        guard let contentDiv = try document.getElementById(Constants.divWrapperId) else { return }
+        breakLongWords(of: contentDiv)
+    }
+
+    /// Walks through nodes and adds breakpoints to TextNode if necessary
+    private func breakLongWords(of node: Node) {
+        let childNodes = node.getChildNodes()
+
+        for child in childNodes {
+            if let textChild = child as? TextNode {
+                let text = textChild.text()
+                guard text.count > Constants.breakStringsAtLength else { return }
+                textChild.text(insertZeroWidthSpaces(in: text))
+            } else {
+                breakLongWords(of: child)
+            }
+        }
+    }
+
+    /// Adds a zero-width space (`Character.zeroWidthSpace`) to each word that is longer than 30 characters or to certain
+    /// specific characters (`Character.isBreakable`)
+    private func insertZeroWidthSpaces(in text: String) -> String {
+        var newText = ""
+        var counter = 0
+        var isInSequence = false
+        for letter in text {
+            counter += 1
+            guard counter < Constants.breakStringsAtLength else {
+                newText.append("\(letter)\(Character.zeroWidthSpace)")
+                counter = 0
+                continue
+            }
+
+            if letter.isWhitespace {
+                counter = 0
+            } else if letter.isBreakable {
+                isInSequence = true
+            } else if isInSequence {
+                newText.append(Character.zeroWidthSpace)
+                isInSequence = false
+            }
+
+            newText.append(letter)
+        }
+
+        return newText
     }
 }
 
