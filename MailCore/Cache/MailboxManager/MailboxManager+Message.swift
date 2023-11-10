@@ -455,6 +455,15 @@ public extension MailboxManager {
         let existingThreads = Array(realm.objects(Thread.self)
             .where { $0.messageIds.containsAny(in: message.linkedUids) })
 
+        // Some Messages don't have references to all previous Messages of the Thread (ex: these from the iOS Mail app).
+        // Because we are missing the links between Messages, it will create multiple Threads for the same Folder.
+        // Hence, we need to find these duplicates.
+        let isThereDuplicatedThreads = isThereDuplicatedThreads(
+            realm: realm,
+            messageIds: message.linkedUids,
+            threadCount: existingThreads.count
+        )
+
         if let newThread = createNewThreadIfRequired(
             for: message,
             folder: folder,
@@ -469,13 +478,49 @@ public extension MailboxManager {
         for thread in existingThreads {
             for existingMessage in allExistingMessages {
                 if !thread.messages.map(\.uid).contains(existingMessage.uid) {
-                    thread.addMessageIfNeeded(newMessage: message.fresh(using: realm) ?? message)
+                    thread.addMessageIfNeeded(newMessage: existingMessage.fresh(using: realm) ?? existingMessage)
                 }
             }
 
             threadsToUpdate.insert(thread)
         }
+
+        // Now that all other existing Threads are updated, we need to remove the duplicated Threads.
+        if isThereDuplicatedThreads {
+            removeDuplicatedThreads(messageIds: message.linkedUids, threadsToUpdate: &threadsToUpdate, using: realm)
+        }
+
         return threadsToUpdate
+    }
+
+    private func isThereDuplicatedThreads(realm: Realm, messageIds: MutableSet<String>, threadCount: Int) -> Bool {
+        let foldersCount = realm.objects(Thread.self).where { $0.messageIds.containsAny(in: messageIds) }
+            .distinct(by: [\Thread.folderId]).count
+        return foldersCount != threadCount
+    }
+
+    private func removeDuplicatedThreads(
+        messageIds: MutableSet<String>,
+        threadsToUpdate: inout Set<Thread>,
+        using realm: Realm
+    ) {
+        // Create a map with all duplicated Threads of the same Thread in a list.
+        var map = [String: [Thread]]()
+        let threads = realm.objects(Thread.self).where { $0.messageIds.containsAny(in: messageIds) }
+        for thread in threads {
+            if map[thread.folderId] == nil {
+                map.updateValue([Thread](), forKey: thread.folderId)
+            }
+            map[thread.folderId]?.append(thread)
+        }
+
+        for value in map.values {
+            for (index, thread) in value.enumerated() where index > 0 {
+                // We want to keep only 1 duplicated Thread, so we skip the 1st one. (He's the chosen one!)
+                threadsToUpdate.remove(thread)
+                realm.delete(thread)
+            }
+        }
     }
 
     private func createSingleMessageThread(message: Message, folder: Folder) -> Thread {
@@ -498,19 +543,15 @@ public extension MailboxManager {
         let thread = message.toThread().detached()
         folder.threads.insert(thread)
 
-        if let refThread = existingThreads.first(where: { $0.folder?.role != .draft && $0.folder?.role != .trash }) {
-            addPreviousMessagesTo(newThread: thread, from: refThread)
-        } else {
-            for existingThread in existingThreads {
-                addPreviousMessagesTo(newThread: thread, from: existingThread)
-            }
-        }
+        let refMessages = existingThreads.flatMap(\.messages).toSet()
+        addPreviousMessagesTo(newThread: thread, from: refMessages)
+
         return thread
     }
 
-    private func addPreviousMessagesTo(newThread: Thread, from existingThread: Thread) {
-        newThread.messageIds.insert(objectsIn: existingThread.messageIds)
-        for message in existingThread.messages {
+    private func addPreviousMessagesTo(newThread: Thread, from refMessages: Set<Message>) {
+        for message in refMessages {
+            newThread.messageIds.insert(objectsIn: message.linkedUids)
             newThread.addMessageIfNeeded(newMessage: message)
         }
     }

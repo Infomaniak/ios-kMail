@@ -441,6 +441,7 @@ public final class Message: Object, Decodable, Identifiable {
             forwarded: forwarded
         )
         thread.messageIds = linkedUids
+        thread.folderId = folderId
         return thread
     }
 }

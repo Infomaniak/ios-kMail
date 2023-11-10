@@ -33,6 +33,12 @@ public extension Array where Element: RealmCollectionValue {
     }
 }
 
+public extension Array where Element: Hashable {
+    func toSet() -> Set<Element> {
+        return Set(self)
+    }
+}
+
 public extension List {
     func toArray() -> [Element] {
         return Array(self)
