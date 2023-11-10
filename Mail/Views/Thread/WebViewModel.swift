@@ -180,13 +180,14 @@ final class WebViewModel: NSObject, ObservableObject {
         let childNodes = node.getChildNodes()
 
         for child in childNodes {
-            if let textChild = child as? TextNode {
-                let text = textChild.text()
-                guard text.count > Constants.breakStringsAtLength else { return }
-                textChild.text(insertZeroWidthSpaces(in: text))
-            } else {
+            guard let textChild = child as? TextNode else {
                 breakLongWords(of: child)
+                continue
             }
+
+            let text = textChild.text()
+            guard text.count > Constants.breakStringsAtLength else { continue }
+            textChild.text(insertZeroWidthSpaces(in: text))
         }
     }
 
@@ -195,22 +196,26 @@ final class WebViewModel: NSObject, ObservableObject {
     private func insertZeroWidthSpaces(in text: String) -> String {
         var newText = ""
         var counter = 0
-        var isInSequence = false
+        var previousCharIsBreakable = false
         for letter in text {
             counter += 1
+
             guard counter < Constants.breakStringsAtLength else {
                 newText.append("\(letter)\(Character.zeroWidthSpace)")
                 counter = 0
                 continue
             }
 
-            if letter.isWhitespace {
+            if letter.representsBreakPoint {
                 counter = 0
             } else if letter.isBreakable {
-                isInSequence = true
-            } else if isInSequence {
-                newText.append(Character.zeroWidthSpace)
-                isInSequence = false
+                previousCharIsBreakable = true
+            } else {
+                if previousCharIsBreakable {
+                    newText.append(Character.zeroWidthSpace)
+                    previousCharIsBreakable = false
+                    counter = 0
+                }
             }
 
             newText.append(letter)
