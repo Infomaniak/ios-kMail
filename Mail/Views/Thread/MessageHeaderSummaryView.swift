@@ -26,7 +26,7 @@ import SwiftUI
 
 struct MessageHeaderSummaryView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var navigationState: NavigationState
+    @EnvironmentObject private var mainViewState: MainViewState
 
     @ObservedRealmObject var message: Message
 
@@ -127,7 +127,7 @@ struct MessageHeaderSummaryView: View {
                         if message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
                             replyOrReplyAllMessage = message
                         } else {
-                            navigationState.editedDraft = EditedDraft.replying(
+                            mainViewState.editedDraft = EditedDraft.replying(
                                 reply: MessageReply(message: message, replyMode: .reply),
                                 currentMailboxEmail: mailboxManager.mailbox.email
                             )

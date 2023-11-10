@@ -28,8 +28,7 @@ struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var userActivityController: UserActivityController
 
-    @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var navigationState: NavigationState
+    @EnvironmentObject private var mainViewState: MainViewState
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -44,15 +43,11 @@ struct ThreadListView: View {
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
     private var shouldDisplayEmptyView: Bool {
-        viewModel.folder.lastUpdate != nil && viewModel.isEmpty && !viewModel.isLoadingPage
+        viewModel.isEmpty && !viewModel.isLoadingPage
     }
 
     private var shouldDisplayNoNetworkView: Bool {
-        !networkMonitor.isConnected && viewModel.folder.lastUpdate == nil
-    }
-
-    private var shouldDisplayLoadMoreButton: Bool {
-        return !viewModel.folder.isHistoryComplete && viewModel.sections != nil && !viewModel.filterUnreadOn
+        !networkMonitor.isConnected && viewModel.sections == nil
     }
 
     init(mailboxManager: MailboxManager,
@@ -116,7 +111,7 @@ struct ThreadListView: View {
                         }
                     }
 
-                    LoadMoreButton(currentFolder: viewModel.folder.freezeIfNeeded(), shouldDisplay: shouldDisplayLoadMoreButton)
+                    LoadMoreButton(currentFolder: viewModel.folder)
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
@@ -165,7 +160,7 @@ struct ThreadListView: View {
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage) {
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
-            navigationState.editedDraft = EditedDraft.new()
+            mainViewState.editedDraft = EditedDraft.new()
         }
         .shortcutModifier(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .onAppear {
@@ -174,17 +169,13 @@ struct ThreadListView: View {
                 viewModel.selectedThread = nil
             }
             userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox,
-                                                      folder: splitViewManager.selectedFolder)
-        }
-        .onChange(of: splitViewManager.selectedFolder) { newFolder in
-            changeFolder(newFolder: newFolder)
-            userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox, folder: newFolder)
+                                                      folder: mainViewState.selectedFolder)
         }
         .onChange(of: viewModel.selectedThread) { newThread in
             if let newThread {
-                navigationState.threadPath = [newThread]
+                mainViewState.threadPath = [newThread]
             } else {
-                navigationState.threadPath = []
+                mainViewState.threadPath = []
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
@@ -202,29 +193,10 @@ struct ThreadListView: View {
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Main"])
     }
 
-    private func changeFolder(newFolder: Folder?) {
-        guard let folder = newFolder else { return }
-
-        viewModel.isLoadingPage = false
-
-        Task {
-            await viewModel.mailboxManager.cancelRefresh()
-
-            fetchingTask?.cancel()
-            _ = await fetchingTask?.result
-            fetchingTask = nil
-            updateFetchingTask(with: folder)
-        }
-    }
-
-    private func updateFetchingTask(with folder: Folder? = nil) {
+    private func updateFetchingTask() {
         guard fetchingTask == nil else { return }
         fetchingTask = Task {
-            if let folder {
-                await viewModel.updateThreads(with: folder)
-            } else {
-                await viewModel.fetchThreads()
-            }
+            await viewModel.fetchThreads()
             fetchingTask = nil
         }
     }

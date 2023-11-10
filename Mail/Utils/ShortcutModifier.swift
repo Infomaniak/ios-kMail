@@ -25,7 +25,7 @@ import SwiftUI
 
 struct ShortcutModifier: ViewModifier {
     @EnvironmentObject private var actionsManager: ActionsManager
-    @EnvironmentObject private var navigationState: NavigationState
+    @EnvironmentObject private var mainViewState: MainViewState
 
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var platformDetector: PlatformDetectable
@@ -75,7 +75,7 @@ struct ShortcutModifier: ViewModifier {
             try await actionsManager.performAction(
                 target: messages,
                 action: .delete,
-                origin: .shortcut(originFolder: viewModel.folder.freezeIfNeeded())
+                origin: .shortcut(originFolder: viewModel.folder)
             )
         }
     }
@@ -90,7 +90,7 @@ struct ShortcutModifier: ViewModifier {
             try await actionsManager.performAction(
                 target: [message],
                 action: .reply,
-                origin: .shortcut(originFolder: viewModel.folder.freezeIfNeeded())
+                origin: .shortcut(originFolder: viewModel.folder)
             )
         }
     }
@@ -98,7 +98,7 @@ struct ShortcutModifier: ViewModifier {
     private func shortcutNewMessage() {
         matomo.track(eventWithCategory: .shortcutAction, name: "newMessage")
 
-        navigationState.editedDraft = EditedDraft.new()
+        mainViewState.editedDraft = EditedDraft.new()
     }
 
     private func shortcutRefresh() {

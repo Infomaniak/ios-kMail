@@ -120,7 +120,7 @@ struct ThreadListToolbar: ViewModifier {
                             ) {
                                 let allMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
                                 multipleSelectionViewModel.isEnabled = false
-                                let originFolder = viewModel.folder.freezeIfNeeded()
+                                let originFolder = viewModel.folder
                                 Task {
                                     matomo.trackBulkEvent(
                                         eventWithCategory: .threadActions,

@@ -32,9 +32,6 @@ import VersionChecker
 public class SplitViewManager: ObservableObject {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
-    @Published var showSearch = false
-    @Published var showReviewAlert = false
-    @Published var selectedFolder: Folder?
     var splitViewController: UISplitViewController?
 
     func adaptToProminentThreadView() {
@@ -54,12 +51,12 @@ struct SplitView: View {
     @Environment(\.isCompactWindow) private var isCompactWindow
     @Environment(\.scenePhase) private var scenePhase
 
-    @EnvironmentObject private var navigationState: NavigationState
+    @EnvironmentObject private var mainViewState: MainViewState
 
     @Weak private var splitViewController: UISplitViewController?
 
     @StateObject private var navigationDrawerController = NavigationDrawerState()
-    @StateObject private var splitViewManager: SplitViewManager
+    @StateObject private var splitViewManager = SplitViewManager()
 
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var orientationManager: OrientationManageable
@@ -74,16 +71,13 @@ struct SplitView: View {
     let mailboxManager: MailboxManager
     init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
-        let splitViewManager = SplitViewManager()
-        splitViewManager.selectedFolder = mailboxManager.getFolder(with: .inbox)
-        _splitViewManager = StateObject(wrappedValue: splitViewManager)
     }
 
     var body: some View {
         Group {
             if isCompactWindow {
                 ZStack {
-                    NBNavigationStack(path: $navigationState.threadPath) {
+                    NBNavigationStack(path: $mainViewState.threadPath) {
                         ThreadListManagerView()
                             .accessibilityHidden(navigationDrawerController.isOpen)
                             .nbNavigationDestination(for: Thread.self) { thread in
@@ -102,10 +96,10 @@ struct SplitView: View {
 
                     ThreadListManagerView()
 
-                    if let thread = navigationState.threadPath.last {
+                    if let thread = mainViewState.threadPath.last {
                         ThreadView(thread: thread)
                     } else {
-                        EmptyStateView.emptyThread(from: splitViewManager.selectedFolder)
+                        EmptyStateView.emptyThread(from: mainViewState.selectedFolder)
                     }
                 }
             }
@@ -128,7 +122,7 @@ struct SplitView: View {
         .sheet(isPresented: $isShowingSyncProfile) {
             SyncProfileNavigationView()
         }
-        .sheet(item: $navigationState.editedDraft) { editedDraft in
+        .sheet(item: $mainViewState.editedDraft) { editedDraft in
             ComposeMessageView(editedDraft: editedDraft, mailboxManager: mailboxManager)
         }
         .onChange(of: scenePhase) { newScenePhase in
@@ -160,8 +154,8 @@ struct SplitView: View {
             await fetchFolders()
 
             let newInbox = getInbox()
-            if newInbox != splitViewManager.selectedFolder {
-                splitViewManager.selectedFolder = newInbox
+            if newInbox != mainViewState.selectedFolder {
+                mainViewState.selectedFolder = newInbox
             }
         }
         .onRotate { orientation in
@@ -174,13 +168,13 @@ struct SplitView: View {
             splitViewManager.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)
         }
-        .customAlert(isPresented: $splitViewManager.showReviewAlert) {
+        .customAlert(isPresented: $mainViewState.isShowingReviewAlert) {
             AskForReviewView()
         }
         .environmentObject(splitViewManager)
         .environmentObject(navigationDrawerController)
         .environmentObject(mailboxManager)
-        .environmentObject(ActionsManager(mailboxManager: mailboxManager, navigationState: navigationState))
+        .environmentObject(ActionsManager(mailboxManager: mailboxManager, mainViewState: mainViewState))
         .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
     }
 
@@ -190,12 +184,12 @@ struct SplitView: View {
             splitViewController?.preferredDisplayMode = .twoBesideSecondary
         } else if orientation.isLandscape {
             splitViewController?.preferredSplitBehavior = .displace
-            splitViewController?.preferredDisplayMode = splitViewManager.selectedFolder == nil
+            splitViewController?.preferredDisplayMode = mainViewState.selectedFolder == nil
                 ? .twoDisplaceSecondary
                 : .oneBesideSecondary
         } else if orientation.isPortrait {
             splitViewController?.preferredSplitBehavior = .overlay
-            splitViewController?.preferredDisplayMode = splitViewManager.selectedFolder == nil
+            splitViewController?.preferredDisplayMode = mainViewState.selectedFolder == nil
                 ? .twoOverSecondary
                 : .oneOverSecondary
         } else {
@@ -224,7 +218,7 @@ struct SplitView: View {
         guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return }
 
         if Constants.isMailTo(url) {
-            navigationState.editedDraft = EditedDraft.mailTo(urlComponents: urlComponents)
+            mainViewState.editedDraft = EditedDraft.mailTo(urlComponents: urlComponents)
         }
     }
 
@@ -259,13 +253,13 @@ struct SplitView: View {
                 // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in
                 // inbox
                 if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
-                    navigationState.threadPath = [tappedNotificationThread]
+                    mainViewState.threadPath = [tappedNotificationThread]
                 } else {
                     snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
                 }
             } else if notification.name == .onUserTappedReplyToNotification {
                 if let tappedNotificationMessage {
-                    navigationState.editedDraft = EditedDraft.replying(
+                    mainViewState.editedDraft = EditedDraft.replying(
                         reply: MessageReply(message: tappedNotificationMessage, replyMode: .reply),
                         currentMailboxEmail: mailboxManager.mailbox.email
                     )

@@ -86,11 +86,11 @@ public class ActionsManager: ObservableObject {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     private let mailboxManager: MailboxManager
-    private let navigationState: NavigationState?
+    private let mainViewState: MainViewState?
 
-    public init(mailboxManager: MailboxManager, navigationState: NavigationState?) {
+    public init(mailboxManager: MailboxManager, mainViewState: MainViewState?) {
         self.mailboxManager = mailboxManager
-        self.navigationState = navigationState
+        self.mainViewState = mainViewState
     }
 
     public func performAction(target messages: [Message], action: Action, origin: ActionOrigin) async throws {
@@ -230,7 +230,7 @@ public class ActionsManager: ObservableObject {
         }
 
         Task { @MainActor in
-            navigationState?.editedDraft = EditedDraft.replying(
+            mainViewState?.editedDraft = EditedDraft.replying(
                 reply: MessageReply(message: replyingMessage, replyMode: mode),
                 currentMailboxEmail: mailboxManager.mailbox.email
             )

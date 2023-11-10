@@ -16,21 +16,23 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
-import MailResources
-import SwiftUI
+import Foundation
 
-struct SearchButton: View {
-    @EnvironmentObject private var mainViewState: MainViewState
+public class MainViewState: ObservableObject {
+    @Published public var editedDraft: EditedDraft?
+    @Published public var messagesToMove: [Message]?
+    @Published public var isShowingSearch = false
+    @Published public var isShowingReviewAlert = false
 
-    var body: some View {
-        Button {
-            mainViewState.isShowingSearch = true
-        } label: {
-            MailResourcesAsset.search.swiftUIImage
-                .resizable()
-                .scaledToFit()
-                .frame(width: UIConstants.navbarIconSize, height: UIConstants.navbarIconSize)
-        }
+    /// Represents the state of navigation
+    ///
+    /// The selected thread is the last in collection, by convention.
+    @Published public var threadPath = [Thread]()
+    @Published public var selectedFolder: Folder?
+
+    let mailboxManager: MailboxManager
+    public init(mailboxManager: MailboxManager) {
+        self.mailboxManager = mailboxManager
+        selectedFolder = mailboxManager.getFolder(with: .inbox)
     }
 }
