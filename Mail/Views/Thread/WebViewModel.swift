@@ -100,6 +100,8 @@ final class WebViewModel: NSObject, ObservableObject {
             try updateHeadContent(of: safeDocument)
             try wrapBody(document: safeDocument, inID: Constants.divWrapperId)
 
+            try breakLongWords(of: safeDocument)
+
             let finalHtml = try safeDocument.outerHtml()
 
             try await contentBlocker.setRemoteContentBlocked(blockRemoteContent)
@@ -114,6 +116,27 @@ final class WebViewModel: NSObject, ObservableObject {
         } catch {
             DDLogError("An error occurred while parsing body \(error)")
             return .errorParsingBody
+        }
+    }
+
+    private func breakLongWords(of document: Document) throws {
+        guard let divNode = try document.getElementById(Constants.divWrapperId) else { return }
+        breakLongWords(of: divNode)
+    }
+
+    private func breakLongWords(of node: Node) {
+        let childNodes = node.getChildNodes()
+
+        for child in childNodes {
+            if let textChild = child as? TextNode {
+                guard !textChild.isBlank() else { continue }
+
+                let text = textChild.text()
+                let res = text.split(separator: "/").joined(separator: "\u{200B}")
+                textChild.text(res)
+            } else {
+                breakLongWords(of: child)
+            }
         }
     }
 
