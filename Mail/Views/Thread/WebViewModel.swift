@@ -99,7 +99,6 @@ final class WebViewModel: NSObject, ObservableObject {
 
             try updateHeadContent(of: safeDocument)
             try wrapBody(document: safeDocument, inID: Constants.divWrapperId)
-
             try breakLongWords(of: safeDocument)
 
             let finalHtml = try safeDocument.outerHtml()
@@ -129,15 +128,40 @@ final class WebViewModel: NSObject, ObservableObject {
 
         for child in childNodes {
             if let textChild = child as? TextNode {
-                guard !textChild.isBlank() else { continue }
-
                 let text = textChild.text()
-                let res = text.split(separator: "/").joined(separator: "\u{200B}")
-                textChild.text(res)
+                guard text.count > Constants.breakStringsAtLength else { return }
+                textChild.text(insertZeroWidthSpaces(in: text))
             } else {
                 breakLongWords(of: child)
             }
         }
+    }
+
+    private func insertZeroWidthSpaces(in text: String) -> String {
+        var newText = ""
+        var counter = 0
+        var isInSequence = false
+        for letter in text {
+            counter += 1
+            guard counter < Constants.breakStringsAtLength else {
+                newText.append("\(letter)\(Character.zeroWidthSpace)")
+                counter = 0
+                continue
+            }
+
+            if letter.isWhitespace {
+                counter = 0
+            } else if letter.isBreakable {
+                isInSequence = true
+            } else if isInSequence {
+                newText.append(Character.zeroWidthSpace)
+                isInSequence = false
+            }
+
+            newText.append(letter)
+        }
+
+        return newText
     }
 
     private func setUpWebViewConfiguration() {

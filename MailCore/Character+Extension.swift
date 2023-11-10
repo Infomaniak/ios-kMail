@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -18,3 +17,15 @@
  */
 
 import Foundation
+
+public extension Character {
+    static let zeroWidthSpace = "\u{200B}"
+}
+
+public extension Character {
+    private static let breakables = Set<Character>(["/", "~", ".", "-", "_", "?", ",", "#", "%", ":", "&", "="])
+
+    var isBreakable: Bool {
+        Self.breakables.contains(self)
+    }
+}
