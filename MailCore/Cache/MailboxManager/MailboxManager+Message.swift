@@ -505,14 +505,8 @@ public extension MailboxManager {
         using realm: Realm
     ) {
         // Create a map with all duplicated Threads of the same Thread in a list.
-        var map = [String: [Thread]]()
         let threads = realm.objects(Thread.self).where { $0.messageIds.containsAny(in: messageIds) }
-        for thread in threads {
-            if map[thread.folderId] == nil {
-                map.updateValue([Thread](), forKey: thread.folderId)
-            }
-            map[thread.folderId]?.append(thread)
-        }
+        let map: [String: [Thread]] = .init(grouping: threads) { $0.folderId }
 
         for value in map.values {
             for (index, thread) in value.enumerated() where index > 0 {
