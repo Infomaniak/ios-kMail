@@ -187,12 +187,11 @@ final class WebViewModel: NSObject, ObservableObject {
                 let text = textNode.text()
                 guard text.count > Constants.breakStringsAtLength else { continue }
 
-                let stringsWithZWSP = insertZeroWidthSpaces(in: text)
-                let parsedNodes = try Parser.parseFragment(stringsWithZWSP, child, child.getBaseUri())
+                let nodesWithWBR = splitTextNodeWithWBR(in: text)
 
                 let siblingIndex = textNode.siblingIndex
                 try textNode.remove()
-                try child.insertChildren(siblingIndex, parsedNodes)
+                try child.insertChildren(siblingIndex, nodesWithWBR)
             }
 
             try breakLongWords(of: child)
@@ -201,15 +200,17 @@ final class WebViewModel: NSObject, ObservableObject {
 
     /// Adds a zero-width space, or ZWSP  (`Constants.zeroWidthSpaceHTML`), to each word that is longer than 30 characters or to
     /// certain specific characters (`Character.isBreakable`)
-    private func insertZeroWidthSpaces(in text: String) -> String {
-        var newText = ""
+    private func splitTextNodeWithWBR(in text: String) -> [Node] {
+        var nodesArray = [Node]()
+        var buffer = ""
         var counter = 0
         var previousCharIsBreakable = false
         for letter in text {
             counter += 1
 
             guard counter < Constants.breakStringsAtLength else {
-                newText.append("\(letter)\(Constants.zeroWidthSpaceHTML)")
+                buffer.append(letter)
+                insertBreak(with: &buffer, in: &nodesArray)
                 counter = 0
                 continue
             }
@@ -220,16 +221,27 @@ final class WebViewModel: NSObject, ObservableObject {
                 previousCharIsBreakable = true
             } else {
                 if previousCharIsBreakable {
-                    newText.append(Constants.zeroWidthSpaceHTML)
+                    insertBreak(with: &buffer, in: &nodesArray)
                     previousCharIsBreakable = false
                     counter = 0
                 }
             }
 
-            newText.append(letter)
+            buffer.append(letter)
         }
+        insertTextNode(with: buffer, in: &nodesArray)
 
-        return newText
+        return nodesArray
+    }
+
+    private func insertTextNode(with text: String, in nodes: inout [Node]) {
+        nodes.append(TextNode(text, nil))
+    }
+
+    private func insertBreak(with text: inout String, in nodes: inout [Node]) {
+        insertTextNode(with: text, in: &nodes)
+        nodes.append(Element.wbr.copy(parent: nil))
+        text = ""
     }
 }
 
