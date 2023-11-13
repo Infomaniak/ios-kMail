@@ -78,6 +78,7 @@ public enum Constants {
     }()
 
     public static let breakStringsAtLength = 30
+    public static let zeroWidthSpaceHTML = "<wbr/>"
 
     /// List of feature flags enabled by default (before getting API data)
     public static let defaultFeatureFlags: [FeatureFlag] = []

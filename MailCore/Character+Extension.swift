@@ -19,16 +19,7 @@
 import Foundation
 
 public extension Character {
-    static let zeroWidthSpace: Character = "\u{200B}"
-}
-
-public extension Character {
     private static let breakables = Set<Character>(["/", "~", ".", "-", "_", "?", ",", "#", "%", ":", "&", "="])
-
-    /// A Boolean value indicating whether the character represents a breakpoint in a string
-    var representsBreakPoint: Bool {
-        return isWhitespace || self == .zeroWidthSpace
-    }
 
     /// A Boolean value indicating whether we can add a zero width space after this character
     var isBreakable: Bool {

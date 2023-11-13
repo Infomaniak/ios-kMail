@@ -168,31 +168,39 @@ final class WebViewModel: NSObject, ObservableObject {
         }
     }
 
-    /// Adds breakpoints if the message contains words that are too long
-    /// Sometimes the WebView needs indication to break certain content like URLs
+    /// Adds breakpoints if the body contains text with words that are too long
+    /// Sometimes the WebView needs indication to break certain content like URLs, so the algorithm
+    /// inserts a `<wbr>` Element in places where a character string can be broken
     private func breakLongWords(of document: Document) throws {
-        guard let contentDiv = try document.getElementById(Constants.divWrapperId) else { return }
-        breakLongWords(of: contentDiv)
+        guard let contentDiv = document.body() else { return }
+        try breakLongWords(of: contentDiv)
     }
 
-    /// Walks through nodes and adds breakpoints to TextNode if necessary
-    private func breakLongWords(of node: Node) {
-        let childNodes = node.getChildNodes()
+    /// Walks through Element nodes and iterates over its TextNodes, then, if the text requires breakpoints
+    /// the TextNode is replaced by several TextNodes separated by `<wbr>` Elements
+    private func breakLongWords(of element: Element) throws {
+        let children = element.children()
 
-        for child in childNodes {
-            guard let textChild = child as? TextNode else {
-                breakLongWords(of: child)
-                continue
+        for child in children {
+            let textNodes = child.textNodes()
+            for textNode in textNodes {
+                let text = textNode.text()
+                guard text.count > Constants.breakStringsAtLength else { continue }
+
+                let stringsWithZWSP = insertZeroWidthSpaces(in: text)
+                let parsedNodes = try Parser.parseFragment(stringsWithZWSP, child, child.getBaseUri())
+
+                let siblingIndex = textNode.siblingIndex
+                try textNode.remove()
+                try child.insertChildren(siblingIndex, parsedNodes)
             }
 
-            let text = textChild.text()
-            guard text.count > Constants.breakStringsAtLength else { continue }
-            textChild.text(insertZeroWidthSpaces(in: text))
+            try breakLongWords(of: child)
         }
     }
 
-    /// Adds a zero-width space (`Character.zeroWidthSpace`) to each word that is longer than 30 characters or to certain
-    /// specific characters (`Character.isBreakable`)
+    /// Adds a zero-width space, or ZWSP  (`Constants.zeroWidthSpaceHTML`), to each word that is longer than 30 characters or to
+    /// certain specific characters (`Character.isBreakable`)
     private func insertZeroWidthSpaces(in text: String) -> String {
         var newText = ""
         var counter = 0
@@ -201,18 +209,18 @@ final class WebViewModel: NSObject, ObservableObject {
             counter += 1
 
             guard counter < Constants.breakStringsAtLength else {
-                newText.append("\(letter)\(Character.zeroWidthSpace)")
+                newText.append("\(letter)\(Constants.zeroWidthSpaceHTML)")
                 counter = 0
                 continue
             }
 
-            if letter.representsBreakPoint {
+            if letter.isWhitespace {
                 counter = 0
             } else if letter.isBreakable {
                 previousCharIsBreakable = true
             } else {
                 if previousCharIsBreakable {
-                    newText.append(Character.zeroWidthSpace)
+                    newText.append(Constants.zeroWidthSpaceHTML)
                     previousCharIsBreakable = false
                     counter = 0
                 }
