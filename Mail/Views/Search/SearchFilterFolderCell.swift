@@ -65,7 +65,7 @@ struct SearchFilterFolderCell: View {
                         folder.icon
                         Text(folder.localizedName)
                     }
-                    .tag(folder.id)
+                    .tag(folder.remoteId)
                 }
             }
         } label: {
