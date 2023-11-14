@@ -170,14 +170,14 @@ final class WebViewModel: NSObject, ObservableObject {
 
     /// Adds breakpoints if the body contains text with words that are too long
     /// Sometimes the WebView needs indication to break certain content like URLs, so the algorithm
-    /// inserts a `<wbr>` Element in places where a character string can be broken
+    /// inserts a `<wbr>` Element where a character string can be broken
     private func breakLongWords(of document: Document) throws {
-        guard let contentDiv = document.body() else { return }
-        try breakLongWords(of: contentDiv)
+        guard let body = document.body() else { return }
+        try breakLongWords(of: body)
     }
 
-    /// Walks through Element nodes and iterates over its TextNodes, then, if the text requires breakpoints
-    /// the TextNode is replaced by several TextNodes separated by `<wbr>` Elements
+    /// Walks through Element nodes and iterates over their TextNodes- Then, if the text requires breakpoints
+    /// the TextNode is split into several TextNodes separated by `<wbr>` Elements
     private func breakLongWords(of element: Element) throws {
         let children = element.children()
 
@@ -187,20 +187,23 @@ final class WebViewModel: NSObject, ObservableObject {
                 let text = textNode.text()
                 guard text.count > Constants.breakStringsAtLength else { continue }
 
-                let nodesWithWBR = splitTextNodeWithWBR(in: text)
-
-                let siblingIndex = textNode.siblingIndex
-                try textNode.remove()
-                try child.insertChildren(siblingIndex, nodesWithWBR)
+                let nodesWithWBR = splitStringIntoNodes(text)
+                try replaceChildNode(of: child, child: textNode, with: nodesWithWBR)
             }
 
             try breakLongWords(of: child)
         }
     }
 
-    /// Adds a zero-width space, or ZWSP  (`Constants.zeroWidthSpaceHTML`), to each word that is longer than 30 characters or to
-    /// certain specific characters (`Character.isBreakable`)
-    private func splitTextNodeWithWBR(in text: String) -> [Node] {
+    private func replaceChildNode(of parent: Element, child: Node, with nodes: [Node]) throws {
+        let siblingIndex = child.siblingIndex
+        try child.remove()
+        try parent.insertChildren(siblingIndex, nodes)
+    }
+
+    /// Splits a string into TextNodes separated by `<wbr>` Elements.
+    /// The string is cut for each word that is too long or at each specific character  (`Character.isBreakable`)
+    private func splitStringIntoNodes(_ text: String) -> [Node] {
         var nodesArray = [Node]()
         var buffer = ""
         var counter = 0
@@ -234,14 +237,14 @@ final class WebViewModel: NSObject, ObservableObject {
         return nodesArray
     }
 
-    private func insertTextNode(with text: String, in nodes: inout [Node]) {
-        nodes.append(TextNode(text, nil))
+    private func insertTextNode(with buffer: String, in nodes: inout [Node]) {
+        nodes.append(TextNode(buffer, nil))
     }
 
-    private func insertBreak(with text: inout String, in nodes: inout [Node]) {
-        insertTextNode(with: text, in: &nodes)
+    private func insertBreak(with buffer: inout String, in nodes: inout [Node]) {
+        insertTextNode(with: buffer, in: &nodes)
         try? nodes.append(Element(Tag.valueOf("wbr"), ""))
-        text = ""
+        buffer = ""
     }
 }
 
