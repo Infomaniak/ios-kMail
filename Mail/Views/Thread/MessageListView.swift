@@ -26,8 +26,6 @@ struct MessageListView: View {
 
     @State private var messageExpansion = [String: Bool]()
 
-    @State private var scrollTask: Task<Void, Never>?
-
     var body: some View {
         ScrollViewReader { proxy in
             LazyVStack(spacing: 0) {
@@ -48,27 +46,12 @@ struct MessageListView: View {
                 computeExpansion(from: messages.toArray())
 
                 guard messages.count > 1,
-                      let firstExpandedUid = firstExpanded()?.uid else {
-                    return
-                }
-
-                guard scrollTask == nil else {
-                    return
-                }
-
-                scrollTask = Task { @MainActor in
-                    guard !Task.isCancelled else {
-                        return
-                    }
-
+                      let firstExpanded = firstExpanded() else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     withAnimation {
-                        proxy.scrollTo(firstExpandedUid, anchor: .top)
+                        proxy.scrollTo(firstExpanded.uid, anchor: .top)
                     }
                 }
-            }
-            .onDisappear {
-                scrollTask?.cancel()
-                scrollTask = nil
             }
             .onChange(of: messages) { newValue in
                 computeExpansion(from: newValue.toArray())
