@@ -38,13 +38,13 @@ struct ChevronIcon: View {
     }
 
     let style: Style
-    var color = MailResourcesAsset.textSecondaryColor.swiftUIColor
+    var color: any ShapeStyle = MailResourcesAsset.textSecondaryColor.swiftUIColor
 
     var body: some View {
         MailResourcesAsset.chevronUp.swiftUIImage
             .resizable()
             .frame(width: 12, height: 12)
-            .foregroundStyle(color)
+            .foregroundStyle(AnyShapeStyle(color))
             .rotationEffect(style.rotationAngle)
     }
 }
