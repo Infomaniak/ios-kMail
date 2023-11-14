@@ -53,19 +53,27 @@ struct SearchFilterFolderCell: View {
 
     var body: some View {
         Menu {
-            Picker(selection: $selectedFolderId.animation(), label: EmptyView()) {
+            Button {
+                withAnimation {
+                    selectedFolderId = allFoldersItem.id
+                }
+            } label: {
                 HStack {
                     allFoldersItem.icon
                     Text(allFoldersItem.name)
                 }
-                .tag(allFoldersItem.id)
+            }
 
-                ForEach(sortedFolders) { folder in
+            ForEach(sortedFolders) { folder in
+                Button {
+                    withAnimation {
+                        selectedFolderId = folder.remoteId
+                    }
+                } label: {
                     HStack {
                         folder.icon
                         Text(folder.localizedName)
                     }
-                    .tag(folder.remoteId)
                 }
             }
         } label: {
