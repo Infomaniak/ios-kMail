@@ -234,7 +234,7 @@ public final class Draft: Object, Codable, Identifiable {
             unsafeQuote = Constants.forwardQuote(message: message)
         }
 
-        let quote = (try? MessageWebViewUtils.cleanHtmlContent(rawHtml: unsafeQuote)?.outerHtml()) ?? ""
+        let quote = (try? MessageWebViewUtils.cleanHTMLContent(rawHTML: unsafeQuote)?.outerHtml()) ?? ""
 
         return "<br><br>" + quote
     }

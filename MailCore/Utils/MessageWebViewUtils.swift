@@ -48,9 +48,9 @@ public enum MessageWebViewUtils {
         return resources
     }
 
-    public static func cleanHtmlContent(rawHtml: String) -> Document? {
+    public static func cleanHTMLContent(rawHTML: String) -> Document? {
         do {
-            let dirtyDocument = try SwiftSoup.parse(rawHtml)
+            let dirtyDocument = try SwiftSoup.parse(rawHTML)
             let cleanedDocument = try SwiftSoup.Cleaner(headWhitelist: .headWhitelist, bodyWhitelist: .extendedBodyWhitelist)
                 .clean(dirtyDocument)
 
