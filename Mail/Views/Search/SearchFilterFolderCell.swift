@@ -22,6 +22,8 @@ import RealmSwift
 import SwiftUI
 
 struct SearchFilterFolderCell: View {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     var folders: [Folder]
     @Binding public var selectedFolderId: String
 
@@ -85,7 +87,7 @@ struct SearchFilterFolderCell: View {
                 }
                 Text(selectedFolderName)
                     .font(MailTextStyle.bodyMedium.font)
-                ChevronIcon(style: .down, color: .accentColor)
+                ChevronIcon(style: .down, color: isSelected ? accentColor.onAccent.swiftUIColor : .accentColor)
             }
         }
         .filterCellStyle(isSelected: isSelected)
