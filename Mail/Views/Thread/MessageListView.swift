@@ -22,7 +22,16 @@ import RealmSwift
 import SwiftUI
 
 struct MessageListView: View {
-    var messages: RealmSwift.List<Message>
+    let messages: RealmSwift.List<Message>
+
+    /// A stable `id` that matches the ordered list of displayed messages.
+    private var id: Int {
+        let hash = messages.toArray().reduce(0) { partialResult, message in
+            partialResult ^ message.messageId.hashValue
+        }
+
+        return hash
+    }
 
     @State private var messageExpansion = [String: Bool]()
 
@@ -46,16 +55,21 @@ struct MessageListView: View {
                 computeExpansion(from: messages.toArray())
 
                 guard messages.count > 1,
-                      let firstExpanded = firstExpanded() else { return }
+                      let firstExpandedUid = firstExpanded()?.uid else {
+                    return
+                }
+
+                // TODO: listen for last message `.isFulyLoaded` to be exact
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     withAnimation {
-                        proxy.scrollTo(firstExpanded.uid, anchor: .top)
+                        proxy.scrollTo(firstExpandedUid, anchor: .top)
                     }
                 }
             }
             .onChange(of: messages) { newValue in
                 computeExpansion(from: newValue.toArray())
             }
+            .id(self.id)
         }
     }
 
