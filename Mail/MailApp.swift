@@ -85,6 +85,14 @@ struct MailApp: App {
                 .onChange(of: navigationState.account) { _ in
                     refreshCacheData()
                 }
+            #if targetEnvironment(macCatalyst)
+                .introspect(.window, on: .iOS(.v16, .v17)) { window in
+                    if let titlebar = window.windowScene?.titlebar {
+                        titlebar.titleVisibility = .hidden
+                        titlebar.toolbar = nil
+                    }
+                }
+            #endif
         }
         .defaultAppStorage(.shared)
     }
