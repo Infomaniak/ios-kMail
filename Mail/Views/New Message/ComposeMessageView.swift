@@ -243,6 +243,7 @@ struct ComposeMessageView: View {
             }
         }
         .introspect(.scrollView, on: .iOS(.v15, .v16, .v17)) { scrollView in
+            guard self.scrollView != scrollView else { return }
             self.scrollView = scrollView
             scrollView.keyboardDismissMode = .interactive
         }
