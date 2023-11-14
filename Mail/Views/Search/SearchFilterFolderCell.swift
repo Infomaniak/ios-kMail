@@ -22,8 +22,6 @@ import RealmSwift
 import SwiftUI
 
 struct SearchFilterFolderCell: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
     var folders: [Folder]
     @Binding public var selectedFolderId: String
 
