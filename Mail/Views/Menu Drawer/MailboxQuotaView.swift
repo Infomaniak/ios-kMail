@@ -59,11 +59,7 @@ private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
                 .rotationEffect(.degrees(-90))
                 .frame(width: UIConstants.menuDrawerQuotaSize)
 
-            MailResourcesAsset.drawer.swiftUIImage
-                .resizable()
-                .scaledToFit()
-                .frame(width: 16, height: 16)
-                .foregroundStyle(.tint)
+            IKIcon(size: .medium, image: MailResourcesAsset.drawer)
         }
         .frame(height: UIConstants.menuDrawerQuotaSize)
     }

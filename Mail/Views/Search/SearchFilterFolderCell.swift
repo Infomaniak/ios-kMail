@@ -22,6 +22,8 @@ import RealmSwift
 import SwiftUI
 
 struct SearchFilterFolderCell: View {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     var folders: [Folder]
     @Binding public var selectedFolderId: String
 
@@ -79,9 +81,7 @@ struct SearchFilterFolderCell: View {
         } label: {
             HStack(spacing: UIPadding.searchFolderCellSpacing) {
                 if isSelected {
-                    MailResourcesAsset.check.swiftUIImage
-                        .resizable()
-                        .frame(width: 12, height: 12)
+                    IKIcon(size: .small, image: MailResourcesAsset.check, color: accentColor.onAccent.swiftUIColor)
                 }
                 Text(selectedFolderName)
                     .font(MailTextStyle.bodyMedium.font)

@@ -27,10 +27,7 @@ struct SearchButton: View {
         Button {
             mainViewState.isShowingSearch = true
         } label: {
-            MailResourcesAsset.search.swiftUIImage
-                .resizable()
-                .scaledToFit()
-                .frame(width: UIConstants.navbarIconSize, height: UIConstants.navbarIconSize)
+            IKIcon(size: .large, image: MailResourcesAsset.search)
         }
     }
 }

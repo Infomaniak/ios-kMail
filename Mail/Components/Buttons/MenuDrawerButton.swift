@@ -32,10 +32,7 @@ struct MenuDrawerButton: View {
             matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
             navigationDrawerState.open()
         } label: {
-            MailResourcesAsset.burger.swiftUIImage
-                .resizable()
-                .scaledToFit()
-                .frame(width: UIConstants.navbarIconSize, height: UIConstants.navbarIconSize)
+            IKIcon(size: .large, image: MailResourcesAsset.burger)
         }
         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonMenu)
     }

@@ -30,10 +30,7 @@ struct AIHeaderView: View {
     var body: some View {
         HStack(spacing: UIPadding.small) {
             if style == .bottomSheet {
-                MailResourcesAsset.aiWriter.swiftUIImage
-                    .resizable()
-                    .frame(width: 24, height: 24)
-                    .foregroundStyle(MailResourcesAsset.aiColor)
+                IKIcon(size: .large, image: MailResourcesAsset.aiWriter, color: MailResourcesAsset.aiColor.swiftUIColor)
             }
 
             Text(MailResourcesStrings.Localizable.aiPromptTitle)

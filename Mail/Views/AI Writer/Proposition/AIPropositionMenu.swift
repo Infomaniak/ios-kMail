@@ -60,10 +60,7 @@ struct AIPropositionMenu: View {
             }
         } label: {
             HStack(spacing: UIPadding.small) {
-                MailResourcesAsset.pencil.swiftUIImage
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 24, height: 24)
+                IKIcon(size: .large, image: MailResourcesAsset.pencil, color: MailResourcesAsset.textSecondaryColor.swiftUIColor)
                 Text(MailResourcesStrings.Localizable.aiButtonRefine)
             }
         }

@@ -38,11 +38,7 @@ struct MenuDrawerItemCell: View {
             action()
         } label: {
             HStack(spacing: UIPadding.menuDrawerCellSpacing) {
-                icon.swiftUIImage
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 24, height: 24)
-                    .foregroundStyle(.tint)
+                IKIcon(size: .large, image: icon)
 
                 Text(label)
                     .textStyle(.bodyMedium)

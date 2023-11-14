@@ -109,12 +109,8 @@ struct MessageHeaderSummaryView: View {
                 if message.isDraft {
                     Spacer()
                     Button(action: deleteDraftTapped) {
-                        MailResourcesAsset.bin.swiftUIImage
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 22, height: 22)
+                        IKIcon(size: .large, image: MailResourcesAsset.bin, color: MailResourcesAsset.redColor.swiftUIColor)
                     }
-                    .tint(MailResourcesAsset.redColor)
                 }
             }
 
@@ -133,19 +129,13 @@ struct MessageHeaderSummaryView: View {
                             )
                         }
                     } label: {
-                        MailResourcesAsset.emailActionReply.swiftUIImage
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 20, height: 20)
+                        IKIcon(size: .large, image: MailResourcesAsset.emailActionReply)
                     }
                     .adaptivePanel(item: $replyOrReplyAllMessage) { message in
                         ReplyActionsView(message: message)
                     }
                     ActionsPanelButton(messages: [message], originFolder: message.folder) {
-                        MailResourcesAsset.plusActions.swiftUIImage
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 20, height: 20)
+                        IKIcon(size: .large, image: MailResourcesAsset.plusActions)
                     }
                 }
                 .padding(.leading, 8)

@@ -194,9 +194,7 @@ struct FolderCellContent: View {
                 }
             }
         } else if isCurrentFolder {
-            MailResourcesAsset.check.swiftUIImage
-                .resizable()
-                .frame(width: 16, height: 16)
+            IKIcon(size: .medium, image: MailResourcesAsset.check)
         }
     }
 
