@@ -89,6 +89,10 @@ public final class MailboxManager: ObservableObject, MailboxManageable, RealmAcc
                         newObject?["remoteId"] = oldObject?["_id"]
                     }
                 }
+                if oldSchemaVersion < 23 {
+                    migration.deleteData(forType: Thread.className())
+                    migration.deleteData(forType: Message.className())
+                }
             },
             objectTypes: [
                 Folder.self,
