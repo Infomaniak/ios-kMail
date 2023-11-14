@@ -209,9 +209,10 @@
     {
       "identity" : "sqrichtexteditor",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Ambrdctr/SQRichTextEditor",
+      "location" : "https://github.com/Infomaniak/SQRichTextEditor",
       "state" : {
-        "revision" : "04737b7694ecc6cfd78631bce5fc370f310e7e14"
+        "revision" : "3c8e71962081ee06fdf9f667b58586e1650bf761",
+        "version" : "1.1.0"
       }
     },
     {
@@ -253,10 +254,10 @@
     {
       "identity" : "swiftsoup",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Ambrdctr/SwiftSoup",
+      "location" : "https://github.com/Infomaniak/SwiftSoup",
       "state" : {
-        "branch" : "master",
-        "revision" : "56ce9d740ef9ea53bba13386ebdc460b6f4fe36c"
+        "revision" : "906757f851af2ab705753b0d3ef4471b620a30cc",
+        "version" : "1.1.0"
       }
     },
     {
