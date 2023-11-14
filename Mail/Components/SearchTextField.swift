@@ -31,7 +31,11 @@ struct SearchTextField: View {
     var body: some View {
         HStack(spacing: UIPadding.small) {
             Button(action: onSubmit) {
-                IKIcon(size: .medium, image: MailResourcesAsset.search, color: MailResourcesAsset.textTertiaryColor.swiftUIColor)
+                IKIcon(
+                    size: .medium,
+                    image: MailResourcesAsset.search,
+                    shapeStyle: MailResourcesAsset.textTertiaryColor.swiftUIColor
+                )
             }
             TextField(MailResourcesStrings.Localizable.searchFieldPlaceholder, text: $value)
                 .autocorrectionDisabled()
@@ -52,7 +56,11 @@ struct SearchTextField: View {
                 .padding(.vertical, value: .intermediate)
 
             Button(action: onDelete) {
-                IKIcon(size: .medium, image: MailResourcesAsset.remove, color: MailResourcesAsset.textTertiaryColor.swiftUIColor)
+                IKIcon(
+                    size: .medium,
+                    image: MailResourcesAsset.remove,
+                    shapeStyle: MailResourcesAsset.textTertiaryColor.swiftUIColor
+                )
             }
             .opacity(value.isEmpty ? 0 : 1)
         }

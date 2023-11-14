@@ -38,14 +38,14 @@ struct IKIcon: View {
 
     let size: Size
     var image: MailResourcesImages
-    var color = UserDefaults.shared.accentColor.primary.swiftUIColor
+    var shapeStyle: any ShapeStyle = Color.accentColor
 
     var body: some View {
         image.swiftUIImage
             .resizable()
             .scaledToFit()
             .frame(width: size.heightAndWidth, height: size.heightAndWidth)
-            .foregroundStyle(color)
+            .foregroundStyle(AnyShapeStyle(shapeStyle))
     }
 }
 

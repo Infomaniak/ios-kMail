@@ -42,7 +42,7 @@ struct MailboxListView: View {
                     IKIcon(
                         size: .medium,
                         image: MailResourcesAsset.addCircle,
-                        color: MailResourcesAsset.textSecondaryColor.swiftUIColor
+                        shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor
                     )
                 }
             }

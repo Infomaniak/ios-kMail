@@ -124,8 +124,6 @@ struct ThreadListHeader: View {
 }
 
 struct UnreadToggleStyle: ToggleStyle {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
     func makeBody(configuration: Configuration) -> some View {
         Button {
             configuration.isOn.toggle()
@@ -133,7 +131,7 @@ struct UnreadToggleStyle: ToggleStyle {
             HStack(spacing: 8) {
                 configuration.label
                 if configuration.isOn {
-                    IKIcon(size: .small, image: MailResourcesAsset.close, color: accentColor.onAccent.swiftUIColor)
+                    IKIcon(size: .small, image: MailResourcesAsset.close, shapeStyle: HierarchicalShapeStyle.primary)
                 }
             }
             .textStyle(configuration.isOn ? .bodySmallMediumOnAccent : .bodySmallMediumAccent)

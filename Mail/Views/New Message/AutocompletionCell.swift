@@ -42,7 +42,11 @@ struct AutocompletionCell: View {
             .opacity(alreadyAppend && !unknownRecipient ? 0.5 : 1)
 
             if alreadyAppend && !unknownRecipient {
-                IKIcon(size: .large, image: MailResourcesAsset.checked, color: MailResourcesAsset.textTertiaryColor.swiftUIColor)
+                IKIcon(
+                    size: .large,
+                    image: MailResourcesAsset.checked,
+                    shapeStyle: MailResourcesAsset.textTertiaryColor.swiftUIColor
+                )
             }
         }
         .padding(.horizontal, value: .regular)

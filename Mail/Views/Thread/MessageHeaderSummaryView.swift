@@ -109,7 +109,7 @@ struct MessageHeaderSummaryView: View {
                 if message.isDraft {
                     Spacer()
                     Button(action: deleteDraftTapped) {
-                        IKIcon(size: .large, image: MailResourcesAsset.bin, color: MailResourcesAsset.redColor.swiftUIColor)
+                        IKIcon(size: .large, image: MailResourcesAsset.bin, shapeStyle: MailResourcesAsset.redColor.swiftUIColor)
                     }
                 }
             }

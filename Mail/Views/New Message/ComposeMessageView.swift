@@ -296,7 +296,7 @@ struct ComposeMessageView: View {
                             IKIcon(
                                 size: .medium,
                                 image: MailResourcesAsset.info,
-                                color: MailResourcesAsset.onTagExternalColor.swiftUIColor
+                                shapeStyle: MailResourcesAsset.onTagExternalColor.swiftUIColor
                             )
                         }
 
@@ -307,7 +307,7 @@ struct ComposeMessageView: View {
                             IKIcon(
                                 size: .medium,
                                 image: MailResourcesAsset.close,
-                                color: MailResourcesAsset.onTagExternalColor.swiftUIColor
+                                shapeStyle: MailResourcesAsset.onTagExternalColor.swiftUIColor
                             )
                         }
                     }

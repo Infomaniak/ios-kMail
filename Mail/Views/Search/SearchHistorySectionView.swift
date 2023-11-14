@@ -53,7 +53,7 @@ struct SearchHistorySectionView: View {
                             IKIcon(
                                 size: .medium,
                                 image: MailResourcesAsset.close,
-                                color: MailResourcesAsset.textSecondaryColor.swiftUIColor
+                                shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor
                             )
                         }
                         .buttonStyle(BorderlessButtonStyle())

@@ -70,7 +70,7 @@ struct AttachmentsView: View {
                     IKIcon(
                         size: .medium,
                         image: MailResourcesAsset.attachment,
-                        color: MailResourcesAsset.textSecondaryColor.swiftUIColor
+                        shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor
                     )
                 }
                 .textStyle(.bodySmallSecondary)

@@ -60,7 +60,7 @@ struct MessageHeaderDetailView: View {
                 IKIcon(
                     size: .medium,
                     image: MailResourcesAsset.calendar,
-                    color: MailResourcesAsset.textSecondaryColor.swiftUIColor
+                    shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor
                 )
                 Text(message.date.formatted(date: .long, time: .shortened))
                     .textStyle(.bodySmallSecondary)

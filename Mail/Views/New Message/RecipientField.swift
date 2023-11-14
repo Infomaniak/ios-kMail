@@ -81,7 +81,7 @@ struct RecipientField: View {
                     IKIcon(
                         size: .medium,
                         image: MailResourcesAsset.remove,
-                        color: MailResourcesAsset.textTertiaryColor.swiftUIColor
+                        shapeStyle: MailResourcesAsset.textTertiaryColor.swiftUIColor
                     )
                 }
                 .foregroundStyle(MailResourcesAsset.textTertiaryColor)

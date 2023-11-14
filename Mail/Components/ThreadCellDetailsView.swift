@@ -30,11 +30,11 @@ struct ThreadCellDetailsView: View {
                 IKIcon(
                     size: .medium,
                     image: MailResourcesAsset.attachment,
-                    color: MailResourcesAsset.textPrimaryColor.swiftUIColor
+                    shapeStyle: MailResourcesAsset.textPrimaryColor.swiftUIColor
                 )
             }
             if isFlagged {
-                IKIcon(size: .medium, image: MailResourcesAsset.starFull, color: MailResourcesAsset.yellowColor.swiftUIColor)
+                IKIcon(size: .medium, image: MailResourcesAsset.starFull, shapeStyle: MailResourcesAsset.yellowColor.swiftUIColor)
             }
         }
     }

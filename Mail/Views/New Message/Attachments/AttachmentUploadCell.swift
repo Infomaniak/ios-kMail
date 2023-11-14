@@ -41,7 +41,11 @@ struct AttachmentUploadCell: View {
                     attachmentRemoved(attachment)
                 }
             } label: {
-                IKIcon(size: .small, image: MailResourcesAsset.close, color: MailResourcesAsset.textSecondaryColor.swiftUIColor)
+                IKIcon(
+                    size: .small,
+                    image: MailResourcesAsset.close,
+                    shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor
+                )
             }
             .buttonStyle(.borderless)
         }

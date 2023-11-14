@@ -22,15 +22,13 @@ import RealmSwift
 import SwiftUI
 
 struct SearchFilterCell: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
     public var title: String
     public var isSelected: Bool
 
     var body: some View {
         HStack(spacing: UIPadding.searchFolderCellSpacing) {
             if isSelected {
-                IKIcon(size: .small, image: MailResourcesAsset.check, color: accentColor.onAccent.swiftUIColor)
+                IKIcon(size: .small, image: MailResourcesAsset.check, shapeStyle: HierarchicalShapeStyle.primary)
             }
             Text(title)
                 .font(MailTextStyle.bodyMedium.font)

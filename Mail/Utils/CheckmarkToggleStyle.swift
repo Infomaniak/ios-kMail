@@ -37,7 +37,7 @@ struct CheckmarkToggleStyle: ToggleStyle {
                         IKIcon(
                             size: .medium,
                             image: MailResourcesAsset.check,
-                            color: MailResourcesAsset.backgroundColor.swiftUIColor
+                            shapeStyle: MailResourcesAsset.backgroundColor.swiftUIColor
                         )
                         .padding(2)
                     }
