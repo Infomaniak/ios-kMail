@@ -24,7 +24,7 @@ public enum Constants {
         .marketingVersion("1.0.11")
         .automaticCodeSigning(devTeam: "864VDCS2QY")
 
-    public static let deploymentTarget = DeploymentTarget.iOS(targetVersion: "15.0", devices: [.iphone, .ipad])
+    public static let deploymentTarget = DeploymentTarget.iOS(targetVersion: "15.0", devices: [.iphone, .ipad, .mac])
 
     public static let swiftlintScript = TargetScript.post(path: "scripts/lint.sh", name: "Swiftlint")
 }
