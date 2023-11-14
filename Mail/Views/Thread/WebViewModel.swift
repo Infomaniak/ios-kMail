@@ -240,7 +240,7 @@ final class WebViewModel: NSObject, ObservableObject {
 
     private func insertBreak(with text: inout String, in nodes: inout [Node]) {
         insertTextNode(with: text, in: &nodes)
-        nodes.append(Element.wbr.copy(parent: nil))
+        try? nodes.append(Element(Tag.valueOf("wbr"), ""))
         text = ""
     }
 }
