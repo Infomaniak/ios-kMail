@@ -20,14 +20,35 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct SearchButton: View {
-    @EnvironmentObject private var mainViewState: MainViewState
+struct IKIcon: View {
+    enum Size {
+        case small, medium, large
 
-    var body: some View {
-        Button {
-            mainViewState.isShowingSearch = true
-        } label: {
-            IKIcon(size: .large, image: MailResourcesAsset.search)
+        var heightAndWidth: CGFloat {
+            switch self {
+            case .small:
+                return 12
+            case .medium:
+                return 16
+            case .large:
+                return 24
+            }
         }
     }
+
+    let size: Size
+    var image: MailResourcesImages
+    var shapeStyle: any ShapeStyle = Color.accentColor
+
+    var body: some View {
+        image.swiftUIImage
+            .resizable()
+            .scaledToFit()
+            .frame(width: size.heightAndWidth, height: size.heightAndWidth)
+            .foregroundStyle(AnyShapeStyle(shapeStyle))
+    }
+}
+
+#Preview {
+    IKIcon(size: .large, image: MailResourcesAsset.folder)
 }

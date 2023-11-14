@@ -90,10 +90,7 @@ struct AccountHeaderCell: View {
             Spacer(minLength: 0)
 
             if isSelected {
-                MailResourcesAsset.check.swiftUIImage
-                    .resizable()
-                    .frame(width: 16, height: 16)
-                    .foregroundStyle(.tint)
+                IKIcon(size: .medium, image: MailResourcesAsset.check)
             }
         }
     }

@@ -293,20 +293,22 @@ struct ComposeMessageView: View {
                             matomo.track(eventWithCategory: .externals, name: "bannerInfo")
                             alert.state = .externalRecipient(state: externalTag)
                         } label: {
-                            MailResourcesAsset.info.swiftUIImage
-                                .resizable()
-                                .foregroundStyle(MailResourcesAsset.onTagExternalColor)
-                                .frame(width: 16, height: 16)
+                            IKIcon(
+                                size: .medium,
+                                image: MailResourcesAsset.info,
+                                shapeStyle: MailResourcesAsset.onTagExternalColor.swiftUIColor
+                            )
                         }
 
                         Button {
                             matomo.track(eventWithCategory: .externals, name: "bannerManuallyClosed")
                             isShowingExternalTag = false
                         } label: {
-                            MailResourcesAsset.close.swiftUIImage
-                                .resizable()
-                                .foregroundStyle(MailResourcesAsset.onTagExternalColor)
-                                .frame(width: 16, height: 16)
+                            IKIcon(
+                                size: .medium,
+                                image: MailResourcesAsset.close,
+                                shapeStyle: MailResourcesAsset.onTagExternalColor.swiftUIColor
+                            )
                         }
                     }
                     .frame(maxWidth: .infinity)

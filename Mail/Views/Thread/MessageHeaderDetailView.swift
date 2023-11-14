@@ -57,11 +57,11 @@ struct MessageHeaderDetailView: View {
                 )
             }
             HStack {
-                MailResourcesAsset.calendar.swiftUIImage
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: labelWidth, height: 16, alignment: .leading)
-                    .foregroundStyle(MailResourcesAsset.textSecondaryColor)
+                IKIcon(
+                    size: .medium,
+                    image: MailResourcesAsset.calendar,
+                    shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor
+                )
                 Text(message.date.formatted(date: .long, time: .shortened))
                     .textStyle(.bodySmallSecondary)
             }

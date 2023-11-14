@@ -28,9 +28,7 @@ struct SearchFilterCell: View {
     var body: some View {
         HStack(spacing: UIPadding.searchFolderCellSpacing) {
             if isSelected {
-                MailResourcesAsset.check.swiftUIImage
-                    .resizable()
-                    .frame(width: 12, height: 12)
+                IKIcon(size: .small, image: MailResourcesAsset.check, shapeStyle: HierarchicalShapeStyle.primary)
             }
             Text(title)
                 .font(MailTextStyle.bodyMedium.font)

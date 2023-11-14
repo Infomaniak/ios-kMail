@@ -78,9 +78,11 @@ struct RecipientField: View {
                 Button {
                     currentText = ""
                 } label: {
-                    MailResourcesAsset.remove.swiftUIImage
-                        .resizable()
-                        .frame(width: 18, height: 18)
+                    IKIcon(
+                        size: .medium,
+                        image: MailResourcesAsset.remove,
+                        shapeStyle: MailResourcesAsset.textTertiaryColor.swiftUIColor
+                    )
                 }
                 .foregroundStyle(MailResourcesAsset.textTertiaryColor)
                 .opacity(shouldDisplayEmptyButton ? 1 : 0)

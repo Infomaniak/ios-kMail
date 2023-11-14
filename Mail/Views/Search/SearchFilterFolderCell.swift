@@ -79,9 +79,7 @@ struct SearchFilterFolderCell: View {
         } label: {
             HStack(spacing: UIPadding.searchFolderCellSpacing) {
                 if isSelected {
-                    MailResourcesAsset.check.swiftUIImage
-                        .resizable()
-                        .frame(width: 12, height: 12)
+                    IKIcon(size: .small, image: MailResourcesAsset.check, shapeStyle: HierarchicalShapeStyle.primary)
                 }
                 Text(selectedFolderName)
                     .font(MailTextStyle.bodyMedium.font)

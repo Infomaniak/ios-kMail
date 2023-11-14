@@ -27,18 +27,14 @@ struct ThreadCellDetailsView: View {
     var body: some View {
         HStack(spacing: UIPadding.small) {
             if hasAttachments {
-                MailResourcesAsset.attachment.swiftUIImage
-                    .resizable()
-                    .foregroundStyle(MailResourcesAsset.textPrimaryColor)
-                    .scaledToFit()
-                    .frame(height: 16)
+                IKIcon(
+                    size: .medium,
+                    image: MailResourcesAsset.attachment,
+                    shapeStyle: MailResourcesAsset.textPrimaryColor.swiftUIColor
+                )
             }
             if isFlagged {
-                MailResourcesAsset.starFull.swiftUIImage
-                    .resizable()
-                    .foregroundStyle(MailResourcesAsset.yellowColor)
-                    .scaledToFit()
-                    .frame(width: 16, height: 16)
+                IKIcon(size: .medium, image: MailResourcesAsset.starFull, shapeStyle: MailResourcesAsset.yellowColor.swiftUIColor)
             }
         }
     }

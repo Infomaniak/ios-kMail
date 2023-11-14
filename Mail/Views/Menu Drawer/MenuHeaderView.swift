@@ -38,10 +38,7 @@ struct MenuHeaderView: View {
             Button {
                 isShowingSettings.toggle()
             } label: {
-                MailResourcesAsset.cog.swiftUIImage
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 24, height: 24)
+                IKIcon(size: .large, image: MailResourcesAsset.cog)
             }
             .buttonStyle(.borderless)
             .accessibilityLabel(MailResourcesStrings.Localizable.settingsTitle)

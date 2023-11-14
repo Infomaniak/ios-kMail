@@ -34,10 +34,12 @@ struct CheckmarkToggleStyle: ToggleStyle {
                         RoundedRectangle(cornerRadius: 2)
                             .fill(.tint)
 
-                        MailResourcesAsset.check.swiftUIImage
-                            .resizable()
-                            .foregroundStyle(MailResourcesAsset.backgroundColor)
-                            .padding(2)
+                        IKIcon(
+                            size: .medium,
+                            image: MailResourcesAsset.check,
+                            shapeStyle: MailResourcesAsset.backgroundColor.swiftUIColor
+                        )
+                        .padding(2)
                     }
                     .opacity(configuration.isOn ? 1 : 0)
                 }

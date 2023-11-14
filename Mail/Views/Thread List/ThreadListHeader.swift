@@ -131,9 +131,7 @@ struct UnreadToggleStyle: ToggleStyle {
             HStack(spacing: 8) {
                 configuration.label
                 if configuration.isOn {
-                    MailResourcesAsset.close.swiftUIImage
-                        .resizable()
-                        .frame(width: 12, height: 12)
+                    IKIcon(size: .small, image: MailResourcesAsset.close, shapeStyle: HierarchicalShapeStyle.primary)
                 }
             }
             .textStyle(configuration.isOn ? .bodySmallMediumOnAccent : .bodySmallMediumAccent)

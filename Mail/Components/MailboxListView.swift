@@ -39,10 +39,11 @@ struct MailboxListView: View {
                 NavigationLink {
                     AddMailboxView()
                 } label: {
-                    MailResourcesAsset.addCircle.swiftUIImage
-                        .resizable()
-                        .foregroundStyle(.tint)
-                        .frame(width: 16, height: 16)
+                    IKIcon(
+                        size: .medium,
+                        image: MailResourcesAsset.addCircle,
+                        shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor
+                    )
                 }
             }
             .padding(value: .regular)
