@@ -68,6 +68,10 @@ final class AIModel: ObservableObject {
         }
     }
 
+    var isReplying: Bool {
+        draftContentManager.isReplying
+    }
+
     init(mailboxManager: MailboxManager, draftContentManager: DraftContentManager) {
         self.mailboxManager = mailboxManager
         self.draftContentManager = draftContentManager
@@ -84,6 +88,10 @@ extension AIModel {
 
     func createConversation() async {
         do {
+            if draftContentManager.isReplying {
+                try await insertReplyingMessageInContext()
+            }
+
             let response = try await mailboxManager.apiFetcher.aiCreateConversation(
                 messages: conversation,
                 engine: UserDefaults.shared.aiEngine,
@@ -125,6 +133,20 @@ extension AIModel {
                 handleError(error)
             }
         }
+    }
+
+    private func insertReplyingMessageInContext() async throws {
+        guard let replyingBody = try await draftContentManager.getReplyingBody() else { return }
+
+        var replyingString: String?
+        if replyingBody.type == "plain/text" {
+            replyingString = replyingBody.value
+        } else if let value = replyingBody.value {
+            let splitReply = await MessageBodyUtils.splitBodyAndQuote(messageBody: value)
+            replyingString = try await MessageBodyUtils.extractText(from: splitReply.messageBody)
+        }
+
+        conversation.insert(AIMessage(type: .context, content: replyingString ?? ""), at: 0)
     }
 
     private func executeShortcutAndRecreateConversation(_ shortcut: AIShortcutAction) async {

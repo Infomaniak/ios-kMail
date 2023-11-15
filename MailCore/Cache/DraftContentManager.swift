@@ -40,9 +40,13 @@ public class DraftContentManager: ObservableObject {
         let shouldAddSignatureText: Bool
     }
 
-    let messageReply: MessageReply?
-    let mailboxManager: MailboxManager
-    let incompleteDraft: Draft
+    private let messageReply: MessageReply?
+    private let mailboxManager: MailboxManager
+    private let incompleteDraft: Draft
+
+    public var isReplying: Bool {
+        return messageReply?.replyMode == .reply || messageReply?.replyMode == .replyAll
+    }
 
     public init(incompleteDraft: Draft, messageReply: MessageReply?, mailboxManager: MailboxManager) {
         self.incompleteDraft = incompleteDraft.freezeIfNeeded()
@@ -99,8 +103,8 @@ public class DraftContentManager: ObservableObject {
 
         if let messageReply {
             // New draft created either with reply or forward
-            async let completeDraftReplyingBody = try await loadReplyingBody(
-                message: messageReply.message,
+            async let completeDraftReplyingBody = try await loadReplyingMessageAndFormat(
+                messageReply.message,
                 replyMode: messageReply.replyMode
             )
             async let replyingAttachments = try await loadReplyingAttachments(
@@ -130,6 +134,11 @@ public class DraftContentManager: ObservableObject {
             attachments: attachments,
             shouldAddSignatureText: shouldAddSignatureText
         )
+    }
+
+    public func getReplyingBody() async throws -> Body? {
+        guard let messageReply else { return nil }
+        return try await loadReplyingMessage(messageReply.message, replyMode: messageReply.replyMode).body
     }
 
     public func shouldOverrideSubject() -> Bool {
@@ -306,14 +315,19 @@ public class DraftContentManager: ObservableObject {
         return isDefault ? .emailMatchDefault : .emailMatch
     }
 
-    private func loadReplyingBody(message: Message, replyMode: ReplyMode) async throws -> String {
+    private func loadReplyingMessage(_ message: Message, replyMode: ReplyMode) async throws -> Message {
         if !message.fullyDownloaded {
             try await mailboxManager.message(message: message)
         }
 
         guard let freshMessage = message.thaw() else { throw MailError.unknownError }
         freshMessage.realm?.refresh()
-        return Draft.replyingBody(message: freshMessage, replyMode: replyMode)
+        return freshMessage
+    }
+
+    private func loadReplyingMessageAndFormat(_ message: Message, replyMode: ReplyMode) async throws -> String {
+        let replyingMessage = try await loadReplyingMessage(message, replyMode: replyMode)
+        return Draft.replyingBody(message: replyingMessage, replyMode: replyMode)
     }
 
     private func loadReplyingAttachments(message: Message, replyMode: ReplyMode) async throws -> [Attachment] {
