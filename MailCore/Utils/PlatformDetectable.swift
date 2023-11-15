@@ -38,6 +38,7 @@ public protocol PlatformDetectable {
     var isDebug: Bool { get }
 }
 
+// TODO: This could be migrated to a Macro
 public struct PlatformDetector: PlatformDetectable {
     public init() {
         // META: Keep SonarCloud happy

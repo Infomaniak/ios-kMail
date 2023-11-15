@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Dynamic
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
@@ -103,7 +104,14 @@ struct SyncInstallProfileTutorialView: View {
             VStack {
                 MailButton(label: MailResourcesStrings.Localizable.buttonGoToSettings) {
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "openSettings")
-                    openURL(URL(string: "App-prefs:")!)
+                    @InjectService var platformDetector: PlatformDetectable
+                    if platformDetector.isMacCatalyst {
+                        Dynamic.NSWorkspace.shared.open(DeeplinkConstants.macProfiles) // Works but requires Catalyst
+                    } else if platformDetector.isiOSAppOnMac {
+                        openURL(DeeplinkConstants.macProfiles) // Does not work
+                    } else {
+                        openURL(DeeplinkConstants.iosPreferences)
+                    }
                 }
                 .mailButtonFullWidth(true)
                 if userCameBackFromSettings {

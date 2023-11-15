@@ -49,7 +49,8 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/johnpatrickmorgan/NavigationBackport", .upToNextMajor(from: "0.8.1")),
                           .package(url: "https://github.com/aheze/Popovers", .upToNextMajor(from: "1.3.2")),
                           .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1")),
-                          .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0"))
+                          .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0")),
+                          .package(url: "https://github.com/mhdhejazi/Dynamic.git", .upToNextMajor(from: "1.2.0"))
                       ],
                       targets: [
                           Target(name: "Mail",
@@ -82,6 +83,7 @@ let project = Project(name: "Mail",
                                      .package(product: "Lottie"),
                                      .package(product: "NavigationBackport"),
                                      .package(product: "Popovers"),
+                                     .package(product: "Dynamic"),
                                      .package(product: "SwiftUIBackports")
                                  ],
                                  settings: .settings(base: Constants.baseSettings),
@@ -141,6 +143,7 @@ let project = Project(name: "Mail",
                                   .package(product: "Lottie"),
                                   .package(product: "NavigationBackport"),
                                   .package(product: "Popovers"),
+                                  .package(product: "Dynamic"),
                                   .package(product: "SwiftUIBackports")
                               ],
                               settings: .settings(base: Constants.baseSettings)
@@ -211,6 +214,7 @@ let project = Project(name: "Mail",
                                   .package(product: "NukeUI"),
                                   .package(product: "SwiftSoup"),
                                   .package(product: "Swifter"),
+                                  .package(product: "Dynamic"),
                                   .package(product: "VersionChecker")
                               ],
                               settings: .settings(base: Constants.baseSettings)
