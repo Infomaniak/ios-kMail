@@ -335,18 +335,26 @@ public extension Draft {
         return !attachments.filter { $0.contentId == nil }.isEmpty
     }
 
+    var isEmptyOfUserChanges: Bool {
+        guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else {
+            return true
+        }
+
+        let itemsToExtract = [".\(Constants.signatureWrapperIdentifier)", ".forwardContentMessage", ".ik_mail_quote"]
+        for itemToExtract in itemsToExtract {
+            let _ = try? document.select(itemToExtract).remove()
+        }
+
+        return !document.hasText()
+    }
+
     /// Check if once the Signature node is removed, we still have content
     var isBodyEmpty: Bool {
         guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else {
             return true
         }
 
-        guard let signatureNode = try? document.getElementsByClass(Constants.signatureWrapperIdentifier).first() else {
-            return !document.hasText()
-        }
-
-        // Do we still have content once we removed the signature ?
-        try? signatureNode.remove()
+        try? document.getElementsByClass(Constants.signatureWrapperIdentifier).first()?.remove()
 
         return !document.hasText()
     }

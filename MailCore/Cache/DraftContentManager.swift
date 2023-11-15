@@ -139,17 +139,19 @@ public class DraftContentManager: ObservableObject {
 
     public func shouldOverrideBody() -> Bool {
         guard let liveDraft = try? getLiveDraft() else { return false }
-        return !liveDraft.isBodyEmpty
+        return !liveDraft.isEmptyOfUserChanges
     }
 
     public func replaceContent(subject: String? = nil, body: String) {
         guard let liveDraft = try? getLiveDraft() else { return }
         guard let parsedMessage = try? SwiftSoup.parse(liveDraft.body) else { return }
 
-        var signatureContent = ""
-        if let foundSignature = try? parsedMessage.select(".\(Constants.signatureWrapperIdentifier)").first(),
-           let signatureHTML = try? foundSignature.outerHtml() {
-            signatureContent = signatureHTML
+        var extractedElements = ""
+        let itemsToExtract = [".\(Constants.signatureWrapperIdentifier)", ".forwardContentMessage", ".ik_mail_quote"]
+        for itemToExtract in itemsToExtract {
+            if let element = try? SwiftSoupUtils.extractHTML(from: parsedMessage, itemToExtract) {
+                extractedElements.append(element)
+            }
         }
 
         let realm = mailboxManager.getRealm()
@@ -157,7 +159,7 @@ public class DraftContentManager: ObservableObject {
             if let subject {
                 liveDraft.subject = subject
             }
-            liveDraft.body = "<p>\(body.replacingOccurrences(of: "\n", with: "<br>"))</p>\(signatureContent)"
+            liveDraft.body = "<p>\(body.replacingOccurrences(of: "\n", with: "<br>"))</p>\(extractedElements)"
         }
         NotificationCenter.default.post(name: .updateComposeMessageBody, object: nil)
     }
