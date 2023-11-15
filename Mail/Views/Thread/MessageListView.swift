@@ -50,7 +50,7 @@ struct MessageListView: View {
                     return
                 }
 
-                // TODO: listen for last message `.isFulyLoaded` to be exact
+                // TODO: listen for last message `.isFullyLoaded` to be exact
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     withAnimation {
                         proxy.scrollTo(firstExpandedUid, anchor: .top)
