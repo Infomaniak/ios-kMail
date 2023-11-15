@@ -25,10 +25,6 @@ import SwiftUI
 
 struct NestableFolder: Identifiable {
     var id: Int {
-        guard !content.isInvalidated else {
-            return UUID().hashValue
-        }
-
         // The id of a folder depends on its `remoteId` and the id of its children
         // Compute the id by doing an XOR with the id of each child
         return children.reduce(content.remoteId.hashValue) { $0 ^ $1.id }
@@ -36,13 +32,6 @@ struct NestableFolder: Identifiable {
 
     let content: Folder
     let children: [NestableFolder]
-
-    /// A view on `children` data, only valid Realm objects
-    var displayableChildren: [NestableFolder] {
-        children.filter { element in
-            !element.content.isInvalidated
-        }
-    }
 
     static func createFoldersHierarchy(from folders: [Folder]) -> [Self] {
         var parentFolders = [NestableFolder]()
@@ -78,11 +67,11 @@ final class FolderListViewModel: ObservableObject {
                 switch results {
                 case .initial(let folders):
                     withAnimation(animateInitialChanges ? .default : nil) {
-                        self?.handleFoldersUpdate(folders)
+                        self?.handleFoldersUpdate(folders.freezeIfNeeded())
                     }
                 case .update(let folders, _, _, _):
                     withAnimation {
-                        self?.handleFoldersUpdate(folders)
+                        self?.handleFoldersUpdate(folders.freezeIfNeeded())
                     }
                 case .error:
                     break
