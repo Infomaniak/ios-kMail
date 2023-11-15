@@ -71,11 +71,11 @@ public class DraftContentManager: ObservableObject {
             let parsedMessage = try SwiftSoup.parse(liveIncompleteDraft.body)
             // If we find the previous signature, we replace it with the new one
             // otherwise we append the signature at the end of the document
-            if let foundSignatureDiv = try parsedMessage.select(".\(Constants.signatureWrapperIdentifier)").first {
+            if let foundSignatureDiv = try parsedMessage.select(".\(Constants.signatureHTMLClass)").first {
                 try foundSignatureDiv.html(newSignature.content)
             } else if let body = parsedMessage.body() {
                 let signatureDiv = try body.appendElement("div")
-                try signatureDiv.addClass(Constants.signatureWrapperIdentifier)
+                try signatureDiv.addClass(Constants.signatureHTMLClass)
                 try signatureDiv.html(newSignature.content)
             }
 
@@ -147,9 +147,8 @@ public class DraftContentManager: ObservableObject {
         guard let parsedMessage = try? SwiftSoup.parse(liveDraft.body) else { return }
 
         var extractedElements = ""
-        let itemsToExtract = [".\(Constants.signatureWrapperIdentifier)", ".forwardContentMessage", ".ik_mail_quote"]
-        for itemToExtract in itemsToExtract {
-            if let element = try? SwiftSoupUtils.extractHTML(from: parsedMessage, itemToExtract) {
+        for itemToExtract in Draft.appendedHTMLElements {
+            if let element = try? SwiftSoupUtils.extractHTML(from: parsedMessage, ".\(itemToExtract)") {
                 extractedElements.append(element)
             }
         }

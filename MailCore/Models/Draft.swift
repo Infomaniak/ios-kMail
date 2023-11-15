@@ -330,19 +330,22 @@ public extension Draft {
 }
 
 public extension Draft {
+    static let appendedHTMLElements = [
+        Constants.signatureHTMLClass,
+        Constants.forwardQuoteHTMLClass,
+        Constants.replyQuoteHTMLClass
+    ]
+
     /// Check that the draft has some Attachments of not
     var hasAttachments: Bool {
         return !attachments.filter { $0.contentId == nil }.isEmpty
     }
 
     var isEmptyOfUserChanges: Bool {
-        guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else {
-            return true
-        }
+        guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else { return true }
 
-        let itemsToExtract = [".\(Constants.signatureWrapperIdentifier)", ".forwardContentMessage", ".ik_mail_quote"]
-        for itemToExtract in itemsToExtract {
-            let _ = try? document.select(itemToExtract).remove()
+        for itemToExtract in Self.appendedHTMLElements {
+            let _ = try? document.getElementsByClass(itemToExtract).remove()
         }
 
         return !document.hasText()
@@ -350,11 +353,9 @@ public extension Draft {
 
     /// Check if once the Signature node is removed, we still have content
     var isBodyEmpty: Bool {
-        guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else {
-            return true
-        }
+        guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else { return true }
 
-        try? document.getElementsByClass(Constants.signatureWrapperIdentifier).first()?.remove()
+        try? document.getElementsByClass(Constants.signatureHTMLClass).first()?.remove()
 
         return !document.hasText()
     }
@@ -365,7 +366,7 @@ public extension Draft {
             return true
         }
 
-        guard let signatureNode = try? document.getElementsByClass(Constants.signatureWrapperIdentifier).first() else {
+        guard let signatureNode = try? document.getElementsByClass(Constants.signatureHTMLClass).first() else {
             return true
         }
 
