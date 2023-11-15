@@ -36,7 +36,7 @@ struct ThreadListCellContextMenu: ViewModifier {
     let thread: Thread
 
     private var actions: [Action] {
-        return (platformDetector.isMacCatalyst || platformDetector.isiOSAppOnMac) ? Action.rightClickActions : []
+        return platformDetector.isMac ? Action.rightClickActions : []
     }
 
     func body(content: Content) -> some View {

@@ -46,7 +46,7 @@ extension RealmAccessible {
             Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration, afterRetry: !canRetry)
 
             @InjectService var platformDetector: PlatformDetectable
-            let isOnMacContext = (platformDetector.isMacCatalyst || platformDetector.isiOSAppOnMac)
+            let isOnMacContext = platformDetector.isMac
 
             guard isOnMacContext else {
                 // Delete configuration for iOS / iPadOS in debug
