@@ -18,22 +18,20 @@
 
 import MailCore
 import MailResources
-import RealmSwift
 import SwiftUI
 
 struct MessageListView: View {
-    let messages: RealmSwift.List<Message>
+    let messages: [Message]
 
     @State private var messageExpansion = [String: Bool]()
 
     var body: some View {
         ScrollViewReader { proxy in
             LazyVStack(spacing: 0) {
-                let messagesArray = messages.toArray()
                 ForEach(messages, id: \.uid) { message in
                     MessageView(
                         message: message,
-                        isMessageExpanded: isExpanded(message: message, from: messagesArray),
+                        isMessageExpanded: isExpanded(message: message, from: messages),
                         threadForcedExpansion: $messageExpansion
                     )
                     .id(message.uid)
@@ -43,7 +41,7 @@ struct MessageListView: View {
                 }
             }
             .onAppear {
-                computeExpansion(from: messages.toArray())
+                computeExpansion(from: messages)
 
                 guard messages.count > 1,
                       let firstExpandedUid = firstExpanded()?.uid else {
@@ -57,10 +55,7 @@ struct MessageListView: View {
                     }
                 }
             }
-            .onChange(of: messages) { newValue in
-                computeExpansion(from: newValue.toArray())
-            }
-            .id(messages.toArray().id)
+            .id(messages.id)
         }
     }
 
@@ -76,6 +71,6 @@ struct MessageListView: View {
     }
 
     private func firstExpanded() -> Message? {
-        return messages.first { isExpanded(message: $0, from: messages.toArray()) }
+        return messages.first { isExpanded(message: $0, from: messages) }
     }
 }

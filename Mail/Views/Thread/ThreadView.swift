@@ -95,7 +95,7 @@ struct ThreadView: View {
                 .padding(.bottom, value: .regular)
                 .padding(.horizontal, value: .regular)
 
-                MessageListView(messages: thread.messages.freezeIfNeeded())
+                MessageListView(messages: thread.messages.toArray())
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
