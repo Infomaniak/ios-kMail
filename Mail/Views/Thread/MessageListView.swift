@@ -24,15 +24,6 @@ import SwiftUI
 struct MessageListView: View {
     let messages: RealmSwift.List<Message>
 
-    /// A stable `id` that matches the ordered list of displayed messages.
-    private var id: Int {
-        let hash = messages.toArray().reduce(0) { partialResult, message in
-            partialResult ^ message.messageId.hashValue
-        }
-
-        return hash
-    }
-
     @State private var messageExpansion = [String: Bool]()
 
     var body: some View {
@@ -69,7 +60,7 @@ struct MessageListView: View {
             .onChange(of: messages) { newValue in
                 computeExpansion(from: newValue.toArray())
             }
-            .id(self.id)
+            .id(messages.toArray().id)
         }
     }
 
