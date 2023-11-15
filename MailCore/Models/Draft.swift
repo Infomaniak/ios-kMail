@@ -330,6 +330,7 @@ public extension Draft {
 }
 
 public extension Draft {
+    /// List of HTML classes of elements added to the content of an email
     static let appendedHTMLElements = [
         Constants.signatureHTMLClass,
         Constants.forwardQuoteHTMLClass,
@@ -341,23 +342,20 @@ public extension Draft {
         return !attachments.filter { $0.contentId == nil }.isEmpty
     }
 
-    var isEmptyOfUserChanges: Bool {
+    private func isEmpty(removeAllElements: Bool) -> Bool {
         guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else { return true }
 
-        for itemToExtract in Self.appendedHTMLElements {
+        let itemsToExtract = removeAllElements ? Self.appendedHTMLElements : [Constants.signatureHTMLClass]
+        for itemToExtract in itemsToExtract {
             let _ = try? document.getElementsByClass(itemToExtract).remove()
         }
 
         return !document.hasText()
     }
 
-    /// Check if once the Signature node is removed, we still have content
-    var isBodyEmpty: Bool {
-        guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else { return true }
-
-        try? document.getElementsByClass(Constants.signatureHTMLClass).first()?.remove()
-
-        return !document.hasText()
+    /// Check if once the signature, the reply quote and the forward quote nodes removed, we still have content
+    var isEmptyOfUserChanges: Bool {
+        isEmpty(removeAllElements: true)
     }
 
     /// Check if the Signature has changes or not
@@ -384,7 +382,7 @@ public extension Draft {
     }
 
     var isCompletelyEmpty: Bool {
-        guard !hasAttachments, isBodyEmpty, isSignatureUnchanged else {
+        guard !hasAttachments, isEmpty(removeAllElements: false), isSignatureUnchanged else {
             return false
         }
         return true
