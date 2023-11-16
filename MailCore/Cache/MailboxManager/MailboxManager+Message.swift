@@ -430,13 +430,12 @@ public extension MailboxManager {
 
                 let isThreadMode = UserDefaults.shared.threadMode == .conversation
                 if isThreadMode {
-                    let (updatedThreads, removedDuplicatedThreads) = createConversationThread(
+                    createConversationThread(
                         message: message,
                         folder: folder,
+                        threadsToUpdate: &threadsToUpdate,
                         using: realm
                     )
-                    threadsToUpdate.subtract(removedDuplicatedThreads)
-                    threadsToUpdate.formUnion(updatedThreads)
                 } else {
                     let createdThread = createSingleMessageThread(message: message, folder: folder)
                     threadsToUpdate.insert(createdThread)
@@ -453,10 +452,9 @@ public extension MailboxManager {
     private func createConversationThread(
         message: Message,
         folder: Folder,
+        threadsToUpdate: inout Set<Thread>,
         using realm: Realm
-    ) -> (threadsToUpdate: Set<Thread>, removedDuplicatedThreads: Set<Thread>) {
-        var threadsToUpdate = Set<Thread>()
-
+    ) {
         let existingThreads = Array(realm.objects(Thread.self)
             .where { $0.messageIds.containsAny(in: message.linkedUids) })
 
@@ -492,9 +490,7 @@ public extension MailboxManager {
 
         // Now that all other existing Threads are updated, we need to remove the duplicated Threads.
         if isThereDuplicatedThreads {
-            return removeDuplicatedThreads(messageIds: message.linkedUids, threadsToUpdate: threadsToUpdate, using: realm)
-        } else {
-            return (threadsToUpdate, Set<Thread>())
+            removeDuplicatedThreads(messageIds: message.linkedUids, threadsToUpdate: &threadsToUpdate, using: realm)
         }
     }
 
@@ -506,11 +502,9 @@ public extension MailboxManager {
 
     private func removeDuplicatedThreads(
         messageIds: MutableSet<String>,
-        threadsToUpdate: Set<Thread>,
+        threadsToUpdate: inout Set<Thread>,
         using realm: Realm
-    ) -> (threadsToUpdate: Set<Thread>, removedDuplicatedThreads: Set<Thread>) {
-        var threadsToUpdate = threadsToUpdate
-        var deletedThreads = Set<Thread>()
+    ) {
         // Create a map with all duplicated Threads of the same Thread in a list.
         let threads = realm.objects(Thread.self).where { $0.messageIds.containsAny(in: messageIds) }
         let map: [String: [Thread]] = Dictionary(grouping: threads) { $0.folderId }
@@ -519,12 +513,9 @@ public extension MailboxManager {
             for (index, thread) in value.enumerated() where index > 0 {
                 // We want to keep only 1 duplicated Thread, so we skip the 1st one. (He's the chosen one!)
                 threadsToUpdate.remove(thread)
-                deletedThreads.insert(thread)
                 realm.delete(thread)
             }
         }
-
-        return (threadsToUpdate, deletedThreads)
     }
 
     private func createSingleMessageThread(message: Message, folder: Folder) -> Thread {
