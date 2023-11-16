@@ -370,7 +370,7 @@ public extension Draft {
         return true
     }
 
-    var isCompletelyEmpty: Bool {
+    var shouldBeSaved: Bool {
         guard !hasAttachments, isEmpty(removeAllElements: false), isSignatureUnchanged else {
             return false
         }
