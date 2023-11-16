@@ -28,11 +28,11 @@ public class MainViewState: ObservableObject {
     ///
     /// The selected thread is the last in collection, by convention.
     @Published public var threadPath = [Thread]()
-    @Published public var selectedFolder: Folder?
+    @Published public var selectedFolder: Folder
 
     let mailboxManager: MailboxManager
-    public init(mailboxManager: MailboxManager) {
+    public init(mailboxManager: MailboxManager, selectedFolder: Folder) {
         self.mailboxManager = mailboxManager
-        selectedFolder = mailboxManager.getFolder(with: .inbox)
+        self.selectedFolder = selectedFolder
     }
 }

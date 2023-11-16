@@ -130,7 +130,7 @@ struct SplitView: View {
             Task {
                 // We need to write in Task instead of async let to avoid being cancelled to early
                 Task {
-                    try await mailboxManager.refreshAllFolders()
+                    await fetchFolders()
                 }
                 Task {
                     try await mailboxManager.refreshAllSignatures()
@@ -156,11 +156,6 @@ struct SplitView: View {
         }
         .task(id: mailboxManager.mailbox.objectId) {
             await fetchFolders()
-
-            let newInbox = getInbox()
-            if newInbox != mainViewState.selectedFolder {
-                mainViewState.selectedFolder = newInbox
-            }
         }
         .onRotate { orientation in
             guard let interfaceOrientation = orientation else { return }
@@ -189,14 +184,10 @@ struct SplitView: View {
             splitViewController?.preferredDisplayMode = .twoBesideSecondary
         } else if orientation.isLandscape {
             splitViewController?.preferredSplitBehavior = .displace
-            splitViewController?.preferredDisplayMode = mainViewState.selectedFolder == nil
-                ? .twoDisplaceSecondary
-                : .oneBesideSecondary
+            splitViewController?.preferredDisplayMode = .oneBesideSecondary
         } else if orientation.isPortrait {
             splitViewController?.preferredSplitBehavior = .overlay
-            splitViewController?.preferredDisplayMode = mainViewState.selectedFolder == nil
-                ? .twoOverSecondary
-                : .oneOverSecondary
+            splitViewController?.preferredDisplayMode = .oneOverSecondary
         } else {
             splitViewController?.preferredSplitBehavior = .automatic
             splitViewController?.preferredDisplayMode = .automatic
@@ -212,11 +203,20 @@ struct SplitView: View {
     private func fetchFolders() async {
         await tryOrDisplayError {
             try await mailboxManager.refreshAllFolders()
-        }
-    }
 
-    private func getInbox() -> Folder? {
-        return mailboxManager.getFolder(with: .inbox)
+            let selectedFolderId = mainViewState.selectedFolder.remoteId
+            guard mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: selectedFolderId) == nil else {
+                return
+            }
+
+            if let inboxFolder = mailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
+                Task { @MainActor in
+                    mainViewState.selectedFolder = inboxFolder
+                }
+            } else {
+                throw MailError.folderNotFound
+            }
+        }
     }
 
     private func handleOpenUrl(_ url: URL) {
