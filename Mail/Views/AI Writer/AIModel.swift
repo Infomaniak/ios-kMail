@@ -44,6 +44,8 @@ final class AIModel: ObservableObject {
     @Published var isShowingReplaceBodyAlert = false
     @Published var isShowingReplaceSubjectAlert: AIProposition?
 
+    var keepConversationWhenPropositionIsDismissed = false
+
     private let mailboxManager: MailboxManager
     private let draftContentManager: DraftContentManager
     private var messageReply: MessageReply?
@@ -103,6 +105,7 @@ extension AIModel {
     }
 
     func resetConversation() {
+        keepConversationWhenPropositionIsDismissed = false
         conversation = []
         isLoading = false
         error = nil
@@ -110,6 +113,7 @@ extension AIModel {
 
     func executeShortcut(_ shortcut: AIShortcutAction) async {
         if shortcut == .edit {
+            keepConversationWhenPropositionIsDismissed = true
             conversation.append(AIMessage(type: .assistant, content: MailResourcesStrings.Localizable.aiMenuEditRequest))
             isShowingProposition = false
             Task { @MainActor in
@@ -192,14 +196,14 @@ extension AIModel {
         }
 
         switch mailApiError {
-        case .apiAITooManyRequests:
+        case .apiAIMaxSyntaxTokensReached:
             if isReplying && !assistantHasProposedAnswers {
                 return .contextMaxSyntaxTokensReached
             } else {
                 return .maxSyntaxTokensReached
             }
-        case .apiAIMaxSyntaxTokensReached:
-            return .maxSyntaxTokensReached
+        case .apiAITooManyRequests:
+            return .tooManyRequests
         default:
             return .unknownError
         }

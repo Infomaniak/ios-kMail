@@ -101,9 +101,8 @@ struct AIPromptView: View {
         }
         .padding(isCompactWindow ? UIPadding.regular : 0)
         .onAppear {
-            if let lastMessage = aiModel.conversation.last,
-               lastMessage.type == .assistant && lastMessage.content == MailResourcesStrings.Localizable.aiMenuEditRequest,
-               let initialMessage = aiModel.conversation.first {
+            if aiModel.keepConversationWhenPropositionIsDismissed,
+               let initialMessage = aiModel.conversation.first(where: { $0.type == .user }) {
                 prompt = initialMessage.content
             }
 
