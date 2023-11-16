@@ -182,6 +182,7 @@ struct SplitView: View {
         if platformDetector.isMacCatalyst || platformDetector.isiOSAppOnMac {
             splitViewController?.preferredSplitBehavior = .tile
             splitViewController?.preferredDisplayMode = .twoBesideSecondary
+            splitViewController?.presentsWithGesture = false
         } else if orientation.isLandscape {
             splitViewController?.preferredSplitBehavior = .displace
             splitViewController?.preferredDisplayMode = .oneBesideSecondary
