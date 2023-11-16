@@ -102,6 +102,7 @@ struct AIPropositionView: View {
                         case .loadingError:
                             MailButton(label: MailResourcesStrings.Localizable.aiButtonRetry) {
                                 matomo.track(eventWithCategory: .aiWriter, name: "retry")
+                                aiModel.keepConversationWhenPropositionIsDismissed = true
                                 willShowAIPrompt = true
                                 dismiss()
                             }

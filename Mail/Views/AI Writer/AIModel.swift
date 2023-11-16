@@ -34,17 +34,17 @@ struct AIProposition: Identifiable {
 final class AIModel: ObservableObject {
     @LazyInjectService var matomo: MatomoUtils
 
-    private static let displayableErrors: [MailApiError] = [.apiAIMaxSyntaxTokensReached, .apiAITooManyRequests]
-
     @Published var conversation = [AIMessage]()
     @Published var isLoading = false
-    @Published var error: MailError?
+    @Published var error: AIError?
 
     @Published var isShowingPrompt = false
     @Published var isShowingProposition = false
 
     @Published var isShowingReplaceBodyAlert = false
     @Published var isShowingReplaceSubjectAlert: AIProposition?
+
+    var keepConversationWhenPropositionIsDismissed = false
 
     private let mailboxManager: MailboxManager
     private let draftContentManager: DraftContentManager
@@ -55,13 +55,13 @@ final class AIModel: ObservableObject {
         return conversation.last?.content ?? ""
     }
 
-    var hasProposedAnswers: Bool {
-        return conversation.count > 1
+    var assistantHasProposedAnswers: Bool {
+        return conversation.contains { $0.type == .assistant }
     }
 
     var currentStyle: SelectableTextView.Style {
         if error != nil {
-            return hasProposedAnswers ? .error : .loadingError
+            return assistantHasProposedAnswers ? .error : .loadingError
         } else if isLoading {
             return .loading
         } else {
@@ -105,6 +105,7 @@ extension AIModel {
     }
 
     func resetConversation() {
+        keepConversationWhenPropositionIsDismissed = false
         conversation = []
         isLoading = false
         error = nil
@@ -112,6 +113,7 @@ extension AIModel {
 
     func executeShortcut(_ shortcut: AIShortcutAction) async {
         if shortcut == .edit {
+            keepConversationWhenPropositionIsDismissed = true
             conversation.append(AIMessage(type: .assistant, content: MailResourcesStrings.Localizable.aiMenuEditRequest))
             isShowingProposition = false
             Task { @MainActor in
@@ -179,11 +181,31 @@ extension AIModel {
 
     private func handleError(_ error: Error) {
         isLoading = false
+        self.error = transformErrorToAIError(error)
 
-        if let mailApiError = error as? MailApiError, Self.displayableErrors.contains(mailApiError) {
-            self.error = mailApiError
-        } else {
-            self.error = .unknownError
+        // If the context is too long, we must remove it so that the user can use
+        // the AI assistant without context for future trials
+        if self.error == .contextMaxSyntaxTokensReached {
+            messageReply = nil
+        }
+    }
+
+    private func transformErrorToAIError(_ error: Error) -> AIError {
+        guard let mailApiError = error as? MailApiError else {
+            return .unknownError
+        }
+
+        switch mailApiError {
+        case .apiAIMaxSyntaxTokensReached:
+            if isReplying && !assistantHasProposedAnswers {
+                return .contextMaxSyntaxTokensReached
+            } else {
+                return .maxSyntaxTokensReached
+            }
+        case .apiAITooManyRequests:
+            return .tooManyRequests
+        default:
+            return .unknownError
         }
     }
 }
@@ -243,5 +265,43 @@ extension AIModel {
         let subject = lastMessage[subjectRange].trimmingCharacters(in: .whitespacesAndNewlines)
         let content = String(lastMessage[contentRange])
         return (subject, content)
+    }
+}
+
+// MARK: - AI Error
+
+enum AIError: LocalizedError {
+    case maxSyntaxTokensReached
+    case contextMaxSyntaxTokensReached
+    case tooManyRequests
+    case unknownError
+
+    var errorDescription: String? {
+        switch self {
+        case .maxSyntaxTokensReached:
+            return MailResourcesStrings.Localizable.aiErrorMaxTokenReached
+        case .contextMaxSyntaxTokensReached:
+            return MailResourcesStrings.Localizable.aiErrorContextMaxTokenReached
+        case .tooManyRequests:
+            return MailResourcesStrings.Localizable.aiErrorTooManyRequests
+        case .unknownError:
+            return MailResourcesStrings.Localizable.aiErrorUnknown
+        }
+    }
+
+    init(from error: Error) {
+        guard let mailApiError = error as? MailApiError else {
+            self = .unknownError
+            return
+        }
+
+        switch mailApiError {
+        case .apiAITooManyRequests:
+            self = .tooManyRequests
+        case .apiAIMaxSyntaxTokensReached:
+            self = .maxSyntaxTokensReached
+        default:
+            self = .unknownError
+        }
     }
 }
