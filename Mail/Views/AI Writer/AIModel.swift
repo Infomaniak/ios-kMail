@@ -148,7 +148,7 @@ extension AIModel {
         }
 
         guard let replyingString else { return }
-        conversation.append(AIMessage(type: .context, content: replyingString))
+        conversation.insert(AIMessage(type: .context, content: replyingString), at: 0)
     }
 
     private func executeShortcutAndRecreateConversation(_ shortcut: AIShortcutAction) async {

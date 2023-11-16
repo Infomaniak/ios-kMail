@@ -134,7 +134,7 @@ public class DraftContentManager: ObservableObject {
 
     public func getReplyingBody() async throws -> Body? {
         guard let messageReply else { return nil }
-        return try await loadReplyingMessage(messageReply.message, replyMode: messageReply.replyMode).body
+        return try await loadReplyingMessage(messageReply.message, replyMode: messageReply.replyMode).body?.freezeIfNeeded()
     }
 
     public func shouldOverrideSubject() -> Bool {
