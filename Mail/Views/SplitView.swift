@@ -128,9 +128,13 @@ struct SplitView: View {
         .onChange(of: scenePhase) { newScenePhase in
             guard newScenePhase == .active else { return }
             Task {
-                async let _ = try? mailboxManager.refreshAllFolders()
-                async let _ = try? mailboxManager.refreshAllSignatures()
-
+                // We need to write in Task instead of async let to avoid being cancelled to early
+                Task {
+                    try await mailboxManager.refreshAllFolders()
+                }
+                Task {
+                    try await mailboxManager.refreshAllSignatures()
+                }
                 guard !platformDetector.isDebug else { return }
                 // We don't want to show both DiscoveryView at the same time
                 isShowingUpdateAvailable = try await VersionChecker.standard.showUpdateVersion()
