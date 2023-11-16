@@ -53,13 +53,13 @@ final class AIModel: ObservableObject {
         return conversation.last?.content ?? ""
     }
 
-    var hasProposedAnswers: Bool {
-        return conversation.count > 1
+    var assistantHasProposedAnswers: Bool {
+        return conversation.contains { $0.type == .assistant }
     }
 
     var currentStyle: SelectableTextView.Style {
         if error != nil {
-            return hasProposedAnswers ? .error : .loadingError
+            return assistantHasProposedAnswers ? .error : .loadingError
         } else if isLoading {
             return .loading
         } else {
@@ -177,7 +177,7 @@ extension AIModel {
 
     private func handleError(_ error: Error) {
         isLoading = false
-        self.error = transformErrorToAIError(_error: error)
+        self.error = transformErrorToAIError(error)
 
         // If the context is too long, we must remove it so that the user can use
         // the AI assistant without context for future trials
@@ -186,14 +186,14 @@ extension AIModel {
         }
     }
 
-    private func transformErrorToAIError(_error: Error) -> AIError {
+    private func transformErrorToAIError(_ error: Error) -> AIError {
         guard let mailApiError = error as? MailApiError else {
             return .unknownError
         }
 
         switch mailApiError {
         case .apiAITooManyRequests:
-            if isReplying && conversation.count <= 2 {
+            if isReplying && !assistantHasProposedAnswers {
                 return .contextMaxSyntaxTokensReached
             } else {
                 return .maxSyntaxTokensReached
@@ -277,8 +277,7 @@ enum AIError: LocalizedError {
         case .maxSyntaxTokensReached:
             return MailResourcesStrings.Localizable.aiErrorMaxTokenReached
         case .contextMaxSyntaxTokensReached:
-            // TODO: Update with correct string
-            return MailResourcesStrings.Localizable.aiErrorMaxTokenReached
+            return MailResourcesStrings.Localizable.aiErrorContextMaxTokenReached
         case .tooManyRequests:
             return MailResourcesStrings.Localizable.aiErrorTooManyRequests
         case .unknownError:
