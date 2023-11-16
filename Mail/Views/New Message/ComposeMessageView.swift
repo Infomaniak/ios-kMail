@@ -131,7 +131,8 @@ struct ComposeMessageView: View {
 
         _aiModel = StateObject(wrappedValue: AIModel(
             mailboxManager: mailboxManager,
-            draftContentManager: currentDraftContentManager
+            draftContentManager: currentDraftContentManager,
+            messageReply: editedDraft.messageReply
         ))
     }
 

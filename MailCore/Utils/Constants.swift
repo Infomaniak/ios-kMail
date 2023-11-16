@@ -95,7 +95,7 @@ public enum Constants {
     public static func forwardQuote(message: Message) -> String {
         let date = DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short)
         let to = ListFormatter.localizedString(byJoining: message.to.map(\.htmlDescription))
-        let subject = message.formattedSubject
+        let subject = message.formattedSubject.normalizedApostrophes
         var cc: String {
             if !message.cc.isEmpty {
                 return "<div>\(MailResourcesStrings.Localizable.ccTitle) \(ListFormatter.localizedString(byJoining: message.cc.map(\.htmlDescription)))<br></div>"
@@ -113,7 +113,7 @@ public enum Constants {
         \(cc)
         <div><br></div>
         <div><br></div>
-        \(message.body?.value ?? "")
+        \(message.body?.value?.normalizedApostrophes ?? "")
         </div>
         """
     }
@@ -127,7 +127,7 @@ public enum Constants {
         <div id=\"answerContentMessage\" class=\"\(replyQuoteHTMLClass)\" >
         <div>\(headerText)</div>
         <blockquote class=\"ws-ng-quote\">
-        \(message.body?.value ?? "")
+        \(message.body?.value?.normalizedApostrophes ?? "")
         </blockquote>
         </div>
         """

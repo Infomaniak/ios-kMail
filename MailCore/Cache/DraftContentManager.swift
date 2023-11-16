@@ -44,10 +44,6 @@ public class DraftContentManager: ObservableObject {
     private let mailboxManager: MailboxManager
     private let incompleteDraft: Draft
 
-    public var isReplying: Bool {
-        return messageReply?.replyMode == .reply || messageReply?.replyMode == .replyAll
-    }
-
     public init(incompleteDraft: Draft, messageReply: MessageReply?, mailboxManager: MailboxManager) {
         self.incompleteDraft = incompleteDraft.freezeIfNeeded()
         self.messageReply = messageReply
@@ -167,7 +163,7 @@ public class DraftContentManager: ObservableObject {
             if let subject {
                 liveDraft.subject = subject
             }
-            liveDraft.body = "<p>\(body.replacingOccurrences(of: "\n", with: "<br>"))</p>\(extractedElements)"
+            liveDraft.body = "<p>\(body.withNewLineIntoHTML)</p>\(extractedElements)"
         }
         NotificationCenter.default.post(name: .updateComposeMessageBody, object: nil)
     }

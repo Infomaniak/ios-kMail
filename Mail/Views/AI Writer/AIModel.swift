@@ -47,7 +47,8 @@ final class AIModel: ObservableObject {
     @Published var isShowingReplaceSubjectAlert: AIProposition?
 
     private let mailboxManager: MailboxManager
-    private var draftContentManager: DraftContentManager
+    private let draftContentManager: DraftContentManager
+    private var messageReply: MessageReply?
     private var contextId: String?
 
     var lastMessage: String {
@@ -69,12 +70,13 @@ final class AIModel: ObservableObject {
     }
 
     var isReplying: Bool {
-        draftContentManager.isReplying
+        messageReply?.isReplying == true
     }
 
-    init(mailboxManager: MailboxManager, draftContentManager: DraftContentManager) {
+    init(mailboxManager: MailboxManager, draftContentManager: DraftContentManager, messageReply: MessageReply?) {
         self.mailboxManager = mailboxManager
         self.draftContentManager = draftContentManager
+        self.messageReply = messageReply
     }
 }
 
@@ -88,10 +90,9 @@ extension AIModel {
 
     func createConversation() async {
         do {
-            if draftContentManager.isReplying {
+            if isReplying {
                 try await insertReplyingMessageInContext()
             }
-
             let response = try await mailboxManager.apiFetcher.aiCreateConversation(
                 messages: conversation,
                 engine: UserDefaults.shared.aiEngine,
@@ -143,10 +144,11 @@ extension AIModel {
             replyingString = replyingBody.value
         } else if let value = replyingBody.value {
             let splitReply = await MessageBodyUtils.splitBodyAndQuote(messageBody: value)
-            replyingString = try await MessageBodyUtils.extractText(from: splitReply.messageBody)
+            replyingString = try await SwiftSoupUtils.extractText(from: splitReply.messageBody)
         }
 
-        conversation.insert(AIMessage(type: .context, content: replyingString ?? ""), at: 0)
+        guard let replyingString else { return }
+        conversation.append(AIMessage(type: .context, content: replyingString))
     }
 
     private func executeShortcutAndRecreateConversation(_ shortcut: AIShortcutAction) async {

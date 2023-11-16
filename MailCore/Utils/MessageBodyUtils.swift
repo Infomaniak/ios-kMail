@@ -81,11 +81,6 @@ public enum MessageBodyUtils {
         return result
     }
 
-    public static func extractText(from messageBody: String) async throws -> String? {
-        let document = try await SwiftSoup.parse(messageBody)
-        return try document.body()?.text()
-    }
-
     private static func findAndRemoveLastParentBlockQuote(htmlDocumentWithoutQuote: Document) throws -> Element? {
         let element = try selectLastParentBlockQuote(document: htmlDocumentWithoutQuote)
         try element?.remove()

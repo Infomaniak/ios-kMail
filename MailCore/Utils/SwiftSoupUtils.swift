@@ -19,12 +19,17 @@
 import SwiftSoup
 
 public enum SwiftSoupUtils {
-    static func extractHTML(from document: Document, _ cssQuery: String) throws -> String {
+    public static func extractHTML(from document: Document, _ cssQuery: String) throws -> String {
         guard let foundElement = try document.select(cssQuery).first() else {
             throw SwiftSoupError.elementNotFound
         }
         let htmlContent = try foundElement.outerHtml()
         return htmlContent
+    }
+
+    public static func extractText(from html: String) async throws -> String? {
+        let document = try await SwiftSoup.parse(html)
+        return try document.body()?.text()
     }
 }
 
