@@ -219,10 +219,6 @@ struct SplitView: View {
         }
     }
 
-    private func getInbox() -> Folder? {
-        return mailboxManager.getFolder(with: .inbox)
-    }
-
     private func handleOpenUrl(_ url: URL) {
         guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return }
 

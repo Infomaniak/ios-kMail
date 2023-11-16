@@ -73,8 +73,8 @@ extension EmptyStateView {
         matomoName: "Folder"
     )
 
-    static func emptyThread(from folder: Folder?) -> EmptyStateView {
-        let name = folder?.localizedName ?? ""
+    static func emptyThread(from folder: Folder) -> EmptyStateView {
+        let name = folder.localizedName
         return EmptyStateView(
             image: MailResourcesAsset.emptyStateThread.swiftUIImage,
             title: MailResourcesStrings.Localizable.noConversationSelected(name),
