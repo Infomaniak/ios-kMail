@@ -330,25 +330,21 @@ public extension Draft {
 }
 
 public extension Draft {
+    /// List of HTML classes of elements added to the content of an email
+    static let appendedHTMLElements = [
+        Constants.signatureHTMLClass,
+        Constants.forwardQuoteHTMLClass,
+        Constants.replyQuoteHTMLClass
+    ]
+
     /// Check that the draft has some Attachments of not
     var hasAttachments: Bool {
         return !attachments.filter { $0.contentId == nil }.isEmpty
     }
 
-    /// Check if once the Signature node is removed, we still have content
-    var isBodyEmpty: Bool {
-        guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else {
-            return true
-        }
-
-        guard let signatureNode = try? document.getElementsByClass(Constants.signatureWrapperIdentifier).first() else {
-            return !document.hasText()
-        }
-
-        // Do we still have content once we removed the signature ?
-        try? signatureNode.remove()
-
-        return !document.hasText()
+    /// Check if once the signature, the reply quote and the forward quote nodes removed, we still have content
+    var isEmptyOfUserChanges: Bool {
+        isEmpty(removeAllElements: true)
     }
 
     /// Check if the Signature has changes or not
@@ -357,7 +353,7 @@ public extension Draft {
             return true
         }
 
-        guard let signatureNode = try? document.getElementsByClass(Constants.signatureWrapperIdentifier).first() else {
+        guard let signatureNode = try? document.getElementsByClass(Constants.signatureHTMLClass).first() else {
             return true
         }
 
@@ -374,10 +370,23 @@ public extension Draft {
         return true
     }
 
-    var isCompletelyEmpty: Bool {
-        guard !hasAttachments, isBodyEmpty, isSignatureUnchanged else {
+    var shouldBeSaved: Bool {
+        guard !hasAttachments, isEmpty(removeAllElements: false), isSignatureUnchanged else {
             return false
         }
         return true
+    }
+
+    /// Check if once the signature node is removed, as well as the reply and forward quotes if `removeAllElements` is true, we
+    /// still have content
+    private func isEmpty(removeAllElements: Bool) -> Bool {
+        guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else { return true }
+
+        let itemsToExtract = removeAllElements ? Self.appendedHTMLElements : [Constants.signatureHTMLClass]
+        for itemToExtract in itemsToExtract {
+            let _ = try? document.getElementsByClass(itemToExtract).remove()
+        }
+
+        return !document.hasText()
     }
 }

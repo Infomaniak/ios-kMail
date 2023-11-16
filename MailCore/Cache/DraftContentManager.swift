@@ -40,9 +40,9 @@ public class DraftContentManager: ObservableObject {
         let shouldAddSignatureText: Bool
     }
 
-    let messageReply: MessageReply?
-    let mailboxManager: MailboxManager
-    let incompleteDraft: Draft
+    private let messageReply: MessageReply?
+    private let mailboxManager: MailboxManager
+    private let incompleteDraft: Draft
 
     public init(incompleteDraft: Draft, messageReply: MessageReply?, mailboxManager: MailboxManager) {
         self.incompleteDraft = incompleteDraft.freezeIfNeeded()
@@ -71,11 +71,11 @@ public class DraftContentManager: ObservableObject {
             let parsedMessage = try SwiftSoup.parse(liveIncompleteDraft.body)
             // If we find the previous signature, we replace it with the new one
             // otherwise we append the signature at the end of the document
-            if let foundSignatureDiv = try parsedMessage.select(".\(Constants.signatureWrapperIdentifier)").first {
+            if let foundSignatureDiv = try parsedMessage.select(".\(Constants.signatureHTMLClass)").first {
                 try foundSignatureDiv.html(newSignature.content)
             } else if let body = parsedMessage.body() {
                 let signatureDiv = try body.appendElement("div")
-                try signatureDiv.addClass(Constants.signatureWrapperIdentifier)
+                try signatureDiv.addClass(Constants.signatureHTMLClass)
                 try signatureDiv.html(newSignature.content)
             }
 
@@ -99,8 +99,8 @@ public class DraftContentManager: ObservableObject {
 
         if let messageReply {
             // New draft created either with reply or forward
-            async let completeDraftReplyingBody = try await loadReplyingBody(
-                message: messageReply.message,
+            async let completeDraftReplyingBody = try await loadReplyingMessageAndFormat(
+                messageReply.message,
                 replyMode: messageReply.replyMode
             )
             async let replyingAttachments = try await loadReplyingAttachments(
@@ -132,6 +132,11 @@ public class DraftContentManager: ObservableObject {
         )
     }
 
+    public func getReplyingBody() async throws -> Body? {
+        guard let messageReply else { return nil }
+        return try await loadReplyingMessage(messageReply.message, replyMode: messageReply.replyMode).body?.freezeIfNeeded()
+    }
+
     public func shouldOverrideSubject() -> Bool {
         guard let liveDraft = try? getLiveDraft() else { return false }
         return !liveDraft.subject.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -139,17 +144,18 @@ public class DraftContentManager: ObservableObject {
 
     public func shouldOverrideBody() -> Bool {
         guard let liveDraft = try? getLiveDraft() else { return false }
-        return !liveDraft.isBodyEmpty
+        return !liveDraft.isEmptyOfUserChanges
     }
 
     public func replaceContent(subject: String? = nil, body: String) {
         guard let liveDraft = try? getLiveDraft() else { return }
         guard let parsedMessage = try? SwiftSoup.parse(liveDraft.body) else { return }
 
-        var signatureContent = ""
-        if let foundSignature = try? parsedMessage.select(".\(Constants.signatureWrapperIdentifier)").first(),
-           let signatureHTML = try? foundSignature.outerHtml() {
-            signatureContent = signatureHTML
+        var extractedElements = ""
+        for itemToExtract in Draft.appendedHTMLElements {
+            if let element = try? SwiftSoupUtils.extractHTML(from: parsedMessage, ".\(itemToExtract)") {
+                extractedElements.append(element)
+            }
         }
 
         let realm = mailboxManager.getRealm()
@@ -157,7 +163,7 @@ public class DraftContentManager: ObservableObject {
             if let subject {
                 liveDraft.subject = subject
             }
-            liveDraft.body = "<p>\(body.replacingOccurrences(of: "\n", with: "<br>"))</p>\(signatureContent)"
+            liveDraft.body = "<p>\(body.withNewLineIntoHTML)</p>\(extractedElements)"
         }
         NotificationCenter.default.post(name: .updateComposeMessageBody, object: nil)
     }
@@ -305,14 +311,19 @@ public class DraftContentManager: ObservableObject {
         return isDefault ? .emailMatchDefault : .emailMatch
     }
 
-    private func loadReplyingBody(message: Message, replyMode: ReplyMode) async throws -> String {
+    private func loadReplyingMessage(_ message: Message, replyMode: ReplyMode) async throws -> Message {
         if !message.fullyDownloaded {
             try await mailboxManager.message(message: message)
         }
 
         guard let freshMessage = message.thaw() else { throw MailError.unknownError }
         freshMessage.realm?.refresh()
-        return Draft.replyingBody(message: freshMessage, replyMode: replyMode)
+        return freshMessage
+    }
+
+    private func loadReplyingMessageAndFormat(_ message: Message, replyMode: ReplyMode) async throws -> String {
+        let replyingMessage = try await loadReplyingMessage(message, replyMode: replyMode)
+        return Draft.replyingBody(message: replyingMessage, replyMode: replyMode)
     }
 
     private func loadReplyingAttachments(message: Message, replyMode: ReplyMode) async throws -> [Attachment] {

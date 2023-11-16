@@ -91,6 +91,7 @@ struct FixedMenuOrderModifier: ViewModifier {
 #Preview {
     AIPropositionMenu(aiModel: AIModel(
         mailboxManager: PreviewHelper.sampleMailboxManager,
-        draftContentManager: PreviewHelper.sampleDraftContentManager
+        draftContentManager: PreviewHelper.sampleDraftContentManager,
+        messageReply: nil
     ))
 }

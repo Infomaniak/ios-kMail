@@ -66,7 +66,7 @@ final class SignatureTests: XCTestCase {
 
         do {
             let document = try SwiftSoup.parse(newBody)
-            guard let signatureNode = try document.getElementsByClass(Constants.signatureWrapperIdentifier).first() else {
+            guard let signatureNode = try document.getElementsByClass(Constants.signatureHTMLClass).first() else {
                 XCTFail("Unexpected signature not found")
                 return
             }
@@ -90,7 +90,7 @@ final class SignatureTests: XCTestCase {
 
         do {
             let document = try SwiftSoup.parse(newBody)
-            guard let signatureNode = try document.getElementsByClass(Constants.signatureWrapperIdentifier).first() else {
+            guard let signatureNode = try document.getElementsByClass(Constants.signatureHTMLClass).first() else {
                 XCTFail("Unexpected signature not found")
                 return
             }

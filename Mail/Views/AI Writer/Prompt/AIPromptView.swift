@@ -38,6 +38,14 @@ struct AIPromptView: View {
 
     @ObservedObject var aiModel: AIModel
 
+    private var placeholder: String {
+        if aiModel.isReplying {
+            return MailResourcesStrings.Localizable.aiPromptAnswer
+        } else {
+            return MailResourcesStrings.Localizable.aiPromptPlaceholder(placeholderProposition)
+        }
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
             HStack(spacing: UIPadding.regular) {
@@ -50,7 +58,7 @@ struct AIPromptView: View {
 
             ZStack(alignment: .topLeading) {
                 if prompt.isEmpty {
-                    Text(MailResourcesStrings.Localizable.aiPromptPlaceholder(placeholderProposition))
+                    Text(placeholder)
                         .foregroundStyle(Color(UIColor.placeholderText))
                         .textStyle(.body)
                         .padding([.vertical, .horizontal], value: .small)
@@ -118,6 +126,7 @@ struct AIPromptView: View {
 #Preview {
     AIPromptView(aiModel: AIModel(
         mailboxManager: PreviewHelper.sampleMailboxManager,
-        draftContentManager: PreviewHelper.sampleDraftContentManager
+        draftContentManager: PreviewHelper.sampleDraftContentManager,
+        messageReply: nil
     ))
 }

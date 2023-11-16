@@ -16,24 +16,25 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
+import SwiftSoup
 
-public struct MessageReply: Identifiable {
-    public var id: String {
-        return localDraftUUID
+public enum SwiftSoupUtils {
+    public static func extractHTML(from document: Document, _ cssQuery: String) throws -> String {
+        guard let foundElement = try document.select(cssQuery).first() else {
+            throw SwiftSoupError.elementNotFound
+        }
+        let htmlContent = try foundElement.outerHtml()
+        return htmlContent
     }
 
-    public let localDraftUUID: String
-    public let message: Message
-    public let replyMode: ReplyMode
-
-    public var isReplying: Bool {
-        replyMode == .reply || replyMode == .replyAll
+    public static func extractText(from html: String) async throws -> String? {
+        let document = try await SwiftSoup.parse(html)
+        return try document.body()?.text()
     }
+}
 
-    public init(message: Message, replyMode: ReplyMode) {
-        self.message = message
-        self.replyMode = replyMode
-        localDraftUUID = UUID().uuidString
+public extension SwiftSoupUtils {
+    enum SwiftSoupError: Error {
+        case elementNotFound
     }
 }

@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: fr, French
  * Tagged: ios
- * Exported by: elena willen
- * Exported at: Mon, 30 Oct 2023 13:05:06 +0100
+ * Exported by: Valentin Perignon
+ * Exported at: Wed, 15 Nov 2023 15:29:02 +0100
  */
 
 /* loco:6256793050618f7416758a32 */
@@ -1477,3 +1477,9 @@
 
 /* loco:653a132b3b8d3a1f740e06f2 */
 "aiGenerationTitlePrompt" = "Générer avec";
+
+/* loco:653fa9122f7b384757074432 */
+"snackbarSubjectCopiedToClipboard" = "Objet copié dans le presse-papiers";
+
+/* loco:6553342162ddfaef2c06b5a2 */
+"aiPromptAnswer" = "Dites à l’assistant comment il peut vous aider à répondre à cet e-mail…";

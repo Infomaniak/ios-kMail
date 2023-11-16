@@ -67,8 +67,6 @@ public enum Constants {
         try! NSRegularExpression(pattern: ">\\s*<|>?\\s+<?")
     }()
 
-    public static let aiDetectPartsRegex = "^[^:]+:(?<subject>.+?)\n\\s*(?<content>.+)"
-
     public static let sizeChangeThreshold = 3
     public static let viewportContent = "width=device-width, initial-scale=1.0"
     public static let divWrapperId = "kmail-message-content"
@@ -90,10 +88,14 @@ public enum Constants {
         return url.scheme?.caseInsensitiveCompare("mailto") == .orderedSame
     }
 
+    public static let signatureHTMLClass = "editorUserSignature"
+    public static let forwardQuoteHTMLClass = "forwardContentMessage"
+    public static let replyQuoteHTMLClass = "ik_mail_quote"
+
     public static func forwardQuote(message: Message) -> String {
         let date = DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short)
         let to = ListFormatter.localizedString(byJoining: message.to.map(\.htmlDescription))
-        let subject = message.formattedSubject.replacingOccurrences(of: "'", with: "’")
+        let subject = message.formattedSubject.normalizedApostrophes
         var cc: String {
             if !message.cc.isEmpty {
                 return "<div>\(MailResourcesStrings.Localizable.ccTitle) \(ListFormatter.localizedString(byJoining: message.cc.map(\.htmlDescription)))<br></div>"
@@ -102,7 +104,7 @@ public enum Constants {
             }
         }
         return """
-        <div class=\"forwardContentMessage\">
+        <div class=\"\(forwardQuoteHTMLClass)\">
         <div>---------- \(MailResourcesStrings.Localizable.messageForwardHeader) ---------<br></div>
         <div>\(MailResourcesStrings.Localizable.fromTitle) \(message.from.first?.htmlDescription ?? "")<br></div>
         <div>\(MailResourcesStrings.Localizable.dateTitle) \(date)<br></div>
@@ -111,7 +113,7 @@ public enum Constants {
         \(cc)
         <div><br></div>
         <div><br></div>
-        \(message.body?.value?.replacingOccurrences(of: "'", with: "’") ?? "")
+        \(message.body?.value?.normalizedApostrophes ?? "")
         </div>
         """
     }
@@ -122,10 +124,10 @@ public enum Constants {
             message.from.first?.htmlDescription ?? ""
         )
         return """
-        <div id=\"answerContentMessage\" class=\"ik_mail_quote\" >
+        <div id=\"answerContentMessage\" class=\"\(replyQuoteHTMLClass)\" >
         <div>\(headerText)</div>
         <blockquote class=\"ws-ng-quote\">
-        \(message.body?.value?.replacingOccurrences(of: "'", with: "’") ?? "")
+        \(message.body?.value?.normalizedApostrophes ?? "")
         </blockquote>
         </div>
         """
@@ -147,8 +149,6 @@ public enum Constants {
 
         return dateFormatter.string(from: date)
     }
-
-    public static let signatureWrapperIdentifier = "editorUserSignature"
 
     public static let messageQuantityLimit = 500
     public static let pageSize = 50
@@ -179,6 +179,8 @@ public enum Constants {
     public static let searchFolderId = "search_folder_id"
 
     public static let backgroundRefreshTaskIdentifier = "com.infomaniak.mail.background-refresh"
+
+    public static let aiDetectPartsRegex = "^[^:]+:(?<subject>.+?)\n\\s*(?<content>.+)"
 
     public static let aiPromptExamples: Set = [
         MailResourcesStrings.Localizable.aiPromptExample1,
