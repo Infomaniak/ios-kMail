@@ -22,6 +22,16 @@ import MailCore
 import MailResources
 import SwiftUI
 
+extension VerticalAlignment {
+    enum SplashScreenIconAlignment: AlignmentID {
+        static func defaultValue(in context: ViewDimensions) -> CGFloat {
+            return context[VerticalAlignment.center]
+        }
+    }
+
+    static let splashScreenIconAlignment = VerticalAlignment(SplashScreenIconAlignment.self)
+}
+
 struct PreloadingView: View {
     @LazyInjectService private var accountManager: AccountManager
 
@@ -30,21 +40,23 @@ struct PreloadingView: View {
     let currentAccount: Account
 
     var body: some View {
-        ZStack {
+        ZStack(alignment: Alignment(horizontal: .center, vertical: .splashScreenIconAlignment)) {
             MailResourcesAsset.backgroundBlueNavBarColor.swiftUIColor
                 .ignoresSafeArea()
 
             VStack(spacing: UIPadding.medium) {
-                Spacer()
                 MailResourcesAsset.splashscreenMail.swiftUIImage
                     .frame(maxWidth: 204)
+                    .alignmentGuide(.splashScreenIconAlignment) { d in d[VerticalAlignment.center] }
+
                 ProgressView()
                     .progressViewStyle(.circular)
-
-                Spacer(minLength: UIPadding.regular)
-                MailResourcesAsset.splashscreenInfomaniak.swiftUIImage
-                    .frame(width: 178)
             }
+        }
+        .safeAreaInset(edge: .bottom) {
+            MailResourcesAsset.splashscreenInfomaniak.swiftUIImage
+                .frame(width: 178)
+                .padding(.bottom, value: .regular)
         }
         .task(id: currentAccount.id) {
             do {
@@ -62,4 +74,9 @@ struct PreloadingView: View {
             }
         }
     }
+}
+
+#Preview("Portrait") {
+    PreloadingView(currentAccount: PreviewHelper.sampleAccount)
+        .environmentObject(RootViewState())
 }
