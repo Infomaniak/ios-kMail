@@ -22,16 +22,56 @@ import MailResources
 import NukeUI
 import SwiftUI
 
-struct AvatarView: View, Equatable {
+final class AvatarViewModel: ObservableObject {
+    let contactBuilder: CommonContactBuilder
+
+    @Published var displayablePerson: CommonContact
+
+    init(contactBuilder: CommonContactBuilder) {
+        self.contactBuilder = contactBuilder
+
+        switch contactBuilder {
+        case .recipient(let recipient, let contextMailboxManager):
+            displayablePerson = CommonContact.emptyContact
+            Task {
+                displayablePerson = CommonContact(recipient: recipient, contextMailboxManager: contextMailboxManager)
+                self.objectWillChange.send()
+            }
+        case .user(let user):
+            displayablePerson = CommonContact(user: user)
+        case .contact(let contact):
+            displayablePerson = contact
+        case .emptyContact:
+            displayablePerson = CommonContact.emptyContact
+        }
+    }
+}
+
+struct AvatarView: View, Equatable, Identifiable {
+    var id: Int {
+        return viewModel.displayablePerson.id
+    }
+
     /// Optional as this view can be displayed from a context without a mailboxManager available
     let mailboxManager: MailboxManager?
 
-    let displayablePerson: CommonContact
+    var size: CGFloat
 
-    var size: CGFloat = 28
+    let viewModel: AvatarViewModel
+
+    static func == (lhs: AvatarView, rhs: AvatarView) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    init(mailboxManager: MailboxManager?, contactBuilder: CommonContactBuilder, size: CGFloat = 28) {
+        self.mailboxManager = mailboxManager
+        viewModel = AvatarViewModel(contactBuilder: contactBuilder)
+        self.size = size
+    }
 
     var body: some View {
         Group {
+            let displayablePerson = viewModel.displayablePerson
             if let mailboxManager,
                let currentToken = mailboxManager.apiFetcher.currentToken,
                let avatarImageRequest = displayablePerson.avatarImageRequest.authenticatedRequestIfNeeded(token:
@@ -52,5 +92,6 @@ struct AvatarView: View, Equatable {
             }
         }
         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
+//        .id(id)
     }
 }

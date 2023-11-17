@@ -46,14 +46,38 @@ public struct AvatarImageRequest {
     }
 }
 
-public struct CommonContact {
+public enum CommonContactBuilder {
+    case recipient(recipient: Recipient, contextMailboxManager: MailboxManager)
+    case user(user: UserProfile)
+    case contact(contact: CommonContact)
+    case emptyContact
+}
+
+public struct CommonContact: Identifiable {
+    public static let emptyContact = CommonContact()
+
+    public let id: Int
+
     public let fullName: String
     public let email: String
     public let avatarImageRequest: AvatarImageRequest
     public let color: UIColor
 
-    public init(recipient: Recipient, contextMailboxManager: MailboxManager) {
+    /// Empty contact
+    private init() {
+        let recipient = Recipient(email: "", name: "")
         email = recipient.email
+        fullName = recipient.name
+        id = recipient.id.hashValue
+        color = UIColor.backgroundColor(from: recipient.hash, with: UIConstants.avatarColors)
+        avatarImageRequest = AvatarImageRequest(imageRequest: nil, shouldAuthenticate: true)
+    }
+
+    public init(recipient: Recipient, contextMailboxManager: MailboxManager) {
+//        assert(!Foundation.Thread.isMainThread, "Do not call this init from main actor, too costly")
+
+        email = recipient.email
+        id = recipient.id.hashValue
 
         if recipient.isMe(currentMailboxEmail: contextMailboxManager.mailbox.email) {
             fullName = MailResourcesStrings.Localizable.contactMe
@@ -65,7 +89,7 @@ public struct CommonContact {
                 avatarImageRequest = AvatarImageRequest(imageRequest: nil, shouldAuthenticate: false)
             }
         } else {
-            let mainViewRealm = contextMailboxManager.contactManager.viewRealm
+            let mainViewRealm = contextMailboxManager.contactManager.getRealm()
             let contact = contextMailboxManager.contactManager.getContact(for: recipient, realm: mainViewRealm)
             fullName = contact?.name ?? (recipient.name.isEmpty ? recipient.email : recipient.name)
             color = contact?.color ?? UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
@@ -74,6 +98,7 @@ public struct CommonContact {
     }
 
     public init(user: UserProfile) {
+        id = "\(user.email)_\(user.displayName)".hashValue
         fullName = user.displayName
         email = user.email
         color = UIColor.backgroundColor(from: user.id, with: UIConstants.avatarColors)
@@ -82,11 +107,6 @@ public struct CommonContact {
         } else {
             avatarImageRequest = AvatarImageRequest(imageRequest: nil, shouldAuthenticate: false)
         }
-    }
-
-    /// A `CommonContact` that represents no-one.
-    public static func emptyContact(contextMailboxManager: MailboxManager) -> CommonContact {
-        CommonContact(recipient: Recipient(email: "", name: ""), contextMailboxManager: contextMailboxManager)
     }
 }
 

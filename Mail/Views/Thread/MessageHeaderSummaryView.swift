@@ -50,10 +50,8 @@ struct MessageHeaderSummaryView: View {
                     } label: {
                         AvatarView(
                             mailboxManager: mailboxManager,
-                            displayablePerson: CommonContact(
-                                recipient: recipient,
-                                contextMailboxManager: mailboxManager
-                            ),
+                            contactBuilder: .recipient(recipient: recipient,
+                                                       contextMailboxManager: mailboxManager),
                             size: 40
                         )
                     }
