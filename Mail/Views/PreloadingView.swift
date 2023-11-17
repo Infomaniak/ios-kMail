@@ -63,3 +63,8 @@ struct PreloadingView: View {
         }
     }
 }
+
+#Preview {
+    PreloadingView(currentAccount: PreviewHelper.sampleAccount)
+        .environmentObject(RootViewState())
+}
