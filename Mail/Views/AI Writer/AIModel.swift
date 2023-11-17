@@ -84,12 +84,12 @@ final class AIModel: ObservableObject {
     }
 }
 
-// MARK: - Conversation
+// MARK: - Manage conversation
 
 extension AIModel {
     func addInitialPrompt(_ prompt: String) {
         recipientsList = getRecipientsList()
-        conversation.append(AIMessage(type: .user, content: prompt, vars: AIMessageVars(recipient: recipientsList)))
+        conversation.append(AIMessage(type: .user, content: prompt, vars: [.recipient: recipientsList]))
         isLoading = true
     }
 
@@ -120,11 +120,6 @@ extension AIModel {
     func executeShortcut(_ shortcut: AIShortcutAction) async {
         if shortcut == .edit {
             keepConversationWhenPropositionIsDismissed = true
-            conversation.append(AIMessage(
-                type: .assistant,
-                content: MailResourcesStrings.Localizable.aiMenuEditRequest,
-                vars: AIMessageVars(recipient: recipientsList)
-            ))
             isShowingProposition = false
             Task { @MainActor in
                 self.isShowingPrompt = true
@@ -161,7 +156,7 @@ extension AIModel {
 
         guard let replyingString else { return }
         conversation.insert(
-            AIMessage(type: .context, content: replyingString, vars: AIMessageVars(recipient: recipientsList)),
+            AIMessage(type: .context, content: replyingString, vars: [.recipient: recipientsList]),
             at: 0
         )
     }
@@ -188,11 +183,7 @@ extension AIModel {
         if let shortcutResponse = response as? AIShortcutResponse {
             conversation.append(shortcutResponse.action)
         }
-        conversation.append(AIMessage(
-            type: .assistant,
-            content: response.content,
-            vars: AIMessageVars(recipient: recipientsList)
-        ))
+        conversation.append(AIMessage(type: .assistant, content: response.content))
         isLoading = false
     }
 
@@ -308,7 +299,7 @@ extension AIModel {
         }
 
         let to: [String] = liveDraft.to.compactMap { recipient in
-            if recipient.name.isEmpty || recipient.name == recipient.email {
+            if recipient.name.isEmpty {
                 return nil
             }
             return recipient.name
