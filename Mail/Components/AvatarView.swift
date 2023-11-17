@@ -22,43 +22,21 @@ import MailResources
 import NukeUI
 import SwiftUI
 
-final class AvatarViewModel: ObservableObject {
-    let contactBuilder: CommonContactBuilder
-
-    @Published var displayablePerson: CommonContact
-
-    init(contactBuilder: CommonContactBuilder) {
-        self.contactBuilder = contactBuilder
-
-        switch contactBuilder {
-        case .recipient(let recipient, let contextMailboxManager):
-            displayablePerson = CommonContact.emptyContact
-            Task {
-                displayablePerson = CommonContact(recipient: recipient, contextMailboxManager: contextMailboxManager)
-                self.objectWillChange.send()
-            }
-        case .user(let user):
-            displayablePerson = CommonContact(user: user)
-        case .contact(let contact):
-            displayablePerson = contact
-        case .emptyContact:
-            displayablePerson = CommonContact.emptyContact
-        }
-    }
-}
-
 struct AvatarView: View, Equatable, Identifiable {
-    var id: Int {
-        return viewModel.displayablePerson.id
-    }
-
     /// Optional as this view can be displayed from a context without a mailboxManager available
     let mailboxManager: MailboxManager?
 
     var size: CGFloat
 
+    /// A view model for async loading of contacts
     let viewModel: AvatarViewModel
 
+    /// Identifiable, linked to the contact displayed
+    var id: Int {
+        return viewModel.displayablePerson.id
+    }
+
+    /// Equatable
     static func == (lhs: AvatarView, rhs: AvatarView) -> Bool {
         lhs.id == rhs.id
     }
@@ -92,6 +70,6 @@ struct AvatarView: View, Equatable, Identifiable {
             }
         }
         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
-//        .id(id)
+        .id(id)
     }
 }

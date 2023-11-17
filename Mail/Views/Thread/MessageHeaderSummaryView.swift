@@ -68,7 +68,13 @@ struct MessageHeaderSummaryView: View {
                         HStack(alignment: .firstTextBaseline, spacing: UIPadding.small) {
                             VStack {
                                 ForEach(message.from) { recipient in
-                                    Text(CommonContact(recipient: recipient, contextMailboxManager: mailboxManager),
+                                    let contactBuilder = CommonContactBuilder.recipient(
+                                        recipient: recipient,
+                                        contextMailboxManager: mailboxManager
+                                    )
+                                    let contact = CommonContactCache.getOrCreateContact(contactBuilder: contactBuilder)
+
+                                    Text(contact,
                                          format: .displayablePerson())
                                         .lineLimit(1)
                                         .textStyle(.bodyMedium)
@@ -85,7 +91,12 @@ struct MessageHeaderSummaryView: View {
                         HStack {
                             Text(
                                 message.recipients.map {
-                                    CommonContact(recipient: $0, contextMailboxManager: mailboxManager).formatted()
+                                    let contactBuilder = CommonContactBuilder.recipient(
+                                        recipient: $0,
+                                        contextMailboxManager: mailboxManager
+                                    )
+                                    let contact = CommonContactCache.getOrCreateContact(contactBuilder: contactBuilder)
+                                    return contact.formatted()
                                 },
                                 format: .list(type: .and)
                             )

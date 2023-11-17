@@ -53,7 +53,72 @@ public enum CommonContactBuilder {
     case emptyContact
 }
 
-public struct CommonContact: Identifiable {
+/// Creating a CommonContact is expensive, relying on a cache to reduce hangs
+public enum CommonContactCache {
+    static let cache = NSCache<NSString, CommonContact>()
+
+    /// Get a contact from cache if any or nil
+    public static func getContactFromCache(contactBuilder: CommonContactBuilder) -> CommonContact? {
+        let key: NSString
+        switch contactBuilder {
+        case .recipient(let recipient, _):
+            key = recipient.id as NSString
+        case .user(let user):
+            key = "\(user.id)" as NSString
+        case .contact(let contact):
+            return contact
+        case .emptyContact:
+            return CommonContact.emptyContact
+        }
+
+        return cache.object(forKey: key)
+    }
+
+    /// Get a contact from cache or build it
+    public static func getOrCreateContact(contactBuilder: CommonContactBuilder) -> CommonContact {
+        let contact: CommonContact
+        let key: NSString
+
+        switch contactBuilder {
+        case .recipient(let recipient, let contextMailboxManager):
+            key = recipient.id as NSString
+            contact = getOrCreateContact(recipient: recipient, contextMailboxManager: contextMailboxManager, key: key)
+        case .user(let user):
+            key = "\(user.id)" as NSString
+            contact = getOrCreateContact(user: user, key: key)
+        case .contact(let wrappedContact):
+            key = "\(wrappedContact.id)" as NSString
+            contact = wrappedContact
+        case .emptyContact:
+            contact = CommonContact.emptyContact
+            key = "\(contact.id)" as NSString
+        }
+
+        cache.setObject(contact, forKey: key)
+        return contact
+    }
+
+    private static func getOrCreateContact(user: UserProfile, key: NSString) -> CommonContact {
+        guard let contact = CommonContactCache.cache.object(forKey: key) else {
+            return CommonContact(user: user)
+        }
+
+        return contact
+    }
+
+    private static func getOrCreateContact(recipient: Recipient,
+                                           contextMailboxManager: MailboxManager,
+                                           key: NSString) -> CommonContact {
+        guard let contact = CommonContactCache.cache.object(forKey: key) else {
+            return CommonContact(recipient: recipient, contextMailboxManager: contextMailboxManager)
+        }
+
+        return contact
+    }
+}
+
+public final class CommonContact: Identifiable {
+    /// Empty contact is a singleton
     public static let emptyContact = CommonContact()
 
     public let id: Int
@@ -62,6 +127,19 @@ public struct CommonContact: Identifiable {
     public let email: String
     public let avatarImageRequest: AvatarImageRequest
     public let color: UIColor
+
+    static func from(contactBuilder: CommonContactBuilder) -> CommonContact {
+        switch contactBuilder {
+        case .recipient(let recipient, let contextMailboxManager):
+            CommonContact(recipient: recipient, contextMailboxManager: contextMailboxManager)
+        case .user(let user):
+            CommonContact(user: user)
+        case .contact(let contact):
+            contact
+        case .emptyContact:
+            emptyContact
+        }
+    }
 
     /// Empty contact
     private init() {
@@ -73,7 +151,8 @@ public struct CommonContact: Identifiable {
         avatarImageRequest = AvatarImageRequest(imageRequest: nil, shouldAuthenticate: true)
     }
 
-    public init(recipient: Recipient, contextMailboxManager: MailboxManager) {
+    /// Init form a `Recipient` in the context of a mailbox
+    init(recipient: Recipient, contextMailboxManager: MailboxManager) {
 //        assert(!Foundation.Thread.isMainThread, "Do not call this init from main actor, too costly")
 
         email = recipient.email
@@ -97,8 +176,9 @@ public struct CommonContact: Identifiable {
         }
     }
 
-    public init(user: UserProfile) {
-        id = "\(user.email)_\(user.displayName)".hashValue
+    /// Init form a `UserProfile`
+    init(user: UserProfile) {
+        id = user.id
         fullName = user.displayName
         email = user.email
         color = UIColor.backgroundColor(from: user.id, with: UIConstants.avatarColors)
