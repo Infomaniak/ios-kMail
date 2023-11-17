@@ -266,7 +266,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         let newAccount = Account(apiToken: token)
         newAccount.user = user
         addAccount(account: newAccount, token: token)
-        setCurrentAccount(account: newAccount)
 
         try? await featureFlagsManager.fetchFlags()
 
@@ -283,6 +282,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             let currentMailboxManager = getMailboxManager(for: mainMailbox)
             try await currentMailboxManager?.refreshAllFolders()
 
+            setCurrentAccount(account: newAccount)
             setCurrentMailboxForCurrentAccount(mailbox: mainMailbox)
         }
 

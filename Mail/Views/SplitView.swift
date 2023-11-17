@@ -69,9 +69,6 @@ struct SplitView: View {
     @State private var isShowingSyncProfile = false
 
     let mailboxManager: MailboxManager
-    init(mailboxManager: MailboxManager) {
-        self.mailboxManager = mailboxManager
-    }
 
     var body: some View {
         Group {

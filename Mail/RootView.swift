@@ -39,6 +39,8 @@ struct RootView: View {
                 NoMailboxView()
             case .unavailableMailboxes:
                 UnavailableMailboxesView()
+            case .preloading(let currentAccount):
+                PreloadingView(currentAccount: currentAccount)
             }
         }
         .environment(\.isCompactWindow, horizontalSizeClass == .compact || verticalSizeClass == .compact)
