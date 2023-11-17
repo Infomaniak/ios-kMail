@@ -26,7 +26,7 @@ struct DetachMailboxConfirmationView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var accountManager: AccountManager
 
-    @EnvironmentObject private var navigationState: NavigationState
+    @EnvironmentObject private var navigationState: RootViewState
 
     let mailbox: Mailbox
 

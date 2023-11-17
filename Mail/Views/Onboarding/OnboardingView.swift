@@ -151,7 +151,7 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 
 struct OnboardingView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var navigationState: NavigationState
+    @EnvironmentObject private var navigationState: RootViewState
 
     @LazyInjectService var orientationManager: OrientationManageable
 

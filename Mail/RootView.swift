@@ -23,11 +23,11 @@ struct RootView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @Environment(\.verticalSizeClass) private var verticalSizeClass
 
-    @EnvironmentObject private var navigationState: NavigationState
+    @EnvironmentObject private var navigationState: RootViewState
 
     var body: some View {
         ZStack {
-            switch navigationState.rootViewState {
+            switch navigationState.state {
             case .appLocked:
                 LockedAppView()
             case .mainView(let currentMailboxManager, let initialFolder):
