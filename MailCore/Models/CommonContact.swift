@@ -55,16 +55,16 @@ public enum CommonContactBuilder {
 
 /// Creating a CommonContact is expensive, relying on a cache to reduce hangs
 public enum CommonContactCache {
-    static let cache = NSCache<NSString, CommonContact>()
+    static let cache = NSCache<NSNumber, CommonContact>()
 
     /// Get a contact from cache if any or nil
     public static func getContactFromCache(contactBuilder: CommonContactBuilder) -> CommonContact? {
-        let key: NSString
+        let key: NSNumber
         switch contactBuilder {
         case .recipient(let recipient, _):
-            key = recipient.id as NSString
+            key = NSNumber(value: recipient.id.hash)
         case .user(let user):
-            key = "\(user.id)" as NSString
+            key = NSNumber(value: user.id)
         case .contact(let contact):
             return contact
         case .emptyContact:
@@ -77,28 +77,28 @@ public enum CommonContactCache {
     /// Get a contact from cache or build it
     public static func getOrCreateContact(contactBuilder: CommonContactBuilder) -> CommonContact {
         let contact: CommonContact
-        let key: NSString
+        let key: NSNumber
 
         switch contactBuilder {
         case .recipient(let recipient, let contextMailboxManager):
-            key = recipient.id as NSString
+            key = NSNumber(value: recipient.id.hash)
             contact = getOrCreateContact(recipient: recipient, contextMailboxManager: contextMailboxManager, key: key)
         case .user(let user):
-            key = "\(user.id)" as NSString
+            key = NSNumber(value: user.id)
             contact = getOrCreateContact(user: user, key: key)
         case .contact(let wrappedContact):
-            key = "\(wrappedContact.id)" as NSString
+            key = NSNumber(value: wrappedContact.id)
             contact = wrappedContact
         case .emptyContact:
             contact = CommonContact.emptyContact
-            key = "\(contact.id)" as NSString
+            key = NSNumber(value: contact.id)
         }
 
         cache.setObject(contact, forKey: key)
         return contact
     }
 
-    private static func getOrCreateContact(user: UserProfile, key: NSString) -> CommonContact {
+    private static func getOrCreateContact(user: UserProfile, key: NSNumber) -> CommonContact {
         guard let contact = CommonContactCache.cache.object(forKey: key) else {
             return CommonContact(user: user)
         }
@@ -108,7 +108,7 @@ public enum CommonContactCache {
 
     private static func getOrCreateContact(recipient: Recipient,
                                            contextMailboxManager: MailboxManager,
-                                           key: NSString) -> CommonContact {
+                                           key: NSNumber) -> CommonContact {
         guard let contact = CommonContactCache.cache.object(forKey: key) else {
             return CommonContact(recipient: recipient, contextMailboxManager: contextMailboxManager)
         }
