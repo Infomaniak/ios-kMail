@@ -47,6 +47,7 @@ struct PreloadingView: View {
             VStack(spacing: UIPadding.medium) {
                 MailResourcesAsset.splashscreenMail.swiftUIImage
                     .frame(maxWidth: 204)
+                    .padding(.top, -28)
                     .alignmentGuide(.splashScreenIconAlignment) { d in d[VerticalAlignment.center] }
 
                 ProgressView()
@@ -76,7 +77,7 @@ struct PreloadingView: View {
     }
 }
 
-#Preview("Portrait") {
+#Preview {
     PreloadingView(currentAccount: PreviewHelper.sampleAccount)
         .environmentObject(RootViewState())
 }
