@@ -35,7 +35,7 @@ public struct AIMessage: Codable {
     public let content: String
     public let vars: AIMessageVars
 
-    public init(type: AIMessageType, content: String, vars: AIMessageVars = AIMessageVars()) {
+    public init(type: AIMessageType, content: String, vars: AIMessageVars) {
         self.type = type
         self.content = content
         self.vars = vars

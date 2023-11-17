@@ -50,7 +50,9 @@ final class AIModel: ObservableObject {
     private let draftContentManager: DraftContentManager
     private let draft: Draft
     private var messageReply: MessageReply?
+
     private var contextId: String?
+    private var recipientsList: String?
 
     var lastMessage: String {
         return conversation.last?.content ?? ""
@@ -86,7 +88,8 @@ final class AIModel: ObservableObject {
 
 extension AIModel {
     func addInitialPrompt(_ prompt: String) {
-        conversation.append(AIMessage(type: .user, content: prompt))
+        let recipientsList = getRecipientsList()
+        conversation.append(AIMessage(type: .user, content: prompt, vars: AIMessageVars(recipient: recipientsList)))
         isLoading = true
     }
 
@@ -116,7 +119,11 @@ extension AIModel {
     func executeShortcut(_ shortcut: AIShortcutAction) async {
         if shortcut == .edit {
             keepConversationWhenPropositionIsDismissed = true
-            conversation.append(AIMessage(type: .assistant, content: MailResourcesStrings.Localizable.aiMenuEditRequest))
+            conversation.append(AIMessage(
+                type: .assistant,
+                content: MailResourcesStrings.Localizable.aiMenuEditRequest,
+                vars: AIMessageVars(recipient: recipientsList)
+            ))
             isShowingProposition = false
             Task { @MainActor in
                 self.isShowingPrompt = true
@@ -152,7 +159,10 @@ extension AIModel {
         }
 
         guard let replyingString else { return }
-        conversation.insert(AIMessage(type: .context, content: replyingString), at: 0)
+        conversation.insert(
+            AIMessage(type: .context, content: replyingString, vars: AIMessageVars(recipient: recipientsList)),
+            at: 0
+        )
     }
 
     private func executeShortcutAndRecreateConversation(_ shortcut: AIShortcutAction) async {
@@ -177,7 +187,11 @@ extension AIModel {
         if let shortcutResponse = response as? AIShortcutResponse {
             conversation.append(shortcutResponse.action)
         }
-        conversation.append(AIMessage(type: .assistant, content: response.content))
+        conversation.append(AIMessage(
+            type: .assistant,
+            content: response.content,
+            vars: AIMessageVars(recipient: recipientsList)
+        ))
         isLoading = false
     }
 
@@ -285,6 +299,21 @@ extension AIModel {
             return false
         }
         return !liveDraft.isEmptyOfUserChanges
+    }
+
+    private func getRecipientsList() -> String? {
+        guard let liveDraft = mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
+            return nil
+        }
+
+        recipientsList = liveDraft.to.compactMap { recipient in
+            if recipient.name.isEmpty || recipient.name == recipient.email {
+                return nil
+            }
+            return recipient.name
+        }.joined(separator: ", ")
+
+        return recipientsList
     }
 }
 
