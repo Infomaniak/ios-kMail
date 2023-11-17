@@ -24,39 +24,7 @@ import RealmSwift
 
 public extension MailboxManager {
     func refreshAllSignatures() async throws {
-        // Get from API
-        let signaturesResult = try await apiFetcher.signatures(mailbox: mailbox)
-        let updatedSignatures = Array(signaturesResult.signatures)
-
-        await backgroundRealm.execute { realm in
-            let signaturesToDelete: [Signature] // no longer present server side
-            let signaturesToUpdate: [Signature] // updated signatures
-            let signaturesToAdd: [Signature] // new signatures
-
-            // fetch all local signatures
-            let existingSignatures = Array(realm.objects(Signature.self))
-
-            signaturesToAdd = updatedSignatures.filter { updatedElement in
-                !existingSignatures.contains(updatedElement)
-            }
-
-            signaturesToUpdate = updatedSignatures.filter { updatedElement in
-                existingSignatures.contains(updatedElement)
-            }
-
-            signaturesToDelete = existingSignatures.filter { existingElement in
-                !updatedSignatures.contains(existingElement)
-            }
-
-            // NOTE: local drafts in `signaturesToDelete` should be migrated to use the new default signature.
-
-            // Update signatures in Realm
-            try? realm.safeWrite {
-                realm.add(signaturesToUpdate, update: .modified)
-                realm.delete(signaturesToDelete)
-                realm.add(signaturesToAdd, update: .modified)
-            }
-        }
+        try await refreshActor.refreshAllSignatures()
     }
 
     func updateSignature(signature: Signature) async throws {

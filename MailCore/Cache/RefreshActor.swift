@@ -81,4 +81,50 @@ public actor RefreshActor {
         _ = await refreshTask?.result
         refreshTask = nil
     }
+
+    // MARK: Signatures
+
+    /// Refresh all signatures.
+    public func refreshAllSignatures() async throws {
+        guard let mailboxManager else {
+            return
+        }
+
+        // Get from API
+        let signaturesResult = try await mailboxManager.apiFetcher.signatures(mailbox: mailboxManager.mailbox)
+        var updatedSignatures = Array(signaturesResult.signatures)
+
+        await mailboxManager.backgroundRealm.execute { realm in
+            let signaturesToDelete: [Signature] // no longer present server side
+            let signaturesToUpdate: [Signature] // updated signatures
+            let signaturesToAdd: [Signature] // new signatures
+
+            // fetch all local signatures
+            let existingSignatures = Array(realm.objects(Signature.self)).filter { !$0.isInvalidated }
+
+            // filter out signatures that may no longer be valid realm objects
+            updatedSignatures = updatedSignatures.filter { !$0.isInvalidated }
+
+            signaturesToAdd = updatedSignatures.filter { updatedElement in
+                !existingSignatures.contains(updatedElement)
+            }
+
+            signaturesToUpdate = updatedSignatures.filter { updatedElement in
+                existingSignatures.contains(updatedElement)
+            }
+
+            signaturesToDelete = existingSignatures.filter { existingElement in
+                !updatedSignatures.contains(existingElement)
+            }
+
+            // NOTE: local drafts in `signaturesToDelete` should be migrated to use the new default signature.
+
+            // Update signatures in Realm
+            try? realm.safeWrite {
+                realm.add(signaturesToUpdate, update: .modified)
+                realm.delete(signaturesToDelete)
+                realm.add(signaturesToAdd, update: .modified)
+            }
+        }
+    }
 }

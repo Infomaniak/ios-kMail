@@ -38,9 +38,12 @@ public final class BackgroundRealm {
 
     public func execute<T>(_ block: @escaping (Realm) -> T, completion: @escaping (T) -> Void) {
         BackgroundExecutor.executeWithBackgroundTask { [weak self] taskCompleted in
-            self?.queue.async {
-                guard let realm = self?.getRealm() else { return }
-                realm.refresh()
+            guard let self else {
+                return
+            }
+
+            queue.async {
+                let realm = self.getRealm()
                 completion(block(realm))
                 taskCompleted()
             }
