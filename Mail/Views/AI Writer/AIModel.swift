@@ -89,7 +89,7 @@ final class AIModel: ObservableObject {
 extension AIModel {
     func addInitialPrompt(_ prompt: String) {
         recipientsList = getRecipientsList()
-        conversation.append(AIMessage(type: .user, content: prompt, vars: [.recipient: recipientsList]))
+        conversation.append(AIMessage(type: .user, content: prompt, vars: AIMessageVars(recipient: recipientsList)))
         isLoading = true
     }
 
@@ -156,7 +156,7 @@ extension AIModel {
 
         guard let replyingString else { return }
         conversation.insert(
-            AIMessage(type: .context, content: replyingString, vars: [.recipient: recipientsList]),
+            AIMessage(type: .context, content: replyingString, vars: AIMessageVars(recipient: recipientsList)),
             at: 0
         )
     }
@@ -199,9 +199,7 @@ extension AIModel {
     }
 
     private func transformErrorToAIError(_ error: Error) -> AIError {
-        guard let mailApiError = error as? MailApiError else {
-            return .unknownError
-        }
+        guard let mailApiError = error as? MailApiError else { return .unknownError }
 
         switch mailApiError {
         case .apiAIMaxSyntaxTokensReached:
@@ -261,9 +259,7 @@ extension AIModel {
         }
 
         let messageRange = NSRange(lastMessage.startIndex ..< lastMessage.endIndex, in: lastMessage)
-        guard let result = contentRegex.firstMatch(in: lastMessage, range: messageRange) else {
-            return (nil, lastMessage)
-        }
+        guard let result = contentRegex.firstMatch(in: lastMessage, range: messageRange) else { return (nil, lastMessage) }
 
         guard let subjectRange = Range(result.range(withName: "subject"), in: lastMessage),
               let contentRange = Range(result.range(withName: "content"), in: lastMessage) else {
@@ -279,34 +275,28 @@ extension AIModel {
 // MARK: - Draft utils
 
 extension AIModel {
+    private func getLiveDraft() -> Draft? {
+        return mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: draft.localUUID)
+    }
+
     private func shouldOverrideSubject() -> Bool {
-        guard let liveDraft = mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
-            return false
-        }
+        guard let liveDraft = getLiveDraft() else { return false }
         return !liveDraft.subject.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     private func shouldOverrideBody() -> Bool {
-        guard let liveDraft = mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
-            return false
-        }
+        guard let liveDraft = getLiveDraft() else { return false }
         return !liveDraft.isEmptyOfUserChanges
     }
 
     private func getRecipientsList() -> String? {
-        guard let liveDraft = mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
-            return nil
-        }
+        guard let liveDraft = getLiveDraft() else { return nil }
 
         let to: [String] = liveDraft.to.compactMap { recipient in
-            if recipient.name.isEmpty {
-                return nil
-            }
+            guard !recipient.name.isEmpty else { return nil }
             return recipient.name
         }
-
-        guard !to.isEmpty else { return nil }
-        return to.joined(separator: ", ")
+        return to.isEmpty ? nil : to.joined(separator: ", ")
     }
 }
 
