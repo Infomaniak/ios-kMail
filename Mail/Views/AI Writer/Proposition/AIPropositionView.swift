@@ -138,9 +138,9 @@ struct AIPropositionView: View {
 }
 
 #Preview {
-    AIPropositionView(
-        aiModel: AIModel(mailboxManager: PreviewHelper.sampleMailboxManager,
-                         draftContentManager: PreviewHelper.sampleDraftContentManager,
-                         messageReply: nil)
-    )
+    AIPropositionView(aiModel: AIModel(
+        mailboxManager: PreviewHelper.sampleMailboxManager,
+        draftContentManager: PreviewHelper.sampleDraftContentManager,
+        editedDraft: .new()
+    ))
 }

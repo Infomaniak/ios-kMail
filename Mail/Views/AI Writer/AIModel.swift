@@ -48,6 +48,7 @@ final class AIModel: ObservableObject {
 
     private let mailboxManager: MailboxManager
     private let draftContentManager: DraftContentManager
+    private let draft: Draft
     private var messageReply: MessageReply?
     private var contextId: String?
 
@@ -73,10 +74,11 @@ final class AIModel: ObservableObject {
         messageReply?.isReplying == true
     }
 
-    init(mailboxManager: MailboxManager, draftContentManager: DraftContentManager, messageReply: MessageReply?) {
+    init(mailboxManager: MailboxManager, draftContentManager: DraftContentManager, editedDraft: EditedDraft) {
         self.mailboxManager = mailboxManager
         self.draftContentManager = draftContentManager
-        self.messageReply = messageReply
+        draft = editedDraft.draft.freezeIfNeeded()
+        messageReply = editedDraft.messageReply
     }
 }
 
@@ -214,7 +216,7 @@ extension AIModel {
 
 extension AIModel {
     func didTapInsert() {
-        let shouldReplaceBody = draftContentManager.shouldOverrideBody()
+        let shouldReplaceBody = shouldOverrideBody()
         guard !shouldReplaceBody || UserDefaults.shared.doNotShowAIReplaceMessageAgain else {
             isShowingReplaceBodyAlert = true
             return
@@ -224,7 +226,7 @@ extension AIModel {
 
     func splitPropositionAndInsert(shouldReplaceBody: Bool) {
         let (subject, body) = splitSubjectAndBody()
-        if let subject, !subject.isEmpty && draftContentManager.shouldOverrideSubject() {
+        if let subject, !subject.isEmpty && shouldOverrideSubject() {
             isShowingReplaceSubjectAlert = AIProposition(subject: subject, body: body, shouldReplaceContent: shouldReplaceBody)
         } else {
             insertProposition(subject: subject, body: body, shouldReplaceBody: shouldReplaceBody)
@@ -265,6 +267,24 @@ extension AIModel {
         let subject = lastMessage[subjectRange].trimmingCharacters(in: .whitespacesAndNewlines)
         let content = String(lastMessage[contentRange])
         return (subject, content)
+    }
+}
+
+// MARK: - Draft
+
+extension AIModel {
+    private func shouldOverrideSubject() -> Bool {
+        guard let liveDraft = mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
+            return false
+        }
+        return !liveDraft.subject.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    private func shouldOverrideBody() -> Bool {
+        guard let liveDraft = mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
+            return false
+        }
+        return !liveDraft.isEmptyOfUserChanges
     }
 }
 

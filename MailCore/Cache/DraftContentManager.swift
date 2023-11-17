@@ -137,16 +137,6 @@ public class DraftContentManager: ObservableObject {
         return try await loadReplyingMessage(messageReply.message, replyMode: messageReply.replyMode).body?.freezeIfNeeded()
     }
 
-    public func shouldOverrideSubject() -> Bool {
-        guard let liveDraft = try? getLiveDraft() else { return false }
-        return !liveDraft.subject.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
-
-    public func shouldOverrideBody() -> Bool {
-        guard let liveDraft = try? getLiveDraft() else { return false }
-        return !liveDraft.isEmptyOfUserChanges
-    }
-
     public func replaceContent(subject: String? = nil, body: String) {
         guard let liveDraft = try? getLiveDraft() else { return }
         guard let parsedMessage = try? SwiftSoup.parse(liveDraft.body) else { return }
