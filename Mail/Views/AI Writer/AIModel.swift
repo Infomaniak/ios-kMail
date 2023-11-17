@@ -88,7 +88,7 @@ final class AIModel: ObservableObject {
 
 extension AIModel {
     func addInitialPrompt(_ prompt: String) {
-        let recipientsList = getRecipientsList()
+        recipientsList = getRecipientsList()
         conversation.append(AIMessage(type: .user, content: prompt, vars: AIMessageVars(recipient: recipientsList)))
         isLoading = true
     }
@@ -114,6 +114,7 @@ extension AIModel {
         conversation = []
         isLoading = false
         error = nil
+        recipientsList = nil
     }
 
     func executeShortcut(_ shortcut: AIShortcutAction) async {
@@ -284,7 +285,7 @@ extension AIModel {
     }
 }
 
-// MARK: - Draft
+// MARK: - Draft utils
 
 extension AIModel {
     private func shouldOverrideSubject() -> Bool {
@@ -306,14 +307,15 @@ extension AIModel {
             return nil
         }
 
-        recipientsList = liveDraft.to.compactMap { recipient in
+        let to: [String] = liveDraft.to.compactMap { recipient in
             if recipient.name.isEmpty || recipient.name == recipient.email {
                 return nil
             }
             return recipient.name
-        }.joined(separator: ", ")
+        }
 
-        return recipientsList
+        guard !to.isEmpty else { return nil }
+        return to.joined(separator: ", ")
     }
 }
 
