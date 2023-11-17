@@ -44,7 +44,7 @@ struct MailApp: App {
     @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
     @AppStorage(UserDefaults.shared.key(.theme), store: .shared) private var theme = DefaultPreferences.theme
 
-    @StateObject private var navigationState = NavigationState()
+    @StateObject private var navigationState = RootViewState()
     @StateObject private var reviewManager = ReviewManager()
 
     init() {
@@ -73,7 +73,7 @@ struct MailApp: App {
                         navigationState.transitionToLockViewIfNeeded()
                         UserDefaults.shared.openingUntilReview -= 1
                     case .background:
-                        if UserDefaults.shared.isAppLockEnabled && navigationState.rootViewState != .appLocked {
+                        if UserDefaults.shared.isAppLockEnabled && navigationState.state != .appLocked {
                             appLockHelper.setTime()
                         }
                     case .inactive:

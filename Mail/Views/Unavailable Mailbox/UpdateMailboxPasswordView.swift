@@ -27,7 +27,7 @@ struct UpdateMailboxPasswordView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
-    @EnvironmentObject private var navigationState: NavigationState
+    @EnvironmentObject private var navigationState: RootViewState
 
     @State private var updatedMailboxPassword = ""
     @State private var isShowingError = false

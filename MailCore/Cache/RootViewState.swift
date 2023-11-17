@@ -23,8 +23,8 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import SwiftUI
 
-public enum RootViewState: Equatable {
-    public static func == (lhs: RootViewState, rhs: RootViewState) -> Bool {
+public enum RootViewType: Equatable {
+    public static func == (lhs: RootViewType, rhs: RootViewType) -> Bool {
         switch (lhs, rhs) {
         case (.appLocked, .appLocked):
             return true
@@ -57,14 +57,14 @@ public enum RootViewDestination {
     case unavailableMailboxes
 }
 
-/// Something that represents the state of navigation
+/// Something that represents the state of the root view
 @MainActor
-public class NavigationState: ObservableObject {
+public class RootViewState: ObservableObject {
     @LazyInjectService private var appLockHelper: AppLockHelper
 
     private var accountManagerObservation: AnyCancellable?
 
-    @Published public private(set) var rootViewState: RootViewState
+    @Published public private(set) var state: RootViewType
 
     public private(set) var account: Account?
 
@@ -72,15 +72,15 @@ public class NavigationState: ObservableObject {
         @InjectService var accountManager: AccountManager
 
         account = accountManager.getCurrentAccount()
-        rootViewState = NavigationState.getMainViewStateIfPossible()
+        state = RootViewState.getMainViewStateIfPossible()
 
         accountManagerObservation = accountManager.objectWillChange.receive(on: RunLoop.main).sink { [weak self] in
             self?.account = accountManager.getCurrentAccount()
-            self?.rootViewState = NavigationState.getMainViewStateIfPossible()
+            self?.state = RootViewState.getMainViewStateIfPossible()
         }
     }
 
-    static func getMainViewStateIfPossible() -> RootViewState {
+    static func getMainViewStateIfPossible() -> RootViewType {
         @InjectService var accountManager: AccountManager
         @InjectService var mailboxInfosManager: MailboxInfosManager
 
@@ -103,15 +103,15 @@ public class NavigationState: ObservableObject {
         withAnimation {
             switch destination {
             case .appLocked:
-                rootViewState = .appLocked
+                state = .appLocked
             case .mainView:
-                rootViewState = NavigationState.getMainViewStateIfPossible()
+                state = RootViewState.getMainViewStateIfPossible()
             case .onboarding:
-                rootViewState = .onboarding
+                state = .onboarding
             case .noMailboxes:
-                rootViewState = .noMailboxes
+                state = .noMailboxes
             case .unavailableMailboxes:
-                rootViewState = .unavailableMailboxes
+                state = .unavailableMailboxes
             }
         }
     }
