@@ -35,8 +35,10 @@ public enum RootViewType: Equatable {
         case (.unavailableMailboxes, .unavailableMailboxes):
             return true
         case (.mainView(let lhsMailboxManager, let lhsFolder), .mainView(let rhsMailboxManager, let rhsFolder)):
-            return lhsMailboxManager.mailbox.objectId == rhsMailboxManager.mailbox.objectId
+            return lhsMailboxManager == rhsMailboxManager
                 && lhsFolder.remoteId == rhsFolder.remoteId
+        case (.preloading(let lhsAccount), .preloading(let rhsAccount)):
+            return lhsAccount == rhsAccount
         default:
             return false
         }
@@ -47,6 +49,7 @@ public enum RootViewType: Equatable {
     case onboarding
     case noMailboxes
     case unavailableMailboxes
+    case preloading(Account)
 }
 
 public enum RootViewDestination {
@@ -84,19 +87,22 @@ public class RootViewState: ObservableObject {
         @InjectService var accountManager: AccountManager
         @InjectService var mailboxInfosManager: MailboxInfosManager
 
-        if let currentAccount = accountManager.getCurrentAccount() {
-            if let currentMailboxManager = accountManager.currentMailboxManager,
-               let initialFolder = currentMailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
-                return .mainView(currentMailboxManager, initialFolder)
-            } else {
-                let mailboxes = mailboxInfosManager.getMailboxes(for: currentAccount.userId)
-                if !mailboxes.isEmpty && mailboxes.allSatisfy({ !$0.isAvailable }) {
-                    return .unavailableMailboxes
-                }
-            }
+        guard let currentAccount = accountManager.getCurrentAccount() else {
+            return .onboarding
         }
 
-        return .onboarding
+        if let currentMailboxManager = accountManager.currentMailboxManager,
+           let initialFolder = currentMailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
+            return .mainView(currentMailboxManager, initialFolder)
+        } else {
+            let mailboxes = mailboxInfosManager.getMailboxes(for: currentAccount.userId)
+
+            if !mailboxes.isEmpty && mailboxes.allSatisfy({ !$0.isAvailable }) {
+                return .unavailableMailboxes
+            } else {
+                return .preloading(currentAccount)
+            }
+        }
     }
 
     public func transitionToRootViewDestination(_ destination: RootViewDestination) {
