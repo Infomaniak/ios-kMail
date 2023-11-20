@@ -127,6 +127,10 @@ extension ContactManager {
                 return
             }
 
+            guard !mergedContact.isInvalidated else {
+                continue
+            }
+
             let email = mergedContact.email
 
             let remote = remote[email]

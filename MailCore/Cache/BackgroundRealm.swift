@@ -40,7 +40,6 @@ public final class BackgroundRealm {
         BackgroundExecutor.executeWithBackgroundTask { [weak self] taskCompleted in
             self?.queue.async {
                 guard let realm = self?.getRealm() else { return }
-                realm.refresh()
                 completion(block(realm))
                 taskCompleted()
             }
