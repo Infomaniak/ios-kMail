@@ -22,12 +22,26 @@ public enum AIMessageType: String, Codable {
     case user, context, assistant
 }
 
+public enum AIMessageVarsKey: Codable {
+    case recipient
+}
+
+public struct AIMessageVars: Codable {
+    let recipient: String?
+
+    public init(recipient: String?) {
+        self.recipient = recipient
+    }
+}
+
 public struct AIMessage: Codable {
     public let type: AIMessageType
     public let content: String
+    public let vars: AIMessageVars?
 
-    public init(type: AIMessageType, content: String) {
+    public init(type: AIMessageType, content: String, vars: AIMessageVars? = nil) {
         self.type = type
         self.content = content
+        self.vars = vars
     }
 }

@@ -48,8 +48,11 @@ final class AIModel: ObservableObject {
 
     private let mailboxManager: MailboxManager
     private let draftContentManager: DraftContentManager
+    private let draft: Draft
     private var messageReply: MessageReply?
+
     private var contextId: String?
+    private var recipientsList: String?
 
     var lastMessage: String {
         return conversation.last?.content ?? ""
@@ -73,18 +76,20 @@ final class AIModel: ObservableObject {
         messageReply?.isReplying == true
     }
 
-    init(mailboxManager: MailboxManager, draftContentManager: DraftContentManager, messageReply: MessageReply?) {
+    init(mailboxManager: MailboxManager, draftContentManager: DraftContentManager, editedDraft: EditedDraft) {
         self.mailboxManager = mailboxManager
         self.draftContentManager = draftContentManager
-        self.messageReply = messageReply
+        draft = editedDraft.draft.freezeIfNeeded()
+        messageReply = editedDraft.messageReply
     }
 }
 
-// MARK: - Conversation
+// MARK: - Manage conversation
 
 extension AIModel {
     func addInitialPrompt(_ prompt: String) {
-        conversation.append(AIMessage(type: .user, content: prompt))
+        recipientsList = getRecipientsList()
+        conversation.append(AIMessage(type: .user, content: prompt, vars: AIMessageVars(recipient: recipientsList)))
         isLoading = true
     }
 
@@ -109,12 +114,12 @@ extension AIModel {
         conversation = []
         isLoading = false
         error = nil
+        recipientsList = nil
     }
 
     func executeShortcut(_ shortcut: AIShortcutAction) async {
         if shortcut == .edit {
             keepConversationWhenPropositionIsDismissed = true
-            conversation.append(AIMessage(type: .assistant, content: MailResourcesStrings.Localizable.aiMenuEditRequest))
             isShowingProposition = false
             Task { @MainActor in
                 self.isShowingPrompt = true
@@ -150,7 +155,10 @@ extension AIModel {
         }
 
         guard let replyingString else { return }
-        conversation.insert(AIMessage(type: .context, content: replyingString), at: 0)
+        conversation.insert(
+            AIMessage(type: .context, content: replyingString, vars: AIMessageVars(recipient: recipientsList)),
+            at: 0
+        )
     }
 
     private func executeShortcutAndRecreateConversation(_ shortcut: AIShortcutAction) async {
@@ -191,9 +199,7 @@ extension AIModel {
     }
 
     private func transformErrorToAIError(_ error: Error) -> AIError {
-        guard let mailApiError = error as? MailApiError else {
-            return .unknownError
-        }
+        guard let mailApiError = error as? MailApiError else { return .unknownError }
 
         switch mailApiError {
         case .apiAIMaxSyntaxTokensReached:
@@ -214,7 +220,7 @@ extension AIModel {
 
 extension AIModel {
     func didTapInsert() {
-        let shouldReplaceBody = draftContentManager.shouldOverrideBody()
+        let shouldReplaceBody = shouldOverrideBody()
         guard !shouldReplaceBody || UserDefaults.shared.doNotShowAIReplaceMessageAgain else {
             isShowingReplaceBodyAlert = true
             return
@@ -224,7 +230,7 @@ extension AIModel {
 
     func splitPropositionAndInsert(shouldReplaceBody: Bool) {
         let (subject, body) = splitSubjectAndBody()
-        if let subject, !subject.isEmpty && draftContentManager.shouldOverrideSubject() {
+        if let subject, !subject.isEmpty && shouldOverrideSubject() {
             isShowingReplaceSubjectAlert = AIProposition(subject: subject, body: body, shouldReplaceContent: shouldReplaceBody)
         } else {
             insertProposition(subject: subject, body: body, shouldReplaceBody: shouldReplaceBody)
@@ -253,9 +259,7 @@ extension AIModel {
         }
 
         let messageRange = NSRange(lastMessage.startIndex ..< lastMessage.endIndex, in: lastMessage)
-        guard let result = contentRegex.firstMatch(in: lastMessage, range: messageRange) else {
-            return (nil, lastMessage)
-        }
+        guard let result = contentRegex.firstMatch(in: lastMessage, range: messageRange) else { return (nil, lastMessage) }
 
         guard let subjectRange = Range(result.range(withName: "subject"), in: lastMessage),
               let contentRange = Range(result.range(withName: "content"), in: lastMessage) else {
@@ -265,6 +269,34 @@ extension AIModel {
         let subject = lastMessage[subjectRange].trimmingCharacters(in: .whitespacesAndNewlines)
         let content = String(lastMessage[contentRange])
         return (subject, content)
+    }
+}
+
+// MARK: - Draft utils
+
+extension AIModel {
+    private func getLiveDraft() -> Draft? {
+        return mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: draft.localUUID)
+    }
+
+    private func shouldOverrideSubject() -> Bool {
+        guard let liveDraft = getLiveDraft() else { return false }
+        return !liveDraft.subject.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    private func shouldOverrideBody() -> Bool {
+        guard let liveDraft = getLiveDraft() else { return false }
+        return !liveDraft.isEmptyOfUserChanges
+    }
+
+    private func getRecipientsList() -> String? {
+        guard let liveDraft = getLiveDraft() else { return nil }
+
+        let to: [String] = liveDraft.to.compactMap { recipient in
+            guard !recipient.name.isEmpty else { return nil }
+            return recipient.name
+        }
+        return to.isEmpty ? nil : to.joined(separator: ", ")
     }
 }
 
