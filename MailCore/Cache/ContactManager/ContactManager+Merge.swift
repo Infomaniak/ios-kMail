@@ -159,8 +159,7 @@ extension ContactManager {
         let cleanupRealm = getRealm()
         try? cleanupRealm.safeWrite {
             for emailToDelete in toDelete {
-                guard let objectToDelete = cleanupRealm.object(ofType: MergedContact.self, forPrimaryKey: emailToDelete),
-                      !objectToDelete.isInvalidated else {
+                guard let objectToDelete = cleanupRealm.object(ofType: MergedContact.self, forPrimaryKey: emailToDelete) else {
                     continue
                 }
                 cleanupRealm.delete(objectToDelete)
