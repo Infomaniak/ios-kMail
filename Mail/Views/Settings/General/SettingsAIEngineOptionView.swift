@@ -23,7 +23,7 @@ struct SettingsAIEngineOptionView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsSelectDisplayModeDescription)
+                SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsAiEngineDescription)
                 AIEngineOptionView(matomoCategory: .settingsAIEngine)
             }
         }
