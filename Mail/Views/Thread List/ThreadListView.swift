@@ -162,7 +162,8 @@ struct ThreadListView: View {
                            multipleSelectionViewModel: multipleSelectionViewModel)
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
-                              title: MailResourcesStrings.Localizable.buttonNewMessage, isExtended: scrollObserver.scrollDirection != .bottom) {
+                              title: MailResourcesStrings.Localizable.buttonNewMessage,
+                              isExtended: scrollObserver.scrollDirection != .bottom) {
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
             mainViewState.editedDraft = EditedDraft.new()
         }

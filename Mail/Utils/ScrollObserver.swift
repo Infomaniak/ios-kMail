@@ -32,11 +32,15 @@ public final class ScrollObserver: ObservableObject {
     private var subscriber: Cancellable?
     private var lastContentOffset = CGFloat.zero
 
+    private weak var scrollView: UIScrollView?
+
     public func observeValue(scrollView: UIScrollView) {
         guard subscriber == nil else { return }
+
         subscriber = scrollView.publisher(for: \.contentOffset).sink { newValue in
             self.scrollViewDidScroll(offset: newValue.y)
         }
+        self.scrollView = scrollView
     }
 
     private func scrollViewDidScroll(offset: CGFloat) {
@@ -45,9 +49,17 @@ public final class ScrollObserver: ObservableObject {
         var newDirection = scrollDirection
         defer { updateScrollDirection(offset: offset, direction: newDirection) }
 
-        guard offset >= 0 else {
-            newDirection = .top
-            return
+        // Do not take into account the top bounce
+        guard offset >= 0 else { return }
+
+        // Do not take into account the bottom bounce
+        if let scrollView {
+            let offsetBottom = offset + scrollView.visibleSize.height
+            let contentHeight = scrollView.contentSize.height + scrollView.safeAreaInsets.bottom
+
+            if offsetBottom > contentHeight {
+                return
+            }
         }
 
         let difference = lastContentOffset - offset
