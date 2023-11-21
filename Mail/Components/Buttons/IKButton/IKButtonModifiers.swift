@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import SwiftUI
 
 struct IKButtonLoadingModifier: ViewModifier {
@@ -31,6 +32,33 @@ struct IKButtonLoadingModifier: ViewModifier {
             LoadingButtonProgressView(plain: isPlain)
                 .opacity(isLoading ? 1 : 0)
         }
+    }
+}
+
+struct IKExpandableButtonModifier: ViewModifier {
+    @Environment(\.mailButtonFullWidth) private var fullWidth: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .frame(maxWidth: fullWidth ? UIConstants.componentsMaxWidth : nil)
+    }
+}
+
+struct IKLayoutButton: ViewModifier {
+    @Environment(\.controlSize) private var controlSize
+
+    private var buttonHeight: CGFloat {
+        if controlSize == .large {
+            return UIConstants.buttonMediumHeight
+        } else {
+            return UIConstants.buttonSmallHeight
+        }
+    }
+
+    func body(content: Content) -> some View {
+        content
+            .padding(.horizontal, value: .medium)
+            .frame(height: buttonHeight)
     }
 }
 

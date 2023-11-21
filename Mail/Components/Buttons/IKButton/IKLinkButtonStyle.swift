@@ -21,12 +21,29 @@ import MailResources
 import SwiftUI
 
 struct IKLinkButtonStyle: ButtonStyle {
+    @Environment(\.mailButtonPrimaryColor) private var mailButtonPrimaryColor: Color
+
     @Environment(\.controlSize) private var controlSize
+    @Environment(\.isEnabled) private var isEnabled
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .foregroundStyle(foreground(role: configuration.role))
             .modifier(IKButtonLoadingModifier(isPlain: false))
+            .modifier(IKExpandableButtonModifier())
+            .modifier(IKLayoutButton())
+            .contentShape(Rectangle())
             .modifier(IKTapAnimationModifier(isPressed: configuration.isPressed))
+    }
+
+    private func foreground(role: ButtonRole?) -> Color {
+        if !isEnabled {
+            return MailTextStyle.bodyMediumOnDisabled.color
+        } else if role == .destructive {
+            return MailTextStyle.bodyMediumError.color
+        } else {
+            return mailButtonPrimaryColor
+        }
     }
 }
 
@@ -53,5 +70,21 @@ struct IKLinkButtonStyle: ButtonStyle {
         }
         .buttonStyle(IKLinkButtonStyle())
         .controlSize(.small)
+
+        Button {
+            /* Preview */
+        } label: {
+            IKButtonLabel(title: "Full Width Button", icon: MailResourcesAsset.pencilPlain)
+        }
+        .buttonStyle(IKLinkButtonStyle())
+        .mailButtonFullWidth(true)
+
+        Button {
+            /* Preview */
+        } label: {
+            IKButtonLabel(title: "Button with different primary color", icon: MailResourcesAsset.pencilPlain)
+        }
+        .buttonStyle(IKLinkButtonStyle())
+        .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
     }
 }
