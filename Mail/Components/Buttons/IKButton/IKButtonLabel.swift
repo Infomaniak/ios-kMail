@@ -23,8 +23,8 @@ import SwiftUI
 struct IKButtonLabel: View {
     @Environment(\.controlSize) private var controlSize
 
-    let title: String
-    let icon: MailResourcesImages
+    var title: String?
+    var icon: MailResourcesImages?
 
     private var font: Font {
         if controlSize == .small {
@@ -34,19 +34,16 @@ struct IKButtonLabel: View {
         }
     }
 
-    private var iconSize: IKIcon.Size {
-        if controlSize == .large {
-            return .large
-        } else {
-            return .medium
-        }
-    }
-
     var body: some View {
         HStack(spacing: UIPadding.small) {
-            IKIcon(size: iconSize, image: icon, shapeStyle: ForegroundStyle())
-            Text(title)
-                .font(font)
+            if let icon {
+                IKIcon(size: .medium, image: icon, shapeStyle: HierarchicalShapeStyle.primary)
+            }
+
+            if let title {
+                Text(title)
+                    .font(font)
+            }
         }
     }
 }
@@ -56,7 +53,7 @@ struct IKButtonLabel: View {
         IKButtonLabel(title: "Hello, World !", icon: MailResourcesAsset.pencilPlain)
             .controlSize(.small)
         IKButtonLabel(title: "Hello, World !", icon: MailResourcesAsset.pencilPlain)
-        IKButtonLabel(title: "Hello, World !", icon: MailResourcesAsset.pencilPlain)
+        IKButtonLabel(icon: MailResourcesAsset.pencilPlain)
             .controlSize(.large)
     }
 }
