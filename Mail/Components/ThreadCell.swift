@@ -178,7 +178,7 @@ struct ThreadCell: View {
 
                 HStack(alignment: .top, spacing: UIPadding.verySmall) {
                     ThreadCellInfoView(subject: dataHolder.subject, preview: dataHolder.preview, density: density)
-                    Spacer()
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     ThreadCellDetailsView(hasAttachments: thread.hasAttachments, isFlagged: thread.flagged)
                 }
             }
