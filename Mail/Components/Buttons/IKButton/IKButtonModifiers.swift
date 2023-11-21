@@ -16,39 +16,29 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
 import SwiftUI
 
-struct IKButtonStyle: ButtonStyle {
-    @Environment(\.mailButtonLoading) private var isLoading: Bool
-
+struct IKButtonLoadingModifier: ViewModifier {
+    let isLoading: Bool
     let isPlain: Bool
 
-    func makeBody(configuration: Configuration) -> some View {
+    func body(content: Content) -> some View {
         ZStack {
-            configuration.label
+            content
                 .opacity(isLoading ? 0 : 1)
 
             LoadingButtonProgressView(plain: isPlain)
                 .opacity(isLoading ? 1 : 0)
         }
-        .scaleEffect(CGSize(width: configuration.isPressed ? 0.9 : 1.0, height: configuration.isPressed ? 0.9 : 1.0))
-        .animation(.spring, value: configuration.isPressed)
-        .allowsHitTesting(!isLoading)
     }
 }
 
-#Preview {
-    VStack(spacing: UIPadding.medium) {
-        Button("Hello, World!", systemImage: "globe") {
-            /* Preview */
-        }
-        .buttonStyle(IKButtonStyle(isPlain: false))
+struct IKTapAnimationModifier: ViewModifier {
+    let isPressed: Bool
 
-        Button("Hello, World!", systemImage: "globe") {
-            /* Preview */
-        }
-        .buttonStyle(IKButtonStyle(isPlain: false))
-        .mailButtonLoading(true)
+    func body(content: Content) -> some View {
+        content
+            .scaleEffect(isPressed ? 0.92 : 1.0)
+            .animation(.spring, value: isPressed)
     }
 }
