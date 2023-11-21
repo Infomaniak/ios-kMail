@@ -68,11 +68,12 @@ struct MessageHeaderSummaryView: View {
                         HStack(alignment: .firstTextBaseline, spacing: UIPadding.small) {
                             VStack {
                                 ForEach(message.from) { recipient in
-                                    let contactBuilder = ContactConfiguration.recipient(
+                                    let contactConfiguration = ContactConfiguration.recipient(
                                         recipient: recipient,
                                         contextMailboxManager: mailboxManager
                                     )
-                                    let contact = CommonContactCache.getOrCreateContact(contactBuilder: contactBuilder)
+                                    let contact = CommonContactCache
+                                        .getOrCreateContact(contactConfiguration: contactConfiguration)
 
                                     Text(contact,
                                          format: .displayablePerson())
@@ -91,11 +92,12 @@ struct MessageHeaderSummaryView: View {
                         HStack {
                             Text(
                                 message.recipients.map {
-                                    let contactBuilder = ContactConfiguration.recipient(
+                                    let contactConfiguration = ContactConfiguration.recipient(
                                         recipient: $0,
                                         contextMailboxManager: mailboxManager
                                     )
-                                    let contact = CommonContactCache.getOrCreateContact(contactBuilder: contactBuilder)
+                                    let contact = CommonContactCache
+                                        .getOrCreateContact(contactConfiguration: contactConfiguration)
                                     return contact.formatted()
                                 },
                                 format: .list(type: .and)

@@ -46,7 +46,20 @@ public struct AvatarImageRequest {
     }
 }
 
-public enum ContactConfiguration {
+public enum ContactConfiguration: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .recipient(let recipient, _):
+            return ".recipient:\(recipient.name) \(recipient.email)"
+        case .user(let user):
+            return ".user:\(user.displayName) \(user.email)"
+        case .contact(let contact):
+            return ".contact:\(contact.fullName) \(contact.email)"
+        case .emptyContact:
+            return ".emptyContact"
+        }
+    }
+
     case recipient(recipient: Recipient, contextMailboxManager: MailboxManager)
     case user(user: UserProfile)
     case contact(contact: CommonContact)
@@ -58,9 +71,9 @@ public enum CommonContactCache {
     static let cache = NSCache<NSNumber, CommonContact>()
 
     /// Get a contact from cache if any or nil
-    public static func getContactFromCache(contactBuilder: ContactConfiguration) -> CommonContact? {
+    public static func getContactFromCache(contactConfiguration: ContactConfiguration) -> CommonContact? {
         let key: NSNumber
-        switch contactBuilder {
+        switch contactConfiguration {
         case .recipient(let recipient, _):
             key = NSNumber(value: recipient.id.hash)
         case .user(let user):
@@ -75,11 +88,11 @@ public enum CommonContactCache {
     }
 
     /// Get a contact from cache or build it
-    public static func getOrCreateContact(contactBuilder: ContactConfiguration) -> CommonContact {
+    public static func getOrCreateContact(contactConfiguration: ContactConfiguration) -> CommonContact {
         let contact: CommonContact
         let key: NSNumber
 
-        switch contactBuilder {
+        switch contactConfiguration {
         case .recipient(let recipient, let contextMailboxManager):
             key = NSNumber(value: recipient.id.hash)
             contact = getOrCreateContact(recipient: recipient, contextMailboxManager: contextMailboxManager, key: key)
@@ -128,8 +141,8 @@ public final class CommonContact: Identifiable {
     public let avatarImageRequest: AvatarImageRequest
     public let color: UIColor
 
-    static func from(contactBuilder: ContactConfiguration) -> CommonContact {
-        switch contactBuilder {
+    static func from(contactConfiguration: ContactConfiguration) -> CommonContact {
+        switch contactConfiguration {
         case .recipient(let recipient, let contextMailboxManager):
             CommonContact(recipient: recipient, contextMailboxManager: contextMailboxManager)
         case .user(let user):
@@ -153,8 +166,6 @@ public final class CommonContact: Identifiable {
 
     /// Init form a `Recipient` in the context of a mailbox
     init(recipient: Recipient, contextMailboxManager: MailboxManager) {
-//        assert(!Foundation.Thread.isMainThread, "Do not call this init from main actor, too costly")
-
         email = recipient.email
         id = recipient.id.hashValue
 

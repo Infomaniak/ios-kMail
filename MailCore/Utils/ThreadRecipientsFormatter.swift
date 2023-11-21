@@ -60,21 +60,21 @@ public extension Thread {
             case 0:
                 return MailResourcesStrings.Localizable.unknownRecipientTitle
             case 1:
-                let contactBuilder = ContactConfiguration.recipient(
+                let contactConfiguration = ContactConfiguration.recipient(
                     recipient: fromArray[0],
                     contextMailboxManager: contextMailboxManager
                 )
-                let contact = CommonContactCache.getOrCreateContact(contactBuilder: contactBuilder)
+                let contact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
                 return contact.formatted()
             default:
                 let fromCount = min(fromArray.count, Constants.threadCellMaxRecipients)
                 return fromArray[0 ..< fromCount]
                     .map {
-                        let contactBuilder = ContactConfiguration.recipient(
+                        let contactConfiguration = ContactConfiguration.recipient(
                             recipient: $0,
                             contextMailboxManager: contextMailboxManager
                         )
-                        let contact = CommonContactCache.getOrCreateContact(contactBuilder: contactBuilder)
+                        let contact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
                         return contact.formatted(style: .shortName)
                     }
                     .joined(separator: ", ")
@@ -83,7 +83,7 @@ public extension Thread {
 
         private func formattedTo(thread: Thread) -> String {
             guard let to = thread.to.first else { return MailResourcesStrings.Localizable.unknownRecipientTitle }
-            let contact = CommonContactCache.getOrCreateContact(contactBuilder: .recipient(
+            let contact = CommonContactCache.getOrCreateContact(contactConfiguration: .recipient(
                 recipient: to,
                 contextMailboxManager: contextMailboxManager
             ))

@@ -20,8 +20,19 @@ import Foundation
 import SwiftUI
 
 /// Something that can asynchronously load a contact, and update views accordingly
+@MainActor
 public final class AvatarViewModel: ObservableObject {
     @Published public var displayablePerson: CommonContact
+
+    /// Something not using the MainActor
+    private struct AvatarLoader {
+        var contactConfiguration: ContactConfiguration
+
+        /// Async get contact method
+        func getContact() async -> CommonContact {
+            return CommonContact.from(contactConfiguration: contactConfiguration)
+        }
+    }
 
     public init(contactConfiguration: ContactConfiguration) {
         // early exit on empty value
@@ -37,7 +48,7 @@ public final class AvatarViewModel: ObservableObject {
         }
 
         // early exit on contact cached
-        if let cached = CommonContactCache.getContactFromCache(contactBuilder: contactConfiguration) {
+        if let cached = CommonContactCache.getContactFromCache(contactConfiguration: contactConfiguration) {
             displayablePerson = cached
             return
         }
@@ -45,8 +56,8 @@ public final class AvatarViewModel: ObservableObject {
         // Load contact in background, empty contact in the meantime
         displayablePerson = CommonContact.emptyContact
         Task {
-            self.displayablePerson = CommonContact.from(contactBuilder: contactConfiguration)
-            self.objectWillChange.send()
+            let loader = AvatarLoader(contactConfiguration: contactConfiguration)
+            self.displayablePerson = await loader.getContact()
         }
     }
 }

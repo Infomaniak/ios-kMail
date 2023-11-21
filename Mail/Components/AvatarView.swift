@@ -22,29 +22,22 @@ import MailResources
 import NukeUI
 import SwiftUI
 
-struct AvatarView: View, Equatable, Identifiable {
+/// A view that displays an avatar linked to a Contact.
+struct AvatarView: View {
     /// Optional as this view can be displayed from a context without a mailboxManager available
     let mailboxManager: MailboxManager?
 
-    var size: CGFloat
+    /// The size of the avatar view
+    let size: CGFloat
 
     /// A view model for async loading of contacts
-    let viewModel: AvatarViewModel
-
-    /// Identifiable, linked to the contact displayed
-    var id: Int {
-        return viewModel.displayablePerson.id
-    }
-
-    /// Equatable
-    static func == (lhs: AvatarView, rhs: AvatarView) -> Bool {
-        lhs.id == rhs.id
-    }
+    @StateObject private var viewModel: AvatarViewModel
 
     init(mailboxManager: MailboxManager?, contactConfiguration: ContactConfiguration, size: CGFloat = 28) {
         self.mailboxManager = mailboxManager
-        viewModel = AvatarViewModel(contactConfiguration: contactConfiguration)
         self.size = size
+
+        _viewModel = StateObject(wrappedValue: AvatarViewModel(contactConfiguration: contactConfiguration))
     }
 
     var body: some View {
@@ -70,6 +63,5 @@ struct AvatarView: View, Equatable, Identifiable {
             }
         }
         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
-        .id(id)
     }
 }
