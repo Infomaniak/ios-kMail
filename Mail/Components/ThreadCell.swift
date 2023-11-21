@@ -209,14 +209,24 @@ struct ThreadCell: View {
     }
 }
 
-struct ThreadCell_Previews: PreviewProvider {
-    static var previews: some View {
+#Preview {
+    List {
         ThreadCell(thread: PreviewHelper.sampleThread,
                    density: .large,
                    accentColor: .blue,
                    isMultipleSelectionEnabled: false,
                    isSelected: false)
-            .previewLayout(.sizeThatFits)
-            .previewDevice("iPhone 13 Pro")
+        ThreadCell(thread: PreviewHelper.sampleThread,
+                   density: .normal,
+                   accentColor: .blue,
+                   isMultipleSelectionEnabled: false,
+                   isSelected: false)
+        ThreadCell(thread: PreviewHelper.sampleThread,
+                   density: .compact,
+                   accentColor: .blue,
+                   isMultipleSelectionEnabled: false,
+                   isSelected: false)
     }
+    .listStyle(.plain)
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }
