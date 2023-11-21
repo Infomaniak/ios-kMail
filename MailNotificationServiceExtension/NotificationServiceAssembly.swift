@@ -99,6 +99,12 @@ enum NotificationServiceAssembly {
             },
             Factory(type: IKSnackBarAvoider.self) { _, _ in
                 IKSnackBarAvoider()
+            },
+            Factory(type: ContactCache.self) { _, _ in
+                let contactCache = ContactCache()
+                // Limit the cache size in extension mode, not needed, but coherent.
+                contactCache.countLimit = Constants.contactCacheExtensionMaxCount
+                return contactCache
             }
         ]
 

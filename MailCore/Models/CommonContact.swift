@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakDI
 import MailResources
 import Nuke
 import UIKit
@@ -66,9 +67,13 @@ public enum ContactConfiguration: CustomDebugStringConvertible {
     case emptyContact
 }
 
-/// Creating a CommonContact is expensive, relying on a cache to reduce hangs
+/// A standard cache for `CommonContact`, used by DI
+public typealias ContactCache = NSCache<NSNumber, CommonContact>
+
+/// Creating a `CommonContact` is expensive, relying on a cache to reduce hangs
 public enum CommonContactCache {
-    static let cache = NSCache<NSNumber, CommonContact>()
+    /// The underlying standard cache
+    @LazyInjectService private static var cache: ContactCache
 
     /// Get a contact from cache if any or nil
     public static func getContactFromCache(contactConfiguration: ContactConfiguration) -> CommonContact? {
