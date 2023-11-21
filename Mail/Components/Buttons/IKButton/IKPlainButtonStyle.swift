@@ -21,6 +21,5 @@ import SwiftUI
 struct IKPlainButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .buttonStyle(IKButtonStyle(isPlain: true))
     }
 }
