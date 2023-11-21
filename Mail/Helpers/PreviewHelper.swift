@@ -25,8 +25,27 @@ import RealmSwift
 import SwiftUI
 
 enum PreviewHelper {
+    private class PreviewHelperRefreshTokenDelegate: RefreshTokenDelegate {
+        func didUpdateToken(newToken: InfomaniakCore.ApiToken, oldToken: InfomaniakCore.ApiToken) {
+            // No implementation
+        }
+
+        func didFailRefreshToken(_ token: InfomaniakCore.ApiToken) {
+            // No implementation
+        }
+    }
+
     static var sampleMailboxManager: MailboxManager = {
-        let apiFetcher = MailApiFetcher()
+        let fakeToken = ApiToken(
+            accessToken: "",
+            expiresIn: 0,
+            refreshToken: "",
+            scope: "",
+            tokenType: "",
+            userId: 0,
+            expirationDate: Date(timeIntervalSinceNow: 1_000_000)
+        )
+        let apiFetcher = MailApiFetcher(token: fakeToken, delegate: PreviewHelperRefreshTokenDelegate())
         let contactManager = ContactManager(userId: 0, apiFetcher: apiFetcher)
         return MailboxManager(account: PreviewHelper.sampleAccount,
                               mailbox: sampleMailbox,

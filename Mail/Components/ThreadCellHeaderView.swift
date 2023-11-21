@@ -45,11 +45,10 @@ struct ThreadCellHeaderView: View, Equatable {
                     .accessibilityHidden(true)
             }
 
-            Spacer()
-
             Text(formattedDate)
                 .textStyle(.bodySmallSecondary)
                 .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .trailing)
                 .accessibilityHidden(true)
         }
     }
