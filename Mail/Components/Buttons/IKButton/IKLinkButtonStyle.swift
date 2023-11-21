@@ -16,11 +16,42 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
+import MailResources
 import SwiftUI
 
 struct IKLinkButtonStyle: ButtonStyle {
+    @Environment(\.controlSize) private var controlSize
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .buttonStyle(IKButtonStyle(isPlain: false))
+            .modifier(IKButtonLoadingModifier(isPlain: false))
+            .modifier(IKTapAnimationModifier(isPressed: configuration.isPressed))
+    }
+}
+
+#Preview {
+    VStack(spacing: UIPadding.medium) {
+        Button {
+            /* Preview */
+        } label: {
+            IKButtonLabel(title: "Standard Button", icon: MailResourcesAsset.pencilPlain)
+        }
+        .buttonStyle(IKLinkButtonStyle())
+
+        Button(role: .destructive) {
+            /* Preview */
+        } label: {
+            IKButtonLabel(title: "Destructive Button", icon: MailResourcesAsset.pencilPlain)
+        }
+        .buttonStyle(IKLinkButtonStyle())
+
+        Button {
+            /* Preview */
+        } label: {
+            IKButtonLabel(title: "Small Button", icon: MailResourcesAsset.pencilPlain)
+        }
+        .buttonStyle(IKLinkButtonStyle())
+        .controlSize(.small)
     }
 }

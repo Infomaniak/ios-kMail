@@ -19,7 +19,8 @@
 import SwiftUI
 
 struct IKButtonLoadingModifier: ViewModifier {
-    let isLoading: Bool
+    @Environment(\.mailButtonLoading) private var isLoading: Bool
+
     let isPlain: Bool
 
     func body(content: Content) -> some View {
