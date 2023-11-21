@@ -46,7 +46,7 @@ public struct AvatarImageRequest {
     }
 }
 
-public enum CommonContactBuilder {
+public enum ContactConfiguration {
     case recipient(recipient: Recipient, contextMailboxManager: MailboxManager)
     case user(user: UserProfile)
     case contact(contact: CommonContact)
@@ -58,7 +58,7 @@ public enum CommonContactCache {
     static let cache = NSCache<NSNumber, CommonContact>()
 
     /// Get a contact from cache if any or nil
-    public static func getContactFromCache(contactBuilder: CommonContactBuilder) -> CommonContact? {
+    public static func getContactFromCache(contactBuilder: ContactConfiguration) -> CommonContact? {
         let key: NSNumber
         switch contactBuilder {
         case .recipient(let recipient, _):
@@ -75,7 +75,7 @@ public enum CommonContactCache {
     }
 
     /// Get a contact from cache or build it
-    public static func getOrCreateContact(contactBuilder: CommonContactBuilder) -> CommonContact {
+    public static func getOrCreateContact(contactBuilder: ContactConfiguration) -> CommonContact {
         let contact: CommonContact
         let key: NSNumber
 
@@ -128,7 +128,7 @@ public final class CommonContact: Identifiable {
     public let avatarImageRequest: AvatarImageRequest
     public let color: UIColor
 
-    static func from(contactBuilder: CommonContactBuilder) -> CommonContact {
+    static func from(contactBuilder: ContactConfiguration) -> CommonContact {
         switch contactBuilder {
         case .recipient(let recipient, let contextMailboxManager):
             CommonContact(recipient: recipient, contextMailboxManager: contextMailboxManager)

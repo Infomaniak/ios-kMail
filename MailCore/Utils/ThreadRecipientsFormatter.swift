@@ -60,7 +60,7 @@ public extension Thread {
             case 0:
                 return MailResourcesStrings.Localizable.unknownRecipientTitle
             case 1:
-                let contactBuilder = CommonContactBuilder.recipient(
+                let contactBuilder = ContactConfiguration.recipient(
                     recipient: fromArray[0],
                     contextMailboxManager: contextMailboxManager
                 )
@@ -70,7 +70,7 @@ public extension Thread {
                 let fromCount = min(fromArray.count, Constants.threadCellMaxRecipients)
                 return fromArray[0 ..< fromCount]
                     .map {
-                        let contactBuilder = CommonContactBuilder.recipient(
+                        let contactBuilder = ContactConfiguration.recipient(
                             recipient: $0,
                             contextMailboxManager: contextMailboxManager
                         )

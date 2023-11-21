@@ -71,7 +71,7 @@ struct ThreadCellDataHolder {
         }
     }
 
-    func contactBuilder(contextMailboxManager: MailboxManager) -> CommonContactBuilder {
+    func contactBuilder(contextMailboxManager: MailboxManager) -> ContactConfiguration {
         if let recipientToDisplay {
             return .recipient(recipient: recipientToDisplay, contextMailboxManager: contextMailboxManager)
         } else {
@@ -149,7 +149,7 @@ struct ThreadCell: View {
                     ZStack {
                         AvatarView(
                             mailboxManager: mailboxManager,
-                            contactBuilder: dataHolder.contactBuilder(contextMailboxManager: mailboxManager),
+                            contactConfiguration: dataHolder.contactBuilder(contextMailboxManager: mailboxManager),
                             size: 40
                         )
                         .opacity(isSelected ? 0 : 1)

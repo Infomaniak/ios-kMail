@@ -23,21 +23,21 @@ import SwiftUI
 public final class AvatarViewModel: ObservableObject {
     @Published public var displayablePerson: CommonContact
 
-    public init(contactBuilder: CommonContactBuilder) {
+    public init(contactConfiguration: ContactConfiguration) {
         // early exit on empty value
-        if case .emptyContact = contactBuilder {
+        if case .emptyContact = contactConfiguration {
             displayablePerson = CommonContact.emptyContact
             return
         }
 
         // early exit on wrapped value
-        if case .contact(let wrappedContact) = contactBuilder {
+        if case .contact(let wrappedContact) = contactConfiguration {
             displayablePerson = wrappedContact
             return
         }
 
         // early exit on contact cached
-        if let cached = CommonContactCache.getContactFromCache(contactBuilder: contactBuilder) {
+        if let cached = CommonContactCache.getContactFromCache(contactBuilder: contactConfiguration) {
             displayablePerson = cached
             return
         }
@@ -45,7 +45,7 @@ public final class AvatarViewModel: ObservableObject {
         // Load contact in background, empty contact in the meantime
         displayablePerson = CommonContact.emptyContact
         Task {
-            self.displayablePerson = CommonContact.from(contactBuilder: contactBuilder)
+            self.displayablePerson = CommonContact.from(contactBuilder: contactConfiguration)
             self.objectWillChange.send()
         }
     }

@@ -70,7 +70,7 @@ struct AccountView: View {
             ScrollView {
                 AvatarView(
                     mailboxManager: mailboxManager,
-                    contactBuilder: .user(user: account.user),
+                    contactConfiguration: .user(user: account.user),
                     size: AccountView.avatarViewSize
                 )
                 .padding(.bottom, value: .regular)

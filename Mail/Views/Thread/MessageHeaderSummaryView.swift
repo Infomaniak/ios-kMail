@@ -50,8 +50,8 @@ struct MessageHeaderSummaryView: View {
                     } label: {
                         AvatarView(
                             mailboxManager: mailboxManager,
-                            contactBuilder: .recipient(recipient: recipient,
-                                                       contextMailboxManager: mailboxManager),
+                            contactConfiguration: .recipient(recipient: recipient,
+                                                             contextMailboxManager: mailboxManager),
                             size: 40
                         )
                     }
@@ -68,7 +68,7 @@ struct MessageHeaderSummaryView: View {
                         HStack(alignment: .firstTextBaseline, spacing: UIPadding.small) {
                             VStack {
                                 ForEach(message.from) { recipient in
-                                    let contactBuilder = CommonContactBuilder.recipient(
+                                    let contactBuilder = ContactConfiguration.recipient(
                                         recipient: recipient,
                                         contextMailboxManager: mailboxManager
                                     )
@@ -91,7 +91,7 @@ struct MessageHeaderSummaryView: View {
                         HStack {
                             Text(
                                 message.recipients.map {
-                                    let contactBuilder = CommonContactBuilder.recipient(
+                                    let contactBuilder = ContactConfiguration.recipient(
                                         recipient: $0,
                                         contextMailboxManager: mailboxManager
                                     )

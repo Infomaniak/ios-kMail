@@ -41,9 +41,9 @@ struct AvatarView: View, Equatable, Identifiable {
         lhs.id == rhs.id
     }
 
-    init(mailboxManager: MailboxManager?, contactBuilder: CommonContactBuilder, size: CGFloat = 28) {
+    init(mailboxManager: MailboxManager?, contactConfiguration: ContactConfiguration, size: CGFloat = 28) {
         self.mailboxManager = mailboxManager
-        viewModel = AvatarViewModel(contactBuilder: contactBuilder)
+        viewModel = AvatarViewModel(contactConfiguration: contactConfiguration)
         self.size = size
     }
 

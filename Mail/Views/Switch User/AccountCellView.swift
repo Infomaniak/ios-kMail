@@ -77,7 +77,7 @@ struct AccountHeaderCell: View {
 
     var body: some View {
         HStack(spacing: UIPadding.small) {
-            AvatarView(mailboxManager: mailboxManager, contactBuilder: .user(user: account.user), size: 40)
+            AvatarView(mailboxManager: mailboxManager, contactConfiguration: .user(user: account.user), size: 40)
             VStack(alignment: .leading, spacing: 0) {
                 Text(account.user.displayName)
                     .textStyle(.bodyMedium)

@@ -32,7 +32,7 @@ struct AccountButton: View {
         } label: {
             if let currentAccountUser = mailboxManager.account.user {
                 AvatarView(mailboxManager: mailboxManager,
-                           contactBuilder: .user(user: currentAccountUser))
+                           contactConfiguration: .user(user: currentAccountUser))
             }
         }
         .sheet(item: $presentedCurrentAccount) { account in

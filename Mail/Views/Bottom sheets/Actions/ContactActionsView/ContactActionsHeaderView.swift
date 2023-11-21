@@ -26,7 +26,7 @@ struct ContactActionsHeaderView: View {
 
     var body: some View {
         HStack {
-            AvatarView(mailboxManager: mailboxManager, contactBuilder: .contact(contact: displayablePerson), size: 40)
+            AvatarView(mailboxManager: mailboxManager, contactConfiguration: .contact(contact: displayablePerson), size: 40)
                 .accessibilityHidden(true)
             VStack(alignment: .leading) {
                 Text(displayablePerson, format: .displayablePerson())
