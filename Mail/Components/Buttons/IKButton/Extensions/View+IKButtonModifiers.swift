@@ -16,28 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
-import MailResources
 import SwiftUI
 
-struct IKButtonLabel: View {
-    var title: String?
-    var icon: MailResourcesImages?
-
-    var body: some View {
-        HStack(spacing: UIPadding.small) {
-            if let icon {
-                IKIcon(size: .medium, image: icon, shapeStyle: HierarchicalShapeStyle.primary)
-            }
-            if let title {
-                Text(title)
-            }
-        }
+extension View {
+    func ikLinkButton() -> some View {
+        buttonStyle(IKLinkButtonStyle())
     }
-}
 
-#Preview {
-    VStack(spacing: UIPadding.medium) {
-        IKButtonLabel(title: "Hello, World !", icon: MailResourcesAsset.pencilPlain)
+    func ikPlainButton() -> some View {
+        buttonStyle(IKPlainButtonStyle())
     }
 }

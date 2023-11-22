@@ -21,30 +21,31 @@ import MailResources
 import SwiftUI
 
 struct IKPlainButtonStyle: ButtonStyle {
-    @Environment(\.mailButtonPrimaryColor) private var mailButtonPrimaryColor: Color
-    @Environment(\.mailButtonSecondaryColor) private var mailButtonSecondaryColor: Color
+    @Environment(\.ikButtonPrimaryStyle) private var ikButtonPrimaryStyle: any ShapeStyle
+    @Environment(\.ikButtonSecondaryStyle) private var ikButtonSecondaryStyle: any ShapeStyle
 
     @Environment(\.controlSize) private var controlSize
     @Environment(\.isEnabled) private var isEnabled
 
-    private var foreground: Color {
+    private var foreground: any ShapeStyle {
         guard isEnabled else { return MailTextStyle.bodyMediumOnDisabled.color }
-        return mailButtonSecondaryColor
+        return ikButtonSecondaryStyle
     }
 
-    private var background: Color {
+    private var background: any ShapeStyle {
         guard isEnabled else { return MailResourcesAsset.textTertiaryColor.swiftUIColor }
-        return mailButtonPrimaryColor
+        return ikButtonPrimaryStyle
     }
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundStyle(foreground)
+            .foregroundStyle(AnyShapeStyle(foreground))
             .modifier(IKButtonLoadingModifier(isPlain: true))
-            .modifier(IKExpandableButtonModifier())
-            .modifier(IKLayoutButton())
-            .background(background, in: RoundedRectangle(cornerRadius: 4))
-            .modifier(IKTapAnimationModifier(isPressed: configuration.isPressed))
+            .modifier(IKButtonExpandableModifier())
+            .modifier(IKButtonControlSizeModifier())
+            .modifier(IKButtonLayout())
+            .background(AnyShapeStyle(background), in: RoundedRectangle(cornerRadius: UIConstants.buttonsRadius))
+            .modifier(IKButtonTapAnimationModifier(isPressed: configuration.isPressed))
     }
 }
 
