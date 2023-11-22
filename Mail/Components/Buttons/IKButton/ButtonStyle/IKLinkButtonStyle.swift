@@ -80,7 +80,7 @@ struct IKLinkButtonStyle: ButtonStyle {
             IKButtonLabel(title: "Full Width Button", icon: MailResourcesAsset.pencilPlain)
         }
         .buttonStyle(IKLinkButtonStyle())
-        .mailButtonFullWidth(true)
+        .ikButtonFullWidth(true)
 
         Button {
             /* Preview */
@@ -88,6 +88,6 @@ struct IKLinkButtonStyle: ButtonStyle {
             IKButtonLabel(title: "Button with different primary color", icon: MailResourcesAsset.pencilPlain)
         }
         .buttonStyle(IKLinkButtonStyle())
-        .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
+        .ikButtonPrimaryStyle(MailResourcesAsset.aiColor.swiftUIColor)
     }
 }

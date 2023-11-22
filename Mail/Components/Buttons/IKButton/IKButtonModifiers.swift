@@ -53,11 +53,11 @@ struct IKButtonControlSizeModifier: ViewModifier {
 }
 
 struct IKButtonExpandableModifier: ViewModifier {
-    @Environment(\.ikButtonFullWidth) private var fullWidth: Bool
+    @Environment(\.ikButtonFullWidth) private var isFullWidth: Bool
 
     func body(content: Content) -> some View {
         content
-            .frame(maxWidth: fullWidth ? UIConstants.componentsMaxWidth : nil)
+            .frame(maxWidth: isFullWidth ? UIConstants.componentsMaxWidth : nil)
     }
 }
 

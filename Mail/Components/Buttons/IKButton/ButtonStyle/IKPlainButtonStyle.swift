@@ -64,7 +64,7 @@ struct IKPlainButtonStyle: ButtonStyle {
             IKButtonLabel(title: "Loading Button", icon: MailResourcesAsset.pencilPlain)
         }
         .buttonStyle(IKPlainButtonStyle())
-        .mailButtonLoading(true)
+        .ikButtonLoading(true)
 
         Button {
             /* Preview */
@@ -80,7 +80,7 @@ struct IKPlainButtonStyle: ButtonStyle {
             IKButtonLabel(title: "Full Width Button", icon: MailResourcesAsset.pencilPlain)
         }
         .buttonStyle(IKPlainButtonStyle())
-        .mailButtonFullWidth(true)
+        .ikButtonLoading(true)
 
         Button {
             /* Preview */
@@ -88,7 +88,7 @@ struct IKPlainButtonStyle: ButtonStyle {
             IKButtonLabel(title: "Button with different colors", icon: MailResourcesAsset.pencilPlain)
         }
         .buttonStyle(IKPlainButtonStyle())
-        .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
-        .mailButtonSecondaryColor(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
+        .ikButtonPrimaryStyle(MailResourcesAsset.aiColor.swiftUIColor)
+        .ikButtonSecondaryStyle(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
     }
 }
