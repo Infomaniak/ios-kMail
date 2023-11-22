@@ -216,6 +216,11 @@ public enum SentryDebug {
         breadcrumb.data = metadata
         SentrySDK.addBreadcrumb(breadcrumb)
 
+        // Only capture non cancel error
+        guard error.asAFError?.isExplicitlyCancelledError != true && (error as? CancellationError) == nil else {
+            return
+        }
+
         // Add an error
         SentrySDK.capture(message: category) { scope in
             scope.setExtras(metadata)
