@@ -42,17 +42,23 @@ public enum ContactConfiguration: CustomDebugStringConvertible {
 extension ContactConfiguration {
     /// A stable key to be used with NSCache
     var cacheKey: NSNumber {
+        return NSNumber(value: id)
+    }
+}
+
+extension ContactConfiguration: Identifiable {
+    public var id: Int {
         switch self {
         case .recipient(let recipient, let contextMailboxManager):
             // One cache entry per recipient per mailbox
             let hash = recipient.id.hash ^ contextMailboxManager.mailbox.id.hash
-            return NSNumber(value: hash)
+            return hash
         case .user(let user):
-            return NSNumber(value: user.id)
+            return user.id
         case .contact(let wrappedContact):
-            return NSNumber(value: wrappedContact.id)
+            return wrappedContact.id
         case .emptyContact:
-            return NSNumber(value: CommonContact.emptyContact.id)
+            return CommonContact.emptyContact.id
         }
     }
 }

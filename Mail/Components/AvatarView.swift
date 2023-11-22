@@ -22,22 +22,35 @@ import MailResources
 import NukeUI
 import SwiftUI
 
+extension AvatarView: Equatable {
+    static func == (lhs: AvatarView, rhs: AvatarView) -> Bool {
+        return lhs.mailboxManager == rhs.mailboxManager
+            && lhs.size == rhs.size
+            && lhs.contactConfiguration.id == rhs.contactConfiguration.id
+    }
+}
+
 /// A view that displays an avatar linked to a Contact.
 struct AvatarView: View {
+    /// A view model for async loading of contacts
+    @ObservedObject private var viewModel: AvatarViewModel
+
     /// Optional as this view can be displayed from a context without a mailboxManager available
-    let mailboxManager: MailboxManager?
+    private let mailboxManager: MailboxManager?
 
     /// The size of the avatar view
-    let size: CGFloat
+    private let size: CGFloat
 
-    /// A view model for async loading of contacts
-    @StateObject private var viewModel: AvatarViewModel
+    /// The configuration associated to this view
+    private let contactConfiguration: ContactConfiguration
 
     init(mailboxManager: MailboxManager?, contactConfiguration: ContactConfiguration, size: CGFloat = 28) {
         self.mailboxManager = mailboxManager
         self.size = size
+        self.contactConfiguration = contactConfiguration
 
-        _viewModel = StateObject(wrappedValue: AvatarViewModel(contactConfiguration: contactConfiguration))
+        // We use an ObservedObject instead of a StateObject because SwiftUI doesn't want to respect Equatable
+        _viewModel = ObservedObject(wrappedValue: AvatarViewModel(contactConfiguration: contactConfiguration))
     }
 
     var body: some View {
