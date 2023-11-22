@@ -72,10 +72,10 @@ extension View {
     }
 
     func ikButtonFullWidth(_ isFullWidth: Bool) -> some View {
-        environment(\.mailButtonFullWidth, isFullWidth)
+        environment(\.ikButtonFullWidth, isFullWidth)
     }
 
     func ikButtonLoading(_ isLoading: Bool) -> some View {
-        environment(\.mailButtonLoading, isLoading)
+        environment(\.ikButtonLoading, isLoading)
     }
 }
