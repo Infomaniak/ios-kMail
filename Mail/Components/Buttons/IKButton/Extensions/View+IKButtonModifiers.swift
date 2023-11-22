@@ -19,8 +19,8 @@
 import SwiftUI
 
 extension View {
-    func ikLinkButton() -> some View {
-        buttonStyle(IKLinkButtonStyle())
+    func ikLinkButton(isInlined: Bool = false) -> some View {
+        buttonStyle(IKLinkButtonStyle(isInlined: isInlined))
     }
 
     func ikPlainButton() -> some View {

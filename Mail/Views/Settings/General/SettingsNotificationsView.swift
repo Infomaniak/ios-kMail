@@ -48,14 +48,11 @@ struct SettingsNotificationsView: View {
                         Text(MailResourcesStrings.Localizable.warningNotificationsDisabledDescription)
                             .textStyle(.bodySecondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                        MailButton(label: MailResourcesStrings.Localizable.warningNotificationsDisabledButton) {
-                            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
-                                return
-                            }
-
+                        Button(MailResourcesStrings.Localizable.warningNotificationsDisabledButton) {
+                            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else { return }
                             openURL(settingsUrl)
                         }
-                        .mailButtonStyle(.link)
+                        .ikLinkButton(isInlined: true)
                     }
                     .padding(value: .regular)
                     .frame(maxWidth: .infinity)

@@ -47,10 +47,12 @@ struct SyncCopyPasswordView: View {
                             .textContentType(.password)
                             .disabled(true)
                             .padding([.vertical, .leading], value: .intermediate)
-                        MailButton(icon: MailResourcesAsset.duplicate) {
+
+                        Button {
                             copyPassword()
+                        } label: {
+                            IKIcon(size: .medium, image: MailResourcesAsset.duplicate)
                         }
-                        .mailButtonStyle(.link)
                         .padding(.trailing, value: .regular)
                     }
                     .background {

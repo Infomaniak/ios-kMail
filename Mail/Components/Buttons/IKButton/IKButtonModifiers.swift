@@ -78,7 +78,7 @@ struct IKButtonLayout: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .padding(.horizontal, isInlined ? nil : UIPadding.medium)
+            .padding(.horizontal, isInlined ? 0 : UIPadding.medium)
             .frame(height: buttonHeight)
     }
 }
