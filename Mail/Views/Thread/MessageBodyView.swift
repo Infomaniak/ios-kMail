@@ -54,12 +54,13 @@ struct MessageBodyView: View {
                         }
 
                     if presentableBody.quote != nil {
-                        MailButton(label: model.showBlockQuote
+                        Button(model.showBlockQuote
                             ? MailResourcesStrings.Localizable.messageHideQuotedText
                             : MailResourcesStrings.Localizable.messageShowQuotedText) {
                                 model.showBlockQuote.toggle()
                             }
-                            .mailButtonStyle(.smallLink)
+                            .ikLinkButton(isInlined: true)
+                            .controlSize(.small)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, value: .regular)
                     }
