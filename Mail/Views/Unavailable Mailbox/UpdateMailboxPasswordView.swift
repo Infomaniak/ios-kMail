@@ -56,11 +56,12 @@ struct UpdateMailboxPasswordView: View {
                     HStack(spacing: UIPadding.verySmall) {
                         Text(MailResourcesStrings.Localizable.enterPasswordOrDescription)
                             .textStyle(.bodySecondary)
-                        MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
+
+                        Button(MailResourcesStrings.Localizable.buttonDetachMailbox) {
                             matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailbox")
                             isShowingDetachMailboxAlertView = true
                         }
-                        .mailButtonStyle(.link)
+                        .ikLinkButton(isInlined: true)
                         .disabled(isLoading)
                     }
                 }
@@ -89,8 +90,8 @@ struct UpdateMailboxPasswordView: View {
                     }
                 }
             }
+            .padding()
         }
-        .padding()
         .safeAreaInset(edge: .bottom) {
             VStack(spacing: UIPadding.medium) {
                 MailButton(label: MailResourcesStrings.Localizable.buttonConfirm) {
