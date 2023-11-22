@@ -51,7 +51,7 @@ struct ModalButtonsView: View {
             }
             .ikPlainButton()
             .disabled(!primaryButtonEnabled)
-            .mailButtonLoading(isButtonLoading)
+            .ikButtonLoading(isButtonLoading)
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
     }
