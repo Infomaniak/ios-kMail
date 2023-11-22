@@ -20,7 +20,7 @@ import MailCore
 import SwiftUI
 
 struct IKButtonLoadingModifier: ViewModifier {
-    @Environment(\.mailButtonLoading) private var isLoading: Bool
+    @Environment(\.ikButtonLoading) private var isLoading: Bool
 
     let isPlain: Bool
 
@@ -35,8 +35,25 @@ struct IKButtonLoadingModifier: ViewModifier {
     }
 }
 
-struct IKExpandableButtonModifier: ViewModifier {
-    @Environment(\.mailButtonFullWidth) private var fullWidth: Bool
+struct IKButtonControlSizeModifier: ViewModifier {
+    @Environment(\.controlSize) private var controlSize
+
+    private var font: Font {
+        if controlSize == .small {
+            return MailTextStyle.bodySmall.font
+        } else {
+            return MailTextStyle.bodyMedium.font
+        }
+    }
+
+    func body(content: Content) -> some View {
+        content
+            .font(font)
+    }
+}
+
+struct IKButtonExpandableModifier: ViewModifier {
+    @Environment(\.ikButtonFullWidth) private var fullWidth: Bool
 
     func body(content: Content) -> some View {
         content
@@ -44,7 +61,7 @@ struct IKExpandableButtonModifier: ViewModifier {
     }
 }
 
-struct IKLayoutButton: ViewModifier {
+struct IKButtonLayout: ViewModifier {
     @Environment(\.controlSize) private var controlSize
 
     private var buttonHeight: CGFloat {
@@ -62,12 +79,16 @@ struct IKLayoutButton: ViewModifier {
     }
 }
 
-struct IKTapAnimationModifier: ViewModifier {
+struct IKButtonTapAnimationModifier: ViewModifier {
+    @Environment(\.ikButtonLoading) private var isLoading: Bool
+    @Environment(\.isEnabled) private var isEnabled
+
     let isPressed: Bool
 
     func body(content: Content) -> some View {
         content
             .scaleEffect(isPressed ? 0.92 : 1.0)
             .animation(.spring, value: isPressed)
+            .allowsHitTesting(isEnabled && !isLoading)
     }
 }

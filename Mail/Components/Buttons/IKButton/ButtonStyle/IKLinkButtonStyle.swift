@@ -21,28 +21,29 @@ import MailResources
 import SwiftUI
 
 struct IKLinkButtonStyle: ButtonStyle {
-    @Environment(\.mailButtonPrimaryColor) private var mailButtonPrimaryColor: Color
+    @Environment(\.ikButtonPrimaryStyle) private var mailButtonPrimaryStyle: any ShapeStyle
 
     @Environment(\.controlSize) private var controlSize
     @Environment(\.isEnabled) private var isEnabled
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundStyle(foreground(role: configuration.role))
+            .foregroundStyle(AnyShapeStyle(foreground(role: configuration.role)))
             .modifier(IKButtonLoadingModifier(isPlain: false))
-            .modifier(IKExpandableButtonModifier())
-            .modifier(IKLayoutButton())
+            .modifier(IKButtonControlSizeModifier())
+            .modifier(IKButtonExpandableModifier())
+            .modifier(IKButtonLayout())
             .contentShape(Rectangle())
-            .modifier(IKTapAnimationModifier(isPressed: configuration.isPressed))
+            .modifier(IKButtonTapAnimationModifier(isPressed: configuration.isPressed))
     }
 
-    private func foreground(role: ButtonRole?) -> Color {
+    private func foreground(role: ButtonRole?) -> any ShapeStyle {
         if !isEnabled {
             return MailTextStyle.bodyMediumOnDisabled.color
         } else if role == .destructive {
             return MailTextStyle.bodyMediumError.color
         } else {
-            return mailButtonPrimaryColor
+            return mailButtonPrimaryStyle
         }
     }
 }
