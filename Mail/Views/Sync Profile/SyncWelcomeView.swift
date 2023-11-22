@@ -40,11 +40,13 @@ struct SyncWelcomeView: View {
             .ignoresSafeArea(edges: .top)
             .safeAreaInset(edge: .bottom) {
                 VStack(spacing: UIPadding.medium) {
-                    MailButton(label: MailResourcesStrings.Localizable.buttonStart) {
+                    Button(MailResourcesStrings.Localizable.buttonStart) {
                         matomo.track(eventWithCategory: .syncAutoConfig, name: "start")
                         navigationPath.append(.downloadProfile)
                     }
-                    .mailButtonFullWidth(true)
+                    .ikPlainButton()
+                    .controlSize(.large)
+                    .ikButtonFullWidth(true)
                 }
                 .padding(.horizontal, value: .medium)
                 .padding(.bottom, UIPadding.onBoardingBottomButtons)

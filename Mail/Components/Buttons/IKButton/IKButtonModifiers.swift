@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import SwiftUI
 
 struct IKButtonLoadingModifier: ViewModifier {
@@ -94,5 +95,28 @@ struct IKButtonTapAnimationModifier: ViewModifier {
             .scaleEffect(isPressed ? 0.92 : 1.0)
             .animation(.spring, value: isPressed)
             .allowsHitTesting(isEnabled && !isLoading)
+    }
+}
+
+struct IKButtonFilledModifier: ViewModifier {
+    @Environment(\.ikButtonPrimaryStyle) private var ikButtonPrimaryStyle: any ShapeStyle
+    @Environment(\.ikButtonSecondaryStyle) private var ikButtonSecondaryStyle: any ShapeStyle
+
+    @Environment(\.isEnabled) private var isEnabled
+
+    private var foreground: any ShapeStyle {
+        guard isEnabled else { return MailTextStyle.bodyMediumOnDisabled.color }
+        return ikButtonSecondaryStyle
+    }
+
+    private var background: any ShapeStyle {
+        guard isEnabled else { return MailResourcesAsset.textTertiaryColor.swiftUIColor }
+        return ikButtonPrimaryStyle
+    }
+
+    func body(content: Content) -> some View {
+        content
+            .foregroundStyle(AnyShapeStyle(foreground))
+            .background(AnyShapeStyle(background), in: RoundedRectangle(cornerRadius: UIConstants.buttonsRadius))
     }
 }

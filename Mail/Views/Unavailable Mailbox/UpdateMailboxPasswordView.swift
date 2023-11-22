@@ -93,22 +93,23 @@ struct UpdateMailboxPasswordView: View {
             .padding()
         }
         .safeAreaInset(edge: .bottom) {
-            VStack(spacing: UIPadding.medium) {
-                MailButton(label: MailResourcesStrings.Localizable.buttonConfirm) {
+            VStack(spacing: UIPadding.intermediate) {
+                Button(MailResourcesStrings.Localizable.buttonConfirm) {
                     matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "updatePassword")
                     updateMailboxPassword()
                 }
-                .mailButtonFullWidth(true)
+                .ikPlainButton()
                 .disabled(disableButton)
-                .mailButtonLoading(isLoading)
+                .ikButtonLoading(isLoading)
 
-                MailButton(label: MailResourcesStrings.Localizable.buttonRequestPassword) {
+                Button(MailResourcesStrings.Localizable.buttonRequestPassword) {
                     matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "requestPassword")
                     askMailboxPassword()
                 }
-                .mailButtonStyle(.link)
-                .mailButtonFullWidth(true)
+                .ikLinkButton()
             }
+            .controlSize(.large)
+            .ikButtonFullWidth(true)
             .padding(.horizontal, value: .medium)
             .padding(.bottom, value: .regular)
         }

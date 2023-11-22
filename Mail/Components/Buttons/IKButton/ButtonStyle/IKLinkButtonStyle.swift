@@ -21,7 +21,7 @@ import MailResources
 import SwiftUI
 
 struct IKLinkButtonStyle: ButtonStyle {
-    @Environment(\.ikButtonPrimaryStyle) private var mailButtonPrimaryStyle: any ShapeStyle
+    @Environment(\.ikButtonPrimaryStyle) private var ikButtonPrimaryStyle: any ShapeStyle
 
     @Environment(\.controlSize) private var controlSize
     @Environment(\.isEnabled) private var isEnabled
@@ -45,7 +45,7 @@ struct IKLinkButtonStyle: ButtonStyle {
         } else if role == .destructive {
             return MailTextStyle.bodyMediumError.color
         } else {
-            return mailButtonPrimaryStyle
+            return ikButtonPrimaryStyle
         }
     }
 }
