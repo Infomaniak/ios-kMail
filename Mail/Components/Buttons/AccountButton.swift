@@ -31,10 +31,8 @@ struct AccountButton: View {
             presentedCurrentAccount = mailboxManager.account
         } label: {
             if let currentAccountUser = mailboxManager.account.user {
-                AvatarView(
-                    mailboxManager: mailboxManager,
-                    displayablePerson: CommonContact(user: currentAccountUser)
-                )
+                AvatarView(mailboxManager: mailboxManager,
+                           contactConfiguration: .user(user: currentAccountUser))
             }
         }
         .sheet(item: $presentedCurrentAccount) { account in

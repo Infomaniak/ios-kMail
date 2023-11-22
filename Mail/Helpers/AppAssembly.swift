@@ -124,6 +124,14 @@ enum ApplicationAssembly {
             },
             Factory(type: AppLaunchCounter.self) { _, _ in
                 AppLaunchCounter()
+            },
+            Factory(type: ContactCache.self) { _, _ in
+                let contactCache = ContactCache()
+                if Bundle.main.isExtension {
+                    // Limit the cache size in extension mode, not strictly needed, but coherent.
+                    contactCache.countLimit = Constants.contactCacheExtensionMaxCount
+                }
+                return contactCache
             }
         ]
 

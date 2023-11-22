@@ -68,23 +68,25 @@ struct AccountView: View {
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
-                AvatarView(mailboxManager: mailboxManager,
-                           displayablePerson: CommonContact(user: account.user),
-                           size: AccountView.avatarViewSize)
-                    .padding(.bottom, value: .regular)
-                    .padding(.top, value: .medium)
-                    .background {
-                        if EasterEgg.halloween.shouldTrigger() {
-                            LottieView(configuration: LottieConfiguration(id: 1, filename: "illu_easter_egg_halloween"),
-                                       isVisible: $isLottieAnimationVisible)
-                                .offset(y: AccountView.avatarViewSize)
-                                .allowsHitTesting(false)
-                                .onAppear {
-                                    EasterEgg.halloween.onTrigger()
-                                }
-                        }
+                AvatarView(
+                    mailboxManager: mailboxManager,
+                    contactConfiguration: .user(user: account.user),
+                    size: AccountView.avatarViewSize
+                )
+                .padding(.bottom, value: .regular)
+                .padding(.top, value: .medium)
+                .background {
+                    if EasterEgg.halloween.shouldTrigger() {
+                        LottieView(configuration: LottieConfiguration(id: 1, filename: "illu_easter_egg_halloween"),
+                                   isVisible: $isLottieAnimationVisible)
+                            .offset(y: AccountView.avatarViewSize)
+                            .allowsHitTesting(false)
+                            .onAppear {
+                                EasterEgg.halloween.onTrigger()
+                            }
                     }
-                    .zIndex(1)
+                }
+                .zIndex(1)
 
                 VStack(spacing: 0) {
                     Text(account.user.displayName)

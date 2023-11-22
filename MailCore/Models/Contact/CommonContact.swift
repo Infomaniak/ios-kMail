@@ -22,38 +22,44 @@ import MailResources
 import Nuke
 import UIKit
 
-public struct AvatarImageRequest {
-    let imageRequest: ImageRequest?
-    let shouldAuthenticate: Bool
+public final class CommonContact: Identifiable {
+    /// Empty contact is a singleton
+    public static let emptyContact = CommonContact()
 
-    public func authenticatedRequestIfNeeded(token: ApiToken) -> ImageRequest? {
-        guard let unauthenticatedImageRequest = imageRequest,
-              let unauthenticatedUrlRequest = unauthenticatedImageRequest.urlRequest else {
-            return nil
-        }
+    public let id: Int
 
-        guard shouldAuthenticate else {
-            return unauthenticatedImageRequest
-        }
-
-        var authenticatedUrlRequest = unauthenticatedUrlRequest
-        authenticatedUrlRequest.addValue(
-            "Bearer \(token.accessToken)",
-            forHTTPHeaderField: "Authorization"
-        )
-
-        return ImageRequest(urlRequest: authenticatedUrlRequest)
-    }
-}
-
-public struct CommonContact {
     public let fullName: String
     public let email: String
     public let avatarImageRequest: AvatarImageRequest
     public let color: UIColor
 
-    public init(recipient: Recipient, contextMailboxManager: MailboxManager) {
+    static func from(contactConfiguration: ContactConfiguration) -> CommonContact {
+        switch contactConfiguration {
+        case .recipient(let recipient, let contextMailboxManager):
+            CommonContact(recipient: recipient, contextMailboxManager: contextMailboxManager)
+        case .user(let user):
+            CommonContact(user: user)
+        case .contact(let contact):
+            contact
+        case .emptyContact:
+            emptyContact
+        }
+    }
+
+    /// Empty contact
+    private init() {
+        let recipient = Recipient(email: "", name: "")
         email = recipient.email
+        fullName = recipient.name
+        id = recipient.id.hashValue
+        color = UIColor.backgroundColor(from: recipient.hash, with: UIConstants.avatarColors)
+        avatarImageRequest = AvatarImageRequest(imageRequest: nil, shouldAuthenticate: true)
+    }
+
+    /// Init form a `Recipient` in the context of a mailbox
+    init(recipient: Recipient, contextMailboxManager: MailboxManager) {
+        email = recipient.email
+        id = recipient.id.hashValue
 
         if recipient.isMe(currentMailboxEmail: contextMailboxManager.mailbox.email) {
             fullName = MailResourcesStrings.Localizable.contactMe
@@ -65,7 +71,7 @@ public struct CommonContact {
                 avatarImageRequest = AvatarImageRequest(imageRequest: nil, shouldAuthenticate: false)
             }
         } else {
-            let mainViewRealm = contextMailboxManager.contactManager.viewRealm
+            let mainViewRealm = contextMailboxManager.contactManager.getRealm()
             let contact = contextMailboxManager.contactManager.getContact(for: recipient, realm: mainViewRealm)
             fullName = contact?.name ?? (recipient.name.isEmpty ? recipient.email : recipient.name)
             color = contact?.color ?? UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
@@ -73,7 +79,9 @@ public struct CommonContact {
         }
     }
 
-    public init(user: UserProfile) {
+    /// Init form a `UserProfile`
+    init(user: UserProfile) {
+        id = user.id
         fullName = user.displayName
         email = user.email
         color = UIColor.backgroundColor(from: user.id, with: UIConstants.avatarColors)
@@ -82,11 +90,6 @@ public struct CommonContact {
         } else {
             avatarImageRequest = AvatarImageRequest(imageRequest: nil, shouldAuthenticate: false)
         }
-    }
-
-    /// A `CommonContact` that represents no-one.
-    public static func emptyContact(contextMailboxManager: MailboxManager) -> CommonContact {
-        CommonContact(recipient: Recipient(email: "", name: ""), contextMailboxManager: contextMailboxManager)
     }
 }
 

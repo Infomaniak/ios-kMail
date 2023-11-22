@@ -50,10 +50,8 @@ struct MessageHeaderSummaryView: View {
                     } label: {
                         AvatarView(
                             mailboxManager: mailboxManager,
-                            displayablePerson: CommonContact(
-                                recipient: recipient,
-                                contextMailboxManager: mailboxManager
-                            ),
+                            contactConfiguration: .recipient(recipient: recipient,
+                                                             contextMailboxManager: mailboxManager),
                             size: 40
                         )
                     }
@@ -70,7 +68,14 @@ struct MessageHeaderSummaryView: View {
                         HStack(alignment: .firstTextBaseline, spacing: UIPadding.small) {
                             VStack {
                                 ForEach(message.from) { recipient in
-                                    Text(CommonContact(recipient: recipient, contextMailboxManager: mailboxManager),
+                                    let contactConfiguration = ContactConfiguration.recipient(
+                                        recipient: recipient,
+                                        contextMailboxManager: mailboxManager
+                                    )
+                                    let contact = CommonContactCache
+                                        .getOrCreateContact(contactConfiguration: contactConfiguration)
+
+                                    Text(contact,
                                          format: .displayablePerson())
                                         .lineLimit(1)
                                         .textStyle(.bodyMedium)
@@ -87,7 +92,13 @@ struct MessageHeaderSummaryView: View {
                         HStack {
                             Text(
                                 message.recipients.map {
-                                    CommonContact(recipient: $0, contextMailboxManager: mailboxManager).formatted()
+                                    let contactConfiguration = ContactConfiguration.recipient(
+                                        recipient: $0,
+                                        contextMailboxManager: mailboxManager
+                                    )
+                                    let contact = CommonContactCache
+                                        .getOrCreateContact(contactConfiguration: contactConfiguration)
+                                    return contact.formatted()
                                 },
                                 format: .list(type: .and)
                             )

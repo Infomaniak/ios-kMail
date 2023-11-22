@@ -71,11 +71,11 @@ struct ThreadCellDataHolder {
         }
     }
 
-    func commonContact(contextMailboxManager: MailboxManager) -> CommonContact {
+    func contactConfiguration(contextMailboxManager: MailboxManager) -> ContactConfiguration {
         if let recipientToDisplay {
-            return CommonContact(recipient: recipientToDisplay, contextMailboxManager: contextMailboxManager)
+            return .recipient(recipient: recipientToDisplay, contextMailboxManager: contextMailboxManager)
         } else {
-            return CommonContact.emptyContact(contextMailboxManager: contextMailboxManager)
+            return .emptyContact
         }
     }
 }
@@ -149,7 +149,7 @@ struct ThreadCell: View {
                     ZStack {
                         AvatarView(
                             mailboxManager: mailboxManager,
-                            displayablePerson: dataHolder.commonContact(contextMailboxManager: mailboxManager),
+                            contactConfiguration: dataHolder.contactConfiguration(contextMailboxManager: mailboxManager),
                             size: 40
                         )
                         .opacity(isSelected ? 0 : 1)
