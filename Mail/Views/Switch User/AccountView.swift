@@ -112,19 +112,21 @@ struct AccountView: View {
                 Spacer()
             }
 
-            VStack(spacing: UIPadding.medium) {
-                MailButton(label: MailResourcesStrings.Localizable.buttonAccountDisconnect) {
+            VStack(spacing: UIPadding.intermediate) {
+                Button(MailResourcesStrings.Localizable.buttonAccountDisconnect) {
                     matomo.track(eventWithCategory: .account, name: "logOut")
                     isShowingLogoutAlert.toggle()
                 }
-                .mailButtonFullWidth(true)
+                .ikPlainButton()
 
-                MailButton(label: MailResourcesStrings.Localizable.buttonAccountDelete) {
+                Button(MailResourcesStrings.Localizable.buttonAccountDelete, role: .destructive) {
                     matomo.track(eventWithCategory: .account, name: "deleteAccount")
                     presentedAccountDeletionToken = tokenStore.tokenFor(userId: account.userId)
                 }
-                .mailButtonStyle(.destructive)
+                .ikLinkButton()
             }
+            .ikButtonFullWidth(true)
+            .controlSize(.large)
             .padding(.horizontal, value: .medium)
             .padding(.bottom, value: .regular)
         }

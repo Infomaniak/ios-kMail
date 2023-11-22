@@ -100,21 +100,23 @@ struct SyncInstallProfileTutorialView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            VStack {
-                MailButton(label: MailResourcesStrings.Localizable.buttonGoToSettings) {
+            VStack(spacing: UIPadding.intermediate) {
+                Button(MailResourcesStrings.Localizable.buttonGoToSettings) {
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "openSettings")
                     openURL(URL(string: "App-prefs:")!)
                 }
-                .mailButtonFullWidth(true)
+                .ikPlainButton()
+
                 if userCameBackFromSettings {
-                    MailButton(label: MailResourcesStrings.Localizable.buttonImDone) {
+                    Button(MailResourcesStrings.Localizable.buttonImDone) {
                         matomo.track(eventWithCategory: .syncAutoConfig, name: "done")
                         dismiss()
                     }
-                    .mailButtonFullWidth(true)
-                    .mailButtonStyle(.link)
+                    .ikLinkButton()
                 }
             }
+            .controlSize(.large)
+            .ikButtonFullWidth(true)
             .padding(.top, value: .verySmall)
             .padding(.horizontal, value: .medium)
             .background(MailResourcesAsset.backgroundColor.swiftUIColor)

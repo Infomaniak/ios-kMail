@@ -197,30 +197,32 @@ struct OnboardingView: View {
                     .padding(.top, UIPadding.onBoardingLogoTop)
             }
 
-            VStack(spacing: UIPadding.medium) {
-                MailButton(label: MailResourcesStrings.Localizable.buttonLogin) {
+            VStack(spacing: UIPadding.intermediate) {
+                Button(MailResourcesStrings.Localizable.buttonLogin) {
                     loginHandler.login()
                 }
-                .mailButtonFullWidth(true)
+                .ikPlainButton()
                 .mailButtonLoading(loginHandler.isLoading)
 
-                MailButton(label: MailResourcesStrings.Localizable.buttonCreateAccount) {
+                Button(MailResourcesStrings.Localizable.buttonCreateAccount) {
                     isPresentingCreateAccount.toggle()
                 }
-                .mailButtonStyle(.link)
-                .mailButtonStyle(.link)
+                .ikLinkButton()
                 .disabled(loginHandler.isLoading)
             }
+            .ikButtonFullWidth(true)
+            .controlSize(.large)
             .opacity(isLastSlide ? 1 : 0)
             .overlay {
                 if !isLastSlide {
-                    MailButton(icon: MailResourcesAsset.fullArrowRight) {
+                    Button {
                         withAnimation {
                             selection = min(slides.count, selection + 1)
                         }
+                    } label: {
+                        IKIcon(size: .large, image: MailResourcesAsset.fullArrowRight, shapeStyle: HierarchicalShapeStyle.primary)
                     }
-                    .mailButtonIconSize(24)
-                    .mailButtonStyle(.floatingActionButton)
+                    .ikHugeButton()
                 }
             }
             .padding(.horizontal, value: .medium)

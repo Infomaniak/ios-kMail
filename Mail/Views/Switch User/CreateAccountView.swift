@@ -72,12 +72,13 @@ struct CreateAccountView: View {
 
             Spacer()
 
-            MailButton(label: MailResourcesStrings.Localizable.buttonStart) {
+            Button(MailResourcesStrings.Localizable.buttonStart) {
                 matomo.track(eventWithCategory: .account, name: "openCreationWebview")
                 isPresentingCreateAccount = true
             }
-            .mailButtonFullWidth(true)
-            .mailButtonLoading(loginHandler.isLoading)
+            .ikPlainButton()
+            .ikButtonLoading(loginHandler.isLoading)
+            .controlSize(.large)
             .padding(.bottom, value: .regular)
         }
         .padding(.horizontal, value: .medium)

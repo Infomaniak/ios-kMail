@@ -38,11 +38,12 @@ struct LockedMailboxView: View {
                 .multilineTextAlignment(.center)
                 .padding(.vertical, value: .medium)
 
-            MailButton(label: MailResourcesStrings.Localizable.buttonClose) {
+            Button(MailResourcesStrings.Localizable.buttonClose) {
                 dismiss()
             }
-            .mailButtonStyle(.link)
-            .mailButtonFullWidth(true)
+            .ikLinkButton()
+            .controlSize(.large)
+            .ikButtonFullWidth(true)
         }
         .padding(.horizontal, value: .medium)
         .padding(.top, value: .regular)

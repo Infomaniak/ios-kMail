@@ -21,30 +21,13 @@ import MailResources
 import SwiftUI
 
 struct IKPlainButtonStyle: ButtonStyle {
-    @Environment(\.ikButtonPrimaryStyle) private var ikButtonPrimaryStyle: any ShapeStyle
-    @Environment(\.ikButtonSecondaryStyle) private var ikButtonSecondaryStyle: any ShapeStyle
-
-    @Environment(\.controlSize) private var controlSize
-    @Environment(\.isEnabled) private var isEnabled
-
-    private var foreground: any ShapeStyle {
-        guard isEnabled else { return MailTextStyle.bodyMediumOnDisabled.color }
-        return ikButtonSecondaryStyle
-    }
-
-    private var background: any ShapeStyle {
-        guard isEnabled else { return MailResourcesAsset.textTertiaryColor.swiftUIColor }
-        return ikButtonPrimaryStyle
-    }
-
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .foregroundStyle(AnyShapeStyle(foreground))
             .modifier(IKButtonLoadingModifier(isPlain: true))
             .modifier(IKButtonExpandableModifier())
             .modifier(IKButtonControlSizeModifier())
             .modifier(IKButtonLayout())
-            .background(AnyShapeStyle(background), in: RoundedRectangle(cornerRadius: UIConstants.buttonsRadius))
+            .modifier(IKButtonFilledModifier())
             .modifier(IKButtonTapAnimationModifier(isPressed: configuration.isPressed))
     }
 }
