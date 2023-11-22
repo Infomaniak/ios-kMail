@@ -43,7 +43,7 @@ struct LoadMoreButton: View {
                     .id(UUID())
                     .frame(maxWidth: .infinity)
             } else if shouldDisplay {
-                MailButton(label: MailResourcesStrings.Localizable.buttonLoadMore) {
+                Button(MailResourcesStrings.Localizable.buttonLoadMore) {
                     withAnimation {
                         isLoadingMore = true
                     }
@@ -59,11 +59,11 @@ struct LoadMoreButton: View {
                         }
                     }
                 }
-                .mailButtonStyle(.smallLink)
-                .frame(alignment: .leading)
+                .ikLinkButton()
+                .controlSize(.small)
             }
         }
-        .padding(value: .small)
+        .padding(.vertical, value: .small)
         .threadListCellAppearance()
     }
 }
