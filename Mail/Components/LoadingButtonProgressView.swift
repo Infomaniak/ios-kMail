@@ -26,10 +26,6 @@ struct LoadingButtonProgressView: View {
         tintColor = plain ? .white : nil
     }
 
-    init(style: MailButton.Style) {
-        tintColor = style == .large ? .white : nil
-    }
-
     var body: some View {
         ProgressView()
             .progressViewStyle(.circular)

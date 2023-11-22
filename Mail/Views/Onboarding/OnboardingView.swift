@@ -202,7 +202,7 @@ struct OnboardingView: View {
                     loginHandler.login()
                 }
                 .ikPlainButton()
-                .mailButtonLoading(loginHandler.isLoading)
+                .ikButtonLoading(loginHandler.isLoading)
 
                 Button(MailResourcesStrings.Localizable.buttonCreateAccount) {
                     isPresentingCreateAccount.toggle()
