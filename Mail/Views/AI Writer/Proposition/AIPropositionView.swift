@@ -96,16 +96,23 @@ struct AIPropositionView: View {
                         case .loading:
                             AIProgressView()
                         case .standard, .error:
-                            MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
+                            Button {
                                 aiModel.didTapInsert()
+                            } label: {
+                                IKButtonLabel(
+                                    title: MailResourcesStrings.Localizable.aiButtonInsert,
+                                    icon: MailResourcesAsset.plus
+                                )
                             }
+                            .ikPlainButton()
                         case .loadingError:
-                            MailButton(label: MailResourcesStrings.Localizable.aiButtonRetry) {
+                            Button(MailResourcesStrings.Localizable.aiButtonRetry) {
                                 matomo.track(eventWithCategory: .aiWriter, name: "retry")
                                 aiModel.keepConversationWhenPropositionIsDismissed = true
                                 willShowAIPrompt = true
                                 dismiss()
                             }
+                            .ikPlainButton()
                         }
                     }
                     .padding(.bottom, value: .verySmall)
