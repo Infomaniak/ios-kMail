@@ -64,8 +64,12 @@ struct IKButtonExpandableModifier: ViewModifier {
 struct IKButtonLayout: ViewModifier {
     @Environment(\.controlSize) private var controlSize
 
-    private var buttonHeight: CGFloat {
-        if controlSize == .large {
+    var isInlined = false
+
+    private var buttonHeight: CGFloat? {
+        if isInlined {
+            return nil
+        } else if controlSize == .large {
             return UIConstants.buttonMediumHeight
         } else {
             return UIConstants.buttonSmallHeight
@@ -74,7 +78,7 @@ struct IKButtonLayout: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .padding(.horizontal, value: .medium)
+            .padding(.horizontal, isInlined ? nil : UIPadding.medium)
             .frame(height: buttonHeight)
     }
 }

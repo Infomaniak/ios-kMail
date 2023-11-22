@@ -26,13 +26,15 @@ struct IKLinkButtonStyle: ButtonStyle {
     @Environment(\.controlSize) private var controlSize
     @Environment(\.isEnabled) private var isEnabled
 
+    var isInlined = false
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .foregroundStyle(AnyShapeStyle(foreground(role: configuration.role)))
             .modifier(IKButtonLoadingModifier(isPlain: false))
             .modifier(IKButtonControlSizeModifier())
             .modifier(IKButtonExpandableModifier())
-            .modifier(IKButtonLayout())
+            .modifier(IKButtonLayout(isInlined: isInlined))
             .contentShape(Rectangle())
             .modifier(IKButtonTapAnimationModifier(isPressed: configuration.isPressed))
     }
