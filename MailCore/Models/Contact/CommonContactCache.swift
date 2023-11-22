@@ -25,49 +25,43 @@ public typealias ContactCache = NSCache<NSNumber, CommonContact>
 
 /// Creating a `CommonContact` is expensive, relying on a cache to reduce hangs
 public enum CommonContactCache {
+    /// Set to false for testing without cache
+    private static let cacheEnabled = true
+
     /// The underlying standard cache
     @LazyInjectService private static var cache: ContactCache
 
     /// Get a contact from cache if any or nil
     public static func getContactFromCache(contactConfiguration: ContactConfiguration) -> CommonContact? {
-        let key = contactConfiguration.cacheKey
-        return cache.object(forKey: key)
+        /// cache enabled check
+        guard cacheEnabled else {
+            return nil
+        }
+
+        return cache.object(forKey: contactConfiguration.cacheKey)
     }
 
     /// Get a contact from cache or build it
     public static func getOrCreateContact(contactConfiguration: ContactConfiguration) -> CommonContact {
-        let contact: CommonContact
-        let key = contactConfiguration.cacheKey
+        /// Try to fetch the entry from cache
+        if let cachedContact = getContactFromCache(contactConfiguration: contactConfiguration) {
+            return cachedContact
+        }
 
+        let contact: CommonContact
         switch contactConfiguration {
         case .recipient(let recipient, let contextMailboxManager):
-            contact = getOrCreateContact(recipient: recipient, contextMailboxManager: contextMailboxManager, key: key)
+            contact = CommonContact(recipient: recipient, contextMailboxManager: contextMailboxManager)
         case .user(let user):
-            contact = getOrCreateContact(user: user, key: key)
+            contact = CommonContact(user: user)
         case .contact(let wrappedContact):
             contact = wrappedContact
         case .emptyContact:
             contact = CommonContact.emptyContact
         }
 
-        cache.setObject(contact, forKey: key)
-        return contact
-    }
-
-    private static func getOrCreateContact(user: UserProfile, key: NSNumber) -> CommonContact {
-        guard let contact = CommonContactCache.cache.object(forKey: key) else {
-            return CommonContact(user: user)
-        }
-
-        return contact
-    }
-
-    private static func getOrCreateContact(recipient: Recipient,
-                                           contextMailboxManager: MailboxManager,
-                                           key: NSNumber) -> CommonContact {
-        guard let contact = CommonContactCache.cache.object(forKey: key) else {
-            return CommonContact(recipient: recipient, contextMailboxManager: contextMailboxManager)
-        }
+        // Store the object in cache
+        cache.setObject(contact, forKey: contactConfiguration.cacheKey)
 
         return contact
     }
