@@ -98,7 +98,7 @@ struct UpdateMailboxPasswordView: View {
                     matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "updatePassword")
                     updateMailboxPassword()
                 }
-                .ikPlainButton(animation: .scale)
+                .ikPlainButton()
                 .disabled(disableButton)
                 .ikButtonLoading(isLoading)
 

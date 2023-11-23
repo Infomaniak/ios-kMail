@@ -52,43 +52,80 @@ struct IKLinkButtonStyle: ButtonStyle {
 }
 
 #Preview {
-    VStack(spacing: UIPadding.medium) {
-        Button {
-            /* Preview */
-        } label: {
-            IKButtonLabel(title: "Standard Button", icon: MailResourcesAsset.pencilPlain)
-        }
-        .ikLinkButton()
+    NavigationView {
+        List {
+            Section("Standard Button") {
+                Button {
+                    /* Preview */
+                } label: {
+                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                }
+            }
 
-        Button(role: .destructive) {
-            /* Preview */
-        } label: {
-            IKButtonLabel(title: "Destructive Button", icon: MailResourcesAsset.pencilPlain)
-        }
-        .ikLinkButton()
+            Section("Loading Button") {
+                Button {
+                    /* Preview */
+                } label: {
+                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                }
+                .ikButtonLoading(true)
+            }
 
-        Button {
-            /* Preview */
-        } label: {
-            IKButtonLabel(title: "Small Button", icon: MailResourcesAsset.pencilPlain)
-        }
-        .ikLinkButton()
-        .controlSize(.small)
+            Section("Destructive Button") {
+                Button(role: .destructive) {
+                    /* Preview */
+                } label: {
+                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                }
+            }
 
-        Button {
-            /* Preview */
-        } label: {
-            IKButtonLabel(title: "Full Width Button", icon: MailResourcesAsset.pencilPlain)
-        }
-        .ikLinkButton()
-        .ikButtonFullWidth(true)
+            Section("Small Button") {
+                Button {
+                    /* Preview */
+                } label: {
+                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                }
+                .controlSize(.small)
+            }
 
-        Button {
-            /* Preview */
-        } label: {
-            IKButtonLabel(title: "Button with different primary color", icon: MailResourcesAsset.pencilPlain)
+            Section("Full Width Button") {
+                Button {
+                    /* Preview */
+                } label: {
+                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                }
+                .controlSize(.large)
+                .ikButtonFullWidth(true)
+            }
+
+            Section("Button With Different Color") {
+                Button {
+                    /* Preview */
+                } label: {
+                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                }
+                .ikButtonPrimaryStyle(MailResourcesAsset.aiColor.swiftUIColor)
+            }
+
+            Section("Scale Animation") {
+                Button {
+                    /* Preview */
+                } label: {
+                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                }
+                .ikLinkButton(animation: .scale)
+            }
+
+            Section("Inlined Button") {
+                Button {
+                    /* Preview */
+                } label: {
+                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                }
+                .ikLinkButton(isInlined: true)
+            }
         }
         .ikLinkButton()
-        .ikButtonPrimaryStyle(MailResourcesAsset.aiColor.swiftUIColor)
+        .navigationTitle("Link Button")
     }
 }

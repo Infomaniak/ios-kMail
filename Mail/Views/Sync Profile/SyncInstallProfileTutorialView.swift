@@ -105,7 +105,7 @@ struct SyncInstallProfileTutorialView: View {
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "openSettings")
                     openURL(URL(string: "App-prefs:")!)
                 }
-                .ikPlainButton(animation: .scale)
+                .ikPlainButton()
 
                 if userCameBackFromSettings {
                     Button(MailResourcesStrings.Localizable.buttonImDone) {

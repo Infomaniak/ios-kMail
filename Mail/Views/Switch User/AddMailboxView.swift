@@ -111,7 +111,7 @@ struct AddMailboxView: View {
         }
         .safeAreaInset(edge: .bottom) {
             Button(MailResourcesStrings.Localizable.buttonAttachMailbox, action: addMailbox)
-                .ikPlainButton(animation: .scale)
+                .ikPlainButton()
                 .ikButtonLoading(isButtonLoading)
                 .ikButtonFullWidth(true)
                 .controlSize(.large)
