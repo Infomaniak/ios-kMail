@@ -50,7 +50,7 @@ struct AvatarView: View {
         self.contactConfiguration = contactConfiguration
 
         // We use an ObservedObject instead of a StateObject because SwiftUI doesn't want to respect Equatable
-        _viewModel = ObservedObject(wrappedValue: AvatarViewModel(contactConfiguration: contactConfiguration))
+        _viewModel = ObservedObject(wrappedValue: AvatarViewModel(contactConfiguration: contactConfiguration.freezeIfNeeded()))
     }
 
     var body: some View {

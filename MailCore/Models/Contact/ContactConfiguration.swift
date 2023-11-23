@@ -37,6 +37,15 @@ public enum ContactConfiguration: CustomDebugStringConvertible {
     case user(user: UserProfile)
     case contact(contact: CommonContact)
     case emptyContact
+
+    public func freezeIfNeeded() -> Self {
+        switch self {
+        case .recipient(let recipient, let contextMailboxManager):
+            return .recipient(recipient: recipient.freezeIfNeeded(), contextMailboxManager: contextMailboxManager)
+        default:
+            return self
+        }
+    }
 }
 
 extension ContactConfiguration {
