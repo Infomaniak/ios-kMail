@@ -118,7 +118,7 @@ struct AccountView: View {
                     matomo.track(eventWithCategory: .account, name: "logOut")
                     isShowingLogoutAlert.toggle()
                 }
-                .ikPlainButton(animation: .scale)
+                .ikPlainButton()
 
                 Button(MailResourcesStrings.Localizable.buttonAccountDelete, role: .destructive) {
                     matomo.track(eventWithCategory: .account, name: "deleteAccount")

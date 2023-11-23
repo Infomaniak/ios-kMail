@@ -201,7 +201,7 @@ struct OnboardingView: View {
                 Button(MailResourcesStrings.Localizable.buttonLogin) {
                     loginHandler.login()
                 }
-                .ikPlainButton(animation: .scale)
+                .ikPlainButton()
                 .ikButtonLoading(loginHandler.isLoading)
 
                 Button(MailResourcesStrings.Localizable.buttonCreateAccount) {
