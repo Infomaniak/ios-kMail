@@ -41,15 +41,16 @@ struct ThreadListManagerView: View {
         ZStack {
             if mainViewState.isShowingSearch {
                 SearchView(mailboxManager: mailboxManager, folder: mainViewState.selectedFolder)
+                    .id(threadListViewHash)
             } else {
                 ThreadListView(
                     mailboxManager: mailboxManager,
                     folder: mainViewState.selectedFolder,
                     isCompact: isCompactWindow
                 )
+                .id(threadListViewHash)
             }
         }
-        .id(threadListViewHash)
         .animation(.easeInOut(duration: 0.25), value: mainViewState.isShowingSearch)
     }
 }
