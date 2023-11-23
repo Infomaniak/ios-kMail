@@ -30,7 +30,7 @@ public final class AvatarViewModel: ObservableObject {
 
         /// Async get contact method
         func getContact() async -> CommonContact {
-            return CommonContact.from(contactConfiguration: contactConfiguration)
+            return CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
         }
     }
 
