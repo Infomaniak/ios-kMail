@@ -30,4 +30,8 @@ extension View {
     func ikHugeButton() -> some View {
         buttonStyle(IKHugeButtonStyle())
     }
+
+    func ikFloatingAppButton(isExtended: Bool) -> some View {
+        buttonStyle(IKFloatingAppButtonStyle(isExtended: isExtended))
+    }
 }

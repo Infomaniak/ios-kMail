@@ -20,7 +20,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct FABButtonStyle: ButtonStyle {
+struct IKFloatingAppButtonStyle: ButtonStyle {
     let isExtended: Bool
 
     func makeBody(configuration: Configuration) -> some View {
