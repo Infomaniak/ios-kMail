@@ -112,7 +112,7 @@ struct SyncInstallProfileTutorialView: View {
                     }
                     openURL(url)
                 }
-                .ikPlainButton()
+                .ikPlainButton(animation: .scale)
 
                 if userCameBackFromSettings {
                     Button(MailResourcesStrings.Localizable.buttonImDone) {

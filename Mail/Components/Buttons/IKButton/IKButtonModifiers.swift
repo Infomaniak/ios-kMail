@@ -20,6 +20,8 @@ import MailCore
 import MailResources
 import SwiftUI
 
+// MARK: - Loading Effect
+
 struct IKButtonLoadingModifier: ViewModifier {
     @Environment(\.ikButtonLoading) private var isLoading: Bool
 
@@ -35,6 +37,8 @@ struct IKButtonLoadingModifier: ViewModifier {
         }
     }
 }
+
+// MARK: - Control Size
 
 struct IKButtonControlSizeModifier: ViewModifier {
     @Environment(\.controlSize) private var controlSize
@@ -53,6 +57,8 @@ struct IKButtonControlSizeModifier: ViewModifier {
     }
 }
 
+// MARK: - Expandable Button
+
 struct IKButtonExpandableModifier: ViewModifier {
     @Environment(\.ikButtonFullWidth) private var isFullWidth: Bool
 
@@ -61,6 +67,8 @@ struct IKButtonExpandableModifier: ViewModifier {
             .frame(maxWidth: isFullWidth ? UIConstants.componentsMaxWidth : nil)
     }
 }
+
+// MARK: - Layout
 
 struct IKButtonLayout: ViewModifier {
     @Environment(\.controlSize) private var controlSize
@@ -84,19 +92,31 @@ struct IKButtonLayout: ViewModifier {
     }
 }
 
+// MARK: - Tap Animation
+
+enum IKButtonTapAnimation {
+    case scale, opacity
+}
+
 struct IKButtonTapAnimationModifier: ViewModifier {
     @Environment(\.ikButtonLoading) private var isLoading: Bool
     @Environment(\.isEnabled) private var isEnabled
 
+    var animation: IKButtonTapAnimation
     let isPressed: Bool
 
     func body(content: Content) -> some View {
         content
-            .scaleEffect(isPressed ? 0.92 : 1.0)
-            .animation(.spring, value: isPressed)
+            .opacity(isPressed && animation == .opacity ? 0.5 : 1.0)
+            .animation(.easeIn(duration: 0.1), value: isPressed)
+            .brightness(isPressed && animation == .scale ? 0.1 : 0)
+            .scaleEffect(isPressed && animation == .scale ? 0.95 : 1.0)
+            .animation(.spring(blendDuration: 0.2), value: isPressed)
             .allowsHitTesting(isEnabled && !isLoading)
     }
 }
+
+// MARK: - Filled Button
 
 struct IKButtonFilledModifier: ViewModifier {
     @Environment(\.ikButtonPrimaryStyle) private var ikButtonPrimaryStyle: any ShapeStyle

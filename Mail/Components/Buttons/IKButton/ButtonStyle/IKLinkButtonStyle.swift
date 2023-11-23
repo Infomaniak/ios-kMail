@@ -26,6 +26,7 @@ struct IKLinkButtonStyle: ButtonStyle {
     @Environment(\.controlSize) private var controlSize
     @Environment(\.isEnabled) private var isEnabled
 
+    var animation: IKButtonTapAnimation
     var isInlined = false
 
     func makeBody(configuration: Configuration) -> some View {
@@ -36,7 +37,7 @@ struct IKLinkButtonStyle: ButtonStyle {
             .modifier(IKButtonExpandableModifier())
             .modifier(IKButtonLayout(isInlined: isInlined))
             .contentShape(Rectangle())
-            .modifier(IKButtonTapAnimationModifier(isPressed: configuration.isPressed))
+            .modifier(IKButtonTapAnimationModifier(animation: animation, isPressed: configuration.isPressed))
     }
 
     private func foreground(role: ButtonRole?) -> any ShapeStyle {
@@ -57,21 +58,21 @@ struct IKLinkButtonStyle: ButtonStyle {
         } label: {
             IKButtonLabel(title: "Standard Button", icon: MailResourcesAsset.pencilPlain)
         }
-        .buttonStyle(IKLinkButtonStyle())
+        .ikLinkButton()
 
         Button(role: .destructive) {
             /* Preview */
         } label: {
             IKButtonLabel(title: "Destructive Button", icon: MailResourcesAsset.pencilPlain)
         }
-        .buttonStyle(IKLinkButtonStyle())
+        .ikLinkButton()
 
         Button {
             /* Preview */
         } label: {
             IKButtonLabel(title: "Small Button", icon: MailResourcesAsset.pencilPlain)
         }
-        .buttonStyle(IKLinkButtonStyle())
+        .ikLinkButton()
         .controlSize(.small)
 
         Button {
@@ -79,7 +80,7 @@ struct IKLinkButtonStyle: ButtonStyle {
         } label: {
             IKButtonLabel(title: "Full Width Button", icon: MailResourcesAsset.pencilPlain)
         }
-        .buttonStyle(IKLinkButtonStyle())
+        .ikLinkButton()
         .ikButtonFullWidth(true)
 
         Button {
@@ -87,7 +88,7 @@ struct IKLinkButtonStyle: ButtonStyle {
         } label: {
             IKButtonLabel(title: "Button with different primary color", icon: MailResourcesAsset.pencilPlain)
         }
-        .buttonStyle(IKLinkButtonStyle())
+        .ikLinkButton()
         .ikButtonPrimaryStyle(MailResourcesAsset.aiColor.swiftUIColor)
     }
 }

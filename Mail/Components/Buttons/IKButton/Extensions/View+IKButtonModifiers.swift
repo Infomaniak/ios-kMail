@@ -19,12 +19,12 @@
 import SwiftUI
 
 extension View {
-    func ikLinkButton(isInlined: Bool = false) -> some View {
-        buttonStyle(IKLinkButtonStyle(isInlined: isInlined))
+    func ikLinkButton(animation: IKButtonTapAnimation = .opacity, isInlined: Bool = false) -> some View {
+        buttonStyle(IKLinkButtonStyle(animation: animation, isInlined: isInlined))
     }
 
-    func ikPlainButton() -> some View {
-        buttonStyle(IKPlainButtonStyle())
+    func ikPlainButton(animation: IKButtonTapAnimation = .opacity) -> some View {
+        buttonStyle(IKPlainButtonStyle(animation: animation))
     }
 
     func ikHugeButton() -> some View {

@@ -21,6 +21,8 @@ import MailResources
 import SwiftUI
 
 struct IKPlainButtonStyle: ButtonStyle {
+    var animation: IKButtonTapAnimation
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .modifier(IKButtonLoadingModifier(isPlain: true))
@@ -28,7 +30,7 @@ struct IKPlainButtonStyle: ButtonStyle {
             .modifier(IKButtonControlSizeModifier())
             .modifier(IKButtonLayout())
             .modifier(IKButtonFilledModifier())
-            .modifier(IKButtonTapAnimationModifier(isPressed: configuration.isPressed))
+            .modifier(IKButtonTapAnimationModifier(animation: animation, isPressed: configuration.isPressed))
     }
 }
 
@@ -39,14 +41,14 @@ struct IKPlainButtonStyle: ButtonStyle {
         } label: {
             IKButtonLabel(title: "Standard Button", icon: MailResourcesAsset.pencilPlain)
         }
-        .buttonStyle(IKPlainButtonStyle())
+        .ikPlainButton()
 
         Button {
             /* Preview */
         } label: {
             IKButtonLabel(title: "Loading Button", icon: MailResourcesAsset.pencilPlain)
         }
-        .buttonStyle(IKPlainButtonStyle())
+        .ikPlainButton()
         .ikButtonLoading(true)
 
         Button {
@@ -54,7 +56,7 @@ struct IKPlainButtonStyle: ButtonStyle {
         } label: {
             IKButtonLabel(title: "Large Button", icon: MailResourcesAsset.pencilPlain)
         }
-        .buttonStyle(IKPlainButtonStyle())
+        .ikPlainButton()
         .controlSize(.large)
 
         Button {
@@ -62,7 +64,7 @@ struct IKPlainButtonStyle: ButtonStyle {
         } label: {
             IKButtonLabel(title: "Full Width Button", icon: MailResourcesAsset.pencilPlain)
         }
-        .buttonStyle(IKPlainButtonStyle())
+        .ikPlainButton()
         .ikButtonLoading(true)
 
         Button {
@@ -70,7 +72,7 @@ struct IKPlainButtonStyle: ButtonStyle {
         } label: {
             IKButtonLabel(title: "Button with different colors", icon: MailResourcesAsset.pencilPlain)
         }
-        .buttonStyle(IKPlainButtonStyle())
+        .ikPlainButton()
         .ikButtonPrimaryStyle(MailResourcesAsset.aiColor.swiftUIColor)
         .ikButtonSecondaryStyle(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
     }

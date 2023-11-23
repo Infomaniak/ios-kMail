@@ -25,7 +25,7 @@ struct IKHugeButtonStyle: ButtonStyle {
         configuration.label
             .frame(width: UIConstants.buttonLargeHeight, height: UIConstants.buttonLargeHeight)
             .modifier(IKButtonFilledModifier())
-            .modifier(IKButtonTapAnimationModifier(isPressed: configuration.isPressed))
+            .modifier(IKButtonTapAnimationModifier(animation: .scale, isPressed: configuration.isPressed))
     }
 }
 
