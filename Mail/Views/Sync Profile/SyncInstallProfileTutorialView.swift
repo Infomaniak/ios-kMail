@@ -103,7 +103,14 @@ struct SyncInstallProfileTutorialView: View {
             VStack {
                 MailButton(label: MailResourcesStrings.Localizable.buttonGoToSettings) {
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "openSettings")
-                    openURL(URL(string: "App-prefs:")!)
+                    @InjectService var platformDetector: PlatformDetectable
+                    let url: URL
+                    if platformDetector.isMac {
+                        url = DeeplinkConstants.macProfiles
+                    } else {
+                        url = DeeplinkConstants.iosPreferences
+                    }
+                    openURL(url)
                 }
                 .mailButtonFullWidth(true)
                 if userCameBackFromSettings {

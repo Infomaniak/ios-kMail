@@ -21,6 +21,11 @@ import MailResources
 import SwiftSoup
 import SwiftUI
 
+public enum DeeplinkConstants {
+    public static let macProfiles = URL(string: "x-apple.systempreferences:com.apple.preference.security")!
+    public static let iosPreferences = URL(string: "App-prefs:")!
+}
+
 public struct URLConstants {
     public static let testFlight = URLConstants(urlString: "https://testflight.apple.com/join/t8dXx60N")
     public static let appStore = URLConstants(urlString: "https://apps.apple.com/app/infomaniak-mail/id1622596573")
