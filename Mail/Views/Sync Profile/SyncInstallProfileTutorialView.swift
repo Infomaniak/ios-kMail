@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import Dynamic
 import InfomaniakCoreUI
 import InfomaniakDI
@@ -106,9 +107,10 @@ struct SyncInstallProfileTutorialView: View {
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "openSettings")
                     @InjectService var platformDetector: PlatformDetectable
                     if platformDetector.isMacCatalyst {
-                        Dynamic.NSWorkspace.shared.open(DeeplinkConstants.macProfiles) // Works but requires Catalyst
+                        // Works only with Catalyst
+                        Dynamic.NSWorkspace.sharedWorkspace.openURL(DeeplinkConstants.macProfiles)
                     } else if platformDetector.isiOSAppOnMac {
-                        openURL(DeeplinkConstants.macProfiles) // Does not work
+                        DDLogError("Unable to open preferences on iOSAppOnMac versions, please use Catalyst")
                     } else {
                         openURL(DeeplinkConstants.iosPreferences)
                     }

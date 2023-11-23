@@ -22,7 +22,7 @@ import SwiftSoup
 import SwiftUI
 
 public enum DeeplinkConstants {
-    public static let macProfiles = URL(fileURLWithPath: "file:///System/Library/PreferencePanes/Profiles.prefPane")
+    public static let macProfiles = URL(string: "file:/System/Library/PreferencePanes/Profiles.prefPane")!
     public static let iosPreferences = URL(string: "App-prefs:")!
 }
 
