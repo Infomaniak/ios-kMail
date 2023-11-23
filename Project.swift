@@ -181,7 +181,8 @@ let project = Project(name: "Mail",
                                   "MailResources/**/*.stringsdict",
                                   "MailResources/**/*.json",
                                   "MailResources/**/*.css",
-                                  "MailResources/**/*.js"
+                                  "MailResources/**/*.js",
+                                  "MailResources/**/*.cer",
                               ],
                               settings: .settings(base: Constants.baseSettings)
                           ),

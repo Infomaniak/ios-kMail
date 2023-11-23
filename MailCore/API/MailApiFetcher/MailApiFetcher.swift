@@ -21,6 +21,7 @@ import Foundation
 import InfomaniakCore
 import InfomaniakDI
 import InfomaniakLogin
+import MailResources
 import Sentry
 import UIKit
 
@@ -30,6 +31,17 @@ public extension ApiFetcher {
         createAuthenticatedSession(token,
                                    authenticator: SyncedAuthenticator(refreshTokenDelegate: delegate),
                                    additionalAdapters: [RequestContextIdAdaptor(), UserAgentAdapter()])
+
+        let keyTrustEvaluator = PublicKeysTrustEvaluator(keys: MailResourcesResources.bundle.af.publicKeys)
+        let evaluators: [String: ServerTrustEvaluating] = [
+            ApiEnvironment.current.mailHost: keyTrustEvaluator,
+            ApiEnvironment.current.apiHost: keyTrustEvaluator
+        ]
+
+        let serverTrustManager = ServerTrustManager(evaluators: evaluators)
+
+        // TODO: Update ApiFetcher to avoid this weird trick
+        authenticatedSession = Session(interceptor: authenticatedSession.interceptor, serverTrustManager: serverTrustManager)
     }
 }
 
