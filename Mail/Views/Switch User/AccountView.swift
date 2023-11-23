@@ -104,6 +104,7 @@ struct AccountView: View {
                             .textStyle(.bodyMediumAccent)
                     }
                 }
+                .ikLinkButton()
                 .zIndex(0)
                 .padding(.horizontal, value: .regular)
 
