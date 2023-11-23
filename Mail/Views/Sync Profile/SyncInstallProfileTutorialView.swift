@@ -106,7 +106,7 @@ struct SyncInstallProfileTutorialView: View {
                     @InjectService var platformDetector: PlatformDetectable
                     let url: URL
                     if platformDetector.isMac {
-                        url = DeeplinkConstants.macProfiles
+                        url = DeeplinkConstants.macSecurityAndPrivacy
                     } else {
                         url = DeeplinkConstants.iosPreferences
                     }

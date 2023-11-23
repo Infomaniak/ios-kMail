@@ -22,7 +22,7 @@ import SwiftSoup
 import SwiftUI
 
 public enum DeeplinkConstants {
-    public static let macProfiles = URL(string: "x-apple.systempreferences:com.apple.preference.security")!
+    public static let macSecurityAndPrivacy = URL(string: "x-apple.systempreferences:com.apple.preference.security")!
     public static let iosPreferences = URL(string: "App-prefs:")!
 }
 
