@@ -143,7 +143,7 @@ public class DraftContentManager: ObservableObject {
 
         var extractedElements = ""
         for itemToExtract in Draft.appendedHTMLElements {
-            if let element = try? SwiftSoupUtils.extractHTML(from: parsedMessage, ".\(itemToExtract)") {
+            if let element = try? SwiftSoupUtils(document: parsedMessage).extractHTML(".\(itemToExtract)") {
                 extractedElements.append(element)
             }
         }

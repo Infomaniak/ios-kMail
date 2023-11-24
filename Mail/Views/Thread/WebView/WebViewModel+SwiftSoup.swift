@@ -33,10 +33,10 @@ extension WebViewModel {
     }
 
     func loadHTMLString(value: String?, blockRemoteContent: Bool) async -> LoadResult {
-        guard let rawHtml = value else { return .errorEmptyInputValue }
+        guard let rawHTML = value else { return .errorEmptyInputValue }
 
         do {
-            guard let safeDocument = MessageWebViewUtils.cleanHTMLContent(rawHTML: rawHtml)
+            guard let safeDocument = try? SwiftSoupUtils(from: rawHTML).cleanDocument()
             else { return .errorCleanHTMLContent }
 
             try updateHeadContent(of: safeDocument)
