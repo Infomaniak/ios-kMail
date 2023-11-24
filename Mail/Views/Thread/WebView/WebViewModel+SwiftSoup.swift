@@ -36,7 +36,7 @@ extension WebViewModel {
         guard let rawHTML = value else { return .errorEmptyInputValue }
 
         do {
-            guard let safeDocument = try? SwiftSoupUtils(from: rawHTML).cleanDocument()
+            guard let safeDocument = try? SwiftSoupUtils(from: rawHTML).cleanCompleteDocument()
             else { return .errorCleanHTMLContent }
 
             try updateHeadContent(of: safeDocument)

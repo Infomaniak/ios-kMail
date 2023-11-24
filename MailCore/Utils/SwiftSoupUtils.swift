@@ -29,7 +29,12 @@ public struct SwiftSoupUtils {
         document = try SwiftSoup.parse(html)
     }
 
-    public func cleanDocument() throws -> Document {
+    public func cleanBody() throws -> Document {
+        let cleanedDocument = try SwiftSoup.Cleaner(headWhitelist: nil, bodyWhitelist: .extendedBodyWhitelist).clean(document)
+        return cleanedDocument
+    }
+
+    public func cleanCompleteDocument() throws -> Document {
         let cleanedDocument = try SwiftSoup.Cleaner(headWhitelist: .headWhitelist, bodyWhitelist: .extendedBodyWhitelist)
             .clean(document)
 

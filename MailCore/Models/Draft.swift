@@ -234,7 +234,7 @@ public final class Draft: Object, Codable, Identifiable {
             unsafeQuote = Constants.forwardQuote(message: message)
         }
 
-        let quote = (try? SwiftSoupUtils(from: unsafeQuote).cleanDocument().outerHtml()) ?? ""
+        let quote = (try? SwiftSoupUtils(from: unsafeQuote).cleanCompleteDocument().outerHtml()) ?? ""
 
         return "<br><br>" + quote
     }

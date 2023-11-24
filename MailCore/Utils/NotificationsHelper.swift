@@ -201,10 +201,10 @@ public enum NotificationsHelper {
         }
 
         do {
-            let basicHtml = try SwiftSoup.clean(body, Whitelist.basic())!
-            let parsedBody = try await SwiftSoup.parse(basicHtml)
+            let cleanedDocument = try SwiftSoupUtils(from: body).cleanBody()
+            guard let extractedBody = cleanedDocument.body() else { return message.preview }
 
-            let rawText = try parsedBody.text(trimAndNormaliseWhitespace: false)
+            let rawText = try extractedBody.text(trimAndNormaliseWhitespace: false)
             return rawText.trimmingCharacters(in: .whitespacesAndNewlines)
         } catch {
             return message.preview
