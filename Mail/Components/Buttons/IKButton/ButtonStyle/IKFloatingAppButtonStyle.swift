@@ -30,7 +30,7 @@ struct IKFloatingAppButtonStyle: ButtonStyle {
             .frame(height: UIConstants.buttonMediumHeight)
             .frame(minWidth: isExtended ? 80 : nil)
             .modifier(IKButtonFilledModifier())
-            .modifier(IKButtonTapAnimationModifier(animation: .scale, isPressed: configuration.isPressed))
+            .modifier(IKButtonScaleAnimationModifier(isAnimationEnabled: true, isPressed: configuration.isPressed))
     }
 }
 

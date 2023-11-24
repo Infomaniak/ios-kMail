@@ -37,7 +37,11 @@ struct IKLinkButtonStyle: ButtonStyle {
             .modifier(IKButtonExpandableModifier())
             .modifier(IKButtonLayout(isInlined: isInlined))
             .contentShape(Rectangle())
-            .modifier(IKButtonTapAnimationModifier(animation: animation, isPressed: configuration.isPressed))
+            .modifier(IKButtonOpacityAnimationModifier(
+                isAnimationEnabled: animation == .opacity,
+                isPressed: configuration.isPressed
+            ))
+            .modifier(IKButtonScaleAnimationModifier(isAnimationEnabled: animation == .scale, isPressed: configuration.isPressed))
     }
 
     private func foreground(role: ButtonRole?) -> any ShapeStyle {
