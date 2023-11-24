@@ -60,7 +60,7 @@ struct MessageHeaderActionView_Previews: PreviewProvider {
             message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
         ) {
             Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
-                .ikLinkButton(isInlined: true)
+                .buttonStyle(IKLinkButtonStyle(isInlined: true))
                 .controlSize(.small)
         }
     }

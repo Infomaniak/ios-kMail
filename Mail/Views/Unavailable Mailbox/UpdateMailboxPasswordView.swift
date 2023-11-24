@@ -61,7 +61,7 @@ struct UpdateMailboxPasswordView: View {
                             matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailbox")
                             isShowingDetachMailboxAlertView = true
                         }
-                        .ikLinkButton(isInlined: true)
+                        .buttonStyle(IKLinkButtonStyle(isInlined: true))
                         .disabled(isLoading)
                     }
                 }
@@ -98,7 +98,7 @@ struct UpdateMailboxPasswordView: View {
                     matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "updatePassword")
                     updateMailboxPassword()
                 }
-                .ikPlainButton()
+                .buttonStyle(IKPlainButtonStyle())
                 .disabled(disableButton)
                 .ikButtonLoading(isLoading)
 
@@ -106,7 +106,7 @@ struct UpdateMailboxPasswordView: View {
                     matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "requestPassword")
                     askMailboxPassword()
                 }
-                .ikLinkButton()
+                .buttonStyle(IKLinkButtonStyle())
             }
             .controlSize(.large)
             .ikButtonFullWidth(true)

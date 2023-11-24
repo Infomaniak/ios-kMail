@@ -59,7 +59,7 @@ struct LoadMoreButton: View {
                         }
                     }
                 }
-                .ikLinkButton()
+                .buttonStyle(IKLinkButtonStyle())
                 .controlSize(.small)
             }
         }

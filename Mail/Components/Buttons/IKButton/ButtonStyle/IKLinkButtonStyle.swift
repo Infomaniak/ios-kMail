@@ -26,7 +26,7 @@ struct IKLinkButtonStyle: ButtonStyle {
     @Environment(\.controlSize) private var controlSize
     @Environment(\.isEnabled) private var isEnabled
 
-    var animation: IKButtonTapAnimation
+    var animation: IKButtonTapAnimation = .opacity
     var isInlined = false
 
     func makeBody(configuration: Configuration) -> some View {
@@ -117,7 +117,7 @@ struct IKLinkButtonStyle: ButtonStyle {
                 } label: {
                     IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
                 }
-                .ikLinkButton(animation: .scale)
+                .buttonStyle(IKLinkButtonStyle(animation: .scale))
             }
 
             Section("Inlined Button") {
@@ -126,10 +126,10 @@ struct IKLinkButtonStyle: ButtonStyle {
                 } label: {
                     IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
                 }
-                .ikLinkButton(isInlined: true)
+                .buttonStyle(IKLinkButtonStyle(isInlined: true))
             }
         }
-        .ikLinkButton()
+        .buttonStyle(IKLinkButtonStyle())
         .navigationTitle("Link Button")
     }
 }

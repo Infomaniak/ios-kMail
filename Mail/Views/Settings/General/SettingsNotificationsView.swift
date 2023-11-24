@@ -52,7 +52,7 @@ struct SettingsNotificationsView: View {
                             guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else { return }
                             openURL(settingsUrl)
                         }
-                        .ikLinkButton(isInlined: true)
+                        .buttonStyle(IKLinkButtonStyle(isInlined: true))
                     }
                     .padding(value: .regular)
                     .frame(maxWidth: .infinity)

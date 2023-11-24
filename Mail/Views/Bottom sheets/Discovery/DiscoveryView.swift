@@ -117,10 +117,10 @@ struct DiscoveryBottomSheetView: View {
 
             VStack(spacing: UIPadding.small) {
                 Button(item.primaryButtonLabel, action: nowButton)
-                    .ikPlainButton()
+                    .buttonStyle(IKPlainButtonStyle())
 
                 Button(MailResourcesStrings.Localizable.buttonLater, action: laterButton)
-                    .ikLinkButton()
+                    .buttonStyle(IKLinkButtonStyle())
             }
             .ikButtonFullWidth(true)
             .controlSize(.large)

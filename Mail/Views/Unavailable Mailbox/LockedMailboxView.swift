@@ -41,7 +41,7 @@ struct LockedMailboxView: View {
             Button(MailResourcesStrings.Localizable.buttonClose) {
                 dismiss()
             }
-            .ikLinkButton()
+            .buttonStyle(IKLinkButtonStyle())
             .controlSize(.large)
             .ikButtonFullWidth(true)
         }

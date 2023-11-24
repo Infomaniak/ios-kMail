@@ -104,7 +104,7 @@ struct AIPropositionView: View {
                                     icon: MailResourcesAsset.plus
                                 )
                             }
-                            .ikPlainButton()
+                            .buttonStyle(IKPlainButtonStyle())
                         case .loadingError:
                             Button(MailResourcesStrings.Localizable.aiButtonRetry) {
                                 matomo.track(eventWithCategory: .aiWriter, name: "retry")
@@ -112,7 +112,7 @@ struct AIPropositionView: View {
                                 willShowAIPrompt = true
                                 dismiss()
                             }
-                            .ikPlainButton()
+                            .buttonStyle(IKPlainButtonStyle())
                         }
                     }
                     .padding(.bottom, value: .verySmall)
