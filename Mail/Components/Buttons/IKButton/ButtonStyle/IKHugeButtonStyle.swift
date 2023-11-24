@@ -24,8 +24,9 @@ struct IKHugeButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .frame(width: UIConstants.buttonLargeHeight, height: UIConstants.buttonLargeHeight)
+            .font(MailTextStyle.bodyMedium.font)
             .modifier(IKButtonFilledModifier())
-            .modifier(IKButtonTapAnimationModifier(animation: .scale, isPressed: configuration.isPressed))
+            .modifier(IKButtonScaleAnimationModifier(isAnimationEnabled: true, isPressed: configuration.isPressed))
     }
 }
 

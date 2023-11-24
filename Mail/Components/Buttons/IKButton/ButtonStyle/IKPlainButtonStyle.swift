@@ -25,12 +25,16 @@ struct IKPlainButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .modifier(IKButtonOpacityAnimationModifier(
+                isAnimationEnabled: animation == .opacity,
+                isPressed: configuration.isPressed
+            ))
             .modifier(IKButtonLoadingModifier(isPlain: true))
             .modifier(IKButtonExpandableModifier())
             .modifier(IKButtonControlSizeModifier())
             .modifier(IKButtonLayout())
             .modifier(IKButtonFilledModifier())
-            .modifier(IKButtonTapAnimationModifier(animation: animation, isPressed: configuration.isPressed))
+            .modifier(IKButtonScaleAnimationModifier(isAnimationEnabled: animation == .scale, isPressed: configuration.isPressed))
     }
 }
 
