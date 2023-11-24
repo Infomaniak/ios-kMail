@@ -113,7 +113,7 @@ struct AccountView: View {
                 Spacer()
             }
 
-            VStack(spacing: UIPadding.intermediate) {
+            VStack(spacing: UIPadding.small) {
                 Button(MailResourcesStrings.Localizable.buttonAccountDisconnect) {
                     matomo.track(eventWithCategory: .account, name: "logOut")
                     isShowingLogoutAlert.toggle()

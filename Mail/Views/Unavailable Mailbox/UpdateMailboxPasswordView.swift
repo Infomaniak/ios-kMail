@@ -93,7 +93,7 @@ struct UpdateMailboxPasswordView: View {
             .padding()
         }
         .safeAreaInset(edge: .bottom) {
-            VStack(spacing: UIPadding.intermediate) {
+            VStack(spacing: UIPadding.small) {
                 Button(MailResourcesStrings.Localizable.buttonConfirm) {
                     matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "updatePassword")
                     updateMailboxPassword()

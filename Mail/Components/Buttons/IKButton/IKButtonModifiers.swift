@@ -98,20 +98,33 @@ enum IKButtonTapAnimation {
     case scale, opacity
 }
 
-struct IKButtonTapAnimationModifier: ViewModifier {
+struct IKButtonScaleAnimationModifier: ViewModifier {
     @Environment(\.ikButtonLoading) private var isLoading: Bool
     @Environment(\.isEnabled) private var isEnabled
 
-    var animation: IKButtonTapAnimation
+    let isAnimationEnabled: Bool
     let isPressed: Bool
 
     func body(content: Content) -> some View {
         content
-            .opacity(isPressed && animation == .opacity ? 0.5 : 1.0)
-            .animation(.easeIn(duration: 0.1), value: isPressed)
-            .brightness(isPressed && animation == .scale ? 0.1 : 0)
-            .scaleEffect(isPressed && animation == .scale ? 0.95 : 1.0)
-            .animation(.spring(blendDuration: 0.2), value: isPressed)
+            .brightness(isPressed && isAnimationEnabled ? 0.1 : 0)
+            .scaleEffect(isPressed && isAnimationEnabled ? 0.9 : 1.0)
+            .animation(.easeInOut(duration: 0.2), value: isPressed)
+            .allowsHitTesting(isEnabled && !isLoading)
+    }
+}
+
+struct IKButtonOpacityAnimationModifier: ViewModifier {
+    @Environment(\.ikButtonLoading) private var isLoading: Bool
+    @Environment(\.isEnabled) private var isEnabled
+
+    let isAnimationEnabled: Bool
+    let isPressed: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(isPressed && isAnimationEnabled ? 0.4 : 1.0)
+            .animation(nil, value: isPressed)
             .allowsHitTesting(isEnabled && !isLoading)
     }
 }

@@ -197,7 +197,7 @@ struct OnboardingView: View {
                     .padding(.top, UIPadding.onBoardingLogoTop)
             }
 
-            VStack(spacing: UIPadding.intermediate) {
+            VStack(spacing: UIPadding.small) {
                 Button(MailResourcesStrings.Localizable.buttonLogin) {
                     loginHandler.login()
                 }
