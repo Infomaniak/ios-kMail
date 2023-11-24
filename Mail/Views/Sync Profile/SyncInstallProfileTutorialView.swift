@@ -100,7 +100,7 @@ struct SyncInstallProfileTutorialView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            VStack(spacing: UIPadding.intermediate) {
+            VStack(spacing: UIPadding.small) {
                 Button(MailResourcesStrings.Localizable.buttonGoToSettings) {
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "openSettings")
                     @InjectService var platformDetector: PlatformDetectable

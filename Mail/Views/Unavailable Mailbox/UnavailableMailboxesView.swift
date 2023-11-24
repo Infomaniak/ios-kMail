@@ -58,7 +58,7 @@ struct UnavailableMailboxesView: View {
 
                 Spacer()
 
-                VStack(spacing: UIPadding.intermediate) {
+                VStack(spacing: UIPadding.small) {
                     NavigationLink(isActive: $isShowingAddMailboxView) {
                         AddMailboxView()
                     } label: {

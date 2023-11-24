@@ -73,7 +73,7 @@ struct SyncCopyPasswordView: View {
         }
         .padding(value: .medium)
         .safeAreaInset(edge: .bottom) {
-            VStack(spacing: UIPadding.medium) {
+            VStack(spacing: UIPadding.small) {
                 Button(MailResourcesStrings.Localizable.buttonCopyPassword) {
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "copyPassword")
                     copyPassword()

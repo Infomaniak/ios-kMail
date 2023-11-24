@@ -115,7 +115,7 @@ struct DiscoveryBottomSheetView: View {
                 .multilineTextAlignment(.center)
                 .textStyle(.bodySecondary)
 
-            VStack(spacing: UIPadding.intermediate) {
+            VStack(spacing: UIPadding.small) {
                 Button(item.primaryButtonLabel, action: nowButton)
                     .ikPlainButton()
 

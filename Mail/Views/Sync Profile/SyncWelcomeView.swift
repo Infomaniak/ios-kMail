@@ -39,7 +39,7 @@ struct SyncWelcomeView: View {
         SlideView(slide: slide)
             .ignoresSafeArea(edges: .top)
             .safeAreaInset(edge: .bottom) {
-                VStack(spacing: UIPadding.medium) {
+                VStack(spacing: UIPadding.small) {
                     Button(MailResourcesStrings.Localizable.buttonStart) {
                         matomo.track(eventWithCategory: .syncAutoConfig, name: "start")
                         navigationPath.append(.downloadProfile)

@@ -43,7 +43,7 @@ struct NoMailboxView: View {
                         .padding(.top, UIPadding.onBoardingLogoTop)
                 }
 
-            VStack(spacing: UIPadding.intermediate) {
+            VStack(spacing: UIPadding.small) {
                 Button(MailResourcesStrings.Localizable.buttonAddEmailAddress) {
                     openURL(URLConstants.ikMe.url)
                 }
