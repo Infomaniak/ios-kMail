@@ -44,7 +44,7 @@ struct SyncWelcomeView: View {
                         matomo.track(eventWithCategory: .syncAutoConfig, name: "start")
                         navigationPath.append(.downloadProfile)
                     }
-                    .ikPlainButton()
+                    .buttonStyle(IKPlainButtonStyle())
                     .controlSize(.large)
                     .ikButtonFullWidth(true)
                 }

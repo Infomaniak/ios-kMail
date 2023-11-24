@@ -83,7 +83,7 @@ struct MessageView: View {
                                     $message.localSafeDisplay.wrappedValue = true
                                 }
                             }
-                            .ikLinkButton(isInlined: true)
+                            .buttonStyle(IKLinkButtonStyle(isInlined: true))
                             .controlSize(.small)
                         }
                     }

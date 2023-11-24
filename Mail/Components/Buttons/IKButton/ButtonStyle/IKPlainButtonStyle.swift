@@ -21,7 +21,7 @@ import MailResources
 import SwiftUI
 
 struct IKPlainButtonStyle: ButtonStyle {
-    var animation: IKButtonTapAnimation
+    var animation: IKButtonTapAnimation = .opacity
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -93,10 +93,10 @@ struct IKPlainButtonStyle: ButtonStyle {
                 } label: {
                     IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
                 }
-                .ikPlainButton(animation: .scale)
+                .buttonStyle(IKPlainButtonStyle(animation: .scale))
             }
         }
-        .ikPlainButton()
+        .buttonStyle(IKPlainButtonStyle())
         .navigationTitle("Plain Button")
     }
 }
