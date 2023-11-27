@@ -35,3 +35,9 @@ extension ButtonStyle where Self == IKFloatingAppButtonStyle {
         return IKFloatingAppButtonStyle(isExtended: isExtended)
     }
 }
+
+extension ButtonStyle where Self == IKSquareButtonStyle {
+    static var ikSquare: IKSquareButtonStyle {
+        return IKSquareButtonStyle()
+    }
+}

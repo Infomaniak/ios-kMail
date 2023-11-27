@@ -222,7 +222,7 @@ struct OnboardingView: View {
                     } label: {
                         IKIcon(size: .large, image: MailResourcesAsset.fullArrowRight, shapeStyle: HierarchicalShapeStyle.primary)
                     }
-                    .buttonStyle(.ikFloatingAppButton(isExtended: false))
+                    .buttonStyle(.ikSquare)
                     .controlSize(.large)
                 }
             }
