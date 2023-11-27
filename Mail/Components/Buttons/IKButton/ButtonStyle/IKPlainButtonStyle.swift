@@ -93,7 +93,7 @@ struct IKPlainButtonStyle: ButtonStyle {
                 .disabled(true)
             }
         }
-        .buttonStyle(IKPlainButtonStyle())
+        .buttonStyle(.ikPlain)
         .navigationTitle("Plain Button")
     }
 }

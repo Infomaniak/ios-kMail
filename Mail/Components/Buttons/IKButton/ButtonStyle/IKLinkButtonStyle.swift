@@ -103,7 +103,7 @@ struct IKLinkButtonStyle: ButtonStyle {
                 } label: {
                     IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
                 }
-                .buttonStyle(IKLinkButtonStyle(isInlined: true))
+                .buttonStyle(.ikLink(isInlined: true))
             }
 
             Section("Loading Button") {
@@ -124,7 +124,7 @@ struct IKLinkButtonStyle: ButtonStyle {
                 .disabled(true)
             }
         }
-        .buttonStyle(IKLinkButtonStyle())
+        .buttonStyle(.ikLink())
         .navigationTitle("Link Button")
     }
 }

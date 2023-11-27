@@ -38,7 +38,7 @@ struct ModalButtonsView: View {
                     secondaryButtonAction?()
                     dismiss()
                 }
-                .buttonStyle(IKLinkButtonStyle())
+                .buttonStyle(.ikLink())
             }
 
             Button(primaryButtonTitle) {
@@ -49,7 +49,7 @@ struct ModalButtonsView: View {
                     dismiss()
                 }
             }
-            .buttonStyle(IKPlainButtonStyle())
+            .buttonStyle(.ikPlain)
             .disabled(!primaryButtonEnabled)
             .ikButtonLoading(isButtonLoading)
         }

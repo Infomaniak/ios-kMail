@@ -46,7 +46,7 @@ struct LockedAppView: View {
                 Spacer()
 
                 Button(MailResourcesStrings.Localizable.buttonUnlock, action: unlockApp)
-                    .buttonStyle(IKPlainButtonStyle())
+                    .buttonStyle(.ikPlain)
                     .controlSize(.large)
                     .ikButtonFullWidth(true)
             }
