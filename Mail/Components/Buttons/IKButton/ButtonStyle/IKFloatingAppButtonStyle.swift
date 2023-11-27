@@ -21,27 +21,90 @@ import MailResources
 import SwiftUI
 
 struct IKFloatingAppButtonStyle: ButtonStyle {
+    @Environment(\.controlSize) private var controlSize
+    @Environment(\.ikButtonLoading) private var isLoading: Bool
+
     let isExtended: Bool
+
+    private var size: CGFloat {
+        if controlSize == .large {
+            return UIConstants.buttonLargeHeight
+        } else {
+            return UIConstants.buttonMediumHeight
+        }
+    }
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .modifier(IKButtonLoadingModifier(isPlain: true))
             .font(MailTextStyle.bodyMedium.font)
-            .padding(.horizontal, isExtended ? UIPadding.regular : 20)
-            .frame(height: UIConstants.buttonMediumHeight)
-            .frame(minWidth: isExtended ? 80 : nil)
+            .padding(.horizontal, UIPadding.regular)
+            .frame(width: isExtended ? nil : size, height: size)
             .modifier(IKButtonFilledModifier())
-            .modifier(IKButtonScaleAnimationModifier(isAnimationEnabled: true, isPressed: configuration.isPressed))
+            .modifier(IKButtonScaleAnimationModifier(isPressed: configuration.isPressed))
+            .allowsHitTesting(!isLoading)
     }
 }
 
 #Preview {
-    VStack {
-        ExtendedFAB(title: "Extended FAB", icon: MailResourcesAsset.pencilPlain, isExtended: true) {
-            /* Preview */
-        }
+    NavigationView {
+        List {
+            Section("Standard Button") {
+                Button {
+                    /* Preview */
+                } label: {
+                    IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: HierarchicalShapeStyle.primary)
+                }
+                .buttonStyle(.ikFloatingAppButton(isExtended: false))
+            }
 
-        ExtendedFAB(title: "FAB", icon: MailResourcesAsset.pencilPlain, isExtended: false) {
-            /* Preview */
+            Section("Extended Button") {
+                Button {
+                    /* Preview */
+                } label: {
+                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                }
+            }
+
+            Section("Large FAB") {
+                Button {
+                    /* Preview */
+                } label: {
+                    IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: HierarchicalShapeStyle.primary)
+                }
+                .buttonStyle(.ikFloatingAppButton(isExtended: false))
+                .controlSize(.large)
+            }
+
+            Section("Loading Button") {
+                Button {
+                    /* Preview */
+                } label: {
+                    IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: HierarchicalShapeStyle.primary)
+                }
+                .buttonStyle(.ikFloatingAppButton(isExtended: false))
+                .ikButtonLoading(true)
+            }
+
+            Section("Loading Extended Button") {
+                Button {
+                    /* Preview */
+                } label: {
+                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                }
+                .ikButtonLoading(true)
+            }
+
+            Section("Disabled Button") {
+                Button {
+                    /* Preview */
+                } label: {
+                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                }
+                .disabled(true)
+            }
         }
+        .navigationTitle("Floating Action Button")
+        .buttonStyle(.ikFloatingAppButton(isExtended: true))
     }
 }

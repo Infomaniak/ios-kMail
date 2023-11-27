@@ -16,25 +16,22 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
-import MailResources
 import SwiftUI
 
-struct IKHugeButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .frame(width: UIConstants.buttonLargeHeight, height: UIConstants.buttonLargeHeight)
-            .font(MailTextStyle.bodyMedium.font)
-            .modifier(IKButtonFilledModifier())
-            .modifier(IKButtonScaleAnimationModifier(isAnimationEnabled: true, isPressed: configuration.isPressed))
+extension ButtonStyle where Self == IKLinkButtonStyle {
+    static func ikLink(isInlined: Bool = false) -> IKLinkButtonStyle {
+        return IKLinkButtonStyle(isInlined: isInlined)
     }
 }
 
-#Preview {
-    Button {
-        /* Preview */
-    } label: {
-        IKIcon(size: .large, image: MailResourcesAsset.fullArrowRight, shapeStyle: HierarchicalShapeStyle.primary)
+extension ButtonStyle where Self == IKPlainButtonStyle {
+    static var ikPlain: IKPlainButtonStyle {
+        return IKPlainButtonStyle()
     }
-    .buttonStyle(IKHugeButtonStyle())
+}
+
+extension ButtonStyle where Self == IKFloatingAppButtonStyle {
+    static func ikFloatingAppButton(isExtended: Bool) -> IKFloatingAppButtonStyle {
+        return IKFloatingAppButtonStyle(isExtended: isExtended)
+    }
 }

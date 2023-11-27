@@ -22,11 +22,9 @@ import SwiftUI
 
 struct IKLinkButtonStyle: ButtonStyle {
     @Environment(\.ikButtonPrimaryStyle) private var ikButtonPrimaryStyle: any ShapeStyle
-
-    @Environment(\.controlSize) private var controlSize
+    @Environment(\.ikButtonLoading) private var isLoading: Bool
     @Environment(\.isEnabled) private var isEnabled
 
-    var animation: IKButtonTapAnimation = .opacity
     var isInlined = false
 
     func makeBody(configuration: Configuration) -> some View {
@@ -37,16 +35,13 @@ struct IKLinkButtonStyle: ButtonStyle {
             .modifier(IKButtonExpandableModifier())
             .modifier(IKButtonLayout(isInlined: isInlined))
             .contentShape(Rectangle())
-            .modifier(IKButtonOpacityAnimationModifier(
-                isAnimationEnabled: animation == .opacity,
-                isPressed: configuration.isPressed
-            ))
-            .modifier(IKButtonScaleAnimationModifier(isAnimationEnabled: animation == .scale, isPressed: configuration.isPressed))
+            .modifier(IKButtonOpacityAnimationModifier(isPressed: configuration.isPressed))
+            .allowsHitTesting(!isLoading)
     }
 
     private func foreground(role: ButtonRole?) -> any ShapeStyle {
-        if !isEnabled {
-            return MailTextStyle.bodyMediumOnDisabled.color
+        if !isEnabled || isLoading {
+            return MailResourcesAsset.textTertiaryColor.swiftUIColor
         } else if role == .destructive {
             return MailTextStyle.bodyMediumError.color
         } else {
@@ -64,15 +59,6 @@ struct IKLinkButtonStyle: ButtonStyle {
                 } label: {
                     IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
                 }
-            }
-
-            Section("Loading Button") {
-                Button {
-                    /* Preview */
-                } label: {
-                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
-                }
-                .ikButtonLoading(true)
             }
 
             Section("Destructive Button") {
@@ -111,15 +97,6 @@ struct IKLinkButtonStyle: ButtonStyle {
                 .ikButtonPrimaryStyle(MailResourcesAsset.aiColor.swiftUIColor)
             }
 
-            Section("Scale Animation") {
-                Button {
-                    /* Preview */
-                } label: {
-                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
-                }
-                .buttonStyle(IKLinkButtonStyle(animation: .scale))
-            }
-
             Section("Inlined Button") {
                 Button {
                     /* Preview */
@@ -127,6 +104,24 @@ struct IKLinkButtonStyle: ButtonStyle {
                     IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
                 }
                 .buttonStyle(IKLinkButtonStyle(isInlined: true))
+            }
+
+            Section("Loading Button") {
+                Button {
+                    /* Preview */
+                } label: {
+                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                }
+                .ikButtonLoading(true)
+            }
+
+            Section("Disabled Button") {
+                Button {
+                    /* Preview */
+                } label: {
+                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                }
+                .disabled(true)
             }
         }
         .buttonStyle(IKLinkButtonStyle())
