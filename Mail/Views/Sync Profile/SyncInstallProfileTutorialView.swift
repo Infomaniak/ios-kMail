@@ -112,14 +112,14 @@ struct SyncInstallProfileTutorialView: View {
                     }
                     openURL(url)
                 }
-                .buttonStyle(IKPlainButtonStyle())
+                .buttonStyle(.ikPlain)
 
                 if userCameBackFromSettings {
                     Button(MailResourcesStrings.Localizable.buttonImDone) {
                         matomo.track(eventWithCategory: .syncAutoConfig, name: "done")
                         dismiss()
                     }
-                    .buttonStyle(IKLinkButtonStyle())
+                    .buttonStyle(.ikLink())
                 }
             }
             .controlSize(.large)

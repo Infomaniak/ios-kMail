@@ -201,13 +201,13 @@ struct OnboardingView: View {
                 Button(MailResourcesStrings.Localizable.buttonLogin) {
                     loginHandler.login()
                 }
-                .buttonStyle(IKPlainButtonStyle())
+                .buttonStyle(.ikPlain)
                 .ikButtonLoading(loginHandler.isLoading)
 
                 Button(MailResourcesStrings.Localizable.buttonCreateAccount) {
                     isPresentingCreateAccount.toggle()
                 }
-                .buttonStyle(IKLinkButtonStyle())
+                .buttonStyle(.ikLink())
                 .disabled(loginHandler.isLoading)
             }
             .ikButtonFullWidth(true)
@@ -222,7 +222,7 @@ struct OnboardingView: View {
                     } label: {
                         IKIcon(size: .large, image: MailResourcesAsset.fullArrowRight, shapeStyle: HierarchicalShapeStyle.primary)
                     }
-                    .buttonStyle(IKFloatingAppButtonStyle(isExtended: false))
+                    .buttonStyle(.ikFloatingAppButton(isExtended: false))
                     .controlSize(.large)
                 }
             }

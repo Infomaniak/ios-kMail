@@ -47,12 +47,12 @@ struct NoMailboxView: View {
                 Button(MailResourcesStrings.Localizable.buttonAddEmailAddress) {
                     openURL(URLConstants.ikMe.url)
                 }
-                .buttonStyle(IKPlainButtonStyle())
+                .buttonStyle(.ikPlain)
 
                 Button(MailResourcesStrings.Localizable.buttonLogInDifferentAccount) {
                     isShowingLoginView = true
                 }
-                .buttonStyle(IKLinkButtonStyle())
+                .buttonStyle(.ikLink())
             }
             .controlSize(.large)
             .ikButtonFullWidth(true)

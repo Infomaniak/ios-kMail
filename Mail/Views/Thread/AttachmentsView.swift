@@ -86,7 +86,7 @@ struct AttachmentsView: View {
                         }
                     }
                 }
-                .buttonStyle(IKLinkButtonStyle(isInlined: true))
+                .buttonStyle(.ikLink(isInlined: true))
                 .controlSize(.small)
                 .ikButtonLoading(downloadInProgress)
 
