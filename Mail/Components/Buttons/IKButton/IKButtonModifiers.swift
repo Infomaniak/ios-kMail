@@ -99,31 +99,21 @@ enum IKButtonTapAnimation {
 }
 
 struct IKButtonScaleAnimationModifier: ViewModifier {
-    @Environment(\.ikButtonLoading) private var isLoading: Bool
-    @Environment(\.isEnabled) private var isEnabled
-
-    let isAnimationEnabled: Bool
     let isPressed: Bool
 
     func body(content: Content) -> some View {
         content
-            .brightness(isPressed && isAnimationEnabled ? 0.1 : 0)
-            .scaleEffect(isPressed && isAnimationEnabled ? 0.95 : 1.0)
-            .allowsHitTesting(isEnabled && !isLoading)
+            .brightness(isPressed ? 0.1 : 0)
+            .scaleEffect(isPressed ? 0.95 : 1.0)
     }
 }
 
 struct IKButtonOpacityAnimationModifier: ViewModifier {
-    @Environment(\.ikButtonLoading) private var isLoading: Bool
-    @Environment(\.isEnabled) private var isEnabled
-
-    let isAnimationEnabled: Bool
     let isPressed: Bool
 
     func body(content: Content) -> some View {
         content
-            .opacity(isPressed && isAnimationEnabled ? 0.4 : 1.0)
-            .allowsHitTesting(isEnabled && !isLoading)
+            .opacity(isPressed ? 0.4 : 1.0)
     }
 }
 
@@ -132,16 +122,17 @@ struct IKButtonOpacityAnimationModifier: ViewModifier {
 struct IKButtonFilledModifier: ViewModifier {
     @Environment(\.ikButtonPrimaryStyle) private var ikButtonPrimaryStyle: any ShapeStyle
     @Environment(\.ikButtonSecondaryStyle) private var ikButtonSecondaryStyle: any ShapeStyle
+    @Environment(\.ikButtonLoading) private var isLoading: Bool
 
     @Environment(\.isEnabled) private var isEnabled
 
     private var foreground: any ShapeStyle {
-        guard isEnabled else { return MailTextStyle.bodyMediumOnDisabled.color }
+        guard isEnabled && !isLoading else { return MailTextStyle.bodyMediumOnDisabled.color }
         return ikButtonSecondaryStyle
     }
 
     private var background: any ShapeStyle {
-        guard isEnabled else { return MailResourcesAsset.textTertiaryColor.swiftUIColor }
+        guard isEnabled && !isLoading else { return MailResourcesAsset.textTertiaryColor.swiftUIColor }
         return ikButtonPrimaryStyle
     }
 

@@ -21,20 +21,17 @@ import MailResources
 import SwiftUI
 
 struct IKPlainButtonStyle: ButtonStyle {
-    var animation: IKButtonTapAnimation = .opacity
+    @Environment(\.ikButtonLoading) private var isLoading: Bool
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .modifier(IKButtonOpacityAnimationModifier(
-                isAnimationEnabled: animation == .opacity,
-                isPressed: configuration.isPressed
-            ))
+            .modifier(IKButtonOpacityAnimationModifier(isPressed: configuration.isPressed))
             .modifier(IKButtonLoadingModifier(isPlain: true))
             .modifier(IKButtonExpandableModifier())
             .modifier(IKButtonControlSizeModifier())
             .modifier(IKButtonLayout())
             .modifier(IKButtonFilledModifier())
-            .modifier(IKButtonScaleAnimationModifier(isAnimationEnabled: animation == .scale, isPressed: configuration.isPressed))
+            .allowsHitTesting(!isLoading)
     }
 }
 
@@ -47,15 +44,6 @@ struct IKPlainButtonStyle: ButtonStyle {
                 } label: {
                     IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
                 }
-            }
-
-            Section("Loading Button") {
-                Button {
-                    /* Preview */
-                } label: {
-                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
-                }
-                .ikButtonLoading(true)
             }
 
             Section("Large Button") {
@@ -87,13 +75,22 @@ struct IKPlainButtonStyle: ButtonStyle {
                 .ikButtonSecondaryStyle(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
             }
 
-            Section("Scale Animation") {
+            Section("Loading Button") {
                 Button {
                     /* Preview */
                 } label: {
                     IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
                 }
-                .buttonStyle(IKPlainButtonStyle(animation: .scale))
+                .ikButtonLoading(true)
+            }
+
+            Section("Disabled Button") {
+                Button {
+                    /* Preview */
+                } label: {
+                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                }
+                .disabled(true)
             }
         }
         .buttonStyle(IKPlainButtonStyle())

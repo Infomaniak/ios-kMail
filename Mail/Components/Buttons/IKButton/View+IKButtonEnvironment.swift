@@ -71,11 +71,11 @@ extension View {
         environment(\.ikButtonSecondaryStyle, style)
     }
 
-    func ikButtonFullWidth(_ isFullWidth: Bool) -> some View {
-        environment(\.ikButtonFullWidth, isFullWidth)
+    func ikButtonFullWidth(_ fullWidth: Bool) -> some View {
+        environment(\.ikButtonFullWidth, fullWidth)
     }
 
-    func ikButtonLoading(_ isLoading: Bool) -> some View {
-        environment(\.ikButtonLoading, isLoading)
+    func ikButtonLoading(_ loading: Bool) -> some View {
+        environment(\.ikButtonLoading, loading)
     }
 }
