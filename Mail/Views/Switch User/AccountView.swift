@@ -103,8 +103,8 @@ struct AccountView: View {
                         Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
                             .textStyle(.bodyMediumAccent)
                     }
+                    .buttonStyle(IKLinkButtonStyle())
                 }
-                .buttonStyle(IKLinkButtonStyle())
                 .zIndex(0)
                 .padding(.horizontal, value: .regular)
 

@@ -108,8 +108,7 @@ struct IKButtonScaleAnimationModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .brightness(isPressed && isAnimationEnabled ? 0.1 : 0)
-            .scaleEffect(isPressed && isAnimationEnabled ? 0.9 : 1.0)
-            .animation(.easeInOut(duration: 0.2), value: isPressed)
+            .scaleEffect(isPressed && isAnimationEnabled ? 0.95 : 1.0)
             .allowsHitTesting(isEnabled && !isLoading)
     }
 }
@@ -124,7 +123,6 @@ struct IKButtonOpacityAnimationModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .opacity(isPressed && isAnimationEnabled ? 0.4 : 1.0)
-            .animation(nil, value: isPressed)
             .allowsHitTesting(isEnabled && !isLoading)
     }
 }
