@@ -79,9 +79,9 @@ struct IKButtonLayout: ViewModifier {
         if isInlined {
             return nil
         } else if controlSize == .large {
-            return UIConstants.buttonMediumHeight
+            return UIConstants.buttonLargeHeight
         } else {
-            return UIConstants.buttonSmallHeight
+            return UIConstants.buttonRegularHeight
         }
     }
 
