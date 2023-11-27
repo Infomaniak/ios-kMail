@@ -28,9 +28,9 @@ struct IKFloatingAppButtonStyle: ButtonStyle {
 
     private var size: CGFloat {
         if controlSize == .large {
-            return UIConstants.buttonLargeHeight
+            return UIConstants.buttonExtraLargeHeight
         } else {
-            return UIConstants.buttonMediumHeight
+            return UIConstants.buttonLargeHeight
         }
     }
 
