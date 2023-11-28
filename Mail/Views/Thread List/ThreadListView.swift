@@ -102,6 +102,7 @@ struct ThreadListView: View {
                                                multipleSelectionViewModel: multipleSelectionViewModel,
                                                thread: thread,
                                                threadDensity: threadDensity,
+                                               accentColor: accentColor,
                                                isSelected: viewModel.selectedThread?.uid == thread.uid,
                                                isMultiSelected: multipleSelectionViewModel.selectedItems.contains(thread),
                                                flushAlert: $flushAlert)

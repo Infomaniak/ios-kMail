@@ -38,14 +38,13 @@ struct ThreadListCell: View {
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var mainViewState: MainViewState
 
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
     let viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     let thread: Thread
 
     let threadDensity: ThreadDensity
+    let accentColor: AccentColor
 
     let isSelected: Bool
     let isMultiSelected: Bool
@@ -128,6 +127,7 @@ struct ThreadListCell_Previews: PreviewProvider {
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(),
             thread: PreviewHelper.sampleThread,
             threadDensity: .large,
+            accentColor: .pink,
             isSelected: false,
             isMultiSelected: false,
             flushAlert: .constant(nil)
