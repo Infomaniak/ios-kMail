@@ -24,9 +24,10 @@ import MailResources
 import SwiftUI
 
 struct SettingsView: View {
-    @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var appLockHelper: AppLockHelper
+    @LazyInjectService private var featureFlagsManageable: FeatureFlagsManageable
+    @LazyInjectService private var matomo: MatomoUtils
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -92,8 +93,10 @@ struct SettingsView: View {
 
                     // MARK: AI Writer
 
-                    SettingsSubMenuCell(title: MailResourcesStrings.Localizable.aiPromptTitle, subtitle: aiEngine.title) {
-                        SettingsAIEngineOptionView()
+                    if featureFlagsManageable.isEnabled(.aiMailComposer) {
+                        SettingsSubMenuCell(title: MailResourcesStrings.Localizable.aiPromptTitle, subtitle: aiEngine.title) {
+                            SettingsAIEngineOptionView()
+                        }
                     }
 
                     IKDivider()
