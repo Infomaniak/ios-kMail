@@ -98,7 +98,7 @@ extension WebViewModel {
         for child in children {
             let textNodes = child.textNodes()
             for textNode in textNodes {
-                let text = textNode.text()
+                let text = textNode.getWholeText()
                 guard text.count > Constants.breakStringsAtLength else { continue }
 
                 let nodesWithWBR = splitStringIntoNodes(text)
