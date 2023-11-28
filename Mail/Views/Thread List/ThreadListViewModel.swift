@@ -112,7 +112,7 @@ final class DateSection: Identifiable, Equatable {
         }
     }
 
-    @Published var isLoadingPage = false
+    @Published var loadingPageTaskId: UUID?
 
     // Used to know thread location
     private var selectedThreadIndex: Int?
@@ -187,18 +187,18 @@ final class DateSection: Identifiable, Equatable {
     }
 
     func fetchThreads() async {
-        guard !isLoadingPage else {
+        guard loadingPageTaskId == nil else {
             return
         }
 
         withAnimation {
-            isLoadingPage = true
+            loadingPageTaskId = UUID()
         }
 
         await mailboxManager.refreshFolderContent(folder)
 
         withAnimation {
-            isLoadingPage = false
+            loadingPageTaskId = nil
         }
     }
 

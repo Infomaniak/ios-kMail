@@ -43,7 +43,7 @@ struct ThreadListView: View {
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
     private var shouldDisplayEmptyView: Bool {
-        viewModel.isEmpty && !viewModel.isLoadingPage
+        viewModel.isEmpty && viewModel.loadingPageTaskId == nil
     }
 
     private var shouldDisplayNoNetworkView: Bool {
@@ -80,9 +80,10 @@ struct ThreadListView: View {
                         .threadListCellAppearance()
                     }
 
-                    if viewModel.isLoadingPage && !isRefreshing {
+                    if let loadingPageTaskId = viewModel.loadingPageTaskId,
+                       !isRefreshing {
                         ProgressView()
-                            .id(UUID())
+                            .id(loadingPageTaskId)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, value: .small)
                             .threadListCellAppearance()
