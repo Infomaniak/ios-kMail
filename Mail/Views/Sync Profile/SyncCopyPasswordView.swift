@@ -47,10 +47,12 @@ struct SyncCopyPasswordView: View {
                             .textContentType(.password)
                             .disabled(true)
                             .padding([.vertical, .leading], value: .intermediate)
-                        MailButton(icon: MailResourcesAsset.duplicate) {
+
+                        Button {
                             copyPassword()
+                        } label: {
+                            IKIcon(size: .medium, image: MailResourcesAsset.duplicate)
                         }
-                        .mailButtonStyle(.link)
                         .padding(.trailing, value: .regular)
                     }
                     .background {
@@ -71,13 +73,15 @@ struct SyncCopyPasswordView: View {
         }
         .padding(value: .medium)
         .safeAreaInset(edge: .bottom) {
-            VStack(spacing: UIPadding.medium) {
-                MailButton(label: MailResourcesStrings.Localizable.buttonCopyPassword) {
+            VStack(spacing: UIPadding.small) {
+                Button(MailResourcesStrings.Localizable.buttonCopyPassword) {
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "copyPassword")
                     copyPassword()
                 }
-                .mailButtonFullWidth(true)
-                .mailButtonLoading(applicationPassword == nil)
+                .buttonStyle(.ikPlain)
+                .ikButtonFullWidth(true)
+                .controlSize(.large)
+                .ikButtonLoading(applicationPassword == nil)
             }
             .padding(.horizontal, value: .medium)
             .padding(.bottom, UIPadding.onBoardingBottomButtons)

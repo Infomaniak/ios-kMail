@@ -23,6 +23,7 @@ import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
+import SwiftUIIntrospect
 
 struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
@@ -40,6 +41,7 @@ struct ThreadListView: View {
 
     @StateObject var viewModel: ThreadListViewModel
     @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    @StateObject private var scrollObserver = ScrollObserver()
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
     private var shouldDisplayEmptyView: Bool {
@@ -117,6 +119,7 @@ struct ThreadListView: View {
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
                 .plainList()
+                .observeScroll(with: scrollObserver)
                 .emptyState(isEmpty: shouldDisplayEmptyView) {
                     switch viewModel.folder.role {
                     case .inbox:
@@ -159,7 +162,8 @@ struct ThreadListView: View {
                            multipleSelectionViewModel: multipleSelectionViewModel)
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
-                              title: MailResourcesStrings.Localizable.buttonNewMessage) {
+                              title: MailResourcesStrings.Localizable.buttonNewMessage,
+                              isExtended: scrollObserver.scrollDirection != .bottom) {
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
             mainViewState.editedDraft = EditedDraft.new()
         }
@@ -178,6 +182,9 @@ struct ThreadListView: View {
             } else {
                 mainViewState.threadPath = []
             }
+        }
+        .onChange(of: multipleSelectionViewModel.isEnabled) { isEnabled in
+            scrollObserver.shouldObserve = !isEnabled
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             updateFetchingTask()

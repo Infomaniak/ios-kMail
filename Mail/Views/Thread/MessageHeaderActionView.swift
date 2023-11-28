@@ -59,8 +59,9 @@ struct MessageHeaderActionView_Previews: PreviewProvider {
             icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
             message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
         ) {
-            MailButton(label: MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
-                .mailButtonStyle(.smallLink)
+            Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
+                .buttonStyle(.ikLink(isInlined: true))
+                .controlSize(.small)
         }
     }
 }

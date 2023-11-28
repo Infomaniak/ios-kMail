@@ -75,7 +75,7 @@ struct AttachmentsView: View {
                 }
                 .textStyle(.bodySmallSecondary)
 
-                MailButton(label: MailResourcesStrings.Localizable.buttonDownloadAll) {
+                Button(MailResourcesStrings.Localizable.buttonDownloadAll) {
                     Task {
                         await tryOrDisplayError {
                             matomo.track(eventWithCategory: .message, name: "downloadAll")
@@ -86,8 +86,9 @@ struct AttachmentsView: View {
                         }
                     }
                 }
-                .mailButtonStyle(.smallLink)
-                .mailButtonLoading(downloadInProgress)
+                .buttonStyle(.ikLink(isInlined: true))
+                .controlSize(.small)
+                .ikButtonLoading(downloadInProgress)
 
                 Spacer()
             }

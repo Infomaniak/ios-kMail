@@ -16,19 +16,28 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
 import SwiftUI
 
-struct LoadingButtonProgressView: View {
-    private let tintColor: Color?
-
-    init(plain: Bool) {
-        tintColor = plain ? .white : nil
+extension ButtonStyle where Self == IKLinkButtonStyle {
+    static func ikLink(isInlined: Bool = false) -> IKLinkButtonStyle {
+        return IKLinkButtonStyle(isInlined: isInlined)
     }
+}
 
-    var body: some View {
-        ProgressView()
-            .progressViewStyle(.circular)
-            .tint(tintColor)
+extension ButtonStyle where Self == IKPlainButtonStyle {
+    static var ikPlain: IKPlainButtonStyle {
+        return IKPlainButtonStyle()
+    }
+}
+
+extension ButtonStyle where Self == IKFloatingAppButtonStyle {
+    static func ikFloatingAppButton(isExtended: Bool) -> IKFloatingAppButtonStyle {
+        return IKFloatingAppButtonStyle(isExtended: isExtended)
+    }
+}
+
+extension ButtonStyle where Self == IKSquareButtonStyle {
+    static var ikSquare: IKSquareButtonStyle {
+        return IKSquareButtonStyle()
     }
 }

@@ -17,18 +17,22 @@
  */
 
 import MailCore
+import MailResources
 import SwiftUI
 
-struct LoadingButtonProgressView: View {
-    private let tintColor: Color?
-
-    init(plain: Bool) {
-        tintColor = plain ? .white : nil
+extension LabelStyle where Self == IKLabelStyle {
+    static var ikLabel: IKLabelStyle {
+        IKLabelStyle()
     }
+}
 
-    var body: some View {
-        ProgressView()
-            .progressViewStyle(.circular)
-            .tint(tintColor)
+struct IKLabelStyle: LabelStyle {
+    private let size = IKIcon.Size.medium
+
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(spacing: UIPadding.small) {
+            configuration.icon
+            configuration.title
+        }
     }
 }

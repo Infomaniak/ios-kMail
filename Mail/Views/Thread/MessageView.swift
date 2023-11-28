@@ -78,12 +78,13 @@ struct MessageView: View {
                             icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
                             message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
                         ) {
-                            MailButton(label: MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) {
+                            Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) {
                                 withAnimation {
                                     $message.localSafeDisplay.wrappedValue = true
                                 }
                             }
-                            .mailButtonStyle(.smallLink)
+                            .buttonStyle(.ikLink(isInlined: true))
+                            .controlSize(.small)
                         }
                     }
 

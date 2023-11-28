@@ -96,16 +96,22 @@ struct AIPropositionView: View {
                         case .loading:
                             AIProgressView()
                         case .standard, .error:
-                            MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.aiButtonInsert) {
+                            Button {
                                 aiModel.didTapInsert()
+                            } label: {
+                                Label { Text(MailResourcesStrings.Localizable.aiButtonInsert) } icon: {
+                                    IKIcon(size: .medium, image: MailResourcesAsset.plus)
+                                }
                             }
+                            .buttonStyle(.ikPlain)
                         case .loadingError:
-                            MailButton(label: MailResourcesStrings.Localizable.aiButtonRetry) {
+                            Button(MailResourcesStrings.Localizable.aiButtonRetry) {
                                 matomo.track(eventWithCategory: .aiWriter, name: "retry")
                                 aiModel.keepConversationWhenPropositionIsDismissed = true
                                 willShowAIPrompt = true
                                 dismiss()
                             }
+                            .buttonStyle(.ikPlain)
                         }
                     }
                     .padding(.bottom, value: .verySmall)
@@ -129,8 +135,8 @@ struct AIPropositionView: View {
                     )
                 }
             }
-            .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
-            .mailButtonSecondaryColor(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
+            .ikButtonPrimaryStyle(MailResourcesAsset.aiColor.swiftUIColor)
+            .ikButtonSecondaryStyle(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
             .tint(MailResourcesAsset.aiColor.swiftUIColor)
             .matomoView(view: ["AI", "Proposition"])
         }

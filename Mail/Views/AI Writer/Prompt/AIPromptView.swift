@@ -89,13 +89,14 @@ struct AIPromptView: View {
 
                 Spacer()
 
-                MailButton(label: MailResourcesStrings.Localizable.aiPromptValidateButton) {
+                Button(MailResourcesStrings.Localizable.aiPromptValidateButton) {
                     matomo.track(eventWithCategory: .aiWriter, name: "generate")
                     aiModel.addInitialPrompt(prompt)
                     dismiss()
                 }
-                .mailButtonPrimaryColor(MailResourcesAsset.aiColor.swiftUIColor)
-                .mailButtonSecondaryColor(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
+                .buttonStyle(.ikPlain)
+                .ikButtonPrimaryStyle(MailResourcesAsset.aiColor.swiftUIColor)
+                .ikButtonSecondaryStyle(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
                 .disabled(prompt.isEmpty)
             }
         }

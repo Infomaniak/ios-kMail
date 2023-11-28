@@ -56,11 +56,12 @@ struct UpdateMailboxPasswordView: View {
                     HStack(spacing: UIPadding.verySmall) {
                         Text(MailResourcesStrings.Localizable.enterPasswordOrDescription)
                             .textStyle(.bodySecondary)
-                        MailButton(label: MailResourcesStrings.Localizable.buttonDetachMailbox) {
+
+                        Button(MailResourcesStrings.Localizable.buttonDetachMailbox) {
                             matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailbox")
                             isShowingDetachMailboxAlertView = true
                         }
-                        .mailButtonStyle(.link)
+                        .buttonStyle(.ikLink(isInlined: true))
                         .disabled(isLoading)
                     }
                 }
@@ -89,25 +90,26 @@ struct UpdateMailboxPasswordView: View {
                     }
                 }
             }
+            .padding()
         }
-        .padding()
         .safeAreaInset(edge: .bottom) {
-            VStack(spacing: UIPadding.medium) {
-                MailButton(label: MailResourcesStrings.Localizable.buttonConfirm) {
+            VStack(spacing: UIPadding.small) {
+                Button(MailResourcesStrings.Localizable.buttonConfirm) {
                     matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "updatePassword")
                     updateMailboxPassword()
                 }
-                .mailButtonFullWidth(true)
+                .buttonStyle(.ikPlain)
                 .disabled(disableButton)
-                .mailButtonLoading(isLoading)
+                .ikButtonLoading(isLoading)
 
-                MailButton(label: MailResourcesStrings.Localizable.buttonRequestPassword) {
+                Button(MailResourcesStrings.Localizable.buttonRequestPassword) {
                     matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "requestPassword")
                     askMailboxPassword()
                 }
-                .mailButtonStyle(.link)
-                .mailButtonFullWidth(true)
+                .buttonStyle(.ikLink())
             }
+            .controlSize(.large)
+            .ikButtonFullWidth(true)
             .padding(.horizontal, value: .medium)
             .padding(.bottom, value: .regular)
         }

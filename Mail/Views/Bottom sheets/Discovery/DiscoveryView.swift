@@ -115,16 +115,15 @@ struct DiscoveryBottomSheetView: View {
                 .multilineTextAlignment(.center)
                 .textStyle(.bodySecondary)
 
-            VStack(spacing: UIPadding.medium) {
-                MailButton(
-                    label: item.primaryButtonLabel,
-                    action: nowButton
-                )
-                .mailButtonFullWidth(true)
+            VStack(spacing: UIPadding.small) {
+                Button(item.primaryButtonLabel, action: nowButton)
+                    .buttonStyle(.ikPlain)
 
-                MailButton(label: MailResourcesStrings.Localizable.buttonLater, action: laterButton)
-                    .mailButtonStyle(.link)
+                Button(MailResourcesStrings.Localizable.buttonLater, action: laterButton)
+                    .buttonStyle(.ikLink())
             }
+            .ikButtonFullWidth(true)
+            .controlSize(.large)
         }
         .padding(.horizontal, value: .medium)
         .padding(.top, value: .regular)

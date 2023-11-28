@@ -32,16 +32,16 @@ struct ModalButtonsView: View {
     var secondaryButtonAction: (() -> Void)?
 
     var body: some View {
-        HStack(spacing: UIPadding.medium) {
+        HStack(spacing: 0) {
             if let secondaryButtonTitle {
-                MailButton(label: secondaryButtonTitle) {
+                Button(secondaryButtonTitle) {
                     secondaryButtonAction?()
                     dismiss()
                 }
-                .mailButtonStyle(.link)
+                .buttonStyle(.ikLink())
             }
 
-            MailButton(label: primaryButtonTitle) {
+            Button(primaryButtonTitle) {
                 Task {
                     isButtonLoading = true
                     await primaryButtonAction()
@@ -49,8 +49,9 @@ struct ModalButtonsView: View {
                     dismiss()
                 }
             }
+            .buttonStyle(.ikPlain)
             .disabled(!primaryButtonEnabled)
-            .mailButtonLoading(isButtonLoading)
+            .ikButtonLoading(isButtonLoading)
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
     }

@@ -56,13 +56,15 @@ struct SyncDownloadProfileView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            VStack(spacing: UIPadding.medium) {
-                MailButton(label: MailResourcesStrings.Localizable.buttonDownload) {
+            VStack(spacing: UIPadding.small) {
+                Button(MailResourcesStrings.Localizable.buttonDownload) {
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "download")
                     downloadProfile()
                 }
-                .mailButtonFullWidth(true)
-                .mailButtonLoading(isDownloadingConfig)
+                .buttonStyle(.ikPlain)
+                .ikButtonFullWidth(true)
+                .controlSize(.large)
+                .ikButtonLoading(isDownloadingConfig)
             }
             .padding(.horizontal, value: .medium)
             .padding(.bottom, UIPadding.onBoardingBottomButtons)

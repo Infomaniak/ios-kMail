@@ -102,9 +102,9 @@ public extension UIConstants {
 
     static let componentsMaxWidth: CGFloat = 496
 
-    static let buttonLargeHeight: CGFloat = 64
-    static let buttonMediumHeight: CGFloat = 56
-    static let buttonSmallHeight: CGFloat = 40
+    static let buttonExtraLargeHeight: CGFloat = 64
+    static let buttonLargeHeight: CGFloat = 56
+    static let buttonRegularHeight: CGFloat = 40
 
     static let aiPromptSheetHeight: CGFloat = 232
 }
@@ -139,4 +139,6 @@ public extension UIConstants {
 
 public extension UIConstants {
     static let menuDrawerMaximumSubFolderLevel = 2
+
+    static let scrollObserverThreshold: ClosedRange<CGFloat> = -20 ... 20
 }
