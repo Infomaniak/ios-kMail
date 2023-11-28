@@ -93,7 +93,7 @@ struct FolderCell: View {
                 }
             }
 
-            if !folder.content.isExpanded || cellType == .move {
+            if folder.content.isExpanded && cellType != .move {
                 ForEach(folder.children) { child in
                     FolderCell(
                         folder: child,
