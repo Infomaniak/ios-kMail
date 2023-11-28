@@ -20,24 +20,19 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct IKButtonLabel: View {
-    var title: String?
-    var icon: MailResourcesImages?
-
-    var body: some View {
-        HStack(spacing: UIPadding.small) {
-            if let icon {
-                IKIcon(size: .medium, image: icon, shapeStyle: HierarchicalShapeStyle.primary)
-            }
-            if let title {
-                Text(title)
-            }
-        }
+extension LabelStyle where Self == IKLabelStyle {
+    static var ikLabel: IKLabelStyle {
+        IKLabelStyle()
     }
 }
 
-#Preview {
-    VStack(spacing: UIPadding.medium) {
-        IKButtonLabel(title: "Hello, World !", icon: MailResourcesAsset.pencilPlain)
+struct IKLabelStyle: LabelStyle {
+    private let size = IKIcon.Size.medium
+
+    func makeBody(configuration: Configuration) -> some View {
+        HStack(spacing: UIPadding.small) {
+            configuration.icon
+            configuration.title
+        }
     }
 }

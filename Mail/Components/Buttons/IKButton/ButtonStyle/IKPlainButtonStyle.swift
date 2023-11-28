@@ -25,6 +25,7 @@ struct IKPlainButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .labelStyle(.ikLabel)
             .modifier(IKButtonOpacityAnimationModifier(isPressed: configuration.isPressed))
             .modifier(IKButtonLoadingModifier(isPlain: true))
             .modifier(IKButtonExpandableModifier())
@@ -42,7 +43,9 @@ struct IKPlainButtonStyle: ButtonStyle {
                 Button {
                     /* Preview */
                 } label: {
-                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                    Label { Text("Lorem Ipsum") } icon: {
+                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: .primary)
+                    }
                 }
             }
 
@@ -50,7 +53,9 @@ struct IKPlainButtonStyle: ButtonStyle {
                 Button {
                     /* Preview */
                 } label: {
-                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                    Label { Text("Lorem Ipsum") } icon: {
+                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: .primary)
+                    }
                 }
                 .controlSize(.large)
             }
@@ -59,7 +64,9 @@ struct IKPlainButtonStyle: ButtonStyle {
                 Button {
                     /* Preview */
                 } label: {
-                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                    Label { Text("Lorem Ipsum") } icon: {
+                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: .primary)
+                    }
                 }
                 .controlSize(.large)
                 .ikButtonFullWidth(true)
@@ -69,7 +76,9 @@ struct IKPlainButtonStyle: ButtonStyle {
                 Button {
                     /* Preview */
                 } label: {
-                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                    Label { Text("Lorem Ipsum") } icon: {
+                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: .primary)
+                    }
                 }
                 .ikButtonPrimaryStyle(MailResourcesAsset.aiColor.swiftUIColor)
                 .ikButtonSecondaryStyle(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
@@ -79,7 +88,9 @@ struct IKPlainButtonStyle: ButtonStyle {
                 Button {
                     /* Preview */
                 } label: {
-                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                    Label { Text("Lorem Ipsum") } icon: {
+                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: .primary)
+                    }
                 }
                 .ikButtonLoading(true)
             }
@@ -88,7 +99,9 @@ struct IKPlainButtonStyle: ButtonStyle {
                 Button {
                     /* Preview */
                 } label: {
-                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                    Label { Text("Lorem Ipsum") } icon: {
+                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: .primary)
+                    }
                 }
                 .disabled(true)
             }

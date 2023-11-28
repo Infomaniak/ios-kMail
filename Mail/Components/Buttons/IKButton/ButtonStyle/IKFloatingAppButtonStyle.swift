@@ -36,6 +36,7 @@ struct IKFloatingAppButtonStyle: ButtonStyle {
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .labelStyle(.ikLabel)
             .modifier(IKButtonLoadingModifier(isPlain: true))
             .font(MailTextStyle.bodyMedium.font)
             .padding(.horizontal, UIPadding.regular)
@@ -62,7 +63,9 @@ struct IKFloatingAppButtonStyle: ButtonStyle {
                 Button {
                     /* Preview */
                 } label: {
-                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                    Label { Text("Lorem Ipsum") } icon: {
+                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: .primary)
+                    }
                 }
             }
 
@@ -90,7 +93,9 @@ struct IKFloatingAppButtonStyle: ButtonStyle {
                 Button {
                     /* Preview */
                 } label: {
-                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                    Label { Text("Lorem Ipsum") } icon: {
+                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: .primary)
+                    }
                 }
                 .ikButtonLoading(true)
             }
@@ -99,7 +104,9 @@ struct IKFloatingAppButtonStyle: ButtonStyle {
                 Button {
                     /* Preview */
                 } label: {
-                    IKButtonLabel(title: "Lorem Ipsum", icon: MailResourcesAsset.pencilPlain)
+                    Label { Text("Lorem Ipsum") } icon: {
+                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: .primary)
+                    }
                 }
                 .disabled(true)
             }
