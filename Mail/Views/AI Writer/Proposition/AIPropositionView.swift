@@ -99,10 +99,9 @@ struct AIPropositionView: View {
                             Button {
                                 aiModel.didTapInsert()
                             } label: {
-                                IKButtonLabel(
-                                    title: MailResourcesStrings.Localizable.aiButtonInsert,
-                                    icon: MailResourcesAsset.plus
-                                )
+                                Label { Text(MailResourcesStrings.Localizable.aiButtonInsert) } icon: {
+                                    IKIcon(size: .medium, image: MailResourcesAsset.plus)
+                                }
                             }
                             .buttonStyle(.ikPlain)
                         case .loadingError:
