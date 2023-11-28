@@ -35,7 +35,7 @@ public class SplitViewManager: ObservableObject {
     var splitViewController: UISplitViewController?
 
     func adaptToProminentThreadView() {
-        guard !platformDetector.isMacCatalyst, !platformDetector.isiOSAppOnMac else {
+        guard !platformDetector.isMac else {
             return
         }
 
@@ -89,7 +89,7 @@ struct SplitView: View {
             } else {
                 NavigationView {
                     MenuDrawerView()
-                        .navigationBarHidden(!(platformDetector.isMacCatalyst || platformDetector.isiOSAppOnMac))
+                        .navigationBarHidden(!platformDetector.isMac)
 
                     ThreadListManagerView()
 
@@ -176,7 +176,7 @@ struct SplitView: View {
     }
 
     private func setupBehaviour(orientation: UIInterfaceOrientation) {
-        if platformDetector.isMacCatalyst || platformDetector.isiOSAppOnMac {
+        if platformDetector.isMac {
             splitViewController?.preferredSplitBehavior = .tile
             splitViewController?.preferredDisplayMode = .twoBesideSecondary
             splitViewController?.presentsWithGesture = false
