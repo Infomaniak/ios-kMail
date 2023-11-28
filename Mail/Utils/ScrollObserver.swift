@@ -46,9 +46,6 @@ public final class ScrollObserver: ObservableObject {
     private func scrollViewDidScroll(offset: CGFloat) {
         guard shouldObserve else { return }
 
-        var newDirection = scrollDirection
-        defer { updateScrollDirection(offset: offset, direction: newDirection) }
-
         // Do not take into account the top bounce
         guard offset >= 0 else { return }
 
@@ -64,7 +61,8 @@ public final class ScrollObserver: ObservableObject {
 
         let difference = lastContentOffset - offset
         guard !UIConstants.scrollObserverThreshold.contains(difference) else { return }
-        newDirection = difference > 0 ? .top : .bottom
+        let newDirection: ScrollDirection = difference > 0 ? .top : .bottom
+        updateScrollDirection(offset: offset, direction: newDirection)
     }
 
     private func updateScrollDirection(offset: CGFloat, direction: ScrollDirection) {
