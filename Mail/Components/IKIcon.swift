@@ -21,19 +21,13 @@ import MailResources
 import SwiftUI
 
 struct IKIcon: View {
-    enum Size {
-        case small, regular, large
-
-        var heightAndWidth: CGFloat {
-            switch self {
-            case .small:
-                return 12
-            case .regular:
-                return 16
-            case .large:
-                return 24
-            }
-        }
+    enum Size: CGFloat {
+        /// 12pt icon
+        case small = 12
+        /// 16pt icon
+        case regular = 16
+        /// 24pt icon
+        case large = 24
     }
 
     let icon: Image
@@ -52,10 +46,14 @@ struct IKIcon: View {
         icon
             .resizable()
             .scaledToFit()
-            .frame(width: size.heightAndWidth, height: size.heightAndWidth)
+            .frame(width: size.rawValue, height: size.rawValue)
     }
 }
 
 #Preview {
-    IKIcon(MailResourcesAsset.folder, size: .large)
+    HStack(spacing: UIPadding.regular) {
+        IKIcon(MailResourcesAsset.pencilPlain, size: .small)
+        IKIcon(MailResourcesAsset.pencilPlain, size: .regular)
+        IKIcon(MailResourcesAsset.pencilPlain, size: .large)
+    }
 }
