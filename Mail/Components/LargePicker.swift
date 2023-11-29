@@ -67,7 +67,7 @@ struct LargePicker<SelectionValue, ButtonType>: View where SelectionValue: Hasha
                     Text(selectedItem?.name ?? noSelectionText)
                         .textStyle(.body)
                     Spacer()
-                    ChevronIcon(style: .down)
+                    ChevronIcon(direction: .down)
                 }
                 .padding(value: .intermediate)
                 .overlay(

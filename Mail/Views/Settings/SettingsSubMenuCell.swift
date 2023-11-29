@@ -38,7 +38,7 @@ struct SettingsSubMenuLabel: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            ChevronIcon(style: .right)
+            ChevronIcon(direction: .right)
         }
         .settingsItem()
     }

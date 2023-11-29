@@ -154,7 +154,7 @@ struct FolderCellContent: View {
         HStack(spacing: UIPadding.menuDrawerCellChevronSpacing) {
             if canCollapseSubFolders && cellType == .menuDrawer {
                 Button(action: collapseFolder) {
-                    ChevronIcon(style: folder.isExpanded ? .up : .down)
+                    ChevronIcon(direction: folder.isExpanded ? .up : .down)
                 }
                 .opacity(level == 0 && !folder.children.isEmpty ? 1 : 0)
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandFolder(folder.name))

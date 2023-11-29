@@ -128,7 +128,7 @@ struct MenuDrawerItemsListView<Content: View>: View {
                     }
                 } label: {
                     HStack(spacing: UIPadding.menuDrawerCellChevronSpacing) {
-                        ChevronIcon(style: isExpanded ? .up : .down)
+                        ChevronIcon(direction: isExpanded ? .up : .down)
                         Text(title)
                             .textStyle(.bodySmallSecondary)
                         Spacer()
