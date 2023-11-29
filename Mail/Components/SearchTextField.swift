@@ -31,7 +31,7 @@ struct SearchTextField: View {
     var body: some View {
         HStack(spacing: UIPadding.small) {
             Button(action: onSubmit) {
-                IKIcon(MailResourcesAsset.search, size: .medium)
+                IKIcon(MailResourcesAsset.search)
                     .foregroundStyle(MailResourcesAsset.textTertiaryColor)
             }
             TextField(MailResourcesStrings.Localizable.searchFieldPlaceholder, text: $value)
@@ -53,7 +53,7 @@ struct SearchTextField: View {
                 .padding(.vertical, value: .intermediate)
 
             Button(action: onDelete) {
-                IKIcon(MailResourcesAsset.remove, size: .medium)
+                IKIcon(MailResourcesAsset.remove)
                     .foregroundStyle(MailResourcesAsset.textTertiaryColor)
             }
             .opacity(value.isEmpty ? 0 : 1)

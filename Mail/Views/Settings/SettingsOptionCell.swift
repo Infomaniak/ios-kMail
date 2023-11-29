@@ -54,7 +54,7 @@ struct SettingsOptionCell: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     if isSelected {
-                        IKIcon(MailResourcesAsset.check, size: .medium)
+                        IKIcon(MailResourcesAsset.check)
                             .foregroundStyle(.tint)
                     }
                 }

@@ -292,14 +292,14 @@ struct ComposeMessageView: View {
                             matomo.track(eventWithCategory: .externals, name: "bannerInfo")
                             alert.state = .externalRecipient(state: externalTag)
                         } label: {
-                            IKIcon(MailResourcesAsset.info, size: .medium)
+                            IKIcon(MailResourcesAsset.info)
                         }
 
                         Button {
                             matomo.track(eventWithCategory: .externals, name: "bannerManuallyClosed")
                             isShowingExternalTag = false
                         } label: {
-                            IKIcon(MailResourcesAsset.close, size: .medium)
+                            IKIcon(MailResourcesAsset.close)
                         }
                     }
                     .padding(value: .regular)

@@ -22,13 +22,13 @@ import SwiftUI
 
 struct IKIcon: View {
     enum Size {
-        case small, medium, large
+        case small, regular, large
 
         var heightAndWidth: CGFloat {
             switch self {
             case .small:
                 return 12
-            case .medium:
+            case .regular:
                 return 16
             case .large:
                 return 24
@@ -39,12 +39,12 @@ struct IKIcon: View {
     let icon: Image
     let size: Size
 
-    init(_ icon: Image, size: Size = .medium) {
+    init(_ icon: Image, size: Size = .regular) {
         self.icon = icon
         self.size = size
     }
 
-    init(_ icon: MailResourcesImages, size: Size = .medium) {
+    init(_ icon: MailResourcesImages, size: Size = .regular) {
         self.init(icon.swiftUIImage, size: size)
     }
 

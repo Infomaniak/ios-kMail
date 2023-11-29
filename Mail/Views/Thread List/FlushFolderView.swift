@@ -62,7 +62,7 @@ struct FlushFolderView: View {
                     }
                 } label: {
                     HStack(spacing: UIPadding.small) {
-                        IKIcon(MailResourcesAsset.bin, size: .medium)
+                        IKIcon(MailResourcesAsset.bin)
                         Text(button)
                     }
                     .textStyle(.bodySmallAccent)

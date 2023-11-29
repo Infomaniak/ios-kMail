@@ -100,7 +100,7 @@ struct AIPropositionView: View {
                                 aiModel.didTapInsert()
                             } label: {
                                 Label { Text(MailResourcesStrings.Localizable.aiButtonInsert) } icon: {
-                                    IKIcon(MailResourcesAsset.plus, size: .medium)
+                                    IKIcon(MailResourcesAsset.plus)
                                 }
                             }
                             .buttonStyle(.ikPlain)

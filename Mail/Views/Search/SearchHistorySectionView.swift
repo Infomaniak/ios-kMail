@@ -51,7 +51,7 @@ struct SearchHistorySectionView: View {
                         Button {
                             deleteSearchTapped(searchItem: searchItem)
                         } label: {
-                            IKIcon(MailResourcesAsset.close, size: .medium)
+                            IKIcon(MailResourcesAsset.close)
                                 .foregroundStyle(MailResourcesAsset.textSecondaryColor)
                         }
                         .buttonStyle(BorderlessButtonStyle())

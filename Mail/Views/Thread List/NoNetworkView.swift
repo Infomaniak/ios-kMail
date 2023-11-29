@@ -23,7 +23,7 @@ import SwiftUI
 struct NoNetworkView: View {
     var body: some View {
         HStack {
-            IKIcon(MailResourcesAsset.noSignal, size: .medium)
+            IKIcon(MailResourcesAsset.noSignal)
             Text(MailResourcesStrings.Localizable.noNetwork)
         }
         .textStyle(.bodySmallWarning)

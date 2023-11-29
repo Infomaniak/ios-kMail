@@ -89,7 +89,7 @@ struct AccountHeaderCell: View {
             Spacer(minLength: 0)
 
             if isSelected {
-                IKIcon(MailResourcesAsset.check, size: .medium)
+                IKIcon(MailResourcesAsset.check)
                     .foregroundStyle(.tint)
             }
         }

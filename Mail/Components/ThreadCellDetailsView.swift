@@ -27,11 +27,11 @@ struct ThreadCellDetailsView: View {
     var body: some View {
         HStack(spacing: UIPadding.small) {
             if hasAttachments {
-                IKIcon(MailResourcesAsset.attachment, size: .medium)
+                IKIcon(MailResourcesAsset.attachment)
                     .foregroundStyle(MailResourcesAsset.textPrimaryColor)
             }
             if isFlagged {
-                IKIcon(MailResourcesAsset.starFull, size: .medium)
+                IKIcon(MailResourcesAsset.starFull)
                     .foregroundStyle(MailResourcesAsset.yellowColor)
             }
         }

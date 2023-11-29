@@ -193,7 +193,7 @@ struct FolderCellContent: View {
                 }
             }
         } else if isCurrentFolder {
-            IKIcon(MailResourcesAsset.check, size: .medium)
+            IKIcon(MailResourcesAsset.check)
         }
     }
 

@@ -39,7 +39,7 @@ struct MailboxListView: View {
                 NavigationLink {
                     AddMailboxView()
                 } label: {
-                    IKIcon(MailResourcesAsset.addCircle, size: .medium)
+                    IKIcon(MailResourcesAsset.addCircle)
                         .foregroundStyle(.tint)
                 }
             }

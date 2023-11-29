@@ -78,7 +78,7 @@ struct RecipientField: View {
                 Button {
                     currentText = ""
                 } label: {
-                    IKIcon(MailResourcesAsset.remove, size: .medium)
+                    IKIcon(MailResourcesAsset.remove)
                 }
                 .foregroundStyle(MailResourcesAsset.textTertiaryColor)
                 .opacity(shouldDisplayEmptyButton ? 1 : 0)
