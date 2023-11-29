@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Combine
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreUI
@@ -105,7 +106,11 @@ final class DateSection: Identifiable, Equatable {
     let mailboxManager: MailboxManager
 
     let folder: Folder
+
     @Published var sections: [DateSection]?
+    let sectionsSubject = PassthroughSubject<[DateSection]?, Never>()
+    var sectionsObserver: AnyCancellable?
+
     @Published var selectedThread: Thread? {
         didSet {
             selectedThreadIndex = filteredThreads.firstIndex { $0.uid == selectedThread?.uid }
@@ -146,7 +151,7 @@ final class DateSection: Identifiable, Equatable {
                     stopObserveFilteredThreads()
                 }
 
-                observeChanges(animateInitialThreadChanges: true)
+                observeChanges()
 
                 guard let topThread = sections?.first?.threads.first?.id else {
                     return
@@ -182,6 +187,13 @@ final class DateSection: Identifiable, Equatable {
         self.mailboxManager = mailboxManager
         self.folder = folder
         self.isCompact = isCompact
+        sectionsObserver = sectionsSubject
+            .throttle(for: .seconds(1), scheduler: DispatchQueue.main, latest: true)
+            .sink { [weak self] newSections in
+                withAnimation {
+                    self?.sections = newSections
+                }
+            }
         observeChanges()
         observeUnreadCount()
     }
