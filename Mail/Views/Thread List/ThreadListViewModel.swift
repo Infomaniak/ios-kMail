@@ -140,6 +140,7 @@ final class DateSection: Identifiable, Equatable {
     @Published var filter = Filter.all {
         didSet {
             Task {
+                SentryDebug.filterChangedBreadcrumb(filterValue: filter.rawValue)
                 if filter == .unseen {
                     observeFilteredResults()
                 } else {
