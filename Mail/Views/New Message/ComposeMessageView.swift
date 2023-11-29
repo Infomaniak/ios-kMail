@@ -285,35 +285,25 @@ struct ComposeMessageView: View {
                 case .many, .one:
                     HStack(spacing: UIPadding.medium) {
                         Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
-                            .foregroundStyle(MailResourcesAsset.onTagExternalColor)
-                            .textStyle(.bodySmall)
-
-                        Spacer()
+                            .font(MailTextStyle.bodySmall.font)
+                            .frame(maxWidth: .infinity, alignment: .leading)
 
                         Button {
                             matomo.track(eventWithCategory: .externals, name: "bannerInfo")
                             alert.state = .externalRecipient(state: externalTag)
                         } label: {
-                            IKIcon(
-                                size: .medium,
-                                image: MailResourcesAsset.info,
-                                shapeStyle: MailResourcesAsset.onTagExternalColor.swiftUIColor
-                            )
+                            IKIcon(MailResourcesAsset.info)
                         }
 
                         Button {
                             matomo.track(eventWithCategory: .externals, name: "bannerManuallyClosed")
                             isShowingExternalTag = false
                         } label: {
-                            IKIcon(
-                                size: .medium,
-                                image: MailResourcesAsset.close,
-                                shapeStyle: MailResourcesAsset.onTagExternalColor.swiftUIColor
-                            )
+                            IKIcon(MailResourcesAsset.close)
                         }
                     }
-                    .frame(maxWidth: .infinity)
                     .padding(value: .regular)
+                    .foregroundStyle(MailResourcesAsset.onTagExternalColor)
                     .background(MailResourcesAsset.yellowColor.swiftUIColor)
                 case .none:
                     EmptyView()

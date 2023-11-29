@@ -220,7 +220,7 @@ struct OnboardingView: View {
                             selection = min(slides.count, selection + 1)
                         }
                     } label: {
-                        IKIcon(size: .large, image: MailResourcesAsset.fullArrowRight, shapeStyle: HierarchicalShapeStyle.primary)
+                        IKIcon(MailResourcesAsset.fullArrowRight, size: .large)
                     }
                     .buttonStyle(.ikSquare)
                     .controlSize(.large)

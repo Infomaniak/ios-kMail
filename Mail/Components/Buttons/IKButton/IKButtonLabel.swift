@@ -27,8 +27,6 @@ extension LabelStyle where Self == IKLabelStyle {
 }
 
 struct IKLabelStyle: LabelStyle {
-    private let size = IKIcon.Size.medium
-
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: UIPadding.small) {
             configuration.icon

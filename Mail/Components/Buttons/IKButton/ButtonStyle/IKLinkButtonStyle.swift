@@ -59,7 +59,7 @@ struct IKLinkButtonStyle: ButtonStyle {
                     /* Preview */
                 } label: {
                     Label { Text("Lorem Ipsum") } icon: {
-                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: .primary)
+                        IKIcon(MailResourcesAsset.pencilPlain)
                     }
                 }
             }
@@ -69,7 +69,7 @@ struct IKLinkButtonStyle: ButtonStyle {
                     /* Preview */
                 } label: {
                     Label { Text("Lorem Ipsum") } icon: {
-                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: .primary)
+                        IKIcon(MailResourcesAsset.pencilPlain)
                     }
                 }
             }
@@ -79,7 +79,7 @@ struct IKLinkButtonStyle: ButtonStyle {
                     /* Preview */
                 } label: {
                     Label { Text("Lorem Ipsum") } icon: {
-                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: .primary)
+                        IKIcon(MailResourcesAsset.pencilPlain)
                     }
                 }
                 .controlSize(.small)
@@ -90,7 +90,7 @@ struct IKLinkButtonStyle: ButtonStyle {
                     /* Preview */
                 } label: {
                     Label { Text("Lorem Ipsum") } icon: {
-                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: .primary)
+                        IKIcon(MailResourcesAsset.pencilPlain)
                     }
                 }
                 .controlSize(.large)
@@ -102,7 +102,7 @@ struct IKLinkButtonStyle: ButtonStyle {
                     /* Preview */
                 } label: {
                     Label { Text("Lorem Ipsum") } icon: {
-                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: .primary)
+                        IKIcon(MailResourcesAsset.pencilPlain)
                     }
                 }
                 .ikButtonPrimaryStyle(MailResourcesAsset.aiColor.swiftUIColor)
@@ -113,7 +113,7 @@ struct IKLinkButtonStyle: ButtonStyle {
                     /* Preview */
                 } label: {
                     Label { Text("Lorem Ipsum") } icon: {
-                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: .primary)
+                        IKIcon(MailResourcesAsset.pencilPlain)
                     }
                 }
                 .buttonStyle(.ikLink(isInlined: true))
@@ -124,7 +124,7 @@ struct IKLinkButtonStyle: ButtonStyle {
                     /* Preview */
                 } label: {
                     Label { Text("Lorem Ipsum") } icon: {
-                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: .primary)
+                        IKIcon(MailResourcesAsset.pencilPlain)
                     }
                 }
                 .ikButtonLoading(true)
@@ -135,7 +135,7 @@ struct IKLinkButtonStyle: ButtonStyle {
                     /* Preview */
                 } label: {
                     Label { Text("Lorem Ipsum") } icon: {
-                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain, shapeStyle: .primary)
+                        IKIcon(MailResourcesAsset.pencilPlain)
                     }
                 }
                 .disabled(true)

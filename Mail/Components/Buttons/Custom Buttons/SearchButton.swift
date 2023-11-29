@@ -27,7 +27,11 @@ struct SearchButton: View {
         Button {
             mainViewState.isShowingSearch = true
         } label: {
-            IKIcon(size: .large, image: MailResourcesAsset.search)
+            IKIcon(MailResourcesAsset.search, size: .large)
         }
     }
+}
+
+#Preview {
+    SearchButton()
 }

@@ -40,7 +40,8 @@ struct SearchHistorySectionView: View {
 
                 ForEach(history, id: \.self) { searchItem in
                     HStack(spacing: UIPadding.regular) {
-                        IKIcon(size: .large, image: MailResourcesAsset.clock)
+                        IKIcon(MailResourcesAsset.clock, size: .large)
+                            .foregroundStyle(.tint)
 
                         Text(searchItem)
                             .textStyle(.bodyMedium)
@@ -50,11 +51,8 @@ struct SearchHistorySectionView: View {
                         Button {
                             deleteSearchTapped(searchItem: searchItem)
                         } label: {
-                            IKIcon(
-                                size: .medium,
-                                image: MailResourcesAsset.close,
-                                shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor
-                            )
+                            IKIcon(MailResourcesAsset.close)
+                                .foregroundStyle(MailResourcesAsset.textSecondaryColor)
                         }
                         .buttonStyle(BorderlessButtonStyle())
                         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonDeleteHistory)

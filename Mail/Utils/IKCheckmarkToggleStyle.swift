@@ -20,7 +20,13 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct CheckmarkToggleStyle: ToggleStyle {
+extension ToggleStyle where Self == IKCheckmarkToggleStyle {
+    static var ikCheckmark: IKCheckmarkToggleStyle {
+        IKCheckmarkToggleStyle()
+    }
+}
+
+struct IKCheckmarkToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         Button {
             configuration.isOn.toggle()
@@ -34,12 +40,9 @@ struct CheckmarkToggleStyle: ToggleStyle {
                         RoundedRectangle(cornerRadius: 2)
                             .fill(.tint)
 
-                        IKIcon(
-                            size: .medium,
-                            image: MailResourcesAsset.check,
-                            shapeStyle: MailResourcesAsset.backgroundColor.swiftUIColor
-                        )
-                        .padding(2)
+                        IKIcon(MailResourcesAsset.check)
+                            .foregroundStyle(MailResourcesAsset.backgroundColor)
+                            .padding(2)
                     }
                     .opacity(configuration.isOn ? 1 : 0)
                 }
@@ -49,4 +52,14 @@ struct CheckmarkToggleStyle: ToggleStyle {
             }
         }
     }
+}
+
+#Preview("Is On") {
+    Toggle("Preview Toggle", isOn: .constant(true))
+        .toggleStyle(.ikCheckmark)
+}
+
+#Preview("Is Off") {
+    Toggle("Preview Toggle", isOn: .constant(false))
+        .toggleStyle(.ikCheckmark)
 }

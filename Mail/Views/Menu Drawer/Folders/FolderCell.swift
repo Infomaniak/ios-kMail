@@ -165,7 +165,6 @@ struct FolderCellContent: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 24, height: 24)
-                    .foregroundStyle(.tint)
 
                 Text(folder.localizedName)
                     .textStyle(textStyle)
@@ -194,7 +193,7 @@ struct FolderCellContent: View {
                 }
             }
         } else if isCurrentFolder {
-            IKIcon(size: .medium, image: MailResourcesAsset.check)
+            IKIcon(MailResourcesAsset.check)
         }
     }
 

@@ -38,7 +38,7 @@ struct MenuDrawerItemCell: View {
             action()
         } label: {
             HStack(spacing: UIPadding.menuDrawerCellSpacing) {
-                IKIcon(size: .large, image: icon)
+                IKIcon(icon, size: .large)
 
                 Text(label)
                     .textStyle(.bodyMedium)
@@ -51,7 +51,5 @@ struct MenuDrawerItemCell: View {
 }
 
 #Preview {
-    MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
-                       label: "Importer des mails",
-                       matomoName: "") { print("Hello") }
+    MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload, label: "Importer des mails", matomoName: "") { print("Hello") }
 }

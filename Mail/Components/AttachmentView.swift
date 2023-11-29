@@ -34,7 +34,8 @@ struct AttachmentView<Content: View>: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                IKIcon(size: .large, image: attachment.icon, shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor)
+                IKIcon(attachment.icon, size: .large)
+                    .foregroundStyle(MailResourcesAsset.textSecondaryColor)
 
                 HStack(spacing: UIPadding.small) {
                     VStack(alignment: .leading, spacing: 0) {

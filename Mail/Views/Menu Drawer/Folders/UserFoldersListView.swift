@@ -56,7 +56,7 @@ struct UserFoldersListView: View {
                     matomo.track(eventWithCategory: .createFolder, name: "fromMenuDrawer")
                     isShowingCreateFolderAlert.toggle()
                 } label: {
-                    IKIcon(size: .medium, image: MailResourcesAsset.addCircle)
+                    IKIcon(MailResourcesAsset.addCircle)
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable.newFolderDialogTitle)
                 .customAlert(isPresented: $isShowingCreateFolderAlert) {
@@ -76,4 +76,12 @@ struct UserFoldersListView: View {
             }
         }
     }
+}
+
+#Preview {
+    UserFoldersListView(folders: [NestableFolder(content: PreviewHelper.sampleFolder, children: [])])
+        .environmentObject(MainViewState(
+            mailboxManager: PreviewHelper.sampleMailboxManager,
+            selectedFolder: PreviewHelper.sampleFolder
+        ))
 }

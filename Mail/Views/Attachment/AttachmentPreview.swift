@@ -59,7 +59,7 @@ struct AttachmentPreview: View {
                             Text(MailResourcesStrings.Localizable.buttonDownload)
                                 .font(MailTextStyle.labelSecondary.font)
                         } icon: {
-                            IKIcon(size: .large, image: MailResourcesAsset.download)
+                            IKIcon(MailResourcesAsset.download, size: .large)
                         }
                         .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                     }

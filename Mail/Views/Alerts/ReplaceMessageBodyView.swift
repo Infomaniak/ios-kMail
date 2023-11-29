@@ -39,7 +39,7 @@ struct ReplaceMessageBodyView: View {
                 Text(MailResourcesStrings.Localizable.aiReplacementDialogDescription)
 
                 Toggle(MailResourcesStrings.Localizable.aiReplacementDialogDoNotShowAgain, isOn: $doNotShowAIReplaceMessageAgain)
-                    .toggleStyle(CheckmarkToggleStyle())
+                    .toggleStyle(.ikCheckmark)
             }
             .textStyle(.bodySecondary)
             .padding(.bottom, UIPadding.alertDescriptionBottom)

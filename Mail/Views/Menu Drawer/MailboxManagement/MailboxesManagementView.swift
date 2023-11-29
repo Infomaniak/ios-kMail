@@ -56,7 +56,7 @@ struct MailboxesManagementView: View {
                 }
             } label: {
                 HStack(spacing: UIPadding.menuDrawerCellSpacing) {
-                    IKIcon(size: .large, image: MailResourcesAsset.envelope)
+                    IKIcon(MailResourcesAsset.envelope, size: .large)
 
                     Text(mailboxManager.mailbox.email)
                         .textStyle(navigationDrawerState.showMailboxes ? .bodyMediumAccent : .bodyMedium)
