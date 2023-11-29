@@ -57,7 +57,7 @@ struct MessageHeaderDetailView: View {
                 )
             }
             HStack {
-                IKIcon(size: .medium, image: MailResourcesAsset.calendar)
+                IKIcon(MailResourcesAsset.calendar, size: .medium)
                 Text(message.date.formatted(date: .long, time: .shortened))
             }
             .textStyle(.bodySmallSecondary)

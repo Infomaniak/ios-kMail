@@ -54,7 +54,7 @@ struct IKFloatingAppButtonStyle: ButtonStyle {
                 Button {
                     /* Preview */
                 } label: {
-                    IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain)
+                    IKIcon(MailResourcesAsset.pencilPlain, size: .medium)
                 }
                 .buttonStyle(.ikFloatingAppButton(isExtended: false))
             }
@@ -64,7 +64,7 @@ struct IKFloatingAppButtonStyle: ButtonStyle {
                     /* Preview */
                 } label: {
                     Label { Text("Lorem Ipsum") } icon: {
-                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain)
+                        IKIcon(MailResourcesAsset.pencilPlain, size: .medium)
                     }
                 }
             }
@@ -73,7 +73,7 @@ struct IKFloatingAppButtonStyle: ButtonStyle {
                 Button {
                     /* Preview */
                 } label: {
-                    IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain)
+                    IKIcon(MailResourcesAsset.pencilPlain, size: .medium)
                 }
                 .buttonStyle(.ikFloatingAppButton(isExtended: false))
                 .controlSize(.large)
@@ -83,7 +83,7 @@ struct IKFloatingAppButtonStyle: ButtonStyle {
                 Button {
                     /* Preview */
                 } label: {
-                    IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain)
+                    IKIcon(MailResourcesAsset.pencilPlain, size: .medium)
                 }
                 .buttonStyle(.ikFloatingAppButton(isExtended: false))
                 .ikButtonLoading(true)
@@ -94,7 +94,7 @@ struct IKFloatingAppButtonStyle: ButtonStyle {
                     /* Preview */
                 } label: {
                     Label { Text("Lorem Ipsum") } icon: {
-                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain)
+                        IKIcon(MailResourcesAsset.pencilPlain, size: .medium)
                     }
                 }
                 .ikButtonLoading(true)
@@ -105,7 +105,7 @@ struct IKFloatingAppButtonStyle: ButtonStyle {
                     /* Preview */
                 } label: {
                     Label { Text("Lorem Ipsum") } icon: {
-                        IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain)
+                        IKIcon(MailResourcesAsset.pencilPlain, size: .medium)
                     }
                 }
                 .disabled(true)

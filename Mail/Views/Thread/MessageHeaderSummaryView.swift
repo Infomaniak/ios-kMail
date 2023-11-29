@@ -120,7 +120,7 @@ struct MessageHeaderSummaryView: View {
                 if message.isDraft {
                     Spacer()
                     Button(role: .destructive, action: deleteDraftTapped) {
-                        IKIcon(size: .large, image: MailResourcesAsset.bin)
+                        IKIcon(MailResourcesAsset.bin, size: .large)
                     }
                     .foregroundStyle(MailResourcesAsset.redColor)
                 }
@@ -141,13 +141,13 @@ struct MessageHeaderSummaryView: View {
                             )
                         }
                     } label: {
-                        IKIcon(size: .large, image: MailResourcesAsset.emailActionReply)
+                        IKIcon(MailResourcesAsset.emailActionReply, size: .large)
                     }
                     .adaptivePanel(item: $replyOrReplyAllMessage) { message in
                         ReplyActionsView(message: message)
                     }
                     ActionsPanelButton(messages: [message], originFolder: message.folder) {
-                        IKIcon(size: .large, image: MailResourcesAsset.plusActions)
+                        IKIcon(MailResourcesAsset.plusActions, size: .large)
                     }
                 }
                 .padding(.leading, 8)

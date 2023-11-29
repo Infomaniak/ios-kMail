@@ -38,7 +38,7 @@ struct MenuHeaderView: View {
             Button {
                 isShowingSettings.toggle()
             } label: {
-                IKIcon(size: .large, image: MailResourcesAsset.cog)
+                IKIcon(MailResourcesAsset.cog, size: .large)
             }
             .buttonStyle(.borderless)
             .accessibilityLabel(MailResourcesStrings.Localizable.settingsTitle)

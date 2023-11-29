@@ -51,7 +51,7 @@ struct SyncCopyPasswordView: View {
                         Button {
                             copyPassword()
                         } label: {
-                            IKIcon(size: .medium, image: MailResourcesAsset.duplicate)
+                            IKIcon(MailResourcesAsset.duplicate, size: .medium)
                         }
                         .padding(.trailing, value: .regular)
                     }

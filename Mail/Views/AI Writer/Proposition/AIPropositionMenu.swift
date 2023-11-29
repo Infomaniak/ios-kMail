@@ -60,7 +60,7 @@ struct AIPropositionMenu: View {
             }
         } label: {
             HStack(spacing: UIPadding.small) {
-                IKIcon(size: .large, image: MailResourcesAsset.pencil)
+                IKIcon(MailResourcesAsset.pencil, size: .large)
                 Text(MailResourcesStrings.Localizable.aiButtonRefine)
             }
         }

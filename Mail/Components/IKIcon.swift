@@ -36,11 +36,20 @@ struct IKIcon: View {
         }
     }
 
+    let icon: Image
     let size: Size
-    var image: MailResourcesImages
+
+    init(_ icon: Image, size: Size = .medium) {
+        self.icon = icon
+        self.size = size
+    }
+
+    init(_ icon: MailResourcesImages, size: Size = .medium) {
+        self.init(icon.swiftUIImage, size: size)
+    }
 
     var body: some View {
-        image.swiftUIImage
+        icon
             .resizable()
             .scaledToFit()
             .frame(width: size.heightAndWidth, height: size.heightAndWidth)
@@ -48,5 +57,5 @@ struct IKIcon: View {
 }
 
 #Preview {
-    IKIcon(size: .large, image: MailResourcesAsset.folder)
+    IKIcon(MailResourcesAsset.folder, size: .large)
 }

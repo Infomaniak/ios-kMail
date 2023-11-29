@@ -41,7 +41,7 @@ struct IKSquareButtonStyle: ButtonStyle {
                 Button {
                     /* Preview */
                 } label: {
-                    IKIcon(size: .medium, image: MailResourcesAsset.pencilPlain)
+                    IKIcon(MailResourcesAsset.pencilPlain, size: .medium)
                 }
             }
         }

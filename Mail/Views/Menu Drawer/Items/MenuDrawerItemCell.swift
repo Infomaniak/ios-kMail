@@ -38,7 +38,7 @@ struct MenuDrawerItemCell: View {
             action()
         } label: {
             HStack(spacing: UIPadding.menuDrawerCellSpacing) {
-                IKIcon(size: .large, image: icon)
+                IKIcon(icon, size: .large)
 
                 Text(label)
                     .textStyle(.bodyMedium)

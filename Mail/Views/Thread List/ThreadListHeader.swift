@@ -131,7 +131,7 @@ struct UnreadToggleStyle: ToggleStyle {
             HStack(spacing: 8) {
                 configuration.label
                 if configuration.isOn {
-                    IKIcon(size: .small, image: MailResourcesAsset.close)
+                    IKIcon(MailResourcesAsset.close, size: .small)
                 }
             }
             .textStyle(configuration.isOn ? .bodySmallMediumOnAccent : .bodySmallMediumAccent)
