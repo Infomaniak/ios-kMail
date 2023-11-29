@@ -23,7 +23,7 @@ import SwiftUI
 extension ThreadListViewModel {
     private func threadResults() -> Results<Thread>? {
         guard let folder = folder.thaw() else {
-            sections = []
+            sectionsSubject.send([])
             return nil
         }
 
@@ -41,7 +41,7 @@ extension ThreadListViewModel {
 
     // MARK: - Observe global changes
 
-    func observeChanges(animateInitialThreadChanges: Bool = false) {
+    func observeChanges() {
         stopObserveChanges()
         observationThreadToken = threadResults()?
             .observe(on: observeQueue) { [weak self] changes in
@@ -55,10 +55,8 @@ extension ThreadListViewModel {
 
                     DispatchQueue.main.sync {
                         self.filteredThreads = filteredThreads
-                        withAnimation(animateInitialThreadChanges ? .default : nil) {
-                            self.sections = newSections
-                        }
                     }
+                    sectionsSubject.send(newSections)
                 case .update(let results, _, _, _):
                     updateThreadResults(results: results.freezeIfNeeded())
                 case .error:
@@ -109,9 +107,8 @@ extension ThreadListViewModel {
                !self.filter.accepts(thread: filteredThreads[0]) {
                 self.filter = .all
             }
-            withAnimation {
-                self.sections = newSections
-            }
+
+            sectionsSubject.send(newSections)
         }
     }
 
