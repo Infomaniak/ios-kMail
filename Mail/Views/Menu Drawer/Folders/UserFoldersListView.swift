@@ -77,3 +77,11 @@ struct UserFoldersListView: View {
         }
     }
 }
+
+#Preview {
+    UserFoldersListView(folders: [NestableFolder(content: PreviewHelper.sampleFolder, children: [])])
+        .environmentObject(MainViewState(
+            mailboxManager: PreviewHelper.sampleMailboxManager,
+            selectedFolder: PreviewHelper.sampleFolder
+        ))
+}

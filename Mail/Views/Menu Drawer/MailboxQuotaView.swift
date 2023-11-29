@@ -60,7 +60,12 @@ private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
                 .frame(width: UIConstants.menuDrawerQuotaSize)
 
             IKIcon(size: .medium, image: MailResourcesAsset.drawer)
+                .foregroundStyle(.tint)
         }
         .frame(height: UIConstants.menuDrawerQuotaSize)
     }
+}
+
+#Preview {
+    MailboxQuotaView(quotas: Quotas())
 }

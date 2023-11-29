@@ -37,3 +37,7 @@ struct MenuDrawerButton: View {
         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonMenu)
     }
 }
+
+#Preview {
+    MenuDrawerButton()
+}

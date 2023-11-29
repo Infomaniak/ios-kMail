@@ -31,3 +31,7 @@ struct SearchButton: View {
         }
     }
 }
+
+#Preview {
+    SearchButton()
+}

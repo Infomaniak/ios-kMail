@@ -90,6 +90,7 @@ struct AccountHeaderCell: View {
 
             if isSelected {
                 IKIcon(size: .medium, image: MailResourcesAsset.check)
+                    .foregroundStyle(.tint)
             }
         }
     }

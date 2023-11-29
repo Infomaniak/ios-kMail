@@ -119,9 +119,10 @@ struct MessageHeaderSummaryView: View {
 
                 if message.isDraft {
                     Spacer()
-                    Button(action: deleteDraftTapped) {
-                        IKIcon(size: .large, image: MailResourcesAsset.bin, shapeStyle: MailResourcesAsset.redColor.swiftUIColor)
+                    Button(role: .destructive, action: deleteDraftTapped) {
+                        IKIcon(size: .large, image: MailResourcesAsset.bin)
                     }
+                    .foregroundStyle(MailResourcesAsset.redColor)
                 }
             }
 

@@ -67,11 +67,8 @@ struct AttachmentsView: View {
                         "\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) (\(message.attachmentsSize, format: .defaultByteCount))"
                     )
                 } icon: {
-                    IKIcon(
-                        size: .medium,
-                        image: MailResourcesAsset.attachment,
-                        shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor
-                    )
+                    IKIcon(size: .medium, image: MailResourcesAsset.attachment)
+                        .foregroundStyle(MailResourcesAsset.textSecondaryColor)
                 }
                 .textStyle(.bodySmallSecondary)
 

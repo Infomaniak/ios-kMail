@@ -51,7 +51,5 @@ struct MenuDrawerItemCell: View {
 }
 
 #Preview {
-    MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
-                       label: "Importer des mails",
-                       matomoName: "") { print("Hello") }
+    MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload, label: "Importer des mails", matomoName: "") { print("Hello") }
 }

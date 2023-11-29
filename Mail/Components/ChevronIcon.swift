@@ -41,8 +41,9 @@ struct ChevronIcon: View {
     var color: any ShapeStyle = MailResourcesAsset.textSecondaryColor.swiftUIColor
 
     var body: some View {
-        IKIcon(size: .small, image: MailResourcesAsset.chevronUp, shapeStyle: color)
+        IKIcon(size: .small, image: MailResourcesAsset.chevronUp)
             .rotationEffect(style.rotationAngle)
+            .foregroundStyle(AnyShapeStyle(color))
     }
 }
 

@@ -43,6 +43,7 @@ struct MailboxListView: View {
                         size: .medium,
                         image: MailResourcesAsset.addCircle
                     )
+                    .foregroundStyle(.tint)
                 }
             }
             .padding(value: .regular)
@@ -64,4 +65,9 @@ struct MailboxListView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
+}
+
+#Preview {
+    MailboxListView(currentMailbox: PreviewHelper.sampleMailbox)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }
