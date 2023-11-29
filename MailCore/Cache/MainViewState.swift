@@ -28,7 +28,11 @@ public class MainViewState: ObservableObject {
     ///
     /// The selected thread is the last in collection, by convention.
     @Published public var threadPath = [Thread]()
-    @Published public var selectedFolder: Folder
+    @Published public var selectedFolder: Folder {
+        didSet {
+            SentryDebug.switchFolderBreadcrumb(uid: selectedFolder.remoteId, name: selectedFolder.name)
+        }
+    }
 
     let mailboxManager: MailboxManager
     public init(mailboxManager: MailboxManager, selectedFolder: Folder) {

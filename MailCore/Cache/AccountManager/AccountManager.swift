@@ -404,6 +404,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         Task {
             self.setCurrentMailboxForCurrentAccount(mailbox: newMailbox, refresh: false)
             self.saveAccounts()
+            SentryDebug.switchMailboxBreadcrumb(mailboxObjectId: newMailbox.objectId)
 
             guard let mailboxManager = getMailboxManager(for: newMailbox) else {
                 logError(.mailboxManagerMissing)

@@ -149,6 +149,16 @@ public enum SentryDebug {
         return crumb
     }
 
+    private static func addAsyncBreadcrumb(level: SentryLevel,
+                                           category: String,
+                                           message: String,
+                                           data: [String: Any]? = nil) {
+        Task {
+            let breadcrumb = createBreadcrumb(level: level, category: category, message: message, data: data)
+            SentrySDK.addBreadcrumb(breadcrumb)
+        }
+    }
+
     static func nilDateParsingBreadcrumb(uid: String) {
         let breadcrumb = createBreadcrumb(level: .warning,
                                           category: Category.ThreadAlgorithm,
@@ -202,6 +212,33 @@ public enum SentryDebug {
             scope.setContext(value: ["Folder": ["Id": folder.id, "name": folder.name]],
                              key: "Folder context")
         }
+    }
+
+    public static func filterChangedBreadcrumb(filterValue: String) {
+        addAsyncBreadcrumb(
+            level: .info,
+            category: "ui",
+            message: "Filter changed",
+            data: ["value": filterValue]
+        )
+    }
+
+    public static func switchMailboxBreadcrumb(mailboxObjectId: String) {
+        addAsyncBreadcrumb(
+            level: .info,
+            category: "ui",
+            message: "Mailbox changed",
+            data: ["ObjectId": mailboxObjectId]
+        )
+    }
+
+    public static func switchFolderBreadcrumb(uid: String, name: String) {
+        addAsyncBreadcrumb(
+            level: .info,
+            category: "ui",
+            message: "Mailbox changed",
+            data: ["Uid": uid, "name": name]
+        )
     }
 
     // MARK: - Standard log
