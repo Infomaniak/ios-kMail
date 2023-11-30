@@ -19,6 +19,7 @@
 import CocoaLumberjackSwift
 import Combine
 import Foundation
+import InfomaniakConcurrency
 import InfomaniakCore
 import MailCore
 import PhotosUI
@@ -37,7 +38,6 @@ final class AttachmentUploadTask: ObservableObject {
 final class AttachmentsManager: ObservableObject {
     private let draft: Draft
     private let mailboxManager: MailboxManager
-    private let parallelTaskMapper = ParallelTaskMapper()
     private let backgroundRealm: BackgroundRealm
 
     /// Something to debounce content will change updates
@@ -246,7 +246,7 @@ final class AttachmentsManager: ObservableObject {
         let attachmentsSlice = attachments[safe: 0 ..< draft.availableAttachmentsSlots]
 
         Task {
-            try? await self.parallelTaskMapper.map(collection: attachmentsSlice) { attachment in
+            await attachmentsSlice.concurrentMap { attachment in
                 _ = await self.importAttachment(attachment: attachment, disposition: disposition)
                 // TODO: - Manage inline attachment
             }

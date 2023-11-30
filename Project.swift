@@ -24,6 +24,7 @@ let project = Project(name: "Mail",
                       packages: [
                           .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "4.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "1.1.11")),
+                          .package(url: "https://github.com/Infomaniak/swift-concurrency", .upToNextMajor(from: "0.0.1")),
                           .package(
                               url: "https://github.com/Infomaniak/ios-core",
                               .revision("86fa4cda0d4c30509297afc4e7a10b1684d7d6fc")
@@ -201,6 +202,7 @@ let project = Project(name: "Mail",
                                   .package(product: "InfomaniakCoreUI"),
                                   .package(product: "InfomaniakLogin"),
                                   .package(product: "InfomaniakDI"),
+                                  .package(product: "InfomaniakConcurrency"),
                                   .package(product: "InfomaniakNotifications"),
                                   .package(product: "InfomaniakBugTracker"),
                                   .package(product: "InfomaniakCreateAccount"),

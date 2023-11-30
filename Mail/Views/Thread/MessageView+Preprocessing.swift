@@ -18,6 +18,7 @@
 
 import CocoaLumberjackSwift
 import Foundation
+import InfomaniakConcurrency
 import InfomaniakCore
 import MailCore
 
@@ -27,11 +28,6 @@ extension MessageView {
     ///
     /// 1 Meg looks like a fine threshold
     private static let bodySizeThreshold = 1_000_000
-
-    /// Cooldown before processing each batch of inline images
-    ///
-    /// 4 seconds feels fine
-    private static let batchCooldown: UInt64 = 4_000_000_000
 
     // MARK: - public interface
 
@@ -91,71 +87,48 @@ extension MessageView {
                 return
             }
 
-            // No more than 4 parallel downloads at a time
-            let downloadMapper = ParallelTaskMapper(concurrency: 4)
-
-            // chunk processing
-            let chunks = attachmentsArray.chunked(into: 10)
-
-            for chunk in chunks {
-                guard !Task.isCancelled else {
-                    break
-                }
-
-                try await processInlineAttachmentsChunk(chunk, downloadMapper: downloadMapper)
+            _ = try await attachmentsArray.concurrentMap { attachment in
+                await Task.yield()
+                guard !Task.isCancelled else { return }
+                try await processInlineAttachment(attachment)
             }
         }
         await task.finish()
     }
 
-    private func processInlineAttachmentsChunk(_ chunk: [Attachment], downloadMapper: ParallelTaskMapper) async throws {
-        let task = Task.detached {
-            // Download all images for the current chunk in parallel
-            let dataArray = try await downloadMapper.map(collection: chunk) { item in
-                try await mailboxManager.attachmentData(attachment: item)
-            }.compactMap { $0 }
+    private func processInlineAttachment(_ attachment: Attachment) async throws {
+        // Download all images for the current chunk in parallel
+        let data = try await mailboxManager.attachmentData(attachment: attachment)
 
-            // Read the DOM once
-            var mailBody = await presentableBody.body?.value
-            var compactBody = await presentableBody.compactBody
-
-            // Prepare the new DOM with the loaded images
-            for (index, attachment) in chunk.enumerated() {
-                guard !Task.isCancelled else {
-                    break
-                }
-
-                guard let contentId = attachment.contentId,
-                      let data = dataArray[safe: index] else {
-                    continue
-                }
-
-                base64Encoder.replaceContentIdForBase64Image(
-                    in: &mailBody,
-                    contentId: contentId,
-                    mimeType: attachment.mimeType,
-                    contentData: data
-                )
-
-                base64Encoder.replaceContentIdForBase64Image(
-                    in: &compactBody,
-                    contentId: contentId,
-                    mimeType: attachment.mimeType,
-                    contentData: data
-                )
-            }
-
-            guard !Task.isCancelled else {
-                return
-            }
-
-            // Mutate DOM
-            await mutate(body: mailBody, compactBody: compactBody)
-
-            // Delay between each chunk processing, just enough, so the user feels the UI is responsive.
-            try await Task.sleep(nanoseconds: Self.batchCooldown)
+        guard !Task.isCancelled else { 
+            return
         }
-        await task.finish()
+
+        // Read the DOM once
+        var mailBody = await presentableBody.body?.value
+        var compactBody = await presentableBody.compactBody
+
+        // Prepare the new DOM with the loaded images
+        guard let contentId = attachment.contentId else {
+            return
+        }
+
+        base64Encoder.replaceContentIdForBase64Image(
+            in: &mailBody,
+            contentId: contentId,
+            mimeType: attachment.mimeType,
+            contentData: data
+        )
+
+        base64Encoder.replaceContentIdForBase64Image(
+            in: &compactBody,
+            contentId: contentId,
+            mimeType: attachment.mimeType,
+            contentData: data
+        )
+
+        // Mutate DOM
+        await mutate(body: mailBody, compactBody: compactBody)
     }
 }
 
