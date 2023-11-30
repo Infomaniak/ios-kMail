@@ -100,7 +100,7 @@ extension MessageView {
         // Download all images for the current chunk in parallel
         let data = try await mailboxManager.attachmentData(attachment: attachment)
 
-        guard !Task.isCancelled else { 
+        guard !Task.isCancelled else {
             return
         }
 
