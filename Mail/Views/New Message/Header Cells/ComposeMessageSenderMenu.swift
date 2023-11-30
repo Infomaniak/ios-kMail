@@ -67,7 +67,7 @@ struct ComposeMessageSenderMenu: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
 
                             if canSelectSignature {
-                                ChevronIcon(style: .down)
+                                ChevronIcon(direction: .down)
                             }
                         }
                         .disabled(!canSelectSignature)

@@ -83,7 +83,7 @@ struct SearchFilterFolderCell: View {
                 }
                 Text(selectedFolderName)
                     .font(MailTextStyle.bodyMedium.font)
-                ChevronIcon(style: .down, color: HierarchicalShapeStyle.primary)
+                ChevronIcon(direction: .down, shapeStyle: HierarchicalShapeStyle.primary)
             }
         }
         .filterCellStyle(isSelected: isSelected)
