@@ -41,14 +41,11 @@ struct MessageView: View {
     @State private var isShowingErrorLoading = false
 
     /// The cancellable task used to preprocess the content
-    @State var preprocessing: Task<Void, Never>?
+    @State var preprocessing: Task<Void, Error>?
 
     @State var displayContentBlockedActionView = false
 
     @ObservedRealmObject var message: Message
-
-    /// Something to base64 encode images
-    let base64Encoder = Base64Encoder()
 
     private var isRemoteContentBlocked: Bool {
         return (UserDefaults.shared.displayExternalContent == .askMe || message.folder?.role == .spam)
@@ -161,23 +158,6 @@ struct MessageView: View {
                 isShowingErrorLoading = true
             }
         }
-    }
-
-    /// Update the DOM in the main actor
-    @MainActor func mutate(compactBody: String?, quote: String?) {
-        presentableBody.compactBody = compactBody
-        presentableBody.quote = quote
-    }
-
-    /// Update the DOM in the main actor
-    @MainActor func mutate(body: String?, compactBody: String?) {
-        presentableBody.body?.value = body
-        presentableBody.compactBody = compactBody
-    }
-
-    /// preprocess is finished
-    @MainActor func processingCompleted() {
-        isMessagePreprocessed = true
     }
 }
 

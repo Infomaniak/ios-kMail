@@ -508,4 +508,14 @@ public struct PresentableBody: Equatable {
     public init(message: Message) {
         body = message.body
     }
+
+    public init(body: Body?, compactBody: String?, quote: String?) {
+        self.body = body
+        self.compactBody = compactBody
+        self.quote = quote
+    }
+
+    public init(presentableBody: PresentableBody) {
+        self.init(body: presentableBody.body, compactBody: presentableBody.compactBody, quote: presentableBody.quote)
+    }
 }
