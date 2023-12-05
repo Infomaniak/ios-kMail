@@ -234,7 +234,7 @@ final class InlineAttachmentWorker {
         let compactBodyCopy = compactBody
         detachedBody?.value = bodyValue
 
-        let presentableBody = PresentableBody(
+        let updatedPresentableBody = PresentableBody(
             body: detachedBody,
             compactBody: compactBodyCopy,
             quote: presentableBody.quote
@@ -244,7 +244,7 @@ final class InlineAttachmentWorker {
         guard !Task.isCancelled else {
             return
         }
-        await setPresentableBody(presentableBody)
+        await setPresentableBody(updatedPresentableBody)
 
         // Delay between each chunk processing, just enough, so the user feels the UI is responsive.
         // This goes beyond a simple Task.yield()
