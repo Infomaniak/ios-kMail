@@ -116,13 +116,13 @@ private final class InlineAttachmentWorker {
 
         let bodyValue = messageBody.value ?? ""
         let messageBodyQuote = await MessageBodyUtils.splitBodyAndQuote(messageBody: bodyValue)
-        let presentableBody = PresentableBody(
+        let updatedPresentableBody = PresentableBody(
             body: messageBody,
             compactBody: messageBodyQuote.messageBody,
             quote: messageBodyQuote.quote
         )
 
-        await setPresentableBody(presentableBody)
+        await setPresentableBody(updatedPresentableBody)
     }
 
     func insertInlineAttachments() async {
@@ -178,8 +178,7 @@ private final class InlineAttachmentWorker {
             }
 
             guard let contentId = attachment.contentId,
-                  let data = dataArray[safe: index],
-                  let data else {
+                  let data = dataArray[safe: index] as? Data else {
                 continue
             }
 
