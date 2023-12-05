@@ -29,17 +29,17 @@ public struct SwiftSoupUtils {
         document = try SwiftSoup.parse(html)
     }
 
-    public func cleanBody() throws -> Document {
+    public func cleanBody() async throws -> Document {
         let cleanedDocument = try SwiftSoup.Cleaner(headWhitelist: nil, bodyWhitelist: .extendedBodyWhitelist).clean(document)
         return cleanedDocument
     }
 
-    public func cleanCompleteDocument() throws -> Document {
+    public func cleanCompleteDocument() async throws -> Document {
         let cleanedDocument = try SwiftSoup.Cleaner(headWhitelist: .headWhitelist, bodyWhitelist: .extendedBodyWhitelist)
             .clean(document)
 
         // We need to remove the tag <meta http-equiv="refresh" content="x">
-        let metaRefreshTags = try cleanedDocument.select("meta[http-equiv='refresh']")
+        let metaRefreshTags = try await cleanedDocument.select("meta[http-equiv='refresh']")
         for metaRefreshTag in metaRefreshTags {
             try metaRefreshTag.parent()?.removeChild(metaRefreshTag)
         }
@@ -47,8 +47,8 @@ public struct SwiftSoupUtils {
         return cleanedDocument
     }
 
-    public func extractHTML(_ cssQuery: String) throws -> String {
-        guard let foundElement = try document.select(cssQuery).first() else { throw SwiftSoupError.elementNotFound }
+    public func extractHTML(_ cssQuery: String) async throws -> String {
+        guard let foundElement = try await document.select(cssQuery).first() else { throw SwiftSoupError.elementNotFound }
 
         let htmlContent = try foundElement.outerHtml()
         return htmlContent

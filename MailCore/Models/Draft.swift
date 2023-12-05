@@ -225,7 +225,7 @@ public final class Draft: Object, Codable, Identifiable {
         return Draft(to: [recipient.detached()])
     }
 
-    public static func replyingBody(message: Message, replyMode: ReplyMode) -> String {
+    public static func replyingBody(message: Message, replyMode: ReplyMode) async -> String {
         let unsafeQuote: String
         switch replyMode {
         case .reply, .replyAll:
@@ -234,7 +234,7 @@ public final class Draft: Object, Codable, Identifiable {
             unsafeQuote = Constants.forwardQuote(message: message)
         }
 
-        let quote = (try? SwiftSoupUtils(from: unsafeQuote).cleanCompleteDocument().outerHtml()) ?? ""
+        let quote = await (try? SwiftSoupUtils(from: unsafeQuote).cleanCompleteDocument().outerHtml()) ?? ""
 
         return "<br><br>" + quote
     }

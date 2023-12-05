@@ -137,13 +137,13 @@ public class DraftContentManager: ObservableObject {
         return try await loadReplyingMessage(messageReply.message, replyMode: messageReply.replyMode).body?.freezeIfNeeded()
     }
 
-    public func replaceContent(subject: String? = nil, body: String) {
+    public func replaceContent(subject: String? = nil, body: String) async {
         guard let liveDraft = try? getLiveDraft() else { return }
-        guard let parsedMessage = try? SwiftSoup.parse(liveDraft.body) else { return }
+        guard let parsedMessage = try? await SwiftSoup.parse(liveDraft.body) else { return }
 
         var extractedElements = ""
         for itemToExtract in Draft.appendedHTMLElements {
-            if let element = try? SwiftSoupUtils(document: parsedMessage).extractHTML(".\(itemToExtract)") {
+            if let element = try? await SwiftSoupUtils(document: parsedMessage).extractHTML(".\(itemToExtract)") {
                 extractedElements.append(element)
             }
         }
@@ -313,7 +313,7 @@ public class DraftContentManager: ObservableObject {
 
     private func loadReplyingMessageAndFormat(_ message: Message, replyMode: ReplyMode) async throws -> String {
         let replyingMessage = try await loadReplyingMessage(message, replyMode: replyMode)
-        return Draft.replyingBody(message: replyingMessage, replyMode: replyMode)
+        return await Draft.replyingBody(message: replyingMessage, replyMode: replyMode)
     }
 
     private func loadReplyingAttachments(message: Message, replyMode: ReplyMode) async throws -> [Attachment] {

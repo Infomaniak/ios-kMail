@@ -219,32 +219,32 @@ extension AIModel {
 // MARK: - Insert result
 
 extension AIModel {
-    func didTapInsert() {
+    func didTapInsert() async {
         let shouldReplaceBody = shouldOverrideBody()
         guard !shouldReplaceBody || UserDefaults.shared.doNotShowAIReplaceMessageAgain else {
             isShowingReplaceBodyAlert = true
             return
         }
-        splitPropositionAndInsert(shouldReplaceBody: shouldReplaceBody)
+        await splitPropositionAndInsert(shouldReplaceBody: shouldReplaceBody)
     }
 
-    func splitPropositionAndInsert(shouldReplaceBody: Bool) {
+    func splitPropositionAndInsert(shouldReplaceBody: Bool) async {
         let (subject, body) = splitSubjectAndBody()
         if let subject, !subject.isEmpty && shouldOverrideSubject() {
             isShowingReplaceSubjectAlert = AIProposition(subject: subject, body: body, shouldReplaceContent: shouldReplaceBody)
         } else {
-            insertProposition(subject: subject, body: body, shouldReplaceBody: shouldReplaceBody)
+            await insertProposition(subject: subject, body: body, shouldReplaceBody: shouldReplaceBody)
         }
     }
 
-    func insertProposition(subject: String?, body: String, shouldReplaceBody: Bool) {
+    func insertProposition(subject: String?, body: String, shouldReplaceBody: Bool) async {
         matomo.track(
             eventWithCategory: .aiWriter,
             action: .data,
             name: shouldReplaceBody ? "replaceProposition" : "insertProposition"
         )
 
-        draftContentManager.replaceContent(subject: subject, body: body)
+        await draftContentManager.replaceContent(subject: subject, body: body)
         withAnimation {
             isShowingProposition = false
         }

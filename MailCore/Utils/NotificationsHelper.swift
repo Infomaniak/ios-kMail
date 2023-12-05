@@ -201,7 +201,7 @@ public enum NotificationsHelper {
         }
 
         do {
-            let cleanedDocument = try SwiftSoupUtils(from: body).cleanBody()
+            let cleanedDocument = try await SwiftSoupUtils(from: body).cleanBody()
             guard let extractedBody = cleanedDocument.body() else { return message.preview }
 
             let rawText = try extractedBody.text(trimAndNormaliseWhitespace: false)
