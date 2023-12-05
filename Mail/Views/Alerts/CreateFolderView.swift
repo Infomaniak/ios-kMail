@@ -39,7 +39,7 @@ struct CreateFolderView: View {
     let mode: Mode
 
     private var isButtonEnabled: Bool {
-        return !folderName.isEmpty && error == nil
+        return !folderName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && error == nil
     }
 
     enum Mode {
@@ -111,12 +111,12 @@ struct CreateFolderView: View {
     }
 
     private func checkFolderName(_ newName: String) {
-        guard !folderName.isEmpty else {
+        let trimmedName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else {
             withAnimation { error = nil }
             return
         }
 
-        let trimmedName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
         withAnimation {
             if trimmedName.count >= Constants.maxFolderNameLength {
                 error = .nameTooLong
