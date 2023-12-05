@@ -231,7 +231,7 @@ struct SplitView: View {
             return false
         }
 
-        return appLaunchCounter.value > Constants.minimumOpeningBeforeSync
+        return true
     }
 
     private func handleNotification(_ notification: Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>.Output) {
