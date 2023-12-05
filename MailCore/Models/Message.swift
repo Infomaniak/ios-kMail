@@ -501,7 +501,6 @@ public struct MessageActionResult: Codable {
 
 public struct PresentableBody: Equatable {
     public var body: Body?
-
     public var compactBody: String?
     public var quote: String?
 

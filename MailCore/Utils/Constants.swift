@@ -200,4 +200,7 @@ public enum Constants {
 
     /// A count limit for the Contact cache in Extension mode, where we have strong memory constraints.
     public static let contactCacheExtensionMaxCount = 50
+
+    /// Batch size of inline attachments during processing.
+    public static let inlineAttachmentBatchSize = 10
 }

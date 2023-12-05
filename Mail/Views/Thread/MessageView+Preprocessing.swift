@@ -39,13 +39,15 @@ extension MessageView {
     // MARK: - public interface
 
     func prepareBodyIfNeeded() {
-        // Content was processed
-        guard !isMessagePreprocessed else {
+        // Message should be downloaded and expanded
+        guard message.fullyDownloaded, isMessageExpanded else {
             return
         }
 
-        // Clean task if existing
-        cancelPrepareBodyIfNeeded()
+        // Content was processed or is processing
+        guard !isMessagePreprocessed, inlineAttachmentWorker == nil else {
+            return
+        }
 
         let worker = InlineAttachmentWorker(
             messageUid: message.uid,
@@ -53,21 +55,15 @@ extension MessageView {
             isMessagePreprocessed: $isMessagePreprocessed,
             mailboxManager: mailboxManager
         )
-
-        preprocessing = worker.processing
-    }
-
-    func cancelPrepareBodyIfNeeded() {
-        guard let preprocessing else {
-            return
-        }
-        preprocessing.cancel()
-        self.preprocessing = nil
+        inlineAttachmentWorker = worker
+        worker.start()
     }
 }
 
 /// Something to process the Attachments outside of the mainActor
-private final class InlineAttachmentWorker {
+///
+/// Call `start()` to begin processing, call `stop` to make sure internal Task is cancelled.
+final class InlineAttachmentWorker {
     /// Something to base64 encode images
     private let base64Encoder = Base64Encoder()
 
@@ -89,6 +85,9 @@ private final class InlineAttachmentWorker {
 
     let mailboxManager: MailboxManager
 
+    /// Tracking the preprocessing Task tree
+    private var processing: Task<Void, Error>?
+
     public init(messageUid: String,
                 presentableBody: Binding<PresentableBody>,
                 isMessagePreprocessed: Binding<Bool>,
@@ -99,16 +98,37 @@ private final class InlineAttachmentWorker {
         self.mailboxManager = mailboxManager
     }
 
-    var processing: Task<Void, Error> {
-        return Task {
-            await self.prepareBody()
-            await self.insertInlineAttachments()
-            await self.processingCompleted()
+    deinit {
+        self.stop()
+    }
+
+    func stop() {
+        processing?.cancel()
+        processing = nil
+    }
+
+    func start() {
+        processing = Task { [weak self] in
+            await self?.prepareBody()
+
+            guard !Task.isCancelled else {
+                return
+            }
+
+            await self?.insertInlineAttachments()
+
+            guard !Task.isCancelled else {
+                return
+            }
+
+            await self?.processingCompleted()
         }
     }
 
     func prepareBody() async {
-        guard !Task.isCancelled else { return }
+        guard !Task.isCancelled else {
+            return
+        }
 
         guard let messageBody = frozenMessage?.body else {
             return
@@ -122,11 +142,17 @@ private final class InlineAttachmentWorker {
             quote: messageBodyQuote.quote
         )
 
+        // Mutate DOM if task is active
+        guard !Task.isCancelled else {
+            return
+        }
         await setPresentableBody(updatedPresentableBody)
     }
 
     func insertInlineAttachments() async {
-        guard !Task.isCancelled else { return }
+        guard !Task.isCancelled else {
+            return
+        }
 
         guard let message = frozenMessage else {
             return
@@ -141,14 +167,19 @@ private final class InlineAttachmentWorker {
         }
 
         // Chunking, and processing each chunk
-        let chunks = attachmentsArray.chunks(ofCount: 10)
+        let chunks = attachmentsArray.chunks(ofCount: Constants.inlineAttachmentBatchSize)
         for attachments in chunks {
+            guard !Task.isCancelled else {
+                return
+            }
             await processInlineAttachments(attachments)
         }
     }
 
     func processInlineAttachments(_ attachments: ArraySlice<Attachment>) async {
-        guard !Task.isCancelled else { return }
+        guard !Task.isCancelled else {
+            return
+        }
 
         // Download all images for the current chunk in parallel
         let dataArray: [Data?] = await attachments.concurrentMap(customConcurrency: 4) { attachment in
@@ -163,7 +194,9 @@ private final class InlineAttachmentWorker {
         // Safety check
         assert(dataArray.count == attachments.count, "Arrays count should match")
 
-        guard !Task.isCancelled else { return }
+        guard !Task.isCancelled else {
+            return
+        }
 
         // Read the DOM once
         let bodyParameters = await readPresentableBody()
@@ -197,18 +230,21 @@ private final class InlineAttachmentWorker {
             )
         }
 
-        // Mutate DOM
         let bodyValue = mailBody
         let compactBodyCopy = compactBody
         detachedBody?.value = bodyValue
 
-        await Task { @MainActor in
-            self.presentableBody = PresentableBody(
-                body: detachedBody,
-                compactBody: compactBodyCopy,
-                quote: self.presentableBody.quote
-            )
-        }.finish()
+        let presentableBody = PresentableBody(
+            body: detachedBody,
+            compactBody: compactBodyCopy,
+            quote: presentableBody.quote
+        )
+
+        // Mutate DOM if task is active
+        guard !Task.isCancelled else {
+            return
+        }
+        await setPresentableBody(presentableBody)
 
         // Delay between each chunk processing, just enough, so the user feels the UI is responsive.
         // This goes beyond a simple Task.yield()

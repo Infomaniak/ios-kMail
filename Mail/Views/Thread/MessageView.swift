@@ -40,8 +40,8 @@ struct MessageView: View {
 
     @State private var isShowingErrorLoading = false
 
-    /// The cancellable task used to preprocess the content
-    @State var preprocessing: Task<Void, Error>?
+    /// Something to preprocess inline attachments
+    @State var inlineAttachmentWorker: InlineAttachmentWorker?
 
     @State var displayContentBlockedActionView = false
 
@@ -115,16 +115,10 @@ struct MessageView: View {
                 }
             }
             .onChange(of: message.fullyDownloaded) { _ in
-                if message.fullyDownloaded, isMessageExpanded {
-                    prepareBodyIfNeeded()
-                }
+                prepareBodyIfNeeded()
             }
             .onChange(of: isMessageExpanded) { _ in
-                if message.fullyDownloaded, isMessageExpanded {
-                    prepareBodyIfNeeded()
-                } else {
-                    cancelPrepareBodyIfNeeded()
-                }
+                prepareBodyIfNeeded()
             }
             .onChange(of: threadForcedExpansion[message.uid]) { newValue in
                 if newValue == true {
@@ -134,15 +128,11 @@ struct MessageView: View {
                 }
             }
             .onAppear {
-                if message.fullyDownloaded,
-                   isMessageExpanded,
-                   !isMessagePreprocessed,
-                   preprocessing == nil {
-                    prepareBodyIfNeeded()
-                }
+                prepareBodyIfNeeded()
             }
             .onDisappear {
-                cancelPrepareBodyIfNeeded()
+                inlineAttachmentWorker?.stop()
+                inlineAttachmentWorker = nil
             }
         }
     }
