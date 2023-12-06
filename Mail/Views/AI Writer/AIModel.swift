@@ -79,7 +79,7 @@ final class AIModel: ObservableObject {
     init(mailboxManager: MailboxManager, draftContentManager: DraftContentManager, editedDraft: EditedDraft) {
         self.mailboxManager = mailboxManager
         self.draftContentManager = draftContentManager
-        draft = editedDraft.draft.freezeIfNeeded()
+        draft = editedDraft.detachedDraft
         messageReply = editedDraft.messageReply
     }
 }

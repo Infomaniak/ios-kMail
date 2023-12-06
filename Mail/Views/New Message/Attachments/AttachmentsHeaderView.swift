@@ -34,7 +34,7 @@ struct AttachmentsHeaderView: View {
                                 uploadTask: attachmentsManager.attachmentUploadTaskOrFinishedTask(for: attachment.uuid),
                                 attachment: attachment
                             ) { attachmentRemoved in
-                                attachmentsManager.removeAttachment(attachmentRemoved)
+                                attachmentsManager.removeAttachment(attachmentRemoved.uuid)
                             }
                         }
                     }

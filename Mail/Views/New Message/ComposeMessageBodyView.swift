@@ -84,13 +84,14 @@ struct ComposeMessageBodyView: View {
 
 struct ComposeMessageBodyView_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageBodyView(draft: Draft(),
+        let draft = Draft()
+        ComposeMessageBodyView(draft: draft,
                                editorModel: .constant(RichTextEditorModel()),
                                editorFocus: .constant(false),
                                currentSignature: .constant(nil),
                                isShowingAIPrompt: .constant(false),
                                attachmentsManager: AttachmentsManager(
-                                   draft: Draft(),
+                                   draftLocalUUID: draft.localUUID,
                                    mailboxManager: PreviewHelper.sampleMailboxManager
                                ),
                                alert: NewMessageAlert(),
