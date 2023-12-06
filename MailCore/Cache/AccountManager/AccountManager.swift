@@ -29,10 +29,6 @@ import RealmSwift
 import Sentry
 import SwiftUI
 
-public protocol AccountManagerDelegate: AnyObject {
-    func currentAccountNeedsAuthentication()
-}
-
 public extension InfomaniakNetworkLoginable {
     func apiToken(username: String, applicationPassword: String) async throws -> ApiToken {
         try await withCheckedThrowingContinuation { continuation in
@@ -81,7 +77,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     public var tokens = [ApiToken]()
     public let refreshTokenLockedQueue = DispatchQueue(label: "com.infomaniak.mail.refreshtoken")
 
-    public weak var delegate: AccountManagerDelegate?
     public var currentUserId: Int {
         didSet {
             UserDefaults.shared.currentMailUserId = currentUserId
@@ -236,7 +231,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         tokenStore.removeTokenFor(userId: token.userId)
         if let account = account(for: token.userId),
            account.userId == currentUserId {
-            delegate?.currentAccountNeedsAuthentication()
+            removeAccount(toDeleteAccount: account)
             NotificationsHelper.sendDisconnectedNotification()
         }
     }
