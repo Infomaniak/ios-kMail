@@ -79,7 +79,7 @@ struct RichTextEditor: UIViewRepresentable {
         func insertBody(editor: MailEditorView) async throws {
             try await editor.contentBlocker.setRemoteContentBlocked(parent.blockRemoteContent)
             editor.clear()
-            try await editor.insertHtml(parent.body)
+            try await editor.insertRawHTML(parent.body)
             editor.moveCursorToStart()
             editor.webView.scrollView.isScrollEnabled = false
             parent.model.height = CGFloat(editor.contentHeight)
@@ -250,6 +250,13 @@ final class MailEditorView: SQTextEditorView {
         webView.evaluateJavaScript("editor.\(name)()") { _, error in
             completion?(error)
         }
+    }
+
+    // MARK: - Custom function
+
+    func insertRawHTML(_ html: String) async throws {
+        let cleanedHTML = try await SwiftSoupUtils(from: html).cleanCompleteDocument()
+        try await webView.evaluateJavaScript("document.getElementById('editor').innerHTML += `\(cleanedHTML)`")
     }
 
     // MARK: - Editor methods
