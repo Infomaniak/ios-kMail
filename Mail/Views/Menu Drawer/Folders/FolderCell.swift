@@ -136,13 +136,6 @@ struct FolderCellContent: View {
     private let isCurrentFolder: Bool
     private let canCollapseSubFolders: Bool
 
-    init(folder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false) {
-        self.folder = folder
-        self.level = min(level, UIConstants.menuDrawerMaximumSubFolderLevel)
-        self.isCurrentFolder = isCurrentFolder
-        self.canCollapseSubFolders = canCollapseSubFolders
-    }
-
     private var textStyle: MailTextStyle {
         if cellType == .menuDrawer {
             return isCurrentFolder ? .bodyMediumAccent : .bodyMedium
@@ -150,14 +143,26 @@ struct FolderCellContent: View {
         return .body
     }
 
+    private var canHaveChevron: Bool {
+        canCollapseSubFolders && cellType == .menuDrawer
+    }
+
+    init(folder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false) {
+        self.folder = folder
+        self.level = min(level, UIConstants.menuDrawerMaximumSubFolderLevel)
+        self.isCurrentFolder = isCurrentFolder
+        self.canCollapseSubFolders = canCollapseSubFolders
+    }
+
     var body: some View {
-        HStack(spacing: UIPadding.menuDrawerCellChevronSpacing) {
-            if canCollapseSubFolders && cellType == .menuDrawer {
+        HStack(spacing: 0) {
+            if canHaveChevron {
                 Button(action: collapseFolder) {
                     ChevronIcon(direction: folder.isExpanded ? .up : .down)
+                        .padding(value: .regular)
                 }
-                .opacity(level == 0 && !folder.children.isEmpty ? 1 : 0)
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandFolder(folder.name))
+                .opacity(level == 0 && !folder.children.isEmpty ? 1 : 0)
             }
 
             HStack(spacing: UIPadding.menuDrawerCellSpacing) {
@@ -176,7 +181,7 @@ struct FolderCellContent: View {
             }
         }
         .padding(.leading, UIPadding.menuDrawerSubFolder * CGFloat(level))
-        .padding(UIPadding.menuDrawerCell)
+        .padding(canHaveChevron ? UIPadding.menuDrawerCellWithChevron : UIPadding.menuDrawerCell)
         .background(background)
     }
 
