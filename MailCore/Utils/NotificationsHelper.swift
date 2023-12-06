@@ -138,8 +138,8 @@ public enum NotificationsHelper {
 
     public static func sendDisconnectedNotification() {
         let content = UNMutableNotificationContent()
-        content.title = "Error"
-        content.body = "Refresh token error"
+        content.title = MailResourcesStrings.Localizable.errorLoginTitle
+        content.body = MailResourcesStrings.Localizable.refreshTokenError
         content.categoryIdentifier = CategoryIdentifier.general
         content.sound = .default
         sendImmediately(notification: content, id: NotificationIdentifier.disconnected)
