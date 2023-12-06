@@ -97,7 +97,9 @@ struct AIPropositionView: View {
                             AIProgressView()
                         case .standard, .error:
                             Button {
-                                aiModel.didTapInsert()
+                                Task {
+                                    await aiModel.didTapInsert()
+                                }
                             } label: {
                                 Label { Text(MailResourcesStrings.Localizable.aiButtonInsert) } icon: {
                                     IKIcon(MailResourcesAsset.plus)
@@ -123,16 +125,20 @@ struct AIPropositionView: View {
             }
             .customAlert(isPresented: $aiModel.isShowingReplaceBodyAlert) {
                 ReplaceMessageBodyView {
-                    aiModel.splitPropositionAndInsert(shouldReplaceBody: true)
+                    Task {
+                        await aiModel.splitPropositionAndInsert(shouldReplaceBody: true)
+                    }
                 }
             }
             .customAlert(item: $aiModel.isShowingReplaceSubjectAlert) { proposition in
                 ReplaceMessageSubjectView(subject: proposition.subject) { shouldReplaceSubject in
-                    aiModel.insertProposition(
-                        subject: shouldReplaceSubject ? proposition.subject : nil,
-                        body: proposition.body,
-                        shouldReplaceBody: proposition.shouldReplaceContent
-                    )
+                    Task {
+                        await aiModel.insertProposition(
+                            subject: shouldReplaceSubject ? proposition.subject : nil,
+                            body: proposition.body,
+                            shouldReplaceBody: proposition.shouldReplaceContent
+                        )
+                    }
                 }
             }
             .ikButtonPrimaryStyle(MailResourcesAsset.aiColor.swiftUIColor)

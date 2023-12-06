@@ -137,18 +137,19 @@ public class DraftContentManager: ObservableObject {
         return try await loadReplyingMessage(messageReply.message, replyMode: messageReply.replyMode).body?.freezeIfNeeded()
     }
 
-    public func replaceContent(subject: String? = nil, body: String) {
-        guard let liveDraft = try? getLiveDraft() else { return }
-        guard let parsedMessage = try? SwiftSoup.parse(liveDraft.body) else { return }
+    public func replaceContent(subject: String? = nil, body: String) async {
+        guard let draft = try? getFrozenDraft() else { return }
+        guard let parsedMessage = try? await SwiftSoup.parse(draft.body) else { return }
 
         var extractedElements = ""
         for itemToExtract in Draft.appendedHTMLElements {
-            if let element = try? SwiftSoupUtils.extractHTML(from: parsedMessage, ".\(itemToExtract)") {
+            if let element = try? await SwiftSoupUtils(document: parsedMessage).extractHTML(".\(itemToExtract)") {
                 extractedElements.append(element)
             }
         }
 
         let realm = mailboxManager.getRealm()
+        guard let liveDraft = draft.thaw() else { return }
         try? realm.write {
             if let subject {
                 liveDraft.subject = subject
@@ -164,6 +165,10 @@ public class DraftContentManager: ObservableObject {
             throw MailError.unknownError
         }
         return liveDraft
+    }
+
+    private func getFrozenDraft() throws -> Draft {
+        return try getLiveDraft().freezeIfNeeded()
     }
 
     private func writeCompleteDraft(
@@ -313,7 +318,7 @@ public class DraftContentManager: ObservableObject {
 
     private func loadReplyingMessageAndFormat(_ message: Message, replyMode: ReplyMode) async throws -> String {
         let replyingMessage = try await loadReplyingMessage(message, replyMode: replyMode)
-        return Draft.replyingBody(message: replyingMessage, replyMode: replyMode)
+        return await Draft.replyingBody(message: replyingMessage.freezeIfNeeded(), replyMode: replyMode)
     }
 
     private func loadReplyingAttachments(message: Message, replyMode: ReplyMode) async throws -> [Attachment] {
