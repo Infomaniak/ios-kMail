@@ -74,6 +74,7 @@ public extension UIPadding {
     // MARK: Menu
 
     static let menuDrawerCell = EdgeInsets(top: intermediate, leading: regular, bottom: intermediate, trailing: regular)
+    static let menuDrawerCellWithChevron = EdgeInsets(top: 2, leading: 0, bottom: 2, trailing: regular)
     static let menuDrawerCellSpacing = regular
     static let menuDrawerCellChevronSpacing = intermediate
     static let menuDrawerSubFolder = medium
