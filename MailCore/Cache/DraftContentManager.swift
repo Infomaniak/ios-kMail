@@ -49,49 +49,11 @@ public class DraftContentManager: ObservableObject {
         self.messageReply = messageReply
         self.mailboxManager = mailboxManager
     }
+}
 
-    public func prepareCompleteDraft() async throws -> Signature {
-        async let draftBodyResult = try await loadCompleteDraftBody()
-        async let signature = try await loadMostFittingSignature()
+// MARK: - Load data
 
-        try await writeCompleteDraft(
-            completeBody: draftBodyResult.body,
-            signature: signature,
-            shouldAddSignatureText: draftBodyResult.shouldAddSignatureText,
-            attachments: draftBodyResult.attachments
-        )
-
-        return try await signature
-    }
-
-    public func updateSignature(with newSignature: Signature) {
-        do {
-            let liveIncompleteDraft = try getLiveDraft()
-
-            let parsedMessage = try SwiftSoup.parse(liveIncompleteDraft.body)
-            // If we find the previous signature, we replace it with the new one
-            // otherwise we append the signature at the end of the document
-            if let foundSignatureDiv = try parsedMessage.select(".\(Constants.signatureHTMLClass)").first {
-                try foundSignatureDiv.html(newSignature.content)
-            } else if let body = parsedMessage.body() {
-                let signatureDiv = try body.appendElement("div")
-                try signatureDiv.addClass(Constants.signatureHTMLClass)
-                try signatureDiv.html(newSignature.content)
-            }
-
-            let realm = mailboxManager.getRealm()
-            try? realm.write {
-                // Keep up to date the rawSignature
-                liveIncompleteDraft.rawSignature = newSignature.content
-                liveIncompleteDraft.identityId = "\(newSignature.id)"
-                liveIncompleteDraft.body = try parsedMessage.outerHtml()
-            }
-            NotificationCenter.default.post(name: .updateComposeMessageBody, object: nil)
-        } catch {
-            DDLogError("An error occurred while transforming the DOM of the draft: \(error)")
-        }
-    }
-
+extension DraftContentManager {
     private func loadCompleteDraftBody() async throws -> CompleteDraftResult {
         var completeDraftBody: String
         var attachments = [Attachment]()
@@ -132,12 +94,69 @@ public class DraftContentManager: ObservableObject {
         )
     }
 
-    public func getReplyingBody() async throws -> Body? {
-        guard let messageReply else { return nil }
-        return try await loadReplyingMessage(messageReply.message, replyMode: messageReply.replyMode).body?.freezeIfNeeded()
+    private func loadReplyingMessage(_ message: Message, replyMode: ReplyMode) async throws -> Message {
+        if !message.fullyDownloaded {
+            try await mailboxManager.message(message: message)
+        }
+
+        guard let freshMessage = message.thaw() else { throw MailError.unknownError }
+        freshMessage.realm?.refresh()
+        return freshMessage
     }
 
-    public func replaceContent(subject: String? = nil, body: String) async {
+    private func loadReplyingMessageAndFormat(_ message: Message, replyMode: ReplyMode) async throws -> String {
+        let replyingMessage = try await loadReplyingMessage(message, replyMode: replyMode)
+        return await Draft.replyingBody(message: replyingMessage.freezeIfNeeded(), replyMode: replyMode)
+    }
+
+    private func loadReplyingAttachments(message: Message, replyMode: ReplyMode) async throws -> [Attachment] {
+        guard replyMode == .forward else { return [] }
+        let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
+            mailbox: mailboxManager.mailbox,
+            message: message
+        ).attachments
+
+        return attachments
+    }
+
+    private func loadCompleteDraftIfNeeded() async throws -> String {
+        guard let associatedMessage = mailboxManager.getRealm()
+            .object(ofType: Message.self, forPrimaryKey: incompleteDraft.messageUid)?.freeze()
+        else { throw MailError.localMessageNotFound }
+
+        let remoteDraft = try await mailboxManager.apiFetcher.draft(from: associatedMessage)
+
+        remoteDraft.localUUID = incompleteDraft.localUUID
+        remoteDraft.action = .save
+        remoteDraft.delay = incompleteDraft.delay
+
+        let realm = mailboxManager.getRealm()
+        try? realm.safeWrite {
+            realm.add(remoteDraft.detached(), update: .modified)
+        }
+
+        return remoteDraft.body
+    }
+}
+
+// MARK: - Write draft
+
+public extension DraftContentManager {
+    func prepareCompleteDraft() async throws -> Signature {
+        async let draftBodyResult = try await loadCompleteDraftBody()
+        async let signature = try await loadMostFittingSignature()
+
+        try await writeCompleteDraft(
+            completeBody: draftBodyResult.body,
+            signature: signature,
+            shouldAddSignatureText: draftBodyResult.shouldAddSignatureText,
+            attachments: draftBodyResult.attachments
+        )
+
+        return try await signature
+    }
+
+    func replaceContent(subject: String? = nil, body: String) async {
         guard let draft = try? getFrozenDraft() else { return }
         guard let parsedMessage = try? await SwiftSoup.parse(draft.body) else { return }
 
@@ -157,18 +176,6 @@ public class DraftContentManager: ObservableObject {
             liveDraft.body = "<p>\(body.withNewLineIntoHTML)</p>\(extractedElements)"
         }
         NotificationCenter.default.post(name: .updateComposeMessageBody, object: nil)
-    }
-
-    private func getLiveDraft() throws -> Draft {
-        let realm = mailboxManager.getRealm()
-        guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID) else {
-            throw MailError.unknownError
-        }
-        return liveDraft
-    }
-
-    private func getFrozenDraft() throws -> Draft {
-        return try getLiveDraft().freezeIfNeeded()
     }
 
     private func writeCompleteDraft(
@@ -194,6 +201,38 @@ public class DraftContentManager: ObservableObject {
             for attachment in attachments {
                 liveIncompleteDraft.attachments.append(attachment)
             }
+        }
+    }
+}
+
+// MARK: - Signatures
+
+extension DraftContentManager {
+    public func updateSignature(with newSignature: Signature) {
+        do {
+            let liveIncompleteDraft = try getLiveDraft()
+
+            let parsedMessage = try SwiftSoup.parse(liveIncompleteDraft.body)
+            // If we find the previous signature, we replace it with the new one
+            // otherwise we append the signature at the end of the document
+            if let foundSignatureDiv = try parsedMessage.select(".\(Constants.signatureHTMLClass)").first {
+                try foundSignatureDiv.html(newSignature.content)
+            } else if let body = parsedMessage.body() {
+                let signatureDiv = try body.appendElement("div")
+                try signatureDiv.addClass(Constants.signatureHTMLClass)
+                try signatureDiv.html(newSignature.content)
+            }
+
+            let realm = mailboxManager.getRealm()
+            try? realm.write {
+                // Keep up to date the rawSignature
+                liveIncompleteDraft.rawSignature = newSignature.content
+                liveIncompleteDraft.identityId = "\(newSignature.id)"
+                liveIncompleteDraft.body = try parsedMessage.outerHtml()
+            }
+            NotificationCenter.default.post(name: .updateComposeMessageBody, object: nil)
+        } catch {
+            DDLogError("An error occurred while transforming the DOM of the draft: \(error)")
         }
     }
 
@@ -305,48 +344,25 @@ public class DraftContentManager: ObservableObject {
         }
         return isDefault ? .emailMatchDefault : .emailMatch
     }
+}
 
-    private func loadReplyingMessage(_ message: Message, replyMode: ReplyMode) async throws -> Message {
-        if !message.fullyDownloaded {
-            try await mailboxManager.message(message: message)
-        }
+// MARK: - Helpers
 
-        guard let freshMessage = message.thaw() else { throw MailError.unknownError }
-        freshMessage.realm?.refresh()
-        return freshMessage
+extension DraftContentManager {
+    public func getReplyingBody() async throws -> Body? {
+        guard let messageReply else { return nil }
+        return try await loadReplyingMessage(messageReply.message, replyMode: messageReply.replyMode).body?.freezeIfNeeded()
     }
 
-    private func loadReplyingMessageAndFormat(_ message: Message, replyMode: ReplyMode) async throws -> String {
-        let replyingMessage = try await loadReplyingMessage(message, replyMode: replyMode)
-        return await Draft.replyingBody(message: replyingMessage.freezeIfNeeded(), replyMode: replyMode)
-    }
-
-    private func loadReplyingAttachments(message: Message, replyMode: ReplyMode) async throws -> [Attachment] {
-        guard replyMode == .forward else { return [] }
-        let attachments = try await mailboxManager.apiFetcher.attachmentsToForward(
-            mailbox: mailboxManager.mailbox,
-            message: message
-        ).attachments
-
-        return attachments
-    }
-
-    private func loadCompleteDraftIfNeeded() async throws -> String {
-        guard let associatedMessage = mailboxManager.getRealm()
-            .object(ofType: Message.self, forPrimaryKey: incompleteDraft.messageUid)?.freeze()
-        else { throw MailError.localMessageNotFound }
-
-        let remoteDraft = try await mailboxManager.apiFetcher.draft(from: associatedMessage)
-
-        remoteDraft.localUUID = incompleteDraft.localUUID
-        remoteDraft.action = .save
-        remoteDraft.delay = incompleteDraft.delay
-
+    private func getLiveDraft() throws -> Draft {
         let realm = mailboxManager.getRealm()
-        try? realm.safeWrite {
-            realm.add(remoteDraft.detached(), update: .modified)
+        guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID) else {
+            throw MailError.unknownError
         }
+        return liveDraft
+    }
 
-        return remoteDraft.body
+    private func getFrozenDraft() throws -> Draft {
+        return try getLiveDraft().freezeIfNeeded()
     }
 }
