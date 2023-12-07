@@ -55,11 +55,11 @@ struct MoveEmailView: View {
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                listOfFolders(nestableFolders: filteredFolders.filter { $0.content.role != nil })
+                listOfFolders(nestableFolders: filteredFolders.filter { $0.detachedContent.role != nil })
                 if searchFilter.isEmpty {
                     IKDivider()
                 }
-                listOfFolders(nestableFolders: filteredFolders.filter { $0.content.role == nil })
+                listOfFolders(nestableFolders: filteredFolders.filter { $0.detachedContent.role == nil })
             }
             .searchable(text: $searchFilter, placement: .navigationBarDrawer(displayMode: .always))
         }

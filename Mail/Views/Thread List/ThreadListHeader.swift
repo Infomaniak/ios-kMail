@@ -25,7 +25,7 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-class ThreadListHeaderFolderObserver: ObservableObject {
+@MainActor final class ThreadListHeaderFolderObserver: ObservableObject {
     private let timer = Timer.publish(
         every: 60, // second
         on: .main,
@@ -83,9 +83,13 @@ struct ThreadListHeader: View {
 
     @Binding var unreadFilterOn: Bool
 
-    init(isMultipleSelectionEnabled: Bool,
-         folder: Folder,
-         unreadFilterOn: Binding<Bool>) {
+    init?(isMultipleSelectionEnabled: Bool,
+          folder: Folder?,
+          unreadFilterOn: Binding<Bool>) {
+        guard let folder else {
+            return nil
+        }
+
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
         _unreadFilterOn = unreadFilterOn
         _folderObserver = StateObject(wrappedValue: ThreadListHeaderFolderObserver(folder: folder))

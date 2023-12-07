@@ -96,7 +96,7 @@ struct SplitView: View {
                     if let thread = mainViewState.threadPath.last {
                         ThreadView(thread: thread)
                     } else {
-                        EmptyStateView.emptyThread(from: mainViewState.selectedFolder)
+                        EmptyStateView.emptyThread(from: mainViewState.detachedSelectedFolder)
                     }
                 }
             }
@@ -202,14 +202,14 @@ struct SplitView: View {
         await tryOrDisplayError {
             try await mailboxManager.refreshAllFolders()
 
-            let selectedFolderId = mainViewState.selectedFolder.remoteId
+            let selectedFolderId = mainViewState.detachedSelectedFolder.remoteId
             guard mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: selectedFolderId) == nil else {
                 return
             }
 
-            if let inboxFolder = mailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
+            if let inboxFolder = mailboxManager.getFolder(with: .inbox)?.detached() {
                 Task { @MainActor in
-                    mainViewState.selectedFolder = inboxFolder
+                    mainViewState.setDetachedSelectedFolder(inboxFolder)
                 }
             } else {
                 throw MailError.folderNotFound

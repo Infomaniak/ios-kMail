@@ -57,7 +57,7 @@ struct FolderCell: View {
     @State private var shouldTransit = false
 
     private var isCurrentFolder: Bool {
-        folder.content.remoteId == currentFolderId
+        folder.detachedContent.remoteId == currentFolderId
     }
 
     var body: some View {
@@ -65,7 +65,7 @@ struct FolderCell: View {
             if cellType == .move || isCompactWindow {
                 Button(action: didTapButton) {
                     FolderCellContent(
-                        folder: folder.content,
+                        folder: folder.detachedContent,
                         level: level,
                         isCurrentFolder: isCurrentFolder,
                         canCollapseSubFolders: canCollapseSubFolders
@@ -77,14 +77,14 @@ struct FolderCell: View {
                 } label: {
                     Button {
                         if let matomoCategory {
-                            matomo.track(eventWithCategory: matomoCategory, name: folder.content.matomoName)
+                            matomo.track(eventWithCategory: matomoCategory, name: folder.detachedContent.matomoName)
                         }
-                        mainViewState.selectedFolder = folder.content
+                        mainViewState.setDetachedSelectedFolder(folder.detachedContent)
                         mainViewState.isShowingSearch = false
                         shouldTransit = true
                     } label: {
                         FolderCellContent(
-                            folder: folder.content,
+                            folder: folder.detachedContent,
                             level: level,
                             isCurrentFolder: isCurrentFolder,
                             canCollapseSubFolders: canCollapseSubFolders
@@ -93,7 +93,7 @@ struct FolderCell: View {
                 }
             }
 
-            if folder.content.isExpanded && cellType != .move {
+            if folder.detachedContent.isExpanded && cellType != .move {
                 ForEach(folder.children) { child in
                     FolderCell(
                         folder: child,
@@ -109,7 +109,7 @@ struct FolderCell: View {
 
     private func didTapButton() {
         if cellType == .move {
-            customCompletion?(folder.content)
+            customCompletion?(folder.detachedContent)
         } else {
             updateFolder()
         }
@@ -117,9 +117,9 @@ struct FolderCell: View {
 
     private func updateFolder() {
         if let matomoCategory {
-            matomo.track(eventWithCategory: matomoCategory, name: folder.content.matomoName)
+            matomo.track(eventWithCategory: matomoCategory, name: folder.detachedContent.matomoName)
         }
-        mainViewState.selectedFolder = folder.content
+        mainViewState.setDetachedSelectedFolder(folder.detachedContent)
         navigationDrawerState.close()
     }
 }

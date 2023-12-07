@@ -82,6 +82,13 @@ enum PreviewHelper {
                                      separator: "",
                                      children: [])
 
+    static let sampleFrozenFolder = Folder(remoteId: "",
+                                           path: "Folder",
+                                           name: "Folder",
+                                           isFavorite: false,
+                                           separator: "",
+                                           children: []).freeze()
+
     static let sampleThread = Thread(uid: "",
                                      messages: [sampleMessage],
                                      unseenMessages: 1,

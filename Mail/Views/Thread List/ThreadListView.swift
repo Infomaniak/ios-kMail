@@ -25,6 +25,9 @@ import RealmSwift
 import SwiftUI
 import SwiftUIIntrospect
 
+/// A stable identity
+extension NSNull: Identifiable {}
+
 struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var userActivityController: UserActivityController
@@ -52,11 +55,10 @@ struct ThreadListView: View {
         !networkMonitor.isConnected && viewModel.sections == nil
     }
 
-    init(mailboxManager: MailboxManager,
-         folder: Folder,
-         isCompact: Bool) {
+    init(mailboxManager: MailboxManager, frozenFolder: Folder, isCompact: Bool) {
+        assert(frozenFolder.isFrozen, "folder should always be frozen")
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
-                                                                   folder: folder,
+                                                                   frozenFolder: frozenFolder,
                                                                    isCompact: isCompact))
         _multipleSelectionViewModel = StateObject(wrappedValue: ThreadListMultipleSelectionViewModel())
 
@@ -66,16 +68,17 @@ struct ThreadListView: View {
     var body: some View {
         VStack(spacing: 0) {
             ThreadListHeader(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
-                             folder: viewModel.folder,
+                             folder: viewModel.frozenFolder,
                              unreadFilterOn: $viewModel.filterUnreadOn)
-                .id(viewModel.folder.id)
+                .id(viewModel.frozenFolder?.id ?? /* NSNull is a singleton, therefore stable id */ NSNull().id)
 
             ScrollViewReader { proxy in
                 List {
                     if !viewModel.isEmpty,
-                       viewModel.folder.role == .trash || viewModel.folder.role == .spam {
+                       let frozenFolder = viewModel.frozenFolder,
+                       frozenFolder.role == .trash || frozenFolder.role == .spam {
                         FlushFolderView(
-                            folder: viewModel.folder,
+                            folder: frozenFolder,
                             mailboxManager: viewModel.mailboxManager,
                             flushAlert: $flushAlert
                         )
@@ -115,20 +118,22 @@ struct ThreadListView: View {
                         }
                     }
 
-                    LoadMoreButton(currentFolder: viewModel.folder)
+                    LoadMoreButton(currentFolder: viewModel.frozenFolder)
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
                 .plainList()
                 .observeScroll(with: scrollObserver)
                 .emptyState(isEmpty: shouldDisplayEmptyView) {
-                    switch viewModel.folder.role {
-                    case .inbox:
-                        EmptyStateView.emptyInbox
-                    case .trash:
-                        EmptyStateView.emptyTrash
-                    default:
-                        EmptyStateView.emptyFolder
+                    if let folder = viewModel.frozenFolder {
+                        switch folder.role {
+                        case .inbox:
+                            EmptyStateView.emptyInbox
+                        case .trash:
+                            EmptyStateView.emptyTrash
+                        default:
+                            EmptyStateView.emptyFolder
+                        }
                     }
                 }
                 .emptyState(isEmpty: shouldDisplayNoNetworkView) {
@@ -175,7 +180,7 @@ struct ThreadListView: View {
                 viewModel.selectedThread = nil
             }
             userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox,
-                                                      folder: mainViewState.selectedFolder)
+                                                      folder: mainViewState.detachedSelectedFolder)
         }
         .onChange(of: viewModel.selectedThread) { newThread in
             if let newThread {
@@ -197,7 +202,7 @@ struct ThreadListView: View {
             }
         }
         .customAlert(item: $flushAlert) { item in
-            FlushFolderAlertView(flushAlert: item, folder: viewModel.folder)
+            FlushFolderAlertView(flushAlert: item, folder: viewModel.frozenFolder)
         }
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Main"])
     }
@@ -215,7 +220,7 @@ struct ThreadListView_Previews: PreviewProvider {
     static var previews: some View {
         ThreadListView(
             mailboxManager: PreviewHelper.sampleMailboxManager,
-            folder: PreviewHelper.sampleFolder,
+            frozenFolder: PreviewHelper.sampleFrozenFolder,
             isCompact: false
         )
     }

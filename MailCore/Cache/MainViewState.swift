@@ -18,7 +18,7 @@
 
 import Foundation
 
-public class MainViewState: ObservableObject {
+@MainActor public final class MainViewState: ObservableObject {
     @Published public var editedDraft: EditedDraft?
     @Published public var messagesToMove: [Message]?
     @Published public var isShowingSearch = false
@@ -28,15 +28,30 @@ public class MainViewState: ObservableObject {
     ///
     /// The selected thread is the last in collection, by convention.
     @Published public var threadPath = [Thread]()
-    @Published public var selectedFolder: Folder {
+    @Published public private(set) var detachedSelectedFolder: Folder {
         didSet {
-            SentryDebug.switchFolderBreadcrumb(uid: selectedFolder.remoteId, name: selectedFolder.name)
+            SentryDebug.switchFolderBreadcrumb(uid: detachedSelectedFolder.remoteId, name: detachedSelectedFolder.name)
         }
+    }
+
+    public var frozenSelectedFolder: Folder? {
+        guard let folder = mailboxManager.getRealm().object(ofType: Folder.self,
+                                                            forPrimaryKey: detachedSelectedFolder.remoteId)?.freeze(),
+            !folder.isInvalidated else {
+            return nil
+        }
+
+        return folder
+    }
+
+    public func setDetachedSelectedFolder(_ folder: Folder) {
+        assert(folder.realm == nil, "folder should be detached")
+        detachedSelectedFolder = folder
     }
 
     let mailboxManager: MailboxManager
     public init(mailboxManager: MailboxManager, selectedFolder: Folder) {
         self.mailboxManager = mailboxManager
-        self.selectedFolder = selectedFolder
+        detachedSelectedFolder = selectedFolder.detached()
     }
 }

@@ -26,14 +26,14 @@ struct FlushFolderAlertView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     let flushAlert: FlushAlertState
-    var folder: Folder?
+    var detachedFolder: Folder?
 
     private var title: String {
         if let deletedMessagesCount = flushAlert.deletedMessages {
             return MailResourcesStrings.Localizable.threadListDeletionConfirmationAlertTitle(deletedMessagesCount)
         }
 
-        switch folder?.role {
+        switch detachedFolder?.role {
         case .spam:
             return MailResourcesStrings.Localizable.threadListEmptySpamButton
         case .trash:
@@ -50,6 +50,11 @@ struct FlushFolderAlertView: View {
         return MailResourcesStrings.Localizable.threadListEmptyFolderAlertDescription
     }
 
+    init(flushAlert: FlushAlertState, folder: Folder? = nil) {
+        self.flushAlert = flushAlert
+        detachedFolder = folder?.detached()
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.medium) {
             Text(title)
@@ -58,8 +63,8 @@ struct FlushFolderAlertView: View {
                 .textStyle(.body)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm) {
-                if let folder, flushAlert.deletedMessages == nil {
-                    matomo.track(eventWithCategory: .threadList, name: "empty\(folder.matomoName.capitalized)Confirm")
+                if let detachedFolder, flushAlert.deletedMessages == nil {
+                    matomo.track(eventWithCategory: .threadList, name: "empty\(detachedFolder.matomoName.capitalized)Confirm")
                 }
                 await flushAlert.completion()
             }

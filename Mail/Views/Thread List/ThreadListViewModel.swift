@@ -105,7 +105,14 @@ final class DateSection: Identifiable, Equatable {
 @MainActor final class ThreadListViewModel: ObservableObject {
     let mailboxManager: MailboxManager
 
-    let folder: Folder
+    private let _frozenFolder: Folder?
+    public var frozenFolder: Folder? {
+        guard let frozenFolder = _frozenFolder, !frozenFolder.isInvalidated else {
+            return nil
+        }
+
+        return frozenFolder
+    }
 
     @Published var sections: [DateSection]?
     let sectionsSubject = PassthroughSubject<[DateSection]?, Never>()
@@ -179,14 +186,13 @@ final class DateSection: Identifiable, Equatable {
 
     // MARK: Init
 
-    init(
-        mailboxManager: MailboxManager,
-        folder: Folder,
-        isCompact: Bool
-    ) {
-        assert(folder.isFrozen, "ThreadListViewModel.folder should always be frozen")
+    init(mailboxManager: MailboxManager,
+         frozenFolder: Folder,
+         isCompact: Bool) {
+        assert(frozenFolder.isFrozen, "frozenFolder should always be frozen")
+        _frozenFolder = frozenFolder
+//        _frozenFolder = mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: folderRemoteId)?.freeze()
         self.mailboxManager = mailboxManager
-        self.folder = folder
         self.isCompact = isCompact
         sectionsObserver = sectionsSubject
             .throttle(for: .seconds(1), scheduler: DispatchQueue.main, latest: true)
@@ -208,7 +214,7 @@ final class DateSection: Identifiable, Equatable {
             loadingPageTaskId = UUID()
         }
 
-        await mailboxManager.refreshFolderContent(folder)
+        await mailboxManager.refreshFolderContent(frozenFolder)
 
         withAnimation {
             loadingPageTaskId = nil

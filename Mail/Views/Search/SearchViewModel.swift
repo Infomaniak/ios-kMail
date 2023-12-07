@@ -106,6 +106,7 @@ enum SearchState {
     init(mailboxManager: MailboxManager, folder: Folder) {
         self.mailboxManager = mailboxManager
 
+        // TODO: Check in what state should be the `folder`
         realFolder = folder.freezeIfNeeded()
         searchFolder = mailboxManager.initSearchFolder().freezeIfNeeded()
         folderList = mailboxManager.getFolders()

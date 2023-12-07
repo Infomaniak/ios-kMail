@@ -43,14 +43,24 @@ protocol ContentUpdatable: AnyObject {
 @MainActor final class AttachmentsManager: ObservableObject, ContentUpdatable {
     private let draftLocalUUID: String
 
+    private let _liveDraft: Draft?
+
     /// Live `Draft` getter
     private var liveDraft: Draft? {
-        guard let liveDraft = mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: draftLocalUUID),
-              !liveDraft.isInvalidated else {
+        guard let _liveDraft,
+              !_liveDraft.isInvalidated else {
             return nil
         }
 
-        return liveDraft
+        return _liveDraft
+    }
+
+    /// Live `[Attachment]` getter
+    var liveAttachments: [Attachment] {
+        guard let liveDraft else {
+            return []
+        }
+        return liveDraft.attachments.filter { $0.contentId == nil && !$0.isInvalidated }.toArray()
     }
 
     private let mailboxManager: MailboxManager
@@ -60,13 +70,6 @@ protocol ContentUpdatable: AnyObject {
     /// Something to debounce content will change updates
     private let contentWillChangeSubject = PassthroughSubject<Void, Never>()
     private var contentWillChangeObserver: AnyCancellable?
-
-    var liveAttachments: [Attachment] {
-        guard let liveDraft else {
-            return []
-        }
-        return liveDraft.attachments.filter { $0.contentId == nil && !$0.isInvalidated }.toArray()
-    }
 
     private var attachmentUploadTasks = SendableDictionary<String, AttachmentUploadTask>()
 
@@ -83,6 +86,7 @@ protocol ContentUpdatable: AnyObject {
     }()
 
     init(draftLocalUUID: String, mailboxManager: MailboxManager) {
+        _liveDraft = mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: draftLocalUUID)
         self.draftLocalUUID = draftLocalUUID
         self.mailboxManager = mailboxManager
 

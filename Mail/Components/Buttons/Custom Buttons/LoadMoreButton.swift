@@ -36,6 +36,14 @@ struct LoadMoreButton: View {
         return !currentFolder.isHistoryComplete && currentFolder.lastUpdate != nil
     }
 
+    init?(currentFolder: Folder?) {
+        guard let currentFolder, !currentFolder.isInvalidated else {
+            return nil
+        }
+
+        self.currentFolder = currentFolder
+    }
+
     var body: some View {
         Group {
             if isLoadingMore {

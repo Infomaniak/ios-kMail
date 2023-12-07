@@ -47,6 +47,16 @@ struct FlushFolderView: View {
         Self.buttons[folder.role ?? .trash] ?? ""
     }
 
+    init?(folder: Folder?, mailboxManager: MailboxManager, flushAlert: Binding<FlushAlertState?>) {
+        guard let folder, !folder.isInvalidated else {
+            return nil
+        }
+        assert(folder.isFrozen, "ThreadListViewModel.folder should always be frozen")
+        self.folder = folder
+        self.mailboxManager = mailboxManager
+        _flushAlert = flushAlert
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(alignment: .leading, spacing: UIPadding.small) {

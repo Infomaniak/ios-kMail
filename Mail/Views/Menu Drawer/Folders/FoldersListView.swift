@@ -38,7 +38,7 @@ struct FoldersListView: View {
         VStack(spacing: 0) {
             ForEach(folders) { folder in
                 FolderCell(folder: folder,
-                           currentFolderId: mainViewState.selectedFolder.remoteId,
+                           currentFolderId: mainViewState.detachedSelectedFolder.remoteId,
                            canCollapseSubFolders: hasSubFolders,
                            matomoCategory: .menuDrawer)
             }

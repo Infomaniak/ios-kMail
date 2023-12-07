@@ -22,18 +22,18 @@ import SwiftUI
 
 extension ThreadListViewModel {
     private func threadResults() -> Results<Thread>? {
-        guard let folder = folder.thaw() else {
+        guard let liveFolder = frozenFolder?.thaw() else {
             sectionsSubject.send([])
             return nil
         }
 
         let threadResults: Results<Thread>
         if let predicate = filter.predicate {
-            threadResults = folder.threads
+            threadResults = liveFolder.threads
                 .filter(predicate + " OR uid == %@", selectedThread?.uid ?? "")
                 .sorted(by: \.date, ascending: false)
         } else {
-            threadResults = folder.threads.sorted(by: \.date, ascending: false)
+            threadResults = liveFolder.threads.sorted(by: \.date, ascending: false)
         }
 
         return threadResults

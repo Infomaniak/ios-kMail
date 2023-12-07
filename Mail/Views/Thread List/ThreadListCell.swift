@@ -122,7 +122,7 @@ struct ThreadListCell_Previews: PreviewProvider {
     static var previews: some View {
         ThreadListCell(
             viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
-                                           folder: PreviewHelper.sampleFolder,
+                                           frozenFolder: PreviewHelper.sampleFrozenFolder,
                                            isCompact: false),
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(),
             thread: PreviewHelper.sampleThread,
