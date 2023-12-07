@@ -24,7 +24,6 @@ public struct EditedDraft: Identifiable {
         return detachedDraft.id
     }
 
-    /// The Draft we track
     public let detachedDraft: Draft
 
     public let messageReply: MessageReply?

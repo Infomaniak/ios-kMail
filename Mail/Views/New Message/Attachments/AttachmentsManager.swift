@@ -34,7 +34,7 @@ import SwiftUI
 }
 
 /// Abstract the fact some object was updated
-protocol ContentUpdatable {
+protocol ContentUpdatable: AnyObject {
     /// Call to notify the content has changed.
     @MainActor func contentWillChange()
 }
