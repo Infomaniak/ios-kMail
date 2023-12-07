@@ -21,12 +21,13 @@ import MailResources
 import SwiftUI
 
 struct AttachmentView<Content: View>: View {
-    let attachment: Attachment
-    let subtitle: String
+    private let detachedAttachment: Attachment
+    private let subtitle: String
+
     @ViewBuilder let accessory: () -> Content?
 
     init(attachment: Attachment, subtitle: String, accessory: @escaping () -> Content? = { EmptyView() }) {
-        self.attachment = attachment
+        detachedAttachment = attachment.detached()
         self.subtitle = subtitle
         self.accessory = accessory
     }
@@ -34,12 +35,12 @@ struct AttachmentView<Content: View>: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                IKIcon(attachment.icon, size: .large)
+                IKIcon(detachedAttachment.icon, size: .large)
                     .foregroundStyle(MailResourcesAsset.textSecondaryColor)
 
                 HStack(spacing: UIPadding.small) {
                     VStack(alignment: .leading, spacing: 0) {
-                        Text(attachment.name)
+                        Text(detachedAttachment.name)
                             .textStyle(.bodySmall)
                             .lineLimit(1)
                             .truncationMode(.middle)

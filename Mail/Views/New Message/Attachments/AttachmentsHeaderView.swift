@@ -26,15 +26,15 @@ struct AttachmentsHeaderView: View {
 
     var body: some View {
         ZStack {
-            if !attachmentsManager.attachments.isEmpty {
+            if !attachmentsManager.liveAttachments.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: UIPadding.small) {
-                        ForEach(attachmentsManager.attachments) { attachment in
+                        ForEach(attachmentsManager.liveAttachments) { attachment in
                             AttachmentUploadCell(
                                 uploadTask: attachmentsManager.attachmentUploadTaskOrFinishedTask(for: attachment.uuid),
                                 attachment: attachment
                             ) { attachmentRemoved in
-                                attachmentsManager.removeAttachment(attachmentRemoved)
+                                attachmentsManager.removeAttachment(attachmentRemoved.uuid)
                             }
                         }
                     }
