@@ -44,7 +44,7 @@ protocol ContentUpdatable {
     private let draftLocalUUID: String
 
     /// Live `Draft` getter
-    private var draft: Draft? {
+    private var liveDraft: Draft? {
         guard let liveDraft = mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: draftLocalUUID),
               !liveDraft.isInvalidated else {
             return nil
@@ -61,11 +61,11 @@ protocol ContentUpdatable {
     private let contentWillChangeSubject = PassthroughSubject<Void, Never>()
     private var contentWillChangeObserver: AnyCancellable?
 
-    var attachments: [Attachment] {
-        guard let draft else {
+    var liveAttachments: [Attachment] {
+        guard let liveDraft else {
             return []
         }
-        return draft.attachments.filter { $0.contentId == nil && !$0.isInvalidated }.toArray()
+        return liveDraft.attachments.filter { $0.contentId == nil && !$0.isInvalidated }.toArray()
     }
 
     private var attachmentUploadTasks = SendableDictionary<String, AttachmentUploadTask>()
@@ -100,7 +100,7 @@ protocol ContentUpdatable {
     }
 
     func completeUploadedAttachments() {
-        for attachment in attachments {
+        for attachment in liveAttachments {
             let uploadTask = attachmentUploadTaskOrCreate(for: attachment.uuid)
             uploadTask.progress = 1
         }
@@ -108,7 +108,7 @@ protocol ContentUpdatable {
     }
 
     private func updateAttachment(oldAttachment: Attachment, newAttachment: Attachment) async {
-        guard let oldAttachment = draft?.attachments.first(where: { $0.uuid == oldAttachment.uuid }) else {
+        guard let oldAttachment = liveDraft?.attachments.first(where: { $0.uuid == oldAttachment.uuid }) else {
             return
         }
 
@@ -171,8 +171,8 @@ protocol ContentUpdatable {
     }
 
     func removeAttachment(_ attachmentUUID: String) {
-        Task.detached {
-            await self.backgroundRealm.execute { realm in
+        Task {
+            await backgroundRealm.execute { realm in
                 try? realm.write {
                     guard let draftInContext = realm.object(ofType: Draft.self, forPrimaryKey: self.draftLocalUUID) else {
                         return
@@ -186,10 +186,10 @@ protocol ContentUpdatable {
                 }
             }
 
-            await self.attachmentUploadTasks[attachmentUUID]?.task?.cancel()
-            await self.attachmentUploadTasks.removeValue(forKey: attachmentUUID)
+            attachmentUploadTasks[attachmentUUID]?.task?.cancel()
+            attachmentUploadTasks.removeValue(forKey: attachmentUUID)
 
-            await self.contentWillChange()
+            contentWillChange()
         }
     }
 
@@ -283,7 +283,7 @@ protocol ContentUpdatable {
             do {
                 let url = try await attachment.writeToTemporaryURL()
                 let updatedAttachment = await updateLocalAttachment(url: url, attachment: localAttachment)
-                let totalSize = attachments.map(\.size).reduce(0) { $0 + $1 }
+                let totalSize = liveAttachments.map(\.size).reduce(0) { $0 + $1 }
                 guard totalSize < Constants.maxAttachmentsSize else {
                     globalError = MailError.attachmentsSizeLimitReached
                     removeAttachment(updatedAttachment.uuid)
