@@ -23,22 +23,28 @@ import MailResources
 import SwiftUI
 
 struct AttachmentUploadCell: View {
+    private let detachedAttachment: Attachment
+    private let attachmentRemoved: ((Attachment) -> Void)?
+
     @ObservedObject var uploadTask: AttachmentUploadTask
 
-    let attachment: Attachment
-    let attachmentRemoved: ((Attachment) -> Void)?
+    init(uploadTask: AttachmentUploadTask, attachment: Attachment, attachmentRemoved: ((Attachment) -> Void)?) {
+        self.uploadTask = uploadTask
+        detachedAttachment = attachment.detached()
+        self.attachmentRemoved = attachmentRemoved
+    }
 
     var body: some View {
         AttachmentView(
-            attachment: attachment,
-            subtitle: uploadTask.error != nil ? uploadTask.error!.localizedDescription : attachment.size
+            attachment: detachedAttachment,
+            subtitle: uploadTask.error != nil ? uploadTask.error!.localizedDescription : detachedAttachment.size
                 .formatted(.defaultByteCount)
         ) {
             Button {
                 if let attachmentRemoved {
                     @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .attachmentActions, name: "delete")
-                    attachmentRemoved(attachment)
+                    attachmentRemoved(detachedAttachment)
                 }
             } label: {
                 IKIcon(MailResourcesAsset.close, size: .small)

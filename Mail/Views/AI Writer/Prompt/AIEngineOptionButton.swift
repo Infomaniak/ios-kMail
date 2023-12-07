@@ -43,7 +43,7 @@ struct AIEngineOptionButton: View {
                     image
                 }
 
-                ChevronIcon(style: .right, color: MailResourcesAsset.textPrimaryColor.swiftUIColor)
+                ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textPrimaryColor.swiftUIColor)
             }
         }
     }

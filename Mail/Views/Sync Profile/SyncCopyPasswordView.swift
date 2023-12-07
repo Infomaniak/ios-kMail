@@ -39,7 +39,7 @@ struct SyncCopyPasswordView: View {
                 .multilineTextAlignment(.center)
 
             VStack(spacing: UIPadding.large) {
-                MailResourcesAsset.lockIllustration.swiftUIImage
+                MailResourcesAsset.lock.swiftUIImage
 
                 if let applicationPassword {
                     HStack(spacing: UIPadding.regular) {

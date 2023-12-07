@@ -59,7 +59,7 @@ struct MessageHeaderView: View {
                     eventWithCategory: .newMessage,
                     action: .data,
                     name: "openLocalDraft",
-                    value: !(mainViewState.editedDraft?.draft.isLoadedRemotely ?? false)
+                    value: !(mainViewState.editedDraft?.detachedDraft.isLoadedRemotely ?? false)
                 )
             } else if message.originalThread?.messages.isEmpty == false {
                 withAnimation {

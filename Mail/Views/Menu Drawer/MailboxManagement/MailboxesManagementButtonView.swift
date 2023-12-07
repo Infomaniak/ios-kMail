@@ -65,7 +65,7 @@ struct MailboxesManagementButtonView: View {
                 } else {
                     switch style {
                     case .blockedPassword:
-                        ChevronIcon(style: .right, color: MailResourcesAsset.textPrimaryColor.swiftUIColor)
+                        ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textPrimaryColor.swiftUIColor)
                     case .menuDrawer:
                         if let detailNumber {
                             Text(detailNumber < 100 ? "\(detailNumber)" : "99+")

@@ -1,7 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "mailbox-error.svg",
+      "filename" : "mailbox-error-light.svg",
+      "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "mailbox-error-dark.svg",
       "idiom" : "universal"
     }
   ],

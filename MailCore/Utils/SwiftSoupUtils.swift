@@ -18,17 +18,43 @@
 
 import SwiftSoup
 
-public enum SwiftSoupUtils {
-    public static func extractHTML(from document: Document, _ cssQuery: String) throws -> String {
-        guard let foundElement = try document.select(cssQuery).first() else {
-            throw SwiftSoupError.elementNotFound
+public struct SwiftSoupUtils {
+    private let document: Document
+
+    public init(document: Document) {
+        self.document = document
+    }
+
+    public init(from html: String) throws {
+        document = try SwiftSoup.parse(html)
+    }
+
+    public func cleanBody() async throws -> Document {
+        let cleanedDocument = try SwiftSoup.Cleaner(headWhitelist: nil, bodyWhitelist: .extendedBodyWhitelist).clean(document)
+        return cleanedDocument
+    }
+
+    public func cleanCompleteDocument() async throws -> Document {
+        let cleanedDocument = try SwiftSoup.Cleaner(headWhitelist: .headWhitelist, bodyWhitelist: .extendedBodyWhitelist)
+            .clean(document)
+
+        // We need to remove the tag <meta http-equiv="refresh" content="x">
+        let metaRefreshTags = try await cleanedDocument.select("meta[http-equiv='refresh']")
+        for metaRefreshTag in metaRefreshTags {
+            try metaRefreshTag.parent()?.removeChild(metaRefreshTag)
         }
+
+        return cleanedDocument
+    }
+
+    public func extractHTML(_ cssQuery: String) async throws -> String {
+        guard let foundElement = try await document.select(cssQuery).first() else { throw SwiftSoupError.elementNotFound }
+
         let htmlContent = try foundElement.outerHtml()
         return htmlContent
     }
 
-    public static func extractText(from html: String) async throws -> String? {
-        let document = try await SwiftSoup.parse(html)
+    public func extractText() async throws -> String? {
         return try document.body()?.text()
     }
 }

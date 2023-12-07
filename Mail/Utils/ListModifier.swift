@@ -22,7 +22,6 @@ struct PlainListModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .listStyle(.plain)
-            .environment(\.defaultMinListRowHeight, 0)
     }
 }
 

@@ -30,5 +30,6 @@ struct LoadingButtonProgressView: View {
         ProgressView()
             .progressViewStyle(.circular)
             .tint(tintColor)
+            .controlSize(.regular)
     }
 }

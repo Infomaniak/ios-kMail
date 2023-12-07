@@ -18,13 +18,20 @@
 
 import Foundation
 
+/// Something to track an edited `Draft`
 public struct EditedDraft: Identifiable {
     public var id: ObjectIdentifier {
-        return draft.id
+        return detachedDraft.id
     }
 
-    public let draft: Draft
+    public let detachedDraft: Draft
+
     public let messageReply: MessageReply?
+
+    init(draft: Draft, messageReply: MessageReply?) {
+        detachedDraft = draft.detached()
+        self.messageReply = messageReply
+    }
 
     public static func new() -> EditedDraft {
         return EditedDraft(draft: Draft(localUUID: UUID().uuidString), messageReply: nil)

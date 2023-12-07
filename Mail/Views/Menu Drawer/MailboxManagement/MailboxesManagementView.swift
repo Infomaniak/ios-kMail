@@ -57,6 +57,7 @@ struct MailboxesManagementView: View {
             } label: {
                 HStack(spacing: UIPadding.menuDrawerCellSpacing) {
                     IKIcon(MailResourcesAsset.envelope, size: .large)
+                        .foregroundStyle(.tint)
 
                     Text(mailboxManager.mailbox.email)
                         .textStyle(navigationDrawerState.showMailboxes ? .bodyMediumAccent : .bodyMedium)
@@ -64,7 +65,7 @@ struct MailboxesManagementView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     if hasOtherMailboxes {
-                        ChevronIcon(style: navigationDrawerState.showMailboxes ? .up : .down)
+                        ChevronIcon(direction: navigationDrawerState.showMailboxes ? .up : .down)
                     }
                 }
                 .environment(\.isEnabled, true)

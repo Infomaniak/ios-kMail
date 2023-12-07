@@ -43,11 +43,12 @@ struct UserFoldersListView: View {
                     }
                 } label: {
                     HStack(spacing: UIPadding.menuDrawerCellChevronSpacing) {
-                        ChevronIcon(style: isExpanded ? .up : .down)
+                        ChevronIcon(direction: isExpanded ? .up : .down)
                         Text(MailResourcesStrings.Localizable.buttonFolders)
                             .textStyle(.bodySmallSecondary)
                         Spacer()
                     }
+                    .padding(value: .regular)
                 }
                 .frame(maxWidth: .infinity)
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandCustomFolders)
@@ -57,13 +58,13 @@ struct UserFoldersListView: View {
                     isShowingCreateFolderAlert.toggle()
                 } label: {
                     IKIcon(MailResourcesAsset.addCircle)
+                        .padding(value: .regular)
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable.newFolderDialogTitle)
                 .customAlert(isPresented: $isShowingCreateFolderAlert) {
                     CreateFolderView(mode: .create)
                 }
             }
-            .padding(value: .regular)
 
             if isExpanded {
                 if folders.isEmpty {
