@@ -147,7 +147,7 @@ struct ComposeMessageView: View {
             do {
                 isLoadingContent = true
                 currentSignature = try await draftContentManager.prepareCompleteDraft()
-                attachmentsManager.completeUploadedAttachments()
+                await attachmentsManager.completeUploadedAttachments()
                 isLoadingContent = false
             } catch {
                 // Unable to get signatures, "An error occurred" and close modal.
