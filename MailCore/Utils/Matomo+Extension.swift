@@ -51,6 +51,7 @@ public extension MatomoUtils.EventCategory {
     static let replyBottomSheet = MatomoUtils.EventCategory(displayName: "replyBottomSheet")
     static let restoreEmailsBottomSheet = MatomoUtils.EventCategory(displayName: "restoreEmailsBottomSheet")
     static let search = MatomoUtils.EventCategory(displayName: "search")
+    static let setAsDefaultApp = MatomoUtils.EventCategory(displayName: "setAsDefaultApp")
     static let snackbar = MatomoUtils.EventCategory(displayName: "snackbar")
     static let syncAutoConfig = MatomoUtils.EventCategory(displayName: "syncAutoConfig")
     static let threadList = MatomoUtils.EventCategory(displayName: "threadList")

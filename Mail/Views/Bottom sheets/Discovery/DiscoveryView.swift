@@ -54,6 +54,14 @@ public extension DiscoveryItem {
         primaryButtonLabel: MailResourcesStrings.Localizable.buttonUpdate,
         matomoCategory: .appUpdate
     )
+
+    static let setAsDefaultApp = DiscoveryItem(
+        image: MailResourcesAsset.notificationsIllustration,
+        title: MailResourcesStrings.Localizable.setAsDefaultAppTitle,
+        description: MailResourcesStrings.Localizable.setAsDefaultAppDescription,
+        primaryButtonLabel: MailResourcesStrings.Localizable.buttonSetNow,
+        matomoCategory: .setAsDefaultApp
+    )
 }
 
 struct DiscoveryView: View {
