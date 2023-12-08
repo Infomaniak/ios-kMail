@@ -18,6 +18,7 @@
 
 import CocoaLumberjackSwift
 import Foundation
+import MailResources
 import RealmSwift
 import Sentry
 import SwiftSoup
@@ -106,7 +107,7 @@ extension DraftContentManager {
 
     private func loadReplyingMessageAndFormat(_ message: Message, replyMode: ReplyMode) async throws -> String {
         let replyingMessage = try await loadReplyingMessage(message, replyMode: replyMode)
-        return await Draft.replyingBody(message: replyingMessage.freezeIfNeeded(), replyMode: replyMode)
+        return try formatReplyingBody(of: replyingMessage, replyingMode: replyMode)
     }
 
     private func loadReplyingAttachments(message: Message, replyMode: ReplyMode) async throws -> [Attachment] {
@@ -202,6 +203,59 @@ public extension DraftContentManager {
                 liveIncompleteDraft.attachments.append(attachment)
             }
         }
+    }
+}
+
+// MARK: - Reply and Forward quotes
+
+extension DraftContentManager {
+    private func formatReplyingBody(of message: Message, replyingMode: ReplyMode) throws -> String {
+        let content: String
+        switch replyingMode {
+        case .reply, .replyAll:
+            content = try formatReply(message: message)
+        case .forward:
+            content = try formatForward(message: message)
+        }
+
+        return "<br><br>\(content)"
+    }
+
+    private func formatReply(message: Message) throws -> String {
+        guard let formattedMessage = try extractHTMLFromReplyingBody(of: message) else { return "" }
+
+        let headerText = MailResourcesStrings.Localizable.messageReplyHeader(
+            DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short),
+            message.from.first?.htmlDescription ?? ""
+        )
+
+        return """
+        <div class="\(Constants.replyQuoteHTMLClass) answerContentMessage" >
+            <div>\(headerText)</div>
+            <blockquote class="ws-ng-quote">
+                \(formattedMessage)
+            </blockquote>
+        </div>
+        """
+    }
+
+    private func formatForward(message: Message) throws -> String {
+        guard let formattedMessage = try extractHTMLFromReplyingBody(of: message) else { return "" }
+
+        return formattedMessage
+    }
+
+    private func extractHTMLFromReplyingBody(of message: Message) throws -> String? {
+        guard let value = message.body?.value else { return nil }
+
+        let document = try SwiftSoup.parse(value)
+        guard let head = document.head(), let body = document.body() else { return nil }
+
+        let styleElementsFromHead = try head.getElementsByTag("style").array()
+        try body.insertChildren(0, styleElementsFromHead)
+
+        let bodyHTML = try body.html()
+        return bodyHTML
     }
 }
 
