@@ -224,14 +224,14 @@ extension DraftContentManager {
     private func formatReply(message: Message) throws -> String {
         guard let formattedMessage = try extractHTMLFromReplyingBody(of: message) else { return "" }
 
-        let headerText = MailResourcesStrings.Localizable.messageReplyHeader(
+        let dateHeader = MailResourcesStrings.Localizable.messageReplyHeader(
             DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short),
             message.from.first?.htmlDescription ?? ""
         )
 
         return """
         <div class="\(Constants.replyQuoteHTMLClass) answerContentMessage" >
-            <div>\(headerText)</div>
+            <div>\(dateHeader)</div>
             <blockquote class="ws-ng-quote">
                 \(formattedMessage)
             </blockquote>
