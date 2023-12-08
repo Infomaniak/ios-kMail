@@ -225,20 +225,6 @@ public final class Draft: Object, Codable, Identifiable {
         return Draft(to: [recipient.detached()])
     }
 
-    public static func replyingBody(message: Message, replyMode: ReplyMode) async -> String {
-        let unsafeQuote: String
-        switch replyMode {
-        case .reply, .replyAll:
-            unsafeQuote = Constants.replyQuote(message: message)
-        case .forward:
-            unsafeQuote = Constants.forwardQuote(message: message)
-        }
-
-        let quote = await (try? SwiftSoupUtils(from: unsafeQuote).cleanCompleteDocument().outerHtml()) ?? ""
-
-        return "<br><br>" + quote
-    }
-
     public static func replying(reply: MessageReply, currentMailboxEmail: String) -> Draft {
         let message = reply.message
         let mode = reply.replyMode

@@ -97,47 +97,6 @@ public enum Constants {
     public static let forwardQuoteHTMLClass = "forwardContentMessage"
     public static let replyQuoteHTMLClass = "ik_mail_quote"
 
-    public static func forwardQuote(message: Message) -> String {
-        let date = DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short)
-        let to = ListFormatter.localizedString(byJoining: message.to.map(\.htmlDescription))
-        let subject = message.formattedSubject.normalizedApostrophes
-        var cc: String {
-            if !message.cc.isEmpty {
-                return "<div>\(MailResourcesStrings.Localizable.ccTitle) \(ListFormatter.localizedString(byJoining: message.cc.map(\.htmlDescription)))<br></div>"
-            } else {
-                return ""
-            }
-        }
-        return """
-        <div class=\"\(forwardQuoteHTMLClass)\">
-        <div>---------- \(MailResourcesStrings.Localizable.messageForwardHeader) ---------<br></div>
-        <div>\(MailResourcesStrings.Localizable.fromTitle) \(message.from.first?.htmlDescription ?? "")<br></div>
-        <div>\(MailResourcesStrings.Localizable.dateTitle) \(date)<br></div>
-        <div>\(MailResourcesStrings.Localizable.subjectTitle) \(subject)<br></div>
-        <div>\(MailResourcesStrings.Localizable.toTitle) \(to)<br></div>
-        \(cc)
-        <div><br></div>
-        <div><br></div>
-        \(message.body?.value?.normalizedApostrophes ?? "")
-        </div>
-        """
-    }
-
-    public static func replyQuote(message: Message) -> String {
-        let headerText = MailResourcesStrings.Localizable.messageReplyHeader(
-            DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short),
-            message.from.first?.htmlDescription ?? ""
-        )
-        return """
-        <div id=\"answerContentMessage\" class=\"\(replyQuoteHTMLClass)\" >
-        <div>\(headerText)</div>
-        <blockquote class=\"ws-ng-quote\">
-        \(message.body?.value?.normalizedApostrophes ?? "")
-        </blockquote>
-        </div>
-        """
-    }
-
     public static func globallyResignFirstResponder() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
