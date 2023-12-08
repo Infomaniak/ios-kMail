@@ -37,6 +37,8 @@ struct MessageHeaderView: View {
 
     var body: some View {
         VStack(spacing: 12) {
+            MessageHeaderFolderView(message: message)
+
             MessageHeaderSummaryView(message: message,
                                      isMessageExpanded: $isMessageExpanded,
                                      isHeaderExpanded: $isHeaderExpanded,
