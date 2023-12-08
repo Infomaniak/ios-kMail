@@ -156,7 +156,11 @@ struct ComposeMessageView: View {
             }
         }
         .onAppear {
-            attachmentsManager.importAttachments(attachments: initialAttachments, draft: draft)
+            attachmentsManager.importAttachments(
+                attachments: initialAttachments,
+                draft: draft,
+                disposition: AttachmentDisposition.defaultDisposition
+            )
             initialAttachments = []
 
             if featureFlagsManager.isEnabled(.aiMailComposer) && UserDefaults.shared.shouldPresentAIFeature {
