@@ -55,7 +55,7 @@ public extension DiscoveryItem {
         matomoCategory: .appUpdate
     )
 
-    static let setAsDefaultApp = DiscoveryItem(
+    static let setAsDefaultAppDiscovery = DiscoveryItem(
         image: MailResourcesAsset.notificationsIllustration,
         title: MailResourcesStrings.Localizable.setAsDefaultAppTitle,
         description: MailResourcesStrings.Localizable.setAsDefaultAppDescription,
@@ -74,7 +74,7 @@ struct DiscoveryView: View {
 
     let item: DiscoveryItem
 
-    let onAppear: () -> Void
+    var onAppear: (() -> Void)?
     let completionHandler: (Bool) -> Void
 
     var body: some View {
@@ -85,7 +85,9 @@ struct DiscoveryView: View {
                 DiscoveryAlertView(item: item, nowButton: didTouchNowButton, laterButton: didTouchLaterButton)
             }
         }
-        .onAppear(perform: onAppear)
+        .onAppear {
+            onAppear?()
+        }
         .onDisappear {
             completionHandler(willDiscoverNewFeature)
             if !willDiscoverNewFeature {

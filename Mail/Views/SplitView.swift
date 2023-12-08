@@ -67,6 +67,7 @@ struct SplitView: View {
     @State private var isShowingUpdateAvailable = false
     @State private var isShowingSyncDiscovery = false
     @State private var isShowingSyncProfile = false
+    @State private var isShowingSetAppAsDefault = false
 
     let mailboxManager: MailboxManager
 
@@ -121,8 +122,8 @@ struct SplitView: View {
             }
         }
         .discoveryPresenter(isPresented: $isShowingUpdateAvailable) {
-            DiscoveryView(item: .updateDiscovery) { /* Empty on purpose */ } completionHandler: { update in
-                guard update else { return }
+            DiscoveryView(item: .updateDiscovery) { wantToUpdate in
+                guard wantToUpdate else { return }
                 let url: URLConstants = Bundle.main.isRunningInTestFlight ? .testFlight : .appStore
                 openURL(url.url)
             }
@@ -130,9 +131,15 @@ struct SplitView: View {
         .discoveryPresenter(isPresented: $isShowingSyncDiscovery) {
             DiscoveryView(item: .syncDiscovery) {
                 UserDefaults.shared.shouldPresentSyncDiscovery = false
-            } completionHandler: { update in
-                guard update else { return }
+            } completionHandler: { wantToSync in
+                guard wantToSync else { return }
                 isShowingSyncProfile = true
+            }
+        }
+        .discoveryPresenter(isPresented: $isShowingSetAppAsDefault) {
+            DiscoveryView(item: .setAsDefaultAppDiscovery) { wantToSetAsDefault in
+                guard wantToSetAsDefault else { return }
+                // TODO: Open Settings.app
             }
         }
         .sheet(isPresented: $isShowingSyncProfile) {
