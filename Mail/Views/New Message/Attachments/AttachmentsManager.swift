@@ -93,12 +93,12 @@ import SwiftUI
     init(draftLocalUUID: String, mailboxManager: MailboxManager) {
         self.draftLocalUUID = draftLocalUUID
         self.mailboxManager = mailboxManager
+        let realm = BackgroundRealm(configuration: mailboxManager.realmConfiguration)
+        backgroundRealm = realm
 
         // Debouncing objectWillChange helps a lot scaling with numerous attachments
-        let backgroundRealm = BackgroundRealm(configuration: mailboxManager.realmConfiguration)
-        self.backgroundRealm = backgroundRealm
         worker = AttachmentsManagerWorker(
-            backgroundRealm: backgroundRealm,
+            backgroundRealm: realm,
             draftLocalUUID: draftLocalUUID,
             mailboxManager: mailboxManager
         )
