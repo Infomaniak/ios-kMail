@@ -64,17 +64,14 @@ final class WebViewModel: NSObject, ObservableObject {
         loadScripts(configuration: webView.configuration)
     }
 
-    func loadBody(presentableBody: PresentableBody, blockRemoteContent: Bool) async -> LoadResult {
+    func loadBody(presentableBody: PresentableBody, blockRemoteContent: Bool) async throws -> LoadResult {
         var messageBody = showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody
 
-        if presentableBody.body?.type == "text/plain" {
-            messageBody = createHTMLForPlainText(text: messageBody)
+        if let body = messageBody, presentableBody.body?.type == "text/plain" {
+            messageBody = try await MessageWebViewUtils.createHTMLForPlainText(text: body)
         }
 
-        let loadResult = await loadHTMLString(
-            value: messageBody,
-            blockRemoteContent: blockRemoteContent
-        )
+        let loadResult = await loadHTMLString(value: messageBody, blockRemoteContent: blockRemoteContent)
         return loadResult
     }
 

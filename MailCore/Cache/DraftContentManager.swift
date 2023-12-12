@@ -232,8 +232,8 @@ extension DraftContentManager {
             ),
             withBR: false
         )
-        try appendBlockquote(to: root) { blockquote in
-            try appendReplyingBody(to: blockquote, message: message)
+        try await appendBlockquote(to: root) { blockquote in
+            try await appendReplyingBody(to: blockquote, message: message)
         }
 
         return try root.outerHtml()
@@ -253,7 +253,7 @@ extension DraftContentManager {
         try appendRecipientLine(to: root, title: MailResourcesStrings.Localizable.ccTitle, recipients: message.cc)
         try appendTextLine(to: root, text: "")
         try appendTextLine(to: root, text: "")
-        try appendReplyingBody(to: root, message: message)
+        try await appendReplyingBody(to: root, message: message)
 
         return try root.outerHtml()
     }
@@ -270,21 +270,24 @@ extension DraftContentManager {
         try appendTextLine(to: element, text: "\(title) \(formattedList)")
     }
 
-    private func appendBlockquote(to element: Element, completion: (Element) throws -> Void) throws {
+    private func appendBlockquote(to element: Element, completion: (Element) async throws -> Void) async throws {
         let blockquote = try element.appendElement("blockquote")
-        try completion(blockquote)
+        try await completion(blockquote)
     }
 
-    private func appendReplyingBody(to element: Element, message: Message) throws {
-        guard let replyingBody = try extractHTMLFromReplyingBody(of: message) else { return }
+    private func appendReplyingBody(to element: Element, message: Message) async throws {
+        guard let replyingBody = try await extractHTMLFromReplyingBody(of: message) else { return }
         try element.append(replyingBody)
     }
 
-    private func extractHTMLFromReplyingBody(of message: Message) throws -> String? {
+    private func extractHTMLFromReplyingBody(of message: Message) async throws -> String? {
         guard let value = message.body?.value else { return nil }
-        guard message.body?.type != "text/plain" else { return "<pre>\(value)</pre>" }
 
-        let document = try SwiftSoup.parse(value)
+        guard message.body?.type != "text/plain" else {
+            return try await MessageWebViewUtils.createHTMLForPlainText(text: value)
+        }
+
+        let document = try await SwiftSoup.parse(value)
         guard let head = document.head(), let body = document.body() else { return nil }
 
         let styleElementsFromHead = try head.getElementsByTag("style").array()
