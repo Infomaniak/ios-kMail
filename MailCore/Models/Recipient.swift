@@ -119,7 +119,7 @@ public final class Recipient: EmbeddedObject, Codable {
     }
 
     public var htmlDescription: String {
-        let emailString = "&lt;\(email)&gt;"
+        let emailString = "<\(email)>"
         if name.isEmpty {
             return emailString
         } else {

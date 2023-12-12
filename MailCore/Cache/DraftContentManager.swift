@@ -107,7 +107,7 @@ extension DraftContentManager {
 
     private func loadReplyingMessageAndFormat(_ message: Message, replyMode: ReplyMode) async throws -> String {
         let replyingMessage = try await loadReplyingMessage(message, replyMode: replyMode)
-        return try formatReplyingBody(of: replyingMessage, replyingMode: replyMode)
+        return try await formatReplyingBody(of: replyingMessage, replyingMode: replyMode)
     }
 
     private func loadReplyingAttachments(message: Message, replyMode: ReplyMode) async throws -> [Attachment] {
@@ -209,67 +209,80 @@ public extension DraftContentManager {
 // MARK: - Reply and Forward quotes
 
 extension DraftContentManager {
-    private func formatReplyingBody(of message: Message, replyingMode: ReplyMode) throws -> String {
+    private func formatReplyingBody(of message: Message, replyingMode: ReplyMode) async throws -> String {
         let content: String
         switch replyingMode {
         case .reply, .replyAll:
-            content = try formatReply(message: message)
+            content = try await formatReply(message: message)
         case .forward:
-            content = try formatForward(message: message)
+            content = try await formatForward(message: message)
         }
 
         return "<br><br>\(content)"
     }
 
-    private func formatReply(message: Message) throws -> String {
-        guard let formattedMessage = try extractHTMLFromReplyingBody(of: message) else { return "" }
+    private func formatReply(message: Message) async throws -> String {
+        guard let root = try await SwiftSoupUtils(fromFragment: Constants.replyRoot).extractParentElement() else { return "" }
 
-        let dateHeader = MailResourcesStrings.Localizable.messageReplyHeader(
-            DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short),
-            message.from.first?.htmlDescription ?? ""
+        try appendTextLine(
+            to: root,
+            text: MailResourcesStrings.Localizable.messageReplyHeader(
+                Constants.localizedDate(message.date),
+                message.formattedFrom
+            ),
+            withBR: false
         )
-
-        return """
-        <div class="\(Constants.replyQuoteHTMLClass) answerContentMessage" >
-            <div>\(dateHeader)</div>
-            <blockquote class="ws-ng-quote">
-                \(formattedMessage)
-            </blockquote>
-        </div>
-        """
-    }
-
-    private func formatForward(message: Message) throws -> String {
-        guard let formattedMessage = try extractHTMLFromReplyingBody(of: message) else { return "" }
-
-        let date = DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short)
-        let to = ListFormatter.localizedString(byJoining: message.to.map(\.htmlDescription))
-        let subject = message.formattedSubject.normalizedApostrophes
-        var cc: String {
-            if !message.cc.isEmpty {
-                return "<div>\(MailResourcesStrings.Localizable.ccTitle) \(ListFormatter.localizedString(byJoining: message.cc.map(\.htmlDescription)))<br></div>"
-            } else {
-                return ""
-            }
+        try appendBlockquote(to: root) { blockquote in
+            try appendReplyingBody(to: blockquote, message: message)
         }
 
-        return """
-        <div class="\(Constants.forwardQuoteHTMLClass)">
-            <div>---------- \(MailResourcesStrings.Localizable.messageForwardHeader) ---------<br></div>
-            <div>\(MailResourcesStrings.Localizable.fromTitle) \(message.from.first?.htmlDescription ?? "")<br></div>
-            <div>\(MailResourcesStrings.Localizable.dateTitle) \(date)<br></div>
-            <div>\(MailResourcesStrings.Localizable.subjectTitle) \(subject)<br></div>
-            <div>\(MailResourcesStrings.Localizable.toTitle) \(to)<br></div>
-            \(cc)
-            <div><br></div>
-            <div><br></div>
-            \(formattedMessage)
-        </div>
-        """
+        return try root.outerHtml()
+    }
+
+    private func formatForward(message: Message) async throws -> String {
+        guard let root = try await SwiftSoupUtils(fromFragment: Constants.forwardRoot).extractParentElement() else { return "" }
+
+        try appendTextLine(to: root, text: "---------- \(MailResourcesStrings.Localizable.messageForwardHeader) ----------")
+        try appendTextLine(to: root, text: "\(MailResourcesStrings.Localizable.fromTitle) \(message.formattedFrom)")
+        try appendTextLine(
+            to: root,
+            text: "\(MailResourcesStrings.Localizable.dateTitle) \(Constants.localizedDate(message.date))"
+        )
+        try appendTextLine(to: root, text: "\(MailResourcesStrings.Localizable.subjectTitle) \(message.formattedSubject)")
+        try appendRecipientLine(to: root, title: MailResourcesStrings.Localizable.toTitle, recipients: message.to)
+        try appendRecipientLine(to: root, title: MailResourcesStrings.Localizable.ccTitle, recipients: message.cc)
+        try appendTextLine(to: root, text: "")
+        try appendTextLine(to: root, text: "")
+        try appendReplyingBody(to: root, message: message)
+
+        return try root.outerHtml()
+    }
+
+    private func appendTextLine(to element: Element, text: String, withBR: Bool = true) throws {
+        let div = try element.appendElement("div")
+        try div.text(text)
+        try div.appendElement("br")
+    }
+
+    private func appendRecipientLine(to element: Element, title: String, recipients: List<Recipient>) throws {
+        guard !recipients.isEmpty else { return }
+        let formattedList = ListFormatter.localizedString(byJoining: recipients.map(\.htmlDescription))
+        try appendTextLine(to: element, text: "\(title) \(formattedList)")
+    }
+
+    private func appendBlockquote(to element: Element, completion: (Element) throws -> Void) throws {
+        let blockquote = try element.appendElement("blockquote")
+        try completion(blockquote)
+    }
+
+    private func appendReplyingBody(to element: Element, message: Message) throws {
+        guard let replyingBody = try extractHTMLFromReplyingBody(of: message) else { return }
+        try element.append(replyingBody)
     }
 
     private func extractHTMLFromReplyingBody(of message: Message) throws -> String? {
         guard let value = message.body?.value else { return nil }
+        guard message.body?.type != "text/plain" else { return "<pre>\(value)</pre>" }
 
         let document = try SwiftSoup.parse(value)
         guard let head = document.head(), let body = document.body() else { return nil }

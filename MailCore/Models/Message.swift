@@ -206,6 +206,10 @@ public final class Message: Object, Decodable, Identifiable {
         return isDraft || !fullyDownloaded
     }
 
+    public var formattedFrom: String {
+        from.first?.htmlDescription ?? MailResourcesStrings.Localizable.unknownRecipientTitle
+    }
+
     public var formattedSubject: String {
         return subject ?? MailResourcesStrings.Localizable.noSubjectTitle
     }

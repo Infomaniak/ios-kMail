@@ -97,6 +97,9 @@ public enum Constants {
     public static let forwardQuoteHTMLClass = "forwardContentMessage"
     public static let replyQuoteHTMLClass = "ik_mail_quote"
 
+    public static let forwardRoot = "<div class=\"\(forwardQuoteHTMLClass)\">"
+    public static let replyRoot = "<div class=\"\(replyQuoteHTMLClass)\">"
+
     public static func globallyResignFirstResponder() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
@@ -112,6 +115,10 @@ public enum Constants {
         else { return dateFormatter.string(from: Date()) }
 
         return dateFormatter.string(from: date)
+    }
+
+    public static func localizedDate(_ date: Date) -> String {
+        return DateFormatter.localizedString(from: date, dateStyle: .medium, timeStyle: .short)
     }
 
     public static let messageQuantityLimit = 500
