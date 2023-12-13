@@ -54,7 +54,7 @@ struct FlushFolderView: View {
                     .textStyle(.bodySmall)
 
                 Button {
-                    matomo.track(eventWithCategory: .threadList, name: "empty\(folder.matomoName)")
+                    matomo.track(eventWithCategory: .threadList, name: "empty\(folder.matomoName.capitalized)")
                     flushAlert = FlushAlertState {
                         await tryOrDisplayError {
                             _ = try await mailboxManager.flushFolder(folder: folder.freezeIfNeeded())
