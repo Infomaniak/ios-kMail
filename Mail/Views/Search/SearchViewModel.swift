@@ -63,7 +63,7 @@ enum SearchState {
     }
 
     @Published var folderList: [Folder]
-    @Published var realFolder: Folder
+    @Published var frozenRealFolder: Folder
     var lastSearchFolderId: String?
 
     /// Token to observe the search itself
@@ -106,8 +106,7 @@ enum SearchState {
     init(mailboxManager: MailboxManager, folder: Folder) {
         self.mailboxManager = mailboxManager
 
-        // TODO: Check in what state should be the `folder`
-        realFolder = folder.freezeIfNeeded()
+        frozenRealFolder = folder.freezeIfNeeded()
         searchFolder = mailboxManager.initSearchFolder().freezeIfNeeded()
         folderList = mailboxManager.getFolders()
 
@@ -148,7 +147,7 @@ enum SearchState {
         stopObserveSearch()
         threads = []
 
-        var folderToSearch = realFolder.remoteId
+        var folderToSearch = frozenRealFolder.remoteId
 
         if selectedFilters.contains(.folder) {
             folderToSearch = selectedSearchFolderId
