@@ -25,15 +25,15 @@ import SwiftUI
 
 struct NestableFolder: Identifiable {
     let id: Int
-    let detachedContent: Folder
+    let frozenContent: Folder
     let children: [NestableFolder]
 
     init(content: Folder, children: [NestableFolder]) {
         // The id of a folder depends on its `remoteId` and the id of its children
         // Compute the id by doing an XOR with the id of each child
-        let contentToUse = content.detached()
+        let contentToUse = content.freezeIfNeeded()
         id = children.reduce(contentToUse.remoteId.hashValue) { $0 ^ $1.id }
-        detachedContent = contentToUse
+        frozenContent = contentToUse
         self.children = children
     }
 
