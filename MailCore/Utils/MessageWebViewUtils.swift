@@ -49,7 +49,7 @@ public enum MessageWebViewUtils {
     }
 
     public static func createHTMLForPlainText(text: String) async throws -> String {
-        guard let root = try await SwiftSoupUtils(fromFragment: "<pre>").extractParentElement() else { return "" }
+        guard let root = try await SwiftSoupUtils(fromHTMLFragment: "<pre>").extractParentElement() else { return "" }
         try root.text(text)
         return try root.outerHtml()
     }

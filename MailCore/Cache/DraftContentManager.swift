@@ -222,7 +222,7 @@ extension DraftContentManager {
     }
 
     private func formatReply(message: Message) async throws -> String {
-        guard let root = try await SwiftSoupUtils(fromFragment: Constants.replyRoot).extractParentElement() else { return "" }
+        guard let root = try await SwiftSoupUtils(fromHTMLFragment: Constants.replyRoot).extractParentElement() else { return "" }
 
         try appendTextLine(
             to: root,
@@ -240,7 +240,8 @@ extension DraftContentManager {
     }
 
     private func formatForward(message: Message) async throws -> String {
-        guard let root = try await SwiftSoupUtils(fromFragment: Constants.forwardRoot).extractParentElement() else { return "" }
+        guard let root = try await SwiftSoupUtils(fromHTMLFragment: Constants.forwardRoot).extractParentElement()
+        else { return "" }
 
         try appendTextLine(to: root, text: "---------- \(MailResourcesStrings.Localizable.messageForwardHeader) ----------")
         try appendTextLine(to: root, text: "\(MailResourcesStrings.Localizable.fromTitle) \(message.formattedFrom)")
@@ -272,6 +273,7 @@ extension DraftContentManager {
 
     private func appendBlockquote(to element: Element, completion: (Element) async throws -> Void) async throws {
         let blockquote = try element.appendElement("blockquote")
+        try blockquote.addClass("ws-ng-quotee")
         try await completion(blockquote)
     }
 

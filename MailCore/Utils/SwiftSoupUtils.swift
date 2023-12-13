@@ -25,11 +25,11 @@ public struct SwiftSoupUtils {
         self.document = document
     }
 
-    public init(from html: String) throws {
+    public init(fromHTML html: String) throws {
         document = try SwiftSoup.parse(html)
     }
 
-    public init(fromFragment html: String) throws {
+    public init(fromHTMLFragment html: String) throws {
         document = try SwiftSoup.parseBodyFragment(html)
     }
 

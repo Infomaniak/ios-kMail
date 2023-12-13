@@ -234,6 +234,11 @@ final class MailEditorView: SQTextEditorView {
         _webView.backgroundColor = .clear
         self.updateToolbarItems(style: .main)
         _webView.scrollView.keyboardDismissMode = .interactive
+
+        if #available(iOS 17.0, *) {
+            _webView.isInspectable = true
+        }
+
         return _webView
     }()
 
@@ -255,7 +260,7 @@ final class MailEditorView: SQTextEditorView {
     // MARK: - Custom function
 
     func insertRawHTML(_ html: String) async throws {
-        let cleanedHTML = try await SwiftSoupUtils(from: html).cleanBody()
+        let cleanedHTML = try await SwiftSoupUtils(fromHTMLFragment: html).cleanBody()
         try await webView.evaluateJavaScript("document.getElementById('editor').innerHTML += `\(cleanedHTML)`")
     }
 
