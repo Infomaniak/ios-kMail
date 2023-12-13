@@ -104,7 +104,10 @@ public class ActionsManager: ObservableObject {
                         .wrappedValue = FlushAlertState(deletedMessages: messagesWithDuplicates
                             .uniqueThreadsInFolder(origin.frozenFolder).count) {
                                 await tryOrDisplayError { [weak self] in
-                                    try await self?.performDelete(messages: messagesWithDuplicates, originFolder: origin.frozenFolder)
+                                    try await self?.performDelete(
+                                        messages: messagesWithDuplicates,
+                                        originFolder: origin.frozenFolder
+                                    )
                                 }
                         }
                 }

@@ -131,7 +131,7 @@ struct FolderCellContent: View {
 
     @Environment(\.folderCellType) var cellType
 
-    private let folder: Folder
+    private let frozenFolder: Folder
     private let level: Int
     private let isCurrentFolder: Bool
     private let canCollapseSubFolders: Bool
@@ -148,7 +148,8 @@ struct FolderCellContent: View {
     }
 
     init(folder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false) {
-        self.folder = folder
+        // assert(folder.isFrozen, "We expect the folder to be frozen")
+        frozenFolder = folder.freezeIfNeeded()
         self.level = min(level, UIConstants.menuDrawerMaximumSubFolderLevel)
         self.isCurrentFolder = isCurrentFolder
         self.canCollapseSubFolders = canCollapseSubFolders
@@ -158,20 +159,20 @@ struct FolderCellContent: View {
         HStack(spacing: 0) {
             if canHaveChevron {
                 Button(action: collapseFolder) {
-                    ChevronIcon(direction: folder.isExpanded ? .up : .down)
+                    ChevronIcon(direction: frozenFolder.isExpanded ? .up : .down)
                         .padding(value: .regular)
                 }
-                .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandFolder(folder.name))
-                .opacity(level == 0 && !folder.children.isEmpty ? 1 : 0)
+                .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandFolder(frozenFolder.name))
+                .opacity(level == 0 && !frozenFolder.children.isEmpty ? 1 : 0)
             }
 
             HStack(spacing: UIPadding.menuDrawerCellSpacing) {
-                folder.icon
+                frozenFolder.icon
                     .resizable()
                     .scaledToFit()
                     .frame(width: 24, height: 24)
 
-                Text(folder.localizedName)
+                Text(frozenFolder.localizedName)
                     .textStyle(textStyle)
                     .lineLimit(1)
 
@@ -188,11 +189,11 @@ struct FolderCellContent: View {
     @ViewBuilder
     private var accessory: some View {
         if cellType == .menuDrawer {
-            if folder.role != .sent && folder.role != .trash {
-                if !folder.formattedUnreadCount.isEmpty {
-                    Text(folder.formattedUnreadCount)
+            if frozenFolder.role != .sent && frozenFolder.role != .trash {
+                if !frozenFolder.formattedUnreadCount.isEmpty {
+                    Text(frozenFolder.formattedUnreadCount)
                         .textStyle(.bodySmallMediumAccent)
-                } else if folder.remoteUnreadCount > 0 {
+                } else if frozenFolder.remoteUnreadCount > 0 {
                     UnreadIndicatorView()
                         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUnreadPastille)
                 }
@@ -210,11 +211,11 @@ struct FolderCellContent: View {
     }
 
     private func collapseFolder() {
-        matomo.track(eventWithCategory: .menuDrawer, name: "collapseFolder", value: !folder.isExpanded)
+        matomo.track(eventWithCategory: .menuDrawer, name: "collapseFolder", value: !frozenFolder.isExpanded)
 
-        guard let liveFolder = folder.thaw() else { return }
+        guard let liveFolder = frozenFolder.thaw() else { return }
         try? liveFolder.realm?.write {
-            liveFolder.isExpanded = !folder.isExpanded
+            liveFolder.isExpanded = !frozenFolder.isExpanded
         }
     }
 }
