@@ -273,7 +273,6 @@ extension DraftContentManager {
 
     private func appendBlockquote(to element: Element, completion: (Element) async throws -> Void) async throws {
         let blockquote = try element.appendElement("blockquote")
-        try blockquote.addClass("ws-ng-quotee")
         try await completion(blockquote)
     }
 
