@@ -235,9 +235,11 @@ final class MailEditorView: SQTextEditorView {
         self.updateToolbarItems(style: .main)
         _webView.scrollView.keyboardDismissMode = .interactive
 
+        #if DEBUG
         if #available(iOS 17.0, *) {
             _webView.isInspectable = true
         }
+        #endif
 
         return _webView
     }()
