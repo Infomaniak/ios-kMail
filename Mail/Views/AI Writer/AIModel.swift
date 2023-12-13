@@ -151,7 +151,7 @@ extension AIModel {
             replyingString = replyingBody.value
         } else if let value = replyingBody.value {
             let splitReply = await MessageBodyUtils.splitBodyAndQuote(messageBody: value)
-            replyingString = try await SwiftSoupUtils(from: splitReply.messageBody).extractText()
+            replyingString = try await SwiftSoupUtils(fromHTML: splitReply.messageBody).extractText()
         }
 
         guard let replyingString else { return }

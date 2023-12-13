@@ -76,7 +76,7 @@ struct MessageBodyView: View {
 
     private func loadBody(blockRemoteContent: Bool) {
         Task {
-            let loadResult = await model.loadBody(presentableBody: presentableBody, blockRemoteContent: blockRemoteContent)
+            let loadResult = try await model.loadBody(presentableBody: presentableBody, blockRemoteContent: blockRemoteContent)
 
             displayContentBlockedActionView = (loadResult == .remoteContentBlocked)
         }

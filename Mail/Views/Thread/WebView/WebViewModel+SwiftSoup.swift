@@ -21,22 +21,11 @@ import MailCore
 import SwiftSoup
 
 extension WebViewModel {
-    func createHTMLForPlainText(text: String?) -> String {
-        guard let text else { return "" }
-        do {
-            let doc = SwiftSoup.Document.createShell("")
-            try doc.body()?.appendElement("pre").text(text)
-            return try doc.outerHtml()
-        } catch {
-            return text
-        }
-    }
-
     func loadHTMLString(value: String?, blockRemoteContent: Bool) async -> LoadResult {
         guard let rawHTML = value else { return .errorEmptyInputValue }
 
         do {
-            guard let safeDocument = try? await SwiftSoupUtils(from: rawHTML).cleanCompleteDocument()
+            guard let safeDocument = try? await SwiftSoupUtils(fromHTML: rawHTML).cleanCompleteDocument()
             else { return .errorCleanHTMLContent }
 
             try updateHeadContent(of: safeDocument)

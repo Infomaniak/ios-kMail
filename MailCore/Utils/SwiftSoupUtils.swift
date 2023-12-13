@@ -25,8 +25,12 @@ public struct SwiftSoupUtils {
         self.document = document
     }
 
-    public init(from html: String) throws {
+    public init(fromHTML html: String) throws {
         document = try SwiftSoup.parse(html)
+    }
+
+    public init(fromHTMLFragment html: String) throws {
+        document = try SwiftSoup.parseBodyFragment(html)
     }
 
     public func cleanBody() async throws -> Document {
@@ -45,6 +49,10 @@ public struct SwiftSoupUtils {
         }
 
         return cleanedDocument
+    }
+
+    public func extractParentElement() async -> Element? {
+        return document.body()?.children().first()
     }
 
     public func extractHTML(_ cssQuery: String) async throws -> String {
