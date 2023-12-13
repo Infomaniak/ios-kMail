@@ -279,7 +279,11 @@ public extension MailboxManager {
         }
     }
 
-    func attachmentData(attachment: Attachment) async throws -> Data {
+    func attachmentData(_ attachment: Attachment) async throws -> Data {
+        guard !Task.isCancelled else {
+            throw CancellationError()
+        }
+
         let data = try await apiFetcher.attachment(attachment: attachment)
 
         let safeAttachment = ThreadSafeReference(to: attachment)
@@ -296,7 +300,7 @@ public extension MailboxManager {
 
     func saveAttachmentLocally(attachment: Attachment) async {
         do {
-            let data = try await attachmentData(attachment: attachment)
+            let data = try await attachmentData(attachment)
             if let url = attachment.localUrl {
                 let parentFolder = url.deletingLastPathComponent()
                 if !FileManager.default.fileExists(atPath: parentFolder.path) {

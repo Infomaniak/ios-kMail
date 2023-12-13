@@ -147,7 +147,7 @@ struct ComposeMessageView: View {
             do {
                 isLoadingContent = true
                 currentSignature = try await draftContentManager.prepareCompleteDraft()
-                attachmentsManager.completeUploadedAttachments()
+                await attachmentsManager.completeUploadedAttachments()
                 isLoadingContent = false
             } catch {
                 // Unable to get signatures, "An error occurred" and close modal.
@@ -156,7 +156,11 @@ struct ComposeMessageView: View {
             }
         }
         .onAppear {
-            attachmentsManager.importAttachments(attachments: initialAttachments, draft: draft)
+            attachmentsManager.importAttachments(
+                attachments: initialAttachments,
+                draft: draft,
+                disposition: AttachmentDisposition.defaultDisposition
+            )
             initialAttachments = []
 
             if featureFlagsManager.isEnabled(.aiMailComposer) && UserDefaults.shared.shouldPresentAIFeature {

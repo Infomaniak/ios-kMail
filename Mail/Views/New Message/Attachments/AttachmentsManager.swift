@@ -24,319 +24,121 @@ import MailCore
 import PhotosUI
 import SwiftUI
 
-@MainActor final class AttachmentUploadTask: ObservableObject {
-    @Published var progress: Double = 0
-    var task: Task<String?, Never>?
-    @Published var error: MailError?
-    var uploadDone: Bool {
-        return progress >= 1
-    }
-}
+/// Something to deal with the tracking and Upload of Attachments linked to a Draft.
+@MainActor protocol AttachmentsManageable {
+    /// The `live` Draft
+    var liveDraft: Draft? { get }
 
-/// Abstract the fact some object was updated
-protocol ContentUpdatable: AnyObject {
-    /// Call to notify the content has changed.
-    @MainActor func contentWillChange()
+    /// Live Attachments linked to the Draft
+    var liveAttachments: [Attachment] { get }
+
+    /// True if all uploaded
+    var allAttachmentsUploaded: Bool { get }
+
+    /// First error encountered
+    var globalError: MailError? { get }
+
+    /// Init a concrete manager type
+    /// - Parameters:
+    ///   - draftLocalUUID: the primary key of the draft
+    ///   - mailboxManager: the mailbox manager linked to this draft
+    init(draftLocalUUID: String, mailboxManager: MailboxManager)
+
+    /// Marks all uploads as done
+    func completeUploadedAttachments() async
+
+    /// Lookup and return _or_ new object representing a finished task instead.
+    func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentUploadTask
+
+    /// Removes an attachment for a specific primary key
+    /// - Parameter attachmentUUID: primary key of the object
+    func removeAttachment(_ attachmentUUID: String)
+
+    /// Uploads remotely a collection of `Attachable`
+    /// - Parameters:
+    ///   - attachments: collection of `Attachable`
+    ///   - draft: Draft containing the attachments
+    ///   - disposition: Is it inline ?
+    func importAttachments(attachments: [Attachable], draft: Draft, disposition: AttachmentDisposition)
 }
 
 /// Something to track `Attachments` linked to a live `Draft`
-@MainActor final class AttachmentsManager: ObservableObject, ContentUpdatable {
+@MainActor final class AttachmentsManager: ObservableObject, AttachmentsManageable {
     private let draftLocalUUID: String
 
-    /// Live `Draft` getter
-    private var liveDraft: Draft? {
-        guard let liveDraft = mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: draftLocalUUID),
-              !liveDraft.isInvalidated else {
-            return nil
-        }
-
-        return liveDraft
-    }
+    /// Async attachment operations
+    private let worker: AttachmentsManagerWorker
 
     private let mailboxManager: MailboxManager
-    private let parallelTaskMapper = ParallelTaskMapper()
     private let backgroundRealm: BackgroundRealm
 
     /// Something to debounce content will change updates
     private let contentWillChangeSubject = PassthroughSubject<Void, Never>()
     private var contentWillChangeObserver: AnyCancellable?
 
-    var liveAttachments: [Attachment] {
-        guard let liveDraft else {
-            return []
-        }
-        return liveDraft.attachments.filter { $0.contentId == nil && !$0.isInvalidated }.toArray()
+    var liveDraft: Draft? {
+        worker.liveDraft
     }
 
-    private var attachmentUploadTasks = SendableDictionary<String, AttachmentUploadTask>()
+    var liveAttachments: [Attachment] {
+        worker.liveAttachments
+    }
 
     var allAttachmentsUploaded: Bool {
-        return attachmentUploadTasks.values.allSatisfy(\.uploadDone)
+        worker.allAttachmentsUploaded
     }
 
     var globalError: MailError?
 
-    private lazy var filenameDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd_HHmmssSS"
-        return formatter
-    }()
-
     init(draftLocalUUID: String, mailboxManager: MailboxManager) {
         self.draftLocalUUID = draftLocalUUID
         self.mailboxManager = mailboxManager
+        let realm = BackgroundRealm(configuration: mailboxManager.realmConfiguration)
+        backgroundRealm = realm
 
         // Debouncing objectWillChange helps a lot scaling with numerous attachments
-        backgroundRealm = BackgroundRealm(configuration: mailboxManager.realmConfiguration)
+        worker = AttachmentsManagerWorker(
+            backgroundRealm: realm,
+            draftLocalUUID: draftLocalUUID,
+            mailboxManager: mailboxManager
+        )
+
         contentWillChangeObserver = contentWillChangeSubject
             .debounce(for: .milliseconds(150), scheduler: DispatchQueue.main)
             .sink { _ in
                 self.objectWillChange.send()
             }
+
+        worker.setUpdateDelegate(self)
     }
 
-    func contentWillChange() {
-        contentWillChangeSubject.send()
+    func completeUploadedAttachments() async {
+        await worker.completeUploadedAttachments()
     }
 
-    func completeUploadedAttachments() {
-        for attachment in liveAttachments {
-            let uploadTask = attachmentUploadTaskOrCreate(for: attachment.uuid)
-            uploadTask.progress = 1
-        }
-        contentWillChange()
-    }
-
-    private func updateAttachment(oldAttachment: Attachment, newAttachment: Attachment) async {
-        guard let oldAttachment = liveDraft?.attachments.first(where: { $0.uuid == oldAttachment.uuid }) else {
-            return
-        }
-
-        let oldAttachmentUUID = oldAttachment.uuid
-        let newAttachmentUUID = newAttachment.uuid
-
-        if oldAttachmentUUID != newAttachmentUUID {
-            attachmentUploadTasks[newAttachmentUUID] = attachmentUploadTasks[oldAttachmentUUID]
-            attachmentUploadTasks.removeValue(forKey: oldAttachmentUUID)
-        }
-
-        await backgroundRealm.execute { realm in
-            try? realm.write {
-                guard let draftInContext = realm.object(ofType: Draft.self, forPrimaryKey: self.draftLocalUUID) else {
-                    return
-                }
-
-                guard let liveOldAttachment = draftInContext.attachments.first(where: { $0.uuid == oldAttachmentUUID }) else {
-                    return
-                }
-
-                // We need to update every field of the local attachment because embedded objects don't have a primary key
-                liveOldAttachment.update(with: newAttachment)
-            }
-        }
-
-        contentWillChange()
-    }
-
-    /// Lookup and return. New object created and returned instead
-    func attachmentUploadTaskOrCreate(for uuid: String) -> AttachmentUploadTask {
-        guard let attachment = attachmentUploadTask(for: uuid) else {
-            let newTask = AttachmentUploadTask()
-            attachmentUploadTasks[uuid] = newTask
-            return newTask
-        }
-
-        return attachment
-    }
-
-    /// Lookup and return. New object representing a finished task instead.
     func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentUploadTask {
-        guard let attachment = attachmentUploadTask(for: uuid) else {
-            let finishedTask = AttachmentUploadTask()
-            finishedTask.progress = 1
-            attachmentUploadTasks[uuid] = finishedTask
-            return finishedTask
-        }
-
-        return attachment
-    }
-
-    /// Lookup and return, nil if not found
-    private func attachmentUploadTask(for uuid: String) -> AttachmentUploadTask? {
-        guard let attachment = attachmentUploadTasks[uuid] else {
-            return nil
-        }
-
-        return attachment
+        worker.attachmentUploadTaskOrFinishedTask(for: uuid)
     }
 
     func removeAttachment(_ attachmentUUID: String) {
         Task {
-            await backgroundRealm.execute { realm in
-                try? realm.write {
-                    guard let draftInContext = realm.object(ofType: Draft.self, forPrimaryKey: self.draftLocalUUID) else {
-                        return
-                    }
-
-                    guard let liveAttachment = draftInContext.attachments.first(where: { $0.uuid == attachmentUUID }) else {
-                        return
-                    }
-
-                    realm.delete(liveAttachment)
-                }
-            }
-
-            attachmentUploadTasks[attachmentUUID]?.task?.cancel()
-            attachmentUploadTasks.removeValue(forKey: attachmentUUID)
-
-            contentWillChange()
+            await worker.removeAttachment(attachmentUUID)
         }
     }
 
-    private func addLocalAttachment(attachment: Attachment) async -> Attachment? {
-        attachmentUploadTasks[attachment.uuid] = AttachmentUploadTask()
-
-        var detached: Attachment?
-        await backgroundRealm.execute { realm in
-            try? realm.write {
-                guard let draftInContext = realm.object(ofType: Draft.self, forPrimaryKey: self.draftLocalUUID) else {
-                    return
-                }
-
-                draftInContext.attachments.append(attachment)
-            }
-
-            detached = attachment.detached()
-        }
-
-        contentWillChange()
-        return detached
-    }
-
-    private func updateAttachmentUploadError(attachment: Attachment, error: Error?) {
-        if let error = error as? MailError {
-            attachmentUploadTasks[attachment.uuid]?.error = error
-        } else {
-            attachmentUploadTasks[attachment.uuid]?.error = .unknownError
-        }
-    }
-
-    private func createLocalAttachment(name: String,
-                                       type: UTType?,
-                                       disposition: AttachmentDisposition) async -> Attachment? {
-        let name = nameWithExtension(name: name,
-                                     correspondingTo: type)
-        let attachment = Attachment(uuid: UUID().uuidString,
-                                    partId: "",
-                                    mimeType: type?.preferredMIMEType ?? "application/octet-stream",
-                                    size: 0,
-                                    name: name,
-                                    disposition: disposition)
-        let savedAttachment = await addLocalAttachment(attachment: attachment)
-        return savedAttachment
-    }
-
-    private func updateLocalAttachment(url: URL, attachment: Attachment) async -> Attachment {
-        let urlResources = try? url.resourceValues(forKeys: [.typeIdentifierKey, .fileSizeKey])
-        let uti = UTType(urlResources?.typeIdentifier ?? "")
-        let name = url.lastPathComponent
-        let updatedName = nameWithExtension(name: name,
-                                            correspondingTo: uti)
-        let mimeType = uti?.preferredMIMEType ?? attachment.mimeType
-        let size = Int64(urlResources?.fileSize ?? 0)
-
-        let newAttachment = Attachment(uuid: attachment.uuid,
-                                       partId: "",
-                                       mimeType: mimeType,
-                                       size: size,
-                                       name: updatedName,
-                                       disposition: attachment.disposition)
-
-        await updateAttachment(oldAttachment: attachment, newAttachment: newAttachment)
-        return newAttachment
-    }
-
-    func importAttachments(attachments: [Attachable], draft: Draft, disposition: AttachmentDisposition = .attachment) {
-        guard !attachments.isEmpty else {
-            return
-        }
-
-        // Cap max number of attachments, API errors out at 100
-        let attachmentsSlice = attachments[safe: 0 ..< draft.availableAttachmentsSlots]
-
+    func importAttachments(attachments: [Attachable], draft: Draft, disposition: AttachmentDisposition) {
         Task {
-            try? await self.parallelTaskMapper.map(collection: attachmentsSlice) { attachment in
-                _ = await self.importAttachment(attachment: attachment, disposition: disposition)
-                // TODO: - Manage inline attachment
-            }
+            await worker.importAttachments(attachments: attachments, draft: draft, disposition: disposition)
         }
     }
+}
 
-    private func importAttachment(attachment: Attachable, disposition: AttachmentDisposition) async -> String? {
-        guard let localAttachment = await createLocalAttachment(name: attachment.suggestedName ?? getDefaultFileName(),
-                                                                type: attachment.type,
-                                                                disposition: disposition) else {
-            return nil
-        }
-
-        let importTask = Task { () -> String? in
-            do {
-                let url = try await attachment.writeToTemporaryURL()
-                let updatedAttachment = await updateLocalAttachment(url: url, attachment: localAttachment)
-                let totalSize = liveAttachments.map(\.size).reduce(0) { $0 + $1 }
-                guard totalSize < Constants.maxAttachmentsSize else {
-                    globalError = MailError.attachmentsSizeLimitReached
-                    removeAttachment(updatedAttachment.uuid)
-                    return nil
-                }
-
-                let remoteAttachment = try await sendAttachment(url: url, localAttachment: updatedAttachment)
-
-                if disposition == .inline,
-                   let cid = remoteAttachment?.contentId {
-                    return cid
-                }
-            } catch {
-                DDLogError("Error while creating attachment: \(error.localizedDescription)")
-                updateAttachmentUploadError(attachment: localAttachment, error: error)
-            }
-
-            return nil
-        }
-
-        attachmentUploadTasks[localAttachment.uuid]?.task = importTask
-
-        return await importTask.value
+extension AttachmentsManager: AttachmentsContentUpdatable {
+    func contentWillChange() {
+        contentWillChangeSubject.send()
     }
 
-    private func nameWithExtension(name: String, correspondingTo type: UTType?) -> String {
-        guard let filenameExtension = type?.preferredFilenameExtension,
-              !name.capitalized.hasSuffix(filenameExtension.capitalized) else {
-            return name
-        }
-
-        return name.appending(".\(filenameExtension)")
-    }
-
-    private func getDefaultFileName() -> String {
-        return filenameDateFormatter.string(from: Date())
-    }
-
-    private func sendAttachment(
-        url: URL,
-        localAttachment: Attachment
-    ) async throws -> Attachment? {
-        let data = try Data(contentsOf: url)
-        let remoteAttachment = try await mailboxManager.apiFetcher.createAttachment(
-            mailbox: mailboxManager.mailbox,
-            attachmentData: data,
-            attachment: localAttachment
-        ) { progress in
-            Task { [weak self] in
-                self?.attachmentUploadTasks[localAttachment.uuid]?.progress = progress
-            }
-        }
-        await updateAttachment(oldAttachment: localAttachment, newAttachment: remoteAttachment)
-        return remoteAttachment
+    func handleGlobalError(_ error: MailError) {
+        globalError = error
     }
 }

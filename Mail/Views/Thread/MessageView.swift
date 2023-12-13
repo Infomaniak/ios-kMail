@@ -40,15 +40,12 @@ struct MessageView: View {
 
     @State private var isShowingErrorLoading = false
 
-    /// The cancellable task used to preprocess the content
-    @State var preprocessing: Task<Void, Never>?
+    /// Something to preprocess inline attachments
+    @State var inlineAttachmentWorker: InlineAttachmentWorker?
 
     @State var displayContentBlockedActionView = false
 
     @ObservedRealmObject var message: Message
-
-    /// Something to base64 encode images
-    let base64Encoder = Base64Encoder()
 
     private var isRemoteContentBlocked: Bool {
         return (UserDefaults.shared.displayExternalContent == .askMe || message.folder?.role == .spam)
@@ -118,16 +115,10 @@ struct MessageView: View {
                 }
             }
             .onChange(of: message.fullyDownloaded) { _ in
-                if message.fullyDownloaded, isMessageExpanded {
-                    prepareBodyIfNeeded()
-                }
+                prepareBodyIfNeeded()
             }
             .onChange(of: isMessageExpanded) { _ in
-                if message.fullyDownloaded, isMessageExpanded {
-                    prepareBodyIfNeeded()
-                } else {
-                    cancelPrepareBodyIfNeeded()
-                }
+                prepareBodyIfNeeded()
             }
             .onChange(of: threadForcedExpansion[message.uid]) { newValue in
                 if newValue == true {
@@ -137,15 +128,11 @@ struct MessageView: View {
                 }
             }
             .onAppear {
-                if message.fullyDownloaded,
-                   isMessageExpanded,
-                   !isMessagePreprocessed,
-                   preprocessing == nil {
-                    prepareBodyIfNeeded()
-                }
+                prepareBodyIfNeeded()
             }
             .onDisappear {
-                cancelPrepareBodyIfNeeded()
+                inlineAttachmentWorker?.stop()
+                inlineAttachmentWorker = nil
             }
         }
     }
@@ -161,23 +148,6 @@ struct MessageView: View {
                 isShowingErrorLoading = true
             }
         }
-    }
-
-    /// Update the DOM in the main actor
-    @MainActor func mutate(compactBody: String?, quote: String?) {
-        presentableBody.compactBody = compactBody
-        presentableBody.quote = quote
-    }
-
-    /// Update the DOM in the main actor
-    @MainActor func mutate(body: String?, compactBody: String?) {
-        presentableBody.body?.value = body
-        presentableBody.compactBody = compactBody
-    }
-
-    /// preprocess is finished
-    @MainActor func processingCompleted() {
-        isMessagePreprocessed = true
     }
 }
 
