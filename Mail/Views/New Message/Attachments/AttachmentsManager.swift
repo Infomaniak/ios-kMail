@@ -43,16 +43,14 @@ protocol ContentUpdatable: AnyObject {
 @MainActor final class AttachmentsManager: ObservableObject, ContentUpdatable {
     private let draftLocalUUID: String
 
-    private let _liveDraft: Draft?
-
     /// Live `Draft` getter
     private var liveDraft: Draft? {
-        guard let _liveDraft,
-              !_liveDraft.isInvalidated else {
+        guard let draft = mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: draftLocalUUID),
+              !draft.isInvalidated else {
             return nil
         }
 
-        return _liveDraft
+        return draft
     }
 
     /// Live `[Attachment]` getter
@@ -86,7 +84,6 @@ protocol ContentUpdatable: AnyObject {
     }()
 
     init(draftLocalUUID: String, mailboxManager: MailboxManager) {
-        _liveDraft = mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: draftLocalUUID)
         self.draftLocalUUID = draftLocalUUID
         self.mailboxManager = mailboxManager
 
