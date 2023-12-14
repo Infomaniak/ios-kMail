@@ -21,7 +21,7 @@ import ProjectDescription
 public enum Constants {
     public static let baseSettings = SettingsDictionary()
         .currentProjectVersion("1")
-        .marketingVersion("1.0.12")
+        .marketingVersion("1.0.13")
         .automaticCodeSigning(devTeam: "864VDCS2QY")
         .merging(["DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER": SettingValue(stringLiteral: "NO")])
 
