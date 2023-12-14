@@ -212,6 +212,28 @@ public class Thread: Object, Decodable, Identifiable {
         self.answered = answered
         self.forwarded = forwarded
     }
+
+    public required init(from decoder: Decoder) throws {
+        super.init()
+
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        uid = try container.decode(String.self, forKey: .uid)
+        messages = try container.decode(List<Message>.self, forKey: .messages)
+        unseenMessages = try container.decode(Int.self, forKey: .unseenMessages)
+        from = try container.decode(List<Recipient>.self, forKey: .from)
+        to = try container.decode(List<Recipient>.self, forKey: .to)
+        subject = try container.decode(String?.self, forKey: .subject)
+        date = try container.decodeIfPresent(Date.self, forKey: .date) ?? Date()
+        hasAttachments = try container.decode(Bool.self, forKey: .hasAttachments)
+        hasDrafts = try container.decode(Bool.self, forKey: .hasDrafts)
+        flagged = try container.decode(Bool.self, forKey: .flagged)
+        answered = try container.decode(Bool.self, forKey: .answered)
+        forwarded = try container.decode(Bool.self, forKey: .forwarded)
+    }
+
+    override public init() {
+        super.init()
+    }
 }
 
 public extension Thread {
