@@ -20,9 +20,9 @@ import MailResources
 import SwiftUI
 
 struct InitialsView: View {
-    var initials: String
-    var color: UIColor
-    var size: CGFloat = 40
+    let initials: String
+    let color: UIColor
+    let size: CGFloat
 
     var body: some View {
         ZStack {
@@ -38,6 +38,6 @@ struct InitialsView: View {
 
 struct InitialsView_Previews: PreviewProvider {
     static var previews: some View {
-        InitialsView(initials: "TE", color: .systemRed)
+        InitialsView(initials: "TE", color: .systemRed, size: 40)
     }
 }

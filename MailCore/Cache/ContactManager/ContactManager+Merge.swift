@@ -82,7 +82,7 @@ extension ContactManager {
         currentMergeRequest = nil
     }
 
-    /// This reprensets the complete process of maintaining a coherent DB of contacts in realm
+    /// This represents the complete process of maintaining a coherent DB of contacts in realm
     ///
     /// This will merge InfomaniakContact with local iPhone ones in a coherent DB.
     /// Removed contacts from both datasets will be cleaned also
