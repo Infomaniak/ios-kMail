@@ -263,7 +263,7 @@ final class MailEditorView: SQTextEditorView {
 
     func insertRawHTML(_ html: String) async throws {
         let cleanedHTML = try await SwiftSoupUtils(fromHTMLFragment: html).cleanBody()
-        try await webView.evaluateJavaScript("document.getElementById('editor').innerHTML += `\(cleanedHTML)`")
+        try await webView.evaluateJavaScript("document.getElementById('editor').innerHTML = `\(cleanedHTML)`")
     }
 
     // MARK: - Editor methods
