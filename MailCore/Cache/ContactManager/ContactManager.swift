@@ -69,7 +69,7 @@ public final class ContactManager: ObservableObject {
         let realmName = "\(userId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: ContactManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 3,
+            schemaVersion: 4,
             deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 MergedContact.self,

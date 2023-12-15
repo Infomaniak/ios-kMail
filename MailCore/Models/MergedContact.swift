@@ -45,7 +45,8 @@ public final class MergedContact: Object, Identifiable {
     private static let contactFormatter = CNContactFormatter()
 
     /// Shared
-    @Persisted(primaryKey: true) public var email: String
+    @Persisted(primaryKey: true) public var id: Int
+    @Persisted public var email: String
     @Persisted public var name: String
 
     /// Remote
@@ -120,6 +121,8 @@ public final class MergedContact: Object, Identifiable {
         // Load the object, prefer data from Device.
         populateWithRemote(remote)
         overrideWithLocal(local)
+
+        id = computeId(email: email, name: name)
     }
 
     /// Overload object with local information
@@ -154,5 +157,13 @@ public final class MergedContact: Object, Identifiable {
 
         // identifier
         remoteIdentifier = contact.id
+    }
+
+    private func computeId(email: String, name: String) -> Int {
+        if email == name {
+            return email.hash
+        } else {
+            return email.hash ^ name.hash
+        }
     }
 }
