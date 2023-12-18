@@ -118,7 +118,7 @@ public final class MergedContact: Object, Identifiable {
 
         self.email = email
 
-        // Load the object, prefer data from Device.
+        // Load the object, prefer data from Device
         populateWithRemote(remote)
         overrideWithLocal(local)
 
@@ -131,10 +131,7 @@ public final class MergedContact: Object, Identifiable {
             return
         }
 
-        // name
         name = Self.contactFormatter.string(from: contact) ?? ""
-
-        // local contact identifier
         localIdentifier = contact.identifier
     }
 
@@ -144,26 +141,16 @@ public final class MergedContact: Object, Identifiable {
             return
         }
 
-        // name
         if let remoteName = contact.name {
             name = remoteName
         }
-
-        // color
         remoteColorHex = contact.color
-
-        // avatar
         remoteAvatarURL = contact.avatar
-
-        // identifier
         remoteIdentifier = contact.id
     }
 
     private func computeId(email: String, name: String) -> Int {
-        if email == name || name.isEmpty {
-            return email.hash
-        } else {
-            return email.hash ^ name.hash
-        }
+        guard email != name && !name.isEmpty else { return email.hash }
+        return email.hash ^ name.hash
     }
 }
