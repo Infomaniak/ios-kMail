@@ -58,7 +58,8 @@ public extension ContactManager {
 
     func getContact(for recipient: Recipient, realm: Realm? = nil) -> MergedContact? {
         let realm = realm ?? getRealm()
-        return realm.objects(MergedContact.self).where { $0.email == recipient.email }.first
+        let matched = realm.objects(MergedContact.self).where { $0.email == recipient.email }
+        return matched.first { $0.name == recipient.name } ?? matched.first
     }
 
     func addressBook(with id: Int) -> AddressBook? {

@@ -36,7 +36,7 @@ extension ContactManager {
 
     /// Making sure only one update task is running or return
     ///
-    /// This will merge Infomaniak contacts with local iPhone ones in a coherent DB.
+    /// This will merge Infomaniak contacts with local device ones in a coherent DB.
     /// Removed contacts from both datasets will be cleaned also.
     public func uniqueUpdateContactDBTask(_ apiFetcher: MailApiFetcher) async {
         // We do not run an update of contacts in extension mode as we are too resource constrained
@@ -197,7 +197,7 @@ extension ContactManager {
         }
     }
 
-    // Insert Contacts indexed by id in base without check
+    /// Insert Contacts indexed by id in base without check
     private func insertMergedContactsInDB(_ mergedContacts: [Int: MergedContact]) {
         guard !Task.isCancelled else {
             return
