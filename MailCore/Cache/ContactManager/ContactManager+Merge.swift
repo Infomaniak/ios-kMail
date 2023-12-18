@@ -92,6 +92,7 @@ extension ContactManager {
             DDLogInfo("Done merging remote and local contacts in DB…")
         }
 
+        // Index contacts by id
         var remoteContactsById = [Int: InfomaniakContact]()
         for contact in remote {
             let emails = contact.emails
@@ -107,33 +108,61 @@ extension ContactManager {
             }
         }
 
-        // Clean contacts no longer present is remote or local iPhone contacts
-        removeDeletedContactsFromLocal(andRemote: remoteContactsById)
-
-        // Insert all the local contacts, while merging them with the remote version
-        let remainingContacts = await insertLocalContactsInDBMerging(remote: remoteContactsById)
-
-        // Insert remaining remote contacts in db
-        insertContactsInDB(remainingContacts)
+        let mergedContacts = await mergeLocalAndRemoteContacts(remoteContactsById)
+        removeDeletedContactsFromLocalAndRemote(mergedContacts)
+        insertMergedContactsInDB(mergedContacts)
     }
+
+    // MARK: - Private
 
     private func computeContactId(email: String, name: String?) -> Int {
         guard let name, name != email else { return email.hash }
         return email.hash ^ name.hash
     }
 
-    // MARK: - Private
+    /// Merge local and remote contacts, insert them in contact database.
+    /// - Parameter remote: all the remote Infomaniak contacts, indexed by id
+    /// - Returns: The remaining remote contacts without a local version, indexed by id
+    private func mergeLocalAndRemoteContacts(_ remoteContacts: [Int: InfomaniakContact]) async -> [MergedContact] {
+        var notMergedContacts = remoteContacts
+        var mergedContacts = [MergedContact]()
 
-    /// Clean contacts no longer present is remote ik or local iPhone contacts
-    private func removeDeletedContactsFromLocal(andRemote remote: [Int: InfomaniakContact]) {
-        var toDelete = [String]()
+        await localContactsHelper.enumerateContacts { localContact, stop in
+            guard !Task.isCancelled else {
+                stop.pointee = true
+                return
+            }
+
+            for contactEmail in localContact.emailAddresses {
+                let email = String(contactEmail.value)
+
+                // lookup matching remote contact for current email
+                let id = self.computeContactId(email: email, name: localContact.fullName)
+                let remoteContact = remoteContacts[id]
+
+                mergedContacts.append(MergedContact(email: email, local: localContact, remote: remoteContact))
+                notMergedContacts.removeValue(forKey: id)
+            }
+        }
+
+        for (_, notMergedContact) in notMergedContacts {
+            for email in notMergedContact.emails {
+                mergedContacts.append(MergedContact(email: email, local: nil, remote: notMergedContact))
+            }
+        }
+
+        return mergedContacts
+    }
+
+    /// Clean contacts no longer present is remote ik or local device contacts
+    private func removeDeletedContactsFromLocalAndRemote(_ newMergedContacts: [MergedContact]) {
+        var idsToDelete = [Int]()
 
         // enumerate realm contacts
-        let lazyContacts = getRealm()
-            .objects(MergedContact.self)
+        let lazyMergedContacts = getRealm().objects(MergedContact.self)
 
-        var contactIterator = lazyContacts.makeIterator()
-        while let mergedContact = contactIterator.next() {
+        var mergedContactIterator = lazyMergedContacts.makeIterator()
+        while let mergedContact = mergedContactIterator.next() {
             guard !Task.isCancelled else {
                 return
             }
@@ -142,19 +171,9 @@ extension ContactManager {
                 continue
             }
 
-            let email = mergedContact.email
-
-            let remote = remote[computeContactId(email: email, name: mergedContact.name)]
-            let local: CNContact?
-            if let localContactId = mergedContact.localIdentifier {
-                local = try? localContactsHelper.getContact(with: localContactId)
-            } else {
-                local = nil
-            }
-
-            // If contact not in iPhone nor in remote infomaniak, then should be deleted
-            if remote == nil && local == nil {
-                toDelete.append(email)
+            let id = computeContactId(email: mergedContact.email, name: mergedContact.name)
+            if !newMergedContacts.contains(where: { $0.id == id }) {
+                idsToDelete.append(id)
             }
         }
 
@@ -162,15 +181,14 @@ extension ContactManager {
             return
         }
 
-        // remove old contacts
-        guard !toDelete.isEmpty else {
+        guard !idsToDelete.isEmpty else {
             return
         }
 
         let cleanupRealm = getRealm()
         try? cleanupRealm.safeWrite {
-            for emailToDelete in toDelete {
-                guard let objectToDelete = cleanupRealm.object(ofType: MergedContact.self, forPrimaryKey: emailToDelete) else {
+            for idToDelete in idsToDelete {
+                guard let objectToDelete = cleanupRealm.object(ofType: MergedContact.self, forPrimaryKey: idToDelete) else {
                     continue
                 }
                 cleanupRealm.delete(objectToDelete)
@@ -178,57 +196,16 @@ extension ContactManager {
         }
     }
 
-    /// Merge local and remote contacts, insert them in contact database.
-    /// - Parameter remote: all the remote Infomaniak contacts, indexed by id
-    /// - Returns: The remaining remote contacts without a local version, indexed by id
-    private func insertLocalContactsInDBMerging(remote input: [Int: InfomaniakContact]) async -> [Int: InfomaniakContact] {
-        var output = input
-
-        await localContactsHelper.enumerateContacts { localContact, stop in
-            guard !Task.isCancelled else {
-                stop.pointee = true
-                return
-            }
-
-            // Realm to use for this contact. Do not call it outside this block, or it may crash.
-            let realm = self.getRealm()
-            try? realm.safeWrite {
-                // For each email of a specific contact
-                for cnEmail in localContact.emailAddresses {
-                    let email = String(cnEmail.value)
-
-                    // lookup matching remote contact for current email
-                    let id = self.computeContactId(email: email, name: localContact.fullName)
-                    let remoteContact = input[id]
-
-                    // Create DB object
-                    let mergedContact = MergedContact(email: email, local: localContact, remote: remoteContact)
-
-                    // Remove email from lookup table
-                    output.removeValue(forKey: id)
-
-                    // Store result
-                    realm.add(mergedContact, update: .modified)
-                }
-            }
-        }
-
-        return output
-    }
-
     // Insert Contacts indexed by id in base without check
-    private func insertContactsInDB(_ input: [Int: InfomaniakContact]) {
+    private func insertMergedContactsInDB(_ mergedContacts: [MergedContact]) {
         guard !Task.isCancelled else {
             return
         }
 
         let realm = getRealm()
         try? realm.safeWrite {
-            for (_, contact) in input {
-                for email in contact.emails {
-                    let mergedContact = MergedContact(email: email, local: nil, remote: contact)
-                    realm.add(mergedContact, update: .modified)
-                }
+            for mergedContact in mergedContacts {
+                realm.add(mergedContact, update: .modified)
             }
         }
     }

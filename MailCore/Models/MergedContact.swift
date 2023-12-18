@@ -160,7 +160,7 @@ public final class MergedContact: Object, Identifiable {
     }
 
     private func computeId(email: String, name: String) -> Int {
-        if email == name {
+        if email == name || name.isEmpty {
             return email.hash
         } else {
             return email.hash ^ name.hash
