@@ -83,14 +83,13 @@ struct AttachmentPreview: View {
 
                     Button {
                         guard let attachmentURL = attachment.localUrl else { return }
-                        openAppB(with: attachmentURL)
+                        openInKdrive(with: attachmentURL)
                     } label: {
                         Label {
-                            // TODO: - Update traduction
-                            Text(MailResourcesStrings.Localizable.buttonDownload)
+                            Text(MailResourcesStrings.Localizable.buttonOpenKdrive)
                                 .font(MailTextStyle.labelSecondary.font)
                         } icon: {
-                            IKIcon(MailResourcesAsset.kdrive, size: .large)
+                            IKIcon(MailResourcesAsset.kdriveLogo, size: .large)
                         }
                         .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                     }
@@ -99,7 +98,7 @@ struct AttachmentPreview: View {
         }
     }
 
-    private func openAppB(with url: URL) {
+    private func openInKdrive(with url: URL) {
         guard let destination = writeToGroupContainer(file: url) else { return }
 
         var targetUrl = URLComponents(string: "kdrive-file-sharing://file")
@@ -113,10 +112,10 @@ struct AttachmentPreview: View {
 
     private func writeToGroupContainer(file: URL) -> URL? {
         guard let sharedContainerURL: URL = FileManager.default
-            .containerURL(forSecurityApplicationGroupIdentifier: "group.com.infomaniak") else { return nil }
+            .containerURL(forSecurityApplicationGroupIdentifier: Constants.appGroupIdentifier) else { return nil }
 
         let groupContainer = sharedContainerURL.appendingPathComponent("Library/Caches/file-sharing", conformingTo: .directory)
-        let destination = sharedContainerURL.appendingPathComponent(file.lastPathComponent)
+        let destination = groupContainer.appendingPathComponent(file.lastPathComponent)
 
         do {
             if FileManager.default.fileExists(atPath: groupContainer.path) {

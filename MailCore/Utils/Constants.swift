@@ -170,4 +170,6 @@ public enum Constants {
 
     /// Batch size of inline attachments during processing.
     public static let inlineAttachmentBatchSize = 10
+
+    public static let appGroupIdentifier = "group.com.infomaniak"
 }
