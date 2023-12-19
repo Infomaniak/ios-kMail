@@ -345,7 +345,9 @@ struct ComposeMessageView: View {
             alert.state = .emptySubject(handler: sendDraft)
             return
         }
+
         sendDraft()
+        mainViewState.isShowingSetAppAsDefaultDiscovery = UserDefaults.shared.shouldPresentSetAsDefaultDiscovery
     }
 
     private func sendDraft() {
