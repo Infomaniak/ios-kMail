@@ -26,9 +26,11 @@ import SwiftUI
 
 struct AttachmentPreview: View {
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var urlOpener: URLOpenable
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.verticalSizeClass) private var sizeClass
+    @Environment(\.openURL) private var openUrl
 
     @State private var downloadedAttachmentURL: IdentifiableURL?
 
@@ -78,8 +80,57 @@ struct AttachmentPreview: View {
                     }
 
                     Spacer()
+
+                    Button {
+                        guard let attachmentURL = attachment.localUrl else { return }
+                        openAppB(with: attachmentURL)
+                    } label: {
+                        Label {
+                            // TODO: - Update traduction
+                            Text(MailResourcesStrings.Localizable.buttonDownload)
+                                .font(MailTextStyle.labelSecondary.font)
+                        } icon: {
+                            IKIcon(MailResourcesAsset.kdrive, size: .large)
+                        }
+                        .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
+                    }
                 }
             }
+        }
+    }
+
+    private func openAppB(with url: URL) {
+        guard let destination = writeToGroupContainer(file: url) else { return }
+
+        var targetUrl = URLComponents(string: "kdrive-file-sharing://file")
+        targetUrl?.queryItems = [URLQueryItem(name: "url", value: destination.path)]
+        if let targetAppUrl = targetUrl?.url, urlOpener.canOpen(url: targetAppUrl) {
+            openUrl(targetAppUrl)
+        } else {
+            openUrl(URLConstants.kdriveAppStore.url)
+        }
+    }
+
+    private func writeToGroupContainer(file: URL) -> URL? {
+        guard let sharedContainerURL: URL = FileManager.default
+            .containerURL(forSecurityApplicationGroupIdentifier: "group.com.infomaniak") else { return nil }
+
+        let groupContainer = sharedContainerURL.appendingPathComponent("Library/Caches/file-sharing", conformingTo: .directory)
+        let destination = sharedContainerURL.appendingPathComponent(file.lastPathComponent)
+
+        do {
+            if FileManager.default.fileExists(atPath: groupContainer.path) {
+                try FileManager.default.removeItem(at: groupContainer)
+            }
+            try FileManager.default.createDirectory(at: groupContainer, withIntermediateDirectories: false)
+            try FileManager.default.copyItem(
+                at: file,
+                to: destination
+            )
+            return destination
+        } catch {
+            print("Error copying file: \(error.localizedDescription)")
+            return nil
         }
     }
 }
