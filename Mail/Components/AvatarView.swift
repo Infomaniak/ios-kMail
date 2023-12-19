@@ -44,6 +44,10 @@ struct AvatarView: View {
     /// The configuration associated to this view
     private let contactConfiguration: ContactConfiguration
 
+    private var displayablePerson: CommonContact {
+        viewModel.displayablePerson
+    }
+
     init(mailboxManager: MailboxManager?, contactConfiguration: ContactConfiguration, size: CGFloat = 28) {
         self.mailboxManager = mailboxManager
         self.size = size
@@ -55,11 +59,7 @@ struct AvatarView: View {
 
     var body: some View {
         Group {
-            let displayablePerson = viewModel.displayablePerson
-            if let mailboxManager,
-               let currentToken = mailboxManager.apiFetcher.currentToken,
-               let avatarImageRequest = displayablePerson.avatarImageRequest.authenticatedRequestIfNeeded(token:
-                   currentToken) {
+            if let avatarImageRequest = getAvatarImageRequest() {
                 LazyImage(request: avatarImageRequest) { state in
                     if let image = state.image {
                         ContactImage(image: image, size: size)
@@ -76,5 +76,10 @@ struct AvatarView: View {
             }
         }
         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
+    }
+
+    private func getAvatarImageRequest() -> ImageRequest? {
+        guard let mailboxManager, let currentToken = mailboxManager.apiFetcher.currentToken else { return nil }
+        return displayablePerson.avatarImageRequest.authenticatedRequestIfNeeded(token: currentToken)
     }
 }
