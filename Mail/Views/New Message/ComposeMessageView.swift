@@ -364,6 +364,7 @@ struct ComposeMessageView: View {
             }
         }
         dismissMessageView()
+        mainViewState.isShowingChristmasEasterEgg = true
     }
 
     private static func writeDraftToRealm(_ realm: Realm, draft: Draft) {

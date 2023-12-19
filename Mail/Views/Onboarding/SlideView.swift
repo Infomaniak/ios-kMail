@@ -57,7 +57,7 @@ struct SlideView: View {
                         } else if let lottieConfiguration = slide.lottieConfiguration {
                             LottieView(
                                 configuration: lottieConfiguration,
-                                isVisible: $isVisible,
+                                isVisible: isVisible,
                                 updateColors: updateAnimationColors
                             )
                         }

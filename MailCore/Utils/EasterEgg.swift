@@ -41,4 +41,18 @@ public struct EasterEgg {
         @InjectService var matomoUtils: MatomoUtils
         matomoUtils.track(eventWithCategory: .easterEgg, name: "halloween\(year)")
     }
+
+    public static let christmas = EasterEgg {
+        let calendar = Calendar(identifier: .gregorian)
+        let components = calendar.dateComponents([.day, .month], from: Date())
+        guard let month = components.month, let day = components.day else {
+            return false
+        }
+
+        return month == 12 && day <= 25
+    } onTrigger: {
+        let year = Calendar(identifier: .gregorian).component(.year, from: Date())
+        @InjectService var matomoUtils: MatomoUtils
+        matomoUtils.track(eventWithCategory: .easterEgg, name: "XMas\(year)")
+    }
 }

@@ -101,6 +101,25 @@ struct SplitView: View {
                 }
             }
         }
+        .overlay(alignment: .bottom) {
+            if EasterEgg.christmas.shouldTrigger() && mainViewState.isShowingChristmasEasterEgg {
+                LottieView(configuration: LottieConfiguration(
+                    id: 1,
+                    filename: "easter_egg_xmas",
+                    contentMode: .scaleAspectFill
+                )) {
+                    mainViewState.isShowingChristmasEasterEgg = false
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 200)
+                .padding(.bottom, 96)
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
+                .onAppear {
+                    EasterEgg.christmas.onTrigger()
+                }
+            }
+        }
         .discoveryPresenter(isPresented: $isShowingUpdateAvailable) {
             DiscoveryView(item: .updateDiscovery) { /* Empty on purpose */ } completionHandler: { update in
                 guard update else { return }
