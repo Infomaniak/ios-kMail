@@ -123,6 +123,26 @@ open class TargetAssembly {
         ]
     }
 
+    private static func setupProxyTypes() {
+        let factories = [
+            Factory(type: CacheManageable.self) { _, _ in
+                CacheManager()
+            },
+            Factory(type: OrientationManageable.self) { _, _ in
+                OrientationManager()
+            },
+            Factory(type: RemoteNotificationRegistrable.self) { _, _ in
+                RemoteNotificationRegistrer()
+            },
+            Factory(type: MessageActionHandlable.self) { _, _ in
+                MessageActionHandler()
+            },
+            Factory(type: URLOpenable.self) { _, _ in
+                URLOpener()
+            }
+        ]
+	}
+
     open class func getTargetServices() -> [Factory] {
         DDLogWarn("targetServices is not implemented in subclass ? Did you forget to override ?")
         return []
