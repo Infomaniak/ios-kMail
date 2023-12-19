@@ -347,7 +347,13 @@ struct ComposeMessageView: View {
         }
 
         sendDraft()
-        mainViewState.isShowingSetAppAsDefaultDiscovery = UserDefaults.shared.shouldPresentSetAsDefaultDiscovery
+
+        if !Bundle.main.isExtension {
+            mainViewState.isShowingSetAppAsDefaultDiscovery = UserDefaults.shared.shouldPresentSetAsDefaultDiscovery
+            if !mainViewState.isShowingSetAppAsDefaultDiscovery {
+                mainViewState.isShowingChristmasEasterEgg = true
+            }
+        }
     }
 
     private func sendDraft() {
@@ -366,10 +372,6 @@ struct ComposeMessageView: View {
             }
         }
         dismissMessageView()
-
-        if !Bundle.main.isExtension {
-            mainViewState.isShowingChristmasEasterEgg = true
-        }
     }
 
     private static func writeDraftToRealm(_ realm: Realm, draft: Draft) {
