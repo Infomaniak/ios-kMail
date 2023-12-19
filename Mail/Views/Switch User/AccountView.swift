@@ -78,7 +78,7 @@ struct AccountView: View {
                 .background {
                     if EasterEgg.halloween.shouldTrigger() {
                         LottieView(configuration: LottieConfiguration(id: 1, filename: "easter_egg_halloween"),
-                                   isVisible: $isLottieAnimationVisible)
+                                   isVisible: isLottieAnimationVisible)
                             .offset(y: AccountView.avatarViewSize)
                             .allowsHitTesting(false)
                             .onAppear {

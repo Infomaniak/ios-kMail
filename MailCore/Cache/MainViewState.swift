@@ -23,6 +23,7 @@ public class MainViewState: ObservableObject {
     @Published public var messagesToMove: [Message]?
     @Published public var isShowingSearch = false
     @Published public var isShowingReviewAlert = false
+    @Published public var isShowingChristmasEasterEgg = false
 
     /// Represents the state of navigation
     ///
