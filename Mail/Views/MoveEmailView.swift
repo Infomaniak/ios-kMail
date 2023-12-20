@@ -52,14 +52,22 @@ struct MoveEmailView: View {
     let movedMessages: [Message]
     let originFolder: Folder?
 
+    private var roleFolders: [NestableFolder] {
+        return filteredFolders.filter { $0.content.role != nil }
+    }
+
+    private var userFolders: [NestableFolder] {
+        return filteredFolders.filter { $0.content.role == nil }
+    }
+
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                listOfFolders(nestableFolders: filteredFolders.filter { $0.content.role != nil })
-                if searchFilter.isEmpty {
+                listOfFolders(nestableFolders: roleFolders)
+                if searchFilter.isEmpty || !userFolders.isEmpty {
                     IKDivider()
                 }
-                listOfFolders(nestableFolders: filteredFolders.filter { $0.content.role == nil })
+                listOfFolders(nestableFolders: userFolders)
             }
             .searchable(text: $searchFilter, placement: .navigationBarDrawer(displayMode: .always))
         }
@@ -84,6 +92,14 @@ struct MoveEmailView: View {
         }
     }
 
+    private func listOfFolders(nestableFolders: [NestableFolder]) -> some View {
+        ForEach(nestableFolders) { nestableFolder in
+            FolderCell(folder: nestableFolder, currentFolderId: originFolder?.remoteId) { folder in
+                move(to: folder)
+            }
+        }
+    }
+
     private func move(to folder: Folder) {
         let frozenOriginFolder = originFolder?.freezeIfNeeded()
         Task {
@@ -92,14 +108,6 @@ struct MoveEmailView: View {
             }
         }
         dismissModal()
-    }
-
-    private func listOfFolders(nestableFolders: [NestableFolder]) -> some View {
-        ForEach(nestableFolders) { nestableFolder in
-            FolderCell(folder: nestableFolder, currentFolderId: originFolder?.remoteId) { folder in
-                move(to: folder)
-            }
-        }
     }
 }
 
