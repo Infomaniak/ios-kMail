@@ -103,6 +103,7 @@ struct ThreadCell: View {
     let density: ThreadDensity
     let isMultipleSelectionEnabled: Bool
     let isSelected: Bool
+    let avatarTapped: (() -> Void)?
 
     private var checkboxSize: CGFloat {
         density == .large ? UIConstants.checkboxLargeSize : UIConstants.checkboxSize
@@ -124,7 +125,8 @@ struct ThreadCell: View {
         density: ThreadDensity,
         accentColor: AccentColor,
         isMultipleSelectionEnabled: Bool = false,
-        isSelected: Bool = false
+        isSelected: Bool = false,
+        avatarTapped: (() -> Void)? = nil
     ) {
         self.thread = thread
 
@@ -134,6 +136,7 @@ struct ThreadCell: View {
         self.accentColor = accentColor
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
         self.isSelected = isSelected
+        self.avatarTapped = avatarTapped
     }
 
     // MARK: - Views
@@ -153,6 +156,9 @@ struct ThreadCell: View {
                             size: 40
                         )
                         .opacity(isSelected ? 0 : 1)
+                        .onTapGesture {
+                            avatarTapped?()
+                        }
                         CheckboxView(isSelected: isSelected, density: density, accentColor: accentColor)
                             .opacity(isSelected ? 1 : 0)
                     }
