@@ -108,9 +108,10 @@ struct ThreadListCell: View {
     }
 
     private func didLongPressCell() {
+        let wasEnabled = multipleSelectionViewModel.isEnabled
         multipleSelectionViewModel.feedbackGenerator.prepare()
-        multipleSelectionViewModel.isEnabled.toggle()
-        if multipleSelectionViewModel.isEnabled {
+        multipleSelectionViewModel.isEnabled = true
+        if !wasEnabled {
             matomo.track(eventWithCategory: .multiSelection, action: .longPress, name: "enable")
             multipleSelectionViewModel.feedbackGenerator.impactOccurred()
             multipleSelectionViewModel.toggleSelection(of: thread)
