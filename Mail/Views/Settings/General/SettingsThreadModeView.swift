@@ -57,7 +57,7 @@ struct SettingsThreadModeView: View {
                 }
             }
         }
-        .plainList()
+        .listStyle(.plain)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsThreadModeTitle, displayMode: .inline)
         .customAlert(item: $threadModeSettingUpdate) { threadModeUpdate in
