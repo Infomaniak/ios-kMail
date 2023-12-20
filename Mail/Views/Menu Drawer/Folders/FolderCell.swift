@@ -174,8 +174,7 @@ struct FolderCellContent: View {
                 Text(folder.localizedName)
                     .textStyle(textStyle)
                     .lineLimit(1)
-
-                Spacer(minLength: UIPadding.regular)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 accessory
             }
