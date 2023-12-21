@@ -25,43 +25,36 @@ import RealmSwift
 import SwiftUI
 
 struct MoveEmailView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
-    @Environment(\.dismissModal) var dismissModal
-
-    @EnvironmentObject private var actionsManager: ActionsManager
-
     typealias MoveHandler = (Folder) -> Void
 
-    @ObservedResults(Folder.self, where: { $0.role != .draft && $0.toolType == nil }) var folders
+    @LazyInjectService private var matomo: MatomoUtils
+
+    @Environment(\.dismissModal) private var dismissModal
+    @EnvironmentObject private var actionsManager: ActionsManager
+
+    @StateObject private var viewModel: FolderListViewModel
+
     @State private var isShowingCreateFolderAlert = false
-
-    private var filteredFolders: [NestableFolder] {
-        guard !searchFilter.isEmpty else {
-            // swiftlint:disable:next empty_count
-            return NestableFolder.createFoldersHierarchy(from: Array(folders.where { $0.parents.count == 0 }))
-        }
-        return folders.filter {
-            let filter = searchFilter.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
-            return $0.verifyFilter(filter)
-        }.map { NestableFolder(content: $0, children: []) }
-    }
-
-    @State private var searchFilter = ""
 
     let movedMessages: [Message]
     let originFolder: Folder?
 
+    init(mailboxManager: MailboxManager, movedMessages: [Message], originFolder: Folder?) {
+        self.movedMessages = movedMessages
+        self.originFolder = originFolder
+        _viewModel = StateObject(wrappedValue: FolderListViewModel(mailboxManager: mailboxManager))
+    }
+
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                listOfFolders(nestableFolders: filteredFolders.filter { $0.content.role != nil })
-                if searchFilter.isEmpty {
+                listOfFolders(nestableFolders: viewModel.roleFolders)
+                if viewModel.searchQuery.isEmpty && !viewModel.userFolders.isEmpty {
                     IKDivider()
                 }
-                listOfFolders(nestableFolders: filteredFolders.filter { $0.content.role == nil })
+                listOfFolders(nestableFolders: viewModel.userFolders)
             }
-            .searchable(text: $searchFilter, placement: .navigationBarDrawer(displayMode: .always))
+            .searchable(text: $viewModel.searchQuery, placement: .navigationBarDrawer(displayMode: .always))
         }
         .navigationTitle(MailResourcesStrings.Localizable.actionMove)
         .navigationBarTitleDisplayMode(.inline)
@@ -84,6 +77,14 @@ struct MoveEmailView: View {
         }
     }
 
+    private func listOfFolders(nestableFolders: [NestableFolder]) -> some View {
+        ForEach(nestableFolders) { nestableFolder in
+            FolderCell(folder: nestableFolder, currentFolderId: originFolder?.remoteId) { folder in
+                move(to: folder)
+            }
+        }
+    }
+
     private func move(to folder: Folder) {
         let frozenOriginFolder = originFolder?.freezeIfNeeded()
         Task {
@@ -93,19 +94,15 @@ struct MoveEmailView: View {
         }
         dismissModal()
     }
-
-    private func listOfFolders(nestableFolders: [NestableFolder]) -> some View {
-        ForEach(nestableFolders) { nestableFolder in
-            FolderCell(folder: nestableFolder, currentFolderId: originFolder?.remoteId) { folder in
-                move(to: folder)
-            }
-        }
-    }
 }
 
 struct MoveMessageView_Previews: PreviewProvider {
     static var previews: some View {
-        MoveEmailView(movedMessages: [PreviewHelper.sampleMessage], originFolder: nil)
-            .environmentObject(PreviewHelper.sampleMailboxManager)
+        MoveEmailView(
+            mailboxManager: PreviewHelper.sampleMailboxManager,
+            movedMessages: [PreviewHelper.sampleMessage],
+            originFolder: nil
+        )
+        .environmentObject(PreviewHelper.sampleMailboxManager)
     }
 }
