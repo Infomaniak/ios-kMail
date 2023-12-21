@@ -4,7 +4,7 @@ html {
 }
 
 body {
-    font-family: -apple-system, Helvetica,Arial, sans-serif;
+    font-family: -apple-system;
 
     padding: 0;
     margin: 16px;
@@ -27,4 +27,8 @@ blockquote blockquote blockquote blockquote {
 
 a:link, a:visited, a:hover, a:active {
     color: var(--kmail-primary-color);
+}
+
+pre {
+    font-family: -apple-system;
 }
