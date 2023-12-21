@@ -59,7 +59,9 @@ struct AvatarView: View {
 
     var body: some View {
         Group {
-            if let avatarImageRequest = getAvatarImageRequest() {
+            if case .emptyContact = contactConfiguration {
+                UnknownRecipientView(size: size)
+            } else if let avatarImageRequest = getAvatarImageRequest() {
                 LazyImage(request: avatarImageRequest) { state in
                     if let image = state.image {
                         ContactImage(image: image, size: size)
