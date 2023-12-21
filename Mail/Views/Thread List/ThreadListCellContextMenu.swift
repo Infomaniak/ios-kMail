@@ -30,6 +30,7 @@ struct ThreadListCellContextMenu: ViewModifier {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     @EnvironmentObject private var actionsManager: ActionsManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var messagesToMove: [Message]?
 
@@ -57,7 +58,7 @@ struct ThreadListCellContextMenu: ViewModifier {
                 }
             }
             .sheet(item: $messagesToMove) { messages in
-                MoveEmailView(movedMessages: messages, originFolder: thread.folder)
+                MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
                     .sheetViewStyle()
             }
     }
