@@ -70,8 +70,8 @@ public enum Logging {
             options.tracePropagationTargets = []
             options.dsn = "https://b7e4f5e8fd464659a8e83ead7015e070@sentry-mobile.infomaniak.com/5"
             options.beforeSend = { event in
-                // if the application is in debug mode discard the events
-                #if DEBUG
+                // if the application is in debug or test mode discard the events
+                #if DEBUG || TEST
                 return nil
                 #else
                 return event
@@ -81,7 +81,7 @@ public enum Logging {
     }
 
     private static func initAtlantis() {
-        #if DEBUG
+        #if DEBUG && !TEST
         guard let hostname = ProcessInfo.processInfo.environment["hostname"],
               !hostname.isEmpty else {
             return
