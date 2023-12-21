@@ -16,27 +16,21 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
-import RealmSwift
+import XCTest
 
-public extension Realm {
-    func uncheckedSafeWrite(_ block: () throws -> Void) throws {
-        if isInWriteTransaction {
-            try block()
-        } else {
-            try write(block)
-        }
+/// Sanity checks of SWIFT_ACTIVE_COMPILATION_CONDITIONS
+final class TestsPreconditions: XCTestCase {
+    func testTestFlagIsSet() {
+        // WHEN
+        #if !TEST
+        XCTFail("the TEST flag is expected to be set in test target")
+        #endif
     }
 
-    func safeWrite(_ block: () throws -> Void) throws {
-        #if DEBUG || TEST
-        dispatchPrecondition(condition: .notOnQueue(.main))
+    func testDebugFlagIsSet() {
+        // WHEN
+        #if !DEBUG
+        XCTFail("the TEST flag is expected to be set in test target")
         #endif
-
-        if isInWriteTransaction {
-            try block()
-        } else {
-            try write(block)
-        }
     }
 }

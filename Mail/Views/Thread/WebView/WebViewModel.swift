@@ -88,7 +88,7 @@ final class WebViewModel: NSObject, ObservableObject {
 
     private func loadScripts(configuration: WKWebViewConfiguration) {
         var scripts = ["javaScriptBridge", "sizeHandler", "fixEmailStyle"]
-        #if DEBUG
+        #if DEBUG || TEST
         scripts.insert("captureLog", at: 0)
         #endif
 
