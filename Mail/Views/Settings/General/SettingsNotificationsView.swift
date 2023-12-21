@@ -99,7 +99,8 @@ struct SettingsNotificationsView: View {
                     .settingsCell()
                 }
             }
-            .plainList()
+            .environment(\.defaultMinListRowHeight, 1)
+            .listStyle(.plain)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications, displayMode: .inline)
@@ -135,14 +136,14 @@ struct SettingsNotificationsView: View {
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "Notifications"])
     }
 
-    func currentTopics() async {
+    private func currentTopics() async {
         let currentSubscription = await notificationService.subscriptionForUser(id: mailboxManager.mailbox.userId)
         withAnimation {
             subscribedTopics = currentSubscription?.topics
         }
     }
 
-    func updateTopicsForCurrentUserIfNeeded() {
+    private func updateTopicsForCurrentUserIfNeeded() {
         Task {
             guard let subscribedTopics else { return }
 

@@ -50,7 +50,7 @@ struct MailboxSignatureSettingsView: View {
                 }
                 .settingsCell()
             }
-            .plainList()
+            .listStyle(.plain)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationTitle(MailResourcesStrings.Localizable.settingsSignatureTitle)

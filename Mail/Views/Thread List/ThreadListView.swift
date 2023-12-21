@@ -119,7 +119,7 @@ struct ThreadListView: View {
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
-                .plainList()
+                .listStyle(.plain)
                 .observeScroll(with: scrollObserver)
                 .emptyState(isEmpty: shouldDisplayEmptyView) {
                     switch viewModel.folder.role {

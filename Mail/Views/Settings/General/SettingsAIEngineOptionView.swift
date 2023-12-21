@@ -28,6 +28,7 @@ struct SettingsAIEngineOptionView: View {
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+        .navigationTitle(MailResourcesStrings.Localizable.aiPromptTitle)
     }
 }
 
