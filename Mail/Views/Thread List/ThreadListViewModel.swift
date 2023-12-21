@@ -189,7 +189,7 @@ final class DateSection: Identifiable, Equatable {
         self.folder = folder
         self.isCompact = isCompact
         sectionsObserver = sectionsSubject
-            .throttle(for: .seconds(1), scheduler: DispatchQueue.main, latest: true)
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] newSections in
                 withAnimation {
                     self?.sections = newSections
