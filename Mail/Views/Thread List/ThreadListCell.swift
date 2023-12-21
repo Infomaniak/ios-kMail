@@ -64,7 +64,14 @@ struct ThreadListCell: View {
             density: threadDensity,
             accentColor: accentColor,
             isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
-            isSelected: isMultiSelected
+            isSelected: isMultiSelected,
+            avatarTapped: {
+                if multipleSelectionViewModel.isEnabled {
+                    didTapCell()
+                } else {
+                    didOptionalTapCell()
+                }
+            }
         )
         .background(SelectionBackground(
             selectionType: selectionType,
@@ -75,7 +82,7 @@ struct ThreadListCell: View {
         .contentShape(Rectangle())
         .onTapGesture { didTapCell() }
         .actionsContextMenu(thread: thread)
-        .onLongPressGesture { didLongPressCell() }
+        .onLongPressGesture { didOptionalTapCell() }
         .swipeActions(
             thread: thread,
             viewModel: viewModel,
@@ -107,14 +114,13 @@ struct ThreadListCell: View {
         }
     }
 
-    private func didLongPressCell() {
+    private func didOptionalTapCell() {
+        guard !multipleSelectionViewModel.isEnabled else { return }
         multipleSelectionViewModel.feedbackGenerator.prepare()
-        multipleSelectionViewModel.isEnabled.toggle()
-        if multipleSelectionViewModel.isEnabled {
-            matomo.track(eventWithCategory: .multiSelection, action: .longPress, name: "enable")
-            multipleSelectionViewModel.feedbackGenerator.impactOccurred()
-            multipleSelectionViewModel.toggleSelection(of: thread)
-        }
+        multipleSelectionViewModel.isEnabled = true
+        matomo.track(eventWithCategory: .multiSelection, action: .longPress, name: "enable")
+        multipleSelectionViewModel.feedbackGenerator.impactOccurred()
+        multipleSelectionViewModel.toggleSelection(of: thread)
     }
 }
 

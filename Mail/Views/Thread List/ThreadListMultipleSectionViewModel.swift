@@ -48,6 +48,9 @@ class ThreadListMultipleSelectionViewModel: ObservableObject {
     func toggleSelection(of thread: Thread) {
         if let threadIndex = selectedItems.firstIndex(of: thread) {
             selectedItems.remove(at: threadIndex)
+            if selectedItems.isEmpty {
+                isEnabled = false
+            }
         } else {
             selectedItems.insert(thread)
         }
