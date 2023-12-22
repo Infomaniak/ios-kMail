@@ -20,9 +20,6 @@ import MailCore
 import SwiftUI
 
 struct RootView: View {
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    @Environment(\.verticalSizeClass) private var verticalSizeClass
-
     @EnvironmentObject private var navigationState: RootViewState
 
     var body: some View {
@@ -43,6 +40,5 @@ struct RootView: View {
                 PreloadingView(currentAccount: currentAccount)
             }
         }
-        .environment(\.isCompactWindow, horizontalSizeClass == .compact || verticalSizeClass == .compact)
     }
 }

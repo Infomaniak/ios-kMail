@@ -54,6 +54,7 @@ struct MailApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .detectCompactWindow()
                 .environmentObject(navigationState)
                 .environmentObject(reviewManager)
                 .onAppear {
