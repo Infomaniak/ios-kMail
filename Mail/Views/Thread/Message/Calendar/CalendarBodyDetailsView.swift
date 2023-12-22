@@ -19,6 +19,7 @@
 import MailCore
 import MailResources
 import SwiftUI
+import WrappingHStack
 
 extension LabelStyle where Self == CalendarLabelStyle {
     static var calendar: CalendarLabelStyle {
@@ -49,8 +50,10 @@ struct CalendarBodyDetailsView: View {
             Label(time, image: MailResourcesAsset.clock.name)
                 .labelStyle(.calendar)
 
-            HStack(spacing: UIPadding.small) {
-                Text("Buttons (Oui / Peut-Être / Non)")
+            WrappingHStack(spacing: .constant(UIPadding.small), lineSpacing: UIPadding.small) {
+                CalendarChoiceButton(choice: .yes, isSelected: false)
+                CalendarChoiceButton(choice: .maybe, isSelected: false)
+                CalendarChoiceButton(choice: .no, isSelected: false)
             }
         }
     }
