@@ -42,7 +42,7 @@ struct MoveEmailView: View {
     init(mailboxManager: MailboxManager, movedMessages: [Message], originFolder: Folder?) {
         self.movedMessages = movedMessages
         self.originFolder = originFolder
-        _viewModel = StateObject(wrappedValue: FolderListViewModel(mailboxManager: mailboxManager))
+        _viewModel = StateObject(wrappedValue: FolderListViewModel(mailboxManager: mailboxManager) { $0.role != .draft })
     }
 
     var body: some View {
