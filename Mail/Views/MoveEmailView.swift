@@ -42,14 +42,17 @@ struct MoveEmailView: View {
     init(mailboxManager: MailboxManager, movedMessages: [Message], originFolder: Folder?) {
         self.movedMessages = movedMessages
         self.originFolder = originFolder
-        _viewModel = StateObject(wrappedValue: FolderListViewModel(mailboxManager: mailboxManager) { $0.role != .draft })
+        _viewModel =
+            StateObject(wrappedValue: FolderListViewModel(mailboxManager: mailboxManager) {
+                $0.toolType == nil && $0.role != .draft
+            })
     }
 
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
                 listOfFolders(nestableFolders: viewModel.roleFolders)
-                if viewModel.searchQuery.isEmpty && !viewModel.userFolders.isEmpty {
+                if !viewModel.isSearching && !viewModel.userFolders.isEmpty {
                     IKDivider()
                 }
                 listOfFolders(nestableFolders: viewModel.userFolders)

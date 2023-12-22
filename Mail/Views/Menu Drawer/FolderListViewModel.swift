@@ -51,6 +51,7 @@ final class FolderListViewModel: ObservableObject {
     @Published private(set) var userFolders = [NestableFolder]()
 
     @Published var searchQuery = ""
+    @Published private(set) var isSearching = false
 
     private let foldersQuery: (Query<Folder>) -> Query<Bool>
 
@@ -58,21 +59,22 @@ final class FolderListViewModel: ObservableObject {
     private var searchQueryObservation: AnyCancellable?
     private var folders: Results<Folder>?
 
-    init(mailboxManager: MailboxManager, foldersQuery: @escaping (Query<Folder>) -> Query<Bool>) {
+    init(mailboxManager: MailboxManager, foldersQuery: @escaping (Query<Folder>) -> Query<Bool> = { $0.toolType == nil }) {
         self.foldersQuery = foldersQuery
         updateFolderListForMailboxManager(mailboxManager, animateInitialChanges: false)
 
         searchQueryObservation = $searchQuery
             .debounce(for: .milliseconds(150), scheduler: DispatchQueue.main)
             .sink { [weak self] _ in
-                guard let folders = self?.folders else { return }
-                self?.filterAndSortFolders(folders)
+                guard let self, let folders else { return }
+                filterAndSortFolders(folders)
+                isSearching = !searchQuery.isEmpty
             }
     }
 
     func updateFolderListForMailboxManager(_ mailboxManager: MailboxManager, animateInitialChanges: Bool) {
         foldersObservationToken = mailboxManager.getRealm()
-            .objects(Folder.self).where { $0.toolType == nil && foldersQuery($0) }
+            .objects(Folder.self).where(foldersQuery)
             .observe(on: DispatchQueue.main) { [weak self] results in
                 switch results {
                 case .initial(let folders):
@@ -105,7 +107,8 @@ final class FolderListViewModel: ObservableObject {
 
     private func filterFolders(_ folders: Results<Folder>) -> [Folder] {
         guard !searchQuery.isEmpty else {
-            return Array(folders)
+            // swiftlint:disable:next empty_count
+            return Array(folders.where { $0.parents.count == 0 })
         }
 
         return folders.filter {
