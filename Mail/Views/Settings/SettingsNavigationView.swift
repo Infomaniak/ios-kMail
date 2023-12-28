@@ -16,13 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import NavigationBackport
 import SwiftUI
 
 struct SettingsNavigationView: View {
     @Environment(\.dismiss) private var dismiss
 
-    @State private var navigationPath = [String]()
+    @State var navigationPath: [SettingsDestination]
 
     var body: some View {
         NBNavigationStack(path: $navigationPath) {
@@ -32,6 +33,9 @@ struct SettingsNavigationView: View {
                         CloseButton(dismissAction: dismiss)
                     }
                 }
+                .nbNavigationDestination(for: SettingsDestination.self) { _ in
+                    SettingsNotificationsView()
+                }
         }
         .environment(\.dismissModal) {
             dismiss()
@@ -40,5 +44,5 @@ struct SettingsNavigationView: View {
 }
 
 #Preview {
-    SettingsNavigationView()
+    SettingsNavigationView(navigationPath: [])
 }

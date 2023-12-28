@@ -20,7 +20,8 @@ import Foundation
 
 public class MainViewState: ObservableObject {
     @Published public var editedDraft: EditedDraft?
-    @Published public var messagesToMove: [Message]?
+    @Published public var settingsViewConfig: SettingsViewConfig?
+
     @Published public var isShowingSearch = false
     @Published public var isShowingReviewAlert = false
     @Published public var isShowingChristmasEasterEgg = false
