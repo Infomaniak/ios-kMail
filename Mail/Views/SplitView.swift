@@ -167,6 +167,8 @@ struct SplitView: View {
                    perform: handleNotification)
         .onReceive(NotificationCenter.default.publisher(for: .onUserTappedReplyToNotification).receive(on: DispatchQueue.main),
                    perform: handleNotification)
+        .onReceive(NotificationCenter.default.publisher(for: .openNotificationSettings).receive(on: DispatchQueue.main),
+                   perform: handleOpenNotificationSettings)
         .onAppear {
             orientationManager.setOrientationLock(.all)
         }
@@ -284,5 +286,10 @@ struct SplitView: View {
                 }
             }
         }
+    }
+
+    private func handleOpenNotificationSettings(_ notification:
+        Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>.Output) {
+        mainViewState.settingsViewConfig = SettingsViewConfig(baseNavigationPath: [.notifications])
     }
 }
