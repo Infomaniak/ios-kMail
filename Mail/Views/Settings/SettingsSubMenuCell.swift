@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import NavigationBackport
 import SwiftUI
 
 struct SettingsSubMenuLabel: View {
@@ -41,6 +42,19 @@ struct SettingsSubMenuLabel: View {
             ChevronIcon(direction: .right)
         }
         .settingsItem()
+    }
+}
+
+struct DeepLinkSettingsSubMenuCell: View {
+    let title: String
+    var subtitle: String?
+    var icon: Image?
+    let value: SettingsDestination
+
+    var body: some View {
+        NBNavigationLink(value: value) {
+            SettingsSubMenuLabel(title: title, subtitle: subtitle, icon: icon)
+        }
     }
 }
 

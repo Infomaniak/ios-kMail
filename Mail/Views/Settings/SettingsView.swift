@@ -77,9 +77,10 @@ struct SettingsView: View {
 
                     // MARK: Notifications
 
-                    SettingsSubMenuCell(title: MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications) {
-                        SettingsNotificationsView()
-                    }
+                    DeepLinkSettingsSubMenuCell(
+                        title: MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications,
+                        value: .notifications
+                    )
 
                     // MARK: Sync Calendar/Contacts
 

@@ -138,6 +138,9 @@ struct SplitView: View {
         .sheet(isPresented: $isShowingSyncProfile) {
             SyncProfileNavigationView()
         }
+        .sheet(item: $mainViewState.settingsViewConfig) { config in
+            SettingsNavigationView(baseNavigationPath: config.baseNavigationPath)
+        }
         .sheet(item: $mainViewState.editedDraft) { editedDraft in
             ComposeMessageView(editedDraft: editedDraft, mailboxManager: mailboxManager)
         }
