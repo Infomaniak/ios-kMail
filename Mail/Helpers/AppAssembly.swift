@@ -132,6 +132,9 @@ enum ApplicationAssembly {
                     contactCache.countLimit = Constants.contactCacheExtensionMaxCount
                 }
                 return contactCache
+            },
+            Factory(type: RefreshAppBackgroundTask.self) { _, _ in
+                RefreshAppBackgroundTask()
             }
         ]
 
