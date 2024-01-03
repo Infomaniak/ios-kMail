@@ -25,7 +25,7 @@ struct CalendarAttendeesView: View {
     @State private var isShowingAttendees = false
 
     let organizer = PreviewHelper.sampleRecipient4
-    let attendees = PreviewHelper.sampleRecipientsList
+    let attendees = Array(repeating: PreviewHelper.sampleRecipient1, count: 4)
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.small) {
@@ -38,19 +38,31 @@ struct CalendarAttendeesView: View {
                     Text("Participants")
                     ChevronIcon(direction: isShowingAttendees ? .up : .down, shapeStyle: .tint)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .buttonStyle(.ikLink(isInlined: true))
 
             if isShowingAttendees {
-                HStack(spacing: UIPadding.regular) {
-                    AvatarView(
-                        mailboxManager: mailboxManager,
-                        contactConfiguration: .recipient(recipient: organizer, contextMailboxManager: mailboxManager),
-                        size: 32
-                    )
+                VStack(alignment: .leading, spacing: UIPadding.regular) {
+                    HStack(spacing: UIPadding.regular) {
+                        AvatarView(
+                            mailboxManager: mailboxManager,
+                            contactConfiguration: .recipient(recipient: organizer, contextMailboxManager: mailboxManager),
+                            size: 32
+                        )
 
-                    Text("Lucien Cheval (Organisateur)")
-                        .textStyle(.body)
+                        Text("Lucien Cheval (Organisateur)")
+                            .textStyle(.body)
+                    }
+
+                    Button {
+                        // TODO: Show bottom sheet with attendees
+                    } label: {
+                        HStack(spacing: UIPadding.regular) {
+                            CalendarAttendeesStack(attendees: attendees)
+                            Text("Consulter")
+                        }
+                    }
                 }
             }
         }
