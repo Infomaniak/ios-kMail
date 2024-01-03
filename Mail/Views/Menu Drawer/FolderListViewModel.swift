@@ -47,30 +47,34 @@ struct NestableFolder: Identifiable {
 }
 
 final class FolderListViewModel: ObservableObject {
-    @Published var roleFolders = [NestableFolder]()
-    @Published var userFolders = [NestableFolder]()
+    @Published private(set) var roleFolders = [NestableFolder]()
+    @Published private(set) var userFolders = [NestableFolder]()
 
     @Published var searchQuery = ""
+    @Published private(set) var isSearching = false
+
+    private let foldersQuery: (Query<Folder>) -> Query<Bool>
 
     private var foldersObservationToken: NotificationToken?
     private var searchQueryObservation: AnyCancellable?
     private var folders: Results<Folder>?
 
-    init(mailboxManager: MailboxManager) {
+    init(mailboxManager: MailboxManager, foldersQuery: @escaping (Query<Folder>) -> Query<Bool> = { $0.toolType == nil }) {
+        self.foldersQuery = foldersQuery
         updateFolderListForMailboxManager(mailboxManager, animateInitialChanges: false)
 
         searchQueryObservation = $searchQuery
             .debounce(for: .milliseconds(150), scheduler: DispatchQueue.main)
             .sink { [weak self] _ in
-                guard let folders = self?.folders else { return }
-                self?.filterAndSortFolders(folders)
+                guard let self, let folders else { return }
+                filterAndSortFolders(folders)
+                isSearching = !searchQuery.isEmpty
             }
     }
 
     func updateFolderListForMailboxManager(_ mailboxManager: MailboxManager, animateInitialChanges: Bool) {
         foldersObservationToken = mailboxManager.getRealm()
-            // swiftlint:disable:next empty_count
-            .objects(Folder.self).where { $0.parents.count == 0 && $0.toolType == nil }
+            .objects(Folder.self).where(foldersQuery)
             .observe(on: DispatchQueue.main) { [weak self] results in
                 switch results {
                 case .initial(let folders):
@@ -92,10 +96,10 @@ final class FolderListViewModel: ObservableObject {
     private func filterAndSortFolders(_ folders: Results<Folder>) {
         let filteredFolders = filterFolders(folders)
 
-        let sortedRoleFolders = filteredFolders.filter { $0.role != nil }.sorted()
+        let sortedRoleFolders = filteredFolders.filter { $0.role != nil }
+            .sorted()
         roleFolders = createFoldersHierarchy(from: sortedRoleFolders)
 
-        // sort Folders with case insensitive compare
         let sortedUserFolders = filteredFolders.filter { $0.role == nil }
             .sorted { $0.name.localizedCompare($1.name) == .orderedAscending }
         userFolders = createFoldersHierarchy(from: sortedUserFolders)
@@ -103,7 +107,8 @@ final class FolderListViewModel: ObservableObject {
 
     private func filterFolders(_ folders: Results<Folder>) -> [Folder] {
         guard !searchQuery.isEmpty else {
-            return Array(folders)
+            // swiftlint:disable:next empty_count
+            return Array(folders.where { $0.parents.count == 0 })
         }
 
         return folders.filter {
