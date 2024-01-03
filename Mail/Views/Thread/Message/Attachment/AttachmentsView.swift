@@ -73,14 +73,14 @@ struct AttachmentsView: View {
                 .textStyle(.bodySmallSecondary)
 
                 Button(MailResourcesStrings.Localizable.buttonDownloadAll) {
+                    downloadInProgress = true
                     Task {
                         await tryOrDisplayError {
                             matomo.track(eventWithCategory: .message, name: "downloadAll")
-                            downloadInProgress = true
                             let attachmentURL = try await mailboxManager.apiFetcher.downloadAttachments(message: message)
                             allAttachmentsURL = IdentifiableURL(url: attachmentURL)
-                            downloadInProgress = false
                         }
+                        downloadInProgress = false
                     }
                 }
                 .buttonStyle(.ikLink(isInlined: true))
