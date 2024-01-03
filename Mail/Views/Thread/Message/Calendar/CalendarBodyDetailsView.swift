@@ -50,6 +50,14 @@ struct CalendarBodyDetailsView: View {
             Label(time, image: MailResourcesAsset.clock.name)
                 .labelStyle(.calendar)
 
+            Label {
+                Text("Cet évènement est déjà passé")
+                    .foregroundStyle(MailTextStyle.bodySmallWarning.color)
+            } icon: {
+                IKIcon(MailResourcesAsset.warning.swiftUIImage, size: .large)
+            }
+            .labelStyle(.calendar)
+
             WrappingHStack(spacing: .constant(UIPadding.small), lineSpacing: UIPadding.small) {
                 CalendarChoiceButton(choice: .yes, isSelected: false)
                 CalendarChoiceButton(choice: .maybe, isSelected: false)
