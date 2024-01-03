@@ -30,7 +30,6 @@ struct FolderListView: View {
 
     init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
-        // swiftlint:disable:next empty_count
         _viewModel = StateObject(wrappedValue: FolderListViewModel(mailboxManager: mailboxManager))
     }
 
