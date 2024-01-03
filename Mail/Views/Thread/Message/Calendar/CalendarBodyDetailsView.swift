@@ -64,6 +64,7 @@ struct CalendarBodyDetailsView: View {
                 CalendarChoiceButton(choice: .no, isSelected: false)
             }
         }
+        .padding(.horizontal, value: .regular)
     }
 }
 

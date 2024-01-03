@@ -30,8 +30,9 @@ struct CalendarBodyView: View {
                 Text("Ajouter à mon calendrier")
             }
             .buttonStyle(.ikPlain)
+            .padding(.horizontal, value: .regular)
         }
-        .padding(value: .regular)
+        .padding(.vertical, value: .regular)
     }
 
     private func addEventToCalendar() {
