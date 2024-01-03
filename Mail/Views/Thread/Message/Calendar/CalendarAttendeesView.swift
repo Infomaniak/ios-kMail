@@ -41,6 +41,7 @@ struct CalendarAttendeesView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .buttonStyle(.ikLink(isInlined: true))
+            .padding(.horizontal, value: .regular)
 
             if isShowingAttendees {
                 VStack(alignment: .leading, spacing: UIPadding.regular) {
@@ -54,6 +55,7 @@ struct CalendarAttendeesView: View {
                         Text("Lucien Cheval (Organisateur)")
                             .textStyle(.body)
                     }
+                    .padding(.horizontal, value: .regular)
 
                     Button {
                         // TODO: Show bottom sheet with attendees
@@ -64,6 +66,7 @@ struct CalendarAttendeesView: View {
                                 .textStyle(.bodyAccent)
                         }
                     }
+                    .padding(.horizontal, UIPadding.regular - UIConstants.avatarBorderLineWidth)
                 }
             }
         }
