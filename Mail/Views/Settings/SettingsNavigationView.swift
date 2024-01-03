@@ -23,7 +23,11 @@ import SwiftUI
 struct SettingsNavigationView: View {
     @Environment(\.dismiss) private var dismiss
 
-    @State var navigationPath: [SettingsDestination]
+    @State private var navigationPath: [SettingsDestination]
+
+    init(baseNavigationPath: [SettingsDestination]) {
+        _navigationPath = State(wrappedValue: baseNavigationPath)
+    }
 
     var body: some View {
         NBNavigationStack(path: $navigationPath) {
@@ -44,5 +48,5 @@ struct SettingsNavigationView: View {
 }
 
 #Preview {
-    SettingsNavigationView(navigationPath: [])
+    SettingsNavigationView(baseNavigationPath: [])
 }

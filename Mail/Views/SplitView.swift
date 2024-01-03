@@ -139,7 +139,7 @@ struct SplitView: View {
             SyncProfileNavigationView()
         }
         .sheet(item: $mainViewState.settingsViewConfig) { config in
-            SettingsNavigationView(navigationPath: config.baseNavigationPath)
+            SettingsNavigationView(baseNavigationPath: config.baseNavigationPath)
         }
         .sheet(item: $mainViewState.editedDraft) { editedDraft in
             ComposeMessageView(editedDraft: editedDraft, mailboxManager: mailboxManager)
