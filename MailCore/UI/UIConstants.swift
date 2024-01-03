@@ -107,6 +107,8 @@ public extension UIConstants {
     static let buttonRegularHeight: CGFloat = 40
 
     static let aiPromptSheetHeight: CGFloat = 232
+
+    static let avatarBorderLineWidth: CGFloat = 1
 }
 
 // MARK: - Animations
