@@ -56,12 +56,6 @@ public enum Logging {
     private static func initLogger() {
         DDOSLogger.sharedInstance.logFormatter = LogFormatter()
         DDLog.add(DDOSLogger.sharedInstance, with: .info)
-        let logFileManager = DDLogFileManagerDefault(logsDirectory: MailboxManager.constants.cacheDirectoryURL
-            .appendingPathComponent("logs", isDirectory: true).path)
-        let fileLogger = DDFileLogger(logFileManager: logFileManager)
-        fileLogger.rollingFrequency = 60 * 60 * 24 // 24 hours
-        fileLogger.logFileManager.maximumNumberOfLogFiles = 7
-        DDLog.add(fileLogger)
     }
 
     private static func initSentry() {
