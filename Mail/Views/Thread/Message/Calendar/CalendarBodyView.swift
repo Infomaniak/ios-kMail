@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import SwiftUI
 
 struct CalendarBodyView: View {
@@ -27,7 +28,7 @@ struct CalendarBodyView: View {
             CalendarAttendeesView()
 
             Button(action: addEventToCalendar) {
-                Text("Ajouter à mon calendrier")
+                Text(MailResourcesStrings.Localizable.buttonAddToMyCalendar)
             }
             .buttonStyle(.ikPlain)
             .padding(.horizontal, value: .regular)
