@@ -28,11 +28,12 @@ struct CalendarView: View {
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .overlay {
             RoundedRectangle(cornerRadius: 8)
-                .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
+                .stroke(MailResourcesAsset.elementsColor.swiftUIColor)
         }
     }
 }
 
 #Preview {
     CalendarView()
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }
