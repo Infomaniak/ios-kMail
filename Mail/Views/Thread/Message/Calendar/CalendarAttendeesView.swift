@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import SwiftUI
 
 struct CalendarAttendeesView: View {
@@ -36,7 +37,7 @@ struct CalendarAttendeesView: View {
                 }
             } label: {
                 HStack(spacing: UIPadding.small) {
-                    Text("Participants")
+                    Text(MailResourcesStrings.Localizable.buttonAttendees)
                     ChevronIcon(direction: isShowingAttendees ? .up : .down, shapeStyle: .tint)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -53,7 +54,7 @@ struct CalendarAttendeesView: View {
                             size: 32
                         )
 
-                        Text("Lucien Cheval (Organisateur)")
+                        Text(MailResourcesStrings.Localizable.calendarOrganizerName("Lucien Cheval"))
                             .textStyle(.body)
                     }
                     .padding(.horizontal, value: .regular)
@@ -63,7 +64,7 @@ struct CalendarAttendeesView: View {
                     } label: {
                         HStack(spacing: UIPadding.regular) {
                             CalendarAttendeesStack(attendees: attendees)
-                            Text("Consulter")
+                            Text(MailResourcesStrings.Localizable.buttonConsult)
                                 .textStyle(.bodyAccent)
                         }
                     }

@@ -51,7 +51,7 @@ struct CalendarBodyDetailsView: View {
                 .labelStyle(.calendar)
 
             Label {
-                Text("Cet évènement est déjà passé")
+                Text(MailResourcesStrings.Localizable.warningEventHasPassed)
                     .foregroundStyle(MailTextStyle.bodySmallWarning.color)
             } icon: {
                 IKIcon(MailResourcesAsset.warning.swiftUIImage, size: .large)
