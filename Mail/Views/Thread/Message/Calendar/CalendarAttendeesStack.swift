@@ -38,7 +38,7 @@ struct CalendarAttendeesStack: View {
     }
 
     var body: some View {
-        HStack(spacing: -6) {
+        HStack(alignment: .top, spacing: -6) {
             ForEach(displayedAttendees) { attendee in
                 CalendarAttendeeAvatarView(recipient: attendee, choice: .yes)
             }
@@ -51,7 +51,7 @@ struct CalendarAttendeesStack: View {
                             .font(MailTextStyle.body.font)
                             .foregroundStyle(MailResourcesAsset.backgroundColor.swiftUIColor)
                     }
-                    .frame(width: 32, height: 32)
+                    .frame(width: 32 + UIConstants.avatarBorderLineWidth, height: 32 + UIConstants.avatarBorderLineWidth)
                     .overlay {
                         Circle()
                             .stroke(MailResourcesAsset.backgroundColor.swiftUIColor)

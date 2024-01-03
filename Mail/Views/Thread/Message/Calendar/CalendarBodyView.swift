@@ -23,9 +23,19 @@ struct CalendarBodyView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.medium) {
             CalendarBodyDetailsView()
+
             CalendarAttendeesView()
+
+            Button(action: addEventToCalendar) {
+                Text("Ajouter à mon calendrier")
+            }
+            .buttonStyle(.ikPlain)
         }
         .padding(value: .regular)
+    }
+
+    private func addEventToCalendar() {
+        // TODO: Add event to calendar
     }
 }
 
