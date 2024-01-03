@@ -31,11 +31,11 @@ struct CalendarAttendeeAvatarView: View {
         AvatarView(
             mailboxManager: mailboxManager,
             contactConfiguration: .recipient(recipient: recipient, contextMailboxManager: mailboxManager),
-            size: 33
+            size: 32 + UIConstants.avatarBorderLineWidth
         )
         .overlay {
             Circle()
-                .stroke(MailResourcesAsset.backgroundColor.swiftUIColor)
+                .stroke(MailResourcesAsset.backgroundColor.swiftUIColor, lineWidth: UIConstants.avatarBorderLineWidth)
         }
         .padding(.trailing, 2)
         .padding(.bottom, 4)
@@ -43,12 +43,12 @@ struct CalendarAttendeeAvatarView: View {
             if let choice {
                 Circle()
                     .fill(MailResourcesAsset.backgroundColor.swiftUIColor)
-                    .frame(width: 17, height: 17)
+                    .frame(width: 16 + UIConstants.avatarBorderLineWidth, height: 16 + UIConstants.avatarBorderLineWidth)
                     .overlay {
                         choice.icon.swiftUIImage
                             .resizable()
                             .foregroundStyle(choice.color)
-                            .padding(1)
+                            .padding(UIConstants.avatarBorderLineWidth)
                     }
             }
         }
