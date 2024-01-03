@@ -61,6 +61,7 @@ struct CalendarAttendeesView: View {
                         HStack(spacing: UIPadding.regular) {
                             CalendarAttendeesStack(attendees: attendees)
                             Text("Consulter")
+                                .textStyle(.bodyAccent)
                         }
                     }
                 }
