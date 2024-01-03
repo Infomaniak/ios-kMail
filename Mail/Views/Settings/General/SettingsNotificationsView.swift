@@ -102,6 +102,7 @@ struct SettingsNotificationsView: View {
             .environment(\.defaultMinListRowHeight, 1)
             .listStyle(.plain)
         }
+        .backButtonDisplayMode(.minimal)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications, displayMode: .inline)
         .onChange(of: notificationsEnabled) { enabled in
