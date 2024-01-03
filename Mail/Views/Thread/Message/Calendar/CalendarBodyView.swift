@@ -23,7 +23,7 @@ struct CalendarBodyView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.medium) {
             CalendarBodyDetailsView()
-            CalendarAttendees()
+            CalendarAttendeesView()
         }
         .padding(value: .regular)
     }
