@@ -139,7 +139,9 @@ enum PreviewHelper {
 
     static let sampleRecipient3 = Recipient(email: "test@example.com", name: "")
 
-    static let sampleRecipientsList = [sampleRecipient1, sampleRecipient2, sampleRecipient3].toRealmList()
+    static let sampleRecipient4 = Recipient(email: "lucien.cheval@ik.com", name: "Lucien Cheval")
+
+    static let sampleRecipientsList = [sampleRecipient1, sampleRecipient2, sampleRecipient3, sampleRecipient4].toRealmList()
 
     static let sampleAttachment = Attachment(
         uuid: "",
