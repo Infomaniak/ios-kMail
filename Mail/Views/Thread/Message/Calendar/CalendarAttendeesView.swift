@@ -23,6 +23,7 @@ struct CalendarAttendeesView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingAttendees = false
+    @State private var isShowingAllAttendees = false
 
     let organizer = PreviewHelper.sampleRecipient4
     let attendees = Array(repeating: PreviewHelper.sampleRecipient1, count: 4)
@@ -58,7 +59,7 @@ struct CalendarAttendeesView: View {
                     .padding(.horizontal, value: .regular)
 
                     Button {
-                        // TODO: Show bottom sheet with attendees
+                        isShowingAllAttendees = true
                     } label: {
                         HStack(spacing: UIPadding.regular) {
                             CalendarAttendeesStack(attendees: attendees)
@@ -71,6 +72,9 @@ struct CalendarAttendeesView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .floatingPanel(isPresented: $isShowingAllAttendees) {
+            CalendarAllAttendeesView(attendees: [])
+        }
     }
 }
 
