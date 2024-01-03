@@ -25,12 +25,16 @@ struct CalendarAllAttendeesView: View {
 
     var body: some View {
         NBNavigationStack {
-            List {}
-                .navigationTitle("Liste des participants (15)")
+            List(attendees) { attendee in
+                CalendarAttendeeCell(recipient: attendee)
+            }
+            .listStyle(.plain)
+            .navigationTitle("Liste des participants (15)")
         }
     }
 }
 
 #Preview {
     CalendarAllAttendeesView(attendees: [PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2])
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }
