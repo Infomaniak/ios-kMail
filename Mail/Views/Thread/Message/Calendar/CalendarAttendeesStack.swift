@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import SwiftUI
 
 struct CalendarAttendeesStack: View {
@@ -47,9 +48,14 @@ struct CalendarAttendeesStack: View {
                     .fill(Color.gray)
                     .overlay {
                         Text("+\(hiddenAttendees)")
-                            .foregroundStyle(Color.white)
+                            .font(MailTextStyle.body.font)
+                            .foregroundStyle(MailResourcesAsset.backgroundColor.swiftUIColor)
                     }
                     .frame(width: 32, height: 32)
+                    .overlay {
+                        Circle()
+                            .stroke(MailResourcesAsset.backgroundColor.swiftUIColor)
+                    }
             }
         }
     }
