@@ -35,10 +35,18 @@ final class ShareNavigationViewController: UIViewController {
         SimpleResolver.sharedResolver.store(factory: snackBarPresenter)
     }
 
+    private func overrideURLOpener() {
+        let urlOpener = Factory(type: URLOpenable.self) { _, _ in
+            URLOpener(extensionContext: self.extensionContext)
+        }
+        SimpleResolver.sharedResolver.store(factory: urlOpener)
+    }
+
     override public func viewDidLoad() {
         super.viewDidLoad()
 
         overrideSnackBarPresenter(contextView: view)
+        overrideURLOpener()
 
         // Set theme
         overrideUserInterfaceStyle = UserDefaults.shared.theme.interfaceStyle

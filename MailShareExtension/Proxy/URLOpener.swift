@@ -17,9 +17,19 @@
  */
 
 import Foundation
+import InfomaniakCore
+import UIKit
 
 public struct URLOpener: URLOpenable {
+    let extensionContext: NSExtensionContext?
+
+    init(extensionContext: NSExtensionContext? = nil) {
+        self.extensionContext = extensionContext
+    }
+
     public func canOpen(url: URL) -> Bool {
         return false
     }
+
+    public func openUrl(_ url: URL) {}
 }

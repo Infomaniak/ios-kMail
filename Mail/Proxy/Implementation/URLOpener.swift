@@ -17,10 +17,15 @@
  */
 
 import Foundation
+import InfomaniakCore
 import UIKit
 
 public struct URLOpener: URLOpenable {
     public func canOpen(url: URL) -> Bool {
         return UIApplication.shared.canOpenURL(url)
+    }
+
+    public func openUrl(_ url: URL) {
+        UIApplication.shared.open(url)
     }
 }

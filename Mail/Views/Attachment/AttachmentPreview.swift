@@ -22,6 +22,7 @@ import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
+import Sentry
 import SwiftUI
 
 struct AttachmentPreview: View {
@@ -34,7 +35,7 @@ struct AttachmentPreview: View {
 
     @State private var downloadedAttachmentURL: IdentifiableURL?
 
-    @ObservedRealmObject var attachment: Attachment
+    @ObservedRealmObject var attachment: MailCore.Attachment
 
     var body: some View {
         NavigationView {
@@ -83,7 +84,11 @@ struct AttachmentPreview: View {
 
                     Button {
                         guard let attachmentURL = attachment.localUrl else { return }
-                        openInKdrive(with: attachmentURL)
+                        do {
+                            try DeeplinkService().shareFileToKdrive(attachmentURL)
+                        } catch {
+                            SentrySDK.capture(error: error)
+                        }
                     } label: {
                         Label {
                             Text(MailResourcesStrings.Localizable.buttonOpenKdrive)
@@ -95,41 +100,6 @@ struct AttachmentPreview: View {
                     }
                 }
             }
-        }
-    }
-
-    private func openInKdrive(with url: URL) {
-        guard let destination = writeToGroupContainer(file: url) else { return }
-
-        var targetUrl = URLComponents(string: "kdrive-file-sharing://file")
-        targetUrl?.queryItems = [URLQueryItem(name: "url", value: destination.path)]
-        if let targetAppUrl = targetUrl?.url, urlOpener.canOpen(url: targetAppUrl) {
-            openUrl(targetAppUrl)
-        } else {
-            openUrl(URLConstants.kdriveAppStore.url)
-        }
-    }
-
-    private func writeToGroupContainer(file: URL) -> URL? {
-        guard let sharedContainerURL: URL = FileManager.default
-            .containerURL(forSecurityApplicationGroupIdentifier: Constants.appGroupIdentifier) else { return nil }
-
-        let groupContainer = sharedContainerURL.appendingPathComponent("Library/Caches/file-sharing", conformingTo: .directory)
-        let destination = groupContainer.appendingPathComponent(file.lastPathComponent)
-
-        do {
-            if FileManager.default.fileExists(atPath: groupContainer.path) {
-                try FileManager.default.removeItem(at: groupContainer)
-            }
-            try FileManager.default.createDirectory(at: groupContainer, withIntermediateDirectories: false)
-            try FileManager.default.copyItem(
-                at: file,
-                to: destination
-            )
-            return destination
-        } catch {
-            print("Error copying file: \(error.localizedDescription)")
-            return nil
         }
     }
 }
