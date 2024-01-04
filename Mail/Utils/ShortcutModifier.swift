@@ -62,7 +62,7 @@ struct ShortcutModifier: ViewModifier {
     }
 
     private func shortcutDelete() {
-        matomo.track(eventWithCategory: .shortcutAction, name: "delete")
+        matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "delete")
 
         let messages: [Message]
         if multipleSelectionViewModel.isEnabled {
@@ -81,7 +81,7 @@ struct ShortcutModifier: ViewModifier {
     }
 
     private func shortcutReply() {
-        matomo.track(eventWithCategory: .shortcutAction, name: "reply")
+        matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "reply")
 
         guard !multipleSelectionViewModel.isEnabled,
               let message = viewModel.selectedThread?
@@ -96,13 +96,13 @@ struct ShortcutModifier: ViewModifier {
     }
 
     private func shortcutNewMessage() {
-        matomo.track(eventWithCategory: .shortcutAction, name: "newMessage")
+        matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "newMessage")
 
         mainViewState.editedDraft = EditedDraft.new()
     }
 
     private func shortcutRefresh() {
-        matomo.track(eventWithCategory: .shortcutAction, name: "refresh")
+        matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "refresh")
 
         Task {
             await viewModel.fetchThreads()
@@ -111,13 +111,13 @@ struct ShortcutModifier: ViewModifier {
 
     private func shortcutNext() {
         guard !multipleSelectionViewModel.isEnabled else { return }
-        matomo.track(eventWithCategory: .shortcutAction, name: "nextThread")
+        matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "nextThread")
         viewModel.nextThread()
     }
 
     private func shortcutPrevious() {
         guard !multipleSelectionViewModel.isEnabled else { return }
-        matomo.track(eventWithCategory: .shortcutAction, name: "previousThread")
+        matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "previousThread")
         viewModel.previousThread()
     }
 }

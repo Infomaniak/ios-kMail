@@ -64,11 +64,11 @@ public extension MatomoUtils.EventCategory {
     static let bottomSheetThreadActions = MatomoUtils.EventCategory(displayName: "bottomSheetThreadActions")
     static let contactActions = MatomoUtils.EventCategory(displayName: "contactActions")
     static let editorActions = MatomoUtils.EventCategory(displayName: "editorActions")
+    static let keyboardShortcutActions = MatomoUtils.EventCategory(displayName: "keyboardShortcutActions")
     static let messageActions = MatomoUtils.EventCategory(displayName: "messageActions")
+    static let notificationActions = MatomoUtils.EventCategory(displayName: "notificationActions")
     static let threadActions = MatomoUtils.EventCategory(displayName: "threadActions")
     static let swipeActions = MatomoUtils.EventCategory(displayName: "swipeActions")
-    static let notificationAction = MatomoUtils.EventCategory(displayName: "notificationAction")
-    static let shortcutAction = MatomoUtils.EventCategory(displayName: "shortcutAction")
 
     // Settings
 
@@ -77,13 +77,13 @@ public extension MatomoUtils.EventCategory {
     static let settingsAIEngine = MatomoUtils.EventCategory(displayName: "settingsAiEngine")
     static let settingsCancelPeriod = MatomoUtils.EventCategory(displayName: "settingsCancelPeriod")
     static let settingsDensity = MatomoUtils.EventCategory(displayName: "settingsDensity")
+    static let settingsDisplayExternalContent = MatomoUtils.EventCategory(displayName: "settingsDisplayExternalContent")
     static let settingsForwardMode = MatomoUtils.EventCategory(displayName: "settingsForwardMode")
     static let settingsNotifications = MatomoUtils.EventCategory(displayName: "settingsNotifications")
     static let settingsTheme = MatomoUtils.EventCategory(displayName: "settingsTheme")
     static let settingsSend = MatomoUtils.EventCategory(displayName: "settingsSend")
     static let settingsSwipeActions = MatomoUtils.EventCategory(displayName: "settingsSwipeActions")
     static let settingsThreadMode = MatomoUtils.EventCategory(displayName: "settingsThreadMode")
-    static let settingsDisplayExternalContent = MatomoUtils.EventCategory(displayName: "settingsDisplayExternalContent")
 }
 
 // MARK: - Helpers
