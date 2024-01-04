@@ -20,7 +20,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
-enum CalendarChoice {
+enum CalendarChoice: CaseIterable {
     case yes, maybe, no
 
     var icon: MailResourcesImages {
