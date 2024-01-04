@@ -40,6 +40,7 @@ struct CalendarAttendeesView: View {
                     Text(MailResourcesStrings.Localizable.buttonAttendees)
                     ChevronIcon(direction: isShowingAttendees ? .up : .down, shapeStyle: .tint)
                 }
+                .textStyle(.bodyAccent)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             .buttonStyle(.ikLink(isInlined: true))
@@ -64,7 +65,7 @@ struct CalendarAttendeesView: View {
                     } label: {
                         HStack(spacing: UIPadding.regular) {
                             CalendarAttendeesStack(attendees: attendees)
-                            Text(MailResourcesStrings.Localizable.buttonConsult)
+                            Text(MailResourcesStrings.Localizable.buttonSee)
                                 .textStyle(.bodyAccent)
                         }
                     }

@@ -21,7 +21,7 @@ import MailResources
 import SwiftUI
 
 struct CalendarHeaderView: View {
-    let title = "Réunion Produit"
+    let title: String
 
     var body: some View {
         HStack(spacing: UIPadding.small) {
@@ -37,5 +37,5 @@ struct CalendarHeaderView: View {
 }
 
 #Preview {
-    CalendarHeaderView()
+    CalendarHeaderView(title: "Réunion Produit")
 }

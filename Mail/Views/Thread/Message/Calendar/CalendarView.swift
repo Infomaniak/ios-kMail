@@ -22,7 +22,7 @@ import SwiftUI
 struct CalendarView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            CalendarHeaderView()
+            CalendarHeaderView(title: "Réunion Produit")
             CalendarBodyView()
         }
         .clipShape(RoundedRectangle(cornerRadius: 8))
