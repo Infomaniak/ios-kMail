@@ -36,7 +36,6 @@ struct ThreadView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.isCompactWindow) private var isCompactWindow
-    @Environment(\.dismiss) private var dismiss
 
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
@@ -163,14 +162,6 @@ struct ThreadView: View {
             }
             .frame(maxWidth: .infinity)
         }
-        .onChange(of: thread.messages) { newMessagesList in
-            guard isCompactWindow, newMessagesList.isEmpty || thread.messageInFolderCount == 0 else {
-                return
-            }
-
-            // Dismiss on iPhone only
-            dismiss()
-        }
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
             case .externalRecipient(let state):
@@ -216,10 +207,6 @@ struct ThreadView: View {
                     action: action,
                     origin: .toolbar(originFolder: originFolder, nearestFlushAlert: $nearestFlushAlert)
                 )
-
-                if action == .archive || (action == .delete && originFolder?.permanentlyDeleteContent != true) {
-                    dismiss()
-                }
             }
         }
     }

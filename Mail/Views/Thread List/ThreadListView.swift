@@ -54,9 +54,11 @@ struct ThreadListView: View {
 
     init(mailboxManager: MailboxManager,
          folder: Folder,
+         selectedThreadOwner: SelectedThreadOwnable,
          isCompact: Bool) {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder,
+                                                                   selectedThreadOwner: selectedThreadOwner,
                                                                    isCompact: isCompact))
         _multipleSelectionViewModel = StateObject(wrappedValue: ThreadListMultipleSelectionViewModel())
 
@@ -103,7 +105,7 @@ struct ThreadListView: View {
                                                thread: thread,
                                                threadDensity: threadDensity,
                                                accentColor: accentColor,
-                                               isSelected: viewModel.selectedThread?.uid == thread.uid,
+                                               isSelected: mainViewState.selectedThread?.uid == thread.uid,
                                                isMultiSelected: multipleSelectionViewModel.selectedItems.contains(thread),
                                                flushAlert: $flushAlert)
                             }
@@ -171,18 +173,8 @@ struct ThreadListView: View {
         .shortcutModifier(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .onAppear {
             networkMonitor.start()
-            if viewModel.isCompact {
-                viewModel.selectedThread = nil
-            }
             userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox,
                                                       folder: mainViewState.selectedFolder)
-        }
-        .onChange(of: viewModel.selectedThread) { newThread in
-            if let newThread {
-                mainViewState.threadPath = [newThread]
-            } else {
-                mainViewState.threadPath = []
-            }
         }
         .onChange(of: multipleSelectionViewModel.isEnabled) { isEnabled in
             scrollObserver.shouldObserve = !isEnabled
@@ -216,6 +208,7 @@ struct ThreadListView_Previews: PreviewProvider {
         ThreadListView(
             mailboxManager: PreviewHelper.sampleMailboxManager,
             folder: PreviewHelper.sampleFolder,
+            selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner,
             isCompact: false
         )
     }

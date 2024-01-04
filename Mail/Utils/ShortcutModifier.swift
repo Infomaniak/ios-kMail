@@ -68,7 +68,7 @@ struct ShortcutModifier: ViewModifier {
         if multipleSelectionViewModel.isEnabled {
             messages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
         } else {
-            guard let unwrapMessages = mainViewState.threadPath.last?.messages.toArray() else { return }
+            guard let unwrapMessages = mainViewState.selectedThread?.messages.toArray() else { return }
             messages = unwrapMessages
         }
         Task {
@@ -84,7 +84,7 @@ struct ShortcutModifier: ViewModifier {
         matomo.track(eventWithCategory: .shortcutAction, name: "reply")
 
         guard !multipleSelectionViewModel.isEnabled,
-              let message = mainViewState.threadPath.last?
+              let message = mainViewState.selectedThread?
               .lastMessageToExecuteAction(currentMailboxEmail: viewModel.mailboxManager.mailbox.email) else { return }
         Task {
             try await actionsManager.performAction(

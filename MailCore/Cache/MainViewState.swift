@@ -18,7 +18,11 @@
 
 import Foundation
 
-public class MainViewState: ObservableObject {
+public protocol SelectedThreadOwnable {
+    var selectedThread: Thread? { get set }
+}
+
+public class MainViewState: ObservableObject, SelectedThreadOwnable {
     @Published public var editedDraft: EditedDraft?
     @Published public var settingsViewConfig: SettingsViewConfig?
 
@@ -33,6 +37,19 @@ public class MainViewState: ObservableObject {
     @Published public var selectedFolder: Folder {
         didSet {
             SentryDebug.switchFolderBreadcrumb(uid: selectedFolder.remoteId, name: selectedFolder.name)
+        }
+    }
+
+    public var selectedThread: Thread? {
+        get {
+            threadPath.last
+        }
+        set {
+            if let newValue {
+                threadPath = [newValue]
+            } else {
+                threadPath = []
+            }
         }
     }
 

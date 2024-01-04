@@ -111,23 +111,10 @@ final class DateSection: Identifiable, Equatable {
     let sectionsSubject = PassthroughSubject<[DateSection]?, Never>()
     var sectionsObserver: AnyCancellable?
 
-    @Published var selectedThread: Thread? {
-        didSet {
-            selectedThreadIndex = filteredThreads.firstIndex { $0.uid == selectedThread?.uid }
-        }
-    }
-
     @Published var loadingPageTaskId: UUID?
 
-    // Used to know thread location
-    private var selectedThreadIndex: Int?
-    var filteredThreads = [Thread]() {
-        didSet {
-            guard let thread = selectedThread,
-                  let index = filteredThreads.firstIndex(where: { $0.uid == thread.uid }) else { return }
-            selectedThreadIndex = index
-        }
-    }
+    var selectedThreadOwner: SelectedThreadOwnable
+    var filteredThreads = [Thread]()
 
     var scrollViewProxy: ScrollViewProxy?
     var isCompact: Bool
@@ -182,11 +169,13 @@ final class DateSection: Identifiable, Equatable {
     init(
         mailboxManager: MailboxManager,
         folder: Folder,
+        selectedThreadOwner: SelectedThreadOwnable,
         isCompact: Bool
     ) {
         assert(folder.isFrozen, "ThreadListViewModel.folder should always be frozen")
         self.mailboxManager = mailboxManager
         self.folder = folder
+        self.selectedThreadOwner = selectedThreadOwner
         self.isCompact = isCompact
         sectionsObserver = sectionsSubject
             .receive(on: DispatchQueue.main)
@@ -215,40 +204,44 @@ final class DateSection: Identifiable, Equatable {
         }
     }
 
-    func nextThreadIfNeeded(from threads: [Thread]) {
-        // iPad only
-        guard !isCompact else {
-            return
-        }
-
+    func nextThreadIfNeeded(oldThreads: [Thread], newThreads: [Thread]) {
         // No more threads ?
-        guard !threads.isEmpty else {
-            selectedThread = nil
+        guard !newThreads.isEmpty else {
+            selectedThreadOwner.selectedThread = nil
             return
         }
 
-        // Matching thread to selection state
-        guard !threads.contains(where: { $0.uid == selectedThread?.uid }),
-              let lastIndex = selectedThreadIndex else {
+        // Only move if selected thread is not present in the new list
+        guard let oldSelectedThread = selectedThreadOwner.selectedThread,
+              !newThreads.contains(where: { $0.uid == oldSelectedThread.uid }),
+              let oldSelectedThreadIndex = oldThreads.firstIndex(where: { $0.uid == oldSelectedThread.uid }) else {
             return
         }
 
-        let validIndex = min(lastIndex, threads.count - 1)
-        selectedThread = threads[validIndex]
+        if isCompact {
+            selectedThreadOwner.selectedThread = nil
+        } else {
+            let validIndex = min(oldSelectedThreadIndex, newThreads.count - 1)
+            selectedThreadOwner.selectedThread = newThreads[validIndex]
+        }
     }
 
     func nextThread() {
-        guard !filteredThreads.isEmpty, let oldIndex = selectedThreadIndex, oldIndex < filteredThreads.count - 1 else { return }
-        let newIndex = oldIndex + 1
-        selectedThread = filteredThreads[newIndex]
-        selectedThreadIndex = newIndex
+        guard !filteredThreads.isEmpty,
+              let currentThread = selectedThreadOwner.selectedThread,
+              let currentThreadIndex = filteredThreads.firstIndex(where: { $0.uid == currentThread.uid }),
+              currentThreadIndex < filteredThreads.count - 1 else { return }
+        let newIndex = currentThreadIndex + 1
+        selectedThreadOwner.selectedThread = filteredThreads[newIndex]
     }
 
     func previousThread() {
-        guard !filteredThreads.isEmpty, let oldIndex = selectedThreadIndex, oldIndex > 0 else { return }
-        let newIndex = oldIndex - 1
-        selectedThread = filteredThreads[newIndex]
-        selectedThreadIndex = newIndex
+        guard !filteredThreads.isEmpty,
+              let currentThread = selectedThreadOwner.selectedThread,
+              let currentThreadIndex = filteredThreads.firstIndex(where: { $0.uid == currentThread.uid }),
+              currentThreadIndex > 0 else { return }
+        let newIndex = currentThreadIndex - 1
+        selectedThreadOwner.selectedThread = filteredThreads[newIndex]
     }
 
     func resetFilterIfNeeded(filteredThreads: [Thread]) {
