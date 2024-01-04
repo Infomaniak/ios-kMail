@@ -68,6 +68,11 @@ public extension MailTextStyle {
         weight: .medium
     )
 
+    static let bodyMediumSecondary = MailTextStyle(
+        mailFont: .bodyMedium,
+        color: MailResourcesAsset.textSecondaryColor.swiftUIColor
+    )
+
     static let bodyMediumTertiary = MailTextStyle(
         mailFont: .bodyMedium,
         color: MailResourcesAsset.textTertiaryColor.swiftUIColor
