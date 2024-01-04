@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -44,7 +43,7 @@ struct CalendarAttendeeCell: View {
 #Preview {
     List {
         CalendarAttendeeCell(recipient: PreviewHelper.sampleRecipient1)
-        CalendarAttendeeCell(recipient: Recipient(email: "tim@ik.com", name: "tim@ik.com"))
+        CalendarAttendeeCell(recipient: PreviewHelper.sampleRecipient5)
     }
     .listStyle(.plain)
     .environmentObject(PreviewHelper.sampleMailboxManager)
