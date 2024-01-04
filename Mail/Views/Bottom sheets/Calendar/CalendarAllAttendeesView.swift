@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import NavigationBackport
 import SwiftUI
 
@@ -29,12 +30,12 @@ struct CalendarAllAttendeesView: View {
                 CalendarAttendeeCell(recipient: attendee)
             }
             .listStyle(.plain)
-            .navigationTitle("Liste des participants (15)")
+            .navigationTitle(MailResourcesStrings.Localizable.attendeesListTitle(attendees.count))
         }
     }
 }
 
 #Preview {
-    CalendarAllAttendeesView(attendees: [PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2])
+    CalendarAllAttendeesView(attendees: PreviewHelper.sampleRecipients)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }

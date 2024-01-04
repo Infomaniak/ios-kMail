@@ -78,7 +78,10 @@ struct RecipientCell: View {
 
 struct RecipientAutocompletionCell_Previews: PreviewProvider {
     static var previews: some View {
-        RecipientCell(recipient: PreviewHelper.sampleRecipient1)
-        RecipientCell(recipient: PreviewHelper.sampleRecipient3)
+        VStack {
+            RecipientCell(recipient: PreviewHelper.sampleRecipient1)
+            RecipientCell(recipient: PreviewHelper.sampleRecipient3)
+        }
+        .environmentObject(PreviewHelper.sampleMailboxManager)
     }
 }

@@ -69,7 +69,7 @@ struct CalendarChoiceButton: View {
                 IKIcon(choice.icon)
                     .foregroundStyle(choice.color)
                 Text(choice.label)
-                    .textStyle(.bodyMedium)
+                    .textStyle(.bodyMediumSecondary)
             }
             .padding(.horizontal, value: .intermediate)
             .padding(.vertical, value: .small)
