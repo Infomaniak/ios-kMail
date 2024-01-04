@@ -31,7 +31,7 @@ struct CalendarLabelStyle: LabelStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: UIPadding.regular) {
             configuration.icon
-                .frame(width: 24, height: 24)
+                .frame(width: IKIcon.Size.large.rawValue, height: IKIcon.Size.large.rawValue)
                 .foregroundStyle(MailResourcesAsset.textSecondaryColor)
             configuration.title
                 .textStyle(.body)
@@ -45,11 +45,6 @@ struct CalendarBodyDetailsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
-            Label(date, image: MailResourcesAsset.calendar.name)
-                .labelStyle(.calendar)
-            Label(time, image: MailResourcesAsset.clock.name)
-                .labelStyle(.calendar)
-
             Label {
                 Text(MailResourcesStrings.Localizable.warningEventHasPassed)
                     .foregroundStyle(MailTextStyle.bodySmallWarning.color)
@@ -58,10 +53,18 @@ struct CalendarBodyDetailsView: View {
             }
             .labelStyle(.calendar)
 
-            WrappingHStack(spacing: .constant(UIPadding.small), lineSpacing: UIPadding.small) {
-                CalendarChoiceButton(choice: .yes, isSelected: false)
-                CalendarChoiceButton(choice: .maybe, isSelected: false)
-                CalendarChoiceButton(choice: .no, isSelected: false)
+            Label(date, image: MailResourcesAsset.calendar.name)
+                .labelStyle(.calendar)
+            Label(time, image: MailResourcesAsset.clock.name)
+                .labelStyle(.calendar)
+
+            WrappingHStack(
+                CalendarChoice.allCases,
+                id: \.self,
+                spacing: .constant(UIPadding.small),
+                lineSpacing: UIPadding.small
+            ) { choice in
+                CalendarChoiceButton(choice: choice, isSelected: false)
             }
         }
         .padding(.horizontal, value: .regular)

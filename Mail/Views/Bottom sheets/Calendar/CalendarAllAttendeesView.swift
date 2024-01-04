@@ -28,9 +28,16 @@ struct CalendarAllAttendeesView: View {
         NBNavigationStack {
             List(attendees) { attendee in
                 CalendarAttendeeCell(recipient: attendee)
+                    .threadListCellAppearance()
+                    .overlay(alignment: .bottom) {
+                        if attendee != attendees.last {
+                            IKDivider()
+                        }
+                    }
             }
             .listStyle(.plain)
             .navigationTitle(MailResourcesStrings.Localizable.attendeesListTitle(attendees.count))
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
