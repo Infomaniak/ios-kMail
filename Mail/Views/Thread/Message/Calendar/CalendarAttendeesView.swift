@@ -27,7 +27,7 @@ struct CalendarAttendeesView: View {
     @State private var isShowingAllAttendees = false
 
     let organizer = PreviewHelper.sampleRecipient4
-    let attendees = Array(repeating: PreviewHelper.sampleRecipient1, count: 4)
+    let attendees = PreviewHelper.sampleRecipients
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.small) {
@@ -54,7 +54,7 @@ struct CalendarAttendeesView: View {
                             size: 32
                         )
 
-                        Text(MailResourcesStrings.Localizable.calendarOrganizerName("Lucien Cheval"))
+                        Text(MailResourcesStrings.Localizable.calendarOrganizerName(organizer.name))
                             .textStyle(.body)
                     }
                     .padding(.horizontal, value: .regular)
@@ -74,7 +74,7 @@ struct CalendarAttendeesView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .floatingPanel(isPresented: $isShowingAllAttendees) {
-            CalendarAllAttendeesView(attendees: [])
+            CalendarAllAttendeesView(attendees: attendees)
         }
     }
 }
