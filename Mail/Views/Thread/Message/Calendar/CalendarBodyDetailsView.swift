@@ -47,7 +47,7 @@ struct CalendarBodyDetailsView: View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
             Label {
                 Text(MailResourcesStrings.Localizable.warningEventHasPassed)
-                    .foregroundStyle(MailTextStyle.bodySmallWarning.color)
+                    .textStyle(.bodyWarning)
             } icon: {
                 IKIcon(MailResourcesAsset.warning.swiftUIImage, size: .large)
             }
