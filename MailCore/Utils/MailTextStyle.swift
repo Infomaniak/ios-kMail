@@ -63,6 +63,11 @@ public extension MailTextStyle {
         color: MailResourcesAsset.textPrimaryColor.swiftUIColor
     )
 
+    static let bodyWarning = MailTextStyle(
+        mailFont: .body,
+        color: MailResourcesAsset.orangeColor.swiftUIColor
+    )
+
     static let bodyMedium = MailTextStyle(
         mailFont: .body,
         weight: .medium
