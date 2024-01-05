@@ -17,6 +17,69 @@
  */
 
 import AppIntents
+import InfomaniakBugTracker
+import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
+import InfomaniakLogin
+import InfomaniakNotifications
+import MailCore
+
+private let realmRootPath = "mailboxes"
+private let appGroupIdentifier = "group.com.infomaniak.mail"
 
 @main
-struct MailAppIntentsExtension: AppIntentsExtension {}
+struct MailAppIntentsExtension: AppIntentsExtension {
+    init() {
+        let sharedServices = [
+            Factory(type: InfomaniakNetworkLoginable.self) { _, _ in
+                InfomaniakNetworkLogin(clientId: MailApiFetcher.clientId)
+            },
+            Factory(type: InfomaniakLoginable.self) { _, _ in
+                InfomaniakLogin(clientId: MailApiFetcher.clientId)
+            },
+            Factory(type: AppGroupPathProvidable.self) { _, _ in
+                guard let provider = AppGroupPathProvider(
+                    realmRootPath: realmRootPath,
+                    appGroupIdentifier: appGroupIdentifier
+                ) else {
+                    fatalError("could not safely init AppGroupPathProvider")
+                }
+
+                return provider
+            },
+            Factory(type: MailboxInfosManager.self) { _, _ in
+                MailboxInfosManager()
+            },
+            Factory(type: KeychainHelper.self) { _, _ in
+                KeychainHelper(accessGroup: AccountManager.accessGroup)
+            },
+            Factory(type: AccountManager.self) { _, _ in
+                AccountManager()
+            },
+            Factory(type: TokenStore.self) { _, _ in
+                TokenStore()
+            },
+            Factory(type: InfomaniakNotifications.self) { _, _ in
+                InfomaniakNotifications(appGroup: AccountManager.appGroup)
+            },
+            Factory(type: FeatureFlagsManageable.self) { _, _ in
+                FeatureFlagsManager()
+            },
+            Factory(type: BugTracker.self) { _, _ in
+                BugTracker(info: BugTrackerInfo(project: "app-mobile-mail", gitHubRepoName: "ios-mail", appReleaseType: .beta))
+            },
+            Factory(type: MatomoUtils.self) { _, _ in
+                MatomoUtils(siteId: Constants.matomoId, baseURL: URLConstants.matomo.url)
+            },
+            Factory(type: RealmManageable.self) { _, _ in
+                RealmManager()
+            },
+            Factory(type: FeatureFlagsManageable.self) { _, _ in
+                FeatureFlagsManager()
+            }
+        ]
+
+        sharedServices.forEach { SimpleResolver.sharedResolver.store(factory: $0) }
+    }
+}
