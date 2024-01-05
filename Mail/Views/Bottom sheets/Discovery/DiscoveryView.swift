@@ -56,7 +56,7 @@ public extension DiscoveryItem {
     )
 
     static let setAsDefaultAppDiscovery = DiscoveryItem(
-        image: MailResourcesAsset.notificationsIllustration,
+        image: UserDefaults.shared.accentColor.defaultApp,
         title: MailResourcesStrings.Localizable.setAsDefaultAppTitle,
         description: MailResourcesStrings.Localizable.setAsDefaultAppDescription,
         primaryButtonLabel: MailResourcesStrings.Localizable.buttonSetNow,
