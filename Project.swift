@@ -77,6 +77,7 @@ let project = Project(name: "Mail",
                                      .target(name: "MailCore"),
                                      .target(name: "MailNotificationServiceExtension"),
                                      .target(name: "MailShareExtension"),
+                                     .target(name: "MailAppIntentsExtension"),
                                      .package(product: "SwiftUIIntrospect-Static"),
                                      .package(product: "SQRichTextEditor"),
                                      .package(product: "Shimmer"),
@@ -164,6 +165,26 @@ let project = Project(name: "Mail",
                                  entitlements: "MailResources/Mail.entitlements",
                                  dependencies: [
                                      .target(name: "MailCore")
+                                 ],
+                                 settings: .settings(base: Constants.baseSettings)),
+                          Target(name: "MailAppIntentsExtension",
+                                 platform: .iOS,
+                                 product: .extensionKitExtension,
+                                 bundleId: "com.infomaniak.mail.MailAppIntentsExtension",
+                                 deploymentTarget: Constants.appIntentsDeploymentTarget,
+                                 infoPlist: .extendingDefault(with: [
+                                    "AppIdentifierPrefix": "$(AppIdentifierPrefix)",
+                                    "CFBundleDisplayName": "$(PRODUCT_NAME)",
+                                    "CFBundleShortVersionString": "$(MARKETING_VERSION)",
+                                    "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
+                                    "EXAppExtensionAttributes": [
+                                        "EXExtensionPointIdentifier": "com.apple.appintents-extension"
+                                    ]
+                                 ]),
+                                 sources: "MailAppIntentsExtension/**",
+                                 entitlements: "MailResources/Mail.entitlements",
+                                 dependencies: [
+                                    .target(name: "MailCore")
                                  ],
                                  settings: .settings(base: Constants.baseSettings)),
                           Target(name: "MailResources",
