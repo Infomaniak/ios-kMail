@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: de, German
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Fri, 08 Dec 2023 14:45:20 +0100
+ * Exported by: Philippe Weidmann
+ * Exported at: Fri, 05 Jan 2024 16:45:06 +0100
  */
 
 /* loco:63e11e5771d13a480771a162 */
@@ -100,6 +100,9 @@
 
 /* loco:63fdb9239bfffe2abc3e1c02 */
 "actionViewInLight" = "Ansicht im hellen Thema";
+
+/* loco:65982378414cb87ae7017bd3 */
+"activeFocusFilterTitle" = "Filtern von Postfächern";
 
 /* loco:63ecf9b0415fc86eea26ec03 */
 "addUnknownRecipientAlreadyUsed" = "Die E-Mail wird bereits verwendet";
@@ -278,6 +281,9 @@
 /* loco:638f6e49a7896c4df9647362 */
 "attachmentQuantity-plural-many" = "";
 
+/* loco:659665294692c252640fa103 */
+"attendeesListTitle" = "Liste der Teilnehmer (%d)";
+
 /* loco:6266649755d41301973d0c43 */
 "bccTitle" = "Bcc:";
 
@@ -314,11 +320,17 @@
 /* loco:62cbe10de2840a0cdc2be0d2 */
 "buttonAddEmailAddress" = "Eine E-Mail-Adresse hinzufügen";
 
+/* loco:65957e21e04c075b780d73d2 */
+"buttonAddToMyCalendar" = "Zu meinem Kalender hinzufügen";
+
 /* loco:6437c062dd576a7631052413 */
 "buttonAttachMailbox" = "Mailadresse hinzufügen";
 
 /* loco:62b2e09059ff20150b5c1b52 */
 "buttonAttachment" = "Einen Anhang hinzufügen";
+
+/* loco:65957dd2d9c7e2750204c382 */
+"buttonAttendees" = "Teilnehmer";
 
 /* loco:62befec91b3e0d24437119b3 */
 "buttonAvailableSoon" = "Bald verfügbar";
@@ -407,6 +419,9 @@
 /* loco:628dfebda6add66651161554 */
 "buttonLogin" = "Anmeldung";
 
+/* loco:65855b1bac34d439fd02e7e2 */
+"buttonMaybe" = "Vielleicht";
+
 /* loco:6284fd623d98060ac31f76d5 */
 "buttonMore" = "Mehr";
 
@@ -418,6 +433,9 @@
 
 /* loco:6527b7d4882400da7d04ffd2 */
 "buttonNo" = "Nein";
+
+/* loco:6581b2b5a7520b536b03f942 */
+"buttonOpenKdrive" = "In kDrive öffnen";
 
 /* loco:62cd642815742c678d4c30e4 */
 "buttonRefuse" = "Abfälle";
@@ -431,11 +449,17 @@
 /* loco:62b2e4a24486732cbc2f04d3 */
 "buttonSchedule" = "Planen Sie den Versand von E-Mails für einen späteren Zeitpunkt";
 
+/* loco:65957d479527393708069ee2 */
+"buttonSee" = "Siehe";
+
 /* loco:6268fc53412a8032745aaeb2 */
 "buttonSeeAll" = "Alle sehen";
 
 /* loco:626918473e1b2d7fe4329d52 */
 "buttonSelectAll" = "Alle";
+
+/* loco:657324e1fb3ef333a001d852 */
+"buttonSetNow" = "Jetzt festlegen";
 
 /* loco:6267af86c6ebf234e9213012 */
 "buttonShare" = "Teilen Sie";
@@ -472,6 +496,9 @@
 
 /* loco:6527b7c3bffd89453201f9e2 */
 "buttonYes" = "Ja";
+
+/* loco:65957d996979353c3e0956c4 */
+"calendarOrganizerName" = "%@ (Organisator)";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";
@@ -770,6 +797,18 @@
 /* loco:62a9dbdf0bddbc02ce031ba2 */
 "favoritesFolder" = "Favoriten";
 
+/* loco:65982105ed32c3578b07f9c2 */
+"filterFocusAllowedMailboxesTitle" = "Erlaubte Mailboxen";
+
+/* loco:659821f5e9990911ff064132 */
+"filterFocusDarkModeTitle" = "Verwenden Sie immer den Dunkelmodus";
+
+/* loco:659822fad61595fa7a0e9d02 */
+"filterFocusDescription" = "Lassen Sie Benachrichtigungen für ausgewählte Postfächer zu und konfigurieren Sie das Aussehen der App.";
+
+/* loco:6598228f255baea380090282 */
+"filterFocusTitle" = "Mailboxen filtern und Aussehen ändern";
+
 /* loco:62665f7d647475580e06e912 */
 "fromTitle" = "Von:";
 
@@ -929,6 +968,12 @@
 /* loco:64ba47d60f3176675907c474 */
 "notificationTitleDelete" = "Gelöscht";
 
+/* loco:659697fd4623764905012212 */
+"onBoardingContactsDescription" = "Wenn Sie den Zugriff erlauben, wird die Verwaltung Ihrer Kontakte und Ihre E-Mail-Erfahrung vereinfacht.";
+
+/* loco:659697471cbe96642e01ee33 */
+"onBoardingContactsTitle" = "Mail den Zugriff auf Ihre Kontakte erlauben";
+
 /* loco:62c2eede5bc8fa0201054443 */
 "onBoardingDescription2" = "Passen Sie Ihre Shortcuts in den Einstellungen der App frei an.";
 
@@ -937,6 +982,12 @@
 
 /* loco:62c2ef65c564d9260842db32 */
 "onBoardingDescription4" = "Erstellen Sie eine kostenlose Adresse oder melden Sie sich bei einem bestehenden Infomaniak-Konto an.";
+
+/* loco:659698f30ec60c361c04b452 */
+"onBoardingNotificationsDescription" = "Verpassen Sie keine wichtigen E-Mails und seien Sie in der Lage, schnell zu antworten, indem Sie die Benachrichtigungen aktivieren.";
+
+/* loco:65969899123f318740070872 */
+"onBoardingNotificationsTitle" = "Benachrichtigungen aktivieren";
 
 /* loco:62c2ee73d35f8933bc4b5262 */
 "onBoardingTitle1" = "Wählen Sie Ihr Thema";
@@ -1483,6 +1534,9 @@
 
 /* loco:641d60b6f5c19a18734d9192 */
 "urlUserReportiOS" = "https://feedback.userreport.com/efffca51-9fab-4c6c-95d8-148d5a0fc8a9/";
+
+/* loco:65957e6e7dfe315a5d02add2 */
+"warningEventHasPassed" = "Dieses Ereignis ist bereits vorbei";
 
 /* loco:6481d72ebb3c88db6e002332 */
 "warningNotificationsDisabledButton" = "Aktivieren Sie sie in den Einstellungen";

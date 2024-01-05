@@ -21,23 +21,23 @@ import Foundation
 import MailCore
 
 struct MailSetFocusFilterIntent: SetFocusFilterIntent {
-    @Parameter(title: "Always use dark mode", default: false)
+    @Parameter(title: "filterFocusDarkModeTitle", default: false)
     var alwaysUseDarkMode: Bool
 
-    @Parameter(title: "App accent")
+    @Parameter(title: "settingsAccentColor")
     var preferredAccent: AccentColorEntity?
 
     @Parameter(title: "settingsThreadListDensityTitle")
     var preferredDensity: ThreadDensityEntity?
 
-    @Parameter(title: "Allowed mailboxes", optionsProvider: AccountOptionsProvider())
+    @Parameter(title: "filterFocusAllowedMailboxesTitle", optionsProvider: AccountOptionsProvider())
     var allowedMailboxes: [AccountEntity]?
 
-    static var title: LocalizedStringResource = "Filter mailboxes and modify look"
-    static var description: IntentDescription = "Allow notifications for selected mailboxes and configure the look of the app."
+    static var title: LocalizedStringResource = "filterFocusTitle"
+    static var description: IntentDescription = "filterFocusDescription"
 
     var displayRepresentation: DisplayRepresentation {
-        DisplayRepresentation(title: "Filtering mailboxes")
+        DisplayRepresentation(title: "activeFocusFilterTitle")
     }
 
     var appContext: FocusFilterAppContext {

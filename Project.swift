@@ -182,6 +182,10 @@ let project = Project(name: "Mail",
                                     ]
                                  ]),
                                  sources: "MailAppIntentsExtension/**",
+                                 resources: [
+                                    "MailResources/**/*.strings",
+                                    "MailResources/**/*.stringsdict",
+                                 ],
                                  entitlements: "MailResources/Mail.entitlements",
                                  dependencies: [
                                     .target(name: "MailCore")

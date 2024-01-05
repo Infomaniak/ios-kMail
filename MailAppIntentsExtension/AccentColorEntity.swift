@@ -25,7 +25,7 @@ enum AccentColorEntity: String, AppEnum {
     case blue
 
     static var typeDisplayRepresentation: TypeDisplayRepresentation {
-        return TypeDisplayRepresentation(stringLiteral: "The app accent color")
+        return TypeDisplayRepresentation(name: "settingsAccentColor")
     }
 
     static var caseDisplayRepresentations: [AccentColorEntity: DisplayRepresentation] = [

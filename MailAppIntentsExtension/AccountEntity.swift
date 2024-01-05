@@ -28,7 +28,7 @@ struct AccountEntity: AppEntity {
     static var defaultQuery = AccountEntityQuery()
 
     static var typeDisplayRepresentation: TypeDisplayRepresentation {
-        TypeDisplayRepresentation(name: "A mailbox")
+        TypeDisplayRepresentation(name: "settingsSectionEmailAddresses")
     }
 
     var displayRepresentation: DisplayRepresentation {
