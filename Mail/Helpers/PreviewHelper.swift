@@ -25,6 +25,12 @@ import RealmSwift
 import SwiftUI
 
 enum PreviewHelper {
+    class MockSelectedThreadOwner: SelectedThreadOwnable {
+        var selectedThread: Thread? = nil
+    }
+
+    static var mockSelectedThreadOwner = MockSelectedThreadOwner()
+
     private class PreviewHelperRefreshTokenDelegate: RefreshTokenDelegate {
         func didUpdateToken(newToken: InfomaniakCore.ApiToken, oldToken: InfomaniakCore.ApiToken) {
             // No implementation

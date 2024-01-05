@@ -108,8 +108,7 @@ struct ThreadListCell: View {
                 splitViewManager.adaptToProminentThreadView()
 
                 // Update both viewModel and navigationState on the truth.
-                viewModel.selectedThread = thread
-                mainViewState.threadPath = [thread]
+                mainViewState.selectedThread = thread
             }
         }
     }
@@ -129,6 +128,7 @@ struct ThreadListCell_Previews: PreviewProvider {
         ThreadListCell(
             viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                            folder: PreviewHelper.sampleFolder,
+                                           selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner,
                                            isCompact: false),
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(),
             thread: PreviewHelper.sampleThread,

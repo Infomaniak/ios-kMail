@@ -46,6 +46,7 @@ struct ThreadListManagerView: View {
                 ThreadListView(
                     mailboxManager: mailboxManager,
                     folder: mainViewState.selectedFolder,
+                    selectedThreadOwner: mainViewState,
                     isCompact: isCompactWindow
                 )
                 .id(threadListViewHash)

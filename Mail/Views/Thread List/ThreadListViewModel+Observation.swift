@@ -30,7 +30,7 @@ extension ThreadListViewModel {
         let threadResults: Results<Thread>
         if let predicate = filter.predicate {
             threadResults = folder.threads
-                .filter(predicate + " OR uid == %@", selectedThread?.uid ?? "")
+                .filter(predicate + " OR uid == %@", selectedThreadOwner.selectedThread?.uid ?? "")
                 .sorted(by: \.date, ascending: false)
         } else {
             threadResults = folder.threads.sorted(by: \.date, ascending: false)
@@ -95,12 +95,13 @@ extension ThreadListViewModel {
     }
 
     private func updateThreadResults(results: Results<Thread>) {
+        let oldFilteredThreads = filteredThreads
         let (filteredThreads, newSections) = mapSectionedResults(results: results)
 
         resetFilterIfNeeded(filteredThreads: filteredThreads)
 
         DispatchQueue.main.sync {
-            self.nextThreadIfNeeded(from: filteredThreads)
+            self.nextThreadIfNeeded(oldThreads: oldFilteredThreads, newThreads: filteredThreads)
             self.filteredThreads = filteredThreads
             if self.filter != .all,
                filteredThreads.count == 1,

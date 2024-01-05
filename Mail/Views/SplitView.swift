@@ -93,7 +93,7 @@ struct SplitView: View {
 
                     ThreadListManagerView()
 
-                    if let thread = mainViewState.threadPath.last {
+                    if let thread = mainViewState.selectedThread {
                         ThreadView(thread: thread)
                     } else {
                         EmptyStateView.emptyThread(from: mainViewState.selectedFolder)
@@ -271,7 +271,7 @@ struct SplitView: View {
                 // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in
                 // inbox
                 if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
-                    mainViewState.threadPath = [tappedNotificationThread]
+                    mainViewState.selectedThread = tappedNotificationThread
                 } else {
                     snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
                 }
