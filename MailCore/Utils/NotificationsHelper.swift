@@ -182,6 +182,9 @@ public enum NotificationsHelper {
         content.badge = await getUnreadCount() as NSNumber
         content.sound = .default
         content.categoryIdentifier = NotificationActionGroupIdentifier.newMail // enable actions
+        if #available(iOS 16.0, *) {
+            content.filterCriteria = MailboxInfosManager.getObjectId(mailboxId: mailboxId, userId: userId)
+        }
         content.userInfo = [NotificationsHelper.UserInfoKeys.userId: userId,
                             NotificationsHelper.UserInfoKeys.mailboxId: mailboxId,
                             NotificationsHelper.UserInfoKeys.messageUid: message.uid]

@@ -64,6 +64,12 @@ final class NotificationService: UNNotificationServiceExtension {
         bestAttemptContent?.title = mailbox.email
         bestAttemptContent?.body = MailResourcesStrings.Localizable.notificationNewEmail
         bestAttemptContent?.sound = .default
+        if #available(iOSApplicationExtension 16.0, *) {
+            bestAttemptContent?.filterCriteria = MailboxInfosManager.getObjectId(
+                mailboxId: mailbox.mailboxId,
+                userId: mailbox.userId
+            )
+        }
         bestAttemptContent?.userInfo = [NotificationsHelper.UserInfoKeys.userId: mailbox.userId,
                                         NotificationsHelper.UserInfoKeys.mailboxId: mailbox.mailboxId]
     }
