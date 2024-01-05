@@ -23,7 +23,7 @@ struct CalendarAttendeeCell: View {
     let recipient: Recipient
 
     var body: some View {
-        HStack(spacing: UIPadding.regular) {
+        HStack(spacing: UIPadding.small) {
             CalendarAttendeeAvatarView(recipient: recipient, choice: .yes)
 
             VStack(alignment: .leading, spacing: 0) {

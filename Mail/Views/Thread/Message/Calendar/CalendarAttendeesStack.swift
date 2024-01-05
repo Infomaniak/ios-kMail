@@ -40,22 +40,19 @@ struct CalendarAttendeesStack: View {
     var body: some View {
         HStack(alignment: .top, spacing: -6) {
             ForEach(displayedAttendees) { attendee in
-                CalendarAttendeeAvatarView(recipient: attendee, choice: .yes)
+                CalendarAttendeeAvatarView(recipient: attendee, choice: .maybe)
             }
 
             if hiddenAttendees > 0 {
-                Circle()
-                    .fill(Color.gray)
-                    .overlay {
-                        Text("+\(hiddenAttendees)")
-                            .font(MailTextStyle.body.font)
-                            .foregroundStyle(MailResourcesAsset.backgroundColor.swiftUIColor)
-                    }
-                    .frame(width: 32 + UIConstants.avatarBorderLineWidth, height: 32 + UIConstants.avatarBorderLineWidth)
-                    .overlay {
-                        Circle()
-                            .stroke(MailResourcesAsset.backgroundColor.swiftUIColor)
-                    }
+                InitialsView(
+                    initials: "+\(hiddenAttendees)",
+                    color: MailResourcesAsset.textSecondaryColor.color,
+                    size: 32 + UIConstants.avatarBorderLineWidth
+                )
+                .overlay {
+                    Circle()
+                        .stroke(MailResourcesAsset.backgroundColor.swiftUIColor, lineWidth: UIConstants.avatarBorderLineWidth)
+                }
             }
         }
     }
