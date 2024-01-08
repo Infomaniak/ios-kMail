@@ -21,15 +21,6 @@ import Foundation
 import MailCore
 
 struct MailSetFocusFilterIntent: SetFocusFilterIntent {
-    @Parameter(title: "filterFocusDarkModeTitle", default: false)
-    var alwaysUseDarkMode: Bool
-
-    @Parameter(title: "settingsAccentColor")
-    var preferredAccent: AccentColorEntity?
-
-    @Parameter(title: "settingsThreadListDensityTitle")
-    var preferredDensity: ThreadDensityEntity?
-
     @Parameter(title: "filterFocusAllowedMailboxesTitle", optionsProvider: AccountOptionsProvider())
     var allowedMailboxes: [AccountEntity]?
 
@@ -52,17 +43,10 @@ struct MailSetFocusFilterIntent: SetFocusFilterIntent {
 
     static func suggestedFocusFilters(for context: FocusFilterSuggestionContext) async -> [MailSetFocusFilterIntent] {
         let exampleFilter = MailSetFocusFilterIntent()
-        exampleFilter.alwaysUseDarkMode = UserDefaults.shared.theme == .dark
-        exampleFilter.preferredAccent = UserDefaults.shared.accentColor.entity
-        exampleFilter.preferredDensity = UserDefaults.shared.threadDensity.entity
         return [exampleFilter]
     }
 
     func perform() async throws -> some IntentResult {
-        UserDefaults.shared.theme = alwaysUseDarkMode ? .dark : DefaultPreferences.theme
-        UserDefaults.shared.accentColor = preferredAccent?.accentColor ?? DefaultPreferences.accentColor
-        UserDefaults.shared.threadDensity = preferredDensity?.threadDensity ?? DefaultPreferences.threadDensity
-
         return .result()
     }
 }

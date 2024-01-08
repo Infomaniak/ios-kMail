@@ -5,7 +5,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Philippe Weidmann
- * Exported at: Fri, 05 Jan 2024 16:45:06 +0100
+ * Exported at: Mon, 08 Jan 2024 14:11:04 +0100
  */
 
 /* loco:63e11e5771d13a480771a162 */
@@ -800,14 +800,11 @@
 /* loco:65982105ed32c3578b07f9c2 */
 "filterFocusAllowedMailboxesTitle" = "Boîtes mail autorisées";
 
-/* loco:659821f5e9990911ff064132 */
-"filterFocusDarkModeTitle" = "Toujours utiliser le mode sombre";
-
 /* loco:659822fad61595fa7a0e9d02 */
-"filterFocusDescription" = "Autorisez les notifications pour les boîtes aux lettres sélectionnées et configurez l'apparence de l'application.";
+"filterFocusDescription" = "Autorisez les notifications pour les boîtes aux lettres sélectionnées.";
 
 /* loco:6598228f255baea380090282 */
-"filterFocusTitle" = "Filtrer les boîtes aux lettres et modifier l'apparence";
+"filterFocusTitle" = "Filtrer les boîtes aux lettres";
 
 /* loco:62665f7d647475580e06e912 */
 "fromTitle" = "De :";
@@ -969,7 +966,7 @@
 "notificationTitleDelete" = "Supprimé";
 
 /* loco:659697fd4623764905012212 */
-"onBoardingContactsDescription" = "En autorisant l’accès, la gestion de vos contacts et votre expérience de messagerie seront simplifiées.";
+"onBoardingContactsDescription" = "En autorisant l’accès, nous pourrons afficher le nom et l’avatar des contacts présents dans votre appareil lors de l’écriture et la réception des e-mails.\nLe traitement se fait uniquement en local sur votre appareil, ces données ne sont en aucun cas envoyées sur nos serveurs.";
 
 /* loco:659697471cbe96642e01ee33 */
 "onBoardingContactsTitle" = "Autoriser Mail à accéder à vos contacts";

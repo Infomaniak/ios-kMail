@@ -5,7 +5,7 @@
  * Locale: es, Spanish
  * Tagged: ios
  * Exported by: Philippe Weidmann
- * Exported at: Fri, 05 Jan 2024 16:45:06 +0100
+ * Exported at: Mon, 08 Jan 2024 14:11:04 +0100
  */
 
 /* loco:63e11e5771d13a480771a162 */
@@ -800,14 +800,11 @@
 /* loco:65982105ed32c3578b07f9c2 */
 "filterFocusAllowedMailboxesTitle" = "Buzones autorizados";
 
-/* loco:659821f5e9990911ff064132 */
-"filterFocusDarkModeTitle" = "Utilice siempre el modo oscuro";
-
 /* loco:659822fad61595fa7a0e9d02 */
-"filterFocusDescription" = "Permitir notificaciones para buzones seleccionados y configurar el aspecto de la aplicación.";
+"filterFocusDescription" = "Permitir notificaciones para buzones seleccionados.";
 
 /* loco:6598228f255baea380090282 */
-"filterFocusTitle" = "Filtrar buzones y modificar el aspecto";
+"filterFocusTitle" = "Filtrar buzones";
 
 /* loco:62665f7d647475580e06e912 */
 "fromTitle" = "De:";
