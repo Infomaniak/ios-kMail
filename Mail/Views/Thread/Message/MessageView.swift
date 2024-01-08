@@ -114,6 +114,12 @@ struct MessageView: View {
                 if message.shouldComplete {
                     await fetchMessage()
                 }
+                do {
+                    try await fetchEventCalendar()
+                } catch {
+                    dump(error)
+                    print("hey")
+                }
             }
             .onChange(of: message.fullyDownloaded) { _ in
                 prepareBodyIfNeeded()
@@ -149,6 +155,15 @@ struct MessageView: View {
                 isShowingErrorLoading = true
             }
         }
+    }
+
+    private func fetchEventCalendar() async throws {
+        guard let attachment = message.attachments.first(where: { $0.uti?.conforms(to: .calendarEvent) == true }) else {
+            return
+        }
+
+        let response = try await mailboxManager.apiFetcher.calendarAttachment(attachment: attachment)
+        dump(response)
     }
 }
 
