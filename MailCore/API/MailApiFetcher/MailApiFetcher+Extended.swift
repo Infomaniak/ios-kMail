@@ -110,6 +110,16 @@ public extension MailApiFetcher {
         return try await request.serializingData().value
     }
 
+    func calendarAttachment(attachment: Attachment) async throws -> CalendarEventResponse {
+        guard let resource = attachment.resource else {
+            throw MailError.resourceError
+        }
+        return try await perform(request: authenticatedRequest(.resource(
+            resource,
+            queryItems: [URLQueryItem(name: "format", value: "render")]
+        ))).data
+    }
+
     func messagesUids(
         mailboxUuid: String,
         folderId: String,
