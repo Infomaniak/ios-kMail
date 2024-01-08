@@ -52,7 +52,9 @@ struct MailSetFocusFilterIntent: SetFocusFilterIntent {
 
     static func suggestedFocusFilters(for context: FocusFilterSuggestionContext) async -> [MailSetFocusFilterIntent] {
         let exampleFilter = MailSetFocusFilterIntent()
-        exampleFilter.alwaysUseDarkMode = true
+        exampleFilter.alwaysUseDarkMode = UserDefaults.shared.theme == .dark
+        exampleFilter.preferredAccent = UserDefaults.shared.accentColor.entity
+        exampleFilter.preferredDensity = UserDefaults.shared.threadDensity.entity
         return [exampleFilter]
     }
 

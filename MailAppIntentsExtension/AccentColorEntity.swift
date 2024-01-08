@@ -20,6 +20,18 @@ import AppIntents
 import Foundation
 import MailCore
 
+extension AccentColor {
+    var entity: AccentColorEntity {
+        switch self {
+        case .pink:
+            return .pink
+        case .blue:
+            return .blue
+        }
+    }
+}
+
+// Enum is duplicated from AccentColor because AppIntents needs to have the type inside the target to compile...
 enum AccentColorEntity: String, AppEnum {
     case pink
     case blue

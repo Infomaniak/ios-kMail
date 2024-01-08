@@ -20,6 +20,20 @@ import AppIntents
 import Foundation
 import MailCore
 
+extension ThreadDensity {
+    var entity: ThreadDensityEntity {
+        switch self {
+        case .compact:
+            return .compact
+        case .normal:
+            return .normal
+        case .large:
+            return .large
+        }
+    }
+}
+
+// Enum is duplicated from ThreadDensity because AppIntents needs to have the type inside the target to compile...
 enum ThreadDensityEntity: String, AppEnum {
     case compact
     case normal
