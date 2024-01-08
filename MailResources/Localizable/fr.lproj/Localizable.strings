@@ -5,7 +5,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Philippe Weidmann
- * Exported at: Mon, 08 Jan 2024 13:53:25 +0100
+ * Exported at: Mon, 08 Jan 2024 14:11:04 +0100
  */
 
 /* loco:63e11e5771d13a480771a162 */
@@ -801,13 +801,10 @@
 "filterFocusAllowedMailboxesTitle" = "Boîtes mail autorisées";
 
 /* loco:659822fad61595fa7a0e9d02 */
-"filterFocusDescription" = "Autorisez les notifications pour les boîtes aux lettres sélectionnées et configurez l'apparence de l'application.";
+"filterFocusDescription" = "Autorisez les notifications pour les boîtes aux lettres sélectionnées.";
 
 /* loco:6598228f255baea380090282 */
-"filterFocusTitle" = "Filtrer les boîtes aux lettres et modifier l'apparence";
-
-/* loco:659bf01196b3fac0af0a64d2 */
-"focusFilterAppDefaultTitle" = "Ne rien faire";
+"filterFocusTitle" = "Filtrer les boîtes aux lettres";
 
 /* loco:62665f7d647475580e06e912 */
 "fromTitle" = "De :";

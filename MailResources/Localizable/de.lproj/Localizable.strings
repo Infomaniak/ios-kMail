@@ -5,7 +5,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Philippe Weidmann
- * Exported at: Mon, 08 Jan 2024 13:53:25 +0100
+ * Exported at: Mon, 08 Jan 2024 14:11:04 +0100
  */
 
 /* loco:63e11e5771d13a480771a162 */
@@ -801,13 +801,10 @@
 "filterFocusAllowedMailboxesTitle" = "Erlaubte Mailboxen";
 
 /* loco:659822fad61595fa7a0e9d02 */
-"filterFocusDescription" = "Lassen Sie Benachrichtigungen für ausgewählte Postfächer zu und konfigurieren Sie das Aussehen der App.";
+"filterFocusDescription" = "Lassen Sie Benachrichtigungen für ausgewählte Postfächer zu.";
 
 /* loco:6598228f255baea380090282 */
-"filterFocusTitle" = "Mailboxen filtern und Aussehen ändern";
-
-/* loco:659bf01196b3fac0af0a64d2 */
-"focusFilterAppDefaultTitle" = "Nichts tun";
+"filterFocusTitle" = "Mailboxen filtern";
 
 /* loco:62665f7d647475580e06e912 */
 "fromTitle" = "Von:";

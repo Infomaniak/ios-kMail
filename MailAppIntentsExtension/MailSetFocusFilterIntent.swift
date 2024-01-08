@@ -24,15 +24,6 @@ struct MailSetFocusFilterIntent: SetFocusFilterIntent {
     @Parameter(title: "filterFocusAllowedMailboxesTitle", optionsProvider: AccountOptionsProvider())
     var allowedMailboxes: [AccountEntity]?
 
-    @Parameter(title: "settingsThemeTitle", default: .appDefault)
-    var preferredTheme: ThemeEntity
-
-    @Parameter(title: "settingsAccentColor", default: .appDefault)
-    var preferredAccent: AccentColorEntity
-
-    @Parameter(title: "settingsThreadListDensityTitle", default: .appDefault)
-    var preferredDensity: ThreadDensityEntity
-
     static var title: LocalizedStringResource = "filterFocusTitle"
     static var description: IntentDescription = "filterFocusDescription"
 
@@ -52,17 +43,10 @@ struct MailSetFocusFilterIntent: SetFocusFilterIntent {
 
     static func suggestedFocusFilters(for context: FocusFilterSuggestionContext) async -> [MailSetFocusFilterIntent] {
         let exampleFilter = MailSetFocusFilterIntent()
-        exampleFilter.preferredTheme = .appDefault
-        exampleFilter.preferredAccent = .appDefault
-        exampleFilter.preferredDensity = .appDefault
         return [exampleFilter]
     }
 
     func perform() async throws -> some IntentResult {
-        UserDefaults.shared.theme = preferredTheme.theme ?? DefaultPreferences.theme
-        UserDefaults.shared.accentColor = preferredAccent.accentColor ?? DefaultPreferences.accentColor
-        UserDefaults.shared.threadDensity = preferredDensity.threadDensity ?? DefaultPreferences.threadDensity
-
         return .result()
     }
 }
