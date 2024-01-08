@@ -38,6 +38,7 @@ enum ThreadDensityEntity: String, AppEnum {
     case compact
     case normal
     case large
+    case appDefault
 
     static var typeDisplayRepresentation: TypeDisplayRepresentation {
         return TypeDisplayRepresentation(stringLiteral: "settingsThreadListDensityTitle")
@@ -46,10 +47,11 @@ enum ThreadDensityEntity: String, AppEnum {
     static var caseDisplayRepresentations: [ThreadDensityEntity: DisplayRepresentation] = [
         .compact: DisplayRepresentation(title: "settingsDensityOptionCompact"),
         .normal: DisplayRepresentation(title: "settingsDensityOptionNormal"),
-        .large: DisplayRepresentation(title: "settingsDensityOptionLarge")
+        .large: DisplayRepresentation(title: "settingsDensityOptionLarge"),
+        .appDefault: DisplayRepresentation(title: "focusFilterAppDefaultTitle")
     ]
 
-    var threadDensity: ThreadDensity {
+    var threadDensity: ThreadDensity? {
         switch self {
         case .compact:
             return .compact
@@ -57,6 +59,8 @@ enum ThreadDensityEntity: String, AppEnum {
             return .normal
         case .large:
             return .large
+        case .appDefault:
+            return nil
         }
     }
 }

@@ -1,3 +1,4 @@
+//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2022 Infomaniak Network SA
@@ -20,39 +21,44 @@ import AppIntents
 import Foundation
 import MailCore
 
-extension AccentColor {
-    var entity: AccentColorEntity {
+extension Theme {
+    var entity: ThemeEntity {
         switch self {
-        case .pink:
-            return .pink
-        case .blue:
-            return .blue
+        case .dark:
+            return .dark
+        case .light:
+            return .light
+        case .system:
+            return .system
         }
     }
 }
 
-// Enum is duplicated from AccentColor because AppIntents needs to have the type inside the target to compile...
-enum AccentColorEntity: String, AppEnum {
-    case pink
-    case blue
+enum ThemeEntity: String, AppEnum {
+    case light
+    case dark
+    case system
     case appDefault
 
     static var typeDisplayRepresentation: TypeDisplayRepresentation {
-        return TypeDisplayRepresentation(name: "settingsAccentColor")
+        return TypeDisplayRepresentation(name: "settingsThemeTitle")
     }
 
-    static var caseDisplayRepresentations: [AccentColorEntity: DisplayRepresentation] = [
-        .pink: DisplayRepresentation(title: "accentColorPinkTitle"),
-        .blue: DisplayRepresentation(title: "accentColorBlueTitle"),
+    static var caseDisplayRepresentations: [ThemeEntity: DisplayRepresentation] = [
+        .light: DisplayRepresentation(title: "settingsOptionLightTheme"),
+        .dark: DisplayRepresentation(title: "settingsOptionDarkTheme"),
+        .system: DisplayRepresentation(title: "settingsOptionSystemTheme"),
         .appDefault: DisplayRepresentation(title: "focusFilterAppDefaultTitle")
     ]
 
-    var accentColor: AccentColor? {
+    var theme: Theme? {
         switch self {
-        case .pink:
-            return .pink
-        case .blue:
-            return .blue
+        case .dark:
+            return .dark
+        case .light:
+            return .light
+        case .system:
+            return .system
         case .appDefault:
             return nil
         }

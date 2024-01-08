@@ -5,7 +5,7 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: Philippe Weidmann
- * Exported at: Fri, 05 Jan 2024 16:45:06 +0100
+ * Exported at: Mon, 08 Jan 2024 13:53:25 +0100
  */
 
 /* loco:63e11e5771d13a480771a162 */
@@ -800,14 +800,14 @@
 /* loco:65982105ed32c3578b07f9c2 */
 "filterFocusAllowedMailboxesTitle" = "Cassette postali autorizzate";
 
-/* loco:659821f5e9990911ff064132 */
-"filterFocusDarkModeTitle" = "Utilizzare sempre la modalità scura";
-
 /* loco:659822fad61595fa7a0e9d02 */
 "filterFocusDescription" = "Consentire le notifiche per le caselle di posta selezionate e configurare l'aspetto dell'applicazione.";
 
 /* loco:6598228f255baea380090282 */
 "filterFocusTitle" = "Filtrare le caselle di posta e modificare l'aspetto";
+
+/* loco:659bf01196b3fac0af0a64d2 */
+"focusFilterAppDefaultTitle" = "Non fare nulla";
 
 /* loco:62665f7d647475580e06e912 */
 "fromTitle" = "Da:";
