@@ -78,7 +78,7 @@ public final class DraftManager {
     }
 
     /// Save a draft server side
-    private func saveDraftRemotely(draft: Draft, mailboxManager: MailboxManager, retry: Bool = true) async {
+    private func saveDraftRemotely(draft: Draft, mailboxManager: MailboxManager, retry: Bool = true, showSnackbar: Bool) async {
         guard draft.identityId != nil else {
             SentrySDK.capture(message: "We are trying to send a draft without an identityId, this will fail.")
             return
@@ -100,12 +100,19 @@ public final class DraftManager {
                 guard let updatedDraft = await setDefaultSignature(draft: draft, mailboxManager: mailboxManager) else {
                     return
                 }
-                await saveDraftRemotely(draft: updatedDraft, mailboxManager: mailboxManager, retry: false)
+                await saveDraftRemotely(
+                    draft: updatedDraft,
+                    mailboxManager: mailboxManager,
+                    retry: false,
+                    showSnackbar: showSnackbar
+                )
             }
             // show error if needed
             else {
                 guard error.shouldDisplay else { return }
-                alertDisplayable.show(message: error.localizedDescription)
+                if showSnackbar {
+                    alertDisplayable.show(message: error.localizedDescription)
+                }
             }
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
@@ -133,8 +140,10 @@ public final class DraftManager {
         return updatedDraft
     }
 
-    public func send(draft: Draft, mailboxManager: MailboxManager, retry: Bool = true) async -> Date? {
-        alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
+    public func send(draft: Draft, mailboxManager: MailboxManager, retry: Bool = true, showSnackbar: Bool) async -> Date? {
+        if showSnackbar {
+            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
+        }
 
         var sendDate: Date?
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
@@ -142,7 +151,9 @@ public final class DraftManager {
 
         do {
             let cancelableResponse = try await mailboxManager.send(draft: draft)
-            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent)
+            if showSnackbar {
+                alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent)
+            }
             sendDate = cancelableResponse.scheduledDate
         } catch {
             // Refresh signatures and retry with default signature on missing identity
@@ -153,16 +164,18 @@ public final class DraftManager {
                 guard let updatedDraft = await setDefaultSignature(draft: draft, mailboxManager: mailboxManager) else {
                     return nil
                 }
-                return await send(draft: updatedDraft, mailboxManager: mailboxManager, retry: false)
+                return await send(draft: updatedDraft, mailboxManager: mailboxManager, retry: false, showSnackbar: showSnackbar)
             }
 
-            alertDisplayable.show(message: error.localizedDescription)
+            if showSnackbar {
+                alertDisplayable.show(message: error.localizedDescription)
+            }
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
         return sendDate
     }
 
-    public func syncDraft(mailboxManager: MailboxManager) {
+    public func syncDraft(mailboxManager: MailboxManager, showSnackbar: Bool) {
         let drafts = mailboxManager.draftWithPendingAction().freezeIfNeeded()
         Task {
             let latestSendDate = await withTaskGroup(of: Date?.self, returning: Date?.self) { group in
@@ -171,11 +184,15 @@ public final class DraftManager {
                         var sendDate: Date?
                         switch draft.action {
                         case .initialSave:
-                            await self.initialSaveRemotely(draft: draft, mailboxManager: mailboxManager)
+                            await self.initialSaveRemotely(
+                                draft: draft,
+                                mailboxManager: mailboxManager,
+                                showSnackbar: showSnackbar
+                            )
                         case .save:
-                            await self.saveDraftRemotely(draft: draft, mailboxManager: mailboxManager)
+                            await self.saveDraftRemotely(draft: draft, mailboxManager: mailboxManager, showSnackbar: showSnackbar)
                         case .send:
-                            sendDate = await self.send(draft: draft, mailboxManager: mailboxManager)
+                            sendDate = await self.send(draft: draft, mailboxManager: mailboxManager, showSnackbar: showSnackbar)
                         default:
                             break
                         }
@@ -198,19 +215,21 @@ public final class DraftManager {
     ///
     /// Present a message with a `delete draft`  action
     @discardableResult
-    public func initialSaveRemotely(draft: Draft, mailboxManager: MailboxManager) async -> Bool {
+    public func initialSaveRemotely(draft: Draft, mailboxManager: MailboxManager, showSnackbar: Bool) async -> Bool {
         guard !draft.shouldBeSaved else {
             deleteEmptyDraft(draft: draft, for: mailboxManager)
             return false
         }
 
-        await saveDraftRemotely(draft: draft, mailboxManager: mailboxManager)
+        await saveDraftRemotely(draft: draft, mailboxManager: mailboxManager, showSnackbar: showSnackbar)
 
         let messageAction: UserAlertAction = (MailResourcesStrings.Localizable.actionDelete, { [weak self] in
             self?.matomo.track(eventWithCategory: .snackbar, name: "deleteDraft")
             self?.deleteDraftSnackBarAction(draft: draft, mailboxManager: mailboxManager)
         })
-        alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarDraftSaved, action: messageAction)
+        if showSnackbar {
+            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarDraftSaved, action: messageAction)
+        }
 
         return true
     }

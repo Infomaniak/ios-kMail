@@ -28,6 +28,7 @@ public class MainViewState: ObservableObject, SelectedThreadOwnable {
 
     @Published public var isShowingSearch = false
     @Published public var isShowingReviewAlert = false
+    @Published public var isShowingSetAppAsDefaultDiscovery = false
     @Published public var isShowingChristmasEasterEgg = false
 
     /// Represents the state of navigation
