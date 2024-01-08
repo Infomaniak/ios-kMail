@@ -20,45 +20,8 @@ import MailCore
 import MailResources
 import SwiftUI
 
-enum CalendarChoice: CaseIterable {
-    case yes, maybe, no
-
-    var icon: MailResourcesImages {
-        switch self {
-        case .yes:
-            return MailResourcesAsset.checkmarkCircleFill
-        case .maybe:
-            return MailResourcesAsset.questionmarkCircleFill
-        case .no:
-            return MailResourcesAsset.crossCircleFill
-        }
-    }
-
-    var label: String {
-        switch self {
-        case .yes:
-            return MailResourcesStrings.Localizable.buttonYes
-        case .maybe:
-            return MailResourcesStrings.Localizable.buttonMaybe
-        case .no:
-            return MailResourcesStrings.Localizable.buttonNo
-        }
-    }
-
-    var color: Color {
-        switch self {
-        case .yes:
-            return MailResourcesAsset.greenColor.swiftUIColor
-        case .maybe:
-            return MailResourcesAsset.textSecondaryColor.swiftUIColor
-        case .no:
-            return MailResourcesAsset.redColor.swiftUIColor
-        }
-    }
-}
-
 struct CalendarChoiceButton: View {
-    let choice: CalendarChoice
+    let choice: CalendarEventState
     let isSelected: Bool
 
     var body: some View {
