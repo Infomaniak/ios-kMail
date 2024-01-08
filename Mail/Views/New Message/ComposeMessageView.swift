@@ -176,8 +176,8 @@ struct ComposeMessageView: View {
             }
         }
         .onDisappear {
-            draftManager.syncDraft(mailboxManager: mailboxManager)
-            if !Bundle.main.isExtension {
+            draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: !mainViewState.isShowingSetAppAsDefaultDiscovery)
+            if !Bundle.main.isExtension && !mainViewState.isShowingSetAppAsDefaultDiscovery {
                 mainViewState.isShowingReviewAlert = reviewManager.shouldRequestReview()
             }
         }
