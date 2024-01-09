@@ -85,9 +85,11 @@ struct MessageView: View {
                             }
                         }
 
-                        // TODO: Show only when mail contains calendar
-                        CalendarView()
-                            .padding(.horizontal, value: .regular)
+                        if let event = message.calendarEvent?.event, event.type == .event {
+                            CalendarView()
+                                .padding(.horizontal, value: .regular)
+                        }
+
 
                         if !message.attachments.filter({ $0.disposition == .attachment || $0.contentId == nil }).isEmpty {
                             AttachmentsView(message: message)
@@ -114,12 +116,7 @@ struct MessageView: View {
                 if message.shouldComplete {
                     await fetchMessage()
                 }
-                do {
-                    try await fetchEventCalendar()
-                } catch {
-                    dump(error)
-                    print("hey")
-                }
+                try? await fetchEventCalendar()
             }
             .onChange(of: message.fullyDownloaded) { _ in
                 prepareBodyIfNeeded()
@@ -162,8 +159,7 @@ struct MessageView: View {
             return
         }
 
-        let response = try await mailboxManager.apiFetcher.calendarAttachment(attachment: attachment)
-        dump(response)
+        try await mailboxManager.attachmentCalendar(attachment)
     }
 }
 

@@ -66,6 +66,10 @@ public final class Attendee: EmbeddedObject, Codable {
     @Persisted public var organizer: Bool
     @Persisted public var state: AttendeeState?
 
+    override public init() {
+        super.init()
+    }
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         address = try container.decode(String.self, forKey: .address)
@@ -75,21 +79,47 @@ public final class Attendee: EmbeddedObject, Codable {
     }
 }
 
+public enum CalendarEventType: String, Codable, PersistableEnum {
+    case event
+    case task = "todo"
+}
+
 public final class CalendarEvent: EmbeddedObject, Codable {
+    @Persisted public var type: CalendarEventType
     @Persisted public var title: String
+    @Persisted public var eventDescription: String
     @Persisted public var location: String?
-    @Persisted public var fullday: Bool
+    @Persisted public var fullDay: Bool
     @Persisted public var timezone: String?
     @Persisted public var start: Date
     @Persisted public var timezoneStart: String
     @Persisted public var end: Date
     @Persisted public var timezoneEnd: String
-    @Persisted public var done: Bool
+    @Persisted public var hasPassed: Bool
     @Persisted public var attendees: RealmSwift.List<Attendee>
+
+    enum CodingKeys: String, CodingKey {
+        case type
+        case title
+        case eventDescription = "description"
+        case location
+        case fullDay = "fullday"
+        case timezone
+        case start
+        case timezoneStart
+        case end
+        case timezoneEnd
+        case hasPassed = "done"
+        case attendees
+    }
 }
 
-public struct CalendarEventResponse: Codable {
-    let userStoredEvent: CalendarEvent?
-    let attachmentEvent: CalendarEvent
-    let userStoredEventDeleted: Bool
+public final class CalendarEventResponse: EmbeddedObject, Codable {
+    @Persisted public var userStoredEvent: CalendarEvent?
+    @Persisted public var attachmentEvent: CalendarEvent?
+    @Persisted public var userStoredEventDeleted: Bool
+
+    public var event: CalendarEvent? {
+        return userStoredEvent ?? attachmentEvent
+    }
 }

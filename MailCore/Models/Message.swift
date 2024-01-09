@@ -186,6 +186,8 @@ public final class Message: Object, Decodable, Identifiable {
     @Persisted public var inTrash = false
     @Persisted public var localSafeDisplay = false
 
+    @Persisted public var calendarEvent: CalendarEventResponse?
+
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
     }
