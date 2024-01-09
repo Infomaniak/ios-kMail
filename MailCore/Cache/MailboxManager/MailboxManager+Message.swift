@@ -312,6 +312,19 @@ public extension MailboxManager {
         return data
     }
 
+    func attachmentCalendar(_ attachment: Attachment) async throws {
+        let calendarEvent = try await apiFetcher.calendarAttachment(attachment: attachment)
+
+        await backgroundRealm.execute { realm in
+            if let message = attachment.parent,
+               let liveMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) {
+                try? realm.safeWrite {
+                    liveMessage.calendarEvent = calendarEvent
+                }
+            }
+        }
+    }
+
     func saveAttachmentLocally(attachment: Attachment) async {
         do {
             let data = try await attachmentData(attachment)
