@@ -21,7 +21,7 @@ import MailResources
 import SwiftUI
 
 struct CalendarChoiceButton: View {
-    let choice: CalendarEventState
+    let choice: AttendeeState
     let isSelected: Bool
 
     var body: some View {
