@@ -59,7 +59,7 @@ struct CalendarBodyDetailsView: View {
                 .labelStyle(.calendar)
 
             WrappingHStack(
-                CalendarEventState.allCases,
+                AttendeeState.allCases,
                 id: \.self,
                 spacing: .constant(UIPadding.small),
                 lineSpacing: UIPadding.small
