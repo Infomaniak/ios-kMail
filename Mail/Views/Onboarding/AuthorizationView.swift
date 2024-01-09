@@ -21,23 +21,28 @@ import MailResources
 import SwiftUI
 
 struct AuthorizationView: View {
-    let contactSlide = Slide(
-        id: 1,
-        backgroundImage: MailResourcesAsset.onboardingBackground3.swiftUIImage,
-        title: MailResourcesStrings.Localizable.noMailboxTitle,
-        description: MailResourcesStrings.Localizable.noMailboxDescription,
-        asset: MailResourcesAsset.authorizationContact.swiftUIImage
-    )
-    let notificationSlide = Slide(
-        id: 1,
-        backgroundImage: MailResourcesAsset.onboardingBackground3.swiftUIImage,
-        title: MailResourcesStrings.Localizable.noMailboxTitle,
-        description: MailResourcesStrings.Localizable.noMailboxDescription,
-        asset: MailResourcesAsset.authorizationNotification.swiftUIImage
-    )
+    @State private var selection = 1
+    @State private var isScrollDisabled = true
+
+    private var slides = Slide.authorizationSlides
+
+    private var isLastSlide: Bool {
+        selection == slides.count
+    }
 
     var body: some View {
-        SlideView(slide: contactSlide)
+        VStack(spacing: 0) {
+            Group {
+                TabView(selection: $selection) {
+                    ForEach(slides) { slide in
+                        SlideView(slide: slide)
+                            .tag(slide.id)
+                    }
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .ignoresSafeArea(edges: .top)
+                .disabled(isScrollDisabled)
+            }
             .overlay(alignment: .top) {
                 MailResourcesAsset.logoText.swiftUIImage
                     .resizable()
@@ -45,18 +50,29 @@ struct AuthorizationView: View {
                     .frame(height: UIConstants.onboardingLogoHeight)
                     .padding(.top, UIPadding.onBoardingLogoTop)
             }
-            .safeAreaInset(edge: .bottom) {
-                VStack(spacing: UIPadding.small) {
-                    Button(MailResourcesStrings.Localizable.contentDescriptionButtonNext) {
-                        // TODO:
+
+            VStack(spacing: UIPadding.small) {
+                Button(MailResourcesStrings.Localizable.contentDescriptionButtonNext) {
+                    if !isLastSlide {
+                        isScrollDisabled = false
+                        withAnimation {
+                            selection = min(slides.count, selection + 1)
+                            isScrollDisabled = true
+                            // TODO: show contact authorization popup
+                        }
+                    } else {
+                        Task {
+                            await NotificationsHelper.askForPermissions()
+                        }
                     }
-                    .buttonStyle(.ikPlain)
-                    .controlSize(.large)
-                    .ikButtonFullWidth(true)
                 }
-                .padding(.horizontal, value: .medium)
-                .padding(.bottom, UIPadding.onBoardingBottomButtons)
+                .buttonStyle(.ikPlain)
+                .controlSize(.large)
+                .ikButtonFullWidth(true)
             }
+            .padding(.horizontal, value: .medium)
+            .padding(.bottom, UIPadding.onBoardingBottomButtons)
+        }
     }
 }
 
