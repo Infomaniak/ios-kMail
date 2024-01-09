@@ -24,7 +24,7 @@ struct AttendeeAvatarView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let recipient: Recipient
-    var choice: CalendarEventState?
+    var choice: AttendeeState?
 
     var body: some View {
         AvatarView(

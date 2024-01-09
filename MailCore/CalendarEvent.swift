@@ -21,11 +21,7 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-public enum CalendarEventType: String, Codable, PersistableEnum {
-    case event, todo
-}
-
-public enum CalendarEventState: String, CaseIterable, Codable, PersistableEnum {
+public enum AttendeeState: String, CaseIterable, Codable, PersistableEnum {
     case yes = "ACCEPTED"
     case maybe = "TENTATIVE"
     case no = "DECLINED"
@@ -64,33 +60,32 @@ public enum CalendarEventState: String, CaseIterable, Codable, PersistableEnum {
     }
 }
 
-public final class CalendarEventAttendee: EmbeddedObject, Codable {
+public final class Attendee: EmbeddedObject, Codable {
     @Persisted public var address: String
     @Persisted public var name: String
     @Persisted public var organizer: Bool
-    @Persisted public var state: CalendarEventState?
+    @Persisted public var state: AttendeeState?
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         address = try container.decode(String.self, forKey: .address)
         name = try container.decode(String.self, forKey: .name)
         organizer = try container.decode(Bool.self, forKey: .organizer)
-        state = try? container.decode(CalendarEventState?.self, forKey: .state)
+        state = try? container.decode(AttendeeState?.self, forKey: .state)
     }
 }
 
 public final class CalendarEvent: EmbeddedObject, Codable {
-    @Persisted public var type: CalendarEventType
     @Persisted public var title: String
     @Persisted public var location: String?
     @Persisted public var fullday: Bool
     @Persisted public var timezone: String?
     @Persisted public var start: Date
-    @Persisted public var timezoneStart: String?
+    @Persisted public var timezoneStart: String
     @Persisted public var end: Date
-    @Persisted public var timezoneEnd: String?
+    @Persisted public var timezoneEnd: String
     @Persisted public var done: Bool
-    @Persisted public var attendees: RealmSwift.List<CalendarEventAttendee>
+    @Persisted public var attendees: RealmSwift.List<Attendee>
 }
 
 public struct CalendarEventResponse: Codable {
