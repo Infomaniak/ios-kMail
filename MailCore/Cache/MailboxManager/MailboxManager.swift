@@ -103,7 +103,10 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 Recipient.self,
                 Draft.self,
                 Signature.self,
-                SearchHistory.self
+                SearchHistory.self,
+                CalendarEventResponse.self,
+                CalendarEvent.self,
+                Attendee.self
             ]
         )
         backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
