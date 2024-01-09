@@ -68,7 +68,15 @@ public final class CalendarEventAttendee: EmbeddedObject, Codable {
     @Persisted public var address: String
     @Persisted public var name: String
     @Persisted public var organizer: Bool
-    @Persisted public var state: CalendarEventState
+    @Persisted public var state: CalendarEventState?
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        address = try container.decode(String.self, forKey: .address)
+        name = try container.decode(String.self, forKey: .name)
+        organizer = try container.decode(Bool.self, forKey: .organizer)
+        state = try? container.decode(CalendarEventState?.self, forKey: .state)
+    }
 }
 
 public final class CalendarEvent: EmbeddedObject, Codable {
