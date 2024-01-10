@@ -107,6 +107,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable, RealmAcc
             ]
         )
         backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
+
+        excludeRealmFromBackup()
     }
 
     /// Delete all mailbox data cache for user
