@@ -85,14 +85,14 @@ struct MessageView: View {
                         }
                     }
 
+                    // TODO: Show only when mail contains calendar
+                    CalendarView()
+                        .padding([.horizontal, .top], value: .regular)
+
                     if !message.attachments.filter({ $0.disposition == .attachment || $0.contentId == nil }).isEmpty {
                         AttachmentsView(message: message)
                             .padding(.top, value: .medium)
                     }
-
-                    // TODO: Show only when mail contains calendar
-                    CalendarView()
-                        .padding(value: .regular)
 
                     if isShowingErrorLoading {
                         Text(MailResourcesStrings.Localizable.errorLoadingMessage)
