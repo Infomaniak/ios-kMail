@@ -74,7 +74,7 @@ struct CalendarChoiceButton: View {
             .padding(.horizontal, value: .intermediate)
             .padding(.vertical, value: .small)
             .overlay {
-                RoundedRectangle(cornerRadius: 30)
+                RoundedRectangle(cornerRadius: UIConstants.buttonsRadius)
                     .stroke(isSelected ? choice.color : MailResourcesAsset.textFieldBorder.swiftUIColor)
             }
         }
