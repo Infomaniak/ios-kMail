@@ -48,7 +48,7 @@ struct CalendarAttendeesView: View {
 
             if isShowingAttendees {
                 VStack(alignment: .leading, spacing: UIPadding.regular) {
-                    HStack(spacing: UIPadding.regular) {
+                    HStack(spacing: UIPadding.small) {
                         AvatarView(
                             mailboxManager: mailboxManager,
                             contactConfiguration: .recipient(recipient: organizer, contextMailboxManager: mailboxManager),
