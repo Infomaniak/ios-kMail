@@ -168,4 +168,33 @@ enum PreviewHelper {
         messageReply: nil,
         mailboxManager: sampleMailboxManager
     )
+
+    static let sampleCalendarEvent = CalendarEvent(
+        type: .event,
+        title: "Réunion Produit",
+        eventDescription: "",
+        location: "Salle Théâtre",
+        fullDay: false,
+        timezone: nil,
+        start: .now,
+        timezoneStart: "UTC",
+        end: .now.addingTimeInterval(120),
+        timezoneEnd: "UTC",
+        hasPassed: false,
+        attendees: [sampleAttendee1, sampleAttendee2, sampleAttendee3].toRealmList()
+    )
+
+    static let sampleAttendee1 = Attendee(address: "lucien.cheval@ik.com", name: "Lucien Cheval", organizer: true)
+    static let sampleAttendee2 = Attendee(
+        address: "noel.flantier@domaine.ch",
+        name: "noel.flantier@domaine.ch",
+        organizer: false,
+        state: .maybe
+    )
+    static let sampleAttendee3 = Attendee(
+        address: "ellen.ripley@domaine.ch",
+        name: "ellen.ripley@domaine.ch",
+        organizer: false,
+        state: .yes
+    )
 }

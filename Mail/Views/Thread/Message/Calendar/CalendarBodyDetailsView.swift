@@ -35,27 +35,29 @@ struct CalendarLabelStyle: LabelStyle {
                 .foregroundStyle(MailResourcesAsset.textSecondaryColor)
             configuration.title
                 .textStyle(.body)
+                .multilineTextAlignment(.leading)
         }
     }
 }
 
 struct CalendarBodyDetailsView: View {
-    let date = "Mardi 28 novembre 2023"
-    let time = "09:00 - 10:00 (CET)"
+    let event: CalendarEvent
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
-            Label {
-                Text(MailResourcesStrings.Localizable.warningEventHasPassed)
-                    .textStyle(.bodyWarning)
-            } icon: {
-                IKIcon(MailResourcesAsset.warning.swiftUIImage, size: .large)
-            }
-            .labelStyle(.calendar)
-
-            Label(date, image: MailResourcesAsset.calendar.name)
+            if event.hasPassed {
+                Label {
+                    Text(MailResourcesStrings.Localizable.warningEventHasPassed)
+                        .textStyle(.bodyWarning)
+                } icon: {
+                    IKIcon(MailResourcesAsset.warning.swiftUIImage, size: .large)
+                }
                 .labelStyle(.calendar)
-            Label(time, image: MailResourcesAsset.clock.name)
+            }
+
+            Label(event.formattedDate, image: MailResourcesAsset.calendar.name)
+                .labelStyle(.calendar)
+            Label(event.formattedTime, image: MailResourcesAsset.clock.name)
                 .labelStyle(.calendar)
 
             WrappingHStack(
@@ -72,5 +74,5 @@ struct CalendarBodyDetailsView: View {
 }
 
 #Preview {
-    CalendarBodyDetailsView()
+    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent)
 }
