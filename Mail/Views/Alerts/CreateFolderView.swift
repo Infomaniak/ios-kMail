@@ -88,7 +88,7 @@ struct CreateFolderView: View {
                 .textStyle(.body)
                 .focused($isFocused)
 
-            Text(error?.localizedDescription ?? "")
+            Text(error?.errorDescription ?? "")
                 .textStyle(.labelError)
                 .padding(.top, value: .verySmall)
                 .opacity(error == nil ? 0 : 1)

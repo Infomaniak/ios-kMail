@@ -37,7 +37,7 @@ struct AttachmentUploadCell: View {
     var body: some View {
         AttachmentView(
             attachment: detachedAttachment,
-            subtitle: uploadTask.error != nil ? uploadTask.error!.localizedDescription : detachedAttachment.size
+            subtitle: uploadTask.error != nil ? (uploadTask.error!.errorDescription ?? "") : detachedAttachment.size
                 .formatted(.defaultByteCount)
         ) {
             Button {
