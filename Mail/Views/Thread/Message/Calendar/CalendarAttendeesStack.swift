@@ -26,11 +26,7 @@ struct CalendarAttendeesStack: View {
     let attendees: [Recipient]
 
     private var displayedAttendees: [Recipient] {
-        if attendees.count > 3 {
-            return Array(attendees[0 ..< 3])
-        } else {
-            return attendees
-        }
+        return Array(attendees.prefix(maxDisplayedAttendees))
     }
 
     private var hiddenAttendees: Int {
