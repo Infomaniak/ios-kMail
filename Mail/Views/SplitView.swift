@@ -281,7 +281,7 @@ struct SplitView: View {
                 if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
                     mainViewState.selectedThread = tappedNotificationThread
                 } else {
-                    snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
+                    snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
                 }
             } else if notification.name == .onUserTappedReplyToNotification {
                 if let tappedNotificationMessage {
@@ -290,7 +290,7 @@ struct SplitView: View {
                         currentMailboxEmail: mailboxManager.mailbox.email
                     )
                 } else {
-                    snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
+                    snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
                 }
             }
         }
