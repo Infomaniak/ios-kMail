@@ -31,6 +31,7 @@ struct CalendarBodyView: View {
                 Text(MailResourcesStrings.Localizable.buttonAddToMyCalendar)
             }
             .buttonStyle(.ikPlain)
+            .ikButtonFullWidth(true)
             .padding(.horizontal, value: .regular)
         }
         .padding(.vertical, value: .regular)
@@ -43,4 +44,5 @@ struct CalendarBodyView: View {
 
 #Preview {
     CalendarBodyView()
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

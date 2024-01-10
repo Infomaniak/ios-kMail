@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
@@ -25,9 +26,9 @@ struct CalendarView: View {
             CalendarHeaderView(title: "Réunion Produit")
             CalendarBodyView()
         }
-        .clipShape(RoundedRectangle(cornerRadius: 8))
+        .clipShape(RoundedRectangle(cornerRadius: UIConstants.buttonsRadius))
         .overlay {
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: UIConstants.buttonsRadius)
                 .stroke(MailResourcesAsset.elementsColor.swiftUIColor)
         }
     }
