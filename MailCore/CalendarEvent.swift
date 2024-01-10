@@ -70,6 +70,13 @@ public final class Attendee: EmbeddedObject, Codable {
         super.init()
     }
 
+    public init(address: String, name: String, organizer: Bool, state: AttendeeState? = nil) {
+        self.address = address
+        self.name = name
+        self.organizer = organizer
+        self.state = state
+    }
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         address = try container.decode(String.self, forKey: .address)
@@ -97,6 +104,54 @@ public final class CalendarEvent: EmbeddedObject, Codable {
     @Persisted public var timezoneEnd: String
     @Persisted public var hasPassed: Bool
     @Persisted public var attendees: RealmSwift.List<Attendee>
+
+    public var formattedDate: String {
+        if Calendar.current.isDate(start, inSameDayAs: end) {
+            return start.formatted(Constants.calendarDateFormat)
+        } else {
+            return "\(start.formatted(Constants.calendarSmallDateFormat)) - \(end.formatted(Constants.calendarSmallDateFormat))"
+        }
+//        return "Pariatur magna laborum in reprehenderit sit consectetur ut. Occaecat commodo magna quis. Cillum qui esse
+//        nostrud. Ut sunt laboris adipisicing incididunt proident. In consectetur veniam velit. Magna enim nostrud laborum
+//        reprehenderit cupidatat dolore commodo quis mollit velit voluptate id do adipisicing. Officia exercitation occaecat
+//        deserunt exercitation nulla."
+    }
+
+    public var formattedTime: String {
+        return "\(start.formatted(Constants.calendarTimeFormat)) - \(end.formatted(Constants.calendarTimeFormat))"
+    }
+
+    override public init() {
+        super.init()
+    }
+
+    public init(
+        type: CalendarEventType,
+        title: String,
+        eventDescription: String,
+        location: String? = nil,
+        fullDay: Bool,
+        timezone: String? = nil,
+        start: Date,
+        timezoneStart: String,
+        end: Date,
+        timezoneEnd: String,
+        hasPassed: Bool,
+        attendees: RealmSwift.List<Attendee>
+    ) {
+        self.type = type
+        self.title = title
+        self.eventDescription = eventDescription
+        self.location = location
+        self.fullDay = fullDay
+        self.timezone = timezone
+        self.start = start
+        self.timezoneStart = timezoneStart
+        self.end = end
+        self.timezoneEnd = timezoneEnd
+        self.hasPassed = hasPassed
+        self.attendees = attendees
+    }
 
     enum CodingKeys: String, CodingKey {
         case type

@@ -21,11 +21,15 @@ import MailResources
 import SwiftUI
 
 struct CalendarBodyView: View {
+    let event: CalendarEvent
+
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
-            CalendarBodyDetailsView()
+            CalendarBodyDetailsView(event: event)
 
-            CalendarAttendeesView()
+            if !event.attendees.isEmpty {
+                CalendarAttendeesView()
+            }
 
             Button(action: addEventToCalendar) {
                 Text(MailResourcesStrings.Localizable.buttonOpenMyCalendar)
@@ -43,6 +47,6 @@ struct CalendarBodyView: View {
 }
 
 #Preview {
-    CalendarBodyView()
+    CalendarBodyView(event: PreviewHelper.sampleCalendarEvent)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }

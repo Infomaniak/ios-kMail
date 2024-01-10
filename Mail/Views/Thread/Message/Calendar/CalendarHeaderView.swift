@@ -27,6 +27,7 @@ struct CalendarHeaderView: View {
         HStack(spacing: UIPadding.small) {
             IKIcon(MailResourcesAsset.logoCalendar, size: .large)
             Text(title)
+                .lineLimit(1)
                 .textStyle(.bodyMedium)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
