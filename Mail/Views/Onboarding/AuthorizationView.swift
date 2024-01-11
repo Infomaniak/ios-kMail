@@ -64,7 +64,7 @@ struct AuthorizationView: View {
                     if !isLastSlide {
                         isScrollDisabled = false
                         Task {
-                            if let accessAllowed = try? await CNContactStore().requestAccess(for: .contacts) {
+                            if await (try? CNContactStore().requestAccess(for: .contacts)) != nil {
                                 try await accountManager.currentMailboxManager?.contactManager.refreshContactsAndAddressBooks()
                             }
                             withAnimation {
