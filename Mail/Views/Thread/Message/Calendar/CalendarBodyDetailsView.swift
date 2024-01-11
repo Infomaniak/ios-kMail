@@ -59,6 +59,10 @@ struct CalendarBodyDetailsView: View {
                 .labelStyle(.calendar)
             Label(event.formattedTime, image: MailResourcesAsset.clock.name)
                 .labelStyle(.calendar)
+            if let location = event.location {
+                Label(location, image: MailResourcesAsset.pin.name)
+                    .labelStyle(.calendar)
+            }
 
             if !event.hasPassed {
                 WrappingHStack(
