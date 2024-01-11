@@ -38,6 +38,8 @@ struct RootView: View {
                 UnavailableMailboxesView()
             case .preloading(let currentAccount):
                 PreloadingView(currentAccount: currentAccount)
+            case .authorization:
+                AuthorizationView()
             }
         }
     }

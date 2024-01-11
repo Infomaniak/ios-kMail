@@ -17,6 +17,7 @@
  */
 
 import CocoaLumberjackSwift
+import Contacts
 import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakCoreUI
@@ -119,6 +120,9 @@ struct MailApp: App {
                 try await accountManager.updateUser(for: account)
                 accountManager.enableBugTrackerIfAvailable()
 
+                guard CNContactStore.authorizationStatus(for: .contacts) != .notDetermined else {
+                    return
+                }
                 try await accountManager.currentContactManager?.refreshContactsAndAddressBooks()
             } catch {
                 DDLogError("Error while updating user account: \(error)")

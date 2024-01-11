@@ -16,11 +16,17 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Contacts
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
 struct AuthorizationView: View {
+    @LazyInjectService private var accountManager: AccountManager
+
+    @EnvironmentObject private var navigationState: RootViewState
+
     @State private var selection = 1
     @State private var isScrollDisabled = true
 
@@ -55,14 +61,19 @@ struct AuthorizationView: View {
                 Button(MailResourcesStrings.Localizable.contentDescriptionButtonNext) {
                     if !isLastSlide {
                         isScrollDisabled = false
-                        withAnimation {
-                            selection = min(slides.count, selection + 1)
-                            isScrollDisabled = true
-                            // TODO: show contact authorization popup
+                        Task {
+                            if let accessAllowed = try? await CNContactStore().requestAccess(for: .contacts) {
+                                try await accountManager.currentMailboxManager?.contactManager.refreshContactsAndAddressBooks()
+                            }
+                            withAnimation {
+                                selection = min(slides.count, selection + 1)
+                                isScrollDisabled = true
+                            }
                         }
                     } else {
                         Task {
                             await NotificationsHelper.askForPermissions()
+                            navigationState.transitionToRootViewDestination(.mainView)
                         }
                     }
                 }
