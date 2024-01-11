@@ -29,7 +29,7 @@ public protocol RealmAccessible {
     /// Fetches an up to date realm for a given configuration, or fail in a controlled manner
     func getRealm() -> Realm
 
-    /// Set `isExcludedFromBackup = true`  to the folder where realm is located to exclude a realm cache from the an iCloud backup
+    /// Set `isExcludedFromBackup = true`  to the folder where realm is located to exclude a realm cache from an iCloud backup
     /// - Important: Avoid calling this method too often as this can be expensive, prefer calling it once at init time
     func excludeRealmFromBackup()
 }
