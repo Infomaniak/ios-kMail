@@ -113,7 +113,11 @@ public final class CalendarEvent: EmbeddedObject, Codable {
     }
 
     public var formattedTime: String {
-        return "\(start.formatted(Constants.calendarTimeFormat)) - \(end.formatted(Constants.calendarTimeFormat))"
+        if fullDay {
+            return MailResourcesStrings.Localizable.calendarAllDayLong
+        } else {
+            return "\(start.formatted(Constants.calendarTimeFormat)) - \(end.formatted(Constants.calendarTimeFormat))"
+        }
     }
 
     public var hasPassed: Bool {
