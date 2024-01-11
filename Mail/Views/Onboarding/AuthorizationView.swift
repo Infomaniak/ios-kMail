@@ -17,6 +17,7 @@
  */
 
 import Contacts
+import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
@@ -24,6 +25,7 @@ import SwiftUI
 
 struct AuthorizationView: View {
     @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var matomo: MatomoUtils
 
     @EnvironmentObject private var navigationState: RootViewState
 
@@ -84,6 +86,7 @@ struct AuthorizationView: View {
             .padding(.horizontal, value: .medium)
             .padding(.bottom, UIPadding.onBoardingBottomButtons)
         }
+        .matomoView(view: [MatomoUtils.View.onboarding.displayName, "Authorization"])
     }
 }
 
