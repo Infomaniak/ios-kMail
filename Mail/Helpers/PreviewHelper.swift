@@ -180,7 +180,6 @@ enum PreviewHelper {
         timezoneStart: "UTC",
         end: .now.addingTimeInterval(120),
         timezoneEnd: "UTC",
-        hasPassed: false,
         attendees: [sampleAttendee1, sampleAttendee2, sampleAttendee3].toRealmList()
     )
 

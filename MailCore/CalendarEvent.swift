@@ -102,7 +102,6 @@ public final class CalendarEvent: EmbeddedObject, Codable {
     @Persisted public var timezoneStart: String
     @Persisted public var end: Date
     @Persisted public var timezoneEnd: String
-    @Persisted public var hasPassed: Bool
     @Persisted public var attendees: RealmSwift.List<Attendee>
 
     public var formattedDate: String {
@@ -111,14 +110,14 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         } else {
             return "\(start.formatted(Constants.calendarSmallDateFormat)) - \(end.formatted(Constants.calendarSmallDateFormat))"
         }
-//        return "Pariatur magna laborum in reprehenderit sit consectetur ut. Occaecat commodo magna quis. Cillum qui esse
-//        nostrud. Ut sunt laboris adipisicing incididunt proident. In consectetur veniam velit. Magna enim nostrud laborum
-//        reprehenderit cupidatat dolore commodo quis mollit velit voluptate id do adipisicing. Officia exercitation occaecat
-//        deserunt exercitation nulla."
     }
 
     public var formattedTime: String {
         return "\(start.formatted(Constants.calendarTimeFormat)) - \(end.formatted(Constants.calendarTimeFormat))"
+    }
+
+    public var hasPassed: Bool {
+        return end < Date.now
     }
 
     override public init() {
@@ -136,7 +135,6 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         timezoneStart: String,
         end: Date,
         timezoneEnd: String,
-        hasPassed: Bool,
         attendees: RealmSwift.List<Attendee>
     ) {
         self.type = type
@@ -149,7 +147,6 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         self.timezoneStart = timezoneStart
         self.end = end
         self.timezoneEnd = timezoneEnd
-        self.hasPassed = hasPassed
         self.attendees = attendees
     }
 
@@ -164,7 +161,6 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         case timezoneStart
         case end
         case timezoneEnd
-        case hasPassed = "done"
         case attendees
     }
 }
@@ -172,7 +168,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
 public final class CalendarEventResponse: EmbeddedObject, Codable {
     @Persisted public var userStoredEvent: CalendarEvent?
     @Persisted public var attachmentEvent: CalendarEvent?
-    @Persisted public var userStoredEventDeleted: Bool
+    @Persisted public var userStoredEventDeleted: Bool?
 
     public var event: CalendarEvent? {
         return userStoredEvent ?? attachmentEvent
