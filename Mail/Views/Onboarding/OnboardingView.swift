@@ -69,16 +69,16 @@ struct Slide: Identifiable {
     static let authorizationSlides = [
         Slide(
             id: 1,
-            backgroundImage: MailResourcesAsset.onboardingBackground3.swiftUIImage,
+            backgroundImage: MailResourcesAsset.onboardingBackground1.swiftUIImage,
             title: MailResourcesStrings.Localizable.onBoardingContactsTitle,
             description: MailResourcesStrings.Localizable.onBoardingContactsDescription,
             asset: MailResourcesAsset.authorizationContact.swiftUIImage
         ),
         Slide(
             id: 2,
-            backgroundImage: MailResourcesAsset.onboardingBackground4.swiftUIImage,
+            backgroundImage: MailResourcesAsset.onboardingBackground2.swiftUIImage,
             title: MailResourcesStrings.Localizable.onBoardingNotificationsTitle,
-            description: MailResourcesStrings.Localizable.onBoardingNotificationsTitle,
+            description: MailResourcesStrings.Localizable.onBoardingNotificationsDescription,
             asset: MailResourcesAsset.authorizationNotification.swiftUIImage
         )
     ]
