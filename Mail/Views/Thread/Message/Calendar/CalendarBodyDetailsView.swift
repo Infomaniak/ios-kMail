@@ -60,13 +60,15 @@ struct CalendarBodyDetailsView: View {
             Label(event.formattedTime, image: MailResourcesAsset.clock.name)
                 .labelStyle(.calendar)
 
-            WrappingHStack(
-                AttendeeState.allCases,
-                id: \.self,
-                spacing: .constant(UIPadding.small),
-                lineSpacing: UIPadding.small
-            ) { choice in
-                CalendarChoiceButton(choice: choice, isSelected: false)
+            if !event.hasPassed {
+                WrappingHStack(
+                    AttendeeState.allCases,
+                    id: \.self,
+                    spacing: .constant(UIPadding.small),
+                    lineSpacing: UIPadding.small
+                ) { choice in
+                    CalendarChoiceButton(choice: choice, isSelected: false)
+                }
             }
         }
         .padding(.horizontal, value: .regular)
