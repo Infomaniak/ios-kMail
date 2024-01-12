@@ -139,8 +139,8 @@ struct SplitView: View {
             DiscoveryView(item: .setAsDefaultAppDiscovery) {
                 UserDefaults.shared.shouldPresentSetAsDefaultDiscovery = false
             } completionHandler: { willSetAsDefault in
-                guard willSetAsDefault else { return }
-                openURL(DeeplinkConstants.iosPreferences)
+                guard willSetAsDefault, let settingsUrl = URL(string: UIApplication.openSettingsURLString) else { return }
+                openURL(settingsUrl)
             }
         }
         .sheet(isPresented: $isShowingSyncProfile) {
