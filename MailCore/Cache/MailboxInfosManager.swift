@@ -46,6 +46,8 @@ public final class MailboxInfosManager {
             },
             objectTypes: [Mailbox.self, MailboxPermissions.self, Quotas.self]
         )
+
+        excludeRealmFromBackup()
     }
 
     private func initMailboxForRealm(mailbox: Mailbox, userId: Int) {

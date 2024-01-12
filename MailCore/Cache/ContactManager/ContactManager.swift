@@ -77,6 +77,8 @@ public final class ContactManager: ObservableObject {
             ]
         )
         backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
+
+        excludeRealmFromBackup()
     }
 
     let localContactsHelper = LocalContactsHelper()

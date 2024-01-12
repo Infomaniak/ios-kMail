@@ -93,7 +93,7 @@ struct SplitView: View {
 
                     ThreadListManagerView()
 
-                    if let thread = mainViewState.threadPath.last {
+                    if let thread = mainViewState.selectedThread {
                         ThreadView(thread: thread)
                     } else {
                         EmptyStateView.emptyThread(from: mainViewState.selectedFolder)
@@ -121,8 +121,8 @@ struct SplitView: View {
             }
         }
         .discoveryPresenter(isPresented: $isShowingUpdateAvailable) {
-            DiscoveryView(item: .updateDiscovery) { /* Empty on purpose */ } completionHandler: { update in
-                guard update else { return }
+            DiscoveryView(item: .updateDiscovery) { willUpdate in
+                guard willUpdate else { return }
                 let url: URLConstants = Bundle.main.isRunningInTestFlight ? .testFlight : .appStore
                 openURL(url.url)
             }
@@ -130,13 +130,24 @@ struct SplitView: View {
         .discoveryPresenter(isPresented: $isShowingSyncDiscovery) {
             DiscoveryView(item: .syncDiscovery) {
                 UserDefaults.shared.shouldPresentSyncDiscovery = false
-            } completionHandler: { update in
-                guard update else { return }
+            } completionHandler: { willSync in
+                guard willSync else { return }
                 isShowingSyncProfile = true
+            }
+        }
+        .discoveryPresenter(isPresented: $mainViewState.isShowingSetAppAsDefaultDiscovery) {
+            DiscoveryView(item: .setAsDefaultAppDiscovery) {
+                UserDefaults.shared.shouldPresentSetAsDefaultDiscovery = false
+            } completionHandler: { willSetAsDefault in
+                guard willSetAsDefault, let settingsUrl = URL(string: UIApplication.openSettingsURLString) else { return }
+                openURL(settingsUrl)
             }
         }
         .sheet(isPresented: $isShowingSyncProfile) {
             SyncProfileNavigationView()
+        }
+        .sheet(item: $mainViewState.settingsViewConfig) { config in
+            SettingsNavigationView(baseNavigationPath: config.baseNavigationPath)
         }
         .sheet(item: $mainViewState.editedDraft) { editedDraft in
             ComposeMessageView(editedDraft: editedDraft, mailboxManager: mailboxManager)
@@ -164,6 +175,8 @@ struct SplitView: View {
                    perform: handleNotification)
         .onReceive(NotificationCenter.default.publisher(for: .onUserTappedReplyToNotification).receive(on: DispatchQueue.main),
                    perform: handleNotification)
+        .onReceive(NotificationCenter.default.publisher(for: .openNotificationSettings).receive(on: DispatchQueue.main),
+                   perform: handleOpenNotificationSettings)
         .onAppear {
             orientationManager.setOrientationLock(.all)
         }
@@ -266,9 +279,9 @@ struct SplitView: View {
                 // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in
                 // inbox
                 if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
-                    mainViewState.threadPath = [tappedNotificationThread]
+                    mainViewState.selectedThread = tappedNotificationThread
                 } else {
-                    snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
+                    snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
                 }
             } else if notification.name == .onUserTappedReplyToNotification {
                 if let tappedNotificationMessage {
@@ -277,9 +290,14 @@ struct SplitView: View {
                         currentMailboxEmail: mailboxManager.mailbox.email
                     )
                 } else {
-                    snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription)
+                    snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
                 }
             }
         }
+    }
+
+    private func handleOpenNotificationSettings(_ notification:
+        Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>.Output) {
+        mainViewState.settingsViewConfig = SettingsViewConfig(baseNavigationPath: [.notifications])
     }
 }

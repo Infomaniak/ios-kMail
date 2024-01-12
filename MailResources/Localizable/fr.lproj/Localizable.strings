@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: fr, French
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Fri, 08 Dec 2023 14:45:20 +0100
+ * Exported by: Philippe Weidmann
+ * Exported at: Mon, 08 Jan 2024 14:11:04 +0100
  */
 
 /* loco:63e11e5771d13a480771a162 */
@@ -100,6 +100,9 @@
 
 /* loco:63fdb9239bfffe2abc3e1c02 */
 "actionViewInLight" = "Voir en thème clair";
+
+/* loco:65982378414cb87ae7017bd3 */
+"activeFocusFilterTitle" = "Filtrage des boîtes aux lettres";
 
 /* loco:63ecf9b0415fc86eea26ec03 */
 "addUnknownRecipientAlreadyUsed" = "L’adresse mail est déjà utilisée";
@@ -278,6 +281,9 @@
 /* loco:638f6e49a7896c4df9647362 */
 "attachmentQuantity-plural-many" = "%d de pièces jointes";
 
+/* loco:659665294692c252640fa103 */
+"attendeesListTitle" = "Liste des participants (%d)";
+
 /* loco:6266649755d41301973d0c43 */
 "bccTitle" = "Cci :";
 
@@ -314,11 +320,17 @@
 /* loco:62cbe10de2840a0cdc2be0d2 */
 "buttonAddEmailAddress" = "Ajouter une adresse mail";
 
+/* loco:65957e21e04c075b780d73d2 */
+"buttonAddToMyCalendar" = "Ajouter à mon calendrier";
+
 /* loco:6437c062dd576a7631052413 */
 "buttonAttachMailbox" = "Ajouter l’adresse mail";
 
 /* loco:62b2e09059ff20150b5c1b52 */
 "buttonAttachment" = "Ajouter une pièce jointe";
+
+/* loco:65957dd2d9c7e2750204c382 */
+"buttonAttendees" = "Participants";
 
 /* loco:62befec91b3e0d24437119b3 */
 "buttonAvailableSoon" = "Bientôt disponible";
@@ -407,6 +419,9 @@
 /* loco:628dfebda6add66651161554 */
 "buttonLogin" = "Se connecter";
 
+/* loco:65855b1bac34d439fd02e7e2 */
+"buttonMaybe" = "Peut-être";
+
 /* loco:6284fd623d98060ac31f76d5 */
 "buttonMore" = "Plus";
 
@@ -418,6 +433,9 @@
 
 /* loco:6527b7d4882400da7d04ffd2 */
 "buttonNo" = "Non";
+
+/* loco:6581b2b5a7520b536b03f942 */
+"buttonOpenKdrive" = "Ouvrir dans kDrive";
 
 /* loco:62cd642815742c678d4c30e4 */
 "buttonRefuse" = "Refuser";
@@ -431,11 +449,17 @@
 /* loco:62b2e4a24486732cbc2f04d3 */
 "buttonSchedule" = "Programmer l’envoi de l’e-mail";
 
+/* loco:65957d479527393708069ee2 */
+"buttonSee" = "Consulter";
+
 /* loco:6268fc53412a8032745aaeb2 */
 "buttonSeeAll" = "Voir tout";
 
 /* loco:626918473e1b2d7fe4329d52 */
 "buttonSelectAll" = "Tout";
+
+/* loco:657324e1fb3ef333a001d852 */
+"buttonSetNow" = "Définir maintenant";
 
 /* loco:6267af86c6ebf234e9213012 */
 "buttonShare" = "Partager";
@@ -472,6 +496,9 @@
 
 /* loco:6527b7c3bffd89453201f9e2 */
 "buttonYes" = "Oui";
+
+/* loco:65957d996979353c3e0956c4 */
+"calendarOrganizerName" = "%@ (Organisateur)";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc :";
@@ -770,6 +797,15 @@
 /* loco:62a9dbdf0bddbc02ce031ba2 */
 "favoritesFolder" = "Favoris";
 
+/* loco:65982105ed32c3578b07f9c2 */
+"filterFocusAllowedMailboxesTitle" = "Boîtes mail autorisées";
+
+/* loco:659822fad61595fa7a0e9d02 */
+"filterFocusDescription" = "Autorisez les notifications pour les boîtes aux lettres sélectionnées.";
+
+/* loco:6598228f255baea380090282 */
+"filterFocusTitle" = "Filtrer les boîtes aux lettres";
+
 /* loco:62665f7d647475580e06e912 */
 "fromTitle" = "De :";
 
@@ -929,6 +965,12 @@
 /* loco:64ba47d60f3176675907c474 */
 "notificationTitleDelete" = "Supprimé";
 
+/* loco:659697fd4623764905012212 */
+"onBoardingContactsDescription" = "En autorisant l’accès, nous pourrons afficher le nom et l’avatar des contacts présents dans votre appareil lors de l’écriture et la réception des e-mails.\nLe traitement se fait uniquement en local sur votre appareil, ces données ne sont en aucun cas envoyées sur nos serveurs.";
+
+/* loco:659697471cbe96642e01ee33 */
+"onBoardingContactsTitle" = "Autoriser Mail à accéder à vos contacts";
+
 /* loco:62c2eede5bc8fa0201054443 */
 "onBoardingDescription2" = "Personnalisez librement vos raccourcis dans les paramètres de l’app.";
 
@@ -937,6 +979,12 @@
 
 /* loco:62c2ef65c564d9260842db32 */
 "onBoardingDescription4" = "Créez une adresse gratuite ou connectez-vous à un compte Infomaniak existant.";
+
+/* loco:659698f30ec60c361c04b452 */
+"onBoardingNotificationsDescription" = "Ne manquez plus aucun e-mail important et soyez en mesure de répondre rapidement en activant les notifications.";
+
+/* loco:65969899123f318740070872 */
+"onBoardingNotificationsTitle" = "Autoriser les notifications";
 
 /* loco:62c2ee73d35f8933bc4b5262 */
 "onBoardingTitle1" = "Choisissez votre thème";
@@ -1483,6 +1531,9 @@
 
 /* loco:641d60b6f5c19a18734d9192 */
 "urlUserReportiOS" = "https://feedback.userreport.com/d6b0e711-0c77-459c-9d06-79f92264f221/";
+
+/* loco:65957e6e7dfe315a5d02add2 */
+"warningEventHasPassed" = "Cet événement est déjà passé";
 
 /* loco:6481d72ebb3c88db6e002332 */
 "warningNotificationsDisabledButton" = "Activez-les dans les paramètres";

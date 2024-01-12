@@ -36,6 +36,7 @@ struct MailApp: App {
     @LazyInjectService private var appLockHelper: AppLockHelper
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
+    @LazyInjectService private var refreshAppBackgroundTask: RefreshAppBackgroundTask
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
@@ -49,11 +50,13 @@ struct MailApp: App {
 
     init() {
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
+        refreshAppBackgroundTask.register()
     }
 
     var body: some Scene {
         WindowGroup {
             RootView()
+                .detectCompactWindow()
                 .environmentObject(navigationState)
                 .environmentObject(reviewManager)
                 .onAppear {
@@ -73,6 +76,7 @@ struct MailApp: App {
                         navigationState.transitionToLockViewIfNeeded()
                         UserDefaults.shared.openingUntilReview -= 1
                     case .background:
+                        refreshAppBackgroundTask.scheduleForBackgroundLaunchIfNeeded()
                         if UserDefaults.shared.isAppLockEnabled && navigationState.state != .appLocked {
                             appLockHelper.setTime()
                         }

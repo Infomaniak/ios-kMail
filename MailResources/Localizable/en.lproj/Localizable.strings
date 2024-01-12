@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: en, English
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Fri, 08 Dec 2023 14:45:20 +0100
+ * Exported by: Philippe Weidmann
+ * Exported at: Mon, 08 Jan 2024 14:11:04 +0100
  */
 
 /* loco:63e11e5771d13a480771a162 */
@@ -100,6 +100,9 @@
 
 /* loco:63fdb9239bfffe2abc3e1c02 */
 "actionViewInLight" = "View in light theme";
+
+/* loco:65982378414cb87ae7017bd3 */
+"activeFocusFilterTitle" = "Filtering mailboxes";
 
 /* loco:63ecf9b0415fc86eea26ec03 */
 "addUnknownRecipientAlreadyUsed" = "The email is already used";
@@ -278,6 +281,9 @@
 /* loco:638f6e49a7896c4df9647362 */
 "attachmentQuantity-plural-many" = "";
 
+/* loco:659665294692c252640fa103 */
+"attendeesListTitle" = "List of attendees (%d)";
+
 /* loco:6266649755d41301973d0c43 */
 "bccTitle" = "Bcc:";
 
@@ -314,11 +320,17 @@
 /* loco:62cbe10de2840a0cdc2be0d2 */
 "buttonAddEmailAddress" = "Add an email address";
 
+/* loco:65957e21e04c075b780d73d2 */
+"buttonAddToMyCalendar" = "Add to my calendar";
+
 /* loco:6437c062dd576a7631052413 */
 "buttonAttachMailbox" = "Add this email address";
 
 /* loco:62b2e09059ff20150b5c1b52 */
 "buttonAttachment" = "Add an attachment";
+
+/* loco:65957dd2d9c7e2750204c382 */
+"buttonAttendees" = "Attendees";
 
 /* loco:62befec91b3e0d24437119b3 */
 "buttonAvailableSoon" = "Available soon";
@@ -407,6 +419,9 @@
 /* loco:628dfebda6add66651161554 */
 "buttonLogin" = "Login";
 
+/* loco:65855b1bac34d439fd02e7e2 */
+"buttonMaybe" = "Maybe";
+
 /* loco:6284fd623d98060ac31f76d5 */
 "buttonMore" = "More";
 
@@ -418,6 +433,9 @@
 
 /* loco:6527b7d4882400da7d04ffd2 */
 "buttonNo" = "No";
+
+/* loco:6581b2b5a7520b536b03f942 */
+"buttonOpenKdrive" = "Open in kDrive";
 
 /* loco:62cd642815742c678d4c30e4 */
 "buttonRefuse" = "Refuse";
@@ -431,11 +449,17 @@
 /* loco:62b2e4a24486732cbc2f04d3 */
 "buttonSchedule" = "Schedule email to send later";
 
+/* loco:65957d479527393708069ee2 */
+"buttonSee" = "See";
+
 /* loco:6268fc53412a8032745aaeb2 */
 "buttonSeeAll" = "See all";
 
 /* loco:626918473e1b2d7fe4329d52 */
 "buttonSelectAll" = "All";
+
+/* loco:657324e1fb3ef333a001d852 */
+"buttonSetNow" = "Set now";
 
 /* loco:6267af86c6ebf234e9213012 */
 "buttonShare" = "Share";
@@ -472,6 +496,9 @@
 
 /* loco:6527b7c3bffd89453201f9e2 */
 "buttonYes" = "Yes";
+
+/* loco:65957d996979353c3e0956c4 */
+"calendarOrganizerName" = "%@ (Organizer)";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";
@@ -770,6 +797,15 @@
 /* loco:62a9dbdf0bddbc02ce031ba2 */
 "favoritesFolder" = "Favorites";
 
+/* loco:65982105ed32c3578b07f9c2 */
+"filterFocusAllowedMailboxesTitle" = "Allowed mailboxes";
+
+/* loco:659822fad61595fa7a0e9d02 */
+"filterFocusDescription" = "Allow notifications for selected mailboxes.";
+
+/* loco:6598228f255baea380090282 */
+"filterFocusTitle" = "Filter mailboxes";
+
 /* loco:62665f7d647475580e06e912 */
 "fromTitle" = "From:";
 
@@ -929,6 +965,12 @@
 /* loco:64ba47d60f3176675907c474 */
 "notificationTitleDelete" = "Deleted";
 
+/* loco:659697fd4623764905012212 */
+"onBoardingContactsDescription" = "By authorizing access, your contact management and messaging experience will be simplified.";
+
+/* loco:659697471cbe96642e01ee33 */
+"onBoardingContactsTitle" = "Allow Mail to access your contacts";
+
 /* loco:62c2eede5bc8fa0201054443 */
 "onBoardingDescription2" = "Customize your shortcuts freely in the app settings.";
 
@@ -937,6 +979,12 @@
 
 /* loco:62c2ef65c564d9260842db32 */
 "onBoardingDescription4" = "Create a free address or connect to an existing Infomaniak account.";
+
+/* loco:659698f30ec60c361c04b452 */
+"onBoardingNotificationsDescription" = "Don’t miss any important emails and be able to respond quickly by activating notifications.";
+
+/* loco:65969899123f318740070872 */
+"onBoardingNotificationsTitle" = "Enable notifications";
 
 /* loco:62c2ee73d35f8933bc4b5262 */
 "onBoardingTitle1" = "Choose your theme";
@@ -1483,6 +1531,9 @@
 
 /* loco:641d60b6f5c19a18734d9192 */
 "urlUserReportiOS" = "https://feedback.userreport.com/5f64b035-33e5-4e71-9572-dc9d1d451c18/";
+
+/* loco:65957e6e7dfe315a5d02add2 */
+"warningEventHasPassed" = "This event has already passed";
 
 /* loco:6481d72ebb3c88db6e002332 */
 "warningNotificationsDisabledButton" = "Enable them in the settings";

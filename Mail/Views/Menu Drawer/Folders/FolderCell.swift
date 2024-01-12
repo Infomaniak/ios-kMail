@@ -93,7 +93,7 @@ struct FolderCell: View {
                 }
             }
 
-            if folder.content.isExpanded && cellType != .move {
+            if folder.content.isExpanded || cellType == .move {
                 ForEach(folder.children) { child in
                     FolderCell(
                         folder: child,
@@ -174,8 +174,7 @@ struct FolderCellContent: View {
                 Text(folder.localizedName)
                     .textStyle(textStyle)
                     .lineLimit(1)
-
-                Spacer(minLength: UIPadding.regular)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 accessory
             }

@@ -54,6 +54,14 @@ public extension DiscoveryItem {
         primaryButtonLabel: MailResourcesStrings.Localizable.buttonUpdate,
         matomoCategory: .appUpdate
     )
+
+    static let setAsDefaultAppDiscovery = DiscoveryItem(
+        image: UserDefaults.shared.accentColor.defaultApp,
+        title: MailResourcesStrings.Localizable.setAsDefaultAppTitle,
+        description: MailResourcesStrings.Localizable.setAsDefaultAppDescription,
+        primaryButtonLabel: MailResourcesStrings.Localizable.buttonSetNow,
+        matomoCategory: .setAsDefaultApp
+    )
 }
 
 struct DiscoveryView: View {
@@ -66,7 +74,7 @@ struct DiscoveryView: View {
 
     let item: DiscoveryItem
 
-    let onAppear: () -> Void
+    var onAppear: (() -> Void)?
     let completionHandler: (Bool) -> Void
 
     var body: some View {
@@ -77,7 +85,9 @@ struct DiscoveryView: View {
                 DiscoveryAlertView(item: item, nowButton: didTouchNowButton, laterButton: didTouchLaterButton)
             }
         }
-        .onAppear(perform: onAppear)
+        .onAppear {
+            onAppear?()
+        }
         .onDisappear {
             completionHandler(willDiscoverNewFeature)
             if !willDiscoverNewFeature {

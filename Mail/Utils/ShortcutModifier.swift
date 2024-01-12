@@ -62,13 +62,13 @@ struct ShortcutModifier: ViewModifier {
     }
 
     private func shortcutDelete() {
-        matomo.track(eventWithCategory: .shortcutAction, name: "delete")
+        matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "delete")
 
         let messages: [Message]
         if multipleSelectionViewModel.isEnabled {
             messages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
         } else {
-            guard let unwrapMessages = viewModel.selectedThread?.messages.toArray() else { return }
+            guard let unwrapMessages = mainViewState.selectedThread?.messages.toArray() else { return }
             messages = unwrapMessages
         }
         Task {
@@ -81,10 +81,10 @@ struct ShortcutModifier: ViewModifier {
     }
 
     private func shortcutReply() {
-        matomo.track(eventWithCategory: .shortcutAction, name: "reply")
+        matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "reply")
 
         guard !multipleSelectionViewModel.isEnabled,
-              let message = viewModel.selectedThread?
+              let message = mainViewState.selectedThread?
               .lastMessageToExecuteAction(currentMailboxEmail: viewModel.mailboxManager.mailbox.email) else { return }
         Task {
             try await actionsManager.performAction(
@@ -96,13 +96,13 @@ struct ShortcutModifier: ViewModifier {
     }
 
     private func shortcutNewMessage() {
-        matomo.track(eventWithCategory: .shortcutAction, name: "newMessage")
+        matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "newMessage")
 
         mainViewState.editedDraft = EditedDraft.new()
     }
 
     private func shortcutRefresh() {
-        matomo.track(eventWithCategory: .shortcutAction, name: "refresh")
+        matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "refresh")
 
         Task {
             await viewModel.fetchThreads()
@@ -111,13 +111,13 @@ struct ShortcutModifier: ViewModifier {
 
     private func shortcutNext() {
         guard !multipleSelectionViewModel.isEnabled else { return }
-        matomo.track(eventWithCategory: .shortcutAction, name: "nextThread")
+        matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "nextThread")
         viewModel.nextThread()
     }
 
     private func shortcutPrevious() {
         guard !multipleSelectionViewModel.isEnabled else { return }
-        matomo.track(eventWithCategory: .shortcutAction, name: "previousThread")
+        matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "previousThread")
         viewModel.previousThread()
     }
 }

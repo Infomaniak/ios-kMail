@@ -142,7 +142,7 @@ struct MessageView: View {
             do {
                 try await mailboxManager.message(message: message)
             } catch let error as MailApiError where error == .apiMessageNotFound {
-                snackbarPresenter.show(message: error.localizedDescription)
+                snackbarPresenter.show(message: error.errorDescription ?? "")
                 try await mailboxManager.refreshFolder(from: [message])
             } catch {
                 isShowingErrorLoading = true

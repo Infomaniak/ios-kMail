@@ -151,7 +151,7 @@ struct ComposeMessageView: View {
                 isLoadingContent = false
             } catch {
                 // Unable to get signatures, "An error occurred" and close modal.
-                snackbarPresenter.show(message: MailError.unknownError.localizedDescription)
+                snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
                 dismissMessageView()
             }
         }
@@ -176,8 +176,8 @@ struct ComposeMessageView: View {
             }
         }
         .onDisappear {
-            draftManager.syncDraft(mailboxManager: mailboxManager)
-            if !Bundle.main.isExtension {
+            draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: !mainViewState.isShowingSetAppAsDefaultDiscovery)
+            if !Bundle.main.isExtension && !mainViewState.isShowingSetAppAsDefaultDiscovery {
                 mainViewState.isShowingReviewAlert = reviewManager.shouldRequestReview()
             }
         }
@@ -345,7 +345,15 @@ struct ComposeMessageView: View {
             alert.state = .emptySubject(handler: sendDraft)
             return
         }
+
         sendDraft()
+
+        if !Bundle.main.isExtension {
+            mainViewState.isShowingSetAppAsDefaultDiscovery = UserDefaults.shared.shouldPresentSetAsDefaultDiscovery
+            if !mainViewState.isShowingSetAppAsDefaultDiscovery {
+                mainViewState.isShowingChristmasEasterEgg = true
+            }
+        }
     }
 
     private func sendDraft() {
@@ -364,7 +372,6 @@ struct ComposeMessageView: View {
             }
         }
         dismissMessageView()
-        mainViewState.isShowingChristmasEasterEgg = true
     }
 
     private static func writeDraftToRealm(_ realm: Realm, draft: Draft) {

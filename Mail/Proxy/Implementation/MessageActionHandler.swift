@@ -43,7 +43,7 @@ public struct MessageActionHandler: MessageActionHandlable {
     @LazyInjectService private var matomo: MatomoUtils
 
     func handleTapOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async {
-        matomo.track(eventWithCategory: .notificationAction, name: ActionNames.open)
+        matomo.track(eventWithCategory: .notificationActions, name: ActionNames.open)
 
         // Switch account if needed
         switchAccountIfNeeded(mailbox: mailbox, mailboxManager: mailboxManager)
@@ -55,7 +55,7 @@ public struct MessageActionHandler: MessageActionHandlable {
     }
 
     func handleReplyOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) {
-        matomo.track(eventWithCategory: .notificationAction, name: ActionNames.reply)
+        matomo.track(eventWithCategory: .notificationActions, name: ActionNames.reply)
 
         // Switch account if needed
         switchAccountIfNeeded(mailbox: mailbox, mailboxManager: mailboxManager)
@@ -69,13 +69,13 @@ public struct MessageActionHandler: MessageActionHandlable {
     func handleArchiveOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async throws {
         let backgroundTaskTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
 
-        matomo.track(eventWithCategory: .notificationAction, name: ActionNames.archive)
+        matomo.track(eventWithCategory: .notificationActions, name: ActionNames.archive)
 
         try await moveMessage(uid: messageUid, to: .archive, mailboxManager: mailboxManager)
 
         await updateUnreadBadgeCount()
 
-        matomo.track(eventWithCategory: .notificationAction, name: ActionNames.archiveExecuted)
+        matomo.track(eventWithCategory: .notificationActions, name: ActionNames.archiveExecuted)
 
         await backgroundTaskTracker.end()
     }
@@ -83,13 +83,13 @@ public struct MessageActionHandler: MessageActionHandlable {
     func handleDeleteOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async throws {
         let backgroundTaskTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
 
-        matomo.track(eventWithCategory: .notificationAction, name: ActionNames.delete)
+        matomo.track(eventWithCategory: .notificationActions, name: ActionNames.delete)
 
         try await moveMessage(uid: messageUid, to: .trash, mailboxManager: mailboxManager)
 
         await updateUnreadBadgeCount()
 
-        matomo.track(eventWithCategory: .notificationAction, name: ActionNames.deleteExecuted)
+        matomo.track(eventWithCategory: .notificationActions, name: ActionNames.deleteExecuted)
 
         await backgroundTaskTracker.end()
     }

@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakDI
+import Realm
 import RealmSwift
 
 /// Something that can access a realm with a given configuration
@@ -27,10 +28,14 @@ public protocol RealmAccessible {
 
     /// Fetches an up to date realm for a given configuration, or fail in a controlled manner
     func getRealm() -> Realm
+
+    /// Set `isExcludedFromBackup = true`  to the folder where realm is located to exclude a realm cache from an iCloud backup
+    /// - Important: Avoid calling this method too often as this can be expensive, prefer calling it once at init time
+    func excludeRealmFromBackup()
 }
 
-extension RealmAccessible {
-    public func getRealm() -> Realm {
+public extension RealmAccessible {
+    func getRealm() -> Realm {
         getRealm(canRetry: true)
     }
 
@@ -42,34 +47,36 @@ extension RealmAccessible {
             let realm = try Realm(configuration: realmConfiguration)
             realm.refresh()
             return realm
-        } catch {
+        } catch let error as RLMError
+            where error.code == .fail && (error.userInfo[RLMErrorCodeNameKey] as? String) == "InvalidSchemaVersion" {
+            // If scheme version is invalid simply delete the current realm and retry with a new one
+            // (we still report the error just in case because it shouldn't happen in production)
             Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration, afterRetry: !canRetry)
 
-            @InjectService var platformDetector: PlatformDetectable
-            let isOnMacContext = platformDetector.isMac
+            @InjectService var realmManager: RealmManageable
+            realmManager.deleteFiles(for: realmConfiguration)
 
-            guard isOnMacContext else {
-                // Delete configuration for iOS / iPadOS in debug
-                if platformDetector.isDebug {
-                    @InjectService var realmManager: RealmManageable
-                    realmManager.deleteFiles(for: realmConfiguration)
-                }
-
-                // And crash like before
-                fatalError("Failed creating realm \(error.localizedDescription)")
-            }
+            return getRealm(canRetry: false)
+        } catch {
+            Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration, afterRetry: !canRetry)
 
             guard canRetry else {
                 // Unable to recover after cleaning realm a first time
                 fatalError("Failed creating realm after a retry \(error.localizedDescription)")
             }
 
-            // If app is running on macOS (no clean on uninstall), seamlessly clean DB and continue
-            @InjectService var realmManager: RealmManageable
-            realmManager.deleteFiles(for: realmConfiguration)
-
             // Retry without recursion
             return getRealm(canRetry: false)
         }
+    }
+
+    func excludeRealmFromBackup() {
+        guard var realmFolderURL = realmConfiguration.fileURL?.deletingLastPathComponent() else {
+            return
+        }
+
+        var metadata = URLResourceValues()
+        metadata.isExcludedFromBackup = true
+        try? realmFolderURL.setResourceValues(metadata)
     }
 }

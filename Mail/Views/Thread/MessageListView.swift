@@ -29,15 +29,17 @@ struct MessageListView: View {
         ScrollViewReader { proxy in
             LazyVStack(spacing: 0) {
                 ForEach(messages, id: \.uid) { message in
-                    MessageView(
-                        message: message,
-                        isMessageExpanded: isExpanded(message: message, from: messages),
-                        threadForcedExpansion: $messageExpansion
-                    )
-                    .id(message.uid)
-                    if message != messages.last {
-                        IKDivider()
+                    VStack {
+                        MessageView(
+                            message: message,
+                            isMessageExpanded: isExpanded(message: message, from: messages),
+                            threadForcedExpansion: $messageExpansion
+                        )
+                        if message != messages.last {
+                            IKDivider()
+                        }
                     }
+                    .id(message.uid)
                 }
             }
             .onAppear {

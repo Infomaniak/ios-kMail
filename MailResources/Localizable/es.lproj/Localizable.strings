@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Fri, 08 Dec 2023 14:45:20 +0100
+ * Exported by: Philippe Weidmann
+ * Exported at: Mon, 08 Jan 2024 14:11:04 +0100
  */
 
 /* loco:63e11e5771d13a480771a162 */
@@ -100,6 +100,9 @@
 
 /* loco:63fdb9239bfffe2abc3e1c02 */
 "actionViewInLight" = "Ver en tema claro";
+
+/* loco:65982378414cb87ae7017bd3 */
+"activeFocusFilterTitle" = "Filtrado de buzones";
 
 /* loco:63ecf9b0415fc86eea26ec03 */
 "addUnknownRecipientAlreadyUsed" = "El correo electrónico ya está utilizado";
@@ -278,6 +281,9 @@
 /* loco:638f6e49a7896c4df9647362 */
 "attachmentQuantity-plural-many" = "";
 
+/* loco:659665294692c252640fa103 */
+"attendeesListTitle" = "Lista de asistentes (%d)";
+
 /* loco:6266649755d41301973d0c43 */
 "bccTitle" = "CCO:";
 
@@ -314,11 +320,17 @@
 /* loco:62cbe10de2840a0cdc2be0d2 */
 "buttonAddEmailAddress" = "Añadir una dirección de correo electrónico";
 
+/* loco:65957e21e04c075b780d73d2 */
+"buttonAddToMyCalendar" = "Añadir a mi calendario";
+
 /* loco:6437c062dd576a7631052413 */
 "buttonAttachMailbox" = "Añadir dirección de correo electrónico";
 
 /* loco:62b2e09059ff20150b5c1b52 */
 "buttonAttachment" = "Añadir un archivo adjunto";
+
+/* loco:65957dd2d9c7e2750204c382 */
+"buttonAttendees" = "Asistentes";
 
 /* loco:62befec91b3e0d24437119b3 */
 "buttonAvailableSoon" = "Disponible en breve";
@@ -407,6 +419,9 @@
 /* loco:628dfebda6add66651161554 */
 "buttonLogin" = "Inicio de sesión";
 
+/* loco:65855b1bac34d439fd02e7e2 */
+"buttonMaybe" = "Quizás";
+
 /* loco:6284fd623d98060ac31f76d5 */
 "buttonMore" = "Más";
 
@@ -418,6 +433,9 @@
 
 /* loco:6527b7d4882400da7d04ffd2 */
 "buttonNo" = "No";
+
+/* loco:6581b2b5a7520b536b03f942 */
+"buttonOpenKdrive" = "Abrir en kDrive";
 
 /* loco:62cd642815742c678d4c30e4 */
 "buttonRefuse" = "Desechos";
@@ -431,11 +449,17 @@
 /* loco:62b2e4a24486732cbc2f04d3 */
 "buttonSchedule" = "Programar un correo electrónico para enviarlo más tarde";
 
+/* loco:65957d479527393708069ee2 */
+"buttonSee" = "Véase";
+
 /* loco:6268fc53412a8032745aaeb2 */
 "buttonSeeAll" = "Ver todos";
 
 /* loco:626918473e1b2d7fe4329d52 */
 "buttonSelectAll" = "Todos";
+
+/* loco:657324e1fb3ef333a001d852 */
+"buttonSetNow" = "Definir ahora";
 
 /* loco:6267af86c6ebf234e9213012 */
 "buttonShare" = "Compartir";
@@ -472,6 +496,9 @@
 
 /* loco:6527b7c3bffd89453201f9e2 */
 "buttonYes" = "Sí";
+
+/* loco:65957d996979353c3e0956c4 */
+"calendarOrganizerName" = "%@ (Organizador)";
 
 /* loco:626664836e30e75f1c390202 */
 "ccTitle" = "Cc:";
@@ -770,6 +797,15 @@
 /* loco:62a9dbdf0bddbc02ce031ba2 */
 "favoritesFolder" = "Favoritos";
 
+/* loco:65982105ed32c3578b07f9c2 */
+"filterFocusAllowedMailboxesTitle" = "Buzones autorizados";
+
+/* loco:659822fad61595fa7a0e9d02 */
+"filterFocusDescription" = "Permitir notificaciones para buzones seleccionados.";
+
+/* loco:6598228f255baea380090282 */
+"filterFocusTitle" = "Filtrar buzones";
+
 /* loco:62665f7d647475580e06e912 */
 "fromTitle" = "De:";
 
@@ -929,6 +965,12 @@
 /* loco:64ba47d60f3176675907c474 */
 "notificationTitleDelete" = "Suprimido";
 
+/* loco:659697fd4623764905012212 */
+"onBoardingContactsDescription" = "Al autorizar el acceso, se simplificará la gestión de tus contactos y tu experiencia con el correo electrónico.";
+
+/* loco:659697471cbe96642e01ee33 */
+"onBoardingContactsTitle" = "Autorizar el acceso de Mail a tus contactos";
+
 /* loco:62c2eede5bc8fa0201054443 */
 "onBoardingDescription2" = "Personaliza tus accesos directos libremente en los ajustes de la aplicación.";
 
@@ -937,6 +979,12 @@
 
 /* loco:62c2ef65c564d9260842db32 */
 "onBoardingDescription4" = "Cree una dirección gratuita o conéctese a una cuenta Infomaniak existente.";
+
+/* loco:659698f30ec60c361c04b452 */
+"onBoardingNotificationsDescription" = "No te pierdas los correos importantes y reacciona rápidamente activando las notificaciones.";
+
+/* loco:65969899123f318740070872 */
+"onBoardingNotificationsTitle" = "Activar notificaciones";
 
 /* loco:62c2ee73d35f8933bc4b5262 */
 "onBoardingTitle1" = "Elija su tema";
@@ -1483,6 +1531,9 @@
 
 /* loco:641d60b6f5c19a18734d9192 */
 "urlUserReportiOS" = "https://feedback.userreport.com/bc05436b-f496-4b6e-934a-338b4b0f1cda/";
+
+/* loco:65957e6e7dfe315a5d02add2 */
+"warningEventHasPassed" = "Este acontecimiento ya ha pasado";
 
 /* loco:6481d72ebb3c88db6e002332 */
 "warningNotificationsDisabledButton" = "Actívalos en los ajustes";

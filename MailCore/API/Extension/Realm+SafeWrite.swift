@@ -29,7 +29,7 @@ public extension Realm {
     }
 
     func safeWrite(_ block: () throws -> Void) throws {
-        #if DEBUG
+        #if DEBUG || TEST
         dispatchPrecondition(condition: .notOnQueue(.main))
         #endif
 

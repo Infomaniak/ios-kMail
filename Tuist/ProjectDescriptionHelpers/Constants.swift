@@ -19,13 +19,19 @@
 import ProjectDescription
 
 public enum Constants {
+    public static let testSettings: [String: SettingValue] = [
+        "SWIFT_ACTIVE_COMPILATION_CONDITIONS": "TEST DEBUG"
+    ]
+
     public static let baseSettings = SettingsDictionary()
         .currentProjectVersion("1")
-        .marketingVersion("1.0.13")
+        .marketingVersion("1.0.14")
         .automaticCodeSigning(devTeam: "864VDCS2QY")
         .merging(["DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER": SettingValue(stringLiteral: "NO")])
 
     public static let deploymentTarget = DeploymentTarget.iOS(targetVersion: "15.0", devices: [.iphone, .ipad, .mac])
+
+    public static let appIntentsDeploymentTarget = DeploymentTarget.iOS(targetVersion: "16.4", devices: [.iphone, .ipad, .mac])
 
     public static let swiftlintScript = TargetScript.post(path: "scripts/lint.sh", name: "Swiftlint")
 }
