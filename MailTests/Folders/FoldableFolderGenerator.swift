@@ -22,11 +22,23 @@ import InfomaniakLogin
 @testable import MailCore
 import XCTest
 
-/// Like in vidja games, I start form noise (random stuff) to build a world.
-/// So here I build a N dimensional array of [Folders] given the result of consecutive random "throws"
-struct UTFoldableFolderGenerator {
-    static let maxDepth = 5
-    static let maxElementsPerLevel = 5
+/// Like in vidja games, you can start form noise (random stuff) to build a world.
+/// So here I build a N dimensional array of [Folders] given random data
+public struct FoldableFolderGenerator {
+    let maxDepth: Int
+    let maxElementsPerLevel: Int
+
+    /// Init of UTFoldableFolderGenerator
+    /// - Parameters:
+    ///   - maxDepth: The depth of the tree structure to generate, must be positive or zero
+    ///   - maxElementsPerLevel: The width of the tree structure to generate, must be positive or zero
+    public init(maxDepth: Int, maxElementsPerLevel: Int) {
+        assert(maxDepth >= 0, "maxDepth should be positive integer. Got:\(maxDepth)")
+        assert(maxElementsPerLevel >= 0, "maxElementsPerLevel should be positive integer. Got:\(maxElementsPerLevel)")
+
+        self.maxDepth = maxDepth
+        self.maxElementsPerLevel = maxElementsPerLevel
+    }
 
     static let wordDictionary = [
         "Lorem",
@@ -72,9 +84,6 @@ struct UTFoldableFolderGenerator {
             folder(withChildren: buildBranch(depth: $0))
         }
 
-        print(randomDepth)
-        print(result)
-
         return result
     }
 
@@ -105,13 +114,11 @@ struct UTFoldableFolderGenerator {
     }
 
     var depthMap: [Int] {
-        (0 ..< Self.maxElementsPerLevel).map { _ in Int.random(in: 0 ... Self.maxDepth) }
+        (0 ..< maxElementsPerLevel).map { _ in Int.random(in: 0 ... maxDepth) }
     }
 
     var elementsCountForDepth: Int {
-        let elementsCountForDepth = Int.random(in: 0 ... Self.maxElementsPerLevel)
-        print("elementsCountForDepth :\(elementsCountForDepth)")
-        return elementsCountForDepth
+        Int.random(in: 0 ... maxElementsPerLevel)
     }
 
     var randomWord: String {

@@ -22,276 +22,62 @@ import InfomaniakLogin
 @testable import MailCore
 import XCTest
 
-/// Something to compare the "shape" of abstract n dimensional arrays
-public struct ArrayShapeCompare {
-    enum ComparisonError: Error {
-        case mismatchArrayCount(lhs: [Any], rhs: [Any])
-        case mismatchType(lhs: Any?, rhs: Any?)
-    }
-
-    public func compare(lhs: [Any], rhs: [Any]) throws {
-        guard lhs.count == rhs.count else {
-            throw ComparisonError.mismatchArrayCount(lhs: lhs, rhs: rhs)
-        }
-
-        for index in lhs.indices {
-            if let lhsArray = lhs[index] as? [Any],
-               let rhsArray = rhs[index] as? [Any] {
-                try compare(lhs: lhsArray, rhs: rhsArray)
-            }
-
-            // excluding one is an array but the other is not one
-            let lhsArray = lhs[index] as? [Any]
-            let rhsArray = rhs[index] as? [Any]
-            guard (lhsArray == nil && rhsArray == nil) || (lhsArray != nil && rhsArray != nil) else {
-                throw ComparisonError.mismatchType(lhs: lhs, rhs: rhs)
-            }
-
-            // two types non nil, same 'shape'
-        }
-    }
-}
-
-/// Testing that the tool `ArrayShapeCompare` is correct
-final class UTArrayShapeCompare: XCTestCase {
-    // MARK: - Test success
-
-    func testArrayShapeCompare_success_empty() {
-        // GIVEN
-        let lhs = [Int]()
-        let rhs: [String] = lhs.map { "\($0)" }
-        let arrayShapeTester = ArrayShapeCompare()
-
-        // WHEN
-        do {
-            try arrayShapeTester.compare(lhs: lhs, rhs: rhs)
-        } catch {
-            XCTFail("Unexpected :\(error)")
-        }
-    }
-
-    func testArrayShapeCompare_success_flat() {
-        // GIVEN
-        let lhs = [1, 2, 3, 4, 5]
-        let rhs = lhs.map { "\($0)" }
-
-        let arrayShapeTester = ArrayShapeCompare()
-
-        // WHEN
-        do {
-            try arrayShapeTester.compare(lhs: lhs, rhs: rhs)
-        } catch {
-            XCTFail("Unexpected :\(error)")
-        }
-    }
-
-    func testArrayShapeCompare_success_nested() {
-        // GIVEN
-        let lhs = [[1], 2, 3, 4, 5, [[[6, 7, 8]]]] as [Any]
-        let rhs = [["1"], "2", "3", "4", "5", [[["6", "7", "8"]]]] as [Any]
-
-        let arrayShapeTester = ArrayShapeCompare()
-
-        // WHEN
-        do {
-            try arrayShapeTester.compare(lhs: lhs, rhs: rhs)
-        } catch {
-            XCTFail("Unexpected :\(error)")
-        }
-    }
-
-    func testArrayShapeCompare_success_nested_dictionary() {
-        // GIVEN
-        let lhs = [[1], 2, 3, 4, 5, [[[6, 7, 8]]]] as [Any]
-        let rhs = [["1"], "2", "3", "4", "5", [[["6", "7", ["8": "valid shape"]]]]] as [Any]
-
-        let arrayShapeTester = ArrayShapeCompare()
-
-        // WHEN
-        do {
-            try arrayShapeTester.compare(lhs: lhs, rhs: rhs)
-        } catch {
-            XCTFail("Unexpected :\(error)")
-        }
-    }
-
-    // MARK: - Test failure
-
-    func testArrayShapeCompare_failureCount_empty() {
-        // GIVEN
-        let lhs = [Int]()
-        let rhs = ["shape_mismatch"]
-        let arrayShapeTester = ArrayShapeCompare()
-
-        // WHEN
-        do {
-            try arrayShapeTester.compare(lhs: lhs, rhs: rhs)
-            XCTFail("Expected to throw")
-        } catch {
-            guard let matchError = error as? ArrayShapeCompare.ComparisonError else {
-                XCTFail("Unexpected :\(error)")
-                return
-            }
-
-            switch matchError {
-            case .mismatchType(let lhs, let rhs):
-                XCTFail("Unexpected object mismatch - lhs:\(lhs) rhs:\(rhs)")
-            case .mismatchArrayCount: break
-                // array count mismatch expected
-            }
-        }
-    }
-
-    func testArrayShapeCompare_failureCount_flat() {
-        // GIVEN
-        let lhs = [1, 2, 3, 4, 5]
-        let rhs = ["1", "2", "3", "4", "5", "6"]
-
-        let arrayShapeTester = ArrayShapeCompare()
-
-        // WHEN
-        do {
-            try arrayShapeTester.compare(lhs: lhs, rhs: rhs)
-            XCTFail("Expected to throw")
-        } catch {
-            guard let matchError = error as? ArrayShapeCompare.ComparisonError else {
-                XCTFail("Unexpected :\(error)")
-                return
-            }
-
-            switch matchError {
-            case .mismatchType(let lhs, let rhs):
-                XCTFail("Unexpected object mismatch - lhs:\(lhs) rhs:\(rhs)")
-            case .mismatchArrayCount: break
-                // array count mismatch expected
-            }
-        }
-    }
-
-    func testArrayShapeCompare_failureCount_nested() {
-        // GIVEN
-        let lhs = [[1], 2, 3, 4, 5, [[[6, 7, 8]]]] as [Any]
-        let rhs = [["1"], "2", "3", "4", "5", [[["6", "7", "mismatch", "8"]]]] as [Any]
-
-        let arrayShapeTester = ArrayShapeCompare()
-
-        // WHEN
-        do {
-            try arrayShapeTester.compare(lhs: lhs, rhs: rhs)
-            XCTFail("Expected to throw")
-        } catch {
-            guard let matchError = error as? ArrayShapeCompare.ComparisonError else {
-                XCTFail("Unexpected :\(error)")
-                return
-            }
-
-            switch matchError {
-            case .mismatchType(let lhs, let rhs):
-                XCTFail("Unexpected object mismatch - lhs:\(lhs) rhs:\(rhs)")
-            case .mismatchArrayCount: break
-                // array count mismatch expected
-            }
-        }
-    }
-
-    func testArrayShapeCompare_failureType_flat() {
-        // GIVEN
-        let lhs = [1, 2, 3, 4, 5]
-        let rhs = ["1", "2", "3", "4", ["5"]] as [Any]
-
-        let arrayShapeTester = ArrayShapeCompare()
-
-        // WHEN
-        do {
-            try arrayShapeTester.compare(lhs: lhs, rhs: rhs)
-            XCTFail("Expected to throw")
-        } catch {
-            guard let matchError = error as? ArrayShapeCompare.ComparisonError else {
-                XCTFail("Unexpected :\(error)")
-                return
-            }
-
-            switch matchError {
-            case .mismatchType: break
-            // object mismatch expected
-            case .mismatchArrayCount(let lhs, let rhs):
-                XCTFail("Unexpected array count - lhs:\(lhs.count) rhs:\(rhs.count)")
-            }
-        }
-    }
-
-    func testArrayShapeCompare_failureType_nested() {
-        // GIVEN
-        let lhs = [[1], 2, 3, 4, 5, [[[6, 7, 8]]]] as [Any]
-        let rhs = [["1"], "2", "3", "4", "5", [[["6", "7", ["8"]]]]] as [Any]
-
-        let arrayShapeTester = ArrayShapeCompare()
-
-        // WHEN
-        do {
-            try arrayShapeTester.compare(lhs: lhs, rhs: rhs)
-            XCTFail("Expected to throw")
-        } catch {
-            guard let matchError = error as? ArrayShapeCompare.ComparisonError else {
-                XCTFail("Unexpected :\(error)")
-                return
-            }
-
-            switch matchError {
-            case .mismatchType: break
-            // object mismatch expected
-            case .mismatchArrayCount(let lhs, let rhs):
-                XCTFail("Unexpected array count - lhs:\(lhs.count) rhs:\(rhs.count)")
-            }
-        }
-    }
-
-    func testArrayShapeCompare_failureType_dictionary() {
-        // GIVEN
-        let lhs = [[1], 2, 3, 4, 5, [[[6, 7, 8]]]] as [Any]
-        let rhs = [["1"], "2", "3", "4", "5", [[["6", "7", [["8", "woops"]]]]]] as [Any]
-
-        let arrayShapeTester = ArrayShapeCompare()
-
-        // WHEN
-        do {
-            try arrayShapeTester.compare(lhs: lhs, rhs: rhs)
-            XCTFail("Expected to throw")
-        } catch {
-            guard let matchError = error as? ArrayShapeCompare.ComparisonError else {
-                XCTFail("Unexpected :\(error)")
-                return
-            }
-
-            switch matchError {
-            case .mismatchType: break
-            // object mismatch expected
-            case .mismatchArrayCount(let lhs, let rhs):
-                XCTFail("Unexpected array count - lhs:\(lhs.count) rhs:\(rhs.count)")
-            }
-        }
-    }
-}
-
-// TODO: Integration test suite
+/// Integration TestSuite for NestableFolder
 final class ITNestableFolder: XCTestCase {
+    var maxDepth = 0
+    var maxElementsPerLevel = 0
+
+    // MARK: - TestSuite
+
+    override class var defaultTestSuite: XCTestSuite {
+        let testSuite = XCTestSuite(name: NSStringFromClass(self))
+
+        // Wide not deep
+        _ = (0 ... 49).map { index in
+            let randomDepth = Int.random(in: 0 ... 5)
+            let randomWidth = Int.random(in: 0 ... 30)
+            addNewTest(maxDepth: randomDepth, maxElementsPerLevel: randomWidth, testSuite: testSuite)
+        }
+
+        // Deep not wide
+        _ = (50 ... 99).map { index in
+            let randomDepth = Int.random(in: 0 ... 30)
+            let randomWidth = Int.random(in: 0 ... 2)
+            print("\(#function) round \(index) with randomDepth:\(randomDepth) randomWidth:\(randomWidth) ")
+            addNewTest(maxDepth: randomDepth, maxElementsPerLevel: randomWidth, testSuite: testSuite)
+        }
+
+        return testSuite
+    }
+
+    class func addNewTest(maxDepth: Int, maxElementsPerLevel: Int, testSuite: XCTestSuite) {
+        for invocation in testInvocations {
+            let newTestCase = ITNestableFolder(invocation: invocation)
+            newTestCase.maxDepth = maxDepth
+            newTestCase.maxElementsPerLevel = maxElementsPerLevel
+
+            testSuite.addTest(newTestCase)
+        }
+    }
+
     // MARK: - Test
 
-    func testRandomFolderStructure() {
+    func testFlatFolderStructureCorrectness() {
         // GIVEN
         let arrayShapeTester = ArrayShapeCompare()
-        let folderStructure = UTFoldableFolderGenerator().invokeFromNoise()
-        print(folderStructure)
+        let folderStructure = UTFoldableFolderGenerator(maxDepth: maxDepth, maxElementsPerLevel: maxElementsPerLevel)
+            .invokeFromNoise()
 
         // WHEN
         let nestedFolders = NestableFolder.createFoldersHierarchy(from: folderStructure)
-        print(nestedFolders)
 
         // THEN
         do {
             try arrayShapeTester.compare(lhs: folderStructure, rhs: nestedFolders)
         } catch {
-            XCTFail("Unexpected :\(error)")
+            XCTFail(
+                "Unexpected :\(error) with maxDepth=\(maxDepth) maxElementsPerLevel=\(maxElementsPerLevel) nestedFolders:\(nestedFolders) folderStructure:\(folderStructure)"
+            )
         }
     }
 }
