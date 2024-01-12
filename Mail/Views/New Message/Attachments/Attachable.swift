@@ -38,11 +38,15 @@ extension NSItemProvider: Attachable {
         return UTType(preferredIdentifier)
     }
 
+//    public func title() async throws -> String {
+//    }
+
     public func writeToTemporaryURL() async throws -> URL {
         switch underlyingType {
         case .isURL:
             let getPlist = try ItemProviderURLRepresentation(from: self)
-            return try await getPlist.result.get()
+            let result = try await getPlist.result.get()
+            return result.url
 
         case .isText:
             let getText = try ItemProviderTextRepresentation(from: self)
@@ -54,11 +58,13 @@ extension NSItemProvider: Attachable {
 
         case .isImageData, .isCompressedData, .isMiscellaneous:
             let getFile = try ItemProviderFileRepresentation(from: self)
-            return try await getFile.result.get()
+            let result = try await getFile.result.get()
+            return result.url
 
         case .isDirectory:
             let getFile = try ItemProviderZipRepresentation(from: self)
-            return try await getFile.result.get()
+            let result = try await getFile.result.get()
+            return result.url
 
         case .none:
             throw ErrorDomain.UTINotFound
