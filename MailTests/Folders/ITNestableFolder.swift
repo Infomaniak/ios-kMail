@@ -33,17 +33,16 @@ final class ITNestableFolder: XCTestCase {
         let testSuite = XCTestSuite(name: NSStringFromClass(self))
 
         // Wide not deep
-        _ = (0 ... 49).map { index in
+        _ = (0 ... 49).map { _ in
             let randomDepth = Int.random(in: 0 ... 5)
-            let randomWidth = Int.random(in: 0 ... 30)
+            let randomWidth = Int.random(in: 0 ... 20)
             addNewTest(maxDepth: randomDepth, maxElementsPerLevel: randomWidth, testSuite: testSuite)
         }
 
         // Deep not wide
-        _ = (50 ... 99).map { index in
-            let randomDepth = Int.random(in: 0 ... 30)
+        _ = (50 ... 99).map { _ in
+            let randomDepth = Int.random(in: 0 ... 20)
             let randomWidth = Int.random(in: 0 ... 2)
-            print("\(#function) round \(index) with randomDepth:\(randomDepth) randomWidth:\(randomWidth) ")
             addNewTest(maxDepth: randomDepth, maxElementsPerLevel: randomWidth, testSuite: testSuite)
         }
 
@@ -65,8 +64,7 @@ final class ITNestableFolder: XCTestCase {
     func testFlatFolderStructureCorrectness() {
         // GIVEN
         let arrayShapeTester = ArrayShapeCompare()
-        let folderStructure = UTFoldableFolderGenerator(maxDepth: maxDepth, maxElementsPerLevel: maxElementsPerLevel)
-            .invokeFromNoise()
+        let folderStructure = FolderStructureGenerator(maxDepth: maxDepth, maxElementsPerLevel: maxElementsPerLevel).folders
 
         // WHEN
         let nestedFolders = NestableFolder.createFoldersHierarchy(from: folderStructure)

@@ -20,13 +20,40 @@ import Foundation
 import InfomaniakCore
 import InfomaniakLogin
 @testable import MailCore
+@testable import RealmSwift
 import XCTest
 
 /// Like in vidja games, you can start form noise (random stuff) to build a world.
 /// So here I build a N dimensional array of [Folders] given random data
-public struct FoldableFolderGenerator {
-    let maxDepth: Int
-    let maxElementsPerLevel: Int
+public struct FolderStructureGenerator {
+    public let maxDepth: Int
+    public let maxElementsPerLevel: Int
+
+    /// Folders structure generated at init. Added to `inMemoryRealm`
+    public var folders = [Folder]()
+
+    /// Folders with a random Role. Added to `inMemoryRealm`
+    public var foldersWithRole = [Folder]()
+
+    var inMemoryRealm: Realm {
+        let identifier = "MockRealm"
+        let configuration = Realm.Configuration(inMemoryIdentifier: identifier, objectTypes: [
+            Folder.self,
+            Thread.self,
+            Message.self,
+            Body.self,
+            Attachment.self,
+            Recipient.self,
+            Draft.self,
+            Signature.self,
+            SearchHistory.self
+        ])
+
+        // It's a unit test
+        // swiftlint:disable:next force_try
+        let realm = try! Realm(configuration: configuration)
+        return realm
+    }
 
     /// Init of UTFoldableFolderGenerator
     /// - Parameters:
@@ -38,6 +65,19 @@ public struct FoldableFolderGenerator {
 
         self.maxDepth = maxDepth
         self.maxElementsPerLevel = maxElementsPerLevel
+
+        // Building the depth of my array to be tested
+        let randomDepth = (0 ..< maxElementsPerLevel).map { _ in Int.random(in: 0 ... maxDepth) }
+
+        // Start to populate it
+        folders = randomDepth.map {
+            folder(withChildren: buildBranch(depth: $0))
+        }
+
+        // Produce folders with a role
+        foldersWithRole = FolderRole.allCases.map { role in
+            folder(withChildren: [], role: role)
+        }
     }
 
     static let wordDictionary = [
@@ -75,18 +115,6 @@ public struct FoldableFolderGenerator {
         "/opt/local/bin"
     ]
 
-    public func invokeFromNoise() -> [Folder] {
-        // Building the depth of my array to be tested
-        let randomDepth = depthMap
-
-        // Start to populate it
-        let result = randomDepth.map {
-            folder(withChildren: buildBranch(depth: $0))
-        }
-
-        return result
-    }
-
     /// Recursively builds a branch of Folders
     func buildBranch(depth: Int) -> [Folder] {
         guard depth > 0 else {
@@ -104,17 +132,20 @@ public struct FoldableFolderGenerator {
         return buffer
     }
 
-    private func folder(withChildren children: [Folder]) -> Folder {
-        Folder(remoteId: randomID,
-               path: randomPath,
-               name: randomWord,
-               isFavorite: randomFavorite,
-               separator: "some",
-               children: children)
-    }
-
-    var depthMap: [Int] {
-        (0 ..< maxElementsPerLevel).map { _ in Int.random(in: 0 ... maxDepth) }
+    private func folder(withChildren children: [Folder], role: FolderRole? = nil) -> Folder {
+        let folder = Folder(remoteId: randomID,
+                            path: randomPath,
+                            name: randomWord,
+                            role: role,
+                            isFavorite: randomFavorite,
+                            separator: "some",
+                            children: children)
+        // It's a unit test
+        // swiftlint:disable:next force_try
+        try! inMemoryRealm.write {
+            inMemoryRealm.add(folder, update: .modified)
+        }
+        return folder
     }
 
     var elementsCountForDepth: Int {

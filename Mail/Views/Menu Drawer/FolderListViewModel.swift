@@ -93,7 +93,7 @@ final class FolderListViewModel: ObservableObject {
             }
     }
 
-    private func filterAndSortFolders(_ folders: Results<Folder>) {
+    func filterAndSortFolders(_ folders: Results<Folder>) {
         let filteredFolders = filterFolders(folders)
 
         let sortedRoleFolders = filteredFolders.filter { $0.role != nil }
@@ -105,7 +105,7 @@ final class FolderListViewModel: ObservableObject {
         userFolders = createFoldersHierarchy(from: sortedUserFolders)
     }
 
-    private func filterFolders(_ folders: Results<Folder>) -> [Folder] {
+    func filterFolders(_ folders: Results<Folder>) -> [Folder] {
         guard !searchQuery.isEmpty else {
             // swiftlint:disable:next empty_count
             return Array(folders.where { $0.parents.count == 0 })

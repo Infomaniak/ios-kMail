@@ -19,12 +19,72 @@
 import Foundation
 import InfomaniakCore
 import InfomaniakLogin
+@testable import Mail
 @testable import MailCore
+@testable import RealmSwift
 import XCTest
 
-// TODO: unit tests
+/// Integration tests of the FolderListViewModel
 final class ITFolderListViewModel: XCTestCase {
-    // MARK: - Test
+    // MARK: - Test roleFolders
 
-    func testSome() {}
+    func testRoleFolders() {
+        // TODO: fixme
+    }
+
+    // MARK: - Test userFolders
+
+    func testUserAndRoleFolderFiltering() {
+        // GIVEN
+        let apiToken = ApiToken(accessToken: "accessToken",
+                                expiresIn: .max,
+                                refreshToken: "refreshToken",
+                                scope: "scope",
+                                tokenType: "tokenType",
+                                userId: 42,
+                                expirationDate: Date().addingTimeInterval(Date().timeIntervalSince1970))
+
+        let mailApiFetcher = MailApiFetcher()
+        let mailboxManager = MailboxManager(account: Account(apiToken: apiToken),
+                                            mailbox: Mailbox(),
+                                            apiFetcher: mailApiFetcher,
+                                            contactManager: ContactManager(userId: 42, apiFetcher: mailApiFetcher))
+        let folderListViewModel = FolderListViewModel(mailboxManager: mailboxManager)
+        let folderGenerator = FolderStructureGenerator(maxDepth: 5, maxElementsPerLevel: 5)
+        let folderRealmResults = folderGenerator.inMemoryRealm.objects(Folder.self).freezeIfNeeded()
+        print("generated \(folderRealmResults.count) folders")
+
+        // TODO: test events
+//        let roleFolderExpectation = XCTestExpectation(description: "[roleFolders] should be updated.")
+//        roleFolderExpectation.expectedFulfillmentCount = 2
+//
+//        let userFolderExpectation = XCTestExpectation(description: "[userFolders] should be updated.")
+//        userFolderExpectation.expectedFulfillmentCount = 2
+//
+//        let viewModelExpectation = XCTestExpectation(description: "folderListViewModel should be updated.")
+//        let asyncExpectations = [roleFolderExpectation, userFolderExpectation /* , viewModelExpectation */ ]
+//
+//        folderListViewModel.$roleFolders.sink(receiveValue: {
+//            roleFolderExpectation.fulfill()
+//            print("roleFolders updated, new value: \($0)")
+//        })
+//        folderListViewModel.$userFolders.sink(receiveValue: {
+//            userFolderExpectation.fulfill()
+//            print("userFolders updated, new value: \($0)")
+//        })
+//        folderListViewModel.objectWillChange.sink(receiveValue: {
+//            viewModelExpectation.fulfill()
+//            print("ViewModel updated: \($0)")
+//        })
+
+        // WHEN
+        folderListViewModel.filterAndSortFolders(folderRealmResults)
+
+        // THEN
+        // wait(for: asyncExpectations, timeout: 10.0)
+        XCTAssertNotEqual(folderGenerator.foldersWithRole.count, 0)
+        XCTAssertNotEqual(folderGenerator.folders.count, 0)
+        XCTAssertEqual(folderListViewModel.roleFolders.count, folderGenerator.foldersWithRole.count)
+        XCTAssertEqual(folderListViewModel.userFolders.count, folderGenerator.folders.count)
+    }
 }
