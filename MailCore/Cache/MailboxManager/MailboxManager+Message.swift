@@ -94,6 +94,7 @@ public extension MailboxManager {
                 previousCursor: previousCursor,
                 newCursor: messagesUids.cursor
             )
+            self.deleteOrphanMessagesAndThreads(realm, folderId: folder.remoteId)
         }
 
         if previousCursor != nil {
@@ -128,6 +129,15 @@ public extension MailboxManager {
 
             remainingOldMessagesToFetch -= Constants.pageSize
         }
+    }
+
+    private func deleteOrphanMessagesAndThreads(_ realm: Realm, folderId: String) {
+        let orphanMessages = realm.objects(Message.self).where { $0.folderId == folderId }
+            .filter { $0.threads.isEmpty && $0.threadsDuplicatedIn.isEmpty }
+        let orphanThreads = realm.objects(Thread.self).filter { $0.folder == nil }
+
+        realm.delete(orphanMessages)
+        realm.delete(orphanThreads)
     }
 
     private func catchLostOffsetMessageError(folder: Folder, isRetrying: Bool, block: () async throws -> Void) async throws {
