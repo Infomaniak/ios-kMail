@@ -183,17 +183,17 @@ enum PreviewHelper {
         attendees: [sampleAttendee1, sampleAttendee2, sampleAttendee3].toRealmList()
     )
 
-    static let sampleAttendee1 = Attendee(address: "lucien.cheval@ik.com", name: "Lucien Cheval", organizer: true)
+    static let sampleAttendee1 = Attendee(email: "lucien.cheval@ik.com", name: "Lucien Cheval", isOrganizer: true)
     static let sampleAttendee2 = Attendee(
-        address: "noel.flantier@domaine.ch",
+        email: "noel.flantier@domaine.ch",
         name: "noel.flantier@domaine.ch",
-        organizer: false,
+        isOrganizer: false,
         state: .maybe
     )
     static let sampleAttendee3 = Attendee(
-        address: "ellen.ripley@domaine.ch",
+        email: "ellen.ripley@domaine.ch",
         name: "ellen.ripley@domaine.ch",
-        organizer: false,
+        isOrganizer: false,
         state: .yes
     )
 }
