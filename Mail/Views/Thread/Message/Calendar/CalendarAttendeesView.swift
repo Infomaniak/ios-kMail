@@ -51,7 +51,7 @@ struct CalendarAttendeesView: View {
                     HStack(spacing: UIPadding.small) {
                         AvatarView(
                             mailboxManager: mailboxManager,
-                            contactConfiguration: .recipient(recipient: organizer, contextMailboxManager: mailboxManager),
+                            contactConfiguration: .correspondent(correspondent: organizer, contextMailboxManager: mailboxManager),
                             size: 32
                         )
 
