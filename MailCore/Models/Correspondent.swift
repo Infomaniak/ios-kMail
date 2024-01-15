@@ -18,9 +18,11 @@
 
 import Foundation
 
-public protocol Correspondent: Identifiable {
+public protocol Correspondent: Identifiable where ID == String {
     var email: String { get }
     var name: String { get }
+
+    func freezeIfNeeded() -> Self
 }
 
 public extension Correspondent {

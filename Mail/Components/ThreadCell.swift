@@ -73,7 +73,7 @@ struct ThreadCellDataHolder {
 
     func contactConfiguration(contextMailboxManager: MailboxManager) -> ContactConfiguration {
         if let recipientToDisplay {
-            return .recipient(recipient: recipientToDisplay, contextMailboxManager: contextMailboxManager)
+            return .correspondent(correspondent: recipientToDisplay, contextMailboxManager: contextMailboxManager)
         } else {
             return .emptyContact
         }

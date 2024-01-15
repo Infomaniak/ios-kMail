@@ -22,7 +22,7 @@ import InfomaniakCore
 public enum ContactConfiguration: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
-        case .recipient(let recipient, _):
+        case .correspondent(let recipient, _):
             return ".recipient:\(recipient.name) \(recipient.email)"
         case .user(let user):
             return ".user:\(user.displayName) \(user.email)"
@@ -33,15 +33,15 @@ public enum ContactConfiguration: CustomDebugStringConvertible {
         }
     }
 
-    case recipient(recipient: Recipient, contextMailboxManager: MailboxManager)
+    case correspondent(correspondent: any Correspondent, contextMailboxManager: MailboxManager)
     case user(user: UserProfile)
     case contact(contact: CommonContact)
     case emptyContact
 
     public func freezeIfNeeded() -> Self {
         switch self {
-        case .recipient(let recipient, let contextMailboxManager):
-            return .recipient(recipient: recipient.freezeIfNeeded(), contextMailboxManager: contextMailboxManager)
+        case .correspondent(let correspondent, let contextMailboxManager):
+            return .correspondent(correspondent: correspondent, contextMailboxManager: contextMailboxManager)
         default:
             return self
         }
@@ -58,7 +58,7 @@ extension ContactConfiguration {
 extension ContactConfiguration: Identifiable {
     public var id: Int {
         switch self {
-        case .recipient(let recipient, let contextMailboxManager):
+        case .correspondent(let correspondent, let contextMailboxManager):
             // One cache entry per recipient per mailbox
             var hasher = Hasher()
             hasher.combine(recipient.id)
