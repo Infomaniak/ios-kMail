@@ -16,12 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
 struct SyncDownloadProfileView: View {
+    @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var server: ConfigWebServer
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -54,12 +56,15 @@ struct SyncDownloadProfileView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            VStack(spacing: UIPadding.medium) {
-                MailButton(label: MailResourcesStrings.Localizable.buttonDownload) {
+            VStack(spacing: UIPadding.small) {
+                Button(MailResourcesStrings.Localizable.buttonDownload) {
+                    matomo.track(eventWithCategory: .syncAutoConfig, name: "download")
                     downloadProfile()
                 }
-                .mailButtonFullWidth(true)
-                .mailButtonLoading(isDownloadingConfig)
+                .buttonStyle(.ikPlain)
+                .ikButtonFullWidth(true)
+                .controlSize(.large)
+                .ikButtonLoading(isDownloadingConfig)
             }
             .padding(.horizontal, value: .medium)
             .padding(.bottom, UIPadding.onBoardingBottomButtons)

@@ -97,6 +97,9 @@ enum ApplicationAssembly {
             Factory(type: PlatformDetectable.self) { _, _ in
                 PlatformDetector()
             },
+            Factory(type: RealmManageable.self) { _, _ in
+                RealmManager()
+            },
             Factory(type: AppGroupPathProvidable.self) { _, _ in
                 guard let provider = AppGroupPathProvider(
                     realmRootPath: realmRootPath,
@@ -118,6 +121,20 @@ enum ApplicationAssembly {
             },
             Factory(type: ConfigWebServer.self) { _, _ in
                 ConfigWebServer()
+            },
+            Factory(type: AppLaunchCounter.self) { _, _ in
+                AppLaunchCounter()
+            },
+            Factory(type: ContactCache.self) { _, _ in
+                let contactCache = ContactCache()
+                if Bundle.main.isExtension {
+                    // Limit the cache size in extension mode, not strictly needed, but coherent.
+                    contactCache.countLimit = Constants.contactCacheExtensionMaxCount
+                }
+                return contactCache
+            },
+            Factory(type: RefreshAppBackgroundTask.self) { _, _ in
+                RefreshAppBackgroundTask()
             }
         ]
 

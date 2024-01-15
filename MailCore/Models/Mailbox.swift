@@ -57,8 +57,8 @@ public class Mailbox: Object, Codable, Identifiable {
     @Persisted public var permissions: MailboxPermissions?
     @Persisted public var quotas: Quotas?
 
-    public var id: Int {
-        return mailboxId
+    public var id: String {
+        return uuid
     }
 
     public var isAvailable: Bool {

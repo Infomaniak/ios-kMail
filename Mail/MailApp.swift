@@ -35,6 +35,8 @@ struct MailApp: App {
 
     @LazyInjectService private var appLockHelper: AppLockHelper
     @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var appLaunchCounter: AppLaunchCounter
+    @LazyInjectService private var refreshAppBackgroundTask: RefreshAppBackgroundTask
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
@@ -43,16 +45,20 @@ struct MailApp: App {
     @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
     @AppStorage(UserDefaults.shared.key(.theme), store: .shared) private var theme = DefaultPreferences.theme
 
-    @StateObject private var navigationState = NavigationState()
+    @StateObject private var navigationState = RootViewState()
+    @StateObject private var reviewManager = ReviewManager()
 
     init() {
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
+        refreshAppBackgroundTask.register()
     }
 
     var body: some Scene {
         WindowGroup {
             RootView()
+                .detectCompactWindow()
                 .environmentObject(navigationState)
+                .environmentObject(reviewManager)
                 .onAppear {
                     updateUI(accent: accentColor, theme: theme)
                 }
@@ -65,10 +71,13 @@ struct MailApp: App {
                 .onChange(of: scenePhase) { newScenePhase in
                     switch newScenePhase {
                     case .active:
+                        appLaunchCounter.increase()
                         refreshCacheData()
                         navigationState.transitionToLockViewIfNeeded()
+                        UserDefaults.shared.openingUntilReview -= 1
                     case .background:
-                        if UserDefaults.shared.isAppLockEnabled && navigationState.rootViewState != .appLocked {
+                        refreshAppBackgroundTask.scheduleForBackgroundLaunchIfNeeded()
+                        if UserDefaults.shared.isAppLockEnabled && navigationState.state != .appLocked {
                             appLockHelper.setTime()
                         }
                     case .inactive:
@@ -80,6 +89,14 @@ struct MailApp: App {
                 .onChange(of: navigationState.account) { _ in
                     refreshCacheData()
                 }
+            #if targetEnvironment(macCatalyst)
+                .introspect(.window, on: .iOS(.v16, .v17)) { window in
+                    if let titlebar = window.windowScene?.titlebar {
+                        titlebar.titleVisibility = .hidden
+                        titlebar.toolbar = nil
+                    }
+                }
+            #endif
         }
         .defaultAppStorage(.shared)
     }
@@ -87,8 +104,8 @@ struct MailApp: App {
     func updateUI(accent: AccentColor, theme: Theme) {
         let allWindows = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.flatMap(\.windows)
         for window in allWindows {
-            window.tintColor = accent.primary.color
             window.overrideUserInterfaceStyle = theme.interfaceStyle
+            window.tintColor = accent.primary.color
         }
     }
 

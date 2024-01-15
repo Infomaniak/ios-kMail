@@ -27,8 +27,9 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(.permissions(mailbox: mailbox))).data
     }
 
-    func featureFlag() async throws -> [FeatureFlag] {
-        try await perform(request: authenticatedRequest(.featureFlag)).data
+    func featureFlag(_ mailboxUUID: String) async throws -> [FeatureFlag] {
+        try await perform(request: authenticatedRequest(.featureFlag(mailboxUUID)))
+            .data
     }
 
     func contacts() async throws -> [InfomaniakContact] {
@@ -51,6 +52,7 @@ public extension MailApiFetcher {
             .data
     }
 
+    @discardableResult
     func updateSignature(mailbox: Mailbox, signature: Signature) async throws -> Bool {
         try await perform(request:
             authenticatedRequest(
@@ -73,12 +75,14 @@ public extension MailApiFetcher {
                                                         method: .post)).data
     }
 
+    @discardableResult
     func markAsSeen(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
         try await perform(request: authenticatedRequest(.messageSeen(uuid: mailbox.uuid),
                                                         method: .post,
                                                         parameters: ["uids": messages.map(\.uid)])).data
     }
 
+    @discardableResult
     func markAsUnseen(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
         try await perform(request: authenticatedRequest(.messageUnseen(uuid: mailbox.uuid),
                                                         method: .post,
@@ -91,6 +95,7 @@ public extension MailApiFetcher {
                                                         parameters: ["uids": messages.map(\.uid), "to": destinationId])).data
     }
 
+    @discardableResult
     func delete(mailbox: Mailbox, messages: [Message]) async throws -> Empty {
         try await perform(request: authenticatedRequest(.deleteMessages(uuid: mailbox.uuid),
                                                         method: .post,

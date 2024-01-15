@@ -164,4 +164,6 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
 
 public enum AttachmentDisposition: String, Codable, PersistableEnum {
     case inline, attachment
+
+    public static let defaultDisposition = AttachmentDisposition.attachment
 }

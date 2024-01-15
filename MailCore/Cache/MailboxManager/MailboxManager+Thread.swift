@@ -103,7 +103,10 @@ public extension MailboxManager {
 
     internal func saveThreads(result: ThreadResult, parent: Folder) async {
         await backgroundRealm.execute { realm in
-            guard let parentFolder = parent.fresh(using: realm) else { return }
+            guard let parentFolder = parent.fresh(using: realm) else {
+                self.logError(.missingFolder)
+                return
+            }
 
             let fetchedThreads = MutableSet<Thread>()
             fetchedThreads.insert(objectsIn: result.threads ?? [])

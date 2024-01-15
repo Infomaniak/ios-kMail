@@ -25,6 +25,8 @@ import MailResources
 import SwiftUI
 
 struct LogoutConfirmationView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var notificationService: InfomaniakNotifications
     @LazyInjectService private var accountManager: AccountManager
 
     let account: Account
@@ -42,9 +44,8 @@ struct LogoutConfirmationView: View {
     }
 
     private func logout() async {
-        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .account, name: "logOutConfirm")
-        @InjectService var notificationService: InfomaniakNotifications
+
         await notificationService.removeStoredTokenFor(userId: account.userId)
 
         accountManager.removeTokenAndAccount(account: account)

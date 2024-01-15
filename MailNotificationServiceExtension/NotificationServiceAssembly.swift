@@ -78,6 +78,9 @@ enum NotificationServiceAssembly {
             Factory(type: PlatformDetectable.self) { _, _ in
                 PlatformDetector()
             },
+            Factory(type: RealmManageable.self) { _, _ in
+                RealmManager()
+            },
             Factory(type: AppGroupPathProvidable.self) { _, _ in
                 guard let provider = AppGroupPathProvider(
                     realmRootPath: realmRootPath,
@@ -96,6 +99,12 @@ enum NotificationServiceAssembly {
             },
             Factory(type: IKSnackBarAvoider.self) { _, _ in
                 IKSnackBarAvoider()
+            },
+            Factory(type: ContactCache.self) { _, _ in
+                let contactCache = ContactCache()
+                // Limit the cache size in extension mode, not needed, but coherent.
+                contactCache.countLimit = Constants.contactCacheExtensionMaxCount
+                return contactCache
             }
         ]
 

@@ -22,6 +22,13 @@ import RealmSwift
 import SwiftSoup
 import UniformTypeIdentifiers
 
+extension String {
+    var trimmed: String {
+        let whiteSpaceSet = NSCharacterSet.whitespacesAndNewlines
+        return trimmingCharacters(in: whiteSpaceSet)
+    }
+}
+
 public enum SaveDraftOption: String, Codable, PersistableEnum {
     case initialSave
     case save
@@ -74,6 +81,7 @@ public final class Draft: Object, Codable, Identifiable {
     @Persisted public var attachments: List<Attachment>
     @Persisted public var action: SaveDraftOption?
     @Persisted public var delay: Int?
+    @Persisted public var rawSignature: String?
 
     /// Public facing "body", wrapping `bodyData`
     public var body: String {
@@ -217,20 +225,6 @@ public final class Draft: Object, Codable, Identifiable {
         return Draft(to: [recipient.detached()])
     }
 
-    public static func replyingBody(message: Message, replyMode: ReplyMode) -> String {
-        let unsafeQuote: String
-        switch replyMode {
-        case .reply, .replyAll:
-            unsafeQuote = Constants.replyQuote(message: message)
-        case .forward:
-            unsafeQuote = Constants.forwardQuote(message: message)
-        }
-
-        let quote = (try? MessageWebViewUtils.cleanHtmlContent(rawHtml: unsafeQuote)?.outerHtml()) ?? ""
-
-        return "<br><br>" + quote
-    }
-
     public static func replying(reply: MessageReply, currentMailboxEmail: String) -> Draft {
         let message = reply.message
         let mode = reply.replyMode
@@ -322,27 +316,63 @@ public extension Draft {
 }
 
 public extension Draft {
+    /// List of HTML classes of elements added to the content of an email
+    static let appendedHTMLElements = [
+        Constants.signatureHTMLClass,
+        Constants.forwardQuoteHTMLClass,
+        Constants.replyQuoteHTMLClass
+    ]
+
     /// Check that the draft has some Attachments of not
     var hasAttachments: Bool {
         return !attachments.filter { $0.contentId == nil }.isEmpty
     }
 
-    /// Check if once the Signature node is removed, we still have content
-    var isBodyEmpty: Bool {
+    /// Check if once the signature, the reply quote and the forward quote nodes removed, we still have content
+    var isEmptyOfUserChanges: Bool {
+        isEmpty(removeAllElements: true)
+    }
+
+    /// Check if the Signature has changes or not
+    var isSignatureUnchanged: Bool {
         guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else {
             return true
         }
 
-        guard let signatureNode = try? document.getElementsByClass(Constants.signatureWrapperIdentifier).first() else {
-            return !document.hasText()
+        guard let signatureNode = try? document.getElementsByClass(Constants.signatureHTMLClass).first() else {
+            return true
         }
-        try? signatureNode.remove()
 
-        return !document.hasText()
+        // We check if the signature was changed, the user might also have written within the signature div without knowing.
+        let signatureNodeText = try? signatureNode.text()
+        guard let rawSignature,
+              let signatureNodeText,
+              let rawSignatureDocument = try? SwiftSoup.parse(rawSignature),
+              let rawSignatureText = try? rawSignatureDocument.text(),
+              rawSignatureText.trimmed == signatureNodeText.trimmed else {
+            return false
+        }
+
+        return true
     }
 
-    var isCompletelyEmpty: Bool {
-        guard !hasAttachments, isBodyEmpty else { return false }
+    var shouldBeSaved: Bool {
+        guard !hasAttachments, isEmpty(removeAllElements: false), isSignatureUnchanged else {
+            return false
+        }
         return true
+    }
+
+    /// Check if once the signature node is removed, as well as the reply and forward quotes if `removeAllElements` is true, we
+    /// still have content
+    private func isEmpty(removeAllElements: Bool) -> Bool {
+        guard !body.isEmpty, let document = try? SwiftSoup.parse(body) else { return true }
+
+        let itemsToExtract = removeAllElements ? Self.appendedHTMLElements : [Constants.signatureHTMLClass]
+        for itemToExtract in itemsToExtract {
+            let _ = try? document.getElementsByClass(itemToExtract).remove()
+        }
+
+        return !document.hasText()
     }
 }

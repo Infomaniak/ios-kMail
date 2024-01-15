@@ -22,13 +22,14 @@ import SwiftUI
 struct LoadingButtonProgressView: View {
     private let tintColor: Color?
 
-    init(style: MailButton.Style) {
-        tintColor = style == .large ? .white : nil
+    init(plain: Bool) {
+        tintColor = plain ? .white : nil
     }
 
     var body: some View {
         ProgressView()
             .progressViewStyle(.circular)
             .tint(tintColor)
+            .controlSize(.regular)
     }
 }

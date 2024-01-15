@@ -20,26 +20,25 @@ import MailCore
 import SwiftUI
 
 struct RootView: View {
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    @Environment(\.verticalSizeClass) private var verticalSizeClass
-
-    @EnvironmentObject private var navigationState: NavigationState
+    @EnvironmentObject private var navigationState: RootViewState
 
     var body: some View {
         ZStack {
-            switch navigationState.rootViewState {
+            switch navigationState.state {
             case .appLocked:
                 LockedAppView()
-            case .mainView(let currentMailboxManager):
+            case .mainView(let currentMailboxManager, let initialFolder):
                 SplitView(mailboxManager: currentMailboxManager)
+                    .environmentObject(MainViewState(mailboxManager: currentMailboxManager, selectedFolder: initialFolder))
             case .onboarding:
                 OnboardingView()
             case .noMailboxes:
                 NoMailboxView()
             case .unavailableMailboxes:
                 UnavailableMailboxesView()
+            case .preloading(let currentAccount):
+                PreloadingView(currentAccount: currentAccount)
             }
         }
-        .environment(\.isCompactWindow, horizontalSizeClass == .compact || verticalSizeClass == .compact)
     }
 }

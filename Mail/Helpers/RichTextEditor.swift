@@ -79,7 +79,7 @@ struct RichTextEditor: UIViewRepresentable {
         func insertBody(editor: MailEditorView) async throws {
             try await editor.contentBlocker.setRemoteContentBlocked(parent.blockRemoteContent)
             editor.clear()
-            try await editor.insertHtml(parent.body)
+            try await editor.insertRawHTML(parent.body)
             editor.moveCursorToStart()
             editor.webView.scrollView.isScrollEnabled = false
             parent.model.height = CGFloat(editor.contentHeight)
@@ -178,7 +178,9 @@ struct RichTextEditorModel {
     var height: CGFloat = 0
 }
 
-class MailEditorView: SQTextEditorView {
+final class MailEditorView: SQTextEditorView {
+    @LazyInjectService var matomo: MatomoUtils
+
     lazy var toolbar = getToolbar()
     var alert: ObservedObject<NewMessageAlert>.Wrapper
     var isShowingCamera: Binding<Bool>
@@ -232,6 +234,13 @@ class MailEditorView: SQTextEditorView {
         _webView.backgroundColor = .clear
         self.updateToolbarItems(style: .main)
         _webView.scrollView.keyboardDismissMode = .interactive
+
+        #if DEBUG && !TEST
+        if #available(iOS 17.0, *) {
+            _webView.isInspectable = true
+        }
+        #endif
+
         return _webView
     }()
 
@@ -248,6 +257,13 @@ class MailEditorView: SQTextEditorView {
         webView.evaluateJavaScript("editor.\(name)()") { _, error in
             completion?(error)
         }
+    }
+
+    // MARK: - Custom function
+
+    func insertRawHTML(_ html: String) async throws {
+        let cleanedHTML = try await SwiftSoupUtils(fromHTMLFragment: html).cleanBody()
+        try await webView.evaluateJavaScript("document.getElementById('editor').innerHTML = `\(cleanedHTML)`")
     }
 
     // MARK: - Editor methods
@@ -312,7 +328,6 @@ class MailEditorView: SQTextEditorView {
         guard let toolbarAction = ToolbarAction(rawValue: sender.tag) else { return }
 
         if let matomoName = toolbarAction.matomoName {
-            @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: .editorActions, name: matomoName)
         }
 

@@ -63,19 +63,31 @@ struct ComposeMessageBodyView: View {
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
             CameraPicker { data in
-                attachmentsManager.importAttachments(attachments: [data], draft: draft)
+                attachmentsManager.importAttachments(
+                    attachments: [data],
+                    draft: draft,
+                    disposition: AttachmentDisposition.defaultDisposition
+                )
             }
             .ignoresSafeArea()
         }
         .sheet(isPresented: $isShowingFileSelection) {
             DocumentPicker(pickerType: .selectContent([.item]) { urls in
-                attachmentsManager.importAttachments(attachments: urls, draft: draft)
+                attachmentsManager.importAttachments(
+                    attachments: urls,
+                    draft: draft,
+                    disposition: AttachmentDisposition.defaultDisposition
+                )
             })
             .ignoresSafeArea()
         }
         .sheet(isPresented: $isShowingPhotoLibrary) {
             ImagePicker { results in
-                attachmentsManager.importAttachments(attachments: results, draft: draft)
+                attachmentsManager.importAttachments(
+                    attachments: results,
+                    draft: draft,
+                    disposition: AttachmentDisposition.defaultDisposition
+                )
             }
             .ignoresSafeArea()
         }
@@ -84,13 +96,14 @@ struct ComposeMessageBodyView: View {
 
 struct ComposeMessageBodyView_Previews: PreviewProvider {
     static var previews: some View {
-        ComposeMessageBodyView(draft: Draft(),
+        let draft = Draft()
+        ComposeMessageBodyView(draft: draft,
                                editorModel: .constant(RichTextEditorModel()),
                                editorFocus: .constant(false),
                                currentSignature: .constant(nil),
                                isShowingAIPrompt: .constant(false),
                                attachmentsManager: AttachmentsManager(
-                                   draft: Draft(),
+                                   draftLocalUUID: draft.localUUID,
                                    mailboxManager: PreviewHelper.sampleMailboxManager
                                ),
                                alert: NewMessageAlert(),

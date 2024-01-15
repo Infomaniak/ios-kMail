@@ -55,12 +55,8 @@ struct ThreadListToolbar: ViewModifier {
 
     @Environment(\.isCompactWindow) private var isCompactWindow
 
-    @EnvironmentObject private var splitViewManager: SplitViewManager
-    @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
     @EnvironmentObject private var actionsManager: ActionsManager
-    @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var presentedCurrentAccount: Account?
     @State private var multipleSelectedMessages: [Message]?
 
     @Binding var flushAlert: FlushAlertState?
@@ -89,21 +85,12 @@ struct ThreadListToolbar: ViewModifier {
                             }
                         } else {
                             if isCompactWindow {
-                                Button {
-                                    matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
-                                    navigationDrawerState.open()
-                                } label: {
-                                    MailResourcesAsset.burger.swiftUIImage
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: UIConstants.navbarIconSize, height: UIConstants.navbarIconSize)
-                                }
-                                .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonMenu)
+                                MenuDrawerButton()
                             }
 
                             let textMaxWidth = isCompactWindow ? UIScreen.main.bounds.size.width - geometry.safeAreaInsets
                                 .leading - geometry.safeAreaInsets.trailing - UIConstants.navbarIconsSpace : 215
-                            Text(splitViewManager.selectedFolder?.localizedName ?? "")
+                            Text(viewModel.folder.localizedName)
                                 .textStyle(.header1)
                                 .frame(maxWidth: textMaxWidth, alignment: .leading)
                         }
@@ -118,29 +105,9 @@ struct ThreadListToolbar: ViewModifier {
                             }
                             .animation(nil, value: multipleSelectionViewModel.selectedItems)
                         } else {
-                            Button {
-                                splitViewManager.showSearch = true
-                            } label: {
-                                MailResourcesAsset.search.swiftUIImage
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: UIConstants.navbarIconSize, height: UIConstants.navbarIconSize)
-                            }
+                            SearchButton()
 
-                            Button {
-                                presentedCurrentAccount = viewModel.mailboxManager.account
-                            } label: {
-                                if let currentAccountUser = viewModel.mailboxManager.account.user {
-                                    AvatarView(
-                                        mailboxManager: mailboxManager,
-                                        displayablePerson: CommonContact(user: currentAccountUser)
-                                    )
-                                }
-                            }
-                            .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
-                            .sheet(item: $presentedCurrentAccount) { account in
-                                AccountView(account: account)
-                            }
+                            AccountButton()
                         }
                     }
                 }
@@ -153,7 +120,7 @@ struct ThreadListToolbar: ViewModifier {
                             ) {
                                 let allMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
                                 multipleSelectionViewModel.isEnabled = false
-                                let originFolder = viewModel.folder.freezeIfNeeded()
+                                let originFolder = viewModel.folder
                                 Task {
                                     matomo.trackBulkEvent(
                                         eventWithCategory: .threadActions,
@@ -171,7 +138,7 @@ struct ThreadListToolbar: ViewModifier {
                                     )
                                 }
                             }
-                            .disabled(action == .archive && splitViewManager.selectedFolder?.role == .archive)
+                            .disabled(action == .archive && viewModel.folder.role == .archive)
                         }
 
                         ToolbarButton(

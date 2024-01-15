@@ -22,9 +22,7 @@ import SwiftUI
 import UIKit
 
 struct MenuHeaderView: View {
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
-    @State private var isShowingSettings = false
+    @EnvironmentObject private var mainViewState: MainViewState
 
     var body: some View {
         HStack {
@@ -36,12 +34,9 @@ struct MenuHeaderView: View {
             Spacer()
 
             Button {
-                isShowingSettings.toggle()
+                mainViewState.settingsViewConfig = SettingsViewConfig(baseNavigationPath: [])
             } label: {
-                MailResourcesAsset.cog.swiftUIImage
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 24, height: 24)
+                IKIcon(MailResourcesAsset.cog, size: .large)
             }
             .buttonStyle(.borderless)
             .accessibilityLabel(MailResourcesStrings.Localizable.settingsTitle)
@@ -54,10 +49,6 @@ struct MenuHeaderView: View {
         .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
         .clipped()
         .shadow(color: MailResourcesAsset.menuDrawerShadowColor.swiftUIColor, radius: 1, x: 0, y: 2)
-        .sheet(isPresented: $isShowingSettings) {
-            SettingsView()
-                .sheetViewStyle()
-        }
     }
 }
 

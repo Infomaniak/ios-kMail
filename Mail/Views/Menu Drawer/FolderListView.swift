@@ -23,81 +23,6 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-struct NestableFolder: Identifiable {
-    var id: String {
-        guard !content.isInvalidated else {
-            return UUID().uuidString
-        }
-
-        return content.id
-    }
-
-    let content: Folder
-    let children: [NestableFolder]
-
-    /// A view on `children` data, only valid Realm objects
-    var displayableChildren: [NestableFolder] {
-        children.filter { element in
-            !element.content.isInvalidated
-        }
-    }
-
-    static func createFoldersHierarchy(from folders: [Folder]) -> [Self] {
-        var parentFolders = [NestableFolder]()
-
-        for folder in folders {
-            parentFolders.append(NestableFolder(
-                content: folder,
-                children: createFoldersHierarchy(from: Array(folder.children))
-            ))
-        }
-
-        return parentFolders
-    }
-}
-
-final class FolderListViewModel: ObservableObject {
-    /// Special folders (eg. Inbox) for the current mailbox
-    @Published var roleFolders = [NestableFolder]()
-    /// User created folders for the current mailbox
-    @Published var userFolders = [NestableFolder]()
-
-    private var foldersObservationToken: NotificationToken?
-
-    init(mailboxManager: MailboxManager) {
-        updateFolderListForMailboxManager(mailboxManager, animateInitialChanges: false)
-    }
-
-    func updateFolderListForMailboxManager(_ mailboxManager: MailboxManager, animateInitialChanges: Bool) {
-        foldersObservationToken = mailboxManager.getRealm()
-            // swiftlint:disable:next empty_count
-            .objects(Folder.self).where { $0.parents.count == 0 && $0.toolType == nil }
-            .observe(on: DispatchQueue.main) { [weak self] results in
-                switch results {
-                case .initial(let folders):
-                    withAnimation(animateInitialChanges ? .default : nil) {
-                        self?.handleFoldersUpdate(folders)
-                    }
-                case .update(let folders, _, _, _):
-                    withAnimation {
-                        self?.handleFoldersUpdate(folders)
-                    }
-                case .error:
-                    break
-                }
-            }
-    }
-
-    private func handleFoldersUpdate(_ folders: Results<Folder>) {
-        let sortedRoleFolders = folders.where { $0.role != nil }.sorted()
-        roleFolders = NestableFolder.createFoldersHierarchy(from: Array(sortedRoleFolders))
-
-        // sort Folders with case insensitive compare
-        let sortedUserFolders = folders.where { $0.role == nil }.sorted { $0.name.localizedCompare($1.name) == .orderedAscending }
-        userFolders = NestableFolder.createFoldersHierarchy(from: Array(sortedUserFolders))
-    }
-}
-
 struct FolderListView: View {
     @StateObject private var viewModel: FolderListViewModel
 
@@ -110,7 +35,7 @@ struct FolderListView: View {
 
     var body: some View {
         Group {
-            RoleFoldersListView(folders: viewModel.roleFolders)
+            FoldersListView(folders: viewModel.roleFolders)
             IKDivider(type: .menu)
             UserFoldersListView(folders: viewModel.userFolders)
         }

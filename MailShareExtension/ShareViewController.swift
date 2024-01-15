@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
@@ -55,7 +56,7 @@ final class ShareNavigationViewController: UIViewController {
             return
         }
 
-        let itemProviders: [NSItemProvider] = extensionItems.compactMap(\.attachments).flatMap { $0 }
+        let itemProviders: [NSItemProvider] = extensionItems.filteredItemProviders
         guard !itemProviders.isEmpty else {
             dismiss(animated: true)
             return

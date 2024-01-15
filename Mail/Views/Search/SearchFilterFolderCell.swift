@@ -31,7 +31,7 @@ struct SearchFilterFolderCell: View {
     }
 
     private var selectedFolderName: String {
-        guard let folder = (folders.first { $0.id == selectedFolderId }) else {
+        guard let folder = (folders.first { $0.remoteId == selectedFolderId }) else {
             return allFoldersItem.name
         }
         return folder.localizedName
@@ -53,31 +53,37 @@ struct SearchFilterFolderCell: View {
 
     var body: some View {
         Menu {
-            Picker(selection: $selectedFolderId.animation(), label: EmptyView()) {
+            Button {
+                withAnimation {
+                    selectedFolderId = allFoldersItem.id
+                }
+            } label: {
                 HStack {
                     allFoldersItem.icon
                     Text(allFoldersItem.name)
                 }
-                .tag(allFoldersItem.id)
+            }
 
-                ForEach(sortedFolders) { folder in
+            ForEach(sortedFolders) { folder in
+                Button {
+                    withAnimation {
+                        selectedFolderId = folder.remoteId
+                    }
+                } label: {
                     HStack {
                         folder.icon
                         Text(folder.localizedName)
                     }
-                    .tag(folder.id)
                 }
             }
         } label: {
             HStack(spacing: UIPadding.searchFolderCellSpacing) {
                 if isSelected {
-                    MailResourcesAsset.check.swiftUIImage
-                        .resizable()
-                        .frame(width: 12, height: 12)
+                    IKIcon(MailResourcesAsset.check, size: .small)
                 }
                 Text(selectedFolderName)
                     .font(MailTextStyle.bodyMedium.font)
-                ChevronIcon(style: .down, color: .accentColor)
+                ChevronIcon(direction: .down, shapeStyle: HierarchicalShapeStyle.primary)
             }
         }
         .filterCellStyle(isSelected: isSelected)

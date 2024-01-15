@@ -43,7 +43,7 @@ struct SlideView: View {
                 slide.backgroundImage
                     .resizable()
                     .frame(height: proxy.size.height * 0.62)
-                    .foregroundColor(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundSecondaryColor)
+                    .foregroundStyle(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundSecondaryColor)
                     .ignoresSafeArea(edges: .top)
 
                 VStack(spacing: 0) {
@@ -57,7 +57,7 @@ struct SlideView: View {
                         } else if let lottieConfiguration = slide.lottieConfiguration {
                             LottieView(
                                 configuration: lottieConfiguration,
-                                isVisible: $isVisible,
+                                isVisible: isVisible,
                                 updateColors: updateAnimationColors
                             )
                         }
@@ -83,7 +83,7 @@ struct SlideView: View {
                         .padding(.top, 32)
                         .frame(maxWidth: 256)
                         .onChange(of: accentColor) { newValue in
-                            matomo.track(eventWithCategory: .onboarding, name: "switchColor", value: newValue == .blue)
+                            matomo.track(eventWithCategory: .onboarding, name: "switchColor\(newValue.rawValue.capitalized)")
                         }
                     } else if let description = slide.description {
                         Text(description)

@@ -36,7 +36,6 @@ struct ThreadView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.isCompactWindow) private var isCompactWindow
-    @Environment(\.dismiss) private var dismiss
 
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
@@ -95,7 +94,7 @@ struct ThreadView: View {
                 .padding(.bottom, value: .regular)
                 .padding(.horizontal, value: .regular)
 
-                MessageListView(messages: thread.messages)
+                MessageListView(messages: thread.messages.toArray())
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
@@ -134,8 +133,9 @@ struct ThreadView: View {
                         }
                     }
                 } label: {
-                    (thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star).swiftUIImage
-                        .foregroundColor(thread.flagged ? MailResourcesAsset.yellowColor.swiftUIColor : .accentColor)
+                    (thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star)
+                        .swiftUIImage
+                        .foregroundStyle(thread.flagged ? MailResourcesAsset.yellowColor.swiftUIColor : .accentColor)
                 }
             }
         }
@@ -161,14 +161,6 @@ struct ThreadView: View {
                                    icon: MailResourcesAsset.plusActions.swiftUIImage)
             }
             .frame(maxWidth: .infinity)
-        }
-        .onChange(of: thread.messages) { newMessagesList in
-            guard isCompactWindow, newMessagesList.isEmpty || thread.messageInFolderCount == 0 else {
-                return
-            }
-
-            // Dismiss on iPhone only
-            dismiss()
         }
         .customAlert(isPresented: $alert.isShowing) {
             switch alert.state {
@@ -215,10 +207,6 @@ struct ThreadView: View {
                     action: action,
                     origin: .toolbar(originFolder: originFolder, nearestFlushAlert: $nearestFlushAlert)
                 )
-
-                if action == .archive || (action == .delete && originFolder?.permanentlyDeleteContent != true) {
-                    dismiss()
-                }
             }
         }
     }

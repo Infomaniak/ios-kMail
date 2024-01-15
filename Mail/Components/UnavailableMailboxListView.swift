@@ -23,8 +23,6 @@ import RealmSwift
 import SwiftUI
 
 struct UnavailableMailboxListView: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
     @ObservedResults(
         Mailbox.self,
         configuration: {

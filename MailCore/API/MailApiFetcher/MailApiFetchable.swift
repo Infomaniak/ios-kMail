@@ -75,7 +75,8 @@ public protocol MailApiCommonFetchable {
 public protocol MailApiExtendedFetchable {
     func permissions(mailbox: Mailbox) async throws -> MailboxPermissions
 
-    func featureFlag() async throws -> [FeatureFlag]
+    /// Get feature flags for a specific mailbox uuid
+    func featureFlag(_ mailboxUUID: String) async throws -> [FeatureFlag]
 
     /// All the remote contacts
     func contacts() async throws -> [InfomaniakContact]
@@ -127,11 +128,19 @@ public protocol MailApiExtendedFetchable {
 
 /// AI capabilities of the `MailApiFetcher`
 public protocol MailApiAIFetchable {
-    func aiCreateConversation(messages: [AIMessage], output: AIOutputFormat) async throws -> AIConversationResponse
+    func aiCreateConversation(messages: [AIMessage], output: AIOutputFormat, engine: AIEngine, mailbox: Mailbox) async throws
+        -> AIConversationResponse
 
-    func aiShortcut(contextId: String, shortcut: AIShortcutAction) async throws -> AIShortcutResponse
+    func aiShortcut(contextId: String, shortcut: AIShortcutAction, engine: AIEngine, mailbox: Mailbox) async throws
+        -> AIShortcutResponse
 
-    func aiShortcutAndRecreateConversation(shortcut: AIShortcutAction, messages: [AIMessage], output: AIOutputFormat) async throws
+    func aiShortcutAndRecreateConversation(
+        shortcut: AIShortcutAction,
+        messages: [AIMessage],
+        output: AIOutputFormat,
+        engine: AIEngine,
+        mailbox: Mailbox
+    ) async throws
         -> AIShortcutResponse
 }
 

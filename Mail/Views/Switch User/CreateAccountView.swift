@@ -25,6 +25,8 @@ import MailResources
 import SwiftUI
 
 struct CreateAccountView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @State private var isPresentingCreateAccount = false
@@ -70,13 +72,13 @@ struct CreateAccountView: View {
 
             Spacer()
 
-            MailButton(label: MailResourcesStrings.Localizable.buttonStart) {
-                @InjectService var matomo: MatomoUtils
+            Button(MailResourcesStrings.Localizable.buttonStart) {
                 matomo.track(eventWithCategory: .account, name: "openCreationWebview")
                 isPresentingCreateAccount = true
             }
-            .mailButtonFullWidth(true)
-            .mailButtonLoading(loginHandler.isLoading)
+            .buttonStyle(.ikPlain)
+            .ikButtonLoading(loginHandler.isLoading)
+            .controlSize(.large)
             .padding(.bottom, value: .regular)
         }
         .padding(.horizontal, value: .medium)

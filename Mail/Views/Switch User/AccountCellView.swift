@@ -26,6 +26,7 @@ import RealmSwift
 import SwiftUI
 
 struct AccountCellView: View {
+    @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var accountManager: AccountManager
 
     @Environment(\.dismissModal) private var dismissModal
@@ -43,7 +44,6 @@ struct AccountCellView: View {
         Button {
             guard !isSelected else { return }
 
-            @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: .account, name: "switch")
             dismissModal()
             accountManager.switchAccount(newAccount: account)
@@ -77,8 +77,7 @@ struct AccountHeaderCell: View {
 
     var body: some View {
         HStack(spacing: UIPadding.small) {
-            AvatarView(mailboxManager: mailboxManager, displayablePerson: CommonContact(user: account.user), size: 40)
-
+            AvatarView(mailboxManager: mailboxManager, contactConfiguration: .user(user: account.user), size: 40)
             VStack(alignment: .leading, spacing: 0) {
                 Text(account.user.displayName)
                     .textStyle(.bodyMedium)
@@ -90,10 +89,8 @@ struct AccountHeaderCell: View {
             Spacer(minLength: 0)
 
             if isSelected {
-                MailResourcesAsset.check.swiftUIImage
-                    .resizable()
-                    .frame(width: 16, height: 16)
-                    .foregroundColor(.accentColor)
+                IKIcon(MailResourcesAsset.check)
+                    .foregroundStyle(.tint)
             }
         }
     }

@@ -36,6 +36,8 @@ public extension MatomoUtils.EventCategory {
     // General
 
     static let aiWriter = MatomoUtils.EventCategory(displayName: "aiWriter")
+    static let appReview = MatomoUtils.EventCategory(displayName: "appReview")
+    static let appUpdate = MatomoUtils.EventCategory(displayName: "appUpdate")
     static let createFolder = MatomoUtils.EventCategory(displayName: "createFolder")
     static let externals = MatomoUtils.EventCategory(displayName: "externals")
     static let invalidPasswordMailbox = MatomoUtils.EventCategory(displayName: "invalidPasswordMailbox")
@@ -45,12 +47,16 @@ public extension MatomoUtils.EventCategory {
     static let newMessage = MatomoUtils.EventCategory(displayName: "newMessage")
     static let noValidMailboxes = MatomoUtils.EventCategory(displayName: "noValidMailboxes")
     static let onboarding = MatomoUtils.EventCategory(displayName: "onboarding")
+    static let promptAIEngine = MatomoUtils.EventCategory(displayName: "promptAiEngine")
     static let replyBottomSheet = MatomoUtils.EventCategory(displayName: "replyBottomSheet")
     static let restoreEmailsBottomSheet = MatomoUtils.EventCategory(displayName: "restoreEmailsBottomSheet")
     static let search = MatomoUtils.EventCategory(displayName: "search")
+    static let setAsDefaultApp = MatomoUtils.EventCategory(displayName: "setAsDefaultApp")
     static let snackbar = MatomoUtils.EventCategory(displayName: "snackbar")
+    static let syncAutoConfig = MatomoUtils.EventCategory(displayName: "syncAutoConfig")
     static let threadList = MatomoUtils.EventCategory(displayName: "threadList")
     static let userInfo = MatomoUtils.EventCategory(displayName: "userInfo")
+    static let easterEgg = MatomoUtils.EventCategory(displayName: "easterEgg")
 
     // Actions
 
@@ -59,24 +65,26 @@ public extension MatomoUtils.EventCategory {
     static let bottomSheetThreadActions = MatomoUtils.EventCategory(displayName: "bottomSheetThreadActions")
     static let contactActions = MatomoUtils.EventCategory(displayName: "contactActions")
     static let editorActions = MatomoUtils.EventCategory(displayName: "editorActions")
+    static let keyboardShortcutActions = MatomoUtils.EventCategory(displayName: "keyboardShortcutActions")
     static let messageActions = MatomoUtils.EventCategory(displayName: "messageActions")
+    static let notificationActions = MatomoUtils.EventCategory(displayName: "notificationActions")
     static let threadActions = MatomoUtils.EventCategory(displayName: "threadActions")
     static let swipeActions = MatomoUtils.EventCategory(displayName: "swipeActions")
-    static let notificationAction = MatomoUtils.EventCategory(displayName: "notificationAction")
 
     // Settings
 
     static let settingsGeneral = MatomoUtils.EventCategory(displayName: "settingsGeneral")
     static let settingsAccentColor = MatomoUtils.EventCategory(displayName: "settingsAccentColor")
+    static let settingsAIEngine = MatomoUtils.EventCategory(displayName: "settingsAiEngine")
     static let settingsCancelPeriod = MatomoUtils.EventCategory(displayName: "settingsCancelPeriod")
     static let settingsDensity = MatomoUtils.EventCategory(displayName: "settingsDensity")
+    static let settingsDisplayExternalContent = MatomoUtils.EventCategory(displayName: "settingsDisplayExternalContent")
     static let settingsForwardMode = MatomoUtils.EventCategory(displayName: "settingsForwardMode")
     static let settingsNotifications = MatomoUtils.EventCategory(displayName: "settingsNotifications")
     static let settingsTheme = MatomoUtils.EventCategory(displayName: "settingsTheme")
     static let settingsSend = MatomoUtils.EventCategory(displayName: "settingsSend")
     static let settingsSwipeActions = MatomoUtils.EventCategory(displayName: "settingsSwipeActions")
     static let settingsThreadMode = MatomoUtils.EventCategory(displayName: "settingsThreadMode")
-    static let settingsDisplayExternalContent = MatomoUtils.EventCategory(displayName: "settingsDisplayExternalContent")
 }
 
 // MARK: - Helpers
@@ -108,12 +116,13 @@ public extension MatomoUtils {
 // MARK: - Track views
 
 struct MatomoView: ViewModifier {
+    @LazyInjectService var matomo: MatomoUtils
+
     let view: [String]
 
     func body(content: Content) -> some View {
         content
             .onAppear {
-                @InjectService var matomo: MatomoUtils
                 matomo.track(view: view)
             }
     }

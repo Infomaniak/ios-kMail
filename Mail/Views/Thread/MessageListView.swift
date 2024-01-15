@@ -18,44 +18,46 @@
 
 import MailCore
 import MailResources
-import RealmSwift
 import SwiftUI
 
 struct MessageListView: View {
-    var messages: RealmSwift.List<Message>
+    let messages: [Message]
 
     @State private var messageExpansion = [String: Bool]()
 
     var body: some View {
         ScrollViewReader { proxy in
             LazyVStack(spacing: 0) {
-                let messagesArray = messages.toArray()
                 ForEach(messages, id: \.uid) { message in
-                    MessageView(
-                        message: message,
-                        isMessageExpanded: isExpanded(message: message, from: messagesArray),
-                        threadForcedExpansion: $messageExpansion
-                    )
-                    .id(message.uid)
-                    if message != messages.last {
-                        IKDivider()
+                    VStack {
+                        MessageView(
+                            message: message,
+                            isMessageExpanded: isExpanded(message: message, from: messages),
+                            threadForcedExpansion: $messageExpansion
+                        )
+                        if message != messages.last {
+                            IKDivider()
+                        }
                     }
+                    .id(message.uid)
                 }
             }
             .onAppear {
-                computeExpansion(from: messages.toArray())
+                computeExpansion(from: messages)
 
                 guard messages.count > 1,
-                      let firstExpanded = firstExpanded() else { return }
+                      let firstExpandedUid = firstExpanded()?.uid else {
+                    return
+                }
+
+                // TODO: listen for last message `.isFullyLoaded` to be exact
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
                     withAnimation {
-                        proxy.scrollTo(firstExpanded.uid, anchor: .top)
+                        proxy.scrollTo(firstExpandedUid, anchor: .top)
                     }
                 }
             }
-            .onChange(of: messages) { newValue in
-                computeExpansion(from: newValue.toArray())
-            }
+            .id(messages.id)
         }
     }
 
@@ -71,6 +73,6 @@ struct MessageListView: View {
     }
 
     private func firstExpanded() -> Message? {
-        return messages.first { isExpanded(message: $0, from: messages.toArray()) }
+        return messages.first { isExpanded(message: $0, from: messages) }
     }
 }

@@ -20,6 +20,7 @@ import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import InfomaniakLogin
+import Lottie
 import MailCore
 import MailResources
 import Sentry
@@ -35,8 +36,8 @@ final class AccountViewDelegate: DeleteAccountDelegate {
             accountManager.removeTokenAndAccount(account: account)
             if let nextAccount = accountManager.accounts.first {
                 accountManager.switchAccount(newAccount: nextAccount)
-                snackbarPresenter.show(message: "Account deleted")
             }
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackBarAccountDeleted)
             accountManager.saveAccounts()
         }
     }
@@ -51,23 +52,41 @@ struct AccountView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var tokenStore: TokenStore
 
+    private static let avatarViewSize: CGFloat = 104
+
     @Environment(\.dismiss) private var dismiss
 
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @State private var isShowingLogoutAlert = false
-    @State private var presentedDeletedToken: ApiToken?
+    @State private var presentedAccountDeletionToken: ApiToken?
     @State private var delegate = AccountViewDelegate()
+    @State private var isLottieAnimationVisible = false
 
     let account: Account
 
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
-                AvatarView(mailboxManager: mailboxManager, displayablePerson: CommonContact(user: account.user), size: 104)
-                    .padding(.bottom, value: .regular)
-                    .padding(.top, value: .medium)
+                AvatarView(
+                    mailboxManager: mailboxManager,
+                    contactConfiguration: .user(user: account.user),
+                    size: AccountView.avatarViewSize
+                )
+                .padding(.bottom, value: .regular)
+                .padding(.top, value: .medium)
+                .background {
+                    if EasterEgg.halloween.shouldTrigger() {
+                        LottieView(configuration: LottieConfiguration(id: 1, filename: "easter_egg_halloween"),
+                                   isVisible: isLottieAnimationVisible)
+                            .offset(y: AccountView.avatarViewSize)
+                            .allowsHitTesting(false)
+                            .onAppear {
+                                EasterEgg.halloween.onTrigger()
+                            }
+                    }
+                }
+                .zIndex(1)
 
                 VStack(spacing: 0) {
                     Text(account.user.displayName)
@@ -84,7 +103,9 @@ struct AccountView: View {
                         Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
                             .textStyle(.bodyMediumAccent)
                     }
+                    .buttonStyle(.ikLink())
                 }
+                .zIndex(0)
                 .padding(.horizontal, value: .regular)
 
                 MailboxListView(currentMailbox: mailboxManager.mailbox)
@@ -92,26 +113,34 @@ struct AccountView: View {
                 Spacer()
             }
 
-            VStack(spacing: UIPadding.medium) {
-                MailButton(label: MailResourcesStrings.Localizable.buttonAccountDisconnect) {
+            VStack(spacing: UIPadding.small) {
+                Button(MailResourcesStrings.Localizable.buttonAccountDisconnect) {
                     matomo.track(eventWithCategory: .account, name: "logOut")
                     isShowingLogoutAlert.toggle()
                 }
-                .mailButtonFullWidth(true)
+                .buttonStyle(.ikPlain)
 
-                MailButton(label: MailResourcesStrings.Localizable.buttonAccountDelete) {
+                Button(MailResourcesStrings.Localizable.buttonAccountDelete, role: .destructive) {
                     matomo.track(eventWithCategory: .account, name: "deleteAccount")
-                    presentedDeletedToken = tokenStore.removeTokenFor(account: account)
+                    presentedAccountDeletionToken = tokenStore.tokenFor(userId: account.userId)
                 }
-                .mailButtonStyle(.destructive)
+                .buttonStyle(.ikLink())
             }
+            .ikButtonFullWidth(true)
+            .controlSize(.large)
             .padding(.horizontal, value: .medium)
             .padding(.bottom, value: .regular)
         }
+        .onAppear {
+            isLottieAnimationVisible = true
+        }
+        .onDisappear {
+            isLottieAnimationVisible = false
+        }
         .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccount, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
-        .sheet(item: $presentedDeletedToken) { deletedToken in
-            DeleteAccountView(token: deletedToken, delegate: delegate)
+        .sheet(item: $presentedAccountDeletionToken) { userToken in
+            DeleteAccountView(token: userToken, delegate: delegate)
         }
         .customAlert(isPresented: $isShowingLogoutAlert) {
             LogoutConfirmationView(account: account)

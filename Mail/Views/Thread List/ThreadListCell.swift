@@ -33,10 +33,10 @@ extension ThreadListCell: Equatable {
 }
 
 struct ThreadListCell: View {
-    @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var navigationState: NavigationState
+    @LazyInjectService private var matomo: MatomoUtils
 
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+    @EnvironmentObject private var splitViewManager: SplitViewManager
+    @EnvironmentObject private var mainViewState: MainViewState
 
     let viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
@@ -44,6 +44,7 @@ struct ThreadListCell: View {
     let thread: Thread
 
     let threadDensity: ThreadDensity
+    let accentColor: AccentColor
 
     let isSelected: Bool
     let isMultiSelected: Bool
@@ -63,7 +64,14 @@ struct ThreadListCell: View {
             density: threadDensity,
             accentColor: accentColor,
             isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
-            isSelected: isMultiSelected
+            isSelected: isMultiSelected,
+            avatarTapped: {
+                if multipleSelectionViewModel.isEnabled {
+                    didTapCell()
+                } else {
+                    didOptionalTapCell()
+                }
+            }
         )
         .background(SelectionBackground(
             selectionType: selectionType,
@@ -73,7 +81,8 @@ struct ThreadListCell: View {
         ))
         .contentShape(Rectangle())
         .onTapGesture { didTapCell() }
-        .onLongPressGesture { didLongPressCell() }
+        .actionsContextMenu(thread: thread)
+        .onLongPressGesture { didOptionalTapCell() }
         .swipeActions(
             thread: thread,
             viewModel: viewModel,
@@ -93,27 +102,24 @@ struct ThreadListCell: View {
                 DraftUtils.editDraft(
                     from: thread,
                     mailboxManager: viewModel.mailboxManager,
-                    editedDraft: $navigationState.editedDraft
+                    editedDraft: $mainViewState.editedDraft
                 )
             } else {
                 splitViewManager.adaptToProminentThreadView()
 
                 // Update both viewModel and navigationState on the truth.
-                viewModel.selectedThread = thread
-                navigationState.threadPath = [thread]
+                mainViewState.selectedThread = thread
             }
         }
     }
 
-    private func didLongPressCell() {
+    private func didOptionalTapCell() {
+        guard !multipleSelectionViewModel.isEnabled else { return }
         multipleSelectionViewModel.feedbackGenerator.prepare()
-        multipleSelectionViewModel.isEnabled.toggle()
-        if multipleSelectionViewModel.isEnabled {
-            @InjectService var matomo: MatomoUtils
-            matomo.track(eventWithCategory: .multiSelection, action: .longPress, name: "enable")
-            multipleSelectionViewModel.feedbackGenerator.impactOccurred()
-            multipleSelectionViewModel.toggleSelection(of: thread)
-        }
+        multipleSelectionViewModel.isEnabled = true
+        matomo.track(eventWithCategory: .multiSelection, action: .longPress, name: "enable")
+        multipleSelectionViewModel.feedbackGenerator.impactOccurred()
+        multipleSelectionViewModel.toggleSelection(of: thread)
     }
 }
 
@@ -122,10 +128,12 @@ struct ThreadListCell_Previews: PreviewProvider {
         ThreadListCell(
             viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                            folder: PreviewHelper.sampleFolder,
+                                           selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner,
                                            isCompact: false),
             multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(),
             thread: PreviewHelper.sampleThread,
             threadDensity: .large,
+            accentColor: .pink,
             isSelected: false,
             isMultiSelected: false,
             flushAlert: .constant(nil)

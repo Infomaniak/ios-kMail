@@ -68,6 +68,8 @@ private struct SwipeActionView: View {
 }
 
 struct ThreadListSwipeActions: ViewModifier {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @AppStorage(UserDefaults.shared.key(.swipeFullLeading)) private var swipeFullLeading = DefaultPreferences.swipeFullLeading
     @AppStorage(UserDefaults.shared.key(.swipeLeading)) private var swipeLeading = DefaultPreferences.swipeLeading
 
@@ -99,7 +101,7 @@ struct ThreadListSwipeActions: ViewModifier {
             }
             .actionsPanel(messages: $actionPanelMessages, originFolder: thread.folder)
             .sheet(item: $messagesToMove) { messages in
-                MoveEmailView(movedMessages: messages, originFolder: thread.folder)
+                MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
                     .sheetViewStyle()
             }
     }

@@ -23,6 +23,8 @@ import MailResources
 import SwiftUI
 
 struct FlushFolderView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     private static let labels: [FolderRole: String] = [
         .spam: MailResourcesStrings.Localizable.threadListSpamHint,
         .trash: MailResourcesStrings.Localizable.threadListTrashHint
@@ -52,8 +54,7 @@ struct FlushFolderView: View {
                     .textStyle(.bodySmall)
 
                 Button {
-                    @InjectService var matomo: MatomoUtils
-                    matomo.track(eventWithCategory: .threadList, name: "empty\(folder.matomoName)")
+                    matomo.track(eventWithCategory: .threadList, name: "empty\(folder.matomoName.capitalized)")
                     flushAlert = FlushAlertState {
                         await tryOrDisplayError {
                             _ = try await mailboxManager.flushFolder(folder: folder.freezeIfNeeded())
@@ -61,10 +62,7 @@ struct FlushFolderView: View {
                     }
                 } label: {
                     HStack(spacing: UIPadding.small) {
-                        MailResourcesAsset.bin.swiftUIImage
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 16, height: 16)
+                        IKIcon(MailResourcesAsset.bin)
                         Text(button)
                     }
                     .textStyle(.bodySmallAccent)

@@ -48,14 +48,11 @@ struct SettingsNotificationsView: View {
                         Text(MailResourcesStrings.Localizable.warningNotificationsDisabledDescription)
                             .textStyle(.bodySecondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                        MailButton(label: MailResourcesStrings.Localizable.warningNotificationsDisabledButton) {
-                            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
-                                return
-                            }
-
+                        Button(MailResourcesStrings.Localizable.warningNotificationsDisabledButton) {
+                            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else { return }
                             openURL(settingsUrl)
                         }
-                        .mailButtonStyle(.link)
+                        .buttonStyle(.ikLink(isInlined: true))
                     }
                     .padding(value: .regular)
                     .frame(maxWidth: .infinity)
@@ -102,8 +99,10 @@ struct SettingsNotificationsView: View {
                     .settingsCell()
                 }
             }
-            .plainList()
+            .environment(\.defaultMinListRowHeight, 1)
+            .listStyle(.plain)
         }
+        .backButtonDisplayMode(.minimal)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsMailboxGeneralNotifications, displayMode: .inline)
         .onChange(of: notificationsEnabled) { enabled in
@@ -138,14 +137,14 @@ struct SettingsNotificationsView: View {
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "Notifications"])
     }
 
-    func currentTopics() async {
+    private func currentTopics() async {
         let currentSubscription = await notificationService.subscriptionForUser(id: mailboxManager.mailbox.userId)
         withAnimation {
             subscribedTopics = currentSubscription?.topics
         }
     }
 
-    func updateTopicsForCurrentUserIfNeeded() {
+    private func updateTopicsForCurrentUserIfNeeded() {
         Task {
             guard let subscribedTopics else { return }
 

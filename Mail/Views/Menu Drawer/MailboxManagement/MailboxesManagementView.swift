@@ -25,6 +25,8 @@ import RealmSwift
 import SwiftUI
 
 struct MailboxesManagementView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
 
@@ -50,16 +52,12 @@ struct MailboxesManagementView: View {
             Button {
                 withAnimation {
                     navigationDrawerState.showMailboxes.toggle()
-                    @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .menuDrawer, name: "mailboxes", value: navigationDrawerState.showMailboxes)
                 }
             } label: {
                 HStack(spacing: UIPadding.menuDrawerCellSpacing) {
-                    MailResourcesAsset.envelope.swiftUIImage
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 24, height: 24)
-                        .foregroundColor(.accentColor)
+                    IKIcon(MailResourcesAsset.envelope, size: .large)
+                        .foregroundStyle(.tint)
 
                     Text(mailboxManager.mailbox.email)
                         .textStyle(navigationDrawerState.showMailboxes ? .bodyMediumAccent : .bodyMedium)
@@ -67,7 +65,7 @@ struct MailboxesManagementView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     if hasOtherMailboxes {
-                        ChevronIcon(style: navigationDrawerState.showMailboxes ? .up : .down)
+                        ChevronIcon(direction: navigationDrawerState.showMailboxes ? .up : .down)
                     }
                 }
                 .environment(\.isEnabled, true)

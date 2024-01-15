@@ -30,11 +30,11 @@ struct ComposeMessageCellTextField: View {
     var body: some View {
         if autocompletionType == nil {
             VStack(spacing: 0) {
-                HStack {
+                HStack(alignment: .top, spacing: UIPadding.small) {
                     Text(type.title)
                         .textStyle(.bodySecondary)
 
-                    TextField("", text: $text)
+                    AxisTextField("", text: $text, axis: .vertical)
                         .focused($focusedField, equals: .subject)
                         .textStyle(.body)
                 }

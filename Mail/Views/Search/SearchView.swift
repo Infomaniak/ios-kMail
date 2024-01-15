@@ -25,7 +25,7 @@ import SwiftUI
 struct SearchView: View {
     @Environment(\.isCompactWindow) private var isCompactWindow
 
-    @EnvironmentObject private var splitViewManager: SplitViewManager
+    @EnvironmentObject private var mainViewState: MainViewState
 
     @StateObject private var viewModel: SearchViewModel
 
@@ -88,7 +88,7 @@ struct SearchView: View {
             ToolbarItem(placement: .navigationBarLeading) {
                 CloseButton {
                     Constants.globallyResignFirstResponder()
-                    splitViewManager.showSearch = false
+                    mainViewState.isShowingSearch = false
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonBack)
             }
@@ -96,6 +96,7 @@ struct SearchView: View {
             ToolbarItem(placement: .principal) {
                 SearchTextField(value: $viewModel.searchValue) {
                     viewModel.matomo.track(eventWithCategory: .search, name: "validateSearch")
+                    viewModel.addToHistoryIfNeeded()
                     viewModel.searchThreadsForCurrentValue()
                 } onDelete: {
                     viewModel.matomo.track(eventWithCategory: .search, name: "deleteSearch")

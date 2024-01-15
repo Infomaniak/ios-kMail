@@ -42,23 +42,20 @@ struct AutocompletionCell: View {
             .opacity(alreadyAppend && !unknownRecipient ? 0.5 : 1)
 
             if alreadyAppend && !unknownRecipient {
-                MailResourcesAsset.checked.swiftUIImage
-                    .resizable()
-                    .frame(width: 24, height: 24)
-                    .foregroundColor(MailResourcesAsset.textTertiaryColor.swiftUIColor)
+                IKIcon(MailResourcesAsset.checked, size: .large)
+                    .foregroundStyle(MailResourcesAsset.textTertiaryColor)
             }
         }
         .padding(.horizontal, value: .regular)
     }
 }
 
-struct AutocompletionCell_Previews: PreviewProvider {
-    static var previews: some View {
-        AutocompletionCell(
-            addRecipient: { _ in /* Preview */ },
-            recipient: PreviewHelper.sampleRecipient1,
-            alreadyAppend: false,
-            unknownRecipient: false
-        )
-    }
+#Preview {
+    AutocompletionCell(
+        addRecipient: { _ in /* Preview */ },
+        recipient: PreviewHelper.sampleRecipient1,
+        alreadyAppend: false,
+        unknownRecipient: false
+    )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }

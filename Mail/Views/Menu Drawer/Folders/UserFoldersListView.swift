@@ -28,18 +28,10 @@ import UIKit
 struct UserFoldersListView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @EnvironmentObject private var splitViewManager: SplitViewManager
-
     @State private var isExpanded = true
     @State private var isShowingCreateFolderAlert = false
 
-    private let folders: [NestableFolder]
-    private let hasSubFolders: Bool
-
-    init(folders: [NestableFolder]) {
-        self.folders = folders
-        hasSubFolders = folders.contains { !$0.children.isEmpty }
-    }
+    let folders: [NestableFolder]
 
     var body: some View {
         VStack(spacing: 0) {
@@ -51,11 +43,12 @@ struct UserFoldersListView: View {
                     }
                 } label: {
                     HStack(spacing: UIPadding.menuDrawerCellChevronSpacing) {
-                        ChevronIcon(style: isExpanded ? .up : .down)
+                        ChevronIcon(direction: isExpanded ? .up : .down)
                         Text(MailResourcesStrings.Localizable.buttonFolders)
                             .textStyle(.bodySmallSecondary)
                         Spacer()
                     }
+                    .padding(value: .regular)
                 }
                 .frame(maxWidth: .infinity)
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandCustomFolders)
@@ -64,16 +57,14 @@ struct UserFoldersListView: View {
                     matomo.track(eventWithCategory: .createFolder, name: "fromMenuDrawer")
                     isShowingCreateFolderAlert.toggle()
                 } label: {
-                    MailResourcesAsset.addCircle.swiftUIImage
-                        .resizable()
-                        .frame(width: 16, height: 16)
+                    IKIcon(MailResourcesAsset.addCircle)
+                        .padding(value: .regular)
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable.newFolderDialogTitle)
                 .customAlert(isPresented: $isShowingCreateFolderAlert) {
                     CreateFolderView(mode: .create)
                 }
             }
-            .padding(value: .regular)
 
             if isExpanded {
                 if folders.isEmpty {
@@ -81,14 +72,17 @@ struct UserFoldersListView: View {
                         .textStyle(.bodySmallSecondary)
                         .padding(value: .regular)
                 } else {
-                    ForEach(folders) { folder in
-                        FolderCell(folder: folder,
-                                   currentFolderId: splitViewManager.selectedFolder?.id,
-                                   canCollapseSubFolders: hasSubFolders,
-                                   matomoCategory: .menuDrawer)
-                    }
+                    FoldersListView(folders: folders)
                 }
             }
         }
     }
+}
+
+#Preview {
+    UserFoldersListView(folders: [NestableFolder(content: PreviewHelper.sampleFolder, children: [])])
+        .environmentObject(MainViewState(
+            mailboxManager: PreviewHelper.sampleMailboxManager,
+            selectedFolder: PreviewHelper.sampleFolder
+        ))
 }

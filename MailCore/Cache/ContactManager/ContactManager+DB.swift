@@ -19,18 +19,10 @@
 import Foundation
 import RealmSwift
 
-public extension ContactManager {
-    func getRealm() -> Realm {
-        do {
-            let realm = try Realm(configuration: realmConfiguration)
-            realm.refresh()
-            return realm
-        } catch {
-            // We can't recover from this error but at least we report it correctly on Sentry
-            Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration)
-        }
-    }
+/// Conforming to `RealmAccessible` to get a standard `.getRealm` function
+extension ContactManager: RealmAccessible {}
 
+public extension ContactManager {
     /// Both *case* insensitive __and__ *diacritic* (accents) insensitive
     static let searchContactInsensitivePredicate = "name contains[cd] %@ OR email contains[cd] %@"
 
@@ -66,7 +58,8 @@ public extension ContactManager {
 
     func getContact(for recipient: Recipient, realm: Realm? = nil) -> MergedContact? {
         let realm = realm ?? getRealm()
-        return realm.objects(MergedContact.self).where { $0.email == recipient.email }.first
+        let matched = realm.objects(MergedContact.self).where { $0.email == recipient.email }
+        return matched.first { $0.name.caseInsensitiveCompare(recipient.name) == .orderedSame } ?? matched.first
     }
 
     func addressBook(with id: Int) -> AddressBook? {

@@ -22,8 +22,10 @@ import ProjectDescriptionHelpers
 
 let project = Project(name: "Mail",
                       packages: [
+                          .package(url: "https://github.com/apple/swift-algorithms", .upToNextMajor(from: "1.2.0")),
                           .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "5.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "2.0.0")),
+                          .package(url: "https://github.com/Infomaniak/swift-concurrency", .upToNextMajor(from: "0.0.4")),
                           .package(
                               url: "https://github.com/Infomaniak/ios-core",
                               .revision("1ec38915366434b250a50573be12568f022f255e")
@@ -32,6 +34,9 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "3.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "2.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-bug-tracker", .upToNextMajor(from: "2.0.0")),
+                          .package(url: "https://github.com/Infomaniak/SQRichTextEditor", .upToNextMajor(from: "1.1.1")),
+                          .package(url: "https://github.com/Infomaniak/SwiftSoup", .upToNextMajor(from: "1.1.0")),
+                          .package(url: "https://github.com/Infomaniak/ios-version-checker", .upToNextMajor(from: "1.0.1")),
                           .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.21.0")),
                           .package(url: "https://github.com/Alamofire/Alamofire", .upToNextMajor(from: "5.2.2")),
                           .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack", .upToNextMajor(from: "3.7.0")),
@@ -39,15 +44,10 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/flowbe/SwiftRegex", .upToNextMajor(from: "1.0.0")),
                           .package(url: "https://github.com/matomo-org/matomo-sdk-ios", .upToNextMajor(from: "7.5.1")),
                           .package(url: "https://github.com/siteline/SwiftUI-Introspect", .upToNextMajor(from: "1.0.0")),
-                          .package(
-                              url: "https://github.com/Ambrdctr/SQRichTextEditor",
-                              .revision("04737b7694ecc6cfd78631bce5fc370f310e7e14")
-                          ),
                           .package(url: "https://github.com/markiv/SwiftUI-Shimmer", .upToNextMajor(from: "1.0.1")),
                           .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0")),
                           .package(url: "https://github.com/kean/Nuke", .upToNextMajor(from: "12.1.3")),
                           .package(url: "https://github.com/airbnb/lottie-ios", .exact("3.5.0")),
-                          .package(url: "https://github.com/Ambrdctr/SwiftSoup", .branch("master")),
                           .package(url: "https://github.com/johnpatrickmorgan/NavigationBackport", .upToNextMajor(from: "0.8.1")),
                           .package(url: "https://github.com/aheze/Popovers", .upToNextMajor(from: "1.3.2")),
                           .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1")),
@@ -77,6 +77,7 @@ let project = Project(name: "Mail",
                                      .target(name: "MailCore"),
                                      .target(name: "MailNotificationServiceExtension"),
                                      .target(name: "MailShareExtension"),
+                                     .target(name: "MailAppIntentsExtension"),
                                      .package(product: "SwiftUIIntrospect-Static"),
                                      .package(product: "SQRichTextEditor"),
                                      .package(product: "Shimmer"),
@@ -96,125 +97,144 @@ let project = Project(name: "Mail",
                                  sources: "MailTests/**",
                                  dependencies: [
                                      .target(name: "Mail")
+                                 ],
+                                 settings: .settings(base: Constants.testSettings)),
+                          Target(name: "MailUITests",
+                                 platform: .iOS,
+                                 product: .uiTests,
+                                 bundleId: "com.infomaniak.mail.uitests",
+                                 infoPlist: "MailTests/Info.plist",
+                                 sources: "MailUITests/**",
+                                 dependencies: [
+                                     .target(name: "Mail")
+                                 ],
+                                 settings: .settings(base: Constants.testSettings)),
+                          Target(name: "MailShareExtension",
+                                 platform: .iOS,
+                                 product: .appExtension,
+                                 bundleId: "com.infomaniak.mail.ShareExtension",
+                                 deploymentTarget: Constants.deploymentTarget,
+                                 infoPlist: .file(path: "MailShareExtension/Info.plist"),
+                                 sources: ["MailShareExtension/**",
+                                           "Mail/Views/**",
+                                           "Mail/Components/**",
+                                           "Mail/Helpers/**",
+                                           "Mail/Utils/**",
+                                           "Mail/Views/**",
+                                           "Mail/Proxy/Protocols/**"],
+                                 resources: [
+                                     "MailShareExtension/Base.lproj/MainInterface.storyboard",
+                                     "Mail/**/*.storyboard",
+                                     "MailResources/**/*.xcassets",
+                                     "MailResources/**/*.strings",
+                                     "MailResources/**/*.stringsdict",
+                                     "MailResources/**/*.json",
+                                     "MailResources/**/*.css",
+                                     "MailResources/**/*.js"
+                                 ],
+                                 entitlements: "MailShareExtension/ShareExtension.entitlements",
+                                 scripts: [Constants.swiftlintScript],
+                                 dependencies: [
+                                     .target(name: "MailCore"),
+                                     .package(product: "SwiftUIIntrospect-Static"),
+                                     .package(product: "SQRichTextEditor"),
+                                     .package(product: "Shimmer"),
+                                     .package(product: "WrappingHStack"),
+                                     .package(product: "Lottie"),
+                                     .package(product: "NavigationBackport"),
+                                     .package(product: "Popovers"),
+                                     .package(product: "SwiftUIBackports")
+                                 ],
+                                 settings: .settings(base: Constants.baseSettings)),
+                          Target(name: "MailNotificationServiceExtension",
+                                 platform: .iOS,
+                                 product: .appExtension,
+                                 bundleId: "com.infomaniak.mail.NotificationServiceExtension",
+                                 deploymentTarget: Constants.deploymentTarget,
+                                 infoPlist: .extendingDefault(with: [
+                                     "AppIdentifierPrefix": "$(AppIdentifierPrefix)",
+                                     "CFBundleDisplayName": "$(PRODUCT_NAME)",
+                                     "CFBundleShortVersionString": "$(MARKETING_VERSION)",
+                                     "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
+                                     "NSExtension": [
+                                         "NSExtensionPointIdentifier": "com.apple.usernotifications.service",
+                                         "NSExtensionPrincipalClass": "$(PRODUCT_MODULE_NAME).NotificationService"
+                                     ]
                                  ]),
-                          Target(
-                              name: "MailUITests",
-                              platform: .iOS,
-                              product: .uiTests,
-                              bundleId: "com.infomaniak.mail.uitests",
-                              infoPlist: "MailTests/Info.plist",
-                              sources: "MailUITests/**",
-                              dependencies: [
-                                  .target(name: "Mail")
-                              ]
-                          ),
-                          Target(
-                              name: "MailShareExtension",
-                              platform: .iOS,
-                              product: .appExtension,
-                              bundleId: "com.infomaniak.mail.ShareExtension",
-                              deploymentTarget: Constants.deploymentTarget,
-                              infoPlist: .file(path: "MailShareExtension/Info.plist"),
-                              sources: ["MailShareExtension/**",
-                                        "Mail/Views/**",
-                                        "Mail/Components/**",
-                                        "Mail/Helpers/**",
-                                        "Mail/Utils/**",
-                                        "Mail/Views/**",
-                                        "Mail/Proxy/Protocols/**"],
-                              resources: [
-                                  "MailShareExtension/Base.lproj/MainInterface.storyboard",
-                                  "Mail/**/*.storyboard",
-                                  "MailResources/**/*.xcassets",
-                                  "MailResources/**/*.strings",
-                                  "MailResources/**/*.stringsdict",
-                                  "MailResources/**/*.json",
-                                  "MailResources/**/*.css",
-                                  "MailResources/**/*.js"
-                              ],
-                              entitlements: "MailShareExtension/ShareExtension.entitlements",
-                              scripts: [Constants.swiftlintScript],
-                              dependencies: [
-                                  .target(name: "MailCore"),
-                                  .package(product: "SwiftUIIntrospect-Static"),
-                                  .package(product: "SQRichTextEditor"),
-                                  .package(product: "Shimmer"),
-                                  .package(product: "WrappingHStack"),
-                                  .package(product: "Lottie"),
-                                  .package(product: "NavigationBackport"),
-                                  .package(product: "Popovers"),
-                                  .package(product: "SwiftUIBackports")
-                              ],
-                              settings: .settings(base: Constants.baseSettings)
-                          ),
-                          Target(
-                              name: "MailNotificationServiceExtension",
-                              platform: .iOS,
-                              product: .appExtension,
-                              bundleId: "com.infomaniak.mail.NotificationServiceExtension",
-                              deploymentTarget: Constants.deploymentTarget,
-                              infoPlist: .extendingDefault(with: [
-                                  "AppIdentifierPrefix": "$(AppIdentifierPrefix)",
-                                  "CFBundleDisplayName": "$(PRODUCT_NAME)",
-                                  "CFBundleShortVersionString": "$(MARKETING_VERSION)",
-                                  "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
-                                  "NSExtension": [
-                                      "NSExtensionPointIdentifier": "com.apple.usernotifications.service",
-                                      "NSExtensionPrincipalClass": "$(PRODUCT_MODULE_NAME).NotificationService"
-                                  ]
-                              ]),
-                              sources: "MailNotificationServiceExtension/**",
-                              entitlements: "MailResources/Mail.entitlements",
-                              dependencies: [
-                                  .target(name: "MailCore")
-                              ],
-                              settings: .settings(base: Constants.baseSettings)
-                          ),
-                          Target(
-                              name: "MailResources",
-                              platform: .iOS,
-                              product: .staticLibrary,
-                              bundleId: "com.infomaniak.mail.resources",
-                              deploymentTarget: Constants.deploymentTarget,
-                              infoPlist: .default,
-                              resources: [
-                                  "MailResources/**/*.xcassets",
-                                  "MailResources/**/*.strings",
-                                  "MailResources/**/*.stringsdict",
-                                  "MailResources/**/*.json",
-                                  "MailResources/**/*.css",
-                                  "MailResources/**/*.js"
-                              ],
-                              settings: .settings(base: Constants.baseSettings)
-                          ),
-                          Target(
-                              name: "MailCore",
-                              platform: .iOS,
-                              product: .framework,
-                              bundleId: "com.infomaniak.mail.core",
-                              deploymentTarget: Constants.deploymentTarget,
-                              infoPlist: "MailCore/Info.plist",
-                              sources: "MailCore/**",
-                              dependencies: [
-                                  .target(name: "MailResources"),
-                                  .package(product: "Alamofire"),
-                                  .package(product: "Atlantis"),
-                                  .package(product: "InfomaniakCore"),
-                                  .package(product: "InfomaniakCoreUI"),
-                                  .package(product: "InfomaniakLogin"),
-                                  .package(product: "InfomaniakDI"),
-                                  .package(product: "InfomaniakNotifications"),
-                                  .package(product: "InfomaniakBugTracker"),
-                                  .package(product: "InfomaniakCreateAccount"),
-                                  .package(product: "CocoaLumberjackSwift"),
-                                  .package(product: "RealmSwift"),
-                                  .package(product: "SwiftRegex"),
-                                  .package(product: "Nuke"),
-                                  .package(product: "NukeUI"),
-                                  .package(product: "SwiftSoup"),
-                                  .package(product: "Swifter")
-                              ],
-                              settings: .settings(base: Constants.baseSettings)
-                          )
+                                 sources: "MailNotificationServiceExtension/**",
+                                 entitlements: "MailResources/Mail.entitlements",
+                                 dependencies: [
+                                     .target(name: "MailCore")
+                                 ],
+                                 settings: .settings(base: Constants.baseSettings)),
+                          Target(name: "MailAppIntentsExtension",
+                                 platform: .iOS,
+                                 product: .extensionKitExtension,
+                                 bundleId: "com.infomaniak.mail.MailAppIntentsExtension",
+                                 deploymentTarget: Constants.appIntentsDeploymentTarget,
+                                 infoPlist: .extendingDefault(with: [
+                                    "AppIdentifierPrefix": "$(AppIdentifierPrefix)",
+                                    "CFBundleDisplayName": "$(PRODUCT_NAME)",
+                                    "CFBundleShortVersionString": "$(MARKETING_VERSION)",
+                                    "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
+                                    "EXAppExtensionAttributes": [
+                                        "EXExtensionPointIdentifier": "com.apple.appintents-extension"
+                                    ]
+                                 ]),
+                                 sources: "MailAppIntentsExtension/**",
+                                 resources: [
+                                    "MailResources/**/*.strings",
+                                    "MailResources/**/*.stringsdict",
+                                 ],
+                                 entitlements: "MailResources/Mail.entitlements",
+                                 dependencies: [
+                                    .target(name: "MailCore")
+                                 ],
+                                 settings: .settings(base: Constants.baseSettings)),
+                          Target(name: "MailResources",
+                                 platform: .iOS,
+                                 product: .staticLibrary,
+                                 bundleId: "com.infomaniak.mail.resources",
+                                 deploymentTarget: Constants.deploymentTarget,
+                                 infoPlist: .default,
+                                 resources: [
+                                     "MailResources/**/*.xcassets",
+                                     "MailResources/**/*.strings",
+                                     "MailResources/**/*.stringsdict",
+                                     "MailResources/**/*.json",
+                                     "MailResources/**/*.css",
+                                     "MailResources/**/*.js"
+                                 ],
+                                 settings: .settings(base: Constants.baseSettings)),
+                          Target(name: "MailCore",
+                                 platform: .iOS,
+                                 product: .framework,
+                                 bundleId: "com.infomaniak.mail.core",
+                                 deploymentTarget: Constants.deploymentTarget,
+                                 infoPlist: "MailCore/Info.plist",
+                                 sources: "MailCore/**",
+                                 dependencies: [
+                                     .target(name: "MailResources"),
+                                     .package(product: "Algorithms"),
+                                     .package(product: "Alamofire"),
+                                     .package(product: "Atlantis"),
+                                     .package(product: "InfomaniakCore"),
+                                     .package(product: "InfomaniakCoreUI"),
+                                     .package(product: "InfomaniakLogin"),
+                                     .package(product: "InfomaniakDI"),
+                                     .package(product: "InfomaniakConcurrency"),
+                                     .package(product: "InfomaniakNotifications"),
+                                     .package(product: "InfomaniakBugTracker"),
+                                     .package(product: "InfomaniakCreateAccount"),
+                                     .package(product: "CocoaLumberjackSwift"),
+                                     .package(product: "RealmSwift"),
+                                     .package(product: "SwiftRegex"),
+                                     .package(product: "Nuke"),
+                                     .package(product: "NukeUI"),
+                                     .package(product: "SwiftSoup"),
+                                     .package(product: "Swifter"),
+                                     .package(product: "VersionChecker")
+                                 ],
+                                 settings: .settings(base: Constants.baseSettings))
                       ],
                       fileHeaderTemplate: .file("file-header-template.txt"))

@@ -110,15 +110,14 @@ struct AddMailboxView: View {
             .padding(value: .regular)
         }
         .safeAreaInset(edge: .bottom) {
-            MailButton(label: MailResourcesStrings.Localizable.buttonAttachMailbox) {
-                addMailbox()
-            }
-            .mailButtonStyle(.large)
-            .mailButtonLoading(isButtonLoading)
-            .mailButtonFullWidth(true)
-            .disabled(buttonDisabled)
-            .padding(.horizontal, value: .medium)
-            .padding(.bottom, value: .regular)
+            Button(MailResourcesStrings.Localizable.buttonAttachMailbox, action: addMailbox)
+                .buttonStyle(.ikPlain)
+                .ikButtonLoading(isButtonLoading)
+                .ikButtonFullWidth(true)
+                .controlSize(.large)
+                .disabled(buttonDisabled)
+                .padding(.horizontal, value: .medium)
+                .padding(.bottom, value: .regular)
         }
         .navigationBarTitle(MailResourcesStrings.Localizable.attachMailboxTitle, displayMode: .inline)
     }

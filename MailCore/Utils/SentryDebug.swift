@@ -32,7 +32,7 @@ public enum SentryDebug {
                 SentrySDK.capture(message: "We tried to download some Messages, but they were nowhere to be found") { scope in
                     scope.setLevel(.error)
                     scope.setContext(
-                        value: ["uids": "\(missingUids.map { Constants.longUid(from: $0, folderId: folder.id) })",
+                        value: ["uids": "\(missingUids.map { Constants.longUid(from: $0, folderId: folder.remoteId) })",
                                 "previousCursor": folder.cursor ?? "No cursor",
                                 "newCursor": newCursor ?? "No cursor"],
                         key: "missingMessages"
@@ -149,6 +149,16 @@ public enum SentryDebug {
         return crumb
     }
 
+    private static func addAsyncBreadcrumb(level: SentryLevel,
+                                           category: String,
+                                           message: String,
+                                           data: [String: Any]? = nil) {
+        Task {
+            let breadcrumb = createBreadcrumb(level: level, category: category, message: message, data: data)
+            SentrySDK.addBreadcrumb(breadcrumb)
+        }
+    }
+
     static func nilDateParsingBreadcrumb(uid: String) {
         let breadcrumb = createBreadcrumb(level: .warning,
                                           category: Category.ThreadAlgorithm,
@@ -171,7 +181,7 @@ public enum SentryDebug {
                                                          "duplicates": message.duplicates.compactMap(\.messageId),
                                                          "references": message.references ?? "nil"],
                                              "Seen": ["Expected": actualSeen, "Actual": liveMessage.seen],
-                                             "Folder": ["id": message.folder?._id ?? "nil",
+                                             "Folder": ["id": message.folder?.remoteId ?? "nil",
                                                         "name": message.folder?.name ?? "nil",
                                                         "last update": message.folder?.lastUpdate,
                                                         "cursor": message.folder?.cursor ?? "nil"]],
@@ -183,7 +193,7 @@ public enum SentryDebug {
 
     static func addBackoffBreadcrumb(folder: Folder, index: Int) {
         let breadcrumb = Breadcrumb()
-        breadcrumb.message = "Backoff \(index) for folder \(folder.name) - \(folder.id)"
+        breadcrumb.message = "Backoff \(index) for folder \(folder.name) - \(folder.remoteId)"
         breadcrumb.level = .warning
         breadcrumb.type = "debug"
         SentrySDK.addBreadcrumb(breadcrumb)
@@ -191,7 +201,7 @@ public enum SentryDebug {
 
     static func addResetingFolderBreadcrumb(folder: Folder) {
         let breadcrumb = Breadcrumb()
-        breadcrumb.message = "Reseting folder after failed backoff \(folder.name) - \(folder.id)"
+        breadcrumb.message = "Reseting folder after failed backoff \(folder.name) - \(folder.remoteId)"
         breadcrumb.level = .warning
         breadcrumb.type = "debug"
         SentrySDK.addBreadcrumb(breadcrumb)
@@ -201,6 +211,56 @@ public enum SentryDebug {
         SentrySDK.capture(message: "Failed reseting folder after backoff") { scope in
             scope.setContext(value: ["Folder": ["Id": folder.id, "name": folder.name]],
                              key: "Folder context")
+        }
+    }
+
+    public static func filterChangedBreadcrumb(filterValue: String) {
+        addAsyncBreadcrumb(
+            level: .info,
+            category: "ui",
+            message: "Filter changed",
+            data: ["value": filterValue]
+        )
+    }
+
+    public static func switchMailboxBreadcrumb(mailboxObjectId: String) {
+        addAsyncBreadcrumb(
+            level: .info,
+            category: "ui",
+            message: "Mailbox changed",
+            data: ["ObjectId": mailboxObjectId]
+        )
+    }
+
+    public static func switchFolderBreadcrumb(uid: String, name: String) {
+        addAsyncBreadcrumb(
+            level: .info,
+            category: "ui",
+            message: "Mailbox changed",
+            data: ["Uid": uid, "name": name]
+        )
+    }
+
+    // MARK: - Standard log
+
+    /// Process a local error  to Sentry for dashboard creation
+    static func logInternalErrorToSentry(category: String, error: Error, function: String) {
+        let metadata: [String: Any] = ["error": error, "localizedDescription": error.localizedDescription]
+
+        // Add a breadcrumb
+        let breadcrumb = Breadcrumb(level: .error, category: category)
+        breadcrumb.message = "\(function)~>|\(error)"
+        breadcrumb.data = metadata
+        SentrySDK.addBreadcrumb(breadcrumb)
+
+        // Only capture non cancel error
+        guard error.asAFError?.isExplicitlyCancelledError != true && (error as? CancellationError) == nil else {
+            return
+        }
+
+        // Add an error
+        SentrySDK.capture(message: category) { scope in
+            scope.setExtras(metadata)
         }
     }
 }

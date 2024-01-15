@@ -25,15 +25,28 @@ import MailResources
 import SwiftUI
 
 struct MenuDrawerItemsAdvancedListView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @Environment(\.openURL) private var openURL
 
     @State private var isShowingRestoreMails = false
+    @State private var isShowingSyncProfile = false
 
     let mailboxCanRestoreEmails: Bool
 
     var body: some View {
         MenuDrawerItemsListView(title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
                                 matomoName: "advancedActions") {
+            MenuDrawerItemCell(icon: MailResourcesAsset.doubleArrowsSynchronize,
+                               label: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle,
+                               matomoName: "syncProfile") {
+                matomo.track(eventWithCategory: .syncAutoConfig, name: "openFromMenuDrawer")
+                isShowingSyncProfile = true
+            }
+            .sheet(isPresented: $isShowingSyncProfile) {
+                SyncProfileNavigationView()
+            }
+
             MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
                                label: MailResourcesStrings.Localizable.buttonImportEmails,
                                matomoName: "importEmails") {
@@ -61,15 +74,9 @@ struct MenuDrawerItemsHelpListView: View {
 
     @State private var isShowingHelp = false
     @State private var isShowingBugTracker = false
-    @State private var isShowingSyncProfile = false
 
     var body: some View {
         MenuDrawerItemsListView {
-            MenuDrawerItemCell(icon: MailResourcesAsset.doubleArrowsSynchronize,
-                               label: MailResourcesStrings.Localizable.buttonSyncCalendarsAndContacts,
-                               matomoName: "syncProfile") {
-                isShowingSyncProfile = true
-            }
             MenuDrawerItemCell(icon: MailResourcesAsset.feedback,
                                label: MailResourcesStrings.Localizable.buttonFeedback,
                                matomoName: "feedback") {
@@ -88,9 +95,6 @@ struct MenuDrawerItemsHelpListView: View {
         .sheet(isPresented: $isShowingBugTracker) {
             BugTrackerView(isPresented: $isShowingBugTracker)
         }
-        .sheet(isPresented: $isShowingSyncProfile) {
-            SyncProfileNavigationView()
-        }
     }
 
     private func sendFeedback() {
@@ -103,6 +107,8 @@ struct MenuDrawerItemsHelpListView: View {
 }
 
 struct MenuDrawerItemsListView<Content: View>: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @State private var isExpanded = false
 
     var title: String?
@@ -117,13 +123,12 @@ struct MenuDrawerItemsListView<Content: View>: View {
                     withAnimation {
                         isExpanded.toggle()
                         if let matomoName {
-                            @InjectService var matomo: MatomoUtils
                             matomo.track(eventWithCategory: .menuDrawer, name: matomoName, value: isExpanded)
                         }
                     }
                 } label: {
                     HStack(spacing: UIPadding.menuDrawerCellChevronSpacing) {
-                        ChevronIcon(style: isExpanded ? .up : .down)
+                        ChevronIcon(direction: isExpanded ? .up : .down)
                         Text(title)
                             .textStyle(.bodySmallSecondary)
                         Spacer()

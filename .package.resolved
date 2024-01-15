@@ -90,6 +90,15 @@
       }
     },
     {
+      "identity" : "ios-version-checker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/ios-version-checker",
+      "state" : {
+        "revision" : "821a785fd229afae83c0a982d772fe89542ab502",
+        "version" : "1.0.1"
+      }
+    },
+    {
       "identity" : "kingfisher",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher",
@@ -200,9 +209,28 @@
     {
       "identity" : "sqrichtexteditor",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Ambrdctr/SQRichTextEditor",
+      "location" : "https://github.com/Infomaniak/SQRichTextEditor",
       "state" : {
-        "revision" : "04737b7694ecc6cfd78631bce5fc370f310e7e14"
+        "revision" : "33b3c2fd969683f197d9497c99e2b258943d05cc",
+        "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "swift-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-algorithms",
+      "state" : {
+        "revision" : "f6919dfc309e7f1b56224378b11e28bab5bccc42",
+        "version" : "1.2.0"
+      }
+    },
+    {
+      "identity" : "swift-concurrency",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/swift-concurrency",
+      "state" : {
+        "revision" : "1c2e7ee0bb93203c865904494b0aa2aedbc57713",
+        "version" : "0.0.4"
       }
     },
     {
@@ -212,6 +240,15 @@
       "state" : {
         "revision" : "532d8b529501fb73a2455b179e0bbb6d49b652ed",
         "version" : "1.5.3"
+      }
+    },
+    {
+      "identity" : "swift-numerics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-numerics.git",
+      "state" : {
+        "revision" : "0a5bc04095a675662cf24757cc0640aa2204253b",
+        "version" : "1.0.2"
       }
     },
     {
@@ -244,10 +281,10 @@
     {
       "identity" : "swiftsoup",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Ambrdctr/SwiftSoup",
+      "location" : "https://github.com/Infomaniak/SwiftSoup",
       "state" : {
-        "branch" : "master",
-        "revision" : "56ce9d740ef9ea53bba13386ebdc460b6f4fe36c"
+        "revision" : "906757f851af2ab705753b0d3ef4471b620a30cc",
+        "version" : "1.1.0"
       }
     },
     {

@@ -58,30 +58,38 @@ struct UnavailableMailboxesView: View {
 
                 Spacer()
 
-                NavigationLink(isActive: $isShowingAddMailboxView) {
-                    AddMailboxView()
-                } label: {
-                    MailButton(label: MailResourcesStrings.Localizable.buttonAddEmailAddress) {
-                        matomo.track(eventWithCategory: .noValidMailboxes, name: "addMailbox")
-                        isShowingAddMailboxView = true
+                VStack(spacing: UIPadding.small) {
+                    NavigationLink(isActive: $isShowingAddMailboxView) {
+                        AddMailboxView()
+                    } label: {
+                        Text(MailResourcesStrings.Localizable.buttonAddEmailAddress)
                     }
-                    .mailButtonFullWidth(true)
-                    .mailButtonStyle(.large)
-                }
+                    .buttonStyle(.ikPlain)
+                    .simultaneousGesture(
+                        TapGesture()
+                            .onEnded {
+                                matomo.track(eventWithCategory: .noValidMailboxes, name: "addMailbox")
+                                isShowingAddMailboxView = true
+                            }
+                    )
 
-                NavigationLink {
-                    // We cannot provide a mailbox manager here
-                    AccountListView(mailboxManager: nil)
-                } label: {
-                    Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
-                        .textStyle(.bodyMediumAccent)
+                    NavigationLink {
+                        // We cannot provide a mailbox manager here
+                        AccountListView(mailboxManager: nil)
+                    } label: {
+                        Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
+                            .textStyle(.bodyMediumAccent)
+                    }
+                    .buttonStyle(.ikLink())
+                    .simultaneousGesture(
+                        TapGesture()
+                            .onEnded {
+                                matomo.track(eventWithCategory: .noValidMailboxes, name: "switchAccount")
+                            }
+                    )
                 }
-                .simultaneousGesture(
-                    TapGesture()
-                        .onEnded {
-                            matomo.track(eventWithCategory: .noValidMailboxes, name: "switchAccount")
-                        }
-                )
+                .controlSize(.large)
+                .ikButtonFullWidth(true)
             }
             .padding(.horizontal, value: .regular)
             .frame(maxWidth: 900)

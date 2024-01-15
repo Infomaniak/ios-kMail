@@ -35,6 +35,8 @@ extension EnvironmentValues {
 }
 
 struct FolderCell: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     enum CellType {
         case menuDrawer, move
     }
@@ -42,7 +44,7 @@ struct FolderCell: View {
     @Environment(\.folderCellType) private var cellType
     @Environment(\.isCompactWindow) private var isCompactWindow
 
-    @EnvironmentObject var splitViewManager: SplitViewManager
+    @EnvironmentObject var mainViewState: MainViewState
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
 
     let folder: NestableFolder
@@ -55,7 +57,7 @@ struct FolderCell: View {
     @State private var shouldTransit = false
 
     private var isCurrentFolder: Bool {
-        folder.id == currentFolderId
+        folder.content.remoteId == currentFolderId
     }
 
     var body: some View {
@@ -75,11 +77,10 @@ struct FolderCell: View {
                 } label: {
                     Button {
                         if let matomoCategory {
-                            @InjectService var matomo: MatomoUtils
                             matomo.track(eventWithCategory: matomoCategory, name: folder.content.matomoName)
                         }
-                        splitViewManager.selectedFolder = folder.content
-                        splitViewManager.showSearch = false
+                        mainViewState.selectedFolder = folder.content
+                        mainViewState.isShowingSearch = false
                         shouldTransit = true
                     } label: {
                         FolderCellContent(
@@ -92,8 +93,8 @@ struct FolderCell: View {
                 }
             }
 
-            if !folder.content.isInvalidated && folder.content.isExpanded || cellType == .move {
-                ForEach(folder.displayableChildren) { child in
+            if folder.content.isExpanded || cellType == .move {
+                ForEach(folder.children) { child in
                     FolderCell(
                         folder: child,
                         level: level + 1,
@@ -116,25 +117,16 @@ struct FolderCell: View {
 
     private func updateFolder() {
         if let matomoCategory {
-            @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: matomoCategory, name: folder.content.matomoName)
         }
-        splitViewManager.selectedFolder = folder.content
+        mainViewState.selectedFolder = folder.content
         navigationDrawerState.close()
     }
 }
 
-extension FolderCellContent: Equatable {
-    static func == (lhs: FolderCellContent, rhs: FolderCellContent) -> Bool {
-        return lhs.isCurrentFolder == rhs.isCurrentFolder
-            && lhs.folder.id == rhs.folder.id
-            && lhs.folder.name == rhs.folder.name
-            && lhs.folder.unreadCount == rhs.folder.unreadCount
-            && lhs.level == rhs.level
-    }
-}
-
 struct FolderCellContent: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @Environment(\.folderCellType) var cellType
@@ -144,13 +136,6 @@ struct FolderCellContent: View {
     private let isCurrentFolder: Bool
     private let canCollapseSubFolders: Bool
 
-    init(folder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false) {
-        self.folder = folder
-        self.level = min(level, UIConstants.menuDrawerMaximumSubFolderLevel)
-        self.isCurrentFolder = isCurrentFolder
-        self.canCollapseSubFolders = canCollapseSubFolders
-    }
-
     private var textStyle: MailTextStyle {
         if cellType == .menuDrawer {
             return isCurrentFolder ? .bodyMediumAccent : .bodyMedium
@@ -158,14 +143,26 @@ struct FolderCellContent: View {
         return .body
     }
 
+    private var canHaveChevron: Bool {
+        canCollapseSubFolders && cellType == .menuDrawer
+    }
+
+    init(folder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false) {
+        self.folder = folder
+        self.level = min(level, UIConstants.menuDrawerMaximumSubFolderLevel)
+        self.isCurrentFolder = isCurrentFolder
+        self.canCollapseSubFolders = canCollapseSubFolders
+    }
+
     var body: some View {
-        HStack(spacing: UIPadding.menuDrawerCellChevronSpacing) {
-            if canCollapseSubFolders && cellType == .menuDrawer {
+        HStack(spacing: 0) {
+            if canHaveChevron {
                 Button(action: collapseFolder) {
-                    ChevronIcon(style: folder.isExpanded ? .up : .down)
+                    ChevronIcon(direction: folder.isExpanded ? .up : .down)
+                        .padding(value: .regular)
                 }
-                .opacity(level == 0 && !folder.children.isEmpty ? 1 : 0)
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandFolder(folder.name))
+                .opacity(level == 0 && !folder.children.isEmpty ? 1 : 0)
             }
 
             HStack(spacing: UIPadding.menuDrawerCellSpacing) {
@@ -173,19 +170,17 @@ struct FolderCellContent: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 24, height: 24)
-                    .foregroundColor(.accentColor)
 
                 Text(folder.localizedName)
                     .textStyle(textStyle)
                     .lineLimit(1)
-
-                Spacer(minLength: UIPadding.regular)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 accessory
             }
         }
         .padding(.leading, UIPadding.menuDrawerSubFolder * CGFloat(level))
-        .padding(UIPadding.menuDrawerCell)
+        .padding(canHaveChevron ? UIPadding.menuDrawerCellWithChevron : UIPadding.menuDrawerCell)
         .background(background)
     }
 
@@ -202,9 +197,7 @@ struct FolderCellContent: View {
                 }
             }
         } else if isCurrentFolder {
-            MailResourcesAsset.check.swiftUIImage
-                .resizable()
-                .frame(width: 16, height: 16)
+            IKIcon(MailResourcesAsset.check)
         }
     }
 
@@ -216,7 +209,6 @@ struct FolderCellContent: View {
     }
 
     private func collapseFolder() {
-        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .menuDrawer, name: "collapseFolder", value: !folder.isExpanded)
 
         guard let liveFolder = folder.thaw() else { return }

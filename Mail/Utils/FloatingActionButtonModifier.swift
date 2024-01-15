@@ -24,6 +24,7 @@ struct FloatingActionButtonModifier: ViewModifier {
     let isEnabled: Bool
     let icon: MailResourcesImages
     let title: String
+    var isExtended = true
     let action: () -> Void
 
     @State private var snackBarAwareModifier = SnackBarAwareModifier(inset: 0)
@@ -33,8 +34,7 @@ struct FloatingActionButtonModifier: ViewModifier {
             content
 
             if isEnabled {
-                MailButton(icon: icon, label: title, action: action)
-                    .mailButtonStyle(.floatingActionButton)
+                ExtendedFAB(title: title, icon: icon, isExtended: isExtended, action: action)
                     .padding(.trailing, value: .medium)
                     .padding(.bottom, UIPadding.floatingButtonBottom)
                     .modifier(snackBarAwareModifier)
@@ -52,8 +52,19 @@ struct FloatingActionButtonModifier: ViewModifier {
 }
 
 extension View {
-    func floatingActionButton(isEnabled: Bool = true, icon: MailResourcesImages, title: String,
-                              action: @escaping () -> Void) -> some View {
-        modifier(FloatingActionButtonModifier(isEnabled: isEnabled, icon: icon, title: title, action: action))
+    func floatingActionButton(
+        isEnabled: Bool = true,
+        icon: MailResourcesImages,
+        title: String,
+        isExtended: Bool = true,
+        action: @escaping () -> Void
+    ) -> some View {
+        modifier(FloatingActionButtonModifier(
+            isEnabled: isEnabled,
+            icon: icon,
+            title: title,
+            isExtended: isExtended,
+            action: action
+        ))
     }
 }

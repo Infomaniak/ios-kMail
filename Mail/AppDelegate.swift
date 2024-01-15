@@ -30,6 +30,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var applicationState: ApplicationStatable
+    @LazyInjectService private var notificationService: InfomaniakNotifications
+    @LazyInjectService private var tokenStore: TokenStore
+    @LazyInjectService private var notificationActions: NotificationActionsRegistrable
 
     /// Making sure the DI is registered at a very early stage of the app launch.
     private let dependencyInjectionHook = EarlyDIHook()
@@ -39,7 +42,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         DDLogInfo("Application starting in foreground ? \(applicationState.applicationState != .background)")
 
         // Register actions for notifications of incoming emails.
-        @InjectService var notificationActions: NotificationActionsRegistrable
         notificationActions.registerEmailActionNotificationGroup()
 
         UNUserNotificationCenter.current().delegate = notificationCenterDelegate
@@ -52,9 +54,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        @InjectService var notificationService: InfomaniakNotifications
-        @InjectService var tokenStore: TokenStore
-
         for account in accountManager.accounts {
             Task {
                 /* Because of a backend issue we can't register the notification token directly after the creation or refresh of

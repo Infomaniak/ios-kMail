@@ -55,7 +55,7 @@ public final class ContactManager: ObservableObject {
 
     public static let constants = ContactManagerConstants()
 
-    let realmConfiguration: Realm.Configuration
+    public let realmConfiguration: Realm.Configuration
     let backgroundRealm: BackgroundRealm
     public lazy var viewRealm: Realm = {
         assert(Foundation.Thread.isMainThread, "viewRealm should only be accessed from main thread")
@@ -69,7 +69,7 @@ public final class ContactManager: ObservableObject {
         let realmName = "\(userId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: ContactManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 3,
+            schemaVersion: 4,
             deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 MergedContact.self,
@@ -77,6 +77,8 @@ public final class ContactManager: ObservableObject {
             ]
         )
         backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
+
+        excludeRealmFromBackup()
     }
 
     let localContactsHelper = LocalContactsHelper()

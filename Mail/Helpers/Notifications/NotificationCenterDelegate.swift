@@ -24,6 +24,8 @@ import UIKit
 import UserNotifications
 
 public struct NotificationTappedPayload {
+    public let userId: Int
+    public let mailboxId: Int
     public let messageId: String
 }
 
@@ -86,5 +88,9 @@ final class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
         Task {
             await handleMailAction(for: response.actionIdentifier, content: response.notification.request.content)
         }
+    }
+
+    nonisolated func userNotificationCenter(_ center: UNUserNotificationCenter, openSettingsFor notification: UNNotification?) {
+        NotificationCenter.default.post(name: .openNotificationSettings, object: nil)
     }
 }

@@ -37,4 +37,5 @@ public enum DefaultPreferences {
     public static let doNotShowAIReplaceMessageAgain = false
     public static let featureFlags: FeatureFlagsManageable.AppFeatureFlags = [:]
     public static let shouldPresentAIFeature = true
+    public static let aiEngine = AIEngine.falcon
 }

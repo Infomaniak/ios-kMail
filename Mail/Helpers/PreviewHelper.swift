@@ -25,8 +25,33 @@ import RealmSwift
 import SwiftUI
 
 enum PreviewHelper {
+    class MockSelectedThreadOwner: SelectedThreadOwnable {
+        var selectedThread: Thread? = nil
+    }
+
+    static var mockSelectedThreadOwner = MockSelectedThreadOwner()
+
+    private class PreviewHelperRefreshTokenDelegate: RefreshTokenDelegate {
+        func didUpdateToken(newToken: InfomaniakCore.ApiToken, oldToken: InfomaniakCore.ApiToken) {
+            // No implementation
+        }
+
+        func didFailRefreshToken(_ token: InfomaniakCore.ApiToken) {
+            // No implementation
+        }
+    }
+
     static var sampleMailboxManager: MailboxManager = {
-        let apiFetcher = MailApiFetcher()
+        let fakeToken = ApiToken(
+            accessToken: "",
+            expiresIn: 0,
+            refreshToken: "",
+            scope: "",
+            tokenType: "",
+            userId: 0,
+            expirationDate: Date(timeIntervalSinceNow: 1_000_000)
+        )
+        let apiFetcher = MailApiFetcher(token: fakeToken, delegate: PreviewHelperRefreshTokenDelegate())
         let contactManager = ContactManager(userId: 0, apiFetcher: apiFetcher)
         return MailboxManager(account: PreviewHelper.sampleAccount,
                               mailbox: sampleMailbox,
@@ -56,7 +81,7 @@ enum PreviewHelper {
                                        aliases: ["test@example.com", "test@example.ch"].toRealmList(),
                                        externalMailFlagEnabled: true)
 
-    static let sampleFolder = Folder(id: "",
+    static let sampleFolder = Folder(remoteId: "",
                                      path: "Folder",
                                      name: "Folder",
                                      isFavorite: false,
@@ -136,4 +161,10 @@ enum PreviewHelper {
         userId: 0,
         expirationDate: Date()
     ))
+
+    static let sampleDraftContentManager = DraftContentManager(
+        incompleteDraft: Draft(),
+        messageReply: nil,
+        mailboxManager: sampleMailboxManager
+    )
 }

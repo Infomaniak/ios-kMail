@@ -30,13 +30,14 @@ struct ThreadListCellContextMenu: ViewModifier {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     @EnvironmentObject private var actionsManager: ActionsManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var messagesToMove: [Message]?
 
     let thread: Thread
 
     private var actions: [Action] {
-        return (platformDetector.isMacCatalyst || platformDetector.isiOSAppOnMac) ? Action.rightClickActions : []
+        return platformDetector.isMac ? Action.rightClickActions : []
     }
 
     func body(content: Content) -> some View {
@@ -57,7 +58,7 @@ struct ThreadListCellContextMenu: ViewModifier {
                 }
             }
             .sheet(item: $messagesToMove) { messages in
-                MoveEmailView(movedMessages: messages, originFolder: thread.folder)
+                MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
                     .sheetViewStyle()
             }
     }

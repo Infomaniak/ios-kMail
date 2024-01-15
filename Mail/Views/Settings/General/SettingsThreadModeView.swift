@@ -28,6 +28,8 @@ struct ThreadModeSettingUpdate: Identifiable {
 }
 
 struct SettingsThreadModeView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @State private var selectedValue: ThreadMode
     @State private var threadModeSettingUpdate: ThreadModeSettingUpdate?
 
@@ -48,7 +50,6 @@ struct SettingsThreadModeView: View {
                         isLast: value == ThreadMode.allCases.last
                     ) {
                         if value != selectedValue {
-                            @InjectService var matomo: MatomoUtils
                             matomo.track(eventWithCategory: .settingsThreadMode, name: value.rawValue)
                             threadModeSettingUpdate = ThreadModeSettingUpdate(newSetting: value)
                         }
@@ -56,7 +57,7 @@ struct SettingsThreadModeView: View {
                 }
             }
         }
-        .plainList()
+        .listStyle(.plain)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsThreadModeTitle, displayMode: .inline)
         .customAlert(item: $threadModeSettingUpdate) { threadModeUpdate in

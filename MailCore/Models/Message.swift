@@ -195,7 +195,7 @@ public final class Message: Object, Decodable, Identifiable {
     }
 
     public var originalThread: Thread? {
-        return threads.first { $0.folder?.id == folderId }
+        return threads.first { $0.folder?.remoteId == folderId }
     }
 
     public var folder: Folder? {
@@ -204,6 +204,10 @@ public final class Message: Object, Decodable, Identifiable {
 
     public var shouldComplete: Bool {
         return isDraft || !fullyDownloaded
+    }
+
+    public var formattedFrom: String {
+        from.first?.htmlDescription ?? MailResourcesStrings.Localizable.unknownRecipientTitle
     }
 
     public var formattedSubject: String {
@@ -441,6 +445,7 @@ public final class Message: Object, Decodable, Identifiable {
             forwarded: forwarded
         )
         thread.messageIds = linkedUids
+        thread.folderId = folderId
         return thread
     }
 }
@@ -500,11 +505,20 @@ public struct MessageActionResult: Codable {
 
 public struct PresentableBody: Equatable {
     public var body: Body?
-
     public var compactBody: String?
     public var quote: String?
 
     public init(message: Message) {
         body = message.body
+    }
+
+    public init(body: Body?, compactBody: String?, quote: String?) {
+        self.body = body
+        self.compactBody = compactBody
+        self.quote = quote
+    }
+
+    public init(presentableBody: PresentableBody) {
+        self.init(body: presentableBody.body, compactBody: presentableBody.compactBody, quote: presentableBody.quote)
     }
 }

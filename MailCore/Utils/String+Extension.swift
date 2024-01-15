@@ -25,6 +25,14 @@ public extension String {
         return sanitizedString.isEmpty ? self : sanitizedString
     }
 
+    var normalizedApostrophes: String {
+        return replacingOccurrences(of: "'", with: "’")
+    }
+
+    var withNewLineIntoHTML: String {
+        replacingOccurrences(of: "\n", with: "<br>")
+    }
+
     func removePrefix(_ prefix: String) -> String {
         guard hasPrefix(prefix) else { return self }
         return String(dropFirst(prefix.count))

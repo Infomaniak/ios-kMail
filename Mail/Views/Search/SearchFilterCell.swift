@@ -28,9 +28,7 @@ struct SearchFilterCell: View {
     var body: some View {
         HStack(spacing: UIPadding.searchFolderCellSpacing) {
             if isSelected {
-                MailResourcesAsset.check.swiftUIImage
-                    .resizable()
-                    .frame(width: 12, height: 12)
+                IKIcon(MailResourcesAsset.check, size: .small)
             }
             Text(title)
                 .font(MailTextStyle.bodyMedium.font)
@@ -39,8 +37,10 @@ struct SearchFilterCell: View {
     }
 }
 
-struct SearchFilterCell_Previews: PreviewProvider {
-    static var previews: some View {
-        SearchFilterCell(title: "Lus", isSelected: true)
-    }
+#Preview("Selected") {
+    SearchFilterCell(title: "Lus", isSelected: true)
+}
+
+#Preview("Not Selected") {
+    SearchFilterCell(title: "Lus", isSelected: false)
 }

@@ -23,13 +23,13 @@ import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
+import SwiftUIIntrospect
 
 struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var userActivityController: UserActivityController
 
-    @EnvironmentObject var splitViewManager: SplitViewManager
-    @EnvironmentObject var navigationState: NavigationState
+    @EnvironmentObject private var mainViewState: MainViewState
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -38,29 +38,27 @@ struct ThreadListView: View {
     @State private var isRefreshing = false
     @State private var firstLaunch = true
     @State private var flushAlert: FlushAlertState?
-    @State private var isLoadingMore = false
 
     @StateObject var viewModel: ThreadListViewModel
     @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    @StateObject private var scrollObserver = ScrollObserver()
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
     private var shouldDisplayEmptyView: Bool {
-        viewModel.folder.lastUpdate != nil && viewModel.isEmpty && !viewModel.isLoadingPage
+        viewModel.isEmpty && viewModel.loadingPageTaskId == nil
     }
 
     private var shouldDisplayNoNetworkView: Bool {
-        !networkMonitor.isConnected && viewModel.folder.lastUpdate == nil
-    }
-
-    private var displayLoadMoreButton: Bool {
-        return !viewModel.folder.isHistoryComplete && !viewModel.isEmpty
+        !networkMonitor.isConnected && viewModel.sections == nil
     }
 
     init(mailboxManager: MailboxManager,
          folder: Folder,
+         selectedThreadOwner: SelectedThreadOwnable,
          isCompact: Bool) {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    folder: folder,
+                                                                   selectedThreadOwner: selectedThreadOwner,
                                                                    isCompact: isCompact))
         _multipleSelectionViewModel = StateObject(wrappedValue: ThreadListMultipleSelectionViewModel())
 
@@ -70,10 +68,9 @@ struct ThreadListView: View {
     var body: some View {
         VStack(spacing: 0) {
             ThreadListHeader(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
-                             isConnected: networkMonitor.isConnected,
-                             lastUpdate: viewModel.lastUpdate,
-                             unreadCount: splitViewManager.selectedFolder?.unreadCount ?? 0,
+                             folder: viewModel.folder,
                              unreadFilterOn: $viewModel.filterUnreadOn)
+                .id(viewModel.folder.id)
 
             ScrollViewReader { proxy in
                 List {
@@ -87,9 +84,10 @@ struct ThreadListView: View {
                         .threadListCellAppearance()
                     }
 
-                    if viewModel.isLoadingPage && !isRefreshing {
+                    if let loadingPageTaskId = viewModel.loadingPageTaskId,
+                       !isRefreshing {
                         ProgressView()
-                            .id(UUID())
+                            .id(loadingPageTaskId)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, value: .small)
                             .threadListCellAppearance()
@@ -106,7 +104,8 @@ struct ThreadListView: View {
                                                multipleSelectionViewModel: multipleSelectionViewModel,
                                                thread: thread,
                                                threadDensity: threadDensity,
-                                               isSelected: viewModel.selectedThread?.uid == thread.uid,
+                                               accentColor: accentColor,
+                                               isSelected: mainViewState.selectedThread?.uid == thread.uid,
                                                isMultiSelected: multipleSelectionViewModel.selectedItems.contains(thread),
                                                flushAlert: $flushAlert)
                             }
@@ -118,36 +117,12 @@ struct ThreadListView: View {
                         }
                     }
 
-                    Group {
-                        if isLoadingMore {
-                            ProgressView()
-                                .id(UUID())
-                                .frame(maxWidth: .infinity)
-                        } else if displayLoadMoreButton && !viewModel.filterUnreadOn {
-                            MailButton(label: MailResourcesStrings.Localizable.buttonLoadMore) {
-                                withAnimation {
-                                    isLoadingMore = true
-                                }
-                                Task {
-                                    await tryOrDisplayError {
-                                        matomo.track(eventWithCategory: .threadList, name: "loadMore")
-                                        _ = try await viewModel.mailboxManager.fetchOnePage(
-                                            folder: viewModel.folder.freeze(),
-                                            direction: .previous
-                                        )
-                                        isLoadingMore = false
-                                    }
-                                }
-                            }
-                            .mailButtonStyle(.smallLink)
-                            .frame(alignment: .leading)
-                        }
-                    }
-                    .padding(.vertical, value: .small)
+                    LoadMoreButton(currentFolder: viewModel.folder)
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
-                .plainList()
+                .listStyle(.plain)
+                .observeScroll(with: scrollObserver)
                 .emptyState(isEmpty: shouldDisplayEmptyView) {
                     switch viewModel.folder.role {
                     case .inbox:
@@ -190,28 +165,19 @@ struct ThreadListView: View {
                            multipleSelectionViewModel: multipleSelectionViewModel)
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
-                              title: MailResourcesStrings.Localizable.buttonNewMessage) {
+                              title: MailResourcesStrings.Localizable.buttonNewMessage,
+                              isExtended: scrollObserver.scrollDirection != .bottom) {
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
-            navigationState.editedDraft = EditedDraft.new()
+            mainViewState.editedDraft = EditedDraft.new()
         }
+        .shortcutModifier(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .onAppear {
             networkMonitor.start()
-            if viewModel.isCompact {
-                viewModel.selectedThread = nil
-            }
             userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox,
-                                                      folder: splitViewManager.selectedFolder)
+                                                      folder: mainViewState.selectedFolder)
         }
-        .onChange(of: splitViewManager.selectedFolder) { newFolder in
-            changeFolder(newFolder: newFolder)
-            userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox, folder: newFolder)
-        }
-        .onChange(of: viewModel.selectedThread) { newThread in
-            if let newThread {
-                navigationState.threadPath = [newThread]
-            } else {
-                navigationState.threadPath = []
-            }
+        .onChange(of: multipleSelectionViewModel.isEnabled) { isEnabled in
+            scrollObserver.shouldObserve = !isEnabled
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             updateFetchingTask()
@@ -228,29 +194,10 @@ struct ThreadListView: View {
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Main"])
     }
 
-    private func changeFolder(newFolder: Folder?) {
-        guard let folder = newFolder else { return }
-
-        viewModel.isLoadingPage = false
-
-        Task {
-            await viewModel.mailboxManager.cancelRefresh()
-
-            fetchingTask?.cancel()
-            _ = await fetchingTask?.result
-            fetchingTask = nil
-            updateFetchingTask(with: folder)
-        }
-    }
-
-    private func updateFetchingTask(with folder: Folder? = nil) {
+    private func updateFetchingTask() {
         guard fetchingTask == nil else { return }
         fetchingTask = Task {
-            if let folder {
-                await viewModel.updateThreads(with: folder)
-            } else {
-                await viewModel.fetchThreads()
-            }
+            await viewModel.fetchThreads()
             fetchingTask = nil
         }
     }
@@ -261,6 +208,7 @@ struct ThreadListView_Previews: PreviewProvider {
         ThreadListView(
             mailboxManager: PreviewHelper.sampleMailboxManager,
             folder: PreviewHelper.sampleFolder,
+            selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner,
             isCompact: false
         )
     }

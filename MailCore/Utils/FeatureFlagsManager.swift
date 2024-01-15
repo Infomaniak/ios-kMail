@@ -45,7 +45,7 @@ public enum FeatureFlag: String, Codable {
 }
 
 public final class FeatureFlagsManager: FeatureFlagsManageable {
-    @InjectService private var accountManager: AccountManager
+    @LazyInjectService private var accountManager: AccountManager
 
     private var enabledFeatures: SendableDictionary<AppFeatureFlags.Key, AppFeatureFlags.Value>
 
@@ -54,7 +54,8 @@ public final class FeatureFlagsManager: FeatureFlagsManageable {
     }
 
     public func isEnabled(_ feature: FeatureFlag) -> Bool {
-        guard let userFeatures = enabledFeatures.value(for: accountManager.currentUserId) else { return false }
+        guard let mailboxUUID = accountManager.currentMailboxManager?.mailbox.uuid,
+              let userFeatures = enabledFeatures.value(for: mailboxUUID) else { return false }
         return userFeatures.contains(feature)
     }
 
@@ -67,14 +68,16 @@ public final class FeatureFlagsManager: FeatureFlagsManageable {
     }
 
     public func fetchFlags() async throws {
-        if enabledFeatures.value(for: accountManager.currentUserId) == nil {
-            enabledFeatures.setValue(Constants.defaultFeatureFlags, for: accountManager.currentUserId)
+        guard let currentMailboxManager = accountManager.currentMailboxManager else { return }
+
+        let mailboxUUID = currentMailboxManager.mailbox.uuid
+        if enabledFeatures.value(for: mailboxUUID) == nil {
+            enabledFeatures.setValue(Constants.defaultFeatureFlags, for: mailboxUUID)
         }
 
-        guard let apiFetcher = accountManager.currentApiFetcher else { return }
-        let enabledFlags = try await apiFetcher.featureFlag()
+        let enabledFlags = try await currentMailboxManager.apiFetcher.featureFlag(mailboxUUID)
 
-        enabledFeatures.setValue(enabledFlags, for: accountManager.currentUserId)
-        UserDefaults.shared.featureFlags[accountManager.currentUserId] = enabledFlags
+        enabledFeatures.setValue(enabledFlags, for: mailboxUUID)
+        UserDefaults.shared.featureFlags[mailboxUUID] = enabledFlags
     }
 }

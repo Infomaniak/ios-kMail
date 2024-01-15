@@ -16,12 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
 struct SyncCopyPasswordView: View {
+    @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -37,7 +39,7 @@ struct SyncCopyPasswordView: View {
                 .multilineTextAlignment(.center)
 
             VStack(spacing: UIPadding.large) {
-                MailResourcesAsset.lockIllustration.swiftUIImage
+                MailResourcesAsset.lock.swiftUIImage
 
                 if let applicationPassword {
                     HStack(spacing: UIPadding.regular) {
@@ -45,10 +47,12 @@ struct SyncCopyPasswordView: View {
                             .textContentType(.password)
                             .disabled(true)
                             .padding([.vertical, .leading], value: .intermediate)
-                        MailButton(icon: MailResourcesAsset.duplicate) {
+
+                        Button {
                             copyPassword()
+                        } label: {
+                            IKIcon(MailResourcesAsset.duplicate)
                         }
-                        .mailButtonStyle(.link)
                         .padding(.trailing, value: .regular)
                     }
                     .background {
@@ -69,12 +73,15 @@ struct SyncCopyPasswordView: View {
         }
         .padding(value: .medium)
         .safeAreaInset(edge: .bottom) {
-            VStack(spacing: UIPadding.medium) {
-                MailButton(label: MailResourcesStrings.Localizable.buttonCopyPassword) {
+            VStack(spacing: UIPadding.small) {
+                Button(MailResourcesStrings.Localizable.buttonCopyPassword) {
+                    matomo.track(eventWithCategory: .syncAutoConfig, name: "copyPassword")
                     copyPassword()
                 }
-                .mailButtonFullWidth(true)
-                .mailButtonLoading(applicationPassword == nil)
+                .buttonStyle(.ikPlain)
+                .ikButtonFullWidth(true)
+                .controlSize(.large)
+                .ikButtonLoading(applicationPassword == nil)
             }
             .padding(.horizontal, value: .medium)
             .padding(.bottom, UIPadding.onBoardingBottomButtons)

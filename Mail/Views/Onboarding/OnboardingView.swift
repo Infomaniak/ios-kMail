@@ -151,11 +151,9 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 
 struct OnboardingView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var navigationState: NavigationState
+    @EnvironmentObject private var navigationState: RootViewState
 
     @LazyInjectService var orientationManager: OrientationManageable
-
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @State private var selection: Int
     @State private var isPresentingCreateAccount = false
@@ -199,30 +197,33 @@ struct OnboardingView: View {
                     .padding(.top, UIPadding.onBoardingLogoTop)
             }
 
-            VStack(spacing: UIPadding.medium) {
-                MailButton(label: MailResourcesStrings.Localizable.buttonLogin) {
+            VStack(spacing: UIPadding.small) {
+                Button(MailResourcesStrings.Localizable.buttonLogin) {
                     loginHandler.login()
                 }
-                .mailButtonFullWidth(true)
-                .mailButtonLoading(loginHandler.isLoading)
+                .buttonStyle(.ikPlain)
+                .ikButtonLoading(loginHandler.isLoading)
 
-                MailButton(label: MailResourcesStrings.Localizable.buttonCreateAccount) {
+                Button(MailResourcesStrings.Localizable.buttonCreateAccount) {
                     isPresentingCreateAccount.toggle()
                 }
-                .mailButtonStyle(.link)
-                .mailButtonStyle(.link)
+                .buttonStyle(.ikLink())
                 .disabled(loginHandler.isLoading)
             }
+            .ikButtonFullWidth(true)
+            .controlSize(.large)
             .opacity(isLastSlide ? 1 : 0)
             .overlay {
                 if !isLastSlide {
-                    MailButton(icon: MailResourcesAsset.fullArrowRight) {
+                    Button {
                         withAnimation {
                             selection = min(slides.count, selection + 1)
                         }
+                    } label: {
+                        IKIcon(MailResourcesAsset.fullArrowRight, size: .large)
                     }
-                    .mailButtonIconSize(24)
-                    .mailButtonStyle(.floatingActionButton)
+                    .buttonStyle(.ikSquare)
+                    .controlSize(.large)
                 }
             }
             .padding(.horizontal, value: .medium)

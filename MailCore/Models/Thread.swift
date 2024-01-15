@@ -45,6 +45,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var flagged: Bool
     @Persisted public var answered: Bool
     @Persisted public var forwarded: Bool
+    @Persisted public var folderId = ""
     @Persisted(originProperty: "threads") private var folders: LinkingObjects<Folder>
     @Persisted public var fromSearch = false
 
@@ -63,7 +64,7 @@ public class Thread: Object, Decodable, Identifiable {
 
     public var messageInFolderCount: Int {
         guard !fromSearch else { return 1 }
-        return messages.filter { $0.folderId == self.folder?.id }.count
+        return messages.filter { $0.folderId == self.folder?.remoteId }.count
     }
 
     public var lastMessageFromFolder: Message? {
@@ -72,7 +73,7 @@ public class Thread: Object, Decodable, Identifiable {
             return messages.last
         }
 
-        return messages.last { $0.folderId == folder?.id }
+        return messages.last { $0.folderId == folder?.remoteId }
     }
 
     public var formattedSubject: String {
@@ -151,7 +152,7 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     private func addDuplicatedMessage(twinMessage: Message, newMessage: Message) {
-        let isTwinTheRealMessage = twinMessage.folderId == folder?.id
+        let isTwinTheRealMessage = twinMessage.folderId == folder?.remoteId
         if isTwinTheRealMessage {
             duplicates.append(newMessage)
         } else {
@@ -210,6 +211,28 @@ public class Thread: Object, Decodable, Identifiable {
         self.flagged = flagged
         self.answered = answered
         self.forwarded = forwarded
+    }
+
+    public required init(from decoder: Decoder) throws {
+        super.init()
+
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        uid = try container.decode(String.self, forKey: .uid)
+        messages = try container.decode(List<Message>.self, forKey: .messages)
+        unseenMessages = try container.decode(Int.self, forKey: .unseenMessages)
+        from = try container.decode(List<Recipient>.self, forKey: .from)
+        to = try container.decode(List<Recipient>.self, forKey: .to)
+        subject = try container.decode(String?.self, forKey: .subject)
+        date = try container.decodeIfPresent(Date.self, forKey: .date) ?? Date()
+        hasAttachments = try container.decode(Bool.self, forKey: .hasAttachments)
+        hasDrafts = try container.decode(Bool.self, forKey: .hasDrafts)
+        flagged = try container.decode(Bool.self, forKey: .flagged)
+        answered = try container.decode(Bool.self, forKey: .answered)
+        forwarded = try container.decode(Bool.self, forKey: .forwarded)
+    }
+
+    override public init() {
+        super.init()
     }
 }
 

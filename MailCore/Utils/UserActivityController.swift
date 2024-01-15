@@ -20,7 +20,9 @@ import Foundation
 import InfomaniakCore
 import InfomaniakDI
 
-public class UserActivityController {
+public final class UserActivityController {
+    @LazyInjectService var mailboxInfosManager: MailboxInfosManager
+
     var currentActivity: NSUserActivity?
 
     public init() {}
@@ -37,13 +39,13 @@ public class UserActivityController {
 
         currentActivity?.invalidate()
         currentActivity = activity
-        currentActivity?.webpageURL = URL(string: "https://\(ApiEnvironment.current.mailHost)/\(mailboxIndex);fid=\(folder.id)")
+
+        let webpageURL = URL(string: "https://\(ApiEnvironment.current.mailHost)/\(mailboxIndex);fid=\(folder.remoteId)")
+        currentActivity?.webpageURL = webpageURL
         currentActivity?.becomeCurrent()
     }
 
     private func getMailboxIndexForCustomOrder(_ mailbox: Mailbox) -> Int? {
-        @InjectService var mailboxInfosManager: MailboxInfosManager
-
         let sortedUserMailboxes = mailboxInfosManager.getMailboxes(for: mailbox.userId).webmailSorted()
         return sortedUserMailboxes.firstIndex { $0.objectId == mailbox.objectId }
     }

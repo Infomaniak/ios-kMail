@@ -25,6 +25,8 @@ import RealmSwift
 import SwiftUI
 
 struct AttachmentPreview: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @Environment(\.dismiss) private var dismiss
     @Environment(\.verticalSizeClass) private var sizeClass
 
@@ -50,7 +52,6 @@ struct AttachmentPreview: View {
                 ToolbarItemGroup(placement: .bottomBar) {
                     Button {
                         guard let attachmentURL = attachment.localUrl else { return }
-                        @InjectService var matomo: MatomoUtils
                         matomo.track(eventWithCategory: .message, name: "download")
                         downloadedAttachmentURL = IdentifiableURL(url: attachmentURL)
                     } label: {
@@ -58,10 +59,7 @@ struct AttachmentPreview: View {
                             Text(MailResourcesStrings.Localizable.buttonDownload)
                                 .font(MailTextStyle.labelSecondary.font)
                         } icon: {
-                            MailResourcesAsset.download.swiftUIImage
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 22, height: 22)
+                            IKIcon(MailResourcesAsset.download, size: .large)
                         }
                         .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                     }

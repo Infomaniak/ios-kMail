@@ -41,10 +41,9 @@ struct ContactActionsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.small) {
-            ContactActionsHeaderView(displayablePerson: CommonContact(
-                recipient: recipient,
-                contextMailboxManager: mailboxManager
-            ))
+            let contactConfiguration = ContactConfiguration.recipient(recipient: recipient, contextMailboxManager: mailboxManager)
+            let contact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
+            ContactActionsHeaderView(displayablePerson: contact)
 
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(actions) { action in

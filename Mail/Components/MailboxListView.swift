@@ -39,10 +39,8 @@ struct MailboxListView: View {
                 NavigationLink {
                     AddMailboxView()
                 } label: {
-                    MailResourcesAsset.addCircle.swiftUIImage
-                        .resizable()
-                        .foregroundColor(accentColor.primary)
-                        .frame(width: 16, height: 16)
+                    IKIcon(MailResourcesAsset.addCircle)
+                        .foregroundStyle(.tint)
                 }
             }
             .padding(value: .regular)
@@ -64,4 +62,9 @@ struct MailboxListView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
+}
+
+#Preview {
+    MailboxListView(currentMailbox: PreviewHelper.sampleMailbox)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

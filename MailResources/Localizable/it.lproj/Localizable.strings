@@ -5,566 +5,8 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Fri, 13 Oct 2023 10:27:14 +0200
+ * Exported at: Fri, 12 Jan 2024 11:47:14 +0100
  */
-
-/* loco:6256793050618f7416758a32 */
-"buttonAddAccount" = "Aggiungere un account";
-
-/* loco:62567a5b3e928d1b5930fc02 */
-"buttonFolders" = "Cartelle";
-
-/* loco:62567ae448317f728353f752 */
-"buttonFeedback" = "Feedback";
-
-/* loco:62567b1163b65257647cd9a2 */
-"menuDrawerAdvancedActions" = "Azioni avanzate";
-
-/* loco:62567b2dadb07654e86a97e2 */
-"buttonHelp" = "Aiuto";
-
-/* loco:62567b5b0774bb46043833b2 */
-"buttonImportEmails" = "Importazione di e-mail";
-
-/* loco:62567b81c34ca7494235e273 */
-"buttonRestoreEmails" = "Ripristino delle e-mail";
-
-/* loco:62567be2708ef36f6e378df2 */
-"buttonMoreStorage" = "Ottenere più spazio di archiviazione";
-
-/* loco:62665f7d647475580e06e912 */
-"fromTitle" = "Da:";
-
-/* loco:62665fa13789aa7e8353ad62 */
-"toTitle" = "A:";
-
-/* loco:626664836e30e75f1c390202 */
-"ccTitle" = "Cc:";
-
-/* loco:6266649755d41301973d0c43 */
-"bccTitle" = "Bcc:";
-
-/* loco:626664d06926336d9e25c462 */
-"subjectTitle" = "Oggetto:";
-
-/* loco:6266655afabeeb6bc774c932 */
-"newMessagePlaceholderTitle" = "Digitare il messaggio";
-
-/* loco:6267af44cf90a405c97af322 */
-"buttonDownload" = "Scarica";
-
-/* loco:6267af86c6ebf234e9213012 */
-"buttonShare" = "Condividi";
-
-/* loco:6267aff571442d3f666a71c2 */
-"buttonDownloadAll" = "Scarica tutti";
-
-/* loco:6267b1e1002a8716d553ad94 */
-"attachmentQuantity" = "%d allegato";
-
-/* loco:6267b57fcc702828232d6f02 */
-"attachmentQuantity-plural" = "%d allegati";
-
-/* loco:6267bafe7edebd666d7d6923 */
-"buttonNewMessage" = "Nuovo messaggio";
-
-/* loco:6267f813a44c1a465c763c92 */
-"threadListSectionToday" = "Oggi";
-
-/* loco:6267f91723d767283212ffd2 */
-"threadListSectionThisWeek" = "Questa settimana";
-
-/* loco:6267f93e15e2421b9677e212 */
-"threadListSectionLastWeek" = "La scorsa settimana";
-
-/* loco:6268fc53412a8032745aaeb2 */
-"buttonSeeAll" = "Vedi tutti";
-
-/* loco:626918473e1b2d7fe4329d52 */
-"buttonSelectAll" = "Tutti";
-
-/* loco:626a458f3be3444c205ee892 */
-"emptyStateInboxTitle" = "Non avete nessuna e-mail";
-
-/* loco:626a51f5e1663d3865426573 */
-"emptyStateInboxDescription" = "Scrivete una nuova e-mail facendo clic su \"Nuovo messaggio\" nell’angolo in basso a destra.";
-
-/* loco:62737d79e632c04950610ed2 */
-"contactActionWriteEmail" = "Scrivi un’e-mail";
-
-/* loco:62737dea7bd28e302301e5c2 */
-"contactActionAddToContacts" = "Aggiungi ai contatti";
-
-/* loco:62737e120020a371c709a8e2 */
-"contactActionCopyEmailAddress" = "Copia l’indirizzo e-mail";
-
-/* loco:627a2ab189bc1f4ea90851c2 */
-"settingsSectionEmailAddresses" = "Indirizzi e-mail";
-
-/* loco:627a2ae2fc0dff2fce768ef2 */
-"settingsSectionGeneral" = "Generale";
-
-/* loco:627a2f67a6d27d332a2f4926 */
-"settingsSendTitle" = "Inviare";
-
-/* loco:627a306b1e32027c033896b2 */
-"settingsAppLock" = "Blocco dell’app";
-
-/* loco:627a30b24e987302322d0f64 */
-"settingsSectionAppearance" = "Aspetto";
-
-/* loco:627a317093c0713ccc6df012 */
-"settingsThreadListDensityTitle" = "Densità dell’elenco delle discussioni";
-
-/* loco:627a318d0c2fa16955156a22 */
-"settingsThemeTitle" = "Tema";
-
-/* loco:627a323b7f79c0171c37aa42 */
-"settingsSwipeActionsTitle" = "Azioni di scorrimento";
-
-/* loco:627a329eeeb721567557b3a2 */
-"settingsExternalContentTitle" = "contenuto esterno";
-
-/* loco:627a3ba7d5f44d600a6f1803 */
-"settingsMailboxGeneralSignature" = "Impostazioni della firma";
-
-/* loco:627a3be50425fc78766ad173 */
-"settingsMailboxGeneralAutoreply" = "Risposta automatica";
-
-/* loco:627a3c02e402a4304d327033 */
-"settingsMailboxGeneralFolders" = "Impostazioni delle cartelle";
-
-/* loco:627a3c1e89de4237021b5622 */
-"settingsMailboxGeneralNotifications" = "Notifiche";
-
-/* loco:627a3c64f10f5f31f53e1c02 */
-"inboxFolder" = "Posta in arrivo";
-
-/* loco:627a3c83ad26c25ce97e94f2 */
-"settingsInboxType" = "Tipo di posta in arrivo";
-
-/* loco:627a3c9ce8a52f1aaf66dfb3 */
-"settingsInboxRules" = "Regole";
-
-/* loco:627a3cdead26c25ce97e94f4 */
-"settingsInboxRedirect" = "Reindirizzamenti";
-
-/* loco:627a3cf1cf1b8849996f97c2 */
-"settingsInboxAlias" = "Alias";
-
-/* loco:627a3d03cf1b8849996f97c4 */
-"settingsSectionSecurity" = "Sicurezza";
-
-/* loco:627a3d72da7e600e226ddca2 */
-"settingsSecurityAdsFilter" = "Filtro annunci e social network";
-
-/* loco:627a3daeda7e600e226ddca4 */
-"settingsSecuritySpamFilter" = "Filtro antispam";
-
-/* loco:627a3df94e4a1b1eff6c77a2 */
-"settingsSecurityBlockedRecipients" = "Destinatari bloccati/autorizzati";
-
-/* loco:627a3e29e849cb43282bb482 */
-"settingsSectionPrivacy" = "La privacy";
-
-/* loco:627a3e42e849cb43282bb484 */
-"settingsPrivacyDeleteSearchHistory" = "Cancella la cronologia delle ricerche";
-
-/* loco:627a3e68a068242a09294182 */
-"settingsPrivacyViewLogs" = "Visualizza i log";
-
-/* loco:627a40651c78f22cb67efdd2 */
-"settingsDefault" = "Predefinito";
-
-/* loco:627a40769905e5026f4309f3 */
-"settingsDensityOptionLarge" = "Grande";
-
-/* loco:627a40878416713fac6e6c82 */
-"settingsDensityOptionCompact" = "Compatto";
-
-/* loco:627a409fc889f27ef73a61e2 */
-"settingsSelectDisplayModeDescription" = "Seleziona una modalità di visualizzazione";
-
-/* loco:627a40cb203b0403f20a0db2 */
-"settingsThemeDescription" = "Scelta del tema";
-
-/* loco:627a40e8203b0403f20a0db5 */
-"settingsOptionLightTheme" = "Luce";
-
-/* loco:627a40fe23cf464d52393803 */
-"settingsOptionDarkTheme" = "Scuro";
-
-/* loco:627a413a4a9b8944955fd206 */
-"settingsOptionThreadModeConversation" = "Discussioni";
-
-/* loco:627a4172023031490409d6b5 */
-"settingsOptionThreadModeMessage" = "Messaggi";
-
-/* loco:627a418d50aa01240d501ae4 */
-"settingsOptionAlways" = "Sempre";
-
-/* loco:627a419ea4d53353fb587204 */
-"settingsOptionAskMe" = "Chiedetemi";
-
-/* loco:627a53b37b420855254af032 */
-"settingsCancellationPeriodTitle" = "Periodo di cancellazione dell’invio";
-
-/* loco:627a53d47b420855254af035 */
-"settingsTransferEmailsTitle" = "Trasferimento di e-mail";
-
-/* loco:627a5401ba58a853294d57a2 */
-"settingsSendIncludeOriginalMessage" = "Includere il messaggio originale nella risposta";
-
-/* loco:627a54238311502e273bbd62 */
-"settingsSendAcknowledgement" = "Richiedete una conferma di ricezione per ogni e-mail inviata.";
-
-/* loco:627a547ad27ea17771565867 */
-"settingsTransferInBody" = "Nel corpo del messaggio";
-
-/* loco:627a54958311502e273bbd74 */
-"settingsTransferAsAttachment" = "Come allegato";
-
-/* loco:627cef9a9e08324b604c8612 */
-"contactMe" = "Me";
-
-/* loco:627e3fa5774ef45bfd4d3b92 */
-"draftFolder" = "Bozze";
-
-/* loco:627e401ec1c7c02de9181292 */
-"sentFolder" = "Messaggi inviati";
-
-/* loco:627e40381ad4112c06450102 */
-"spamFolder" = "Spam";
-
-/* loco:627e40419151de052d2d3962 */
-"trashFolder" = "Cestino";
-
-/* loco:627e4053e699c44b3f1f9be2 */
-"archiveFolder" = "Archivio";
-
-/* loco:627e52f442b7411bfd029f02 */
-"settingsTitle" = "Impostazioni";
-
-/* loco:6282142ca5e6f61ada1c4014 */
-"buttonAccountSwitch" = "Modifica del conto";
-
-/* loco:628215d524fcfb2f2d1a8a84 */
-"buttonAccountAssociatedEmailAddresses" = "Indirizzi e-mail associati a questo account";
-
-/* loco:628216026aae4d7bc05773c3 */
-"buttonAccountDelete" = "Cancellare l’account";
-
-/* loco:628216272fd1aa2f0249a892 */
-"buttonAccountDisconnect" = "Disconnettere l’account";
-
-/* loco:6284fd413d98060ac31f76d2 */
-"actionReply" = "Rispondi";
-
-/* loco:6284fd55867ed227676f1743 */
-"actionForward" = "Inoltra";
-
-/* loco:6284fd623d98060ac31f76d5 */
-"buttonMore" = "Altro";
-
-/* loco:62860a31425f1905bb227912 */
-"titleMyAccount" = "Il mio account";
-
-/* loco:62860a56f6ea2c34fb742092 */
-"titleMyAccounts" = "I miei conti";
-
-/* loco:62864eec841ea80f560649f2 */
-"contentDescriptionIconFavorite" = "È il preferito";
-
-/* loco:62864ffe2129f0730a307462 */
-"contentDescriptionIconAttachments" = "Dispone di allegati";
-
-/* loco:628b6d81110f662ac808a165 */
-"messageReplyHeader" = "Il %1$@, %2$@ ha scritto:";
-
-/* loco:628b90d373427778f14fd442 */
-"messageIsDraftOption" = "Bozza";
-
-/* loco:628c97c0e21b4a3db5218982 */
-"contentDescriptionButtonFilterSearch" = "Filtro di ricerca";
-
-/* loco:628c99d77702e65f5779df32 */
-"contentDescriptionButtonMenu" = "Menu";
-
-/* loco:628c9d1654bb544229106572 */
-"contentDescriptionButtonBack" = "Indietro";
-
-/* loco:628c9db2c6482c597c115152 */
-"contentDescriptionButtonExpandHeader" = "Espandi intestazione";
-
-/* loco:628c9f21fe133f61075b64f2 */
-"contentDescriptionIconNewMail" = "Nuovo";
-
-/* loco:628ca42f2edf27145113fbb3 */
-"contentDescriptionIconCalendar" = "Ha un evento di calendario";
-
-/* loco:628dfebda6add66651161554 */
-"buttonLogin" = "Accesso";
-
-/* loco:628e1ad9d1c6366c8a4e6362 */
-"errorLoginDescription" = "La connessione non è riuscita.";
-
-/* loco:628e1af711413554dd3010a5 */
-"errorLoginTitle" = "Errore di accesso";
-
-/* loco:6294634e9f544121e77de3b2 */
-"messageForwardHeader" = "Messaggio inoltrato";
-
-/* loco:6294648c19755a1ae9494462 */
-"dateTitle" = "Data:";
-
-/* loco:6295d5650b0ed37f63022fe3 */
-"settingsSwipeShortRight" = "Breve strisciata a destra";
-
-/* loco:6295d58f35b3260585685212 */
-"settingsSwipeLongRight" = "Passaggio lungo a destra";
-
-/* loco:6295d5b6dff6bd5f535fce82 */
-"settingsSwipeShortLeft" = "Breve strisciata a sinistra";
-
-/* loco:6295d5d7b524ea4e9d4d72d3 */
-"settingsSwipeLongLeft" = "Passaggio lungo a sinistra";
-
-/* loco:6295d75d0ac5a369d16b45c5 */
-"settingsDisabled" = "Disabili";
-
-/* loco:6295d7b8a080fe0c5d544952 */
-"settingsDelaySeconds" = "%d secondi";
-
-/* loco:6295d8a6be385969441d55f2 */
-"contentDescriptionButtonDeleteDraft" = "Cancella la bozza";
-
-/* loco:6295dbd84dc6ed5644064ba2 */
-"settingsSwipeActionReadUnread" = "Letto / non letto";
-
-/* loco:6295e8f405a6650e5621df92 */
-"settingsSwipeActionQuickActionsMenu" = "Menu Azioni rapide";
-
-/* loco:6295e9101cbb5020e33ad4d2 */
-"settingsSwipeActionNone" = "Nessuno";
-
-/* loco:629f0e12701ef82cde591a62 */
-"actionDelete" = "Cestina";
-
-/* loco:629f0e2244ac887a51141312 */
-"actionArchive" = "Archivia";
-
-/* loco:629f0e3e701ef82cde591a65 */
-"actionMarkAsRead" = "Segna come letto";
-
-/* loco:629f0e49b7fae5715e13e972 */
-"actionMove" = "Sposta messaggio";
-
-/* loco:629f0e5a701ef82cde591a67 */
-"actionPostpone" = "Rimanda";
-
-/* loco:629f0e67a7c8ea4e366cf342 */
-"actionSpam" = "Segnala spam";
-
-/* loco:629f0f37ccbf1e53bf0ab752 */
-"actionBlockSender" = "Blocca mittente";
-
-/* loco:629f0f6557b1a86b24759543 */
-"actionPhishing" = "Segnala phishing";
-
-/* loco:629f0f8232570829c53e38e2 */
-"actionPrint" = "Stampa";
-
-/* loco:629f0fa6da208e4d4539cdd2 */
-"actionOpenIn" = "Aprire in";
-
-/* loco:629f0fd21c251254874665a2 */
-"actionReportDisplayProblem" = "Segnala un problema di visualizzazione";
-
-/* loco:629f0fe5f3c27b205b282582 */
-"actionEditMenu" = "Menu Modifica";
-
-/* loco:629f3973a183191c9564a302 */
-"contentDescriptionButtonSettings" = "Impostazioni";
-
-/* loco:62a1e691ede283161606f7f4 */
-"actionMarkAsUnread" = "Segna come non letto";
-
-/* loco:62a20a5c73b7e9202e05fabe */
-"buttonCancel" = "Annulla";
-
-/* loco:62a336b8e2b762772773d2c2 */
-"snackbarEmailSent" = "Email inviata";
-
-/* loco:62a33e1331304f212d104d43 */
-"commercialFolder" = "Promozioni";
-
-/* loco:62a33e2d0c5ac4438c366a32 */
-"socialNetworksFolder" = "Reti sociali";
-
-/* loco:62a85b6ad3c793021731f332 */
-"actionReplyAll" = "Rispondi a tutti";
-
-/* loco:62a992d5499836193818b633 */
-"emptyStateNetworkTitle" = "Non si è connessi a Internet";
-
-/* loco:62a992fdee966e51e955b6d2 */
-"emptyStateNetworkDescription" = "Controllare la connessione o collegarsi a Internet per controllare le e-mail.";
-
-/* loco:62a9d5b4ee7aa537c701dec3 */
-"contentDescriptionButtonExpandAccountSelection" = "Ampliare la selezione dei conti";
-
-/* loco:62a9d5feeda57b54d242e682 */
-"contentDescriptionButtonExpandCustomFolders" = "Espandere le cartelle personalizzate";
-
-/* loco:62a9db4ae45f1e29371ff802 */
-"scheduledMessagesFolder" = "Messaggi programmati";
-
-/* loco:62a9db9c563de5001402e482 */
-"pendingMessagesFolder" = "Messaggi in sospeso";
-
-/* loco:62a9dbdf0bddbc02ce031ba2 */
-"favoritesFolder" = "Preferiti";
-
-/* loco:62ab21e14956e9775f391ca4 */
-"actionNonSpam" = "Segnala come non spam";
-
-/* loco:62ab221b4956e9775f391ca6 */
-"snackbarThreadMoved" = "Conversazione spostata in %@";
-
-/* loco:62ab223f0763d104d71437f2 */
-"snackbarMessageMoved" = "Messaggio spostato a %@";
-
-/* loco:62ab2274c8d2fe4bb7134de4 */
-"snackbarThreadsMoved" = "Conversazioni spostate al %@";
-
-/* loco:62ab22a33a9b9314d8557222 */
-"snackbarMoveCancelled" = "Spostamento annullato";
-
-/* loco:62ab4ab51521a800290a7c32 */
-"snackbarSenderBlacklisted" = "Mittente inserito nella lista nera con successo";
-
-/* loco:62ab4ae387f65e26e577dd42 */
-"snackbarReportPhishingConfirmation" = "Segnalato con successo";
-
-/* loco:62ac871d2502053d7b0cbb32 */
-"send" = "Inviare";
-
-/* loco:62b017def2354224c578fc12 */
-"settingsSwipeDescription" = "Scorri gli elementi nella tua casella di posta e accedi rapidamente alle azioni più frequenti.";
-
-/* loco:62b1c0a1e915206f7e2d5764 */
-"moveTitle" = "In quale cartella vuoi spostare il tuo e-mail?";
-
-/* loco:62b1c0de630e5a572542c032 */
-"buttonCreateFolder" = "Aggiungi una cartella";
-
-/* loco:62b1c12cc1df8a35281faba4 */
-"createFolderName" = "Nome della cartella";
-
-/* loco:62b1c1491ea473352a4fb205 */
-"createFolderParent" = "Cartella dei genitori";
-
-/* loco:62b1c15d9ced2854214f09f2 */
-"createFolderNoParent" = "Nessuno";
-
-/* loco:62b1c2566ff2923a1a5b0832 */
-"buttonCreate" = "Crea";
-
-/* loco:62b1d1ee36cd805389679933 */
-"contentDescriptionIconStorage" = "Stato di conservazione";
-
-/* loco:62b2cafadce4b504255da0e3 */
-"buttonTextOptionsOpen" = "Formattazione del testo aperto";
-
-/* loco:62b2d26c5fd79a7b69199b92 */
-"buttonTextOptionsClose" = "Chiudere la formattazione del testo";
-
-/* loco:62b2d43771635f1d1f0da462 */
-"buttonBold" = "In grassetto";
-
-/* loco:62b2d9637708901a27423992 */
-"buttonItalic" = "Corsivo";
-
-/* loco:62b2d9af68273c4a783d30d2 */
-"buttonUnderline" = "Sottolineatura";
-
-/* loco:62b2dd31865d4941c92777d3 */
-"buttonStrikeThrough" = "Sciopero attraverso";
-
-/* loco:62b2dda49d1c850fb016c612 */
-"buttonBulletPoint" = "Punto di riferimento";
-
-/* loco:62b2e09059ff20150b5c1b52 */
-"buttonAttachment" = "Aggiungere un allegato";
-
-/* loco:62b2e3ddf30bc656eb06a442 */
-"buttonCamera" = "Scattare una foto";
-
-/* loco:62b2e44a50f68769a0054863 */
-"buttonHyperlink" = "Aggiungere un collegamento ipertestuale";
-
-/* loco:62b2e4a24486732cbc2f04d3 */
-"buttonSchedule" = "Programmare l’invio di un’e-mail in un secondo momento";
-
-/* loco:62b2f6bcdfa4fa28ad7bb122 */
-"menuDrawerMailboxStorage" = "%1$@ / %2$@ usato";
-
-/* loco:62b42d5d2b411f48ef2eb982 */
-"buttonValid" = "Convalidare";
-
-/* loco:62b42dc3832cca6d684a4ae2 */
-"urlEntryTitle" = "Creare un collegamento ipertestuale";
-
-/* loco:62b42e39dbeac92077145712 */
-"snackbarInvalidUrl" = "URL non valido";
-
-/* loco:62b4362a0524dc792a0ee634 */
-"urlPlaceholder" = "URL";
-
-/* loco:62b47ed7bd878067784e6f62 */
-"attachmentActionFile" = "Allegare un file";
-
-/* loco:62b47f35c231ca5bb0344262 */
-"attachmentActionPhotoLibrary" = "Inviare una foto dalla libreria fotografica";
-
-/* loco:62b47f7819800f7e7f520e62 */
-"attachmentActionCamera" = "Macchina fotografica";
-
-/* loco:62b4807d362dbc0bed1eb402 */
-"attachmentActionTitle" = "Aggiungere un allegato";
-
-/* loco:62b95774aee47c626b773693 */
-"unknownRecipientTitle" = "(sconosciuto)";
-
-/* loco:62b9579b3dfaf347e24071f3 */
-"noSubjectTitle" = "(senza soggetto)";
-
-/* loco:62b959afe3c12548284cb282 */
-"snackbarDraftSaved" = "Bozza salvata";
-
-/* loco:62b959dd7994e66bc4719df2 */
-"snackbarDraftDeleted" = "Bozza cancellata";
-
-/* loco:62b9669e0e674b404f5a5212 */
-"contentDescriptionUserAvatar" = "Avatar utente";
-
-/* loco:62baa8f1786752698b4ff2b2 */
-"lockAppTitle" = "Applicazione bloccata";
-
-/* loco:62baa963ab8fce473930eea4 */
-"appSecurityDescription" = "Proteggete l’accesso alla vostra applicazione attivando il blocco del telefono.";
-
-/* loco:62baab4c017b586c23177d62 */
-"notificationGeneralChannelName" = "Notifiche generali";
-
-/* loco:62baabfc07e6a001ca19e535 */
-"refreshTokenError" = "Sei stato disconnesso a causa di un problema. Riconnettiti";
-
-/* loco:62bb144be43a74010f186a22 */
-"settingsAccentColor" = "Colore d’accento";
-
-/* loco:62bb14784ae7d90af73a4c93 */
-"settingsAccentColorDescription" = "Scegliere il colore d’accento per l’applicazione";
 
 /* loco:62bb154d7513e127cb2e9c94 */
 "accentColorBlueTitle" = "Blu";
@@ -572,182 +14,62 @@
 /* loco:62bb155aef94e921b059e1c3 */
 "accentColorPinkTitle" = "Rosa";
 
-/* loco:62bc355b27ec7c112e166eb2 */
-"threadListHeaderLastUpdate" = "Aggiornato %@";
+/* loco:642179d9733cd4523d03dcf2 */
+"accentColorSystemTitle" = "Colore del sistema";
 
-/* loco:62bc35840445497c51137862 */
-"threadListHeaderUnreadCount" = "%@ non letto";
+/* loco:629f0e2244ac887a51141312 */
+"actionArchive" = "Archivia";
 
-/* loco:62bc35a8de12a01f3a49e022 */
-"threadListHeaderUnreadCount-plural" = "%@ non letti";
+/* loco:629f0f37ccbf1e53bf0ab752 */
+"actionBlockSender" = "Blocca mittente";
 
-/* loco:62bc67601f560d734f2fbe58 */
-"snackbarContactSaved" = "Nuovo contatto registrato con successo";
+/* loco:629f0e12701ef82cde591a62 */
+"actionDelete" = "Cestina";
 
-/* loco:62bd85a64880c362bd5ece72 */
-"snackbarEmailCopiedToClipboard" = "Indirizzo e-mail copiato negli appunti";
+/* loco:629f0fe5f3c27b205b282582 */
+"actionEditMenu" = "Menu Modifica";
 
-/* loco:62bdb04cdf5d4469a92796d2 */
-"moreStorageTitle" = "La vostra scatola è piena? Ottieni più spazio!";
+/* loco:6284fd55867ed227676f1743 */
+"actionForward" = "Inoltra";
 
-/* loco:62bdb0cc6a325e7949729c03 */
-"moreStorageText1" = "La casella di posta elettronica è piena e non è possibile ricevere altri messaggi 🥲";
+/* loco:629f0e3e701ef82cde591a65 */
+"actionMarkAsRead" = "Segna come letto";
 
-/* loco:62befb1c9eaa4c1d85178522 */
-"moreStorageText2" = "Presto potrete sbloccare i limiti del vostro indirizzo e-mail ik.me (limite di archiviazione, invio, inoltro, …).";
+/* loco:62a1e691ede283161606f7f4 */
+"actionMarkAsUnread" = "Segna come non letto";
 
-/* loco:62befe9ca822415272753592 */
-"buttonClose" = "Chiudere";
+/* loco:629f0e49b7fae5715e13e972 */
+"actionMove" = "Sposta messaggio";
 
-/* loco:62befec91b3e0d24437119b3 */
-"buttonAvailableSoon" = "Disponibile a breve";
+/* loco:63e22d56403b335b953b0672 */
+"actionMoveToInbox" = "Sposta nella casella di posta";
 
-/* loco:62bf1d8b38fa643dbc4c8b42 */
-"restoreEmailsTitle" = "Ripristino delle e-mail";
+/* loco:62ab21e14956e9775f391ca4 */
+"actionNonSpam" = "Segnala come non spam";
 
-/* loco:62bf1dc26398da30d5675c52 */
-"restoreEmailsText" = "Tutte le e-mail torneranno nella vostra casella di posta.";
+/* loco:629f0fa6da208e4d4539cdd2 */
+"actionOpenIn" = "Aprire in";
 
-/* loco:62bf20b963bddf721324a142 */
-"buttonConfirmRestoreEmails" = "Ripristino";
+/* loco:629f0f6557b1a86b24759543 */
+"actionPhishing" = "Segnala phishing";
 
-/* loco:62bf21b31385976cad230b43 */
-"restoreEmailsBackupDate" = "Data di backup";
+/* loco:629f0e5a701ef82cde591a67 */
+"actionPostpone" = "Rimanda";
 
-/* loco:62c2b600d8c4bb2ee63957f2 */
-"settingsSwipeActionToDefine" = "Per definire";
+/* loco:629f0f8232570829c53e38e2 */
+"actionPrint" = "Stampa";
 
-/* loco:62c2ee4c19620114866e5bb2 */
-"buttonCreateAccount" = "Creare un account";
+/* loco:6284fd413d98060ac31f76d2 */
+"actionReply" = "Rispondi";
 
-/* loco:62c2ee73d35f8933bc4b5262 */
-"onBoardingTitle1" = "Scegliete il vostro tema";
+/* loco:62a85b6ad3c793021731f332 */
+"actionReplyAll" = "Rispondi a tutti";
 
-/* loco:62c2ee8cfa454b3819243ba2 */
-"onBoardingTitle2" = "Risparmiate tempo con le azioni a scorrimento";
+/* loco:629f0fd21c251254874665a2 */
+"actionReportDisplayProblem" = "Segnala un problema di visualizzazione";
 
-/* loco:62c2eede5bc8fa0201054443 */
-"onBoardingDescription2" = "Personalizzate liberamente i vostri collegamenti nelle impostazioni dell’app.";
-
-/* loco:62c2ef13b664ac09fe4a0762 */
-"onBoardingTitle3" = "Premere un messaggio per alcuni secondi per selezionare più messaggi";
-
-/* loco:62c2ef31d501950dff4cbda2 */
-"onBoardingDescription3" = "Archiviare, eliminare, spostare o inserire tra i preferiti più messaggi contemporaneamente.";
-
-/* loco:62c2ef4a24eb9878221dcd63 */
-"onBoardingTitle4" = "Iniziate!";
-
-/* loco:62c2ef65c564d9260842db32 */
-"onBoardingDescription4" = "Create un indirizzo gratuito o collegatevi a un account Infomaniak esistente.";
-
-/* loco:62c2f9feea59c120ad52bc23 */
-"snackbarRestorationLaunched" = "Avvio del restauro";
-
-/* loco:62c424189aacc248962d6224 */
-"pickerNoSelection" = "Nessuna selezione";
-
-/* loco:62c427c7ad522f1ff078a162 */
-"loadingText" = "Caricamento…";
-
-/* loco:62c466d780a5557baa2d0d82 */
-"helpFAQ" = "FAQ";
-
-/* loco:62c466f080a5557baa2d0d84 */
-"helpChatbot" = "Chatbot";
-
-/* loco:62c4672bb812405fb22925f2 */
-"helpSubtitle" = "Per aiutarvi";
-
-/* loco:62c691f711673b15f21d70b4 */
-"settingsEnabled" = "Abilitato";
-
-/* loco:62c693f572adfe66fd2a82b7 */
-"settingsCancellationPeriodDescription" = "Avete la possibilità di annullare l’invio della vostra email fino a 30 secondi.";
-
-/* loco:62c6a408b365f734dd2c0d73 */
-"settingsTransferEmailsDescription" = "Quando si inoltra un’e-mail, scegliere la modalità di visualizzazione più adatta.";
-
-/* loco:62c6b582acc973360733ab94 */
-"threadListSectionThisMonth" = "Questo mese";
-
-/* loco:62c6ebd44e5adc4b6d1d9822 */
-"settingsSecurityBlockedRecipientsDescription" = "È possibile specificare i mittenti da approvare o bloccare affinché la nostra protezione antispam li elabori per voi.";
-
-/* loco:62c6ec1bfdc46c4e9c7c5d82 */
-"settingsSecurityBlockedOption" = "Bloccato";
-
-/* loco:62c6ec7e7d532f473370e902 */
-"settingsSecurityApprovedOption" = "Approvato";
-
-/* loco:62cbdde9f492421f63253c52 */
-"noMailboxTitle" = "Nessun indirizzo e-mail associato a questo account";
-
-/* loco:62cbe0be9251f174a43c5202 */
-"noMailboxDescription" = "Non avete un indirizzo e-mail associato al vostro account Infomaniak. Per aggiungere un indirizzo, toccare il pulsante sottostante.";
-
-/* loco:62cbe10de2840a0cdc2be0d2 */
-"buttonAddEmailAddress" = "Aggiungere un indirizzo e-mail";
-
-/* loco:62cbe12c9251f174a43c5205 */
-"buttonLogInDifferentAccount" = "Accedere con un altro account";
-
-/* loco:62cd280d733bbc7d8f42d194 */
-"settingsDensityOptionNormal" = "Normale";
-
-/* loco:62cd63dab9cd016ad83df012 */
-"reportDisplayProblemTitle" = "Segnala un problema di visualizzazione";
-
-/* loco:62cd640724b16d271d296bc2 */
-"reportDisplayProblemDescription" = "Accettate di condividere i vostri dati con i nostri sviluppatori in modo che possano aiutarvi a risolvere il vostro problema?";
-
-/* loco:62cd641b15742c678d4c30e2 */
-"buttonAccept" = "Accetta";
-
-/* loco:62cd642815742c678d4c30e4 */
-"buttonRefuse" = "Rifiuti";
-
-/* loco:62cd644f5141ee164b494272 */
-"snackbarDisplayProblemReported" = "Problema di visualizzazione segnalato";
-
-/* loco:62cecdf0413c882ede7451c2 */
-"reportPhishingTitle" = "Segnala un tentativo di phishing";
-
-/* loco:62cece41730aa70c5f3da0e2 */
-"reportPhishingDescription" = "Se il messaggio tenta di rubare informazioni sensibili (password, dati bancari, ecc.) e/o si spaccia per un’identità riconosciuta, si tratta di phishing.\n\nSegnalandolo a noi, accelererete l’individuazione di messaggi pericolosi per tutti i nostri utenti.\n\nLa segnalazione sarà inviata al nostro team di sicurezza per l’analisi e l’intervento. L’e-mail verrà inoltre spostata automaticamente nella cartella spam.";
-
-/* loco:62cfb94ffe73905627441c62 */
-"settingsOptionSystemTheme" = "Sistema";
-
-/* loco:62d5561a4fa44b4a25143fc2 */
-"searchFilterRead" = "Leggi";
-
-/* loco:62d5563645aa5e5f197eef92 */
-"searchFilterUnread" = "Non letti";
-
-/* loco:62d5568245072b538b5aeaa2 */
-"searchFilterAttachment" = "Allegati";
-
-/* loco:62d559f7bd07624399379972 */
-"searchFilterFolder" = "Tutte le cartelle";
-
-/* loco:62de4beb1a10d74d4c7e6df2 */
-"multipleSelectionCount" = "%d selezionato";
-
-/* loco:62de4c63f1fea7507653c564 */
-"multipleSelectionCount-plural" = "%d selezionati";
-
-/* loco:62df8aee00dc4d02575d73f2 */
-"messageDetailsYesterday" = "Ieri";
-
-/* loco:62df8c27cc288916217bd964 */
-"messageDetailsDateAt" = "%1$@ alle %2$@";
-
-/* loco:62dfcbfd27c35d15796e01c3 */
-"actionStar" = "Aggiungi ai preferiti";
-
-/* loco:62dfccb7dfb07663055fc0b2 */
-"actionUnstar" = "Elimina dai preferiti";
+/* loco:63c94bcfbaa59733423c0a83 */
+"actionReportJunk" = "Segnala spazzatura";
 
 /* loco:62e13281cd9a910e235d06d2 */
 "actionShortMarkAsRead" = "Leggi";
@@ -755,131 +77,29 @@
 /* loco:62e14b027e61d3640a5bf7e3 */
 "actionShortMarkAsUnread" = "Non letto";
 
+/* loco:64089f358a3d4917a9149802 */
+"actionShortSpam" = "Spam";
+
 /* loco:62e14df023e4fb767e2391a4 */
 "actionShortStar" = "Preferiti";
 
-/* loco:62ed16680ed9e562702a5ab2 */
-"contactsSearch" = "Contatti";
+/* loco:629f0e67a7c8ea4e366cf342 */
+"actionSpam" = "Segnala spam";
 
-/* loco:62f0e594f7dcd16da506af53 */
-"recentSearchesTitle" = "Ricerche recenti";
+/* loco:62dfcbfd27c35d15796e01c3 */
+"actionStar" = "Aggiungi ai preferiti";
 
-/* loco:62fb875a6743ac5a237b07e3 */
-"noBodyTitle" = "Questo messaggio è vuoto.";
+/* loco:62dfccb7dfb07663055fc0b2 */
+"actionUnstar" = "Elimina dai preferiti";
 
-/* loco:62fe2cd176cfba76ac066f32 */
-"searchFieldPlaceholder" = "Ricerca di un’e-mail";
+/* loco:640070c70e888e3c550040d2 */
+"actionViewInDark" = "Visualizzazione in tema scuro";
 
-/* loco:630c6314609abb40215d6482 */
-"contentDescriptionButtonNext" = "Avanti";
+/* loco:63fdb9239bfffe2abc3e1c02 */
+"actionViewInLight" = "Vista in tema chiaro";
 
-/* loco:63316306552e4c217c351c42 */
-"emptyStateSearchTitle" = "Nessun risultato";
-
-/* loco:633163748419ac683a189ba2 */
-"emptyStateSearchDescription" = "Non abbiamo trovato alcuna e-mail corrispondente alla vostra ricerca.";
-
-/* loco:63480020415e160cac510302 */
-"emptyStateFolderTitle" = "Questa cartella è vuota";
-
-/* loco:6348008e331e743e77176522 */
-"emptyStateFolderDescription" = "Non c’è nulla da vedere qui.";
-
-/* loco:634ea0a369dac5469e1ce6d2 */
-"noConversationSelected" = "Nessuna conversazione selezionata in %@";
-
-/* loco:635fab674606bd5f944f7784 */
-"workInProgressTitle" = "Disponibile a breve";
-
-/* loco:6364d5ac2e2f281d52389ee2 */
-"draftPrefix" = "(Bozza)";
-
-/* loco:6374f6a12619632e014135d2 */
-"attachmentFileLimitReached" = "I file che si sta tentando di inviare superano il limite di 25 MB per gli allegati.";
-
-/* loco:637799775ff1e6190b2cd622 */
-"emptyStateHistoryDescription" = "Ricerca per contatto o parole chiave";
-
-/* loco:637ce6f461e6ca5762134f53 */
-"noFolderTitle" = "Non hai ancora nessuna cartella…";
-
-/* loco:638f5a17e9a49034ae006a92 */
-"snackbarThreadDeletedPermanently" = "Conversazione cancellata";
-
-/* loco:638f5f3f40687b206c230e62 */
-"snackbarSenderBlacklisted-plural" = "Mittenti inseriti nella lista nera con successo";
-
-/* loco:638f5f9440687b206c230e64 */
-"snackbarMessageDeletedPermanently" = "Messaggio cancellato";
-
-/* loco:638f61c30f52e171f83f4ce2 */
-"snackbarThreadDeletedPermanently-plural" = "Conversazioni cancellate";
-
-/* loco:638f6e49a7896c4df9647362 */
-"attachmentQuantity-plural-many" = "";
-
-/* loco:638f6ec13ee2595d320a7242 */
-"multipleSelectionCount-plural-many" = "";
-
-/* loco:638f6f0d5075370cf374e2a2 */
-"snackbarSenderBlacklisted-plural-many" = "";
-
-/* loco:638f6f33a6d6283e9b3411a2 */
-"snackbarThreadDeletedPermanently-plural-many" = "";
-
-/* loco:638f6f4f55158c5b515a5ff2 */
-"snackbarThreadMoved-plural-many" = "";
-
-/* loco:638f6f782bdb800e9d6c3682 */
-"threadListHeaderUnreadCount-plural-many" = "";
-
-/* loco:63a473bcf3bb7f422358cfd2 */
-"confirmLogoutTitle" = "Disconnettersi";
-
-/* loco:63a474bd648cd86d56444012 */
-"confirmLogoutDescription" = "Sei sicuro di volerti disconnettere da %@?";
-
-/* loco:63c64f5d53fe7b61a46310c3 */
-"newFolderDialogHint" = "Nome della cartella";
-
-/* loco:63c6c6744cd306160719c9c2 */
-"snackbarEmailSending" = "Invio di e-mail in corso";
-
-/* loco:63c94bcfbaa59733423c0a83 */
-"actionReportJunk" = "Segnala spazzatura";
-
-/* loco:63d14902e3c4eb4832777c42 */
-"errorCancelAttachmentsUploadInProgress" = "Alcuni allegati vengono ancora importati. Se si chiude la vista, gli allegati andranno persi.";
-
-/* loco:63d7e73a70ff84756f78f0b3 */
-"threadListHeaderUnreadCountMore" = "99 non letti";
-
-/* loco:63e11e5771d13a480771a162 */
-"SettingsEnableNotifications" = "Abilitazione delle notifiche";
-
-/* loco:63e22d56403b335b953b0672 */
-"actionMoveToInbox" = "Sposta nella casella di posta";
-
-/* loco:63e391b028b5fa7bab41e292 */
-"buttonConfirm" = "Conferma";
-
-/* loco:63ea46d0b146e764dd672ee2 */
-"errorNewFolderAlreadyExists" = "La cartella è già esistente";
-
-/* loco:63ebabc469ccbb24d90659c2 */
-"threadListTrashHint" = "I messaggi rimasti nel cestino per più di 30 giorni saranno automaticamente eliminati.";
-
-/* loco:63ebacb17b37201ea253d432 */
-"threadListSpamHint" = "I messaggi che sono rimasti nella cartella spam per più di 30 giorni saranno eliminati automaticamente.";
-
-/* loco:63ebad842446f5106c0058b2 */
-"threadListEmptyTrashButton" = "Svuota il cestino";
-
-/* loco:63ebae36eeb4ae34ef49ba42 */
-"threadListEmptySpamButton" = "Spam vuoto";
-
-/* loco:63ecd31247f7a57fc228b532 */
-"addUnknownRecipientTitle" = "Aggiungi un destinatario";
+/* loco:65982378414cb87ae7017bd3 */
+"activeFocusFilterTitle" = "Filtrare le caselle di posta elettronica";
 
 /* loco:63ecf9b0415fc86eea26ec03 */
 "addUnknownRecipientAlreadyUsed" = "L’e-mail è già utilizzata";
@@ -887,476 +107,68 @@
 /* loco:63ecfa898018fd68e85e29a2 */
 "addUnknownRecipientInvalidEmail" = "L’e-mail non è valida";
 
-/* loco:63eddb9871489a3042032122 */
-"threadListEmptyFolderAlertDescription" = "Sei sicuro di voler eliminare definitivamente tutti i messaggi in questa cartella?";
-
-/* loco:63edf25697f024075b239532 */
-"threadListDeletionConfirmationAlertTitle" = "Cancella %d messaggio";
-
-/* loco:63edf28c20221c0f3a6d30a2 */
-"threadListDeletionConfirmationAlertTitle-plural" = "Cancella %d messaggi";
-
-/* loco:63ee0cbbad127b43f8650242 */
-"newFolderDialogMovePositiveButton" = "Crea e sposta";
-
-/* loco:63f377ed99071860fb4439d2 */
-"threadListDeletionConfirmationAlertDescription-plural" = "Sei sicuro di voler cancellare questi messaggi in modo permanente?";
-
-/* loco:63f380d5d0a8f81b511bf704 */
-"threadListDeletionConfirmationAlertDescription" = "Sei sicuro di voler cancellare questo messaggio in modo permanente?";
-
-/* loco:63f3961e7c16fb607809d632 */
-"snackbarBlockUserConfirmation" = "Il mittente è ora bloccato";
-
-/* loco:63f48eda1e7aec342b70c5a2 */
-"newFolderDialogTitle" = "Nuova cartella";
-
-/* loco:63fdb9239bfffe2abc3e1c02 */
-"actionViewInLight" = "Vista in tema chiaro";
-
-/* loco:63fe19a90375095d660d0152 */
-"errorNewFolderNameTooLong" = "Il nome della cartella non deve superare i 255 caratteri";
-
-/* loco:640070c70e888e3c550040d2 */
-"actionViewInDark" = "Visualizzazione in tema scuro";
-
-/* loco:6400bafe3dae40636c716ea2 */
-"messageShowQuotedText" = "Visualizza la conversazione";
-
-/* loco:6400bb16c117ec0d866887b5 */
-"messageHideQuotedText" = "Nascondi la conversazione";
-
-/* loco:640836aa0f09a82bfa0da572 */
-"searchAllMessages" = "Tutti i messaggi";
-
-/* loco:64089f358a3d4917a9149802 */
-"actionShortSpam" = "Spam";
-
-/* loco:640adf8cc17f7c5be778c933 */
-"buttonUnselectAll" = "Nessuno";
-
-/* loco:641178a6902412584c6acf62 */
-"emptyStateTrashTitle" = "Il cestino è vuoto";
-
-/* loco:641178c63f22e04fa704c022 */
-"emptyStateTrashDescription" = "Spostate i messaggi nel cestino. Verranno eliminati definitivamente dopo 30 giorni.";
-
-/* loco:641196a69abab039df3a23f2 */
-"noNetwork" = "Nessun segnale";
-
-/* loco:6412e19cf8d74923f83fd492 */
-"threadListEmptyDraftButton" = "Bozze vuote";
-
-/* loco:641322a5ac96d1091376a812 */
-"buttonUnlock" = "Sblocca";
-
-/* loco:6419645b21b6617fba4a8dc2 */
-"noUpdatedAt" = "Mai aggiornato";
-
-/* loco:641b1d7a9c76fa6987570e72 */
-"threadListDeletionConfirmationAlertDescription-plural-many" = "";
-
-/* loco:641c3d9b723c7f035409c3d2 */
-"notificationNewEmail" = "Nuova email";
-
-/* loco:641d60b6f5c19a18734d9192 */
-"urlUserReportiOS" = "https://feedback.userreport.com/b0fada78-1555-4c59-abad-423e887534d5/";
-
-/* loco:641db88f88b1f63cb05aad52 */
-"tooManyRecipients" = "Non è possibile aggiungere questo indirizzo perché è stato raggiunto il limite di destinatari";
-
-/* loco:642179d9733cd4523d03dcf2 */
-"accentColorSystemTitle" = "Colore del sistema";
-
-/* loco:6422e08598a76c7f98590952 */
-"contentDescriptionButtonExpandRecipients" = "Vedi dettagli";
-
-/* loco:642430a9ce12f43b026e7ef2 */
-"contentDescriptionSelectedItem" = "Selezionato";
-
-/* loco:64243b2f0c473e027779afc4 */
-"emailWithoutSubjectTitle" = "Oggetto vuoto";
-
-/* loco:64243b4a9a9a1f26302e33f3 */
-"emailWithoutSubjectDescription" = "State per inviare un messaggio senza oggetto. Volete continuare?";
-
-/* loco:64245322f2b3ab37ed1b26b2 */
-"buttonContinue" = "Continua";
-
-/* loco:642456b7a9f7d62fda3252d2 */
-"contentDescriptionButtonDeleteHistory" = "Cancella la voce della cronologia";
-
-/* loco:6425728328677e02905abef2 */
-"updateAvailableTitle" = "Aggiornamento disponibile!";
-
-/* loco:642572dc0839911c7350abf2 */
-"buttonUpdate" = "Aggiorna";
-
-/* loco:64257388057ce0235d2c5222 */
-"updateAvailableDescription" = "Per vivere la migliore esperienza con Infomaniak Mail, ti consigliamo di aggiornare la tua applicazione.";
-
-/* loco:6425777e2343387912223aa2 */
-"buttonLater" = "Più tardi";
-
-/* loco:642bef2a4b57be636f4d03e2 */
-"contentDescriptionContactAlreadyUsed" = "Contatto già utilizzato come destinatario";
-
-/* loco:6436aae98d2f282f4c6ba492 */
-"failToOpenDraft" = "Impossibile aprire la bozza";
-
-/* loco:6437c062dd576a7631052413 */
-"buttonAttachMailbox" = "Aggiungi l’indirizzo e-mail";
-
-/* loco:6437c47e426da35ef96cfc12 */
-"attachMailboxPasswordInputHint" = "Password";
-
-/* loco:6437c532f51a3257a53fa6f2 */
-"attachMailboxDescription2" = "Sono supportati solo gli indirizzi e-mail Infomaniak";
-
-/* loco:6437c60334e2ec004807c7f2 */
-"attachMailboxDescription1" = "Se hai già un indirizzo e-mail Infomaniak, accedi ora";
-
-/* loco:6437c70f4234b3111a48be63 */
-"attachMailboxInputHint" = "Indirizzo e-mail";
-
-/* loco:6437e8f60dad565a51542b62 */
-"attachMailboxTitle" = "Aggiungi indirizzo e-mail";
-
-/* loco:64380fdd8d050844fe71ae26 */
-"contentDescriptionButtonShowPassword" = "Mostra password";
-
-/* loco:643e9d37c9a67764c307d742 */
-"errorInvalidCredentials" = "Email o password non valide";
-
-/* loco:64477b57fd06fe11190c1f13 */
-"comingSoon" = "Prossimamente…";
-
-/* loco:6448e34925a77d88bc0f8ab4 */
-"errorTooManyRecipients" = "Troppi destinatari";
-
-/* loco:6448ef7a5b39bc7e040ce0b3 */
-"errorSendLimitExceeded" = "Limite d’invio raggiunto";
-
-/* loco:644928aac87be149bf05d254 */
-"errorAtLeastOneRecipient" = "È richiesto almeno un destinatario";
-
-/* loco:6449292ce5f4e56abb063f65 */
-"errorEditScheduledMessage" = "Impossibile modificare un messaggio pianificato o inviato";
-
-/* loco:64492a1e7d49e1ef190ab465 */
-"errorRefusedRecipients" = "Il server respinge tutti i destinatari";
-
-/* loco:644b7ef4a60127b0b201ab52 */
-"settingsSignatureTitle" = "Firme";
-
-/* loco:644f6a7bf8a5eec20801ac93 */
-"settingsSignatureDescription" = "Selezionare una firma predefinita";
-
-/* loco:6450d3f93e5fcf13c9037b02 */
-"errorMailboxLocked" = "Questo indirizzo e-mail è bloccato";
-
-/* loco:645b485e158c37a429012092 */
-"buttonLoadMore" = "Carica altre conversazioni";
-
-/* loco:645c9af969688c1b200ad4a2 */
-"errorMessageNotFound" = "Messaggio non trovato";
-
-/* loco:645c9bbb13c8e41a84040012 */
-"errorUnknown" = "Errore sconosciuto";
-
-/* loco:645c9dbc8c94de23f7091a42 */
-"errorFolderNotFound" = "File non trovato";
-
-/* loco:64649a4f09a501c76901b37b */
-"alertBlockedImagesDescription" = "Per la vostra sicurezza abbiamo bloccato alcuni contenuti del vostro messaggio.";
-
-/* loco:64649adb0070f636ff04bc12 */
-"alertBlockedImagesDisplayContent" = "Visualizza il contenuto";
-
-/* loco:646e10cd8b1764c28f0fb3e2 */
-"snackbarDraftSaving" = "Salvataggio della bozza";
-
-/* loco:6470516c5a7017daea03dde3 */
-"errorDraftNotFound" = "Bozza non trovata";
-
-/* loco:64787b6c6a6ceb25210556d2 */
-"contentDescriptionWarningIcon" = "Avviso";
-
-/* loco:6481a2d4fdda813a7f0d3662 */
-"alertNotificationsDisabledTitle" = "Notifiche disabilitate";
-
-/* loco:6481a3d9c7a313bee80faa42 */
-"alertNotificationsDisabledDescription" = "Attiva le notifiche per Infomaniak Mail **nelle impostazioni di iOS** per essere avvisati quando si ricevono nuovi messaggi";
-
-/* loco:6481a576efb1d3072f0ede02 */
-"alertNotificationsDisabledButton" = "Vedi i parametri";
-
-/* loco:6481d7112f7eca9f7e0ad572 */
-"warningNotificationsDisabledDescription" = "ATTENZIONE: le notifiche push sono disattivate.";
-
-/* loco:6481d72ebb3c88db6e002332 */
-"warningNotificationsDisabledButton" = "Abilitarli nelle impostazioni";
-
-/* loco:648b1287231f4ec587052ef2 */
-"noValidMailboxTitle" = "Non è stata trovata una casella di posta elettronica valida. Per ora può essere risolto solo con la webmail.";
-
-/* loco:6491b5d13be3801fbb056c22 */
-"lockedMailboxDescription" = "L’accesso al tuo indirizzo e-mail è attualmente bloccato. Si prega di contattare l’amministratore.";
-
-/* loco:6492a702283a5b8f7e04df72 */
-"notificationTitleCouldNotSendDraft" = "Non è stato possibile inviare l’e-mail";
-
-/* loco:6492a96bf71de72ab30e8c02 */
-"notificationTitleCouldNotSaveDraft" = "Non è stato possibile salvare la bozza";
-
-/* loco:6493f877e4cdab71070ad552 */
-"errorAlreadyLinkedMailbox" = "Questo indirizzo e-mail è già collegato al vostro account";
-
-/* loco:6493fd86b3b044cbef0df789 */
-"errorFolderDoesNotExist" = "La cartella è inesistente";
-
-/* loco:6493ff227390f40cdb06d7d3 */
-"errorUnableToCreateFolder" = "Impossibile creare la cartella";
-
-/* loco:649400300f4bf580f6093602 */
-"errorUnableToFlushFolder" = "Impossibile svuotare la cartella";
-
-/* loco:6494050cd62813225a066fb2 */
-"errorMoveDestinationNotFound" = "La cartella di destinazione è inesistente";
-
-/* loco:64940ce4eee54db1a50e44b4 */
-"errorAttachmentNotFound" = "Allegato non trovato";
-
-/* loco:649424a6e244ffcc6c011135 */
-"errorRefusedSender" = "Il server respinge il mittente";
-
-/* loco:64942b149051a862c5049f03 */
-"errorInvalidAttachment" = "Allegato non valido";
-
-/* loco:64999ba3e6d90f26b6023952 */
-"blockedMailboxTitle" = "L’indirizzo e-mail %@ è bloccato";
-
-/* loco:649adbc029c685e8c20dc096 */
-"lockedMailboxTitle-plural" = "Indirizzi e-mail bloccati";
-
-/* loco:649adc1b599c6ce9d6099fa2 */
-"lockedMailboxDescription-plural" = "L’accesso alle caselle di posta elettronica è attualmente bloccato. Contattare l’amministratore.";
-
-/* loco:649e9f941e62d5ca5f032305 */
-"lockedMailboxTitle" = "Indirizzo e-mail bloccato";
-
-/* loco:649ea00ef9c6ecfe620a0b62 */
-"blockedPasswordTitle" = "Password bloccata";
-
-/* loco:649ea1ed3c1546646f049403 */
-"blockedPasswordTitle-plural" = "Password bloccate";
-
-/* loco:64a2b5254093e7708d0de5b2 */
-"enterPasswordTitle" = "Inserisci la password";
-
-/* loco:64a2b619946ed6ede60a85e2 */
-"enterPasswordDescription1" = "La password è stata modificata. Se non sei responsabile, contatta l’amministratore.";
-
-/* loco:64a2b7a35386a9ec49013e42 */
-"buttonRequestPassword" = "Richiesta password";
-
-/* loco:64a3bb083ee4236af806d393 */
-"errorInvalidMailboxPassword" = "Password errata per l’indirizzo e-mail";
-
-/* loco:64a3c705a13a2645f80da972 */
-"errorMailboxPasswordLength" = "La password deve essere compresa tra 6 e 80 caratteri";
-
-/* loco:64a3d65f003e64f9790f5ed2 */
-"popupDetachMailboxTitle" = "Staccare l’indirizzo";
-
-/* loco:64a4240f5579c83f7b070182 */
-"contentDescriptionUnreadPastille" = "Questa cartella contiene i messaggi non letti";
-
-/* loco:64a695f87730509b39030ae2 */
-"popupDetachMailboxDescription" = "Sei sicuro di voler staccare l’indirizzo %@?";
-
-/* loco:64a8005d6a8d4403460c9c42 */
-"enterPasswordOrDescription" = "o";
-
-/* loco:64aba64bdb705f66d6043b03 */
-"enterPasswordDescription2" = "Inserisci la nuova password per l’indirizzo e-mail %@";
-
-/* loco:64abb7007886284b68017193 */
-"buttonDetachMailbox" = "staccare l’indirizzo";
-
-/* loco:64ad0bc9605cc9e323051192 */
-"lockedMailboxDescription-plural-many" = "";
-
-/* loco:64ad0bf21a8c5c3877078262 */
-"lockedMailboxTitle-plural-many" = "";
-
-/* loco:64ad0c0b88d6fd5fec0b0533 */
-"blockedPasswordTitle-plural-many" = "";
-
-/* loco:64aea2c18a9e9776080ee393 */
-"errorInvalidEmailAddress" = "Indirizzo e-mail non valido";
-
-/* loco:64b621d61bdb4c64d60e80d2 */
-"contentDescriptionIconInvalidPassword" = "Sbloccare l’indirizzo e-mail";
-
-/* loco:64ba47ab214bcfcf4c056014 */
-"notificationTitleArchive" = "Archiviato";
-
-/* loco:64ba47d60f3176675907c474 */
-"notificationTitleDelete" = "Soppresso";
-
-/* loco:64c13b09da352fc751044323 */
-"contentDescriptionButtonExpandFolder" = "Espandi la cartella %@";
-
-/* loco:64c1409a9dfa82cc110e3252 */
-"contentDescriptionButtonSelectSignature" = "Seleziona una firma diversa";
-
-/* loco:64c2115c61d539e7b80a4f12 */
-"newAccountTitle" = "Create il vostro indirizzo e-mail gratuito a vita";
-
-/* loco:64c21b867739a75d260c0272 */
-"newAccountStorageMail" = "20 GB di memoria per la posta";
-
-/* loco:64c21d831dadd3122c0c73f2 */
-"newAccountDescription" = "Comunicare e archiviare documenti e foto in un ecosistema privo di pubblicità che rispetta la vostra privacy";
-
-/* loco:64c21f7b8b1932323c047792 */
-"newAccountStorageDrive" = "15 GB di memoria kDrive";
-
-/* loco:64ca16484dbf65eb9b0ea862 */
-"pleaseLogInFirst" = "Effettua prima il login nell'app Infomaniak Mail.";
-
-/* loco:64cca81829e8aeaec602e1c2 */
-"settingsThreadModeTitle" = "Modalità di visualizzazione dei messaggi";
-
-/* loco:64d209e0b3606abecd06b622 */
-"errorNewFolderInvalidCharacter" = "Il nome della cartella contiene caratteri non validi";
-
-/* loco:64d2441dc9b7f2b678050fc4 */
-"settingsThreadModeWarningDescription" = "Si noti che la modifica di questa opzione comporta un nuovo download di tutti i messaggi";
-
-/* loco:64d2491e76ea5dc92c070c52 */
-"settingsThreadModeWarningTitle" = "Passare alla modalità %@?";
-
-/* loco:64db5beeaa9eb013f7039f64 */
-"externalTag" = "Esterno";
-
-/* loco:64db5c4e6ded79bce2077102 */
-"externalDialogTitleExpeditor" = "Spedizioniere esterno";
-
-/* loco:64db5c9b91415c032d05f9f2 */
-"externalDialogTitleRecipient" = "Destinatario esterno";
-
-/* loco:64db5d146ded79bce2077106 */
-"externalDialogDescriptionExpeditor" = "Il mittente %@ non fa parte della vostra organizzazione o dei vostri contatti. Fate attenzione se state condividendo informazioni sensibili.";
-
-/* loco:64db5dc6df82e571c9064552 */
-"externalDialogConfirmButton" = "Capisco";
-
-/* loco:64db6125fde80c52f005cd42 */
-"externalDialogDescriptionExpeditor-plural" = "Alcuni mittenti non fanno parte della vostra organizzazione o dei vostri contatti. Fate attenzione se state condividendo informazioni sensibili.";
-
-/* loco:64db6d8c2395a8caf3096ae3 */
-"externalDialogDescriptionRecipient" = "Il destinatario %@ non fa parte della vostra organizzazione o dei vostri contatti. Fate attenzione se state condividendo informazioni sensibili.";
-
-/* loco:64db6e28e1a0ee7e7405efc5 */
-"externalDialogDescriptionRecipient-plural" = "Alcuni destinatari non fanno parte della vostra organizzazione o dei vostri contatti. Fate attenzione se condividete informazioni sensibili.";
-
-/* loco:64df15c6e992ed0689022852 */
-"settingsExternalContentDescription" = "Visualizzare il contenuto esterno";
-
-/* loco:64df3c1f3e0659f4670b7093 */
-"snackbarMailboxPasswordRequested" = "Richiesta inviata all’amministratore";
-
-/* loco:64e7612b488e98f39d0960e2 */
-"externalDialogDescriptionExpeditor-plural-many" = "";
-
-/* loco:64e7615fcdd6976491020982 */
-"externalDialogDescriptionRecipient-plural-many" = "";
-
-/* loco:64edf250cb0c86ab3001d1b2 */
-"buttonStart" = "Inizia";
-
-/* loco:65016e82bd99726dde081533 */
-"noConnection" = "Nessuna connessione";
-
-/* loco:65017fa44f4fa3e3b902d043 */
-"aiPromptTitle" = "Assistente di scrittura";
-
-/* loco:6501834aa4abf8d77708b7b5 */
-"aiPromptTag" = "Beta";
-
-/* loco:6501840ef58ecb8b620adb23 */
-"aiPromptPlaceholder" = "Comunica all’assistente di scrittura cosa vuoi scrivere. Ad esempio, \"%@\".";
-
-/* loco:65019254a2948ddd0d0e0ca3 */
-"aiPromptValidateButton" = "Genera";
-
-/* loco:6502bdf0d8ec8382d70de1c7 */
-"errorLoadingMessage" = "Non è stato possibile scaricare questo messaggio dal server.";
-
-/* loco:6502fd61e3b907c3db020f92 */
-"snackbarDeletedConversation" = "La conversazione non esiste più";
-
-/* loco:65042259ab599c0ca6094172 */
-"aiPromptGenerationLoader" = "L’assistente sta scrivendo";
-
-/* loco:65081ae6a237c4d16909e463 */
-"aiButtonRefine" = "Affinare";
+/* loco:63ecd31247f7a57fc228b532 */
+"addUnknownRecipientTitle" = "Aggiungi un destinatario";
 
 /* loco:65081b4d5787de874c0dec32 */
 "aiButtonInsert" = "Inserisci";
 
-/* loco:650af993aaf29390e1022692 */
-"aiReplacementDialogTitle" = "Sostituire i contenuti esistenti?";
-
-/* loco:650afa5b0b0204386e077c94 */
-"aiReplacementDialogDescription" = "Facendo clic su \"Sostituisci\", il contenuto preesistente andrà perso.";
-
-/* loco:650afb3b15bedc19200ab182 */
-"aiReplacementDialogPositiveButton" = "Sostituisci";
-
-/* loco:650afca41010feb5710a0b45 */
-"aiReplacementDialogDoNotShowAgain" = "Non visualizzare più questo messaggio";
-
-/* loco:65129af16ad732b0790e61c2 */
-"aiErrorTooManyRequests" = "Sono state presentate troppe richieste in un breve lasso di tempo. Attendere prego.";
-
-/* loco:65129ba24376b5dd8c04b6a2 */
-"aiErrorMaxTokenReached" = "La tua richiesta è troppo lunga, ti prego di accorciarla.";
-
-/* loco:65129c4db1cb64db900f6a02 */
-"aiErrorUnknown" = "Si è verificato un errore. Se l’errore persiste, si prega di contattare il nostro helpdesk.\nGrazie per la pazienza.";
+/* loco:65081ae6a237c4d16909e463 */
+"aiButtonRefine" = "Affinare";
 
 /* loco:65129d1caf62abf5d40d9082 */
 "aiButtonRetry" = "Riprova";
 
-/* loco:651549fc352ff768af054453 */
-"aiMenuEditRequest" = "Modifica la mia richiesta";
-
-/* loco:65154a444e2a92186f026aa3 */
-"aiMenuRegenerate" = "Rigenera una risposta";
-
-/* loco:65154a5b5740266cf70c84a2 */
-"aiMenuShorten" = "Accorcia";
-
-/* loco:65154a780b64dfbdde02ac45 */
-"aiMenuExpand" = "Espandi";
-
-/* loco:65154b23fc895ced1501cde2 */
-"aiMenuSeriousWriting" = "Scrittura seria";
-
-/* loco:65154b39664dcac1df0d7492 */
-"aiMenuFriendlyWriting" = "Scrittura amichevole";
+/* loco:651587be8ddc30b025013c52 */
+"aiDiscoveryDescription" = "Semplifica la scrittura dei messaggi con l’intelligenza artificiale.";
 
 /* loco:651584a40e0b9f6c680ced32 */
 "aiDiscoveryTitle" = "Scrivi le vostre e-mail utilizzando l’IA";
 
-/* loco:651587be8ddc30b025013c52 */
-"aiDiscoveryDescription" = "Semplifica la scrittura dei messaggi con l’intelligenza artificiale.";
+/* loco:653922bdcfcd84657f033492 */
+"aiEngineChatGpt" = "ChatGPT";
 
-/* loco:651588aec32dc5a9eb0b6c94 */
-"buttonTry" = "Prova";
+/* loco:6539230c9770e8ba3102c722 */
+"aiEngineFalcon" = "AI sovrana";
+
+/* loco:653924b9080dd61d2e016072 */
+"aiEngineWarning" = "Utilizzando ChatGPT, i vostri dati saranno trattati dalla società americana OpenAI. Vi consigliamo di non utilizzarli per messaggi sensibili.";
+
+/* loco:6555e85e5cfcd5053e081e92 */
+"aiErrorContextMaxTokenReached" = "L’e-mail a cui stai rispondendo è troppo lunga perché l’intelligenza artificiale sia in grado di generare una risposta al momento.\n\nRiassumi ciò che vuoi dire per ottenere il suo aiuto.";
+
+/* loco:65129ba24376b5dd8c04b6a2 */
+"aiErrorMaxTokenReached" = "La tua richiesta è troppo lunga, ti prego di accorciarla.";
+
+/* loco:65129af16ad732b0790e61c2 */
+"aiErrorTooManyRequests" = "Sono state presentate troppe richieste in un breve lasso di tempo. Attendere prego.";
+
+/* loco:65129c4db1cb64db900f6a02 */
+"aiErrorUnknown" = "Si è verificato un errore. Se l’errore persiste, si prega di contattare il nostro helpdesk.\nGrazie per la pazienza.";
+
+/* loco:653a132b3b8d3a1f740e06f2 */
+"aiGenerationTitlePrompt" = "Genera con";
+
+/* loco:651549fc352ff768af054453 */
+"aiMenuEditRequest" = "Modifica la mia richiesta";
+
+/* loco:65154a780b64dfbdde02ac45 */
+"aiMenuExpand" = "Espandi";
+
+/* loco:65154b39664dcac1df0d7492 */
+"aiMenuFriendlyWriting" = "Scrittura amichevole";
+
+/* loco:65154a444e2a92186f026aa3 */
+"aiMenuRegenerate" = "Rigenera una risposta";
+
+/* loco:65154b23fc895ced1501cde2 */
+"aiMenuSeriousWriting" = "Scrittura seria";
+
+/* loco:65154a5b5740266cf70c84a2 */
+"aiMenuShorten" = "Accorcia";
+
+/* loco:6553342162ddfaef2c06b5a2 */
+"aiPromptAnswer" = "Dica all’assistente come può aiutarti a rispondere a questa e-mail.";
 
 /* loco:651bc83def57493b22006342 */
 "aiPromptExample1" = "un’e-mail di ringraziamento per un regalo di benvenuto";
@@ -1373,41 +185,1241 @@
 /* loco:651bc96abf48bc251603add2 */
 "aiPromptExample5" = "un’e-mail di richiesta di incontro con un cliente importante";
 
-/* loco:651eb54cfe85ef34780286a4 */
-"syncTutorialWelcomeTitle" = "Visualizza i calendari e i contatti di Infomaniak sul tuo dispositivo";
+/* loco:65042259ab599c0ca6094172 */
+"aiPromptGenerationLoader" = "L’assistente sta scrivendo";
 
-/* loco:651ebb317a265dd7c2066965 */
-"syncTutorialDownloadProfileTitle" = "Scarica il profilo di configurazione";
+/* loco:6501840ef58ecb8b620adb23 */
+"aiPromptPlaceholder" = "Comunica all’assistente di scrittura cosa vuoi scrivere. Ad esempio, \"%@\".";
 
-/* loco:651ebbbc9d9d92b13b016333 */
-"syncTutorialDownloadProfileDescription" = "Per scaricare il profilo, fare clic su \"Download\" e poi autorizzare il download.";
+/* loco:6501834aa4abf8d77708b7b5 */
+"aiPromptTag" = "Beta";
+
+/* loco:65017fa44f4fa3e3b902d043 */
+"aiPromptTitle" = "Assistente di scrittura";
+
+/* loco:65019254a2948ddd0d0e0ca3 */
+"aiPromptValidateButton" = "Genera";
+
+/* loco:65323d14fd2982f3ff080382 */
+"aiReplaceSubjectDescription" = "Il soggetto diventerà:\n\n%@";
+
+/* loco:65323a4677722095b50538e2 */
+"aiReplaceSubjectTitle" = "Sostituire il soggetto attuale con la proposta dell’assistente?";
+
+/* loco:650afa5b0b0204386e077c94 */
+"aiReplacementDialogDescription" = "Facendo clic su \"Sostituisci\", il contenuto preesistente andrà perso.";
+
+/* loco:650afca41010feb5710a0b45 */
+"aiReplacementDialogDoNotShowAgain" = "Non visualizzare più questo messaggio";
+
+/* loco:650afb3b15bedc19200ab182 */
+"aiReplacementDialogPositiveButton" = "Sostituisci";
+
+/* loco:650af993aaf29390e1022692 */
+"aiReplacementDialogTitle" = "Sostituire i contenuti esistenti?";
+
+/* loco:64649a4f09a501c76901b37b */
+"alertBlockedImagesDescription" = "Per la vostra sicurezza abbiamo bloccato alcuni contenuti del vostro messaggio.";
+
+/* loco:64649adb0070f636ff04bc12 */
+"alertBlockedImagesDisplayContent" = "Visualizza il contenuto";
+
+/* loco:6481a576efb1d3072f0ede02 */
+"alertNotificationsDisabledButton" = "Vedi i parametri";
+
+/* loco:6481a3d9c7a313bee80faa42 */
+"alertNotificationsDisabledDescription" = "Attiva le notifiche per Infomaniak Mail **nelle impostazioni di iOS** per essere avvisati quando si ricevono nuovi messaggi";
+
+/* loco:6481a2d4fdda813a7f0d3662 */
+"alertNotificationsDisabledTitle" = "Notifiche disabilitate";
+
+/* loco:62baa963ab8fce473930eea4 */
+"appSecurityDescription" = "Proteggete l’accesso alla vostra applicazione attivando il blocco del telefono.";
+
+/* loco:627e4053e699c44b3f1f9be2 */
+"archiveFolder" = "Archivio";
+
+/* loco:6437c60334e2ec004807c7f2 */
+"attachMailboxDescription1" = "Se hai già un indirizzo e-mail Infomaniak, accedi ora";
+
+/* loco:6437c532f51a3257a53fa6f2 */
+"attachMailboxDescription2" = "Sono supportati solo gli indirizzi e-mail Infomaniak";
+
+/* loco:6437c70f4234b3111a48be63 */
+"attachMailboxInputHint" = "Indirizzo e-mail";
+
+/* loco:6437c47e426da35ef96cfc12 */
+"attachMailboxPasswordInputHint" = "Password";
+
+/* loco:6437e8f60dad565a51542b62 */
+"attachMailboxTitle" = "Aggiungi indirizzo e-mail";
+
+/* loco:62b47f7819800f7e7f520e62 */
+"attachmentActionCamera" = "Macchina fotografica";
+
+/* loco:62b47ed7bd878067784e6f62 */
+"attachmentActionFile" = "Allegare un file";
+
+/* loco:62b47f35c231ca5bb0344262 */
+"attachmentActionPhotoLibrary" = "Inviare una foto dalla libreria fotografica";
+
+/* loco:62b4807d362dbc0bed1eb402 */
+"attachmentActionTitle" = "Aggiungere un allegato";
+
+/* loco:6374f6a12619632e014135d2 */
+"attachmentFileLimitReached" = "I file che si sta tentando di inviare superano il limite di 25 MB per gli allegati.";
+
+/* loco:6267b1e1002a8716d553ad94 */
+"attachmentQuantity" = "%d allegato";
+
+/* loco:6267b57fcc702828232d6f02 */
+"attachmentQuantity-plural" = "%d allegati";
+
+/* loco:638f6e49a7896c4df9647362 */
+"attachmentQuantity-plural-many" = "";
+
+/* loco:659665294692c252640fa103 */
+"attendeesListTitle" = "Elenco dei partecipanti (%d)";
+
+/* loco:6266649755d41301973d0c43 */
+"bccTitle" = "Bcc:";
+
+/* loco:64999ba3e6d90f26b6023952 */
+"blockedMailboxTitle" = "L’indirizzo e-mail %@ è bloccato";
+
+/* loco:649ea00ef9c6ecfe620a0b62 */
+"blockedPasswordTitle" = "Password bloccata";
+
+/* loco:649ea1ed3c1546646f049403 */
+"blockedPasswordTitle-plural" = "Password bloccate";
+
+/* loco:64ad0c0b88d6fd5fec0b0533 */
+"blockedPasswordTitle-plural-many" = "";
+
+/* loco:62cd641b15742c678d4c30e2 */
+"buttonAccept" = "Accetta";
+
+/* loco:628215d524fcfb2f2d1a8a84 */
+"buttonAccountAssociatedEmailAddresses" = "Indirizzi e-mail associati a questo account";
+
+/* loco:628216026aae4d7bc05773c3 */
+"buttonAccountDelete" = "Cancellare l’account";
+
+/* loco:628216272fd1aa2f0249a892 */
+"buttonAccountDisconnect" = "Disconnettere l’account";
+
+/* loco:6282142ca5e6f61ada1c4014 */
+"buttonAccountSwitch" = "Modifica del conto";
+
+/* loco:6256793050618f7416758a32 */
+"buttonAddAccount" = "Aggiungere un account";
+
+/* loco:62cbe10de2840a0cdc2be0d2 */
+"buttonAddEmailAddress" = "Aggiungere un indirizzo e-mail";
+
+/* loco:65957e21e04c075b780d73d2 */
+"buttonAddToMyCalendar" = "Aggiungi al mio calendario";
+
+/* loco:6437c062dd576a7631052413 */
+"buttonAttachMailbox" = "Aggiungi l’indirizzo e-mail";
+
+/* loco:62b2e09059ff20150b5c1b52 */
+"buttonAttachment" = "Aggiungere un allegato";
+
+/* loco:65957dd2d9c7e2750204c382 */
+"buttonAttendees" = "Partecipanti";
+
+/* loco:62befec91b3e0d24437119b3 */
+"buttonAvailableSoon" = "Disponibile a breve";
 
 /* loco:651ebd40ccc14ebdca0313a5 */
 "buttonBackToApp" = "Torna all’applicazione Mail";
 
-/* loco:651ebdb4528e72051a098242 */
-"syncTutorialCopyPasswordTitle" = "Copiare la password di convalida";
+/* loco:62b2d43771635f1d1f0da462 */
+"buttonBold" = "In grassetto";
 
-/* loco:651ebe0029cb784d2b0e1992 */
-"syncTutorialCopyPasswordDescription" = "Copia la password, che ti servirà per convalidare il passaggio successivo.";
+/* loco:62b2dda49d1c850fb016c612 */
+"buttonBulletPoint" = "Punto di riferimento";
+
+/* loco:62b2e3ddf30bc656eb06a442 */
+"buttonCamera" = "Scattare una foto";
+
+/* loco:62a20a5c73b7e9202e05fabe */
+"buttonCancel" = "Annulla";
+
+/* loco:62befe9ca822415272753592 */
+"buttonClose" = "Chiudere";
+
+/* loco:63e391b028b5fa7bab41e292 */
+"buttonConfirm" = "Conferma";
+
+/* loco:62bf20b963bddf721324a142 */
+"buttonConfirmRestoreEmails" = "Ripristino";
+
+/* loco:64245322f2b3ab37ed1b26b2 */
+"buttonContinue" = "Continua";
 
 /* loco:651ebe26c0bfc1baa10da002 */
 "buttonCopyPassword" = "Copia la password";
 
-/* loco:651ebe4a1a15bf27e204db22 */
-"snackbarPasswordCopied" = "La password è stata copiata";
+/* loco:62b1c2566ff2923a1a5b0832 */
+"buttonCreate" = "Crea";
 
-/* loco:651ebf5b1a15bf27e204db25 */
-"syncTutorialInstallProfileTitle" = "Installare il profilo";
+/* loco:62c2ee4c19620114866e5bb2 */
+"buttonCreateAccount" = "Creare un account";
 
-/* loco:651ebf9f3e95150dce005d02 */
-"syncTutorialInstallProfileTip" = "Digita \"Profilo scaricato\" nella ricerca delle impostazioni per trovare facilmente la scheda!";
+/* loco:62b1c0de630e5a572542c032 */
+"buttonCreateFolder" = "Aggiungi una cartella";
+
+/* loco:64abb7007886284b68017193 */
+"buttonDetachMailbox" = "staccare l’indirizzo";
+
+/* loco:6267af44cf90a405c97af322 */
+"buttonDownload" = "Scarica";
+
+/* loco:6267aff571442d3f666a71c2 */
+"buttonDownloadAll" = "Scarica tutti";
+
+/* loco:62567ae448317f728353f752 */
+"buttonFeedback" = "Feedback";
+
+/* loco:62567a5b3e928d1b5930fc02 */
+"buttonFolders" = "Cartelle";
 
 /* loco:651ebfd6a9604ddb660b5e12 */
 "buttonGoToSettings" = "Vai alle impostazioni";
 
+/* loco:62567b2dadb07654e86a97e2 */
+"buttonHelp" = "Aiuto";
+
+/* loco:62b2e44a50f68769a0054863 */
+"buttonHyperlink" = "Aggiungere un collegamento ipertestuale";
+
 /* loco:651ec0181cd81d901b000d55 */
 "buttonImDone" = "Ho finito";
+
+/* loco:62567b5b0774bb46043833b2 */
+"buttonImportEmails" = "Importazione di e-mail";
+
+/* loco:62b2d9637708901a27423992 */
+"buttonItalic" = "Corsivo";
+
+/* loco:6425777e2343387912223aa2 */
+"buttonLater" = "Più tardi";
+
+/* loco:645b485e158c37a429012092 */
+"buttonLoadMore" = "Carica altre conversazioni";
+
+/* loco:62cbe12c9251f174a43c5205 */
+"buttonLogInDifferentAccount" = "Accedere con un altro account";
+
+/* loco:628dfebda6add66651161554 */
+"buttonLogin" = "Accesso";
+
+/* loco:65855b1bac34d439fd02e7e2 */
+"buttonMaybe" = "Forse";
+
+/* loco:6284fd623d98060ac31f76d5 */
+"buttonMore" = "Altro";
+
+/* loco:62567be2708ef36f6e378df2 */
+"buttonMoreStorage" = "Ottenere più spazio di archiviazione";
+
+/* loco:6267bafe7edebd666d7d6923 */
+"buttonNewMessage" = "Nuovo messaggio";
+
+/* loco:6527b7d4882400da7d04ffd2 */
+"buttonNo" = "No";
+
+/* loco:6581b2b5a7520b536b03f942 */
+"buttonOpenKdrive" = "Aprire in kDrive";
+
+/* loco:62cd642815742c678d4c30e4 */
+"buttonRefuse" = "Rifiuti";
+
+/* loco:64a2b7a35386a9ec49013e42 */
+"buttonRequestPassword" = "Richiesta password";
+
+/* loco:62567b81c34ca7494235e273 */
+"buttonRestoreEmails" = "Ripristino delle e-mail";
+
+/* loco:62b2e4a24486732cbc2f04d3 */
+"buttonSchedule" = "Programmare l’invio di un’e-mail in un secondo momento";
+
+/* loco:65957d479527393708069ee2 */
+"buttonSee" = "Vedi";
+
+/* loco:6268fc53412a8032745aaeb2 */
+"buttonSeeAll" = "Vedi tutti";
+
+/* loco:626918473e1b2d7fe4329d52 */
+"buttonSelectAll" = "Tutti";
+
+/* loco:657324e1fb3ef333a001d852 */
+"buttonSetNow" = "Imposta ora";
+
+/* loco:6267af86c6ebf234e9213012 */
+"buttonShare" = "Condividi";
+
+/* loco:64edf250cb0c86ab3001d1b2 */
+"buttonStart" = "Inizia";
+
+/* loco:62b2dd31865d4941c92777d3 */
+"buttonStrikeThrough" = "Sciopero attraverso";
+
+/* loco:62b2d26c5fd79a7b69199b92 */
+"buttonTextOptionsClose" = "Chiudere la formattazione del testo";
+
+/* loco:62b2cafadce4b504255da0e3 */
+"buttonTextOptionsOpen" = "Formattazione del testo aperto";
+
+/* loco:651588aec32dc5a9eb0b6c94 */
+"buttonTry" = "Prova";
+
+/* loco:62b2d9af68273c4a783d30d2 */
+"buttonUnderline" = "Sottolineatura";
+
+/* loco:641322a5ac96d1091376a812 */
+"buttonUnlock" = "Sblocca";
+
+/* loco:640adf8cc17f7c5be778c933 */
+"buttonUnselectAll" = "Nessuno";
+
+/* loco:642572dc0839911c7350abf2 */
+"buttonUpdate" = "Aggiorna";
+
+/* loco:62b42d5d2b411f48ef2eb982 */
+"buttonValid" = "Convalidare";
+
+/* loco:6527b7c3bffd89453201f9e2 */
+"buttonYes" = "Sì";
+
+/* loco:659ff1ea44e0167c0c012382 */
+"calendarAllDayLong" = "Tutta la giornata";
+
+/* loco:659ff39192d69743b20b4b72 */
+"calendarNotInvited" = "Non fai parte degli invitati";
+
+/* loco:65957d996979353c3e0956c4 */
+"calendarOrganizerName" = "%@ (Organizzatore)";
+
+/* loco:626664836e30e75f1c390202 */
+"ccTitle" = "Cc:";
+
+/* loco:64477b57fd06fe11190c1f13 */
+"comingSoon" = "Prossimamente…";
+
+/* loco:62a33e1331304f212d104d43 */
+"commercialFolder" = "Promozioni";
+
+/* loco:63a474bd648cd86d56444012 */
+"confirmLogoutDescription" = "Sei sicuro di volerti disconnettere da %@?";
+
+/* loco:63a473bcf3bb7f422358cfd2 */
+"confirmLogoutTitle" = "Disconnettersi";
+
+/* loco:62737dea7bd28e302301e5c2 */
+"contactActionAddToContacts" = "Aggiungi ai contatti";
+
+/* loco:62737e120020a371c709a8e2 */
+"contactActionCopyEmailAddress" = "Copia l’indirizzo e-mail";
+
+/* loco:62737d79e632c04950610ed2 */
+"contactActionWriteEmail" = "Scrivi un’e-mail";
+
+/* loco:627cef9a9e08324b604c8612 */
+"contactMe" = "Me";
+
+/* loco:62ed16680ed9e562702a5ab2 */
+"contactsSearch" = "Contatti";
+
+/* loco:628c9d1654bb544229106572 */
+"contentDescriptionButtonBack" = "Indietro";
+
+/* loco:6295d8a6be385969441d55f2 */
+"contentDescriptionButtonDeleteDraft" = "Cancella la bozza";
+
+/* loco:642456b7a9f7d62fda3252d2 */
+"contentDescriptionButtonDeleteHistory" = "Cancella la voce della cronologia";
+
+/* loco:62a9d5b4ee7aa537c701dec3 */
+"contentDescriptionButtonExpandAccountSelection" = "Ampliare la selezione dei conti";
+
+/* loco:62a9d5feeda57b54d242e682 */
+"contentDescriptionButtonExpandCustomFolders" = "Espandere le cartelle personalizzate";
+
+/* loco:64c13b09da352fc751044323 */
+"contentDescriptionButtonExpandFolder" = "Espandi la cartella %@";
+
+/* loco:628c9db2c6482c597c115152 */
+"contentDescriptionButtonExpandHeader" = "Espandi intestazione";
+
+/* loco:6422e08598a76c7f98590952 */
+"contentDescriptionButtonExpandRecipients" = "Vedi dettagli";
+
+/* loco:628c97c0e21b4a3db5218982 */
+"contentDescriptionButtonFilterSearch" = "Filtro di ricerca";
+
+/* loco:628c99d77702e65f5779df32 */
+"contentDescriptionButtonMenu" = "Menu";
+
+/* loco:630c6314609abb40215d6482 */
+"contentDescriptionButtonNext" = "Avanti";
+
+/* loco:64c1409a9dfa82cc110e3252 */
+"contentDescriptionButtonSelectSignature" = "Seleziona una firma diversa";
+
+/* loco:629f3973a183191c9564a302 */
+"contentDescriptionButtonSettings" = "Impostazioni";
+
+/* loco:64380fdd8d050844fe71ae26 */
+"contentDescriptionButtonShowPassword" = "Mostra password";
+
+/* loco:642bef2a4b57be636f4d03e2 */
+"contentDescriptionContactAlreadyUsed" = "Contatto già utilizzato come destinatario";
+
+/* loco:62864ffe2129f0730a307462 */
+"contentDescriptionIconAttachments" = "Dispone di allegati";
+
+/* loco:628ca42f2edf27145113fbb3 */
+"contentDescriptionIconCalendar" = "Ha un evento di calendario";
+
+/* loco:62864eec841ea80f560649f2 */
+"contentDescriptionIconFavorite" = "È il preferito";
+
+/* loco:64b621d61bdb4c64d60e80d2 */
+"contentDescriptionIconInvalidPassword" = "Sbloccare l’indirizzo e-mail";
+
+/* loco:628c9f21fe133f61075b64f2 */
+"contentDescriptionIconNewMail" = "Nuovo";
+
+/* loco:62b1d1ee36cd805389679933 */
+"contentDescriptionIconStorage" = "Stato di conservazione";
+
+/* loco:642430a9ce12f43b026e7ef2 */
+"contentDescriptionSelectedItem" = "Selezionato";
+
+/* loco:64a4240f5579c83f7b070182 */
+"contentDescriptionUnreadPastille" = "Questa cartella contiene i messaggi non letti";
+
+/* loco:62b9669e0e674b404f5a5212 */
+"contentDescriptionUserAvatar" = "Avatar utente";
+
+/* loco:64787b6c6a6ceb25210556d2 */
+"contentDescriptionWarningIcon" = "Avviso";
+
+/* loco:62b1c12cc1df8a35281faba4 */
+"createFolderName" = "Nome della cartella";
+
+/* loco:62b1c15d9ced2854214f09f2 */
+"createFolderNoParent" = "Nessuno";
+
+/* loco:62b1c1491ea473352a4fb205 */
+"createFolderParent" = "Cartella dei genitori";
+
+/* loco:6294648c19755a1ae9494462 */
+"dateTitle" = "Data:";
+
+/* loco:627e3fa5774ef45bfd4d3b92 */
+"draftFolder" = "Bozze";
+
+/* loco:6364d5ac2e2f281d52389ee2 */
+"draftPrefix" = "(Bozza)";
+
+/* loco:64243b4a9a9a1f26302e33f3 */
+"emailWithoutSubjectDescription" = "State per inviare un messaggio senza oggetto. Volete continuare?";
+
+/* loco:64243b2f0c473e027779afc4 */
+"emailWithoutSubjectTitle" = "Oggetto vuoto";
+
+/* loco:6348008e331e743e77176522 */
+"emptyStateFolderDescription" = "Non c’è nulla da vedere qui.";
+
+/* loco:63480020415e160cac510302 */
+"emptyStateFolderTitle" = "Questa cartella è vuota";
+
+/* loco:637799775ff1e6190b2cd622 */
+"emptyStateHistoryDescription" = "Ricerca per contatto o parole chiave";
+
+/* loco:626a51f5e1663d3865426573 */
+"emptyStateInboxDescription" = "Scrivete una nuova e-mail facendo clic su \"Nuovo messaggio\" nell’angolo in basso a destra.";
+
+/* loco:626a458f3be3444c205ee892 */
+"emptyStateInboxTitle" = "Non avete nessuna e-mail";
+
+/* loco:62a992fdee966e51e955b6d2 */
+"emptyStateNetworkDescription" = "Controllare la connessione o collegarsi a Internet per controllare le e-mail.";
+
+/* loco:62a992d5499836193818b633 */
+"emptyStateNetworkTitle" = "Non si è connessi a Internet";
+
+/* loco:633163748419ac683a189ba2 */
+"emptyStateSearchDescription" = "Non abbiamo trovato alcuna e-mail corrispondente alla vostra ricerca.";
+
+/* loco:63316306552e4c217c351c42 */
+"emptyStateSearchTitle" = "Nessun risultato";
+
+/* loco:641178c63f22e04fa704c022 */
+"emptyStateTrashDescription" = "Spostate i messaggi nel cestino. Verranno eliminati definitivamente dopo 30 giorni.";
+
+/* loco:641178a6902412584c6acf62 */
+"emptyStateTrashTitle" = "Il cestino è vuoto";
+
+/* loco:64a2b619946ed6ede60a85e2 */
+"enterPasswordDescription1" = "La password è stata modificata. Se non sei responsabile, contatta l’amministratore.";
+
+/* loco:64aba64bdb705f66d6043b03 */
+"enterPasswordDescription2" = "Inserisci la nuova password per l’indirizzo e-mail %@";
+
+/* loco:64a8005d6a8d4403460c9c42 */
+"enterPasswordOrDescription" = "o";
+
+/* loco:64a2b5254093e7708d0de5b2 */
+"enterPasswordTitle" = "Inserisci la password";
+
+/* loco:6493f877e4cdab71070ad552 */
+"errorAlreadyLinkedMailbox" = "Questo indirizzo e-mail è già collegato al vostro account";
+
+/* loco:644928aac87be149bf05d254 */
+"errorAtLeastOneRecipient" = "È richiesto almeno un destinatario";
+
+/* loco:64940ce4eee54db1a50e44b4 */
+"errorAttachmentNotFound" = "Allegato non trovato";
+
+/* loco:63d14902e3c4eb4832777c42 */
+"errorCancelAttachmentsUploadInProgress" = "Alcuni allegati vengono ancora importati. Se si chiude la vista, gli allegati andranno persi.";
+
+/* loco:6470516c5a7017daea03dde3 */
+"errorDraftNotFound" = "Bozza non trovata";
+
+/* loco:6449292ce5f4e56abb063f65 */
+"errorEditScheduledMessage" = "Impossibile modificare un messaggio pianificato o inviato";
+
+/* loco:6493fd86b3b044cbef0df789 */
+"errorFolderDoesNotExist" = "La cartella è inesistente";
+
+/* loco:645c9dbc8c94de23f7091a42 */
+"errorFolderNotFound" = "File non trovato";
+
+/* loco:64942b149051a862c5049f03 */
+"errorInvalidAttachment" = "Allegato non valido";
+
+/* loco:643e9d37c9a67764c307d742 */
+"errorInvalidCredentials" = "Email o password non valide";
+
+/* loco:64aea2c18a9e9776080ee393 */
+"errorInvalidEmailAddress" = "Indirizzo e-mail non valido";
+
+/* loco:64a3bb083ee4236af806d393 */
+"errorInvalidMailboxPassword" = "Password errata per l’indirizzo e-mail";
+
+/* loco:6502bdf0d8ec8382d70de1c7 */
+"errorLoadingMessage" = "Non è stato possibile scaricare questo messaggio dal server.";
+
+/* loco:628e1ad9d1c6366c8a4e6362 */
+"errorLoginDescription" = "La connessione non è riuscita.";
+
+/* loco:628e1af711413554dd3010a5 */
+"errorLoginTitle" = "Errore di accesso";
+
+/* loco:6450d3f93e5fcf13c9037b02 */
+"errorMailboxLocked" = "Questo indirizzo e-mail è bloccato";
+
+/* loco:64a3c705a13a2645f80da972 */
+"errorMailboxPasswordLength" = "La password deve essere compresa tra 6 e 80 caratteri";
+
+/* loco:645c9af969688c1b200ad4a2 */
+"errorMessageNotFound" = "Messaggio non trovato";
+
+/* loco:6494050cd62813225a066fb2 */
+"errorMoveDestinationNotFound" = "La cartella di destinazione è inesistente";
+
+/* loco:63ea46d0b146e764dd672ee2 */
+"errorNewFolderAlreadyExists" = "La cartella è già esistente";
+
+/* loco:64d209e0b3606abecd06b622 */
+"errorNewFolderInvalidCharacter" = "Il nome della cartella contiene caratteri non validi";
+
+/* loco:63fe19a90375095d660d0152 */
+"errorNewFolderNameTooLong" = "Il nome della cartella non deve superare i 255 caratteri";
+
+/* loco:64492a1e7d49e1ef190ab465 */
+"errorRefusedRecipients" = "Il server respinge tutti i destinatari";
+
+/* loco:649424a6e244ffcc6c011135 */
+"errorRefusedSender" = "Il server respinge il mittente";
+
+/* loco:6448ef7a5b39bc7e040ce0b3 */
+"errorSendLimitExceeded" = "Limite d’invio raggiunto";
+
+/* loco:6448e34925a77d88bc0f8ab4 */
+"errorTooManyRecipients" = "Troppi destinatari";
+
+/* loco:6493ff227390f40cdb06d7d3 */
+"errorUnableToCreateFolder" = "Impossibile creare la cartella";
+
+/* loco:649400300f4bf580f6093602 */
+"errorUnableToFlushFolder" = "Impossibile svuotare la cartella";
+
+/* loco:645c9bbb13c8e41a84040012 */
+"errorUnknown" = "Errore sconosciuto";
+
+/* loco:64db5dc6df82e571c9064552 */
+"externalDialogConfirmButton" = "Capisco";
+
+/* loco:64db5d146ded79bce2077106 */
+"externalDialogDescriptionExpeditor" = "Il mittente %@ non fa parte della vostra organizzazione o dei vostri contatti. Fate attenzione se state condividendo informazioni sensibili.";
+
+/* loco:64db6125fde80c52f005cd42 */
+"externalDialogDescriptionExpeditor-plural" = "Alcuni mittenti non fanno parte della vostra organizzazione o dei vostri contatti. Fate attenzione se state condividendo informazioni sensibili.";
+
+/* loco:64e7612b488e98f39d0960e2 */
+"externalDialogDescriptionExpeditor-plural-many" = "";
+
+/* loco:64db6d8c2395a8caf3096ae3 */
+"externalDialogDescriptionRecipient" = "Il destinatario %@ non fa parte della vostra organizzazione o dei vostri contatti. Fate attenzione se state condividendo informazioni sensibili.";
+
+/* loco:64db6e28e1a0ee7e7405efc5 */
+"externalDialogDescriptionRecipient-plural" = "Alcuni destinatari non fanno parte della vostra organizzazione o dei vostri contatti. Fate attenzione se condividete informazioni sensibili.";
+
+/* loco:64e7615fcdd6976491020982 */
+"externalDialogDescriptionRecipient-plural-many" = "";
+
+/* loco:64db5c4e6ded79bce2077102 */
+"externalDialogTitleExpeditor" = "Spedizioniere esterno";
+
+/* loco:64db5c9b91415c032d05f9f2 */
+"externalDialogTitleRecipient" = "Destinatario esterno";
+
+/* loco:64db5beeaa9eb013f7039f64 */
+"externalTag" = "Esterno";
+
+/* loco:6436aae98d2f282f4c6ba492 */
+"failToOpenDraft" = "Impossibile aprire la bozza";
+
+/* loco:62a9dbdf0bddbc02ce031ba2 */
+"favoritesFolder" = "Preferiti";
+
+/* loco:65982105ed32c3578b07f9c2 */
+"filterFocusAllowedMailboxesTitle" = "Cassette postali autorizzate";
+
+/* loco:659822fad61595fa7a0e9d02 */
+"filterFocusDescription" = "Consentire le notifiche per le caselle di posta selezionate.";
+
+/* loco:6598228f255baea380090282 */
+"filterFocusTitle" = "Filtrare le caselle di posta";
+
+/* loco:62665f7d647475580e06e912 */
+"fromTitle" = "Da:";
+
+/* loco:62c466f080a5557baa2d0d84 */
+"helpChatbot" = "Chatbot";
+
+/* loco:62c466d780a5557baa2d0d82 */
+"helpFAQ" = "FAQ";
+
+/* loco:62c4672bb812405fb22925f2 */
+"helpSubtitle" = "Per aiutarvi";
+
+/* loco:627a3c64f10f5f31f53e1c02 */
+"inboxFolder" = "Posta in arrivo";
+
+/* loco:62c427c7ad522f1ff078a162 */
+"loadingText" = "Caricamento…";
+
+/* loco:62baa8f1786752698b4ff2b2 */
+"lockAppTitle" = "Applicazione bloccata";
+
+/* loco:6491b5d13be3801fbb056c22 */
+"lockedMailboxDescription" = "L’accesso al tuo indirizzo e-mail è attualmente bloccato. Si prega di contattare l’amministratore.";
+
+/* loco:649adc1b599c6ce9d6099fa2 */
+"lockedMailboxDescription-plural" = "L’accesso alle caselle di posta elettronica è attualmente bloccato. Contattare l’amministratore.";
+
+/* loco:64ad0bc9605cc9e323051192 */
+"lockedMailboxDescription-plural-many" = "";
+
+/* loco:649e9f941e62d5ca5f032305 */
+"lockedMailboxTitle" = "Indirizzo e-mail bloccato";
+
+/* loco:649adbc029c685e8c20dc096 */
+"lockedMailboxTitle-plural" = "Indirizzi e-mail bloccati";
+
+/* loco:64ad0bf21a8c5c3877078262 */
+"lockedMailboxTitle-plural-many" = "";
+
+/* loco:62567b1163b65257647cd9a2 */
+"menuDrawerAdvancedActions" = "Azioni avanzate";
+
+/* loco:62b2f6bcdfa4fa28ad7bb122 */
+"menuDrawerMailboxStorage" = "%1$@ / %2$@ usato";
+
+/* loco:62df8c27cc288916217bd964 */
+"messageDetailsDateAt" = "%1$@ alle %2$@";
+
+/* loco:62df8aee00dc4d02575d73f2 */
+"messageDetailsYesterday" = "Ieri";
+
+/* loco:6294634e9f544121e77de3b2 */
+"messageForwardHeader" = "Messaggio inoltrato";
+
+/* loco:6400bb16c117ec0d866887b5 */
+"messageHideQuotedText" = "Nascondi la conversazione";
+
+/* loco:628b90d373427778f14fd442 */
+"messageIsDraftOption" = "Bozza";
+
+/* loco:628b6d81110f662ac808a165 */
+"messageReplyHeader" = "Il %1$@, %2$@ ha scritto:";
+
+/* loco:6400bafe3dae40636c716ea2 */
+"messageShowQuotedText" = "Visualizza la conversazione";
+
+/* loco:62bdb0cc6a325e7949729c03 */
+"moreStorageText1" = "La casella di posta elettronica è piena e non è possibile ricevere altri messaggi 🥲";
+
+/* loco:62befb1c9eaa4c1d85178522 */
+"moreStorageText2" = "Presto potrete sbloccare i limiti del vostro indirizzo e-mail ik.me (limite di archiviazione, invio, inoltro, …).";
+
+/* loco:62bdb04cdf5d4469a92796d2 */
+"moreStorageTitle" = "La vostra scatola è piena? Ottieni più spazio!";
+
+/* loco:62b1c0a1e915206f7e2d5764 */
+"moveTitle" = "In quale cartella vuoi spostare il tuo e-mail?";
+
+/* loco:62de4beb1a10d74d4c7e6df2 */
+"multipleSelectionCount" = "%d selezionato";
+
+/* loco:62de4c63f1fea7507653c564 */
+"multipleSelectionCount-plural" = "%d selezionati";
+
+/* loco:638f6ec13ee2595d320a7242 */
+"multipleSelectionCount-plural-many" = "";
+
+/* loco:64c21d831dadd3122c0c73f2 */
+"newAccountDescription" = "Comunicare e archiviare documenti e foto in un ecosistema privo di pubblicità che rispetta la vostra privacy";
+
+/* loco:64c21f7b8b1932323c047792 */
+"newAccountStorageDrive" = "15 GB di memoria kDrive";
+
+/* loco:64c21b867739a75d260c0272 */
+"newAccountStorageMail" = "20 GB di memoria per la posta";
+
+/* loco:64c2115c61d539e7b80a4f12 */
+"newAccountTitle" = "Create il vostro indirizzo e-mail gratuito a vita";
+
+/* loco:63c64f5d53fe7b61a46310c3 */
+"newFolderDialogHint" = "Nome della cartella";
+
+/* loco:63ee0cbbad127b43f8650242 */
+"newFolderDialogMovePositiveButton" = "Crea e sposta";
+
+/* loco:63f48eda1e7aec342b70c5a2 */
+"newFolderDialogTitle" = "Nuova cartella";
+
+/* loco:6266655afabeeb6bc774c932 */
+"newMessagePlaceholderTitle" = "Digitare il messaggio";
+
+/* loco:62fb875a6743ac5a237b07e3 */
+"noBodyTitle" = "Questo messaggio è vuoto.";
+
+/* loco:65016e82bd99726dde081533 */
+"noConnection" = "Nessuna connessione";
+
+/* loco:634ea0a369dac5469e1ce6d2 */
+"noConversationSelected" = "Nessuna conversazione selezionata in %@";
+
+/* loco:637ce6f461e6ca5762134f53 */
+"noFolderTitle" = "Non hai ancora nessuna cartella…";
+
+/* loco:62cbe0be9251f174a43c5202 */
+"noMailboxDescription" = "Non avete un indirizzo e-mail associato al vostro account Infomaniak. Per aggiungere un indirizzo, toccare il pulsante sottostante.";
+
+/* loco:62cbdde9f492421f63253c52 */
+"noMailboxTitle" = "Nessun indirizzo e-mail associato a questo account";
+
+/* loco:641196a69abab039df3a23f2 */
+"noNetwork" = "Nessun segnale";
+
+/* loco:62b9579b3dfaf347e24071f3 */
+"noSubjectTitle" = "(senza soggetto)";
+
+/* loco:6419645b21b6617fba4a8dc2 */
+"noUpdatedAt" = "Mai aggiornato";
+
+/* loco:648b1287231f4ec587052ef2 */
+"noValidMailboxTitle" = "Non è stata trovata una casella di posta elettronica valida. Per ora può essere risolto solo con la webmail.";
+
+/* loco:62baab4c017b586c23177d62 */
+"notificationGeneralChannelName" = "Notifiche generali";
+
+/* loco:641c3d9b723c7f035409c3d2 */
+"notificationNewEmail" = "Nuova email";
+
+/* loco:64ba47ab214bcfcf4c056014 */
+"notificationTitleArchive" = "Archiviato";
+
+/* loco:6492a96bf71de72ab30e8c02 */
+"notificationTitleCouldNotSaveDraft" = "Non è stato possibile salvare la bozza";
+
+/* loco:6492a702283a5b8f7e04df72 */
+"notificationTitleCouldNotSendDraft" = "Non è stato possibile inviare l’e-mail";
+
+/* loco:64ba47d60f3176675907c474 */
+"notificationTitleDelete" = "Soppresso";
+
+/* loco:659697fd4623764905012212 */
+"onBoardingContactsDescription" = "Questo accesso ti permetterà di scrivere facilmente ai tuoi contatti da Infomaniak Mail.\nRispettiamo la tua privacy e i tuoi contatti non saranno utilizzati per altri scopi.";
+
+/* loco:659697471cbe96642e01ee33 */
+"onBoardingContactsTitle" = "Consenti al l’applicazione di accedere ai contatti";
+
+/* loco:62c2eede5bc8fa0201054443 */
+"onBoardingDescription2" = "Personalizzate liberamente i vostri collegamenti nelle impostazioni dell’app.";
+
+/* loco:62c2ef31d501950dff4cbda2 */
+"onBoardingDescription3" = "Archiviare, eliminare, spostare o inserire tra i preferiti più messaggi contemporaneamente.";
+
+/* loco:62c2ef65c564d9260842db32 */
+"onBoardingDescription4" = "Create un indirizzo gratuito o collegatevi a un account Infomaniak esistente.";
+
+/* loco:659698f30ec60c361c04b452 */
+"onBoardingNotificationsDescription" = "Non perdete le e-mail importanti e rispondete rapidamente attivando le notifiche.";
+
+/* loco:65969899123f318740070872 */
+"onBoardingNotificationsTitle" = "Attivare le notifiche";
+
+/* loco:62c2ee73d35f8933bc4b5262 */
+"onBoardingTitle1" = "Scegliete il vostro tema";
+
+/* loco:62c2ee8cfa454b3819243ba2 */
+"onBoardingTitle2" = "Risparmiate tempo con le azioni a scorrimento";
+
+/* loco:62c2ef13b664ac09fe4a0762 */
+"onBoardingTitle3" = "Premere un messaggio per alcuni secondi per selezionare più messaggi";
+
+/* loco:62c2ef4a24eb9878221dcd63 */
+"onBoardingTitle4" = "Iniziate!";
+
+/* loco:62a9db9c563de5001402e482 */
+"pendingMessagesFolder" = "Messaggi in sospeso";
+
+/* loco:62c424189aacc248962d6224 */
+"pickerNoSelection" = "Nessuna selezione";
+
+/* loco:64ca16484dbf65eb9b0ea862 */
+"pleaseLogInFirst" = "Effettua prima il login nell’app Infomaniak Mail.";
+
+/* loco:64a695f87730509b39030ae2 */
+"popupDetachMailboxDescription" = "Sei sicuro di voler staccare l’indirizzo %@?";
+
+/* loco:64a3d65f003e64f9790f5ed2 */
+"popupDetachMailboxTitle" = "Staccare l’indirizzo";
+
+/* loco:62f0e594f7dcd16da506af53 */
+"recentSearchesTitle" = "Ricerche recenti";
+
+/* loco:62baabfc07e6a001ca19e535 */
+"refreshTokenError" = "Sei stato disconnesso a causa di un problema. Riconnettiti";
+
+/* loco:62cd640724b16d271d296bc2 */
+"reportDisplayProblemDescription" = "Accettate di condividere i vostri dati con i nostri sviluppatori in modo che possano aiutarvi a risolvere il vostro problema?";
+
+/* loco:62cd63dab9cd016ad83df012 */
+"reportDisplayProblemTitle" = "Segnala un problema di visualizzazione";
+
+/* loco:62cece41730aa70c5f3da0e2 */
+"reportPhishingDescription" = "Se il messaggio tenta di rubare informazioni sensibili (password, dati bancari, ecc.) e/o si spaccia per un’identità riconosciuta, si tratta di phishing.\n\nSegnalandolo a noi, accelererete l’individuazione di messaggi pericolosi per tutti i nostri utenti.\n\nLa segnalazione sarà inviata al nostro team di sicurezza per l’analisi e l’intervento. L’e-mail verrà inoltre spostata automaticamente nella cartella spam.";
+
+/* loco:62cecdf0413c882ede7451c2 */
+"reportPhishingTitle" = "Segnala un tentativo di phishing";
+
+/* loco:62bf21b31385976cad230b43 */
+"restoreEmailsBackupDate" = "Data di backup";
+
+/* loco:6525654879f83da8670bf0e4 */
+"restoreEmailsNoBackup" = "Nessun backup trovato";
+
+/* loco:62bf1dc26398da30d5675c52 */
+"restoreEmailsText" = "Tutte le e-mail torneranno nella vostra casella di posta.";
+
+/* loco:62bf1d8b38fa643dbc4c8b42 */
+"restoreEmailsTitle" = "Ripristino delle e-mail";
+
+/* loco:6527b6ed91798bfb5d0960e2 */
+"reviewAlertTitle" = "Ti piace la posta di Infomaniak?";
+
+/* loco:62a9db4ae45f1e29371ff802 */
+"scheduledMessagesFolder" = "Messaggi programmati";
+
+/* loco:640836aa0f09a82bfa0da572 */
+"searchAllMessages" = "Tutti i messaggi";
+
+/* loco:62fe2cd176cfba76ac066f32 */
+"searchFieldPlaceholder" = "Ricerca di un’e-mail";
+
+/* loco:62d5568245072b538b5aeaa2 */
+"searchFilterAttachment" = "Allegati";
+
+/* loco:62d559f7bd07624399379972 */
+"searchFilterFolder" = "Tutte le cartelle";
+
+/* loco:62d5561a4fa44b4a25143fc2 */
+"searchFilterRead" = "Leggi";
+
+/* loco:62d5563645aa5e5f197eef92 */
+"searchFilterUnread" = "Non letti";
+
+/* loco:6537b4ae2236eeafef03c882 */
+"searchFolderName" = "Ricerca";
+
+/* loco:62ac871d2502053d7b0cbb32 */
+"send" = "Inviare";
+
+/* loco:627e401ec1c7c02de9181292 */
+"sentFolder" = "Messaggi inviati";
+
+/* loco:657314ba4d64ddc63f074b42 */
+"setAsDefaultAppDescription" = "Scegli un servizio di posta elettronica sicuro e rispettoso della tua privacy e dell’ambiente.";
+
+/* loco:65731498b8f6abbd070ce033 */
+"setAsDefaultAppTitle" = "Rendi Infomaniak la tua app di Mail predefinita";
+
+/* loco:62bb144be43a74010f186a22 */
+"settingsAccentColor" = "Colore d’accento";
+
+/* loco:62bb14784ae7d90af73a4c93 */
+"settingsAccentColorDescription" = "Scegliere il colore d’accento per l’applicazione";
+
+/* loco:65391d2584dd77c18b02f0e2 */
+"settingsAiEngineDescription" = "Selezionare l’assistente di scrittura";
+
+/* loco:627a306b1e32027c033896b2 */
+"settingsAppLock" = "Blocco dell’app";
+
+/* loco:62c693f572adfe66fd2a82b7 */
+"settingsCancellationPeriodDescription" = "Avete la possibilità di annullare l’invio della vostra email fino a 30 secondi.";
+
+/* loco:627a53b37b420855254af032 */
+"settingsCancellationPeriodTitle" = "Periodo di cancellazione dell’invio";
+
+/* loco:627a40651c78f22cb67efdd2 */
+"settingsDefault" = "Predefinito";
+
+/* loco:6295d7b8a080fe0c5d544952 */
+"settingsDelaySeconds" = "%d secondi";
+
+/* loco:627a40878416713fac6e6c82 */
+"settingsDensityOptionCompact" = "Compatto";
+
+/* loco:627a40769905e5026f4309f3 */
+"settingsDensityOptionLarge" = "Grande";
+
+/* loco:62cd280d733bbc7d8f42d194 */
+"settingsDensityOptionNormal" = "Normale";
+
+/* loco:6295d75d0ac5a369d16b45c5 */
+"settingsDisabled" = "Disabili";
+
+/* loco:63e11e5771d13a480771a162 */
+"settingsEnableNotifications" = "Abilitazione delle notifiche";
+
+/* loco:62c691f711673b15f21d70b4 */
+"settingsEnabled" = "Abilitato";
+
+/* loco:64df15c6e992ed0689022852 */
+"settingsExternalContentDescription" = "Visualizzare il contenuto esterno";
+
+/* loco:627a329eeeb721567557b3a2 */
+"settingsExternalContentTitle" = "contenuto esterno";
+
+/* loco:627a3cf1cf1b8849996f97c2 */
+"settingsInboxAlias" = "Alias";
+
+/* loco:627a3cdead26c25ce97e94f4 */
+"settingsInboxRedirect" = "Reindirizzamenti";
+
+/* loco:627a3c9ce8a52f1aaf66dfb3 */
+"settingsInboxRules" = "Regole";
+
+/* loco:627a3c83ad26c25ce97e94f2 */
+"settingsInboxType" = "Tipo di posta in arrivo";
+
+/* loco:627a3be50425fc78766ad173 */
+"settingsMailboxGeneralAutoreply" = "Risposta automatica";
+
+/* loco:627a3c02e402a4304d327033 */
+"settingsMailboxGeneralFolders" = "Impostazioni delle cartelle";
+
+/* loco:627a3c1e89de4237021b5622 */
+"settingsMailboxGeneralNotifications" = "Notifiche";
+
+/* loco:627a3ba7d5f44d600a6f1803 */
+"settingsMailboxGeneralSignature" = "Impostazioni della firma";
+
+/* loco:627a418d50aa01240d501ae4 */
+"settingsOptionAlways" = "Sempre";
+
+/* loco:627a419ea4d53353fb587204 */
+"settingsOptionAskMe" = "Chiedetemi";
+
+/* loco:627a40fe23cf464d52393803 */
+"settingsOptionDarkTheme" = "Scuro";
+
+/* loco:627a40e8203b0403f20a0db5 */
+"settingsOptionLightTheme" = "Chiaro";
+
+/* loco:62cfb94ffe73905627441c62 */
+"settingsOptionSystemTheme" = "Sistema";
+
+/* loco:627a413a4a9b8944955fd206 */
+"settingsOptionThreadModeConversation" = "Discussioni";
+
+/* loco:627a4172023031490409d6b5 */
+"settingsOptionThreadModeMessage" = "Messaggi";
+
+/* loco:627a3e42e849cb43282bb484 */
+"settingsPrivacyDeleteSearchHistory" = "Cancella la cronologia delle ricerche";
+
+/* loco:627a3e68a068242a09294182 */
+"settingsPrivacyViewLogs" = "Visualizza i log";
+
+/* loco:627a30b24e987302322d0f64 */
+"settingsSectionAppearance" = "Aspetto";
+
+/* loco:627a2ab189bc1f4ea90851c2 */
+"settingsSectionEmailAddresses" = "Indirizzi e-mail";
+
+/* loco:627a2ae2fc0dff2fce768ef2 */
+"settingsSectionGeneral" = "Generale";
+
+/* loco:627a3e29e849cb43282bb482 */
+"settingsSectionPrivacy" = "La privacy";
+
+/* loco:627a3d03cf1b8849996f97c4 */
+"settingsSectionSecurity" = "Sicurezza";
+
+/* loco:627a3d72da7e600e226ddca2 */
+"settingsSecurityAdsFilter" = "Filtro annunci e social network";
+
+/* loco:62c6ec7e7d532f473370e902 */
+"settingsSecurityApprovedOption" = "Approvato";
+
+/* loco:62c6ec1bfdc46c4e9c7c5d82 */
+"settingsSecurityBlockedOption" = "Bloccato";
+
+/* loco:627a3df94e4a1b1eff6c77a2 */
+"settingsSecurityBlockedRecipients" = "Destinatari bloccati/autorizzati";
+
+/* loco:62c6ebd44e5adc4b6d1d9822 */
+"settingsSecurityBlockedRecipientsDescription" = "È possibile specificare i mittenti da approvare o bloccare affinché la nostra protezione antispam li elabori per voi.";
+
+/* loco:627a3daeda7e600e226ddca4 */
+"settingsSecuritySpamFilter" = "Filtro antispam";
+
+/* loco:627a409fc889f27ef73a61e2 */
+"settingsSelectDisplayModeDescription" = "Seleziona una modalità di visualizzazione";
+
+/* loco:627a54238311502e273bbd62 */
+"settingsSendAcknowledgement" = "Richiedete una conferma di ricezione per ogni e-mail inviata.";
+
+/* loco:627a5401ba58a853294d57a2 */
+"settingsSendIncludeOriginalMessage" = "Includere il messaggio originale nella risposta";
+
+/* loco:627a2f67a6d27d332a2f4926 */
+"settingsSendTitle" = "Inviare";
+
+/* loco:644f6a7bf8a5eec20801ac93 */
+"settingsSignatureDescription" = "Selezionare una firma predefinita";
+
+/* loco:644b7ef4a60127b0b201ab52 */
+"settingsSignatureTitle" = "Firme";
+
+/* loco:6295e9101cbb5020e33ad4d2 */
+"settingsSwipeActionNone" = "Nessuno";
+
+/* loco:6295e8f405a6650e5621df92 */
+"settingsSwipeActionQuickActionsMenu" = "Menu Azioni rapide";
+
+/* loco:6295dbd84dc6ed5644064ba2 */
+"settingsSwipeActionReadUnread" = "Letto / non letto";
+
+/* loco:62c2b600d8c4bb2ee63957f2 */
+"settingsSwipeActionToDefine" = "Per definire";
+
+/* loco:627a323b7f79c0171c37aa42 */
+"settingsSwipeActionsTitle" = "Azioni di scorrimento";
+
+/* loco:62b017def2354224c578fc12 */
+"settingsSwipeDescription" = "Scorri gli elementi nella tua casella di posta e accedi rapidamente alle azioni più frequenti.";
+
+/* loco:6295d5d7b524ea4e9d4d72d3 */
+"settingsSwipeLongLeft" = "Passaggio lungo a sinistra";
+
+/* loco:6295d58f35b3260585685212 */
+"settingsSwipeLongRight" = "Passaggio lungo a destra";
+
+/* loco:6295d5b6dff6bd5f535fce82 */
+"settingsSwipeShortLeft" = "Breve strisciata a sinistra";
+
+/* loco:6295d5650b0ed37f63022fe3 */
+"settingsSwipeShortRight" = "Breve strisciata a destra";
+
+/* loco:627a40cb203b0403f20a0db2 */
+"settingsThemeDescription" = "Scelta del tema";
+
+/* loco:627a318d0c2fa16955156a22 */
+"settingsThemeTitle" = "Tema";
+
+/* loco:627a317093c0713ccc6df012 */
+"settingsThreadListDensityTitle" = "Densità dell’elenco delle discussioni";
+
+/* loco:64cca81829e8aeaec602e1c2 */
+"settingsThreadModeTitle" = "Modalità di visualizzazione dei messaggi";
+
+/* loco:64d2441dc9b7f2b678050fc4 */
+"settingsThreadModeWarningDescription" = "Si noti che la modifica di questa opzione comporta un nuovo download di tutti i messaggi";
+
+/* loco:64d2491e76ea5dc92c070c52 */
+"settingsThreadModeWarningTitle" = "Passare alla modalità %@?";
+
+/* loco:627e52f442b7411bfd029f02 */
+"settingsTitle" = "Impostazioni";
+
+/* loco:627a54958311502e273bbd74 */
+"settingsTransferAsAttachment" = "Come allegato";
+
+/* loco:62c6a408b365f734dd2c0d73 */
+"settingsTransferEmailsDescription" = "Quando si inoltra un’e-mail, scegliere la modalità di visualizzazione più adatta.";
+
+/* loco:627a53d47b420855254af035 */
+"settingsTransferEmailsTitle" = "Trasferimento di e-mail";
+
+/* loco:627a547ad27ea17771565867 */
+"settingsTransferInBody" = "Nel corpo del messaggio";
+
+/* loco:6538a602e0eb783378001bb2 */
+"shortcutNextAction" = "Avanti";
+
+/* loco:6538a626e0eb783378001bb4 */
+"shortcutPreviousAction" = "Precedente";
+
+/* loco:6538a4daa986575986004e72 */
+"shortcutRefreshAction" = "Aggiornare";
+
+/* loco:652fd443ec75b05b000d43f2 */
+"snackBarAccountDeleted" = "Account cancellato";
+
+/* loco:63f3961e7c16fb607809d632 */
+"snackbarBlockUserConfirmation" = "Il mittente è ora bloccato";
+
+/* loco:62bc67601f560d734f2fbe58 */
+"snackbarContactSaved" = "Nuovo contatto registrato con successo";
+
+/* loco:6502fd61e3b907c3db020f92 */
+"snackbarDeletedConversation" = "La conversazione non esiste più";
+
+/* loco:62cd644f5141ee164b494272 */
+"snackbarDisplayProblemReported" = "Problema di visualizzazione segnalato";
+
+/* loco:62b959dd7994e66bc4719df2 */
+"snackbarDraftDeleted" = "Bozza cancellata";
+
+/* loco:62b959afe3c12548284cb282 */
+"snackbarDraftSaved" = "Bozza salvata";
+
+/* loco:646e10cd8b1764c28f0fb3e2 */
+"snackbarDraftSaving" = "Salvataggio della bozza";
+
+/* loco:62bd85a64880c362bd5ece72 */
+"snackbarEmailCopiedToClipboard" = "Indirizzo e-mail copiato negli appunti";
+
+/* loco:63c6c6744cd306160719c9c2 */
+"snackbarEmailSending" = "Invio di e-mail in corso";
+
+/* loco:62a336b8e2b762772773d2c2 */
+"snackbarEmailSent" = "Email inviata";
+
+/* loco:62b42e39dbeac92077145712 */
+"snackbarInvalidUrl" = "URL non valido";
+
+/* loco:64df3c1f3e0659f4670b7093 */
+"snackbarMailboxPasswordRequested" = "Richiesta inviata all’amministratore";
+
+/* loco:638f5f9440687b206c230e64 */
+"snackbarMessageDeletedPermanently" = "Messaggio cancellato";
+
+/* loco:62ab223f0763d104d71437f2 */
+"snackbarMessageMoved" = "Messaggio spostato a %@";
+
+/* loco:62ab22a33a9b9314d8557222 */
+"snackbarMoveCancelled" = "Spostamento annullato";
+
+/* loco:651ebe4a1a15bf27e204db22 */
+"snackbarPasswordCopied" = "La password è stata copiata";
+
+/* loco:62ab4ae387f65e26e577dd42 */
+"snackbarReportPhishingConfirmation" = "Segnalato con successo";
+
+/* loco:62c2f9feea59c120ad52bc23 */
+"snackbarRestorationLaunched" = "Avvio del restauro";
+
+/* loco:62ab4ab51521a800290a7c32 */
+"snackbarSenderBlacklisted" = "Mittente inserito nella lista nera con successo";
+
+/* loco:638f5f3f40687b206c230e62 */
+"snackbarSenderBlacklisted-plural" = "Mittenti inseriti nella lista nera con successo";
+
+/* loco:638f6f0d5075370cf374e2a2 */
+"snackbarSenderBlacklisted-plural-many" = "";
+
+/* loco:653fa9122f7b384757074432 */
+"snackbarSubjectCopiedToClipboard" = "Soggetto copiato negli appunti";
+
+/* loco:638f5a17e9a49034ae006a92 */
+"snackbarThreadDeletedPermanently" = "Conversazione cancellata";
+
+/* loco:638f61c30f52e171f83f4ce2 */
+"snackbarThreadDeletedPermanently-plural" = "Conversazioni cancellate";
+
+/* loco:638f6f33a6d6283e9b3411a2 */
+"snackbarThreadDeletedPermanently-plural-many" = "";
+
+/* loco:62ab221b4956e9775f391ca6 */
+"snackbarThreadMoved" = "Conversazione spostata in %@";
+
+/* loco:638f6f4f55158c5b515a5ff2 */
+"snackbarThreadMoved-plural-many" = "";
+
+/* loco:62ab2274c8d2fe4bb7134de4 */
+"snackbarThreadsMoved" = "Conversazioni spostate al %@";
+
+/* loco:62a33e2d0c5ac4438c366a32 */
+"socialNetworksFolder" = "Reti sociali";
+
+/* loco:627e40381ad4112c06450102 */
+"spamFolder" = "Spam";
+
+/* loco:626664d06926336d9e25c462 */
+"subjectTitle" = "Oggetto:";
+
+/* loco:653112b14b84af451706ef56 */
+"syncCalendarsAndContactsDescription" = "Visualizza i contatti e il calendario direttamente dal dispositivo.";
+
+/* loco:651eca5dc41aeaf052015d62 */
+"syncCalendarsAndContactsTitle" = "Sincronizzazione di calendari e contatti";
+
+/* loco:651ebe0029cb784d2b0e1992 */
+"syncTutorialCopyPasswordDescription" = "Copia la password, che ti servirà per convalidare il passaggio successivo.";
+
+/* loco:651ebdb4528e72051a098242 */
+"syncTutorialCopyPasswordTitle" = "Copiare la password di convalida";
+
+/* loco:651ebbbc9d9d92b13b016333 */
+"syncTutorialDownloadProfileDescription" = "Per scaricare il profilo, fare clic su \"Download\" e poi autorizzare il download.";
+
+/* loco:651ebb317a265dd7c2066965 */
+"syncTutorialDownloadProfileTitle" = "Scarica il profilo di configurazione";
 
 /* loco:651ec05c094ca020b0060213 */
 "syncTutorialInstallProfileStep1" = "Nelle impostazioni, aprire la scheda \"Profilo scaricato\" e fare clic su installa.";
@@ -1422,22 +1434,118 @@
 "syncTutorialInstallProfileStep4" = "Incolla la password di convalida del passaggio precedente.";
 
 /* loco:651ec1014c5a0be89406c4d4 */
-"syncTutorialInstallProfileStep5" = "Torna all'applicazione Mail.";
+"syncTutorialInstallProfileStep5" = "Torna all’applicazione Mail.";
+
+/* loco:651ebf9f3e95150dce005d02 */
+"syncTutorialInstallProfileTip" = "Digita \"Profilo scaricato\" nella ricerca delle impostazioni per trovare facilmente la scheda!";
+
+/* loco:651ebf5b1a15bf27e204db25 */
+"syncTutorialInstallProfileTitle" = "Installare il profilo";
 
 /* loco:651ec8814a88e40c620a2f32 */
 "syncTutorialStepCount" = "%1$d di %2$d";
 
-/* loco:651eca5dc41aeaf052015d62 */
-"buttonSyncCalendarsAndContacts" = "Sincronizzazione di calendario e contatti";
+/* loco:63f380d5d0a8f81b511bf704 */
+"threadListDeletionConfirmationAlertDescription" = "Sei sicuro di voler cancellare questo messaggio in modo permanente?";
 
-/* loco:6525654879f83da8670bf0e4 */
-"restoreEmailsNoBackup" = "Nessun backup trovato";
+/* loco:63f377ed99071860fb4439d2 */
+"threadListDeletionConfirmationAlertDescription-plural" = "Sei sicuro di voler cancellare questi messaggi in modo permanente?";
 
-/* loco:6527b6ed91798bfb5d0960e2 */
-"reviewAlertTitle" = "Ti piace la posta di Infomaniak?";
+/* loco:641b1d7a9c76fa6987570e72 */
+"threadListDeletionConfirmationAlertDescription-plural-many" = "";
 
-/* loco:6527b7c3bffd89453201f9e2 */
-"buttonReviewAlertYes" = "Sì";
+/* loco:63edf25697f024075b239532 */
+"threadListDeletionConfirmationAlertTitle" = "Cancella %d messaggio";
 
-/* loco:6527b7d4882400da7d04ffd2 */
-"buttonReviewAlertNo" = "No";
+/* loco:63edf28c20221c0f3a6d30a2 */
+"threadListDeletionConfirmationAlertTitle-plural" = "Cancella %d messaggi";
+
+/* loco:6412e19cf8d74923f83fd492 */
+"threadListEmptyDraftButton" = "Bozze vuote";
+
+/* loco:63eddb9871489a3042032122 */
+"threadListEmptyFolderAlertDescription" = "Sei sicuro di voler eliminare definitivamente tutti i messaggi in questa cartella?";
+
+/* loco:63ebae36eeb4ae34ef49ba42 */
+"threadListEmptySpamButton" = "Spam vuoto";
+
+/* loco:63ebad842446f5106c0058b2 */
+"threadListEmptyTrashButton" = "Svuota il cestino";
+
+/* loco:62bc355b27ec7c112e166eb2 */
+"threadListHeaderLastUpdate" = "Aggiornato %@";
+
+/* loco:62bc35840445497c51137862 */
+"threadListHeaderUnreadCount" = "%@ non letto";
+
+/* loco:62bc35a8de12a01f3a49e022 */
+"threadListHeaderUnreadCount-plural" = "%@ non letti";
+
+/* loco:638f6f782bdb800e9d6c3682 */
+"threadListHeaderUnreadCount-plural-many" = "";
+
+/* loco:63d7e73a70ff84756f78f0b3 */
+"threadListHeaderUnreadCountMore" = "99 non letti";
+
+/* loco:6267f93e15e2421b9677e212 */
+"threadListSectionLastWeek" = "La scorsa settimana";
+
+/* loco:62c6b582acc973360733ab94 */
+"threadListSectionThisMonth" = "Questo mese";
+
+/* loco:6267f91723d767283212ffd2 */
+"threadListSectionThisWeek" = "Questa settimana";
+
+/* loco:6267f813a44c1a465c763c92 */
+"threadListSectionToday" = "Oggi";
+
+/* loco:63ebacb17b37201ea253d432 */
+"threadListSpamHint" = "I messaggi che sono rimasti nella cartella spam per più di 30 giorni saranno eliminati automaticamente.";
+
+/* loco:63ebabc469ccbb24d90659c2 */
+"threadListTrashHint" = "I messaggi rimasti nel cestino per più di 30 giorni saranno automaticamente eliminati.";
+
+/* loco:62860a31425f1905bb227912 */
+"titleMyAccount" = "Il mio account";
+
+/* loco:62860a56f6ea2c34fb742092 */
+"titleMyAccounts" = "I miei conti";
+
+/* loco:62665fa13789aa7e8353ad62 */
+"toTitle" = "A:";
+
+/* loco:641db88f88b1f63cb05aad52 */
+"tooManyRecipients" = "Non è possibile aggiungere questo indirizzo perché è stato raggiunto il limite di destinatari";
+
+/* loco:627e40419151de052d2d3962 */
+"trashFolder" = "Cestino";
+
+/* loco:62b95774aee47c626b773693 */
+"unknownRecipientTitle" = "(sconosciuto)";
+
+/* loco:64257388057ce0235d2c5222 */
+"updateAvailableDescription" = "Per vivere la migliore esperienza con Infomaniak Mail, ti consigliamo di aggiornare la tua applicazione.";
+
+/* loco:6425728328677e02905abef2 */
+"updateAvailableTitle" = "Aggiornamento disponibile!";
+
+/* loco:62b42dc3832cca6d684a4ae2 */
+"urlEntryTitle" = "Creare un collegamento ipertestuale";
+
+/* loco:62b4362a0524dc792a0ee634 */
+"urlPlaceholder" = "URL";
+
+/* loco:641d60b6f5c19a18734d9192 */
+"urlUserReportiOS" = "https://feedback.userreport.com/b0fada78-1555-4c59-abad-423e887534d5/";
+
+/* loco:65957e6e7dfe315a5d02add2 */
+"warningEventHasPassed" = "Questo evento è già passato";
+
+/* loco:6481d72ebb3c88db6e002332 */
+"warningNotificationsDisabledButton" = "Abilitarli nelle impostazioni";
+
+/* loco:6481d7112f7eca9f7e0ad572 */
+"warningNotificationsDisabledDescription" = "ATTENZIONE: le notifiche push sono disattivate.";
+
+/* loco:635fab674606bd5f944f7784 */
+"workInProgressTitle" = "Disponibile a breve";

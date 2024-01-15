@@ -63,6 +63,8 @@ final class NewMessageAlert: SheetState<NewMessageAlert.State> {
 struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dismissModal) var dismissModal
+    @EnvironmentObject private var mainViewState: MainViewState
+    @EnvironmentObject private var reviewManager: ReviewManager
 
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var draftManager: DraftManager
@@ -112,21 +114,26 @@ struct ComposeMessageView: View {
     init(editedDraft: EditedDraft, mailboxManager: MailboxManager, attachments: [Attachable] = []) {
         messageReply = editedDraft.messageReply
 
-        Self.writeDraftToRealm(mailboxManager.getRealm(), draft: editedDraft.draft)
-        _draft = StateRealmObject(wrappedValue: editedDraft.draft)
+        Self.writeDraftToRealm(mailboxManager.getRealm(), draft: editedDraft.detachedDraft)
+        _draft = StateRealmObject(wrappedValue: editedDraft.detachedDraft)
 
-        draftContentManager = DraftContentManager(
-            incompleteDraft: editedDraft.draft,
+        let currentDraftContentManager = DraftContentManager(
+            incompleteDraft: editedDraft.detachedDraft,
             messageReply: editedDraft.messageReply,
             mailboxManager: mailboxManager
         )
+        draftContentManager = currentDraftContentManager
 
         self.mailboxManager = mailboxManager
-        _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draft: editedDraft.draft,
+        _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draftLocalUUID: editedDraft.detachedDraft.localUUID,
                                                                            mailboxManager: mailboxManager))
         _initialAttachments = State(wrappedValue: attachments)
 
-        _aiModel = StateObject(wrappedValue: AIModel(mailboxManager: mailboxManager))
+        _aiModel = StateObject(wrappedValue: AIModel(
+            mailboxManager: mailboxManager,
+            draftContentManager: currentDraftContentManager,
+            editedDraft: editedDraft
+        ))
     }
 
     // MARK: - View
@@ -140,16 +147,20 @@ struct ComposeMessageView: View {
             do {
                 isLoadingContent = true
                 currentSignature = try await draftContentManager.prepareCompleteDraft()
-                attachmentsManager.completeUploadedAttachments()
+                await attachmentsManager.completeUploadedAttachments()
                 isLoadingContent = false
             } catch {
                 // Unable to get signatures, "An error occurred" and close modal.
-                snackbarPresenter.show(message: MailError.unknownError.localizedDescription)
+                snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
                 dismissMessageView()
             }
         }
         .onAppear {
-            attachmentsManager.importAttachments(attachments: initialAttachments, draft: draft)
+            attachmentsManager.importAttachments(
+                attachments: initialAttachments,
+                draft: draft,
+                disposition: AttachmentDisposition.defaultDisposition
+            )
             initialAttachments = []
 
             if featureFlagsManager.isEnabled(.aiMailComposer) && UserDefaults.shared.shouldPresentAIFeature {
@@ -165,7 +176,13 @@ struct ComposeMessageView: View {
             }
         }
         .onDisappear {
-            draftManager.syncDraft(mailboxManager: mailboxManager)
+            var shouldShowSnackbar = false
+            if !Bundle.main.isExtension && !mainViewState.isShowingSetAppAsDefaultDiscovery {
+                shouldShowSnackbar = !mainViewState.isShowingSetAppAsDefaultDiscovery
+                mainViewState.isShowingReviewAlert = reviewManager.shouldRequestReview()
+            }
+
+            draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: shouldShowSnackbar)
         }
         .interactiveDismissDisabled()
         .customAlert(isPresented: $alert.isShowing) {
@@ -185,14 +202,18 @@ struct ComposeMessageView: View {
                 dismissMessageView()
             }
         }
-        .aiDiscoveryPresenter(isPresented: $isShowingAIPopover) {
-            AIDiscoveryView(aiModel: aiModel)
+        .discoveryPresenter(isPresented: $isShowingAIPopover) {
+            DiscoveryView(item: .aiDiscovery) {
+                UserDefaults.shared.shouldPresentAIFeature = false
+            } completionHandler: { willShowAIPrompt in
+                aiModel.isShowingPrompt = willShowAIPrompt
+            }
         }
         .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {
             AIPromptView(aiModel: aiModel)
         }
         .sheet(isPresented: $aiModel.isShowingProposition) {
-            AIPropositionView(aiModel: aiModel, draft: draft)
+            AIPropositionView(aiModel: aiModel)
         }
         .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
@@ -230,6 +251,7 @@ struct ComposeMessageView: View {
             }
         }
         .introspect(.scrollView, on: .iOS(.v15, .v16, .v17)) { scrollView in
+            guard self.scrollView != scrollView else { return }
             self.scrollView = scrollView
             scrollView.keyboardDismissMode = .interactive
         }
@@ -270,33 +292,25 @@ struct ComposeMessageView: View {
                 case .many, .one:
                     HStack(spacing: UIPadding.medium) {
                         Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
-                            .foregroundColor(MailResourcesAsset.onTagExternalColor)
-                            .textStyle(.bodySmall)
-
-                        Spacer()
+                            .font(MailTextStyle.bodySmall.font)
+                            .frame(maxWidth: .infinity, alignment: .leading)
 
                         Button {
                             matomo.track(eventWithCategory: .externals, name: "bannerInfo")
                             alert.state = .externalRecipient(state: externalTag)
                         } label: {
-                            MailResourcesAsset.info.swiftUIImage
-                                .resizable()
-                                .foregroundColor(MailResourcesAsset.onTagExternalColor)
-                                .frame(width: 16, height: 16)
+                            IKIcon(MailResourcesAsset.info)
                         }
 
                         Button {
                             matomo.track(eventWithCategory: .externals, name: "bannerManuallyClosed")
                             isShowingExternalTag = false
                         } label: {
-                            MailResourcesAsset.close.swiftUIImage
-                                .resizable()
-                                .foregroundColor(MailResourcesAsset.onTagExternalColor)
-                                .frame(width: 16, height: 16)
+                            IKIcon(MailResourcesAsset.close)
                         }
                     }
-                    .frame(maxWidth: .infinity)
                     .padding(value: .regular)
+                    .foregroundStyle(MailResourcesAsset.onTagExternalColor)
                     .background(MailResourcesAsset.yellowColor.swiftUIColor)
                 case .none:
                     EmptyView()
@@ -334,7 +348,15 @@ struct ComposeMessageView: View {
             alert.state = .emptySubject(handler: sendDraft)
             return
         }
+
         sendDraft()
+
+        if !Bundle.main.isExtension {
+            mainViewState.isShowingSetAppAsDefaultDiscovery = UserDefaults.shared.shouldPresentSetAsDefaultDiscovery
+            if !mainViewState.isShowingSetAppAsDefaultDiscovery {
+                mainViewState.isShowingChristmasEasterEgg = true
+            }
+        }
     }
 
     private func sendDraft() {

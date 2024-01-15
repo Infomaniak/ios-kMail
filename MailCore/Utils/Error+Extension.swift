@@ -41,8 +41,8 @@ public func tryOrDisplayError(_ body: () async throws -> Void) async {
 private func displayErrorIfNeeded(error: Error) {
     @InjectService var snackbarPresenter: SnackBarPresentable
     if let error = error as? MailError {
-        if error.shouldDisplay {
-            snackbarPresenter.show(message: error.errorDescription)
+        if error.shouldDisplay, let errorDescription = error.errorDescription {
+            snackbarPresenter.show(message: errorDescription)
         } else {
             SentrySDK.capture(message: "Encountered error that we didn't display to the user") { scope in
                 scope.setContext(

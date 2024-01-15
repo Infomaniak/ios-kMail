@@ -29,7 +29,7 @@ struct ContactActionView: View {
     @Environment(\.dismiss) private var dismiss
 
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var navigationState: NavigationState
+    @EnvironmentObject private var mainViewState: MainViewState
 
     let recipient: Recipient
     let action: Action
@@ -61,7 +61,7 @@ struct ContactActionView: View {
 
     private func writeEmail() {
         dismiss()
-        navigationState.editedDraft = EditedDraft.writing(to: recipient)
+        mainViewState.editedDraft = EditedDraft.writing(to: recipient)
     }
 
     private func addToContacts() {

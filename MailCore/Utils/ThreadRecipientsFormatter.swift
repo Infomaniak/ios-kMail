@@ -60,13 +60,22 @@ public extension Thread {
             case 0:
                 return MailResourcesStrings.Localizable.unknownRecipientTitle
             case 1:
-                return CommonContact(recipient: fromArray[0], contextMailboxManager: contextMailboxManager).formatted()
+                let contactConfiguration = ContactConfiguration.recipient(
+                    recipient: fromArray[0],
+                    contextMailboxManager: contextMailboxManager
+                )
+                let contact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
+                return contact.formatted()
             default:
                 let fromCount = min(fromArray.count, Constants.threadCellMaxRecipients)
                 return fromArray[0 ..< fromCount]
                     .map {
-                        CommonContact(recipient: $0, contextMailboxManager: contextMailboxManager)
-                            .formatted(style: .shortName)
+                        let contactConfiguration = ContactConfiguration.recipient(
+                            recipient: $0,
+                            contextMailboxManager: contextMailboxManager
+                        )
+                        let contact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
+                        return contact.formatted(style: .shortName)
                     }
                     .joined(separator: ", ")
             }
@@ -74,7 +83,11 @@ public extension Thread {
 
         private func formattedTo(thread: Thread) -> String {
             guard let to = thread.to.first else { return MailResourcesStrings.Localizable.unknownRecipientTitle }
-            return CommonContact(recipient: to, contextMailboxManager: contextMailboxManager).formatted()
+            let contact = CommonContactCache.getOrCreateContact(contactConfiguration: .recipient(
+                recipient: to,
+                contextMailboxManager: contextMailboxManager
+            ))
+            return contact.formatted()
         }
 
         public func format(_ value: Thread) -> String {

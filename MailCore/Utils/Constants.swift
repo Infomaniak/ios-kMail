@@ -21,7 +21,14 @@ import MailResources
 import SwiftSoup
 import SwiftUI
 
+public enum DeeplinkConstants {
+    public static let macSecurityAndPrivacy = URL(string: "x-apple.systempreferences:com.apple.preference.security")!
+    public static let iosPreferences = URL(string: "App-prefs:")!
+}
+
 public struct URLConstants {
+    public static let testFlight = URLConstants(urlString: "https://testflight.apple.com/join/t8dXx60N")
+    public static let appStore = URLConstants(urlString: "https://apps.apple.com/app/infomaniak-mail/id1622596573")
     public static let importMails = URLConstants(urlString: "https://import-email.infomaniak.com")
     public static let matomo = URLConstants(urlString: "https://analytics.infomaniak.com/matomo.php")
     public static let faq =
@@ -73,6 +80,8 @@ public enum Constants {
         return "const MESSAGE_SELECTOR = \"#\(divWrapperId)\"; \(mungeScript)"
     }()
 
+    public static let breakStringsAtLength = 30
+
     /// List of feature flags enabled by default (before getting API data)
     public static let defaultFeatureFlags: [FeatureFlag] = []
 
@@ -84,46 +93,12 @@ public enum Constants {
         return url.scheme?.caseInsensitiveCompare("mailto") == .orderedSame
     }
 
-    public static func forwardQuote(message: Message) -> String {
-        let date = DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short)
-        let to = ListFormatter.localizedString(byJoining: message.to.map(\.htmlDescription))
-        let subject = message.formattedSubject.replacingOccurrences(of: "'", with: "’")
-        var cc: String {
-            if !message.cc.isEmpty {
-                return "<div>\(MailResourcesStrings.Localizable.ccTitle) \(ListFormatter.localizedString(byJoining: message.cc.map(\.htmlDescription)))<br></div>"
-            } else {
-                return ""
-            }
-        }
-        return """
-        <div class=\"forwardContentMessage\">
-        <div>---------- \(MailResourcesStrings.Localizable.messageForwardHeader) ---------<br></div>
-        <div>\(MailResourcesStrings.Localizable.fromTitle) \(message.from.first?.htmlDescription ?? "")<br></div>
-        <div>\(MailResourcesStrings.Localizable.dateTitle) \(date)<br></div>
-        <div>\(MailResourcesStrings.Localizable.subjectTitle) \(subject)<br></div>
-        <div>\(MailResourcesStrings.Localizable.toTitle) \(to)<br></div>
-        \(cc)
-        <div><br></div>
-        <div><br></div>
-        \(message.body?.value?.replacingOccurrences(of: "'", with: "’") ?? "")
-        </div>
-        """
-    }
+    public static let signatureHTMLClass = "editorUserSignature"
+    public static let forwardQuoteHTMLClass = "forwardContentMessage"
+    public static let replyQuoteHTMLClass = "ik_mail_quote"
 
-    public static func replyQuote(message: Message) -> String {
-        let headerText = MailResourcesStrings.Localizable.messageReplyHeader(
-            DateFormatter.localizedString(from: message.date, dateStyle: .medium, timeStyle: .short),
-            message.from.first?.htmlDescription ?? ""
-        )
-        return """
-        <div id=\"answerContentMessage\" class=\"ik_mail_quote\" >
-        <div>\(headerText)</div>
-        <blockquote class=\"ws-ng-quote\">
-        \(message.body?.value?.replacingOccurrences(of: "'", with: "’") ?? "")
-        </blockquote>
-        </div>
-        """
-    }
+    public static let forwardRoot = "<div class=\"\(forwardQuoteHTMLClass)\">"
+    public static let replyRoot = "<div class=\"\(replyQuoteHTMLClass)\">"
 
     public static func globallyResignFirstResponder() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
@@ -142,7 +117,9 @@ public enum Constants {
         return dateFormatter.string(from: date)
     }
 
-    public static let signatureWrapperIdentifier = "editorUserSignature"
+    public static func localizedDate(_ date: Date) -> String {
+        return DateFormatter.localizedString(from: date, dateStyle: .medium, timeStyle: .short)
+    }
 
     public static let messageQuantityLimit = 500
     public static let pageSize = 50
@@ -174,6 +151,8 @@ public enum Constants {
 
     public static let backgroundRefreshTaskIdentifier = "com.infomaniak.mail.background-refresh"
 
+    public static let aiDetectPartsRegex = "^[^:]+:(?<subject>.+?)\n\\s*(?<content>.+)"
+
     public static let aiPromptExamples: Set = [
         MailResourcesStrings.Localizable.aiPromptExample1,
         MailResourcesStrings.Localizable.aiPromptExample2,
@@ -181,4 +160,12 @@ public enum Constants {
         MailResourcesStrings.Localizable.aiPromptExample4,
         MailResourcesStrings.Localizable.aiPromptExample5
     ]
+
+    public static let openingBeforeReview = 50
+
+    /// A count limit for the Contact cache in Extension mode, where we have strong memory constraints.
+    public static let contactCacheExtensionMaxCount = 50
+
+    /// Batch size of inline attachments during processing.
+    public static let inlineAttachmentBatchSize = 10
 }

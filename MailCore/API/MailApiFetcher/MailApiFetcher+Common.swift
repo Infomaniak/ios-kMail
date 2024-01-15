@@ -29,6 +29,7 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(.mailboxes)).data
     }
 
+    @discardableResult
     func addMailbox(mail: String, password: String) async throws -> MailboxLinkedResult {
         try await perform(request: authenticatedRequest(
             .addMailbox,
@@ -37,6 +38,7 @@ public extension MailApiFetcher {
         )).data
     }
 
+    @discardableResult
     func updateMailboxPassword(mailbox: Mailbox, password: String) async throws -> Bool {
         try await perform(request: authenticatedRequest(
             .updateMailboxPassword(mailboxId: mailbox.mailboxId),
@@ -45,6 +47,7 @@ public extension MailApiFetcher {
         )).data
     }
 
+    @discardableResult
     func askMailboxPassword(mailbox: Mailbox) async throws -> Bool {
         try await perform(request: authenticatedRequest(
             .askMailboxPassword(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox),

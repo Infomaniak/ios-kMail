@@ -24,12 +24,6 @@ import MailCore
 import PhotosUI
 import UniformTypeIdentifiers
 
-protocol Attachable {
-    var suggestedName: String? { get }
-    var type: UTType? { get }
-    func writeToTemporaryURL() async throws -> URL
-}
-
 extension NSItemProvider: Attachable {
     enum ErrorDomain: Error {
         case UTINotFound
@@ -40,11 +34,11 @@ extension NSItemProvider: Attachable {
             .first { UTType($0)?.conforms(to: .image) == true || UTType($0)?.conforms(to: .movie) == true } ?? ""
     }
 
-    var type: UTType? {
+    public var type: UTType? {
         return UTType(preferredIdentifier)
     }
 
-    func writeToTemporaryURL() async throws -> URL {
+    public func writeToTemporaryURL() async throws -> URL {
         switch underlyingType {
         case .isURL:
             let getPlist = try ItemProviderURLRepresentation(from: self)
@@ -73,43 +67,43 @@ extension NSItemProvider: Attachable {
 }
 
 extension PHPickerResult: Attachable {
-    var suggestedName: String? {
+    public var suggestedName: String? {
         return itemProvider.suggestedName
     }
 
-    var type: UTType? {
+    public var type: UTType? {
         return itemProvider.type
     }
 
-    func writeToTemporaryURL() async throws -> URL {
+    public func writeToTemporaryURL() async throws -> URL {
         return try await itemProvider.writeToTemporaryURL()
     }
 }
 
 extension URL: Attachable {
-    var suggestedName: String? {
+    public var suggestedName: String? {
         return lastPathComponent
     }
 
-    var type: UTType? {
+    public var type: UTType? {
         return UTType.data
     }
 
-    func writeToTemporaryURL() async throws -> URL {
+    public func writeToTemporaryURL() async throws -> URL {
         return self
     }
 }
 
 extension Data: Attachable {
-    var suggestedName: String? {
+    public var suggestedName: String? {
         return nil
     }
 
-    var type: UTType? {
+    public var type: UTType? {
         return UTType.image
     }
 
-    func writeToTemporaryURL() async throws -> URL {
+    public func writeToTemporaryURL() async throws -> URL {
         let temporaryURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         let temporaryFileURL = temporaryURL.appendingPathComponent("attachment").appendingPathExtension("jpeg")
         try FileManager.default.createDirectory(at: temporaryURL, withIntermediateDirectories: true)

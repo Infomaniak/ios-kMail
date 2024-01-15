@@ -61,7 +61,7 @@ struct ActionsPanelViewModifier: ViewModifier {
             ActionsView(mailboxManager: mailboxManager, target: messages, origin: origin, completionHandler: completionHandler)
         }
         .sheet(item: $messagesToMove) { messages in
-            MoveEmailView(movedMessages: messages, originFolder: originFolder)
+            MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: originFolder)
                 .sheetViewStyle()
         }
         .floatingPanel(item: $reportForJunkMessage) { reportForJunkMessage in

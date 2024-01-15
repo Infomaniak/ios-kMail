@@ -16,51 +16,41 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
 struct SyncWelcomeView: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
-    @Environment(\.colorScheme) private var colorScheme
+    @LazyInjectService private var matomo: MatomoUtils
 
     @Binding var navigationPath: [SyncProfileStep]
 
-    var body: some View {
-        ZStack {
-            GeometryReader { proxy in
-                MailResourcesAsset.onboardingBackground4.swiftUIImage
-                    .resizable()
-                    .frame(height: proxy.size.height * 0.62)
-                    .foregroundColor(colorScheme == .light ? accentColor.secondary : MailResourcesAsset.backgroundSecondaryColor)
-            }
-            .ignoresSafeArea(edges: .top)
+    private let slide = Slide(
+        id: 0,
+        backgroundImage: MailResourcesAsset.onboardingBackground4.swiftUIImage,
+        title: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle,
+        description: MailResourcesStrings.Localizable.syncCalendarsAndContactsDescription,
+        asset: MailResourcesAsset.syncIllustration.swiftUIImage
+    )
 
-            VStack(spacing: UIPadding.medium) {
-                MailResourcesAsset.illuSync.swiftUIImage
-                Spacer(minLength: UIPadding.medium)
-                Text(MailResourcesStrings.Localizable.syncTutorialWelcomeTitle)
-                    .textStyle(.header1)
-                    .multilineTextAlignment(.center)
-                HStack {
-                    ChipView(text: "iPhone")
-                    ChipView(text: "iPad")
+    var body: some View {
+        SlideView(slide: slide)
+            .ignoresSafeArea(edges: .top)
+            .safeAreaInset(edge: .bottom) {
+                VStack(spacing: UIPadding.small) {
+                    Button(MailResourcesStrings.Localizable.buttonStart) {
+                        matomo.track(eventWithCategory: .syncAutoConfig, name: "start")
+                        navigationPath.append(.downloadProfile)
+                    }
+                    .buttonStyle(.ikPlain)
+                    .controlSize(.large)
+                    .ikButtonFullWidth(true)
                 }
-                Spacer(minLength: UIPadding.medium)
+                .padding(.horizontal, value: .medium)
+                .padding(.bottom, UIPadding.onBoardingBottomButtons)
             }
-            .padding(value: .medium)
-        }
-        .safeAreaInset(edge: .bottom) {
-            VStack(spacing: UIPadding.medium) {
-                MailButton(label: MailResourcesStrings.Localizable.buttonStart) {
-                    navigationPath.append(.downloadProfile)
-                }
-                .mailButtonFullWidth(true)
-            }
-            .padding(.horizontal, value: .medium)
-            .padding(.bottom, UIPadding.onBoardingBottomButtons)
-        }
     }
 }
 

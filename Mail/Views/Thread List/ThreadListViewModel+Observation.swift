@@ -23,14 +23,14 @@ import SwiftUI
 extension ThreadListViewModel {
     private func threadResults() -> Results<Thread>? {
         guard let folder = folder.thaw() else {
-            sections = []
+            sectionsSubject.send([])
             return nil
         }
 
         let threadResults: Results<Thread>
         if let predicate = filter.predicate {
             threadResults = folder.threads
-                .filter(predicate + " OR uid == %@", selectedThread?.uid ?? "")
+                .filter(predicate + " OR uid == %@", selectedThreadOwner.selectedThread?.uid ?? "")
                 .sorted(by: \.date, ascending: false)
         } else {
             threadResults = folder.threads.sorted(by: \.date, ascending: false)
@@ -41,10 +41,9 @@ extension ThreadListViewModel {
 
     // MARK: - Observe global changes
 
-    func observeChanges(animateInitialThreadChanges: Bool = false) {
+    func observeChanges() {
         stopObserveChanges()
         observationThreadToken = threadResults()?
-            .sectioned(by: \Thread.sectionDate, ascending: false)
             .observe(on: observeQueue) { [weak self] changes in
                 guard let self else { return }
 
@@ -56,12 +55,12 @@ extension ThreadListViewModel {
 
                     DispatchQueue.main.sync {
                         self.filteredThreads = filteredThreads
-                        withAnimation(animateInitialThreadChanges ? .default : nil) {
-                            self.sections = newSections
-                        }
                     }
-                case .update(let results, _, _, _, _, _):
+                    sectionsSubject.send(newSections)
+                case .update(let results, _, _, _):
                     updateThreadResults(results: results.freezeIfNeeded())
+                case .error:
+                    break
                 }
 
                 // We only apply the first update when in "unread" mode
@@ -69,22 +68,6 @@ extension ThreadListViewModel {
                     stopObserveChanges()
                 }
             }
-
-        observationLastUpdateToken = folder.observe(keyPaths: [\Folder.lastUpdate], on: observeQueue) { [weak self] changes in
-            switch changes {
-            case .change(let folder, _):
-                let lastUpdate = folder.freezeIfNeeded().lastUpdate
-                Task {
-                    await MainActor.run {
-                        withAnimation {
-                            self?.lastUpdate = lastUpdate
-                        }
-                    }
-                }
-            default:
-                break
-            }
-        }
     }
 
     func stopObserveChanges() {
@@ -92,10 +75,18 @@ extension ThreadListViewModel {
         observationLastUpdateToken?.invalidate()
     }
 
-    private func mapSectionedResults(results: SectionedResults<String, Thread>) -> (threads: [Thread], sections: [DateSection]) {
+    private func mapSectionedResults(results: Results<Thread>) -> (threads: [Thread], sections: [DateSection]) {
+        let results = Dictionary(grouping: results.freezeIfNeeded()) { $0.sectionDate }
+            .sorted {
+                guard let firstDate = $0.value.first?.date,
+                      let secondDate = $1.value.first?.date else { return false }
+
+                return firstDate > secondDate
+            }
+
         var threads = [Thread]()
         let sections = results.map {
-            let sectionThreads = Array($0)
+            let sectionThreads = Array($0.value)
             threads.append(contentsOf: sectionThreads)
             return DateSection(sectionKey: $0.key, threads: sectionThreads)
         }
@@ -103,22 +94,22 @@ extension ThreadListViewModel {
         return (threads: threads, sections: sections)
     }
 
-    private func updateThreadResults(results: SectionedResults<String, Thread>) {
+    private func updateThreadResults(results: Results<Thread>) {
+        let oldFilteredThreads = filteredThreads
         let (filteredThreads, newSections) = mapSectionedResults(results: results)
 
         resetFilterIfNeeded(filteredThreads: filteredThreads)
 
         DispatchQueue.main.sync {
-            self.nextThreadIfNeeded(from: filteredThreads)
+            self.nextThreadIfNeeded(oldThreads: oldFilteredThreads, newThreads: filteredThreads)
             self.filteredThreads = filteredThreads
             if self.filter != .all,
                filteredThreads.count == 1,
                !self.filter.accepts(thread: filteredThreads[0]) {
                 self.filter = .all
             }
-            withAnimation {
-                self.sections = newSections
-            }
+
+            sectionsSubject.send(newSections)
         }
     }
 
@@ -140,9 +131,9 @@ extension ThreadListViewModel {
 
         let containAnyOf = NSPredicate(format: Self.containAnyOfUIDs, allThreadsUIDs)
         let realm = mailboxManager.getRealm()
-        let allThreads = realm.objects(Thread.self).filter(containAnyOf)
+        let allThreads = realm.objects(Thread.self)
+            .filter(containAnyOf)
             .sorted(by: \.date, ascending: false)
-            .sectioned(by: \Thread.sectionDate, ascending: false)
 
         observeFilteredThreadsToken = allThreads.observe(on: observeQueue) { [weak self] changes in
             guard let self else { return }
@@ -150,8 +141,10 @@ extension ThreadListViewModel {
             switch changes {
             case .initial:
                 break
-            case .update(let results, _, _, _, _, _):
+            case .update(let results, _, _, _):
                 updateThreadResults(results: results.freezeIfNeeded())
+            case .error:
+                break
             }
         }
     }
@@ -174,9 +167,11 @@ extension ThreadListViewModel {
             switch changes {
             case .initial(let all), .update(let all, _, _, _):
                 let unreadCount = all.where { $0.unseenMessages > 0 }.count
-                Task {
-                    await MainActor.run {
-                        self.unreadCount = unreadCount
+                // Disable filter if we have no unread emails left
+                guard unreadCount == 0 && filterUnreadOn else { return }
+                Task { @MainActor in
+                    withAnimation {
+                        self.filterUnreadOn = false
                     }
                 }
 

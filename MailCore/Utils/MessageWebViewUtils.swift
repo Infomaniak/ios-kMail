@@ -48,22 +48,9 @@ public enum MessageWebViewUtils {
         return resources
     }
 
-    public static func cleanHtmlContent(rawHtml: String) -> Document? {
-        do {
-            let dirtyDocument = try SwiftSoup.parse(rawHtml)
-            let cleanedDocument = try SwiftSoup.Cleaner(headWhitelist: .headWhitelist, bodyWhitelist: .extendedBodyWhitelist)
-                .clean(dirtyDocument)
-
-            // We need to remove the tag <meta http-equiv="refresh" content="x">
-            let metaRefreshTags = try cleanedDocument.select("meta[http-equiv='refresh']")
-            for metaRefreshTag in metaRefreshTags {
-                try metaRefreshTag.parent()?.removeChild(metaRefreshTag)
-            }
-
-            return cleanedDocument
-        } catch {
-            DDLogError("An error occurred while parsing body \(error)")
-            return nil
-        }
+    public static func createHTMLForPlainText(text: String) async throws -> String {
+        guard let root = try await SwiftSoupUtils(fromHTMLFragment: "<pre>").extractParentElement() else { return "" }
+        try root.text(text)
+        return try root.outerHtml()
     }
 }

@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -27,6 +29,8 @@ extension MailResourcesImages: Identifiable {
 }
 
 struct SyncInstallProfileTutorialView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @Environment(\.dismissModal) private var dismiss
     @Environment(\.openURL) private var openURL
 
@@ -67,7 +71,8 @@ struct SyncInstallProfileTutorialView: View {
                             if index == 0 {
                                 InformationBlockView(
                                     icon: MailResourcesAsset.lightBulbShine.swiftUIImage,
-                                    message: MailResourcesStrings.Localizable.syncTutorialInstallProfileTip
+                                    message: MailResourcesStrings.Localizable.syncTutorialInstallProfileTip,
+                                    iconColor: .accentColor
                                 )
                             }
                         }
@@ -95,19 +100,30 @@ struct SyncInstallProfileTutorialView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            VStack {
-                MailButton(label: MailResourcesStrings.Localizable.buttonGoToSettings) {
-                    openURL(URL(string: "App-prefs:")!)
+            VStack(spacing: UIPadding.small) {
+                Button(MailResourcesStrings.Localizable.buttonGoToSettings) {
+                    matomo.track(eventWithCategory: .syncAutoConfig, name: "openSettings")
+                    @InjectService var platformDetector: PlatformDetectable
+                    let url: URL
+                    if platformDetector.isMac {
+                        url = DeeplinkConstants.macSecurityAndPrivacy
+                    } else {
+                        url = DeeplinkConstants.iosPreferences
+                    }
+                    openURL(url)
                 }
-                .mailButtonFullWidth(true)
+                .buttonStyle(.ikPlain)
+
                 if userCameBackFromSettings {
-                    MailButton(label: MailResourcesStrings.Localizable.buttonImDone) {
+                    Button(MailResourcesStrings.Localizable.buttonImDone) {
+                        matomo.track(eventWithCategory: .syncAutoConfig, name: "done")
                         dismiss()
                     }
-                    .mailButtonFullWidth(true)
-                    .mailButtonStyle(.link)
+                    .buttonStyle(.ikLink())
                 }
             }
+            .controlSize(.large)
+            .ikButtonFullWidth(true)
             .padding(.top, value: .verySmall)
             .padding(.horizontal, value: .medium)
             .background(MailResourcesAsset.backgroundColor.swiftUIColor)

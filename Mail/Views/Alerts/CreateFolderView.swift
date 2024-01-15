@@ -25,17 +25,22 @@ import RealmSwift
 import SwiftUI
 
 struct CreateFolderView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @EnvironmentObject private var mailboxManager: MailboxManager
     // swiftlint:disable:next empty_count
     @ObservedResults(Folder.self, where: { $0.parents.count == 0 }) private var folders
 
     @State private var folderName = ""
     @State private var error: FolderError?
-    @State private var buttonIsEnabled = false
 
     @FocusState private var isFocused
 
     let mode: Mode
+
+    private var isButtonEnabled: Bool {
+        return !folderName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && error == nil
+    }
 
     enum Mode {
         case create
@@ -83,14 +88,13 @@ struct CreateFolderView: View {
                 .textStyle(.body)
                 .focused($isFocused)
 
-            Text(error?.localizedDescription ?? "None")
+            Text(error?.errorDescription ?? "")
                 .textStyle(.labelError)
                 .padding(.top, value: .verySmall)
                 .opacity(error == nil ? 0 : 1)
                 .padding(.bottom, value: .small)
 
-            ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: buttonIsEnabled) {
-                @InjectService var matomo: MatomoUtils
+            ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: isButtonEnabled) {
                 matomo.track(eventWithCategory: .createFolder, name: "confirm")
                 await tryOrDisplayError {
                     let folder = try await mailboxManager.createFolder(name: folderName)
@@ -108,16 +112,20 @@ struct CreateFolderView: View {
 
     private func checkFolderName(_ newName: String) {
         let trimmedName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
-        if trimmedName.count >= Constants.maxFolderNameLength {
-            error = .nameTooLong
-            // swiftlint:disable:next empty_count
-        } else if trimmedName.lowercased() == "inbox" || folders.where({ $0.name == trimmedName }).count > 0 {
-            error = .nameAlreadyExists
-        } else {
-            error = nil
+        guard !trimmedName.isEmpty else {
+            withAnimation { error = nil }
+            return
         }
 
-        buttonIsEnabled = !folderName.isEmpty && error == nil
+        withAnimation {
+            if trimmedName.count >= Constants.maxFolderNameLength {
+                error = .nameTooLong
+            } else if trimmedName.lowercased() == "inbox" || !folders.where({ $0.name == trimmedName }).isEmpty {
+                error = .nameAlreadyExists
+            } else {
+                error = nil
+            }
+        }
     }
 }
 

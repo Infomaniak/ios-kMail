@@ -66,8 +66,8 @@ public extension Endpoint {
                                             URLQueryItem(name: "product_id", value: "\(mailbox.hostingId)")])
     }
 
-    static var featureFlag: Endpoint {
-        return .base.appending(path: "/feature-flag/check")
+    static func featureFlag(_ mailboxUUID: String) -> Endpoint {
+        return .base.appending(path: "/feature-flag/check", queryItems: [URLQueryItem(name: "mailbox_uuid", value: mailboxUUID)])
     }
 
     static var addressBooks: Endpoint {
@@ -95,16 +95,23 @@ public extension Endpoint {
             .appending(path: "/securedProxy/cache/invalidation/profile/workspace/mailbox/\(mailboxId)/update_password")
     }
 
-    static var ai: Endpoint {
-        return .base.appending(path: "/ai")
+    static func ai(mailbox: Mailbox? = nil) -> Endpoint {
+        var queryItems = [URLQueryItem]()
+        if let mailbox {
+            queryItems.append(URLQueryItem(name: "mailbox_uuid", value: mailbox.uuid))
+        }
+        return .base.appending(path: "/ai", queryItems: queryItems)
     }
 
-    static func aiShortcut(contextId: String? = nil, shortcut: String) -> Endpoint {
-        var mobileAIEndpoint = Endpoint.ai.appending(path: "/mobile")
+    static func aiShortcut(contextId: String? = nil, shortcut: String, mailbox: Mailbox) -> Endpoint {
+        var mobileAIEndpoint = Endpoint.ai().appending(path: "/mobile")
         if let contextId {
             mobileAIEndpoint = mobileAIEndpoint.appending(path: "/\(contextId)")
         }
-        return mobileAIEndpoint.appending(path: "/\(shortcut)")
+        return mobileAIEndpoint.appending(
+            path: "/\(shortcut)",
+            queryItems: [URLQueryItem(name: "mailbox_uuid", value: mailbox.uuid)]
+        )
     }
 
     static func askMailboxPassword(hostingId: Int, mailboxName: String) -> Endpoint {

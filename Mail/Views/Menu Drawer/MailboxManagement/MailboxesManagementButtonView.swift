@@ -54,7 +54,7 @@ struct MailboxesManagementButtonView: View {
                     .resizable()
                     .scaledToFit()
                     .frame(width: 24, height: 24)
-                    .foregroundColor(.accentColor)
+                    .foregroundStyle(.tint)
                 Text(mailbox.email)
                     .textStyle(.body)
                     .lineLimit(1)
@@ -65,7 +65,7 @@ struct MailboxesManagementButtonView: View {
                 } else {
                     switch style {
                     case .blockedPassword:
-                        ChevronIcon(style: .right, color: MailResourcesAsset.textPrimaryColor.swiftUIColor)
+                        ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textPrimaryColor.swiftUIColor)
                     case .menuDrawer:
                         if let detailNumber {
                             Text(detailNumber < 100 ? "\(detailNumber)" : "99+")
@@ -77,7 +77,7 @@ struct MailboxesManagementButtonView: View {
                         if isSelected {
                             MailResourcesAsset.check.swiftUIImage
                                 .frame(width: 16, height: 16)
-                                .foregroundColor(.accentColor)
+                                .foregroundStyle(.tint)
                         }
                     case .locked:
                         EmptyView()

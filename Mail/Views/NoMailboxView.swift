@@ -43,17 +43,19 @@ struct NoMailboxView: View {
                         .padding(.top, UIPadding.onBoardingLogoTop)
                 }
 
-            VStack(spacing: UIPadding.medium) {
-                MailButton(icon: MailResourcesAsset.plus, label: MailResourcesStrings.Localizable.buttonAddEmailAddress) {
+            VStack(spacing: UIPadding.small) {
+                Button(MailResourcesStrings.Localizable.buttonAddEmailAddress) {
                     openURL(URLConstants.ikMe.url)
                 }
-                .mailButtonFullWidth(true)
+                .buttonStyle(.ikPlain)
 
-                MailButton(label: MailResourcesStrings.Localizable.buttonLogInDifferentAccount) {
+                Button(MailResourcesStrings.Localizable.buttonLogInDifferentAccount) {
                     isShowingLoginView = true
                 }
-                .mailButtonStyle(.link)
+                .buttonStyle(.ikLink())
             }
+            .controlSize(.large)
+            .ikButtonFullWidth(true)
             .padding(.horizontal, value: .medium)
             .padding(.bottom, UIPadding.onBoardingBottomButtons)
         }

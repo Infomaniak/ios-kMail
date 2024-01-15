@@ -23,7 +23,7 @@ import InfomaniakDI
 import RealmSwift
 import SwiftRegex
 
-public final class MailboxManager: ObservableObject, MailboxManageable {
+public final class MailboxManager: ObservableObject, MailboxManageable, RealmAccessible {
     @LazyInjectService var snackbarPresenter: SnackBarPresentable
     @LazyInjectService var mailboxInfosManager: MailboxInfosManager
 
@@ -38,6 +38,12 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
 
     public let apiFetcher: MailApiFetcher
     public let contactManager: ContactManager
+
+    enum ErrorDomain: Error {
+        case missingMessage
+        case missingFolder
+        case missingDraft
+    }
 
     public final class MailboxManagerConstants {
         private let fileManager = FileManager.default
@@ -67,7 +73,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 20,
+            schemaVersion: 23,
             migrationBlock: { migration, oldSchemaVersion in
                 // No migration needed from 0 to 16
                 if oldSchemaVersion < 17 {
@@ -76,6 +82,16 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 }
                 if oldSchemaVersion < 20 {
                     migration.deleteData(forType: SearchHistory.className())
+                }
+
+                if oldSchemaVersion < 21 {
+                    migration.enumerateObjects(ofType: Folder.className()) { oldObject, newObject in
+                        newObject?["remoteId"] = oldObject?["_id"]
+                    }
+                }
+                if oldSchemaVersion < 23 {
+                    migration.deleteData(forType: Thread.className())
+                    migration.deleteData(forType: Message.className())
                 }
             },
             objectTypes: [
@@ -91,17 +107,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
             ]
         )
         backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
-    }
 
-    public func getRealm() -> Realm {
-        do {
-            let realm = try Realm(configuration: realmConfiguration)
-            realm.refresh()
-            return realm
-        } catch {
-            // We can't recover from this error but at least we report it correctly on Sentry
-            Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration)
-        }
+        excludeRealmFromBackup()
     }
 
     /// Delete all mailbox data cache for user
@@ -142,7 +149,10 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         using realm: Realm? = nil
     ) {
         let realm = realm ?? getRealm()
-        guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
+        guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else {
+            logError(.missingMessage)
+            return
+        }
         message.inTrash = savedMessage.inTrash
         if keepProperties.contains(.fullyDownloaded) {
             message.fullyDownloaded = savedMessage.fullyDownloaded
@@ -164,7 +174,10 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         for folder: Folder,
         using realm: Realm
     ) {
-        guard let savedFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder._id) else { return }
+        guard let savedFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder.remoteId) else {
+            logError(.missingFolder)
+            return
+        }
         folder.unreadCount = savedFolder.unreadCount
         folder.lastUpdate = savedFolder.lastUpdate
         folder.cursor = savedFolder.cursor
@@ -187,27 +200,6 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     public func hasUnreadMessages() -> Bool {
         let realm = getRealm()
         return realm.objects(Folder.self).contains { $0.unreadCount > 0 }
-    }
-
-    public func cleanRealm() {
-        Task {
-            await backgroundRealm.execute { realm in
-
-                let folders = realm.objects(Folder.self)
-                let threads = realm.objects(Thread.self)
-                let messages = realm.objects(Message.self)
-
-                try? realm.safeWrite {
-                    realm.delete(threads)
-                    realm.delete(messages)
-                    for folder in folders {
-                        folder.cursor = nil
-                        folder.resetHistoryInfo()
-                        folder.computeUnreadCount()
-                    }
-                }
-            }
-        }
     }
 }
 

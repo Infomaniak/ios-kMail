@@ -66,12 +66,14 @@ extension View {
         }
     }
 
-    func foregroundColor(_ color: InfomaniakCoreColor) -> some View {
-        return foregroundColor(Color(color.color))
+    // With iOS 17+, we will be able to make `InfomaniakCoreColor` conform to `ShapeStyle`
+    func foregroundStyle(_ color: InfomaniakCoreColor) -> some View {
+        return foregroundStyle(Color(color.color))
     }
 
-    func foregroundColor(_ color: MailResourcesColors) -> some View {
-        return foregroundColor(color.swiftUIColor)
+    // With iOS 17+, we will be able to make `MailResourcesColors` conform to `ShapeStyle`
+    func foregroundStyle(_ color: MailResourcesColors) -> some View {
+        return foregroundStyle(color.swiftUIColor)
     }
 
     func tint(_ tint: MailResourcesColors) -> some View {

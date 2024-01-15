@@ -71,11 +71,11 @@ struct ThreadCellDataHolder {
         }
     }
 
-    func commonContact(contextMailboxManager: MailboxManager) -> CommonContact {
+    func contactConfiguration(contextMailboxManager: MailboxManager) -> ContactConfiguration {
         if let recipientToDisplay {
-            return CommonContact(recipient: recipientToDisplay, contextMailboxManager: contextMailboxManager)
+            return .recipient(recipient: recipientToDisplay, contextMailboxManager: contextMailboxManager)
         } else {
-            return CommonContact.emptyContact(contextMailboxManager: contextMailboxManager)
+            return .emptyContact
         }
     }
 }
@@ -103,6 +103,7 @@ struct ThreadCell: View {
     let density: ThreadDensity
     let isMultipleSelectionEnabled: Bool
     let isSelected: Bool
+    let avatarTapped: (() -> Void)?
 
     private var checkboxSize: CGFloat {
         density == .large ? UIConstants.checkboxLargeSize : UIConstants.checkboxSize
@@ -124,7 +125,8 @@ struct ThreadCell: View {
         density: ThreadDensity,
         accentColor: AccentColor,
         isMultipleSelectionEnabled: Bool = false,
-        isSelected: Bool = false
+        isSelected: Bool = false,
+        avatarTapped: (() -> Void)? = nil
     ) {
         self.thread = thread
 
@@ -134,6 +136,7 @@ struct ThreadCell: View {
         self.accentColor = accentColor
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
         self.isSelected = isSelected
+        self.avatarTapped = avatarTapped
     }
 
     // MARK: - Views
@@ -149,10 +152,13 @@ struct ThreadCell: View {
                     ZStack {
                         AvatarView(
                             mailboxManager: mailboxManager,
-                            displayablePerson: dataHolder.commonContact(contextMailboxManager: mailboxManager),
+                            contactConfiguration: dataHolder.contactConfiguration(contextMailboxManager: mailboxManager),
                             size: 40
                         )
                         .opacity(isSelected ? 0 : 1)
+                        .onTapGesture {
+                            avatarTapped?()
+                        }
                         CheckboxView(isSelected: isSelected, density: density, accentColor: accentColor)
                             .opacity(isSelected ? 1 : 0)
                     }
@@ -178,7 +184,7 @@ struct ThreadCell: View {
 
                 HStack(alignment: .top, spacing: UIPadding.verySmall) {
                     ThreadCellInfoView(subject: dataHolder.subject, preview: dataHolder.preview, density: density)
-                    Spacer()
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     ThreadCellDetailsView(hasAttachments: thread.hasAttachments, isFlagged: thread.flagged)
                 }
             }
@@ -209,14 +215,24 @@ struct ThreadCell: View {
     }
 }
 
-struct ThreadCell_Previews: PreviewProvider {
-    static var previews: some View {
+#Preview {
+    List {
         ThreadCell(thread: PreviewHelper.sampleThread,
                    density: .large,
                    accentColor: .blue,
                    isMultipleSelectionEnabled: false,
                    isSelected: false)
-            .previewLayout(.sizeThatFits)
-            .previewDevice("iPhone 13 Pro")
+        ThreadCell(thread: PreviewHelper.sampleThread,
+                   density: .normal,
+                   accentColor: .blue,
+                   isMultipleSelectionEnabled: false,
+                   isSelected: false)
+        ThreadCell(thread: PreviewHelper.sampleThread,
+                   density: .compact,
+                   accentColor: .blue,
+                   isMultipleSelectionEnabled: false,
+                   isSelected: false)
     }
+    .listStyle(.plain)
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }

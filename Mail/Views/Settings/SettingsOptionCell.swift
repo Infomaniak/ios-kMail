@@ -47,17 +47,15 @@ struct SettingsOptionCell: View {
                         .resizable()
                         .scaledToFit()
                         .frame(width: 24, height: 24)
-                        .foregroundColor(MailResourcesAsset.textTertiaryColor)
+                        .foregroundStyle(MailResourcesAsset.textTertiaryColor)
 
                     Text(title)
                         .textStyle(.body)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
                     if isSelected {
-                        MailResourcesAsset.check.swiftUIImage
-                            .resizable()
-                            .frame(width: 16, height: 16)
-                            .foregroundColor(.accentColor)
+                        IKIcon(MailResourcesAsset.check)
+                            .foregroundStyle(.tint)
                     }
                 }
                 .settingsItem()

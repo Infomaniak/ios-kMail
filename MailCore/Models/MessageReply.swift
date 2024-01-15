@@ -27,6 +27,10 @@ public struct MessageReply: Identifiable {
     public let message: Message
     public let replyMode: ReplyMode
 
+    public var isReplying: Bool {
+        replyMode == .reply || replyMode == .replyAll
+    }
+
     public init(message: Message, replyMode: ReplyMode) {
         self.message = message
         self.replyMode = replyMode

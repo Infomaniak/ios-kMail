@@ -24,6 +24,8 @@ import MailResources
 import SwiftUI
 
 struct MenuDrawerItemCell: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     let icon: MailResourcesImages
     let label: String
     let matomoName: String
@@ -32,16 +34,11 @@ struct MenuDrawerItemCell: View {
 
     var body: some View {
         Button {
-            @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: .menuDrawer, name: matomoName)
             action()
         } label: {
             HStack(spacing: UIPadding.menuDrawerCellSpacing) {
-                icon.swiftUIImage
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 24, height: 24)
-                    .foregroundColor(.accentColor)
+                IKIcon(icon, size: .large)
 
                 Text(label)
                     .textStyle(.bodyMedium)
@@ -54,12 +51,5 @@ struct MenuDrawerItemCell: View {
 }
 
 #Preview {
-    VStack {
-        MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
-                           label: "Importer des mails",
-                           matomoName: "") { print("Hello") }
-        MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
-                           label: MailResourcesStrings.Localizable.buttonSyncCalendarsAndContacts,
-                           matomoName: "") { print("Hello") }
-    }
+    MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload, label: "Importer des mails", matomoName: "") { print("Hello") }
 }

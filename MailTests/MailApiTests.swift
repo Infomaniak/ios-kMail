@@ -62,14 +62,14 @@ final class MailApiTests: XCTestCase {
     func testThreads() async throws {
         let mailbox = try await setUpTest()
         let folders = try await currentApiFetcher.folders(mailbox: mailbox)
-        _ = try await currentApiFetcher.threads(mailbox: mailbox, folderId: folders[0]._id)
+        _ = try await currentApiFetcher.threads(mailbox: mailbox, folderId: folders[0].remoteId)
     }
 
     func testMessage() async throws {
         let mailbox = try await setUpTest()
         let folders = try await currentApiFetcher.folders(mailbox: mailbox)
         let inbox = folders.first { $0.role == .inbox }!
-        let threadResult = try await currentApiFetcher.threads(mailbox: mailbox, folderId: inbox._id)
+        let threadResult = try await currentApiFetcher.threads(mailbox: mailbox, folderId: inbox.remoteId)
         _ = try await currentApiFetcher.message(message: threadResult.threads![0].messages[0])
     }
 
