@@ -24,12 +24,6 @@ import InfomaniakCoreUI
 import RealmSwift
 import SwiftRegex
 
-extension Recipient: Identifiable {
-    public var id: String {
-        return name + email
-    }
-}
-
 /// The composite protocol of the `ContactManager` service
 public typealias ContactManageable = ContactFetchable & ContactManagerCoreable & RealmAccessible
 

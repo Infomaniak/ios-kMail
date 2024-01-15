@@ -20,18 +20,18 @@ import MailCore
 import SwiftUI
 
 struct CalendarAttendeeCell: View {
-    let recipient: Recipient
+    let attendee: Attendee
 
     var body: some View {
         HStack(spacing: UIPadding.small) {
-            AttendeeAvatarView(recipient: recipient, choice: .yes)
+            AttendeeAvatarView(attendee: attendee)
 
             VStack(alignment: .leading, spacing: 0) {
-                if !recipient.name.isEmpty && recipient.name != recipient.email {
-                    Text(recipient.name)
+                if !attendee.name.isEmpty && attendee.name != attendee.email {
+                    Text(attendee.name)
                         .textStyle(.bodyMedium)
                 }
-                Text(recipient.email)
+                Text(attendee.email)
                     .textStyle(.bodySecondary)
             }
         }
@@ -43,8 +43,8 @@ struct CalendarAttendeeCell: View {
 
 #Preview {
     List {
-        CalendarAttendeeCell(recipient: PreviewHelper.sampleRecipient1)
-        CalendarAttendeeCell(recipient: PreviewHelper.sampleRecipient5)
+        CalendarAttendeeCell(attendee: PreviewHelper.sampleAttendee1)
+        CalendarAttendeeCell(attendee: PreviewHelper.sampleAttendee2)
     }
     .listStyle(.plain)
     .environmentObject(PreviewHelper.sampleMailboxManager)
