@@ -37,7 +37,7 @@ public struct RecipientHolder {
     var bcc = [Recipient]()
 }
 
-public final class Recipient: EmbeddedObject, Codable {
+public final class Recipient: EmbeddedObject, Correspondent, Codable {
     @Persisted public var email: String
     @Persisted public var name: String
     @Persisted public var isAddedByMe = false
@@ -79,18 +79,6 @@ public final class Recipient: EmbeddedObject, Codable {
         return recipients
     }
 
-    func isCurrentUser(currentAccountEmail: String) -> Bool {
-        return currentAccountEmail == email
-    }
-
-    func isMe(currentMailboxEmail: String) -> Bool {
-        return currentMailboxEmail == email
-    }
-
-    public func isSameRecipient(as recipient: Recipient) -> Bool {
-        return email == recipient.email && name == recipient.name
-    }
-
     private static let mailerDeamonRegex = Regex(pattern: "mailer-daemon@(?:.+.)?infomaniak.ch")
 
     public func isExternal(mailboxManager: MailboxManager) -> Bool {
@@ -116,14 +104,5 @@ public final class Recipient: EmbeddedObject, Codable {
         let isContact = !(mailboxManager.contactManager.contacts(matching: email)).isEmpty
 
         return !isKnownDomain && !isMailerDeamon && !isAnAlias && !isContact
-    }
-
-    public var htmlDescription: String {
-        let emailString = "<\(email)>"
-        if name.isEmpty {
-            return emailString
-        } else {
-            return "\(name) \(emailString)"
-        }
     }
 }

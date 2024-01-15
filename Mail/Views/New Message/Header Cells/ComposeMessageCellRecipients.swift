@@ -122,7 +122,7 @@ struct ComposeMessageCellRecipients: View {
             return
         }
 
-        guard !recipients.contains(where: { $0.isSameRecipient(as: recipient) }) else {
+        guard !recipients.contains(where: { $0.isSameCorrespondent(as: recipient) }) else {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientAlreadyUsed)
             return
         }

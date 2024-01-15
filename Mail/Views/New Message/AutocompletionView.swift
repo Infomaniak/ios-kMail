@@ -37,7 +37,7 @@ struct AutocompletionView: View {
     var body: some View {
         LazyVStack(spacing: UIPadding.small) {
             ForEach(autocompletion) { recipient in
-                let isLastRecipient = autocompletion.last?.isSameRecipient(as: recipient) == true
+                let isLastRecipient = autocompletion.last?.isSameCorrespondent(as: recipient) == true
                 let isUserProposal = shouldAddUserProposal && isLastRecipient
 
                 VStack(alignment: .leading, spacing: UIPadding.small) {
@@ -45,7 +45,7 @@ struct AutocompletionView: View {
                         addRecipient: addRecipient,
                         recipient: recipient,
                         highlight: textDebounce.text,
-                        alreadyAppend: addedRecipients.contains { $0.isSameRecipient(as: recipient) },
+                        alreadyAppend: addedRecipients.contains { $0.isSameCorrespondent(as: recipient) },
                         unknownRecipient: isUserProposal
                     )
 
