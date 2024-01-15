@@ -23,9 +23,9 @@ import SwiftUI
 struct CalendarAttendeesStack: View {
     private let maxDisplayedAttendees = 3
 
-    let attendees: [Recipient]
+    let attendees: [Attendee]
 
-    private var displayedAttendees: [Recipient] {
+    private var displayedAttendees: [Attendee] {
         return Array(attendees.prefix(maxDisplayedAttendees))
     }
 
@@ -36,7 +36,7 @@ struct CalendarAttendeesStack: View {
     var body: some View {
         HStack(alignment: .top, spacing: -8) {
             ForEach(displayedAttendees) { attendee in
-                AttendeeAvatarView(recipient: attendee, choice: .maybe)
+                AttendeeAvatarView(attendee: attendee)
             }
 
             if hiddenAttendees > 0 {
@@ -55,6 +55,6 @@ struct CalendarAttendeesStack: View {
 }
 
 #Preview {
-    CalendarAttendeesStack(attendees: Array(repeating: PreviewHelper.sampleRecipient1, count: 4))
+    CalendarAttendeesStack(attendees: PreviewHelper.sampleAttendees)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }

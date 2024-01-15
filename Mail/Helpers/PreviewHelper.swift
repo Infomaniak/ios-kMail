@@ -180,20 +180,28 @@ enum PreviewHelper {
         timezoneStart: "UTC",
         end: .now.addingTimeInterval(120),
         timezoneEnd: "UTC",
-        attendees: [sampleAttendee1, sampleAttendee2, sampleAttendee3].toRealmList()
+        attendees: sampleAttendees.toRealmList()
     )
+
+    static let sampleAttendees = [sampleAttendee1, sampleAttendee2, sampleAttendee3, sampleAttendee4]
 
     static let sampleAttendee1 = Attendee(email: "lucien.cheval@ik.com", name: "Lucien Cheval", isOrganizer: true)
     static let sampleAttendee2 = Attendee(
         email: "noel.flantier@domaine.ch",
         name: "noel.flantier@domaine.ch",
         isOrganizer: false,
-        state: .maybe
+        state: .yes
     )
     static let sampleAttendee3 = Attendee(
         email: "ellen.ripley@domaine.ch",
-        name: "ellen.ripley@domaine.ch",
+        name: "Ellen Ripley",
         isOrganizer: false,
-        state: .yes
+        state: .maybe
+    )
+    static let sampleAttendee4 = Attendee(
+        email: "steph.guy@domaine.ch",
+        name: "Steph Guy",
+        isOrganizer: false,
+        state: .no
     )
 }

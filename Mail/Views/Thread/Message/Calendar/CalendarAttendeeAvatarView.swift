@@ -23,13 +23,12 @@ import SwiftUI
 struct AttendeeAvatarView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    let recipient: Recipient
-    var choice: AttendeeState?
+    let attendee: Attendee
 
     var body: some View {
         AvatarView(
             mailboxManager: mailboxManager,
-            contactConfiguration: .correspondent(correspondent: recipient, contextMailboxManager: mailboxManager),
+            contactConfiguration: .correspondent(correspondent: attendee, contextMailboxManager: mailboxManager),
             size: 32 + UIConstants.avatarBorderLineWidth
         )
         .overlay {
@@ -38,14 +37,14 @@ struct AttendeeAvatarView: View {
         }
         .padding([.bottom, .trailing], UIPadding.verySmall)
         .overlay(alignment: .bottomTrailing) {
-            if let choice {
+            if let state = attendee.state {
                 Circle()
                     .fill(MailResourcesAsset.backgroundColor.swiftUIColor)
                     .frame(width: 16 + UIConstants.avatarBorderLineWidth, height: 16 + UIConstants.avatarBorderLineWidth)
                     .overlay {
-                        choice.icon.swiftUIImage
+                        state.icon.swiftUIImage
                             .resizable()
-                            .foregroundStyle(choice.color)
+                            .foregroundStyle(state.color)
                             .padding(UIConstants.avatarBorderLineWidth)
                     }
             }
@@ -55,10 +54,10 @@ struct AttendeeAvatarView: View {
 
 #Preview {
     VStack {
-        AttendeeAvatarView(recipient: PreviewHelper.sampleRecipient1, choice: .yes)
-        AttendeeAvatarView(recipient: PreviewHelper.sampleRecipient1, choice: .maybe)
-        AttendeeAvatarView(recipient: PreviewHelper.sampleRecipient1, choice: .no)
-        AttendeeAvatarView(recipient: PreviewHelper.sampleRecipient1, choice: nil)
+        AttendeeAvatarView(attendee: PreviewHelper.sampleRecipient1)
+        AttendeeAvatarView(attendee: PreviewHelper.sampleRecipient2)
+        AttendeeAvatarView(attendee: PreviewHelper.sampleRecipient3)
+        AttendeeAvatarView(attendee: PreviewHelper.sampleRecipient4)
     }
     .environmentObject(PreviewHelper.sampleMailboxManager)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
