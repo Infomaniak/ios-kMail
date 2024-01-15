@@ -28,7 +28,7 @@ struct CalendarBodyView: View {
             CalendarBodyDetailsView(event: event)
 
             if !event.attendees.isEmpty {
-                CalendarAttendeesView()
+                CalendarAttendeesView(organizer: event.organizer, attendees: event.attendees.toArray())
             }
 
             Button(action: addEventToCalendar) {

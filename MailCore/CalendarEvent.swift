@@ -60,7 +60,7 @@ public enum AttendeeState: String, CaseIterable, Codable, PersistableEnum {
     }
 }
 
-public final class Attendee: EmbeddedObject, Codable {
+public final class Attendee: EmbeddedObject, Correspondent, Codable {
     @Persisted public var email: String
     @Persisted public var name: String
     @Persisted public var isOrganizer: Bool
@@ -70,7 +70,8 @@ public final class Attendee: EmbeddedObject, Codable {
         super.init()
     }
 
-    public init(email: String, name: String, isOrganizer: Bool, state: AttendeeState? = nil) {
+    public convenience init(email: String, name: String, isOrganizer: Bool, state: AttendeeState? = nil) {
+        self.init()
         self.email = email
         self.name = name
         self.isOrganizer = isOrganizer
@@ -111,6 +112,14 @@ public final class CalendarEvent: EmbeddedObject, Codable {
     @Persisted public var timezoneEnd: String
     @Persisted public var attendees: RealmSwift.List<Attendee>
 
+    public var hasPassed: Bool {
+        return end < Date.now
+    }
+
+    public var organizer: Attendee? {
+        return attendees.first(where: \.isOrganizer)
+    }
+
     public var formattedDate: String {
         if Calendar.current.isDate(start, inSameDayAs: end) {
             return start.formatted(Constants.calendarDateFormat)
@@ -125,10 +134,6 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         } else {
             return "\(start.formatted(Constants.calendarTimeFormat)) - \(end.formatted(Constants.calendarTimeFormat))"
         }
-    }
-
-    public var hasPassed: Bool {
-        return end < Date.now
     }
 
     override public init() {

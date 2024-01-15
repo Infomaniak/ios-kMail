@@ -24,12 +24,6 @@ import InfomaniakCoreUI
 import RealmSwift
 import SwiftRegex
 
-extension Recipient: Identifiable {
-    public var id: String {
-        return name + email
-    }
-}
-
 public final class ContactManager: ObservableObject {
     public class ContactManagerConstants {
         private let fileManager = FileManager.default

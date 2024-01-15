@@ -26,8 +26,8 @@ struct CalendarAttendeesView: View {
     @State private var isShowingAttendees = false
     @State private var isShowingAllAttendees = false
 
-    let organizer = PreviewHelper.sampleRecipient4
-    let attendees = PreviewHelper.sampleRecipients
+    let organizer: Attendee?
+    let attendees: [Attendee]
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
@@ -48,17 +48,22 @@ struct CalendarAttendeesView: View {
 
             if isShowingAttendees {
                 VStack(alignment: .leading, spacing: UIPadding.regular) {
-                    HStack(spacing: UIPadding.small) {
-                        AvatarView(
-                            mailboxManager: mailboxManager,
-                            contactConfiguration: .correspondent(correspondent: organizer, contextMailboxManager: mailboxManager),
-                            size: 32
-                        )
+                    if let organizer {
+                        HStack(spacing: UIPadding.small) {
+                            AvatarView(
+                                mailboxManager: mailboxManager,
+                                contactConfiguration: .correspondent(
+                                    correspondent: organizer,
+                                    contextMailboxManager: mailboxManager
+                                ),
+                                size: 32
+                            )
 
-                        Text(MailResourcesStrings.Localizable.calendarOrganizerName(organizer.name))
-                            .textStyle(.body)
+                            Text(MailResourcesStrings.Localizable.calendarOrganizerName(organizer.name))
+                                .textStyle(.body)
+                        }
+                        .padding(.horizontal, value: .regular)
                     }
-                    .padding(.horizontal, value: .regular)
 
                     Button {
                         isShowingAllAttendees = true
@@ -84,6 +89,9 @@ struct CalendarAttendeesView: View {
 }
 
 #Preview {
-    CalendarAttendeesView()
-        .environmentObject(PreviewHelper.sampleMailboxManager)
+    CalendarAttendeesView(
+        organizer: PreviewHelper.sampleAttendee1,
+        attendees: [PreviewHelper.sampleAttendee1, PreviewHelper.sampleAttendee2]
+    )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }
