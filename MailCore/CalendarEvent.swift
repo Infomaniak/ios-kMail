@@ -61,28 +61,35 @@ public enum AttendeeState: String, CaseIterable, Codable, PersistableEnum {
 }
 
 public final class Attendee: EmbeddedObject, Codable {
-    @Persisted public var address: String
+    @Persisted public var email: String
     @Persisted public var name: String
-    @Persisted public var organizer: Bool
+    @Persisted public var isOrganizer: Bool
     @Persisted public var state: AttendeeState?
 
     override public init() {
         super.init()
     }
 
-    public init(address: String, name: String, organizer: Bool, state: AttendeeState? = nil) {
-        self.address = address
+    public init(email: String, name: String, isOrganizer: Bool, state: AttendeeState? = nil) {
+        self.email = email
         self.name = name
-        self.organizer = organizer
+        self.isOrganizer = isOrganizer
         self.state = state
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        address = try container.decode(String.self, forKey: .address)
+        email = try container.decode(String.self, forKey: .email)
         name = try container.decode(String.self, forKey: .name)
-        organizer = try container.decode(Bool.self, forKey: .organizer)
+        isOrganizer = try container.decode(Bool.self, forKey: .isOrganizer)
         state = try? container.decode(AttendeeState?.self, forKey: .state)
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case name
+        case email = "address"
+        case isOrganizer = "organizer"
+        case state
     }
 }
 
