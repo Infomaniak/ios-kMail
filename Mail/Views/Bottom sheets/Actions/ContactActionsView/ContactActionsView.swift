@@ -40,7 +40,10 @@ struct ContactActionsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.small) {
-            let contactConfiguration = ContactConfiguration.recipient(recipient: recipient, contextMailboxManager: mailboxManager)
+            let contactConfiguration = ContactConfiguration.correspondent(
+                correspondent: recipient,
+                contextMailboxManager: mailboxManager
+            )
             let contact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
             ContactActionsHeaderView(displayablePerson: contact)
 

@@ -29,7 +29,7 @@ struct AttendeeAvatarView: View {
     var body: some View {
         AvatarView(
             mailboxManager: mailboxManager,
-            contactConfiguration: .recipient(recipient: recipient, contextMailboxManager: mailboxManager),
+            contactConfiguration: .correspondent(correspondent: recipient, contextMailboxManager: mailboxManager),
             size: 32 + UIConstants.avatarBorderLineWidth
         )
         .overlay {

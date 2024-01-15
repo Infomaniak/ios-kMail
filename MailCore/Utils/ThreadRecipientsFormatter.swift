@@ -60,8 +60,8 @@ public extension Thread {
             case 0:
                 return MailResourcesStrings.Localizable.unknownRecipientTitle
             case 1:
-                let contactConfiguration = ContactConfiguration.recipient(
-                    recipient: fromArray[0],
+                let contactConfiguration = ContactConfiguration.correspondent(
+                    correspondent: fromArray[0],
                     contextMailboxManager: contextMailboxManager
                 )
                 let contact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
@@ -70,8 +70,8 @@ public extension Thread {
                 let fromCount = min(fromArray.count, Constants.threadCellMaxRecipients)
                 return fromArray[0 ..< fromCount]
                     .map {
-                        let contactConfiguration = ContactConfiguration.recipient(
-                            recipient: $0,
+                        let contactConfiguration = ContactConfiguration.correspondent(
+                            correspondent: $0,
                             contextMailboxManager: contextMailboxManager
                         )
                         let contact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
@@ -83,8 +83,8 @@ public extension Thread {
 
         private func formattedTo(thread: Thread) -> String {
             guard let to = thread.to.first else { return MailResourcesStrings.Localizable.unknownRecipientTitle }
-            let contact = CommonContactCache.getOrCreateContact(contactConfiguration: .recipient(
-                recipient: to,
+            let contact = CommonContactCache.getOrCreateContact(contactConfiguration: .correspondent(
+                correspondent: to,
                 contextMailboxManager: contextMailboxManager
             ))
             return contact.formatted()

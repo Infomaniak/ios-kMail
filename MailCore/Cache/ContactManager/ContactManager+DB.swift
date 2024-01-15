@@ -56,10 +56,10 @@ public extension ContactManager {
         return results
     }
 
-    func getContact(for recipient: Recipient, realm: Realm? = nil) -> MergedContact? {
+    func getContact(for correspondent: any Correspondent, realm: Realm? = nil) -> MergedContact? {
         let realm = realm ?? getRealm()
-        let matched = realm.objects(MergedContact.self).where { $0.email == recipient.email }
-        return matched.first { $0.name.caseInsensitiveCompare(recipient.name) == .orderedSame } ?? matched.first
+        let matched = realm.objects(MergedContact.self).where { $0.email == correspondent.email }
+        return matched.first { $0.name.caseInsensitiveCompare(correspondent.name) == .orderedSame } ?? matched.first
     }
 
     func addressBook(with id: Int) -> AddressBook? {

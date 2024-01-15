@@ -45,7 +45,10 @@ struct RecipientCell: View {
         HStack(spacing: UIPadding.small) {
             AvatarView(
                 mailboxManager: mailboxManager,
-                contactConfiguration: .recipient(recipient: recipient, contextMailboxManager: mailboxManager),
+                contactConfiguration: .correspondent(
+                    correspondent: recipient.freezeIfNeeded(),
+                    contextMailboxManager: mailboxManager
+                ),
                 size: 40
             )
             .accessibilityHidden(true)
