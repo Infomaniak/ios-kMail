@@ -19,15 +19,16 @@
 import MailCore
 import MailResources
 import NavigationBackport
+import RealmSwift
 import SwiftUI
 
 struct CalendarAllAttendeesView: View {
-    let attendees: [Recipient]
+    let attendees: [Attendee]
 
     var body: some View {
         VStack(spacing: 0) {
             ForEach(attendees) { attendee in
-                CalendarAttendeeCell(recipient: attendee)
+                CalendarAttendeeCell(attendee: attendee)
                     .overlay(alignment: .bottom) {
                         if attendee != attendees.last {
                             IKDivider()
@@ -39,6 +40,6 @@ struct CalendarAllAttendeesView: View {
 }
 
 #Preview {
-    CalendarAllAttendeesView(attendees: PreviewHelper.sampleRecipients)
+    CalendarAllAttendeesView(attendees: PreviewHelper.sampleAttendees)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }

@@ -26,6 +26,10 @@ public protocol Correspondent: Identifiable where ID == String {
 }
 
 public extension Correspondent {
+    var id: String {
+        return name + email
+    }
+
     var htmlDescription: String {
         let emailString = "<\(email)>"
         if name.isEmpty {
