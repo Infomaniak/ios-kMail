@@ -155,11 +155,12 @@ struct MessageView: View {
     }
 
     private func fetchEventCalendar() async throws {
-        guard let attachment = message.attachments.first(where: { $0.uti?.conforms(to: .calendarEvent) == true }) else {
+        guard let liveMessage = mailboxManager.getRealm().object(ofType: Message.self, forPrimaryKey: message.uid),
+              let attachment = liveMessage.attachments.first(where: { $0.uti?.conforms(to: .calendarEvent) == true }) else {
             return
         }
 
-        try await mailboxManager.attachmentCalendar(attachment)
+        try await mailboxManager.attachmentCalendar(attachment.freezeIfNeeded())
     }
 }
 
