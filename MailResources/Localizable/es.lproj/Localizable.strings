@@ -4,12 +4,9 @@
  * Release: Working copy
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Mon, 08 Jan 2024 14:11:04 +0100
+ * Exported by: Valentin Perignon
+ * Exported at: Fri, 12 Jan 2024 11:47:14 +0100
  */
-
-/* loco:63e11e5771d13a480771a162 */
-"SettingsEnableNotifications" = "Activar las notificaciones";
 
 /* loco:62bb154d7513e127cb2e9c94 */
 "accentColorBlueTitle" = "Azul";
@@ -497,6 +494,12 @@
 /* loco:6527b7c3bffd89453201f9e2 */
 "buttonYes" = "Sí";
 
+/* loco:659ff1ea44e0167c0c012382 */
+"calendarAllDayLong" = "Todo el día";
+
+/* loco:659ff39192d69743b20b4b72 */
+"calendarNotInvited" = "No estás invitado";
+
 /* loco:65957d996979353c3e0956c4 */
 "calendarOrganizerName" = "%@ (Organizador)";
 
@@ -966,10 +969,10 @@
 "notificationTitleDelete" = "Suprimido";
 
 /* loco:659697fd4623764905012212 */
-"onBoardingContactsDescription" = "Al autorizar el acceso, se simplificará la gestión de tus contactos y tu experiencia con el correo electrónico.";
+"onBoardingContactsDescription" = "Este acceso le permitirá escribir fácilmente a sus contactos desde Infomaniak Mail.\nRespetamos su privacidad y sus contactos no se utilizarán para ningún otro fin.";
 
 /* loco:659697471cbe96642e01ee33 */
-"onBoardingContactsTitle" = "Autorizar el acceso de Mail a tus contactos";
+"onBoardingContactsTitle" = "Permitir que la aplicación acceda a tus contactos";
 
 /* loco:62c2eede5bc8fa0201054443 */
 "onBoardingDescription2" = "Personaliza tus accesos directos libremente en los ajustes de la aplicación.";
@@ -1117,6 +1120,9 @@
 
 /* loco:6295d75d0ac5a369d16b45c5 */
 "settingsDisabled" = "Discapacitados";
+
+/* loco:63e11e5771d13a480771a162 */
+"settingsEnableNotifications" = "Activar las notificaciones";
 
 /* loco:62c691f711673b15f21d70b4 */
 "settingsEnabled" = "Activado";
