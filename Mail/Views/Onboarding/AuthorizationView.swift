@@ -23,34 +23,33 @@ import MailCore
 import MailResources
 import SwiftUI
 
+enum AuthorizationSlide: Int {
+    case contacts
+    case notifications
+}
+
 struct AuthorizationView: View {
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var matomo: MatomoUtils
 
     @EnvironmentObject private var navigationState: RootViewState
 
-    @State private var selection = 1
+    @State private var selection = AuthorizationSlide.contacts.rawValue
     @State private var isScrollDisabled = true
 
     private var slides = Slide.authorizationSlides
 
-    private var isLastSlide: Bool {
-        selection == slides.count
-    }
-
     var body: some View {
         VStack(spacing: 0) {
-            Group {
-                TabView(selection: $selection) {
-                    ForEach(slides) { slide in
-                        SlideView(slide: slide)
-                            .tag(slide.id)
-                    }
+            TabView(selection: $selection) {
+                ForEach(slides) { slide in
+                    SlideView(slide: slide)
+                        .tag(slide.id)
                 }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                .ignoresSafeArea(edges: .top)
-                .disabled(isScrollDisabled)
             }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .ignoresSafeArea(edges: .top)
+            .disabled(isScrollDisabled)
             .overlay(alignment: .top) {
                 MailResourcesAsset.logoText.swiftUIImage
                     .resizable()
@@ -61,15 +60,16 @@ struct AuthorizationView: View {
 
             VStack(spacing: UIPadding.small) {
                 Button(MailResourcesStrings.Localizable.contentDescriptionButtonNext) {
-                    if !isLastSlide {
+                    if selection == AuthorizationSlide.contacts.rawValue {
                         isScrollDisabled = false
                         Task {
-                            if await (try? CNContactStore().requestAccess(for: .contacts)) != nil {
-                                try await accountManager.currentMailboxManager?.contactManager.refreshContactsAndAddressBooks()
-                            }
+                            let accessAllowed = await (try? CNContactStore().requestAccess(for: .contacts))
                             withAnimation {
-                                selection = min(slides.count, selection + 1)
+                                selection = AuthorizationSlide.notifications.rawValue
                                 isScrollDisabled = true
+                            }
+                            if accessAllowed != nil {
+                                try await accountManager.currentMailboxManager?.contactManager.refreshContactsAndAddressBooks()
                             }
                         }
                     } else {
