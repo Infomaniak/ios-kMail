@@ -21,13 +21,19 @@ import MailResources
 import SwiftUI
 
 struct CalendarBodyView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     let event: CalendarEvent
+
+    private var iAmPartOfAttendees: Bool {
+        return event.iAmPartOfAttendees(currentMailboxEmail: mailboxManager.mailbox.email)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
-            CalendarBodyDetailsView(event: event)
+            CalendarBodyDetailsView(event: event, iAmPartOfAttendees: iAmPartOfAttendees)
 
-            if !event.attendees.isEmpty {
+            if !event.attendees.isEmpty && iAmPartOfAttendees {
                 CalendarAttendeesView(organizer: event.organizer, attendees: event.attendees.toArray())
             }
 
