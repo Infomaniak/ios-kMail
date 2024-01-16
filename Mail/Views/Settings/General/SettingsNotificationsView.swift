@@ -27,7 +27,6 @@ import SwiftUI
 struct SettingsNotificationsView: View {
     @LazyInjectService private var notificationService: InfomaniakNotifications
     @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var accountManager: AccountManager
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 

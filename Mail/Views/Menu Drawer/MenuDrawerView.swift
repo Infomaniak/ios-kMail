@@ -43,8 +43,6 @@ class NavigationDrawerState: ObservableObject {
 }
 
 struct NavigationDrawer: View {
-    @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
     @GestureState private var isDragGestureActive = false
