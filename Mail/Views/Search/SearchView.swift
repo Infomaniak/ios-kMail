@@ -23,8 +23,6 @@ import RealmSwift
 import SwiftUI
 
 struct SearchView: View {
-    @Environment(\.isCompactWindow) private var isCompactWindow
-
     @EnvironmentObject private var mainViewState: MainViewState
 
     @StateObject private var viewModel: SearchViewModel

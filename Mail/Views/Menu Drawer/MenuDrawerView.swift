@@ -118,9 +118,6 @@ struct NavigationDrawer: View {
 }
 
 struct MenuDrawerView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
-    @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingRestoreMails = false
