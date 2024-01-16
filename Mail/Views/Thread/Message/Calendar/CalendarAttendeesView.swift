@@ -29,6 +29,14 @@ struct CalendarAttendeesView: View {
     let organizer: Attendee?
     let attendees: [Attendee]
 
+    private var organizerContact: CommonContact? {
+        guard let organizer else { return nil }
+        return CommonContactCache.getOrCreateContact(contactConfiguration: .correspondent(
+            correspondent: organizer,
+            contextMailboxManager: mailboxManager
+        ))
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
             Button {
@@ -48,18 +56,15 @@ struct CalendarAttendeesView: View {
 
             if isShowingAttendees {
                 VStack(alignment: .leading, spacing: UIPadding.regular) {
-                    if let organizer {
+                    if let organizerContact {
                         HStack(spacing: UIPadding.small) {
                             AvatarView(
                                 mailboxManager: mailboxManager,
-                                contactConfiguration: .correspondent(
-                                    correspondent: organizer,
-                                    contextMailboxManager: mailboxManager
-                                ),
+                                contactConfiguration: .contact(contact: organizerContact),
                                 size: 32
                             )
 
-                            Text(MailResourcesStrings.Localizable.calendarOrganizerName(organizer.name))
+                            Text(MailResourcesStrings.Localizable.calendarOrganizerName(organizerContact.fullName))
                                 .textStyle(.body)
                         }
                         .padding(.horizontal, value: .regular)
