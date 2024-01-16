@@ -25,10 +25,21 @@ struct AttendeeAvatarView: View {
 
     let attendee: Attendee
 
+    private var hasChoice: Bool {
+        attendee.state != nil
+    }
+
+    private var cachedContact: CommonContact {
+        return CommonContactCache.getOrCreateContact(contactConfiguration: .correspondent(
+            correspondent: attendee,
+            contextMailboxManager: mailboxManager
+        ))
+    }
+
     var body: some View {
         AvatarView(
             mailboxManager: mailboxManager,
-            contactConfiguration: .correspondent(correspondent: attendee, contextMailboxManager: mailboxManager),
+            contactConfiguration: .contact(contact: cachedContact),
             size: 32 + UIConstants.avatarBorderLineWidth
         )
         .overlay {

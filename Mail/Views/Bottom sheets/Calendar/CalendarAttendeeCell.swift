@@ -20,18 +20,27 @@ import MailCore
 import SwiftUI
 
 struct CalendarAttendeeCell: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     let attendee: Attendee
+
+    private var cachedContact: CommonContact {
+        return CommonContactCache.getOrCreateContact(contactConfiguration: .correspondent(
+            correspondent: attendee,
+            contextMailboxManager: mailboxManager
+        ))
+    }
 
     var body: some View {
         HStack(spacing: UIPadding.small) {
             AttendeeAvatarView(attendee: attendee)
 
             VStack(alignment: .leading, spacing: 0) {
-                if !attendee.name.isEmpty && attendee.name != attendee.email {
-                    Text(attendee.name)
+                if !cachedContact.fullName.isEmpty && cachedContact.fullName != attendee.email {
+                    Text(cachedContact.fullName)
                         .textStyle(.bodyMedium)
                 }
-                Text(attendee.email)
+                Text(cachedContact.email)
                     .textStyle(.bodySecondary)
             }
         }
