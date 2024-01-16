@@ -24,11 +24,10 @@ import MailResources
 import SwiftUI
 
 struct ContactActionsView: View {
-    @Environment(\.dismiss) private var dismiss
-
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let recipient: Recipient
+
     private var actions: [Action] {
         let contact = mailboxManager.contactManager.getContact(for: recipient)
 
