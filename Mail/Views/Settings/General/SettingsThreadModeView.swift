@@ -78,8 +78,6 @@ struct SettingsThreadModeView: View {
     }
 }
 
-struct SettingsThreadModeView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsThreadModeView()
-    }
+#Preview {
+    SettingsThreadModeView()
 }

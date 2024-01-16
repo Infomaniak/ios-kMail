@@ -92,9 +92,10 @@ extension LargePicker where ButtonType == EmptyView {
     }
 }
 
-struct LargePicker_Previews: PreviewProvider {
-    static var previews: some View {
-        LargePicker(title: nil, selection: .constant(0), items: [.init(id: 0, name: "Value")])
-        LargePicker(title: "Title", selection: .constant(0), items: [.init(id: 0, name: "Value")])
-    }
+#Preview {
+    LargePicker(title: nil, selection: .constant(0), items: [.init(id: 0, name: "Value")])
+}
+
+#Preview {
+    LargePicker(title: "Title", selection: .constant(0), items: [.init(id: 0, name: "Value")])
 }

@@ -77,12 +77,10 @@ struct SwipeConfigCell: View {
     }
 }
 
-struct SwipeConfigCell_Previews: PreviewProvider {
-    static var previews: some View {
-        SwipeConfigCell(section: .leadingSwipe)
-            .previewDisplayName("Swipe Right")
+#Preview("Swipe Right") {
+    SwipeConfigCell(section: .leadingSwipe)
+}
 
-        SwipeConfigCell(section: .trailingSwipe)
-            .previewDisplayName("Swipe Left")
-    }
+#Preview("Swipe Left") {
+    SwipeConfigCell(section: .trailingSwipe)
 }

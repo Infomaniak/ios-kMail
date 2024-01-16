@@ -82,8 +82,6 @@ struct ComposeMessageSenderMenu: View {
     }
 }
 
-struct ComposeMessageStaticText_Previews: PreviewProvider {
-    static var previews: some View {
-        ComposeMessageSenderMenu(currentSignature: .constant(nil), autocompletionType: nil, type: .from, text: "email@email.com")
-    }
+#Preview {
+    ComposeMessageSenderMenu(currentSignature: .constant(nil), autocompletionType: nil, type: .from, text: "email@email.com")
 }

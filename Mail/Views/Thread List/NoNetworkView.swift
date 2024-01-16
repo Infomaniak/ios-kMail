@@ -30,8 +30,6 @@ struct NoNetworkView: View {
     }
 }
 
-struct NoNetworkView_Previews: PreviewProvider {
-    static var previews: some View {
-        NoNetworkView()
-    }
+#Preview {
+    NoNetworkView()
 }

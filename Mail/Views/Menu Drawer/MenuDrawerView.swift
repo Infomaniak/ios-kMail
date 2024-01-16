@@ -176,10 +176,8 @@ struct AppVersionView: View {
     }
 }
 
-struct MenuDrawerView_Previews: PreviewProvider {
-    static var previews: some View {
-        MenuDrawerView()
-            .environmentObject(PreviewHelper.sampleMailboxManager)
-            .environmentObject(NavigationDrawerState())
-    }
+#Preview {
+    MenuDrawerView()
+        .environmentObject(PreviewHelper.sampleMailboxManager)
+        .environmentObject(NavigationDrawerState())
 }

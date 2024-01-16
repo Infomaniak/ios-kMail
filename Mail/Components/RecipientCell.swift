@@ -76,9 +76,10 @@ struct RecipientCell: View {
     }
 }
 
-struct RecipientAutocompletionCell_Previews: PreviewProvider {
-    static var previews: some View {
-        RecipientCell(recipient: PreviewHelper.sampleRecipient1)
-        RecipientCell(recipient: PreviewHelper.sampleRecipient3)
-    }
+#Preview {
+    RecipientCell(recipient: PreviewHelper.sampleRecipient1)
+}
+
+#Preview {
+    RecipientCell(recipient: PreviewHelper.sampleRecipient3)
 }

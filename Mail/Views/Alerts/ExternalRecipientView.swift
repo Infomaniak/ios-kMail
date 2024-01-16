@@ -60,8 +60,6 @@ struct ExternalRecipientView: View {
     }
 }
 
-struct ExternalRecipientView_Previews: PreviewProvider {
-    static var previews: some View {
-        ExternalRecipientView(externalTagSate: .many, isDraft: false)
-    }
+#Preview {
+    ExternalRecipientView(externalTagSate: .many, isDraft: false)
 }

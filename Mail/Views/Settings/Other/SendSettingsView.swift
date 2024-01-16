@@ -76,8 +76,6 @@ struct SendSettingsView: View {
     }
 }
 
-struct SendSettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SendSettingsView()
-    }
+#Preview {
+    SendSettingsView()
 }

@@ -108,8 +108,6 @@ struct SettingsSwipeActionsView: View {
     }
 }
 
-struct SettingsSwipeActionsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsSwipeActionsView()
-    }
+#Preview {
+    SettingsSwipeActionsView()
 }

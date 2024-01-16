@@ -101,8 +101,6 @@ struct AttachmentsView: View {
     }
 }
 
-struct AttachmentsView_Previews: PreviewProvider {
-    static var previews: some View {
-        AttachmentsView(message: PreviewHelper.sampleMessage)
-    }
+#Preview {
+    AttachmentsView(message: PreviewHelper.sampleMessage)
 }

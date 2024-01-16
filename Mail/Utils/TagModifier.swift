@@ -41,9 +41,7 @@ extension View {
     }
 }
 
-struct TagModifier_Previews: PreviewProvider {
-    static var previews: some View {
-        Text("Beta")
-            .tagModifier(foregroundColor: MailResourcesAsset.onTagExternalColor, backgroundColor: MailResourcesAsset.yellowColor)
-    }
+#Preview {
+    Text("Beta")
+        .tagModifier(foregroundColor: MailResourcesAsset.onTagExternalColor, backgroundColor: MailResourcesAsset.yellowColor)
 }

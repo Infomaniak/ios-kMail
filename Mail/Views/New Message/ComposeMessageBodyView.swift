@@ -94,19 +94,17 @@ struct ComposeMessageBodyView: View {
     }
 }
 
-struct ComposeMessageBodyView_Previews: PreviewProvider {
-    static var previews: some View {
-        let draft = Draft()
-        ComposeMessageBodyView(draft: draft,
-                               editorModel: .constant(RichTextEditorModel()),
-                               editorFocus: .constant(false),
-                               currentSignature: .constant(nil),
-                               isShowingAIPrompt: .constant(false),
-                               attachmentsManager: AttachmentsManager(
-                                   draftLocalUUID: draft.localUUID,
-                                   mailboxManager: PreviewHelper.sampleMailboxManager
-                               ),
-                               alert: NewMessageAlert(),
-                               messageReply: nil)
-    }
+#Preview {
+    let draft = Draft()
+    return ComposeMessageBodyView(draft: draft,
+                                  editorModel: .constant(RichTextEditorModel()),
+                                  editorFocus: .constant(false),
+                                  currentSignature: .constant(nil),
+                                  isShowingAIPrompt: .constant(false),
+                                  attachmentsManager: AttachmentsManager(
+                                      draftLocalUUID: draft.localUUID,
+                                      mailboxManager: PreviewHelper.sampleMailboxManager
+                                  ),
+                                  alert: NewMessageAlert(),
+                                  messageReply: nil)
 }

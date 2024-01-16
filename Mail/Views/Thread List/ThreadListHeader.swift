@@ -149,13 +149,14 @@ extension ToggleStyle where Self == UnreadToggleStyle {
     static var unread: UnreadToggleStyle { .init() }
 }
 
-struct ThreadListHeader_Previews: PreviewProvider {
-    static var previews: some View {
-        ThreadListHeader(isMultipleSelectionEnabled: false,
-                         folder: PreviewHelper.sampleFolder,
-                         unreadFilterOn: .constant(false))
-        ThreadListHeader(isMultipleSelectionEnabled: false,
-                         folder: PreviewHelper.sampleFolder,
-                         unreadFilterOn: .constant(true))
-    }
+#Preview {
+    ThreadListHeader(isMultipleSelectionEnabled: false,
+                     folder: PreviewHelper.sampleFolder,
+                     unreadFilterOn: .constant(false))
+}
+
+#Preview {
+    ThreadListHeader(isMultipleSelectionEnabled: false,
+                     folder: PreviewHelper.sampleFolder,
+                     unreadFilterOn: .constant(true))
 }

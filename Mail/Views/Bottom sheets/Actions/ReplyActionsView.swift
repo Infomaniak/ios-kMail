@@ -38,9 +38,7 @@ struct ReplyActionsView: View {
     }
 }
 
-struct ReplyActionsView_Previews: PreviewProvider {
-    static var previews: some View {
-        ReplyActionsView(message: PreviewHelper.sampleMessage)
-            .accentColor(AccentColor.pink.primary.swiftUIColor)
-    }
+#Preview {
+    ReplyActionsView(message: PreviewHelper.sampleMessage)
+        .accentColor(AccentColor.pink.primary.swiftUIColor)
 }

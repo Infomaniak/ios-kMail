@@ -135,13 +135,11 @@ struct ComposeMessageCellRecipients: View {
     }
 }
 
-struct ComposeMessageCellRecipients_Previews: PreviewProvider {
-    static var previews: some View {
-        ComposeMessageCellRecipients(
-            recipients: .constant(PreviewHelper.sampleRecipientsList),
-            showRecipientsFields: .constant(false),
-            autocompletionType: .constant(nil),
-            type: .bcc
-        )
-    }
+#Preview {
+    ComposeMessageCellRecipients(
+        recipients: .constant(PreviewHelper.sampleRecipientsList),
+        showRecipientsFields: .constant(false),
+        autocompletionType: .constant(nil),
+        type: .bcc
+    )
 }

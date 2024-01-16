@@ -39,8 +39,6 @@ struct ShortRecipientsList: View {
     }
 }
 
-struct ShortRecipientsList_Previews: PreviewProvider {
-    static var previews: some View {
-        ShortRecipientsList(recipients: PreviewHelper.sampleRecipientsList, type: .to)
-    }
+#Preview {
+    ShortRecipientsList(recipients: PreviewHelper.sampleRecipientsList, type: .to)
 }

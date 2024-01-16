@@ -36,8 +36,6 @@ struct InitialsView: View {
     }
 }
 
-struct InitialsView_Previews: PreviewProvider {
-    static var previews: some View {
-        InitialsView(initials: "TE", color: .systemRed, size: 40)
-    }
+#Preview {
+    InitialsView(initials: "TE", color: .systemRed, size: 40)
 }

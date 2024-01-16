@@ -118,11 +118,9 @@ extension View {
     }
 }
 
-struct AlertView_Previews: PreviewProvider {
-    static var previews: some View {
-        AlertView {
-            CreateFolderView(mode: .create)
-        }
-        .environmentObject(PreviewHelper.sampleMailboxManager)
+#Preview {
+    AlertView {
+        CreateFolderView(mode: .create)
     }
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }

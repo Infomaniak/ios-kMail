@@ -83,14 +83,12 @@ struct MessageBodyView: View {
     }
 }
 
-struct MessageBodyView_Previews: PreviewProvider {
-    static var previews: some View {
-        MessageBodyView(
-            isMessagePreprocessed: true,
-            presentableBody: .constant(PreviewHelper.samplePresentableBody),
-            blockRemoteContent: false,
-            displayContentBlockedActionView: .constant(false),
-            messageUid: "message_uid"
-        )
-    }
+#Preview {
+    MessageBodyView(
+        isMessagePreprocessed: true,
+        presentableBody: .constant(PreviewHelper.samplePresentableBody),
+        blockRemoteContent: false,
+        displayContentBlockedActionView: .constant(false),
+        messageUid: "message_uid"
+    )
 }

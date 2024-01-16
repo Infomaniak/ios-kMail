@@ -29,8 +29,6 @@ struct UnreadIndicatorView: View {
     }
 }
 
-struct UnreadIndicatorView_Previews: PreviewProvider {
-    static var previews: some View {
-        UnreadIndicatorView(hidden: false)
-    }
+#Preview {
+    UnreadIndicatorView(hidden: false)
 }

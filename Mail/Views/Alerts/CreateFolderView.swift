@@ -129,12 +129,10 @@ struct CreateFolderView: View {
     }
 }
 
-struct CreateFolderView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            CreateFolderView(mode: .create)
-            CreateFolderView(mode: .move { _ in /* Preview */ })
-        }
-        .environmentObject(PreviewHelper.sampleMailboxManager)
+#Preview {
+    Group {
+        CreateFolderView(mode: .create)
+        CreateFolderView(mode: .move { _ in /* Preview */ })
     }
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }

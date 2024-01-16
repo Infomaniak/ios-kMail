@@ -165,8 +165,6 @@ struct UpdateMailboxPasswordView: View {
     }
 }
 
-struct UpdateMailboxPasswordView_Previews: PreviewProvider {
-    static var previews: some View {
-        UpdateMailboxPasswordView(mailbox: PreviewHelper.sampleMailbox)
-    }
+#Preview {
+    UpdateMailboxPasswordView(mailbox: PreviewHelper.sampleMailbox)
 }

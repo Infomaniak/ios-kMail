@@ -63,8 +63,6 @@ struct SelectionBackground: View {
     }
 }
 
-struct SelectionBackground_Previews: PreviewProvider {
-    static var previews: some View {
-        SelectionBackground(selectionType: SelectionBackgroundKind.single, paddingLeading: 8, accentColor: .blue)
-    }
+#Preview {
+    SelectionBackground(selectionType: SelectionBackgroundKind.single, paddingLeading: 8, accentColor: .blue)
 }

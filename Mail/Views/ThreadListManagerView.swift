@@ -56,9 +56,7 @@ struct ThreadListManagerView: View {
     }
 }
 
-struct ThreadListManagerView_Previews: PreviewProvider {
-    static var previews: some View {
-        ThreadListManagerView()
-            .environmentObject(PreviewHelper.sampleMailboxManager)
-    }
+#Preview {
+    ThreadListManagerView()
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

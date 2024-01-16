@@ -52,8 +52,6 @@ struct MenuHeaderView: View {
     }
 }
 
-struct MenuHeaderView_Previews: PreviewProvider {
-    static var previews: some View {
-        MenuHeaderView()
-    }
+#Preview {
+    MenuHeaderView()
 }

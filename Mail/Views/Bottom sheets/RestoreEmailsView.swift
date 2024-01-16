@@ -90,9 +90,7 @@ struct RestoreEmailsView: View {
     }
 }
 
-struct RestoreEmailsView_Previews: PreviewProvider {
-    static var previews: some View {
-        RestoreEmailsView()
-            .environmentObject(PreviewHelper.sampleMailboxManager)
-    }
+#Preview {
+    RestoreEmailsView()
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

@@ -60,9 +60,7 @@ struct ContactActionsView: View {
     }
 }
 
-struct ContactActionsView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContactActionsView(recipient: PreviewHelper.sampleRecipient1)
-            .environmentObject(PreviewHelper.sampleMailboxManager)
-    }
+#Preview {
+    ContactActionsView(recipient: PreviewHelper.sampleRecipient1)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }
