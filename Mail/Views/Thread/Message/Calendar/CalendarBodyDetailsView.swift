@@ -42,6 +42,7 @@ struct CalendarLabelStyle: LabelStyle {
 
 struct CalendarBodyDetailsView: View {
     let event: CalendarEvent
+    let iAmPartOfAttendees: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
@@ -63,8 +64,12 @@ struct CalendarBodyDetailsView: View {
                 Label(location, image: MailResourcesAsset.pin.name)
                     .labelStyle(.calendar)
             }
+            if !iAmPartOfAttendees {
+                Label(MailResourcesStrings.Localizable.calendarNotInvited, image: MailResourcesAsset.socialMedia.name)
+                    .labelStyle(.calendar)
+            }
 
-            if !event.hasPassed {
+            if !event.hasPassed && iAmPartOfAttendees {
                 WrappingHStack(
                     AttendeeState.allCases,
                     id: \.self,
@@ -79,6 +84,10 @@ struct CalendarBodyDetailsView: View {
     }
 }
 
-#Preview {
-    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent)
+#Preview("Is Invited") {
+    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent, iAmPartOfAttendees: true)
+}
+
+#Preview("Is Not Invited") {
+    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent, iAmPartOfAttendees: false)
 }

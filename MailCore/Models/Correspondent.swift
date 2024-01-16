@@ -18,7 +18,7 @@
 
 import Foundation
 
-public protocol Correspondent: Identifiable where ID == String {
+public protocol Correspondent: Identifiable {
     var email: String { get }
     var name: String { get }
 

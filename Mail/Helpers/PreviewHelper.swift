@@ -187,8 +187,8 @@ enum PreviewHelper {
 
     static let sampleAttendee1 = Attendee(email: "lucien.cheval@ik.com", name: "Lucien Cheval", isOrganizer: true)
     static let sampleAttendee2 = Attendee(
-        email: "noel.flantier@domaine.ch",
-        name: "noel.flantier@domaine.ch",
+        email: "test@example.com",
+        name: "test@example.com",
         isOrganizer: false,
         state: .yes
     )

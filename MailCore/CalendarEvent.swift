@@ -179,6 +179,10 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         case timezoneEnd
         case attendees
     }
+
+    public func iAmPartOfAttendees(currentMailboxEmail: String) -> Bool {
+        return attendees.contains { $0.isMe(currentMailboxEmail: currentMailboxEmail) }
+    }
 }
 
 public final class CalendarEventResponse: EmbeddedObject, Codable {
