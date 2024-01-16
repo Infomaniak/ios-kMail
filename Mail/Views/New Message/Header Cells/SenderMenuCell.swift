@@ -54,8 +54,6 @@ struct SenderMenuCell: View {
     }
 }
 
-struct SenderMenuCell_Previews: PreviewProvider {
-    static var previews: some View {
-        SenderMenuCell(currentSignature: .constant(nil), signature: Signature())
-    }
+#Preview {
+    SenderMenuCell(currentSignature: .constant(nil), signature: Signature())
 }

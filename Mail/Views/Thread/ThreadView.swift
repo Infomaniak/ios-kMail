@@ -236,9 +236,7 @@ extension Label {
     }
 }
 
-struct ThreadView_Previews: PreviewProvider {
-    static var previews: some View {
-        ThreadView(thread: PreviewHelper.sampleThread)
-            .environmentObject(PreviewHelper.sampleMailboxManager)
-    }
+#Preview {
+    ThreadView(thread: PreviewHelper.sampleThread)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

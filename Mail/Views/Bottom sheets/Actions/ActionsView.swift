@@ -77,15 +77,13 @@ struct ActionsView: View {
     }
 }
 
-struct ActionsView_Previews: PreviewProvider {
-    static var previews: some View {
-        ActionsView(
-            mailboxManager: PreviewHelper.sampleMailboxManager,
-            target: PreviewHelper.sampleThread.messages.toArray(),
-            origin: .toolbar(originFolder: nil)
-        )
-        .accentColor(AccentColor.pink.primary.swiftUIColor)
-    }
+#Preview {
+    ActionsView(
+        mailboxManager: PreviewHelper.sampleMailboxManager,
+        target: PreviewHelper.sampleThread.messages.toArray(),
+        origin: .toolbar(originFolder: nil)
+    )
+    .accentColor(AccentColor.pink.primary.swiftUIColor)
 }
 
 struct QuickActionView: View {

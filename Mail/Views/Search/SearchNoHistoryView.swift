@@ -31,8 +31,6 @@ struct SearchNoHistoryView: View {
     }
 }
 
-struct SearchNoHistoryView_Previews: PreviewProvider {
-    static var previews: some View {
-        SearchNoHistoryView()
-    }
+#Preview {
+    SearchNoHistoryView()
 }

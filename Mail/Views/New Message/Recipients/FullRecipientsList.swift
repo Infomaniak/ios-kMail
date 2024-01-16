@@ -67,8 +67,6 @@ struct FullRecipientsList: View {
     }
 }
 
-struct FullRecipientsList_Previews: PreviewProvider {
-    static var previews: some View {
-        FullRecipientsList(recipients: .constant(PreviewHelper.sampleRecipientsList), type: .to)
-    }
+#Preview {
+    FullRecipientsList(recipients: .constant(PreviewHelper.sampleRecipientsList), type: .to)
 }

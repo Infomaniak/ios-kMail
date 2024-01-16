@@ -39,8 +39,6 @@ struct UnknownRecipientCell: View {
     }
 }
 
-struct UnknownRecipientCell_Previews: PreviewProvider {
-    static var previews: some View {
-        UnknownRecipientCell(recipient: PreviewHelper.sampleRecipient1)
-    }
+#Preview {
+    UnknownRecipientCell(recipient: PreviewHelper.sampleRecipient1)
 }

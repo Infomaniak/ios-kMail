@@ -203,13 +203,11 @@ struct ThreadListView: View {
     }
 }
 
-struct ThreadListView_Previews: PreviewProvider {
-    static var previews: some View {
-        ThreadListView(
-            mailboxManager: PreviewHelper.sampleMailboxManager,
-            folder: PreviewHelper.sampleFolder,
-            selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner,
-            isCompact: false
-        )
-    }
+#Preview {
+    ThreadListView(
+        mailboxManager: PreviewHelper.sampleMailboxManager,
+        folder: PreviewHelper.sampleFolder,
+        selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner,
+        isCompact: false
+    )
 }

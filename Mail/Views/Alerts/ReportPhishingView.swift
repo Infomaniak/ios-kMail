@@ -53,9 +53,7 @@ struct ReportPhishingView: View {
     }
 }
 
-struct PhishingView_Previews: PreviewProvider {
-    static var previews: some View {
-        ReportPhishingView(message: PreviewHelper.sampleMessage)
-            .environmentObject(PreviewHelper.sampleMailboxManager)
-    }
+#Preview {
+    ReportPhishingView(message: PreviewHelper.sampleMessage)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

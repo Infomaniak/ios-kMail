@@ -68,12 +68,10 @@ struct RecipientChip: View {
     }
 }
 
-struct RecipientChip_Previews: PreviewProvider {
-    static var previews: some View {
-        RecipientChip(recipient: PreviewHelper.sampleRecipient1, fieldType: .to) {
-            /* Preview */
-        } switchFocusHandler: {
-            /* Preview */
-        }
+#Preview {
+    RecipientChip(recipient: PreviewHelper.sampleRecipient1, fieldType: .to) {
+        /* Preview */
+    } switchFocusHandler: {
+        /* Preview */
     }
 }

@@ -77,10 +77,8 @@ struct FlushFolderView: View {
     }
 }
 
-struct FlushFolderView_Previews: PreviewProvider {
-    static var previews: some View {
-        FlushFolderView(folder: PreviewHelper.sampleFolder,
-                        mailboxManager: PreviewHelper.sampleMailboxManager,
-                        flushAlert: .constant(nil))
-    }
+#Preview {
+    FlushFolderView(folder: PreviewHelper.sampleFolder,
+                    mailboxManager: PreviewHelper.sampleMailboxManager,
+                    flushAlert: .constant(nil))
 }

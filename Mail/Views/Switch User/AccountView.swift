@@ -156,8 +156,6 @@ extension ApiToken: Identifiable {
     }
 }
 
-struct AccountView_Previews: PreviewProvider {
-    static var previews: some View {
-        AccountView(account: PreviewHelper.sampleAccount)
-    }
+#Preview {
+    AccountView(account: PreviewHelper.sampleAccount)
 }

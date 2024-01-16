@@ -50,8 +50,6 @@ struct TextStylePreview: View {
     }
 }
 
-struct TextStylePreview_Previews: PreviewProvider {
-    static var previews: some View {
-        TextStylePreview()
-    }
+#Preview {
+    TextStylePreview()
 }

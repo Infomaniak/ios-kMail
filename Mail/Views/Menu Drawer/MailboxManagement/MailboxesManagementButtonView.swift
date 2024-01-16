@@ -88,17 +88,18 @@ struct MailboxesManagementButtonView: View {
     }
 }
 
-struct MailboxesManagementButtonView_Previews: PreviewProvider {
-    static var previews: some View {
-        MailboxesManagementButtonView(
-            icon: MailResourcesAsset.folder,
-            mailbox: PreviewHelper.sampleMailbox,
-            isSelected: false
-        )
-        MailboxesManagementButtonView(
-            icon: MailResourcesAsset.folder,
-            mailbox: PreviewHelper.sampleMailbox,
-            isSelected: false
-        )
-    }
+#Preview {
+    MailboxesManagementButtonView(
+        icon: MailResourcesAsset.folder,
+        mailbox: PreviewHelper.sampleMailbox,
+        isSelected: false
+    )
+}
+
+#Preview {
+    MailboxesManagementButtonView(
+        icon: MailResourcesAsset.folder,
+        mailbox: PreviewHelper.sampleMailbox,
+        isSelected: true
+    )
 }

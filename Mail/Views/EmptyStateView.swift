@@ -99,8 +99,6 @@ extension EmptyStateView {
     )
 }
 
-struct EmptyListView_Previews: PreviewProvider {
-    static var previews: some View {
-        EmptyStateView.emptyFolder
-    }
+#Preview {
+    EmptyStateView.emptyFolder
 }

@@ -39,8 +39,6 @@ struct ThreadCountIndicatorView: View {
     }
 }
 
-struct ThreadCountIndicatorView_Previews: PreviewProvider {
-    static var previews: some View {
-        ThreadCountIndicatorView(messagesCount: 2, hasUnseenMessages: false)
-    }
+#Preview {
+    ThreadCountIndicatorView(messagesCount: 2, hasUnseenMessages: false)
 }

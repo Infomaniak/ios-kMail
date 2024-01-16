@@ -61,9 +61,7 @@ struct ReportDisplayProblemView: View {
     }
 }
 
-struct ReportDisplayProblemView_Previews: PreviewProvider {
-    static var previews: some View {
-        ReportDisplayProblemView(message: PreviewHelper.sampleMessage)
-            .environmentObject(PreviewHelper.sampleMailboxManager)
-    }
+#Preview {
+    ReportDisplayProblemView(message: PreviewHelper.sampleMessage)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

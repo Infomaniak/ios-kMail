@@ -218,10 +218,8 @@ struct FolderCellContent: View {
     }
 }
 
-struct FolderCellView_Previews: PreviewProvider {
-    static var previews: some View {
-        FolderCell(folder: NestableFolder(content: PreviewHelper.sampleFolder, children: []), currentFolderId: nil)
-            .environmentObject(PreviewHelper.sampleMailboxManager)
-            .environmentObject(NavigationDrawerState())
-    }
+#Preview {
+    FolderCell(folder: NestableFolder(content: PreviewHelper.sampleFolder, children: []), currentFolderId: nil)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
+        .environmentObject(NavigationDrawerState())
 }

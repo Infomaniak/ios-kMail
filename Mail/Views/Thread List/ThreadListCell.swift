@@ -123,20 +123,18 @@ struct ThreadListCell: View {
     }
 }
 
-struct ThreadListCell_Previews: PreviewProvider {
-    static var previews: some View {
-        ThreadListCell(
-            viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
-                                           folder: PreviewHelper.sampleFolder,
-                                           selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner,
-                                           isCompact: false),
-            multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(),
-            thread: PreviewHelper.sampleThread,
-            threadDensity: .large,
-            accentColor: .pink,
-            isSelected: false,
-            isMultiSelected: false,
-            flushAlert: .constant(nil)
-        )
-    }
+#Preview {
+    ThreadListCell(
+        viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
+                                       folder: PreviewHelper.sampleFolder,
+                                       selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner,
+                                       isCompact: false),
+        multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(),
+        thread: PreviewHelper.sampleThread,
+        threadDensity: .large,
+        accentColor: .pink,
+        isSelected: false,
+        isMultiSelected: false,
+        flushAlert: .constant(nil)
+    )
 }

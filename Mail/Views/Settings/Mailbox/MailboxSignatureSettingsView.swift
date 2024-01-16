@@ -76,8 +76,6 @@ struct MailboxSignatureSettingsView: View {
     }
 }
 
-struct MailboxSignatureSettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        MailboxSignatureSettingsView(mailboxManager: PreviewHelper.sampleMailboxManager)
-    }
+#Preview {
+    MailboxSignatureSettingsView(mailboxManager: PreviewHelper.sampleMailboxManager)
 }

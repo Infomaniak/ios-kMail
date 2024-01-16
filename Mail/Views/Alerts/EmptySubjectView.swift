@@ -46,8 +46,6 @@ struct EmptySubjectView: View {
     }
 }
 
-struct EmptySubjectView_Preview: PreviewProvider {
-    static var previews: some View {
-        EmptySubjectView { /* Preview */ }
-    }
+#Preview {
+    EmptySubjectView { /* Preview */ }
 }

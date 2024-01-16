@@ -51,11 +51,9 @@ struct LockedMailboxView: View {
     }
 }
 
-struct LockedMailboxView_Previews: PreviewProvider {
-    static var previews: some View {
-        Text("Preview")
-            .floatingPanel(isPresented: .constant(true)) {
-                LockedMailboxView(lockedMailbox: PreviewHelper.sampleMailbox)
-            }
-    }
+#Preview {
+    Text("Preview")
+        .floatingPanel(isPresented: .constant(true)) {
+            LockedMailboxView(lockedMailbox: PreviewHelper.sampleMailbox)
+        }
 }

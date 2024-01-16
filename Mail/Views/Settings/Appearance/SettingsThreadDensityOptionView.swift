@@ -64,8 +64,6 @@ struct SettingsThreadDensityOptionView: View {
     }
 }
 
-struct SettingsThreadDensityOptionView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsThreadDensityOptionView()
-    }
+#Preview {
+    SettingsThreadDensityOptionView()
 }

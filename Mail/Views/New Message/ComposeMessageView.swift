@@ -387,11 +387,9 @@ struct ComposeMessageView: View {
     }
 }
 
-struct ComposeMessageView_Previews: PreviewProvider {
-    static var previews: some View {
-        ComposeMessageView(
-            editedDraft: EditedDraft.new(),
-            mailboxManager: PreviewHelper.sampleMailboxManager
-        )
-    }
+#Preview {
+    ComposeMessageView(
+        editedDraft: EditedDraft.new(),
+        mailboxManager: PreviewHelper.sampleMailboxManager
+    )
 }

@@ -40,8 +40,6 @@ struct UnknownRecipientView: View {
     }
 }
 
-struct UnknownRecipientView_Previews: PreviewProvider {
-    static var previews: some View {
-        UnknownRecipientView(size: 40)
-    }
+#Preview {
+    UnknownRecipientView(size: 40)
 }

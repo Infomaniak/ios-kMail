@@ -71,8 +71,6 @@ struct SettingsSubMenuCell<Content: View>: View {
     }
 }
 
-struct SettingsSubMenuCell_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsSubMenuCell(title: "Settings sub-menu") { EmptyView() }
-    }
+#Preview {
+    SettingsSubMenuCell(title: "Settings sub-menu") { EmptyView() }
 }

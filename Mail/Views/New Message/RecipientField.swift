@@ -102,8 +102,6 @@ struct RecipientField: View {
     }
 }
 
-struct RecipientField_Previews: PreviewProvider {
-    static var previews: some View {
-        RecipientField(currentText: .constant(""), recipients: .constant(PreviewHelper.sampleRecipientsList), type: .to)
-    }
+#Preview {
+    RecipientField(currentText: .constant(""), recipients: .constant(PreviewHelper.sampleRecipientsList), type: .to)
 }

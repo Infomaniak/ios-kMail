@@ -45,9 +45,7 @@ struct IndeterminateProgressView: View {
     }
 }
 
-struct IndeterminateProgressView_Previews: PreviewProvider {
-    static var previews: some View {
-        IndeterminateProgressView(indeterminate: true, progress: 1)
-            .padding()
-    }
+#Preview {
+    IndeterminateProgressView(indeterminate: true, progress: 1)
+        .padding()
 }
