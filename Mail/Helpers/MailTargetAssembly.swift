@@ -25,8 +25,8 @@ import InfomaniakLogin
 import InfomaniakNotifications
 import MailCore
 
-class MailTargetAssembly: TargetAssembly {
-    override class func getTargetServices() -> [Factory] {
+open class CommonAppAndShareTargetAssembly: TargetAssembly {
+    override open class func getTargetServices() -> [Factory] {
         return [
             Factory(type: CacheManageable.self) { _, _ in
                 CacheManager()
@@ -42,7 +42,14 @@ class MailTargetAssembly: TargetAssembly {
             },
             Factory(type: ApplicationStatable.self) { _, _ in
                 ApplicationState()
-            },
+            }
+        ]
+    }
+}
+
+class MailTargetAssembly: CommonAppAndShareTargetAssembly {
+    override class func getTargetServices() -> [Factory] {
+        return super.getTargetServices() + [
             Factory(type: RefreshAppBackgroundTask.self) { _, _ in
                 RefreshAppBackgroundTask()
             },

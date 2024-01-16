@@ -20,24 +20,4 @@ import Foundation
 import InfomaniakDI
 import MailCore
 
-class MailShareExtensionTargetAssembly: TargetAssembly {
-    override class func getTargetServices() -> [Factory] {
-        return [
-            Factory(type: CacheManageable.self) { _, _ in
-                CacheManager()
-            },
-            Factory(type: OrientationManageable.self) { _, _ in
-                OrientationManager()
-            },
-            Factory(type: RemoteNotificationRegistrable.self) { _, _ in
-                RemoteNotificationRegistrer()
-            },
-            Factory(type: MessageActionHandlable.self) { _, _ in
-                MessageActionHandler()
-            },
-            Factory(type: ApplicationStatable.self) { _, _ in
-                ApplicationState()
-            }
-        ]
-    }
-}
+class MailShareExtensionTargetAssembly: CommonAppAndShareTargetAssembly {}
