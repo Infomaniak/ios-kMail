@@ -38,27 +38,32 @@ extension NSItemProvider: Attachable {
         return UTType(preferredIdentifier)
     }
 
-    public func writeToTemporaryURL() async throws -> URL {
+    public func writeToTemporaryURL() async throws -> (url: URL, title: String?) {
         switch underlyingType {
         case .isURL:
             let getPlist = try ItemProviderURLRepresentation(from: self)
-            return try await getPlist.result.get().url
+            let result = try await getPlist.result.get()
+            return (result.url, result.title)
 
         case .isText:
             let getText = try ItemProviderTextRepresentation(from: self)
-            return try await getText.result.get()
+            let resultURL = try await getText.result.get()
+            return (resultURL, nil)
 
         case .isUIImage:
             let getUIImage = try ItemProviderUIImageRepresentation(from: self)
-            return try await getUIImage.result.get()
+            let resultURL = try await getUIImage.result.get()
+            return (resultURL, nil)
 
         case .isImageData, .isCompressedData, .isMiscellaneous:
             let getFile = try ItemProviderFileRepresentation(from: self)
-            return try await getFile.result.get().url
+            let result = try await getFile.result.get()
+            return (result.url, result.title)
 
         case .isDirectory:
             let getFile = try ItemProviderZipRepresentation(from: self)
-            return try await getFile.result.get().url
+            let result = try await getFile.result.get()
+            return (result.url, result.title)
 
         case .none:
             throw ErrorDomain.UTINotFound
@@ -75,7 +80,7 @@ extension PHPickerResult: Attachable {
         return itemProvider.type
     }
 
-    public func writeToTemporaryURL() async throws -> URL {
+    public func writeToTemporaryURL() async throws -> (url: URL, title: String?) {
         return try await itemProvider.writeToTemporaryURL()
     }
 }
@@ -89,8 +94,8 @@ extension URL: Attachable {
         return UTType.data
     }
 
-    public func writeToTemporaryURL() async throws -> URL {
-        return self
+    public func writeToTemporaryURL() async throws -> (url: URL, title: String?) {
+        return (self, nil)
     }
 }
 
@@ -103,11 +108,11 @@ extension Data: Attachable {
         return UTType.image
     }
 
-    public func writeToTemporaryURL() async throws -> URL {
+    public func writeToTemporaryURL() async throws -> (url: URL, title: String?) {
         let temporaryURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         let temporaryFileURL = temporaryURL.appendingPathComponent("attachment").appendingPathExtension("jpeg")
         try FileManager.default.createDirectory(at: temporaryURL, withIntermediateDirectories: true)
         try write(to: temporaryFileURL)
-        return temporaryFileURL
+        return (temporaryFileURL, nil)
     }
 }
