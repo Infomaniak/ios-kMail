@@ -28,8 +28,6 @@ final class ShareNavigationViewController: UIViewController {
     /// Making sure the DI is registered at a very early stage of the app launch.
     private let dependencyInjectionHook = EarlyDIHook()
 
-    @LazyInjectService private var accountManager: AccountManager
-
     private func overrideSnackBarPresenter(contextView: UIView) {
         let snackBarPresenter = Factory(type: SnackBarPresentable.self) { _, _ in
             SnackBarPresenter(contextView: contextView)

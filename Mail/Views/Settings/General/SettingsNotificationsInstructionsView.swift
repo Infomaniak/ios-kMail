@@ -22,7 +22,6 @@ import MailResources
 import SwiftUI
 
 struct SettingsNotificationsInstructionsView: View {
-    @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) var openURL
 
     var body: some View {

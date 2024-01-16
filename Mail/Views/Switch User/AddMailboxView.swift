@@ -23,8 +23,6 @@ import MailResources
 import SwiftUI
 
 struct AddMailboxView: View {
-    @Environment(\.dismiss) var dismiss
-
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 

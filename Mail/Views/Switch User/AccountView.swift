@@ -54,8 +54,6 @@ struct AccountView: View {
 
     private static let avatarViewSize: CGFloat = 104
 
-    @Environment(\.dismiss) private var dismiss
-
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingLogoutAlert = false
