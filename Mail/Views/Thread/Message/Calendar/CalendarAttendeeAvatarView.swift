@@ -26,6 +26,10 @@ struct CalendarAttendeeAvatarView: View {
     let recipient: Recipient
     var choice: CalendarChoice?
 
+    private var hasChoice: Bool {
+        choice != nil
+    }
+
     var body: some View {
         AvatarView(
             mailboxManager: mailboxManager,
@@ -36,8 +40,8 @@ struct CalendarAttendeeAvatarView: View {
             Circle()
                 .stroke(MailResourcesAsset.backgroundColor.swiftUIColor, lineWidth: UIConstants.avatarBorderLineWidth)
         }
-        .padding(.trailing, 2)
-        .padding(.bottom, 4)
+        .padding(.trailing, hasChoice ? 2 : 0)
+        .padding(.bottom, hasChoice ? 4 : 0)
         .overlay(alignment: .bottomTrailing) {
             if let choice {
                 Circle()

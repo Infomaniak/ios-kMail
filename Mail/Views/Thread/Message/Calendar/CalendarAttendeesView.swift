@@ -63,7 +63,7 @@ struct CalendarAttendeesView: View {
                     Button {
                         isShowingAllAttendees = true
                     } label: {
-                        HStack(spacing: UIPadding.regular) {
+                        HStack(spacing: UIPadding.small) {
                             CalendarAttendeesStack(attendees: attendees)
                             Text(MailResourcesStrings.Localizable.buttonSee)
                                 .textStyle(.bodyAccent)
