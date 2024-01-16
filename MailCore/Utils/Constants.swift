@@ -18,6 +18,7 @@
 
 import Foundation
 import MailResources
+import SwiftRegex
 import SwiftSoup
 import SwiftUI
 
@@ -176,4 +177,16 @@ public enum Constants {
     public static let inlineAttachmentBatchSize = 10
 
     public static let appGroupIdentifier = "group.com.infomaniak"
+
+    /// Decodes the date according to the string format, yyyy-MM-dd or ISO 8601
+    public static func decodeDateCorrectly(_ date: String) -> Date? {
+        if let regex = Regex(pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"), !regex.matches(in: date).isEmpty {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            return dateFormatter.date(from: date)
+        } else {
+            let dateFormatter = ISO8601DateFormatter()
+            return dateFormatter.date(from: date)
+        }
+    }
 }

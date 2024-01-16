@@ -166,6 +166,27 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         self.attendees = attendees
     }
 
+    // We need to create our own init
+    // The date from the API is not always in ISO 8601 format, but changes
+    // when the event lasts the entire day
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        type = try container.decode(CalendarEventType.self, forKey: .type)
+        title = try container.decode(String.self, forKey: .title)
+        eventDescription = try container.decode(String.self, forKey: .eventDescription)
+        location = try container.decode(String?.self, forKey: .location)
+        fullDay = try container.decode(Bool.self, forKey: .fullDay)
+        timezone = try container.decode(String?.self, forKey: .timezone)
+        timezoneStart = try container.decode(String.self, forKey: .timezoneStart)
+        timezoneEnd = try container.decode(String.self, forKey: .timezoneEnd)
+        attendees = try container.decode(List<Attendee>.self, forKey: .attendees)
+
+        let startString = try container.decode(String.self, forKey: .start)
+        start = Constants.decodeDateCorrectly(startString) ?? .now
+        let endString = try container.decode(String.self, forKey: .end)
+        end = Constants.decodeDateCorrectly(endString) ?? .now
+    }
+
     enum CodingKeys: String, CodingKey {
         case type
         case title
