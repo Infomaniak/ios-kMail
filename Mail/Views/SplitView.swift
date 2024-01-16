@@ -165,7 +165,7 @@ struct SplitView: View {
                 guard !platformDetector.isDebug else { return }
                 // We don't want to show both DiscoveryView at the same time
                 isShowingUpdateAvailable = try await VersionChecker.standard.showUpdateVersion()
-                isShowingSyncDiscovery = isShowingUpdateAvailable ? false : UserDefaults.shared.shouldPresentSyncDiscovery
+                isShowingSyncDiscovery = isShowingUpdateAvailable ? false : showSync()
             }
         }
         .onOpenURL { url in
@@ -247,6 +247,15 @@ struct SplitView: View {
                 throw MailError.folderNotFound
             }
         }
+    }
+
+    private func showSync() -> Bool {
+        guard UserDefaults.shared.shouldPresentSyncDiscovery,
+              !appLaunchCounter.isFirstLaunch else {
+            return false
+        }
+
+        return appLaunchCounter.value > Constants.minimumOpeningBeforeSync
     }
 
     private func handleOpenUrl(_ url: URL) {
