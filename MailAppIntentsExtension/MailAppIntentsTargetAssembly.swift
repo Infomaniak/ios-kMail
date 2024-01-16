@@ -17,11 +17,6 @@
  */
 
 import Foundation
-import InfomaniakCore
-import InfomaniakCoreUI
-import InfomaniakDI
-import InfomaniakLogin
-import InfomaniakNotifications
 import MailCore
 
-class NotificationServiceTargetAssembly: TargetAssembly {}
+class MailAppIntentsTargetAssembly: TargetAssembly {}

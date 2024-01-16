@@ -27,7 +27,7 @@ import UserNotifications
 
 final class NotificationService: UNNotificationServiceExtension {
     /// Making sure the DI is registered at a very early stage of the app launch.
-    private let dependencyInjectionHook = EarlyDIHook()
+    private let dependencyInjectionHook = NotificationServiceTargetAssembly()
 
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
@@ -37,7 +37,6 @@ final class NotificationService: UNNotificationServiceExtension {
 
     override init() {
         super.init()
-        Logging.initLogging()
         ModelMigrator().migrateRealmIfNeeded()
     }
 
