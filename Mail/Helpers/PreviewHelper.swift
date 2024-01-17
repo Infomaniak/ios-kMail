@@ -174,7 +174,7 @@ enum PreviewHelper {
         title: "Réunion Produit",
         eventDescription: "",
         location: "Salle Théâtre",
-        fullDay: false,
+        isFullDay: false,
         timezone: nil,
         start: .now,
         timezoneStart: "UTC",
