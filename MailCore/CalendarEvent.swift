@@ -26,6 +26,12 @@ public enum CalendarEventType: String, Codable, PersistableEnum {
     case task = "todo"
 }
 
+public enum CalendarEventStatus: String, Codable, PersistableEnum {
+    case confirmed = "CONFIRMED"
+    case tentative = "TENTATIVE"
+    case cancelled = "CANCELLED"
+}
+
 public final class CalendarEvent: EmbeddedObject, Codable {
     @Persisted public var type: CalendarEventType
     @Persisted public var title: String
@@ -37,10 +43,11 @@ public final class CalendarEvent: EmbeddedObject, Codable {
     @Persisted public var timezoneStart: String
     @Persisted public var end: Date
     @Persisted public var timezoneEnd: String
+    @Persisted public var status: CalendarEventStatus?
     @Persisted public var attendees: RealmSwift.List<Attendee>
 
     public var hasPassed: Bool {
-        return end < Date.now
+        return end < .now
     }
 
     public var organizer: Attendee? {
