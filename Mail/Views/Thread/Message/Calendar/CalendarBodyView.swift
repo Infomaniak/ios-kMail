@@ -22,7 +22,7 @@ import SwiftUI
 
 struct CalendarBodyView: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: UIPadding.medium) {
+        VStack(alignment: .leading, spacing: UIPadding.regular) {
             CalendarBodyDetailsView()
 
             CalendarAttendeesView()
