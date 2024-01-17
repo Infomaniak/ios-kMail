@@ -104,7 +104,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
     @Persisted public var title: String
     @Persisted public var eventDescription: String
     @Persisted public var location: String?
-    @Persisted public var fullDay: Bool
+    @Persisted public var isFullDay: Bool
     @Persisted public var timezone: String?
     @Persisted public var start: Date
     @Persisted public var timezoneStart: String
@@ -121,15 +121,21 @@ public final class CalendarEvent: EmbeddedObject, Codable {
     }
 
     public var formattedDate: String {
-        if Calendar.current.isDate(start, inSameDayAs: end) {
+        var computedEnd = end
+        // When the event is `fullDay`, the start date is included and the end date excluded
+        if isFullDay && !Calendar.current.isDate(start, inSameDayAs: end) {
+            computedEnd = Calendar.current.date(byAdding: .day, value: -1, to: end) ?? end
+        }
+
+        if Calendar.current.isDate(start, inSameDayAs: computedEnd) {
             return start.formatted(Constants.calendarDateFormat)
         } else {
-            return "\(start.formatted(Constants.calendarSmallDateFormat)) - \(end.formatted(Constants.calendarSmallDateFormat))"
+            return "\(start.formatted(Constants.calendarSmallDateFormat)) - \(computedEnd.formatted(Constants.calendarSmallDateFormat))"
         }
     }
 
     public var formattedTime: String {
-        if fullDay {
+        if isFullDay {
             return MailResourcesStrings.Localizable.calendarAllDayLong
         } else {
             return "\(start.formatted(Constants.calendarTimeFormat)) - \(end.formatted(Constants.calendarTimeFormat))"
@@ -145,7 +151,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         title: String,
         eventDescription: String,
         location: String? = nil,
-        fullDay: Bool,
+        isFullDay: Bool,
         timezone: String? = nil,
         start: Date,
         timezoneStart: String,
@@ -157,7 +163,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         self.title = title
         self.eventDescription = eventDescription
         self.location = location
-        self.fullDay = fullDay
+        self.isFullDay = isFullDay
         self.timezone = timezone
         self.start = start
         self.timezoneStart = timezoneStart
@@ -175,7 +181,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         title = try container.decode(String.self, forKey: .title)
         eventDescription = try container.decode(String.self, forKey: .eventDescription)
         location = try container.decode(String?.self, forKey: .location)
-        fullDay = try container.decode(Bool.self, forKey: .fullDay)
+        isFullDay = try container.decode(Bool.self, forKey: .isFullDay)
         timezone = try container.decode(String?.self, forKey: .timezone)
         timezoneStart = try container.decode(String.self, forKey: .timezoneStart)
         timezoneEnd = try container.decode(String.self, forKey: .timezoneEnd)
@@ -192,7 +198,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         case title
         case eventDescription = "description"
         case location
-        case fullDay = "fullday"
+        case isFullDay = "fullday"
         case timezone
         case start
         case timezoneStart
