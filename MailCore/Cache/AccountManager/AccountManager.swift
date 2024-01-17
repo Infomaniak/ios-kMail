@@ -30,18 +30,6 @@ import Sentry
 import SwiftUI
 
 public extension InfomaniakNetworkLoginable {
-    func apiToken(username: String, applicationPassword: String) async throws -> ApiToken {
-        try await withCheckedThrowingContinuation { continuation in
-            getApiToken(username: username, applicationPassword: applicationPassword) { token, error in
-                if let token {
-                    continuation.resume(returning: token)
-                } else {
-                    continuation.resume(throwing: error ?? MailError.unknownError)
-                }
-            }
-        }
-    }
-
     func apiToken(using code: String, codeVerifier: String) async throws -> ApiToken {
         try await withCheckedThrowingContinuation { continuation in
             getApiTokenUsing(code: code, codeVerifier: codeVerifier) { token, error in
@@ -224,7 +212,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     public func didFailRefreshToken(_ token: ApiToken) {
         SentrySDK.capture(message: "Failed refreshing token") { scope in
             scope.setContext(
-                value: ["User id": token.userId, "Expiration date": token.expirationDate.timeIntervalSince1970],
+                value: ["User id": token.userId, "Expiration date": token.expirationDate?.timeIntervalSince1970 ?? "infinite"],
                 key: "Token Infos"
             )
         }
