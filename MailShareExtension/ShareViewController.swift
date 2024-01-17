@@ -26,7 +26,7 @@ import UIKit
 
 final class ShareNavigationViewController: UIViewController {
     /// Making sure the DI is registered at a very early stage of the app launch.
-    private let dependencyInjectionHook = EarlyDIHook()
+    private let dependencyInjectionHook = MailShareExtensionTargetAssembly()
 
     private func overrideSnackBarPresenter(contextView: UIView) {
         let snackBarPresenter = Factory(type: SnackBarPresentable.self) { _, _ in

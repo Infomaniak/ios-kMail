@@ -34,9 +34,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     @LazyInjectService private var tokenStore: TokenStore
     @LazyInjectService private var notificationActions: NotificationActionsRegistrable
 
-    /// Making sure the DI is registered at a very early stage of the app launch.
-    private let dependencyInjectionHook = EarlyDIHook()
-
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         DDLogInfo("Application starting in foreground ? \(applicationState.applicationState != .background)")
