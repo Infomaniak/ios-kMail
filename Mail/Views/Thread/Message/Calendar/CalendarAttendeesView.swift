@@ -30,7 +30,7 @@ struct CalendarAttendeesView: View {
     let attendees = PreviewHelper.sampleRecipients
 
     var body: some View {
-        VStack(alignment: .leading, spacing: UIPadding.small) {
+        VStack(alignment: .leading, spacing: UIPadding.regular) {
             Button {
                 withAnimation {
                     isShowingAttendees.toggle()
@@ -69,7 +69,7 @@ struct CalendarAttendeesView: View {
                                 .textStyle(.bodyAccent)
                         }
                     }
-                    .padding(.horizontal, UIPadding.regular - UIConstants.avatarBorderLineWidth)
+                    .padding(.horizontal, UIPadding.regular - UIConstants.avatarBorderLineWidth / 2)
                 }
             }
         }
