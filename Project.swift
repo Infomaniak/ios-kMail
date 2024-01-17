@@ -23,16 +23,16 @@ import ProjectDescriptionHelpers
 let project = Project(name: "Mail",
                       packages: [
                           .package(url: "https://github.com/apple/swift-algorithms", .upToNextMajor(from: "1.2.0")),
-                          .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "5.0.0")),
+                          .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "6.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "2.0.0")),
                           .package(url: "https://github.com/Infomaniak/swift-concurrency", .upToNextMajor(from: "0.0.4")),
                           .package(
                               url: "https://github.com/Infomaniak/ios-core",
-                              .revision("1ec38915366434b250a50573be12568f022f255e")
+                              .revision("fcb77e55122826fc21e5e73ccc2a79126a969a42")
                           ),
-                          .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "3.0.0")),
+                          .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "4.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "3.0.0")),
-                          .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "2.0.0")),
+                          .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "3.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-bug-tracker", .upToNextMajor(from: "2.0.0")),
                           .package(url: "https://github.com/Infomaniak/SQRichTextEditor", .upToNextMajor(from: "1.1.1")),
                           .package(url: "https://github.com/Infomaniak/SwiftSoup", .upToNextMajor(from: "1.1.0")),

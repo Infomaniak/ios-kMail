@@ -28,6 +28,8 @@ import InfomaniakNotifications
 private let realmRootPath = "mailboxes"
 private let appGroupIdentifier = "group.com.infomaniak.mail"
 
+private let loginConfig = InfomaniakLogin.Config(clientId: "E90BC22D-67A8-452C-BE93-28DA33588CA4", accessType: nil)
+
 extension [Factory] {
     func registerFactoriesInDI() {
         forEach { SimpleResolver.sharedResolver.store(factory: $0) }
@@ -53,10 +55,10 @@ open class TargetAssembly {
                 MailboxInfosManager()
             },
             Factory(type: InfomaniakNetworkLoginable.self) { _, _ in
-                InfomaniakNetworkLogin(clientId: MailApiFetcher.clientId)
+                InfomaniakNetworkLogin(config: loginConfig)
             },
             Factory(type: InfomaniakLoginable.self) { _, _ in
-                InfomaniakLogin(clientId: MailApiFetcher.clientId)
+                InfomaniakLogin(config: loginConfig)
             },
             Factory(type: KeychainHelper.self) { _, _ in
                 KeychainHelper(accessGroup: AccountManager.accessGroup)

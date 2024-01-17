@@ -34,8 +34,6 @@ public extension ApiFetcher {
 }
 
 public final class MailApiFetcher: ApiFetcher, MailApiFetchable {
-    public static let clientId = "E90BC22D-67A8-452C-BE93-28DA33588CA4"
-
     /// All status except 401 are handled by our code, 401 status is handled by Alamofire's Authenticator code
     private lazy var handledHttpStatus: Set<Int> = {
         var allStatus = Set(200 ... 500)

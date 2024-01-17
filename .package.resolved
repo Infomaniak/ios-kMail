@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Alamofire/Alamofire",
       "state" : {
-        "revision" : "b2fa556e4e48cbf06cf8c63def138c98f4b811fa",
-        "version" : "5.8.0"
+        "revision" : "3dc6a42c7727c49bf26508e29b0a0b35f9c7e1ad",
+        "version" : "5.8.1"
       }
     },
     {
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ProxymanApp/atlantis",
       "state" : {
-        "revision" : "cfa72085bce2600b28e47fdbbbfa2d5b96f0392b",
-        "version" : "1.22.0"
+        "revision" : "131d757cf8e6e368ad338728379174f7cfff9326",
+        "version" : "1.23.0"
       }
     },
     {
@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack",
       "state" : {
-        "revision" : "67ec5818a757aba4d7c534e21a905d878d128dbf",
-        "version" : "3.8.1"
+        "revision" : "363ed23d19a931809ea834a7d722da830353806a",
+        "version" : "3.8.2"
       }
     },
     {
@@ -41,7 +41,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "1ec38915366434b250a50573be12568f022f255e"
+        "revision" : "fcb77e55122826fc21e5e73ccc2a79126a969a42"
       }
     },
     {
@@ -49,8 +49,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "2ade7b9cfc5942d1126570b40a6680e4ffcff105",
-        "version" : "3.0.0"
+        "revision" : "400b26b6a266bb9206ad4eade1231a9f264e98e7",
+        "version" : "4.0.0"
       }
     },
     {
@@ -58,8 +58,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-create-account",
       "state" : {
-        "revision" : "6e0c03e842b39454a8a1c17391fe81790c587f86",
-        "version" : "2.0.0"
+        "revision" : "233986fce330fdc588d3e5155500b703f9748539",
+        "version" : "3.0.0"
       }
     },
     {
@@ -76,8 +76,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-login",
       "state" : {
-        "revision" : "ba2e72bc84a673d4e1626f898419da82b54baefb",
-        "version" : "5.0.0"
+        "revision" : "94dee9d95d92c5fbe152476b78b04985fbddaa7c",
+        "version" : "6.0.1"
       }
     },
     {
@@ -139,8 +139,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/johnpatrickmorgan/NavigationBackport",
       "state" : {
-        "revision" : "fb860a404f8c0aabeca1016400e41ece5363a369",
-        "version" : "0.9.0"
+        "revision" : "b002991691b54fd7b952e1e780de252620f8ac77",
+        "version" : "0.9.1"
       }
     },
     {
@@ -148,8 +148,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "3f666f120b63ea7de57d42e9a7c9b47f8e7a290b",
-        "version" : "12.1.6"
+        "revision" : "15fde63470d782c897816a74bdd516a907e33147",
+        "version" : "12.3.0"
       }
     },
     {
@@ -202,8 +202,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SnapKit/SnapKit.git",
       "state" : {
-        "revision" : "f222cbdf325885926566172f6f5f06af95473158",
-        "version" : "5.6.0"
+        "revision" : "e74fe2a978d1216c3602b129447c7301573cc2d8",
+        "version" : "5.7.0"
       }
     },
     {
@@ -292,8 +292,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "3ced72fccb284235c266c1e8a32f1bf93129fc74",
-        "version" : "1.1.0"
+        "revision" : "18e965f867e37a558ad13c12d330dbe047099180",
+        "version" : "1.1.2"
       }
     },
     {
