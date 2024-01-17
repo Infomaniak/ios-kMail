@@ -83,7 +83,9 @@ public class RootViewState: ObservableObject {
 
         accountManagerObservation = accountManager.objectWillChange.receive(on: RunLoop.main).sink { [weak self] in
             self?.account = accountManager.getCurrentAccount()
-            self?.state = RootViewState.getMainViewStateIfPossible()
+            withAnimation {
+                self?.state = RootViewState.getMainViewStateIfPossible()
+            }
         }
     }
 
