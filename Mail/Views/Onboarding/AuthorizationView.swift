@@ -61,9 +61,9 @@ struct AuthorizationView: View {
             VStack(spacing: UIPadding.small) {
                 Button(MailResourcesStrings.Localizable.contentDescriptionButtonNext) {
                     if selection == AuthorizationSlide.contacts.rawValue {
-                        isScrollDisabled = false
                         Task {
                             let accessAllowed = await (try? CNContactStore().requestAccess(for: .contacts))
+                            isScrollDisabled = false
                             withAnimation {
                                 selection = AuthorizationSlide.notifications.rawValue
                                 isScrollDisabled = true
