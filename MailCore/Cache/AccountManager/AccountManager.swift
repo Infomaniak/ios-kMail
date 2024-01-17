@@ -283,10 +283,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         saveAccounts()
 
-        Task {
-            try await currentMailboxManager?.contactManager.refreshContactsAndAddressBooks()
-        }
-
         return newAccount
     }
 

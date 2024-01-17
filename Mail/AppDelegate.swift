@@ -42,10 +42,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         notificationActions.registerEmailActionNotificationGroup()
 
         UNUserNotificationCenter.current().delegate = notificationCenterDelegate
-        Task {
-            // Ask permission app launch
-            await NotificationsHelper.askForPermissions()
-        }
         application.registerForRemoteNotifications()
         return true
     }
