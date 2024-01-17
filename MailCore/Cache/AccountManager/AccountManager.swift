@@ -206,6 +206,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     public func didUpdateToken(newToken: ApiToken, oldToken: ApiToken) {
+        SentryDebug.logTokenMigration(newToken: newToken, oldToken: oldToken)
         tokenStore.addToken(newToken: newToken)
     }
 

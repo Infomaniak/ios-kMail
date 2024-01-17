@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakLogin
 import RealmSwift
 import Sentry
 
@@ -188,6 +189,25 @@ public enum SentryDebug {
                                      key: "Message context")
                 }
             }
+        }
+    }
+
+    static func logTokenMigration(newToken: ApiToken, oldToken: ApiToken) {
+        let newTokenIsInfinite = newToken.expirationDate == nil
+        let oldTokenIsInfinite = oldToken.expirationDate == nil
+
+        let additionalData = ["newTokenIsInfinite": newTokenIsInfinite, "oldTokenIsInfinite": oldTokenIsInfinite]
+        let breadcrumb = Breadcrumb(level: .info, category: "Token")
+        breadcrumb.message = "Token updated"
+        breadcrumb.data = additionalData
+        SentrySDK.addBreadcrumb(breadcrumb)
+
+        // Only track migration
+        guard newTokenIsInfinite else { return }
+
+        SentrySDK.capture(message: "Update token infinite token") { scope in
+            scope.setContext(value: additionalData,
+                             key: "Migration context")
         }
     }
 
