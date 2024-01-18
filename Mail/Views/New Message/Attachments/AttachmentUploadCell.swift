@@ -61,16 +61,20 @@ struct AttachmentUploadCell: View {
                 .opacity(uploadTask.progress == 1 ? 0 : 1)
         }
         .onTapGesture {
-            guard let attachment = attachment.thaw()?.freezeIfNeeded() else { return }
-            previewedAttachment = attachment
-            if !FileManager.default.fileExists(atPath: attachment.localUrl.path) {
-                Task {
-                    await mailboxManager.saveAttachmentLocally(attachment: attachment)
-                }
-            }
+            showAttachmentPreview()
         }
         .sheet(item: $previewedAttachment) { previewedAttachment in
             AttachmentPreview(attachment: previewedAttachment)
+        }
+    }
+
+    private func showAttachmentPreview() {
+        guard let attachment = attachment.thaw()?.freezeIfNeeded() else { return }
+        previewedAttachment = attachment
+        if !FileManager.default.fileExists(atPath: attachment.localUrl.path) {
+            Task {
+                await mailboxManager.saveAttachmentLocally(attachment: attachment)
+            }
         }
     }
 }
