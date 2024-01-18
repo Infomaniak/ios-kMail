@@ -64,8 +64,6 @@ struct AttachmentView<Content: View>: View {
     }
 }
 
-struct AttachmentView_Previews: PreviewProvider {
-    static var previews: some View {
-        AttachmentView(attachment: PreviewHelper.sampleAttachment, subtitle: "24ko")
-    }
+#Preview {
+    AttachmentView(attachment: PreviewHelper.sampleAttachment, subtitle: "24ko")
 }

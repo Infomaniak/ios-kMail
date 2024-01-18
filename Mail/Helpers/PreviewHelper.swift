@@ -32,11 +32,11 @@ enum PreviewHelper {
     static var mockSelectedThreadOwner = MockSelectedThreadOwner()
 
     private class PreviewHelperRefreshTokenDelegate: RefreshTokenDelegate {
-        func didUpdateToken(newToken: InfomaniakCore.ApiToken, oldToken: InfomaniakCore.ApiToken) {
+        func didUpdateToken(newToken: ApiToken, oldToken: ApiToken) {
             // No implementation
         }
 
-        func didFailRefreshToken(_ token: InfomaniakCore.ApiToken) {
+        func didFailRefreshToken(_ token: ApiToken) {
             // No implementation
         }
     }

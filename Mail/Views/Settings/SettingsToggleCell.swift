@@ -103,8 +103,6 @@ struct SettingsToggleCell: View {
     }
 }
 
-struct SettingsToggleCell_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsToggleCell(title: "Code lock", userDefaults: \.isAppLockEnabled)
-    }
+#Preview {
+    SettingsToggleCell(title: "Code lock", userDefaults: \.isAppLockEnabled)
 }

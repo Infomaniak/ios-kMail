@@ -60,8 +60,6 @@ struct ReplaceMessageBodyView: View {
     }
 }
 
-struct ReplaceMessageContentView_Preview: PreviewProvider {
-    static var previews: some View {
-        ReplaceMessageBodyView { /* Preview */ }
-    }
+#Preview {
+    ReplaceMessageBodyView { /* Preview */ }
 }

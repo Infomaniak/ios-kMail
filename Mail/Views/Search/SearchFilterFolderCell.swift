@@ -90,8 +90,6 @@ struct SearchFilterFolderCell: View {
     }
 }
 
-struct SearchFilterFolderCell_Previews: PreviewProvider {
-    static var previews: some View {
-        SearchFilterFolderCell(selection: .constant("folder"), folders: [PreviewHelper.sampleFolder])
-    }
+#Preview {
+    SearchFilterFolderCell(selection: .constant("folder"), folders: [PreviewHelper.sampleFolder])
 }

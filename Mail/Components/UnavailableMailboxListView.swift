@@ -77,8 +77,6 @@ struct UnavailableMailboxListView: View {
     }
 }
 
-struct UnavailableMailboxListView_Previews: PreviewProvider {
-    static var previews: some View {
-        UnavailableMailboxListView()
-    }
+#Preview {
+    UnavailableMailboxListView()
 }

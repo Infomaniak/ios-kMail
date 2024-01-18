@@ -46,10 +46,6 @@ struct IKDivider: View {
     }
 }
 
-struct SeparatorView_Previews: PreviewProvider {
-    static var previews: some View {
-        IKDivider()
-            .previewLayout(.sizeThatFits)
-            .previewDevice("iPhone 13 Pro")
-    }
+#Preview {
+    IKDivider()
 }

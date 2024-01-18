@@ -24,11 +24,10 @@ import MailResources
 import SwiftUI
 
 struct ContactActionsView: View {
-    @Environment(\.dismiss) private var dismiss
-
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let recipient: Recipient
+
     private var actions: [Action] {
         let contact = mailboxManager.contactManager.getContact(for: recipient)
 
@@ -60,9 +59,7 @@ struct ContactActionsView: View {
     }
 }
 
-struct ContactActionsView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContactActionsView(recipient: PreviewHelper.sampleRecipient1)
-            .environmentObject(PreviewHelper.sampleMailboxManager)
-    }
+#Preview {
+    ContactActionsView(recipient: PreviewHelper.sampleRecipient1)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

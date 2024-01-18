@@ -102,11 +102,8 @@ struct MailboxesManagementView: View {
     }
 }
 
-struct MailboxesManagementView_Previews: PreviewProvider {
-    static var previews: some View {
-        MailboxesManagementView()
-            .environmentObject(PreviewHelper.sampleMailboxManager)
-            .previewLayout(.sizeThatFits)
-            .accentColor(UserDefaults.shared.accentColor.primary.swiftUIColor)
-    }
+#Preview {
+    MailboxesManagementView()
+        .environmentObject(PreviewHelper.sampleMailboxManager)
+        .accentColor(UserDefaults.shared.accentColor.primary.swiftUIColor)
 }

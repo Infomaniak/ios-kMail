@@ -23,8 +23,6 @@ import RealmSwift
 import SwiftUI
 
 struct SearchView: View {
-    @Environment(\.isCompactWindow) private var isCompactWindow
-
     @EnvironmentObject private var mainViewState: MainViewState
 
     @StateObject private var viewModel: SearchViewModel
@@ -109,8 +107,6 @@ struct SearchView: View {
     }
 }
 
-struct SearchView_Previews: PreviewProvider {
-    static var previews: some View {
-        SearchView(mailboxManager: PreviewHelper.sampleMailboxManager, folder: PreviewHelper.sampleFolder)
-    }
+#Preview {
+    SearchView(mailboxManager: PreviewHelper.sampleMailboxManager, folder: PreviewHelper.sampleFolder)
 }

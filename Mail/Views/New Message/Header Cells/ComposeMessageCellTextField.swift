@@ -51,8 +51,6 @@ struct ComposeMessageCellTextField: View {
     }
 }
 
-struct ComposeMessageCellTextField_Previews: PreviewProvider {
-    static var previews: some View {
-        ComposeMessageCellTextField(text: .constant(""), autocompletionType: nil, type: .subject)
-    }
+#Preview {
+    ComposeMessageCellTextField(text: .constant(""), autocompletionType: nil, type: .subject)
 }

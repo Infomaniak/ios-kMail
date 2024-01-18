@@ -66,8 +66,6 @@ struct DetachMailboxConfirmationView: View {
     }
 }
 
-struct DetachMailboxConfirmationView_Previews: PreviewProvider {
-    static var previews: some View {
-        DetachMailboxConfirmationView(mailbox: PreviewHelper.sampleMailbox)
-    }
+#Preview {
+    DetachMailboxConfirmationView(mailbox: PreviewHelper.sampleMailbox)
 }

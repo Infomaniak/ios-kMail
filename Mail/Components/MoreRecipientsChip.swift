@@ -41,8 +41,6 @@ struct MoreRecipientsChip: View {
     }
 }
 
-struct MoreRecipientsChip_Previews: PreviewProvider {
-    static var previews: some View {
-        MoreRecipientsChip(count: 42)
-    }
+#Preview {
+    MoreRecipientsChip(count: 42)
 }

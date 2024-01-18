@@ -31,8 +31,6 @@ struct ShimmerView: View {
     }
 }
 
-struct ShimmerView_Previews: PreviewProvider {
-    static var previews: some View {
-        ShimmerView()
-    }
+#Preview {
+    ShimmerView()
 }

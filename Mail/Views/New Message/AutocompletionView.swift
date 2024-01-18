@@ -83,12 +83,10 @@ struct AutocompletionView: View {
     }
 }
 
-struct AutocompletionView_Previews: PreviewProvider {
-    static var previews: some View {
-        AutocompletionView(
-            textDebounce: TextDebounce(),
-            autocompletion: .constant([]),
-            addedRecipients: .constant(PreviewHelper.sampleRecipientsList)
-        ) { _ in /* Preview */ }
-    }
+#Preview {
+    AutocompletionView(
+        textDebounce: TextDebounce(),
+        autocompletion: .constant([]),
+        addedRecipients: .constant(PreviewHelper.sampleRecipientsList)
+    ) { _ in /* Preview */ }
 }

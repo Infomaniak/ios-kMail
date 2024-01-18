@@ -41,7 +41,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "13d80f170cfaec89dd35728aed7ea22b5fce7b82"
+        "revision" : "fcb77e55122826fc21e5e73ccc2a79126a969a42"
       }
     },
     {
@@ -49,8 +49,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "0a6b23bc6c37d9c75033428ca07d0a2a6cf4e97b",
-        "version" : "2.5.5"
+        "revision" : "d593bdc3d788cadc8856137ff6d2cffbfd707163",
+        "version" : "4.1.0"
       }
     },
     {
@@ -58,8 +58,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-create-account",
       "state" : {
-        "revision" : "f75d9bd65a94e7374fb271d063cc18c8e72dca6a",
-        "version" : "1.1.0"
+        "revision" : "233986fce330fdc588d3e5155500b703f9748539",
+        "version" : "3.0.0"
       }
     },
     {
@@ -67,8 +67,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-dependency-injection",
       "state" : {
-        "revision" : "b4d872b5baf5d6f19b98fdfd765205c57870d02e",
-        "version" : "1.1.11"
+        "revision" : "8dc9e67e6d3d9f4f5bd02d693a7ce1f93b125bcd",
+        "version" : "2.0.1"
       }
     },
     {
@@ -76,8 +76,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-login",
       "state" : {
-        "revision" : "b9f5d87da453b52eec72fb1e0443f28209c6ac67",
-        "version" : "4.1.0"
+        "revision" : "94dee9d95d92c5fbe152476b78b04985fbddaa7c",
+        "version" : "6.0.1"
       }
     },
     {
@@ -103,16 +103,16 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher",
       "state" : {
-        "revision" : "add0a87ec4e31e2ca2a0b2085f0559201e4f5918",
-        "version" : "7.10.1"
+        "revision" : "3ec0ab0bca4feb56e8b33e289c9496e89059dd08",
+        "version" : "7.10.2"
       }
     },
     {
       "identity" : "localizekit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/PhilippeWeidmann/LocalizeKit",
+      "location" : "https://github.com/Infomaniak/LocalizeKit",
       "state" : {
-        "revision" : "1abb86ce614ae8d925bf82123c7360ab95827975",
+        "revision" : "a8f5b63a242a7cb5d8939db011fc9ee871a2a300",
         "version" : "1.0.1"
       }
     },
@@ -191,10 +191,10 @@
     {
       "identity" : "snackbar.swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/PhilippeWeidmann/SnackBar.swift",
+      "location" : "https://github.com/Infomaniak/SnackBar.swift",
       "state" : {
-        "revision" : "9a3c0c71796625ec3804df993483aa80266fa1ff",
-        "version" : "1.1.0"
+        "revision" : "7d8d20af50c6b744aa9791b597f7efbd0a15add2",
+        "version" : "1.2.0"
       }
     },
     {

@@ -144,17 +144,13 @@ struct MenuDrawerItemsListView<Content: View>: View {
     }
 }
 
-struct ItemsListView_Previews: PreviewProvider {
-    static var previews: some View {
-        MenuDrawerItemsListView(title: "Actions avancées") {
-            MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
-                               label: "Importer des mails",
-                               matomoName: "") { print("Hello") }
-            MenuDrawerItemCell(icon: MailResourcesAsset.restoreArrow,
-                               label: "Restaurer des mails",
-                               matomoName: "") { print("Hello") }
-        }
-        .previewLayout(.sizeThatFits)
-        .previewDevice(PreviewDevice(stringLiteral: "iPhone 11 Pro"))
+#Preview {
+    MenuDrawerItemsListView(title: "Actions avancées") {
+        MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
+                           label: "Importer des mails",
+                           matomoName: "") { print("Hello") }
+        MenuDrawerItemCell(icon: MailResourcesAsset.restoreArrow,
+                           label: "Restaurer des mails",
+                           matomoName: "") { print("Hello") }
     }
 }

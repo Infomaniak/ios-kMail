@@ -32,8 +32,6 @@ struct ContactImage: View {
     }
 }
 
-struct ContactImage_Previews: PreviewProvider {
-    static var previews: some View {
-        ContactImage(image: Image(systemName: "person"), size: 40)
-    }
+#Preview {
+    ContactImage(image: Image(systemName: "person"), size: 40)
 }

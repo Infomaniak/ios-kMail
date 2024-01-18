@@ -68,9 +68,10 @@ struct ChevronButton: View {
     }
 }
 
-struct ChevronIcon_Previews: PreviewProvider {
-    static var previews: some View {
-        ChevronIcon(direction: .up)
-        ChevronIcon(direction: .down)
-    }
+#Preview {
+    ChevronIcon(direction: .up)
+}
+
+#Preview {
+    ChevronIcon(direction: .down)
 }

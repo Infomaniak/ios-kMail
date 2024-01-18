@@ -35,12 +35,9 @@ private struct ScrollOffsetPreferenceKey: PreferenceKey {
 struct ThreadView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @Environment(\.isCompactWindow) private var isCompactWindow
-
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
 
-    @State private var headerHeight: CGFloat = 0
     @State private var displayNavigationTitle = false
     @State private var replyOrReplyAllMessage: Message?
 
@@ -236,9 +233,7 @@ extension Label {
     }
 }
 
-struct ThreadView_Previews: PreviewProvider {
-    static var previews: some View {
-        ThreadView(thread: PreviewHelper.sampleThread)
-            .environmentObject(PreviewHelper.sampleMailboxManager)
-    }
+#Preview {
+    ThreadView(thread: PreviewHelper.sampleThread)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

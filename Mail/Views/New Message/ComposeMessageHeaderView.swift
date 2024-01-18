@@ -81,8 +81,6 @@ struct ComposeMessageHeaderView: View {
     }
 }
 
-struct ComposeMessageHeaderView_Previews: PreviewProvider {
-    static var previews: some View {
-        ComposeMessageHeaderView(draft: Draft(), autocompletionType: .constant(nil), currentSignature: .constant(nil))
-    }
+#Preview {
+    ComposeMessageHeaderView(draft: Draft(), autocompletionType: .constant(nil), currentSignature: .constant(nil))
 }

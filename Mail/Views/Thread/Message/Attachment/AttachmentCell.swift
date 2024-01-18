@@ -28,8 +28,6 @@ struct AttachmentCell: View {
     }
 }
 
-struct AttachmentCell_Previews: PreviewProvider {
-    static var previews: some View {
-        AttachmentCell(attachment: PreviewHelper.sampleAttachment)
-    }
+#Preview {
+    AttachmentCell(attachment: PreviewHelper.sampleAttachment)
 }

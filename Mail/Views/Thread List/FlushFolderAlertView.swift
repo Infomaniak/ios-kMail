@@ -67,8 +67,6 @@ struct FlushFolderAlertView: View {
     }
 }
 
-struct FlushFolderAlertView_Previews: PreviewProvider {
-    static var previews: some View {
-        FlushFolderAlertView(flushAlert: FlushAlertState { /* Preview */ })
-    }
+#Preview {
+    FlushFolderAlertView(flushAlert: FlushAlertState { /* Preview */ })
 }

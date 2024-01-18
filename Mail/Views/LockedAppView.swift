@@ -72,8 +72,6 @@ struct LockedAppView: View {
     }
 }
 
-struct LockedAppView_Previews: PreviewProvider {
-    static var previews: some View {
-        LockedAppView()
-    }
+#Preview {
+    LockedAppView()
 }

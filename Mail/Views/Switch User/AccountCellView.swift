@@ -96,20 +96,18 @@ struct AccountHeaderCell: View {
     }
 }
 
-struct AccountCellView_Previews: PreviewProvider {
-    static var previews: some View {
-        AccountCellView(
-            selectedUserId: .constant(nil),
-            mailboxManager: nil,
-            account: Account(apiToken: ApiToken(
-                accessToken: "",
-                expiresIn: .max,
-                refreshToken: "",
-                scope: "",
-                tokenType: "",
-                userId: 0,
-                expirationDate: .distantFuture
-            ))
-        )
-    }
+#Preview {
+    AccountCellView(
+        selectedUserId: .constant(nil),
+        mailboxManager: nil,
+        account: Account(apiToken: ApiToken(
+            accessToken: "",
+            expiresIn: .max,
+            refreshToken: "",
+            scope: "",
+            tokenType: "",
+            userId: 0,
+            expirationDate: .distantFuture
+        ))
+    )
 }

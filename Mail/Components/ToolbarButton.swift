@@ -54,8 +54,6 @@ struct ToolbarButton: View {
     }
 }
 
-struct ToolbarButton_Previews: PreviewProvider {
-    static var previews: some View {
-        ToolbarButton(text: "Preview", icon: MailResourcesAsset.folder.swiftUIImage) { /* Preview */ }
-    }
+#Preview {
+    ToolbarButton(text: "Preview", icon: MailResourcesAsset.folder.swiftUIImage) { /* Preview */ }
 }

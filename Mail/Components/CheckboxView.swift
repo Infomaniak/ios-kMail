@@ -46,13 +46,11 @@ struct CheckboxView: View {
     }
 }
 
-struct CheckboxView_Previews: PreviewProvider {
-    static var previews: some View {
-        VStack {
-            CheckboxView(isSelected: false, density: .large, accentColor: .blue)
-            CheckboxView(isSelected: true, density: .large, accentColor: .blue)
-            CheckboxView(isSelected: false, density: .normal, accentColor: .blue)
-            CheckboxView(isSelected: true, density: .normal, accentColor: .blue)
-        }
+#Preview {
+    VStack {
+        CheckboxView(isSelected: false, density: .large, accentColor: .blue)
+        CheckboxView(isSelected: true, density: .large, accentColor: .blue)
+        CheckboxView(isSelected: false, density: .normal, accentColor: .blue)
+        CheckboxView(isSelected: true, density: .normal, accentColor: .blue)
     }
 }

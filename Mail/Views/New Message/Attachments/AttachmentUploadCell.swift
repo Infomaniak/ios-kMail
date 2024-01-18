@@ -59,10 +59,8 @@ struct AttachmentUploadCell: View {
     }
 }
 
-struct AttachmentUploadCell_Previews: PreviewProvider {
-    static var previews: some View {
-        AttachmentUploadCell(uploadTask: AttachmentUploadTask(), attachment: PreviewHelper.sampleAttachment) { _ in
-            /* Preview */
-        }
+#Preview {
+    AttachmentUploadCell(uploadTask: AttachmentUploadTask(), attachment: PreviewHelper.sampleAttachment) { _ in
+        /* Preview */
     }
 }

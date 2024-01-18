@@ -59,14 +59,6 @@ final class SyncedAuthenticator: OAuthAuthenticator {
             return
         }
 
-        // Maybe someone else refreshed our token
-        if let token = tokenStore.tokenFor(userId: credential.userId, fetchLocation: .keychain),
-           token.expirationDate > credential.expirationDate {
-            SentrySDK.addBreadcrumb(token.generateBreadcrumb(level: .info, message: "Refreshing token - Success with local"))
-            completion(.success(token))
-            return
-        }
-
         // It is absolutely necessary that the app stays awake while we refresh the token
         BackgroundExecutor.executeWithBackgroundTask { endBackgroundTask in
             self.networkLoginService.refreshToken(token: credential) { token, error in

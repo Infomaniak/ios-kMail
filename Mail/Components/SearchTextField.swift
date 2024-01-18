@@ -66,12 +66,10 @@ struct SearchTextField: View {
     }
 }
 
-struct SearchTextField_Previews: PreviewProvider {
-    static var previews: some View {
-        SearchTextField(
-            value: .constant("Recherche"),
-            onSubmit: { /* Empty on purpose */ },
-            onDelete: { /* Empty on purpose */ }
-        )
-    }
+#Preview {
+    SearchTextField(
+        value: .constant("Recherche"),
+        onSubmit: { /* Empty on purpose */ },
+        onDelete: { /* Empty on purpose */ }
+    )
 }

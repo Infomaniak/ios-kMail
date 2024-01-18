@@ -111,8 +111,6 @@ struct AccountListView: View {
     }
 }
 
-struct AccountListView_Previews: PreviewProvider {
-    static var previews: some View {
-        AccountListView(mailboxManager: nil)
-    }
+#Preview {
+    AccountListView(mailboxManager: nil)
 }

@@ -17,6 +17,7 @@
  */
 
 import CocoaLumberjackSwift
+import Contacts
 import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakCoreUI
@@ -31,7 +32,7 @@ import UIKit
 @main
 struct MailApp: App {
     /// Making sure the DI is registered at a very early stage of the app launch.
-    private let dependencyInjectionHook = EarlyDIHook()
+    private let dependencyInjectionHook = MailTargetAssembly()
 
     @LazyInjectService private var appLockHelper: AppLockHelper
     @LazyInjectService private var accountManager: AccountManager
@@ -119,6 +120,9 @@ struct MailApp: App {
                 try await accountManager.updateUser(for: account)
                 accountManager.enableBugTrackerIfAvailable()
 
+                guard CNContactStore.authorizationStatus(for: .contacts) != .notDetermined else {
+                    return
+                }
                 try await accountManager.currentContactManager?.refreshContactsAndAddressBooks()
             } catch {
                 DDLogError("Error while updating user account: \(error)")

@@ -69,10 +69,8 @@ struct MessageHeaderDetailView: View {
     }
 }
 
-struct MessageHeaderDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        MessageHeaderDetailView(message: PreviewHelper.sampleMessage)
-    }
+#Preview {
+    MessageHeaderDetailView(message: PreviewHelper.sampleMessage)
 }
 
 struct RecipientLabel: View {

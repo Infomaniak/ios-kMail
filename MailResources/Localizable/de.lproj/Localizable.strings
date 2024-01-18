@@ -4,12 +4,9 @@
  * Release: Working copy
  * Locale: de, German
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Mon, 08 Jan 2024 14:11:04 +0100
+ * Exported by: Valentin Perignon
+ * Exported at: Fri, 12 Jan 2024 11:47:14 +0100
  */
-
-/* loco:63e11e5771d13a480771a162 */
-"SettingsEnableNotifications" = "Benachrichtigungen einschalten";
 
 /* loco:62bb154d7513e127cb2e9c94 */
 "accentColorBlueTitle" = "Blau";
@@ -497,6 +494,12 @@
 /* loco:6527b7c3bffd89453201f9e2 */
 "buttonYes" = "Ja";
 
+/* loco:659ff1ea44e0167c0c012382 */
+"calendarAllDayLong" = "Gesamter Tag";
+
+/* loco:659ff39192d69743b20b4b72 */
+"calendarNotInvited" = "Sie zählen nicht zu den eingeladenen Personen";
+
 /* loco:65957d996979353c3e0956c4 */
 "calendarOrganizerName" = "%@ (Organisator)";
 
@@ -684,7 +687,7 @@
 "errorAttachmentNotFound" = "Dateianhang unauffindbar";
 
 /* loco:63d14902e3c4eb4832777c42 */
-"errorCancelAttachmentsUploadInProgress" = "Einige Anhänge werden noch importiert. Wenn Sie die Ansicht schließen, gehen die Anhänge verloren.";
+"errorCancelAttachmentsUploadInProgress" = "Einige Anhänge werden noch importiert. Wenn Sie die Ansicht schliessen, gehen die Anhänge verloren.";
 
 /* loco:6470516c5a7017daea03dde3 */
 "errorDraftNotFound" = "Entwurf unauffindbar";
@@ -966,10 +969,10 @@
 "notificationTitleDelete" = "Gelöscht";
 
 /* loco:659697fd4623764905012212 */
-"onBoardingContactsDescription" = "Wenn Sie den Zugriff erlauben, wird die Verwaltung Ihrer Kontakte und Ihre E-Mail-Erfahrung vereinfacht.";
+"onBoardingContactsDescription" = "Mit diesem Zugang können Sie Ihren Kontakten ganz einfach über Infomaniak Mail schreiben.\nWir respektieren Ihre Privatsphäre und Ihre Kontakte werden nicht für andere Zwecke verwendet.";
 
 /* loco:659697471cbe96642e01ee33 */
-"onBoardingContactsTitle" = "Mail den Zugriff auf Ihre Kontakte erlauben";
+"onBoardingContactsTitle" = "Erlauben Sie der App den Zugriff auf Ihre Kontakte";
 
 /* loco:62c2eede5bc8fa0201054443 */
 "onBoardingDescription2" = "Passen Sie Ihre Shortcuts in den Einstellungen der App frei an.";
@@ -1117,6 +1120,9 @@
 
 /* loco:6295d75d0ac5a369d16b45c5 */
 "settingsDisabled" = "Behinderte";
+
+/* loco:63e11e5771d13a480771a162 */
+"settingsEnableNotifications" = "Benachrichtigungen einschalten";
 
 /* loco:62c691f711673b15f21d70b4 */
 "settingsEnabled" = "Aktiviert";

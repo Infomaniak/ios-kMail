@@ -74,8 +74,6 @@ struct AddLinkView: View {
     }
 }
 
-struct AddLinkView_Previews: PreviewProvider {
-    static var previews: some View {
-        AddLinkView()
-    }
+#Preview {
+    AddLinkView()
 }

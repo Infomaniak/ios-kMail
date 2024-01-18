@@ -65,6 +65,23 @@ struct Slide: Identifiable {
             lottieConfiguration: LottieConfiguration(id: 4, filename: "illu_onboarding_4", loopFrameStart: 127, loopFrameEnd: 236)
         )
     ]
+
+    static let authorizationSlides = [
+        Slide(
+            id: AuthorizationSlide.contacts.rawValue,
+            backgroundImage: MailResourcesAsset.onboardingBackground1.swiftUIImage,
+            title: MailResourcesStrings.Localizable.onBoardingContactsTitle,
+            description: MailResourcesStrings.Localizable.onBoardingContactsDescription,
+            asset: MailResourcesAsset.authorizationContact.swiftUIImage
+        ),
+        Slide(
+            id: AuthorizationSlide.notifications.rawValue,
+            backgroundImage: MailResourcesAsset.onboardingBackground2.swiftUIImage,
+            title: MailResourcesStrings.Localizable.onBoardingNotificationsTitle,
+            description: MailResourcesStrings.Localizable.onBoardingNotificationsDescription,
+            asset: MailResourcesAsset.authorizationNotification.swiftUIImage
+        )
+    ]
 }
 
 @MainActor

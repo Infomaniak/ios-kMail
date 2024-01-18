@@ -57,8 +57,6 @@ struct ModalButtonsView: View {
     }
 }
 
-struct ModalButtonsView_Previews: PreviewProvider {
-    static var previews: some View {
-        ModalButtonsView(primaryButtonTitle: "Save") { /* Preview */ }
-    }
+#Preview {
+    ModalButtonsView(primaryButtonTitle: "Save") { /* Preview */ }
 }

@@ -66,8 +66,6 @@ struct NoMailboxView: View {
     }
 }
 
-struct NoMailboxView_Previews: PreviewProvider {
-    static var previews: some View {
-        NoMailboxView()
-    }
+#Preview {
+    NoMailboxView()
 }

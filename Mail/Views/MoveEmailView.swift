@@ -99,13 +99,11 @@ struct MoveEmailView: View {
     }
 }
 
-struct MoveMessageView_Previews: PreviewProvider {
-    static var previews: some View {
-        MoveEmailView(
-            mailboxManager: PreviewHelper.sampleMailboxManager,
-            movedMessages: [PreviewHelper.sampleMessage],
-            originFolder: nil
-        )
-        .environmentObject(PreviewHelper.sampleMailboxManager)
-    }
+#Preview {
+    MoveEmailView(
+        mailboxManager: PreviewHelper.sampleMailboxManager,
+        movedMessages: [PreviewHelper.sampleMessage],
+        originFolder: nil
+    )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }

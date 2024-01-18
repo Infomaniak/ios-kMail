@@ -89,9 +89,10 @@ struct SkeletonSwipeCell: View {
     }
 }
 
-struct SkeletonSwipeCell_Previews: PreviewProvider {
-    static var previews: some View {
-        SwipeConfigCell(section: .leadingSwipe)
-        SwipeConfigCell(section: .trailingSwipe)
-    }
+#Preview {
+    SwipeConfigCell(section: .leadingSwipe)
+}
+
+#Preview {
+    SwipeConfigCell(section: .trailingSwipe)
 }

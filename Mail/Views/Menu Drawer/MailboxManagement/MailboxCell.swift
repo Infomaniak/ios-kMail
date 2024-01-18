@@ -95,8 +95,6 @@ struct MailboxCell: View {
     }
 }
 
-struct MailboxCell_Previews: PreviewProvider {
-    static var previews: some View {
-        MailboxCell(mailbox: PreviewHelper.sampleMailbox, isSelected: true)
-    }
+#Preview {
+    MailboxCell(mailbox: PreviewHelper.sampleMailbox, isSelected: true)
 }

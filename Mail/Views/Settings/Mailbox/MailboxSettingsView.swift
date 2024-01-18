@@ -42,8 +42,6 @@ struct MailboxSettingsView: View {
     }
 }
 
-struct MailboxSettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        MailboxSettingsView(mailboxManager: PreviewHelper.sampleMailboxManager)
-    }
+#Preview {
+    MailboxSettingsView(mailboxManager: PreviewHelper.sampleMailboxManager)
 }

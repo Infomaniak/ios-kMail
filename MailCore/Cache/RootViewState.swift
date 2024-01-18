@@ -17,6 +17,7 @@
  */
 
 import Combine
+import Contacts
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreUI
@@ -29,6 +30,8 @@ public enum RootViewType: Equatable {
         case (.appLocked, .appLocked):
             return true
         case (.onboarding, .onboarding):
+            return true
+        case (.authorization, .authorization):
             return true
         case (.noMailboxes, .noMailboxes):
             return true
@@ -47,6 +50,7 @@ public enum RootViewType: Equatable {
     case appLocked
     case mainView(MailboxManager, Folder)
     case onboarding
+    case authorization
     case noMailboxes
     case unavailableMailboxes
     case preloading(Account)
@@ -79,7 +83,9 @@ public class RootViewState: ObservableObject {
 
         accountManagerObservation = accountManager.objectWillChange.receive(on: RunLoop.main).sink { [weak self] in
             self?.account = accountManager.getCurrentAccount()
-            self?.state = RootViewState.getMainViewStateIfPossible()
+            withAnimation {
+                self?.state = RootViewState.getMainViewStateIfPossible()
+            }
         }
     }
 
@@ -89,6 +95,10 @@ public class RootViewState: ObservableObject {
 
         guard let currentAccount = accountManager.getCurrentAccount() else {
             return .onboarding
+        }
+
+        guard CNContactStore.authorizationStatus(for: .contacts) != .notDetermined else {
+            return .authorization
         }
 
         if let currentMailboxManager = accountManager.currentMailboxManager,

@@ -42,8 +42,6 @@ struct RecipientsList: View {
     }
 }
 
-struct RecipientsList_Previews: PreviewProvider {
-    static var previews: some View {
-        RecipientsList(recipients: .constant(PreviewHelper.sampleRecipientsList), isCurrentFieldFocused: true, type: .to)
-    }
+#Preview {
+    RecipientsList(recipients: .constant(PreviewHelper.sampleRecipientsList), isCurrentFieldFocused: true, type: .to)
 }

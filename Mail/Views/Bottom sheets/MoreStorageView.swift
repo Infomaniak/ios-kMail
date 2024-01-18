@@ -59,9 +59,6 @@ struct MoreStorageView: View {
     }
 }
 
-struct MoreStorageView_Previews: PreviewProvider {
-    static var previews: some View {
-        MoreStorageView()
-            .previewLayout(.sizeThatFits)
-    }
+#Preview {
+    MoreStorageView()
 }

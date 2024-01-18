@@ -53,15 +53,13 @@ struct MessageHeaderActionView<Content: View>: View {
     }
 }
 
-struct MessageHeaderActionView_Previews: PreviewProvider {
-    static var previews: some View {
-        MessageHeaderActionView(
-            icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
-            message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
-        ) {
-            Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
-                .buttonStyle(.ikLink(isInlined: true))
-                .controlSize(.small)
-        }
+#Preview {
+    MessageHeaderActionView(
+        icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
+        message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
+    ) {
+        Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
+            .buttonStyle(.ikLink(isInlined: true))
+            .controlSize(.small)
     }
 }

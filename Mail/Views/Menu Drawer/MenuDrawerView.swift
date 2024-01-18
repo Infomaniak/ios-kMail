@@ -43,8 +43,6 @@ class NavigationDrawerState: ObservableObject {
 }
 
 struct NavigationDrawer: View {
-    @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
     @GestureState private var isDragGestureActive = false
@@ -120,9 +118,6 @@ struct NavigationDrawer: View {
 }
 
 struct MenuDrawerView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
-    @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingRestoreMails = false
@@ -176,10 +171,8 @@ struct AppVersionView: View {
     }
 }
 
-struct MenuDrawerView_Previews: PreviewProvider {
-    static var previews: some View {
-        MenuDrawerView()
-            .environmentObject(PreviewHelper.sampleMailboxManager)
-            .environmentObject(NavigationDrawerState())
-    }
+#Preview {
+    MenuDrawerView()
+        .environmentObject(PreviewHelper.sampleMailboxManager)
+        .environmentObject(NavigationDrawerState())
 }

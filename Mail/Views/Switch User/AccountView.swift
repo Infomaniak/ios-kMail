@@ -54,8 +54,6 @@ struct AccountView: View {
 
     private static let avatarViewSize: CGFloat = 104
 
-    @Environment(\.dismiss) private var dismiss
-
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingLogoutAlert = false
@@ -156,8 +154,6 @@ extension ApiToken: Identifiable {
     }
 }
 
-struct AccountView_Previews: PreviewProvider {
-    static var previews: some View {
-        AccountView(account: PreviewHelper.sampleAccount)
-    }
+#Preview {
+    AccountView(account: PreviewHelper.sampleAccount)
 }

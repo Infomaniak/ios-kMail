@@ -73,16 +73,14 @@ struct BottomBarView<Items: View>: View {
     }
 }
 
-struct BottomBarView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationView {
-            List {
-                Text("View #1")
-            }
-            .navigationTitle("Title")
-            .bottomBar {
-                Text("Coucou")
-            }
+#Preview {
+    NavigationView {
+        List {
+            Text("View #1")
+        }
+        .navigationTitle("Title")
+        .bottomBar {
+            Text("Coucou")
         }
     }
 }

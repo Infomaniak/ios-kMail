@@ -176,10 +176,13 @@ struct ComposeMessageView: View {
             }
         }
         .onDisappear {
-            draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: !mainViewState.isShowingSetAppAsDefaultDiscovery)
+            var shouldShowSnackbar = false
             if !Bundle.main.isExtension && !mainViewState.isShowingSetAppAsDefaultDiscovery {
+                shouldShowSnackbar = !mainViewState.isShowingSetAppAsDefaultDiscovery
                 mainViewState.isShowingReviewAlert = reviewManager.shouldRequestReview()
             }
+
+            draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: shouldShowSnackbar)
         }
         .interactiveDismissDisabled()
         .customAlert(isPresented: $alert.isShowing) {
@@ -384,11 +387,9 @@ struct ComposeMessageView: View {
     }
 }
 
-struct ComposeMessageView_Previews: PreviewProvider {
-    static var previews: some View {
-        ComposeMessageView(
-            editedDraft: EditedDraft.new(),
-            mailboxManager: PreviewHelper.sampleMailboxManager
-        )
-    }
+#Preview {
+    ComposeMessageView(
+        editedDraft: EditedDraft.new(),
+        mailboxManager: PreviewHelper.sampleMailboxManager
+    )
 }

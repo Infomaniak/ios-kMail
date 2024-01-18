@@ -4,12 +4,9 @@
  * Release: Working copy
  * Locale: it, Italian
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Mon, 08 Jan 2024 14:11:04 +0100
+ * Exported by: Valentin Perignon
+ * Exported at: Fri, 12 Jan 2024 11:47:14 +0100
  */
-
-/* loco:63e11e5771d13a480771a162 */
-"SettingsEnableNotifications" = "Abilitazione delle notifiche";
 
 /* loco:62bb154d7513e127cb2e9c94 */
 "accentColorBlueTitle" = "Blu";
@@ -497,6 +494,12 @@
 /* loco:6527b7c3bffd89453201f9e2 */
 "buttonYes" = "Sì";
 
+/* loco:659ff1ea44e0167c0c012382 */
+"calendarAllDayLong" = "Tutta la giornata";
+
+/* loco:659ff39192d69743b20b4b72 */
+"calendarNotInvited" = "Non fai parte degli invitati";
+
 /* loco:65957d996979353c3e0956c4 */
 "calendarOrganizerName" = "%@ (Organizzatore)";
 
@@ -966,10 +969,10 @@
 "notificationTitleDelete" = "Soppresso";
 
 /* loco:659697fd4623764905012212 */
-"onBoardingContactsDescription" = "Autorizzando l’accesso, la gestione dei vostri contatti e la vostra esperienza con la posta elettronica saranno semplificate.";
+"onBoardingContactsDescription" = "Questo accesso ti permetterà di scrivere facilmente ai tuoi contatti da Infomaniak Mail.\nRispettiamo la tua privacy e i tuoi contatti non saranno utilizzati per altri scopi.";
 
 /* loco:659697471cbe96642e01ee33 */
-"onBoardingContactsTitle" = "Autorizzare Mail ad accedere ai contatti";
+"onBoardingContactsTitle" = "Consenti al l’applicazione di accedere ai contatti";
 
 /* loco:62c2eede5bc8fa0201054443 */
 "onBoardingDescription2" = "Personalizzate liberamente i vostri collegamenti nelle impostazioni dell’app.";
@@ -1005,7 +1008,7 @@
 "pickerNoSelection" = "Nessuna selezione";
 
 /* loco:64ca16484dbf65eb9b0ea862 */
-"pleaseLogInFirst" = "Effettua prima il login nell'app Infomaniak Mail.";
+"pleaseLogInFirst" = "Effettua prima il login nell’app Infomaniak Mail.";
 
 /* loco:64a695f87730509b39030ae2 */
 "popupDetachMailboxDescription" = "Sei sicuro di voler staccare l’indirizzo %@?";
@@ -1117,6 +1120,9 @@
 
 /* loco:6295d75d0ac5a369d16b45c5 */
 "settingsDisabled" = "Disabili";
+
+/* loco:63e11e5771d13a480771a162 */
+"settingsEnableNotifications" = "Abilitazione delle notifiche";
 
 /* loco:62c691f711673b15f21d70b4 */
 "settingsEnabled" = "Abilitato";
@@ -1428,7 +1434,7 @@
 "syncTutorialInstallProfileStep4" = "Incolla la password di convalida del passaggio precedente.";
 
 /* loco:651ec1014c5a0be89406c4d4 */
-"syncTutorialInstallProfileStep5" = "Torna all'applicazione Mail.";
+"syncTutorialInstallProfileStep5" = "Torna all’applicazione Mail.";
 
 /* loco:651ebf9f3e95150dce005d02 */
 "syncTutorialInstallProfileTip" = "Digita \"Profilo scaricato\" nella ricerca delle impostazioni per trovare facilmente la scheda!";

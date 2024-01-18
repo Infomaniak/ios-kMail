@@ -56,8 +56,6 @@ struct LogoutConfirmationView: View {
     }
 }
 
-struct LogoutConfirmationView_Previews: PreviewProvider {
-    static var previews: some View {
-        LogoutConfirmationView(account: PreviewHelper.sampleAccount)
-    }
+#Preview {
+    LogoutConfirmationView(account: PreviewHelper.sampleAccount)
 }

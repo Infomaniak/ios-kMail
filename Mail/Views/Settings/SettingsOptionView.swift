@@ -105,8 +105,6 @@ struct SettingsOptionView<OptionEnum>: View where OptionEnum: CaseIterable, Opti
     }
 }
 
-struct SettingsOptionView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsOptionView<Theme>(title: "Theme", subtitle: "Theme", keyPath: \.theme)
-    }
+#Preview {
+    SettingsOptionView<Theme>(title: "Theme", subtitle: "Theme", keyPath: \.theme)
 }

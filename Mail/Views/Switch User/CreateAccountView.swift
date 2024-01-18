@@ -92,8 +92,6 @@ struct CreateAccountView: View {
     }
 }
 
-struct CreateAccountView_Previews: PreviewProvider {
-    static var previews: some View {
-        CreateAccountView(loginHandler: LoginHandler())
-    }
+#Preview {
+    CreateAccountView(loginHandler: LoginHandler())
 }

@@ -134,14 +134,12 @@ extension View {
     }
 }
 
-struct ThreadListSwipeAction_Previews: PreviewProvider {
-    static var previews: some View {
-        SwipeActionView(
-            actionPanelMessages: .constant(nil),
-            moveSheetMessages: .constant(nil),
-            flushAlert: .constant(nil),
-            thread: PreviewHelper.sampleThread,
-            action: .delete
-        )
-    }
+#Preview {
+    SwipeActionView(
+        actionPanelMessages: .constant(nil),
+        moveSheetMessages: .constant(nil),
+        flushAlert: .constant(nil),
+        thread: PreviewHelper.sampleThread,
+        action: .delete
+    )
 }

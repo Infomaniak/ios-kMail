@@ -47,8 +47,6 @@ struct AIHeaderView: View {
     }
 }
 
-struct AIHeaderView_Previews: PreviewProvider {
-    static var previews: some View {
-        AIHeaderView(style: .bottomSheet)
-    }
+#Preview {
+    AIHeaderView(style: .bottomSheet)
 }

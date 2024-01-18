@@ -40,9 +40,7 @@ struct ReportJunkView: View {
     }
 }
 
-struct ReportJunkView_Previews: PreviewProvider {
-    static var previews: some View {
-        ReportJunkView(reportedMessage: PreviewHelper.sampleMessage, origin: .floatingPanel())
-            .accentColor(AccentColor.pink.primary.swiftUIColor)
-    }
+#Preview {
+    ReportJunkView(reportedMessage: PreviewHelper.sampleMessage, origin: .floatingPanel())
+        .accentColor(AccentColor.pink.primary.swiftUIColor)
 }

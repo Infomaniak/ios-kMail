@@ -19,6 +19,7 @@
 import Foundation
 import InfomaniakCore
 import InfomaniakDI
+import InfomaniakLogin
 
 public class TokenStore {
     public enum TokenStoreFetchLocation {
