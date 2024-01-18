@@ -42,9 +42,8 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
         return parentLink.first
     }
 
-    public var localUrl: URL? {
-        guard let message = parent else { return nil }
-        return FileManager.default.temporaryDirectory.appendingPathComponent("\(message.uid)_\(partId)/\(name)")
+    public var localUrl: URL {
+        return FileManager.default.temporaryDirectory.appendingPathComponent("\(uuid)_\(partId)/\(name)")
     }
 
     public var uti: UTType? {

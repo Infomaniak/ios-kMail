@@ -37,8 +37,8 @@ struct AttachmentPreview: View {
     var body: some View {
         NavigationView {
             Group {
-                if let url = attachment.localUrl, FileManager.default.fileExists(atPath: url.path) {
-                    PreviewController(url: url)
+                if FileManager.default.fileExists(atPath: attachment.localUrl.path) {
+                    PreviewController(url: attachment.localUrl)
                 } else {
                     ProgressView()
                 }
@@ -51,9 +51,8 @@ struct AttachmentPreview: View {
 
                 ToolbarItemGroup(placement: .bottomBar) {
                     Button {
-                        guard let attachmentURL = attachment.localUrl else { return }
                         matomo.track(eventWithCategory: .message, name: "download")
-                        downloadedAttachmentURL = IdentifiableURL(url: attachmentURL)
+                        downloadedAttachmentURL = IdentifiableURL(url: attachment.localUrl)
                     } label: {
                         Label {
                             Text(MailResourcesStrings.Localizable.buttonDownload)

@@ -48,7 +48,7 @@ struct AttachmentsView: View {
                         Button {
                             matomo.track(eventWithCategory: .attachmentActions, name: "open")
                             previewedAttachment = attachment
-                            if !FileManager.default.fileExists(atPath: attachment.localUrl?.path ?? "") {
+                            if !FileManager.default.fileExists(atPath: attachment.localUrl.path) {
                                 Task {
                                     await mailboxManager.saveAttachmentLocally(attachment: attachment)
                                 }
