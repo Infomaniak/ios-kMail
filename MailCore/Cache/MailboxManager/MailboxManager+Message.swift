@@ -314,13 +314,12 @@ public extension MailboxManager {
     func saveAttachmentLocally(attachment: Attachment) async {
         do {
             let data = try await attachmentData(attachment)
-            if let url = attachment.localUrl {
-                let parentFolder = url.deletingLastPathComponent()
-                if !FileManager.default.fileExists(atPath: parentFolder.path) {
-                    try FileManager.default.createDirectory(at: parentFolder, withIntermediateDirectories: true)
-                }
-                try data.write(to: url)
+            let url = attachment.localUrl
+            let parentFolder = url.deletingLastPathComponent()
+            if !FileManager.default.fileExists(atPath: parentFolder.path) {
+                try FileManager.default.createDirectory(at: parentFolder, withIntermediateDirectories: true)
             }
+            try data.write(to: url)
         } catch {
             // Handle error
             print("Failed to save attachment: \(error)")
