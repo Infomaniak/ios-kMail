@@ -22,19 +22,22 @@ import SwiftUI
 import WrappingHStack
 
 extension LabelStyle where Self == CalendarLabelStyle {
-    static var calendar: CalendarLabelStyle {
-        return CalendarLabelStyle()
+    static func calendar(_ warning: CalendarEventWarning? = nil) -> CalendarLabelStyle {
+        return CalendarLabelStyle(warning: warning)
     }
 }
 
 struct CalendarLabelStyle: LabelStyle {
+    let warning: CalendarEventWarning?
+
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: UIPadding.regular) {
             configuration.icon
                 .frame(width: IKIcon.Size.large.rawValue, height: IKIcon.Size.large.rawValue)
-                .foregroundStyle(MailResourcesAsset.textSecondaryColor)
+                .foregroundStyle(warning?.color ?? MailResourcesAsset.textSecondaryColor.swiftUIColor)
             configuration.title
-                .textStyle(.body)
+                .font(MailTextStyle.body.font)
+                .foregroundStyle(warning?.color ?? MailTextStyle.body.color)
                 .multilineTextAlignment(.leading)
         }
     }
@@ -46,30 +49,25 @@ struct CalendarBodyDetailsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
-            if event.hasPassed {
-                Label {
-                    Text(MailResourcesStrings.Localizable.warningEventHasPassed)
-                        .textStyle(.bodyWarning)
-                } icon: {
-                    IKIcon(MailResourcesAsset.warning.swiftUIImage, size: .large)
-                }
-                .labelStyle(.calendar)
+            if let warning = event.warning {
+                Label { Text(warning.label) } icon: { IKIcon(MailResourcesAsset.warning, size: .large) }
+                    .labelStyle(.calendar(warning))
             }
 
             Label(event.formattedDate, image: MailResourcesAsset.calendar.name)
-                .labelStyle(.calendar)
+                .labelStyle(.calendar())
             Label(event.formattedTime, image: MailResourcesAsset.clock.name)
-                .labelStyle(.calendar)
+                .labelStyle(.calendar())
             if let location = event.location {
                 Label(location, image: MailResourcesAsset.pin.name)
-                    .labelStyle(.calendar)
+                    .labelStyle(.calendar())
             }
             if !iAmPartOfAttendees {
                 Label(MailResourcesStrings.Localizable.calendarNotInvited, image: MailResourcesAsset.socialMedia.name)
-                    .labelStyle(.calendar)
+                    .labelStyle(.calendar())
             }
 
-            if !event.hasPassed && iAmPartOfAttendees {
+            if event.warning == nil && iAmPartOfAttendees {
                 WrappingHStack(
                     AttendeeState.allCases,
                     id: \.self,

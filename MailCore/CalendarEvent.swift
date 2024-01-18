@@ -32,6 +32,28 @@ public enum CalendarEventStatus: String, Codable, PersistableEnum {
     case cancelled = "CANCELLED"
 }
 
+public enum CalendarEventWarning {
+    case isCancelled, hasPassed
+
+    public var label: String {
+        switch self {
+        case .isCancelled:
+            return MailResourcesStrings.Localizable.warningEventIsCancelled
+        case .hasPassed:
+            return MailResourcesStrings.Localizable.warningEventHasPassed
+        }
+    }
+
+    public var color: Color {
+        switch self {
+        case .isCancelled:
+            return MailResourcesAsset.redColor.swiftUIColor
+        case .hasPassed:
+            return MailResourcesAsset.orangeColor.swiftUIColor
+        }
+    }
+}
+
 public final class CalendarEvent: EmbeddedObject, Codable {
     @Persisted public var type: CalendarEventType
     @Persisted public var title: String
@@ -46,8 +68,14 @@ public final class CalendarEvent: EmbeddedObject, Codable {
     @Persisted public var status: CalendarEventStatus?
     @Persisted public var attendees: RealmSwift.List<Attendee>
 
-    public var hasPassed: Bool {
-        return end < .now
+    public var warning: CalendarEventWarning? {
+        if status == .cancelled {
+            return .isCancelled
+        } else if hasPassed {
+            return .hasPassed
+        } else {
+            return nil
+        }
     }
 
     public var organizer: Attendee? {
@@ -76,6 +104,10 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         }
     }
 
+    private var hasPassed: Bool {
+        return end < .now
+    }
+
     override public init() {
         super.init()
     }
@@ -91,6 +123,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         timezoneStart: String,
         end: Date,
         timezoneEnd: String,
+        status: CalendarEventStatus?,
         attendees: RealmSwift.List<Attendee>
     ) {
         self.type = type
@@ -103,6 +136,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         self.timezoneStart = timezoneStart
         self.end = end
         self.timezoneEnd = timezoneEnd
+        self.status = status
         self.attendees = attendees
     }
 
@@ -119,6 +153,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         timezone = try container.decode(String?.self, forKey: .timezone)
         timezoneStart = try container.decode(String.self, forKey: .timezoneStart)
         timezoneEnd = try container.decode(String.self, forKey: .timezoneEnd)
+        status = try container.decode(CalendarEventStatus?.self, forKey: .status)
         attendees = try container.decode(List<Attendee>.self, forKey: .attendees)
 
         let startString = try container.decode(String.self, forKey: .start)
@@ -138,6 +173,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         case timezoneStart
         case end
         case timezoneEnd
+        case status
         case attendees
     }
 
