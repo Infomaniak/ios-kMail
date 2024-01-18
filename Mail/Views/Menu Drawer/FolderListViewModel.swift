@@ -25,8 +25,7 @@ import SwiftUI
 struct NestableFolder: Identifiable {
     var id: Int {
         // The id of a folder depends on its `remoteId` and the id of its children
-        // Compute the id by doing an XOR with the id of each child
-        return children.reduce(content.remoteId.hashValue) { $0 ^ $1.id }
+        return children.collectionId(baseId: content.remoteId.hashValue)
     }
 
     let content: Folder
@@ -36,9 +35,10 @@ struct NestableFolder: Identifiable {
         var parentFolders = [NestableFolder]()
 
         for folder in folders {
+            let sortedChildren = folder.children.sortedByName()
             parentFolders.append(NestableFolder(
                 content: folder,
-                children: createFoldersHierarchy(from: Array(folder.children))
+                children: createFoldersHierarchy(from: sortedChildren)
             ))
         }
 
@@ -101,7 +101,7 @@ final class FolderListViewModel: ObservableObject {
         roleFolders = createFoldersHierarchy(from: sortedRoleFolders)
 
         let sortedUserFolders = filteredFolders.filter { $0.role == nil }
-            .sorted { $0.name.localizedCompare($1.name) == .orderedAscending }
+            .sortedByName()
         userFolders = createFoldersHierarchy(from: sortedUserFolders)
     }
 
