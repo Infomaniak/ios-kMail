@@ -182,10 +182,16 @@ public final class CalendarEvent: EmbeddedObject, Codable {
     }
 }
 
+public enum AttachmentEventMethod: String, Codable, PersistableEnum {
+    case request = "REQUEST"
+    case reply = "REPLY"
+}
+
 public final class CalendarEventResponse: EmbeddedObject, Codable {
     @Persisted public var userStoredEvent: CalendarEvent?
     @Persisted public var attachmentEvent: CalendarEvent?
     @Persisted public var userStoredEventDeleted: Bool?
+    @Persisted public var attachmentEventMethod: AttachmentEventMethod
 
     public var event: CalendarEvent? {
         return userStoredEvent ?? attachmentEvent

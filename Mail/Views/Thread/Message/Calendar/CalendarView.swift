@@ -22,11 +22,12 @@ import SwiftUI
 
 struct CalendarView: View {
     let event: CalendarEvent
+    let attachmentMethod: AttachmentEventMethod
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             CalendarHeaderView(title: event.title)
-            CalendarBodyView(event: event)
+            CalendarBodyView(event: event, attachmentMethod: attachmentMethod)
         }
         .clipShape(RoundedRectangle(cornerRadius: UIConstants.buttonsRadius))
         .overlay {
@@ -37,6 +38,6 @@ struct CalendarView: View {
 }
 
 #Preview {
-    CalendarView(event: PreviewHelper.sampleCalendarEvent)
+    CalendarView(event: PreviewHelper.sampleCalendarEvent, attachmentMethod: .request)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }
