@@ -59,34 +59,62 @@ struct AuthorizationView: View {
             }
 
             VStack(spacing: UIPadding.small) {
-                Button(MailResourcesStrings.Localizable.contentDescriptionButtonNext) {
-                    if selection == AuthorizationSlide.contacts.rawValue {
-                        Task {
-                            let accessAllowed = await (try? CNContactStore().requestAccess(for: .contacts))
-                            isScrollDisabled = false
-                            withAnimation {
-                                selection = AuthorizationSlide.notifications.rawValue
-                                isScrollDisabled = true
-                            }
-                            if accessAllowed != nil {
-                                try await accountManager.currentMailboxManager?.contactManager.refreshContactsAndAddressBooks()
-                            }
-                        }
-                    } else {
-                        Task {
-                            await NotificationsHelper.askForPermissions()
-                            navigationState.transitionToRootViewDestination(.mainView)
-                        }
-                    }
-                }
-                .buttonStyle(.ikPlain)
-                .controlSize(.large)
-                .ikButtonFullWidth(true)
+                Button(MailResourcesStrings.Localizable.contentDescriptionButtonNext, action: nextButtonClicked)
+                    .buttonStyle(.ikPlain)
+                    .controlSize(.large)
+                    .ikButtonFullWidth(true)
             }
             .padding(.horizontal, value: .medium)
             .padding(.bottom, UIPadding.onBoardingBottomButtons)
         }
         .matomoView(view: [MatomoUtils.View.onboarding.displayName, "Authorization"])
+        .task(id: accountManager.currentMailboxManager) {
+            await fetchFirstMessagesInBackground()
+        }
+    }
+
+    private func fetchFirstMessagesInBackground() async {
+        guard let currentMailboxManager = accountManager.currentMailboxManager,
+              currentMailboxManager.getFolder(with: .inbox)?.cursor == nil else {
+            return
+        }
+
+        try? await currentMailboxManager.refreshAllFolders()
+
+        guard let inboxFolder = currentMailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() else {
+            return
+        }
+
+        await currentMailboxManager.refreshFolderContent(inboxFolder)
+    }
+
+    private func nextButtonClicked() {
+        if selection == AuthorizationSlide.contacts.rawValue {
+            requestContactsAuthorization()
+        } else {
+            requestNotificationsAuthorization()
+        }
+    }
+
+    private func requestContactsAuthorization() {
+        Task {
+            let accessAllowed = await (try? CNContactStore().requestAccess(for: .contacts))
+            isScrollDisabled = false
+            withAnimation {
+                selection = AuthorizationSlide.notifications.rawValue
+                isScrollDisabled = true
+            }
+            if accessAllowed != nil {
+                try await accountManager.currentMailboxManager?.contactManager.refreshContactsAndAddressBooks()
+            }
+        }
+    }
+
+    func requestNotificationsAuthorization() {
+        Task {
+            await NotificationsHelper.askForPermissions()
+            navigationState.transitionToRootViewDestination(.mainView)
+        }
     }
 }
 
