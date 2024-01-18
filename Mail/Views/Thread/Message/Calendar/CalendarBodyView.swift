@@ -24,6 +24,7 @@ struct CalendarBodyView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let event: CalendarEvent
+    let attachmentMethod: AttachmentEventMethod
 
     private var iAmPartOfAttendees: Bool {
         return event.iAmPartOfAttendees(currentMailboxEmail: mailboxManager.mailbox.email)
@@ -31,7 +32,7 @@ struct CalendarBodyView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
-            CalendarBodyDetailsView(event: event, iAmPartOfAttendees: iAmPartOfAttendees)
+            CalendarBodyDetailsView(event: event, attachmentMethod: attachmentMethod, iAmPartOfAttendees: iAmPartOfAttendees)
 
             if !event.attendees.isEmpty {
                 CalendarAttendeesView(organizer: event.organizer, attendees: event.attendees.toArray())
@@ -53,6 +54,6 @@ struct CalendarBodyView: View {
 }
 
 #Preview {
-    CalendarBodyView(event: PreviewHelper.sampleCalendarEvent)
+    CalendarBodyView(event: PreviewHelper.sampleCalendarEvent, attachmentMethod: .request)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }
