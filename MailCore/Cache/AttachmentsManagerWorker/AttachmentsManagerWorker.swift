@@ -90,6 +90,11 @@ public final class AttachmentsManagerWorker {
 
     var attachmentsTitles: [String?]? {
         didSet {
+            // Only pre-fill subject when sharing from the outside
+            guard Bundle.main.isExtension else {
+                return
+            }
+
             let realm = backgroundRealm.getRealm()
             guard let draft = realm.object(ofType: Draft.self, forPrimaryKey: draftLocalUUID),
                   !draft.isInvalidated,
