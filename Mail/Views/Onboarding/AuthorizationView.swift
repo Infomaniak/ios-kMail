@@ -73,7 +73,7 @@ struct AuthorizationView: View {
         }
     }
 
-    func fetchFirstMessagesInBackground() async {
+    private func fetchFirstMessagesInBackground() async {
         guard let currentMailboxManager = accountManager.currentMailboxManager,
               currentMailboxManager.getFolder(with: .inbox)?.cursor == nil else {
             return
@@ -88,7 +88,7 @@ struct AuthorizationView: View {
         await currentMailboxManager.refreshFolderContent(inboxFolder)
     }
 
-    func nextButtonClicked() {
+    private func nextButtonClicked() {
         if selection == AuthorizationSlide.contacts.rawValue {
             requestContactsAuthorization()
         } else {
@@ -96,7 +96,7 @@ struct AuthorizationView: View {
         }
     }
 
-    func requestContactsAuthorization() {
+    private func requestContactsAuthorization() {
         Task {
             let accessAllowed = await (try? CNContactStore().requestAccess(for: .contacts))
             isScrollDisabled = false
