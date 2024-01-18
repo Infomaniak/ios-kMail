@@ -253,6 +253,7 @@ public final class AttachmentsManagerWorker {
                 self.updateAttachmentUploadTaskProgress(attachment, progress: progress)
             }
         }
+        remoteAttachment.temporaryLocalUrl = url.path
         await updateAttachment(oldAttachment: localAttachment, newAttachment: remoteAttachment)
         return remoteAttachment
     }
