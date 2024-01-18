@@ -45,7 +45,12 @@ struct CalendarLabelStyle: LabelStyle {
 
 struct CalendarBodyDetailsView: View {
     let event: CalendarEvent
+    let attachmentMethod: AttachmentEventMethod
     let iAmPartOfAttendees: Bool
+
+    private var canReply: Bool {
+        attachmentMethod == .request && event.warning == nil && iAmPartOfAttendees
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
@@ -67,7 +72,7 @@ struct CalendarBodyDetailsView: View {
                     .labelStyle(.calendar())
             }
 
-            if event.warning == nil && iAmPartOfAttendees {
+            if canReply {
                 WrappingHStack(
                     AttendeeState.allCases,
                     id: \.self,
@@ -83,9 +88,9 @@ struct CalendarBodyDetailsView: View {
 }
 
 #Preview("Is Invited") {
-    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent, iAmPartOfAttendees: true)
+    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent, attachmentMethod: .request, iAmPartOfAttendees: true)
 }
 
 #Preview("Is Not Invited") {
-    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent, iAmPartOfAttendees: false)
+    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent, attachmentMethod: .request, iAmPartOfAttendees: false)
 }

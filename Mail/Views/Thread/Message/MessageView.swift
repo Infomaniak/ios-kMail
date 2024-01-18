@@ -86,7 +86,7 @@ struct MessageView: View {
                         }
 
                         if let event = message.calendarEvent?.event, event.type == .event {
-                            CalendarView()
+                            CalendarView(event: event, attachmentMethod: eventMethod)
                                 .padding(.horizontal, value: .regular)
                         }
 
