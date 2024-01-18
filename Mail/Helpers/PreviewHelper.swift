@@ -180,6 +180,7 @@ enum PreviewHelper {
         timezoneStart: "UTC",
         end: .now.addingTimeInterval(120),
         timezoneEnd: "UTC",
+        status: nil,
         attendees: sampleAttendees.toRealmList()
     )
 
