@@ -37,7 +37,7 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
     @Persisted public var driveUrl: String?
     @Persisted(originProperty: "attachments") var parentLink: LinkingObjects<Message>
     @Persisted public var saved = false
-    @Persisted public var temporaryLocalUrl: String
+    @Persisted public var temporaryLocalUrl: String?
 
     public var parent: Message? {
         return parentLink.first

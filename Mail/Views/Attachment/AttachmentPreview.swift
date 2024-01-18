@@ -39,8 +39,9 @@ struct AttachmentPreview: View {
             Group {
                 if FileManager.default.fileExists(atPath: attachment.localUrl.path) {
                     PreviewController(url: attachment.localUrl)
-                } else if FileManager.default.fileExists(atPath: attachment.temporaryLocalUrl) {
-                    PreviewController(url: URL(fileURLWithPath: attachment.temporaryLocalUrl))
+                } else if let temporaryLocalUrl = attachment.temporaryLocalUrl,
+                          FileManager.default.fileExists(atPath: temporaryLocalUrl) {
+                    PreviewController(url: URL(fileURLWithPath: temporaryLocalUrl))
                 } else {
                     ProgressView()
                 }
