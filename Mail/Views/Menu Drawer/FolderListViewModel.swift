@@ -35,9 +35,10 @@ struct NestableFolder: Identifiable {
         var parentFolders = [NestableFolder]()
 
         for folder in folders {
+            let sortedChildren = folder.children.sortedByName()
             parentFolders.append(NestableFolder(
                 content: folder,
-                children: createFoldersHierarchy(from: Array(folder.children))
+                children: createFoldersHierarchy(from: sortedChildren)
             ))
         }
 
@@ -100,7 +101,7 @@ final class FolderListViewModel: ObservableObject {
         roleFolders = createFoldersHierarchy(from: sortedRoleFolders)
 
         let sortedUserFolders = filteredFolders.filter { $0.role == nil }
-            .sorted { $0.name.localizedCompare($1.name) == .orderedAscending }
+            .sortedByName()
         userFolders = createFoldersHierarchy(from: sortedUserFolders)
     }
 
