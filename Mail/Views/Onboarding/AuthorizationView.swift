@@ -68,6 +68,24 @@ struct AuthorizationView: View {
             .padding(.bottom, UIPadding.onBoardingBottomButtons)
         }
         .matomoView(view: [MatomoUtils.View.onboarding.displayName, "Authorization"])
+        .task(id: accountManager.currentMailboxManager) {
+            await fetchFirstMessagesInBackground()
+        }
+    }
+
+    func fetchFirstMessagesInBackground() async {
+        guard let currentMailboxManager = accountManager.currentMailboxManager,
+              currentMailboxManager.getFolder(with: .inbox)?.cursor == nil else {
+            return
+        }
+
+        try? await currentMailboxManager.refreshAllFolders()
+
+        guard let inboxFolder = currentMailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() else {
+            return
+        }
+
+        await currentMailboxManager.refreshFolderContent(inboxFolder)
     }
 
     func nextButtonClicked() {
