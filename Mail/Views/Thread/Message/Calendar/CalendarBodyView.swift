@@ -33,7 +33,7 @@ struct CalendarBodyView: View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
             CalendarBodyDetailsView(event: event, iAmPartOfAttendees: iAmPartOfAttendees)
 
-            if !event.attendees.isEmpty && iAmPartOfAttendees {
+            if !event.attendees.isEmpty {
                 CalendarAttendeesView(organizer: event.organizer, attendees: event.attendees.toArray())
             }
 
