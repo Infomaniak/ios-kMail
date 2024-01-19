@@ -82,25 +82,28 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         return attendees.first(where: \.isOrganizer)
     }
 
-    public var formattedDate: String {
-        var computedEnd = end
-        // When the event is `fullDay`, the start date is included and the end date excluded
-        if isFullDay && !Calendar.current.isDate(start, inSameDayAs: end) {
-            computedEnd = Calendar.current.date(byAdding: .day, value: -1, to: end) ?? end
-        }
-
-        if Calendar.current.isDate(start, inSameDayAs: computedEnd) {
-            return start.formatted(Constants.calendarDateFormat)
-        } else {
-            return "\(start.formatted(Constants.calendarSmallDateFormat)) - \(computedEnd.formatted(Constants.calendarSmallDateFormat))"
-        }
-    }
-
-    public var formattedTime: String {
+    public var formattedDateTime: String {
         if isFullDay {
-            return MailResourcesStrings.Localizable.calendarAllDayLong
+            var computedEnd = end
+            if !Calendar.current.isDate(start, inSameDayAs: end) {
+                computedEnd = Calendar.current.date(byAdding: .day, value: -1, to: end) ?? end
+            }
+
+            var date = ""
+            if Calendar.current.isDate(start, inSameDayAs: computedEnd) {
+                date = start.formatted(Constants.calendarDateFormat)
+            } else {
+                date =
+                    "\(start.formatted(Constants.calendarSmallDateFormat)) - \(computedEnd.formatted(Constants.calendarSmallDateFormat))"
+            }
+
+            return "\(date)\n\(MailResourcesStrings.Localizable.calendarAllDayLong)"
         } else {
-            return "\(start.formatted(Constants.calendarTimeFormat)) - \(end.formatted(Constants.calendarTimeFormat))"
+            if Calendar.current.isDate(start, inSameDayAs: end) {
+                return "\(start.formatted(Constants.calendarDateFormat))\n\(start.formatted(Constants.calendarTimeFormat)) - \(end.formatted(Constants.calendarTimeFormat))"
+            } else {
+                return "\(start.formatted(Constants.calendarDateTimeFormat))\n\(end.formatted(Constants.calendarDateTimeFormat))"
+            }
         }
     }
 
