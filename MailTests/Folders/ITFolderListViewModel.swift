@@ -95,11 +95,13 @@ final class ITFolderListViewModel: XCTestCase {
         let folderRealmResults = folderGenerator.inMemoryRealm.objects(Folder.self).freezeIfNeeded()
         print("generated \(folderRealmResults.count) folders")
 
-        let mailboxManager = MCKMailboxManageable(realm: folderGenerator.inMemoryRealm)
+        let mailboxManager = MCKMailboxManageable_FolderListViewModel(realm: folderGenerator.inMemoryRealm)
 
         let roleFolderExpectation = XCTestExpectation(description: "[roleFolders] should be updated.")
         let userFolderExpectation = XCTestExpectation(description: "[userFolders] should be updated.")
-        let asyncExpectations = [roleFolderExpectation, userFolderExpectation]
+        let viewModelExpectation = XCTestExpectation(description: "folderListViewModel should be updated twice.")
+        viewModelExpectation.expectedFulfillmentCount = 2
+        let asyncExpectations = [roleFolderExpectation, userFolderExpectation, viewModelExpectation]
 
         var cancellable = Set<AnyCancellable>()
 
@@ -117,11 +119,80 @@ final class ITFolderListViewModel: XCTestCase {
             XCTAssertGreaterThan($0.count, 0, "Expecting a non empty array")
             print("userFolders updated, count: \($0.count)")
         }.store(in: &cancellable)
+        folderListViewModel.objectWillChange.dropFirst().sink {
+            viewModelExpectation.fulfill()
+            print("ViewModel updated")
+        }.store(in: &cancellable)
 
         wait(for: asyncExpectations, timeout: 10.0)
         XCTAssertGreaterThan(folderGenerator.foldersWithRole.count, 0)
         XCTAssertGreaterThan(folderGenerator.folders.count, 0)
         XCTAssertEqual(folderListViewModel.roleFolders.count, folderGenerator.foldersWithRole.count)
         XCTAssertEqual(folderListViewModel.userFolders.count, folderGenerator.folders.count)
+    }
+}
+
+/// Integration tests of the FolderListViewModelWorker
+final class ITFolderListViewModelWorker: XCTestCase {
+    func testFilterAndSortFolders_noSearch() async {
+        // GIVEN
+        let folderGenerator = FolderStructureGenerator(maxDepth: 5, maxElementsPerLevel: 5)
+        let folderRealmResults = folderGenerator.inMemoryRealm.objects(Folder.self).freezeIfNeeded()
+        print("generated \(folderRealmResults.count) folders")
+
+        let worker = FolderListViewModelWorker()
+
+        // WHEN
+        let result = await worker.filterAndSortFolders(folderRealmResults, searchQuery: "")
+
+        // THEN
+        XCTAssertGreaterThan(folderGenerator.foldersWithRole.count, 0)
+        XCTAssertGreaterThan(folderGenerator.folders.count, 0)
+        XCTAssertEqual(result.roleFolders.count, folderGenerator.foldersWithRole.count)
+        XCTAssertEqual(result.userFolders.count, folderGenerator.folders.count)
+    }
+
+    func testFilterAndSortFolders_SearchRandomElement() async {
+        // GIVEN
+        let folderGenerator = FolderStructureGenerator(maxDepth: 5, maxElementsPerLevel: 5)
+        let folderRealmResults = folderGenerator.inMemoryRealm.objects(Folder.self).freezeIfNeeded()
+        guard let randomFolder = folderRealmResults.randomElement() else {
+            XCTFail("Unexpected")
+            return
+        }
+        print("generated \(folderRealmResults.count) folders")
+
+        let worker = FolderListViewModelWorker()
+
+        // WHEN
+        let result = await worker.filterAndSortFolders(folderRealmResults, searchQuery: randomFolder.localizedName)
+        let allFolders = result.roleFolders + result.userFolders
+
+        // THEN
+        XCTAssertGreaterThanOrEqual(allFolders.count, 1, "There should be at least one match")
+        guard let matchingFolder = allFolders.first else {
+            XCTFail("Unexpected")
+            return
+        }
+        XCTAssertEqual(matchingFolder.content.localizedName, randomFolder.localizedName, "We expect the names to match")
+    }
+
+    func testFilterAndSortFolders_SearchNoMatch() async {
+        // GIVEN
+        let searchString = "nope"
+        let folderGenerator = FolderStructureGenerator(maxDepth: 5, maxElementsPerLevel: 5)
+        let folderRealmResults = folderGenerator.inMemoryRealm.objects(Folder.self).freezeIfNeeded()
+        print("generated \(folderRealmResults.count) folders")
+
+        XCTAssertFalse(FolderStructureGenerator.wordDictionary.contains(searchString), "We should not have a match")
+
+        let worker = FolderListViewModelWorker()
+
+        // WHEN
+        let result = await worker.filterAndSortFolders(folderRealmResults, searchQuery: searchString)
+        let allFolders = result.roleFolders + result.userFolders
+
+        // THEN
+        XCTAssertEqual(allFolders.count, 0, "There should be no match")
     }
 }
