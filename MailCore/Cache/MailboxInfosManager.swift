@@ -30,6 +30,8 @@ public final class MailboxInfosManager {
     public let realmConfiguration: Realm.Configuration
     private let dbName = "MailboxInfos.realm"
 
+    private let backgroundRealm: BackgroundRealm
+
     public init() {
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(dbName),
@@ -47,6 +49,7 @@ public final class MailboxInfosManager {
             objectTypes: [Mailbox.self, MailboxPermissions.self, Quotas.self]
         )
 
+        backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
         excludeRealmFromBackup()
     }
 
@@ -55,7 +58,7 @@ public final class MailboxInfosManager {
     }
 
     @discardableResult
-    func storeMailboxes(user: InfomaniakCore.UserProfile, mailboxes: [Mailbox]) -> [Mailbox] {
+    func storeMailboxes(user: InfomaniakCore.UserProfile, mailboxes: [Mailbox]) async -> [Mailbox] {
         let realm = getRealm()
         for mailbox in mailboxes {
             initMailboxForRealm(mailbox: mailbox, userId: user.id)
@@ -68,9 +71,13 @@ public final class MailboxInfosManager {
             }
         }
         let mailboxRemovedIds = mailboxRemoved.map(\.objectId)
-        try? realm.write {
-            realm.delete(realm.objects(Mailbox.self).filter("objectId IN %@", mailboxRemovedIds))
-            realm.add(mailboxes, update: .modified)
+
+        await backgroundRealm.execute { realm in
+            let detachedMailboxes = mailboxes.map { $0.detached() }
+            try? realm.write {
+                realm.delete(realm.objects(Mailbox.self).filter("objectId IN %@", mailboxRemovedIds))
+                realm.add(detachedMailboxes, update: .modified)
+            }
         }
         return mailboxRemoved
     }
@@ -99,11 +106,12 @@ public final class MailboxInfosManager {
         return freeze ? mailbox?.freeze() : mailbox
     }
 
-    public func updateUnseen(unseenMessages: Int, for mailbox: Mailbox) {
-        let realm = getRealm()
-        let freshMailbox = mailbox.fresh(using: realm)
-        try? realm.safeWrite {
-            freshMailbox?.unseenMessages = unseenMessages
+    public func updateUnseen(unseenMessages: Int, for mailbox: Mailbox) async {
+        await backgroundRealm.execute { realm in
+            let freshMailbox = mailbox.fresh(using: realm)
+            try? realm.safeWrite {
+                freshMailbox?.unseenMessages = unseenMessages
+            }
         }
     }
 
