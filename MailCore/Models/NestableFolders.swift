@@ -17,12 +17,12 @@
  */
 
 import Foundation
+import InfomaniakCore
 
 public struct NestableFolder: Identifiable {
     public var id: Int {
         // The id of a folder depends on its `remoteId` and the id of its children
-        // Compute the id by doing an XOR with the id of each child
-        return children.reduce(content.remoteId.hashValue) { $0 ^ $1.id }
+        return children.collectionId(baseId: content.remoteId.hashValue)
     }
 
     public let content: Folder
@@ -37,9 +37,10 @@ public struct NestableFolder: Identifiable {
         var parentFolders = [NestableFolder]()
 
         for folder in folders {
+            let sortedChildren = folder.children.sortedByName()
             parentFolders.append(NestableFolder(
                 content: folder,
-                children: createFoldersHierarchy(from: Array(folder.children))
+                children: createFoldersHierarchy(from: sortedChildren)
             ))
         }
 

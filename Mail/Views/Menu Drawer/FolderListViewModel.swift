@@ -22,30 +22,6 @@ import MailCore
 import RealmSwift
 import SwiftUI
 
-struct NestableFolder: Identifiable {
-    var id: Int {
-        // The id of a folder depends on its `remoteId` and the id of its children
-        return children.collectionId(baseId: content.remoteId.hashValue)
-    }
-
-    let content: Folder
-    let children: [NestableFolder]
-
-    static func createFoldersHierarchy(from folders: [Folder]) -> [Self] {
-        var parentFolders = [NestableFolder]()
-
-        for folder in folders {
-            let sortedChildren = folder.children.sortedByName()
-            parentFolders.append(NestableFolder(
-                content: folder,
-                children: createFoldersHierarchy(from: sortedChildren)
-            ))
-        }
-
-        return parentFolders
-    }
-}
-
 @MainActor final class FolderListViewModel: ObservableObject {
     @Published private(set) var roleFolders = [NestableFolder]()
     @Published private(set) var userFolders = [NestableFolder]()
