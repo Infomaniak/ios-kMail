@@ -25,7 +25,8 @@ import InfomaniakLogin
 @testable import RealmSwift
 import XCTest
 
-struct MCKMailboxManageable: MailboxManageable {
+/// A MailboxManageable used to test the FolderListViewModel
+struct MCKMailboxManageable_FolderListViewModel: MailboxManageable {
     let realm: Realm
     init(realm: Realm) {
         self.realm = realm
