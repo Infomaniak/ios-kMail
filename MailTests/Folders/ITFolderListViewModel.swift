@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Combine
 import Foundation
 import InfomaniakCore
 import InfomaniakLogin
@@ -24,66 +25,101 @@ import InfomaniakLogin
 @testable import RealmSwift
 import XCTest
 
-/// Integration tests of the FolderListViewModel
-final class ITFolderListViewModel: XCTestCase {
-    // MARK: - Test roleFolders
-
-    func testRoleFolders() {
-        // TODO: fixme
+struct MCKMailboxManageable: MailboxManageable {
+    let realm: Realm
+    init(realm: Realm) {
+        self.realm = realm
     }
 
-    // MARK: - Test userFolders
+    func draftWithPendingAction() -> RealmSwift.Results<MailCore.Draft> {
+        fatalError("Unexpected")
+    }
 
-    func testUserAndRoleFolderFiltering() {
+    func draft(messageUid: String, using realm: RealmSwift.Realm?) -> MailCore.Draft? { nil }
+
+    func draft(localUuid: String, using realm: RealmSwift.Realm?) -> MailCore.Draft? { nil }
+
+    func draft(remoteUuid: String, using realm: RealmSwift.Realm?) -> MailCore.Draft? { nil }
+
+    func send(draft: MailCore.Draft) async throws -> MailCore.SendResponse {
+        fatalError("Unexpected")
+    }
+
+    func save(draft: MailCore.Draft) async throws {}
+
+    func delete(draft: MailCore.Draft) async throws {}
+
+    func delete(draftMessage: MailCore.Message) async throws {}
+
+    func deleteLocally(draft: MailCore.Draft) async throws {}
+
+    func deleteOrphanDrafts() async {}
+
+    func messages(folder: MailCore.Folder, isRetrying: Bool) async throws {}
+
+    func fetchOnePage(folder: MailCore.Folder, direction: MailCore.NewMessagesDirection?) async throws -> Bool { false }
+
+    func message(message: MailCore.Message) async throws {}
+
+    func attachmentData(_ attachment: MailCore.Attachment) async throws -> Data { Data() }
+
+    func saveAttachmentLocally(attachment: MailCore.Attachment) async {}
+
+    func markAsSeen(message: MailCore.Message, seen: Bool) async throws {}
+
+    func move(messages: [MailCore.Message], to folderRole: MailCore.FolderRole) async throws -> MailCore.UndoAction {
+        fatalError("Unexpected")
+    }
+
+    func move(messages: [MailCore.Message], to folder: MailCore.Folder) async throws -> MailCore.UndoAction {
+        fatalError("Unexpected")
+    }
+
+    func delete(messages: [MailCore.Message]) async throws {}
+
+    var realmConfiguration: RealmSwift.Realm.Configuration {
+        realm.configuration
+    }
+
+    func getRealm() -> Realm {
+        realm
+    }
+}
+
+/// Integration tests of the FolderListViewModel
+final class ITFolderListViewModel: XCTestCase {
+    @MainActor func testInitAndFetchFromDB() {
         // GIVEN
-        let apiToken = ApiToken(accessToken: "accessToken",
-                                expiresIn: .max,
-                                refreshToken: "refreshToken",
-                                scope: "scope",
-                                tokenType: "tokenType",
-                                userId: 42,
-                                expirationDate: Date().addingTimeInterval(Date().timeIntervalSince1970))
-
-        let mailApiFetcher = MailApiFetcher()
-        let mailboxManager = MailboxManager(account: Account(apiToken: apiToken),
-                                            mailbox: Mailbox(),
-                                            apiFetcher: mailApiFetcher,
-                                            contactManager: ContactManager(userId: 42, apiFetcher: mailApiFetcher))
-        let folderListViewModel = FolderListViewModel(mailboxManager: mailboxManager)
         let folderGenerator = FolderStructureGenerator(maxDepth: 5, maxElementsPerLevel: 5)
         let folderRealmResults = folderGenerator.inMemoryRealm.objects(Folder.self).freezeIfNeeded()
         print("generated \(folderRealmResults.count) folders")
 
-        // TODO: test events
-//        let roleFolderExpectation = XCTestExpectation(description: "[roleFolders] should be updated.")
-//        roleFolderExpectation.expectedFulfillmentCount = 2
-//
-//        let userFolderExpectation = XCTestExpectation(description: "[userFolders] should be updated.")
-//        userFolderExpectation.expectedFulfillmentCount = 2
-//
-//        let viewModelExpectation = XCTestExpectation(description: "folderListViewModel should be updated.")
-//        let asyncExpectations = [roleFolderExpectation, userFolderExpectation /* , viewModelExpectation */ ]
-//
-//        folderListViewModel.$roleFolders.sink(receiveValue: {
-//            roleFolderExpectation.fulfill()
-//            print("roleFolders updated, new value: \($0)")
-//        })
-//        folderListViewModel.$userFolders.sink(receiveValue: {
-//            userFolderExpectation.fulfill()
-//            print("userFolders updated, new value: \($0)")
-//        })
-//        folderListViewModel.objectWillChange.sink(receiveValue: {
-//            viewModelExpectation.fulfill()
-//            print("ViewModel updated: \($0)")
-//        })
+        let mailboxManager = MCKMailboxManageable(realm: folderGenerator.inMemoryRealm)
+
+        let roleFolderExpectation = XCTestExpectation(description: "[roleFolders] should be updated.")
+        let userFolderExpectation = XCTestExpectation(description: "[userFolders] should be updated.")
+        let asyncExpectations = [roleFolderExpectation, userFolderExpectation]
+
+        var cancellable = Set<AnyCancellable>()
 
         // WHEN
-        folderListViewModel.filterAndSortFolders(folderRealmResults)
+        let folderListViewModel = FolderListViewModel(mailboxManager: mailboxManager)
 
         // THEN
-        // wait(for: asyncExpectations, timeout: 10.0)
-        XCTAssertNotEqual(folderGenerator.foldersWithRole.count, 0)
-        XCTAssertNotEqual(folderGenerator.folders.count, 0)
+        folderListViewModel.$roleFolders.dropFirst().sink {
+            roleFolderExpectation.fulfill()
+            XCTAssertGreaterThan($0.count, 0, "Expecting a non empty array")
+            print("roleFolders updated, count: \($0.count)")
+        }.store(in: &cancellable)
+        folderListViewModel.$userFolders.dropFirst().sink {
+            userFolderExpectation.fulfill()
+            XCTAssertGreaterThan($0.count, 0, "Expecting a non empty array")
+            print("userFolders updated, count: \($0.count)")
+        }.store(in: &cancellable)
+
+        wait(for: asyncExpectations, timeout: 10.0)
+        XCTAssertGreaterThan(folderGenerator.foldersWithRole.count, 0)
+        XCTAssertGreaterThan(folderGenerator.folders.count, 0)
         XCTAssertEqual(folderListViewModel.roleFolders.count, folderGenerator.foldersWithRole.count)
         XCTAssertEqual(folderListViewModel.userFolders.count, folderGenerator.folders.count)
     }

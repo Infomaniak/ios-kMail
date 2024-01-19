@@ -20,7 +20,7 @@ import Foundation
 import RealmSwift
 
 /// An abstract interface on the `MailboxManager`
-public typealias MailboxManageable = MailBoxManagerDraftable & MailBoxManagerMessageable
+public typealias MailboxManageable = MailBoxManagerDraftable & MailBoxManagerMessageable & RealmAccessible
 
 /// An abstract interface on the `MailboxManager` related to messages
 public protocol MailBoxManagerMessageable {

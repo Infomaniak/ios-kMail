@@ -23,7 +23,7 @@ import InfomaniakDI
 import RealmSwift
 import SwiftRegex
 
-public final class MailboxManager: ObservableObject, MailboxManageable, RealmAccessible {
+public final class MailboxManager: ObservableObject, MailboxManageable {
     @LazyInjectService var snackbarPresenter: SnackBarPresentable
     @LazyInjectService var mailboxInfosManager: MailboxInfosManager
 

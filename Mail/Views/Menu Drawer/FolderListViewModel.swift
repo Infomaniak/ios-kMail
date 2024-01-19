@@ -46,7 +46,7 @@ struct NestableFolder: Identifiable {
     }
 }
 
-final class FolderListViewModel: ObservableObject {
+@MainActor final class FolderListViewModel: ObservableObject {
     @Published private(set) var roleFolders = [NestableFolder]()
     @Published private(set) var userFolders = [NestableFolder]()
 
@@ -59,7 +59,7 @@ final class FolderListViewModel: ObservableObject {
     private var searchQueryObservation: AnyCancellable?
     private var folders: Results<Folder>?
 
-    init(mailboxManager: MailboxManager, foldersQuery: @escaping (Query<Folder>) -> Query<Bool> = { $0.toolType == nil }) {
+    init(mailboxManager: MailboxManageable, foldersQuery: @escaping (Query<Folder>) -> Query<Bool> = { $0.toolType == nil }) {
         self.foldersQuery = foldersQuery
         updateFolderListForMailboxManager(mailboxManager, animateInitialChanges: false)
 
@@ -72,20 +72,26 @@ final class FolderListViewModel: ObservableObject {
             }
     }
 
-    func updateFolderListForMailboxManager(_ mailboxManager: MailboxManager, animateInitialChanges: Bool) {
+    func updateFolderListForMailboxManager(_ mailboxManager: MailboxManageable, animateInitialChanges: Bool) {
         foldersObservationToken = mailboxManager.getRealm()
             .objects(Folder.self).where(foldersQuery)
             .observe(on: DispatchQueue.main) { [weak self] results in
+                guard let self else {
+                    return
+                }
+
                 switch results {
                 case .initial(let folders):
                     withAnimation(animateInitialChanges ? .default : nil) {
-                        self?.folders = folders.freezeIfNeeded()
-                        self?.filterAndSortFolders(folders.freezeIfNeeded())
+                        let frozenFolders = folders.freezeIfNeeded()
+                        self.folders = frozenFolders
+                        self.filterAndSortFolders(frozenFolders)
                     }
                 case .update(let folders, _, _, _):
                     withAnimation {
-                        self?.folders = folders.freezeIfNeeded()
-                        self?.filterAndSortFolders(folders.freezeIfNeeded())
+                        let frozenFolders = folders.freezeIfNeeded()
+                        self.folders = frozenFolders
+                        self.filterAndSortFolders(frozenFolders)
                     }
                 case .error:
                     break
