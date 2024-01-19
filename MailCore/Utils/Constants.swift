@@ -132,11 +132,6 @@ public enum Constants {
     public static let shortDateFormatter = Date.FormatStyle.dateTime.month(.wide)
     public static let longDateFormatter = shortDateFormatter.year()
 
-    public static let calendarDateFormat = Date.FormatStyle.dateTime.weekday(.wide).day().month(.wide).year()
-    public static let calendarSmallDateFormat = Date.FormatStyle.dateTime.day().month().year()
-    public static let calendarTimeFormat = Date.FormatStyle.dateTime.hour().minute()
-    public static let calendarDateTimeFormat = calendarSmallDateFormat.hour().minute()
-
     public static func longUid(from shortUid: String, folderId: String) -> String {
         return "\(shortUid)@\(folderId)"
     }

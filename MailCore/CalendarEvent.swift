@@ -84,26 +84,9 @@ public final class CalendarEvent: EmbeddedObject, Codable {
 
     public var formattedDateTime: String {
         if isFullDay {
-            var computedEnd = end
-            if !Calendar.current.isDate(start, inSameDayAs: end) {
-                computedEnd = Calendar.current.date(byAdding: .day, value: -1, to: end) ?? end
-            }
-
-            var date = ""
-            if Calendar.current.isDate(start, inSameDayAs: computedEnd) {
-                date = start.formatted(Constants.calendarDateFormat)
-            } else {
-                date =
-                    "\(start.formatted(Constants.calendarSmallDateFormat)) - \(computedEnd.formatted(Constants.calendarSmallDateFormat))"
-            }
-
-            return "\(date)\n\(MailResourcesStrings.Localizable.calendarAllDayLong)"
+            return formatFullDayDate()
         } else {
-            if Calendar.current.isDate(start, inSameDayAs: end) {
-                return "\(start.formatted(Constants.calendarDateFormat))\n\(start.formatted(Constants.calendarTimeFormat)) - \(end.formatted(Constants.calendarTimeFormat))"
-            } else {
-                return "\(start.formatted(Constants.calendarDateTimeFormat))\n\(end.formatted(Constants.calendarDateTimeFormat))"
-            }
+            return formatStandardDate()
         }
     }
 
@@ -182,6 +165,30 @@ public final class CalendarEvent: EmbeddedObject, Codable {
 
     public func iAmPartOfAttendees(currentMailboxEmail: String) -> Bool {
         return attendees.contains { $0.isMe(currentMailboxEmail: currentMailboxEmail) }
+    }
+
+    private func formatStandardDate() -> String {
+        if Calendar.current.isDate(start, inSameDayAs: end) {
+            return "\(start.formatted(.calendarDateFull))\n\(start.formatted(.calendarTime)) - \(end.formatted(.calendarTime))"
+        } else {
+            return "\(start.formatted(.calendarDateTime)) -\n\(end.formatted(.calendarDateTime))"
+        }
+    }
+
+    private func formatFullDayDate() -> String {
+        var computedEnd = end
+        if !Calendar.current.isDate(start, inSameDayAs: end) {
+            computedEnd = Calendar.current.date(byAdding: .day, value: -1, to: end) ?? end
+        }
+
+        var date = ""
+        if Calendar.current.isDate(start, inSameDayAs: computedEnd) {
+            date = start.formatted(.calendarDateFull)
+        } else {
+            date = "\(start.formatted(.calendarDateShort)) - \(computedEnd.formatted(.calendarDateShort))"
+        }
+
+        return "\(date)\n\(MailResourcesStrings.Localizable.calendarAllDayLong)"
     }
 }
 
