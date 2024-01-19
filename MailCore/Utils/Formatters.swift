@@ -42,3 +42,21 @@ public extension FormatStyle where Self == ByteCountFormatStyle {
         return .byteCount(style: .binary)
     }
 }
+
+public extension FormatStyle where Self == Date.FormatStyle {
+    static var calendarDateFull: Date.FormatStyle {
+        return .dateTime.weekday(.wide).day().month(.wide).year()
+    }
+
+    static var calendarDateShort: Date.FormatStyle {
+        return .dateTime.day().month().year()
+    }
+
+    static var calendarTime: Date.FormatStyle {
+        return .dateTime.hour().minute()
+    }
+
+    static var calendarDateTime: Date.FormatStyle {
+        return .dateTime.day().month().year().hour().minute()
+    }
+}
