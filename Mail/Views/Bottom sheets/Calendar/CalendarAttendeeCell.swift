@@ -36,7 +36,8 @@ struct CalendarAttendeeCell: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(value: .regular)
+        .padding(.vertical, value: .small)
+        .padding(.horizontal, value: .regular)
     }
 }
 
