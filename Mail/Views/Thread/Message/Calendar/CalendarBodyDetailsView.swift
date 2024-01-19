@@ -59,9 +59,7 @@ struct CalendarBodyDetailsView: View {
                     .labelStyle(.calendar(warning))
             }
 
-            Label(event.formattedDate, image: MailResourcesAsset.calendar.name)
-                .labelStyle(.calendar())
-            Label(event.formattedTime, image: MailResourcesAsset.clock.name)
+            Label(event.formattedDateTime, image: MailResourcesAsset.calendarBadgeClock.name)
                 .labelStyle(.calendar())
             if let location = event.location {
                 Label(location, image: MailResourcesAsset.pin.name)
