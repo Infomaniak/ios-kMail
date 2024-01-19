@@ -26,7 +26,7 @@ import UniformTypeIdentifiers
 public protocol Attachable {
     var suggestedName: String? { get }
     var type: UTType? { get }
-    func writeToTemporaryURL() async throws -> URL
+    func writeToTemporaryURL() async throws -> (url: URL, title: String?)
 }
 
 /// Abstracts that some attachment was updated
@@ -86,6 +86,30 @@ public final class AttachmentsManagerWorker {
 
     var detachedAttachments: [Attachment] {
         liveAttachments.map { $0.detached() }
+    }
+
+    var attachmentsTitles: [String?]? {
+        didSet {
+            // Only pre-fill subject when sharing from the outside
+            guard Bundle.main.isExtension else {
+                return
+            }
+
+            let realm = backgroundRealm.getRealm()
+            guard let draft = realm.object(ofType: Draft.self, forPrimaryKey: draftLocalUUID),
+                  !draft.isInvalidated,
+                  draft.subject.isEmpty else {
+                return
+            }
+
+            guard let attachmentTitle = attachmentsTitles?.compactMap({ $0 }).first else {
+                return
+            }
+
+            try? realm.write {
+                draft.subject = attachmentTitle
+            }
+        }
     }
 
     public init(backgroundRealm: BackgroundRealm, draftLocalUUID: String, mailboxManager: MailboxManager) {
@@ -165,7 +189,6 @@ public final class AttachmentsManagerWorker {
         await updateDelegate?.contentWillChange()
     }
 
-    @discardableResult
     func importAttachment(attachment: Attachable, disposition: AttachmentDisposition) async -> String? {
         guard let localAttachment = await createLocalAttachment(name: attachment.suggestedName ?? getDefaultFileName(),
                                                                 type: attachment.type,
@@ -175,8 +198,11 @@ public final class AttachmentsManagerWorker {
 
         let importTask = Task { () -> String? in
             do {
-                let url = try await attachment.writeToTemporaryURL()
-                let updatedAttachment = await updateLocalAttachment(url: url, attachment: localAttachment)
+                let attachmentResult = try await attachment.writeToTemporaryURL()
+                let attachmentURL = attachmentResult.url
+                let attachmentTitle = attachmentResult.title
+
+                let updatedAttachment = await updateLocalAttachment(url: attachmentURL, attachment: localAttachment)
                 let totalSize = liveAttachments.map(\.size).reduce(0) { $0 + $1 }
                 guard totalSize < Constants.maxAttachmentsSize else {
                     await updateDelegate?.handleGlobalError(MailError.attachmentsSizeLimitReached)
@@ -184,18 +210,14 @@ public final class AttachmentsManagerWorker {
                     return nil
                 }
 
-                let remoteAttachment = try await sendAttachment(url: url, localAttachment: updatedAttachment)
+                try await sendAttachment(url: attachmentURL, localAttachment: updatedAttachment)
+                return attachmentTitle
 
-                if disposition == .inline,
-                   let cid = remoteAttachment?.contentId {
-                    return cid
-                }
             } catch {
                 DDLogError("Error while creating attachment: \(error.localizedDescription)")
                 await updateAttachmentUploadError(localAttachment, error: error)
+                return nil
             }
-
-            return nil
         }
 
         if let uploadTask = attachmentUploadTasks[localAttachment.uuid] {
@@ -220,6 +242,7 @@ public final class AttachmentsManagerWorker {
         return savedAttachment
     }
 
+    @discardableResult
     func sendAttachment(url: URL, localAttachment: Attachment) async throws -> Attachment? {
         let data = try Data(contentsOf: url)
         let remoteAttachment = try await mailboxManager.apiFetcher.createAttachment(
@@ -235,6 +258,7 @@ public final class AttachmentsManagerWorker {
                 self.updateAttachmentUploadTaskProgress(attachment, progress: progress)
             }
         }
+        remoteAttachment.temporaryLocalUrl = url.path
         await updateAttachment(oldAttachment: localAttachment, newAttachment: remoteAttachment)
         return remoteAttachment
     }
@@ -290,7 +314,11 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
         guard let liveDraft else {
             return []
         }
-        return liveDraft.attachments.filter { $0.contentId == nil && !$0.isInvalidated }.toArray()
+        return liveDraft.attachments.filter { attachment in
+            guard !attachment.isInvalidated else { return false }
+            guard let contentId = attachment.contentId else { return true }
+            return contentId.isEmpty
+        }.toArray()
     }
 
     public var allAttachmentsUploaded: Bool {
@@ -301,7 +329,9 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
         self.updateDelegate = updateDelegate
     }
 
-    public func importAttachments(attachments: [Attachable], draft: Draft, disposition: AttachmentDisposition) async {
+    public func importAttachments(attachments: [Attachable],
+                                  draft: Draft,
+                                  disposition: AttachmentDisposition) async {
         guard !attachments.isEmpty else {
             return
         }
@@ -309,10 +339,13 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
         // Cap max number of attachments, API errors out at 100
         let attachmentsSlice = attachments[safe: 0 ..< draft.availableAttachmentsSlots]
 
-        await attachmentsSlice.concurrentForEach { attachment in
-            await self.importAttachment(attachment: attachment, disposition: disposition)
+        let titles: [String?] = await attachmentsSlice.concurrentMap { attachment in
+            let title = await self.importAttachment(attachment: attachment, disposition: disposition)
             // TODO: - Manage inline attachment
+            return title
         }
+
+        attachmentsTitles = titles
     }
 
     public func removeAttachment(_ attachmentUUID: String) async {

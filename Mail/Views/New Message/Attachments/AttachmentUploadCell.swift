@@ -23,28 +23,32 @@ import MailResources
 import SwiftUI
 
 struct AttachmentUploadCell: View {
-    private let detachedAttachment: Attachment
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
+    private let attachment: Attachment
     private let attachmentRemoved: ((Attachment) -> Void)?
 
     @ObservedObject var uploadTask: AttachmentUploadTask
 
+    @State private var previewedAttachment: Attachment?
+
     init(uploadTask: AttachmentUploadTask, attachment: Attachment, attachmentRemoved: ((Attachment) -> Void)?) {
         self.uploadTask = uploadTask
-        detachedAttachment = attachment.detached()
+        self.attachment = attachment
         self.attachmentRemoved = attachmentRemoved
     }
 
     var body: some View {
         AttachmentView(
-            attachment: detachedAttachment,
-            subtitle: uploadTask.error != nil ? (uploadTask.error!.errorDescription ?? "") : detachedAttachment.size
+            attachment: attachment.detached(),
+            subtitle: uploadTask.error != nil ? (uploadTask.error!.errorDescription ?? "") : attachment.size
                 .formatted(.defaultByteCount)
         ) {
             Button {
                 if let attachmentRemoved {
                     @InjectService var matomo: MatomoUtils
                     matomo.track(eventWithCategory: .attachmentActions, name: "delete")
-                    attachmentRemoved(detachedAttachment)
+                    attachmentRemoved(attachment)
                 }
             } label: {
                 IKIcon(MailResourcesAsset.close, size: .small)
@@ -55,6 +59,22 @@ struct AttachmentUploadCell: View {
         .overlay(alignment: .bottom) {
             IndeterminateProgressView(indeterminate: uploadTask.progress == 0, progress: uploadTask.progress)
                 .opacity(uploadTask.progress == 1 ? 0 : 1)
+        }
+        .onTapGesture {
+            showAttachmentPreview()
+        }
+        .sheet(item: $previewedAttachment) { previewedAttachment in
+            AttachmentPreview(attachment: previewedAttachment)
+        }
+    }
+
+    private func showAttachmentPreview() {
+        guard let attachment = attachment.thaw()?.freezeIfNeeded() else { return }
+        previewedAttachment = attachment
+        if !FileManager.default.fileExists(atPath: attachment.localUrl.path) {
+            Task {
+                await mailboxManager.saveAttachmentLocally(attachment: attachment)
+            }
         }
     }
 }

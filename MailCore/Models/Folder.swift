@@ -253,3 +253,9 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         self.toolType = toolType
     }
 }
+
+public extension Collection where Element: Folder {
+    func sortedByName() -> [Self.Element] {
+        return sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+    }
+}

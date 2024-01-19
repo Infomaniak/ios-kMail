@@ -37,14 +37,14 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
     @Persisted public var driveUrl: String?
     @Persisted(originProperty: "attachments") var parentLink: LinkingObjects<Message>
     @Persisted public var saved = false
+    @Persisted public var temporaryLocalUrl: String?
 
     public var parent: Message? {
         return parentLink.first
     }
 
-    public var localUrl: URL? {
-        guard let message = parent else { return nil }
-        return FileManager.default.temporaryDirectory.appendingPathComponent("\(message.uid)_\(partId)/\(name)")
+    public var localUrl: URL {
+        return FileManager.default.temporaryDirectory.appendingPathComponent("\(uuid)_\(partId)/\(name)")
     }
 
     public var uti: UTType? {
@@ -159,6 +159,7 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
         contentId = remoteAttachment.contentId
         resource = remoteAttachment.resource
         driveUrl = remoteAttachment.driveUrl
+        temporaryLocalUrl = remoteAttachment.temporaryLocalUrl
     }
 }
 

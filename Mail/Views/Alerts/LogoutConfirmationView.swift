@@ -53,6 +53,8 @@ struct LogoutConfirmationView: View {
             accountManager.switchAccount(newAccount: nextAccount)
         }
         accountManager.saveAccounts()
+
+        async let _ = NotificationsHelper.updateUnreadCountBadge()
     }
 }
 
