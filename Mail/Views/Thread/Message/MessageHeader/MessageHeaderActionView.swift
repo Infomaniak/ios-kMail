@@ -46,10 +46,9 @@ struct MessageHeaderActionView<Content: View>: View {
                 .padding(.leading, iconSize + UIPadding.small)
             }
             .padding(.vertical, value: .verySmall)
-            .padding(.horizontal)
+            .padding(.horizontal, value: .regular)
             IKDivider()
         }
-        .padding(.top)
     }
 }
 
