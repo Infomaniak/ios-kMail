@@ -45,11 +45,11 @@ struct CalendarLabelStyle: LabelStyle {
 
 struct CalendarBodyDetailsView: View {
     let event: CalendarEvent
-    let attachmentMethod: AttachmentEventMethod
+    let attachmentMethod: AttachmentEventMethod?
     let iAmPartOfAttendees: Bool
 
     private var canReply: Bool {
-        attachmentMethod == .request && event.warning == nil && iAmPartOfAttendees
+        attachmentMethod != .reply && event.warning != .isCancelled && iAmPartOfAttendees
     }
 
     var body: some View {
