@@ -193,17 +193,31 @@ public final class CalendarEvent: EmbeddedObject, Codable {
 }
 
 public enum AttachmentEventMethod: String, Codable, PersistableEnum {
+    case publish = "PUBLISH"
     case request = "REQUEST"
     case reply = "REPLY"
+    case cancel = "CANCEL"
 }
 
 public final class CalendarEventResponse: EmbeddedObject, Codable {
     @Persisted public var userStoredEvent: CalendarEvent?
     @Persisted public var attachmentEvent: CalendarEvent?
     @Persisted public var userStoredEventDeleted: Bool?
-    @Persisted public var attachmentEventMethod: AttachmentEventMethod
+    @Persisted public var attachmentEventMethod: AttachmentEventMethod?
 
     public var event: CalendarEvent? {
         return userStoredEvent ?? attachmentEvent
+    }
+
+    override public init() {
+        super.init()
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        userStoredEvent = try container.decode(CalendarEvent?.self, forKey: .userStoredEvent)
+        attachmentEvent = try container.decode(CalendarEvent?.self, forKey: .attachmentEvent)
+        userStoredEventDeleted = try container.decode(Bool?.self, forKey: .userStoredEventDeleted)
+        attachmentEventMethod = try? container.decode(AttachmentEventMethod?.self, forKey: .attachmentEventMethod)
     }
 }

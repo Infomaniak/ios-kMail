@@ -24,7 +24,7 @@ struct CalendarBodyView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let event: CalendarEvent
-    let attachmentMethod: AttachmentEventMethod
+    let attachmentMethod: AttachmentEventMethod?
 
     private var iAmPartOfAttendees: Bool {
         return event.iAmPartOfAttendees(currentMailboxEmail: mailboxManager.mailbox.email)
