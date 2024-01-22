@@ -33,34 +33,29 @@ struct AttachmentView<Content: View>: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            HStack {
-                IKIcon(detachedAttachment.icon, size: .large)
-                    .foregroundStyle(MailResourcesAsset.textSecondaryColor)
+        HStack(spacing: UIPadding.small) {
+            IKIcon(detachedAttachment.icon, size: .large)
+                .foregroundStyle(MailResourcesAsset.textSecondaryColor)
 
-                HStack(spacing: UIPadding.small) {
-                    VStack(alignment: .leading, spacing: 0) {
-                        Text(detachedAttachment.name)
-                            .textStyle(.bodySmall)
-                            .lineLimit(1)
-                            .truncationMode(.middle)
+            VStack(alignment: .leading, spacing: 0) {
+                Text(detachedAttachment.name)
+                    .textStyle(.bodySmall)
+                    .lineLimit(1)
+                    .truncationMode(.middle)
 
-                        Text(subtitle)
-                            .textStyle(.labelSecondary)
-                    }
-
-                    accessory()
-                }
+                Text(subtitle)
+                    .textStyle(.labelSecondary)
             }
-            .padding(.horizontal, value: .small)
-            .padding(.vertical, value: .verySmall)
+
+            accessory()
         }
-        .background(
-            RoundedRectangle(cornerRadius: 6)
-                .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
-        )
-        .cornerRadius(6)
         .frame(maxWidth: 200)
+        .padding(.horizontal, value: .small)
+        .padding(.vertical, value: .verySmall)
+        .overlay {
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(MailResourcesAsset.elementsColor.swiftUIColor)
+        }
     }
 }
 
