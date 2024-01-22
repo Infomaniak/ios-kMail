@@ -41,18 +41,12 @@ struct AttachmentsView: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: UIPadding.regular) {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: UIPadding.small) {
                     ForEach(attachments) { attachment in
                         Button {
-                            matomo.track(eventWithCategory: .attachmentActions, name: "open")
-                            previewedAttachment = attachment
-                            if !FileManager.default.fileExists(atPath: attachment.localUrl.path) {
-                                Task {
-                                    await mailboxManager.saveAttachmentLocally(attachment: attachment)
-                                }
-                            }
+                            openAttachment(attachment)
                         } label: {
                             AttachmentCell(attachment: attachment)
                         }
@@ -72,20 +66,10 @@ struct AttachmentsView: View {
                 }
                 .textStyle(.bodySmallSecondary)
 
-                Button(MailResourcesStrings.Localizable.buttonDownloadAll) {
-                    downloadInProgress = true
-                    Task {
-                        await tryOrDisplayError {
-                            matomo.track(eventWithCategory: .message, name: "downloadAll")
-                            let attachmentURL = try await mailboxManager.apiFetcher.downloadAttachments(message: message)
-                            allAttachmentsURL = IdentifiableURL(url: attachmentURL)
-                        }
-                        downloadInProgress = false
-                    }
-                }
-                .buttonStyle(.ikLink(isInlined: true))
-                .controlSize(.small)
-                .ikButtonLoading(downloadInProgress)
+                Button(MailResourcesStrings.Localizable.buttonDownloadAll, action: downloadAllAttachments)
+                    .buttonStyle(.ikLink(isInlined: true))
+                    .controlSize(.small)
+                    .ikButtonLoading(downloadInProgress)
 
                 Spacer()
             }
@@ -97,6 +81,28 @@ struct AttachmentsView: View {
         .sheet(item: $allAttachmentsURL) { allAttachmentsURL in
             DocumentPicker(pickerType: .exportContent([allAttachmentsURL.url]))
                 .ignoresSafeArea()
+        }
+    }
+
+    private func openAttachment(_ attachment: Attachment) {
+        matomo.track(eventWithCategory: .attachmentActions, name: "open")
+        previewedAttachment = attachment
+        if !FileManager.default.fileExists(atPath: attachment.localUrl.path) {
+            Task {
+                await mailboxManager.saveAttachmentLocally(attachment: attachment)
+            }
+        }
+    }
+
+    private func downloadAllAttachments() {
+        downloadInProgress = true
+        Task {
+            await tryOrDisplayError {
+                matomo.track(eventWithCategory: .message, name: "downloadAll")
+                let attachmentURL = try await mailboxManager.apiFetcher.downloadAttachments(message: message)
+                allAttachmentsURL = IdentifiableURL(url: attachmentURL)
+            }
+            downloadInProgress = false
         }
     }
 }
