@@ -67,52 +67,49 @@ struct MessageView: View {
                     isHeaderExpanded: $isHeaderExpanded,
                     isMessageExpanded: $isMessageExpanded
                 )
-                .padding(.horizontal, value: .regular)
 
                 if isMessageExpanded {
-                    if isRemoteContentBlocked && displayContentBlockedActionView {
-                        MessageHeaderActionView(
-                            icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
-                            message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
-                        ) {
-                            Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) {
-                                withAnimation {
-                                    $message.localSafeDisplay.wrappedValue = true
+                    VStack(spacing: UIPadding.regular) {
+                        if isRemoteContentBlocked && displayContentBlockedActionView {
+                            MessageHeaderActionView(
+                                icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
+                                message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
+                            ) {
+                                Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) {
+                                    withAnimation {
+                                        $message.localSafeDisplay.wrappedValue = true
+                                    }
                                 }
+                                .buttonStyle(.ikLink(isInlined: true))
+                                .controlSize(.small)
                             }
-                            .buttonStyle(.ikLink(isInlined: true))
-                            .controlSize(.small)
                         }
-                    }
 
-                    // TODO: Show only when mail contains calendar
-                    CalendarView()
-                        .padding([.horizontal, .top], value: .regular)
-
-                    if !message.attachments.filter({ $0.disposition == .attachment || $0.contentId == nil }).isEmpty {
-                        AttachmentsView(message: message)
-                            .padding(.top, value: .medium)
-                    }
-
-                    if isShowingErrorLoading {
-                        Text(MailResourcesStrings.Localizable.errorLoadingMessage)
-                            .textStyle(.bodySmallItalicSecondary)
-                            .padding(.top, value: .regular)
+                        // TODO: Show only when mail contains calendar
+                        CalendarView()
                             .padding(.horizontal, value: .regular)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    } else {
-                        MessageBodyView(
-                            isMessagePreprocessed: isMessagePreprocessed,
-                            presentableBody: $presentableBody,
-                            blockRemoteContent: isRemoteContentBlocked,
-                            displayContentBlockedActionView: $displayContentBlockedActionView,
-                            messageUid: message.uid
-                        )
-                        .padding(.top, value: .regular)
+
+                        if !message.attachments.filter({ $0.disposition == .attachment || $0.contentId == nil }).isEmpty {
+                            AttachmentsView(message: message)
+                        }
+
+                        if isShowingErrorLoading {
+                            Text(MailResourcesStrings.Localizable.errorLoadingMessage)
+                                .textStyle(.bodySmallItalicSecondary)
+                                .padding(.horizontal, value: .regular)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        } else {
+                            MessageBodyView(
+                                isMessagePreprocessed: isMessagePreprocessed,
+                                presentableBody: $presentableBody,
+                                blockRemoteContent: isRemoteContentBlocked,
+                                displayContentBlockedActionView: $displayContentBlockedActionView,
+                                messageUid: message.uid
+                            )
+                        }
                     }
                 }
             }
-            .padding(.vertical, value: .regular)
             .task {
                 if message.shouldComplete {
                     await fetchMessage()
