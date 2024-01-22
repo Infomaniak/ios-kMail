@@ -53,6 +53,7 @@ struct AttachmentsView: View {
                     }
                 }
                 .padding(.horizontal, value: .regular)
+                .padding(.vertical, 1)
             }
 
             HStack(spacing: UIPadding.small) {
