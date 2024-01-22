@@ -62,11 +62,7 @@ struct MessageView: View {
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                MessageHeaderView(
-                    message: message,
-                    isHeaderExpanded: $isHeaderExpanded,
-                    isMessageExpanded: $isMessageExpanded
-                )
+                MessageHeaderView(message: message, isHeaderExpanded: $isHeaderExpanded, isMessageExpanded: $isMessageExpanded)
 
                 if isMessageExpanded {
                     VStack(spacing: UIPadding.regular) {
@@ -86,10 +82,9 @@ struct MessageView: View {
                         }
 
                         if let event = message.calendarEvent?.event, event.type == .event {
-                            CalendarView(event: event, attachmentMethod: eventMethod)
+                            CalendarView(event: event, attachmentMethod: message.calendarEvent?.attachmentEventMethod)
                                 .padding(.horizontal, value: .regular)
                         }
-
 
                         if !message.attachments.filter({ $0.disposition == .attachment || $0.contentId == nil }).isEmpty {
                             AttachmentsView(message: message)
@@ -112,11 +107,18 @@ struct MessageView: View {
                     }
                 }
             }
+            .onAppear {
+                prepareBodyIfNeeded()
+            }
             .task {
                 if message.shouldComplete {
                     await fetchMessage()
                 }
                 try? await fetchEventCalendar()
+            }
+            .onDisappear {
+                inlineAttachmentWorker?.stop()
+                inlineAttachmentWorker = nil
             }
             .onChange(of: message.fullyDownloaded) { _ in
                 prepareBodyIfNeeded()
@@ -130,13 +132,6 @@ struct MessageView: View {
                         isMessageExpanded = true
                     }
                 }
-            }
-            .onAppear {
-                prepareBodyIfNeeded()
-            }
-            .onDisappear {
-                inlineAttachmentWorker?.stop()
-                inlineAttachmentWorker = nil
             }
         }
     }

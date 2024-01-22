@@ -93,8 +93,8 @@ struct MessageHeaderSummaryView: View {
                             HStack {
                                 Text(
                                     message.recipients.map {
-                                        let contactConfiguration = ContactConfiguration.recipient(
-                                            recipient: $0,
+                                        let contactConfiguration = ContactConfiguration.correspondent(
+                                            correspondent: $0,
                                             contextMailboxManager: mailboxManager
                                         )
                                         let contact = CommonContactCache

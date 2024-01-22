@@ -22,7 +22,7 @@ import SwiftUI
 
 struct CalendarView: View {
     let event: CalendarEvent
-    let attachmentMethod: AttachmentEventMethod
+    let attachmentMethod: AttachmentEventMethod?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
