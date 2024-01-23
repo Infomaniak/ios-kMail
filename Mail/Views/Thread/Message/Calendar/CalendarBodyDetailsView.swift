@@ -46,10 +46,10 @@ struct CalendarLabelStyle: LabelStyle {
 struct CalendarBodyDetailsView: View {
     let event: CalendarEvent
     let attachmentMethod: AttachmentEventMethod?
-    let iAmInvited: Bool
+    let me: Attendee?
 
     private var canReply: Bool {
-        return (attachmentMethod == .request || attachmentMethod == nil) && event.warning != .isCancelled && iAmInvited
+        return (attachmentMethod == .request || attachmentMethod == nil) && event.warning != .isCancelled && me != nil
     }
 
     var body: some View {
@@ -65,7 +65,7 @@ struct CalendarBodyDetailsView: View {
                 Label(location, image: MailResourcesAsset.pin.name)
                     .labelStyle(.calendar())
             }
-            if !iAmInvited && !event.attendees.isEmpty {
+            if me == nil && !event.attendees.isEmpty {
                 Label(MailResourcesStrings.Localizable.calendarNotInvited, image: MailResourcesAsset.socialMedia.name)
                     .labelStyle(.calendar())
             }
@@ -77,7 +77,7 @@ struct CalendarBodyDetailsView: View {
                     spacing: .constant(UIPadding.small),
                     lineSpacing: UIPadding.small
                 ) { choice in
-                    CalendarChoiceButton(choice: choice, isSelected: false)
+                    CalendarChoiceButton(choice: choice, isSelected: me?.state == choice)
                 }
             }
         }
@@ -86,9 +86,13 @@ struct CalendarBodyDetailsView: View {
 }
 
 #Preview("Is Invited") {
-    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent, attachmentMethod: .request, iAmInvited: true)
+    CalendarBodyDetailsView(
+        event: PreviewHelper.sampleCalendarEvent,
+        attachmentMethod: .request,
+        me: PreviewHelper.sampleAttendee1
+    )
 }
 
 #Preview("Is Not Invited") {
-    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent, attachmentMethod: .request, iAmInvited: false)
+    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent, attachmentMethod: .request, me: nil)
 }
