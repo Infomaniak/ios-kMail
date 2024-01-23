@@ -26,11 +26,6 @@ struct CalendarAllAttendeesView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Text(MailResourcesStrings.Localizable.attendeesListTitle(attendees.count))
-                .font(.headline)
-                .frame(maxWidth: .infinity)
-                .padding(.bottom, value: .small)
-
             ForEach(attendees) { attendee in
                 CalendarAttendeeCell(recipient: attendee)
                     .overlay(alignment: .bottom) {
