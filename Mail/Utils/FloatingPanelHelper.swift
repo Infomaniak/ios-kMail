@@ -23,24 +23,30 @@ import SwiftUI
 import SwiftUIBackports
 
 extension View {
-    func floatingPanel<Content: View>(isPresented: Binding<Bool>,
-                                      @ViewBuilder content: @escaping () -> Content) -> some View {
+    func floatingPanel<Content: View>(
+        isPresented: Binding<Bool>,
+        title: String? = nil,
+        @ViewBuilder content: @escaping () -> Content
+    ) -> some View {
         sheet(isPresented: isPresented) {
             if #available(iOS 16.0, *) {
-                content().modifier(SelfSizingPanelViewModifier())
+                content().modifier(SelfSizingPanelViewModifier(title: title))
             } else {
-                content().modifier(SelfSizingPanelBackportViewModifier())
+                content().modifier(SelfSizingPanelBackportViewModifier(title: title))
             }
         }
     }
 
-    func floatingPanel<Item: Identifiable, Content: View>(item: Binding<Item?>,
-                                                          @ViewBuilder content: @escaping (Item) -> Content) -> some View {
+    func floatingPanel<Item: Identifiable, Content: View>(
+        item: Binding<Item?>,
+        title: String? = nil,
+        @ViewBuilder content: @escaping (Item) -> Content
+    ) -> some View {
         sheet(item: item) { item in
             if #available(iOS 16.0, *) {
-                content(item).modifier(SelfSizingPanelViewModifier())
+                content(item).modifier(SelfSizingPanelViewModifier(title: title))
             } else {
-                content(item).modifier(SelfSizingPanelBackportViewModifier())
+                content(item).modifier(SelfSizingPanelBackportViewModifier(title: title))
             }
         }
     }
@@ -61,8 +67,11 @@ struct SelfSizingPanelBackportViewModifier: ViewModifier {
     @State private var currentDetents: Set<Backport.PresentationDetent> = [.medium]
 
     var dragIndicator = Visibility.visible
+    var title: String?
 
-    private let topPadding: CGFloat = UIPadding.medium
+    private let topPadding = UIPadding.medium
+    private let titleSpacing = UIPadding.small
+
     private var backportDragIndicator: Backport<Any>.Visibility {
         switch dragIndicator {
         case .automatic:
@@ -74,21 +83,36 @@ struct SelfSizingPanelBackportViewModifier: ViewModifier {
         }
     }
 
-    func body(content: Content) -> some View {
-        ScrollView {
-            content
-                .padding(.bottom, value: .regular)
+    private var headerSize: CGFloat {
+        guard title != nil else {
+            return topPadding
         }
-        .padding(.top, topPadding)
-        .introspect(.scrollView, on: .iOS(.v15)) { scrollView in
-            guard !currentDetents.contains(.large) else { return }
-            let totalPanelContentHeight = scrollView.contentSize.height + topPadding
+        return topPadding + titleSpacing + UIFont.preferredFont(forTextStyle: .headline).pointSize
+    }
 
-            scrollView.isScrollEnabled = totalPanelContentHeight > (scrollView.window?.bounds.height ?? 0)
-            if totalPanelContentHeight > (scrollView.window?.bounds.height ?? 0) / 2 {
-                currentDetents = [.medium, .large]
+    func body(content: Content) -> some View {
+        VStack(spacing: UIPadding.small) {
+            if let title {
+                Text(title)
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+            }
+
+            ScrollView {
+                content
+                    .padding(.bottom, value: .regular)
+            }
+            .introspect(.scrollView, on: .iOS(.v15)) { scrollView in
+                guard !currentDetents.contains(.large) else { return }
+                let totalPanelContentHeight = scrollView.contentSize.height + headerSize
+
+                scrollView.isScrollEnabled = totalPanelContentHeight > (scrollView.window?.bounds.height ?? 0)
+                if totalPanelContentHeight > (scrollView.window?.bounds.height ?? 0) / 2 {
+                    currentDetents = [.medium, .large]
+                }
             }
         }
+        .padding(.top, topPadding)
         .backport.presentationDragIndicator(backportDragIndicator)
         .backport.presentationDetents(currentDetents)
         .ikPresentationCornerRadius(20)
@@ -101,31 +125,48 @@ struct SelfSizingPanelViewModifier: ViewModifier {
     @State private var selection: PresentationDetent = .height(0)
 
     var dragIndicator = Visibility.visible
+    var title: String?
 
-    private let topPadding: CGFloat = UIPadding.medium
+    private let topPadding = UIPadding.medium
+    private let titleSpacing = UIPadding.small
+
+    private var headerSize: CGFloat {
+        guard title != nil else {
+            return topPadding
+        }
+        return topPadding + titleSpacing + UIFont.preferredFont(forTextStyle: .headline).pointSize
+    }
 
     func body(content: Content) -> some View {
-        ScrollView {
-            content
-                .padding(.bottom, value: .regular)
-        }
-        .padding(.top, topPadding)
-        .introspect(.scrollView, on: .iOS(.v16, .v17)) { scrollView in
-            let totalPanelContentHeight = scrollView.contentSize.height + topPadding
-            guard selection != .height(totalPanelContentHeight) else { return }
+        VStack(spacing: titleSpacing) {
+            if let title {
+                Text(title)
+                    .font(Font(UIFont.preferredFont(forTextStyle: .headline)))
+                    .frame(maxWidth: .infinity)
+            }
 
-            scrollView.isScrollEnabled = totalPanelContentHeight > (scrollView.window?.bounds.height ?? 0)
-            DispatchQueue.main.async {
-                currentDetents = [.height(0), .height(totalPanelContentHeight)]
-                selection = .height(totalPanelContentHeight)
+            ScrollView {
+                content
+                    .padding(.bottom, value: .regular)
+            }
+            .introspect(.scrollView, on: .iOS(.v16, .v17)) { scrollView in
+                let totalPanelContentHeight = scrollView.contentSize.height + headerSize
+                guard selection != .height(totalPanelContentHeight) else { return }
 
-                // Hack to let time for the animation to finish, after animation is complete we can modify the state again
-                // if we don't do this the animation is cut before finishing
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    currentDetents = [selection]
+                scrollView.isScrollEnabled = totalPanelContentHeight > (scrollView.window?.bounds.height ?? 0)
+                DispatchQueue.main.async {
+                    currentDetents = [.height(0), .height(totalPanelContentHeight)]
+                    selection = .height(totalPanelContentHeight)
+
+                    // Hack to let time for the animation to finish, after animation is complete we can modify the state again
+                    // if we don't do this the animation is cut before finishing
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        currentDetents = [selection]
+                    }
                 }
             }
         }
+        .padding(.top, topPadding)
         .presentationDetents(currentDetents, selection: $selection)
         .presentationDragIndicator(dragIndicator)
         .ikPresentationCornerRadius(20)
