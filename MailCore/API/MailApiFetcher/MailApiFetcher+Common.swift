@@ -98,6 +98,14 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(.quotas(mailbox: mailbox.mailbox, productId: mailbox.hostingId)))
     }
 
+    func externalMailFlag(mailbox: Mailbox) async throws -> ExternalMailInfo {
+        try await perform(request: authenticatedRequest(.externalMailFlag(
+            hostingId: mailbox.hostingId,
+            mailboxName: mailbox.mailbox
+        )))
+        .data
+    }
+
     @discardableResult
     func undoAction(resource: String) async throws -> Bool {
         try await perform(request: authenticatedRequest(.resource(resource), method: .post))

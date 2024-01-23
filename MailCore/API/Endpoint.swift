@@ -190,6 +190,10 @@ public extension Endpoint {
         ])
     }
 
+    static func externalMailFlag(hostingId: Int, mailboxName: String) -> Endpoint {
+        return .baseManager.appending(path: "/\(hostingId)/mailboxes/\(mailboxName)/external_mail_flag")
+    }
+
     static func draft(uuid: String) -> Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/draft")
     }
