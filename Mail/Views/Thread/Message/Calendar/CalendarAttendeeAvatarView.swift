@@ -65,10 +65,10 @@ struct AttendeeAvatarView: View {
 
 #Preview {
     VStack {
-        AttendeeAvatarView(attendee: PreviewHelper.sampleRecipient1)
-        AttendeeAvatarView(attendee: PreviewHelper.sampleRecipient2)
-        AttendeeAvatarView(attendee: PreviewHelper.sampleRecipient3)
-        AttendeeAvatarView(attendee: PreviewHelper.sampleRecipient4)
+        AttendeeAvatarView(attendee: PreviewHelper.sampleAttendee1)
+        AttendeeAvatarView(attendee: PreviewHelper.sampleAttendee2)
+        AttendeeAvatarView(attendee: PreviewHelper.sampleAttendee3)
+        AttendeeAvatarView(attendee: PreviewHelper.sampleAttendee4)
     }
     .environmentObject(PreviewHelper.sampleMailboxManager)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
