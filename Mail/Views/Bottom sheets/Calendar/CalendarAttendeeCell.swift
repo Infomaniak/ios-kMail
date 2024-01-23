@@ -24,7 +24,7 @@ struct CalendarAttendeeCell: View {
 
     var body: some View {
         HStack(spacing: UIPadding.small) {
-            CalendarAttendeeAvatarView(recipient: recipient, choice: .yes)
+            AttendeeAvatarView(recipient: recipient, choice: .yes)
 
             VStack(alignment: .leading, spacing: 0) {
                 if !recipient.name.isEmpty && recipient.name != recipient.email {
