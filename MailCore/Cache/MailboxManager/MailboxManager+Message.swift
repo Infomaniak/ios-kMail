@@ -108,8 +108,9 @@ public extension MailboxManager {
 
         if folder.role == .inbox,
            let freshFolder = folder.fresh(using: getRealm()) {
-            mailboxInfosManager.updateUnseen(unseenMessages: freshFolder.unreadCount, for: mailbox)
+            let unreadCount = freshFolder.unreadCount
             Task {
+                await mailboxInfosManager.updateUnseen(unseenMessages: unreadCount, for: mailbox)
                 await NotificationsHelper.clearAlreadyReadNotifications()
                 await NotificationsHelper.updateUnreadCountBadge()
             }

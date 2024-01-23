@@ -260,7 +260,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             }
         }
 
-        mailboxInfosManager.storeMailboxes(user: user, mailboxes: mailboxesResponse)
+        await mailboxInfosManager.storeMailboxes(user: user, mailboxes: mailboxesResponse)
         if let mainMailbox = (mailboxesResponse.first(where: { $0.isPrimary }) ?? mailboxesResponse.first)?.freezeIfNeeded() {
             await notificationService.updateTopicsIfNeeded([mainMailbox.notificationTopicName], userApiFetcher: apiFetcher)
             let currentMailboxManager = getMailboxManager(for: mainMailbox)
@@ -299,7 +299,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             }
         }
 
-        let mailboxRemovedList = mailboxInfosManager.storeMailboxes(user: user, mailboxes: fetchedMailboxes)
+        let mailboxRemovedList = await mailboxInfosManager.storeMailboxes(user: user, mailboxes: fetchedMailboxes)
         mailboxManagers.removeAll()
 
         var switchedMailbox: Mailbox?
