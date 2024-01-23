@@ -22,31 +22,7 @@ import MailCore
 import RealmSwift
 import SwiftUI
 
-struct NestableFolder: Identifiable {
-    var id: Int {
-        // The id of a folder depends on its `remoteId` and the id of its children
-        return children.collectionId(baseId: content.remoteId.hashValue)
-    }
-
-    let content: Folder
-    let children: [NestableFolder]
-
-    static func createFoldersHierarchy(from folders: [Folder]) -> [Self] {
-        var parentFolders = [NestableFolder]()
-
-        for folder in folders {
-            let sortedChildren = folder.children.sortedByName()
-            parentFolders.append(NestableFolder(
-                content: folder,
-                children: createFoldersHierarchy(from: sortedChildren)
-            ))
-        }
-
-        return parentFolders
-    }
-}
-
-final class FolderListViewModel: ObservableObject {
+@MainActor final class FolderListViewModel: ObservableObject {
     @Published private(set) var roleFolders = [NestableFolder]()
     @Published private(set) var userFolders = [NestableFolder]()
 
@@ -58,8 +34,9 @@ final class FolderListViewModel: ObservableObject {
     private var foldersObservationToken: NotificationToken?
     private var searchQueryObservation: AnyCancellable?
     private var folders: Results<Folder>?
+    private let worker = FolderListViewModelWorker()
 
-    init(mailboxManager: MailboxManager, foldersQuery: @escaping (Query<Folder>) -> Query<Bool> = { $0.toolType == nil }) {
+    init(mailboxManager: MailboxManageable, foldersQuery: @escaping (Query<Folder>) -> Query<Bool> = { $0.toolType == nil }) {
         self.foldersQuery = foldersQuery
         updateFolderListForMailboxManager(mailboxManager, animateInitialChanges: false)
 
@@ -72,40 +49,61 @@ final class FolderListViewModel: ObservableObject {
             }
     }
 
-    func updateFolderListForMailboxManager(_ mailboxManager: MailboxManager, animateInitialChanges: Bool) {
+    func updateFolderListForMailboxManager(_ mailboxManager: MailboxManageable, animateInitialChanges: Bool) {
         foldersObservationToken = mailboxManager.getRealm()
             .objects(Folder.self).where(foldersQuery)
             .observe(on: DispatchQueue.main) { [weak self] results in
+                guard let self else {
+                    return
+                }
+
                 switch results {
                 case .initial(let folders):
-                    withAnimation(animateInitialChanges ? .default : nil) {
-                        self?.folders = folders.freezeIfNeeded()
-                        self?.filterAndSortFolders(folders.freezeIfNeeded())
-                    }
+                    processObservedFolders(folders, animated: animateInitialChanges)
                 case .update(let folders, _, _, _):
-                    withAnimation {
-                        self?.folders = folders.freezeIfNeeded()
-                        self?.filterAndSortFolders(folders.freezeIfNeeded())
-                    }
+                    processObservedFolders(folders, animated: true)
                 case .error:
                     break
                 }
             }
     }
 
-    private func filterAndSortFolders(_ folders: Results<Folder>) {
-        let filteredFolders = filterFolders(folders)
+    private func processObservedFolders(_ folders: Results<Folder>, animated: Bool) {
+        let frozenFolders = folders.freezeIfNeeded()
+        self.folders = frozenFolders
+        filterAndSortFolders(frozenFolders, animated: animated)
+    }
+
+    private func filterAndSortFolders(_ folders: Results<Folder>, animated: Bool = false) {
+        Task { @MainActor in
+            let result = await worker.filterAndSortFolders(folders, searchQuery: searchQuery)
+            withAnimation(animated ? .default : nil) {
+                roleFolders = result.roleFolders
+                userFolders = result.userFolders
+            }
+        }
+    }
+}
+
+/// A worker that will be part of the cooperative thread pool
+struct FolderListViewModelWorker {
+    func filterAndSortFolders(_ folders: Results<Folder>,
+                              searchQuery: String) async -> (roleFolders: [NestableFolder], userFolders: [NestableFolder]) {
+        assert(folders.isFrozen, "Expecting frozen objects")
+        let filteredFolders = filterFolders(folders, searchQuery: searchQuery)
 
         let sortedRoleFolders = filteredFolders.filter { $0.role != nil }
             .sorted()
-        roleFolders = createFoldersHierarchy(from: sortedRoleFolders)
-
         let sortedUserFolders = filteredFolders.filter { $0.role == nil }
             .sortedByName()
-        userFolders = createFoldersHierarchy(from: sortedUserFolders)
+
+        async let roleFolders = createFoldersHierarchy(from: sortedRoleFolders, searchQuery: searchQuery)
+        async let userFolders = createFoldersHierarchy(from: sortedUserFolders, searchQuery: searchQuery)
+
+        return await (roleFolders, userFolders)
     }
 
-    private func filterFolders(_ folders: Results<Folder>) -> [Folder] {
+    private func filterFolders(_ folders: Results<Folder>, searchQuery: String) -> [Folder] {
         guard !searchQuery.isEmpty else {
             // swiftlint:disable:next empty_count
             return Array(folders.where { $0.parents.count == 0 })
@@ -117,7 +115,7 @@ final class FolderListViewModel: ObservableObject {
         }
     }
 
-    private func createFoldersHierarchy(from folders: [Folder]) -> [NestableFolder] {
+    private func createFoldersHierarchy(from folders: [Folder], searchQuery: String) -> [NestableFolder] {
         if searchQuery.isEmpty {
             return NestableFolder.createFoldersHierarchy(from: folders)
         } else {

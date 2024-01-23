@@ -22,7 +22,7 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-public enum FolderRole: String, Codable, PersistableEnum {
+public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
     case archive = "ARCHIVE"
     case commercial = "COMMERCIAL"
     case draft = "DRAFT"
