@@ -46,10 +46,10 @@ struct CalendarLabelStyle: LabelStyle {
 struct CalendarBodyDetailsView: View {
     let event: CalendarEvent
     let attachmentMethod: AttachmentEventMethod?
-    let iAmPartOfAttendees: Bool
+    let iAmInvited: Bool
 
     private var canReply: Bool {
-        attachmentMethod != .reply && event.warning != .isCancelled && iAmPartOfAttendees
+        return (attachmentMethod == .request || attachmentMethod == nil) && event.warning != .isCancelled && iAmInvited
     }
 
     var body: some View {
@@ -65,7 +65,7 @@ struct CalendarBodyDetailsView: View {
                 Label(location, image: MailResourcesAsset.pin.name)
                     .labelStyle(.calendar())
             }
-            if !iAmPartOfAttendees {
+            if !iAmInvited && !event.attendees.isEmpty {
                 Label(MailResourcesStrings.Localizable.calendarNotInvited, image: MailResourcesAsset.socialMedia.name)
                     .labelStyle(.calendar())
             }
@@ -86,9 +86,9 @@ struct CalendarBodyDetailsView: View {
 }
 
 #Preview("Is Invited") {
-    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent, attachmentMethod: .request, iAmPartOfAttendees: true)
+    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent, attachmentMethod: .request, iAmInvited: true)
 }
 
 #Preview("Is Not Invited") {
-    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent, attachmentMethod: .request, iAmPartOfAttendees: false)
+    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent, attachmentMethod: .request, iAmInvited: false)
 }

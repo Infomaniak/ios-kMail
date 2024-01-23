@@ -26,13 +26,13 @@ struct CalendarBodyView: View {
     let event: CalendarEvent
     let attachmentMethod: AttachmentEventMethod?
 
-    private var iAmPartOfAttendees: Bool {
+    private var iAmInvited: Bool {
         return event.iAmPartOfAttendees(currentMailboxEmail: mailboxManager.mailbox.email)
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
-            CalendarBodyDetailsView(event: event, attachmentMethod: attachmentMethod, iAmPartOfAttendees: iAmPartOfAttendees)
+            CalendarBodyDetailsView(event: event, attachmentMethod: attachmentMethod, iAmInvited: iAmInvited)
 
             if !event.attendees.isEmpty {
                 CalendarAttendeesView(organizer: event.organizer, attendees: event.attendees.toArray())
