@@ -28,7 +28,7 @@ struct CalendarBodyView: View {
             CalendarAttendeesView()
 
             Button(action: addEventToCalendar) {
-                Text(MailResourcesStrings.Localizable.buttonAddToMyCalendar)
+                Text(MailResourcesStrings.Localizable.buttonOpenMyCalendar)
             }
             .buttonStyle(.ikPlain)
             .ikButtonFullWidth(true)

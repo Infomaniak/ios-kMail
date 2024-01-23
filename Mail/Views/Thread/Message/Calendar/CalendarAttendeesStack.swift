@@ -34,9 +34,9 @@ struct CalendarAttendeesStack: View {
     }
 
     var body: some View {
-        HStack(alignment: .top, spacing: -6) {
+        HStack(alignment: .top, spacing: -8) {
             ForEach(displayedAttendees) { attendee in
-                CalendarAttendeeAvatarView(recipient: attendee, choice: .maybe)
+                AttendeeAvatarView(recipient: attendee, choice: .maybe)
             }
 
             if hiddenAttendees > 0 {

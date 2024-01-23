@@ -20,7 +20,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct CalendarAttendeeAvatarView: View {
+struct AttendeeAvatarView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let recipient: Recipient
@@ -36,8 +36,7 @@ struct CalendarAttendeeAvatarView: View {
             Circle()
                 .stroke(MailResourcesAsset.backgroundColor.swiftUIColor, lineWidth: UIConstants.avatarBorderLineWidth)
         }
-        .padding(.trailing, 2)
-        .padding(.bottom, 4)
+        .padding([.bottom, .trailing], UIPadding.verySmall)
         .overlay(alignment: .bottomTrailing) {
             if let choice {
                 Circle()
@@ -56,10 +55,10 @@ struct CalendarAttendeeAvatarView: View {
 
 #Preview {
     VStack {
-        CalendarAttendeeAvatarView(recipient: PreviewHelper.sampleRecipient1, choice: .yes)
-        CalendarAttendeeAvatarView(recipient: PreviewHelper.sampleRecipient1, choice: .maybe)
-        CalendarAttendeeAvatarView(recipient: PreviewHelper.sampleRecipient1, choice: .no)
-        CalendarAttendeeAvatarView(recipient: PreviewHelper.sampleRecipient1, choice: nil)
+        AttendeeAvatarView(recipient: PreviewHelper.sampleRecipient1, choice: .yes)
+        AttendeeAvatarView(recipient: PreviewHelper.sampleRecipient1, choice: .maybe)
+        AttendeeAvatarView(recipient: PreviewHelper.sampleRecipient1, choice: .no)
+        AttendeeAvatarView(recipient: PreviewHelper.sampleRecipient1, choice: nil)
     }
     .environmentObject(PreviewHelper.sampleMailboxManager)
     .frame(maxWidth: .infinity, maxHeight: .infinity)
