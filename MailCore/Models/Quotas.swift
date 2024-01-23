@@ -27,4 +27,15 @@ public class Quotas: EmbeddedObject, Codable {
         let currentProgression = Double(size) / Double(Constants.sizeLimit)
         return max(Constants.minimumQuotasProgressionToDisplay, currentProgression)
     }
+
+    override public init() {
+        super.init()
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        // For some reason sometimes backend returns null instead of real value
+        size = try container.decodeIfPresent(Int.self, forKey: .size) ?? 0
+        sizeCheckedAt = try container.decode(Int64.self, forKey: .sizeCheckedAt)
+    }
 }
