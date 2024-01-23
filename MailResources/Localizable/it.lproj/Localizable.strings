@@ -5,7 +5,7 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Fri, 12 Jan 2024 11:47:14 +0100
+ * Exported at: Tue, 23 Jan 2024 13:39:19 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -317,9 +317,6 @@
 /* loco:62cbe10de2840a0cdc2be0d2 */
 "buttonAddEmailAddress" = "Aggiungere un indirizzo e-mail";
 
-/* loco:65957e21e04c075b780d73d2 */
-"buttonAddToMyCalendar" = "Aggiungi al mio calendario";
-
 /* loco:6437c062dd576a7631052413 */
 "buttonAttachMailbox" = "Aggiungi l’indirizzo e-mail";
 
@@ -433,6 +430,9 @@
 
 /* loco:6581b2b5a7520b536b03f942 */
 "buttonOpenKdrive" = "Aprire in kDrive";
+
+/* loco:65957e21e04c075b780d73d2 */
+"buttonOpenMyCalendar" = "Apri nel mio calendario";
 
 /* loco:62cd642815742c678d4c30e4 */
 "buttonRefuse" = "Rifiuti";
@@ -1540,6 +1540,9 @@
 
 /* loco:65957e6e7dfe315a5d02add2 */
 "warningEventHasPassed" = "Questo evento è già passato";
+
+/* loco:65a7dc1de5c74dfd370d6732 */
+"warningEventIsCancelled" = "Questo evento è stato cancellato";
 
 /* loco:6481d72ebb3c88db6e002332 */
 "warningNotificationsDisabledButton" = "Abilitarli nelle impostazioni";
