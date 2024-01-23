@@ -94,6 +94,10 @@ public class Mailbox: Object, Codable, Identifiable {
         case externalMailFlagEnabled
     }
 
+    override public init() {
+        super.init()
+    }
+
     public convenience init(
         uuid: String,
         email: String,
@@ -140,6 +144,33 @@ public class Mailbox: Object, Codable, Identifiable {
         self.dailyLimit = dailyLimit
         self.aliases = aliases
         self.externalMailFlagEnabled = externalMailFlagEnabled
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        uuid = try container.decode(String.self, forKey: .uuid)
+        email = try container.decode(String.self, forKey: .email)
+        emailIdn = try container.decode(String.self, forKey: .emailIdn)
+        mailbox = try container.decode(String.self, forKey: .mailbox)
+        linkId = try container.decode(Int.self, forKey: .linkId)
+        mailboxId = try container.decode(Int.self, forKey: .mailboxId)
+        hostingId = try container.decode(Int.self, forKey: .hostingId)
+        isPrimary = try container.decode(Bool.self, forKey: .isPrimary)
+        passwordStatus = try container.decode(String.self, forKey: .passwordStatus)
+        isPasswordValid = try container.decode(Bool.self, forKey: .isPasswordValid)
+        isValid = try container.decode(Bool.self, forKey: .isValid)
+        isLocked = try container.decode(Bool.self, forKey: .isLocked)
+        hasSocialAndCommercialFiltering = try container.decode(Bool.self, forKey: .hasSocialAndCommercialFiltering)
+        showConfigModal = try container.decode(Bool.self, forKey: .showConfigModal)
+        forceResetPassword = try container.decode(Bool.self, forKey: .forceResetPassword)
+        mdaVersion = try container.decode(String.self, forKey: .mdaVersion)
+        isLimited = try container.decode(Bool.self, forKey: .isLimited)
+        isFree = try container.decode(Bool.self, forKey: .isFree)
+        dailyLimit = try container.decode(Int.self, forKey: .dailyLimit)
+        remoteUnseenMessages = try container.decode(Int.self, forKey: .remoteUnseenMessages)
+        // Waiting for WS issue #5508 to remove this and go back to default initializer
+        aliases = (try? container.decode(List<String>.self, forKey: .aliases)) ?? List<String>()
+        externalMailFlagEnabled = try container.decode(Bool.self, forKey: .externalMailFlagEnabled)
     }
 }
 
