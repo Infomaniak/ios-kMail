@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailResources
@@ -24,8 +25,7 @@ import SwiftUI
 
 extension [Message]: Identifiable {
     public var id: Int {
-        // Calculate a unique identifier by XORing hash values of messages
-        return reduce(1) { $0.hashValue ^ $1.hashValue }
+        return collectionId()
     }
 }
 

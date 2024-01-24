@@ -60,8 +60,10 @@ extension ContactConfiguration: Identifiable {
         switch self {
         case .recipient(let recipient, let contextMailboxManager):
             // One cache entry per recipient per mailbox
-            let hash = recipient.id.hash ^ contextMailboxManager.mailbox.id.hash
-            return hash
+            var hasher = Hasher()
+            hasher.combine(recipient.id)
+            hasher.combine(contextMailboxManager.mailbox.id)
+            return hasher.finalize()
         case .user(let user):
             return user.id
         case .contact(let wrappedContact):

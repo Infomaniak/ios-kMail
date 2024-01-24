@@ -97,7 +97,7 @@ extension ContactManager {
         for contact in remote {
             let emails = contact.emails
             for email in emails {
-                let id = computeContactId(email: email, name: contact.name)
+                let id = MergedContact.computeId(email: email, name: contact.name)
                 if let remoteContact = remoteContactsById[id] {
                     if remoteContact.avatar == nil {
                         remoteContactsById[id]?.avatar = contact.avatar
@@ -114,11 +114,6 @@ extension ContactManager {
     }
 
     // MARK: - Private
-
-    private func computeContactId(email: String, name: String?) -> Int {
-        guard let name, name != email && !name.isEmpty else { return email.hash }
-        return email.hash ^ name.hash
-    }
 
     /// Merge local and remote contacts
     /// - Parameter remoteContacts: all the remote Infomaniak contacts, indexed by id
@@ -137,7 +132,7 @@ extension ContactManager {
                 let email = String(contactEmail.value)
 
                 // lookup matching remote contact for current email
-                let id = self.computeContactId(email: email, name: localContact.fullName)
+                let id = MergedContact.computeId(email: email, name: localContact.fullName)
                 let remoteContact = remoteContacts[id]
 
                 mergedContacts[id] = MergedContact(email: email, local: localContact, remote: remoteContact)
@@ -147,7 +142,7 @@ extension ContactManager {
 
         for notMergedContact in notMergedContacts.values {
             for email in notMergedContact.emails {
-                let id = computeContactId(email: email, name: notMergedContact.name)
+                let id = MergedContact.computeId(email: email, name: notMergedContact.name)
                 mergedContacts[id] = MergedContact(email: email, local: nil, remote: notMergedContact)
             }
         }
@@ -172,7 +167,7 @@ extension ContactManager {
                 continue
             }
 
-            let id = computeContactId(email: mergedContact.email, name: mergedContact.name)
+            let id = MergedContact.computeId(email: mergedContact.email, name: mergedContact.name)
             if newMergedContacts[id] == nil {
                 idsToDelete.append(id)
             }

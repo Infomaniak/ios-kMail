@@ -122,7 +122,7 @@ public final class MergedContact: Object, Identifiable {
         populateWithRemote(remote)
         overrideWithLocal(local)
 
-        id = computeId(email: email, name: name)
+        id = MergedContact.computeId(email: email, name: name)
     }
 
     /// Overload object with local information
@@ -149,8 +149,12 @@ public final class MergedContact: Object, Identifiable {
         remoteIdentifier = contact.id
     }
 
-    private func computeId(email: String, name: String) -> Int {
-        guard email != name && !name.isEmpty else { return email.hash }
-        return email.hash ^ name.hash
+    static func computeId(email: String, name: String?) -> Int {
+        guard let name, email != name && !name.isEmpty else { return email.hash }
+
+        var hasher = Hasher()
+        hasher.combine(email)
+        hasher.combine(name)
+        return hasher.finalize()
     }
 }
