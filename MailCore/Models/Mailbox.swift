@@ -55,6 +55,7 @@ public class Mailbox: Object, Codable, Identifiable {
 
     @Persisted public var permissions: MailboxPermissions?
     @Persisted public var quotas: Quotas?
+    @Persisted public var externalMailInfo: ExternalMailInfo?
 
     public var id: String {
         return uuid
