@@ -259,6 +259,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             if mailbox.isLimited {
                 mailbox.quotas = try await apiFetcher.quotas(mailbox: mailbox)
             }
+            mailbox.externalMailInfo = try await apiFetcher.externalMailFlag(mailbox: mailbox)
         }
 
         await mailboxInfosManager.storeMailboxes(user: user, mailboxes: mailboxesResponse)
@@ -298,6 +299,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             if mailbox.isLimited {
                 mailbox.quotas = try await apiFetcher.quotas(mailbox: mailbox)
             }
+            mailbox.externalMailInfo = try await apiFetcher.externalMailFlag(mailbox: mailbox)
         }
 
         let mailboxRemovedList = await mailboxInfosManager.storeMailboxes(user: user, mailboxes: fetchedMailboxes)
