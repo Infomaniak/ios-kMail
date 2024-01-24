@@ -81,7 +81,7 @@ public final class Attendee: EmbeddedObject, Correspondent, Codable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         email = try container.decode(String.self, forKey: .email)
-        name = try container.decode(String.self, forKey: .name)
+        name = try container.decode(String?.self, forKey: .name) ?? ""
         isOrganizer = try container.decode(Bool.self, forKey: .isOrganizer)
         state = try? container.decode(AttendeeState?.self, forKey: .state)
     }
