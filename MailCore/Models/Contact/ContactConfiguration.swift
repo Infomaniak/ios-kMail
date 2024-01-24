@@ -59,9 +59,9 @@ extension ContactConfiguration: Identifiable {
     public var id: Int {
         switch self {
         case .correspondent(let correspondent, let contextMailboxManager):
-            // One cache entry per recipient per mailbox
+            // One cache entry per correspondent per mailbox
             var hasher = Hasher()
-            hasher.combine(recipient.id)
+            hasher.combine(correspondent.id)
             hasher.combine(contextMailboxManager.mailbox.id)
             return hasher.finalize()
         case .user(let user):
