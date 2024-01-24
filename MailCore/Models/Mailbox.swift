@@ -47,7 +47,6 @@ public class Mailbox: Object, Codable, Identifiable {
     @Persisted public var unseenMessages = 0
     @Persisted public var remoteUnseenMessages: Int
     @Persisted public var aliases: List<String>
-    @Persisted public var externalMailFlagEnabled: Bool
     @Persisted public var userId = 0 {
         didSet {
             objectId = MailboxInfosManager.getObjectId(mailboxId: mailboxId, userId: userId)
@@ -91,7 +90,6 @@ public class Mailbox: Object, Codable, Identifiable {
         case dailyLimit
         case remoteUnseenMessages = "unseenMessages"
         case aliases
-        case externalMailFlagEnabled
     }
 
     override public init() {
@@ -118,8 +116,7 @@ public class Mailbox: Object, Codable, Identifiable {
         isLimited: Bool,
         isFree: Bool,
         dailyLimit: Int,
-        aliases: List<String>,
-        externalMailFlagEnabled: Bool
+        aliases: List<String>
     ) {
         self.init()
 
@@ -143,7 +140,6 @@ public class Mailbox: Object, Codable, Identifiable {
         self.isFree = isFree
         self.dailyLimit = dailyLimit
         self.aliases = aliases
-        self.externalMailFlagEnabled = externalMailFlagEnabled
     }
 
     public required init(from decoder: Decoder) throws {
