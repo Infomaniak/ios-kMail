@@ -59,6 +59,29 @@ final class SyncedAuthenticator: OAuthAuthenticator {
             return
         }
 
+        if let storedToken = tokenStore.tokenFor(userId: credential.userId, fetchLocation: .keychain) {
+            // Someone else refreshed our token and we already have an infinite token
+            if storedToken.expirationDate == nil && credential.expirationDate != nil {
+                SentrySDK.addBreadcrumb(storedToken.generateBreadcrumb(
+                    level: .info,
+                    message: "Refreshing token - Success with local (infinite)"
+                ))
+                completion(.success(storedToken))
+                return
+            }
+            // Someone else refreshed our token and we don't have an infinite token
+            if let storedTokenExpirationDate = storedToken.expirationDate,
+               let tokenExpirationDate = credential.expirationDate,
+               tokenExpirationDate > storedTokenExpirationDate {
+                SentrySDK.addBreadcrumb(storedToken.generateBreadcrumb(
+                    level: .info,
+                    message: "Refreshing token - Success with local"
+                ))
+                completion(.success(storedToken))
+                return
+            }
+        }
+
         // It is absolutely necessary that the app stays awake while we refresh the token
         BackgroundExecutor.executeWithBackgroundTask { endBackgroundTask in
             self.networkLoginService.refreshToken(token: credential) { token, error in
