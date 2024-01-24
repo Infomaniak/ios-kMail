@@ -77,4 +77,9 @@ final class MailApiTests: XCTestCase {
         let mailbox = try await setUpTest()
         _ = try await currentApiFetcher.quotas(mailbox: mailbox)
     }
+
+    func testExternalMailFlag() async throws {
+        let mailbox = try await setUpTest()
+        _ = try await currentApiFetcher.externalMailFlag(mailbox: mailbox)
+    }
 }
