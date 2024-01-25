@@ -174,6 +174,21 @@ struct SettingsView: View {
                             matomoName: \.rawValue
                         )
                     }
+
+                    // MARK: Auto Advance
+
+                    SettingsSubMenuCell(
+                        title: MailResourcesStrings.Localizable.settingsAutoAdvanceTitle,
+                        subtitle: autoAdvance.description
+                    ) {
+                        SettingsOptionView(
+                            title: MailResourcesStrings.Localizable.settingsAutoAdvanceTitle,
+                            subtitle: MailResourcesStrings.Localizable.settingsAutoAdvanceDescription,
+                            keyPath: \.autoAdvance,
+                            matomoCategory: .settingsAutoAdvance,
+                            matomoName: \.rawValue
+                        )
+                    }
                 }
             }
         }
