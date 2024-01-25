@@ -37,7 +37,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     public let account: Account
 
     public let apiFetcher: MailApiFetcher
-    public let contactManager: ContactManager
+    public let contactManager: ContactManageable
 
     enum ErrorDomain: Error {
         case missingMessage
@@ -65,7 +65,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         }
     }
 
-    public init(account: Account, mailbox: Mailbox, apiFetcher: MailApiFetcher, contactManager: ContactManager) {
+    public init(account: Account, mailbox: Mailbox, apiFetcher: MailApiFetcher, contactManager: ContactManageable) {
         self.account = account
         self.mailbox = mailbox
         self.apiFetcher = apiFetcher

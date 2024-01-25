@@ -125,7 +125,7 @@ enum SearchState {
     }
 
     func updateContactSuggestion() {
-        let autocompleteContacts = mailboxManager.contactManager.contacts(matching: searchValue)
+        let autocompleteContacts = mailboxManager.contactManager.contacts(matching: searchValue, fetchLimit: nil)
         var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
         // Append typed email
         if Constants.isEmailAddress(searchValue) && !contacts

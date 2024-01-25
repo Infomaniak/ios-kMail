@@ -80,8 +80,7 @@ public protocol MailBoxManagerSearchable {
 
 /// An abstract interface on the `MailboxManager` related to contacts
 public protocol MailBoxManagerContactable {
-    // TODO: substitute for ContactManageable
-    var contactManager: ContactManager { get }
+    var contactManager: ContactManageable { get }
 }
 
 // TODO: write a dedicated protocol for each MailboxManager+<>
