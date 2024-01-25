@@ -38,4 +38,5 @@ public enum DefaultPreferences {
     public static let featureFlags: FeatureFlagsManageable.AppFeatureFlags = [:]
     public static let shouldPresentAIFeature = true
     public static let aiEngine = AIEngine.falcon
+    public static let autoAdvance = AutoAdvance.listOfThread
 }
