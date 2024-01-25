@@ -26,7 +26,7 @@ struct CalendarChoiceButton: View {
 
     var body: some View {
         Button {
-            // TODO: Select item
+            sendReply()
         } label: {
             HStack(spacing: UIPadding.small) {
                 IKIcon(choice.icon)
@@ -43,6 +43,8 @@ struct CalendarChoiceButton: View {
         }
         .allowsHitTesting(!isSelected)
     }
+
+    private func sendReply() {}
 }
 
 #Preview {
