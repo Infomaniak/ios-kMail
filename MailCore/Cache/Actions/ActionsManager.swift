@@ -25,7 +25,9 @@ import SwiftUI
 
 extension [Message]: Identifiable {
     public var id: Int {
-        return collectionId()
+        var hasher = Hasher()
+        forEach { hasher.combine($0.hashValue) }
+        return hasher.finalize()
     }
 }
 
