@@ -90,7 +90,7 @@ public extension MailboxManager {
         return Array(realm.objects(Folder.self).where { $0.toolType == nil })
     }
 
-    func createFolder(name: String, parent: Folder? = nil) async throws -> Folder {
+    func createFolder(name: String, parent: Folder?) async throws -> Folder {
         var folder = try await apiFetcher.create(mailbox: mailbox, folder: NewFolder(name: name, path: parent?.path))
 
         await backgroundRealm.execute { realm in
@@ -111,7 +111,7 @@ public extension MailboxManager {
         return try await refreshActor.flushFolder(folder: folder, mailbox: mailbox, apiFetcher: apiFetcher)
     }
 
-    func refreshFolder(from messages: [Message], additionalFolder: Folder? = nil) async throws {
+    func refreshFolder(from messages: [Message], additionalFolder: Folder?) async throws {
         try await refreshActor.refreshFolder(from: messages, additionalFolder: additionalFolder)
     }
 

@@ -38,7 +38,7 @@ enum SearchState {
 }
 
 @MainActor class SearchViewModel: ObservableObject {
-    let mailboxManager: MailboxManager
+    let mailboxManager: MailboxManageable
 
     public let filters: [SearchFilter] = [.read, .unread, .favorite, .attachment, .folder]
     @Published var selectedFilters: [SearchFilter] = [] {
@@ -103,12 +103,12 @@ enum SearchState {
     var currentSearchTask: Task<Void, Never>?
     let observeQueue = DispatchQueue(label: "com.infomaniak.observation.SearchViewModel", qos: .userInteractive)
 
-    init(mailboxManager: MailboxManager, folder: Folder) {
+    init(mailboxManager: MailboxManageable, folder: Folder) {
         self.mailboxManager = mailboxManager
 
         realFolder = folder.freezeIfNeeded()
         searchFolder = mailboxManager.initSearchFolder().freezeIfNeeded()
-        folderList = mailboxManager.getFolders()
+        folderList = mailboxManager.getFolders(using: nil)
 
         searchFieldObservation = $searchValue
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
