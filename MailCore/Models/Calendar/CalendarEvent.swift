@@ -55,6 +55,7 @@ public enum CalendarEventWarning {
 }
 
 public final class CalendarEvent: EmbeddedObject, Codable {
+    @Persisted public var id: Int
     @Persisted public var type: CalendarEventType
     @Persisted public var title: String
     @Persisted public var eventDescription: String
@@ -99,6 +100,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
     }
 
     public init(
+        id: Int,
         type: CalendarEventType,
         title: String,
         eventDescription: String,
@@ -112,6 +114,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         status: CalendarEventStatus?,
         attendees: RealmSwift.List<Attendee>
     ) {
+        self.id = id
         self.type = type
         self.title = title
         self.eventDescription = eventDescription
@@ -131,6 +134,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
     // when the event lasts the entire day
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(Int.self, forKey: .id)
         type = try container.decode(CalendarEventType.self, forKey: .type)
         title = try container.decode(String.self, forKey: .title)
         eventDescription = try container.decode(String.self, forKey: .eventDescription)
@@ -149,6 +153,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
     }
 
     enum CodingKeys: String, CodingKey {
+        case id
         case type
         case title
         case eventDescription = "description"
@@ -197,27 +202,4 @@ public enum AttachmentEventMethod: String, Codable, PersistableEnum {
     case request = "REQUEST"
     case reply = "REPLY"
     case cancel = "CANCEL"
-}
-
-public final class CalendarEventResponse: EmbeddedObject, Codable {
-    @Persisted public var userStoredEvent: CalendarEvent?
-    @Persisted public var attachmentEvent: CalendarEvent?
-    @Persisted public var userStoredEventDeleted: Bool?
-    @Persisted public var attachmentEventMethod: AttachmentEventMethod?
-
-    public var event: CalendarEvent? {
-        return userStoredEvent ?? attachmentEvent
-    }
-
-    override public init() {
-        super.init()
-    }
-
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        userStoredEvent = try container.decode(CalendarEvent?.self, forKey: .userStoredEvent)
-        attachmentEvent = try container.decode(CalendarEvent?.self, forKey: .attachmentEvent)
-        userStoredEventDeleted = try container.decode(Bool?.self, forKey: .userStoredEventDeleted)
-        attachmentEventMethod = try? container.decode(AttachmentEventMethod?.self, forKey: .attachmentEventMethod)
-    }
 }
