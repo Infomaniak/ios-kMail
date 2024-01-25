@@ -20,10 +20,11 @@ import Foundation
 import RealmSwift
 
 /// An abstract interface on the `MailboxManager`
-public typealias MailboxManageable = MailBoxManagerDraftable & MailBoxManagerMessageable & RealmAccessible
+public typealias MailboxManageable = MailboxManagerCalendareable & MailboxManagerDraftable & MailboxManagerMessageable &
+    RealmAccessible
 
 /// An abstract interface on the `MailboxManager` related to messages
-public protocol MailBoxManagerMessageable {
+public protocol MailboxManagerMessageable {
     func messages(folder: Folder, isRetrying: Bool) async throws
     func fetchOnePage(folder: Folder, direction: NewMessagesDirection?) async throws -> Bool
     func message(message: Message) async throws
@@ -36,7 +37,7 @@ public protocol MailBoxManagerMessageable {
 }
 
 /// An abstract interface on the `MailboxManager` related to drafts
-public protocol MailBoxManagerDraftable {
+public protocol MailboxManagerDraftable {
     func draftWithPendingAction() -> Results<Draft>
     func draft(messageUid: String, using realm: Realm?) -> Draft?
     func draft(localUuid: String, using realm: Realm?) -> Draft?
@@ -47,6 +48,11 @@ public protocol MailBoxManagerDraftable {
     func delete(draftMessage: Message) async throws
     func deleteLocally(draft: Draft) async throws
     func deleteOrphanDrafts() async
+}
+
+public protocol MailboxManagerCalendareable {
+    func attachmentCalendar(from messageUid: String) async throws
+    func calendarReply(to messageUid: String, reply: AttendeeState) async throws
 }
 
 // TODO: write a dedicated protocol for each MailboxManager+<>
