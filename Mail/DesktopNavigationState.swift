@@ -18,16 +18,6 @@
 
 import Foundation
 
-public struct SettingsViewConfig: Identifiable, Hashable, Codable {
-    public let id: UUID
-    public let baseNavigationPath: [SettingsDestination]
-
-    public init(baseNavigationPath: [SettingsDestination]) {
-        id = UUID()
-        self.baseNavigationPath = baseNavigationPath
-    }
-}
-
-public enum SettingsDestination: Hashable, Codable {
-    case notifications
+class DesktopNavigationState: ObservableObject {
+    static let settingsWindowIdentifier = "settings"
 }

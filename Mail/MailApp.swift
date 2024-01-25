@@ -25,6 +25,7 @@ import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications
 import MailCore
+import MailResources
 import Sentry
 import SwiftUI
 import UIKit
@@ -98,6 +99,40 @@ struct MailApp: App {
             #endif
         }
         .defaultAppStorage(.shared)
+        if #available(iOS 16.0, *) {
+            WindowGroup(
+                MailResourcesStrings.Localizable.settingsTitle,
+                id: DesktopNavigationState.settingsWindowIdentifier,
+                for: SettingsViewConfig.self
+            ) { $config in
+                if case .mainView(let mailboxManager, let currentFolder) = navigationState.state,
+                   let baseNavigationPath = config?.baseNavigationPath {
+                    SettingsNavigationView(baseNavigationPath: baseNavigationPath)
+                        .onAppear {
+                            updateUI(accent: accentColor, theme: theme)
+                        }
+                        .onChange(of: theme) { newTheme in
+                            updateUI(accent: accentColor, theme: newTheme)
+                        }
+                        .onChange(of: accentColor) { newAccentColor in
+                            updateUI(accent: newAccentColor, theme: theme)
+                        }
+                        .environmentObject(mailboxManager)
+                        .detectCompactWindow()
+                        .environmentObject(navigationState)
+                        .environmentObject(reviewManager)
+                    #if targetEnvironment(macCatalyst)
+                        .introspect(.window, on: .iOS(.v16, .v17)) { window in
+                            if let titlebar = window.windowScene?.titlebar {
+                                titlebar.titleVisibility = .hidden
+                                titlebar.toolbar = nil
+                            }
+                        }
+                    #endif
+                }
+            }
+            .defaultAppStorage(.shared)
+        }
     }
 
     func updateUI(accent: AccentColor, theme: Theme) {

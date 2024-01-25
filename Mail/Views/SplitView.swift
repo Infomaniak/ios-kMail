@@ -146,7 +146,8 @@ struct SplitView: View {
         .sheet(isPresented: $isShowingSyncProfile) {
             SyncProfileNavigationView()
         }
-        .sheet(item: $mainViewState.settingsViewConfig) { config in
+        .sheet(item: $mainViewState.settingsViewConfig,
+               desktopIdentifier: DesktopNavigationState.settingsWindowIdentifier) { config in
             SettingsNavigationView(baseNavigationPath: config.baseNavigationPath)
         }
         .sheet(item: $mainViewState.composeMessageIntent) { intent in
