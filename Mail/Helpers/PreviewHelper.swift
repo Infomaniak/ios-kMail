@@ -170,6 +170,7 @@ enum PreviewHelper {
     )
 
     static let sampleCalendarEvent = CalendarEvent(
+        id: 42,
         type: .event,
         title: "Réunion Produit",
         eventDescription: "",
