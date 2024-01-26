@@ -100,20 +100,20 @@ public class ActionsManager: ObservableObject {
 
         switch action {
         case .delete:
-            guard origin.folder?.permanentlyDeleteContent != true else {
+            guard origin.frozenFolder?.permanentlyDeleteContent != true else {
                 Task { @MainActor in
                     origin.nearestFlushAlert?
                         .wrappedValue = FlushAlertState(deletedMessages: messagesWithDuplicates
-                            .uniqueThreadsInFolder(origin.folder).count) {
+                            .uniqueThreadsInFolder(origin.frozenFolder).count) {
                                 await tryOrDisplayError { [weak self] in
-                                    try await self?.performDelete(messages: messagesWithDuplicates, originFolder: origin.folder)
+                                    try await self?.performDelete(messages: messagesWithDuplicates, originFolder: origin.frozenFolder)
                                 }
                         }
                 }
                 return
             }
 
-            try await performDelete(messages: messagesWithDuplicates, originFolder: origin.folder)
+            try await performDelete(messages: messagesWithDuplicates, originFolder: origin.frozenFolder)
         case .reply:
             try replyOrForward(messages: messagesWithDuplicates, mode: .reply)
         case .replyAll:
@@ -121,14 +121,14 @@ public class ActionsManager: ObservableObject {
         case .forward:
             try replyOrForward(messages: messagesWithDuplicates, mode: .forward)
         case .archive:
-            let messagesFromFolder = messagesWithDuplicates.filter { $0.folderId == origin.folder?.remoteId }
-            try await performMove(messages: messagesFromFolder, from: origin.folder, to: .archive)
+            let messagesFromFolder = messagesWithDuplicates.filter { $0.folderId == origin.frozenFolder?.remoteId }
+            try await performMove(messages: messagesFromFolder, from: origin.frozenFolder, to: .archive)
         case .markAsRead:
             try await mailboxManager.markAsSeen(messages: messagesWithDuplicates, seen: true)
         case .markAsUnread:
             let messagesToExecuteAction = messagesWithDuplicates.lastMessagesAndDuplicatesToExecuteAction(
                 currentMailboxEmail: mailboxManager.mailbox.email,
-                currentFolder: origin.folder
+                currentFolder: origin.frozenFolder
             )
             try await mailboxManager.markAsSeen(messages: messagesToExecuteAction, seen: false)
         case .openMovePanel:
@@ -138,13 +138,13 @@ public class ActionsManager: ObservableObject {
         case .star:
             let messagesToExecuteAction = messagesWithDuplicates.lastMessagesAndDuplicatesToExecuteAction(
                 currentMailboxEmail: mailboxManager.mailbox.email,
-                currentFolder: origin.folder
+                currentFolder: origin.frozenFolder
             )
             try await mailboxManager.star(messages: messagesToExecuteAction, starred: true)
         case .unstar:
             try await mailboxManager.star(messages: messagesWithDuplicates, starred: false)
         case .moveToInbox, .nonSpam:
-            try await performMove(messages: messagesWithDuplicates, from: origin.folder, to: .inbox)
+            try await performMove(messages: messagesWithDuplicates, from: origin.frozenFolder, to: .inbox)
         case .quickActionPanel:
             Task { @MainActor in
                 origin.nearestMessagesActionsPanel?.wrappedValue = messagesWithDuplicates
@@ -155,8 +155,8 @@ public class ActionsManager: ObservableObject {
                 origin.nearestReportJunkMessageActionsPanel?.wrappedValue = messagesWithDuplicates.first
             }
         case .spam:
-            let messagesFromFolder = messagesWithDuplicates.filter { $0.folderId == origin.folder?.remoteId }
-            try await performMove(messages: messagesFromFolder, from: origin.folder, to: .spam)
+            let messagesFromFolder = messagesWithDuplicates.filter { $0.folderId == origin.frozenFolder?.remoteId }
+            try await performMove(messages: messagesFromFolder, from: origin.frozenFolder, to: .spam)
         case .phishing:
             Task { @MainActor in
                 origin.nearestReportedForPhishingMessageAlert?.wrappedValue = messagesWithDuplicates.first
