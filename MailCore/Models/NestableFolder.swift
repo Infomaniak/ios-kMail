@@ -22,14 +22,17 @@ import InfomaniakCore
 public struct NestableFolder: Identifiable {
     public var id: Int {
         // The id of a folder depends on its `remoteId` and the id of its children
-        return children.collectionId(baseId: content.remoteId.hashValue)
+        return children.collectionId(baseId: frozenContent.remoteId.hashValue)
     }
 
-    public let content: Folder
+    /// The underlying _frozen_ Folder
+    public let frozenContent: Folder
+
+    /// `NestableFolder` childs
     public let children: [NestableFolder]
 
     public init(content: Folder, children: [NestableFolder]) {
-        self.content = content
+        frozenContent = content.freezeIfNeeded()
         self.children = children
     }
 

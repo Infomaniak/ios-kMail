@@ -174,7 +174,7 @@ final class ITFolderListViewModelWorker: XCTestCase {
             XCTFail("Unexpected")
             return
         }
-        XCTAssertEqual(matchingFolder.content.localizedName, randomFolder.localizedName, "We expect the names to match")
+        XCTAssertEqual(matchingFolder.frozenContent.localizedName, randomFolder.localizedName, "We expect the names to match")
     }
 
     func testFilterAndSortFolders_SearchNoMatch() async {
