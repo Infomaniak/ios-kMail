@@ -62,7 +62,10 @@ enum SearchState {
         }
     }
 
+    /// The frozen folder list
     @Published var folderList: [Folder]
+
+    /// Frozen underlying folder
     @Published var realFolder: Folder
     var lastSearchFolderId: String?
 
@@ -96,6 +99,7 @@ enum SearchState {
 
     @LazyInjectService var matomo: MatomoUtils
 
+    /// The searchFolders, stored Frozen.
     let searchFolder: Folder
     var resourceNext: String?
     var lastSearch = ""
@@ -108,7 +112,7 @@ enum SearchState {
 
         realFolder = folder.freezeIfNeeded()
         searchFolder = mailboxManager.initSearchFolder().freezeIfNeeded()
-        folderList = mailboxManager.getFolders()
+        folderList = mailboxManager.getFrozenFolders()
 
         searchFieldObservation = $searchValue
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
@@ -125,7 +129,7 @@ enum SearchState {
     }
 
     func updateContactSuggestion() {
-        let autocompleteContacts = mailboxManager.contactManager.contacts(matching: searchValue)
+        let autocompleteContacts = mailboxManager.contactManager.frozenContacts(matching: searchValue)
         var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
         // Append typed email
         if Constants.isEmailAddress(searchValue) && !contacts
@@ -182,8 +186,9 @@ enum SearchState {
 
         isLoading = true
         await tryOrDisplayError {
+            let searchFolderCopy = searchFolder.detached()
             let threadResult = try await mailboxManager.searchThreads(
-                searchFolder: searchFolder.freeze(),
+                searchFolder: searchFolderCopy,
                 from: resource,
                 searchFilter: searchFilters
             )

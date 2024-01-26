@@ -33,8 +33,8 @@ public extension ContactManager {
     /// - Parameters:
     ///   - string: input string to match against email and name
     ///   - fetchLimit: limit the query by default to limit memory footprint
-    /// - Returns: The collection of matching contacts.
-    func contacts(matching string: String, fetchLimit: Int? = nil) -> [MergedContact] {
+    /// - Returns: The collection of matching contacts. Frozen.
+    func frozenContacts(matching string: String, fetchLimit: Int? = nil) -> [MergedContact] {
         let realm = getRealm()
         let lazyResults = realm
             .objects(MergedContact.self)
@@ -53,7 +53,7 @@ public extension ContactManager {
             results.append(next)
         }
 
-        return results
+        return results.map { $0.freezeIfNeeded() }
     }
 
     func getContact(for recipient: Recipient, realm: Realm? = nil) -> MergedContact? {

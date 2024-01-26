@@ -84,10 +84,12 @@ public extension MailboxManager {
     /// Get all the real folders in Realm
     /// - Parameters:
     ///   - realm: The Realm instance to use. If this parameter is `nil`, a new one will be created.
-    /// - Returns: The list of real folders.
-    func getFolders(using realm: Realm? = nil) -> [Folder] {
+    /// - Returns: The list of real folders, frozen.
+    func getFrozenFolders(using realm: Realm? = nil) -> [Folder] {
         let realm = realm ?? getRealm()
-        return Array(realm.objects(Folder.self).where { $0.toolType == nil })
+        let folders = Array(realm.objects(Folder.self).where { $0.toolType == nil })
+        let frozenFolders = folders.map { $0.freezeIfNeeded() }
+        return frozenFolders
     }
 
     func createFolder(name: String, parent: Folder? = nil) async throws -> Folder {
