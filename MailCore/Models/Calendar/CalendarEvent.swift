@@ -174,7 +174,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         case attendees
     }
 
-    public func getMe(currentMailboxEmail: String) -> Attendee? {
+    public func getMyAttendee(currentMailboxEmail: String) -> Attendee? {
         return attendees.first { $0.isMe(currentMailboxEmail: currentMailboxEmail) }
     }
 

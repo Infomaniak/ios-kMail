@@ -44,13 +44,23 @@ struct CalendarLabelStyle: LabelStyle {
 }
 
 struct CalendarBodyDetailsView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     let event: CalendarEvent
-    let me: Attendee?
+
+    private var me: Attendee? {
+        return event.getMyAttendee(currentMailboxEmail: mailboxManager.mailbox.email)
+    }
+
+    private var iAmInvited: Bool {
+        return me != nil
+    }
 
     private var canReply: Bool {
-        let parent = event.parent
-        return (parent?.attachmentEventMethod == .request || parent?.attachmentEventMethod == nil) && event
-            .warning != .isCancelled && me != nil
+        let isAnInvitation = event.parent?.attachmentEventMethod == .request || event.parent?.attachmentEventMethod == nil
+        let isNotCancelled = event.warning != .isCancelled
+
+        return isAnInvitation && isNotCancelled && iAmInvited
     }
 
     var body: some View {
@@ -60,16 +70,16 @@ struct CalendarBodyDetailsView: View {
                     .labelStyle(.calendar(warning))
             }
 
-            Label(event.formattedDateTime, image: MailResourcesAsset.calendarBadgeClock.name)
-                .labelStyle(.calendar())
-            if let location = event.location {
-                Label(location, image: MailResourcesAsset.pin.name)
-                    .labelStyle(.calendar())
+            Group {
+                Label(event.formattedDateTime, image: MailResourcesAsset.calendarBadgeClock.name)
+                if let location = event.location {
+                    Label(location, image: MailResourcesAsset.pin.name)
+                }
+                if !iAmInvited && !event.attendees.isEmpty {
+                    Label(MailResourcesStrings.Localizable.calendarNotInvited, image: MailResourcesAsset.socialMedia.name)
+                }
             }
-            if me == nil && !event.attendees.isEmpty {
-                Label(MailResourcesStrings.Localizable.calendarNotInvited, image: MailResourcesAsset.socialMedia.name)
-                    .labelStyle(.calendar())
-            }
+            .labelStyle(.calendar())
 
             if canReply {
                 CalendarChoiceButtonsStack(currentState: me?.state, messageUid: event.parent?.message?.uid)
@@ -79,10 +89,7 @@ struct CalendarBodyDetailsView: View {
     }
 }
 
-#Preview("Is Invited") {
-    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent, me: PreviewHelper.sampleAttendee1)
-}
-
-#Preview("Is Not Invited") {
-    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent, me: nil)
+#Preview {
+    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }
