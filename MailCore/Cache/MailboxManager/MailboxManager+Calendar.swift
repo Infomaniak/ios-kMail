@@ -26,7 +26,6 @@ public extension MailboxManager {
         }
 
         let calendarEvent = try await apiFetcher.calendarAttachment(attachment: attachment)
-
         await backgroundRealm.execute { realm in
             if let message = attachment.parent,
                let liveMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) {
