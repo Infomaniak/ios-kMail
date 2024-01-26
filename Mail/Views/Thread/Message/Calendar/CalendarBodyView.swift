@@ -23,9 +23,7 @@ import SwiftUI
 struct CalendarBodyView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    let messageUid: String
     let event: CalendarEvent
-    let attachmentMethod: AttachmentEventMethod?
 
     private var me: Attendee? {
         return event.getMe(currentMailboxEmail: mailboxManager.mailbox.email)
@@ -33,7 +31,7 @@ struct CalendarBodyView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
-            CalendarBodyDetailsView(messageUid: messageUid, event: event, attachmentMethod: attachmentMethod, me: me)
+            CalendarBodyDetailsView(event: event, me: me)
 
             if !event.attendees.isEmpty {
                 CalendarAttendeesView(organizer: event.organizer, attendees: event.attendees.toArray())
@@ -55,10 +53,6 @@ struct CalendarBodyView: View {
 }
 
 #Preview {
-    CalendarBodyView(
-        messageUid: "",
-        event: PreviewHelper.sampleCalendarEvent,
-        attachmentMethod: .request
-    )
-    .environmentObject(PreviewHelper.sampleMailboxManager)
+    CalendarBodyView(event: PreviewHelper.sampleCalendarEvent)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

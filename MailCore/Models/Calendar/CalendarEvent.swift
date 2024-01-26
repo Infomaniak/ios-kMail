@@ -69,6 +69,12 @@ public final class CalendarEvent: EmbeddedObject, Codable {
     @Persisted public var status: CalendarEventStatus?
     @Persisted public var attendees: RealmSwift.List<Attendee>
 
+    @Persisted(originProperty: "userStoredEvent") public var userStoredParent: LinkingObjects<CalendarEventResponse>
+    @Persisted(originProperty: "attachmentEvent") public var attachmentParent: LinkingObjects<CalendarEventResponse>
+    public var parent: CalendarEventResponse? {
+        userStoredParent.first ?? attachmentParent.first
+    }
+
     public var warning: CalendarEventWarning? {
         if status == .cancelled {
             return .isCancelled

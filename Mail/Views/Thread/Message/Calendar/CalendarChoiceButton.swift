@@ -25,7 +25,7 @@ struct CalendarChoiceButton: View {
 
     let choice: AttendeeState
     let isSelected: Bool
-    let messageUid: String
+    let messageUid: String?
 
     var body: some View {
         Button(action: sendReply) {
@@ -47,6 +47,7 @@ struct CalendarChoiceButton: View {
 
     private func sendReply() {
         Task {
+            guard let messageUid else { return }
             try await mailboxManager.calendarReply(to: messageUid, reply: choice)
         }
     }
