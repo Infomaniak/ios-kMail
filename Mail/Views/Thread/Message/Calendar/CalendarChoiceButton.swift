@@ -16,12 +16,17 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
 struct CalendarChoiceButton: View {
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
     @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @Binding var selectedChoice: AttendeeState?
 
     let choice: AttendeeState
     let isSelected: Bool
@@ -46,9 +51,17 @@ struct CalendarChoiceButton: View {
     }
 
     private func sendReply() {
+        guard let messageUid else { return }
+
+        let oldChoice = selectedChoice
+        selectedChoice = choice
         Task {
-            guard let messageUid else { return }
-            try await mailboxManager.calendarReply(to: messageUid, reply: choice)
+            do {
+                try await mailboxManager.calendarReply(to: messageUid, reply: choice)
+            } catch {
+                selectedChoice = oldChoice
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorCalendarChoiceCouldNotBeSent)
+            }
         }
     }
 }
@@ -56,15 +69,15 @@ struct CalendarChoiceButton: View {
 #Preview {
     VStack {
         HStack {
-            CalendarChoiceButton(choice: .yes, isSelected: false, messageUid: "")
-            CalendarChoiceButton(choice: .maybe, isSelected: false, messageUid: "")
-            CalendarChoiceButton(choice: .no, isSelected: false, messageUid: "")
+            CalendarChoiceButton(selectedChoice: .constant(nil), choice: .yes, isSelected: false, messageUid: "")
+            CalendarChoiceButton(selectedChoice: .constant(nil), choice: .maybe, isSelected: false, messageUid: "")
+            CalendarChoiceButton(selectedChoice: .constant(nil), choice: .no, isSelected: false, messageUid: "")
         }
 
         HStack {
-            CalendarChoiceButton(choice: .yes, isSelected: true, messageUid: "")
-            CalendarChoiceButton(choice: .maybe, isSelected: true, messageUid: "")
-            CalendarChoiceButton(choice: .no, isSelected: true, messageUid: "")
+            CalendarChoiceButton(selectedChoice: .constant(nil), choice: .yes, isSelected: true, messageUid: "")
+            CalendarChoiceButton(selectedChoice: .constant(nil), choice: .maybe, isSelected: true, messageUid: "")
+            CalendarChoiceButton(selectedChoice: .constant(nil), choice: .no, isSelected: true, messageUid: "")
         }
     }
     .environmentObject(PreviewHelper.sampleMailboxManager)
