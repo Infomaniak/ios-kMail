@@ -29,16 +29,7 @@ public struct ActionOrigin {
     }
 
     public private(set) var type: ActionOriginType
-    public private(set) var frozenFolder: Folder? {
-        didSet {
-            #if DEBUG
-            guard let frozenFolder else {
-                return
-            }
-            assert(frozenFolder.isFrozen, "We expect the folder to be frozen")
-            #endif
-        }
-    }
+    public private(set) var frozenFolder: Folder?
 
     private(set) var nearestMessagesActionsPanel: Binding<[Message]?>?
     private(set) var nearestFlushAlert: Binding<FlushAlertState?>?
@@ -47,9 +38,29 @@ public struct ActionOrigin {
     private(set) var nearestReportedForPhishingMessageAlert: Binding<Message?>?
     private(set) var nearestReportedForDisplayProblemMessageAlert: Binding<Message?>?
 
+    init(
+        type: ActionOriginType,
+        folder: Folder? = nil,
+        nearestMessagesActionsPanel: Binding<[Message]?>? = nil,
+        nearestFlushAlert: Binding<FlushAlertState?>? = nil,
+        nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
+        nearestReportJunkMessageActionsPanel: Binding<Message?>? = nil,
+        nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
+        nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil
+    ) {
+        self.type = type
+        frozenFolder = folder?.freezeIfNeeded()
+        self.nearestMessagesActionsPanel = nearestMessagesActionsPanel
+        self.nearestFlushAlert = nearestFlushAlert
+        self.nearestMessagesToMoveSheet = nearestMessagesToMoveSheet
+        self.nearestReportJunkMessageActionsPanel = nearestReportJunkMessageActionsPanel
+        self.nearestReportedForPhishingMessageAlert = nearestReportedForPhishingMessageAlert
+        self.nearestReportedForDisplayProblemMessageAlert = nearestReportedForDisplayProblemMessageAlert
+    }
+
     public static func toolbar(originFolder: Folder? = nil,
                                nearestFlushAlert: Binding<FlushAlertState?>? = nil) -> ActionOrigin {
-        return ActionOrigin(type: .toolbar, frozenFolder: originFolder, nearestFlushAlert: nearestFlushAlert)
+        return ActionOrigin(type: .toolbar, folder: originFolder, nearestFlushAlert: nearestFlushAlert)
     }
 
     public static func floatingPanel(originFolder: Folder? = nil,
@@ -60,7 +71,7 @@ public struct ActionOrigin {
                                      nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil) -> ActionOrigin {
         return ActionOrigin(
             type: .floatingPanel,
-            frozenFolder: originFolder,
+            folder: originFolder,
             nearestFlushAlert: nearestFlushAlert,
             nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
             nearestReportJunkMessageActionsPanel: nearestReportJunkMessageActionsPanel,
@@ -71,7 +82,7 @@ public struct ActionOrigin {
 
     public static func multipleSelection(originFolder: Folder? = nil,
                                          nearestFlushAlert: Binding<FlushAlertState?>? = nil) -> ActionOrigin {
-        return ActionOrigin(type: .multipleSelection, frozenFolder: originFolder, nearestFlushAlert: nearestFlushAlert)
+        return ActionOrigin(type: .multipleSelection, folder: originFolder, nearestFlushAlert: nearestFlushAlert)
     }
 
     public static func swipe(
@@ -81,7 +92,7 @@ public struct ActionOrigin {
         nearestFlushAlert: Binding<FlushAlertState?>? = nil
     ) -> ActionOrigin {
         return ActionOrigin(type: .swipe,
-                            frozenFolder: originFolder,
+                            folder: originFolder,
                             nearestMessagesActionsPanel: nearestMessagesActionsPanel,
                             nearestFlushAlert: nearestFlushAlert,
                             nearestMessagesToMoveSheet: nearestMessagesToMoveSheet)
@@ -89,6 +100,6 @@ public struct ActionOrigin {
 
     public static func shortcut(originFolder: Folder? = nil,
                                 nearestFlushAlert: Binding<FlushAlertState?>? = nil) -> ActionOrigin {
-        ActionOrigin(type: .shortcut, frozenFolder: originFolder, nearestFlushAlert: nearestFlushAlert)
+        ActionOrigin(type: .shortcut, folder: originFolder, nearestFlushAlert: nearestFlushAlert)
     }
 }
