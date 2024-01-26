@@ -28,6 +28,11 @@ public final class CalendarEventResponse: EmbeddedObject, Codable {
     @Persisted public var userStoredEventDeleted: Bool?
     @Persisted public var attachmentEventMethod: AttachmentEventMethod?
 
+    @Persisted(originProperty: "calendarEvent") public var messages: LinkingObjects<Message>
+    public var message: Message? {
+        messages.first
+    }
+
     public var event: CalendarEvent? {
         return userStoredEvent ?? attachmentEvent
     }
@@ -42,5 +47,12 @@ public final class CalendarEventResponse: EmbeddedObject, Codable {
         attachmentEvent = try container.decode(CalendarEvent?.self, forKey: .attachmentEvent)
         userStoredEventDeleted = try container.decode(Bool?.self, forKey: .userStoredEventDeleted)
         attachmentEventMethod = try? container.decode(AttachmentEventMethod?.self, forKey: .attachmentEventMethod)
+    }
+
+    enum CodingKeys: CodingKey {
+        case userStoredEvent
+        case attachmentEvent
+        case userStoredEventDeleted
+        case attachmentEventMethod
     }
 }

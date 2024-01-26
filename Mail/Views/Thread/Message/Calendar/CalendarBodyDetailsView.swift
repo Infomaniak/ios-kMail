@@ -44,13 +44,13 @@ struct CalendarLabelStyle: LabelStyle {
 }
 
 struct CalendarBodyDetailsView: View {
-    let messageUid: String
     let event: CalendarEvent
-    let attachmentMethod: AttachmentEventMethod?
     let me: Attendee?
 
     private var canReply: Bool {
-        return (attachmentMethod == .request || attachmentMethod == nil) && event.warning != .isCancelled && me != nil
+        let parent = event.parent
+        return (parent?.attachmentEventMethod == .request || parent?.attachmentEventMethod == nil) && event
+            .warning != .isCancelled && me != nil
     }
 
     var body: some View {
@@ -78,7 +78,7 @@ struct CalendarBodyDetailsView: View {
                     spacing: .constant(UIPadding.small),
                     lineSpacing: UIPadding.small
                 ) { choice in
-                    CalendarChoiceButton(choice: choice, isSelected: me?.state == choice, messageUid: messageUid)
+                    CalendarChoiceButton(choice: choice, isSelected: me?.state == choice, messageUid: event.parent?.message?.uid)
                 }
             }
         }
@@ -87,14 +87,9 @@ struct CalendarBodyDetailsView: View {
 }
 
 #Preview("Is Invited") {
-    CalendarBodyDetailsView(
-        messageUid: "",
-        event: PreviewHelper.sampleCalendarEvent,
-        attachmentMethod: .request,
-        me: PreviewHelper.sampleAttendee1
-    )
+    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent, me: PreviewHelper.sampleAttendee1)
 }
 
 #Preview("Is Not Invited") {
-    CalendarBodyDetailsView(messageUid: "", event: PreviewHelper.sampleCalendarEvent, attachmentMethod: .request, me: nil)
+    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent, me: nil)
 }
