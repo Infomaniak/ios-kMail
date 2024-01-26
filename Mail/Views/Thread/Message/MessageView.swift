@@ -82,12 +82,8 @@ struct MessageView: View {
                         }
 
                         if let event = message.calendarEvent?.event, event.type == .event {
-                            CalendarView(
-                                messageUid: message.uid,
-                                event: event,
-                                attachmentMethod: message.calendarEvent?.attachmentEventMethod
-                            )
-                            .padding(.horizontal, value: .regular)
+                            CalendarView(event: event)
+                                .padding(.horizontal, value: .regular)
                         }
 
                         if !message.attachments.filter({ $0.disposition == .attachment || $0.contentId == nil }).isEmpty {
