@@ -33,7 +33,7 @@ public extension ApiFetcher {
     }
 }
 
-public final class MailApiFetcher: ApiFetcher {
+public final class MailApiFetcher: ApiFetcher, MailApiFetchable {
     /// All status except 401 are handled by our code, 401 status is handled by Alamofire's Authenticator code
     private lazy var handledHttpStatus: Set<Int> = {
         var allStatus = Set(200 ... 500)

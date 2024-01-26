@@ -22,8 +22,7 @@ import InfomaniakCore
 
 /// Public interface of `MailApiFetcher`
 public typealias MailApiFetchable = MailApiAIFetchable & MailApiCalendarFetchable & MailApiCommonFetchable &
-    MailApiExtendedFetchable &
-    MailApiSyncProfileFetchable
+    MailApiExtendedFetchable & MailApiSyncProfileFetchable
 
 /// Main interface of the `MailApiFetcher`
 public protocol MailApiCommonFetchable {
@@ -154,7 +153,7 @@ public protocol MailApiSyncProfileFetchable {
 public protocol MailApiCalendarFetchable {
     func calendarAttachment(attachment: Attachment) async throws -> CalendarEventResponse
 
-    func calendarReply(to attachment: Attachment, reply: AttendeeState) async throws -> Bool
+    func calendarReply(to attachment: Attachment, reply: AttendeeState) async throws -> CalendarNotStoredEventReplyResponse
 
     func calendarReplyAndUpdateRemoteCalendar(to event: CalendarEvent, reply: AttendeeState) async throws -> Bool
 }
