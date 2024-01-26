@@ -72,14 +72,7 @@ struct CalendarBodyDetailsView: View {
             }
 
             if canReply {
-                WrappingHStack(
-                    AttendeeState.allCases,
-                    id: \.self,
-                    spacing: .constant(UIPadding.small),
-                    lineSpacing: UIPadding.small
-                ) { choice in
-                    CalendarChoiceButton(choice: choice, isSelected: me?.state == choice, messageUid: event.parent?.message?.uid)
-                }
+                CalendarChoiceButtonsStack(currentState: me?.state, messageUid: event.parent?.message?.uid)
             }
         }
         .padding(.horizontal, value: .regular)

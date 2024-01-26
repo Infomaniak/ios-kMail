@@ -5,7 +5,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Tue, 23 Jan 2024 13:39:19 +0100
+ * Exported at: Fri, 26 Jan 2024 11:40:37 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -685,6 +685,9 @@
 
 /* loco:64940ce4eee54db1a50e44b4 */
 "errorAttachmentNotFound" = "Attachment cannot be found";
+
+/* loco:65b3890c3784205fa5060812 */
+"errorCalendarChoiceCouldNotBeSent" = "Your choice could not be sent";
 
 /* loco:63d14902e3c4eb4832777c42 */
 "errorCancelAttachmentsUploadInProgress" = "Some attachments are still being imported. If you close the view attachments will be lost.";
