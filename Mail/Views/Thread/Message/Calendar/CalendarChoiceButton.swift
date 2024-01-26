@@ -21,13 +21,14 @@ import MailResources
 import SwiftUI
 
 struct CalendarChoiceButton: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     let choice: AttendeeState
     let isSelected: Bool
+    let messageUid: String
 
     var body: some View {
-        Button {
-            sendReply()
-        } label: {
+        Button(action: sendReply) {
             HStack(spacing: UIPadding.small) {
                 IKIcon(choice.icon)
                     .foregroundStyle(choice.color)
@@ -44,21 +45,26 @@ struct CalendarChoiceButton: View {
         .allowsHitTesting(!isSelected)
     }
 
-    private func sendReply() {}
+    private func sendReply() {
+        Task {
+            try await mailboxManager.calendarReply(to: messageUid, reply: choice)
+        }
+    }
 }
 
 #Preview {
     VStack {
         HStack {
-            CalendarChoiceButton(choice: .yes, isSelected: false)
-            CalendarChoiceButton(choice: .maybe, isSelected: false)
-            CalendarChoiceButton(choice: .no, isSelected: false)
+            CalendarChoiceButton(choice: .yes, isSelected: false, messageUid: "")
+            CalendarChoiceButton(choice: .maybe, isSelected: false, messageUid: "")
+            CalendarChoiceButton(choice: .no, isSelected: false, messageUid: "")
         }
 
         HStack {
-            CalendarChoiceButton(choice: .yes, isSelected: true)
-            CalendarChoiceButton(choice: .maybe, isSelected: true)
-            CalendarChoiceButton(choice: .no, isSelected: true)
+            CalendarChoiceButton(choice: .yes, isSelected: true, messageUid: "")
+            CalendarChoiceButton(choice: .maybe, isSelected: true, messageUid: "")
+            CalendarChoiceButton(choice: .no, isSelected: true, messageUid: "")
         }
     }
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }
