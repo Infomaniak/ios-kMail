@@ -22,6 +22,10 @@ public struct CalendarReplyRequest: Codable {
     public var reply: AttendeeState
 }
 
+public struct CalendarNotStoredEventReplyResponse: Codable {
+    public var event: CalendarEvent
+}
+
 public final class CalendarEventResponse: EmbeddedObject, Codable {
     @Persisted public var userStoredEvent: CalendarEvent?
     @Persisted public var attachmentEvent: CalendarEvent?
