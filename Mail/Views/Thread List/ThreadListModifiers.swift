@@ -90,7 +90,7 @@ struct ThreadListToolbar: ViewModifier {
 
                             let textMaxWidth = isCompactWindow ? UIScreen.main.bounds.size.width - geometry.safeAreaInsets
                                 .leading - geometry.safeAreaInsets.trailing - UIConstants.navbarIconsSpace : 215
-                            Text(viewModel.folder.localizedName)
+                            Text(viewModel.frozenFolder.localizedName)
                                 .textStyle(.header1)
                                 .frame(maxWidth: textMaxWidth, alignment: .leading)
                         }
@@ -120,7 +120,7 @@ struct ThreadListToolbar: ViewModifier {
                             ) {
                                 let allMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
                                 multipleSelectionViewModel.isEnabled = false
-                                let originFolder = viewModel.folder
+                                let originFolder = viewModel.frozenFolder
                                 Task {
                                     matomo.trackBulkEvent(
                                         eventWithCategory: .threadActions,
@@ -138,7 +138,7 @@ struct ThreadListToolbar: ViewModifier {
                                     )
                                 }
                             }
-                            .disabled(action == .archive && viewModel.folder.role == .archive)
+                            .disabled(action == .archive && viewModel.frozenFolder.role == .archive)
                         }
 
                         ToolbarButton(
@@ -150,7 +150,7 @@ struct ThreadListToolbar: ViewModifier {
                     }
                     .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
                 }
-                .actionsPanel(messages: $multipleSelectedMessages, originFolder: viewModel.folder) { _ in
+                .actionsPanel(messages: $multipleSelectedMessages, originFolder: viewModel.frozenFolder) { _ in
                     multipleSelectionViewModel.isEnabled = false
                 }
                 .navigationTitle(

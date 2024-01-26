@@ -68,16 +68,16 @@ struct ThreadListView: View {
     var body: some View {
         VStack(spacing: 0) {
             ThreadListHeader(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
-                             folder: viewModel.folder,
+                             folder: viewModel.frozenFolder,
                              unreadFilterOn: $viewModel.filterUnreadOn)
-                .id(viewModel.folder.id)
+                .id(viewModel.frozenFolder.id)
 
             ScrollViewReader { proxy in
                 List {
                     if !viewModel.isEmpty,
-                       viewModel.folder.role == .trash || viewModel.folder.role == .spam {
+                       viewModel.frozenFolder.role == .trash || viewModel.frozenFolder.role == .spam {
                         FlushFolderView(
-                            folder: viewModel.folder,
+                            folder: viewModel.frozenFolder,
                             mailboxManager: viewModel.mailboxManager,
                             flushAlert: $flushAlert
                         )
@@ -117,14 +117,14 @@ struct ThreadListView: View {
                         }
                     }
 
-                    LoadMoreButton(currentFolder: viewModel.folder)
+                    LoadMoreButton(currentFolder: viewModel.frozenFolder)
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
                 .listStyle(.plain)
                 .observeScroll(with: scrollObserver)
                 .emptyState(isEmpty: shouldDisplayEmptyView) {
-                    switch viewModel.folder.role {
+                    switch viewModel.frozenFolder.role {
                     case .inbox:
                         EmptyStateView.emptyInbox
                     case .trash:
@@ -189,7 +189,7 @@ struct ThreadListView: View {
             }
         }
         .customAlert(item: $flushAlert) { item in
-            FlushFolderAlertView(flushAlert: item, folder: viewModel.folder)
+            FlushFolderAlertView(flushAlert: item, folder: viewModel.frozenFolder)
         }
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Main"])
     }

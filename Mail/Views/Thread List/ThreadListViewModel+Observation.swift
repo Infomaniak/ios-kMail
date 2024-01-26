@@ -22,7 +22,7 @@ import SwiftUI
 
 extension ThreadListViewModel {
     private func threadResults() -> Results<Thread>? {
-        guard let folder = folder.thaw() else {
+        guard let folder = frozenFolder.thaw() else {
             sectionsSubject.send([])
             return nil
         }
