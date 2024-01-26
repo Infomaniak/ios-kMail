@@ -5,7 +5,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Fri, 26 Jan 2024 11:40:37 +0100
+ * Exported at: Fri, 26 Jan 2024 15:15:06 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -687,7 +687,7 @@
 "errorAttachmentNotFound" = "Dateianhang unauffindbar";
 
 /* loco:65b3890c3784205fa5060812 */
-"errorCalendarChoiceCouldNotBeSent" = "Ihre Auswahl konnte nicht gesendet werden";
+"errorCalendarChoiceCouldNotBeSent" = "Beim Senden Ihrer Auswahl ist ein Fehler aufgetreten";
 
 /* loco:63d14902e3c4eb4832777c42 */
 "errorCancelAttachmentsUploadInProgress" = "Einige Anhänge werden noch importiert. Wenn Sie die Ansicht schliessen, gehen die Anhänge verloren.";
@@ -1315,6 +1315,9 @@
 
 /* loco:63f3961e7c16fb607809d632 */
 "snackbarBlockUserConfirmation" = "Absender ist jetzt blockiert";
+
+/* loco:65b3b9ca21fbc50b4105f973 */
+"snackbarCalendarChoiceSent" = "Auswahl erfolgreich gesendet";
 
 /* loco:62bc67601f560d734f2fbe58 */
 "snackbarContactSaved" = "Neuer Kontakt erfolgreich registriert";
