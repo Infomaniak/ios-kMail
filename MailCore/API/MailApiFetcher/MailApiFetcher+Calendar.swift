@@ -30,7 +30,7 @@ public extension MailApiFetcher {
     }
 
     @discardableResult
-    func calendarReply(to attachment: Attachment, reply: AttendeeState) async throws -> Bool {
+    func calendarReply(to attachment: Attachment, reply: AttendeeState) async throws -> CalendarNotStoredEventReplyResponse {
         guard let resource = attachment.resource else {
             throw MailError.resourceError
         }
