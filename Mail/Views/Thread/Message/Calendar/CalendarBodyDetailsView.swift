@@ -44,6 +44,7 @@ struct CalendarLabelStyle: LabelStyle {
 }
 
 struct CalendarBodyDetailsView: View {
+    let messageUid: String
     let event: CalendarEvent
     let attachmentMethod: AttachmentEventMethod?
     let me: Attendee?
@@ -77,7 +78,7 @@ struct CalendarBodyDetailsView: View {
                     spacing: .constant(UIPadding.small),
                     lineSpacing: UIPadding.small
                 ) { choice in
-                    CalendarChoiceButton(choice: choice, isSelected: me?.state == choice)
+                    CalendarChoiceButton(choice: choice, isSelected: me?.state == choice, messageUid: messageUid)
                 }
             }
         }
@@ -87,6 +88,7 @@ struct CalendarBodyDetailsView: View {
 
 #Preview("Is Invited") {
     CalendarBodyDetailsView(
+        messageUid: "",
         event: PreviewHelper.sampleCalendarEvent,
         attachmentMethod: .request,
         me: PreviewHelper.sampleAttendee1
@@ -94,5 +96,5 @@ struct CalendarBodyDetailsView: View {
 }
 
 #Preview("Is Not Invited") {
-    CalendarBodyDetailsView(event: PreviewHelper.sampleCalendarEvent, attachmentMethod: .request, me: nil)
+    CalendarBodyDetailsView(messageUid: "", event: PreviewHelper.sampleCalendarEvent, attachmentMethod: .request, me: nil)
 }

@@ -21,13 +21,14 @@ import MailResources
 import SwiftUI
 
 struct CalendarView: View {
+    let messageUid: String
     let event: CalendarEvent
     let attachmentMethod: AttachmentEventMethod?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             CalendarHeaderView(title: event.title)
-            CalendarBodyView(event: event, attachmentMethod: attachmentMethod)
+            CalendarBodyView(messageUid: messageUid, event: event, attachmentMethod: attachmentMethod)
         }
         .clipShape(RoundedRectangle(cornerRadius: UIConstants.buttonsRadius))
         .overlay {
@@ -38,6 +39,6 @@ struct CalendarView: View {
 }
 
 #Preview {
-    CalendarView(event: PreviewHelper.sampleCalendarEvent, attachmentMethod: .request)
+    CalendarView(messageUid: "", event: PreviewHelper.sampleCalendarEvent, attachmentMethod: .request)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }
