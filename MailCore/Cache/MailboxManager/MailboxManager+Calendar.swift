@@ -40,7 +40,7 @@ public extension MailboxManager {
         // If the event is stored in Calendar, we call a route that notifies guests and
         // updates the event. Otherwise we call a route that only notifies guests.
         let frozenMessage = liveMessage.freezeIfNeeded()
-        if let eventAttachment = frozenMessage.calendarEvent, let event = eventAttachment.userStoredEvent {
+        if let eventAttachment = frozenMessage.calendarEventResponse, let event = eventAttachment.userStoredEvent {
             try await apiFetcher.calendarReplyAndUpdateRemoteCalendar(to: event, reply: reply)
         } else {
             try await apiFetcher.calendarReply(to: attachment, reply: reply)
@@ -57,7 +57,7 @@ public extension MailboxManager {
         await backgroundRealm.execute { realm in
             if let liveMessage = realm.object(ofType: Message.self, forPrimaryKey: messageUid) {
                 try? realm.safeWrite {
-                    liveMessage.calendarEvent = eventResponse
+                    liveMessage.calendarEventResponse = eventResponse
                 }
             }
         }

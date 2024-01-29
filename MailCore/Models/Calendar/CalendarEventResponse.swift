@@ -39,13 +39,13 @@ public final class CalendarEventResponse: EmbeddedObject, Codable {
     @Persisted public var userStoredEventDeleted: Bool?
     @Persisted public var attachmentEventMethod: AttachmentEventMethod?
 
-    @Persisted(originProperty: "calendarEvent") public var messages: LinkingObjects<Message>
+    @Persisted(originProperty: "calendarEventResponse") public var messages: LinkingObjects<Message>
     public var message: Message? {
         messages.first
     }
 
-    public var event: CalendarEvent? {
-        return userStoredEvent ?? attachmentEvent
+    public var frozenEvent: CalendarEvent? {
+        return (userStoredEvent ?? attachmentEvent)?.freezeIfNeeded()
     }
 
     override public init() {

@@ -28,7 +28,7 @@ import XCTest
 struct MCKContactManageable_FolderListViewModel: ContactManageable {
     func contacts(matching string: String, fetchLimit: Int?) -> [MailCore.MergedContact] { [] }
 
-    func getContact(for recipient: MailCore.Recipient, realm: RealmSwift.Realm?) -> MailCore.MergedContact? { nil }
+    func getContact(for correspondent: any MailCore.Correspondent, realm: RealmSwift.Realm?) -> MailCore.MergedContact? { nil }
 
     func addressBook(with id: Int) -> MailCore.AddressBook? { nil }
 
@@ -145,6 +145,14 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable {
     }
 
     func delete(messages: [MailCore.Message]) async throws {}
+
+    func attachmentCalendar(from messageUid: String) async throws {
+        fatalError("Unexpected")
+    }
+
+    func calendarReply(to messageUid: String, reply: MailCore.AttendeeState) async throws {
+        fatalError("Unexpected")
+    }
 
     var realmConfiguration: RealmSwift.Realm.Configuration {
         realm.configuration

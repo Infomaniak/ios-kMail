@@ -26,7 +26,7 @@ public protocol ContactFetchable {
     ///   - fetchLimit: limit the query by default to limit memory footprint
     /// - Returns: The collection of matching contacts.
     func contacts(matching string: String, fetchLimit: Int?) -> [MergedContact]
-    func getContact(for recipient: Recipient, realm: Realm?) -> MergedContact?
+    func getContact(for correspondent: any Correspondent, realm: Realm?) -> MergedContact?
     func addressBook(with id: Int) -> AddressBook?
     func addContact(recipient: Recipient) async throws
 }

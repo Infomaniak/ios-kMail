@@ -50,6 +50,7 @@ struct CalendarChoiceButton: View {
         .allowsHitTesting(!isSelected)
     }
 
+    @MainActor
     private func sendReply() {
         guard let messageUid else { return }
 
