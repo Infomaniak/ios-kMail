@@ -173,14 +173,10 @@ enum PreviewHelper {
         id: 42,
         type: .event,
         title: "Réunion Produit",
-        eventDescription: "",
         location: "Salle Théâtre",
         isFullDay: false,
-        timezone: nil,
         start: .now,
-        timezoneStart: "UTC",
         end: .now.addingTimeInterval(120),
-        timezoneEnd: "UTC",
         status: nil,
         attendees: sampleAttendees.toRealmList()
     )

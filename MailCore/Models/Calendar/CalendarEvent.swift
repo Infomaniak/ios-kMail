@@ -58,14 +58,10 @@ public final class CalendarEvent: EmbeddedObject, Codable {
     @Persisted public var id: Int
     @Persisted public var type: CalendarEventType
     @Persisted public var title: String
-    @Persisted public var eventDescription: String
     @Persisted public var location: String?
     @Persisted public var isFullDay: Bool
-    @Persisted public var timezone: String?
     @Persisted public var start: Date
-    @Persisted public var timezoneStart: String
     @Persisted public var end: Date
-    @Persisted public var timezoneEnd: String
     @Persisted public var status: CalendarEventStatus?
     @Persisted public var attendees: RealmSwift.List<Attendee>
 
@@ -109,28 +105,20 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         id: Int,
         type: CalendarEventType,
         title: String,
-        eventDescription: String,
         location: String? = nil,
         isFullDay: Bool,
-        timezone: String? = nil,
         start: Date,
-        timezoneStart: String,
         end: Date,
-        timezoneEnd: String,
         status: CalendarEventStatus?,
         attendees: RealmSwift.List<Attendee>
     ) {
         self.id = id
         self.type = type
         self.title = title
-        self.eventDescription = eventDescription
         self.location = location
         self.isFullDay = isFullDay
-        self.timezone = timezone
         self.start = start
-        self.timezoneStart = timezoneStart
         self.end = end
-        self.timezoneEnd = timezoneEnd
         self.status = status
         self.attendees = attendees
     }
@@ -143,12 +131,8 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         id = try container.decode(Int.self, forKey: .id)
         type = try container.decode(CalendarEventType.self, forKey: .type)
         title = try container.decode(String.self, forKey: .title)
-        eventDescription = try container.decode(String.self, forKey: .eventDescription)
         location = try container.decode(String?.self, forKey: .location)
         isFullDay = try container.decode(Bool.self, forKey: .isFullDay)
-        timezone = try container.decode(String?.self, forKey: .timezone)
-        timezoneStart = try container.decode(String.self, forKey: .timezoneStart)
-        timezoneEnd = try container.decode(String.self, forKey: .timezoneEnd)
         status = try container.decode(CalendarEventStatus?.self, forKey: .status)
         attendees = try container.decode(List<Attendee>.self, forKey: .attendees)
 
@@ -162,14 +146,10 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         case id
         case type
         case title
-        case eventDescription = "description"
         case location
         case isFullDay = "fullday"
-        case timezone
         case start
-        case timezoneStart
         case end
-        case timezoneEnd
         case status
         case attendees
     }
@@ -201,11 +181,4 @@ public final class CalendarEvent: EmbeddedObject, Codable {
 
         return "\(date)\n\(MailResourcesStrings.Localizable.calendarAllDayLong)"
     }
-}
-
-public enum AttachmentEventMethod: String, Codable, PersistableEnum {
-    case publish = "PUBLISH"
-    case request = "REQUEST"
-    case reply = "REPLY"
-    case cancel = "CANCEL"
 }
