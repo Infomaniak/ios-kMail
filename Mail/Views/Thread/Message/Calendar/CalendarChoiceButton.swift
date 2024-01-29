@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
@@ -53,6 +54,9 @@ struct CalendarChoiceButton: View {
     @MainActor
     private func sendReply() {
         guard let messageUid else { return }
+
+        @InjectService var matomoUtils: MatomoUtils
+        matomoUtils.track(eventWithCategory: .calendarEvent, name: "reply\(choice.matomoName.capitalized)")
 
         let oldChoice = selectedChoice
         selectedChoice = choice

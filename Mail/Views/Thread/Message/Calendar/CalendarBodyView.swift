@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -42,6 +44,9 @@ struct CalendarBodyView: View {
     }
 
     private func addEventToCalendar() {
+        @InjectService var matomoUtils: MatomoUtils
+        matomoUtils.track(eventWithCategory: .calendarEvent, name: "openInMyCalendar")
+
         // TODO: Add event to calendar
     }
 }
