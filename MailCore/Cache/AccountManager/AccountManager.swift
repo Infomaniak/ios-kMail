@@ -93,7 +93,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     /// Shorthand for `currentMailboxManager?.contactManager`
-    public var currentContactManager: ContactManager? {
+    public var currentContactManager: ContactManageable? {
         currentMailboxManager?.contactManager
     }
 

@@ -38,9 +38,10 @@ enum SearchState {
 }
 
 @MainActor class SearchViewModel: ObservableObject {
-    let mailboxManager: MailboxManager
+    @LazyInjectService var matomo: MatomoUtils
 
-    public let filters: [SearchFilter] = [.read, .unread, .favorite, .attachment, .folder]
+    @Published var searchValue = ""
+
     @Published var selectedFilters: [SearchFilter] = [] {
         willSet {
             // cancel current running tasks
@@ -50,27 +51,9 @@ enum SearchState {
         }
     }
 
-    var searchValueType: SearchFieldValueType = .threadsAndContacts
-    @Published var searchValue = ""
-    var searchState: SearchState {
-        if selectedFilters.isEmpty && searchValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-            return .history
-        } else if (threads.isEmpty && !isLoading) && contacts.isEmpty {
-            return .noResults
-        } else {
-            return .results
-        }
-    }
-
     @Published var folderList: [Folder]
+
     @Published var realFolder: Folder
-    var lastSearchFolderId: String?
-
-    /// Token to observe the search itself
-    var observationSearchThreadToken: NotificationToken?
-
-    /// Token to observe the fetched search results changes
-    var observationSearchResultsChangesToken: NotificationToken?
 
     @Published var selectedSearchFolderId = "" {
         didSet {
@@ -88,27 +71,56 @@ enum SearchState {
         }
     }
 
-    var selectedThread: Thread?
-
     @Published var threads: [Thread] = []
+
     @Published var contacts: [Recipient] = []
+
     @Published var isLoading = false
 
-    @LazyInjectService var matomo: MatomoUtils
+    let mailboxManager: MailboxManageable
+
+    public let filters: [SearchFilter] = [.read, .unread, .favorite, .attachment, .folder]
+
+    var searchValueType: SearchFieldValueType = .threadsAndContacts
+
+    var searchState: SearchState {
+        if selectedFilters.isEmpty && searchValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return .history
+        } else if (threads.isEmpty && !isLoading) && contacts.isEmpty {
+            return .noResults
+        } else {
+            return .results
+        }
+    }
+
+    var lastSearchFolderId: String?
+
+    /// Token to observe the search itself
+    var observationSearchThreadToken: NotificationToken?
+
+    /// Token to observe the fetched search results changes
+    var observationSearchResultsChangesToken: NotificationToken?
+
+    var selectedThread: Thread?
 
     let searchFolder: Folder
+
     var resourceNext: String?
+
     var lastSearch = ""
+
     var searchFieldObservation: AnyCancellable?
+
     var currentSearchTask: Task<Void, Never>?
+
     let observeQueue = DispatchQueue(label: "com.infomaniak.observation.SearchViewModel", qos: .userInteractive)
 
-    init(mailboxManager: MailboxManager, folder: Folder) {
+    init(mailboxManager: MailboxManageable, folder: Folder) {
         self.mailboxManager = mailboxManager
 
         realFolder = folder.freezeIfNeeded()
         searchFolder = mailboxManager.initSearchFolder().freezeIfNeeded()
-        folderList = mailboxManager.getFolders()
+        folderList = mailboxManager.getFolders(using: nil)
 
         searchFieldObservation = $searchValue
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
@@ -125,7 +137,7 @@ enum SearchState {
     }
 
     func updateContactSuggestion() {
-        let autocompleteContacts = mailboxManager.contactManager.contacts(matching: searchValue)
+        let autocompleteContacts = mailboxManager.contactManager.contacts(matching: searchValue, fetchLimit: nil)
         var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
         // Append typed email
         if Constants.isEmailAddress(searchValue) && !contacts

@@ -20,7 +20,12 @@ import Foundation
 import RealmSwift
 
 /// An abstract interface on the `MailboxManager`
-public typealias MailboxManageable = MailBoxManagerDraftable & MailBoxManagerMessageable & RealmAccessible
+public typealias MailboxManageable = MailBoxManagerContactable
+    & MailBoxManagerDraftable
+    & MailBoxManagerFolderable
+    & MailBoxManagerMessageable
+    & MailBoxManagerSearchable
+    & RealmAccessible
 
 /// An abstract interface on the `MailboxManager` related to messages
 public protocol MailBoxManagerMessageable {
@@ -47,6 +52,35 @@ public protocol MailBoxManagerDraftable {
     func delete(draftMessage: Message) async throws
     func deleteLocally(draft: Draft) async throws
     func deleteOrphanDrafts() async
+}
+
+/// An abstract interface on the `MailboxManager` related to Folders
+public protocol MailBoxManagerFolderable {
+    func refreshAllFolders() async throws
+    func getFolder(with role: FolderRole) -> Folder?
+    func getFolders(using realm: Realm?) -> [Folder]
+    func createFolder(name: String, parent: Folder?) async throws -> Folder
+    func flushFolder(folder: Folder) async throws -> Bool
+    func refreshFolder(from messages: [Message], additionalFolder: Folder?) async throws
+    func refreshFolderContent(_ folder: Folder) async
+    func cancelRefresh() async
+}
+
+/// An abstract interface on the `MailboxManager` related to search
+public protocol MailBoxManagerSearchable {
+    func initSearchFolder() -> Folder
+    func searchThreads(searchFolder: Folder?, filterFolderId: String, filter: Filter,
+                       searchFilter: [URLQueryItem]) async throws -> ThreadResult
+    func searchThreads(searchFolder: Folder?, from resource: String,
+                       searchFilter: [URLQueryItem]) async throws -> ThreadResult
+    func searchThreadsOffline(searchFolder: Folder?, filterFolderId: String,
+                              searchFilters: [SearchCondition]) async
+    func addToSearchHistory(value: String) async
+}
+
+/// An abstract interface on the `MailboxManager` related to contacts
+public protocol MailBoxManagerContactable {
+    var contactManager: ContactManageable { get }
 }
 
 // TODO: write a dedicated protocol for each MailboxManager+<>
