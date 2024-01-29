@@ -26,6 +26,13 @@ public struct CalendarNotStoredEventReplyResponse: Codable {
     public var event: CalendarEvent
 }
 
+public enum AttachmentEventMethod: String, Codable, PersistableEnum {
+    case publish = "PUBLISH"
+    case request = "REQUEST"
+    case reply = "REPLY"
+    case cancel = "CANCEL"
+}
+
 public final class CalendarEventResponse: EmbeddedObject, Codable {
     @Persisted public var userStoredEvent: CalendarEvent?
     @Persisted public var attachmentEvent: CalendarEvent?
