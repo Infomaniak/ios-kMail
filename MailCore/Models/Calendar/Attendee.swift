@@ -58,6 +58,17 @@ public enum AttendeeState: String, CaseIterable, Codable, PersistableEnum {
             return MailResourcesAsset.redColor.swiftUIColor
         }
     }
+
+    public var matomoName: String {
+        switch self {
+        case .yes:
+            "yes"
+        case .maybe:
+            "maybe"
+        case .no:
+            "no"
+        }
+    }
 }
 
 public final class Attendee: EmbeddedObject, Correspondent, Codable {

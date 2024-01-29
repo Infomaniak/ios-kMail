@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import NavigationBackport
@@ -36,6 +37,7 @@ struct CalendarAllAttendeesView: View {
                     }
             }
         }
+        .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "CalendarAllAttendees"])
     }
 }
 

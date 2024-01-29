@@ -16,11 +16,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
 struct CalendarAttendeesView: View {
+    @LazyInjectService private var matomoUtils: MatomoUtils
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingAttendees = false
@@ -42,6 +46,7 @@ struct CalendarAttendeesView: View {
             Button {
                 withAnimation {
                     isShowingAttendees.toggle()
+                    matomoUtils.track(eventWithCategory: .calendarEvent, name: "attendees", value: isShowingAttendees)
                 }
             } label: {
                 HStack(spacing: UIPadding.small) {
@@ -72,6 +77,7 @@ struct CalendarAttendeesView: View {
 
                     Button {
                         isShowingAllAttendees = true
+                        matomoUtils.track(eventWithCategory: .calendarEvent, name: "seeAllAttendees")
                     } label: {
                         HStack(spacing: UIPadding.small) {
                             CalendarAttendeesStack(attendees: attendees)
