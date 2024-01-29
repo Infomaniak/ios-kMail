@@ -247,6 +247,6 @@ public extension Endpoint {
     }
 
     static func calendarReplyAndUpdateEvent(id: Int) -> Endpoint {
-        .base.appending(path: "/pim/event/\(id)/reply")
+        return .base.appending(path: "/pim/event/\(id)/reply")
     }
 }
