@@ -25,15 +25,8 @@ public extension MailboxManager {
             return
         }
 
-        let calendarEvent = try await apiFetcher.calendarAttachment(attachment: attachment)
-        await backgroundRealm.execute { realm in
-            if let message = attachment.parent,
-               let liveMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) {
-                try? realm.safeWrite {
-                    liveMessage.calendarEvent = calendarEvent
-                }
-            }
-        }
+        let calendarEventResponse = try await apiFetcher.calendarAttachment(attachment: attachment)
+        await saveCalendarEventResponse(to: messageUid, eventResponse: calendarEventResponse)
     }
 
     func calendarReply(to messageUid: String, reply: AttendeeState) async throws {
@@ -42,6 +35,10 @@ public extension MailboxManager {
             return
         }
 
+        // Currently, when a user reply, we need to check whether its event is stored
+        // in Infomaniak Calendar or not.
+        // If the event is stored in Calendar, we call a route that notifies guests and
+        // updates the event. Otherwise we call a route that only notifies guests.
         let frozenMessage = liveMessage.freezeIfNeeded()
         if let eventAttachment = frozenMessage.calendarEvent, let event = eventAttachment.userStoredEvent {
             try await apiFetcher.calendarReplyAndUpdateRemoteCalendar(to: event, reply: reply)
@@ -54,5 +51,15 @@ public extension MailboxManager {
 
     private func getCalendarAttachment(of message: Message) -> Attachment? {
         return message.attachments.first { $0.uti?.conforms(to: .calendarEvent) == true }?.freezeIfNeeded()
+    }
+
+    private func saveCalendarEventResponse(to messageUid: String, eventResponse: CalendarEventResponse) async {
+        await backgroundRealm.execute { realm in
+            if let liveMessage = realm.object(ofType: Message.self, forPrimaryKey: messageUid) {
+                try? realm.safeWrite {
+                    liveMessage.calendarEvent = eventResponse
+                }
+            }
+        }
     }
 }
