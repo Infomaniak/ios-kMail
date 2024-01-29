@@ -81,7 +81,7 @@ struct MessageView: View {
                             }
                         }
 
-                        if let event = message.calendarEvent?.event, event.type == .event {
+                        if let event = message.calendarEventResponse?.frozenEvent, event.type == .event {
                             CalendarView(event: event)
                                 .padding(.horizontal, value: .regular)
                         }

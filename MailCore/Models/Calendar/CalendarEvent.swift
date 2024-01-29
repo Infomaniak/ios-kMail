@@ -71,8 +71,20 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         userStoredParent.first ?? attachmentParent.first
     }
 
+    public var isAnInvitation: Bool {
+        return parent?.attachmentEventMethod == .request || parent?.attachmentEventMethod == nil
+    }
+
+    public var isCancelled: Bool {
+        return status == .cancelled
+    }
+
+    public var hasPassed: Bool {
+        return end < .now
+    }
+
     public var warning: CalendarEventWarning? {
-        if status == .cancelled {
+        if isCancelled {
             return .isCancelled
         } else if hasPassed {
             return .hasPassed
@@ -91,10 +103,6 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         } else {
             return formatStandardDate()
         }
-    }
-
-    private var hasPassed: Bool {
-        return end < .now
     }
 
     override public init() {
@@ -154,8 +162,8 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         case attendees
     }
 
-    public func getMyAttendee(currentMailboxEmail: String) -> Attendee? {
-        return attendees.first { $0.isMe(currentMailboxEmail: currentMailboxEmail) }
+    public func getMyFrozenAttendee(currentMailboxEmail: String) -> Attendee? {
+        return attendees.first { $0.isMe(currentMailboxEmail: currentMailboxEmail) }?.freezeIfNeeded()
     }
 
     private func formatStandardDate() -> String {

@@ -21,11 +21,11 @@ import RealmSwift
 
 /// An abstract interface on the `MailboxManager`
 public typealias MailboxManageable = MailboxManagerCalendareable
-    & MailBoxManagerContactable
-    & MailBoxManagerDraftable
-    & MailBoxManagerFolderable
-    & MailBoxManagerMessageable
-    & MailBoxManagerSearchable
+    & MailboxManagerContactable
+    & MailboxManagerDraftable
+    & MailboxManagerFolderable
+    & MailboxManagerMessageable
+    & MailboxManagerSearchable
     & RealmAccessible
 
 /// An abstract interface on the `MailboxManager` related to messages
@@ -56,7 +56,7 @@ public protocol MailboxManagerDraftable {
 }
 
 /// An abstract interface on the `MailboxManager` related to Folders
-public protocol MailBoxManagerFolderable {
+public protocol MailboxManagerFolderable {
     func refreshAllFolders() async throws
     func getFolder(with role: FolderRole) -> Folder?
     func getFrozenFolders(using realm: Realm?) -> [Folder]
@@ -68,7 +68,7 @@ public protocol MailBoxManagerFolderable {
 }
 
 /// An abstract interface on the `MailboxManager` related to search
-public protocol MailBoxManagerSearchable {
+public protocol MailboxManagerSearchable {
     func initSearchFolder() -> Folder
     func searchThreads(searchFolder: Folder?, filterFolderId: String, filter: Filter,
                        searchFilter: [URLQueryItem]) async throws -> ThreadResult
@@ -80,7 +80,7 @@ public protocol MailBoxManagerSearchable {
 }
 
 /// An abstract interface on the `MailboxManager` related to contacts
-public protocol MailBoxManagerContactable {
+public protocol MailboxManagerContactable {
     var contactManager: ContactManageable { get }
 }
 

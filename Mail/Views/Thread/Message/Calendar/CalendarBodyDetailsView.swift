@@ -48,19 +48,16 @@ struct CalendarBodyDetailsView: View {
 
     let event: CalendarEvent
 
-    private var me: Attendee? {
-        return event.getMyAttendee(currentMailboxEmail: mailboxManager.mailbox.email)
+    private var frozenMe: Attendee? {
+        return event.getMyFrozenAttendee(currentMailboxEmail: mailboxManager.mailbox.email)
     }
 
     private var iAmInvited: Bool {
-        return me != nil
+        return frozenMe != nil
     }
 
     private var canReply: Bool {
-        let isAnInvitation = event.parent?.attachmentEventMethod == .request || event.parent?.attachmentEventMethod == nil
-        let isNotCancelled = event.warning != .isCancelled
-
-        return isAnInvitation && isNotCancelled && iAmInvited
+        return event.isAnInvitation && !event.isCancelled && iAmInvited
     }
 
     var body: some View {
@@ -72,7 +69,7 @@ struct CalendarBodyDetailsView: View {
 
             Group {
                 Label(event.formattedDateTime, image: MailResourcesAsset.calendarBadgeClock.name)
-                if let location = event.location {
+                if let location = event.location, !location.isEmpty {
                     Label(location, image: MailResourcesAsset.pin.name)
                 }
                 if !iAmInvited && !event.attendees.isEmpty {
@@ -82,7 +79,7 @@ struct CalendarBodyDetailsView: View {
             .labelStyle(.calendar())
 
             if canReply {
-                CalendarChoiceButtonsStack(currentState: me?.state, messageUid: event.parent?.message?.uid)
+                CalendarChoiceButtonsStack(currentState: frozenMe?.state, messageUid: event.parent?.message?.uid)
             }
         }
         .padding(.horizontal, value: .regular)
