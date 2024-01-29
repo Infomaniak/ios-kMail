@@ -83,7 +83,7 @@ struct AttachmentPreview: View {
                     Spacer()
 
                     Button {
-                        guard let attachmentURL = attachment.localUrl else { return }
+                        let attachmentURL = attachment.localUrl
                         do {
                             try DeeplinkService().shareFileToKdrive(attachmentURL)
                         } catch {
