@@ -29,6 +29,7 @@ public enum DeeplinkConstants {
 public struct URLConstants {
     public static let testFlight = URLConstants(urlString: "https://testflight.apple.com/join/t8dXx60N")
     public static let appStore = URLConstants(urlString: "https://apps.apple.com/app/infomaniak-mail/id1622596573")
+    public static let kdriveAppStore = URLConstants(urlString: "https://itunes.apple.com/app/id1482778676")
     public static let importMails = URLConstants(urlString: "https://import-email.infomaniak.com")
     public static let matomo = URLConstants(urlString: "https://analytics.infomaniak.com/matomo.php")
     public static let faq =
@@ -169,4 +170,6 @@ public enum Constants {
 
     /// Batch size of inline attachments during processing.
     public static let inlineAttachmentBatchSize = 10
+
+    public static let appGroupIdentifier = "group.com.infomaniak"
 }

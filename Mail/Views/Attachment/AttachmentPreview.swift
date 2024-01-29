@@ -22,17 +22,20 @@ import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
+import Sentry
 import SwiftUI
 
 struct AttachmentPreview: View {
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var urlOpener: URLOpenable
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.verticalSizeClass) private var sizeClass
+    @Environment(\.openURL) private var openUrl
 
     @State private var downloadedAttachmentURL: IdentifiableURL?
 
-    @ObservedRealmObject var attachment: Attachment
+    @ObservedRealmObject var attachment: MailCore.Attachment
 
     var body: some View {
         NavigationView {
@@ -78,6 +81,23 @@ struct AttachmentPreview: View {
                     }
 
                     Spacer()
+
+                    Button {
+                        let attachmentURL = attachment.localUrl
+                        do {
+                            try DeeplinkService().shareFileToKdrive(attachmentURL)
+                        } catch {
+                            SentrySDK.capture(error: error)
+                        }
+                    } label: {
+                        Label {
+                            Text(MailResourcesStrings.Localizable.buttonOpenKdrive)
+                                .font(MailTextStyle.labelSecondary.font)
+                        } icon: {
+                            IKIcon(MailResourcesAsset.kdriveLogo, size: .large)
+                        }
+                        .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
+                    }
                 }
             }
         }
