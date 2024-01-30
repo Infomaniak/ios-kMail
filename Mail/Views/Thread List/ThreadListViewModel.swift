@@ -168,13 +168,13 @@ final class DateSection: Identifiable, Equatable {
 
     init(
         mailboxManager: MailboxManager,
-        folder: Folder,
+        frozenFolder: Folder,
         selectedThreadOwner: SelectedThreadOwnable,
         isCompact: Bool
     ) {
-        assert(folder.isFrozen, "ThreadListViewModel.folder should always be frozen")
+        assert(frozenFolder.isFrozen, "ThreadListViewModel.folder should always be frozen")
         self.mailboxManager = mailboxManager
-        frozenFolder = folder.freezeIfNeeded()
+        self.frozenFolder = frozenFolder
         self.selectedThreadOwner = selectedThreadOwner
         self.isCompact = isCompact
         sectionsObserver = sectionsSubject

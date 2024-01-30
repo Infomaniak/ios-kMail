@@ -53,11 +53,11 @@ struct ThreadListView: View {
     }
 
     init(mailboxManager: MailboxManager,
-         folder: Folder,
+         frozenFolder: Folder,
          selectedThreadOwner: SelectedThreadOwnable,
          isCompact: Bool) {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
-                                                                   folder: folder,
+                                                                   frozenFolder: frozenFolder,
                                                                    selectedThreadOwner: selectedThreadOwner,
                                                                    isCompact: isCompact))
         _multipleSelectionViewModel = StateObject(wrappedValue: ThreadListMultipleSelectionViewModel())
@@ -206,7 +206,7 @@ struct ThreadListView: View {
 #Preview {
     ThreadListView(
         mailboxManager: PreviewHelper.sampleMailboxManager,
-        folder: PreviewHelper.sampleFolder,
+        frozenFolder: PreviewHelper.sampleFolder,
         selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner,
         isCompact: false
     )
