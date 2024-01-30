@@ -37,7 +37,7 @@ extension SearchViewModel {
     func clearSearch() {
         searchValueType = .threadsAndContacts
         searchValue = ""
-        threads = []
+        frozenThreads = []
         contacts = []
         isLoading = false
     }

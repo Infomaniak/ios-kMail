@@ -27,7 +27,7 @@ extension SearchViewModel {
         stopObserveSearchResultsChanges()
 
         guard let liveFolder = frozenSearchFolder.thaw() else {
-            threads = []
+            frozenThreads = []
             return
         }
 
@@ -39,11 +39,11 @@ extension SearchViewModel {
 
             switch changes {
             case .initial(let results):
-                let results = Array(results.freezeIfNeeded())
+                let frozenResults = Array(results.freezeIfNeeded())
                 Task {
                     await MainActor.run {
                         withAnimation {
-                            self.threads = results
+                            self.frozenThreads = frozenResults
                         }
                         self.isLoading = false
 
@@ -69,7 +69,7 @@ extension SearchViewModel {
     func observeSearchResultsChanges() {
         stopObserveSearchResultsChanges()
 
-        let allThreadsUIDs = threads.map(\.uid)
+        let allThreadsUIDs = frozenThreads.map(\.uid)
         let containAnyOf = NSPredicate(format: Self.containAnyOfUIDs, allThreadsUIDs)
         let realm = mailboxManager.getRealm()
         let allThreads = realm.objects(Thread.self).filter(containAnyOf)
@@ -81,8 +81,8 @@ extension SearchViewModel {
 
             switch changes {
             case .update(let results, _, _, let modificationIndexes):
-                let results = Array(results.freezeIfNeeded())
-                refreshObservedSearchResults(all: results, changes: modificationIndexes)
+                let frozenResults = Array(results.freezeIfNeeded())
+                refreshObservedSearchResults(allFrozen: frozenResults, changes: modificationIndexes)
 
             default:
                 break
@@ -95,17 +95,17 @@ extension SearchViewModel {
     }
 
     /// Update search result threads on observation change.
-    private func refreshObservedSearchResults(all: [Thread], changes: [Int]) {
+    private func refreshObservedSearchResults(allFrozen: [Thread], changes: [Int]) {
         Task {
             for index in changes {
-                guard let updatedThread = all[safe: index] else {
+                guard let updatedThread = allFrozen[safe: index] else {
                     continue
                 }
 
                 // Swap the updated thread at index
                 await MainActor.run {
                     withAnimation {
-                        self.threads[index] = updatedThread
+                        self.frozenThreads[index] = updatedThread
                     }
                 }
             }

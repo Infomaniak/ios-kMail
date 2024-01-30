@@ -47,7 +47,7 @@ enum SearchState {
             // cancel current running tasks
             stopObserveSearch()
             currentSearchTask?.cancel()
-            threads = []
+            frozenThreads = []
         }
     }
 
@@ -57,7 +57,7 @@ enum SearchState {
     /// Frozen underlying folder
     @Published var frozenRealFolder: Folder
 
-    @Published var threads: [Thread] = []
+    @Published var frozenThreads: [Thread] = []
 
     @Published var contacts: [Recipient] = []
 
@@ -82,7 +82,7 @@ enum SearchState {
     var searchState: SearchState {
         if selectedFilters.isEmpty && searchValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return .history
-        } else if (threads.isEmpty && !isLoading) && contacts.isEmpty {
+        } else if (frozenThreads.isEmpty && !isLoading) && contacts.isEmpty {
             return .noResults
         } else {
             return .results
@@ -160,7 +160,7 @@ enum SearchState {
 
         isLoading = true
         stopObserveSearch()
-        threads = []
+        frozenThreads = []
 
         var folderToSearch = frozenRealFolder.remoteId
 
@@ -209,9 +209,9 @@ enum SearchState {
 
     func loadNextPageIfNeeded(currentItem: Thread) {
         // Start loading next page when we reach the second-to-last item
-        guard !threads.isEmpty else { return }
-        let thresholdIndex = threads.index(threads.endIndex, offsetBy: -1)
-        if threads.firstIndex(where: { $0.uid == currentItem.uid }) == thresholdIndex {
+        guard !frozenThreads.isEmpty else { return }
+        let thresholdIndex = frozenThreads.index(frozenThreads.endIndex, offsetBy: -1)
+        if frozenThreads.firstIndex(where: { $0.uid == currentItem.uid }) == thresholdIndex {
             Task {
                 await fetchNextPage()
             }

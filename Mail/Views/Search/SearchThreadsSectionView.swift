@@ -31,7 +31,7 @@ struct SearchThreadsSectionView: View {
 
     var body: some View {
         Section {
-            ForEach(viewModel.threads) { thread in
+            ForEach(viewModel.frozenThreads) { thread in
                 ThreadCell(thread: thread, density: threadDensity, accentColor: accentColor)
                     .onTapGesture {
                         didTapCell(thread: thread)
@@ -47,7 +47,7 @@ struct SearchThreadsSectionView: View {
                     }
             }
         } header: {
-            if threadDensity != .compact && !viewModel.threads.isEmpty {
+            if threadDensity != .compact && !viewModel.frozenThreads.isEmpty {
                 Text(MailResourcesStrings.Localizable.searchAllMessages)
                     .textStyle(.bodySmallSecondary)
                     .padding(.horizontal, value: .regular)

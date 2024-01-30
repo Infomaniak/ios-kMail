@@ -274,7 +274,7 @@ final class ITSearchViewModel: XCTestCase {
             XCTFail("folderList should not change")
         }.store(in: &cancellable)
 
-        viewModel.$threads.dropFirst().sink { _ in
+        viewModel.$frozenThreads.dropFirst().sink { _ in
             threadExpectation.fulfill()
         }.store(in: &cancellable)
         viewModel.$contacts.sink { _ in
