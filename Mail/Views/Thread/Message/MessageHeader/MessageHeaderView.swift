@@ -53,7 +53,7 @@ struct MessageHeaderView: View {
                 DraftUtils.editDraft(
                     from: message,
                     mailboxManager: mailboxManager,
-                    editedDraft: $mainViewState.editedDraft
+                    composeMessageIntent: $mainViewState.composeMessageIntent
                 )
                 matomo.track(eventWithCategory: .newMessage, name: "openFromDraft")
                 matomo.track(

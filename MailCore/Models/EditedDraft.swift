@@ -33,22 +33,6 @@ public struct EditedDraft: Identifiable {
         self.messageReply = messageReply
     }
 
-    public static func new() -> EditedDraft {
-        return EditedDraft(draft: Draft(localUUID: UUID().uuidString), messageReply: nil)
-    }
-
-    public static func existing(draft: Draft) -> EditedDraft {
-        return EditedDraft(draft: draft, messageReply: nil)
-    }
-
-    public static func mailTo(urlComponents: URLComponents) -> EditedDraft {
-        return EditedDraft(draft: Draft.mailTo(urlComponents: urlComponents), messageReply: nil)
-    }
-
-    public static func writing(to recipient: Recipient) -> EditedDraft {
-        return EditedDraft(draft: Draft.writing(to: recipient), messageReply: nil)
-    }
-
     public static func replying(reply: MessageReply, currentMailboxEmail: String) -> EditedDraft {
         return EditedDraft(draft: Draft.replying(reply: reply, currentMailboxEmail: currentMailboxEmail), messageReply: reply)
     }

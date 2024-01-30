@@ -76,11 +76,11 @@ final class AIModel: ObservableObject {
         messageReply?.isReplying == true
     }
 
-    init(mailboxManager: MailboxManager, draftContentManager: DraftContentManager, editedDraft: EditedDraft) {
+    init(mailboxManager: MailboxManager, draftContentManager: DraftContentManager, draft: Draft) {
         self.mailboxManager = mailboxManager
         self.draftContentManager = draftContentManager
-        draft = editedDraft.detachedDraft
-        messageReply = editedDraft.messageReply
+        self.draft = draft
+        messageReply = nil // editedDraft.messageReply
     }
 }
 

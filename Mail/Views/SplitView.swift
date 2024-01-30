@@ -152,6 +152,9 @@ struct SplitView: View {
         .sheet(item: $mainViewState.editedDraft) { editedDraft in
             ComposeMessageView(editedDraft: editedDraft, mailboxManager: mailboxManager)
         }
+        .sheet(item: $mainViewState.composeMessageIntent) { intent in
+            ComposeMessageIntentView(composeMessageIntent: intent)
+        }
         .onChange(of: scenePhase) { newScenePhase in
             guard newScenePhase == .active else { return }
             Task {
@@ -262,7 +265,7 @@ struct SplitView: View {
         guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return }
 
         if Constants.isMailTo(url) {
-            mainViewState.editedDraft = EditedDraft.mailTo(urlComponents: urlComponents)
+            mainViewState.composeMessageIntent = .mailTo(mailToURLComponents: urlComponents, originMailboxManager: mailboxManager)
         }
     }
 

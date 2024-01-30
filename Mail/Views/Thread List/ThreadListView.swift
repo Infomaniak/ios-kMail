@@ -168,7 +168,7 @@ struct ThreadListView: View {
                               title: MailResourcesStrings.Localizable.buttonNewMessage,
                               isExtended: scrollObserver.scrollDirection != .bottom) {
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
-            mainViewState.editedDraft = EditedDraft.new()
+            mainViewState.composeMessageIntent = .new(originMailboxManager: viewModel.mailboxManager)
         }
         .shortcutModifier(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .onAppear {

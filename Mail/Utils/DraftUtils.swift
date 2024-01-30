@@ -22,23 +22,34 @@ import SwiftUI
 
 @MainActor
 enum DraftUtils {
-    public static func editDraft(from thread: Thread, mailboxManager: MailboxManageable, editedDraft: Binding<EditedDraft?>) {
+    public static func editDraft(
+        from thread: Thread,
+        mailboxManager: MailboxManageable,
+        composeMessageIntent: Binding<ComposeMessageIntent?>
+    ) {
         guard let message = thread.messages.first else { return }
         // If we already have the draft locally, present it directly
         if let draft = mailboxManager.draft(messageUid: message.uid, using: nil)?.detached() {
-            editedDraft.wrappedValue = EditedDraft.existing(draft: draft)
+            composeMessageIntent.wrappedValue = ComposeMessageIntent.existing(draft: draft, originMailboxManager: mailboxManager)
         } else {
-            DraftUtils.editDraft(from: message, mailboxManager: mailboxManager, editedDraft: editedDraft)
+            DraftUtils.editDraft(from: message, mailboxManager: mailboxManager, composeMessageIntent: composeMessageIntent)
         }
     }
 
-    public static func editDraft(from message: Message, mailboxManager: MailboxManageable, editedDraft: Binding<EditedDraft?>) {
+    public static func editDraft(
+        from message: Message,
+        mailboxManager: MailboxManageable,
+        composeMessageIntent: Binding<ComposeMessageIntent?>
+    ) {
         // If we already have the draft locally, present it directly
         if let draft = mailboxManager.draft(messageUid: message.uid, using: nil)?.detached() {
-            editedDraft.wrappedValue = EditedDraft.existing(draft: draft)
+            composeMessageIntent.wrappedValue = ComposeMessageIntent.existing(draft: draft, originMailboxManager: mailboxManager)
             // Draft comes from API, we will update it after showing the ComposeMessageView
         } else {
-            editedDraft.wrappedValue = EditedDraft.existing(draft: Draft(messageUid: message.uid))
+            composeMessageIntent.wrappedValue = ComposeMessageIntent.existing(
+                draft: Draft(messageUid: message.uid),
+                originMailboxManager: mailboxManager
+            )
         }
     }
 }

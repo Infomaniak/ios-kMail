@@ -88,7 +88,7 @@ struct ComposeMessageView: View {
     @StateObject private var alert = NewMessageAlert()
     @StateObject private var aiModel: AIModel
 
-    @StateRealmObject private var draft: Draft
+    @ObservedRealmObject private var draft: Draft
 
     @FocusState private var focusedField: ComposeViewFieldType? {
         willSet {
@@ -112,111 +112,110 @@ struct ComposeMessageView: View {
     // MARK: - Init
 
     init(editedDraft: EditedDraft, mailboxManager: MailboxManager, attachments: [Attachable] = []) {
-        messageReply = editedDraft.messageReply
+        fatalError()
+    }
 
-        Self.writeDraftToRealm(mailboxManager.getRealm(), draft: editedDraft.detachedDraft)
-        _draft = StateRealmObject(wrappedValue: editedDraft.detachedDraft)
+    init(draft: Draft, mailboxManager: MailboxManager, attachments: [Attachable] = []) {
+        messageReply = nil // editedDraft.messageReply
+
+        _draft = ObservedRealmObject(wrappedValue: draft)
 
         let currentDraftContentManager = DraftContentManager(
-            incompleteDraft: editedDraft.detachedDraft,
-            messageReply: editedDraft.messageReply,
+            incompleteDraft: draft,
+            messageReply: nil,
             mailboxManager: mailboxManager
         )
         draftContentManager = currentDraftContentManager
 
         self.mailboxManager = mailboxManager
-        _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draftLocalUUID: editedDraft.detachedDraft.localUUID,
+        _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draftLocalUUID: draft.localUUID,
                                                                            mailboxManager: mailboxManager))
         _initialAttachments = State(wrappedValue: attachments)
 
         _aiModel = StateObject(wrappedValue: AIModel(
             mailboxManager: mailboxManager,
             draftContentManager: currentDraftContentManager,
-            editedDraft: editedDraft
+            draft: draft
         ))
     }
 
     // MARK: - View
 
     var body: some View {
-        NavigationView {
-            composeMessage
-        }
-        .navigationViewStyle(.stack)
-        .task {
-            do {
-                isLoadingContent = true
-                currentSignature = try await draftContentManager.prepareCompleteDraft()
-                await attachmentsManager.completeUploadedAttachments()
-                isLoadingContent = false
-            } catch {
-                // Unable to get signatures, "An error occurred" and close modal.
-                snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
-                dismissMessageView()
+        composeMessage
+            .task {
+                do {
+                    isLoadingContent = true
+                    currentSignature = try await draftContentManager.prepareCompleteDraft()
+                    await attachmentsManager.completeUploadedAttachments()
+                    isLoadingContent = false
+                } catch {
+                    // Unable to get signatures, "An error occurred" and close modal.
+                    snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
+                    dismissMessageView()
+                }
             }
-        }
-        .onAppear {
-            attachmentsManager.importAttachments(
-                attachments: initialAttachments,
-                draft: draft,
-                disposition: AttachmentDisposition.defaultDisposition
-            )
-            initialAttachments = []
+            .onAppear {
+                attachmentsManager.importAttachments(
+                    attachments: initialAttachments,
+                    draft: draft,
+                    disposition: AttachmentDisposition.defaultDisposition
+                )
+                initialAttachments = []
 
-            if featureFlagsManager.isEnabled(.aiMailComposer) && UserDefaults.shared.shouldPresentAIFeature {
-                isShowingAIPopover = true
-                return
-            }
+                if featureFlagsManager.isEnabled(.aiMailComposer) && UserDefaults.shared.shouldPresentAIFeature {
+                    isShowingAIPopover = true
+                    return
+                }
 
-            switch messageReply?.replyMode {
-            case .reply, .replyAll:
-                focusedField = .editor
-            default:
-                focusedField = .to
+                switch messageReply?.replyMode {
+                case .reply, .replyAll:
+                    focusedField = .editor
+                default:
+                    focusedField = .to
+                }
             }
-        }
-        .onDisappear {
-            var shouldShowSnackbar = false
-            if !Bundle.main.isExtension && !mainViewState.isShowingSetAppAsDefaultDiscovery {
-                shouldShowSnackbar = !mainViewState.isShowingSetAppAsDefaultDiscovery
-                mainViewState.isShowingReviewAlert = reviewManager.shouldRequestReview()
-            }
+            .onDisappear {
+                var shouldShowSnackbar = false
+                if !Bundle.main.isExtension && !mainViewState.isShowingSetAppAsDefaultDiscovery {
+                    shouldShowSnackbar = !mainViewState.isShowingSetAppAsDefaultDiscovery
+                    mainViewState.isShowingReviewAlert = reviewManager.shouldRequestReview()
+                }
 
-            draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: shouldShowSnackbar)
-        }
-        .interactiveDismissDisabled()
-        .customAlert(isPresented: $alert.isShowing) {
-            switch alert.state {
-            case .link(let handler):
-                AddLinkView(actionHandler: handler)
-            case .emptySubject(let handler):
-                EmptySubjectView(actionHandler: handler)
-            case .externalRecipient(let state):
-                ExternalRecipientView(externalTagSate: state, isDraft: true)
-            case .none:
-                EmptyView()
+                draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: shouldShowSnackbar)
             }
-        }
-        .customAlert(isPresented: $isShowingCancelAttachmentsError) {
-            AttachmentsUploadInProgressErrorView {
-                dismissMessageView()
+            .customAlert(isPresented: $alert.isShowing) {
+                switch alert.state {
+                case .link(let handler):
+                    AddLinkView(actionHandler: handler)
+                case .emptySubject(let handler):
+                    EmptySubjectView(actionHandler: handler)
+                case .externalRecipient(let state):
+                    ExternalRecipientView(externalTagSate: state, isDraft: true)
+                case .none:
+                    EmptyView()
+                }
             }
-        }
-        .discoveryPresenter(isPresented: $isShowingAIPopover) {
-            DiscoveryView(item: .aiDiscovery) {
-                UserDefaults.shared.shouldPresentAIFeature = false
-            } completionHandler: { willShowAIPrompt in
-                aiModel.isShowingPrompt = willShowAIPrompt
+            .customAlert(isPresented: $isShowingCancelAttachmentsError) {
+                AttachmentsUploadInProgressErrorView {
+                    dismissMessageView()
+                }
             }
-        }
-        .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {
-            AIPromptView(aiModel: aiModel)
-        }
-        .sheet(isPresented: $aiModel.isShowingProposition) {
-            AIPropositionView(aiModel: aiModel)
-        }
-        .environmentObject(draftContentManager)
-        .matomoView(view: ["ComposeMessage"])
+            .discoveryPresenter(isPresented: $isShowingAIPopover) {
+                DiscoveryView(item: .aiDiscovery) {
+                    UserDefaults.shared.shouldPresentAIFeature = false
+                } completionHandler: { willShowAIPrompt in
+                    aiModel.isShowingPrompt = willShowAIPrompt
+                }
+            }
+            .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {
+                AIPromptView(aiModel: aiModel)
+            }
+            .sheet(isPresented: $aiModel.isShowingProposition) {
+                AIPropositionView(aiModel: aiModel)
+            }
+            .environmentObject(draftContentManager)
+            .matomoView(view: ["ComposeMessage"])
     }
 
     /// Compose message view
@@ -376,20 +375,11 @@ struct ComposeMessageView: View {
         }
         dismissMessageView()
     }
-
-    private static func writeDraftToRealm(_ realm: Realm, draft: Draft) {
-        try? realm.write {
-            draft.action = draft.action == nil && draft.remoteUUID.isEmpty ? .initialSave : .save
-            draft.delay = UserDefaults.shared.cancelSendDelay.rawValue
-
-            realm.add(draft, update: .modified)
-        }
-    }
 }
 
 #Preview {
     ComposeMessageView(
-        editedDraft: EditedDraft.new(),
+        draft: Draft(),
         mailboxManager: PreviewHelper.sampleMailboxManager
     )
 }

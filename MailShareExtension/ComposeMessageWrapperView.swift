@@ -43,7 +43,7 @@ struct ComposeMessageWrapperView: View {
     var body: some View {
         if let mailboxManager = accountManager.currentMailboxManager {
             ComposeMessageView(
-                editedDraft: EditedDraft.existing(draft: draft),
+                draft: draft,
                 mailboxManager: mailboxManager,
                 attachments: itemProviders
             )

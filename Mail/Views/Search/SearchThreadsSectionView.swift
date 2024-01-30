@@ -69,7 +69,7 @@ struct SearchThreadsSectionView: View {
             DraftUtils.editDraft(
                 from: thread,
                 mailboxManager: viewModel.mailboxManager,
-                editedDraft: $mainViewState.editedDraft
+                composeMessageIntent: $mainViewState.composeMessageIntent
             )
         } else {
             splitViewManager.adaptToProminentThreadView()
