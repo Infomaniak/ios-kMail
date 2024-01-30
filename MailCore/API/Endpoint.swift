@@ -242,11 +242,11 @@ public extension Endpoint {
         return .draft(uuid: uuid).appending(path: "/attachmentsToForward")
     }
 
-    static func calendarReply(resource: String) -> Endpoint {
+    static func replyToCalendarEvent(resource: String) -> Endpoint {
         return .resource(resource).appending(path: "/reply")
     }
 
-    static func calendarReplyAndUpdateEvent(id: Int) -> Endpoint {
+    static func replyToCalendarEventAndUpdateCalendar(id: Int) -> Endpoint {
         return .base.appending(path: "/pim/event/\(id)/reply")
     }
 }

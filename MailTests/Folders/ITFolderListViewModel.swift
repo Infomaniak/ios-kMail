@@ -154,11 +154,11 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable {
 
     func delete(messages: [MailCore.Message]) async throws {}
 
-    func attachmentCalendar(from messageUid: String) async throws {
+    func calendarEvent(from messageUid: String) async throws {
         fatalError("Unexpected")
     }
 
-    func calendarReply(to messageUid: String, reply: MailCore.AttendeeState) async throws {
+    func replyToCalendarEvent(messageUid: String, reply: MailCore.AttendeeState) async throws {
         fatalError("Unexpected")
     }
 

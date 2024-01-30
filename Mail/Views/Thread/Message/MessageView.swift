@@ -150,7 +150,7 @@ struct MessageView: View {
     }
 
     private func fetchEventCalendar() async throws {
-        try await mailboxManager.attachmentCalendar(from: message.uid)
+        try await mailboxManager.calendarEvent(from: message.uid)
     }
 }
 

@@ -25,6 +25,10 @@ import SwiftUI
 struct CalendarBodyView: View {
     @Environment(\.openURL) private var openURL
 
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @State private var isLoadingCalendarButton = false
+
     let event: CalendarEvent
 
     var body: some View {
@@ -40,6 +44,7 @@ struct CalendarBodyView: View {
             }
             .buttonStyle(.ikPlain)
             .ikButtonFullWidth(true)
+            .ikButtonLoading(isLoadingCalendarButton)
             .padding(.horizontal, value: .regular)
         }
         .padding(.vertical, value: .regular)
@@ -49,9 +54,13 @@ struct CalendarBodyView: View {
         @InjectService var matomoUtils: MatomoUtils
         matomoUtils.track(eventWithCategory: .calendarEvent, name: "openInMyCalendar")
 
-        if event.parent?.userStoredEvent != nil {
-            openURL(URLConstants.calendarEvent(event).url)
+        if event.parent?.userStoredEvent == nil {
+            isLoadingCalendarButton = true
+            // try await mailboxManager.importICSEvent()
+            isLoadingCalendarButton = false
         }
+
+        openURL(URLConstants.calendarEvent(event).url)
     }
 }
 

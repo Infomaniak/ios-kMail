@@ -85,8 +85,8 @@ public protocol MailboxManagerContactable {
 }
 
 public protocol MailboxManagerCalendareable {
-    func attachmentCalendar(from messageUid: String) async throws
-    func calendarReply(to messageUid: String, reply: AttendeeState) async throws
+    func calendarEvent(from messageUid: String) async throws
+    func replyToCalendarEvent(messageUid: String, reply: AttendeeState) async throws
 }
 
 // TODO: write a dedicated protocol for each MailboxManager+<>

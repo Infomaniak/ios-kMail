@@ -19,19 +19,19 @@
 import Foundation
 
 public extension MailboxManager {
-    func attachmentCalendar(from messageUid: String) async throws {
+    func calendarEvent(from messageUid: String) async throws {
         guard let liveMessage = getRealm().object(ofType: Message.self, forPrimaryKey: messageUid),
-              let attachment = getCalendarAttachment(of: liveMessage) else {
+              let attachment = getFrozenCalendarAttachment(from: liveMessage) else {
             return
         }
 
-        let calendarEventResponse = try await apiFetcher.calendarAttachment(attachment: attachment)
+        let calendarEventResponse = try await apiFetcher.calendarEvent(from: attachment)
         await saveCalendarEventResponse(to: messageUid, eventResponse: calendarEventResponse)
     }
 
-    func calendarReply(to messageUid: String, reply: AttendeeState) async throws {
+    func replyToCalendarEvent(messageUid: String, reply: AttendeeState) async throws {
         guard let liveMessage = getRealm().object(ofType: Message.self, forPrimaryKey: messageUid),
-              let attachment = getCalendarAttachment(of: liveMessage) else {
+              let attachment = getFrozenCalendarAttachment(from: liveMessage) else {
             return
         }
 
@@ -41,15 +41,19 @@ public extension MailboxManager {
         // updates the event. Otherwise we call a route that only notifies guests.
         let frozenMessage = liveMessage.freezeIfNeeded()
         if let eventAttachment = frozenMessage.calendarEventResponse, let event = eventAttachment.userStoredEvent {
-            try await apiFetcher.calendarReplyAndUpdateRemoteCalendar(to: event, reply: reply)
+            try await apiFetcher.replyToCalendarEventAndUpdateCalendar(event: event, reply: reply)
         } else {
-            try await apiFetcher.calendarReply(to: attachment, reply: reply)
+            try await apiFetcher.replyToCalendarEvent(attachment: attachment, reply: reply)
         }
 
-        try await attachmentCalendar(from: messageUid)
+        try await calendarEvent(from: messageUid)
     }
 
-    private func getCalendarAttachment(of message: Message) -> Attachment? {
+    func importICSEventToCalendar() async throws {}
+}
+
+extension MailboxManager {
+    private func getFrozenCalendarAttachment(from message: Message) -> Attachment? {
         return message.attachments.first { $0.uti?.conforms(to: .calendarEvent) == true }?.freezeIfNeeded()
     }
 
