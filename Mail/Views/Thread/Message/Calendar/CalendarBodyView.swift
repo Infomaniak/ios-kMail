@@ -54,13 +54,24 @@ struct CalendarBodyView: View {
         @InjectService var matomoUtils: MatomoUtils
         matomoUtils.track(eventWithCategory: .calendarEvent, name: "openInMyCalendar")
 
-        if event.parent?.userStoredEvent == nil {
-            isLoadingCalendarButton = true
-            // try await mailboxManager.importICSEvent()
-            isLoadingCalendarButton = false
-        }
+        Task { @MainActor in
+            var eventToOpen = event
 
-        openURL(URLConstants.calendarEvent(event).url)
+            if event.parent?.userStoredEvent == nil {
+                isLoadingCalendarButton = true
+                guard let messageUid = event.parent?.message?.uid,
+                      let storedEvent = try? await mailboxManager.importICSEventToCalendar(messageUid: messageUid) else {
+                    isLoadingCalendarButton = false
+                    @InjectService var snackbarPresenter: SnackBarPresentable
+                    snackbarPresenter.show(message: "Erreur en affichant l'évènement dans Infomaniak Calendar")
+                    return
+                }
+                isLoadingCalendarButton = false
+                eventToOpen = storedEvent
+            }
+
+            openURL(URLConstants.calendarEvent(eventToOpen.freezeIfNeeded()).url)
+        }
     }
 }
 

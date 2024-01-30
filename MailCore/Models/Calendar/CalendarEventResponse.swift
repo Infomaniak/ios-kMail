@@ -22,7 +22,7 @@ public struct CalendarReplyRequest: Codable {
     public var reply: AttendeeState
 }
 
-public struct CalendarNotStoredEventReplyResponse: Codable {
+public struct CalendarUpdatedEventResponse: Codable {
     public var event: CalendarEvent
 }
 

@@ -249,4 +249,8 @@ public extension Endpoint {
     static func replyToCalendarEventAndUpdateCalendar(id: Int) -> Endpoint {
         return .base.appending(path: "/pim/event/\(id)/reply")
     }
+
+    static func importICSEventToCalendar(resource: String) -> Endpoint {
+        return .resource(resource).appending(path: "/import-ics")
+    }
 }

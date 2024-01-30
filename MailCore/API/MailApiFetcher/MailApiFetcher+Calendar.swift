@@ -30,7 +30,7 @@ public extension MailApiFetcher {
     }
 
     @discardableResult
-    func replyToCalendarEvent(attachment: Attachment, reply: AttendeeState) async throws -> CalendarNotStoredEventReplyResponse {
+    func replyToCalendarEvent(attachment: Attachment, reply: AttendeeState) async throws -> CalendarUpdatedEventResponse {
         guard let resource = attachment.resource else {
             throw MailError.resourceError
         }
@@ -51,5 +51,14 @@ public extension MailApiFetcher {
             method: .post,
             parameters: replyRequest
         )).data
+    }
+
+    @discardableResult
+    func importICSEventToCalendar(attachment: Attachment) async throws -> CalendarUpdatedEventResponse {
+        guard let resource = attachment.resource else {
+            throw MailError.resourceError
+        }
+
+        return try await perform(request: authenticatedRequest(.importICSEventToCalendar(resource: resource), method: .post)).data
     }
 }
