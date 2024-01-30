@@ -218,11 +218,15 @@ final class DateSection: Identifiable, Equatable {
             return
         }
 
-        if isCompact {
-            selectedThreadOwner.selectedThread = nil
-        } else {
+        switch UserDefaults.shared.autoAdvance {
+        case .previousThread:
+            let validIndex = max(oldSelectedThreadIndex - 1, 0)
+            selectedThreadOwner.selectedThread = newThreads[validIndex]
+        case .followingThread:
             let validIndex = min(oldSelectedThreadIndex, newThreads.count - 1)
             selectedThreadOwner.selectedThread = newThreads[validIndex]
+        case .listOfThread:
+            selectedThreadOwner.selectedThread = nil
         }
     }
 
