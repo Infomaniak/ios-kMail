@@ -23,6 +23,8 @@ import MailResources
 import SwiftUI
 
 struct CalendarBodyView: View {
+    @Environment(\.openURL) private var openURL
+
     let event: CalendarEvent
 
     var body: some View {
@@ -47,7 +49,9 @@ struct CalendarBodyView: View {
         @InjectService var matomoUtils: MatomoUtils
         matomoUtils.track(eventWithCategory: .calendarEvent, name: "openInMyCalendar")
 
-        // TODO: Add event to calendar
+        if event.parent?.userStoredEvent != nil {
+            openURL(URLConstants.calendarEvent(event).url)
+        }
     }
 }
 

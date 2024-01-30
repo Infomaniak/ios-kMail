@@ -40,6 +40,15 @@ public struct URLConstants {
     public static let chatbot = URLConstants(urlString: "https://www.infomaniak.com/chatbot")
     public static let ikMe = URLConstants(urlString: "https://www.ik.me")
 
+    public static func calendarEvent(_ event: CalendarEvent) -> URLConstants {
+        let startDate = Calendar.current.firstDayOfTheWeek(of: event.start) ?? .now
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let date = dateFormatter.string(from: startDate)
+
+        return URLConstants(urlString: "https://calendar.infomaniak.com/?event=\(event.id)&view=week&from=\(date)")
+    }
+
     public static let schemeUrl = "http"
 
     private var urlString: String

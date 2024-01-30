@@ -31,7 +31,6 @@ struct AttachmentPreview: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.verticalSizeClass) private var sizeClass
-    @Environment(\.openURL) private var openUrl
 
     @State private var downloadedAttachmentURL: IdentifiableURL?
 
