@@ -26,7 +26,7 @@ import InfomaniakLogin
 import XCTest
 
 struct MCKContactManageable_FolderListViewModel: ContactManageable {
-    func contacts(matching string: String, fetchLimit: Int?) -> [MailCore.MergedContact] { [] }
+    func frozenContacts(matching string: String, fetchLimit: Int?) -> [MailCore.MergedContact] { [] }
 
     func getContact(for recipient: MailCore.Recipient, realm: RealmSwift.Realm?) -> MailCore.MergedContact? { nil }
 
@@ -49,11 +49,19 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable {
 
     func refreshAllFolders() async throws {}
 
-    func getFolder(with role: MailCore.FolderRole) -> MailCore.Folder? {
+    func getFrozenFolders(with role: MailCore.FolderRole) -> MailCore.Folder? {
+        fatalError("Unexpected")
+    }
+
+    func getFrozenFolders(using realm: RealmSwift.Realm?) -> [MailCore.Folder] {
         fatalError("Unexpected")
     }
 
     func getFolders(using realm: RealmSwift.Realm?) -> [MailCore.Folder] {
+        fatalError("Unexpected")
+    }
+
+    func getFolder(with role: MailCore.FolderRole) -> MailCore.Folder? {
         fatalError("Unexpected")
     }
 

@@ -28,7 +28,7 @@ import XCTest
 
 /// A ContactManageable used to test the SearchViewModel
 struct MCKContactManageable_SearchViewModel: ContactManageable {
-    func contacts(matching string: String, fetchLimit: Int?) -> [MailCore.MergedContact] { [] }
+    func frozenContacts(matching string: String, fetchLimit: Int?) -> [MailCore.MergedContact] { [] }
 
     func getContact(for recipient: MailCore.Recipient, realm: RealmSwift.Realm?) -> MailCore.MergedContact? { nil }
 
@@ -70,7 +70,7 @@ final class MCKMailboxManageable_SearchViewModel: MailboxManageable {
         }
     }
 
-    func getFolders(using realm: RealmSwift.Realm?) -> [MailCore.Folder] {
+    func getFrozenFolders(using realm: RealmSwift.Realm?) -> [MailCore.Folder] {
         folderGenerator.folders
     }
 
@@ -215,13 +215,13 @@ final class ITSearchViewModel: XCTestCase {
         let viewModel = SearchViewModel(mailboxManager: mailboxManager, folder: someFolder)
 
         // THEN
-        viewModel.$realFolder.sink { folder in
+        viewModel.$frozenRealFolder.sink { folder in
             realFolderExpectation.fulfill()
             XCTAssertNotNil(folder)
             XCTAssertTrue(folder.isFrozen)
             XCTAssertEqual(folder.remoteId, someFolder.remoteId)
         }.store(in: &cancellable)
-        viewModel.$folderList.sink { folderList in
+        viewModel.$frozenFolderList.sink { folderList in
             XCTAssertNotNil(folderList)
             XCTAssertEqual(folderList, folderGenerator.folders)
             folderListExpectation.fulfill()
@@ -267,10 +267,10 @@ final class ITSearchViewModel: XCTestCase {
         viewModel.searchValue = searchWord
 
         // THEN
-        viewModel.$realFolder.dropFirst().sink { _ in
+        viewModel.$frozenRealFolder.dropFirst().sink { _ in
             XCTFail("realFolder should not change")
         }.store(in: &cancellable)
-        viewModel.$folderList.dropFirst().sink { _ in
+        viewModel.$frozenFolderList.dropFirst().sink { _ in
             XCTFail("folderList should not change")
         }.store(in: &cancellable)
 
