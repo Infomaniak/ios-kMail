@@ -63,14 +63,14 @@ struct CalendarBodyView: View {
                       let storedEvent = try? await mailboxManager.importICSEventToCalendar(messageUid: messageUid) else {
                     isLoadingCalendarButton = false
                     @InjectService var snackbarPresenter: SnackBarPresentable
-                    snackbarPresenter.show(message: "Erreur en affichant l'évènement dans Infomaniak Calendar")
+                    snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorEventCouldNotBeOpenedInMyCalendar)
                     return
                 }
                 isLoadingCalendarButton = false
                 eventToOpen = storedEvent
             }
 
-            openURL(URLConstants.calendarEvent(eventToOpen.freezeIfNeeded()).url)
+            openURL(URLConstants.calendarEvent(eventToOpen).url)
         }
     }
 }

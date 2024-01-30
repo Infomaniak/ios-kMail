@@ -20,7 +20,7 @@ import Foundation
 
 public extension MailboxManager {
     func calendarEvent(from messageUid: String) async throws {
-        let (frozenMessage, frozenAttachment) = try getFrozenMessageAndCalendarAttachment(messageUid: messageUid)
+        let (_, frozenAttachment) = try getFrozenMessageAndCalendarAttachment(messageUid: messageUid)
 
         let calendarEventResponse = try await apiFetcher.calendarEvent(from: frozenAttachment)
         await saveCalendarEventResponse(to: messageUid, eventResponse: calendarEventResponse)
