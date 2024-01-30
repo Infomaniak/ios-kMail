@@ -42,6 +42,9 @@ open class CommonAppAndShareTargetAssembly: TargetAssembly {
             },
             Factory(type: ApplicationStatable.self) { _, _ in
                 ApplicationState()
+            },
+            Factory(type: URLOpenable.self) { _, _ in
+                URLOpener()
             }
         ]
     }

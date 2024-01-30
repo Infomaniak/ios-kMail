@@ -97,7 +97,7 @@ struct CreateFolderView: View {
             ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: isButtonEnabled) {
                 matomo.track(eventWithCategory: .createFolder, name: "confirm")
                 await tryOrDisplayError {
-                    let folder = try await mailboxManager.createFolder(name: folderName)
+                    let folder = try await mailboxManager.createFolder(name: folderName, parent: nil)
                     if case .move(let moveHandler) = mode {
                         moveHandler(folder)
                         NotificationCenter.default.post(Notification(name: .dismissMoveSheet))

@@ -25,8 +25,76 @@ import InfomaniakLogin
 @testable import RealmSwift
 import XCTest
 
+struct MCKContactManageable_FolderListViewModel: ContactManageable {
+    func contacts(matching string: String, fetchLimit: Int?) -> [MailCore.MergedContact] { [] }
+
+    func getContact(for recipient: MailCore.Recipient, realm: RealmSwift.Realm?) -> MailCore.MergedContact? { nil }
+
+    func addressBook(with id: Int) -> MailCore.AddressBook? { nil }
+
+    func addContact(recipient: MailCore.Recipient) async throws {}
+
+    func refreshContactsAndAddressBooks() async throws {}
+
+    static func deleteUserContacts(userId: Int) {}
+
+    var realmConfiguration: RealmSwift.Realm.Configuration
+}
+
 /// A MailboxManageable used to test the FolderListViewModel
 struct MCKMailboxManageable_FolderListViewModel: MailboxManageable {
+    var contactManager: MailCore.ContactManageable {
+        MCKContactManageable_FolderListViewModel(realmConfiguration: realmConfiguration)
+    }
+
+    func refreshAllFolders() async throws {}
+
+    func getFolder(with role: MailCore.FolderRole) -> MailCore.Folder? {
+        fatalError("Unexpected")
+    }
+
+    func getFolders(using realm: RealmSwift.Realm?) -> [MailCore.Folder] {
+        fatalError("Unexpected")
+    }
+
+    func createFolder(name: String, parent: MailCore.Folder?) async throws -> MailCore.Folder {
+        fatalError("Unexpected")
+    }
+
+    func flushFolder(folder: MailCore.Folder) async throws -> Bool { false }
+
+    func refreshFolder(from messages: [MailCore.Message], additionalFolder: MailCore.Folder?) async throws {}
+
+    func refreshFolderContent(_ folder: MailCore.Folder) async {}
+
+    func cancelRefresh() async {}
+
+    func initSearchFolder() -> MailCore.Folder {
+        fatalError("Unexpected")
+    }
+
+    func searchThreads(
+        searchFolder: MailCore.Folder?,
+        filterFolderId: String,
+        filter: MailCore.Filter,
+        searchFilter: [URLQueryItem]
+    ) async throws -> MailCore.ThreadResult {
+        fatalError("Unexpected")
+    }
+
+    func searchThreads(searchFolder: MailCore.Folder?, from resource: String,
+                       searchFilter: [URLQueryItem]) async throws -> MailCore.ThreadResult {
+        fatalError("Unexpected")
+    }
+
+    func searchThreadsOffline(
+        searchFolder: MailCore.Folder?,
+        filterFolderId: String,
+        searchFilters: [MailCore.SearchCondition]
+    ) async {}
+
+    func addToSearchHistory(value: String) async {}
+
     let realm: Realm
     init(realm: Realm) {
         self.realm = realm

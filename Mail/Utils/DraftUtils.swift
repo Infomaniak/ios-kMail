@@ -22,19 +22,19 @@ import SwiftUI
 
 @MainActor
 enum DraftUtils {
-    public static func editDraft(from thread: Thread, mailboxManager: MailboxManager, editedDraft: Binding<EditedDraft?>) {
+    public static func editDraft(from thread: Thread, mailboxManager: MailboxManageable, editedDraft: Binding<EditedDraft?>) {
         guard let message = thread.messages.first else { return }
         // If we already have the draft locally, present it directly
-        if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
+        if let draft = mailboxManager.draft(messageUid: message.uid, using: nil)?.detached() {
             editedDraft.wrappedValue = EditedDraft.existing(draft: draft)
         } else {
             DraftUtils.editDraft(from: message, mailboxManager: mailboxManager, editedDraft: editedDraft)
         }
     }
 
-    public static func editDraft(from message: Message, mailboxManager: MailboxManager, editedDraft: Binding<EditedDraft?>) {
+    public static func editDraft(from message: Message, mailboxManager: MailboxManageable, editedDraft: Binding<EditedDraft?>) {
         // If we already have the draft locally, present it directly
-        if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
+        if let draft = mailboxManager.draft(messageUid: message.uid, using: nil)?.detached() {
             editedDraft.wrappedValue = EditedDraft.existing(draft: draft)
             // Draft comes from API, we will update it after showing the ComposeMessageView
         } else {

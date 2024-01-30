@@ -106,7 +106,7 @@ public extension MailboxManager {
         }
 
         try await apiFetcher.deleteDraft(draftResource: draftResource)
-        try await refreshFolder(from: [draftMessage])
+        try await refreshFolder(from: [draftMessage], additionalFolder: nil)
     }
 
     func deleteLocally(draft: Draft) async throws {

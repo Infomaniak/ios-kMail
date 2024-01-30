@@ -30,7 +30,20 @@ extension Recipient: Identifiable {
     }
 }
 
-public final class ContactManager: ObservableObject {
+/// The composite protocol of the `ContactManager` service
+public typealias ContactManageable = ContactFetchable & ContactManagerCoreable & RealmAccessible
+
+public protocol ContactManagerCoreable {
+    /// Entry point to refresh all contacts in base
+    func refreshContactsAndAddressBooks() async throws
+
+    /// Delete all contact data cache for user
+    /// - Parameters:
+    ///   - userId: User ID
+    static func deleteUserContacts(userId: Int)
+}
+
+public final class ContactManager: ObservableObject, ContactManageable {
     public class ContactManagerConstants {
         private let fileManager = FileManager.default
         public let rootDocumentsURL: URL
@@ -84,7 +97,6 @@ public final class ContactManager: ObservableObject {
     let localContactsHelper = LocalContactsHelper()
     var currentMergeRequest: Task<Void, Never>?
 
-    // Entry point to refresh all contacts in base
     public func refreshContactsAndAddressBooks() async throws {
         // We do not run an update of contacts in extension mode as we are too resource constrained
         guard !Bundle.main.isExtension else {
@@ -118,9 +130,6 @@ public final class ContactManager: ObservableObject {
         }
     }
 
-    /// Delete all contact data cache for user
-    /// - Parameters:
-    ///   - userId: User ID
     public static func deleteUserContacts(userId: Int) {
         let files = (try? FileManager.default
             .contentsOfDirectory(at: ContactManager.constants.rootDocumentsURL, includingPropertiesForKeys: nil))

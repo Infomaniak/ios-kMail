@@ -19,8 +19,17 @@
 import Foundation
 import RealmSwift
 
-/// Conforming to `RealmAccessible` to get a standard `.getRealm` function
-extension ContactManager: RealmAccessible {}
+public protocol ContactFetchable {
+    /// Case and diacritic insensitive search for a `MergedContact`
+    /// - Parameters:
+    ///   - string: input string to match against email and name
+    ///   - fetchLimit: limit the query by default to limit memory footprint
+    /// - Returns: The collection of matching contacts.
+    func frozenContacts(matching string: String, fetchLimit: Int?) -> [MergedContact]
+    func getContact(for recipient: Recipient, realm: Realm?) -> MergedContact?
+    func addressBook(with id: Int) -> AddressBook?
+    func addContact(recipient: Recipient) async throws
+}
 
 public extension ContactManager {
     /// Both *case* insensitive __and__ *diacritic* (accents) insensitive
@@ -34,7 +43,7 @@ public extension ContactManager {
     ///   - string: input string to match against email and name
     ///   - fetchLimit: limit the query by default to limit memory footprint
     /// - Returns: The collection of matching contacts. Frozen.
-    func frozenContacts(matching string: String, fetchLimit: Int? = nil) -> [MergedContact] {
+    func frozenContacts(matching string: String, fetchLimit: Int?) -> [MergedContact] {
         let realm = getRealm()
         let lazyResults = realm
             .objects(MergedContact.self)
@@ -56,7 +65,7 @@ public extension ContactManager {
         return results.map { $0.freezeIfNeeded() }
     }
 
-    func getContact(for recipient: Recipient, realm: Realm? = nil) -> MergedContact? {
+    func getContact(for recipient: Recipient, realm: Realm?) -> MergedContact? {
         let realm = realm ?? getRealm()
         let matched = realm.objects(MergedContact.self).where { $0.email == recipient.email }
         return matched.first { $0.name.caseInsensitiveCompare(recipient.name) == .orderedSame } ?? matched.first

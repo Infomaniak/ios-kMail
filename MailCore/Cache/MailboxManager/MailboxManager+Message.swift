@@ -350,7 +350,7 @@ public extension MailboxManager {
 
     func delete(messages: [Message]) async throws {
         try await apiFetcher.delete(mailbox: mailbox, messages: messages)
-        try await refreshFolder(from: messages)
+        try await refreshFolder(from: messages, additionalFolder: nil)
     }
 
     // MARK: Private
@@ -615,7 +615,7 @@ public extension MailboxManager {
         } else {
             try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
         }
-        try await refreshFolder(from: messages)
+        try await refreshFolder(from: messages, additionalFolder: nil)
 
         // TODO: Remove after fix
         SentryDebug.listIncoherentMessageUpdate(messages: messages, actualSeen: seen)
@@ -633,19 +633,19 @@ public extension MailboxManager {
 
     private func star(messages: [Message]) async throws -> MessageActionResult {
         let response = try await apiFetcher.star(mailbox: mailbox, messages: messages)
-        try await refreshFolder(from: messages)
+        try await refreshFolder(from: messages, additionalFolder: nil)
         return response
     }
 
     private func unstar(messages: [Message]) async throws -> MessageActionResult {
         let response = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
-        try await refreshFolder(from: messages)
+        try await refreshFolder(from: messages, additionalFolder: nil)
         return response
     }
 
     private func undoAction(for cancellableResponse: UndoResponse, and messages: [Message]) -> UndoAction {
         let undoBlock = {
-            try await self.refreshFolder(from: messages)
+            try await self.refreshFolder(from: messages, additionalFolder: nil)
         }
         return UndoAction(undo: cancellableResponse, undoBlock: undoBlock)
     }
