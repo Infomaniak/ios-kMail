@@ -63,10 +63,10 @@ enum SearchState {
     }
 
     /// The frozen folder list
-    @Published var folderList: [Folder]
+    @Published var frozenFolderList: [Folder]
 
     /// Frozen underlying folder
-    @Published var realFolder: Folder
+    @Published var frozenRealFolder: Folder
     var lastSearchFolderId: String?
 
     /// Token to observe the search itself
@@ -100,7 +100,7 @@ enum SearchState {
     @LazyInjectService var matomo: MatomoUtils
 
     /// The searchFolders, stored Frozen.
-    let searchFolder: Folder
+    let frozenSearchFolder: Folder
     var resourceNext: String?
     var lastSearch = ""
     var searchFieldObservation: AnyCancellable?
@@ -110,9 +110,9 @@ enum SearchState {
     init(mailboxManager: MailboxManager, folder: Folder) {
         self.mailboxManager = mailboxManager
 
-        realFolder = folder.freezeIfNeeded()
-        searchFolder = mailboxManager.initSearchFolder().freezeIfNeeded()
-        folderList = mailboxManager.getFrozenFolders()
+        frozenRealFolder = folder.freezeIfNeeded()
+        frozenSearchFolder = mailboxManager.initSearchFolder().freezeIfNeeded()
+        frozenFolderList = mailboxManager.getFrozenFolders()
 
         searchFieldObservation = $searchValue
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
@@ -151,7 +151,7 @@ enum SearchState {
         stopObserveSearch()
         threads = []
 
-        var folderToSearch = realFolder.remoteId
+        var folderToSearch = frozenRealFolder.remoteId
 
         if selectedFilters.contains(.folder) {
             folderToSearch = selectedSearchFolderId
@@ -160,14 +160,14 @@ enum SearchState {
 
         if ReachabilityListener.instance.currentStatus == .offline {
             await mailboxManager.searchThreadsOffline(
-                searchFolder: searchFolder,
+                searchFolder: frozenSearchFolder,
                 filterFolderId: folderToSearch,
                 searchFilters: searchFiltersOffline
             )
         } else {
             await tryOrDisplayError {
                 let result = try await mailboxManager.searchThreads(
-                    searchFolder: searchFolder,
+                    searchFolder: frozenSearchFolder,
                     filterFolderId: folderToSearch,
                     filter: filter,
                     searchFilter: searchFilters
@@ -186,9 +186,8 @@ enum SearchState {
 
         isLoading = true
         await tryOrDisplayError {
-            let searchFolderCopy = searchFolder.detached()
             let threadResult = try await mailboxManager.searchThreads(
-                searchFolder: searchFolderCopy,
+                searchFolder: frozenSearchFolder,
                 from: resource,
                 searchFilter: searchFilters
             )

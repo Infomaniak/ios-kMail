@@ -26,12 +26,12 @@ extension SearchViewModel {
         stopObserveSearch()
         stopObserveSearchResultsChanges()
 
-        guard let folder = searchFolder.thaw() else {
+        guard let liveFolder = frozenSearchFolder.thaw() else {
             threads = []
             return
         }
 
-        let threadResults = folder.threads.sorted(by: \.date, ascending: false)
+        let threadResults = liveFolder.threads.sorted(by: \.date, ascending: false)
         observationSearchThreadToken = threadResults.observe(on: .main) { [weak self] changes in
             guard let self else {
                 return

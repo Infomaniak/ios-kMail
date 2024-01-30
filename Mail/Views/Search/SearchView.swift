@@ -37,8 +37,11 @@ struct SearchView: View {
                 HStack(spacing: UIPadding.small) {
                     ForEach(viewModel.filters) { filter in
                         if filter == .folder {
-                            SearchFilterFolderCell(selection: $viewModel.selectedSearchFolderId, folders: viewModel.folderList)
-                                .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonFilterSearch)
+                            SearchFilterFolderCell(
+                                selection: $viewModel.selectedSearchFolderId,
+                                folders: viewModel.frozenFolderList
+                            )
+                            .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonFilterSearch)
                         } else {
                             SearchFilterCell(
                                 title: filter.title,
