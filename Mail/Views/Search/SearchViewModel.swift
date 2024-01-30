@@ -51,15 +51,17 @@ enum SearchState {
         }
     }
 
-    /// The frozen folder list
-    @Published var frozenFolderList: [Folder]
-
-    /// Frozen underlying folder
+    /// Frozen underlying `Folder`
     @Published var frozenRealFolder: Folder
 
+    /// The frozen `Folder` list
+    @Published var frozenFolderList: [Folder]
+
+    /// Frozen `Thread` list
     @Published var frozenThreads: [Thread] = []
 
-    @Published var contacts: [Recipient] = []
+    /// Frozen `Recipient` list
+    @Published var frozenContacts: [Recipient] = []
 
     @Published var isLoading = false
 
@@ -82,7 +84,7 @@ enum SearchState {
     var searchState: SearchState {
         if selectedFilters.isEmpty && searchValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return .history
-        } else if (frozenThreads.isEmpty && !isLoading) && contacts.isEmpty {
+        } else if (frozenThreads.isEmpty && !isLoading) && frozenContacts.isEmpty {
             return .noResults
         } else {
             return .results
@@ -141,15 +143,17 @@ enum SearchState {
 
     func updateContactSuggestion() {
         let autocompleteContacts = mailboxManager.contactManager.frozenContacts(matching: searchValue, fetchLimit: nil)
-        var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
+        var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name).freezeIfNeeded() }
+
         // Append typed email
-        if Constants.isEmailAddress(searchValue) && !contacts
+        if Constants.isEmailAddress(searchValue) && !frozenContacts
             .contains(where: { $0.email.caseInsensitiveCompare(searchValue) == .orderedSame }) {
-            autocompleteRecipients.append(Recipient(email: searchValue, name: ""))
+            autocompleteRecipients.append(Recipient(email: searchValue, name: "").freezeIfNeeded())
         }
+
         let contactRange: Range<Int> = 0 ..< min(autocompleteRecipients.count, Constants.contactSuggestionLimit)
         withAnimation {
-            contacts = Array(autocompleteRecipients[contactRange])
+            frozenContacts = Array(autocompleteRecipients[contactRange])
         }
     }
 

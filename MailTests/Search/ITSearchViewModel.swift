@@ -277,7 +277,7 @@ final class ITSearchViewModel: XCTestCase {
         viewModel.$frozenThreads.dropFirst().sink { _ in
             threadExpectation.fulfill()
         }.store(in: &cancellable)
-        viewModel.$contacts.sink { _ in
+        viewModel.$frozenContacts.sink { _ in
             contactsExpectation.fulfill()
         }.store(in: &cancellable)
         viewModel.$isLoading.dropFirst().sink { _ in

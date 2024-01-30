@@ -38,7 +38,7 @@ extension SearchViewModel {
         searchValueType = .threadsAndContacts
         searchValue = ""
         frozenThreads = []
-        contacts = []
+        frozenContacts = []
         isLoading = false
     }
 
@@ -56,7 +56,7 @@ extension SearchViewModel {
         if searchValueType == .threadsAndContacts {
             updateContactSuggestion()
         } else {
-            contacts = []
+            frozenContacts = []
         }
 
         currentSearchTask?.cancel()

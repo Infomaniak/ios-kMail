@@ -27,7 +27,7 @@ struct SearchContactsSectionView: View {
 
     var body: some View {
         Section {
-            ForEach(viewModel.contacts) { contact in
+            ForEach(viewModel.frozenContacts) { contact in
                 RecipientCell(recipient: contact)
                     .onTapGesture {
                         viewModel.matomo.track(eventWithCategory: .search, name: "selectContact")
@@ -40,7 +40,7 @@ struct SearchContactsSectionView: View {
             .padding(.leading, UIPadding.small + UIConstants.unreadIconSize + UIPadding.small)
             .padding(.trailing, value: .regular)
         } header: {
-            if !viewModel.contacts.isEmpty {
+            if !viewModel.frozenContacts.isEmpty {
                 Text(MailResourcesStrings.Localizable.contactsSearch)
                     .textStyle(.bodySmallSecondary)
                     .padding(.horizontal, value: .regular)
