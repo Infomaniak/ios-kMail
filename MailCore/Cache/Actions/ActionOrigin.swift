@@ -29,13 +29,34 @@ public struct ActionOrigin {
     }
 
     public private(set) var type: ActionOriginType
-    public private(set) var folder: Folder?
+    public private(set) var frozenFolder: Folder?
+
     private(set) var nearestMessagesActionsPanel: Binding<[Message]?>?
     private(set) var nearestFlushAlert: Binding<FlushAlertState?>?
     private(set) var nearestMessagesToMoveSheet: Binding<[Message]?>?
     private(set) var nearestReportJunkMessageActionsPanel: Binding<Message?>?
     private(set) var nearestReportedForPhishingMessageAlert: Binding<Message?>?
     private(set) var nearestReportedForDisplayProblemMessageAlert: Binding<Message?>?
+
+    init(
+        type: ActionOriginType,
+        folder: Folder? = nil,
+        nearestMessagesActionsPanel: Binding<[Message]?>? = nil,
+        nearestFlushAlert: Binding<FlushAlertState?>? = nil,
+        nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
+        nearestReportJunkMessageActionsPanel: Binding<Message?>? = nil,
+        nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
+        nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil
+    ) {
+        self.type = type
+        frozenFolder = folder?.freezeIfNeeded()
+        self.nearestMessagesActionsPanel = nearestMessagesActionsPanel
+        self.nearestFlushAlert = nearestFlushAlert
+        self.nearestMessagesToMoveSheet = nearestMessagesToMoveSheet
+        self.nearestReportJunkMessageActionsPanel = nearestReportJunkMessageActionsPanel
+        self.nearestReportedForPhishingMessageAlert = nearestReportedForPhishingMessageAlert
+        self.nearestReportedForDisplayProblemMessageAlert = nearestReportedForDisplayProblemMessageAlert
+    }
 
     public static func toolbar(originFolder: Folder? = nil,
                                nearestFlushAlert: Binding<FlushAlertState?>? = nil) -> ActionOrigin {

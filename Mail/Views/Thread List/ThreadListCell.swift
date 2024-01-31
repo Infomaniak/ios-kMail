@@ -126,7 +126,7 @@ struct ThreadListCell: View {
 #Preview {
     ThreadListCell(
         viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
-                                       folder: PreviewHelper.sampleFolder,
+                                       frozenFolder: PreviewHelper.sampleFolder,
                                        selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner,
                                        isCompact: false),
         multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(),

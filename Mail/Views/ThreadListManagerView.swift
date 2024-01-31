@@ -45,7 +45,7 @@ struct ThreadListManagerView: View {
             } else {
                 ThreadListView(
                     mailboxManager: mailboxManager,
-                    folder: mainViewState.selectedFolder,
+                    frozenFolder: mainViewState.selectedFolder,
                     selectedThreadOwner: mainViewState,
                     isCompact: isCompactWindow
                 )

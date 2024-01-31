@@ -37,8 +37,8 @@ extension SearchViewModel {
     func clearSearch() {
         searchValueType = .threadsAndContacts
         searchValue = ""
-        threads = []
-        contacts = []
+        frozenThreads = []
+        frozenContacts = []
         isLoading = false
     }
 
@@ -56,7 +56,7 @@ extension SearchViewModel {
         if searchValueType == .threadsAndContacts {
             updateContactSuggestion()
         } else {
-            contacts = []
+            frozenContacts = []
         }
 
         currentSearchTask?.cancel()

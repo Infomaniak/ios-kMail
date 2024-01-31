@@ -47,13 +47,23 @@ enum SearchState {
             // cancel current running tasks
             stopObserveSearch()
             currentSearchTask?.cancel()
-            threads = []
+            frozenThreads = []
         }
     }
 
-    @Published var folderList: [Folder]
+    /// Frozen underlying `Folder`
+    @Published var frozenRealFolder: Folder
 
-    @Published var realFolder: Folder
+    /// The frozen `Folder` list
+    @Published var frozenFolderList: [Folder]
+
+    /// Frozen `Thread` list
+    @Published var frozenThreads: [Thread] = []
+
+    /// Frozen `Recipient` list
+    @Published var frozenContacts: [Recipient] = []
+
+    @Published var isLoading = false
 
     @Published var selectedSearchFolderId = "" {
         didSet {
@@ -71,22 +81,10 @@ enum SearchState {
         }
     }
 
-    @Published var threads: [Thread] = []
-
-    @Published var contacts: [Recipient] = []
-
-    @Published var isLoading = false
-
-    let mailboxManager: MailboxManageable
-
-    public let filters: [SearchFilter] = [.read, .unread, .favorite, .attachment, .folder]
-
-    var searchValueType: SearchFieldValueType = .threadsAndContacts
-
     var searchState: SearchState {
         if selectedFilters.isEmpty && searchValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return .history
-        } else if (threads.isEmpty && !isLoading) && contacts.isEmpty {
+        } else if (frozenThreads.isEmpty && !isLoading) && frozenContacts.isEmpty {
             return .noResults
         } else {
             return .results
@@ -101,9 +99,16 @@ enum SearchState {
     /// Token to observe the fetched search results changes
     var observationSearchResultsChangesToken: NotificationToken?
 
+    let mailboxManager: MailboxManageable
+
+    public let filters: [SearchFilter] = [.read, .unread, .favorite, .attachment, .folder]
+
+    var searchValueType: SearchFieldValueType = .threadsAndContacts
+
     var selectedThread: Thread?
 
-    let searchFolder: Folder
+    /// The searchFolders, stored Frozen.
+    let frozenSearchFolder: Folder
 
     var resourceNext: String?
 
@@ -118,9 +123,9 @@ enum SearchState {
     init(mailboxManager: MailboxManageable, folder: Folder) {
         self.mailboxManager = mailboxManager
 
-        realFolder = folder.freezeIfNeeded()
-        searchFolder = mailboxManager.initSearchFolder().freezeIfNeeded()
-        folderList = mailboxManager.getFolders(using: nil)
+        frozenRealFolder = folder.freezeIfNeeded()
+        frozenSearchFolder = mailboxManager.initSearchFolder().freezeIfNeeded()
+        frozenFolderList = mailboxManager.getFrozenFolders(using: nil)
 
         searchFieldObservation = $searchValue
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
@@ -137,16 +142,18 @@ enum SearchState {
     }
 
     func updateContactSuggestion() {
-        let autocompleteContacts = mailboxManager.contactManager.contacts(matching: searchValue, fetchLimit: nil)
-        var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
+        let autocompleteContacts = mailboxManager.contactManager.frozenContacts(matching: searchValue, fetchLimit: nil)
+        var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name).freezeIfNeeded() }
+
         // Append typed email
-        if Constants.isEmailAddress(searchValue) && !contacts
+        if Constants.isEmailAddress(searchValue) && !frozenContacts
             .contains(where: { $0.email.caseInsensitiveCompare(searchValue) == .orderedSame }) {
-            autocompleteRecipients.append(Recipient(email: searchValue, name: ""))
+            autocompleteRecipients.append(Recipient(email: searchValue, name: "").freezeIfNeeded())
         }
+
         let contactRange: Range<Int> = 0 ..< min(autocompleteRecipients.count, Constants.contactSuggestionLimit)
         withAnimation {
-            contacts = Array(autocompleteRecipients[contactRange])
+            frozenContacts = Array(autocompleteRecipients[contactRange])
         }
     }
 
@@ -157,9 +164,9 @@ enum SearchState {
 
         isLoading = true
         stopObserveSearch()
-        threads = []
+        frozenThreads = []
 
-        var folderToSearch = realFolder.remoteId
+        var folderToSearch = frozenRealFolder.remoteId
 
         if selectedFilters.contains(.folder) {
             folderToSearch = selectedSearchFolderId
@@ -168,14 +175,14 @@ enum SearchState {
 
         if ReachabilityListener.instance.currentStatus == .offline {
             await mailboxManager.searchThreadsOffline(
-                searchFolder: searchFolder,
+                searchFolder: frozenSearchFolder,
                 filterFolderId: folderToSearch,
                 searchFilters: searchFiltersOffline
             )
         } else {
             await tryOrDisplayError {
                 let result = try await mailboxManager.searchThreads(
-                    searchFolder: searchFolder,
+                    searchFolder: frozenSearchFolder,
                     filterFolderId: folderToSearch,
                     filter: filter,
                     searchFilter: searchFilters
@@ -195,7 +202,7 @@ enum SearchState {
         isLoading = true
         await tryOrDisplayError {
             let threadResult = try await mailboxManager.searchThreads(
-                searchFolder: searchFolder.freeze(),
+                searchFolder: frozenSearchFolder,
                 from: resource,
                 searchFilter: searchFilters
             )
@@ -206,9 +213,9 @@ enum SearchState {
 
     func loadNextPageIfNeeded(currentItem: Thread) {
         // Start loading next page when we reach the second-to-last item
-        guard !threads.isEmpty else { return }
-        let thresholdIndex = threads.index(threads.endIndex, offsetBy: -1)
-        if threads.firstIndex(where: { $0.uid == currentItem.uid }) == thresholdIndex {
+        guard !frozenThreads.isEmpty else { return }
+        let thresholdIndex = frozenThreads.index(frozenThreads.endIndex, offsetBy: -1)
+        if frozenThreads.firstIndex(where: { $0.uid == currentItem.uid }) == thresholdIndex {
             Task {
                 await fetchNextPage()
             }

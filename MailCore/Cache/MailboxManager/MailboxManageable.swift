@@ -58,7 +58,7 @@ public protocol MailBoxManagerDraftable {
 public protocol MailBoxManagerFolderable {
     func refreshAllFolders() async throws
     func getFolder(with role: FolderRole) -> Folder?
-    func getFolders(using realm: Realm?) -> [Folder]
+    func getFrozenFolders(using realm: Realm?) -> [Folder]
     func createFolder(name: String, parent: Folder?) async throws -> Folder
     func flushFolder(folder: Folder) async throws -> Bool
     func refreshFolder(from messages: [Message], additionalFolder: Folder?) async throws
