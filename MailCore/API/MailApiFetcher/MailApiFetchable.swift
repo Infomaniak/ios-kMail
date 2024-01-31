@@ -21,7 +21,8 @@ import Foundation
 import InfomaniakCore
 
 /// Public interface of `MailApiFetcher`
-public typealias MailApiFetchable = MailApiAIFetchable & MailApiCommonFetchable & MailApiExtendedFetchable
+public typealias MailApiFetchable = MailApiAIFetchable & MailApiCalendarFetchable & MailApiCommonFetchable &
+    MailApiExtendedFetchable & MailApiSyncProfileFetchable
 
 /// Main interface of the `MailApiFetcher`
 public protocol MailApiCommonFetchable {
@@ -126,7 +127,6 @@ public protocol MailApiExtendedFetchable {
     func deleteDraft(draftResource: String) async throws -> Empty?
 }
 
-/// AI capabilities of the `MailApiFetcher`
 public protocol MailApiAIFetchable {
     func aiCreateConversation(messages: [AIMessage], output: AIOutputFormat, engine: AIEngine, mailbox: Mailbox) async throws
         -> AIConversationResponse
@@ -148,4 +148,14 @@ public protocol MailApiSyncProfileFetchable {
     func downloadSyncProfile(syncContacts: Bool, syncCalendar: Bool) async throws -> URL
 
     func applicationPassword() async throws -> ApplicationPassword
+}
+
+public protocol MailApiCalendarFetchable {
+    func calendarEvent(from attachment: Attachment) async throws -> CalendarEventResponse
+
+    func replyToCalendarEvent(attachment: Attachment, reply: AttendeeState) async throws -> CalendarUpdatedEventResponse
+
+    func replyToCalendarEventAndUpdateCalendar(event: CalendarEvent, reply: AttendeeState) async throws -> Bool
+
+    func importICSEventToCalendar(attachment: Attachment) async throws -> CalendarUpdatedEventResponse
 }

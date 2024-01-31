@@ -5,7 +5,7 @@
  * Locale: es, Spanish
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Fri, 12 Jan 2024 11:47:14 +0100
+ * Exported at: Tue, 30 Jan 2024 15:55:08 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -317,9 +317,6 @@
 /* loco:62cbe10de2840a0cdc2be0d2 */
 "buttonAddEmailAddress" = "Añadir una dirección de correo electrónico";
 
-/* loco:65957e21e04c075b780d73d2 */
-"buttonAddToMyCalendar" = "Añadir a mi calendario";
-
 /* loco:6437c062dd576a7631052413 */
 "buttonAttachMailbox" = "Añadir dirección de correo electrónico";
 
@@ -433,6 +430,9 @@
 
 /* loco:6581b2b5a7520b536b03f942 */
 "buttonOpenKdrive" = "Abrir en kDrive";
+
+/* loco:65957e21e04c075b780d73d2 */
+"buttonOpenMyCalendar" = "Abrir en mi calendario";
 
 /* loco:62cd642815742c678d4c30e4 */
 "buttonRefuse" = "Desechos";
@@ -686,6 +686,9 @@
 /* loco:64940ce4eee54db1a50e44b4 */
 "errorAttachmentNotFound" = "No se ha encontrado el adjunto";
 
+/* loco:65b3890c3784205fa5060812 */
+"errorCalendarChoiceCouldNotBeSent" = "Se ha producido un error al enviar su elección";
+
 /* loco:63d14902e3c4eb4832777c42 */
 "errorCancelAttachmentsUploadInProgress" = "Algunos archivos adjuntos se siguen importando. Si cierra la vista se perderán los archivos adjuntos.";
 
@@ -694,6 +697,9 @@
 
 /* loco:6449292ce5f4e56abb063f65 */
 "errorEditScheduledMessage" = "Imposible modificar un mensaje programado o enviado";
+
+/* loco:65b90c1464496af26b01ef32 */
+"errorEventCouldNotBeOpenedInMyCalendar" = "Se ha producido un error al abrir el evento en Infomaniak Calendar";
 
 /* loco:6493fd86b3b044cbef0df789 */
 "errorFolderDoesNotExist" = "La carpeta no existe";
@@ -1313,6 +1319,9 @@
 /* loco:63f3961e7c16fb607809d632 */
 "snackbarBlockUserConfirmation" = "El remitente está bloqueado";
 
+/* loco:65b3b9ca21fbc50b4105f973 */
+"snackbarCalendarChoiceSent" = "Elección enviada correctamente";
+
 /* loco:62bc67601f560d734f2fbe58 */
 "snackbarContactSaved" = "Nuevo contacto registrado correctamente";
 
@@ -1540,6 +1549,9 @@
 
 /* loco:65957e6e7dfe315a5d02add2 */
 "warningEventHasPassed" = "Este acontecimiento ya ha pasado";
+
+/* loco:65a7dc1de5c74dfd370d6732 */
+"warningEventIsCancelled" = "Este evento ha sido cancelado";
 
 /* loco:6481d72ebb3c88db6e002332 */
 "warningNotificationsDisabledButton" = "Actívalos en los ajustes";

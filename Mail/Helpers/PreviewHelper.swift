@@ -134,12 +134,13 @@ enum PreviewHelper {
     static let samplePresentableBody = PresentableBody(message: sampleMessage)
 
     static let sampleRecipient1 = Recipient(email: "from@example.com", name: "John Doe")
-
     static let sampleRecipient2 = Recipient(email: "to@example.com", name: "Alice Bobber")
+    static let sampleRecipient3 = Recipient(email: "cc@example.com", name: "")
+    static let sampleRecipient4 = Recipient(email: "lucien.cheval@ik.com", name: "Lucien Cheval")
+    static let sampleRecipient5 = Recipient(email: "ellen.ripley@domaine.ch", name: "ellen.ripley@domaine.ch")
 
-    static let sampleRecipient3 = Recipient(email: "test@example.com", name: "")
-
-    static let sampleRecipientsList = [sampleRecipient1, sampleRecipient2, sampleRecipient3].toRealmList()
+    static let sampleRecipients = [sampleRecipient1, sampleRecipient2, sampleRecipient3, sampleRecipient4, sampleRecipient5]
+    static let sampleRecipientsList = sampleRecipients.toRealmList()
 
     static let sampleAttachment = Attachment(
         uuid: "",
@@ -166,5 +167,39 @@ enum PreviewHelper {
         incompleteDraft: Draft(),
         messageReply: nil,
         mailboxManager: sampleMailboxManager
+    )
+
+    static let sampleCalendarEvent = CalendarEvent(
+        id: 42,
+        type: .event,
+        title: "Réunion Produit",
+        location: "Salle Théâtre",
+        isFullDay: false,
+        start: .now,
+        end: .now.addingTimeInterval(120),
+        status: nil,
+        attendees: sampleAttendees.toRealmList()
+    )
+
+    static let sampleAttendees = [sampleAttendee1, sampleAttendee2, sampleAttendee3, sampleAttendee4]
+
+    static let sampleAttendee1 = Attendee(email: "lucien.cheval@ik.com", name: "Lucien Cheval", isOrganizer: true)
+    static let sampleAttendee2 = Attendee(
+        email: "test@example.com",
+        name: "test@example.com",
+        isOrganizer: false,
+        state: .yes
+    )
+    static let sampleAttendee3 = Attendee(
+        email: "ellen.ripley@domaine.ch",
+        name: "Ellen Ripley",
+        isOrganizer: false,
+        state: .maybe
+    )
+    static let sampleAttendee4 = Attendee(
+        email: "steph.guy@domaine.ch",
+        name: "Steph Guy",
+        isOrganizer: false,
+        state: .no
     )
 }

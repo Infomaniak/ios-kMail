@@ -18,6 +18,7 @@
 
 import Foundation
 import MailResources
+import SwiftRegex
 import SwiftSoup
 import SwiftUI
 
@@ -38,6 +39,15 @@ public struct URLConstants {
         )
     public static let chatbot = URLConstants(urlString: "https://www.infomaniak.com/chatbot")
     public static let ikMe = URLConstants(urlString: "https://www.ik.me")
+
+    public static func calendarEvent(_ event: CalendarEvent) -> URLConstants {
+        let startDate = Calendar.current.firstDayOfTheWeek(of: event.start) ?? .now
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let date = dateFormatter.string(from: startDate)
+
+        return URLConstants(urlString: "https://calendar.infomaniak.com/?event=\(event.id)&view=week&from=\(date)")
+    }
 
     public static let schemeUrl = "http"
 
@@ -172,4 +182,16 @@ public enum Constants {
     public static let inlineAttachmentBatchSize = 10
 
     public static let appGroupIdentifier = "group.com.infomaniak"
+
+    /// Decodes the date according to the string format, yyyy-MM-dd or ISO 8601
+    public static func decodeDateCorrectly(_ date: String) -> Date? {
+        if let regex = Regex(pattern: "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"), !regex.matches(in: date).isEmpty {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            return dateFormatter.date(from: date)
+        } else {
+            let dateFormatter = ISO8601DateFormatter()
+            return dateFormatter.date(from: date)
+        }
+    }
 }

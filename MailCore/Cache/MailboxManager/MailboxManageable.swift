@@ -20,15 +20,16 @@ import Foundation
 import RealmSwift
 
 /// An abstract interface on the `MailboxManager`
-public typealias MailboxManageable = MailBoxManagerContactable
-    & MailBoxManagerDraftable
-    & MailBoxManagerFolderable
-    & MailBoxManagerMessageable
-    & MailBoxManagerSearchable
+public typealias MailboxManageable = MailboxManagerCalendareable
+    & MailboxManagerContactable
+    & MailboxManagerDraftable
+    & MailboxManagerFolderable
+    & MailboxManagerMessageable
+    & MailboxManagerSearchable
     & RealmAccessible
 
 /// An abstract interface on the `MailboxManager` related to messages
-public protocol MailBoxManagerMessageable {
+public protocol MailboxManagerMessageable {
     func messages(folder: Folder, isRetrying: Bool) async throws
     func fetchOnePage(folder: Folder, direction: NewMessagesDirection?) async throws -> Bool
     func message(message: Message) async throws
@@ -41,7 +42,7 @@ public protocol MailBoxManagerMessageable {
 }
 
 /// An abstract interface on the `MailboxManager` related to drafts
-public protocol MailBoxManagerDraftable {
+public protocol MailboxManagerDraftable {
     func draftWithPendingAction() -> Results<Draft>
     func draft(messageUid: String, using realm: Realm?) -> Draft?
     func draft(localUuid: String, using realm: Realm?) -> Draft?
@@ -55,7 +56,7 @@ public protocol MailBoxManagerDraftable {
 }
 
 /// An abstract interface on the `MailboxManager` related to Folders
-public protocol MailBoxManagerFolderable {
+public protocol MailboxManagerFolderable {
     func refreshAllFolders() async throws
     func getFolder(with role: FolderRole) -> Folder?
     func getFrozenFolders(using realm: Realm?) -> [Folder]
@@ -67,7 +68,7 @@ public protocol MailBoxManagerFolderable {
 }
 
 /// An abstract interface on the `MailboxManager` related to search
-public protocol MailBoxManagerSearchable {
+public protocol MailboxManagerSearchable {
     func initSearchFolder() -> Folder
     func searchThreads(searchFolder: Folder?, filterFolderId: String, filter: Filter,
                        searchFilter: [URLQueryItem]) async throws -> ThreadResult
@@ -79,8 +80,14 @@ public protocol MailBoxManagerSearchable {
 }
 
 /// An abstract interface on the `MailboxManager` related to contacts
-public protocol MailBoxManagerContactable {
+public protocol MailboxManagerContactable {
     var contactManager: ContactManageable { get }
+}
+
+public protocol MailboxManagerCalendareable {
+    func calendarEvent(from messageUid: String) async throws
+    func replyToCalendarEvent(messageUid: String, reply: AttendeeState) async throws
+    func importICSEventToCalendar(messageUid: String) async throws -> CalendarEvent
 }
 
 // TODO: write a dedicated protocol for each MailboxManager+<>

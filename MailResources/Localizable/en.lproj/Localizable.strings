@@ -5,7 +5,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Fri, 12 Jan 2024 11:47:14 +0100
+ * Exported at: Tue, 30 Jan 2024 15:55:08 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -317,9 +317,6 @@
 /* loco:62cbe10de2840a0cdc2be0d2 */
 "buttonAddEmailAddress" = "Add an email address";
 
-/* loco:65957e21e04c075b780d73d2 */
-"buttonAddToMyCalendar" = "Add to my calendar";
-
 /* loco:6437c062dd576a7631052413 */
 "buttonAttachMailbox" = "Add this email address";
 
@@ -433,6 +430,9 @@
 
 /* loco:6581b2b5a7520b536b03f942 */
 "buttonOpenKdrive" = "Open in kDrive";
+
+/* loco:65957e21e04c075b780d73d2 */
+"buttonOpenMyCalendar" = "Open in my calendar";
 
 /* loco:62cd642815742c678d4c30e4 */
 "buttonRefuse" = "Refuse";
@@ -686,6 +686,9 @@
 /* loco:64940ce4eee54db1a50e44b4 */
 "errorAttachmentNotFound" = "Attachment cannot be found";
 
+/* loco:65b3890c3784205fa5060812 */
+"errorCalendarChoiceCouldNotBeSent" = "An error occurred while sending your choice";
+
 /* loco:63d14902e3c4eb4832777c42 */
 "errorCancelAttachmentsUploadInProgress" = "Some attachments are still being imported. If you close the view attachments will be lost.";
 
@@ -694,6 +697,9 @@
 
 /* loco:6449292ce5f4e56abb063f65 */
 "errorEditScheduledMessage" = "Scheduled or sent messages cannot be edited";
+
+/* loco:65b90c1464496af26b01ef32 */
+"errorEventCouldNotBeOpenedInMyCalendar" = "An error occurred while opening the event in Infomaniak Calendar";
 
 /* loco:6493fd86b3b044cbef0df789 */
 "errorFolderDoesNotExist" = "The folder does not exist";
@@ -1313,6 +1319,9 @@
 /* loco:63f3961e7c16fb607809d632 */
 "snackbarBlockUserConfirmation" = "Sender is now blocked";
 
+/* loco:65b3b9ca21fbc50b4105f973 */
+"snackbarCalendarChoiceSent" = "Choice sent successfully";
+
 /* loco:62bc67601f560d734f2fbe58 */
 "snackbarContactSaved" = "New contact successfully registered";
 
@@ -1540,6 +1549,9 @@
 
 /* loco:65957e6e7dfe315a5d02add2 */
 "warningEventHasPassed" = "This event has already passed";
+
+/* loco:65a7dc1de5c74dfd370d6732 */
+"warningEventIsCancelled" = "This event has been cancelled";
 
 /* loco:6481d72ebb3c88db6e002332 */
 "warningNotificationsDisabledButton" = "Enable them in the settings";

@@ -62,57 +62,63 @@ struct MessageView: View {
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                MessageHeaderView(
-                    message: message,
-                    isHeaderExpanded: $isHeaderExpanded,
-                    isMessageExpanded: $isMessageExpanded
-                )
-                .padding(.horizontal, value: .regular)
+                MessageHeaderView(message: message, isHeaderExpanded: $isHeaderExpanded, isMessageExpanded: $isMessageExpanded)
 
                 if isMessageExpanded {
-                    if isRemoteContentBlocked && displayContentBlockedActionView {
-                        MessageHeaderActionView(
-                            icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
-                            message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
-                        ) {
-                            Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) {
-                                withAnimation {
-                                    $message.localSafeDisplay.wrappedValue = true
+                    VStack(spacing: UIPadding.regular) {
+                        if isRemoteContentBlocked && displayContentBlockedActionView {
+                            MessageHeaderActionView(
+                                icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
+                                message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
+                            ) {
+                                Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) {
+                                    withAnimation {
+                                        $message.localSafeDisplay.wrappedValue = true
+                                    }
                                 }
+                                .buttonStyle(.ikLink(isInlined: true))
+                                .controlSize(.small)
                             }
-                            .buttonStyle(.ikLink(isInlined: true))
-                            .controlSize(.small)
                         }
-                    }
 
-                    if !message.attachments.filter({ $0.disposition == .attachment || $0.contentId == nil }).isEmpty {
-                        AttachmentsView(message: message)
-                            .padding(.top, value: .medium)
-                    }
+                        if let event = message.calendarEventResponse?.frozenEvent, event.type == .event {
+                            CalendarView(event: event)
+                                .padding(.horizontal, value: .regular)
+                        }
 
-                    if isShowingErrorLoading {
-                        Text(MailResourcesStrings.Localizable.errorLoadingMessage)
-                            .textStyle(.bodySmallItalicSecondary)
-                            .padding(.top, value: .regular)
-                            .padding(.horizontal, value: .regular)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    } else {
-                        MessageBodyView(
-                            isMessagePreprocessed: isMessagePreprocessed,
-                            presentableBody: $presentableBody,
-                            blockRemoteContent: isRemoteContentBlocked,
-                            displayContentBlockedActionView: $displayContentBlockedActionView,
-                            messageUid: message.uid
-                        )
-                        .padding(.top, value: .regular)
+                        if !message.attachments.filter({ $0.disposition == .attachment || $0.contentId == nil }).isEmpty {
+                            AttachmentsView(message: message)
+                        }
+
+                        if isShowingErrorLoading {
+                            Text(MailResourcesStrings.Localizable.errorLoadingMessage)
+                                .textStyle(.bodySmallItalicSecondary)
+                                .padding(.horizontal, value: .regular)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        } else {
+                            MessageBodyView(
+                                isMessagePreprocessed: isMessagePreprocessed,
+                                presentableBody: $presentableBody,
+                                blockRemoteContent: isRemoteContentBlocked,
+                                displayContentBlockedActionView: $displayContentBlockedActionView,
+                                messageUid: message.uid
+                            )
+                        }
                     }
                 }
             }
-            .padding(.vertical, value: .regular)
+            .onAppear {
+                prepareBodyIfNeeded()
+            }
             .task {
                 if message.shouldComplete {
                     await fetchMessage()
                 }
+                try? await fetchEventCalendar()
+            }
+            .onDisappear {
+                inlineAttachmentWorker?.stop()
+                inlineAttachmentWorker = nil
             }
             .onChange(of: message.fullyDownloaded) { _ in
                 prepareBodyIfNeeded()
@@ -126,13 +132,6 @@ struct MessageView: View {
                         isMessageExpanded = true
                     }
                 }
-            }
-            .onAppear {
-                prepareBodyIfNeeded()
-            }
-            .onDisappear {
-                inlineAttachmentWorker?.stop()
-                inlineAttachmentWorker = nil
             }
         }
     }
@@ -148,6 +147,10 @@ struct MessageView: View {
                 isShowingErrorLoading = true
             }
         }
+    }
+
+    private func fetchEventCalendar() async throws {
+        try await mailboxManager.calendarEvent(from: message.uid)
     }
 }
 

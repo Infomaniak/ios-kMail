@@ -50,8 +50,8 @@ struct MessageHeaderSummaryView: View {
                     } label: {
                         AvatarView(
                             mailboxManager: mailboxManager,
-                            contactConfiguration: .recipient(recipient: recipient,
-                                                             contextMailboxManager: mailboxManager),
+                            contactConfiguration: .correspondent(correspondent: recipient,
+                                                                 contextMailboxManager: mailboxManager),
                             size: 40
                         )
                     }
@@ -68,8 +68,8 @@ struct MessageHeaderSummaryView: View {
                         HStack(alignment: .firstTextBaseline, spacing: UIPadding.small) {
                             VStack {
                                 ForEach(message.from) { recipient in
-                                    let contactConfiguration = ContactConfiguration.recipient(
-                                        recipient: recipient,
+                                    let contactConfiguration = ContactConfiguration.correspondent(
+                                        correspondent: recipient,
                                         contextMailboxManager: mailboxManager
                                     )
                                     let contact = CommonContactCache
@@ -88,33 +88,34 @@ struct MessageHeaderSummaryView: View {
                         }
                     }
 
-                    if isMessageExpanded {
-                        HStack {
-                            Text(
-                                message.recipients.map {
-                                    let contactConfiguration = ContactConfiguration.recipient(
-                                        recipient: $0,
-                                        contextMailboxManager: mailboxManager
-                                    )
-                                    let contact = CommonContactCache
-                                        .getOrCreateContact(contactConfiguration: contactConfiguration)
-                                    return contact.formatted()
-                                },
-                                format: .list(type: .and)
-                            )
-                            .lineLimit(1)
-                            .textStyle(.bodySmallSecondary)
-                            ChevronButton(isExpanded: $isHeaderExpanded)
-                                .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandRecipients)
-                                .onChange(of: isHeaderExpanded) { isExpanded in
-                                    matomo.track(eventWithCategory: .message, name: "openDetails", value: isExpanded)
-                                }
+                    Group {
+                        if isMessageExpanded {
+                            HStack {
+                                Text(
+                                    message.recipients.map {
+                                        let contactConfiguration = ContactConfiguration.correspondent(
+                                            correspondent: $0,
+                                            contextMailboxManager: mailboxManager
+                                        )
+                                        let contact = CommonContactCache
+                                            .getOrCreateContact(contactConfiguration: contactConfiguration)
+                                        return contact.formatted()
+                                    },
+                                    format: .list(type: .and)
+                                )
+
+                                ChevronButton(isExpanded: $isHeaderExpanded)
+                                    .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandRecipients)
+                                    .onChange(of: isHeaderExpanded) { isExpanded in
+                                        matomo.track(eventWithCategory: .message, name: "openDetails", value: isExpanded)
+                                    }
+                            }
+                        } else {
+                            Text(message.formattedSubject)
                         }
-                    } else {
-                        Text(message.formattedSubject)
-                            .textStyle(.bodySecondary)
-                            .lineLimit(1)
                     }
+                    .textStyle(.bodySmallSecondary)
+                    .lineLimit(1)
                 }
 
                 if message.isDraft {

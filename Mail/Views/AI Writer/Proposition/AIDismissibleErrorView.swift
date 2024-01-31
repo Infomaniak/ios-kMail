@@ -32,7 +32,11 @@ struct AIDismissibleErrorView: View {
     var body: some View {
         Group {
             if isShowingError {
-                InformationBlockView(icon: MailResourcesAsset.warning.swiftUIImage, message: error?.localizedDescription ?? "") {
+                InformationBlockView(
+                    icon: MailResourcesAsset.warning.swiftUIImage,
+                    message: error?.localizedDescription ?? "",
+                    iconColor: MailResourcesAsset.orangeColor.swiftUIColor
+                ) {
                     matomo.track(eventWithCategory: .aiWriter, name: "dismissError")
 
                     withAnimation {

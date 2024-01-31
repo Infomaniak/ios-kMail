@@ -5,7 +5,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Fri, 12 Jan 2024 11:47:14 +0100
+ * Exported at: Tue, 30 Jan 2024 15:55:08 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -177,10 +177,10 @@
 "aiPromptExample2" = "un e-mail de confirmation de réservation d’hôtel";
 
 /* loco:651bc902eecf2c30a70e51e2 */
-"aiPromptExample3" = "un e-mail de remerciement pour une invitation à un événement";
+"aiPromptExample3" = "un e-mail de remerciement pour une invitation à un évènement";
 
 /* loco:651bc92b603aebc1b205b522 */
-"aiPromptExample4" = "un e-mail d’invitation à un événement d’entreprise";
+"aiPromptExample4" = "un e-mail d’invitation à un évènement d’entreprise";
 
 /* loco:651bc96abf48bc251603add2 */
 "aiPromptExample5" = "un e-mail de demande de rendez-vous avec un client important";
@@ -317,9 +317,6 @@
 /* loco:62cbe10de2840a0cdc2be0d2 */
 "buttonAddEmailAddress" = "Ajouter une adresse mail";
 
-/* loco:65957e21e04c075b780d73d2 */
-"buttonAddToMyCalendar" = "Ajouter à mon calendrier";
-
 /* loco:6437c062dd576a7631052413 */
 "buttonAttachMailbox" = "Ajouter l’adresse mail";
 
@@ -433,6 +430,9 @@
 
 /* loco:6581b2b5a7520b536b03f942 */
 "buttonOpenKdrive" = "Ouvrir dans kDrive";
+
+/* loco:65957e21e04c075b780d73d2 */
+"buttonOpenMyCalendar" = "Ouvrir dans mon calendrier";
 
 /* loco:62cd642815742c678d4c30e4 */
 "buttonRefuse" = "Refuser";
@@ -686,6 +686,9 @@
 /* loco:64940ce4eee54db1a50e44b4 */
 "errorAttachmentNotFound" = "Pièce jointe introuvable";
 
+/* loco:65b3890c3784205fa5060812 */
+"errorCalendarChoiceCouldNotBeSent" = "Une erreur s’est produite lors de l’envoi de votre choix";
+
 /* loco:63d14902e3c4eb4832777c42 */
 "errorCancelAttachmentsUploadInProgress" = "Certaines pièces jointes sont toujours en cours d’importation. Si vous fermez la vue, les pièces jointes seront perdues.";
 
@@ -694,6 +697,9 @@
 
 /* loco:6449292ce5f4e56abb063f65 */
 "errorEditScheduledMessage" = "Impossible de modifier un message planifié ou envoyé";
+
+/* loco:65b90c1464496af26b01ef32 */
+"errorEventCouldNotBeOpenedInMyCalendar" = "Une erreur s’est produite lors de l’ouverture de la manifestation dans Infomaniak Calendar";
 
 /* loco:6493fd86b3b044cbef0df789 */
 "errorFolderDoesNotExist" = "Le dossier n’existe pas";
@@ -1313,6 +1319,9 @@
 /* loco:63f3961e7c16fb607809d632 */
 "snackbarBlockUserConfirmation" = "L’expéditeur est maintenant bloqué";
 
+/* loco:65b3b9ca21fbc50b4105f973 */
+"snackbarCalendarChoiceSent" = "Choix envoyé avec succès";
+
 /* loco:62bc67601f560d734f2fbe58 */
 "snackbarContactSaved" = "Nouveau contact enregistré avec succès";
 
@@ -1539,7 +1548,10 @@
 "urlUserReportiOS" = "https://feedback.userreport.com/d6b0e711-0c77-459c-9d06-79f92264f221/";
 
 /* loco:65957e6e7dfe315a5d02add2 */
-"warningEventHasPassed" = "Cet événement est déjà passé";
+"warningEventHasPassed" = "Cet évènement est déjà passé";
+
+/* loco:65a7dc1de5c74dfd370d6732 */
+"warningEventIsCancelled" = "Cet évènement a été annulé";
 
 /* loco:6481d72ebb3c88db6e002332 */
 "warningNotificationsDisabledButton" = "Activez-les dans les paramètres";
