@@ -5,7 +5,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Fri, 26 Jan 2024 15:15:06 +0100
+ * Exported at: Tue, 30 Jan 2024 15:55:08 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -697,6 +697,9 @@
 
 /* loco:6449292ce5f4e56abb063f65 */
 "errorEditScheduledMessage" = "Scheduled or sent messages cannot be edited";
+
+/* loco:65b90c1464496af26b01ef32 */
+"errorEventCouldNotBeOpenedInMyCalendar" = "An error occurred while opening the event in Infomaniak Calendar";
 
 /* loco:6493fd86b3b044cbef0df789 */
 "errorFolderDoesNotExist" = "The folder does not exist";

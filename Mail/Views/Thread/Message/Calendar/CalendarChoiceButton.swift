@@ -62,7 +62,7 @@ struct CalendarChoiceButton: View {
         selectedChoice = choice
         Task {
             do {
-                try await mailboxManager.calendarReply(to: messageUid, reply: choice)
+                try await mailboxManager.replyToCalendarEvent(messageUid: messageUid, reply: choice)
                 snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarCalendarChoiceSent)
             } catch {
                 selectedChoice = oldChoice

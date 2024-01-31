@@ -19,7 +19,7 @@
 import Foundation
 
 public extension MailApiFetcher {
-    func calendarAttachment(attachment: Attachment) async throws -> CalendarEventResponse {
+    func calendarEvent(from attachment: Attachment) async throws -> CalendarEventResponse {
         guard let resource = attachment.resource else {
             throw MailError.resourceError
         }
@@ -30,26 +30,35 @@ public extension MailApiFetcher {
     }
 
     @discardableResult
-    func calendarReply(to attachment: Attachment, reply: AttendeeState) async throws -> CalendarNotStoredEventReplyResponse {
+    func replyToCalendarEvent(attachment: Attachment, reply: AttendeeState) async throws -> CalendarUpdatedEventResponse {
         guard let resource = attachment.resource else {
             throw MailError.resourceError
         }
 
         let replyRequest = CalendarReplyRequest(reply: reply)
         return try await perform(request: authenticatedRequest(
-            .calendarReply(resource: resource),
+            .replyToCalendarEvent(resource: resource),
             method: .post,
             parameters: replyRequest
         )).data
     }
 
     @discardableResult
-    func calendarReplyAndUpdateRemoteCalendar(to event: CalendarEvent, reply: AttendeeState) async throws -> Bool {
+    func replyToCalendarEventAndUpdateCalendar(event: CalendarEvent, reply: AttendeeState) async throws -> Bool {
         let replyRequest = CalendarReplyRequest(reply: reply)
         return try await perform(request: authenticatedRequest(
-            .calendarReplyAndUpdateEvent(id: event.id),
+            .replyToCalendarEventAndUpdateCalendar(id: event.id),
             method: .post,
             parameters: replyRequest
         )).data
+    }
+
+    @discardableResult
+    func importICSEventToCalendar(attachment: Attachment) async throws -> CalendarUpdatedEventResponse {
+        guard let resource = attachment.resource else {
+            throw MailError.resourceError
+        }
+
+        return try await perform(request: authenticatedRequest(.importICSEventToCalendar(resource: resource), method: .post)).data
     }
 }

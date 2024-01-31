@@ -151,9 +151,11 @@ public protocol MailApiSyncProfileFetchable {
 }
 
 public protocol MailApiCalendarFetchable {
-    func calendarAttachment(attachment: Attachment) async throws -> CalendarEventResponse
+    func calendarEvent(from attachment: Attachment) async throws -> CalendarEventResponse
 
-    func calendarReply(to attachment: Attachment, reply: AttendeeState) async throws -> CalendarNotStoredEventReplyResponse
+    func replyToCalendarEvent(attachment: Attachment, reply: AttendeeState) async throws -> CalendarUpdatedEventResponse
 
-    func calendarReplyAndUpdateRemoteCalendar(to event: CalendarEvent, reply: AttendeeState) async throws -> Bool
+    func replyToCalendarEventAndUpdateCalendar(event: CalendarEvent, reply: AttendeeState) async throws -> Bool
+
+    func importICSEventToCalendar(attachment: Attachment) async throws -> CalendarUpdatedEventResponse
 }

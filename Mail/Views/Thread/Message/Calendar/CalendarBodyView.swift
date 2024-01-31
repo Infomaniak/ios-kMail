@@ -23,6 +23,12 @@ import MailResources
 import SwiftUI
 
 struct CalendarBodyView: View {
+    @Environment(\.openURL) private var openURL
+
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @State private var isLoadingCalendarButton = false
+
     let event: CalendarEvent
 
     var body: some View {
@@ -35,9 +41,10 @@ struct CalendarBodyView: View {
 
             Button(action: addEventToCalendar) {
                 Text(MailResourcesStrings.Localizable.buttonOpenMyCalendar)
+                    .frame(maxWidth: .infinity)
             }
             .buttonStyle(.ikPlain)
-            .ikButtonFullWidth(true)
+            .ikButtonLoading(isLoadingCalendarButton)
             .padding(.horizontal, value: .regular)
         }
         .padding(.vertical, value: .regular)
@@ -47,7 +54,24 @@ struct CalendarBodyView: View {
         @InjectService var matomoUtils: MatomoUtils
         matomoUtils.track(eventWithCategory: .calendarEvent, name: "openInMyCalendar")
 
-        // TODO: Add event to calendar
+        Task { @MainActor in
+            var eventToOpen = event
+
+            if event.parent?.userStoredEvent == nil || event.parent?.userStoredEventDeleted == true {
+                isLoadingCalendarButton = true
+                guard let messageUid = event.parent?.message?.uid,
+                      let storedEvent = try? await mailboxManager.importICSEventToCalendar(messageUid: messageUid) else {
+                    isLoadingCalendarButton = false
+                    @InjectService var snackbarPresenter: SnackBarPresentable
+                    snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorEventCouldNotBeOpenedInMyCalendar)
+                    return
+                }
+                isLoadingCalendarButton = false
+                eventToOpen = storedEvent
+            }
+
+            openURL(URLConstants.calendarEvent(eventToOpen).url)
+        }
     }
 }
 
