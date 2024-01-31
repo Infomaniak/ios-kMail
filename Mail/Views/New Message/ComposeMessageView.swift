@@ -56,7 +56,6 @@ final class NewMessageAlert: SheetState<NewMessageAlert.State> {
     enum State {
         case link(handler: (String) -> Void)
         case emptySubject(handler: () -> Void)
-        case externalRecipient(state: DisplayExternalRecipientStatus.State)
     }
 }
 
@@ -77,7 +76,6 @@ struct ComposeMessageView: View {
     @State private var editorFocus = false
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
-    @State private var isShowingExternalTag = true
 
     @State private var isShowingAIPopover = false
 
@@ -187,8 +185,6 @@ struct ComposeMessageView: View {
                     AddLinkView(actionHandler: handler)
                 case .emptySubject(let handler):
                     EmptySubjectView(actionHandler: handler)
-                case .externalRecipient(let state):
-                    ExternalRecipientView(externalTagSate: state, isDraft: true)
                 case .none:
                     EmptyView()
                 }
@@ -282,36 +278,7 @@ struct ComposeMessageView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            if isShowingExternalTag {
-                let externalTag = draft.displayExternalTag(mailboxManager: mailboxManager)
-                switch externalTag {
-                case .many, .one:
-                    HStack(spacing: UIPadding.medium) {
-                        Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
-                            .font(MailTextStyle.bodySmall.font)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
-                        Button {
-                            matomo.track(eventWithCategory: .externals, name: "bannerInfo")
-                            alert.state = .externalRecipient(state: externalTag)
-                        } label: {
-                            IKIcon(MailResourcesAsset.info)
-                        }
-
-                        Button {
-                            matomo.track(eventWithCategory: .externals, name: "bannerManuallyClosed")
-                            isShowingExternalTag = false
-                        } label: {
-                            IKIcon(MailResourcesAsset.close)
-                        }
-                    }
-                    .padding(value: .regular)
-                    .foregroundStyle(MailResourcesAsset.onTagExternalColor)
-                    .background(MailResourcesAsset.yellowColor.swiftUIColor)
-                case .none:
-                    EmptyView()
-                }
-            }
+            ExternalTagBottomView(externalTag: draft.displayExternalTag(mailboxManager: mailboxManager))
         }
     }
 
