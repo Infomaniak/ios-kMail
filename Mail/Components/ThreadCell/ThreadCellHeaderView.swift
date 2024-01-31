@@ -29,26 +29,29 @@ struct ThreadCellHeaderView: View, Equatable {
 
     var body: some View {
         HStack(spacing: UIPadding.small) {
-            if showDraftPrefix {
-                Text("\(MailResourcesStrings.Localizable.draftPrefix)")
-                    .textStyle(.bodyMediumError)
+            HStack(spacing: UIPadding.small) {
+                if showDraftPrefix {
+                    Text("\(MailResourcesStrings.Localizable.draftPrefix)")
+                        .textStyle(.bodyMediumError)
+                        .lineLimit(1)
+                        .layoutPriority(1)
+                }
+
+                Text(recipientsTitle)
+                    .textStyle(.bodyMedium)
                     .lineLimit(1)
-                    .layoutPriority(1)
-            }
 
-            Text(recipientsTitle)
-                .textStyle(.bodyMedium)
-                .lineLimit(1)
-
-            if messageCount > 1 {
-                ThreadCountIndicatorView(messagesCount: messageCount, hasUnseenMessages: prominentMessageCount)
-                    .accessibilityHidden(true)
+                if messageCount > 1 {
+                    ThreadCountIndicatorView(messagesCount: messageCount, hasUnseenMessages: prominentMessageCount)
+                        .accessibilityHidden(true)
+                }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             Text(formattedDate)
                 .textStyle(.bodySmallSecondary)
                 .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .trailing)
+                .layoutPriority(1)
                 .accessibilityHidden(true)
         }
     }

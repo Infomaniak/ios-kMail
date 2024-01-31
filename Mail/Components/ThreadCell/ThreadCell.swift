@@ -147,29 +147,15 @@ struct ThreadCell: View {
                 .accessibilityLabel(additionalAccessibilityLabel)
                 .accessibilityHidden(additionalAccessibilityLabel.isEmpty)
 
-            Group {
-                if density == .large {
-                    ZStack {
-                        AvatarView(
-                            mailboxManager: mailboxManager,
-                            contactConfiguration: dataHolder.contactConfiguration(contextMailboxManager: mailboxManager),
-                            size: 40
-                        )
-                        .opacity(isSelected ? 0 : 1)
-                        .onTapGesture {
-                            avatarTapped?()
-                        }
-                        CheckboxView(isSelected: isSelected, density: density, accentColor: accentColor)
-                            .opacity(isSelected ? 1 : 0)
-                    }
-                    .accessibility(hidden: true)
-                    .animation(nil, value: isSelected)
-                } else if isMultipleSelectionEnabled {
-                    CheckboxView(isSelected: isSelected, density: density, accentColor: accentColor)
-                        .opacity(shouldDisplayCheckbox ? 1 : 0)
-                        .animation(.default.speed(1.5), value: shouldDisplayCheckbox)
-                }
-            }
+            ThreadCellAvatarCheckboxView(
+                accentColor: accentColor,
+                density: density,
+                isSelected: isSelected,
+                isMultipleSelectionEnabled: isMultipleSelectionEnabled,
+                shouldDisplayCheckbox: shouldDisplayCheckbox,
+                contactConfiguration: dataHolder.contactConfiguration(contextMailboxManager: mailboxManager),
+                avatarTapped: avatarTapped
+            )
             .padding(.trailing, value: .verySmall)
 
             VStack(alignment: .leading, spacing: UIPadding.verySmall) {
@@ -198,18 +184,20 @@ struct ThreadCell: View {
         .padding(.vertical, density.cellVerticalPadding)
         .clipped()
         .accessibilityElement(children: .combine)
-        .onChange(of: isMultipleSelectionEnabled) { isEnabled in
-            guard density != .large else { return }
+        .onChange(of: isMultipleSelectionEnabled, perform: animateCheckbox)
+    }
 
-            withAnimation {
-                if isEnabled {
-                    // We should wait a bit before showing the checkbox
-                    DispatchQueue.main.asyncAfter(deadline: .now() + UIConstants.checkboxAppearDelay) {
-                        shouldDisplayCheckbox = true
-                    }
-                } else {
-                    shouldDisplayCheckbox = false
+    private func animateCheckbox(_ isEnabled: Bool) {
+        guard density != .large else { return }
+
+        withAnimation {
+            if isEnabled {
+                // We should wait a bit before showing the checkbox
+                DispatchQueue.main.asyncAfter(deadline: .now() + UIConstants.checkboxAppearDelay) {
+                    shouldDisplayCheckbox = true
                 }
+            } else {
+                shouldDisplayCheckbox = false
             }
         }
     }
