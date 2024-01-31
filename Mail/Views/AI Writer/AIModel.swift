@@ -49,7 +49,6 @@ final class AIModel: ObservableObject {
     private let mailboxManager: MailboxManager
     private let draftContentManager: DraftContentManager
     private let draft: Draft
-    private var messageReply: MessageReply?
 
     private var contextId: String?
     private var recipientsList: String?
@@ -72,15 +71,13 @@ final class AIModel: ObservableObject {
         }
     }
 
-    var isReplying: Bool {
-        messageReply?.isReplying == true
-    }
+    var isReplying: Bool
 
-    init(mailboxManager: MailboxManager, draftContentManager: DraftContentManager, draft: Draft) {
+    init(mailboxManager: MailboxManager, draftContentManager: DraftContentManager, draft: Draft, isReplying: Bool) {
         self.mailboxManager = mailboxManager
         self.draftContentManager = draftContentManager
         self.draft = draft
-        messageReply = nil // editedDraft.messageReply
+        self.isReplying = isReplying
     }
 }
 
@@ -194,7 +191,7 @@ extension AIModel {
         // If the context is too long, we must remove it so that the user can use
         // the AI assistant without context for future trials
         if self.error == .contextMaxSyntaxTokensReached {
-            messageReply = nil
+            isReplying = false
         }
     }
 
