@@ -49,20 +49,10 @@ public extension ContactManager {
             .objects(MergedContact.self)
             .filter(Self.searchContactInsensitivePredicate, string, string)
 
-        // Use a default value if none provided
-        let fetchLimit = fetchLimit ?? Self.contactFetchLimit
+        let fetchLimit = min(lazyResults.count, fetchLimit ?? Self.contactFetchLimit)
 
-        // Iterate a given number of times to emulate a `LIMIT` statement.
-        var iterator = lazyResults.makeIterator()
-        var results = [MergedContact]()
-        for _ in 0 ..< fetchLimit {
-            guard let next = iterator.next() else {
-                break
-            }
-            results.append(next)
-        }
-
-        return results.map { $0.freezeIfNeeded() }
+        let limitedResults = lazyResults[0 ..< fetchLimit]
+        return limitedResults.map { $0.freezeIfNeeded() }
     }
 
     func getContact(for recipient: Recipient, realm: Realm?) -> MergedContact? {
