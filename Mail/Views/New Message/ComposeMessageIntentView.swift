@@ -18,6 +18,7 @@
 
 import InfomaniakDI
 import MailCore
+import NavigationBackport
 import RealmSwift
 import SwiftUI
 
@@ -31,7 +32,7 @@ struct ComposeMessageIntentView: View {
     @State private var messageReply: MessageReply?
 
     var body: some View {
-        NavigationView {
+        NBNavigationStack {
             if let draft,
                let mailboxManager {
                 ComposeMessageView(draft: draft, mailboxManager: mailboxManager, messageReply: messageReply)
@@ -40,7 +41,6 @@ struct ComposeMessageIntentView: View {
                     .progressViewStyle(.circular)
             }
         }
-        .navigationViewStyle(.stack)
         .interactiveDismissDisabled()
         .task(id: composeMessageIntent) {
             await initFromIntent()
