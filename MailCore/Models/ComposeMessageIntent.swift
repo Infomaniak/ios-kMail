@@ -19,10 +19,6 @@
 import Foundation
 
 public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
-    public var id: Int {
-        return hashValue
-    }
-
     public enum IntentType: Codable, Hashable {
         case new
         case existing(draftLocalUUID: String)
@@ -31,9 +27,17 @@ public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
         case reply(messageUid: String, replyMode: ReplyMode)
     }
 
+    public let id: UUID
     public let userId: Int
     public let mailboxId: Int
     public let type: IntentType
+
+    init(userId: Int, mailboxId: Int, type: IntentType) {
+        id = UUID()
+        self.userId = userId
+        self.mailboxId = mailboxId
+        self.type = type
+    }
 
     public static func new(originMailboxManager: MailboxManager) -> ComposeMessageIntent {
         return ComposeMessageIntent(
