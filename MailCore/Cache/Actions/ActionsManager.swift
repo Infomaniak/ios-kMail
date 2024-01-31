@@ -235,9 +235,10 @@ public class ActionsManager: ObservableObject {
         }
 
         Task { @MainActor in
-            mainViewState?.editedDraft = EditedDraft.replying(
-                reply: MessageReply(message: replyingMessage, replyMode: mode),
-                currentMailboxEmail: mailboxManager.mailbox.email
+            mainViewState?.composeMessageIntent = .replyingTo(
+                message: replyingMessage,
+                replyMode: mode,
+                originMailboxManager: mailboxManager
             )
         }
     }

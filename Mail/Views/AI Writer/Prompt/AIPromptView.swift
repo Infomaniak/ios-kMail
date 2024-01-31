@@ -127,6 +127,7 @@ struct AIPromptView: View {
     AIPromptView(aiModel: AIModel(
         mailboxManager: PreviewHelper.sampleMailboxManager,
         draftContentManager: PreviewHelper.sampleDraftContentManager,
-        editedDraft: EditedDraft.new()
+        draft: Draft(),
+        isReplying: false
     ))
 }

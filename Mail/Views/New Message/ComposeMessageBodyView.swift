@@ -39,7 +39,7 @@ struct ComposeMessageBodyView: View {
     let messageReply: MessageReply?
 
     private var isRemoteContentBlocked: Bool {
-        return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.message.localSafeDisplay == false
+        return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.frozenMessage.localSafeDisplay == false
     }
 
     var body: some View {

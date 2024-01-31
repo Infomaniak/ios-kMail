@@ -61,7 +61,7 @@ struct ContactActionView: View {
 
     private func writeEmail() {
         dismiss()
-        mainViewState.editedDraft = EditedDraft.writing(to: recipient)
+        mainViewState.composeMessageIntent = .writeTo(recipient: recipient, originMailboxManager: mailboxManager)
     }
 
     private func addToContacts() {

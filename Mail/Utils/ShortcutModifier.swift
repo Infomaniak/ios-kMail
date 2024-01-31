@@ -98,7 +98,7 @@ struct ShortcutModifier: ViewModifier {
     private func shortcutNewMessage() {
         matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "newMessage")
 
-        mainViewState.editedDraft = EditedDraft.new()
+        mainViewState.composeMessageIntent = .new(originMailboxManager: viewModel.mailboxManager)
     }
 
     private func shortcutRefresh() {

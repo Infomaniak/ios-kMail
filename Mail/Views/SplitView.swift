@@ -149,8 +149,8 @@ struct SplitView: View {
         .sheet(item: $mainViewState.settingsViewConfig) { config in
             SettingsNavigationView(baseNavigationPath: config.baseNavigationPath)
         }
-        .sheet(item: $mainViewState.editedDraft) { editedDraft in
-            ComposeMessageView(editedDraft: editedDraft, mailboxManager: mailboxManager)
+        .sheet(item: $mainViewState.composeMessageIntent) { intent in
+            ComposeMessageIntentView(composeMessageIntent: intent)
         }
         .onChange(of: scenePhase) { newScenePhase in
             guard newScenePhase == .active else { return }
@@ -262,7 +262,7 @@ struct SplitView: View {
         guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return }
 
         if Constants.isMailTo(url) {
-            mainViewState.editedDraft = EditedDraft.mailTo(urlComponents: urlComponents)
+            mainViewState.composeMessageIntent = .mailTo(mailToURLComponents: urlComponents, originMailboxManager: mailboxManager)
         }
     }
 
@@ -294,9 +294,10 @@ struct SplitView: View {
                 }
             } else if notification.name == .onUserTappedReplyToNotification {
                 if let tappedNotificationMessage {
-                    mainViewState.editedDraft = EditedDraft.replying(
-                        reply: MessageReply(message: tappedNotificationMessage, replyMode: .reply),
-                        currentMailboxEmail: mailboxManager.mailbox.email
+                    mainViewState.composeMessageIntent = .replyingTo(
+                        message: tappedNotificationMessage,
+                        replyMode: .reply,
+                        originMailboxManager: mailboxManager
                     )
                 } else {
                     snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")

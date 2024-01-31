@@ -53,14 +53,7 @@ struct MessageHeaderView: View {
                 DraftUtils.editDraft(
                     from: message,
                     mailboxManager: mailboxManager,
-                    editedDraft: $mainViewState.editedDraft
-                )
-                matomo.track(eventWithCategory: .newMessage, name: "openFromDraft")
-                matomo.track(
-                    eventWithCategory: .newMessage,
-                    action: .data,
-                    name: "openLocalDraft",
-                    value: !(mainViewState.editedDraft?.detachedDraft.isLoadedRemotely ?? false)
+                    composeMessageIntent: $mainViewState.composeMessageIntent
                 )
             } else if message.originalThread?.messages.isEmpty == false {
                 withAnimation {

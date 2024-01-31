@@ -24,9 +24,14 @@ public typealias MailboxManageable = MailboxManagerCalendareable
     & MailboxManagerContactable
     & MailboxManagerDraftable
     & MailboxManagerFolderable
+    & MailboxManagerMailboxable
     & MailboxManagerMessageable
     & MailboxManagerSearchable
     & RealmAccessible
+
+public protocol MailboxManagerMailboxable {
+    var mailbox: Mailbox { get }
+}
 
 /// An abstract interface on the `MailboxManager` related to messages
 public protocol MailboxManagerMessageable {
