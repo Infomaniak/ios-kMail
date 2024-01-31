@@ -25,11 +25,11 @@ import SwiftUI
 struct ComposeMessageIntentView: View {
     @LazyInjectService private var accountManager: AccountManager
 
-    let composeMessageIntent: ComposeMessageIntent
-
     @State private var draft: Draft?
     @State private var mailboxManager: MailboxManager?
     @State private var messageReply: MessageReply?
+
+    let composeMessageIntent: ComposeMessageIntent
 
     var body: some View {
         NBNavigationStack {
