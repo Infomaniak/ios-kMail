@@ -41,9 +41,9 @@ struct CalendarBodyView: View {
 
             Button(action: addEventToCalendar) {
                 Text(MailResourcesStrings.Localizable.buttonOpenMyCalendar)
+                    .frame(maxWidth: .infinity)
             }
             .buttonStyle(.ikPlain)
-            .ikButtonFullWidth(true)
             .ikButtonLoading(isLoadingCalendarButton)
             .padding(.horizontal, value: .regular)
         }
@@ -57,7 +57,7 @@ struct CalendarBodyView: View {
         Task { @MainActor in
             var eventToOpen = event
 
-            if event.parent?.userStoredEvent == nil {
+            if event.parent?.userStoredEvent == nil || event.parent?.userStoredEventDeleted == true {
                 isLoadingCalendarButton = true
                 guard let messageUid = event.parent?.message?.uid,
                       let storedEvent = try? await mailboxManager.importICSEventToCalendar(messageUid: messageUid) else {
