@@ -63,11 +63,11 @@ extension DraftContentManager {
         if let messageReply {
             // New draft created either with reply or forward
             async let completeDraftReplyingBody = try await loadReplyingMessageAndFormat(
-                messageReply.message,
+                messageReply.frozenMessage,
                 replyMode: messageReply.replyMode
             )
             async let replyingAttachments = try await loadReplyingAttachments(
-                message: messageReply.message,
+                message: messageReply.frozenMessage,
                 replyMode: messageReply.replyMode
             )
 
@@ -371,7 +371,7 @@ extension DraftContentManager {
     }
 
     private func guessMostFittingSignature(userSignatures: [Signature], defaultSignature: Signature) -> Signature {
-        guard let previousMessage = messageReply?.message else { return defaultSignature }
+        guard let previousMessage = messageReply?.frozenMessage else { return defaultSignature }
 
         let signaturesGroupedByEmail = Dictionary(grouping: userSignatures, by: \.senderEmail)
         let recipientsFieldsToCheck = [\Message.to, \Message.from, \Message.cc]
@@ -445,7 +445,7 @@ extension DraftContentManager {
 extension DraftContentManager {
     public func getReplyingBody() async throws -> Body? {
         guard let messageReply else { return nil }
-        return try await loadReplyingMessage(messageReply.message, replyMode: messageReply.replyMode).body?.freezeIfNeeded()
+        return try await loadReplyingMessage(messageReply.frozenMessage, replyMode: messageReply.replyMode).body?.freezeIfNeeded()
     }
 
     private func getLiveDraft() throws -> Draft {

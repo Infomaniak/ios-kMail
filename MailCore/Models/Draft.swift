@@ -226,7 +226,7 @@ public final class Draft: Object, Codable, Identifiable {
     }
 
     public static func replying(reply: MessageReply, currentMailboxEmail: String) -> Draft {
-        let message = reply.message
+        let message = reply.frozenMessage
         let mode = reply.replyMode
         var subject = "\(message.formattedSubject)"
         switch mode {
@@ -246,7 +246,7 @@ public final class Draft: Object, Codable, Identifiable {
             recipientHolder = message.recipientsForReplyTo(replyAll: mode == .replyAll, currentMailboxEmail: currentMailboxEmail)
         }
 
-        return Draft(localUUID: reply.localDraftUUID,
+        return Draft(localUUID: UUID().uuidString,
                      inReplyToUid: mode.isReply ? message.uid : nil,
                      forwardedUid: mode == .forward ? message.uid : nil,
                      references: "\(message.references ?? "") \(message.messageId ?? "")",
