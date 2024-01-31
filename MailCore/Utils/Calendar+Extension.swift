@@ -19,6 +19,7 @@
 import Foundation
 
 public extension Calendar {
+    /// Get the date of the first day of the week (according to Locale) at midnight
     func firstDayOfTheWeek(of date: Date) -> Date? {
         let components = dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)
         return self.date(from: components)
