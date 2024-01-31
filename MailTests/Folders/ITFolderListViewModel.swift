@@ -43,6 +43,8 @@ struct MCKContactManageable_FolderListViewModel: ContactManageable {
 
 /// A MailboxManageable used to test the FolderListViewModel
 struct MCKMailboxManageable_FolderListViewModel: MailboxManageable {
+    let mailbox = Mailbox()
+
     var contactManager: MailCore.ContactManageable {
         MCKContactManageable_FolderListViewModel(realmConfiguration: realmConfiguration)
     }

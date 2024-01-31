@@ -45,6 +45,7 @@ struct MCKContactManageable_SearchViewModel: ContactManageable {
 
 /// A MailboxManageable used to test the SearchViewModel
 final class MCKMailboxManageable_SearchViewModel: MailboxManageable {
+    let mailbox = Mailbox()
     let targetFolder: Folder
     let realm: Realm
     let folderGenerator: FolderStructureGenerator
