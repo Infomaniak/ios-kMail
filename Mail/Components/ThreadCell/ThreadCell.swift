@@ -147,7 +147,7 @@ struct ThreadCell: View {
                 .accessibilityLabel(additionalAccessibilityLabel)
                 .accessibilityHidden(additionalAccessibilityLabel.isEmpty)
 
-            ThreadCellCheckboxView(
+            ThreadCellAvatarCheckboxView(
                 accentColor: accentColor,
                 density: density,
                 isSelected: isSelected,

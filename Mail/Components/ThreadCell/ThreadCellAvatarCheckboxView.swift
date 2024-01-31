@@ -19,7 +19,7 @@
 import MailCore
 import SwiftUI
 
-struct ThreadCellCheckboxView: View {
+struct ThreadCellAvatarCheckboxView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let accentColor: AccentColor
@@ -54,7 +54,7 @@ struct ThreadCellCheckboxView: View {
 }
 
 #Preview {
-    ThreadCellCheckboxView(
+    ThreadCellAvatarCheckboxView(
         accentColor: .pink,
         density: .large,
         isSelected: false,
