@@ -181,13 +181,7 @@ struct SettingsView: View {
                         title: MailResourcesStrings.Localizable.settingsAutoAdvanceTitle,
                         subtitle: autoAdvance.description
                     ) {
-                        SettingsOptionView(
-                            title: MailResourcesStrings.Localizable.settingsAutoAdvanceTitle,
-                            subtitle: MailResourcesStrings.Localizable.settingsAutoAdvanceDescription,
-                            keyPath: \.autoAdvance,
-                            matomoCategory: .settingsAutoAdvance,
-                            matomoName: \.rawValue
-                        )
+                        SettingsAutoAdvanceView(section: .compact)
                     }
                 }
             }
