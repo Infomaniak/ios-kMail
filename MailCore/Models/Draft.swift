@@ -45,7 +45,7 @@ public enum SaveDraftOption: String, Codable, PersistableEnum {
     }
 }
 
-public enum ReplyMode: Equatable {
+public enum ReplyMode: Codable, Hashable, Equatable {
     case reply, replyAll
     case forward
 

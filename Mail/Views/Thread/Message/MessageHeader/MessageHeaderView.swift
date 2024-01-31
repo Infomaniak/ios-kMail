@@ -55,13 +55,6 @@ struct MessageHeaderView: View {
                     mailboxManager: mailboxManager,
                     composeMessageIntent: $mainViewState.composeMessageIntent
                 )
-                matomo.track(eventWithCategory: .newMessage, name: "openFromDraft")
-                matomo.track(
-                    eventWithCategory: .newMessage,
-                    action: .data,
-                    name: "openLocalDraft",
-                    value: !(mainViewState.editedDraft?.detachedDraft.isLoadedRemotely ?? false)
-                )
             } else if message.originalThread?.messages.isEmpty == false {
                 withAnimation {
                     isHeaderExpanded = false

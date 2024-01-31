@@ -28,9 +28,7 @@ public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
         case existing(draftLocalUUID: String)
         case mailTo(mailToURLComponents: URLComponents)
         case writeTo(recipient: Recipient)
-        case reply
-        case replyAll
-        case forward
+        case reply(messageUid: String, replyMode: ReplyMode)
     }
 
     public let userId: Int
@@ -66,6 +64,16 @@ public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
             userId: originMailboxManager.mailbox.userId,
             mailboxId: originMailboxManager.mailbox.mailboxId,
             type: .writeTo(recipient: recipient)
+        )
+    }
+
+    public static func replyingTo(message: Message,
+                                  replyMode: ReplyMode,
+                                  originMailboxManager: MailboxManager) -> ComposeMessageIntent {
+        return ComposeMessageIntent(
+            userId: originMailboxManager.mailbox.userId,
+            mailboxId: originMailboxManager.mailbox.mailboxId,
+            type: .reply(messageUid: message.uid, replyMode: replyMode)
         )
     }
 }

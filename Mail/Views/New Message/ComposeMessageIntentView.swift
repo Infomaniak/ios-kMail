@@ -28,12 +28,13 @@ struct ComposeMessageIntentView: View {
 
     @State private var draft: Draft?
     @State private var mailboxManager: MailboxManager?
+    @State private var messageReply: MessageReply?
 
     var body: some View {
         NavigationView {
             if let draft,
                let mailboxManager {
-                ComposeMessageView(draft: draft, mailboxManager: mailboxManager)
+                ComposeMessageView(draft: draft, mailboxManager: mailboxManager, messageReply: messageReply)
             } else {
                 ProgressView()
                     .progressViewStyle(.circular)
@@ -65,12 +66,15 @@ struct ComposeMessageIntentView: View {
             newDraft = Draft.mailTo(urlComponents: mailToURLComponents)
         case .writeTo(let recipient):
             newDraft = Draft.writing(to: recipient)
-        case .reply:
-            break
-        case .replyAll:
-            break
-        case .forward:
-            break
+        case .reply(let messageUid, let replyMode):
+            if let frozenMessage = mailboxManager.getRealm().object(ofType: Message.self, forPrimaryKey: messageUid)?.freeze() {
+                let messageReply = MessageReply(frozenMessage: frozenMessage, replyMode: replyMode)
+                self.messageReply = messageReply
+                newDraft = Draft.replying(
+                    reply: messageReply,
+                    currentMailboxEmail: mailboxManager.mailbox.email
+                )
+            }
         }
 
         if let newDraft {

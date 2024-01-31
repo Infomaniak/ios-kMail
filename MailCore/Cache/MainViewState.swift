@@ -23,7 +23,6 @@ public protocol SelectedThreadOwnable {
 }
 
 public class MainViewState: ObservableObject, SelectedThreadOwnable {
-    @Published public var editedDraft: EditedDraft?
     @Published public var composeMessageIntent: ComposeMessageIntent?
 
     @Published public var settingsViewConfig: SettingsViewConfig?

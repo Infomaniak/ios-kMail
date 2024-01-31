@@ -149,9 +149,6 @@ struct SplitView: View {
         .sheet(item: $mainViewState.settingsViewConfig) { config in
             SettingsNavigationView(baseNavigationPath: config.baseNavigationPath)
         }
-        .sheet(item: $mainViewState.editedDraft) { editedDraft in
-            ComposeMessageView(editedDraft: editedDraft, mailboxManager: mailboxManager)
-        }
         .sheet(item: $mainViewState.composeMessageIntent) { intent in
             ComposeMessageIntentView(composeMessageIntent: intent)
         }
@@ -297,9 +294,10 @@ struct SplitView: View {
                 }
             } else if notification.name == .onUserTappedReplyToNotification {
                 if let tappedNotificationMessage {
-                    mainViewState.editedDraft = EditedDraft.replying(
-                        reply: MessageReply(message: tappedNotificationMessage, replyMode: .reply),
-                        currentMailboxEmail: mailboxManager.mailbox.email
+                    mainViewState.composeMessageIntent = .replyingTo(
+                        message: tappedNotificationMessage,
+                        replyMode: .reply,
+                        originMailboxManager: mailboxManager
                     )
                 } else {
                     snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")

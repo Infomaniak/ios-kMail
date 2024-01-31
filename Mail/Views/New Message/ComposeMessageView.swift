@@ -111,18 +111,14 @@ struct ComposeMessageView: View {
 
     // MARK: - Init
 
-    init(editedDraft: EditedDraft, mailboxManager: MailboxManager, attachments: [Attachable] = []) {
-        fatalError()
-    }
-
-    init(draft: Draft, mailboxManager: MailboxManager, attachments: [Attachable] = []) {
-        messageReply = nil // editedDraft.messageReply
+    init(draft: Draft, mailboxManager: MailboxManager, messageReply: MessageReply? = nil, attachments: [Attachable] = []) {
+        self.messageReply = messageReply
 
         _draft = ObservedRealmObject(wrappedValue: draft)
 
         let currentDraftContentManager = DraftContentManager(
             incompleteDraft: draft,
-            messageReply: nil,
+            messageReply: messageReply,
             mailboxManager: mailboxManager
         )
         draftContentManager = currentDraftContentManager

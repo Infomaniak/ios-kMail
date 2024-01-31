@@ -136,9 +136,10 @@ struct MessageHeaderSummaryView: View {
                         if message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
                             replyOrReplyAllMessage = message
                         } else {
-                            mainViewState.editedDraft = EditedDraft.replying(
-                                reply: MessageReply(message: message, replyMode: .reply),
-                                currentMailboxEmail: mailboxManager.mailbox.email
+                            mainViewState.composeMessageIntent = .replyingTo(
+                                message: message,
+                                replyMode: .reply,
+                                originMailboxManager: mailboxManager
                             )
                         }
                     } label: {
