@@ -22,6 +22,7 @@ public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
     public enum IntentType: Codable, Hashable {
         case new
         case existing(draftLocalUUID: String)
+        case existingRemote(messageUid: String)
         case mailTo(mailToURLComponents: URLComponents)
         case writeTo(recipient: Recipient)
         case reply(messageUid: String, replyMode: ReplyMode)
@@ -52,6 +53,14 @@ public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
             userId: originMailboxManager.mailbox.userId,
             mailboxId: originMailboxManager.mailbox.mailboxId,
             type: .existing(draftLocalUUID: draft.localUUID)
+        )
+    }
+
+    public static func existingRemote(messageUid: String, originMailboxManager: MailboxManageable) -> ComposeMessageIntent {
+        return ComposeMessageIntent(
+            userId: originMailboxManager.mailbox.userId,
+            mailboxId: originMailboxManager.mailbox.mailboxId,
+            type: .existingRemote(messageUid: messageUid)
         )
     }
 

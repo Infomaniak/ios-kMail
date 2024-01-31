@@ -24,6 +24,9 @@ import SwiftUI
 
 struct ComposeMessageIntentView: View {
     @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
+    @Environment(\.dismiss) private var dismiss
 
     @State private var draft: Draft?
     @State private var mailboxManager: MailboxManager?
@@ -52,41 +55,45 @@ struct ComposeMessageIntentView: View {
             for: composeMessageIntent.mailboxId,
             userId: composeMessageIntent.userId
         ) else {
+            dismiss()
+            snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
             return
         }
 
-        var draftLocalUUID: String?
-        var newDraft: Draft?
+        var draftToWrite: Draft?
         switch composeMessageIntent.type {
         case .new:
-            newDraft = Draft(localUUID: UUID().uuidString)
+            draftToWrite = Draft(localUUID: UUID().uuidString)
         case .existing(let existingDraftLocalUUID):
-            draftLocalUUID = existingDraftLocalUUID
+            draftToWrite = mailboxManager.draft(localUuid: existingDraftLocalUUID)
+        case .existingRemote(let messageUid):
+            draftToWrite = Draft(messageUid: messageUid)
         case .mailTo(let mailToURLComponents):
-            newDraft = Draft.mailTo(urlComponents: mailToURLComponents)
+            draftToWrite = Draft.mailTo(urlComponents: mailToURLComponents)
         case .writeTo(let recipient):
-            newDraft = Draft.writing(to: recipient)
+            draftToWrite = Draft.writing(to: recipient)
         case .reply(let messageUid, let replyMode):
             if let frozenMessage = mailboxManager.getRealm().object(ofType: Message.self, forPrimaryKey: messageUid)?.freeze() {
                 let messageReply = MessageReply(frozenMessage: frozenMessage, replyMode: replyMode)
                 self.messageReply = messageReply
-                newDraft = Draft.replying(
+                draftToWrite = Draft.replying(
                     reply: messageReply,
                     currentMailboxEmail: mailboxManager.mailbox.email
                 )
             }
         }
 
-        if let newDraft {
-            draftLocalUUID = newDraft.localUUID
-            writeDraftToRealm(mailboxManager.getRealm(), draft: newDraft)
-        }
+        if let draftToWrite {
+            let draftLocalUUID = draftToWrite.localUUID
+            writeDraftToRealm(mailboxManager.getRealm(), draft: draftToWrite)
 
-        guard let draftLocalUUID else { return }
-
-        Task { @MainActor in
-            draft = mailboxManager.draft(localUuid: draftLocalUUID)
-            self.mailboxManager = mailboxManager
+            Task { @MainActor in
+                draft = mailboxManager.draft(localUuid: draftLocalUUID)
+                self.mailboxManager = mailboxManager
+            }
+        } else {
+            dismiss()
+            snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
         }
     }
 

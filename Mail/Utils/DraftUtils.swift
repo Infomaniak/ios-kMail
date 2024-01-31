@@ -32,7 +32,7 @@ enum DraftUtils {
         guard let message = thread.messages.first else { return }
         // If we already have the draft locally, present it directly
         if let draft = mailboxManager.draft(messageUid: message.uid, using: nil)?.detached() {
-            matomoOpenDraft(draft: draft)
+            matomoOpenDraft(isLoadedRemotely: false)
             composeMessageIntent.wrappedValue = ComposeMessageIntent.existing(draft: draft, originMailboxManager: mailboxManager)
         } else {
             DraftUtils.editDraft(from: message, mailboxManager: mailboxManager, composeMessageIntent: composeMessageIntent)
@@ -46,27 +46,26 @@ enum DraftUtils {
     ) {
         // If we already have the draft locally, present it directly
         if let draft = mailboxManager.draft(messageUid: message.uid, using: nil)?.detached() {
-            matomoOpenDraft(draft: draft)
+            matomoOpenDraft(isLoadedRemotely: false)
             composeMessageIntent.wrappedValue = ComposeMessageIntent.existing(draft: draft, originMailboxManager: mailboxManager)
             // Draft comes from API, we will update it after showing the ComposeMessageView
         } else {
-            let draft = Draft(messageUid: message.uid)
-            matomoOpenDraft(draft: draft)
-            composeMessageIntent.wrappedValue = ComposeMessageIntent.existing(
-                draft: draft,
+            matomoOpenDraft(isLoadedRemotely: true)
+            composeMessageIntent.wrappedValue = ComposeMessageIntent.existingRemote(
+                messageUid: message.uid,
                 originMailboxManager: mailboxManager
             )
         }
     }
 
-    private static func matomoOpenDraft(draft: Draft) {
+    private static func matomoOpenDraft(isLoadedRemotely: Bool) {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .newMessage, name: "openFromDraft")
         matomo.track(
             eventWithCategory: .newMessage,
             action: .data,
             name: "openLocalDraft",
-            value: !draft.isLoadedRemotely
+            value: !isLoadedRemotely
         )
     }
 }
