@@ -45,6 +45,9 @@ open class CommonAppAndShareTargetAssembly: TargetAssembly {
             },
             Factory(type: URLOpenable.self) { _, _ in
                 URLOpener()
+            },
+            Factory(type: ReviewManageable.self) { _, _ in
+                ReviewManager()
             }
         ]
     }
