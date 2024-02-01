@@ -71,7 +71,7 @@ struct AttachmentUploadCell: View {
     private func showAttachmentPreview() {
         guard let attachment = attachment.thaw()?.freezeIfNeeded() else { return }
         previewedAttachment = attachment
-        if !FileManager.default.fileExists(atPath: attachment.localUrl.path) {
+        if !FileManager.default.fileExists(atPath: attachment.getLocalURL(mailboxManager: mailboxManager).path) {
             Task {
                 await mailboxManager.saveAttachmentLocally(attachment: attachment)
             }

@@ -315,7 +315,7 @@ public extension MailboxManager {
     func saveAttachmentLocally(attachment: Attachment) async {
         do {
             let data = try await attachmentData(attachment)
-            let url = attachment.localUrl
+            let url = attachment.getLocalURL(userId: account.userId, mailboxId: mailbox.mailboxId)
             let parentFolder = url.deletingLastPathComponent()
             if !FileManager.default.fileExists(atPath: parentFolder.path) {
                 try FileManager.default.createDirectory(at: parentFolder, withIntermediateDirectories: true)

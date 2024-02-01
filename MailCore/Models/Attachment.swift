@@ -43,10 +43,6 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
         return parentLink.first
     }
 
-    public var localUrl: URL {
-        return FileManager.default.temporaryDirectory.appendingPathComponent("\(uuid)_\(partId)/\(name)")
-    }
-
     public var uti: UTType? {
         UTType(mimeType: mimeType, conformingTo: .data)
     }
@@ -147,6 +143,22 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
         self.contentId = contentId
         self.resource = resource
         self.driveUrl = driveUrl
+    }
+
+    public func getLocalURL(userId: Int, mailboxId: Int) -> URL {
+        var localURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(userId)/\(mailboxId)")
+        if let folderId = parent?.folderId {
+            localURL = localURL.appendingPathComponent("\(folderId)")
+        }
+        if let shortUid = parent?.shortUid {
+            localURL = localURL.appendingPathComponent("\(shortUid)")
+        }
+
+        return localURL.appendingPathComponent("\(partId)/\(name)")
+    }
+
+    public func getLocalURL(mailboxManager: MailboxManager) -> URL {
+        getLocalURL(userId: mailboxManager.account.userId, mailboxId: mailboxManager.mailbox.mailboxId)
     }
 
     public func update(with remoteAttachment: Attachment) {
