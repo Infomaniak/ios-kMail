@@ -44,15 +44,19 @@ struct SettingsAutoAdvanceView: View {
     var section: AutoAdvanceSection
 
     var body: some View {
-        ScrollView {
-            SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsAutoAdvanceDescription)
+        VStack {
+            List {
+                SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsAutoAdvanceDescription)
+                    .settingsCell()
 
-            ForEach(section.options, id: \.rawValue) { option in
-                SettingsOptionCell(value: option, isSelected: option == autoAdvance, isLast: option == section.options.last) {
-                    matomo.track(eventWithCategory: .settingsAutoAdvance, name: option.rawValue)
-                    autoAdvance = option
+                ForEach(section.options, id: \.rawValue) { option in
+                    SettingsOptionCell(value: option, isSelected: option == autoAdvance, isLast: option == section.options.last) {
+                        matomo.track(eventWithCategory: .settingsAutoAdvance, name: option.rawValue)
+                        autoAdvance = option
+                    }
                 }
             }
+            .listStyle(.plain)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationTitle(MailResourcesStrings.Localizable.settingsAutoAdvanceTitle)
