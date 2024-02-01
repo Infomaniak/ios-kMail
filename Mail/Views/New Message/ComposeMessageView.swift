@@ -316,7 +316,10 @@ struct ComposeMessageView: View {
         sendDraft()
 
         if !Bundle.main.isExtension {
-            mainViewState.isShowingSetAppAsDefaultDiscovery = UserDefaults.shared.shouldPresentSetAsDefaultDiscovery
+            // We should implement a proper router to avoid doing this
+            DispatchQueue.main.asyncAfter(deadline: UIConstants.modalCloseDelay) {
+                mainViewState.isShowingSetAppAsDefaultDiscovery = UserDefaults.shared.shouldPresentSetAsDefaultDiscovery
+            }
             if !mainViewState.isShowingSetAppAsDefaultDiscovery {
                 mainViewState.isShowingChristmasEasterEgg = true
             }

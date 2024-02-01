@@ -116,6 +116,10 @@ public extension UIConstants {
 public extension UIConstants {
     static let checkboxAppearDelay = 0.2
     static let checkboxDisappearOffsetDelay = 0.35
+
+    static var modalCloseDelay: DispatchTime {
+        DispatchTime.now() + 0.75
+    }
 }
 
 // MARK: - Utils
