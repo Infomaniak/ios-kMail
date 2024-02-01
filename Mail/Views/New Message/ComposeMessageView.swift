@@ -56,7 +56,6 @@ final class NewMessageAlert: SheetState<NewMessageAlert.State> {
     enum State {
         case link(handler: (String) -> Void)
         case emptySubject(handler: () -> Void)
-        case externalRecipient(state: DisplayExternalRecipientStatus.State)
     }
 }
 
@@ -77,7 +76,6 @@ struct ComposeMessageView: View {
     @State private var editorFocus = false
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
-    @State private var isShowingExternalTag = true
 
     @State private var isShowingAIPopover = false
 
@@ -139,84 +137,6 @@ struct ComposeMessageView: View {
     // MARK: - View
 
     var body: some View {
-        composeMessage
-            .task {
-                do {
-                    isLoadingContent = true
-                    currentSignature = try await draftContentManager.prepareCompleteDraft()
-                    await attachmentsManager.completeUploadedAttachments()
-                    isLoadingContent = false
-                } catch {
-                    // Unable to get signatures, "An error occurred" and close modal.
-                    snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
-                    dismissMessageView()
-                }
-            }
-            .onAppear {
-                attachmentsManager.importAttachments(
-                    attachments: initialAttachments,
-                    draft: draft,
-                    disposition: AttachmentDisposition.defaultDisposition
-                )
-                initialAttachments = []
-
-                if featureFlagsManager.isEnabled(.aiMailComposer) && UserDefaults.shared.shouldPresentAIFeature {
-                    isShowingAIPopover = true
-                    return
-                }
-
-                switch messageReply?.replyMode {
-                case .reply, .replyAll:
-                    focusedField = .editor
-                default:
-                    focusedField = .to
-                }
-            }
-            .onDisappear {
-                var shouldShowSnackbar = false
-                if !Bundle.main.isExtension && !mainViewState.isShowingSetAppAsDefaultDiscovery {
-                    shouldShowSnackbar = !mainViewState.isShowingSetAppAsDefaultDiscovery
-                    mainViewState.isShowingReviewAlert = reviewManager.shouldRequestReview()
-                }
-
-                draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: shouldShowSnackbar)
-            }
-            .customAlert(isPresented: $alert.isShowing) {
-                switch alert.state {
-                case .link(let handler):
-                    AddLinkView(actionHandler: handler)
-                case .emptySubject(let handler):
-                    EmptySubjectView(actionHandler: handler)
-                case .externalRecipient(let state):
-                    ExternalRecipientView(externalTagSate: state, isDraft: true)
-                case .none:
-                    EmptyView()
-                }
-            }
-            .customAlert(isPresented: $isShowingCancelAttachmentsError) {
-                AttachmentsUploadInProgressErrorView {
-                    dismissMessageView()
-                }
-            }
-            .discoveryPresenter(isPresented: $isShowingAIPopover) {
-                DiscoveryView(item: .aiDiscovery) {
-                    UserDefaults.shared.shouldPresentAIFeature = false
-                } completionHandler: { willShowAIPrompt in
-                    aiModel.isShowingPrompt = willShowAIPrompt
-                }
-            }
-            .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {
-                AIPromptView(aiModel: aiModel)
-            }
-            .sheet(isPresented: $aiModel.isShowingProposition) {
-                AIPropositionView(aiModel: aiModel)
-            }
-            .environmentObject(draftContentManager)
-            .matomoView(view: ["ComposeMessage"])
-    }
-
-    /// Compose message view
-    private var composeMessage: some View {
         ScrollView {
             VStack(spacing: 0) {
                 ComposeMessageHeaderView(
@@ -282,37 +202,79 @@ struct ComposeMessageView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            if isShowingExternalTag {
-                let externalTag = draft.displayExternalTag(mailboxManager: mailboxManager)
-                switch externalTag {
-                case .many, .one:
-                    HStack(spacing: UIPadding.medium) {
-                        Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
-                            .font(MailTextStyle.bodySmall.font)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-
-                        Button {
-                            matomo.track(eventWithCategory: .externals, name: "bannerInfo")
-                            alert.state = .externalRecipient(state: externalTag)
-                        } label: {
-                            IKIcon(MailResourcesAsset.info)
-                        }
-
-                        Button {
-                            matomo.track(eventWithCategory: .externals, name: "bannerManuallyClosed")
-                            isShowingExternalTag = false
-                        } label: {
-                            IKIcon(MailResourcesAsset.close)
-                        }
-                    }
-                    .padding(value: .regular)
-                    .foregroundStyle(MailResourcesAsset.onTagExternalColor)
-                    .background(MailResourcesAsset.yellowColor.swiftUIColor)
-                case .none:
-                    EmptyView()
-                }
+            ExternalTagBottomView(externalTag: draft.displayExternalTag(mailboxManager: mailboxManager))
+        }
+        .task {
+            do {
+                isLoadingContent = true
+                currentSignature = try await draftContentManager.prepareCompleteDraft()
+                await attachmentsManager.completeUploadedAttachments()
+                isLoadingContent = false
+            } catch {
+                // Unable to get signatures, "An error occurred" and close modal.
+                snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
+                dismissMessageView()
             }
         }
+        .onAppear {
+            attachmentsManager.importAttachments(
+                attachments: initialAttachments,
+                draft: draft,
+                disposition: AttachmentDisposition.defaultDisposition
+            )
+            initialAttachments = []
+
+            if featureFlagsManager.isEnabled(.aiMailComposer) && UserDefaults.shared.shouldPresentAIFeature {
+                isShowingAIPopover = true
+                return
+            }
+
+            switch messageReply?.replyMode {
+            case .reply, .replyAll:
+                focusedField = .editor
+            default:
+                focusedField = .to
+            }
+        }
+        .onDisappear {
+            var shouldShowSnackbar = false
+            if !Bundle.main.isExtension && !mainViewState.isShowingSetAppAsDefaultDiscovery {
+                shouldShowSnackbar = !mainViewState.isShowingSetAppAsDefaultDiscovery
+                mainViewState.isShowingReviewAlert = reviewManager.shouldRequestReview()
+            }
+
+            draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: shouldShowSnackbar)
+        }
+        .customAlert(isPresented: $alert.isShowing) {
+            switch alert.state {
+            case .link(let handler):
+                AddLinkView(actionHandler: handler)
+            case .emptySubject(let handler):
+                EmptySubjectView(actionHandler: handler)
+            case .none:
+                EmptyView()
+            }
+        }
+        .customAlert(isPresented: $isShowingCancelAttachmentsError) {
+            AttachmentsUploadInProgressErrorView {
+                dismissMessageView()
+            }
+        }
+        .discoveryPresenter(isPresented: $isShowingAIPopover) {
+            DiscoveryView(item: .aiDiscovery) {
+                UserDefaults.shared.shouldPresentAIFeature = false
+            } completionHandler: { willShowAIPrompt in
+                aiModel.isShowingPrompt = willShowAIPrompt
+            }
+        }
+        .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {
+            AIPromptView(aiModel: aiModel)
+        }
+        .sheet(isPresented: $aiModel.isShowingProposition) {
+            AIPropositionView(aiModel: aiModel)
+        }
+        .environmentObject(draftContentManager)
+        .matomoView(view: ["ComposeMessage"])
     }
 
     /// Progress view

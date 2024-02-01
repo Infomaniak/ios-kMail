@@ -41,7 +41,7 @@ struct ThreadView: View {
     @State private var displayNavigationTitle = false
     @State private var replyOrReplyAllMessage: Message?
 
-    @StateObject private var alert = NewMessageAlert()
+    @State private var isShowingExternalTagAlert = false
 
     @ObservedRealmObject var thread: Thread
 
@@ -71,11 +71,10 @@ struct ThreadView: View {
                         mailboxManager: mailboxManager,
                         recipientsList: thread.from
                     )
-                    switch externalTag {
-                    case .many, .one:
+                    if externalTag.shouldDisplay {
                         Button {
                             matomo.track(eventWithCategory: .externals, name: "threadTag")
-                            alert.state = .externalRecipient(state: externalTag)
+                            isShowingExternalTagAlert = true
                         } label: {
                             Text(MailResourcesStrings.Localizable.externalTag)
                                 .tagModifier(
@@ -83,8 +82,9 @@ struct ThreadView: View {
                                     backgroundColor: MailResourcesAsset.yellowColor
                                 )
                         }
-                    case .none:
-                        EmptyView()
+                        .customAlert(isPresented: $isShowingExternalTagAlert) {
+                            ExternalRecipientView(externalTagSate: externalTag, isDraft: false)
+                        }
                     }
                 }
                 .padding(.top, value: .small)
@@ -158,14 +158,6 @@ struct ThreadView: View {
                                    icon: MailResourcesAsset.plusActions.swiftUIImage)
             }
             .frame(maxWidth: .infinity)
-        }
-        .customAlert(isPresented: $alert.isShowing) {
-            switch alert.state {
-            case .externalRecipient(let state):
-                ExternalRecipientView(externalTagSate: state, isDraft: false)
-            default:
-                EmptyView()
-            }
         }
         .customAlert(item: $nearestFlushAlert) { item in
             FlushFolderAlertView(flushAlert: item)

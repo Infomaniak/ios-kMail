@@ -24,6 +24,15 @@ public struct DisplayExternalRecipientStatus {
         case none
         case one(recipient: Recipient)
         case many
+
+        public var shouldDisplay: Bool {
+            switch self {
+            case .none:
+                return false
+            case .one, .many:
+                return true
+            }
+        }
     }
 
     let mailboxManager: MailboxManager
