@@ -41,8 +41,6 @@ struct SettingsAutoAdvanceView: View {
 
     @AppStorage(UserDefaults.shared.key(.autoAdvance)) private var autoAdvance = DefaultPreferences.autoAdvance
 
-    var completionHandler: (() -> Void)?
-
     var section: AutoAdvanceSection
 
     var body: some View {
@@ -53,7 +51,6 @@ struct SettingsAutoAdvanceView: View {
                 SettingsOptionCell(value: option, isSelected: option == autoAdvance, isLast: option == section.options.last) {
                     matomo.track(eventWithCategory: .settingsAutoAdvance, name: option.rawValue)
                     autoAdvance = option
-                    completionHandler?()
                 }
             }
         }

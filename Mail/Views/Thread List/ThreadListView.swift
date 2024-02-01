@@ -58,8 +58,7 @@ struct ThreadListView: View {
          isCompact: Bool) {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    frozenFolder: frozenFolder,
-                                                                   selectedThreadOwner: selectedThreadOwner,
-                                                                   isCompact: isCompact))
+                                                                   selectedThreadOwner: selectedThreadOwner))
         _multipleSelectionViewModel = StateObject(wrappedValue: ThreadListMultipleSelectionViewModel())
 
         UITableViewCell.appearance().focusEffect = .none

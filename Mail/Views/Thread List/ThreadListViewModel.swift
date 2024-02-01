@@ -117,7 +117,6 @@ final class DateSection: Identifiable, Equatable {
     var filteredThreads = [Thread]()
 
     var scrollViewProxy: ScrollViewProxy?
-    var isCompact: Bool
 
     /// Observe a filtered thread
     var observeFilteredThreadsToken: NotificationToken?
@@ -169,14 +168,12 @@ final class DateSection: Identifiable, Equatable {
     init(
         mailboxManager: MailboxManager,
         frozenFolder: Folder,
-        selectedThreadOwner: SelectedThreadOwnable,
-        isCompact: Bool
+        selectedThreadOwner: SelectedThreadOwnable
     ) {
         assert(frozenFolder.isFrozen, "ThreadListViewModel.folder should always be frozen")
         self.mailboxManager = mailboxManager
         self.frozenFolder = frozenFolder
         self.selectedThreadOwner = selectedThreadOwner
-        self.isCompact = isCompact
         sectionsObserver = sectionsSubject
             .receive(on: DispatchQueue.main)
             .sink { [weak self] newSections in
