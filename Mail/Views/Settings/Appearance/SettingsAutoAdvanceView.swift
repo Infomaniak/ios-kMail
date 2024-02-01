@@ -24,13 +24,13 @@ import SwiftUI
 
 enum AutoAdvanceSection: CaseIterable {
     case compact
-    case large
+    case regular
 
     var options: [AutoAdvance] {
         switch self {
         case .compact:
             return [.previousThread, .followingThread, .listOfThread]
-        case .large:
+        case .regular:
             return [.previousThread, .followingThread]
         }
     }
