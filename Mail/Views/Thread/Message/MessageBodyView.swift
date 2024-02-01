@@ -34,6 +34,8 @@ struct MessageBodyView: View {
 
     let messageUid: String
 
+    let printNotif = NotificationCenter.default.publisher(for: NSNotification.Name(Constants.printNotification))
+
     var body: some View {
         ZStack {
             VStack {

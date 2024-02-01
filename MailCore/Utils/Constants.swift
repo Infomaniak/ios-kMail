@@ -194,4 +194,6 @@ public enum Constants {
             return dateFormatter.date(from: date)
         }
     }
+
+    public static let printNotification = "printNotification"
 }

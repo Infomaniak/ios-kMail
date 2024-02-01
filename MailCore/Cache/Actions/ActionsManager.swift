@@ -146,6 +146,13 @@ public class ActionsManager: ObservableObject {
             try await mailboxManager.star(messages: messagesToExecuteAction, starred: true)
         case .unstar:
             try await mailboxManager.star(messages: messagesWithDuplicates, starred: false)
+        case .print:
+            guard let message = messages.first else { return }
+            // Needed to be sure that the bottomView is dismissed before we try to show the printPanel
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                let nc = NotificationCenter.default
+                nc.post(name: Notification.Name(Constants.printNotification), object: message)
+            }
         case .moveToInbox, .nonSpam:
             try await performMove(messages: messagesWithDuplicates, from: origin.frozenFolder, to: .inbox)
         case .quickActionPanel:

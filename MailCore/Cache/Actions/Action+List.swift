@@ -79,6 +79,7 @@ extension Action: CaseIterable {
             unread ? .markAsRead : .markAsUnread,
             archive ? .archive : .moveToInbox,
             star ? .unstar : .star,
+            .print,
             userIsStaff ? .reportDisplayProblem : nil
         ]
         return (Action.quickActions, tempListActions.compactMap { $0 })
@@ -223,6 +224,12 @@ public extension Action {
         iconResource: MailResourcesAsset.unstar,
         tintColorResource: MailResourcesAsset.swipeFavoriteColor,
         matomoName: "favorite"
+    )
+    static let print = Action(
+        id: "print",
+        title: MailResourcesStrings.Localizable.actionPrint,
+        iconResource: MailResourcesAsset.printText,
+        matomoName: "print"
     )
     static let reportJunk = Action(
         id: "reportJunk",
