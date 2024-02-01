@@ -31,12 +31,15 @@ struct SettingsView: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @Environment(\.isCompactWindow) private var isCompactWindow
+
     @AppStorage(UserDefaults.shared.key(.aiEngine)) private var aiEngine = DefaultPreferences.aiEngine
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var density = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.theme)) private var theme = DefaultPreferences.theme
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
     @AppStorage(UserDefaults.shared.key(.externalContent)) private var externalContent = DefaultPreferences.externalContent
     @AppStorage(UserDefaults.shared.key(.threadMode)) private var threadMode = DefaultPreferences.threadMode
+    @AppStorage(UserDefaults.shared.key(.autoAdvance)) private var autoAdvance = DefaultPreferences.autoAdvance
 
     @State private var isShowingSyncProfile = false
 
@@ -172,6 +175,15 @@ struct SettingsView: View {
                             matomoCategory: .settingsDisplayExternalContent,
                             matomoName: \.rawValue
                         )
+                    }
+
+                    // MARK: Auto Advance
+
+                    SettingsSubMenuCell(
+                        title: MailResourcesStrings.Localizable.settingsAutoAdvanceTitle,
+                        subtitle: autoAdvance.description
+                    ) {
+                        SettingsAutoAdvanceView(section: isCompactWindow ? .compact : .regular)
                     }
                 }
             }

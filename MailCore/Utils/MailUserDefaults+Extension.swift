@@ -51,6 +51,7 @@ public extension UserDefaults.Keys {
     static let shouldPresentSyncDiscovery = UserDefaults.Keys(rawValue: "shouldPresentSyncDiscovery")
     static let shouldPresentSetAsDefaultDiscovery = UserDefaults.Keys(rawValue: "shouldPresentSetAsDefaultDiscovery")
     static let aiEngine = UserDefaults.Keys(rawValue: "aiEngine")
+    static let autoAdvance = UserDefaults.Keys(rawValue: "autoAdvance")
 }
 
 public extension UserDefaults {
@@ -311,6 +312,15 @@ public extension UserDefaults {
         }
         set {
             setValue(newValue.rawValue, forKey: key(.aiEngine))
+        }
+    }
+
+    var autoAdvance: AutoAdvance {
+        get {
+            return AutoAdvance(rawValue: string(forKey: key(.autoAdvance)) ?? "") ?? DefaultPreferences.autoAdvance
+        }
+        set {
+            set(newValue.rawValue, forKey: key(.autoAdvance))
         }
     }
 }

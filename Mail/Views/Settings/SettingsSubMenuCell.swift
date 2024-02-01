@@ -35,6 +35,7 @@ struct SettingsSubMenuLabel: View {
                 if let subtitle {
                     Text(subtitle)
                         .textStyle(.bodySmallTertiary)
+                        .multilineTextAlignment(.leading)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
