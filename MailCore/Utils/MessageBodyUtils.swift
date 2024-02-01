@@ -18,6 +18,7 @@
 
 import CocoaLumberjackSwift
 import Foundation
+import MailResources
 import SwiftSoup
 
 public enum MessageBodyUtils {
@@ -43,6 +44,32 @@ public enum MessageBodyUtils {
         "[name=\"quote\"]", // GMX
         "blockquote[type=\"cite\"]"
     ]
+
+    public static func prepareWithPrintOption(message: Message) async -> PresentableBody? {
+        guard let messageBody = message.body else {
+            return nil
+        }
+        let bodyValue = messageBody.value ?? ""
+
+        do {
+            let printHeader = try createPrintHeader(message: message)
+            let originalDocument = try await SwiftSoup.parse(bodyValue).insertChildren(0, [printHeader])
+
+            let bodyFromDoc = try originalDocument.outerHtml()
+
+            let messageBodyQuote = await splitBodyAndQuote(messageBody: bodyFromDoc)
+
+            return PresentableBody(
+                body: messageBody,
+                compactBody: messageBodyQuote.messageBody,
+                quote: messageBodyQuote.quote
+            )
+        } catch {
+            print("error: \(error.localizedDescription)")
+        }
+        let messageBodyQuote = MessageBodyQuote(messageBody: bodyValue, quote: nil)
+        return PresentableBody(body: messageBody, compactBody: messageBodyQuote.messageBody, quote: messageBodyQuote.quote)
+    }
 
     public static func splitBodyAndQuote(messageBody: String) async -> MessageBodyQuote {
         let task = Task {
@@ -116,6 +143,85 @@ public enum MessageBodyUtils {
         } else {
             return try (htmlDocumentWithQuote.outerHtml(), nil)
         }
+    }
+
+    private static func createPrintHeader(message: Message) throws -> Element {
+        let rootHeaderDiv = try Element(Tag("div"), "").attr("id", "printHeader")
+        let firstSeparator = try Element(Tag("hr"), "")
+            .attr("size", "1")
+            .attr("color", "black")
+            .attr("width", "100%")
+            .attr("style", "margin-bottom: 10px")
+        let secondSeparator = try Element(Tag("hr"), "")
+            .attr("size", "1")
+            .attr("color", "LightGray")
+            .attr("width", "100%")
+            .attr("style", "margin-top: 10px")
+            .attr("style", "margin-bottom: 10px")
+
+        let b64image = MailResourcesAsset.logoText.image.pngData()?.base64EncodedString()
+
+        let iconElement = try Element(Tag("img"), "")
+            .attr("src", "data:image/png;base64, \(b64image ?? "")")
+            .attr("style", "margin-bottom: 10px; width: 150px;")
+
+        try rootHeaderDiv.insertChildren(0, [iconElement, firstSeparator])
+
+        if let subject = message.subject {
+            let subjectElement = try Element(Tag("b"), "").appendText(subject)
+            try rootHeaderDiv.insertChildren(2, [subjectElement])
+        }
+
+        try rootHeaderDiv.insertChildren(3, [secondSeparator])
+
+        var messageDetailsDiv = try Element(Tag("div"), "").attr("style", "margin-bottom: 40px")
+        messageDetailsDiv = try insertPrintRecipientField(
+            to: messageDetailsDiv,
+            prefix: MailResourcesStrings.Localizable.ccTitle,
+            recipients: message.cc.toArray()
+        )
+        messageDetailsDiv = try insertPrintRecipientField(
+            to: messageDetailsDiv,
+            prefix: MailResourcesStrings.Localizable.toTitle,
+            recipients: message.to.toArray()
+        )
+        messageDetailsDiv = try insertPrintRecipientField(
+            to: messageDetailsDiv,
+            prefix: MailResourcesStrings.Localizable.fromTitle,
+            recipients: message.from.toArray()
+        )
+        messageDetailsDiv = try insertPrintDateField(
+            to: messageDetailsDiv,
+            prefix: MailResourcesStrings.Localizable.dateTitle,
+            date: message.date.formatted(date: .long, time: .shortened)
+        )
+
+        try rootHeaderDiv.insertChildren(4, [messageDetailsDiv])
+        return rootHeaderDiv
+    }
+
+    private static func insertPrintRecipientField(to element: Element, prefix: String,
+                                                  recipients: [Recipient]) throws -> Element {
+        guard !recipients.isEmpty else { return element }
+
+        let recipientsField = Element(Tag("div"), "")
+        let fieldName = try Element(Tag("b"), "").appendText(prefix)
+        let recipientsName = recipients.map { $0.htmlDescription }.joined(separator: ", ")
+        let fieldValue = try Element(Tag("text"), "").appendText(recipientsName)
+
+        try recipientsField.insertChildren(0, [fieldName, fieldValue])
+
+        return try element.insertChildren(0, [recipientsField])
+    }
+
+    private static func insertPrintDateField(to element: Element, prefix: String, date: String) throws -> Element {
+        let recipientsField = Element(Tag("div"), "")
+        let fieldName = try Element(Tag("b"), "").appendText(prefix)
+        let fieldValue = try Element(Tag("text"), "").appendText(date)
+
+        try recipientsField.insertChildren(0, [fieldName, fieldValue])
+
+        return try element.insertChildren(0, [recipientsField])
     }
 
     // MARK: - Utils

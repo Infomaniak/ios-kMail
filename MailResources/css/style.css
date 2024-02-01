@@ -32,3 +32,10 @@ a:link, a:visited, a:hover, a:active {
 pre {
     font-family: -apple-system;
 }
+
+/* on-screen styles */
+@media screen {
+  #printHeader {
+      display: none;
+  }
+}
