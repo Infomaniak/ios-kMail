@@ -26,7 +26,12 @@ public enum ReviewType: String {
     case readyForReview
 }
 
-public class ReviewManager: ObservableObject {
+public protocol ReviewManageable {
+    func shouldRequestReview() -> Bool
+    func requestReview()
+}
+
+public class ReviewManager: ReviewManageable {
     public init() { /* Empty on purpose */ }
 
     public func shouldRequestReview() -> Bool {

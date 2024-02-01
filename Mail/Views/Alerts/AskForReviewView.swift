@@ -24,8 +24,8 @@ import SwiftUI
 
 struct AskForReviewView: View {
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var reviewManager: ReviewManageable
 
-    @EnvironmentObject private var reviewManager: ReviewManager
     @Environment(\.openURL) private var openURL
 
     var body: some View {

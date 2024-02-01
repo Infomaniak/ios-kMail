@@ -47,7 +47,6 @@ struct MailApp: App {
     @AppStorage(UserDefaults.shared.key(.theme), store: .shared) private var theme = DefaultPreferences.theme
 
     @StateObject private var navigationState = RootViewState()
-    @StateObject private var reviewManager = ReviewManager()
 
     init() {
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
@@ -59,7 +58,6 @@ struct MailApp: App {
             RootView()
                 .detectCompactWindow()
                 .environmentObject(navigationState)
-                .environmentObject(reviewManager)
                 .onAppear {
                     updateUI(accent: accentColor, theme: theme)
                 }

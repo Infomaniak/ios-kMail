@@ -63,12 +63,12 @@ struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dismissModal) var dismissModal
     @EnvironmentObject private var mainViewState: MainViewState
-    @EnvironmentObject private var reviewManager: ReviewManager
 
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var draftManager: DraftManager
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
+    @LazyInjectService private var reviewManager: ReviewManageable
 
     @State private var isLoadingContent = true
     @State private var isShowingCancelAttachmentsError = false
