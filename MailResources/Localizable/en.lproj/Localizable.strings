@@ -1103,6 +1103,30 @@
 /* loco:627a306b1e32027c033896b2 */
 "settingsAppLock" = "App lock";
 
+/* loco:65b275e7c53c28d1410bf342 */
+"settingsAutoAdvanceDescription" = "Select what to display when a message is archived or deleted ";
+
+/* loco:65b27dc325bc06589501c462 */
+"settingsAutoAdvanceFollowingThreadDescription" = "Display following thread when archiving or deleting\n";
+
+/* loco:65b277d399fe1ebac10546a2 */
+"settingsAutoAdvanceFollowingThreadTitle" = "Following thread";
+
+/* loco:65b27e2b4f176d33ca06b302 */
+"settingsAutoAdvanceListOfThreadsDescription" = "Display list of threads when archiving or deleting";
+
+/* loco:65b2780c2b7256da8b038512 */
+"settingsAutoAdvanceListOfThreadsTitle" = "List of threads";
+
+/* loco:65b27d1e0565d99b930ae142 */
+"settingsAutoAdvancePreviousThreadDescription" = "Display previous thread when archiving or deleting";
+
+/* loco:65b277b504a5c5b4710041f3 */
+"settingsAutoAdvancePreviousThreadTitle" = "Previous thread";
+
+/* loco:65b274f8719e4e08b103c7f4 */
+"settingsAutoAdvanceTitle" = "Auto advance";
+
 /* loco:62c693f572adfe66fd2a82b7 */
 "settingsCancellationPeriodDescription" = "You have the possibility to cancel the sending of your email up to 30 seconds";
 
@@ -1411,6 +1435,9 @@
 
 /* loco:626664d06926336d9e25c462 */
 "subjectTitle" = "Subject:";
+
+/* loco:65ba2326ef9447c160013bf2 */
+"superCollapsedBlock" = "See all (%d)";
 
 /* loco:653112b14b84af451706ef56 */
 "syncCalendarsAndContactsDescription" = "View your contacts and calendar directly from your device.";
