@@ -129,18 +129,8 @@ final class InlineAttachmentWorker {
         guard !Task.isCancelled else {
             return
         }
-
-        guard let messageBody = frozenMessage?.body else {
-            return
-        }
-
-        let bodyValue = messageBody.value ?? ""
-        let messageBodyQuote = await MessageBodyUtils.splitBodyAndQuote(messageBody: bodyValue)
-        let updatedPresentableBody = PresentableBody(
-            body: messageBody,
-            compactBody: messageBodyQuote.messageBody,
-            quote: messageBodyQuote.quote
-        )
+        guard let frozenMessage,
+              let updatedPresentableBody = await MessageBodyUtils.prepareWithPrintOption(message: frozenMessage) else { return }
 
         // Mutate DOM if task is active
         guard !Task.isCancelled else {
