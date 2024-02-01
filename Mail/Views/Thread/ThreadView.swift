@@ -71,8 +71,7 @@ struct ThreadView: View {
                         mailboxManager: mailboxManager,
                         recipientsList: thread.from
                     )
-                    switch externalTag {
-                    case .many, .one:
+                    if externalTag.shouldDisplay {
                         Button {
                             matomo.track(eventWithCategory: .externals, name: "threadTag")
                             isShowingExternalTagAlert = true
@@ -86,8 +85,6 @@ struct ThreadView: View {
                         .customAlert(isPresented: $isShowingExternalTagAlert) {
                             ExternalRecipientView(externalTagSate: externalTag, isDraft: false)
                         }
-                    case .none:
-                        EmptyView()
                     }
                 }
                 .padding(.top, value: .small)

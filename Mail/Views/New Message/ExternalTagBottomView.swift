@@ -31,37 +31,32 @@ struct ExternalTagBottomView: View {
     let externalTag: DisplayExternalRecipientStatus.State
 
     var body: some View {
-        if isShowingExternalTag {
-            switch externalTag {
-            case .many, .one:
-                HStack(spacing: UIPadding.medium) {
-                    Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
-                        .font(MailTextStyle.bodySmall.font)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+        if isShowingExternalTag && externalTag.shouldDisplay {
+            HStack(spacing: UIPadding.medium) {
+                Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
+                    .font(MailTextStyle.bodySmall.font)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
-                    Button {
-                        matomo.track(eventWithCategory: .externals, name: "bannerInfo")
-                        isShowingExternalTagAlert = true
-                    } label: {
-                        IKIcon(MailResourcesAsset.info)
-                    }
-                    .customAlert(isPresented: $isShowingExternalTagAlert) {
-                        ExternalRecipientView(externalTagSate: externalTag, isDraft: true)
-                    }
-
-                    Button {
-                        matomo.track(eventWithCategory: .externals, name: "bannerManuallyClosed")
-                        isShowingExternalTag = false
-                    } label: {
-                        IKIcon(MailResourcesAsset.close)
-                    }
+                Button {
+                    matomo.track(eventWithCategory: .externals, name: "bannerInfo")
+                    isShowingExternalTagAlert = true
+                } label: {
+                    IKIcon(MailResourcesAsset.info)
                 }
-                .padding(value: .regular)
-                .foregroundStyle(MailResourcesAsset.onTagExternalColor)
-                .background(MailResourcesAsset.yellowColor.swiftUIColor)
-            case .none:
-                EmptyView()
+                .customAlert(isPresented: $isShowingExternalTagAlert) {
+                    ExternalRecipientView(externalTagSate: externalTag, isDraft: true)
+                }
+
+                Button {
+                    matomo.track(eventWithCategory: .externals, name: "bannerManuallyClosed")
+                    isShowingExternalTag = false
+                } label: {
+                    IKIcon(MailResourcesAsset.close)
+                }
             }
+            .padding(value: .regular)
+            .foregroundStyle(MailResourcesAsset.onTagExternalColor)
+            .background(MailResourcesAsset.yellowColor.swiftUIColor)
         }
     }
 }
