@@ -38,7 +38,7 @@ struct MessageBodyView: View {
 
     let messageUid: String
 
-    let printNotif = NotificationCenter.default.publisher(for: NSNotification.Name(Constants.printNotification))
+    private let printNotificationPublisher = NotificationCenter.default.publisher(for: Notification.Name.printNotification)
 
     var body: some View {
         ZStack {
@@ -78,7 +78,7 @@ struct MessageBodyView: View {
                 ShimmerView()
             }
         }
-        .onReceive(printNotif) { _ in
+        .onReceive(printNotificationPublisher) { _ in
             printMessage()
         }
     }

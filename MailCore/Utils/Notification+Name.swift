@@ -24,4 +24,5 @@ public extension Notification.Name {
     static let dismissMoveSheet = Notification.Name(rawValue: "sheetViewDismiss")
     static let updateComposeMessageBody = Notification.Name(rawValue: "updateComposeMessageBody")
     static let openNotificationSettings = Notification.Name(rawValue: "openNotificationSettings")
+    static let printNotification = Notification.Name(rawValue: "printNotification")
 }
