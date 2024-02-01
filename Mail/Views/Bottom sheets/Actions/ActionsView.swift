@@ -34,7 +34,7 @@ struct ActionsView: View {
          origin: ActionOrigin,
          completionHandler: ((Action) -> Void)? = nil) {
         let userIsStaff = mailboxManager.account.user.isStaff ?? false
-        let actions = Action.actionsForMessages(messages, originFolder: origin.frozenFolder, userIsStaff: userIsStaff)
+        let actions = Action.actionsForMessages(messages, origin: origin, userIsStaff: userIsStaff)
         quickActions = actions.quickActions
         listActions = actions.listActions
 

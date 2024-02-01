@@ -21,11 +21,12 @@ import MailCore
 import SwiftUI
 
 extension View {
-    func actionsPanel(messages: Binding<[Message]?>, originFolder: Folder?,
+    func actionsPanel(messages: Binding<[Message]?>, originFolder: Folder?, panelSource: ActionOrigin.FloatingPanelSource,
                       completionHandler: ((Action) -> Void)? = nil) -> some View {
         return modifier(ActionsPanelViewModifier(
             messages: messages,
             originFolder: originFolder,
+            panelSource: panelSource,
             completionHandler: completionHandler
         ))
     }
@@ -42,11 +43,13 @@ struct ActionsPanelViewModifier: ViewModifier {
 
     @Binding var messages: [Message]?
     let originFolder: Folder?
+    let panelSource: ActionOrigin.FloatingPanelSource
 
     var completionHandler: ((Action) -> Void)?
 
     private var origin: ActionOrigin {
         .floatingPanel(
+            source: panelSource,
             originFolder: originFolder?.freezeIfNeeded(),
             nearestFlushAlert: $flushAlert,
             nearestMessagesToMoveSheet: $messagesToMove,

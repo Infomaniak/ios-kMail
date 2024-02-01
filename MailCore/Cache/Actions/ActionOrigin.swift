@@ -20,12 +20,17 @@ import Foundation
 import SwiftUI
 
 public struct ActionOrigin {
-    public enum ActionOriginType {
+    public enum ActionOriginType: Equatable {
         case swipe
-        case floatingPanel
+        case floatingPanel(source: FloatingPanelSource)
         case toolbar
         case multipleSelection
         case shortcut
+    }
+
+    public enum FloatingPanelSource {
+        case threadList
+        case messageList
     }
 
     public private(set) var type: ActionOriginType
@@ -63,14 +68,15 @@ public struct ActionOrigin {
         return ActionOrigin(type: .toolbar, folder: originFolder, nearestFlushAlert: nearestFlushAlert)
     }
 
-    public static func floatingPanel(originFolder: Folder? = nil,
+    public static func floatingPanel(source: FloatingPanelSource,
+                                     originFolder: Folder? = nil,
                                      nearestFlushAlert: Binding<FlushAlertState?>? = nil,
                                      nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
                                      nearestReportJunkMessageActionsPanel: Binding<Message?>? = nil,
                                      nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
                                      nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil) -> ActionOrigin {
         return ActionOrigin(
-            type: .floatingPanel,
+            type: .floatingPanel(source: source),
             folder: originFolder,
             nearestFlushAlert: nearestFlushAlert,
             nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,

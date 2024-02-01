@@ -150,7 +150,11 @@ struct ThreadListToolbar: ViewModifier {
                     }
                     .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
                 }
-                .actionsPanel(messages: $multipleSelectedMessages, originFolder: viewModel.frozenFolder) { _ in
+                .actionsPanel(
+                    messages: $multipleSelectedMessages,
+                    originFolder: viewModel.frozenFolder,
+                    panelSource: .threadList
+                ) { _ in
                     multipleSelectionViewModel.isEnabled = false
                 }
                 .navigationTitle(
