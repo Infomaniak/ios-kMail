@@ -88,7 +88,7 @@ struct MessageBodyView: View {
         let printFormatter = model.webView.viewPrintFormatter()
         printController.printFormatter = printFormatter
 
-        let completionHandler: UIPrintInteractionController.CompletionHandler = { printController, completed, error in
+        let completionHandler: UIPrintInteractionController.CompletionHandler = { _, completed, error in
             if completed {
                 matomo.track(eventWithCategory: .bottomSheetMessageActions, name: "printValidated")
             } else if error == nil {
@@ -96,7 +96,7 @@ struct MessageBodyView: View {
             }
         }
 
-        DispatchQueue.main.async {
+        Task { @MainActor in
             printController.present(animated: true, completionHandler: completionHandler)
         }
     }
