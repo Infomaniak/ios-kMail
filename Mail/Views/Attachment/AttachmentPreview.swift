@@ -32,6 +32,8 @@ struct AttachmentPreview: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.verticalSizeClass) private var sizeClass
 
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @State private var downloadedAttachmentURL: IdentifiableURL?
 
     @ObservedRealmObject var attachment: MailCore.Attachment
@@ -39,8 +41,8 @@ struct AttachmentPreview: View {
     var body: some View {
         NavigationView {
             Group {
-                if FileManager.default.fileExists(atPath: attachment.localUrl.path) {
-                    PreviewController(url: attachment.localUrl)
+                if FileManager.default.fileExists(atPath: attachment.getLocalURL(mailboxManager: mailboxManager).path) {
+                    PreviewController(url: attachment.getLocalURL(mailboxManager: mailboxManager))
                 } else if let temporaryLocalUrl = attachment.temporaryLocalUrl,
                           FileManager.default.fileExists(atPath: temporaryLocalUrl) {
                     PreviewController(url: URL(fileURLWithPath: temporaryLocalUrl))
@@ -57,7 +59,7 @@ struct AttachmentPreview: View {
                 ToolbarItemGroup(placement: .bottomBar) {
                     Button {
                         matomo.track(eventWithCategory: .message, name: "download")
-                        downloadedAttachmentURL = IdentifiableURL(url: attachment.localUrl)
+                        downloadedAttachmentURL = IdentifiableURL(url: attachment.getLocalURL(mailboxManager: mailboxManager))
                     } label: {
                         Label {
                             Text(MailResourcesStrings.Localizable.buttonDownload)
@@ -82,7 +84,7 @@ struct AttachmentPreview: View {
                     Spacer()
 
                     Button {
-                        let attachmentURL = attachment.localUrl
+                        let attachmentURL = attachment.getLocalURL(mailboxManager: mailboxManager)
                         do {
                             try DeeplinkService().shareFileToKdrive(attachmentURL)
                         } catch {
