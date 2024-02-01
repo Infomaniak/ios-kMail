@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -23,6 +25,8 @@ import SwiftSoup
 import SwiftUI
 
 struct MessageBodyView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @State private var textPlainHeight = CGFloat.zero
 
     @StateObject private var model = WebViewModel()
@@ -73,6 +77,27 @@ struct MessageBodyView: View {
             if model.initialContentLoading {
                 ShimmerView()
             }
+        }
+        .onReceive(printNotif) { _ in
+            printMessage()
+        }
+    }
+
+    func printMessage() {
+        let printController = UIPrintInteractionController.shared
+        let printFormatter = model.webView.viewPrintFormatter()
+        printController.printFormatter = printFormatter
+
+        let completionHandler: UIPrintInteractionController.CompletionHandler = { printController, completed, error in
+            if completed {
+                matomo.track(eventWithCategory: .bottomSheetMessageActions, name: "printValidated")
+            } else if error == nil {
+                matomo.track(eventWithCategory: .bottomSheetMessageActions, name: "printCancelled")
+            }
+        }
+
+        DispatchQueue.main.async {
+            printController.present(animated: true, completionHandler: completionHandler)
         }
     }
 
