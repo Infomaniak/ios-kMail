@@ -27,7 +27,7 @@ extension View {
         @ViewBuilder content: @escaping (Item) -> Content
     ) -> some View where Item: Identifiable & Codable & Hashable, Content: View {
         if #available(iOS 16.0, *) {
-            return self.modifier(IdentifiableSheetOrDesktopWindowViewModifier(
+            return modifier(IdentifiableSheetOrDesktopWindowViewModifier(
                 item: item,
                 desktopWindowIdentifier: desktopIdentifier,
                 sheetContent: content
@@ -41,15 +41,16 @@ extension View {
 @available(iOS 16.0, *)
 struct IdentifiableSheetOrDesktopWindowViewModifier<Item: Identifiable & Codable & Hashable, SheetContent: View>: ViewModifier {
     @LazyInjectService private var platformDetector: PlatformDetectable
+
     @Environment(\.openWindow) private var openWindow
 
     @Binding var item: Item?
     let desktopWindowIdentifier: String
-    @ViewBuilder var sheetContent: (Item) -> SheetContent
+    @ViewBuilder let sheetContent: (Item) -> SheetContent
 
     func body(content: Content) -> some View {
         if platformDetector.isMac {
-            content.onChange(of: item?.id) { newValue in
+            content.onChange(of: item?.id) { _ in
                 guard let item else { return }
                 openWindow(id: desktopWindowIdentifier, value: item)
             }

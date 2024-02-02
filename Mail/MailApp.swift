@@ -82,6 +82,7 @@ struct MailApp: App {
                 }
         }
         .defaultAppStorage(.shared)
+
         if #available(iOS 16.0, *) {
             WindowGroup(
                 MailResourcesStrings.Localizable.settingsTitle,
@@ -93,11 +94,11 @@ struct MailApp: App {
                     SettingsNavigationView(baseNavigationPath: baseNavigationPath)
                         .standardWindow()
                         .environmentObject(navigationState)
-
                         .environmentObject(mailboxManager)
                 }
             }
             .defaultAppStorage(.shared)
+
             WindowGroup(
                 MailResourcesStrings.Localizable.settingsTitle,
                 id: DesktopWindowIdentifier.composeWindowIdentifier,
