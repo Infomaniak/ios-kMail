@@ -26,6 +26,7 @@ import SwiftUI
 
 struct MessageBodyView: View {
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @State private var textPlainHeight = CGFloat.zero
 
@@ -91,7 +92,9 @@ struct MessageBodyView: View {
         let completionHandler: UIPrintInteractionController.CompletionHandler = { _, completed, error in
             if completed {
                 matomo.track(eventWithCategory: .bottomSheetMessageActions, name: "printValidated")
-            } else if error == nil {
+            } else if let error {
+                snackbarPresenter.show(message: error.localizedDescription)
+            } else {
                 matomo.track(eventWithCategory: .bottomSheetMessageActions, name: "printCancelled")
             }
         }
