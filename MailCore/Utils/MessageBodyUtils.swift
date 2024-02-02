@@ -147,23 +147,14 @@ public enum MessageBodyUtils {
 
     private static func createPrintHeader(message: Message) throws -> Element {
         let rootHeaderDiv = try Element(Tag("div"), "").attr("id", "printHeader")
-        let firstSeparator = try Element(Tag("hr"), "")
-            .attr("size", "1")
-            .attr("color", "black")
-            .attr("width", "100%")
-            .attr("style", "margin-bottom: 10px")
-        let secondSeparator = try Element(Tag("hr"), "")
-            .attr("size", "1")
-            .attr("color", "LightGray")
-            .attr("width", "100%")
-            .attr("style", "margin-top: 10px")
-            .attr("style", "margin-bottom: 10px")
+        let firstSeparator = try Element(Tag("hr"), "").attr("color", "black")
+        let secondSeparator = try Element(Tag("hr"), "").attr("color", "LightGray")
 
         let b64image = MailResourcesAsset.logoText.image.pngData()?.base64EncodedString()
 
         let iconElement = try Element(Tag("img"), "")
             .attr("src", "data:image/png;base64, \(b64image ?? "")")
-            .attr("style", "margin-bottom: 10px; width: 150px;")
+            .attr("style", "width: 150px;")
 
         try rootHeaderDiv.insertChildren(0, [iconElement, firstSeparator])
 
