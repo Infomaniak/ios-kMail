@@ -19,11 +19,13 @@
 import Foundation
 
 public struct SettingsViewConfig: Identifiable, Hashable, Codable {
-    public let id: UUID
+    public var id: Int {
+        return hashValue
+    }
+
     public let baseNavigationPath: [SettingsDestination]
 
     public init(baseNavigationPath: [SettingsDestination]) {
-        id = UUID()
         self.baseNavigationPath = baseNavigationPath
     }
 }

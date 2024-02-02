@@ -192,7 +192,9 @@ struct ComposeMessageView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                CloseButton(dismissHandler: didTouchDismiss)
+                if !platformDetector.isMac {
+                    CloseButton(dismissHandler: didTouchDismiss)
+                }
             }
 
             ToolbarItem(placement: .navigationBarTrailing) {

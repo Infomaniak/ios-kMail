@@ -16,11 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
 import MailCore
 import NavigationBackport
 import SwiftUI
 
 struct SettingsNavigationView: View {
+    @LazyInjectService private var platformDetector: PlatformDetectable
+
     @Environment(\.dismiss) private var dismiss
 
     @State private var navigationPath: [SettingsDestination]
@@ -34,7 +37,9 @@ struct SettingsNavigationView: View {
             SettingsView()
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        CloseButton(dismissAction: dismiss)
+                        if !platformDetector.isMac {
+                            CloseButton(dismissAction: dismiss)
+                        }
                     }
                 }
                 .nbNavigationDestination(for: SettingsDestination.self) { _ in
