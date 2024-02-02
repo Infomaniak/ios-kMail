@@ -28,7 +28,7 @@ struct ReplyActionsView: View {
     var body: some View {
         HStack(alignment: .top, spacing: UIPadding.regular) {
             ForEach(quickActions) { action in
-                QuickActionView(targetMessages: [message], action: action, origin: .floatingPanel())
+                QuickActionView(targetMessages: [message], action: action, origin: .floatingPanel(source: .messageList))
             }
 
             Spacer()

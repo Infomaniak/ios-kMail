@@ -148,7 +148,7 @@ struct MessageHeaderSummaryView: View {
                     .adaptivePanel(item: $replyOrReplyAllMessage) { message in
                         ReplyActionsView(message: message)
                     }
-                    ActionsPanelButton(messages: [message], originFolder: message.folder) {
+                    ActionsPanelButton(messages: [message], originFolder: message.folder, panelSource: .messageList) {
                         IKIcon(MailResourcesAsset.plusActions, size: .large)
                     }
                 }

@@ -66,12 +66,13 @@ extension Action: CaseIterable {
         .quickActionPanel
     ]
 
-    private static func actionsForMessage(_ message: Message,
+    private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
                                           userIsStaff: Bool) -> (quickActions: [Action], listActions: [Action]) {
         let archive = message.folder?.role != .archive
         let unread = !message.seen
         let star = message.flagged
         let spam = message.folder?.role == .spam
+        let print = origin.type == .floatingPanel(source: .messageList)
 
         let tempListActions: [Action?] = [
             .openMovePanel,
@@ -79,6 +80,7 @@ extension Action: CaseIterable {
             unread ? .markAsRead : .markAsUnread,
             archive ? .archive : .moveToInbox,
             star ? .unstar : .star,
+            print ? .print : nil,
             userIsStaff ? .reportDisplayProblem : nil
         ]
         return (Action.quickActions, tempListActions.compactMap { $0 })
@@ -121,14 +123,14 @@ extension Action: CaseIterable {
     }
 
     public static func actionsForMessages(_ messages: [Message],
-                                          originFolder: Folder?,
+                                          origin: ActionOrigin,
                                           userIsStaff: Bool) -> (quickActions: [Action], listActions: [Action]) {
         if messages.count == 1, let message = messages.first {
-            return actionsForMessage(message, userIsStaff: userIsStaff)
-        } else if messages.uniqueThreadsInFolder(originFolder).count > 1 {
-            return actionsForMessagesInDifferentThreads(messages, originFolder: originFolder)
+            return actionsForMessage(message, origin: origin, userIsStaff: userIsStaff)
+        } else if messages.uniqueThreadsInFolder(origin.frozenFolder).count > 1 {
+            return actionsForMessagesInDifferentThreads(messages, originFolder: origin.frozenFolder)
         } else {
-            return actionsForMessagesInSameThreads(messages, originFolder: originFolder)
+            return actionsForMessagesInSameThreads(messages, originFolder: origin.frozenFolder)
         }
     }
 }
@@ -223,6 +225,12 @@ public extension Action {
         iconResource: MailResourcesAsset.unstar,
         tintColorResource: MailResourcesAsset.swipeFavoriteColor,
         matomoName: "favorite"
+    )
+    static let print = Action(
+        id: "print",
+        title: MailResourcesStrings.Localizable.actionPrint,
+        iconResource: MailResourcesAsset.printText,
+        matomoName: "print"
     )
     static let reportJunk = Action(
         id: "reportJunk",

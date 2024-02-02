@@ -28,6 +28,7 @@ struct ActionsPanelButton<Content: View>: View {
 
     let messages: [Message]
     let originFolder: Folder?
+    let panelSource: ActionOrigin.FloatingPanelSource
     @ViewBuilder var label: () -> Content
 
     var body: some View {
@@ -36,7 +37,7 @@ struct ActionsPanelButton<Content: View>: View {
         } label: {
             label()
         }
-        .actionsPanel(messages: $actionMessages, originFolder: originFolder) { action in
+        .actionsPanel(messages: $actionMessages, originFolder: originFolder, panelSource: panelSource) { action in
             if action == .markAsUnread {
                 dismiss()
             }

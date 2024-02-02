@@ -16,6 +16,8 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -23,6 +25,9 @@ import SwiftSoup
 import SwiftUI
 
 struct MessageBodyView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
     @State private var textPlainHeight = CGFloat.zero
 
     @StateObject private var model = WebViewModel()
@@ -33,6 +38,8 @@ struct MessageBodyView: View {
     @Binding var displayContentBlockedActionView: Bool
 
     let messageUid: String
+
+    private let printNotificationPublisher = NotificationCenter.default.publisher(for: Notification.Name.printNotification)
 
     var body: some View {
         ZStack {
@@ -71,6 +78,29 @@ struct MessageBodyView: View {
             if model.initialContentLoading {
                 ShimmerView()
             }
+        }
+        .onReceive(printNotificationPublisher) { _ in
+            printMessage()
+        }
+    }
+
+    func printMessage() {
+        let printController = UIPrintInteractionController.shared
+        let printFormatter = model.webView.viewPrintFormatter()
+        printController.printFormatter = printFormatter
+
+        let completionHandler: UIPrintInteractionController.CompletionHandler = { _, completed, error in
+            if completed {
+                matomo.track(eventWithCategory: .bottomSheetMessageActions, name: "printValidated")
+            } else if let error {
+                snackbarPresenter.show(message: error.localizedDescription)
+            } else {
+                matomo.track(eventWithCategory: .bottomSheetMessageActions, name: "printCancelled")
+            }
+        }
+
+        Task { @MainActor in
+            printController.present(animated: true, completionHandler: completionHandler)
         }
     }
 

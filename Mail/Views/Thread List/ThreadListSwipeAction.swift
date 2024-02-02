@@ -99,7 +99,7 @@ struct ThreadListSwipeActions: ViewModifier {
                     edgeActions([swipeFullTrailing, swipeTrailing])
                 }
             }
-            .actionsPanel(messages: $actionPanelMessages, originFolder: thread.folder)
+            .actionsPanel(messages: $actionPanelMessages, originFolder: thread.folder, panelSource: .threadList)
             .sheet(item: $messagesToMove) { messages in
                 MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
                     .sheetViewStyle()
