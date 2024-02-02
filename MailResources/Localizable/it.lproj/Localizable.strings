@@ -5,7 +5,7 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Thu, 01 Feb 2024 14:36:23 +0100
+ * Exported at: Fri, 02 Feb 2024 14:29:45 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -186,7 +186,7 @@
 "aiPromptExample5" = "un’e-mail di richiesta di incontro con un cliente importante";
 
 /* loco:65042259ab599c0ca6094172 */
-"aiPromptGenerationLoader" = "L’assistente sta scrivendo";
+"aiPromptGenerationLoader" = "L’assistente sta scrivendo…";
 
 /* loco:6501840ef58ecb8b620adb23 */
 "aiPromptPlaceholder" = "Comunica all’assistente di scrittura cosa vuoi scrivere. Ad esempio, \"%@\".";

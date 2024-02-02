@@ -55,6 +55,11 @@ struct AIPropositionView: View {
                     .padding([.horizontal, .bottom], value: .regular)
                 }
                 .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+                .overlay(alignment: .bottom) {
+                    if aiModel.currentStyle == .loading {
+                        AIProgressView()
+                    }
+                }
                 .onChange(of: aiModel.error) { error in
                     guard error != nil else { return }
                     withAnimation {
@@ -94,7 +99,8 @@ struct AIPropositionView: View {
 
                         switch aiModel.currentStyle {
                         case .loading:
-                            AIProgressView()
+                            Text(MailResourcesStrings.Localizable.aiPromptGenerationLoader)
+                                .textStyle(.bodyMediumTertiary)
                         case .standard, .error:
                             Button {
                                 Task {
