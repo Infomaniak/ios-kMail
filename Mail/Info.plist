@@ -89,6 +89,13 @@
 	<string>Photo access will be used to save pictures in your photo library.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+    <key>UIApplicationSceneManifest</key>
+    <dict>
+        <key>UIApplicationSupportsMultipleScenes</key>
+        <true/>
+        <key>UISceneConfigurations</key>
+        <dict/>
+    </dict>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>

@@ -27,6 +27,11 @@ public enum DeeplinkConstants {
     public static let iosPreferences = URL(string: "App-prefs:")!
 }
 
+public enum DesktopWindowIdentifier {
+    public static let settingsWindowIdentifier = "settings"
+    public static let composeWindowIdentifier = "compose"
+}
+
 public struct URLConstants {
     public static let testFlight = URLConstants(urlString: "https://testflight.apple.com/join/t8dXx60N")
     public static let appStore = URLConstants(urlString: "https://apps.apple.com/app/infomaniak-mail/id1622596573")
@@ -77,11 +82,10 @@ public enum Constants {
     public static let emailPredicate = NSPredicate(format: "SELF MATCHES %@", Constants.mailRegex)
     public static let mailRegex =
         "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
-    public static var referenceRegex: NSRegularExpression = {
-        // It's safe to unwrap because this will always succeed
-        // swiftlint:disable:next force_try
-        try! NSRegularExpression(pattern: ">\\s*<|>?\\s+<?")
-    }()
+
+    // It's safe to unwrap because this will always succeed
+    // swiftlint:disable:next force_try
+    public static let referenceRegex: NSRegularExpression = try! NSRegularExpression(pattern: ">\\s*<|>?\\s+<?")
 
     public static let sizeChangeThreshold = 3
     public static let viewportContent = "width=device-width, initial-scale=1.0"

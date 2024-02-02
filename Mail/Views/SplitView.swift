@@ -146,10 +146,12 @@ struct SplitView: View {
         .sheet(isPresented: $isShowingSyncProfile) {
             SyncProfileNavigationView()
         }
-        .sheet(item: $mainViewState.settingsViewConfig) { config in
+        .sheet(item: $mainViewState.settingsViewConfig,
+               desktopIdentifier: DesktopWindowIdentifier.settingsWindowIdentifier) { config in
             SettingsNavigationView(baseNavigationPath: config.baseNavigationPath)
         }
-        .sheet(item: $mainViewState.composeMessageIntent) { intent in
+        .sheet(item: $mainViewState.composeMessageIntent,
+               desktopIdentifier: DesktopWindowIdentifier.composeWindowIdentifier) { intent in
             ComposeMessageIntentView(composeMessageIntent: intent)
         }
         .onChange(of: scenePhase) { newScenePhase in

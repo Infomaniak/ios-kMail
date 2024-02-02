@@ -39,6 +39,7 @@ struct ComposeMessageIntentView: View {
             if let draft,
                let mailboxManager {
                 ComposeMessageView(draft: draft, mailboxManager: mailboxManager, messageReply: messageReply)
+                    .environmentObject(mailboxManager)
             } else {
                 ProgressView()
                     .progressViewStyle(.circular)

@@ -36,6 +36,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        // Prevent window restoration on macOS
+        UserDefaults.standard.set(false, forKey: "NSQuitAlwaysKeepsWindows")
+
         DDLogInfo("Application starting in foreground ? \(applicationState.applicationState != .background)")
 
         // Register actions for notifications of incoming emails.

@@ -25,6 +25,7 @@ import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications
 import MailCore
+import MailResources
 import Sentry
 import SwiftUI
 import UIKit
@@ -56,17 +57,8 @@ struct MailApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
-                .detectCompactWindow()
+                .standardWindow()
                 .environmentObject(navigationState)
-                .onAppear {
-                    updateUI(accent: accentColor, theme: theme)
-                }
-                .onChange(of: theme) { newTheme in
-                    updateUI(accent: accentColor, theme: newTheme)
-                }
-                .onChange(of: accentColor) { newAccentColor in
-                    updateUI(accent: newAccentColor, theme: theme)
-                }
                 .onChange(of: scenePhase) { newScenePhase in
                     switch newScenePhase {
                     case .active:
@@ -88,23 +80,37 @@ struct MailApp: App {
                 .onChange(of: navigationState.account) { _ in
                     refreshCacheData()
                 }
-            #if targetEnvironment(macCatalyst)
-                .introspect(.window, on: .iOS(.v16, .v17)) { window in
-                    if let titlebar = window.windowScene?.titlebar {
-                        titlebar.titleVisibility = .hidden
-                        titlebar.toolbar = nil
-                    }
-                }
-            #endif
         }
         .defaultAppStorage(.shared)
-    }
 
-    func updateUI(accent: AccentColor, theme: Theme) {
-        let allWindows = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.flatMap(\.windows)
-        for window in allWindows {
-            window.overrideUserInterfaceStyle = theme.interfaceStyle
-            window.tintColor = accent.primary.color
+        if #available(iOS 16.0, *) {
+            WindowGroup(
+                MailResourcesStrings.Localizable.settingsTitle,
+                id: DesktopWindowIdentifier.settingsWindowIdentifier,
+                for: SettingsViewConfig.self
+            ) { $config in
+                if case .mainView(let mailboxManager, _) = navigationState.state,
+                   let baseNavigationPath = config?.baseNavigationPath {
+                    SettingsNavigationView(baseNavigationPath: baseNavigationPath)
+                        .standardWindow()
+                        .environmentObject(navigationState)
+                        .environmentObject(mailboxManager)
+                }
+            }
+            .defaultAppStorage(.shared)
+
+            WindowGroup(
+                MailResourcesStrings.Localizable.settingsTitle,
+                id: DesktopWindowIdentifier.composeWindowIdentifier,
+                for: ComposeMessageIntent.self
+            ) { $composeMessageIntent in
+                if let composeMessageIntent {
+                    ComposeMessageIntentView(composeMessageIntent: composeMessageIntent)
+                        .standardWindow()
+                        .environmentObject(navigationState)
+                }
+            }
+            .defaultAppStorage(.shared)
         }
     }
 

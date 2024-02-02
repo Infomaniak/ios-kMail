@@ -18,8 +18,11 @@
 
 import Foundation
 
-public struct SettingsViewConfig: Identifiable {
-    public let id = UUID()
+public struct SettingsViewConfig: Identifiable, Hashable, Codable {
+    public var id: Int {
+        return hashValue
+    }
+
     public let baseNavigationPath: [SettingsDestination]
 
     public init(baseNavigationPath: [SettingsDestination]) {
@@ -27,6 +30,6 @@ public struct SettingsViewConfig: Identifiable {
     }
 }
 
-public enum SettingsDestination: Hashable {
+public enum SettingsDestination: Hashable, Codable {
     case notifications
 }

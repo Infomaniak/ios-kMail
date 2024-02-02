@@ -65,6 +65,7 @@ struct ComposeMessageView: View {
     @EnvironmentObject private var mainViewState: MainViewState
 
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var platformDetector: PlatformDetectable
     @LazyInjectService private var draftManager: DraftManager
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
@@ -191,7 +192,9 @@ struct ComposeMessageView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
-                CloseButton(dismissHandler: didTouchDismiss)
+                if !platformDetector.isMac {
+                    CloseButton(dismissHandler: didTouchDismiss)
+                }
             }
 
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -238,7 +241,10 @@ struct ComposeMessageView: View {
         }
         .onDisappear {
             var shouldShowSnackbar = false
-            if !Bundle.main.isExtension && !mainViewState.isShowingSetAppAsDefaultDiscovery {
+            let shouldDisplayAdditionalAlerts = !platformDetector.isMac &&
+                !Bundle.main.isExtension &&
+                !mainViewState.isShowingSetAppAsDefaultDiscovery
+            if shouldDisplayAdditionalAlerts {
                 shouldShowSnackbar = !mainViewState.isShowingSetAppAsDefaultDiscovery
                 mainViewState.isShowingReviewAlert = reviewManager.shouldRequestReview()
             }
