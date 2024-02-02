@@ -147,8 +147,8 @@ public enum MessageBodyUtils {
 
     private static func createPrintHeader(message: Message) throws -> Element {
         let rootHeaderDiv = try Element(Tag("div"), "").attr("id", "printHeader")
-        let firstSeparator = try Element(Tag("hr"), "").attr("color", "black")
-        let secondSeparator = try Element(Tag("hr"), "").attr("color", "LightGray")
+        let firstSeparator = try Element(Tag("hr"), "").attr("style", "color: black")
+        let secondSeparator = try Element(Tag("hr"), "").attr("style", "color: LightGray")
 
         let b64image = MailResourcesAsset.logoText.image.pngData()?.base64EncodedString()
 
