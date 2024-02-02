@@ -53,7 +53,7 @@ public enum MessageBodyUtils {
 
         do {
             let printHeader = try createPrintHeader(message: message)
-            let originalDocument = try await SwiftSoup.parse(bodyValue).insertChildren(0, [printHeader])
+            let originalDocument = try await SwiftSoup.parse(bodyValue).prependChild(printHeader)
 
             let bodyFromDoc = try originalDocument.outerHtml()
 
@@ -160,10 +160,10 @@ public enum MessageBodyUtils {
 
         if let subject = message.subject {
             let subjectElement = try Element(Tag("b"), "").appendText(subject)
-            try rootHeaderDiv.insertChildren(2, [subjectElement])
+            try rootHeaderDiv.appendChild(subjectElement)
         }
 
-        try rootHeaderDiv.insertChildren(3, [secondSeparator])
+        try rootHeaderDiv.appendChild(secondSeparator)
 
         var messageDetailsDiv = try Element(Tag("div"), "").attr("style", "margin-bottom: 40px")
         messageDetailsDiv = try insertPrintRecipientField(
@@ -187,7 +187,7 @@ public enum MessageBodyUtils {
             date: message.date.formatted(date: .long, time: .shortened)
         )
 
-        try rootHeaderDiv.insertChildren(4, [messageDetailsDiv])
+        try rootHeaderDiv.appendChild(messageDetailsDiv)
         return rootHeaderDiv
     }
 
@@ -202,7 +202,7 @@ public enum MessageBodyUtils {
 
         try recipientsField.insertChildren(0, [fieldName, fieldValue])
 
-        return try element.insertChildren(0, [recipientsField])
+        return try element.prependChild(recipientsField)
     }
 
     private static func insertPrintDateField(to element: Element, prefix: String, date: String) throws -> Element {
@@ -212,7 +212,7 @@ public enum MessageBodyUtils {
 
         try recipientsField.insertChildren(0, [fieldName, fieldValue])
 
-        return try element.insertChildren(0, [recipientsField])
+        return try element.prependChild(recipientsField)
     }
 
     // MARK: - Utils
