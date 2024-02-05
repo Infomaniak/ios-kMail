@@ -33,7 +33,10 @@ struct AIProgressView: View {
                         LinearGradient(
                             stops: [
                                 Gradient.Stop(color: MailResourcesAsset.backgroundColor.swiftUIColor, location: 0),
-                                Gradient.Stop(color: MailResourcesAsset.backgroundColor.swiftUIColor.opacity(0.8), location: 0.5),
+                                Gradient.Stop(
+                                    color: MailResourcesAsset.backgroundColor.swiftUIColor.opacity(0.75),
+                                    location: 0.66
+                                ),
                                 Gradient.Stop(color: .clear, location: 1)
                             ],
                             startPoint: .bottom,
@@ -41,6 +44,7 @@ struct AIProgressView: View {
                         )
                     )
             }
+            .allowsHitTesting(false)
     }
 }
 
