@@ -22,14 +22,29 @@ import SwiftUI
 
 struct AIProgressView: View {
     var body: some View {
-        HStack(spacing: UIPadding.small) {
-            Text(MailResourcesStrings.Localizable.aiPromptGenerationLoader)
-                .textStyle(.bodyMediumTertiary)
-
-            ProgressView()
-                .progressViewStyle(.circular)
-                .tint(MailResourcesAsset.aiColor.swiftUIColor)
-        }
+        ProgressView()
+            .controlSize(.large)
+            .padding(.top, 64)
+            .padding(.bottom, value: .medium)
+            .frame(maxWidth: .infinity)
+            .background {
+                Rectangle()
+                    .fill(
+                        LinearGradient(
+                            stops: [
+                                Gradient.Stop(color: MailResourcesAsset.backgroundColor.swiftUIColor, location: 0),
+                                Gradient.Stop(
+                                    color: MailResourcesAsset.backgroundColor.swiftUIColor.opacity(0.75),
+                                    location: 0.66
+                                ),
+                                Gradient.Stop(color: .clear, location: 1)
+                            ],
+                            startPoint: .bottom,
+                            endPoint: .top
+                        )
+                    )
+            }
+            .allowsHitTesting(false)
     }
 }
 
