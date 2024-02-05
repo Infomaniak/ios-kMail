@@ -103,6 +103,15 @@ struct SettingsView: View {
                         }
                     }
 
+                    // MARK: Auto Advance
+
+                    SettingsSubMenuCell(
+                        title: MailResourcesStrings.Localizable.settingsAutoAdvanceTitle,
+                        subtitle: autoAdvance.description
+                    ) {
+                        SettingsAutoAdvanceView(section: isCompactWindow ? .compact : .regular)
+                    }
+
                     IKDivider()
                 }
 
@@ -175,15 +184,6 @@ struct SettingsView: View {
                             matomoCategory: .settingsDisplayExternalContent,
                             matomoName: \.rawValue
                         )
-                    }
-
-                    // MARK: Auto Advance
-
-                    SettingsSubMenuCell(
-                        title: MailResourcesStrings.Localizable.settingsAutoAdvanceTitle,
-                        subtitle: autoAdvance.description
-                    ) {
-                        SettingsAutoAdvanceView(section: isCompactWindow ? .compact : .regular)
                     }
                 }
             }
