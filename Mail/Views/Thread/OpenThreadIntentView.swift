@@ -21,12 +21,6 @@ import MailCore
 import RealmSwift
 import SwiftUI
 
-protocol IntentViewable<Intent> {
-    associatedtype Intent
-    var resolvedIntent: State<Intent?> { get }
-    func initFromIntent() async
-}
-
 struct OpenThreadIntentView: View, IntentViewable {
     typealias Intent = ResolvedIntent
 
