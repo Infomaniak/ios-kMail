@@ -22,24 +22,33 @@ import NavigationBackport
 import RealmSwift
 import SwiftUI
 
-struct ComposeMessageIntentView: View {
+struct ComposeMessageIntentView: View, IntentViewable {
+    typealias Intent = ResolvedIntent
+
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @Environment(\.dismiss) private var dismiss
 
-    @State private var draft: Draft?
-    @State private var mailboxManager: MailboxManager?
-    @State private var messageReply: MessageReply?
+    let resolvedIntent = State<ResolvedIntent?>()
+
+    struct ResolvedIntent {
+        let mailboxManager: MailboxManager
+        let draft: Draft
+        let messageReply: MessageReply?
+    }
 
     let composeMessageIntent: ComposeMessageIntent
 
     var body: some View {
         NBNavigationStack {
-            if let draft,
-               let mailboxManager {
-                ComposeMessageView(draft: draft, mailboxManager: mailboxManager, messageReply: messageReply)
-                    .environmentObject(mailboxManager)
+            if let resolvedIntent = resolvedIntent.wrappedValue {
+                ComposeMessageView(
+                    draft: resolvedIntent.draft,
+                    mailboxManager: resolvedIntent.mailboxManager,
+                    messageReply: resolvedIntent.messageReply
+                )
+                .environmentObject(resolvedIntent.mailboxManager)
             } else {
                 ProgressView()
                     .progressViewStyle(.circular)
@@ -62,6 +71,7 @@ struct ComposeMessageIntentView: View {
         }
 
         var draftToWrite: Draft?
+        var maybeMessageReply: MessageReply?
         switch composeMessageIntent.type {
         case .new:
             draftToWrite = Draft(localUUID: UUID().uuidString)
@@ -76,7 +86,7 @@ struct ComposeMessageIntentView: View {
         case .reply(let messageUid, let replyMode):
             if let frozenMessage = mailboxManager.getRealm().object(ofType: Message.self, forPrimaryKey: messageUid)?.freeze() {
                 let messageReply = MessageReply(frozenMessage: frozenMessage, replyMode: replyMode)
-                self.messageReply = messageReply
+                maybeMessageReply = messageReply
                 draftToWrite = Draft.replying(
                     reply: messageReply,
                     currentMailboxEmail: mailboxManager.mailbox.email
@@ -88,9 +98,18 @@ struct ComposeMessageIntentView: View {
             let draftLocalUUID = draftToWrite.localUUID
             writeDraftToRealm(mailboxManager.getRealm(), draft: draftToWrite)
 
-            Task { @MainActor in
-                draft = mailboxManager.draft(localUuid: draftLocalUUID)
-                self.mailboxManager = mailboxManager
+            Task { @MainActor [maybeMessageReply] in
+                guard let liveDraft = mailboxManager.draft(localUuid: draftLocalUUID) else {
+                    dismiss()
+                    snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
+                    return
+                }
+
+                resolvedIntent.wrappedValue = ResolvedIntent(
+                    mailboxManager: mailboxManager,
+                    draft: liveDraft,
+                    messageReply: maybeMessageReply
+                )
             }
         } else {
             dismiss()
