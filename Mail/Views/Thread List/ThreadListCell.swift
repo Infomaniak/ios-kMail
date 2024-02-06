@@ -81,6 +81,14 @@ struct ThreadListCell: View {
         ))
         .contentShape(Rectangle())
         .onTapGesture { didTapCell() }
+        .openInWindowOnDoubleTap(
+            windowId: DesktopWindowIdentifier.threadWindowIdentifier,
+            value: OpenThreadIntent.openFromThreadCell(
+                thread: thread,
+                currentFolder: viewModel.frozenFolder,
+                mailboxManager: viewModel.mailboxManager
+            )
+        )
         .actionsContextMenu(thread: thread)
         .onLongPressGesture { didOptionalTapCell() }
         .swipeActions(

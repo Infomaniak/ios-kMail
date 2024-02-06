@@ -78,6 +78,7 @@ struct AttachmentsView: View {
         }
         .sheet(item: $previewedAttachment) { previewedAttachment in
             AttachmentPreview(attachment: previewedAttachment)
+                .environmentObject(mailboxManager)
         }
         .sheet(item: $allAttachmentsURL) { allAttachmentsURL in
             DocumentPicker(pickerType: .exportContent([allAttachmentsURL.url]))

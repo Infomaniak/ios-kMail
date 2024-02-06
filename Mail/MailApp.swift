@@ -111,6 +111,15 @@ struct MailApp: App {
                 }
             }
             .defaultAppStorage(.shared)
+
+            WindowGroup(id: DesktopWindowIdentifier.threadWindowIdentifier,
+                        for: OpenThreadIntent.self) { $openThreadIntent in
+                if let openThreadIntent {
+                    OpenThreadIntentView(openThreadIntent: openThreadIntent)
+                        .standardWindow()
+                }
+            }
+            .defaultAppStorage(.shared)
         }
     }
 

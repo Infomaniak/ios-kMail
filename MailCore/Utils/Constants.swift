@@ -30,6 +30,7 @@ public enum DeeplinkConstants {
 public enum DesktopWindowIdentifier {
     public static let settingsWindowIdentifier = "settings"
     public static let composeWindowIdentifier = "compose"
+    public static let threadWindowIdentifier = "thread"
 }
 
 public struct URLConstants {
