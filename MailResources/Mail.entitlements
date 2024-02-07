@@ -17,6 +17,8 @@
 	<true/>
 	<key>com.apple.security.network.client</key>
 	<true/>
+    <key>com.apple.security.print</key>
+    <true/>
 	<key>com.apple.security.personal-information.addressbook</key>
 	<true/>
 	<key>com.apple.security.personal-information.photos-library</key>

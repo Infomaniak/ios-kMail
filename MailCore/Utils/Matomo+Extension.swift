@@ -71,6 +71,7 @@ public extension MatomoUtils.EventCategory {
     static let notificationActions = MatomoUtils.EventCategory(displayName: "notificationActions")
     static let threadActions = MatomoUtils.EventCategory(displayName: "threadActions")
     static let swipeActions = MatomoUtils.EventCategory(displayName: "swipeActions")
+    static let menuAction = MatomoUtils.EventCategory(displayName: "menuAction")
 
     // Settings
 

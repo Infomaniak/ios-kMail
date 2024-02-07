@@ -67,6 +67,9 @@ struct UserAccountScene: Scene {
                     refreshCacheData()
                 }
         }
+        .commands {
+            CustomCommands(rootViewState: rootViewState)
+        }
         .defaultAppStorage(.shared)
 
         if #available(iOS 16.0, *) {
