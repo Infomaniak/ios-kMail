@@ -20,11 +20,11 @@ import MailCore
 import SwiftUI
 
 struct RootView: View {
-    @EnvironmentObject private var navigationState: RootViewState
+    @EnvironmentObject private var rootViewState: RootViewState
 
     var body: some View {
         ZStack {
-            switch navigationState.state {
+            switch rootViewState.state {
             case .appLocked:
                 LockedAppView()
             case .mainView(let currentMailboxManager, let initialFolder):

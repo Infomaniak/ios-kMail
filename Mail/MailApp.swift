@@ -47,7 +47,7 @@ struct MailApp: App {
     @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
     @AppStorage(UserDefaults.shared.key(.theme), store: .shared) private var theme = DefaultPreferences.theme
 
-    @StateObject private var navigationState = RootViewState()
+    @StateObject private var rootViewState = RootViewState()
 
     init() {
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
@@ -58,17 +58,17 @@ struct MailApp: App {
         WindowGroup {
             RootView()
                 .standardWindow()
-                .environmentObject(navigationState)
+                .environmentObject(rootViewState)
                 .onChange(of: scenePhase) { newScenePhase in
                     switch newScenePhase {
                     case .active:
                         appLaunchCounter.increase()
                         refreshCacheData()
-                        navigationState.transitionToLockViewIfNeeded()
+                        rootViewState.transitionToLockViewIfNeeded()
                         UserDefaults.shared.openingUntilReview -= 1
                     case .background:
                         refreshAppBackgroundTask.scheduleForBackgroundLaunchIfNeeded()
-                        if UserDefaults.shared.isAppLockEnabled && navigationState.state != .appLocked {
+                        if UserDefaults.shared.isAppLockEnabled && rootViewState.state != .appLocked {
                             appLockHelper.setTime()
                         }
                     case .inactive:
@@ -77,7 +77,7 @@ struct MailApp: App {
                         break
                     }
                 }
-                .onChange(of: navigationState.account) { _ in
+                .onChange(of: rootViewState.account) { _ in
                     refreshCacheData()
                 }
         }
@@ -89,11 +89,11 @@ struct MailApp: App {
                 id: DesktopWindowIdentifier.settingsWindowIdentifier,
                 for: SettingsViewConfig.self
             ) { $config in
-                if case .mainView(let mailboxManager, _) = navigationState.state,
+                if case .mainView(let mailboxManager, _) = rootViewState.state,
                    let baseNavigationPath = config?.baseNavigationPath {
                     SettingsNavigationView(baseNavigationPath: baseNavigationPath)
                         .standardWindow()
-                        .environmentObject(navigationState)
+                        .environmentObject(rootViewState)
                         .environmentObject(mailboxManager)
                 }
             }
@@ -107,7 +107,7 @@ struct MailApp: App {
                 if let composeMessageIntent {
                     ComposeMessageIntentView(composeMessageIntent: composeMessageIntent)
                         .standardWindow()
-                        .environmentObject(navigationState)
+                        .environmentObject(rootViewState)
                 }
             }
             .defaultAppStorage(.shared)
@@ -124,7 +124,7 @@ struct MailApp: App {
     }
 
     func refreshCacheData() {
-        guard let account = navigationState.account else {
+        guard let account = rootViewState.account else {
             return
         }
 
