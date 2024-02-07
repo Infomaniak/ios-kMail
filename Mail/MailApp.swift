@@ -35,19 +35,9 @@ struct MailApp: App {
     /// Making sure the DI is registered at a very early stage of the app launch.
     private let dependencyInjectionHook = MailTargetAssembly()
 
-    @LazyInjectService private var appLockHelper: AppLockHelper
-    @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var appLaunchCounter: AppLaunchCounter
     @LazyInjectService private var refreshAppBackgroundTask: RefreshAppBackgroundTask
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-
-    @Environment(\.scenePhase) private var scenePhase
-
-    @AppStorage(UserDefaults.shared.key(.accentColor), store: .shared) private var accentColor = DefaultPreferences.accentColor
-    @AppStorage(UserDefaults.shared.key(.theme), store: .shared) private var theme = DefaultPreferences.theme
-
-    @StateObject private var rootViewState = RootViewState()
 
     init() {
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
@@ -55,50 +45,9 @@ struct MailApp: App {
     }
 
     var body: some Scene {
-        WindowGroup {
-            RootView()
-                .standardWindow()
-                .environmentObject(rootViewState)
-                .onChange(of: scenePhase) { newScenePhase in
-                    switch newScenePhase {
-                    case .active:
-                        appLaunchCounter.increase()
-                        refreshCacheData()
-                        rootViewState.transitionToLockViewIfNeeded()
-                        UserDefaults.shared.openingUntilReview -= 1
-                    case .background:
-                        refreshAppBackgroundTask.scheduleForBackgroundLaunchIfNeeded()
-                        if UserDefaults.shared.isAppLockEnabled && rootViewState.state != .appLocked {
-                            appLockHelper.setTime()
-                        }
-                    case .inactive:
-                        break
-                    @unknown default:
-                        break
-                    }
-                }
-                .onChange(of: rootViewState.account) { _ in
-                    refreshCacheData()
-                }
-        }
-        .defaultAppStorage(.shared)
+        UserAccountWindow()
 
         if #available(iOS 16.0, *) {
-            WindowGroup(
-                MailResourcesStrings.Localizable.settingsTitle,
-                id: DesktopWindowIdentifier.settingsWindowIdentifier,
-                for: SettingsViewConfig.self
-            ) { $config in
-                if case .mainView(let mailboxManager, _) = rootViewState.state,
-                   let baseNavigationPath = config?.baseNavigationPath {
-                    SettingsNavigationView(baseNavigationPath: baseNavigationPath)
-                        .standardWindow()
-                        .environmentObject(rootViewState)
-                        .environmentObject(mailboxManager)
-                }
-            }
-            .defaultAppStorage(.shared)
-
             WindowGroup(
                 MailResourcesStrings.Localizable.settingsTitle,
                 id: DesktopWindowIdentifier.composeWindowIdentifier,
@@ -107,7 +56,6 @@ struct MailApp: App {
                 if let composeMessageIntent {
                     ComposeMessageIntentView(composeMessageIntent: composeMessageIntent)
                         .standardWindow()
-                        .environmentObject(rootViewState)
                 }
             }
             .defaultAppStorage(.shared)
@@ -120,26 +68,6 @@ struct MailApp: App {
                 }
             }
             .defaultAppStorage(.shared)
-        }
-    }
-
-    func refreshCacheData() {
-        guard let account = rootViewState.account else {
-            return
-        }
-
-        Task {
-            do {
-                try await accountManager.updateUser(for: account)
-                accountManager.enableBugTrackerIfAvailable()
-
-                guard CNContactStore.authorizationStatus(for: .contacts) != .notDetermined else {
-                    return
-                }
-                try await accountManager.currentContactManager?.refreshContactsAndAddressBooks()
-            } catch {
-                DDLogError("Error while updating user account: \(error)")
-            }
         }
     }
 }
