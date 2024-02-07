@@ -47,27 +47,8 @@ struct MailApp: App {
     var body: some Scene {
         UserAccountScene()
 
-        if #available(iOS 16.0, *) {
-            WindowGroup(
-                MailResourcesStrings.Localizable.settingsTitle,
-                id: DesktopWindowIdentifier.composeWindowIdentifier,
-                for: ComposeMessageIntent.self
-            ) { $composeMessageIntent in
-                if let composeMessageIntent {
-                    ComposeMessageIntentView(composeMessageIntent: composeMessageIntent)
-                        .standardWindow()
-                }
-            }
-            .defaultAppStorage(.shared)
+        ComposeMessageScene()
 
-            WindowGroup(id: DesktopWindowIdentifier.threadWindowIdentifier,
-                        for: OpenThreadIntent.self) { $openThreadIntent in
-                if let openThreadIntent {
-                    OpenThreadIntentView(openThreadIntent: openThreadIntent)
-                        .standardWindow()
-                }
-            }
-            .defaultAppStorage(.shared)
-        }
+        DisplayThreadScene()
     }
 }
