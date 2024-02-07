@@ -37,6 +37,13 @@ struct CustomCommands: Commands {
     }
 
     var body: some Commands {
+        CommandMenu(MailResourcesStrings.Localizable.messageMenuTitle) {
+            if #available(iOS 16.0, *),
+               let mainViewState {
+                MessageCommands(mainViewState: mainViewState)
+            }
+        }
+
         CommandGroup(replacing: .newItem) {
             if #available(iOS 16.0, *) {
                 NewMessageCommand(mailboxManager: mainViewState?.mailboxManager)

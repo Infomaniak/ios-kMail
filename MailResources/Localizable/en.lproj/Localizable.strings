@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: en, English
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Fri, 02 Feb 2024 14:29:45 +0100
+ * Exported by: Philippe Weidmann
+ * Exported at: Wed, 07 Feb 2024 11:39:18 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -854,6 +854,12 @@
 /* loco:64ad0bf21a8c5c3877078262 */
 "lockedMailboxTitle-plural-many" = "";
 
+/* loco:65c253eca5ff12654a065ce2 */
+"mailToDescription" = "Email addresses linked to this account";
+
+/* loco:65c25397da1981a2280677ce */
+"mailToTitle" = "Which email address would you like to send a message to %s?";
+
 /* loco:62567b1163b65257647cd9a2 */
 "menuDrawerAdvancedActions" = "Advanced actions";
 
@@ -874,6 +880,9 @@
 
 /* loco:628b90d373427778f14fd442 */
 "messageIsDraftOption" = "Draft";
+
+/* loco:65c35d9e6e00f9b3e60f34d3 */
+"messageMenuTitle" = "Message";
 
 /* loco:628b6d81110f662ac808a165 */
 "messageReplyHeader" = "On %1$@, %2$@ wrote:";
