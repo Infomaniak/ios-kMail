@@ -45,7 +45,7 @@ struct MailApp: App {
     }
 
     var body: some Scene {
-        UserAccountWindow()
+        UserAccountScene()
 
         if #available(iOS 16.0, *) {
             WindowGroup(

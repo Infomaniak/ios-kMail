@@ -30,7 +30,7 @@ import Sentry
 import SwiftUI
 import UIKit
 
-struct UserAccountWindow: Scene {
+struct UserAccountScene: Scene {
     @Environment(\.scenePhase) private var scenePhase
 
     @LazyInjectService private var appLockHelper: AppLockHelper
@@ -75,11 +75,11 @@ struct UserAccountWindow: Scene {
                 id: DesktopWindowIdentifier.settingsWindowIdentifier,
                 for: SettingsViewConfig.self
             ) { $config in
-                if case .mainView(let mailboxManager, _) = rootViewState.state,
+                if case .mainView(let mainViewState) = rootViewState.state,
                    let baseNavigationPath = config?.baseNavigationPath {
                     SettingsNavigationView(baseNavigationPath: baseNavigationPath)
                         .standardWindow()
-                        .environmentObject(mailboxManager)
+                        .environmentObject(mainViewState.mailboxManager)
                 }
             }
             .defaultAppStorage(.shared)

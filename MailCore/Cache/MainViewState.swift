@@ -55,7 +55,8 @@ public class MainViewState: ObservableObject, SelectedThreadOwnable {
         }
     }
 
-    let mailboxManager: MailboxManager
+    public let mailboxManager: MailboxManager
+
     public init(mailboxManager: MailboxManager, selectedFolder: Folder) {
         self.mailboxManager = mailboxManager
         self.selectedFolder = selectedFolder

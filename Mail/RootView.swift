@@ -27,9 +27,9 @@ struct RootView: View {
             switch rootViewState.state {
             case .appLocked:
                 LockedAppView()
-            case .mainView(let currentMailboxManager, let initialFolder):
-                SplitView(mailboxManager: currentMailboxManager)
-                    .environmentObject(MainViewState(mailboxManager: currentMailboxManager, selectedFolder: initialFolder))
+            case .mainView(let mainViewState):
+                SplitView(mailboxManager: mainViewState.mailboxManager)
+                    .environmentObject(mainViewState)
             case .onboarding:
                 OnboardingView()
             case .noMailboxes:

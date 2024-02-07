@@ -37,9 +37,8 @@ public enum RootViewType: Equatable {
             return true
         case (.unavailableMailboxes, .unavailableMailboxes):
             return true
-        case (.mainView(let lhsMailboxManager, let lhsFolder), .mainView(let rhsMailboxManager, let rhsFolder)):
-            return lhsMailboxManager == rhsMailboxManager
-                && lhsFolder.remoteId == rhsFolder.remoteId
+        case (.mainView(let lhsMainViewState), .mainView(let rhsMainViewState)):
+            return lhsMainViewState.mailboxManager == rhsMainViewState.mailboxManager
         case (.preloading(let lhsAccount), .preloading(let rhsAccount)):
             return lhsAccount == rhsAccount
         default:
@@ -48,7 +47,7 @@ public enum RootViewType: Equatable {
     }
 
     case appLocked
-    case mainView(MailboxManager, Folder)
+    case mainView(MainViewState)
     case onboarding
     case authorization
     case noMailboxes
@@ -103,7 +102,7 @@ public class RootViewState: ObservableObject {
 
         if let currentMailboxManager = accountManager.currentMailboxManager,
            let initialFolder = currentMailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
-            return .mainView(currentMailboxManager, initialFolder)
+            return .mainView(MainViewState(mailboxManager: currentMailboxManager, selectedFolder: initialFolder))
         } else {
             let mailboxes = mailboxInfosManager.getMailboxes(for: currentAccount.userId)
 
