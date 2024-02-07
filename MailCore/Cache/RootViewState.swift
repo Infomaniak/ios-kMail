@@ -37,6 +37,8 @@ public enum RootViewType: Equatable {
             return true
         case (.unavailableMailboxes, .unavailableMailboxes):
             return true
+        case (.updateRequired, .updateRequired):
+            return true
         case (.mainView(let lhsMainViewState), .mainView(let rhsMainViewState)):
             return lhsMainViewState.mailboxManager == rhsMainViewState.mailboxManager
         case (.preloading(let lhsAccount), .preloading(let rhsAccount)):
@@ -52,6 +54,7 @@ public enum RootViewType: Equatable {
     case authorization
     case noMailboxes
     case unavailableMailboxes
+    case updateRequired
     case preloading(Account)
 }
 
