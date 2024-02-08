@@ -64,6 +64,7 @@ public enum RootViewDestination {
     case onboarding
     case noMailboxes
     case unavailableMailboxes
+    case updateRequired
 }
 
 /// Something that represents the state of the root view
@@ -74,6 +75,7 @@ public class RootViewState: ObservableObject {
     private var accountManagerObservation: AnyCancellable?
 
     @Published public private(set) var state: RootViewType
+    @Published public var shouldShowUpdateDiscovery = false
 
     public private(set) var account: Account?
 
@@ -130,6 +132,8 @@ public class RootViewState: ObservableObject {
                 state = .noMailboxes
             case .unavailableMailboxes:
                 state = .unavailableMailboxes
+            case .updateRequired:
+                state = .updateRequired
             }
         }
     }

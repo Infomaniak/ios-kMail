@@ -64,7 +64,6 @@ struct SplitView: View {
     @LazyInjectService private var platformDetector: PlatformDetectable
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
 
-    @State private var isShowingUpdateAvailable = false
     @State private var isShowingSyncDiscovery = false
     @State private var isShowingSyncProfile = false
 
@@ -120,7 +119,7 @@ struct SplitView: View {
                 }
             }
         }
-        .discoveryPresenter(isPresented: $isShowingUpdateAvailable) {
+        .discoveryPresenter(isPresented: $mainViewState.isShowingUpdateAvailable) {
             DiscoveryView(item: .updateDiscovery) { willUpdate in
                 guard willUpdate else { return }
                 let url: URLConstants = Bundle.main.isRunningInTestFlight ? .testFlight : .appStore
@@ -166,8 +165,7 @@ struct SplitView: View {
                 }
                 guard !platformDetector.isDebug else { return }
                 // We don't want to show both DiscoveryView at the same time
-                isShowingUpdateAvailable = try await VersionChecker.standard.showUpdateVersion()
-                isShowingSyncDiscovery = isShowingUpdateAvailable ? false : showSync()
+                isShowingSyncDiscovery = mainViewState.isShowingUpdateAvailable ? false : showSync()
             }
         }
         .onOpenURL { url in

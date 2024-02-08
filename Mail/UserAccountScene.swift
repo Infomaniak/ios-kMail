@@ -29,6 +29,7 @@ import MailResources
 import Sentry
 import SwiftUI
 import UIKit
+import VersionChecker
 
 struct UserAccountScene: Scene {
     @Environment(\.scenePhase) private var scenePhase
@@ -51,6 +52,7 @@ struct UserAccountScene: Scene {
                         appLaunchCounter.increase()
                         refreshCacheData()
                         rootViewState.transitionToLockViewIfNeeded()
+                        checkAppVersion()
                         UserDefaults.shared.openingUntilReview -= 1
                     case .background:
                         refreshAppBackgroundTask.scheduleForBackgroundLaunchIfNeeded()
@@ -105,6 +107,26 @@ struct UserAccountScene: Scene {
                 try await accountManager.currentContactManager?.refreshContactsAndAddressBooks()
             } catch {
                 DDLogError("Error while updating user account: \(error)")
+            }
+        }
+    }
+
+    func checkAppVersion() {
+        Task {
+            do {
+                let versionStatus = try await VersionChecker.standard.checkAppVersionStatus()
+                switch versionStatus {
+                case .updateIsRequired:
+                    rootViewState.transitionToRootViewDestination(.updateRequired)
+                case .canBeUpdated:
+                    if case .mainView(let mainViewState) = rootViewState.state {
+                        mainViewState.isShowingUpdateAvailable = true
+                    }
+                case .isUpToDate:
+                    break
+                }
+            } catch {
+                DDLogError("Error while checking version status: \(error)")
             }
         }
     }
