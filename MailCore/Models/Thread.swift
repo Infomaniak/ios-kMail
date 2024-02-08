@@ -48,6 +48,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var folderId = ""
     @Persisted(originProperty: "threads") private var folders: LinkingObjects<Folder>
     @Persisted public var fromSearch = false
+    @Persisted public var searchFolderName: String?
 
     @Persisted public var isDraft = false
 
@@ -97,6 +98,13 @@ public class Thread: Object, Decodable, Identifiable {
 
     public func updateFlagged() {
         flagged = messages.contains { $0.flagged }
+    }
+
+    public func fillSearchFolderName(using realm: Realm) {
+        if messages.count == 1, let message = messages.first {
+            let parentFolder = realm.object(ofType: Folder.self, forPrimaryKey: message.folderId)
+            searchFolderName = parentFolder?.localizedName
+        }
     }
 
     /// Re-generate `Thread` properties given the messages it contains.

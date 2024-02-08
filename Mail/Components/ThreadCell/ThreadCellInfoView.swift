@@ -23,17 +23,30 @@ struct ThreadCellInfoView: View, Equatable {
     let subject: String
     let preview: String
     let density: ThreadDensity
+    let folderName: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.verySmall) {
-            Text(subject)
-                .textStyle(.body)
-                .lineLimit(1)
+            if density == .compact {
+                HStack {
+                    Text(subject)
+                        .textStyle(.body)
+                        .lineLimit(1)
 
-            if density != .compact {
-                Text(preview)
-                    .textStyle(.bodySmallSecondary)
+                    MessageFolderCell(title: folderName)
+                }
+            } else {
+                Text(subject)
+                    .textStyle(.body)
                     .lineLimit(1)
+
+                HStack {
+                    Text(preview)
+                        .textStyle(.bodySmallSecondary)
+                        .lineLimit(1)
+
+                    MessageFolderCell(title: folderName)
+                }
             }
         }
     }

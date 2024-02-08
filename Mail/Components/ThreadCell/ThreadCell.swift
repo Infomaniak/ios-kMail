@@ -103,6 +103,7 @@ struct ThreadCell: View {
     let density: ThreadDensity
     let isMultipleSelectionEnabled: Bool
     let isSelected: Bool
+    let origin: ThreadOrigin
     let avatarTapped: (() -> Void)?
 
     private var checkboxSize: CGFloat {
@@ -126,6 +127,7 @@ struct ThreadCell: View {
         accentColor: AccentColor,
         isMultipleSelectionEnabled: Bool = false,
         isSelected: Bool = false,
+        origin: ThreadOrigin = .threadList,
         avatarTapped: (() -> Void)? = nil
     ) {
         self.thread = thread
@@ -136,6 +138,7 @@ struct ThreadCell: View {
         self.accentColor = accentColor
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
         self.isSelected = isSelected
+        self.origin = origin
         self.avatarTapped = avatarTapped
     }
 
@@ -169,8 +172,15 @@ struct ThreadCell: View {
                 )
 
                 HStack(alignment: .top, spacing: UIPadding.verySmall) {
-                    ThreadCellInfoView(subject: dataHolder.subject, preview: dataHolder.preview, density: density)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    let folderName = origin == .search ? thread.searchFolderName : nil
+                    let _ = print(folderName)
+                    ThreadCellInfoView(
+                        subject: dataHolder.subject,
+                        preview: dataHolder.preview,
+                        density: density,
+                        folderName: folderName
+                    )
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     ThreadCellDetailsView(hasAttachments: thread.hasAttachments, isFlagged: thread.flagged)
                 }
             }

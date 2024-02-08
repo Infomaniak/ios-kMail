@@ -32,7 +32,7 @@ struct SearchThreadsSectionView: View {
     var body: some View {
         Section {
             ForEach(viewModel.frozenThreads) { thread in
-                ThreadCell(thread: thread, density: threadDensity, accentColor: accentColor)
+                ThreadCell(thread: thread, density: threadDensity, accentColor: accentColor, origin: .search)
                     .onTapGesture {
                         didTapCell(thread: thread)
                     }
