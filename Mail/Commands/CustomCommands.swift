@@ -50,7 +50,7 @@ struct CustomCommands: Commands {
             }
         }
 
-        CommandGroup(after: .newItem) {
+        CommandGroup(after: .importExport) {
             Button(MailResourcesStrings.Localizable.shortcutRefreshAction) {
                 guard let mainViewState else { return }
                 refresh(mailboxManager: mainViewState.mailboxManager, currentFolder: mainViewState.selectedFolder)
