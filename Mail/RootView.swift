@@ -32,14 +32,16 @@ struct RootView: View {
                     .environmentObject(mainViewState)
             case .onboarding:
                 OnboardingView()
+            case .authorization:
+                AuthorizationView()
             case .noMailboxes:
                 NoMailboxView()
             case .unavailableMailboxes:
                 UnavailableMailboxesView()
+            case .updateRequired:
+                MailUpdateRequiredView()
             case .preloading(let currentAccount):
                 PreloadingView(currentAccount: currentAccount)
-            case .authorization:
-                AuthorizationView()
             }
         }
     }
