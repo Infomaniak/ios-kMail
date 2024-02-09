@@ -100,11 +100,14 @@ public class Thread: Object, Decodable, Identifiable {
         flagged = messages.contains { $0.flagged }
     }
 
-    public func fillSearchFolderName(using realm: Realm) {
-        if messages.count == 1, let message = messages.first {
-            let parentFolder = realm.object(ofType: Folder.self, forPrimaryKey: message.folderId)
-            searchFolderName = parentFolder?.localizedName
+    public func makeFromSearch(using realm: Realm) {
+        fromSearch = true
+        guard messages.count == 1,
+              let message = messages.first else {
+            return
         }
+        let parentFolder = realm.object(ofType: Folder.self, forPrimaryKey: message.folderId)
+        searchFolderName = parentFolder?.localizedName
     }
 
     /// Re-generate `Thread` properties given the messages it contains.

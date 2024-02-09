@@ -25,25 +25,37 @@ struct ThreadCellInfoView: View, Equatable {
     let density: ThreadDensity
     let folderName: String?
 
+    let hasAttachments: Bool
+    let isFlagged: Bool
+
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.verySmall) {
             if density == .compact {
-                HStack {
+                HStack(alignment: .top, spacing: UIPadding.verySmall) {
                     Text(subject)
                         .textStyle(.body)
                         .lineLimit(1)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     MessageFolderCell(title: folderName)
+
+                    ThreadCellDetailsView(hasAttachments: hasAttachments, isFlagged: isFlagged)
                 }
             } else {
-                Text(subject)
-                    .textStyle(.body)
-                    .lineLimit(1)
+                HStack(alignment: .top, spacing: UIPadding.verySmall) {
+                    Text(subject)
+                        .textStyle(.body)
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
-                HStack {
+                    ThreadCellDetailsView(hasAttachments: hasAttachments, isFlagged: isFlagged)
+                }
+
+                HStack(alignment: .top, spacing: UIPadding.verySmall) {
                     Text(preview)
                         .textStyle(.bodySmallSecondary)
                         .lineLimit(1)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     MessageFolderCell(title: folderName)
                 }

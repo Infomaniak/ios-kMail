@@ -68,9 +68,7 @@ public extension MailboxManager {
     private func saveSearchThreads(threadResult: ThreadResult, searchFolder: Folder?) async {
         await backgroundRealm.execute { realm in
             for thread in threadResult.threads ?? [] {
-                thread.fromSearch = true
-
-                thread.fillSearchFolderName(using: realm)
+                thread.makeFromSearch(using: realm)
 
                 for message in thread.messages where realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
                     message.fromSearch = true
@@ -156,8 +154,7 @@ public extension MailboxManager {
                         answered: newMessage.answered,
                         forwarded: newMessage.forwarded
                     )
-                    newThread.fromSearch = true
-                    newThread.fillSearchFolderName(using: realm)
+                    newThread.makeFromSearch(using: realm)
                     newThread.subject = message.subject
                     searchFolder.threads.insert(newThread)
                 }

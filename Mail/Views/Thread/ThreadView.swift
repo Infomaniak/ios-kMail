@@ -86,9 +86,8 @@ struct ThreadView: View {
                             ExternalRecipientView(externalTagSate: externalTag, isDraft: false)
                         }
                     }
-                    if thread.fromSearch, let folderName = thread.searchFolderName {
-                        MessageFolderCell(title: folderName)
-                    }
+
+                    MessageFolderCell(title: thread.searchFolderName, inThreadHeader: true)
                 }
                 .padding(.top, value: .small)
                 .padding(.bottom, value: .regular)

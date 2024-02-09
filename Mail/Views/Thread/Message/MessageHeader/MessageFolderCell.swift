@@ -21,10 +21,13 @@ import SwiftUI
 
 struct MessageFolderCell: View {
     let title: String?
+    var inThreadHeader = false
 
     var body: some View {
         if let title {
             Text(title)
+                .lineLimit(1)
+                .truncationMode(inThreadHeader ? .middle : .tail)
                 .textStyle(.bodySmallSecondary)
                 .padding(.vertical, 1)
                 .padding(.horizontal, 4)
