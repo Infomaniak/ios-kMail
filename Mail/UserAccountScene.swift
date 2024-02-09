@@ -38,6 +38,7 @@ struct UserAccountScene: Scene {
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
     @LazyInjectService private var refreshAppBackgroundTask: RefreshAppBackgroundTask
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     @StateObject private var rootViewState = RootViewState()
 
@@ -114,7 +115,8 @@ struct UserAccountScene: Scene {
     func checkAppVersion() {
         Task {
             do {
-                let versionStatus = try await VersionChecker.standard.checkAppVersionStatus()
+                let platform: Platform = platformDetector.isMacCatalyst ? .macOS : .ios
+                let versionStatus = try await VersionChecker.standard.checkAppVersionStatus(platform: platform)
                 switch versionStatus {
                 case .updateIsRequired:
                     rootViewState.transitionToRootViewDestination(.updateRequired)

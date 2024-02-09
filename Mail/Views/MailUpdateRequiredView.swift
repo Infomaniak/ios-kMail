@@ -24,7 +24,7 @@ import VersionChecker
 struct MailUpdateRequiredView: View {
     @Environment(\.openURL) private var openURL
 
-    let sharedStyle = TemplateSharedStyle(
+    private let sharedStyle = TemplateSharedStyle(
         background: MailResourcesAsset.backgroundColor.swiftUIColor,
         titleTextStyle: .init(font: MailTextStyle.header2.font, color: MailTextStyle.header2.color),
         descriptionTextStyle: .init(font: MailTextStyle.bodySecondary.font, color: MailTextStyle.bodySecondary.color),

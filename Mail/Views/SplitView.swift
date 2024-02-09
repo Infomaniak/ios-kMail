@@ -26,7 +26,6 @@ import MailResources
 import NavigationBackport
 import RealmSwift
 import SwiftUI
-import VersionChecker
 @_spi(Advanced) import SwiftUIIntrospect
 
 public class SplitViewManager: ObservableObject {
