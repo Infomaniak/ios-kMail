@@ -101,9 +101,9 @@ public extension MailboxManager {
         await backgroundTracker.end()
     }
 
-    internal func saveThreads(result: ThreadResult, parent: Folder) async {
+    func saveSearchThreads(result: ThreadResult, searchFolder: Folder) async {
         await backgroundRealm.execute { realm in
-            guard let parentFolder = parent.fresh(using: realm) else {
+            guard let searchFolder = searchFolder.fresh(using: realm) else {
                 self.logError(.missingFolder)
                 return
             }
@@ -117,17 +117,18 @@ public extension MailboxManager {
                 }
             }
 
+            if result.currentOffset == 0 {
+                self.clearSearchResults(searchFolder: searchFolder, using: realm)
+            }
+
             // Update thread in Realm
             try? realm.safeWrite {
                 // Clean old threads after fetching first page
                 if result.currentOffset == 0 {
-                    parentFolder.lastUpdate = Date()
-                    realm.delete(parentFolder.threads.flatMap(\.messages).filter { $0.fromSearch == true })
-                    realm.delete(parentFolder.threads.filter { $0.fromSearch == true })
+                    searchFolder.lastUpdate = Date()
                 }
                 realm.add(fetchedThreads, update: .modified)
-                parentFolder.threads.insert(objectsIn: fetchedThreads)
-                parentFolder.unreadCount = result.folderUnseenMessages
+                searchFolder.threads.insert(objectsIn: fetchedThreads)
             }
         }
     }
