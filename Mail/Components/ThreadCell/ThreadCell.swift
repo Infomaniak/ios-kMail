@@ -168,7 +168,7 @@ struct ThreadCell: View {
                     showDraftPrefix: thread.hasDrafts
                 )
 
-                ThreadCellInfoView(
+                ThreadCellBodyView(
                     subject: dataHolder.subject,
                     preview: dataHolder.preview,
                     density: density,
