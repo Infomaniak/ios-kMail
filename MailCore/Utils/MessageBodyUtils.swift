@@ -49,15 +49,15 @@ public enum MessageBodyUtils {
         guard let messageBody = message.body else {
             return nil
         }
-        let bodyValue = messageBody.value ?? ""
+        var bodyValue = messageBody.value ?? ""
 
         do {
-            let printHeader = try createPrintHeader(message: message)
-            let originalDocument = try await SwiftSoup.parse(bodyValue).prependChild(printHeader)
+            if messageBody.type == "text/plain" {
+                bodyValue = try await MessageWebViewUtils.createHTMLForPlainText(text: bodyValue)
+            }
+            bodyValue = try await prependPrintHeader(to: bodyValue, with: message)
 
-            let bodyFromDoc = try originalDocument.outerHtml()
-
-            let messageBodyQuote = await splitBodyAndQuote(messageBody: bodyFromDoc)
+            let messageBodyQuote = await splitBodyAndQuote(messageBody: bodyValue)
 
             return PresentableBody(
                 body: messageBody,
@@ -213,6 +213,13 @@ public enum MessageBodyUtils {
         try recipientsField.insertChildren(0, [fieldName, fieldValue])
 
         return try element.prependChild(recipientsField)
+    }
+
+    public static func prependPrintHeader(to body: String, with message: Message) async throws -> String {
+        let parsedBody = try await SwiftSoup.parse(body)
+        let printHeader = try createPrintHeader(message: message)
+        let originalDocument = try parsedBody.prependChild(printHeader)
+        return try originalDocument.outerHtml()
     }
 
     // MARK: - Utils
