@@ -31,7 +31,7 @@ struct ThreadCellBodyView: View, Equatable {
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.verySmall) {
             if density == .compact {
-                HStack(alignment: .top, spacing: UIPadding.verySmall) {
+                HStack(spacing: UIPadding.verySmall) {
                     Text(subject)
                         .textStyle(.body)
                         .lineLimit(1)
@@ -42,7 +42,7 @@ struct ThreadCellBodyView: View, Equatable {
                     ThreadCellDetailsView(hasAttachments: hasAttachments, isFlagged: isFlagged)
                 }
             } else {
-                HStack(alignment: .top, spacing: UIPadding.verySmall) {
+                HStack(spacing: UIPadding.verySmall) {
                     Text(subject)
                         .textStyle(.body)
                         .lineLimit(1)
@@ -51,7 +51,7 @@ struct ThreadCellBodyView: View, Equatable {
                     ThreadCellDetailsView(hasAttachments: hasAttachments, isFlagged: isFlagged)
                 }
 
-                HStack(alignment: .top, spacing: UIPadding.verySmall) {
+                HStack(spacing: UIPadding.verySmall) {
                     Text(preview)
                         .textStyle(.bodySmallSecondary)
                         .lineLimit(1)
