@@ -49,6 +49,16 @@ public extension MailboxManager {
         }
     }
 
+    func clearSearchResults() async {
+        await backgroundRealm.execute { realm in
+            guard let searchFolder = realm.objects(Folder.self).where({ $0.remoteId == Constants.searchFolderId }).first else {
+                return
+            }
+
+            self.clearSearchResults(searchFolder: searchFolder, using: realm)
+        }
+    }
+
     func searchThreads(searchFolder: Folder?, filterFolderId: String, filter: Filter = .all,
                        searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
         let threadResult = try await apiFetcher.threads(

@@ -75,6 +75,7 @@ public protocol MailboxManagerFolderable {
 /// An abstract interface on the `MailboxManager` related to search
 public protocol MailboxManagerSearchable {
     func initSearchFolder() -> Folder
+    func clearSearchResults() async
     func searchThreads(searchFolder: Folder?, filterFolderId: String, filter: Filter,
                        searchFilter: [URLQueryItem]) async throws -> ThreadResult
     func searchThreads(searchFolder: Folder?, from resource: String,
