@@ -30,8 +30,7 @@ struct MessageFolderTag: View {
                 .truncationMode(inThreadHeader ? .middle : .tail)
                 .tagModifier(
                     foregroundColor: MailResourcesAsset.textSecondaryColor,
-                    backgroundColor: MailResourcesAsset.textFieldColor,
-                    style: .bodySmallSecondary
+                    backgroundColor: MailResourcesAsset.textFieldColor
                 )
         }
     }
