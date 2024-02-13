@@ -23,24 +23,13 @@ import MailCore
 import Social
 import SwiftUI
 import UIKit
+import VersionChecker
 
 final class ShareNavigationViewController: UIViewController {
     /// Making sure the DI is registered at a very early stage of the app launch.
     private let dependencyInjectionHook = MailShareExtensionTargetAssembly()
 
-    private func overrideSnackBarPresenter(contextView: UIView) {
-        let snackBarPresenter = Factory(type: SnackBarPresentable.self) { _, _ in
-            SnackBarPresenter(contextView: contextView)
-        }
-        SimpleResolver.sharedResolver.store(factory: snackBarPresenter)
-    }
-
-    private func overrideURLOpener() {
-        let urlOpener = Factory(type: URLOpenable.self) { _, _ in
-            URLOpener(extensionContext: self.extensionContext)
-        }
-        SimpleResolver.sharedResolver.store(factory: urlOpener)
-    }
+    private var composeMessageHostingViewController: UIViewController!
 
     override public func viewDidLoad() {
         super.viewDidLoad()
@@ -56,7 +45,7 @@ final class ShareNavigationViewController: UIViewController {
         preferredContentSize = CGSize(width: 540, height: 620)
 
         // Make sure we are handling [NSExtensionItem]
-        guard let extensionItems: [NSExtensionItem] = extensionContext?.inputItems.compactMap { $0 as? NSExtensionItem },
+        guard let extensionItems: [NSExtensionItem] = extensionContext?.inputItems.compactMap({ $0 as? NSExtensionItem }),
               !extensionItems.isEmpty else {
             dismiss(animated: true)
             return
@@ -72,26 +61,56 @@ final class ShareNavigationViewController: UIViewController {
         ModelMigrator().migrateRealmIfNeeded()
 
         // We need to go threw wrapping to use SwiftUI in an NSExtension.
-        let rootView = ComposeMessageWrapperView(dismissHandler: {
-                                                     self.dismiss(animated: true)
-                                                 },
-                                                 itemProviders: itemProviders)
+        let rootView = ComposeMessageWrapperView(dismissHandler: { self.dismiss(animated: true) }, itemProviders: itemProviders)
             .defaultAppStorage(.shared)
-        let hostingController = UIHostingController(rootView: rootView)
-        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
-        addChild(hostingController)
-        view.addSubview(hostingController.view)
-        hostingController.didMove(toParent: self)
-
-        NSLayoutConstraint.activate([
-            hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            hostingController.view.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
-            hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
+        composeMessageHostingViewController = setSwiftUIRootView(rootView)
     }
 
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
         extensionContext!.completeRequest(returningItems: nil, completionHandler: nil)
+    }
+
+    private func overrideSnackBarPresenter(contextView: UIView) {
+        let snackBarPresenter = Factory(type: SnackBarPresentable.self) { _, _ in
+            SnackBarPresenter(contextView: contextView)
+        }
+        SimpleResolver.sharedResolver.store(factory: snackBarPresenter)
+    }
+
+    private func overrideURLOpener() {
+        let urlOpener = Factory(type: URLOpenable.self) { _, _ in
+            URLOpener(extensionContext: self.extensionContext)
+        }
+        SimpleResolver.sharedResolver.store(factory: urlOpener)
+    }
+
+    private func checkVersion() {
+        Task { @MainActor in
+            if try await VersionChecker.standard.checkAppVersionStatus(platform: .ios) == .updateIsRequired {
+                composeMessageHostingViewController.willMove(toParent: nil)
+                composeMessageHostingViewController.view.removeFromSuperview()
+                composeMessageHostingViewController.removeFromParent()
+
+                setSwiftUIRootView(MailUpdateRequiredView())
+            }
+        }
+    }
+
+    @discardableResult
+    private func setSwiftUIRootView(_ rootView: some View) -> UIViewController {
+        let hostingViewController = UIHostingController(rootView: rootView)
+        hostingViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        addChild(hostingViewController)
+        view.addSubview(hostingViewController.view)
+        hostingViewController.didMove(toParent: self)
+
+        NSLayoutConstraint.activate([
+            hostingViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
+            hostingViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            hostingViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hostingViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+
+        return hostingViewController
     }
 }
