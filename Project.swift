@@ -54,7 +54,7 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0"))
                       ],
                       targets: [
-                          Target(name: "Mail",
+                          Target(name: "Infomaniak Mail",
                                  platform: .iOS,
                                  product: .app,
                                  bundleId: "com.infomaniak.mail",
@@ -96,7 +96,7 @@ let project = Project(name: "Mail",
                                  infoPlist: "MailTests/Info.plist",
                                  sources: "MailTests/**",
                                  dependencies: [
-                                     .target(name: "Mail")
+                                     .target(name: "Infomaniak Mail")
                                  ],
                                  settings: .settings(base: Constants.testSettings)),
                           Target(name: "MailUITests",
@@ -106,7 +106,7 @@ let project = Project(name: "Mail",
                                  infoPlist: "MailTests/Info.plist",
                                  sources: "MailUITests/**",
                                  dependencies: [
-                                     .target(name: "Mail")
+                                     .target(name: "Infomaniak Mail")
                                  ],
                                  settings: .settings(base: Constants.testSettings)),
                           Target(name: "MailShareExtension",
