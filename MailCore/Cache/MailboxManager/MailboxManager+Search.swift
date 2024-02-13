@@ -41,6 +41,24 @@ public extension MailboxManager {
         return searchFolder
     }
 
+    func clearSearchResults(searchFolder: Folder, using realm: Realm) {
+        try? realm.safeWrite {
+            realm.delete(realm.objects(Message.self).where { $0.fromSearch == true })
+            realm.delete(realm.objects(Thread.self).where { $0.fromSearch == true })
+            searchFolder.threads.removeAll()
+        }
+    }
+
+    func clearSearchResults() async {
+        await backgroundRealm.execute { realm in
+            guard let searchFolder = realm.objects(Folder.self).where({ $0.remoteId == Constants.searchFolderId }).first else {
+                return
+            }
+
+            self.clearSearchResults(searchFolder: searchFolder, using: realm)
+        }
+    }
+
     func searchThreads(searchFolder: Folder?, filterFolderId: String, filter: Filter = .all,
                        searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
         let threadResult = try await apiFetcher.threads(
@@ -62,7 +80,7 @@ public extension MailboxManager {
         }
 
         if let searchFolder {
-            await saveThreads(result: threadResult, parent: searchFolder)
+            await saveSearchThreads(result: threadResult, searchFolder: searchFolder)
         }
 
         return threadResult
@@ -82,7 +100,7 @@ public extension MailboxManager {
         }
 
         if let searchFolder {
-            await saveThreads(result: threadResult, parent: searchFolder)
+            await saveSearchThreads(result: threadResult, searchFolder: searchFolder)
         }
 
         return threadResult
@@ -96,11 +114,7 @@ public extension MailboxManager {
                 return
             }
 
-            try? realm.safeWrite {
-                realm.delete(realm.objects(Message.self).where { $0.fromSearch == true })
-                realm.delete(searchFolder.threads.where { $0.fromSearch == true })
-                searchFolder.threads.removeAll()
-            }
+            self.clearSearchResults(searchFolder: searchFolder, using: realm)
 
             var predicates: [NSPredicate] = []
             for searchFilter in searchFilters {

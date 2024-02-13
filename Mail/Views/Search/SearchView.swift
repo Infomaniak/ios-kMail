@@ -90,6 +90,9 @@ struct SearchView: View {
                 CloseButton {
                     Constants.globallyResignFirstResponder()
                     mainViewState.isShowingSearch = false
+                    Task {
+                        await viewModel.mailboxManager.clearSearchResults()
+                    }
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonBack)
             }
