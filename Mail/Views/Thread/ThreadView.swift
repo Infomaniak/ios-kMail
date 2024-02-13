@@ -23,6 +23,7 @@ import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
+import WrappingHStack
 
 private struct ScrollOffsetPreferenceKey: PreferenceKey {
     static var defaultValue: CGPoint = .zero
@@ -67,27 +68,29 @@ struct ThreadView: View {
                         .multilineTextAlignment(.leading)
                         .lineSpacing(8)
 
-                    let externalTag = thread.displayExternalRecipientState(
-                        mailboxManager: mailboxManager,
-                        recipientsList: thread.from
-                    )
-                    if externalTag.shouldDisplay {
-                        Button {
-                            matomo.track(eventWithCategory: .externals, name: "threadTag")
-                            isShowingExternalTagAlert = true
-                        } label: {
-                            Text(MailResourcesStrings.Localizable.externalTag)
-                                .tagModifier(
-                                    foregroundColor: MailResourcesAsset.onTagExternalColor,
-                                    backgroundColor: MailResourcesAsset.yellowColor
-                                )
+                    WrappingHStack(lineSpacing: UIPadding.small) {
+                        let externalTag = thread.displayExternalRecipientState(
+                            mailboxManager: mailboxManager,
+                            recipientsList: thread.from
+                        )
+                        if externalTag.shouldDisplay {
+                            Button {
+                                matomo.track(eventWithCategory: .externals, name: "threadTag")
+                                isShowingExternalTagAlert = true
+                            } label: {
+                                Text(MailResourcesStrings.Localizable.externalTag)
+                                    .tagModifier(
+                                        foregroundColor: MailResourcesAsset.onTagExternalColor,
+                                        backgroundColor: MailResourcesAsset.yellowColor
+                                    )
+                            }
+                            .customAlert(isPresented: $isShowingExternalTagAlert) {
+                                ExternalRecipientView(externalTagSate: externalTag, isDraft: false)
+                            }
                         }
-                        .customAlert(isPresented: $isShowingExternalTagAlert) {
-                            ExternalRecipientView(externalTagSate: externalTag, isDraft: false)
-                        }
-                    }
 
-                    MessageFolderCell(title: thread.searchFolderName, inThreadHeader: true)
+                        MessageFolderCell(title: thread.searchFolderName, inThreadHeader: true)
+                    }
                 }
                 .padding(.top, value: .small)
                 .padding(.bottom, value: .regular)
