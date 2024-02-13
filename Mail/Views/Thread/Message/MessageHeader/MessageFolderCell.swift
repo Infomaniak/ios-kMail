@@ -28,13 +28,11 @@ struct MessageFolderCell: View {
             Text(title)
                 .lineLimit(1)
                 .truncationMode(inThreadHeader ? .middle : .tail)
-                .textStyle(.bodySmallSecondary)
-                .padding(.vertical, 1)
-                .padding(.horizontal, 4)
-                .background {
-                    RoundedRectangle(cornerRadius: 4)
-                        .foregroundStyle(MailResourcesAsset.textFieldColor.swiftUIColor)
-                }
+                .tagModifier(
+                    foregroundColor: MailResourcesAsset.textSecondaryColor,
+                    backgroundColor: MailResourcesAsset.textFieldColor,
+                    style: .bodySmallSecondary
+                )
         }
     }
 }

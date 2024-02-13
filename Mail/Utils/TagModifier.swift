@@ -23,21 +23,26 @@ import SwiftUI
 struct TagModifier: ViewModifier {
     let foregroundColor: MailResourcesColors
     let backgroundColor: MailResourcesColors
+    let style: MailTextStyle
 
     func body(content: Content) -> some View {
         content
             .foregroundStyle(foregroundColor)
-            .textStyle(.labelMedium)
+            .textStyle(style)
             .padding(.horizontal, value: .verySmall)
-            .padding(.vertical, 2)
+            .padding(.vertical, 1)
             .background(backgroundColor.swiftUIColor)
-            .cornerRadius(2)
+            .cornerRadius(4)
     }
 }
 
 extension View {
-    func tagModifier(foregroundColor: MailResourcesColors, backgroundColor: MailResourcesColors) -> some View {
-        modifier(TagModifier(foregroundColor: foregroundColor, backgroundColor: backgroundColor))
+    func tagModifier(
+        foregroundColor: MailResourcesColors,
+        backgroundColor: MailResourcesColors,
+        style: MailTextStyle = .labelMedium
+    ) -> some View {
+        modifier(TagModifier(foregroundColor: foregroundColor, backgroundColor: backgroundColor, style: style))
     }
 }
 
