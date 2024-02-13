@@ -32,10 +32,7 @@ struct ThreadCellBodyView: View, Equatable {
         VStack(alignment: .leading, spacing: UIPadding.verySmall) {
             if density == .compact {
                 HStack(spacing: UIPadding.verySmall) {
-                    Text(subject)
-                        .textStyle(.body)
-                        .lineLimit(1)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    ThreadCellTextView(title: subject, type: .subject)
 
                     MessageFolderCell(title: folderName)
 
@@ -43,19 +40,13 @@ struct ThreadCellBodyView: View, Equatable {
                 }
             } else {
                 HStack(spacing: UIPadding.verySmall) {
-                    Text(subject)
-                        .textStyle(.body)
-                        .lineLimit(1)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    ThreadCellTextView(title: subject, type: .subject)
 
                     ThreadCellDetailsView(hasAttachments: hasAttachments, isFlagged: isFlagged)
                 }
 
                 HStack(spacing: UIPadding.verySmall) {
-                    Text(preview)
-                        .textStyle(.bodySmallSecondary)
-                        .lineLimit(1)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    ThreadCellTextView(title: preview, type: .preview)
 
                     MessageFolderCell(title: folderName)
                 }
