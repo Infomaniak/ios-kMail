@@ -52,12 +52,12 @@ struct ComposeMessageIntentView: View, IntentViewable {
             } else {
                 ProgressView()
                     .progressViewStyle(.circular)
+                    .task {
+                        await initFromIntent()
+                    }
             }
         }
         .interactiveDismissDisabled()
-        .task(id: composeMessageIntent) {
-            await initFromIntent()
-        }
     }
 
     func initFromIntent() async {
