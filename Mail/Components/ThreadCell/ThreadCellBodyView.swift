@@ -33,21 +33,17 @@ struct ThreadCellBodyView: View, Equatable {
             if density == .compact {
                 HStack(spacing: UIPadding.verySmall) {
                     ThreadCellTextView(title: subject, type: .subject)
-
                     MessageFolderCell(title: folderName)
-
                     ThreadCellDetailsView(hasAttachments: hasAttachments, isFlagged: isFlagged)
                 }
             } else {
                 HStack(spacing: UIPadding.verySmall) {
                     ThreadCellTextView(title: subject, type: .subject)
-
                     ThreadCellDetailsView(hasAttachments: hasAttachments, isFlagged: isFlagged)
                 }
 
                 HStack(spacing: UIPadding.verySmall) {
                     ThreadCellTextView(title: preview, type: .preview)
-
                     MessageFolderCell(title: folderName)
                 }
             }
