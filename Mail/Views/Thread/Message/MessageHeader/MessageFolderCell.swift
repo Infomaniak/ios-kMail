@@ -19,7 +19,7 @@
 import MailResources
 import SwiftUI
 
-struct MessageFolderCell: View {
+struct MessageFolderTag: View {
     let title: String?
     var inThreadHeader = false
 
@@ -38,5 +38,5 @@ struct MessageFolderCell: View {
 }
 
 #Preview {
-    MessageFolderCell(title: "Boite de réception")
+    MessageFolderTag(title: "Boite de réception")
 }

@@ -34,11 +34,11 @@ struct ThreadCellTextView: View {
         }
     }
 
-    let title: String
+    let text: String
     let type: ThreadCellTextType
 
     var body: some View {
-        Text(title)
+        Text(text)
             .textStyle(type.style)
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -46,5 +46,5 @@ struct ThreadCellTextView: View {
 }
 
 #Preview {
-    ThreadCellTextView(title: "Subject", type: .subject)
+    ThreadCellTextView(text: "Subject", type: .subject)
 }

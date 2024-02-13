@@ -89,7 +89,7 @@ struct ThreadView: View {
                             }
                         }
 
-                        MessageFolderCell(title: thread.searchFolderName, inThreadHeader: true)
+                        MessageFolderTag(title: thread.searchFolderName, inThreadHeader: true)
                     }
                 }
                 .padding(.top, value: .small)
