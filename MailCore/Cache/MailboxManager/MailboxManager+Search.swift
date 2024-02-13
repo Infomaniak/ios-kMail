@@ -51,7 +51,7 @@ public extension MailboxManager {
             isDraftFolder: false
         )
 
-        await saveSearchThreads(threadResult: threadResult, searchFolder: searchFolder)
+        await prepareAndSaveSearchThreads(threadResult: threadResult, searchFolder: searchFolder)
 
         return threadResult
     }
@@ -60,12 +60,12 @@ public extension MailboxManager {
                        searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
         let threadResult = try await apiFetcher.threads(from: resource, searchFilter: searchFilter)
 
-        await saveSearchThreads(threadResult: threadResult, searchFolder: searchFolder)
+        await prepareAndSaveSearchThreads(threadResult: threadResult, searchFolder: searchFolder)
 
         return threadResult
     }
 
-    private func saveSearchThreads(threadResult: ThreadResult, searchFolder: Folder?) async {
+    private func prepareAndSaveSearchThreads(threadResult: ThreadResult, searchFolder: Folder?) async {
         await backgroundRealm.execute { realm in
             for thread in threadResult.threads ?? [] {
                 thread.makeFromSearch(using: realm)
