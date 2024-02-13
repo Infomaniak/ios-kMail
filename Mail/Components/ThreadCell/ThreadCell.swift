@@ -168,11 +168,14 @@ struct ThreadCell: View {
                     showDraftPrefix: thread.hasDrafts
                 )
 
-                HStack(alignment: .top, spacing: UIPadding.verySmall) {
-                    ThreadCellInfoView(subject: dataHolder.subject, preview: dataHolder.preview, density: density)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    ThreadCellDetailsView(hasAttachments: thread.hasAttachments, isFlagged: thread.flagged)
-                }
+                ThreadCellBodyView(
+                    subject: dataHolder.subject,
+                    preview: dataHolder.preview,
+                    density: density,
+                    folderName: thread.searchFolderName,
+                    hasAttachments: thread.hasAttachments,
+                    isFlagged: thread.flagged
+                )
             }
             .animation(
                 isMultipleSelectionEnabled ? .threadListSlide : .threadListSlide.delay(UIConstants.checkboxDisappearOffsetDelay),

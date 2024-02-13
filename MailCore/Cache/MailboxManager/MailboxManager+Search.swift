@@ -69,9 +69,24 @@ public extension MailboxManager {
             isDraftFolder: false
         )
 
+        await prepareAndSaveSearchThreads(threadResult: threadResult, searchFolder: searchFolder)
+
+        return threadResult
+    }
+
+    func searchThreads(searchFolder: Folder?, from resource: String,
+                       searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
+        let threadResult = try await apiFetcher.threads(from: resource, searchFilter: searchFilter)
+
+        await prepareAndSaveSearchThreads(threadResult: threadResult, searchFolder: searchFolder)
+
+        return threadResult
+    }
+
+    private func prepareAndSaveSearchThreads(threadResult: ThreadResult, searchFolder: Folder?) async {
         await backgroundRealm.execute { realm in
             for thread in threadResult.threads ?? [] {
-                thread.fromSearch = true
+                thread.makeFromSearch(using: realm)
 
                 for message in thread.messages where realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
                     message.fromSearch = true
@@ -82,28 +97,6 @@ public extension MailboxManager {
         if let searchFolder {
             await saveSearchThreads(result: threadResult, searchFolder: searchFolder)
         }
-
-        return threadResult
-    }
-
-    func searchThreads(searchFolder: Folder?, from resource: String,
-                       searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
-        let threadResult = try await apiFetcher.threads(from: resource, searchFilter: searchFilter)
-
-        let realm = getRealm()
-        for thread in threadResult.threads ?? [] {
-            thread.fromSearch = true
-
-            for message in thread.messages where realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
-                message.fromSearch = true
-            }
-        }
-
-        if let searchFolder {
-            await saveSearchThreads(result: threadResult, searchFolder: searchFolder)
-        }
-
-        return threadResult
     }
 
     func searchThreadsOffline(searchFolder: Folder?, filterFolderId: String,
@@ -175,7 +168,7 @@ public extension MailboxManager {
                         answered: newMessage.answered,
                         forwarded: newMessage.forwarded
                     )
-                    newThread.fromSearch = true
+                    newThread.makeFromSearch(using: realm)
                     newThread.subject = message.subject
                     searchFolder.threads.insert(newThread)
                 }

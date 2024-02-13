@@ -27,11 +27,11 @@ struct TagModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .foregroundStyle(foregroundColor)
-            .textStyle(.labelMedium)
+            .textStyle(.bodySmallSecondary)
             .padding(.horizontal, value: .verySmall)
-            .padding(.vertical, 2)
+            .padding(.vertical, 1)
             .background(backgroundColor.swiftUIColor)
-            .cornerRadius(2)
+            .cornerRadius(4)
     }
 }
 
