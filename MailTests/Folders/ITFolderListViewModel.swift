@@ -18,9 +18,9 @@
 
 import Combine
 import Foundation
+@testable import Infomaniak_Mail
 import InfomaniakCore
 import InfomaniakLogin
-@testable import Mail
 @testable import MailCore
 @testable import RealmSwift
 import XCTest
@@ -82,6 +82,8 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable {
     func initSearchFolder() -> MailCore.Folder {
         fatalError("Unexpected")
     }
+
+    func clearSearchResults() async {}
 
     func searchThreads(
         searchFolder: MailCore.Folder?,

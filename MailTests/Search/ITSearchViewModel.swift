@@ -17,9 +17,9 @@
  */
 
 import Combine
+@testable import Infomaniak_Mail
 import InfomaniakCore
 import InfomaniakLogin
-@testable import Mail
 @testable import MailCore
 import RealmSwift
 import XCTest
@@ -120,6 +120,8 @@ final class MCKMailboxManageable_SearchViewModel: MailboxManageable {
 
         return searchThreadsReturnValue
     }
+
+    func clearSearchResults() async {}
 
     func searchThreads(searchFolder: MailCore.Folder?, from resource: String,
                        searchFilter: [URLQueryItem]) async throws -> MailCore.ThreadResult {

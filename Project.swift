@@ -36,7 +36,7 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/Infomaniak/ios-bug-tracker", .upToNextMajor(from: "2.0.0")),
                           .package(url: "https://github.com/Infomaniak/SQRichTextEditor", .upToNextMajor(from: "1.1.1")),
                           .package(url: "https://github.com/Infomaniak/SwiftSoup", .upToNextMajor(from: "1.1.0")),
-                          .package(url: "https://github.com/Infomaniak/ios-version-checker", .upToNextMajor(from: "1.0.1")),
+                          .package(url: "https://github.com/Infomaniak/ios-version-checker", .upToNextMajor(from: "1.1.0")),
                           .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.21.0")),
                           .package(url: "https://github.com/Alamofire/Alamofire", .upToNextMajor(from: "5.2.2")),
                           .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack", .upToNextMajor(from: "3.7.0")),
@@ -54,7 +54,7 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0"))
                       ],
                       targets: [
-                          Target(name: "Mail",
+                          Target(name: "Infomaniak Mail",
                                  platform: .iOS,
                                  product: .app,
                                  bundleId: "com.infomaniak.mail",
@@ -96,7 +96,7 @@ let project = Project(name: "Mail",
                                  infoPlist: "MailTests/Info.plist",
                                  sources: "MailTests/**",
                                  dependencies: [
-                                     .target(name: "Mail")
+                                     .target(name: "Infomaniak Mail")
                                  ],
                                  settings: .settings(base: Constants.testSettings)),
                           Target(name: "MailUITests",
@@ -106,7 +106,7 @@ let project = Project(name: "Mail",
                                  infoPlist: "MailTests/Info.plist",
                                  sources: "MailUITests/**",
                                  dependencies: [
-                                     .target(name: "Mail")
+                                     .target(name: "Infomaniak Mail")
                                  ],
                                  settings: .settings(base: Constants.testSettings)),
                           Target(name: "MailShareExtension",

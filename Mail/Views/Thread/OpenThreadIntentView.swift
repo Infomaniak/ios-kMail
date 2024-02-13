@@ -54,7 +54,7 @@ struct OpenThreadIntentView: View, IntentViewable {
         } else {
             ProgressView()
                 .progressViewStyle(.circular)
-                .task(id: openThreadIntent) {
+                .task {
                     await initFromIntent()
                 }
         }

@@ -47,7 +47,7 @@ struct SearchThreadsSectionView: View {
                     }
             }
         } header: {
-            if threadDensity != .compact && !viewModel.frozenThreads.isEmpty {
+            if !viewModel.frozenThreads.isEmpty {
                 Text(MailResourcesStrings.Localizable.searchAllMessages)
                     .textStyle(.bodySmallSecondary)
                     .padding(.horizontal, value: .regular)

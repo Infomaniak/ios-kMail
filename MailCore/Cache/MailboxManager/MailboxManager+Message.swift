@@ -190,7 +190,7 @@ public extension MailboxManager {
         let realm = getRealm()
         var paginationInfo: PaginationInfo?
 
-        let sortedMessages = realm.objects(Message.self).where { $0.folderId == folder.remoteId }
+        let sortedMessages = realm.objects(Message.self).where { $0.folderId == folder.remoteId && $0.fromSearch == false }
             .sorted {
                 guard let firstMessageShortUid = $0.shortUid,
                       let secondMessageShortUid = $1.shortUid else {
