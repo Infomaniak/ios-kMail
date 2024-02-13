@@ -83,6 +83,8 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable {
         fatalError("Unexpected")
     }
 
+    func clearSearchResults() async {}
+
     func searchThreads(
         searchFolder: MailCore.Folder?,
         filterFolderId: String,
