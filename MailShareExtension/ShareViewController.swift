@@ -56,7 +56,7 @@ final class ShareNavigationViewController: UIViewController {
         preferredContentSize = CGSize(width: 540, height: 620)
 
         // Make sure we are handling [NSExtensionItem]
-        guard let extensionItems: [NSExtensionItem] = extensionContext?.inputItems.compactMap { $0 as? NSExtensionItem },
+        guard let extensionItems: [NSExtensionItem] = extensionContext?.inputItems.compactMap({ $0 as? NSExtensionItem }),
               !extensionItems.isEmpty else {
             dismiss(animated: true)
             return
@@ -72,11 +72,11 @@ final class ShareNavigationViewController: UIViewController {
         ModelMigrator().migrateRealmIfNeeded()
 
         // We need to go threw wrapping to use SwiftUI in an NSExtension.
-        let rootView = ComposeMessageWrapperView(dismissHandler: {
-                                                     self.dismiss(animated: true)
-                                                 },
-                                                 itemProviders: itemProviders)
-            .defaultAppStorage(.shared)
+        let rootView = ComposeMessageWrapperView(itemProviders: itemProviders) {
+            self.dismiss(animated: true)
+        }
+        .defaultAppStorage(.shared)
+
         let hostingController = UIHostingController(rootView: rootView)
         hostingController.view.translatesAutoresizingMaskIntoConstraints = false
         addChild(hostingController)
