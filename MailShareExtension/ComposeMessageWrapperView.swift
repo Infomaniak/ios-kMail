@@ -26,34 +26,22 @@ import SwiftUI
 import UIKit
 
 struct ComposeMessageWrapperView: View {
-    private var itemProviders: [NSItemProvider]
-    private var dismissHandler: SimpleClosure
-
-    @State private var draft: Draft
-
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
 
-    init(dismissHandler: @escaping SimpleClosure, itemProviders: [NSItemProvider], draft: Draft = Draft()) {
-        _draft = State(wrappedValue: draft)
-        self.dismissHandler = dismissHandler
-        self.itemProviders = itemProviders
-    }
+    let itemProviders: [NSItemProvider]
+    let dismissHandler: SimpleClosure
 
     var body: some View {
         if let mailboxManager = accountManager.currentMailboxManager {
-            ComposeMessageView(
-                draft: draft,
-                mailboxManager: mailboxManager,
-                attachments: itemProviders
-            )
-            .environmentObject(mailboxManager)
-            .environment(\.dismissModal) {
-                dismissHandler(())
-            }
-            .task {
-                try? await featureFlagsManager.fetchFlags()
-            }
+            ComposeMessageIntentView(composeMessageIntent: .new(originMailboxManager: mailboxManager), attachments: itemProviders)
+                .environmentObject(mailboxManager)
+                .environment(\.dismissModal) {
+                    dismissHandler(())
+                }
+                .task {
+                    try? await featureFlagsManager.fetchFlags()
+                }
         } else {
             PleaseLoginView(tapHandler: dismissHandler)
         }

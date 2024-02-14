@@ -39,6 +39,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
     }
 
     let composeMessageIntent: ComposeMessageIntent
+    var attachments: [Attachable] = []
 
     var body: some View {
         NBNavigationStack {
@@ -46,7 +47,8 @@ struct ComposeMessageIntentView: View, IntentViewable {
                 ComposeMessageView(
                     draft: resolvedIntent.draft,
                     mailboxManager: resolvedIntent.mailboxManager,
-                    messageReply: resolvedIntent.messageReply
+                    messageReply: resolvedIntent.messageReply,
+                    attachments: attachments
                 )
                 .environmentObject(resolvedIntent.mailboxManager)
             } else {
