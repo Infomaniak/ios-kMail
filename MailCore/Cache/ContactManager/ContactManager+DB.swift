@@ -48,11 +48,12 @@ public extension ContactManager {
         let lazyResults = realm
             .objects(MergedContact.self)
             .filter(Self.searchContactInsensitivePredicate, string, string)
+            .freeze()
 
         let fetchLimit = min(lazyResults.count, fetchLimit ?? Self.contactFetchLimit)
 
         let limitedResults = lazyResults[0 ..< fetchLimit]
-        return limitedResults.map { $0.freezeIfNeeded() }
+        return limitedResults
     }
 
     func getContact(for correspondent: any Correspondent, realm: Realm? = nil) -> MergedContact? {
