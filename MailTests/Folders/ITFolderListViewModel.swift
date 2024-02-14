@@ -26,7 +26,7 @@ import InfomaniakLogin
 import XCTest
 
 struct MCKContactManageable_FolderListViewModel: ContactManageable {
-    func frozenContacts(matching string: String, fetchLimit: Int?) -> [MailCore.MergedContact] { [] }
+    func frozenContacts(matching string: String, fetchLimit: Int?) -> any Collection<MailCore.MergedContact> { [] }
 
     func getContact(for correspondent: any MailCore.Correspondent, realm: RealmSwift.Realm?) -> MailCore.MergedContact? { nil }
 
