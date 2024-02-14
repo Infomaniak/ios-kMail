@@ -25,7 +25,7 @@ public protocol ContactFetchable {
     ///   - string: input string to match against email and name
     ///   - fetchLimit: limit the query by default to limit memory footprint
     /// - Returns: The collection of matching contacts.
-    func frozenContacts(matching string: String, fetchLimit: Int?) -> [MergedContact]
+    func frozenContacts(matching string: String, fetchLimit: Int?) -> any Collection<MergedContact>
     func getContact(for correspondent: any Correspondent, realm: Realm?) -> MergedContact?
     func addressBook(with id: Int) -> AddressBook?
     func addContact(recipient: Recipient) async throws
@@ -43,7 +43,7 @@ public extension ContactManager {
     ///   - string: input string to match against email and name
     ///   - fetchLimit: limit the query by default to limit memory footprint
     /// - Returns: The collection of matching contacts. Frozen.
-    func frozenContacts(matching string: String, fetchLimit: Int?) -> [MergedContact] {
+    func frozenContacts(matching string: String, fetchLimit: Int?) -> any Collection<MergedContact> {
         let realm = getRealm()
         let lazyResults = realm
             .objects(MergedContact.self)
