@@ -154,6 +154,7 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
                     accountManager.switchAccount(newAccount: previousAccount)
                 }
                 snackbarPresenter.show(message: error.localizedDescription)
+                SentryDebug.loginError(error: error, step: "createAndSetCurrentAccount")
             }
             isLoading = false
         }
@@ -163,6 +164,7 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
         isLoading = false
         guard (error as? ASWebAuthenticationSessionError)?.code != .canceledLogin else { return }
         isPresentingErrorAlert = true
+        SentryDebug.loginError(error: error, step: "loginFailed")
     }
 }
 
