@@ -26,12 +26,13 @@ struct MailToView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let currentMailbox: Mailbox?
+    let mailTo: String?
 
     var body: some View {
         VStack(spacing: 0) {
             accentColor.mailTo.swiftUIImage
 
-            Text(MailResourcesStrings.Localizable.mailToTitle("test@test.com"))
+            Text(MailResourcesStrings.Localizable.mailToTitle(mailTo ?? ""))
                 .textStyle(.header1)
                 .multilineTextAlignment(.center)
                 .padding(.bottom, value: .medium)
@@ -65,6 +66,6 @@ struct MailToView: View {
 }
 
 #Preview {
-    MailToView(currentMailbox: PreviewHelper.sampleMailbox)
+    MailToView(currentMailbox: PreviewHelper.sampleMailbox, mailTo: PreviewHelper.sampleRecipient1.email)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }
