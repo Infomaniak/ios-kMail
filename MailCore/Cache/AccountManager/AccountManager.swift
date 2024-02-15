@@ -227,6 +227,8 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     public func createAndSetCurrentAccount(code: String, codeVerifier: String) async throws -> Account {
         let token = try await networkLoginService.apiToken(using: code, codeVerifier: codeVerifier)
+        setSentryUserId(userId: token.userId)
+
         do {
             return try await createAndSetCurrentAccount(token: token)
         } catch {

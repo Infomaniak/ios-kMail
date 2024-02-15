@@ -133,6 +133,16 @@ public enum SentryDebug {
         }
     }
 
+    public static func loginError(error: Error, step: String) {
+        SentrySDK.capture(message: "Error while logging") { scope in
+            scope.setLevel(.error)
+            scope.setContext(
+                value: ["step": step, "error": error, "description": error.localizedDescription],
+                key: "underlying error"
+            )
+        }
+    }
+
     // MARK: - Breadcrumb
 
     enum Category {
