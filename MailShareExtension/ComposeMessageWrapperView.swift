@@ -24,17 +24,26 @@ import MailResources
 import Social
 import SwiftUI
 import UIKit
+import VersionChecker
 
 struct ComposeMessageWrapperView: View {
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
 
+    @State private var versionStatus: VersionStatus?
+
     let itemProviders: [NSItemProvider]
     let dismissHandler: SimpleClosure
 
     var body: some View {
-        if let mailboxManager = accountManager.currentMailboxManager {
-            ComposeMessageIntentView(composeMessageIntent: .new(originMailboxManager: mailboxManager), attachments: itemProviders)
+        Group {
+            if versionStatus == .updateIsRequired {
+                MailUpdateRequiredView { dismissHandler(()) }
+            } else if let mailboxManager = accountManager.currentMailboxManager {
+                ComposeMessageIntentView(
+                    composeMessageIntent: .new(originMailboxManager: mailboxManager),
+                    attachments: itemProviders
+                )
                 .environmentObject(mailboxManager)
                 .environment(\.dismissModal) {
                     dismissHandler(())
@@ -42,9 +51,17 @@ struct ComposeMessageWrapperView: View {
                 .task {
                     try? await featureFlagsManager.fetchFlags()
                 }
-        } else {
-            PleaseLoginView(tapHandler: dismissHandler)
+            } else {
+                PleaseLoginView(tapHandler: dismissHandler)
+            }
         }
+        .task {
+            try? await checkAppVersion()
+        }
+    }
+
+    @MainActor private func checkAppVersion() async throws {
+        versionStatus = try? await VersionChecker.standard.checkAppVersionStatus()
     }
 }
 

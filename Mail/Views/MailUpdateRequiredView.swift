@@ -24,6 +24,8 @@ import VersionChecker
 struct MailUpdateRequiredView: View {
     @Environment(\.openURL) private var openURL
 
+    var dismissHandler: (() -> Void)?
+
     private let sharedStyle = TemplateSharedStyle(
         background: MailResourcesAsset.backgroundColor.swiftUIColor,
         titleTextStyle: .init(font: MailTextStyle.header2.font, color: MailTextStyle.header2.color),
@@ -37,7 +39,12 @@ struct MailUpdateRequiredView: View {
     )
 
     var body: some View {
-        UpdateRequiredView(image: MailResourcesAsset.updateRequired.swiftUIImage, sharedStyle: sharedStyle, handler: updateApp)
+        UpdateRequiredView(
+            image: MailResourcesAsset.updateRequired.swiftUIImage,
+            sharedStyle: sharedStyle,
+            updateHandler: updateApp,
+            dismissHandler: dismissHandler
+        )
     }
 
     private func updateApp() {
