@@ -125,7 +125,9 @@ struct UserAccountScene: Scene {
                         mainViewState.isShowingUpdateAvailable = true
                     }
                 case .isUpToDate:
-                    break
+                    if rootViewState.state == .updateRequired {
+                        rootViewState.transitionToRootViewDestination(.mainView)
+                    }
                 }
             } catch {
                 DDLogError("Error while checking version status: \(error)")
