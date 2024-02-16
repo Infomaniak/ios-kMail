@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack",
       "state" : {
-        "revision" : "ae8e475260b978299134d42d739f0ec8241d9af0",
-        "version" : "3.8.3"
+        "revision" : "af4973721172dd7850a42a58a9ffcec0ec82e5a9",
+        "version" : "3.8.4"
       }
     },
     {
@@ -41,7 +41,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "69fdb4f235ea505508670bbf91d21064fe742a75"
+        "revision" : "c7933560d540395966eb6298a952db4018068281"
       }
     },
     {
@@ -103,8 +103,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher",
       "state" : {
-        "revision" : "3ec0ab0bca4feb56e8b33e289c9496e89059dd08",
-        "version" : "7.10.2"
+        "revision" : "5b92f029fab2cce44386d28588098b5be0824ef5",
+        "version" : "7.11.0"
       }
     },
     {
@@ -148,8 +148,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "15fde63470d782c897816a74bdd516a907e33147",
-        "version" : "12.3.0"
+        "revision" : "8ecbfc886da39bccb01c34abef5f2ff4073ad633",
+        "version" : "12.4.0"
       }
     },
     {
@@ -175,8 +175,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "eafdd3720a8cc750bdd38bf776082d2c8cf743fc",
-        "version" : "10.46.0"
+        "revision" : "55466ae0fb29c5f21866792f05c1fc0c590d7c29",
+        "version" : "10.47.0"
       }
     },
     {
@@ -184,8 +184,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "3b9a8e69ca296bd8cd0e317ad7a448e5daf4a342",
-        "version" : "8.18.0"
+        "revision" : "b847a202a517a90763e8fd0656d8028aeee7b78d",
+        "version" : "8.20.0"
       }
     },
     {
