@@ -27,7 +27,7 @@ struct MailToView: View {
 
     @LazyInjectService private var accountManager: AccountManager
 
-    @State var selectedMailbox: Mailbox? = nil
+    @State var selectedMailbox: Mailbox?
 
     @Binding var composeMessageIntent: ComposeMessageIntent
 
@@ -52,7 +52,7 @@ struct MailToView: View {
                         mailbox: currentMailbox,
                         isSelected: selectedMailbox == currentMailbox
                     ) {
-                        selectedMailbox = currentMailbox
+                        selectMailbox(currentMailbox)
                     }
                 }
 
@@ -65,13 +65,13 @@ struct MailToView: View {
                         mailbox: mailbox,
                         isSelected: selectedMailbox == mailbox
                     ) {
-                        selectedMailbox = mailbox
+                        selectMailbox(mailbox)
                     }
                 }
             }
 
             Button(MailResourcesStrings.Localizable.buttonContinue) {
-                mailboxSelected()
+                mailboxHasBeenSelected()
             }
             .buttonStyle(.ikPlain)
             .ikButtonFullWidth(true)
@@ -80,10 +80,11 @@ struct MailToView: View {
         .mailboxCellStyle(.account)
         .onAppear {
             selectedMailbox = accountManager.currentMailboxManager?.mailbox
+            print(selectedMailbox)
         }
     }
 
-    private func mailboxSelected() {
+    private func mailboxHasBeenSelected() {
         guard let selectedMailbox, let mailboxManager = accountManager.getMailboxManager(for: selectedMailbox) else {
             // TODO: display snackbar
             return
@@ -96,6 +97,15 @@ struct MailToView: View {
         default:
             break
         }
+    }
+
+    private func selectMailbox(_ mailbox: Mailbox) {
+        guard mailbox.isAvailable else {
+            // TODO: Display snackbar
+            return
+        }
+
+        selectedMailbox = mailbox
     }
 }
 
