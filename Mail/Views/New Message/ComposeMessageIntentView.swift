@@ -49,7 +49,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
     var body: some View {
         NBNavigationStack {
             if shouldPresentMailToView {
-                MailToView(composeMessageIntent: $composeMessageIntent)
+                SelectMailboxView(composeMessageIntent: $composeMessageIntent)
             } else {
                 if let resolvedIntent = resolvedIntent.wrappedValue {
                     ComposeMessageView(

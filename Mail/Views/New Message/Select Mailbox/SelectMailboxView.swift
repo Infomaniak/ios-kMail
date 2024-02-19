@@ -16,20 +16,32 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakDI
 import MailCore
 import MailResources
 import NavigationBackport
 import SwiftUI
 
-struct MailToView: View {
+struct SelectMailboxView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
 
     @State var selectedMailbox: Mailbox?
 
     @Binding var composeMessageIntent: ComposeMessageIntent
+
+    var accounts: [Account] {
+        accountManager.accounts.sorted { lhs, rhs in
+            if lhs.userId == accountManager.currentUserId {
+                return true
+            } else {
+                return lhs.user.displayName.compare(rhs.user.displayName) == .orderedAscending
+            }
+        }
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -46,28 +58,7 @@ struct MailToView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             ScrollView {
-                if let currentMailbox = accountManager.currentMailboxManager?.mailbox {
-                    MailboxesManagementButtonView(
-                        icon: MailResourcesAsset.envelope,
-                        mailbox: currentMailbox,
-                        isSelected: selectedMailbox == currentMailbox
-                    ) {
-                        selectMailbox(currentMailbox)
-                    }
-                }
-
-                ForEachMailboxView(
-                    userId: accountManager.currentUserId,
-                    excludedMailboxIds: [accountManager.currentMailboxManager?.mailbox.mailboxId].compactMap { $0 }
-                ) { mailbox in
-                    MailboxesManagementButtonView(
-                        icon: MailResourcesAsset.envelope,
-                        mailbox: mailbox,
-                        isSelected: selectedMailbox == mailbox
-                    ) {
-                        selectMailbox(mailbox)
-                    }
-                }
+                AccountMailboxesListView(accounts: accounts, selectedMailbox: selectedMailbox, selectMailbox: selectMailbox)
             }
 
             Button(MailResourcesStrings.Localizable.buttonContinue) {
@@ -80,7 +71,6 @@ struct MailToView: View {
         .mailboxCellStyle(.account)
         .onAppear {
             selectedMailbox = accountManager.currentMailboxManager?.mailbox
-            print(selectedMailbox)
         }
     }
 
@@ -110,7 +100,7 @@ struct MailToView: View {
 }
 
 #Preview {
-    MailToView(composeMessageIntent: .constant(.new()))
+    SelectMailboxView(composeMessageIntent: .constant(.new()))
 }
 
 enum TestTest {
