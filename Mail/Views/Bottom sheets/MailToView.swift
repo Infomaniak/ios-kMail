@@ -16,23 +16,26 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
 import MailCore
 import MailResources
+import NavigationBackport
 import SwiftUI
 
 struct MailToView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
-    @EnvironmentObject private var mailboxManager: MailboxManager
+    @LazyInjectService private var accountManager: AccountManager
 
-    let currentMailbox: Mailbox?
-    let mailTo: String?
+    @State var selectedMailbox: Mailbox? = nil
+
+    @Binding var composeMessageIntent: ComposeMessageIntent
 
     var body: some View {
         VStack(spacing: 0) {
             accentColor.mailTo.swiftUIImage
 
-            Text(MailResourcesStrings.Localizable.mailToTitle(mailTo ?? ""))
+            Text(MailResourcesStrings.Localizable.mailToTitle(""))
                 .textStyle(.header1)
                 .multilineTextAlignment(.center)
                 .padding(.bottom, value: .medium)
@@ -43,29 +46,63 @@ struct MailToView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             ScrollView {
-                if let currentMailbox {
-                    MailboxCell(mailbox: currentMailbox, isSelected: true)
-                        .mailboxCellStyle(.account)
+                if let currentMailbox = accountManager.currentMailboxManager?.mailbox {
+                    MailboxesManagementButtonView(
+                        icon: MailResourcesAsset.envelope,
+                        mailbox: currentMailbox,
+                        isSelected: selectedMailbox == currentMailbox
+                    ) {
+                        selectedMailbox = currentMailbox
+                    }
                 }
 
                 ForEachMailboxView(
-                    userId: mailboxManager.account.userId,
-                    excludedMailboxIds: [currentMailbox?.mailboxId].compactMap { $0 }
+                    userId: accountManager.currentUserId,
+                    excludedMailboxIds: [accountManager.currentMailboxManager?.mailbox.mailboxId].compactMap { $0 }
                 ) { mailbox in
-                    MailboxCell(mailbox: mailbox)
-                        .mailboxCellStyle(.account)
+                    MailboxesManagementButtonView(
+                        icon: MailResourcesAsset.envelope,
+                        mailbox: mailbox,
+                        isSelected: selectedMailbox == mailbox
+                    ) {
+                        selectedMailbox = mailbox
+                    }
                 }
             }
 
-            Button(MailResourcesStrings.Localizable.buttonContinue) {}
-                .buttonStyle(.ikPlain)
-                .ikButtonFullWidth(true)
+            Button(MailResourcesStrings.Localizable.buttonContinue) {
+                mailboxSelected()
+            }
+            .buttonStyle(.ikPlain)
+            .ikButtonFullWidth(true)
         }
         .padding(.horizontal, value: .medium)
+        .mailboxCellStyle(.account)
+        .onAppear {
+            selectedMailbox = accountManager.currentMailboxManager?.mailbox
+        }
+    }
+
+    private func mailboxSelected() {
+        guard let selectedMailbox, let mailboxManager = accountManager.getMailboxManager(for: selectedMailbox) else {
+            // TODO: display snackbar
+            return
+        }
+        switch composeMessageIntent.type {
+        case .new:
+            composeMessageIntent = .new(originMailboxManager: mailboxManager)
+        case .mailTo(let mailToURLComponents):
+            composeMessageIntent = .mailTo(mailToURLComponents: mailToURLComponents, originMailboxManager: mailboxManager)
+        default:
+            break
+        }
     }
 }
 
 #Preview {
-    MailToView(currentMailbox: PreviewHelper.sampleMailbox, mailTo: PreviewHelper.sampleRecipient1.email)
-        .environmentObject(PreviewHelper.sampleMailboxManager)
+    MailToView(composeMessageIntent: .constant(.new()))
+}
+
+enum TestTest {
+    case test
 }

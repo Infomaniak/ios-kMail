@@ -30,6 +30,11 @@ struct ComposeMessageIntentView: View, IntentViewable {
 
     @Environment(\.dismiss) private var dismiss
 
+    @State var mailboxManager: MailboxManager?
+    private var shouldPresentMailToView: Bool {
+        composeMessageIntent.mailboxId == nil && composeMessageIntent.userId == nil
+    }
+
     let resolvedIntent = State<ResolvedIntent?>()
 
     struct ResolvedIntent {
@@ -38,35 +43,40 @@ struct ComposeMessageIntentView: View, IntentViewable {
         let messageReply: MessageReply?
     }
 
-    let composeMessageIntent: ComposeMessageIntent
+    @State var composeMessageIntent: ComposeMessageIntent
     var attachments: [Attachable] = []
 
     var body: some View {
         NBNavigationStack {
-            if let resolvedIntent = resolvedIntent.wrappedValue {
-                ComposeMessageView(
-                    draft: resolvedIntent.draft,
-                    mailboxManager: resolvedIntent.mailboxManager,
-                    messageReply: resolvedIntent.messageReply,
-                    attachments: attachments
-                )
-                .environmentObject(resolvedIntent.mailboxManager)
+            if shouldPresentMailToView {
+                MailToView(composeMessageIntent: $composeMessageIntent)
             } else {
-                ProgressView()
-                    .progressViewStyle(.circular)
-                    .task {
-                        await initFromIntent()
-                    }
+                if let resolvedIntent = resolvedIntent.wrappedValue {
+                    ComposeMessageView(
+                        draft: resolvedIntent.draft,
+                        mailboxManager: resolvedIntent.mailboxManager,
+                        messageReply: resolvedIntent.messageReply,
+                        attachments: attachments
+                    )
+                    .environmentObject(resolvedIntent.mailboxManager)
+                } else {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .task {
+                            await initFromIntent()
+                        }
+                }
             }
         }
         .interactiveDismissDisabled()
     }
 
     func initFromIntent() async {
-        guard let mailboxManager = accountManager.getMailboxManager(
-            for: composeMessageIntent.mailboxId,
-            userId: composeMessageIntent.userId
-        ) else {
+        guard let mailboxId = composeMessageIntent.mailboxId, let userId = composeMessageIntent.userId,
+              let mailboxManager = accountManager.getMailboxManager(
+                  for: mailboxId,
+                  userId: userId
+              ) else {
             dismiss()
             snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
             return

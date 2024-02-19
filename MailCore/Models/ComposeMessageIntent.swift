@@ -29,21 +29,21 @@ public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
     }
 
     public let id: UUID
-    public let userId: Int
-    public let mailboxId: Int
+    public let userId: Int?
+    public let mailboxId: Int?
     public let type: IntentType
 
-    init(userId: Int, mailboxId: Int, type: IntentType) {
+    init(userId: Int?, mailboxId: Int?, type: IntentType) {
         id = UUID()
         self.userId = userId
         self.mailboxId = mailboxId
         self.type = type
     }
 
-    public static func new(originMailboxManager: MailboxManager) -> ComposeMessageIntent {
+    public static func new(originMailboxManager: MailboxManager? = nil) -> ComposeMessageIntent {
         return ComposeMessageIntent(
-            userId: originMailboxManager.mailbox.userId,
-            mailboxId: originMailboxManager.mailbox.mailboxId,
+            userId: originMailboxManager?.mailbox.userId,
+            mailboxId: originMailboxManager?.mailbox.mailboxId,
             type: .new
         )
     }
@@ -64,10 +64,11 @@ public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
         )
     }
 
-    public static func mailTo(mailToURLComponents: URLComponents, originMailboxManager: MailboxManager) -> ComposeMessageIntent {
+    public static func mailTo(mailToURLComponents: URLComponents,
+                              originMailboxManager: MailboxManager? = nil) -> ComposeMessageIntent {
         return ComposeMessageIntent(
-            userId: originMailboxManager.mailbox.userId,
-            mailboxId: originMailboxManager.mailbox.mailboxId,
+            userId: originMailboxManager?.mailbox.userId,
+            mailboxId: originMailboxManager?.mailbox.mailboxId,
             type: .mailTo(mailToURLComponents: mailToURLComponents)
         )
     }
