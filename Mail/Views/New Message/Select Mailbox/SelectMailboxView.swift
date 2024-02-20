@@ -71,6 +71,9 @@ struct SelectMailboxView: View {
         .mailboxCellStyle(.account)
         .onAppear {
             selectedMailbox = accountManager.currentMailboxManager?.mailbox
+            if accountManager.accounts.count == 1 && mailboxInfosManager.getMailboxes().count == 1 {
+                mailboxHasBeenSelected()
+            }
         }
     }
 
