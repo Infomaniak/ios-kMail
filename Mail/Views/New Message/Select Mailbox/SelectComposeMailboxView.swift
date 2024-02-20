@@ -46,12 +46,12 @@ struct SelectComposeMailboxView: View {
         VStack(spacing: 0) {
             accentColor.mailTo.swiftUIImage
 
-            Text(MailResourcesStrings.Localizable.mailToTitle(""))
+            Text(MailResourcesStrings.Localizable.selectComposeMailboxTitle)
                 .textStyle(.header1)
                 .multilineTextAlignment(.center)
                 .padding(.bottom, value: .medium)
 
-            Text(MailResourcesStrings.Localizable.mailToDescription)
+            Text(MailResourcesStrings.Localizable.selectComposeMailboxDescription)
                 .textStyle(.bodySmallSecondary)
                 .padding(.bottom, value: .regular)
                 .frame(maxWidth: .infinity, alignment: .leading)
