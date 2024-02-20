@@ -35,6 +35,25 @@ public extension Date {
             return formatted(date: .numeric, time: .omitted)
         }
     }
+
+    var messageHeaderRelativeFormatted: String {
+        if self > .now {
+            return formatted(date: .numeric, time: .shortened)
+        } else if Calendar.current.isDateInToday(self) {
+            return formatted(date: .omitted, time: .shortened)
+        } else if Calendar.current.isDateInYesterday(self) {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateStyle = .long
+            dateFormatter.timeStyle = .short
+            dateFormatter.formattingContext = .middleOfSentence
+            dateFormatter.doesRelativeDateFormatting = true
+            return dateFormatter.string(from: self)
+        } else if Calendar.current.isDate(self, equalTo: .now, toGranularity: .year) {
+            return formatted(.dateTime.day().month().hour().minute())
+        } else {
+            return formatted(.dateTime.year().day().month().hour().minute())
+        }
+    }
 }
 
 public extension FormatStyle where Self == ByteCountFormatStyle {
