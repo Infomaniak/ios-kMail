@@ -140,8 +140,8 @@ public enum SentryDebug {
                 value: ["step": step, "error": error, "description": error.localizedDescription],
                 key: "underlying error"
             )
-		}
-	}
+        }
+    }
 
     public static func sendSubBodiesTrigger(messageUid: String) {
         SentrySDK.capture(message: "Received an email with SubBodies!!") { scope in
