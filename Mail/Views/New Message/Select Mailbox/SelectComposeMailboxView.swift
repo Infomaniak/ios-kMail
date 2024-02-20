@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
@@ -26,6 +27,7 @@ import SwiftUI
 struct SelectComposeMailboxView: View {
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
+    @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     @Environment(\.dismiss) private var dismiss
@@ -81,6 +83,7 @@ struct SelectComposeMailboxView: View {
                 }
             }
         }
+        .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "SelectComposeMailboxView"])
     }
 
     private func dismissMessageView() {
