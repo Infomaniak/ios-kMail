@@ -94,6 +94,7 @@ struct MessageHeaderView_Previews: PreviewProvider {
                 isMessageExpanded: .constant(true)
             )
         }
+        .environmentObject(PreviewHelper.sampleMailboxManager)
         .previewLayout(.sizeThatFits)
     }
 }
