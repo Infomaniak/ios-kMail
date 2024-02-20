@@ -38,7 +38,7 @@ struct AccountMailboxesListView: View {
                 MailboxesManagementButtonView(
                     icon: MailResourcesAsset.envelope,
                     mailbox: currentMailbox,
-                    isSelected: selectedMailbox == currentMailbox
+                    isSelected: selectedMailbox?.id == currentMailbox.id
                 ) {
                     selectMailbox(currentMailbox)
                 }
@@ -51,7 +51,7 @@ struct AccountMailboxesListView: View {
                 MailboxesManagementButtonView(
                     icon: MailResourcesAsset.envelope,
                     mailbox: mailbox,
-                    isSelected: selectedMailbox == mailbox
+                    isSelected: selectedMailbox?.id == mailbox.id
                 ) {
                     selectMailbox(mailbox)
                 }
