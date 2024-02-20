@@ -33,18 +33,13 @@ struct SelectMailboxView: View {
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
-    @State private var selectedMailbox: Mailbox?
-
     @Binding var composeMessageIntent: ComposeMessageIntent
 
-    private var accounts: [Account] {
-        accountManager.accounts.sorted { lhs, rhs in
-            if (lhs.userId == accountManager.currentUserId) != (rhs.userId == accountManager.currentUserId) {
-                return lhs.userId == accountManager.currentUserId
-            } else {
-                return lhs.user.displayName < rhs.user.displayName
-            }
-        }
+    @StateObject private var viewModel: SelectMailboxViewModel
+
+    init(composeMessageIntent: Binding<ComposeMessageIntent>) {
+        _composeMessageIntent = composeMessageIntent
+        _viewModel = StateObject(wrappedValue: SelectMailboxViewModel(composeMessageIntent: composeMessageIntent))
     }
 
     var body: some View {
@@ -62,11 +57,15 @@ struct SelectMailboxView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             ScrollView {
-                AccountMailboxesListView(accounts: accounts, selectedMailbox: selectedMailbox, selectMailbox: selectMailbox)
+                AccountMailboxesListView(
+                    accounts: viewModel.accounts,
+                    selectedMailbox: viewModel.selectedMailbox,
+                    selectMailbox: viewModel.selectMailbox
+                )
             }
 
             Button(MailResourcesStrings.Localizable.buttonContinue) {
-                mailboxHasBeenSelected()
+                viewModel.mailboxHasBeenSelected()
             }
             .buttonStyle(.ikPlain)
             .controlSize(.large)
@@ -75,10 +74,7 @@ struct SelectMailboxView: View {
         .padding(.horizontal, value: .medium)
         .mailboxCellStyle(.account)
         .onAppear {
-            selectedMailbox = accountManager.currentMailboxManager?.mailbox
-            if accountManager.accounts.count == 1 && mailboxInfosManager.getMailboxes().count == 1 {
-                mailboxHasBeenSelected()
-            }
+            viewModel.initDefaultAccountAndMailbox()
         }
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
@@ -87,31 +83,6 @@ struct SelectMailboxView: View {
                 }
             }
         }
-    }
-
-    private func mailboxHasBeenSelected() {
-        guard let selectedMailbox, let mailboxManager = accountManager.getMailboxManager(for: selectedMailbox) else {
-            // TODO: display snackbar
-            return
-        }
-
-        switch composeMessageIntent.type {
-        case .new:
-            composeMessageIntent = .new(originMailboxManager: mailboxManager, fromExtension: true)
-        case .mailTo(let mailToURLComponents):
-            composeMessageIntent = .mailTo(mailToURLComponents: mailToURLComponents, originMailboxManager: mailboxManager)
-        default:
-            break
-        }
-    }
-
-    private func selectMailbox(_ mailbox: Mailbox) {
-        guard mailbox.isAvailable else {
-            // TODO: Display snackbar
-            return
-        }
-
-        selectedMailbox = mailbox
     }
 
     /// Something to dismiss the view regardless of presentation context
