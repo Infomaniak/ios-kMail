@@ -23,7 +23,7 @@ import MailResources
 import NavigationBackport
 import SwiftUI
 
-struct SelectMailboxView: View {
+struct SelectComposeMailboxView: View {
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
     @LazyInjectService private var platformDetector: PlatformDetectable
@@ -93,7 +93,7 @@ struct SelectMailboxView: View {
 }
 
 #Preview {
-    SelectMailboxView(composeMessageIntent: .constant(.new()))
+    SelectComposeMailboxView(composeMessageIntent: .constant(.new()))
 }
 
 enum TestTest {
