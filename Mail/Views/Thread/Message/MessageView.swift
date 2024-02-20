@@ -168,6 +168,7 @@ struct MessageView_Previews: PreviewProvider {
                 threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: true])
             )
         }
+        .environmentObject(PreviewHelper.sampleMailboxManager)
         .previewLayout(.sizeThatFits)
     }
 }
