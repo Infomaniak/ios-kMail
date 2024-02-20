@@ -20,11 +20,13 @@ import Foundation
 import InfomaniakCore
 import InfomaniakDI
 import MailCore
+import MailResources
 import SwiftUI
 
 final class SelectComposeMailboxViewModel: ObservableObject {
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @Published private(set) var selectedMailbox: Mailbox?
 
@@ -52,7 +54,7 @@ final class SelectComposeMailboxViewModel: ObservableObject {
 
     func selectMailbox(_ mailbox: Mailbox) {
         guard mailbox.isAvailable else {
-            // TODO: Display snackbar
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorMailboxUnavailable)
             return
         }
         selectedMailbox = mailbox
@@ -60,7 +62,7 @@ final class SelectComposeMailboxViewModel: ObservableObject {
 
     func validateMailboxChoice() {
         guard let selectedMailbox, let mailboxManager = accountManager.getMailboxManager(for: selectedMailbox) else {
-            // TODO: display snackbar
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
             return
         }
 
