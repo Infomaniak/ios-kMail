@@ -29,16 +29,16 @@ struct SelectMailboxView: View {
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
 
-    @State var selectedMailbox: Mailbox?
+    @State private var selectedMailbox: Mailbox?
 
     @Binding var composeMessageIntent: ComposeMessageIntent
 
-    var accounts: [Account] {
+    private var accounts: [Account] {
         accountManager.accounts.sorted { lhs, rhs in
-            if lhs.userId == accountManager.currentUserId {
-                return true
+            if (lhs.userId == accountManager.currentUserId) != (rhs.userId == accountManager.currentUserId) {
+                return lhs.userId == accountManager.currentUserId
             } else {
-                return lhs.user.displayName.compare(rhs.user.displayName) == .orderedAscending
+                return lhs.user.displayName < rhs.user.displayName
             }
         }
     }
