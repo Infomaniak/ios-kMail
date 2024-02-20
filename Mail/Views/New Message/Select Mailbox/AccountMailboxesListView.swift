@@ -25,41 +25,27 @@ import SwiftUI
 struct AccountMailboxesListView: View {
     @LazyInjectService private var accountManager: AccountManager
 
-    var accounts: [Account]
+    let account: Account
     var selectedMailbox: Mailbox?
-    var selectMailbox: (Mailbox) -> Void
+    let selectMailbox: (Mailbox) -> Void
+
+    private var currentMailbox: Mailbox? {
+        return accountManager.currentMailboxManager?.mailbox
+    }
 
     var body: some View {
-        ForEach(accounts) { account in
-            Text(account.user.displayName)
+        Text(account.user.displayName)
 
-            if account.userId == accountManager.currentUserId,
-               let currentMailbox = accountManager.currentMailboxManager?.mailbox {
-                MailboxesManagementButtonView(
-                    icon: MailResourcesAsset.envelope,
-                    mailbox: currentMailbox,
-                    isSelected: selectedMailbox?.id == currentMailbox.id
-                ) {
-                    selectMailbox(currentMailbox)
-                }
-            }
+        if account.userId == accountManager.currentUserId, let currentMailbox {
+            AccountMailboxCell(mailbox: currentMailbox, selectedMailbox: selectedMailbox, selectMailbox: selectMailbox)
+        }
 
-            ForEachMailboxView(
-                userId: account.userId,
-                excludedMailboxIds: [accountManager.currentMailboxManager?.mailbox.mailboxId].compactMap { $0 }
-            ) { mailbox in
-                MailboxesManagementButtonView(
-                    icon: MailResourcesAsset.envelope,
-                    mailbox: mailbox,
-                    isSelected: selectedMailbox?.id == mailbox.id
-                ) {
-                    selectMailbox(mailbox)
-                }
-            }
+        ForEachMailboxView(userId: account.userId, excludedMailboxIds: [currentMailbox?.mailboxId].compactMap { $0 }) { mailbox in
+            AccountMailboxCell(mailbox: mailbox, selectedMailbox: selectedMailbox, selectMailbox: selectMailbox)
         }
     }
 }
 
 #Preview {
-    AccountMailboxesListView(accounts: [], selectedMailbox: PreviewHelper.sampleMailbox) { _ in }
+    AccountMailboxesListView(account: PreviewHelper.sampleAccount, selectedMailbox: PreviewHelper.sampleMailbox) { _ in }
 }

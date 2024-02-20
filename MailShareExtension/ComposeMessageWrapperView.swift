@@ -41,7 +41,7 @@ struct ComposeMessageWrapperView: View {
                 MailUpdateRequiredView { dismissHandler(()) }
             } else if let mailboxManager = accountManager.currentMailboxManager {
                 ComposeMessageIntentView(
-                    ComposeMessageIntentView(composeMessageIntent: .new(), attachments: itemProviders)
+                    ComposeMessageIntentView(composeMessageIntent: .new(fromExtension: true), attachments: itemProviders)
                 )
                 .environmentObject(mailboxManager)
                 .environment(\.dismissModal) {

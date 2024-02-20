@@ -33,13 +33,13 @@ struct SelectComposeMailboxView: View {
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
-    @Binding var composeMessageIntent: ComposeMessageIntent
+    @StateObject private var viewModel: SelectComposeMailboxViewModel
 
-    @StateObject private var viewModel: SelectMailboxViewModel
+    @Binding var composeMessageIntent: ComposeMessageIntent
 
     init(composeMessageIntent: Binding<ComposeMessageIntent>) {
         _composeMessageIntent = composeMessageIntent
-        _viewModel = StateObject(wrappedValue: SelectMailboxViewModel(composeMessageIntent: composeMessageIntent))
+        _viewModel = StateObject(wrappedValue: SelectComposeMailboxViewModel(composeMessageIntent: composeMessageIntent))
     }
 
     var body: some View {
@@ -57,25 +57,23 @@ struct SelectComposeMailboxView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             ScrollView {
-                AccountMailboxesListView(
-                    accounts: viewModel.accounts,
-                    selectedMailbox: viewModel.selectedMailbox,
-                    selectMailbox: viewModel.selectMailbox
-                )
+                ForEach(viewModel.accounts) { account in
+                    AccountMailboxesListView(
+                        account: account,
+                        selectedMailbox: viewModel.selectedMailbox,
+                        selectMailbox: viewModel.selectMailbox
+                    )
+                }
             }
 
-            Button(MailResourcesStrings.Localizable.buttonContinue) {
-                viewModel.mailboxHasBeenSelected()
-            }
-            .buttonStyle(.ikPlain)
-            .controlSize(.large)
-            .ikButtonFullWidth(true)
+            Button(MailResourcesStrings.Localizable.buttonContinue, action: viewModel.validateMailboxChoice)
+                .buttonStyle(.ikPlain)
+                .controlSize(.large)
+                .ikButtonFullWidth(true)
         }
         .padding(.horizontal, value: .medium)
         .mailboxCellStyle(.account)
-        .onAppear {
-            viewModel.initDefaultAccountAndMailbox()
-        }
+        .onAppear(perform: viewModel.initDefaultAccountAndMailbox)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 if !platformDetector.isMac {
@@ -85,7 +83,6 @@ struct SelectComposeMailboxView: View {
         }
     }
 
-    /// Something to dismiss the view regardless of presentation context
     private func dismissMessageView() {
         dismissModal()
         dismiss()

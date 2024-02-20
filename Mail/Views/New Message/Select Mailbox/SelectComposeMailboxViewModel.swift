@@ -22,14 +22,13 @@ import InfomaniakDI
 import MailCore
 import SwiftUI
 
-final class SelectMailboxViewModel: ObservableObject {
+final class SelectComposeMailboxViewModel: ObservableObject {
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
 
     @Published private(set) var selectedMailbox: Mailbox?
 
     private(set) var composeMessageIntent: Binding<ComposeMessageIntent>
-
     private(set) var accounts = [Account]()
 
     init(composeMessageIntent: Binding<ComposeMessageIntent>) {
@@ -44,7 +43,22 @@ final class SelectMailboxViewModel: ObservableObject {
         }
     }
 
-    func mailboxHasBeenSelected() {
+    func initDefaultAccountAndMailbox() {
+        selectedMailbox = accountManager.currentMailboxManager?.mailbox
+        if accountManager.accounts.count == 1 && mailboxInfosManager.getMailboxes().count == 1 {
+            validateMailboxChoice()
+        }
+    }
+
+    func selectMailbox(_ mailbox: Mailbox) {
+        guard mailbox.isAvailable else {
+            // TODO: Display snackbar
+            return
+        }
+        selectedMailbox = mailbox
+    }
+
+    func validateMailboxChoice() {
         guard let selectedMailbox, let mailboxManager = accountManager.getMailboxManager(for: selectedMailbox) else {
             // TODO: display snackbar
             return
@@ -60,22 +74,6 @@ final class SelectMailboxViewModel: ObservableObject {
             )
         default:
             break
-        }
-    }
-
-    func selectMailbox(_ mailbox: Mailbox) {
-        guard mailbox.isAvailable else {
-            // TODO: Display snackbar
-            return
-        }
-
-        selectedMailbox = mailbox
-    }
-
-    func initDefaultAccountAndMailbox() {
-        selectedMailbox = accountManager.currentMailboxManager?.mailbox
-        if accountManager.accounts.count == 1 && mailboxInfosManager.getMailboxes().count == 1 {
-            mailboxHasBeenSelected()
         }
     }
 }

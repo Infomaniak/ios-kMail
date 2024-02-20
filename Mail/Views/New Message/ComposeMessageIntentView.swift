@@ -73,10 +73,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
 
     func initFromIntent() async {
         guard let mailboxId = composeMessageIntent.mailboxId, let userId = composeMessageIntent.userId,
-              let mailboxManager = accountManager.getMailboxManager(
-                  for: mailboxId,
-                  userId: userId
-              ) else {
+              let mailboxManager = accountManager.getMailboxManager(for: mailboxId, userId: userId) else {
             dismiss()
             snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
             return
