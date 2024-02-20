@@ -81,10 +81,7 @@ struct MessageHeaderSummaryView: View {
                                         .textStyle(.bodyMedium)
                                 }
                             }
-                            Text(message.date.customRelativeFormatted)
-                                .lineLimit(1)
-                                .layoutPriority(1)
-                                .textStyle(.labelSecondary)
+                            MessageHeaderDateView(date: message.date)
                         }
                     }
 
