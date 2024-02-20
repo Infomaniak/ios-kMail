@@ -25,30 +25,30 @@ import SwiftUI
 struct ComposeMessageIntentView: View, IntentViewable {
     typealias Intent = ResolvedIntent
 
-    @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
-
-    @Environment(\.dismiss) private var dismiss
-
-    @State var mailboxManager: MailboxManager?
-    private var shouldPresentMailToView: Bool {
-        composeMessageIntent.mailboxId == nil && composeMessageIntent.userId == nil
-    }
-
-    let resolvedIntent = State<ResolvedIntent?>()
-
     struct ResolvedIntent {
         let mailboxManager: MailboxManager
         let draft: Draft
         let messageReply: MessageReply?
     }
 
-    @State var composeMessageIntent: ComposeMessageIntent
-    var attachments: [Attachable] = []
+    @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var composeMessageIntent: ComposeMessageIntent
+    let resolvedIntent = State<ResolvedIntent?>()
+
+    private var attachments: [Attachable]
+
+    init(composeMessageIntent: ComposeMessageIntent, attachments: [Attachable] = []) {
+        _composeMessageIntent = State(wrappedValue: composeMessageIntent)
+        self.attachments = attachments
+    }
 
     var body: some View {
         NBNavigationStack {
-            if shouldPresentMailToView {
+            if composeMessageIntent.shouldSelectMailbox {
                 SelectComposeMailboxView(composeMessageIntent: $composeMessageIntent)
             } else {
                 if let resolvedIntent = resolvedIntent.wrappedValue {
@@ -106,15 +106,8 @@ struct ComposeMessageIntentView: View, IntentViewable {
             }
         }
 
-        switch composeMessageIntent.type {
-        case .mailTo:
+        if composeMessageIntent.isFromOutsideOfApp {
             try? await mailboxManager.refreshAllSignatures()
-        case .new(let fromExtension):
-            if fromExtension {
-                try? await mailboxManager.refreshAllSignatures()
-            }
-        default:
-            break
         }
 
         if let draftToWrite {

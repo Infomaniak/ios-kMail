@@ -33,6 +33,21 @@ public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
     public let mailboxId: Int?
     public let type: IntentType
 
+    public var shouldSelectMailbox: Bool {
+        userId == nil || mailboxId == nil
+    }
+
+    public var isFromOutsideOfApp: Bool {
+        switch type {
+        case .new(let fromExtension) where fromExtension:
+            return true
+        case .mailTo(let mailToURLComponents):
+            return true
+        default:
+            return false
+        }
+    }
+
     init(userId: Int?, mailboxId: Int?, type: IntentType) {
         id = UUID()
         self.userId = userId
