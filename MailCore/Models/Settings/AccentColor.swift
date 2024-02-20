@@ -126,7 +126,7 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
         case .pink:
             return MailResourcesAsset.mailboxPink
         case .blue:
-            return MailResourcesAsset.mailboxPink
+            return MailResourcesAsset.mailboxBlue
         }
     }
 
