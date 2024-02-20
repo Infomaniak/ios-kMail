@@ -44,7 +44,7 @@ struct SelectComposeMailboxView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            accentColor.mailTo.swiftUIImage
+            accentColor.mailboxImage.swiftUIImage
 
             Text(MailResourcesStrings.Localizable.selectComposeMailboxTitle)
                 .textStyle(.header1)

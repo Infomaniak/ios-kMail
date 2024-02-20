@@ -121,12 +121,12 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
         }
     }
 
-    public var mailTo: MailResourcesImages {
+    public var mailboxImage: MailResourcesImages {
         switch self {
         case .pink:
-            return MailResourcesAsset.mailToPink
+            return MailResourcesAsset.mailboxPink
         case .blue:
-            return MailResourcesAsset.mailToBlue
+            return MailResourcesAsset.mailboxPink
         }
     }
 
