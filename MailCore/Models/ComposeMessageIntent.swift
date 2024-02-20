@@ -20,7 +20,7 @@ import Foundation
 
 public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
     public enum IntentType: Codable, Hashable {
-        case new
+        case new(fromExtension: Bool)
         case existing(draftLocalUUID: String)
         case existingRemote(messageUid: String)
         case mailTo(mailToURLComponents: URLComponents)
@@ -40,11 +40,11 @@ public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
         self.type = type
     }
 
-    public static func new(originMailboxManager: MailboxManager? = nil) -> ComposeMessageIntent {
+    public static func new(originMailboxManager: MailboxManager? = nil, fromExtension: Bool = false) -> ComposeMessageIntent {
         return ComposeMessageIntent(
             userId: originMailboxManager?.mailbox.userId,
             mailboxId: originMailboxManager?.mailbox.mailboxId,
-            type: .new
+            type: .new(fromExtension: fromExtension)
         )
     }
 

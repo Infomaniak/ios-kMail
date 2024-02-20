@@ -65,6 +65,7 @@ struct SelectMailboxView: View {
                 mailboxHasBeenSelected()
             }
             .buttonStyle(.ikPlain)
+            .controlSize(.large)
             .ikButtonFullWidth(true)
         }
         .padding(.horizontal, value: .medium)
@@ -82,9 +83,10 @@ struct SelectMailboxView: View {
             // TODO: display snackbar
             return
         }
+
         switch composeMessageIntent.type {
         case .new:
-            composeMessageIntent = .new(originMailboxManager: mailboxManager)
+            composeMessageIntent = .new(originMailboxManager: mailboxManager, fromExtension: true)
         case .mailTo(let mailToURLComponents):
             composeMessageIntent = .mailTo(mailToURLComponents: mailToURLComponents, originMailboxManager: mailboxManager)
         default:

@@ -106,6 +106,17 @@ struct ComposeMessageIntentView: View, IntentViewable {
             }
         }
 
+        switch composeMessageIntent.type {
+        case .mailTo:
+            try? await mailboxManager.refreshAllSignatures()
+        case .new(let fromExtension):
+            if fromExtension {
+                try? await mailboxManager.refreshAllSignatures()
+            }
+        default:
+            break
+        }
+
         if let draftToWrite {
             let draftLocalUUID = draftToWrite.localUUID
             writeDraftToRealm(mailboxManager.getRealm(), draft: draftToWrite)
