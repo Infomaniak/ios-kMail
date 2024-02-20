@@ -46,6 +46,35 @@ final class ProxySubBody: Codable {
         subBody.partId = partId
         return subBody
     }
+
+    private enum CodingKeys: String, CodingKey {
+        case body
+        case name
+        case type
+        case date
+        case subject
+        case from
+        case to
+        case partId
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        body = try values.decode(ProxyBody.self, forKey: .body)
+
+        name = try values.decode(String.self, forKey: .name)
+        type = try values.decode(String.self, forKey: .type)
+        date = try values.decode(Date.self, forKey: .date)
+        subject = try values.decode(String.self, forKey: .subject)
+        from = try values.decode([Recipient].self, forKey: .from)
+        to = try values.decode([Recipient].self, forKey: .to)
+
+        if let partId = try? values.decode(Int.self, forKey: .partId) {
+            self.partId = "\(partId)"
+        } else {
+            partId = try values.decodeIfPresent(String.self, forKey: .partId) ?? ""
+        }
+    }
 }
 
 public final class SubBody: BodyContent {
@@ -59,13 +88,15 @@ public final class SubBody: BodyContent {
 }
 
 extension ProxyBody {
-    private var allSubBodyRecursively: [ProxySubBody] {
-        let items = subBody ?? []
-        return items + items.flatMap { $0.body.allSubBodyRecursively }
-    }
+    var allSubBodies: [SubBody] {
+        guard let subBody else {
+            return []
+        }
 
-    func flattenSubBody() -> List<SubBody> {
-        return allSubBodyRecursively.map { $0.realmObject() }.toRealmList()
+        let items = subBody.flatMap { item in
+            [item.realmObject()] + item.body.allSubBodies
+        }
+        return items
     }
 }
 

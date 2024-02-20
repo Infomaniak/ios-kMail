@@ -469,7 +469,7 @@ final class ProxyBody: Codable {
         let body = Body()
         body.value = truncatedValue
         body.type = type
-        body.subBody = flattenSubBody()
+        body.subBody = allSubBodies.toRealmList()
         return body
     }
 }
