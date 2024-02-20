@@ -40,16 +40,14 @@ struct ComposeMessageWrapperView: View {
             if versionStatus == .updateIsRequired {
                 MailUpdateRequiredView { dismissHandler(()) }
             } else if let mailboxManager = accountManager.currentMailboxManager {
-                ComposeMessageIntentView(
-                    ComposeMessageIntentView(composeMessageIntent: .new(fromExtension: true), attachments: itemProviders)
-                )
-                .environmentObject(mailboxManager)
-                .environment(\.dismissModal) {
-                    dismissHandler(())
-                }
-                .task {
-                    try? await featureFlagsManager.fetchFlags()
-                }
+                ComposeMessageIntentView(composeMessageIntent: .new(fromExtension: true), attachments: itemProviders)
+                    .environmentObject(mailboxManager)
+                    .environment(\.dismissModal) {
+                        dismissHandler(())
+                    }
+                    .task {
+                        try? await featureFlagsManager.fetchFlags()
+                    }
             } else {
                 PleaseLoginView(tapHandler: dismissHandler)
             }
