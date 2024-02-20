@@ -172,6 +172,7 @@ struct MessageHeaderSummaryView_Previews: PreviewProvider {
                 // Preview
             }
         }
+        .environmentObject(PreviewHelper.sampleMailboxManager)
         .previewLayout(.sizeThatFits)
     }
 }
