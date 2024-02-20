@@ -75,7 +75,8 @@ struct UserAccountScene: Scene {
         }
         .defaultAppStorage(.shared)
 
-        if #available(iOS 16.0, *) {
+        // There is a crash if we target iOS 16.0
+        if #available(iOS 16.1, *) {
             WindowGroup(
                 MailResourcesStrings.Localizable.settingsTitle,
                 id: DesktopWindowIdentifier.settingsWindowIdentifier,
