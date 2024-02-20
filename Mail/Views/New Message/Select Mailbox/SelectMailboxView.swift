@@ -24,10 +24,14 @@ import NavigationBackport
 import SwiftUI
 
 struct SelectMailboxView: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
+    @LazyInjectService private var platformDetector: PlatformDetectable
+
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismissModal) var dismissModal
+
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @State private var selectedMailbox: Mailbox?
 
@@ -76,6 +80,13 @@ struct SelectMailboxView: View {
                 mailboxHasBeenSelected()
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                if !platformDetector.isMac {
+                    CloseButton(dismissHandler: dismissMessageView)
+                }
+            }
+        }
     }
 
     private func mailboxHasBeenSelected() {
@@ -101,6 +112,12 @@ struct SelectMailboxView: View {
         }
 
         selectedMailbox = mailbox
+    }
+
+    /// Something to dismiss the view regardless of presentation context
+    private func dismissMessageView() {
+        dismissModal()
+        dismiss()
     }
 }
 
