@@ -22,7 +22,7 @@ struct MessageHeaderDateView: View {
     let date: Date
 
     var body: some View {
-        Text(date.messageHeaderRelativeFormatted)
+        Text(date, format: .thread(.header))
             .lineLimit(1)
             .layoutPriority(1)
             .textStyle(.labelSecondary)

@@ -18,47 +18,66 @@
 
 import Foundation
 
+// MARK: Date
+
 public extension Date {
-    var customRelativeFormatted: String {
-        if self > .now {
-            return formatted(date: .numeric, time: .omitted)
-        } else if Calendar.current.isDateInToday(self) {
-            return formatted(date: .omitted, time: .shortened)
-        } else if Calendar.current.isDateInYesterday(self) {
-            let dateMidnight = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: self)!
-            return dateMidnight.formatted(.relative(presentation: .named))
-        } else if let lastWeek = Calendar.current.date(byAdding: .day, value: -7, to: Date()), self > lastWeek {
-            return formatted(.dateTime.weekday(.wide))
-        } else if Calendar.current.isDate(self, equalTo: .now, toGranularity: .year) {
-            return formatted(.dateTime.day().month())
-        } else {
-            return formatted(date: .numeric, time: .omitted)
+    struct ThreadFormatStyle: Foundation.FormatStyle {
+        // swiftlint:disable:next nesting
+        public enum Style: Codable, Equatable, Hashable {
+            case list
+            case header
         }
-    }
 
-    var messageHeaderRelativeFormatted: String {
-        if self > .now {
-            return formatted(date: .numeric, time: .shortened)
-        } else if Calendar.current.isDateInToday(self) {
-            return formatted(date: .omitted, time: .shortened)
-        } else if Calendar.current.isDateInYesterday(self) {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .long
-            dateFormatter.timeStyle = .short
-            dateFormatter.formattingContext = .middleOfSentence
-            dateFormatter.doesRelativeDateFormatting = true
-            return dateFormatter.string(from: self)
-        } else if Calendar.current.isDate(self, equalTo: .now, toGranularity: .year) {
-            return formatted(.dateTime.day().month().hour().minute())
-        } else {
-            return formatted(.dateTime.year().day().month().hour().minute())
+        private let style: Style
+
+        init(style: Style) {
+            self.style = style
         }
-    }
-}
 
-public extension FormatStyle where Self == ByteCountFormatStyle {
-    static var defaultByteCount: ByteCountFormatStyle {
-        return .byteCount(style: .binary)
+        public func format(_ value: Date) -> String {
+            switch style {
+            case .list:
+                return formatToCustomRelative(value)
+            case .header:
+                return formatToMessageHeaderRelative(value)
+            }
+        }
+
+        private func formatToCustomRelative(_ date: Date) -> String {
+            if date > .now {
+                return date.formatted(date: .numeric, time: .omitted)
+            } else if Calendar.current.isDateInToday(date) {
+                return date.formatted(date: .omitted, time: .shortened)
+            } else if Calendar.current.isDateInYesterday(date) {
+                let dateMidnight = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: date)!
+                return dateMidnight.formatted(.relative(presentation: .named))
+            } else if let lastWeek = Calendar.current.date(byAdding: .day, value: -7, to: .now), date > lastWeek {
+                return date.formatted(.dateTime.weekday(.wide))
+            } else if Calendar.current.isDate(date, equalTo: .now, toGranularity: .year) {
+                return date.formatted(.dateTime.day().month())
+            } else {
+                return date.formatted(date: .numeric, time: .omitted)
+            }
+        }
+
+        private func formatToMessageHeaderRelative(_ date: Date) -> String {
+            if date > .now {
+                return date.formatted(date: .numeric, time: .shortened)
+            } else if Calendar.current.isDateInToday(date) {
+                return date.formatted(date: .omitted, time: .shortened)
+            } else if Calendar.current.isDateInYesterday(date) {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateStyle = .long
+                dateFormatter.timeStyle = .short
+                dateFormatter.formattingContext = .middleOfSentence
+                dateFormatter.doesRelativeDateFormatting = true
+                return dateFormatter.string(from: date)
+            } else if Calendar.current.isDate(date, equalTo: .now, toGranularity: .year) {
+                return date.formatted(.dateTime.day().month().hour().minute())
+            } else {
+                return date.formatted(.dateTime.year().day().month().hour().minute())
+            }
+        }
     }
 }
 
@@ -77,5 +96,17 @@ public extension FormatStyle where Self == Date.FormatStyle {
 
     static var calendarDateTime: Date.FormatStyle {
         return .dateTime.day().month().year().hour().minute()
+    }
+
+    static func thread(_ style: Date.ThreadFormatStyle.Style) -> Date.ThreadFormatStyle {
+        return .init(style: style)
+    }
+}
+
+// MARK: ByteCount
+
+public extension FormatStyle where Self == ByteCountFormatStyle {
+    static var defaultByteCount: ByteCountFormatStyle {
+        return .byteCount(style: .binary)
     }
 }
