@@ -25,18 +25,7 @@ import SwiftUI
 struct ComposeMessageSenderMenu: View {
     @EnvironmentObject private var draftContentManager: DraftContentManager
 
-    /// Note:
-    /// ObservedResults will invoke a `default.realm` store, and break (no migration block) while a migration is needed in share
-    /// extension.
-    ///
-    /// Therefore, I have to pass the correct realm configuration for `Signature.self`, so it can function correctly.
-    @ObservedResults(Signature.self, configuration: {
-        @InjectService var accountManager: AccountManager
-        guard let currentMailboxManager = accountManager.currentMailboxManager else {
-            return nil
-        }
-        return currentMailboxManager.realmConfiguration
-    }()) private var signatures
+    @ObservedResults(Signature.self) private var signatures
 
     @Binding var currentSignature: Signature?
 
@@ -46,6 +35,20 @@ struct ComposeMessageSenderMenu: View {
 
     private var canSelectSignature: Bool {
         signatures.count > 1
+    }
+
+    init(
+        currentSignature: Binding<Signature?>,
+        mailboxManager: MailboxManager,
+        autocompletionType: ComposeViewFieldType?,
+        type: ComposeViewFieldType,
+        text: String
+    ) {
+        _currentSignature = currentSignature
+        _signatures = ObservedResults(Signature.self, configuration: mailboxManager.realmConfiguration)
+        self.autocompletionType = autocompletionType
+        self.type = type
+        self.text = text
     }
 
     var body: some View {
@@ -83,5 +86,11 @@ struct ComposeMessageSenderMenu: View {
 }
 
 #Preview {
-    ComposeMessageSenderMenu(currentSignature: .constant(nil), autocompletionType: nil, type: .from, text: "email@email.com")
+    ComposeMessageSenderMenu(
+        currentSignature: .constant(nil),
+        mailboxManager: PreviewHelper.sampleMailboxManager,
+        autocompletionType: nil,
+        type: .from,
+        text: "email@email.com"
+    )
 }
