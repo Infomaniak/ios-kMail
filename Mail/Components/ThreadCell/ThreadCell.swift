@@ -49,7 +49,7 @@ struct ThreadCellDataHolder {
 
     init(thread: Thread) {
         let lastMessageNotFromSent = thread.messages.last { $0.folder?.role != .sent } ?? thread.messages.last
-        date = thread.date.customRelativeFormatted
+        date = thread.date.formatted(.thread(.list))
 
         subject = thread.formattedSubject
 
