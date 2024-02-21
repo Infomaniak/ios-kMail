@@ -93,7 +93,7 @@ extension ContactManager {
         }
 
         // Index contacts by id
-        var remoteContactsById = [Int: InfomaniakContact]()
+        var remoteContactsById = [String: InfomaniakContact]()
         for contact in remote {
             let emails = contact.emails
             for email in emails {
@@ -118,9 +118,9 @@ extension ContactManager {
     /// Merge local and remote contacts
     /// - Parameter remoteContacts: all the remote Infomaniak contacts, indexed by id
     /// - Returns: The remaining remote contacts without a local version, indexed by id
-    private func mergeLocalAndRemoteContacts(_ remoteContacts: [Int: InfomaniakContact]) async -> [Int: MergedContact] {
+    private func mergeLocalAndRemoteContacts(_ remoteContacts: [String: InfomaniakContact]) async -> [String: MergedContact] {
         var notMergedContacts = remoteContacts
-        var mergedContacts = [Int: MergedContact]()
+        var mergedContacts = [String: MergedContact]()
 
         await localContactsHelper.enumerateContacts { localContact, stop in
             guard !Task.isCancelled else {
@@ -151,8 +151,8 @@ extension ContactManager {
     }
 
     /// Clean contacts no longer present in remote Infomaniak or local device contacts
-    private func removeDeletedContactsFromLocalAndRemote(_ newMergedContacts: [Int: MergedContact]) {
-        var idsToDelete = [Int]()
+    private func removeDeletedContactsFromLocalAndRemote(_ newMergedContacts: [String: MergedContact]) {
+        var idsToDelete = [String]()
 
         // enumerate realm contacts
         let lazyMergedContacts = getRealm().objects(MergedContact.self)
@@ -193,7 +193,7 @@ extension ContactManager {
     }
 
     /// Insert Contacts indexed by id in base without check
-    private func insertMergedContactsInDB(_ mergedContacts: [Int: MergedContact]) {
+    private func insertMergedContactsInDB(_ mergedContacts: [String: MergedContact]) {
         guard !Task.isCancelled else {
             return
         }
