@@ -48,7 +48,7 @@ public final class UserAlertDisplayer: UserAlertDisplayable {
 
     /// Used by DI
     public init() {
-        // META: keep sonarcloud happy
+        // META: keep SonarCloud happy
     }
 
     // MARK: - UserAlertDisplayable

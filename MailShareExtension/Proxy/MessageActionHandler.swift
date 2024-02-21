@@ -22,18 +22,18 @@ import MailCore
 // Stub for extension mode
 public struct MessageActionHandler: MessageActionHandlable {
     func handleTapOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async throws {
-        // META: Keep sonar could happy
+        // META: Keep SonarCloud happy
     }
 
     func handleArchiveOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async throws {
-        // META: Keep sonar could happy
+        // META: Keep SonarCloud happy
     }
 
     func handleDeleteOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async throws {
-        // META: Keep sonar could happy
+        // META: Keep SonarCloud happy
     }
 
     func handleReplyOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) {
-        // META: Keep sonar could happy
+        // META: Keep SonarCloud happy
     }
 }

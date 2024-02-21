@@ -74,7 +74,7 @@ public final class DraftManager {
 
     /// Used by DI only
     public init() {
-        // META: Silencing Sonarcloud
+        // META: Silencing SonarCloud
     }
 
     /// Save a draft server side
