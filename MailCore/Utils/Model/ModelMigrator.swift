@@ -25,9 +25,7 @@ import RealmSwift
 ///
 /// useful from app extension
 public struct ModelMigrator {
-    public init() {
-        // META: keep SonarCloud happy
-    }
+    public init() {}
 
     /// Perform a getRealm on each realm store to trigger a migration if needed
     public func migrateRealmIfNeeded() {

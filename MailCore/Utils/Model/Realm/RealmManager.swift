@@ -33,9 +33,7 @@ public struct RealmManager: RealmManageable {
         static let deleteRealmFiles = "DeleteRealmFiles"
     }
 
-    public init() {
-        // META: Keep SonarCloud happy
-    }
+    public init() {}
 
     public func deleteFiles(for configuration: Realm.Configuration) {
         let realmInConflict = configuration.fileURL?.lastPathComponent ?? ""

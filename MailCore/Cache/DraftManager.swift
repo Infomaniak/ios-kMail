@@ -73,9 +73,7 @@ public final class DraftManager {
     @LazyInjectService private var alertDisplayable: UserAlertDisplayable
 
     /// Used by DI only
-    public init() {
-        // META: Silencing SonarCloud
-    }
+    public init() {}
 
     /// Save a draft server side
     private func saveDraftRemotely(draft: Draft, mailboxManager: MailboxManager, retry: Bool = true, showSnackbar: Bool) async {

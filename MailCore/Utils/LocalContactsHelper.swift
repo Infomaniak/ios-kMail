@@ -51,9 +51,7 @@ public final class LocalContactsHelper: LocalContactsHelpable {
         CNContactNicknameKey
     ] as [CNKeyDescriptor]) + [CNContactFormatter.descriptorForRequiredKeys(for: .fullName)]
 
-    public init() {
-        // META: Keep SonarCloud happy
-    }
+    public init() {}
 
     public func enumerateContacts(usingBlock: @escaping (CNContact, UnsafeMutablePointer<ObjCBool>) -> Void) async {
         do {
