@@ -20,6 +20,7 @@ import InfomaniakCore
 import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications
+import Intents
 import MailCore
 import MailResources
 import RealmSwift
@@ -100,11 +101,30 @@ final class NotificationService: UNNotificationServiceExtension {
                 return contentHandler(bestAttemptContent)
             }
 
-            let completeNotification = await NotificationsHelper.generateNotificationFor(message: fetchedMessage,
-                                                                                         mailboxId: mailboxId,
-                                                                                         userId: userId)
+            await NotificationsHelper.generateBaseNotificationFor(
+                message: fetchedMessage,
+                mailboxId: mailboxId,
+                userId: userId,
+                incompleteNotification: bestAttemptContent
+            )
+
             await NotificationsHelper.clearAlreadyReadNotifications(shouldWait: true)
-            contentHandler(completeNotification)
+
+            if let fromRecipient = fetchedMessage.from.first,
+               let communicationNotification = await NotificationsHelper.generateCommunicationNotificationFor(
+                   message: fetchedMessage,
+                   fromRecipient: fromRecipient,
+                   mailboxManager: mailboxManager,
+                   incompleteNotification: bestAttemptContent
+               ) {
+                contentHandler(communicationNotification)
+            } else {
+                let normalNotification = await NotificationsHelper.generateNotificationFor(
+                    message: fetchedMessage,
+                    incompleteNotification: bestAttemptContent
+                )
+                contentHandler(normalNotification)
+            }
         }
     }
 

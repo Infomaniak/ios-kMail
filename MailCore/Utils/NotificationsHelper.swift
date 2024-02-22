@@ -23,6 +23,7 @@ import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import InfomaniakNotifications
+import Intents
 import MailResources
 import RealmSwift
 import SwiftSoup
@@ -166,29 +167,86 @@ public enum NotificationsHelper {
         }
     }
 
-    public static func generateNotificationFor(message: Message,
-                                               mailboxId: Int,
-                                               userId: Int) async -> UNMutableNotificationContent {
-        let content = UNMutableNotificationContent()
-        if !message.from.isEmpty {
-            content.title = message.from.map(\.name).joined(separator: ",")
-        } else {
-            content.title = MailResourcesStrings.Localizable.unknownRecipientTitle
-        }
-        content.subtitle = message.formattedSubject
-        content.body = await getCleanBodyFrom(message: message)
-        content.threadIdentifier = "\(mailboxId)_\(userId)"
-        content.targetContentIdentifier = "\(userId)_\(mailboxId)_\(message.uid)"
-        content.badge = await getUnreadCount() as NSNumber
-        content.sound = .default
-        content.categoryIdentifier = NotificationActionGroupIdentifier.newMail // enable actions
+    public static func generateBaseNotificationFor(message: Message,
+                                                   mailboxId: Int,
+                                                   userId: Int,
+                                                   incompleteNotification: UNMutableNotificationContent) async {
+        incompleteNotification.threadIdentifier = "\(mailboxId)_\(userId)"
+        incompleteNotification.targetContentIdentifier = "\(userId)_\(mailboxId)_\(message.uid)"
+        incompleteNotification.badge = await getUnreadCount() as NSNumber
+        incompleteNotification.sound = .default
+        incompleteNotification.categoryIdentifier = NotificationActionGroupIdentifier.newMail // enable actions
         if #available(iOS 16.0, *) {
-            content.filterCriteria = MailboxInfosManager.getObjectId(mailboxId: mailboxId, userId: userId)
+            incompleteNotification.filterCriteria = MailboxInfosManager.getObjectId(mailboxId: mailboxId, userId: userId)
         }
-        content.userInfo = [NotificationsHelper.UserInfoKeys.userId: userId,
-                            NotificationsHelper.UserInfoKeys.mailboxId: mailboxId,
-                            NotificationsHelper.UserInfoKeys.messageUid: message.uid]
-        return content
+        incompleteNotification.userInfo = [NotificationsHelper.UserInfoKeys.userId: userId,
+                                           NotificationsHelper.UserInfoKeys.mailboxId: mailboxId,
+                                           NotificationsHelper.UserInfoKeys.messageUid: message.uid]
+    }
+
+    public static func generateNotificationFor(message: Message,
+                                               incompleteNotification: UNMutableNotificationContent)
+        async -> UNMutableNotificationContent {
+        if !message.from.isEmpty {
+            incompleteNotification.title = message.from.map(\.name).joined(separator: ",")
+        } else {
+            incompleteNotification.title = MailResourcesStrings.Localizable.unknownRecipientTitle
+        }
+        incompleteNotification.subtitle = message.formattedSubject
+        incompleteNotification.body = await getCleanBodyFrom(message: message)
+        return incompleteNotification
+    }
+
+    public static func generateCommunicationNotificationFor(
+        message: Message,
+        fromRecipient: Recipient,
+        mailboxManager: MailboxManager,
+        incompleteNotification: UNMutableNotificationContent
+    ) async -> UNNotificationContent? {
+        let localContact = mailboxManager.contactManager.getContact(for: fromRecipient, realm: nil)
+        let handleSender = INPersonHandle(value: fromRecipient.email, type: .emailAddress)
+        let sender = INPerson(personHandle: handleSender,
+                              nameComponents: nil,
+                              displayName: localContact?.name ?? fromRecipient.name,
+                              image: nil,
+                              contactIdentifier: localContact?.localIdentifier,
+                              customIdentifier: nil)
+
+        let handleRecipient = INPersonHandle(value: MailResourcesStrings.Localizable.contactMe, type: .unknown)
+        let recipient = INPerson(personHandle: handleRecipient,
+                                 nameComponents: nil,
+                                 displayName: MailResourcesStrings.Localizable.contactMe,
+                                 image: nil,
+                                 contactIdentifier: localContact?.localIdentifier,
+                                 customIdentifier: nil,
+                                 isMe: true)
+
+        let body = await getCleanBodyFrom(message: message)
+        let subtitle = message.formattedSubject
+        incompleteNotification.body = body
+
+        let intent = INSendMessageIntent(recipients: [sender, recipient],
+                                         outgoingMessageType: .outgoingMessageText,
+                                         content: body,
+                                         speakableGroupName: INSpeakableString(spokenPhrase: subtitle),
+                                         conversationIdentifier: message.uid,
+                                         serviceName: nil,
+                                         sender: sender,
+                                         attachments: nil)
+
+        let interaction = INInteraction(intent: intent, response: nil)
+
+        interaction.direction = .incoming
+
+        do {
+            try await interaction.donate()
+            let updatedContent = try incompleteNotification.updating(from: intent)
+
+            return updatedContent
+
+        } catch {
+            return nil
+        }
     }
 
     private static func getCleanBodyFrom(message: Message) async -> String {
