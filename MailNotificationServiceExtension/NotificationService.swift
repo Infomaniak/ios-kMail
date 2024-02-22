@@ -101,7 +101,7 @@ final class NotificationService: UNNotificationServiceExtension {
                 return contentHandler(bestAttemptContent)
             }
 
-            let baseNotification = await NotificationsHelper.generateBaseNotificationFor(
+            await NotificationsHelper.generateBaseNotificationFor(
                 message: fetchedMessage,
                 mailboxId: mailboxId,
                 userId: userId,

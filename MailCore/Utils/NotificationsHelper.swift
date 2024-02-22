@@ -170,8 +170,7 @@ public enum NotificationsHelper {
     public static func generateBaseNotificationFor(message: Message,
                                                    mailboxId: Int,
                                                    userId: Int,
-                                                   incompleteNotification: UNMutableNotificationContent)
-        async -> UNMutableNotificationContent {
+                                                   incompleteNotification: UNMutableNotificationContent) async {
         incompleteNotification.threadIdentifier = "\(mailboxId)_\(userId)"
         incompleteNotification.targetContentIdentifier = "\(userId)_\(mailboxId)_\(message.uid)"
         incompleteNotification.badge = await getUnreadCount() as NSNumber
@@ -183,7 +182,6 @@ public enum NotificationsHelper {
         incompleteNotification.userInfo = [NotificationsHelper.UserInfoKeys.userId: userId,
                                            NotificationsHelper.UserInfoKeys.mailboxId: mailboxId,
                                            NotificationsHelper.UserInfoKeys.messageUid: message.uid]
-        return incompleteNotification
     }
 
     public static func generateNotificationFor(message: Message,
