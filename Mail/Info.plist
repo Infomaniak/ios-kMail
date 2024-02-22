@@ -81,6 +81,10 @@
 	<string>Local contacts will be used to show recipient info. We will NOT send them to the server.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>To be able to lock the app</string>
+	<key>NSUserActivityTypes</key>
+	<array>
+		<string>INSendMessageIntent</string>
+	</array>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>Atlantis would use Bonjour Service to discover Proxyman app from your local network.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
@@ -89,13 +93,13 @@
 	<string>Photo access will be used to save pictures in your photo library.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-    <key>UIApplicationSceneManifest</key>
-    <dict>
-        <key>UIApplicationSupportsMultipleScenes</key>
-        <true/>
-        <key>UISceneConfigurations</key>
-        <dict/>
-    </dict>
+	<key>UIApplicationSceneManifest</key>
+	<dict>
+		<key>UIApplicationSupportsMultipleScenes</key>
+		<true/>
+		<key>UISceneConfigurations</key>
+		<dict/>
+	</dict>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>fetch</string>
