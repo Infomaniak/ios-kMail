@@ -35,7 +35,7 @@ final class UTContactManager: XCTestCase {
         try! realm.write {
             for i in 0 ..< count {
                 let contact = MergedContact()
-                contact.id = i
+                contact.id = "\(i)"
                 let randomName = UUID().uuidString
                 contact.name = "\(randomName)"
                 contact.email = "\(randomName)@somemail.com"

@@ -45,7 +45,7 @@ public final class MergedContact: Object, Identifiable {
     private static let contactFormatter = CNContactFormatter()
 
     /// Shared
-    @Persisted(primaryKey: true) public var id: Int
+    @Persisted(primaryKey: true) public var id: String
     @Persisted public var email: String
     @Persisted public var name: String
 
@@ -149,12 +149,8 @@ public final class MergedContact: Object, Identifiable {
         remoteIdentifier = contact.id
     }
 
-    static func computeId(email: String, name: String?) -> Int {
-        guard let name, email != name && !name.isEmpty else { return email.hash }
-
-        var hasher = Hasher()
-        hasher.combine(email)
-        hasher.combine(name)
-        return hasher.finalize()
+    static func computeId(email: String, name: String?) -> String {
+        guard let name, email != name && !name.isEmpty else { return email }
+        return name + email
     }
 }
