@@ -47,9 +47,7 @@ public final class UserAlertDisplayer: UserAlertDisplayable {
     @LazyInjectService private var applicationState: ApplicationStatable
 
     /// Used by DI
-    public init() {
-        // META: keep sonarcloud happy
-    }
+    public init() {}
 
     // MARK: - UserAlertDisplayable
 

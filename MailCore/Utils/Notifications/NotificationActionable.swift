@@ -39,9 +39,7 @@ public enum NewMailActionIdentifier {
 }
 
 public struct NotificationActionsRegistrer: NotificationActionsRegistrable {
-    public init() {
-        // META: Keep sonar could happy
-    }
+    public init() {}
 
     // MARK: - NotificationActionsRegistrable
 

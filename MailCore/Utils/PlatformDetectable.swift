@@ -39,9 +39,7 @@ public protocol PlatformDetectable {
 }
 
 public struct PlatformDetector: PlatformDetectable {
-    public init() {
-        // META: Keep SonarCloud happy
-    }
+    public init() {}
 
     public var isMacCatalyst: Bool = {
         #if targetEnvironment(macCatalyst)
