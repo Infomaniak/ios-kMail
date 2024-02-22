@@ -77,15 +77,17 @@ final class WebViewModel: NSObject, ObservableObject {
     }
 
     private func formatSubBodyContent(subBodies: List<SubBody>, messageUid: String) -> String {
-        var subBodiesContent = ""
-        for subBody in subBodies {
-            guard let bodyValue = subBody.value else {
-                continue
+        let subBodiesContent = subBodies.reduce("") {
+            var partialResult = $0
+
+            guard let bodyValue = $1.value else {
+                return partialResult
             }
-            if !subBodiesContent.isEmpty {
-                subBodiesContent += "<br/>"
+
+            if !partialResult.isEmpty {
+                partialResult += "<br/>"
             }
-            subBodiesContent += "<blockquote>\(bodyValue)</blockquote>"
+            return partialResult + "<blockquote>\(bodyValue)</blockquote>"
         }
 
         if !subBodiesContent.isEmpty {
