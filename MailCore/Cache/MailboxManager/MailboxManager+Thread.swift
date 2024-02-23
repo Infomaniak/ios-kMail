@@ -76,7 +76,14 @@ public extension MailboxManager {
                     let foldersToUpdate = Set(threadsToUpdate.compactMap(\.folder))
 
                     try? realm.safeWrite {
-                        realm.delete(draftsToDelete)
+                        for draft in draftsToDelete {
+                            if draft.action == nil {
+                                realm.delete(draft)
+                            } else {
+                                draft.remoteUUID = ""
+                            }
+                        }
+
                         realm.delete(messagesToDelete)
                         for thread in threadsToUpdate {
                             if thread.messageInFolderCount == 0 {
