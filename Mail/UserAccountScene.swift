@@ -47,10 +47,15 @@ struct UserAccountScene: Scene {
             RootView()
                 .standardWindow()
                 .environmentObject(rootViewState)
+                .onReceive(NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)) { _ in
+                    /* `scenePhase` changes each time a pop-up is presented.
+                     We have to listen to `UIScene.willEnterForegroundNotification` to increase the `appLaunchCounter`
+                     only when the app enters foreground. */
+                    appLaunchCounter.increase()
+                }
                 .onChange(of: scenePhase) { newScenePhase in
                     switch newScenePhase {
                     case .active:
-                        appLaunchCounter.increase()
                         refreshCacheData()
                         rootViewState.transitionToLockViewIfNeeded()
                         checkAppVersion()
