@@ -454,15 +454,12 @@ public final class Message: Object, Decodable, Identifiable {
 
 // MARK: - Body
 
-public struct BodyResult: Codable {
-    let body: Body
-}
-
 /// Proxy class to preprocess JSON of a Body object
 /// Preprocessing body to remain within Realm limitations
 final class ProxyBody: Codable {
     public var value: String?
     public var type: String?
+    public var subBody: [ProxySubBody]?
 
     /// Generate a new persisted realm object on the fly
     public func realmObject() -> Body {
@@ -472,33 +469,13 @@ final class ProxyBody: Codable {
         let body = Body()
         body.value = truncatedValue
         body.type = type
+        body.subBody = allSubBodies.toRealmList()
         return body
     }
 }
 
-public final class Body: EmbeddedObject, Codable {
-    /// Public facing "value", wrapping `valueData`
-    public var value: String? {
-        get {
-            guard let decompressedString = valueData?.decompressedString() else {
-                return nil
-            }
-
-            return decompressedString
-        } set {
-            guard let data = newValue?.compressed() else {
-                valueData = nil
-                return
-            }
-
-            valueData = data
-        }
-    }
-
-    @Persisted public var type: String?
-
-    /// Store compressed data to reduce realm size.
-    @Persisted var valueData: Data?
+public final class Body: BodyContent {
+    @Persisted public var subBody: List<SubBody>
 }
 
 public struct MessageActionResult: Codable {

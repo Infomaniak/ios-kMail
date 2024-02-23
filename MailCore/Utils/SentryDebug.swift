@@ -143,6 +143,13 @@ public enum SentryDebug {
         }
     }
 
+    public static func sendSubBodiesTrigger(messageUid: String) {
+        SentrySDK.capture(message: "Received an email with SubBodies!!") { scope in
+            scope.setLevel(.info)
+            scope.setExtra(value: "messageUid", key: messageUid)
+        }
+    }
+
     // MARK: - Breadcrumb
 
     enum Category {

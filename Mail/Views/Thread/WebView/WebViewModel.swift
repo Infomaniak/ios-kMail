@@ -19,6 +19,7 @@
 import CocoaLumberjackSwift
 import Combine
 import MailCore
+import RealmSwift
 import Sentry
 import WebKit
 
@@ -64,11 +65,36 @@ final class WebViewModel: NSObject, ObservableObject {
         loadScripts(configuration: webView.configuration)
     }
 
-    func loadBody(presentableBody: PresentableBody, blockRemoteContent: Bool) async throws -> LoadResult {
+    func loadBody(presentableBody: PresentableBody, blockRemoteContent: Bool, messageUid: String) async throws -> LoadResult {
         var messageBody = showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody
+
+        if messageBody != nil, let subBodies = presentableBody.body?.subBody {
+            messageBody! += formatSubBodyContent(subBodies: subBodies, messageUid: messageUid)
+        }
 
         let loadResult = await loadHTMLString(value: messageBody, blockRemoteContent: blockRemoteContent)
         return loadResult
+    }
+
+    private func formatSubBodyContent(subBodies: List<SubBody>, messageUid: String) -> String {
+        let subBodiesContent = subBodies.reduce("") {
+            var partialResult = $0
+
+            guard let bodyValue = $1.value else {
+                return partialResult
+            }
+
+            if !partialResult.isEmpty {
+                partialResult += "<br/>"
+            }
+            return partialResult + "<blockquote>\(bodyValue)</blockquote>"
+        }
+
+        if !subBodiesContent.isEmpty {
+            SentryDebug.sendSubBodiesTrigger(messageUid: messageUid)
+        }
+
+        return subBodiesContent
     }
 
     private func setUpWebViewConfiguration() {
