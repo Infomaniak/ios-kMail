@@ -240,6 +240,8 @@ struct ComposeMessageView: View {
             }
         }
         .onDestroy {
+            updateSubjectIfNeeded()
+
             var shouldShowSnackbar = false
             let shouldDisplayAdditionalAlerts = !platformDetector.isMac &&
                 !Bundle.main.isExtension &&
@@ -343,6 +345,17 @@ struct ComposeMessageView: View {
             }
         }
         dismissMessageView()
+    }
+
+    private func updateSubjectIfNeeded() {
+        guard draft.subject.count > 998, let liveDraft = draft.thaw() else { return }
+
+        let subject = draft.subject
+        let index = subject.index(subject.startIndex, offsetBy: 998)
+
+        try? liveDraft.realm?.write {
+            liveDraft.subject = String(subject[..<index])
+        }
     }
 }
 
