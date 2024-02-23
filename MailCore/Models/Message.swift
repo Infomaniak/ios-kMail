@@ -144,6 +144,10 @@ public enum MessageDKIM: String, Codable, PersistableEnum {
     case notSigned = "not_signed"
 }
 
+/// A Message has :
+/// - Many threads
+/// - One originalThread: parent thread
+/// - One folder
 public final class Message: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var uid = ""
     @Persisted public var messageId: String?

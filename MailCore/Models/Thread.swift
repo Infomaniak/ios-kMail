@@ -32,6 +32,8 @@ public struct ThreadResult: Decodable {
     public let resourceNext: String?
 }
 
+/// A Thread has :
+/// - One folder
 public class Thread: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var uid: String
     @Persisted public var messages: List<Message>
