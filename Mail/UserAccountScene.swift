@@ -48,7 +48,7 @@ struct UserAccountScene: Scene {
                 .standardWindow()
                 .environmentObject(rootViewState)
                 .onReceive(NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)) { _ in
-                    /* `scenePhase` is called each time a popup is presented which leads to wrong `appLaunchCounter.value.
+                    /* `scenePhase` changes each time a pop-up is presented.
                      We have to listen to UIScene.willEnterForegroundNotification to increase the counter only
                      when the app enter foreground */
                     appLaunchCounter.increase()
