@@ -185,27 +185,44 @@ public class ActionsManager: ObservableObject {
     }
 
     private func performMove(messages: [Message], from originFolder: Folder?, to folderRole: FolderRole) async throws {
-        let undoAction = try await mailboxManager.move(messages: messages, to: folderRole)
-        let snackbarMessage = snackbarMoveMessage(
-            for: messages,
-            originFolder: originFolder,
-            destinationFolderName: folderRole.localizedName
-        )
+        let originalThreads = messages.flatMap { $0.threads.filter { $0.folder == originFolder } }
+        await mailboxManager.markMovedLocally(true, threads: originalThreads)
 
-        async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
+        do {
+            let undoAction = try await mailboxManager.move(messages: messages, to: folderRole)
+            let snackbarMessage = snackbarMoveMessage(
+                for: messages,
+                originFolder: originFolder,
+                destinationFolderName: folderRole.localizedName
+            )
+
+            async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
+        } catch {
+            await mailboxManager.markMovedLocally(false, threads: originalThreads)
+            throw error
+        }
     }
 
     public func performMove(messages: [Message], from originFolder: Folder?, to destinationFolder: Folder) async throws {
         let messagesFromFolder = messages.filter { $0.folderId == originFolder?.remoteId }
-        let undoAction = try await mailboxManager.move(messages: messagesFromFolder, to: destinationFolder)
 
-        let snackbarMessage = snackbarMoveMessage(
-            for: messagesFromFolder,
-            originFolder: originFolder,
-            destinationFolderName: destinationFolder.localizedName
-        )
+        let originalThreads = messagesFromFolder.flatMap { $0.threads.filter { $0.folder == originFolder } }
+        await mailboxManager.markMovedLocally(true, threads: originalThreads)
 
-        async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
+        do {
+            let undoAction = try await mailboxManager.move(messages: messagesFromFolder, to: destinationFolder)
+
+            let snackbarMessage = snackbarMoveMessage(
+                for: messagesFromFolder,
+                originFolder: originFolder,
+                destinationFolderName: destinationFolder.localizedName
+            )
+
+            async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
+        } catch {
+            await mailboxManager.markMovedLocally(false, threads: originalThreads)
+            throw error
+        }
     }
 
     private func performDelete(messages: [Message], originFolder: Folder?) async throws {

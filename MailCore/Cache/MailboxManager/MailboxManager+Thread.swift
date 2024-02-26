@@ -139,4 +139,18 @@ public extension MailboxManager {
             }
         }
     }
+
+    func markMovedLocally(_ movedLocally: Bool, threads: [Thread]) async {
+        await backgroundRealm.execute { realm in
+            try? realm.write {
+                for thread in threads {
+                    guard let liveThread = realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) else {
+                        continue
+                    }
+
+                    liveThread.isMovedOutLocally = movedLocally
+                }
+            }
+        }
+    }
 }
