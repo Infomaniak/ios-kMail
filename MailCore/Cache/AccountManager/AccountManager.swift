@@ -24,6 +24,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications
+import MailResources
 import Nuke
 import RealmSwift
 import Sentry
@@ -51,6 +52,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     @LazyInjectService var matomo: MatomoUtils
     @LazyInjectService var mailboxInfosManager: MailboxInfosManager
     @LazyInjectService var featureFlagsManager: FeatureFlagsManageable
+    @InjectService var snackbarPresenter: SnackBarPresentable
 
     private static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
     private static let group = "com.infomaniak.mail"
@@ -221,7 +223,9 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         if let account = account(for: token.userId),
            account.userId == currentUserId {
             removeAccount(toDeleteAccount: account)
-            NotificationsHelper.sendDisconnectedNotification()
+            Task { @MainActor in
+                NotificationsHelper.sendDisconnectedNotification()
+            }
         }
     }
 
