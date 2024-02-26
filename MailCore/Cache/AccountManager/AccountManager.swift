@@ -52,7 +52,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     @LazyInjectService var matomo: MatomoUtils
     @LazyInjectService var mailboxInfosManager: MailboxInfosManager
     @LazyInjectService var featureFlagsManager: FeatureFlagsManageable
-    @InjectService var snackbarPresenter: SnackBarPresentable
 
     private static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
     private static let group = "com.infomaniak.mail"
