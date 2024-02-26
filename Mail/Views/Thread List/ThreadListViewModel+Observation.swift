@@ -30,10 +30,13 @@ extension ThreadListViewModel {
         let threadResults: Results<Thread>
         if let predicate = filter.predicate {
             threadResults = folder.threads
+                .where { $0.isMovedOutLocally == false }
                 .filter(predicate + " OR uid == %@", selectedThreadOwner.selectedThread?.uid ?? "")
                 .sorted(by: \.date, ascending: false)
         } else {
-            threadResults = folder.threads.sorted(by: \.date, ascending: false)
+            threadResults = folder.threads
+                .where { $0.isMovedOutLocally == false }
+                .sorted(by: \.date, ascending: false)
         }
 
         return threadResults

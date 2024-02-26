@@ -55,6 +55,9 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var duplicates = List<Message>()
     @Persisted public var messageIds: MutableSet<String>
 
+    /// This property is used to remove threads from list before network call is finished
+    @Persisted public var isMovedOutLocally = false
+
     public var id: String {
         return uid
     }
