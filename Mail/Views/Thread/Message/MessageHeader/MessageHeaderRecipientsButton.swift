@@ -30,6 +30,18 @@ struct MessageHeaderRecipientsButton: View {
 
     let recipients: [Recipient]
 
+    private var formattedRecipients: [String] {
+        recipients.map {
+            let contactConfiguration = ContactConfiguration.correspondent(
+                correspondent: $0,
+                contextMailboxManager: mailboxManager
+            )
+            let contact = CommonContactCache
+                .getOrCreateContact(contactConfiguration: contactConfiguration)
+            return contact.formatted()
+        }
+    }
+
     var body: some View {
         Button {
             matomo.track(eventWithCategory: .message, name: "openDetails", value: isHeaderExpanded)
@@ -38,19 +50,7 @@ struct MessageHeaderRecipientsButton: View {
             }
         } label: {
             HStack {
-                Text(
-                    recipients.map {
-                        let contactConfiguration = ContactConfiguration.correspondent(
-                            correspondent: $0,
-                            contextMailboxManager: mailboxManager
-                        )
-                        let contact = CommonContactCache
-                            .getOrCreateContact(contactConfiguration: contactConfiguration)
-                        return contact.formatted()
-                    },
-                    format: .list(type: .and)
-                )
-
+                Text(formattedRecipients, format: .list(type: .and))
                 ChevronIcon(direction: isHeaderExpanded ? .up : .down)
             }
         }
