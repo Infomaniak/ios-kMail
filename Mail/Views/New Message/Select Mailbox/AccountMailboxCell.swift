@@ -26,12 +26,19 @@ struct AccountMailboxCell: View {
     let selectMailbox: (Mailbox) -> Void
 
     var body: some View {
-        MailboxesManagementButtonView(
-            icon: MailResourcesAsset.envelope,
-            mailbox: mailbox,
-            isSelected: selectedMailbox?.mailboxId == mailbox.mailboxId
-        ) {
-            selectMailbox(mailbox)
+        Button {
+            withAnimation {
+                selectMailbox(mailbox)
+            }
+        } label: {
+            Label {
+                Text(mailbox.email)
+            } icon: {
+                if selectedMailbox?.mailboxId == mailbox.mailboxId {
+                    MailResourcesAsset.check.swiftUIImage
+                }
+            }
+            .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonSelectSignature)
         }
     }
 }

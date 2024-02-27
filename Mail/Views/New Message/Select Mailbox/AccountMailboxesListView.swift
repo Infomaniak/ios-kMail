@@ -27,6 +27,8 @@ struct AccountMailboxesListView: View {
 
     let account: Account
     var selectedMailbox: Mailbox?
+    let mailboxManager: MailboxManager?
+
     let selectMailbox: (Mailbox) -> Void
 
     private var currentMailbox: Mailbox? {
@@ -34,18 +36,39 @@ struct AccountMailboxesListView: View {
     }
 
     var body: some View {
-        Text(account.user.displayName)
+        Menu {
+            ForEachMailboxView(userId: account.userId) { mailbox in
+                AccountMailboxCell(mailbox: mailbox, selectedMailbox: selectedMailbox, selectMailbox: selectMailbox)
+            }
+        } label: {
+            HStack(spacing: UIPadding.small) {
+                AvatarView(mailboxManager: mailboxManager, contactConfiguration: .user(user: account.user), size: 40)
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(account.user.displayName)
+                        .textStyle(.bodyMedium)
+                    Text(account.user.email)
+                        .textStyle(.bodySecondary)
+                }
+                .lineLimit(1)
 
-        if account.userId == accountManager.currentUserId, let currentMailbox {
-            AccountMailboxCell(mailbox: currentMailbox, selectedMailbox: selectedMailbox, selectMailbox: selectMailbox)
-        }
+                Spacer(minLength: 0)
 
-        ForEachMailboxView(userId: account.userId, excludedMailboxIds: [currentMailbox?.mailboxId].compactMap { $0 }) { mailbox in
-            AccountMailboxCell(mailbox: mailbox, selectedMailbox: selectedMailbox, selectMailbox: selectMailbox)
+                ChevronIcon(direction: .down)
+            }
+            .padding([.leading, .vertical], value: .small)
+            .padding(.trailing, value: .regular)
+            .overlay {
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
+            }
         }
     }
 }
 
 #Preview {
-    AccountMailboxesListView(account: PreviewHelper.sampleAccount, selectedMailbox: PreviewHelper.sampleMailbox) { _ in }
+    AccountMailboxesListView(
+        account: PreviewHelper.sampleAccount,
+        selectedMailbox: PreviewHelper.sampleMailbox,
+        mailboxManager: nil
+    ) { _ in }
 }

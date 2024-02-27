@@ -53,16 +53,12 @@ struct SelectComposeMailboxView: View {
                 .multilineTextAlignment(.center)
                 .padding(.bottom, value: .medium)
 
-            Text(MailResourcesStrings.Localizable.selectComposeMailboxDescription)
-                .textStyle(.bodySmallSecondary)
-                .padding(.bottom, value: .regular)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
             ScrollView {
                 ForEach(viewModel.accounts) { account in
                     AccountMailboxesListView(
                         account: account,
                         selectedMailbox: viewModel.selectedMailbox,
+                        mailboxManager: nil,
                         selectMailbox: viewModel.selectMailbox
                     )
                 }
