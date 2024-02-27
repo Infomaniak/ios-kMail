@@ -75,26 +75,29 @@ struct MessageHeaderView: View {
     }
 }
 
-struct MessageHeaderView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            MessageHeaderView(
-                message: PreviewHelper.sampleMessage,
-                isHeaderExpanded: .constant(false),
-                isMessageExpanded: .constant(false)
-            )
-            MessageHeaderView(
-                message: PreviewHelper.sampleMessage,
-                isHeaderExpanded: .constant(false),
-                isMessageExpanded: .constant(true)
-            )
-            MessageHeaderView(
-                message: PreviewHelper.sampleMessage,
-                isHeaderExpanded: .constant(true),
-                isMessageExpanded: .constant(true)
-            )
-        }
-        .environmentObject(PreviewHelper.sampleMailboxManager)
-        .previewLayout(.sizeThatFits)
-    }
+#Preview("Message collapsed") {
+    MessageHeaderView(
+        message: PreviewHelper.sampleMessage,
+        isHeaderExpanded: .constant(false),
+        isMessageExpanded: .constant(false)
+    )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
+}
+
+#Preview("Message expanded") {
+    MessageHeaderView(
+        message: PreviewHelper.sampleMessage,
+        isHeaderExpanded: .constant(false),
+        isMessageExpanded: .constant(true)
+    )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
+}
+
+#Preview("Message Header View") {
+    MessageHeaderView(
+        message: PreviewHelper.sampleMessage,
+        isHeaderExpanded: .constant(true),
+        isMessageExpanded: .constant(true)
+    )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }

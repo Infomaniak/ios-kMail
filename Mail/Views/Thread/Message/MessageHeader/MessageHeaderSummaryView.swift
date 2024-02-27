@@ -25,6 +25,8 @@ import RealmSwift
 import SwiftUI
 
 struct MessageHeaderSummaryView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
 
@@ -37,8 +39,6 @@ struct MessageHeaderSummaryView: View {
     @Binding var isHeaderExpanded: Bool
 
     let deleteDraftTapped: () -> Void
-
-    @LazyInjectService private var matomo: MatomoUtils
 
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
@@ -87,26 +87,7 @@ struct MessageHeaderSummaryView: View {
 
                     Group {
                         if isMessageExpanded {
-                            HStack {
-                                Text(
-                                    message.recipients.map {
-                                        let contactConfiguration = ContactConfiguration.correspondent(
-                                            correspondent: $0,
-                                            contextMailboxManager: mailboxManager
-                                        )
-                                        let contact = CommonContactCache
-                                            .getOrCreateContact(contactConfiguration: contactConfiguration)
-                                        return contact.formatted()
-                                    },
-                                    format: .list(type: .and)
-                                )
-
-                                ChevronButton(isExpanded: $isHeaderExpanded)
-                                    .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandRecipients)
-                                    .onChange(of: isHeaderExpanded) { isExpanded in
-                                        matomo.track(eventWithCategory: .message, name: "openDetails", value: isExpanded)
-                                    }
-                            }
+                            MessageHeaderRecipientsButton(isHeaderExpanded: $isHeaderExpanded, recipients: message.recipients)
                         } else {
                             Text(message.formattedSubject)
                         }
@@ -114,14 +95,16 @@ struct MessageHeaderSummaryView: View {
                     .textStyle(.bodySmallSecondary)
                     .lineLimit(1)
                 }
+                .accessibilityHint(MailResourcesStrings.Localizable
+                    .contentDescriptionButtonExpandRecipients)
+            }
 
-                if message.isDraft {
-                    Spacer()
-                    Button(role: .destructive, action: deleteDraftTapped) {
-                        IKIcon(MailResourcesAsset.bin, size: .large)
-                    }
-                    .foregroundStyle(MailResourcesAsset.redColor)
+            if message.isDraft {
+                Spacer()
+                Button(role: .destructive, action: deleteDraftTapped) {
+                    IKIcon(MailResourcesAsset.bin, size: .large)
                 }
+                .foregroundStyle(MailResourcesAsset.redColor)
             }
 
             Spacer()
