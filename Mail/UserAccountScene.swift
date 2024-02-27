@@ -111,7 +111,7 @@ struct UserAccountScene: Scene {
                 guard CNContactStore.authorizationStatus(for: .contacts) != .notDetermined else {
                     return
                 }
-                try await accountManager.currentContactManager?.refreshContactsAndAddressBooks()
+                try await accountManager.currentContactManager?.refreshContactsAndAddressBooksIfNeeded()
             } catch {
                 DDLogError("Error while updating user account: \(error)")
             }
