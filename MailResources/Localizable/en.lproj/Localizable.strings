@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: en, English
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Wed, 07 Feb 2024 11:39:18 +0100
+ * Exported by: Charlene Hoareau
+ * Exported at: Tue, 27 Feb 2024 11:36:19 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -734,6 +734,9 @@
 /* loco:64a3c705a13a2645f80da972 */
 "errorMailboxPasswordLength" = "The password must be between 6 and 80 characters";
 
+/* loco:65d4ae8ef9b6570a070b3e92 */
+"errorMailboxUnavailable" = "This email address is not available";
+
 /* loco:645c9af969688c1b200ad4a2 */
 "errorMessageNotFound" = "Message not found";
 
@@ -853,12 +856,6 @@
 
 /* loco:64ad0bf21a8c5c3877078262 */
 "lockedMailboxTitle-plural-many" = "";
-
-/* loco:65c253eca5ff12654a065ce2 */
-"mailToDescription" = "Email addresses linked to this account";
-
-/* loco:65c25397da1981a2280677ce */
-"mailToTitle" = "Which email address would you like to send a message to %s?";
 
 /* loco:62567b1163b65257647cd9a2 */
 "menuDrawerAdvancedActions" = "Advanced actions";
@@ -1035,7 +1032,7 @@
 "recentSearchesTitle" = "Recent searches";
 
 /* loco:62baabfc07e6a001ca19e535 */
-"refreshTokenError" = "You’ve been disconnected due to a problem. Please log in again";
+"refreshTokenError" = "You have been disconnected";
 
 /* loco:62cd640724b16d271d296bc2 */
 "reportDisplayProblemDescription" = "Do you agree to share your data with our developers so that they can help you with your problem?";
@@ -1087,6 +1084,12 @@
 
 /* loco:6537b4ae2236eeafef03c882 */
 "searchFolderName" = "Search";
+
+/* loco:65c253eca5ff12654a065ce2 */
+"selectComposeMailboxDescription" = "Email addresses linked to this account";
+
+/* loco:65c25397da1981a2280677ce */
+"selectComposeMailboxTitle" = "Which email address would you like to send a message to?";
 
 /* loco:62ac871d2502053d7b0cbb32 */
 "send" = "Send";
