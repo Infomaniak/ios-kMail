@@ -38,6 +38,6 @@ public extension MailApiFetcher {
             .applicationPassword,
             method: .post,
             parameters: ["name": "CalDAV/CardDAV - \(Constants.appVersion()) - \(Date().ISO8601Format())"]
-        )).data
+        ))
     }
 }

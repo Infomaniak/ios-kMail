@@ -24,32 +24,30 @@ import InfomaniakLogin
 /// implementing `MailApiExtendedFetchable`
 public extension MailApiFetcher {
     func permissions(mailbox: Mailbox) async throws -> MailboxPermissions {
-        try await perform(request: authenticatedRequest(.permissions(mailbox: mailbox))).data
+        try await perform(request: authenticatedRequest(.permissions(mailbox: mailbox)))
     }
 
     func featureFlag(_ mailboxUUID: String) async throws -> [FeatureFlag] {
         try await perform(request: authenticatedRequest(.featureFlag(mailboxUUID)))
-            .data
     }
 
     func contacts() async throws -> [InfomaniakContact] {
-        try await perform(request: authenticatedRequest(.contacts)).data
+        try await perform(request: authenticatedRequest(.contacts))
     }
 
     func addressBooks() async throws -> AddressBookResult {
-        try await perform(request: authenticatedRequest(.addressBooks)).data
+        try await perform(request: authenticatedRequest(.addressBooks))
     }
 
     func addContact(_ recipient: Recipient, to addressBook: AddressBook) async throws -> Int {
         try await perform(request: authenticatedSession.request(Endpoint.addContact.url,
                                                                 method: .post,
                                                                 parameters: NewContact(from: recipient, addressBook: addressBook),
-                                                                encoder: JSONParameterEncoder.default)).data
+                                                                encoder: JSONParameterEncoder.default))
     }
 
     func signatures(mailbox: Mailbox) async throws -> SignatureResponse {
         try await perform(request: authenticatedRequest(.signatures(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox)))
-            .data
     }
 
     @discardableResult
@@ -63,43 +61,43 @@ public extension MailApiFetcher {
                 ),
                 method: .patch,
                 parameters: signature
-            )).data
+            ))
     }
 
     func folders(mailbox: Mailbox) async throws -> [Folder] {
-        try await perform(request: authenticatedRequest(.folders(uuid: mailbox.uuid))).data
+        try await perform(request: authenticatedRequest(.folders(uuid: mailbox.uuid)))
     }
 
     func flushFolder(mailbox: Mailbox, folderId: String) async throws -> Bool {
         try await perform(request: authenticatedRequest(.flushFolder(mailboxUuid: mailbox.uuid, folderId: folderId),
-                                                        method: .post)).data
+                                                        method: .post))
     }
 
     @discardableResult
     func markAsSeen(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
         try await perform(request: authenticatedRequest(.messageSeen(uuid: mailbox.uuid),
                                                         method: .post,
-                                                        parameters: ["uids": messages.map(\.uid)])).data
+                                                        parameters: ["uids": messages.map(\.uid)]))
     }
 
     @discardableResult
     func markAsUnseen(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
         try await perform(request: authenticatedRequest(.messageUnseen(uuid: mailbox.uuid),
                                                         method: .post,
-                                                        parameters: ["uids": messages.map(\.uid)])).data
+                                                        parameters: ["uids": messages.map(\.uid)]))
     }
 
     func move(mailbox: Mailbox, messages: [Message], destinationId: String) async throws -> UndoResponse {
         try await perform(request: authenticatedRequest(.moveMessages(uuid: mailbox.uuid),
                                                         method: .post,
-                                                        parameters: ["uids": messages.map(\.uid), "to": destinationId])).data
+                                                        parameters: ["uids": messages.map(\.uid), "to": destinationId]))
     }
 
     @discardableResult
     func delete(mailbox: Mailbox, messages: [Message]) async throws -> Empty {
         try await perform(request: authenticatedRequest(.deleteMessages(uuid: mailbox.uuid),
                                                         method: .post,
-                                                        parameters: ["uids": messages.map(\.uid)])).data
+                                                        parameters: ["uids": messages.map(\.uid)]))
     }
 
     func attachment(attachment: Attachment) async throws -> Data {
@@ -119,7 +117,7 @@ public extension MailApiFetcher {
             mailboxUuid: mailboxUuid,
             folderId: folderId,
             paginationInfo: paginationInfo
-        ))).data
+        )))
     }
 
     func messagesByUids(mailboxUuid: String, folderId: String, messageUids: [String]) async throws -> MessageByUidsResult {
@@ -127,7 +125,7 @@ public extension MailApiFetcher {
             mailboxUuid: mailboxUuid,
             folderId: folderId,
             messagesUids: messageUids
-        ))).data
+        )))
     }
 
     func messagesDelta(mailboxUUid: String, folderId: String, signature: String) async throws -> MessageDeltaResult {
@@ -135,7 +133,7 @@ public extension MailApiFetcher {
             mailboxUuid: mailboxUUid,
             folderId: folderId,
             signature: signature
-        ))).data
+        )))
     }
 
     func message(message: Message) async throws -> Message {
@@ -144,18 +142,18 @@ public extension MailApiFetcher {
             queryItems: [
                 URLQueryItem(name: "prefered_format", value: "html")
             ]
-        ))).data
+        )))
     }
 
     func draft(mailbox: Mailbox, draftUuid: String) async throws -> Draft {
-        try await perform(request: authenticatedRequest(.draft(uuid: mailbox.uuid, draftUuid: draftUuid))).data
+        try await perform(request: authenticatedRequest(.draft(uuid: mailbox.uuid, draftUuid: draftUuid)))
     }
 
     func draft(from message: Message) async throws -> Draft {
         guard let resource = message.draftResource else {
             throw MailError.resourceError
         }
-        return try await perform(request: authenticatedRequest(.resource(resource))).data
+        return try await perform(request: authenticatedRequest(.resource(resource)))
     }
 
     func send(mailbox: Mailbox, draft: Draft) async throws -> SendResponse {
@@ -163,7 +161,7 @@ public extension MailApiFetcher {
             draft.remoteUUID.isEmpty ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.remoteUUID),
             method: draft.remoteUUID.isEmpty ? .post : .put,
             parameters: draft
-        )).data
+        ))
     }
 
     func save(mailbox: Mailbox, draft: Draft) async throws -> DraftResponse {
@@ -171,19 +169,18 @@ public extension MailApiFetcher {
             draft.remoteUUID.isEmpty ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.remoteUUID),
             method: draft.remoteUUID.isEmpty ? .post : .put,
             parameters: draft
-        )).data
+        ))
     }
 
     @discardableResult
     func deleteDraft(mailbox: Mailbox, draftId: String) async throws -> Empty? {
         // TODO: Remove try? when bug will be fixed from API
         return try? await perform(request: authenticatedRequest(.draft(uuid: mailbox.uuid, draftUuid: draftId), method: .delete))
-            .data
     }
 
     @discardableResult
     func deleteDraft(draftResource: String) async throws -> Empty? {
         // TODO: Remove try? when bug will be fixed from API
-        return try? await perform(request: authenticatedRequest(.resource(draftResource), method: .delete)).data
+        return try? await perform(request: authenticatedRequest(.resource(draftResource), method: .delete))
     }
 }

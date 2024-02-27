@@ -26,7 +26,7 @@ public extension MailApiFetcher {
         return try await perform(request: authenticatedRequest(.resource(
             resource,
             queryItems: [URLQueryItem(name: "format", value: "render")]
-        ))).data
+        )))
     }
 
     @discardableResult
@@ -40,7 +40,7 @@ public extension MailApiFetcher {
             .replyToCalendarEvent(resource: resource),
             method: .post,
             parameters: replyRequest
-        )).data
+        ))
     }
 
     @discardableResult
@@ -50,7 +50,7 @@ public extension MailApiFetcher {
             .replyToCalendarEventAndUpdateCalendar(id: event.id),
             method: .post,
             parameters: replyRequest
-        )).data
+        ))
     }
 
     @discardableResult
@@ -59,6 +59,6 @@ public extension MailApiFetcher {
             throw MailError.resourceError
         }
 
-        return try await perform(request: authenticatedRequest(.importICSEventToCalendar(resource: resource), method: .post)).data
+        return try await perform(request: authenticatedRequest(.importICSEventToCalendar(resource: resource), method: .post))
     }
 }
