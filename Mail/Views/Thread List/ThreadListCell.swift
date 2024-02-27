@@ -115,7 +115,7 @@ struct ThreadListCell: View {
             } else {
                 splitViewManager.adaptToProminentThreadView()
 
-                // Update both viewModel and navigationState on the truth.
+                viewModel.detectDirection(from: thread)
                 mainViewState.selectedThread = thread
             }
         }

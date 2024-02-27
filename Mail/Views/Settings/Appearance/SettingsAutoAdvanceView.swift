@@ -29,9 +29,9 @@ enum AutoAdvanceSection: CaseIterable {
     var options: [AutoAdvance] {
         switch self {
         case .compact:
-            return [.previousThread, .followingThread, .listOfThread]
+            return [.previousThread, .followingThread, .listOfThread, .naturalThread]
         case .regular:
-            return [.previousThread, .followingThread]
+            return [.previousThread, .followingThread, .naturalThread]
         }
     }
 }

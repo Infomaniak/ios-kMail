@@ -5,7 +5,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Tue, 27 Feb 2024 11:36:19 +0100
+ * Exported at: Wed, 28 Feb 2024 10:59:43 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1129,6 +1129,12 @@
 
 /* loco:65b2780c2b7256da8b038512 */
 "settingsAutoAdvanceListOfThreadsTitle" = "Liste der Themen";
+
+/* loco:65df003b996ecfc40c0d9962 */
+"settingsAutoAdvanceNaturalThreadDescription" = "Anzeige von Threads basierend auf natürlicher Navigation beim Archivieren oder Löschen";
+
+/* loco:65defeba6cb9206d3f0d4392 */
+"settingsAutoAdvanceNaturalThreadTitle" = "Natürliche Navigation";
 
 /* loco:65b27d1e0565d99b930ae142 */
 "settingsAutoAdvancePreviousThreadDescription" = "Vorheriges Thema beim Archivieren oder Löschen anzeigen";

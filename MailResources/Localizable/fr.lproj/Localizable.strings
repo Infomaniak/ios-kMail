@@ -5,7 +5,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Tue, 27 Feb 2024 11:36:19 +0100
+ * Exported at: Wed, 28 Feb 2024 10:59:43 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1130,6 +1130,12 @@
 /* loco:65b2780c2b7256da8b038512 */
 "settingsAutoAdvanceListOfThreadsTitle" = "Liste des conversations";
 
+/* loco:65df003b996ecfc40c0d9962 */
+"settingsAutoAdvanceNaturalThreadDescription" = "Afficher la conversation selon le sens naturel de navigation après archivage ou suppression";
+
+/* loco:65defeba6cb9206d3f0d4392 */
+"settingsAutoAdvanceNaturalThreadTitle" = "Sens naturel de navigation";
+
 /* loco:65b27d1e0565d99b930ae142 */
 "settingsAutoAdvancePreviousThreadDescription" = "Afficher la conversation précédente après archivage ou suppression";
 
@@ -1137,7 +1143,7 @@
 "settingsAutoAdvancePreviousThreadTitle" = "Conversation précédente";
 
 /* loco:65b274f8719e4e08b103c7f4 */
-"settingsAutoAdvanceTitle" = "Avance Automatique";
+"settingsAutoAdvanceTitle" = "Avance automatique";
 
 /* loco:62c693f572adfe66fd2a82b7 */
 "settingsCancellationPeriodDescription" = "Vous avez la possibilité d’annuler l’envoi de votre e-mail jusqu’à 30 secondes";

@@ -24,6 +24,7 @@ public enum AutoAdvance: String, CaseIterable, SettingsOptionEnum {
     case previousThread
     case followingThread
     case listOfThread
+    case naturalThread
 
     public var title: String {
         switch self {
@@ -33,6 +34,8 @@ public enum AutoAdvance: String, CaseIterable, SettingsOptionEnum {
             return MailResourcesStrings.Localizable.settingsAutoAdvanceFollowingThreadTitle
         case .listOfThread:
             return MailResourcesStrings.Localizable.settingsAutoAdvanceListOfThreadsTitle
+        case .naturalThread:
+            return MailResourcesStrings.Localizable.settingsAutoAdvanceNaturalThreadTitle
         }
     }
 
@@ -44,6 +47,8 @@ public enum AutoAdvance: String, CaseIterable, SettingsOptionEnum {
             return MailResourcesStrings.Localizable.settingsAutoAdvanceFollowingThreadDescription
         case .listOfThread:
             return MailResourcesStrings.Localizable.settingsAutoAdvanceListOfThreadsDescription
+        case .naturalThread:
+            return MailResourcesStrings.Localizable.settingsAutoAdvanceNaturalThreadDescription
         }
     }
 
