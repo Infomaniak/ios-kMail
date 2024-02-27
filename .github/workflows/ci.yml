@@ -16,6 +16,11 @@ jobs:
           access_token: ${{ github.token }}
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Install mise
+        uses: jdx/mise-action@v2
+        with:
+          install: true
+          cache: true
       - name: Create test env
         env:
           ENV_PATH: "MailTests/Env.swift"
@@ -26,6 +31,6 @@ jobs:
           touch $ENV_PATH
           echo -e "enum Env {\n static let token = \"$ACCESS_TOKEN\"\n static let userId = $USER_ID\n static let mailboxId = $MAILBOX_ID\n}" > $ENV_PATH
       - name: Build
-        run: .tuist-bin/tuist build --generate "Infomaniak Mail"
+        run: tuist build --generate "Infomaniak Mail"
       - name: Test
         run: xcodebuild test -workspace Mail.xcworkspace -scheme Mail -destination "platform=iOS Simulator,name=iPhone 13" -only-testing:MailTests/MailApiTests
