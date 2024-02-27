@@ -60,7 +60,7 @@ public extension MailApiFetcher {
             .ai(mailbox: mailbox),
             method: .post,
             parameters: AIConversationRequest(messages: messages, output: output, engine: engine)
-        )).data
+        ))
     }
 
     func aiShortcut(contextId: String, shortcut: AIShortcutAction, engine: AIEngine,
@@ -69,7 +69,7 @@ public extension MailApiFetcher {
             .aiShortcut(contextId: contextId, shortcut: shortcut.apiName, mailbox: mailbox),
             method: .patch,
             parameters: AIShortcutRequest(engine: engine)
-        )).data
+        ))
     }
 
     func aiShortcutAndRecreateConversation(
@@ -83,6 +83,6 @@ public extension MailApiFetcher {
             .aiShortcut(shortcut: shortcut.apiName, mailbox: mailbox),
             method: .post,
             parameters: AIConversationRequest(messages: messages, output: output, engine: engine)
-        )).data
+        ))
     }
 }

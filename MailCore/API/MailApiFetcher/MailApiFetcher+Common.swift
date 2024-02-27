@@ -26,7 +26,7 @@ public extension MailApiFetcher {
     // MARK: - API methods
 
     func mailboxes() async throws -> [Mailbox] {
-        try await perform(request: authenticatedRequest(.mailboxes)).data
+        try await perform(request: authenticatedRequest(.mailboxes))
     }
 
     @discardableResult
@@ -35,7 +35,7 @@ public extension MailApiFetcher {
             .addMailbox,
             method: .post,
             parameters: ["mail": mail, "password": password, "is_primary": false]
-        )).data
+        ))
     }
 
     @discardableResult
@@ -44,7 +44,7 @@ public extension MailApiFetcher {
             .updateMailboxPassword(mailboxId: mailbox.mailboxId),
             method: .put,
             parameters: ["password": password]
-        )).data
+        ))
     }
 
     @discardableResult
@@ -52,23 +52,22 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(
             .askMailboxPassword(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox),
             method: .post
-        )).data
+        ))
     }
 
     func detachMailbox(mailbox: Mailbox) async throws -> Bool {
-        try await perform(request: authenticatedRequest(.detachMailbox(mailboxId: mailbox.mailboxId), method: .delete)).data
+        try await perform(request: authenticatedRequest(.detachMailbox(mailboxId: mailbox.mailboxId), method: .delete))
     }
 
     func listBackups(mailbox: Mailbox) async throws -> BackupsList {
         try await perform(request: authenticatedRequest(.backups(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox)))
-            .data
     }
 
     @discardableResult
     func restoreBackup(mailbox: Mailbox, date: String) async throws -> Bool {
         try await perform(request: authenticatedRequest(.backups(hostingId: mailbox.hostingId, mailboxName: mailbox.mailbox),
                                                         method: .put,
-                                                        parameters: ["date": date])).data
+                                                        parameters: ["date": date]))
     }
 
     func threads(mailbox: Mailbox, folderId: String, filter: Filter = .all,
@@ -79,11 +78,11 @@ public extension MailApiFetcher {
             filter: filter == .all ? nil : filter.rawValue,
             searchFilters: searchFilter,
             isDraftFolder: isDraftFolder
-        ))).data
+        )))
     }
 
     func threads(from resource: String, searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
-        try await perform(request: authenticatedRequest(.resource(resource, queryItems: searchFilter))).data
+        try await perform(request: authenticatedRequest(.resource(resource, queryItems: searchFilter)))
     }
 
     func download(message: Message) async throws -> URL {
@@ -96,24 +95,24 @@ public extension MailApiFetcher {
     }
 
     func quotas(mailbox: Mailbox) async throws -> Quotas {
-        try await perform(request: authenticatedRequest(.quotas(mailbox: mailbox.mailbox, productId: mailbox.hostingId))).data
+        try await perform(request: authenticatedRequest(.quotas(mailbox: mailbox.mailbox, productId: mailbox.hostingId)))
     }
 
     @discardableResult
     func undoAction(resource: String) async throws -> Bool {
-        try await perform(request: authenticatedRequest(.resource(resource), method: .post)).data
+        try await perform(request: authenticatedRequest(.resource(resource), method: .post))
     }
 
     func star(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
         try await perform(request: authenticatedRequest(.star(uuid: mailbox.uuid),
                                                         method: .post,
-                                                        parameters: ["uids": messages.map(\.uid)])).data
+                                                        parameters: ["uids": messages.map(\.uid)]))
     }
 
     func unstar(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
         try await perform(request: authenticatedRequest(.unstar(uuid: mailbox.uuid),
                                                         method: .post,
-                                                        parameters: ["uids": messages.map(\.uid)])).data
+                                                        parameters: ["uids": messages.map(\.uid)]))
     }
 
     func downloadAttachments(message: Message) async throws -> URL {
@@ -130,17 +129,17 @@ public extension MailApiFetcher {
 
     @discardableResult
     func blockSender(message: Message) async throws -> NullableResponse {
-        try await perform(request: authenticatedRequest(.blockSender(messageResource: message.resource), method: .post)).data
+        try await perform(request: authenticatedRequest(.blockSender(messageResource: message.resource), method: .post))
     }
 
     func reportPhishing(message: Message) async throws -> Bool {
         try await perform(request: authenticatedRequest(.report(messageResource: message.resource),
                                                         method: .post,
-                                                        parameters: ["type": "phishing"])).data
+                                                        parameters: ["type": "phishing"]))
     }
 
     func create(mailbox: Mailbox, folder: NewFolder) async throws -> Folder {
-        try await perform(request: authenticatedRequest(.folders(uuid: mailbox.uuid), method: .post, parameters: folder)).data
+        try await perform(request: authenticatedRequest(.folders(uuid: mailbox.uuid), method: .post, parameters: folder))
     }
 
     func createAttachment(
@@ -164,12 +163,13 @@ public extension MailApiFetcher {
             }
         }
 
-        return try await perform(request: uploadRequest).data
+        return try await perform(request: uploadRequest)
     }
 
     func attachmentsToForward(mailbox: Mailbox, message: Message) async throws -> AttachmentsToForwardResult {
         let attachmentsToForward = AttachmentsToForward(toForwardUids: [message.uid], mode: AttachmentDisposition.inline.rawValue)
-        return try await perform(request: authenticatedRequest(.attachmentToForward(uuid: mailbox.uuid), method: .post,
-                                                               parameters: attachmentsToForward)).data
+        return try await perform(request: authenticatedRequest(.attachmentToForward(uuid: mailbox.uuid),
+                                                               method: .post,
+                                                               parameters: attachmentsToForward))
     }
 }
