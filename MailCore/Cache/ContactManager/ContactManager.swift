@@ -28,6 +28,7 @@ import SwiftRegex
 public typealias ContactManageable = ContactFetchable & ContactManagerCoreable & RealmAccessible
 
 public protocol ContactManagerCoreable {
+    func refreshContactsAndAddressBooksIfNeeded() async throws
     /// Entry point to refresh all contacts in base
     func refreshContactsAndAddressBooks() async throws
 
@@ -90,6 +91,19 @@ public final class ContactManager: ObservableObject, ContactManageable {
 
     let localContactsHelper = LocalContactsHelper()
     var currentMergeRequest: Task<Void, Never>?
+    var lastRefreshDate: Date?
+
+    public func refreshContactsAndAddressBooksIfNeeded() async throws {
+        let refreshIntervalSeconds = 60.0
+        if let lastRefreshDate,
+           lastRefreshDate.addingTimeInterval(refreshIntervalSeconds) > Date() {
+            DDLogInfo("Skip updating contacts, we updated less than \(Int(refreshIntervalSeconds)) seconds ago")
+            return
+        }
+
+        try await refreshContactsAndAddressBooks()
+        lastRefreshDate = Date()
+    }
 
     public func refreshContactsAndAddressBooks() async throws {
         // We do not run an update of contacts in extension mode as we are too resource constrained

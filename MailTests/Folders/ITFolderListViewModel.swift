@@ -34,6 +34,8 @@ struct MCKContactManageable_FolderListViewModel: ContactManageable {
 
     func addContact(recipient: MailCore.Recipient) async throws {}
 
+    func refreshContactsAndAddressBooksIfNeeded() async throws {}
+
     func refreshContactsAndAddressBooks() async throws {}
 
     static func deleteUserContacts(userId: Int) {}
