@@ -5,7 +5,7 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Mon, 26 Feb 2024 09:29:48 +0100
+ * Exported at: Tue, 27 Feb 2024 11:36:19 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1032,7 +1032,7 @@
 "recentSearchesTitle" = "Ricerche recenti";
 
 /* loco:62baabfc07e6a001ca19e535 */
-"refreshTokenError" = "Siete stati disconnessi";
+"refreshTokenError" = "Sei stato disconnesso";
 
 /* loco:62cd640724b16d271d296bc2 */
 "reportDisplayProblemDescription" = "Accettate di condividere i vostri dati con i nostri sviluppatori in modo che possano aiutarvi a risolvere il vostro problema?";
