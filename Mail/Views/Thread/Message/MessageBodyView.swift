@@ -60,7 +60,7 @@ struct MessageBodyView: View {
                             loadBody(blockRemoteContent: newValue)
                         }
 
-                    if presentableBody.quote != nil {
+                    if !presentableBody.quotes.isEmpty {
                         Button(model.showBlockQuote
                             ? MailResourcesStrings.Localizable.messageHideQuotedText
                             : MailResourcesStrings.Localizable.messageShowQuotedText) {
