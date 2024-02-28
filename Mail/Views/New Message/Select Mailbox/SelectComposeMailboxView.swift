@@ -61,6 +61,7 @@ struct SelectComposeMailboxView: View {
                         mailboxManager: nil,
                         selectMailbox: viewModel.selectMailbox
                     )
+                    .padding(.bottom, value: .regular)
                 }
             }
 
