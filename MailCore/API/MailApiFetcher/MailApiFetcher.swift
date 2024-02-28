@@ -41,10 +41,8 @@ public final class MailApiFetcher: ApiFetcher, MailApiFetchable {
         return allStatus
     }()
 
-    override public func perform<T: Decodable>(
-        request: DataRequest,
-        decoder: JSONDecoder = ApiFetcher.decoder
-    ) async throws -> (data: T, responseAt: Int?) {
+    override public func perform<T: Decodable>(request: DataRequest,
+                                               decoder: JSONDecoder = ApiFetcher.decoder) async throws -> T {
         do {
             return try await super.perform(request: request.validate(statusCode: handledHttpStatus))
         } catch InfomaniakError.apiError(let apiError) {
