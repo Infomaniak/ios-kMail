@@ -38,8 +38,13 @@ public class BodyContent: EmbeddedObject {
         }
     }
 
-    @Persisted public var type: String?
+    @Persisted public var type: BodyType?
     @Persisted var valueData: Data?
+}
+
+public enum BodyType: String, Codable, PersistableEnum {
+    case textPlain = "text/plain"
+    case textHtml = "text/html"
 }
 
 // MARK: - Body
@@ -52,7 +57,7 @@ public final class Body: BodyContent {
 /// Preprocessing body to remain within Realm limitations
 final class ProxyBody: Codable {
     public var value: String?
-    public var type: String?
+    public var type: BodyType?
     public var subBody: [ProxySubBody]?
 
     var allSubBodies: [SubBody] {
