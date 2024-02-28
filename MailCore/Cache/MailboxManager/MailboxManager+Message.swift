@@ -344,13 +344,17 @@ public extension MailboxManager {
 
     func move(messages: [Message], to folder: Folder) async throws -> UndoAction {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder.remoteId)
-        try await refreshFolder(from: messages, additionalFolder: folder)
+        Task {
+            try await refreshFolder(from: messages, additionalFolder: folder)
+        }
         return undoAction(for: response, and: messages)
     }
 
     func delete(messages: [Message]) async throws {
         try await apiFetcher.delete(mailbox: mailbox, messages: messages)
-        try await refreshFolder(from: messages, additionalFolder: nil)
+        Task {
+            try await refreshFolder(from: messages, additionalFolder: nil)
+        }
     }
 
     // MARK: Private
