@@ -59,6 +59,7 @@ public struct PaginationInfo {
     let direction: NewMessagesDirection
 }
 
+/// Class used to get a page of shortUids
 public final class MessageUidsResult: Decodable {
     public let messageShortUids: [String]
     public let cursor: String
@@ -73,6 +74,7 @@ public final class MessageByUidsResult: Decodable {
     public let messages: [Message]
 }
 
+/// Class used to get difference between a given cursor and the last cursor
 public final class MessageDeltaResult: Decodable {
     public let deletedShortUids: [String]
     public let addedShortUids: [String]
