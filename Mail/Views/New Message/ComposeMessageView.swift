@@ -243,6 +243,7 @@ struct ComposeMessageView: View {
             var shouldShowSnackbar = false
             let shouldDisplayAdditionalAlerts = !platformDetector.isMac &&
                 !Bundle.main.isExtension &&
+                !Bundle.main.isRunningInTestFlight &&
                 !mainViewState.isShowingSetAppAsDefaultDiscovery
             if shouldDisplayAdditionalAlerts {
                 shouldShowSnackbar = !mainViewState.isShowingSetAppAsDefaultDiscovery
