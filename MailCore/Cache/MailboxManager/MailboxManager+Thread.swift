@@ -329,7 +329,7 @@ public extension MailboxManager {
         }
     }
 
-    internal func deleteMessages(uids: [String]) async {
+    private func deleteMessages(uids: [String]) async {
         guard !uids.isEmpty && !Task.isCancelled else { return }
 
         let backgroundTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
