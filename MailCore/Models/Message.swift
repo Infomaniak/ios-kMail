@@ -146,6 +146,10 @@ public enum MessageDKIM: String, Codable, PersistableEnum {
     case notSigned = "not_signed"
 }
 
+public struct MessageActionResult: Codable {
+    public var flagged: Int
+}
+
 /// A Message has :
 /// - Many threads
 /// - One originalThread: parent thread
@@ -459,55 +463,5 @@ public final class Message: Object, Decodable, Identifiable {
         thread.messageIds = linkedUids
         thread.folderId = folderId
         return thread
-    }
-}
-
-// MARK: - Body
-
-/// Proxy class to preprocess JSON of a Body object
-/// Preprocessing body to remain within Realm limitations
-final class ProxyBody: Codable {
-    public var value: String?
-    public var type: String?
-    public var subBody: [ProxySubBody]?
-
-    /// Generate a new persisted realm object on the fly
-    public func realmObject() -> Body {
-        // truncate message if needed
-        let truncatedValue = value?.truncatedForRealmIfNeeded
-
-        let body = Body()
-        body.value = truncatedValue
-        body.type = type
-        body.subBody = allSubBodies.toRealmList()
-        return body
-    }
-}
-
-public final class Body: BodyContent {
-    @Persisted public var subBody: List<SubBody>
-}
-
-public struct MessageActionResult: Codable {
-    public var flagged: Int
-}
-
-public struct PresentableBody: Equatable {
-    public var body: Body?
-    public var compactBody: String?
-    public var quotes = [String]()
-
-    public init(message: Message) {
-        body = message.body
-    }
-
-    public init(body: Body?, compactBody: String?, quotes: [String]) {
-        self.body = body
-        self.compactBody = compactBody
-        self.quotes = quotes
-    }
-
-    public init(presentableBody: PresentableBody) {
-        self.init(body: presentableBody.body, compactBody: presentableBody.compactBody, quotes: presentableBody.quotes)
     }
 }

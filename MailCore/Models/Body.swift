@@ -19,6 +19,98 @@
 import Foundation
 import RealmSwift
 
+public class BodyContent: EmbeddedObject {
+    /// Public facing "value", wrapping `valueData`
+    public var value: String? {
+        get {
+            guard let decompressedString = valueData?.decompressedString() else {
+                return nil
+            }
+
+            return decompressedString
+        } set {
+            guard let data = newValue?.compressed() else {
+                valueData = nil
+                return
+            }
+
+            valueData = data
+        }
+    }
+
+    @Persisted public var type: String?
+    @Persisted var valueData: Data?
+}
+
+// MARK: - Body
+
+public final class Body: BodyContent {
+    @Persisted public var subBody: List<SubBody>
+}
+
+/// Proxy class to preprocess JSON of a Body object
+/// Preprocessing body to remain within Realm limitations
+final class ProxyBody: Codable {
+    public var value: String?
+    public var type: String?
+    public var subBody: [ProxySubBody]?
+
+    var allSubBodies: [SubBody] {
+        guard let subBody else {
+            return []
+        }
+
+        let items = subBody.flatMap { item in
+            [item.realmObject()] + item.body.allSubBodies
+        }
+        return items
+    }
+
+    /// Generate a new persisted realm object on the fly
+    public func realmObject() -> Body {
+        // truncate message if needed
+        let truncatedValue = value?.truncatedForRealmIfNeeded
+
+        let body = Body()
+        body.value = truncatedValue
+        body.type = type
+        body.subBody = allSubBodies.toRealmList()
+        return body
+    }
+}
+
+public struct PresentableBody: Equatable {
+    public var body: Body?
+    public var compactBody: String?
+    public var quotes = [String]()
+
+    public init(message: Message) {
+        body = message.body
+    }
+
+    public init(body: Body?, compactBody: String?, quotes: [String]) {
+        self.body = body
+        self.compactBody = compactBody
+        self.quotes = quotes
+    }
+
+    public init(presentableBody: PresentableBody) {
+        self.init(body: presentableBody.body, compactBody: presentableBody.compactBody, quotes: presentableBody.quotes)
+    }
+}
+
+// MARK: - SubBody
+
+public final class SubBody: BodyContent {
+    @Persisted public var name: String?
+    @Persisted public var subBodyType: String?
+    @Persisted public var date: Date?
+    @Persisted public var subject: String?
+    @Persisted public var from = List<Recipient>()
+    @Persisted public var to = List<Recipient>()
+    @Persisted public var partId: String?
+}
+
 final class ProxySubBody: Codable {
     public var body: ProxyBody
 
@@ -75,50 +167,4 @@ final class ProxySubBody: Codable {
             partId = try values.decodeIfPresent(String.self, forKey: .partId) ?? ""
         }
     }
-}
-
-public final class SubBody: BodyContent {
-    @Persisted public var name: String?
-    @Persisted public var subBodyType: String?
-    @Persisted public var date: Date?
-    @Persisted public var subject: String?
-    @Persisted public var from = List<Recipient>()
-    @Persisted public var to = List<Recipient>()
-    @Persisted public var partId: String?
-}
-
-extension ProxyBody {
-    var allSubBodies: [SubBody] {
-        guard let subBody else {
-            return []
-        }
-
-        let items = subBody.flatMap { item in
-            [item.realmObject()] + item.body.allSubBodies
-        }
-        return items
-    }
-}
-
-public class BodyContent: EmbeddedObject {
-    /// Public facing "value", wrapping `valueData`
-    public var value: String? {
-        get {
-            guard let decompressedString = valueData?.decompressedString() else {
-                return nil
-            }
-
-            return decompressedString
-        } set {
-            guard let data = newValue?.compressed() else {
-                valueData = nil
-                return
-            }
-
-            valueData = data
-        }
-    }
-
-    @Persisted public var type: String?
-    @Persisted var valueData: Data?
 }
