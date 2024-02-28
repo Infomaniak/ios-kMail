@@ -442,6 +442,11 @@ public extension MailboxManager {
 
     // MARK: - Thread creation
 
+    /// Main function to create threads from a list of message
+    /// - Parameters:
+    ///   - messageByUids: MessageByUidsResult (list of message)
+    ///   - folder: Given folder
+    ///   - realm: Given realm
     private func createThreads(messageByUids: MessageByUidsResult, folder: Folder, using realm: Realm) {
         var threadsToUpdate = Set<Thread>()
         try? realm.safeWrite {
@@ -480,6 +485,12 @@ public extension MailboxManager {
         }
     }
 
+    /// Add the given message to existing compatible threads + Create a new thread if needed
+    /// - Parameters:
+    ///   - message: Given message
+    ///   - folder: Given folder
+    ///   - threadsToUpdate: List of thread to update after thread's creation
+    ///   - realm: Given realm
     private func createConversationThread(
         message: Message,
         folder: Folder,
@@ -525,6 +536,11 @@ public extension MailboxManager {
         }
     }
 
+    /// Create a thread which can contain only 1 message
+    /// - Parameters:
+    ///   - message: Given message
+    ///   - folder: Given folder
+    ///   - threadsToUpdate: List of thread to update after thread's creation
     private func createSingleMessageThread(message: Message, folder: Folder, threadsToUpdate: inout Set<Thread>) {
         let thread = message.toThread().detached()
         folder.threads.insert(thread)
