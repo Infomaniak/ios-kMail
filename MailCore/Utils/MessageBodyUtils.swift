@@ -52,7 +52,7 @@ public enum MessageBodyUtils {
         var bodyValue = messageBody.value ?? ""
 
         do {
-            if messageBody.type == "text/plain" {
+            if messageBody.type == .textPlain {
                 bodyValue = try await MessageWebViewUtils.createHTMLForPlainText(text: bodyValue)
             }
             bodyValue = try await prependPrintHeader(to: bodyValue, with: message)

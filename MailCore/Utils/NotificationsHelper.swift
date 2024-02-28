@@ -257,7 +257,7 @@ public enum NotificationsHelper {
 
         let body = await MessageBodyUtils.splitBodyAndQuote(messageBody: fullBody).messageBody
 
-        guard bodyType != "text/plain" else {
+        guard bodyType != .textPlain else {
             return body.trimmingCharacters(in: .whitespacesAndNewlines)
         }
 

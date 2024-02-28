@@ -144,7 +144,7 @@ extension AIModel {
         guard let replyingBody = try await draftContentManager.getReplyingBody() else { return }
 
         var replyingString: String?
-        if replyingBody.type == "plain/text" {
+        if replyingBody.type == .textPlain {
             replyingString = replyingBody.value
         } else if let value = replyingBody.value {
             let splitReply = await MessageBodyUtils.splitBodyAndQuote(messageBody: value)

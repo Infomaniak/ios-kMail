@@ -284,7 +284,7 @@ extension DraftContentManager {
     private func extractHTMLFromReplyingBody(of message: Message) async throws -> String? {
         guard let value = message.body?.value else { return nil }
 
-        guard message.body?.type != "text/plain" else {
+        guard message.body?.type != .textPlain else {
             return try await MessageWebViewUtils.createHTMLForPlainText(text: value)
         }
 
