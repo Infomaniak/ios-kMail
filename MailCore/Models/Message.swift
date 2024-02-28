@@ -485,19 +485,19 @@ public struct MessageActionResult: Codable {
 public struct PresentableBody: Equatable {
     public var body: Body?
     public var compactBody: String?
-    public var quote: String?
+    public var quotes = [String]()
 
     public init(message: Message) {
         body = message.body
     }
 
-    public init(body: Body?, compactBody: String?, quote: String?) {
+    public init(body: Body?, compactBody: String?, quotes: [String]) {
         self.body = body
         self.compactBody = compactBody
-        self.quote = quote
+        self.quotes = quotes
     }
 
     public init(presentableBody: PresentableBody) {
-        self.init(body: presentableBody.body, compactBody: presentableBody.compactBody, quote: presentableBody.quote)
+        self.init(body: presentableBody.body, compactBody: presentableBody.compactBody, quotes: presentableBody.quotes)
     }
 }

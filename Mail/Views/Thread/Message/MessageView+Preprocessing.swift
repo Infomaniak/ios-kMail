@@ -227,7 +227,7 @@ final class InlineAttachmentWorker {
         let updatedPresentableBody = PresentableBody(
             body: detachedBody,
             compactBody: compactBodyCopy,
-            quote: presentableBody.quote
+            quotes: presentableBody.quotes
         )
 
         // Mutate DOM if task is active

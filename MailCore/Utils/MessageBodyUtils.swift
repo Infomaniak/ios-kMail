@@ -25,9 +25,9 @@ public enum MessageBodyUtils {
     private static let blockquote = "blockquote"
 
     private static var quoteDescriptors = [
-        // Do not detect this quote as long as we can't detect siblings quotes or else a single reply will be missing among the
-        // many replies of an Outlook reply "chain", which is worst than simply ignoring it
-//        "#divRplyFwdMsg", // Outlook
+        // The reply and forward #divRplyFwdMsg div only contains the header.
+        // The previous message body is written right next to this div and can't be detected
+        // "#divRplyFwdMsg", // Outlook
         "#isForwardContent",
         "#isReplyContent",
         "#mailcontent:not(table)",
@@ -42,7 +42,7 @@ public enum MessageBodyUtils {
         anyCssClassContaining(cssClass: "yahoo_quoted"),
         anyCssClassContaining(cssClass: "zmail_extra"), // Zoho
         "[name=\"quote\"]", // GMX
-        "blockquote[type=\"cite\"]"
+        "blockquote[type=\"cite\"]" // iOS and macOS Mail
     ]
 
     public static func prepareWithPrintOption(message: Message) async -> PresentableBody? {
@@ -62,39 +62,38 @@ public enum MessageBodyUtils {
             return PresentableBody(
                 body: messageBody,
                 compactBody: messageBodyQuote.messageBody,
-                quote: messageBodyQuote.quote
+                quotes: messageBodyQuote.quotes
             )
         } catch {
             print("error: \(error.localizedDescription)")
         }
-        let messageBodyQuote = MessageBodyQuote(messageBody: bodyValue, quote: nil)
-        return PresentableBody(body: messageBody, compactBody: messageBodyQuote.messageBody, quote: messageBodyQuote.quote)
+        let messageBodyQuote = MessageBodyQuote(messageBody: bodyValue)
+        return PresentableBody(body: messageBody, compactBody: messageBodyQuote.messageBody, quotes: messageBodyQuote.quotes)
+    }
+
+    public static func splitContentAndQuote(body: String) async throws -> (String, [String]) {
+        let parsedBody = try await SwiftSoup.parse(body)
+
+        var quotes = [String]()
+        for quoteDescriptor in quoteDescriptors {
+            let foundQuotes = try await parsedBody.select(quoteDescriptor)
+            for foundQuote in foundQuotes {
+                try quotes.append(foundQuote.outerHtml())
+                try foundQuote.remove()
+            }
+        }
+
+        return try (parsedBody.outerHtml(), quotes)
     }
 
     public static func splitBodyAndQuote(messageBody: String) async -> MessageBodyQuote {
         let task = Task {
             do {
-                let htmlDocumentWithQuote = try await SwiftSoup.parse(messageBody)
-                let htmlDocumentWithoutQuote = try await SwiftSoup.parse(messageBody)
-
-                let blockquoteElement = try findAndRemoveLastParentBlockQuote(htmlDocumentWithoutQuote: htmlDocumentWithoutQuote)
-                var currentQuoteDescriptor =
-                    try findFirstKnownParentQuoteDescriptor(htmlDocumentWithoutQuote: htmlDocumentWithoutQuote)
-
-                if currentQuoteDescriptor.isEmpty {
-                    currentQuoteDescriptor = blockquoteElement == nil ? "" : blockquote
-                }
-
-                let (body, quote) = try await splitBodyAndQuote(
-                    blockquoteElement: blockquoteElement,
-                    htmlDocumentWithQuote: htmlDocumentWithQuote,
-                    currentQuoteDescriptor: currentQuoteDescriptor
-                )
-                return MessageBodyQuote(messageBody: quote?.isEmpty ?? true ? messageBody : body, quote: quote)
+                return try await extractQuotesFromBody(messageBody)
             } catch {
                 DDLogError("Error splitting blockquote \(error)")
+                return MessageBodyQuote(messageBody: messageBody)
             }
-            return MessageBodyQuote(messageBody: messageBody, quote: nil)
         }
 
         let timeoutTask = Task {
@@ -108,22 +107,19 @@ public enum MessageBodyUtils {
         return result
     }
 
-    private static func findAndRemoveLastParentBlockQuote(htmlDocumentWithoutQuote: Document) throws -> Element? {
-        let element = try selectLastParentBlockQuote(document: htmlDocumentWithoutQuote)
-        try element?.remove()
-        return element
-    }
+    private static func extractQuotesFromBody(_ body: String) async throws -> MessageBodyQuote {
+        let parsedBody = try await SwiftSoup.parse(body)
 
-    private static func findFirstKnownParentQuoteDescriptor(htmlDocumentWithoutQuote: Document) throws -> String {
-        var currentQuoteDescriptor = ""
+        var quotes = [String]()
         for quoteDescriptor in quoteDescriptors {
-            let quotedContentElement = try htmlDocumentWithoutQuote.select(quoteDescriptor)
-            if !quotedContentElement.isEmpty() {
-                try quotedContentElement.remove()
-                currentQuoteDescriptor = quoteDescriptor
+            let foundQuotes = try await parsedBody.select(quoteDescriptor)
+            for foundQuote in foundQuotes {
+                try quotes.append(foundQuote.outerHtml())
+                try foundQuote.remove()
             }
         }
-        return currentQuoteDescriptor
+
+        return try MessageBodyQuote(messageBody: parsedBody.outerHtml(), quotes: quotes)
     }
 
     private static func splitBodyAndQuote(blockquoteElement: Element?, htmlDocumentWithQuote: Document,
@@ -230,18 +226,14 @@ public enum MessageBodyUtils {
     private static func anyCssClassContaining(cssClass: String) -> String {
         return "[class*=\(cssClass)]"
     }
-
-    private static func selectLastParentBlockQuote(document: Document) throws -> Element? {
-        return try document.select("\(blockquote):not(\(blockquote) \(blockquote)):last-of-type").first()
-    }
 }
 
 public struct MessageBodyQuote {
     public let messageBody: String
-    public let quote: String?
+    public let quotes: [String]
 
-    public init(messageBody: String, quote: String?) {
+    public init(messageBody: String, quotes: [String] = []) {
         self.messageBody = messageBody
-        self.quote = quote
+        self.quotes = quotes
     }
 }
