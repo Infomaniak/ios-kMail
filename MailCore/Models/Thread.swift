@@ -64,6 +64,8 @@ public class Thread: Object, Decodable, Identifiable {
         return uid
     }
 
+    /// Parent folder of the thread.
+    /// (A thread only has one folder)
     public var folder: Folder? {
         return folders.first
     }

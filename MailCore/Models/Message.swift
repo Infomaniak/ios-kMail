@@ -183,6 +183,7 @@ public final class Message: Object, Decodable, Identifiable {
     @Persisted public var forwarded: Bool
     @Persisted public var flagged: Bool
     @Persisted public var hasUnsubscribeLink: Bool?
+    /// Threads where the message can be found
     @Persisted(originProperty: "messages") var threads: LinkingObjects<Thread>
     @Persisted(originProperty: "messages") private var folders: LinkingObjects<Folder>
     @Persisted(originProperty: "duplicates") var threadsDuplicatedIn: LinkingObjects<Thread>
@@ -202,10 +203,13 @@ public final class Message: Object, Decodable, Identifiable {
         return Array(to) + Array(cc)
     }
 
+    /// This is the parent thread situated in the parent folder.
     public var originalThread: Thread? {
         return threads.first { $0.folder?.remoteId == folderId }
     }
 
+    /// Parent folder of the message.
+    /// (A message only has one folder)
     public var folder: Folder? {
         return folders.first
     }
