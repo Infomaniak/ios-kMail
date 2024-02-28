@@ -52,11 +52,11 @@ struct UserAccountScene: Scene {
                      We have to listen to `UIScene.willEnterForegroundNotification` to increase the `appLaunchCounter`
                      only when the app enters foreground. */
                     appLaunchCounter.increase()
+                    refreshCacheData()
                 }
                 .onChange(of: scenePhase) { newScenePhase in
                     switch newScenePhase {
                     case .active:
-                        refreshCacheData()
                         rootViewState.transitionToLockViewIfNeeded()
                         checkAppVersion()
                         UserDefaults.shared.openingUntilReview -= 1
