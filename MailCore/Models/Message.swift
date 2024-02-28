@@ -59,6 +59,7 @@ public struct PaginationInfo {
     let direction: NewMessagesDirection
 }
 
+/// Class used to get a page of shortUids
 public final class MessageUidsResult: Decodable {
     public let messageShortUids: [String]
     public let cursor: String
@@ -73,6 +74,7 @@ public final class MessageByUidsResult: Decodable {
     public let messages: [Message]
 }
 
+/// Class used to get difference between a given cursor and the last cursor
 public final class MessageDeltaResult: Decodable {
     public let deletedShortUids: [String]
     public let addedShortUids: [String]
@@ -144,6 +146,10 @@ public enum MessageDKIM: String, Codable, PersistableEnum {
     case notSigned = "not_signed"
 }
 
+/// A Message has :
+/// - Many threads
+/// - One originalThread: parent thread
+/// - One folder
 public final class Message: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var uid = ""
     @Persisted public var messageId: String?
@@ -177,6 +183,7 @@ public final class Message: Object, Decodable, Identifiable {
     @Persisted public var forwarded: Bool
     @Persisted public var flagged: Bool
     @Persisted public var hasUnsubscribeLink: Bool?
+    /// Threads where the message can be found
     @Persisted(originProperty: "messages") var threads: LinkingObjects<Thread>
     @Persisted(originProperty: "messages") private var folders: LinkingObjects<Folder>
     @Persisted(originProperty: "duplicates") var threadsDuplicatedIn: LinkingObjects<Thread>
@@ -196,10 +203,13 @@ public final class Message: Object, Decodable, Identifiable {
         return Array(to) + Array(cc)
     }
 
+    /// This is the parent thread situated in the parent folder.
     public var originalThread: Thread? {
         return threads.first { $0.folder?.remoteId == folderId }
     }
 
+    /// Parent folder of the message.
+    /// (A message only has one folder)
     public var folder: Folder? {
         return folders.first
     }
