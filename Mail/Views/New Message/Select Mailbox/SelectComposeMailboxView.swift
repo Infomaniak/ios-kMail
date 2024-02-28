@@ -65,6 +65,11 @@ struct SelectComposeMailboxView: View {
                 }
             }
 
+            if let selectedMailbox = viewModel.selectedMailbox,
+               let account = accountManager.account(for: selectedMailbox.userId) {
+                SelectedMailboxView(account: account, selectedMailbox: selectedMailbox)
+            }
+
             Button(MailResourcesStrings.Localizable.buttonContinue, action: viewModel.validateMailboxChoice)
                 .buttonStyle(.ikPlain)
                 .controlSize(.large)
