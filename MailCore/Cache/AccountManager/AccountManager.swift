@@ -56,15 +56,10 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     private static let appIdentifierPrefix = Bundle.main.infoDictionary!["AppIdentifierPrefix"] as! String
     private static let group = "com.infomaniak.mail"
 
-    private let tag = "ch.infomaniak.token".data(using: .utf8)!
-    private var currentAccount: Account?
-
     public static let appGroup = "group." + group
     public static let accessGroup: String = AccountManager.appIdentifierPrefix + AccountManager.group
 
-    public var accounts = SendableArray<Account>()
-    public var tokens = [ApiToken]()
-    public let refreshTokenLockedQueue = DispatchQueue(label: "com.infomaniak.mail.refreshtoken")
+    private var currentAccount: Account?
 
     public var currentUserId: Int {
         didSet {
@@ -102,6 +97,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         return apiFetchers[currentUserId]
     }
 
+    public let accounts = SendableArray<Account>()
     private let mailboxManagers = SendableDictionary<String, MailboxManager>()
     private let contactManagers = SendableDictionary<String, ContactManager>()
     private let apiFetchers = SendableDictionary<Int, MailApiFetcher>()
