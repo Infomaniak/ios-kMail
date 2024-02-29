@@ -26,14 +26,14 @@ import SwiftUI
 
 struct SelectComposeMailboxView: View {
     @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var platformDetector: PlatformDetectable
 
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     @Environment(\.dismiss) private var dismiss
     @Environment(\.dismissModal) var dismissModal
-
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @StateObject private var viewModel: SelectComposeMailboxViewModel
 
@@ -58,7 +58,6 @@ struct SelectComposeMailboxView: View {
                     AccountMailboxesListView(
                         account: account,
                         selectedMailbox: viewModel.selectedMailbox,
-                        mailboxManager: nil,
                         selectMailbox: viewModel.selectMailbox
                     )
                     .padding(.bottom, value: .regular)

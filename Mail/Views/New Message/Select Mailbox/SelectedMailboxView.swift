@@ -22,12 +22,14 @@ import MailResources
 import SwiftUI
 
 struct SelectedMailboxView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     let account: Account
     let selectedMailbox: Mailbox
 
     var body: some View {
         HStack {
-            AvatarView(mailboxManager: nil, contactConfiguration: .user(user: account.user), size: 40)
+            AvatarView(mailboxManager: mailboxManager, contactConfiguration: .user(user: account.user), size: 40)
             Text(selectedMailbox.email)
                 .textStyle(.body)
             Spacer()

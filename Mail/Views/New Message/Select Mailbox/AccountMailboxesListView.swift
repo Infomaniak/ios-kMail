@@ -25,9 +25,10 @@ import SwiftUI
 struct AccountMailboxesListView: View {
     @LazyInjectService private var accountManager: AccountManager
 
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     let account: Account
     var selectedMailbox: Mailbox?
-    let mailboxManager: MailboxManager?
 
     let selectMailbox: (Mailbox) -> Void
 
@@ -68,7 +69,6 @@ struct AccountMailboxesListView: View {
 #Preview {
     AccountMailboxesListView(
         account: PreviewHelper.sampleAccount,
-        selectedMailbox: PreviewHelper.sampleMailbox,
-        mailboxManager: nil
+        selectedMailbox: PreviewHelper.sampleMailbox
     ) { _ in }
 }
