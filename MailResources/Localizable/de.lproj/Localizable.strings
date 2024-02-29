@@ -1091,9 +1091,6 @@
 /* loco:6537b4ae2236eeafef03c882 */
 "searchFolderName" = "Suche";
 
-/* loco:65c253eca5ff12654a065ce2 */
-"selectComposeMailboxDescription" = "Mit diesem Konto verknüpfte E-Mail-Adressen";
-
 /* loco:65c25397da1981a2280677ce */
 "selectComposeMailboxTitle" = "Senden Sie eine Nachricht mit der Adresse :";
 
