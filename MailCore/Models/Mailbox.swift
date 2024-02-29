@@ -167,7 +167,6 @@ public class Mailbox: Object, Codable, Identifiable {
         remoteUnseenMessages = try container.decode(Int.self, forKey: .remoteUnseenMessages)
         // Waiting for WS issue #5508 to remove this and go back to default initializer
         aliases = (try? container.decode(List<String>.self, forKey: .aliases)) ?? List<String>()
-        externalMailFlagEnabled = try container.decode(Bool.self, forKey: .externalMailFlagEnabled)
     }
 }
 
