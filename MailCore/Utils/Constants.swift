@@ -177,7 +177,6 @@ public enum Constants {
         MailResourcesStrings.Localizable.aiPromptExample5
     ]
 
-    public static let openingBeforeReview = 50
     public static let minimumOpeningBeforeSync = 2
 
     /// A count limit for the Contact cache in Extension mode, where we have strong memory constraints.

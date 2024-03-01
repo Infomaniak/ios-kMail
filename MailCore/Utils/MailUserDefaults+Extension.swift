@@ -261,27 +261,6 @@ public extension UserDefaults {
         }
     }
 
-    var openingUntilReview: Int {
-        get {
-            if object(forKey: key(.openingUntilReview)) == nil {
-                set(Constants.openingBeforeReview, forKey: key(.openingUntilReview))
-            }
-            return integer(forKey: key(.openingUntilReview))
-        }
-        set {
-            set(newValue, forKey: key(.openingUntilReview))
-        }
-    }
-
-    var appReview: ReviewType {
-        get {
-            return ReviewType(rawValue: string(forKey: key(.appReview)) ?? "") ?? .none
-        }
-        set {
-            set(newValue.rawValue, forKey: key(.appReview))
-        }
-    }
-
     var shouldPresentSyncDiscovery: Bool {
         get {
             if object(forKey: key(.shouldPresentSyncDiscovery)) == nil {
