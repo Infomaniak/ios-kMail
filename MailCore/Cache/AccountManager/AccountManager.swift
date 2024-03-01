@@ -64,7 +64,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     public var currentUserId: Int {
         didSet {
             UserDefaults.shared.currentMailUserId = currentUserId
-            setSentryUserId(userId: currentUserId)
+            SentryDebug.setUserId(currentUserId)
             objectWillChange.send()
         }
     }
@@ -226,7 +226,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     public func createAndSetCurrentAccount(code: String, codeVerifier: String) async throws -> Account {
         let token = try await networkLoginService.apiToken(using: code, codeVerifier: codeVerifier)
-        setSentryUserId(userId: token.userId)
+        SentryDebug.setUserId(token.userId)
 
         do {
             return try await createAndSetCurrentAccount(token: token)
@@ -466,15 +466,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         if !Bundle.main.isExtension {
             matomo.connectUser(userId: "\(currentUserId)")
         }
-    }
-
-    private func setSentryUserId(userId: Int) {
-        guard userId != 0 else {
-            return
-        }
-        let user = Sentry.User(userId: "\(userId)")
-        user.ipAddress = "{{auto}}"
-        SentrySDK.setUser(user)
     }
 
     public func setCurrentMailboxForCurrentAccount(mailbox: Mailbox, refresh: Bool = true) {
