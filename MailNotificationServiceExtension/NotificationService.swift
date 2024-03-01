@@ -39,6 +39,7 @@ final class NotificationService: UNNotificationServiceExtension {
     override init() {
         super.init()
         ModelMigrator().migrateRealmIfNeeded()
+        SentryDebug.setUserId(accountManager.currentUserId)
     }
 
     func fetchMessage(uid: String, in mailboxManager: MailboxManager) async throws -> Message? {
@@ -92,6 +93,9 @@ final class NotificationService: UNNotificationServiceExtension {
                 logNotificationFailed(userInfo: userInfos, type: .mailboxNotFound)
                 return contentHandler(bestAttemptContent)
             }
+
+            // User id can change for each received notification
+            SentryDebug.setUserId(userId)
 
             // Prepare a notification in case we can't fetch the message in time / the message doesn't exist anymore
             prepareEmptyMessageNotification(in: mailbox)

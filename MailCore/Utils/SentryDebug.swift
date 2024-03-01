@@ -22,6 +22,13 @@ import RealmSwift
 import Sentry
 
 public enum SentryDebug {
+    public static func setUserId(_ userId: Int) {
+        guard userId != 0 else { return }
+        let user = Sentry.User(userId: "\(userId)")
+        user.ipAddress = "{{auto}}"
+        SentrySDK.setUser(user)
+    }
+
     // MARK: - Errors
 
     public static let knownDebugDate = Date(timeIntervalSince1970: 1_893_456_000)
