@@ -22,26 +22,10 @@ import MailCore
 import MailResources
 import SwiftUI
 
-enum AutoAdvanceSection: CaseIterable {
-    case compact
-    case regular
-
-    var options: [AutoAdvance] {
-        switch self {
-        case .compact:
-            return [.previousThread, .followingThread, .listOfThread, .naturalThread]
-        case .regular:
-            return [.previousThread, .followingThread, .naturalThread]
-        }
-    }
-}
-
 struct SettingsAutoAdvanceView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @AppStorage(UserDefaults.shared.key(.autoAdvance)) private var autoAdvance = DefaultPreferences.autoAdvance
-
-    var section: AutoAdvanceSection
 
     var body: some View {
         VStack {
@@ -49,8 +33,12 @@ struct SettingsAutoAdvanceView: View {
                 SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsAutoAdvanceDescription)
                     .settingsCell()
 
-                ForEach(section.options, id: \.rawValue) { option in
-                    SettingsOptionCell(value: option, isSelected: option == autoAdvance, isLast: option == section.options.last) {
+                ForEach(AutoAdvance.allCases, id: \.rawValue) { option in
+                    SettingsOptionCell(
+                        value: option,
+                        isSelected: option == autoAdvance,
+                        isLast: option == AutoAdvance.allCases.last
+                    ) {
                         matomo.track(eventWithCategory: .settingsAutoAdvance, name: option.rawValue)
                         autoAdvance = option
                     }
@@ -64,5 +52,5 @@ struct SettingsAutoAdvanceView: View {
 }
 
 #Preview {
-    SettingsAutoAdvanceView(section: .compact)
+    SettingsAutoAdvanceView()
 }
