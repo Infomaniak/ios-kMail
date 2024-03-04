@@ -112,6 +112,21 @@ struct SettingsView: View {
                         SettingsAutoAdvanceView(section: isCompactWindow ? .compact : .regular)
                     }
 
+                    // MARK: External Content
+
+                    SettingsSubMenuCell(
+                        title: MailResourcesStrings.Localizable.settingsExternalContentTitle,
+                        subtitle: externalContent.title
+                    ) {
+                        SettingsOptionView(
+                            title: MailResourcesStrings.Localizable.settingsExternalContentTitle,
+                            subtitle: MailResourcesStrings.Localizable.settingsExternalContentDescription,
+                            keyPath: \.displayExternalContent,
+                            matomoCategory: .settingsDisplayExternalContent,
+                            matomoName: \.rawValue
+                        )
+                    }
+
                     IKDivider()
                 }
 
@@ -169,21 +184,6 @@ struct SettingsView: View {
                         subtitle: threadMode.title
                     ) {
                         SettingsThreadModeView()
-                    }
-
-                    // MARK: External Content
-
-                    SettingsSubMenuCell(
-                        title: MailResourcesStrings.Localizable.settingsExternalContentTitle,
-                        subtitle: externalContent.title
-                    ) {
-                        SettingsOptionView(
-                            title: MailResourcesStrings.Localizable.settingsExternalContentTitle,
-                            subtitle: MailResourcesStrings.Localizable.settingsExternalContentDescription,
-                            keyPath: \.displayExternalContent,
-                            matomoCategory: .settingsDisplayExternalContent,
-                            matomoName: \.rawValue
-                        )
                     }
                 }
             }

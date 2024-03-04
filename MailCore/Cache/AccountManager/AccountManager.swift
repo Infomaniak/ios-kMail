@@ -255,10 +255,15 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         try? await featureFlagsManager.fetchFlags()
 
         for mailbox in mailboxesResponse {
-            mailbox.permissions = try await apiFetcher.permissions(mailbox: mailbox)
+            async let permissions = apiFetcher.permissions(mailbox: mailbox)
+            async let externalMailInfo = apiFetcher.externalMailFlag(mailbox: mailbox)
+
             if mailbox.isLimited {
                 mailbox.quotas = try await apiFetcher.quotas(mailbox: mailbox)
             }
+
+            mailbox.permissions = try await permissions
+            mailbox.externalMailInfo = try await externalMailInfo
         }
 
         await mailboxInfosManager.storeMailboxes(user: user, mailboxes: mailboxesResponse)
@@ -298,6 +303,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             if mailbox.isLimited {
                 mailbox.quotas = try await apiFetcher.quotas(mailbox: mailbox)
             }
+            mailbox.externalMailInfo = try await apiFetcher.externalMailFlag(mailbox: mailbox)
         }
 
         let mailboxRemovedList = await mailboxInfosManager.storeMailboxes(user: user, mailboxes: fetchedMailboxes)

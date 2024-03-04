@@ -26,7 +26,7 @@ import Sentry
 extension MailboxInfosManager: RealmAccessible {}
 
 public final class MailboxInfosManager {
-    private static let currentDbVersion: UInt64 = 6
+    private static let currentDbVersion: UInt64 = 7
     public let realmConfiguration: Realm.Configuration
     private let dbName = "MailboxInfos.realm"
 
@@ -39,14 +39,14 @@ public final class MailboxInfosManager {
             migrationBlock: { migration, oldSchemaVersion in
                 // No migration needed from 0 to 5
 
-                // Added `aliases` and `externalMailFlagEnabled` to Mailbox
+                // Added `aliases` to Mailbox
                 if oldSchemaVersion < 6 {
                     migration.enumerateObjects(ofType: Mailbox.className()) { _, newObject in
                         newObject!["aliases"] = List<String>()
                     }
                 }
             },
-            objectTypes: [Mailbox.self, MailboxPermissions.self, Quotas.self]
+            objectTypes: [Mailbox.self, MailboxPermissions.self, Quotas.self, ExternalMailInfo.self]
         )
 
         backgroundRealm = BackgroundRealm(configuration: realmConfiguration)

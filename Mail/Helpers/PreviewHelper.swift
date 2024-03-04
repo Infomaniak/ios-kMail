@@ -78,8 +78,7 @@ enum PreviewHelper {
                                        isLimited: false,
                                        isFree: false,
                                        dailyLimit: 999,
-                                       aliases: ["test@example.com", "test@example.ch"].toRealmList(),
-                                       externalMailFlagEnabled: true)
+                                       aliases: ["test@example.com", "test@example.ch"].toRealmList())
 
     static let sampleFolder = Folder(remoteId: "",
                                      path: "Folder",

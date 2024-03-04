@@ -50,6 +50,8 @@ public protocol MailApiCommonFetchable {
 
     func quotas(mailbox: Mailbox) async throws -> Quotas
 
+    func externalMailFlag(mailbox: Mailbox) async throws -> ExternalMailInfo
+
     func undoAction(resource: String) async throws -> Bool
 
     func star(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult

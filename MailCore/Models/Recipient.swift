@@ -82,12 +82,13 @@ public final class Recipient: EmbeddedObject, Correspondent, Codable {
     private static let mailerDeamonRegex = Regex(pattern: "mailer-daemon@(?:.+.)?infomaniak.ch")
 
     public func isExternal(mailboxManager: MailboxManager) -> Bool {
-        guard mailboxManager.mailbox.externalMailFlagEnabled else { return false }
+        guard let externalMailInfo = mailboxManager.mailbox.externalMailInfo,
+              externalMailInfo.externalMailFlagEnabled else { return false }
 
         // if the email address is added manually by me, it's not considered as an extern
         guard !isAddedByMe else { return false }
 
-        let trustedDomains = ["@infomaniak.com", "@infomaniak.event", "@swisstransfer.com"]
+        let trustedDomains = externalMailInfo.domains
         let isKnownDomain = trustedDomains.contains { domain in
             return email.hasSuffix(domain)
         }
