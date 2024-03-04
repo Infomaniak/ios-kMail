@@ -45,6 +45,10 @@ public extension Endpoint {
         return Endpoint(path: "/1/mail_hostings")
     }
 
+    private static func baseManagerMailbox(hostingId: Int, mailboxName: String) -> Endpoint {
+        return .baseManager.appending(path: "/\(hostingId)/mailboxes/\(mailboxName)")
+    }
+
     private static var base: Endpoint {
         return Endpoint(hostKeypath: \.mailHost, path: "/api")
     }
@@ -115,7 +119,7 @@ public extension Endpoint {
     }
 
     static func askMailboxPassword(hostingId: Int, mailboxName: String) -> Endpoint {
-        return .baseManager.appending(path: "/\(hostingId)/mailboxes/\(mailboxName)/ask_password")
+        return .baseManagerMailbox(hostingId: hostingId, mailboxName: mailboxName).appending(path: "/ask_password")
     }
 
     static func detachMailbox(mailboxId: Int) -> Endpoint {
@@ -123,11 +127,11 @@ public extension Endpoint {
     }
 
     static func backups(hostingId: Int, mailboxName: String) -> Endpoint {
-        return .baseManager.appending(path: "/\(hostingId)/mailboxes/\(mailboxName)/backups")
+        return .baseManagerMailbox(hostingId: hostingId, mailboxName: mailboxName).appending(path: "/backups")
     }
 
     static func signatures(hostingId: Int, mailboxName: String) -> Endpoint {
-        return .baseManager.appending(path: "/\(hostingId)/mailboxes/\(mailboxName)/signatures")
+        return .baseManagerMailbox(hostingId: hostingId, mailboxName: mailboxName).appending(path: "/signatures")
     }
 
     static func updateSignature(hostingId: Int, mailboxName: String, signatureId: Int) -> Endpoint {
@@ -191,7 +195,7 @@ public extension Endpoint {
     }
 
     static func externalMailFlag(hostingId: Int, mailboxName: String) -> Endpoint {
-        return .baseManager.appending(path: "/\(hostingId)/mailboxes/\(mailboxName)/external_mail_flag")
+        return .baseManagerMailbox(hostingId: hostingId, mailboxName: mailboxName).appending(path: "/external_mail_flag")
     }
 
     static func draft(uuid: String) -> Endpoint {

@@ -103,7 +103,6 @@ public extension MailApiFetcher {
             hostingId: mailbox.hostingId,
             mailboxName: mailbox.mailbox
         )))
-        .data
     }
 
     @discardableResult
