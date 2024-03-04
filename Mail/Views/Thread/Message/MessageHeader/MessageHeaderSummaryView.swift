@@ -98,8 +98,7 @@ struct MessageHeaderSummaryView: View {
                 .accessibilityHint(MailResourcesStrings.Localizable
                     .contentDescriptionButtonExpandRecipients)
             }
-
-            Spacer()
+            .frame(maxWidth: .infinity)
 
             if message.isDraft {
                 Button(role: .destructive, action: deleteDraftTapped) {
