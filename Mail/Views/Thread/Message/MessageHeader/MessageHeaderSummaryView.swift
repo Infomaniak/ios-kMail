@@ -98,16 +98,14 @@ struct MessageHeaderSummaryView: View {
                 .accessibilityHint(MailResourcesStrings.Localizable
                     .contentDescriptionButtonExpandRecipients)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             if message.isDraft {
-                Spacer()
                 Button(role: .destructive, action: deleteDraftTapped) {
                     IKIcon(MailResourcesAsset.bin, size: .large)
                 }
                 .foregroundStyle(MailResourcesAsset.redColor)
             }
-
-            Spacer()
 
             if isMessageExpanded {
                 HStack(spacing: 20) {
