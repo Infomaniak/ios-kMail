@@ -54,8 +54,8 @@ public extension Thread {
             for recipient in thread.from {
                 guard !fromArray
                     .contains(where: {
-                        $0.email == recipient
-                            .email && ($0.name == recipient.name || $0.email == contextMailboxManager.mailbox.email)
+                        $0.email == recipient.email &&
+                            ($0.name == recipient.name || $0.email == contextMailboxManager.mailbox.email)
                     }) else { continue }
                 fromArray.append(recipient)
             }
