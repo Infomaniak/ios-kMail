@@ -31,22 +31,14 @@ struct SelectComposeMailboxView: View {
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.dismissModal) var dismissModal
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
-    @StateObject private var viewModel: SelectComposeMailboxViewModel
-
     @Binding var composeMessageIntent: ComposeMessageIntent
 
-    init(composeMessageIntent: Binding<ComposeMessageIntent>) {
-        _composeMessageIntent = composeMessageIntent
-        _viewModel = StateObject(wrappedValue: SelectComposeMailboxViewModel(composeMessageIntent: composeMessageIntent))
-    }
+    let viewModel: SelectComposeMailboxViewModel
 
     var body: some View {
         VStack(spacing: 0) {
             accentColor.mailboxImage.swiftUIImage
+                .padding(.bottom, value: .regular)
 
             Text(MailResourcesStrings.Localizable.selectComposeMailboxTitle)
                 .textStyle(.header2)
@@ -65,7 +57,7 @@ struct SelectComposeMailboxView: View {
             }
 
             if let selectedMailbox = viewModel.selectedMailbox,
-               let account = accountManager.account(for: selectedMailbox.userId) {
+               let account = accountManager.account(for: selectedMailbox.userId), viewModel.selectionMade {
                 SelectedMailboxView(account: account, selectedMailbox: selectedMailbox)
             }
 
@@ -76,27 +68,13 @@ struct SelectComposeMailboxView: View {
         }
         .padding(.horizontal, value: .medium)
         .mailboxCellStyle(.account)
-        .onAppear(perform: viewModel.initDefaultAccountAndMailbox)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                if !platformDetector.isMac {
-                    CloseButton(dismissHandler: dismissMessageView)
-                }
-            }
-        }
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "SelectComposeMailboxView"])
-    }
-
-    private func dismissMessageView() {
-        dismissModal()
-        dismiss()
     }
 }
 
 #Preview {
-    SelectComposeMailboxView(composeMessageIntent: .constant(.new()))
-}
-
-enum TestTest {
-    case test
+    SelectComposeMailboxView(
+        composeMessageIntent: .constant(.new()),
+        viewModel: SelectComposeMailboxViewModel(composeMessageIntent: .constant(.new()))
+    )
 }
