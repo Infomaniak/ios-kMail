@@ -218,7 +218,7 @@ extension DraftContentManager {
             content = try await formatForward(message: message)
         }
 
-        return "<br><br>\(content)"
+        return "\(Constants.editorFirstLines)\(content)"
     }
 
     private func formatReply(message: Message) async throws -> String {
