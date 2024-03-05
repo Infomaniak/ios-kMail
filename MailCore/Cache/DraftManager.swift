@@ -293,6 +293,6 @@ public final class DraftManager {
         try? liveDraft.realm?.write {
             liveDraft.subject = String(subject[..<index])
         }
-        return liveDraft.detached()
+        return liveDraft.freeze()
     }
 }
