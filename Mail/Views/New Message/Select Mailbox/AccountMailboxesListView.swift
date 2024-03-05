@@ -51,8 +51,7 @@ struct AccountMailboxesListView: View {
                         .textStyle(.bodySecondary)
                 }
                 .lineLimit(1)
-
-                Spacer(minLength: 0)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 ChevronIcon(direction: .down)
             }
