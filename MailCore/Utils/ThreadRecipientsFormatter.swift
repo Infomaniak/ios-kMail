@@ -52,11 +52,10 @@ public extension Thread {
         private func formattedFrom(thread: Thread) -> String {
             var fromArray = [Recipient]()
             for recipient in thread.from {
-                guard !fromArray
-                    .contains(where: {
-                        $0.email == recipient.email &&
-                            ($0.name == recipient.name || $0.email == contextMailboxManager.mailbox.email)
-                    }) else { continue }
+                guard !fromArray.contains(where: {
+                    $0.email == recipient.email &&
+                        ($0.name == recipient.name || $0.email == contextMailboxManager.mailbox.email)
+                }) else { continue }
                 fromArray.append(recipient)
             }
 
