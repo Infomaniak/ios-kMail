@@ -382,7 +382,6 @@ public extension Draft {
     func updateSubjectIfNeeded() {
         guard subject.count > 998, let liveDraft = thaw() else { return }
 
-        let subject = subject
         let index = subject.index(subject.startIndex, offsetBy: 998)
 
         try? liveDraft.realm?.write {
