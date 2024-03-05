@@ -376,16 +376,3 @@ public extension Draft {
         return !document.hasText()
     }
 }
-
-public extension Draft {
-    /// Shorten the subject if it's longer than 998 character
-    func updateSubjectIfNeeded() {
-        guard subject.count > 998, let liveDraft = thaw() else { return }
-
-        let index = subject.index(subject.startIndex, offsetBy: 998)
-
-        try? liveDraft.realm?.write {
-            liveDraft.subject = String(subject[..<index])
-        }
-    }
-}
