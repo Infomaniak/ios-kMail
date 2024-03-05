@@ -38,6 +38,7 @@ struct UserAccountScene: Scene {
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
     @LazyInjectService private var refreshAppBackgroundTask: RefreshAppBackgroundTask
+    @LazyInjectService private var reviewManager: ReviewManageable
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     @StateObject private var rootViewState = RootViewState()
@@ -59,7 +60,7 @@ struct UserAccountScene: Scene {
                     case .active:
                         rootViewState.transitionToLockViewIfNeeded()
                         checkAppVersion()
-                        UserDefaults.shared.openingUntilReview -= 1
+                        reviewManager.decreaseOpeningUntilReview()
                     case .background:
                         refreshAppBackgroundTask.scheduleForBackgroundLaunchIfNeeded()
                         if UserDefaults.shared.isAppLockEnabled && rootViewState.state != .appLocked {
