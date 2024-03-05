@@ -29,6 +29,7 @@ final class SelectComposeMailboxViewModel: ObservableObject {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @Published private(set) var selectedMailbox: Mailbox?
+    @Published private(set) var selectionMade = false
 
     private(set) var composeMessageIntent: Binding<ComposeMessageIntent>
     private(set) var accounts = [Account]()
@@ -58,6 +59,7 @@ final class SelectComposeMailboxViewModel: ObservableObject {
             return
         }
         selectedMailbox = mailbox
+        selectionMade = true
     }
 
     func validateMailboxChoice() {

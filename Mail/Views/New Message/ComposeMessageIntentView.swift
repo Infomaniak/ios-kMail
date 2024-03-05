@@ -47,9 +47,9 @@ struct ComposeMessageIntentView: View, IntentViewable {
     }
 
     var body: some View {
-        NBNavigationStack {
+        NavigationView {
             if composeMessageIntent.shouldSelectMailbox {
-                SelectComposeMailboxView(composeMessageIntent: $composeMessageIntent)
+                CurrentComposeMailboxView(composeMessageIntent: $composeMessageIntent)
             } else {
                 if let resolvedIntent = resolvedIntent.wrappedValue {
                     ComposeMessageView(
@@ -69,6 +69,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
             }
         }
         .interactiveDismissDisabled()
+        .navigationViewStyle(.stack)
     }
 
     func initFromIntent() async {
