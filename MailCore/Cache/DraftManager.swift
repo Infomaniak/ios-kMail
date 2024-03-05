@@ -87,6 +87,7 @@ public final class DraftManager {
         await draftQueue.cleanQueueElement(uuid: draft.localUUID)
         await draftQueue.beginBackgroundTask(withName: "Draft Saver", for: draft.localUUID)
 
+        draft.updateSubjectIfNeeded()
         do {
             try await mailboxManager.save(draft: draft)
         } catch {
