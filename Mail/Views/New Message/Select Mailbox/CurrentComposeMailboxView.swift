@@ -78,6 +78,7 @@ struct CurrentComposeMailboxView: View {
         .mailboxCellStyle(.account)
         .onAppear(perform: viewModel.initDefaultAccountAndMailbox)
         .backButtonDisplayMode(.minimal)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 if !platformDetector.isMac {
