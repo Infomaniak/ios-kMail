@@ -58,7 +58,7 @@ struct AccountMailboxesListView: View {
             .padding([.leading, .vertical], value: .small)
             .padding(.trailing, value: .regular)
             .overlay {
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 8)
                     .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
             }
         }
