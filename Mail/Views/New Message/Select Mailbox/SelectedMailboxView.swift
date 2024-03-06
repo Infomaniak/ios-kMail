@@ -32,7 +32,7 @@ struct SelectedMailboxView: View {
             AvatarView(mailboxManager: mailboxManager, contactConfiguration: .user(user: account.user), size: 40)
             Text(selectedMailbox.email)
                 .textStyle(.body)
-            Spacer()
+                .frame(maxWidth: .infinity, alignment: .leading)
             MailResourcesAsset.checkmarkCircleFill.swiftUIImage
                 .foregroundStyle(MailResourcesAsset.greenColor)
         }
