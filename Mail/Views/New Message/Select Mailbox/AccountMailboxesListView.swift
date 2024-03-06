@@ -55,8 +55,8 @@ struct AccountMailboxesListView: View {
 
                 ChevronIcon(direction: .down)
             }
-            .padding([.leading, .vertical], value: .small)
-            .padding(.trailing, value: .regular)
+            .padding(.vertical, value: .small)
+            .padding(.horizontal, value: .regular)
             .overlay {
                 RoundedRectangle(cornerRadius: 8)
                     .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
