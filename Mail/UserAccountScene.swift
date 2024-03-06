@@ -54,13 +54,13 @@ struct UserAccountScene: Scene {
                      only when the app enters foreground. */
                     appLaunchCounter.increase()
                     refreshCacheData()
+                    reviewManager.decreaseOpeningUntilReview()
                 }
                 .onChange(of: scenePhase) { newScenePhase in
                     switch newScenePhase {
                     case .active:
                         rootViewState.transitionToLockViewIfNeeded()
                         checkAppVersion()
-                        reviewManager.decreaseOpeningUntilReview()
                     case .background:
                         refreshAppBackgroundTask.scheduleForBackgroundLaunchIfNeeded()
                         if UserDefaults.shared.isAppLockEnabled && rootViewState.state != .appLocked {
