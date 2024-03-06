@@ -116,6 +116,8 @@ public enum Constants {
     public static let forwardRoot = "<div class=\"\(forwardQuoteHTMLClass)\">"
     public static let replyRoot = "<div class=\"\(replyQuoteHTMLClass)\">"
 
+    public static let editorFirstLines = "<div><br></div><div><br></div>"
+
     public static func globallyResignFirstResponder() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
