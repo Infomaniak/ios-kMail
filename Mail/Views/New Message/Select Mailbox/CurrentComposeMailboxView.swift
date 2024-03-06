@@ -48,7 +48,7 @@ struct CurrentComposeMailboxView: View {
             accentColor.mailboxImage.swiftUIImage
                 .padding(.bottom, value: .regular)
 
-            Text(MailResourcesStrings.Localizable.selectComposeMailboxTitle)
+            Text(MailResourcesStrings.Localizable.composeMailboxCurrentTitle)
                 .textStyle(.header2)
                 .multilineTextAlignment(.center)
                 .padding(.bottom, value: .medium)
