@@ -49,7 +49,17 @@ struct ThreadView: View {
 
     @ModalState private var nearestFlushAlert: FlushAlertState?
 
-    private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
+    @State private var toolbarActions: [Action]
+
+    init(thread: Thread) {
+        self.thread = thread
+        _toolbarActions = thread.folder?.role == .archive ? State(wrappedValue: [
+            Action.reply,
+            Action.forward,
+            Action.openMovePanel,
+            Action.delete
+        ]) : State(wrappedValue: [Action.reply, Action.forward, Action.archive, Action.delete])
+    }
 
     var body: some View {
         ScrollView {
@@ -155,7 +165,6 @@ struct ThreadView: View {
                     ToolbarButton(text: action.title, icon: action.icon) {
                         didTap(action: action)
                     }
-                    .disabled(action == .archive && thread.folder?.role == .archive)
                 }
                 Spacer()
             }

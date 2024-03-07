@@ -138,7 +138,6 @@ struct ThreadListToolbar: ViewModifier {
                                     )
                                 }
                             }
-                            .disabled(action == .archive && viewModel.frozenFolder.role == .archive)
                         }
 
                         ToolbarButton(
