@@ -76,16 +76,23 @@ public final class DraftManager {
     public init() {}
 
     /// Save a draft server side
-    private func saveDraftRemotely(draft: Draft, mailboxManager: MailboxManager, retry: Bool = true, showSnackbar: Bool) async {
-        guard draft.identityId != nil else {
+    private func saveDraftRemotely(
+        draft initialDraft: Draft,
+        mailboxManager: MailboxManager,
+        retry: Bool = true,
+        showSnackbar: Bool
+    ) async {
+        guard initialDraft.identityId != nil else {
             SentrySDK.capture(message: "We are trying to send a draft without an identityId, this will fail.")
             return
         }
 
         matomo.track(eventWithCategory: .newMessage, name: "saveDraft")
 
-        await draftQueue.cleanQueueElement(uuid: draft.localUUID)
-        await draftQueue.beginBackgroundTask(withName: "Draft Saver", for: draft.localUUID)
+        await draftQueue.cleanQueueElement(uuid: initialDraft.localUUID)
+        await draftQueue.beginBackgroundTask(withName: "Draft Saver", for: initialDraft.localUUID)
+
+        let draft = updateSubjectIfNeeded(draft: initialDraft)
 
         do {
             try await mailboxManager.save(draft: draft)
@@ -138,14 +145,17 @@ public final class DraftManager {
         return updatedDraft
     }
 
-    public func send(draft: Draft, mailboxManager: MailboxManager, retry: Bool = true, showSnackbar: Bool) async -> Date? {
+    public func send(draft initialDraft: Draft, mailboxManager: MailboxManager, retry: Bool = true,
+                     showSnackbar: Bool) async -> Date? {
         if showSnackbar {
             alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
         }
 
         var sendDate: Date?
-        await draftQueue.cleanQueueElement(uuid: draft.localUUID)
-        await draftQueue.beginBackgroundTask(withName: "Draft Sender", for: draft.localUUID)
+        await draftQueue.cleanQueueElement(uuid: initialDraft.localUUID)
+        await draftQueue.beginBackgroundTask(withName: "Draft Sender", for: initialDraft.localUUID)
+
+        let draft = updateSubjectIfNeeded(draft: initialDraft)
 
         do {
             let cancelableResponse = try await mailboxManager.send(draft: draft)
@@ -273,5 +283,19 @@ public final class DraftManager {
             }
             realm.delete(object)
         }
+    }
+
+    private func updateSubjectIfNeeded(draft: Draft) -> Draft {
+        guard draft.subject.count > 998, let liveDraft = draft.thaw() else {
+            return draft
+        }
+
+        let subject = draft.subject
+        let index = subject.index(subject.startIndex, offsetBy: 998)
+
+        try? liveDraft.realm?.write {
+            liveDraft.subject = String(subject[..<index])
+        }
+        return liveDraft.freeze()
     }
 }
