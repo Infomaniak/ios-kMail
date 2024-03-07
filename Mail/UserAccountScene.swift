@@ -38,6 +38,7 @@ struct UserAccountScene: Scene {
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
     @LazyInjectService private var refreshAppBackgroundTask: RefreshAppBackgroundTask
+    @LazyInjectService private var reviewManager: ReviewManageable
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     @StateObject private var rootViewState = RootViewState()
@@ -53,13 +54,13 @@ struct UserAccountScene: Scene {
                      only when the app enters foreground. */
                     appLaunchCounter.increase()
                     refreshCacheData()
+                    reviewManager.decreaseOpeningUntilReview()
                 }
                 .onChange(of: scenePhase) { newScenePhase in
                     switch newScenePhase {
                     case .active:
                         rootViewState.transitionToLockViewIfNeeded()
                         checkAppVersion()
-                        UserDefaults.shared.openingUntilReview -= 1
                     case .background:
                         refreshAppBackgroundTask.scheduleForBackgroundLaunchIfNeeded()
                         if UserDefaults.shared.isAppLockEnabled && rootViewState.state != .appLocked {
