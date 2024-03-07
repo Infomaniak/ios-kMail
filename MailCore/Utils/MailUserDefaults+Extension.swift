@@ -46,8 +46,6 @@ public extension UserDefaults.Keys {
     static let doNotShowAIReplaceMessageAgain = UserDefaults.Keys(rawValue: "showAIReplaceContentAlert")
     static let featureFlags = UserDefaults.Keys(rawValue: "featureFlags")
     static let shouldPresentAIFeature = UserDefaults.Keys(rawValue: "shouldPresentAIFeature")
-    static let openingUntilReview = UserDefaults.Keys(rawValue: "openingUntilReview")
-    static let appReview = UserDefaults.Keys(rawValue: "appReview")
     static let shouldPresentSyncDiscovery = UserDefaults.Keys(rawValue: "shouldPresentSyncDiscovery")
     static let shouldPresentSetAsDefaultDiscovery = UserDefaults.Keys(rawValue: "shouldPresentSetAsDefaultDiscovery")
     static let aiEngine = UserDefaults.Keys(rawValue: "aiEngine")
