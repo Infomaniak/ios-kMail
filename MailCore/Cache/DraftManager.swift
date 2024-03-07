@@ -145,14 +145,17 @@ public final class DraftManager {
         return updatedDraft
     }
 
-    public func send(draft: Draft, mailboxManager: MailboxManager, retry: Bool = true, showSnackbar: Bool) async -> Date? {
+    public func send(draft initialDraft: Draft, mailboxManager: MailboxManager, retry: Bool = true,
+                     showSnackbar: Bool) async -> Date? {
         if showSnackbar {
             alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
         }
 
         var sendDate: Date?
-        await draftQueue.cleanQueueElement(uuid: draft.localUUID)
-        await draftQueue.beginBackgroundTask(withName: "Draft Sender", for: draft.localUUID)
+        await draftQueue.cleanQueueElement(uuid: initialDraft.localUUID)
+        await draftQueue.beginBackgroundTask(withName: "Draft Sender", for: initialDraft.localUUID)
+
+        let draft = updateSubjectIfNeeded(draft: initialDraft)
 
         do {
             let cancelableResponse = try await mailboxManager.send(draft: draft)
