@@ -89,7 +89,13 @@ extension Action: CaseIterable {
     private static func actionsForMessagesInDifferentThreads(_ messages: [Message], originFolder: Folder?)
         -> (quickActions: [Action], listActions: [Action]) {
         let unread = messages.allSatisfy(\.seen)
-        let quickActions: [Action] = [.openMovePanel, unread ? .markAsUnread : .markAsRead, .archive, .delete]
+        let isArchiveFolder = originFolder?.role == .archive
+        let quickActions: [Action] = [
+            .openMovePanel,
+            unread ? .markAsUnread : .markAsRead,
+            isArchiveFolder ? .moveToInbox : .archive,
+            .delete
+        ]
 
         let spam = originFolder?.role == .spam
         let star = messages.allSatisfy(\.flagged)
@@ -281,7 +287,8 @@ public extension Action {
     static let moveToInbox = Action(
         id: "moveToInbox",
         title: MailResourcesStrings.Localizable.actionMoveToInbox,
-        iconResource: MailResourcesAsset.drawer,
+        shortTitle: "Boite de réception",
+        iconResource: MailResourcesAsset.drawerDownload,
         tintColorResource: MailResourcesAsset.grayActionColor,
         isDestructive: true,
         matomoName: "moveToInbox"
