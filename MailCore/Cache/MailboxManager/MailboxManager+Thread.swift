@@ -365,7 +365,7 @@ public extension MailboxManager {
                         }
 
                         realm.delete(messagesToDelete)
-                        for thread in threadsToUpdate {
+                        for thread in threadsToUpdate where !thread.isInvalidated {
                             if thread.messageInFolderCount == 0 {
                                 threadsToDelete.insert(thread)
                             } else {
