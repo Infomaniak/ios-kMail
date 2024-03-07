@@ -84,19 +84,15 @@ struct ThreadListToolbar: ViewModifier {
                                 multipleSelectionViewModel.isEnabled = false
                             }
                         } else {
-                            // We embed both views in an HStack to fix the iOS 17.4 navigationBar bug
-                            // Feedback report: FB13643946
-                            HStack {
-                                if isCompactWindow {
-                                    MenuDrawerButton()
-                                }
-
-                                let textMaxWidth = isCompactWindow ? UIScreen.main.bounds.size.width - geometry.safeAreaInsets
-                                    .leading - geometry.safeAreaInsets.trailing - UIConstants.navbarIconsSpace : 215
-                                Text(viewModel.frozenFolder.localizedName)
-                                    .textStyle(.header1)
-                                    .frame(maxWidth: textMaxWidth, alignment: .leading)
+                            if isCompactWindow {
+                                MenuDrawerButton()
                             }
+
+                            let textMaxWidth = isCompactWindow ? UIScreen.main.bounds.size.width - geometry.safeAreaInsets
+                                .leading - geometry.safeAreaInsets.trailing - UIConstants.navbarIconsSpace : 215
+                            Text(viewModel.frozenFolder.localizedName)
+                                .textStyle(.header1)
+                                .frame(maxWidth: textMaxWidth, alignment: .leading)
                         }
                     }
 
