@@ -89,11 +89,11 @@ extension Action: CaseIterable {
     private static func actionsForMessagesInDifferentThreads(_ messages: [Message], originFolder: Folder?)
         -> (quickActions: [Action], listActions: [Action]) {
         let unread = messages.allSatisfy(\.seen)
-        let isArchiveFolder = originFolder?.role == .archive
+        let archive = originFolder?.role != .archive
         let quickActions: [Action] = [
             .openMovePanel,
             unread ? .markAsUnread : .markAsRead,
-            isArchiveFolder ? .moveToInbox : .archive,
+            archive ? .archive : .moveToInbox,
             .delete
         ]
 
