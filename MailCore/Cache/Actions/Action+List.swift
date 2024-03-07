@@ -287,7 +287,7 @@ public extension Action {
     static let moveToInbox = Action(
         id: "moveToInbox",
         title: MailResourcesStrings.Localizable.actionMoveToInbox,
-        shortTitle: "Boite de réception",
+        shortTitle: MailResourcesStrings.Localizable.inboxFolder,
         iconResource: MailResourcesAsset.drawerDownload,
         tintColorResource: MailResourcesAsset.grayActionColor,
         isDestructive: true,
