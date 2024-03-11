@@ -20,6 +20,16 @@ import MailCore
 import MailResources
 import SwiftUI
 
+extension VerticalAlignment {
+    struct SettingsOptionCellCheckmark: AlignmentID {
+        static func defaultValue(in context: ViewDimensions) -> CGFloat {
+            return context[VerticalAlignment.center]
+        }
+    }
+
+    static let settingsOptionCellCheckmark = VerticalAlignment(SettingsOptionCellCheckmark.self)
+}
+
 struct SettingsOptionCell: View {
     let title: String
     let icon: Image?
@@ -51,7 +61,7 @@ struct SettingsOptionCell: View {
     var body: some View {
         Button(action: action) {
             VStack(spacing: 0) {
-                HStack(alignment: .top, spacing: UIPadding.regular) {
+                HStack(alignment: .settingsOptionCellCheckmark, spacing: UIPadding.regular) {
                     VStack(alignment: .leading, spacing: UIPadding.small) {
                         HStack(spacing: UIPadding.regular) {
                             icon?
@@ -63,18 +73,24 @@ struct SettingsOptionCell: View {
                             Text(title)
                                 .textStyle(.body)
                                 .frame(maxWidth: .infinity, alignment: .leading)
+                                .alignmentGuide(.settingsOptionCellCheckmark) { dimension in
+                                    dimension[VerticalAlignment.center]
+                                }
                         }
-                        if isSelected {
-                            if let hint {
-                                Text(hint)
-                                    .textStyle(.bodySmallSecondary)
-                                    .multilineTextAlignment(.leading)
-                            }
+
+                        if let hint, isSelected {
+                            Text(hint)
+                                .textStyle(.bodySmallSecondary)
+                                .multilineTextAlignment(.leading)
                         }
                     }
+
                     if isSelected {
                         IKIcon(MailResourcesAsset.check)
                             .foregroundStyle(.tint)
+                            .alignmentGuide(.settingsOptionCellCheckmark, computeValue: { dimension in
+                                dimension[VerticalAlignment.center]
+                            })
                     }
                 }
                 .settingsItem()
