@@ -32,7 +32,7 @@ struct CurrentComposeMailboxView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.dismissModal) var dismissModal
+    @Environment(\.dismissModal) private var dismissModal
 
     @StateObject private var viewModel: SelectComposeMailboxViewModel
 
