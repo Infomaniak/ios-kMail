@@ -69,7 +69,7 @@ struct CurrentComposeMailboxView: View {
                     composeMessageIntent: $composeMessageIntent,
                     viewModel: viewModel
                 )) {
-                    Text("Envoyer avec une autre adresse")
+                    Text(MailResourcesStrings.Localizable.buttonSendWithDifferentAddress)
                         .textStyle(.bodyMediumAccent)
                 }
             }
