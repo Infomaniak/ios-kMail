@@ -55,4 +55,8 @@ public enum Theme: String, CaseIterable, SettingsOptionEnum {
             return Image(MailResourcesAsset.themeTel.name)
         }
     }
+
+    public var hint: String? {
+        return nil
+    }
 }

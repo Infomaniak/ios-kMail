@@ -55,4 +55,12 @@ public enum AutoAdvance: String, CaseIterable, SettingsOptionEnum {
     public var image: Image? {
         return nil
     }
+
+    public var hint: String? {
+        if self == .naturalThread {
+            return MailResourcesStrings.Localizable.settingsAutoAdvanceNaturalThreadHint
+        } else {
+            return nil
+        }
+    }
 }

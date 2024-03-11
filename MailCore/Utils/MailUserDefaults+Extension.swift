@@ -23,6 +23,7 @@ import SwiftUI
 public protocol SettingsOptionEnum {
     var title: String { get }
     var image: Image? { get }
+    var hint: String? { get }
 }
 
 public extension UserDefaults.Keys {

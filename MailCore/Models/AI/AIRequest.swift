@@ -47,6 +47,10 @@ public enum AIEngine: String, CaseIterable, SettingsOptionEnum, Codable {
         }
     }
 
+    public var hint: String? {
+        return nil
+    }
+
     public var matomoName: String {
         switch self {
         case .falcon:
