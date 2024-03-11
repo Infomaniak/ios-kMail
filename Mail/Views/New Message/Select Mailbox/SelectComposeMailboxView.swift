@@ -66,6 +66,7 @@ struct SelectComposeMailboxView: View {
                 .ikButtonFullWidth(true)
         }
         .padding(.horizontal, value: .medium)
+        .padding(.bottom, UIPadding.onBoardingBottomButtons)
         .mailboxCellStyle(.account)
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "SelectComposeMailboxView"])
     }

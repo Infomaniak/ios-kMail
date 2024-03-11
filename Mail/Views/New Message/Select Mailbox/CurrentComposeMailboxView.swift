@@ -62,8 +62,6 @@ struct CurrentComposeMailboxView: View {
             VStack(spacing: UIPadding.regular) {
                 Button(MailResourcesStrings.Localizable.buttonContinue, action: viewModel.validateMailboxChoice)
                     .buttonStyle(.ikPlain)
-                    .ikButtonFullWidth(true)
-                    .controlSize(.large)
 
                 NavigationLink(destination: SelectComposeMailboxView(
                     composeMessageIntent: $composeMessageIntent,
@@ -71,8 +69,11 @@ struct CurrentComposeMailboxView: View {
                 )) {
                     Text(MailResourcesStrings.Localizable.buttonSendWithDifferentAddress)
                         .textStyle(.bodyMediumAccent)
+                        .padding(.bottom, UIPadding.onBoardingBottomButtons)
                 }
             }
+            .ikButtonFullWidth(true)
+            .controlSize(.large)
         }
         .padding(.horizontal, value: .medium)
         .mailboxCellStyle(.account)
