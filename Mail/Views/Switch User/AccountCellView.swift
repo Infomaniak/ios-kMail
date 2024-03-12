@@ -54,14 +54,6 @@ struct AccountCellView: View {
                 selectedUserId = $0 ? account.userId : nil
             }))
         }
-        .background {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
-        }
     }
 }
 
@@ -103,6 +95,14 @@ struct AccountHeaderCell: View {
         }
         .padding(.vertical, value: .small)
         .padding(.horizontal, value: .regular)
+        .background {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
+        }
+        .overlay {
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
+        }
     }
 }
 

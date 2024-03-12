@@ -43,10 +43,6 @@ struct AccountMailboxesListView: View {
             }
         } label: {
             AccountHeaderCell(account: account, mailboxManager: mailboxManager, isSelected: .constant(false))
-                .overlay {
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
-                }
         }
     }
 }
