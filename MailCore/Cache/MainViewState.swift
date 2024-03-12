@@ -32,8 +32,8 @@ public class MainViewState: ObservableObject, SelectedThreadOwnable {
     @ModalPublished public var isShowingSyncDiscovery = false
     @Published public var isShowingSearch = false
     @Published public var isShowingReviewAlert = false
-    @Published public var isShowingUpdateAvailable = false
-    @Published public var isShowingSetAppAsDefaultDiscovery = false
+    @ModalPublished public var isShowingUpdateAvailable = false
+    @ModalPublished public var isShowingSetAppAsDefaultDiscovery = false
     @Published public var isShowingChristmasEasterEgg = false
 
     /// Represents the state of navigation

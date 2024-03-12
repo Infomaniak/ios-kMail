@@ -39,6 +39,7 @@ final class AIModel: ObservableObject {
     @Published var isLoading = false
     @Published var error: AIError?
 
+    @ModalPublished var isShowingDiscovery = false
     @ModalPublished var isShowingPrompt = false
     @ModalPublished var isShowingProposition = false
 

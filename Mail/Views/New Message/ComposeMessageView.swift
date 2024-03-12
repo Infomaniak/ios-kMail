@@ -78,8 +78,6 @@ struct ComposeMessageView: View {
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
 
-    @State private var isShowingAIPopover = false
-
     @State private var editorModel = RichTextEditorModel()
     @Weak private var scrollView: UIScrollView?
 
@@ -228,7 +226,7 @@ struct ComposeMessageView: View {
             initialAttachments = []
 
             if featureFlagsManager.isEnabled(.aiMailComposer) && UserDefaults.shared.shouldPresentAIFeature {
-                isShowingAIPopover = true
+                aiModel.isShowingDiscovery = true
                 return
             }
 
@@ -267,7 +265,7 @@ struct ComposeMessageView: View {
                 dismissMessageView()
             }
         }
-        .discoveryPresenter(isPresented: $isShowingAIPopover) {
+        .discoveryPresenter(isPresented: $aiModel.isShowingDiscovery) {
             DiscoveryView(item: .aiDiscovery) {
                 UserDefaults.shared.shouldPresentAIFeature = false
             } completionHandler: { willShowAIPrompt in
