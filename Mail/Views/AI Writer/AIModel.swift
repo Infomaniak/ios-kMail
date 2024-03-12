@@ -21,6 +21,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct AIProposition: Identifiable {
@@ -38,8 +39,8 @@ final class AIModel: ObservableObject {
     @Published var isLoading = false
     @Published var error: AIError?
 
-    @Published var isShowingPrompt = false
-    @Published var isShowingProposition = false
+    @ModalPublished var isShowingPrompt = false
+    @ModalPublished var isShowingProposition = false
 
     @Published var isShowingReplaceBodyAlert = false
     @Published var isShowingReplaceSubjectAlert: AIProposition?

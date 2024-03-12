@@ -22,14 +22,15 @@ import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 
 struct AttachmentsView: View {
     @State private var showDocumentPicker = false
 
-    @State private var previewedAttachment: Attachment?
+    @ModalState private var previewedAttachment: Attachment?
     @State private var downloadInProgress = false
-    @State private var allAttachmentsURL: IdentifiableURL?
+    @ModalState private var allAttachmentsURL: IdentifiableURL?
 
     @EnvironmentObject var mailboxManager: MailboxManager
     @ObservedRealmObject var message: Message

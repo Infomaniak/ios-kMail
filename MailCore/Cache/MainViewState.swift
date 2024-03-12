@@ -17,15 +17,16 @@
  */
 
 import Foundation
+import SwiftModalPresentation
 
 public protocol SelectedThreadOwnable {
     var selectedThread: Thread? { get set }
 }
 
 public class MainViewState: ObservableObject, SelectedThreadOwnable {
-    @Published public var composeMessageIntent: ComposeMessageIntent?
+    @ModalPublished public var composeMessageIntent: ComposeMessageIntent?
 
-    @Published public var settingsViewConfig: SettingsViewConfig?
+    @ModalPublished public var settingsViewConfig: SettingsViewConfig?
 
     @Published public var isShowingSearch = false
     @Published public var isShowingReviewAlert = false

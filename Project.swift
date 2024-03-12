@@ -51,7 +51,8 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/johnpatrickmorgan/NavigationBackport", .upToNextMajor(from: "0.8.1")),
                           .package(url: "https://github.com/aheze/Popovers", .upToNextMajor(from: "1.3.2")),
                           .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1")),
-                          .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0"))
+                          .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0")),
+                          .package(url: "https://github.com/Infomaniak/swift-modal-presentation", .upToNextMajor(from: "1.0.0"))
                       ],
                       targets: [
                           Target(name: "Infomaniak Mail",
@@ -173,22 +174,22 @@ let project = Project(name: "Mail",
                                  bundleId: "com.infomaniak.mail.MailAppIntentsExtension",
                                  deploymentTarget: Constants.appIntentsDeploymentTarget,
                                  infoPlist: .extendingDefault(with: [
-                                    "AppIdentifierPrefix": "$(AppIdentifierPrefix)",
-                                    "CFBundleDisplayName": "$(PRODUCT_NAME)",
-                                    "CFBundleShortVersionString": "$(MARKETING_VERSION)",
-                                    "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
-                                    "EXAppExtensionAttributes": [
-                                        "EXExtensionPointIdentifier": "com.apple.appintents-extension"
-                                    ]
+                                     "AppIdentifierPrefix": "$(AppIdentifierPrefix)",
+                                     "CFBundleDisplayName": "$(PRODUCT_NAME)",
+                                     "CFBundleShortVersionString": "$(MARKETING_VERSION)",
+                                     "CFBundleVersion": "$(CURRENT_PROJECT_VERSION)",
+                                     "EXAppExtensionAttributes": [
+                                         "EXExtensionPointIdentifier": "com.apple.appintents-extension"
+                                     ]
                                  ]),
                                  sources: "MailAppIntentsExtension/**",
                                  resources: [
-                                    "MailResources/**/*.strings",
-                                    "MailResources/**/*.stringsdict",
+                                     "MailResources/**/*.strings",
+                                     "MailResources/**/*.stringsdict",
                                  ],
                                  entitlements: "MailResources/Mail.entitlements",
                                  dependencies: [
-                                    .target(name: "MailCore")
+                                     .target(name: "MailCore")
                                  ],
                                  settings: .settings(base: Constants.baseSettings)),
                           Target(name: "MailResources",
@@ -233,7 +234,8 @@ let project = Project(name: "Mail",
                                      .package(product: "NukeUI"),
                                      .package(product: "SwiftSoup"),
                                      .package(product: "Swifter"),
-                                     .package(product: "VersionChecker")
+                                     .package(product: "VersionChecker"),
+                                     .package(product: "SwiftModalPresentation")
                                  ],
                                  settings: .settings(base: Constants.baseSettings))
                       ],

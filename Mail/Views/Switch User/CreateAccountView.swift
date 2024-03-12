@@ -22,6 +22,7 @@ import InfomaniakDI
 import InfomaniakLogin
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct CreateAccountView: View {
@@ -29,7 +30,7 @@ struct CreateAccountView: View {
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
-    @State private var isPresentingCreateAccount = false
+    @ModalState private var isPresentingCreateAccount = false
 
     @ObservedObject var loginHandler: LoginHandler
 

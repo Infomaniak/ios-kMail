@@ -19,6 +19,7 @@
 import InfomaniakCore
 import InfomaniakDI
 import MailCore
+import SwiftModalPresentation
 import SwiftUI
 
 extension View {
@@ -33,7 +34,7 @@ struct ThreadListCellContextMenu: ViewModifier {
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var messagesToMove: [Message]?
+    @ModalState private var messagesToMove: [Message]?
 
     let thread: Thread
 

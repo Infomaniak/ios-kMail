@@ -21,6 +21,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct SettingsView: View {
@@ -41,7 +42,7 @@ struct SettingsView: View {
     @AppStorage(UserDefaults.shared.key(.threadMode)) private var threadMode = DefaultPreferences.threadMode
     @AppStorage(UserDefaults.shared.key(.autoAdvance)) private var autoAdvance = DefaultPreferences.autoAdvance
 
-    @State private var isShowingSyncProfile = false
+    @ModalState private var isShowingSyncProfile = false
 
     var body: some View {
         ScrollView {

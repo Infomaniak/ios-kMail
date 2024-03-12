@@ -19,12 +19,13 @@
 import InfomaniakCoreUI
 import MailCore
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 
 struct ComposeMessageBodyView: View {
     @State private var isShowingCamera = false
-    @State private var isShowingFileSelection = false
-    @State private var isShowingPhotoLibrary = false
+    @ModalState private var isShowingFileSelection = false
+    @ModalState private var isShowingPhotoLibrary = false
 
     @ObservedRealmObject var draft: Draft
 

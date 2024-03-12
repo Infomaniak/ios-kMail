@@ -23,6 +23,7 @@ import MailCore
 import MailResources
 import RealmSwift
 import Sentry
+import SwiftModalPresentation
 import SwiftUI
 
 struct AttachmentPreview: View {
@@ -34,7 +35,7 @@ struct AttachmentPreview: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var downloadedAttachmentURL: IdentifiableURL?
+    @ModalState private var downloadedAttachmentURL: IdentifiableURL?
 
     @ObservedRealmObject var attachment: MailCore.Attachment
 

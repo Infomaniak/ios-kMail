@@ -20,6 +20,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct AttachmentUploadCell: View {
@@ -30,7 +31,7 @@ struct AttachmentUploadCell: View {
 
     @ObservedObject var uploadTask: AttachmentUploadTask
 
-    @State private var previewedAttachment: Attachment?
+    @ModalState private var previewedAttachment: Attachment?
 
     init(uploadTask: AttachmentUploadTask, attachment: Attachment, attachmentRemoved: ((Attachment) -> Void)?) {
         self.uploadTask = uploadTask

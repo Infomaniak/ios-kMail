@@ -21,6 +21,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct MailboxCellStyleKey: EnvironmentKey {
@@ -48,7 +49,7 @@ struct MailboxCell: View {
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
     @State private var isShowingLockedView = false
-    @State private var isShowingUpdatePasswordView = false
+    @ModalState private var isShowingUpdatePasswordView = false
 
     let mailbox: Mailbox
     var isSelected = false

@@ -18,6 +18,7 @@
 
 import Foundation
 import MailCore
+import SwiftModalPresentation
 import SwiftUI
 
 extension View {
@@ -38,7 +39,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     @State private var reportForJunkMessage: Message?
     @State private var reportedForDisplayProblemMessage: Message?
     @State private var reportedForPhishingMessage: Message?
-    @State private var messagesToMove: [Message]?
+    @ModalState private var messagesToMove: [Message]?
     @State private var flushAlert: FlushAlertState?
 
     @Binding var messages: [Message]?

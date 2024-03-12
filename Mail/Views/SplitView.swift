@@ -25,6 +25,7 @@ import MailCore
 import MailResources
 import NavigationBackport
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
@@ -64,7 +65,7 @@ struct SplitView: View {
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
 
     @State private var isShowingSyncDiscovery = false
-    @State private var isShowingSyncProfile = false
+    @ModalState private var isShowingSyncProfile = false
 
     let mailboxManager: MailboxManager
 
