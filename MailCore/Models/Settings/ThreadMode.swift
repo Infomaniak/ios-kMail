@@ -41,4 +41,8 @@ public enum ThreadMode: String, CaseIterable, SettingsOptionEnum {
             return MailResourcesAsset.singleEmail.swiftUIImage
         }
     }
+
+    public var hint: String? {
+        return nil
+    }
 }

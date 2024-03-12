@@ -87,4 +87,8 @@ extension Action: SettingsOptionEnum {
     public var image: Image? {
         return nil
     }
+
+    public var hint: String? {
+        return nil
+    }
 }

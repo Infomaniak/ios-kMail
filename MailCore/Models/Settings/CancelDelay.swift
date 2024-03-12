@@ -38,6 +38,10 @@ public enum CancelDelay: Int, CaseIterable, SettingsOptionEnum {
         return nil
     }
 
+    public var hint: String? {
+        return nil
+    }
+
     public var matomoName: String {
         return "\(rawValue)s"
     }

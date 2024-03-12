@@ -49,4 +49,8 @@ public enum ThreadDensity: String, CaseIterable, SettingsOptionEnum {
         }
         return resource.swiftUIImage
     }
+
+    public var hint: String? {
+        return nil
+    }
 }

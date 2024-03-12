@@ -5,7 +5,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Tue, 27 Feb 2024 11:36:19 +0100
+ * Exported at: Mon, 11 Mar 2024 13:27:21 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -511,6 +511,12 @@
 
 /* loco:62a33e1331304f212d104d43 */
 "commercialFolder" = "Werbeaktionen";
+
+/* loco:65c25397da1981a2280677ce */
+"composeMailboxCurrentTitle" = "Senden Sie eine Nachricht mit der Adresse :";
+
+/* loco:65e833228a845e47d60a4612 */
+"composeMailboxSelectionTitle" = "Wählen Sie die Absenderadresse aus:";
 
 /* loco:63a474bd648cd86d56444012 */
 "confirmLogoutDescription" = "Sind Sie sicher, dass Sie sich von %@ abmelden möchten?";
@@ -1085,12 +1091,6 @@
 /* loco:6537b4ae2236eeafef03c882 */
 "searchFolderName" = "Suche";
 
-/* loco:65c253eca5ff12654a065ce2 */
-"selectComposeMailboxDescription" = "Mit diesem Konto verknüpfte E-Mail-Adressen";
-
-/* loco:65c25397da1981a2280677ce */
-"selectComposeMailboxTitle" = "An welche E-Mail-Adresse möchten Sie eine Nachricht senden?";
-
 /* loco:62ac871d2502053d7b0cbb32 */
 "send" = "Senden Sie";
 
@@ -1129,6 +1129,15 @@
 
 /* loco:65b2780c2b7256da8b038512 */
 "settingsAutoAdvanceListOfThreadsTitle" = "Liste der Themen";
+
+/* loco:65df003b996ecfc40c0d9962 */
+"settingsAutoAdvanceNaturalThreadDescription" = "Wiederholt die letzte Aktion, die Sie durchgeführt haben";
+
+/* loco:65eb1767b7ece7e666042e02 */
+"settingsAutoAdvanceNaturalThreadHint" = "Wählt automatisch die nächste oder vorherige Konversation aus, je nachdem, wie Sie zuletzt interagiert haben.";
+
+/* loco:65defeba6cb9206d3f0d4392 */
+"settingsAutoAdvanceNaturalThreadTitle" = "Wiederholung der letzten Aktion";
 
 /* loco:65b27d1e0565d99b930ae142 */
 "settingsAutoAdvancePreviousThreadDescription" = "Vorheriges Thema beim Archivieren oder Löschen anzeigen";

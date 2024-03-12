@@ -5,7 +5,7 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Tue, 27 Feb 2024 11:36:19 +0100
+ * Exported at: Mon, 11 Mar 2024 13:27:21 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -511,6 +511,12 @@
 
 /* loco:62a33e1331304f212d104d43 */
 "commercialFolder" = "Promozioni";
+
+/* loco:65c25397da1981a2280677ce */
+"composeMailboxCurrentTitle" = "Invia un messaggio con l'indirizzo :";
+
+/* loco:65e833228a845e47d60a4612 */
+"composeMailboxSelectionTitle" = "Seleziona l'indirizzo di invio :";
 
 /* loco:63a474bd648cd86d56444012 */
 "confirmLogoutDescription" = "Sei sicuro di volerti disconnettere da %@?";
@@ -1085,12 +1091,6 @@
 /* loco:6537b4ae2236eeafef03c882 */
 "searchFolderName" = "Ricerca";
 
-/* loco:65c253eca5ff12654a065ce2 */
-"selectComposeMailboxDescription" = "Indirizzi e-mail collegati a questo account";
-
-/* loco:65c25397da1981a2280677ce */
-"selectComposeMailboxTitle" = "A quale indirizzo e-mail desidera inviare un messaggio?";
-
 /* loco:62ac871d2502053d7b0cbb32 */
 "send" = "Inviare";
 
@@ -1129,6 +1129,15 @@
 
 /* loco:65b2780c2b7256da8b038512 */
 "settingsAutoAdvanceListOfThreadsTitle" = "Elenco delle discussioni";
+
+/* loco:65df003b996ecfc40c0d9962 */
+"settingsAutoAdvanceNaturalThreadDescription" = "Ripete l’ultima azione eseguita";
+
+/* loco:65eb1767b7ece7e666042e02 */
+"settingsAutoAdvanceNaturalThreadHint" = "Seleziona automaticamente la conversazione successiva o precedente, a seconda dell’ultima interazione.";
+
+/* loco:65defeba6cb9206d3f0d4392 */
+"settingsAutoAdvanceNaturalThreadTitle" = "Ripetere l’ultima azione";
 
 /* loco:65b27d1e0565d99b930ae142 */
 "settingsAutoAdvancePreviousThreadDescription" = "Visualizzazione della discussione precedente quando si archivia o si elimina";

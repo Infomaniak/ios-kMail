@@ -36,4 +36,8 @@ public enum ExternalContent: String, CaseIterable, SettingsOptionEnum {
     public var image: Image? {
         return nil
     }
+
+    public var hint: String? {
+        return nil
+    }
 }

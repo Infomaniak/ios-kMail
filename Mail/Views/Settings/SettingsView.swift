@@ -109,7 +109,7 @@ struct SettingsView: View {
                         title: MailResourcesStrings.Localizable.settingsAutoAdvanceTitle,
                         subtitle: autoAdvance.description
                     ) {
-                        SettingsAutoAdvanceView(section: isCompactWindow ? .compact : .regular)
+                        SettingsAutoAdvanceView()
                     }
 
                     // MARK: External Content

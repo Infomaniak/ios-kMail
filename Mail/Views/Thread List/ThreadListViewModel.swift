@@ -163,6 +163,8 @@ final class DateSection: Identifiable, Equatable {
         }
     }
 
+    private var movingUp = false
+
     // MARK: Init
 
     init(
@@ -224,6 +226,14 @@ final class DateSection: Identifiable, Equatable {
             selectedThreadOwner.selectedThread = newThreads[validIndex]
         case .listOfThread:
             selectedThreadOwner.selectedThread = nil
+        case .naturalThread:
+            if movingUp {
+                let validIndex = max(oldSelectedThreadIndex - 1, 0)
+                selectedThreadOwner.selectedThread = newThreads[validIndex]
+            } else {
+                let validIndex = min(oldSelectedThreadIndex, newThreads.count - 1)
+                selectedThreadOwner.selectedThread = newThreads[validIndex]
+            }
         }
     }
 
@@ -243,6 +253,14 @@ final class DateSection: Identifiable, Equatable {
               currentThreadIndex > 0 else { return }
         let newIndex = currentThreadIndex - 1
         selectedThreadOwner.selectedThread = filteredThreads[newIndex]
+    }
+
+    func detectDirection(from newThread: Thread) {
+        guard !filteredThreads.isEmpty,
+              let initialThread = selectedThreadOwner.selectedThread,
+              let initialThreadIndex = filteredThreads.firstIndex(where: { $0.uid == initialThread.uid }),
+              let newThreadIndex = filteredThreads.firstIndex(where: { $0.uid == newThread.uid }) else { return }
+        movingUp = newThreadIndex < initialThreadIndex
     }
 
     func resetFilterIfNeeded(filteredThreads: [Thread]) {

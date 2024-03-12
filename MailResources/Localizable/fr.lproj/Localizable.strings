@@ -5,7 +5,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Tue, 27 Feb 2024 11:36:19 +0100
+ * Exported at: Mon, 11 Mar 2024 13:27:21 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -511,6 +511,12 @@
 
 /* loco:62a33e1331304f212d104d43 */
 "commercialFolder" = "Promotions";
+
+/* loco:65c25397da1981a2280677ce */
+"composeMailboxCurrentTitle" = "Envoyer un message avec l’adresse :";
+
+/* loco:65e833228a845e47d60a4612 */
+"composeMailboxSelectionTitle" = "Sélectionner l’adresse d’envoi :";
 
 /* loco:63a474bd648cd86d56444012 */
 "confirmLogoutDescription" = "Êtes-vous sûr de vouloir vous déconnecter du compte %@ ?";
@@ -1085,12 +1091,6 @@
 /* loco:6537b4ae2236eeafef03c882 */
 "searchFolderName" = "Recherche";
 
-/* loco:65c253eca5ff12654a065ce2 */
-"selectComposeMailboxDescription" = "Adresses mail associées à ce compte";
-
-/* loco:65c25397da1981a2280677ce */
-"selectComposeMailboxTitle" = "Avec quelle adresse mail souhaitez-vous envoyer un message ?";
-
 /* loco:62ac871d2502053d7b0cbb32 */
 "send" = "Envoyer";
 
@@ -1130,6 +1130,15 @@
 /* loco:65b2780c2b7256da8b038512 */
 "settingsAutoAdvanceListOfThreadsTitle" = "Liste des conversations";
 
+/* loco:65df003b996ecfc40c0d9962 */
+"settingsAutoAdvanceNaturalThreadDescription" = "Répète la dernière action que vous avez effectuée";
+
+/* loco:65eb1767b7ece7e666042e02 */
+"settingsAutoAdvanceNaturalThreadHint" = "Sélectionne automatiquement la conversation suivante ou précédente, selon votre dernière interaction.";
+
+/* loco:65defeba6cb9206d3f0d4392 */
+"settingsAutoAdvanceNaturalThreadTitle" = "Répéter la dernière action";
+
 /* loco:65b27d1e0565d99b930ae142 */
 "settingsAutoAdvancePreviousThreadDescription" = "Afficher la conversation précédente après archivage ou suppression";
 
@@ -1137,7 +1146,7 @@
 "settingsAutoAdvancePreviousThreadTitle" = "Conversation précédente";
 
 /* loco:65b274f8719e4e08b103c7f4 */
-"settingsAutoAdvanceTitle" = "Avance Automatique";
+"settingsAutoAdvanceTitle" = "Avance automatique";
 
 /* loco:62c693f572adfe66fd2a82b7 */
 "settingsCancellationPeriodDescription" = "Vous avez la possibilité d’annuler l’envoi de votre e-mail jusqu’à 30 secondes";

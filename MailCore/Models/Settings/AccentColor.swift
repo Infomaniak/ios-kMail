@@ -41,6 +41,10 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
         }
     }
 
+    public var hint: String? {
+        return nil
+    }
+
     // MARK: - Colors
 
     public var primary: MailResourcesColors {
