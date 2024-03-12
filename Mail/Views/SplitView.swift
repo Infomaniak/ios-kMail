@@ -64,8 +64,6 @@ struct SplitView: View {
     @LazyInjectService private var platformDetector: PlatformDetectable
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
 
-    @State private var isShowingSyncDiscovery = false
-
     let mailboxManager: MailboxManager
 
     var body: some View {
@@ -125,7 +123,7 @@ struct SplitView: View {
                 openURL(url.url)
             }
         }
-        .discoveryPresenter(isPresented: $isShowingSyncDiscovery) {
+        .discoveryPresenter(isPresented: $mainViewState.isShowingSyncDiscovery) {
             DiscoveryView(item: .syncDiscovery) {
                 UserDefaults.shared.shouldPresentSyncDiscovery = false
             } completionHandler: { willSync in
@@ -164,7 +162,7 @@ struct SplitView: View {
                 }
                 guard !platformDetector.isDebug else { return }
                 // We don't want to show both DiscoveryView at the same time
-                isShowingSyncDiscovery = mainViewState.isShowingUpdateAvailable ? false : showSync()
+                mainViewState.isShowingSyncDiscovery = mainViewState.isShowingUpdateAvailable ? false : showSync()
             }
         }
         .onOpenURL { url in
