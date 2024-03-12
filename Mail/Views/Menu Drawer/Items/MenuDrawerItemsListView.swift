@@ -26,12 +26,13 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct MenuDrawerItemsAdvancedListView: View {
+    @EnvironmentObject private var mainViewState: MainViewState
+
     @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.openURL) private var openURL
 
     @State private var isShowingRestoreMails = false
-    @ModalState private var isShowingSyncProfile = false
 
     let mailboxCanRestoreEmails: Bool
 
@@ -42,10 +43,7 @@ struct MenuDrawerItemsAdvancedListView: View {
                                label: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle,
                                matomoName: "syncProfile") {
                 matomo.track(eventWithCategory: .syncAutoConfig, name: "openFromMenuDrawer")
-                isShowingSyncProfile = true
-            }
-            .sheet(isPresented: $isShowingSyncProfile) {
-                SyncProfileNavigationView()
+                mainViewState.isShowingSyncProfile = true
             }
 
             MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,

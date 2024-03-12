@@ -28,6 +28,7 @@ public class MainViewState: ObservableObject, SelectedThreadOwnable {
 
     @ModalPublished public var settingsViewConfig: SettingsViewConfig?
 
+    @ModalPublished public var isShowingSyncProfile = false
     @Published public var isShowingSearch = false
     @Published public var isShowingReviewAlert = false
     @Published public var isShowingUpdateAvailable = false

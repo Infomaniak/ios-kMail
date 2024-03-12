@@ -65,7 +65,6 @@ struct SplitView: View {
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
 
     @State private var isShowingSyncDiscovery = false
-    @ModalState private var isShowingSyncProfile = false
 
     let mailboxManager: MailboxManager
 
@@ -131,7 +130,7 @@ struct SplitView: View {
                 UserDefaults.shared.shouldPresentSyncDiscovery = false
             } completionHandler: { willSync in
                 guard willSync else { return }
-                isShowingSyncProfile = true
+                mainViewState.isShowingSyncProfile = true
             }
         }
         .discoveryPresenter(isPresented: $mainViewState.isShowingSetAppAsDefaultDiscovery) {
@@ -142,7 +141,7 @@ struct SplitView: View {
                 openURL(settingsUrl)
             }
         }
-        .sheet(isPresented: $isShowingSyncProfile) {
+        .sheet(isPresented: $mainViewState.isShowingSyncProfile) {
             SyncProfileNavigationView()
         }
         .sheet(item: $mainViewState.settingsViewConfig,
