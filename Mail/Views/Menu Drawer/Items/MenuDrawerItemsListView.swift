@@ -32,7 +32,7 @@ struct MenuDrawerItemsAdvancedListView: View {
 
     @Environment(\.openURL) private var openURL
 
-    @State private var isShowingRestoreMails = false
+    @ModalState private var isShowingRestoreMails = false
 
     let mailboxCanRestoreEmails: Bool
 

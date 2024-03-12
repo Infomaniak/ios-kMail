@@ -48,7 +48,7 @@ struct MailboxCell: View {
     @Environment(\.mailboxCellStyle) private var style: Style
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
-    @State private var isShowingLockedView = false
+    @ModalState private var isShowingLockedView = false
     @ModalState private var isShowingUpdatePasswordView = false
 
     let mailbox: Mailbox
