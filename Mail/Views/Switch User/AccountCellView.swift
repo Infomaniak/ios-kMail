@@ -55,11 +55,11 @@ struct AccountCellView: View {
             }))
         }
         .background {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: 8)
                 .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
         }
         .overlay {
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: 8)
                 .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
         }
     }
