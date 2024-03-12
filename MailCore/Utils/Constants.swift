@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakDI
 import MailResources
 import SwiftRegex
 import SwiftSoup
@@ -161,8 +162,10 @@ public enum Constants {
         let release = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String? ?? "x.x"
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String? ?? "x"
         let betaRelease = Bundle.main.isRunningInTestFlight ? "beta" : ""
+        @InjectService var platformDetector: PlatformDetectable
+        var systemName = platformDetector.isMac ? "macOS" : UIDevice.current.systemName
 
-        return "\(appName) iOS version \(release)-\(betaRelease)\(build)"
+        return "\(appName) \(systemName) version \(release)-\(betaRelease)\(build)"
     }
 
     public static let searchFolderId = "search_folder_id"
