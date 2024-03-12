@@ -42,25 +42,11 @@ struct AccountMailboxesListView: View {
                 AccountMailboxCell(mailbox: mailbox, selectedMailbox: selectedMailbox, selectMailbox: selectMailbox)
             }
         } label: {
-            HStack(spacing: UIPadding.small) {
-                AvatarView(mailboxManager: mailboxManager, contactConfiguration: .user(user: account.user), size: 40)
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(account.user.displayName)
-                        .textStyle(.bodyMedium)
-                    Text(account.user.email)
-                        .textStyle(.bodySecondary)
+            AccountHeaderCell(account: account, mailboxManager: mailboxManager, isSelected: .constant(false))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 8)
+                        .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
                 }
-                .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-                ChevronIcon(direction: .down)
-            }
-            .padding(.vertical, value: .small)
-            .padding(.horizontal, value: .regular)
-            .overlay {
-                RoundedRectangle(cornerRadius: 8)
-                    .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
-            }
         }
     }
 }

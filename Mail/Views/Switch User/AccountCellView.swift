@@ -54,8 +54,6 @@ struct AccountCellView: View {
                 selectedUserId = $0 ? account.userId : nil
             }))
         }
-        .padding([.leading, .vertical], value: .small)
-        .padding(.trailing, value: .regular)
         .background {
             RoundedRectangle(cornerRadius: 10)
                 .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
@@ -75,6 +73,12 @@ struct AccountHeaderCell: View {
 
     @Binding var isSelected: Bool
 
+    enum AccountHeaderCellType {
+        case switchAccount, selectComposeMailbox
+    }
+
+    var type = AccountHeaderCellType.switchAccount
+
     var body: some View {
         HStack(spacing: UIPadding.small) {
             AvatarView(mailboxManager: mailboxManager, contactConfiguration: .user(user: account.user), size: 40)
@@ -85,14 +89,20 @@ struct AccountHeaderCell: View {
                     .textStyle(.bodySecondary)
             }
             .lineLimit(1)
+            .frame(maxWidth: .infinity, alignment: .leading)
 
-            Spacer(minLength: 0)
-
-            if isSelected {
-                IKIcon(MailResourcesAsset.check)
-                    .foregroundStyle(.tint)
+            switch type {
+            case .switchAccount:
+                if isSelected {
+                    IKIcon(MailResourcesAsset.check)
+                        .foregroundStyle(.tint)
+                }
+            case .selectComposeMailbox:
+                ChevronIcon(direction: .down)
             }
         }
+        .padding(.vertical, value: .small)
+        .padding(.horizontal, value: .regular)
     }
 }
 

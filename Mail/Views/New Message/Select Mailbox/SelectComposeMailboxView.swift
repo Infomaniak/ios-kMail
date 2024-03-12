@@ -44,6 +44,7 @@ struct SelectComposeMailboxView: View {
                 .textStyle(.header2)
                 .multilineTextAlignment(.center)
                 .padding(.bottom, value: .medium)
+                .padding(.horizontal, value: .regular)
 
             ScrollView {
                 ForEach(viewModel.accounts) { account in
@@ -52,20 +53,22 @@ struct SelectComposeMailboxView: View {
                         selectedMailbox: viewModel.selectedMailbox,
                         selectMailbox: viewModel.selectMailbox
                     )
+                    .padding(.horizontal, value: .regular)
                 }
             }
 
             if let selectedMailbox = viewModel.selectedMailbox,
                let account = accountManager.account(for: selectedMailbox.userId), viewModel.selectionMade {
                 SelectedMailboxView(account: account, selectedMailbox: selectedMailbox)
+                    .padding(.horizontal, value: .medium)
             }
 
             Button(MailResourcesStrings.Localizable.buttonContinue, action: viewModel.validateMailboxChoice)
                 .buttonStyle(.ikPlain)
                 .controlSize(.large)
                 .ikButtonFullWidth(true)
+                .padding(.horizontal, value: .medium)
         }
-        .padding(.horizontal, value: .medium)
         .padding(.bottom, UIPadding.onBoardingBottomButtons)
         .mailboxCellStyle(.account)
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "SelectComposeMailboxView"])

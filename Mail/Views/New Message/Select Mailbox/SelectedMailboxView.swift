@@ -37,8 +37,8 @@ struct SelectedMailboxView: View {
                 .foregroundStyle(MailResourcesAsset.greenColor)
         }
         .lineLimit(1)
-        .padding([.leading, .vertical], value: .small)
-        .padding(.trailing, value: .regular)
+        .padding(.vertical, value: .small)
+        .padding(.horizontal, value: .regular)
         .background(
             RoundedRectangle(cornerRadius: 8)
                 .fill(MailResourcesAsset.textFieldColor.swiftUIColor)
