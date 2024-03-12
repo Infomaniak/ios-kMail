@@ -161,8 +161,16 @@ public enum Constants {
         let release = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String? ?? "x.x"
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as! String? ?? "x"
         let betaRelease = Bundle.main.isRunningInTestFlight ? "beta" : ""
+        let platformDetector = PlatformDetector()
+        var device = ""
 
-        return "\(appName) iOS version \(release)-\(betaRelease)\(build)"
+        if platformDetector.isMac {
+            device = "macOS"
+        } else {
+            device = "iOS"
+        }
+
+        return "\(appName) \(device) version \(release)-\(betaRelease)\(build)"
     }
 
     public static let searchFolderId = "search_folder_id"
