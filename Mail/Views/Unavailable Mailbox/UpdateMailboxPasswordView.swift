@@ -20,6 +20,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct UpdateMailboxPasswordView: View {
@@ -32,7 +33,7 @@ struct UpdateMailboxPasswordView: View {
     @State private var updatedMailboxPassword = ""
     @State private var isShowingError = false
     @State private var isLoading = false
-    @State private var isShowingDetachMailboxAlertView = false
+    @ModalState private var isShowingDetachMailboxAlertView = false
     @State private var snackBarAwareModifier = SnackBarAwareModifier(inset: 0)
 
     private var disableButton: Bool {

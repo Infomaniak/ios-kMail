@@ -17,9 +17,10 @@
  */
 
 import Foundation
+import SwiftModalPresentation
 
 class SheetState<State>: ObservableObject {
-    @Published var isShowing = false
+    @ModalPublished var isShowing = false
     @Published var state: State? {
         didSet { isShowing = state != nil }
     }

@@ -20,6 +20,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct ThreadModeSettingUpdate: Identifiable {
@@ -31,7 +32,7 @@ struct SettingsThreadModeView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @State private var selectedValue: ThreadMode
-    @State private var threadModeSettingUpdate: ThreadModeSettingUpdate?
+    @ModalState private var threadModeSettingUpdate: ThreadModeSettingUpdate?
 
     init() {
         _selectedValue = State(wrappedValue: UserDefaults.shared.threadMode)

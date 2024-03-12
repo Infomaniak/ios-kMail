@@ -23,6 +23,7 @@ import MailCore
 import MailResources
 import Popovers
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
@@ -72,7 +73,7 @@ struct ComposeMessageView: View {
     @LazyInjectService private var reviewManager: ReviewManageable
 
     @State private var isLoadingContent = true
-    @State private var isShowingCancelAttachmentsError = false
+    @ModalState private var isShowingCancelAttachmentsError = false
     @State private var autocompletionType: ComposeViewFieldType?
     @State private var editorFocus = false
     @State private var currentSignature: Signature?

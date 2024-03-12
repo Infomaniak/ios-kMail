@@ -22,6 +22,7 @@ import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 import WrappingHStack
 
@@ -42,11 +43,11 @@ struct ThreadView: View {
     @State private var displayNavigationTitle = false
     @State private var replyOrReplyAllMessage: Message?
 
-    @State private var isShowingExternalTagAlert = false
+    @ModalState private var isShowingExternalTagAlert = false
 
     @ObservedRealmObject var thread: Thread
 
-    @State private var nearestFlushAlert: FlushAlertState?
+    @ModalState private var nearestFlushAlert: FlushAlertState?
 
     private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
 

@@ -24,7 +24,7 @@ import MailResources
 import SwiftModalPresentation
 import SwiftUI
 
-struct AIProposition: Identifiable {
+struct AIProposition: Identifiable, Equatable {
     let id = UUID()
     let subject: String
     let body: String
@@ -43,8 +43,8 @@ final class AIModel: ObservableObject {
     @ModalPublished var isShowingPrompt = false
     @ModalPublished var isShowingProposition = false
 
-    @Published var isShowingReplaceBodyAlert = false
-    @Published var isShowingReplaceSubjectAlert: AIProposition?
+    @ModalPublished var isShowingReplaceBodyAlert = false
+    @ModalPublished var isShowingReplaceSubjectAlert: AIProposition?
 
     var keepConversationWhenPropositionIsDismissed = false
 
