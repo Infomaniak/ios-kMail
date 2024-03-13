@@ -41,7 +41,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "9d416547d67729a05d3b5965f72792db367d03d5"
+        "revision" : "c190e9179dfcafc062d7cab182827c8ab78acc54"
       }
     },
     {
@@ -150,6 +150,15 @@
       "state" : {
         "revision" : "8ecbfc886da39bccb01c34abef5f2ff4073ad633",
         "version" : "12.4.0"
+      }
+    },
+    {
+      "identity" : "osinfo",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/MarcoEidinger/OSInfo.git",
+      "state" : {
+        "revision" : "54fd6673923ef5966268918152235b0e15ed057c",
+        "version" : "1.0.1"
       }
     },
     {
