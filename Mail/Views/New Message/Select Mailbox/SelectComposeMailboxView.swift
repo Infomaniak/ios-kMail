@@ -43,17 +43,20 @@ struct SelectComposeMailboxView: View {
             Text(MailResourcesStrings.Localizable.composeMailboxSelectionTitle)
                 .textStyle(.header2)
                 .multilineTextAlignment(.center)
-                .padding(.bottom, value: .medium)
+                .padding(.bottom, value: .regular)
                 .padding(.horizontal, value: .regular)
 
             ScrollView {
-                ForEach(viewModel.accounts) { account in
-                    AccountMailboxesListView(
-                        account: account,
-                        selectedMailbox: viewModel.selectedMailbox,
-                        selectMailbox: viewModel.selectMailbox
-                    )
-                    .padding(.horizontal, value: .regular)
+                VStack(spacing: 0) {
+                    ForEach(viewModel.accounts) { account in
+                        AccountMailboxesListView(
+                            account: account,
+                            selectedMailbox: viewModel.selectedMailbox,
+                            selectMailbox: viewModel.selectMailbox
+                        )
+                        .padding(.horizontal, value: .regular)
+                        .padding(.top, value: .small)
+                    }
                 }
             }
 

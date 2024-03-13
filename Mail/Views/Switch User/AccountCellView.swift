@@ -72,7 +72,7 @@ struct AccountHeaderCell: View {
     var type = AccountHeaderCellType.switchAccount
 
     var body: some View {
-        HStack(spacing: UIPadding.small) {
+        HStack {
             AvatarView(mailboxManager: mailboxManager, contactConfiguration: .user(user: account.user), size: 40)
             VStack(alignment: .leading, spacing: 0) {
                 Text(account.user.displayName)
