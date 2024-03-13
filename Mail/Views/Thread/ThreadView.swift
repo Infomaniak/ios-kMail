@@ -42,6 +42,9 @@ struct ThreadView: View {
 
     @State private var displayNavigationTitle = false
     @State private var replyOrReplyAllMessage: Message?
+    @State private var messagesToMove: [Message]?
+    @State private var nearestFlushAlert: FlushAlertState?
+    @State private var toolbarActions: [Action]
 
     @ModalState private var isShowingExternalTagAlert = false
 
@@ -165,6 +168,10 @@ struct ThreadView: View {
                     ToolbarButton(text: action.title, icon: action.icon) {
                         didTap(action: action)
                     }
+                    .sheet(item: $messagesToMove) { messages in
+                        MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
+                            .sheetViewStyle()
+                    }
                 }
                 Spacer()
             }
@@ -201,6 +208,10 @@ struct ThreadView: View {
            message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
             replyOrReplyAllMessage = message
             return
+        }
+
+        if action == .openMovePanel {
+            messagesToMove = messages
         }
 
         let originFolder = thread.folder?.freezeIfNeeded()
