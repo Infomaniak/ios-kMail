@@ -54,6 +54,7 @@ struct IdentifiableSheetOrDesktopWindowViewModifier<Item: Identifiable & Codable
             content.onChange(of: item?.id) { _ in
                 guard let item else { return }
                 openWindow(id: desktopWindowIdentifier, value: item)
+                self.item = nil
             }
         } else {
             content.sheet(item: $item) { item in
