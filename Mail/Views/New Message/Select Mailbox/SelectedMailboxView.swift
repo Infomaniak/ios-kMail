@@ -43,7 +43,6 @@ struct SelectedMailboxView: View {
             RoundedRectangle(cornerRadius: 8)
                 .fill(MailResourcesAsset.textFieldColor.swiftUIColor)
         )
-        .padding(.bottom, value: .regular)
     }
 }
 

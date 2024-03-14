@@ -71,8 +71,9 @@ struct CurrentComposeMailboxView: View {
                 )) {
                     Text(MailResourcesStrings.Localizable.buttonSendWithDifferentAddress)
                         .textStyle(.bodyMediumAccent)
-                        .padding(.bottom, UIPadding.onBoardingBottomButtons)
                 }
+                .buttonStyle(.ikLink())
+                .padding(.bottom, UIPadding.onBoardingBottomButtons)
             }
             .ikButtonFullWidth(true)
             .controlSize(.large)

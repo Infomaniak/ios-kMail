@@ -64,6 +64,7 @@ struct SelectComposeMailboxView: View {
                let account = accountManager.account(for: selectedMailbox.userId), viewModel.selectionMade {
                 SelectedMailboxView(account: account, selectedMailbox: selectedMailbox)
                     .padding(.horizontal, value: .medium)
+                    .padding(.bottom, value: .regular)
             }
 
             Button(MailResourcesStrings.Localizable.buttonContinue, action: viewModel.validateMailboxChoice)
