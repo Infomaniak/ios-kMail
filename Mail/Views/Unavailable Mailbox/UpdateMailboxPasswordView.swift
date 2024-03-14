@@ -33,7 +33,7 @@ struct UpdateMailboxPasswordView: View {
     @State private var updatedMailboxPassword = ""
     @State private var isShowingError = false
     @State private var isLoading = false
-    @ModalState private var isShowingDetachMailboxAlertView = false
+    @ModalState(context: ContextKeys.detachMailbox) private var isShowingDetachMailboxAlertView = false
     @State private var snackBarAwareModifier = SnackBarAwareModifier(inset: 0)
 
     private var disableButton: Bool {

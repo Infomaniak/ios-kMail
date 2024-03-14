@@ -26,7 +26,7 @@ import SwiftUI
 struct ExternalTagBottomView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @ModalState private var isShowingExternalTagAlert = false
+    @ModalState(context: ContextKeys.externalTagBottom) private var isShowingExternalTagAlert = false
     @State private var isShowingExternalTag = true
 
     let externalTag: DisplayExternalRecipientStatus.State

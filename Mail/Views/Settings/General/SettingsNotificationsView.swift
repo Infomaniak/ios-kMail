@@ -37,7 +37,7 @@ struct SettingsNotificationsView: View {
         .notificationsEnabled
     @State var subscribedTopics: [String]?
 
-    @ModalState private var showAlertNotification = false
+    @ModalState(context: ContextKeys.settings) private var showAlertNotification = false
     @State private var showWarning = false
 
     var body: some View {

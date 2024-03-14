@@ -176,7 +176,7 @@ struct OnboardingView: View {
     @LazyInjectService var orientationManager: OrientationManageable
 
     @State private var selection: Int
-    @ModalState private var isPresentingCreateAccount = false
+    @ModalState(context: ContextKeys.onboarding) private var isPresentingCreateAccount = false
     @StateObject private var loginHandler = LoginHandler()
 
     private var isScrollEnabled: Bool

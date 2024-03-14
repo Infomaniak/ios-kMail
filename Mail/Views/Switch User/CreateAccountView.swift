@@ -30,7 +30,7 @@ struct CreateAccountView: View {
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
-    @ModalState private var isPresentingCreateAccount = false
+    @ModalState(context: ContextKeys.createAccount) private var isPresentingCreateAccount = false
 
     @ObservedObject var loginHandler: LoginHandler
 

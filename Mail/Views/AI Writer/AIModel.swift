@@ -39,12 +39,12 @@ final class AIModel: ObservableObject {
     @Published var isLoading = false
     @Published var error: AIError?
 
-    @ModalPublished var isShowingDiscovery = false
-    @ModalPublished var isShowingPrompt = false
-    @ModalPublished var isShowingProposition = false
+    @ModalPublished(context: ContextKeys.ai) var isShowingDiscovery = false
+    @ModalPublished(context: ContextKeys.ai) var isShowingPrompt = false
+    @ModalPublished(context: ContextKeys.ai) var isShowingProposition = false
 
-    @ModalPublished var isShowingReplaceBodyAlert = false
-    @ModalPublished var isShowingReplaceSubjectAlert: AIProposition?
+    @ModalPublished(context: ContextKeys.aiAlert) var isShowingReplaceBodyAlert = false
+    @ModalPublished(wrappedValue: nil, context: ContextKeys.aiAlert) var isShowingReplaceSubjectAlert: AIProposition?
 
     var keepConversationWhenPropositionIsDismissed = false
 

@@ -57,8 +57,8 @@ struct AccountView: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @ModalState private var isShowingLogoutAlert = false
-    @ModalState private var presentedAccountDeletionToken: ApiToken?
+    @ModalState(context: ContextKeys.account) private var isShowingLogoutAlert = false
+    @ModalState(wrappedValue: nil, context: ContextKeys.account) private var presentedAccountDeletionToken: ApiToken?
     @State private var delegate = AccountViewDelegate()
     @State private var isLottieAnimationVisible = false
 

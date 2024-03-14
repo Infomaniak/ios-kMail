@@ -35,7 +35,7 @@ struct AttachmentPreview: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @ModalState private var downloadedAttachmentURL: IdentifiableURL?
+    @ModalState(wrappedValue: nil, context: ContextKeys.attachmentDownload) private var downloadedAttachmentURL: IdentifiableURL?
 
     @ObservedRealmObject var attachment: MailCore.Attachment
 

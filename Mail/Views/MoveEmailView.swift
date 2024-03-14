@@ -35,7 +35,7 @@ struct MoveEmailView: View {
 
     @StateObject private var viewModel: FolderListViewModel
 
-    @ModalState private var isShowingCreateFolderAlert = false
+    @ModalState(context: ContextKeys.moveEmail) private var isShowingCreateFolderAlert = false
 
     let movedMessages: [Message]
     let originFolder: Folder?

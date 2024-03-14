@@ -24,8 +24,8 @@ import SwiftUI
 
 struct ComposeMessageBodyView: View {
     @State private var isShowingCamera = false
-    @ModalState private var isShowingFileSelection = false
-    @ModalState private var isShowingPhotoLibrary = false
+    @ModalState(context: ContextKeys.composeBody) private var isShowingFileSelection = false
+    @ModalState(context: ContextKeys.composeBody) private var isShowingPhotoLibrary = false
 
     @ObservedRealmObject var draft: Draft
 

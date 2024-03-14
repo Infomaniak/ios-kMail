@@ -32,7 +32,7 @@ struct SettingsThreadModeView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @State private var selectedValue: ThreadMode
-    @ModalState private var threadModeSettingUpdate: ThreadModeSettingUpdate?
+    @ModalState(wrappedValue: nil, context: ContextKeys.settings) private var threadModeSettingUpdate: ThreadModeSettingUpdate?
 
     init() {
         _selectedValue = State(wrappedValue: UserDefaults.shared.threadMode)

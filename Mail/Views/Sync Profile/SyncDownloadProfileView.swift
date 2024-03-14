@@ -31,7 +31,7 @@ struct SyncDownloadProfileView: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @ModalState private var isConfigWebViewPresented = false
+    @ModalState(context: ContextKeys.sync) private var isConfigWebViewPresented = false
     @State private var isDownloadingConfig = false
 
     @Binding var navigationPath: [SyncProfileStep]
