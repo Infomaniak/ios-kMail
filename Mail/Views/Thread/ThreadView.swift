@@ -44,7 +44,6 @@ struct ThreadView: View {
     @State private var replyOrReplyAllMessage: Message?
     @State private var messagesToMove: [Message]?
     @State private var nearestFlushAlert: FlushAlertState?
-    @State private var toolbarActions: [Action]
 
     @ModalState private var isShowingExternalTagAlert = false
 
@@ -54,15 +53,8 @@ struct ThreadView: View {
 
     @State private var toolbarActions: [Action]
 
-    init(thread: Thread) {
-        self.thread = thread
-        _toolbarActions = thread.folder?.role == .archive ? State(wrappedValue: [
-            Action.reply,
-            Action.forward,
-            Action.openMovePanel,
-            Action.delete
-        ]) : State(wrappedValue: [Action.reply, Action.forward, Action.archive, Action.delete])
-    }
+    private static let standardActions: [Action] = [.reply, .forward, .archive, .delete]
+    private static let archiveActions: [Action] = [.reply, .forward, .openMovePanel, .delete]
 
     var body: some View {
         ScrollView {
@@ -156,7 +148,7 @@ struct ThreadView: View {
             }
         }
         .bottomBar {
-            ForEach(toolbarActions) { action in
+            ForEach(thread.folder?.role == .archive ? ThreadView.archiveActions : ThreadView.standardActions) { action in
                 if action == .reply {
                     ToolbarButton(text: action.title, icon: action.icon) {
                         didTap(action: action)
