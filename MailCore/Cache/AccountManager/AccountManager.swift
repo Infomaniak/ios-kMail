@@ -312,7 +312,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     private func fetchMailboxesMetadata(mailboxes: [Mailbox], apiFetcher: MailApiFetcher) async throws {
         try await withThrowingTaskGroup(of: Void.self) { group in
-            for mailbox in mailboxes where mailbox.isPasswordValid {
+            for mailbox in mailboxes where mailbox.isAvailable {
                 group.addTask {
                     async let permissions = apiFetcher.permissions(mailbox: mailbox)
                     async let externalMailInfo = apiFetcher.externalMailFlag(mailbox: mailbox)
