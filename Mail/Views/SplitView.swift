@@ -161,8 +161,7 @@ struct SplitView: View {
                     try await mailboxManager.refreshAllSignatures()
                 }
                 guard !platformDetector.isDebug else { return }
-                // We don't want to show both DiscoveryView at the same time
-                mainViewState.isShowingSyncDiscovery = mainViewState.isShowingUpdateAvailable ? false : showSync()
+                mainViewState.isShowingSyncDiscovery = shouldShowSync()
             }
         }
         .onOpenURL { url in
@@ -246,7 +245,11 @@ struct SplitView: View {
         }
     }
 
-    private func showSync() -> Bool {
+    private func shouldShowSync() -> Bool {
+        guard !mainViewState.isShowingUpdateAvailable else {
+            // We don't want to show both DiscoveryView at the same time
+            return false
+        }
         guard UserDefaults.shared.shouldPresentSyncDiscovery,
               !appLaunchCounter.isFirstLaunch else {
             return false
