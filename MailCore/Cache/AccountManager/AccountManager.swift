@@ -254,17 +254,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         try? await featureFlagsManager.fetchFlags()
 
-        for mailbox in mailboxesResponse {
-            async let permissions = apiFetcher.permissions(mailbox: mailbox)
-            async let externalMailInfo = apiFetcher.externalMailFlag(mailbox: mailbox)
-
-            if mailbox.isLimited {
-                mailbox.quotas = try await apiFetcher.quotas(mailbox: mailbox)
-            }
-
-            mailbox.permissions = try await permissions
-            mailbox.externalMailInfo = try await externalMailInfo
-        }
+        try await fetchMailboxesMetadata(mailboxes: mailboxesResponse, apiFetcher: apiFetcher)
 
         await mailboxInfosManager.storeMailboxes(user: user, mailboxes: mailboxesResponse)
         if let mainMailbox = (mailboxesResponse.first(where: { $0.isPrimary }) ?? mailboxesResponse.first)?.freezeIfNeeded() {
@@ -298,13 +288,8 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             removeAccount(toDeleteAccount: account)
             throw MailError.noMailbox
         }
-        for mailbox in fetchedMailboxes {
-            mailbox.permissions = try await apiFetcher.permissions(mailbox: mailbox)
-            if mailbox.isLimited {
-                mailbox.quotas = try await apiFetcher.quotas(mailbox: mailbox)
-            }
-            mailbox.externalMailInfo = try await apiFetcher.externalMailFlag(mailbox: mailbox)
-        }
+
+        try await fetchMailboxesMetadata(mailboxes: fetchedMailboxes, apiFetcher: apiFetcher)
 
         let mailboxRemovedList = await mailboxInfosManager.storeMailboxes(user: user, mailboxes: fetchedMailboxes)
         mailboxManagers.removeAll()
@@ -323,6 +308,27 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
 
         saveAccounts()
+    }
+
+    private func fetchMailboxesMetadata(mailboxes: [Mailbox], apiFetcher: MailApiFetcher) async throws {
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            for mailbox in mailboxes where mailbox.isAvailable {
+                group.addTask {
+                    async let permissions = apiFetcher.permissions(mailbox: mailbox)
+                    async let externalMailInfo = apiFetcher.externalMailFlag(mailbox: mailbox)
+
+                    if mailbox.isLimited {
+                        async let quotas = apiFetcher.quotas(mailbox: mailbox)
+                        mailbox.quotas = try await quotas
+                    }
+
+                    mailbox.permissions = try await permissions
+                    mailbox.externalMailInfo = try await externalMailInfo
+                }
+            }
+
+            try await group.waitForAll()
+        }
     }
 
     public func loadAccounts() -> [Account] {

@@ -22,4 +22,14 @@ import RealmSwift
 public class ExternalMailInfo: EmbeddedObject, Codable {
     @Persisted public var externalMailFlagEnabled: Bool
     @Persisted public var domains: List<String>
+
+    override public init() {
+        super.init()
+    }
+
+    public required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        externalMailFlagEnabled = try container.decode(Bool.self, forKey: .externalMailFlagEnabled)
+        domains = try container.decodeIfPresent(List<String>.self, forKey: .domains) ?? List()
+    }
 }
