@@ -1,12 +1,13 @@
 {
+  "originHash" : "c835d5365298c352cf12c2f148d73c4557fae07c9fd5e9066ffe848439b86528",
   "pins" : [
     {
       "identity" : "alamofire",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Alamofire/Alamofire",
       "state" : {
-        "revision" : "3dc6a42c7727c49bf26508e29b0a0b35f9c7e1ad",
-        "version" : "5.8.1"
+        "revision" : "723fa5a6c65812aec4a0d7cc432ee198883b6e00",
+        "version" : "5.9.0"
       }
     },
     {
@@ -23,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack",
       "state" : {
-        "revision" : "af4973721172dd7850a42a58a9ffcec0ec82e5a9",
-        "version" : "3.8.4"
+        "revision" : "4b8714a7fb84d42393314ce897127b3939885ec3",
+        "version" : "3.8.5"
       }
     },
     {
@@ -184,8 +185,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "55466ae0fb29c5f21866792f05c1fc0c590d7c29",
-        "version" : "10.47.0"
+        "revision" : "7a2f7d41ffa409978a6b5e475c2ee57f08222705",
+        "version" : "10.48.0"
       }
     },
     {
@@ -193,8 +194,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "b847a202a517a90763e8fd0656d8028aeee7b78d",
-        "version" : "8.20.0"
+        "revision" : "38f4f70d07117b9f958a76b1bff278c2f29ffe0e",
+        "version" : "8.21.0"
       }
     },
     {
@@ -301,8 +302,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/SwiftSoup",
       "state" : {
-        "revision" : "906757f851af2ab705753b0d3ef4471b620a30cc",
-        "version" : "1.1.0"
+        "revision" : "6ebcbe3c5598e52303884dd5ba32eed1f3c96b0b",
+        "version" : "1.2.0"
       }
     },
     {
@@ -342,5 +343,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
