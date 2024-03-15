@@ -25,6 +25,7 @@ import MailCore
 import MailResources
 import NavigationBackport
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
@@ -62,9 +63,6 @@ struct SplitView: View {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var platformDetector: PlatformDetectable
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
-
-    @State private var isShowingSyncDiscovery = false
-    @State private var isShowingSyncProfile = false
 
     let mailboxManager: MailboxManager
 
@@ -125,12 +123,12 @@ struct SplitView: View {
                 openURL(url.url)
             }
         }
-        .discoveryPresenter(isPresented: $isShowingSyncDiscovery) {
+        .discoveryPresenter(isPresented: $mainViewState.isShowingSyncDiscovery) {
             DiscoveryView(item: .syncDiscovery) {
                 UserDefaults.shared.shouldPresentSyncDiscovery = false
             } completionHandler: { willSync in
                 guard willSync else { return }
-                isShowingSyncProfile = true
+                mainViewState.isShowingSyncProfile = true
             }
         }
         .discoveryPresenter(isPresented: $mainViewState.isShowingSetAppAsDefaultDiscovery) {
@@ -141,7 +139,7 @@ struct SplitView: View {
                 openURL(settingsUrl)
             }
         }
-        .sheet(isPresented: $isShowingSyncProfile) {
+        .sheet(isPresented: $mainViewState.isShowingSyncProfile) {
             SyncProfileNavigationView()
         }
         .sheet(item: $mainViewState.settingsViewConfig,
@@ -163,8 +161,7 @@ struct SplitView: View {
                     try await mailboxManager.refreshAllSignatures()
                 }
                 guard !platformDetector.isDebug else { return }
-                // We don't want to show both DiscoveryView at the same time
-                isShowingSyncDiscovery = mainViewState.isShowingUpdateAvailable ? false : showSync()
+                mainViewState.isShowingSyncDiscovery = shouldShowSync()
             }
         }
         .onOpenURL { url in
@@ -248,7 +245,11 @@ struct SplitView: View {
         }
     }
 
-    private func showSync() -> Bool {
+    private func shouldShowSync() -> Bool {
+        guard !mainViewState.isShowingUpdateAvailable else {
+            // We don't want to show both DiscoveryView at the same time
+            return false
+        }
         guard UserDefaults.shared.shouldPresentSyncDiscovery,
               !appLaunchCounter.isFirstLaunch else {
             return false

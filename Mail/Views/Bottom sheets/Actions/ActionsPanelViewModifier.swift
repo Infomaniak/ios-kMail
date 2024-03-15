@@ -18,6 +18,7 @@
 
 import Foundation
 import MailCore
+import SwiftModalPresentation
 import SwiftUI
 
 extension View {
@@ -35,11 +36,11 @@ extension View {
 struct ActionsPanelViewModifier: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var reportForJunkMessage: Message?
-    @State private var reportedForDisplayProblemMessage: Message?
-    @State private var reportedForPhishingMessage: Message?
-    @State private var messagesToMove: [Message]?
-    @State private var flushAlert: FlushAlertState?
+    @ModalState private var reportForJunkMessage: Message?
+    @ModalState private var reportedForDisplayProblemMessage: Message?
+    @ModalState private var reportedForPhishingMessage: Message?
+    @ModalState private var messagesToMove: [Message]?
+    @ModalState private var flushAlert: FlushAlertState?
 
     @Binding var messages: [Message]?
     let originFolder: Folder?

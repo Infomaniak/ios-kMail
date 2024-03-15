@@ -20,6 +20,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct CalendarAttendeesView: View {
@@ -28,7 +29,7 @@ struct CalendarAttendeesView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingAttendees = false
-    @State private var isShowingAllAttendees = false
+    @ModalState private var isShowingAllAttendees = false
 
     let organizer: Attendee?
     let attendees: [Attendee]

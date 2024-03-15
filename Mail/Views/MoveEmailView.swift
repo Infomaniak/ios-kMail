@@ -22,6 +22,7 @@ import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 
 struct MoveEmailView: View {
@@ -34,7 +35,7 @@ struct MoveEmailView: View {
 
     @StateObject private var viewModel: FolderListViewModel
 
-    @State private var isShowingCreateFolderAlert = false
+    @ModalState(context: ContextKeys.moveEmail) private var isShowingCreateFolderAlert = false
 
     let movedMessages: [Message]
     let originFolder: Folder?

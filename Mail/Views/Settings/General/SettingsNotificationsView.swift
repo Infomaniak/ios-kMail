@@ -22,6 +22,7 @@ import InfomaniakDI
 import InfomaniakNotifications
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct SettingsNotificationsView: View {
@@ -36,7 +37,7 @@ struct SettingsNotificationsView: View {
         .notificationsEnabled
     @State var subscribedTopics: [String]?
 
-    @State private var showAlertNotification = false
+    @ModalState(context: ContextKeys.settings) private var showAlertNotification = false
     @State private var showWarning = false
 
     var body: some View {

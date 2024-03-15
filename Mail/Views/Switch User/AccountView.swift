@@ -24,6 +24,7 @@ import Lottie
 import MailCore
 import MailResources
 import Sentry
+import SwiftModalPresentation
 import SwiftUI
 
 final class AccountViewDelegate: DeleteAccountDelegate {
@@ -56,8 +57,8 @@ struct AccountView: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var isShowingLogoutAlert = false
-    @State private var presentedAccountDeletionToken: ApiToken?
+    @ModalState(context: ContextKeys.account) private var isShowingLogoutAlert = false
+    @ModalState(wrappedValue: nil, context: ContextKeys.account) private var presentedAccountDeletionToken: ApiToken?
     @State private var delegate = AccountViewDelegate()
     @State private var isLottieAnimationVisible = false
 

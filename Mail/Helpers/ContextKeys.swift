@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2022 Infomaniak Network SA
+ Copyright (C) 2024 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -17,11 +17,18 @@
  */
 
 import Foundation
-import SwiftModalPresentation
 
-class SheetState<State>: ObservableObject {
-    @ModalPublished var isShowing = false
-    @Published var state: State? {
-        didSet { isShowing = state != nil }
-    }
+struct ContextKeys {
+    static let ai = "aiContext"
+    static let aiAlert = "aiAlertContext"
+    static let attachmentDownload = "attachmentDowloadContext"
+    static let detachMailbox = "detachMailboxContext"
+    static let moveEmail = "moveEmailContext"
+    static let composeBody = "composeBodyContext"
+    static let externalTagBottom = "externalTagBottomContext"
+    static let onboarding = "onboardingContext"
+    static let createAccount = "createAccountContext"
+    static let settings = "settingsContext"
+    static let account = "accountContext"
+    static let sync = "syncContext"
 }

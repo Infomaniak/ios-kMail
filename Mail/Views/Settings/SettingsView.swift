@@ -21,6 +21,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct SettingsView: View {
@@ -30,6 +31,7 @@ struct SettingsView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var mainViewState: MainViewState
 
     @Environment(\.isCompactWindow) private var isCompactWindow
 
@@ -40,8 +42,6 @@ struct SettingsView: View {
     @AppStorage(UserDefaults.shared.key(.externalContent)) private var externalContent = DefaultPreferences.externalContent
     @AppStorage(UserDefaults.shared.key(.threadMode)) private var threadMode = DefaultPreferences.threadMode
     @AppStorage(UserDefaults.shared.key(.autoAdvance)) private var autoAdvance = DefaultPreferences.autoAdvance
-
-    @State private var isShowingSyncProfile = false
 
     var body: some View {
         ScrollView {
@@ -89,7 +89,7 @@ struct SettingsView: View {
 
                     Button {
                         matomo.track(eventWithCategory: .syncAutoConfig, name: "openFromSettings")
-                        isShowingSyncProfile = true
+                        mainViewState.isShowingSyncProfile = true
                     } label: {
                         SettingsSubMenuLabel(title: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle)
                     }
@@ -194,9 +194,6 @@ struct SettingsView: View {
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsTitle, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
-        .sheet(isPresented: $isShowingSyncProfile) {
-            SyncProfileNavigationView()
-        }
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "General"])
     }
 }

@@ -22,6 +22,7 @@ import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 import UIKit
 
@@ -29,7 +30,7 @@ struct UserFoldersListView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @State private var isExpanded = true
-    @State private var isShowingCreateFolderAlert = false
+    @ModalState private var isShowingCreateFolderAlert = false
 
     let folders: [NestableFolder]
 

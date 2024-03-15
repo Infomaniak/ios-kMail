@@ -20,6 +20,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct SyncDownloadProfileView: View {
@@ -30,7 +31,7 @@ struct SyncDownloadProfileView: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var isConfigWebViewPresented = false
+    @ModalState(context: ContextKeys.sync) private var isConfigWebViewPresented = false
     @State private var isDownloadingConfig = false
 
     @Binding var navigationPath: [SyncProfileStep]

@@ -20,6 +20,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 import SwiftUIIntrospect
 
@@ -32,7 +33,7 @@ struct AIPromptView: View {
     // The focus is done thanks to UIKit, this allows the keyboard to appear more quickly
     @State private var hasFocusedEditor = false
     @State private var prompt = ""
-    @State private var isShowingAIEngineChoice = false
+    @ModalState(context: ContextKeys.aiAlert) private var isShowingAIEngineChoice = false
     @State private var placeholderProposition = Constants.aiPromptExamples.randomElement() ?? MailResourcesStrings.Localizable
         .aiPromptExample1
 

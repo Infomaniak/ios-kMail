@@ -21,9 +21,10 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
-struct AIProposition: Identifiable {
+struct AIProposition: Identifiable, Equatable {
     let id = UUID()
     let subject: String
     let body: String
@@ -38,11 +39,12 @@ final class AIModel: ObservableObject {
     @Published var isLoading = false
     @Published var error: AIError?
 
-    @Published var isShowingPrompt = false
-    @Published var isShowingProposition = false
+    @ModalPublished(context: ContextKeys.ai) var isShowingDiscovery = false
+    @ModalPublished(context: ContextKeys.ai) var isShowingPrompt = false
+    @ModalPublished(context: ContextKeys.ai) var isShowingProposition = false
 
-    @Published var isShowingReplaceBodyAlert = false
-    @Published var isShowingReplaceSubjectAlert: AIProposition?
+    @ModalPublished(context: ContextKeys.aiAlert) var isShowingReplaceBodyAlert = false
+    @ModalPublished(wrappedValue: nil, context: ContextKeys.aiAlert) var isShowingReplaceSubjectAlert: AIProposition?
 
     var keepConversationWhenPropositionIsDismissed = false
 

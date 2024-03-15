@@ -24,6 +24,7 @@ import InfomaniakLogin
 import Lottie
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct Slide: Identifiable {
@@ -175,7 +176,7 @@ struct OnboardingView: View {
     @LazyInjectService var orientationManager: OrientationManageable
 
     @State private var selection: Int
-    @State private var isPresentingCreateAccount = false
+    @ModalState(context: ContextKeys.onboarding) private var isPresentingCreateAccount = false
     @StateObject private var loginHandler = LoginHandler()
 
     private var isScrollEnabled: Bool

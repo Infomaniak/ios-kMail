@@ -21,6 +21,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 private struct SwipeActionView: View {
@@ -77,7 +78,7 @@ struct ThreadListSwipeActions: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.swipeTrailing)) private var swipeTrailing = DefaultPreferences.swipeTrailing
 
     @State private var actionPanelMessages: [Message]?
-    @State private var messagesToMove: [Message]?
+    @ModalState private var messagesToMove: [Message]?
 
     let thread: Thread
     let viewModel: ThreadListViewModel

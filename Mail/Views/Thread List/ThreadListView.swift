@@ -22,6 +22,7 @@ import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 import SwiftUIIntrospect
 
@@ -37,7 +38,7 @@ struct ThreadListView: View {
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
     @State private var firstLaunch = true
-    @State private var flushAlert: FlushAlertState?
+    @ModalState private var flushAlert: FlushAlertState?
 
     @StateObject var viewModel: ThreadListViewModel
     @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel

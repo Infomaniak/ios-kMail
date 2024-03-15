@@ -22,15 +22,17 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct MenuDrawerItemsAdvancedListView: View {
+    @EnvironmentObject private var mainViewState: MainViewState
+
     @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.openURL) private var openURL
 
-    @State private var isShowingRestoreMails = false
-    @State private var isShowingSyncProfile = false
+    @ModalState private var isShowingRestoreMails = false
 
     let mailboxCanRestoreEmails: Bool
 
@@ -41,10 +43,7 @@ struct MenuDrawerItemsAdvancedListView: View {
                                label: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle,
                                matomoName: "syncProfile") {
                 matomo.track(eventWithCategory: .syncAutoConfig, name: "openFromMenuDrawer")
-                isShowingSyncProfile = true
-            }
-            .sheet(isPresented: $isShowingSyncProfile) {
-                SyncProfileNavigationView()
+                mainViewState.isShowingSyncProfile = true
             }
 
             MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
@@ -72,8 +71,8 @@ struct MenuDrawerItemsHelpListView: View {
     @Environment(\.openURL) private var openURL
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var isShowingHelp = false
-    @State private var isShowingBugTracker = false
+    @ModalState private var isShowingHelp = false
+    @ModalState private var isShowingBugTracker = false
 
     var body: some View {
         MenuDrawerItemsListView {

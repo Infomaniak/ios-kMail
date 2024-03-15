@@ -19,12 +19,13 @@
 import InfomaniakCore
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct AccountButton: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var presentedCurrentAccount: Account?
+    @ModalState private var presentedCurrentAccount: Account?
 
     var body: some View {
         Button {

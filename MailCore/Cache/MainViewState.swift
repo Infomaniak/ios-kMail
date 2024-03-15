@@ -17,20 +17,23 @@
  */
 
 import Foundation
+import SwiftModalPresentation
 
 public protocol SelectedThreadOwnable {
     var selectedThread: Thread? { get set }
 }
 
 public class MainViewState: ObservableObject, SelectedThreadOwnable {
-    @Published public var composeMessageIntent: ComposeMessageIntent?
+    @ModalPublished public var composeMessageIntent: ComposeMessageIntent?
 
-    @Published public var settingsViewConfig: SettingsViewConfig?
+    @ModalPublished public var settingsViewConfig: SettingsViewConfig?
 
+    @ModalPublished public var isShowingSyncProfile = false
+    @ModalPublished public var isShowingSyncDiscovery = false
     @Published public var isShowingSearch = false
-    @Published public var isShowingReviewAlert = false
-    @Published public var isShowingUpdateAvailable = false
-    @Published public var isShowingSetAppAsDefaultDiscovery = false
+    @ModalPublished public var isShowingReviewAlert = false
+    @ModalPublished public var isShowingUpdateAvailable = false
+    @ModalPublished public var isShowingSetAppAsDefaultDiscovery = false
     @Published public var isShowingChristmasEasterEgg = false
 
     /// Represents the state of navigation

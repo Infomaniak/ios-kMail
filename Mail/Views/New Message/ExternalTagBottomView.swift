@@ -20,12 +20,13 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct ExternalTagBottomView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @State private var isShowingExternalTagAlert = false
+    @ModalState(context: ContextKeys.externalTagBottom) private var isShowingExternalTagAlert = false
     @State private var isShowingExternalTag = true
 
     let externalTag: DisplayExternalRecipientStatus.State

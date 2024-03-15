@@ -23,6 +23,7 @@ import MailCore
 import MailResources
 import Popovers
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
@@ -72,13 +73,11 @@ struct ComposeMessageView: View {
     @LazyInjectService private var reviewManager: ReviewManageable
 
     @State private var isLoadingContent = true
-    @State private var isShowingCancelAttachmentsError = false
+    @ModalState private var isShowingCancelAttachmentsError = false
     @State private var autocompletionType: ComposeViewFieldType?
     @State private var editorFocus = false
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
-
-    @State private var isShowingAIPopover = false
 
     @State private var editorModel = RichTextEditorModel()
     @Weak private var scrollView: UIScrollView?
@@ -228,7 +227,7 @@ struct ComposeMessageView: View {
             initialAttachments = []
 
             if featureFlagsManager.isEnabled(.aiMailComposer) && UserDefaults.shared.shouldPresentAIFeature {
-                isShowingAIPopover = true
+                aiModel.isShowingDiscovery = true
                 return
             }
 
@@ -267,7 +266,7 @@ struct ComposeMessageView: View {
                 dismissMessageView()
             }
         }
-        .discoveryPresenter(isPresented: $isShowingAIPopover) {
+        .discoveryPresenter(isPresented: $aiModel.isShowingDiscovery) {
             DiscoveryView(item: .aiDiscovery) {
                 UserDefaults.shared.shouldPresentAIFeature = false
             } completionHandler: { willShowAIPrompt in
