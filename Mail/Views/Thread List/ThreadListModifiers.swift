@@ -58,6 +58,7 @@ struct ThreadListToolbar: ViewModifier {
     @EnvironmentObject private var actionsManager: ActionsManager
 
     @State private var multipleSelectedMessages: [Message]?
+    @State private var messagesToMove: [Message]?
 
     @Binding var flushAlert: FlushAlertState?
 
@@ -119,6 +120,7 @@ struct ThreadListToolbar: ViewModifier {
                                 icon: action.icon
                             ) {
                                 let allMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
+                                messagesToMove = allMessages
                                 multipleSelectionViewModel.isEnabled = false
                                 let originFolder = viewModel.frozenFolder
                                 Task {
@@ -138,7 +140,6 @@ struct ThreadListToolbar: ViewModifier {
                                     )
                                 }
                             }
-                            .disabled(action == .archive && viewModel.frozenFolder.role == .archive)
                         }
 
                         ToolbarButton(
@@ -156,6 +157,14 @@ struct ThreadListToolbar: ViewModifier {
                     panelSource: .threadList
                 ) { _ in
                     multipleSelectionViewModel.isEnabled = false
+                }
+                .sheet(item: $messagesToMove) { messages in
+                    MoveEmailView(
+                        mailboxManager: viewModel.mailboxManager,
+                        movedMessages: messages,
+                        originFolder: viewModel.frozenFolder
+                    )
+                    .sheetViewStyle()
                 }
                 .navigationTitle(
                     multipleSelectionViewModel.isEnabled

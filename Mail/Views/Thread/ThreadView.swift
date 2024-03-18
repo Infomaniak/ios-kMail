@@ -35,6 +35,9 @@ private struct ScrollOffsetPreferenceKey: PreferenceKey {
 }
 
 struct ThreadView: View {
+    private static let standardActions: [Action] = [.reply, .forward, .archive, .delete]
+    private static let archiveActions: [Action] = [.reply, .forward, .openMovePanel, .delete]
+
     @LazyInjectService private var matomo: MatomoUtils
 
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -42,14 +45,16 @@ struct ThreadView: View {
 
     @State private var displayNavigationTitle = false
     @State private var replyOrReplyAllMessage: Message?
+    @State private var messagesToMove: [Message]?
 
     @ModalState private var isShowingExternalTagAlert = false
+    @ModalState private var nearestFlushAlert: FlushAlertState?
 
     @ObservedRealmObject var thread: Thread
 
-    @ModalState private var nearestFlushAlert: FlushAlertState?
-
-    private let toolbarActions: [Action] = [.reply, .forward, .archive, .delete]
+    private var toolbarActions: [Action] {
+        thread.folder?.role == .archive ? Self.archiveActions : Self.standardActions
+    }
 
     var body: some View {
         ScrollView {
@@ -155,7 +160,10 @@ struct ThreadView: View {
                     ToolbarButton(text: action.title, icon: action.icon) {
                         didTap(action: action)
                     }
-                    .disabled(action == .archive && thread.folder?.role == .archive)
+                    .sheet(item: $messagesToMove) { messages in
+                        MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
+                            .sheetViewStyle()
+                    }
                 }
                 Spacer()
             }
@@ -192,6 +200,10 @@ struct ThreadView: View {
            message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
             replyOrReplyAllMessage = message
             return
+        }
+
+        if action == .openMovePanel {
+            messagesToMove = messages
         }
 
         let originFolder = thread.folder?.freezeIfNeeded()
