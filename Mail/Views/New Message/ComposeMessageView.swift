@@ -239,6 +239,9 @@ struct ComposeMessageView: View {
             }
         }
         .onDestroy {
+            guard !platformDetector.isMac else {
+                return
+            }
             var shouldShowSnackbar = false
             let shouldDisplayAdditionalAlerts = !platformDetector.isMac &&
                 !Bundle.main.isExtension &&
