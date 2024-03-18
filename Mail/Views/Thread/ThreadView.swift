@@ -35,6 +35,9 @@ private struct ScrollOffsetPreferenceKey: PreferenceKey {
 }
 
 struct ThreadView: View {
+    private static let standardActions: [Action] = [.reply, .forward, .archive, .delete]
+    private static let archiveActions: [Action] = [.reply, .forward, .openMovePanel, .delete]
+
     @LazyInjectService private var matomo: MatomoUtils
 
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -43,18 +46,15 @@ struct ThreadView: View {
     @State private var displayNavigationTitle = false
     @State private var replyOrReplyAllMessage: Message?
     @State private var messagesToMove: [Message]?
-    @State private var nearestFlushAlert: FlushAlertState?
 
     @ModalState private var isShowingExternalTagAlert = false
+    @ModalState private var nearestFlushAlert: FlushAlertState?
 
     @ObservedRealmObject var thread: Thread
 
-    @ModalState private var nearestFlushAlert: FlushAlertState?
-
-    @State private var toolbarActions: [Action]
-
-    private static let standardActions: [Action] = [.reply, .forward, .archive, .delete]
-    private static let archiveActions: [Action] = [.reply, .forward, .openMovePanel, .delete]
+    private var toolbarActions: [Action] {
+        thread.folder?.role == .archive ? Self.archiveActions : Self.standardActions
+    }
 
     var body: some View {
         ScrollView {
@@ -148,7 +148,7 @@ struct ThreadView: View {
             }
         }
         .bottomBar {
-            ForEach(thread.folder?.role == .archive ? ThreadView.archiveActions : ThreadView.standardActions) { action in
+            ForEach(toolbarActions) { action in
                 if action == .reply {
                     ToolbarButton(text: action.title, icon: action.icon) {
                         didTap(action: action)
