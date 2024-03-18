@@ -24,10 +24,10 @@ import MailResources
 import SwiftUI
 
 struct AskForReviewView: View {
+    @EnvironmentObject private var mainViewState: MainViewState
+
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var reviewManager: ReviewManageable
-
-    @Environment(\.openURL) private var openURL
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -47,7 +47,7 @@ struct AskForReviewView: View {
                 // Ask for feedback
                 if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
                     UserDefaults.shared.appReview = .feedback
-                    openURL(userReportURL)
+                    mainViewState.isShowingSafariView = SafariWebContent(url: userReportURL)
                 }
             }
         }
