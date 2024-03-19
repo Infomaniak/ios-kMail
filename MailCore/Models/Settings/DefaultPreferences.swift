@@ -35,7 +35,6 @@ public enum DefaultPreferences {
     public static let acknowledgement = false
     public static let includeOriginalInReply = false
     public static let threadMode = ThreadMode.conversation
-    public static let doNotShowAIReplaceMessageAgain = false
     public static let featureFlags: FeatureFlagsManageable.AppFeatureFlags = [:]
     public static let shouldPresentAIFeature = true
     public static let aiEngine = AIEngine.falcon

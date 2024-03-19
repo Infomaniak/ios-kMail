@@ -44,7 +44,6 @@ public extension UserDefaults.Keys {
     static let acknowledgement = UserDefaults.Keys(rawValue: "acknowledgement")
     static let includeOriginalInReply = UserDefaults.Keys(rawValue: "includeOriginalInReply")
     static let threadMode = UserDefaults.Keys(rawValue: "threadMode")
-    static let doNotShowAIReplaceMessageAgain = UserDefaults.Keys(rawValue: "showAIReplaceContentAlert")
     static let featureFlags = UserDefaults.Keys(rawValue: "featureFlags")
     static let shouldPresentAIFeature = UserDefaults.Keys(rawValue: "shouldPresentAIFeature")
     static let shouldPresentSyncDiscovery = UserDefaults.Keys(rawValue: "shouldPresentSyncDiscovery")
@@ -218,18 +217,6 @@ public extension UserDefaults {
         }
         set {
             set(newValue.rawValue, forKey: key(.threadMode))
-        }
-    }
-
-    var doNotShowAIReplaceMessageAgain: Bool {
-        get {
-            if object(forKey: key(.doNotShowAIReplaceMessageAgain)) == nil {
-                set(DefaultPreferences.doNotShowAIReplaceMessageAgain, forKey: key(.doNotShowAIReplaceMessageAgain))
-            }
-            return bool(forKey: key(.doNotShowAIReplaceMessageAgain))
-        }
-        set {
-            set(newValue, forKey: key(.doNotShowAIReplaceMessageAgain))
         }
     }
 
