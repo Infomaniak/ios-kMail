@@ -28,7 +28,7 @@ struct SelectedMailboxView: View {
     let selectedMailbox: Mailbox
 
     var body: some View {
-        HStack {
+        HStack(spacing: UIPadding.small) {
             AvatarView(mailboxManager: mailboxManager, contactConfiguration: .user(user: account.user), size: 40)
             Text(selectedMailbox.email)
                 .textStyle(.body)

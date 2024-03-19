@@ -52,13 +52,11 @@ struct CurrentComposeMailboxView: View {
                 .textStyle(.header2)
                 .multilineTextAlignment(.center)
                 .padding(.bottom, value: .medium)
-                .padding(.horizontal, value: .regular)
 
             if let selectedMailbox = viewModel.selectedMailbox,
                let account = accountManager.account(for: selectedMailbox.userId) {
                 SelectedMailboxView(account: account, selectedMailbox: selectedMailbox)
                     .frame(maxHeight: .infinity, alignment: .top)
-                    .padding(.horizontal, value: .regular)
             }
 
             VStack(spacing: UIPadding.regular) {
@@ -77,8 +75,9 @@ struct CurrentComposeMailboxView: View {
             }
             .ikButtonFullWidth(true)
             .controlSize(.large)
-            .padding(.horizontal, value: .medium)
+            .padding(.horizontal, value: .small)
         }
+        .padding(.horizontal, value: .regular)
         .mailboxCellStyle(.account)
         .onAppear(perform: viewModel.initDefaultAccountAndMailbox)
         .backButtonDisplayMode(.minimal)
