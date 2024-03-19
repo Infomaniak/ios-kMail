@@ -32,7 +32,7 @@ public class MainViewState: ObservableObject, SelectedThreadOwnable {
     @ModalPublished public var isShowingSyncDiscovery = false
     @Published public var isShowingSearch = false
     @ModalPublished public var isShowingReviewAlert = false
-    @ModalPublished public var isShowingSafariView: SafariWebContent?
+    @ModalPublished public var isShowingSafariView: IdentifiableURL?
     @ModalPublished public var isShowingUpdateAvailable = false
     @ModalPublished public var isShowingSetAppAsDefaultDiscovery = false
     @Published public var isShowingChristmasEasterEgg = false

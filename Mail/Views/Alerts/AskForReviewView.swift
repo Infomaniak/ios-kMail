@@ -47,7 +47,7 @@ struct AskForReviewView: View {
                 // Ask for feedback
                 if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
                     UserDefaults.shared.appReview = .feedback
-                    mainViewState.isShowingSafariView = SafariWebContent(url: userReportURL)
+                    mainViewState.isShowingSafariView = IdentifiableURL(url: userReportURL)
                 }
             }
         }
