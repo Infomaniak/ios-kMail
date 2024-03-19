@@ -25,7 +25,7 @@ import RealmSwift
 import SwiftUI
 
 struct SearchView: View {
-    @InjectService var platformDetector: PlatformDetectable
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     @EnvironmentObject private var mainViewState: MainViewState
 
