@@ -42,7 +42,12 @@ struct AccountMailboxesListView: View {
                 AccountMailboxCell(mailbox: mailbox, selectedMailbox: selectedMailbox, selectMailbox: selectMailbox)
             }
         } label: {
-            AccountHeaderCell(account: account, mailboxManager: mailboxManager, isSelected: .constant(false))
+            AccountHeaderCell(
+                account: account,
+                mailboxManager: mailboxManager,
+                isSelected: .constant(false),
+                type: .selectComposeMailbox
+            )
         }
     }
 }
