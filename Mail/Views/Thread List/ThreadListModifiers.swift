@@ -120,7 +120,6 @@ struct ThreadListToolbar: ViewModifier {
                                 icon: action.icon
                             ) {
                                 let allMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
-                                messagesToMove = allMessages
                                 multipleSelectionViewModel.isEnabled = false
                                 let originFolder = viewModel.frozenFolder
                                 Task {
@@ -135,7 +134,8 @@ struct ThreadListToolbar: ViewModifier {
                                         action: action,
                                         origin: .multipleSelection(
                                             originFolder: originFolder,
-                                            nearestFlushAlert: $flushAlert
+                                            nearestFlushAlert: $flushAlert,
+                                            nearestMessagesToMoveSheet: $messagesToMove
                                         )
                                     )
                                 }

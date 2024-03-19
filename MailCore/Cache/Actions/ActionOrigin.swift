@@ -87,8 +87,14 @@ public struct ActionOrigin {
     }
 
     public static func multipleSelection(originFolder: Folder? = nil,
-                                         nearestFlushAlert: Binding<FlushAlertState?>? = nil) -> ActionOrigin {
-        return ActionOrigin(type: .multipleSelection, folder: originFolder, nearestFlushAlert: nearestFlushAlert)
+                                         nearestFlushAlert: Binding<FlushAlertState?>? = nil,
+                                         nearestMessagesToMoveSheet: Binding<[Message]?>? = nil) -> ActionOrigin {
+        return ActionOrigin(
+            type: .multipleSelection,
+            folder: originFolder,
+            nearestFlushAlert: nearestFlushAlert,
+            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet
+        )
     }
 
     public static func swipe(
