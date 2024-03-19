@@ -150,6 +150,9 @@ struct SplitView: View {
                desktopIdentifier: DesktopWindowIdentifier.composeWindowIdentifier) { intent in
             ComposeMessageIntentView(composeMessageIntent: intent)
         }
+        .sheet(item: $mainViewState.isShowingSafariView) { safariContent in
+            SafariWebView(url: safariContent.url)
+        }
         .onChange(of: scenePhase) { newScenePhase in
             guard newScenePhase == .active else { return }
             Task {
