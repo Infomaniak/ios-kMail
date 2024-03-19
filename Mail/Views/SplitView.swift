@@ -152,6 +152,7 @@ struct SplitView: View {
         }
         .sheet(item: $mainViewState.isShowingSafariView) { safariContent in
             SafariWebView(url: safariContent.url)
+                .ignoresSafeArea()
         }
         .onChange(of: scenePhase) { newScenePhase in
             guard newScenePhase == .active else { return }
