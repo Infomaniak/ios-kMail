@@ -28,15 +28,16 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/Infomaniak/swift-concurrency", .upToNextMajor(from: "0.0.4")),
                           .package(
                               url: "https://github.com/Infomaniak/ios-core",
-                              .revision("c190e9179dfcafc062d7cab182827c8ab78acc54")
+                              .revision("e760a1dd4eba0c584d5ab5b43b51c0bb9df30b3d")
                           ),
-                          .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "4.1.0")),
-                          .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "3.0.0")),
-                          .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "3.0.0")),
-                          .package(url: "https://github.com/Infomaniak/ios-bug-tracker", .upToNextMajor(from: "2.0.0")),
+                          .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "6.0.0")),
+                          .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "5.0.0")),
+                          .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "5.0.0")),
+                          .package(url: "https://github.com/Infomaniak/ios-bug-tracker", .upToNextMajor(from: "3.0.0")),
+                          .package(url: "https://github.com/Infomaniak/ios-version-checker", .upToNextMajor(from: "3.0.0")),
+                          .package(url: "https://github.com/Infomaniak/swift-modal-presentation", .upToNextMajor(from: "1.0.0")),
                           .package(url: "https://github.com/Infomaniak/SQRichTextEditor", .upToNextMajor(from: "1.1.1")),
                           .package(url: "https://github.com/Infomaniak/SwiftSoup", .upToNextMajor(from: "1.1.0")),
-                          .package(url: "https://github.com/Infomaniak/ios-version-checker", .upToNextMajor(from: "1.1.2")),
                           .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.21.0")),
                           .package(url: "https://github.com/Alamofire/Alamofire", .upToNextMajor(from: "5.2.2")),
                           .package(url: "https://github.com/CocoaLumberjack/CocoaLumberjack", .upToNextMajor(from: "3.7.0")),
@@ -51,8 +52,7 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/johnpatrickmorgan/NavigationBackport", .upToNextMajor(from: "0.8.1")),
                           .package(url: "https://github.com/aheze/Popovers", .upToNextMajor(from: "1.3.2")),
                           .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1")),
-                          .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0")),
-                          .package(url: "https://github.com/Infomaniak/swift-modal-presentation", .upToNextMajor(from: "1.0.0"))
+                          .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0"))
                       ],
                       targets: [
                           Target(name: "Infomaniak Mail",
