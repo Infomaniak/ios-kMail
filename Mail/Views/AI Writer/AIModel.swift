@@ -220,7 +220,7 @@ extension AIModel {
 extension AIModel {
     func didTapInsert() async {
         let shouldReplaceBody = shouldOverrideBody()
-        guard !shouldReplaceBody || UserDefaults.shared.doNotShowAIReplaceMessageAgain else {
+        guard !shouldReplaceBody else {
             isShowingReplaceBodyAlert = true
             return
         }
