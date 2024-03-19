@@ -16,16 +16,24 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
 
 struct SearchView: View {
+    @LazyInjectService private var platformDetector: PlatformDetectable
+
     @EnvironmentObject private var mainViewState: MainViewState
 
     @StateObject private var viewModel: SearchViewModel
+
+    private var shouldShowHorizontalScrollbar: Bool {
+        platformDetector.isMac
+    }
 
     init(mailboxManager: MailboxManager, folder: Folder) {
         _viewModel = StateObject(wrappedValue: SearchViewModel(mailboxManager: mailboxManager, folder: folder))
@@ -33,7 +41,7 @@ struct SearchView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ScrollView(.horizontal, showsIndicators: false) {
+            ScrollView(.horizontal, showsIndicators: shouldShowHorizontalScrollbar) {
                 HStack(spacing: UIPadding.small) {
                     ForEach(viewModel.filters) { filter in
                         if filter == .folder {
@@ -56,6 +64,7 @@ struct SearchView: View {
                     }
                 }
                 .padding(value: .regular)
+                .padding(.bottom, shouldShowHorizontalScrollbar ? UIPadding.verySmall : 0)
             }
 
             List {
