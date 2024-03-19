@@ -33,6 +33,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     @LazyInjectService private var notificationService: InfomaniakNotifications
     @LazyInjectService private var tokenStore: TokenStore
     @LazyInjectService private var notificationActions: NotificationActionsRegistrable
+    @LazyInjectService private var draftManager: DraftManager
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
@@ -72,5 +74,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         return orientationManager.orientationLock
+    }
+
+    func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
+        guard platformDetector.isMac,
+              let currentMailboxManager = accountManager.currentMailboxManager else {
+            return
+        }
+        draftManager.syncDraft(mailboxManager: currentMailboxManager, showSnackbar: false)
     }
 }

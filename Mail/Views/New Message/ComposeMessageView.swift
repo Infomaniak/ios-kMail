@@ -238,7 +238,10 @@ struct ComposeMessageView: View {
                 focusedField = .to
             }
         }
-        .onDestroy {
+        .onDisappear {
+            guard !platformDetector.isMac else {
+                return
+            }
             var shouldShowSnackbar = false
             let shouldDisplayAdditionalAlerts = !platformDetector.isMac &&
                 !Bundle.main.isExtension &&
