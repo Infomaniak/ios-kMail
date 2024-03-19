@@ -31,12 +31,8 @@ struct SearchView: View {
 
     @StateObject private var viewModel: SearchViewModel
 
-    private var showHorizontalScrollbar: Bool {
+    private var shouldShowHorizontalScrollbar: Bool {
         platformDetector.isMac
-    }
-
-    private var bottomPadding: CGFloat {
-        platformDetector.isMac ? UIPadding.verySmall : 0
     }
 
     init(mailboxManager: MailboxManager, folder: Folder) {
@@ -45,7 +41,7 @@ struct SearchView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ScrollView(.horizontal, showsIndicators: showHorizontalScrollbar) {
+            ScrollView(.horizontal, showsIndicators: shouldShowHorizontalScrollbar) {
                 HStack(spacing: UIPadding.small) {
                     ForEach(viewModel.filters) { filter in
                         if filter == .folder {
@@ -68,7 +64,7 @@ struct SearchView: View {
                     }
                 }
                 .padding(value: .regular)
-                .padding(.bottom, bottomPadding)
+                .padding(.bottom, shouldShowHorizontalScrollbar ? UIPadding.verySmall : 0)
             }
 
             List {
