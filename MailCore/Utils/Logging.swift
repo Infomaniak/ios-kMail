@@ -21,6 +21,7 @@ import CocoaLumberjack
 import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
+import InfomaniakDI
 import RealmSwift
 import Sentry
 
@@ -85,6 +86,38 @@ public enum Logging {
             return
         }
         Atlantis.start(hostName: hostname)
+        #endif
+    }
+
+    public static func resetAppForUITestsIfNeeded() {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("resetData") {
+            UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
+            UserDefaults.shared.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
+            @InjectService var keychainHelper: KeychainHelper
+            keychainHelper.deleteAllTokens()
+
+            @InjectService var appGroupPathProvider: AppGroupPathProvidable
+            do {
+                let appGroupFileURLs = try FileManager.default.contentsOfDirectory(at: appGroupPathProvider.groupDirectoryURL,
+                                                                                   includingPropertiesForKeys: nil,
+                                                                                   options: .skipsHiddenFiles)
+                for fileURL in appGroupFileURLs {
+                    try FileManager.default.removeItem(at: fileURL)
+                }
+
+                let documentFileURLs = try FileManager.default.contentsOfDirectory(
+                    at: FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!,
+                    includingPropertiesForKeys: nil,
+                    options: .skipsHiddenFiles
+                )
+                for fileURL in documentFileURLs {
+                    try FileManager.default.removeItem(at: fileURL)
+                }
+            } catch {
+                DDLogError(error)
+            }
+        }
         #endif
     }
 }
