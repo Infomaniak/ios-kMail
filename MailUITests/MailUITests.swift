@@ -16,40 +16,176 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailResources
 import XCTest
 
 class MailUITests: XCTestCase {
+    static let testSubject = "UI Test"
+
     override func setUpWithError() throws {
         try super.setUpWithError()
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-
-        // In UI tests it is usually best to stop immediately when a failure occurs.
         continueAfterFailure = false
-
-        // In UI tests it’s important to set the initial state - such as interface orientation - required for your tests before
-        // they run. The setUp method is a good place to do this.
     }
 
     override func tearDownWithError() throws {
         try super.tearDownWithError()
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    func testExample() throws {
-        // UI tests must launch the application that they test.
+    func launchAppFromScratch(resetData: Bool = true) {
         let app = XCUIApplication()
+        if resetData {
+            app.launchArguments += ["resetData"]
+        }
         app.launch()
-
-        // Use recording to get started writing UI tests.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
     }
 
-    func testLaunchPerformance() throws {
-        if #available(macOS 10.15, iOS 13.0, tvOS 13.0, watchOS 7.0, *) {
-            // This measures how long it takes to launch your application.
-            measure(metrics: [XCTApplicationLaunchMetric()]) {
-                XCUIApplication().launch()
-            }
+    func testLogin() throws {
+        launchAppFromScratch()
+        login()
+    }
+
+    func testDisplayThread() throws {
+        launchAppFromScratch()
+        login()
+        let app = XCUIApplication()
+
+        app.collectionViews.staticTexts.element(boundBy: 1).firstMatch.tap()
+        _ = app.webViews.firstMatch.waitForExistence(timeout: 3)
+    }
+
+    func testNewMessage() throws {
+        launchAppFromScratch()
+        login()
+        let app = XCUIApplication()
+
+        app.buttons.containing(NSPredicate(format: "label = %@", MailResourcesStrings.Localizable.buttonNewMessage))
+            .firstMatch.tap()
+        _ = app.webViews.firstMatch.waitForExistence(timeout: 3)
+    }
+
+    func testSendNewMessage() throws {
+        launchAppFromScratch()
+        login()
+        writeTestMessage()
+
+        let app = XCUIApplication()
+        app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage].buttons[MailResourcesStrings.Localizable.send].tap()
+        _ = app.collectionViews.firstMatch.waitForExistence(timeout: 2)
+    }
+
+    func testSaveMessage() throws {
+        launchAppFromScratch()
+        login()
+        writeTestMessage()
+
+        let app = XCUIApplication()
+        app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage]
+            .buttons[MailResourcesStrings.Localizable.buttonClose].tap()
+        _ = app.collectionViews.firstMatch.waitForExistence(timeout: 2)
+    }
+
+    func testSwitchFolder() {
+        launchAppFromScratch()
+        login()
+
+        let app = XCUIApplication()
+        app.navigationBars.firstMatch.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonMenu].tap()
+        app.scrollViews.otherElements.staticTexts[MailResourcesStrings.Localizable.archiveFolder].tap()
+    }
+
+    func testDeleteSwipeAction() {
+        launchAppFromScratch(resetData: false)
+        login()
+        let app = XCUIApplication()
+
+        let testMailCell = app.collectionViews.cells.element(boundBy: 1)
+        let _ = testMailCell.waitForExistence(timeout: 10)
+        testMailCell.firstMatch.swipeLeft()
+        app.collectionViews.buttons[MailResourcesStrings.Localizable.actionDelete].tap()
+    }
+
+    func testMoreSwipeActionThenDelete() {
+        launchAppFromScratch()
+        login()
+        let app = XCUIApplication()
+
+        let testMailCell = app.collectionViews.cells.element(boundBy: 1)
+        let _ = testMailCell.waitForExistence(timeout: 10)
+        testMailCell.firstMatch.swipeLeft()
+
+        app.collectionViews.buttons[MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu].tap()
+        app.buttons[MailResourcesStrings.Localizable.actionDelete].tap()
+    }
+
+    func writeTestMessage() {
+        let app = XCUIApplication()
+
+        app.buttons.containing(NSPredicate(format: "label = %@", MailResourcesStrings.Localizable.buttonNewMessage))
+            .firstMatch.tap()
+        let composeBodyView = app.webViews.firstMatch
+        _ = composeBodyView.waitForExistence(timeout: 3)
+
+        app.textFields.firstMatch.tap()
+        app.textFields.firstMatch.typeText(Env.testAccountEmail)
+        app.textFields.firstMatch.typeText("\n")
+
+        let scrollViewsQuery = app.scrollViews
+        let textView = scrollViewsQuery.otherElements.containing(
+            .staticText,
+            identifier: MailResourcesStrings.Localizable.fromTitle
+        ).children(matching: .textView).element(boundBy: 1)
+        textView.tap()
+        textView.typeText(MailUITests.testSubject)
+
+        composeBodyView.tap()
+        composeBodyView.typeText(MailResourcesStrings.Localizable.aiPromptExample1)
+    }
+
+    func login() {
+        let app = XCUIApplication()
+
+        app.buttons.containing(NSPredicate(format: "label = %@", MailResourcesStrings.Localizable.contentDescriptionButtonNext))
+            .firstMatch.tap()
+        app.buttons.containing(NSPredicate(format: "label = %@", MailResourcesStrings.Localizable.contentDescriptionButtonNext))
+            .firstMatch.tap()
+        app.buttons.containing(NSPredicate(format: "label = %@", MailResourcesStrings.Localizable.contentDescriptionButtonNext))
+            .firstMatch.tap()
+        let loginButton = app.buttons.containing(NSPredicate(format: "label = %@", MailResourcesStrings.Localizable.buttonLogin))
+            .firstMatch
+        let _ = loginButton.waitForExistence(timeout: 2)
+        loginButton.tap()
+        let loginWebview = app.webViews.firstMatch
+
+        let emailField = loginWebview.textFields.firstMatch
+        let _ = emailField.waitForExistence(timeout: 5)
+        emailField.tap()
+        emailField.typeText(Env.testAccountEmail)
+
+        let passwordField = loginWebview.secureTextFields.firstMatch
+        passwordField.tap()
+        passwordField.typeText(Env.testAccountPassword)
+        passwordField.typeText("\n")
+
+        let nextButton = app.buttons.containing(NSPredicate(
+            format: "label = %@",
+            MailResourcesStrings.Localizable.contentDescriptionButtonNext
+        )).firstMatch
+        let permissionApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+
+        let _ = nextButton.waitForExistence(timeout: 1)
+        if nextButton.exists {
+            nextButton.tap()
+
+            permissionApp.alerts.firstMatch.buttons.firstMatch.tap()
         }
+
+        if nextButton.exists {
+            app.buttons.firstMatch.tap()
+
+            permissionApp.alerts.firstMatch.buttons.firstMatch.tap()
+        }
+
+        let refreshText = app.staticTexts[Date().formatted(.relative(presentation: .named))]
+        _ = refreshText.waitForExistence(timeout: 5)
     }
 }
