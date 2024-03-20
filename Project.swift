@@ -28,13 +28,13 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/Infomaniak/swift-concurrency", .upToNextMajor(from: "0.0.4")),
                           .package(
                               url: "https://github.com/Infomaniak/ios-core",
-                              .revision("e760a1dd4eba0c584d5ab5b43b51c0bb9df30b3d")
+                              .revision("eb590897129b2b5b9f289b6db7fd2816bcea7225")
                           ),
-                          .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "6.0.0")),
+                          .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "7.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "5.0.0")),
-                          .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "5.0.0")),
+                          .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "6.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-bug-tracker", .upToNextMajor(from: "3.0.0")),
-                          .package(url: "https://github.com/Infomaniak/ios-version-checker", .upToNextMajor(from: "3.0.0")),
+                          .package(url: "https://github.com/Infomaniak/ios-version-checker", .upToNextMajor(from: "4.0.0")),
                           .package(url: "https://github.com/Infomaniak/swift-modal-presentation", .upToNextMajor(from: "1.0.0")),
                           .package(url: "https://github.com/Infomaniak/SQRichTextEditor", .upToNextMajor(from: "1.1.1")),
                           .package(url: "https://github.com/Infomaniak/SwiftSoup", .upToNextMajor(from: "1.1.0")),
