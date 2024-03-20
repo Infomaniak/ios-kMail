@@ -27,6 +27,9 @@ import UniformTypeIdentifiers
 extension NSItemProvider: Attachable {
     enum ErrorDomain: Error {
         case UTINotFound
+
+        /// The type needs dedicated handling
+        case unsupportedUnderlyingType
     }
 
     private var preferredIdentifier: String {
@@ -67,6 +70,9 @@ extension NSItemProvider: Attachable {
 
         case .none:
             throw ErrorDomain.UTINotFound
+
+        default:
+            throw ErrorDomain.unsupportedUnderlyingType
         }
     }
 }
