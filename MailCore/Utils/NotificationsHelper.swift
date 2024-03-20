@@ -249,7 +249,7 @@ public enum NotificationsHelper {
         }
     }
 
-    private static func getCleanBodyFrom(message: Message) async -> String {
+    public static func getCleanBodyFrom(message: Message) async -> String {
         guard let fullBody = message.body?.value,
               let bodyType = message.body?.type else {
             return message.preview

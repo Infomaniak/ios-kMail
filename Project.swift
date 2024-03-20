@@ -52,7 +52,8 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/johnpatrickmorgan/NavigationBackport", .upToNextMajor(from: "0.8.1")),
                           .package(url: "https://github.com/aheze/Popovers", .upToNextMajor(from: "1.3.2")),
                           .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1")),
-                          .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0"))
+                          .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0")),
+                          .package(path: Path("/Users/valentinperignon/Developer/packages/infomaniak/swift-rich-editor"))
                       ],
                       targets: [
                           Target(name: "Infomaniak Mail",
@@ -87,7 +88,8 @@ let project = Project(name: "Mail",
                                      .package(product: "Lottie"),
                                      .package(product: "NavigationBackport"),
                                      .package(product: "Popovers"),
-                                     .package(product: "SwiftUIBackports")
+                                     .package(product: "SwiftUIBackports"),
+                                     .package(product: "InfomaniakRichEditor")
                                  ],
                                  settings: .settings(base: Constants.baseSettings),
                                  environment: ["hostname": "\(ProcessInfo.processInfo.hostName)."]),
@@ -147,7 +149,8 @@ let project = Project(name: "Mail",
                                      .package(product: "Lottie"),
                                      .package(product: "NavigationBackport"),
                                      .package(product: "Popovers"),
-                                     .package(product: "SwiftUIBackports")
+                                     .package(product: "SwiftUIBackports"),
+                                    .package(product: "InfomaniakRichEditor")
                                  ],
                                  settings: .settings(base: Constants.baseSettings)),
                           Target(name: "MailNotificationServiceExtension",

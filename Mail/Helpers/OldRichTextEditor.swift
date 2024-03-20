@@ -19,13 +19,14 @@
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
+import InfomaniakRichEditor
 import MailCore
 import MailResources
 import SQRichTextEditor
 import SwiftUI
 import WebKit
 
-struct RichTextEditor: UIViewRepresentable {
+struct OldRichTextEditor: UIViewRepresentable {
     @State private var mustUpdateBody = false
 
     @Binding var model: RichTextEditorModel
@@ -60,9 +61,9 @@ struct RichTextEditor: UIViewRepresentable {
     }
 
     class Coordinator: SQTextEditorDelegate {
-        var parent: RichTextEditor
+        var parent: OldRichTextEditor
 
-        init(_ parent: RichTextEditor) {
+        init(_ parent: OldRichTextEditor) {
             self.parent = parent
             NotificationCenter.default.addObserver(
                 self,
@@ -469,6 +470,23 @@ enum ToolbarAction: Int {
             return "postpone"
         default:
             return nil
+        }
+    }
+
+    func isSelected(textAttributes: RETextAttributes) -> Bool {
+        switch self {
+        case .bold:
+            return textAttributes.format.hasBold
+        case .italic:
+            return textAttributes.format.hasItalic
+        case .underline:
+            return textAttributes.format.hasUnderline
+        case .strikeThrough:
+            return textAttributes.format.hasStrikeThrough
+        case .link:
+            return false
+        case .unorderedList, .editText, .ai, .addFile, .addPhoto, .takePhoto, .programMessage:
+            return false
         }
     }
 
