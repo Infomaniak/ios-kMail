@@ -101,6 +101,7 @@ struct ComposeMessageView: View {
     private let messageReply: MessageReply?
     private let draftContentManager: DraftContentManager
     private let mailboxManager: MailboxManager
+    private let textAttachment: TextAttachable?
 
     private var isSendButtonDisabled: Bool {
         let disabledState = draft.identityId == nil
@@ -112,7 +113,13 @@ struct ComposeMessageView: View {
 
     // MARK: - Init
 
-    init(draft: Draft, mailboxManager: MailboxManager, messageReply: MessageReply? = nil, attachments: [Attachable] = []) {
+    init(
+        draft: Draft,
+        mailboxManager: MailboxManager,
+        messageReply: MessageReply? = nil,
+        attachments: [Attachable] = [],
+        textAttachment: TextAttachable? = nil
+    ) {
         self.messageReply = messageReply
 
         _draft = ObservedRealmObject(wrappedValue: draft)
@@ -123,6 +130,8 @@ struct ComposeMessageView: View {
             mailboxManager: mailboxManager
         )
         draftContentManager = currentDraftContentManager
+
+        self.textAttachment = textAttachment
 
         self.mailboxManager = mailboxManager
         _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draftLocalUUID: draft.localUUID,
@@ -214,6 +223,11 @@ struct ComposeMessageView: View {
                 isLoadingContent = true
                 currentSignature = try await draftContentManager.prepareCompleteDraft()
                 await attachmentsManager.completeUploadedAttachments()
+                let textAttachment = await textAttachment?.textAttachment
+
+                // TODO: set title and body from attachmentsManager.
+                print("title: \(textAttachment?.title), textAttachment.body :\(textAttachment?.body)")
+
                 isLoadingContent = false
             } catch {
                 // Unable to get signatures, "An error occurred" and close modal.
