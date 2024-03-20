@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct ContextKeys {
+enum ContextKeys {
     static let ai = "aiContext"
     static let aiAlert = "aiAlertContext"
     static let attachmentDownload = "attachmentDowloadContext"
