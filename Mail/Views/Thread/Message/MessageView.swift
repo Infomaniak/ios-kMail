@@ -99,7 +99,12 @@ struct MessageView: View {
                 }
             }
             .onAppear {
-                prepareBodyIfNeeded()
+                Task {
+                    let preview = await NotificationsHelper.getCleanBodyFrom(message: message)
+                    print(preview)
+
+                    prepareBodyIfNeeded()
+                }
             }
             .task {
                 await fetchMessageAndEventCalendar()
