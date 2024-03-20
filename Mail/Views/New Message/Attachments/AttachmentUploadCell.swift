@@ -31,7 +31,7 @@ struct AttachmentUploadCell: View {
 
     @ObservedObject var uploadTask: AttachmentUploadTask
 
-    @ModalState private var previewedAttachment: Attachment?
+    @ModalState(wrappedValue: nil, context: ContextKeys.compose) private var previewedAttachment: Attachment?
 
     init(uploadTask: AttachmentUploadTask, attachment: Attachment, attachmentRemoved: ((Attachment) -> Void)?) {
         self.uploadTask = uploadTask
