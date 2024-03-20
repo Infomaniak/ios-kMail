@@ -18,13 +18,13 @@
 
 import Foundation
 
-struct ContextKeys {
+enum ContextKeys {
     static let ai = "aiContext"
     static let aiAlert = "aiAlertContext"
     static let attachmentDownload = "attachmentDowloadContext"
     static let detachMailbox = "detachMailboxContext"
     static let moveEmail = "moveEmailContext"
-    static let composeBody = "composeBodyContext"
+    static let compose = "composeContext"
     static let externalTagBottom = "externalTagBottomContext"
     static let onboarding = "onboardingContext"
     static let createAccount = "createAccountContext"
