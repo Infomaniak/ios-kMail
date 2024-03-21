@@ -254,7 +254,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         try? await featureFlagsManager.fetchFlags()
 
-        try await fetchMailboxesMetadata(mailboxes: mailboxesResponse, apiFetcher: apiFetcher)
+        await fetchMailboxesMetadata(mailboxes: mailboxesResponse, apiFetcher: apiFetcher)
 
         await mailboxInfosManager.storeMailboxes(user: user, mailboxes: mailboxesResponse)
         if let mainMailbox = (mailboxesResponse.first(where: { $0.isPrimary }) ?? mailboxesResponse.first)?.freezeIfNeeded() {
