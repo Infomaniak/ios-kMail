@@ -47,7 +47,10 @@ struct ComposeMessageBodyView: View {
         VStack {
             AttachmentsHeaderView(attachmentsManager: attachmentsManager)
 
-            MailRichEditorView()
+            EditorView(isShowingFileSelection: $isShowingFileSelection,
+                       isShowingPhotoLibrary: $isShowingPhotoLibrary,
+                       isShowingAIPrompt: $isShowingAIPrompt,
+                       isShowingAlert: $isShowingAlert)
                 .frame(maxWidth: .infinity)
                 .frame(height: 100)
         }

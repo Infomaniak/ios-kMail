@@ -20,12 +20,14 @@ import InfomaniakRichEditor
 import MailCore
 import UIKit
 
-final class MailRichEditorCoordinator {
+final class EditorCoordinator {
     let toolbar: UIToolbar!
 
+    private(set) var parent: EditorView
     private(set) var toolbarStyle = ToolbarStyle.main
 
-    init() {
+    init(parent: EditorView) {
+        self.parent = parent
         toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 320, height: 48))
         setUpToolbar()
     }
@@ -33,7 +35,7 @@ final class MailRichEditorCoordinator {
 
 // MARK: - RichEditorViewDelegate
 
-extension MailRichEditorCoordinator: RichEditorViewDelegate {
+extension EditorCoordinator: RichEditorViewDelegate {
     func richEditorView(_ richEditorView: RichEditorView, didSelectedTextAttributesChanged textAttributes: RETextAttributes) {
         updateToolbarItems(for: richEditorView, style: toolbarStyle)
     }
@@ -41,7 +43,7 @@ extension MailRichEditorCoordinator: RichEditorViewDelegate {
 
 // MARK: - Toolbar
 
-extension MailRichEditorCoordinator {
+extension EditorCoordinator {
     private func setUpToolbar() {
         UIConstants.applyComposeViewStyle(to: toolbar)
     }
@@ -114,9 +116,12 @@ extension MailRichEditorCoordinator {
         case .strikeThrough:
             richEditorView.strikethrough()
         case .unorderedList:
-            print("Not Implemented Yet")
+            richEditorView.unorderedList()
         case .link:
-            print("Not Implemented Yet")
+            parent.isShowingAlert = NewMessageAlert(type: .link { path in
+                guard let url = URL(string: path) else { return }
+                richEditorView.addLink(url)
+            })
         default:
             fatalError("Action not handled")
         }
