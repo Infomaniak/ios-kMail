@@ -33,9 +33,9 @@ struct ComposeMessageBodyView: View {
     @Binding var editorFocus: Bool
     @Binding var currentSignature: Signature?
     @Binding var isShowingAIPrompt: Bool
+    @Binding var isShowingAlert: NewMessageAlert?
 
     @ObservedObject var attachmentsManager: AttachmentsManager
-    @ObservedObject var alert: NewMessageAlert
 
     let messageReply: MessageReply?
 
@@ -50,12 +50,12 @@ struct ComposeMessageBodyView: View {
             RichTextEditor(
                 model: $editorModel,
                 body: $draft.body,
-                alert: $alert,
                 isShowingCamera: $isShowingCamera,
                 isShowingFileSelection: $isShowingFileSelection,
                 isShowingPhotoLibrary: $isShowingPhotoLibrary,
                 becomeFirstResponder: $editorFocus,
                 isShowingAIPrompt: $isShowingAIPrompt,
+                isShowingAlert: $isShowingAlert,
                 blockRemoteContent: isRemoteContentBlocked
             )
             .ignoresSafeArea(.all, edges: .bottom)
@@ -102,10 +102,10 @@ struct ComposeMessageBodyView: View {
                                   editorFocus: .constant(false),
                                   currentSignature: .constant(nil),
                                   isShowingAIPrompt: .constant(false),
+                                  isShowingAlert: .constant(nil),
                                   attachmentsManager: AttachmentsManager(
                                       draftLocalUUID: draft.localUUID,
                                       mailboxManager: PreviewHelper.sampleMailboxManager
                                   ),
-                                  alert: NewMessageAlert(),
                                   messageReply: nil)
 }
