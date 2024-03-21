@@ -44,52 +44,54 @@ struct CurrentComposeMailboxView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            accentColor.mailboxImage.swiftUIImage
-                .padding(.bottom, value: .regular)
+        NavigationView {
+            VStack(spacing: 0) {
+                accentColor.mailboxImage.swiftUIImage
+                    .padding(.bottom, value: .regular)
 
-            Text(MailResourcesStrings.Localizable.composeMailboxCurrentTitle)
-                .textStyle(.header2)
-                .multilineTextAlignment(.center)
-                .padding(.bottom, value: .medium)
+                Text(MailResourcesStrings.Localizable.composeMailboxCurrentTitle)
+                    .textStyle(.header2)
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, value: .medium)
 
-            if let selectedMailbox = viewModel.selectedMailbox,
-               let account = accountManager.account(for: selectedMailbox.userId) {
-                SelectedMailboxView(account: account, selectedMailbox: selectedMailbox)
-                    .frame(maxHeight: .infinity, alignment: .top)
-            }
-
-            VStack(spacing: UIPadding.regular) {
-                Button(MailResourcesStrings.Localizable.buttonContinue, action: viewModel.validateMailboxChoice)
-                    .buttonStyle(.ikPlain)
-
-                NavigationLink(destination: SelectComposeMailboxView(
-                    composeMessageIntent: $composeMessageIntent,
-                    viewModel: viewModel
-                )) {
-                    Text(MailResourcesStrings.Localizable.buttonSendWithDifferentAddress)
-                        .textStyle(.bodyMediumAccent)
+                if let selectedMailbox = viewModel.selectedMailbox,
+                   let account = accountManager.account(for: selectedMailbox.userId) {
+                    SelectedMailboxView(account: account, selectedMailbox: selectedMailbox)
+                        .frame(maxHeight: .infinity, alignment: .top)
                 }
-                .buttonStyle(.ikLink())
-                .padding(.bottom, UIPadding.onBoardingBottomButtons)
+
+                VStack(spacing: UIPadding.regular) {
+                    Button(MailResourcesStrings.Localizable.buttonContinue, action: viewModel.validateMailboxChoice)
+                        .buttonStyle(.ikPlain)
+
+                    NavigationLink(destination: SelectComposeMailboxView(
+                        composeMessageIntent: $composeMessageIntent,
+                        viewModel: viewModel
+                    )) {
+                        Text(MailResourcesStrings.Localizable.buttonSendWithDifferentAddress)
+                            .textStyle(.bodyMediumAccent)
+                    }
+                    .buttonStyle(.ikLink())
+                    .padding(.bottom, UIPadding.onBoardingBottomButtons)
+                }
+                .ikButtonFullWidth(true)
+                .controlSize(.large)
+                .padding(.horizontal, value: .small)
             }
-            .ikButtonFullWidth(true)
-            .controlSize(.large)
-            .padding(.horizontal, value: .small)
-        }
-        .padding(.horizontal, value: .regular)
-        .mailboxCellStyle(.account)
-        .onAppear(perform: viewModel.initDefaultAccountAndMailbox)
-        .backButtonDisplayMode(.minimal)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                if !platformDetector.isMac {
-                    CloseButton(dismissHandler: dismissMessageView)
+            .padding(.horizontal, value: .regular)
+            .mailboxCellStyle(.account)
+            .onAppear(perform: viewModel.initDefaultAccountAndMailbox)
+            .backButtonDisplayMode(.minimal)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    if !platformDetector.isMac {
+                        CloseButton(dismissHandler: dismissMessageView)
+                    }
                 }
             }
+            .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "CurrentComposeMailboxView"])
         }
-        .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "CurrentComposeMailboxView"])
     }
 
     private func dismissMessageView() {
