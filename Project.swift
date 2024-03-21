@@ -70,7 +70,8 @@ let project = Project(name: "Mail",
                                      "MailResources/**/*.json",
                                      "MailResources/**/*.css",
                                      "MailResources/**/*.js",
-                                     "MailResources/**/*.html"
+                                     "MailResources/**/*.html",
+                                     "MailResources/**/PrivacyInfo.xcprivacy"
                                  ],
                                  entitlements: "MailResources/Mail.entitlements",
                                  scripts: [Constants.swiftlintScript],
