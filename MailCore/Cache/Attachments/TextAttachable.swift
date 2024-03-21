@@ -50,7 +50,6 @@ extension NSItemProvider: TextAttachable {
                 let resultTuple = (dictionary["title"] as? String, dictionary["URL"] as? String)
                 return resultTuple
             } catch {
-                print("error:\(error)")
                 return Self.nilAttachment
             }
         }
