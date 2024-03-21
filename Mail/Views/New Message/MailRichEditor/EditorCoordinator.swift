@@ -20,6 +20,7 @@ import InfomaniakRichEditor
 import MailCore
 import UIKit
 
+@MainActor
 final class EditorCoordinator {
     let toolbar: UIToolbar!
 
@@ -88,15 +89,15 @@ extension EditorCoordinator {
     private func performAppAction(_ action: ToolbarAction) {
         switch action {
         case .ai:
-            print("Not Implemented Yet")
+            parent.isShowingAIPrompt = true
         case .addFile:
-            print("Not Implemented Yet")
+            parent.isShowingFileSelection = true
         case .addPhoto:
-            print("Not Implemented Yet")
+            parent.isShowingPhotoLibrary = true
         case .takePhoto:
-            print("Not Implemented Yet")
+            parent.isShowingCamera = true
         case .programMessage:
-            print("Not Implemented Yet")
+            showWorkInProgressSnackBar()
         default:
             fatalError("Action not handled")
         }

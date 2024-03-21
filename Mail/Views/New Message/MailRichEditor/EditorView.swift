@@ -22,6 +22,7 @@ import SwiftUI
 
 struct EditorView: UIViewRepresentable {
     @Binding var isShowingFileSelection: Bool
+    @Binding var isShowingCamera: Bool
     @Binding var isShowingPhotoLibrary: Bool
     @Binding var isShowingAIPrompt: Bool
     @Binding var isShowingAlert: NewMessageAlert?
@@ -43,6 +44,7 @@ struct EditorView: UIViewRepresentable {
 
 #Preview {
     EditorView(isShowingFileSelection: .constant(false),
+               isShowingCamera: .constant(false),
                isShowingPhotoLibrary: .constant(false),
                isShowingAIPrompt: .constant(false),
                isShowingAlert: .constant(nil))
