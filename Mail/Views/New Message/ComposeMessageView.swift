@@ -53,11 +53,14 @@ enum ComposeViewFieldType: Hashable {
     }
 }
 
-final class NewMessageAlert: SheetState<NewMessageAlert.State> {
-    enum State {
-        case link(handler: (String) -> Void)
-        case emptySubject(handler: () -> Void)
-    }
+struct NewMessageAlert: Identifiable {
+    let id = UUID()
+    let type: NewMessageAlertType
+}
+
+enum NewMessageAlertType {
+    case link(handler: (String) -> Void)
+    case emptySubject(handler: () -> Void)
 }
 
 struct ComposeMessageView: View {
@@ -73,7 +76,8 @@ struct ComposeMessageView: View {
     @LazyInjectService private var reviewManager: ReviewManageable
 
     @State private var isLoadingContent = true
-    @ModalState private var isShowingCancelAttachmentsError = false
+    @ModalState(context: ContextKeys.compose) private var isShowingCancelAttachmentsError = false
+    @ModalState(wrappedValue: nil, context: ContextKeys.compose) private var isShowingAlert: NewMessageAlert?
     @State private var autocompletionType: ComposeViewFieldType?
     @State private var editorFocus = false
     @State private var currentSignature: Signature?
@@ -83,7 +87,6 @@ struct ComposeMessageView: View {
     @Weak private var scrollView: UIScrollView?
 
     @StateObject private var attachmentsManager: AttachmentsManager
-    @StateObject private var alert = NewMessageAlert()
     @StateObject private var aiModel: AIModel
 
     @ObservedRealmObject private var draft: Draft
@@ -153,8 +156,8 @@ struct ComposeMessageView: View {
                         editorFocus: $editorFocus,
                         currentSignature: $currentSignature,
                         isShowingAIPrompt: $aiModel.isShowingPrompt,
+                        isShowingAlert: $isShowingAlert,
                         attachmentsManager: attachmentsManager,
-                        alert: alert,
                         messageReply: messageReply
                     )
                 }
@@ -254,14 +257,12 @@ struct ComposeMessageView: View {
 
             draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: shouldShowSnackbar)
         }
-        .customAlert(isPresented: $alert.isShowing) {
-            switch alert.state {
+        .customAlert(item: $isShowingAlert) { alert in
+            switch alert.type {
             case .link(let handler):
                 AddLinkView(actionHandler: handler)
             case .emptySubject(let handler):
                 EmptySubjectView(actionHandler: handler)
-            case .none:
-                EmptyView()
             }
         }
         .customAlert(isPresented: $isShowingCancelAttachmentsError) {
@@ -312,7 +313,7 @@ struct ComposeMessageView: View {
     private func didTouchSend() {
         guard !draft.subject.isEmpty else {
             matomo.track(eventWithCategory: .newMessage, name: "sendWithoutSubject")
-            alert.state = .emptySubject(handler: sendDraft)
+            isShowingAlert = NewMessageAlert(type: .emptySubject(handler: sendDraft))
             return
         }
 

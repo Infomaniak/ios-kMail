@@ -35,24 +35,27 @@ struct RichTextEditor: UIViewRepresentable {
     @Binding var isShowingPhotoLibrary: Bool
     @Binding var becomeFirstResponder: Bool
     @Binding var isShowingAIPrompt: Bool
+    @Binding var isShowingAlert: NewMessageAlert?
 
     let blockRemoteContent: Bool
-    var alert: ObservedObject<NewMessageAlert>.Wrapper
 
-    init(model: Binding<RichTextEditorModel>, body: Binding<String>,
-         alert: ObservedObject<NewMessageAlert>.Wrapper,
-         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>,
+    init(model: Binding<RichTextEditorModel>,
+         body: Binding<String>,
+         isShowingCamera: Binding<Bool>,
+         isShowingFileSelection: Binding<Bool>,
+         isShowingPhotoLibrary: Binding<Bool>,
          becomeFirstResponder: Binding<Bool>,
          isShowingAIPrompt: Binding<Bool>,
+         isShowingAlert: Binding<NewMessageAlert?>,
          blockRemoteContent: Bool) {
         _model = model
         _body = body
-        self.alert = alert
         _isShowingCamera = isShowingCamera
         _isShowingFileSelection = isShowingFileSelection
         _isShowingPhotoLibrary = isShowingPhotoLibrary
         _becomeFirstResponder = becomeFirstResponder
         _isShowingAIPrompt = isShowingAIPrompt
+        _isShowingAlert = isShowingAlert
         self.blockRemoteContent = blockRemoteContent
     }
 
@@ -130,11 +133,13 @@ struct RichTextEditor: UIViewRepresentable {
     }
 
     func makeUIView(context: Context) -> MailEditorView {
-        let richTextEditor = MailEditorView(alert: alert,
-                                            isShowingCamera: $isShowingCamera,
-                                            isShowingFileSelection: $isShowingFileSelection,
-                                            isShowingPhotoLibrary: $isShowingPhotoLibrary,
-                                            isShowingAIPrompt: $isShowingAIPrompt)
+        let richTextEditor = MailEditorView(
+            isShowingCamera: $isShowingCamera,
+            isShowingFileSelection: $isShowingFileSelection,
+            isShowingPhotoLibrary: $isShowingPhotoLibrary,
+            isShowingAIPrompt: $isShowingAIPrompt,
+            isShowingAlert: $isShowingAlert
+        )
         richTextEditor.delegate = context.coordinator
         return richTextEditor
     }
@@ -182,22 +187,21 @@ final class MailEditorView: SQTextEditorView {
     @LazyInjectService var matomo: MatomoUtils
 
     lazy var toolbar = getToolbar()
-    var alert: ObservedObject<NewMessageAlert>.Wrapper
     var isShowingCamera: Binding<Bool>
     var isShowingFileSelection: Binding<Bool>
     var isShowingPhotoLibrary: Binding<Bool>
     var isShowingAIPrompt: Binding<Bool>
+    var isShowingAlert: Binding<NewMessageAlert?>
 
     var toolbarStyle = ToolbarStyle.main
 
-    init(alert: ObservedObject<NewMessageAlert>.Wrapper,
-         isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>,
-         isShowingAIPrompt: Binding<Bool>) {
-        self.alert = alert
+    init(isShowingCamera: Binding<Bool>, isShowingFileSelection: Binding<Bool>, isShowingPhotoLibrary: Binding<Bool>,
+         isShowingAIPrompt: Binding<Bool>, isShowingAlert: Binding<NewMessageAlert?>) {
         self.isShowingCamera = isShowingCamera
         self.isShowingFileSelection = isShowingFileSelection
         self.isShowingPhotoLibrary = isShowingPhotoLibrary
         self.isShowingAIPrompt = isShowingAIPrompt
+        self.isShowingAlert = isShowingAlert
         super.init()
     }
 
@@ -358,9 +362,9 @@ final class MailEditorView: SQTextEditorView {
                 removeLink()
             } else {
                 webView.resignFirstResponder()
-                alert.state.wrappedValue = .link { url in
+                isShowingAlert.wrappedValue = NewMessageAlert(type: .link(handler: { url in
                     self.makeLink(url: url)
-                }
+                }))
             }
         case .programMessage:
             // TODO: Handle programmed message
