@@ -20,7 +20,12 @@ import InfomaniakRichEditor
 import MailCore
 import SwiftUI
 
-struct MailRichEditorView: UIViewRepresentable {
+struct EditorView: UIViewRepresentable {
+    @Binding var isShowingFileSelection: Bool
+    @Binding var isShowingPhotoLibrary: Bool
+    @Binding var isShowingAIPrompt: Bool
+    @Binding var isShowingAlert: NewMessageAlert?
+
     func makeUIView(context: Context) -> some UIView {
         let editor = RichEditorView()
         editor.delegate = context.coordinator
@@ -31,11 +36,14 @@ struct MailRichEditorView: UIViewRepresentable {
 
     func updateUIView(_ uiView: UIViewType, context: Context) {}
 
-    func makeCoordinator() -> MailRichEditorCoordinator {
-        return MailRichEditorCoordinator()
+    func makeCoordinator() -> EditorCoordinator {
+        return EditorCoordinator(parent: self)
     }
 }
 
 #Preview {
-    MailRichEditorView()
+    EditorView(isShowingFileSelection: .constant(false),
+               isShowingPhotoLibrary: .constant(false),
+               isShowingAIPrompt: .constant(false),
+               isShowingAlert: .constant(nil))
 }
