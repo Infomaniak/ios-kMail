@@ -20,10 +20,10 @@ import Foundation
 import InfomaniakCore
 
 /// Tuple wrapping an abstract title and body
-typealias TextAttachment = (title: String?, body: String?)
+public typealias TextAttachment = (title: String?, body: String?)
 
 /// Something that can provide a text to attach to content
-protocol TextAttachable {
+public protocol TextAttachable {
     /// Async get the text
     var textAttachment: TextAttachment { get async }
 }
@@ -31,7 +31,7 @@ protocol TextAttachable {
 extension NSItemProvider: TextAttachable {
     static let nilAttachment: TextAttachment = (nil, nil)
 
-    var textAttachment: TextAttachment {
+    public var textAttachment: TextAttachment {
         get async {
             guard underlyingType == .isPropertyList else {
                 return Self.nilAttachment

@@ -222,11 +222,9 @@ struct ComposeMessageView: View {
             do {
                 isLoadingContent = true
                 currentSignature = try await draftContentManager.prepareCompleteDraft()
-                await attachmentsManager.completeUploadedAttachments()
-                let textAttachment = await textAttachment?.textAttachment
 
-                // TODO: set title and body from attachmentsManager.
-                print("title: \(textAttachment?.title), textAttachment.body :\(textAttachment?.body)")
+                async let _ = attachmentsManager.completeUploadedAttachments()
+                async let _ = attachmentsManager.processTextAttachment(textAttachment)
 
                 isLoadingContent = false
             } catch {

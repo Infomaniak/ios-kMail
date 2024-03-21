@@ -20,9 +20,15 @@ import Combine
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreUI
-import MailCore
 import PhotosUI
 import UniformTypeIdentifiers
+
+/// Interface of an Attachment
+public protocol Attachable {
+    var suggestedName: String? { get }
+    var type: UTType? { get }
+    func writeToTemporaryURL() async throws -> (url: URL, title: String?)
+}
 
 extension NSItemProvider: Attachable {
     enum ErrorDomain: Error {

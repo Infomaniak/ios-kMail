@@ -22,13 +22,6 @@ import InfomaniakConcurrency
 import InfomaniakCore
 import UniformTypeIdentifiers
 
-/// Interface of an Attachment
-public protocol Attachable {
-    var suggestedName: String? { get }
-    var type: UTType? { get }
-    func writeToTemporaryURL() async throws -> (url: URL, title: String?)
-}
-
 /// Abstracts that some attachment was updated
 public protocol AttachmentsContentUpdatable: AnyObject {
     /// Call to notify the content has changed.
@@ -375,6 +368,44 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
             await updateAttachmentUploadTaskProgress(uploadTask, progress: 1)
         }
         await updateDelegate?.contentWillChange()
+    }
+
+    public func processTextAttachment(_ attachment: TextAttachable) async {
+        // process attachment
+        let textAttachment = await attachment.textAttachment
+
+        // mutate Draft
+        await backgroundRealm.execute { realm in
+            try? realm.write {
+                guard let draftInContext = realm.object(ofType: Draft.self, forPrimaryKey: self.draftLocalUUID) else {
+                    return
+                }
+
+                // Title if any usable
+                var modified = false
+                if draftInContext.subject.isEmpty,
+                   let title = textAttachment.title {
+                    draftInContext.subject = title
+                    modified = true
+                }
+
+                // Url if any after a minimalistic input sanitising
+                if let body = textAttachment.body,
+                   let bodyUrl = URL(string: body),
+                   !body.isEmpty {
+                    draftInContext.body = "<a href=\"\(bodyUrl.absoluteString)\">"
+                        + bodyUrl.absoluteString
+                        + "</a> <br/>"
+                        + draftInContext.body
+                    modified = true
+                }
+
+                guard modified else {
+                    return
+                }
+                realm.add(draftInContext, update: .modified)
+            }
+        }
     }
 
     @MainActor public func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentUploadTask {
