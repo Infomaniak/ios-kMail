@@ -69,7 +69,9 @@ struct ActionsPanelViewModifier: ViewModifier {
                 .sheetViewStyle()
         }
         .floatingPanel(item: $reportForJunkMessage) { reportForJunkMessage in
-            ReportJunkView(reportedMessage: reportForJunkMessage, origin: origin)
+            ReportJunkView(reportedMessage: reportForJunkMessage, origin: origin, dismissHandler: {
+                self.reportForJunkMessage = nil
+            })
         }
         .customAlert(item: $reportedForDisplayProblemMessage) { message in
             ReportDisplayProblemView(message: message)

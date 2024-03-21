@@ -18,16 +18,36 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
+import MailResources
 import SwiftUI
 
 struct ReportJunkView: View {
+    @LazyInjectService private var platformDetector: PlatformDetectable
+
     let reportedMessage: Message
     let actions: [Action] = [.spam, .phishing, .block]
     let origin: ActionOrigin
 
+    var dismissHandler: () -> Void
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
+            if platformDetector.isMac {
+                HStack(alignment: .center, spacing: 0) {
+                    CloseButton(size: .small, dismissHandler: dismissHandler)
+                        .padding(.leading, value: .regular)
+                    Spacer()
+                    Text(MailResourcesStrings.Localizable.actionReportJunk)
+                        .font(.headline)
+                        .foregroundStyle(MailTextStyle.header2.color)
+                        .padding(.trailing, value: .regular)
+                    Spacer()
+                }
+                .padding(.bottom, value: .regular)
+            }
+
             ForEach(actions) { action in
                 if action != actions.first {
                     IKDivider()
@@ -41,6 +61,12 @@ struct ReportJunkView: View {
 }
 
 #Preview {
-    ReportJunkView(reportedMessage: PreviewHelper.sampleMessage, origin: .floatingPanel(source: .threadList))
-        .accentColor(AccentColor.pink.primary.swiftUIColor)
+    let fakeDismissHandler: () -> Void = {}
+
+    return ReportJunkView(
+        reportedMessage: PreviewHelper.sampleMessage,
+        origin: .floatingPanel(source: .threadList),
+        dismissHandler: fakeDismissHandler
+    )
+    .accentColor(AccentColor.pink.primary.swiftUIColor)
 }
