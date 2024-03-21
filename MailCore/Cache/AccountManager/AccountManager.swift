@@ -289,7 +289,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             throw MailError.noMailbox
         }
 
-        try await fetchMailboxesMetadata(mailboxes: fetchedMailboxes, apiFetcher: apiFetcher)
+        await fetchMailboxesMetadata(mailboxes: fetchedMailboxes, apiFetcher: apiFetcher)
 
         let mailboxRemovedList = await mailboxInfosManager.storeMailboxes(user: user, mailboxes: fetchedMailboxes)
         mailboxManagers.removeAll()
@@ -310,8 +310,8 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         saveAccounts()
     }
 
-    private func fetchMailboxesMetadata(mailboxes: [Mailbox], apiFetcher: MailApiFetcher) async throws {
-        try await withThrowingTaskGroup(of: Void.self) { group in
+    private func fetchMailboxesMetadata(mailboxes: [Mailbox], apiFetcher: MailApiFetcher) async {
+        await withTaskGroup(of: Void.self) { group in
             for mailbox in mailboxes where mailbox.isAvailable {
                 group.addTask {
                     async let permissions = apiFetcher.permissions(mailbox: mailbox)
@@ -319,15 +319,15 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
                     if mailbox.isLimited {
                         async let quotas = apiFetcher.quotas(mailbox: mailbox)
-                        mailbox.quotas = try await quotas
+                        mailbox.quotas = try? await quotas
                     }
 
-                    mailbox.permissions = try await permissions
-                    mailbox.externalMailInfo = try await externalMailInfo
+                    mailbox.permissions = try? await permissions
+                    mailbox.externalMailInfo = try? await externalMailInfo
                 }
             }
 
-            try await group.waitForAll()
+            await group.waitForAll()
         }
     }
 
