@@ -48,6 +48,7 @@ struct ComposeMessageBodyView: View {
             AttachmentsHeaderView(attachmentsManager: attachmentsManager)
 
             EditorView(isShowingFileSelection: $isShowingFileSelection,
+                       isShowingCamera: $isShowingCamera,
                        isShowingPhotoLibrary: $isShowingPhotoLibrary,
                        isShowingAIPrompt: $isShowingAIPrompt,
                        isShowingAlert: $isShowingAlert)
