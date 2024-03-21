@@ -33,6 +33,12 @@ public extension String {
         replacingOccurrences(of: "\n", with: "<br>")
     }
 
+    var trimmedAndWithoutNewlines: String {
+        return trimmingCharacters(in: .whitespacesAndNewlines)
+            .replacingOccurrences(of: "\r", with: "")
+            .replacingOccurrences(of: "\n", with: " ")
+    }
+
     func removePrefix(_ prefix: String) -> String {
         guard hasPrefix(prefix) else { return self }
         return String(dropFirst(prefix.count))

@@ -255,13 +255,12 @@ public enum NotificationsHelper {
             return message.preview
         }
 
-        let body = await MessageBodyUtils.splitBodyAndQuote(messageBody: fullBody).messageBody
-
         guard bodyType != .textPlain else {
-            return body.trimmingCharacters(in: .whitespacesAndNewlines)
+            return fullBody.trimmedAndWithoutNewlines
         }
 
         do {
+            let body = await MessageBodyUtils.splitBodyAndQuote(messageBody: fullBody).messageBody
             let cleanedDocument = try await SwiftSoupUtils(fromHTML: body).cleanBody()
             guard let extractedBody = cleanedDocument.body() else { return message.preview }
 
