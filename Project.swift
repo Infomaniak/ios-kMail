@@ -150,7 +150,7 @@ let project = Project(name: "Mail",
                                      .package(product: "NavigationBackport"),
                                      .package(product: "Popovers"),
                                      .package(product: "SwiftUIBackports"),
-                                    .package(product: "InfomaniakRichEditor")
+                                     .package(product: "InfomaniakRichEditor")
                                  ],
                                  settings: .settings(base: Constants.baseSettings)),
                           Target(name: "MailNotificationServiceExtension",
