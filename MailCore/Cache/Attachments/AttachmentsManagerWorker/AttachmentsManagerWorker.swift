@@ -393,9 +393,9 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
                 if let body = textAttachment.body,
                    let bodyUrl = URL(string: body),
                    !body.isEmpty {
-                    draftInContext.body = "<a href=\"\(bodyUrl.absoluteString)\">"
+                    draftInContext.body = "<div><a href=\"\(bodyUrl.absoluteString)\">"
                         + bodyUrl.absoluteString
-                        + "</a> <br/>"
+                        + "</a></div>"
                         + draftInContext.body
                     modified = true
                 }

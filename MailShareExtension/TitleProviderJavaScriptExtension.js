@@ -16,7 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-var TitleProviderJavaScriptExtension = function() {};
+let TitleProviderJavaScriptExtension = function() {};
 
 TitleProviderJavaScriptExtension.prototype = {
     run: function(arguments) {
