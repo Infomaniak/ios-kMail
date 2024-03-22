@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2024 Infomaniak Network SA
@@ -20,39 +19,22 @@
 import MailCore
 import SwiftUI
 
-extension HorizontalAlignment {
-    struct HeaderCloseButtonTitle: AlignmentID {
-        static func defaultValue(in context: ViewDimensions) -> CGFloat {
-            return context[HorizontalAlignment.leading]
-        }
-    }
-
-    static let headerCloseButtonTitle = HorizontalAlignment(HeaderCloseButtonTitle.self)
-}
-
 struct HeaderCloseButtonView: View {
-    var title: String
-    var dismissHandler: () -> Void
+    let title: String
+    let dismissHandler: () -> Void
 
     var body: some View {
-        VStack(alignment: .headerCloseButtonTitle, spacing: 0) {
-            HStack(alignment: .center) {
-                CloseButton(size: .small, dismissHandler: dismissHandler)
-                    .padding(.leading, value: .regular)
+        HStack(alignment: .center) {
+            CloseButton(size: .small, dismissHandler: dismissHandler)
+                .padding(.leading, value: .regular)
 
-                Spacer()
-
-                Text(title)
-                    .font(.headline)
-                    .foregroundStyle(MailTextStyle.header2.color)
-                    .padding(.trailing, value: .medium)
-                    .alignmentGuide(.headerCloseButtonTitle) { dimension in
-                        dimension[HorizontalAlignment.center]
-                    }
-                Spacer()
-            }
-            .padding(.bottom, value: .regular)
+            Text(title)
+                .font(.headline)
+                .foregroundStyle(MailTextStyle.header2.color)
+                .padding(.trailing, value: .medium)
+                .frame(maxWidth: .infinity)
         }
+        .padding(.bottom, value: .regular)
     }
 }
 

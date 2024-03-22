@@ -30,7 +30,7 @@ struct ReportJunkView: View {
     let actions: [Action] = [.spam, .phishing, .block]
     let origin: ActionOrigin
 
-    var dismissHandler: () -> Void
+    let dismissHandler: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -51,12 +51,6 @@ struct ReportJunkView: View {
 }
 
 #Preview {
-    let fakeDismissHandler: () -> Void = {}
-
-    return ReportJunkView(
-        reportedMessage: PreviewHelper.sampleMessage,
-        origin: .floatingPanel(source: .threadList),
-        dismissHandler: fakeDismissHandler
-    )
-    .accentColor(AccentColor.pink.primary.swiftUIColor)
+    ReportJunkView(reportedMessage: PreviewHelper.sampleMessage, origin: .floatingPanel(source: .threadList), dismissHandler: {})
+        .accentColor(AccentColor.pink.primary.swiftUIColor)
 }
