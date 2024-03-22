@@ -26,6 +26,8 @@ import SwiftUI
 struct ReportJunkView: View {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
+    @Environment(\.dismiss) private var dismiss
+
     let reportedMessage: Message
     let actions: [Action] = [.spam, .phishing, .block]
     let origin: ActionOrigin
@@ -35,7 +37,9 @@ struct ReportJunkView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             if platformDetector.isMac {
-                HeaderCloseButtonView(title: MailResourcesStrings.Localizable.actionReportJunk, dismissHandler: dismissHandler)
+                HeaderCloseButtonView(title: MailResourcesStrings.Localizable.actionReportJunk) {
+                    dismiss()
+                }
             }
 
             ForEach(actions) { action in
@@ -51,6 +55,6 @@ struct ReportJunkView: View {
 }
 
 #Preview {
-    ReportJunkView(reportedMessage: PreviewHelper.sampleMessage, origin: .floatingPanel(source: .threadList), dismissHandler: {})
+    ReportJunkView(reportedMessage: PreviewHelper.sampleMessage, origin: .floatingPanel(source: .threadList)) {}
         .accentColor(AccentColor.pink.primary.swiftUIColor)
 }

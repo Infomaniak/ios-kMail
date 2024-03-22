@@ -39,6 +39,6 @@ struct HeaderCloseButtonView: View {
 }
 
 #Preview {
-    HeaderCloseButtonView(title: "View", dismissHandler: {})
+    HeaderCloseButtonView(title: "View") {}
         .previewLayout(.sizeThatFits)
 }
