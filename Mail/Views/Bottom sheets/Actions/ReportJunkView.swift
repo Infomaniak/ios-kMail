@@ -32,8 +32,6 @@ struct ReportJunkView: View {
     let actions: [Action] = [.spam, .phishing, .block]
     let origin: ActionOrigin
 
-    let dismissHandler: () -> Void
-
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             if platformDetector.isMac {
@@ -55,6 +53,6 @@ struct ReportJunkView: View {
 }
 
 #Preview {
-    ReportJunkView(reportedMessage: PreviewHelper.sampleMessage, origin: .floatingPanel(source: .threadList)) {}
+    ReportJunkView(reportedMessage: PreviewHelper.sampleMessage, origin: .floatingPanel(source: .threadList))
         .accentColor(AccentColor.pink.primary.swiftUIColor)
 }
