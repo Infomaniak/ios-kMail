@@ -59,7 +59,9 @@ public extension MailboxManager {
         }
     }
 
-    func searchThreads(searchFolder: Folder?, filterFolderId: String, filter: Filter = .all,
+    func searchThreads(@EnsureFrozen searchFolder: Folder?,
+                       filterFolderId: String,
+                       filter: Filter = .all,
                        searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
         let threadResult = try await apiFetcher.threads(
             mailbox: mailbox,
@@ -74,7 +76,8 @@ public extension MailboxManager {
         return threadResult
     }
 
-    func searchThreads(searchFolder: Folder?, from resource: String,
+    func searchThreads(@EnsureFrozen searchFolder: Folder?,
+                       from resource: String,
                        searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
         let threadResult = try await apiFetcher.threads(from: resource, searchFilter: searchFilter)
 
@@ -83,7 +86,7 @@ public extension MailboxManager {
         return threadResult
     }
 
-    private func prepareAndSaveSearchThreads(threadResult: ThreadResult, searchFolder: Folder?) async {
+    private func prepareAndSaveSearchThreads(threadResult: ThreadResult, @EnsureFrozen searchFolder: Folder?) async {
         await backgroundRealm.execute { realm in
             for thread in threadResult.threads ?? [] {
                 thread.makeFromSearch(using: realm)
@@ -99,7 +102,8 @@ public extension MailboxManager {
         }
     }
 
-    func searchThreadsOffline(searchFolder: Folder?, filterFolderId: String,
+    func searchThreadsOffline(@EnsureFrozen searchFolder: Folder?,
+                              filterFolderId: String,
                               searchFilters: [SearchCondition]) async {
         await backgroundRealm.execute { realm in
             guard let searchFolder = searchFolder?.fresh(using: realm) else {
