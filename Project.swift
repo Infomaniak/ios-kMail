@@ -28,7 +28,7 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/Infomaniak/swift-concurrency", .upToNextMajor(from: "0.0.4")),
                           .package(
                               url: "https://github.com/Infomaniak/ios-core",
-                              .revision("52589897e44b774adca66401413c054471ffcce5")
+                              .revision("4ab5bce9c313d99e6b127778be6eeb6d12fa059f")
                           ),
                           .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "7.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "5.0.0")),
