@@ -95,7 +95,7 @@ public class ActionsManager: ObservableObject {
         self.mainViewState = mainViewState
     }
 
-    public func performAction(target messages: [Message], action: Action, origin: ActionOrigin) async throws {
+    public func performAction(@EnsureFrozen target messages: [Message], action: Action, origin: ActionOrigin) async throws {
         let messagesWithDuplicates = messages.addingDuplicates()
 
         switch action {
@@ -203,7 +203,11 @@ public class ActionsManager: ObservableObject {
         }
     }
 
-    public func performMove(messages: [Message], from originFolder: Folder?, to destinationFolder: Folder) async throws {
+    public func performMove(
+        @EnsureFrozen messages: [Message],
+        @EnsureFrozen from originFolder: Folder?,
+        @EnsureFrozen to destinationFolder: Folder
+    ) async throws {
         let messagesFromFolder = messages.filter { $0.folderId == originFolder?.remoteId }
 
         let originalThreads = messagesFromFolder.flatMap { $0.threads.filter { $0.folder == originFolder } }
