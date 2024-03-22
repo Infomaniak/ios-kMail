@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailResources
@@ -25,7 +26,7 @@ import RealmSwift
 // MARK: - Message
 
 public extension MailboxManager {
-    func message(message: Message) async throws {
+    func message(@EnsureFrozen message: Message) async throws {
         // Get from API
         let completedMessage = try await apiFetcher.message(message: message)
         completedMessage.fullyDownloaded = true
@@ -38,7 +39,7 @@ public extension MailboxManager {
         }
     }
 
-    func attachmentData(_ attachment: Attachment) async throws -> Data {
+    func attachmentData(@EnsureFrozen _ attachment: Attachment) async throws -> Data {
         guard !Task.isCancelled else {
             throw CancellationError()
         }
@@ -57,7 +58,7 @@ public extension MailboxManager {
         return data
     }
 
-    func saveAttachmentLocally(attachment: Attachment) async {
+    func saveAttachmentLocally(@EnsureFrozen attachment: Attachment) async {
         do {
             let data = try await attachmentData(attachment)
             let url = attachment.getLocalURL(userId: account.userId, mailboxId: mailbox.mailboxId)
@@ -72,7 +73,7 @@ public extension MailboxManager {
         }
     }
 
-    func markAsSeen(message: Message, seen: Bool = true) async throws {
+    func markAsSeen(@EnsureFrozen message: Message, seen: Bool = true) async throws {
         if seen {
             var messages = [message]
             messages.append(contentsOf: message.duplicates)
@@ -82,12 +83,12 @@ public extension MailboxManager {
         }
     }
 
-    func move(messages: [Message], to folderRole: FolderRole) async throws -> UndoAction {
+    func move(@EnsureFrozen messages: [Message], to folderRole: FolderRole) async throws -> UndoAction {
         guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
         return try await move(messages: messages, to: folder)
     }
 
-    func move(messages: [Message], to folder: Folder) async throws -> UndoAction {
+    func move(@EnsureFrozen messages: [Message], @EnsureFrozen to folder: Folder) async throws -> UndoAction {
         let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder.remoteId)
         Task {
             try await refreshFolder(from: messages, additionalFolder: folder)
@@ -104,7 +105,7 @@ public extension MailboxManager {
 
     // MARK: Private
 
-    func markAsSeen(messages: [Message], seen: Bool) async throws {
+    func markAsSeen(@EnsureFrozen messages: [Message], seen: Bool) async throws {
         if seen {
             try await apiFetcher.markAsSeen(mailbox: mailbox, messages: messages)
         } else {
@@ -118,7 +119,7 @@ public extension MailboxManager {
 
     /// Set starred the given messages.
     /// - Important: This methods stars only the messages you passes, no processing is done to add duplicates or remove drafts
-    func star(messages: [Message], starred: Bool) async throws {
+    func star(@EnsureFrozen messages: [Message], starred: Bool) async throws {
         if starred {
             _ = try await star(messages: messages)
         } else {
@@ -126,19 +127,19 @@ public extension MailboxManager {
         }
     }
 
-    private func star(messages: [Message]) async throws -> MessageActionResult {
+    private func star(@EnsureFrozen messages: [Message]) async throws -> MessageActionResult {
         let response = try await apiFetcher.star(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages, additionalFolder: nil)
         return response
     }
 
-    private func unstar(messages: [Message]) async throws -> MessageActionResult {
+    private func unstar(@EnsureFrozen messages: [Message]) async throws -> MessageActionResult {
         let response = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages, additionalFolder: nil)
         return response
     }
 
-    private func undoAction(for cancellableResponse: UndoResponse, and messages: [Message]) -> UndoAction {
+    private func undoAction(for cancellableResponse: UndoResponse, @EnsureFrozen and messages: [Message]) -> UndoAction {
         let undoBlock = {
             try await self.refreshFolder(from: messages, additionalFolder: nil)
         }
