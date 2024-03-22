@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCore
 import RealmSwift
 
 // MARK: - Draft
@@ -42,7 +43,7 @@ public extension MailboxManager {
         return realm.objects(Draft.self).where { $0.remoteUUID == remoteUuid }.first
     }
 
-    func send(draft: Draft) async throws -> SendResponse {
+    func send(@EnsureFrozen draft: Draft) async throws -> SendResponse {
         do {
             let cancelableResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
             // Once the draft has been sent, we can delete it from Realm
@@ -64,7 +65,7 @@ public extension MailboxManager {
         }
     }
 
-    func save(draft: Draft) async throws {
+    func save(@EnsureFrozen draft: Draft) async throws {
         do {
             let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
             await backgroundRealm.execute { realm in
@@ -91,12 +92,12 @@ public extension MailboxManager {
         }
     }
 
-    func delete(draft: Draft) async throws {
+    func delete(@EnsureFrozen draft: Draft) async throws {
         try await deleteLocally(draft: draft)
         try await apiFetcher.deleteDraft(mailbox: mailbox, draftId: draft.remoteUUID)
     }
 
-    func delete(draftMessage: Message) async throws {
+    func delete(@EnsureFrozen draftMessage: Message) async throws {
         guard let draftResource = draftMessage.draftResource else {
             throw MailError.resourceError
         }
@@ -109,7 +110,7 @@ public extension MailboxManager {
         try await refreshFolder(from: [draftMessage], additionalFolder: nil)
     }
 
-    func deleteLocally(draft: Draft) async throws {
+    func deleteLocally(@EnsureFrozen draft: Draft) async throws {
         await backgroundRealm.execute { realm in
             guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
                 self.logError(.missingDraft)
