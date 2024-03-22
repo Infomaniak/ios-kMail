@@ -31,7 +31,7 @@ public extension MailboxManager {
     /// - Parameters:
     ///   - folder: Folder to fetch messages from
     ///   - fetchCurrentFolderCompleted: Completion once the messages have been fetched
-    func threads(folder: Folder, fetchCurrentFolderCompleted: (() -> Void) = {}) async throws {
+    func threads(@EnsureFrozen folder: Folder, fetchCurrentFolderCompleted: (() -> Void) = {}) async throws {
         try await messages(folder: folder.freezeIfNeeded())
         fetchCurrentFolderCompleted()
 
@@ -60,7 +60,7 @@ public extension MailboxManager {
     /// - Parameters:
     ///   - folder: Folder to fetch
     ///   - isRetrying: is function called from a retry ?
-    func messages(folder: Folder, isRetrying: Bool = false) async throws {
+    func messages(@EnsureFrozen folder: Folder, isRetrying: Bool = false) async throws {
         guard !Task.isCancelled else { return }
 
         let realm = getRealm()
@@ -179,7 +179,7 @@ public extension MailboxManager {
     ///   - direction: Following or previous page to get
     ///   - backoffIndex: index used in case the offset of the last call doesn't exist
     /// - Returns: MessageUidsResult
-    func messageUidsWithBackOff(folder: Folder,
+    func messageUidsWithBackOff(@EnsureFrozen folder: Folder,
                                 direction: NewMessagesDirection? = nil,
                                 backoffIndex: Int = 0) async throws -> MessageUidsResult {
         let backoffSequence = [1, 1, 2, 8, 34, 144]
@@ -244,7 +244,7 @@ public extension MailboxManager {
     ///   - folder: Given folder
     ///   - direction: Following or previous page to fetch
     /// - Returns: Returns if there are other pages to fetch
-    func fetchOnePage(folder: Folder, direction: NewMessagesDirection? = nil) async throws -> Bool {
+    func fetchOnePage(@EnsureFrozen folder: Folder, direction: NewMessagesDirection? = nil) async throws -> Bool {
         let messageUidsResult = try await messageUidsWithBackOff(folder: folder, direction: direction)
 
         let messagesUids = MessagesUids(
@@ -294,7 +294,7 @@ public extension MailboxManager {
     /// - Parameters:
     ///   - messageUids: Given MessagesUids
     ///   - folder: Given folder
-    private func handleMessagesUids(messageUids: MessagesUids, folder: Folder) async throws {
+    private func handleMessagesUids(messageUids: MessagesUids, @EnsureFrozen folder: Folder) async throws {
         let startDate = Date(timeIntervalSinceNow: -5 * 60)
         let ignoredIds = folder.fresh(using: getRealm())?.threads
             .where { $0.date > startDate }
@@ -388,7 +388,7 @@ public extension MailboxManager {
         await backgroundTracker.end()
     }
 
-    private func updateMessages(updates: [MessageFlags], folder: Folder) async {
+    private func updateMessages(updates: [MessageFlags], @EnsureFrozen folder: Folder) async {
         guard !Task.isCancelled else { return }
 
         let backgroundTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
@@ -415,7 +415,7 @@ public extension MailboxManager {
         await backgroundTracker.end()
     }
 
-    private func addMessages(shortUids: [String], folder: Folder, newCursor: String?) async throws {
+    private func addMessages(shortUids: [String], @EnsureFrozen folder: Folder, newCursor: String?) async throws {
         guard !shortUids.isEmpty && !Task.isCancelled else { return }
 
         let uniqueUids: [String] = getUniqueUids(folder: folder, remoteUids: shortUids)
@@ -575,7 +575,11 @@ public extension MailboxManager {
     ///   - folder: Given folder
     ///   - isRetrying: is function already called from a retry
     ///   - block: Block to execute
-    private func catchLostOffsetMessageError(folder: Folder, isRetrying: Bool, block: () async throws -> Void) async throws {
+    private func catchLostOffsetMessageError(
+        @EnsureFrozen folder: Folder,
+        isRetrying: Bool,
+        block: () async throws -> Void
+    ) async throws {
         do {
             try await block()
         } catch let error as MailError where error == MailApiError.lostOffsetMessage {
@@ -679,7 +683,7 @@ public extension MailboxManager {
 
     // MARK: - Other
 
-    func saveSearchThreads(result: ThreadResult, searchFolder: Folder) async {
+    func saveSearchThreads(result: ThreadResult, @EnsureFrozen searchFolder: Folder) async {
         await backgroundRealm.execute { realm in
             guard let searchFolder = searchFolder.fresh(using: realm) else {
                 self.logError(.missingFolder)
@@ -711,7 +715,7 @@ public extension MailboxManager {
         }
     }
 
-    func markMovedLocally(_ movedLocally: Bool, threads: [Thread]) async {
+    func markMovedLocally(_ movedLocally: Bool, @EnsureFrozen threads: [Thread]) async {
         await backgroundRealm.execute { realm in
             try? realm.write {
                 for thread in threads {
