@@ -26,14 +26,14 @@ struct HeaderCloseButtonView: View {
     var body: some View {
         HStack(alignment: .center) {
             CloseButton(size: .small, dismissHandler: dismissHandler)
-                .padding(.leading, value: .regular)
 
             Text(title)
                 .font(.headline)
                 .foregroundStyle(MailTextStyle.header2.color)
-                .padding(.trailing, value: .medium)
                 .frame(maxWidth: .infinity)
         }
+        .padding(.horizontal, value: .regular)
+        .padding(.trailing, IKIcon.Size.small.rawValue)
         .padding(.bottom, value: .regular)
     }
 }
