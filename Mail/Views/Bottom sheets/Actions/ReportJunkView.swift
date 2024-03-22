@@ -35,17 +35,7 @@ struct ReportJunkView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             if platformDetector.isMac {
-                HStack(alignment: .center, spacing: 0) {
-                    CloseButton(size: .small, dismissHandler: dismissHandler)
-                        .padding(.leading, value: .regular)
-                    Spacer()
-                    Text(MailResourcesStrings.Localizable.actionReportJunk)
-                        .font(.headline)
-                        .foregroundStyle(MailTextStyle.header2.color)
-                        .padding(.trailing, value: .regular)
-                    Spacer()
-                }
-                .padding(.bottom, value: .regular)
+                HeaderCloseButtonView(title: MailResourcesStrings.Localizable.actionReportJunk, dismissHandler: dismissHandler)
             }
 
             ForEach(actions) { action in
