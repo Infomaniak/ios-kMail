@@ -20,25 +20,39 @@
 import MailCore
 import SwiftUI
 
+extension HorizontalAlignment {
+    struct HeaderCloseButtonTitle: AlignmentID {
+        static func defaultValue(in context: ViewDimensions) -> CGFloat {
+            return context[HorizontalAlignment.leading]
+        }
+    }
+
+    static let headerCloseButtonTitle = HorizontalAlignment(HeaderCloseButtonTitle.self)
+}
+
 struct HeaderCloseButtonView: View {
     var title: String
     var dismissHandler: () -> Void
 
     var body: some View {
-        HStack(alignment: .center, spacing: 0) {
-            CloseButton(size: .small, dismissHandler: dismissHandler)
-                .padding(.leading, value: .regular)
+        VStack(alignment: .headerCloseButtonTitle, spacing: 0) {
+            HStack(alignment: .center) {
+                CloseButton(size: .small, dismissHandler: dismissHandler)
+                    .padding(.leading, value: .regular)
 
-            Spacer()
+                Spacer()
 
-            Text(title)
-                .font(.headline)
-                .foregroundStyle(MailTextStyle.header2.color)
-                .padding(.trailing, value: .regular)
-
-            Spacer()
+                Text(title)
+                    .font(.headline)
+                    .foregroundStyle(MailTextStyle.header2.color)
+                    .padding(.trailing, value: .medium)
+                    .alignmentGuide(.headerCloseButtonTitle) { dimension in
+                        dimension[HorizontalAlignment.center]
+                    }
+                Spacer()
+            }
+            .padding(.bottom, value: .regular)
         }
-        .padding(.bottom, value: .regular)
     }
 }
 
