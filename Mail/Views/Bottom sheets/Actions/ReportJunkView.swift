@@ -18,16 +18,28 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
+import MailResources
 import SwiftUI
 
 struct ReportJunkView: View {
+    @LazyInjectService private var platformDetector: PlatformDetectable
+
+    @Environment(\.dismiss) private var dismiss
+
     let reportedMessage: Message
     let actions: [Action] = [.spam, .phishing, .block]
     let origin: ActionOrigin
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
+            if platformDetector.isMac {
+                HeaderCloseButtonView(title: MailResourcesStrings.Localizable.actionReportJunk) {
+                    dismiss()
+                }
+            }
+
             ForEach(actions) { action in
                 if action != actions.first {
                     IKDivider()
