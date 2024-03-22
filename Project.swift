@@ -126,6 +126,7 @@ let project = Project(name: "Mail",
                                            "Mail/Proxy/Protocols/**"],
                                  resources: [
                                      "MailShareExtension/Base.lproj/MainInterface.storyboard",
+                                     "MailShareExtension/**/*.js",
                                      "Mail/**/*.storyboard",
                                      "MailResources/**/*.xcassets",
                                      "MailResources/**/*.strings",

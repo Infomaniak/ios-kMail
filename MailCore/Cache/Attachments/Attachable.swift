@@ -20,16 +20,26 @@ import Combine
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreUI
-import MailCore
 import PhotosUI
 import UniformTypeIdentifiers
 
+/// Interface of an Attachment
+public protocol Attachable {
+    var suggestedName: String? { get }
+    var type: UTType? { get }
+    func writeToTemporaryURL() async throws -> (url: URL, title: String?)
+}
+
 extension NSItemProvider: Attachable {
     enum ErrorDomain: Error {
+        /// Not matching an UTI
         case UTINotFound
 
         /// The type needs dedicated handling
         case unsupportedUnderlyingType
+
+        /// The item cannot be saved to a file
+        case notWritableItem
     }
 
     private var preferredIdentifier: String {
@@ -68,9 +78,13 @@ extension NSItemProvider: Attachable {
             let result = try await getFile.result.get()
             return (result.url, result.title)
 
+        case .isPropertyList:
+            throw ErrorDomain.notWritableItem
+
         case .none:
             throw ErrorDomain.UTINotFound
 
+        // Keep it for forward compatibility
         default:
             throw ErrorDomain.unsupportedUnderlyingType
         }
