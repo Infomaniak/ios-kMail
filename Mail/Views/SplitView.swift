@@ -17,7 +17,6 @@
  */
 
 import Combine
-import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
