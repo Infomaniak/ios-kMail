@@ -50,20 +50,22 @@ struct ComposeMessageIntentView: View, IntentViewable {
         if composeMessageIntent.shouldSelectMailbox {
             CurrentComposeMailboxView(composeMessageIntent: $composeMessageIntent)
         } else {
-            if let resolvedIntent = resolvedIntent.wrappedValue {
-                ComposeMessageView(
-                    draft: resolvedIntent.draft,
-                    mailboxManager: resolvedIntent.mailboxManager,
-                    messageReply: resolvedIntent.messageReply,
-                    attachments: attachments
-                )
-                .environmentObject(resolvedIntent.mailboxManager)
-            } else {
-                ProgressView()
-                    .progressViewStyle(.circular)
-                    .task {
-                        await initFromIntent()
-                    }
+            NavigationView {
+                if let resolvedIntent = resolvedIntent.wrappedValue {
+                    ComposeMessageView(
+                        draft: resolvedIntent.draft,
+                        mailboxManager: resolvedIntent.mailboxManager,
+                        messageReply: resolvedIntent.messageReply,
+                        attachments: attachments
+                    )
+                    .environmentObject(resolvedIntent.mailboxManager)
+                } else {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .task {
+                            await initFromIntent()
+                        }
+                }
             }
         }
     }

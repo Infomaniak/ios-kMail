@@ -137,47 +137,45 @@ struct ComposeMessageView: View {
     // MARK: - View
 
     var body: some View {
-        NavigationView {
-            ScrollView {
-                VStack(spacing: 0) {
-                    ComposeMessageHeaderView(
-                        draft: draft,
-                        focusedField: _focusedField,
-                        autocompletionType: $autocompletionType,
-                        currentSignature: $currentSignature
-                    )
+        ScrollView {
+            VStack(spacing: 0) {
+                ComposeMessageHeaderView(
+                    draft: draft,
+                    focusedField: _focusedField,
+                    autocompletionType: $autocompletionType,
+                    currentSignature: $currentSignature
+                )
 
-                    if autocompletionType == nil && !isLoadingContent {
-                        ComposeMessageBodyView(
-                            draft: draft,
-                            editorModel: $editorModel,
-                            editorFocus: $editorFocus,
-                            currentSignature: $currentSignature,
-                            isShowingAIPrompt: $aiModel.isShowingPrompt,
-                            attachmentsManager: attachmentsManager,
-                            alert: alert,
-                            messageReply: messageReply
-                        )
-                    }
+                if autocompletionType == nil && !isLoadingContent {
+                    ComposeMessageBodyView(
+                        draft: draft,
+                        editorModel: $editorModel,
+                        editorFocus: $editorFocus,
+                        currentSignature: $currentSignature,
+                        isShowingAIPrompt: $aiModel.isShowingPrompt,
+                        attachmentsManager: attachmentsManager,
+                        alert: alert,
+                        messageReply: messageReply
+                    )
                 }
             }
-            .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)
-            .navigationBarTitleDisplayMode(.inline)
-            .interactiveDismissDisabled()
-            .navigationViewStyle(.stack)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    if !platformDetector.isMac {
-                        CloseButton(dismissHandler: didTouchDismiss)
-                    }
+        }
+        .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)
+        .navigationBarTitleDisplayMode(.inline)
+        .interactiveDismissDisabled()
+        .navigationViewStyle(.stack)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                if !platformDetector.isMac {
+                    CloseButton(dismissHandler: didTouchDismiss)
                 }
+            }
 
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: didTouchSend) {
-                        Label(MailResourcesStrings.Localizable.send, image: MailResourcesAsset.send.name)
-                    }
-                    .disabled(isSendButtonDisabled)
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: didTouchSend) {
+                    Label(MailResourcesStrings.Localizable.send, image: MailResourcesAsset.send.name)
                 }
+                .disabled(isSendButtonDisabled)
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
