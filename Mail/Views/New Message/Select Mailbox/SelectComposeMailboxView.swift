@@ -70,6 +70,7 @@ struct SelectComposeMailboxView: View {
                 .controlSize(.large)
                 .ikButtonFullWidth(true)
                 .padding(.horizontal, value: .small)
+                .disabled(!viewModel.selectionMade)
         }
         .padding(.horizontal, value: .regular)
         .padding(.bottom, UIPadding.onBoardingBottomButtons)
