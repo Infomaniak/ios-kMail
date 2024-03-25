@@ -29,10 +29,19 @@ public enum DeeplinkConstants {
     public static let iosPreferences = URL(string: "App-prefs:")!
 }
 
+@MainActor
 public enum DesktopWindowIdentifier {
     public static let settingsWindowIdentifier = "settings"
     public static let composeWindowIdentifier = "compose"
     public static let threadWindowIdentifier = "thread"
+
+    public static func mainWindowIdentifier(currentViewState: RootViewState) -> String {
+        if case .mainView(let mainViewState) = currentViewState.state {
+            return "Main-\(mainViewState.mailboxManager.mailbox.objectId)"
+        } else {
+            return "Main"
+        }
+    }
 }
 
 public struct URLConstants {

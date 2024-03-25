@@ -44,7 +44,7 @@ struct UserAccountScene: Scene {
     @StateObject private var rootViewState = RootViewState()
 
     var body: some Scene {
-        WindowGroup {
+        WindowGroup(id: DesktopWindowIdentifier.mainWindowIdentifier(currentViewState: rootViewState)) {
             RootView()
                 .standardWindow()
                 .environmentObject(rootViewState)
