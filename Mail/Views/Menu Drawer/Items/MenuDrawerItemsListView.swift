@@ -68,6 +68,8 @@ struct MenuDrawerItemsAdvancedListView: View {
 }
 
 struct MenuDrawerItemsHelpListView: View {
+    @LazyInjectService private var accountManager: AccountManager
+
     @Environment(\.openURL) private var openURL
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -98,6 +100,7 @@ struct MenuDrawerItemsHelpListView: View {
 
     private func sendFeedback() {
         if mailboxManager.account.user?.isStaff == true {
+            accountManager.enableBugTrackerIfAvailable()
             isShowingBugTracker.toggle()
         } else if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
             openURL(userReportURL)
