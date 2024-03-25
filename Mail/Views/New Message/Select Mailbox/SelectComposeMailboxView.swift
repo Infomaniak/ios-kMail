@@ -65,12 +65,14 @@ struct SelectComposeMailboxView: View {
                     .padding(.bottom, value: .regular)
             }
 
-            Button(MailResourcesStrings.Localizable.buttonContinue, action: viewModel.validateMailboxChoice)
-                .buttonStyle(.ikPlain)
-                .controlSize(.large)
-                .ikButtonFullWidth(true)
-                .padding(.horizontal, value: .small)
-                .disabled(!viewModel.selectionMade)
+            Button(MailResourcesStrings.Localizable.buttonContinue) {
+                viewModel.validateMailboxChoice(viewModel.selectedMailbox)
+            }
+            .buttonStyle(.ikPlain)
+            .controlSize(.large)
+            .ikButtonFullWidth(true)
+            .padding(.horizontal, value: .small)
+            .disabled(!viewModel.selectionMade)
         }
         .padding(.horizontal, value: .regular)
         .padding(.bottom, UIPadding.onBoardingBottomButtons)

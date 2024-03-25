@@ -29,6 +29,7 @@ final class SelectComposeMailboxViewModel: ObservableObject {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @Published private(set) var selectedMailbox: Mailbox?
+    @Published private(set) var defaultMailbox: Mailbox?
     @Published private(set) var selectionMade = false
 
     private(set) var composeMessageIntent: Binding<ComposeMessageIntent>
@@ -47,9 +48,9 @@ final class SelectComposeMailboxViewModel: ObservableObject {
     }
 
     func initDefaultAccountAndMailbox() {
-        selectedMailbox = accountManager.currentMailboxManager?.mailbox
-        if accountManager.accounts.count == 1 && mailboxInfosManager.getMailboxes().count == 1 {
-            validateMailboxChoice()
+        defaultMailbox = accountManager.currentMailboxManager?.mailbox
+        if let defaultMailbox, accountManager.accounts.count == 1 && mailboxInfosManager.getMailboxes().count == 1 {
+            validateMailboxChoice(defaultMailbox)
         }
     }
 
@@ -62,8 +63,8 @@ final class SelectComposeMailboxViewModel: ObservableObject {
         selectionMade = true
     }
 
-    func validateMailboxChoice() {
-        guard let selectedMailbox, let mailboxManager = accountManager.getMailboxManager(for: selectedMailbox) else {
+    func validateMailboxChoice(_ selectedMailbox: Mailbox?) {
+        guard let mailbox = selectedMailbox, let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
             return
         }

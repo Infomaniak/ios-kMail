@@ -54,15 +54,17 @@ struct CurrentComposeMailboxView: View {
                     .multilineTextAlignment(.center)
                     .padding(.bottom, value: .medium)
 
-                if let selectedMailbox = viewModel.selectedMailbox,
-                   let account = accountManager.account(for: selectedMailbox.userId) {
-                    SelectedMailboxView(account: account, selectedMailbox: selectedMailbox)
+                if let defaultMailbox = viewModel.defaultMailbox,
+                   let account = accountManager.account(for: defaultMailbox.userId) {
+                    SelectedMailboxView(account: account, selectedMailbox: defaultMailbox)
                         .frame(maxHeight: .infinity, alignment: .top)
                 }
 
                 VStack(spacing: UIPadding.regular) {
-                    Button(MailResourcesStrings.Localizable.buttonContinue, action: viewModel.validateMailboxChoice)
-                        .buttonStyle(.ikPlain)
+                    Button(MailResourcesStrings.Localizable.buttonContinue) {
+                        viewModel.validateMailboxChoice(viewModel.defaultMailbox)
+                    }
+                    .buttonStyle(.ikPlain)
 
                     NavigationLink(destination: SelectComposeMailboxView(
                         composeMessageIntent: $composeMessageIntent,
