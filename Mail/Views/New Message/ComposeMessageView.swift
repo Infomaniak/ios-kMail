@@ -331,7 +331,7 @@ struct ComposeMessageView: View {
 
         sendDraft()
 
-        if !Bundle.main.isExtension {
+        if !Bundle.main.isExtension && !platformDetector.isMac {
             // We should implement a proper router to avoid doing this
             DispatchQueue.main.asyncAfter(deadline: UIConstants.modalCloseDelay) {
                 mainViewState.isShowingSetAppAsDefaultDiscovery = UserDefaults.shared.shouldPresentSetAsDefaultDiscovery
