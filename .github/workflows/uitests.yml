@@ -1,0 +1,28 @@
+name: CI workflow
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: UI Tests
+    runs-on: [ self-hosted, iOS ]
+
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Create test env
+        env:
+          ENV_PATH: "MailUITests/Env.swift"
+          UITEST_ACCOUNT_EMAIL: ${{ secrets.UITEST_ACCOUNT_EMAIL }}
+          UITEST_ACCOUNT_PASSWORD: ${{ secrets.UITEST_ACCOUNT_PASSWORD }}
+        run: |
+          touch $ENV_PATH
+          echo -e "enum Env {\n static let testAccountEmail = \"$UITEST_ACCOUNT_EMAIL\"\n static let testAccountPassword = \"$UITEST_ACCOUNT_PASSWORD\"\n}" > $ENV_PATH
+      - name: UITest
+        run: .tuist-bin/tuist test Mail --device "iPhone 15 Pro" --test-targets MailUITests/MailUITests
