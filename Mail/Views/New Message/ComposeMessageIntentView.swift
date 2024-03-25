@@ -38,12 +38,11 @@ struct ComposeMessageIntentView: View, IntentViewable {
 
     @State private var composeMessageIntent: ComposeMessageIntent
     let resolvedIntent = State<ResolvedIntent?>()
+    var textAttachment: TextAttachable?
+    var attachments: [Attachable] = []
 
-    private var attachments: [Attachable]
-
-    init(composeMessageIntent: ComposeMessageIntent, attachments: [Attachable] = []) {
+    init(composeMessageIntent: ComposeMessageIntent) {
         _composeMessageIntent = State(wrappedValue: composeMessageIntent)
-        self.attachments = attachments
     }
 
     var body: some View {

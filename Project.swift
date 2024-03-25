@@ -28,7 +28,7 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/Infomaniak/swift-concurrency", .upToNextMajor(from: "0.0.4")),
                           .package(
                               url: "https://github.com/Infomaniak/ios-core",
-                              .revision("eb590897129b2b5b9f289b6db7fd2816bcea7225")
+                              .revision("4ab5bce9c313d99e6b127778be6eeb6d12fa059f")
                           ),
                           .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "7.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "5.0.0")),
@@ -126,6 +126,7 @@ let project = Project(name: "Mail",
                                            "Mail/Proxy/Protocols/**"],
                                  resources: [
                                      "MailShareExtension/Base.lproj/MainInterface.storyboard",
+                                     "MailShareExtension/**/*.js",
                                      "Mail/**/*.storyboard",
                                      "MailResources/**/*.xcassets",
                                      "MailResources/**/*.strings",

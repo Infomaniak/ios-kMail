@@ -26,6 +26,8 @@
 	<dict>
 		<key>NSExtensionAttributes</key>
 		<dict>
+			<key>NSExtensionJavaScriptPreprocessingFile</key>
+			<string>TitleProviderJavaScriptExtension</string>
 			<key>NSExtensionActivationRule</key>
 			<string>SUBQUERY (extensionItems, $extensionItem, SUBQUERY ($extensionItem.attachments, $attachment, (ANY $attachment.registeredTypeIdentifiers UTI-CONFORMS-TO &quot;public.data&quot;)).@count == $extensionItem.attachments.@count ).@count &gt; 0</string>
 		</dict>

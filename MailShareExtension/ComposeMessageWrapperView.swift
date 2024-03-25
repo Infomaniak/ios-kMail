@@ -21,6 +21,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import MobileCoreServices
 import Social
 import SwiftUI
 import UIKit
@@ -35,19 +36,37 @@ struct ComposeMessageWrapperView: View {
     let itemProviders: [NSItemProvider]
     let dismissHandler: SimpleClosure
 
+    static let typePropertyList = String(kUTTypePropertyList)
+
+    var textAttachment: TextAttachable? {
+        itemProviders.first { itemProvider in
+            itemProvider.hasItemConformingToTypeIdentifier(Self.typePropertyList)
+        }
+    }
+
+    var attachments: [Attachable] {
+        itemProviders.filter { itemProvider in
+            !itemProvider.hasItemConformingToTypeIdentifier(Self.typePropertyList)
+        }
+    }
+
     var body: some View {
         Group {
             if versionStatus == .updateIsRequired {
                 MailUpdateRequiredView { dismissHandler(()) }
             } else if let mailboxManager = accountManager.currentMailboxManager {
-                ComposeMessageIntentView(composeMessageIntent: .new(fromExtension: true), attachments: itemProviders)
-                    .environmentObject(mailboxManager)
-                    .environment(\.dismissModal) {
-                        dismissHandler(())
-                    }
-                    .task {
-                        try? await featureFlagsManager.fetchFlags()
-                    }
+                ComposeMessageIntentView(
+                    composeMessageIntent: .new(fromExtension: true),
+                    textAttachment: textAttachment,
+                    attachments: attachments
+                )
+                .environmentObject(mailboxManager)
+                .environment(\.dismissModal) {
+                    dismissHandler(())
+                }
+                .task {
+                    try? await featureFlagsManager.fetchFlags()
+                }
             } else {
                 PleaseLoginView(tapHandler: dismissHandler)
             }

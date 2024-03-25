@@ -65,6 +65,8 @@ public enum Logging {
             options.dsn = "https://b7e4f5e8fd464659a8e83ead7015e070@sentry-mobile.infomaniak.com/5"
             options.enableUIViewControllerTracing = false
             options.enableUserInteractionTracing = false
+            options.enableMetricKit = true
+
             options.beforeSend = { event in
                 // if the application is in debug or test mode discard the events
                 #if DEBUG || TEST
