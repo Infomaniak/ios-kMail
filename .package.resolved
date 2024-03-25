@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-bug-tracker",
       "state" : {
-        "revision" : "d40287294487de602bbca229558b8f01c3ef04b8",
-        "version" : "3.0.0"
+        "revision" : "7b582c8281a74762293b1522d7c1f096a44eb07e",
+        "version" : "4.0.0"
       }
     },
     {
