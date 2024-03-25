@@ -21,6 +21,8 @@ import MailResources
 import SwiftUI
 
 struct AccountMailboxCell: View {
+    @State private var showCheckMark = false
+
     let mailbox: Mailbox
     var selectedMailbox: Mailbox?
     let selectMailbox: (Mailbox) -> Void
@@ -28,18 +30,23 @@ struct AccountMailboxCell: View {
     var body: some View {
         Button {
             withAnimation {
-                selectMailbox(mailbox)
+                mailboxSelected()
             }
         } label: {
             Label {
                 Text(mailbox.email)
             } icon: {
-                if selectedMailbox?.mailboxId == mailbox.mailboxId {
+                if selectedMailbox?.mailboxId == mailbox.mailboxId && showCheckMark {
                     MailResourcesAsset.check.swiftUIImage
                 }
             }
-            .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonSelectSignature)
+            .accessibilityHint(MailResourcesStrings.Localizable.composeMailboxSelectionTitle)
         }
+    }
+
+    private func mailboxSelected() {
+        showCheckMark = true
+        selectMailbox(mailbox)
     }
 }
 
