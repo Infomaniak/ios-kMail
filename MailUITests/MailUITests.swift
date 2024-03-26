@@ -109,7 +109,7 @@ class MailUITests: XCTestCase {
 
         app.collectionViews.buttons[MailResourcesStrings.Localizable.actionDelete].tap()
 
-        undo()
+        undo(ignoreUndoFailure: false)
     }
 
     func testMoveAction() {
@@ -168,9 +168,14 @@ class MailUITests: XCTestCase {
         }
     }
 
-    func undo() {
+    func undo(ignoreUndoFailure: Bool = true) {
         let cancelButton = app.buttons[MailResourcesStrings.Localizable.buttonCancel]
         _ = cancelButton.waitForExistence(timeout: 10)
+
+        if !cancelButton.exists && ignoreUndoFailure {
+            return
+        }
+
         cancelButton.tap()
     }
 
