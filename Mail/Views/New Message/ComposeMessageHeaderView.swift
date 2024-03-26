@@ -36,6 +36,7 @@ struct ComposeMessageHeaderView: View {
         VStack(spacing: 0) {
             ComposeMessageSenderMenu(
                 currentSignature: $currentSignature,
+                mailboxManager: mailboxManager,
                 autocompletionType: autocompletionType,
                 type: .from,
                 text: mailboxManager.mailbox.email

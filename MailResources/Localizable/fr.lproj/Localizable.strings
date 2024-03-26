@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: fr, French
  * Tagged: ios
- * Exported by: Charlene Hoareau
- * Exported at: Mon, 11 Mar 2024 13:27:21 +0100
+ * Exported by: elena willen
+ * Exported at: Mon, 11 Mar 2024 16:16:23 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -454,6 +454,9 @@
 
 /* loco:626918473e1b2d7fe4329d52 */
 "buttonSelectAll" = "Tout";
+
+/* loco:65ef191d6c54ba7fcc03cc92 */
+"buttonSendWithDifferentAddress" = "Envoyer avec une autre adresse";
 
 /* loco:657324e1fb3ef333a001d852 */
 "buttonSetNow" = "Définir maintenant";
@@ -1131,13 +1134,10 @@
 "settingsAutoAdvanceListOfThreadsTitle" = "Liste des conversations";
 
 /* loco:65df003b996ecfc40c0d9962 */
-"settingsAutoAdvanceNaturalThreadDescription" = "Répète la dernière action que vous avez effectuée";
-
-/* loco:65eb1767b7ece7e666042e02 */
-"settingsAutoAdvanceNaturalThreadHint" = "Sélectionne automatiquement la conversation suivante ou précédente, selon votre dernière interaction.";
+"settingsAutoAdvanceNaturalThreadDescription" = "Afficher la conversation selon le sens naturel de navigation après archivage ou suppression";
 
 /* loco:65defeba6cb9206d3f0d4392 */
-"settingsAutoAdvanceNaturalThreadTitle" = "Répéter la dernière action";
+"settingsAutoAdvanceNaturalThreadTitle" = "Sens naturel de navigation";
 
 /* loco:65b27d1e0565d99b930ae142 */
 "settingsAutoAdvancePreviousThreadDescription" = "Afficher la conversation précédente après archivage ou suppression";

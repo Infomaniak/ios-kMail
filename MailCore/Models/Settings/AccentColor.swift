@@ -121,6 +121,15 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
         }
     }
 
+    public var mailboxImage: MailResourcesImages {
+        switch self {
+        case .pink:
+            return MailResourcesAsset.mailboxPink
+        case .blue:
+            return MailResourcesAsset.mailboxBlue
+        }
+    }
+
     // MARK: Swipe settings icons
 
     public var fullTrailingIcon: MailResourcesImages {
