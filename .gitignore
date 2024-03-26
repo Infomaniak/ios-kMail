@@ -69,3 +69,4 @@ release/
 
 ### Tests ###
 MailTests/Env.swift
+MailUITests/Env.swift

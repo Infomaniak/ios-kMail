@@ -108,7 +108,8 @@ let project = Project(name: "Mail",
                                  infoPlist: "MailTests/Info.plist",
                                  sources: "MailUITests/**",
                                  dependencies: [
-                                     .target(name: "Infomaniak Mail")
+                                     .target(name: "Infomaniak Mail"),
+                                     .target(name: "MailResources"),
                                  ],
                                  settings: .settings(base: Constants.testSettings)),
                           Target(name: "MailShareExtension",

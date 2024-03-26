@@ -48,7 +48,12 @@ final class WebViewModel: NSObject, ObservableObject {
     }
 
     override init() {
-        webView = WKWebView()
+        let configuration = WKWebViewConfiguration()
+        configuration.dataDetectorTypes = .all
+        configuration.defaultWebpagePreferences.allowsContentJavaScript = false
+        configuration.setURLSchemeHandler(URLSchemeHandler(), forURLScheme: URLSchemeHandler.scheme)
+
+        webView = WKWebView(frame: .zero, configuration: configuration)
         contentBlocker = ContentBlocker(webView: webView)
 
         super.init()
@@ -98,10 +103,6 @@ final class WebViewModel: NSObject, ObservableObject {
     }
 
     private func setUpWebViewConfiguration() {
-        webView.configuration.dataDetectorTypes = .all
-        webView.configuration.defaultWebpagePreferences.allowsContentJavaScript = false
-        webView.configuration.setURLSchemeHandler(URLSchemeHandler(), forURLScheme: URLSchemeHandler.scheme)
-
         webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.log.rawValue)
         webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.sizeChanged.rawValue)
         webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.overScroll.rawValue)
