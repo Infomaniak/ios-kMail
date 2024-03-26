@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
@@ -24,6 +25,7 @@ import SwiftUI
 
 struct SenderMenuCell: View {
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     @EnvironmentObject private var draftContentManager: DraftContentManager
 
@@ -41,7 +43,11 @@ struct SenderMenuCell: View {
             draftContentManager.updateSignature(with: signature)
         } label: {
             Label {
-                Text("\(signature.senderName) (\(signature.name))")
+                if !platformDetector.isMac {
+                    Text("\(signature.senderName) (\(signature.name))")
+                } else {
+                    Text("\(signature.senderEmail) (\(signature.name))")
+                }
             } icon: {
                 if signature == currentSignature {
                     MailResourcesAsset.check.swiftUIImage
