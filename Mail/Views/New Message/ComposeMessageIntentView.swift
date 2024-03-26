@@ -39,7 +39,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
     }
 
     let composeMessageIntent: ComposeMessageIntent
-    var textAttachment: TextAttachable?
+    var textAttachments: [TextAttachable] = []
     var attachments: [Attachable] = []
 
     var body: some View {
@@ -50,7 +50,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
                     mailboxManager: resolvedIntent.mailboxManager,
                     messageReply: resolvedIntent.messageReply,
                     attachments: attachments,
-                    textAttachment: textAttachment
+                    textAttachments: textAttachments
                 )
                 .environmentObject(resolvedIntent.mailboxManager)
             } else {

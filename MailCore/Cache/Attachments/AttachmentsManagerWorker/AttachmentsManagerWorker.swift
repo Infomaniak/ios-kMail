@@ -370,7 +370,12 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
         await updateDelegate?.contentWillChange()
     }
 
-    public func processTextAttachment(_ attachment: TextAttachable) async {
+    public func processTextAttachments(_ attachments: [TextAttachable]) async {
+        // TODO: handle all the attachments
+        guard let attachment = attachments.first else {
+            return
+        }
+
         // process attachment
         let textAttachment = await attachment.textAttachment
 

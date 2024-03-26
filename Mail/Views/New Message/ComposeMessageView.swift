@@ -101,7 +101,7 @@ struct ComposeMessageView: View {
     private let messageReply: MessageReply?
     private let draftContentManager: DraftContentManager
     private let mailboxManager: MailboxManager
-    private let textAttachment: TextAttachable?
+    private let textAttachments: [TextAttachable]
 
     private var isSendButtonDisabled: Bool {
         let disabledState = draft.identityId == nil
@@ -118,9 +118,10 @@ struct ComposeMessageView: View {
         mailboxManager: MailboxManager,
         messageReply: MessageReply? = nil,
         attachments: [Attachable] = [],
-        textAttachment: TextAttachable? = nil
+        textAttachments: [TextAttachable] = []
     ) {
         self.messageReply = messageReply
+        self.textAttachments = textAttachments
 
         _draft = ObservedRealmObject(wrappedValue: draft)
 
@@ -130,8 +131,6 @@ struct ComposeMessageView: View {
             mailboxManager: mailboxManager
         )
         draftContentManager = currentDraftContentManager
-
-        self.textAttachment = textAttachment
 
         self.mailboxManager = mailboxManager
         _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draftLocalUUID: draft.localUUID,
@@ -224,7 +223,7 @@ struct ComposeMessageView: View {
                 currentSignature = try await draftContentManager.prepareCompleteDraft()
 
                 async let _ = attachmentsManager.completeUploadedAttachments()
-                async let _ = attachmentsManager.processTextAttachment(textAttachment)
+                async let _ = attachmentsManager.processTextAttachments(textAttachments)
 
                 isLoadingContent = false
             } catch {
