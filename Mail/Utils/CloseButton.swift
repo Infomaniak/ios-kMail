@@ -20,20 +20,15 @@ import MailResources
 import SwiftUI
 
 struct CloseButton: View {
-    enum Size: CGFloat {
-        case small = 16
-        case medium = 24
-    }
-
-    var size: Size?
+    var size: IKIcon.Size?
     let dismissHandler: () -> Void
 
-    init(size: Size? = nil, dismissHandler: @escaping () -> Void) {
+    init(size: IKIcon.Size? = nil, dismissHandler: @escaping () -> Void) {
         self.size = size
         self.dismissHandler = dismissHandler
     }
 
-    init(size: Size? = nil, dismissAction: DismissAction) {
+    init(size: IKIcon.Size? = nil, dismissAction: DismissAction) {
         self.size = size
         dismissHandler = dismissAction.callAsFunction
     }

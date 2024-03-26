@@ -252,7 +252,7 @@ struct OnboardingView: View {
         }
         .overlay(alignment: .topLeading) {
             if !isScrollEnabled {
-                CloseButton(size: .small, dismissAction: dismiss)
+                CloseButton(size: .regular, dismissAction: dismiss)
                     .padding(.top, UIPadding.onBoardingLogoTop)
                     .padding(.top, value: .verySmall)
                     .padding(.leading, value: .medium)

@@ -40,6 +40,11 @@ struct CreateAccountView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            CloseButton(size: .regular, dismissAction: dismiss)
+                .padding(.top, UIPadding.onBoardingLogoTop)
+                .padding(.top, value: .verySmall)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
             accentColor.createAccountImage.swiftUIImage
                 .resizable()
                 .scaledToFit()
@@ -83,15 +88,9 @@ struct CreateAccountView: View {
             }
             .buttonStyle(.ikPlain)
             .ikButtonLoading(loginHandler.isLoading)
+            .ikButtonFullWidth(true)
             .controlSize(.large)
             .padding(.bottom, value: .regular)
-        }
-        .overlay(alignment: .topLeading) {
-            if platformDetector.isMac {
-                CloseButton(size: .small, dismissAction: dismiss)
-                    .padding(.top, UIPadding.onBoardingLogoTop)
-                    .padding(.top, value: .verySmall)
-            }
         }
         .padding(.horizontal, value: .medium)
         .sheet(isPresented: $isPresentingCreateAccount) {
