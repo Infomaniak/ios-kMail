@@ -40,6 +40,7 @@ struct UserAccountScene: Scene {
     @LazyInjectService private var refreshAppBackgroundTask: RefreshAppBackgroundTask
     @LazyInjectService private var reviewManager: ReviewManageable
     @LazyInjectService private var platformDetector: PlatformDetectable
+    @LazyInjectService private var cacheManager: CacheManageable
 
     @StateObject private var rootViewState = RootViewState()
 
@@ -53,7 +54,7 @@ struct UserAccountScene: Scene {
                      We have to listen to `UIScene.willEnterForegroundNotification` to increase the `appLaunchCounter`
                      only when the app enters foreground. */
                     appLaunchCounter.increase()
-                    refreshCacheData()
+                    cacheManager.refreshCacheData(account: rootViewState.account)
                     reviewManager.decreaseOpeningUntilReview()
                 }
                 .onChange(of: scenePhase) { newScenePhase in
@@ -72,8 +73,8 @@ struct UserAccountScene: Scene {
                         break
                     }
                 }
-                .onChange(of: rootViewState.account) { _ in
-                    refreshCacheData()
+                .task(id: rootViewState.account) {
+                    cacheManager.refreshCacheData(account: rootViewState.account)
                 }
         }
         .commands {
@@ -96,26 +97,6 @@ struct UserAccountScene: Scene {
                 }
             }
             .defaultAppStorage(.shared)
-        }
-    }
-
-    func refreshCacheData() {
-        guard let account = rootViewState.account else {
-            return
-        }
-
-        Task {
-            do {
-                try await accountManager.updateUser(for: account)
-                accountManager.enableBugTrackerIfAvailable()
-
-                guard CNContactStore.authorizationStatus(for: .contacts) != .notDetermined else {
-                    return
-                }
-                try await accountManager.currentContactManager?.refreshContactsAndAddressBooksIfNeeded()
-            } catch {
-                DDLogError("Error while updating user account: \(error)")
-            }
         }
     }
 
