@@ -40,6 +40,7 @@ struct MailApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     init() {
+        Logging.resetAppForUITestsIfNeeded()
         DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
         refreshAppBackgroundTask.register()
     }

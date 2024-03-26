@@ -242,6 +242,7 @@ struct OnboardingView: View {
                     } label: {
                         IKIcon(MailResourcesAsset.fullArrowRight, size: .large)
                     }
+                    .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonNext)
                     .buttonStyle(.ikSquare)
                     .controlSize(.large)
                 }
