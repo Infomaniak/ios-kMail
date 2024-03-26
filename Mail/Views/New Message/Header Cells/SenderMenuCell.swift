@@ -43,10 +43,10 @@ struct SenderMenuCell: View {
             draftContentManager.updateSignature(with: signature)
         } label: {
             Label {
-                if !platformDetector.isMac {
-                    Text("\(signature.senderName) (\(signature.name))")
+                if platformDetector.isMac {
+                    Text("\(signature.senderName) (\(signature.name)) \(signature.senderEmailIdn)")
                 } else {
-                    Text("\(signature.senderEmail) (\(signature.name))")
+                    Text("\(signature.senderName) (\(signature.name))")
                 }
             } icon: {
                 if signature == currentSignature {
