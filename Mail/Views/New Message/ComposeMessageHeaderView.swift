@@ -83,4 +83,5 @@ struct ComposeMessageHeaderView: View {
 
 #Preview {
     ComposeMessageHeaderView(draft: Draft(), autocompletionType: .constant(nil), currentSignature: .constant(nil))
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

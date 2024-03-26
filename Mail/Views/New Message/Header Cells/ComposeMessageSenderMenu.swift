@@ -84,4 +84,5 @@ struct ComposeMessageSenderMenu: View {
 
 #Preview {
     ComposeMessageSenderMenu(currentSignature: .constant(nil), autocompletionType: nil, type: .from, text: "email@email.com")
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }
