@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakCreateAccount
 import InfomaniakDI
@@ -27,8 +28,11 @@ import SwiftUI
 
 struct CreateAccountView: View {
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
+    @Environment(\.dismiss) private var dismiss
 
     @ModalState(context: ContextKeys.createAccount) private var isPresentingCreateAccount = false
 
@@ -81,6 +85,13 @@ struct CreateAccountView: View {
             .ikButtonLoading(loginHandler.isLoading)
             .controlSize(.large)
             .padding(.bottom, value: .regular)
+        }
+        .overlay(alignment: .topLeading) {
+            if platformDetector.isMac {
+                CloseButton(size: .small, dismissAction: dismiss)
+                    .padding(.top, UIPadding.onBoardingLogoTop)
+                    .padding(.top, value: .verySmall)
+            }
         }
         .padding(.horizontal, value: .medium)
         .sheet(isPresented: $isPresentingCreateAccount) {
