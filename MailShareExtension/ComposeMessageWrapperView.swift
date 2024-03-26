@@ -58,9 +58,9 @@ struct ComposeMessageWrapperView: View {
     var attachments: [Attachable] {
         itemProviders.filter { itemProvider in
             let isPropertyList = itemProvider.hasItemConformingToTypeIdentifier(Self.typePropertyList)
-            let isWebloc = itemProvider.underlyingType == .isURL
+            let isUrlAsWebloc = itemProvider.underlyingType == .isURL
 
-            return !isPropertyList && !isWebloc
+            return !isPropertyList && !isUrlAsWebloc
         }
     }
 

@@ -371,13 +371,44 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
     }
 
     public func processTextAttachments(_ attachments: [TextAttachable]) async {
-        // TODO: handle all the attachments
-        guard let attachment = attachments.first else {
-            return
+        // Process all text attachments
+        let textAttachments = await attachments.concurrentMap { attachment in
+            await attachment.textAttachment
         }
 
-        // process attachment
-        let textAttachment = await attachment.textAttachment
+        // Get first usable title
+        let anyUsableTitle: String = textAttachments.reduce("") { partialResult, textAttachment in
+            guard let title = textAttachment.title,
+                  !title.isEmpty else {
+                return partialResult
+            }
+
+            return title
+        }
+
+        // Get all URLs
+        let allURLs: [String] = textAttachments.compactMap { attachment in
+            guard let body = attachment.body,
+                  !body.isEmpty else {
+                return nil
+            }
+
+            return body
+        }
+
+        // Render all URLs as HTML code, if any after a minimalistic input sanitising
+        let formattedBodyUrls = allURLs.reduce("") { partialResult, urlString in
+            guard let bodyUrl = URL(string: urlString) else {
+                return partialResult
+            }
+
+            let bodyAbsoluteUrl = bodyUrl.absoluteString
+            guard !bodyAbsoluteUrl.isEmpty else {
+                return partialResult
+            }
+
+            return partialResult + "<div><a href=\"\(bodyAbsoluteUrl)\">" + bodyAbsoluteUrl + "</a></div>"
+        }
 
         // mutate Draft
         await backgroundRealm.execute { realm in
@@ -389,25 +420,20 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
                 // Title if any usable
                 var modified = false
                 if draftInContext.subject.isEmpty,
-                   let title = textAttachment.title {
-                    draftInContext.subject = title
+                   !anyUsableTitle.isEmpty {
+                    draftInContext.subject = anyUsableTitle
                     modified = true
                 }
 
-                // Url if any after a minimalistic input sanitising
-                if let body = textAttachment.body,
-                   let bodyUrl = URL(string: body),
-                   !body.isEmpty {
-                    draftInContext.body = "<div><a href=\"\(bodyUrl.absoluteString)\">"
-                        + bodyUrl.absoluteString
-                        + "</a></div>"
-                        + draftInContext.body
+                if !formattedBodyUrls.isEmpty {
+                    draftInContext.body = formattedBodyUrls + draftInContext.body
                     modified = true
                 }
 
                 guard modified else {
                     return
                 }
+
                 realm.add(draftInContext, update: .modified)
             }
         }
