@@ -21,7 +21,7 @@ import MailCore
 
 /// A wrapping type that can read an NSItemProvider that renders as a`.webloc` on the fly and provide the content thanks to the
 /// `TextAttachable` protocol
-struct WeblocToTextAttachment: TextAttachable {
+struct WeblocToTextAttachment: HTMLAttachable {
     let item: NSItemProvider
 
     init?(wrapping item: NSItemProvider) {
@@ -40,11 +40,11 @@ struct WeblocToTextAttachment: TextAttachable {
                 return (nil, nil)
             }
 
-            guard let weblocData = NSData(contentsOf: webloc.url) else {
+            guard let weblocData = try? Data(contentsOf: webloc.url) else {
                 return (nil, nil)
             }
 
-            guard let parsedWebloc = try? PropertyListSerialization.propertyList(from: weblocData as Data,
+            guard let parsedWebloc = try? PropertyListSerialization.propertyList(from: weblocData,
                                                                                  options: [],
                                                                                  format: nil) as? NSDictionary else {
                 return (nil, nil)
@@ -52,8 +52,27 @@ struct WeblocToTextAttachment: TextAttachable {
 
             let parsedURL = parsedWebloc["URL"] as? String
 
-            /// The `webloc` title is not useful for an email subject, discarding it
+            /// The `webloc` file name is generated, so not useful for an email subject, discarding it
             return TextAttachment(title: nil, body: parsedURL)
+        }
+    }
+
+    // MARK: HTMLAttachable protocol
+
+    var renderedHTML: String? {
+        get async {
+            guard let urlString = await textAttachment.body,
+                  let bodyUrl = URL(string: urlString) else {
+                return nil
+            }
+
+            let bodyAbsoluteUrl = bodyUrl.absoluteString
+            guard !bodyAbsoluteUrl.isEmpty else {
+                return nil
+            }
+
+            let finalHTML = "<div class=\"renderedHTML\"><a href=\"\(bodyAbsoluteUrl)\">" + bodyAbsoluteUrl + "</a></div>"
+            return finalHTML
         }
     }
 }

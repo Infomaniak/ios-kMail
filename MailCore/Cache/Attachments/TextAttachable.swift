@@ -28,6 +28,14 @@ public protocol TextAttachable {
     var textAttachment: TextAttachment { get async }
 }
 
+/// Something that can be rendered into HTML that can be added to a Mail Draft safely.
+///
+/// Inherits from `TextAttachable`
+public protocol HTMLAttachable: TextAttachable {
+    /// Provides a sanitised HTML that can be added to a Mail body.
+    var renderedHTML: String? { get async }
+}
+
 extension NSItemProvider: TextAttachable {
     static let nilAttachment: TextAttachment = (nil, nil)
 
