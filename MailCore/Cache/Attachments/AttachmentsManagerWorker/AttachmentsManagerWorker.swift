@@ -415,14 +415,7 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
     }
 
     private func anyUsableTitle(in textAttachments: [TextAttachment]) -> String {
-        textAttachments.first { textAttachment in
-            guard let title = textAttachment.title,
-                  !title.isEmpty else {
-                return false
-            }
-
-            return true
-        }?.title ?? ""
+        textAttachments.first { $0.title?.isEmpty == false }?.title ?? ""
     }
 
     private func allURLs(in textAttachments: [TextAttachment]) -> [String] {
