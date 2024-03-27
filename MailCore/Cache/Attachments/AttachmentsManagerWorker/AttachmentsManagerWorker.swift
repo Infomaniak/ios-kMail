@@ -407,8 +407,7 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
     }
 
     private func anyUsableTitle(in textAttachments: [TextAttachable]) async -> String {
-        // TODO: async map in ik-concurrency.
-        let textAttachments = await textAttachments.concurrentMap(customConcurrency: 1) { attachment in
+        let textAttachments = await textAttachments.asyncMap { attachment in
             await attachment.textAttachment
         }
 
@@ -417,8 +416,7 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
     }
 
     private func allSanitizedHtml(in htmlAttachments: [HTMLAttachable]) async -> [String] {
-        // TODO: async map in ik-concurrency.
-        let allSanitizedHtml: [String] = await htmlAttachments.concurrentCompactMap(customConcurrency: 1) { attachment in
+        let allSanitizedHtml: [String] = await htmlAttachments.asyncCompactMap { attachment in
             guard let renderedHTML = await attachment.renderedHTML,
                   !renderedHTML.isEmpty else {
                 return nil

@@ -239,8 +239,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/swift-concurrency",
       "state" : {
-        "revision" : "1c2e7ee0bb93203c865904494b0aa2aedbc57713",
-        "version" : "0.0.4"
+        "revision" : "02960fd5d2cf57c7ba38d13bbbf580d7f6ac7102",
+        "version" : "0.0.5"
       }
     },
     {
