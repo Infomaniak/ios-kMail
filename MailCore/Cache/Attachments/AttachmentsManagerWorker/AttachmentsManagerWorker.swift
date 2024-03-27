@@ -377,14 +377,14 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
         }
 
         // Get first usable title
-        let anyUsableTitle: String = textAttachments.reduce("") { partialResult, textAttachment in
+        let anyUsableTitle: String = textAttachments.first { textAttachment in
             guard let title = textAttachment.title,
                   !title.isEmpty else {
-                return partialResult
+                return false
             }
 
-            return title
-        }
+            return true
+        }?.title ?? ""
 
         // Get all URLs
         let allURLs: [String] = textAttachments.compactMap { attachment in
