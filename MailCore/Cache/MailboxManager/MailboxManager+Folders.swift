@@ -92,7 +92,7 @@ public extension MailboxManager {
         return frozenFolders
     }
 
-    func createFolder(name: String, parent: Folder?) async throws -> Folder {
+    func createFolder(name: String, @EnsureFrozen parent: Folder?) async throws -> Folder {
         var folder = try await apiFetcher.create(mailbox: mailbox, folder: NewFolder(name: name, path: parent?.path))
 
         await backgroundRealm.execute { realm in
@@ -109,15 +109,15 @@ public extension MailboxManager {
 
     // MARK: RefreshActor
 
-    func flushFolder(folder: Folder) async throws -> Bool {
+    func flushFolder(@EnsureFrozen folder: Folder) async throws -> Bool {
         return try await refreshActor.flushFolder(folder: folder, mailbox: mailbox, apiFetcher: apiFetcher)
     }
 
-    func refreshFolder(from messages: [Message], additionalFolder: Folder?) async throws {
+    func refreshFolder(@EnsureFrozen from messages: [Message], @EnsureFrozen additionalFolder: Folder?) async throws {
         try await refreshActor.refreshFolder(from: messages, additionalFolder: additionalFolder)
     }
 
-    func refreshFolderContent(_ folder: Folder) async {
+    func refreshFolderContent(@EnsureFrozen _ folder: Folder) async {
         await refreshActor.refreshFolderContent(folder)
     }
 
