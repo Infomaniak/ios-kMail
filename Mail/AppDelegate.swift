@@ -26,6 +26,7 @@ import UIKit
 @available(iOSApplicationExtension, unavailable)
 final class AppDelegate: UIResponder, UIApplicationDelegate {
     private let notificationCenterDelegate = NotificationCenterDelegate()
+    private let quickActionService = QuickActionService.shared
 
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var accountManager: AccountManager
@@ -82,5 +83,40 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             return
         }
         draftManager.syncDraft(mailboxManager: currentMailboxManager, showSnackbar: false)
+    }
+
+    func application(
+        _ application: UIApplication,
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
+        /// Unwrap shortcutItem provided with the options. If it’s present, this indicates that the user is launching the app from
+        /// a quick action.
+        if let shortcutItem = options.shortcutItem {
+            quickActionService.quickAction = QuickAction(shortcutItem: shortcutItem)
+        }
+
+        /// Creating the appropriate UISceneConfiguration object and returning it.
+        let configuration = UISceneConfiguration(
+            name: connectingSceneSession.configuration.name,
+            sessionRole: connectingSceneSession.role
+        )
+        configuration.delegateClass = SceneDelegate.self
+        return configuration
+    }
+
+    class SceneDelegate: NSObject, UIWindowSceneDelegate {
+        private let quickActionService = QuickActionService.shared
+
+        /// to hook into events that trigger when a user interacts with a quick action
+        func windowScene(
+            _ windowScene: UIWindowScene,
+            performActionFor shortcutItem: UIApplicationShortcutItem,
+            completionHandler: @escaping (Bool) -> Void
+        ) {
+            /// Attempt to convert UIApplicationShortcutItem into an Action and pass it onto the ActionService.
+            quickActionService.quickAction = QuickAction(shortcutItem: shortcutItem)
+            completionHandler(true)
+        }
     }
 }

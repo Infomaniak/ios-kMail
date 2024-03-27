@@ -21,6 +21,8 @@ import MailResources
 import SwiftUI
 
 struct ComposeMessageScene: Scene {
+    private let quickActionService = QuickActionService.shared
+
     var body: some Scene {
         if #available(iOS 16.0, *) {
             WindowGroup(
@@ -31,6 +33,7 @@ struct ComposeMessageScene: Scene {
                 if let composeMessageIntent {
                     ComposeMessageIntentView(composeMessageIntent: composeMessageIntent)
                         .standardWindow()
+                        .environmentObject(quickActionService)
                 }
             }
             .defaultAppStorage(.shared)
