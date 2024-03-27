@@ -17,8 +17,6 @@
  */
 
 import Foundation
-
-// import InfomaniakCore
 import MailCore
 
 /// A wrapping type that can read an NSItemProvider that renders as a`.webloc` on the fly and provide the content thanks to the
