@@ -377,38 +377,13 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
         }
 
         // Get first usable title
-        let anyUsableTitle: String = textAttachments.first { textAttachment in
-            guard let title = textAttachment.title,
-                  !title.isEmpty else {
-                return false
-            }
-
-            return true
-        }?.title ?? ""
+        let anyUsableTitle = anyUsableTitle(in: textAttachments)
 
         // Get all URLs
-        let allURLs: [String] = textAttachments.compactMap { attachment in
-            guard let body = attachment.body,
-                  !body.isEmpty else {
-                return nil
-            }
-
-            return body
-        }
+        let allURLs = allURLs(in: textAttachments)
 
         // Render all URLs as HTML code, if any after a minimalistic input sanitising
-        let formattedBodyUrls = allURLs.reduce("") { partialResult, urlString in
-            guard let bodyUrl = URL(string: urlString) else {
-                return partialResult
-            }
-
-            let bodyAbsoluteUrl = bodyUrl.absoluteString
-            guard !bodyAbsoluteUrl.isEmpty else {
-                return partialResult
-            }
-
-            return partialResult + "<div><a href=\"\(bodyAbsoluteUrl)\">" + bodyAbsoluteUrl + "</a></div>"
-        }
+        let formattedBodyUrls = formattedBodyUrls(allURLs: allURLs)
 
         // mutate Draft
         await backgroundRealm.execute { realm in
@@ -436,6 +411,43 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
 
                 realm.add(draftInContext, update: .modified)
             }
+        }
+    }
+
+    private func anyUsableTitle(in textAttachments: [TextAttachment]) -> String {
+        textAttachments.first { textAttachment in
+            guard let title = textAttachment.title,
+                  !title.isEmpty else {
+                return false
+            }
+
+            return true
+        }?.title ?? ""
+    }
+
+    private func allURLs(in textAttachments: [TextAttachment]) -> [String] {
+        textAttachments.compactMap { attachment in
+            guard let body = attachment.body,
+                  !body.isEmpty else {
+                return nil
+            }
+
+            return body
+        }
+    }
+
+    private func formattedBodyUrls(allURLs: [String]) -> String {
+        allURLs.reduce("") { partialResult, urlString in
+            guard let bodyUrl = URL(string: urlString) else {
+                return partialResult
+            }
+
+            let bodyAbsoluteUrl = bodyUrl.absoluteString
+            guard !bodyAbsoluteUrl.isEmpty else {
+                return partialResult
+            }
+
+            return partialResult + "<div><a href=\"\(bodyAbsoluteUrl)\">" + bodyAbsoluteUrl + "</a></div>"
         }
     }
 
