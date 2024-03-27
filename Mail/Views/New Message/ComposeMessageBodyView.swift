@@ -47,20 +47,13 @@ struct ComposeMessageBodyView: View {
         VStack {
             AttachmentsHeaderView(attachmentsManager: attachmentsManager)
 
-            RichTextEditor(
-                model: $editorModel,
-                body: $draft.body,
-                isShowingCamera: $isShowingCamera,
-                isShowingFileSelection: $isShowingFileSelection,
-                isShowingPhotoLibrary: $isShowingPhotoLibrary,
-                becomeFirstResponder: $editorFocus,
-                isShowingAIPrompt: $isShowingAIPrompt,
-                isShowingAlert: $isShowingAlert,
-                blockRemoteContent: isRemoteContentBlocked
-            )
-            .ignoresSafeArea(.all, edges: .bottom)
-            .frame(height: editorModel.height + 20)
-            .padding(.vertical, value: .verySmall)
+            EditorView(isShowingFileSelection: $isShowingFileSelection,
+                       isShowingCamera: $isShowingCamera,
+                       isShowingPhotoLibrary: $isShowingPhotoLibrary,
+                       isShowingAIPrompt: $isShowingAIPrompt,
+                       isShowingAlert: $isShowingAlert)
+                .frame(maxWidth: .infinity)
+                .frame(height: 100)
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
             CameraPicker { data in
