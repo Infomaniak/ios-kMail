@@ -25,7 +25,7 @@ struct HeaderCloseButtonView: View {
 
     var body: some View {
         HStack(alignment: .center) {
-            CloseButton(size: .small, dismissHandler: dismissHandler)
+            CloseButton(size: .regular, dismissHandler: dismissHandler)
 
             Text(title)
                 .font(.headline)
