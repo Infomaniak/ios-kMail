@@ -32,6 +32,7 @@ public class SplitViewManager: ObservableObject {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     var splitViewController: UISplitViewController?
+//    private let quickActionService = QuickActionService.shared
 
     func adaptToProminentThreadView() {
         guard !platformDetector.isMac else {
@@ -64,6 +65,7 @@ struct SplitView: View {
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
 
     let mailboxManager: MailboxManager
+//    private let quickActionService = QuickActionService.shared
 
     var body: some View {
         Group {
@@ -147,7 +149,8 @@ struct SplitView: View {
         }
         .sheet(item: $mainViewState.composeMessageIntent,
                desktopIdentifier: DesktopWindowIdentifier.composeWindowIdentifier) { intent in
-            ComposeMessageIntentView(composeMessageIntent: intent)
+            ComposeMessageIntentView(composeMessageIntent: intent) //
+//                .environmentObject(quickActionService)
         }
         .sheet(item: $mainViewState.isShowingSafariView) { safariContent in
             SafariWebView(url: safariContent.url)
@@ -176,6 +179,8 @@ struct SplitView: View {
                    perform: handleNotification)
         .onReceive(NotificationCenter.default.publisher(for: .openNotificationSettings).receive(on: DispatchQueue.main),
                    perform: handleOpenNotificationSettings)
+        .onReceive(NotificationCenter.default.publisher(for: .userPerformedShortcut).receive(on: DispatchQueue.main),
+                   perform: handleApplicationShortcut)
         .onAppear {
             orientationManager.setOrientationLock(.all)
         }
@@ -267,6 +272,12 @@ struct SplitView: View {
         if Constants.isMailTo(url) {
             mainViewState.composeMessageIntent = .mailTo(mailToURLComponents: urlComponents, originMailboxManager: mailboxManager)
         }
+    }
+
+    private func handleApplicationShortcut(_ notification: Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>
+        .Output) {
+        guard let shortcut = notification.object as? UIApplicationShortcutItem else { return }
+        dump(shortcut)
     }
 
     private func handleNotification(_ notification: Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>.Output) {

@@ -26,12 +26,15 @@ import UIKit
 /// We create and identify quick actions the app will perform
 enum QuickActionType: String {
     case newMessage = "NewMessage"
-    // ajouter ensuite case search, case add account
+    case search = "Search"
+    case support = "Support"
 }
 
 /// We need the other enum to be Equatable to add other actions later
 enum QuickAction: Equatable {
     case newMessage
+    case search
+    case support
 
     /// We create a failable initializer that accepts an instance of UIApplicationShortcutItem to let the system describe quick
     /// actions
@@ -44,6 +47,10 @@ enum QuickAction: Equatable {
         switch type {
         case .newMessage:
             self = .newMessage
+        case .search:
+            self = .search
+        case .support:
+            self = .support
         }
     }
 }

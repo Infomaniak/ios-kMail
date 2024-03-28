@@ -21,6 +21,7 @@ import SwiftUI
 
 struct RootView: View {
     @EnvironmentObject private var rootViewState: RootViewState
+    private let quickActionService = QuickActionService.shared
 
     var body: some View {
         ZStack {
@@ -30,6 +31,7 @@ struct RootView: View {
             case .mainView(let mainViewState):
                 SplitView(mailboxManager: mainViewState.mailboxManager)
                     .environmentObject(mainViewState)
+                    .environmentObject(quickActionService)
             case .onboarding:
                 OnboardingView()
             case .authorization:

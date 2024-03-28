@@ -31,6 +31,8 @@ struct ThreadListView: View {
     @LazyInjectService private var userActivityController: UserActivityController
 
     @EnvironmentObject private var mainViewState: MainViewState
+//    @EnvironmentObject var quickActionService: QuickActionService
+//    @Environment(\.scenePhase) var scenePhase
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -52,6 +54,8 @@ struct ThreadListView: View {
     private var shouldDisplayNoNetworkView: Bool {
         !networkMonitor.isConnected && viewModel.sections == nil
     }
+
+//    private let quickActionService = QuickActionService.shared
 
     init(mailboxManager: MailboxManager,
          frozenFolder: Folder,
@@ -169,7 +173,18 @@ struct ThreadListView: View {
                               isExtended: scrollObserver.scrollDirection != .bottom) {
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
             mainViewState.composeMessageIntent = .new(originMailboxManager: viewModel.mailboxManager)
+//            createNewMessage()
         }
+//        .onChange(of: scenePhase) { newValue in
+//            // 2
+//            switch newValue {
+//            case .active:
+//                performActionIfNeeded()
+//            // 3
+//            default:
+//                break
+//            }
+//        }
         .shortcutModifier(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .onAppear {
             networkMonitor.start()
@@ -201,6 +216,24 @@ struct ThreadListView: View {
             fetchingTask = nil
         }
     }
+//
+//    func createNewMessage() {
+//        guard let mailboxManager = viewModel.mailboxManager else {
+//            return
+//        }
+//        mainViewState.composeMessageIntent = .new(originMailboxManager: mailboxManager)
+//    }
+//
+//    func performActionIfNeeded() {
+//        guard let quickAction = quickActionService.quickAction else { return }
+//
+//        switch quickAction {
+//        case .newMessage:
+//            createNewMessage()
+//        }
+//
+//        quickActionService.quickAction = nil
+//    }
 }
 
 #Preview {
