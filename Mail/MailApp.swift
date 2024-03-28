@@ -34,7 +34,6 @@ import UIKit
 struct MailApp: App {
     /// Making sure the DI is registered at a very early stage of the app launch.
     private let dependencyInjectionHook = MailTargetAssembly()
-    private let quickActionService = QuickActionService.shared
 
     @LazyInjectService private var refreshAppBackgroundTask: RefreshAppBackgroundTask
 

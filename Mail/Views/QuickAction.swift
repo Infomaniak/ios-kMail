@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2024 Infomaniak Network SA
@@ -57,9 +56,9 @@ enum QuickAction: Equatable {
 
 /// We define an ObservableObject class we can later pass into the SwiftUI environment as well as provide a singleton accessor for
 /// later when we work with UIKit code
-class QuickActionService: ObservableObject {
-    static let shared = QuickActionService()
+// class QuickActionService: ObservableObject {
+//    static let shared = QuickActionService()
 
-    /// We represent an action the app should perform
-    @Published var quickAction: QuickAction?
-}
+/// We represent an action the app should perform
+//    @Published var quickAction: QuickAction?
+// }
