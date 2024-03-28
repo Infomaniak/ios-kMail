@@ -64,6 +64,12 @@ struct NewMessageCommand: View {
         switch quickAction {
         case .newMessage:
             newMessage(mailboxManager: mailboxManager!)
+        case .search:
+            // Recherche
+            newMessage(mailboxManager: mailboxManager!)
+        case .support:
+            // A changer
+            newMessage(mailboxManager: mailboxManager!)
         }
 
         quickActionService.quickAction = nil

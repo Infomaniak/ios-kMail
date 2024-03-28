@@ -40,7 +40,7 @@ public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
         self.type = type
     }
 
-    public static func new(originMailboxManager: MailboxManager) -> ComposeMessageIntent {
+    public static func new(originMailboxManager: MailboxManager) -> ComposeMessageIntent { // nouveau message
         return ComposeMessageIntent(
             userId: originMailboxManager.mailbox.userId,
             mailboxId: originMailboxManager.mailbox.mailboxId,

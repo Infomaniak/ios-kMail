@@ -37,6 +37,8 @@ struct ThreadListManagerView: View {
         return hasher.finalize()
     }
 
+//    private let quickActionService = QuickActionService.shared
+
     var body: some View {
         ZStack {
             if mainViewState.isShowingSearch {
@@ -50,6 +52,7 @@ struct ThreadListManagerView: View {
                     isCompact: isCompactWindow
                 )
                 .id(threadListViewHash)
+//                .environmentObject(quickActionService)
             }
         }
         .animation(.easeInOut(duration: 0.25), value: mainViewState.isShowingSearch)
