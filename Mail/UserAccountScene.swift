@@ -43,7 +43,6 @@ struct UserAccountScene: Scene {
     @LazyInjectService private var cacheManager: CacheManageable
 
     @StateObject private var rootViewState = RootViewState()
-    private let quickActionService = QuickActionService.shared
 
     var body: some Scene {
         WindowGroup(id: DesktopWindowIdentifier.mainWindowIdentifier(currentViewState: rootViewState)) {
@@ -63,7 +62,7 @@ struct UserAccountScene: Scene {
                     case .active:
                         rootViewState.transitionToLockViewIfNeeded()
                         checkAppVersion()
-                    case .background: // action ici ?
+                    case .background:
                         refreshAppBackgroundTask.scheduleForBackgroundLaunchIfNeeded()
                         if UserDefaults.shared.isAppLockEnabled && rootViewState.state != .appLocked {
                             appLockHelper.setTime()

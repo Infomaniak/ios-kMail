@@ -26,7 +26,6 @@ import UIKit
 @available(iOSApplicationExtension, unavailable)
 final class AppDelegate: UIResponder, UIApplicationDelegate {
     private let notificationCenterDelegate = NotificationCenterDelegate()
-    private let quickActionService = QuickActionService.shared
 
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var accountManager: AccountManager
