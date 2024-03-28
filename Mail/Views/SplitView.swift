@@ -277,7 +277,7 @@ struct SplitView: View {
     private func handleApplicationShortcut(_ notification: Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>
         .Output) {
         guard let shortcut = notification.object as? UIApplicationShortcutItem else { return }
-        dump(shortcut)
+        mainViewState.composeMessageIntent = .new(originMailboxManager: mailboxManager)
     }
 
     private func handleNotification(_ notification: Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>.Output) {
