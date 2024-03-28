@@ -477,7 +477,7 @@ public extension MailboxManager {
                     createSingleMessageThread(message: message, folder: folder, threadsToUpdate: &threadsToUpdate)
                 }
 
-                if let message = realm.objects(Message.self).first(where: { $0.uid == message.uid }) {
+                if let message = realm.objects(Message.self).where({ $0.uid == message.uid }).first {
                     folder.messages.insert(message)
                 }
             }
