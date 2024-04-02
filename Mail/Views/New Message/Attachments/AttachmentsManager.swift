@@ -116,8 +116,8 @@ import SwiftUI
         await worker.completeUploadedAttachments()
     }
 
-    func processHtmlAttachments(_ attachments: [HTMLAttachable]) async {
-        await worker.processHtmlAttachments(attachments)
+    func processHTMLAttachments(_ attachments: [HTMLAttachable]) async {
+        await worker.processHTMLAttachments(attachments)
     }
 
     func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentUploadTask {

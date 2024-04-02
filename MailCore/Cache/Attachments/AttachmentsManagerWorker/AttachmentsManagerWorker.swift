@@ -370,7 +370,7 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
         await updateDelegate?.contentWillChange()
     }
 
-    public func processHtmlAttachments(_ htmlAttachments: [HTMLAttachable]) async {
+    public func processHTMLAttachments(_ htmlAttachments: [HTMLAttachable]) async {
         // Get first usable title
         let anyUsableTitle = await anyUsableTitle(in: htmlAttachments)
 

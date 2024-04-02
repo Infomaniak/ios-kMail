@@ -48,7 +48,7 @@ struct SafariKeyValueToHTMLAttachment: HTMLAttachable {
                 return nil
             }
 
-            let finalHTML = "<div class=\"renderedHTML\"><a href=\"\(bodyAbsoluteUrl)\">" + bodyAbsoluteUrl + "</a></div>"
+            let finalHTML = "<div><a href=\"\(bodyAbsoluteUrl)\">" + bodyAbsoluteUrl + "</a></div>"
             return finalHTML
         }
     }

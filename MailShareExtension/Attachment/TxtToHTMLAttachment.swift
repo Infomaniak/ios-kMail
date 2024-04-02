@@ -66,7 +66,7 @@ struct TxtToTextAttachment: HTMLAttachable {
                 return nil
             }
 
-            let finalHTML = "<div class=\"renderedHTML\">" + cleanHTML + "</div>"
+            let finalHTML = "<div>" + cleanHTML + "</div>"
             return finalHTML
         }
     }

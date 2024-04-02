@@ -223,7 +223,7 @@ struct ComposeMessageView: View {
                 currentSignature = try await draftContentManager.prepareCompleteDraft()
 
                 async let _ = attachmentsManager.completeUploadedAttachments()
-                async let _ = attachmentsManager.processHtmlAttachments(htmlAttachments)
+                async let _ = attachmentsManager.processHTMLAttachments(htmlAttachments)
 
                 isLoadingContent = false
             } catch {
