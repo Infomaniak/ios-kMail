@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Charlene Hoareau
- * Exported at: Mon, 11 Mar 2024 13:27:21 +0100
+ * Exported by: elena willen
+ * Exported at: Mon, 11 Mar 2024 16:16:23 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -454,6 +454,9 @@
 
 /* loco:626918473e1b2d7fe4329d52 */
 "buttonSelectAll" = "Todos";
+
+/* loco:65ef191d6c54ba7fcc03cc92 */
+"buttonSendWithDifferentAddress" = "Enviar con otra dirección";
 
 /* loco:657324e1fb3ef333a001d852 */
 "buttonSetNow" = "Definir ahora";
@@ -1131,13 +1134,10 @@
 "settingsAutoAdvanceListOfThreadsTitle" = "Lista de temas";
 
 /* loco:65df003b996ecfc40c0d9962 */
-"settingsAutoAdvanceNaturalThreadDescription" = "Repite la última acción realizada";
-
-/* loco:65eb1767b7ece7e666042e02 */
-"settingsAutoAdvanceNaturalThreadHint" = "Selecciona automáticamente la conversación siguiente o anterior, en función de tu última interacción.";
+"settingsAutoAdvanceNaturalThreadDescription" = "Hilo de visualización basado en la navegación natural al archivar o borrar";
 
 /* loco:65defeba6cb9206d3f0d4392 */
-"settingsAutoAdvanceNaturalThreadTitle" = "Repetir la última acción";
+"settingsAutoAdvanceNaturalThreadTitle" = "Navegación natural";
 
 /* loco:65b27d1e0565d99b930ae142 */
 "settingsAutoAdvancePreviousThreadDescription" = "Mostrar el hilo anterior al archivar o borrar";
