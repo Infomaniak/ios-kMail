@@ -71,7 +71,7 @@ struct ComposeMessageWrapperView: View {
             } else if let mailboxManager = accountManager.currentMailboxManager {
                 ComposeMessageIntentView(
                     composeMessageIntent: .new(fromExtension: true),
-                    textAttachment: textAttachment,
+                    textAttachments: textAttachments,
                     attachments: attachments
                 )
                 .environmentObject(mailboxManager)

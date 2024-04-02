@@ -38,16 +38,12 @@ struct ComposeMessageIntentView: View, IntentViewable {
 
     @State private var composeMessageIntent: ComposeMessageIntent
     let resolvedIntent = State<ResolvedIntent?>()
-    var textAttachment: TextAttachable?
+    var textAttachments: [TextAttachable]
     var attachments: [Attachable]
 
-    struct ResolvedIntent {
-        let mailboxManager: MailboxManager
-        let draft: Draft
-        let messageReply: MessageReply?
-    init(composeMessageIntent: ComposeMessageIntent, textAttachment: TextAttachable? = nil, attachments: [Attachable] = []) {
+    init(composeMessageIntent: ComposeMessageIntent, textAttachments: [TextAttachable] = [], attachments: [Attachable] = []) {
         _composeMessageIntent = State(wrappedValue: composeMessageIntent)
-        self.textAttachment = textAttachment
+        self.textAttachments = textAttachments
         self.attachments = attachments
     }
 
@@ -146,6 +142,6 @@ struct ComposeMessageIntentView: View, IntentViewable {
 
 #Preview {
     ComposeMessageIntentView(
-        composeMessageIntent: .new(originMailboxManager: PreviewHelper.sampleMailboxManager), textAttachment: nil, attachments: []
+        composeMessageIntent: .new(originMailboxManager: PreviewHelper.sampleMailboxManager), textAttachments: [], attachments: []
     )
 }
