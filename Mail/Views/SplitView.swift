@@ -276,13 +276,18 @@ struct SplitView: View {
         guard let shortcut = notification.object as? UIApplicationShortcutItem else { return }
         guard let quickAction = QuickAction(shortcutItem: shortcut) else { return }
 
+        @InjectService var matomo: MatomoUtils
+
         switch quickAction {
         case .newMessage:
             mainViewState.composeMessageIntent = .new(originMailboxManager: mailboxManager)
+            matomo.track(eventWithCategory: .homeScreenShortcuts, name: "newMessage")
         case .search:
             mainViewState.isShowingSearch = true
+            matomo.track(eventWithCategory: .homeScreenShortcuts, name: "search")
         case .support:
             openURL(URLConstants.chatbot.url)
+            matomo.track(eventWithCategory: .homeScreenShortcuts, name: "support")
         }
     }
 

@@ -41,6 +41,7 @@ public extension MatomoUtils.EventCategory {
     static let calendarEvent = MatomoUtils.EventCategory(displayName: "calendarEvent")
     static let createFolder = MatomoUtils.EventCategory(displayName: "createFolder")
     static let externals = MatomoUtils.EventCategory(displayName: "externals")
+    static let homeScreenShortcuts = MatomoUtils.EventCategory(displayName: "homeScreenShortcuts")
     static let invalidPasswordMailbox = MatomoUtils.EventCategory(displayName: "invalidPasswordMailbox")
     static let menuDrawer = MatomoUtils.EventCategory(displayName: "menuDrawer")
     static let message = MatomoUtils.EventCategory(displayName: "message")
