@@ -32,7 +32,6 @@ public class SplitViewManager: ObservableObject {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     var splitViewController: UISplitViewController?
-//    private let quickActionService = QuickActionService.shared
 
     func adaptToProminentThreadView() {
         guard !platformDetector.isMac else {
@@ -65,7 +64,6 @@ struct SplitView: View {
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
 
     let mailboxManager: MailboxManager
-//    private let quickActionService = QuickActionService.shared
 
     var body: some View {
         Group {
@@ -150,7 +148,6 @@ struct SplitView: View {
         .sheet(item: $mainViewState.composeMessageIntent,
                desktopIdentifier: DesktopWindowIdentifier.composeWindowIdentifier) { intent in
             ComposeMessageIntentView(composeMessageIntent: intent) //
-//                .environmentObject(quickActionService)
         }
         .sheet(item: $mainViewState.isShowingSafariView) { safariContent in
             SafariWebView(url: safariContent.url)
@@ -277,12 +274,18 @@ struct SplitView: View {
     private func handleApplicationShortcut(_ notification: Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>
         .Output) {
         guard let shortcut = notification.object as? UIApplicationShortcutItem else { return }
-        // dans le cas newMessage
-        mainViewState.composeMessageIntent = .new(originMailboxManager: mailboxManager)
-        // dans le cas search
+        guard let quickAction = QuickAction(shortcutItem: shortcut) else { return }
 
-        // dans le cas support
-        // mainViewState.isShowingSearch
+        switch quickAction {
+        case .newMessage:
+            mainViewState.composeMessageIntent = .new(originMailboxManager: mailboxManager)
+        case .search:
+            mainViewState.isShowingSearch = true
+        case .support:
+            if let faqURL = URL(string: "\(URLConstants.chatbot.url)") {
+                mainViewState.isShowingSafariView = IdentifiableURL(url: faqURL)
+            }
+        }
     }
 
     private func handleNotification(_ notification: Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>.Output) {
