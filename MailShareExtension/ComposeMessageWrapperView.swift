@@ -70,7 +70,7 @@ struct ComposeMessageWrapperView: View {
                 MailUpdateRequiredView { dismissHandler(()) }
             } else if let mailboxManager = accountManager.currentMailboxManager {
                 ComposeMessageIntentView(
-                    composeMessageIntent: .new(originMailboxManager: mailboxManager),
+                    composeMessageIntent: .new(fromExtension: true),
                     textAttachments: textAttachments,
                     attachments: attachments
                 )

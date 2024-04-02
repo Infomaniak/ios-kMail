@@ -20,7 +20,7 @@ import Foundation
 
 public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
     public enum IntentType: Codable, Hashable {
-        case new
+        case new(fromExtension: Bool)
         case existing(draftLocalUUID: String)
         case existingRemote(messageUid: String)
         case mailTo(mailToURLComponents: URLComponents)
@@ -29,22 +29,37 @@ public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
     }
 
     public let id: UUID
-    public let userId: Int
-    public let mailboxId: Int
+    public let userId: Int?
+    public let mailboxId: Int?
     public let type: IntentType
 
-    init(userId: Int, mailboxId: Int, type: IntentType) {
+    public var shouldSelectMailbox: Bool {
+        userId == nil || mailboxId == nil
+    }
+
+    public var isFromOutsideOfApp: Bool {
+        switch type {
+        case .new(let fromExtension) where fromExtension:
+            return true
+        case .mailTo(let mailToURLComponents):
+            return true
+        default:
+            return false
+        }
+    }
+
+    init(userId: Int?, mailboxId: Int?, type: IntentType) {
         id = UUID()
         self.userId = userId
         self.mailboxId = mailboxId
         self.type = type
     }
 
-    public static func new(originMailboxManager: MailboxManager) -> ComposeMessageIntent {
+    public static func new(originMailboxManager: MailboxManager? = nil, fromExtension: Bool = false) -> ComposeMessageIntent {
         return ComposeMessageIntent(
-            userId: originMailboxManager.mailbox.userId,
-            mailboxId: originMailboxManager.mailbox.mailboxId,
-            type: .new
+            userId: originMailboxManager?.mailbox.userId,
+            mailboxId: originMailboxManager?.mailbox.mailboxId,
+            type: .new(fromExtension: fromExtension)
         )
     }
 
@@ -64,10 +79,11 @@ public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
         )
     }
 
-    public static func mailTo(mailToURLComponents: URLComponents, originMailboxManager: MailboxManager) -> ComposeMessageIntent {
+    public static func mailTo(mailToURLComponents: URLComponents,
+                              originMailboxManager: MailboxManager? = nil) -> ComposeMessageIntent {
         return ComposeMessageIntent(
-            userId: originMailboxManager.mailbox.userId,
-            mailboxId: originMailboxManager.mailbox.mailboxId,
+            userId: originMailboxManager?.mailbox.userId,
+            mailboxId: originMailboxManager?.mailbox.mailboxId,
             type: .mailTo(mailToURLComponents: mailToURLComponents)
         )
     }

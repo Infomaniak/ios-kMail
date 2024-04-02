@@ -267,7 +267,7 @@ struct SplitView: View {
         guard let urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true) else { return }
 
         if Constants.isMailTo(url) {
-            mainViewState.composeMessageIntent = .mailTo(mailToURLComponents: urlComponents, originMailboxManager: mailboxManager)
+            mainViewState.composeMessageIntent = .mailTo(mailToURLComponents: urlComponents)
         }
     }
 
