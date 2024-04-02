@@ -116,12 +116,8 @@ import SwiftUI
         await worker.completeUploadedAttachments()
     }
 
-    func processTextAttachment(_ attachment: TextAttachable?) async {
-        guard let attachment else {
-            return
-        }
-
-        await worker.processTextAttachment(attachment)
+    func processTextAttachments(_ attachments: [TextAttachable]) async {
+        await worker.processTextAttachments(attachments)
     }
 
     func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentUploadTask {

@@ -41,6 +41,10 @@ struct ComposeMessageIntentView: View, IntentViewable {
     var textAttachment: TextAttachable?
     var attachments: [Attachable]
 
+    struct ResolvedIntent {
+        let mailboxManager: MailboxManager
+        let draft: Draft
+        let messageReply: MessageReply?
     init(composeMessageIntent: ComposeMessageIntent, textAttachment: TextAttachable? = nil, attachments: [Attachable] = []) {
         _composeMessageIntent = State(wrappedValue: composeMessageIntent)
         self.textAttachment = textAttachment

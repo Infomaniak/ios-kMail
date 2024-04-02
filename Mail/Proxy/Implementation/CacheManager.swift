@@ -17,26 +17,31 @@
  */
 
 import CocoaLumberjackSwift
+import Contacts
 import Foundation
+import InfomaniakCore
 import InfomaniakDI
 import MailCore
-import UIKit
 
 @available(iOSApplicationExtension, unavailable)
 public final class CacheManager: CacheManageable {
     @LazyInjectService private var accountManager: AccountManager
 
-    public func refreshCacheData() {
-        guard let currentAccount = accountManager.getCurrentAccount() else {
-            return
-        }
+    public func refreshCacheData(account: Account?) {
+        guard let account else { return }
+
+        // Try to enable at least once before attempting fetching new user
+        accountManager.enableBugTrackerIfAvailable()
 
         Task {
             do {
-                try await accountManager.updateUser(for: currentAccount)
+                try await accountManager.updateUser(for: account)
                 accountManager.enableBugTrackerIfAvailable()
 
-                try await accountManager.currentContactManager?.refreshContactsAndAddressBooks()
+                guard CNContactStore.authorizationStatus(for: .contacts) != .notDetermined else {
+                    return
+                }
+                try await accountManager.currentContactManager?.refreshContactsAndAddressBooksIfNeeded()
             } catch {
                 DDLogError("Error while updating user account: \(error)")
             }

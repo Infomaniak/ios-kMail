@@ -38,15 +38,29 @@ struct ComposeMessageWrapperView: View {
 
     static let typePropertyList = String(kUTTypePropertyList)
 
-    var textAttachment: TextAttachable? {
-        itemProviders.first { itemProvider in
+    /// All the Attachments that should directly provide URLs and title for a new Email Draft
+    var textAttachments: [TextAttachable] {
+        // All property list, result from JS execution in Safari
+        let propertyListItems = itemProviders.filter { itemProvider in
             itemProvider.hasItemConformingToTypeIdentifier(Self.typePropertyList)
         }
+
+        // All `.webloc` item providers, wrapped in a type that can read it on the fly
+        let weblocTextAttachments = itemProviders
+            .filter { $0.underlyingType == .isURL }
+            .compactMap { WeblocToTextAttachment(wrapping: $0) }
+
+        let allItems: [TextAttachable] = propertyListItems + weblocTextAttachments
+        return allItems
     }
 
+    /// All the Attachments that should be uploaded as standalone files for a new Email Draft
     var attachments: [Attachable] {
         itemProviders.filter { itemProvider in
-            !itemProvider.hasItemConformingToTypeIdentifier(Self.typePropertyList)
+            let isPropertyList = itemProvider.hasItemConformingToTypeIdentifier(Self.typePropertyList)
+            let isUrlAsWebloc = itemProvider.underlyingType == .isURL
+
+            return !isPropertyList && !isUrlAsWebloc
         }
     }
 

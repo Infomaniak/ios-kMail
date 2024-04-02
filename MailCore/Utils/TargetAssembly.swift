@@ -70,7 +70,7 @@ open class TargetAssembly {
                 FeatureFlagsManager()
             },
             Factory(type: BugTracker.self) { _, _ in
-                BugTracker(info: BugTrackerInfo(project: "app-mobile-mail", gitHubRepoName: "ios-mail", appReleaseType: .beta))
+                BugTracker(info: BugTrackerInfo(project: "app-mobile-mail"))
             },
             Factory(type: MatomoUtils.self) { _, _ in
                 MatomoUtils(siteId: Constants.matomoId, baseURL: URLConstants.matomo.url)
