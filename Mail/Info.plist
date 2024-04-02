@@ -8,7 +8,7 @@
 			<key>UIApplicationShortcutItemType</key>
 			<string>NewMessage</string>
 			<key>UIApplicationShortcutItemTitle</key>
-			<string>Rédiger</string>
+			<string>shortcutNewMessageTitle</string>
 			<key>UIApplicationShortcutItemIconSymbolName</key>
 			<string>square.and.pencil</string>
 		</dict>
@@ -16,7 +16,7 @@
 			<key>UIApplicationShortcutItemType</key>
 			<string>Search</string>
 			<key>UIApplicationShortcutItemTitle</key>
-			<string>Rechercher</string>
+			<string>shortcutSearchTitle</string>
 			<key>UIApplicationShortcutItemIconSymbolName</key>
 			<string>magnifyingglass</string>
 		</dict>
@@ -24,7 +24,7 @@
 			<key>UIApplicationShortcutItemType</key>
 			<string>Support</string>
 			<key>UIApplicationShortcutItemTitle</key>
-			<string>Aide &amp; Support</string>
+			<string>shortcutSupportTitle</string>
 			<key>UIApplicationShortcutItemIconSymbolName</key>
 			<string>questionmark.bubble</string>
 		</dict>

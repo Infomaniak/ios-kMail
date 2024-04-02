@@ -27,8 +27,6 @@ import SwiftUI
 struct NewMessageCommand: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-//    @EnvironmentObject var quickActionService: QuickActionService
-//    @Environment(\.scenePhase) var scenePhase
     @Environment(\.openWindow) private var openWindow
 
     let mailboxManager: MailboxManager?
@@ -40,14 +38,6 @@ struct NewMessageCommand: View {
         }
         .keyboardShortcut("n")
         .disabled(mailboxManager == nil)
-//        .onChange(of: scenePhase) { newValue in
-//            switch newValue {
-//            case .active:
-//                performActionIfNeeded()
-//            default:
-//                break
-//            }
-//        }
     }
 
     func newMessage(mailboxManager: MailboxManager) {
@@ -57,21 +47,4 @@ struct NewMessageCommand: View {
             value: ComposeMessageIntent.new(originMailboxManager: mailboxManager)
         )
     }
-
-//    func performActionIfNeeded() {
-//        guard let quickAction = quickActionService.quickAction else { return }
-//
-//        switch quickAction {
-//        case .newMessage:
-//            newMessage(mailboxManager: mailboxManager!)
-//        case .search:
-//            // Recherche
-//            newMessage(mailboxManager: mailboxManager!)
-//        case .support:
-//            // A changer
-//            newMessage(mailboxManager: mailboxManager!)
-//        }
-//
-//        quickActionService.quickAction = nil
-//    }
 }

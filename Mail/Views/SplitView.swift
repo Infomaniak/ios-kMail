@@ -147,7 +147,7 @@ struct SplitView: View {
         }
         .sheet(item: $mainViewState.composeMessageIntent,
                desktopIdentifier: DesktopWindowIdentifier.composeWindowIdentifier) { intent in
-            ComposeMessageIntentView(composeMessageIntent: intent) //
+            ComposeMessageIntentView(composeMessageIntent: intent)
         }
         .sheet(item: $mainViewState.isShowingSafariView) { safariContent in
             SafariWebView(url: safariContent.url)
@@ -282,9 +282,7 @@ struct SplitView: View {
         case .search:
             mainViewState.isShowingSearch = true
         case .support:
-            if let faqURL = URL(string: "\(URLConstants.chatbot.url)") {
-                mainViewState.isShowingSafariView = IdentifiableURL(url: faqURL)
-            }
+            openURL(URLConstants.chatbot.url)
         }
     }
 
