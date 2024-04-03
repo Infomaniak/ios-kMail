@@ -375,7 +375,7 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
         let anyUsableTitle = await anyUsableTitle(in: htmlAttachments)
 
         // Get all the sanitized HTML we can fetch
-        let allSanitizedHtmlString = await allSanitizedHtml(in: htmlAttachments).reduce("", +)
+        let allSanitizedHtmlString = await allSanitizedHtml(in: htmlAttachments).joined(separator: "")
 
         // Mutate Draft
         await backgroundRealm.execute { realm in
