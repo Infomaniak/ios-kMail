@@ -25,50 +25,56 @@ import SwiftUI
 struct ComposeMessageIntentView: View, IntentViewable {
     typealias Intent = ResolvedIntent
 
-    @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
-
-    @Environment(\.dismiss) private var dismiss
-
-    let resolvedIntent = State<ResolvedIntent?>()
-
     struct ResolvedIntent {
         let mailboxManager: MailboxManager
         let draft: Draft
         let messageReply: MessageReply?
     }
 
-    let composeMessageIntent: ComposeMessageIntent
+    @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var composeMessageIntent: ComposeMessageIntent
+    let resolvedIntent = State<ResolvedIntent?>()
     var htmlAttachments: [HTMLAttachable] = []
     var attachments: [Attachable] = []
 
+    init(composeMessageIntent: ComposeMessageIntent, htmlAttachments: [HTMLAttachable] = [], attachments: [Attachable] = []) {
+        _composeMessageIntent = State(wrappedValue: composeMessageIntent)
+        self.htmlAttachments = htmlAttachments
+        self.attachments = attachments
+    }
+
     var body: some View {
-        NBNavigationStack {
-            if let resolvedIntent = resolvedIntent.wrappedValue {
-                ComposeMessageView(
-                    draft: resolvedIntent.draft,
-                    mailboxManager: resolvedIntent.mailboxManager,
-                    messageReply: resolvedIntent.messageReply,
-                    attachments: attachments,
-                    htmlAttachments: htmlAttachments
-                )
-                .environmentObject(resolvedIntent.mailboxManager)
-            } else {
-                ProgressView()
-                    .progressViewStyle(.circular)
-                    .task {
-                        await initFromIntent()
-                    }
+        if composeMessageIntent.shouldSelectMailbox {
+            CurrentComposeMailboxView(composeMessageIntent: $composeMessageIntent)
+        } else {
+            NavigationView {
+                if let resolvedIntent = resolvedIntent.wrappedValue {
+                    ComposeMessageView(
+                        draft: resolvedIntent.draft,
+                        mailboxManager: resolvedIntent.mailboxManager,
+                        messageReply: resolvedIntent.messageReply,
+                        attachments: attachments,
+                        htmlAttachments: htmlAttachments
+                    )
+                    .environmentObject(resolvedIntent.mailboxManager)
+                } else {
+                    ProgressView()
+                        .progressViewStyle(.circular)
+                        .task {
+                            await initFromIntent()
+                        }
+                }
             }
         }
-        .interactiveDismissDisabled()
     }
 
     func initFromIntent() async {
-        guard let mailboxManager = accountManager.getMailboxManager(
-            for: composeMessageIntent.mailboxId,
-            userId: composeMessageIntent.userId
-        ) else {
+        guard let mailboxId = composeMessageIntent.mailboxId, let userId = composeMessageIntent.userId,
+              let mailboxManager = accountManager.getMailboxManager(for: mailboxId, userId: userId) else {
             dismiss()
             snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
             return
@@ -96,6 +102,10 @@ struct ComposeMessageIntentView: View, IntentViewable {
                     currentMailboxEmail: mailboxManager.mailbox.email
                 )
             }
+        }
+
+        if composeMessageIntent.isFromOutsideOfApp {
+            try? await mailboxManager.refreshAllSignatures()
         }
 
         if let draftToWrite {
@@ -133,6 +143,6 @@ struct ComposeMessageIntentView: View, IntentViewable {
 
 #Preview {
     ComposeMessageIntentView(
-        composeMessageIntent: .new(originMailboxManager: PreviewHelper.sampleMailboxManager)
+        composeMessageIntent: .new(originMailboxManager: PreviewHelper.sampleMailboxManager), htmlAttachments: [], attachments: []
     )
 }

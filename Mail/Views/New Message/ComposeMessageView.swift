@@ -171,6 +171,24 @@ struct ComposeMessageView: View {
                 }
             }
         }
+        .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)
+        .navigationBarTitleDisplayMode(.inline)
+        .interactiveDismissDisabled()
+        .navigationViewStyle(.stack)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                if !platformDetector.isMac {
+                    CloseButton(dismissHandler: didTouchDismiss)
+                }
+            }
+
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: didTouchSend) {
+                    Label(MailResourcesStrings.Localizable.send, image: MailResourcesAsset.send.name)
+                }
+                .disabled(isSendButtonDisabled)
+            }
+        }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .overlay {
             if isLoadingContent {
@@ -197,22 +215,6 @@ struct ComposeMessageView: View {
 
             let rectTop = CGRect(x: 0, y: 0, width: 1, height: 1)
             scrollView?.scrollRectToVisible(rectTop, animated: true)
-        }
-        .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                if !platformDetector.isMac {
-                    CloseButton(dismissHandler: didTouchDismiss)
-                }
-            }
-
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: didTouchSend) {
-                    Label(MailResourcesStrings.Localizable.send, image: MailResourcesAsset.send.name)
-                }
-                .disabled(isSendButtonDisabled)
-            }
         }
         .safeAreaInset(edge: .bottom) {
             ExternalTagBottomView(externalTag: draft.displayExternalTag(mailboxManager: mailboxManager))
