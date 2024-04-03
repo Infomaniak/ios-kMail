@@ -190,7 +190,7 @@ public extension Action {
     static let forward = Action(
         id: "forward",
         title: MailResourcesStrings.Localizable.actionForward,
-        iconResource: MailResourcesAsset.emailActionTransfer,
+        iconResource: MailResourcesAsset.emailActionForward,
         matomoName: "forward"
     )
     static let markAsRead = Action(
