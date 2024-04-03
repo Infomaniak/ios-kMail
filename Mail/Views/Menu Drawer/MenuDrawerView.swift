@@ -43,6 +43,8 @@ class NavigationDrawerState: ObservableObject {
 }
 
 struct NavigationDrawer: View {
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
     @GestureState private var isDragGestureActive = false
@@ -79,6 +81,7 @@ struct NavigationDrawer: View {
             .gesture(dragGestureForRootViewSize(rootViewSizeProxy.size))
             .statusBarHidden(navigationDrawerState.isOpen)
             .onChange(of: navigationDrawerState.isOpen) { isOpen in
+                snackbarPresenter.dismissAll()
                 if !isOpen {
                     offsetWidth = 0
                 }

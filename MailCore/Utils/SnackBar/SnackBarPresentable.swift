@@ -32,6 +32,8 @@ public protocol SnackBarPresentable {
         anchor: CGFloat,
         contextView: UIView?
     )
+    /// Dismiss all currently presented snackBars
+    func dismissAll()
 }
 
 public final class SnackBarPresenter: SnackBarPresentable {
@@ -66,5 +68,9 @@ public final class SnackBarPresenter: SnackBarPresentable {
                 contextView: contextView
             )
         }
+    }
+
+    public func dismissAll() {
+        NotificationCenter.default.post(name: IKSnackBar.dismissSnackbarNotificationName, object: nil, userInfo: nil)
     }
 }

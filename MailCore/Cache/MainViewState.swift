@@ -17,6 +17,8 @@
  */
 
 import Foundation
+import InfomaniakCoreUI
+import InfomaniakDI
 import SwiftModalPresentation
 
 public protocol SelectedThreadOwnable {
@@ -24,23 +26,47 @@ public protocol SelectedThreadOwnable {
 }
 
 public class MainViewState: ObservableObject, SelectedThreadOwnable {
-    @ModalPublished public var composeMessageIntent: ComposeMessageIntent?
+    @ModalPublished public var composeMessageIntent: ComposeMessageIntent? {
+        didSet {
+            @InjectService var snackbarPresenter: SnackBarPresentable
+            snackbarPresenter.dismissAll()
+        }
+    }
 
     @ModalPublished public var settingsViewConfig: SettingsViewConfig?
 
     @ModalPublished public var isShowingSyncProfile = false
     @ModalPublished public var isShowingSyncDiscovery = false
-    @Published public var isShowingSearch = false
+    @Published public var isShowingSearch = false {
+        didSet {
+            @InjectService var snackbarPresenter: SnackBarPresentable
+            snackbarPresenter.dismissAll()
+        }
+    }
+
     @ModalPublished public var isShowingReviewAlert = false
-    @ModalPublished public var isShowingSafariView: IdentifiableURL?
+    @ModalPublished public var isShowingSafariView: IdentifiableURL? {
+        didSet {
+            @InjectService var snackbarPresenter: SnackBarPresentable
+            snackbarPresenter.dismissAll()
+        }
+    }
+
     @ModalPublished public var isShowingUpdateAvailable = false
     @ModalPublished public var isShowingSetAppAsDefaultDiscovery = false
     @Published public var isShowingChristmasEasterEgg = false
 
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
     /// Represents the state of navigation
     ///
     /// The selected thread is the last in collection, by convention.
-    @Published public var threadPath = [Thread]()
+    @Published public var threadPath = [Thread]() {
+        didSet {
+            snackbarPresenter.dismissAll()
+        }
+    }
+
     @Published public var selectedFolder: Folder {
         didSet {
             SentryDebug.switchFolderBreadcrumb(uid: selectedFolder.remoteId, name: selectedFolder.name)

@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftModalPresentation
@@ -25,7 +26,12 @@ import SwiftUI
 struct AccountButton: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @ModalState private var presentedCurrentAccount: Account?
+    @ModalState private var presentedCurrentAccount: Account? {
+        didSet {
+            @InjectService var snackbarPresenter: SnackBarPresentable
+            snackbarPresenter.dismissAll()
+        }
+    }
 
     var body: some View {
         Button {

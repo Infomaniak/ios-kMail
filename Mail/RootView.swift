@@ -16,10 +16,13 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
 import MailCore
 import SwiftUI
 
 struct RootView: View {
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
     @EnvironmentObject private var rootViewState: RootViewState
 
     var body: some View {
@@ -43,6 +46,9 @@ struct RootView: View {
             case .preloading(let currentAccount):
                 PreloadingView(currentAccount: currentAccount)
             }
+        }
+        .onChange(of: rootViewState.state) { _ in
+            snackbarPresenter.dismissAll()
         }
     }
 }

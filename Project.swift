@@ -30,7 +30,10 @@ let project = Project(name: "Mail",
                               url: "https://github.com/Infomaniak/ios-core",
                               .revision("7388c5ccc5ab177bf640968a711be2ab2f24200c")
                           ),
-                          .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "7.0.0")),
+                          .package(
+                              url: "https://github.com/Infomaniak/ios-core-ui",
+                              .revision("78fc0f85a4b32051ab3de6bb492a3690c1fc363b")
+                          ),
                           .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "5.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "6.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-bug-tracker", .upToNextMajor(from: "4.0.0")),
