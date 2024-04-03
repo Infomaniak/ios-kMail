@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: elena willen
- * Exported at: Mon, 11 Mar 2024 16:16:23 +0100
+ * Exported by: Charlene Hoareau
+ * Exported at: Wed, 03 Apr 2024 13:11:24 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -208,9 +208,6 @@
 
 /* loco:650afa5b0b0204386e077c94 */
 "aiReplacementDialogDescription" = "Al pulsar \"Sustituir\", se perderá el contenido preexistente.";
-
-/* loco:650afca41010feb5710a0b45 */
-"aiReplacementDialogDoNotShowAgain" = "No volver a mostrar este mensaje";
 
 /* loco:650afb3b15bedc19200ab182 */
 "aiReplacementDialogPositiveButton" = "Sustituir";
@@ -448,9 +445,6 @@
 
 /* loco:65957d479527393708069ee2 */
 "buttonSee" = "Véase";
-
-/* loco:6268fc53412a8032745aaeb2 */
-"buttonSeeAll" = "Ver todos";
 
 /* loco:626918473e1b2d7fe4329d52 */
 "buttonSelectAll" = "Todos";
@@ -1037,6 +1031,9 @@
 /* loco:64a3d65f003e64f9790f5ed2 */
 "popupDetachMailboxTitle" = "Separar dirección";
 
+/* loco:660d031f55535d66db02f2f2 */
+"publicFolderSubtitle" = "Este espacio pertenece a %@ y centraliza los archivos comunes de tu organización.";
+
 /* loco:62f0e594f7dcd16da506af53 */
 "recentSearchesTitle" = "Búsquedas recientes";
 
@@ -1134,10 +1131,13 @@
 "settingsAutoAdvanceListOfThreadsTitle" = "Lista de temas";
 
 /* loco:65df003b996ecfc40c0d9962 */
-"settingsAutoAdvanceNaturalThreadDescription" = "Hilo de visualización basado en la navegación natural al archivar o borrar";
+"settingsAutoAdvanceNaturalThreadDescription" = "Repite la última acción realizada";
+
+/* loco:65eb1767b7ece7e666042e02 */
+"settingsAutoAdvanceNaturalThreadHint" = "Selecciona automáticamente la conversación siguiente o anterior, en función de tu última interacción.";
 
 /* loco:65defeba6cb9206d3f0d4392 */
-"settingsAutoAdvanceNaturalThreadTitle" = "Navegación natural";
+"settingsAutoAdvanceNaturalThreadTitle" = "Repetir la última acción";
 
 /* loco:65b27d1e0565d99b930ae142 */
 "settingsAutoAdvancePreviousThreadDescription" = "Mostrar el hilo anterior al archivar o borrar";
