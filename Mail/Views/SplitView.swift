@@ -176,6 +176,8 @@ struct SplitView: View {
                    perform: handleNotification)
         .onReceive(NotificationCenter.default.publisher(for: .openNotificationSettings).receive(on: DispatchQueue.main),
                    perform: handleOpenNotificationSettings)
+        .onReceive(NotificationCenter.default.publisher(for: .userPerformedHomeScreenShortcut).receive(on: DispatchQueue.main),
+                   perform: handleApplicationShortcut)
         .onAppear {
             orientationManager.setOrientationLock(.all)
         }
@@ -267,6 +269,25 @@ struct SplitView: View {
         if Constants.isMailTo(url) {
             mainViewState.composeMessageIntent = .mailTo(mailToURLComponents: urlComponents)
         }
+    }
+
+    private func handleApplicationShortcut(_ notification: Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>
+        .Output) {
+        guard let shortcut = notification.object as? UIApplicationShortcutItem,
+              let homeScreenShortcut = HomeScreenShortcut(shortcutItem: shortcut)
+        else { return }
+
+        switch homeScreenShortcut {
+        case .newMessage:
+            mainViewState.composeMessageIntent = .new(originMailboxManager: mailboxManager)
+        case .search:
+            mainViewState.isShowingSearch = true
+        case .support:
+            openURL(URLConstants.chatbot.url)
+        }
+
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .homeScreenShortcuts, name: homeScreenShortcut.rawValue)
     }
 
     private func handleNotification(_ notification: Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>.Output) {

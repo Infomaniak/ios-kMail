@@ -83,4 +83,14 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         draftManager.syncDraft(mailboxManager: currentMailboxManager, showSnackbar: false)
     }
+
+    func application(
+        _ application: UIApplication,
+        configurationForConnecting connectingSceneSession: UISceneSession,
+        options: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
+        let sceneConfiguration = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
+        sceneConfiguration.delegateClass = SceneDelegate.self
+        return sceneConfiguration
+    }
 }
