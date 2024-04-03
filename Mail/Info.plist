@@ -6,7 +6,7 @@
 	<array>
 		<dict>
 			<key>UIApplicationShortcutItemType</key>
-			<string>NewMessage</string>
+			<string>newMessage</string>
 			<key>UIApplicationShortcutItemTitle</key>
 			<string>shortcutNewMessageTitle</string>
 			<key>UIApplicationShortcutItemIconSymbolName</key>
@@ -14,7 +14,7 @@
 		</dict>
 		<dict>
 			<key>UIApplicationShortcutItemType</key>
-			<string>Search</string>
+			<string>search</string>
 			<key>UIApplicationShortcutItemTitle</key>
 			<string>shortcutSearchTitle</string>
 			<key>UIApplicationShortcutItemIconSymbolName</key>
@@ -22,7 +22,7 @@
 		</dict>
 		<dict>
 			<key>UIApplicationShortcutItemType</key>
-			<string>Support</string>
+			<string>support</string>
 			<key>UIApplicationShortcutItemTitle</key>
 			<string>shortcutSupportTitle</string>
 			<key>UIApplicationShortcutItemIconSymbolName</key>

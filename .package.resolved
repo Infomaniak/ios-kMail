@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Alamofire/Alamofire",
       "state" : {
-        "revision" : "723fa5a6c65812aec4a0d7cc432ee198883b6e00",
-        "version" : "5.9.0"
+        "revision" : "f455c2975872ccd2d9c81594c658af65716e9b9a",
+        "version" : "5.9.1"
       }
     },
     {
@@ -131,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/matomo-org/matomo-sdk-ios",
       "state" : {
-        "revision" : "15a645e11eaa8053f93749d73ced03da1e56fd01",
-        "version" : "7.5.2"
+        "revision" : "a8800d8725fb84bad6b7dea555075f961952bc0a",
+        "version" : "7.6.0"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/johnpatrickmorgan/NavigationBackport",
       "state" : {
-        "revision" : "b002991691b54fd7b952e1e780de252620f8ac77",
-        "version" : "0.9.1"
+        "revision" : "add71ebc3cf71e43c662c69c4d7c1f2dc5dc3588",
+        "version" : "0.9.2"
       }
     },
     {
@@ -239,8 +239,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/swift-concurrency",
       "state" : {
-        "revision" : "1c2e7ee0bb93203c865904494b0aa2aedbc57713",
-        "version" : "0.0.4"
+        "revision" : "02960fd5d2cf57c7ba38d13bbbf580d7f6ac7102",
+        "version" : "0.0.5"
       }
     },
     {

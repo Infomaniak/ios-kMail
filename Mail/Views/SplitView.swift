@@ -176,7 +176,7 @@ struct SplitView: View {
                    perform: handleNotification)
         .onReceive(NotificationCenter.default.publisher(for: .openNotificationSettings).receive(on: DispatchQueue.main),
                    perform: handleOpenNotificationSettings)
-        .onReceive(NotificationCenter.default.publisher(for: .userPerformedShortcut).receive(on: DispatchQueue.main),
+        .onReceive(NotificationCenter.default.publisher(for: .userPerformedHomeScreenShortcut).receive(on: DispatchQueue.main),
                    perform: handleApplicationShortcut)
         .onAppear {
             orientationManager.setOrientationLock(.all)
@@ -273,22 +273,21 @@ struct SplitView: View {
 
     private func handleApplicationShortcut(_ notification: Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>
         .Output) {
-        guard let shortcut = notification.object as? UIApplicationShortcutItem else { return }
-        guard let quickAction = QuickAction(shortcutItem: shortcut) else { return }
+        guard let shortcut = notification.object as? UIApplicationShortcutItem,
+              let homeScreenShortcut = HomeScreenShortcut(shortcutItem: shortcut)
+        else { return }
 
-        @InjectService var matomo: MatomoUtils
-
-        switch quickAction {
+        switch homeScreenShortcut {
         case .newMessage:
             mainViewState.composeMessageIntent = .new(originMailboxManager: mailboxManager)
-            matomo.track(eventWithCategory: .homeScreenShortcuts, name: "newMessage")
         case .search:
             mainViewState.isShowingSearch = true
-            matomo.track(eventWithCategory: .homeScreenShortcuts, name: "search")
         case .support:
             openURL(URLConstants.chatbot.url)
-            matomo.track(eventWithCategory: .homeScreenShortcuts, name: "support")
         }
+
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .homeScreenShortcuts, name: homeScreenShortcut.rawValue)
     }
 
     private func handleNotification(_ notification: Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>.Output) {

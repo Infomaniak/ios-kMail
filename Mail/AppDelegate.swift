@@ -86,32 +86,11 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(
         _ application: UIApplication,
-        performActionFor shortcutItem: UIApplicationShortcutItem,
-        completionHandler: @escaping (Bool) -> Void
-    ) {
-        NotificationCenter.default.post(name: .userPerformedShortcut, object: shortcutItem)
-        completionHandler(true)
-    }
-
-    func application(
-        _ application: UIApplication,
         configurationForConnecting connectingSceneSession: UISceneSession,
         options: UIScene.ConnectionOptions
     ) -> UISceneConfiguration {
         let sceneConfiguration = UISceneConfiguration(name: nil, sessionRole: connectingSceneSession.role)
         sceneConfiguration.delegateClass = SceneDelegate.self
         return sceneConfiguration
-    }
-}
-
-class SceneDelegate: NSObject, UIWindowSceneDelegate {
-    /// to hook into events that trigger when a user interacts with a quick action
-    func windowScene(
-        _ windowScene: UIWindowScene,
-        performActionFor shortcutItem: UIApplicationShortcutItem,
-        completionHandler: @escaping (Bool) -> Void
-    ) {
-        NotificationCenter.default.post(name: .userPerformedShortcut, object: shortcutItem)
-        completionHandler(true)
     }
 }

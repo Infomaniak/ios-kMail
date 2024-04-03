@@ -25,5 +25,5 @@ public extension Notification.Name {
     static let updateComposeMessageBody = Notification.Name(rawValue: "updateComposeMessageBody")
     static let openNotificationSettings = Notification.Name(rawValue: "openNotificationSettings")
     static let printNotification = Notification.Name(rawValue: "printNotification")
-    static let userPerformedShortcut = Notification.Name(rawValue: "userPerformedShortcut")
+    static let userPerformedHomeScreenShortcut = Notification.Name(rawValue: "userPerformedHomeScreenShortcut")
 }

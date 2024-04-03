@@ -1,3 +1,4 @@
+//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2024 Infomaniak Network SA
@@ -19,28 +20,13 @@
 import Foundation
 import UIKit
 
-enum QuickActionType: String {
-    case newMessage = "NewMessage"
-    case search = "Search"
-    case support = "Support"
-}
-
-enum QuickAction: Equatable {
+public enum HomeScreenShortcut: String {
     case newMessage
     case search
     case support
 
-    init?(shortcutItem: UIApplicationShortcutItem) {
-        guard let type = QuickActionType(rawValue: shortcutItem.type) else {
-            return nil
-        }
-        switch type {
-        case .newMessage:
-            self = .newMessage
-        case .search:
-            self = .search
-        case .support:
-            self = .support
-        }
+    public init?(shortcutItem: UIApplicationShortcutItem) {
+        guard let shortcut = HomeScreenShortcut(rawValue: shortcutItem.type) else { return nil }
+        self = shortcut
     }
 }
