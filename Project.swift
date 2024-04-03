@@ -25,7 +25,7 @@ let project = Project(name: "Mail",
                           .package(url: "https://github.com/apple/swift-algorithms", .upToNextMajor(from: "1.2.0")),
                           .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "6.0.0")),
                           .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "2.0.0")),
-                          .package(url: "https://github.com/Infomaniak/swift-concurrency", .upToNextMajor(from: "0.0.4")),
+                          .package(url: "https://github.com/Infomaniak/swift-concurrency", .upToNextMajor(from: "0.0.5")),
                           .package(
                               url: "https://github.com/Infomaniak/ios-core",
                               .revision("7388c5ccc5ab177bf640968a711be2ab2f24200c")

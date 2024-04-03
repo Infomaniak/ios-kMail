@@ -39,18 +39,23 @@ struct ComposeMessageWrapperView: View {
     static let typePropertyList = String(kUTTypePropertyList)
 
     /// All the Attachments that should directly provide URLs and title for a new Email Draft
-    var textAttachments: [TextAttachable] {
-        // All property list, result from JS execution in Safari
-        let propertyListItems = itemProviders.filter { itemProvider in
-            itemProvider.hasItemConformingToTypeIdentifier(Self.typePropertyList)
-        }
+    var htmlAttachments: [HTMLAttachable] {
+        // All property list, result from JS execution in Safari, wrapped in a type that can format HTML
+        let propertyListItems: [HTMLAttachable] = itemProviders
+            .filter { $0.hasItemConformingToTypeIdentifier(Self.typePropertyList) }
+            .map { SafariKeyValueToHTMLAttachment(wrapping: $0) }
 
         // All `.webloc` item providers, wrapped in a type that can read it on the fly
         let weblocTextAttachments = itemProviders
             .filter { $0.underlyingType == .isURL }
             .compactMap { WeblocToTextAttachment(wrapping: $0) }
 
-        let allItems: [TextAttachable] = propertyListItems + weblocTextAttachments
+        // All `.txt` item providers, wrapped in a type that can read it on the fly
+        let txtTextAttachments = itemProviders
+            .filter { $0.underlyingType == .isText }
+            .compactMap { TxtToTextAttachment(wrapping: $0) }
+
+        let allItems: [HTMLAttachable] = propertyListItems + weblocTextAttachments + txtTextAttachments
         return allItems
     }
 
@@ -59,8 +64,9 @@ struct ComposeMessageWrapperView: View {
         itemProviders.filter { itemProvider in
             let isPropertyList = itemProvider.hasItemConformingToTypeIdentifier(Self.typePropertyList)
             let isUrlAsWebloc = itemProvider.underlyingType == .isURL
+            let isTextAsTxt = itemProvider.underlyingType == .isText
 
-            return !isPropertyList && !isUrlAsWebloc
+            return !isPropertyList && !isUrlAsWebloc && !isTextAsTxt
         }
     }
 
@@ -71,7 +77,7 @@ struct ComposeMessageWrapperView: View {
             } else if let mailboxManager = accountManager.currentMailboxManager {
                 ComposeMessageIntentView(
                     composeMessageIntent: .new(fromExtension: true),
-                    textAttachments: textAttachments,
+                    htmlAttachments: htmlAttachments,
                     attachments: attachments
                 )
                 .environmentObject(mailboxManager)

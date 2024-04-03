@@ -38,12 +38,12 @@ struct ComposeMessageIntentView: View, IntentViewable {
 
     @State private var composeMessageIntent: ComposeMessageIntent
     let resolvedIntent = State<ResolvedIntent?>()
-    var textAttachments: [TextAttachable]
-    var attachments: [Attachable]
+    var htmlAttachments: [HTMLAttachable] = []
+    var attachments: [Attachable] = []
 
-    init(composeMessageIntent: ComposeMessageIntent, textAttachments: [TextAttachable] = [], attachments: [Attachable] = []) {
+    init(composeMessageIntent: ComposeMessageIntent, htmlAttachments: [HTMLAttachable] = [], attachments: [Attachable] = []) {
         _composeMessageIntent = State(wrappedValue: composeMessageIntent)
-        self.textAttachments = textAttachments
+        self.htmlAttachments = htmlAttachments
         self.attachments = attachments
     }
 
@@ -57,7 +57,8 @@ struct ComposeMessageIntentView: View, IntentViewable {
                         draft: resolvedIntent.draft,
                         mailboxManager: resolvedIntent.mailboxManager,
                         messageReply: resolvedIntent.messageReply,
-                        attachments: attachments
+                        attachments: attachments,
+                        htmlAttachments: htmlAttachments
                     )
                     .environmentObject(resolvedIntent.mailboxManager)
                 } else {
@@ -142,6 +143,6 @@ struct ComposeMessageIntentView: View, IntentViewable {
 
 #Preview {
     ComposeMessageIntentView(
-        composeMessageIntent: .new(originMailboxManager: PreviewHelper.sampleMailboxManager), textAttachments: [], attachments: []
+        composeMessageIntent: .new(originMailboxManager: PreviewHelper.sampleMailboxManager), htmlAttachments: [], attachments: []
     )
 }

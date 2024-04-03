@@ -370,22 +370,14 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
         await updateDelegate?.contentWillChange()
     }
 
-    public func processTextAttachments(_ attachments: [TextAttachable]) async {
-        // Process all text attachments
-        let textAttachments = await attachments.concurrentMap { attachment in
-            await attachment.textAttachment
-        }
-
+    public func processHTMLAttachments(_ htmlAttachments: [HTMLAttachable]) async {
         // Get first usable title
-        let anyUsableTitle = anyUsableTitle(in: textAttachments)
+        let anyUsableTitle = await anyUsableTitle(in: htmlAttachments)
 
-        // Get all URLs
-        let allURLs = allURLs(in: textAttachments)
+        // Get all the sanitized HTML we can fetch
+        let allSanitizedHtmlString = await allSanitizedHtml(in: htmlAttachments).joined(separator: "")
 
-        // Render all URLs as HTML code, if any after a minimalistic input sanitising
-        let formattedBodyUrls = formattedBodyUrls(allURLs: allURLs)
-
-        // mutate Draft
+        // Mutate Draft
         await backgroundRealm.execute { realm in
             try? realm.write {
                 guard let draftInContext = realm.object(ofType: Draft.self, forPrimaryKey: self.draftLocalUUID) else {
@@ -400,8 +392,8 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
                     modified = true
                 }
 
-                if !formattedBodyUrls.isEmpty {
-                    draftInContext.body = formattedBodyUrls + draftInContext.body
+                if !allSanitizedHtmlString.isEmpty {
+                    draftInContext.body = allSanitizedHtmlString + draftInContext.body
                     modified = true
                 }
 
@@ -414,34 +406,26 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
         }
     }
 
-    private func anyUsableTitle(in textAttachments: [TextAttachment]) -> String {
-        textAttachments.first { $0.title?.isEmpty == false }?.title ?? ""
+    private func anyUsableTitle(in textAttachments: [TextAttachable]) async -> String {
+        let textAttachments = await textAttachments.asyncMap { attachment in
+            await attachment.textAttachment
+        }
+
+        let title = textAttachments.first { $0.title?.isEmpty == false }?.title ?? ""
+        return title
     }
 
-    private func allURLs(in textAttachments: [TextAttachment]) -> [String] {
-        textAttachments.compactMap { attachment in
-            guard let body = attachment.body,
-                  !body.isEmpty else {
+    private func allSanitizedHtml(in htmlAttachments: [HTMLAttachable]) async -> [String] {
+        let allSanitizedHtml: [String] = await htmlAttachments.asyncCompactMap { attachment in
+            guard let renderedHTML = await attachment.renderedHTML,
+                  !renderedHTML.isEmpty else {
                 return nil
             }
 
-            return body
+            return renderedHTML
         }
-    }
 
-    private func formattedBodyUrls(allURLs: [String]) -> String {
-        allURLs.reduce("") { partialResult, urlString in
-            guard let bodyUrl = URL(string: urlString) else {
-                return partialResult
-            }
-
-            let bodyAbsoluteUrl = bodyUrl.absoluteString
-            guard !bodyAbsoluteUrl.isEmpty else {
-                return partialResult
-            }
-
-            return partialResult + "<div><a href=\"\(bodyAbsoluteUrl)\">" + bodyAbsoluteUrl + "</a></div>"
-        }
+        return allSanitizedHtml
     }
 
     @MainActor public func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentUploadTask {
