@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: de, German
  * Tagged: ios
- * Exported by: elena willen
- * Exported at: Mon, 11 Mar 2024 16:16:23 +0100
+ * Exported by: Charlene Hoareau
+ * Exported at: Wed, 03 Apr 2024 13:11:24 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -208,9 +208,6 @@
 
 /* loco:650afa5b0b0204386e077c94 */
 "aiReplacementDialogDescription" = "Wenn Sie auf \"Ersetzen\" klicken, geht der bereits vorhandene Inhalt verloren.";
-
-/* loco:650afca41010feb5710a0b45 */
-"aiReplacementDialogDoNotShowAgain" = "Diese Nachricht nicht mehr anzeigen";
 
 /* loco:650afb3b15bedc19200ab182 */
 "aiReplacementDialogPositiveButton" = "Ersetzen";
@@ -448,9 +445,6 @@
 
 /* loco:65957d479527393708069ee2 */
 "buttonSee" = "Siehe";
-
-/* loco:6268fc53412a8032745aaeb2 */
-"buttonSeeAll" = "Alle sehen";
 
 /* loco:626918473e1b2d7fe4329d52 */
 "buttonSelectAll" = "Alle";
@@ -1036,6 +1030,9 @@
 
 /* loco:64a3d65f003e64f9790f5ed2 */
 "popupDetachMailboxTitle" = "Adresse abtrennen";
+
+/* loco:660d031f55535d66db02f2f2 */
+"publicFolderSubtitle" = "Dieser Bereich gehört zu %@ und fungiert als zentrales Verzeichnis der gemeinsamen Dateien Ihrer Organisation.";
 
 /* loco:62f0e594f7dcd16da506af53 */
 "recentSearchesTitle" = "Letzte Suchen";
