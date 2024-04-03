@@ -171,17 +171,8 @@ struct ComposeMessageView: View {
                 }
             }
         }
-        .navigationTitle(MailResourcesStrings.Localizable.buttonNewMessage)
-        .navigationBarTitleDisplayMode(.inline)
-        .interactiveDismissDisabled()
-        .navigationViewStyle(.stack)
+        .composeMessageToolbar(dismissHandler: didTouchDismiss)
         .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                if !platformDetector.isMac {
-                    CloseButton(dismissHandler: didTouchDismiss)
-                }
-            }
-
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: didTouchSend) {
                     Label(MailResourcesStrings.Localizable.send, image: MailResourcesAsset.send.name)

@@ -18,6 +18,7 @@
 
 import InfomaniakDI
 import MailCore
+import MailResources
 import NavigationBackport
 import RealmSwift
 import SwiftUI
@@ -48,28 +49,30 @@ struct ComposeMessageIntentView: View, IntentViewable {
     }
 
     var body: some View {
-        if composeMessageIntent.shouldSelectMailbox {
-            CurrentComposeMailboxView(composeMessageIntent: $composeMessageIntent)
-        } else {
-            NavigationView {
-                if let resolvedIntent = resolvedIntent.wrappedValue {
-                    ComposeMessageView(
-                        draft: resolvedIntent.draft,
-                        mailboxManager: resolvedIntent.mailboxManager,
-                        messageReply: resolvedIntent.messageReply,
-                        attachments: attachments,
-                        htmlAttachments: htmlAttachments
-                    )
-                    .environmentObject(resolvedIntent.mailboxManager)
-                } else {
-                    ProgressView()
-                        .progressViewStyle(.circular)
-                        .task {
-                            await initFromIntent()
-                        }
+        Group {
+            if composeMessageIntent.shouldSelectMailbox {
+                CurrentComposeMailboxView(composeMessageIntent: $composeMessageIntent)
+            } else {
+                NavigationView {
+                    if let resolvedIntent = resolvedIntent.wrappedValue {
+                        ComposeMessageView(
+                            draft: resolvedIntent.draft,
+                            mailboxManager: resolvedIntent.mailboxManager,
+                            messageReply: resolvedIntent.messageReply,
+                            attachments: attachments
+                        )
+                        .environmentObject(resolvedIntent.mailboxManager)
+                    } else {
+                        ComposeMessageProgressView()
+                            .task {
+                                await initFromIntent()
+                            }
+                    }
                 }
             }
         }
+        .navigationViewStyle(.stack)
+        .interactiveDismissDisabled()
     }
 
     func initFromIntent() async {
