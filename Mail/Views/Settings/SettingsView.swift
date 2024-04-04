@@ -29,6 +29,7 @@ struct SettingsView: View {
     @LazyInjectService private var appLockHelper: AppLockHelper
     @LazyInjectService private var featureFlagsManageable: FeatureFlagsManageable
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
@@ -42,6 +43,8 @@ struct SettingsView: View {
     @AppStorage(UserDefaults.shared.key(.externalContent)) private var externalContent = DefaultPreferences.externalContent
     @AppStorage(UserDefaults.shared.key(.threadMode)) private var threadMode = DefaultPreferences.threadMode
     @AppStorage(UserDefaults.shared.key(.autoAdvance)) private var autoAdvance = DefaultPreferences.autoAdvance
+
+    @State private var isShowingSyncProfile = false
 
     var body: some View {
         ScrollView {
@@ -89,7 +92,11 @@ struct SettingsView: View {
 
                     Button {
                         matomo.track(eventWithCategory: .syncAutoConfig, name: "openFromSettings")
-                        mainViewState.isShowingSyncProfile = true
+                        if platformDetector.isMac {
+                            isShowingSyncProfile = true
+                        } else {
+                            mainViewState.isShowingSyncProfile = true
+                        }
                     } label: {
                         SettingsSubMenuLabel(title: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle)
                     }
@@ -190,6 +197,9 @@ struct SettingsView: View {
         }
         .onChange(of: threadMode) { _ in
             accountManager.updateConversationSettings()
+        }
+        .sheet(isPresented: $isShowingSyncProfile) {
+            SyncProfileNavigationView()
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsTitle, displayMode: .inline)
