@@ -239,7 +239,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     private func createAndSetCurrentAccount(token: ApiToken) async throws -> Account {
         let apiFetcher = MailApiFetcher(token: token, delegate: self)
-        let user = try await apiFetcher.userProfile(dateFormat: .iso8601)
+        let user = try await apiFetcher.userProfile(ignoreDefaultAvatar: true, dateFormat: .iso8601)
 
         let mailboxesResponse = try await apiFetcher.mailboxes()
         guard !mailboxesResponse.isEmpty else {
@@ -278,7 +278,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
 
         let apiFetcher = getApiFetcher(for: account.userId, token: token)
-        let user = try await apiFetcher.userProfile(dateFormat: .iso8601)
+        let user = try await apiFetcher.userProfile(ignoreDefaultAvatar: true, dateFormat: .iso8601)
         account.user = user
 
         try? await featureFlagsManager.fetchFlags()
