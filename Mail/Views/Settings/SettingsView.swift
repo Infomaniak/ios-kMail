@@ -44,7 +44,7 @@ struct SettingsView: View {
     @AppStorage(UserDefaults.shared.key(.threadMode)) private var threadMode = DefaultPreferences.threadMode
     @AppStorage(UserDefaults.shared.key(.autoAdvance)) private var autoAdvance = DefaultPreferences.autoAdvance
 
-    @State private var isSyncProfileSheetPresented = false
+    @State private var isShowingSyncProfile = false
 
     var body: some View {
         ScrollView {
@@ -93,7 +93,7 @@ struct SettingsView: View {
                     Button {
                         matomo.track(eventWithCategory: .syncAutoConfig, name: "openFromSettings")
                         if platformDetector.isMac {
-                            isSyncProfileSheetPresented = true
+                            isShowingSyncProfile = true
                         } else {
                             mainViewState.isShowingSyncProfile = true
                         }
@@ -198,7 +198,7 @@ struct SettingsView: View {
         .onChange(of: threadMode) { _ in
             accountManager.updateConversationSettings()
         }
-        .sheet(isPresented: $isSyncProfileSheetPresented) {
+        .sheet(isPresented: $isShowingSyncProfile) {
             SyncProfileNavigationView()
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
