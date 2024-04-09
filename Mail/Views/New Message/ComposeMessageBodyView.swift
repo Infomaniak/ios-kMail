@@ -47,13 +47,16 @@ struct ComposeMessageBodyView: View {
         VStack {
             AttachmentsHeaderView(attachmentsManager: attachmentsManager)
 
-            EditorView(isShowingFileSelection: $isShowingFileSelection,
-                       isShowingCamera: $isShowingCamera,
-                       isShowingPhotoLibrary: $isShowingPhotoLibrary,
-                       isShowingAIPrompt: $isShowingAIPrompt,
-                       isShowingAlert: $isShowingAlert)
-                .frame(maxWidth: .infinity)
-                .frame(height: 100)
+            EditorView(
+                body: $draft.body,
+                isShowingFileSelection: $isShowingFileSelection,
+                isShowingCamera: $isShowingCamera,
+                isShowingPhotoLibrary: $isShowingPhotoLibrary,
+                isShowingAIPrompt: $isShowingAIPrompt,
+                isShowingAlert: $isShowingAlert
+            )
+            .frame(maxWidth: .infinity)
+            .frame(height: 400)
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
             CameraPicker { data in

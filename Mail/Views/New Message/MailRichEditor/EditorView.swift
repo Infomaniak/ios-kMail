@@ -21,13 +21,14 @@ import MailCore
 import SwiftUI
 
 struct EditorView: UIViewRepresentable {
+    @Binding var body: String
     @Binding var isShowingFileSelection: Bool
     @Binding var isShowingCamera: Bool
     @Binding var isShowingPhotoLibrary: Bool
     @Binding var isShowingAIPrompt: Bool
     @Binding var isShowingAlert: NewMessageAlert?
 
-    func makeUIView(context: Context) -> some UIView {
+    func makeUIView(context: Context) -> RichEditorView {
         let editor = RichEditorView()
         editor.delegate = context.coordinator
         editor.addInputAccessoryView(context.coordinator.toolbar)
@@ -35,7 +36,11 @@ struct EditorView: UIViewRepresentable {
         return editor
     }
 
-    func updateUIView(_ uiView: UIViewType, context: Context) {}
+    func updateUIView(_ richEditorView: RichEditorView, context: Context) {
+        if richEditorView.text != body {
+            richEditorView.text = body
+        }
+    }
 
     func makeCoordinator() -> EditorCoordinator {
         return EditorCoordinator(parent: self)
@@ -43,7 +48,8 @@ struct EditorView: UIViewRepresentable {
 }
 
 #Preview {
-    EditorView(isShowingFileSelection: .constant(false),
+    EditorView(body: .constant(""),
+               isShowingFileSelection: .constant(false),
                isShowingCamera: .constant(false),
                isShowingPhotoLibrary: .constant(false),
                isShowingAIPrompt: .constant(false),

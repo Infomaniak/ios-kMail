@@ -37,6 +37,15 @@ final class EditorCoordinator {
 // MARK: - RichEditorViewDelegate
 
 extension EditorCoordinator: RichEditorViewDelegate {
+    func richEditorViewDidLoad(_ richEditorView: RichEditorView) {
+        richEditorView.text = parent.body
+    }
+
+    func richEditorViewDidChange(_ richEditorView: RichEditorView) {
+        // TODO: Maybe we can throttle here?
+        parent.body = richEditorView.text
+    }
+
     func richEditorView(_ richEditorView: RichEditorView, didSelectedTextAttributesChanged textAttributes: RETextAttributes) {
         updateToolbarItems(for: richEditorView, style: toolbarStyle)
     }
