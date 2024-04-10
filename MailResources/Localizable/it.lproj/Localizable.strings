@@ -4,8 +4,8 @@
  * Release: Working copy
  * Locale: it, Italian
  * Tagged: ios
- * Exported by: Charlene Hoareau
- * Exported at: Wed, 03 Apr 2024 13:11:24 +0200
+ * Exported by: elena willen
+ * Exported at: Wed, 10 Apr 2024 14:30:18 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1115,6 +1115,9 @@
 /* loco:627a306b1e32027c033896b2 */
 "settingsAppLock" = "Blocco dell’app";
 
+/* loco:6616826f71895b3f5e022484 */
+"settingsAuthoriseTracking" = "Autorizza il tracciamento";
+
 /* loco:65b275e7c53c28d1410bf342 */
 "settingsAutoAdvanceDescription" = "Selezionare cosa visualizzare quando un messaggio viene archiviato o eliminato";
 
@@ -1153,6 +1156,12 @@
 
 /* loco:627a53b37b420855254af032 */
 "settingsCancellationPeriodTitle" = "Periodo di cancellazione dell’invio";
+
+/* loco:6616815d2f83f25c2c0023e2 */
+"settingsDataManagementDescription" = "È possibile personalizzare i dati tecnici e di utilizzo che Infomaniak recupera per correggere i bug e sviluppare l’applicazione. I due strumenti utilizzati sono ospitati e gestiti esclusivamente da noi.\n\nInfomaniak rispetta la vostra privacy: il codice sorgente di questa applicazione può essere controllato, le informazioni raccolte sono anonime e i vostri dati personali rimangono strettamente confidenziali e non vengono mai condivisi con terzi.";
+
+/* loco:661680f35cb9d448bb047913 */
+"settingsDataManagementTitle" = "Gestione dei dati";
 
 /* loco:627a40651c78f22cb67efdd2 */
 "settingsDefault" = "Predefinito";
@@ -1208,6 +1217,12 @@
 /* loco:627a3ba7d5f44d600a6f1803 */
 "settingsMailboxGeneralSignature" = "Impostazioni della firma";
 
+/* loco:661682154ac22eb334026eb3 */
+"settingsMatomoDescription" = "Matomo è uno strumento di analisi ospitato e gestito esclusivamente da Infomaniak per capire come viene utilizzata l’applicazione.\n\nStudiando questi dati, il nostro team è in grado di migliorare continuamente l’interfaccia dell’applicazione.";
+
+/* loco:661681a7717583be6201ecc2 */
+"settingsMatomoTitle" = "Matomo";
+
 /* loco:627a418d50aa01240d501ae4 */
 "settingsOptionAlways" = "Sempre";
 
@@ -1237,6 +1252,9 @@
 
 /* loco:627a30b24e987302322d0f64 */
 "settingsSectionAppearance" = "Aspetto";
+
+/* loco:661680c87c6f0ba6c60dfa72 */
+"settingsSectionDataPrivacy" = "Dati e privacy";
 
 /* loco:627a2ab189bc1f4ea90851c2 */
 "settingsSectionEmailAddresses" = "Indirizzi e-mail";
@@ -1279,6 +1297,12 @@
 
 /* loco:627a2f67a6d27d332a2f4926 */
 "settingsSendTitle" = "Inviare";
+
+/* loco:66168246bbff09cbe6030855 */
+"settingsSentryDescription" = "Sentry è uno strumento ospitato e gestito esclusivamente da Infomaniak per monitorare la stabilità dell’applicazione in tempo reale e segnalare automaticamente eventuali errori tecnici ai nostri sviluppatori.\n\nQuesti dati consentono al nostro team di correggere e ottimizzare rapidamente l’applicazione, migliorando l’esperienza dell’utente.";
+
+/* loco:661681c0c840865b4a0756b3 */
+"settingsSentryTitle" = "Sentry";
 
 /* loco:644f6a7bf8a5eec20801ac93 */
 "settingsSignatureDescription" = "Selezionare una firma predefinita";
