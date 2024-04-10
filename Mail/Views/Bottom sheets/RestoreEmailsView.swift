@@ -56,19 +56,19 @@ struct RestoreEmailsView: View {
                              secondaryButtonTitle: nil,
                              primaryButtonEnabled: !availableDates.isEmpty,
                              primaryButtonAction: restoreEmails)
-                .task {
-                    await tryOrDisplayError {
-                        let backupsList = try await mailboxManager.apiFetcher.listBackups(mailbox: mailboxManager.mailbox).backups
-                        withAnimation {
-                            availableDates = backupsList
-                            selectedDate = backupsList.last ?? ""
-                            pickerNoSelectionText = MailResourcesStrings.Localizable.pickerNoSelection
-                        }
-                    }
-                }
-                .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "RestoreEmailsView"])
         }
         .padding(.horizontal, UIPadding.bottomSheetHorizontal)
+        .task {
+            await tryOrDisplayError {
+                let backupsList = try await mailboxManager.apiFetcher.listBackups(mailbox: mailboxManager.mailbox).backups
+                withAnimation {
+                    availableDates = backupsList
+                    selectedDate = backupsList.last ?? ""
+                    pickerNoSelectionText = MailResourcesStrings.Localizable.pickerNoSelection
+                }
+            }
+        }
+        .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "RestoreEmailsView"])
     }
 
     private func restoreEmails() async {
