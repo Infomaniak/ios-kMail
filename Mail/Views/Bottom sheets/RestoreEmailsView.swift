@@ -38,17 +38,10 @@ struct RestoreEmailsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if platformDetector.isMac || UIDevice.current.systemName == "iPadOS" {
-                HeaderCloseButtonView(title: MailResourcesStrings.Localizable.restoreEmailsTitle) {
-                    dismiss()
-                }
-                .padding(.horizontal, UIPadding.small)
-            } else {
-                Text(MailResourcesStrings.Localizable.restoreEmailsTitle)
-                    .textStyle(.bodyMedium)
-                    .padding(.bottom, 16)
-                    .padding(.horizontal, UIPadding.bottomSheetHorizontal)
-            }
+            Text(MailResourcesStrings.Localizable.restoreEmailsTitle)
+                .textStyle(.bodyMedium)
+                .padding(.bottom, 16)
+                .padding(.horizontal, UIPadding.bottomSheetHorizontal)
 
             VStack(alignment: .leading, spacing: 0) {
                 Text(MailResourcesStrings.Localizable.restoreEmailsText)

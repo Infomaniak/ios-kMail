@@ -21,29 +21,58 @@ import SwiftUI
 extension View {
     func adaptivePanel<Item: Identifiable, Content: View>(item: Binding<Item?>,
                                                           @ViewBuilder content: @escaping (Item) -> Content) -> some View {
-        return modifier(AdaptivePanelViewModifier(item: item, panelContent: content))
+        return modifier(AdaptivePanelViewItemModifier(item: item, panelContent: content))
+    }
+
+    func adaptivePanel<Content: View>(isPresented: Binding<Bool>,
+                                      @ViewBuilder content: @escaping () ->
+                                          Content) -> some View {
+        return modifier(AdaptivePanelViewIsPresentedModifier(isPresented: isPresented, panelContent: content))
     }
 }
 
-struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>: ViewModifier {
-    @Environment(\.isCompactWindow) private var isCompactWindow
-
+struct AdaptivePanelViewItemModifier<Item: Identifiable, PanelContent: View>: ViewModifier {
     @Binding var item: Item?
     @ViewBuilder var panelContent: (Item) -> PanelContent
     func body(content: Content) -> some View {
         content
             .popover(item: $item) { item in
-                if isCompactWindow {
-                    if #available(iOS 16.0, *) {
-                        panelContent(item).modifier(SelfSizingPanelViewModifier())
-                    } else {
-                        panelContent(item).modifier(SelfSizingPanelBackportViewModifier())
-                    }
-                } else {
+                AdaptativeView {
                     panelContent(item)
-                        .padding()
-                        .frame(idealWidth: 400)
                 }
             }
+    }
+}
+
+struct AdaptivePanelViewIsPresentedModifier<PanelContent: View>: ViewModifier {
+    @Binding var isPresented: Bool
+    @ViewBuilder var panelContent: PanelContent
+
+    func body(content: Content) -> some View {
+        content
+            .popover(isPresented: $isPresented) {
+                AdaptativeView {
+                    panelContent
+                }
+            }
+    }
+}
+
+struct AdaptativeView<Content: View>: View {
+    @Environment(\.isCompactWindow) private var isCompactWindow
+    @ViewBuilder var panelContent: Content
+
+    var body: some View {
+        if isCompactWindow {
+            if #available(iOS 16.0, *) {
+                panelContent.modifier(SelfSizingPanelViewModifier())
+            } else {
+                panelContent.modifier(SelfSizingPanelBackportViewModifier())
+            }
+        } else {
+            panelContent
+                .padding()
+                .frame(idealWidth: 400)
+        }
     }
 }
