@@ -192,6 +192,22 @@ struct SettingsView: View {
                     ) {
                         SettingsThreadModeView()
                     }
+
+                    IKDivider()
+                }
+
+                // MARK: - Section: Data and privacy
+
+                Group {
+                    SettingsSectionTitleView(
+                        title: MailResourcesStrings.Localizable.settingsSectionDataPrivacy
+                    )
+
+                    SettingsSubMenuCell(
+                        title: MailResourcesStrings.Localizable.settingsDataManagementTitle
+                    ) {
+                        SettingsDataManagement()
+                    }
                 }
             }
         }
