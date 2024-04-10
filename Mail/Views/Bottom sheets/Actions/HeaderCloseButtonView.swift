@@ -32,7 +32,6 @@ struct HeaderCloseButtonView: View {
                 .foregroundStyle(MailTextStyle.header2.color)
                 .frame(maxWidth: .infinity)
         }
-        .padding(.horizontal, value: .regular)
         .padding(.trailing, IKIcon.Size.small.rawValue)
         .padding(.bottom, value: .regular)
     }

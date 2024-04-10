@@ -59,7 +59,7 @@ struct MenuDrawerItemsAdvancedListView: View {
                 ) {
                     isShowingRestoreMails = true
                 }
-                .adaptivePanel(isPresented: $isShowingRestoreMails) {
+                .sheetOrAlertPanel(isPresented: $isShowingRestoreMails) {
                     RestoreEmailsView()
                 }
             }

@@ -38,6 +38,7 @@ struct ReportJunkView: View {
                 HeaderCloseButtonView(title: MailResourcesStrings.Localizable.actionReportJunk) {
                     dismiss()
                 }
+                .padding(.horizontal, value: .regular)
             }
 
             ForEach(actions) { action in
