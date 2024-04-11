@@ -20,23 +20,29 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct SettingsDataManagement: View {
+struct SettingsDataManagementView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
                 accentColor.dataPrivacyImage.swiftUIImage
-                    .padding(.bottom, value: .regular)
+                    .padding(.bottom, value: .medium)
 
                 Text(MailResourcesStrings.Localizable.settingsDataManagementDescription)
                     .textStyle(.body)
                     .multilineTextAlignment(.leading)
-                    .padding(.bottom, value: .medium)
+                    .padding(.bottom, value: .regular)
+                    .padding(.horizontal, UIPadding.regular)
 
                 ForEach(DataManagement.allCases, id: \.self) { item in
                     SettingsSubMenuCell(title: item.title, icon: item.image) {
-                        // TODO:
+                        switch item {
+                        case .matomo:
+                            SettingsDataManagementDetailView.matomo
+                        case .sentry:
+                            SettingsDataManagementDetailView.sentry
+                        }
                     }
 
                     if item != DataManagement.allCases.last {
@@ -44,15 +50,13 @@ struct SettingsDataManagement: View {
                     }
                 }
             }
-            .padding(.horizontal, UIPadding.regular)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsDataManagementTitle, displayMode: .inline)
-//        .matomoView(view: [MatomoUtils.View.settingsView.displayName, "SwipeActions"])
         .backButtonDisplayMode(.minimal)
     }
 }
 
 #Preview {
-    SettingsDataManagement()
+    SettingsDataManagementView()
 }

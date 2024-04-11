@@ -206,7 +206,7 @@ struct SettingsView: View {
                     SettingsSubMenuCell(
                         title: MailResourcesStrings.Localizable.settingsDataManagementTitle
                     ) {
-                        SettingsDataManagement()
+                        SettingsDataManagementView()
                     }
                 }
             }
