@@ -1,11 +1,10 @@
 /*
  * Loco ios export: iOS Localizable.strings
  * Project: kMail
- * Release: Working copy
  * Locale: fr, French
  * Tagged: ios
  * Exported by: elena willen
- * Exported at: Wed, 10 Apr 2024 14:30:18 +0200
+ * Exported at: Thu, 11 Apr 2024 12:42:02 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1158,7 +1157,7 @@
 "settingsCancellationPeriodTitle" = "Délai d’annulation d’envoi";
 
 /* loco:6616815d2f83f25c2c0023e2 */
-"settingsDataManagementDescription" = "Vous pouvez personnaliser les données d’utilisation et techniques qui sont récupérées par Infomaniak pour corriger des bugs et faire évoluer l’application. Les deux outils utilisés sont hébergés et gérés exclusivement chez nous.  \n\nInfomaniak respecte votre vie privée : le code source de cette application peut être vérifié, les informations récoltées sont anonymes et vos informations personnelles restent strictement confidentielles et ne sont jamais partagées avec des tiers. ";
+"settingsDataManagementDescription" = "Vous pouvez personnaliser les données d’utilisation et techniques qui sont récupérées par Infomaniak pour corriger des bugs et faire évoluer l’application. Les deux outils utilisés sont hébergés et gérés exclusivement chez nous.  \nInfomaniak respecte votre vie privée : le code source de cette application peut être vérifié, les informations récoltées sont anonymes et vos informations personnelles restent strictement confidentielles et ne sont jamais partagées avec des tiers. ";
 
 /* loco:661680f35cb9d448bb047913 */
 "settingsDataManagementTitle" = "Gestion des données";
@@ -1218,7 +1217,7 @@
 "settingsMailboxGeneralSignature" = "Paramètres de signature";
 
 /* loco:661682154ac22eb334026eb3 */
-"settingsMatomoDescription" = "Matomo est un outil d’analyse hébergé et géré exclusivement par Infomaniak pour comprendre comment l’application est utilisée.  \n\nL’étude de ces données permet à notre équipe d’améliorer en continue l’interface de l’application.";
+"settingsMatomoDescription" = "Matomo est un outil d’analyse hébergé et géré exclusivement par Infomaniak pour comprendre comment l’application est utilisée.  \nL’étude de ces données permet à notre équipe d’améliorer en continue l’interface de l’application.";
 
 /* loco:661681a7717583be6201ecc2 */
 "settingsMatomoTitle" = "Matomo";
@@ -1299,7 +1298,7 @@
 "settingsSendTitle" = "Envoi";
 
 /* loco:66168246bbff09cbe6030855 */
-"settingsSentryDescription" = "Sentry est un outil hébergé et géré exclusivement par Infomaniak pour surveiller en temps réel la stabilité de l’application et signaler automatiquement d’éventuelles erreurs techniques à nos développeurs.\n\n  Ces données permettent à notre équipe de rapidement corriger et optimiser l’application, ce qui se traduit par une meilleure expérience d’utilisation pour vous.";
+"settingsSentryDescription" = "Sentry est un outil hébergé et géré exclusivement par Infomaniak pour surveiller en temps réel la stabilité de l’application et signaler automatiquement d’éventuelles erreurs techniques à nos développeurs.\n  Ces données permettent à notre équipe de rapidement corriger et optimiser l’application, ce qui se traduit par une meilleure expérience d’utilisation pour vous.";
 
 /* loco:661681c0c840865b4a0756b3 */
 "settingsSentryTitle" = "Sentry";
