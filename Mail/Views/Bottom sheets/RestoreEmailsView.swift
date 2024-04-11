@@ -26,6 +26,9 @@ import SwiftUI
 struct RestoreEmailsView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
 
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.isCompactWindow) private var isCompactWindow
+
     @State private var selectedDate = ""
     @State private var availableDates = [String]()
     @State private var pickerNoSelectionText = MailResourcesStrings.Localizable.loadingText
@@ -34,30 +37,30 @@ struct RestoreEmailsView: View {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.restoreEmailsTitle)
                 .textStyle(.bodyMedium)
-                .padding(.bottom, 16)
+                .padding(.bottom, value: .regular)
 
             Text(MailResourcesStrings.Localizable.restoreEmailsText)
                 .textStyle(.bodySecondary)
-                .padding(.bottom, 10)
+                .padding(.bottom, value: .small)
 
             LargePicker(title: MailResourcesStrings.Localizable.restoreEmailsBackupDate,
                         noSelectionText: pickerNoSelectionText,
                         selection: $selectedDate,
                         items: availableDates.map(mapDates))
-                .padding(.bottom, 24)
+                .padding(.bottom, value: .medium)
                 .onChange(of: selectedDate) { _ in
                     matomo.track(eventWithCategory: .restoreEmailsBottomSheet, action: .input, name: "selectDate")
                 }
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirmRestoreEmails,
-                             secondaryButtonTitle: nil,
                              primaryButtonEnabled: !availableDates.isEmpty,
-                             primaryButtonAction: restoreEmails)
+                             primaryButtonAction: restoreEmails,
+                             secondaryButtonAction: dismiss.callAsFunction)
         }
-        .padding(.horizontal, UIPadding.bottomSheetHorizontal)
+        .padding(.horizontal, isCompactWindow ? UIPadding.bottomSheetHorizontal : 0)
         .task {
             await tryOrDisplayError {
                 let backupsList = try await mailboxManager.apiFetcher.listBackups(mailbox: mailboxManager.mailbox).backups

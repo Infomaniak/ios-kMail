@@ -30,6 +30,7 @@ struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>: ViewMo
 
     @Binding var item: Item?
     @ViewBuilder var panelContent: (Item) -> PanelContent
+
     func body(content: Content) -> some View {
         content
             .popover(item: $item) { item in
