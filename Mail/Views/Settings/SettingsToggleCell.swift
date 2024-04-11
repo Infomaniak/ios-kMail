@@ -82,6 +82,9 @@ struct SettingsToggleCell: View {
             if userDefaults == \.isAppLockEnabled {
                 enableAppLock()
             }
+            if userDefaults == \.isMatomoAuthorized {
+                optOutMatomo(!newValue)
+            }
         }
         .settingsItem()
     }
@@ -100,6 +103,10 @@ struct SettingsToggleCell: View {
                 }
             }
         }
+    }
+
+    private func optOutMatomo(_ optOut: Bool) {
+        matomo.optOut(optOut)
     }
 }
 
