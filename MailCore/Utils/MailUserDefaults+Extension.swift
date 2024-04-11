@@ -50,6 +50,8 @@ public extension UserDefaults.Keys {
     static let shouldPresentSetAsDefaultDiscovery = UserDefaults.Keys(rawValue: "shouldPresentSetAsDefaultDiscovery")
     static let aiEngine = UserDefaults.Keys(rawValue: "aiEngine")
     static let autoAdvance = UserDefaults.Keys(rawValue: "autoAdvance")
+    static let matomoAuthorized = UserDefaults.Keys(rawValue: "matomoAuthorized")
+    static let sentryAuthorized = UserDefaults.Keys(rawValue: "sentryAuthorized")
 }
 
 public extension UserDefaults {
@@ -196,6 +198,30 @@ public extension UserDefaults {
         }
         set {
             set(newValue, forKey: key(.includeOriginalInReply))
+        }
+    }
+
+    var isMatomoAuthorized: Bool {
+        get {
+            if object(forKey: key(.matomoAuthorized)) == nil {
+                set(DefaultPreferences.matomoAuthorized, forKey: key(.matomoAuthorized))
+            }
+            return bool(forKey: key(.matomoAuthorized))
+        }
+        set {
+            set(newValue, forKey: key(.matomoAuthorized))
+        }
+    }
+
+    var isSentryAuthorized: Bool {
+        get {
+            if object(forKey: key(.sentryAuthorized)) == nil {
+                set(DefaultPreferences.sentryAuthorized, forKey: key(.sentryAuthorized))
+            }
+            return bool(forKey: key(.sentryAuthorized))
+        }
+        set {
+            set(newValue, forKey: key(.sentryAuthorized))
         }
     }
 
