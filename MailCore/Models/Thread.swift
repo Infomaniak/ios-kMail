@@ -19,7 +19,6 @@
 import Foundation
 import MailResources
 import RealmSwift
-import Sentry
 
 public struct ThreadResult: Decodable {
     public let threads: [Thread]?
