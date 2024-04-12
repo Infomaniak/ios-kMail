@@ -20,7 +20,6 @@ import Foundation
 import InfomaniakCore
 import Realm
 import RealmSwift
-import Sentry
 
 /// Conforming to `RealmAccessible` to get a standard `.getRealm` function
 extension MailboxInfosManager: RealmAccessible {}

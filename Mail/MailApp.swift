@@ -26,7 +26,6 @@ import InfomaniakLogin
 import InfomaniakNotifications
 import MailCore
 import MailResources
-import Sentry
 import SwiftUI
 import UIKit
 
