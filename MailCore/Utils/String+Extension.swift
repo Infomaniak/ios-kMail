@@ -33,6 +33,10 @@ public extension String {
         replacingOccurrences(of: "\n", with: "<br>")
     }
 
+    func wrapInHTMLTag(_ tag: String) -> String {
+        return "<\(tag)>\(self)</\(tag)>"
+    }
+
     var trimmedAndWithoutNewlines: String {
         return trimmingCharacters(in: .whitespacesAndNewlines)
             .replacingOccurrences(of: "\r", with: "")
