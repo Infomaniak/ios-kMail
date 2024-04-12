@@ -456,7 +456,7 @@ public extension MailboxManager {
                         scope.setContext(value: ["Message": ["uid": message.uid,
                                                              "messageId": message.messageId],
                                                  "Folder": ["id": message.folder?.remoteId,
-                                                            "name": message.folder?.name,
+                                                            "name": message.folder?.matomoName,
                                                             "cursor": message.folder?.cursor]],
                                          key: "Message context")
                     }
