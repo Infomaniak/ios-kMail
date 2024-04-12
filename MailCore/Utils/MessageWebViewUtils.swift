@@ -26,8 +26,13 @@ public enum MessageWebViewUtils {
         case message, editor
     }
 
-    public static func generateCSS(for target: WebViewTarget) -> String {
-        var resources = ""
+    public static func loadAndFormatCSS(for target: WebViewTarget) -> String {
+        let loadedCSS = loadCSS(for: target).map { $0.wrapInHTMLTag("style") }
+        return loadedCSS.joined()
+    }
+
+    public static func loadCSS(for target: WebViewTarget) -> [String] {
+        var resources = [String]()
 
         if let style = MailResourcesResources.bundle.loadCSS(filename: "style") {
             let variables = """
@@ -35,15 +40,16 @@ public enum MessageWebViewUtils {
                 --kmail-primary-color: \(UserDefaults.shared.accentColor.primary.swiftUIColor.hexRepresentation);
             }
             """
-            resources += "<style>\(variables + style)</style>".replacingOccurrences(of: "\n", with: "")
+            let processedStyle = "\(variables + style)".replacingOccurrences(of: "\n", with: "")
+            resources.append(processedStyle)
         }
 
         if let fixDisplayCSS = MailResourcesResources.bundle.loadCSS(filename: "improveRendering") {
-            resources += "<style>\(fixDisplayCSS)</style>"
+            resources.append(fixDisplayCSS)
         }
 
         if target == .editor, let editorCSS = MailResourcesResources.bundle.loadCSS(filename: "editor") {
-            resources += "<style>\(editorCSS)</style>"
+            resources.append(editorCSS)
         }
 
         return resources

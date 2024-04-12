@@ -39,6 +39,11 @@ final class EditorCoordinator {
 extension EditorCoordinator: RichEditorViewDelegate {
     func richEditorViewDidLoad(_ richEditorView: RichEditorView) {
         richEditorView.text = parent.body
+
+        let editorCSS = MessageWebViewUtils.loadCSS(for: .editor)
+        for css in editorCSS {
+            richEditorView.injectAdditionalCSS(css)
+        }
     }
 
     func richEditorViewDidChange(_ richEditorView: RichEditorView) {

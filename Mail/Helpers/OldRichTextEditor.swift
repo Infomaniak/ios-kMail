@@ -212,7 +212,7 @@ final class MailEditorView: SQTextEditorView {
             config.userContentController.add(self, name: jsMessageName.rawValue)
         }
 
-        let css = customCss ?? MessageWebViewUtils.generateCSS(for: .editor)
+        let css = customCss ?? MessageWebViewUtils.loadAndFormatCSS(for: .editor)
         let cssStyle = "(() => { document.head.innerHTML += `\(css)`; })()"
         let cssScript = WKUserScript(source: cssStyle, injectionTime: .atDocumentEnd, forMainFrameOnly: false)
         config.userContentController.addUserScript(cssScript)
