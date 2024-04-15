@@ -27,6 +27,7 @@ import SwiftUI
 public enum DeeplinkConstants {
     public static let macSecurityAndPrivacy = URL(string: "x-apple.systempreferences:com.apple.preference.security")!
     public static let iosPreferences = URL(string: "App-prefs:")!
+    public static let macNotifications = URL(string: "x-apple.systempreferences:com.apple.preference.notifications")!
 }
 
 @MainActor

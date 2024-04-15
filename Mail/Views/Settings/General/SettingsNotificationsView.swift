@@ -50,11 +50,15 @@ struct SettingsNotificationsView: View {
                             .textStyle(.bodySecondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         Button(MailResourcesStrings.Localizable.warningNotificationsDisabledButton) {
-                            let settingsUrl = platformDetector
-                                .isMac ? "x-apple.systempreferences:com.apple.preference.notifications" : UIApplication
-                                .openSettingsURLString
-                            guard let url = URL(string: settingsUrl) else { return }
-                            openURL(url)
+                            let settingsURL: URL?
+                            if platformDetector.isMac {
+                                settingsURL = DeeplinkConstants.macNotifications
+                            } else {
+                                settingsURL = URL(string: UIApplication.openSettingsURLString)
+                            }
+
+                            guard let settingsURL else { return }
+                            openURL(settingsURL)
                         }
                         .buttonStyle(.ikLink(isInlined: true))
                     }
