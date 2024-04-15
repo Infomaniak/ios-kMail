@@ -3,6 +3,16 @@
     {
       "filename" : "matomo-text.svg",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "matomo-text-dark.svg",
+      "idiom" : "universal"
     }
   ],
   "info" : {

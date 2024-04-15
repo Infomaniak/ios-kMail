@@ -3,6 +3,16 @@
     {
       "filename" : "sentry.svg",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "sentry-dark.svg",
+      "idiom" : "universal"
     }
   ],
   "info" : {
