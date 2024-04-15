@@ -29,9 +29,9 @@ public enum Constants {
         .automaticCodeSigning(devTeam: "864VDCS2QY")
         .merging(["DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER": SettingValue(stringLiteral: "NO")])
 
-    public static let deploymentTarget = DeploymentTarget.iOS(targetVersion: "15.0", devices: [.iphone, .ipad, .mac])
+    public static let deploymentTarget = DeploymentTargets.iOS("15.0")
 
-    public static let appIntentsDeploymentTarget = DeploymentTarget.iOS(targetVersion: "16.4", devices: [.iphone, .ipad, .mac])
+    public static let appIntentsDeploymentTarget = DeploymentTargets.iOS("16.4")
 
     public static let swiftlintScript = TargetScript.post(path: "scripts/lint.sh", name: "Swiftlint")
 }

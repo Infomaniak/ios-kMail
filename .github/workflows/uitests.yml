@@ -14,6 +14,7 @@ jobs:
         uses: styfle/cancel-workflow-action@0.12.1
         with:
           access_token: ${{ github.token }}
+      - uses: jdx/mise-action@v2
       - name: Checkout
         uses: actions/checkout@v2
       - name: Create test env
@@ -25,4 +26,4 @@ jobs:
           touch $ENV_PATH
           echo -e "enum Env {\n static let testAccountEmail = \"$UITEST_ACCOUNT_EMAIL\"\n static let testAccountPassword = \"$UITEST_ACCOUNT_PASSWORD\"\n}" > $ENV_PATH
       - name: UITest
-        run: .tuist-bin/tuist test Mail --device "iPhone 15 Pro" --test-targets MailUITests/MailUITests
+        run: tuist install && tuist test Mail --device "iPhone 15 Pro" --test-targets MailUITests/MailUITests
