@@ -28,6 +28,7 @@ import SwiftUI
 struct SettingsNotificationsView: View {
     @LazyInjectService private var notificationService: InfomaniakNotifications
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -49,8 +50,7 @@ struct SettingsNotificationsView: View {
                             .textStyle(.bodySecondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
                         Button(MailResourcesStrings.Localizable.warningNotificationsDisabledButton) {
-                            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else { return }
-                            openURL(settingsUrl)
+                            DeeplinkConstants.presentsNotificationSettings()
                         }
                         .buttonStyle(.ikLink(isInlined: true))
                     }

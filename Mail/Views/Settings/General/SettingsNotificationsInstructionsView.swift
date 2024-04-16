@@ -32,17 +32,10 @@ struct SettingsNotificationsInstructionsView: View {
                 .textStyle(.bodySecondary)
             ModalButtonsView(
                 primaryButtonTitle: MailResourcesStrings.Localizable.alertNotificationsDisabledButton,
-                primaryButtonAction: openSettings
+                primaryButtonAction: DeeplinkConstants.presentsNotificationSettings
+
             )
         }
-    }
-
-    private func openSettings() {
-        guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
-            return
-        }
-
-        openURL(settingsUrl)
     }
 }
 

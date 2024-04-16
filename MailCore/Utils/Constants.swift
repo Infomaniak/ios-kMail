@@ -26,7 +26,23 @@ import SwiftUI
 
 public enum DeeplinkConstants {
     public static let macSecurityAndPrivacy = URL(string: "x-apple.systempreferences:com.apple.preference.security")!
+    public static let macNotifications = URL(string: "x-apple.systempreferences:com.apple.preference.notifications")!
     public static let iosPreferences = URL(string: "App-prefs:")!
+
+    public static func presentsNotificationSettings() {
+        @InjectService var platformDetector: PlatformDetectable
+        @Environment(\.openURL) var openURL
+
+        let settingsURL: URL?
+        if platformDetector.isMac {
+            settingsURL = DeeplinkConstants.macNotifications
+        } else {
+            settingsURL = URL(string: UIApplication.openSettingsURLString)
+        }
+
+        guard let settingsURL else { return }
+        openURL(settingsURL)
+    }
 }
 
 @MainActor
