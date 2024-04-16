@@ -33,5 +33,7 @@ public enum Constants {
 
     public static let appIntentsDeploymentTarget = DeploymentTargets.iOS("16.4")
 
+    public static let destinations = Set<Destination>([.iPhone, .iPad, .macCatalyst])
+
     public static let swiftlintScript = TargetScript.post(path: "scripts/lint.sh", name: "Swiftlint")
 }
