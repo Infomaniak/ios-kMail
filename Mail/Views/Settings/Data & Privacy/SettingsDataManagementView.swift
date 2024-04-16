@@ -23,17 +23,26 @@ import SwiftUI
 struct SettingsDataManagementView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
+    @Environment(\.openURL) private var openURL
+
     var body: some View {
         ScrollView {
-            VStack(spacing: 0) {
+            VStack(alignment: .leading, spacing: 0) {
                 accentColor.dataPrivacyImage.swiftUIImage
                     .padding(.bottom, value: .medium)
+                    .frame(maxWidth: .infinity)
 
                 Text(MailResourcesStrings.Localizable.settingsDataManagementDescription)
                     .textStyle(.body)
                     .multilineTextAlignment(.leading)
                     .padding(.bottom, value: .regular)
-                    .padding(.horizontal, UIPadding.regular)
+                    .padding(.horizontal, value: .regular)
+
+                Button(MailResourcesStrings.Localizable.settingsDataManagementSourceCode) {
+                    openURL(URLConstants.sourceCode.url)
+                }
+                .buttonStyle(.ikLink(isInlined: true))
+                .padding(UIPadding.regular)
 
                 ForEach(DataManagement.allCases, id: \.self) { item in
                     SettingsSubMenuCell(title: item.title, icon: item.image) {
