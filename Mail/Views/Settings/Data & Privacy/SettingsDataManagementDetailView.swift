@@ -32,7 +32,7 @@ struct SettingsDataManagementDetailView: View {
         ScrollView {
             VStack(spacing: 0) {
                 image
-                    .padding(.bottom, value: .regular)
+                    .padding(.vertical, value: .regular)
 
                 Text(description)
                     .textStyle(.body)
