@@ -4,7 +4,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: elena willen
- * Exported at: Thu, 11 Apr 2024 12:42:02 +0200
+ * Exported at: Tue, 16 Apr 2024 15:16:20 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1115,7 +1115,7 @@
 "settingsAppLock" = "App lock";
 
 /* loco:6616826f71895b3f5e022484 */
-"settingsAuthoriseTracking" = "Authorise tracking";
+"settingsAuthorizeTracking" = "Authorize tracking";
 
 /* loco:65b275e7c53c28d1410bf342 */
 "settingsAutoAdvanceDescription" = "Select what to display when a message is archived or deleted ";
@@ -1157,7 +1157,10 @@
 "settingsCancellationPeriodTitle" = "Send cancellation period";
 
 /* loco:6616815d2f83f25c2c0023e2 */
-"settingsDataManagementDescription" = "You can customise the usage and technical data that Infomaniak retrieves to correct bugs and develop the application. The two tools used are hosted and managed exclusively by us.  \nInfomaniak respects your privacy: the source code of this application can be checked, the information collected is anonymous and your personal details remain strictly confidential and are never shared with third parties. ";
+"settingsDataManagementDescription" = "You can customise the usage and technical data that Infomaniak retrieves to correct bugs and develop the application. The two tools used are hosted and managed exclusively by us.\n\nInfomaniak respects your privacy: the source code of this application can be checked, the information collected is anonymous and your personal details remain strictly confidential and are never shared with third parties.";
+
+/* loco:661e2f0a9eed20101603dc02 */
+"settingsDataManagementSourceCode" = "See source code";
 
 /* loco:661680f35cb9d448bb047913 */
 "settingsDataManagementTitle" = "Data management";
@@ -1217,7 +1220,7 @@
 "settingsMailboxGeneralSignature" = "Signature settings";
 
 /* loco:661682154ac22eb334026eb3 */
-"settingsMatomoDescription" = "Matomo is an analysis tool hosted and managed exclusively by Infomaniak to understand how the application is used.  \nBy studying this data, our team is able to continually improve the application’s interface.";
+"settingsMatomoDescription" = "Matomo is an analysis tool hosted and managed exclusively by Infomaniak to understand how the application is used.\n\nBy studying this data, our team is able to continually improve the application’s interface.";
 
 /* loco:661681a7717583be6201ecc2 */
 "settingsMatomoTitle" = "Matomo";
@@ -1298,7 +1301,7 @@
 "settingsSendTitle" = "Send";
 
 /* loco:66168246bbff09cbe6030855 */
-"settingsSentryDescription" = "Sentry is a tool hosted and managed exclusively by Infomaniak to monitor the stability of the application in real time and automatically report any technical errors to our developers.  \nThis data enables our team to quickly correct and optimise the application, resulting in a better user experience for you.";
+"settingsSentryDescription" = "Sentry is a tool hosted and managed exclusively by Infomaniak to monitor the stability of the application in real time and automatically report any technical errors to our developers.\n\nThis data enables our team to quickly correct and optimise the application, resulting in a better user experience for you.";
 
 /* loco:661681c0c840865b4a0756b3 */
 "settingsSentryTitle" = "Sentry";
