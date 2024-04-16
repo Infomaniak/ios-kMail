@@ -37,8 +37,8 @@ struct EditorView: UIViewRepresentable {
     }
 
     func updateUIView(_ richEditorView: RichEditorView, context: Context) {
-        if richEditorView.text != body {
-            richEditorView.text = body
+        if richEditorView.html != body {
+            richEditorView.html = body
         }
     }
 
