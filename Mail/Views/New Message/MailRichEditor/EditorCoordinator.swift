@@ -38,7 +38,7 @@ final class EditorCoordinator {
 
 extension EditorCoordinator: RichEditorViewDelegate {
     func richEditorViewDidLoad(_ richEditorView: RichEditorView) {
-        richEditorView.text = parent.body
+        richEditorView.html = parent.body
 
         let editorCSS = MessageWebViewUtils.loadCSS(for: .editor)
         for css in editorCSS {
@@ -47,11 +47,10 @@ extension EditorCoordinator: RichEditorViewDelegate {
     }
 
     func richEditorViewDidChange(_ richEditorView: RichEditorView) {
-        // TODO: Maybe we can throttle here?
-        parent.body = richEditorView.text
+        parent.body = richEditorView.html
     }
 
-    func richEditorView(_ richEditorView: RichEditorView, didSelectedTextAttributesChanged textAttributes: RETextAttributes) {
+    func richEditorView(_ richEditorView: RichEditorView, selectedTextAttributesDidChange textAttributes: RETextAttributes) {
         updateToolbarItems(for: richEditorView, style: toolbarStyle)
     }
 }
