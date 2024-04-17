@@ -44,7 +44,7 @@ struct SettingsDataManagementDetailView: View {
                 SettingsToggleCell(
                     title: MailResourcesStrings.Localizable.settingsAuthoriseTracking,
                     userDefaults: userDefaults,
-                    matomoCategory: .settingsSend, // TODO: To change for .settingsDataPrivacy
+                    matomoCategory: .settingsDataPrivacy,
                     matomoName: matomoName
                 )
             }
@@ -59,7 +59,7 @@ extension SettingsDataManagementDetailView {
         title: MailResourcesStrings.Localizable.settingsMatomoTitle,
         description: MailResourcesStrings.Localizable.settingsMatomoDescription,
         userDefaults: \.isMatomoAuthorized,
-        matomoName: "Matomo"
+        matomoName: "matomo"
     )
 
     static let sentry = SettingsDataManagementDetailView(
@@ -67,7 +67,7 @@ extension SettingsDataManagementDetailView {
         title: MailResourcesStrings.Localizable.settingsSentryTitle,
         description: MailResourcesStrings.Localizable.settingsSentryDescription,
         userDefaults: \.isSentryAuthorized,
-        matomoName: "Sentry"
+        matomoName: "sentry"
     )
 }
 

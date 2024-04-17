@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -63,6 +64,7 @@ struct SettingsDataManagementView: View {
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsDataManagementTitle, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
+        .matomoView(view: [MatomoUtils.View.settingsView.displayName, "dataPrivacy"])
     }
 }
 
