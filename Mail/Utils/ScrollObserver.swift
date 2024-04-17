@@ -60,9 +60,13 @@ public final class ScrollObserver: ObservableObject {
         }
 
         let difference = lastContentOffset - offset
+//        let significantDifference: CGFloat = 100.0
+//        guard abs(difference) >= significantDifference else { return }
         guard !UIConstants.scrollObserverThreshold.contains(difference) else { return }
         let newDirection: ScrollDirection = difference > 0 ? .top : .bottom
         updateScrollDirection(offset: offset, direction: newDirection)
+        print("newDirection: \(newDirection)")
+//        lastContentOffset = offset
     }
 
     private func updateScrollDirection(offset: CGFloat, direction: ScrollDirection) {
