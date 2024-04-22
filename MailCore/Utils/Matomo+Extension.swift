@@ -88,9 +88,8 @@ public extension MatomoUtils.EventCategory {
     static let settingsSend = MatomoUtils.EventCategory(displayName: "settingsSend")
     static let settingsSwipeActions = MatomoUtils.EventCategory(displayName: "settingsSwipeActions")
     static let settingsThreadMode = MatomoUtils.EventCategory(displayName: "settingsThreadMode")
-    static let settingsAutoAdvance = MatomoUtils.EventCategory(displayName: "settingsAutoAdvance")    
+    static let settingsAutoAdvance = MatomoUtils.EventCategory(displayName: "settingsAutoAdvance")
     static let settingsDataPrivacy = MatomoUtils.EventCategory(displayName: "settingsDataPrivacy")
-
 }
 
 // MARK: - Helpers
