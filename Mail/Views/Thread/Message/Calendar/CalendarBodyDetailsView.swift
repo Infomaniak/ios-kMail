@@ -68,12 +68,15 @@ struct CalendarBodyDetailsView: View {
             }
 
             Group {
-                Label(event.formattedDateTime, image: MailResourcesAsset.calendarBadgeClock.name)
+                IKLabelView(event.formattedDateTime, image: MailResourcesAsset.calendarBadgeClock.swiftUIImage)
                 if let location = event.location, !location.isEmpty {
-                    Label(location, image: MailResourcesAsset.pin.name)
+                    IKLabelView(location, image: MailResourcesAsset.pin.swiftUIImage)
                 }
                 if !iAmInvited && !event.attendees.isEmpty {
-                    Label(MailResourcesStrings.Localizable.calendarNotInvited, image: MailResourcesAsset.socialMedia.name)
+                    IKLabelView(
+                        MailResourcesStrings.Localizable.calendarNotInvited,
+                        image: MailResourcesAsset.socialMedia.swiftUIImage
+                    )
                 }
             }
             .labelStyle(.calendar())

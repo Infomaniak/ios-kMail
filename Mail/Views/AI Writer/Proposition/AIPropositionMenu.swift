@@ -52,7 +52,7 @@ struct AIPropositionMenu: View {
                                 await aiModel.executeShortcut(action)
                             }
                         } label: {
-                            Label(action.label, image: action.icon.name)
+                            IKLabelView(action.label, image: action.icon.swiftUIImage)
                         }
                         .disabled(aiModel.error != nil && action != .regenerate)
                     }
