@@ -20,7 +20,7 @@ import Foundation
 
 public extension Bundle {
     func load(filename: String, withExtension fileExtension: String) -> String? {
-        guard let url = Bundle.main.url(forResource: filename, withExtension: fileExtension),
+        guard let url = url(forResource: filename, withExtension: fileExtension),
               let document = try? String(contentsOf: url) else { return nil }
         return document
     }

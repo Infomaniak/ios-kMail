@@ -18,6 +18,7 @@
 
 import CocoaLumberjackSwift
 import Foundation
+import MailResources
 import Swifter
 import UIKit
 
@@ -25,12 +26,12 @@ public final class ConfigWebServer {
     private let server = HttpServer()
     private var firstLoad = true
 
-    public static let syncProfileBackToAppHTML: String = Bundle.main.load(
+    public static let syncProfileBackToAppHTML: String = MailResourcesResources.bundle.load(
         filename: "SyncProfileBackToApp",
         withExtension: "html"
     ) ?? ""
 
-    public static let syncProfileIndexHTML: String = Bundle.main.load(
+    public static let syncProfileIndexHTML: String = MailResourcesResources.bundle.load(
         filename: "SyncProfileIndex",
         withExtension: "html"
     ) ?? ""

@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailResources
 import Sentry
 import WebKit
 
@@ -78,7 +79,7 @@ extension WebViewModel: WKScriptMessageHandler {
 
 extension WKUserContentController {
     func addUserScript(named filename: String, injectionTime: WKUserScriptInjectionTime, forMainFrameOnly: Bool) {
-        if let script = Bundle.main.load(filename: filename, withExtension: "js") {
+        if let script = MailResourcesResources.bundle.load(filename: filename, withExtension: "js") {
             addUserScript(WKUserScript(source: script, injectionTime: injectionTime, forMainFrameOnly: forMainFrameOnly))
         }
     }
