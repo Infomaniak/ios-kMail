@@ -47,6 +47,7 @@ struct SettingsDataManagementDetailView: View {
                 )
             }
         }
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(title, displayMode: .inline)
     }
 }
