@@ -39,8 +39,6 @@ struct SettingsDataManagementDetailView: View {
                     .multilineTextAlignment(.leading)
                     .padding(UIPadding.regular)
 
-                IKDivider()
-
                 SettingsToggleCell(
                     title: MailResourcesStrings.Localizable.settingsAuthorizeTracking,
                     userDefaults: userDefaults,
