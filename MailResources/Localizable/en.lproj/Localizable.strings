@@ -4,7 +4,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: elena willen
- * Exported at: Tue, 16 Apr 2024 15:16:20 +0200
+ * Exported at: Mon, 22 Apr 2024 12:43:15 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1157,7 +1157,7 @@
 "settingsCancellationPeriodTitle" = "Send cancellation period";
 
 /* loco:6616815d2f83f25c2c0023e2 */
-"settingsDataManagementDescription" = "You can customise the usage and technical data that Infomaniak retrieves to correct bugs and develop the application. The two tools used are hosted and managed exclusively by us.\n\nInfomaniak respects your privacy: the source code of this application can be checked, the information collected is anonymous and your personal details remain strictly confidential and are never shared with third parties.";
+"settingsDataManagementDescription" = "You can customize the usage and operational data that Infomaniak retrieves to correct bugs and enhance the application. Both tools are hosted and managed exclusively by us.\n\nInfomaniak respects your privacy: the source code of this application can be verified, the information collected is anonymous and your personal information remains strictly confidential and is never shared with third parties.";
 
 /* loco:661e2f0a9eed20101603dc02 */
 "settingsDataManagementSourceCode" = "See source code";

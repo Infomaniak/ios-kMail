@@ -4,7 +4,7 @@
  * Locale: es, Spanish
  * Tagged: ios
  * Exported by: elena willen
- * Exported at: Tue, 16 Apr 2024 15:16:21 +0200
+ * Exported at: Mon, 22 Apr 2024 12:43:15 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1157,7 +1157,7 @@
 "settingsCancellationPeriodTitle" = "Enviar plazo de anulación";
 
 /* loco:6616815d2f83f25c2c0023e2 */
-"settingsDataManagementDescription" = "Puede personalizar los datos de uso y técnicos que Infomaniak recupera para corregir errores y desarrollar la aplicación. Las dos herramientas utilizadas están alojadas y gestionadas exclusivamente por nosotros.\n\nInfomaniak respeta su privacidad: el código fuente de esta aplicación puede consultarse, la información recopilada es anónima y sus datos personales permanecen estrictamente confidenciales y nunca se comparten con terceros.";
+"settingsDataManagementDescription" = "Puede personalizar los datos de uso y funcionamiento que Infomaniak recupera para corregir errores y mejorar la aplicación. Ambas herramientas están alojadas y gestionadas exclusivamente por nosotros.\n\nInfomaniak respeta su privacidad: el código fuente de esta aplicación puede verificarse, la información recopilada es anónima y sus datos personales permanecen estrictamente confidenciales y nunca se comparten con terceros.";
 
 /* loco:661e2f0a9eed20101603dc02 */
 "settingsDataManagementSourceCode" = "Ver código fuente";

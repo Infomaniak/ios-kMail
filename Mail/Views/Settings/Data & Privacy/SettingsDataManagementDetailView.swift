@@ -42,7 +42,7 @@ struct SettingsDataManagementDetailView: View {
                 IKDivider()
 
                 SettingsToggleCell(
-                    title: MailResourcesStrings.Localizable.settingsAuthoriseTracking,
+                    title: MailResourcesStrings.Localizable.settingsAuthorizeTracking,
                     userDefaults: userDefaults,
                     matomoCategory: .settingsDataPrivacy,
                     matomoName: matomoName
