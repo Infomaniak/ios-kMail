@@ -4,7 +4,7 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: elena willen
- * Exported at: Mon, 22 Apr 2024 12:43:15 +0200
+ * Exported at: Tue, 23 Apr 2024 11:01:45 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1160,7 +1160,7 @@
 "settingsDataManagementDescription" = "È possibile personalizzare i dati di utilizzo e operativi che Infomaniak recupera per correggere i bug e migliorare l’applicazione. Entrambi gli strumenti sono ospitati e gestiti esclusivamente da noi.\n\nInfomaniak rispetta la vostra privacy: il codice sorgente di questa applicazione può essere verificato, le informazioni raccolte sono anonime e i vostri dati personali rimangono strettamente confidenziali e non vengono mai condivisi con terze parti.";
 
 /* loco:661e2f0a9eed20101603dc02 */
-"settingsDataManagementSourceCode" = "Vedere il codice sorgente";
+"settingsDataManagementSourceCode" = "Vedi il codice sorgente";
 
 /* loco:661680f35cb9d448bb047913 */
 "settingsDataManagementTitle" = "Gestione dei dati";
