@@ -16,27 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailResources
 import SwiftUI
 
-struct IKLabelView: View {
-    private let title: String
-    private let image: Image
-
-    init(_ title: String, image: Image) {
-        self.title = title
-        self.image = image
-    }
-
-    var body: some View {
-        Label {
+extension Label where Title == Text, Icon == Image {
+    init(_ title: String, asset: Image) {
+        self.init {
             Text(title)
         } icon: {
-            image
+            asset
         }
     }
-}
-
-#Preview {
-    IKLabelView(MailResourcesStrings.Localizable.calendarNotInvited, image: MailResourcesAsset.socialMedia.swiftUIImage)
 }

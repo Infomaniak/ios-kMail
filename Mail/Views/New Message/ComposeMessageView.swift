@@ -175,7 +175,7 @@ struct ComposeMessageView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: didTouchSend) {
-                    IKLabelView(MailResourcesStrings.Localizable.send, image: MailResourcesAsset.send.swiftUIImage)
+                    Label(MailResourcesStrings.Localizable.send, asset: MailResourcesAsset.send.swiftUIImage)
                 }
                 .disabled(isSendButtonDisabled)
             }
