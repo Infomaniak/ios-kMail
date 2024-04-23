@@ -43,9 +43,6 @@ struct SyncProfileNavigationView: View {
                             SyncCopyPasswordView(navigationPath: $navigationPath)
                         case .installProfile:
                             SyncInstallProfileTutorialView()
-                                .onAppear {
-                                    UserDefaults.shared.shouldPresentSyncDiscovery = false
-                                }
                         }
                     }
                     .backButtonDisplayMode(.minimal)
