@@ -18,14 +18,9 @@
 
 import Foundation
 import SwiftUI
-
-public struct CompactWindowKey: EnvironmentKey {
-    public static let defaultValue = true
-}
+import SwiftUIMacros
 
 public extension EnvironmentValues {
-    var isCompactWindow: CompactWindowKey.Value {
-        get { return self[CompactWindowKey.self] }
-        set { self[CompactWindowKey.self] = newValue }
-    }
+    @EnvironmentValue
+    var isCompactWindow = true
 }

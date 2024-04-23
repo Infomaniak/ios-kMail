@@ -23,16 +23,11 @@ import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
-
-struct FolderCellTypeEnvironment: EnvironmentKey {
-    static var defaultValue = FolderCell.CellType.menuDrawer
-}
+import SwiftUIMacros
 
 extension EnvironmentValues {
-    var folderCellType: FolderCell.CellType {
-        get { self[FolderCellTypeEnvironment.self] }
-        set { self[FolderCellTypeEnvironment.self] = newValue }
-    }
+    @EnvironmentValue
+    var folderCellType = FolderCell.CellType.menuDrawer
 }
 
 struct FolderCell: View {
