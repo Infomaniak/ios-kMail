@@ -134,6 +134,9 @@ struct SyncInstallProfileTutorialView: View {
                 }
             }
         }
+        .onAppear {
+            UserDefaults.shared.shouldPresentSyncDiscovery = false
+        }
     }
 }
 
