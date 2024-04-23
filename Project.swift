@@ -20,7 +20,6 @@ import Foundation
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-
 let project = Project(name: "Mail",
                       packages: [],
                       targets: [
@@ -34,7 +33,8 @@ let project = Project(name: "Mail",
                                   resources: [
                                       "Mail/**/LaunchScreen.storyboard",
                                       "Mail/Assets.xcassets", // Needed for AppIcon
-                                      "MailResources/**/PrivacyInfo.xcprivacy"
+                                      "MailResources/**/PrivacyInfo.xcprivacy",
+                                      "MailResources/**/InfoPlist.strings"
                                   ],
                                   entitlements: "MailResources/Mail.entitlements",
                                   scripts: [Constants.swiftlintScript],
