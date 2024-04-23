@@ -24,6 +24,7 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct ComposeMessageBodyView: View {
+    @State private var height = CGFloat.zero
     @State private var isShowingCamera = false
     @ModalState(context: ContextKeys.compose) private var isShowingFileSelection = false
     @ModalState(context: ContextKeys.compose) private var isShowingPhotoLibrary = false
@@ -49,14 +50,14 @@ struct ComposeMessageBodyView: View {
 
             EditorView(
                 body: $draft.body,
+                height: $height,
                 isShowingFileSelection: $isShowingFileSelection,
                 isShowingCamera: $isShowingCamera,
                 isShowingPhotoLibrary: $isShowingPhotoLibrary,
                 isShowingAIPrompt: $isShowingAIPrompt,
                 isShowingAlert: $isShowingAlert
             )
-            .frame(maxWidth: .infinity)
-            .frame(height: 400)
+            .frame(height: height)
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
             CameraPicker { data in
