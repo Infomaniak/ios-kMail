@@ -106,7 +106,11 @@ struct SettingsToggleCell: View {
     }
 
     private func optOutMatomo(_ optOut: Bool) {
+        #if DEBUG && !TEST
+        matomo.optOut(true)
+        #else
         matomo.optOut(optOut)
+        #endif
     }
 }
 
