@@ -40,7 +40,7 @@ struct SettingsDataManagementView: View {
                     .padding(.horizontal, value: .regular)
 
                 Button(MailResourcesStrings.Localizable.settingsDataManagementSourceCode) {
-                    openURL(URLConstants.sourceCode.url)
+                    openURL(URLConstants.githubRepository.url)
                 }
                 .buttonStyle(.ikLink(isInlined: true))
                 .padding(UIPadding.regular)
