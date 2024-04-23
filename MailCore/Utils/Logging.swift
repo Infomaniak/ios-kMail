@@ -73,7 +73,11 @@ public enum Logging {
                 #if DEBUG || TEST
                 return nil
                 #else
-                return event
+                if UserDefaults.shared.isSentryAuthorized {
+                    return event
+                } else {
+                    return nil
+                }
                 #endif
             }
         }

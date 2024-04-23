@@ -1,11 +1,10 @@
 /*
  * Loco ios export: iOS Localizable.strings
  * Project: kMail
- * Release: Working copy
  * Locale: en, English
  * Tagged: ios
- * Exported by: Charlene Hoareau
- * Exported at: Wed, 03 Apr 2024 13:11:24 +0200
+ * Exported by: elena willen
+ * Exported at: Mon, 22 Apr 2024 12:43:15 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1032,7 +1031,7 @@
 "popupDetachMailboxTitle" = "Detach mailbox";
 
 /* loco:660d031f55535d66db02f2f2 */
-"publicFolderSubtitle" = "This space belongs to %@ and centralizes your organization's common files.";
+"publicFolderSubtitle" = "This space belongs to %@ and centralizes your organization’s common files.";
 
 /* loco:62f0e594f7dcd16da506af53 */
 "recentSearchesTitle" = "Recent searches";
@@ -1115,6 +1114,9 @@
 /* loco:627a306b1e32027c033896b2 */
 "settingsAppLock" = "App lock";
 
+/* loco:6616826f71895b3f5e022484 */
+"settingsAuthorizeTracking" = "Authorize tracking";
+
 /* loco:65b275e7c53c28d1410bf342 */
 "settingsAutoAdvanceDescription" = "Select what to display when a message is archived or deleted ";
 
@@ -1153,6 +1155,15 @@
 
 /* loco:627a53b37b420855254af032 */
 "settingsCancellationPeriodTitle" = "Send cancellation period";
+
+/* loco:6616815d2f83f25c2c0023e2 */
+"settingsDataManagementDescription" = "You can customize the usage and operational data that Infomaniak retrieves to correct bugs and enhance the application. Both tools are hosted and managed exclusively by us.\n\nInfomaniak respects your privacy: the source code of this application can be verified, the information collected is anonymous and your personal information remains strictly confidential and is never shared with third parties.";
+
+/* loco:661e2f0a9eed20101603dc02 */
+"settingsDataManagementSourceCode" = "See source code";
+
+/* loco:661680f35cb9d448bb047913 */
+"settingsDataManagementTitle" = "Data management";
 
 /* loco:627a40651c78f22cb67efdd2 */
 "settingsDefault" = "Default";
@@ -1208,6 +1219,12 @@
 /* loco:627a3ba7d5f44d600a6f1803 */
 "settingsMailboxGeneralSignature" = "Signature settings";
 
+/* loco:661682154ac22eb334026eb3 */
+"settingsMatomoDescription" = "Matomo is an analysis tool hosted and managed exclusively by Infomaniak to understand how the application is used.\n\nBy studying this data, our team is able to continually improve the application’s interface.";
+
+/* loco:661681a7717583be6201ecc2 */
+"settingsMatomoTitle" = "Matomo";
+
 /* loco:627a418d50aa01240d501ae4 */
 "settingsOptionAlways" = "Always";
 
@@ -1237,6 +1254,9 @@
 
 /* loco:627a30b24e987302322d0f64 */
 "settingsSectionAppearance" = "Appearance";
+
+/* loco:661680c87c6f0ba6c60dfa72 */
+"settingsSectionDataPrivacy" = "Data & Privacy";
 
 /* loco:627a2ab189bc1f4ea90851c2 */
 "settingsSectionEmailAddresses" = "Email addresses";
@@ -1279,6 +1299,12 @@
 
 /* loco:627a2f67a6d27d332a2f4926 */
 "settingsSendTitle" = "Send";
+
+/* loco:66168246bbff09cbe6030855 */
+"settingsSentryDescription" = "Sentry is a tool hosted and managed exclusively by Infomaniak to monitor the stability of the application in real time and automatically report any technical errors to our developers.\n\nThis data enables our team to quickly correct and optimise the application, resulting in a better user experience for you.";
+
+/* loco:661681c0c840865b4a0756b3 */
+"settingsSentryTitle" = "Sentry";
 
 /* loco:644f6a7bf8a5eec20801ac93 */
 "settingsSignatureDescription" = "Select a default signature";

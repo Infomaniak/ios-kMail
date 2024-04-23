@@ -1,11 +1,10 @@
 /*
  * Loco ios export: iOS Localizable.strings
  * Project: kMail
- * Release: Working copy
  * Locale: de, German
  * Tagged: ios
- * Exported by: Charlene Hoareau
- * Exported at: Wed, 03 Apr 2024 13:11:24 +0200
+ * Exported by: elena willen
+ * Exported at: Mon, 22 Apr 2024 12:43:15 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1115,6 +1114,9 @@
 /* loco:627a306b1e32027c033896b2 */
 "settingsAppLock" = "App-Sperre";
 
+/* loco:6616826f71895b3f5e022484 */
+"settingsAuthorizeTracking" = "Verfolgung genehmigen";
+
 /* loco:65b275e7c53c28d1410bf342 */
 "settingsAutoAdvanceDescription" = "Auswählen, was angezeigt werden soll, wenn eine Nachricht archiviert oder gelöscht wird";
 
@@ -1153,6 +1155,15 @@
 
 /* loco:627a53b37b420855254af032 */
 "settingsCancellationPeriodTitle" = "Kündigungsfrist senden";
+
+/* loco:6616815d2f83f25c2c0023e2 */
+"settingsDataManagementDescription" = "Sie können die Nutzungs- und Betriebsdaten, die Infomaniak abruft, individuell anpassen, um Fehler zu beheben und die Anwendung zu verbessern. Beide Tools werden ausschliesslich von uns gehostet und verwaltet.\n\nInfomaniak respektiert Ihre Privatsphäre: Der Quellcode dieser Anwendung kann überprüft werden, die gesammelten Informationen sind anonym und Ihre persönlichen Daten werden streng vertraulich behandelt und niemals an Dritte weitergegeben.";
+
+/* loco:661e2f0a9eed20101603dc02 */
+"settingsDataManagementSourceCode" = "Siehe Quellcode";
+
+/* loco:661680f35cb9d448bb047913 */
+"settingsDataManagementTitle" = "Verwaltung der Daten";
 
 /* loco:627a40651c78f22cb67efdd2 */
 "settingsDefault" = "Standard";
@@ -1208,6 +1219,12 @@
 /* loco:627a3ba7d5f44d600a6f1803 */
 "settingsMailboxGeneralSignature" = "Signatur-Einstellungen";
 
+/* loco:661682154ac22eb334026eb3 */
+"settingsMatomoDescription" = "Matomo ist ein Analysetool, das ausschliesslich von Infomaniak gehostet und verwaltet wird, um zu verstehen, wie die Anwendung genutzt wird.\n\nDurch die Untersuchung dieser Daten kann unser Team die Schnittstelle der Anwendung kontinuierlich verbessern.";
+
+/* loco:661681a7717583be6201ecc2 */
+"settingsMatomoTitle" = "Matomo";
+
 /* loco:627a418d50aa01240d501ae4 */
 "settingsOptionAlways" = "Immer";
 
@@ -1237,6 +1254,9 @@
 
 /* loco:627a30b24e987302322d0f64 */
 "settingsSectionAppearance" = "Erscheinungsbild";
+
+/* loco:661680c87c6f0ba6c60dfa72 */
+"settingsSectionDataPrivacy" = "Daten und Datenschutz";
 
 /* loco:627a2ab189bc1f4ea90851c2 */
 "settingsSectionEmailAddresses" = "E-Mail-Adressen";
@@ -1279,6 +1299,12 @@
 
 /* loco:627a2f67a6d27d332a2f4926 */
 "settingsSendTitle" = "Senden Sie";
+
+/* loco:66168246bbff09cbe6030855 */
+"settingsSentryDescription" = "Sentry ist ein Tool, das ausschliesslich von Infomaniak gehostet und verwaltet wird, um die Stabilität der Anwendung in Echtzeit zu überwachen und unseren Entwicklern automatisch alle technischen Fehler zu melden.\n\nAnhand dieser Daten kann unser Team die Anwendung schnell korrigieren und optimieren, was zu einem besseren Nutzererlebnis für Sie führt.";
+
+/* loco:661681c0c840865b4a0756b3 */
+"settingsSentryTitle" = "Sentry";
 
 /* loco:644f6a7bf8a5eec20801ac93 */
 "settingsSignatureDescription" = "Wählen Sie eine Standardsignatur";

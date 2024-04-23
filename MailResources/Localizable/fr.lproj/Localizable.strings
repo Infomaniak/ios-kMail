@@ -1,11 +1,10 @@
 /*
  * Loco ios export: iOS Localizable.strings
  * Project: kMail
- * Release: Working copy
  * Locale: fr, French
  * Tagged: ios
- * Exported by: Charlene Hoareau
- * Exported at: Wed, 03 Apr 2024 13:11:24 +0200
+ * Exported by: elena willen
+ * Exported at: Mon, 22 Apr 2024 12:43:15 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1115,8 +1114,11 @@
 /* loco:627a306b1e32027c033896b2 */
 "settingsAppLock" = "Verrouillage de l’application";
 
+/* loco:6616826f71895b3f5e022484 */
+"settingsAuthorizeTracking" = "Autoriser le suivi";
+
 /* loco:65b275e7c53c28d1410bf342 */
-"settingsAutoAdvanceDescription" = "Sélectionnez ce que vous souhaitez afficher lorsqu’un message est archivé ou supprimé ";
+"settingsAutoAdvanceDescription" = "Sélectionnez ce que vous souhaitez afficher lorsqu’un message est archivé ou supprimé";
 
 /* loco:65b27dc325bc06589501c462 */
 "settingsAutoAdvanceFollowingThreadDescription" = "Afficher la conversation suivante après archivage ou suppression";
@@ -1153,6 +1155,15 @@
 
 /* loco:627a53b37b420855254af032 */
 "settingsCancellationPeriodTitle" = "Délai d’annulation d’envoi";
+
+/* loco:6616815d2f83f25c2c0023e2 */
+"settingsDataManagementDescription" = "Vous pouvez personnaliser les données d’utilisation et opérationnelles qui sont récupérées par Infomaniak pour corriger des bugs et faire évoluer l’application. Les deux outils utilisés sont hébergés et gérés exclusivement chez nous.\n\nInfomaniak respecte votre vie privée : le code source de cette application peut être vérifié, les informations récoltées sont anonymes et vos informations personnelles restent strictement confidentielles et ne sont jamais partagées avec des tiers.";
+
+/* loco:661e2f0a9eed20101603dc02 */
+"settingsDataManagementSourceCode" = "Voir le code source";
+
+/* loco:661680f35cb9d448bb047913 */
+"settingsDataManagementTitle" = "Gestion des données";
 
 /* loco:627a40651c78f22cb67efdd2 */
 "settingsDefault" = "Par défaut";
@@ -1208,6 +1219,12 @@
 /* loco:627a3ba7d5f44d600a6f1803 */
 "settingsMailboxGeneralSignature" = "Paramètres de signature";
 
+/* loco:661682154ac22eb334026eb3 */
+"settingsMatomoDescription" = "Matomo est un outil d’analyse hébergé et géré exclusivement par Infomaniak pour comprendre comment l’application est utilisée.\n\nL’étude de ces données permet à notre équipe d’améliorer en continue l’interface de l’application.";
+
+/* loco:661681a7717583be6201ecc2 */
+"settingsMatomoTitle" = "Matomo";
+
 /* loco:627a418d50aa01240d501ae4 */
 "settingsOptionAlways" = "Toujours";
 
@@ -1237,6 +1254,9 @@
 
 /* loco:627a30b24e987302322d0f64 */
 "settingsSectionAppearance" = "Apparence";
+
+/* loco:661680c87c6f0ba6c60dfa72 */
+"settingsSectionDataPrivacy" = "Données & Confidentialité";
 
 /* loco:627a2ab189bc1f4ea90851c2 */
 "settingsSectionEmailAddresses" = "Adresses mail";
@@ -1279,6 +1299,12 @@
 
 /* loco:627a2f67a6d27d332a2f4926 */
 "settingsSendTitle" = "Envoi";
+
+/* loco:66168246bbff09cbe6030855 */
+"settingsSentryDescription" = "Sentry est un outil hébergé et géré exclusivement par Infomaniak pour surveiller en temps réel la stabilité de l’application et signaler automatiquement d’éventuelles erreurs techniques à nos développeurs.\n\nCes données permettent à notre équipe de rapidement corriger et optimiser l’application, ce qui se traduit par une meilleure expérience d’utilisation pour vous.";
+
+/* loco:661681c0c840865b4a0756b3 */
+"settingsSentryTitle" = "Sentry";
 
 /* loco:644f6a7bf8a5eec20801ac93 */
 "settingsSignatureDescription" = "Sélectionner une signature par défaut";

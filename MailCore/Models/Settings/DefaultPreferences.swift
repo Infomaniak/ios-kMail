@@ -40,4 +40,6 @@ public enum DefaultPreferences {
     public static let aiEngine = AIEngine.falcon
     public static let autoAdvance = UIDevice.current.userInterfaceIdiom == .pad ? AutoAdvance.followingThread : AutoAdvance
         .listOfThread
+    public static let matomoAuthorized = true
+    public static let sentryAuthorized = true
 }

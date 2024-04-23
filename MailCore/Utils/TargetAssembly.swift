@@ -73,7 +73,11 @@ open class TargetAssembly {
                 BugTracker(info: BugTrackerInfo(project: "app-mobile-mail"))
             },
             Factory(type: MatomoUtils.self) { _, _ in
-                MatomoUtils(siteId: Constants.matomoId, baseURL: URLConstants.matomo.url)
+                let matomo = MatomoUtils(siteId: Constants.matomoId, baseURL: URLConstants.matomo.url)
+                #if DEBUG
+                matomo.optOut(true)
+                #endif
+                return matomo
             },
             Factory(type: IKSnackBarAvoider.self) { _, _ in
                 IKSnackBarAvoider()
