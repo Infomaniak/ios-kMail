@@ -26,13 +26,13 @@ public struct Action: Identifiable, Hashable, Equatable {
     public let shortTitle: String?
     public let iconName: String
     public var icon: Image {
-        return Image(iconName)
+        return Image(iconName, bundle: MailResourcesResources.bundle)
     }
 
     public let tintColorName: String?
     public var tintColor: Color? {
         guard let tintColorName else { return nil }
-        return Color(tintColorName)
+        return Color(tintColorName, bundle: MailResourcesResources.bundle)
     }
 
     public let isDestructive: Bool

@@ -108,7 +108,7 @@ struct PleaseLoginView: View {
 
     var body: some View {
         VStack {
-            MailShareExtensionAsset.logoText.swiftUIImage
+            MailResourcesAsset.logoText.swiftUIImage
                 .resizable()
                 .scaledToFit()
                 .frame(height: UIConstants.onboardingLogoHeight)

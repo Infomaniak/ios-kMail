@@ -17,6 +17,7 @@
  */
 
 import Lottie
+import MailResources
 import SwiftUI
 
 extension LottieAnimationView {
@@ -55,7 +56,7 @@ struct LottieView: UIViewRepresentable {
         let view = UIView()
 
         let animationView = LottieAnimationView()
-        let animation = LottieAnimation.named(configuration.filename)
+        let animation = LottieAnimation.named(configuration.filename, bundle: MailResourcesResources.bundle)
         animationView.animation = animation
         animationView.contentMode = configuration.contentMode
         animationView.loopMode = configuration.loopMode

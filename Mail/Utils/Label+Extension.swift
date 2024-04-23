@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2022 Infomaniak Network SA
+ Copyright (C) 2024 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -16,17 +16,14 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
+import SwiftUI
 
-public extension Bundle {
-    func load(filename: String, withExtension fileExtension: String) -> String? {
-        guard let url = url(forResource: filename, withExtension: fileExtension),
-              let document = try? String(contentsOf: url) else { return nil }
-        return document
-    }
-
-    func loadCSS(filename: String) -> String? {
-        guard let css = load(filename: filename, withExtension: "css") else { return nil }
-        return css.replacingOccurrences(of: "\n", with: "")
+extension Label where Title == Text, Icon == Image {
+    init(_ title: String, asset: Image) {
+        self.init {
+            Text(title)
+        } icon: {
+            asset
+        }
     }
 }
