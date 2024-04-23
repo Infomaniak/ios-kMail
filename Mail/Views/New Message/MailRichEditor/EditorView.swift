@@ -22,6 +22,7 @@ import SwiftUI
 
 struct EditorView: UIViewRepresentable {
     @Binding var body: String
+    @Binding var height: CGFloat
     @Binding var isShowingFileSelection: Bool
     @Binding var isShowingCamera: Bool
     @Binding var isShowingPhotoLibrary: Bool
@@ -49,6 +50,7 @@ struct EditorView: UIViewRepresentable {
 
 #Preview {
     EditorView(body: .constant(""),
+               height: .constant(.zero),
                isShowingFileSelection: .constant(false),
                isShowingCamera: .constant(false),
                isShowingPhotoLibrary: .constant(false),

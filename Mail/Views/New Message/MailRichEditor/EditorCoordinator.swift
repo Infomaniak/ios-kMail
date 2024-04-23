@@ -50,6 +50,11 @@ extension EditorCoordinator: RichEditorViewDelegate {
         parent.body = richEditorView.html
     }
 
+    func richEditorView(_ richEditorView: RichEditorView, contentHeightDidChange contentHeight: CGFloat) {
+        parent.height = contentHeight
+        print("NEW HEIGHT", contentHeight)
+    }
+
     func richEditorView(_ richEditorView: RichEditorView, selectedTextAttributesDidChange textAttributes: RETextAttributes) {
         updateToolbarItems(for: richEditorView, style: toolbarStyle)
     }
