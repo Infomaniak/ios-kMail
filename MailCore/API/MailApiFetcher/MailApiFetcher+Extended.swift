@@ -56,11 +56,11 @@ public extension MailApiFetcher {
             authenticatedRequest(
                 .updateSignature(
                     hostingId: mailbox.hostingId,
-                    mailboxName: mailbox.mailbox,
-                    signatureId: signature.id
+                    mailboxName: mailbox.mailbox
                 ),
-                method: .patch,
-                parameters: signature
+                method: .post,
+                parameters: ["default_signature_id": signature.id,
+                             "default_reply_signature_id": nil]
             ))
     }
 

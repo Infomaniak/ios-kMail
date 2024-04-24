@@ -133,9 +133,9 @@ public extension Endpoint {
     static func signatures(hostingId: Int, mailboxName: String) -> Endpoint {
         return .baseManagerMailbox(hostingId: hostingId, mailboxName: mailboxName).appending(path: "/signatures")
     }
-
-    static func updateSignature(hostingId: Int, mailboxName: String, signatureId: Int) -> Endpoint {
-        return .signatures(hostingId: hostingId, mailboxName: mailboxName).appending(path: "/\(signatureId)")
+    
+    static func updateSignature(hostingId: Int, mailboxName: String) -> Endpoint {
+        return .signatures(hostingId: hostingId, mailboxName: mailboxName).appending(path: "/set_defaults")
     }
 
     static func folders(uuid: String) -> Endpoint {
