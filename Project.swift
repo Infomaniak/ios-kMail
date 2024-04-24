@@ -75,7 +75,7 @@ let project = Project(name: "Mail",
                                   sources: "MailUITests/**",
                                   dependencies: [
                                       .target(name: "Infomaniak Mail"),
-                                      .target(name: "MailResources"),
+                                      .target(name: "MailResources")
                                   ],
                                   settings: .settings(base: Constants.testSettings)),
                           .target(name: "MailShareExtension",
@@ -92,7 +92,7 @@ let project = Project(name: "Mail",
                                             "Mail/Views/**",
                                             "Mail/Proxy/Protocols/**"],
                                   resources: [
-                                      "MailShareExtension/**/*.js", // Needed for NSExtensionJavaScriptPreprocessingFile
+                                      "MailShareExtension/**/*.js" // Needed for NSExtensionJavaScriptPreprocessingFile
                                   ],
                                   entitlements: "MailShareExtension/ShareExtension.entitlements",
                                   scripts: [Constants.swiftlintScript],
@@ -146,7 +146,7 @@ let project = Project(name: "Mail",
                                   sources: "MailAppIntentsExtension/**",
                                   resources: [
                                       "MailResources/**/*.strings",
-                                      "MailResources/**/*.stringsdict",
+                                      "MailResources/**/*.stringsdict"
                                   ],
                                   entitlements: "MailResources/Mail.entitlements",
                                   dependencies: [
@@ -166,7 +166,7 @@ let project = Project(name: "Mail",
                                       "MailResources/**/*.json",
                                       "MailResources/**/*.css",
                                       "MailResources/**/*.js",
-                                      "MailResources/**/*.html",
+                                      "MailResources/**/*.html"
                                   ],
                                   settings: .settings(base: Constants.baseSettings)),
                           .target(name: "MailCore",
