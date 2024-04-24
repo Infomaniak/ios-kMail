@@ -301,7 +301,7 @@ public extension Draft {
 public extension Draft {
     /// Compute if the draft has external recipients
     func displayExternalTag(mailboxManager: MailboxManager) -> DisplayExternalRecipientStatus.State {
-        var recipientsList = List<Recipient>()
+        let recipientsList = List<Recipient>()
         recipientsList.append(objectsIn: cc)
         recipientsList.append(objectsIn: bcc)
         recipientsList.append(objectsIn: to)
@@ -370,7 +370,7 @@ public extension Draft {
 
         let itemsToExtract = removeAllElements ? Self.appendedHTMLElements : [Constants.signatureHTMLClass]
         for itemToExtract in itemsToExtract {
-            let _ = try? document.getElementsByClass(itemToExtract).remove()
+            _ = try? document.getElementsByClass(itemToExtract).remove()
         }
 
         return !document.hasText()

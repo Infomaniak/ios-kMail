@@ -18,6 +18,4 @@
 
 import ProjectDescription
 
-public extension Target {
-    // TODO: move contructors here if needed
-}
+public extension Target {}

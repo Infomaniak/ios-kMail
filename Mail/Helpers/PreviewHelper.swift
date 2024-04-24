@@ -26,7 +26,7 @@ import SwiftUI
 
 enum PreviewHelper {
     class MockSelectedThreadOwner: SelectedThreadOwnable {
-        var selectedThread: Thread? = nil
+        var selectedThread: Thread?
     }
 
     static var mockSelectedThreadOwner = MockSelectedThreadOwner()
