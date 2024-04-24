@@ -364,7 +364,9 @@ extension DraftContentManager {
     }
 
     private func getDefaultSignature(userSignatures: [Signature]) throws -> Signature {
-        guard let defaultSignature = userSignatures.defaultSignature else {
+        let isReply = messageReply != nil
+
+        guard let defaultSignature = isReply ? userSignatures.defaultReplySignature : userSignatures.defaultSignature else {
             throw MailError.defaultSignatureMissing
         }
         return defaultSignature.freezeIfNeeded()

@@ -26,6 +26,8 @@ public enum SignaturePosition: String, PersistableEnum, Codable {
 
 public struct SignatureResponse: Decodable {
     public var signatures: [Signature]
+    public var defaultSignatureId: Int
+    public var defaultReplySignatureId: Int?
 
     public var `default`: Signature? {
         signatures.first(where: \.isDefault)
@@ -33,6 +35,8 @@ public struct SignatureResponse: Decodable {
 
     private enum CodingKeys: String, CodingKey {
         case signatures
+        case defaultSignatureId
+        case defaultReplySignatureId
     }
 }
 
@@ -46,6 +50,7 @@ public final class Signature: Object, Codable, Identifiable {
     @Persisted public var senderEmailIdn: String
     @Persisted public var senderId: Int
     @Persisted public var isDefault: Bool
+    @Persisted public var isDefaultReply: Bool = false
     @Persisted public var position: SignaturePosition
 
     private enum CodingKeys: String, CodingKey {
@@ -93,5 +98,13 @@ public extension [Signature] {
 
         // We matched one
         return defaultSignature
+    }
+
+    var defaultReplySignature: Signature? {
+        guard let defaultReplySignature = first(where: \.isDefaultReply) else {
+            return defaultSignature
+        }
+
+        return defaultReplySignature
     }
 }
