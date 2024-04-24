@@ -208,7 +208,7 @@ public enum SentryDebug {
                                              "Seen": ["Expected": actualSeen, "Actual": liveMessage.seen],
                                              "Folder": ["id": message.folder?.remoteId ?? "nil",
                                                         "name": message.folder?.matomoName ?? "nil",
-                                                        "last update": message.folder?.lastUpdate,
+                                                        "last update": message.folder?.lastUpdate as Any,
                                                         "cursor": message.folder?.cursor ?? "nil"]],
                                      key: "Message context")
                 }
