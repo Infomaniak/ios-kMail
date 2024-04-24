@@ -29,10 +29,6 @@ class MailUITests: XCTestCase {
         continueAfterFailure = false
     }
 
-    override func tearDownWithError() throws {
-        try super.tearDownWithError()
-    }
-
     func launchAppFromScratch(resetData: Bool = true) {
         if resetData {
             app.launchArguments += ["resetData"]
@@ -181,7 +177,7 @@ class MailUITests: XCTestCase {
 
     func swipeFirstCell() {
         let testMailCell = app.collectionViews.cells.element(boundBy: 1)
-        let _ = testMailCell.waitForExistence(timeout: 10)
+        _ = testMailCell.waitForExistence(timeout: 10)
         testMailCell.firstMatch.swipeLeft()
     }
 
@@ -212,12 +208,12 @@ class MailUITests: XCTestCase {
         app.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonNext].firstMatch.tap()
 
         let loginButton = app.buttons[MailResourcesStrings.Localizable.buttonLogin].firstMatch
-        let _ = loginButton.waitForExistence(timeout: 2)
+        _ = loginButton.waitForExistence(timeout: 2)
         loginButton.tap()
         let loginWebview = app.webViews.firstMatch
 
         let emailField = loginWebview.textFields.firstMatch
-        let _ = emailField.waitForExistence(timeout: 5)
+        _ = emailField.waitForExistence(timeout: 5)
         emailField.tap()
         emailField.typeText(Env.testAccountEmail)
 
@@ -229,14 +225,14 @@ class MailUITests: XCTestCase {
         let nextButton = app.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonNext]
         let permissionApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
 
-        let _ = nextButton.waitForExistence(timeout: 3)
+        _ = nextButton.waitForExistence(timeout: 3)
         if nextButton.exists {
             nextButton.tap()
 
             permissionApp.alerts.firstMatch.buttons.firstMatch.tap()
         }
 
-        let _ = nextButton.waitForExistence(timeout: 3)
+        _ = nextButton.waitForExistence(timeout: 3)
         if nextButton.exists {
             app.buttons.firstMatch.tap()
 

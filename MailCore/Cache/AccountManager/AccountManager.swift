@@ -468,7 +468,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             logError(.missingAPIFetcher)
             return
         }
-        try await apiFetcher.detachMailbox(mailbox: mailbox)
+        _ = try await apiFetcher.detachMailbox(mailbox: mailbox)
         try await updateUser(for: currentAccount)
     }
 

@@ -41,7 +41,7 @@ public struct ComposeMessageIntent: Codable, Identifiable, Hashable {
         switch type {
         case .new(let fromExtension) where fromExtension:
             return true
-        case .mailTo(let mailToURLComponents):
+        case .mailTo:
             return true
         default:
             return false

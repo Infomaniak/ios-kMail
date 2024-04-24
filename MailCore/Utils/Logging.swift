@@ -119,7 +119,7 @@ public enum Logging {
                     try FileManager.default.removeItem(at: fileURL)
                 }
             } catch {
-                DDLogError(error)
+                DDLogError("resetAppForUITestsIfNeeded \(error)")
             }
         }
         #endif
