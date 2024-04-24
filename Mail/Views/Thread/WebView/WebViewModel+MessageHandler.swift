@@ -57,8 +57,8 @@ extension WebViewModel: WKScriptMessageHandler {
         SentrySDK.capture(message: "After zooming the mail it can still scroll.") { scope in
             scope.setTags(["messageUid": data["messageId"] as? String ?? ""])
             scope.setExtras([
-                "clientWidth": data["clientWidth"],
-                "scrollWidth": data["scrollWidth"]
+                "clientWidth": data["clientWidth"] as Any,
+                "scrollWidth": data["scrollWidth"] as Any
             ])
         }
     }
@@ -69,9 +69,9 @@ extension WebViewModel: WKScriptMessageHandler {
         SentrySDK.capture(message: "JavaScript returned an error when displaying an email.") { scope in
             scope.setTags(["messageUid": data["messageId"] ?? ""])
             scope.setExtras([
-                "errorName": data["errorName"],
-                "errorMessage": data["errorMessage"],
-                "errorStack": data["errorStack"]
+                "errorName": data["errorName"] as Any,
+                "errorMessage": data["errorMessage"] as Any,
+                "errorStack": data["errorStack"] as Any
             ])
         }
     }

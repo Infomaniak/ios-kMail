@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Alamofire
 import Foundation
 import InfomaniakLogin
 import RealmSwift
@@ -207,7 +208,7 @@ public enum SentryDebug {
                                              "Seen": ["Expected": actualSeen, "Actual": liveMessage.seen],
                                              "Folder": ["id": message.folder?.remoteId ?? "nil",
                                                         "name": message.folder?.matomoName ?? "nil",
-                                                        "last update": message.folder?.lastUpdate,
+                                                        "last update": message.folder?.lastUpdate as Any,
                                                         "cursor": message.folder?.cursor ?? "nil"]],
                                      key: "Message context")
                 }
@@ -297,13 +298,33 @@ public enum SentryDebug {
         SentrySDK.addBreadcrumb(breadcrumb)
 
         // Only capture non cancel error
-        guard error.asAFError?.isExplicitlyCancelledError != true && (error as? CancellationError) == nil else {
+        guard shouldSendToSentry(error: error) else {
             return
         }
 
         // Add an error
         SentrySDK.capture(message: category) { scope in
-            scope.setExtras(metadata)
+            scope.setContext(value: metadata, key: "Internal Error Data")
         }
+    }
+
+    private static func shouldSendToSentry(error: Error) -> Bool {
+        let possibleAfError = (error as? AFErrorWithContext)?.afError ?? error.asAFError
+
+        if let possibleAfError {
+            if possibleAfError.isExplicitlyCancelledError {
+                return false
+            } else if (possibleAfError.underlyingError as? NSError)?.code == NSURLErrorNotConnectedToInternet {
+                return false
+            } else {
+                return true
+            }
+        } else if let wrappedAfError = (error as? AFErrorWithContext)?.afError {
+            return shouldSendToSentry(error: wrappedAfError)
+        } else if error is CancellationError {
+            return false
+        }
+
+        return true
     }
 }
