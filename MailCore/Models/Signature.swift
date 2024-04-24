@@ -50,7 +50,7 @@ public final class Signature: Object, Codable, Identifiable {
     @Persisted public var senderEmailIdn: String
     @Persisted public var senderId: Int
     @Persisted public var isDefault: Bool
-    @Persisted public var isDefaultReply: Bool = false
+    @Persisted public var isDefaultReply = false
     @Persisted public var position: SignaturePosition
 
     private enum CodingKeys: String, CodingKey {
