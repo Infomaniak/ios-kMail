@@ -94,6 +94,12 @@ public actor RefreshActor {
         let signaturesResult = try await mailboxManager.apiFetcher.signatures(mailbox: mailboxManager.mailbox)
         var updatedSignatures = Set(signaturesResult.signatures)
 
+        if let defaultReplyId = signaturesResult.defaultReplySignatureId {
+            updatedSignatures.first {
+                $0.id == defaultReplyId
+            }?.isDefaultReply = true
+        }
+
         await mailboxManager.backgroundRealm.execute { realm in
             let signaturesToDelete: Set<Signature> // no longer present server side
             let signaturesToUpdate: [Signature] // updated signatures
