@@ -304,7 +304,7 @@ public enum SentryDebug {
 
         // Add an error
         SentrySDK.capture(message: category) { scope in
-            scope.setExtras(metadata)
+            scope.setContext(value: metadata, key: "Internal Error Data")
         }
     }
 

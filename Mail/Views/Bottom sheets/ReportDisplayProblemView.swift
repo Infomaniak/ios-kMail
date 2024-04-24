@@ -54,7 +54,7 @@ struct ReportDisplayProblemView: View {
                                             filename: fileURL.lastPathComponent,
                                             contentType: "message/rfc822")
             _ = SentrySDK.capture(message: "Message display problem reported") { scope in
-                scope.add(fileAttachment)
+                scope.addAttachment(fileAttachment)
             }
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarDisplayProblemReported)
         }
