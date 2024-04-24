@@ -34,7 +34,7 @@ class AFErrorWithContext: MailError {
     }
 }
 
-public class MailError: LocalizedError {
+public class MailError: LocalizedError, Encodable {
     public let code: String
     public let errorDescription: String?
     public let shouldDisplay: Bool
