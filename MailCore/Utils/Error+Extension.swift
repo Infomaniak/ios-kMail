@@ -44,12 +44,11 @@ private func displayErrorIfNeeded(error: Error) {
         if error.shouldDisplay, let errorDescription = error.errorDescription {
             snackbarPresenter.show(message: errorDescription)
         } else {
-            SentrySDK.capture(message: "Encountered error that we didn't display to the user") { scope in
-                scope.setContext(
-                    value: ["Code": error.code, "Raw": error],
-                    key: "Error"
-                )
-            }
+            SentryDebug.logInternalErrorToSentry(
+                category: "Encountered error that we didn't display to the user",
+                error: error,
+                function: #function
+            )
         }
         DDLogError("MailError: \(error)")
     } else if error.shouldDisplay {
