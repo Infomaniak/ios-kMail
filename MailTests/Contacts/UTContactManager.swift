@@ -25,22 +25,23 @@ final class UTContactManager: XCTestCase {
     override func setUpWithError() throws {}
 
     func generateFakeContacts(count: Int) {
-        let realm = contactManager.getRealm()
-        // swiftlint:disable:next force_try
-        try! realm.write {
-            realm.deleteAll()
-        }
-
-        // swiftlint:disable:next force_try
-        try! realm.write {
-            for i in 0 ..< count {
-                let contact = MergedContact()
-                contact.id = "\(i)"
-                let randomName = UUID().uuidString
-                contact.name = "\(randomName)"
-                contact.email = "\(randomName)@somemail.com"
-                realm.add(contact)
+        do {
+            try contactManager.writeTransaction { writableRealm in
+                writableRealm.deleteAll()
             }
+
+            try contactManager.writeTransaction { writableRealm in
+                for i in 0 ..< count {
+                    let contact = MergedContact()
+                    contact.id = "\(i)"
+                    let randomName = UUID().uuidString
+                    contact.name = "\(randomName)"
+                    contact.email = "\(randomName)@somemail.com"
+                    writableRealm.add(contact)
+                }
+            }
+        } catch {
+            fatalError("failed transaction in base, error:\(error)")
         }
     }
 

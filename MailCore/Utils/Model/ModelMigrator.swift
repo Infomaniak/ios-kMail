@@ -30,8 +30,8 @@ public struct ModelMigrator {
     /// Perform a getRealm on each realm store to trigger a migration if needed
     public func migrateRealmIfNeeded() {
         @InjectService var mailboxInfosManager: MailboxInfosManager
-        // call to .getRealm will trigger the migration if needed
-        _ = mailboxInfosManager.getRealm()
+        // .writeTransaction internal call to .getRealm will trigger the migration if needed
+        try? mailboxInfosManager.writeTransaction { _ in }
 
         @InjectService var accountManager: AccountManager
         if let currentMailboxManager = accountManager.currentMailboxManager {
@@ -40,7 +40,8 @@ public struct ModelMigrator {
         }
 
         if let contactManager = accountManager.currentContactManager {
-            _ = contactManager.getRealm()
+            // Force migration by performing a transaction
+            _ = try? contactManager.writeTransaction { _ in }
         }
     }
 }

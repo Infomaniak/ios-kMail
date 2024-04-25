@@ -28,10 +28,12 @@ extension MailboxInfosManager: MailRealmAccessible {}
 
 public final class MailboxInfosManager {
     private static let currentDbVersion: UInt64 = 7
-    public let realmConfiguration: Realm.Configuration
     private let dbName = "MailboxInfos.realm"
 
     private let backgroundRealm: BackgroundRealm
+
+    public let realmConfiguration: Realm.Configuration
+    public let transactionExecutor: Transactionable
 
     public init() {
         realmConfiguration = Realm.Configuration(
@@ -51,6 +53,8 @@ public final class MailboxInfosManager {
         )
 
         backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
+        transactionExecutor = TransactionExecutor(realmAccessible: backgroundRealm)
+
         excludeRealmFromBackup()
     }
 
@@ -60,18 +64,22 @@ public final class MailboxInfosManager {
 
     @discardableResult
     func storeMailboxes(user: InfomaniakCore.UserProfile, mailboxes: [Mailbox]) async -> [Mailbox] {
-        let realm = getRealm()
-        for mailbox in mailboxes {
-            initMailboxForRealm(mailbox: mailbox, userId: user.id)
-            keepCacheAttributes(for: mailbox, using: realm)
-        }
-
-        let mailboxRemoved = getMailboxes(for: user.id, using: realm).filter { currentMailbox in
-            !mailboxes.contains { newMailbox in
-                newMailbox.objectId == currentMailbox.objectId
+        var mailboxRemoved = [Mailbox]()
+        var mailboxRemovedIds = [String]()
+        try? writeTransaction { writableRealm in
+            for mailbox in mailboxes {
+                initMailboxForRealm(mailbox: mailbox, userId: user.id)
+                keepCacheAttributes(for: mailbox, writableRealm: writableRealm)
             }
+
+            mailboxRemoved = getMailboxes(for: user.id, using: writableRealm).filter { currentMailbox in
+                !mailboxes.contains { newMailbox in
+                    newMailbox.objectId == currentMailbox.objectId
+                }
+            }
+
+            mailboxRemovedIds = mailboxRemoved.map(\.objectId)
         }
-        let mailboxRemovedIds = mailboxRemoved.map(\.objectId)
 
         await backgroundRealm.execute { realm in
             let detachedMailboxes = mailboxes.map { $0.detached() }
@@ -87,13 +95,28 @@ public final class MailboxInfosManager {
         return "\(mailboxId)_\(userId)"
     }
 
-    public func getMailboxes(for userId: Int? = nil, using realm: Realm? = nil) -> [Mailbox] {
-        let realm = realm ?? getRealm()
+    public func getMailboxes(for userId: Int? = nil) -> [Mailbox] {
+        let mailboxes = fetchResults(ofType: Mailbox.self) { partial in
+            var realmMailboxList = partial.sorted(by: \Mailbox.mailboxId)
+
+            if let userId {
+                realmMailboxList = realmMailboxList.where { $0.userId == userId }
+            }
+
+            let frozenMailboxes = realmMailboxList.freezeIfNeeded()
+            return frozenMailboxes
+        }
+
+        return Array(mailboxes)
+    }
+
+    public func getMailboxes(for userId: Int? = nil, using realm: Realm) -> [Mailbox] {
         var realmMailboxList = realm.objects(Mailbox.self)
             .sorted(by: \Mailbox.mailboxId)
         if let userId {
             realmMailboxList = realmMailboxList.where { $0.userId == userId }
         }
+
         return Array(realmMailboxList.map { $0.freeze() })
     }
 
@@ -116,17 +139,15 @@ public final class MailboxInfosManager {
         }
     }
 
-    public func keepCacheAttributes(for mailbox: Mailbox, using realm: Realm? = nil) {
-        let realm = realm ?? getRealm()
-        guard let savedMailbox = realm.object(ofType: Mailbox.self, forPrimaryKey: mailbox.objectId) else { return }
+    public func keepCacheAttributes(for mailbox: Mailbox, writableRealm: Realm) {
+        guard let savedMailbox = writableRealm.object(ofType: Mailbox.self, forPrimaryKey: mailbox.objectId) else { return }
         mailbox.unseenMessages = savedMailbox.unseenMessages
     }
 
     public func removeMailboxesFor(userId: Int) {
-        let realm = getRealm()
-        let userMailboxes = realm.objects(Mailbox.self).where { $0.userId == userId }
-        try? realm.safeWrite {
-            realm.delete(userMailboxes)
+        try? writeTransaction { writableRealm in
+            let userMailboxes = writableRealm.objects(Mailbox.self).where { $0.userId == userId }
+            writableRealm.delete(userMailboxes)
         }
     }
 }

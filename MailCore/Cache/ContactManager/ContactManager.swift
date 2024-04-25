@@ -26,7 +26,10 @@ import RealmSwift
 import SwiftRegex
 
 /// The composite protocol of the `ContactManager` service
-public typealias ContactManageable = ContactFetchable & ContactManagerCoreable & MailRealmAccessible
+public typealias ContactManageable = ContactFetchable
+    & ContactManagerCoreable
+    & MailRealmAccessible
+    & Transactionable
 
 public protocol ContactManagerCoreable {
     func refreshContactsAndAddressBooksIfNeeded() async throws
@@ -65,7 +68,9 @@ public final class ContactManager: ObservableObject, ContactManageable {
     public static let constants = ContactManagerConstants()
 
     public let realmConfiguration: Realm.Configuration
-    let backgroundRealm: BackgroundRealm
+    private let backgroundRealm: BackgroundRealm
+    public let transactionExecutor: Transactionable
+
     public lazy var viewRealm: Realm = {
         assert(Foundation.Thread.isMainThread, "viewRealm should only be accessed from main thread")
         return getRealm()
@@ -86,6 +91,7 @@ public final class ContactManager: ObservableObject, ContactManageable {
             ]
         )
         backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
+        transactionExecutor = TransactionExecutor(realmAccessible: backgroundRealm)
 
         excludeRealmFromBackup()
     }
