@@ -19,6 +19,7 @@
 import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreDB
 import InfomaniakDI
 import RealmSwift
 import SwiftRegex
@@ -33,6 +34,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     public static let constants = MailboxManagerConstants()
 
     public let realmConfiguration: Realm.Configuration
+    public let transactionExecutor: Transactionable
+
     public let mailbox: Mailbox
     public let account: Account
 
@@ -111,6 +114,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
             ]
         )
         backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
+        transactionExecutor = TransactionExecutor(realmAccessible: backgroundRealm)
 
         excludeRealmFromBackup()
     }
