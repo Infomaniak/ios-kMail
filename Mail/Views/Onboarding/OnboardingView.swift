@@ -23,6 +23,7 @@ import InfomaniakDI
 import InfomaniakLogin
 import Lottie
 import MailCore
+import MailCoreUI
 import MailResources
 import SwiftModalPresentation
 import SwiftUI

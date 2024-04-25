@@ -21,11 +21,11 @@ import MailCore
 import SwiftUI
 
 public final class ScrollObserver: ObservableObject {
-    enum ScrollDirection {
+    public enum ScrollDirection {
         case none, top, bottom
     }
 
-    @Published var scrollDirection = ScrollDirection.none
+    @Published public var scrollDirection = ScrollDirection.none
 
     public var shouldObserve = true
 
@@ -33,6 +33,8 @@ public final class ScrollObserver: ObservableObject {
     private var lastContentOffset = CGFloat.zero
 
     private weak var scrollView: UIScrollView?
+
+    public init() {}
 
     public func observeValue(scrollView: UIScrollView) {
         guard subscriber == nil else { return }
@@ -77,16 +79,20 @@ public final class ScrollObserver: ObservableObject {
     }
 }
 
-extension View {
+public extension View {
     func observeScroll(with scrollObserver: ScrollObserver) -> some View {
         modifier(ScrollObserverModifier(scrollObserver: scrollObserver))
     }
 }
 
-struct ScrollObserverModifier: ViewModifier {
+public struct ScrollObserverModifier: ViewModifier {
     let scrollObserver: ScrollObserver
 
-    func body(content: Content) -> some View {
+    public init(scrollObserver: ScrollObserver) {
+        self.scrollObserver = scrollObserver
+    }
+
+    public func body(content: Content) -> some View {
         content
             .introspect(.list, on: .iOS(.v15)) { scrollObserver.observeValue(scrollView: $0) }
             .introspect(.list, on: .iOS(.v16, .v17)) { scrollObserver.observeValue(scrollView: $0) }

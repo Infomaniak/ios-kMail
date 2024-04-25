@@ -21,10 +21,10 @@ import MailResources
 import SwiftUI
 import SwiftUIIntrospect
 
-struct SegmentedControlModifier: ViewModifier {
+public struct SegmentedControlModifier: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .introspect(.picker(style: .segmented), on: .iOS(.v15, .v16, .v17)) { segmentedControl in
                 segmentedControl.selectedSegmentTintColor = accentColor.primary.color
@@ -35,7 +35,7 @@ struct SegmentedControlModifier: ViewModifier {
     }
 }
 
-extension View {
+public extension View {
     func ikSegmentedControl() -> some View {
         modifier(SegmentedControlModifier())
     }

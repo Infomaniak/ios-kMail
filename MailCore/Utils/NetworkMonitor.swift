@@ -19,9 +19,9 @@
 import Foundation
 import Network
 
-class NetworkMonitor: ObservableObject {
-    @Published var isConnected = true
-    @Published var isCellular = false
+public class NetworkMonitor: ObservableObject {
+    @Published public var isConnected = true
+    @Published public var isCellular = false
 
     private var monitor: NWPathMonitor?
     private let queue = DispatchQueue.global()

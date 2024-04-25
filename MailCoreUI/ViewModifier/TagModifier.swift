@@ -20,11 +20,11 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct TagModifier: ViewModifier {
+public struct TagModifier: ViewModifier {
     let foregroundColor: MailResourcesColors
     let backgroundColor: MailResourcesColors
 
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .foregroundStyle(foregroundColor)
             .textStyle(.bodySmallSecondary)
@@ -35,7 +35,7 @@ struct TagModifier: ViewModifier {
     }
 }
 
-extension View {
+public extension View {
     func tagModifier(foregroundColor: MailResourcesColors, backgroundColor: MailResourcesColors) -> some View {
         modifier(TagModifier(foregroundColor: foregroundColor, backgroundColor: backgroundColor))
     }

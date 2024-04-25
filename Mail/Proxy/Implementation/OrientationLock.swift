@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakCoreUI
+import MailCoreUI
 import UIKit
 
 @available(iOSApplicationExtension, unavailable)

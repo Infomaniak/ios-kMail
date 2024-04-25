@@ -16,17 +16,22 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
-import UIKit
+import MailResources
+import SwiftUI
 
-/// Something that can manage rotation state
-public protocol OrientationManageable {
-    /// Access the orientation lock mask
-    var orientationLock: UIInterfaceOrientationMask { get }
+public struct AppShadowModifier: ViewModifier {
+    public func body(content: Content) -> some View {
+        ZStack {
+            MailResourcesAsset.backgroundColor.swiftUIColor
+                .ignoresSafeArea()
+                .shadow(color: .black.opacity(0.08), radius: 2.5, x: 0.5, y: 0.5)
+            content
+        }
+    }
+}
 
-    /// Set the orientation lock mask
-    func setOrientationLock(_ orientation: UIInterfaceOrientationMask)
-
-    /// Read the interface orientation
-    var interfaceOrientation: UIInterfaceOrientation? { get }
+public extension View {
+    func appShadow() -> some View {
+        modifier(AppShadowModifier())
+    }
 }

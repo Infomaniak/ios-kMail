@@ -20,7 +20,7 @@ import SwiftUI
 import UIKit
 @_spi(Advanced) import SwiftUIIntrospect
 
-struct NavigationBarStyleViewModifier: ViewModifier {
+public struct NavigationBarStyleViewModifier: ViewModifier {
     @Weak private var navigationViewController: UINavigationController?
     let standardAppearance: UINavigationBarAppearance
     let scrollEdgeAppearance: UINavigationBarAppearance?
@@ -30,7 +30,17 @@ struct NavigationBarStyleViewModifier: ViewModifier {
     @State private var previousScrollEdgeAppearance: UINavigationBarAppearance?
     @State private var previousCompactAppearance: UINavigationBarAppearance?
 
-    func body(content: Content) -> some View {
+    public init(
+        standardAppearance: UINavigationBarAppearance,
+        scrollEdgeAppearance: UINavigationBarAppearance?,
+        compactAppearance: UINavigationBarAppearance?
+    ) {
+        self.standardAppearance = standardAppearance
+        self.scrollEdgeAppearance = scrollEdgeAppearance
+        self.compactAppearance = compactAppearance
+    }
+
+    public func body(content: Content) -> some View {
         content
             .introspect(.viewController, on: .iOS(.v15, .v16, .v17)) { viewController in
                 guard navigationViewController != viewController.navigationController else { return }

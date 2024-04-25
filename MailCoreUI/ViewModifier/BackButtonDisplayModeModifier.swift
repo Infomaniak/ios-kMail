@@ -19,10 +19,10 @@
 import SwiftUI
 import SwiftUIIntrospect
 
-struct BackButtonDisplayModeModifier: ViewModifier {
+public struct BackButtonDisplayModeModifier: ViewModifier {
     let displayMode: UINavigationItem.BackButtonDisplayMode
 
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .introspect(.viewController, on: .iOS(.v15, .v16, .v17)) { viewController in
                 viewController.navigationItem.backButtonDisplayMode = displayMode
@@ -30,7 +30,7 @@ struct BackButtonDisplayModeModifier: ViewModifier {
     }
 }
 
-extension View {
+public extension View {
     func backButtonDisplayMode(_ displayMode: UINavigationItem.BackButtonDisplayMode) -> some View {
         modifier(BackButtonDisplayModeModifier(displayMode: displayMode))
     }

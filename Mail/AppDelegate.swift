@@ -21,6 +21,7 @@ import InfomaniakCore
 import InfomaniakDI
 import InfomaniakNotifications
 import MailCore
+import MailCoreUI
 import UIKit
 
 @available(iOSApplicationExtension, unavailable)

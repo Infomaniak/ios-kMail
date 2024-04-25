@@ -21,16 +21,20 @@ import InfomaniakDI
 import MailCore
 import SwiftUI
 
-struct SnackBarAwareModifier: ViewModifier {
+public struct SnackBarAwareModifier: ViewModifier {
     @LazyInjectService var avoider: IKSnackBarAvoider
 
-    var inset: CGFloat {
+    public var inset: CGFloat {
         didSet {
             avoider.addAvoider(inset: inset)
         }
     }
 
-    func body(content: Content) -> some View {
+    public init(inset: CGFloat) {
+        self.inset = inset
+    }
+
+    public func body(content: Content) -> some View {
         content
             .onChange(of: inset) { newValue in
                 avoider.addAvoider(inset: newValue)

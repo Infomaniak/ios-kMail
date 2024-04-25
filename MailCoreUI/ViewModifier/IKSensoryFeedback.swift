@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-enum IKSensoryFeedback {
+public enum IKSensoryFeedback {
     case impact(weight: IKSensoryFeedback.IKWeight = .medium, intensity: Double = 1.0)
 
     @available(iOS 17.0, macOS 14.0, *)
@@ -38,7 +38,7 @@ enum IKSensoryFeedback {
     }
 }
 
-extension IKSensoryFeedback {
+public extension IKSensoryFeedback {
     enum IKWeight {
         case heavy, medium, light
 
@@ -67,11 +67,11 @@ extension IKSensoryFeedback {
     }
 }
 
-struct IKSensoryFeedbackModifier<T: Equatable>: ViewModifier {
+public struct IKSensoryFeedbackModifier<T: Equatable>: ViewModifier {
     let feedback: IKSensoryFeedback
     let trigger: T
 
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .onChange(of: trigger) { _ in
                 feedback.trigger()
@@ -81,7 +81,7 @@ struct IKSensoryFeedbackModifier<T: Equatable>: ViewModifier {
 
 @available(iOS, obsoleted: 17.0, message: "SwiftUI.View.sensoryFeedback is available on iOS 17.")
 @available(macOS, obsoleted: 14.0, message: "SwiftUI.View.sensoryFeedback is available on macOS 14.")
-extension View {
+public extension View {
     /// Plays the specified `feedback` when the provided `trigger` value
     /// changes.
     ///

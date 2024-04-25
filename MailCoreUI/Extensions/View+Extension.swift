@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2022 Infomaniak Network SA
+ Copyright (C) 2024 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -17,46 +17,11 @@
  */
 
 import InfomaniakCoreUI
-import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
 
-struct DeviceRotationViewModifier: ViewModifier {
-    let action: (UIInterfaceOrientation?) -> Void
-
-    private var orientationManager: OrientationManageable
-
-    @State private var lastOrientation: UIInterfaceOrientation?
-
-    init(action: @escaping (UIInterfaceOrientation?) -> Void) {
-        let orientationSource = InjectService<OrientationManageable>().wrappedValue
-        let orientation = orientationSource.interfaceOrientation
-        self.action = action
-        orientationManager = orientationSource
-        lastOrientation = orientation
-    }
-
-    func body(content: Content) -> some View {
-        content
-            .onReceive(NotificationCenter.default.publisher(for: UIDevice.orientationDidChangeNotification)) { _ in
-                guard let currentOrientation = orientationManager.interfaceOrientation else {
-                    return
-                }
-                if lastOrientation != currentOrientation {
-                    lastOrientation = currentOrientation
-                    action(currentOrientation)
-                }
-            }
-    }
-}
-
-/// A View wrapper to make the modifier easier to use
-extension View {
-    func onRotate(perform action: @escaping (UIInterfaceOrientation?) -> Void) -> some View {
-        modifier(DeviceRotationViewModifier(action: action))
-    }
-
+public extension View {
     @ViewBuilder
     func modifyIf<Content: View>(_ condition: Bool, transform: (Self) -> Content) -> some View {
         if condition {

@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-extension Label where Title == Text, Icon == Image {
+public extension Label where Title == Text, Icon == Image {
     init(_ title: String, asset: Image) {
         self.init {
             Text(title)

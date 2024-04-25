@@ -21,7 +21,7 @@ import InfomaniakDI
 import MailCore
 import SwiftUI
 
-extension View {
+public extension View {
     func sheet<Item, Content>(
         item: Binding<Item?>,
         desktopIdentifier: String,
@@ -40,7 +40,8 @@ extension View {
 }
 
 @available(iOS 16.0, *)
-struct IdentifiableSheetOrDesktopWindowViewModifier<Item: Identifiable & Codable & Hashable, SheetContent: View>: ViewModifier {
+public struct IdentifiableSheetOrDesktopWindowViewModifier<Item: Identifiable & Codable & Hashable, SheetContent: View>:
+    ViewModifier {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     @Environment(\.openWindow) private var openWindow
@@ -49,7 +50,7 @@ struct IdentifiableSheetOrDesktopWindowViewModifier<Item: Identifiable & Codable
     let desktopWindowIdentifier: String
     @ViewBuilder let sheetContent: (Item) -> SheetContent
 
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         if platformDetector.isMac {
             content.onChange(of: item?.id) { _ in
                 guard let item else { return }

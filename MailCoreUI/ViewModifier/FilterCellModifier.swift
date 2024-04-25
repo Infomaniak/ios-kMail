@@ -20,12 +20,12 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct FilterCellModifier: ViewModifier {
+public struct FilterCellModifier: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     let isSelected: Bool
 
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .padding(.vertical, value: .verySmall)
             .padding(.horizontal, value: .small)
@@ -39,7 +39,7 @@ struct FilterCellModifier: ViewModifier {
     }
 }
 
-extension View {
+public extension View {
     func filterCellStyle(isSelected: Bool) -> some View {
         modifier(FilterCellModifier(isSelected: isSelected))
     }

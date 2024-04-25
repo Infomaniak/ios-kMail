@@ -19,17 +19,17 @@
 import MailCore
 import SwiftUI
 
-struct TextStyleModifier: ViewModifier {
+public struct TextStyleModifier: ViewModifier {
     let style: MailTextStyle
 
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content
             .font(style.font)
             .foregroundStyle(style.color)
     }
 }
 
-extension View {
+public extension View {
     func textStyle(_ style: MailTextStyle) -> some View {
         modifier(TextStyleModifier(style: style))
     }

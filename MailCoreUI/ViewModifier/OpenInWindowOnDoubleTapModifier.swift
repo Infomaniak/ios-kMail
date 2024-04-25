@@ -21,7 +21,7 @@ import InfomaniakDI
 import MailCore
 import SwiftUI
 
-extension View {
+public extension View {
     func openInWindowOnDoubleTap<Value: Codable & Hashable>(windowId: String, value: Value) -> some View {
         if #available(iOS 16.0, *) {
             return self.modifier(OpenInWindowOnDoubleTapModifier(windowId: windowId, value: value))
@@ -32,7 +32,7 @@ extension View {
 }
 
 @available(iOS 16.0, *)
-struct OpenInWindowOnDoubleTapModifier<Value: Codable & Hashable>: ViewModifier {
+public struct OpenInWindowOnDoubleTapModifier<Value: Codable & Hashable>: ViewModifier {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     @Environment(\.openWindow) private var openWindow
@@ -40,7 +40,7 @@ struct OpenInWindowOnDoubleTapModifier<Value: Codable & Hashable>: ViewModifier 
     let windowId: String
     let value: Value
 
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         content.simultaneousGesture(
             TapGesture(count: 2).onEnded {
                 if platformDetector.isMac {

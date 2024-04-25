@@ -18,35 +18,40 @@
 
 import SwiftUI
 
-struct ViewWidthKey: PreferenceKey {
-    static var defaultValue: CGFloat = .zero
+public struct ViewWidthKey: PreferenceKey {
+    public static var defaultValue: CGFloat = .zero
 
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+    public static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = max(value, nextValue())
     }
 }
 
-struct ViewHeightKey: PreferenceKey {
-    static var defaultValue: CGFloat = .zero
+public struct ViewHeightKey: PreferenceKey {
+    public static var defaultValue: CGFloat = .zero
 
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+    public static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = max(value, nextValue())
     }
 }
 
-struct BottomSafeAreaKey: PreferenceKey {
-    static var defaultValue: CGFloat = .zero
+public struct BottomSafeAreaKey: PreferenceKey {
+    public static var defaultValue: CGFloat = .zero
 
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+    public static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = nextValue()
     }
 }
 
-struct ViewGeometry<K>: View where K: PreferenceKey {
-    let key: K.Type
-    let property: KeyPath<GeometryProxy, K.Value>
+public struct ViewGeometry<K>: View where K: PreferenceKey {
+    public let key: K.Type
+    public let property: KeyPath<GeometryProxy, K.Value>
 
-    var body: some View {
+    public init(key: K.Type, property: KeyPath<GeometryProxy, K.Value>) {
+        self.key = key
+        self.property = property
+    }
+
+    public var body: some View {
         GeometryReader { proxy in
             Color.clear
                 .preference(key: key, value: proxy[keyPath: property])

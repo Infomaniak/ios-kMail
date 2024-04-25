@@ -21,11 +21,13 @@ import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
+import MailCoreUI
 import MailResources
 import NavigationBackport
 import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
+
 @_spi(Advanced) import SwiftUIIntrospect
 
 public class SplitViewManager: ObservableObject {
