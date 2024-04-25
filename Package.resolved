@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-bug-tracker",
       "state" : {
-        "revision" : "7b582c8281a74762293b1522d7c1f096a44eb07e",
-        "version" : "4.0.0"
+        "revision" : "264d99bb71c48d404d32784fa4e3c271a70bed90",
+        "version" : "5.0.0"
       }
     },
     {
@@ -41,7 +41,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "f55044d2156f39a5a2251e37bfe23f596227056e"
+        "revision" : "4e168afcd6bc05bfa3cd96bd8f7889f920bab788"
       }
     },
     {
@@ -49,8 +49,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "43ae7acd0252baba9c7338a20b5a0aefcc301054",
-        "version" : "7.1.0"
+        "revision" : "b190fc752289c127d17ab707444dc1b83017eaad",
+        "version" : "8.0.0"
       }
     },
     {
@@ -58,8 +58,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-create-account",
       "state" : {
-        "revision" : "46f2ee2e1df00c84d29c30f191e578ad593f0784",
-        "version" : "6.0.0"
+        "revision" : "c194f002d7aa2929d2c2e6bfc51b8d1018ea6779",
+        "version" : "7.0.0"
       }
     },
     {
@@ -85,8 +85,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-notifications",
       "state" : {
-        "revision" : "cb006524be443259d04a311f06add5ee034fbf35",
-        "version" : "5.0.0"
+        "revision" : "c5ae1674448eafca051700aa47a35629e347dc0a",
+        "version" : "6.0.0"
       }
     },
     {
@@ -94,8 +94,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-version-checker",
       "state" : {
-        "revision" : "7fc0d96c297e1a868e3e430bc1195b4d0ab70131",
-        "version" : "4.0.0"
+        "revision" : "4a9f4342fef91a132676ddcdd50c4808fefd4736",
+        "version" : "5.0.0"
       }
     },
     {
