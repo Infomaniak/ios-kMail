@@ -17,24 +17,14 @@
  */
 
 import Foundation
+import InfomaniakCoreDB
 import InfomaniakDI
 import Realm
 import RealmSwift
 
-/// Something that can access a realm with a given configuration
-public protocol RealmAccessible {
-    /// Configuration for a given realm
-    var realmConfiguration: Realm.Configuration { get }
+public protocol MailRealmAccessible: RealmAccessible, RealmConfigurable {}
 
-    /// Fetches an up to date realm for a given configuration, or fail in a controlled manner
-    func getRealm() -> Realm
-
-    /// Set `isExcludedFromBackup = true`  to the folder where realm is located to exclude a realm cache from an iCloud backup
-    /// - Important: Avoid calling this method too often as this can be expensive, prefer calling it once at init time
-    func excludeRealmFromBackup()
-}
-
-public extension RealmAccessible {
+public extension MailRealmAccessible {
     func getRealm() -> Realm {
         getRealm(canRetry: true)
     }

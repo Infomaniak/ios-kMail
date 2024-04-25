@@ -20,14 +20,14 @@ import Foundation
 import RealmSwift
 
 /// An abstract interface on the `MailboxManager`
-public typealias MailboxManageable = MailboxManagerCalendareable
+public typealias MailboxManageable = MailRealmAccessible
+    & MailboxManagerCalendareable
     & MailboxManagerContactable
     & MailboxManagerDraftable
     & MailboxManagerFolderable
     & MailboxManagerMailboxable
     & MailboxManagerMessageable
     & MailboxManagerSearchable
-    & RealmAccessible
 
 public protocol MailboxManagerMailboxable {
     var mailbox: Mailbox { get }

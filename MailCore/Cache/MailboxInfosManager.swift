@@ -23,7 +23,7 @@ import Realm
 import RealmSwift
 
 /// Conforming to `RealmAccessible` to get a standard `.getRealm` function
-extension MailboxInfosManager: RealmAccessible {}
+extension MailboxInfosManager: MailRealmAccessible {}
 
 public final class MailboxInfosManager {
     private static let currentDbVersion: UInt64 = 7

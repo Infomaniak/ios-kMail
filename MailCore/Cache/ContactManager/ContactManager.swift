@@ -20,12 +20,13 @@ import CocoaLumberjackSwift
 import Contacts
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreDB
 import InfomaniakCoreUI
 import RealmSwift
 import SwiftRegex
 
 /// The composite protocol of the `ContactManager` service
-public typealias ContactManageable = ContactFetchable & ContactManagerCoreable & RealmAccessible
+public typealias ContactManageable = ContactFetchable & ContactManagerCoreable & MailRealmAccessible
 
 public protocol ContactManagerCoreable {
     func refreshContactsAndAddressBooksIfNeeded() async throws
