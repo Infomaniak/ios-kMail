@@ -21,7 +21,7 @@ import InfomaniakCoreDB
 import RealmSwift
 
 /// An abstract interface on the `MailboxManager`
-public typealias MailboxManageable = MailRealmAccessible
+public typealias MailboxManageable = MailRealmAccessible /* TODO: remove MailRealmAccessible */
     & MailboxManagerCalendareable
     & MailboxManagerContactable
     & MailboxManagerDraftable

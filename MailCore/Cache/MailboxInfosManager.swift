@@ -22,6 +22,7 @@ import InfomaniakCoreDB
 import Realm
 import RealmSwift
 
+// TODO: Remove when possible to mask .getRealm
 /// Conforming to `RealmAccessible` to get a standard `.getRealm` function
 extension MailboxInfosManager: MailRealmAccessible {}
 

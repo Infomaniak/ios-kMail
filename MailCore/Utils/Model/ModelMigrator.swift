@@ -35,7 +35,8 @@ public struct ModelMigrator {
 
         @InjectService var accountManager: AccountManager
         if let currentMailboxManager = accountManager.currentMailboxManager {
-            _ = currentMailboxManager.getRealm()
+            // Force migration by performing a transaction
+            try? currentMailboxManager.writeTransaction { _ in }
         }
 
         if let contactManager = accountManager.currentContactManager {

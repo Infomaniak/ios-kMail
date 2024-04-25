@@ -72,9 +72,7 @@ final class InlineAttachmentWorker {
 
     /// Private accessor on the message
     private var frozenMessage: Message? {
-        let realm = mailboxManager.getRealm()
-        let message = realm.object(ofType: Message.self, forPrimaryKey: messageUid)?.freezeIfNeeded()
-        return message
+        mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?.freezeIfNeeded()
     }
 
     /// A binding on the `PresentableBody` from `MessageView`

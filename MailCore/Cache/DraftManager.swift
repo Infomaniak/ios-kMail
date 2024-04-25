@@ -131,17 +131,16 @@ public final class DraftManager {
         }
 
         var updatedDraft: Draft?
-        let realm = mailboxManager.getRealm()
-        try? realm.write {
-            guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
+        try? mailboxManager.writeTransaction { writableRealm in
+            guard let liveDraft = writableRealm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
                 return
             }
+
             liveDraft.identityId = "\(defaultSignature.id)"
-
-            realm.add(liveDraft, update: .modified)
-
+            writableRealm.add(liveDraft, update: .modified)
             updatedDraft = liveDraft.detached()
         }
+
         return updatedDraft
     }
 
@@ -276,12 +275,11 @@ public final class DraftManager {
 
     private func deleteEmptyDraft(draft: Draft, for mailboxManager: MailboxManager) {
         let primaryKey = draft.localUUID
-        let realm = mailboxManager.getRealm()
-        try? realm.write {
-            guard let object = realm.object(ofType: Draft.self, forPrimaryKey: primaryKey) else {
+        try? mailboxManager.writeTransaction { writableRealm in
+            guard let object = writableRealm.object(ofType: Draft.self, forPrimaryKey: primaryKey) else {
                 return
             }
-            realm.delete(object)
+            writableRealm.delete(object)
         }
     }
 

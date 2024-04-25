@@ -238,7 +238,7 @@ struct SplitView: View {
             try await mailboxManager.refreshAllFolders()
 
             let selectedFolderId = mainViewState.selectedFolder.remoteId
-            guard mailboxManager.getRealm().object(ofType: Folder.self, forPrimaryKey: selectedFolderId) == nil else {
+            guard mailboxManager.fetchObject(ofType: Folder.self, forPrimaryKey: selectedFolderId) == nil else {
                 return
             }
 
@@ -306,10 +306,10 @@ struct SplitView: View {
                 try? await Task.sleep(nanoseconds: UInt64(0.5 * Double(NSEC_PER_SEC)))
             }
 
-            let realm = notificationMailboxManager.getRealm()
-
-            let tappedNotificationMessage = realm.object(ofType: Message.self, forPrimaryKey: notificationPayload.messageId)?
+            let tappedNotificationMessage = notificationMailboxManager.fetchObject(ofType: Message.self,
+                                                                                   forPrimaryKey: notificationPayload.messageId)?
                 .freezeIfNeeded()
+
             if notification.name == .onUserTappedNotification {
                 // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in
                 // inbox

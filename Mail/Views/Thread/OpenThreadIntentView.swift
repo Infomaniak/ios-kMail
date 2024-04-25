@@ -72,10 +72,10 @@ struct OpenThreadIntentView: View, IntentViewable {
         }
 
         Task { @MainActor in
-            let realm = mailboxManager.getRealm()
-            guard let folder = realm.object(ofType: Folder.self, forPrimaryKey: openThreadIntent.folderId),
-                  let thread = mailboxManager.getRealm().object(ofType: Thread.self, forPrimaryKey: openThreadIntent.threadUid)
-            else {
+            guard let folder = mailboxManager.fetchObject(ofType: Folder.self,
+                                                          forPrimaryKey: openThreadIntent.folderId),
+                let thread = mailboxManager.fetchObject(ofType: Thread.self,
+                                                        forPrimaryKey: openThreadIntent.threadUid) else {
                 snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
                 return
             }
