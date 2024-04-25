@@ -39,6 +39,7 @@ struct ThreadListView: View {
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
     @State private var firstLaunch = true
+    @State private var isShowingUpdateVersionView = isUpdateViewNeeded()
     @ModalState private var flushAlert: FlushAlertState?
 
     @StateObject var viewModel: ThreadListViewModel
@@ -95,6 +96,11 @@ struct ThreadListView: View {
 
                     if threadDensity == .compact {
                         ListVerticalInsetView(height: UIPadding.verySmall)
+                    }
+
+                    if isShowingUpdateVersionView {
+                        UpdateVersionView(isShowingUpdateVersionView: $isShowingUpdateVersionView)
+                            .threadListCellAppearance()
                     }
 
                     ForEach(viewModel.sections ?? []) { section in
@@ -201,6 +207,14 @@ struct ThreadListView: View {
         fetchingTask = Task {
             await viewModel.fetchThreads()
             fetchingTask = nil
+        }
+    }
+
+    static func isUpdateViewNeeded() -> Bool {
+        if #available(iOS 16.5, *) {
+            return false
+        } else {
+            return true
         }
     }
 }
