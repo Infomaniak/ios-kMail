@@ -33,7 +33,6 @@ struct SettingsNotificationsInstructionsView: View {
             ModalButtonsView(
                 primaryButtonTitle: MailResourcesStrings.Localizable.alertNotificationsDisabledButton,
                 primaryButtonAction: DeeplinkConstants.presentsNotificationSettings
-
             )
         }
     }
