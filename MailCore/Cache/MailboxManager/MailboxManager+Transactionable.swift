@@ -20,23 +20,24 @@ import Foundation
 import InfomaniakCoreDB
 import RealmSwift
 
-extension MailboxManager: Transactionable {
-    public func fetchObject<Element: Object, KeyType>(ofType type: Element.Type,
-                                                      forPrimaryKey key: KeyType) -> Element? {
+/// Transactionable
+public extension MailboxManager {
+    func fetchObject<Element: Object, KeyType>(ofType type: Element.Type,
+                                               forPrimaryKey key: KeyType) -> Element? {
         return transactionExecutor.fetchObject(ofType: type, forPrimaryKey: key)
     }
 
-    public func fetchObject<Element: RealmFetchable>(ofType type: Element.Type,
-                                                     filtering: (Results<Element>) -> Element?) -> Element? {
+    func fetchObject<Element: RealmFetchable>(ofType type: Element.Type,
+                                              filtering: (Results<Element>) -> Element?) -> Element? {
         return transactionExecutor.fetchObject(ofType: type, filtering: filtering)
     }
 
-    public func fetchResults<Element: RealmFetchable>(ofType type: Element.Type,
-                                                      filtering: (Results<Element>) -> Results<Element>) -> Results<Element> {
+    func fetchResults<Element: RealmFetchable>(ofType type: Element.Type,
+                                               filtering: (Results<Element>) -> Results<Element>) -> Results<Element> {
         return transactionExecutor.fetchResults(ofType: type, filtering: filtering)
     }
 
-    public func writeTransaction(withRealm realmClosure: (Realm) throws -> Void) throws {
+    func writeTransaction(withRealm realmClosure: (Realm) throws -> Void) throws {
         try transactionExecutor.writeTransaction(withRealm: realmClosure)
     }
 }

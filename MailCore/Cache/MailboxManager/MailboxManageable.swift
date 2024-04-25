@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCoreDB
 import RealmSwift
 
 /// An abstract interface on the `MailboxManager`
@@ -28,6 +29,7 @@ public typealias MailboxManageable = MailRealmAccessible
     & MailboxManagerMailboxable
     & MailboxManagerMessageable
     & MailboxManagerSearchable
+    & Transactionable
 
 public protocol MailboxManagerMailboxable {
     var mailbox: Mailbox { get }
