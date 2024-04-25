@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreDB
 import Realm
 import RealmSwift
 
@@ -123,7 +124,7 @@ public final class MailboxInfosManager {
     public func removeMailboxesFor(userId: Int) {
         let realm = getRealm()
         let userMailboxes = realm.objects(Mailbox.self).where { $0.userId == userId }
-        try? realm.uncheckedSafeWrite {
+        try? realm.safeWrite {
             realm.delete(userMailboxes)
         }
     }

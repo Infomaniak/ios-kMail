@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreDB
 import RealmSwift
 
 // MARK: - Search
@@ -35,7 +36,7 @@ public extension MailboxManager {
         )
 
         let realm = getRealm()
-        try? realm.uncheckedSafeWrite {
+        try? realm.safeWrite {
             realm.add(searchFolder, update: .modified)
         }
         return searchFolder
