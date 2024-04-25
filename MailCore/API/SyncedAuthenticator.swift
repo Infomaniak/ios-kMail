@@ -29,18 +29,33 @@ final class SyncedAuthenticator: OAuthAuthenticator {
     @LazyInjectService var networkLoginService: InfomaniakNetworkLoginable
 
     func handleFailedRefreshingToken(oldToken: ApiToken, error: Error?) -> Result<OAuthAuthenticator.Credential, Error> {
-        guard let error = error as NSError?,
-              error.domain == "invalid_grant" else {
+        guard let error else {
             // Couldn't refresh the token, keep the old token and fetch it later. Maybe because of bad network ?
             SentrySDK
                 .addBreadcrumb(oldToken.generateBreadcrumb(level: .error,
                                                            message: "Refreshing token failed - Other \(error.debugDescription)"))
-            return .failure(error ?? MailError.unknownError)
+            return .failure(MailError.unknownError)
         }
 
-        // Couldn't refresh the token, API says it's invalid
-        SentrySDK.addBreadcrumb(oldToken.generateBreadcrumb(level: .error, message: "Refreshing token failed - Invalid grant"))
-        refreshTokenDelegate?.didFailRefreshToken(oldToken)
+        if case .noRefreshToken = (error as? InfomaniakLoginError) {
+            // Couldn't refresh the token because we don't have a refresh token
+            SentrySDK
+                .addBreadcrumb(oldToken.generateBreadcrumb(level: .error,
+                                                           message: "Refreshing token failed - Cannot refresh infinite token"))
+            refreshTokenDelegate?.didFailRefreshToken(oldToken)
+            return .failure(error)
+        }
+
+        if (error as NSError).domain == "invalid_grant" {
+            // Couldn't refresh the token, API says it's invalid
+            SentrySDK
+                .addBreadcrumb(oldToken.generateBreadcrumb(level: .error,
+                                                           message: "Refreshing token failed - Invalid grant"))
+            refreshTokenDelegate?.didFailRefreshToken(oldToken)
+            return .failure(error)
+        }
+
+        // Something else happened
         return .failure(error)
     }
 
