@@ -17,14 +17,25 @@
  */
 
 import Foundation
+import InfomaniakCoreDB
 import RealmSwift
 
 public extension Object {
     func fresh(using realm: Realm) -> Self? {
-        if let primaryKey = objectSchema.primaryKeyProperty?.name,
-           let primaryKeyValue = value(forKey: primaryKey) {
-            return realm.object(ofType: Self.self, forPrimaryKey: primaryKeyValue)
+        guard let primaryKey = objectSchema.primaryKeyProperty?.name,
+              let primaryKeyValue = value(forKey: primaryKey) else {
+            return nil
         }
-        return nil
+
+        return realm.object(ofType: Self.self, forPrimaryKey: primaryKeyValue)
+    }
+
+    func fresh(transactionable: Transactionable) -> Self? {
+        guard let primaryKey = objectSchema.primaryKeyProperty?.name,
+              let primaryKeyValue = value(forKey: primaryKey) else {
+            return nil
+        }
+
+        return transactionable.fetchObject(ofType: Self.self, forPrimaryKey: primaryKeyValue)
     }
 }

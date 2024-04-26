@@ -35,10 +35,10 @@ public extension MailboxManager {
             toolType: .search
         )
 
-        let realm = getRealm()
-        try? realm.safeWrite {
-            realm.add(searchFolder, update: .modified)
+        try? writeTransaction { writableRealm in
+            writableRealm.add(searchFolder, update: .modified)
         }
+
         return searchFolder
     }
 

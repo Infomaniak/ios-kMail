@@ -154,9 +154,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     func keepCacheAttributes(
         for message: Message,
         keepProperties: MessagePropertiesOptions,
-        using realm: Realm? = nil
+        using realm: Realm
     ) {
-        let realm = realm ?? getRealm()
         guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else {
             logError(.missingMessage)
             return
@@ -203,11 +202,6 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
             }
         }
         return result
-    }
-
-    public func hasUnreadMessages() -> Bool {
-        let realm = getRealm()
-        return realm.objects(Folder.self).contains { $0.unreadCount > 0 }
     }
 }
 

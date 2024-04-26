@@ -63,9 +63,7 @@ public extension MailboxManager {
     func messages(folder: Folder, isRetrying: Bool = false) async throws {
         guard !Task.isCancelled else { return }
 
-        let realm = getRealm()
-        let freshFolder = folder.fresh(using: realm)
-
+        let freshFolder = folder.fresh(transactionable: self)
         let previousCursor = freshFolder?.cursor
         var messagesUids: MessagesUids
 
@@ -145,7 +143,7 @@ public extension MailboxManager {
         }
 
         if folder.role == .inbox,
-           let freshFolder = folder.fresh(using: getRealm()) {
+           let freshFolder = folder.fresh(transactionable: self) {
             let unreadCount = freshFolder.unreadCount
             Task {
                 await mailboxInfosManager.updateUnseen(unseenMessages: unreadCount, for: mailbox)
@@ -154,8 +152,7 @@ public extension MailboxManager {
             }
         }
 
-        let realmPrevious = getRealm()
-        guard let folderPrevious = folder.fresh(using: realmPrevious) else {
+        guard let folderPrevious = folder.fresh(transactionable: self) else {
             logError(.missingFolder)
             return
         }
@@ -189,22 +186,21 @@ public extension MailboxManager {
 
         SentryDebug.addBackoffBreadcrumb(folder: folder, index: backoffIndex)
 
-        let realm = getRealm()
         var paginationInfo: PaginationInfo?
-
-        let sortedMessages = realm.objects(Message.self).where { $0.folderId == folder.remoteId && $0.fromSearch == false }
-            .sorted {
-                guard let firstMessageShortUid = $0.shortUid,
-                      let secondMessageShortUid = $1.shortUid else {
-                    SentryDebug.castToShortUidFailed(firstUid: $0.uid, secondUid: $1.uid)
-                    return false
-                }
-
-                if direction == .following {
-                    return firstMessageShortUid > secondMessageShortUid
-                }
-                return firstMessageShortUid < secondMessageShortUid
+        let sortedMessages = fetchResults(ofType: Message.self) { partial in
+            partial.where { $0.folderId == folder.remoteId && $0.fromSearch == false }
+        }.sorted {
+            guard let firstMessageShortUid = $0.shortUid,
+                  let secondMessageShortUid = $1.shortUid else {
+                SentryDebug.castToShortUidFailed(firstUid: $0.uid, secondUid: $1.uid)
+                return false
             }
+
+            if direction == .following {
+                return firstMessageShortUid > secondMessageShortUid
+            }
+            return firstMessageShortUid < secondMessageShortUid
+        }
 
         let backoffOffset = backoffSequence[backoffIndex] - 1
         let currentOffset = min(backoffOffset, sortedMessages.count - 1)
@@ -296,7 +292,7 @@ public extension MailboxManager {
     ///   - folder: Given folder
     private func handleMessagesUids(messageUids: MessagesUids, folder: Folder) async throws {
         let startDate = Date(timeIntervalSinceNow: -5 * 60)
-        let ignoredIds = folder.fresh(using: getRealm())?.threads
+        let ignoredIds = folder.fresh(transactionable: self)?.threads
             .where { $0.date > startDate }
             .map(\.uid) ?? []
         await deleteMessages(uids: messageUids.deletedUids)
@@ -305,7 +301,7 @@ public extension MailboxManager {
             startDate: startDate,
             folder: folder,
             alreadyWrongIds: ignoredIds,
-            realm: getRealm()
+            transactionable: self
         )
         await updateMessages(updates: messageUids.updated, folder: folder)
         if !shouldIgnoreNextEvents {
@@ -314,7 +310,7 @@ public extension MailboxManager {
                 startDate: startDate,
                 folder: folder,
                 alreadyWrongIds: ignoredIds,
-                realm: getRealm()
+                transactionable: self
             )
         }
         try await addMessages(shortUids: messageUids.addedShortUids, folder: folder, newCursor: messageUids.cursor)
@@ -324,7 +320,7 @@ public extension MailboxManager {
                 startDate: startDate,
                 folder: folder,
                 alreadyWrongIds: ignoredIds,
-                realm: getRealm()
+                transactionable: self
             )
         }
     }

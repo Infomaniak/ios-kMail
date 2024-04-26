@@ -54,7 +54,7 @@ public extension MailboxManager {
 
 extension MailboxManager {
     private func getFrozenMessageAndCalendarAttachment(messageUid: String) throws -> (Message, Attachment) {
-        guard let frozenMessage = getRealm().object(ofType: Message.self, forPrimaryKey: messageUid)?.freezeIfNeeded(),
+        guard let frozenMessage = fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?.freezeIfNeeded(),
               let frozenAttachment = getFrozenCalendarAttachment(from: frozenMessage) else {
             throw MailError.noCalendarAttachmentFound
         }

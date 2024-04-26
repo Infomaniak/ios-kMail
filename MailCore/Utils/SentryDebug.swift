@@ -18,6 +18,7 @@
 
 import Alamofire
 import Foundation
+import InfomaniakCoreDB
 import InfomaniakLogin
 import RealmSwift
 import Sentry
@@ -96,8 +97,14 @@ public enum SentryDebug {
         }
     }
 
-    static func captureWrongDate(step: String, startDate: Date, folder: Folder, alreadyWrongIds: [String], realm: Realm) -> Bool {
-        guard let freshFolder = folder.fresh(using: realm) else { return false }
+    static func captureWrongDate(
+        step: String,
+        startDate: Date,
+        folder: Folder,
+        alreadyWrongIds: [String],
+        transactionable: Transactionable
+    ) -> Bool {
+        guard let freshFolder = folder.fresh(transactionable: transactionable) else { return false }
 
         let threads = freshFolder.threads
             .where { $0.date > startDate }

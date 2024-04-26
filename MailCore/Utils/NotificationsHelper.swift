@@ -203,7 +203,7 @@ public enum NotificationsHelper {
         mailboxManager: MailboxManager,
         incompleteNotification: UNMutableNotificationContent
     ) async -> UNNotificationContent? {
-        let localContact = mailboxManager.contactManager.getContact(for: fromRecipient, realm: nil)
+        let localContact = mailboxManager.contactManager.getContact(for: fromRecipient)
         let handleSender = INPersonHandle(value: fromRecipient.email, type: .emailAddress)
         let sender = INPerson(personHandle: handleSender,
                               nameComponents: nil,

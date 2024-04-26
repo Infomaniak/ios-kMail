@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCoreDB
 import RealmSwift
 
 public protocol ContactFetchable {
@@ -26,7 +27,12 @@ public protocol ContactFetchable {
     ///   - fetchLimit: limit the query by default to limit memory footprint
     /// - Returns: The collection of matching contacts.
     func frozenContacts(matching string: String, fetchLimit: Int?) -> any Collection<MergedContact>
-    func getContact(for correspondent: any Correspondent, realm: Realm?) -> MergedContact?
+
+    /// Get a contact from a given transactionable
+    func getContact(for correspondent: any Correspondent, transactionable: Transactionable) -> MergedContact?
+
+    /// Get a contact from shared contact manager
+    func getContact(for correspondent: any Correspondent) -> MergedContact?
     func addressBook(with id: Int) -> AddressBook?
     func addContact(recipient: Recipient) async throws
 }
@@ -57,8 +63,12 @@ public extension ContactManager {
         return limitedResults
     }
 
-    func getContact(for correspondent: any Correspondent, realm: Realm? = nil) -> MergedContact? {
-        fetchObject(ofType: MergedContact.self) { partial in
+    func getContact(for correspondent: any Correspondent) -> MergedContact? {
+        getContact(for: correspondent, transactionable: self)
+    }
+
+    func getContact(for correspondent: any Correspondent, transactionable: Transactionable) -> MergedContact? {
+        transactionable.fetchObject(ofType: MergedContact.self) { partial in
             let matched = partial.where { $0.email == correspondent.email }
             let result = matched.first { $0.name.caseInsensitiveCompare(correspondent.name) == .orderedSame } ?? matched.first
             return result

@@ -21,14 +21,14 @@ import InfomaniakCoreDB
 import RealmSwift
 
 /// An abstract interface on the `MailboxManager`
-public typealias MailboxManageable = MailRealmAccessible /* TODO: remove MailRealmAccessible */
-    & MailboxManagerCalendareable
+public typealias MailboxManageable = MailboxManagerCalendareable
     & MailboxManagerContactable
     & MailboxManagerDraftable
     & MailboxManagerFolderable
     & MailboxManagerMailboxable
     & MailboxManagerMessageable
     & MailboxManagerSearchable
+    & RealmConfigurable
     & Transactionable
 
 public protocol MailboxManagerMailboxable {
@@ -51,9 +51,12 @@ public protocol MailboxManagerMessageable {
 /// An abstract interface on the `MailboxManager` related to drafts
 public protocol MailboxManagerDraftable {
     func draftWithPendingAction() -> Results<Draft>
-    func draft(messageUid: String, using realm: Realm?) -> Draft?
-    func draft(localUuid: String, using realm: Realm?) -> Draft?
-    func draft(remoteUuid: String, using realm: Realm?) -> Draft?
+    func draft(messageUid: String) -> Draft?
+    func draft(messageUid: String, using realm: Realm) -> Draft?
+    func draft(localUuid: String) -> Draft?
+    func draft(localUuid: String, using realm: Realm) -> Draft?
+    func draft(remoteUuid: String) -> Draft?
+    func draft(remoteUuid: String, using realm: Realm) -> Draft?
     func send(draft: Draft) async throws -> SendResponse
     func save(draft: Draft) async throws
     func delete(draft: Draft) async throws
@@ -66,7 +69,7 @@ public protocol MailboxManagerDraftable {
 public protocol MailboxManagerFolderable {
     func refreshAllFolders() async throws
     func getFolder(with role: FolderRole) -> Folder?
-    func getFrozenFolders(using realm: Realm?) -> [Folder]
+    func getFrozenFolders() -> [Folder]
     func createFolder(name: String, parent: Folder?) async throws -> Folder
     func flushFolder(folder: Folder) async throws -> Bool
     func refreshFolder(from messages: [Message], additionalFolder: Folder?) async throws

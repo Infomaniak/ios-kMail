@@ -38,7 +38,9 @@ struct MCKContactManageable_FolderListViewModel: ContactManageable, MCKTransacti
 
     func frozenContacts(matching string: String, fetchLimit: Int?) -> any Collection<MailCore.MergedContact> { [] }
 
-    func getContact(for correspondent: any MailCore.Correspondent, realm: RealmSwift.Realm?) -> MailCore.MergedContact? { nil }
+    func getContact(for correspondent: any MailCore.Correspondent) -> MailCore.MergedContact? { nil }
+
+    func getContact(for correspondent: any Correspondent, transactionable: Transactionable) -> MergedContact? { nil }
 
     func addressBook(with id: Int) -> MailCore.AddressBook? { nil }
 

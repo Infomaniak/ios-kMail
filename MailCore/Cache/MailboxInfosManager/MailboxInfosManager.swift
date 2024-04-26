@@ -22,9 +22,8 @@ import InfomaniakCoreDB
 import Realm
 import RealmSwift
 
-// TODO: Remove when possible to mask .getRealm
-/// Conforming to `RealmAccessible` to get a standard `.getRealm` function
-extension MailboxInfosManager: MailRealmAccessible {}
+// So we can exclude it from backups
+extension MailboxInfosManager: RealmConfigurable {}
 
 public final class MailboxInfosManager {
     private static let currentDbVersion: UInt64 = 7
@@ -120,12 +119,20 @@ public final class MailboxInfosManager {
         return Array(realmMailboxList.map { $0.freeze() })
     }
 
-    public func getMailbox(id: Int, userId: Int, using realm: Realm? = nil) -> Mailbox? {
+    public func getMailbox(id: Int, userId: Int) -> Mailbox? {
+        return getMailbox(objectId: MailboxInfosManager.getObjectId(mailboxId: id, userId: userId))
+    }
+
+    public func getMailbox(id: Int, userId: Int, using realm: Realm) -> Mailbox? {
         return getMailbox(objectId: MailboxInfosManager.getObjectId(mailboxId: id, userId: userId), using: realm)
     }
 
-    public func getMailbox(objectId: String, freeze: Bool = true, using realm: Realm? = nil) -> Mailbox? {
-        let realm = realm ?? getRealm()
+    public func getMailbox(objectId: String, freeze: Bool = true) -> Mailbox? {
+        let mailbox = fetchObject(ofType: Mailbox.self, forPrimaryKey: objectId)
+        return freeze ? mailbox?.freeze() : mailbox
+    }
+
+    public func getMailbox(objectId: String, freeze: Bool = true, using realm: Realm) -> Mailbox? {
         let mailbox = realm.object(ofType: Mailbox.self, forPrimaryKey: objectId)
         return freeze ? mailbox?.freeze() : mailbox
     }

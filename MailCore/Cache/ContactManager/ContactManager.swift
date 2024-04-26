@@ -28,7 +28,7 @@ import SwiftRegex
 /// The composite protocol of the `ContactManager` service
 public typealias ContactManageable = ContactFetchable
     & ContactManagerCoreable
-    & MailRealmAccessible
+    & RealmConfigurable
     & Transactionable
 
 public protocol ContactManagerCoreable {
@@ -70,11 +70,6 @@ public final class ContactManager: ObservableObject, ContactManageable {
     public let realmConfiguration: Realm.Configuration
     private let backgroundRealm: BackgroundRealm
     public let transactionExecutor: Transactionable
-
-    public lazy var viewRealm: Realm = {
-        assert(Foundation.Thread.isMainThread, "viewRealm should only be accessed from main thread")
-        return getRealm()
-    }()
 
     let apiFetcher: MailApiFetcher
 

@@ -22,10 +22,14 @@ import InfomaniakDI
 import Realm
 import RealmSwift
 
-public protocol MailRealmAccessible: RealmAccessible, RealmConfigurable {}
+/// Centralised way to access a realm configuration and instance.
+///
+/// MailCoreRealmAccessible is only intended to be used by `BackgroundRealm`
+protocol MailCoreRealmAccessible: RealmAccessible, RealmConfigurable {}
 
-public extension MailRealmAccessible {
-    func getRealm() -> Realm {
+/// Default shared getRealm() implementation with migration retry
+extension MailCoreRealmAccessible {
+    public func getRealm() -> Realm {
         getRealm(canRetry: true)
     }
 
@@ -59,7 +63,10 @@ public extension MailRealmAccessible {
             return getRealm(canRetry: false)
         }
     }
+}
 
+/// Default implementation handling iCloud backup exclusion
+public extension RealmConfigurable {
     func excludeRealmFromBackup() {
         guard var realmFolderURL = realmConfiguration.fileURL?.deletingLastPathComponent() else {
             return
