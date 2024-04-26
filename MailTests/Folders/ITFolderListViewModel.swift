@@ -20,12 +20,22 @@ import Combine
 import Foundation
 @testable import Infomaniak_Mail
 import InfomaniakCore
+import InfomaniakCoreDB
 import InfomaniakLogin
 @testable import MailCore
 @testable import RealmSwift
 import XCTest
 
-struct MCKContactManageable_FolderListViewModel: ContactManageable {
+struct MCKContactManageable_FolderListViewModel: ContactManageable, MCKTransactionablePassthrough {
+    var transactionExecutor: Transactionable!
+
+    var realmConfiguration: RealmSwift.Realm.Configuration
+
+    init(realmConfiguration: RealmSwift.Realm.Configuration) {
+        self.realmConfiguration = realmConfiguration
+        transactionExecutor = TransactionExecutor(realmAccessible: self)
+    }
+
     func frozenContacts(matching string: String, fetchLimit: Int?) -> any Collection<MailCore.MergedContact> { [] }
 
     func getContact(for correspondent: any MailCore.Correspondent, realm: RealmSwift.Realm?) -> MailCore.MergedContact? { nil }
@@ -39,12 +49,10 @@ struct MCKContactManageable_FolderListViewModel: ContactManageable {
     func refreshContactsAndAddressBooks() async throws {}
 
     static func deleteUserContacts(userId: Int) {}
-
-    var realmConfiguration: RealmSwift.Realm.Configuration
 }
 
 /// A MailboxManageable used to test the FolderListViewModel
-struct MCKMailboxManageable_FolderListViewModel: MailboxManageable {
+struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransactionablePassthrough {
     let mailbox = Mailbox()
 
     var contactManager: MailCore.ContactManageable {
@@ -110,8 +118,14 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable {
     func addToSearchHistory(value: String) async {}
 
     let realm: Realm
+    var transactionExecutor: Transactionable!
     init(realm: Realm) {
         self.realm = realm
+        transactionExecutor = TransactionExecutor(realmAccessible: self)
+    }
+
+    func getRealm() -> Realm {
+        realm
     }
 
     func draftWithPendingAction() -> RealmSwift.Results<MailCore.Draft> {
@@ -174,10 +188,6 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable {
 
     var realmConfiguration: RealmSwift.Realm.Configuration {
         realm.configuration
-    }
-
-    func getRealm() -> Realm {
-        realm
     }
 }
 
