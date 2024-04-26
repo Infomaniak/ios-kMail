@@ -18,20 +18,25 @@
 
 import SwiftUI
 
-extension View {
+public extension View {
     func adaptivePanel<Item: Identifiable, Content: View>(item: Binding<Item?>,
                                                           @ViewBuilder content: @escaping (Item) -> Content) -> some View {
         return modifier(AdaptivePanelViewModifier(item: item, panelContent: content))
     }
 }
 
-struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>: ViewModifier {
+public struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>: ViewModifier {
     @Environment(\.isCompactWindow) private var isCompactWindow
 
     @Binding var item: Item?
-    @ViewBuilder var panelContent: (Item) -> PanelContent
+    @ViewBuilder let panelContent: (Item) -> PanelContent
 
-    func body(content: Content) -> some View {
+    public init(item: Binding<Item?>, panelContent: @escaping (Item) -> PanelContent) {
+        _item = item
+        self.panelContent = panelContent
+    }
+
+    public func body(content: Content) -> some View {
         content
             .popover(item: $item) { item in
                 if isCompactWindow {

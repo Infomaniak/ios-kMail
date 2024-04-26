@@ -20,21 +20,26 @@ import MailCore
 import SwiftUI
 import SwiftUIBackports
 
-extension View {
+public extension View {
     func sheetOrAlertPanel<ModalContent: View>(isPresented: Binding<Bool>,
                                                @ViewBuilder modalContent: @escaping () -> ModalContent) -> some View {
         modifier(SheetOrAlertPanel(isPresented: isPresented, modalContent: modalContent))
     }
 }
 
-struct SheetOrAlertPanel<ModalContent: View>: ViewModifier {
+public struct SheetOrAlertPanel<ModalContent: View>: ViewModifier {
     @Environment(\.isCompactWindow) private var isCompactWindow
 
     @Binding var isPresented: Bool
 
     @ViewBuilder let modalContent: () -> ModalContent
 
-    func body(content: Content) -> some View {
+    public init(isPresented: Binding<Bool>, modalContent: @escaping () -> ModalContent) {
+        _isPresented = isPresented
+        self.modalContent = modalContent
+    }
+
+    public func body(content: Content) -> some View {
         content
             .sheet(isPresented: Binding(get: { isCompactWindow && isPresented }, set: { isPresented = $0 })) {
                 if #available(iOS 16.0, *) {

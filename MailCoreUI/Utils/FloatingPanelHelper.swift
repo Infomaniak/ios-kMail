@@ -22,7 +22,7 @@ import MailResources
 import SwiftUI
 import SwiftUIBackports
 
-extension View {
+public extension View {
     func floatingPanel<Content: View>(
         isPresented: Binding<Bool>,
         title: String? = nil,
@@ -63,11 +63,11 @@ extension View {
 }
 
 @available(iOS, introduced: 15, deprecated: 16, message: "Use native way")
-struct SelfSizingPanelBackportViewModifier: ViewModifier {
+public struct SelfSizingPanelBackportViewModifier: ViewModifier {
     @State private var currentDetents: Set<Backport.PresentationDetent> = [.medium]
 
-    var dragIndicator = Visibility.visible
-    var title: String?
+    let dragIndicator: Visibility
+    let title: String?
 
     private let topPadding = UIPadding.medium
     private let titleSpacing = UIPadding.small
@@ -90,7 +90,12 @@ struct SelfSizingPanelBackportViewModifier: ViewModifier {
         return topPadding + titleSpacing + UIFont.preferredFont(forTextStyle: .headline).pointSize
     }
 
-    func body(content: Content) -> some View {
+    public init(dragIndicator: Visibility = Visibility.visible, title: String? = nil) {
+        self.dragIndicator = dragIndicator
+        self.title = title
+    }
+
+    public func body(content: Content) -> some View {
         VStack(spacing: UIPadding.small) {
             if let title {
                 Text(title)
@@ -120,12 +125,12 @@ struct SelfSizingPanelBackportViewModifier: ViewModifier {
 }
 
 @available(iOS 16.0, *)
-struct SelfSizingPanelViewModifier: ViewModifier {
+public struct SelfSizingPanelViewModifier: ViewModifier {
     @State private var currentDetents: Set<PresentationDetent> = [.height(0)]
     @State private var selection: PresentationDetent = .height(0)
 
-    var dragIndicator = Visibility.visible
-    var title: String?
+    let dragIndicator: Visibility
+    let title: String?
 
     private let topPadding = UIPadding.medium
     private let titleSpacing = UIPadding.small
@@ -137,7 +142,12 @@ struct SelfSizingPanelViewModifier: ViewModifier {
         return topPadding + titleSpacing + UIFont.preferredFont(forTextStyle: .headline).pointSize
     }
 
-    func body(content: Content) -> some View {
+    public init(dragIndicator: Visibility = Visibility.visible, title: String? = nil) {
+        self.dragIndicator = dragIndicator
+        self.title = title
+    }
+
+    public func body(content: Content) -> some View {
         VStack(spacing: titleSpacing) {
             if let title {
                 Text(title)

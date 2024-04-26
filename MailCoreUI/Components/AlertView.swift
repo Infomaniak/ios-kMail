@@ -17,7 +17,6 @@
  */
 
 import MailCore
-import MailCoreUI
 import MailResources
 import SwiftUI
 
@@ -108,7 +107,7 @@ private struct ClearFullScreenView: UIViewRepresentable {
     func updateUIView(_ uiView: UIView, context: Context) {}
 }
 
-extension View {
+public extension View {
     func customAlert<Content: View>(isPresented: Binding<Bool>, @ViewBuilder content: () -> Content) -> some View {
         modifier(CustomAlertModifier(isPresented: isPresented, alertView: content))
     }
@@ -121,7 +120,7 @@ extension View {
 
 #Preview {
     AlertView {
-        CreateFolderView(mode: .create)
+        Text("Some alert text")
     }
     .environmentObject(PreviewHelper.sampleMailboxManager)
 }
