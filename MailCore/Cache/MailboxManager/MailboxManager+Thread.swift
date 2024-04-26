@@ -188,7 +188,7 @@ public extension MailboxManager {
 
         var paginationInfo: PaginationInfo?
         let sortedMessages = fetchResults(ofType: Message.self) { partial in
-            partial.where { $0.folderId == folder.remoteId && $0.fromSearch == false }
+            partial.where { $0.folderId == folder.remoteId && !$0.fromSearch }
         }.sorted {
             guard let firstMessageShortUid = $0.shortUid,
                   let secondMessageShortUid = $1.shortUid else {
