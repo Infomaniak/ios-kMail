@@ -1,7 +1,9 @@
 #!/bin/bash
 
-#tuist install
-#tuist generate -n
+eval "$($HOME/.local/bin/mise activate -C $SRCROOT bash --shims)"
+
+tuist install
+tuist generate -n
 
 
 # Check if the "--full-dir" argument is provided
