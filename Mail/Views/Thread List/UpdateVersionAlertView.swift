@@ -18,23 +18,25 @@
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
-import MailResources
 import SwiftUI
 
 struct UpdateVersionAlertView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @Binding var isShowingUpdateVersionView: Bool
+    @Environment(\.openURL) var openURL
+
+    @AppStorage(UserDefaults.shared.key(.updateOSViewDismissed)) private var updateOSViewDismissed = DefaultPreferences
+        .updateOSViewDismissed
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.medium) {
             Text("Vos e-mails peuvent ne pas s’afficher correctement ")
                 .textStyle(.bodyMedium)
-            Text("Pour une expérience optimale, veuillez mettre à jour votre appareil")
+            Text("Pour une expérience optimale, veuillez mettre à jour votre appareil.")
                 .textStyle(.body)
 
             ModalButtonsView(primaryButtonTitle: "Mettre à jour",
-                             // MailResourcesStrings.Localizable.buttonConfirmRestoreEmails,
+                             // MailResourcesStrings.Localizable.buttonUpdateOSVersion,
                              secondaryButtonTitle: "Plus tard",
                              primaryButtonAction: updateVersion,
                              secondaryButtonAction: dismissUpdateVersionView)
@@ -43,23 +45,17 @@ struct UpdateVersionAlertView: View {
 
     private func updateVersion() {
         matomo.track(eventWithCategory: .syncAutoConfig, name: "openSettings")
-        @Environment(\.openURL) var openURL
-        //        @InjectService var platformDetector: PlatformDetectable
         let url: URL
-        //        if platformDetector.isMac {
-        //            url = DeeplinkConstants.macSecurityAndPrivacy
-        //        } else {
         url = DeeplinkConstants.iosPreferences
-//            URL(string: "x-apple.systempreferences:com.apple.preference.security")
-        //        }
         openURL(url)
+        dismissUpdateVersionView()
     }
 
     private func dismissUpdateVersionView() {
-        isShowingUpdateVersionView = false
+        updateOSViewDismissed = true
     }
 }
 
 #Preview {
-    UpdateVersionAlertView(isShowingUpdateVersionView: .constant(true))
+    UpdateVersionAlertView()
 }

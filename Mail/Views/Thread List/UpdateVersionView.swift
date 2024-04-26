@@ -23,14 +23,15 @@ import SwiftUI
 
 struct UpdateVersionView: View {
     @State private var isShowingUpdateAlert = false
-    @Binding var isShowingUpdateVersionView: Bool
+//    @Binding var isShowingUpdateVersionView: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.small) {
             VStack(alignment: .leading, spacing: UIPadding.small) {
                 HStack(alignment: .center, spacing: UIPadding.small) {
                     IKIcon(MailResourcesAsset.warning)
-                    Text("Vos e-mails peuvent ne pas s’afficher correctement")
+                        .foregroundStyle(MailResourcesAsset.orangeColor)
+                    Text("Vos e-mails peuvent ne pas s’afficher correctement.")
                         .textStyle(.bodySmall)
                 }
 
@@ -46,17 +47,19 @@ struct UpdateVersionView: View {
                     .buttonStyle(.borderless)
                 }
             }
-            .padding(value: .regular)
+            .padding(.top, value: .regular)
+            .padding(.bottom, value: .small)
+            .padding(.horizontal, value: .regular)
 
             IKDivider(type: .full)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .customAlert(isPresented: $isShowingUpdateAlert) {
-            UpdateVersionAlertView(isShowingUpdateVersionView: $isShowingUpdateVersionView)
+            UpdateVersionAlertView()
         }
     }
 }
 
 #Preview {
-    UpdateVersionView(isShowingUpdateVersionView: .constant(true))
+    UpdateVersionView()
 }
