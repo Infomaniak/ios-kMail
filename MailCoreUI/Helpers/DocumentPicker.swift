@@ -20,8 +20,8 @@ import SwiftUI
 import UIKit
 import UniformTypeIdentifiers
 
-struct DocumentPicker: UIViewControllerRepresentable {
-    enum PickerType {
+public struct DocumentPicker: UIViewControllerRepresentable {
+    public enum PickerType {
         case selectContent([UTType], ([URL]) -> Void)
         case exportContent([URL])
     }
@@ -30,11 +30,15 @@ struct DocumentPicker: UIViewControllerRepresentable {
 
     let pickerType: PickerType
 
-    func makeCoordinator() -> DocumentPicker.Coordinator {
+    public init(pickerType: PickerType) {
+        self.pickerType = pickerType
+    }
+
+    public func makeCoordinator() -> DocumentPicker.Coordinator {
         return DocumentPicker.Coordinator(parent: self)
     }
 
-    func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
+    public func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
         let picker: UIDocumentPickerViewController
         switch pickerType {
         case .selectContent(let types, _):
@@ -48,21 +52,21 @@ struct DocumentPicker: UIViewControllerRepresentable {
         return picker
     }
 
-    func updateUIViewController(
+    public func updateUIViewController(
         _ uiViewController: DocumentPicker.UIViewControllerType,
         context: UIViewControllerRepresentableContext<DocumentPicker>
     ) {
         // Empty on purpose
     }
 
-    class Coordinator: NSObject, UIDocumentPickerDelegate {
+    public class Coordinator: NSObject, UIDocumentPickerDelegate {
         var parent: DocumentPicker
 
         init(parent: DocumentPicker) {
             self.parent = parent
         }
 
-        func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
             if case .selectContent(_, let completion) = parent.pickerType {
                 completion(urls)
             }

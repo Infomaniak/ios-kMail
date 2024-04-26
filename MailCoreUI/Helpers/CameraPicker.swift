@@ -20,13 +20,18 @@ import PhotosUI
 import SwiftUI
 import UIKit
 
-struct CameraPicker: UIViewControllerRepresentable {
-    var sourceType: UIImagePickerController.SourceType = .camera
-
-    var completion: (Data) -> Void
+public struct CameraPicker: UIViewControllerRepresentable {
     @Environment(\.presentationMode) private var presentationMode
 
-    func makeUIViewController(context: Context) -> UIImagePickerController {
+    let sourceType: UIImagePickerController.SourceType
+    let completion: (Data) -> Void
+
+    public init(sourceType: UIImagePickerController.SourceType = .camera, completion: @escaping (Data) -> Void) {
+        self.sourceType = sourceType
+        self.completion = completion
+    }
+
+    public func makeUIViewController(context: Context) -> UIImagePickerController {
         let imagePicker = UIImagePickerController()
         imagePicker.allowsEditing = false
         imagePicker.sourceType = sourceType
@@ -35,25 +40,25 @@ struct CameraPicker: UIViewControllerRepresentable {
         return imagePicker
     }
 
-    func makeCoordinator() -> Coordinator {
+    public func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
 
-    func updateUIViewController(
+    public func updateUIViewController(
         _ uiViewController: CameraPicker.UIViewControllerType,
         context: UIViewControllerRepresentableContext<CameraPicker>
     ) {
         // Empty on prupose
     }
 
-    final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    public final class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
         var parent: CameraPicker
 
         init(_ parent: CameraPicker) {
             self.parent = parent
         }
 
-        func imagePickerController(
+        public func imagePickerController(
             _ picker: UIImagePickerController,
             didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
         ) {

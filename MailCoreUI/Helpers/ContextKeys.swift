@@ -16,15 +16,19 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SafariServices
-import SwiftUI
+import Foundation
 
-struct SafariWebView: UIViewControllerRepresentable {
-    let url: URL
-
-    func makeUIViewController(context: Context) -> SFSafariViewController {
-        return SFSafariViewController(url: url)
-    }
-
-    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
+public enum ContextKeys {
+    public static let ai = "aiContext"
+    public static let aiAlert = "aiAlertContext"
+    public static let attachmentDownload = "attachmentDowloadContext"
+    public static let detachMailbox = "detachMailboxContext"
+    public static let moveEmail = "moveEmailContext"
+    public static let compose = "composeContext"
+    public static let externalTagBottom = "externalTagBottomContext"
+    public static let onboarding = "onboardingContext"
+    public static let createAccount = "createAccountContext"
+    public static let settings = "settingsContext"
+    public static let account = "accountContext"
+    public static let sync = "syncContext"
 }

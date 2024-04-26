@@ -20,11 +20,16 @@ import PhotosUI
 import SwiftUI
 import UIKit
 
-struct ImagePicker: UIViewControllerRepresentable {
-    var completion: ([PHPickerResult]) -> Void
+public struct ImagePicker: UIViewControllerRepresentable {
     @Environment(\.dismiss) private var dismiss
 
-    func makeUIViewController(context: Context) -> PHPickerViewController {
+    let completion: ([PHPickerResult]) -> Void
+
+    public init(completion: @escaping ([PHPickerResult]) -> Void) {
+        self.completion = completion
+    }
+
+    public func makeUIViewController(context: Context) -> PHPickerViewController {
         var configuration = PHPickerConfiguration(photoLibrary: PHPhotoLibrary.shared())
         configuration.selectionLimit = 0
         let controller = PHPickerViewController(configuration: configuration)
@@ -32,25 +37,25 @@ struct ImagePicker: UIViewControllerRepresentable {
         return controller
     }
 
-    func makeCoordinator() -> Coordinator {
+    public func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
 
-    func updateUIViewController(
+    public func updateUIViewController(
         _ uiViewController: PHPickerViewController,
         context: UIViewControllerRepresentableContext<ImagePicker>
     ) {
         // Empty on purpose
     }
 
-    final class Coordinator: NSObject, PHPickerViewControllerDelegate, UINavigationControllerDelegate {
+    public final class Coordinator: NSObject, PHPickerViewControllerDelegate, UINavigationControllerDelegate {
         var parent: ImagePicker
 
         init(_ parent: ImagePicker) {
             self.parent = parent
         }
 
-        func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
+        public func picker(_ picker: PHPickerViewController, didFinishPicking results: [PHPickerResult]) {
             parent.completion(results)
             parent.dismiss()
         }
