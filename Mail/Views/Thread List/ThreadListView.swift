@@ -30,16 +30,19 @@ import SwiftUIIntrospect
 struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var userActivityController: UserActivityController
+    @LazyInjectService var platformDetector: PlatformDetectable
 
     @EnvironmentObject private var mainViewState: MainViewState
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+    @AppStorage(UserDefaults.shared.key(.updateOSViewDismissed)) private var updateOSViewDismissed = DefaultPreferences
+        .updateOSViewDismissed
 
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
     @State private var firstLaunch = true
-    @State private var isShowingUpdateVersionView = isUpdateViewNeeded()
+//    @State private var isShowingUpdateVersionView = isUpdateViewNeeded()
     @ModalState private var flushAlert: FlushAlertState?
 
     @StateObject var viewModel: ThreadListViewModel
@@ -53,6 +56,15 @@ struct ThreadListView: View {
 
     private var shouldDisplayNoNetworkView: Bool {
         !networkMonitor.isConnected && viewModel.sections == nil
+    }
+
+    private var shouldDisplayUpdateOSView: Bool {
+        guard !updateOSViewDismissed && !platformDetector.isMac else { return false }
+        if #available(iOS 16.5, *) {
+            return true // après DEBUG: remettre à false
+        } else {
+            return true
+        }
     }
 
     init(mailboxManager: MailboxManager,
@@ -98,8 +110,8 @@ struct ThreadListView: View {
                         ListVerticalInsetView(height: UIPadding.verySmall)
                     }
 
-                    if isShowingUpdateVersionView {
-                        UpdateVersionView(isShowingUpdateVersionView: $isShowingUpdateVersionView)
+                    if shouldDisplayUpdateOSView {
+                        UpdateVersionView()
                             .threadListCellAppearance()
                     }
 
@@ -210,13 +222,13 @@ struct ThreadListView: View {
         }
     }
 
-    static func isUpdateViewNeeded() -> Bool {
-        if #available(iOS 16.5, *) {
-            return false
-        } else {
-            return true
-        }
-    }
+//    static func isUpdateViewNeeded() -> Bool {
+//        if #available(iOS 16.5, *) {
+//            return true
+//        } else {
+//            return true
+//        }
+//    }
 }
 
 #Preview {
