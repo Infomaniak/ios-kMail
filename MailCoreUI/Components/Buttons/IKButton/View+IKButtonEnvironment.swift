@@ -38,7 +38,7 @@ struct IKButtonLoadingKey: EnvironmentKey {
 
 // MARK: - EnvironmentValues
 
-extension EnvironmentValues {
+public extension EnvironmentValues {
     var ikButtonPrimaryStyle: any ShapeStyle {
         get { self[IKButtonPrimaryStyleKey.self] }
         set { self[IKButtonPrimaryStyleKey.self] = newValue }
@@ -62,7 +62,7 @@ extension EnvironmentValues {
 
 // MARK: - View functions
 
-extension View {
+public extension View {
     func ikButtonPrimaryStyle(_ style: any ShapeStyle) -> some View {
         environment(\.ikButtonPrimaryStyle, style)
     }

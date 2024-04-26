@@ -16,22 +16,28 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
-import MailResources
 import SwiftUI
 
-struct SearchButton: View {
-    @EnvironmentObject private var mainViewState: MainViewState
-
-    var body: some View {
-        Button {
-            mainViewState.isShowingSearch = true
-        } label: {
-            IKIcon(MailResourcesAsset.search, size: .large)
-        }
+public extension ButtonStyle where Self == IKLinkButtonStyle {
+    static func ikLink(isInlined: Bool = false) -> IKLinkButtonStyle {
+        return IKLinkButtonStyle(isInlined: isInlined)
     }
 }
 
-#Preview {
-    SearchButton()
+public extension ButtonStyle where Self == IKPlainButtonStyle {
+    static var ikPlain: IKPlainButtonStyle {
+        return IKPlainButtonStyle()
+    }
+}
+
+public extension ButtonStyle where Self == IKFloatingAppButtonStyle {
+    static func ikFloatingAppButton(isExtended: Bool) -> IKFloatingAppButtonStyle {
+        return IKFloatingAppButtonStyle(isExtended: isExtended)
+    }
+}
+
+public extension ButtonStyle where Self == IKSquareButtonStyle {
+    static var ikSquare: IKSquareButtonStyle {
+        return IKSquareButtonStyle()
+    }
 }

@@ -16,28 +16,20 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
-import InfomaniakDI
 import MailCore
-import MailResources
 import SwiftUI
 
-struct MenuDrawerButton: View {
-    @LazyInjectService private var matomo: MatomoUtils
+public struct LoadingButtonProgressView: View {
+    private let tintColor: Color?
 
-    @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
-
-    var body: some View {
-        Button {
-            matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
-            navigationDrawerState.open()
-        } label: {
-            IKIcon(MailResourcesAsset.burger, size: .large)
-        }
-        .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonMenu)
+    public init(plain: Bool) {
+        tintColor = plain ? .white : nil
     }
-}
 
-#Preview {
-    MenuDrawerButton()
+    public var body: some View {
+        ProgressView()
+            .progressViewStyle(.circular)
+            .tint(tintColor)
+            .controlSize(.regular)
+    }
 }

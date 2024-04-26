@@ -17,19 +17,22 @@
  */
 
 import MailCore
+import MailCoreUI
+import MailResources
 import SwiftUI
 
-struct LoadingButtonProgressView: View {
-    private let tintColor: Color?
-
-    init(plain: Bool) {
-        tintColor = plain ? .white : nil
-    }
+struct SearchButton: View {
+    @EnvironmentObject private var mainViewState: MainViewState
 
     var body: some View {
-        ProgressView()
-            .progressViewStyle(.circular)
-            .tint(tintColor)
-            .controlSize(.regular)
+        Button {
+            mainViewState.isShowingSearch = true
+        } label: {
+            IKIcon(MailResourcesAsset.search, size: .large)
+        }
     }
+}
+
+#Preview {
+    SearchButton()
 }

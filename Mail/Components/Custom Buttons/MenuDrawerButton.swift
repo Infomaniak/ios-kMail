@@ -16,28 +16,29 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
+import MailCore
+import MailCoreUI
+import MailResources
 import SwiftUI
 
-extension ButtonStyle where Self == IKLinkButtonStyle {
-    static func ikLink(isInlined: Bool = false) -> IKLinkButtonStyle {
-        return IKLinkButtonStyle(isInlined: isInlined)
+struct MenuDrawerButton: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
+    @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
+
+    var body: some View {
+        Button {
+            matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
+            navigationDrawerState.open()
+        } label: {
+            IKIcon(MailResourcesAsset.burger, size: .large)
+        }
+        .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonMenu)
     }
 }
 
-extension ButtonStyle where Self == IKPlainButtonStyle {
-    static var ikPlain: IKPlainButtonStyle {
-        return IKPlainButtonStyle()
-    }
-}
-
-extension ButtonStyle where Self == IKFloatingAppButtonStyle {
-    static func ikFloatingAppButton(isExtended: Bool) -> IKFloatingAppButtonStyle {
-        return IKFloatingAppButtonStyle(isExtended: isExtended)
-    }
-}
-
-extension ButtonStyle where Self == IKSquareButtonStyle {
-    static var ikSquare: IKSquareButtonStyle {
-        return IKSquareButtonStyle()
-    }
+#Preview {
+    MenuDrawerButton()
 }

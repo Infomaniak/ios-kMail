@@ -20,14 +20,14 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct IKLinkButtonStyle: ButtonStyle {
+public struct IKLinkButtonStyle: ButtonStyle {
     @Environment(\.ikButtonPrimaryStyle) private var ikButtonPrimaryStyle: any ShapeStyle
     @Environment(\.ikButtonLoading) private var isLoading: Bool
     @Environment(\.isEnabled) private var isEnabled
 
     var isInlined = false
 
-    func makeBody(configuration: Configuration) -> some View {
+    public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .labelStyle(.ikLabel)
             .foregroundStyle(AnyShapeStyle(foreground(role: configuration.role)))

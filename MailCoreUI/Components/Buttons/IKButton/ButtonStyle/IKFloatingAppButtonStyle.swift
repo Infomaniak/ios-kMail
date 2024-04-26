@@ -20,7 +20,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct IKFloatingAppButtonStyle: ButtonStyle {
+public struct IKFloatingAppButtonStyle: ButtonStyle {
     @Environment(\.controlSize) private var controlSize
     @Environment(\.ikButtonLoading) private var isLoading: Bool
 
@@ -34,7 +34,7 @@ struct IKFloatingAppButtonStyle: ButtonStyle {
         }
     }
 
-    func makeBody(configuration: Configuration) -> some View {
+    public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .labelStyle(.ikLabel)
             .modifier(IKButtonLoadingModifier(isPlain: true))

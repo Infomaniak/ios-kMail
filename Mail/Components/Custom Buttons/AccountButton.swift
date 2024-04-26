@@ -21,6 +21,7 @@ import MailCore
 import MailResources
 import SwiftModalPresentation
 import SwiftUI
+import MailCoreUI
 
 struct AccountButton: View {
     @EnvironmentObject private var mailboxManager: MailboxManager

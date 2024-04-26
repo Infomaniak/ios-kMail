@@ -20,10 +20,10 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct IKSquareButtonStyle: ButtonStyle {
+public struct IKSquareButtonStyle: ButtonStyle {
     @Environment(\.ikButtonLoading) private var isLoading: Bool
 
-    func makeBody(configuration: Configuration) -> some View {
+    public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .labelStyle(.ikLabel)
             .modifier(IKButtonOpacityAnimationModifier(isPressed: configuration.isPressed))
