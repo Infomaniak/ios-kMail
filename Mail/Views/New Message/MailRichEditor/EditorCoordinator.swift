@@ -110,13 +110,14 @@ extension EditorCoordinator {
     private func performAppAction(_ action: EditorToolbarAction) {
         switch action {
         case .ai:
-            parent.isShowingAIPrompt = true
+            // parent.isShowingAIPrompt = true
+            break
         case .addFile:
-            parent.isShowingFileSelection = true
+            parent.toolbarModel.isShowingFileSelection = true
         case .addPhoto:
-            parent.isShowingPhotoLibrary = true
+            parent.toolbarModel.isShowingPhotoLibrary = true
         case .takePhoto:
-            parent.isShowingCamera = true
+            parent.toolbarModel.isShowingCamera = true
         case .programMessage:
             showWorkInProgressSnackBar()
         default:
@@ -140,10 +141,11 @@ extension EditorCoordinator {
         case .unorderedList:
             richEditorView.unorderedList()
         case .link:
-            parent.isShowingAlert = NewMessageAlert(type: .link { path in
-                guard let url = URL(string: path) else { return }
-                richEditorView.addLink(url)
-            })
+//            parent.isShowingAlert = NewMessageAlert(type: .link { path in
+//                guard let url = URL(string: path) else { return }
+//                richEditorView.addLink(url)
+//            })
+            break
         default:
             fatalError("Action not handled")
         }

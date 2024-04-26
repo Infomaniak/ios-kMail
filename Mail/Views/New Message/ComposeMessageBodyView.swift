@@ -22,22 +22,21 @@ import MailCoreUI
 import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
+@_spi(Advanced) import SwiftUIIntrospect
 
 struct ComposeMessageBodyView: View {
-    @State private var isShowingCamera = false
-    @ModalState(context: ContextKeys.compose) private var isShowingFileSelection = false
-    @ModalState(context: ContextKeys.compose) private var isShowingPhotoLibrary = false
+    @State private var editorModel = EditorModel()
+    @StateObject private var toolbarModel = EditorToolbarModel()
 
     @ObservedRealmObject var draft: Draft
 
-    @Binding var editorModel: EditorModel
     @Binding var editorFocus: Bool
-    @Binding var isShowingAIPrompt: Bool
-    @Binding var isShowingAlert: NewMessageAlert?
+    @Binding var currentSignature: Signature?
 
     @ObservedObject var attachmentsManager: AttachmentsManager
 
     let messageReply: MessageReply?
+    let scrollView: UIScrollView?
 
     private var isRemoteContentBlocked: Bool {
         return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.frozenMessage.localSafeDisplay == false
@@ -47,18 +46,13 @@ struct ComposeMessageBodyView: View {
         VStack {
             AttachmentsHeaderView(attachmentsManager: attachmentsManager)
 
-            EditorView(
-                body: $draft.body,
-                model: $editorModel,
-                isShowingFileSelection: $isShowingFileSelection,
-                isShowingCamera: $isShowingCamera,
-                isShowingPhotoLibrary: $isShowingPhotoLibrary,
-                isShowingAIPrompt: $isShowingAIPrompt,
-                isShowingAlert: $isShowingAlert
-            )
-            .frame(height: editorModel.height)
+            EditorView(body: $draft.body, model: $editorModel, toolbarModel: toolbarModel)
+                .frame(height: editorModel.height)
         }
-        .fullScreenCover(isPresented: $isShowingCamera) {
+        .customAlert(isPresented: .constant(false)) {
+            AddLinkView(actionHandler: { _ in })
+        }
+        .fullScreenCover(isPresented: $toolbarModel.isShowingCamera) {
             CameraPicker { data in
                 attachmentsManager.importAttachments(
                     attachments: [data],
@@ -68,7 +62,7 @@ struct ComposeMessageBodyView: View {
             }
             .ignoresSafeArea()
         }
-        .sheet(isPresented: $isShowingFileSelection) {
+        .sheet(isPresented: $toolbarModel.isShowingFileSelection) {
             DocumentPicker(pickerType: .selectContent([.item]) { urls in
                 attachmentsManager.importAttachments(
                     attachments: urls,
@@ -78,7 +72,7 @@ struct ComposeMessageBodyView: View {
             })
             .ignoresSafeArea()
         }
-        .sheet(isPresented: $isShowingPhotoLibrary) {
+        .sheet(isPresented: $toolbarModel.isShowingPhotoLibrary) {
             ImagePicker { results in
                 attachmentsManager.importAttachments(
                     attachments: results,
@@ -89,18 +83,23 @@ struct ComposeMessageBodyView: View {
             .ignoresSafeArea()
         }
     }
+
+    private func keepCursorVisible(_ cursorPosition: CGPoint?) {
+        guard let scrollView, let cursorPosition else {
+            return
+        }
+    }
 }
 
 #Preview {
     let draft = Draft()
     return ComposeMessageBodyView(draft: draft,
-                                  editorModel: .constant(EditorModel()),
                                   editorFocus: .constant(false),
-                                  isShowingAIPrompt: .constant(false),
-                                  isShowingAlert: .constant(nil),
+                                  currentSignature: .constant(nil),
                                   attachmentsManager: AttachmentsManager(
                                       draftLocalUUID: draft.localUUID,
                                       mailboxManager: PreviewHelper.sampleMailboxManager
                                   ),
-                                  messageReply: nil)
+                                  messageReply: nil,
+                                  scrollView: nil)
 }

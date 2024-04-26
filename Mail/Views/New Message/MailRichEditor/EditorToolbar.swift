@@ -20,7 +20,15 @@ import InfomaniakDI
 import InfomaniakRichEditor
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import UIKit
+
+final class EditorToolbarModel: ObservableObject {
+    @ModalPublished(context: ContextKeys.compose) var isShowingCamera = false
+    @ModalPublished(context: ContextKeys.compose) var isShowingFileSelection = false
+    @ModalPublished(context: ContextKeys.compose) var isShowingPhotoLibrary = false
+    @ModalPublished(context: ContextKeys.compose) var isShowingLinkAlert = false
+}
 
 enum EditorToolbarStyle {
     case main
