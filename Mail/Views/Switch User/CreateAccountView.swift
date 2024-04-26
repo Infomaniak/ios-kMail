@@ -22,6 +22,7 @@ import InfomaniakCreateAccount
 import InfomaniakDI
 import InfomaniakLogin
 import MailCore
+import MailCoreUI
 import MailResources
 import SwiftModalPresentation
 import SwiftUI

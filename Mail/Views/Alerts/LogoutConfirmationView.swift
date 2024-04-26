@@ -21,6 +21,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import InfomaniakNotifications
 import MailCore
+import MailCoreUI
 import MailResources
 import SwiftUI
 

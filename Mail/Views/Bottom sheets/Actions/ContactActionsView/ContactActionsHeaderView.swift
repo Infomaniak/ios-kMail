@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailCoreUI
 import SwiftUI
 
 struct ContactActionsHeaderView: View {
@@ -24,7 +25,11 @@ struct ContactActionsHeaderView: View {
 
     let displayablePerson: CommonContact
 
-    var body: some View {
+    public init(displayablePerson: CommonContact) {
+        self.displayablePerson = displayablePerson
+    }
+
+    public var body: some View {
         HStack {
             AvatarView(mailboxManager: mailboxManager, contactConfiguration: .contact(contact: displayablePerson), size: 40)
                 .accessibilityHidden(true)

@@ -20,6 +20,7 @@ import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
+import MailCoreUI
 import MailResources
 import RealmSwift
 import SwiftModalPresentation
@@ -215,30 +216,6 @@ struct ThreadView: View {
                     origin: .toolbar(originFolder: originFolder, nearestFlushAlert: $nearestFlushAlert)
                 )
             }
-        }
-    }
-}
-
-struct VerticalLabelStyle: LabelStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        VStack(spacing: 4) {
-            configuration.icon
-            configuration.title
-        }
-    }
-}
-
-extension LabelStyle where Self == VerticalLabelStyle {
-    static var vertical: VerticalLabelStyle { .init() }
-}
-
-extension Label {
-    @ViewBuilder
-    func dynamicLabelStyle(sizeClass: UserInterfaceSizeClass) -> some View {
-        if sizeClass == .compact {
-            labelStyle(.iconOnly)
-        } else {
-            labelStyle(.vertical)
         }
     }
 }

@@ -35,7 +35,7 @@ struct Slide: Identifiable {
     var description: String?
     var showPicker = false
     var asset: Image?
-    var lottieConfiguration: LottieConfiguration?
+    var lottieConfiguration: MailCoreUI.LottieConfiguration?
 
     static let onBoardingSlides = [
         Slide(
@@ -285,7 +285,7 @@ struct OnboardingView: View {
 
     // MARK: - Private methods
 
-    private func updateAnimationColors(_ animation: LottieAnimationView, _ configuration: LottieConfiguration) {
+    private func updateAnimationColors(_ animation: LottieAnimationView, _ configuration: MailCoreUI.LottieConfiguration) {
         IlluColors.onBoardingAllColors.forEach { $0.applyColors(to: animation) }
 
         if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {

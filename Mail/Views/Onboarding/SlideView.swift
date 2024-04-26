@@ -19,8 +19,8 @@
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
-import Lottie
 import MailCore
+import MailCoreUI
 import MailResources
 import SwiftUI
 import SwiftUIIntrospect

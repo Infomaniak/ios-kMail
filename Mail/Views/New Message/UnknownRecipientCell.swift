@@ -17,13 +17,18 @@
  */
 
 import MailCore
+import MailCoreUI
 import MailResources
 import SwiftUI
 
-struct UnknownRecipientCell: View {
+public struct UnknownRecipientCell: View {
     let recipient: Recipient
 
-    var body: some View {
+    public init(recipient: Recipient) {
+        self.recipient = recipient
+    }
+
+    public var body: some View {
         HStack(spacing: 8) {
             UnknownRecipientView(size: 40)
                 .accessibilityHidden(true)

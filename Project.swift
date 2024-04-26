@@ -91,7 +91,7 @@ let project = Project(name: "Mail",
                                   scripts: [Constants.swiftlintScript],
                                   dependencies: [
                                       .target(name: "MailCore"),
-                                      .target(name: "MailCoreUI"),
+                                      .target(name: "MailCoreUI")
                                   ],
                                   settings: .settings(base: Constants.baseSettings)),
                           .target(name: "MailNotificationServiceExtension",
