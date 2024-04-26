@@ -19,6 +19,7 @@
 import InfomaniakCore
 import InfomaniakDI
 import MailCore
+import MailCoreUI
 import NavigationBackport
 import SwiftUI
 

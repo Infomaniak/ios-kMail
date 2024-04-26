@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakDI
+import MailCoreUI
 import MailResources
 import SwiftUI
 

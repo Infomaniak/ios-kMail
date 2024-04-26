@@ -18,6 +18,7 @@
 
 import InfomaniakCoreUI
 import MailCore
+import MailCoreUI
 import RealmSwift
 import SwiftModalPresentation
 import SwiftUI

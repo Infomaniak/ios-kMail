@@ -21,6 +21,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import InfomaniakLogin
 import MailCore
+import MailCoreUI
 import MailResources
 import RealmSwift
 import SwiftUI

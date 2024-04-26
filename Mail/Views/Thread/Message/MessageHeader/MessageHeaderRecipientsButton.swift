@@ -19,6 +19,7 @@
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
+import MailCoreUI
 import SwiftUI
 
 struct MessageHeaderRecipientsButton: View {
