@@ -20,13 +20,13 @@ import MailCore
 import MailResources
 import SwiftUI
 
-typealias DismissModalAction = () -> Void
+public typealias DismissModalAction = () -> Void
 
-struct DismissModalKey: EnvironmentKey {
-    static let defaultValue: DismissModalAction = { /* dismiss nothing by default */ }
+public struct DismissModalKey: EnvironmentKey {
+    public static let defaultValue: DismissModalAction = { /* dismiss nothing by default */ }
 }
 
-extension EnvironmentValues {
+public extension EnvironmentValues {
     var dismissModal: DismissModalAction {
         get {
             return self[DismissModalKey.self]
@@ -37,16 +37,18 @@ extension EnvironmentValues {
     }
 }
 
-extension View {
+public extension View {
     func sheetViewStyle() -> some View {
         modifier(SheetViewModifier())
     }
 }
 
-struct SheetViewModifier: ViewModifier {
+public struct SheetViewModifier: ViewModifier {
     @Environment(\.dismiss) private var dismiss
 
-    func body(content: Content) -> some View {
+    public init() {}
+
+    public func body(content: Content) -> some View {
         NavigationView {
             content
                 .toolbar {

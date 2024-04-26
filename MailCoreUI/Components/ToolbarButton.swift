@@ -20,13 +20,18 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct ToolbarButtonLabel: View {
+public struct ToolbarButtonLabel: View {
     @Environment(\.verticalSizeClass) private var sizeClass
 
     let text: String
     let icon: Image
 
-    var body: some View {
+    public init(text: String, icon: Image) {
+        self.text = text
+        self.icon = icon
+    }
+
+    public var body: some View {
         Label {
             Text(text)
                 .textStyle(MailTextStyle.labelMediumAccent)
@@ -41,12 +46,18 @@ struct ToolbarButtonLabel: View {
     }
 }
 
-struct ToolbarButton: View {
+public struct ToolbarButton: View {
     let text: String
     let icon: Image
     let action: () -> Void
 
-    var body: some View {
+    public init(text: String, icon: Image, action: @escaping () -> Void) {
+        self.text = text
+        self.icon = icon
+        self.action = action
+    }
+
+    public var body: some View {
         Button(action: action) {
             ToolbarButtonLabel(text: text, icon: icon)
         }

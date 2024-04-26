@@ -19,8 +19,8 @@
 import MailResources
 import SwiftUI
 
-struct ChevronIcon<ChevronShapeStyle: ShapeStyle>: View {
-    enum Direction {
+public struct ChevronIcon<ChevronShapeStyle: ShapeStyle>: View {
+    public enum Direction {
         case up, right, left, down
 
         var rotationAngle: Angle {
@@ -40,24 +40,29 @@ struct ChevronIcon<ChevronShapeStyle: ShapeStyle>: View {
     let direction: Direction
     let shapeStyle: ChevronShapeStyle
 
-    init(direction: Direction, shapeStyle: ChevronShapeStyle = MailResourcesAsset.textSecondaryColor.swiftUIColor) {
+    public init(direction: Direction, shapeStyle: ChevronShapeStyle = MailResourcesAsset.textSecondaryColor.swiftUIColor) {
         self.direction = direction
         self.shapeStyle = shapeStyle
     }
 
-    var body: some View {
+    public var body: some View {
         IKIcon(MailResourcesAsset.chevronUp, size: .small)
             .rotationEffect(direction.rotationAngle)
             .foregroundStyle(shapeStyle)
     }
 }
 
-struct ChevronButton: View {
+public struct ChevronButton: View {
     @Binding var isExpanded: Bool
 
-    var color = MailResourcesAsset.textSecondaryColor.swiftUIColor
+    let color: Color
 
-    var body: some View {
+    public init(isExpanded: Binding<Bool>, color: Color = MailResourcesAsset.textSecondaryColor.swiftUIColor) {
+        _isExpanded = isExpanded
+        self.color = color
+    }
+
+    public var body: some View {
         Button {
             withAnimation {
                 isExpanded.toggle()

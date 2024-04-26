@@ -20,26 +20,36 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct UnknownRecipientView: View {
-    let size: CGFloat
+public struct IKDivider: View {
+    public enum DividerType {
+        case menu, item, full
 
-    private var iconSize: CGFloat {
-        return size - 2 * UIPadding.small
+        var insets: EdgeInsets {
+            switch self {
+            case .menu:
+                return EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0)
+            case .item:
+                return EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
+            case .full:
+                return EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+            }
+        }
     }
 
-    var body: some View {
-        Circle()
-            .fill(Color.accentColor)
-            .frame(width: size, height: size)
-            .overlay {
-                MailResourcesAsset.userBold.swiftUIImage
-                    .resizable()
-                    .foregroundStyle(MailResourcesAsset.backgroundColor)
-                    .frame(width: iconSize, height: iconSize)
-            }
+    let type: DividerType
+
+    public init(type: DividerType = .item) {
+        self.type = type
+    }
+
+    public var body: some View {
+        Divider()
+            .frame(height: 1)
+            .overlay(MailResourcesAsset.elementsColor.swiftUIColor)
+            .padding(type.insets)
     }
 }
 
 #Preview {
-    UnknownRecipientView(size: 40)
+    IKDivider()
 }

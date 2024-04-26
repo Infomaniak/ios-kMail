@@ -16,26 +16,20 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailResources
 import SwiftUI
 
-struct InitialsView: View {
-    let initials: String
-    let color: UIColor
-    let size: CGFloat
+public struct ListVerticalInsetView: View {
+    let height: CGFloat
 
-    var body: some View {
-        ZStack {
-            Circle()
-                .fill(Color(uiColor: color))
-            Text(initials)
-                .font(.system(size: size * 0.5, weight: .semibold))
-                .foregroundStyle(MailResourcesAsset.backgroundSecondaryColor)
-        }
-        .frame(width: size, height: size)
+    public init(height: CGFloat) {
+        self.height = height
     }
-}
 
-#Preview {
-    InitialsView(initials: "TE", color: .systemRed, size: 40)
+    public var body: some View {
+        Spacer()
+            .frame(height: height)
+            .listRowInsets(.init())
+            .listRowSeparator(.hidden)
+            .listRowBackground(Color.clear)
+    }
 }

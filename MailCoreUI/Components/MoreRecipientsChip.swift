@@ -19,18 +19,22 @@
 import MailCore
 import SwiftUI
 
-extension EdgeInsets {
+public extension EdgeInsets {
     init(uiEdgeInsets insets: UIEdgeInsets) {
         self.init(top: insets.top, leading: insets.left, bottom: insets.bottom, trailing: insets.right)
     }
 }
 
-struct MoreRecipientsChip: View {
+public struct MoreRecipientsChip: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     let count: Int
 
-    var body: some View {
+    public init(count: Int) {
+        self.count = count
+    }
+
+    public var body: some View {
         Text("+\(count)")
             .textStyle(.bodyAccent)
             .padding(EdgeInsets(uiEdgeInsets: UIPadding.recipientChip))

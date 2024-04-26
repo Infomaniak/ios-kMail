@@ -19,21 +19,21 @@
 import MailResources
 import SwiftUI
 
-struct CloseButton: View {
-    var size: IKIcon.Size?
+public struct CloseButton: View {
+    let size: IKIcon.Size?
     let dismissHandler: () -> Void
 
-    init(size: IKIcon.Size? = nil, dismissHandler: @escaping () -> Void) {
+    public init(size: IKIcon.Size? = nil, dismissHandler: @escaping () -> Void) {
         self.size = size
         self.dismissHandler = dismissHandler
     }
 
-    init(size: IKIcon.Size? = nil, dismissAction: DismissAction) {
+    public init(size: IKIcon.Size? = nil, dismissAction: DismissAction) {
         self.size = size
         dismissHandler = dismissAction.callAsFunction
     }
 
-    var body: some View {
+    public var body: some View {
         Button(action: dismissHandler) {
             Label {
                 Text(MailResourcesStrings.Localizable.buttonClose)

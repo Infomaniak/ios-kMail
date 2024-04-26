@@ -16,36 +16,29 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
 import MailResources
 import SwiftUI
 
-struct IKDivider: View {
-    enum DividerType {
-        case menu, item, full
+public struct SyncStepToolbarItem: View {
+    let step: Int
+    let totalSteps: Int
 
-        var insets: EdgeInsets {
-            switch self {
-            case .menu:
-                return EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0)
-            case .item:
-                return EdgeInsets(top: 0, leading: 16, bottom: 0, trailing: 16)
-            case .full:
-                return EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-            }
-        }
+    public init(step: Int, totalSteps: Int) {
+        self.step = step
+        self.totalSteps = totalSteps
     }
 
-    var type = DividerType.item
-
-    var body: some View {
-        Divider()
-            .frame(height: 1)
-            .overlay(MailResourcesAsset.elementsColor.swiftUIColor)
-            .padding(type.insets)
+    public var body: some View {
+        VStack {
+            Text(MailResourcesStrings.Localizable.syncTutorialStepCount(step, totalSteps))
+                .textStyle(.bodyMedium)
+                .padding(value: .small)
+                .background(RoundedRectangle(cornerRadius: 8).fill(MailResourcesAsset.textFieldBorder.swiftUIColor))
+        }
+        .padding(value: .regular)
     }
 }
 
 #Preview {
-    IKDivider()
+    SyncStepToolbarItem(step: 1, totalSteps: 3)
 }

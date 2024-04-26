@@ -20,15 +20,21 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct SearchTextField: View {
+public struct SearchTextField: View {
     @State private var initialFocusDone = false
 
-    @Binding public var value: String
+    @Binding var value: String
 
-    public var onSubmit: () -> Void
-    public var onDelete: () -> Void
+    let onSubmit: () -> Void
+    let onDelete: () -> Void
 
-    var body: some View {
+    public init(value: Binding<String>, onSubmit: @escaping () -> Void, onDelete: @escaping () -> Void) {
+        _value = value
+        self.onSubmit = onSubmit
+        self.onDelete = onDelete
+    }
+
+    public var body: some View {
         HStack(spacing: UIPadding.small) {
             Button(action: onSubmit) {
                 IKIcon(MailResourcesAsset.search)

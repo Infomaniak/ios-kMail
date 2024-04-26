@@ -53,7 +53,7 @@ extension AnimationKeypath {
     }
 }
 
-struct IlluColors {
+public struct IlluColors {
     let keyPath: AnimationKeypath
     let colors: Colors
 
@@ -112,7 +112,7 @@ struct IlluColors {
 
 // MARK: - Onboarding colors
 
-extension IlluColors {
+public extension IlluColors {
     // MARK: Default colors
 
     static let onBoardingAllColors = [
@@ -382,7 +382,7 @@ extension IlluColors {
 
 // MARK: - Functions
 
-extension IlluColors {
+public extension IlluColors {
     func applyColors(to animation: LottieAnimationView) {
         animation.updateColor(color: colors.lightColor, darkColor: colors.darkColor, for: keyPath)
     }

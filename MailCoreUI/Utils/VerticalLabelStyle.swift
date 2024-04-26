@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2022 Infomaniak Network SA
+ Copyright (C) 2024 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -16,22 +16,28 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
 import SwiftUI
 
-struct ContactImage: View {
-    let image: Image
-    let size: CGFloat
-
-    var body: some View {
-        image
-            .resizable()
-            .scaledToFit()
-            .frame(width: size, height: size)
-            .clipShape(Circle())
+public struct VerticalLabelStyle: LabelStyle {
+    public func makeBody(configuration: Configuration) -> some View {
+        VStack(spacing: 4) {
+            configuration.icon
+            configuration.title
+        }
     }
 }
 
-#Preview {
-    ContactImage(image: Image(systemName: "person"), size: 40)
+public extension LabelStyle where Self == VerticalLabelStyle {
+    static var vertical: VerticalLabelStyle { .init() }
+}
+
+public extension Label {
+    @ViewBuilder
+    func dynamicLabelStyle(sizeClass: UserInterfaceSizeClass) -> some View {
+        if sizeClass == .compact {
+            labelStyle(.iconOnly)
+        } else {
+            labelStyle(.vertical)
+        }
+    }
 }

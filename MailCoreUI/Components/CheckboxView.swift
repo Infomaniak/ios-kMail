@@ -20,18 +20,18 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct CheckboxView: View {
+public struct CheckboxView: View {
     let accentColor: AccentColor
     let isSelected: Bool
     let size: CGFloat
 
-    init(isSelected: Bool, density: ThreadDensity, accentColor: AccentColor) {
+    public init(isSelected: Bool, density: ThreadDensity, accentColor: AccentColor) {
         self.isSelected = isSelected
         self.accentColor = accentColor
         size = density == .large ? UIConstants.checkboxLargeSize : UIConstants.checkboxSize
     }
 
-    var body: some View {
+    public var body: some View {
         ZStack {
             Circle()
                 .strokeBorder(Color.accentColor, lineWidth: isSelected ? 0 : 2)

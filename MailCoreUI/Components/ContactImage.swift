@@ -16,23 +16,27 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailResources
+import MailCore
 import SwiftUI
 
-struct SyncStepToolbarItem: View {
-    let step: Int
-    let totalSteps: Int
-    var body: some View {
-        VStack {
-            Text(MailResourcesStrings.Localizable.syncTutorialStepCount(step, totalSteps))
-                .textStyle(.bodyMedium)
-                .padding(value: .small)
-                .background(RoundedRectangle(cornerRadius: 8).fill(MailResourcesAsset.textFieldBorder.swiftUIColor))
-        }
-        .padding(value: .regular)
+public struct ContactImage: View {
+    let image: Image
+    let size: CGFloat
+
+    public init(image: Image, size: CGFloat) {
+        self.image = image
+        self.size = size
+    }
+
+    public var body: some View {
+        image
+            .resizable()
+            .scaledToFit()
+            .frame(width: size, height: size)
+            .clipShape(Circle())
     }
 }
 
 #Preview {
-    SyncStepToolbarItem(step: 1, totalSteps: 3)
+    ContactImage(image: Image(systemName: "person"), size: 40)
 }

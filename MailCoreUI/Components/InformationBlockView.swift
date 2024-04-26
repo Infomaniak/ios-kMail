@@ -20,11 +20,11 @@ import MailCore
 import MailResources
 import SwiftUI
 
-extension VerticalAlignment {
+public extension VerticalAlignment {
     /// Alignment ID used for the icon and the text
     /// The icon must be vertically centered with the first line of the text
     enum InformationBlockAlignment: AlignmentID {
-        static func defaultValue(in context: ViewDimensions) -> CGFloat {
+        public static func defaultValue(in context: ViewDimensions) -> CGFloat {
             return context[.top]
         }
     }
@@ -32,13 +32,20 @@ extension VerticalAlignment {
     static let informationBlockAlignment = VerticalAlignment(InformationBlockAlignment.self)
 }
 
-struct InformationBlockView: View {
+public struct InformationBlockView: View {
     let icon: Image
     let message: String
-    var iconColor: Color?
-    var dismissHandler: (() -> Void)?
+    let iconColor: Color?
+    let dismissHandler: (() -> Void)?
 
-    var body: some View {
+    public init(icon: Image, message: String, iconColor: Color? = nil, dismissHandler: (() -> Void)? = nil) {
+        self.icon = icon
+        self.message = message
+        self.iconColor = iconColor
+        self.dismissHandler = dismissHandler
+    }
+
+    public var body: some View {
         HStack(alignment: .informationBlockAlignment, spacing: UIPadding.intermediate) {
             icon
                 .resizable()

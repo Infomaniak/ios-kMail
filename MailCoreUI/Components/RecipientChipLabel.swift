@@ -22,15 +22,25 @@ import MailResources
 import SwiftUI
 import UIKit
 
-struct RecipientChipLabelView: UIViewRepresentable {
+public struct RecipientChipLabelView: UIViewRepresentable {
     @Environment(\.isEnabled) private var isEnabled: Bool
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let recipient: Recipient
-    var removeHandler: (() -> Void)?
-    var switchFocusHandler: (() -> Void)?
+    let removeHandler: (() -> Void)?
+    let switchFocusHandler: (() -> Void)?
 
-    func makeUIView(context: Context) -> RecipientChipLabel {
+    public init(
+        recipient: Recipient,
+        removeHandler: (() -> Void)? = nil,
+        switchFocusHandler: (() -> Void)? = nil
+    ) {
+        self.recipient = recipient
+        self.removeHandler = removeHandler
+        self.switchFocusHandler = switchFocusHandler
+    }
+
+    public func makeUIView(context: Context) -> RecipientChipLabel {
         let label = RecipientChipLabel(recipient: recipient, external: recipient.isExternal(mailboxManager: mailboxManager))
         label.removeHandler = removeHandler
         label.switchFocusHandler = switchFocusHandler
@@ -40,7 +50,7 @@ struct RecipientChipLabelView: UIViewRepresentable {
         return label
     }
 
-    func updateUIView(_ uiLabel: RecipientChipLabel, context: Context) {
+    public func updateUIView(_ uiLabel: RecipientChipLabel, context: Context) {
         uiLabel.text = recipient.name.isEmpty ? recipient.email : recipient.name
         uiLabel.isExternal = recipient.isExternal(mailboxManager: mailboxManager)
         uiLabel.isUserInteractionEnabled = isEnabled
@@ -48,23 +58,23 @@ struct RecipientChipLabelView: UIViewRepresentable {
     }
 }
 
-class RecipientChipLabel: UILabel, UIKeyInput {
+public class RecipientChipLabel: UILabel, UIKeyInput {
     var removeHandler: (() -> Void)?
     var switchFocusHandler: (() -> Void)?
 
-    override var intrinsicContentSize: CGSize {
+    override public var intrinsicContentSize: CGSize {
         var contentSize = super.intrinsicContentSize
         contentSize.height += UIPadding.recipientChip.top + UIPadding.recipientChip.bottom
         contentSize.width += UIPadding.recipientChip.left + UIPadding.recipientChip.right
         return contentSize
     }
 
-    override var canBecomeFirstResponder: Bool { return isUserInteractionEnabled }
+    override public var canBecomeFirstResponder: Bool { return isUserInteractionEnabled }
 
-    var hasText = false
+    public var hasText = false
     var isExternal = false
 
-    init(recipient: Recipient, external: Bool) {
+    public init(recipient: Recipient, external: Bool) {
         super.init(frame: .zero)
 
         text = recipient.name.isEmpty ? recipient.email : recipient.name
@@ -86,27 +96,27 @@ class RecipientChipLabel: UILabel, UIKeyInput {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func drawText(in rect: CGRect) {
+    override public func drawText(in rect: CGRect) {
         super.drawText(in: rect.inset(by: UIPadding.recipientChip))
     }
 
-    override func becomeFirstResponder() -> Bool {
+    override public func becomeFirstResponder() -> Bool {
         updateColors(isFirstResponder: true)
         return super.becomeFirstResponder()
     }
 
-    override func resignFirstResponder() -> Bool {
+    override public func resignFirstResponder() -> Bool {
         updateColors(isFirstResponder: false)
         return super.resignFirstResponder()
     }
 
-    func insertText(_ text: String) {
+    public func insertText(_ text: String) {
         if text == "\t" {
             switchFocusHandler?()
         }
     }
 
-    func deleteBackward() {
+    public func deleteBackward() {
         removeHandler?()
     }
 

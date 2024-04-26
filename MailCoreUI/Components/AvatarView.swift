@@ -23,7 +23,7 @@ import NukeUI
 import SwiftUI
 
 extension AvatarView: Equatable {
-    static func == (lhs: AvatarView, rhs: AvatarView) -> Bool {
+    public static func == (lhs: AvatarView, rhs: AvatarView) -> Bool {
         return lhs.mailboxManager == rhs.mailboxManager
             && lhs.size == rhs.size
             && lhs.contactConfiguration.id == rhs.contactConfiguration.id
@@ -31,7 +31,7 @@ extension AvatarView: Equatable {
 }
 
 /// A view that displays an avatar linked to a Contact.
-struct AvatarView: View {
+public struct AvatarView: View {
     /// A view model for async loading of contacts
     @ObservedObject private var viewModel: AvatarViewModel
 
@@ -48,7 +48,7 @@ struct AvatarView: View {
         viewModel.displayablePerson
     }
 
-    init(mailboxManager: MailboxManager?, contactConfiguration: ContactConfiguration, size: CGFloat = 28) {
+    public init(mailboxManager: MailboxManager?, contactConfiguration: ContactConfiguration, size: CGFloat = 28) {
         self.mailboxManager = mailboxManager
         self.size = size
         self.contactConfiguration = contactConfiguration
@@ -57,7 +57,7 @@ struct AvatarView: View {
         _viewModel = ObservedObject(wrappedValue: AvatarViewModel(contactConfiguration: contactConfiguration.freezeIfNeeded()))
     }
 
-    var body: some View {
+    public var body: some View {
         Group {
             if case .emptyContact = contactConfiguration {
                 UnknownRecipientView(size: size)

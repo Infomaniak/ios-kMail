@@ -19,8 +19,8 @@
 import MailCore
 import SwiftUI
 
-struct RecipientCellModifier: ViewModifier {
-    func body(content: Content) -> some View {
+public struct RecipientCellModifier: ViewModifier {
+    public func body(content: Content) -> some View {
         content
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -29,19 +29,24 @@ struct RecipientCellModifier: ViewModifier {
     }
 }
 
-extension View {
+public extension View {
     func recipientCellModifier() -> some View {
         modifier(RecipientCellModifier())
     }
 }
 
-struct RecipientCell: View {
+public struct RecipientCell: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let recipient: Recipient
-    var highlight: String?
+    let highlight: String?
 
-    var body: some View {
+    public init(recipient: Recipient, highlight: String? = nil) {
+        self.recipient = recipient
+        self.highlight = highlight
+    }
+
+    public var body: some View {
         HStack(spacing: UIPadding.small) {
             AvatarView(
                 mailboxManager: mailboxManager,

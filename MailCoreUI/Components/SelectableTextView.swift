@@ -22,8 +22,8 @@ import MailResources
 import SwiftUI
 import UIKit
 
-struct SelectableTextView: UIViewRepresentable {
-    enum Style {
+public struct SelectableTextView: UIViewRepresentable {
+    public enum Style {
         case loading, standard, loadingError, error
 
         var foregroundColor: UIColor {
@@ -39,9 +39,15 @@ struct SelectableTextView: UIViewRepresentable {
     @Binding var textPlainHeight: CGFloat
 
     let text: String?
-    var style = Style.standard
+    let style: Style
 
-    func makeUIView(context: Context) -> UITextView {
+    public init(textPlainHeight: Binding<CGFloat>, text: String?, style: Style = Style.standard) {
+        _textPlainHeight = textPlainHeight
+        self.text = text
+        self.style = style
+    }
+
+    public func makeUIView(context: Context) -> UITextView {
         let textView = UITextView()
         textView.dataDetectorTypes = .all
         textView.isScrollEnabled = false
@@ -56,7 +62,7 @@ struct SelectableTextView: UIViewRepresentable {
         return textView
     }
 
-    func updateUIView(_ uiView: UITextView, context: Context) {
+    public func updateUIView(_ uiView: UITextView, context: Context) {
         // Replace text when the style is standard and the current color has not yet been changed
         if case .standard = style, uiView.textColor != style.foregroundColor {
             replaceText(text: text ?? "", in: uiView)

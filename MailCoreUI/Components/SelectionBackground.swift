@@ -20,7 +20,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
-enum SelectionBackgroundKind {
+public enum SelectionBackgroundKind {
     case none
     case multiple
     case folder
@@ -46,13 +46,25 @@ struct RoundedCorner: Shape {
     }
 }
 
-struct SelectionBackground: View {
+public struct SelectionBackground: View {
     let selectionType: SelectionBackgroundKind
-    var paddingLeading = UIPadding.small
-    var withAnimation = true
+    let paddingLeading: CGFloat
+    let withAnimation: Bool
     let accentColor: AccentColor
 
-    var body: some View {
+    public init(
+        selectionType: SelectionBackgroundKind,
+        paddingLeading: CGFloat = UIPadding.small,
+        withAnimation: Bool = true,
+        accentColor: AccentColor
+    ) {
+        self.selectionType = selectionType
+        self.paddingLeading = paddingLeading
+        self.withAnimation = withAnimation
+        self.accentColor = accentColor
+    }
+
+    public var body: some View {
         Rectangle()
             .fill(selectionType == .single ? MailResourcesAsset.elementsColor.swiftUIColor : accentColor.secondary.swiftUIColor)
             .clipShape(RoundedCorner(radius: 8, corners: [.topLeft, .bottomLeft]))

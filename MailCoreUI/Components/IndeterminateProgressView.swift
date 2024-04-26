@@ -18,13 +18,18 @@
 
 import SwiftUI
 
-struct IndeterminateProgressView: View {
+public struct IndeterminateProgressView: View {
     @State private var animationDuration = 1.0
 
     let indeterminate: Bool
     let progress: Double
 
-    var body: some View {
+    public init(indeterminate: Bool, progress: Double) {
+        self.indeterminate = indeterminate
+        self.progress = progress
+    }
+
+    public var body: some View {
         ZStack {
             ProgressView(value: indeterminate ? 0 : progress)
             if indeterminate {

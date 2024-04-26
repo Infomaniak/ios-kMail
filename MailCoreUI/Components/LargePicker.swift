@@ -19,7 +19,7 @@
 import MailResources
 import SwiftUI
 
-struct LargePicker<SelectionValue, ButtonType>: View where SelectionValue: Hashable, ButtonType: View {
+public struct LargePicker<SelectionValue, ButtonType>: View where SelectionValue: Hashable, ButtonType: View {
     let title: String?
     let noSelectionText: String
     let items: [Item<SelectionValue>]
@@ -27,20 +27,25 @@ struct LargePicker<SelectionValue, ButtonType>: View where SelectionValue: Hasha
 
     @Binding var selection: SelectionValue
 
-    struct Item<ID>: Identifiable where ID: Hashable {
-        let id: ID
-        let name: String
+    public struct Item<ID>: Identifiable where ID: Hashable {
+        public let id: ID
+        public let name: String
+
+        public init(id: ID, name: String) {
+            self.id = id
+            self.name = name
+        }
     }
 
     private var selectedItem: Item<SelectionValue>? {
         return items.first { $0.id == selection }
     }
 
-    init(title: String? = nil,
-         noSelectionText: String = MailResourcesStrings.Localizable.pickerNoSelection,
-         selection: Binding<SelectionValue>,
-         items: [Item<SelectionValue>],
-         button: Button<ButtonType>?) {
+    public init(title: String? = nil,
+                noSelectionText: String = MailResourcesStrings.Localizable.pickerNoSelection,
+                selection: Binding<SelectionValue>,
+                items: [Item<SelectionValue>],
+                button: Button<ButtonType>?) {
         self.title = title
         self.noSelectionText = noSelectionText
         self.items = items
@@ -48,7 +53,7 @@ struct LargePicker<SelectionValue, ButtonType>: View where SelectionValue: Hasha
         _selection = selection
     }
 
-    var body: some View {
+    public var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             if let title {
                 Text(title)
@@ -79,7 +84,7 @@ struct LargePicker<SelectionValue, ButtonType>: View where SelectionValue: Hasha
     }
 }
 
-extension LargePicker where ButtonType == EmptyView {
+public extension LargePicker where ButtonType == EmptyView {
     init(title: String? = nil,
          noSelectionText: String = MailResourcesStrings.Localizable.pickerNoSelection,
          selection: Binding<SelectionValue>,

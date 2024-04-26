@@ -19,8 +19,9 @@
 import Lottie
 import MailResources
 import SwiftUI
+import UIKit
 
-extension LottieAnimationView {
+public extension LottieAnimationView {
     func updateColor(color: UIColor, darkColor: UIColor, for keyPath: AnimationKeypath) {
         let color = UITraitCollection.current.userInterfaceStyle == .dark ? darkColor : color
         let colorProvider = ColorValueProvider(color.lottieColorValue)
@@ -28,13 +29,29 @@ extension LottieAnimationView {
     }
 }
 
-struct LottieConfiguration {
-    let id: Int
-    let filename: String
-    var loopMode: LottieLoopMode = .playOnce
-    var contentMode = UIView.ContentMode.scaleAspectFit
-    var loopFrameStart: Int?
-    var loopFrameEnd: Int?
+public struct LottieConfiguration {
+    public let id: Int
+    public let filename: String
+    public let loopMode: LottieLoopMode
+    public let contentMode: UIView.ContentMode
+    public let loopFrameStart: Int?
+    public let loopFrameEnd: Int?
+
+    public init(
+        id: Int,
+        filename: String,
+        loopMode: LottieLoopMode = .playOnce,
+        contentMode: UIView.ContentMode = UIView.ContentMode.scaleAspectFit,
+        loopFrameStart: Int? = nil,
+        loopFrameEnd: Int? = nil
+    ) {
+        self.id = id
+        self.filename = filename
+        self.loopMode = loopMode
+        self.contentMode = contentMode
+        self.loopFrameStart = loopFrameStart
+        self.loopFrameEnd = loopFrameEnd
+    }
 }
 
 class LottieViewModel: ObservableObject {
@@ -42,17 +59,29 @@ class LottieViewModel: ObservableObject {
     var accentColor = UserDefaults.shared.accentColor
 }
 
-struct LottieView: UIViewRepresentable {
-    typealias UpdateColorsClosure = (LottieAnimationView, LottieConfiguration) -> Void
+public struct LottieView: UIViewRepresentable {
+    public typealias UpdateColorsClosure = (LottieAnimationView, LottieConfiguration) -> Void
 
     @StateObject private var viewModel = LottieViewModel()
 
     let configuration: LottieConfiguration
-    var isVisible = true
-    var updateColors: UpdateColorsClosure?
-    var completionFirstPlay: (() -> Void)?
+    let isVisible: Bool
+    let updateColors: UpdateColorsClosure?
+    let completionFirstPlay: (() -> Void)?
 
-    func makeUIView(context: Context) -> UIView {
+    public init(
+        configuration: LottieConfiguration,
+        isVisible: Bool = true,
+        updateColors: UpdateColorsClosure? = nil,
+        completionFirstPlay: (() -> Void)? = nil
+    ) {
+        self.configuration = configuration
+        self.isVisible = isVisible
+        self.updateColors = updateColors
+        self.completionFirstPlay = completionFirstPlay
+    }
+
+    public func makeUIView(context: Context) -> UIView {
         let view = UIView()
 
         let animationView = LottieAnimationView()
@@ -92,7 +121,7 @@ struct LottieView: UIViewRepresentable {
         }
     }
 
-    func updateUIView(_ uiView: UIViewType, context: Context) {
+    public func updateUIView(_ uiView: UIViewType, context: Context) {
         guard isVisible, let animationView = uiView.subviews.first as? LottieAnimationView else { return }
 
         if !animationView.isAnimationPlaying {
