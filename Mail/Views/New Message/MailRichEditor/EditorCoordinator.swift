@@ -25,7 +25,7 @@ final class EditorCoordinator {
     let toolbar: UIToolbar!
 
     private(set) var parent: EditorView
-    private(set) var toolbarStyle = ToolbarStyle.main
+    private(set) var toolbarStyle = EditorToolbarStyle.main
 
     init(parent: EditorView) {
         self.parent = parent
@@ -50,9 +50,12 @@ extension EditorCoordinator: RichEditorViewDelegate {
         parent.body = richEditorView.html
     }
 
+    func richEditorViewDidChangeSelection(_ richEditorView: RichEditorView) {
+        parent.model.cursorPosition = richEditorView.selection?.anchorPoint
+    }
+
     func richEditorView(_ richEditorView: RichEditorView, contentHeightDidChange contentHeight: CGFloat) {
-        parent.height = contentHeight
-        print("NEW HEIGHT", contentHeight)
+        parent.model.height = contentHeight
     }
 
     func richEditorView(_ richEditorView: RichEditorView, selectedTextAttributesDidChange textAttributes: RETextAttributes) {
@@ -67,7 +70,7 @@ extension EditorCoordinator {
         UIConstants.applyComposeViewStyle(to: toolbar)
     }
 
-    public func updateToolbarItems(for richEditorView: RichEditorView, style: ToolbarStyle) {
+    public func updateToolbarItems(for richEditorView: RichEditorView, style: EditorToolbarStyle) {
         toolbarStyle = style
 
         let flexibleSpaceItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: self, action: nil)
@@ -94,7 +97,7 @@ extension EditorCoordinator {
     }
 
     @objc private func onToolbarClick(_ sender: UIBarButtonItem, for richEditorView: RichEditorView) {
-        guard let toolbarAction = ToolbarAction(rawValue: sender.tag) else { return }
+        guard let toolbarAction = EditorToolbarAction(rawValue: sender.tag) else { return }
 
         switch toolbarAction {
         case .ai, .addFile, .addPhoto, .takePhoto, .programMessage:
@@ -104,7 +107,7 @@ extension EditorCoordinator {
         }
     }
 
-    private func performAppAction(_ action: ToolbarAction) {
+    private func performAppAction(_ action: EditorToolbarAction) {
         switch action {
         case .ai:
             parent.isShowingAIPrompt = true
@@ -121,10 +124,10 @@ extension EditorCoordinator {
         }
     }
 
-    private func performFormatAction(_ action: ToolbarAction, for richEditorView: RichEditorView) {
+    private func performFormatAction(_ action: EditorToolbarAction, for richEditorView: RichEditorView) {
         switch action {
         case .editText:
-            let newToolbarStyle: ToolbarStyle = toolbarStyle == .main ? .textEdition : .main
+            let newToolbarStyle: EditorToolbarStyle = toolbarStyle == .main ? .textEdition : .main
             updateToolbarItems(for: richEditorView, style: newToolbarStyle)
         case .bold:
             richEditorView.bold()

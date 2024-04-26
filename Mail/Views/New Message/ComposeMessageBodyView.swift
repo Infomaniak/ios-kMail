@@ -24,14 +24,13 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct ComposeMessageBodyView: View {
-    @State private var height = CGFloat.zero
     @State private var isShowingCamera = false
     @ModalState(context: ContextKeys.compose) private var isShowingFileSelection = false
     @ModalState(context: ContextKeys.compose) private var isShowingPhotoLibrary = false
 
     @ObservedRealmObject var draft: Draft
 
-    @Binding var editorModel: RichTextEditorModel
+    @Binding var editorModel: EditorModel
     @Binding var editorFocus: Bool
     @Binding var isShowingAIPrompt: Bool
     @Binding var isShowingAlert: NewMessageAlert?
@@ -50,14 +49,14 @@ struct ComposeMessageBodyView: View {
 
             EditorView(
                 body: $draft.body,
-                height: $height,
+                model: $editorModel,
                 isShowingFileSelection: $isShowingFileSelection,
                 isShowingCamera: $isShowingCamera,
                 isShowingPhotoLibrary: $isShowingPhotoLibrary,
                 isShowingAIPrompt: $isShowingAIPrompt,
                 isShowingAlert: $isShowingAlert
             )
-            .frame(height: height)
+            .frame(height: editorModel.height)
         }
         .fullScreenCover(isPresented: $isShowingCamera) {
             CameraPicker { data in
@@ -95,7 +94,7 @@ struct ComposeMessageBodyView: View {
 #Preview {
     let draft = Draft()
     return ComposeMessageBodyView(draft: draft,
-                                  editorModel: .constant(RichTextEditorModel()),
+                                  editorModel: .constant(EditorModel()),
                                   editorFocus: .constant(false),
                                   isShowingAIPrompt: .constant(false),
                                   isShowingAlert: .constant(nil),
