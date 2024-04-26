@@ -20,9 +20,16 @@ import InfomaniakRichEditor
 import MailCore
 import SwiftUI
 
+struct EditorModel {
+    var height: CGFloat = .zero
+    var cursorPosition: CGPoint? = .zero
+}
+
 struct EditorView: UIViewRepresentable {
     @Binding var body: String
-    @Binding var height: CGFloat
+
+    @Binding var model: EditorModel
+
     @Binding var isShowingFileSelection: Bool
     @Binding var isShowingCamera: Bool
     @Binding var isShowingPhotoLibrary: Bool
@@ -50,7 +57,7 @@ struct EditorView: UIViewRepresentable {
 
 #Preview {
     EditorView(body: .constant(""),
-               height: .constant(.zero),
+               model: .constant(EditorModel()),
                isShowingFileSelection: .constant(false),
                isShowingCamera: .constant(false),
                isShowingPhotoLibrary: .constant(false),
