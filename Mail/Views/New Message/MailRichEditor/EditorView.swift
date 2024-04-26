@@ -29,12 +29,7 @@ struct EditorView: UIViewRepresentable {
     @Binding var body: String
 
     @Binding var model: EditorModel
-
-    @Binding var isShowingFileSelection: Bool
-    @Binding var isShowingCamera: Bool
-    @Binding var isShowingPhotoLibrary: Bool
-    @Binding var isShowingAIPrompt: Bool
-    @Binding var isShowingAlert: NewMessageAlert?
+    @ObservedObject var toolbarModel: EditorToolbarModel
 
     func makeUIView(context: Context) -> RichEditorView {
         let editor = RichEditorView()
@@ -56,11 +51,5 @@ struct EditorView: UIViewRepresentable {
 }
 
 #Preview {
-    EditorView(body: .constant(""),
-               model: .constant(EditorModel()),
-               isShowingFileSelection: .constant(false),
-               isShowingCamera: .constant(false),
-               isShowingPhotoLibrary: .constant(false),
-               isShowingAIPrompt: .constant(false),
-               isShowingAlert: .constant(nil))
+    EditorView(body: .constant(""), model: .constant(EditorModel()), toolbarModel: EditorToolbarModel())
 }

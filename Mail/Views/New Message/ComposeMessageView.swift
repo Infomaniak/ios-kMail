@@ -84,7 +84,6 @@ struct ComposeMessageView: View {
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
 
-    @State private var editorModel = EditorModel()
     @Weak private var scrollView: UIScrollView?
 
     @StateObject private var attachmentsManager: AttachmentsManager
@@ -159,12 +158,11 @@ struct ComposeMessageView: View {
                 if autocompletionType == nil && !isLoadingContent {
                     ComposeMessageBodyView(
                         draft: draft,
-                        editorModel: $editorModel,
                         editorFocus: $editorFocus,
-                        isShowingAIPrompt: $aiModel.isShowingPrompt,
-                        isShowingAlert: $isShowingAlert,
+                        currentSignature: $currentSignature,
                         attachmentsManager: attachmentsManager,
-                        messageReply: messageReply
+                        messageReply: messageReply,
+                        scrollView: scrollView
                     )
                 }
             }
@@ -199,7 +197,6 @@ struct ComposeMessageView: View {
 //            let rect = CGRect(x: 0, y: realPosition, width: 1, height: 1)
 //            scrollView.scrollRectToVisible(rect, animated: true)
 //        }
-        .onChange(of: editorModel.cursorPosition, perform: keepCursorVisible)
         .onChange(of: autocompletionType) { newValue in
             guard newValue != nil else { return }
 
@@ -348,12 +345,6 @@ struct ComposeMessageView: View {
             }
         }
         dismissMessageView()
-    }
-
-    private func keepCursorVisible(_ cursorPosition: CGPoint?) {
-        guard let scrollView, let cursorPosition else {
-            return
-        }
     }
 }
 
