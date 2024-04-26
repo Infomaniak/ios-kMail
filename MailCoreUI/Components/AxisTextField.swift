@@ -18,19 +18,19 @@
 
 import SwiftUI
 
-struct AxisTextField: View {
+public struct AxisTextField: View {
     @Binding var text: String
 
     let localizedStringKey: LocalizedStringKey
     let axis: Axis
 
-    init(_ localizedStringKey: LocalizedStringKey, text: Binding<String>, axis: Axis) {
+    public init(_ localizedStringKey: LocalizedStringKey, text: Binding<String>, axis: Axis) {
         _text = text
         self.localizedStringKey = localizedStringKey
         self.axis = axis
     }
 
-    var body: some View {
+    public var body: some View {
         if #available(iOS 16.0, *) {
             TextField(localizedStringKey, text: $text, axis: .vertical)
         } else {

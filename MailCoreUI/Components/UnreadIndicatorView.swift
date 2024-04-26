@@ -19,10 +19,14 @@
 import MailCore
 import SwiftUI
 
-struct UnreadIndicatorView: View {
-    var hidden = false
+public struct UnreadIndicatorView: View {
+    let hidden: Bool
 
-    var body: some View {
+    public init(hidden: Bool = false) {
+        self.hidden = hidden
+    }
+
+    public var body: some View {
         Circle()
             .frame(width: UIConstants.unreadIconSize, height: UIConstants.unreadIconSize)
             .foregroundStyle(hidden ? .clear : .accentColor)

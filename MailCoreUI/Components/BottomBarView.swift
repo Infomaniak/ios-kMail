@@ -17,15 +17,14 @@
  */
 
 import MailCore
-import MailCoreUI
 import MailResources
 import SwiftUI
 
-struct BottomBar<Items: View>: ViewModifier {
+public struct BottomBar<Items: View>: ViewModifier {
     let isVisible: Bool
     @ViewBuilder var items: () -> Items
 
-    func body(content: Content) -> some View {
+    public func body(content: Content) -> some View {
         VStack(spacing: 0) {
             content
             Spacer(minLength: 0)
@@ -37,19 +36,29 @@ struct BottomBar<Items: View>: ViewModifier {
     }
 }
 
-extension View {
+public extension View {
     func bottomBar<Items: View>(isVisible: Bool = true, @ViewBuilder items: @escaping () -> Items) -> some View {
         modifier(BottomBar(isVisible: isVisible, items: items))
     }
 }
 
-struct BottomBarView<Items: View>: View {
-    @State private var hasBottomSafeArea = true
-    @State private var snackBarAwareModifier = SnackBarAwareModifier(inset: 0)
+public struct BottomBarView<Items: View>: View {
+    @State private var hasBottomSafeArea: Bool
+    @State private var snackBarAwareModifier: SnackBarAwareModifier
 
-    @ViewBuilder var items: () -> Items
+    @ViewBuilder let items: () -> Items
 
-    var body: some View {
+    public init(
+        hasBottomSafeArea: Bool = true,
+        snackBarAwareModifier: SnackBarAwareModifier = SnackBarAwareModifier(inset: 0),
+        items: @escaping () -> Items
+    ) {
+        self.hasBottomSafeArea = hasBottomSafeArea
+        self.snackBarAwareModifier = snackBarAwareModifier
+        self.items = items
+    }
+
+    public var body: some View {
         HStack {
             Spacer(minLength: UIConstants.bottomBarHorizontalMinimumSpace)
             items()

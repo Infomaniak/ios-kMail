@@ -20,19 +20,19 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct AttachmentView<Content: View>: View {
+public struct AttachmentView<Content: View>: View {
     private let detachedAttachment: Attachment
     private let subtitle: String
 
     @ViewBuilder let accessory: () -> Content?
 
-    init(attachment: Attachment, subtitle: String, accessory: @escaping () -> Content? = { EmptyView() }) {
+    public init(attachment: Attachment, subtitle: String, accessory: @escaping () -> Content? = { EmptyView() }) {
         detachedAttachment = attachment.detached()
         self.subtitle = subtitle
         self.accessory = accessory
     }
 
-    var body: some View {
+    public var body: some View {
         HStack(spacing: UIPadding.small) {
             IKIcon(detachedAttachment.icon, size: .large)
                 .foregroundStyle(MailResourcesAsset.textSecondaryColor)

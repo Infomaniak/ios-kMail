@@ -20,8 +20,8 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct IKIcon: View {
-    enum Size: CGFloat {
+public struct IKIcon: View {
+    public enum Size: CGFloat {
         /// 12pt icon
         case small = 12
         /// 16pt icon
@@ -33,16 +33,16 @@ struct IKIcon: View {
     let icon: Image
     let size: Size
 
-    init(_ icon: Image, size: Size = .regular) {
+    public init(_ icon: Image, size: Size = .regular) {
         self.icon = icon
         self.size = size
     }
 
-    init(_ icon: MailResourcesImages, size: Size = .regular) {
+    public init(_ icon: MailResourcesImages, size: Size = .regular) {
         self.init(icon.swiftUIImage, size: size)
     }
 
-    var body: some View {
+    public var body: some View {
         icon
             .resizable()
             .scaledToFit()
