@@ -15,9 +15,9 @@ fi
 
 # Perform the periphery scan and handle directory removal based on argument
 if "$full_dir"; then
-    detailedOutput=$(periphery scan --quiet)
+    detailedOutput=$(periphery scan --quiet --enable-unused-import-analysis)
 else
-    detailedOutput=$(periphery scan --quiet | sed "s|$(pwd)/||g")
+    detailedOutput=$(periphery scan --quiet --enable-unused-import-analysis | sed "s|$(pwd)/||g")
 fi
 
 unusedCount=$(wc -l <<< "$detailedOutput" | tr -d '[:space:]')
