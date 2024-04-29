@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: elena willen
- * Exported at: Mon, 22 Apr 2024 12:43:15 +0200
+ * Exported by: Ambroise Decouttere
+ * Exported at: Mon, 29 Apr 2024 14:06:22 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1089,6 +1089,9 @@
 
 /* loco:6537b4ae2236eeafef03c882 */
 "searchFolderName" = "Buscar en";
+
+/* loco:662f89ba8e8c8321190ae342 */
+"selectSignatureNone" = "Ninguna";
 
 /* loco:62ac871d2502053d7b0cbb32 */
 "send" = "Enviar";

@@ -50,8 +50,7 @@ struct SenderMenuCell: View {
                         Text("\(signature.senderName) (\(signature.name))")
                     }
                 } else {
-                    // TODO: - Add traduction
-                    Text("NONE")
+                    Text(MailResourcesStrings.Localizable.selectSignatureNone)
                 }
             } icon: {
                 if signature == currentSignature {
