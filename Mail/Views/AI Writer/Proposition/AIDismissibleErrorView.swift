@@ -34,7 +34,7 @@ struct AIDismissibleErrorView: View {
         Group {
             if isShowingError {
                 InformationBlockView(
-                    icon: MailResourcesAsset.warning.swiftUIImage,
+                    icon: MailResourcesAsset.warningFill.swiftUIImage,
                     message: error?.localizedDescription ?? "",
                     iconColor: MailResourcesAsset.orangeColor.swiftUIColor
                 ) {

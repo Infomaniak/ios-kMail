@@ -61,7 +61,7 @@ struct ThreadListView: View {
     private var shouldDisplayUpdateOSView: Bool {
         guard !updateOSViewDismissed && !platformDetector.isMac else { return false }
         if #available(iOS 16.5, *) {
-            return true // après DEBUG: remettre à false
+            return true //  après DEBUG: remettre à false
         } else {
             return true
         }

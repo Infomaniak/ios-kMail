@@ -18,6 +18,7 @@
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
+import MailResources
 import SwiftUI
 
 struct UpdateVersionAlertView: View {
@@ -30,14 +31,13 @@ struct UpdateVersionAlertView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.medium) {
-            Text("Vos e-mails peuvent ne pas s’afficher correctement ")
+            Text("Votre expérience peut être dégradée car votre appareil n’est pas à jour")
                 .textStyle(.bodyMedium)
-            Text("Pour une expérience optimale, veuillez mettre à jour votre appareil.")
+            Text("Pour votre sécurité et améliorer votre expérience, veuillez mettre à jour votre appareil.")
                 .textStyle(.body)
 
-            ModalButtonsView(primaryButtonTitle: "Mettre à jour",
-                             // MailResourcesStrings.Localizable.buttonUpdateOSVersion,
-                             secondaryButtonTitle: "Plus tard",
+            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonUpdate,
+                             secondaryButtonTitle: MailResourcesStrings.Localizable.buttonLater,
                              primaryButtonAction: updateVersion,
                              secondaryButtonAction: dismissUpdateVersionView)
         }

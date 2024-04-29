@@ -62,7 +62,7 @@ struct MailboxesManagementButtonView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 if !mailbox.isAvailable && style != .blockedPassword && style != .locked {
-                    MailResourcesAsset.warning.swiftUIImage
+                    MailResourcesAsset.warningFill.swiftUIImage
                         .foregroundStyle(MailResourcesAsset.orangeColor.swiftUIColor)
                 } else {
                     switch style {
