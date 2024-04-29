@@ -33,7 +33,8 @@ struct MCKContactManageable_FolderListViewModel: ContactManageable, MCKTransacti
 
     init(realmConfiguration: RealmSwift.Realm.Configuration) {
         self.realmConfiguration = realmConfiguration
-        transactionExecutor = TransactionExecutor(realmAccessible: self)
+        let backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
+        transactionExecutor = TransactionExecutor(realmAccessible: backgroundRealm)
     }
 
     func frozenContacts(matching string: String, fetchLimit: Int?) -> any Collection<MailCore.MergedContact> { [] }
@@ -54,7 +55,7 @@ struct MCKContactManageable_FolderListViewModel: ContactManageable, MCKTransacti
 }
 
 /// A MailboxManageable used to test the FolderListViewModel
-struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransactionablePassthrough {
+struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransactionablePassthrough, RealmAccessible {
     let mailbox = Mailbox()
 
     var contactManager: MailCore.ContactManageable {
@@ -191,6 +192,20 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
     var realmConfiguration: RealmSwift.Realm.Configuration {
         realm.configuration
     }
+
+    func draft(messageUid: String) -> MailCore.Draft? { nil }
+
+    func draft(messageUid: String, using realm: RealmSwift.Realm) -> MailCore.Draft? { nil }
+
+    func draft(localUuid: String) -> MailCore.Draft? { nil }
+
+    func draft(localUuid: String, using realm: RealmSwift.Realm) -> MailCore.Draft? { nil }
+
+    func draft(remoteUuid: String) -> MailCore.Draft? { nil }
+
+    func draft(remoteUuid: String, using realm: RealmSwift.Realm) -> MailCore.Draft? { nil }
+
+    func getFrozenFolders() -> [MailCore.Folder] { [] }
 }
 
 /// Integration tests of the FolderListViewModel
