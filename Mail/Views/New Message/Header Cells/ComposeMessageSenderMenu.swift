@@ -25,6 +25,7 @@ import SwiftUI
 
 struct ComposeMessageSenderMenu: View {
     @EnvironmentObject private var draftContentManager: DraftContentManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ObservedResults(Signature.self) private var signatures
 
@@ -35,7 +36,7 @@ struct ComposeMessageSenderMenu: View {
     let text: String
 
     private var canSelectSignature: Bool {
-        signatures.count > 1
+        !signatures.isEmpty
     }
 
     init(
@@ -59,23 +60,28 @@ struct ComposeMessageSenderMenu: View {
                     Text(type.title)
                         .textStyle(.bodySecondary)
 
-                    if let currentSignature {
-                        Menu {
-                            ForEach(signatures) { signature in
-                                SenderMenuCell(currentSignature: $currentSignature, signature: signature)
-                            }
-                        } label: {
-                            Text(currentSignature, format: .signature(style: canSelectSignature ? .long : .short))
-                                .textStyle(.body)
-                                .lineLimit(1)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-
-                            if canSelectSignature {
-                                ChevronIcon(direction: .down)
+                    Menu {
+                        SenderMenuCell(currentSignature: $currentSignature, signature: nil)
+                        ForEach(signatures) { signature in
+                            SenderMenuCell(currentSignature: $currentSignature, signature: signature)
+                        }
+                    } label: {
+                        Group {
+                            if let currentSignature {
+                                Text(currentSignature, format: .signature(style: canSelectSignature ? .long : .short))
+                            } else {
+                                Text(mailboxManager.mailbox.email)
                             }
                         }
-                        .disabled(!canSelectSignature)
+                        .textStyle(.body)
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                        if canSelectSignature {
+                            ChevronIcon(direction: .down)
+                        }
                     }
+                    .disabled(!canSelectSignature)
                 }
                 .padding(.vertical, UIPadding.composeViewHeaderCellLargeVertical)
                 .padding(.horizontal, UIPadding.composeViewHeaderHorizontal)

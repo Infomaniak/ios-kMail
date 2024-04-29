@@ -31,7 +31,7 @@ struct SenderMenuCell: View {
 
     @Binding var currentSignature: Signature?
 
-    let signature: Signature
+    let signature: Signature?
 
     var body: some View {
         Button {
@@ -43,10 +43,15 @@ struct SenderMenuCell: View {
             draftContentManager.updateSignature(with: signature)
         } label: {
             Label {
-                if platformDetector.isMac {
-                    Text("\(signature.senderName) (\(signature.name)) \(signature.senderEmailIdn)")
+                if let signature {
+                    if platformDetector.isMac {
+                        Text("\(signature.senderName) (\(signature.name)) \(signature.senderEmailIdn)")
+                    } else {
+                        Text("\(signature.senderName) (\(signature.name))")
+                    }
                 } else {
-                    Text("\(signature.senderName) (\(signature.name))")
+                    // TODO: - Add traduction
+                    Text("NONE")
                 }
             } icon: {
                 if signature == currentSignature {
@@ -55,7 +60,9 @@ struct SenderMenuCell: View {
             }
             .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonSelectSignature)
 
-            Text(signature.senderEmailIdn)
+            if let signature {
+                Text(signature.senderEmailIdn)
+            }
         }
     }
 }
