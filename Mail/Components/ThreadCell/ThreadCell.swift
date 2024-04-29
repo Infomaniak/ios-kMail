@@ -47,8 +47,17 @@ struct ThreadCellDataHolder {
 
     let isInWrittenByMeFolder: Bool
 
+    private static let messagesNotFromSent = NSPredicate(
+        format: "(folders.@count > 0) AND (SUBQUERY(folders, $folder, $folder.role == %@).@count > 0)",
+        FolderRole.sent.rawValue
+    )
+
     init(thread: Thread) {
-        let lastMessageNotFromSent = thread.messages.last { $0.folder?.role != .sent } ?? thread.messages.last
+        // swiftlint:disable next first_where
+        let lastMessageNotFromSent = thread.messages
+            .filter(Self.messagesNotFromSent)
+            .first ?? thread.messages.last
+
         date = thread.date.formatted(.thread(.list))
 
         subject = thread.formattedSubject
