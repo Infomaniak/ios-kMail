@@ -24,33 +24,41 @@ import SwiftUI
 
 struct UpdateVersionView: View {
     @State private var isShowingUpdateAlert = false
-//    @Binding var isShowingUpdateVersionView: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.small) {
-            VStack(alignment: .leading, spacing: UIPadding.small) {
-                HStack(alignment: .center, spacing: UIPadding.small) {
-                    IKIcon(MailResourcesAsset.warning)
-                        .foregroundStyle(MailResourcesAsset.orangeColor)
+            HStack(alignment: .informationBlockAlignment, spacing: UIPadding.small) {
+                IKIcon(MailResourcesAsset.warning)
+                    .foregroundStyle(MailResourcesAsset.orangeColor)
+                    .alignmentGuide(.informationBlockAlignment) { d in
+                        // Center of the view is on the informationBlockAlignment guide
+                        d[VerticalAlignment.center]
+                    }
+
+                VStack(alignment: .leading, spacing: UIPadding.small) {
                     Text("Vos e-mails peuvent ne pas s’afficher correctement.")
                         .textStyle(.bodySmall)
-                }
+                        .alignmentGuide(.informationBlockAlignment) { d in
+                            // Center of the first line is on the informationBlockAlignment guide
+                            (d.height - (d[.lastTextBaseline] - d[.firstTextBaseline])) / 2
+                        }
 
-                Button {
-                    //  matomo.track(eventWithCategory: .threadList, name: "")
-                    isShowingUpdateAlert = true
-
-                } label: {
-                    HStack(spacing: UIPadding.small) {
-                        Text("En savoir plus")
-                            .textStyle(.bodySmallAccent)
+                    Button {
+                        //  matomo.track(eventWithCategory: .threadList, name: "")
+                        isShowingUpdateAlert = true
+                    } label: {
+                        HStack(spacing: UIPadding.small) {
+                            Text("En savoir plus")
+                                .textStyle(.bodySmallAccent)
+                        }
+                        .buttonStyle(.borderless)
                     }
-                    .buttonStyle(.borderless)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(.top, value: .regular)
-            .padding(.bottom, value: .small)
             .padding(.horizontal, value: .regular)
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             IKDivider(type: .full)
         }

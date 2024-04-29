@@ -64,7 +64,7 @@ struct CalendarBodyDetailsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
             if let warning = event.warning {
-                Label { Text(warning.label) } icon: { IKIcon(MailResourcesAsset.warning, size: .large) }
+                Label { Text(warning.label) } icon: { IKIcon(MailResourcesAsset.warningFill, size: .large) }
                     .labelStyle(.calendar(warning))
             }
 
