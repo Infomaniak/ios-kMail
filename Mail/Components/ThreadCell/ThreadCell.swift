@@ -34,6 +34,10 @@ extension ThreadDensity {
 }
 
 struct ThreadCellDataHolder {
+    static let lastMessageNotFromSentPredicate = NSPredicate(
+        format: "SUBQUERY(folders, $folder, $folder.role != %@).@count > 0",
+        FolderRole.sent.rawValue
+    )
     /// Sender of the last message that is not in the Sent folder, otherwise the last message of the thread
     let recipientToDisplay: Recipient?
 
@@ -49,7 +53,8 @@ struct ThreadCellDataHolder {
     let isInWrittenByMeFolder: Bool
 
     init(thread: Thread) {
-        let lastMessageNotFromSent = thread.messages.last { $0.folder?.role != .sent } ?? thread.messages.last
+        let lastMessageNotFromSent = thread.messages.filter(Self.lastMessageNotFromSentPredicate).last ?? thread.messages.last
+
         date = thread.date.formatted(.thread(.list))
 
         subject = thread.formattedSubject
