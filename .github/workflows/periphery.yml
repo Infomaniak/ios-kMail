@@ -20,4 +20,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Periphery
+        id: periphery
         run: ./scripts/periphery.sh
+      - uses: mshick/add-pr-comment@v2
+        with:
+          message: |
+            Found ${{ steps.periphery.outputs.unused_count }} unused code occurences
+            <details>
+              <summary>Expand</summary>
+              
+              ```
+              ${{ steps.periphery.outputs.detailed_output }}
+              ```
+            </details>

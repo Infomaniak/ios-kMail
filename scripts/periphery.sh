@@ -24,3 +24,10 @@ unusedCount=$(wc -l <<< "$detailedOutput" | tr -d '[:space:]')
 
 echo "$detailedOutput"
 echo "Total unused instances $unusedCount"
+
+# Output script result to GITHUB_OUTPUT to get it in next step
+echo 'detailed_output<<EOF' >> $GITHUB_OUTPUT
+echo "$detailedOutput" >> $GITHUB_OUTPUT
+echo 'EOF' >> $GITHUB_OUTPUT
+
+echo "unused_count=$unusedCount" >> $GITHUB_OUTPUT
