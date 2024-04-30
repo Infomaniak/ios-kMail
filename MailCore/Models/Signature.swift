@@ -26,7 +26,7 @@ public enum SignaturePosition: String, PersistableEnum, Codable {
 
 public struct SignatureResponse: Decodable {
     public var signatures: [Signature]
-    public var defaultSignatureId: Int
+    public var defaultSignatureId: Int?
     public var defaultReplySignatureId: Int?
 
     public var `default`: Signature? {
