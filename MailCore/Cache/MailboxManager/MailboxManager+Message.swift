@@ -105,7 +105,7 @@ public extension MailboxManager {
     // MARK: Private
 
     func markAsSeen(messages: [Message], seen: Bool) async throws {
-        await markSeenLocally(seen, messages: messages)
+        await updateLocally(.seen, value: seen, messages: messages)
 
         do {
             if seen {
@@ -114,7 +114,7 @@ public extension MailboxManager {
                 try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
             }
         } catch {
-            await markSeenLocally(!seen, messages: messages)
+            await updateLocally(.seen, value: !seen, messages: messages)
         }
 
         try await refreshFolder(from: messages, additionalFolder: nil)
@@ -123,7 +123,30 @@ public extension MailboxManager {
         SentryDebug.listIncoherentMessageUpdate(messages: messages, actualSeen: seen)
     }
 
-    func markSeenLocally(_ seen: Bool, messages: [Message]) async {
+    enum UpdateType {
+        case seen
+        case star
+
+        func update(message: Message, with value: Bool) {
+            switch self {
+            case .seen:
+                message.seen = value
+            case .star:
+                message.flagged = value
+            }
+        }
+
+        func update(thread: Thread) {
+            switch self {
+            case .seen:
+                thread.updateUnseenMessages()
+            case .star:
+                thread.updateFlagged()
+            }
+        }
+    }
+
+    func updateLocally(_ type: UpdateType, value: Bool, messages: [Message]) async {
         await backgroundRealm.execute { realm in
             var updateThreads = Set<Thread>()
 
@@ -133,7 +156,7 @@ public extension MailboxManager {
                         continue
                     }
 
-                    liveMessage.seen = seen
+                    type.update(message: liveMessage, with: value)
 
                     for thread in liveMessage.threads {
                         updateThreads.insert(thread)
@@ -145,7 +168,7 @@ public extension MailboxManager {
                         continue
                     }
 
-                    liveThread.updateUnseenMessages()
+                    type.update(thread: liveThread)
                 }
             }
         }
@@ -154,10 +177,16 @@ public extension MailboxManager {
     /// Set starred the given messages.
     /// - Important: This methods stars only the messages you passes, no processing is done to add duplicates or remove drafts
     func star(messages: [Message], starred: Bool) async throws {
-        if starred {
-            _ = try await star(messages: messages)
-        } else {
-            _ = try await unstar(messages: messages)
+        await updateLocally(.star, value: starred, messages: messages)
+
+        do {
+            if starred {
+                _ = try await star(messages: messages)
+            } else {
+                _ = try await unstar(messages: messages)
+            }
+        } catch {
+            await updateLocally(.star, value: !starred, messages: messages)
         }
     }
 
