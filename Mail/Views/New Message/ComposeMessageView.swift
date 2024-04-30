@@ -218,7 +218,6 @@ struct ComposeMessageView: View {
 
                 isLoadingContent = false
             } catch {
-                // Unable to get signatures, "An error occurred" and close modal.
                 snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
                 dismissMessageView()
             }

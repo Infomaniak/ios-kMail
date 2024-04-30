@@ -145,7 +145,7 @@ extension DraftContentManager {
 public extension DraftContentManager {
     func prepareCompleteDraft() async throws -> Signature? {
         async let draftBodyResult = try await loadCompleteDraftBody()
-        async let signature = try await loadMostFittingSignature()
+        async let signature = await loadMostFittingSignature()
 
         try await writeCompleteDraft(
             completeBody: draftBodyResult.body,
@@ -154,7 +154,7 @@ public extension DraftContentManager {
             attachments: draftBodyResult.attachments
         )
 
-        return try await signature
+        return await signature
     }
 
     func replaceContent(subject: String? = nil, body: String) async {
@@ -339,32 +339,22 @@ extension DraftContentManager {
     }
 
     /// Load best signature from local DB
-    private func loadMostFittingSignature() async throws -> Signature? {
-        do {
-            let storedSignatures = mailboxManager.getStoredSignatures()
-            let defaultSignature = getDefaultSignature(userSignatures: storedSignatures)
+    private func loadMostFittingSignature() async -> Signature? {
+        let storedSignatures = mailboxManager.getStoredSignatures()
+        let defaultSignature = getDefaultSignature(userSignatures: storedSignatures)
 
-            // If draft already has an identity, return corresponding signature
-            if let storedDraft = mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID),
-               let identityId = storedDraft.identityId {
-                return getSignature(for: identityId, userSignatures: storedSignatures) ?? defaultSignature
-            }
-
-            // If draft is a new message or a forward, use default signature
-            guard let messageReply, messageReply.isReplying else {
-                return defaultSignature
-            }
-
-            return guessMostFittingSignature(userSignatures: storedSignatures, defaultSignature: defaultSignature)
-        } catch {
-            SentrySDK.capture(message: "We failed to fetch Signatures. This will close the Editor.") { scope in
-                scope.setExtras([
-                    "errorMessage": error.localizedDescription,
-                    "error": "\(error)"
-                ])
-            }
-            throw error
+        // If draft already has an identity, return corresponding signature
+        if let storedDraft = mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID),
+           let identityId = storedDraft.identityId {
+            return getSignature(for: identityId, userSignatures: storedSignatures) ?? defaultSignature
         }
+
+        // If draft is a new message or a forward, use default signature
+        guard let messageReply, messageReply.isReplying else {
+            return defaultSignature
+        }
+
+        return guessMostFittingSignature(userSignatures: storedSignatures, defaultSignature: defaultSignature)
     }
 
     private func getSignature(for identity: String, userSignatures: [Signature]) -> Signature? {
