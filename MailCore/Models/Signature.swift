@@ -88,13 +88,7 @@ public extension Signature {
 public extension [Signature] {
     /// Find the default signature, if any, in  an `Array` of `Signature`
     var defaultSignature: Signature? {
-        guard let defaultSignature = first(where: \.isDefault) else {
-            // We try to return at least a signature, so the backend is happy. Same on Android.
-            return first
-        }
-
-        // We matched one
-        return defaultSignature
+        return first(where: \.isDefault)
     }
 
     var defaultReplySignature: Signature? {
