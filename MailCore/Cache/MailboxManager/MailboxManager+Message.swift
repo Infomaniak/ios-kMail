@@ -105,15 +105,50 @@ public extension MailboxManager {
     // MARK: Private
 
     func markAsSeen(messages: [Message], seen: Bool) async throws {
-        if seen {
-            try await apiFetcher.markAsSeen(mailbox: mailbox, messages: messages)
-        } else {
-            try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
+        await markSeenLocally(seen, messages: messages)
+
+        do {
+            if seen {
+                try await apiFetcher.markAsSeen(mailbox: mailbox, messages: messages)
+            } else {
+                try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
+            }
+        } catch {
+            await markSeenLocally(!seen, messages: messages)
         }
+
         try await refreshFolder(from: messages, additionalFolder: nil)
 
         // TODO: Remove after fix
         SentryDebug.listIncoherentMessageUpdate(messages: messages, actualSeen: seen)
+    }
+
+    func markSeenLocally(_ seen: Bool, messages: [Message]) async {
+        await backgroundRealm.execute { realm in
+            var updateThreads = Set<Thread>()
+
+            try? realm.write {
+                for message in messages {
+                    guard let liveMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else {
+                        continue
+                    }
+
+                    liveMessage.seen = seen
+
+                    for thread in liveMessage.threads {
+                        updateThreads.insert(thread)
+                    }
+                }
+
+                for thread in updateThreads {
+                    guard let liveThread = realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) else {
+                        continue
+                    }
+
+                    liveThread.updateUnseenMessages()
+                }
+            }
+        }
     }
 
     /// Set starred the given messages.
