@@ -92,9 +92,15 @@ struct MoveEmailView: View {
 
     private func move(to folder: Folder) {
         let frozenOriginFolder = originFolder?.freezeIfNeeded()
+        let frozenDestinationFolder = folder.freezeIfNeeded()
+
         Task {
             await tryOrDisplayError {
-                try await actionsManager.performMove(messages: movedMessages, from: frozenOriginFolder, to: folder)
+                try await actionsManager.performMove(
+                    messages: movedMessages,
+                    from: frozenOriginFolder,
+                    to: frozenDestinationFolder
+                )
             }
         }
         dismissModal()

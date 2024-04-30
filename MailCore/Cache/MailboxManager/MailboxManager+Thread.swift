@@ -19,6 +19,7 @@
 import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreDB
 import InfomaniakCoreUI
 import RealmSwift
 import Sentry
@@ -31,8 +32,8 @@ public extension MailboxManager {
     /// - Parameters:
     ///   - folder: Folder to fetch messages from
     ///   - fetchCurrentFolderCompleted: Completion once the messages have been fetched
-    func threads(folder: Folder, fetchCurrentFolderCompleted: (() -> Void) = {}) async throws {
-        try await messages(folder: folder.freezeIfNeeded())
+    func threads(@EnsureFrozen folder: Folder, fetchCurrentFolderCompleted: (() -> Void) = {}) async throws {
+        try await messages(folder: folder)
         fetchCurrentFolderCompleted()
 
         var roles: [FolderRole] {
