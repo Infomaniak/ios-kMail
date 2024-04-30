@@ -1,0 +1,35 @@
+name: CI workflow
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Scan unused code
+    runs-on: [ self-hosted, iOS ]
+
+    steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.12.1
+        with:
+          access_token: ${{ github.token }}
+      - uses: jdx/mise-action@v2
+        with:
+          cache: false
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Periphery
+        id: periphery
+        run: ./scripts/periphery.sh
+      - uses: mshick/add-pr-comment@v2
+        with:
+          message: |
+            Found ${{ steps.periphery.outputs.unused_count }} unused code occurences
+            <details>
+              <summary>Expand</summary>
+              
+              ```
+              ${{ steps.periphery.outputs.detailed_output }}
+              ```
+            </details>
