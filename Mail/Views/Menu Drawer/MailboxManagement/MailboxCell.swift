@@ -24,16 +24,11 @@ import MailCoreUI
 import MailResources
 import SwiftModalPresentation
 import SwiftUI
-
-struct MailboxCellStyleKey: EnvironmentKey {
-    static var defaultValue = MailboxCell.Style.menuDrawer
-}
+import SwiftUIMacros
 
 extension EnvironmentValues {
-    var mailboxCellStyle: MailboxCell.Style {
-        get { self[MailboxCellStyleKey.self] }
-        set { self[MailboxCellStyleKey.self] = newValue }
-    }
+    @EnvironmentValue
+    var mailboxCellStyle = MailboxCell.Style.menuDrawer
 }
 
 extension View {

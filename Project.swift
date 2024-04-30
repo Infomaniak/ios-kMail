@@ -203,7 +203,8 @@ let project = Project(name: "Mail",
                                       .external(name: "Lottie"),
                                       .external(name: "NavigationBackport"),
                                       .external(name: "Popovers"),
-                                      .external(name: "SwiftUIBackports")
+                                      .external(name: "SwiftUIBackports"),
+                                      .external(name: "SwiftUIMacros")
                                   ],
                                   settings: .settings(base: Constants.baseSettings))
                       ],

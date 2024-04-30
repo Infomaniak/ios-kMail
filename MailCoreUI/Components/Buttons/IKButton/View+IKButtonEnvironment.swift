@@ -17,47 +17,16 @@
  */
 
 import SwiftUI
-
-// MARK: - EnvironmentKey
-
-struct IKButtonPrimaryStyleKey: EnvironmentKey {
-    static var defaultValue: any ShapeStyle = TintShapeStyle.tint
-}
-
-struct IKButtonSecondaryStyleKey: EnvironmentKey {
-    static var defaultValue: any ShapeStyle = UserDefaults.shared.accentColor.onAccent.swiftUIColor
-}
-
-struct IKButtonFullWidthKey: EnvironmentKey {
-    static var defaultValue = false
-}
-
-struct IKButtonLoadingKey: EnvironmentKey {
-    static var defaultValue = false
-}
+import SwiftUIMacros
 
 // MARK: - EnvironmentValues
 
-public extension EnvironmentValues {
-    var ikButtonPrimaryStyle: any ShapeStyle {
-        get { self[IKButtonPrimaryStyleKey.self] }
-        set { self[IKButtonPrimaryStyleKey.self] = newValue }
-    }
-
-    var ikButtonSecondaryStyle: any ShapeStyle {
-        get { self[IKButtonSecondaryStyleKey.self] }
-        set { self[IKButtonSecondaryStyleKey.self] = newValue }
-    }
-
-    var ikButtonFullWidth: Bool {
-        get { self[IKButtonFullWidthKey.self] }
-        set { self[IKButtonFullWidthKey.self] = newValue }
-    }
-
-    var ikButtonLoading: Bool {
-        get { self[IKButtonLoadingKey.self] }
-        set { self[IKButtonLoadingKey.self] = newValue }
-    }
+@EnvironmentStorage
+extension EnvironmentValues {
+    var ikButtonPrimaryStyle: any ShapeStyle = TintShapeStyle.tint
+    var ikButtonSecondaryStyle: any ShapeStyle = UserDefaults.shared.accentColor.onAccent.swiftUIColor
+    var ikButtonFullWidth = false
+    var ikButtonLoading = false
 }
 
 // MARK: - View functions
