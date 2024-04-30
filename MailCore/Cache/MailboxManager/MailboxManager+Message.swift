@@ -123,57 +123,6 @@ public extension MailboxManager {
         SentryDebug.listIncoherentMessageUpdate(messages: messages, actualSeen: seen)
     }
 
-    enum UpdateType {
-        case seen
-        case star
-
-        func update(message: Message, with value: Bool) {
-            switch self {
-            case .seen:
-                message.seen = value
-            case .star:
-                message.flagged = value
-            }
-        }
-
-        func update(thread: Thread) {
-            switch self {
-            case .seen:
-                thread.updateUnseenMessages()
-            case .star:
-                thread.updateFlagged()
-            }
-        }
-    }
-
-    func updateLocally(_ type: UpdateType, value: Bool, messages: [Message]) async {
-        await backgroundRealm.execute { realm in
-            var updateThreads = Set<Thread>()
-
-            try? realm.write {
-                for message in messages {
-                    guard let liveMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else {
-                        continue
-                    }
-
-                    type.update(message: liveMessage, with: value)
-
-                    for thread in liveMessage.threads {
-                        updateThreads.insert(thread)
-                    }
-                }
-
-                for thread in updateThreads {
-                    guard let liveThread = realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) else {
-                        continue
-                    }
-
-                    type.update(thread: liveThread)
-                }
-            }
-        }
-    }
-
     /// Set starred the given messages.
     /// - Important: This methods stars only the messages you passes, no processing is done to add duplicates or remove drafts
     func star(messages: [Message], starred: Bool) async throws {
