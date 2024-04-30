@@ -34,6 +34,10 @@ struct SenderMenuCell: View {
 
     let signature: Signature?
 
+    private var signatureLabel: String {
+        signature?.formatted(style: .option) ?? MailResourcesStrings.Localizable.selectSignatureNone
+    }
+
     var body: some View {
         Button {
             matomo.track(eventWithCategory: .newMessage, name: "switchIdentity")
@@ -44,7 +48,7 @@ struct SenderMenuCell: View {
             draftContentManager.updateSignature(with: signature)
         } label: {
             Label {
-                Text(signature?.formatted(style: .option) ?? MailResourcesStrings.Localizable.selectSignatureNone)
+                Text(signatureLabel)
             } icon: {
                 if signature == currentSignature {
                     MailResourcesAsset.check.swiftUIImage

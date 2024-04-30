@@ -39,6 +39,10 @@ struct ComposeMessageSenderMenu: View {
         !signatures.isEmpty
     }
 
+    private var signatureLabel: String {
+        currentSignature?.formatted(style: canSelectSignature ? .long : .short) ?? mailboxManager.mailbox.emailIdn
+    }
+
     init(
         currentSignature: Binding<Signature?>,
         mailboxManager: MailboxManager,
@@ -66,8 +70,7 @@ struct ComposeMessageSenderMenu: View {
                             SenderMenuCell(currentSignature: $currentSignature, signature: signature)
                         }
                     } label: {
-                        Text(currentSignature?.formatted(style: canSelectSignature ? .long : .short) ?? mailboxManager.mailbox
-                            .emailIdn)
+                        Text(signatureLabel)
                             .textStyle(.body)
                             .lineLimit(1)
                             .frame(maxWidth: .infinity, alignment: .leading)
