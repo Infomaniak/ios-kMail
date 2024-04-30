@@ -17,6 +17,8 @@
  */
 
 import Foundation
+import InfomaniakCore
+import InfomaniakDI
 
 public extension FormatStyle where Self == Signature.FormatStyle {
     static func signature(style: Signature.FormatStyle.Style) -> Self {
@@ -35,6 +37,7 @@ public extension Signature {
         public enum Style: Codable {
             case long
             case short
+            case option
         }
 
         private let style: Style
@@ -44,6 +47,14 @@ public extension Signature {
         }
 
         public func format(_ value: Signature) -> String {
+            if style == .option {
+                @LazyInjectService var platformDetector: PlatformDetectable
+                if platformDetector.isMac {
+                    return "\(value.senderName) (\(value.name)) \(value.senderEmailIdn)"
+                } else {
+                    return "\(value.senderName) (\(value.name))"
+                }
+            }
             if style == .short {
                 return value.senderEmailIdn
             }

@@ -66,7 +66,7 @@ struct ComposeMessageSenderMenu: View {
                         }
                     } label: {
                         Text(currentSignature?.formatted(style: canSelectSignature ? .long : .short) ?? mailboxManager.mailbox
-                            .email)
+                            .emailIdn)
                             .textStyle(.body)
                             .lineLimit(1)
                             .frame(maxWidth: .infinity, alignment: .leading)
