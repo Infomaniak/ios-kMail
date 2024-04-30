@@ -15,19 +15,26 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import InfomaniakBugTracker
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct UpdateVersionAlertView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.openURL) var openURL
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @AppStorage(UserDefaults.shared.key(.updateOSViewDismissed)) private var updateOSViewDismissed = DefaultPreferences
         .updateOSViewDismissed
+
+    @ModalState private var isShowingBugTracker = false
+
+    var isShownFromFeedbackOrHelpButton: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.medium) {
@@ -52,10 +59,21 @@ struct UpdateVersionAlertView: View {
     }
 
     private func dismissUpdateVersionView() {
+        if isShownFromFeedbackOrHelpButton {
+            sendFeedback()
+        }
         updateOSViewDismissed = true
+    }
+
+    private func sendFeedback() {
+        if mailboxManager.account.user?.isStaff == false {
+            isShowingBugTracker.toggle()
+        } else if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
+            openURL(userReportURL)
+        }
     }
 }
 
 #Preview {
-    UpdateVersionAlertView()
+    UpdateVersionAlertView(isShownFromFeedbackOrHelpButton: true)
 }

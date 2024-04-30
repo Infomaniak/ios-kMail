@@ -74,13 +74,14 @@ struct MenuDrawerItemsHelpListView: View {
 
     @ModalState private var isShowingHelp = false
     @ModalState private var isShowingBugTracker = false
+    @ModalState private var isShowingUpdateVersionAlert = false
 
     var body: some View {
         MenuDrawerItemsListView {
             MenuDrawerItemCell(icon: MailResourcesAsset.feedback,
                                label: MailResourcesStrings.Localizable.buttonFeedback,
                                matomoName: "feedback") {
-                sendFeedback()
+                isShowingUpdateVersionAlert = true
             }
             MenuDrawerItemCell(icon: MailResourcesAsset.help,
                                label: MailResourcesStrings.Localizable.buttonHelp,
@@ -95,13 +96,8 @@ struct MenuDrawerItemsHelpListView: View {
         .sheet(isPresented: $isShowingBugTracker) {
             BugTrackerView(isPresented: $isShowingBugTracker)
         }
-    }
-
-    private func sendFeedback() {
-        if mailboxManager.account.user?.isStaff == true {
-            isShowingBugTracker.toggle()
-        } else if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
-            openURL(userReportURL)
+        .customAlert(isPresented: $isShowingUpdateVersionAlert) {
+            UpdateVersionAlertView(isShownFromFeedbackOrHelpButton: true)
         }
     }
 }
