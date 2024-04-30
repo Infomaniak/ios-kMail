@@ -25,6 +25,10 @@ public extension FormatStyle where Self == Signature.FormatStyle {
 }
 
 public extension Signature {
+    func formatted(style: Signature.FormatStyle.Style) -> String {
+        Self.FormatStyle(style: style).format(self)
+    }
+
     struct FormatStyle: Foundation.FormatStyle {
         // Standard API does also nested types
         // swiftlint:disable:next nesting

@@ -66,16 +66,11 @@ struct ComposeMessageSenderMenu: View {
                             SenderMenuCell(currentSignature: $currentSignature, signature: signature)
                         }
                     } label: {
-                        Group {
-                            if let currentSignature {
-                                Text(currentSignature, format: .signature(style: canSelectSignature ? .long : .short))
-                            } else {
-                                Text(mailboxManager.mailbox.email)
-                            }
-                        }
-                        .textStyle(.body)
-                        .lineLimit(1)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        Text(currentSignature?.formatted(style: canSelectSignature ? .long : .short) ?? mailboxManager.mailbox
+                            .email)
+                            .textStyle(.body)
+                            .lineLimit(1)
+                            .frame(maxWidth: .infinity, alignment: .leading)
 
                         if canSelectSignature {
                             ChevronIcon(direction: .down)
