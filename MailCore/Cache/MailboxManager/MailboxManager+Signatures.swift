@@ -32,8 +32,15 @@ public extension MailboxManager {
         try await refreshAllSignatures()
     }
 
-    func getStoredSignatures(using realm: Realm? = nil) -> [Signature] {
-        let realm = realm ?? getRealm()
+    func getStoredSignatures() -> [Signature] {
+        let signatures = fetchResults(ofType: Signature.self) { partial in
+            partial
+        }
+
+        return Array(signatures)
+    }
+
+    func getStoredSignatures(using realm: Realm) -> [Signature] {
         return Array(realm.objects(Signature.self))
     }
 }

@@ -133,10 +133,11 @@ extension ThreadListViewModel {
         }
 
         let containAnyOf = NSPredicate(format: Self.containAnyOfUIDs, allThreadsUIDs)
-        let realm = mailboxManager.getRealm()
-        let allThreads = realm.objects(Thread.self)
-            .filter(containAnyOf)
-            .sorted(by: \.date, ascending: false)
+        let allThreads = mailboxManager.fetchResults(ofType: Thread.self) { partial in
+            partial
+                .filter(containAnyOf)
+                .sorted(by: \.date, ascending: false)
+        }
 
         observeFilteredThreadsToken = allThreads.observe(on: observeQueue) { [weak self] changes in
             guard let self else { return }

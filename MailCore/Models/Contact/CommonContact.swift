@@ -72,8 +72,8 @@ public final class CommonContact: Identifiable {
                 avatarImageRequest = AvatarImageRequest(imageRequest: nil, shouldAuthenticate: false)
             }
         } else {
-            let mainViewRealm = contextMailboxManager.contactManager.getRealm()
-            let contact = contextMailboxManager.contactManager.getContact(for: correspondent, realm: mainViewRealm)
+            let transactionable = contextMailboxManager.contactManager
+            let contact = contextMailboxManager.contactManager.getContact(for: correspondent, transactionable: transactionable)
             fullName = contact?.name ?? (correspondent.name.isEmpty ? correspondent.email : correspondent.name)
             color = UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
             avatarImageRequest = AvatarImageRequest(imageRequest: contact?.avatarImageRequest, shouldAuthenticate: true)

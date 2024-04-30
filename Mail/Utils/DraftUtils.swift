@@ -31,7 +31,7 @@ enum DraftUtils {
     ) {
         guard let message = thread.messages.first else { return }
         // If we already have the draft locally, present it directly
-        if let draft = mailboxManager.draft(messageUid: message.uid, using: nil)?.detached() {
+        if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
             matomoOpenDraft(isLoadedRemotely: false)
             composeMessageIntent.wrappedValue = ComposeMessageIntent.existing(draft: draft, originMailboxManager: mailboxManager)
         } else {
@@ -45,7 +45,7 @@ enum DraftUtils {
         composeMessageIntent: Binding<ComposeMessageIntent?>
     ) {
         // If we already have the draft locally, present it directly
-        if let draft = mailboxManager.draft(messageUid: message.uid, using: nil)?.detached() {
+        if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
             matomoOpenDraft(isLoadedRemotely: false)
             composeMessageIntent.wrappedValue = ComposeMessageIntent.existing(draft: draft, originMailboxManager: mailboxManager)
             // Draft comes from API, we will update it after showing the ComposeMessageView

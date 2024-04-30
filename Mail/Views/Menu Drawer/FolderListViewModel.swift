@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import InfomaniakCoreDB
 import MailCore
 import RealmSwift
 import SwiftUI
@@ -38,7 +39,7 @@ import SwiftUI
 
     init(mailboxManager: MailboxManageable, foldersQuery: @escaping (Query<Folder>) -> Query<Bool> = { $0.toolType == nil }) {
         self.foldersQuery = foldersQuery
-        updateFolderListForMailboxManager(mailboxManager, animateInitialChanges: false)
+        updateFolderListForMailboxManager(transactionable: mailboxManager, animateInitialChanges: false)
 
         searchQueryObservation = $searchQuery
             .debounce(for: .milliseconds(150), scheduler: DispatchQueue.main)
@@ -49,23 +50,25 @@ import SwiftUI
             }
     }
 
-    func updateFolderListForMailboxManager(_ mailboxManager: MailboxManageable, animateInitialChanges: Bool) {
-        foldersObservationToken = mailboxManager.getRealm()
-            .objects(Folder.self).where(foldersQuery)
-            .observe(on: DispatchQueue.main) { [weak self] results in
-                guard let self else {
-                    return
-                }
+    func updateFolderListForMailboxManager(transactionable: Transactionable, animateInitialChanges: Bool) {
+        let objects = transactionable.fetchResults(ofType: Folder.self) { partial in
+            partial.where(foldersQuery)
+        }
 
-                switch results {
-                case .initial(let folders):
-                    processObservedFolders(folders, animated: animateInitialChanges)
-                case .update(let folders, _, _, _):
-                    processObservedFolders(folders, animated: true)
-                case .error:
-                    break
-                }
+        foldersObservationToken = objects.observe(on: DispatchQueue.main) { [weak self] results in
+            guard let self else {
+                return
             }
+
+            switch results {
+            case .initial(let folders):
+                processObservedFolders(folders, animated: animateInitialChanges)
+            case .update(let folders, _, _, _):
+                processObservedFolders(folders, animated: true)
+            case .error:
+                break
+            }
+        }
     }
 
     private func processObservedFolders(_ folders: Results<Folder>, animated: Bool) {

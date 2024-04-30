@@ -108,7 +108,7 @@ public enum NotificationsHelper {
               let mailboxManager = accountManager.getMailboxManager(for: mailbox),
               let messageUid = content.userInfo[NotificationsHelper.UserInfoKeys.messageUid] as? String,
               !messageUid.isEmpty,
-              let message = mailboxManager.getRealm().object(ofType: Message.self, forPrimaryKey: messageUid),
+              let message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: messageUid),
               message.folder?.role == .inbox,
               !message.seen
         else {
@@ -203,7 +203,7 @@ public enum NotificationsHelper {
         mailboxManager: MailboxManager,
         incompleteNotification: UNMutableNotificationContent
     ) async -> UNNotificationContent? {
-        let localContact = mailboxManager.contactManager.getContact(for: fromRecipient, realm: nil)
+        let localContact = mailboxManager.contactManager.getContact(for: fromRecipient)
         let handleSender = INPersonHandle(value: fromRecipient.email, type: .emailAddress)
         let sender = INPerson(personHandle: handleSender,
                               nameComponents: nil,

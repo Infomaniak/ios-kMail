@@ -77,19 +77,21 @@ public extension MailboxManager {
     ///   - role: Role of the folder.
     /// - Returns: The folder with the corresponding role, or `nil` if no such folder has been found.
     func getFolder(with role: FolderRole) -> Folder? {
-        let realm = getRealm() // Always a new realm, so access is from the correct thread
-        return realm.objects(Folder.self).where { $0.role == role }.first
+        fetchObject(ofType: Folder.self) { partial in
+            partial.where { $0.role == role }.first
+        }
     }
 
     /// Get all the real folders in Realm
-    /// - Parameters:
-    ///   - realm: The Realm instance to use. If this parameter is `nil`, a new one will be created.
     /// - Returns: The list of real folders, frozen.
-    func getFrozenFolders(using realm: Realm? = nil) -> [Folder] {
-        let realm = realm ?? getRealm()
-        let folders = Array(realm.objects(Folder.self).where { $0.toolType == nil })
-        let frozenFolders = folders.map { $0.freezeIfNeeded() }
-        return frozenFolders
+    func getFrozenFolders() -> [Folder] {
+        let frozenFolders = fetchResults(ofType: Folder.self) { partial in
+            partial
+                .where { $0.toolType == nil }
+                .freezeIfNeeded()
+        }
+
+        return Array(frozenFolders)
     }
 
     func createFolder(name: String, parent: Folder?) async throws -> Folder {

@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreDB
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -98,7 +99,8 @@ struct ComposeMessageIntentView: View, IntentViewable {
         case .writeTo(let recipient):
             draftToWrite = Draft.writing(to: recipient)
         case .reply(let messageUid, let replyMode):
-            if let frozenMessage = mailboxManager.getRealm().object(ofType: Message.self, forPrimaryKey: messageUid)?.freeze() {
+            // TODO: Can we move this transaction away from the main actor ?
+            if let frozenMessage = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?.freeze() {
                 let messageReply = MessageReply(frozenMessage: frozenMessage, replyMode: replyMode)
                 maybeMessageReply = messageReply
                 draftToWrite = Draft.replying(
@@ -114,7 +116,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
 
         if let draftToWrite {
             let draftLocalUUID = draftToWrite.localUUID
-            writeDraftToRealm(mailboxManager.getRealm(), draft: draftToWrite)
+            writeDraftToRealm(mailboxManager, draft: draftToWrite)
 
             Task { @MainActor [maybeMessageReply] in
                 guard let liveDraft = mailboxManager.draft(localUuid: draftLocalUUID) else {
@@ -135,8 +137,8 @@ struct ComposeMessageIntentView: View, IntentViewable {
         }
     }
 
-    func writeDraftToRealm(_ realm: Realm, draft: Draft) {
-        try? realm.write {
+    func writeDraftToRealm(_ transactionable: Transactionable, draft: Draft) {
+        try? transactionable.writeTransaction { realm in
             draft.action = draft.action == nil && draft.remoteUUID.isEmpty ? .initialSave : .save
             draft.delay = UserDefaults.shared.cancelSendDelay.rawValue
 

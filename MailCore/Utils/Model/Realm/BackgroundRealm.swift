@@ -21,8 +21,9 @@ import RealmSwift
 import Sentry
 
 /// Conforming to `RealmAccessible` to get a standard `.getRealm` function
-extension BackgroundRealm: RealmAccessible {}
+extension BackgroundRealm: MailCoreRealmAccessible {}
 
+/// Async await db transactions. Can provide a Realm.
 public final class BackgroundRealm {
     private let queue: DispatchQueue
 

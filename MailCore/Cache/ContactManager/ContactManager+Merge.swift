@@ -155,7 +155,9 @@ extension ContactManager {
         var idsToDelete = [String]()
 
         // enumerate realm contacts
-        let lazyMergedContacts = getRealm().objects(MergedContact.self)
+        let lazyMergedContacts = fetchResults(ofType: MergedContact.self) { partial in
+            partial
+        }
 
         var mergedContactIterator = lazyMergedContacts.makeIterator()
         while let mergedContact = mergedContactIterator.next() {
@@ -181,13 +183,12 @@ extension ContactManager {
             return
         }
 
-        let cleanupRealm = getRealm()
-        try? cleanupRealm.safeWrite {
+        try? writeTransaction { writableRealm in
             for idToDelete in idsToDelete {
-                guard let objectToDelete = cleanupRealm.object(ofType: MergedContact.self, forPrimaryKey: idToDelete) else {
+                guard let objectToDelete = writableRealm.object(ofType: MergedContact.self, forPrimaryKey: idToDelete) else {
                     continue
                 }
-                cleanupRealm.delete(objectToDelete)
+                writableRealm.delete(objectToDelete)
             }
         }
     }
@@ -198,10 +199,9 @@ extension ContactManager {
             return
         }
 
-        let realm = getRealm()
-        try? realm.safeWrite {
+        try? writeTransaction { writableRealm in
             for mergedContact in mergedContacts.values {
-                realm.add(mergedContact, update: .modified)
+                writableRealm.add(mergedContact, update: .modified)
             }
         }
     }

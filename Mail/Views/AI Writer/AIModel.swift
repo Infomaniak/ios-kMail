@@ -276,7 +276,7 @@ extension AIModel {
 
 extension AIModel {
     private func getLiveDraft() -> Draft? {
-        return mailboxManager.getRealm().object(ofType: Draft.self, forPrimaryKey: draft.localUUID)
+        return mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: draft.localUUID)
     }
 
     private func shouldOverrideSubject() -> Bool {

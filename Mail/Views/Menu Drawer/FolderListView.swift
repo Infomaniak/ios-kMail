@@ -40,7 +40,7 @@ struct FolderListView: View {
             UserFoldersListView(folders: viewModel.userFolders)
         }
         .onChange(of: mailboxManager) { newMailboxManager in
-            viewModel.updateFolderListForMailboxManager(newMailboxManager, animateInitialChanges: true)
+            viewModel.updateFolderListForMailboxManager(transactionable: newMailboxManager, animateInitialChanges: true)
         }
     }
 }

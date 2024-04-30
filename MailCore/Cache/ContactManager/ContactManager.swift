@@ -20,12 +20,16 @@ import CocoaLumberjackSwift
 import Contacts
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreDB
 import InfomaniakCoreUI
 import RealmSwift
 import SwiftRegex
 
 /// The composite protocol of the `ContactManager` service
-public typealias ContactManageable = ContactFetchable & ContactManagerCoreable & RealmAccessible
+public typealias ContactManageable = ContactFetchable
+    & ContactManagerCoreable
+    & RealmConfigurable
+    & Transactionable
 
 public protocol ContactManagerCoreable {
     func refreshContactsAndAddressBooksIfNeeded() async throws
@@ -64,11 +68,8 @@ public final class ContactManager: ObservableObject, ContactManageable {
     public static let constants = ContactManagerConstants()
 
     public let realmConfiguration: Realm.Configuration
-    let backgroundRealm: BackgroundRealm
-    public lazy var viewRealm: Realm = {
-        assert(Foundation.Thread.isMainThread, "viewRealm should only be accessed from main thread")
-        return getRealm()
-    }()
+    private let backgroundRealm: BackgroundRealm
+    public let transactionExecutor: Transactionable
 
     let apiFetcher: MailApiFetcher
 
@@ -85,6 +86,7 @@ public final class ContactManager: ObservableObject, ContactManageable {
             ]
         )
         backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
+        transactionExecutor = TransactionExecutor(realmAccessible: backgroundRealm)
 
         excludeRealmFromBackup()
     }

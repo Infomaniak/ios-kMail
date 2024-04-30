@@ -125,7 +125,7 @@ enum SearchState {
 
         frozenRealFolder = folder.freezeIfNeeded()
         frozenSearchFolder = mailboxManager.initSearchFolder().freezeIfNeeded()
-        frozenFolderList = mailboxManager.getFrozenFolders(using: nil)
+        frozenFolderList = mailboxManager.getFrozenFolders()
 
         searchFieldObservation = $searchValue
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)

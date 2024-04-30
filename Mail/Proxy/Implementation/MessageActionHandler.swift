@@ -98,10 +98,7 @@ public struct MessageActionHandler: MessageActionHandlable {
 
     /// Silently move mail to a specified folder
     private func moveMessage(uid: String, to folderRole: FolderRole, mailboxManager: MailboxManager) async throws {
-        let realm = mailboxManager.getRealm()
-        realm.refresh()
-
-        guard let notificationMessage = realm.object(ofType: Message.self, forPrimaryKey: uid) else {
+        guard let notificationMessage = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: uid) else {
             throw ErrorDomain.messageNotFoundInDatabase
         }
 

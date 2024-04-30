@@ -19,6 +19,7 @@
 import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreDB
 import InfomaniakDI
 import RealmSwift
 import SwiftRegex
@@ -33,6 +34,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     public static let constants = MailboxManagerConstants()
 
     public let realmConfiguration: Realm.Configuration
+    public let transactionExecutor: Transactionable
+
     public let mailbox: Mailbox
     public let account: Account
 
@@ -111,6 +114,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
             ]
         )
         backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
+        transactionExecutor = TransactionExecutor(realmAccessible: backgroundRealm)
 
         excludeRealmFromBackup()
     }
@@ -150,9 +154,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     func keepCacheAttributes(
         for message: Message,
         keepProperties: MessagePropertiesOptions,
-        using realm: Realm? = nil
+        using realm: Realm
     ) {
-        let realm = realm ?? getRealm()
         guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else {
             logError(.missingMessage)
             return
@@ -199,11 +202,6 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
             }
         }
         return result
-    }
-
-    public func hasUnreadMessages() -> Bool {
-        let realm = getRealm()
-        return realm.objects(Folder.self).contains { $0.unreadCount > 0 }
     }
 }
 

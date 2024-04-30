@@ -20,6 +20,7 @@ import CocoaLumberjackSwift
 import Foundation
 import InfomaniakConcurrency
 import InfomaniakCore
+import InfomaniakCoreDB
 import UniformTypeIdentifiers
 
 /// Abstracts that some attachment was updated
@@ -69,6 +70,8 @@ public final class AttachmentsManagerWorker {
     private let backgroundRealm: BackgroundRealm
     private let draftLocalUUID: String
 
+    public let transactionExecutor: Transactionable
+
     private lazy var filenameDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyyMMdd_HHmmssSS"
@@ -88,8 +91,7 @@ public final class AttachmentsManagerWorker {
                 return
             }
 
-            let realm = backgroundRealm.getRealm()
-            guard let draft = realm.object(ofType: Draft.self, forPrimaryKey: draftLocalUUID),
+            guard let draft = transactionExecutor.fetchObject(ofType: Draft.self, forPrimaryKey: draftLocalUUID),
                   !draft.isInvalidated,
                   draft.subject.isEmpty else {
                 return
@@ -99,8 +101,11 @@ public final class AttachmentsManagerWorker {
                 return
             }
 
-            try? realm.write {
-                draft.subject = attachmentTitle
+            try? transactionExecutor.writeTransaction { writableRealm in
+                guard let liveDraft = writableRealm.object(ofType: Draft.self, forPrimaryKey: draftLocalUUID) else {
+                    return
+                }
+                liveDraft.subject = attachmentTitle
             }
         }
     }
@@ -109,6 +114,7 @@ public final class AttachmentsManagerWorker {
         self.backgroundRealm = backgroundRealm
         self.draftLocalUUID = draftLocalUUID
         self.mailboxManager = mailboxManager
+        transactionExecutor = TransactionExecutor(realmAccessible: backgroundRealm)
     }
 
     func addLocalAttachment(attachment: Attachment) async -> Attachment? {
@@ -295,7 +301,7 @@ public final class AttachmentsManagerWorker {
 
 extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
     public var liveDraft: Draft? {
-        guard let liveDraft = backgroundRealm.getRealm().object(ofType: Draft.self, forPrimaryKey: draftLocalUUID),
+        guard let liveDraft = transactionExecutor.fetchObject(ofType: Draft.self, forPrimaryKey: draftLocalUUID),
               !liveDraft.isInvalidated else {
             return nil
         }

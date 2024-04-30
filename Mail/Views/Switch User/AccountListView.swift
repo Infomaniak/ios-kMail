@@ -39,21 +39,22 @@ final class AccountListViewModel: ObservableObject {
     private var mailboxObservationToken: NotificationToken?
 
     init() {
-        mailboxObservationToken = mailboxInfosManager.getRealm()
-            .objects(Mailbox.self)
-            .sorted(by: \.mailboxId)
-            .observe(on: DispatchQueue.main) { [weak self] results in
-                switch results {
-                case .initial(let mailboxes):
+        let mailboxes = mailboxInfosManager.fetchResults(ofType: Mailbox.self) { partial in
+            partial.sorted(by: \.mailboxId)
+        }
+
+        mailboxObservationToken = mailboxes.observe(on: DispatchQueue.main) { [weak self] results in
+            switch results {
+            case .initial(let mailboxes):
+                self?.handleMailboxChanged(Array(mailboxes))
+            case .update(let mailboxes, _, _, _):
+                withAnimation {
                     self?.handleMailboxChanged(Array(mailboxes))
-                case .update(let mailboxes, _, _, _):
-                    withAnimation {
-                        self?.handleMailboxChanged(Array(mailboxes))
-                    }
-                case .error:
-                    break
                 }
+            case .error:
+                break
             }
+        }
     }
 
     private func handleMailboxChanged(_ mailboxes: [Mailbox]) {

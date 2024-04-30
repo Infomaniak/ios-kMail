@@ -23,22 +23,36 @@ import RealmSwift
 
 public extension MailboxManager {
     func draftWithPendingAction() -> Results<Draft> {
-        let realm = getRealm()
-        return realm.objects(Draft.self).where { $0.action != nil }
+        fetchResults(ofType: Draft.self) { partial in
+            partial.where { $0.action != nil }
+        }
     }
 
-    func draft(messageUid: String, using realm: Realm? = nil) -> Draft? {
-        let realm = realm ?? getRealm()
+    func draft(messageUid: String) -> Draft? {
+        fetchObject(ofType: Draft.self) { partial in
+            partial.where { $0.messageUid == messageUid }.first
+        }
+    }
+
+    func draft(messageUid: String, using realm: Realm) -> Draft? {
         return realm.objects(Draft.self).where { $0.messageUid == messageUid }.first
     }
 
-    func draft(localUuid: String, using realm: Realm? = nil) -> Draft? {
-        let realm = realm ?? getRealm()
-        return realm.objects(Draft.self).where { $0.localUUID == localUuid }.first
+    func draft(localUuid: String) -> Draft? {
+        fetchObject(ofType: Draft.self, forPrimaryKey: localUuid)
     }
 
-    func draft(remoteUuid: String, using realm: Realm? = nil) -> Draft? {
-        let realm = realm ?? getRealm()
+    func draft(localUuid: String, using realm: Realm) -> Draft? {
+        return realm.object(ofType: Draft.self, forPrimaryKey: localUuid)
+    }
+
+    func draft(remoteUuid: String) -> Draft? {
+        fetchObject(ofType: Draft.self) { partial in
+            partial.where { $0.remoteUUID == remoteUuid }.first
+        }
+    }
+
+    func draft(remoteUuid: String, using realm: Realm) -> Draft? {
         return realm.objects(Draft.self).where { $0.remoteUUID == remoteUuid }.first
     }
 
@@ -101,7 +115,14 @@ public extension MailboxManager {
             throw MailError.resourceError
         }
 
-        if let draft = getRealm().objects(Draft.self).where({ $0.remoteUUID == draftResource }).first?.freeze() {
+        let draft = fetchObject(ofType: Draft.self) { partial in
+            partial
+                .where { $0.remoteUUID == draftResource }
+                .first?
+                .freeze()
+        }
+
+        if let draft {
             try await deleteLocally(draft: draft)
         }
 

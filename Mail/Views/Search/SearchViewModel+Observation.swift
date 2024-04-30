@@ -71,8 +71,9 @@ extension SearchViewModel {
 
         let allThreadsUIDs = frozenThreads.map(\.uid)
         let containAnyOf = NSPredicate(format: Self.containAnyOfUIDs, allThreadsUIDs)
-        let realm = mailboxManager.getRealm()
-        let allThreads = realm.objects(Thread.self).filter(containAnyOf)
+        let allThreads = mailboxManager.fetchResults(ofType: Thread.self) { partial in
+            partial.filter(containAnyOf)
+        }
 
         observationSearchResultsChangesToken = allThreads.observe(on: observeQueue) { [weak self] changes in
             guard let self else {

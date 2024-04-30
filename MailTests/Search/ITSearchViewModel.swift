@@ -19,6 +19,7 @@
 import Combine
 @testable import Infomaniak_Mail
 import InfomaniakCore
+import InfomaniakCoreDB
 import InfomaniakLogin
 @testable import MailCore
 import RealmSwift
@@ -27,10 +28,22 @@ import XCTest
 // MARK: - Mocking
 
 /// A ContactManageable used to test the SearchViewModel
-struct MCKContactManageable_SearchViewModel: ContactManageable {
+struct MCKContactManageable_SearchViewModel: ContactManageable, MCKTransactionablePassthrough {
+    var transactionExecutor: Transactionable!
+
+    var realmConfiguration: RealmSwift.Realm.Configuration
+
+    init(realmConfiguration: RealmSwift.Realm.Configuration) {
+        self.realmConfiguration = realmConfiguration
+        let backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
+        transactionExecutor = TransactionExecutor(realmAccessible: backgroundRealm)
+    }
+
     func frozenContacts(matching string: String, fetchLimit: Int?) -> any Collection<MailCore.MergedContact> { [] }
 
-    func getContact(for correspondent: any MailCore.Correspondent, realm: RealmSwift.Realm?) -> MailCore.MergedContact? { nil }
+    func getContact(for correspondent: any MailCore.Correspondent) -> MailCore.MergedContact? { nil }
+
+    func getContact(for correspondent: any Correspondent, transactionable: Transactionable) -> MergedContact? { nil }
 
     func addressBook(with id: Int) -> MailCore.AddressBook? { nil }
 
@@ -41,12 +54,11 @@ struct MCKContactManageable_SearchViewModel: ContactManageable {
     func refreshContactsAndAddressBooks() async throws {}
 
     static func deleteUserContacts(userId: Int) {}
-
-    var realmConfiguration: RealmSwift.Realm.Configuration
 }
 
 /// A MailboxManageable used to test the SearchViewModel
-final class MCKMailboxManageable_SearchViewModel: MailboxManageable {
+final class MCKMailboxManageable_SearchViewModel: MailboxManageable, MCKTransactionablePassthrough, RealmAccessible {
+    var transactionExecutor: Transactionable!
     let mailbox = Mailbox()
     let targetFolder: Folder
     let realm: Realm
@@ -55,6 +67,7 @@ final class MCKMailboxManageable_SearchViewModel: MailboxManageable {
         self.realm = realm
         self.targetFolder = targetFolder
         self.folderGenerator = folderGenerator
+        transactionExecutor = TransactionExecutor(realmAccessible: self)
     }
 
     var contactManager: MailCore.ContactManageable {
@@ -203,6 +216,20 @@ final class MCKMailboxManageable_SearchViewModel: MailboxManageable {
     func getRealm() -> Realm {
         realm
     }
+
+    func draft(messageUid: String) -> MailCore.Draft? { nil }
+
+    func draft(messageUid: String, using realm: RealmSwift.Realm) -> MailCore.Draft? { nil }
+
+    func draft(localUuid: String) -> MailCore.Draft? { nil }
+
+    func draft(localUuid: String, using realm: RealmSwift.Realm) -> MailCore.Draft? { nil }
+
+    func draft(remoteUuid: String) -> MailCore.Draft? { nil }
+
+    func draft(remoteUuid: String, using realm: RealmSwift.Realm) -> MailCore.Draft? { nil }
+
+    func getFrozenFolders() -> [MailCore.Folder] { [] }
 }
 
 // MARK: - ITSearchViewModel

@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCoreDB
 import RealmSwift
 
 public protocol ContactFetchable {
@@ -26,7 +27,12 @@ public protocol ContactFetchable {
     ///   - fetchLimit: limit the query by default to limit memory footprint
     /// - Returns: The collection of matching contacts.
     func frozenContacts(matching string: String, fetchLimit: Int?) -> any Collection<MergedContact>
-    func getContact(for correspondent: any Correspondent, realm: Realm?) -> MergedContact?
+
+    /// Get a contact from a given transactionable
+    func getContact(for correspondent: any Correspondent, transactionable: Transactionable) -> MergedContact?
+
+    /// Get a contact from shared contact manager
+    func getContact(for correspondent: any Correspondent) -> MergedContact?
     func addressBook(with id: Int) -> AddressBook?
     func addContact(recipient: Recipient) async throws
 }
@@ -44,9 +50,10 @@ public extension ContactManager {
     ///   - fetchLimit: limit the query by default to limit memory footprint
     /// - Returns: The collection of matching contacts. Frozen.
     func frozenContacts(matching string: String, fetchLimit: Int?) -> any Collection<MergedContact> {
-        let realm = getRealm()
-        let lazyResults = realm
-            .objects(MergedContact.self)
+        var lazyResults = fetchResults(ofType: MergedContact.self) { partial in
+            partial
+        }
+        lazyResults = lazyResults
             .filter(Self.searchContactInsensitivePredicate, string, string)
             .freeze()
 
@@ -56,20 +63,26 @@ public extension ContactManager {
         return limitedResults
     }
 
-    func getContact(for correspondent: any Correspondent, realm: Realm? = nil) -> MergedContact? {
-        let realm = realm ?? getRealm()
-        let matched = realm.objects(MergedContact.self).where { $0.email == correspondent.email }
-        return matched.first { $0.name.caseInsensitiveCompare(correspondent.name) == .orderedSame } ?? matched.first
+    func getContact(for correspondent: any Correspondent) -> MergedContact? {
+        getContact(for: correspondent, transactionable: self)
+    }
+
+    func getContact(for correspondent: any Correspondent, transactionable: Transactionable) -> MergedContact? {
+        transactionable.fetchObject(ofType: MergedContact.self) { partial in
+            let matched = partial.where { $0.email == correspondent.email }
+            let result = matched.first { $0.name.caseInsensitiveCompare(correspondent.name) == .orderedSame } ?? matched.first
+            return result
+        }
     }
 
     func addressBook(with id: Int) -> AddressBook? {
-        let realm = getRealm()
-        return realm.object(ofType: AddressBook.self, forPrimaryKey: id)
+        fetchObject(ofType: AddressBook.self, forPrimaryKey: id)
     }
 
     private func getDefaultAddressBook() -> AddressBook? {
-        let realm = getRealm()
-        return realm.objects(AddressBook.self).where { $0.isDefault == true }.first
+        fetchObject(ofType: AddressBook.self) { partial in
+            partial.where { $0.isDefault == true }.first
+        }
     }
 
     func addContact(recipient: Recipient) async throws {
@@ -82,9 +95,8 @@ public extension ContactManager {
 
         let mergedContact = MergedContact(email: recipient.email, local: nil, remote: newContact)
 
-        let realm = getRealm()
-        try? realm.safeWrite {
-            realm.add(mergedContact, update: .modified)
+        try writeTransaction { writableRealm in
+            writableRealm.add(mergedContact, update: .modified)
         }
     }
 }
