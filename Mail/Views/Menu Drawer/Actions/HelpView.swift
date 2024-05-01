@@ -19,21 +19,29 @@
 import MailCore
 import MailCoreUI
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct HelpView: View {
     private struct HelpAction: Hashable {
         let title: String
         let destination: URL
+        let openUpdateVersionAlert: Bool
 
-        static let faq = HelpAction(title: MailResourcesStrings.Localizable.helpFAQ, destination: URLConstants.faq.url)
+        static let faq = HelpAction(
+            title: MailResourcesStrings.Localizable.helpFAQ,
+            destination: URLConstants.faq.url,
+            openUpdateVersionAlert: false
+        )
         static let chatbot = HelpAction(
-            title: MailResourcesStrings.Localizable.helpChatbot,
-            destination: URLConstants.chatbot.url
+            title: MailResourcesStrings.Localizable.helpChatbot, destination: URLConstants.chatbot.url,
+            openUpdateVersionAlert: true
         )
     }
 
     @Environment(\.openURL) var openURL
+
+    @ModalState(context: ContextKeys.help) private var isShowingUpdateVersionAlert = false
 
     private let actions: [HelpAction] = [.faq, .chatbot]
 
@@ -43,7 +51,11 @@ struct HelpView: View {
                 ForEach(actions, id: \.self) { action in
                     VStack(alignment: .leading, spacing: 0) {
                         Button {
-                            openURL(action.destination)
+                            if action.openUpdateVersionAlert {
+                                isShowingUpdateVersionAlert = true
+                            } else {
+                                openURL(action.destination)
+                            }
                         } label: {
                             Text(action.title)
                                 .textStyle(.body)
@@ -69,6 +81,13 @@ struct HelpView: View {
         .listStyle(.plain)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.buttonHelp, displayMode: .inline)
+        .customAlert(isPresented: $isShowingUpdateVersionAlert) {
+            UpdateVersionAlertView {
+                let url: URL
+                url = URLConstants.chatbot.url
+                openURL(url)
+            }
+        }
     }
 }
 

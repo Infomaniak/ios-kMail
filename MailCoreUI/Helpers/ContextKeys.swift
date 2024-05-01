@@ -31,4 +31,5 @@ public enum ContextKeys {
     public static let settings = "settingsContext"
     public static let account = "accountContext"
     public static let sync = "syncContext"
+    public static let help = "helpContext"
 }
