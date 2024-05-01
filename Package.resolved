@@ -220,8 +220,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/SQRichTextEditor",
       "state" : {
-        "revision" : "33b3c2fd969683f197d9497c99e2b258943d05cc",
-        "version" : "1.1.1"
+        "revision" : "18835a4a423b1b34269dd47460c796096a6d13b3",
+        "version" : "1.1.2"
       }
     },
     {
