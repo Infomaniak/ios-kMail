@@ -97,7 +97,17 @@ struct MenuDrawerItemsHelpListView: View {
             BugTrackerView(isPresented: $isShowingBugTracker)
         }
         .customAlert(isPresented: $isShowingUpdateVersionAlert) {
-            UpdateVersionAlertView(isShownFromFeedbackOrHelpButton: true)
+            UpdateVersionAlertView {
+                sendFeedback()
+            }
+        }
+    }
+
+    private func sendFeedback() {
+        if mailboxManager.account.user?.isStaff == false {
+            isShowingBugTracker.toggle()
+        } else if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
+            openURL(userReportURL)
         }
     }
 }

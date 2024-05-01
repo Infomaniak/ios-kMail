@@ -64,7 +64,7 @@ struct UpdateVersionView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .customAlert(isPresented: $isShowingUpdateAlert) {
-            UpdateVersionAlertView(isShownFromFeedbackOrHelpButton: false)
+            UpdateVersionAlertView {}
         }
     }
 }

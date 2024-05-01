@@ -42,7 +42,6 @@ struct ThreadListView: View {
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
     @State private var firstLaunch = true
-//    @State private var isShowingUpdateVersionView = isUpdateViewNeeded()
     @ModalState private var flushAlert: FlushAlertState?
 
     @StateObject var viewModel: ThreadListViewModel
@@ -61,9 +60,18 @@ struct ThreadListView: View {
     private var shouldDisplayUpdateOSView: Bool {
         guard !updateOSViewDismissed && !platformDetector.isMac else { return false }
         if #available(iOS 16.5, *) {
-            return true //  après DEBUG: remettre à false
-        } else {
             return true
+        } else {
+            let currentVersion = ProcessInfo().operatingSystemVersion
+            if currentVersion.majorVersion == 15 {
+                if currentVersion.minorVersion < 7 {
+                    return true
+                } else {
+                    return false
+                }
+            } else {
+                return true
+            }
         }
     }
 
@@ -221,14 +229,6 @@ struct ThreadListView: View {
             fetchingTask = nil
         }
     }
-
-//    static func isUpdateViewNeeded() -> Bool {
-//        if #available(iOS 16.5, *) {
-//            return true
-//        } else {
-//            return true
-//        }
-//    }
 }
 
 #Preview {

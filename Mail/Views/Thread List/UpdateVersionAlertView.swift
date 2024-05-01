@@ -28,13 +28,14 @@ struct UpdateVersionAlertView: View {
 
     @Environment(\.openURL) var openURL
     @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var mainViewState: MainViewState
 
     @AppStorage(UserDefaults.shared.key(.updateOSViewDismissed)) private var updateOSViewDismissed = DefaultPreferences
         .updateOSViewDismissed
 
     @ModalState private var isShowingBugTracker = false
 
-    var isShownFromFeedbackOrHelpButton: Bool
+    let onLaterPressed: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.medium) {
@@ -59,21 +60,11 @@ struct UpdateVersionAlertView: View {
     }
 
     private func dismissUpdateVersionView() {
-        if isShownFromFeedbackOrHelpButton {
-            sendFeedback()
-        }
+        onLaterPressed()
         updateOSViewDismissed = true
-    }
-
-    private func sendFeedback() {
-        if mailboxManager.account.user?.isStaff == false {
-            isShowingBugTracker.toggle()
-        } else if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
-            openURL(userReportURL)
-        }
     }
 }
 
 #Preview {
-    UpdateVersionAlertView(isShownFromFeedbackOrHelpButton: true)
+    UpdateVersionAlertView {}
 }
