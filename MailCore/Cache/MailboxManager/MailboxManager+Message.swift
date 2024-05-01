@@ -105,11 +105,18 @@ public extension MailboxManager {
     // MARK: Private
 
     func markAsSeen(messages: [Message], seen: Bool) async throws {
-        if seen {
-            try await apiFetcher.markAsSeen(mailbox: mailbox, messages: messages)
-        } else {
-            try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
+        await updateLocally(.seen, value: seen, messages: messages)
+
+        do {
+            if seen {
+                try await apiFetcher.markAsSeen(mailbox: mailbox, messages: messages)
+            } else {
+                try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
+            }
+        } catch {
+            await updateLocally(.seen, value: !seen, messages: messages)
         }
+
         try await refreshFolder(from: messages, additionalFolder: nil)
 
         // TODO: Remove after fix
@@ -119,10 +126,16 @@ public extension MailboxManager {
     /// Set starred the given messages.
     /// - Important: This methods stars only the messages you passes, no processing is done to add duplicates or remove drafts
     func star(messages: [Message], starred: Bool) async throws {
-        if starred {
-            _ = try await star(messages: messages)
-        } else {
-            _ = try await unstar(messages: messages)
+        await updateLocally(.star, value: starred, messages: messages)
+
+        do {
+            if starred {
+                _ = try await star(messages: messages)
+            } else {
+                _ = try await unstar(messages: messages)
+            }
+        } catch {
+            await updateLocally(.star, value: !starred, messages: messages)
         }
     }
 
