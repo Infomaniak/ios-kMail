@@ -18,6 +18,7 @@
 
 import InfomaniakRichEditor
 import MailCore
+import MailCoreUI
 import UIKit
 
 @MainActor
