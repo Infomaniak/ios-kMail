@@ -19,6 +19,7 @@
 import InfomaniakDI
 import InfomaniakRichEditor
 import MailCore
+import MailCoreUI
 import MailResources
 import SwiftModalPresentation
 import UIKit

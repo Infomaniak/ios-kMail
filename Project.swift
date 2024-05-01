@@ -225,13 +225,13 @@ let project = Project(name: "Mail",
                                       .target(name: "MailCore"),
                                       .external(name: "SwiftUIIntrospect-Static"),
                                       .external(name: "InfomaniakOnboarding"),
-                                      .external(name: "SQRichTextEditor"),
                                       .external(name: "Shimmer"),
                                       .external(name: "WrappingHStack"),
                                       .external(name: "NavigationBackport"),
                                       .external(name: "Popovers"),
                                       .external(name: "SwiftUIBackports"),
-                                      .external(name: "SwiftUIMacros")
+                                      .external(name: "SwiftUIMacros"),
+                                      .external(name: "InfomaniakRichEditor")
                                   ],
                                   settings: .settings(base: Constants.baseSettings))
                       ],
