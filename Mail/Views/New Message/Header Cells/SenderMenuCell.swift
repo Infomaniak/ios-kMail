@@ -28,10 +28,15 @@ struct SenderMenuCell: View {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     @EnvironmentObject private var draftContentManager: DraftContentManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @Binding var currentSignature: Signature?
 
-    let signature: Signature
+    let signature: Signature?
+
+    private var signatureLabel: String {
+        signature?.formatted(style: .option) ?? MailResourcesStrings.Localizable.selectSignatureNone
+    }
 
     var body: some View {
         Button {
@@ -43,11 +48,7 @@ struct SenderMenuCell: View {
             draftContentManager.updateSignature(with: signature)
         } label: {
             Label {
-                if platformDetector.isMac {
-                    Text("\(signature.senderName) (\(signature.name)) \(signature.senderEmailIdn)")
-                } else {
-                    Text("\(signature.senderName) (\(signature.name))")
-                }
+                Text(signatureLabel)
             } icon: {
                 if signature == currentSignature {
                     MailResourcesAsset.check.swiftUIImage
@@ -55,7 +56,7 @@ struct SenderMenuCell: View {
             }
             .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonSelectSignature)
 
-            Text(signature.senderEmailIdn)
+            Text(signature?.senderEmailIdn ?? mailboxManager.mailbox.emailIdn)
         }
     }
 }

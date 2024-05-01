@@ -144,9 +144,9 @@ extension DraftContentManager {
 // MARK: - Write draft
 
 public extension DraftContentManager {
-    func prepareCompleteDraft() async throws -> Signature {
+    func prepareCompleteDraft() async throws -> Signature? {
         async let draftBodyResult = try await loadCompleteDraftBody()
-        async let signature = try await loadMostFittingSignature()
+        async let signature = await loadMostFittingSignature()
 
         try await writeCompleteDraft(
             completeBody: draftBodyResult.body,
@@ -155,7 +155,7 @@ public extension DraftContentManager {
             attachments: draftBodyResult.attachments
         )
 
-        return try await signature
+        return await signature
     }
 
     func replaceContent(subject: String? = nil, body: String) async {
@@ -184,7 +184,7 @@ public extension DraftContentManager {
 
     private func writeCompleteDraft(
         completeBody: String,
-        signature: Signature,
+        signature: Signature?,
         shouldAddSignatureText: Bool,
         attachments: [Attachment]
     ) throws {
@@ -195,7 +195,7 @@ public extension DraftContentManager {
             }
 
             fetchedDraft = liveIncompleteDraft
-            if liveIncompleteDraft.identityId == nil || liveIncompleteDraft.identityId?.isEmpty == true {
+            if let signature, liveIncompleteDraft.identityId == nil || liveIncompleteDraft.identityId?.isEmpty == true {
                 liveIncompleteDraft.identityId = "\(signature.id)"
                 if shouldAddSignatureText {
                     liveIncompleteDraft.rawSignature = signature.content
@@ -312,7 +312,7 @@ extension DraftContentManager {
 // MARK: - Signatures
 
 extension DraftContentManager {
-    public func updateSignature(with newSignature: Signature) {
+    public func updateSignature(with newSignature: Signature?) {
         do {
             let liveIncompleteDraft = try getLiveDraft()
 
@@ -320,17 +320,25 @@ extension DraftContentManager {
             // If we find the previous signature, we replace it with the new one
             // otherwise we append the signature at the end of the document
             if let foundSignatureDiv = try parsedMessage.select(".\(Constants.signatureHTMLClass)").first {
-                try foundSignatureDiv.html(newSignature.content)
-            } else if let body = parsedMessage.body() {
+                if let newSignature {
+                    try foundSignatureDiv.html(newSignature.content)
+                } else {
+                    try foundSignatureDiv.remove()
+                }
+            } else if let body = parsedMessage.body(), let newSignature {
                 let signatureDiv = try body.appendElement("div")
                 try signatureDiv.addClass(Constants.signatureHTMLClass)
                 try signatureDiv.html(newSignature.content)
             }
 
             try? mailboxManager.writeTransaction { _ in
-                // Keep up to date the rawSignature
-                liveIncompleteDraft.rawSignature = newSignature.content
-                liveIncompleteDraft.identityId = "\(newSignature.id)"
+                var identityId: String?
+                if let newSignature {
+                    identityId = "\(newSignature.id)"
+                }
+				// Keep up to date the rawSignature
+                liveIncompleteDraft.rawSignature = newSignature?.content
+                liveIncompleteDraft.identityId = identityId
                 liveIncompleteDraft.body = try parsedMessage.outerHtml()
             }
 
@@ -341,46 +349,36 @@ extension DraftContentManager {
     }
 
     /// Load best signature from local DB
-    private func loadMostFittingSignature() async throws -> Signature {
-        do {
-            let storedSignatures = mailboxManager.getStoredSignatures()
-            let defaultSignature = try getDefaultSignature(userSignatures: storedSignatures)
+    private func loadMostFittingSignature() async -> Signature? {
+        let storedSignatures = mailboxManager.getStoredSignatures()
+        let defaultSignature = getDefaultSignature(userSignatures: storedSignatures)
 
-            // If draft already has an identity, return corresponding signature
-            if let storedDraft = mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID),
-               let identityId = storedDraft.identityId {
-                return getSignature(for: identityId, userSignatures: storedSignatures) ?? defaultSignature
-            }
-
-            // If draft is a new message or a forward, use default signature
-            guard let messageReply, messageReply.replyMode == .reply || messageReply.replyMode == .replyAll else {
-                return defaultSignature
-            }
-
-            return guessMostFittingSignature(userSignatures: storedSignatures, defaultSignature: defaultSignature)
-        } catch {
-            SentrySDK.capture(message: "We failed to fetch Signatures. This will close the Editor.") { scope in
-                scope.setExtras([
-                    "errorMessage": error.localizedDescription,
-                    "error": "\(error)"
-                ])
-            }
-            throw error
+        // If draft already has an identity, return corresponding signature
+        if let storedDraft = mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID),
+           let identityId = storedDraft.identityId {
+            return getSignature(for: identityId, userSignatures: storedSignatures) ?? defaultSignature
         }
+
+        // If draft is a new message or a forward, use default signature
+        guard let messageReply, messageReply.isReplying else {
+            return defaultSignature
+        }
+
+        return guessMostFittingSignature(userSignatures: storedSignatures, defaultSignature: defaultSignature)
     }
 
     private func getSignature(for identity: String, userSignatures: [Signature]) -> Signature? {
         return userSignatures.first { identity == "\($0.id)" }?.freezeIfNeeded()
     }
 
-    private func getDefaultSignature(userSignatures: [Signature]) throws -> Signature {
-        guard let defaultSignature = userSignatures.defaultSignature else {
-            throw MailError.defaultSignatureMissing
-        }
-        return defaultSignature.freezeIfNeeded()
+    private func getDefaultSignature(userSignatures: [Signature]) -> Signature? {
+        let isReply = messageReply?.isReplying ?? false
+
+        let defaultSignature = isReply ? userSignatures.defaultReplySignature : userSignatures.defaultSignature
+        return defaultSignature?.freezeIfNeeded()
     }
 
-    private func guessMostFittingSignature(userSignatures: [Signature], defaultSignature: Signature) -> Signature {
+    private func guessMostFittingSignature(userSignatures: [Signature], defaultSignature: Signature?) -> Signature? {
         guard let previousMessage = messageReply?.frozenMessage else { return defaultSignature }
 
         let signaturesGroupedByEmail = Dictionary(grouping: userSignatures, by: \.senderEmail)
