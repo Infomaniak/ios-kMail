@@ -39,9 +39,9 @@ struct UpdateVersionAlertView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.medium) {
-            Text("Votre expérience peut être dégradée car votre appareil n’est pas à jour")
+            Text(MailResourcesStrings.Localizable.updateVersionTitle)
                 .textStyle(.bodyMedium)
-            Text("Pour votre sécurité et améliorer votre expérience, veuillez mettre à jour votre appareil.")
+            Text(MailResourcesStrings.Localizable.updateVersionDescription)
                 .textStyle(.body)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonUpdate,
