@@ -19,7 +19,6 @@
 import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
-import MailResources
 import SwiftUI
 
 struct ThreadListManagerView: View {

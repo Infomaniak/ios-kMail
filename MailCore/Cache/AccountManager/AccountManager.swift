@@ -24,7 +24,6 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications
-import MailResources
 import Nuke
 import RealmSwift
 import Sentry

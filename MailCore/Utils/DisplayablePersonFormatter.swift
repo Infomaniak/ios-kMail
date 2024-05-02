@@ -17,7 +17,6 @@
  */
 
 import Foundation
-import MailResources
 
 public extension FormatStyle where Self == CommonContact.FormatStyle {
     static func displayablePerson(style: CommonContact.FormatStyle.Style = .fullName) -> Self {

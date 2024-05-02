@@ -18,7 +18,6 @@
 
 import AppIntents
 import Foundation
-import MailCore
 
 struct MailSetFocusFilterIntent: SetFocusFilterIntent {
     @Parameter(title: "filterFocusAllowedMailboxesTitle", optionsProvider: AccountOptionsProvider())

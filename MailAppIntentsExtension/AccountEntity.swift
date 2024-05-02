@@ -19,7 +19,6 @@
 import AppIntents
 import Foundation
 import InfomaniakDI
-import MailCore
 
 struct AccountEntity: AppEntity {
     let id: String

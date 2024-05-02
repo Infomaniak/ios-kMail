@@ -18,7 +18,6 @@
 
 import Foundation
 import InfomaniakCore
-import MailResources
 import Nuke
 import RealmSwift
 import SwiftRegex

@@ -336,7 +336,7 @@ extension DraftContentManager {
                 if let newSignature {
                     identityId = "\(newSignature.id)"
                 }
-				// Keep up to date the rawSignature
+                // Keep up to date the rawSignature
                 liveIncompleteDraft.rawSignature = newSignature?.content
                 liveIncompleteDraft.identityId = identityId
                 liveIncompleteDraft.body = try parsedMessage.outerHtml()

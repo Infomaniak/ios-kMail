@@ -17,7 +17,6 @@
  */
 
 import Foundation
-import MailResources
 import RealmSwift
 import SwiftSoup
 import UniformTypeIdentifiers

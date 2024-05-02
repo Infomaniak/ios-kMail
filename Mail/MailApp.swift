@@ -17,15 +17,8 @@
  */
 
 import CocoaLumberjackSwift
-import Contacts
-import InfomaniakBugTracker
-import InfomaniakCore
-import InfomaniakCoreUI
 import InfomaniakDI
-import InfomaniakLogin
-import InfomaniakNotifications
 import MailCore
-import MailResources
 import SwiftUI
 import UIKit
 

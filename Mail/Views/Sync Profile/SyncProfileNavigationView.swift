@@ -17,7 +17,6 @@
  */
 
 import MailCoreUI
-import MailResources
 import NavigationBackport
 import SwiftUI
 
