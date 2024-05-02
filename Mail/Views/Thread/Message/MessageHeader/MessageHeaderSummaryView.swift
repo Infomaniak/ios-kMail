@@ -87,6 +87,8 @@ struct MessageHeaderSummaryView: View {
                                         .textStyle(.bodyMedium)
                                 }
                             }
+                            IKIcon(MailResourcesAsset.checkmarkAuthentication, size: .small)
+
                             MessageHeaderDateView(date: message.date)
                         }
                         .accessibilityElement(children: .combine)
