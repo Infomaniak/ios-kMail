@@ -18,6 +18,7 @@
 
 import MailCore
 import MailCoreUI
+import MailResources
 import SwiftUI
 
 struct ContactActionsHeaderView: View {
@@ -30,14 +31,24 @@ struct ContactActionsHeaderView: View {
     }
 
     public var body: some View {
-        HStack {
-            AvatarView(mailboxManager: mailboxManager, contactConfiguration: .contact(contact: displayablePerson), size: 40)
-                .accessibilityHidden(true)
-            VStack(alignment: .leading) {
-                Text(displayablePerson, format: .displayablePerson())
-                    .textStyle(.bodyMedium)
-                Text(displayablePerson.email)
-                    .textStyle(.bodySecondary)
+        VStack(alignment: .leading, spacing: UIPadding.medium) {
+            HStack {
+                AvatarView(mailboxManager: mailboxManager, contactConfiguration: .contact(contact: displayablePerson), size: 40)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text(displayablePerson, format: .displayablePerson())
+                            .textStyle(.bodyMedium)
+                        IKIcon(MailResourcesAsset.checkmarkAuthentication)
+                    }
+                    Text(displayablePerson.email)
+                        .textStyle(.bodySecondary)
+                }
+            }
+            HStack {
+                IKIcon(MailResourcesAsset.checkmarkAuthentication)
+                Text(MailResourcesStrings.Localizable.expeditorAuthenticationDescription)
+                    .textStyle(.label)
             }
         }
         .accessibilityElement(children: .combine)
