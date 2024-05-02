@@ -43,7 +43,9 @@ public extension MatomoUtils.EventCategory {
     static let externals = MatomoUtils.EventCategory(displayName: "externals")
     static let homeScreenShortcuts = MatomoUtils.EventCategory(displayName: "homeScreenShortcuts")
     static let invalidPasswordMailbox = MatomoUtils.EventCategory(displayName: "invalidPasswordMailbox")
+    static let later = MatomoUtils.EventCategory(displayName: "later")
     static let menuDrawer = MatomoUtils.EventCategory(displayName: "menuDrawer")
+    static let moreInfo = MatomoUtils.EventCategory(displayName: "moreInfo")
     static let message = MatomoUtils.EventCategory(displayName: "message")
     static let multiSelection = MatomoUtils.EventCategory(displayName: "multiSelection")
     static let newMessage = MatomoUtils.EventCategory(displayName: "newMessage")
@@ -57,6 +59,7 @@ public extension MatomoUtils.EventCategory {
     static let snackbar = MatomoUtils.EventCategory(displayName: "snackbar")
     static let syncAutoConfig = MatomoUtils.EventCategory(displayName: "syncAutoConfig")
     static let threadList = MatomoUtils.EventCategory(displayName: "threadList")
+    static let update = MatomoUtils.EventCategory(displayName: "update")
     static let userInfo = MatomoUtils.EventCategory(displayName: "userInfo")
     static let easterEgg = MatomoUtils.EventCategory(displayName: "easterEgg")
 

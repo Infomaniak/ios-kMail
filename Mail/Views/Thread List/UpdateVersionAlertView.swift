@@ -45,9 +45,13 @@ struct UpdateVersionAlertView: View {
                 .textStyle(.body)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonUpdate,
-                             secondaryButtonTitle: MailResourcesStrings.Localizable.buttonLater,
-                             primaryButtonAction: updateVersion,
-                             secondaryButtonAction: dismissUpdateVersionView)
+                             secondaryButtonTitle: MailResourcesStrings.Localizable.buttonLater) {
+                matomo.track(eventWithCategory: .update, name: "update")
+                updateVersion()
+            } secondaryButtonAction: {
+                matomo.track(eventWithCategory: .later, name: "later")
+                dismissUpdateVersionView()
+            }
         }
     }
 

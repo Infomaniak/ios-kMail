@@ -23,6 +23,8 @@ import MailResources
 import SwiftUI
 
 struct UpdateVersionView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @Binding var isShowingUpdateAlert: Bool
 
     var body: some View {
@@ -42,7 +44,7 @@ struct UpdateVersionView: View {
                         }
 
                     Button {
-                        //  matomo.track(eventWithCategory: .threadList, name: "")
+                        matomo.track(eventWithCategory: .userInfo, name: "moreInfo")
                         isShowingUpdateAlert = true
                     } label: {
                         HStack(spacing: UIPadding.small) {
