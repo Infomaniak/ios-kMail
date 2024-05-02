@@ -61,7 +61,7 @@ struct ThreadListView: View {
     private var shouldDisplayUpdateOSView: Bool {
         guard !updateOSViewDismissed && !platformDetector.isMac else { return false }
         if #available(iOS 16.5, *) {
-            return true
+            return false
         } else {
             let currentVersion = ProcessInfo().operatingSystemVersion
             if currentVersion.majorVersion == 15 {
