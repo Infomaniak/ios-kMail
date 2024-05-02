@@ -66,7 +66,7 @@ public struct MessageActionHandler: MessageActionHandlable {
                                                                           messageId: messageUid))
     }
 
-    func handleArchiveOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async throws {
+    func handleArchiveOnNotification(messageUid: String, mailboxManager: MailboxManager) async throws {
         let backgroundTaskTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
 
         matomo.track(eventWithCategory: .notificationActions, name: ActionNames.archive)
@@ -80,7 +80,7 @@ public struct MessageActionHandler: MessageActionHandlable {
         await backgroundTaskTracker.end()
     }
 
-    func handleDeleteOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async throws {
+    func handleDeleteOnNotification(messageUid: String, mailboxManager: MailboxManager) async throws {
         let backgroundTaskTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
 
         matomo.track(eventWithCategory: .notificationActions, name: ActionNames.delete)

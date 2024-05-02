@@ -23,7 +23,6 @@ import RealmSwift
 import SwiftUI
 
 struct ComposeMessageSenderMenu: View {
-    @EnvironmentObject private var draftContentManager: DraftContentManager
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ObservedResults(Signature.self) private var signatures
@@ -32,7 +31,6 @@ struct ComposeMessageSenderMenu: View {
 
     let autocompletionType: ComposeViewFieldType?
     let type: ComposeViewFieldType
-    let text: String
 
     private var canSelectSignature: Bool {
         !signatures.isEmpty
@@ -46,14 +44,12 @@ struct ComposeMessageSenderMenu: View {
         currentSignature: Binding<Signature?>,
         mailboxManager: MailboxManager,
         autocompletionType: ComposeViewFieldType?,
-        type: ComposeViewFieldType,
-        text: String
+        type: ComposeViewFieldType
     ) {
         _currentSignature = currentSignature
         _signatures = ObservedResults(Signature.self, configuration: mailboxManager.realmConfiguration)
         self.autocompletionType = autocompletionType
         self.type = type
-        self.text = text
     }
 
     var body: some View {
@@ -94,7 +90,6 @@ struct ComposeMessageSenderMenu: View {
         currentSignature: .constant(nil),
         mailboxManager: PreviewHelper.sampleMailboxManager,
         autocompletionType: nil,
-        type: .from,
-        text: "email@email.com"
+        type: .from
     )
 }

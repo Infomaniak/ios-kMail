@@ -56,8 +56,7 @@ struct ThreadListView: View {
 
     init(mailboxManager: MailboxManager,
          frozenFolder: Folder,
-         selectedThreadOwner: SelectedThreadOwnable,
-         isCompact: Bool) {
+         selectedThreadOwner: SelectedThreadOwnable) {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    frozenFolder: frozenFolder,
                                                                    selectedThreadOwner: selectedThreadOwner))
@@ -208,7 +207,6 @@ struct ThreadListView: View {
     ThreadListView(
         mailboxManager: PreviewHelper.sampleMailboxManager,
         frozenFolder: PreviewHelper.sampleFolder,
-        selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner,
-        isCompact: false
+        selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner
     )
 }

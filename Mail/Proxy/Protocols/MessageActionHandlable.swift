@@ -25,10 +25,10 @@ protocol MessageActionHandlable {
     func handleTapOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async throws
 
     /// Silently move mail to `archive` folder
-    func handleArchiveOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async throws
+    func handleArchiveOnNotification(messageUid: String, mailboxManager: MailboxManager) async throws
 
     /// Silently move mail to `trash` folder
-    func handleDeleteOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async throws
+    func handleDeleteOnNotification(messageUid: String, mailboxManager: MailboxManager) async throws
 
     /// Present a new `reply to` draft to the user with the correct account
     func handleReplyOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager)

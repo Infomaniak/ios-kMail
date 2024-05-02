@@ -22,9 +22,6 @@ import MailResources
 import SwiftUI
 
 struct SendSettingsView: View {
-    @State private var includeOriginal = false
-    @State private var askAck = false
-
     var body: some View {
         List {
             // Cancel period

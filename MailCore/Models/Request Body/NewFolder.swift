@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct NewFolder: Encodable {
+public struct NewFolder: Codable {
     let name: String
     let path: String?
 }

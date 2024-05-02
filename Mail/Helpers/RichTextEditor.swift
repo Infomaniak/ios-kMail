@@ -165,20 +165,6 @@ struct RichTextEditor: UIViewRepresentable {
     }
 }
 
-extension SQTextEditorView {
-    func insertHtml(_ html: String) async throws {
-        return try await withCheckedThrowingContinuation { continuation in
-            insertHTML(html) { error in
-                if let error {
-                    continuation.resume(throwing: error)
-                } else {
-                    continuation.resume()
-                }
-            }
-        }
-    }
-}
-
 struct RichTextEditorModel {
     var cursorPosition: CGFloat = 0
     var height: CGFloat = 0

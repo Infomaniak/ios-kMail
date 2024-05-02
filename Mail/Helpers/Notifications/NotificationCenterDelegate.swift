@@ -68,13 +68,11 @@ final class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
         case NewMailActionIdentifier.archive:
             try? await messageActions.handleArchiveOnNotification(
                 messageUid: messageUid,
-                mailbox: mailbox,
                 mailboxManager: mailboxManager
             )
         case NewMailActionIdentifier.delete:
             try? await messageActions.handleDeleteOnNotification(
                 messageUid: messageUid,
-                mailbox: mailbox,
                 mailboxManager: mailboxManager
             )
         case NewMailActionIdentifier.reply:

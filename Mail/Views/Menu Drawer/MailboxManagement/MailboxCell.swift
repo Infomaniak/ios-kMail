@@ -84,7 +84,7 @@ struct MailboxCell: View {
             navigationDrawerState.close()
         }
         .floatingPanel(isPresented: $isShowingLockedView) {
-            LockedMailboxView(lockedMailbox: mailbox)
+            LockedMailboxView()
         }
         .sheet(isPresented: $isShowingUpdatePasswordView) {
             UpdateMailboxPasswordView(mailbox: mailbox)

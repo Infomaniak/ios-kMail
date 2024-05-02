@@ -95,7 +95,7 @@ extension DraftContentManager {
         )
     }
 
-    private func loadReplyingMessage(_ message: Message, replyMode: ReplyMode) async throws -> Message {
+    private func loadReplyingMessage(_ message: Message) async throws -> Message {
         if !message.fullyDownloaded {
             try await mailboxManager.message(message: message)
         }
@@ -106,7 +106,7 @@ extension DraftContentManager {
     }
 
     private func loadReplyingMessageAndFormat(_ message: Message, replyMode: ReplyMode) async throws -> String {
-        let replyingMessage = try await loadReplyingMessage(message, replyMode: replyMode)
+        let replyingMessage = try await loadReplyingMessage(message)
         return try await formatReplyingBody(of: replyingMessage, replyingMode: replyMode)
     }
 
@@ -239,8 +239,7 @@ extension DraftContentManager {
             text: MailResourcesStrings.Localizable.messageReplyHeader(
                 Constants.localizedDate(message.date),
                 message.formattedFrom
-            ),
-            withBR: false
+            )
         )
         try await appendBlockquote(to: root) { blockquote in
             try await appendReplyingBody(to: blockquote, message: message)
@@ -269,7 +268,7 @@ extension DraftContentManager {
         return try root.outerHtml()
     }
 
-    private func appendTextLine(to element: Element, text: String, withBR: Bool = true) throws {
+    private func appendTextLine(to element: Element, text: String) throws {
         let div = try element.appendElement("div")
         try div.text(text)
         try div.appendElement("br")
@@ -453,7 +452,7 @@ extension DraftContentManager {
 extension DraftContentManager {
     public func getReplyingBody() async throws -> Body? {
         guard let messageReply else { return nil }
-        return try await loadReplyingMessage(messageReply.frozenMessage, replyMode: messageReply.replyMode).body?.freezeIfNeeded()
+        return try await loadReplyingMessage(messageReply.frozenMessage).body?.freezeIfNeeded()
     }
 
     private func getLiveDraft(realm: Realm) -> Draft? {

@@ -34,7 +34,6 @@ struct UserAccountScene: Scene {
     @Environment(\.scenePhase) private var scenePhase
 
     @LazyInjectService private var appLockHelper: AppLockHelper
-    @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
     @LazyInjectService private var refreshAppBackgroundTask: RefreshAppBackgroundTask
     @LazyInjectService private var reviewManager: ReviewManageable

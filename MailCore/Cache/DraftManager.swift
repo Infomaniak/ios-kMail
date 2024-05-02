@@ -26,11 +26,6 @@ import Sentry
 import SwiftSoup
 import UIKit
 
-struct DraftQueueElement {
-    var saveTask: Task<Void, Never>?
-    var backgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid
-}
-
 actor DraftQueue {
     private var taskQueue = [String: DispatchWorkItem]()
     private var identifierQueue = [String: UIBackgroundTaskIdentifier]()
@@ -40,10 +35,6 @@ actor DraftQueue {
         endBackgroundTask(uuid: uuid)
         taskQueue[uuid] = nil
         identifierQueue[uuid] = .invalid
-    }
-
-    func saveTask(task: DispatchWorkItem, for uuid: String) {
-        taskQueue[uuid] = task
     }
 
     func beginBackgroundTask(withName name: String, for uuid: String) async {
@@ -67,7 +58,6 @@ actor DraftQueue {
 
 public final class DraftManager {
     private let draftQueue = DraftQueue()
-    private static let saveExpirationSec = 3
 
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var alertDisplayable: UserAlertDisplayable

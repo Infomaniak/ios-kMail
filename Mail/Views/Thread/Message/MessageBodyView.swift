@@ -29,8 +29,6 @@ struct MessageBodyView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
-    @State private var textPlainHeight = CGFloat.zero
-
     @StateObject private var model = WebViewModel()
 
     @Binding var presentableBody: PresentableBody

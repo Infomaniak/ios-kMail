@@ -29,11 +29,8 @@ import SwiftUI
 struct SettingsNotificationsView: View {
     @LazyInjectService private var notificationService: InfomaniakNotifications
     @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var platformDetector: PlatformDetectable
 
     @EnvironmentObject private var mailboxManager: MailboxManager
-
-    @Environment(\.openURL) private var openURL
 
     @AppStorage(UserDefaults.shared.key(.notificationsEnabled)) private var notificationsEnabled = DefaultPreferences
         .notificationsEnabled
