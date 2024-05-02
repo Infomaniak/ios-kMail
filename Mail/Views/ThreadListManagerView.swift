@@ -19,12 +19,9 @@
 import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
-import MailResources
 import SwiftUI
 
 struct ThreadListManagerView: View {
-    @Environment(\.isCompactWindow) private var isCompactWindow
-
     @AppStorage(UserDefaults.shared.key(.threadMode)) private var threadMode = DefaultPreferences.threadMode
 
     @EnvironmentObject private var mainViewState: MainViewState
@@ -47,8 +44,7 @@ struct ThreadListManagerView: View {
                 ThreadListView(
                     mailboxManager: mailboxManager,
                     frozenFolder: mainViewState.selectedFolder,
-                    selectedThreadOwner: mainViewState,
-                    isCompact: isCompactWindow
+                    selectedThreadOwner: mainViewState
                 )
                 .id(threadListViewHash)
             }

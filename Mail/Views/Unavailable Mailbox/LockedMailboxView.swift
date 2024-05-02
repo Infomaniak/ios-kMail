@@ -24,7 +24,6 @@ import SwiftUI
 struct LockedMailboxView: View {
     @Environment(\.dismiss) private var dismiss
 
-    let lockedMailbox: Mailbox
     var body: some View {
         VStack(spacing: UIPadding.regular) {
             MailResourcesAsset.mailboxError.swiftUIImage
@@ -55,6 +54,6 @@ struct LockedMailboxView: View {
 #Preview {
     Text("Preview")
         .floatingPanel(isPresented: .constant(true)) {
-            LockedMailboxView(lockedMailbox: PreviewHelper.sampleMailbox)
+            LockedMailboxView()
         }
 }

@@ -320,20 +320,4 @@ enum AIError: LocalizedError {
             return MailResourcesStrings.Localizable.aiErrorUnknown
         }
     }
-
-    init(from error: Error) {
-        guard let mailApiError = error as? MailApiError else {
-            self = .unknownError
-            return
-        }
-
-        switch mailApiError {
-        case .apiAITooManyRequests:
-            self = .tooManyRequests
-        case .apiAIMaxSyntaxTokensReached:
-            self = .maxSyntaxTokensReached
-        default:
-            self = .unknownError
-        }
-    }
 }

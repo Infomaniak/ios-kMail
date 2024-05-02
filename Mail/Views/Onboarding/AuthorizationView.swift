@@ -30,7 +30,6 @@ enum AuthorizationSlide: Int {
 
 struct AuthorizationView: View {
     @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var matomo: MatomoUtils
 
     @EnvironmentObject private var navigationState: RootViewState
 
@@ -118,8 +117,6 @@ struct AuthorizationView: View {
     }
 }
 
-struct AuthorizationView_Previews: PreviewProvider {
-    static var previews: some View {
-        AuthorizationView()
-    }
+#Preview {
+    AuthorizationView()
 }

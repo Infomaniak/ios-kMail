@@ -126,8 +126,6 @@ final class DateSection: Identifiable, Equatable {
     var observationLastUpdateToken: NotificationToken?
     let observeQueue = DispatchQueue(label: "com.infomaniak.observation.ThreadListViewModel", qos: .userInteractive)
 
-    private let loadNextPageThreshold = 10
-
     @Published var filter = Filter.all {
         didSet {
             Task {

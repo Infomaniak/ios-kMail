@@ -22,8 +22,6 @@ import MailResources
 import SwiftSoup
 
 public enum MessageBodyUtils {
-    private static let blockquote = "blockquote"
-
     private static var quoteDescriptors = [
         // The reply and forward #divRplyFwdMsg div only contains the header.
         // The previous message body is written right next to this div and can't be detected
@@ -120,25 +118,6 @@ public enum MessageBodyUtils {
         }
 
         return try MessageBodyQuote(messageBody: parsedBody.outerHtml(), quotes: quotes)
-    }
-
-    private static func splitBodyAndQuote(blockquoteElement: Element?, htmlDocumentWithQuote: Document,
-                                          currentQuoteDescriptor: String) async throws -> (String, String?) {
-        if currentQuoteDescriptor == blockquote {
-            for quotedContentElement in try await htmlDocumentWithQuote.select(currentQuoteDescriptor) {
-                if try quotedContentElement.outerHtml() == blockquoteElement?.outerHtml() {
-                    try quotedContentElement.remove()
-                    break
-                }
-            }
-            return try (htmlDocumentWithQuote.outerHtml(), blockquoteElement?.outerHtml())
-        } else if !currentQuoteDescriptor.isEmpty {
-            let quotedContentElements = try await htmlDocumentWithQuote.select(currentQuoteDescriptor)
-            try quotedContentElements.remove()
-            return try (htmlDocumentWithQuote.outerHtml(), quotedContentElements.outerHtml())
-        } else {
-            return try (htmlDocumentWithQuote.outerHtml(), nil)
-        }
     }
 
     private static func createPrintHeader(message: Message) throws -> Element {

@@ -25,7 +25,6 @@ import SwiftUI
 
 struct SenderMenuCell: View {
     @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var platformDetector: PlatformDetectable
 
     @EnvironmentObject private var draftContentManager: DraftContentManager
     @EnvironmentObject private var mailboxManager: MailboxManager

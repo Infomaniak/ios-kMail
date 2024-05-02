@@ -26,9 +26,6 @@ import SwiftUI
 
 /// Something to deal with the tracking and Upload of Attachments linked to a Draft.
 @MainActor protocol AttachmentsManageable {
-    /// The `live` Draft
-    var liveDraft: Draft? { get }
-
     /// Live Attachments linked to the Draft
     var liveAttachments: [Attachment] { get }
 
@@ -64,21 +61,12 @@ import SwiftUI
 
 /// Something to track `Attachments` linked to a live `Draft`
 @MainActor final class AttachmentsManager: ObservableObject, AttachmentsManageable {
-    private let draftLocalUUID: String
-
     /// Async attachment operations
     private let worker: AttachmentsManagerWorker
-
-    private let mailboxManager: MailboxManager
-    private let backgroundRealm: BackgroundRealm
 
     /// Something to debounce content will change updates
     private let contentWillChangeSubject = PassthroughSubject<Void, Never>()
     private var contentWillChangeObserver: AnyCancellable?
-
-    var liveDraft: Draft? {
-        worker.liveDraft
-    }
 
     var liveAttachments: [Attachment] {
         worker.liveAttachments
@@ -91,17 +79,8 @@ import SwiftUI
     var globalError: MailError?
 
     init(draftLocalUUID: String, mailboxManager: MailboxManager) {
-        self.draftLocalUUID = draftLocalUUID
-        self.mailboxManager = mailboxManager
-        let realm = BackgroundRealm(configuration: mailboxManager.realmConfiguration)
-        backgroundRealm = realm
-
         // Debouncing objectWillChange helps a lot scaling with numerous attachments
-        worker = AttachmentsManagerWorker(
-            backgroundRealm: realm,
-            draftLocalUUID: draftLocalUUID,
-            mailboxManager: mailboxManager
-        )
+        worker = AttachmentsManagerWorker(draftLocalUUID: draftLocalUUID, mailboxManager: mailboxManager)
 
         contentWillChangeObserver = contentWillChangeSubject
             .debounce(for: .milliseconds(150), scheduler: DispatchQueue.main)

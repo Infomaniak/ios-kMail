@@ -18,7 +18,6 @@
 
 import MailCore
 import MailCoreUI
-import MailResources
 import SwiftUI
 
 struct MessageListView: View {

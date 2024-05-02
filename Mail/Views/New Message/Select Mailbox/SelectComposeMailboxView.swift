@@ -26,8 +26,6 @@ import SwiftUI
 
 struct SelectComposeMailboxView: View {
     @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var platformDetector: PlatformDetectable
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 

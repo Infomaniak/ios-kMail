@@ -18,6 +18,5 @@
 
 import Foundation
 import InfomaniakDI
-import MailCore
 
 class MailShareExtensionTargetAssembly: CommonAppAndShareTargetAssembly {}

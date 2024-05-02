@@ -29,11 +29,8 @@ struct MessageBodyView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
-    @State private var textPlainHeight = CGFloat.zero
-
     @StateObject private var model = WebViewModel()
 
-    let isMessagePreprocessed: Bool
     @Binding var presentableBody: PresentableBody
     var blockRemoteContent: Bool
     @Binding var displayContentBlockedActionView: Bool
@@ -120,7 +117,6 @@ struct MessageBodyView: View {
 
 #Preview {
     MessageBodyView(
-        isMessagePreprocessed: true,
         presentableBody: .constant(PreviewHelper.samplePresentableBody),
         blockRemoteContent: false,
         displayContentBlockedActionView: .constant(false),

@@ -22,8 +22,6 @@ import MailResources
 import SwiftUI
 
 struct SettingsNotificationsInstructionsView: View {
-    @Environment(\.openURL) var openURL
-
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.medium) {
             Text(MailResourcesStrings.Localizable.alertNotificationsDisabledTitle)

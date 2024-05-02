@@ -27,8 +27,6 @@ import SwiftUI
 import WrappingHStack
 
 struct RecipientField: View {
-    @State private var keyboardHeight: CGFloat = 0
-
     @FocusState var focusedField: ComposeViewFieldType?
 
     @Binding var currentText: String
@@ -36,11 +34,6 @@ struct RecipientField: View {
 
     let type: ComposeViewFieldType
     var onSubmit: (() -> Void)?
-
-    /// A trimmed view on `currentText`
-    private var trimmedInputText: String {
-        currentText.trimmingCharacters(in: .whitespacesAndNewlines)
-    }
 
     private var isCurrentFieldFocused: Bool {
         if case .chip(let hash, _) = focusedField {
@@ -84,15 +77,6 @@ struct RecipientField: View {
                 .foregroundStyle(MailResourcesAsset.textTertiaryColor)
                 .opacity(shouldDisplayEmptyButton ? 1 : 0)
             }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { output in
-            if let userInfo = output.userInfo,
-               let keyboardFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
-                keyboardHeight = keyboardFrame.height
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidHideNotification)) { _ in
-            keyboardHeight = 0
         }
     }
 

@@ -39,8 +39,7 @@ struct ComposeMessageHeaderView: View {
                 currentSignature: $currentSignature,
                 mailboxManager: mailboxManager,
                 autocompletionType: autocompletionType,
-                type: .from,
-                text: mailboxManager.mailbox.email
+                type: .from
             )
 
             ComposeMessageCellRecipients(

@@ -111,10 +111,6 @@ struct ThreadCell: View {
     let isSelected: Bool
     let avatarTapped: (() -> Void)?
 
-    private var checkboxSize: CGFloat {
-        density == .large ? UIConstants.checkboxLargeSize : UIConstants.checkboxSize
-    }
-
     private var additionalAccessibilityLabel: String {
         var label = ""
         if isSelected {

@@ -121,8 +121,6 @@ struct NavigationDrawer: View {
 struct MenuDrawerView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var isShowingRestoreMails = false
-
     var body: some View {
         VStack(spacing: 0) {
             MenuHeaderView()

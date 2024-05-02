@@ -20,22 +20,15 @@ import InfomaniakCore
 import InfomaniakDI
 import MailCore
 import MailCoreUI
-import MailResources
 import SwiftUI
 
 struct AccountMailboxesListView: View {
-    @LazyInjectService private var accountManager: AccountManager
-
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let account: Account
     var selectedMailbox: Mailbox?
 
     let selectMailbox: (Mailbox) -> Void
-
-    private var currentMailbox: Mailbox? {
-        return accountManager.currentMailboxManager?.mailbox
-    }
 
     var body: some View {
         Menu {

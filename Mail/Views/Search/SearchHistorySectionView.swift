@@ -23,8 +23,6 @@ import RealmSwift
 import SwiftUI
 
 struct SearchHistorySectionView: View {
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
     @ObservedResults(SearchHistory.self) private var searchHistories
     private var searchHistory: SearchHistory? {
         return searchHistories.first

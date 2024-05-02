@@ -32,7 +32,6 @@ struct ComposeMessageBodyView: View {
 
     @Binding var editorModel: RichTextEditorModel
     @Binding var editorFocus: Bool
-    @Binding var currentSignature: Signature?
     @Binding var isShowingAIPrompt: Bool
     @Binding var isShowingAlert: NewMessageAlert?
 
@@ -101,7 +100,6 @@ struct ComposeMessageBodyView: View {
     return ComposeMessageBodyView(draft: draft,
                                   editorModel: .constant(RichTextEditorModel()),
                                   editorFocus: .constant(false),
-                                  currentSignature: .constant(nil),
                                   isShowingAIPrompt: .constant(false),
                                   isShowingAlert: .constant(nil),
                                   attachmentsManager: AttachmentsManager(

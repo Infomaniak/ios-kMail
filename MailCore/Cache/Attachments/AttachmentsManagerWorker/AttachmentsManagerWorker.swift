@@ -110,8 +110,8 @@ public final class AttachmentsManagerWorker {
         }
     }
 
-    public init(backgroundRealm: BackgroundRealm, draftLocalUUID: String, mailboxManager: MailboxManager) {
-        self.backgroundRealm = backgroundRealm
+    public init(draftLocalUUID: String, mailboxManager: MailboxManager) {
+        backgroundRealm = BackgroundRealm(configuration: mailboxManager.realmConfiguration)
         self.draftLocalUUID = draftLocalUUID
         self.mailboxManager = mailboxManager
         transactionExecutor = TransactionExecutor(realmAccessible: backgroundRealm)

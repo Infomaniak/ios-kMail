@@ -91,8 +91,6 @@ enum SearchState {
         }
     }
 
-    var lastSearchFolderId: String?
-
     /// Token to observe the search itself
     var observationSearchThreadToken: NotificationToken?
 
@@ -170,7 +168,6 @@ enum SearchState {
 
         if selectedFilters.contains(.folder) {
             folderToSearch = selectedSearchFolderId
-            lastSearchFolderId = selectedSearchFolderId
         }
 
         if ReachabilityListener.instance.currentStatus == .offline {

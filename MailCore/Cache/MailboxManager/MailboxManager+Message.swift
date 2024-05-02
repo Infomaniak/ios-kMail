@@ -19,7 +19,6 @@
 import Foundation
 import InfomaniakCoreUI
 import InfomaniakDI
-import MailResources
 import RealmSwift
 
 // MARK: - Message

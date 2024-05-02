@@ -18,7 +18,6 @@
 
 import InfomaniakCore
 import InfomaniakLogin
-import MailCore
 import SwiftUI
 
 struct DeleteAccountView: UIViewControllerRepresentable {

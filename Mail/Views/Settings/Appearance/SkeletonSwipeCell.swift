@@ -16,12 +16,11 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
-import MailResources
 import SwiftUI
 
 struct SkeletonSwipeCell: View {
     let isLeading: Bool
+
     var body: some View {
         Rectangle()
             .fill(Color.clear)

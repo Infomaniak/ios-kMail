@@ -98,7 +98,6 @@ struct MessageView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         } else {
                             MessageBodyView(
-                                isMessagePreprocessed: isMessagePreprocessed,
                                 presentableBody: $presentableBody,
                                 blockRemoteContent: isRemoteContentBlocked,
                                 displayContentBlockedActionView: $displayContentBlockedActionView,
