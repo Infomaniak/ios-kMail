@@ -42,6 +42,7 @@ struct ThreadListView: View {
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
     @State private var firstLaunch = true
+    @State private var isShowingUpdateAlert = false
     @ModalState private var flushAlert: FlushAlertState?
 
     @StateObject var viewModel: ThreadListViewModel
@@ -119,7 +120,7 @@ struct ThreadListView: View {
                     }
 
                     if shouldDisplayUpdateOSView {
-                        UpdateVersionView()
+                        UpdateVersionView(isShowingUpdateAlert: $isShowingUpdateAlert)
                             .threadListCellAppearance()
                     }
 
@@ -218,6 +219,9 @@ struct ThreadListView: View {
         }
         .customAlert(item: $flushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: viewModel.frozenFolder)
+        }
+        .customAlert(isPresented: $isShowingUpdateAlert) {
+            UpdateVersionAlertView {}
         }
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Main"])
     }
