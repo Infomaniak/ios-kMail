@@ -35,7 +35,7 @@ struct UpdateVersionView: View {
                     }
 
                 VStack(alignment: .leading, spacing: UIPadding.small) {
-                    Text("Vos e-mails peuvent ne pas s’afficher correctement.")
+                    Text(MailResourcesStrings.Localizable.updateVersionTitle)
                         .textStyle(.bodySmall)
                         .alignmentGuide(.informationBlockAlignment) { d in
                             (d.height - (d[.lastTextBaseline] - d[.firstTextBaseline])) / 2
@@ -46,7 +46,7 @@ struct UpdateVersionView: View {
                         isShowingUpdateAlert = true
                     } label: {
                         HStack(spacing: UIPadding.small) {
-                            Text("En savoir plus")
+                            Text(MailResourcesStrings.Localizable.moreInfo)
                                 .textStyle(.bodySmallAccent)
                         }
                         .buttonStyle(.borderless)
