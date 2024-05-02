@@ -61,7 +61,9 @@ struct UpdateVersionAlertView: View {
 
     private func dismissUpdateVersionView() {
         onLaterPressed()
-        updateOSViewDismissed = true
+        withAnimation {
+            updateOSViewDismissed = true
+        }
     }
 }
 

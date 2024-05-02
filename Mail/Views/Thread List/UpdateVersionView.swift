@@ -23,7 +23,7 @@ import MailResources
 import SwiftUI
 
 struct UpdateVersionView: View {
-    @State private var isShowingUpdateAlert = false
+    @Binding var isShowingUpdateAlert: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.small) {
@@ -31,7 +31,6 @@ struct UpdateVersionView: View {
                 IKIcon(MailResourcesAsset.warning)
                     .foregroundStyle(MailResourcesAsset.orangeColor)
                     .alignmentGuide(.informationBlockAlignment) { d in
-                        // Center of the view is on the informationBlockAlignment guide
                         d[VerticalAlignment.center]
                     }
 
@@ -39,7 +38,6 @@ struct UpdateVersionView: View {
                     Text("Vos e-mails peuvent ne pas s’afficher correctement.")
                         .textStyle(.bodySmall)
                         .alignmentGuide(.informationBlockAlignment) { d in
-                            // Center of the first line is on the informationBlockAlignment guide
                             (d.height - (d[.lastTextBaseline] - d[.firstTextBaseline])) / 2
                         }
 
@@ -63,12 +61,9 @@ struct UpdateVersionView: View {
             IKDivider(type: .full)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .customAlert(isPresented: $isShowingUpdateAlert) {
-            UpdateVersionAlertView {}
-        }
     }
 }
 
 #Preview {
-    UpdateVersionView()
+    UpdateVersionView(isShowingUpdateAlert: .constant(true))
 }
