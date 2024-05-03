@@ -62,7 +62,7 @@ public protocol MailboxManagerDraftable {
     func delete(draft: Draft) async throws
     func delete(draftMessage: Message) async throws
     func deleteLocally(draft: Draft) async throws
-    func deleteOrphanDrafts() async
+    func deleteOrphanDrafts() async throws
 }
 
 /// An abstract interface on the `MailboxManager` related to Folders
@@ -80,14 +80,14 @@ public protocol MailboxManagerFolderable {
 /// An abstract interface on the `MailboxManager` related to search
 public protocol MailboxManagerSearchable {
     func initSearchFolder() -> Folder
-    func clearSearchResults() async
+    func clearSearchResults() async throws
     func searchThreads(searchFolder: Folder?, filterFolderId: String, filter: Filter,
                        searchFilter: [URLQueryItem]) async throws -> ThreadResult
     func searchThreads(searchFolder: Folder?, from resource: String,
                        searchFilter: [URLQueryItem]) async throws -> ThreadResult
     func searchThreadsOffline(searchFolder: Folder?, filterFolderId: String,
-                              searchFilters: [SearchCondition]) async
-    func addToSearchHistory(value: String) async
+                              searchFilters: [SearchCondition]) async throws
+    func addToSearchHistory(value: String) async throws
 }
 
 /// An abstract interface on the `MailboxManager` related to contacts

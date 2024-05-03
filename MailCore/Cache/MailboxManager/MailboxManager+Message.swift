@@ -29,11 +29,9 @@ public extension MailboxManager {
         let completedMessage = try await apiFetcher.message(message: message)
         completedMessage.fullyDownloaded = true
 
-        await backgroundRealm.execute { realm in
-            // Update message in Realm
-            try? realm.safeWrite {
-                realm.add(completedMessage, update: .modified)
-            }
+        // Update message in Realm
+        try writeTransaction { writableRealm in
+            writableRealm.add(completedMessage, update: .modified)
         }
     }
 
@@ -45,12 +43,12 @@ public extension MailboxManager {
         let data = try await apiFetcher.attachment(attachment: attachment)
 
         let safeAttachment = ThreadSafeReference(to: attachment)
-        await backgroundRealm.execute { realm in
-            if let liveAttachment = realm.resolve(safeAttachment) {
-                try? realm.safeWrite {
-                    liveAttachment.saved = true
-                }
+        try writeTransaction { writableRealm in
+            guard let liveAttachment = writableRealm.resolve(safeAttachment) else {
+                return
             }
+
+            liveAttachment.saved = true
         }
 
         return data
@@ -104,7 +102,7 @@ public extension MailboxManager {
     // MARK: Private
 
     func markAsSeen(messages: [Message], seen: Bool) async throws {
-        await updateLocally(.seen, value: seen, messages: messages)
+        try await updateLocally(.seen, value: seen, messages: messages)
 
         do {
             if seen {
@@ -113,7 +111,7 @@ public extension MailboxManager {
                 try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
             }
         } catch {
-            await updateLocally(.seen, value: !seen, messages: messages)
+            try await updateLocally(.seen, value: !seen, messages: messages)
         }
 
         try await refreshFolder(from: messages, additionalFolder: nil)
@@ -125,7 +123,7 @@ public extension MailboxManager {
     /// Set starred the given messages.
     /// - Important: This methods stars only the messages you passes, no processing is done to add duplicates or remove drafts
     func star(messages: [Message], starred: Bool) async throws {
-        await updateLocally(.star, value: starred, messages: messages)
+        try await updateLocally(.star, value: starred, messages: messages)
 
         do {
             if starred {
@@ -134,7 +132,7 @@ public extension MailboxManager {
                 _ = try await unstar(messages: messages)
             }
         } catch {
-            await updateLocally(.star, value: !starred, messages: messages)
+            try await updateLocally(.star, value: !starred, messages: messages)
         }
     }
 

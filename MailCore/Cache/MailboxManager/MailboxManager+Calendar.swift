@@ -23,7 +23,7 @@ public extension MailboxManager {
         let (_, frozenAttachment) = try getFrozenMessageAndCalendarAttachment(messageUid: messageUid)
 
         let calendarEventResponse = try await apiFetcher.calendarEvent(from: frozenAttachment)
-        await saveCalendarEventResponse(to: messageUid, eventResponse: calendarEventResponse)
+        try await saveCalendarEventResponse(to: messageUid, eventResponse: calendarEventResponse)
     }
 
     func replyToCalendarEvent(messageUid: String, reply: AttendeeState) async throws {
@@ -66,13 +66,12 @@ extension MailboxManager {
         return message.attachments.first { $0.uti?.conforms(to: .calendarEvent) == true }?.freezeIfNeeded()
     }
 
-    private func saveCalendarEventResponse(to messageUid: String, eventResponse: CalendarEventResponse) async {
-        await backgroundRealm.execute { realm in
-            if let liveMessage = realm.object(ofType: Message.self, forPrimaryKey: messageUid) {
-                try? realm.safeWrite {
-                    liveMessage.calendarEventResponse = eventResponse
-                }
+    private func saveCalendarEventResponse(to messageUid: String, eventResponse: CalendarEventResponse) async throws {
+        try writeTransaction { writableRealm in
+            guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: messageUid) else {
+                return
             }
+            liveMessage.calendarEventResponse = eventResponse
         }
     }
 }

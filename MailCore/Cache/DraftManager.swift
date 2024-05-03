@@ -245,7 +245,7 @@ public final class DraftManager {
                 await mailboxManager.refreshFolderContent(draftFolder)
             }
 
-            await mailboxManager.deleteOrphanDrafts()
+            try await mailboxManager.deleteOrphanDrafts()
         }
     }
 

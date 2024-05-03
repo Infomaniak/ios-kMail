@@ -186,7 +186,7 @@ public class ActionsManager: ObservableObject {
 
     private func performMove(messages: [Message], from originFolder: Folder?, to folderRole: FolderRole) async throws {
         let originalThreads = messages.flatMap { $0.threads.filter { $0.folder == originFolder } }
-        await mailboxManager.markMovedLocally(true, threads: originalThreads)
+        try await mailboxManager.markMovedLocally(true, threads: originalThreads)
 
         do {
             let undoAction = try await mailboxManager.move(messages: messages, to: folderRole)
@@ -198,7 +198,7 @@ public class ActionsManager: ObservableObject {
 
             async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
         } catch {
-            await mailboxManager.markMovedLocally(false, threads: originalThreads)
+            try await mailboxManager.markMovedLocally(false, threads: originalThreads)
             throw error
         }
     }
@@ -207,7 +207,7 @@ public class ActionsManager: ObservableObject {
         let messagesFromFolder = messages.filter { $0.folderId == originFolder?.remoteId }
 
         let originalThreads = messagesFromFolder.flatMap { $0.threads.filter { $0.folder == originFolder } }
-        await mailboxManager.markMovedLocally(true, threads: originalThreads)
+        try await mailboxManager.markMovedLocally(true, threads: originalThreads)
 
         do {
             let undoAction = try await mailboxManager.move(messages: messagesFromFolder, to: destinationFolder)
@@ -220,7 +220,7 @@ public class ActionsManager: ObservableObject {
 
             async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
         } catch {
-            await mailboxManager.markMovedLocally(false, threads: originalThreads)
+            try await mailboxManager.markMovedLocally(false, threads: originalThreads)
             throw error
         }
     }

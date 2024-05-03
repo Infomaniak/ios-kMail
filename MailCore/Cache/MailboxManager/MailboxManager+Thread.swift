@@ -102,36 +102,35 @@ public extension MailboxManager {
 
         guard !Task.isCancelled else { return }
 
-        await backgroundRealm.execute { realm in
-            guard let folder = folder.fresh(using: realm) else {
+        try writeTransaction { writableRealm in
+            guard let folder = folder.fresh(using: writableRealm) else {
                 self.logError(.missingFolder)
                 return
             }
-            try? realm.safeWrite {
-                if previousCursor == nil && messagesUids.addedShortUids.count < Constants.pageSize {
-                    folder.completeHistoryInfo()
-                }
-                if let newUnreadCount = messagesUids.folderUnreadCount {
-                    folder.remoteUnreadCount = newUnreadCount
-                }
-                folder.computeUnreadCount()
-                folder.cursor = messagesUids.cursor
-                folder.lastUpdate = Date()
+
+            if previousCursor == nil && messagesUids.addedShortUids.count < Constants.pageSize {
+                folder.completeHistoryInfo()
             }
+            if let newUnreadCount = messagesUids.folderUnreadCount {
+                folder.remoteUnreadCount = newUnreadCount
+            }
+            folder.computeUnreadCount()
+            folder.cursor = messagesUids.cursor
+            folder.lastUpdate = Date()
 
             SentryDebug.searchForOrphanMessages(
                 folderId: folder.remoteId,
-                using: realm,
+                using: writableRealm,
                 previousCursor: previousCursor,
                 newCursor: messagesUids.cursor
             )
             SentryDebug.searchForOrphanThreads(
-                using: realm,
+                using: writableRealm,
                 previousCursor: previousCursor,
                 newCursor: messagesUids.cursor
             )
 
-            self.deleteOrphanMessagesAndThreads(realm, folderId: folder.remoteId)
+            self.deleteOrphanMessagesAndThreads(writableRealm: writableRealm, folderId: folder.remoteId)
         }
 
         if previousCursor != nil {
@@ -253,31 +252,27 @@ public extension MailboxManager {
 
         switch direction {
         case .previous:
-            return await backgroundRealm.execute { realm in
-                let freshFolder = folder.fresh(using: realm)
+            var onePage = false
+            try writeTransaction { writableRealm in
+                let freshFolder = folder.fresh(using: writableRealm)
                 if messagesUids.addedShortUids.count < Constants.pageSize || messagesUids.addedShortUids.contains("1") {
-                    try? realm.safeWrite {
-                        freshFolder?.completeHistoryInfo()
-                    }
-                    return false
+                    freshFolder?.completeHistoryInfo()
+                    onePage = false
                 } else {
-                    try? realm.safeWrite {
-                        freshFolder?.remainingOldMessagesToFetch -= Constants.pageSize
-                    }
-                    return true
+                    freshFolder?.remainingOldMessagesToFetch -= Constants.pageSize
+                    onePage = true
                 }
             }
+            return onePage
         case .following:
             break
         case .none:
-            await backgroundRealm.execute { realm in
-                let freshFolder = folder.fresh(using: realm)
-                try? realm.safeWrite {
-                    freshFolder?.resetHistoryInfo()
+            try writeTransaction { writableRealm in
+                let freshFolder = folder.fresh(using: writableRealm)
+                freshFolder?.resetHistoryInfo()
 
-                    if messagesUids.addedShortUids.count < Constants.pageSize {
-                        freshFolder?.completeHistoryInfo()
-                    }
+                if messagesUids.addedShortUids.count < Constants.pageSize {
+                    freshFolder?.completeHistoryInfo()
                 }
             }
         }
@@ -327,89 +322,82 @@ public extension MailboxManager {
     }
 
     private func deleteMessages(uids: [String]) async {
-        guard !uids.isEmpty && !Task.isCancelled else { return }
+        guard !uids.isEmpty,
+              !Task.isCancelled else {
+            return
+        }
 
-        let backgroundTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
-        await backgroundRealm.execute { realm in
-            let batchSize = 100
-            for index in stride(from: 0, to: uids.count, by: batchSize) {
-                autoreleasepool {
-                    let uidsBatch = Array(uids[index ..< min(index + batchSize, uids.count)])
+        let batchSize = 100
+        for index in stride(from: 0, to: uids.count, by: batchSize) {
+            try? writeTransaction { writableRealm in
+                let uidsBatch = Array(uids[index ..< min(index + batchSize, uids.count)])
 
-                    let messagesToDelete = realm.objects(Message.self).where { $0.uid.in(uidsBatch) }
-                    var threadsToUpdate = Set<Thread>()
-                    var threadsToDelete = Set<Thread>()
-                    var draftsToDelete = Set<Draft>()
+                let messagesToDelete = writableRealm.objects(Message.self).where { $0.uid.in(uidsBatch) }
+                var threadsToUpdate = Set<Thread>()
+                var threadsToDelete = Set<Thread>()
+                var draftsToDelete = Set<Draft>()
 
-                    for message in messagesToDelete {
-                        if let draft = self.draft(messageUid: message.uid, using: realm) {
-                            draftsToDelete.insert(draft)
-                        }
-                        for parent in message.threads {
-                            threadsToUpdate.insert(parent)
-                        }
+                for message in messagesToDelete {
+                    if let draft = self.draft(messageUid: message.uid, using: writableRealm) {
+                        draftsToDelete.insert(draft)
                     }
+                    for parent in message.threads {
+                        threadsToUpdate.insert(parent)
+                    }
+                }
 
-                    let foldersToUpdate = Set(threadsToUpdate.compactMap(\.folder))
+                let foldersToUpdate = Set(threadsToUpdate.compactMap(\.folder))
 
-                    try? realm.safeWrite {
-                        for draft in draftsToDelete {
-                            if draft.action == nil {
-                                realm.delete(draft)
-                            } else {
-                                draft.remoteUUID = ""
-                            }
-                        }
+                for draft in draftsToDelete {
+                    if draft.action == nil {
+                        writableRealm.delete(draft)
+                    } else {
+                        draft.remoteUUID = ""
+                    }
+                }
 
-                        realm.delete(messagesToDelete)
-                        for thread in threadsToUpdate where !thread.isInvalidated {
-                            if thread.messageInFolderCount == 0 {
-                                threadsToDelete.insert(thread)
-                            } else {
-                                do {
-                                    try thread.recomputeOrFail()
-                                } catch {
-                                    threadsToDelete.insert(thread)
-                                    SentryDebug.threadHasNilLastMessageFromFolderDate(thread: thread)
-                                }
-                            }
-                        }
-                        realm.delete(threadsToDelete)
-                        for updateFolder in foldersToUpdate {
-                            updateFolder.computeUnreadCount()
+                writableRealm.delete(messagesToDelete)
+                for thread in threadsToUpdate where !thread.isInvalidated {
+                    if thread.messageInFolderCount == 0 {
+                        threadsToDelete.insert(thread)
+                    } else {
+                        do {
+                            try thread.recomputeOrFail()
+                        } catch {
+                            threadsToDelete.insert(thread)
+                            SentryDebug.threadHasNilLastMessageFromFolderDate(thread: thread)
                         }
                     }
                 }
+                writableRealm.delete(threadsToDelete)
+                for updateFolder in foldersToUpdate {
+                    updateFolder.computeUnreadCount()
+                }
             }
         }
-        await backgroundTracker.end()
     }
 
     private func updateMessages(updates: [MessageFlags], folder: Folder) async {
         guard !Task.isCancelled else { return }
 
-        let backgroundTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
-        await backgroundRealm.execute { realm in
+        try? writeTransaction { writableRealm in
             var threadsToUpdate = Set<Thread>()
-            try? realm.safeWrite {
-                for update in updates {
-                    let uid = Constants.longUid(from: String(update.shortUid), folderId: folder.remoteId)
-                    if let message = realm.object(ofType: Message.self, forPrimaryKey: uid) {
-                        message.answered = update.answered
-                        message.flagged = update.isFavorite
-                        message.forwarded = update.forwarded
-                        message.scheduled = update.scheduled
-                        message.seen = update.seen
+            for update in updates {
+                let uid = Constants.longUid(from: String(update.shortUid), folderId: folder.remoteId)
+                if let message = writableRealm.object(ofType: Message.self, forPrimaryKey: uid) {
+                    message.answered = update.answered
+                    message.flagged = update.isFavorite
+                    message.forwarded = update.forwarded
+                    message.scheduled = update.scheduled
+                    message.seen = update.seen
 
-                        for parent in message.threads {
-                            threadsToUpdate.insert(parent)
-                        }
+                    for parent in message.threads {
+                        threadsToUpdate.insert(parent)
                     }
                 }
-                self.updateThreads(threads: threadsToUpdate, realm: realm)
             }
+            self.updateThreads(threads: threadsToUpdate, realm: writableRealm)
         }
-        await backgroundTracker.end()
     }
 
     private func addMessages(shortUids: [String], folder: Folder, newCursor: String?) async throws {
@@ -422,11 +410,11 @@ public extension MailboxManager {
             messageUids: uniqueUids
         )
 
-        let backgroundTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
-        await backgroundRealm.execute { [self] realm in
-            if let folder = folder.fresh(using: realm) {
-                createThreads(messageByUids: messageByUidsResult, folder: folder, using: realm)
+        try? writeTransaction { writableRealm in
+            if let folder = folder.fresh(using: writableRealm) {
+                createThreads(messageByUids: messageByUidsResult, folder: folder, writableRealm: writableRealm)
             }
+
             SentryDebug.sendMissingMessagesSentry(
                 sentUids: uniqueUids,
                 receivedMessages: messageByUidsResult.messages,
@@ -434,7 +422,6 @@ public extension MailboxManager {
                 newCursor: newCursor
             )
         }
-        await backgroundTracker.end()
     }
 
     // MARK: - Thread creation
@@ -444,42 +431,40 @@ public extension MailboxManager {
     ///   - messageByUids: MessageByUidsResult (list of message)
     ///   - folder: Given folder
     ///   - realm: Given realm
-    private func createThreads(messageByUids: MessageByUidsResult, folder: Folder, using realm: Realm) {
+    private func createThreads(messageByUids: MessageByUidsResult, folder: Folder, writableRealm: Realm) {
         var threadsToUpdate = Set<Thread>()
-        try? realm.safeWrite {
-            for message in messageByUids.messages {
-                guard realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil else {
-                    SentrySDK.capture(message: "Found already existing message") { scope in
-                        scope.setContext(value: ["Message": ["uid": message.uid,
-                                                             "messageId": message.messageId],
-                                                 "Folder": ["id": message.folder?.remoteId,
-                                                            "name": message.folder?.matomoName,
-                                                            "cursor": message.folder?.cursor]],
-                                         key: "Message context")
-                    }
-                    continue
+        for message in messageByUids.messages {
+            guard writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil else {
+                SentrySDK.capture(message: "Found already existing message") { scope in
+                    scope.setContext(value: ["Message": ["uid": message.uid,
+                                                         "messageId": message.messageId],
+                                             "Folder": ["id": message.folder?.remoteId,
+                                                        "name": message.folder?.matomoName,
+                                                        "cursor": message.folder?.cursor]],
+                                     key: "Message context")
                 }
-                message.inTrash = folder.role == .trash
-                message.computeReference()
-
-                let isThreadMode = UserDefaults.shared.threadMode == .conversation
-                if isThreadMode {
-                    createConversationThread(
-                        message: message,
-                        folder: folder,
-                        threadsToUpdate: &threadsToUpdate,
-                        using: realm
-                    )
-                } else {
-                    createSingleMessageThread(message: message, folder: folder, threadsToUpdate: &threadsToUpdate)
-                }
-
-                if let message = realm.objects(Message.self).where({ $0.uid == message.uid }).first {
-                    folder.messages.insert(message)
-                }
+                continue
             }
-            self.updateThreads(threads: threadsToUpdate, realm: realm)
+            message.inTrash = folder.role == .trash
+            message.computeReference()
+
+            let isThreadMode = UserDefaults.shared.threadMode == .conversation
+            if isThreadMode {
+                createConversationThread(
+                    message: message,
+                    folder: folder,
+                    threadsToUpdate: &threadsToUpdate,
+                    using: writableRealm
+                )
+            } else {
+                createSingleMessageThread(message: message, folder: folder, threadsToUpdate: &threadsToUpdate)
+            }
+
+            if let message = writableRealm.objects(Message.self).where({ $0.uid == message.uid }).first {
+                folder.messages.insert(message)
+            }
         }
+        updateThreads(threads: threadsToUpdate, realm: writableRealm)
     }
 
     /// Add the given message to existing compatible threads + Create a new thread if needed
@@ -585,35 +570,31 @@ public extension MailboxManager {
             DDLogWarn("resetHistoryInfo because of lostOffsetMessageError")
             SentryDebug.addResetingFolderBreadcrumb(folder: folder)
 
-            await backgroundRealm.execute { realm in
-                guard let folder = folder.fresh(using: realm) else {
+            try writeTransaction { writableRealm in
+                guard let folder = folder.fresh(using: writableRealm) else {
                     self.logError(.missingFolder)
                     return
                 }
 
-                try? realm.write {
-                    realm.delete(folder.messages)
-                    realm.delete(folder.threads)
-                    folder.lastUpdate = nil
-                    folder.unreadCount = 0
-                    folder.remainingOldMessagesToFetch = Constants.messageQuantityLimit
-                    folder.isHistoryComplete = false
-                    folder.cursor = nil
-                }
+                writableRealm.delete(folder.messages)
+                writableRealm.delete(folder.threads)
+                folder.lastUpdate = nil
+                folder.unreadCount = 0
+                folder.remainingOldMessagesToFetch = Constants.messageQuantityLimit
+                folder.isHistoryComplete = false
+                folder.cursor = nil
             }
             try await messages(folder: folder, isRetrying: true)
         }
     }
 
-    private func deleteOrphanMessagesAndThreads(_ realm: Realm, folderId: String) {
-        let orphanMessages = realm.objects(Message.self).where { $0.folderId == folderId }
+    private func deleteOrphanMessagesAndThreads(writableRealm: Realm, folderId: String) {
+        let orphanMessages = writableRealm.objects(Message.self).where { $0.folderId == folderId }
             .filter { $0.threads.isEmpty && $0.threadsDuplicatedIn.isEmpty }
-        let orphanThreads = realm.objects(Thread.self).filter { $0.folder == nil }
+        let orphanThreads = writableRealm.objects(Thread.self).filter { $0.folder == nil }
 
-        try? realm.safeWrite {
-            realm.delete(orphanMessages)
-            realm.delete(orphanThreads)
-        }
+        writableRealm.delete(orphanMessages)
+        writableRealm.delete(orphanThreads)
     }
 
     private func removeDuplicatedThreads(
@@ -676,9 +657,9 @@ public extension MailboxManager {
 
     // MARK: - Other
 
-    func saveSearchThreads(result: ThreadResult, searchFolder: Folder) async {
-        await backgroundRealm.execute { realm in
-            guard let searchFolder = searchFolder.fresh(using: realm) else {
+    func saveSearchThreads(result: ThreadResult, searchFolder: Folder) async throws {
+        try writeTransaction { writableRealm in
+            guard let searchFolder = searchFolder.fresh(using: writableRealm) else {
                 self.logError(.missingFolder)
                 return
             }
@@ -688,23 +669,21 @@ public extension MailboxManager {
 
             for thread in fetchedThreads {
                 for message in thread.messages {
-                    self.keepCacheAttributes(for: message, keepProperties: .standard, using: realm)
+                    self.keepCacheAttributes(for: message, keepProperties: .standard, using: writableRealm)
                 }
             }
 
             if result.currentOffset == 0 {
-                self.clearSearchResults(searchFolder: searchFolder, using: realm)
+                self.clearSearchResults(searchFolder: searchFolder, writableRealm: writableRealm)
             }
 
             // Update thread in Realm
-            try? realm.safeWrite {
-                // Clean old threads after fetching first page
-                if result.currentOffset == 0 {
-                    searchFolder.lastUpdate = Date()
-                }
-                realm.add(fetchedThreads, update: .modified)
-                searchFolder.threads.insert(objectsIn: fetchedThreads)
+            // Clean old threads after fetching first page
+            if result.currentOffset == 0 {
+                searchFolder.lastUpdate = Date()
             }
+            writableRealm.add(fetchedThreads, update: .modified)
+            searchFolder.threads.insert(objectsIn: fetchedThreads)
         }
     }
 }

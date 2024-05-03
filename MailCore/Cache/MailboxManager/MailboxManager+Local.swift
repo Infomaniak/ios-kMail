@@ -42,44 +42,40 @@ public extension MailboxManager {
         }
     }
 
-    func updateLocally(_ type: UpdateType, value: Bool, messages: [Message]) async {
-        await backgroundRealm.execute { realm in
+    func updateLocally(_ type: UpdateType, value: Bool, messages: [Message]) async throws {
+        try? writeTransaction { writableRealm in
             var updateThreads = Set<Thread>()
 
-            try? realm.write {
-                for message in messages {
-                    guard let liveMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else {
-                        continue
-                    }
-
-                    type.update(message: liveMessage, with: value)
-
-                    for thread in liveMessage.threads {
-                        updateThreads.insert(thread)
-                    }
+            for message in messages {
+                guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) else {
+                    continue
                 }
 
-                for thread in updateThreads {
-                    guard let liveThread = realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) else {
-                        continue
-                    }
+                type.update(message: liveMessage, with: value)
 
-                    type.update(thread: liveThread)
+                for thread in liveMessage.threads {
+                    updateThreads.insert(thread)
                 }
+            }
+
+            for thread in updateThreads {
+                guard let liveThread = writableRealm.object(ofType: Thread.self, forPrimaryKey: thread.uid) else {
+                    continue
+                }
+
+                type.update(thread: liveThread)
             }
         }
     }
 
-    func markMovedLocally(_ movedLocally: Bool, threads: [Thread]) async {
-        await backgroundRealm.execute { realm in
-            try? realm.write {
-                for thread in threads {
-                    guard let liveThread = realm.object(ofType: Thread.self, forPrimaryKey: thread.uid) else {
-                        continue
-                    }
-
-                    liveThread.isMovedOutLocally = movedLocally
+    func markMovedLocally(_ movedLocally: Bool, threads: [Thread]) async throws {
+        try writeTransaction { writableRealm in
+            for thread in threads {
+                guard let liveThread = writableRealm.object(ofType: Thread.self, forPrimaryKey: thread.uid) else {
+                    continue
                 }
+
+                liveThread.isMovedOutLocally = movedLocally
             }
         }
     }

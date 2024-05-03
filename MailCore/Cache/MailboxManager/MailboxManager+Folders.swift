@@ -26,50 +26,42 @@ import RealmSwift
 public extension MailboxManager {
     /// Get all remote folders in DB
     func refreshAllFolders() async throws {
-        let backgroundTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
-
-        // Network check
         guard ReachabilityListener.instance.currentStatus != .offline else {
             return
         }
 
-        // Get from API
         let folderResult = try await apiFetcher.folders(mailbox: mailbox)
         let newFolders = getSubFolders(from: folderResult)
 
-        await backgroundRealm.execute { realm in
+        try writeTransaction { writableRealm in
+            // Update folders in Realm
             for folder in newFolders {
-                self.keepCacheAttributes(for: folder, using: realm)
+                self.keepCacheAttributes(for: folder, using: writableRealm)
             }
 
             // Get from Realm
-            let cachedFolders = realm.objects(Folder.self)
+            let cachedFolders = writableRealm.objects(Folder.self)
 
-            // Update folders in Realm
-            try? realm.safeWrite {
-                // Remove old folders
-                realm.add(folderResult, update: .modified)
-                let toDeleteFolders = Set(cachedFolders).subtracting(Set(newFolders))
-                    .filter { $0.remoteId != Constants.searchFolderId }
-                var toDeleteThreads = [Thread]()
+            // Remove old folders
+            writableRealm.add(folderResult, update: .modified)
+            let toDeleteFolders = Set(cachedFolders).subtracting(Set(newFolders))
+                .filter { $0.remoteId != Constants.searchFolderId }
+            var toDeleteThreads = [Thread]()
 
-                // Threads contains in folders to delete
-                let mayBeDeletedThreads = Set(toDeleteFolders.flatMap(\.threads))
-                // Messages contains in folders to delete
-                let toDeleteMessages = Set(toDeleteFolders.flatMap(\.messages))
+            // Threads contains in folders to delete
+            let mayBeDeletedThreads = Set(toDeleteFolders.flatMap(\.threads))
+            // Messages contains in folders to delete
+            let toDeleteMessages = Set(toDeleteFolders.flatMap(\.messages))
 
-                // Delete thread if all his messages are deleted
-                for thread in mayBeDeletedThreads where Set(thread.messages).isSubset(of: toDeleteMessages) {
-                    toDeleteThreads.append(thread)
-                }
-
-                realm.delete(toDeleteMessages)
-                realm.delete(toDeleteThreads)
-                realm.delete(toDeleteFolders)
+            // Delete thread if all his messages are deleted
+            for thread in mayBeDeletedThreads where Set(thread.messages).isSubset(of: toDeleteMessages) {
+                toDeleteThreads.append(thread)
             }
-        }
 
-        await backgroundTracker.end()
+            writableRealm.delete(toDeleteMessages)
+            writableRealm.delete(toDeleteThreads)
+            writableRealm.delete(toDeleteFolders)
+        }
     }
 
     /// Get the folder with the corresponding role in Realm.
@@ -96,13 +88,10 @@ public extension MailboxManager {
 
     func createFolder(name: String, parent: Folder?) async throws -> Folder {
         var folder = try await apiFetcher.create(mailbox: mailbox, folder: NewFolder(name: name, path: parent?.path))
-
-        await backgroundRealm.execute { realm in
-            try? realm.safeWrite {
-                realm.add(folder)
-                if let parent {
-                    parent.fresh(using: realm)?.children.insert(folder)
-                }
+        try writeTransaction { writableRealm in
+            writableRealm.add(folder)
+            if let parent {
+                parent.fresh(using: writableRealm)?.children.insert(folder)
             }
             folder = folder.freeze()
         }

@@ -101,7 +101,7 @@ struct SearchView: View {
                     Constants.globallyResignFirstResponder()
                     mainViewState.isShowingSearch = false
                     Task {
-                        await viewModel.mailboxManager.clearSearchResults()
+                        try await viewModel.mailboxManager.clearSearchResults()
                     }
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonBack)
