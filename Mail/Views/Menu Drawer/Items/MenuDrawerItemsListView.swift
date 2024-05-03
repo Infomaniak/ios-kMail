@@ -81,7 +81,11 @@ struct MenuDrawerItemsHelpListView: View {
             MenuDrawerItemCell(icon: MailResourcesAsset.feedback,
                                label: MailResourcesStrings.Localizable.buttonFeedback,
                                matomoName: "feedback") {
-                isShowingUpdateVersionAlert = true
+                if Constants.canOSBeUpdated {
+                    isShowingUpdateVersionAlert = true
+                } else {
+                    sendFeedback()
+                }
             }
             MenuDrawerItemCell(icon: MailResourcesAsset.help,
                                label: MailResourcesStrings.Localizable.buttonHelp,
@@ -104,7 +108,7 @@ struct MenuDrawerItemsHelpListView: View {
     }
 
     private func sendFeedback() {
-        if mailboxManager.account.user?.isStaff == false {
+        if mailboxManager.account.user?.isStaff == true {
             isShowingBugTracker.toggle()
         } else if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
             openURL(userReportURL)

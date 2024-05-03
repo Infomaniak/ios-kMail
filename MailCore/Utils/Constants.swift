@@ -224,4 +224,15 @@ public enum Constants {
             return dateFormatter.date(from: date)
         }
     }
+
+    public static var canOSBeUpdated: Bool {
+        @InjectService var platformDetector: PlatformDetectable
+
+        guard !platformDetector.isMac else { return false }
+
+        let currentVersion = ProcessInfo().operatingSystemVersion
+        let isiOS15Breakable = currentVersion.majorVersion == 15 && currentVersion.minorVersion < 7
+        let isiOS16Breakable = currentVersion.majorVersion == 16 && currentVersion.minorVersion < 5
+        return isiOS15Breakable || isiOS16Breakable
+    }
 }

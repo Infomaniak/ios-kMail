@@ -30,7 +30,6 @@ import SwiftUIIntrospect
 struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var userActivityController: UserActivityController
-    @LazyInjectService var platformDetector: PlatformDetectable
 
     @EnvironmentObject private var mainViewState: MainViewState
 
@@ -42,7 +41,7 @@ struct ThreadListView: View {
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
     @State private var firstLaunch = true
-    @State private var isShowingUpdateAlert = false
+    @ModalState private var isShowingUpdateAlert = false
     @ModalState private var flushAlert: FlushAlertState?
 
     @StateObject var viewModel: ThreadListViewModel
@@ -58,23 +57,14 @@ struct ThreadListView: View {
         !networkMonitor.isConnected && viewModel.sections == nil
     }
 
-    private var shouldDisplayUpdateOSView: Bool {
-        guard !updateOSViewDismissed && !platformDetector.isMac else { return false }
-        if #available(iOS 16.5, *) {
-            return false
-        } else {
-            let currentVersion = ProcessInfo().operatingSystemVersion
-            if currentVersion.majorVersion == 15 {
-                if currentVersion.minorVersion < 7 {
-                    return true
-                } else {
-                    return false
-                }
-            } else {
-                return true
-            }
-        }
-    }
+//    private var canOSBeUpdated: Bool {
+//        guard !updateOSViewDismissed && !platformDetector.isMac else { return false }
+//
+//        let currentVersion = ProcessInfo().operatingSystemVersion
+//        let isiOS15Breakable = currentVersion.majorVersion == 15 && currentVersion.minorVersion < 7
+//        let isiOS16Breakable = currentVersion.majorVersion == 16 && currentVersion.minorVersion < 5
+//        return isiOS15Breakable || isiOS16Breakable
+//    }
 
     init(mailboxManager: MailboxManager,
          frozenFolder: Folder,
@@ -119,7 +109,7 @@ struct ThreadListView: View {
                         ListVerticalInsetView(height: UIPadding.verySmall)
                     }
 
-                    if shouldDisplayUpdateOSView {
+                    if Constants.canOSBeUpdated && !updateOSViewDismissed {
                         UpdateVersionView(isShowingUpdateAlert: $isShowingUpdateAlert)
                             .threadListCellAppearance()
                     }

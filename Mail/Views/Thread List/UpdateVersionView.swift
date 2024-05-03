@@ -29,29 +29,29 @@ struct UpdateVersionView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.small) {
-            HStack(alignment: .informationBlockAlignment, spacing: UIPadding.small) {
+            HStack(alignment: .blockAlignment, spacing: UIPadding.small) {
                 IKIcon(MailResourcesAsset.warning)
                     .foregroundStyle(MailResourcesAsset.orangeColor)
-                    .alignmentGuide(.informationBlockAlignment) { d in
+                    .alignmentGuide(.blockAlignment) { d in
                         d[VerticalAlignment.center]
                     }
 
                 VStack(alignment: .leading, spacing: UIPadding.small) {
                     Text(MailResourcesStrings.Localizable.updateVersionTitle)
                         .textStyle(.bodySmall)
-                        .alignmentGuide(.informationBlockAlignment) { d in
+                        .alignmentGuide(.blockAlignment) { d in
                             (d.height - (d[.lastTextBaseline] - d[.firstTextBaseline])) / 2
                         }
 
                     Button {
-                        matomo.track(eventWithCategory: .userInfo, name: "moreInfo")
+                        matomo.track(eventWithCategory: .updateVersion, name: "moreInfo")
                         isShowingUpdateAlert = true
                     } label: {
                         HStack(spacing: UIPadding.small) {
                             Text(MailResourcesStrings.Localizable.moreInfo)
                                 .textStyle(.bodySmallAccent)
                         }
-                        .buttonStyle(.borderless)
+                        .buttonStyle(.ikLink(isInlined: false))
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
