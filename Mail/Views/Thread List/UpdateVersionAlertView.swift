@@ -26,16 +26,12 @@ import SwiftUI
 struct UpdateVersionAlertView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @Environment(\.openURL) var openURL
-    @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var mainViewState: MainViewState
+    @Environment(\.openURL) private var openURL
 
     @AppStorage(UserDefaults.shared.key(.updateOSViewDismissed)) private var updateOSViewDismissed = DefaultPreferences
         .updateOSViewDismissed
 
-    @ModalState private var isShowingBugTracker = false
-
-    let onLaterPressed: () -> Void
+    var onLaterPressed: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.medium) {
@@ -45,26 +41,21 @@ struct UpdateVersionAlertView: View {
                 .textStyle(.body)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonUpdate,
-                             secondaryButtonTitle: MailResourcesStrings.Localizable.buttonLater) {
-                matomo.track(eventWithCategory: .update, name: "update")
-                updateVersion()
-            } secondaryButtonAction: {
-                matomo.track(eventWithCategory: .later, name: "later")
-                dismissUpdateVersionView()
-            }
+                             secondaryButtonTitle: MailResourcesStrings.Localizable.buttonLater,
+                             primaryButtonAction: updateVersion,
+                             secondaryButtonAction: dismissUpdateVersionView)
         }
     }
 
     private func updateVersion() {
-        matomo.track(eventWithCategory: .syncAutoConfig, name: "openSettings")
-        let url: URL
-        url = DeeplinkConstants.iosPreferences
-        openURL(url)
+        matomo.track(eventWithCategory: .updateVersion, name: "update")
+        openURL(DeeplinkConstants.iosPreferences)
         dismissUpdateVersionView()
     }
 
     private func dismissUpdateVersionView() {
-        onLaterPressed()
+        matomo.track(eventWithCategory: .updateVersion, name: "later")
+        onLaterPressed?()
         withAnimation {
             updateOSViewDismissed = true
         }

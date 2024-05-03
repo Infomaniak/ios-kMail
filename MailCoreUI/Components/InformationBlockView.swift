@@ -29,7 +29,7 @@ public extension VerticalAlignment {
         }
     }
 
-    static let informationBlockAlignment = VerticalAlignment(InformationBlockAlignment.self)
+    static let blockAlignment = VerticalAlignment(InformationBlockAlignment.self)
 }
 
 public struct InformationBlockView: View {
@@ -46,13 +46,13 @@ public struct InformationBlockView: View {
     }
 
     public var body: some View {
-        HStack(alignment: .informationBlockAlignment, spacing: UIPadding.intermediate) {
+        HStack(alignment: .blockAlignment, spacing: UIPadding.intermediate) {
             icon
                 .resizable()
                 .scaledToFit()
                 .frame(width: 16, height: 16)
                 .foregroundStyle(iconColor ?? .clear)
-                .alignmentGuide(.informationBlockAlignment) { d in
+                .alignmentGuide(.blockAlignment) { d in
                     // Center of the view is on the informationBlockAlignment guide
                     d[VerticalAlignment.center]
                 }
@@ -60,7 +60,7 @@ public struct InformationBlockView: View {
             Text(message)
                 .textStyle(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .alignmentGuide(.informationBlockAlignment) { d in
+                .alignmentGuide(.blockAlignment) { d in
                     // Center of the first line is on the informationBlockAlignment guide
                     (d.height - (d[.lastTextBaseline] - d[.firstTextBaseline])) / 2
                 }
@@ -68,7 +68,7 @@ public struct InformationBlockView: View {
             if let dismissHandler {
                 CloseButton(size: .regular, dismissHandler: dismissHandler)
                     .tint(MailResourcesAsset.textSecondaryColor.swiftUIColor)
-                    .alignmentGuide(.informationBlockAlignment) { d in
+                    .alignmentGuide(.blockAlignment) { d in
                         d[VerticalAlignment.center]
                     }
             }

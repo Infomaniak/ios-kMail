@@ -51,7 +51,7 @@ struct HelpView: View {
                 ForEach(actions, id: \.self) { action in
                     VStack(alignment: .leading, spacing: 0) {
                         Button {
-                            if action.openUpdateVersionAlert {
+                            if action.openUpdateVersionAlert && Constants.canOSBeUpdated {
                                 isShowingUpdateVersionAlert = true
                             } else {
                                 openURL(action.destination)
@@ -83,9 +83,7 @@ struct HelpView: View {
         .navigationBarTitle(MailResourcesStrings.Localizable.buttonHelp, displayMode: .inline)
         .customAlert(isPresented: $isShowingUpdateVersionAlert) {
             UpdateVersionAlertView {
-                let url: URL
-                url = URLConstants.chatbot.url
-                openURL(url)
+                openURL(HelpAction.chatbot.destination)
             }
         }
     }
