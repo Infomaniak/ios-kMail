@@ -36,9 +36,9 @@ struct SettingsSubMenuLabel: View {
                 if let subtitle {
                     Text(subtitle)
                         .textStyle(.bodySmallTertiary)
-                        .multilineTextAlignment(.leading)
                 }
             }
+            .multilineTextAlignment(.leading)
             .frame(maxWidth: .infinity, alignment: .leading)
 
             ChevronIcon(direction: .right)
