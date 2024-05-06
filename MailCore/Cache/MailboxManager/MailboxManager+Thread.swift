@@ -327,6 +327,10 @@ public extension MailboxManager {
             return
         }
 
+        // Making sure the system will not terminate the app between batches
+        let expiringActivity = ExpiringActivity()
+        expiringActivity.start()
+
         let batchSize = 100
         for index in stride(from: 0, to: uids.count, by: batchSize) {
             try? writeTransaction { writableRealm in
@@ -375,6 +379,8 @@ public extension MailboxManager {
                 }
             }
         }
+
+        expiringActivity.endAll()
     }
 
     private func updateMessages(updates: [MessageFlags], folder: Folder) async {
