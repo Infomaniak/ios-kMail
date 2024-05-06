@@ -84,8 +84,8 @@ public final class ContactManager: ObservableObject, ContactManageable {
                 AddressBook.self
             ]
         )
-        let backgroundRealm = MailCoreRealmAccessor(realmConfiguration: realmConfiguration)
-        transactionExecutor = TransactionExecutor(realmAccessible: backgroundRealm)
+        let realmAccessor = MailCoreRealmAccessor(realmConfiguration: realmConfiguration)
+        transactionExecutor = TransactionExecutor(realmAccessible: realmAccessor)
 
         excludeRealmFromBackup()
     }
