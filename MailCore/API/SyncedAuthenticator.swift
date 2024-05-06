@@ -97,28 +97,21 @@ final class SyncedAuthenticator: OAuthAuthenticator {
             }
         }
 
-        // It is absolutely necessary that the app stays awake while we refresh the token
-        BackgroundExecutor.executeWithBackgroundTask { endBackgroundTask in
-            self.networkLoginService.refreshToken(token: credential) { token, error in
-                // New token has been fetched correctly
-                if let token {
-                    SentrySDK
-                        .addBreadcrumb(token
-                            .generateBreadcrumb(level: .info, message: "Refreshing token - Success with remote"))
-                    self.refreshTokenDelegate?.didUpdateToken(newToken: token, oldToken: credential)
-                    completion(.success(token))
-                } else {
-                    completion(self.handleFailedRefreshingToken(oldToken: credential, error: error))
-                }
-                endBackgroundTask()
+        // It is necessary that the app stays awake while we refresh the token
+        let expiringActivity = ExpiringActivity()
+        expiringActivity.start()
+        networkLoginService.refreshToken(token: credential) { token, error in
+            // New token has been fetched correctly
+            if let token {
+                SentrySDK
+                    .addBreadcrumb(token
+                        .generateBreadcrumb(level: .info, message: "Refreshing token - Success with remote"))
+                self.refreshTokenDelegate?.didUpdateToken(newToken: token, oldToken: credential)
+                completion(.success(token))
+            } else {
+                completion(self.handleFailedRefreshingToken(oldToken: credential, error: error))
             }
-        } onExpired: {
-            SentrySDK
-                .addBreadcrumb((credential as ApiToken)
-                    .generateBreadcrumb(level: .error, message: "Refreshing token failed - Background task expired"))
-            // If we didn't fetch the new token in the given time there is not much we can do apart from hoping that it wasn't
-            // revoked
-            completion(.failure(MailError.noToken))
+            expiringActivity.endAll()
         }
     }
 }
