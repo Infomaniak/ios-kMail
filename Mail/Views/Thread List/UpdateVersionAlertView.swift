@@ -15,7 +15,6 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import InfomaniakBugTracker
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
@@ -28,8 +27,8 @@ struct UpdateVersionAlertView: View {
 
     @Environment(\.openURL) private var openURL
 
-    @AppStorage(UserDefaults.shared.key(.updateOSViewDismissed)) private var updateOSViewDismissed = DefaultPreferences
-        .updateOSViewDismissed
+    @AppStorage(UserDefaults.shared.key(.updateVersionViewDismissed)) private var updateVersionViewDismissed = DefaultPreferences
+        .updateVersionViewDismissed
 
     var onLaterPressed: (() -> Void)?
 
@@ -57,7 +56,7 @@ struct UpdateVersionAlertView: View {
         matomo.track(eventWithCategory: .updateVersion, name: "later")
         onLaterPressed?()
         withAnimation {
-            updateOSViewDismissed = true
+            updateVersionViewDismissed = true
         }
     }
 }
