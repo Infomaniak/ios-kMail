@@ -35,8 +35,8 @@ struct ThreadListView: View {
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-    @AppStorage(UserDefaults.shared.key(.updateOSViewDismissed)) private var updateOSViewDismissed = DefaultPreferences
-        .updateOSViewDismissed
+    @AppStorage(UserDefaults.shared.key(.updateVersionViewDismissed)) private var updateVersionViewDismissed = DefaultPreferences
+        .updateVersionViewDismissed
 
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
@@ -56,15 +56,6 @@ struct ThreadListView: View {
     private var shouldDisplayNoNetworkView: Bool {
         !networkMonitor.isConnected && viewModel.sections == nil
     }
-
-//    private var canOSBeUpdated: Bool {
-//        guard !updateOSViewDismissed && !platformDetector.isMac else { return false }
-//
-//        let currentVersion = ProcessInfo().operatingSystemVersion
-//        let isiOS15Breakable = currentVersion.majorVersion == 15 && currentVersion.minorVersion < 7
-//        let isiOS16Breakable = currentVersion.majorVersion == 16 && currentVersion.minorVersion < 5
-//        return isiOS15Breakable || isiOS16Breakable
-//    }
 
     init(mailboxManager: MailboxManager,
          frozenFolder: Folder,
@@ -109,7 +100,7 @@ struct ThreadListView: View {
                         ListVerticalInsetView(height: UIPadding.verySmall)
                     }
 
-                    if Constants.canOSBeUpdated && !updateOSViewDismissed {
+                    if Constants.canOSBeUpdated && !updateVersionViewDismissed {
                         UpdateVersionView(isShowingUpdateAlert: $isShowingUpdateAlert)
                             .threadListCellAppearance()
                     }

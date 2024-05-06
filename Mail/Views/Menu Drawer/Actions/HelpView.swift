@@ -39,7 +39,7 @@ struct HelpView: View {
         )
     }
 
-    @Environment(\.openURL) var openURL
+    @Environment(\.openURL) private var openURL
 
     @ModalState(context: ContextKeys.help) private var isShowingUpdateVersionAlert = false
 
