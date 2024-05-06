@@ -30,7 +30,7 @@ public extension MailboxManager {
         completedMessage.fullyDownloaded = true
 
         // Update message in Realm
-        try writeTransaction { writableRealm in
+        try? writeTransaction { writableRealm in
             writableRealm.add(completedMessage, update: .modified)
         }
     }
@@ -43,7 +43,7 @@ public extension MailboxManager {
         let data = try await apiFetcher.attachment(attachment: attachment)
 
         let safeAttachment = ThreadSafeReference(to: attachment)
-        try writeTransaction { writableRealm in
+        try? writeTransaction { writableRealm in
             guard let liveAttachment = writableRealm.resolve(safeAttachment) else {
                 return
             }
@@ -102,7 +102,7 @@ public extension MailboxManager {
     // MARK: Private
 
     func markAsSeen(messages: [Message], seen: Bool) async throws {
-        try await updateLocally(.seen, value: seen, messages: messages)
+        await updateLocally(.seen, value: seen, messages: messages)
 
         do {
             if seen {
@@ -111,7 +111,7 @@ public extension MailboxManager {
                 try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
             }
         } catch {
-            try await updateLocally(.seen, value: !seen, messages: messages)
+            await updateLocally(.seen, value: !seen, messages: messages)
         }
 
         try await refreshFolder(from: messages, additionalFolder: nil)
@@ -123,7 +123,7 @@ public extension MailboxManager {
     /// Set starred the given messages.
     /// - Important: This methods stars only the messages you passes, no processing is done to add duplicates or remove drafts
     func star(messages: [Message], starred: Bool) async throws {
-        try await updateLocally(.star, value: starred, messages: messages)
+        await updateLocally(.star, value: starred, messages: messages)
 
         do {
             if starred {
@@ -132,7 +132,7 @@ public extension MailboxManager {
                 _ = try await unstar(messages: messages)
             }
         } catch {
-            try await updateLocally(.star, value: !starred, messages: messages)
+            await updateLocally(.star, value: !starred, messages: messages)
         }
     }
 

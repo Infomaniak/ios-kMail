@@ -48,8 +48,8 @@ public extension MailboxManager {
         searchFolder.threads.removeAll()
     }
 
-    func clearSearchResults() async throws {
-        try writeTransaction { writableRealm in
+    func clearSearchResults() async {
+        try? writeTransaction { writableRealm in
             guard let searchFolder = writableRealm.objects(Folder.self)
                 .where({ $0.remoteId == Constants.searchFolderId })
                 .first else {
@@ -70,7 +70,7 @@ public extension MailboxManager {
             isDraftFolder: false
         )
 
-        try await prepareAndSaveSearchThreads(threadResult: threadResult, searchFolder: searchFolder)
+        await prepareAndSaveSearchThreads(threadResult: threadResult, searchFolder: searchFolder)
 
         return threadResult
     }
@@ -79,13 +79,13 @@ public extension MailboxManager {
                        searchFilter: [URLQueryItem] = []) async throws -> ThreadResult {
         let threadResult = try await apiFetcher.threads(from: resource, searchFilter: searchFilter)
 
-        try await prepareAndSaveSearchThreads(threadResult: threadResult, searchFolder: searchFolder)
+        await prepareAndSaveSearchThreads(threadResult: threadResult, searchFolder: searchFolder)
 
         return threadResult
     }
 
-    private func prepareAndSaveSearchThreads(threadResult: ThreadResult, searchFolder: Folder?) async throws {
-        try writeTransaction { writableRealm in
+    private func prepareAndSaveSearchThreads(threadResult: ThreadResult, searchFolder: Folder?) async {
+        try? writeTransaction { writableRealm in
             for thread in threadResult.threads ?? [] {
                 thread.makeFromSearch(using: writableRealm)
 
@@ -97,13 +97,13 @@ public extension MailboxManager {
         }
 
         if let searchFolder {
-            try await saveSearchThreads(result: threadResult, searchFolder: searchFolder)
+            await saveSearchThreads(result: threadResult, searchFolder: searchFolder)
         }
     }
 
     func searchThreadsOffline(searchFolder: Folder?, filterFolderId: String,
-                              searchFilters: [SearchCondition]) async throws {
-        try writeTransaction { writableRealm in
+                              searchFilters: [SearchCondition]) async {
+        try? writeTransaction { writableRealm in
             guard let searchFolder = searchFolder?.fresh(using: writableRealm) else {
                 self.logError(.missingFolder)
                 return
@@ -175,8 +175,8 @@ public extension MailboxManager {
         }
     }
 
-    func addToSearchHistory(value: String) async throws {
-        try writeTransaction { writableRealm in
+    func addToSearchHistory(value: String) async {
+        try? writeTransaction { writableRealm in
             let searchHistory: SearchHistory
             if let existingSearchHistory = writableRealm.objects(SearchHistory.self).first {
                 searchHistory = existingSearchHistory

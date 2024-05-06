@@ -171,7 +171,7 @@ enum SearchState {
         }
 
         if ReachabilityListener.instance.currentStatus == .offline {
-            try? await mailboxManager.searchThreadsOffline(
+            await mailboxManager.searchThreadsOffline(
                 searchFolder: frozenSearchFolder,
                 filterFolderId: folderToSearch,
                 searchFilters: searchFiltersOffline
@@ -222,7 +222,7 @@ enum SearchState {
     func addToHistoryIfNeeded() {
         if searchValue.trimmingCharacters(in: .whitespacesAndNewlines).count >= 3 {
             Task {
-                try await mailboxManager.addToSearchHistory(value: searchValue)
+                await mailboxManager.addToSearchHistory(value: searchValue)
             }
         }
     }

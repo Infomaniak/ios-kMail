@@ -122,7 +122,7 @@ public final class ContactManager: ObservableObject, ContactManageable {
 
             // Process addressBooks
             let addressBooks = try await addressBooksRequest
-            try writeTransaction { writableRealm in
+            try? writeTransaction { writableRealm in
                 writableRealm.add(addressBooks, update: .modified)
             }
             await backgroundTaskTracker.end()

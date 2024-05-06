@@ -42,7 +42,7 @@ public extension MailboxManager {
         }
     }
 
-    func updateLocally(_ type: UpdateType, value: Bool, messages: [Message]) async throws {
+    func updateLocally(_ type: UpdateType, value: Bool, messages: [Message]) async {
         try? writeTransaction { writableRealm in
             var updateThreads = Set<Thread>()
 
@@ -68,8 +68,8 @@ public extension MailboxManager {
         }
     }
 
-    func markMovedLocally(_ movedLocally: Bool, threads: [Thread]) async throws {
-        try writeTransaction { writableRealm in
+    func markMovedLocally(_ movedLocally: Bool, threads: [Thread]) async {
+        try? writeTransaction { writableRealm in
             for thread in threads {
                 guard let liveThread = writableRealm.object(ofType: Thread.self, forPrimaryKey: thread.uid) else {
                     continue

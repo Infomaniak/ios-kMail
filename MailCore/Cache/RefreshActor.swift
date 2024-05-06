@@ -100,7 +100,7 @@ public actor RefreshActor {
             }?.isDefaultReply = true
         }
 
-        try mailboxManager.writeTransaction { writableRealm in
+        try? mailboxManager.writeTransaction { writableRealm in
             let signaturesToDelete: Set<Signature> // no longer present server side
             let signaturesToUpdate: [Signature] // updated signatures
             let signaturesToAdd: [Signature] // new signatures

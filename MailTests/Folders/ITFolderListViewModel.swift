@@ -96,7 +96,7 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
         fatalError("Unexpected")
     }
 
-    func clearSearchResults() async throws {}
+    func clearSearchResults() async {}
 
     func searchThreads(
         searchFolder: MailCore.Folder?,
@@ -118,7 +118,7 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
         searchFilters: [MailCore.SearchCondition]
     ) async {}
 
-    func addToSearchHistory(value: String) async throws {}
+    func addToSearchHistory(value: String) async {}
 
     let realm: Realm
     var transactionExecutor: Transactionable!
@@ -153,7 +153,7 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
 
     func deleteLocally(draft: MailCore.Draft) async throws {}
 
-    func deleteOrphanDrafts() async throws {}
+    func deleteOrphanDrafts() async {}
 
     func messages(folder: MailCore.Folder, isRetrying: Bool) async throws {}
 

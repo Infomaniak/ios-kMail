@@ -136,7 +136,7 @@ final class MCKMailboxManageable_SearchViewModel: MailboxManageable, MCKTransact
         return searchThreadsReturnValue
     }
 
-    func clearSearchResults() async throws {}
+    func clearSearchResults() async {}
 
     func searchThreads(searchFolder: MailCore.Folder?, from resource: String,
                        searchFilter: [URLQueryItem]) async throws -> MailCore.ThreadResult {
@@ -149,7 +149,7 @@ final class MCKMailboxManageable_SearchViewModel: MailboxManageable, MCKTransact
         searchFilters: [MailCore.SearchCondition]
     ) async {}
 
-    func addToSearchHistory(value: String) async throws {}
+    func addToSearchHistory(value: String) async {}
 
     func draftWithPendingAction() -> RealmSwift.Results<MailCore.Draft> {
         fatalError("Unexpected")
@@ -173,7 +173,7 @@ final class MCKMailboxManageable_SearchViewModel: MailboxManageable, MCKTransact
 
     func deleteLocally(draft: MailCore.Draft) async throws {}
 
-    func deleteOrphanDrafts() async throws {}
+    func deleteOrphanDrafts() async {}
 
     func messages(folder: MailCore.Folder, isRetrying: Bool) async throws {}
 

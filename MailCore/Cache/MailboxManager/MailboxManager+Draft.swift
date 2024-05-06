@@ -81,7 +81,7 @@ public extension MailboxManager {
     func save(draft: Draft) async throws {
         do {
             let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
-            try writeTransaction { writableRealm in
+            try? writeTransaction { writableRealm in
                 // Update draft in Realm
                 guard let liveDraft = writableRealm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
                     self.logError(.missingDraft)
@@ -130,7 +130,7 @@ public extension MailboxManager {
     }
 
     func deleteLocally(draft: Draft) async throws {
-        try writeTransaction { writableRealm in
+        try? writeTransaction { writableRealm in
             guard let liveDraft = writableRealm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
                 self.logError(.missingDraft)
                 return
@@ -140,7 +140,7 @@ public extension MailboxManager {
         }
     }
 
-    func deleteOrphanDrafts() async throws {
+    func deleteOrphanDrafts() async {
         guard let draftFolder = getFolder(with: .draft) else {
             logError(.missingFolder)
             return
@@ -148,7 +148,7 @@ public extension MailboxManager {
 
         let existingMessageUids = Set(draftFolder.threads.flatMap(\.messages).map(\.uid))
 
-        try writeTransaction { writableRealm in
+        try? writeTransaction { writableRealm in
             let noActionDrafts = writableRealm.objects(Draft.self).where { $0.action == nil }
             for draft in noActionDrafts {
                 if let messageUid = draft.messageUid,

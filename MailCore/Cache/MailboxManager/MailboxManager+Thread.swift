@@ -102,7 +102,7 @@ public extension MailboxManager {
 
         guard !Task.isCancelled else { return }
 
-        try writeTransaction { writableRealm in
+        try? writeTransaction { writableRealm in
             guard let folder = folder.fresh(using: writableRealm) else {
                 self.logError(.missingFolder)
                 return
@@ -253,7 +253,7 @@ public extension MailboxManager {
         switch direction {
         case .previous:
             var onePage = false
-            try writeTransaction { writableRealm in
+            try? writeTransaction { writableRealm in
                 let freshFolder = folder.fresh(using: writableRealm)
                 if messagesUids.addedShortUids.count < Constants.pageSize || messagesUids.addedShortUids.contains("1") {
                     freshFolder?.completeHistoryInfo()
@@ -267,7 +267,7 @@ public extension MailboxManager {
         case .following:
             break
         case .none:
-            try writeTransaction { writableRealm in
+            try? writeTransaction { writableRealm in
                 let freshFolder = folder.fresh(using: writableRealm)
                 freshFolder?.resetHistoryInfo()
 
@@ -570,7 +570,7 @@ public extension MailboxManager {
             DDLogWarn("resetHistoryInfo because of lostOffsetMessageError")
             SentryDebug.addResetingFolderBreadcrumb(folder: folder)
 
-            try writeTransaction { writableRealm in
+            try? writeTransaction { writableRealm in
                 guard let folder = folder.fresh(using: writableRealm) else {
                     self.logError(.missingFolder)
                     return
@@ -657,8 +657,8 @@ public extension MailboxManager {
 
     // MARK: - Other
 
-    func saveSearchThreads(result: ThreadResult, searchFolder: Folder) async throws {
-        try writeTransaction { writableRealm in
+    func saveSearchThreads(result: ThreadResult, searchFolder: Folder) async {
+        try? writeTransaction { writableRealm in
             guard let searchFolder = searchFolder.fresh(using: writableRealm) else {
                 self.logError(.missingFolder)
                 return

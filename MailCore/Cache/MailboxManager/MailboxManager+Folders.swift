@@ -33,7 +33,7 @@ public extension MailboxManager {
         let folderResult = try await apiFetcher.folders(mailbox: mailbox)
         let newFolders = getSubFolders(from: folderResult)
 
-        try writeTransaction { writableRealm in
+        try? writeTransaction { writableRealm in
             // Update folders in Realm
             for folder in newFolders {
                 self.keepCacheAttributes(for: folder, using: writableRealm)
