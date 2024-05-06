@@ -113,9 +113,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
             ]
         )
 
-        // TODO: Remove BackgroundRealm reference
-        let backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
-        transactionExecutor = TransactionExecutor(realmAccessible: backgroundRealm)
+        let realmAccessor = MailCoreRealmAccessor(realmConfiguration: realmConfiguration)
+        transactionExecutor = TransactionExecutor(realmAccessible: realmAccessor)
 
         excludeRealmFromBackup()
     }

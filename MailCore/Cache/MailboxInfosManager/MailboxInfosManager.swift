@@ -49,8 +49,8 @@ public final class MailboxInfosManager {
             objectTypes: [Mailbox.self, MailboxPermissions.self, Quotas.self, ExternalMailInfo.self]
         )
 
-        let backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
-        transactionExecutor = TransactionExecutor(realmAccessible: backgroundRealm)
+        let realmAccessor = MailCoreRealmAccessor(realmConfiguration: realmConfiguration)
+        transactionExecutor = TransactionExecutor(realmAccessible: realmAccessor)
 
         excludeRealmFromBackup()
     }

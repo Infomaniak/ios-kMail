@@ -115,8 +115,8 @@ public final class AttachmentsManagerWorker {
     public init(draftLocalUUID: String, mailboxManager: MailboxManager) {
         self.draftLocalUUID = draftLocalUUID
         self.mailboxManager = mailboxManager
-        let backgroundRealm = BackgroundRealm(configuration: mailboxManager.realmConfiguration)
-        transactionExecutor = TransactionExecutor(realmAccessible: backgroundRealm)
+        let realmAccessor = MailCoreRealmAccessor(realmConfiguration: mailboxManager.realmConfiguration)
+        transactionExecutor = TransactionExecutor(realmAccessible: realmAccessor)
     }
 
     func addLocalAttachment(attachment: Attachment) async -> Attachment? {
