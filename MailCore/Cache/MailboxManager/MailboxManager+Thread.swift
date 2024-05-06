@@ -675,13 +675,12 @@ public extension MailboxManager {
 
             if result.currentOffset == 0 {
                 self.clearSearchResults(searchFolder: searchFolder, writableRealm: writableRealm)
-            }
 
-            // Update thread in Realm
-            // Clean old threads after fetching first page
-            if result.currentOffset == 0 {
+                // Update thread in Realm
+                // Clean old threads after fetching first page
                 searchFolder.lastUpdate = Date()
             }
+
             writableRealm.add(fetchedThreads, update: .modified)
             searchFolder.threads.insert(objectsIn: fetchedThreads)
         }
