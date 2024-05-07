@@ -25,9 +25,11 @@ struct ContactActionsHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let displayablePerson: CommonContact
+    let bimi: Bimi?
 
-    public init(displayablePerson: CommonContact) {
+    public init(displayablePerson: CommonContact, bimi: Bimi?) {
         self.displayablePerson = displayablePerson
+        self.bimi = bimi
     }
 
     public var body: some View {
@@ -39,16 +41,20 @@ struct ContactActionsHeaderView: View {
                     HStack {
                         Text(displayablePerson, format: .displayablePerson())
                             .textStyle(.bodyMedium)
-                        IKIcon(MailResourcesAsset.checkmarkAuthentication)
+                        if let bimi = bimi, bimi.isCertified {
+                            IKIcon(MailResourcesAsset.checkmarkAuthentication)
+                        }
                     }
                     Text(displayablePerson.email)
                         .textStyle(.bodySecondary)
                 }
             }
-            HStack {
-                IKIcon(MailResourcesAsset.checkmarkAuthentication)
-                Text(MailResourcesStrings.Localizable.expeditorAuthenticationDescription)
-                    .textStyle(.label)
+            if let bimi = bimi, bimi.isCertified {
+                HStack {
+                    IKIcon(MailResourcesAsset.checkmarkAuthentication)
+                    Text(MailResourcesStrings.Localizable.expeditorAuthenticationDescription)
+                        .textStyle(.label)
+                }
             }
         }
         .accessibilityElement(children: .combine)
