@@ -172,13 +172,10 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 
 struct OnboardingView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var navigationState: RootViewState
 
     @LazyInjectService var orientationManager: OrientationManageable
 
     @State private var selection: Int
-    @ModalState(context: ContextKeys.onboarding) private var isPresentingCreateAccount = false
-    @StateObject private var loginHandler = LoginHandler()
 
     private var isScrollEnabled: Bool
     private var slides = Slide.onBoardingSlides
@@ -217,39 +214,7 @@ struct OnboardingView: View {
                     .frame(height: UIConstants.onboardingLogoHeight)
                     .padding(.top, UIPadding.onBoardingLogoTop)
             }
-
-            VStack(spacing: UIPadding.small) {
-                Button(MailResourcesStrings.Localizable.buttonLogin) {
-                    loginHandler.login()
-                }
-                .buttonStyle(.ikPlain)
-                .ikButtonLoading(loginHandler.isLoading)
-
-                Button(MailResourcesStrings.Localizable.buttonCreateAccount) {
-                    isPresentingCreateAccount.toggle()
-                }
-                .buttonStyle(.ikLink())
-                .disabled(loginHandler.isLoading)
-            }
-            .ikButtonFullWidth(true)
-            .controlSize(.large)
-            .opacity(isLastSlide ? 1 : 0)
-            .overlay {
-                if !isLastSlide {
-                    Button {
-                        withAnimation {
-                            selection = min(slides.count, selection + 1)
-                        }
-                    } label: {
-                        IKIcon(MailResourcesAsset.fullArrowRight, size: .large)
-                    }
-                    .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonNext)
-                    .buttonStyle(.ikSquare)
-                    .controlSize(.large)
-                }
-            }
-            .padding(.horizontal, value: .medium)
-            .padding(.bottom, UIPadding.onBoardingBottomButtons)
+            OnboardingBottomButtonsView(selection: $selection, isLastSlide: isLastSlide)
         }
         .overlay(alignment: .topLeading) {
             if !isScrollEnabled {
@@ -259,11 +224,6 @@ struct OnboardingView: View {
                     .padding(.leading, value: .medium)
             }
         }
-        .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $loginHandler.isPresentingErrorAlert) {
-            // Use default button
-        } message: {
-            Text(MailResourcesStrings.Localizable.errorLoginDescription)
-        }
         .onAppear {
             if UIDevice.current.userInterfaceIdiom == .phone {
                 UIDevice.current
@@ -272,15 +232,7 @@ struct OnboardingView: View {
                 UIViewController.attemptRotationToDeviceOrientation()
             }
         }
-        .onChange(of: loginHandler.shouldShowEmptyMailboxesView) { shouldShowEmptyMailboxesView in
-            if shouldShowEmptyMailboxesView {
-                navigationState.transitionToRootViewDestination(.noMailboxes)
-            }
-        }
         .matomoView(view: [MatomoUtils.View.onboarding.displayName, "Main"])
-        .sheet(isPresented: $isPresentingCreateAccount) {
-            CreateAccountView(loginHandler: loginHandler)
-        }
     }
 
     // MARK: - Private methods
