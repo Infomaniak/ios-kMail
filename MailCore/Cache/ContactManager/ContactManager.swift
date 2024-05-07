@@ -68,7 +68,6 @@ public final class ContactManager: ObservableObject, ContactManageable {
     public static let constants = ContactManagerConstants()
 
     public let realmConfiguration: Realm.Configuration
-    private let backgroundRealm: BackgroundRealm
     public let transactionExecutor: Transactionable
 
     let apiFetcher: MailApiFetcher
@@ -85,8 +84,8 @@ public final class ContactManager: ObservableObject, ContactManageable {
                 AddressBook.self
             ]
         )
-        backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
-        transactionExecutor = TransactionExecutor(realmAccessible: backgroundRealm)
+        let realmAccessor = MailCoreRealmAccessor(realmConfiguration: realmConfiguration)
+        transactionExecutor = TransactionExecutor(realmAccessible: realmAccessor)
 
         excludeRealmFromBackup()
     }
@@ -123,10 +122,8 @@ public final class ContactManager: ObservableObject, ContactManageable {
 
             // Process addressBooks
             let addressBooks = try await addressBooksRequest
-            await backgroundRealm.execute { realm in
-                try? realm.safeWrite {
-                    realm.add(addressBooks, update: .modified)
-                }
+            try? writeTransaction { writableRealm in
+                writableRealm.add(addressBooks, update: .modified)
             }
             await backgroundTaskTracker.end()
 

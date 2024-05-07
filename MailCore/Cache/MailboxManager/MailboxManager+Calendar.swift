@@ -67,12 +67,11 @@ extension MailboxManager {
     }
 
     private func saveCalendarEventResponse(to messageUid: String, eventResponse: CalendarEventResponse) async {
-        await backgroundRealm.execute { realm in
-            if let liveMessage = realm.object(ofType: Message.self, forPrimaryKey: messageUid) {
-                try? realm.safeWrite {
-                    liveMessage.calendarEventResponse = eventResponse
-                }
+        try? writeTransaction { writableRealm in
+            guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: messageUid) else {
+                return
             }
+            liveMessage.calendarEventResponse = eventResponse
         }
     }
 }

@@ -61,13 +61,15 @@ public protocol AttachmentsManagerWorkable {
     @MainActor func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentUploadTask
 }
 
+/// Transactionable
+extension AttachmentsManagerWorker: TransactionablePassthrough {}
+
 // MARK: - AttachmentsManagerWorker
 
 public final class AttachmentsManagerWorker {
     weak var updateDelegate: AttachmentsContentUpdatable?
 
     private let mailboxManager: MailboxManager
-    private let backgroundRealm: BackgroundRealm
     private let draftLocalUUID: String
 
     public let transactionExecutor: Transactionable
@@ -111,25 +113,22 @@ public final class AttachmentsManagerWorker {
     }
 
     public init(draftLocalUUID: String, mailboxManager: MailboxManager) {
-        backgroundRealm = BackgroundRealm(configuration: mailboxManager.realmConfiguration)
         self.draftLocalUUID = draftLocalUUID
         self.mailboxManager = mailboxManager
-        transactionExecutor = TransactionExecutor(realmAccessible: backgroundRealm)
+        let realmAccessor = MailCoreRealmAccessor(realmConfiguration: mailboxManager.realmConfiguration)
+        transactionExecutor = TransactionExecutor(realmAccessible: realmAccessor)
     }
 
     func addLocalAttachment(attachment: Attachment) async -> Attachment? {
         attachmentUploadTasks[attachment.uuid] = await AttachmentUploadTask()
 
         var detached: Attachment?
-        await backgroundRealm.execute { realm in
-            try? realm.write {
-                guard let draftInContext = realm.object(ofType: Draft.self, forPrimaryKey: self.draftLocalUUID) else {
-                    return
-                }
-
-                draftInContext.attachments.append(attachment)
+        try? writeTransaction { writableRealm in
+            guard let draftInContext = writableRealm.object(ofType: Draft.self, forPrimaryKey: self.draftLocalUUID) else {
+                return
             }
 
+            draftInContext.attachments.append(attachment)
             detached = attachment.detached()
         }
 
@@ -170,19 +169,17 @@ public final class AttachmentsManagerWorker {
             attachmentUploadTasks.removeValue(forKey: oldAttachmentUUID)
         }
 
-        await backgroundRealm.execute { realm in
-            try? realm.write {
-                guard let draftInContext = realm.object(ofType: Draft.self, forPrimaryKey: self.draftLocalUUID) else {
-                    return
-                }
-
-                guard let liveOldAttachment = draftInContext.attachments.first(where: { $0.uuid == oldAttachmentUUID }) else {
-                    return
-                }
-
-                // We need to update every field of the local attachment because embedded objects don't have a primary key
-                liveOldAttachment.update(with: newAttachment)
+        try? writeTransaction { writableRealm in
+            guard let draftInContext = writableRealm.object(ofType: Draft.self, forPrimaryKey: self.draftLocalUUID) else {
+                return
             }
+
+            guard let liveOldAttachment = draftInContext.attachments.first(where: { $0.uuid == oldAttachmentUUID }) else {
+                return
+            }
+
+            // We need to update every field of the local attachment because embedded objects don't have a primary key
+            liveOldAttachment.update(with: newAttachment)
         }
 
         await updateDelegate?.contentWillChange()
@@ -348,18 +345,16 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
     }
 
     public func removeAttachment(_ attachmentUUID: String) async {
-        await backgroundRealm.execute { realm in
-            try? realm.write {
-                guard let draftInContext = realm.object(ofType: Draft.self, forPrimaryKey: self.draftLocalUUID) else {
-                    return
-                }
-
-                guard let liveAttachment = draftInContext.attachments.first(where: { $0.uuid == attachmentUUID }) else {
-                    return
-                }
-
-                realm.delete(liveAttachment)
+        try? writeTransaction { writableRealm in
+            guard let draftInContext = writableRealm.object(ofType: Draft.self, forPrimaryKey: self.draftLocalUUID) else {
+                return
             }
+
+            guard let liveAttachment = draftInContext.attachments.first(where: { $0.uuid == attachmentUUID }) else {
+                return
+            }
+
+            writableRealm.delete(liveAttachment)
         }
 
         await attachmentUploadTasks[attachmentUUID]?.task?.cancel()
@@ -384,31 +379,29 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
         let allSanitizedHtmlString = await allSanitizedHtml(in: htmlAttachments).joined(separator: "")
 
         // Mutate Draft
-        await backgroundRealm.execute { realm in
-            try? realm.write {
-                guard let draftInContext = realm.object(ofType: Draft.self, forPrimaryKey: self.draftLocalUUID) else {
-                    return
-                }
-
-                // Title if any usable
-                var modified = false
-                if draftInContext.subject.isEmpty,
-                   !anyUsableTitle.isEmpty {
-                    draftInContext.subject = anyUsableTitle
-                    modified = true
-                }
-
-                if !allSanitizedHtmlString.isEmpty {
-                    draftInContext.body = allSanitizedHtmlString + draftInContext.body
-                    modified = true
-                }
-
-                guard modified else {
-                    return
-                }
-
-                realm.add(draftInContext, update: .modified)
+        try? writeTransaction { writableRealm in
+            guard let draftInContext = writableRealm.object(ofType: Draft.self, forPrimaryKey: self.draftLocalUUID) else {
+                return
             }
+
+            // Title if any usable
+            var modified = false
+            if draftInContext.subject.isEmpty,
+               !anyUsableTitle.isEmpty {
+                draftInContext.subject = anyUsableTitle
+                modified = true
+            }
+
+            if !allSanitizedHtmlString.isEmpty {
+                draftInContext.body = allSanitizedHtmlString + draftInContext.body
+                modified = true
+            }
+
+            guard modified else {
+                return
+            }
+
+            writableRealm.add(draftInContext, update: .modified)
         }
     }
 

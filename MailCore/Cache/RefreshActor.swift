@@ -100,13 +100,13 @@ public actor RefreshActor {
             }?.isDefaultReply = true
         }
 
-        await mailboxManager.backgroundRealm.execute { realm in
+        try? mailboxManager.writeTransaction { writableRealm in
             let signaturesToDelete: Set<Signature> // no longer present server side
             let signaturesToUpdate: [Signature] // updated signatures
             let signaturesToAdd: [Signature] // new signatures
 
             // fetch all local signatures
-            let existingSignatures = Array(realm.objects(Signature.self))
+            let existingSignatures = Array(writableRealm.objects(Signature.self))
 
             // filter out signatures that may no longer be valid realm objects
             updatedSignatures = updatedSignatures.filter { !$0.isInvalidated }
@@ -126,11 +126,9 @@ public actor RefreshActor {
             // NOTE: local drafts in `signaturesToDelete` should be migrated to use the new default signature.
 
             // Update signatures in Realm
-            try? realm.safeWrite {
-                realm.add(signaturesToUpdate, update: .modified)
-                realm.delete(signaturesToDelete)
-                realm.add(signaturesToAdd, update: .modified)
-            }
+            writableRealm.add(signaturesToUpdate, update: .modified)
+            writableRealm.delete(signaturesToDelete)
+            writableRealm.add(signaturesToAdd, update: .modified)
         }
     }
 }

@@ -29,8 +29,6 @@ public final class MailboxInfosManager {
     private static let currentDbVersion: UInt64 = 7
     private let dbName = "MailboxInfos.realm"
 
-    private let backgroundRealm: BackgroundRealm
-
     public let realmConfiguration: Realm.Configuration
     public let transactionExecutor: Transactionable
 
@@ -51,8 +49,8 @@ public final class MailboxInfosManager {
             objectTypes: [Mailbox.self, MailboxPermissions.self, Quotas.self, ExternalMailInfo.self]
         )
 
-        backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
-        transactionExecutor = TransactionExecutor(realmAccessible: backgroundRealm)
+        let realmAccessor = MailCoreRealmAccessor(realmConfiguration: realmConfiguration)
+        transactionExecutor = TransactionExecutor(realmAccessible: realmAccessor)
 
         excludeRealmFromBackup()
     }
@@ -78,15 +76,13 @@ public final class MailboxInfosManager {
             }
 
             mailboxRemovedIds = mailboxRemoved.map(\.objectId)
+
+            let detachedMailboxes = mailboxes.map { $0.detached() }
+            let mailboxes = writableRealm.objects(Mailbox.self).filter("objectId IN %@", mailboxRemovedIds)
+            writableRealm.delete(mailboxes)
+            writableRealm.add(detachedMailboxes, update: .modified)
         }
 
-        await backgroundRealm.execute { realm in
-            let detachedMailboxes = mailboxes.map { $0.detached() }
-            try? realm.write {
-                realm.delete(realm.objects(Mailbox.self).filter("objectId IN %@", mailboxRemovedIds))
-                realm.add(detachedMailboxes, update: .modified)
-            }
-        }
         return mailboxRemoved
     }
 
@@ -138,11 +134,9 @@ public final class MailboxInfosManager {
     }
 
     public func updateUnseen(unseenMessages: Int, for mailbox: Mailbox) async {
-        await backgroundRealm.execute { realm in
-            let freshMailbox = mailbox.fresh(using: realm)
-            try? realm.safeWrite {
-                freshMailbox?.unseenMessages = unseenMessages
-            }
+        try? writeTransaction { writableRealm in
+            let freshMailbox = mailbox.fresh(using: writableRealm)
+            freshMailbox?.unseenMessages = unseenMessages
         }
     }
 

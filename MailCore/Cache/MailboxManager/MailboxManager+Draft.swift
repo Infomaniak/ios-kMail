@@ -81,17 +81,16 @@ public extension MailboxManager {
     func save(draft: Draft) async throws {
         do {
             let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
-            await backgroundRealm.execute { realm in
+            try? writeTransaction { writableRealm in
                 // Update draft in Realm
-                guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
+                guard let liveDraft = writableRealm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
                     self.logError(.missingDraft)
                     return
                 }
-                try? realm.safeWrite {
-                    liveDraft.remoteUUID = saveResponse.uuid
-                    liveDraft.messageUid = saveResponse.uid
-                    liveDraft.action = nil
-                }
+
+                liveDraft.remoteUUID = saveResponse.uuid
+                liveDraft.messageUid = saveResponse.uid
+                liveDraft.action = nil
             }
         } catch let error as MailApiError {
             // Do not delete draft on invalid identity
@@ -131,14 +130,13 @@ public extension MailboxManager {
     }
 
     func deleteLocally(draft: Draft) async throws {
-        await backgroundRealm.execute { realm in
-            guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
+        try? writeTransaction { writableRealm in
+            guard let liveDraft = writableRealm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
                 self.logError(.missingDraft)
                 return
             }
-            try? realm.safeWrite {
-                realm.delete(liveDraft)
-            }
+
+            writableRealm.delete(liveDraft)
         }
     }
 
@@ -150,14 +148,12 @@ public extension MailboxManager {
 
         let existingMessageUids = Set(draftFolder.threads.flatMap(\.messages).map(\.uid))
 
-        await backgroundRealm.execute { realm in
-            try? realm.safeWrite {
-                let noActionDrafts = realm.objects(Draft.self).where { $0.action == nil }
-                for draft in noActionDrafts {
-                    if let messageUid = draft.messageUid,
-                       !existingMessageUids.contains(messageUid) {
-                        realm.delete(draft)
-                    }
+        try? writeTransaction { writableRealm in
+            let noActionDrafts = writableRealm.objects(Draft.self).where { $0.action == nil }
+            for draft in noActionDrafts {
+                if let messageUid = draft.messageUid,
+                   !existingMessageUids.contains(messageUid) {
+                    writableRealm.delete(draft)
                 }
             }
         }

@@ -77,3 +77,8 @@ public extension RealmConfigurable {
         try? realmFolderURL.setResourceValues(metadata)
     }
 }
+
+/// Some type conforming to MailCoreRealmAccessible
+struct MailCoreRealmAccessor: MailCoreRealmAccessible {
+    var realmConfiguration: Realm.Configuration
+}

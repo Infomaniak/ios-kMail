@@ -29,11 +29,9 @@ public extension MailboxManager {
         let completedMessage = try await apiFetcher.message(message: message)
         completedMessage.fullyDownloaded = true
 
-        await backgroundRealm.execute { realm in
-            // Update message in Realm
-            try? realm.safeWrite {
-                realm.add(completedMessage, update: .modified)
-            }
+        // Update message in Realm
+        try? writeTransaction { writableRealm in
+            writableRealm.add(completedMessage, update: .modified)
         }
     }
 
@@ -45,12 +43,12 @@ public extension MailboxManager {
         let data = try await apiFetcher.attachment(attachment: attachment)
 
         let safeAttachment = ThreadSafeReference(to: attachment)
-        await backgroundRealm.execute { realm in
-            if let liveAttachment = realm.resolve(safeAttachment) {
-                try? realm.safeWrite {
-                    liveAttachment.saved = true
-                }
+        try? writeTransaction { writableRealm in
+            guard let liveAttachment = writableRealm.resolve(safeAttachment) else {
+                return
             }
+
+            liveAttachment.saved = true
         }
 
         return data

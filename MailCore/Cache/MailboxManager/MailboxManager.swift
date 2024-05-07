@@ -29,7 +29,6 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     @LazyInjectService var mailboxInfosManager: MailboxInfosManager
 
     lazy var refreshActor = RefreshActor(mailboxManager: self)
-    let backgroundRealm: BackgroundRealm
 
     public static let constants = MailboxManagerConstants()
 
@@ -113,8 +112,9 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 Attendee.self
             ]
         )
-        backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
-        transactionExecutor = TransactionExecutor(realmAccessible: backgroundRealm)
+
+        let realmAccessor = MailCoreRealmAccessor(realmConfiguration: realmConfiguration)
+        transactionExecutor = TransactionExecutor(realmAccessible: realmAccessor)
 
         excludeRealmFromBackup()
     }

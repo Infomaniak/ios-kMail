@@ -42,21 +42,21 @@ public extension MailboxManager {
         return searchFolder
     }
 
-    func clearSearchResults(searchFolder: Folder, using realm: Realm) {
-        try? realm.safeWrite {
-            realm.delete(realm.objects(Message.self).where { $0.fromSearch == true })
-            realm.delete(realm.objects(Thread.self).where { $0.fromSearch == true })
-            searchFolder.threads.removeAll()
-        }
+    func clearSearchResults(searchFolder: Folder, writableRealm: Realm) {
+        writableRealm.delete(writableRealm.objects(Message.self).where { $0.fromSearch == true })
+        writableRealm.delete(writableRealm.objects(Thread.self).where { $0.fromSearch == true })
+        searchFolder.threads.removeAll()
     }
 
     func clearSearchResults() async {
-        await backgroundRealm.execute { realm in
-            guard let searchFolder = realm.objects(Folder.self).where({ $0.remoteId == Constants.searchFolderId }).first else {
+        try? writeTransaction { writableRealm in
+            guard let searchFolder = writableRealm.objects(Folder.self)
+                .where({ $0.remoteId == Constants.searchFolderId })
+                .first else {
                 return
             }
 
-            self.clearSearchResults(searchFolder: searchFolder, using: realm)
+            self.clearSearchResults(searchFolder: searchFolder, writableRealm: writableRealm)
         }
     }
 
@@ -85,11 +85,12 @@ public extension MailboxManager {
     }
 
     private func prepareAndSaveSearchThreads(threadResult: ThreadResult, searchFolder: Folder?) async {
-        await backgroundRealm.execute { realm in
+        try? writeTransaction { writableRealm in
             for thread in threadResult.threads ?? [] {
-                thread.makeFromSearch(using: realm)
+                thread.makeFromSearch(using: writableRealm)
 
-                for message in thread.messages where realm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
+                for message in thread.messages
+                    where writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil {
                     message.fromSearch = true
                 }
             }
@@ -102,13 +103,13 @@ public extension MailboxManager {
 
     func searchThreadsOffline(searchFolder: Folder?, filterFolderId: String,
                               searchFilters: [SearchCondition]) async {
-        await backgroundRealm.execute { realm in
-            guard let searchFolder = searchFolder?.fresh(using: realm) else {
+        try? writeTransaction { writableRealm in
+            guard let searchFolder = searchFolder?.fresh(using: writableRealm) else {
                 self.logError(.missingFolder)
                 return
             }
 
-            self.clearSearchResults(searchFolder: searchFolder, using: realm)
+            self.clearSearchResults(searchFolder: searchFolder, writableRealm: writableRealm)
 
             var predicates: [NSPredicate] = []
             for searchFilter in searchFilters {
@@ -146,53 +147,48 @@ public extension MailboxManager {
             }
 
             let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
-
-            let filteredMessages = realm.objects(Message.self).filter(compoundPredicate)
+            let filteredMessages = writableRealm.objects(Message.self).filter(compoundPredicate)
 
             // Update thread in Realm
-            try? realm.safeWrite {
-                for message in filteredMessages {
-                    let newMessage = message.detached()
-                    newMessage.uid = "offline\(newMessage.uid)"
-                    newMessage.fromSearch = true
+            for message in filteredMessages {
+                let newMessage = message.detached()
+                newMessage.uid = "offline\(newMessage.uid)"
+                newMessage.fromSearch = true
 
-                    let newThread = Thread(
-                        uid: "offlineThread\(message.uid)",
-                        messages: [newMessage],
-                        unseenMessages: 0,
-                        from: Array(message.from.detached()),
-                        to: Array(message.to.detached()),
-                        date: newMessage.date,
-                        hasAttachments: newMessage.hasAttachments,
-                        hasDrafts: newMessage.isDraft,
-                        flagged: newMessage.flagged,
-                        answered: newMessage.answered,
-                        forwarded: newMessage.forwarded
-                    )
-                    newThread.makeFromSearch(using: realm)
-                    newThread.subject = message.subject
-                    searchFolder.threads.insert(newThread)
-                }
+                let newThread = Thread(
+                    uid: "offlineThread\(message.uid)",
+                    messages: [newMessage],
+                    unseenMessages: 0,
+                    from: Array(message.from.detached()),
+                    to: Array(message.to.detached()),
+                    date: newMessage.date,
+                    hasAttachments: newMessage.hasAttachments,
+                    hasDrafts: newMessage.isDraft,
+                    flagged: newMessage.flagged,
+                    answered: newMessage.answered,
+                    forwarded: newMessage.forwarded
+                )
+                newThread.makeFromSearch(using: writableRealm)
+                newThread.subject = message.subject
+                searchFolder.threads.insert(newThread)
             }
         }
     }
 
     func addToSearchHistory(value: String) async {
-        return await backgroundRealm.execute { realm in
-            try? realm.safeWrite {
-                let searchHistory: SearchHistory
-                if let existingSearchHistory = realm.objects(SearchHistory.self).first {
-                    searchHistory = existingSearchHistory
-                } else {
-                    searchHistory = SearchHistory()
-                    realm.add(searchHistory)
-                }
-
-                if let indexToRemove = searchHistory.history.firstIndex(of: value) {
-                    searchHistory.history.remove(at: indexToRemove)
-                }
-                searchHistory.history.insert(value, at: 0)
+        try? writeTransaction { writableRealm in
+            let searchHistory: SearchHistory
+            if let existingSearchHistory = writableRealm.objects(SearchHistory.self).first {
+                searchHistory = existingSearchHistory
+            } else {
+                searchHistory = SearchHistory()
+                writableRealm.add(searchHistory)
             }
+
+            if let indexToRemove = searchHistory.history.firstIndex(of: value) {
+                searchHistory.history.remove(at: indexToRemove)
+            }
+            searchHistory.history.insert(value, at: 0)
         }
     }
 }

@@ -35,8 +35,8 @@ struct MCKContactManageable_SearchViewModel: ContactManageable, MCKTransactionab
 
     init(realmConfiguration: RealmSwift.Realm.Configuration) {
         self.realmConfiguration = realmConfiguration
-        let backgroundRealm = BackgroundRealm(configuration: realmConfiguration)
-        transactionExecutor = TransactionExecutor(realmAccessible: backgroundRealm)
+        let realmAccessor = MailCoreRealmAccessor(realmConfiguration: realmConfiguration)
+        transactionExecutor = TransactionExecutor(realmAccessible: realmAccessor)
     }
 
     func frozenContacts(matching string: String, fetchLimit: Int?) -> any Collection<MailCore.MergedContact> { [] }
