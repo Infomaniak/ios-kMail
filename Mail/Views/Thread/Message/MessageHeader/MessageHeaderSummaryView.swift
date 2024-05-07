@@ -53,7 +53,7 @@ struct MessageHeaderSummaryView: View {
                     } label: {
                         AvatarView(
                             mailboxManager: mailboxManager,
-                            contactConfiguration: .correspondent(correspondent: recipient,
+                            contactConfiguration: .correspondent(correspondent: recipient, associatedBimi: message.bimi,
                                                                  contextMailboxManager: mailboxManager),
                             size: 40
                         )

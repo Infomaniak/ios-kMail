@@ -50,8 +50,8 @@ public enum CommonContactCache {
 
         let contact: CommonContact
         switch contactConfiguration {
-        case .correspondent(let correspondent, let contextMailboxManager):
-            contact = CommonContact(correspondent: correspondent, contextMailboxManager: contextMailboxManager)
+        case .correspondent(let correspondent, let bimi, let contextMailboxManager):
+            contact = CommonContact(correspondent: correspondent, associatedBimi: bimi, contextMailboxManager: contextMailboxManager)
         case .user(let user):
             contact = CommonContact(user: user)
         case .contact(let wrappedContact):

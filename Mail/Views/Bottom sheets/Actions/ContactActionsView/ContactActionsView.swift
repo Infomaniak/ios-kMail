@@ -43,6 +43,7 @@ struct ContactActionsView: View {
         VStack(alignment: .leading, spacing: UIPadding.small) {
             let contactConfiguration = ContactConfiguration.correspondent(
                 correspondent: recipient,
+                associatedBimi: bimi,
                 contextMailboxManager: mailboxManager
             )
             let contact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
