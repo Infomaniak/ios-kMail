@@ -20,18 +20,6 @@ import MailCore
 import MailResources
 import SwiftUI
 
-public extension VerticalAlignment {
-    /// Alignment ID used for the icon and the text
-    /// The icon must be vertically centered with the first line of the text
-    enum InformationBlockAlignment: AlignmentID {
-        public static func defaultValue(in context: ViewDimensions) -> CGFloat {
-            return context[.top]
-        }
-    }
-
-    static let blockAlignment = VerticalAlignment(InformationBlockAlignment.self)
-}
-
 public struct InformationBlockView: View {
     let icon: Image
     let message: String
@@ -46,13 +34,13 @@ public struct InformationBlockView: View {
     }
 
     public var body: some View {
-        HStack(alignment: .blockAlignment, spacing: UIPadding.intermediate) {
+        HStack(alignment: .iconAndMultilineTextAlignment, spacing: UIPadding.intermediate) {
             icon
                 .resizable()
                 .scaledToFit()
                 .frame(width: 16, height: 16)
                 .foregroundStyle(iconColor ?? .clear)
-                .alignmentGuide(.blockAlignment) { d in
+                .alignmentGuide(.iconAndMultilineTextAlignment) { d in
                     // Center of the view is on the informationBlockAlignment guide
                     d[VerticalAlignment.center]
                 }
@@ -60,7 +48,7 @@ public struct InformationBlockView: View {
             Text(message)
                 .textStyle(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .alignmentGuide(.blockAlignment) { d in
+                .alignmentGuide(.iconAndMultilineTextAlignment) { d in
                     // Center of the first line is on the informationBlockAlignment guide
                     (d.height - (d[.lastTextBaseline] - d[.firstTextBaseline])) / 2
                 }
@@ -68,7 +56,7 @@ public struct InformationBlockView: View {
             if let dismissHandler {
                 CloseButton(size: .regular, dismissHandler: dismissHandler)
                     .tint(MailResourcesAsset.textSecondaryColor.swiftUIColor)
-                    .alignmentGuide(.blockAlignment) { d in
+                    .alignmentGuide(.iconAndMultilineTextAlignment) { d in
                         d[VerticalAlignment.center]
                     }
             }

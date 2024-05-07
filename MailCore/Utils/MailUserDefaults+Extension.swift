@@ -50,7 +50,7 @@ public extension UserDefaults.Keys {
     static let shouldPresentSetAsDefaultDiscovery = UserDefaults.Keys(rawValue: "shouldPresentSetAsDefaultDiscovery")
     static let aiEngine = UserDefaults.Keys(rawValue: "aiEngine")
     static let autoAdvance = UserDefaults.Keys(rawValue: "autoAdvance")
-    static let updateVersionViewDismissed = UserDefaults.Keys(rawValue: "updateVersionViewDismissed")
+    static let hasDismissedUpdateVersionView = UserDefaults.Keys(rawValue: "hasDismissedUpdateVersionView")
     static let matomoAuthorized = UserDefaults.Keys(rawValue: "matomoAuthorized")
     static let sentryAuthorized = UserDefaults.Keys(rawValue: "sentryAuthorized")
 }

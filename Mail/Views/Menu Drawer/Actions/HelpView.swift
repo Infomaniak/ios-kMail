@@ -23,7 +23,11 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct HelpView: View {
-    private struct HelpAction: Hashable {
+    private struct HelpAction: Identifiable, Equatable {
+        var id: String {
+            return destination.absoluteString
+        }
+
         let title: String
         let destination: URL
         let openUpdateVersionAlert: Bool
@@ -34,25 +38,26 @@ struct HelpView: View {
             openUpdateVersionAlert: false
         )
         static let chatbot = HelpAction(
-            title: MailResourcesStrings.Localizable.helpChatbot, destination: URLConstants.chatbot.url,
+            title: MailResourcesStrings.Localizable.helpChatbot,
+            destination: URLConstants.chatbot.url,
             openUpdateVersionAlert: true
         )
     }
 
     @Environment(\.openURL) private var openURL
 
-    @ModalState(context: ContextKeys.help) private var isShowingUpdateVersionAlert = false
+    @ModalState(wrappedValue: nil, context: ContextKeys.help) private var updateVersionAlert: HelpAction?
 
     private let actions: [HelpAction] = [.faq, .chatbot]
 
     var body: some View {
         List {
             Section {
-                ForEach(actions, id: \.self) { action in
+                ForEach(actions) { action in
                     VStack(alignment: .leading, spacing: 0) {
                         Button {
                             if action.openUpdateVersionAlert && Constants.canOSBeUpdated {
-                                isShowingUpdateVersionAlert = true
+                                updateVersionAlert = action
                             } else {
                                 openURL(action.destination)
                             }
@@ -81,9 +86,9 @@ struct HelpView: View {
         .listStyle(.plain)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.buttonHelp, displayMode: .inline)
-        .customAlert(isPresented: $isShowingUpdateVersionAlert) {
+        .customAlert(item: $updateVersionAlert) { action in
             UpdateVersionAlertView {
-                openURL(HelpAction.chatbot.destination)
+                openURL(action.destination)
             }
         }
     }
