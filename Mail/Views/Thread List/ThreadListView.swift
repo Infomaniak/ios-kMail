@@ -35,8 +35,9 @@ struct ThreadListView: View {
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-    @AppStorage(UserDefaults.shared.key(.updateVersionViewDismissed)) private var updateVersionViewDismissed = DefaultPreferences
-        .updateVersionViewDismissed
+    @AppStorage(UserDefaults.shared.key(.hasDismissedUpdateVersionView)) private var hasDismissedUpdateVersionView =
+        DefaultPreferences
+            .hasDismissedUpdateVersionView
 
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
@@ -100,7 +101,7 @@ struct ThreadListView: View {
                         ListVerticalInsetView(height: UIPadding.verySmall)
                     }
 
-                    if Constants.canOSBeUpdated && !updateVersionViewDismissed {
+                    if Constants.canOSBeUpdated && !hasDismissedUpdateVersionView && viewModel.frozenFolder.role == .inbox {
                         UpdateVersionView(isShowingUpdateAlert: $isShowingUpdateAlert)
                             .threadListCellAppearance()
                     }
@@ -202,7 +203,7 @@ struct ThreadListView: View {
             FlushFolderAlertView(flushAlert: item, folder: viewModel.frozenFolder)
         }
         .customAlert(isPresented: $isShowingUpdateAlert) {
-            UpdateVersionAlertView {}
+            UpdateVersionAlertView()
         }
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Main"])
     }

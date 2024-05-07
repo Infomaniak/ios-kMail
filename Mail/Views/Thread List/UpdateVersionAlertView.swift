@@ -27,8 +27,9 @@ struct UpdateVersionAlertView: View {
 
     @Environment(\.openURL) private var openURL
 
-    @AppStorage(UserDefaults.shared.key(.updateVersionViewDismissed)) private var updateVersionViewDismissed = DefaultPreferences
-        .updateVersionViewDismissed
+    @AppStorage(UserDefaults.shared.key(.hasDismissedUpdateVersionView)) private var hasDismissedUpdateVersionView =
+        DefaultPreferences
+            .hasDismissedUpdateVersionView
 
     var onLaterPressed: (() -> Void)?
 
@@ -56,11 +57,11 @@ struct UpdateVersionAlertView: View {
         matomo.track(eventWithCategory: .updateVersion, name: "later")
         onLaterPressed?()
         withAnimation {
-            updateVersionViewDismissed = true
+            hasDismissedUpdateVersionView = true
         }
     }
 }
 
 #Preview {
-    UpdateVersionAlertView {}
+    UpdateVersionAlertView()
 }

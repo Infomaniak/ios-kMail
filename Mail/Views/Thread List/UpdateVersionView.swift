@@ -28,37 +28,33 @@ struct UpdateVersionView: View {
     @Binding var isShowingUpdateAlert: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: UIPadding.small) {
-            HStack(alignment: .blockAlignment, spacing: UIPadding.small) {
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .iconAndMultilineTextAlignment, spacing: UIPadding.small) {
                 IKIcon(MailResourcesAsset.warning)
                     .foregroundStyle(MailResourcesAsset.orangeColor)
-                    .alignmentGuide(.blockAlignment) { d in
+                    .alignmentGuide(.iconAndMultilineTextAlignment) { d in
                         d[VerticalAlignment.center]
                     }
 
-                VStack(alignment: .leading, spacing: UIPadding.small) {
-                    Text(MailResourcesStrings.Localizable.updateVersionTitle)
-                        .textStyle(.bodySmall)
-                        .alignmentGuide(.blockAlignment) { d in
-                            (d.height - (d[.lastTextBaseline] - d[.firstTextBaseline])) / 2
-                        }
-
-                    Button {
-                        matomo.track(eventWithCategory: .updateVersion, name: "moreInfo")
-                        isShowingUpdateAlert = true
-                    } label: {
-                        HStack(spacing: UIPadding.small) {
-                            Text(MailResourcesStrings.Localizable.moreInfo)
-                                .textStyle(.bodySmallAccent)
-                        }
-                        .buttonStyle(.ikLink(isInlined: false))
+                Text(MailResourcesStrings.Localizable.updateVersionTitle)
+                    .textStyle(.bodySmall)
+                    .alignmentGuide(.iconAndMultilineTextAlignment) { d in
+                        (d.height - (d[.lastTextBaseline] - d[.firstTextBaseline])) / 2
                     }
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
             }
             .padding(.top, value: .regular)
             .padding(.horizontal, value: .regular)
             .frame(maxWidth: .infinity, alignment: .leading)
+
+            Button {
+                matomo.track(eventWithCategory: .updateVersion, name: "moreInfo")
+                isShowingUpdateAlert = true
+            } label: {
+                Text(MailResourcesStrings.Localizable.moreInfo)
+                    .textStyle(.bodySmallAccent)
+            }
+            .buttonStyle(.ikLink())
+            .padding(.leading, value: .regular)
 
             IKDivider(type: .full)
         }
