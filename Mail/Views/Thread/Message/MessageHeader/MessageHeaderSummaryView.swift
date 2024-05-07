@@ -59,7 +59,7 @@ struct MessageHeaderSummaryView: View {
                         )
                     }
                     .adaptivePanel(item: $contactViewRecipient) { recipient in
-                        ContactActionsView(recipient: recipient)
+                        ContactActionsView(recipient: recipient, bimi: message.bimi)
                             .environmentObject(mailboxManager)
                         // We need to manually pass environmentObject because of a bug with SwiftUI end popovers on macOS
                     }
@@ -87,7 +87,10 @@ struct MessageHeaderSummaryView: View {
                                         .textStyle(.bodyMedium)
                                 }
                             }
-                            IKIcon(MailResourcesAsset.checkmarkAuthentication, size: .small)
+
+                            if let bimi = message.bimi, bimi.isCertified {
+                                IKIcon(MailResourcesAsset.checkmarkAuthentication, size: .small)
+                            }
 
                             MessageHeaderDateView(date: message.date)
                         }
