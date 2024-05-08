@@ -103,9 +103,11 @@ struct SettingsView: View {
 
                     // MARK: AI Writer
 
-                    if featureFlagsManageable.isEnabled(.aiMailComposer) {
-                        SettingsSubMenuCell(title: MailResourcesStrings.Localizable.aiPromptTitle, subtitle: aiEngine.title) {
-                            SettingsAIEngineOptionView()
+                    if !platformDetector.isMac {
+                        if featureFlagsManageable.isEnabled(.aiMailComposer) {
+                            SettingsSubMenuCell(title: MailResourcesStrings.Localizable.aiPromptTitle, subtitle: aiEngine.title) {
+                                SettingsAIEngineOptionView()
+                            }
                         }
                     }
 
