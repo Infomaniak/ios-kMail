@@ -101,7 +101,8 @@ struct ThreadListView: View {
                         ListVerticalInsetView(height: UIPadding.verySmall)
                     }
 
-                    if Constants.canOSBeUpdated && !hasDismissedUpdateVersionView && viewModel.frozenFolder.role == .inbox {
+                    if Constants.isUsingABreakableOSVersion && !hasDismissedUpdateVersionView && viewModel.frozenFolder
+                        .role == .inbox {
                         UpdateVersionView(isShowingUpdateAlert: $isShowingUpdateAlert)
                             .threadListCellAppearance()
                     }
@@ -203,7 +204,9 @@ struct ThreadListView: View {
             FlushFolderAlertView(flushAlert: item, folder: viewModel.frozenFolder)
         }
         .customAlert(isPresented: $isShowingUpdateAlert) {
-            UpdateVersionAlertView()
+            UpdateVersionAlertView(onDismiss: {
+                hasDismissedUpdateVersionView = true
+            })
         }
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Main"])
     }
