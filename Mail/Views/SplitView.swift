@@ -124,11 +124,13 @@ struct SplitView: View {
             }
         }
         .discoveryPresenter(isPresented: $mainViewState.isShowingSyncDiscovery) {
-            DiscoveryView(item: .syncDiscovery) {
-                UserDefaults.shared.shouldPresentSyncDiscovery = false
-            } completionHandler: { willSync in
-                guard willSync else { return }
-                mainViewState.isShowingSyncProfile = true
+            if !platformDetector.isMac {
+                DiscoveryView(item: .syncDiscovery) {
+                    UserDefaults.shared.shouldPresentSyncDiscovery = false
+                } completionHandler: { willSync in
+                    guard willSync else { return }
+                    mainViewState.isShowingSyncProfile = true
+                }
             }
         }
         .discoveryPresenter(isPresented: $mainViewState.isShowingSetAppAsDefaultDiscovery) {
