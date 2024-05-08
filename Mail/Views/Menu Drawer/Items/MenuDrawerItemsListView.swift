@@ -81,7 +81,7 @@ struct MenuDrawerItemsHelpListView: View {
             MenuDrawerItemCell(icon: MailResourcesAsset.feedback,
                                label: MailResourcesStrings.Localizable.buttonFeedback,
                                matomoName: "feedback") {
-                if Constants.canOSBeUpdated {
+                if Constants.isUsingABreakableOSVersion {
                     isShowingUpdateVersionAlert = true
                 } else {
                     sendFeedback()
@@ -101,9 +101,9 @@ struct MenuDrawerItemsHelpListView: View {
             BugTrackerView(isPresented: $isShowingBugTracker)
         }
         .customAlert(isPresented: $isShowingUpdateVersionAlert) {
-            UpdateVersionAlertView {
+            UpdateVersionAlertView(onLaterPressed: {
                 sendFeedback()
-            }
+            })
         }
     }
 

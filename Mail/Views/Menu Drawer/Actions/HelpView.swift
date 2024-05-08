@@ -30,17 +30,17 @@ struct HelpView: View {
 
         let title: String
         let destination: URL
-        let openUpdateVersionAlert: Bool
+        let shouldOpenUpdateVersionAlert: Bool
 
         static let faq = HelpAction(
             title: MailResourcesStrings.Localizable.helpFAQ,
             destination: URLConstants.faq.url,
-            openUpdateVersionAlert: false
+            shouldOpenUpdateVersionAlert: false
         )
         static let chatbot = HelpAction(
             title: MailResourcesStrings.Localizable.helpChatbot,
             destination: URLConstants.chatbot.url,
-            openUpdateVersionAlert: true
+            shouldOpenUpdateVersionAlert: true
         )
     }
 
@@ -56,7 +56,7 @@ struct HelpView: View {
                 ForEach(actions) { action in
                     VStack(alignment: .leading, spacing: 0) {
                         Button {
-                            if action.openUpdateVersionAlert && Constants.canOSBeUpdated {
+                            if action.shouldOpenUpdateVersionAlert && Constants.isUsingABreakableOSVersion {
                                 updateVersionAlert = action
                             } else {
                                 openURL(action.destination)
@@ -87,9 +87,9 @@ struct HelpView: View {
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.buttonHelp, displayMode: .inline)
         .customAlert(item: $updateVersionAlert) { action in
-            UpdateVersionAlertView {
+            UpdateVersionAlertView(onLaterPressed: {
                 openURL(action.destination)
-            }
+            })
         }
     }
 }

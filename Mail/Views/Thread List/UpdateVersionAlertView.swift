@@ -32,6 +32,7 @@ struct UpdateVersionAlertView: View {
             .hasDismissedUpdateVersionView
 
     var onLaterPressed: (() -> Void)?
+    var onDismiss: (() -> Void)?
 
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.medium) {
@@ -43,22 +44,21 @@ struct UpdateVersionAlertView: View {
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonUpdate,
                              secondaryButtonTitle: MailResourcesStrings.Localizable.buttonLater,
                              primaryButtonAction: updateVersion,
-                             secondaryButtonAction: dismissUpdateVersionView)
+                             secondaryButtonAction: laterButton)
+        }
+        .onDisappear {
+            onDismiss?()
         }
     }
 
     private func updateVersion() {
         matomo.track(eventWithCategory: .updateVersion, name: "update")
         openURL(DeeplinkConstants.iosPreferences)
-        dismissUpdateVersionView()
     }
 
-    private func dismissUpdateVersionView() {
+    private func laterButton() {
         matomo.track(eventWithCategory: .updateVersion, name: "later")
         onLaterPressed?()
-        withAnimation {
-            hasDismissedUpdateVersionView = true
-        }
     }
 }
 

@@ -225,7 +225,7 @@ public enum Constants {
         }
     }
 
-    public static var canOSBeUpdated: Bool {
+    public static var isUsingABreakableOSVersion: Bool {
         @InjectService var platformDetector: PlatformDetectable
 
         guard !platformDetector.isMac else { return false }

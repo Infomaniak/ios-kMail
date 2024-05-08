@@ -31,7 +31,6 @@ struct UpdateVersionView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .iconAndMultilineTextAlignment, spacing: UIPadding.small) {
                 IKIcon(MailResourcesAsset.warning)
-                    .foregroundStyle(MailResourcesAsset.orangeColor)
                     .alignmentGuide(.iconAndMultilineTextAlignment) { d in
                         d[VerticalAlignment.center]
                     }
@@ -51,9 +50,9 @@ struct UpdateVersionView: View {
                 isShowingUpdateAlert = true
             } label: {
                 Text(MailResourcesStrings.Localizable.moreInfo)
-                    .textStyle(.bodySmallAccent)
             }
             .buttonStyle(.ikLink())
+            .controlSize(.small)
             .padding(.leading, value: .regular)
 
             IKDivider(type: .full)
