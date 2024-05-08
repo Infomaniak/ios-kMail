@@ -89,17 +89,19 @@ struct SettingsView: View {
 
                     // MARK: Sync Calendar/Contacts
 
-                    Button {
-                        matomo.track(eventWithCategory: .syncAutoConfig, name: "openFromSettings")
-                        if platformDetector.isMac {
-                            isShowingSyncProfile = true
-                        } else {
-                            mainViewState.isShowingSyncProfile = true
+                    if !platformDetector.isMac {
+                        Button {
+                            matomo.track(eventWithCategory: .syncAutoConfig, name: "openFromSettings")
+                            if platformDetector.isMac {
+                                isShowingSyncProfile = true
+                            } else {
+                                mainViewState.isShowingSyncProfile = true
+                            }
+                        } label: {
+                            SettingsSubMenuLabel(title: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle)
                         }
-                    } label: {
-                        SettingsSubMenuLabel(title: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle)
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
 
                     // MARK: AI Writer
 
