@@ -48,6 +48,10 @@ struct ComposeMessageBodyView: View {
 
             EditorView(body: $draft.body, model: $editorModel, toolbarModel: toolbarModel)
                 .frame(height: editorModel.height)
+                .onChange(of: editorModel.cursorPosition, perform: keepCursorVisible)
+                .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { _ in
+                    keepCursorVisible(editorModel.cursorPosition)
+                }
         }
         .customAlert(isPresented: .constant(false)) {
             AddLinkView(actionHandler: { _ in })
@@ -88,6 +92,15 @@ struct ComposeMessageBodyView: View {
         guard let scrollView, let cursorPosition else {
             return
         }
+
+        print("[SCROLL] NEW POSITION", cursorPosition.y)
+
+        let scrollContentHeight = scrollView.contentSize.height
+        let editorYPosition = scrollContentHeight - editorModel.height
+        let cursorYPosition = editorYPosition + cursorPosition.y
+
+        let scrollRect = CGRect(x: cursorPosition.x, y: cursorYPosition, width: 30, height: 30)
+        scrollView.scrollRectToVisible(scrollRect, animated: true)
     }
 }
 
