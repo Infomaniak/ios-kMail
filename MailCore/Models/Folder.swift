@@ -163,6 +163,10 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return [FolderRole.draft, FolderRole.spam, FolderRole.trash].contains(role)
     }
 
+    public var shouldWarnBeforeDeletion: Bool {
+        permanentlyDeleteContent && role != .draft
+    }
+
     public var matomoName: String {
         guard let role else { return "customFolder" }
 

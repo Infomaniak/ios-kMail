@@ -100,7 +100,7 @@ public class ActionsManager: ObservableObject {
 
         switch action {
         case .delete:
-            guard origin.frozenFolder?.permanentlyDeleteContent != true else {
+            guard origin.frozenFolder?.shouldWarnBeforeDeletion != true else {
                 Task { @MainActor in
                     origin.nearestFlushAlert?
                         .wrappedValue = FlushAlertState(deletedMessages: messagesWithDuplicates
@@ -226,9 +226,7 @@ public class ActionsManager: ObservableObject {
     }
 
     private func performDelete(messages: [Message], originFolder: Folder?) async throws {
-        if originFolder?.role == .trash
-            || originFolder?.role == .spam
-            || originFolder?.role == .draft {
+        if originFolder?.permanentlyDeleteContent == true {
             try await mailboxManager.delete(messages: messages)
             let snackbarMessage = snackbarPermanentlyDeleteMessage(for: messages, originFolder: originFolder)
             async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: nil)
