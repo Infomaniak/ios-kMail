@@ -272,10 +272,12 @@ struct ComposeMessageView: View {
             }
         }
         .discoveryPresenter(isPresented: $aiModel.isShowingDiscovery) {
-            DiscoveryView(item: .aiDiscovery) {
-                UserDefaults.shared.shouldPresentAIFeature = false
-            } completionHandler: { willShowAIPrompt in
-                aiModel.isShowingPrompt = willShowAIPrompt
+            if !platformDetector.isMac {
+                DiscoveryView(item: .aiDiscovery) {
+                    UserDefaults.shared.shouldPresentAIFeature = false
+                } completionHandler: { willShowAIPrompt in
+                    aiModel.isShowingPrompt = willShowAIPrompt
+                }
             }
         }
         .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {
