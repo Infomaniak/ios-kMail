@@ -50,7 +50,8 @@ struct SyncInstallProfileTutorialView: View {
         MailResourcesAsset.syncTutorial1,
         MailResourcesAsset.syncTutorial2,
         MailResourcesAsset.syncTutorial3,
-        MailResourcesAsset.syncTutorial4
+        MailResourcesAsset.syncTutorial4,
+        MailResourcesAsset.syncTutorial5
     ]
 
     init() {
