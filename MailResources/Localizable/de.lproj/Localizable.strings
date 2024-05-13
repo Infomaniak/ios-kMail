@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: de, German
  * Tagged: ios
- * Exported by: Ambroise Decouttere
- * Exported at: Wed, 01 May 2024 10:29:33 +0200
+ * Exported by: Philippe Weidmann
+ * Exported at: Mon, 13 May 2024 08:25:56 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -775,6 +775,9 @@
 /* loco:645c9bbb13c8e41a84040012 */
 "errorUnknown" = "Unbekannter Fehler";
 
+/* loco:6633774d2c7f8dd9e10270d4 */
+"expeditorAuthenticationDescription" = "Die Herkunft des Absenders wurde authentifiziert.";
+
 /* loco:64db5dc6df82e571c9064552 */
 "externalDialogConfirmButton" = "Ich habe verstanden";
 
@@ -815,7 +818,7 @@
 "filterFocusAllowedMailboxesTitle" = "Erlaubte Mailboxen";
 
 /* loco:659822fad61595fa7a0e9d02 */
-"filterFocusDescription" = "Lassen Sie Benachrichtigungen für ausgewählte Postfächer zu.";
+"filterFocusDescription" = "Benachrichtigungen für ausgewählte Postfächer zulassen.";
 
 /* loco:6598228f255baea380090282 */
 "filterFocusTitle" = "Mailboxen filtern";
@@ -859,6 +862,9 @@
 /* loco:64ad0bf21a8c5c3877078262 */
 "lockedMailboxTitle-plural-many" = "";
 
+/* loco:6639ec5faf37f28888054ea2 */
+"manageSignatures" = "Meine Signaturen verwalten";
+
 /* loco:62567b1163b65257647cd9a2 */
 "menuDrawerAdvancedActions" = "Erweiterte Aktionen";
 
@@ -888,6 +894,9 @@
 
 /* loco:6400bafe3dae40636c716ea2 */
 "messageShowQuotedText" = "Anzeigen der Konversation";
+
+/* loco:66334ad612173107a60187e4 */
+"moreInfo" = "Weitere Informationen";
 
 /* loco:62bdb0cc6a325e7949729c03 */
 "moreStorageText1" = "Ihre Mailbox ist voll und Sie können keine weiteren Nachrichten empfangen 🥲";
@@ -1124,7 +1133,7 @@
 "settingsAutoAdvanceDescription" = "Auswählen, was angezeigt werden soll, wenn eine Nachricht archiviert oder gelöscht wird";
 
 /* loco:65b27dc325bc06589501c462 */
-"settingsAutoAdvanceFollowingThreadDescription" = "Beim Archivieren oder Löschen folgenden Thread anzeigen\n";
+"settingsAutoAdvanceFollowingThreadDescription" = "Beim Archivieren oder Löschen folgenden Thread anzeigen";
 
 /* loco:65b277d399fe1ebac10546a2 */
 "settingsAutoAdvanceFollowingThreadTitle" = "Folgender Thread";
@@ -1517,7 +1526,7 @@
 "syncTutorialInstallProfileStep3" = "Klicken Sie auf **Installieren**.";
 
 /* loco:651ec0dd115c4a32f40a2335 */
-"syncTutorialInstallProfileStep4" = "Fügen Sie das Validierungskennwort aus dem vorherigen Schritt ein.";
+"syncTutorialInstallProfileStep4" = "Geben Sie das Bestätigungskennwort **zweimal ein**: einmal für Kalender und einmal für Adressbücher.";
 
 /* loco:651ec1014c5a0be89406c4d4 */
 "syncTutorialInstallProfileStep5" = "Gehen Sie zurück zu Ihrem Mail-Programm.";
@@ -1614,6 +1623,12 @@
 
 /* loco:6425728328677e02905abef2 */
 "updateAvailableTitle" = "Aktualisierung verfügbar!";
+
+/* loco:66334836156fb80dc80ab1d2 */
+"updateVersionDescription" = "Bitte aktualisieren Sie Ihr Gerät zu Ihrer Sicherheit und zur Verbesserung Ihrer Erfahrung.";
+
+/* loco:6633460708b9ff4adf0726b2 */
+"updateVersionTitle" = "Ihr Erlebnis kann sich verschlechtern, weil Ihr Gerät veraltet ist";
 
 /* loco:62b42dc3832cca6d684a4ae2 */
 "urlEntryTitle" = "Einen Hyperlink erstellen";

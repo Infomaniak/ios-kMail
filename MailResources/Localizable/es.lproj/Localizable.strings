@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Ambroise Decouttere
- * Exported at: Wed, 01 May 2024 10:29:33 +0200
+ * Exported by: Philippe Weidmann
+ * Exported at: Mon, 13 May 2024 08:25:56 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -775,6 +775,9 @@
 /* loco:645c9bbb13c8e41a84040012 */
 "errorUnknown" = "Error desconocido";
 
+/* loco:6633774d2c7f8dd9e10270d4 */
+"expeditorAuthenticationDescription" = "Se ha autentificado el origen del remitente.";
+
 /* loco:64db5dc6df82e571c9064552 */
 "externalDialogConfirmButton" = "Comprendo";
 
@@ -859,6 +862,9 @@
 /* loco:64ad0bf21a8c5c3877078262 */
 "lockedMailboxTitle-plural-many" = "";
 
+/* loco:6639ec5faf37f28888054ea2 */
+"manageSignatures" = "Gestionar mis firmas";
+
 /* loco:62567b1163b65257647cd9a2 */
 "menuDrawerAdvancedActions" = "Acciones avanzadas";
 
@@ -888,6 +894,9 @@
 
 /* loco:6400bafe3dae40636c716ea2 */
 "messageShowQuotedText" = "Mostrar la conversación";
+
+/* loco:66334ad612173107a60187e4 */
+"moreInfo" = "Más información";
 
 /* loco:62bdb0cc6a325e7949729c03 */
 "moreStorageText1" = "Tu buzón está lleno y no puedes recibir más mensajes 🥲";
@@ -1124,16 +1133,16 @@
 "settingsAutoAdvanceDescription" = "Seleccione qué mostrar cuando se archiva o elimina un mensaje";
 
 /* loco:65b27dc325bc06589501c462 */
-"settingsAutoAdvanceFollowingThreadDescription" = "Mostrar el siguiente hilo al archivar o borrar\n";
+"settingsAutoAdvanceFollowingThreadDescription" = "Mostrar el siguiente conversación al archivar o borrar";
 
 /* loco:65b277d399fe1ebac10546a2 */
-"settingsAutoAdvanceFollowingThreadTitle" = "Siguiendo el hilo";
+"settingsAutoAdvanceFollowingThreadTitle" = "Siguiendo el conversación";
 
 /* loco:65b27e2b4f176d33ca06b302 */
-"settingsAutoAdvanceListOfThreadsDescription" = "Mostrar lista de hilos al archivar o borrar";
+"settingsAutoAdvanceListOfThreadsDescription" = "Mostrar lista de conversaciones al archivar o borrar";
 
 /* loco:65b2780c2b7256da8b038512 */
-"settingsAutoAdvanceListOfThreadsTitle" = "Lista de temas";
+"settingsAutoAdvanceListOfThreadsTitle" = "Lista de conversaciones";
 
 /* loco:65df003b996ecfc40c0d9962 */
 "settingsAutoAdvanceNaturalThreadDescription" = "Repite la última acción realizada";
@@ -1145,13 +1154,13 @@
 "settingsAutoAdvanceNaturalThreadTitle" = "Repetir la última acción";
 
 /* loco:65b27d1e0565d99b930ae142 */
-"settingsAutoAdvancePreviousThreadDescription" = "Mostrar el hilo anterior al archivar o borrar";
+"settingsAutoAdvancePreviousThreadDescription" = "Mostrar el conversación anterior al archivar o borrar";
 
 /* loco:65b277b504a5c5b4710041f3 */
-"settingsAutoAdvancePreviousThreadTitle" = "Tema anterior";
+"settingsAutoAdvancePreviousThreadTitle" = "Conversación anterior";
 
 /* loco:65b274f8719e4e08b103c7f4 */
-"settingsAutoAdvanceTitle" = "Auto advance";
+"settingsAutoAdvanceTitle" = "Avance automático";
 
 /* loco:62c693f572adfe66fd2a82b7 */
 "settingsCancellationPeriodDescription" = "Tiene la posibilidad de cancelar el envío de su correo electrónico hasta 30 segundos";
@@ -1517,7 +1526,7 @@
 "syncTutorialInstallProfileStep3" = "Haga clic en **Instalar**.";
 
 /* loco:651ec0dd115c4a32f40a2335 */
-"syncTutorialInstallProfileStep4" = "Pegue la contraseña de validación del paso anterior.";
+"syncTutorialInstallProfileStep4" = "Introduzca la contraseña de validación **dos veces**: una para los calendarios y otra para las libretas de direcciones.";
 
 /* loco:651ec1014c5a0be89406c4d4 */
 "syncTutorialInstallProfileStep5" = "Vuelve a la aplicación Mail.";
@@ -1614,6 +1623,12 @@
 
 /* loco:6425728328677e02905abef2 */
 "updateAvailableTitle" = "¡Actualización disponible!";
+
+/* loco:66334836156fb80dc80ab1d2 */
+"updateVersionDescription" = "Por su seguridad y para mejorar su experiencia, actualice su dispositivo.";
+
+/* loco:6633460708b9ff4adf0726b2 */
+"updateVersionTitle" = "Tu experiencia puede degradarse porque tu dispositivo no está actualizado";
 
 /* loco:62b42dc3832cca6d684a4ae2 */
 "urlEntryTitle" = "Crear un hiperenlace";
