@@ -101,9 +101,7 @@ struct MenuDrawerItemsHelpListView: View {
             BugTrackerView(isPresented: $isShowingBugTracker)
         }
         .customAlert(isPresented: $isShowingUpdateVersionAlert) {
-            UpdateVersionAlertView(onLaterPressed: {
-                sendFeedback()
-            })
+            UpdateVersionAlertView(onLaterPressed: sendFeedback)
         }
     }
 
