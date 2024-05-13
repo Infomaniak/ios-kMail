@@ -34,6 +34,7 @@ struct AttachmentsHeaderView: View {
                                 uploadTask: attachmentsManager.attachmentUploadTaskOrFinishedTask(for: attachment.uuid),
                                 attachment: attachment
                             ) { attachmentRemoved in
+                                guard !attachmentRemoved.isInvalidated else { return }
                                 attachmentsManager.removeAttachment(attachmentRemoved.uuid)
                             }
                         }
