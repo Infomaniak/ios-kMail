@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: en, English
  * Tagged: ios
- * Exported by: Ambroise Decouttere
- * Exported at: Wed, 01 May 2024 10:29:32 +0200
+ * Exported by: Philippe Weidmann
+ * Exported at: Mon, 13 May 2024 08:25:56 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -775,6 +775,9 @@
 /* loco:645c9bbb13c8e41a84040012 */
 "errorUnknown" = "Unknown error";
 
+/* loco:6633774d2c7f8dd9e10270d4 */
+"expeditorAuthenticationDescription" = "The sender’s origin has been authenticated.";
+
 /* loco:64db5dc6df82e571c9064552 */
 "externalDialogConfirmButton" = "I understand";
 
@@ -859,6 +862,9 @@
 /* loco:64ad0bf21a8c5c3877078262 */
 "lockedMailboxTitle-plural-many" = "";
 
+/* loco:6639ec5faf37f28888054ea2 */
+"manageSignatures" = "Manage my signatures";
+
 /* loco:62567b1163b65257647cd9a2 */
 "menuDrawerAdvancedActions" = "Advanced actions";
 
@@ -888,6 +894,9 @@
 
 /* loco:6400bafe3dae40636c716ea2 */
 "messageShowQuotedText" = "Display the conversation";
+
+/* loco:66334ad612173107a60187e4 */
+"moreInfo" = "More information";
 
 /* loco:62bdb0cc6a325e7949729c03 */
 "moreStorageText1" = "Your mailbox is full and you can‘t receive any more messages 🥲";
@@ -1121,10 +1130,10 @@
 "settingsAuthorizeTracking" = "Authorize tracking";
 
 /* loco:65b275e7c53c28d1410bf342 */
-"settingsAutoAdvanceDescription" = "Select what to display when a message is archived or deleted ";
+"settingsAutoAdvanceDescription" = "Select what to display when a message is archived or deleted";
 
 /* loco:65b27dc325bc06589501c462 */
-"settingsAutoAdvanceFollowingThreadDescription" = "Display following thread when archiving or deleting\n";
+"settingsAutoAdvanceFollowingThreadDescription" = "Display following thread when archiving or deleting";
 
 /* loco:65b277d399fe1ebac10546a2 */
 "settingsAutoAdvanceFollowingThreadTitle" = "Following thread";
@@ -1517,7 +1526,7 @@
 "syncTutorialInstallProfileStep3" = "Click on **Install**.";
 
 /* loco:651ec0dd115c4a32f40a2335 */
-"syncTutorialInstallProfileStep4" = "Paste the validation password from the previous step.";
+"syncTutorialInstallProfileStep4" = "Enter the validation password **twice**: once for calendars and once for address books.";
 
 /* loco:651ec1014c5a0be89406c4d4 */
 "syncTutorialInstallProfileStep5" = "Go back to your Mail application.";
@@ -1614,6 +1623,12 @@
 
 /* loco:6425728328677e02905abef2 */
 "updateAvailableTitle" = "Update available!";
+
+/* loco:66334836156fb80dc80ab1d2 */
+"updateVersionDescription" = "For your safety and to improve your experience, please update your device.";
+
+/* loco:6633460708b9ff4adf0726b2 */
+"updateVersionTitle" = "Your experience may be degraded because your device is out of date";
 
 /* loco:62b42dc3832cca6d684a4ae2 */
 "urlEntryTitle" = "Create a hyperlink";

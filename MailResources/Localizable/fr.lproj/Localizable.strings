@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: fr, French
  * Tagged: ios
- * Exported by: Ambroise Decouttere
- * Exported at: Wed, 01 May 2024 10:29:33 +0200
+ * Exported by: Philippe Weidmann
+ * Exported at: Mon, 13 May 2024 08:25:56 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -775,6 +775,9 @@
 /* loco:645c9bbb13c8e41a84040012 */
 "errorUnknown" = "Erreur inconnue";
 
+/* loco:6633774d2c7f8dd9e10270d4 */
+"expeditorAuthenticationDescription" = "La provenance de cet expéditeur a été authentifiée.";
+
 /* loco:64db5dc6df82e571c9064552 */
 "externalDialogConfirmButton" = "J’ai compris";
 
@@ -815,7 +818,7 @@
 "filterFocusAllowedMailboxesTitle" = "Boîtes aux lettres autorisées";
 
 /* loco:659822fad61595fa7a0e9d02 */
-"filterFocusDescription" = "Autorisez les notifications pour les boîtes aux lettres sélectionnées.";
+"filterFocusDescription" = "Autoriser les notifications pour les boîtes aux lettres sélectionnées.";
 
 /* loco:6598228f255baea380090282 */
 "filterFocusTitle" = "Filtrer les boîtes aux lettres";
@@ -859,6 +862,9 @@
 /* loco:64ad0bf21a8c5c3877078262 */
 "lockedMailboxTitle-plural-many" = "Adresses mail bloquées";
 
+/* loco:6639ec5faf37f28888054ea2 */
+"manageSignatures" = "Gérer mes signatures";
+
 /* loco:62567b1163b65257647cd9a2 */
 "menuDrawerAdvancedActions" = "Actions avancées";
 
@@ -888,6 +894,9 @@
 
 /* loco:6400bafe3dae40636c716ea2 */
 "messageShowQuotedText" = "Afficher la conversation";
+
+/* loco:66334ad612173107a60187e4 */
+"moreInfo" = "En savoir plus";
 
 /* loco:62bdb0cc6a325e7949729c03 */
 "moreStorageText1" = "Votre boîte est pleine et vous ne pouvez plus recevoir de nouveaux messages 🥲";
@@ -1022,7 +1031,7 @@
 "pickerNoSelection" = "Aucune sélection";
 
 /* loco:64ca16484dbf65eb9b0ea862 */
-"pleaseLogInFirst" = "Veuillez d’abord vous connecter à l’application Infomaniak Mail.’";
+"pleaseLogInFirst" = "Veuillez d’abord vous connecter à l’application Infomaniak Mail.";
 
 /* loco:64a695f87730509b39030ae2 */
 "popupDetachMailboxDescription" = "Êtes-vous sûr de vouloir détacher l’adresse %@ ?";
@@ -1517,7 +1526,7 @@
 "syncTutorialInstallProfileStep3" = "Cliquez sur **Installer**.";
 
 /* loco:651ec0dd115c4a32f40a2335 */
-"syncTutorialInstallProfileStep4" = "Collez le mot de passe de validation de l’étape précédente.";
+"syncTutorialInstallProfileStep4" = "Entrez le mot de passe de validation **deux fois** : une fois pour les calendriers et une fois pour les carnets d’adresses.";
 
 /* loco:651ec1014c5a0be89406c4d4 */
 "syncTutorialInstallProfileStep5" = "Retournez à votre application Mail.";
@@ -1614,6 +1623,12 @@
 
 /* loco:6425728328677e02905abef2 */
 "updateAvailableTitle" = "Mise à jour disponible !";
+
+/* loco:66334836156fb80dc80ab1d2 */
+"updateVersionDescription" = "Pour votre sécurité et pour améliorer votre expérience, veuillez mettre à jour votre appareil.";
+
+/* loco:6633460708b9ff4adf0726b2 */
+"updateVersionTitle" = "Votre expérience peut être dégradée parce que votre appareil n’est pas à jour";
 
 /* loco:62b42dc3832cca6d684a4ae2 */
 "urlEntryTitle" = "Créer un lien hypertexte";

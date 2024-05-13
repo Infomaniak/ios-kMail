@@ -118,8 +118,10 @@ struct PleaseLoginView: View {
                 .textStyle(.header2)
                 .padding(.top, UIPadding.onBoardingLogoTop)
             LottieView(configuration: slide.lottieConfiguration!)
-            Spacer()
-        }.onTapGesture {
+                .frame(maxHeight: .infinity)
+        }
+        .padding()
+        .onTapGesture {
             tapHandler(())
         }
     }
