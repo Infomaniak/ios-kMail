@@ -40,6 +40,14 @@ struct MailboxSignatureSettingsView: View {
                 SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsSignatureDescription)
                     .settingsCell()
 
+                SettingsOptionCell(
+                    title: MailResourcesStrings.Localizable.selectSignatureNone,
+                    isSelected: signatures.defaultSignature == nil,
+                    isLast: false
+                ) {
+                    setAsDefault(nil)
+                }
+
                 ForEach(signatures) { signature in
                     SettingsOptionCell(
                         title: signature.name,
@@ -67,10 +75,12 @@ struct MailboxSignatureSettingsView: View {
         }
     }
 
-    private func setAsDefault(_ signature: Signature) {
-        guard !signature.isDefault else { return }
-        let detachedSignature = signature.detached()
-        detachedSignature.isDefault = true
+    private func setAsDefault(_ signature: Signature?) {
+        guard !(signature?.isDefault ?? false) else { return }
+
+        let detachedSignature = signature?.detached()
+        detachedSignature?.isDefault = true
+
         Task {
             try await mailboxManager.updateSignature(signature: detachedSignature)
         }

@@ -51,7 +51,7 @@ public extension MailApiFetcher {
     }
 
     @discardableResult
-    func updateSignature(mailbox: Mailbox, signature: Signature) async throws -> Bool {
+    func updateSignature(mailbox: Mailbox, signature: Signature?) async throws -> Bool {
         try await perform(request:
             authenticatedRequest(
                 .updateSignature(
@@ -59,8 +59,7 @@ public extension MailApiFetcher {
                     mailboxName: mailbox.mailbox
                 ),
                 method: .post,
-                parameters: ["default_signature_id": signature.id,
-                             "default_reply_signature_id": nil]
+                parameters: ["default_signature_id": signature?.id]
             ))
     }
 

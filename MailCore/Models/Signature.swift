@@ -99,3 +99,9 @@ public extension [Signature] {
         return defaultReplySignature
     }
 }
+
+public extension Results<Signature> {
+    var defaultSignature: Signature? {
+        return first(where: \.isDefault)
+    }
+}
