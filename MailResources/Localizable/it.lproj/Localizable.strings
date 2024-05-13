@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: it, Italian
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Mon, 13 May 2024 08:25:56 +0200
+ * Exported by: Charlene Hoareau
+ * Exported at: Mon, 13 May 2024 11:43:06 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -863,7 +863,7 @@
 "lockedMailboxTitle-plural-many" = "";
 
 /* loco:6639ec5faf37f28888054ea2 */
-"manageSignatures" = "Gestire le mie firme";
+"manageSignatures" = "Gestisci le mie firme";
 
 /* loco:62567b1163b65257647cd9a2 */
 "menuDrawerAdvancedActions" = "Azioni avanzate";
@@ -1526,7 +1526,7 @@
 "syncTutorialInstallProfileStep3" = "Fai clic su **Installazione**.";
 
 /* loco:651ec0dd115c4a32f40a2335 */
-"syncTutorialInstallProfileStep4" = "Immettere la password di convalida **due volte**: una per i calendari e una per le rubriche.";
+"syncTutorialInstallProfileStep4" = "Incolla la password di convalida **due volte**: una per i calendari e una per le rubriche.";
 
 /* loco:651ec1014c5a0be89406c4d4 */
 "syncTutorialInstallProfileStep5" = "Torna all’applicazione Mail.";
