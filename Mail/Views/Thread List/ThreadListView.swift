@@ -69,6 +69,22 @@ struct ThreadListView: View {
         UITableViewCell.appearance().focusEffect = .none
     }
 
+    private var shouldDisplayFlushFolderView: Bool {
+        !viewModel.isEmpty && (viewModel.frozenFolder.role == .trash || viewModel.frozenFolder.role == .spam)
+    }
+
+    private var shouldDisplayProgressView: Bool {
+        viewModel.loadingPageTaskId != nil && !isRefreshing
+    }
+
+    private var shouldDisplayVerticalInsetView: Bool {
+        threadDensity == .compact
+    }
+
+    private var shouldDisplayUpdateVersion: Bool {
+        Constants.isUsingABreakableOSVersion && !hasDismissedUpdateVersionView && viewModel.frozenFolder.role == .inbox
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             ThreadListHeader(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
@@ -78,33 +94,33 @@ struct ThreadListView: View {
 
             ScrollViewReader { proxy in
                 List {
-                    if !viewModel.isEmpty,
-                       viewModel.frozenFolder.role == .trash || viewModel.frozenFolder.role == .spam {
-                        FlushFolderView(
-                            folder: viewModel.frozenFolder,
-                            mailboxManager: viewModel.mailboxManager,
-                            flushAlert: $flushAlert
-                        )
+                    if shouldDisplayFlushFolderView || shouldDisplayProgressView || shouldDisplayVerticalInsetView ||
+                        shouldDisplayUpdateVersion {
+                        VStack(spacing: 0) {
+                            if shouldDisplayFlushFolderView {
+                                FlushFolderView(
+                                    folder: viewModel.frozenFolder,
+                                    mailboxManager: viewModel.mailboxManager,
+                                    flushAlert: $flushAlert
+                                )
+                            }
+
+                            if shouldDisplayProgressView, let loadingPageTaskId = viewModel.loadingPageTaskId {
+                                ProgressView()
+                                    .id(loadingPageTaskId)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, value: .small)
+                            }
+
+                            if shouldDisplayVerticalInsetView {
+                                ListVerticalInsetView(height: UIPadding.verySmall)
+                            }
+
+                            if shouldDisplayUpdateVersion {
+                                UpdateVersionView(isShowingUpdateAlert: $isShowingUpdateAlert)
+                            }
+                        }
                         .threadListCellAppearance()
-                    }
-
-                    if let loadingPageTaskId = viewModel.loadingPageTaskId,
-                       !isRefreshing {
-                        ProgressView()
-                            .id(loadingPageTaskId)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, value: .small)
-                            .threadListCellAppearance()
-                    }
-
-                    if threadDensity == .compact {
-                        ListVerticalInsetView(height: UIPadding.verySmall)
-                    }
-
-                    if Constants.isUsingABreakableOSVersion && !hasDismissedUpdateVersionView && viewModel.frozenFolder
-                        .role == .inbox {
-                        UpdateVersionView(isShowingUpdateAlert: $isShowingUpdateAlert)
-                            .threadListCellAppearance()
                     }
 
                     ForEach(viewModel.sections ?? []) { section in
@@ -127,11 +143,14 @@ struct ThreadListView: View {
                         }
                     }
 
-                    if !viewModel.filterUnreadOn {
-                        LoadMoreButton(currentFolder: viewModel.frozenFolder)
-                    }
+                    VStack(spacing: 0) {
+                        if !viewModel.filterUnreadOn {
+                            LoadMoreButton(currentFolder: viewModel.frozenFolder)
+                        }
 
-                    ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
+                        ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
+                    }
+                    .threadListCellAppearance()
                 }
                 .listStyle(.plain)
                 .observeScroll(with: scrollObserver)
