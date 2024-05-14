@@ -58,18 +58,7 @@ struct ThreadListView: View {
         !networkMonitor.isConnected && viewModel.sections == nil
     }
 
-    init(mailboxManager: MailboxManager,
-         frozenFolder: Folder,
-         selectedThreadOwner: SelectedThreadOwnable) {
-        _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
-                                                                   frozenFolder: frozenFolder,
-                                                                   selectedThreadOwner: selectedThreadOwner))
-        _multipleSelectionViewModel = StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(frozenFolder: frozenFolder))
-
-        UITableViewCell.appearance().focusEffect = .none
-    }
-
-    private var shouldDisplayTopCel: Bool {
+    private var shouldDisplayHeaderCell: Bool {
         shouldDisplayFlushFolderView || shouldDisplayProgressView || shouldDisplayVerticalInsetView || shouldDisplayUpdateVersion
     }
 
@@ -89,6 +78,17 @@ struct ThreadListView: View {
         Constants.isUsingABreakableOSVersion && !hasDismissedUpdateVersionView && viewModel.frozenFolder.role == .inbox
     }
 
+    init(mailboxManager: MailboxManager,
+         frozenFolder: Folder,
+         selectedThreadOwner: SelectedThreadOwnable) {
+        _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
+                                                                   frozenFolder: frozenFolder,
+                                                                   selectedThreadOwner: selectedThreadOwner))
+        _multipleSelectionViewModel = StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(frozenFolder: frozenFolder))
+
+        UITableViewCell.appearance().focusEffect = .none
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             ThreadListHeader(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
@@ -98,8 +98,7 @@ struct ThreadListView: View {
 
             ScrollViewReader { proxy in
                 List {
-                    if shouldDisplayFlushFolderView || shouldDisplayProgressView || shouldDisplayVerticalInsetView ||
-                        shouldDisplayUpdateVersion {
+                    if shouldDisplayHeaderCell {
                         VStack(spacing: 0) {
                             if shouldDisplayFlushFolderView {
                                 FlushFolderView(
