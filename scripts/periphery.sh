@@ -24,3 +24,8 @@ echo "$detailedOutput" >> $GITHUB_OUTPUT
 echo 'EOF' >> $GITHUB_OUTPUT
 
 echo "unused_count=$unusedCount" >> $GITHUB_OUTPUT
+
+
+if [[ "$1" == "--clean" ]]; then
+    rm -R $HOME/Library/Caches/com.github.peripheryapp
+fi

@@ -21,7 +21,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Periphery
         id: periphery
-        run: ./scripts/periphery.sh
+        run: ./scripts/periphery.sh --clean
       - uses: mshick/add-pr-comment@v2
         with:
           message: |
