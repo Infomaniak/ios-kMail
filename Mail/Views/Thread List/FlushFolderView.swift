@@ -70,7 +70,8 @@ struct FlushFolderView: View {
                     }
                     .textStyle(.bodySmallAccent)
                 }
-                .buttonStyle(.borderless)
+                .buttonStyle(.ikLink(isInlined: true))
+                .controlSize(.small)
             }
             .padding(value: .regular)
 

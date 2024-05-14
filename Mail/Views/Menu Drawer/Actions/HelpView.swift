@@ -19,31 +19,48 @@
 import MailCore
 import MailCoreUI
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct HelpView: View {
-    private struct HelpAction: Hashable {
+    private struct HelpAction: Identifiable, Equatable {
+        var id: String {
+            return destination.absoluteString
+        }
+
         let title: String
         let destination: URL
+        let shouldOpenUpdateVersionAlert: Bool
 
-        static let faq = HelpAction(title: MailResourcesStrings.Localizable.helpFAQ, destination: URLConstants.faq.url)
+        static let faq = HelpAction(
+            title: MailResourcesStrings.Localizable.helpFAQ,
+            destination: URLConstants.faq.url,
+            shouldOpenUpdateVersionAlert: false
+        )
         static let chatbot = HelpAction(
             title: MailResourcesStrings.Localizable.helpChatbot,
-            destination: URLConstants.chatbot.url
+            destination: URLConstants.chatbot.url,
+            shouldOpenUpdateVersionAlert: true
         )
     }
 
-    @Environment(\.openURL) var openURL
+    @Environment(\.openURL) private var openURL
+
+    @ModalState(wrappedValue: nil, context: ContextKeys.help) private var updateVersionAlert: HelpAction?
 
     private let actions: [HelpAction] = [.faq, .chatbot]
 
     var body: some View {
         List {
             Section {
-                ForEach(actions, id: \.self) { action in
+                ForEach(actions) { action in
                     VStack(alignment: .leading, spacing: 0) {
                         Button {
-                            openURL(action.destination)
+                            if action.shouldOpenUpdateVersionAlert && Constants.isUsingABreakableOSVersion {
+                                updateVersionAlert = action
+                            } else {
+                                openURL(action.destination)
+                            }
                         } label: {
                             Text(action.title)
                                 .textStyle(.body)
@@ -69,6 +86,11 @@ struct HelpView: View {
         .listStyle(.plain)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.buttonHelp, displayMode: .inline)
+        .customAlert(item: $updateVersionAlert) { action in
+            UpdateVersionAlertView(onLaterPressed: {
+                openURL(action.destination)
+            })
+        }
     }
 }
 

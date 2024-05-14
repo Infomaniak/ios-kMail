@@ -74,13 +74,18 @@ struct MenuDrawerItemsHelpListView: View {
 
     @ModalState private var isShowingHelp = false
     @ModalState private var isShowingBugTracker = false
+    @ModalState private var isShowingUpdateVersionAlert = false
 
     var body: some View {
         MenuDrawerItemsListView {
             MenuDrawerItemCell(icon: MailResourcesAsset.feedback,
                                label: MailResourcesStrings.Localizable.buttonFeedback,
                                matomoName: "feedback") {
-                sendFeedback()
+                if Constants.isUsingABreakableOSVersion {
+                    isShowingUpdateVersionAlert = true
+                } else {
+                    sendFeedback()
+                }
             }
             MenuDrawerItemCell(icon: MailResourcesAsset.help,
                                label: MailResourcesStrings.Localizable.buttonHelp,
@@ -94,6 +99,9 @@ struct MenuDrawerItemsHelpListView: View {
         }
         .sheet(isPresented: $isShowingBugTracker) {
             BugTrackerView(isPresented: $isShowingBugTracker)
+        }
+        .customAlert(isPresented: $isShowingUpdateVersionAlert) {
+            UpdateVersionAlertView(onLaterPressed: sendFeedback)
         }
     }
 

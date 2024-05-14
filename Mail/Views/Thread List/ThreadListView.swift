@@ -35,10 +35,14 @@ struct ThreadListView: View {
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+    @AppStorage(UserDefaults.shared.key(.hasDismissedUpdateVersionView)) private var hasDismissedUpdateVersionView =
+        DefaultPreferences
+            .hasDismissedUpdateVersionView
 
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
     @State private var firstLaunch = true
+    @ModalState private var isShowingUpdateAlert = false
     @ModalState private var flushAlert: FlushAlertState?
 
     @StateObject var viewModel: ThreadListViewModel
@@ -95,6 +99,12 @@ struct ThreadListView: View {
 
                     if threadDensity == .compact {
                         ListVerticalInsetView(height: UIPadding.verySmall)
+                    }
+
+                    if Constants.isUsingABreakableOSVersion && !hasDismissedUpdateVersionView && viewModel.frozenFolder
+                        .role == .inbox {
+                        UpdateVersionView(isShowingUpdateAlert: $isShowingUpdateAlert)
+                            .threadListCellAppearance()
                     }
 
                     ForEach(viewModel.sections ?? []) { section in
@@ -192,6 +202,11 @@ struct ThreadListView: View {
         }
         .customAlert(item: $flushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: viewModel.frozenFolder)
+        }
+        .customAlert(isPresented: $isShowingUpdateAlert) {
+            UpdateVersionAlertView(onDismiss: {
+                hasDismissedUpdateVersionView = true
+            })
         }
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Main"])
     }
