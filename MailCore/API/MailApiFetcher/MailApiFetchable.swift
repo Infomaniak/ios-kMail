@@ -90,7 +90,7 @@ public protocol MailApiExtendedFetchable {
 
     func signatures(mailbox: Mailbox) async throws -> SignatureResponse
 
-    func updateSignature(mailbox: Mailbox, signature: Signature) async throws -> Bool
+    func updateSignature(mailbox: Mailbox, signature: Signature?) async throws -> Bool
 
     func folders(mailbox: Mailbox) async throws -> [Folder]
 

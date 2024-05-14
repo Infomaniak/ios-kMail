@@ -26,7 +26,7 @@ public extension MailboxManager {
         try await refreshActor.refreshAllSignatures()
     }
 
-    func updateSignature(signature: Signature) async throws {
+    func updateSignature(signature: Signature?) async throws {
         try await apiFetcher.updateSignature(mailbox: mailbox, signature: signature)
         try await refreshAllSignatures()
     }
