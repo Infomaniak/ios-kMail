@@ -69,6 +69,10 @@ struct ThreadListView: View {
         UITableViewCell.appearance().focusEffect = .none
     }
 
+    private var shouldDisplayTopCel: Bool {
+        shouldDisplayFlushFolderView || shouldDisplayProgressView || shouldDisplayVerticalInsetView || shouldDisplayUpdateVersion
+    }
+
     private var shouldDisplayFlushFolderView: Bool {
         !viewModel.isEmpty && (viewModel.frozenFolder.role == .trash || viewModel.frozenFolder.role == .spam)
     }

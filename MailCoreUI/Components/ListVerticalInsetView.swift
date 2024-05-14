@@ -28,8 +28,5 @@ public struct ListVerticalInsetView: View {
     public var body: some View {
         Spacer()
             .frame(height: height)
-            .listRowInsets(.init())
-            .listRowSeparator(.hidden)
-            .listRowBackground(Color.clear)
     }
 }

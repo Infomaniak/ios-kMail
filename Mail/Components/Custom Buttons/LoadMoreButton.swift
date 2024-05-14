@@ -64,6 +64,5 @@ struct LoadMoreButton: View {
             }
         }
         .padding(.vertical, value: .small)
-        .threadListCellAppearance()
     }
 }
