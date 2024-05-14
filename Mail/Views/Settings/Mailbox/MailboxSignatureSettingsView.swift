@@ -76,7 +76,7 @@ struct MailboxSignatureSettingsView: View {
     }
 
     private func setAsDefault(_ signature: Signature?) {
-        guard !(signature?.isDefault ?? false) else { return }
+        guard signature?.isDefault != true else { return }
 
         let detachedSignature = signature?.detached()
         detachedSignature?.isDefault = true
