@@ -1,6 +1,19 @@
 // swift-tools-version: 5.9
 import PackageDescription
 
+#if TUIST
+import ProjectDescription
+import ProjectDescriptionHelpers
+
+let packageSettings = PackageSettings(
+    productTypes: [
+        "RealmSwift": .staticLibrary,
+        "Realm": .staticLibrary,
+    ]
+)
+
+#endif
+
 let package = Package(
     name: "Dependencies",
     dependencies: [
@@ -8,7 +21,7 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "6.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "2.0.0")),
         .package(url: "https://github.com/Infomaniak/swift-concurrency", .upToNextMajor(from: "0.0.5")),
-        .package(url: "https://github.com/Infomaniak/ios-core", .revision("4e168afcd6bc05bfa3cd96bd8f7889f920bab788")),
+        .package(url: "https://github.com/Infomaniak/ios-core", revision: "4e168afcd6bc05bfa3cd96bd8f7889f920bab788"),
         .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "8.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "6.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "7.0.0")),
@@ -27,7 +40,7 @@ let package = Package(
         .package(url: "https://github.com/markiv/SwiftUI-Shimmer", .upToNextMajor(from: "1.0.1")),
         .package(url: "https://github.com/dkk/WrappingHStack", .upToNextMajor(from: "2.0.0")),
         .package(url: "https://github.com/kean/Nuke", .upToNextMajor(from: "12.1.3")),
-        .package(url: "https://github.com/airbnb/lottie-ios", .exact("3.5.0")),
+        .package(url: "https://github.com/airbnb/lottie-ios", exact: "3.5.0"),
         .package(url: "https://github.com/johnpatrickmorgan/NavigationBackport", .upToNextMajor(from: "0.8.1")),
         .package(url: "https://github.com/aheze/Popovers", .upToNextMajor(from: "1.3.2")),
         .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1")),
