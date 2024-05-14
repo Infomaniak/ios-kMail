@@ -117,7 +117,9 @@ struct ThreadListView: View {
                         }
                     }
 
-                    LoadMoreButton(currentFolder: viewModel.frozenFolder)
+                    if !viewModel.filterUnreadOn {
+                        LoadMoreButton(currentFolder: viewModel.frozenFolder)
+                    }
 
                     ListVerticalInsetView(height: multipleSelectionViewModel.isEnabled ? 100 : 110)
                 }
