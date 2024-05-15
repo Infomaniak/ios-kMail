@@ -223,6 +223,9 @@ struct TOnboardingView: UIViewControllerRepresentable {
 
         let controller = OnboardingViewController(configuration: configuration)
         controller.delegate = context.coordinator
+        context.coordinator.currentAccentColor = accentColor
+        context.coordinator.currentColorScheme = context.environment.colorScheme
+
         return controller
     }
 
@@ -231,14 +234,21 @@ struct TOnboardingView: UIViewControllerRepresentable {
             uiViewController.setSelectedSlide(index: selectedSlide)
         }
 
-        if uiViewController.currentSlideViewCell?.backgroundImageView.tintColor != accentColor.secondary.color {
-            context.coordinator.invalidateColors()
+        let coordinator = context.coordinator
 
-            uiViewController.currentSlideViewCell?.backgroundImageView.tintColor = accentColor.secondary.color
+        if coordinator.currentAccentColor != accentColor || coordinator.currentColorScheme != context.environment.colorScheme {
+            coordinator.invalidateColors()
+
+            let newColorScheme = context.environment.colorScheme
+            uiViewController.currentSlideViewCell?.backgroundImageView.tintColor = newColorScheme == .dark ? MailResourcesAsset
+                .backgroundSecondaryColor.color : accentColor.secondary.color
             uiViewController.pageIndicator.currentPageIndicatorTintColor = accentColor.primary.color
             if let configuration = slides[selectedSlide].animationConfiguration {
                 uiViewController.currentSlideViewCell?.updateAnimationColors(configuration: configuration)
             }
+
+            coordinator.currentAccentColor = accentColor
+            coordinator.currentColorScheme = newColorScheme
         }
     }
 
@@ -318,6 +328,9 @@ struct TOnboardingView: UIViewControllerRepresentable {
     }
 
     class Coordinator: OnboardingViewControllerDelegate {
+        var currentAccentColor: AccentColor?
+        var currentColorScheme: ColorScheme?
+
         let selectedSlide: Binding<Int>
         let slides: [InfomaniakOnboarding.Slide]
         var colorUpdateNeededAtIndex = Set<Int>()
@@ -340,7 +353,9 @@ struct TOnboardingView: UIViewControllerRepresentable {
         }
 
         func willDisplaySlideViewCell(_ slideViewCell: SlideCollectionViewCell, at index: Int) {
-            slideViewCell.backgroundImageView.tintColor = UserDefaults.shared.accentColor.secondary.color
+            slideViewCell.backgroundImageView.tintColor = slideViewCell.traitCollection.userInterfaceStyle == .dark ?
+                MailResourcesAsset.backgroundSecondaryColor.color :
+                UserDefaults.shared.accentColor.secondary.color
 
             if let configuration = slides[index].animationConfiguration,
                colorUpdateNeededAtIndex.contains(index) {
