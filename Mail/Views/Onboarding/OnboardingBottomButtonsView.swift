@@ -31,7 +31,11 @@ struct OnboardingBottomButtonsView: View {
 
     @Binding var selection: Int
 
-    let isLastSlide: Bool
+    let slideCount: Int
+
+    var isLastSlide: Bool {
+        return selection == slideCount - 1
+    }
 
     var body: some View {
         VStack(spacing: UIPadding.small) {
@@ -54,7 +58,7 @@ struct OnboardingBottomButtonsView: View {
             if !isLastSlide {
                 Button {
                     withAnimation {
-                        selection += 1
+                        selection = min(slideCount - 1, selection + 1)
                     }
                 } label: {
                     IKIcon(MailResourcesAsset.fullArrowRight, size: .large)
@@ -83,5 +87,5 @@ struct OnboardingBottomButtonsView: View {
 }
 
 #Preview {
-    OnboardingBottomButtonsView(selection: .constant(0), isLastSlide: false)
+    OnboardingBottomButtonsView(selection: .constant(0), slideCount: 4)
 }

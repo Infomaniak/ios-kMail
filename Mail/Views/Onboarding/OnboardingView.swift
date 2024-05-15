@@ -21,6 +21,7 @@ import InfomaniakCoreUI
 import InfomaniakCreateAccount
 import InfomaniakDI
 import InfomaniakLogin
+import InfomaniakOnboarding
 import Lottie
 import MailCore
 import MailCoreUI
@@ -37,36 +38,7 @@ struct Slide: Identifiable {
     var asset: Image?
     var lottieConfiguration: MailCoreUI.LottieConfiguration?
 
-    static let onBoardingSlides = [
-        Slide(
-            id: 1,
-            backgroundImage: MailResourcesAsset.onboardingBackground1.swiftUIImage,
-            title: MailResourcesStrings.Localizable.onBoardingTitle1,
-            showPicker: true,
-            lottieConfiguration: LottieConfiguration(id: 1, filename: "illu_onboarding_1", loopFrameStart: 54, loopFrameEnd: 138)
-        ),
-        Slide(
-            id: 2,
-            backgroundImage: MailResourcesAsset.onboardingBackground2.swiftUIImage,
-            title: MailResourcesStrings.Localizable.onBoardingTitle2,
-            description: MailResourcesStrings.Localizable.onBoardingDescription2,
-            lottieConfiguration: LottieConfiguration(id: 2, filename: "illu_onboarding_2", loopFrameStart: 108, loopFrameEnd: 253)
-        ),
-        Slide(
-            id: 3,
-            backgroundImage: MailResourcesAsset.onboardingBackground3.swiftUIImage,
-            title: MailResourcesStrings.Localizable.onBoardingTitle3,
-            description: MailResourcesStrings.Localizable.onBoardingDescription3,
-            lottieConfiguration: LottieConfiguration(id: 3, filename: "illu_onboarding_3", loopFrameStart: 111, loopFrameEnd: 187)
-        ),
-        Slide(
-            id: 4,
-            backgroundImage: MailResourcesAsset.onboardingBackground4.swiftUIImage,
-            title: MailResourcesStrings.Localizable.onBoardingTitle4,
-            description: MailResourcesStrings.Localizable.onBoardingDescription4,
-            lottieConfiguration: LottieConfiguration(id: 4, filename: "illu_onboarding_4", loopFrameStart: 127, loopFrameEnd: 236)
-        )
-    ]
+    static let onBoardingSlides = [Slide]()
 
     static let authorizationSlides = [
         Slide(
@@ -170,6 +142,227 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
     }
 }
 
+extension SlideCollectionViewCell {
+    func updateAnimationColors(configuration: IKLottieConfiguration) {
+        guard let animation = illustrationAnimationView else { return }
+        IlluColors.onBoardingAllColors.forEach { $0.applyColors(to: animation) }
+
+        if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
+            IlluColors.illuOnBoarding234Colors.forEach { $0.applyColors(to: animation) }
+        }
+
+        switch configuration.id {
+        case 1:
+            IlluColors.illuOnBoarding1Colors.forEach { $0.applyColors(to: animation) }
+        case 2:
+            IlluColors.illuOnBoarding2Colors.forEach { $0.applyColors(to: animation) }
+        case 3:
+            IlluColors.illuOnBoarding3Colors.forEach { $0.applyColors(to: animation) }
+        case 4:
+            IlluColors.illuOnBoarding4Colors.forEach { $0.applyColors(to: animation) }
+        default:
+            break
+        }
+
+        if UserDefaults.shared.accentColor == .pink {
+            IlluColors.onBoardingPinkColors.forEach { $0.applyColors(to: animation) }
+
+            if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
+                IlluColors.illuOnBoarding234PinkColors.forEach { $0.applyColors(to: animation) }
+            }
+
+            switch configuration.id {
+            case 1:
+                IlluColors.illuOnBoarding1PinkColors.forEach { $0.applyColors(to: animation) }
+            case 2:
+                IlluColors.illuOnBoarding2PinkColors.forEach { $0.applyColors(to: animation) }
+            case 3:
+                IlluColors.illu3PinkColors.forEach { $0.applyColors(to: animation) }
+            case 4:
+                IlluColors.illuOnBoarding4PinkColors.forEach { $0.applyColors(to: animation) }
+            default:
+                break
+            }
+        } else {
+            IlluColors.onBoardingBlueColors.forEach { $0.applyColors(to: animation) }
+
+            if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
+                IlluColors.illuOnBoarding234BlueColors.forEach { $0.applyColors(to: animation) }
+            }
+
+            switch configuration.id {
+            case 1:
+                IlluColors.illuOnBoarding1BlueColors.forEach { $0.applyColors(to: animation) }
+            case 2:
+                IlluColors.illuOnBoarding2BlueColors.forEach { $0.applyColors(to: animation) }
+            case 3:
+                IlluColors.illu3BlueColors.forEach { $0.applyColors(to: animation) }
+            case 4:
+                IlluColors.illuOnBoarding4BlueColors.forEach { $0.applyColors(to: animation) }
+            default:
+                break
+            }
+        }
+    }
+}
+
+struct TOnboardingView: UIViewControllerRepresentable {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
+    typealias UIViewControllerType = OnboardingViewController
+
+    @State var selectedSlide = 0
+
+    func makeUIViewController(context: Context) -> InfomaniakOnboarding.OnboardingViewController {
+        let configuration = OnboardingConfiguration(
+            headerImage: MailResourcesAsset.logoText.image,
+            slides: slides,
+            pageIndicatorColor: accentColor.primary.color,
+            isScrollEnabled: true
+        )
+
+        let controller = OnboardingViewController(configuration: configuration)
+        controller.delegate = context.coordinator
+        return controller
+    }
+
+    func updateUIViewController(_ uiViewController: InfomaniakOnboarding.OnboardingViewController, context: Context) {
+        if uiViewController.pageIndicator.currentPage != selectedSlide {
+            uiViewController.setSelectedSlide(index: selectedSlide)
+        }
+
+        if uiViewController.currentSlideViewCell?.backgroundImageView.tintColor != accentColor.secondary.color {
+            context.coordinator.invalidateColors()
+
+            uiViewController.currentSlideViewCell?.backgroundImageView.tintColor = accentColor.secondary.color
+            uiViewController.pageIndicator.currentPageIndicatorTintColor = accentColor.primary.color
+            if let configuration = slides[selectedSlide].animationConfiguration {
+                uiViewController.currentSlideViewCell?.updateAnimationColors(configuration: configuration)
+            }
+        }
+    }
+
+    var slides: [InfomaniakOnboarding.Slide] {
+        return [
+            InfomaniakOnboarding.Slide(
+                backgroundImage: MailResourcesAsset.onboardingBackground1.image,
+                backgroundImageTintColor: accentColor.secondary.color,
+                illustrationImage: nil,
+                animationConfiguration: IKLottieConfiguration(
+                    id: 1,
+                    filename: "illu_onboarding_1",
+                    bundle: MailResourcesResources.bundle,
+                    loopFrameStart: 54,
+                    loopFrameEnd: 138,
+                    lottieConfiguration: .init(renderingEngine: .mainThread)
+                ),
+                bottomViewController: UIHostingController(rootView: OnboardingThemePickerView(title: MailResourcesStrings
+                        .Localizable.onBoardingTitle1))
+            ),
+            InfomaniakOnboarding.Slide(
+                backgroundImage: MailResourcesAsset.onboardingBackground2.image,
+                backgroundImageTintColor: accentColor.secondary.color,
+                illustrationImage: nil,
+                animationConfiguration: IKLottieConfiguration(
+                    id: 2,
+                    filename: "illu_onboarding_2",
+                    bundle: MailResourcesResources.bundle,
+                    loopFrameStart: 108,
+                    loopFrameEnd: 253,
+                    lottieConfiguration: .init(renderingEngine: .mainThread)
+                ),
+                bottomViewController: UIHostingController(rootView: OnboardingTextView(
+                    title: MailResourcesStrings.Localizable.onBoardingTitle2,
+                    description: MailResourcesStrings.Localizable.onBoardingDescription2
+                ))
+            ),
+            InfomaniakOnboarding.Slide(
+                backgroundImage: MailResourcesAsset.onboardingBackground3.image,
+                backgroundImageTintColor: accentColor.secondary.color,
+                illustrationImage: nil,
+                animationConfiguration: IKLottieConfiguration(
+                    id: 3,
+                    filename: "illu_onboarding_3",
+                    bundle: MailResourcesResources.bundle,
+                    loopFrameStart: 111,
+                    loopFrameEnd: 187,
+                    lottieConfiguration: .init(renderingEngine: .mainThread)
+                ),
+                bottomViewController: UIHostingController(rootView: OnboardingTextView(
+                    title: MailResourcesStrings.Localizable.onBoardingTitle3,
+                    description: MailResourcesStrings.Localizable.onBoardingDescription3
+                ))
+            ),
+            InfomaniakOnboarding.Slide(
+                backgroundImage: MailResourcesAsset.onboardingBackground4.image,
+                backgroundImageTintColor: accentColor.secondary.color,
+                illustrationImage: nil,
+                animationConfiguration: IKLottieConfiguration(
+                    id: 4,
+                    filename: "illu_onboarding_4",
+                    bundle: MailResourcesResources.bundle,
+                    loopFrameStart: 127,
+                    loopFrameEnd: 236,
+                    lottieConfiguration: .init(renderingEngine: .mainThread)
+                ),
+                bottomViewController: UIHostingController(rootView: OnboardingTextView(
+                    title: MailResourcesStrings.Localizable.onBoardingTitle4,
+                    description: MailResourcesStrings.Localizable.onBoardingDescription4
+                ))
+            )
+        ]
+    }
+
+    func makeCoordinator() -> Coordinator {
+        return Coordinator(selectedSlide: $selectedSlide, slides: slides)
+    }
+
+    class Coordinator: OnboardingViewControllerDelegate {
+        let selectedSlide: Binding<Int>
+        let slides: [InfomaniakOnboarding.Slide]
+        var colorUpdateNeededAtIndex = Set<Int>()
+
+        init(selectedSlide: Binding<Int>, slides: [InfomaniakOnboarding.Slide]) {
+            self.selectedSlide = selectedSlide
+            self.slides = slides
+        }
+
+        func bottomViewForIndex(_ index: Int) -> UIView? {
+            let hostingViewController = UIHostingController(rootView: OnboardingBottomButtonsView(
+                selection: selectedSlide,
+                slideCount: slides.count
+            ))
+            return hostingViewController.view
+        }
+
+        func shouldAnimateBottomViewForIndex(_ index: Int) -> Bool {
+            return index == slides.count - 1 || (index == slides.count - 2 && selectedSlide.wrappedValue == slides.count - 1)
+        }
+
+        func willDisplaySlideViewCell(_ slideViewCell: SlideCollectionViewCell, at index: Int) {
+            slideViewCell.backgroundImageView.tintColor = UserDefaults.shared.accentColor.secondary.color
+
+            if let configuration = slides[index].animationConfiguration,
+               colorUpdateNeededAtIndex.contains(index) {
+                slideViewCell.updateAnimationColors(configuration: configuration)
+                colorUpdateNeededAtIndex.remove(index)
+            }
+        }
+
+        func invalidateColors() {
+            for i in 0 ..< slides.count {
+                colorUpdateNeededAtIndex.insert(i)
+            }
+        }
+
+        func currentIndexChanged(newIndex: Int) {
+            DispatchQueue.main.async { [weak self] in
+                self?.selectedSlide.wrappedValue = newIndex
+            }
+        }
+    }
+}
+
 struct OnboardingView: View {
     @Environment(\.dismiss) private var dismiss
 
@@ -193,28 +386,8 @@ struct OnboardingView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Group {
-                if isScrollEnabled {
-                    TabView(selection: $selection) {
-                        ForEach(slides) { slide in
-                            SlideView(slide: slide, updateAnimationColors: updateAnimationColors)
-                                .tag(slide.id)
-                        }
-                    }
-                    .tabViewStyle(.page)
-                    .ignoresSafeArea(edges: .top)
-                } else if let slide = slides.first(where: { $0.id == selection }) {
-                    SlideView(slide: slide)
-                }
-            }
-            .overlay(alignment: .top) {
-                MailResourcesAsset.logoText.swiftUIImage
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: UIConstants.onboardingLogoHeight)
-                    .padding(.top, UIPadding.onBoardingLogoTop)
-            }
-            OnboardingBottomButtonsView(selection: $selection, isLastSlide: isLastSlide)
+            TOnboardingView()
+                .ignoresSafeArea()
         }
         .overlay(alignment: .topLeading) {
             if !isScrollEnabled {
