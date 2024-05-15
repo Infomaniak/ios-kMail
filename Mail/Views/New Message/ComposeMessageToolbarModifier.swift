@@ -39,7 +39,7 @@ struct ComposeMessageToolbarModifier: ViewModifier {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    if !platformDetector.isMac || Bundle.main.isExtension {
+                    if !platformDetector.isMac || platformDetector.isInExtension {
                         CloseButton(dismissHandler: dismissHandler)
                     }
                 }

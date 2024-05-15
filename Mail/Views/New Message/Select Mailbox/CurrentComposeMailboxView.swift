@@ -87,7 +87,7 @@ struct CurrentComposeMailboxView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    if !platformDetector.isMac {
+                    if !platformDetector.isMac || platformDetector.isInExtension {
                         CloseButton(dismissHandler: dismissMessageView)
                     }
                 }
