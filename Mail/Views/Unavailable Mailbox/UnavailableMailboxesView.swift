@@ -41,17 +41,13 @@ struct UnavailableMailboxesView: View {
                             .frame(height: UIConstants.onboardingLogoHeight)
                             .padding(.top, UIPadding.onBoardingLogoTop)
 
-                        MailResourcesAsset.mailboxError.swiftUIImage
-                            .resizable()
-                            .scaledToFit()
-                            .frame(height: 64)
-                        Text(MailResourcesStrings.Localizable.lockedMailboxTitlePlural)
-                            .textStyle(.header2)
-                            .multilineTextAlignment(.center)
-                        Text(MailResourcesStrings.Localizable.lockedMailboxDescriptionPlural)
-                            .textStyle(.bodySecondary)
-                            .multilineTextAlignment(.center)
-                            .padding(.top, value: .medium)
+                        InformationBlockView(
+                            icon: MailResourcesAsset.warningFill.swiftUIImage,
+                            title: "Certaines de vos adresses mails sont bloquées",
+                            message: "Pour plus d'informations, consultez les FAQ ou le support.",
+//                            message: MailResourcesStrings.Localizable.lockedMailboxDescriptionPlural,
+                            iconColor: MailResourcesAsset.orangeColor.swiftUIColor
+                        )
 
                         UnavailableMailboxListView()
                     }

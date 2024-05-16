@@ -22,12 +22,15 @@ import SwiftUI
 
 public struct InformationBlockView: View {
     let icon: Image
+    let title: String?
     let message: String
     let iconColor: Color?
     let dismissHandler: (() -> Void)?
 
-    public init(icon: Image, message: String, iconColor: Color? = nil, dismissHandler: (() -> Void)? = nil) {
+    public init(icon: Image, title: String? = nil, message: String, iconColor: Color? = nil,
+                dismissHandler: (() -> Void)? = nil) {
         self.icon = icon
+        self.title = title
         self.message = message
         self.iconColor = iconColor
         self.dismissHandler = dismissHandler
@@ -45,13 +48,22 @@ public struct InformationBlockView: View {
                     d[VerticalAlignment.center]
                 }
 
-            Text(message)
-                .textStyle(.body)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .alignmentGuide(.iconAndMultilineTextAlignment) { d in
-                    // Center of the first line is on the informationBlockAlignment guide
-                    (d.height - (d[.lastTextBaseline] - d[.firstTextBaseline])) / 2
+            VStack(alignment: .leading, spacing: UIPadding.intermediate) {
+                if let title {
+                    Text(title)
+                        .textStyle(.bodyMedium)
+                        .multilineTextAlignment(.leading)
                 }
+
+                Text(message)
+                    .textStyle(.body)
+                    .multilineTextAlignment(.leading)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .alignmentGuide(.iconAndMultilineTextAlignment) { d in
+                // Center of the first line is on the informationBlockAlignment guide
+                (d.height - (d[.lastTextBaseline] - d[.firstTextBaseline])) / 2
+            }
 
             if let dismissHandler {
                 CloseButton(size: .regular, dismissHandler: dismissHandler)
@@ -68,9 +80,10 @@ public struct InformationBlockView: View {
 }
 
 #Preview("Without Dismiss") {
-    InformationBlockView(icon: MailResourcesAsset.lightBulbShine.swiftUIImage, message: "Tip")
+    InformationBlockView(icon: MailResourcesAsset.lightBulbShine.swiftUIImage, title: "Title", message: "Tip")
 }
 
 #Preview("With Dismiss") {
-    InformationBlockView(icon: MailResourcesAsset.lightBulbShine.swiftUIImage, message: "Dismissible Tip") { /* Preview */ }
+    InformationBlockView(icon: MailResourcesAsset.lightBulbShine.swiftUIImage, message: "Dismissible Tip") {
+    /* Preview */ }
 }
