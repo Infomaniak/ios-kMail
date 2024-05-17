@@ -94,7 +94,7 @@ struct AccountListView: View {
         .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
             orientationManager.setOrientationLock(.all)
         }, content: {
-            OnboardingView(page: 4, isScrollEnabled: false)
+            SingleOnboardingView()
         })
         .task {
             try? await updateUsers()

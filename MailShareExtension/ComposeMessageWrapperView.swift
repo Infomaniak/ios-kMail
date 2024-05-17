@@ -19,6 +19,8 @@
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
+import InfomaniakOnboarding
+import Lottie
 import MailCore
 import MailCoreUI
 import MailResources
@@ -102,27 +104,44 @@ struct ComposeMessageWrapperView: View {
     }
 }
 
-struct PleaseLoginView: View {
-    @State var slide = Slide.onBoardingSlides.first!
+extension Slide {
+    static var pleaseLogin =
+        Slide(
+            backgroundImage: MailResourcesAsset.onboardingBackground1.image,
+            backgroundImageTintColor: UserDefaults.shared.accentColor.secondary.color,
+            content: .animation(IKLottieConfiguration(
+                id: 1,
+                filename: "illu_onboarding_1",
+                bundle: MailResourcesResources.bundle,
+                loopFrameStart: 54,
+                loopFrameEnd: 138,
+                lottieConfiguration: .init(renderingEngine: .mainThread)
+            )),
+            bottomViewController: UIHostingController(rootView: OnboardingTextView(
+                title: MailResourcesStrings.Localizable.pleaseLogInFirst,
+                description: ""
+            ))
+        )
+}
 
+struct PleaseLoginView: View {
     var tapHandler: SimpleClosure
 
     var body: some View {
-        VStack {
-            MailResourcesAsset.logoText.swiftUIImage
-                .resizable()
-                .scaledToFit()
-                .frame(height: UIConstants.onboardingLogoHeight)
-                .padding(.top, UIPadding.onBoardingLogoTop)
-            Text(MailResourcesStrings.Localizable.pleaseLogInFirst)
-                .textStyle(.header2)
-                .padding(.top, UIPadding.onBoardingLogoTop)
-            LottieView(configuration: slide.lottieConfiguration!)
-                .frame(maxHeight: .infinity)
+        WaveView(slides: [Slide.pleaseLogin], selectedSlide: .constant(0)) { _ in
+            Button(MailResourcesStrings.Localizable.buttonClose) {
+                tapHandler(())
+            }
+            .buttonStyle(.ikPlain)
+            .ikButtonFullWidth(true)
+            .controlSize(.large)
+            .padding(.horizontal, value: .medium)
+            .padding(.bottom, UIPadding.onBoardingBottomButtons)
         }
-        .padding()
-        .onTapGesture {
-            tapHandler(())
-        }
+        .ignoresSafeArea()
     }
+}
+
+#Preview {
+    PleaseLoginView {}
 }
