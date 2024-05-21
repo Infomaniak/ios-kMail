@@ -231,7 +231,7 @@ struct ComposeMessageView: View {
             initialAttachments = []
 
             if featureFlagsManager.isEnabled(.aiMailComposer) && UserDefaults.shared.shouldPresentAIFeature {
-                aiModel.isShowingDiscovery = true
+                aiModel.isShowingDiscovery = platformDetector.isMac ? false : true
                 return
             }
 
@@ -272,12 +272,10 @@ struct ComposeMessageView: View {
             }
         }
         .discoveryPresenter(isPresented: $aiModel.isShowingDiscovery) {
-            if !platformDetector.isMac {
-                DiscoveryView(item: .aiDiscovery) {
-                    UserDefaults.shared.shouldPresentAIFeature = false
-                } completionHandler: { willShowAIPrompt in
-                    aiModel.isShowingPrompt = willShowAIPrompt
-                }
+            DiscoveryView(item: .aiDiscovery) {
+                UserDefaults.shared.shouldPresentAIFeature = false
+            } completionHandler: { willShowAIPrompt in
+                aiModel.isShowingPrompt = willShowAIPrompt
             }
         }
         .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {

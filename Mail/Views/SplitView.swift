@@ -124,13 +124,11 @@ struct SplitView: View {
             }
         }
         .discoveryPresenter(isPresented: $mainViewState.isShowingSyncDiscovery) {
-            if !platformDetector.isMac {
-                DiscoveryView(item: .syncDiscovery) {
-                    UserDefaults.shared.shouldPresentSyncDiscovery = false
-                } completionHandler: { willSync in
-                    guard willSync else { return }
-                    mainViewState.isShowingSyncProfile = true
-                }
+            DiscoveryView(item: .syncDiscovery) {
+                UserDefaults.shared.shouldPresentSyncDiscovery = false
+            } completionHandler: { willSync in
+                guard willSync else { return }
+                mainViewState.isShowingSyncProfile = true
             }
         }
         .discoveryPresenter(isPresented: $mainViewState.isShowingSetAppAsDefaultDiscovery) {
@@ -167,7 +165,7 @@ struct SplitView: View {
                     try await mailboxManager.refreshAllSignatures()
                 }
                 guard !platformDetector.isDebug else { return }
-                mainViewState.isShowingSyncDiscovery = shouldShowSync()
+                mainViewState.isShowingSyncDiscovery = platformDetector.isMac ? false : shouldShowSync()
             }
         }
         .onOpenURL { url in
