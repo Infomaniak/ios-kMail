@@ -387,3 +387,11 @@ public extension IlluColors {
         animation.updateColor(color: colors.lightColor, darkColor: colors.darkColor, for: keyPath)
     }
 }
+
+public extension LottieAnimationView {
+    func updateColor(color: UIColor, darkColor: UIColor, for keyPath: AnimationKeypath) {
+        let color = UITraitCollection.current.userInterfaceStyle == .dark ? darkColor : color
+        let colorProvider = ColorValueProvider(color.lottieColorValue)
+        setValueProvider(colorProvider, keypath: keyPath)
+    }
+}
