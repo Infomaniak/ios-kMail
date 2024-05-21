@@ -60,7 +60,8 @@ struct ComposeMessageIntentView: View, IntentViewable {
                             draft: resolvedIntent.draft,
                             mailboxManager: resolvedIntent.mailboxManager,
                             messageReply: resolvedIntent.messageReply,
-                            attachments: attachments
+                            attachments: attachments,
+                            htmlAttachments: htmlAttachments
                         )
                         .environmentObject(resolvedIntent.mailboxManager)
                     } else {
