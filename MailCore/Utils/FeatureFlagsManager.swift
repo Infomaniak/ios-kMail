@@ -66,7 +66,7 @@ public final class FeatureFlagsManager: FeatureFlagsManageable {
     private func isEnabledLocally(_ feature: FeatureFlag) -> Bool {
         switch feature {
         case .aiMailComposer:
-            return platformDetector.isMac ? false : true
+            return !platformDetector.isMac
         default:
             return true
         }
