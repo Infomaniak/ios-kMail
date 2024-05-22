@@ -63,6 +63,7 @@ struct SplitView: View {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var platformDetector: PlatformDetectable
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
+    @LazyInjectService private var featureFlagsManageable: FeatureFlagsManageable
 
     let mailboxManager: MailboxManager
 
@@ -165,7 +166,7 @@ struct SplitView: View {
                     try await mailboxManager.refreshAllSignatures()
                 }
                 guard !platformDetector.isDebug else { return }
-                mainViewState.isShowingSyncDiscovery = shouldShowSync()
+                mainViewState.isShowingSyncDiscovery = platformDetector.isMac ? false : shouldShowSync()
             }
         }
         .onOpenURL { url in
