@@ -30,6 +30,7 @@ struct MenuDrawerItemsAdvancedListView: View {
     @EnvironmentObject private var mainViewState: MainViewState
 
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     @Environment(\.openURL) private var openURL
 
@@ -40,11 +41,13 @@ struct MenuDrawerItemsAdvancedListView: View {
     var body: some View {
         MenuDrawerItemsListView(title: MailResourcesStrings.Localizable.menuDrawerAdvancedActions,
                                 matomoName: "advancedActions") {
-            MenuDrawerItemCell(icon: MailResourcesAsset.doubleArrowsSynchronize,
-                               label: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle,
-                               matomoName: "syncProfile") {
-                matomo.track(eventWithCategory: .syncAutoConfig, name: "openFromMenuDrawer")
-                mainViewState.isShowingSyncProfile = true
+            if !platformDetector.isMac {
+                MenuDrawerItemCell(icon: MailResourcesAsset.doubleArrowsSynchronize,
+                                   label: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle,
+                                   matomoName: "syncProfile") {
+                    matomo.track(eventWithCategory: .syncAutoConfig, name: "openFromMenuDrawer")
+                    mainViewState.isShowingSyncProfile = true
+                }
             }
 
             MenuDrawerItemCell(icon: MailResourcesAsset.drawerDownload,
@@ -52,6 +55,7 @@ struct MenuDrawerItemsAdvancedListView: View {
                                matomoName: "importEmails") {
                 openURL(URLConstants.importMails.url)
             }
+
             if mailboxCanRestoreEmails {
                 MenuDrawerItemCell(
                     icon: MailResourcesAsset.restoreArrow,
