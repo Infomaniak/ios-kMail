@@ -30,6 +30,7 @@ struct SettingsView: View {
     @LazyInjectService private var appLockHelper: AppLockHelper
     @LazyInjectService private var featureFlagsManageable: FeatureFlagsManageable
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
@@ -88,7 +89,7 @@ struct SettingsView: View {
 
                     // MARK: Sync Calendar/Contacts
 
-                    if featureFlagsManageable.isEnabledLocally(.syncCalendarAndContacts) {
+                    if !platformDetector.isMac {
                         Button {
                             matomo.track(eventWithCategory: .syncAutoConfig, name: "openFromSettings")
                             mainViewState.isShowingSyncProfile = true
@@ -100,7 +101,7 @@ struct SettingsView: View {
 
                     // MARK: AI Writer
 
-                    if featureFlagsManageable.isEnabled(.aiMailComposer) && featureFlagsManageable.isEnabledLocally(.aiMailComposer) {
+                    if featureFlagsManageable.isEnabled(.aiMailComposer) {
                         SettingsSubMenuCell(title: MailResourcesStrings.Localizable.aiPromptTitle, subtitle: aiEngine.title) {
                             SettingsAIEngineOptionView()
                         }

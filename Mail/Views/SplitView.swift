@@ -166,7 +166,7 @@ struct SplitView: View {
                     try await mailboxManager.refreshAllSignatures()
                 }
                 guard !platformDetector.isDebug else { return }
-                mainViewState.isShowingSyncDiscovery = featureFlagsManageable.isEnabledLocally(.syncCalendarAndContacts) ? shouldShowSync() : false
+                mainViewState.isShowingSyncDiscovery = platformDetector.isMac ? false : shouldShowSync()
             }
         }
         .onOpenURL { url in
