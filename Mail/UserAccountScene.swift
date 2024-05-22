@@ -31,8 +31,6 @@ import UIKit
 import VersionChecker
 
 struct UserAccountScene: Scene {
-    @Environment(\.scenePhase) private var scenePhase
-
     @LazyInjectService private var appLockHelper: AppLockHelper
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
     @LazyInjectService private var refreshAppBackgroundTask: RefreshAppBackgroundTask
@@ -64,19 +62,10 @@ struct UserAccountScene: Scene {
                     rootViewState.transitionToLockViewIfNeeded()
                     checkAppVersion()
                 }
-                .onChange(of: scenePhase) { newScenePhase in
-                    switch newScenePhase {
-                    case .active:
-                        break
-                    case .background:
-                        refreshAppBackgroundTask.scheduleForBackgroundLaunchIfNeeded()
-                        if UserDefaults.shared.isAppLockEnabled && rootViewState.state != .appLocked {
-                            appLockHelper.setTime()
-                        }
-                    case .inactive:
-                        break
-                    @unknown default:
-                        break
+                .onReceive(NotificationCenter.default.publisher(for: UIScene.didEnterBackgroundNotification)) { _ in
+                    refreshAppBackgroundTask.scheduleForBackgroundLaunchIfNeeded()
+                    if UserDefaults.shared.isAppLockEnabled && rootViewState.state != .appLocked {
+                        appLockHelper.setTime()
                     }
                 }
                 .task(id: rootViewState.account) {
