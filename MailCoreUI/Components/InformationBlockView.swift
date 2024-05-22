@@ -25,14 +25,25 @@ public struct InformationBlockView: View {
     let title: String?
     let message: String
     let iconColor: Color?
+    let buttonAction: (() -> Void)?
+    let buttonTitle: String?
     let dismissHandler: (() -> Void)?
 
-    public init(icon: Image, title: String? = nil, message: String, iconColor: Color? = nil,
-                dismissHandler: (() -> Void)? = nil) {
+    public init(
+        icon: Image,
+        title: String? = nil,
+        message: String,
+        iconColor: Color? = nil,
+        buttonAction: (() -> Void)? = nil,
+        buttonTitle: String? = nil,
+        dismissHandler: (() -> Void)? = nil
+    ) {
         self.icon = icon
         self.title = title
         self.message = message
         self.iconColor = iconColor
+        self.buttonAction = buttonAction
+        self.buttonTitle = buttonTitle
         self.dismissHandler = dismissHandler
     }
 
@@ -51,13 +62,19 @@ public struct InformationBlockView: View {
             VStack(alignment: .leading, spacing: UIPadding.intermediate) {
                 if let title {
                     Text(title)
-                        .textStyle(.bodyMedium)
+                        .textStyle(.bodySmallMedium)
                         .multilineTextAlignment(.leading)
                 }
 
                 Text(message)
                     .textStyle(.body)
                     .multilineTextAlignment(.leading)
+
+                if let buttonTitle, let buttonAction {
+                    Button(buttonTitle, action: buttonAction)
+                        .buttonStyle(.ikLink(isInlined: true))
+                        .controlSize(.small)
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .alignmentGuide(.iconAndMultilineTextAlignment) { d in
@@ -80,7 +97,13 @@ public struct InformationBlockView: View {
 }
 
 #Preview("Without Dismiss") {
-    InformationBlockView(icon: MailResourcesAsset.lightBulbShine.swiftUIImage, title: "Title", message: "Tip")
+    InformationBlockView(
+        icon: MailResourcesAsset.lightBulbShine.swiftUIImage,
+        title: "Title",
+        message: "Tip",
+        buttonAction: {},
+        buttonTitle: "Button title"
+    )
 }
 
 #Preview("With Dismiss") {

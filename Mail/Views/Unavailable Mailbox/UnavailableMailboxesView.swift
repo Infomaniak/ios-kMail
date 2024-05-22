@@ -27,6 +27,8 @@ struct UnavailableMailboxesView: View {
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var matomo: MatomoUtils
 
+    @Environment(\.openURL) private var openURL
+
     @State private var isShowingNewAccountView = false
     @State private var isShowingAddMailboxView = false
 
@@ -40,14 +42,19 @@ struct UnavailableMailboxesView: View {
                             .scaledToFit()
                             .frame(height: UIConstants.onboardingLogoHeight)
                             .padding(.top, UIPadding.onBoardingLogoTop)
+                            .padding(.bottom, UIPadding.regular)
 
                         InformationBlockView(
                             icon: MailResourcesAsset.warningFill.swiftUIImage,
                             title: "Certaines de vos adresses mails sont bloquées",
-                            message: "Pour plus d'informations, consultez les FAQ ou le support.",
+                            message: "Pour plus d'informations :",
 //                            message: MailResourcesStrings.Localizable.lockedMailboxDescriptionPlural,
-                            iconColor: MailResourcesAsset.orangeColor.swiftUIColor
+                            iconColor: MailResourcesAsset.orangeColor.swiftUIColor,
+                            buttonAction: openFAQ,
+                            buttonTitle: "Consulter les FAQ"
+                            // MailResourcesStrings.Localizable.helpFAQ // add new string
                         )
+                        .padding(.top, UIPadding.regular)
 
                         UnavailableMailboxListView()
                     }
@@ -88,7 +95,7 @@ struct UnavailableMailboxesView: View {
                 .controlSize(.large)
                 .ikButtonFullWidth(true)
             }
-            .padding(.horizontal, value: .regular)
+            .padding(.horizontal, value: .medium)
             .frame(maxWidth: 900)
             .matomoView(view: ["UnavailableMailboxesView"])
         }
@@ -98,6 +105,11 @@ struct UnavailableMailboxesView: View {
         } content: {
             SingleOnboardingView()
         }
+    }
+
+    private func openFAQ() {
+//        matomo.track(eventWithCategory: .updateVersion, name: "update") // new matomo
+        openURL(URLConstants.faq.url)
     }
 }
 
