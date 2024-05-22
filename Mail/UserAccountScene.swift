@@ -54,11 +54,11 @@ struct UserAccountScene: Scene {
                     appLaunchCounter.increase()
                     cacheManager.refreshCacheData(account: rootViewState.account)
                     reviewManager.decreaseOpeningUntilReview()
+                    rootViewState.transitionToLockViewIfNeeded()
                 }
                 .onChange(of: scenePhase) { newScenePhase in
                     switch newScenePhase {
                     case .active:
-                        rootViewState.transitionToLockViewIfNeeded()
                         checkAppVersion()
                     case .background:
                         refreshAppBackgroundTask.scheduleForBackgroundLaunchIfNeeded()
