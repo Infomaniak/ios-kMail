@@ -71,7 +71,7 @@ struct SettingsView: View {
 
                     // MARK: App Lock
 
-                    if appLockHelper.isAvailable {
+                    if appLockHelper.isAvailable() {
                         SettingsToggleCell(
                             title: MailResourcesStrings.Localizable.settingsAppLock,
                             userDefaults: \.isAppLockEnabled,
