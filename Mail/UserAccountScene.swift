@@ -31,8 +31,6 @@ import UIKit
 import VersionChecker
 
 struct UserAccountScene: Scene {
-    @Environment(\.scenePhase) private var scenePhase
-
     @LazyInjectService private var appLockHelper: AppLockHelper
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
     @LazyInjectService private var refreshAppBackgroundTask: RefreshAppBackgroundTask
@@ -48,27 +46,26 @@ struct UserAccountScene: Scene {
                 .standardWindow()
                 .environmentObject(rootViewState)
                 .onReceive(NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)) { _ in
-                    /* `scenePhase` changes each time a pop-up is presented.
+                    /*
+                     On iOS:
+                     `scenePhase` changes each time a pop-up is presented.
                      We have to listen to `UIScene.willEnterForegroundNotification` to increase the `appLaunchCounter`
-                     only when the app enters foreground. */
+                     only when the app enters foreground.
+
+                     On macOS:
+                     `scenePhase` stays always active even when the app is on the background.
+                     */
+
                     appLaunchCounter.increase()
                     cacheManager.refreshCacheData(account: rootViewState.account)
                     reviewManager.decreaseOpeningUntilReview()
+                    rootViewState.transitionToLockViewIfNeeded()
+                    checkAppVersion()
                 }
-                .onChange(of: scenePhase) { newScenePhase in
-                    switch newScenePhase {
-                    case .active:
-                        rootViewState.transitionToLockViewIfNeeded()
-                        checkAppVersion()
-                    case .background:
-                        refreshAppBackgroundTask.scheduleForBackgroundLaunchIfNeeded()
-                        if UserDefaults.shared.isAppLockEnabled && rootViewState.state != .appLocked {
-                            appLockHelper.setTime()
-                        }
-                    case .inactive:
-                        break
-                    @unknown default:
-                        break
+                .onReceive(NotificationCenter.default.publisher(for: UIScene.didEnterBackgroundNotification)) { _ in
+                    refreshAppBackgroundTask.scheduleForBackgroundLaunchIfNeeded()
+                    if UserDefaults.shared.isAppLockEnabled && rootViewState.state != .appLocked {
+                        appLockHelper.setTime()
                     }
                 }
                 .task(id: rootViewState.account) {

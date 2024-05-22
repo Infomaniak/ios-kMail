@@ -138,9 +138,7 @@ public class RootViewState: ObservableObject {
     }
 
     public func transitionToLockViewIfNeeded() {
-        if UserDefaults.shared.isAppLockEnabled
-            && appLockHelper.isAppLocked
-            && account != nil {
+        if UserDefaults.shared.isAppLockEnabled && appLockHelper.isAppLocked && account != nil {
             transitionToRootViewDestination(.appLocked)
         }
     }
