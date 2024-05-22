@@ -27,6 +27,9 @@ public protocol FeatureFlagsManageable {
     /// Check if a given feature is enabled for the current mailbox
     func isEnabled(_ feature: FeatureFlag) -> Bool
 
+    /// Check if a given feature has locals constraints
+    func isEnabledLocally(_ feature: FeatureFlag) -> Bool
+
     /// Execute the correct closure depending if a given feature is enabled or not for the current mailbox
     func feature(_ feature: FeatureFlag, on: () -> Void, off: (() -> Void)?)
 

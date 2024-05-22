@@ -26,6 +26,7 @@ import SwiftUI
 public enum FeatureFlag: String, Codable {
     case aiMailComposer = "ai-mail-composer"
     case bimi
+    case syncCalendarAndContacts
     case unknown
 
     public init(from decoder: Decoder) throws {
@@ -46,6 +47,7 @@ public enum FeatureFlag: String, Codable {
 
 public final class FeatureFlagsManager: FeatureFlagsManageable {
     @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     private var enabledFeatures: SendableDictionary<AppFeatureFlags.Key, AppFeatureFlags.Value>
 
@@ -57,6 +59,15 @@ public final class FeatureFlagsManager: FeatureFlagsManageable {
         guard let mailboxUUID = accountManager.currentMailboxManager?.mailbox.uuid,
               let userFeatures = enabledFeatures.value(for: mailboxUUID) else { return false }
         return userFeatures.contains(feature)
+    }
+
+    public func isEnabledLocally(_ feature: FeatureFlag) -> Bool {
+        switch feature {
+        case .aiMailComposer, .syncCalendarAndContacts:
+            return platformDetector.isMac ? false : true
+        default:
+            return true
+        }
     }
 
     public func feature(_ feature: FeatureFlag, on: () -> Void, off: (() -> Void)?) {

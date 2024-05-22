@@ -231,7 +231,7 @@ struct ComposeMessageView: View {
             initialAttachments = []
 
             if featureFlagsManager.isEnabled(.aiMailComposer) && UserDefaults.shared.shouldPresentAIFeature {
-                aiModel.isShowingDiscovery = platformDetector.isMac ? false : true
+                aiModel.isShowingDiscovery = featureFlagsManager.isEnabledLocally(.aiMailComposer) ? true : false
                 return
             }
 
