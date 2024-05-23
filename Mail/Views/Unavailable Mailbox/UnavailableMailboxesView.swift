@@ -42,11 +42,11 @@ struct UnavailableMailboxesView: View {
                             .scaledToFit()
                             .frame(height: UIConstants.onboardingLogoHeight)
                             .padding(.top, UIPadding.onBoardingLogoTop)
-                            .padding(.bottom, UIPadding.regular)
+                            .padding(.bottom, value: .regular)
 
                         InformationBlockView(
                             icon: MailResourcesAsset.warningFill.swiftUIImage,
-                            title: "Certaines de vos adresses mails sont bloquées",
+                            title: "Certaines de vos adresses mail sont bloquées",
                             message: "Pour plus d'informations :",
 //                            message: MailResourcesStrings.Localizable.lockedMailboxDescriptionPlural,
                             iconColor: MailResourcesAsset.orangeColor.swiftUIColor,

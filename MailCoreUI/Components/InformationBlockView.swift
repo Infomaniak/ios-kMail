@@ -60,27 +60,28 @@ public struct InformationBlockView: View {
                 }
 
             VStack(alignment: .leading, spacing: UIPadding.intermediate) {
-                if let title {
-                    Text(title)
-                        .textStyle(.bodySmallMedium)
+                VStack(alignment: .leading, spacing: UIPadding.intermediate) {
+                    if let title {
+                        Text(title)
+                            .textStyle(.bodyMedium)
+                            .multilineTextAlignment(.leading)
+                    }
+
+                    Text(message)
+                        .textStyle(.bodySecondary)
                         .multilineTextAlignment(.leading)
                 }
-
-                Text(message)
-                    .textStyle(.body)
-                    .multilineTextAlignment(.leading)
+                .alignmentGuide(.iconAndMultilineTextAlignment) { d in
+                    // Center of the first line is on the informationBlockAlignment guide
+                    (d.height - (d[.lastTextBaseline] - d[.firstTextBaseline])) / 2
+                }
 
                 if let buttonTitle, let buttonAction {
                     Button(buttonTitle, action: buttonAction)
                         .buttonStyle(.ikLink(isInlined: true))
-                        .controlSize(.small)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .alignmentGuide(.iconAndMultilineTextAlignment) { d in
-                // Center of the first line is on the informationBlockAlignment guide
-                (d.height - (d[.lastTextBaseline] - d[.firstTextBaseline])) / 2
-            }
 
             if let dismissHandler {
                 CloseButton(size: .regular, dismissHandler: dismissHandler)
@@ -101,12 +102,30 @@ public struct InformationBlockView: View {
         icon: MailResourcesAsset.lightBulbShine.swiftUIImage,
         title: "Title",
         message: "Tip",
+        iconColor: .blue,
         buttonAction: {},
         buttonTitle: "Button title"
     )
 }
 
 #Preview("With Dismiss") {
-    InformationBlockView(icon: MailResourcesAsset.lightBulbShine.swiftUIImage, message: "Dismissible Tip") {
+    InformationBlockView(
+        icon: MailResourcesAsset.lightBulbShine.swiftUIImage,
+        title: "Title",
+        message: "Tip",
+        iconColor: .blue,
+        buttonAction: {},
+        buttonTitle: "Button title"
+    ) {
     /* Preview */ }
+}
+
+#Preview("Without Title") {
+    InformationBlockView(
+        icon: MailResourcesAsset.lightBulbShine.swiftUIImage,
+        message: "Tip",
+        iconColor: .blue,
+        buttonAction: {},
+        buttonTitle: "Button title"
+    )
 }
