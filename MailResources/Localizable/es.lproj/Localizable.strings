@@ -4,7 +4,7 @@
  * Locale: es, Spanish
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Mon, 13 May 2024 11:43:06 +0200
+ * Exported at: Thu, 23 May 2024 10:07:10 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -851,7 +851,7 @@
 "lockedMailboxDescription" = "El acceso a su dirección de correo electrónico está bloqueado. Póngase en contacto con su administrador.";
 
 /* loco:649adc1b599c6ce9d6099fa2 */
-"lockedMailboxDescription-plural" = "El acceso a sus buzones de correo está bloqueado. Póngase en contacto con su administrador.";
+"lockedMailboxDescription-plural" = "Para más información:";
 
 /* loco:64ad0bc9605cc9e323051192 */
 "lockedMailboxDescription-plural-many" = "";
@@ -860,7 +860,7 @@
 "lockedMailboxTitle" = "Dirección de correo electrónico bloqueada";
 
 /* loco:649adbc029c685e8c20dc096 */
-"lockedMailboxTitle-plural" = "Buzones de correo bloqueados";
+"lockedMailboxTitle-plural" = "Algunos de sus buzones están bloqueados";
 
 /* loco:64ad0bf21a8c5c3877078262 */
 "lockedMailboxTitle-plural-many" = "";
@@ -1044,6 +1044,9 @@
 
 /* loco:660d031f55535d66db02f2f2 */
 "publicFolderSubtitle" = "Este espacio pertenece a %@ y centraliza los archivos comunes de tu organización.";
+
+/* loco:664ef6e5f66217322302f962 */
+"readFAQ" = "Lea las preguntas frecuentes";
 
 /* loco:62f0e594f7dcd16da506af53 */
 "recentSearchesTitle" = "Búsquedas recientes";

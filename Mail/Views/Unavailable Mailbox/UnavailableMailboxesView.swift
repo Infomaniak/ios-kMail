@@ -46,13 +46,11 @@ struct UnavailableMailboxesView: View {
 
                         InformationBlockView(
                             icon: MailResourcesAsset.warningFill.swiftUIImage,
-                            title: "Certaines de vos adresses mail sont bloquées",
-                            message: "Pour plus d'informations :",
-//                            message: MailResourcesStrings.Localizable.lockedMailboxDescriptionPlural,
+                            title: MailResourcesStrings.Localizable.lockedMailboxTitlePlural,
+                            message: MailResourcesStrings.Localizable.lockedMailboxDescriptionPlural,
                             iconColor: MailResourcesAsset.orangeColor.swiftUIColor,
                             buttonAction: openFAQ,
-                            buttonTitle: "Consulter les FAQ"
-                            // MailResourcesStrings.Localizable.helpFAQ // add new string
+                            buttonTitle: MailResourcesStrings.Localizable.readFAQ
                         )
                         .padding(.top, UIPadding.regular)
 
@@ -108,7 +106,7 @@ struct UnavailableMailboxesView: View {
     }
 
     private func openFAQ() {
-//        matomo.track(eventWithCategory: .updateVersion, name: "update") // new matomo
+        matomo.track(eventWithCategory: .noValidMailboxes, name: "readFAQ")
         openURL(URLConstants.faq.url)
     }
 }

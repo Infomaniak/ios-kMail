@@ -4,7 +4,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Mon, 13 May 2024 11:43:06 +0200
+ * Exported at: Thu, 23 May 2024 10:07:10 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -851,7 +851,7 @@
 "lockedMailboxDescription" = "Access to your mailbox is currently blocked. Please contact your administrator.";
 
 /* loco:649adc1b599c6ce9d6099fa2 */
-"lockedMailboxDescription-plural" = "Access to your mailboxes is currently blocked. Please contact your administrator.";
+"lockedMailboxDescription-plural" = "For further information:";
 
 /* loco:64ad0bc9605cc9e323051192 */
 "lockedMailboxDescription-plural-many" = "";
@@ -860,7 +860,7 @@
 "lockedMailboxTitle" = "Blocked mailbox";
 
 /* loco:649adbc029c685e8c20dc096 */
-"lockedMailboxTitle-plural" = "Blocked mailboxes";
+"lockedMailboxTitle-plural" = "Some of your mailboxes are blocked";
 
 /* loco:64ad0bf21a8c5c3877078262 */
 "lockedMailboxTitle-plural-many" = "";
@@ -1044,6 +1044,9 @@
 
 /* loco:660d031f55535d66db02f2f2 */
 "publicFolderSubtitle" = "This space belongs to %@ and centralizes your organization’s common files.";
+
+/* loco:664ef6e5f66217322302f962 */
+"readFAQ" = "Read FAQ";
 
 /* loco:62f0e594f7dcd16da506af53 */
 "recentSearchesTitle" = "Recent searches";
