@@ -62,6 +62,7 @@ struct WaveView<BottomView: View>: UIViewControllerRepresentable {
         controller.delegate = context.coordinator
         context.coordinator.currentAccentColor = accentColor
         context.coordinator.currentColorScheme = context.environment.colorScheme
+        context.coordinator.invalidateColors()
 
         return controller
     }
