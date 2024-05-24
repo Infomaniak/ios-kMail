@@ -40,24 +40,30 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
         ModelMigrator().migrateRealmIfNeeded()
         SentryDebug.setUserId(accountManager.currentUserId)
 
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.hidesWhenStopped = true
-        activityIndicator.center = view.center
-        view.addSubview(activityIndicator)
         activityIndicator.startAnimating()
+        view.addSubview(activityIndicator)
 
+        errorLabel.isHidden = true
         errorLabel.font = UIFont.preferredFont(forTextStyle: .body)
         errorLabel.textAlignment = .center
         errorLabel.textColor = .secondaryLabel
         errorLabel.text = MailResourcesStrings.Localizable.errorMessageNotFound
+        errorLabel.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(errorLabel)
+
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            errorLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            errorLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
 
     func stopAnimating(displayError: Bool) {
         activityIndicator.stopAnimating()
-        if displayError {
-            errorLabel.sizeToFit()
-            errorLabel.center = view.center
-            view.addSubview(errorLabel)
-        }
+        errorLabel.isHidden = displayError
     }
 
     func didReceive(_ notification: UNNotification) {
