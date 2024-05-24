@@ -42,25 +42,6 @@ final class NotificationService: UNNotificationServiceExtension {
         SentryDebug.setUserId(accountManager.currentUserId)
     }
 
-    func fetchMessage(uid: String, in mailboxManager: MailboxManager) async throws -> Message? {
-        guard let inboxFolder = mailboxManager.getFolder(with: .inbox),
-              inboxFolder.cursor != nil else {
-            // We do nothing if we don't have an initial cursor
-            return nil
-        }
-        await mailboxManager.refreshFolderContent(inboxFolder.freezeIfNeeded())
-
-        @ThreadSafe var message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: uid)
-
-        if let message,
-           !message.fullyDownloaded {
-            try await mailboxManager.message(message: message)
-        }
-
-        message?.realm?.refresh()
-        return message?.freezeIfNeeded()
-    }
-
     func prepareEmptyMessageNotification(in mailbox: Mailbox) {
         bestAttemptContent?.title = mailbox.email
         bestAttemptContent?.body = MailResourcesStrings.Localizable.notificationNewEmail
@@ -100,7 +81,7 @@ final class NotificationService: UNNotificationServiceExtension {
             // Prepare a notification in case we can't fetch the message in time / the message doesn't exist anymore
             prepareEmptyMessageNotification(in: mailbox)
             guard let messageUid = userInfos[NotificationsHelper.UserInfoKeys.messageUid] as? String,
-                  let fetchedMessage = try? await fetchMessage(uid: messageUid, in: mailboxManager) else {
+                  let fetchedMessage = try? await NotificationsHelper.fetchMessage(uid: messageUid, in: mailboxManager) else {
                 logNotificationFailed(userInfo: userInfos, type: .messageNotFound)
                 return contentHandler(bestAttemptContent)
             }

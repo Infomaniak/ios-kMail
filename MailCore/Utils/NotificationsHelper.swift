@@ -78,6 +78,25 @@ public enum NotificationsHelper {
         return totalUnreadCount
     }
 
+    public static func fetchMessage(uid: String, in mailboxManager: MailboxManager) async throws -> Message? {
+        guard let inboxFolder = mailboxManager.getFolder(with: .inbox),
+              inboxFolder.cursor != nil else {
+            // We do nothing if we don't have an initial cursor
+            return nil
+        }
+        await mailboxManager.refreshFolderContent(inboxFolder.freezeIfNeeded())
+
+        @ThreadSafe var message = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: uid)
+
+        if let message,
+           !message.fullyDownloaded {
+            try await mailboxManager.message(message: message)
+        }
+
+        message?.realm?.refresh()
+        return message?.freezeIfNeeded()
+    }
+
     public static func clearAlreadyReadNotifications(shouldWait: Bool = false) async {
         let notificationCenter = UNUserNotificationCenter.current()
         let deliveredNotifications = await notificationCenter.deliveredNotifications()
