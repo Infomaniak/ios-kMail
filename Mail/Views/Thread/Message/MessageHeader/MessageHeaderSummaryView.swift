@@ -28,6 +28,8 @@ import SwiftUI
 struct MessageHeaderSummaryView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
+    @Environment(\.isMessageInteractive) private var isMessageInteractive
+
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
 
@@ -59,6 +61,7 @@ struct MessageHeaderSummaryView: View {
                     .adaptivePanel(item: $contactViewRecipient) { recipient in
                         ContactActionsView(recipient: recipient)
                     }
+                    .disabled(!isMessageInteractive)
                 }
 
                 VStack(alignment: .leading, spacing: UIPadding.verySmall) {
@@ -108,7 +111,7 @@ struct MessageHeaderSummaryView: View {
                 .foregroundStyle(MailResourcesAsset.redColor)
             }
 
-            if isMessageExpanded {
+            if isMessageExpanded && isMessageInteractive {
                 HStack(spacing: 20) {
                     Button {
                         matomo.track(eventWithCategory: .messageActions, name: "reply")

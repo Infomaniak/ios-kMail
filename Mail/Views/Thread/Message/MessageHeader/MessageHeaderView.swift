@@ -27,6 +27,8 @@ import SwiftUI
 struct MessageHeaderView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
+    @Environment(\.isMessageInteractive) private var isMessageInteractive
+
     @EnvironmentObject private var mainViewState: MainViewState
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -44,11 +46,14 @@ struct MessageHeaderView: View {
 
             if isHeaderExpanded {
                 MessageHeaderDetailView(message: message)
+                    .disabled(!isMessageInteractive)
             }
         }
         .contentShape(Rectangle())
         .padding(value: .regular)
         .onTapGesture {
+            guard isMessageInteractive else { return }
+
             if message.isDraft {
                 DraftUtils.editDraft(
                     from: message,

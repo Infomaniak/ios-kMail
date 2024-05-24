@@ -24,6 +24,12 @@ import MailCoreUI
 import MailResources
 import RealmSwift
 import SwiftUI
+import SwiftUIMacros
+
+extension EnvironmentValues {
+    @EnvironmentKey
+    var isMessageInteractive = true
+}
 
 /// Something that can display an email
 struct MessageView: View {
