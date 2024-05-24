@@ -31,53 +31,55 @@ struct SearchHistorySectionView: View {
     let viewModel: SearchViewModel
 
     var body: some View {
-        Section {
-            if let history = searchHistory?.history {
-                if history.isEmpty {
+        if viewModel.searchState == .history {
+            Section {
+                if searchHistory == nil || searchHistory?.history.isEmpty == true {
                     SearchNoHistoryView()
                 }
 
-                ForEach(history, id: \.self) { searchItem in
-                    HStack(spacing: UIPadding.regular) {
-                        IKIcon(MailResourcesAsset.clock, size: .large)
-                            .foregroundStyle(.tint)
+                if let history = searchHistory?.history {
+                    ForEach(history, id: \.self) { searchItem in
+                        HStack(spacing: UIPadding.regular) {
+                            IKIcon(MailResourcesAsset.clock, size: .large)
+                                .foregroundStyle(.tint)
 
-                        Text(searchItem)
-                            .textStyle(.bodyMedium)
+                            Text(searchItem)
+                                .textStyle(.bodyMedium)
 
-                        Spacer()
+                            Spacer()
 
-                        Button {
-                            deleteSearchTapped(searchItem: searchItem)
-                        } label: {
-                            IKIcon(MailResourcesAsset.close)
-                                .foregroundStyle(MailResourcesAsset.textSecondaryColor)
+                            Button {
+                                deleteSearchTapped(searchItem: searchItem)
+                            } label: {
+                                IKIcon(MailResourcesAsset.close)
+                                    .foregroundStyle(MailResourcesAsset.textSecondaryColor)
+                            }
+                            .buttonStyle(BorderlessButtonStyle())
+                            .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonDeleteHistory)
                         }
-                        .buttonStyle(BorderlessButtonStyle())
-                        .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonDeleteHistory)
-                    }
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        viewModel.matomo.track(eventWithCategory: .search, name: "fromHistory")
-                        Constants.globallyResignFirstResponder()
-                        viewModel.searchValue = searchItem
-                        Task {
-                            await viewModel.fetchThreads()
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            viewModel.matomo.track(eventWithCategory: .search, name: "fromHistory")
+                            Constants.globallyResignFirstResponder()
+                            viewModel.searchValue = searchItem
+                            Task {
+                                await viewModel.fetchThreads()
+                            }
                         }
+                        .padding(value: .regular)
                     }
-                    .padding(value: .regular)
+                }
+            } header: {
+                if viewModel.searchState == .history && searchHistory?.history.isEmpty == false {
+                    Text(MailResourcesStrings.Localizable.recentSearchesTitle)
+                        .textStyle(.bodySmallSecondary)
+                        .padding(.horizontal, value: .regular)
                 }
             }
-        } header: {
-            if searchHistory?.history.isEmpty == false {
-                Text(MailResourcesStrings.Localizable.recentSearchesTitle)
-                    .textStyle(.bodySmallSecondary)
-                    .padding(.horizontal, value: .regular)
-            }
+            .listRowSeparator(.hidden)
+            .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
+            .listRowInsets(.init())
         }
-        .listRowSeparator(.hidden)
-        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .listRowInsets(.init())
     }
 
     @MainActor
