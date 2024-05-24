@@ -31,37 +31,39 @@ struct SearchThreadsSectionView: View {
     let viewModel: SearchViewModel
 
     var body: some View {
-        Section {
-            ForEach(viewModel.frozenThreads) { thread in
-                ThreadCell(thread: thread, density: threadDensity, accentColor: accentColor)
-                    .onTapGesture {
-                        didTapCell(thread: thread)
-                    }
-                    .background(SelectionBackground(
-                        selectionType: viewModel.selectedThread == thread ? .single : .none,
-                        paddingLeading: 4,
-                        withAnimation: false,
-                        accentColor: accentColor
-                    ))
-                    .onAppear {
-                        viewModel.loadNextPageIfNeeded(currentItem: thread)
-                    }
+        if viewModel.searchState == .results {
+            Section {
+                ForEach(viewModel.frozenThreads) { thread in
+                    ThreadCell(thread: thread, density: threadDensity, accentColor: accentColor)
+                        .onTapGesture {
+                            didTapCell(thread: thread)
+                        }
+                        .background(SelectionBackground(
+                            selectionType: viewModel.selectedThread == thread ? .single : .none,
+                            paddingLeading: 4,
+                            withAnimation: false,
+                            accentColor: accentColor
+                        ))
+                        .onAppear {
+                            viewModel.loadNextPageIfNeeded(currentItem: thread)
+                        }
+                }
+            } header: {
+                if !viewModel.frozenThreads.isEmpty {
+                    Text(MailResourcesStrings.Localizable.searchAllMessages)
+                        .textStyle(.bodySmallSecondary)
+                        .padding(.horizontal, value: .regular)
+                }
+            } footer: {
+                if viewModel.isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                        .id(UUID())
+                        .threadListCellAppearance()
+                }
             }
-        } header: {
-            if !viewModel.frozenThreads.isEmpty {
-                Text(MailResourcesStrings.Localizable.searchAllMessages)
-                    .textStyle(.bodySmallSecondary)
-                    .padding(.horizontal, value: .regular)
-            }
-        } footer: {
-            if viewModel.isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity)
-                    .id(UUID())
-                    .threadListCellAppearance()
-            }
+            .threadListCellAppearance()
         }
-        .threadListCellAppearance()
     }
 
     private func didTapCell(thread: Thread) {

@@ -69,12 +69,9 @@ struct SearchView: View {
             }
 
             List {
-                if viewModel.searchState == .history {
-                    SearchHistorySectionView(viewModel: viewModel)
-                } else if viewModel.searchState == .results {
-                    SearchContactsSectionView(viewModel: viewModel)
-                    SearchThreadsSectionView(viewModel: viewModel)
-                }
+                SearchHistorySectionView(viewModel: viewModel)
+                SearchContactsSectionView(viewModel: viewModel)
+                SearchThreadsSectionView(viewModel: viewModel)
             }
             .listStyle(.plain)
         }

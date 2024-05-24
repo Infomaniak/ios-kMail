@@ -27,28 +27,30 @@ struct SearchContactsSectionView: View {
     let viewModel: SearchViewModel
 
     var body: some View {
-        Section {
-            ForEach(viewModel.frozenContacts) { contact in
-                RecipientCell(recipient: contact)
-                    .onTapGesture {
-                        viewModel.matomo.track(eventWithCategory: .search, name: "selectContact")
-                        viewModel.addToHistoryIfNeeded()
-                        Constants.globallyResignFirstResponder()
-                        viewModel.searchThreadsForContact(contact)
-                    }
+        if viewModel.searchState == .results {
+            Section {
+                ForEach(viewModel.frozenContacts) { contact in
+                    RecipientCell(recipient: contact)
+                        .onTapGesture {
+                            viewModel.matomo.track(eventWithCategory: .search, name: "selectContact")
+                            viewModel.addToHistoryIfNeeded()
+                            Constants.globallyResignFirstResponder()
+                            viewModel.searchThreadsForContact(contact)
+                        }
+                }
+                .padding(.vertical, threadDensity.cellVerticalPadding)
+                .padding(.leading, UIPadding.small + UIConstants.unreadIconSize + UIPadding.small)
+                .padding(.trailing, value: .regular)
+            } header: {
+                if !viewModel.frozenContacts.isEmpty {
+                    Text(MailResourcesStrings.Localizable.contactsSearch)
+                        .textStyle(.bodySmallSecondary)
+                        .padding(.horizontal, value: .regular)
+                }
             }
-            .padding(.vertical, threadDensity.cellVerticalPadding)
-            .padding(.leading, UIPadding.small + UIConstants.unreadIconSize + UIPadding.small)
-            .padding(.trailing, value: .regular)
-        } header: {
-            if !viewModel.frozenContacts.isEmpty {
-                Text(MailResourcesStrings.Localizable.contactsSearch)
-                    .textStyle(.bodySmallSecondary)
-                    .padding(.horizontal, value: .regular)
-            }
+            .listRowInsets(.init())
+            .listRowSeparator(.hidden)
+            .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
         }
-        .listRowInsets(.init())
-        .listRowSeparator(.hidden)
-        .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
     }
 }
