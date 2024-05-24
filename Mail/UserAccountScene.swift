@@ -25,6 +25,7 @@ import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications
 import MailCore
+import MailCoreUI
 import MailResources
 import SwiftUI
 import UIKit
@@ -45,29 +46,7 @@ struct UserAccountScene: Scene {
             RootView()
                 .standardWindow()
                 .environmentObject(rootViewState)
-                .onReceive(NotificationCenter.default.publisher(for: UIScene.willEnterForegroundNotification)) { _ in
-                    /*
-                     On iOS:
-                     `scenePhase` changes each time a pop-up is presented.
-                     We have to listen to `UIScene.willEnterForegroundNotification` to increase the `appLaunchCounter`
-                     only when the app enters foreground.
-
-                     On macOS:
-                     `scenePhase` stays always active even when the app is on the background.
-                     */
-
-                    appLaunchCounter.increase()
-                    cacheManager.refreshCacheData(account: rootViewState.account)
-                    reviewManager.decreaseOpeningUntilReview()
-                    rootViewState.transitionToLockViewIfNeeded()
-                    checkAppVersion()
-                }
-                .onReceive(NotificationCenter.default.publisher(for: UIScene.didEnterBackgroundNotification)) { _ in
-                    refreshAppBackgroundTask.scheduleForBackgroundLaunchIfNeeded()
-                    if UserDefaults.shared.isAppLockEnabled && rootViewState.state != .appLocked {
-                        appLockHelper.setTime()
-                    }
-                }
+                .sceneLifecycle(willEnterForeground: willEnterForeground, didEnterBackground: didEnterBackground)
                 .task(id: rootViewState.account) {
                     cacheManager.refreshCacheData(account: rootViewState.account)
                 }
@@ -95,7 +74,22 @@ struct UserAccountScene: Scene {
         }
     }
 
-    func checkAppVersion() {
+    private func willEnterForeground() {
+        appLaunchCounter.increase()
+        reviewManager.decreaseOpeningUntilReview()
+        cacheManager.refreshCacheData(account: rootViewState.account)
+        rootViewState.transitionToLockViewIfNeeded()
+        checkAppVersion()
+    }
+
+    private func didEnterBackground() {
+        refreshAppBackgroundTask.scheduleForBackgroundLaunchIfNeeded()
+        if UserDefaults.shared.isAppLockEnabled && rootViewState.state != .appLocked {
+            appLockHelper.setTime()
+        }
+    }
+
+    private func checkAppVersion() {
         Task {
             do {
                 let platform: Platform = platformDetector.isMacCatalyst ? .macOS : .ios

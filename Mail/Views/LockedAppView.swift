@@ -27,6 +27,8 @@ struct LockedAppView: View {
 
     @EnvironmentObject var navigationState: RootViewState
 
+    @State private var isEvaluatingPolicy = false
+
     var body: some View {
         ZStack {
             VStack(spacing: UIPadding.medium) {
@@ -49,6 +51,7 @@ struct LockedAppView: View {
                     .buttonStyle(.ikPlain)
                     .controlSize(.large)
                     .ikButtonFullWidth(true)
+                    .ikButtonLoading(isEvaluatingPolicy)
             }
             .padding(.top, UIPadding.onBoardingLogoTop)
             .padding(.bottom, value: .large)
@@ -61,12 +64,17 @@ struct LockedAppView: View {
     }
 
     private func unlockApp() {
+        guard !isEvaluatingPolicy else { return }
+
         Task {
+            isEvaluatingPolicy = true
             if await (try? appLockHelper.evaluatePolicy(reason: MailResourcesStrings.Localizable.lockAppTitle)) == true {
                 appLockHelper.setTime()
                 Task {
                     navigationState.transitionToRootViewDestination(.mainView)
                 }
+            } else {
+                isEvaluatingPolicy = false
             }
         }
     }
