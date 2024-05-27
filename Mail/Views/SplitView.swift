@@ -49,7 +49,6 @@ public class SplitViewManager: ObservableObject {
 struct SplitView: View {
     @Environment(\.openURL) private var openURL
     @Environment(\.isCompactWindow) private var isCompactWindow
-    @Environment(\.scenePhase) private var scenePhase
 
     @EnvironmentObject private var mainViewState: MainViewState
 
@@ -155,8 +154,7 @@ struct SplitView: View {
             SafariWebView(url: safariContent.url)
                 .ignoresSafeArea()
         }
-        .onChange(of: scenePhase) { newScenePhase in
-            guard newScenePhase == .active else { return }
+        .sceneLifecycle(willEnterForeground: {
             Task {
                 // We need to write in Task instead of async let to avoid being cancelled to early
                 Task {
@@ -168,7 +166,7 @@ struct SplitView: View {
                 guard !platformDetector.isDebug else { return }
                 mainViewState.isShowingSyncDiscovery = platformDetector.isMac ? false : shouldShowSync()
             }
-        }
+        })
         .onOpenURL { url in
             handleOpenUrl(url)
         }
