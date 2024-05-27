@@ -113,11 +113,11 @@ struct SettingsNotificationsView: View {
                 }
             }
         }
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+        .sceneLifecycle(willEnterForeground: {
             settingsNotificationEnabled { enabled in
                 showWarning = !enabled
             }
-        }
+        })
         .onAppear {
             settingsNotificationEnabled { enabled in
                 showWarning = !enabled

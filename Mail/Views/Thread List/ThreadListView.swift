@@ -191,9 +191,9 @@ struct ThreadListView: View {
         .onChange(of: multipleSelectionViewModel.isEnabled) { isEnabled in
             scrollObserver.shouldObserve = !isEnabled
         }
-        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+        .sceneLifecycle(willEnterForeground: {
             updateFetchingTask()
-        }
+        })
         .task {
             if firstLaunch {
                 updateFetchingTask()
