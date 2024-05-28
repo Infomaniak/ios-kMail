@@ -20,14 +20,14 @@ import MailCore
 import MailResources
 import SwiftUI
 
-extension LabelStyle where Self == IKLabelStyle {
+public extension LabelStyle where Self == IKLabelStyle {
     static var ikLabel: IKLabelStyle {
         IKLabelStyle()
     }
 }
 
-struct IKLabelStyle: LabelStyle {
-    func makeBody(configuration: Configuration) -> some View {
+public struct IKLabelStyle: LabelStyle {
+    public func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: UIPadding.small) {
             configuration.icon
             configuration.title
