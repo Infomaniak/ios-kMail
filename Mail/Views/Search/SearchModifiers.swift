@@ -54,7 +54,7 @@ struct SearchToolbar: ViewModifier {
                     if multipleSelectionViewModel.isEnabled {
                         Button(MailResourcesStrings.Localizable.buttonCancel) {
                             matomo.track(eventWithCategory: .searchMultiSelection, name: "cancel")
-                            multipleSelectionViewModel.isEnabled = false
+                            multipleSelectionViewModel.disable()
                         }
                     } else {
                         CloseButton {
@@ -90,7 +90,7 @@ struct SearchToolbar: ViewModifier {
                             icon: action.icon
                         ) {
                             let allMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
-                            multipleSelectionViewModel.isEnabled = false
+                            multipleSelectionViewModel.disable()
                             Task {
                                 matomo.trackBulkEvent(
                                     eventWithCategory: .threadActions,
@@ -133,7 +133,7 @@ struct SearchToolbar: ViewModifier {
                     await viewModel.fetchThreads()
                 }
             } completionHandler: { _ in
-                multipleSelectionViewModel.isEnabled = false
+                multipleSelectionViewModel.disable()
             }
             .navigationTitle(
                 multipleSelectionViewModel.isEnabled

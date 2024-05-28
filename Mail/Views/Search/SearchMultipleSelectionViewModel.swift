@@ -21,12 +21,8 @@ import SwiftUI
 
 @MainActor
 class SearchMultipleSelectionViewModel: ObservableObject {
-    @Published var isEnabled = false {
-        didSet {
-            if !isEnabled {
-                selectedItems = []
-            }
-        }
+    var isEnabled: Bool {
+        return !selectedItems.isEmpty
     }
 
     @Published var selectedItems = Set<Thread>()
@@ -34,16 +30,21 @@ class SearchMultipleSelectionViewModel: ObservableObject {
 
     let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
-    func toggleSelection(of thread: Thread) {
-        if let threadIndex = selectedItems.firstIndex(of: thread) {
-            selectedItems.remove(at: threadIndex)
-            if selectedItems.isEmpty {
-                isEnabled = false
-            }
-        } else {
-            selectedItems.insert(thread)
+    func disable() {
+        withAnimation {
+            selectedItems.removeAll()
         }
-        setActions()
+    }
+
+    func toggleSelection(of thread: Thread) {
+        withAnimation(.default.speed(2)) {
+            if let threadIndex = selectedItems.firstIndex(of: thread) {
+                selectedItems.remove(at: threadIndex)
+            } else {
+                selectedItems.insert(thread)
+            }
+            setActions()
+        }
     }
 
     private func setActions() {
