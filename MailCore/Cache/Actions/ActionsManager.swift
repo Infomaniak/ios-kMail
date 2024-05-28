@@ -49,7 +49,7 @@ extension RandomAccessCollection where Element == Message {
     ///
     /// - For a list of messages all coming from the same thread: `lastMessageToExecuteAction`
     func lastMessagesAndDuplicatesToExecuteAction(currentMailboxEmail: String, currentFolder: Folder?) -> [Message] {
-        if isSingleMessage(currentFolder: currentFolder) {
+        if isSingleMessage(currentFolder: currentFolder) || currentFolder?.toolType == .search {
             return addingDuplicates()
         } else {
             return uniqueThreadsInFolder(currentFolder)
@@ -57,6 +57,12 @@ extension RandomAccessCollection where Element == Message {
                 }
                 .addingDuplicates()
         }
+    }
+
+    func fromFolderOrSearch(originFolder: Folder?) -> [Message] {
+        return originFolder?.toolType == .search ?
+            self as! [Message] :
+            filter { $0.folderId == originFolder?.remoteId }
     }
 
     /// - Returns: The original message list and their duplicates
@@ -124,7 +130,7 @@ public class ActionsManager: ObservableObject {
         case .forward:
             try replyOrForward(messages: messagesWithDuplicates, mode: .forward)
         case .archive:
-            let messagesFromFolder = messagesWithDuplicates.filter { $0.folderId == origin.frozenFolder?.remoteId }
+            let messagesFromFolder = messagesWithDuplicates.fromFolderOrSearch(originFolder: origin.frozenFolder)
             try await performMove(messages: messagesFromFolder, from: origin.frozenFolder, to: .archive)
         case .markAsRead:
             try await mailboxManager.markAsSeen(messages: messagesWithDuplicates, seen: true)
@@ -165,7 +171,7 @@ public class ActionsManager: ObservableObject {
                 origin.nearestReportJunkMessageActionsPanel?.wrappedValue = messagesWithDuplicates.first
             }
         case .spam:
-            let messagesFromFolder = messagesWithDuplicates.filter { $0.folderId == origin.frozenFolder?.remoteId }
+            let messagesFromFolder = messagesWithDuplicates.fromFolderOrSearch(originFolder: origin.frozenFolder)
             try await performMove(messages: messagesFromFolder, from: origin.frozenFolder, to: .spam)
         case .phishing:
             Task { @MainActor in
@@ -204,7 +210,7 @@ public class ActionsManager: ObservableObject {
     }
 
     public func performMove(messages: [Message], from originFolder: Folder?, to destinationFolder: Folder) async throws {
-        let messagesFromFolder = messages.filter { $0.folderId == originFolder?.remoteId }
+        let messagesFromFolder = messages.fromFolderOrSearch(originFolder: originFolder)
 
         let originalThreads = messagesFromFolder.flatMap { $0.threads.filter { $0.folder == originFolder } }
         await mailboxManager.markMovedLocally(true, threads: originalThreads)

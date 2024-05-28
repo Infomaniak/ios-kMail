@@ -150,15 +150,14 @@ struct ThreadListToolbar: ViewModifier {
                             multipleSelectedMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
                         }
                     }
-                    .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
                 }
                 .actionsPanel(
                     messages: $multipleSelectedMessages,
                     originFolder: viewModel.frozenFolder,
-                    panelSource: .threadList
-                ) { _ in
-                    multipleSelectionViewModel.isEnabled = false
-                }
+                    panelSource: .threadList, completionHandler: { _ in
+                        multipleSelectionViewModel.isEnabled = false
+                    }
+                )
                 .sheet(item: $messagesToMove) { messages in
                     MoveEmailView(
                         mailboxManager: viewModel.mailboxManager,

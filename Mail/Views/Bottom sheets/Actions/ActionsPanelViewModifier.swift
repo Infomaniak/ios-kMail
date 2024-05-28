@@ -22,12 +22,18 @@ import SwiftModalPresentation
 import SwiftUI
 
 extension View {
-    func actionsPanel(messages: Binding<[Message]?>, originFolder: Folder?, panelSource: ActionOrigin.FloatingPanelSource,
-                      completionHandler: ((Action) -> Void)? = nil) -> some View {
+    func actionsPanel(
+        messages: Binding<[Message]?>,
+        originFolder: Folder?,
+        panelSource: ActionOrigin.FloatingPanelSource,
+        onMove: (() -> Void)? = nil,
+        completionHandler: ((Action) -> Void)? = nil
+    ) -> some View {
         return modifier(ActionsPanelViewModifier(
             messages: messages,
             originFolder: originFolder,
             panelSource: panelSource,
+            onMove: onMove,
             completionHandler: completionHandler
         ))
     }
@@ -46,6 +52,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     let originFolder: Folder?
     let panelSource: ActionOrigin.FloatingPanelSource
 
+    var onMove: (() -> Void)?
     var completionHandler: ((Action) -> Void)?
 
     private var origin: ActionOrigin {
@@ -65,7 +72,7 @@ struct ActionsPanelViewModifier: ViewModifier {
             ActionsView(mailboxManager: mailboxManager, target: messages, origin: origin, completionHandler: completionHandler)
         }
         .sheet(item: $messagesToMove) { messages in
-            MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: originFolder)
+            MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: originFolder, completion: onMove)
                 .sheetViewStyle()
         }
         .floatingPanel(item: $reportForJunkMessage) { reportForJunkMessage in
