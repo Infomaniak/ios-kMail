@@ -94,7 +94,6 @@ struct SearchListCell: View {
                 splitViewManager.adaptToProminentThreadView()
 
                 mainViewState.selectedThread = thread
-
                 viewModel.selectedThread = thread
             }
         }

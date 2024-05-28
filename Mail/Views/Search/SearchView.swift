@@ -95,7 +95,7 @@ struct SearchView: View {
         .searchToolbar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .onDisappear {
             if viewModel.selectedThread == nil {
-                viewModel.observationSearchThreadToken?.invalidate()
+                viewModel.stopObserveSearch()
             }
         }
         .onAppear {
