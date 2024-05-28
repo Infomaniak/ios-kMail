@@ -83,7 +83,7 @@ struct ThreadListToolbar: ViewModifier {
                         if multipleSelectionViewModel.isEnabled {
                             Button(MailResourcesStrings.Localizable.buttonCancel) {
                                 matomo.track(eventWithCategory: .multiSelection, name: "cancel")
-                                multipleSelectionViewModel.isEnabled = false
+                                multipleSelectionViewModel.disable()
                             }
                         } else {
                             if isCompactWindow {
@@ -121,7 +121,7 @@ struct ThreadListToolbar: ViewModifier {
                                 icon: action.icon
                             ) {
                                 let allMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
-                                multipleSelectionViewModel.isEnabled = false
+                                multipleSelectionViewModel.disable()
                                 let originFolder = viewModel.frozenFolder
                                 Task {
                                     matomo.trackBulkEvent(
@@ -155,7 +155,7 @@ struct ThreadListToolbar: ViewModifier {
                     messages: $multipleSelectedMessages,
                     originFolder: viewModel.frozenFolder,
                     panelSource: .threadList, completionHandler: { _ in
-                        multipleSelectionViewModel.isEnabled = false
+                        multipleSelectionViewModel.disable()
                     }
                 )
                 .sheet(item: $messagesToMove) { messages in

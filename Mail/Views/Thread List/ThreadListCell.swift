@@ -102,9 +102,7 @@ struct ThreadListCell: View {
 
     private func didTapCell() {
         if multipleSelectionViewModel.isEnabled {
-            withAnimation(.default.speed(2)) {
-                multipleSelectionViewModel.toggleSelection(of: thread)
-            }
+            multipleSelectionViewModel.toggleSelection(of: thread)
         } else {
             if thread.shouldPresentAsDraft {
                 DraftUtils.editDraft(
@@ -124,7 +122,6 @@ struct ThreadListCell: View {
     private func didOptionalTapCell() {
         guard !multipleSelectionViewModel.isEnabled else { return }
         multipleSelectionViewModel.feedbackGenerator.prepare()
-        multipleSelectionViewModel.isEnabled = true
         matomo.track(eventWithCategory: .multiSelection, action: .longPress, name: "enable")
         multipleSelectionViewModel.feedbackGenerator.impactOccurred()
         multipleSelectionViewModel.toggleSelection(of: thread)
