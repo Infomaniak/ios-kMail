@@ -1507,6 +1507,9 @@
 /* loco:65ba2326ef9447c160013bf2 */
 "superCollapsedBlock" = "Vedi tutti (%d)";
 
+/* loco:6655c3b29b769d05b20834c4 */
+"swissTransferAttachmentDescription" = "Il mittente ha allegato uno o più file di grandi dimensioni, disponibili tramite il link SwissTransfer.";
+
 /* loco:653112b14b84af451706ef56 */
 "syncCalendarsAndContactsDescription" = "Visualizza i contatti e il calendario direttamente dal dispositivo.";
 
