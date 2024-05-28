@@ -27,12 +27,8 @@ import SwiftUI
 class ThreadListMultipleSelectionViewModel: ObservableObject {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @Published var isEnabled = false {
-        didSet {
-            if !isEnabled {
-                selectedItems = []
-            }
-        }
+    var isEnabled: Bool {
+        return !selectedItems.isEmpty
     }
 
     @Published var selectedItems = Set<Thread>()
@@ -46,16 +42,21 @@ class ThreadListMultipleSelectionViewModel: ObservableObject {
         setActions()
     }
 
-    func toggleSelection(of thread: Thread) {
-        if let threadIndex = selectedItems.firstIndex(of: thread) {
-            selectedItems.remove(at: threadIndex)
-            if selectedItems.isEmpty {
-                isEnabled = false
-            }
-        } else {
-            selectedItems.insert(thread)
+    func disable() {
+        withAnimation {
+            selectedItems.removeAll()
         }
-        setActions()
+    }
+
+    func toggleSelection(of thread: Thread) {
+        withAnimation(.default.speed(2)) {
+            if let threadIndex = selectedItems.firstIndex(of: thread) {
+                selectedItems.remove(at: threadIndex)
+            } else {
+                selectedItems.insert(thread)
+            }
+            setActions()
+        }
     }
 
     func selectAll(threads: [Thread]) {
@@ -63,7 +64,7 @@ class ThreadListMultipleSelectionViewModel: ObservableObject {
         feedbackGenerator.impactOccurred(intensity: 0.6)
 
         if threads.count == selectedItems.count {
-            selectedItems.removeAll()
+            disable()
             matomo.track(eventWithCategory: .multiSelection, name: "none")
         } else {
             selectedItems = Set(threads)
