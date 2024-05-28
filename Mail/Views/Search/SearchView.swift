@@ -29,8 +29,13 @@ struct SearchView: View {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     @EnvironmentObject private var mainViewState: MainViewState
+    @EnvironmentObject private var actionsManager: ActionsManager
+
+    @State private var multipleSelectedMessages: [Message]?
+    @State private var messagesToMove: [Message]?
 
     @StateObject private var viewModel: SearchViewModel
+    @StateObject private var multipleSelectionViewModel: SearchMultipleSelectionViewModel
 
     private var shouldShowHorizontalScrollbar: Bool {
         platformDetector.isMac
@@ -38,40 +43,43 @@ struct SearchView: View {
 
     init(mailboxManager: MailboxManager, folder: Folder) {
         _viewModel = StateObject(wrappedValue: SearchViewModel(mailboxManager: mailboxManager, folder: folder))
+        _multipleSelectionViewModel = StateObject(wrappedValue: SearchMultipleSelectionViewModel())
     }
 
     var body: some View {
         VStack(spacing: 0) {
-            ScrollView(.horizontal, showsIndicators: shouldShowHorizontalScrollbar) {
-                HStack(spacing: UIPadding.small) {
-                    ForEach(viewModel.filters) { filter in
-                        if filter == .folder {
-                            SearchFilterFolderCell(
-                                selection: $viewModel.selectedSearchFolderId,
-                                folders: viewModel.frozenFolderList
-                            )
-                            .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonFilterSearch)
-                        } else {
-                            SearchFilterCell(
-                                title: filter.title,
-                                isSelected: viewModel.selectedFilters.contains(filter)
-                            )
-                            .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonFilterSearch)
-                            .accessibilityAddTraits(viewModel.selectedFilters.contains(filter) ? [.isSelected] : [])
-                            .onTapGesture {
-                                viewModel.searchFilter(filter)
+            if !multipleSelectionViewModel.isEnabled {
+                ScrollView(.horizontal, showsIndicators: shouldShowHorizontalScrollbar) {
+                    HStack(spacing: UIPadding.small) {
+                        ForEach(viewModel.filters) { filter in
+                            if filter == .folder {
+                                SearchFilterFolderCell(
+                                    selection: $viewModel.selectedSearchFolderId,
+                                    folders: viewModel.frozenFolderList
+                                )
+                                .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonFilterSearch)
+                            } else {
+                                SearchFilterCell(
+                                    title: filter.title,
+                                    isSelected: viewModel.selectedFilters.contains(filter)
+                                )
+                                .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonFilterSearch)
+                                .accessibilityAddTraits(viewModel.selectedFilters.contains(filter) ? [.isSelected] : [])
+                                .onTapGesture {
+                                    viewModel.searchFilter(filter)
+                                }
                             }
                         }
                     }
+                    .padding(value: .regular)
+                    .padding(.bottom, shouldShowHorizontalScrollbar ? UIPadding.verySmall : 0)
                 }
-                .padding(value: .regular)
-                .padding(.bottom, shouldShowHorizontalScrollbar ? UIPadding.verySmall : 0)
             }
 
             List {
                 SearchHistorySectionView(viewModel: viewModel)
                 SearchContactsSectionView(viewModel: viewModel)
-                SearchThreadsSectionView(viewModel: viewModel)
+                SearchThreadsSectionView(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
             }
             .listStyle(.plain)
         }
@@ -84,6 +92,7 @@ struct SearchView: View {
         .refreshable {
             await viewModel.fetchThreads()
         }
+        .searchToolbar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .onDisappear {
             if viewModel.selectedThread == nil {
                 viewModel.observationSearchThreadToken?.invalidate()
@@ -91,30 +100,6 @@ struct SearchView: View {
         }
         .onAppear {
             viewModel.selectedThread = nil
-        }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                CloseButton {
-                    Constants.globallyResignFirstResponder()
-                    mainViewState.isShowingSearch = false
-                    Task {
-                        await viewModel.mailboxManager.clearSearchResults()
-                    }
-                }
-                .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonBack)
-            }
-
-            ToolbarItem(placement: .principal) {
-                SearchTextField(value: $viewModel.searchValue) {
-                    viewModel.matomo.track(eventWithCategory: .search, name: "validateSearch")
-                    viewModel.addToHistoryIfNeeded()
-                    viewModel.searchThreadsForCurrentValue()
-                } onDelete: {
-                    viewModel.matomo.track(eventWithCategory: .search, name: "deleteSearch")
-                    viewModel.clearSearch()
-                }
-                .frame(maxWidth: .infinity)
-            }
         }
         .matomoView(view: ["SearchView"])
     }
