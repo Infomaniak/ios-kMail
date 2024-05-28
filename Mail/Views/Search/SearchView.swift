@@ -92,6 +92,7 @@ struct SearchView: View {
         .refreshable {
             await viewModel.fetchThreads()
         }
+        .toolbarAppStyle()
         .searchToolbar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .onDisappear {
             if viewModel.selectedThread == nil {
