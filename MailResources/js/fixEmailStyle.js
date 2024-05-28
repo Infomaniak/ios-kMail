@@ -19,8 +19,9 @@
 function removeAllProperties() {
     const properties = [
         { name: 'position', values: ['absolute'] },
-        { name: '-webkit-text-size-adjust', values: [] },
-        { name: 'height', values: ['100%'] }
+        { name: '-webkit-text-size-adjust' },
+        { name: 'height', values: ['100%'] },
+        { name: 'min-height', values: ['100%'] }
     ];
     removeCSSProperty(properties);
     return true;
@@ -72,5 +73,5 @@ function removePropertiesForAllCSSRules(properties, styleSheet) {
 }
 
 function shouldRemovePropertyForGivenValue(property, value) {
-    return property.values.length === 0 || property.values.includes(value.toLowerCase().trim())
+    return property.values === undefined || property.values.includes(value.toLowerCase().trim())
 }
