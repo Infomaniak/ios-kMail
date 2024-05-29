@@ -44,8 +44,7 @@ extension Slide {
                     loopFrameEnd: 138,
                     lottieConfiguration: .init(renderingEngine: .mainThread)
                 )),
-                bottomViewController: UIHostingController(rootView: OnboardingThemePickerView(title: MailResourcesStrings
-                        .Localizable.onBoardingTitle1))
+                bottomView: OnboardingThemePickerView(title: MailResourcesStrings.Localizable.onBoardingTitle1)
             ),
             Slide(
                 backgroundImage: MailResourcesAsset.onboardingBackground2.image,
@@ -58,10 +57,10 @@ extension Slide {
                     loopFrameEnd: 253,
                     lottieConfiguration: .init(renderingEngine: .mainThread)
                 )),
-                bottomViewController: UIHostingController(rootView: OnboardingTextView(
+                bottomView: OnboardingTextView(
                     title: MailResourcesStrings.Localizable.onBoardingTitle2,
                     description: MailResourcesStrings.Localizable.onBoardingDescription2
-                ))
+                )
             ),
             Slide(
                 backgroundImage: MailResourcesAsset.onboardingBackground3.image,
@@ -74,10 +73,10 @@ extension Slide {
                     loopFrameEnd: 187,
                     lottieConfiguration: .init(renderingEngine: .mainThread)
                 )),
-                bottomViewController: UIHostingController(rootView: OnboardingTextView(
+                bottomView: OnboardingTextView(
                     title: MailResourcesStrings.Localizable.onBoardingTitle3,
                     description: MailResourcesStrings.Localizable.onBoardingDescription3
-                ))
+                )
             ),
             Slide(
                 backgroundImage: MailResourcesAsset.onboardingBackground4.image,
@@ -90,10 +89,10 @@ extension Slide {
                     loopFrameEnd: 236,
                     lottieConfiguration: .init(renderingEngine: .mainThread)
                 )),
-                bottomViewController: UIHostingController(rootView: OnboardingTextView(
+                bottomView: OnboardingTextView(
                     title: MailResourcesStrings.Localizable.onBoardingTitle4,
                     description: MailResourcesStrings.Localizable.onBoardingDescription4
-                ))
+                )
             )
         ]
     }

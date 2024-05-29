@@ -29,17 +29,17 @@ extension Slide {
         Slide(backgroundImage: MailResourcesAsset.onboardingBackground1.image,
               backgroundImageTintColor: UserDefaults.shared.accentColor.secondary.color,
               content: .illustration(MailResourcesAsset.authorizationContact.image),
-              bottomViewController: UIHostingController(rootView: OnboardingTextView(
+              bottomView: OnboardingTextView(
                   title: MailResourcesStrings.Localizable.onBoardingContactsTitle,
                   description: MailResourcesStrings.Localizable.onBoardingContactsDescription
-              ))),
+              )),
         Slide(backgroundImage: MailResourcesAsset.onboardingBackground2.image,
               backgroundImageTintColor: UserDefaults.shared.accentColor.secondary.color,
               content: .illustration(MailResourcesAsset.authorizationNotification.image),
-              bottomViewController: UIHostingController(rootView: OnboardingTextView(
+              bottomView: OnboardingTextView(
                   title: MailResourcesStrings.Localizable.onBoardingNotificationsTitle,
                   description: MailResourcesStrings.Localizable.onBoardingNotificationsDescription
-              )))
+              ))
     ]
 }
 

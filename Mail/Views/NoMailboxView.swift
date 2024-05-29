@@ -29,10 +29,10 @@ struct NoMailboxView: View {
     private let slide = Slide(backgroundImage: MailResourcesAsset.onboardingBackground3.image,
                               backgroundImageTintColor: UserDefaults.shared.accentColor.secondary.color,
                               content: .illustration(MailResourcesAsset.noMailbox.image),
-                              bottomViewController: UIHostingController(rootView: OnboardingTextView(
+                              bottomView: OnboardingTextView(
                                   title: MailResourcesStrings.Localizable.noMailboxTitle,
                                   description: MailResourcesStrings.Localizable.noMailboxDescription
-                              )))
+                              ))
 
     var body: some View {
         WaveView(slides: [slide], selectedSlide: .constant(0)) { _ in

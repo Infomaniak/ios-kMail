@@ -122,9 +122,8 @@ struct WaveView<BottomView: View>: UIViewControllerRepresentable {
             self.bottomView = bottomView
         }
 
-        func bottomViewForIndex(_ index: Int) -> UIView? {
-            let hostingViewController = UIHostingController(rootView: bottomView(index))
-            return hostingViewController.view
+        func bottomViewForIndex(_ index: Int) -> (any View)? {
+            return bottomView(index)
         }
 
         func shouldAnimateBottomViewForIndex(_ index: Int) -> Bool {

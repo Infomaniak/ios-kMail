@@ -31,10 +31,10 @@ struct SyncWelcomeView: View {
     private let slide = Slide(backgroundImage: MailResourcesAsset.onboardingBackground4.image,
                               backgroundImageTintColor: UserDefaults.shared.accentColor.secondary.color,
                               content: .illustration(MailResourcesAsset.syncIllustration.image),
-                              bottomViewController: UIHostingController(rootView: OnboardingTextView(
+                              bottomView: OnboardingTextView(
                                   title: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle,
                                   description: MailResourcesStrings.Localizable.syncCalendarsAndContactsDescription
-                              )))
+                              ))
 
     var body: some View {
         WaveView(slides: [slide], selectedSlide: .constant(0), headerImage: nil) { _ in

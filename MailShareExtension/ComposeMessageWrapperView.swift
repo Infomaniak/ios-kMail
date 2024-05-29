@@ -117,10 +117,10 @@ extension Slide {
                 loopFrameEnd: 138,
                 lottieConfiguration: .init(renderingEngine: .mainThread)
             )),
-            bottomViewController: UIHostingController(rootView: OnboardingTextView(
+            bottomView: OnboardingTextView(
                 title: MailResourcesStrings.Localizable.pleaseLogInFirst,
                 description: ""
-            ))
+            )
         )
 }
 
