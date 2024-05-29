@@ -73,29 +73,7 @@ struct MessageView: View {
 
                 if isMessageExpanded {
                     VStack(spacing: UIPadding.regular) {
-                        if isRemoteContentBlocked && displayContentBlockedActionView {
-                            MessageHeaderActionView(
-                                icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
-                                message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
-                            ) {
-                                Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) {
-                                    withAnimation {
-                                        $message.localSafeDisplay.wrappedValue = true
-                                    }
-                                }
-                                .buttonStyle(.ikLink(isInlined: true))
-                                .controlSize(.small)
-                            }
-                        }
-
-                        if let event = message.calendarEventResponse?.frozenEvent, event.type == .event {
-                            CalendarView(event: event)
-                                .padding(.horizontal, value: .regular)
-                        }
-
-                        if !message.attachments.filter({ $0.disposition == .attachment || $0.contentId == nil }).isEmpty {
-                            AttachmentsView(message: message)
-                        }
+                        MessageSubHeaderView(message: message, displayContentBlockedActionView: $displayContentBlockedActionView)
 
                         if isShowingErrorLoading {
                             Text(MailResourcesStrings.Localizable.errorLoadingMessage)
