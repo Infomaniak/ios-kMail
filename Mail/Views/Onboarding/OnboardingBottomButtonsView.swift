@@ -33,7 +33,7 @@ struct OnboardingBottomButtonsView: View {
 
     let slideCount: Int
 
-    var isLastSlide: Bool {
+    private var isLastSlide: Bool {
         return selection == slideCount - 1
     }
 

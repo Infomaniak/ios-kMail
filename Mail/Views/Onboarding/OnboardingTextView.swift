@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import SwiftUI
 
 struct OnboardingTextView: View {
@@ -23,13 +24,12 @@ struct OnboardingTextView: View {
     let description: String
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(spacing: UIPadding.medium) {
             Text(title)
                 .textStyle(.header2)
 
             Text(description)
                 .textStyle(.bodySecondary)
-                .padding(.top, value: .medium)
         }
         .multilineTextAlignment(.center)
     }
