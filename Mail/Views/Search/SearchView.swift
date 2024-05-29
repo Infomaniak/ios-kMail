@@ -89,6 +89,7 @@ struct SearchView: View {
             EmptyStateView.emptySearch
         }
         .refreshable {
+            multipleSelectionViewModel.disable()
             await viewModel.fetchThreads()
         }
         .toolbarAppStyle()
