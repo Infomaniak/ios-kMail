@@ -101,6 +101,7 @@ struct AccountListView: View {
             try? await updateUsers()
         }
         .matomoView(view: [MatomoUtils.View.accountView.displayName, "AccountListView"])
+        .accessibility(label: Text(MailResourcesStrings.Localizable.buttonAddAccount))
     }
 
     private func updateUsers() async throws {

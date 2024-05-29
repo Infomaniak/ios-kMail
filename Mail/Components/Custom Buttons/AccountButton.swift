@@ -17,13 +17,18 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
 import MailCoreUI
+import MailResources
 import SwiftModalPresentation
 import SwiftUI
 
 struct AccountButton: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @LazyInjectService private var matomo: MatomoUtils
 
     @ModalState private var presentedCurrentAccount: Account?
 
@@ -34,6 +39,7 @@ struct AccountButton: View {
             if let currentAccountUser = mailboxManager.account.user {
                 AvatarView(mailboxManager: mailboxManager,
                            contactConfiguration: .user(user: currentAccountUser))
+                    .accessibility(label: Text(MailResourcesStrings.Localizable.titleMyAccount))
             }
         }
         .sheet(item: $presentedCurrentAccount) { account in

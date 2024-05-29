@@ -32,6 +32,7 @@ struct MailboxListView: View {
             HStack(alignment: .center, spacing: 0) {
                 Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
                     .textStyle(.bodySmallSecondary)
+                    .padding(value: .regular)
 
                 Spacer(minLength: UIPadding.regular)
 
@@ -40,9 +41,10 @@ struct MailboxListView: View {
                 } label: {
                     IKIcon(MailResourcesAsset.addCircle)
                         .foregroundStyle(.tint)
+                        .padding(value: .regular)
+                        .accessibility(label: Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses))
                 }
             }
-            .padding(value: .regular)
 
             if let currentMailbox {
                 MailboxCell(mailbox: currentMailbox, isSelected: true)
