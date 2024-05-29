@@ -88,6 +88,22 @@ class MailUITests: XCTestCase {
         app.scrollViews.otherElements.staticTexts[MailResourcesStrings.Localizable.archiveFolder].tap()
     }
 
+    func testCreateFolder() {
+        launchAppFromScratch()
+        login()
+
+        app.navigationBars.firstMatch.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonMenu].tap()
+        let newFolderButton = app.scrollViews.otherElements.buttons[MailResourcesStrings.Localizable.newFolderDialogTitle]
+        newFolderButton.waitForExistence(timeout: 10)
+        newFolderButton.tap()
+
+        let folderNameTextField = app.textFields[MailResourcesStrings.Localizable.createFolderName]
+        folderNameTextField.waitForExistence(timeout: 10)
+        folderNameTextField.tap()
+        folderNameTextField.typeText("Test-\(Date().timeIntervalSince1970)")
+        app.staticTexts[MailResourcesStrings.Localizable.buttonCreate].tap()
+    }
+
     func testDeleteSwipeAction() {
         launchAppFromScratch()
         login()
