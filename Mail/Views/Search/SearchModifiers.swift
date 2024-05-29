@@ -140,5 +140,6 @@ struct SearchToolbar: ViewModifier {
                     ? MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count)
                     : ""
             )
+            .navigationBarTitleDisplayMode(.inline)
     }
 }
