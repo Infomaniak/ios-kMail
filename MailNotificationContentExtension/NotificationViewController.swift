@@ -37,8 +37,8 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        ModelMigrator().migrateRealmIfNeeded()
         SentryDebug.setUserId(accountManager.currentUserId)
+        ModelMigrator().migrateRealmIfNeeded()
 
         activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         activityIndicator.hidesWhenStopped = true
