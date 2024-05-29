@@ -93,9 +93,10 @@ public extension MailboxManager {
             if let parent {
                 parent.fresh(using: writableRealm)?.children.insert(folder)
             }
-            folder = folder.freeze()
         }
-        return folder
+
+        let frozenFolder = folder.freeze()
+        return frozenFolder
     }
 
     // MARK: RefreshActor
