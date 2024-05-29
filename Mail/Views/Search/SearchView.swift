@@ -85,7 +85,6 @@ struct SearchView: View {
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarSearchListStyle()
-        .navigationBarTitleDisplayMode(.inline)
         .emptyState(isEmpty: viewModel.searchState == .noResults) {
             EmptyStateView.emptySearch
         }
