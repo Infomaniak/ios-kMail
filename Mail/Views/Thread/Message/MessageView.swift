@@ -35,6 +35,8 @@ extension EnvironmentValues {
 struct MessageView: View {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
+    @Environment(\.isMessageInteractive) private var isMessageInteractive
+
     @EnvironmentObject var mailboxManager: MailboxManager
 
     @State var presentableBody: PresentableBody
@@ -73,7 +75,12 @@ struct MessageView: View {
 
                 if isMessageExpanded {
                     VStack(spacing: UIPadding.regular) {
-                        MessageSubHeaderView(message: message, displayContentBlockedActionView: $displayContentBlockedActionView)
+                        if isMessageInteractive {
+                            MessageSubHeaderView(
+                                message: message,
+                                displayContentBlockedActionView: $displayContentBlockedActionView
+                            )
+                        }
 
                         if isShowingErrorLoading {
                             Text(MailResourcesStrings.Localizable.errorLoadingMessage)
