@@ -61,6 +61,11 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
         ])
     }
 
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
+        view.window?.updateUI(accent: UserDefaults.shared.accentColor, theme: UserDefaults.shared.theme)
+    }
+
     func stopAnimating(displayError: Bool) {
         activityIndicator.stopAnimating()
         errorLabel.isHidden = displayError
