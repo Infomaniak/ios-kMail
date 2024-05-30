@@ -79,6 +79,9 @@ struct AttachmentsView: View {
             }
             .padding(.horizontal, value: .regular)
         }
+        .task {
+            await mailboxManager.swissTransferAttachment(message: message)
+        }
         .sheet(item: $previewedAttachment) { previewedAttachment in
             AttachmentPreview(attachment: previewedAttachment)
                 .environmentObject(mailboxManager)
