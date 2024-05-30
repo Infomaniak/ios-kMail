@@ -108,7 +108,9 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 SearchHistory.self,
                 CalendarEventResponse.self,
                 CalendarEvent.self,
-                Attendee.self
+                Attendee.self,
+                SwissTransferAttachment.self,
+                File.self
             ]
         )
 
