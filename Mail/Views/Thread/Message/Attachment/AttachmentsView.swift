@@ -70,9 +70,19 @@ struct AttachmentsView: View {
 
             HStack(spacing: UIPadding.small) {
                 Label {
-                    Text(
-                        "\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) (\(message.attachmentsSize, format: .defaultByteCount))"
-                    )
+                    if let swissTransferAttachment = message.swissTransferAttachment, !attachments.isEmpty {
+                        let totalSize = message.attachmentsSize + swissTransferAttachment.size
+                        Text(
+                            "\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) \(MailResourcesStrings.Localizable.linkingWord) \(MailResourcesStrings.Localizable.fileQuantity(swissTransferAttachment.files.count)) (\(totalSize, format: .defaultByteCount))")
+                    } else if let swissTransferAttachment = message.swissTransferAttachment, attachments.isEmpty {
+                        Text(
+                            "\(MailResourcesStrings.Localizable.fileQuantity(swissTransferAttachment.nbfiles)) (\(swissTransferAttachment.size, format: .defaultByteCount))"
+                        )
+                    } else {
+                        Text(
+                            "\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) (\(message.attachmentsSize, format: .defaultByteCount))"
+                        )
+                    }
                 } icon: {
                     IKIcon(MailResourcesAsset.attachment)
                         .foregroundStyle(MailResourcesAsset.textSecondaryColor)
