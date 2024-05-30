@@ -46,6 +46,9 @@ struct SearchView: View {
                 SearchViewList(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
             }
         }
+        .accessibilityAction(.escape) {
+            mainViewState.isShowingSearch = false
+        }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarSearchListStyle()
         .emptyState(isEmpty: viewModel.searchState == .noResults) {
