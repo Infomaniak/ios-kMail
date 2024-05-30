@@ -42,7 +42,7 @@ struct AttachmentsView: View {
 
     var body: some View {
         VStack(spacing: UIPadding.regular) {
-            if let swissTransferUuid = message.swissTransferUuid {
+            if message.swissTransferUuid != nil {
                 SwissTransferAttachmentView()
             }
             ScrollView(.horizontal, showsIndicators: false) {
