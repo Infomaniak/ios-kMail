@@ -42,9 +42,9 @@ struct AttachmentUploadCell: View {
 
     var body: some View {
         AttachmentView(
-            attachment: attachment.detached(),
+            title: attachment.name,
             subtitle: uploadTask.error != nil ? (uploadTask.error!.errorDescription ?? "") : attachment.size
-                .formatted(.defaultByteCount)
+                .formatted(.defaultByteCount), icon: attachment.icon
         ) {
             Button {
                 if let attachmentRemoved {
