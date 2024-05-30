@@ -107,6 +107,10 @@ public extension MailApiFetcher {
         return try await request.serializingData().value
     }
 
+    func swissTransfer(stUuid: String) async throws -> SwissTransferAttachment {
+        try await perform(request: authenticatedRequest(.swissTransfer(stUuid: stUuid)))
+    }
+
     func messagesUids(
         mailboxUuid: String,
         folderId: String,
