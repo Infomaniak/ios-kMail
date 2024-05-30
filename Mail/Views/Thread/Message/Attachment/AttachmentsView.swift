@@ -51,7 +51,16 @@ struct AttachmentsView: View {
                         Button {
                             openAttachment(attachment)
                         } label: {
-                            AttachmentCell(attachment: attachment)
+                            AttachmentView(title: attachment.name, subtitle: attachment.size.formatted(.defaultByteCount), icon: attachment.icon)
+                        }
+                    }
+                    if let files = message.swissTransferAttachment?.files {
+                        ForEach(files) { file in
+                            Button {
+                                // TODO: Open file
+                            } label: {
+                                AttachmentView(title: file.name, subtitle: file.size.formatted(.defaultByteCount), icon: file.icon)
+                            }
                         }
                     }
                 }
