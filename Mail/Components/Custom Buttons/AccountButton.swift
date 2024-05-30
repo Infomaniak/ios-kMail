@@ -17,8 +17,6 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
-import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -27,8 +25,6 @@ import SwiftUI
 
 struct AccountButton: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
-
-    @LazyInjectService private var matomo: MatomoUtils
 
     @ModalState private var presentedCurrentAccount: Account?
 

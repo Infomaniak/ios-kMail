@@ -32,9 +32,9 @@ struct MailboxListView: View {
             HStack(alignment: .center, spacing: 0) {
                 Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
                     .textStyle(.bodySmallSecondary)
-                    .padding(value: .regular)
+                    .padding([.top, .bottom, .leading], value: .regular)
 
-                Spacer(minLength: UIPadding.regular)
+                Spacer(minLength: 0)
 
                 NavigationLink {
                     AddMailboxView()
