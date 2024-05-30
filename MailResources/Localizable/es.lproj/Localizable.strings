@@ -370,6 +370,9 @@
 /* loco:6267aff571442d3f666a71c2 */
 "buttonDownloadAll" = "Descargar todo";
 
+/* loco:665868375c0888d3b9083612 */
+"buttonEditText" = "Editar texto";
+
 /* loco:62567ae448317f728353f752 */
 "buttonFeedback" = "Comentarios";
 
@@ -396,6 +399,9 @@
 
 /* loco:6425777e2343387912223aa2 */
 "buttonLater" = "Más tarde";
+
+/* loco:665868ebce4392ec5d0e94f2 */
+"buttonLink" = "Añadir un hipervínculo";
 
 /* loco:645b485e158c37a429012092 */
 "buttonLoadMore" = "Cargar más conversaciones";
@@ -477,6 +483,9 @@
 
 /* loco:641322a5ac96d1091376a812 */
 "buttonUnlock" = "Desbloquear";
+
+/* loco:665867d23121013fb900b192 */
+"buttonUnorderedList" = "Lista desordenada";
 
 /* loco:640adf8cc17f7c5be778c933 */
 "buttonUnselectAll" = "Ninguno";

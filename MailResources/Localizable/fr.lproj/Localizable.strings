@@ -370,6 +370,9 @@
 /* loco:6267aff571442d3f666a71c2 */
 "buttonDownloadAll" = "Tout télécharger";
 
+/* loco:665868375c0888d3b9083612 */
+"buttonEditText" = "Editer le texte";
+
 /* loco:62567ae448317f728353f752 */
 "buttonFeedback" = "Feedback";
 
@@ -396,6 +399,9 @@
 
 /* loco:6425777e2343387912223aa2 */
 "buttonLater" = "Plus tard";
+
+/* loco:665868ebce4392ec5d0e94f2 */
+"buttonLink" = "Ajouter un lien hypertexte";
 
 /* loco:645b485e158c37a429012092 */
 "buttonLoadMore" = "Charger plus de conversations";
@@ -477,6 +483,9 @@
 
 /* loco:641322a5ac96d1091376a812 */
 "buttonUnlock" = "Déverrouiller";
+
+/* loco:665867d23121013fb900b192 */
+"buttonUnorderedList" = "Liste non ordonnée";
 
 /* loco:640adf8cc17f7c5be778c933 */
 "buttonUnselectAll" = "Aucun";
