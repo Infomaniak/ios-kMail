@@ -817,6 +817,15 @@
 /* loco:62a9dbdf0bddbc02ce031ba2 */
 "favoritesFolder" = "Favoris";
 
+/* loco:66587f0c073fdbd3d8051342 */
+"fileQuantity" = "%d fichier envoyé via SwissTransfer";
+
+/* loco:66587fa3e58bc83def020512 */
+"fileQuantity-plural" = "%d fichiers envoyés via SwissTransfer";
+
+/* loco:6658833c09d08ba3a705fca2 */
+"fileQuantity-plural-many" = "%d fichiers envoyés via SwissTransfer";
+
 /* loco:65982105ed32c3578b07f9c2 */
 "filterFocusAllowedMailboxesTitle" = "Boîtes aux lettres autorisées";
 
@@ -840,6 +849,9 @@
 
 /* loco:627a3c64f10f5f31f53e1c02 */
 "inboxFolder" = "Boîte de réception";
+
+/* loco:66587c95fee30207e108c472 */
+"linkingWord" = "et";
 
 /* loco:62c427c7ad522f1ff078a162 */
 "loadingText" = "Chargement…";
