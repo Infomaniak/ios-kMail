@@ -38,8 +38,8 @@ final class NotificationService: UNNotificationServiceExtension {
 
     override init() {
         super.init()
-        ModelMigrator().migrateRealmIfNeeded()
         SentryDebug.setUserId(accountManager.currentUserId)
+        ModelMigrator().migrateRealmIfNeeded()
     }
 
     func prepareEmptyMessageNotification(in mailbox: Mailbox) {
