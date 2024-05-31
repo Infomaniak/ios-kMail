@@ -4,7 +4,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Thu, 23 May 2024 10:07:10 +0200
+ * Exported at: Fri, 31 May 2024 08:27:23 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -860,7 +860,7 @@
 "lockedMailboxTitle" = "Blocked mailbox";
 
 /* loco:649adbc029c685e8c20dc096 */
-"lockedMailboxTitle-plural" = "Some of your mailboxes are blocked";
+"lockedMailboxTitle-plural" = "Blocked mailboxes";
 
 /* loco:64ad0bf21a8c5c3877078262 */
 "lockedMailboxTitle-plural-many" = "";
