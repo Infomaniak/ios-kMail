@@ -34,17 +34,19 @@ struct ExternalTagBottomView: View {
 
     var body: some View {
         if isShowingExternalTag && externalTag.shouldDisplay {
-            HStack(spacing: UIPadding.medium) {
-                Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
-                    .font(MailTextStyle.bodySmall.font)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
+            HStack(spacing: UIPadding.small) {
                 Button {
                     matomo.track(eventWithCategory: .externals, name: "bannerInfo")
                     isShowingExternalTagAlert = true
                 } label: {
-                    IKIcon(MailResourcesAsset.info)
+                    HStack(spacing: UIPadding.small) {
+                        Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
+                            .font(MailTextStyle.bodySmallMedium.font)
+
+                        IKIcon(MailResourcesAsset.info)
+                    }
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .customAlert(isPresented: $isShowingExternalTagAlert) {
                     ExternalRecipientView(externalTagSate: externalTag, isDraft: true)
                 }
@@ -64,5 +66,5 @@ struct ExternalTagBottomView: View {
 }
 
 #Preview {
-    ExternalTagBottomView(externalTag: Draft().displayExternalTag(mailboxManager: PreviewHelper.sampleMailboxManager))
+    ExternalTagBottomView(externalTag: .many)
 }
