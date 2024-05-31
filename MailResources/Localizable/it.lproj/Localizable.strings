@@ -421,6 +421,9 @@
 /* loco:6267bafe7edebd666d7d6923 */
 "buttonNewMessage" = "Nuovo messaggio";
 
+/* loco:66596b6a5fa78a61780e4315 */
+"buttonNewWindow" = "Nuova finestra";
+
 /* loco:6527b7d4882400da7d04ffd2 */
 "buttonNo" = "No";
 
