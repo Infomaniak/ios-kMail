@@ -52,7 +52,7 @@ struct UnavailableMailboxesView: View {
                             buttonAction: openFAQ,
                             buttonTitle: MailResourcesStrings.Localizable.readFAQ
                         )
-                        .padding(.top, UIPadding.regular)
+                        .padding(.top, value: .regular)
 
                         UnavailableMailboxListView()
                     }
@@ -93,7 +93,7 @@ struct UnavailableMailboxesView: View {
                 .controlSize(.large)
                 .ikButtonFullWidth(true)
             }
-            .padding(.horizontal, value: .medium)
+            .padding(.horizontal, value: .regular)
             .frame(maxWidth: 900)
             .matomoView(view: ["UnavailableMailboxesView"])
         }

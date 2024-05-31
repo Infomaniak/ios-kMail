@@ -68,7 +68,7 @@ public struct InformationBlockView: View {
                     }
 
                     Text(message)
-                        .textStyle(.bodySecondary)
+                        .textStyle(.body)
                         .multilineTextAlignment(.leading)
                 }
                 .alignmentGuide(.iconAndMultilineTextAlignment) { d in
