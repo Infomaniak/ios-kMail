@@ -4,7 +4,7 @@
  * Locale: es, Spanish
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Fri, 31 May 2024 08:27:23 +0200
+ * Exported at: Mon, 03 Jun 2024 13:35:00 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -860,7 +860,7 @@
 "lockedMailboxTitle" = "Dirección de correo electrónico bloqueada";
 
 /* loco:649adbc029c685e8c20dc096 */
-"lockedMailboxTitle-plural" = "Buzones de correo bloqueados";
+"lockedMailboxTitle-plural" = "Algunos de sus buzones están bloqueados";
 
 /* loco:64ad0bf21a8c5c3877078262 */
 "lockedMailboxTitle-plural-many" = "";

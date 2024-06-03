@@ -860,7 +860,7 @@
 "lockedMailboxTitle" = "Blockierte E-Mail-Adresse";
 
 /* loco:649adbc029c685e8c20dc096 */
-"lockedMailboxTitle-plural" = "Gesperrte Mailadressen";
+"lockedMailboxTitle-plural" = "Einige Ihrer Mailboxen sind blockiert";
 
 /* loco:64ad0bf21a8c5c3877078262 */
 "lockedMailboxTitle-plural-many" = "";
