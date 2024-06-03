@@ -42,7 +42,7 @@ struct MailboxListView: View {
                     IKIcon(MailResourcesAsset.addCircle)
                         .foregroundStyle(.tint)
                         .padding(value: .regular)
-                        .accessibility(label: Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses))
+                        .accessibilityLabel(MailResourcesStrings.Localizable.buttonAddEmailAddress)
                 }
             }
 

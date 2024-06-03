@@ -51,7 +51,7 @@ struct ComposeMessageHeaderView: View {
                 type: .to,
                 areCCAndBCCEmpty: draft.cc.isEmpty && draft.bcc.isEmpty
             )
-            .accessibility(label: Text(MailResourcesStrings.Localizable.toTitle))
+            .accessibilityLabel(MailResourcesStrings.Localizable.toTitle)
 
             if showRecipientsFields {
                 ComposeMessageCellRecipients(
@@ -61,7 +61,7 @@ struct ComposeMessageHeaderView: View {
                     focusedField: _focusedField,
                     type: .cc
                 )
-                .accessibility(label: Text(MailResourcesStrings.Localizable.ccTitle))
+                .accessibilityLabel(MailResourcesStrings.Localizable.ccTitle)
 
                 ComposeMessageCellRecipients(
                     recipients: $draft.bcc,
@@ -70,7 +70,7 @@ struct ComposeMessageHeaderView: View {
                     focusedField: _focusedField,
                     type: .bcc
                 )
-                .accessibility(label: Text(MailResourcesStrings.Localizable.bccTitle))
+                .accessibilityLabel(MailResourcesStrings.Localizable.bccTitle)
             }
 
             ComposeMessageCellTextField(
@@ -79,7 +79,7 @@ struct ComposeMessageHeaderView: View {
                 autocompletionType: autocompletionType,
                 type: .subject
             )
-            .accessibility(label: Text(MailResourcesStrings.Localizable.subjectTitle))
+            .accessibilityLabel(MailResourcesStrings.Localizable.subjectTitle)
         }
         .onAppear {
             showRecipientsFields = !draft.bcc.isEmpty || !draft.cc.isEmpty
