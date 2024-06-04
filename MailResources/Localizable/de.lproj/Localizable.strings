@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: de, German
  * Tagged: ios
- * Exported by: Charlene Hoareau
- * Exported at: Mon, 13 May 2024 11:43:06 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Tue, 04 Jun 2024 12:29:31 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1076,7 +1076,7 @@
 "restoreEmailsTitle" = "Wiederherstellung Ihrer E-Mails";
 
 /* loco:6527b6ed91798bfb5d0960e2 */
-"reviewAlertTitle" = "Möchten Sie Infomaniak Mail?";
+"reviewAlertTitle" = "Mögen Sie Infomaniak Mail?";
 
 /* loco:62a9db4ae45f1e29371ff802 */
 "scheduledMessagesFolder" = "Geplante Nachrichten";
