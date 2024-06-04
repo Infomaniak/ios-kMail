@@ -21,6 +21,7 @@ import InfomaniakCoreUI
 import InfomaniakCreateAccount
 import InfomaniakDI
 import InfomaniakLogin
+import InfomaniakOnboarding
 import Lottie
 import MailCore
 import MailCoreUI
@@ -28,62 +29,73 @@ import MailResources
 import SwiftModalPresentation
 import SwiftUI
 
-struct Slide: Identifiable {
-    let id: Int
-    let backgroundImage: Image
-    let title: String
-    var description: String?
-    var showPicker = false
-    var asset: Image?
-    var lottieConfiguration: MailCoreUI.LottieConfiguration?
-
-    static let onBoardingSlides = [
-        Slide(
-            id: 1,
-            backgroundImage: MailResourcesAsset.onboardingBackground1.swiftUIImage,
-            title: MailResourcesStrings.Localizable.onBoardingTitle1,
-            showPicker: true,
-            lottieConfiguration: LottieConfiguration(id: 1, filename: "illu_onboarding_1", loopFrameStart: 54, loopFrameEnd: 138)
-        ),
-        Slide(
-            id: 2,
-            backgroundImage: MailResourcesAsset.onboardingBackground2.swiftUIImage,
-            title: MailResourcesStrings.Localizable.onBoardingTitle2,
-            description: MailResourcesStrings.Localizable.onBoardingDescription2,
-            lottieConfiguration: LottieConfiguration(id: 2, filename: "illu_onboarding_2", loopFrameStart: 108, loopFrameEnd: 253)
-        ),
-        Slide(
-            id: 3,
-            backgroundImage: MailResourcesAsset.onboardingBackground3.swiftUIImage,
-            title: MailResourcesStrings.Localizable.onBoardingTitle3,
-            description: MailResourcesStrings.Localizable.onBoardingDescription3,
-            lottieConfiguration: LottieConfiguration(id: 3, filename: "illu_onboarding_3", loopFrameStart: 111, loopFrameEnd: 187)
-        ),
-        Slide(
-            id: 4,
-            backgroundImage: MailResourcesAsset.onboardingBackground4.swiftUIImage,
-            title: MailResourcesStrings.Localizable.onBoardingTitle4,
-            description: MailResourcesStrings.Localizable.onBoardingDescription4,
-            lottieConfiguration: LottieConfiguration(id: 4, filename: "illu_onboarding_4", loopFrameStart: 127, loopFrameEnd: 236)
-        )
-    ]
-
-    static let authorizationSlides = [
-        Slide(
-            id: AuthorizationSlide.contacts.rawValue,
-            backgroundImage: MailResourcesAsset.onboardingBackground1.swiftUIImage,
-            title: MailResourcesStrings.Localizable.onBoardingContactsTitle,
-            description: MailResourcesStrings.Localizable.onBoardingContactsDescription,
-            asset: MailResourcesAsset.authorizationContact.swiftUIImage
-        ),
-        Slide(
-            id: AuthorizationSlide.notifications.rawValue,
-            backgroundImage: MailResourcesAsset.onboardingBackground2.swiftUIImage,
-            title: MailResourcesStrings.Localizable.onBoardingNotificationsTitle,
-            description: MailResourcesStrings.Localizable.onBoardingNotificationsDescription,
-            asset: MailResourcesAsset.authorizationNotification.swiftUIImage
-        )
-    ]
+extension Slide {
+    static var onboardingSlides: [Slide] {
+        let accentColor = UserDefaults.shared.accentColor
+        return [
+            Slide(
+                backgroundImage: MailResourcesAsset.onboardingBackground1.image,
+                backgroundImageTintColor: accentColor.secondary.color,
+                content: .animation(IKLottieConfiguration(
+                    id: 1,
+                    filename: "illu_onboarding_1",
+                    bundle: MailResourcesResources.bundle,
+                    loopFrameStart: 54,
+                    loopFrameEnd: 138,
+                    lottieConfiguration: .init(renderingEngine: .mainThread)
+                )),
+                bottomView: OnboardingThemePickerView(title: MailResourcesStrings.Localizable.onBoardingTitle1)
+            ),
+            Slide(
+                backgroundImage: MailResourcesAsset.onboardingBackground2.image,
+                backgroundImageTintColor: accentColor.secondary.color,
+                content: .animation(IKLottieConfiguration(
+                    id: 2,
+                    filename: "illu_onboarding_2",
+                    bundle: MailResourcesResources.bundle,
+                    loopFrameStart: 108,
+                    loopFrameEnd: 253,
+                    lottieConfiguration: .init(renderingEngine: .mainThread)
+                )),
+                bottomView: OnboardingTextView(
+                    title: MailResourcesStrings.Localizable.onBoardingTitle2,
+                    description: MailResourcesStrings.Localizable.onBoardingDescription2
+                )
+            ),
+            Slide(
+                backgroundImage: MailResourcesAsset.onboardingBackground3.image,
+                backgroundImageTintColor: accentColor.secondary.color,
+                content: .animation(IKLottieConfiguration(
+                    id: 3,
+                    filename: "illu_onboarding_3",
+                    bundle: MailResourcesResources.bundle,
+                    loopFrameStart: 111,
+                    loopFrameEnd: 187,
+                    lottieConfiguration: .init(renderingEngine: .mainThread)
+                )),
+                bottomView: OnboardingTextView(
+                    title: MailResourcesStrings.Localizable.onBoardingTitle3,
+                    description: MailResourcesStrings.Localizable.onBoardingDescription3
+                )
+            ),
+            Slide(
+                backgroundImage: MailResourcesAsset.onboardingBackground4.image,
+                backgroundImageTintColor: accentColor.secondary.color,
+                content: .animation(IKLottieConfiguration(
+                    id: 4,
+                    filename: "illu_onboarding_4",
+                    bundle: MailResourcesResources.bundle,
+                    loopFrameStart: 127,
+                    loopFrameEnd: 236,
+                    lottieConfiguration: .init(renderingEngine: .mainThread)
+                )),
+                bottomView: OnboardingTextView(
+                    title: MailResourcesStrings.Localizable.onBoardingTitle4,
+                    description: MailResourcesStrings.Localizable.onBoardingDescription4
+                )
+            )
+        ]
+    }
 }
 
 @MainActor
@@ -170,122 +182,9 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
     }
 }
 
-struct OnboardingView: View {
-    @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var navigationState: RootViewState
-
-    @LazyInjectService var orientationManager: OrientationManageable
-
-    @State private var selection: Int
-    @ModalState(context: ContextKeys.onboarding) private var isPresentingCreateAccount = false
-    @StateObject private var loginHandler = LoginHandler()
-
-    private var isScrollEnabled: Bool
-    private var slides = Slide.onBoardingSlides
-
-    private var isLastSlide: Bool {
-        selection == slides.count
-    }
-
-    init(page: Int = 1, isScrollEnabled: Bool = true) {
-        _selection = State(initialValue: page)
-        self.isScrollEnabled = isScrollEnabled
-        UIPageControl.appearance().currentPageIndicatorTintColor = .tintColor
-        UIPageControl.appearance().pageIndicatorTintColor = MailResourcesAsset.elementsColor.color
-    }
-
-    var body: some View {
-        VStack(spacing: 0) {
-            Group {
-                if isScrollEnabled {
-                    TabView(selection: $selection) {
-                        ForEach(slides) { slide in
-                            SlideView(slide: slide, updateAnimationColors: updateAnimationColors)
-                                .tag(slide.id)
-                        }
-                    }
-                    .tabViewStyle(.page)
-                    .ignoresSafeArea(edges: .top)
-                } else if let slide = slides.first(where: { $0.id == selection }) {
-                    SlideView(slide: slide)
-                }
-            }
-            .overlay(alignment: .top) {
-                MailResourcesAsset.logoText.swiftUIImage
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: UIConstants.onboardingLogoHeight)
-                    .padding(.top, UIPadding.onBoardingLogoTop)
-            }
-
-            VStack(spacing: UIPadding.small) {
-                Button(MailResourcesStrings.Localizable.buttonLogin) {
-                    loginHandler.login()
-                }
-                .buttonStyle(.ikPlain)
-                .ikButtonLoading(loginHandler.isLoading)
-
-                Button(MailResourcesStrings.Localizable.buttonCreateAccount) {
-                    isPresentingCreateAccount.toggle()
-                }
-                .buttonStyle(.ikLink())
-                .disabled(loginHandler.isLoading)
-            }
-            .ikButtonFullWidth(true)
-            .controlSize(.large)
-            .opacity(isLastSlide ? 1 : 0)
-            .overlay {
-                if !isLastSlide {
-                    Button {
-                        withAnimation {
-                            selection = min(slides.count, selection + 1)
-                        }
-                    } label: {
-                        IKIcon(MailResourcesAsset.fullArrowRight, size: .large)
-                    }
-                    .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonNext)
-                    .buttonStyle(.ikSquare)
-                    .controlSize(.large)
-                }
-            }
-            .padding(.horizontal, value: .medium)
-            .padding(.bottom, UIPadding.onBoardingBottomButtons)
-        }
-        .overlay(alignment: .topLeading) {
-            if !isScrollEnabled {
-                CloseButton(size: .regular, dismissAction: dismiss)
-                    .padding(.top, UIPadding.onBoardingLogoTop)
-                    .padding(.top, value: .verySmall)
-                    .padding(.leading, value: .medium)
-            }
-        }
-        .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $loginHandler.isPresentingErrorAlert) {
-            // Use default button
-        } message: {
-            Text(MailResourcesStrings.Localizable.errorLoginDescription)
-        }
-        .onAppear {
-            if UIDevice.current.userInterfaceIdiom == .phone {
-                UIDevice.current
-                    .setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-                orientationManager.setOrientationLock(.portrait)
-                UIViewController.attemptRotationToDeviceOrientation()
-            }
-        }
-        .onChange(of: loginHandler.shouldShowEmptyMailboxesView) { shouldShowEmptyMailboxesView in
-            if shouldShowEmptyMailboxesView {
-                navigationState.transitionToRootViewDestination(.noMailboxes)
-            }
-        }
-        .matomoView(view: [MatomoUtils.View.onboarding.displayName, "Main"])
-        .sheet(isPresented: $isPresentingCreateAccount) {
-            CreateAccountView(loginHandler: loginHandler)
-        }
-    }
-
-    // MARK: - Private methods
-
-    private func updateAnimationColors(_ animation: LottieAnimationView, _ configuration: MailCoreUI.LottieConfiguration) {
+extension SlideCollectionViewCell {
+    func updateAnimationColors(configuration: IKLottieConfiguration) {
+        guard let animation = illustrationAnimationView else { return }
         IlluColors.onBoardingAllColors.forEach { $0.applyColors(to: animation) }
 
         if configuration.id == 2 || configuration.id == 3 || configuration.id == 4 {
@@ -344,6 +243,35 @@ struct OnboardingView: View {
                 break
             }
         }
+    }
+}
+
+struct OnboardingView: View {
+    @LazyInjectService private var orientationManager: OrientationManageable
+
+    @State private var selectedSlide = 0
+
+    private let slides = Slide.onboardingSlides
+
+    var body: some View {
+        WaveView(slides: slides, selectedSlide: $selectedSlide) { index in
+            return index == slides.count - 1 || (index == slides.count - 2 && selectedSlide == slides.count - 1)
+        } bottomView: { _ in
+            OnboardingBottomButtonsView(
+                selection: $selectedSlide,
+                slideCount: slides.count
+            )
+        }
+        .ignoresSafeArea()
+        .onAppear {
+            if UIDevice.current.userInterfaceIdiom == .phone {
+                UIDevice.current
+                    .setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
+                orientationManager.setOrientationLock(.portrait)
+                UIViewController.attemptRotationToDeviceOrientation()
+            }
+        }
+        .matomoView(view: [MatomoUtils.View.onboarding.displayName, "Main"])
     }
 }
 

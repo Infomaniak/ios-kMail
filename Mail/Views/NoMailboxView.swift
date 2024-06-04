@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakOnboarding
 import MailCore
 import MailResources
 import SwiftUI
@@ -24,25 +25,17 @@ struct NoMailboxView: View {
     @Environment(\.openURL) private var openURL
 
     @State private var isShowingLoginView = false
-    let slide = Slide(
-        id: 1,
-        backgroundImage: MailResourcesAsset.onboardingBackground3.swiftUIImage,
-        title: MailResourcesStrings.Localizable.noMailboxTitle,
-        description: MailResourcesStrings.Localizable.noMailboxDescription,
-        asset: MailResourcesAsset.noMailbox.swiftUIImage
-    )
+
+    private let slide = Slide(backgroundImage: MailResourcesAsset.onboardingBackground3.image,
+                              backgroundImageTintColor: UserDefaults.shared.accentColor.secondary.color,
+                              content: .illustration(MailResourcesAsset.noMailbox.image),
+                              bottomView: OnboardingTextView(
+                                  title: MailResourcesStrings.Localizable.noMailboxTitle,
+                                  description: MailResourcesStrings.Localizable.noMailboxDescription
+                              ))
 
     var body: some View {
-        VStack(spacing: 0) {
-            SlideView(slide: slide)
-                .overlay(alignment: .top) {
-                    MailResourcesAsset.logoText.swiftUIImage
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: UIConstants.onboardingLogoHeight)
-                        .padding(.top, UIPadding.onBoardingLogoTop)
-                }
-
+        WaveView(slides: [slide], selectedSlide: .constant(0)) { _ in
             VStack(spacing: UIPadding.small) {
                 Button(MailResourcesStrings.Localizable.buttonAddEmailAddress) {
                     openURL(URLConstants.ikMe.url)
@@ -59,9 +52,10 @@ struct NoMailboxView: View {
             .padding(.horizontal, value: .medium)
             .padding(.bottom, UIPadding.onBoardingBottomButtons)
         }
+        .ignoresSafeArea()
         .matomoView(view: ["NoMailboxView"])
         .fullScreenCover(isPresented: $isShowingLoginView) {
-            OnboardingView(page: 4, isScrollEnabled: false)
+            SingleOnboardingView()
         }
     }
 }

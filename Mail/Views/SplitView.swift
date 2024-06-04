@@ -20,8 +20,10 @@ import Combine
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
+import Lottie
 import MailCore
 import MailCoreUI
+import MailResources
 import NavigationBackport
 import RealmSwift
 import SwiftModalPresentation
@@ -99,21 +101,19 @@ struct SplitView: View {
         }
         .overlay(alignment: .bottom) {
             if EasterEgg.christmas.shouldTrigger() && mainViewState.isShowingChristmasEasterEgg {
-                LottieView(configuration: LottieConfiguration(
-                    id: 1,
-                    filename: "easter_egg_xmas",
-                    contentMode: .scaleAspectFill
-                )) {
-                    mainViewState.isShowingChristmasEasterEgg = false
-                }
-                .frame(maxWidth: .infinity)
-                .frame(height: 200)
-                .padding(.bottom, 96)
-                .ignoresSafeArea()
-                .allowsHitTesting(false)
-                .onAppear {
-                    EasterEgg.christmas.onTrigger()
-                }
+                LottieView(animation: LottieAnimation.named("easter_egg_xmas", bundle: MailResourcesResources.bundle))
+                    .animationDidFinish { _ in
+                        mainViewState.isShowingChristmasEasterEgg = false
+                    }
+                    .playing(loopMode: .playOnce)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 200)
+                    .padding(.bottom, 96)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+                    .onAppear {
+                        EasterEgg.christmas.onTrigger()
+                    }
             }
         }
         .discoveryPresenter(isPresented: $mainViewState.isShowingUpdateAvailable) {

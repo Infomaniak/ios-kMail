@@ -18,6 +18,7 @@
 
 import InfomaniakCoreUI
 import InfomaniakDI
+import InfomaniakOnboarding
 import MailCore
 import MailResources
 import SwiftUI
@@ -27,30 +28,27 @@ struct SyncWelcomeView: View {
 
     @Binding var navigationPath: [SyncProfileStep]
 
-    private let slide = Slide(
-        id: 0,
-        backgroundImage: MailResourcesAsset.onboardingBackground4.swiftUIImage,
-        title: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle,
-        description: MailResourcesStrings.Localizable.syncCalendarsAndContactsDescription,
-        asset: MailResourcesAsset.syncIllustration.swiftUIImage
-    )
+    private let slide = Slide(backgroundImage: MailResourcesAsset.onboardingBackground4.image,
+                              backgroundImageTintColor: UserDefaults.shared.accentColor.secondary.color,
+                              content: .illustration(MailResourcesAsset.syncIllustration.image),
+                              bottomView: OnboardingTextView(
+                                  title: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle,
+                                  description: MailResourcesStrings.Localizable.syncCalendarsAndContactsDescription
+                              ))
 
     var body: some View {
-        SlideView(slide: slide)
-            .ignoresSafeArea(edges: .top)
-            .safeAreaInset(edge: .bottom) {
-                VStack(spacing: UIPadding.small) {
-                    Button(MailResourcesStrings.Localizable.buttonStart) {
-                        matomo.track(eventWithCategory: .syncAutoConfig, name: "start")
-                        navigationPath.append(.downloadProfile)
-                    }
-                    .buttonStyle(.ikPlain)
-                    .controlSize(.large)
-                    .ikButtonFullWidth(true)
-                }
-                .padding(.horizontal, value: .medium)
-                .padding(.bottom, UIPadding.onBoardingBottomButtons)
+        WaveView(slides: [slide], selectedSlide: .constant(0), headerImage: nil) { _ in
+            Button(MailResourcesStrings.Localizable.buttonStart) {
+                matomo.track(eventWithCategory: .syncAutoConfig, name: "start")
+                navigationPath.append(.downloadProfile)
             }
+            .buttonStyle(.ikPlain)
+            .controlSize(.large)
+            .ikButtonFullWidth(true)
+            .padding(.horizontal, value: .medium)
+            .padding(.bottom, UIPadding.onBoardingBottomButtons)
+        }
+        .ignoresSafeArea(edges: .top)
     }
 }
 

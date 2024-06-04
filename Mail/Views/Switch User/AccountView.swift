@@ -77,13 +77,16 @@ struct AccountView: View {
                 .padding(.top, value: .medium)
                 .background {
                     if EasterEgg.halloween.shouldTrigger() {
-                        LottieView(configuration: LottieConfiguration(id: 1, filename: "easter_egg_halloween"),
-                                   isVisible: isLottieAnimationVisible)
-                            .offset(y: AccountView.avatarViewSize)
-                            .allowsHitTesting(false)
-                            .onAppear {
-                                EasterEgg.halloween.onTrigger()
-                            }
+                        LottieView(animation: LottieAnimation.named(
+                            "easter_egg_halloween",
+                            bundle: MailResourcesResources.bundle
+                        ))
+                        .playing(loopMode: .playOnce)
+                        .offset(y: AccountView.avatarViewSize)
+                        .allowsHitTesting(false)
+                        .onAppear {
+                            EasterEgg.halloween.onTrigger()
+                        }
                     }
                 }
                 .zIndex(1)

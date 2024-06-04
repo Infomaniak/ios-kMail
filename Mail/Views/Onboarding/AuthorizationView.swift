@@ -19,9 +19,29 @@
 import Contacts
 import InfomaniakCoreUI
 import InfomaniakDI
+import InfomaniakOnboarding
 import MailCore
 import MailResources
 import SwiftUI
+
+extension Slide {
+    static let authorizationSlides = [
+        Slide(backgroundImage: MailResourcesAsset.onboardingBackground1.image,
+              backgroundImageTintColor: UserDefaults.shared.accentColor.secondary.color,
+              content: .illustration(MailResourcesAsset.authorizationContact.image),
+              bottomView: OnboardingTextView(
+                  title: MailResourcesStrings.Localizable.onBoardingContactsTitle,
+                  description: MailResourcesStrings.Localizable.onBoardingContactsDescription
+              )),
+        Slide(backgroundImage: MailResourcesAsset.onboardingBackground2.image,
+              backgroundImageTintColor: UserDefaults.shared.accentColor.secondary.color,
+              content: .illustration(MailResourcesAsset.authorizationNotification.image),
+              bottomView: OnboardingTextView(
+                  title: MailResourcesStrings.Localizable.onBoardingNotificationsTitle,
+                  description: MailResourcesStrings.Localizable.onBoardingNotificationsDescription
+              ))
+    ]
+}
 
 enum AuthorizationSlide: Int {
     case contacts
@@ -34,29 +54,12 @@ struct AuthorizationView: View {
     @EnvironmentObject private var navigationState: RootViewState
 
     @State private var selection = AuthorizationSlide.contacts.rawValue
-    @State private var isScrollDisabled = true
+    @State private var isScrollEnabled = false
 
     private var slides = Slide.authorizationSlides
 
     var body: some View {
-        VStack(spacing: 0) {
-            TabView(selection: $selection) {
-                ForEach(slides) { slide in
-                    SlideView(slide: slide)
-                        .tag(slide.id)
-                }
-            }
-            .tabViewStyle(.page(indexDisplayMode: .never))
-            .ignoresSafeArea(edges: .top)
-            .disabled(isScrollDisabled)
-            .overlay(alignment: .top) {
-                MailResourcesAsset.logoText.swiftUIImage
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: UIConstants.onboardingLogoHeight)
-                    .padding(.top, UIPadding.onBoardingLogoTop)
-            }
-
+        WaveView(slides: slides, selectedSlide: $selection, isScrollEnabled: isScrollEnabled) { _ in
             VStack(spacing: UIPadding.small) {
                 Button(MailResourcesStrings.Localizable.contentDescriptionButtonNext, action: nextButtonClicked)
                     .buttonStyle(.ikPlain)
@@ -66,6 +69,7 @@ struct AuthorizationView: View {
             .padding(.horizontal, value: .medium)
             .padding(.bottom, UIPadding.onBoardingBottomButtons)
         }
+        .ignoresSafeArea()
         .matomoView(view: [MatomoUtils.View.onboarding.displayName, "Authorization"])
         .task(id: accountManager.currentMailboxManager) {
             await fetchFirstMessagesInBackground()
@@ -98,10 +102,10 @@ struct AuthorizationView: View {
     private func requestContactsAuthorization() {
         Task {
             let accessAllowed = await (try? CNContactStore().requestAccess(for: .contacts))
-            isScrollDisabled = false
+            isScrollEnabled = true
             withAnimation {
                 selection = AuthorizationSlide.notifications.rawValue
-                isScrollDisabled = true
+                isScrollEnabled = false
             }
             if accessAllowed != nil {
                 try await accountManager.currentMailboxManager?.contactManager.refreshContactsAndAddressBooks()

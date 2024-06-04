@@ -100,7 +100,7 @@ struct UnavailableMailboxesView: View {
         .fullScreenCover(isPresented: $isShowingNewAccountView) {
             orientationManager.setOrientationLock(.all)
         } content: {
-            OnboardingView(page: 4, isScrollEnabled: false)
+            SingleOnboardingView()
         }
     }
 }
