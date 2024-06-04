@@ -860,10 +860,13 @@
 "lockedMailboxTitle" = "Blockierte E-Mail-Adresse";
 
 /* loco:649adbc029c685e8c20dc096 */
-"lockedMailboxTitle-plural" = "Einige Ihrer Mailboxen sind blockiert";
+"lockedMailboxTitle-plural" = "Gesperrte Mailadressen";
 
 /* loco:64ad0bf21a8c5c3877078262 */
 "lockedMailboxTitle-plural-many" = "";
+
+/* loco:665ed97d84c0a50abb0783d3 */
+"lockedMailboxTitleIB" = "Einige Ihrer Mailboxen sind blockiert";
 
 /* loco:6639ec5faf37f28888054ea2 */
 "manageSignatures" = "Meine Signaturen verwalten";

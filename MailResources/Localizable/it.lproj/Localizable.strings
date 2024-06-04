@@ -4,7 +4,7 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Tue, 04 Jun 2024 10:04:13 +0200
+ * Exported at: Tue, 04 Jun 2024 11:17:27 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -860,10 +860,13 @@
 "lockedMailboxTitle" = "Indirizzo e-mail bloccato";
 
 /* loco:649adbc029c685e8c20dc096 */
-"lockedMailboxTitle-plural" = "Alcuni indirizzi e-mail bloccati";
+"lockedMailboxTitle-plural" = "Indirizzi e-mail bloccati";
 
 /* loco:64ad0bf21a8c5c3877078262 */
 "lockedMailboxTitle-plural-many" = "";
+
+/* loco:665ed97d84c0a50abb0783d3 */
+"lockedMailboxTitleIB" = "Alcuni indirizzi e-mail bloccati";
 
 /* loco:6639ec5faf37f28888054ea2 */
 "manageSignatures" = "Gestisci le mie firme";
