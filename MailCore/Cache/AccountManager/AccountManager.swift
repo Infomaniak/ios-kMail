@@ -58,7 +58,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     public static let appGroup = "group." + group
     public static let accessGroup: String = AccountManager.appIdentifierPrefix + AccountManager.group
 
-    private var currentAccount: Account?
+    @SendableProperty private var currentAccount: Account?
 
     public var currentUserId: Int {
         didSet {
