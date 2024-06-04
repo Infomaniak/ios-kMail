@@ -68,33 +68,27 @@ struct AttachmentsView: View {
                 .padding(.vertical, 1)
             }
 
-            HStack(spacing: UIPadding.small) {
-                Label {
-                    if let swissTransferAttachment = message.swissTransferAttachment, !attachments.isEmpty {
-                        let totalSize = message.attachmentsSize + swissTransferAttachment.size
-                        Text(
-                            "\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) \(MailResourcesStrings.Localizable.linkingWord) \(MailResourcesStrings.Localizable.fileQuantity(swissTransferAttachment.files.count)) (\(totalSize, format: .defaultByteCount))")
-                    } else if let swissTransferAttachment = message.swissTransferAttachment, attachments.isEmpty {
-                        Text(
-                            "\(MailResourcesStrings.Localizable.fileQuantity(swissTransferAttachment.nbfiles)) (\(swissTransferAttachment.size, format: .defaultByteCount))"
-                        )
-                    } else {
-                        Text(
-                            "\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) (\(message.attachmentsSize, format: .defaultByteCount))"
-                        )
-                    }
-                } icon: {
-                    IKIcon(MailResourcesAsset.attachment)
+            Button {
+                downloadAllAttachments()
+            } label: {
+                HStack(alignment: .iconAndMultilineTextAlignment, spacing: UIPadding.small) {
+                    MailResourcesAsset.attachment.swiftUIImage
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 16, height: 16)
                         .foregroundStyle(MailResourcesAsset.textSecondaryColor)
+                        .alignmentGuide(.iconAndMultilineTextAlignment) { d in
+                            d[VerticalAlignment.center]
+                        }
+
+                    Text(attributedString())
+                        .textStyle(.bodySmallSecondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .alignmentGuide(.iconAndMultilineTextAlignment) { d in
+                            (d.height - (d[.lastTextBaseline] - d[.firstTextBaseline])) / 2
+                        }
+                        .multilineTextAlignment(.leading)
                 }
-                .textStyle(.bodySmallSecondary)
-
-                Button(MailResourcesStrings.Localizable.buttonDownloadAll, action: downloadAllAttachments)
-                    .buttonStyle(.ikLink(isInlined: true))
-                    .controlSize(.small)
-                    .ikButtonLoading(downloadInProgress)
-
-                Spacer()
             }
             .padding(.horizontal, value: .regular)
         }
@@ -109,6 +103,28 @@ struct AttachmentsView: View {
             DocumentPicker(pickerType: .exportContent([allAttachmentsURL.url]))
                 .ignoresSafeArea()
         }
+    }
+
+    private func attributedString() -> AttributedString {
+        var text: String
+
+        if let swissTransferAttachment = message.swissTransferAttachment, !attachments.isEmpty {
+            let totalSize = message.attachmentsSize + swissTransferAttachment.size
+            text = "\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) \(MailResourcesStrings.Localizable.linkingWord) \(MailResourcesStrings.Localizable.fileQuantity(swissTransferAttachment.files.count)) (\(totalSize.formatted(.defaultByteCount))). \(MailResourcesStrings.Localizable.buttonDownloadAll)"
+
+        } else if let swissTransferAttachment = message.swissTransferAttachment, attachments.isEmpty {
+            text = "\(MailResourcesStrings.Localizable.fileQuantity(swissTransferAttachment.nbfiles)) (\(swissTransferAttachment.size.formatted(.defaultByteCount))). \(MailResourcesStrings.Localizable.buttonDownloadAll)"
+
+        } else {
+            text = "\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) (\(message.attachmentsSize.formatted(.defaultByteCount))). \(MailResourcesStrings.Localizable.buttonDownloadAll)"
+        }
+
+        var attributedString = AttributedString(text)
+        if let range = attributedString.range(of: MailResourcesStrings.Localizable.buttonDownloadAll) {
+            attributedString[range].foregroundColor = .accentColor
+        }
+
+        return attributedString
     }
 
     private func openAttachment(_ attachment: Attachment) {
