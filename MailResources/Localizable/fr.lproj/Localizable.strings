@@ -4,7 +4,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Thu, 23 May 2024 10:07:10 +0200
+ * Exported at: Tue, 04 Jun 2024 10:04:13 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -848,7 +848,7 @@
 "lockAppTitle" = "Application verrouillée";
 
 /* loco:6491b5d13be3801fbb056c22 */
-"lockedMailboxDescription" = "L’accès à votre adresse mail est actuellement bloqué. Nous vous invitons à contacter votre administrateur.";
+"lockedMailboxDescription" = "L’accès à votre adresse mail est actuellement bloqué.\nPour plus d’informations, consultez les FAQ.";
 
 /* loco:649adc1b599c6ce9d6099fa2 */
 "lockedMailboxDescription-plural" = "Pour plus d’informations :";

@@ -16,13 +16,18 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
 
 struct LockedMailboxView: View {
+    @LazyInjectService private var accountManager: AccountManager
+
     @Environment(\.dismiss) private var dismiss
+
+    let mailbox: Mailbox
 
     var body: some View {
         VStack(spacing: UIPadding.regular) {
@@ -30,7 +35,7 @@ struct LockedMailboxView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(height: 64)
-            Text(MailResourcesStrings.Localizable.lockedMailboxTitle)
+            Text(attributedString())
                 .textStyle(.header2)
                 .multilineTextAlignment(.center)
             Text(MailResourcesStrings.Localizable.lockedMailboxDescription)
@@ -38,10 +43,10 @@ struct LockedMailboxView: View {
                 .multilineTextAlignment(.center)
                 .padding(.vertical, value: .medium)
 
-            Button(MailResourcesStrings.Localizable.buttonClose) {
+            Button(MailResourcesStrings.Localizable.externalDialogConfirmButton) {
                 dismiss()
             }
-            .buttonStyle(.ikLink())
+            .buttonStyle(.ikPlain)
             .controlSize(.large)
             .ikButtonFullWidth(true)
         }
@@ -49,11 +54,26 @@ struct LockedMailboxView: View {
         .padding(.top, value: .regular)
         .matomoView(view: ["LockedMailboxView"])
     }
+
+    func attributedString() -> AttributedString {
+        do {
+            var text = try AttributedString(markdown: MailResourcesStrings.Localizable
+                .blockedMailboxTitle("**\(mailbox.email)**"))
+
+            if let range = text.range(of: mailbox.email) {
+                text[range].foregroundColor = MailResourcesAsset.textPrimaryColor.swiftUIColor
+            }
+
+            return text
+        } catch {
+            return ""
+        }
+    }
 }
 
 #Preview {
     Text("Preview")
         .floatingPanel(isPresented: .constant(true)) {
-            LockedMailboxView()
+            LockedMailboxView(mailbox: PreviewHelper.sampleMailbox)
         }
 }

@@ -848,7 +848,7 @@
 "lockAppTitle" = "Anwendung gesperrt";
 
 /* loco:6491b5d13be3801fbb056c22 */
-"lockedMailboxDescription" = "Der Zugriff auf Ihre E-Mail-Adresse ist derzeit gesperrt. Bitte wenden Sie sich an Ihren Administrator.";
+"lockedMailboxDescription" = "Der Zugriff auf Ihre E-Mail-Adresse ist derzeit gesperrt.\nFür weitere Informationen, FAQ lesen.";
 
 /* loco:649adc1b599c6ce9d6099fa2 */
 "lockedMailboxDescription-plural" = "Für weitere Informationen:";

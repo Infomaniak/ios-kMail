@@ -4,7 +4,7 @@
  * Locale: es, Spanish
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Mon, 03 Jun 2024 13:35:00 +0200
+ * Exported at: Tue, 04 Jun 2024 10:04:13 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -848,7 +848,7 @@
 "lockAppTitle" = "Aplicación bloqueada";
 
 /* loco:6491b5d13be3801fbb056c22 */
-"lockedMailboxDescription" = "El acceso a su dirección de correo electrónico está bloqueado. Póngase en contacto con su administrador.";
+"lockedMailboxDescription" = "El acceso a su dirección de correo electrónico está bloqueado.\nPara más información, lea las preguntas frecuentes.";
 
 /* loco:649adc1b599c6ce9d6099fa2 */
 "lockedMailboxDescription-plural" = "Para más información:";
