@@ -63,7 +63,7 @@ extension MailboxManager {
     }
 
     private func getFrozenCalendarAttachment(from message: Message) -> Attachment? {
-        return message.attachments.first { $0.uti?.conforms(to: .calendarEvent) == true }?.freezeIfNeeded()
+        return message.attachments.first { AttachmentHelper(type: $0.mimeType).uti?.conforms(to: .calendarEvent) == true }?.freezeIfNeeded()
     }
 
     private func saveCalendarEventResponse(to messageUid: String, eventResponse: CalendarEventResponse) async {
