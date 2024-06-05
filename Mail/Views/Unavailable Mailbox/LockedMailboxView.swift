@@ -23,11 +23,9 @@ import MailResources
 import SwiftUI
 
 struct LockedMailboxView: View {
-    @LazyInjectService private var accountManager: AccountManager
-
     @Environment(\.dismiss) private var dismiss
 
-    let mailbox: Mailbox
+    let email: String
 
     var body: some View {
         VStack(spacing: UIPadding.regular) {
@@ -35,7 +33,7 @@ struct LockedMailboxView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(height: 64)
-            Text(MailResourcesStrings.Localizable.blockedMailboxTitle(mailbox.email))
+            Text(MailResourcesStrings.Localizable.blockedMailboxTitle(email))
                 .textStyle(.header2)
                 .multilineTextAlignment(.center)
             Text(MailResourcesStrings.Localizable.lockedMailboxDescription)
@@ -59,6 +57,6 @@ struct LockedMailboxView: View {
 #Preview {
     Text("Preview")
         .floatingPanel(isPresented: .constant(true)) {
-            LockedMailboxView(mailbox: PreviewHelper.sampleMailbox)
+            LockedMailboxView(email: PreviewHelper.sampleMailbox.email)
         }
 }
