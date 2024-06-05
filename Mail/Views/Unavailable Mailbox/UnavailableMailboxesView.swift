@@ -41,8 +41,7 @@ struct UnavailableMailboxesView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(height: UIConstants.onboardingLogoHeight)
-                            .padding(.top, UIPadding.onBoardingLogoTop)
-                            .padding(.bottom, value: .regular)
+                            .padding(.vertical, UIPadding.onBoardingLogoTop)
 
                         InformationBlockView(
                             icon: MailResourcesAsset.warningFill.swiftUIImage,
@@ -52,7 +51,6 @@ struct UnavailableMailboxesView: View {
                             buttonAction: openFAQ,
                             buttonTitle: MailResourcesStrings.Localizable.readFAQ
                         )
-                        .padding(.top, value: .regular)
 
                         UnavailableMailboxListView()
                     }
