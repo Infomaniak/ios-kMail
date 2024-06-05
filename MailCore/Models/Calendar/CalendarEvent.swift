@@ -141,7 +141,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         title = try container.decode(String.self, forKey: .title)
         location = try container.decode(String?.self, forKey: .location)
         isFullDay = try container.decode(Bool.self, forKey: .isFullDay)
-        status = try container.decode(CalendarEventStatus?.self, forKey: .status)
+        status = try? container.decode(CalendarEventStatus?.self, forKey: .status)
         attendees = try container.decode(List<Attendee>.self, forKey: .attendees)
 
         let startString = try container.decode(String.self, forKey: .start)
