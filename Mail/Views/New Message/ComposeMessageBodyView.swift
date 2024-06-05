@@ -53,8 +53,11 @@ struct ComposeMessageBodyView: View {
                     keepCursorVisible(editorModel.cursorPosition)
                 }
         }
-        .customAlert(isPresented: .constant(false)) {
-            AddLinkView(actionHandler: { _ in })
+        .customAlert(item: $toolbarModel.isShowingLinkAlert) { alert in
+            switch alert.type {
+            case .link(let handler):
+                AddLinkView(actionHandler: handler)
+            }
         }
         .fullScreenCover(isPresented: $toolbarModel.isShowingCamera) {
             CameraPicker { data in

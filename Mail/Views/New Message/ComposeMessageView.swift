@@ -60,7 +60,6 @@ struct NewMessageAlert: Identifiable {
 }
 
 enum NewMessageAlertType {
-    case link(handler: (String) -> Void)
     case emptySubject(handler: () -> Void)
 }
 
@@ -258,8 +257,6 @@ struct ComposeMessageView: View {
         }
         .customAlert(item: $isShowingAlert) { alert in
             switch alert.type {
-            case .link(let handler):
-                AddLinkView(actionHandler: handler)
             case .emptySubject(let handler):
                 EmptySubjectView(actionHandler: handler)
             }
