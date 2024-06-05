@@ -24,11 +24,24 @@ import MailResources
 import SwiftModalPresentation
 import UIKit
 
+struct ToolbarAlert: Identifiable, Equatable {
+    let id = UUID()
+    let type: ToolbarAlertType
+
+    static func == (lhs: ToolbarAlert, rhs: ToolbarAlert) -> Bool {
+        return lhs.id == rhs.id
+    }
+}
+
+enum ToolbarAlertType {
+    case link(handler: (String) -> Void)
+}
+
 final class EditorToolbarModel: ObservableObject {
     @ModalPublished(context: ContextKeys.compose) var isShowingCamera = false
     @ModalPublished(context: ContextKeys.compose) var isShowingFileSelection = false
     @ModalPublished(context: ContextKeys.compose) var isShowingPhotoLibrary = false
-    @ModalPublished(context: ContextKeys.compose) var isShowingLinkAlert = false
+    @ModalPublished(wrappedValue: nil, context: ContextKeys.compose) var isShowingLinkAlert: ToolbarAlert?
 }
 
 enum EditorToolbarStyle {
@@ -51,7 +64,7 @@ enum EditorToolbarStyle {
 }
 
 enum EditorToolbarAction: Int {
-    case bold = 1
+    case bold
     case italic
     case underline
     case strikeThrough
@@ -140,9 +153,11 @@ enum EditorToolbarAction: Int {
             return textAttributes.format.hasUnderline
         case .strikeThrough:
             return textAttributes.format.hasStrikeThrough
+        case .unorderedList:
+            return textAttributes.format.hasUnorderedList
         case .link:
-            return false
-        case .unorderedList, .editText, .ai, .addFile, .addPhoto, .takePhoto, .programMessage:
+            return textAttributes.format.hasLink
+        case .editText, .ai, .addFile, .addPhoto, .takePhoto, .programMessage:
             return false
         }
     }
