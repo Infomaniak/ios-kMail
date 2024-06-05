@@ -35,7 +35,7 @@ struct LockedMailboxView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(height: 64)
-            Text(attributedString())
+            Text(MailResourcesStrings.Localizable.blockedMailboxTitle(mailbox.email))
                 .textStyle(.header2)
                 .multilineTextAlignment(.center)
             Text(MailResourcesStrings.Localizable.lockedMailboxDescription)
@@ -53,21 +53,6 @@ struct LockedMailboxView: View {
         .padding(.horizontal, value: .medium)
         .padding(.top, value: .regular)
         .matomoView(view: ["LockedMailboxView"])
-    }
-
-    func attributedString() -> AttributedString {
-        do {
-            var text = try AttributedString(markdown: MailResourcesStrings.Localizable
-                .blockedMailboxTitle("**\(mailbox.email)**"))
-
-            if let range = text.range(of: mailbox.email) {
-                text[range].foregroundColor = MailResourcesAsset.textPrimaryColor.swiftUIColor
-            }
-
-            return text
-        } catch {
-            return ""
-        }
     }
 }
 
