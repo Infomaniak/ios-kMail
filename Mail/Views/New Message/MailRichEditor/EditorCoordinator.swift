@@ -142,11 +142,10 @@ extension EditorCoordinator {
         case .unorderedList:
             richEditorView.unorderedList()
         case .link:
-//            parent.isShowingAlert = NewMessageAlert(type: .link { path in
-//                guard let url = URL(string: path) else { return }
-//                richEditorView.addLink(url)
-//            })
-            break
+            parent.toolbarModel.isShowingLinkAlert = ToolbarAlert(type: .link { path in
+                guard let url = URL(string: path) else { return }
+                richEditorView.addLink(text: nil, url: url)
+            })
         default:
             fatalError("Action not handled")
         }
