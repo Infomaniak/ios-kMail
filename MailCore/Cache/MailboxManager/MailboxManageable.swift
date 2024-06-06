@@ -21,7 +21,8 @@ import InfomaniakCoreDB
 import RealmSwift
 
 /// An abstract interface on the `MailboxManager`
-public typealias MailboxManageable = MailboxManagerCalendareable
+public typealias MailboxManageable = MailboxManagerAttachable
+    & MailboxManagerCalendareable
     & MailboxManagerContactable
     & MailboxManagerDraftable
     & MailboxManagerFolderable
@@ -99,6 +100,10 @@ public protocol MailboxManagerCalendareable {
     func calendarEvent(from messageUid: String) async throws
     func replyToCalendarEvent(messageUid: String, reply: AttendeeState) async throws
     func importICSEventToCalendar(messageUid: String) async throws -> CalendarEvent
+}
+
+public protocol MailboxManagerAttachable {
+    func swissTransferAttachment(message: Message) async throws
 }
 
 // TODO: write a dedicated protocol for each MailboxManager+<>
