@@ -261,8 +261,16 @@ public extension Endpoint {
     static func importICSEventToCalendar(resource: String) -> Endpoint {
         return .resource(resource).appending(path: "/import-ics")
     }
-    
+
     static func swissTransfer(stUuid: String) -> Endpoint {
         return .base.appending(path: "/swisstransfer/containers/\(stUuid)")
+    }
+
+    static func downloadSwissTransferAttachment(stUuid: String, fileUuid: String) -> Endpoint {
+        return .swissTransfer(stUuid: stUuid).appending(path: "/files/\(fileUuid)")
+    }
+
+    static func downloadAllSwissTransferAttachments(stUuid: String) -> Endpoint {
+        return .swissTransfer(stUuid: stUuid).appending(path: "/files/download")
     }
 }
