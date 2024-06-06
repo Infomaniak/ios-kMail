@@ -186,16 +186,6 @@ struct ComposeMessageView: View {
             self.scrollView = scrollView
             scrollView.keyboardDismissMode = .interactive
         }
-//        .onChange(of: editorModel.height) { _ in
-//            guard let scrollView else { return }
-//
-//            let fullSize = scrollView.contentSize.height
-//            let realPosition = (fullSize - editorModel.height) + editorModel.cursorPosition
-//
-//            guard realPosition >= 0 else { return }
-//            let rect = CGRect(x: 0, y: realPosition, width: 1, height: 1)
-//            scrollView.scrollRectToVisible(rect, animated: true)
-//        }
         .onChange(of: autocompletionType) { newValue in
             guard newValue != nil else { return }
 
