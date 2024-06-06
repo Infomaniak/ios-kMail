@@ -19,21 +19,18 @@
 import Foundation
 
 public extension MailboxManager {
-    func swissTransferAttachment(message: Message) async {
+    func swissTransferAttachment(message: Message) async throws {
         guard let stUuid = message.swissTransferUuid else { return }
         let messageUid = message.uid
-        do {
-            let swissTransferAttachment = try await apiFetcher.swissTransfer(stUuid: stUuid)
 
-            try? writeTransaction { writableRealm in
-                guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: messageUid) else {
-                    return
-                }
-                liveMessage.swissTransferAttachment = swissTransferAttachment
-                writableRealm.add(liveMessage, update: .modified)
+        let swissTransferAttachment = try await apiFetcher.swissTransferAttachment(stUuid: stUuid)
+
+        try? writeTransaction { writableRealm in
+            guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: messageUid) else {
+                return
             }
-        } catch {
-            // Handle error
+            liveMessage.swissTransferAttachment = swissTransferAttachment
+            writableRealm.add(liveMessage, update: .modified)
         }
     }
 }
