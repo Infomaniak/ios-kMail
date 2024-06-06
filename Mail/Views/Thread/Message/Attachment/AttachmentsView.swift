@@ -29,7 +29,7 @@ import SwiftUI
 struct AttachmentsView: View {
     @ModalState private var previewedAttachment: Attachment?
     @State private var downloadInProgress = false
-    @ModalState private var allAttachmentsURL: IdentifiableURL?
+    @ModalState private var attachmentsURL: AttachmentsURL?
 
     @EnvironmentObject var mailboxManager: MailboxManager
     @ObservedRealmObject var message: Message
@@ -51,10 +51,10 @@ struct AttachmentsView: View {
                             AttachmentView(title: attachment.name, subtitle: attachment.size.formatted(.defaultByteCount), icon: attachment.icon)
                         }
                     }
-                    if let files = message.swissTransferAttachment?.files {
-                        ForEach(files) { file in
+                    if let swissTransferAttachment = message.swissTransferAttachment {
+                        ForEach(swissTransferAttachment.files) { file in
                             Button {
-                                // TODO: Open file
+                                downloadSwissTransferAttachment(stUuid: swissTransferAttachment.uuid, fileUuid: file.uuid)
                             } label: {
                                 AttachmentView(title: file.name, subtitle: file.size.formatted(.defaultByteCount), icon: file.icon)
                             }
@@ -90,14 +90,14 @@ struct AttachmentsView: View {
             .padding(.horizontal, value: .regular)
         }
         .task {
-            await mailboxManager.swissTransferAttachment(message: message)
+            try? await mailboxManager.swissTransferAttachment(message: message)
         }
         .sheet(item: $previewedAttachment) { previewedAttachment in
             AttachmentPreview(attachment: previewedAttachment)
                 .environmentObject(mailboxManager)
         }
-        .sheet(item: $allAttachmentsURL) { allAttachmentsURL in
-            DocumentPicker(pickerType: .exportContent([allAttachmentsURL.url]))
+        .sheet(item: $attachmentsURL) { attachmentsURL in
+            DocumentPicker(pickerType: .exportContent(attachmentsURL.urls))
                 .ignoresSafeArea()
         }
     }
@@ -134,13 +134,38 @@ struct AttachmentsView: View {
         }
     }
 
+    private func downloadSwissTransferAttachment(stUuid: String, fileUuid: String) {
+        matomo.track(eventWithCategory: .attachmentActions, name: "openSwissTransfer")
+
+        Task {
+            await tryOrDisplayError {
+                let attachmentURL = try await mailboxManager.apiFetcher.downloadSwissTransferAttachment(stUuid: stUuid, fileUuid: fileUuid)
+                attachmentsURL = AttachmentsURL(urls: [attachmentURL])
+            }
+        }
+    }
+
     private func downloadAllAttachments() {
         downloadInProgress = true
         Task {
             await tryOrDisplayError {
                 matomo.track(eventWithCategory: .message, name: "downloadAll")
-                let attachmentURL = try await mailboxManager.apiFetcher.downloadAttachments(message: message)
-                allAttachmentsURL = IdentifiableURL(url: attachmentURL)
+
+                try await withThrowingTaskGroup(of: URL.self) { group in
+                    var urls = [URL]()
+                    group.addTask {
+                        try await mailboxManager.apiFetcher.downloadAttachments(message: message)
+                    }
+                    if let swissTransferAttachment = message.swissTransferAttachment {
+                        group.addTask {
+                            try await mailboxManager.apiFetcher.downloadAllSwissTransferAttachment(stUuid: swissTransferAttachment.uuid)
+                        }
+                    }
+                    for try await url in group {
+                        urls.append(url)
+                    }
+                    attachmentsURL = AttachmentsURL(urls: urls)
+                }
             }
             downloadInProgress = false
         }
