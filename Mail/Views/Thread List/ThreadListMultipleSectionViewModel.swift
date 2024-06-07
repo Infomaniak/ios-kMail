@@ -34,11 +34,11 @@ class ThreadListMultipleSelectionViewModel: ObservableObject {
     @Published var selectedItems = Set<Thread>()
     @Published var toolbarActions = [Action]()
 
-    let frozenFolder: Folder
+    let fromArchiveFolder: Bool
     let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
-    init(frozenFolder: Folder) {
-        self.frozenFolder = frozenFolder
+    init(fromArchiveFolder: Bool = false) {
+        self.fromArchiveFolder = fromArchiveFolder
         setActions()
     }
 
@@ -76,7 +76,7 @@ class ThreadListMultipleSelectionViewModel: ObservableObject {
     private func setActions() {
         let read = selectedItems.contains { $0.unseenMessages != 0 } ? Action.markAsRead : Action.markAsUnread
         let star = selectedItems.allSatisfy(\.flagged) ? Action.unstar : Action.star
-        let archive = frozenFolder.role == .archive ? Action.openMovePanel : Action.archive
+        let archive = fromArchiveFolder ? Action.openMovePanel : Action.archive
         toolbarActions = [read, archive, star, .delete]
     }
 }

@@ -64,7 +64,8 @@ struct ThreadListView: View {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    frozenFolder: frozenFolder,
                                                                    selectedThreadOwner: selectedThreadOwner))
-        _multipleSelectionViewModel = StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(frozenFolder: frozenFolder))
+        _multipleSelectionViewModel =
+            StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(fromArchiveFolder: frozenFolder.role == .archive))
 
         UITableViewCell.appearance().focusEffect = .none
     }
