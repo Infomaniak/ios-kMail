@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: de, German
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Tue, 04 Jun 2024 12:29:31 +0200
+ * Exported by: Charlene Hoareau
+ * Exported at: Fri, 07 Jun 2024 09:36:13 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -279,9 +279,6 @@
 
 /* loco:6266649755d41301973d0c43 */
 "bccTitle" = "Bcc:";
-
-/* loco:64999ba3e6d90f26b6023952 */
-"blockedMailboxTitle" = "Mailbox %@ ist blockiert";
 
 /* loco:649ea00ef9c6ecfe620a0b62 */
 "blockedPasswordTitle" = "Passwort blockiert";
@@ -848,13 +845,16 @@
 "lockAppTitle" = "Anwendung gesperrt";
 
 /* loco:6491b5d13be3801fbb056c22 */
-"lockedMailboxDescription" = "Der Zugriff auf Ihre E-Mail-Adresse ist derzeit gesperrt.\nFür weitere Informationen, FAQ lesen.";
+"lockedMailboxBottomSheetDescription" = "Der Zugriff auf Ihre E-Mail-Adresse ist derzeit gesperrt.\nFür weitere Informationen, FAQ lesen.";
+
+/* loco:64999ba3e6d90f26b6023952 */
+"lockedMailboxBottomSheetTitle" = "Mailbox %@ ist blockiert";
 
 /* loco:649adc1b599c6ce9d6099fa2 */
-"lockedMailboxDescription-plural" = "Für weitere Informationen:";
+"lockedMailboxScreenDescription" = "Für weitere Informationen:";
 
-/* loco:64ad0bc9605cc9e323051192 */
-"lockedMailboxDescription-plural-many" = "";
+/* loco:665ed97d84c0a50abb0783d3 */
+"lockedMailboxScreenTitle" = "Einige Ihrer Mailboxen sind blockiert";
 
 /* loco:649e9f941e62d5ca5f032305 */
 "lockedMailboxTitle" = "Blockierte E-Mail-Adresse";
@@ -864,9 +864,6 @@
 
 /* loco:64ad0bf21a8c5c3877078262 */
 "lockedMailboxTitle-plural-many" = "";
-
-/* loco:665ed97d84c0a50abb0783d3 */
-"lockedMailboxTitleIB" = "Einige Ihrer Mailboxen sind blockiert";
 
 /* loco:6639ec5faf37f28888054ea2 */
 "manageSignatures" = "Meine Signaturen verwalten";

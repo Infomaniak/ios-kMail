@@ -4,7 +4,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Tue, 04 Jun 2024 11:17:27 +0200
+ * Exported at: Fri, 07 Jun 2024 09:36:13 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -279,9 +279,6 @@
 
 /* loco:6266649755d41301973d0c43 */
 "bccTitle" = "Cci :";
-
-/* loco:64999ba3e6d90f26b6023952 */
-"blockedMailboxTitle" = "L’adresse %@ est bloquée";
 
 /* loco:649ea00ef9c6ecfe620a0b62 */
 "blockedPasswordTitle" = "Mot de passe bloqué";
@@ -848,13 +845,16 @@
 "lockAppTitle" = "Application verrouillée";
 
 /* loco:6491b5d13be3801fbb056c22 */
-"lockedMailboxDescription" = "L’accès à votre adresse mail est actuellement bloqué.\nPour plus d’informations, consultez les FAQ.";
+"lockedMailboxBottomSheetDescription" = "L’accès à votre adresse mail est actuellement bloqué.\nPour plus d’informations, consultez les FAQ.";
+
+/* loco:64999ba3e6d90f26b6023952 */
+"lockedMailboxBottomSheetTitle" = "L’adresse %@ est bloquée";
 
 /* loco:649adc1b599c6ce9d6099fa2 */
-"lockedMailboxDescription-plural" = "Pour plus d’informations :";
+"lockedMailboxScreenDescription" = "Pour plus d’informations :";
 
-/* loco:64ad0bc9605cc9e323051192 */
-"lockedMailboxDescription-plural-many" = "L’accès à votre adresse mail est actuellement bloqué. Nous vous invitons à contacter votre administrateur.";
+/* loco:665ed97d84c0a50abb0783d3 */
+"lockedMailboxScreenTitle" = "Certaines de vos adresses mail sont bloquées";
 
 /* loco:649e9f941e62d5ca5f032305 */
 "lockedMailboxTitle" = "Adresse mail bloquée";
@@ -864,9 +864,6 @@
 
 /* loco:64ad0bf21a8c5c3877078262 */
 "lockedMailboxTitle-plural-many" = "Adresses mail bloquées";
-
-/* loco:665ed97d84c0a50abb0783d3 */
-"lockedMailboxTitleIB" = "Certaines de vos adresses mail sont bloquées";
 
 /* loco:6639ec5faf37f28888054ea2 */
 "manageSignatures" = "Gérer mes signatures";
