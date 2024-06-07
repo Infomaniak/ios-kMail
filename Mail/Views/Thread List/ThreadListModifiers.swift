@@ -154,10 +154,10 @@ struct ThreadListToolbar: ViewModifier {
                 .actionsPanel(
                     messages: $multipleSelectedMessages,
                     originFolder: viewModel.frozenFolder,
-                    panelSource: .threadList, completionHandler: { _ in
-                        multipleSelectionViewModel.disable()
-                    }
-                )
+                    panelSource: .threadList
+                ) { _ in
+                    multipleSelectionViewModel.disable()
+                }
                 .sheet(item: $messagesToMove) { messages in
                     MoveEmailView(
                         mailboxManager: viewModel.mailboxManager,

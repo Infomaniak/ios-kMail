@@ -65,6 +65,15 @@ extension Action: CaseIterable {
         .noAction,
         .quickActionPanel
     ]
+    
+    public var refreshSearchResult: Bool {
+        switch self {
+        case .moved, .archive, .delete:
+            return true
+        default:
+            return false
+        }
+    }
 
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
                                           userIsStaff: Bool) -> (quickActions: [Action], listActions: [Action]) {
@@ -323,5 +332,12 @@ public extension Action {
         iconResource: MailResourcesAsset.navigationMenu,
         tintColorResource: MailResourcesAsset.swipeQuickActionColor,
         matomoName: "quickActions"
+    )
+    /// Used to return an Action in the movePanel completion
+    static let moved = Action(
+        id: "fakeActionMove",
+        title: "",
+        iconResource: MailResourcesAsset.emailActionSend,
+        matomoName: ""
     )
 }
