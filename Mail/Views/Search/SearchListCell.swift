@@ -29,7 +29,7 @@ struct SearchListCell: View {
     @EnvironmentObject private var mainViewState: MainViewState
 
     let viewModel: SearchViewModel
-    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
 
     let thread: Thread
 
@@ -117,7 +117,7 @@ struct SearchListCell: View {
 #Preview {
     SearchListCell(
         viewModel: SearchViewModel(mailboxManager: PreviewHelper.sampleMailboxManager, folder: PreviewHelper.sampleFolder),
-        multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(),
+        multipleSelectionViewModel: MultipleSelectionViewModel(),
         thread: PreviewHelper.sampleThread,
         threadDensity: .large,
         accentColor: .pink,

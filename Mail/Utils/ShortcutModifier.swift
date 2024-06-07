@@ -32,7 +32,7 @@ struct ShortcutModifier: ViewModifier {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     @ObservedObject var viewModel: ThreadListViewModel
-    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
 
     func body(content: Content) -> some View {
         ZStack {
@@ -125,7 +125,7 @@ struct ShortcutModifier: ViewModifier {
 
 extension View {
     func shortcutModifier(viewModel: ThreadListViewModel,
-                          multipleSelectionViewModel: ThreadListMultipleSelectionViewModel) -> some View {
+                          multipleSelectionViewModel: MultipleSelectionViewModel) -> some View {
         modifier(ShortcutModifier(viewModel: viewModel,
                                   multipleSelectionViewModel: multipleSelectionViewModel))
     }

@@ -35,7 +35,7 @@ struct SearchView: View {
     @State private var messagesToMove: [Message]?
 
     @StateObject private var viewModel: SearchViewModel
-    @StateObject private var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    @StateObject private var multipleSelectionViewModel: MultipleSelectionViewModel
 
     private var shouldShowHorizontalScrollbar: Bool {
         platformDetector.isMac
@@ -43,7 +43,7 @@ struct SearchView: View {
 
     init(mailboxManager: MailboxManager, folder: Folder) {
         _viewModel = StateObject(wrappedValue: SearchViewModel(mailboxManager: mailboxManager, folder: folder))
-        _multipleSelectionViewModel = StateObject(wrappedValue: ThreadListMultipleSelectionViewModel())
+        _multipleSelectionViewModel = StateObject(wrappedValue: MultipleSelectionViewModel())
     }
 
     var body: some View {

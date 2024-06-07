@@ -26,7 +26,7 @@ import SwiftUI
 extension View {
     func searchToolbar(
         viewModel: SearchViewModel,
-        multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+        multipleSelectionViewModel: MultipleSelectionViewModel
     ) -> some View {
         modifier(SearchToolbar(
             viewModel: viewModel,
@@ -45,7 +45,7 @@ struct SearchToolbar: ViewModifier {
     @State private var messagesToMove: [Message]?
 
     @ObservedObject var viewModel: SearchViewModel
-    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
 
     func body(content: Content) -> some View {
         content
