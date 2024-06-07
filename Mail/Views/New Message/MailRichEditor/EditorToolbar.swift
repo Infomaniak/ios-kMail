@@ -34,14 +34,14 @@ struct ToolbarAlert: Identifiable, Equatable {
 }
 
 enum ToolbarAlertType {
-    case link(handler: (String) -> Void)
+    case link(handler: (String, URL) -> Void)
 }
 
 final class EditorToolbarModel: ObservableObject {
     @ModalPublished(context: ContextKeys.compose) var isShowingCamera = false
     @ModalPublished(context: ContextKeys.compose) var isShowingFileSelection = false
     @ModalPublished(context: ContextKeys.compose) var isShowingPhotoLibrary = false
-    @ModalPublished(wrappedValue: nil, context: ContextKeys.compose) var isShowingLinkAlert: ToolbarAlert?
+    @ModalPublished(wrappedValue: nil, context: ContextKeys.compose) var isShowingAlert: ToolbarAlert?
 }
 
 enum EditorToolbarStyle {

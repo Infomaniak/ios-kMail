@@ -53,7 +53,7 @@ struct ComposeMessageBodyView: View {
                     keepCursorVisible(editorModel.cursorPosition)
                 }
         }
-        .customAlert(item: $toolbarModel.isShowingLinkAlert) { alert in
+        .customAlert(item: $toolbarModel.isShowingAlert) { alert in
             switch alert.type {
             case .link(let handler):
                 AddLinkView(actionHandler: handler)

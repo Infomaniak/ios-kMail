@@ -21,6 +21,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import SwiftRegex
 import SwiftUI
 
 struct AddLinkView: View {
@@ -32,7 +33,7 @@ struct AddLinkView: View {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var matomo: MatomoUtils
 
-    var actionHandler: ((String) -> Void)?
+    var actionHandler: ((String, URL) -> Void)?
 
     private var textPlaceholder: String {
         if url.isEmpty {
@@ -76,18 +77,17 @@ struct AddLinkView: View {
     private func didTapPrimaryButton() {
         matomo.track(eventWithCategory: .editorActions, name: "addLinkConfirm")
 
-        guard var urlComponents = URLComponents(string: url) else {
+        var correctlyFormattedURL = url
+        if Regex(pattern: "^\\w+:")?.matches(in: url).isEmpty != false {
+            correctlyFormattedURL = "https://\(correctlyFormattedURL)"
+        }
+
+        guard let url = URL(string: correctlyFormattedURL) else {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarInvalidUrl)
             return
         }
-        if urlComponents.scheme == nil {
-            urlComponents.scheme = URLConstants.schemeUrl
-        }
-        guard let url = urlComponents.url?.absoluteString else {
-            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarInvalidUrl)
-            return
-        }
-        actionHandler?(url)
+
+        actionHandler?(text, url)
     }
 }
 

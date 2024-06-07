@@ -79,8 +79,6 @@ public struct URLConstants {
         return URLConstants(urlString: "https://calendar.infomaniak.com/?event=\(event.id)&view=week&from=\(date)")
     }
 
-    public static let schemeUrl = "http"
-
     private var urlString: String
 
     public var url: URL {
