@@ -40,9 +40,9 @@ struct MoveEmailView: View {
 
     let movedMessages: [Message]
     let originFolder: Folder?
-    let completion: (() -> Void)?
+    let completion: ((Action) -> Void)?
 
-    init(mailboxManager: MailboxManager, movedMessages: [Message], originFolder: Folder?, completion: (() -> Void)? = nil) {
+    init(mailboxManager: MailboxManager, movedMessages: [Message], originFolder: Folder?, completion: ((Action) -> Void)? = nil) {
         self.movedMessages = movedMessages
         self.originFolder = originFolder
         self.completion = completion
@@ -104,7 +104,7 @@ struct MoveEmailView: View {
                     to: frozenDestinationFolder
                 )
 
-                completion?()
+                completion?(.moved)
             }
         }
         dismissModal()

@@ -107,9 +107,7 @@ struct SearchToolbar: ViewModifier {
                                     )
                                 )
 
-                                if action == Action.archive || action == Action.delete {
-                                    await viewModel.fetchThreads()
-                                }
+                                refreshSearchIfNeeded(action: action)
                             }
                         }
                     }
@@ -126,13 +124,8 @@ struct SearchToolbar: ViewModifier {
                 messages: $multipleSelectedMessages,
                 originFolder: viewModel.frozenSearchFolder,
                 panelSource: .threadList
-            ) {
-                Task {
-                    // Need to wait 500 milliseconds before reloading
-                    try await Task.sleep(nanoseconds: 500_000_000)
-                    await viewModel.fetchThreads()
-                }
-            } completionHandler: { _ in
+            ) { action in
+                refreshSearchIfNeeded(action: action)
                 multipleSelectionViewModel.disable()
             }
             .navigationTitle(
@@ -141,5 +134,14 @@ struct SearchToolbar: ViewModifier {
                     : ""
             )
             .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func refreshSearchIfNeeded(action: Action) {
+        guard action.refreshSearchResult else { return }
+        Task {
+            // Need to wait 500 milliseconds before reloading
+            try await Task.sleep(nanoseconds: 500_000_000)
+            await viewModel.fetchThreads()
+        }
     }
 }
