@@ -70,6 +70,14 @@ struct SearchListCell: View {
         .onTapGesture {
             didTapCell()
         }
+        .openInWindowOnDoubleTap(
+            windowId: DesktopWindowIdentifier.threadWindowIdentifier,
+            value: OpenThreadIntent.openFromThreadCell(
+                thread: thread,
+                currentFolder: viewModel.frozenSearchFolder,
+                mailboxManager: viewModel.mailboxManager as! MailboxManager
+            )
+        )
         .actionsContextMenu(thread: thread)
         .onLongPressGesture {
             didOptionalTapCell()
