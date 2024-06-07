@@ -29,7 +29,7 @@ struct SearchThreadsSectionView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     let viewModel: SearchViewModel
-    @ObservedObject var multipleSelectionViewModel: SearchMultipleSelectionViewModel
+    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
 
     var body: some View {
         if viewModel.searchState == .results {
