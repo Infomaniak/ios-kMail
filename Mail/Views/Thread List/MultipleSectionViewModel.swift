@@ -24,7 +24,7 @@ import MailCore
 import SwiftUI
 
 @MainActor
-class ThreadListMultipleSelectionViewModel: ObservableObject {
+class MultipleSelectionViewModel: ObservableObject {
     @LazyInjectService private var matomo: MatomoUtils
 
     var isEnabled: Bool {

@@ -82,7 +82,7 @@ struct ThreadListSwipeActions: ViewModifier {
 
     let thread: Thread
     let viewModel: ThreadListViewModel
-    let multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    let multipleSelectionViewModel: MultipleSelectionViewModel
 
     @Binding var flushAlert: FlushAlertState?
 
@@ -126,7 +126,7 @@ struct ThreadListSwipeActions: ViewModifier {
 extension View {
     func swipeActions(thread: Thread,
                       viewModel: ThreadListViewModel,
-                      multipleSelectionViewModel: ThreadListMultipleSelectionViewModel,
+                      multipleSelectionViewModel: MultipleSelectionViewModel,
                       nearestFlushAlert: Binding<FlushAlertState?>) -> some View {
         modifier(ThreadListSwipeActions(thread: thread,
                                         viewModel: viewModel,

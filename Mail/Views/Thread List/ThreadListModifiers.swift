@@ -32,7 +32,7 @@ extension View {
     func threadListToolbar(
         flushAlert: Binding<FlushAlertState?>,
         viewModel: ThreadListViewModel,
-        multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+        multipleSelectionViewModel: MultipleSelectionViewModel
     ) -> some View {
         modifier(ThreadListToolbar(
             flushAlert: flushAlert,
@@ -64,7 +64,7 @@ struct ThreadListToolbar: ViewModifier {
     @Binding var flushAlert: FlushAlertState?
 
     @ObservedObject var viewModel: ThreadListViewModel
-    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
 
     private var selectAllButtonTitle: String {
         if multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count {

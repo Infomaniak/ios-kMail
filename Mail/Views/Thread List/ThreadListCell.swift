@@ -39,7 +39,7 @@ struct ThreadListCell: View {
     @EnvironmentObject private var mainViewState: MainViewState
 
     let viewModel: ThreadListViewModel
-    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
 
     let thread: Thread
 
@@ -133,7 +133,7 @@ struct ThreadListCell: View {
         viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                        frozenFolder: PreviewHelper.sampleFolder,
                                        selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner),
-        multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(fromArchiveFolder: true),
+        multipleSelectionViewModel: MultipleSelectionViewModel(fromArchiveFolder: true),
         thread: PreviewHelper.sampleThread,
         threadDensity: .large,
         accentColor: .pink,
