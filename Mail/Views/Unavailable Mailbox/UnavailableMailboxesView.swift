@@ -105,7 +105,7 @@ struct UnavailableMailboxesView: View {
 
     private func openFAQ() {
         matomo.track(eventWithCategory: .noValidMailboxes, name: "readFAQ")
-        openURL(URLConstants.faq.url)
+        openURL(URL(string: MailResourcesStrings.Localizable.faqUrl)!)
     }
 }
 

@@ -34,7 +34,7 @@ struct HelpView: View {
 
         static let faq = HelpAction(
             title: MailResourcesStrings.Localizable.helpFAQ,
-            destination: URLConstants.faq.url,
+            destination: URL(string: MailResourcesStrings.Localizable.faqUrl)!,
             shouldOpenUpdateVersionAlert: false
         )
         static let chatbot = HelpAction(

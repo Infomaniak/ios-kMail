@@ -4,7 +4,7 @@
  * Locale: es, Spanish
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Fri, 07 Jun 2024 09:36:13 +0200
+ * Exported at: Fri, 07 Jun 2024 14:40:14 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -811,6 +811,9 @@
 /* loco:6436aae98d2f282f4c6ba492 */
 "failToOpenDraft" = "No se ha podido abrir el borrador";
 
+/* loco:6662ca5b2a0774393a053d22 */
+"faqUrl" = "https://www.infomaniak.com/es/asistencia/faq/admin2/servicio-de-correo";
+
 /* loco:62a9dbdf0bddbc02ce031ba2 */
 "favoritesFolder" = "Favoritos";
 
@@ -854,7 +857,7 @@
 "lockedMailboxScreenDescription" = "Para más información:";
 
 /* loco:665ed97d84c0a50abb0783d3 */
-"lockedMailboxScreenTitle" = "Algunos de sus buzones están bloqueados";
+"lockedMailboxScreenTitle" = "Algunas de sus direcciones de correo electrónico están bloqueadas";
 
 /* loco:649e9f941e62d5ca5f032305 */
 "lockedMailboxTitle" = "Dirección de correo electrónico bloqueada";
