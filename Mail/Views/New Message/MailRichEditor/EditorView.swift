@@ -34,7 +34,7 @@ struct EditorView: UIViewRepresentable {
     func makeUIView(context: Context) -> RichEditorView {
         let editor = RichEditorView()
         editor.delegate = context.coordinator
-        editor.addInputAccessoryView(context.coordinator.toolbar)
+        editor.inputAccessoryView = context.coordinator.toolbar
 
         return editor
     }
