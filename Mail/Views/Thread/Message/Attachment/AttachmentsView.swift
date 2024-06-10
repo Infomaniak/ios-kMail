@@ -98,25 +98,15 @@ struct AttachmentsView: View {
         }
     }
 
-        var text: String
     private func text() -> String {
         if let swissTransferAttachment = message.swissTransferAttachment, !attachments.isEmpty {
             let totalSize = message.attachmentsSize + swissTransferAttachment.size
-            text = "\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) \(MailResourcesStrings.Localizable.linkingWord) \(MailResourcesStrings.Localizable.fileQuantity(swissTransferAttachment.files.count)) (\(totalSize.formatted(.defaultByteCount))). \(MailResourcesStrings.Localizable.buttonDownloadAll)"
-
+            return "\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) \(MailResourcesStrings.Localizable.linkingWord) \(MailResourcesStrings.Localizable.fileQuantity(swissTransferAttachment.files.count)) (\(totalSize.formatted(.defaultByteCount)))"
         } else if let swissTransferAttachment = message.swissTransferAttachment, attachments.isEmpty {
-            text = "\(MailResourcesStrings.Localizable.fileQuantity(swissTransferAttachment.nbfiles)) (\(swissTransferAttachment.size.formatted(.defaultByteCount))). \(MailResourcesStrings.Localizable.buttonDownloadAll)"
-
+            return "\(MailResourcesStrings.Localizable.fileQuantity(swissTransferAttachment.nbfiles)) (\(swissTransferAttachment.size.formatted(.defaultByteCount)))"
         } else {
-            text = "\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) (\(message.attachmentsSize.formatted(.defaultByteCount))). \(MailResourcesStrings.Localizable.buttonDownloadAll)"
+            return "\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) (\(message.attachmentsSize.formatted(.defaultByteCount)))"
         }
-
-        var attributedString = AttributedString(text)
-        if let range = attributedString.range(of: MailResourcesStrings.Localizable.buttonDownloadAll) {
-            attributedString[range].foregroundColor = .accentColor
-        }
-
-        return attributedString
     }
 
     private func openAttachment(_ attachment: Attachment) {
