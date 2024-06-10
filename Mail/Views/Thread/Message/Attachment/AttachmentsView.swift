@@ -41,7 +41,7 @@ struct AttachmentsView: View {
     }
 
     var body: some View {
-        VStack(spacing: UIPadding.regular) {
+        VStack(alignment: .leading, spacing: UIPadding.regular) {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: UIPadding.small) {
                     ForEach(attachments) { attachment in
@@ -61,34 +61,30 @@ struct AttachmentsView: View {
                         }
                     }
                 }
-                .padding(.horizontal, value: .regular)
                 .padding(.vertical, 1)
             }
 
-            Button {
-                downloadAllAttachments()
-            } label: {
-                HStack(alignment: .iconAndMultilineTextAlignment, spacing: UIPadding.small) {
-                    MailResourcesAsset.attachment.swiftUIImage
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 16, height: 16)
-                        .foregroundStyle(MailResourcesAsset.textSecondaryColor)
-                        .alignmentGuide(.iconAndMultilineTextAlignment) { d in
-                            d[VerticalAlignment.center]
-                        }
+            HStack(alignment: .iconAndMultilineTextAlignment, spacing: UIPadding.small) {
+                MailResourcesAsset.attachment.swiftUIImage
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 16, height: 16)
+                    .foregroundStyle(MailResourcesAsset.textSecondaryColor)
 
+                VStack(alignment: .leading, spacing: UIPadding.verySmall) {
                     Text(text())
                         .textStyle(.bodySmallSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .alignmentGuide(.iconAndMultilineTextAlignment) { d in
-                            (d.height - (d[.lastTextBaseline] - d[.firstTextBaseline])) / 2
-                        }
                         .multilineTextAlignment(.leading)
+
+                    Button(MailResourcesStrings.Localizable.buttonDownloadAll, action: downloadAllAttachments)
+                        .buttonStyle(.ikLink(isInlined: true))
+                        .controlSize(.small)
+                        .ikButtonLoading(downloadInProgress)
                 }
             }
-            .padding(.horizontal, value: .regular)
         }
+        .padding(.horizontal, value: .regular)
         .task {
             try? await mailboxManager.swissTransferAttachment(message: message)
         }
