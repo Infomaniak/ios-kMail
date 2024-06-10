@@ -78,7 +78,7 @@ struct AttachmentsView: View {
                             d[VerticalAlignment.center]
                         }
 
-                    Text(attributedString())
+                    Text(text())
                         .textStyle(.bodySmallSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .alignmentGuide(.iconAndMultilineTextAlignment) { d in
@@ -102,9 +102,8 @@ struct AttachmentsView: View {
         }
     }
 
-    private func attributedString() -> AttributedString {
         var text: String
-
+    private func text() -> String {
         if let swissTransferAttachment = message.swissTransferAttachment, !attachments.isEmpty {
             let totalSize = message.attachmentsSize + swissTransferAttachment.size
             text = "\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) \(MailResourcesStrings.Localizable.linkingWord) \(MailResourcesStrings.Localizable.fileQuantity(swissTransferAttachment.files.count)) (\(totalSize.formatted(.defaultByteCount))). \(MailResourcesStrings.Localizable.buttonDownloadAll)"
