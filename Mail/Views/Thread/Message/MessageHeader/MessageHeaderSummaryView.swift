@@ -60,6 +60,8 @@ struct MessageHeaderSummaryView: View {
                     }
                     .adaptivePanel(item: $contactViewRecipient) { recipient in
                         ContactActionsView(recipient: recipient)
+                            .environmentObject(mailboxManager)
+                        // We need to manually pass environmentObject because of a bug with SwiftUI end popovers on macOS
                     }
                     .disabled(!isMessageInteractive)
                 }
