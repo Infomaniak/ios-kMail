@@ -19,8 +19,6 @@
 import Foundation
 import MailResources
 import RealmSwift
-//import SwiftUI
-//import UniformTypeIdentifiers
 
 public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
     @Persisted public var uuid: String
