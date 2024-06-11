@@ -45,6 +45,7 @@ public struct CloseButton: View {
             }
         }
         .labelStyle(.iconOnly)
+        .keyboardShortcut(.cancelAction)
     }
 }
 
