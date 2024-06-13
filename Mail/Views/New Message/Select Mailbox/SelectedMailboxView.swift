@@ -23,15 +23,16 @@ import MailResources
 import SwiftUI
 
 struct SelectedMailboxView: View {
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
-    let account: Account
-    let selectedMailbox: Mailbox
+    let selectedMailboxManager: MailboxManager
 
     var body: some View {
         HStack(spacing: UIPadding.small) {
-            AvatarView(mailboxManager: mailboxManager, contactConfiguration: .user(user: account.user), size: 40)
-            Text(selectedMailbox.email)
+            AvatarView(
+                mailboxManager: selectedMailboxManager,
+                contactConfiguration: .user(user: selectedMailboxManager.account.user),
+                size: 40
+            )
+            Text(selectedMailboxManager.mailbox.email)
                 .textStyle(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
             MailResourcesAsset.checkmarkCircleFill.swiftUIImage
@@ -48,5 +49,5 @@ struct SelectedMailboxView: View {
 }
 
 #Preview {
-    SelectedMailboxView(account: PreviewHelper.sampleAccount, selectedMailbox: PreviewHelper.sampleMailbox)
+    SelectedMailboxView(selectedMailboxManager: PreviewHelper.sampleMailboxManager)
 }

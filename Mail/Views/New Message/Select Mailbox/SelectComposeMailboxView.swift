@@ -57,8 +57,8 @@ struct SelectComposeMailboxView: View {
             }
 
             if let selectedMailbox = viewModel.selectedMailbox,
-               let account = accountManager.account(for: selectedMailbox.userId), viewModel.selectionMade {
-                SelectedMailboxView(account: account, selectedMailbox: selectedMailbox)
+               let mailboxManager = accountManager.getMailboxManager(for: selectedMailbox) {
+                SelectedMailboxView(selectedMailboxManager: mailboxManager)
                     .padding(.horizontal, value: .small)
                     .padding(.bottom, value: .regular)
             }
