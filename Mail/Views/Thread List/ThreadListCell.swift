@@ -38,7 +38,7 @@ struct ThreadListCell: View {
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var mainViewState: MainViewState
 
-    let viewModel: ThreadListViewModel
+    let viewModel: ThreadListable
     @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
 
     let thread: Thread
@@ -101,6 +101,7 @@ struct ThreadListCell: View {
     }
 
     private func didTapCell() {
+        viewModel.addToSearchHistoryIfNeeded()
         if multipleSelectionViewModel.isEnabled {
             multipleSelectionViewModel.toggleSelection(of: thread)
         } else {
@@ -113,7 +114,7 @@ struct ThreadListCell: View {
             } else {
                 splitViewManager.adaptToProminentThreadView()
 
-                viewModel.detectDirection(from: thread)
+                viewModel.onTapCell(thread: thread)
                 mainViewState.selectedThread = thread
             }
         }
@@ -122,7 +123,8 @@ struct ThreadListCell: View {
     private func didOptionalTapCell() {
         guard !multipleSelectionViewModel.isEnabled else { return }
         multipleSelectionViewModel.feedbackGenerator.prepare()
-        matomo.track(eventWithCategory: .multiSelection, action: .longPress, name: "enable")
+        let eventCategory: MatomoUtils.EventCategory = viewModel.origin == .threadList ? .multiSelection : .searchMultiSelection
+        matomo.track(eventWithCategory: eventCategory, action: .longPress, name: "enable")
         multipleSelectionViewModel.feedbackGenerator.impactOccurred()
         multipleSelectionViewModel.toggleSelection(of: thread)
     }

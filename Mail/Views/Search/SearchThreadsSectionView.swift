@@ -35,14 +35,15 @@ struct SearchThreadsSectionView: View {
         if viewModel.searchState == .results {
             Section {
                 ForEach(viewModel.frozenThreads) { thread in
-                    SearchListCell(
+                    ThreadListCell(
                         viewModel: viewModel,
                         multipleSelectionViewModel: multipleSelectionViewModel,
                         thread: thread,
                         threadDensity: threadDensity,
                         accentColor: accentColor,
                         isSelected: mainViewState.selectedThread?.uid == thread.uid,
-                        isMultiSelected: multipleSelectionViewModel.selectedItems.contains(thread)
+                        isMultiSelected: multipleSelectionViewModel.selectedItems.contains(thread),
+                        flushAlert: .constant(nil)
                     )
                     .onAppear {
                         viewModel.loadNextPageIfNeeded(currentItem: thread)
