@@ -27,8 +27,6 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct AttachmentsView: View {
-    @State private var showDocumentPicker = false
-
     @ModalState private var previewedAttachment: Attachment?
     @State private var downloadInProgress = false
     @ModalState private var allAttachmentsURL: IdentifiableURL?
