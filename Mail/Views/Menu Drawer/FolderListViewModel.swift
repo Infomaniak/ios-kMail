@@ -98,7 +98,7 @@ struct FolderListViewModelWorker {
         let sortedRoleFolders = filteredFolders.filter { $0.role != nil }
             .sorted()
         let sortedUserFolders = filteredFolders.filter { $0.role == nil }
-            .sortedByName()
+            .sortedByFavoriteAndName()
 
         async let roleFolders = createFoldersHierarchy(from: sortedRoleFolders, searchQuery: searchQuery)
         async let userFolders = createFoldersHierarchy(from: sortedUserFolders, searchQuery: searchQuery)

@@ -259,7 +259,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
 }
 
 public extension Collection where Element: Folder {
-    func sortedByName() -> [Self.Element] {
-        return sorted { $0.name.localizedStandardCompare($1.name) == .orderedAscending }
+    func sortedByFavoriteAndName() -> [Self.Element] {
+        return sorted { $0.isFavorite == $1.isFavorite ? $0.name.localizedStandardCompare($1.name) == .orderedAscending : $0.isFavorite && !$1.isFavorite }
     }
 }

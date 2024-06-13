@@ -40,7 +40,7 @@ public struct NestableFolder: Identifiable {
         var parentFolders = [NestableFolder]()
 
         for folder in folders {
-            let sortedChildren = folder.children.sortedByName()
+            let sortedChildren = folder.children.sortedByFavoriteAndName()
             parentFolders.append(NestableFolder(
                 content: folder,
                 children: createFoldersHierarchy(from: sortedChildren)
