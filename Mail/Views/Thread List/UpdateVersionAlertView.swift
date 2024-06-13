@@ -28,10 +28,6 @@ struct UpdateVersionAlertView: View {
 
     @Environment(\.openURL) private var openURL
 
-    @AppStorage(UserDefaults.shared.key(.hasDismissedUpdateVersionView)) private var hasDismissedUpdateVersionView =
-        DefaultPreferences
-            .hasDismissedUpdateVersionView
-
     var onLaterPressed: (() -> Void)?
     var onDismiss: (() -> Void)?
 
