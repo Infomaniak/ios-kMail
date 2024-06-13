@@ -72,7 +72,7 @@ struct SearchToolbar: ViewModifier {
                     if !multipleSelectionViewModel.isEnabled {
                         SearchTextField(value: $viewModel.searchValue) {
                             viewModel.matomo.track(eventWithCategory: .search, name: "validateSearch")
-                            viewModel.addToHistoryIfNeeded()
+                            viewModel.addToSearchHistoryIfNeeded()
                             viewModel.searchThreadsForCurrentValue()
                         } onDelete: {
                             viewModel.matomo.track(eventWithCategory: .search, name: "deleteSearch")
@@ -107,7 +107,7 @@ struct SearchToolbar: ViewModifier {
                                     )
                                 )
 
-                                refreshSearchIfNeeded(action: action)
+                                viewModel.refreshSearchIfNeeded(action: action)
                             }
                         }
                     }
@@ -125,7 +125,7 @@ struct SearchToolbar: ViewModifier {
                 originFolder: viewModel.frozenSearchFolder,
                 panelSource: .threadList
             ) { action in
-                refreshSearchIfNeeded(action: action)
+                viewModel.refreshSearchIfNeeded(action: action)
                 multipleSelectionViewModel.disable()
             }
             .navigationTitle(
@@ -134,14 +134,5 @@ struct SearchToolbar: ViewModifier {
                     : ""
             )
             .navigationBarTitleDisplayMode(.inline)
-    }
-
-    private func refreshSearchIfNeeded(action: Action) {
-        guard action.refreshSearchResult else { return }
-        Task {
-            // Need to wait 500 milliseconds before reloading
-            try await Task.sleep(nanoseconds: 500_000_000)
-            await viewModel.fetchThreads()
-        }
     }
 }

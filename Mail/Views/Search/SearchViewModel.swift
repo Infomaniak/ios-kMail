@@ -37,7 +37,17 @@ enum SearchState {
     case noResults
 }
 
-@MainActor class SearchViewModel: ObservableObject {
+final class SearchViewModel: ObservableObject, ThreadListable {
+    var frozenFolder: MailCore.Folder {
+        return frozenSearchFolder
+    }
+
+    var origin: ThreadListableType {
+        return .search
+    }
+
+    let mailboxManager: MailCore.MailboxManager
+
     @LazyInjectService var matomo: MatomoUtils
 
     @Published var searchValue = ""
@@ -97,8 +107,6 @@ enum SearchState {
     /// Token to observe the fetched search results changes
     var observationSearchResultsChangesToken: NotificationToken?
 
-    let mailboxManager: MailboxManageable
-
     public let filters: [SearchFilter] = [.read, .unread, .favorite, .attachment, .folder]
 
     var searchValueType: SearchFieldValueType = .threadsAndContacts
@@ -118,9 +126,8 @@ enum SearchState {
 
     let observeQueue = DispatchQueue(label: "com.infomaniak.observation.SearchViewModel", qos: .userInteractive)
 
-    init(mailboxManager: MailboxManageable, folder: Folder) {
+    init(mailboxManager: MailboxManager, folder: Folder) {
         self.mailboxManager = mailboxManager
-
         frozenRealFolder = folder.freezeIfNeeded()
         frozenSearchFolder = mailboxManager.initSearchFolder().freezeIfNeeded()
         frozenFolderList = mailboxManager.getFrozenFolders()
@@ -219,11 +226,25 @@ enum SearchState {
         }
     }
 
-    func addToHistoryIfNeeded() {
+    func addToSearchHistoryIfNeeded() {
         if searchValue.trimmingCharacters(in: .whitespacesAndNewlines).count >= 3 {
             Task {
                 await mailboxManager.addToSearchHistory(value: searchValue)
             }
+        }
+    }
+
+    func onTapCell(thread: Thread) {
+        selectedThread = thread
+    }
+
+    func refreshSearchIfNeeded(action: Action) {
+        guard action.refreshSearchResult else { return }
+        Task {
+            // Need to wait 500 milliseconds before reloading
+            try await Task.sleep(nanoseconds: 500_000_000)
+            print("refresh")
+            await fetchThreads()
         }
     }
 }
