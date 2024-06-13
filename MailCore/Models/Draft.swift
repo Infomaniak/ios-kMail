@@ -181,7 +181,6 @@ public final class Draft: Object, Codable, Identifiable {
                             priority: MessagePriority = .normal,
                             swissTransferUuid: String? = nil,
                             attachments: [Attachment]? = nil,
-                            isOffline: Bool = true,
                             action: SaveDraftOption? = nil) {
         self.init()
 
