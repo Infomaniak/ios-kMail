@@ -26,10 +26,6 @@ struct AttendeeAvatarView: View {
 
     let attendee: Attendee
 
-    private var hasChoice: Bool {
-        attendee.state != nil
-    }
-
     private var cachedContact: CommonContact {
         return CommonContactCache.getOrCreateContact(contactConfiguration: .correspondent(
             correspondent: attendee,
