@@ -45,6 +45,24 @@ final class UTContactManager: XCTestCase {
         }
     }
 
+    @discardableResult
+    func generateMergedContact(name: String, email: String) -> MergedContact {
+        do {
+            let contact = MergedContact()
+            contact.id = UUID().uuidString
+            contact.name = name
+            contact.email = email
+
+            try contactManager.writeTransaction { writableRealm in
+                writableRealm.add(contact)
+            }
+
+            return contact
+        } catch {
+            fatalError("failed transaction in base, error:\(error)")
+        }
+    }
+
     func testGetContactsMatching() throws {
         // GIVEN
         generateFakeContacts(count: 100_000)
@@ -54,5 +72,38 @@ final class UTContactManager: XCTestCase {
             // THEN
             XCTAssertEqual(matchingContacts.isEmpty, false)
         }
+    }
+
+    func testGetContactFirstName() throws {
+        // GIVEN
+        generateMergedContact(name: "Some Person", email: "samemail@mail.com")
+        generateMergedContact(name: "Some Other", email: "samemail@mail.com")
+        generateMergedContact(name: "Dr. Some Other", email: "samemail@mail.com")
+
+        let recipient0 = Recipient(email: "someother@mail.com", name: "Some Person")
+        let recipient1 = Recipient(email: "samemail@mail.com", name: "Some Person")
+        let recipient2 = Recipient(email: "samemail@mail.com", name: "Some Other")
+        let recipient3 = Recipient(email: "samemail@mail.com", name: "Dr. Some Other")
+        let recipient4 = Recipient(email: "samemail@mail.com", name: "Dr Some Other")
+        let recipient5 = Recipient(email: "samemail@mail.com", name: "dr. some other")
+
+        // WHEN
+        let merged0 = contactManager.getContact(for: recipient0)
+        let merged1 = contactManager.getContact(for: recipient1)
+        let merged2 = contactManager.getContact(for: recipient2)
+        let merged3 = contactManager.getContact(for: recipient3)
+        let merged4 = contactManager.getContact(for: recipient4)
+        let merged5 = contactManager.getContact(for: recipient5)
+
+        // THEN
+        XCTAssertNil(merged0, "We only match on email address")
+        XCTAssertEqual(recipient1.name, merged1?.name)
+        XCTAssertEqual(recipient2.name, merged2?.name)
+        XCTAssertEqual(recipient3.name, merged3?.name, "We only want perfect matches case insensitive but diatric sensistive")
+        XCTAssertNotEqual(recipient4.name, merged4?.name, "We only want perfect matches case insensitive but diatric sensistive")
+        XCTAssertTrue(
+            merged5?.name.caseInsensitiveCompare(recipient5.name) == .orderedSame,
+            "We only want perfect matches case insensitive but diatric sensistive"
+        )
     }
 }
