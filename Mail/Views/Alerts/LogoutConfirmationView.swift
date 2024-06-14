@@ -37,7 +37,7 @@ struct LogoutConfirmationView: View {
             Text(MailResourcesStrings.Localizable.confirmLogoutTitle)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, UIPadding.alertTitleBottom)
-            Text(MailResourcesStrings.Localizable.confirmLogoutDescription(account.user.email))
+            Text(MailResourcesStrings.Localizable.confirmLogoutDescription(account.user?.email ?? ""))
                 .textStyle(.bodySecondary)
                 .padding(.bottom, UIPadding.alertDescriptionBottom)
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm, primaryButtonAction: logout)

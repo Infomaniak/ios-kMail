@@ -64,8 +64,9 @@ public final class CommonContact: Identifiable {
         if correspondent.isMe(currentMailboxEmail: contextMailboxManager.mailbox.email) {
             fullName = MailResourcesStrings.Localizable.contactMe
             color = UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
-            if correspondent.isCurrentUser(currentAccountEmail: contextMailboxManager.account.user.email),
-               let avatarString = contextMailboxManager.account.user.avatar,
+            if let currentUser = contextMailboxManager.account.user,
+               correspondent.isCurrentUser(currentAccountEmail: currentUser.email),
+               let avatarString = currentUser.avatar,
                let avatarURL = URL(string: avatarString) {
                 avatarImageRequest = AvatarImageRequest(imageRequest: ImageRequest(url: avatarURL), shouldAuthenticate: false)
             } else {
