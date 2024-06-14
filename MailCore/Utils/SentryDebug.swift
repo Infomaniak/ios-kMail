@@ -18,6 +18,7 @@
 
 import Alamofire
 import Foundation
+import InfomaniakCore
 import InfomaniakCoreDB
 import InfomaniakLogin
 import RealmSwift
@@ -161,6 +162,13 @@ public enum SentryDebug {
         SentrySDK.capture(message: "Received an email with SubBodies!!") { scope in
             scope.setLevel(.info)
             scope.setExtra(value: "messageUid", key: messageUid)
+        }
+    }
+
+    public static func captureNoTokenError(account: Account?) {
+        SentrySDK.capture(message: "Account with no token") { scope in
+            scope.setLevel(.info)
+            scope.setExtra(value: "account", key: "\(account?.userId ?? -1)")
         }
     }
 

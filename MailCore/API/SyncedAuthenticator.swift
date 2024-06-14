@@ -70,7 +70,7 @@ final class SyncedAuthenticator: OAuthAuthenticator {
             SentrySDK
                 .addBreadcrumb((credential as ApiToken)
                     .generateBreadcrumb(level: .error, message: "Refreshing token failed - Keychain unaccessible"))
-            completion(.failure(MailError.noToken))
+            completion(.failure(MailError.keychainUnavailable))
             return
         }
 
