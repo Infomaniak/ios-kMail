@@ -53,6 +53,7 @@ public class MailError: LocalizedError, Encodable {
         localizedDescription: MailResourcesStrings.Localizable.refreshTokenError,
         shouldDisplay: true
     )
+    public static let keychainUnavailable = MailError(code: "keychainUnavailable", shouldDisplay: false)
     public static let resourceError = MailError(code: "resourceError", shouldDisplay: true)
     public static let unknownToken = MailError(code: "unknownToken", shouldDisplay: true)
     public static let noMailbox = MailError(code: "noMailbox")

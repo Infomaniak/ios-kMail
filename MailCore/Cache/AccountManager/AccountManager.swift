@@ -273,6 +273,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     public func updateUser(for account: Account?) async throws {
         guard let account,
               let token = tokenStore.tokenFor(userId: account.userId) else {
+            SentryDebug.captureNoTokenError(account: account)
             throw MailError.noToken
         }
 
