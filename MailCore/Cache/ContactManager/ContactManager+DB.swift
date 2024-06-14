@@ -70,7 +70,7 @@ public extension ContactManager {
     func getContact(for correspondent: any Correspondent, transactionable: Transactionable) -> MergedContact? {
         transactionable.fetchObject(ofType: MergedContact.self) { partial in
             let matched = partial.where { $0.email == correspondent.email }
-            let result = matched.filter(NSPredicate(format: "name ==[c] %@", correspondent.name)).first ?? matched.first
+            let result = matched.filter("name ==[c] %@", correspondent.name).first ?? matched.first
             return result
         }
     }
