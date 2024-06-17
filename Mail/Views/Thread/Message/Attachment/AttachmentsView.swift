@@ -40,6 +40,22 @@ struct AttachmentsView: View {
         return message.attachments.filter { $0.disposition == .attachment || $0.contentId == nil }
     }
 
+    private var formattedText: String {
+        var text = [String]()
+        if !attachments.isEmpty {
+            text.append("\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count))")
+        }
+        if let swissTransferAttachment = message.swissTransferAttachment {
+            text.append("\(MailResourcesStrings.Localizable.fileQuantity(swissTransferAttachment.nbfiles))")
+        }
+        return text.formatted(.list(type: .and))
+    }
+
+    private var formattedSize: String {
+        guard let swissTransferAttachment = message.swissTransferAttachment else { return message.attachmentsSize.formatted(.defaultByteCount) }
+        return (message.attachmentsSize + swissTransferAttachment.size).formatted(.defaultByteCount)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.regular) {
             ScrollView(.horizontal, showsIndicators: false) {
@@ -72,7 +88,7 @@ struct AttachmentsView: View {
                     .foregroundStyle(MailResourcesAsset.textSecondaryColor)
 
                 VStack(alignment: .leading, spacing: UIPadding.verySmall) {
-                    Text(text())
+                    Text("\(formattedText) (\(formattedSize))")
                         .textStyle(.bodySmallSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .multilineTextAlignment(.leading)
@@ -95,17 +111,6 @@ struct AttachmentsView: View {
         .sheet(item: $attachmentsURL) { attachmentsURL in
             DocumentPicker(pickerType: .exportContent(attachmentsURL.urls))
                 .ignoresSafeArea()
-        }
-    }
-
-    private func text() -> String {
-        if let swissTransferAttachment = message.swissTransferAttachment, !attachments.isEmpty {
-            let totalSize = message.attachmentsSize + swissTransferAttachment.size
-            return "\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) \(MailResourcesStrings.Localizable.linkingWord) \(MailResourcesStrings.Localizable.fileQuantity(swissTransferAttachment.files.count)) (\(totalSize.formatted(.defaultByteCount)))"
-        } else if let swissTransferAttachment = message.swissTransferAttachment, attachments.isEmpty {
-            return "\(MailResourcesStrings.Localizable.fileQuantity(swissTransferAttachment.nbfiles)) (\(swissTransferAttachment.size.formatted(.defaultByteCount)))"
-        } else {
-            return "\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) (\(message.attachmentsSize.formatted(.defaultByteCount)))"
         }
     }
 
