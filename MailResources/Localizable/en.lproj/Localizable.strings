@@ -4,7 +4,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Fri, 07 Jun 2024 14:40:14 +0200
+ * Exported at: Mon, 17 Jun 2024 09:59:01 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -853,12 +853,6 @@
 /* loco:64999ba3e6d90f26b6023952 */
 "lockedMailboxBottomSheetTitle" = "Mailbox %@ is blocked";
 
-/* loco:649adc1b599c6ce9d6099fa2 */
-"lockedMailboxScreenDescription" = "For further information:";
-
-/* loco:665ed97d84c0a50abb0783d3 */
-"lockedMailboxScreenTitle" = "Some of your mailboxes are blocked";
-
 /* loco:649e9f941e62d5ca5f032305 */
 "lockedMailboxTitle" = "Blocked mailbox";
 
@@ -867,6 +861,12 @@
 
 /* loco:64ad0bf21a8c5c3877078262 */
 "lockedMailboxTitle-plural-many" = "";
+
+/* loco:649adc1b599c6ce9d6099fa2 */
+"lockedMailboxViewDescription" = "For further information:";
+
+/* loco:665ed97d84c0a50abb0783d3 */
+"lockedMailboxViewTitle" = "Some of your mailboxes are blocked";
 
 /* loco:6639ec5faf37f28888054ea2 */
 "manageSignatures" = "Manage my signatures";

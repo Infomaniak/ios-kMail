@@ -45,8 +45,8 @@ struct UnavailableMailboxesView: View {
 
                         InformationBlockView(
                             icon: MailResourcesAsset.warningFill.swiftUIImage,
-                            title: MailResourcesStrings.Localizable.lockedMailboxScreenTitle,
-                            message: MailResourcesStrings.Localizable.lockedMailboxScreenDescription,
+                            title: MailResourcesStrings.Localizable.lockedMailboxViewTitle,
+                            message: MailResourcesStrings.Localizable.lockedMailboxViewDescription,
                             iconColor: MailResourcesAsset.orangeColor.swiftUIColor,
                             buttonAction: openFAQ,
                             buttonTitle: MailResourcesStrings.Localizable.readFAQ
