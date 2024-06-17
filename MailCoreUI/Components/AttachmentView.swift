@@ -34,6 +34,20 @@ public struct AttachmentView<Content: View>: View {
         self.accessory = accessory
     }
 
+    public init(attachment: Attachment, accessory: @escaping () -> Content? = { EmptyView() }) {
+        self.title = attachment.name
+        self.subtitle = attachment.size.formatted(.defaultByteCount)
+        self.icon = attachment.icon
+        self.accessory = accessory
+    }
+
+    public init(file: File, accessory: @escaping () -> Content? = { EmptyView() }) {
+        self.title = file.name
+        self.subtitle = file.size.formatted(.defaultByteCount)
+        self.icon = file.icon
+        self.accessory = accessory
+    }
+
     public var body: some View {
         HStack(spacing: UIPadding.small) {
             IKIcon(icon, size: .large)

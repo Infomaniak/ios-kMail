@@ -64,7 +64,7 @@ struct AttachmentsView: View {
                         Button {
                             openAttachment(attachment)
                         } label: {
-                            AttachmentView(title: attachment.name, subtitle: attachment.size.formatted(.defaultByteCount), icon: attachment.icon)
+                            AttachmentView(attachment: attachment)
                         }
                     }
                     if let swissTransferAttachment = message.swissTransferAttachment {
@@ -72,7 +72,7 @@ struct AttachmentsView: View {
                             Button {
                                 downloadSwissTransferAttachment(stUuid: swissTransferAttachment.uuid, fileUuid: file.uuid)
                             } label: {
-                                AttachmentView(title: file.name, subtitle: file.size.formatted(.defaultByteCount), icon: file.icon)
+                                AttachmentView(file: file)
                             }
                         }
                     }
