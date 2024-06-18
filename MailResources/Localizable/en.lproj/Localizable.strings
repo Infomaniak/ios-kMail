@@ -4,7 +4,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Mon, 13 May 2024 11:43:06 +0200
+ * Exported at: Mon, 17 Jun 2024 09:59:01 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -279,9 +279,6 @@
 
 /* loco:6266649755d41301973d0c43 */
 "bccTitle" = "Bcc:";
-
-/* loco:64999ba3e6d90f26b6023952 */
-"blockedMailboxTitle" = "Mailbox %@ is blocked";
 
 /* loco:649ea00ef9c6ecfe620a0b62 */
 "blockedPasswordTitle" = "Blocked password";
@@ -814,6 +811,9 @@
 /* loco:6436aae98d2f282f4c6ba492 */
 "failToOpenDraft" = "Failed to open draft";
 
+/* loco:6662ca5b2a0774393a053d22 */
+"faqUrl" = "https://www.infomaniak.com/en/support/faq/admin2/email-service";
+
 /* loco:62a9dbdf0bddbc02ce031ba2 */
 "favoritesFolder" = "Favorites";
 
@@ -848,13 +848,10 @@
 "lockAppTitle" = "Application locked";
 
 /* loco:6491b5d13be3801fbb056c22 */
-"lockedMailboxDescription" = "Access to your mailbox is currently blocked. Please contact your administrator.";
+"lockedMailboxBottomSheetDescription" = "Access to your mailbox is currently blocked.\nFor further information, please read FAQ.";
 
-/* loco:649adc1b599c6ce9d6099fa2 */
-"lockedMailboxDescription-plural" = "Access to your mailboxes is currently blocked. Please contact your administrator.";
-
-/* loco:64ad0bc9605cc9e323051192 */
-"lockedMailboxDescription-plural-many" = "";
+/* loco:64999ba3e6d90f26b6023952 */
+"lockedMailboxBottomSheetTitle" = "Mailbox %@ is blocked";
 
 /* loco:649e9f941e62d5ca5f032305 */
 "lockedMailboxTitle" = "Blocked mailbox";
@@ -864,6 +861,12 @@
 
 /* loco:64ad0bf21a8c5c3877078262 */
 "lockedMailboxTitle-plural-many" = "";
+
+/* loco:649adc1b599c6ce9d6099fa2 */
+"lockedMailboxViewDescription" = "For further information:";
+
+/* loco:665ed97d84c0a50abb0783d3 */
+"lockedMailboxViewTitle" = "Some of your mailboxes are blocked";
 
 /* loco:6639ec5faf37f28888054ea2 */
 "manageSignatures" = "Manage my signatures";
@@ -1044,6 +1047,9 @@
 
 /* loco:660d031f55535d66db02f2f2 */
 "publicFolderSubtitle" = "This space belongs to %@ and centralizes your organization’s common files.";
+
+/* loco:664ef6e5f66217322302f962 */
+"readFAQ" = "Read FAQ";
 
 /* loco:62f0e594f7dcd16da506af53 */
 "recentSearchesTitle" = "Recent searches";

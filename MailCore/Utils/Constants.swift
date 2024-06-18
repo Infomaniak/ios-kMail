@@ -67,10 +67,6 @@ public struct URLConstants {
     public static let importMails = URLConstants(urlString: "https://import-email.infomaniak.com")
     public static let matomo = URLConstants(urlString: "https://analytics.infomaniak.com/matomo.php")
     public static let githubRepository = URLConstants(urlString: "https://github.com/Infomaniak/ios-kMail")
-    public static let faq =
-        URLConstants(
-            urlString: "https://www.infomaniak.com/\(Locale.current.languageCode ?? "fr")/support/faq/admin2/service-mail"
-        )
     public static let chatbot = URLConstants(urlString: "https://www.infomaniak.com/chatbot")
     public static let ikMe = URLConstants(urlString: "https://www.ik.me")
 

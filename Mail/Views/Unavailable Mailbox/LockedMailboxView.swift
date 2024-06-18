@@ -24,24 +24,26 @@ import SwiftUI
 struct LockedMailboxView: View {
     @Environment(\.dismiss) private var dismiss
 
+    let email: String
+
     var body: some View {
         VStack(spacing: UIPadding.regular) {
             MailResourcesAsset.mailboxError.swiftUIImage
                 .resizable()
                 .scaledToFit()
                 .frame(height: 64)
-            Text(MailResourcesStrings.Localizable.lockedMailboxTitle)
+            Text(MailResourcesStrings.Localizable.lockedMailboxBottomSheetTitle(email))
                 .textStyle(.header2)
                 .multilineTextAlignment(.center)
-            Text(MailResourcesStrings.Localizable.lockedMailboxDescription)
+            Text(MailResourcesStrings.Localizable.lockedMailboxBottomSheetDescription)
                 .textStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
                 .padding(.vertical, value: .medium)
 
-            Button(MailResourcesStrings.Localizable.buttonClose) {
+            Button(MailResourcesStrings.Localizable.externalDialogConfirmButton) {
                 dismiss()
             }
-            .buttonStyle(.ikLink())
+            .buttonStyle(.ikPlain)
             .controlSize(.large)
             .ikButtonFullWidth(true)
         }
@@ -54,6 +56,6 @@ struct LockedMailboxView: View {
 #Preview {
     Text("Preview")
         .floatingPanel(isPresented: .constant(true)) {
-            LockedMailboxView()
+            LockedMailboxView(email: PreviewHelper.sampleMailbox.email)
         }
 }
