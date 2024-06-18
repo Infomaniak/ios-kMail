@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2022 Infomaniak Network SA
+ Copyright (C) 2024 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -27,7 +27,12 @@ public struct AttachmentView<Content: View>: View {
 
     @ViewBuilder let accessory: () -> Content?
 
-    public init(title: String, subtitle: String, icon: MailResourcesImages, accessory: @escaping () -> Content? = { EmptyView() }) {
+    public init(
+        title: String,
+        subtitle: String,
+        icon: MailResourcesImages,
+        accessory: @escaping () -> Content? = { EmptyView() }
+    ) {
         self.title = title
         self.subtitle = subtitle
         self.icon = icon
@@ -35,16 +40,16 @@ public struct AttachmentView<Content: View>: View {
     }
 
     public init(attachment: Attachment, accessory: @escaping () -> Content? = { EmptyView() }) {
-        self.title = attachment.name
-        self.subtitle = attachment.size.formatted(.defaultByteCount)
-        self.icon = attachment.icon
+        title = attachment.name
+        subtitle = attachment.size.formatted(.defaultByteCount)
+        icon = attachment.icon
         self.accessory = accessory
     }
 
     public init(swissTransferFile: File, accessory: @escaping () -> Content? = { EmptyView() }) {
-        self.title = swissTransferFile.name
-        self.subtitle = swissTransferFile.size.formatted(.defaultByteCount)
-        self.icon = swissTransferFile.icon
+        title = swissTransferFile.name
+        subtitle = swissTransferFile.size.formatted(.defaultByteCount)
+        icon = swissTransferFile.icon
         self.accessory = accessory
     }
 
