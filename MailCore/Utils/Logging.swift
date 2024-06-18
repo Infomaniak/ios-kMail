@@ -135,8 +135,7 @@ public enum Log {
                                            level: SentryLevel = .debug,
                                            file: StaticString = #file,
                                            function: StaticString = #function,
-                                           line: UInt = #line,
-                                           tag: Any? = nil) {
+                                           line: UInt = #line) {
         let message = message()
         let oldTokenMetadata: Any = oldToken?.metadata ?? "NULL"
         let newTokenMetadata: Any = newToken?.metadata ?? "NULL"
