@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2023 Infomaniak Network SA
+ Copyright (C) 2024 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -29,7 +29,6 @@ public protocol SnackBarPresentable {
         message: String,
         duration: SnackBar.Duration,
         action: IKSnackBar.Action?,
-        anchor: CGFloat,
         contextView: UIView?
     )
 }
@@ -54,7 +53,6 @@ public final class SnackBarPresenter: SnackBarPresentable {
         message: String,
         duration: SnackBar.Duration = .lengthLong,
         action: IKSnackBar.Action? = nil,
-        anchor: CGFloat = 0,
         contextView: UIView? = nil
     ) {
         Task { @MainActor in
@@ -62,7 +60,6 @@ public final class SnackBarPresenter: SnackBarPresentable {
                 message: message,
                 duration: duration,
                 action: action,
-                anchor: anchor,
                 contextView: contextView
             )
         }
