@@ -123,7 +123,7 @@ struct ThreadListCell: View {
     private func didOptionalTapCell() {
         guard !multipleSelectionViewModel.isEnabled else { return }
         multipleSelectionViewModel.feedbackGenerator.prepare()
-        let eventCategory: MatomoUtils.EventCategory = viewModel.origin == .threadList ? .multiSelection : .searchMultiSelection
+        let eventCategory: MatomoUtils.EventCategory = viewModel is SearchViewModel ? .searchMultiSelection : .multiSelection
         matomo.track(eventWithCategory: eventCategory, action: .longPress, name: "enable")
         multipleSelectionViewModel.feedbackGenerator.impactOccurred()
         multipleSelectionViewModel.toggleSelection(of: thread)
