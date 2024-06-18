@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2022 Infomaniak Network SA
+ Copyright (C) 2024 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -52,7 +52,8 @@ struct AttachmentsView: View {
     }
 
     private var formattedSize: String {
-        guard let swissTransferAttachment = message.swissTransferAttachment else { return message.attachmentsSize.formatted(.defaultByteCount) }
+        guard let swissTransferAttachment = message.swissTransferAttachment
+        else { return message.attachmentsSize.formatted(.defaultByteCount) }
         return (message.attachmentsSize + swissTransferAttachment.size).formatted(.defaultByteCount)
     }
 
@@ -81,10 +82,7 @@ struct AttachmentsView: View {
             }
 
             HStack(alignment: .iconAndMultilineTextAlignment, spacing: UIPadding.small) {
-                MailResourcesAsset.attachment.swiftUIImage
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 16, height: 16)
+                IKIcon(MailResourcesAsset.attachment)
                     .foregroundStyle(MailResourcesAsset.textSecondaryColor)
 
                 VStack(alignment: .leading, spacing: UIPadding.verySmall) {
@@ -129,7 +127,10 @@ struct AttachmentsView: View {
 
         Task {
             await tryOrDisplayError {
-                let attachmentURL = try await mailboxManager.apiFetcher.downloadSwissTransferAttachment(stUuid: stUuid, fileUuid: fileUuid)
+                let attachmentURL = try await mailboxManager.apiFetcher.downloadSwissTransferAttachment(
+                    stUuid: stUuid,
+                    fileUuid: fileUuid
+                )
                 attachmentsURL = AttachmentsURL(urls: [attachmentURL])
             }
         }
@@ -148,7 +149,8 @@ struct AttachmentsView: View {
                     }
                     if let swissTransferAttachment = message.swissTransferAttachment {
                         group.addTask {
-                            try await mailboxManager.apiFetcher.downloadAllSwissTransferAttachment(stUuid: swissTransferAttachment.uuid)
+                            try await mailboxManager.apiFetcher
+                                .downloadAllSwissTransferAttachment(stUuid: swissTransferAttachment.uuid)
                         }
                     }
                     for try await url in group {
