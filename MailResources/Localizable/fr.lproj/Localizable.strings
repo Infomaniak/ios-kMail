@@ -824,7 +824,7 @@
 "fileQuantity-plural" = "%d fichiers envoyés via SwissTransfer";
 
 /* loco:6658833c09d08ba3a705fca2 */
-"fileQuantity-plural-many" = "%d fichiers envoyés via SwissTransfer";
+"fileQuantity-plural-many" = "%d de fichiers envoyés via SwissTransfer";
 
 /* loco:65982105ed32c3578b07f9c2 */
 "filterFocusAllowedMailboxesTitle" = "Boîtes aux lettres autorisées";
