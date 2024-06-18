@@ -264,11 +264,6 @@ final class MailEditorView: SQTextEditorView {
         callEditorMethod(name: "moveCursorToStart", completion: completion)
     }
 
-    /// Removes any current selection and moves the cursor to the very end of the document.
-    func moveCursorToEnd(completion: ((_ error: Error?) -> Void)? = nil) {
-        callEditorMethod(name: "moveCursorToEnd", completion: completion)
-    }
-
     func makeUnorderedList(completion: ((_ error: Error?) -> Void)? = nil) {
         callEditorMethod(name: "makeUnorderedList", completion: completion)
     }
