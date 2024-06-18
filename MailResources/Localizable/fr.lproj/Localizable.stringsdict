@@ -141,7 +141,7 @@
 			<key>other</key>
 			<string>%d fichiers envoyés via SwissTransfer</string>
 			<key>many</key>
-			<string>%d fichiers envoyés via SwissTransfer</string>
+			<string>%d de fichiers envoyés via SwissTransfer</string>
 		</dict>
 	</dict>
 </dict>
