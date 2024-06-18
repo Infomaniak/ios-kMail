@@ -72,11 +72,6 @@ public final class DraftManager {
         retry: Bool = true,
         showSnackbar: Bool
     ) async {
-        guard initialDraft.identityId != nil else {
-            SentrySDK.capture(message: "We are trying to send a draft without an identityId, this will fail.")
-            return
-        }
-
         matomo.track(eventWithCategory: .newMessage, name: "saveDraft")
 
         await draftQueue.cleanQueueElement(uuid: initialDraft.localUUID)
