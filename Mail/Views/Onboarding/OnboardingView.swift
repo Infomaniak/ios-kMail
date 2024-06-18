@@ -275,18 +275,20 @@ struct OnboardingView: View {
     }
 }
 
-struct OnboardingView_Previews: PreviewProvider {
-    static var previews: some View {
-        OnboardingView()
-            .previewDevice(PreviewDevice(rawValue: "iPhone 14 Pro"))
-            .previewDisplayName("Onboarding - Dynamic Island")
+#Preview {
+    OnboardingView()
+        .previewDevice(PreviewDevice(rawValue: "iPhone 14 Pro"))
+        .previewDisplayName("Onboarding - Dynamic Island")
+}
 
-        OnboardingView()
-            .previewDevice(PreviewDevice(rawValue: "iPhone 14"))
-            .previewDisplayName("Onboarding - Notch")
+#Preview {
+    OnboardingView()
+        .previewDevice(PreviewDevice(rawValue: "iPhone 14"))
+        .previewDisplayName("Onboarding - Notch")
+}
 
-        OnboardingView()
-            .previewDevice(PreviewDevice(rawValue: "iPhone SE (3rd generation)"))
-            .previewDisplayName("Onboarding - Default")
-    }
+#Preview {
+    OnboardingView()
+        .previewDevice(PreviewDevice(rawValue: "iPhone SE (3rd generation)"))
+        .previewDisplayName("Onboarding - Default")
 }
