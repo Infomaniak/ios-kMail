@@ -269,10 +269,6 @@ final class MailEditorView: SQTextEditorView {
         callEditorMethod(name: "moveCursorToEnd", completion: completion)
     }
 
-    func addBold(completion: ((_ error: Error?) -> Void)? = nil) {
-        callEditorMethod(name: "bold", completion: completion)
-    }
-
     func makeUnorderedList(completion: ((_ error: Error?) -> Void)? = nil) {
         callEditorMethod(name: "makeUnorderedList", completion: completion)
     }
