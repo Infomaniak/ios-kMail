@@ -41,10 +41,10 @@ public struct AttachmentView<Content: View>: View {
         self.accessory = accessory
     }
 
-    public init(file: File, accessory: @escaping () -> Content? = { EmptyView() }) {
-        self.title = file.name
-        self.subtitle = file.size.formatted(.defaultByteCount)
-        self.icon = file.icon
+    public init(swissTransferFile: File, accessory: @escaping () -> Content? = { EmptyView() }) {
+        self.title = swissTransferFile.name
+        self.subtitle = swissTransferFile.size.formatted(.defaultByteCount)
+        self.icon = swissTransferFile.icon
         self.accessory = accessory
     }
 

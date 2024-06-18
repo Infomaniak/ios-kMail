@@ -72,7 +72,7 @@ struct AttachmentsView: View {
                             Button {
                                 downloadSwissTransferAttachment(stUuid: swissTransferAttachment.uuid, fileUuid: file.uuid)
                             } label: {
-                                AttachmentView(file: file)
+                                AttachmentView(swissTransferFile: file)
                             }
                         }
                     }
