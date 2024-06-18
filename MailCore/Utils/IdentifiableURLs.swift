@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2022 Infomaniak Network SA
+ Copyright (C) 2024 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -25,9 +25,4 @@ public struct IdentifiableURL: Identifiable, Equatable {
     public init(url: URL) {
         self.url = url
     }
-}
-
-struct IdentifiableURLComponents: Identifiable {
-    var id: Int { urlComponents.hashValue }
-    let urlComponents: URLComponents
 }
