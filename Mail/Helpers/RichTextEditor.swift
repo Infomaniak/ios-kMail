@@ -273,10 +273,6 @@ final class MailEditorView: SQTextEditorView {
         callEditorMethod(name: "makeUnorderedList", completion: completion)
     }
 
-    func removeList(completion: ((_ error: Error?) -> Void)? = nil) {
-        callEditorMethod(name: "removeList", completion: completion)
-    }
-
     // MARK: - Custom Toolbar
 
     public func updateToolbarItems(style: ToolbarStyle) {
