@@ -276,7 +276,7 @@ final class ThreadListViewModel: ObservableObject, ThreadListable {
         detectDirection(from: thread)
     }
 
-    func addToSearchHistoryIfNeeded() {
+    func addCurrentSearchTermToHistoryIfNeeded() {
         // Empty on purpose
     }
     

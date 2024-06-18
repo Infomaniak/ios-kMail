@@ -72,7 +72,7 @@ struct SearchToolbar: ViewModifier {
                     if !multipleSelectionViewModel.isEnabled {
                         SearchTextField(value: $viewModel.searchValue) {
                             viewModel.matomo.track(eventWithCategory: .search, name: "validateSearch")
-                            viewModel.addToSearchHistoryIfNeeded()
+                            viewModel.addCurrentSearchTermToHistoryIfNeeded()
                             viewModel.searchThreadsForCurrentValue()
                         } onDelete: {
                             viewModel.matomo.track(eventWithCategory: .search, name: "deleteSearch")

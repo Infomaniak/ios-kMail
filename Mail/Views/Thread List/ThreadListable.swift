@@ -29,7 +29,7 @@ enum ThreadListableType {
     var frozenFolder: Folder { get }
     var origin: ThreadListableType { get }
 
-    func addToSearchHistoryIfNeeded()
+    func addCurrentSearchTermToHistoryIfNeeded()
     func onTapCell(thread: Thread)
     func refreshSearchIfNeeded(action: Action)
 }
