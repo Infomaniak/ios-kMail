@@ -142,21 +142,20 @@ struct MessageHeaderSummaryView: View {
     }
 }
 
-struct MessageHeaderSummaryView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
-                                     isMessageExpanded: .constant(false),
-                                     isHeaderExpanded: .constant(false)) {
-                // Preview
-            }
-            MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
-                                     isMessageExpanded: .constant(true),
-                                     isHeaderExpanded: .constant(false)) {
-                // Preview
-            }
-        }
-        .environmentObject(PreviewHelper.sampleMailboxManager)
+#Preview {
+    MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
+                             isMessageExpanded: .constant(false),
+                             isHeaderExpanded: .constant(false)) {
+        // Preview
+    }.environmentObject(PreviewHelper.sampleMailboxManager)
         .previewLayout(.sizeThatFits)
-    }
+}
+
+#Preview {
+    MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
+                             isMessageExpanded: .constant(true),
+                             isHeaderExpanded: .constant(false)) {
+        // Preview
+    }.environmentObject(PreviewHelper.sampleMailboxManager)
+        .previewLayout(.sizeThatFits)
 }
