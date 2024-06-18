@@ -89,6 +89,7 @@ struct MessageHeaderSummaryView: View {
                             }
                             MessageHeaderDateView(date: message.date)
                         }
+                        .accessibilityElement(children: .combine)
                     }
 
                     Group {
