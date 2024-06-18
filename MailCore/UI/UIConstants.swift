@@ -88,6 +88,7 @@ public extension UIConstants {
     static let menuDrawerMaxWidth: CGFloat = 352
     static let menuDrawerTrailingSpacing: CGFloat = 64
     static let menuDrawerLogoHeight: CGFloat = 48
+    static let menuDrawerLogoMacOSHeight: CGFloat = 32
     static let menuDrawerQuotaSize: CGFloat = 40
 
     static let unreadIconSize: CGFloat = 8
