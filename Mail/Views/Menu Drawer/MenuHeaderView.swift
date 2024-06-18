@@ -16,6 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -23,33 +25,59 @@ import SwiftUI
 import UIKit
 
 struct MenuHeaderView: View {
+    @LazyInjectService private var platformDetector: PlatformDetectable
+
     @EnvironmentObject private var mainViewState: MainViewState
 
+    private var menuDrawerLogoHeight: CGFloat {
+        platformDetector.isMac ? UIConstants.menuDrawerLogoMacOSHeight : UIConstants.menuDrawerLogoHeight
+    }
+
     var body: some View {
-        HStack {
-            MailResourcesAsset.logoText.swiftUIImage
-                .resizable()
-                .scaledToFit()
-                .frame(height: UIConstants.menuDrawerLogoHeight)
+        if platformDetector.isMac {
+            ZStack {}
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        logoImage
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        settingsButton
+                    }
+                }
+        } else {
+            HStack {
+                logoImage
 
-            Spacer()
+                Spacer()
 
-            Button {
-                mainViewState.settingsViewConfig = SettingsViewConfig(baseNavigationPath: [])
-            } label: {
-                IKIcon(MailResourcesAsset.cog, size: .large)
+                settingsButton
             }
-            .buttonStyle(.borderless)
-            .accessibilityLabel(MailResourcesStrings.Localizable.settingsTitle)
-            .frame(width: UIConstants.menuDrawerLogoHeight, height: UIConstants.menuDrawerLogoHeight)
-            .contentShape(Rectangle())
+            .padding(.vertical, value: .regular)
+            .padding(.leading, value: .medium)
+            .padding(.trailing, value: .verySmall)
+            .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
+            .clipped()
+            .shadow(color: MailResourcesAsset.menuDrawerShadowColor.swiftUIColor, radius: 1, x: 0, y: 2)
         }
-        .padding(.vertical, value: .regular)
-        .padding(.leading, value: .medium)
-        .padding(.trailing, value: .verySmall)
-        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
-        .clipped()
-        .shadow(color: MailResourcesAsset.menuDrawerShadowColor.swiftUIColor, radius: 1, x: 0, y: 2)
+    }
+
+    private var logoImage: some View {
+        MailResourcesAsset.logoText.swiftUIImage
+            .resizable()
+            .scaledToFit()
+            .frame(height: menuDrawerLogoHeight)
+    }
+
+    private var settingsButton: some View {
+        Button {
+            mainViewState.settingsViewConfig = SettingsViewConfig(baseNavigationPath: [])
+        } label: {
+            IKIcon(MailResourcesAsset.cog, size: .large)
+        }
+        .buttonStyle(.borderless)
+        .accessibilityLabel(MailResourcesStrings.Localizable.settingsTitle)
+        .frame(width: menuDrawerLogoHeight, height: menuDrawerLogoHeight)
+        .contentShape(Rectangle())
     }
 }
 
