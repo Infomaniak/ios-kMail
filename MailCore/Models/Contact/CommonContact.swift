@@ -33,19 +33,6 @@ public final class CommonContact: Identifiable {
     public let avatarImageRequest: AvatarImageRequest
     public let color: UIColor
 
-    static func from(contactConfiguration: ContactConfiguration) -> CommonContact {
-        switch contactConfiguration {
-        case .correspondent(let correspondent, let contextMailboxManager):
-            CommonContact(correspondent: correspondent, contextMailboxManager: contextMailboxManager)
-        case .user(let user):
-            CommonContact(user: user)
-        case .contact(let contact):
-            contact
-        case .emptyContact:
-            emptyContact
-        }
-    }
-
     /// Empty contact
     private init() {
         let recipient = Recipient(email: "", name: "")
