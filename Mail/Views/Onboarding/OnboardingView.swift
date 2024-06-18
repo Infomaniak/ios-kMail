@@ -255,7 +255,7 @@ struct OnboardingView: View {
 
     var body: some View {
         WaveView(slides: slides, selectedSlide: $selectedSlide) { index in
-            return index == slides.count - 1 || (index == slides.count - 2 && selectedSlide == slides.count - 1)
+            index == slides.count - 1 || (index == slides.count - 2 && selectedSlide == slides.count - 1)
         } bottomView: { _ in
             OnboardingBottomButtonsView(
                 selection: $selectedSlide,
