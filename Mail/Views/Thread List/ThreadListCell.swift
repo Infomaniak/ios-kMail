@@ -101,7 +101,7 @@ struct ThreadListCell: View {
     }
 
     private func didTapCell() {
-        viewModel.addToSearchHistoryIfNeeded()
+        viewModel.addCurrentSearchTermToHistoryIfNeeded()
         if multipleSelectionViewModel.isEnabled {
             multipleSelectionViewModel.toggleSelection(of: thread)
         } else {

@@ -38,7 +38,7 @@ enum SearchState {
 }
 
 final class SearchViewModel: ObservableObject, ThreadListable {
-    var frozenFolder: MailCore.Folder {
+    var frozenFolder: Folder {
         return frozenSearchFolder
     }
 
@@ -226,7 +226,7 @@ final class SearchViewModel: ObservableObject, ThreadListable {
         }
     }
 
-    func addToSearchHistoryIfNeeded() {
+    func addCurrentSearchTermToHistoryIfNeeded() {
         if searchValue.trimmingCharacters(in: .whitespacesAndNewlines).count >= 3 {
             Task {
                 await mailboxManager.addToSearchHistory(value: searchValue)
@@ -243,7 +243,6 @@ final class SearchViewModel: ObservableObject, ThreadListable {
         Task {
             // Need to wait 500 milliseconds before reloading
             try await Task.sleep(nanoseconds: 500_000_000)
-            print("refresh")
             await fetchThreads()
         }
     }
