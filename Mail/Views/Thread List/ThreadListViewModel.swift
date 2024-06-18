@@ -275,7 +275,7 @@ final class ThreadListViewModel: ObservableObject, ThreadListable {
     func addCurrentSearchTermToHistoryIfNeeded() {
         // Empty on purpose
     }
-    
+
     func refreshSearchIfNeeded(action: MailCore.Action) {
         // Empty on purpose
     }
