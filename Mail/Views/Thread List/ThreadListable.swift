@@ -19,15 +19,9 @@
 import Foundation
 import MailCore
 
-enum ThreadListableType {
-    case search
-    case threadList
-}
-
 @MainActor protocol ThreadListable {
     var mailboxManager: MailboxManager { get }
     var frozenFolder: Folder { get }
-    var origin: ThreadListableType { get }
 
     func addCurrentSearchTermToHistoryIfNeeded()
     func onTapCell(thread: Thread)

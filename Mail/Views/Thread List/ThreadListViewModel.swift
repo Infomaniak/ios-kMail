@@ -103,10 +103,6 @@ final class DateSection: Identifiable, Equatable {
 }
 
 final class ThreadListViewModel: ObservableObject, ThreadListable {
-    var origin: ThreadListableType {
-        return .threadList
-    }
-
     let mailboxManager: MailCore.MailboxManager
     let frozenFolder: Folder
 

@@ -107,7 +107,7 @@ struct ThreadListSwipeActions: ViewModifier {
                 viewModel.refreshSearchIfNeeded(action: action)
             }
             .sheet(item: $messagesToMove) { messages in
-                let originFolder: Folder? = viewModel.origin == .search ? viewModel.frozenFolder : thread.folder
+                let originFolder: Folder? = viewModel is SearchViewModel ? viewModel.frozenFolder : thread.folder
                 MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: originFolder)
                     .sheetViewStyle()
             }

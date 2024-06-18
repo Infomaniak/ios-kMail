@@ -42,10 +42,6 @@ final class SearchViewModel: ObservableObject, ThreadListable {
         return frozenSearchFolder
     }
 
-    var origin: ThreadListableType {
-        return .search
-    }
-
     let mailboxManager: MailCore.MailboxManager
 
     @LazyInjectService var matomo: MatomoUtils
