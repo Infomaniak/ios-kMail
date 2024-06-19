@@ -190,16 +190,6 @@ public enum SentryDebug {
         return crumb
     }
 
-    private static func addAsyncBreadcrumb(level: SentryLevel,
-                                           category: String,
-                                           message: String,
-                                           data: [String: Any]? = nil) {
-        Task {
-            let breadcrumb = createBreadcrumb(level: level, category: category, message: message, data: data)
-            SentrySDK.addBreadcrumb(breadcrumb)
-        }
-    }
-
     static func nilDateParsingBreadcrumb(uid: String) {
         let breadcrumb = createBreadcrumb(level: .warning,
                                           category: Category.threadAlgorithm.rawValue,
@@ -348,21 +338,19 @@ public enum SentryDebug {
 // MARK: - SHARED -
 
 public extension SentryDebug {
-    static func addBreadcrumb(
-        message: String,
-        category: SentryDebug.Category,
-        level: SentryLevel,
-        metadata: [String: Any]? = nil
-    ) {
+    static func addAsyncBreadcrumb(level: SentryLevel,
+                                   category: String,
+                                   message: String,
+                                   data: [String: Any]? = nil) {
         Task {
-            let breadcrumb = Breadcrumb(level: level, category: category.rawValue)
+            let breadcrumb = Breadcrumb(level: level, category: category)
             breadcrumb.message = message
-            breadcrumb.data = metadata
+            breadcrumb.data = data
             SentrySDK.addBreadcrumb(breadcrumb)
         }
     }
 
-    static func capture(
+    static func asyncCapture(
         error: Error,
         context: [String: Any]? = nil,
         contextKey: String? = nil,
@@ -381,7 +369,7 @@ public extension SentryDebug {
         }
     }
 
-    static func capture(
+    static func asyncCapture(
         message: String,
         context: [String: Any]? = nil,
         contextKey: String? = nil,

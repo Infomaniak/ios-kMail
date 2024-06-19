@@ -143,19 +143,17 @@ public enum Log {
         metadata["oldToken"] = oldTokenMetadata
         metadata["newToken"] = newTokenMetadata
 
-        SentryDebug.capture(
+        SentryDebug.asyncCapture(
             message: message,
             context: metadata,
             level: level,
             extras: ["file": "\(file)", "function": "\(function)", "line": "\(line)"]
         )
 
-        SentryDebug.addBreadcrumb(
-            message: message,
-            category: SentryDebug.Category.threadAlgorithm,
-            level: level,
-            metadata: metadata
-        )
+        SentryDebug.addAsyncBreadcrumb(level: level,
+                                       category: SentryDebug.Category.threadAlgorithm.rawValue,
+                                       message: message,
+                                       data: metadata)
 
         if level == .error {
             DDLogError(message)
