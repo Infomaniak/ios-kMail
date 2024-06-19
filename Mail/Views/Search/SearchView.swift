@@ -41,17 +41,16 @@ struct SearchView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
+        Group {
             if !multipleSelectionViewModel.isEnabled {
-                SearchFilterHeaderView(viewModel: viewModel)
-            }
+                VStack(spacing: 0) {
+                    SearchFilterHeaderView(viewModel: viewModel)
 
-            List {
-                SearchHistorySectionView(viewModel: viewModel)
-                SearchContactsSectionView(viewModel: viewModel)
-                SearchThreadsSectionView(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
+                    SearchViewList(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
+                }
+            } else {
+                SearchViewList(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
             }
-            .listStyle(.plain)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarSearchListStyle()
