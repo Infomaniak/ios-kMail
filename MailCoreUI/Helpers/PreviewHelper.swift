@@ -127,7 +127,6 @@ public enum PreviewHelper {
                                               scheduled: false,
                                               forwarded: false,
                                               flagged: false,
-                                              safeDisplay: false,
                                               hasUnsubscribeLink: true)
 
     public static let samplePresentableBody = PresentableBody(message: sampleMessage)

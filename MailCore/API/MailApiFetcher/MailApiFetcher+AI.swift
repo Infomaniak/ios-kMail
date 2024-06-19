@@ -22,17 +22,6 @@ import InfomaniakCore
 
 // AI feature requests take longer to respond. In this case, we increase the timeout
 extension MailApiFetcher {
-    private func authenticatedAIRequest(_ endpoint: Endpoint, method: HTTPMethod = .get,
-                                        parameters: Parameters? = nil) -> DataRequest {
-        return authenticatedRequest(
-            endpoint,
-            method: method,
-            parameters: parameters
-        ) {
-            $0.timeoutInterval = Constants.longTimeout
-        }
-    }
-
     private func authenticatedAIRequest<Parameters: Encodable>(
         _ endpoint: Endpoint,
         method: HTTPMethod = .get,
@@ -63,8 +52,12 @@ public extension MailApiFetcher {
         ))
     }
 
-    func aiShortcut(contextId: String, shortcut: AIShortcutAction, engine: AIEngine,
-                    mailbox: Mailbox) async throws -> AIShortcutResponse {
+    func aiShortcut(
+        contextId: String,
+        shortcut: AIShortcutAction,
+        engine: AIEngine,
+        mailbox: Mailbox
+    ) async throws -> AIShortcutResponse {
         try await perform(request: authenticatedRequest(
             .aiShortcut(contextId: contextId, shortcut: shortcut.apiName, mailbox: mailbox),
             method: .patch,

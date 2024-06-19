@@ -37,7 +37,7 @@ final class ShareNavigationViewController: UIViewController {
 
     private func overrideURLOpener() {
         let urlOpener = Factory(type: URLOpenable.self) { _, _ in
-            URLOpener(extensionContext: self.extensionContext)
+            URLOpener()
         }
         SimpleResolver.sharedResolver.store(factory: urlOpener)
     }

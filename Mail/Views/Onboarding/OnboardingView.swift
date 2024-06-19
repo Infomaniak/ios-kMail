@@ -255,7 +255,7 @@ struct OnboardingView: View {
 
     var body: some View {
         WaveView(slides: slides, selectedSlide: $selectedSlide) { index in
-            return index == slides.count - 1 || (index == slides.count - 2 && selectedSlide == slides.count - 1)
+            index == slides.count - 1 || (index == slides.count - 2 && selectedSlide == slides.count - 1)
         } bottomView: { _ in
             OnboardingBottomButtonsView(
                 selection: $selectedSlide,
@@ -275,18 +275,6 @@ struct OnboardingView: View {
     }
 }
 
-struct OnboardingView_Previews: PreviewProvider {
-    static var previews: some View {
-        OnboardingView()
-            .previewDevice(PreviewDevice(rawValue: "iPhone 14 Pro"))
-            .previewDisplayName("Onboarding - Dynamic Island")
-
-        OnboardingView()
-            .previewDevice(PreviewDevice(rawValue: "iPhone 14"))
-            .previewDisplayName("Onboarding - Notch")
-
-        OnboardingView()
-            .previewDevice(PreviewDevice(rawValue: "iPhone SE (3rd generation)"))
-            .previewDisplayName("Onboarding - Default")
-    }
+#Preview {
+    OnboardingView()
 }

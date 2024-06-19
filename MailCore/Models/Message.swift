@@ -316,7 +316,6 @@ public final class Message: Object, Decodable, Identifiable {
         case scheduled
         case forwarded
         case flagged
-        case safeDisplay
         case hasUnsubscribeLink
     }
 
@@ -410,7 +409,6 @@ public final class Message: Object, Decodable, Identifiable {
         scheduled: Bool,
         forwarded: Bool,
         flagged: Bool,
-        safeDisplay: Bool? = nil,
         hasUnsubscribeLink: Bool? = nil
     ) {
         self.init()

@@ -26,8 +26,3 @@ public struct IdentifiableURL: Identifiable, Equatable {
         self.url = url
     }
 }
-
-struct IdentifiableURLComponents: Identifiable {
-    var id: Int { urlComponents.hashValue }
-    let urlComponents: URLComponents
-}

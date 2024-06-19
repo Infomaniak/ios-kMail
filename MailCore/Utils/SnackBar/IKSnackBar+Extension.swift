@@ -50,14 +50,12 @@ public extension IKSnackBar {
     ///   - message: The message to display
     ///   - duration: The time the message should be displayed
     ///   - action: The action to perform if any
-    ///   - anchor: The anchor to use for presenting
     ///   - contextView: Set a context view, when displaying in extension mode for eg.
     /// - Returns: An IKSnackBar if any
     static func showMailSnackBar(
         message: String,
         duration: SnackBar.Duration = .lengthLong,
         action: IKSnackBar.Action? = nil,
-        anchor: CGFloat = 0,
         contextView: UIView? = nil
     ) -> IKSnackBar? {
         @LazyInjectService var avoider: IKSnackBarAvoider

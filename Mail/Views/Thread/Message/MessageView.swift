@@ -145,21 +145,21 @@ struct MessageView: View {
     }
 }
 
-struct MessageView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            MessageView(
-                message: PreviewHelper.sampleMessage,
-                threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: true])
-            )
+#Preview("Message collapsed") {
+    MessageView(
+        message: PreviewHelper.sampleMessage,
+        threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: true])
+    )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
+    .previewLayout(.sizeThatFits)
+}
 
-            MessageView(
-                message: PreviewHelper.sampleMessage,
-                isMessageExpanded: true,
-                threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: true])
-            )
-        }
-        .environmentObject(PreviewHelper.sampleMailboxManager)
-        .previewLayout(.sizeThatFits)
-    }
+#Preview("Message expanded") {
+    MessageView(
+        message: PreviewHelper.sampleMessage,
+        isMessageExpanded: true,
+        threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: true])
+    )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
+    .previewLayout(.sizeThatFits)
 }
