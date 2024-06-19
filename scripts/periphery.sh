@@ -8,9 +8,9 @@ tuist generate -n
 
 # Perform the periphery scan and handle directory removal based on argument
 if [[ "$1" == "--full-dir" ]]; then
-    detailedOutput=$(periphery scan --quiet --enable-unused-import-analysis)
+    detailedOutput=$(periphery scan --quiet --retain-codable-properties)
 else
-    detailedOutput=$(periphery scan --quiet --enable-unused-import-analysis | sed "s|$(pwd)/||g")
+    detailedOutput=$(periphery scan --quiet --retain-codable-properties | sed "s|$(pwd)/||g")
 fi
 
 unusedCount=$(wc -l <<< "$detailedOutput" | tr -d '[:space:]')
