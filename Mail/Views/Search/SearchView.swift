@@ -26,8 +26,6 @@ import RealmSwift
 import SwiftUI
 
 struct SearchView: View {
-    @LazyInjectService private var platformDetector: PlatformDetectable
-
     @EnvironmentObject private var mainViewState: MainViewState
     @EnvironmentObject private var actionsManager: ActionsManager
 
@@ -37,10 +35,6 @@ struct SearchView: View {
     @StateObject private var viewModel: SearchViewModel
     @StateObject private var multipleSelectionViewModel: MultipleSelectionViewModel
 
-    private var shouldShowHorizontalScrollbar: Bool {
-        platformDetector.isMac
-    }
-
     init(mailboxManager: MailboxManager, folder: Folder) {
         _viewModel = StateObject(wrappedValue: SearchViewModel(mailboxManager: mailboxManager, folder: folder))
         _multipleSelectionViewModel = StateObject(wrappedValue: MultipleSelectionViewModel())
@@ -49,31 +43,7 @@ struct SearchView: View {
     var body: some View {
         VStack(spacing: 0) {
             if !multipleSelectionViewModel.isEnabled {
-                ScrollView(.horizontal, showsIndicators: shouldShowHorizontalScrollbar) {
-                    HStack(spacing: UIPadding.small) {
-                        ForEach(viewModel.filters) { filter in
-                            if filter == .folder {
-                                SearchFilterFolderCell(
-                                    selection: $viewModel.selectedSearchFolderId,
-                                    folders: viewModel.frozenFolderList
-                                )
-                                .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonFilterSearch)
-                            } else {
-                                SearchFilterCell(
-                                    title: filter.title,
-                                    isSelected: viewModel.selectedFilters.contains(filter)
-                                )
-                                .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonFilterSearch)
-                                .accessibilityAddTraits(viewModel.selectedFilters.contains(filter) ? [.isSelected] : [])
-                                .onTapGesture {
-                                    viewModel.searchFilter(filter)
-                                }
-                            }
-                        }
-                    }
-                    .padding(value: .regular)
-                    .padding(.bottom, shouldShowHorizontalScrollbar ? UIPadding.verySmall : 0)
-                }
+                SearchFilterHeaderView(viewModel: viewModel)
             }
 
             List {
