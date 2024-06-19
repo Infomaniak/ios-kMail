@@ -145,19 +145,21 @@ struct MessageView: View {
     }
 }
 
-#Preview {
+#Preview("Message collapsed") {
     MessageView(
         message: PreviewHelper.sampleMessage,
         threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: true])
-    ).environmentObject(PreviewHelper.sampleMailboxManager)
-        .previewLayout(.sizeThatFits)
+    )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
+    .previewLayout(.sizeThatFits)
 }
 
-#Preview {
+#Preview("Message expanded") {
     MessageView(
         message: PreviewHelper.sampleMessage,
         isMessageExpanded: true,
         threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: true])
-    ).environmentObject(PreviewHelper.sampleMailboxManager)
-        .previewLayout(.sizeThatFits)
+    )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
+    .previewLayout(.sizeThatFits)
 }

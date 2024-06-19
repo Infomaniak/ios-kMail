@@ -277,18 +277,4 @@ struct OnboardingView: View {
 
 #Preview {
     OnboardingView()
-        .previewDevice(PreviewDevice(rawValue: "iPhone 14 Pro"))
-        .previewDisplayName("Onboarding - Dynamic Island")
-}
-
-#Preview {
-    OnboardingView()
-        .previewDevice(PreviewDevice(rawValue: "iPhone 14"))
-        .previewDisplayName("Onboarding - Notch")
-}
-
-#Preview {
-    OnboardingView()
-        .previewDevice(PreviewDevice(rawValue: "iPhone SE (3rd generation)"))
-        .previewDisplayName("Onboarding - Default")
 }

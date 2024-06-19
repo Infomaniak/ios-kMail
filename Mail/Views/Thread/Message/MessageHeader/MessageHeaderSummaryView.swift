@@ -142,20 +142,22 @@ struct MessageHeaderSummaryView: View {
     }
 }
 
-#Preview {
+#Preview("Message collapsed") {
     MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
                              isMessageExpanded: .constant(false),
                              isHeaderExpanded: .constant(false)) {
         // Preview
-    }.environmentObject(PreviewHelper.sampleMailboxManager)
-        .previewLayout(.sizeThatFits)
+    }
+    .environmentObject(PreviewHelper.sampleMailboxManager)
+    .previewLayout(.sizeThatFits)
 }
 
-#Preview {
+#Preview("Message expanded") {
     MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
                              isMessageExpanded: .constant(true),
                              isHeaderExpanded: .constant(false)) {
         // Preview
-    }.environmentObject(PreviewHelper.sampleMailboxManager)
-        .previewLayout(.sizeThatFits)
+    }
+    .environmentObject(PreviewHelper.sampleMailboxManager)
+    .previewLayout(.sizeThatFits)
 }
