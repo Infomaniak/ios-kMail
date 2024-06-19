@@ -174,8 +174,9 @@ public enum SentryDebug {
 
     // MARK: - Breadcrumb
 
-    enum Category {
-        static let ThreadAlgorithm = "Thread algo"
+    public enum Category: String {
+        case threadAlgorithm = "Thread algo"
+        case syncedAuthenticator = "SyncedAuthenticator"
     }
 
     private static func createBreadcrumb(level: SentryLevel,
@@ -189,19 +190,9 @@ public enum SentryDebug {
         return crumb
     }
 
-    private static func addAsyncBreadcrumb(level: SentryLevel,
-                                           category: String,
-                                           message: String,
-                                           data: [String: Any]? = nil) {
-        Task {
-            let breadcrumb = createBreadcrumb(level: level, category: category, message: message, data: data)
-            SentrySDK.addBreadcrumb(breadcrumb)
-        }
-    }
-
     static func nilDateParsingBreadcrumb(uid: String) {
         let breadcrumb = createBreadcrumb(level: .warning,
-                                          category: Category.ThreadAlgorithm,
+                                          category: Category.threadAlgorithm.rawValue,
                                           message: "Nil message date decoded",
                                           data: ["uid": uid])
         SentrySDK.addBreadcrumb(breadcrumb)
@@ -341,5 +332,64 @@ public enum SentryDebug {
         }
 
         return true
+    }
+}
+
+// MARK: - SHARED -
+
+public extension SentryDebug {
+    static func addAsyncBreadcrumb(level: SentryLevel,
+                                   category: String,
+                                   message: String,
+                                   data: [String: Any]? = nil) {
+        Task {
+            let breadcrumb = Breadcrumb(level: level, category: category)
+            breadcrumb.message = message
+            breadcrumb.data = data
+            SentrySDK.addBreadcrumb(breadcrumb)
+        }
+    }
+
+    static func asyncCapture(
+        error: Error,
+        context: [String: Any]? = nil,
+        contextKey: String? = nil,
+        extras: [String: Any]? = nil
+    ) {
+        Task {
+            SentrySDK.capture(error: error) { scope in
+                if let context, let contextKey {
+                    scope.setContext(value: context, key: contextKey)
+                }
+
+                if let extras {
+                    scope.setExtras(extras)
+                }
+            }
+        }
+    }
+
+    static func asyncCapture(
+        message: String,
+        context: [String: Any]? = nil,
+        contextKey: String? = nil,
+        level: SentryLevel? = nil,
+        extras: [String: Any]? = nil
+    ) {
+        Task {
+            SentrySDK.capture(message: message) { scope in
+                if let context, let contextKey {
+                    scope.setContext(value: context, key: contextKey)
+                }
+
+                if let level {
+                    scope.setLevel(level)
+                }
+
+                if let extras {
+                    scope.setExtras(extras)
+                }
+            }
+        }
     }
 }

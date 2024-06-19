@@ -22,6 +22,7 @@ import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
 import InfomaniakDI
+import InfomaniakLogin
 import RealmSwift
 import Sentry
 
@@ -123,5 +124,43 @@ public enum Logging {
             }
         }
         #endif
+    }
+}
+
+/// Something to centralize log methods per feature
+public enum Log {
+    public static func tokenAuthentication(_ message: @autoclosure () -> String,
+                                           oldToken: ApiToken?,
+                                           newToken: ApiToken?,
+                                           level: SentryLevel = .debug,
+                                           file: StaticString = #file,
+                                           function: StaticString = #function,
+                                           line: UInt = #line) {
+        let message = message()
+        let oldTokenMetadata: Any = oldToken?.metadata ?? "NULL"
+        let newTokenMetadata: Any = newToken?.metadata ?? "NULL"
+        var metadata = [String: Any]()
+        metadata["oldToken"] = oldTokenMetadata
+        metadata["newToken"] = newTokenMetadata
+
+        SentryDebug.asyncCapture(
+            message: message,
+            context: metadata,
+            level: level,
+            extras: ["file": "\(file)", "function": "\(function)", "line": "\(line)"]
+        )
+
+        SentryDebug.addAsyncBreadcrumb(level: level,
+                                       category: SentryDebug.Category.threadAlgorithm.rawValue,
+                                       message: message,
+                                       data: metadata)
+
+        if level == .error {
+            DDLogError(message)
+            DDLogError("old token: \(oldTokenMetadata)")
+            DDLogError("new token: \(newTokenMetadata)")
+        } else {
+            DDLogInfo(message)
+        }
     }
 }
