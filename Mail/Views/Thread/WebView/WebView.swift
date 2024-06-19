@@ -48,6 +48,7 @@ extension WKWebView {
 
 final class WebViewController: UIViewController {
     var openURL: OpenURLAction?
+    var onWebKitProcessTerminated: (() -> Void)?
     var model: WebViewModel?
     var messageUid: String?
 
@@ -139,6 +140,10 @@ extension WebViewController: WKNavigationDelegate {
             decisionHandler(.allow)
         }
     }
+
+    func webViewWebContentProcessDidTerminate(_ webView: WKWebView) {
+        onWebKitProcessTerminated?()
+    }
 }
 
 struct WebView: UIViewControllerRepresentable {
@@ -146,12 +151,14 @@ struct WebView: UIViewControllerRepresentable {
 
     let model: WebViewModel
     let messageUid: String
+    var onWebKitProcessTerminated: (() -> Void)?
 
     func makeUIViewController(context: Context) -> WebViewController {
         let controller = WebViewController()
         controller.openURL = openUrl
         controller.model = model
         controller.messageUid = messageUid
+        controller.onWebKitProcessTerminated = onWebKitProcessTerminated
         return controller
     }
 

@@ -43,20 +43,22 @@ struct MessageBodyView: View {
         ZStack {
             VStack {
                 if presentableBody.body != nil {
-                    WebView(model: model, messageUid: messageUid)
-                        .frame(height: model.webViewHeight)
-                        .onAppear {
-                            loadBody(blockRemoteContent: blockRemoteContent)
-                        }
-                        .onChange(of: presentableBody) { _ in
-                            loadBody(blockRemoteContent: blockRemoteContent)
-                        }
-                        .onChange(of: model.showBlockQuote) { _ in
-                            loadBody(blockRemoteContent: blockRemoteContent)
-                        }
-                        .onChange(of: blockRemoteContent) { newValue in
-                            loadBody(blockRemoteContent: newValue)
-                        }
+                    WebView(model: model, messageUid: messageUid) {
+                        loadBody(blockRemoteContent: blockRemoteContent)
+                    }
+                    .frame(height: model.webViewHeight)
+                    .onAppear {
+                        loadBody(blockRemoteContent: blockRemoteContent)
+                    }
+                    .onChange(of: presentableBody) { _ in
+                        loadBody(blockRemoteContent: blockRemoteContent)
+                    }
+                    .onChange(of: model.showBlockQuote) { _ in
+                        loadBody(blockRemoteContent: blockRemoteContent)
+                    }
+                    .onChange(of: blockRemoteContent) { newValue in
+                        loadBody(blockRemoteContent: newValue)
+                    }
 
                     if !presentableBody.quotes.isEmpty {
                         Button(model.showBlockQuote
