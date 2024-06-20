@@ -48,9 +48,11 @@ struct ComposeMessageBodyView: View {
 
             EditorView(body: $draft.body, model: $editorModel, toolbarModel: toolbarModel)
                 .frame(height: editorModel.height)
-                .onChange(of: editorModel.cursorPosition, perform: keepCursorVisible)
                 .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { _ in
-                    keepCursorVisible(editorModel.cursorPosition)
+                    keepCursorVisible()
+                }
+                .onChange(of: editorModel.cursorPosition?.minY) { _ in
+                    keepCursorVisible()
                 }
         }
         .customAlert(item: $toolbarModel.isShowingAlert) { alert in
@@ -91,18 +93,15 @@ struct ComposeMessageBodyView: View {
         }
     }
 
-    private func keepCursorVisible(_ cursorPosition: CGPoint?) {
-        guard let scrollView, let cursorPosition else {
+    private func keepCursorVisible() {
+        guard let scrollView, let cursorPosition = editorModel.cursorPosition else {
             return
         }
 
-        print("[SCROLL] NEW POSITION", cursorPosition.y)
-
         let scrollContentHeight = scrollView.contentSize.height
-        let editorYPosition = scrollContentHeight - editorModel.height
-        let cursorYPosition = editorYPosition + cursorPosition.y
+        let editorHeight = scrollContentHeight - editorModel.height
 
-        let scrollRect = CGRect(x: cursorPosition.x, y: cursorYPosition, width: 30, height: 30)
+        let scrollRect = cursorPosition.offsetBy(dx: 0, dy: editorHeight)
         scrollView.scrollRectToVisible(scrollRect, animated: true)
     }
 }

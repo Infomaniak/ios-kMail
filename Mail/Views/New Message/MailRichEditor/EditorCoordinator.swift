@@ -38,21 +38,12 @@ final class EditorCoordinator {
 // MARK: - RichEditorViewDelegate
 
 extension EditorCoordinator: RichEditorViewDelegate {
-    func richEditorViewDidLoad(_ richEditorView: RichEditorView) {
-        richEditorView.html = parent.body
-
-        let editorCSS = MessageWebViewUtils.loadCSS(for: .editor)
-        for css in editorCSS {
-            richEditorView.injectAdditionalCSS(css)
-        }
-    }
-
     func richEditorViewDidChange(_ richEditorView: RichEditorView) {
         parent.body = richEditorView.html
     }
 
-    func richEditorViewDidChangeSelection(_ richEditorView: RichEditorView) {
-        parent.model.cursorPosition = richEditorView.selection?.anchorPoint
+    func richEditorView(_ richEditorView: RichEditorView, cursorPositionDidChange cursorPosition: CGRect) {
+        parent.model.cursorPosition = cursorPosition
     }
 
     func richEditorView(_ richEditorView: RichEditorView, contentHeightDidChange contentHeight: CGFloat) {
@@ -111,6 +102,7 @@ extension EditorCoordinator {
     private func performAppAction(_ action: EditorToolbarAction) {
         switch action {
         case .ai:
+            // TODO: Fix AI sheet
             // parent.isShowingAIPrompt = true
             break
         case .addFile:

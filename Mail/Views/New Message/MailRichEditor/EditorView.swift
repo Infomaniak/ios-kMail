@@ -22,7 +22,7 @@ import SwiftUI
 
 struct EditorModel {
     var height: CGFloat = .zero
-    var cursorPosition: CGPoint? = .zero
+    var cursorPosition: CGRect? = .zero
 }
 
 struct EditorView: UIViewRepresentable {
@@ -35,6 +35,12 @@ struct EditorView: UIViewRepresentable {
         let editor = RichEditorView()
         editor.delegate = context.coordinator
         editor.inputAccessoryView = context.coordinator.toolbar
+
+        editor.html = body
+        let editorCSS = MessageWebViewUtils.loadCSS(for: .editor)
+        for css in editorCSS {
+            editor.injectAdditionalCSS(css)
+        }
 
         return editor
     }
