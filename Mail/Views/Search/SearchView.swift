@@ -42,13 +42,13 @@ struct SearchView: View {
 
     var body: some View {
         Group {
-            if !multipleSelectionViewModel.isEnabled {
-                VStack(spacing: 0) {
+            VStack(spacing: 0) {
+                Rectangle() // Needed to fix navBar clear color bug
+                    .frame(height: 0.2)
+                    .foregroundStyle(.clear)
+                if !multipleSelectionViewModel.isEnabled {
                     SearchFilterHeaderView(viewModel: viewModel)
-
-                    SearchViewList(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
                 }
-            } else {
                 SearchViewList(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
             }
         }
