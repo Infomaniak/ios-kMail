@@ -48,6 +48,8 @@ struct FloatingActionButtonModifier: ViewModifier {
                     }
             }
         }
+        // keyboardShortcut to open a New Message : Cmd + m
+        .keyboardShortcut("m")
         .ignoresSafeArea(.keyboard)
     }
 }
