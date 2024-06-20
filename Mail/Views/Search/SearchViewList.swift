@@ -24,8 +24,10 @@ struct SearchViewList: View {
 
     var body: some View {
         List {
-            SearchHistorySectionView(viewModel: viewModel)
-            SearchContactsSectionView(viewModel: viewModel)
+            if !multipleSelectionViewModel.isEnabled {
+                SearchHistorySectionView(viewModel: viewModel)
+                SearchContactsSectionView(viewModel: viewModel)
+            }
             SearchThreadsSectionView(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         }
         .listStyle(.plain)
