@@ -37,7 +37,10 @@ let project = Project(name: "Mail",
                                       "MailResources/**/InfoPlist.strings"
                                   ],
                                   entitlements: "MailResources/Mail.entitlements",
-                                  scripts: [Constants.swiftlintScript],
+                                  scripts: [
+                                      Constants.swiftlintScript,
+                                      Constants.stripSymbolsScript
+                                  ],
                                   dependencies: [
                                       .target(name: "MailCore"),
                                       .target(name: "MailCoreUI"),
