@@ -65,7 +65,7 @@ extension Action: CaseIterable {
         .noAction,
         .quickActionPanel
     ]
-    
+
     public var refreshSearchResult: Bool {
         switch self {
         case .moved, .archive, .delete:
