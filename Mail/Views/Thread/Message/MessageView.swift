@@ -124,6 +124,12 @@ struct MessageView: View {
                     }
                 }
             }
+            .accessibilityAction(named: MailResourcesStrings.Localizable.expandMessage) {
+                guard isMessageInteractive else { return }
+                withAnimation {
+                    isMessageExpanded.toggle()
+                }
+            }
         }
     }
 
