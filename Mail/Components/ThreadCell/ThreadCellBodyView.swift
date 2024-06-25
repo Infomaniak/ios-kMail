@@ -17,7 +17,6 @@
  */
 
 import MailCore
-import MailResources
 import SwiftUI
 
 struct ThreadCellBodyView: View, Equatable {

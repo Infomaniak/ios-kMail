@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
@@ -34,9 +35,11 @@ struct ThreadCellAnsweredView: View {
 
     var body: some View {
         image?
-            .frame(width: 16)
-            .foregroundStyle(MailResourcesAsset.textSecondaryColor.swiftUIColor)
-            .padding(.trailing, 4)
+            .resizable()
+            .scaledToFit()
+            .frame(width: 14)
+            .foregroundStyle(MailResourcesAsset.textSecondaryColor)
+            .padding(.trailing, UIPadding.verySmall)
     }
 }
 
