@@ -53,7 +53,16 @@ public enum AutoAdvance: String, CaseIterable, SettingsOptionEnum {
     }
 
     public var image: Image? {
-        return nil
+        switch self {
+        case .previousThread:
+            return MailResourcesAsset.arrowUp.swiftUIImage
+        case .followingThread:
+            return MailResourcesAsset.arrowDown.swiftUIImage
+        case .listOfThread:
+            return MailResourcesAsset.listConversation.swiftUIImage
+        case .naturalThread:
+            return MailResourcesAsset.doubleArrowsSynchronize.swiftUIImage
+        }
     }
 
     public var hint: String? {
