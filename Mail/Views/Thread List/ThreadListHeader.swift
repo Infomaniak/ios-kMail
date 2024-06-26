@@ -33,6 +33,7 @@ class ThreadListHeaderFolderObserver: ObservableObject {
         in: .common
     ).autoconnect()
     private var timerObservation: AnyCancellable?
+    // periphery:ignore - We need to keep a reference to this to keep receiving events (automatically removed on deinit)
     private var folderObservation: NotificationToken?
 
     @Published private(set) var lastUpdateText: String?

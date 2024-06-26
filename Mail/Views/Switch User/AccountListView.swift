@@ -36,6 +36,7 @@ final class AccountListViewModel: ObservableObject {
 
     @Published var accounts = [Account: [Mailbox]]()
 
+    // periphery:ignore - We need to keep a reference to this to keep receiving events (automatically removed on deinit)
     private var mailboxObservationToken: NotificationToken?
 
     init() {
