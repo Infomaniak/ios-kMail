@@ -143,7 +143,7 @@ enum EditorToolbarAction: Int {
         }
     }
 
-    func isSelected(textAttributes: RETextAttributes) -> Bool {
+    func isSelected(textAttributes: TextAttributes) -> Bool {
         switch self {
         case .bold:
             return textAttributes.format.hasBold
