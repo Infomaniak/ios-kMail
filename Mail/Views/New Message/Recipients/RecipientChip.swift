@@ -31,6 +31,7 @@ struct RecipientChip: View {
 
     let recipient: Recipient
     let fieldType: ComposeViewFieldType
+    // periphery:ignore - Used in removeAndFocus
     @FocusState var focusedField: ComposeViewFieldType?
     var removeHandler: (() -> Void)?
     var switchFocusHandler: (() -> Void)?
