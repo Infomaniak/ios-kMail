@@ -25,6 +25,7 @@ import PhotosUI
 import SwiftUI
 
 /// Something to deal with the tracking and Upload of Attachments linked to a Draft.
+/// periphery:ignore - AttachmentsManageable is needed in case we later want to do tests
 @MainActor protocol AttachmentsManageable {
     /// Live Attachments linked to the Draft
     var liveAttachments: [Attachment] { get }
@@ -60,6 +61,7 @@ import SwiftUI
 }
 
 /// Something to track `Attachments` linked to a live `Draft`
+/// periphery:ignore - AttachmentsManageable is needed in case we later want to do tests
 @MainActor final class AttachmentsManager: ObservableObject, AttachmentsManageable {
     /// Async attachment operations
     private let worker: AttachmentsManagerWorker
