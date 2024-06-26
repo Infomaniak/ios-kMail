@@ -23,14 +23,14 @@ import RealmSwift
 public class SwissTransferAttachment: EmbeddedObject, Codable {
     @Persisted public var uuid: String
     @Persisted public var nbfiles: Int
-    @Persisted public var size: Int64
+    @Persisted public var size: Int
     @Persisted public var files: RealmSwift.List<File>
 }
 
 public class File: EmbeddedObject, Codable, Identifiable {
     @Persisted public var uuid: String
     @Persisted public var name: String
-    @Persisted public var size: Int64
+    @Persisted public var size: Int
     @Persisted public var type: String
 
     public var icon: MailResourcesImages {
