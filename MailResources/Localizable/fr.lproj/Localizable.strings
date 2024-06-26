@@ -4,7 +4,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Fri, 21 Jun 2024 08:23:40 +0200
+ * Exported at: Wed, 26 Jun 2024 09:39:32 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -675,6 +675,9 @@
 
 /* loco:641178a6902412584c6acf62 */
 "emptyStateTrashTitle" = "La corbeille est vide";
+
+/* loco:667bac4f2a74996e510ce652 */
+"enableMultiSelection" = "Activer la sélection multiple";
 
 /* loco:64a2b619946ed6ede60a85e2 */
 "enterPasswordDescription1" = "Votre mot de passe a été modifié. Si vous n’en êtes pas à l’origine, veuillez contacter votre administrateur.";

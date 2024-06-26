@@ -141,6 +141,8 @@ struct ThreadListToolbar: ViewModifier {
                                     )
                                 }
                             }
+                            .accessibilityLabel(action.title)
+                            .accessibilityAddTraits(.isButton)
                         }
 
                         ToolbarButton(
@@ -149,6 +151,8 @@ struct ThreadListToolbar: ViewModifier {
                         ) {
                             multipleSelectedMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
                         }
+                        .accessibilityLabel(MailResourcesStrings.Localizable.buttonMore)
+                        .accessibilityAddTraits(.isButton)
                     }
                 }
                 .actionsPanel(

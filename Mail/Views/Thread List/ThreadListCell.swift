@@ -21,6 +21,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
+import MailResources
 import SwiftUI
 
 extension ThreadListCell: Equatable {
@@ -98,6 +99,9 @@ struct ThreadListCell: View {
             nearestFlushAlert: $flushAlert
         )
         .threadListCellAppearance()
+        .accessibilityAction(named: MailResourcesStrings.Localizable.enableMultiSelection) {
+            didOptionalTapCell()
+        }
     }
 
     private func didTapCell() {
