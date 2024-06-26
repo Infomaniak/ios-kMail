@@ -21,6 +21,8 @@ import SwiftUI
 protocol IntentViewable<Intent> {
     associatedtype Intent
 
+    // periphery:ignore - For no only used for simple protocol conformance
     var resolvedIntent: State<Intent?> { get }
+    // periphery:ignore - For no only used for simple protocol conformance
     func initFromIntent() async
 }
