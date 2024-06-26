@@ -28,4 +28,20 @@ import Foundation
         self.undo = undo
         self.afterUndo = afterUndo
     }
+
+    public init(waitingForAsyncUndoAction: Task<UndoAction, any Error>) {
+        undo = {
+            let undoAction = try await waitingForAsyncUndoAction.value
+            return try await undoAction.undo()
+        }
+
+        afterUndo = {
+            let undoAction = try await waitingForAsyncUndoAction.value
+            guard let afterUndo = undoAction.afterUndo else {
+                return true
+            }
+
+            return try await afterUndo()
+        }
+    }
 }
