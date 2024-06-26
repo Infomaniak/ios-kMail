@@ -20,6 +20,6 @@ import AppIntents
 
 @main
 struct MailAppIntentsExtension: AppIntentsExtension {
-    /// Making sure the DI is registered at a very early stage of the app launch.
+    // periphery:ignore - Making sure the DI is registered at a very early stage of the app launch.
     private let dependencyInjectionHook = MailAppIntentsTargetAssembly()
 }

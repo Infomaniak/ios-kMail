@@ -19,4 +19,5 @@
 import Foundation
 import InfomaniakDI
 
+// periphery:ignore - Used by DI
 class MailShareExtensionTargetAssembly: CommonAppAndShareTargetAssembly {}

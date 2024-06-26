@@ -27,7 +27,7 @@ import RealmSwift
 import UserNotifications
 
 final class NotificationService: UNNotificationServiceExtension {
-    /// Making sure the DI is registered at a very early stage of the app launch.
+    // periphery:ignore - Making sure the DI is registered at a very early stage of the app launch.
     private let dependencyInjectionHook = NotificationServiceTargetAssembly()
 
     @LazyInjectService private var accountManager: AccountManager

@@ -54,6 +54,7 @@ open class CommonAppAndShareTargetAssembly: TargetAssembly {
     }
 }
 
+// periphery:ignore - Used by DI
 class MailTargetAssembly: CommonAppAndShareTargetAssembly {
     override class func getTargetServices() -> [Factory] {
         return super.getTargetServices() + [

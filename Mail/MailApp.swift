@@ -24,7 +24,7 @@ import UIKit
 
 @main
 struct MailApp: App {
-    /// Making sure the DI is registered at a very early stage of the app launch.
+    // periphery:ignore - Making sure the DI is registered at a very early stage of the app launch.
     private let dependencyInjectionHook = MailTargetAssembly()
 
     @LazyInjectService private var refreshAppBackgroundTask: RefreshAppBackgroundTask
