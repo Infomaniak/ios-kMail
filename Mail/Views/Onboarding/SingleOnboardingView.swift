@@ -31,19 +31,13 @@ struct SingleOnboardingView: View {
     private let slides = [Slide.onboardingSlides.last!]
 
     var body: some View {
-        WaveView(slides: slides, selectedSlide: .constant(0)) { _ in
+        WaveView(slides: slides, selectedSlide: .constant(0), dismissHandler: dismiss.callAsFunction) { _ in
             OnboardingBottomButtonsView(
                 selection: .constant(0),
                 slideCount: 1
             )
         }
         .ignoresSafeArea()
-        .overlay(alignment: .topLeading) {
-            CloseButton(size: .regular, dismissAction: dismiss)
-                .padding(.top, UIPadding.onBoardingLogoTop)
-                .padding(.top, value: .verySmall)
-                .padding(.leading, value: .medium)
-        }
         .onAppear {
             if UIDevice.current.userInterfaceIdiom == .phone {
                 UIDevice.current
