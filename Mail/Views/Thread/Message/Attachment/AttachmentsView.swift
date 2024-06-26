@@ -52,8 +52,9 @@ struct AttachmentsView: View {
     }
 
     private var formattedSize: String {
-        guard let swissTransferAttachment = message.swissTransferAttachment
-        else { return message.attachmentsSize.formatted(.defaultByteCount) }
+        guard let swissTransferAttachment = message.swissTransferAttachment else {
+            return message.attachmentsSize.formatted(.defaultByteCount)
+        }
         return (message.attachmentsSize + swissTransferAttachment.size).formatted(.defaultByteCount)
     }
 
