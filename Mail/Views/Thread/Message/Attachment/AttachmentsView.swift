@@ -29,7 +29,7 @@ import SwiftUI
 struct AttachmentsView: View {
     @ModalState private var previewedAttachment: Attachment?
     @State private var downloadInProgress = false
-    @ModalState private var allAttachmentsURL: IdentifiableURL?
+    @ModalState private var attachmentsURL: AttachmentsURL?
 
     @EnvironmentObject var mailboxManager: MailboxManager
     @ObservedRealmObject var message: Message
@@ -40,48 +40,75 @@ struct AttachmentsView: View {
         return message.attachments.filter { $0.disposition == .attachment || $0.contentId == nil }
     }
 
+    private var formattedText: String {
+        var text = [String]()
+        if !attachments.isEmpty {
+            text.append("\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count))")
+        }
+        if let swissTransferAttachment = message.swissTransferAttachment {
+            text.append("\(MailResourcesStrings.Localizable.fileQuantity(swissTransferAttachment.nbfiles))")
+        }
+        return text.formatted(.list(type: .and))
+    }
+
+    private var formattedSize: String {
+        guard let swissTransferAttachment = message.swissTransferAttachment else {
+            return message.attachmentsSize.formatted(.defaultByteCount)
+        }
+        return (Int(message.attachmentsSize) + swissTransferAttachment.size).formatted(.defaultByteCount)
+    }
+
     var body: some View {
-        VStack(spacing: UIPadding.regular) {
+        VStack(alignment: .leading, spacing: UIPadding.regular) {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: UIPadding.small) {
                     ForEach(attachments) { attachment in
                         Button {
                             openAttachment(attachment)
                         } label: {
-                            AttachmentCell(attachment: attachment)
+                            AttachmentView(attachment: attachment)
+                        }
+                    }
+                    if let swissTransferAttachment = message.swissTransferAttachment {
+                        ForEach(swissTransferAttachment.files) { file in
+                            Button {
+                                downloadSwissTransferAttachment(stUuid: swissTransferAttachment.uuid, fileUuid: file.uuid)
+                            } label: {
+                                AttachmentView(swissTransferFile: file)
+                            }
                         }
                     }
                 }
-                .padding(.horizontal, value: .regular)
                 .padding(.vertical, 1)
             }
 
-            HStack(spacing: UIPadding.small) {
-                Label {
-                    Text(
-                        "\(MailResourcesStrings.Localizable.attachmentQuantity(attachments.count)) (\(message.attachmentsSize, format: .defaultByteCount))"
-                    )
-                } icon: {
-                    IKIcon(MailResourcesAsset.attachment)
-                        .foregroundStyle(MailResourcesAsset.textSecondaryColor)
+            HStack(alignment: .iconAndMultilineTextAlignment, spacing: UIPadding.small) {
+                IKIcon(MailResourcesAsset.attachment)
+                    .foregroundStyle(MailResourcesAsset.textSecondaryColor)
+
+                VStack(alignment: .leading, spacing: UIPadding.verySmall) {
+                    Text("\(formattedText) (\(formattedSize))")
+                        .textStyle(.bodySmallSecondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .multilineTextAlignment(.leading)
+
+                    Button(MailResourcesStrings.Localizable.buttonDownloadAll, action: downloadAllAttachments)
+                        .buttonStyle(.ikLink(isInlined: true))
+                        .controlSize(.small)
+                        .ikButtonLoading(downloadInProgress)
                 }
-                .textStyle(.bodySmallSecondary)
-
-                Button(MailResourcesStrings.Localizable.buttonDownloadAll, action: downloadAllAttachments)
-                    .buttonStyle(.ikLink(isInlined: true))
-                    .controlSize(.small)
-                    .ikButtonLoading(downloadInProgress)
-
-                Spacer()
             }
-            .padding(.horizontal, value: .regular)
+        }
+        .padding(.horizontal, value: .regular)
+        .task {
+            try? await mailboxManager.swissTransferAttachment(message: message)
         }
         .sheet(item: $previewedAttachment) { previewedAttachment in
             AttachmentPreview(attachment: previewedAttachment)
                 .environmentObject(mailboxManager)
         }
-        .sheet(item: $allAttachmentsURL) { allAttachmentsURL in
-            DocumentPicker(pickerType: .exportContent([allAttachmentsURL.url]))
+        .sheet(item: $attachmentsURL) { attachmentsURL in
+            DocumentPicker(pickerType: .exportContent(attachmentsURL.urls))
                 .ignoresSafeArea()
         }
     }
@@ -96,13 +123,42 @@ struct AttachmentsView: View {
         }
     }
 
+    private func downloadSwissTransferAttachment(stUuid: String, fileUuid: String) {
+        matomo.track(eventWithCategory: .attachmentActions, name: "openSwissTransfer")
+
+        Task {
+            await tryOrDisplayError {
+                let attachmentURL = try await mailboxManager.apiFetcher.downloadSwissTransferAttachment(
+                    stUuid: stUuid,
+                    fileUuid: fileUuid
+                )
+                attachmentsURL = AttachmentsURL(urls: [attachmentURL])
+            }
+        }
+    }
+
     private func downloadAllAttachments() {
         downloadInProgress = true
         Task {
             await tryOrDisplayError {
                 matomo.track(eventWithCategory: .message, name: "downloadAll")
-                let attachmentURL = try await mailboxManager.apiFetcher.downloadAttachments(message: message)
-                allAttachmentsURL = IdentifiableURL(url: attachmentURL)
+
+                try await withThrowingTaskGroup(of: URL.self) { group in
+                    var urls = [URL]()
+                    group.addTask {
+                        try await mailboxManager.apiFetcher.downloadAttachments(message: message)
+                    }
+                    if let swissTransferAttachment = message.swissTransferAttachment {
+                        group.addTask {
+                            try await mailboxManager.apiFetcher
+                                .downloadAllSwissTransferAttachment(stUuid: swissTransferAttachment.uuid)
+                        }
+                    }
+                    for try await url in group {
+                        urls.append(url)
+                    }
+                    attachmentsURL = AttachmentsURL(urls: urls)
+                }
             }
             downloadInProgress = false
         }

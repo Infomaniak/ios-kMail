@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2022 Infomaniak Network SA
+ Copyright (C) 2023 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -16,18 +16,13 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
-import MailCoreUI
-import SwiftUI
+import Foundation
 
-struct AttachmentCell: View {
-    let attachment: Attachment
+public struct AttachmentsURL: Identifiable, Equatable {
+    public let id = UUID()
+    public let urls: [URL]
 
-    var body: some View {
-        AttachmentView(attachment: attachment, subtitle: attachment.size.formatted(.defaultByteCount))
+    public init(urls: [URL]) {
+        self.urls = urls
     }
-}
-
-#Preview {
-    AttachmentCell(attachment: PreviewHelper.sampleAttachment)
 }

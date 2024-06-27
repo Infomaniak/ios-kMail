@@ -99,14 +99,6 @@ public extension MailApiFetcher {
                                                         parameters: ["uids": messages.map(\.uid)]))
     }
 
-    func attachment(attachment: Attachment) async throws -> Data {
-        guard let resource = attachment.resource else {
-            throw MailError.resourceError
-        }
-        let request = authenticatedRequest(.resource(resource))
-        return try await request.serializingData().value
-    }
-
     func messagesUids(
         mailboxUuid: String,
         folderId: String,

@@ -230,6 +230,10 @@ final class MCKMailboxManageable_SearchViewModel: MailboxManageable, MCKTransact
     func draft(remoteUuid: String, using realm: RealmSwift.Realm) -> MailCore.Draft? { nil }
 
     func getFrozenFolders() -> [MailCore.Folder] { [] }
+
+    func swissTransferAttachment(message: MailCore.Message) async throws {
+        fatalError("Unexpected")
+    }
 }
 
 // MARK: - ITSearchViewModel

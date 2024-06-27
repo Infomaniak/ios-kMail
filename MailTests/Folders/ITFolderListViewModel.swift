@@ -206,6 +206,10 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
     func draft(remoteUuid: String, using realm: RealmSwift.Realm) -> MailCore.Draft? { nil }
 
     func getFrozenFolders() -> [MailCore.Folder] { [] }
+
+    func swissTransferAttachment(message: MailCore.Message) async throws {
+        fatalError("Unexpected")
+    }
 }
 
 /// Integration tests of the FolderListViewModel

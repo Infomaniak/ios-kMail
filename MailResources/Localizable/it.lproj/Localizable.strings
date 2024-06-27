@@ -817,6 +817,15 @@
 /* loco:62a9dbdf0bddbc02ce031ba2 */
 "favoritesFolder" = "Preferiti";
 
+/* loco:66587f0c073fdbd3d8051342 */
+"fileQuantity" = "%d file inviato da SwissTransfer";
+
+/* loco:66587fa3e58bc83def020512 */
+"fileQuantity-plural" = "%d file inviati da SwissTransfer";
+
+/* loco:6658833c09d08ba3a705fca2 */
+"fileQuantity-plural-many" = "";
+
 /* loco:65982105ed32c3578b07f9c2 */
 "filterFocusAllowedMailboxesTitle" = "Cassette postali autorizzate";
 
@@ -1506,6 +1515,9 @@
 
 /* loco:65ba2326ef9447c160013bf2 */
 "superCollapsedBlock" = "Vedi tutti (%d)";
+
+/* loco:6655c3b29b769d05b20834c4 */
+"swissTransferAttachmentDescription" = "Il mittente ha allegato uno o più file di grandi dimensioni, disponibili tramite il link SwissTransfer.";
 
 /* loco:653112b14b84af451706ef56 */
 "syncCalendarsAndContactsDescription" = "Visualizza i contatti e il calendario direttamente dal dispositivo.";

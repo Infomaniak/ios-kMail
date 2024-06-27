@@ -200,6 +200,8 @@ public final class Message: Object, Decodable, Identifiable {
 
     @Persisted public var calendarEventResponse: CalendarEventResponse?
 
+    @Persisted public var swissTransferAttachment: SwissTransferAttachment?
+
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
     }

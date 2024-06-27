@@ -18,11 +18,7 @@
 
 import Foundation
 import MailResources
-import PDFKit
-import QuickLookThumbnailing
 import RealmSwift
-import SwiftUI
-import UniformTypeIdentifiers
 
 public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
     @Persisted public var uuid: String
@@ -43,41 +39,8 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
         return parentLink.first
     }
 
-    public var uti: UTType? {
-        UTType(mimeType: mimeType, conformingTo: .data)
-    }
-
     public var icon: MailResourcesImages {
-        guard let uti else { return MailResourcesAsset.unknownFile }
-
-        if uti.conforms(to: .pdf) {
-            return MailResourcesAsset.pdfFile
-        } else if uti.conforms(to: .calendarEvent) || uti.conforms(to: .ics) {
-            return MailResourcesAsset.icsFile
-        } else if uti.conforms(to: .vCard) {
-            return MailResourcesAsset.vcardFile
-        } else if uti.conforms(to: .image) {
-            return MailResourcesAsset.imageFile
-        } else if uti.conforms(to: .audio) {
-            return MailResourcesAsset.audioFile
-        } else if uti.conforms(to: .movie) {
-            return MailResourcesAsset.videoFile
-        } else if uti.conforms(to: .spreadsheet) {
-            return MailResourcesAsset.gridFile
-        } else if uti.conforms(to: .presentation) {
-            return MailResourcesAsset.pointFile
-        } else if uti.conforms(to: .sourceCode) || uti.conforms(to: .html) || uti.conforms(to: .json) || uti.conforms(to: .xml) {
-            return MailResourcesAsset.codeFile
-        } else if uti.conforms(to: .text) || uti.conforms(to: .pages) || uti.conforms(to: .onlyOffice)
-            || uti.conforms(to: .wordDoc) || uti.conforms(to: .wordDocm) || uti.conforms(to: .wordDocx) {
-            return MailResourcesAsset.docFile
-        } else if uti.conforms(to: .archive) {
-            return MailResourcesAsset.archiveFile
-        } else if uti.conforms(to: .font) {
-            return MailResourcesAsset.fontFile
-        } else {
-            return MailResourcesAsset.unknownFile
-        }
+        return AttachmentHelper(type: mimeType).icon
     }
 
     private enum CodingKeys: String, CodingKey {

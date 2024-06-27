@@ -21,24 +21,45 @@ import MailResources
 import SwiftUI
 
 public struct AttachmentView<Content: View>: View {
-    private let detachedAttachment: Attachment
+    private let title: String
     private let subtitle: String
+    private let icon: MailResourcesImages
 
     @ViewBuilder let accessory: () -> Content?
 
-    public init(attachment: Attachment, subtitle: String, accessory: @escaping () -> Content? = { EmptyView() }) {
-        detachedAttachment = attachment.detached()
+    public init(
+        title: String,
+        subtitle: String,
+        icon: MailResourcesImages,
+        accessory: @escaping () -> Content? = { EmptyView() }
+    ) {
+        self.title = title
         self.subtitle = subtitle
+        self.icon = icon
+        self.accessory = accessory
+    }
+
+    public init(attachment: Attachment, accessory: @escaping () -> Content? = { EmptyView() }) {
+        title = attachment.name
+        subtitle = attachment.size.formatted(.defaultByteCount)
+        icon = attachment.icon
+        self.accessory = accessory
+    }
+
+    public init(swissTransferFile: File, accessory: @escaping () -> Content? = { EmptyView() }) {
+        title = swissTransferFile.name
+        subtitle = swissTransferFile.size.formatted(.defaultByteCount)
+        icon = swissTransferFile.icon
         self.accessory = accessory
     }
 
     public var body: some View {
         HStack(spacing: UIPadding.small) {
-            IKIcon(detachedAttachment.icon, size: .large)
+            IKIcon(icon, size: .large)
                 .foregroundStyle(MailResourcesAsset.textSecondaryColor)
 
             VStack(alignment: .leading, spacing: 0) {
-                Text(detachedAttachment.name)
+                Text(title)
                     .textStyle(.bodySmall)
                     .lineLimit(1)
                     .truncationMode(.middle)
@@ -60,5 +81,5 @@ public struct AttachmentView<Content: View>: View {
 }
 
 #Preview {
-    AttachmentView(attachment: PreviewHelper.sampleAttachment, subtitle: "24ko")
+    AttachmentView(title: "title", subtitle: "24ko", icon: PreviewHelper.sampleAttachment.icon)
 }

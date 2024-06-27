@@ -122,18 +122,6 @@ public extension MailApiFetcher {
                                                         parameters: ["uids": messages.map(\.uid)]))
     }
 
-    func downloadAttachments(message: Message) async throws -> URL {
-        let destination = DownloadRequest.suggestedDownloadDestination(options: [
-            .createIntermediateDirectories,
-            .removePreviousFile
-        ])
-        let download = authenticatedSession.download(
-            Endpoint.downloadAttachments(messageResource: message.resource).url,
-            to: destination
-        )
-        return try await download.serializingDownloadedFileURL().value
-    }
-
     @discardableResult
     func blockSender(message: Message) async throws -> NullableResponse {
         try await perform(request: authenticatedRequest(.blockSender(messageResource: message.resource), method: .post))
