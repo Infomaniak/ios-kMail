@@ -20,27 +20,29 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct ThreadCellAnsweredView: View {
-    let answered: Bool
-    let forwarded: Bool
+struct ThreadCellActionView: View {
+    let lastAction: ThreadLastAction?
 
     private var image: Image? {
-        if answered {
-            return MailResourcesAsset.emailReplyFilled.swiftUIImage
-        } else if forwarded {
+        switch lastAction {
+        case .forward:
             return MailResourcesAsset.emailForwardFilled.swiftUIImage
+        case .reply:
+            return MailResourcesAsset.emailReplyFilled.swiftUIImage
+        case nil:
+            return nil
         }
-        return nil
     }
 
     private var accessibilityLabel: String {
-        var label = ""
-        if answered {
-            label = MailResourcesStrings.Localizable.contentDescriptionIconReply
-        } else if forwarded {
-            label = MailResourcesStrings.Localizable.contentDescriptionIconForward
+        switch lastAction {
+        case .forward:
+            return MailResourcesStrings.Localizable.contentDescriptionIconForward
+        case .reply:
+            return MailResourcesStrings.Localizable.contentDescriptionIconReply
+        case nil:
+            return ""
         }
-        return label
     }
 
     var body: some View {
@@ -56,7 +58,7 @@ struct ThreadCellAnsweredView: View {
 
 #Preview {
     VStack {
-        ThreadCellAnsweredView(answered: true, forwarded: false)
-        ThreadCellAnsweredView(answered: false, forwarded: true)
+        ThreadCellActionView(lastAction: .forward)
+        ThreadCellActionView(lastAction: .reply)
     }
 }

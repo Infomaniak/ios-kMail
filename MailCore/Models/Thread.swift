@@ -46,6 +46,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var flagged: Bool
     @Persisted public var answered: Bool
     @Persisted public var forwarded: Bool
+    @Persisted public var lastAction: ThreadLastAction?
     @Persisted public var folderId = ""
     @Persisted(originProperty: "threads") private var folders: LinkingObjects<Folder>
     @Persisted public var fromSearch = false
@@ -136,6 +137,12 @@ public class Thread: Object, Decodable, Identifiable {
             date = lastMessageFromFolderDate
         } else {
             throw MailError.incoherentThreadDate
+        }
+
+        if let lastMessageAction = messages.last(where: {
+            $0.forwarded || $0.answered
+        }) {
+            lastAction = lastMessageAction.forwarded ? .forward : .reply
         }
 
         subject = messages.first?.subject
@@ -302,4 +309,9 @@ public enum SearchCondition: Equatable {
     case contains(String)
     case everywhere(Bool)
     case attachments(Bool)
+}
+
+public enum ThreadLastAction: String, PersistableEnum {
+    case forward
+    case reply
 }
