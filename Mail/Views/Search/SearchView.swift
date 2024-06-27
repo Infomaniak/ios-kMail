@@ -26,12 +26,6 @@ import RealmSwift
 import SwiftUI
 
 struct SearchView: View {
-    @EnvironmentObject private var mainViewState: MainViewState
-    @EnvironmentObject private var actionsManager: ActionsManager
-
-    @State private var multipleSelectedMessages: [Message]?
-    @State private var messagesToMove: [Message]?
-
     @StateObject private var viewModel: SearchViewModel
     @StateObject private var multipleSelectionViewModel: MultipleSelectionViewModel
 

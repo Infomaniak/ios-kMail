@@ -23,7 +23,6 @@ import SwiftUI
 
 struct SearchThreadsSectionView: View {
     @EnvironmentObject private var mainViewState: MainViewState
-    @EnvironmentObject private var splitViewManager: SplitViewManager
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
