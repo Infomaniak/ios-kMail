@@ -149,9 +149,13 @@ public extension MailboxManager {
     }
 
     private func undoAction(for cancellableResponse: UndoResponse, and messages: [Message]) -> UndoAction {
-        let undoBlock = {
+        let afterUndo = {
             try await self.refreshFolder(from: messages, additionalFolder: nil)
+            return true
         }
-        return UndoAction(undo: cancellableResponse, undoBlock: undoBlock)
+        let undo = {
+            try await self.apiFetcher.undoAction(resource: cancellableResponse.undoResource)
+        }
+        return UndoAction(undo: undo, afterUndo: afterUndo)
     }
 }

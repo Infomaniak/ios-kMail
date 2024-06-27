@@ -188,19 +188,25 @@ public class ActionsManager: ObservableObject {
         let originalThreads = messages.flatMap { $0.threads.filter { $0.folder == originFolder } }
         await mailboxManager.markMovedLocally(true, threads: originalThreads)
 
-        do {
-            let undoAction = try await mailboxManager.move(messages: messages, to: folderRole)
-            let snackbarMessage = snackbarMoveMessage(
-                for: messages,
-                originFolder: originFolder,
-                destinationFolderName: folderRole.localizedName
-            )
-
-            async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
-        } catch {
-            await mailboxManager.markMovedLocally(false, threads: originalThreads)
-            throw error
+        let moveTask = Task {
+            do {
+                let undoAction = try await mailboxManager.move(messages: messages, to: folderRole)
+                return undoAction
+            } catch {
+                await mailboxManager.markMovedLocally(false, threads: originalThreads)
+                throw error
+            }
         }
+
+        let undoAction = UndoAction(waitingForAsyncUndoAction: moveTask)
+
+        let snackbarMessage = snackbarMoveMessage(
+            for: messages,
+            originFolder: originFolder,
+            destinationFolderName: folderRole.localizedName
+        )
+
+        async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
     }
 
     public func performMove(messages: [Message], from originFolder: Folder?, to destinationFolder: Folder) async throws {
@@ -209,27 +215,37 @@ public class ActionsManager: ObservableObject {
         let originalThreads = messagesFromFolder.flatMap { $0.threads.filter { $0.folder == originFolder } }
         await mailboxManager.markMovedLocally(true, threads: originalThreads)
 
-        do {
-            let undoAction = try await mailboxManager.move(messages: messagesFromFolder, to: destinationFolder)
-
-            let snackbarMessage = snackbarMoveMessage(
-                for: messagesFromFolder,
-                originFolder: originFolder,
-                destinationFolderName: destinationFolder.localizedName
-            )
-
-            async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
-        } catch {
-            await mailboxManager.markMovedLocally(false, threads: originalThreads)
-            throw error
+        let moveTask = Task {
+            do {
+                let undoAction = try await mailboxManager.move(messages: messagesFromFolder, to: destinationFolder)
+                return undoAction
+            } catch {
+                await mailboxManager.markMovedLocally(false, threads: originalThreads)
+                throw error
+            }
         }
+
+        let undoAction = UndoAction(waitingForAsyncUndoAction: moveTask)
+
+        let snackbarMessage = snackbarMoveMessage(
+            for: messagesFromFolder,
+            originFolder: originFolder,
+            destinationFolderName: destinationFolder.localizedName
+        )
+
+        async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
     }
 
     private func performDelete(messages: [Message], originFolder: Folder?) async throws {
         if originFolder?.permanentlyDeleteContent == true {
-            try await mailboxManager.delete(messages: messages)
+            let permanentlyDeleteTask = Task {
+                try await mailboxManager.delete(messages: messages)
+            }
+
             let snackbarMessage = snackbarPermanentlyDeleteMessage(for: messages, originFolder: originFolder)
             async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: nil)
+
+            try await permanentlyDeleteTask.value
         } else {
             try await performMove(messages: messages, from: originFolder, to: .trash)
         }
@@ -243,8 +259,7 @@ public class ActionsManager: ObservableObject {
             IKSnackBar.showCancelableSnackBar(
                 message: message,
                 cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                undoAction: undoAction,
-                mailboxManager: mailboxManager
+                undoAction: undoAction
             )
         } else {
             snackbarPresenter.show(message: message)

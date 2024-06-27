@@ -18,14 +18,37 @@
 
 import Foundation
 
-public struct UndoAction {
-    public typealias UndoBlock = () async throws -> Void
+@frozen public struct UndoAction {
+    public typealias UndoBlock = () async throws -> Bool
 
-    public let undo: CancelableResponse
-    public let undoBlock: UndoBlock?
+    /// A block that executes the undo action
+    public let undo: UndoBlock
+    /// An optional block to executes something after the undo is done
+    public let afterUndo: UndoBlock?
 
-    public init(undo: CancelableResponse, undoBlock: UndoBlock?) {
+    public init(undo: @escaping UndoBlock, afterUndo: UndoBlock?) {
         self.undo = undo
-        self.undoBlock = undoBlock
+        self.afterUndo = afterUndo
+    }
+
+    /// A convenience init for when we need to wait on an async call to be done but we want to update the UI without waiting
+    ///
+    /// For example: We need to wait for an `undoResource` when moving messages to undo the move but we want to present the
+    /// snackbar without waiting
+    public init(waitingForAsyncUndoAction: Task<UndoAction, any Error>) {
+        // In this context, undoing is simply waiting to get the original UndoAction and then calling the original undo
+        undo = {
+            let undoAction = try await waitingForAsyncUndoAction.value
+            return try await undoAction.undo()
+        }
+
+        afterUndo = {
+            let undoAction = try await waitingForAsyncUndoAction.value
+            guard let afterUndo = undoAction.afterUndo else {
+                return true
+            }
+
+            return try await afterUndo()
+        }
     }
 }
