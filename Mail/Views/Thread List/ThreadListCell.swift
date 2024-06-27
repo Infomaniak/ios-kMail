@@ -38,8 +38,8 @@ struct ThreadListCell: View {
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var mainViewState: MainViewState
 
-    let viewModel: ThreadListViewModel
-    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    let viewModel: ThreadListable
+    @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
 
     let thread: Thread
 
@@ -101,10 +101,9 @@ struct ThreadListCell: View {
     }
 
     private func didTapCell() {
+        viewModel.addCurrentSearchTermToHistoryIfNeeded()
         if multipleSelectionViewModel.isEnabled {
-            withAnimation(.default.speed(2)) {
-                multipleSelectionViewModel.toggleSelection(of: thread)
-            }
+            multipleSelectionViewModel.toggleSelection(of: thread)
         } else {
             if thread.shouldPresentAsDraft {
                 DraftUtils.editDraft(
@@ -115,7 +114,7 @@ struct ThreadListCell: View {
             } else {
                 splitViewManager.adaptToProminentThreadView()
 
-                viewModel.detectDirection(from: thread)
+                viewModel.onTapCell(thread: thread)
                 mainViewState.selectedThread = thread
             }
         }
@@ -124,8 +123,8 @@ struct ThreadListCell: View {
     private func didOptionalTapCell() {
         guard !multipleSelectionViewModel.isEnabled else { return }
         multipleSelectionViewModel.feedbackGenerator.prepare()
-        multipleSelectionViewModel.isEnabled = true
-        matomo.track(eventWithCategory: .multiSelection, action: .longPress, name: "enable")
+        let eventCategory: MatomoUtils.EventCategory = viewModel is SearchViewModel ? .searchMultiSelection : .multiSelection
+        matomo.track(eventWithCategory: eventCategory, action: .longPress, name: "enable")
         multipleSelectionViewModel.feedbackGenerator.impactOccurred()
         multipleSelectionViewModel.toggleSelection(of: thread)
     }
@@ -136,7 +135,7 @@ struct ThreadListCell: View {
         viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                        frozenFolder: PreviewHelper.sampleFolder,
                                        selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner),
-        multipleSelectionViewModel: ThreadListMultipleSelectionViewModel(frozenFolder: PreviewHelper.sampleFolder),
+        multipleSelectionViewModel: MultipleSelectionViewModel(fromArchiveFolder: true),
         thread: PreviewHelper.sampleThread,
         threadDensity: .large,
         accentColor: .pink,

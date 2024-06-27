@@ -26,95 +26,44 @@ import RealmSwift
 import SwiftUI
 
 struct SearchView: View {
-    @LazyInjectService private var platformDetector: PlatformDetectable
-
-    @EnvironmentObject private var mainViewState: MainViewState
-
     @StateObject private var viewModel: SearchViewModel
-
-    private var shouldShowHorizontalScrollbar: Bool {
-        platformDetector.isMac
-    }
+    @StateObject private var multipleSelectionViewModel: MultipleSelectionViewModel
 
     init(mailboxManager: MailboxManager, folder: Folder) {
         _viewModel = StateObject(wrappedValue: SearchViewModel(mailboxManager: mailboxManager, folder: folder))
+        _multipleSelectionViewModel = StateObject(wrappedValue: MultipleSelectionViewModel())
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView(.horizontal, showsIndicators: shouldShowHorizontalScrollbar) {
-                HStack(spacing: UIPadding.small) {
-                    ForEach(viewModel.filters) { filter in
-                        if filter == .folder {
-                            SearchFilterFolderCell(
-                                selection: $viewModel.selectedSearchFolderId,
-                                folders: viewModel.frozenFolderList
-                            )
-                            .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonFilterSearch)
-                        } else {
-                            SearchFilterCell(
-                                title: filter.title,
-                                isSelected: viewModel.selectedFilters.contains(filter)
-                            )
-                            .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonFilterSearch)
-                            .accessibilityAddTraits(viewModel.selectedFilters.contains(filter) ? [.isSelected] : [])
-                            .onTapGesture {
-                                viewModel.searchFilter(filter)
-                            }
-                        }
-                    }
+        Group {
+            VStack(spacing: 0) {
+                Rectangle() // Needed to fix navBar clear color bug
+                    .frame(height: 0.2)
+                    .foregroundStyle(.clear)
+                if !multipleSelectionViewModel.isEnabled {
+                    SearchFilterHeaderView(viewModel: viewModel)
                 }
-                .padding(value: .regular)
-                .padding(.bottom, shouldShowHorizontalScrollbar ? UIPadding.verySmall : 0)
+                SearchViewList(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
             }
-
-            List {
-                SearchHistorySectionView(viewModel: viewModel)
-                SearchContactsSectionView(viewModel: viewModel)
-                SearchThreadsSectionView(viewModel: viewModel)
-            }
-            .listStyle(.plain)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarSearchListStyle()
-        .navigationBarTitleDisplayMode(.inline)
         .emptyState(isEmpty: viewModel.searchState == .noResults) {
             EmptyStateView.emptySearch
         }
         .refreshable {
+            multipleSelectionViewModel.disable()
             await viewModel.fetchThreads()
         }
+        .toolbarAppStyle()
+        .searchToolbar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .onDisappear {
             if viewModel.selectedThread == nil {
-                viewModel.observationSearchThreadToken?.invalidate()
+                viewModel.stopObserveSearch()
             }
         }
         .onAppear {
             viewModel.selectedThread = nil
-        }
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                CloseButton {
-                    Constants.globallyResignFirstResponder()
-                    mainViewState.isShowingSearch = false
-                    Task {
-                        await viewModel.mailboxManager.clearSearchResults()
-                    }
-                }
-                .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonBack)
-            }
-
-            ToolbarItem(placement: .principal) {
-                SearchTextField(value: $viewModel.searchValue) {
-                    viewModel.matomo.track(eventWithCategory: .search, name: "validateSearch")
-                    viewModel.addToHistoryIfNeeded()
-                    viewModel.searchThreadsForCurrentValue()
-                } onDelete: {
-                    viewModel.matomo.track(eventWithCategory: .search, name: "deleteSearch")
-                    viewModel.clearSearch()
-                }
-                .frame(maxWidth: .infinity)
-            }
         }
         .matomoView(view: ["SearchView"])
     }

@@ -46,7 +46,7 @@ struct ThreadListView: View {
     @ModalState private var flushAlert: FlushAlertState?
 
     @StateObject var viewModel: ThreadListViewModel
-    @StateObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    @StateObject var multipleSelectionViewModel: MultipleSelectionViewModel
     @StateObject private var scrollObserver = ScrollObserver()
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
@@ -64,7 +64,8 @@ struct ThreadListView: View {
         _viewModel = StateObject(wrappedValue: ThreadListViewModel(mailboxManager: mailboxManager,
                                                                    frozenFolder: frozenFolder,
                                                                    selectedThreadOwner: selectedThreadOwner))
-        _multipleSelectionViewModel = StateObject(wrappedValue: ThreadListMultipleSelectionViewModel(frozenFolder: frozenFolder))
+        _multipleSelectionViewModel =
+            StateObject(wrappedValue: MultipleSelectionViewModel(fromArchiveFolder: frozenFolder.role == .archive))
 
         UITableViewCell.appearance().focusEffect = .none
     }

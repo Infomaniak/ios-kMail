@@ -35,6 +35,7 @@ private struct SwipeActionView: View {
     @Binding var moveSheetMessages: [Message]?
     @Binding var flushAlert: FlushAlertState?
 
+    let viewModel: ThreadListable
     let thread: Thread
     let action: Action
 
@@ -58,6 +59,8 @@ private struct SwipeActionView: View {
                             nearestFlushAlert: $flushAlert
                         )
                     )
+
+                    viewModel.refreshSearchIfNeeded(action: action)
                 }
             }
         } label: {
@@ -81,8 +84,8 @@ struct ThreadListSwipeActions: ViewModifier {
     @ModalState private var messagesToMove: [Message]?
 
     let thread: Thread
-    let viewModel: ThreadListViewModel
-    let multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    let viewModel: ThreadListable
+    let multipleSelectionViewModel: MultipleSelectionViewModel
 
     @Binding var flushAlert: FlushAlertState?
 
@@ -100,9 +103,12 @@ struct ThreadListSwipeActions: ViewModifier {
                     edgeActions([swipeFullTrailing, swipeTrailing])
                 }
             }
-            .actionsPanel(messages: $actionPanelMessages, originFolder: thread.folder, panelSource: .threadList)
+            .actionsPanel(messages: $actionPanelMessages, originFolder: thread.folder, panelSource: .threadList) { action in
+                viewModel.refreshSearchIfNeeded(action: action)
+            }
             .sheet(item: $messagesToMove) { messages in
-                MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
+                let originFolder: Folder? = viewModel is SearchViewModel ? viewModel.frozenFolder : thread.folder
+                MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: originFolder)
                     .sheetViewStyle()
             }
     }
@@ -115,6 +121,7 @@ struct ThreadListSwipeActions: ViewModifier {
                     actionPanelMessages: $actionPanelMessages,
                     moveSheetMessages: $messagesToMove,
                     flushAlert: $flushAlert,
+                    viewModel: viewModel,
                     thread: thread,
                     action: action
                 )
@@ -125,8 +132,8 @@ struct ThreadListSwipeActions: ViewModifier {
 
 extension View {
     func swipeActions(thread: Thread,
-                      viewModel: ThreadListViewModel,
-                      multipleSelectionViewModel: ThreadListMultipleSelectionViewModel,
+                      viewModel: ThreadListable,
+                      multipleSelectionViewModel: MultipleSelectionViewModel,
                       nearestFlushAlert: Binding<FlushAlertState?>) -> some View {
         modifier(ThreadListSwipeActions(thread: thread,
                                         viewModel: viewModel,
@@ -140,6 +147,9 @@ extension View {
         actionPanelMessages: .constant(nil),
         moveSheetMessages: .constant(nil),
         flushAlert: .constant(nil),
+        viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
+                                       frozenFolder: PreviewHelper.sampleFolder,
+                                       selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner),
         thread: PreviewHelper.sampleThread,
         action: .delete
     )

@@ -102,9 +102,8 @@ final class DateSection: Identifiable, Equatable {
     }
 }
 
-@MainActor final class ThreadListViewModel: ObservableObject {
-    let mailboxManager: MailboxManager
-
+final class ThreadListViewModel: ObservableObject, ThreadListable {
+    let mailboxManager: MailCore.MailboxManager
     let frozenFolder: Folder
 
     @Published var sections: [DateSection]?
@@ -267,5 +266,17 @@ final class DateSection: Identifiable, Equatable {
                 filterUnreadOn.toggle()
             }
         }
+    }
+
+    func onTapCell(thread: Thread) {
+        detectDirection(from: thread)
+    }
+
+    func addCurrentSearchTermToHistoryIfNeeded() {
+        // Empty on purpose
+    }
+
+    func refreshSearchIfNeeded(action: MailCore.Action) {
+        // Empty on purpose
     }
 }

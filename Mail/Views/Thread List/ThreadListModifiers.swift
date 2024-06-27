@@ -32,7 +32,7 @@ extension View {
     func threadListToolbar(
         flushAlert: Binding<FlushAlertState?>,
         viewModel: ThreadListViewModel,
-        multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+        multipleSelectionViewModel: MultipleSelectionViewModel
     ) -> some View {
         modifier(ThreadListToolbar(
             flushAlert: flushAlert,
@@ -64,7 +64,7 @@ struct ThreadListToolbar: ViewModifier {
     @Binding var flushAlert: FlushAlertState?
 
     @ObservedObject var viewModel: ThreadListViewModel
-    @ObservedObject var multipleSelectionViewModel: ThreadListMultipleSelectionViewModel
+    @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
 
     private var selectAllButtonTitle: String {
         if multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count {
@@ -83,7 +83,7 @@ struct ThreadListToolbar: ViewModifier {
                         if multipleSelectionViewModel.isEnabled {
                             Button(MailResourcesStrings.Localizable.buttonCancel) {
                                 matomo.track(eventWithCategory: .multiSelection, name: "cancel")
-                                multipleSelectionViewModel.isEnabled = false
+                                multipleSelectionViewModel.disable()
                             }
                         } else {
                             if isCompactWindow {
@@ -121,7 +121,7 @@ struct ThreadListToolbar: ViewModifier {
                                 icon: action.icon
                             ) {
                                 let allMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
-                                multipleSelectionViewModel.isEnabled = false
+                                multipleSelectionViewModel.disable()
                                 let originFolder = viewModel.frozenFolder
                                 Task {
                                     matomo.trackBulkEvent(
@@ -150,14 +150,13 @@ struct ThreadListToolbar: ViewModifier {
                             multipleSelectedMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
                         }
                     }
-                    .disabled(multipleSelectionViewModel.selectedItems.isEmpty)
                 }
                 .actionsPanel(
                     messages: $multipleSelectedMessages,
                     originFolder: viewModel.frozenFolder,
                     panelSource: .threadList
                 ) { _ in
-                    multipleSelectionViewModel.isEnabled = false
+                    multipleSelectionViewModel.disable()
                 }
                 .sheet(item: $messagesToMove) { messages in
                     MoveEmailView(

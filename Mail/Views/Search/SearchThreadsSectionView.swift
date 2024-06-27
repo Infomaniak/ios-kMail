@@ -23,30 +23,30 @@ import SwiftUI
 
 struct SearchThreadsSectionView: View {
     @EnvironmentObject private var mainViewState: MainViewState
-    @EnvironmentObject private var splitViewManager: SplitViewManager
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     let viewModel: SearchViewModel
+    @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
 
     var body: some View {
         if viewModel.searchState == .results {
             Section {
                 ForEach(viewModel.frozenThreads) { thread in
-                    ThreadCell(thread: thread, density: threadDensity, accentColor: accentColor)
-                        .onTapGesture {
-                            didTapCell(thread: thread)
-                        }
-                        .background(SelectionBackground(
-                            selectionType: viewModel.selectedThread == thread ? .single : .none,
-                            paddingLeading: 4,
-                            withAnimation: false,
-                            accentColor: accentColor
-                        ))
-                        .onAppear {
-                            viewModel.loadNextPageIfNeeded(currentItem: thread)
-                        }
+                    ThreadListCell(
+                        viewModel: viewModel,
+                        multipleSelectionViewModel: multipleSelectionViewModel,
+                        thread: thread,
+                        threadDensity: threadDensity,
+                        accentColor: accentColor,
+                        isSelected: mainViewState.selectedThread?.uid == thread.uid,
+                        isMultiSelected: multipleSelectionViewModel.selectedItems.contains(thread),
+                        flushAlert: .constant(nil)
+                    )
+                    .onAppear {
+                        viewModel.loadNextPageIfNeeded(currentItem: thread)
+                    }
                 }
             } header: {
                 if !viewModel.frozenThreads.isEmpty {
@@ -63,23 +63,6 @@ struct SearchThreadsSectionView: View {
                 }
             }
             .threadListCellAppearance()
-        }
-    }
-
-    private func didTapCell(thread: Thread) {
-        viewModel.addToHistoryIfNeeded()
-        if thread.shouldPresentAsDraft {
-            DraftUtils.editDraft(
-                from: thread,
-                mailboxManager: viewModel.mailboxManager,
-                composeMessageIntent: $mainViewState.composeMessageIntent
-            )
-        } else {
-            splitViewManager.adaptToProminentThreadView()
-
-            // Update both viewModel and navigationState on the truth.
-            viewModel.selectedThread = thread
-            mainViewState.threadPath = [thread]
         }
     }
 }

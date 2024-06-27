@@ -24,38 +24,39 @@ import MailCore
 import SwiftUI
 
 @MainActor
-class ThreadListMultipleSelectionViewModel: ObservableObject {
+class MultipleSelectionViewModel: ObservableObject {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @Published var isEnabled = false {
-        didSet {
-            if !isEnabled {
-                selectedItems = []
-            }
-        }
+    var isEnabled: Bool {
+        return !selectedItems.isEmpty
     }
 
     @Published var selectedItems = Set<Thread>()
     @Published var toolbarActions = [Action]()
 
-    let frozenFolder: Folder
+    let fromArchiveFolder: Bool
     let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
-    init(frozenFolder: Folder) {
-        self.frozenFolder = frozenFolder
+    init(fromArchiveFolder: Bool = false) {
+        self.fromArchiveFolder = fromArchiveFolder
         setActions()
     }
 
-    func toggleSelection(of thread: Thread) {
-        if let threadIndex = selectedItems.firstIndex(of: thread) {
-            selectedItems.remove(at: threadIndex)
-            if selectedItems.isEmpty {
-                isEnabled = false
-            }
-        } else {
-            selectedItems.insert(thread)
+    func disable() {
+        withAnimation {
+            selectedItems.removeAll()
         }
-        setActions()
+    }
+
+    func toggleSelection(of thread: Thread) {
+        withAnimation(.default.speed(2)) {
+            if let threadIndex = selectedItems.firstIndex(of: thread) {
+                selectedItems.remove(at: threadIndex)
+            } else {
+                selectedItems.insert(thread)
+            }
+            setActions()
+        }
     }
 
     func selectAll(threads: [Thread]) {
@@ -63,7 +64,7 @@ class ThreadListMultipleSelectionViewModel: ObservableObject {
         feedbackGenerator.impactOccurred(intensity: 0.6)
 
         if threads.count == selectedItems.count {
-            selectedItems.removeAll()
+            disable()
             matomo.track(eventWithCategory: .multiSelection, name: "none")
         } else {
             selectedItems = Set(threads)
@@ -75,7 +76,7 @@ class ThreadListMultipleSelectionViewModel: ObservableObject {
     private func setActions() {
         let read = selectedItems.contains { $0.unseenMessages != 0 } ? Action.markAsRead : Action.markAsUnread
         let star = selectedItems.allSatisfy(\.flagged) ? Action.unstar : Action.star
-        let archive = frozenFolder.role == .archive ? Action.openMovePanel : Action.archive
+        let archive = fromArchiveFolder ? Action.openMovePanel : Action.archive
         toolbarActions = [read, archive, star, .delete]
     }
 }

@@ -33,7 +33,7 @@ struct SearchContactsSectionView: View {
                     RecipientCell(recipient: contact)
                         .onTapGesture {
                             viewModel.matomo.track(eventWithCategory: .search, name: "selectContact")
-                            viewModel.addToHistoryIfNeeded()
+                            viewModel.addCurrentSearchTermToHistoryIfNeeded()
                             Constants.globallyResignFirstResponder()
                             viewModel.searchThreadsForContact(contact)
                         }
