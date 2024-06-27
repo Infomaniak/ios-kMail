@@ -26,6 +26,8 @@ import RealmSwift
 import SwiftUI
 
 struct SearchView: View {
+    @EnvironmentObject private var mainViewState: MainViewState
+
     @StateObject private var viewModel: SearchViewModel
     @StateObject private var multipleSelectionViewModel: MultipleSelectionViewModel
 
