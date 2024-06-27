@@ -1,6 +1,6 @@
 #!/bin/bash
 
-eval "$($HOME/.local/bin/mise activate -C $SRCROOT bash --shims)"
+eval "$($HOME/.local/bin/mise activate bash --shims)"
 
 tuist install
 tuist generate -n
@@ -13,7 +13,11 @@ else
     detailedOutput=$(periphery scan --quiet --retain-codable-properties | sed "s|$(pwd)/||g")
 fi
 
-unusedCount=$(wc -l <<< "$detailedOutput" | tr -d '[:space:]')
+if [[ "$detailedOutput" == *"No unused code detected."* ]]; then
+    unusedCount=0
+else
+    unusedCount=$(wc -l <<< "$detailedOutput" | tr -d '[:space:]')
+fi
 
 echo "$detailedOutput"
 echo "Total unused instances $unusedCount"
