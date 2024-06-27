@@ -79,6 +79,7 @@ struct AttachmentsView: View {
                         }
                     }
                 }
+                .padding(.horizontal, value: .regular)
                 .padding(.vertical, 1)
             }
 
@@ -98,8 +99,8 @@ struct AttachmentsView: View {
                         .ikButtonLoading(downloadInProgress)
                 }
             }
+            .padding(.horizontal, value: .regular)
         }
-        .padding(.horizontal, value: .regular)
         .task {
             try? await mailboxManager.swissTransferAttachment(message: message)
         }
