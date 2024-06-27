@@ -33,13 +33,24 @@ struct ThreadCellAnsweredView: View {
         return nil
     }
 
+    private var accessibilityLabel: String {
+        var label = ""
+        if answered {
+            label = MailResourcesStrings.Localizable.contentDescriptionIconReply
+        } else if forwarded {
+            label = MailResourcesStrings.Localizable.contentDescriptionIconForward
+        }
+        return label
+    }
+
     var body: some View {
         image?
             .resizable()
             .scaledToFit()
-            .frame(width: 14)
+            .frame(width: 16)
             .foregroundStyle(MailResourcesAsset.textSecondaryColor)
-            .padding(.trailing, UIPadding.verySmall)
+            .padding(.trailing, value: .verySmall)
+            .accessibilityLabel(accessibilityLabel)
     }
 }
 
