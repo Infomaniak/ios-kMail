@@ -95,8 +95,7 @@ public extension IKSnackBar {
         message: String,
         cancelSuccessMessage: String,
         duration: SnackBar.Duration = .lengthLong,
-        undoAction: UndoAction,
-        mailboxManager: MailboxManager
+        undoAction: UndoAction
     ) -> IKSnackBar? {
         return IKSnackBar.showMailSnackBar(
             message: message,

@@ -259,8 +259,7 @@ public class ActionsManager: ObservableObject {
             IKSnackBar.showCancelableSnackBar(
                 message: message,
                 cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
-                undoAction: undoAction,
-                mailboxManager: mailboxManager
+                undoAction: undoAction
             )
         } else {
             snackbarPresenter.show(message: message)
