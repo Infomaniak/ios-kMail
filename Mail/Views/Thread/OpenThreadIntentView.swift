@@ -38,6 +38,7 @@ struct OpenThreadIntentView: View, IntentViewable {
         let mailboxManager: MailboxManager
         let currentFolder: Folder
         let thread: Thread
+        // periphery:ignore - We need to keep a reference to this to keep receiving events (automatically removed on deinit)
         let threadObservation: NotificationToken
     }
 

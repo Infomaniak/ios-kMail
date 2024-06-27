@@ -64,7 +64,6 @@ struct SplitView: View {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var platformDetector: PlatformDetectable
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
-    @LazyInjectService private var featureFlagsManageable: FeatureFlagsManageable
 
     let mailboxManager: MailboxManager
 
@@ -330,6 +329,7 @@ struct SplitView: View {
         }
     }
 
+    // periphery:ignore:parameters notification - Needed for signature calling in .onReceive
     private func handleOpenNotificationSettings(_ notification:
         Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>.Output) {
         mainViewState.settingsViewConfig = SettingsViewConfig(baseNavigationPath: [.notifications])

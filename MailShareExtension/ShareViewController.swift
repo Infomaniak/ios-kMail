@@ -25,7 +25,7 @@ import SwiftUI
 import UIKit
 
 final class ShareNavigationViewController: UIViewController {
-    /// Making sure the DI is registered at a very early stage of the app launch.
+    // periphery:ignore - Making sure the DI is registered at a very early stage of the app launch.
     private let dependencyInjectionHook = MailShareExtensionTargetAssembly()
 
     private func overrideSnackBarPresenter(contextView: UIView) {

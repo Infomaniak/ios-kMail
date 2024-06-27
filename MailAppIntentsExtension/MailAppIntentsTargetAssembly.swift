@@ -19,4 +19,5 @@
 import Foundation
 import MailCore
 
+// periphery:ignore - Used by DI
 class MailAppIntentsTargetAssembly: TargetAssembly {}

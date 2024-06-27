@@ -24,6 +24,7 @@ struct MailSetFocusFilterIntent: SetFocusFilterIntent {
     var allowedMailboxes: [AccountEntity]?
 
     static var title: LocalizedStringResource = "filterFocusTitle"
+    // periphery:ignore - Used by AppIntents runtime
     static var description: IntentDescription = "filterFocusDescription"
 
     var displayRepresentation: DisplayRepresentation {

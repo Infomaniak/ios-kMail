@@ -32,6 +32,7 @@ import SwiftUI
 
     private let foldersQuery: (Query<Folder>) -> Query<Bool>
 
+    // periphery:ignore - We need to keep a reference to this to keep receiving events (automatically removed on deinit)
     private var foldersObservationToken: NotificationToken?
     private var searchQueryObservation: AnyCancellable?
     private var folders: Results<Folder>?
