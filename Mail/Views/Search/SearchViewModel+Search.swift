@@ -60,6 +60,8 @@ extension SearchViewModel {
         }
 
         currentSearchTask?.cancel()
+        isLoading = false
+
         currentSearchTask = Task {
             await fetchThreads()
         }
