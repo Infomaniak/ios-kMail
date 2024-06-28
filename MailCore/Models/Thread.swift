@@ -139,13 +139,25 @@ public class Thread: Object, Decodable, Identifiable {
             throw MailError.incoherentThreadDate
         }
 
-        if let lastMessageAction = messages.last(where: {
-            $0.forwarded || $0.answered
-        }) {
-            lastAction = lastMessageAction.forwarded ? .forward : .reply
+        if let lastMessage = lastMessageOrDuplicateWithAction() {
+            lastAction = lastMessage.forwarded ? .forward : .reply
         }
 
         subject = messages.first?.subject
+    }
+
+    private func lastMessageOrDuplicateWithAction() -> Message? {
+        guard let lastMessage = messages.last(where: { message in
+            (message.forwarded || message.answered) || message.duplicates.contains(where: {
+                $0.forwarded || $0.answered
+            })
+        }) else { return nil }
+
+        guard lastMessage.forwarded || lastMessage.answered else {
+            return lastMessage.duplicates.first { $0.forwarded || $0.answered }
+        }
+
+        return lastMessage
     }
 
     func addMessageIfNeeded(newMessage: Message) {
