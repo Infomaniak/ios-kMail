@@ -210,7 +210,8 @@ let project = Project(name: "Mail",
                                       .external(name: "SwiftSoup"),
                                       .external(name: "Swifter"),
                                       .external(name: "VersionChecker"),
-                                      .external(name: "SwiftModalPresentation")
+                                      .external(name: "SwiftModalPresentation"),
+                                      .external(name: "SVGKit")
                                   ],
                                   settings: .settings(base: Constants.baseSettings)),
                           .target(name: "MailCoreUI",
