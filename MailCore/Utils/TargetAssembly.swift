@@ -47,6 +47,8 @@ open class TargetAssembly {
 
         // setup DI ASAP
         Self.setupDI()
+
+        SVGImageDecoder.register()
     }
 
     open class func getCommonServices() -> [Factory] {
