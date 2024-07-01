@@ -26,6 +26,7 @@ import RealmSwift
 import SwiftUI
 
 struct MessageHeaderSummaryView: View {
+    @LazyInjectService private var featureFlagsManageable: FeatureFlagsManageable
     @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.isMessageInteractive) private var isMessageInteractive
@@ -88,7 +89,7 @@ struct MessageHeaderSummaryView: View {
                                 }
                             }
 
-                            if let bimi = message.bimi, bimi.isCertified {
+                            if let bimi = message.bimi, bimi.isCertified, featureFlagsManageable.isEnabled(.bimi) {
                                 IKIcon(MailResourcesAsset.checkmarkAuthentication, size: .small)
                             }
 

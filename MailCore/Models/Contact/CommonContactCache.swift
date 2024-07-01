@@ -51,7 +51,18 @@ public enum CommonContactCache {
         let contact: CommonContact
         switch contactConfiguration {
         case .correspondent(let correspondent, let bimi, let contextMailboxManager):
-            contact = CommonContact(correspondent: correspondent, associatedBimi: bimi, contextMailboxManager: contextMailboxManager)
+            @InjectService var featureFlagsManageable: FeatureFlagsManageable
+            var associatedBimi: Bimi?
+            featureFlagsManageable.feature(.bimi) {
+                associatedBimi = bimi
+            } off: {
+                associatedBimi = nil
+            }
+            contact = CommonContact(
+                correspondent: correspondent,
+                associatedBimi: associatedBimi,
+                contextMailboxManager: contextMailboxManager
+            )
         case .user(let user):
             contact = CommonContact(user: user)
         case .contact(let wrappedContact):
