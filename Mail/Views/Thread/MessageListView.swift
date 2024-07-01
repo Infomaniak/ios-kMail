@@ -20,26 +20,39 @@ import MailCore
 import MailCoreUI
 import SwiftUI
 
+enum MessageExpansionType: Equatable {
+    case expanded
+    case collapsed
+    case superCollapsed
+    case firstSuperCollapsed(Int)
+}
+
 struct MessageListView: View {
     let messages: [Message]
 
-    @State private var messageExpansion = [String: Bool]()
+    @State private var messageExpansion = [String: MessageExpansionType]()
 
     var body: some View {
         ScrollViewReader { proxy in
             LazyVStack(spacing: 0) {
                 ForEach(messages, id: \.uid) { message in
-                    VStack(spacing: 0) {
-                        MessageView(
-                            message: message,
-                            isMessageExpanded: isExpanded(message: message, from: messages),
-                            threadForcedExpansion: $messageExpansion
-                        )
-                        if message != messages.last {
-                            IKDivider(type: .full)
+                    if case .firstSuperCollapsed(let count) = messageExpansion[message.uid] {
+                        SuperCollapsedView(count: count) {
+                            uncollapse(from: message.uid)
                         }
+                    } else if messageExpansion[message.uid] != .superCollapsed {
+                        VStack(spacing: 0) {
+                            MessageView(
+                                message: message,
+                                isMessageExpanded: isExpanded(message: message, from: messages),
+                                threadForcedExpansion: $messageExpansion
+                            )
+                            if divider(for: message) {
+                                IKDivider(type: .full)
+                            }
+                        }
+                        .id(message.uid)
                     }
-                    .id(message.uid)
                 }
             }
             .onAppear {
@@ -63,9 +76,77 @@ struct MessageListView: View {
 
     private func computeExpansion(from messageList: [Message]) {
         for message in messageList {
-            guard messageExpansion[message.uid] != true else { continue }
-            messageExpansion[message.uid] = isExpanded(message: message, from: messageList)
+            guard messageExpansion[message.uid] != .expanded else { continue }
+            messageExpansion[message.uid] = isExpanded(message: message, from: messageList) ? .expanded : .collapsed
         }
+
+        computeSuperCollapsed(from: messageList)
+    }
+
+    private func computeSuperCollapsed(from messageList: [Message]) {
+        var toSuperCollapse = [String]()
+
+        for message in messageList {
+            guard message != messageList.first && message != messageList.last else { continue }
+            guard messageExpansion[message.uid] != .expanded else {
+                superCollapseIfNeeded(toSuperCollapse)
+                toSuperCollapse.removeAll()
+                continue
+            }
+
+            toSuperCollapse.append(message.uid)
+        }
+
+        superCollapseIfNeeded(toSuperCollapse)
+    }
+
+    private func superCollapseIfNeeded(_ ids: [String]) {
+        guard ids.count > 2 else { return }
+
+        for id in ids {
+            messageExpansion[id] = .superCollapsed
+        }
+        if let firstId = ids.first {
+            messageExpansion[firstId] = .firstSuperCollapsed(ids.count)
+        }
+    }
+
+    private func uncollapse(from id: String) {
+        var toUncollapse = [String]()
+
+        for message in messages {
+            if message.uid == id {
+                toUncollapse.append(message.uid)
+            } else {
+                guard !toUncollapse.isEmpty else {
+                    // Did not start uncollapsing
+                    continue
+                }
+                guard messageExpansion[message.uid] == .superCollapsed else {
+                    // Finished uncollapsing
+                    break
+                }
+                toUncollapse.append(message.uid)
+            }
+        }
+
+        withAnimation {
+            for id in toUncollapse {
+                messageExpansion[id] = .collapsed
+            }
+        }
+    }
+
+    private func divider(for message: Message) -> Bool {
+        if message != messages.last {
+            guard let index = messages.firstIndex(of: message),
+                  index + 1 < messages.count else { return true }
+            if case .firstSuperCollapsed = messageExpansion[messages[index + 1].uid] {
+                return false
+            }
+            return true
+        }
+        return false
     }
 
     private func isExpanded(message: Message, from messageList: [Message]) -> Bool {

@@ -42,7 +42,7 @@ struct MessageView: View {
     @State var presentableBody: PresentableBody
     @State var isHeaderExpanded = false
     @State var isMessageExpanded: Bool
-    @Binding private var threadForcedExpansion: [String: Bool]
+    @Binding private var threadForcedExpansion: [String: MessageExpansionType]
 
     /// True once we finished preprocessing the content
     @State var isMessagePreprocessed = false
@@ -61,7 +61,7 @@ struct MessageView: View {
             && !message.localSafeDisplay
     }
 
-    init(message: Message, isMessageExpanded: Bool = false, threadForcedExpansion: Binding<[String: Bool]>) {
+    init(message: Message, isMessageExpanded: Bool = false, threadForcedExpansion: Binding<[String: MessageExpansionType]>) {
         self.message = message
         presentableBody = PresentableBody(message: message)
         self.isMessageExpanded = isMessageExpanded
@@ -118,7 +118,7 @@ struct MessageView: View {
                 prepareBodyIfNeeded()
             }
             .onChange(of: threadForcedExpansion[message.uid]) { newValue in
-                if newValue == true {
+                if newValue == .expanded {
                     withAnimation {
                         isMessageExpanded = true
                     }
@@ -169,7 +169,7 @@ struct MessageView: View {
 #Preview("Message collapsed") {
     MessageView(
         message: PreviewHelper.sampleMessage,
-        threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: true])
+        threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .collapsed])
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
     .previewLayout(.sizeThatFits)
@@ -179,7 +179,7 @@ struct MessageView: View {
     MessageView(
         message: PreviewHelper.sampleMessage,
         isMessageExpanded: true,
-        threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: true])
+        threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .expanded])
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
     .previewLayout(.sizeThatFits)
