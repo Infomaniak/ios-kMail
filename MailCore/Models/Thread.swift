@@ -140,7 +140,7 @@ public class Thread: Object, Decodable, Identifiable {
         }
 
         if let lastMessage = lastMessageOrDuplicateWithAction() {
-            lastAction = lastMessage.forwarded ? .forward : .reply
+            lastAction = lastMessage.answered ? .reply : .forward
         }
 
         subject = messages.first?.subject
