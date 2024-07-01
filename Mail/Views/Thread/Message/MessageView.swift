@@ -102,10 +102,10 @@ struct MessageView: View {
                 prepareBodyIfNeeded()
             }
             .task {
-                if message.shouldComplete {
-                    await fetchMessage()
-                }
-                try? await fetchEventCalendar()
+                await fetchMessageAndEventCalendar()
+            }
+            .task(id: isMessageExpanded) {
+                await fetchMessageAndEventCalendar()
             }
             .onDisappear {
                 inlineAttachmentWorker?.stop()
@@ -127,21 +127,36 @@ struct MessageView: View {
         }
     }
 
-    @MainActor private func fetchMessage() async {
+    private func fetchMessageAndEventCalendar() async {
+        guard isMessageExpanded else { return }
+
+        async let fetchMessageResult: Void = fetchMessage()
+
+        async let fetchEventCalendar: Void = fetchEventCalendar()
+
+        await fetchMessageResult
+        await fetchEventCalendar
+    }
+
+    private func fetchMessage() async {
+        guard message.shouldComplete else { return }
+
         await tryOrDisplayError {
             do {
                 try await mailboxManager.message(message: message)
             } catch let error as MailApiError where error == .apiMessageNotFound {
                 snackbarPresenter.show(message: error.errorDescription ?? "")
                 try await mailboxManager.refreshFolder(from: [message], additionalFolder: nil)
+            } catch let error as AFErrorWithContext where error.afError.isExplicitlyCancelledError {
+                isShowingErrorLoading = false
             } catch {
                 isShowingErrorLoading = true
             }
         }
     }
 
-    private func fetchEventCalendar() async throws {
-        try await mailboxManager.calendarEvent(from: message.uid)
+    private func fetchEventCalendar() async {
+        try? await mailboxManager.calendarEvent(from: message.uid)
     }
 }
 

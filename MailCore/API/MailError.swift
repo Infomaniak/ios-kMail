@@ -23,9 +23,9 @@ import MailResources
 
 extension ApiError: CustomStringConvertible {}
 
-class AFErrorWithContext: MailError {
-    let request: DataRequest
-    let afError: AFError
+public class AFErrorWithContext: MailError {
+    public let request: DataRequest
+    public let afError: AFError
 
     init(request: DataRequest, afError: AFError) {
         self.request = request
