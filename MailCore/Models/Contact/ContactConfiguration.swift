@@ -41,7 +41,11 @@ public enum ContactConfiguration: CustomDebugStringConvertible {
     public func freezeIfNeeded() -> Self {
         switch self {
         case .correspondent(let correspondent, let bimi, let contextMailboxManager):
-            return .correspondent(correspondent: correspondent, associatedBimi: bimi, contextMailboxManager: contextMailboxManager)
+            return .correspondent(
+                correspondent: correspondent,
+                associatedBimi: bimi,
+                contextMailboxManager: contextMailboxManager
+            )
         default:
             return self
         }
