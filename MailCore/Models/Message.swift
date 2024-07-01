@@ -414,7 +414,6 @@ public final class Message: Object, Decodable, Identifiable {
         scheduled: Bool,
         forwarded: Bool,
         flagged: Bool,
-        safeDisplay: Bool? = nil,
         hasUnsubscribeLink: Bool? = nil,
         bimi: Bimi? = nil
     ) {
