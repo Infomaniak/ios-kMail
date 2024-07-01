@@ -146,17 +146,17 @@ enum EditorToolbarAction: Int {
     func isSelected(textAttributes: TextAttributes) -> Bool {
         switch self {
         case .bold:
-            return textAttributes.format.hasBold
+            return textAttributes.hasBold
         case .italic:
-            return textAttributes.format.hasItalic
+            return textAttributes.hasItalic
         case .underline:
-            return textAttributes.format.hasUnderline
+            return textAttributes.hasUnderline
         case .strikeThrough:
-            return textAttributes.format.hasStrikeThrough
+            return textAttributes.hasStrikeThrough
         case .unorderedList:
-            return textAttributes.format.hasUnorderedList
+            return textAttributes.hasUnorderedList
         case .link:
-            return textAttributes.format.hasLink
+            return textAttributes.hasLink
         case .editText, .ai, .addFile, .addPhoto, .takePhoto, .programMessage:
             return false
         }
