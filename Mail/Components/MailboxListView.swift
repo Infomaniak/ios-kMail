@@ -33,8 +33,7 @@ struct MailboxListView: View {
                 Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
                     .textStyle(.bodySmallSecondary)
                     .padding([.top, .bottom, .leading], value: .regular)
-
-                Spacer(minLength: 0)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 NavigationLink {
                     AddMailboxView()
