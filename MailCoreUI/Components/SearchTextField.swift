@@ -21,6 +21,8 @@ import MailResources
 import SwiftUI
 
 public struct SearchTextField: View {
+    @EnvironmentObject private var mainViewState: MainViewState
+
     @State private var initialFocusDone = false
 
     @Binding var value: String
@@ -55,6 +57,9 @@ public struct SearchTextField: View {
                         textField.becomeFirstResponder()
                         initialFocusDone = true
                     }
+                }
+                .accessibilityAction(.escape) {
+                    mainViewState.isShowingSearch = false
                 }
                 .padding(.vertical, value: .intermediate)
 

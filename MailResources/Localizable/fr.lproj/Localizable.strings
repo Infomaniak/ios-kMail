@@ -4,7 +4,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Mon, 17 Jun 2024 09:59:01 +0200
+ * Exported at: Wed, 26 Jun 2024 09:39:32 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -370,6 +370,9 @@
 /* loco:6267aff571442d3f666a71c2 */
 "buttonDownloadAll" = "Tout télécharger";
 
+/* loco:665868375c0888d3b9083612 */
+"buttonEditText" = "Editer le texte";
+
 /* loco:62567ae448317f728353f752 */
 "buttonFeedback" = "Feedback";
 
@@ -396,6 +399,9 @@
 
 /* loco:6425777e2343387912223aa2 */
 "buttonLater" = "Plus tard";
+
+/* loco:665868ebce4392ec5d0e94f2 */
+"buttonLink" = "Ajouter un lien hypertexte";
 
 /* loco:645b485e158c37a429012092 */
 "buttonLoadMore" = "Charger plus de conversations";
@@ -477,6 +483,9 @@
 
 /* loco:641322a5ac96d1091376a812 */
 "buttonUnlock" = "Déverrouiller";
+
+/* loco:665867d23121013fb900b192 */
+"buttonUnorderedList" = "Liste non ordonnée";
 
 /* loco:640adf8cc17f7c5be778c933 */
 "buttonUnselectAll" = "Aucun";
@@ -667,6 +676,9 @@
 /* loco:641178a6902412584c6acf62 */
 "emptyStateTrashTitle" = "La corbeille est vide";
 
+/* loco:667bac4f2a74996e510ce652 */
+"enableMultiSelection" = "Activer la sélection multiple";
+
 /* loco:64a2b619946ed6ede60a85e2 */
 "enterPasswordDescription1" = "Votre mot de passe a été modifié. Si vous n’en êtes pas à l’origine, veuillez contacter votre administrateur.";
 
@@ -774,6 +786,9 @@
 
 /* loco:645c9bbb13c8e41a84040012 */
 "errorUnknown" = "Erreur inconnue";
+
+/* loco:66751c058dba7adeaa010912 */
+"expandMessage" = "Afficher le message";
 
 /* loco:6633774d2c7f8dd9e10270d4 */
 "expeditorAuthenticationDescription" = "La provenance de cet expéditeur a été authentifiée.";

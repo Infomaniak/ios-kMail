@@ -19,6 +19,7 @@
 import InfomaniakCore
 import MailCore
 import MailCoreUI
+import MailResources
 import SwiftModalPresentation
 import SwiftUI
 
@@ -34,6 +35,7 @@ struct AccountButton: View {
             if let currentAccountUser = mailboxManager.account.user {
                 AvatarView(mailboxManager: mailboxManager,
                            contactConfiguration: .user(user: currentAccountUser))
+                    .accessibilityLabel(MailResourcesStrings.Localizable.titleMyAccount)
             }
         }
         .sheet(item: $presentedCurrentAccount) { account in

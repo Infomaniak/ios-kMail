@@ -285,6 +285,7 @@ final class MailEditorView: SQTextEditorView {
             item.tag = action.rawValue
             item.isSelected = action.isSelected(textAttribute: selectedTextAttribute)
             item.tintColor = action.tint
+            item.accessibilityLabel = action.accessibilityLabel
             if action == .editText && style == .textEdition {
                 item.tintColor = UserDefaults.shared.accentColor.primary.color
             }
@@ -443,6 +444,35 @@ enum ToolbarAction: Int {
             return "postpone"
         default:
             return nil
+        }
+    }
+
+    var accessibilityLabel: String {
+        switch self {
+        case .bold:
+            return MailResourcesStrings.Localizable.buttonBold
+        case .italic:
+            return MailResourcesStrings.Localizable.buttonItalic
+        case .underline:
+            return MailResourcesStrings.Localizable.buttonUnderline
+        case .strikeThrough:
+            return MailResourcesStrings.Localizable.buttonStrikeThrough
+        case .unorderedList:
+            return MailResourcesStrings.Localizable.buttonUnorderedList
+        case .editText:
+            return MailResourcesStrings.Localizable.buttonEditText
+        case .ai:
+            return MailResourcesStrings.Localizable.aiDiscoveryTitle
+        case .addFile:
+            return MailResourcesStrings.Localizable.attachmentActionFile
+        case .addPhoto:
+            return MailResourcesStrings.Localizable.attachmentActionPhotoLibrary
+        case .takePhoto:
+            return MailResourcesStrings.Localizable.buttonCamera
+        case .link:
+            return MailResourcesStrings.Localizable.buttonLink
+        case .programMessage:
+            return MailResourcesStrings.Localizable.buttonSchedule
         }
     }
 

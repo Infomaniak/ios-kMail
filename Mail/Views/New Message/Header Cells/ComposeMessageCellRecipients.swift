@@ -63,20 +63,23 @@ struct ComposeMessageCellRecipients: View {
     var body: some View {
         VStack(spacing: 0) {
             if autocompletionType == nil || autocompletionType == type {
-                HStack(alignment: .newMessageCellAlignment) {
-                    Text(type.title)
-                        .textStyle(.bodySecondary)
+                HStack {
+                    HStack(alignment: .newMessageCellAlignment) {
+                        Text(type.title)
+                            .textStyle(.bodySecondary)
 
-                    RecipientField(
-                        focusedField: _focusedField,
-                        currentText: $textDebounce.text,
-                        recipients: $recipients,
-                        type: type
-                    ) {
-                        if let bestMatch = autocompletion.first {
-                            addNewRecipient(bestMatch)
+                        RecipientField(
+                            focusedField: _focusedField,
+                            currentText: $textDebounce.text,
+                            recipients: $recipients,
+                            type: type
+                        ) {
+                            if let bestMatch = autocompletion.first {
+                                addNewRecipient(bestMatch)
+                            }
                         }
                     }
+                    .padding(.vertical, value: .intermediate)
 
                     if shouldDisplayChevron {
                         Spacer()
@@ -84,8 +87,7 @@ struct ComposeMessageCellRecipients: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, value: .intermediate)
-                .padding(.horizontal, UIPadding.composeViewHeaderHorizontal)
+                .padding(.leading, UIPadding.composeViewHeaderHorizontal)
 
                 IKDivider()
             }
@@ -143,4 +145,5 @@ struct ComposeMessageCellRecipients: View {
         autocompletionType: .constant(nil),
         type: .bcc
     )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }

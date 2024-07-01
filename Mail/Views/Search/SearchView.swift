@@ -26,6 +26,8 @@ import RealmSwift
 import SwiftUI
 
 struct SearchView: View {
+    @EnvironmentObject private var mainViewState: MainViewState
+
     @StateObject private var viewModel: SearchViewModel
     @StateObject private var multipleSelectionViewModel: MultipleSelectionViewModel
 
@@ -45,6 +47,12 @@ struct SearchView: View {
                 }
                 SearchViewList(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
             }
+        }
+        .accessibilityAction(.escape) {
+            mainViewState.isShowingSearch = false
+        }
+        .accessibilityAction(.escape) {
+            mainViewState.isShowingSearch = false
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarSearchListStyle()

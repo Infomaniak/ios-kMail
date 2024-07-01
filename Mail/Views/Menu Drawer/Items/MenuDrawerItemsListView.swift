@@ -145,8 +145,8 @@ struct MenuDrawerItemsListView<Content: View>: View {
                             .textStyle(.bodySmallSecondary)
                         Spacer()
                     }
+                    .padding(value: .regular)
                 }
-                .padding(value: .regular)
             }
 
             if title == nil || isExpanded {

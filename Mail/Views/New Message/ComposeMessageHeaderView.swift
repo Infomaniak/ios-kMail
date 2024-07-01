@@ -18,6 +18,7 @@
 
 import MailCore
 import MailCoreUI
+import MailResources
 import RealmSwift
 import SwiftUI
 
@@ -50,6 +51,7 @@ struct ComposeMessageHeaderView: View {
                 type: .to,
                 areCCAndBCCEmpty: draft.cc.isEmpty && draft.bcc.isEmpty
             )
+            .accessibilityLabel(MailResourcesStrings.Localizable.toTitle)
 
             if showRecipientsFields {
                 ComposeMessageCellRecipients(
@@ -59,6 +61,7 @@ struct ComposeMessageHeaderView: View {
                     focusedField: _focusedField,
                     type: .cc
                 )
+                .accessibilityLabel(MailResourcesStrings.Localizable.ccTitle)
 
                 ComposeMessageCellRecipients(
                     recipients: $draft.bcc,
@@ -67,6 +70,7 @@ struct ComposeMessageHeaderView: View {
                     focusedField: _focusedField,
                     type: .bcc
                 )
+                .accessibilityLabel(MailResourcesStrings.Localizable.bccTitle)
             }
 
             ComposeMessageCellTextField(
@@ -75,6 +79,7 @@ struct ComposeMessageHeaderView: View {
                 autocompletionType: autocompletionType,
                 type: .subject
             )
+            .accessibilityLabel(MailResourcesStrings.Localizable.subjectTitle)
         }
         .onAppear {
             showRecipientsFields = !draft.bcc.isEmpty || !draft.cc.isEmpty

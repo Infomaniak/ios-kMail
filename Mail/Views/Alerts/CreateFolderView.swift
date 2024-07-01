@@ -29,6 +29,8 @@ struct CreateFolderView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @Environment(\.dismiss) private var dismiss
     // swiftlint:disable:next empty_count
     @ObservedResults(Folder.self, where: { $0.parents.count == 0 }) private var folders
 
@@ -108,6 +110,9 @@ struct CreateFolderView: View {
         }
         .onAppear {
             isFocused = true
+        }
+        .accessibilityAction(.escape) {
+            dismiss()
         }
     }
 

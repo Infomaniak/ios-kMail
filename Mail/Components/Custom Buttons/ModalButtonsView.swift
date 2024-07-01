@@ -39,6 +39,7 @@ struct ModalButtonsView: View {
                     dismiss()
                 }
                 .buttonStyle(.ikLink())
+                .keyboardShortcut(.cancelAction)
             }
 
             Button(primaryButtonTitle) {
@@ -52,6 +53,7 @@ struct ModalButtonsView: View {
             .buttonStyle(.ikPlain)
             .disabled(!primaryButtonEnabled)
             .ikButtonLoading(isButtonLoading)
+            .keyboardShortcut(.defaultAction)
         }
         .frame(maxWidth: .infinity, alignment: .trailing)
     }
