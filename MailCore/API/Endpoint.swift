@@ -266,10 +266,6 @@ public extension Endpoint {
         return Endpoint(hostKeypath: \.mailHost, path: "\(bimi.svgContent)")
     }
 
-    static func bimiSvgUrl(bimi: Bimi) -> Endpoint {
-        return Endpoint(hostKeypath: \.mailHost, path: "\(bimi.svgContent)")
-    }
-
     static func swissTransfer(stUuid: String) -> Endpoint {
         return .base.appending(path: "/swisstransfer/containers/\(stUuid)")
     }
