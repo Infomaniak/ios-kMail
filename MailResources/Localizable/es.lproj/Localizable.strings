@@ -4,7 +4,7 @@
  * Locale: es, Spanish
  * Tagged: ios
  * Exported by: Charlene Hoareau
- * Exported at: Mon, 17 Jun 2024 09:59:01 +0200
+ * Exported at: Wed, 26 Jun 2024 09:39:32 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -676,6 +676,9 @@
 /* loco:641178a6902412584c6acf62 */
 "emptyStateTrashTitle" = "La papelera está vacía";
 
+/* loco:667bac4f2a74996e510ce652 */
+"enableMultiSelection" = "Activar la selección múltiple";
+
 /* loco:64a2b619946ed6ede60a85e2 */
 "enterPasswordDescription1" = "Su contraseña ha sido modificada. Si no es culpa suya, póngase en contacto con su administrador.";
 
@@ -783,6 +786,9 @@
 
 /* loco:645c9bbb13c8e41a84040012 */
 "errorUnknown" = "Error desconocido";
+
+/* loco:66751c058dba7adeaa010912 */
+"expandMessage" = "Ampliar mensaje";
 
 /* loco:6633774d2c7f8dd9e10270d4 */
 "expeditorAuthenticationDescription" = "Se ha autentificado el origen del remitente.";

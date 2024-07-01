@@ -67,6 +67,9 @@ struct FolderCell: View {
                         canCollapseSubFolders: canCollapseSubFolders
                     )
                 }
+                .accessibilityAction(.default) {
+                    didTapButton()
+                }
             } else {
                 NavigationLink(isActive: $shouldTransit) {
                     ThreadListManagerView()
@@ -86,6 +89,9 @@ struct FolderCell: View {
                             canCollapseSubFolders: canCollapseSubFolders
                         )
                     }
+                }
+                .accessibilityAction(.default) {
+                    updateFolder()
                 }
             }
 

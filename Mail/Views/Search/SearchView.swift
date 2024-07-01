@@ -51,6 +51,9 @@ struct SearchView: View {
         .accessibilityAction(.escape) {
             mainViewState.isShowingSearch = false
         }
+        .accessibilityAction(.escape) {
+            mainViewState.isShowingSearch = false
+        }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarSearchListStyle()
         .emptyState(isEmpty: viewModel.searchState == .noResults) {
