@@ -77,9 +77,13 @@ struct ThreadCellDataHolder {
         }
     }
 
-    func contactConfiguration(contextMailboxManager: MailboxManager) -> ContactConfiguration {
+    func contactConfiguration(thread: Thread, contextMailboxManager: MailboxManager) -> ContactConfiguration {
         if let recipientToDisplay {
-            return .correspondent(correspondent: recipientToDisplay, contextMailboxManager: contextMailboxManager)
+            return .correspondent(
+                correspondent: recipientToDisplay,
+                associatedBimi: thread.bimi,
+                contextMailboxManager: contextMailboxManager
+            )
         } else {
             return .emptyContact
         }
@@ -155,7 +159,7 @@ struct ThreadCell: View {
                 isSelected: isSelected,
                 isMultipleSelectionEnabled: isMultipleSelectionEnabled,
                 shouldDisplayCheckbox: shouldDisplayCheckbox,
-                contactConfiguration: dataHolder.contactConfiguration(contextMailboxManager: mailboxManager),
+                contactConfiguration: dataHolder.contactConfiguration(thread: thread, contextMailboxManager: mailboxManager),
                 avatarTapped: avatarTapped
             )
             .padding(.trailing, value: .verySmall)

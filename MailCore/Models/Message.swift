@@ -465,7 +465,8 @@ public final class Message: Object, Decodable, Identifiable {
             hasDrafts: !(draftResource?.isEmpty ?? true),
             flagged: flagged,
             answered: answered,
-            forwarded: forwarded
+            forwarded: forwarded,
+            bimi: bimi
         )
         thread.messageIds = linkedUids
         thread.folderId = folderId
