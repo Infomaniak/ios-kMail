@@ -34,13 +34,12 @@ struct SuperCollapsedView: View {
                 }
                 .frame(height: 8)
 
-            Button {
-                action()
-            } label: {
+            Button(action: action) {
                 Text(MailResourcesStrings.Localizable.superCollapsedBlock(count))
                     .textStyle(.bodyAccent)
-                    .padding(.vertical, 10)
-                    .padding(.horizontal, 20)
+                    .padding(.vertical, UIPadding.small)
+                    .padding(.horizontal, UIPadding.medium)
+                    .frame(minHeight: 40)
                     .background(
                         RoundedRectangle(cornerRadius: 16)
                             .strokeBorder(MailResourcesAsset.textFieldColor.swiftUIColor, lineWidth: 1)
