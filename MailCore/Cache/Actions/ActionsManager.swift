@@ -135,7 +135,7 @@ public class ActionsManager: ObservableObject {
         case .markAsRead:
             try await mailboxManager.markAsSeen(messages: messagesWithDuplicates, seen: true)
         case .markAsUnread:
-            let messagesToExecuteAction = messagesWithDuplicates.lastMessagesAndDuplicatesToExecuteAction(
+            let messagesToExecuteAction = messages.lastMessagesAndDuplicatesToExecuteAction(
                 currentMailboxEmail: mailboxManager.mailbox.email,
                 currentFolder: origin.frozenFolder
             )
@@ -145,7 +145,7 @@ public class ActionsManager: ObservableObject {
                 origin.nearestMessagesToMoveSheet?.wrappedValue = messagesWithDuplicates
             }
         case .star:
-            let messagesToExecuteAction = messagesWithDuplicates.lastMessagesAndDuplicatesToExecuteAction(
+            let messagesToExecuteAction = messages.lastMessagesAndDuplicatesToExecuteAction(
                 currentMailboxEmail: mailboxManager.mailbox.email,
                 currentFolder: origin.frozenFolder
             )
