@@ -90,6 +90,7 @@ struct MessageHeaderSummaryView: View {
                             MessageHeaderDateView(date: message.date)
                         }
                         .accessibilityElement(children: .combine)
+                        .accessibilityAddTraits(.isButton)
                     }
 
                     Group {
@@ -101,6 +102,7 @@ struct MessageHeaderSummaryView: View {
                     }
                     .textStyle(.bodySmallSecondary)
                     .lineLimit(1)
+                    .accessibilityAddTraits(.isButton)
                 }
                 .accessibilityHint(MailResourcesStrings.Localizable
                     .contentDescriptionButtonExpandRecipients)
