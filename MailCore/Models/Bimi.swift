@@ -16,9 +16,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
 import RealmSwift
 
 public class Bimi: EmbeddedObject, Codable {
     @Persisted public var svgContent: String
     @Persisted public var isCertified: Bool
+
+    public var shouldDisplayBimi: Bool {
+        @InjectService var featureFlagsManageable: FeatureFlagsManageable
+        return isCertified && featureFlagsManageable.isEnabled(.bimi)
+    }
 }

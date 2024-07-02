@@ -16,15 +16,12 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
 
 struct ContactActionsHeaderView: View {
-    @LazyInjectService private var featureFlagsManageable: FeatureFlagsManageable
-
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let displayablePerson: CommonContact
@@ -44,7 +41,7 @@ struct ContactActionsHeaderView: View {
                     HStack {
                         Text(displayablePerson, format: .displayablePerson())
                             .textStyle(.bodyMedium)
-                        if let bimi, bimi.isCertified, featureFlagsManageable.isEnabled(.bimi) {
+                        if let bimi, bimi.shouldDisplayBimi {
                             IKIcon(MailResourcesAsset.checkmarkAuthentication)
                         }
                     }
@@ -52,7 +49,7 @@ struct ContactActionsHeaderView: View {
                         .textStyle(.bodySecondary)
                 }
             }
-            if let bimi, bimi.isCertified, featureFlagsManageable.isEnabled(.bimi) {
+            if let bimi, bimi.shouldDisplayBimi {
                 HStack {
                     IKIcon(MailResourcesAsset.checkmarkAuthentication)
                     Text(MailResourcesStrings.Localizable.expeditorAuthenticationDescription)
