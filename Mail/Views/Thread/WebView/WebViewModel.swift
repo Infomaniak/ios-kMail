@@ -36,7 +36,7 @@ final class WebViewModel: NSObject, ObservableObject {
     let webView: WKWebView
     let contentBlocker: ContentBlocker
 
-    let style: String = MessageWebViewUtils.generateCSS(for: .message)
+    let style: String = MessageWebViewUtils.loadAndFormatCSS(for: .message)
 
     enum LoadResult: Equatable {
         case remoteContentBlocked

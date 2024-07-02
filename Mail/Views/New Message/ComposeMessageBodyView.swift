@@ -22,22 +22,21 @@ import MailCoreUI
 import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
+@_spi(Advanced) import SwiftUIIntrospect
 
 struct ComposeMessageBodyView: View {
-    @State private var isShowingCamera = false
-    @ModalState(context: ContextKeys.compose) private var isShowingFileSelection = false
-    @ModalState(context: ContextKeys.compose) private var isShowingPhotoLibrary = false
+    @State private var editorModel = EditorModel()
+    @StateObject private var toolbarModel = EditorToolbarModel()
 
     @ObservedRealmObject var draft: Draft
 
-    @Binding var editorModel: RichTextEditorModel
     @Binding var editorFocus: Bool
-    @Binding var isShowingAIPrompt: Bool
-    @Binding var isShowingAlert: NewMessageAlert?
+    @Binding var currentSignature: Signature?
 
     @ObservedObject var attachmentsManager: AttachmentsManager
 
     let messageReply: MessageReply?
+    let scrollView: UIScrollView?
 
     private var isRemoteContentBlocked: Bool {
         return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.frozenMessage.localSafeDisplay == false
@@ -47,22 +46,22 @@ struct ComposeMessageBodyView: View {
         VStack {
             AttachmentsHeaderView(attachmentsManager: attachmentsManager)
 
-            RichTextEditor(
-                model: $editorModel,
-                body: $draft.body,
-                isShowingCamera: $isShowingCamera,
-                isShowingFileSelection: $isShowingFileSelection,
-                isShowingPhotoLibrary: $isShowingPhotoLibrary,
-                becomeFirstResponder: $editorFocus,
-                isShowingAIPrompt: $isShowingAIPrompt,
-                isShowingAlert: $isShowingAlert,
-                blockRemoteContent: isRemoteContentBlocked
-            )
-            .ignoresSafeArea(.all, edges: .bottom)
-            .frame(height: editorModel.height + 20)
-            .padding(.vertical, value: .verySmall)
+            EditorView(body: $draft.body, model: $editorModel, toolbarModel: toolbarModel)
+                .frame(height: editorModel.height)
+                .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { _ in
+                    keepCursorVisible()
+                }
+                .onChange(of: editorModel.cursorPosition?.minY) { _ in
+                    keepCursorVisible()
+                }
         }
-        .fullScreenCover(isPresented: $isShowingCamera) {
+        .customAlert(item: $toolbarModel.isShowingAlert) { alert in
+            switch alert.type {
+            case .link(let handler):
+                AddLinkView(actionHandler: handler)
+            }
+        }
+        .fullScreenCover(isPresented: $toolbarModel.isShowingCamera) {
             CameraPicker { data in
                 attachmentsManager.importAttachments(
                     attachments: [data],
@@ -72,7 +71,7 @@ struct ComposeMessageBodyView: View {
             }
             .ignoresSafeArea()
         }
-        .sheet(isPresented: $isShowingFileSelection) {
+        .sheet(isPresented: $toolbarModel.isShowingFileSelection) {
             DocumentPicker(pickerType: .selectContent([.item]) { urls in
                 attachmentsManager.importAttachments(
                     attachments: urls,
@@ -82,7 +81,7 @@ struct ComposeMessageBodyView: View {
             })
             .ignoresSafeArea()
         }
-        .sheet(isPresented: $isShowingPhotoLibrary) {
+        .sheet(isPresented: $toolbarModel.isShowingPhotoLibrary) {
             ImagePicker { results in
                 attachmentsManager.importAttachments(
                     attachments: results,
@@ -93,18 +92,29 @@ struct ComposeMessageBodyView: View {
             .ignoresSafeArea()
         }
     }
+
+    private func keepCursorVisible() {
+        guard let scrollView, let cursorPosition = editorModel.cursorPosition else {
+            return
+        }
+
+        let scrollContentHeight = scrollView.contentSize.height
+        let editorHeight = scrollContentHeight - editorModel.height
+
+        let scrollRect = cursorPosition.offsetBy(dx: 0, dy: editorHeight)
+        scrollView.scrollRectToVisible(scrollRect, animated: true)
+    }
 }
 
 #Preview {
     let draft = Draft()
     return ComposeMessageBodyView(draft: draft,
-                                  editorModel: .constant(RichTextEditorModel()),
                                   editorFocus: .constant(false),
-                                  isShowingAIPrompt: .constant(false),
-                                  isShowingAlert: .constant(nil),
+                                  currentSignature: .constant(nil),
                                   attachmentsManager: AttachmentsManager(
                                       draftLocalUUID: draft.localUUID,
                                       mailboxManager: PreviewHelper.sampleMailboxManager
                                   ),
-                                  messageReply: nil)
+                                  messageReply: nil,
+                                  scrollView: nil)
 }

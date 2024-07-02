@@ -60,7 +60,6 @@ struct NewMessageAlert: Identifiable {
 }
 
 enum NewMessageAlertType {
-    case link(handler: (String) -> Void)
     case emptySubject(handler: () -> Void)
 }
 
@@ -84,7 +83,6 @@ struct ComposeMessageView: View {
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
 
-    @State private var editorModel = RichTextEditorModel()
     @Weak private var scrollView: UIScrollView?
 
     @StateObject private var attachmentsManager: AttachmentsManager
@@ -159,12 +157,11 @@ struct ComposeMessageView: View {
                 if autocompletionType == nil && !isLoadingContent {
                     ComposeMessageBodyView(
                         draft: draft,
-                        editorModel: $editorModel,
                         editorFocus: $editorFocus,
-                        isShowingAIPrompt: $aiModel.isShowingPrompt,
-                        isShowingAlert: $isShowingAlert,
+                        currentSignature: $currentSignature,
                         attachmentsManager: attachmentsManager,
-                        messageReply: messageReply
+                        messageReply: messageReply,
+                        scrollView: scrollView
                     )
                 }
             }
@@ -188,16 +185,6 @@ struct ComposeMessageView: View {
             guard self.scrollView != scrollView else { return }
             self.scrollView = scrollView
             scrollView.keyboardDismissMode = .interactive
-        }
-        .onChange(of: editorModel.height) { _ in
-            guard let scrollView else { return }
-
-            let fullSize = scrollView.contentSize.height
-            let realPosition = (fullSize - editorModel.height) + editorModel.cursorPosition
-
-            guard realPosition >= 0 else { return }
-            let rect = CGRect(x: 0, y: realPosition, width: 1, height: 1)
-            scrollView.scrollRectToVisible(rect, animated: true)
         }
         .onChange(of: autocompletionType) { newValue in
             guard newValue != nil else { return }
@@ -260,8 +247,6 @@ struct ComposeMessageView: View {
         }
         .customAlert(item: $isShowingAlert) { alert in
             switch alert.type {
-            case .link(let handler):
-                AddLinkView(actionHandler: handler)
             case .emptySubject(let handler):
                 EmptySubjectView(actionHandler: handler)
             }
