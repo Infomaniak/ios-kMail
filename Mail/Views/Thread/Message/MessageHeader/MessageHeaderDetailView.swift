@@ -81,18 +81,11 @@ struct RecipientLabel: View {
     @Binding var labelWidth: CGFloat
     let title: String
     let recipients: RealmSwift.List<Recipient>
-    let bimi: Bimi?
+    var bimi: Bimi?
 
     @State private var contactViewRecipient: Recipient?
 
     @LazyInjectService private var matomo: MatomoUtils
-
-    init(labelWidth: Binding<CGFloat>, title: String, recipients: RealmSwift.List<Recipient>, bimi: Bimi? = nil) {
-        _labelWidth = labelWidth
-        self.title = title
-        self.recipients = recipients
-        self.bimi = bimi
-    }
 
     var body: some View {
         HStack(alignment: .top) {
