@@ -75,18 +75,10 @@ struct MessageListView: View {
     }
 
     private func computeExpansion(from messageList: [Message]) {
-        for message in messageList {
-            guard messageExpansion[message.uid] != .expanded else { continue }
-            messageExpansion[message.uid] = isExpanded(message: message, from: messageList) ? .expanded : .collapsed
-        }
-
-        computeSuperCollapsed(from: messageList)
-    }
-
-    private func computeSuperCollapsed(from messageList: [Message]) {
         var toSuperCollapse = [String]()
 
         for message in messageList {
+            messageExpansion[message.uid] = expansion(for: message, from: messageList)
             guard message != messageList.first && message != messageList.last else { continue }
             guard messageExpansion[message.uid] != .expanded else {
                 superCollapseIfNeeded(toSuperCollapse)
@@ -151,6 +143,13 @@ struct MessageListView: View {
 
     private func isExpanded(message: Message, from messageList: [Message]) -> Bool {
         return ((messageList.last?.uid == message.uid) && !message.isDraft) || !message.seen
+    }
+
+    /// Function used to give a first value to a message expansion before trying to superCollapse it
+    /// Return `expanded` or `collapsed`
+    /// Not `superCollapsed`
+    private func expansion(for message: Message, from messageList: [Message]) -> MessageExpansionType {
+        return isExpanded(message: message, from: messageList) ? .expanded : .collapsed
     }
 
     private func firstExpanded() -> Message? {
