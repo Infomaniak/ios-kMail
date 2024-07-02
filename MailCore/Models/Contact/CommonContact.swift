@@ -44,7 +44,7 @@ public final class CommonContact: Identifiable {
     }
 
     /// Init form a `Correspondent` in the context of a mailbox
-    init(correspondent: any Correspondent, contextMailboxManager: MailboxManager) {
+    init(correspondent: any Correspondent, associatedBimi: Bimi?, contextMailboxManager: MailboxManager) {
         email = correspondent.email
         id = correspondent.id.hashValue
 
@@ -64,7 +64,14 @@ public final class CommonContact: Identifiable {
             let contact = contextMailboxManager.contactManager.getContact(for: correspondent, transactionable: transactionable)
             fullName = contact?.name ?? (correspondent.name.isEmpty ? correspondent.email : correspondent.name)
             color = UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
-            avatarImageRequest = AvatarImageRequest(imageRequest: contact?.avatarImageRequest, shouldAuthenticate: true)
+            if let associatedBimi, contact == nil {
+                avatarImageRequest = AvatarImageRequest(
+                    imageRequest: ImageRequest(url: Endpoint.bimiSvgUrl(bimi: associatedBimi).url),
+                    shouldAuthenticate: true
+                )
+            } else {
+                avatarImageRequest = AvatarImageRequest(imageRequest: contact?.avatarImageRequest, shouldAuthenticate: true)
+            }
         }
     }
 

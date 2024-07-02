@@ -36,7 +36,8 @@ struct MessageHeaderDetailView: View {
             RecipientLabel(
                 labelWidth: $labelWidth,
                 title: MailResourcesStrings.Localizable.fromTitle,
-                recipients: message.from
+                recipients: message.from,
+                bimi: message.bimi
             )
             RecipientLabel(
                 labelWidth: $labelWidth,
@@ -80,6 +81,7 @@ struct RecipientLabel: View {
     @Binding var labelWidth: CGFloat
     let title: String
     let recipients: RealmSwift.List<Recipient>
+    var bimi: Bimi?
 
     @State private var contactViewRecipient: Recipient?
 
@@ -113,7 +115,7 @@ struct RecipientLabel: View {
                 }
             }
             .adaptivePanel(item: $contactViewRecipient) { recipient in
-                ContactActionsView(recipient: recipient)
+                ContactActionsView(recipient: recipient, bimi: bimi)
                     .environmentObject(mailboxManager)
                 // We need to manually pass environmentObject because of a bug with SwiftUI end popovers on macOS
             }

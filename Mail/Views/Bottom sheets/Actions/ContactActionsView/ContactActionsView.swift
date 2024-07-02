@@ -27,6 +27,7 @@ struct ContactActionsView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let recipient: Recipient
+    let bimi: Bimi?
 
     private var actions: [Action] {
         let contact = mailboxManager.contactManager.getContact(for: recipient)
@@ -42,10 +43,11 @@ struct ContactActionsView: View {
         VStack(alignment: .leading, spacing: UIPadding.small) {
             let contactConfiguration = ContactConfiguration.correspondent(
                 correspondent: recipient,
+                associatedBimi: bimi,
                 contextMailboxManager: mailboxManager
             )
             let contact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
-            ContactActionsHeaderView(displayablePerson: contact)
+            ContactActionsHeaderView(displayablePerson: contact, bimi: bimi)
 
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(actions) { action in
@@ -63,6 +65,6 @@ struct ContactActionsView: View {
 }
 
 #Preview {
-    ContactActionsView(recipient: PreviewHelper.sampleRecipient1)
+    ContactActionsView(recipient: PreviewHelper.sampleRecipient1, bimi: nil)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }

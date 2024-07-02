@@ -109,6 +109,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 CalendarEventResponse.self,
                 CalendarEvent.self,
                 Attendee.self,
+                Bimi.self,
                 SwissTransferAttachment.self,
                 File.self
             ]

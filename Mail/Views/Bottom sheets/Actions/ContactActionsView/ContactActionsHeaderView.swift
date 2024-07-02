@@ -18,26 +18,43 @@
 
 import MailCore
 import MailCoreUI
+import MailResources
 import SwiftUI
 
 struct ContactActionsHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let displayablePerson: CommonContact
+    let bimi: Bimi?
 
-    public init(displayablePerson: CommonContact) {
+    public init(displayablePerson: CommonContact, bimi: Bimi?) {
         self.displayablePerson = displayablePerson
+        self.bimi = bimi
     }
 
     public var body: some View {
-        HStack {
-            AvatarView(mailboxManager: mailboxManager, contactConfiguration: .contact(contact: displayablePerson), size: 40)
-                .accessibilityHidden(true)
-            VStack(alignment: .leading) {
-                Text(displayablePerson, format: .displayablePerson())
-                    .textStyle(.bodyMedium)
-                Text(displayablePerson.email)
-                    .textStyle(.bodySecondary)
+        VStack(alignment: .leading, spacing: UIPadding.medium) {
+            HStack {
+                AvatarView(mailboxManager: mailboxManager, contactConfiguration: .contact(contact: displayablePerson), size: 40)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text(displayablePerson, format: .displayablePerson())
+                            .textStyle(.bodyMedium)
+                        if let bimi, bimi.shouldDisplayBimi {
+                            IKIcon(MailResourcesAsset.checkmarkAuthentication)
+                        }
+                    }
+                    Text(displayablePerson.email)
+                        .textStyle(.bodySecondary)
+                }
+            }
+            if let bimi, bimi.shouldDisplayBimi {
+                HStack {
+                    IKIcon(MailResourcesAsset.checkmarkAuthentication)
+                    Text(MailResourcesStrings.Localizable.expeditorAuthenticationDescription)
+                        .textStyle(.label)
+                }
             }
         }
         .accessibilityElement(children: .combine)
