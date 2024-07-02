@@ -175,6 +175,7 @@ struct ThreadCell: View {
                     preview: dataHolder.preview,
                     density: density,
                     folderName: thread.searchFolderName,
+                    lastAction: thread.lastAction,
                     hasAttachments: thread.hasAttachments,
                     isFlagged: thread.flagged
                 )

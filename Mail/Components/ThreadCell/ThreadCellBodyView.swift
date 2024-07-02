@@ -25,6 +25,7 @@ struct ThreadCellBodyView: View, Equatable {
     let density: ThreadDensity
     let folderName: String?
 
+    let lastAction: ThreadLastAction?
     let hasAttachments: Bool
     let isFlagged: Bool
 
@@ -32,12 +33,14 @@ struct ThreadCellBodyView: View, Equatable {
         VStack(alignment: .leading, spacing: UIPadding.verySmall) {
             if density == .compact {
                 HStack(spacing: UIPadding.verySmall) {
+                    ThreadCellActionView(lastAction: lastAction)
                     ThreadCellTextView(text: subject, type: .subject)
                     MessageFolderTag(title: folderName)
                     ThreadCellDetailsView(hasAttachments: hasAttachments, isFlagged: isFlagged)
                 }
             } else {
                 HStack(spacing: UIPadding.verySmall) {
+                    ThreadCellActionView(lastAction: lastAction)
                     ThreadCellTextView(text: subject, type: .subject)
                     ThreadCellDetailsView(hasAttachments: hasAttachments, isFlagged: isFlagged)
                 }

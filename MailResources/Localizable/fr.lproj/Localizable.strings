@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: fr, French
  * Tagged: ios
- * Exported by: Charlene Hoareau
- * Exported at: Wed, 26 Jun 2024 09:39:32 +0200
+ * Exported by: Ambroise Decouttere
+ * Exported at: Mon, 01 Jul 2024 13:28:52 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -598,11 +598,17 @@
 /* loco:62864eec841ea80f560649f2 */
 "contentDescriptionIconFavorite" = "Est favori";
 
+/* loco:667a9f52a0023c99b00c9ea2 */
+"contentDescriptionIconForward" = "Transféré";
+
 /* loco:64b621d61bdb4c64d60e80d2 */
 "contentDescriptionIconInvalidPassword" = "Débloquer l’adresse";
 
 /* loco:628c9f21fe133f61075b64f2 */
 "contentDescriptionIconNewMail" = "Nouveau";
+
+/* loco:667aa0ab6f3cd83e50048b82 */
+"contentDescriptionIconReply" = "Réponse";
 
 /* loco:62b1d1ee36cd805389679933 */
 "contentDescriptionIconStorage" = "État du stockage";

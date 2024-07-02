@@ -46,6 +46,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var flagged: Bool
     @Persisted public var answered: Bool
     @Persisted public var forwarded: Bool
+    @Persisted public var lastAction: ThreadLastAction?
     @Persisted public var folderId = ""
     @Persisted(originProperty: "threads") private var folders: LinkingObjects<Folder>
     @Persisted public var fromSearch = false
@@ -138,7 +139,20 @@ public class Thread: Object, Decodable, Identifiable {
             throw MailError.incoherentThreadDate
         }
 
+        lastAction = getLastAction()
+
         subject = messages.first?.subject
+    }
+
+    private func getLastAction() -> ThreadLastAction? {
+        guard let lastMessage = messages.last(where: { message in
+            message.forwarded || message.answered
+        }) else { return nil }
+
+        if lastMessage.answered {
+            return .reply
+        }
+        return .forward
     }
 
     func addMessageIfNeeded(newMessage: Message) {
@@ -302,4 +316,9 @@ public enum SearchCondition: Equatable {
     case contains(String)
     case everywhere(Bool)
     case attachments(Bool)
+}
+
+public enum ThreadLastAction: String, PersistableEnum {
+    case forward
+    case reply
 }

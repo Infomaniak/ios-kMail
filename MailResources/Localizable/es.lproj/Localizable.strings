@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Charlene Hoareau
- * Exported at: Wed, 26 Jun 2024 09:39:32 +0200
+ * Exported by: Ambroise Decouttere
+ * Exported at: Mon, 01 Jul 2024 13:28:52 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -598,11 +598,17 @@
 /* loco:62864eec841ea80f560649f2 */
 "contentDescriptionIconFavorite" = "Es favorito";
 
+/* loco:667a9f52a0023c99b00c9ea2 */
+"contentDescriptionIconForward" = "Reenviado";
+
 /* loco:64b621d61bdb4c64d60e80d2 */
 "contentDescriptionIconInvalidPassword" = "Desbloquear la dirección de correo electrónico";
 
 /* loco:628c9f21fe133f61075b64f2 */
 "contentDescriptionIconNewMail" = "Nuevo";
+
+/* loco:667aa0ab6f3cd83e50048b82 */
+"contentDescriptionIconReply" = "Respuesta";
 
 /* loco:62b1d1ee36cd805389679933 */
 "contentDescriptionIconStorage" = "Estado de almacenamiento";
@@ -1166,13 +1172,13 @@
 "settingsAutoAdvanceDescription" = "Seleccione qué mostrar cuando se archiva o elimina un mensaje";
 
 /* loco:65b27dc325bc06589501c462 */
-"settingsAutoAdvanceFollowingThreadDescription" = "Mostrar el siguiente conversación al archivar o borrar";
+"settingsAutoAdvanceFollowingThreadDescription" = "Mostrar la siguiente conversación al archivar o borrar";
 
 /* loco:65b277d399fe1ebac10546a2 */
-"settingsAutoAdvanceFollowingThreadTitle" = "Siguiendo el conversación";
+"settingsAutoAdvanceFollowingThreadTitle" = "Conversación siguiente";
 
 /* loco:65b27e2b4f176d33ca06b302 */
-"settingsAutoAdvanceListOfThreadsDescription" = "Mostrar lista de conversaciones al archivar o borrar";
+"settingsAutoAdvanceListOfThreadsDescription" = "Mostrar la lista de conversaciones al archivar o borrar";
 
 /* loco:65b2780c2b7256da8b038512 */
 "settingsAutoAdvanceListOfThreadsTitle" = "Lista de conversaciones";
@@ -1187,7 +1193,7 @@
 "settingsAutoAdvanceNaturalThreadTitle" = "Repetir la última acción";
 
 /* loco:65b27d1e0565d99b930ae142 */
-"settingsAutoAdvancePreviousThreadDescription" = "Mostrar el conversación anterior al archivar o borrar";
+"settingsAutoAdvancePreviousThreadDescription" = "Mostrar la conversación anterior al archivar o borrar";
 
 /* loco:65b277b504a5c5b4710041f3 */
 "settingsAutoAdvancePreviousThreadTitle" = "Conversación anterior";

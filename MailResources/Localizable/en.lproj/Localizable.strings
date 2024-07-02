@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: en, English
  * Tagged: ios
- * Exported by: Charlene Hoareau
- * Exported at: Wed, 26 Jun 2024 09:39:32 +0200
+ * Exported by: Ambroise Decouttere
+ * Exported at: Mon, 01 Jul 2024 13:28:52 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -598,11 +598,17 @@
 /* loco:62864eec841ea80f560649f2 */
 "contentDescriptionIconFavorite" = "Is favorite";
 
+/* loco:667a9f52a0023c99b00c9ea2 */
+"contentDescriptionIconForward" = "Forwarded";
+
 /* loco:64b621d61bdb4c64d60e80d2 */
 "contentDescriptionIconInvalidPassword" = "Unblock mailbox";
 
 /* loco:628c9f21fe133f61075b64f2 */
 "contentDescriptionIconNewMail" = "New";
+
+/* loco:667aa0ab6f3cd83e50048b82 */
+"contentDescriptionIconReply" = "Reply";
 
 /* loco:62b1d1ee36cd805389679933 */
 "contentDescriptionIconStorage" = "Storage status";
@@ -1172,7 +1178,7 @@
 "settingsAutoAdvanceFollowingThreadTitle" = "Following thread";
 
 /* loco:65b27e2b4f176d33ca06b302 */
-"settingsAutoAdvanceListOfThreadsDescription" = "Display list of threads when archiving or deleting";
+"settingsAutoAdvanceListOfThreadsDescription" = "Display the list of threads when archiving or deleting";
 
 /* loco:65b2780c2b7256da8b038512 */
 "settingsAutoAdvanceListOfThreadsTitle" = "List of threads";
