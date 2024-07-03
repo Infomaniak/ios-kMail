@@ -51,6 +51,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted(originProperty: "threads") private var folders: LinkingObjects<Folder>
     @Persisted public var fromSearch = false
     @Persisted public var searchFolderName: String?
+    @Persisted public var bimi: Bimi?
 
     @Persisted public var isDraft = false
 
@@ -212,6 +213,7 @@ public class Thread: Object, Decodable, Identifiable {
         case flagged
         case answered
         case forwarded
+        case bimi
     }
 
     public convenience init(
@@ -226,7 +228,8 @@ public class Thread: Object, Decodable, Identifiable {
         hasDrafts: Bool,
         flagged: Bool,
         answered: Bool,
-        forwarded: Bool
+        forwarded: Bool,
+        bimi: Bimi? = nil
     ) {
         self.init()
 
@@ -242,6 +245,7 @@ public class Thread: Object, Decodable, Identifiable {
         self.flagged = flagged
         self.answered = answered
         self.forwarded = forwarded
+        self.bimi = bimi
     }
 
     public required init(from decoder: Decoder) throws {
@@ -260,6 +264,7 @@ public class Thread: Object, Decodable, Identifiable {
         flagged = try container.decode(Bool.self, forKey: .flagged)
         answered = try container.decode(Bool.self, forKey: .answered)
         forwarded = try container.decode(Bool.self, forKey: .forwarded)
+        bimi = try container.decodeIfPresent(Bimi.self, forKey: .bimi)
     }
 
     override public init() {

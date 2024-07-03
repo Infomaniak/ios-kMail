@@ -188,6 +188,7 @@ public final class Message: Object, Decodable, Identifiable {
     @Persisted public var forwarded: Bool
     @Persisted public var flagged: Bool
     @Persisted public var hasUnsubscribeLink: Bool?
+    @Persisted public var bimi: Bimi?
     /// Threads where the message can be found
     @Persisted(originProperty: "messages") var threads: LinkingObjects<Thread>
     @Persisted(originProperty: "messages") private var folders: LinkingObjects<Folder>
@@ -319,6 +320,7 @@ public final class Message: Object, Decodable, Identifiable {
         case forwarded
         case flagged
         case hasUnsubscribeLink
+        case bimi
     }
 
     override init() {
@@ -381,6 +383,7 @@ public final class Message: Object, Decodable, Identifiable {
         forwarded = try values.decode(Bool.self, forKey: .forwarded)
         flagged = try values.decode(Bool.self, forKey: .flagged)
         hasUnsubscribeLink = try values.decodeIfPresent(Bool.self, forKey: .hasUnsubscribeLink)
+        bimi = try values.decodeIfPresent(Bimi.self, forKey: .bimi)
     }
 
     public convenience init(
@@ -411,7 +414,8 @@ public final class Message: Object, Decodable, Identifiable {
         scheduled: Bool,
         forwarded: Bool,
         flagged: Bool,
-        hasUnsubscribeLink: Bool? = nil
+        hasUnsubscribeLink: Bool? = nil,
+        bimi: Bimi? = nil
     ) {
         self.init()
 
@@ -443,6 +447,7 @@ public final class Message: Object, Decodable, Identifiable {
         self.forwarded = forwarded
         self.flagged = flagged
         self.hasUnsubscribeLink = hasUnsubscribeLink
+        self.bimi = bimi
         fullyDownloaded = true
     }
 
@@ -459,7 +464,8 @@ public final class Message: Object, Decodable, Identifiable {
             hasDrafts: !(draftResource?.isEmpty ?? true),
             flagged: flagged,
             answered: answered,
-            forwarded: forwarded
+            forwarded: forwarded,
+            bimi: bimi
         )
         thread.messageIds = linkedUids
         thread.folderId = folderId
