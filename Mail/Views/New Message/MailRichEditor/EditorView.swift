@@ -34,6 +34,7 @@ struct EditorView: UIViewRepresentable {
     func makeUIView(context: Context) -> RichEditorView {
         let editor = RichEditorView()
         editor.delegate = context.coordinator
+        editor.isScrollable = false
         editor.inputAccessoryView = context.coordinator.toolbar
 
         editor.html = body
