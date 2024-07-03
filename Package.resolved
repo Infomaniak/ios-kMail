@@ -217,7 +217,6 @@
       }
     },
     {
-    {
       "identity" : "svgkit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SVGKit/SVGKit.git",
@@ -226,6 +225,7 @@
         "revision" : "02421928cab787faaffb2403d47c39392936fbc7"
       }
     },
+    {
       "identity" : "swift-algorithms",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-algorithms",
