@@ -60,10 +60,10 @@ public final class CommonContact: Identifiable {
                 avatarImageRequest = AvatarImageRequest(imageRequest: nil, shouldAuthenticate: false)
             }
         } else {
+            fullName = correspondent.name.isEmpty ? correspondent.email : correspondent.name
+            color = UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
             let transactionable = contextMailboxManager.contactManager
             let contact = contextMailboxManager.contactManager.getContact(for: correspondent, transactionable: transactionable)
-            fullName = contact?.name ?? (correspondent.name.isEmpty ? correspondent.email : correspondent.name)
-            color = UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
             if let associatedBimi, contact == nil {
                 avatarImageRequest = AvatarImageRequest(
                     imageRequest: ImageRequest(url: Endpoint.bimiSvgUrl(bimi: associatedBimi).url),
