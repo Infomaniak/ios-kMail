@@ -26,7 +26,6 @@ import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
 struct ComposeMessageBodyView: View {
-    @State private var editorModel = EditorModel()
     @StateObject private var toolbarModel = EditorToolbarModel()
 
     @ObservedRealmObject var draft: Draft
@@ -50,7 +49,7 @@ struct ComposeMessageBodyView: View {
             AttachmentsHeaderView(attachmentsManager: attachmentsManager)
 
             RichEditor(html: $draft.body)
-                .isEditorScrollable(false)
+                .editorScrollDisabled(true)
                 .editorInputAccessoryView(UIView())
                 .onTextAttributesChange { print("New Text Attributes:", $0) }
         }
