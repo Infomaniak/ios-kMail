@@ -36,6 +36,8 @@ struct ComposeMessageBodyView: View {
 
     @ObservedObject var attachmentsManager: AttachmentsManager
 
+    @Weak private var editorView: UIView?
+
     let messageReply: MessageReply?
     let scrollView: UIScrollView?
 
@@ -50,11 +52,10 @@ struct ComposeMessageBodyView: View {
             RichEditor(html: $draft.body)
                 .isEditorScrollable(false)
                 .editorInputAccessoryView(UIView())
-                .onCursorPositionChange { cursor in
-                    print("New Cursor Position:", cursor)
-                }
-                .onTextAttributesChange { textAttributes in
-                    print("New Text Attributes:", textAttributes)
+                .onCursorPositionChange(perform: keepCursorVisible)
+                .onTextAttributesChange { print("New Text Attributes:", $0) }
+                .introspect(.view) { editorView in
+                    self.editorView = editorView
                 }
         }
         .customAlert(item: $toolbarModel.isShowingAlert) { alert in
@@ -95,16 +96,11 @@ struct ComposeMessageBodyView: View {
         }
     }
 
-    private func keepCursorVisible() {
-        guard let scrollView, let cursorPosition = editorModel.cursorPosition else {
-            return
-        }
+    private func keepCursorVisible(_ cursor: CGRect) {
+        guard let scrollView, let editorView else { return }
 
-        let scrollContentHeight = scrollView.contentSize.height
-        let editorHeight = scrollContentHeight - editorModel.height
-
-        let scrollRect = cursorPosition.offsetBy(dx: 0, dy: editorHeight)
-        scrollView.scrollRectToVisible(scrollRect, animated: true)
+        let convertedCursor = editorView.convert(cursor, to: scrollView)
+        scrollView.scrollRectToVisible(convertedCursor, animated: true)
     }
 }
 
