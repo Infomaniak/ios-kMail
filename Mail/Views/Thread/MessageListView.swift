@@ -36,22 +36,24 @@ struct MessageListView: View {
         ScrollViewReader { proxy in
             LazyVStack(spacing: 0) {
                 ForEach(messages, id: \.uid) { message in
-                    if case .firstSuperCollapsed(let count) = messageExpansion[message.uid] {
-                        SuperCollapsedView(count: count) {
-                            uncollapse(from: message.uid)
-                        }
-                    } else if messageExpansion[message.uid] != .superCollapsed {
-                        VStack(spacing: 0) {
-                            MessageView(
-                                message: message,
-                                isMessageExpanded: isExpanded(message: message, from: messages),
-                                threadForcedExpansion: $messageExpansion
-                            )
-                            if divider(for: message) {
-                                IKDivider(type: .full)
+                    ZStack {
+                        if case .firstSuperCollapsed(let count) = messageExpansion[message.uid] {
+                            SuperCollapsedView(count: count) {
+                                uncollapse(from: message.uid)
                             }
+                        } else if messageExpansion[message.uid] != .superCollapsed {
+                            VStack(spacing: 0) {
+                                MessageView(
+                                    message: message,
+                                    isMessageExpanded: isExpanded(message: message, from: messages),
+                                    threadForcedExpansion: $messageExpansion
+                                )
+                                if divider(for: message) {
+                                    IKDivider(type: .full)
+                                }
+                            }
+                            .id(message.uid)
                         }
-                        .id(message.uid)
                     }
                 }
             }
