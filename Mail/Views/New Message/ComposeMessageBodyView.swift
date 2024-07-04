@@ -52,11 +52,7 @@ struct ComposeMessageBodyView: View {
             RichEditor(html: $draft.body)
                 .isEditorScrollable(false)
                 .editorInputAccessoryView(UIView())
-                .onCursorPositionChange(perform: keepCursorVisible)
                 .onTextAttributesChange { print("New Text Attributes:", $0) }
-                .introspect(.view) { editorView in
-                    self.editorView = editorView
-                }
         }
         .customAlert(item: $toolbarModel.isShowingAlert) { alert in
             switch alert.type {
@@ -94,13 +90,6 @@ struct ComposeMessageBodyView: View {
             }
             .ignoresSafeArea()
         }
-    }
-
-    private func keepCursorVisible(_ cursor: CGRect) {
-        guard let scrollView, let editorView else { return }
-
-        let convertedCursor = editorView.convert(cursor, to: scrollView)
-        scrollView.scrollRectToVisible(convertedCursor, animated: true)
     }
 }
 
