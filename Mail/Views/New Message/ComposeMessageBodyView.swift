@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCoreUI
+import InfomaniakRichEditor
 import MailCore
 import MailCoreUI
 import RealmSwift
@@ -46,13 +47,14 @@ struct ComposeMessageBodyView: View {
         VStack {
             AttachmentsHeaderView(attachmentsManager: attachmentsManager)
 
-            EditorView(body: $draft.body, model: $editorModel, toolbarModel: toolbarModel)
-                .frame(height: editorModel.height)
-                .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidShowNotification)) { _ in
-                    keepCursorVisible()
+            RichEditor(html: $draft.body)
+                .isEditorScrollable(false)
+                .editorInputAccessoryView(UIView())
+                .onCursorPositionChange { cursor in
+                    print("New Cursor Position:", cursor)
                 }
-                .onChange(of: editorModel.cursorPosition?.minY) { _ in
-                    keepCursorVisible()
+                .onTextAttributesChange { textAttributes in
+                    print("New Text Attributes:", textAttributes)
                 }
         }
         .customAlert(item: $toolbarModel.isShowingAlert) { alert in
