@@ -22,6 +22,7 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct ShortcutModifier: ViewModifier {
@@ -30,6 +31,8 @@ struct ShortcutModifier: ViewModifier {
 
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var platformDetector: PlatformDetectable
+
+    @ModalState private var flushAlert: FlushAlertState?
 
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
@@ -60,6 +63,9 @@ struct ShortcutModifier: ViewModifier {
 
             content
         }
+        .customAlert(item: $flushAlert) { item in
+            FlushFolderAlertView(flushAlert: item, folder: viewModel.frozenFolder)
+        }
     }
 
     private func shortcutDelete() {
@@ -76,7 +82,7 @@ struct ShortcutModifier: ViewModifier {
             try await actionsManager.performAction(
                 target: messages,
                 action: .delete,
-                origin: .shortcut(originFolder: viewModel.frozenFolder)
+                origin: .shortcut(originFolder: viewModel.frozenFolder, nearestFlushAlert: $flushAlert)
             )
         }
     }
