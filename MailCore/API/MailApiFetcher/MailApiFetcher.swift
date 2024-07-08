@@ -54,8 +54,8 @@ public final class MailApiFetcher: ApiFetcher, MailApiFetchable {
         } catch {
             logError(error)
             if let afError = error.asAFError {
-                if case .responseSerializationFailed(let reason) = afError,
-                   case .decodingFailed(let error) = reason {
+                if case .responseSerializationFailed(let reason) = afError, case .decodingFailed(let error) = reason,
+                   let statusCode = request.response?.statusCode, (200 ... 299).contains(statusCode) {
                     var rawJson = "No data"
                     if let data = request.data,
                        let stringData = String(data: data, encoding: .utf8) {
