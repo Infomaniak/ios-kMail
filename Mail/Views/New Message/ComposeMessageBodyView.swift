@@ -23,7 +23,6 @@ import MailCoreUI
 import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
-@_spi(Advanced) import SwiftUIIntrospect
 
 struct ComposeMessageBodyView: View {
     @StateObject private var toolbarModel = EditorToolbarModel()
