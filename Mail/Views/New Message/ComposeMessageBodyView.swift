@@ -21,10 +21,10 @@ import InfomaniakRichEditor
 import MailCore
 import MailCoreUI
 import RealmSwift
-import SwiftModalPresentation
 import SwiftUI
 
 struct ComposeMessageBodyView: View {
+    @State private var textAttributes = TextAttributes()
     @StateObject private var toolbarModel = EditorToolbarModel()
 
     @ObservedRealmObject var draft: Draft
@@ -34,23 +34,27 @@ struct ComposeMessageBodyView: View {
 
     @ObservedObject var attachmentsManager: AttachmentsManager
 
-    @Weak private var editorView: UIView?
-
     let messageReply: MessageReply?
-    let scrollView: UIScrollView?
 
     private var isRemoteContentBlocked: Bool {
         return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.frozenMessage.localSafeDisplay == false
+    }
+
+    private var customCSS: String {
+        return MessageWebViewUtils.loadCSS(for: .editor).joined()
     }
 
     var body: some View {
         VStack {
             AttachmentsHeaderView(attachmentsManager: attachmentsManager)
 
-            RichEditor(html: $draft.body)
-                .editorScrollDisabled(true)
+            RichEditor(html: $draft.body, textAttributes: $textAttributes)
+                .editorScrollable(true)
                 .editorInputAccessoryView(UIView())
-                .onTextAttributesChange { print("New Text Attributes:", $0) }
+                .editorCSS(customCSS)
+                .introspectEditor { richEditorView in
+                    // TODO: Customize editor here.
+                }
         }
         .customAlert(item: $toolbarModel.isShowingAlert) { alert in
             switch alert.type {
@@ -100,6 +104,5 @@ struct ComposeMessageBodyView: View {
                                       draftLocalUUID: draft.localUUID,
                                       mailboxManager: PreviewHelper.sampleMailboxManager
                                   ),
-                                  messageReply: nil,
-                                  scrollView: nil)
+                                  messageReply: nil)
 }

@@ -160,8 +160,7 @@ struct ComposeMessageView: View {
                         editorFocus: $editorFocus,
                         currentSignature: $currentSignature,
                         attachmentsManager: attachmentsManager,
-                        messageReply: messageReply,
-                        scrollView: scrollView
+                        messageReply: messageReply
                     )
                 }
             }
