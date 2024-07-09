@@ -37,7 +37,7 @@ struct AddLinkView: View {
 
     private var textPlaceholder: String {
         if url.isEmpty {
-            return "Texte à afficher"
+            return MailResourcesStrings.Localizable.addLinkTextPlaceholder
         } else {
             return url
         }
