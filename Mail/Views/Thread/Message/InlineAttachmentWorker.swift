@@ -24,30 +24,6 @@ import InfomaniakCore
 import MailCore
 import SwiftUI
 
-/// MessageView code related to pre-processing
-extension MessageView {
-    /// Cooldown before processing each batch of inline images
-    ///
-    /// 4 seconds feels fine
-    static let batchCooldown: UInt64 = 4_000_000_000
-
-    // MARK: - public interface
-
-    func prepareBodyIfNeeded() {
-        // Message should be downloaded and expanded
-        guard message.fullyDownloaded, isMessageExpanded else {
-            return
-        }
-
-        // Content was processed or is processing
-        guard !isMessagePreprocessed else {
-            return
-        }
-
-        inlineAttachmentWorker.start(mailboxManager: mailboxManager)
-    }
-}
-
 /// Something to process the Attachments outside of the mainActor
 ///
 /// Call `start()` to begin processing, call `stop` to make sure internal Task is cancelled.
@@ -55,29 +31,24 @@ final class InlineAttachmentWorker: ObservableObject {
     /// Something to base64 encode images
     private let base64Encoder = Base64Encoder()
 
-    /// The UID of the `Message` displayed
-    let messageUid: String
-
-    /// Private accessor on the message
-    private var frozenMessage: Message? {
-        mailboxManager?.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?.freezeIfNeeded()
-    }
-
     /// The presentableBody with the current pre-processing (partial or done)
-    @Published var presentableBody: PresentableBody?
+    @Published var presentableBody: PresentableBody
 
     /// Set to true when done processing
-    @Published var isMessagePreprocessed: Bool
+    var isMessagePreprocessed: Bool
 
     var mailboxManager: MailboxManager?
+
+    let frozenMessage: Message
 
     /// Tracking the preprocessing Task tree
     private var processing: Task<Void, Error>?
 
-    public init(messageUid: String) {
-        self.messageUid = messageUid
-
+    public init(frozenMessage: Message) {
+        // TODO: assert frozen
+        self.frozenMessage = frozenMessage
         isMessagePreprocessed = false
+        presentableBody = PresentableBody(message: frozenMessage)
     }
 
     deinit {
@@ -90,11 +61,12 @@ final class InlineAttachmentWorker: ObservableObject {
     }
 
     func start(mailboxManager: MailboxManager) {
-        self.mailboxManager = mailboxManager
-        guard let frozenMessage = frozenMessage else {
+        // Content was processed or is processing
+        guard !isMessagePreprocessed else {
             return
         }
-        presentableBody = PresentableBody(message: frozenMessage)
+
+        self.mailboxManager = mailboxManager
 
         processing = Task { [weak self] in
             await self?.prepareBody()
@@ -117,8 +89,7 @@ final class InlineAttachmentWorker: ObservableObject {
         guard !Task.isCancelled else {
             return
         }
-        guard let frozenMessage,
-              let updatedPresentableBody = await MessageBodyUtils.prepareWithPrintOption(message: frozenMessage) else { return }
+        guard let updatedPresentableBody = await MessageBodyUtils.prepareWithPrintOption(message: frozenMessage) else { return }
 
         // Mutate DOM if task is active
         guard !Task.isCancelled else {
@@ -132,12 +103,8 @@ final class InlineAttachmentWorker: ObservableObject {
             return
         }
 
-        guard let message = frozenMessage else {
-            return
-        }
-
         // Since mutation of the DOM is costly, I batch the processing of images, then mutate the DOM.
-        let attachmentsArray = message.attachments.filter { $0.contentId != nil }.toArray()
+        let attachmentsArray = frozenMessage.attachments.filter { $0.contentId != nil }.toArray()
 
         // Early exit, nothing to process
         guard !attachmentsArray.isEmpty else {
@@ -161,11 +128,6 @@ final class InlineAttachmentWorker: ObservableObject {
 
         guard let mailboxManager = mailboxManager else {
             DDLogError("processInlineAttachments will fail without a mailboxManager")
-            return
-        }
-
-        guard let frozenMessage = frozenMessage else {
-            DDLogError("processInlineAttachments will fail without a frozenMessage")
             return
         }
 
@@ -222,17 +184,10 @@ final class InlineAttachmentWorker: ObservableObject {
         let compactBodyCopy = compactBody
         detachedBody?.value = bodyValue
 
-        let baseBody: PresentableBody
-        if let presentableBody = presentableBody {
-            baseBody = presentableBody
-        } else {
-            baseBody = PresentableBody(message: frozenMessage)
-        }
-
         let updatedPresentableBody = PresentableBody(
             body: detachedBody,
             compactBody: compactBodyCopy,
-            quotes: baseBody.quotes
+            quotes: presentableBody.quotes
         )
 
         // Mutate DOM if task is active
@@ -247,22 +202,17 @@ final class InlineAttachmentWorker: ObservableObject {
     }
 
     @MainActor private func setPresentableBody(_ body: PresentableBody) {
-        print("done processing body :\(messageUid)")
+        print("done processing body :\(frozenMessage.uid)")
         presentableBody = body
     }
 
     @MainActor func processingCompleted() {
-        print("done processing all :\(messageUid)")
+        print("done processing all :\(frozenMessage.uid)")
         isMessagePreprocessed = true
     }
 
     typealias BodyParts = (bodyString: String?, compactBody: String?, detachedBody: Body?)
     @MainActor private func readPresentableBody() -> BodyParts {
-        guard let presentableBody = presentableBody else {
-            DDLogError("No presentable body to use")
-            return (nil, nil, nil)
-        }
-
         let mailBody = presentableBody.body?.value
         let compactBody = presentableBody.compactBody
         let detachedBody = presentableBody.body?.detached()

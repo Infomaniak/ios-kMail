@@ -39,13 +39,9 @@ struct MessageView: View {
 
     @EnvironmentObject var mailboxManager: MailboxManager
 
-    @State var presentableBody: PresentableBody
     @State var isHeaderExpanded = false
     @State var isMessageExpanded: Bool
     @Binding private var threadForcedExpansion: [String: MessageExpansionType]
-
-    /// True once we finished preprocessing the content
-    @State var isMessagePreprocessed = false
 
     @State private var isShowingErrorLoading = false
 
@@ -54,7 +50,7 @@ struct MessageView: View {
     @ObservedRealmObject var message: Message
 
     /// Something to preprocess inline attachments
-    let inlineAttachmentWorker: InlineAttachmentWorker
+    @StateObject var inlineAttachmentWorker: InlineAttachmentWorker
 
     private var isRemoteContentBlocked: Bool {
         return (UserDefaults.shared.displayExternalContent == .askMe || message.folder?.role == .spam)
@@ -63,10 +59,9 @@ struct MessageView: View {
 
     init(message: Message, isMessageExpanded: Bool = false, threadForcedExpansion: Binding<[String: MessageExpansionType]>) {
         self.message = message
-        presentableBody = PresentableBody(message: message)
         self.isMessageExpanded = isMessageExpanded
         _threadForcedExpansion = threadForcedExpansion
-        inlineAttachmentWorker = InlineAttachmentWorker(messageUid: message.uid)
+        _inlineAttachmentWorker = StateObject(wrappedValue: InlineAttachmentWorker(frozenMessage: message))
     }
 
     var body: some View {
@@ -90,7 +85,7 @@ struct MessageView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         } else {
                             MessageBodyView(
-                                presentableBody: $presentableBody,
+                                presentableBody: self.inlineAttachmentWorker.presentableBody,
                                 blockRemoteContent: isRemoteContentBlocked,
                                 displayContentBlockedActionView: $displayContentBlockedActionView,
                                 messageUid: message.uid
@@ -108,11 +103,6 @@ struct MessageView: View {
             .task {
                 for await _ in inlineAttachmentWorker.objectWillChange.values {
                     debugPrint("inlineAttachmentWorker did change :\(message.uid)")
-                    guard let updatedBody = inlineAttachmentWorker.presentableBody else {
-                        return
-                    }
-                    self.isMessagePreprocessed = true
-                    self.presentableBody = updatedBody
                 }
             }
             .task(id: isMessageExpanded) {
@@ -127,9 +117,9 @@ struct MessageView: View {
             .onChange(of: isMessageExpanded) { _ in
                 prepareBodyIfNeeded()
             }
-            .onChange(of: presentableBody) { _ in
-                print("presentable body changed \(message.uid)")
-            }
+//            .onChange(of: presentableBody) { _ in
+//                print("presentable body changed \(message.uid)")
+//            }
             .onChange(of: threadForcedExpansion[message.uid]) { newValue in
                 if newValue == .expanded {
                     withAnimation {
@@ -186,6 +176,25 @@ struct MessageView: View {
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
     .previewLayout(.sizeThatFits)
+}
+
+/// MessageView code related to pre-processing
+extension MessageView {
+    /// Cooldown before processing each batch of inline images
+    ///
+    /// 4 seconds feels fine
+    static let batchCooldown: UInt64 = 4_000_000_000
+
+    // MARK: - public interface
+
+    func prepareBodyIfNeeded() {
+        // Message should be downloaded and expanded
+        guard message.fullyDownloaded, isMessageExpanded else {
+            return
+        }
+
+        inlineAttachmentWorker.start(mailboxManager: mailboxManager)
+    }
 }
 
 #Preview("Message expanded") {

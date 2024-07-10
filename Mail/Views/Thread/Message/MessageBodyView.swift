@@ -31,7 +31,7 @@ struct MessageBodyView: View {
 
     @StateObject private var model = WebViewModel()
 
-    @Binding var presentableBody: PresentableBody
+    let presentableBody: PresentableBody
     var blockRemoteContent: Bool
     @Binding var displayContentBlockedActionView: Bool
 
@@ -119,7 +119,7 @@ struct MessageBodyView: View {
 
 #Preview {
     MessageBodyView(
-        presentableBody: .constant(PreviewHelper.samplePresentableBody),
+        presentableBody: PreviewHelper.samplePresentableBody,
         blockRemoteContent: false,
         displayContentBlockedActionView: .constant(false),
         messageUid: "message_uid"

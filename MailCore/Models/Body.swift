@@ -85,6 +85,11 @@ final class ProxyBody: Codable {
 }
 
 public struct PresentableBody: Equatable {
+    // TODO: fixme
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        false
+    }
+    
     public var body: Body?
     public var compactBody: String?
     public var quotes = [String]()
