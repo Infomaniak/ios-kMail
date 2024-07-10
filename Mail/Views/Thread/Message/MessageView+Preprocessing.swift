@@ -40,25 +40,18 @@ extension MessageView {
         }
 
         // Content was processed or is processing
-        guard !isMessagePreprocessed, inlineAttachmentWorker == nil else {
+        guard !isMessagePreprocessed else {
             return
         }
 
-        let worker = InlineAttachmentWorker(
-            messageUid: message.uid,
-            presentableBody: $presentableBody,
-            isMessagePreprocessed: $isMessagePreprocessed,
-            mailboxManager: mailboxManager
-        )
-        inlineAttachmentWorker = worker
-        worker.start()
+        inlineAttachmentWorker.start(mailboxManager: mailboxManager)
     }
 }
 
 /// Something to process the Attachments outside of the mainActor
 ///
 /// Call `start()` to begin processing, call `stop` to make sure internal Task is cancelled.
-final class InlineAttachmentWorker {
+final class InlineAttachmentWorker: ObservableObject {
     /// Something to base64 encode images
     private let base64Encoder = Base64Encoder()
 
@@ -67,28 +60,24 @@ final class InlineAttachmentWorker {
 
     /// Private accessor on the message
     private var frozenMessage: Message? {
-        mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?.freezeIfNeeded()
+        mailboxManager?.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?.freezeIfNeeded()
     }
 
-    /// A binding on the `PresentableBody` from `MessageView`
-    @Binding var presentableBody: PresentableBody
+    /// The presentableBody with the current pre-processing (partial or done)
+    @Published var presentableBody: PresentableBody?
 
-    /// A binding on the `isMessagePreprocessed` from `MessageView`
-    @Binding var isMessagePreprocessed: Bool
+    /// Set to true when done processing
+    @Published var isMessagePreprocessed: Bool
 
-    let mailboxManager: MailboxManager
+    var mailboxManager: MailboxManager?
 
     /// Tracking the preprocessing Task tree
     private var processing: Task<Void, Error>?
 
-    public init(messageUid: String,
-                presentableBody: Binding<PresentableBody>,
-                isMessagePreprocessed: Binding<Bool>,
-                mailboxManager: MailboxManager) {
+    public init(messageUid: String) {
         self.messageUid = messageUid
-        _presentableBody = presentableBody
-        _isMessagePreprocessed = isMessagePreprocessed
-        self.mailboxManager = mailboxManager
+
+        isMessagePreprocessed = false
     }
 
     deinit {
@@ -100,7 +89,13 @@ final class InlineAttachmentWorker {
         processing = nil
     }
 
-    func start() {
+    func start(mailboxManager: MailboxManager) {
+        self.mailboxManager = mailboxManager
+        guard let frozenMessage = frozenMessage else {
+            return
+        }
+        presentableBody = PresentableBody(message: frozenMessage)
+
         processing = Task { [weak self] in
             await self?.prepareBody()
 
@@ -164,10 +159,20 @@ final class InlineAttachmentWorker {
             return
         }
 
+        guard let mailboxManager = mailboxManager else {
+            DDLogError("processInlineAttachments will fail without a mailboxManager")
+            return
+        }
+
+        guard let frozenMessage = frozenMessage else {
+            DDLogError("processInlineAttachments will fail without a frozenMessage")
+            return
+        }
+
         // Download all images for the current chunk in parallel
         let dataArray: [Data?] = await attachments.concurrentMap(customConcurrency: 4) { attachment in
             do {
-                return try await self.mailboxManager.attachmentData(attachment)
+                return try await mailboxManager.attachmentData(attachment)
             } catch {
                 DDLogError("Error \(error) : Failed to fetch data  for attachment: \(attachment)")
                 return nil
@@ -217,10 +222,17 @@ final class InlineAttachmentWorker {
         let compactBodyCopy = compactBody
         detachedBody?.value = bodyValue
 
+        let baseBody: PresentableBody
+        if let presentableBody = presentableBody {
+            baseBody = presentableBody
+        } else {
+            baseBody = PresentableBody(message: frozenMessage)
+        }
+
         let updatedPresentableBody = PresentableBody(
             body: detachedBody,
             compactBody: compactBodyCopy,
-            quotes: presentableBody.quotes
+            quotes: baseBody.quotes
         )
 
         // Mutate DOM if task is active
@@ -235,15 +247,22 @@ final class InlineAttachmentWorker {
     }
 
     @MainActor private func setPresentableBody(_ body: PresentableBody) {
+        print("done processing body :\(messageUid)")
         presentableBody = body
     }
 
     @MainActor func processingCompleted() {
+        print("done processing all :\(messageUid)")
         isMessagePreprocessed = true
     }
 
     typealias BodyParts = (bodyString: String?, compactBody: String?, detachedBody: Body?)
     @MainActor private func readPresentableBody() -> BodyParts {
+        guard let presentableBody = presentableBody else {
+            DDLogError("No presentable body to use")
+            return (nil, nil, nil)
+        }
+
         let mailBody = presentableBody.body?.value
         let compactBody = presentableBody.compactBody
         let detachedBody = presentableBody.body?.detached()

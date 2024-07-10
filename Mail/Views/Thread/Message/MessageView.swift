@@ -49,12 +49,12 @@ struct MessageView: View {
 
     @State private var isShowingErrorLoading = false
 
-    /// Something to preprocess inline attachments
-    @State var inlineAttachmentWorker: InlineAttachmentWorker?
-
     @State var displayContentBlockedActionView = false
 
     @ObservedRealmObject var message: Message
+
+    /// Something to preprocess inline attachments
+    let inlineAttachmentWorker: InlineAttachmentWorker
 
     private var isRemoteContentBlocked: Bool {
         return (UserDefaults.shared.displayExternalContent == .askMe || message.folder?.role == .spam)
@@ -66,6 +66,7 @@ struct MessageView: View {
         presentableBody = PresentableBody(message: message)
         self.isMessageExpanded = isMessageExpanded
         _threadForcedExpansion = threadForcedExpansion
+        inlineAttachmentWorker = InlineAttachmentWorker(messageUid: message.uid)
     }
 
     var body: some View {
@@ -104,18 +105,30 @@ struct MessageView: View {
             .task {
                 await fetchMessageAndEventCalendar()
             }
+            .task {
+                for await _ in inlineAttachmentWorker.objectWillChange.values {
+                    debugPrint("inlineAttachmentWorker did change :\(message.uid)")
+                    guard let updatedBody = inlineAttachmentWorker.presentableBody else {
+                        return
+                    }
+                    self.isMessagePreprocessed = true
+                    self.presentableBody = updatedBody
+                }
+            }
             .task(id: isMessageExpanded) {
                 await fetchMessageAndEventCalendar()
             }
             .onDisappear {
-                inlineAttachmentWorker?.stop()
-                inlineAttachmentWorker = nil
+                inlineAttachmentWorker.stop()
             }
             .onChange(of: message.fullyDownloaded) { _ in
                 prepareBodyIfNeeded()
             }
             .onChange(of: isMessageExpanded) { _ in
                 prepareBodyIfNeeded()
+            }
+            .onChange(of: presentableBody) { _ in
+                print("presentable body changed \(message.uid)")
             }
             .onChange(of: threadForcedExpansion[message.uid]) { newValue in
                 if newValue == .expanded {
