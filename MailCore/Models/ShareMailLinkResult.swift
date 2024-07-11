@@ -19,6 +19,8 @@
 import Foundation
 
 public struct ShareMailLinkResult: Codable, Identifiable {
-    public let id = UUID()
+    public var id: String {
+       return url
+    }
     public var url: String
 }
