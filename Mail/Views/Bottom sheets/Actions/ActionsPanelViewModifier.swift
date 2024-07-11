@@ -45,6 +45,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     @ModalState private var reportedForPhishingMessage: Message?
     @ModalState private var messagesToMove: [Message]?
     @ModalState private var flushAlert: FlushAlertState?
+    @ModalState private var shareMailLink: ShareMailLinkResult?
 
     @Binding var messages: [Message]?
     let originFolder: Folder?
@@ -60,7 +61,8 @@ struct ActionsPanelViewModifier: ViewModifier {
             nearestMessagesToMoveSheet: $messagesToMove,
             nearestReportJunkMessageActionsPanel: $reportForJunkMessage,
             nearestReportedForPhishingMessageAlert: $reportedForPhishingMessage,
-            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage
+            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+            nearestShareMailLinkPanel: $shareMailLink
         )
     }
 
@@ -88,6 +90,17 @@ struct ActionsPanelViewModifier: ViewModifier {
         }
         .customAlert(item: $flushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: originFolder)
+        }
+        .sheet(item: $shareMailLink) { shareMailLinkResult in
+            if #available(iOS 16.0, *) {
+                ActivityView(activityItems: [shareMailLinkResult.url])
+                    .ignoresSafeArea(edges: [.bottom])
+                    .presentationDetents([.medium, .large])
+            } else {
+                ActivityView(activityItems: [shareMailLinkResult.url])
+                    .ignoresSafeArea(edges: [.bottom])
+                    .backport.presentationDetents([.medium, .large])
+            }
         }
     }
 }

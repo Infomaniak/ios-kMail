@@ -90,6 +90,7 @@ extension Action: CaseIterable {
             archive ? .archive : .moveToInbox,
             star ? .unstar : .star,
             print ? .print : nil,
+            .shareMailLink,
             userIsStaff ? .reportDisplayProblem : nil
         ]
         return (Action.quickActions, tempListActions.compactMap { $0 })
@@ -339,5 +340,11 @@ public extension Action {
         title: "",
         iconResource: MailResourcesAsset.emailActionSend,
         matomoName: ""
+    )
+    static let shareMailLink = Action(
+        id: "shareMailLink",
+        title: MailResourcesStrings.Localizable.shareEmail,
+        iconResource: MailResourcesAsset.emailActionShare,
+        matomoName: "shareLink"
     )
 }

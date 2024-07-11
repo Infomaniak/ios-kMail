@@ -277,4 +277,8 @@ public extension Endpoint {
     static func downloadAllSwissTransferAttachments(stUuid: String) -> Endpoint {
         return .swissTransfer(stUuid: stUuid).appending(path: "/files/download")
     }
+
+    static func share(messageResource: String) -> Endpoint {
+        return .resource(messageResource).appending(path: "/share")
+    }
 }

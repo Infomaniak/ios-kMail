@@ -185,6 +185,12 @@ public class ActionsManager: ObservableObject {
             guard let message = messagesWithDuplicates.first else { return }
             try await mailboxManager.apiFetcher.blockSender(message: message)
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted(1))
+        case .shareMailLink:
+            guard let message = messagesWithDuplicates.first else { return }
+            let result = try await mailboxManager.apiFetcher.shareMailLink(message: message)
+            Task { @MainActor in
+                origin.nearestShareMailLinkPanel?.wrappedValue = result
+            }
         default:
             break
         }

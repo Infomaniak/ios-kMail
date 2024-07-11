@@ -167,4 +167,9 @@ public extension MailApiFetcher {
                                                                method: .post,
                                                                parameters: attachmentsToForward))
     }
+
+    func shareMailLink(message: Message) async throws -> ShareMailLinkResult {
+        try await perform(request: authenticatedRequest(.share(messageResource: message.resource),
+                                                        method: .post))
+    }
 }

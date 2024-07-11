@@ -1426,6 +1426,9 @@
 /* loco:627a547ad27ea17771565867 */
 "settingsTransferInBody" = "In the message body";
 
+/* loco:668cdbc1a27f04dd51065022 */
+"shareEmail" = "Share email";
+
 /* loco:6538a602e0eb783378001bb2 */
 "shortcutNextAction" = "Next";
 
