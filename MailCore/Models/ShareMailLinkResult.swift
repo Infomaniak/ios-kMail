@@ -18,9 +18,10 @@
 
 import Foundation
 
-public struct ShareMailLinkResult: Codable, Identifiable {
+@frozen public struct ShareMailLinkResult: Codable, Identifiable {
     public var id: String {
-       return url
+        return url
     }
+
     public var url: String
 }
