@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCore
 import InfomaniakDI
 import WebKit
 
@@ -28,6 +29,7 @@ public final class URLSchemeHandler: NSObject, WKURLSchemeHandler {
     private let syncQueue = DispatchQueue(label: "com.infomaniak.mail.URLSchemeHandler")
 
     @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var tokenStore: TokenStore
 
     public func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
         guard let url = urlSchemeTask.request.url else {
@@ -35,7 +37,8 @@ public final class URLSchemeHandler: NSObject, WKURLSchemeHandler {
             return
         }
 
-        guard let currentAccessToken = accountManager.getCurrentAccount()?.token?.accessToken else {
+        guard let currentAccount = accountManager.getCurrentAccount(),
+              let currentAccessToken = tokenStore.tokenFor(userId: currentAccount.userId)?.accessToken else {
             urlSchemeTask.didFailWithError(MailError.unknownError)
             return
         }
