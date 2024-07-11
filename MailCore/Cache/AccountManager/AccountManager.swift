@@ -512,7 +512,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     public func removeTokenAndAccount(account: Account) {
-        let removedToken = tokenStore.removeTokenFor(userId: account.userId) ?? account.token
+        let removedToken = tokenStore.removeTokenFor(userId: account.userId)
         removeAccount(toDeleteAccount: account)
 
         guard let removedToken else {
@@ -524,10 +524,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             self.logError(.failedToDeleteAPIToken(wrapping: error))
             DDLogError("Failed to delete api token: \(error.localizedDescription)")
         }
-    }
-
-    public func account(for token: ApiToken) -> Account? {
-        return accounts.values.first { $0.token.userId == token.userId }
     }
 
     public func account(for userId: Int) -> Account? {
