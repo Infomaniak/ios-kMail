@@ -41,7 +41,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "da6a3fa3a35be975e068ce59ee43d4b05ecabb9d"
+        "revision" : "8178fa508021e1d34deed765f545d4333d695a8e"
       }
     },
     {
@@ -121,8 +121,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/LocalizeKit",
       "state" : {
-        "revision" : "a8f5b63a242a7cb5d8939db011fc9ee871a2a300",
-        "version" : "1.0.1"
+        "revision" : "e7dbea6d3a8d57f8352e1457649c45e49699b5eb",
+        "version" : "1.0.2"
       }
     },
     {
@@ -130,8 +130,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/airbnb/lottie-spm.git",
       "state" : {
-        "revision" : "1d29eccc24cc8b75bff9f6804155112c0ffc9605",
-        "version" : "4.4.3"
+        "revision" : "b842598f1295f3ffa1475b1580672d1fe5b83580",
+        "version" : "4.5.0"
       }
     },
     {
@@ -157,8 +157,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/kean/Nuke",
       "state" : {
-        "revision" : "084076db4f9b9ee4db51177ef5a4879689c1aa09",
-        "version" : "12.7.2"
+        "revision" : "311016d972aa751ae8ab0cd5897422ebe7db0501",
+        "version" : "12.7.3"
       }
     },
     {
@@ -184,8 +184,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "058ecce712b4be8b2a2384ed893bf83d56a49fc0",
-        "version" : "14.10.1"
+        "revision" : "f889f79a2301208fd9d322d07abfc883b8f2046c",
+        "version" : "14.10.2"
       }
     },
     {
@@ -193,8 +193,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "fb903a9c901cb7863953fdcb5182b05ca2275b27",
-        "version" : "10.52.0"
+        "revision" : "ae827eabf45ba64562c75b6e99038da6ce12d427",
+        "version" : "10.52.1"
       }
     },
     {
@@ -202,8 +202,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "08862789e1cbba7a9561bed69832a9306f339cd3",
-        "version" : "8.29.1"
+        "revision" : "5a601a24aa1b3fb29fcdb824633f050e08257e92",
+        "version" : "8.30.1"
       }
     },
     {
@@ -265,8 +265,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log",
       "state" : {
-        "revision" : "e97a6fcb1ab07462881ac165fdbb37f067e205d5",
-        "version" : "1.5.4"
+        "revision" : "9cb486020ebf03bfa5b5df985387a14a98744537",
+        "version" : "1.6.1"
       }
     },
     {
