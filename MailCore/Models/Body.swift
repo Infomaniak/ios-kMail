@@ -84,18 +84,15 @@ final class ProxyBody: Codable {
     }
 }
 
-public struct PresentableBody: Equatable {
-    // TODO: fixme
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        false
-    }
-    
-    public var body: Body?
-    public var compactBody: String?
-    public var quotes = [String]()
+@frozen public struct PresentableBody: Equatable {
+    public let body: Body?
+    public let compactBody: String?
+    public let quotes: [String]
 
     public init(message: Message) {
         body = message.body
+        compactBody = nil
+        quotes = []
     }
 
     public init(body: Body?, compactBody: String?, quotes: [String]) {
