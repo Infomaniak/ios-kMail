@@ -33,7 +33,7 @@ struct AddLinkView: View {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var matomo: MatomoUtils
 
-    var actionHandler: ((String, URL) -> Void)?
+    var actionHandler: ((URL, String) -> Void)?
 
     private var textPlaceholder: String {
         if url.isEmpty {
@@ -87,7 +87,7 @@ struct AddLinkView: View {
             return
         }
 
-        actionHandler?(text, url)
+        actionHandler?(url, text)
     }
 }
 

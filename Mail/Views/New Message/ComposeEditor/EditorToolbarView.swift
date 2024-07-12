@@ -36,7 +36,7 @@ final class EditorToolbarView: UIToolbar {
         super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 48))
 
         UIConstants.applyComposeViewStyle(to: self)
-        setupStyle(.main)
+        setupType(.main)
     }
 
     @available(*, unavailable)
@@ -50,15 +50,15 @@ final class EditorToolbarView: UIToolbar {
             .objectWillChange
             .debounce(for: .milliseconds(50), scheduler: DispatchQueue.main)
             .sink { [weak self] in
-                guard let self, type == .textEdition else { return }
-                setupStyle(type)
+                guard let self else { return }
+                setupType(type)
             }
     }
 
-    private func setupStyle(_ style: EditorToolbarStyle) {
-        type = style
+    private func setupType(_ type: EditorToolbarStyle) {
+        self.type = type
 
-        let actions = style.actions
+        let actions = type.actions
         let actionItems = actions.map { action in
             let item = UIBarButtonItem(image: action.icon, style: .plain, target: self, action: #selector(didTapOnBarButtonItem))
             item.tag = action.rawValue
@@ -66,7 +66,7 @@ final class EditorToolbarView: UIToolbar {
             if let textAttributes {
                 item.isSelected = action.isSelected(textAttributes: textAttributes)
             }
-            if action == .editText && style == .textEdition {
+            if action == .editText && type == .textEdition {
                 item.tintColor = UserDefaults.shared.accentColor.primary.color
             } else {
                 item.tintColor = action.tint
@@ -87,19 +87,24 @@ final class EditorToolbarView: UIToolbar {
 
         switch action {
         case .editText:
-            setupStyle(type == .main ? .textEdition : .main)
+            setupType(type == .main ? .textEdition : .main)
         case .bold:
             textAttributes?.bold()
         case .italic:
-            break
+            textAttributes?.italic()
         case .underline:
-            break
+            textAttributes?.underline()
         case .strikeThrough:
-            break
+            textAttributes?.strikethrough()
         case .unorderedList:
-            break
+            textAttributes?.unorderedList()
         case .link:
-            break
+            guard let textAttributes else { return }
+            if textAttributes.hasLink {
+                textAttributes.unlink()
+            } else {
+                mainButtonItemsHandler?(action)
+            }
         case .ai, .addFile, .addPhoto, .takePhoto, .programMessage:
             mainButtonItemsHandler?(action)
         }
