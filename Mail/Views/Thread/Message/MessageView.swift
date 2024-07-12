@@ -86,6 +86,7 @@ struct MessageView: View {
                         } else {
                             MessageBodyView(
                                 presentableBody: inlineAttachmentWorker.presentableBody,
+                                isMessagePreprocessed: inlineAttachmentWorker.isMessagePreprocessed,
                                 blockRemoteContent: isRemoteContentBlocked,
                                 displayContentBlockedActionView: $displayContentBlockedActionView,
                                 messageUid: message.uid
