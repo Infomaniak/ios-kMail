@@ -85,7 +85,7 @@ struct MessageView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         } else {
                             MessageBodyView(
-                                presentableBody: self.inlineAttachmentWorker.presentableBody,
+                                presentableBody: inlineAttachmentWorker.presentableBody,
                                 blockRemoteContent: isRemoteContentBlocked,
                                 displayContentBlockedActionView: $displayContentBlockedActionView,
                                 messageUid: message.uid
@@ -169,15 +169,6 @@ struct MessageView: View {
     }
 }
 
-#Preview("Message collapsed") {
-    MessageView(
-        message: PreviewHelper.sampleMessage,
-        threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .collapsed])
-    )
-    .environmentObject(PreviewHelper.sampleMailboxManager)
-    .previewLayout(.sizeThatFits)
-}
-
 /// MessageView code related to pre-processing
 extension MessageView {
     /// Cooldown before processing each batch of inline images
@@ -185,16 +176,22 @@ extension MessageView {
     /// 4 seconds feels fine
     static let batchCooldown: UInt64 = 4_000_000_000
 
-    // MARK: - public interface
-
     func prepareBodyIfNeeded() {
-        // Message should be downloaded and expanded
         guard message.fullyDownloaded, isMessageExpanded else {
             return
         }
 
         inlineAttachmentWorker.start(mailboxManager: mailboxManager)
     }
+}
+
+#Preview("Message collapsed") {
+    MessageView(
+        message: PreviewHelper.sampleMessage,
+        threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .collapsed])
+    )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
+    .previewLayout(.sizeThatFits)
 }
 
 #Preview("Message expanded") {
