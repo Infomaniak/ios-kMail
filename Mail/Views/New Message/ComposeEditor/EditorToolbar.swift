@@ -21,21 +21,7 @@ import InfomaniakRichEditor
 import MailCore
 import MailCoreUI
 import MailResources
-import SwiftModalPresentation
 import UIKit
-
-struct ToolbarAlert: Identifiable, Equatable {
-    let id = UUID()
-    let type: ToolbarAlertType
-
-    static func == (lhs: ToolbarAlert, rhs: ToolbarAlert) -> Bool {
-        return lhs.id == rhs.id
-    }
-}
-
-enum ToolbarAlertType {
-    case link(handler: (String, URL) -> Void)
-}
 
 enum EditorToolbarStyle {
     case main
@@ -170,15 +156,15 @@ enum EditorToolbarAction: Int {
         case .bold:
             return textAttributes.hasBold
         case .italic:
-            return textAttributes.italic
+            return textAttributes.hasItalic
         case .underline:
-            return textAttributes.underline
+            return textAttributes.hasUnderline
         case .strikeThrough:
-            return textAttributes.strikethrough
+            return textAttributes.hasStrikethrough
         case .unorderedList:
-            return textAttributes.unorderedList
+            return textAttributes.hasUnorderedList
         case .link:
-            return textAttributes.link
+            return textAttributes.hasLink
         case .editText, .ai, .addFile, .addPhoto, .takePhoto, .programMessage:
             return false
         }

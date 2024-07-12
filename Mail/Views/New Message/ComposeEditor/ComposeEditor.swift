@@ -30,10 +30,10 @@ struct ComposeEditor: View {
     @State private var toolbar = EditorToolbarView()
     @StateObject private var textAttributes = TextAttributes()
 
+    @ModalState(context: ContextKeys.compose) var isShowingLinkAlert = false
     @ModalState(context: ContextKeys.compose) var isShowingFileSelection = false
     @ModalState(context: ContextKeys.compose) var isShowingPhotoLibrary = false
     @ModalState(context: ContextKeys.compose) var isShowingCamera = false
-    @ModalState(wrappedValue: nil, context: ContextKeys.compose) var isShowingAlert: ToolbarAlert?
 
     @ObservedRealmObject var draft: Draft
 
@@ -44,12 +44,9 @@ struct ComposeEditor: View {
             .editorInputAccessoryView(toolbar)
             .editorCSS(Self.customCSS)
             .onAppear(perform: configureToolbar)
-//            .customAlert(item: .constant(nil)) { alert in
-//                switch alert.type {
-//                case .link(let handler):
-//                    AddLinkView(actionHandler: handler)
-//                }
-//            }
+            .customAlert(isPresented: $isShowingLinkAlert) {
+                AddLinkView(actionHandler: didCreateLink)
+            }
             .sheet(isPresented: $isShowingFileSelection) {
                 DocumentPicker(pickerType: .selectContent([.item], didPickDocument))
                     .ignoresSafeArea()
@@ -71,19 +68,26 @@ struct ComposeEditor: View {
 
     private func didTapMainToolbarButton(_ action: EditorToolbarAction) {
         switch action {
+        case .link:
+            isShowingLinkAlert = true
         case .ai:
+            // TODO: Show AI
             break
         case .addFile:
-            isShowingFileSelection.toggle()
+            isShowingFileSelection = true
         case .addPhoto:
-            isShowingPhotoLibrary.toggle()
+            isShowingPhotoLibrary = true
         case .takePhoto:
-            isShowingCamera.toggle()
+            isShowingCamera = true
         case .programMessage:
             showWorkInProgressSnackBar()
         default:
             print("Action not handled.")
         }
+    }
+
+    private func didCreateLink(url: URL, text: String) {
+        textAttributes.addLink(url: url, text: text)
     }
 
     private func didPickDocument(_ urls: [URL]) {
