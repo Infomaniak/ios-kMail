@@ -38,4 +38,17 @@ public extension Object {
 
         return transactionable.fetchObject(ofType: Self.self, forPrimaryKey: primaryKeyValue)
     }
+
+    /// Get an updated frozen copy for a given object
+    func refresh() -> Self {
+        guard realm != nil else { return self }
+
+        guard let liveMessage = thaw(),
+              let realm = liveMessage.realm else {
+            return self
+        }
+
+        realm.refresh()
+        return liveMessage.freeze()
+    }
 }

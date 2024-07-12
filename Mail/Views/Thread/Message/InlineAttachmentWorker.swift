@@ -35,18 +35,22 @@ final class InlineAttachmentWorker: ObservableObject {
     @Published var presentableBody: PresentableBody
 
     /// Set to true when done processing
-    var isMessagePreprocessed: Bool
+    @Published var isMessagePreprocessed: Bool
 
     var mailboxManager: MailboxManager?
 
-    let frozenMessage: Message
+    private var frozenMessage: Message {
+        return message.refresh()
+    }
+
+    private var message: Message
 
     /// Tracking the preprocessing Task tree
     private var processing: Task<Void, Error>?
 
     public init(frozenMessage: Message) {
-        // TODO: assert frozen
-        self.frozenMessage = frozenMessage
+        assert(frozenMessage.isFrozen, "message should be frozen")
+        message = frozenMessage
         isMessagePreprocessed = false
         presentableBody = PresentableBody(message: frozenMessage)
     }
@@ -126,7 +130,7 @@ final class InlineAttachmentWorker: ObservableObject {
             return
         }
 
-        guard let mailboxManager = mailboxManager else {
+        guard let mailboxManager else {
             DDLogError("processInlineAttachments will fail without a mailboxManager")
             return
         }
