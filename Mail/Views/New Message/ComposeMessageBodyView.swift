@@ -24,13 +24,9 @@ import RealmSwift
 import SwiftUI
 
 struct ComposeMessageBodyView: View {
-    @State private var textAttributes = TextAttributes()
-    @StateObject private var toolbarModel = EditorToolbarModel()
+    @FocusState var focusedField: ComposeViewFieldType?
 
     @ObservedRealmObject var draft: Draft
-
-    @Binding var editorFocus: Bool
-    @Binding var currentSignature: Signature?
 
     @ObservedObject var attachmentsManager: AttachmentsManager
 
@@ -40,69 +36,23 @@ struct ComposeMessageBodyView: View {
         return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.frozenMessage.localSafeDisplay == false
     }
 
-    private var customCSS: String {
-        return MessageWebViewUtils.loadCSS(for: .editor).joined()
-    }
-
     var body: some View {
         VStack {
             AttachmentsHeaderView(attachmentsManager: attachmentsManager)
-
-            RichEditor(html: $draft.body, textAttributes: $textAttributes)
-                .editorScrollable(true)
-                .editorInputAccessoryView(UIView())
-                .editorCSS(customCSS)
-                .introspectEditor { richEditorView in
-                    // TODO: Customize editor here.
-                }
-        }
-        .customAlert(item: $toolbarModel.isShowingAlert) { alert in
-            switch alert.type {
-            case .link(let handler):
-                AddLinkView(actionHandler: handler)
-            }
-        }
-        .fullScreenCover(isPresented: $toolbarModel.isShowingCamera) {
-            CameraPicker { data in
-                attachmentsManager.importAttachments(
-                    attachments: [data],
-                    draft: draft,
-                    disposition: AttachmentDisposition.defaultDisposition
-                )
-            }
-            .ignoresSafeArea()
-        }
-        .sheet(isPresented: $toolbarModel.isShowingFileSelection) {
-            DocumentPicker(pickerType: .selectContent([.item]) { urls in
-                attachmentsManager.importAttachments(
-                    attachments: urls,
-                    draft: draft,
-                    disposition: AttachmentDisposition.defaultDisposition
-                )
-            })
-            .ignoresSafeArea()
-        }
-        .sheet(isPresented: $toolbarModel.isShowingPhotoLibrary) {
-            ImagePicker { results in
-                attachmentsManager.importAttachments(
-                    attachments: results,
-                    draft: draft,
-                    disposition: AttachmentDisposition.defaultDisposition
-                )
-            }
-            .ignoresSafeArea()
+            ComposeEditor(draft: draft, attachmentsManager: attachmentsManager)
         }
     }
 }
 
 #Preview {
     let draft = Draft()
-    return ComposeMessageBodyView(draft: draft,
-                                  editorFocus: .constant(false),
-                                  currentSignature: .constant(nil),
-                                  attachmentsManager: AttachmentsManager(
-                                      draftLocalUUID: draft.localUUID,
-                                      mailboxManager: PreviewHelper.sampleMailboxManager
-                                  ),
-                                  messageReply: nil)
+    return ComposeMessageBodyView(
+        focusedField: .init(),
+        draft: draft,
+        attachmentsManager: AttachmentsManager(
+            draftLocalUUID: draft.localUUID,
+            mailboxManager: PreviewHelper.sampleMailboxManager
+        ),
+        messageReply: nil
+    )
 }

@@ -79,7 +79,6 @@ struct ComposeMessageView: View {
     @ModalState(context: ContextKeys.compose) private var isShowingCancelAttachmentsError = false
     @ModalState(wrappedValue: nil, context: ContextKeys.compose) private var isShowingAlert: NewMessageAlert?
     @State private var autocompletionType: ComposeViewFieldType?
-    @State private var editorFocus = false
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
 
@@ -90,12 +89,7 @@ struct ComposeMessageView: View {
 
     @ObservedRealmObject private var draft: Draft
 
-    @FocusState private var focusedField: ComposeViewFieldType? {
-        willSet {
-            let editorInFocus = (newValue == .editor)
-            editorFocus = editorInFocus
-        }
-    }
+    @FocusState private var focusedField: ComposeViewFieldType?
 
     private let messageReply: MessageReply?
     private let draftContentManager: DraftContentManager
@@ -156,9 +150,8 @@ struct ComposeMessageView: View {
 
                 if autocompletionType == nil && !isLoadingContent {
                     ComposeMessageBodyView(
+                        focusedField: _focusedField,
                         draft: draft,
-                        editorFocus: $editorFocus,
-                        currentSignature: $currentSignature,
                         attachmentsManager: attachmentsManager,
                         messageReply: messageReply
                     )
