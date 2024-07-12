@@ -37,13 +37,6 @@ enum ToolbarAlertType {
     case link(handler: (String, URL) -> Void)
 }
 
-final class EditorToolbarModel: ObservableObject {
-    @ModalPublished(context: ContextKeys.compose) var isShowingCamera = false
-    @ModalPublished(context: ContextKeys.compose) var isShowingFileSelection = false
-    @ModalPublished(context: ContextKeys.compose) var isShowingPhotoLibrary = false
-    @ModalPublished(wrappedValue: nil, context: ContextKeys.compose) var isShowingAlert: ToolbarAlert?
-}
-
 enum EditorToolbarStyle {
     case main
     case textEdition
@@ -143,10 +136,39 @@ enum EditorToolbarAction: Int {
         }
     }
 
+    var accessibilityLabel: String {
+        switch self {
+        case .bold:
+            return MailResourcesStrings.Localizable.buttonBold
+        case .italic:
+            return MailResourcesStrings.Localizable.buttonItalic
+        case .underline:
+            return MailResourcesStrings.Localizable.buttonUnderline
+        case .strikeThrough:
+            return MailResourcesStrings.Localizable.buttonStrikeThrough
+        case .unorderedList:
+            return MailResourcesStrings.Localizable.buttonUnorderedList
+        case .editText:
+            return MailResourcesStrings.Localizable.buttonEditText
+        case .ai:
+            return MailResourcesStrings.Localizable.aiDiscoveryTitle
+        case .addFile:
+            return MailResourcesStrings.Localizable.attachmentActionFile
+        case .addPhoto:
+            return MailResourcesStrings.Localizable.attachmentActionPhotoLibrary
+        case .takePhoto:
+            return MailResourcesStrings.Localizable.buttonCamera
+        case .link:
+            return MailResourcesStrings.Localizable.buttonLink
+        case .programMessage:
+            return MailResourcesStrings.Localizable.buttonSchedule
+        }
+    }
+
     func isSelected(textAttributes: TextAttributes) -> Bool {
         switch self {
         case .bold:
-            return textAttributes.bold
+            return textAttributes.hasBold
         case .italic:
             return textAttributes.italic
         case .underline:
