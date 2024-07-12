@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-bug-tracker",
       "state" : {
-        "revision" : "264d99bb71c48d404d32784fa4e3c271a70bed90",
-        "version" : "5.0.0"
+        "revision" : "87f990917a8de59ef37768d0b14f75d4abfe8993",
+        "version" : "6.0.0"
       }
     },
     {
@@ -41,7 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "8178fa508021e1d34deed765f545d4333d695a8e"
+        "revision" : "6c175294c2ff03c43eb7c9bd32ebd3a8c6448b0d",
+        "version" : "11.0.0"
       }
     },
     {
@@ -49,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "8896710779c0daaeb6680c4997ff582cd9ed6ae3",
-        "version" : "9.0.0"
+        "revision" : "f6aa4a07a6668c86e9665be93cc6199c1dd64895",
+        "version" : "10.0.0"
       }
     },
     {
@@ -58,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-create-account",
       "state" : {
-        "revision" : "4cf259a7934f82f19e7e209839cd77a9c6a2aeb9",
-        "version" : "8.0.0"
+        "revision" : "4379f1fc92d2db1a72eebbd69814562e671a7710",
+        "version" : "9.0.0"
       }
     },
     {
@@ -85,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-notifications",
       "state" : {
-        "revision" : "c5ae1674448eafca051700aa47a35629e347dc0a",
-        "version" : "6.0.0"
+        "revision" : "b638cbf6f218ff7ebccd2aa219e69f3cf696d30a",
+        "version" : "7.0.0"
       }
     },
     {
@@ -103,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-version-checker",
       "state" : {
-        "revision" : "4a9f4342fef91a132676ddcdd50c4808fefd4736",
-        "version" : "5.0.0"
+        "revision" : "c8fd02352bfc6bede63e41bdb21f2472f7bc1612",
+        "version" : "6.0.0"
       }
     },
     {
@@ -114,15 +115,6 @@
       "state" : {
         "revision" : "2ef543ee21d63734e1c004ad6c870255e8716c50",
         "version" : "7.12.0"
-      }
-    },
-    {
-      "identity" : "localizekit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/LocalizeKit",
-      "state" : {
-        "revision" : "e7dbea6d3a8d57f8352e1457649c45e49699b5eb",
-        "version" : "1.0.2"
       }
     },
     {
