@@ -30,6 +30,8 @@ struct ComposeMessageBodyView: View {
 
     @ObservedObject var attachmentsManager: AttachmentsManager
 
+    @Binding var isShowingAI: Bool
+
     let messageReply: MessageReply?
 
     private var isRemoteContentBlocked: Bool {
@@ -39,7 +41,7 @@ struct ComposeMessageBodyView: View {
     var body: some View {
         VStack {
             AttachmentsHeaderView(attachmentsManager: attachmentsManager)
-            ComposeEditor(draft: draft, attachmentsManager: attachmentsManager)
+            ComposeEditor(draft: draft, attachmentsManager: attachmentsManager, isShowingAI: $isShowingAI)
         }
     }
 }
@@ -53,6 +55,7 @@ struct ComposeMessageBodyView: View {
             draftLocalUUID: draft.localUUID,
             mailboxManager: PreviewHelper.sampleMailboxManager
         ),
+        isShowingAI: .constant(false),
         messageReply: nil
     )
 }
