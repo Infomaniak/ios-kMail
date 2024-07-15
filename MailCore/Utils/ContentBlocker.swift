@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakRichEditor
 import SwiftSoup
 import WebKit
 
@@ -27,12 +28,19 @@ public class ContentBlocker {
 
     public init(webView: WKWebView) {
         self.webView = webView
-        contentBlockRules = ContentRuleGenerator.generateContentRulesJSON(rules: [
+
+        let rules = [
             ContentRule(action: ContentRuleAction(type: .block), trigger: ContentRuleTrigger(urlFilter: ".*"))
         ] + allowedHosts.map {
             ContentRule(action: ContentRuleAction(type: .ignorePreviousRules),
                         trigger: ContentRuleTrigger(urlFilter: $0))
-        })
+        } + [
+            ContentRule(action: ContentRuleAction(type: .ignorePreviousRules), trigger: ContentRuleTrigger(
+                urlFilter: "\(Bundle(for: RichEditorView.self).bundleURL.absoluteURL).*"
+            ))
+        ]
+
+        contentBlockRules = ContentRuleGenerator.generateContentRulesJSON(rules: rules)
     }
 
     public func documentHasRemoteContent(_ document: Document) throws -> Bool {
