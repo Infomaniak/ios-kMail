@@ -40,7 +40,6 @@ struct MessageView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
 
     @State var isHeaderExpanded = false
-    @State var isMessageExpanded: Bool
     @Binding private var threadForcedExpansion: [String: MessageExpansionType]
 
     @State private var isShowingErrorLoading = false
@@ -57,9 +56,12 @@ struct MessageView: View {
             && !message.localSafeDisplay
     }
 
-    init(message: Message, isMessageExpanded: Bool = false, threadForcedExpansion: Binding<[String: MessageExpansionType]>) {
+    private var isMessageExpanded: Bool {
+        threadForcedExpansion[message.uid] == .expanded
+    }
+
+    init(message: Message, threadForcedExpansion: Binding<[String: MessageExpansionType]>) {
         self.message = message
-        self.isMessageExpanded = isMessageExpanded
         _threadForcedExpansion = threadForcedExpansion
         _inlineAttachmentWorker = StateObject(wrappedValue: InlineAttachmentWorker(messageUid: message.uid))
     }
@@ -67,7 +69,13 @@ struct MessageView: View {
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                MessageHeaderView(message: message, isHeaderExpanded: $isHeaderExpanded, isMessageExpanded: $isMessageExpanded)
+                MessageHeaderView(message: message,
+                                  isHeaderExpanded: $isHeaderExpanded,
+                                  isMessageExpanded: Binding(get: {
+                                      isMessageExpanded
+                                  }, set: { newValue in
+                                      threadForcedExpansion[message.uid] = newValue ? .expanded : .collapsed
+                                  }))
 
                 if isMessageExpanded {
                     VStack(spacing: UIPadding.regular) {
@@ -113,17 +121,10 @@ struct MessageView: View {
             .onChange(of: isMessageExpanded) { _ in
                 prepareBodyIfNeeded()
             }
-            .onChange(of: threadForcedExpansion[message.uid]) { newValue in
-                if newValue == .expanded {
-                    withAnimation {
-                        isMessageExpanded = true
-                    }
-                }
-            }
             .accessibilityAction(named: MailResourcesStrings.Localizable.expandMessage) {
                 guard isMessageInteractive else { return }
                 withAnimation {
-                    isMessageExpanded.toggle()
+                    threadForcedExpansion[message.uid] = isMessageExpanded ? .collapsed : .expanded
                 }
             }
         }
@@ -190,7 +191,6 @@ extension MessageView {
 #Preview("Message expanded") {
     MessageView(
         message: PreviewHelper.sampleMessage,
-        isMessageExpanded: true,
         threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .expanded])
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
