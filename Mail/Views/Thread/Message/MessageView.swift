@@ -101,11 +101,6 @@ struct MessageView: View {
             .task {
                 await fetchMessageAndEventCalendar()
             }
-            .task {
-                for await _ in inlineAttachmentWorker.objectWillChange.values {
-                    debugPrint("inlineAttachmentWorker did change :\(message.uid)")
-                }
-            }
             .task(id: isMessageExpanded) {
                 await fetchMessageAndEventCalendar()
             }
@@ -118,9 +113,6 @@ struct MessageView: View {
             .onChange(of: isMessageExpanded) { _ in
                 prepareBodyIfNeeded()
             }
-//            .onChange(of: presentableBody) { _ in
-//                print("presentable body changed \(message.uid)")
-//            }
             .onChange(of: threadForcedExpansion[message.uid]) { newValue in
                 if newValue == .expanded {
                     withAnimation {
