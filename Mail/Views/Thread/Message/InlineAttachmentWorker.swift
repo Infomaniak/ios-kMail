@@ -39,20 +39,15 @@ final class InlineAttachmentWorker: ObservableObject {
 
     var mailboxManager: MailboxManager?
 
-    private var frozenMessage: Message {
-        return message.refresh()
-    }
-
-    private var message: Message
+    private let messageUid: String
 
     /// Tracking the preprocessing Task tree
     private var processing: Task<Void, Error>?
 
-    public init(frozenMessage: Message) {
-        assert(frozenMessage.isFrozen, "message should be frozen")
-        message = frozenMessage
+    public init(messageUid: String) {
+        self.messageUid = messageUid
         isMessagePreprocessed = false
-        presentableBody = PresentableBody(message: frozenMessage)
+        presentableBody = PresentableBody()
     }
 
     deinit {
@@ -72,14 +67,21 @@ final class InlineAttachmentWorker: ObservableObject {
 
         self.mailboxManager = mailboxManager
 
+        let uuid = UUID().uuidString
+        let messageUid = messageUid
         processing = Task { [weak self] in
-            await self?.prepareBody()
+            guard let message = mailboxManager.transactionExecutor.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?
+                .freeze() else {
+                return
+            }
+
+            await self?.prepareBody(frozenMessage: message)
 
             guard !Task.isCancelled else {
                 return
             }
 
-            await self?.insertInlineAttachments()
+            await self?.insertInlineAttachments(frozenMessage: message)
 
             guard !Task.isCancelled else {
                 return
@@ -89,7 +91,7 @@ final class InlineAttachmentWorker: ObservableObject {
         }
     }
 
-    func prepareBody() async {
+    private func prepareBody(frozenMessage: Message) async {
         guard !Task.isCancelled else {
             return
         }
@@ -102,7 +104,7 @@ final class InlineAttachmentWorker: ObservableObject {
         await setPresentableBody(updatedPresentableBody)
     }
 
-    func insertInlineAttachments() async {
+    private func insertInlineAttachments(frozenMessage: Message) async {
         guard !Task.isCancelled else {
             return
         }
@@ -125,7 +127,7 @@ final class InlineAttachmentWorker: ObservableObject {
         }
     }
 
-    func processInlineAttachments(_ attachments: ArraySlice<Attachment>) async {
+    private func processInlineAttachments(_ attachments: ArraySlice<Attachment>) async {
         guard !Task.isCancelled else {
             return
         }
@@ -206,12 +208,10 @@ final class InlineAttachmentWorker: ObservableObject {
     }
 
     @MainActor private func setPresentableBody(_ body: PresentableBody) {
-        print("done processing body :\(frozenMessage.uid)")
         presentableBody = body
     }
 
     @MainActor func processingCompleted() {
-        print("done processing all :\(frozenMessage.uid)")
         isMessagePreprocessed = true
     }
 

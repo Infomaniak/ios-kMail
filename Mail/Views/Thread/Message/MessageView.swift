@@ -61,7 +61,7 @@ struct MessageView: View {
         self.message = message
         self.isMessageExpanded = isMessageExpanded
         _threadForcedExpansion = threadForcedExpansion
-        _inlineAttachmentWorker = StateObject(wrappedValue: InlineAttachmentWorker(frozenMessage: message))
+        _inlineAttachmentWorker = StateObject(wrappedValue: InlineAttachmentWorker(messageUid: message.uid))
     }
 
     var body: some View {

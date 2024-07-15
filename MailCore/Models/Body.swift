@@ -101,6 +101,12 @@ final class ProxyBody: Codable {
         self.quotes = quotes
     }
 
+    public init() {
+        body = nil
+        compactBody = nil
+        quotes = []
+    }
+
     public init(presentableBody: PresentableBody) {
         self.init(body: presentableBody.body, compactBody: presentableBody.compactBody, quotes: presentableBody.quotes)
     }
