@@ -153,6 +153,7 @@ struct ComposeMessageView: View {
                         focusedField: _focusedField,
                         draft: draft,
                         attachmentsManager: attachmentsManager,
+                        isShowingAI: $aiModel.isShowingPrompt,
                         messageReply: messageReply
                     )
                 }

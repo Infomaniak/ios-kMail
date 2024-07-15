@@ -39,6 +39,8 @@ struct ComposeEditor: View {
 
     @ObservedObject var attachmentsManager: AttachmentsManager
 
+    @Binding var isShowingAI: Bool
+
     var body: some View {
         RichEditor(html: $draft.body, textAttributes: textAttributes)
             .editorInputAccessoryView(toolbar)
@@ -71,8 +73,7 @@ struct ComposeEditor: View {
         case .link:
             isShowingLinkAlert = true
         case .ai:
-            // TODO: Show AI
-            break
+            isShowingAI = true
         case .addFile:
             isShowingFileSelection = true
         case .addPhoto:
@@ -115,6 +116,14 @@ struct ComposeEditor: View {
     }
 }
 
-// #Preview {
-//    ComposeEditor()
-// }
+#Preview {
+    let draft = Draft()
+    return ComposeEditor(
+        draft: draft,
+        attachmentsManager: AttachmentsManager(
+            draftLocalUUID: draft.localUUID,
+            mailboxManager: PreviewHelper.sampleMailboxManager
+        ),
+        isShowingAI: .constant(false)
+    )
+}
