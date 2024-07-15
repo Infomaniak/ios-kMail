@@ -211,7 +211,8 @@ let project = Project(name: "Mail",
                                       .external(name: "Swifter"),
                                       .external(name: "VersionChecker"),
                                       .external(name: "SwiftModalPresentation"),
-                                      .external(name: "SVGKit")
+                                      .external(name: "SVGKit"),
+                                      .external(name: "InfomaniakRichEditor")
                                   ],
                                   settings: .settings(base: Constants.baseSettings)),
                           .target(name: "MailCoreUI",
@@ -230,8 +231,7 @@ let project = Project(name: "Mail",
                                       .external(name: "NavigationBackport"),
                                       .external(name: "Popovers"),
                                       .external(name: "SwiftUIBackports"),
-                                      .external(name: "SwiftUIMacros"),
-                                      .external(name: "InfomaniakRichEditor")
+                                      .external(name: "SwiftUIMacros")
                                   ],
                                   settings: .settings(base: Constants.baseSettings))
                       ],
