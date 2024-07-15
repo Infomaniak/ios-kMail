@@ -41,11 +41,18 @@ struct ComposeEditor: View {
 
     @Binding var isShowingAI: Bool
 
+    let messageReply: MessageReply?
+
+    private var isRemoteContentBlocked: Bool {
+        return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.frozenMessage.localSafeDisplay == false
+    }
+
     var body: some View {
         RichEditor(html: $draft.body, textAttributes: textAttributes)
             .editorInputAccessoryView(toolbar)
             .editorCSS(Self.customCSS)
-            .onAppear(perform: configureToolbar)
+            .introspectEditor(perform: setupEditor)
+            .onAppear(perform: setupToolbar)
             .customAlert(isPresented: $isShowingLinkAlert) {
                 AddLinkView(actionHandler: didCreateLink)
             }
@@ -63,7 +70,14 @@ struct ComposeEditor: View {
             }
     }
 
-    private func configureToolbar() {
+    private func setupEditor(_ editor: RichEditorView) {
+        Task {
+            let contentBlocker = ContentBlocker(webView: editor.webView)
+            try? await contentBlocker.setRemoteContentBlocked(isRemoteContentBlocked)
+        }
+    }
+
+    private func setupToolbar() {
         toolbar.setTextAttributes(textAttributes)
         toolbar.mainButtonItemsHandler = didTapMainToolbarButton
     }
@@ -124,6 +138,7 @@ struct ComposeEditor: View {
             draftLocalUUID: draft.localUUID,
             mailboxManager: PreviewHelper.sampleMailboxManager
         ),
-        isShowingAI: .constant(false)
+        isShowingAI: .constant(false),
+        messageReply: nil
     )
 }
