@@ -52,7 +52,6 @@ struct MessageListView: View {
                                     IKDivider(type: .full)
                                 }
                             }
-                            .id(message.uid)
                         }
                     }
                 }
