@@ -118,7 +118,8 @@ struct MessageView: View {
             .onChange(of: message.fullyDownloaded) { _ in
                 prepareBodyIfNeeded()
             }
-            .onChange(of: isMessageExpanded) { _ in
+            .onChange(of: isMessageExpanded) { newValue in
+                guard isMessageExpanded != newValue else { return }
                 prepareBodyIfNeeded()
             }
             .accessibilityAction(named: MailResourcesStrings.Localizable.expandMessage) {
