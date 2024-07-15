@@ -34,14 +34,15 @@ struct ComposeMessageBodyView: View {
 
     let messageReply: MessageReply?
 
-    private var isRemoteContentBlocked: Bool {
-        return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.frozenMessage.localSafeDisplay == false
-    }
-
     var body: some View {
         VStack {
             AttachmentsHeaderView(attachmentsManager: attachmentsManager)
-            ComposeEditor(draft: draft, attachmentsManager: attachmentsManager, isShowingAI: $isShowingAI)
+            ComposeEditor(
+                draft: draft,
+                attachmentsManager: attachmentsManager,
+                isShowingAI: $isShowingAI,
+                messageReply: messageReply
+            )
         }
     }
 }

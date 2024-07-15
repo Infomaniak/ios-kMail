@@ -97,8 +97,7 @@ struct ComposeMessageView: View {
     private let htmlAttachments: [HTMLAttachable]
 
     private var isSendButtonDisabled: Bool {
-        let disabledState = draft.recipientsAreEmpty
-            || !attachmentsManager.allAttachmentsUploaded
+        let disabledState = draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded
         return disabledState
     }
 
