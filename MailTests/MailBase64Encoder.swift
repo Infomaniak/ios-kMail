@@ -51,7 +51,7 @@ final class MailBase64Encoder: XCTestCase {
             in: &processedBody,
             contentId: contentId,
             mimeType: mimeType,
-            contentData: imageData
+            contentBase64Encoded: imageBase64
         )
 
         // THEN
@@ -106,11 +106,12 @@ final class MailBase64Encoder: XCTestCase {
         let expectedResult = "data:image/png;base64,"
 
         // WHEN
+        let imageBase64 = imageData.base64EncodedString()
         base64Encoder.replaceContentIdForBase64Image(
             in: &processedBody,
             contentId: contentId,
             mimeType: mimeType,
-            contentData: imageData
+            contentBase64Encoded: imageBase64
         )
 
         // THEN

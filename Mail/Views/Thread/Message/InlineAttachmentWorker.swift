@@ -112,18 +112,23 @@ final class InlineAttachmentWorker: ObservableObject {
         // Since mutation of the DOM is costly, I batch the processing of images, then mutate the DOM.
         let attachmentsArray = frozenMessage.attachments.filter { $0.contentId != nil }.toArray()
 
-        // Early exit, nothing to process
         guard !attachmentsArray.isEmpty else {
             return
         }
 
-        // Chunking, and processing each chunk
+        // Chunking, and processing each chunk. Opportunity to yield between each batch.
         let chunks = attachmentsArray.chunks(ofCount: Constants.inlineAttachmentBatchSize)
         for attachments in chunks {
             guard !Task.isCancelled else {
                 return
             }
-            await processInlineAttachments(attachments)
+
+            // Run each batch in a `Task` to get an `autoreleasepool` behaviour
+            let batchTask = Task {
+                await processInlineAttachments(attachments)
+            }
+            await batchTask.finish()
+            await Task.yield()
         }
     }
 
@@ -137,18 +142,20 @@ final class InlineAttachmentWorker: ObservableObject {
             return
         }
 
-        // Download all images for the current chunk in parallel
-        let dataArray: [Data?] = await attachments.concurrentMap(customConcurrency: 4) { attachment in
+        // Download and encode all images for the current chunk in parallel.
+        // Force a fixed max concurrency to be a nice citizen to the network.
+        let base64Images: [String?] = await attachments.concurrentMap(customConcurrency: 4) { attachment in
             do {
-                return try await mailboxManager.attachmentData(attachment)
+                let attachmentData = try await mailboxManager.attachmentData(attachment)
+                let base64String = attachmentData.base64EncodedString()
+                return base64String
             } catch {
                 DDLogError("Error \(error) : Failed to fetch data  for attachment: \(attachment)")
                 return nil
             }
         }
 
-        // Safety check
-        assert(dataArray.count == attachments.count, "Arrays count should match")
+        assert(base64Images.count == attachments.count, "Arrays count should match")
 
         guard !Task.isCancelled else {
             return
@@ -167,7 +174,7 @@ final class InlineAttachmentWorker: ObservableObject {
             }
 
             guard let contentId = attachment.contentId,
-                  let data = dataArray[safe: index] as? Data else {
+                  let base64Image = base64Images[safe: index] as? String else {
                 continue
             }
 
@@ -175,14 +182,14 @@ final class InlineAttachmentWorker: ObservableObject {
                 in: &mailBody,
                 contentId: contentId,
                 mimeType: attachment.mimeType,
-                contentData: data
+                contentBase64Encoded: base64Image
             )
 
             base64Encoder.replaceContentIdForBase64Image(
                 in: &compactBody,
                 contentId: contentId,
                 mimeType: attachment.mimeType,
-                contentData: data
+                contentBase64Encoded: base64Image
             )
         }
 
@@ -196,14 +203,11 @@ final class InlineAttachmentWorker: ObservableObject {
             quotes: presentableBody.quotes
         )
 
-        // Mutate DOM if task is active
+        // Mutate DOM if task is still active
         guard !Task.isCancelled else {
             return
         }
         await setPresentableBody(updatedPresentableBody)
-
-        // Opportunity to yield between each batch processing
-        await Task.yield()
     }
 
     @MainActor private func setPresentableBody(_ body: PresentableBody) {
@@ -225,10 +229,15 @@ final class InlineAttachmentWorker: ObservableObject {
 }
 
 struct Base64Encoder {
-    func replaceContentIdForBase64Image(in body: inout String?, contentId: String, mimeType: String, contentData: Data) {
+    func replaceContentIdForBase64Image(
+        in body: inout String?,
+        contentId: String,
+        mimeType: String,
+        contentBase64Encoded: String
+    ) {
         body = body?.replacingOccurrences(
             of: "cid:\(contentId)",
-            with: "data:\(mimeType);base64,\(contentData.base64EncodedString())"
+            with: "data:\(mimeType);base64,\(contentBase64Encoded)"
         )
     }
 }
