@@ -143,16 +143,17 @@ final class InlineAttachmentWorker: ObservableObject {
 
         // Download and encode all images for the current chunk in parallel.
         // Force a fixed max concurrency to be a nice citizen to the network.
-        let base64Images: [String?] = await attachments.concurrentMap(customConcurrency: 4) { attachment in
-            do {
-                let attachmentData = try await mailboxManager.attachmentData(attachment)
-                let base64String = attachmentData.base64EncodedString()
-                return base64String
-            } catch {
-                DDLogError("Error \(error) : Failed to fetch data  for attachment: \(attachment)")
-                return nil
+        let base64Images: [String?] = await attachments
+            .concurrentMap(customConcurrency: Constants.concurrentNetworkCalls) { attachment in
+                do {
+                    let attachmentData = try await mailboxManager.attachmentData(attachment)
+                    let base64String = attachmentData.base64EncodedString()
+                    return base64String
+                } catch {
+                    DDLogError("Error \(error) : Failed to fetch data  for attachment: \(attachment)")
+                    return nil
+                }
             }
-        }
 
         assert(base64Images.count == attachments.count, "Arrays count should match")
 
