@@ -158,6 +158,14 @@ struct ComposeMessageView: View {
                 }
             }
         }
+        .availableSpatialTapGesture { location in
+            // If the user directly tap on the UIScrollView, and not a
+            // subview like a TextField, we should target the editor
+            let targetView = scrollView?.hitTest(location, with: nil)
+            if targetView is UIScrollView {
+                focusedField = .editor
+            }
+        }
         .composeMessageToolbar(dismissHandler: didTouchDismiss)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -173,7 +181,7 @@ struct ComposeMessageView: View {
                 progressView
             }
         }
-        .introspect(.scrollView, on: .iOS(.v15, .v16, .v17)) { scrollView in
+        .introspect(.scrollView, on: .iOS(.v15, .v16, .v17, .v18)) { scrollView in
             guard self.scrollView != scrollView else { return }
             self.scrollView = scrollView
             scrollView.keyboardDismissMode = .interactive
