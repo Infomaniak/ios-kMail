@@ -166,11 +166,6 @@ struct MessageView: View {
 
 /// MessageView code related to pre-processing
 extension MessageView {
-    /// Cooldown before processing each batch of inline images
-    ///
-    /// 4 seconds feels fine
-    static let batchCooldown: UInt64 = 4_000_000_000
-
     func prepareBodyIfNeeded() {
         guard message.fullyDownloaded, isMessageExpanded else {
             return

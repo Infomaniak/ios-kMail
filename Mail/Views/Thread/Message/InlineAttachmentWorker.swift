@@ -202,9 +202,8 @@ final class InlineAttachmentWorker: ObservableObject {
         }
         await setPresentableBody(updatedPresentableBody)
 
-        // Delay between each chunk processing, just enough, so the user feels the UI is responsive.
-        // This goes beyond a simple Task.yield()
-        try? await Task.sleep(nanoseconds: MessageView.batchCooldown)
+        // Opportunity to yield between each batch processing
+        await Task.yield()
     }
 
     @MainActor private func setPresentableBody(_ body: PresentableBody) {
