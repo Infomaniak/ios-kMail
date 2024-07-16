@@ -21,7 +21,7 @@ import MailResources
 @testable import SwiftSoup
 import XCTest
 
-final class MailBase64Encoder: XCTestCase {
+final class MailBodyImageMutator: XCTestCase {
     // MARK: - Test simple image
 
     func testEncodeSomeImage() {
@@ -39,7 +39,7 @@ final class MailBase64Encoder: XCTestCase {
         </html>
         """
         var processedBody: String? = htmlBody
-        let base64Encoder = Base64Encoder()
+        let bodyImageMutator = BodyImageMutator()
         guard let imageData = MailResourcesAsset.allFolders.image.pngData() else {
             XCTFail("Unexpected")
             return
@@ -47,7 +47,7 @@ final class MailBase64Encoder: XCTestCase {
         let imageBase64 = imageData.base64EncodedString()
 
         // WHEN
-        base64Encoder.replaceContentIdForBase64Image(
+        bodyImageMutator.replaceContentIdForBase64Image(
             in: &processedBody,
             contentId: contentId,
             mimeType: mimeType,
@@ -101,13 +101,13 @@ final class MailBase64Encoder: XCTestCase {
         </html>
         """
         var processedBody: String? = htmlBody
-        let base64Encoder = Base64Encoder()
+        let bodyImageMutator = BodyImageMutator()
         let imageData = Data()
         let expectedResult = "data:image/png;base64,"
 
         // WHEN
         let imageBase64 = imageData.base64EncodedString()
-        base64Encoder.replaceContentIdForBase64Image(
+        bodyImageMutator.replaceContentIdForBase64Image(
             in: &processedBody,
             contentId: contentId,
             mimeType: mimeType,

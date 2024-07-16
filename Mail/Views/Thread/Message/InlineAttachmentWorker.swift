@@ -28,8 +28,7 @@ import SwiftUI
 ///
 /// Call `start()` to begin processing, call `stop` to make sure internal Task is cancelled.
 final class InlineAttachmentWorker: ObservableObject {
-    /// Something to base64 encode images
-    private let base64Encoder = Base64Encoder()
+    private let bodyImageMutator = BodyImageMutator()
 
     /// The presentableBody with the current pre-processing (partial or done)
     @Published var presentableBody: PresentableBody
@@ -178,14 +177,14 @@ final class InlineAttachmentWorker: ObservableObject {
                 continue
             }
 
-            base64Encoder.replaceContentIdForBase64Image(
+            bodyImageMutator.replaceContentIdForBase64Image(
                 in: &mailBody,
                 contentId: contentId,
                 mimeType: attachment.mimeType,
                 contentBase64Encoded: base64Image
             )
 
-            base64Encoder.replaceContentIdForBase64Image(
+            bodyImageMutator.replaceContentIdForBase64Image(
                 in: &compactBody,
                 contentId: contentId,
                 mimeType: attachment.mimeType,
@@ -228,7 +227,8 @@ final class InlineAttachmentWorker: ObservableObject {
     }
 }
 
-struct Base64Encoder {
+/// Something to insert base64 image into a mail body. Easily testable.
+struct BodyImageMutator {
     func replaceContentIdForBase64Image(
         in body: inout String?,
         contentId: String,
