@@ -28,6 +28,9 @@ import SwiftUI
 ///
 /// Call `start()` to begin processing, call `stop` to make sure internal Task is cancelled.
 final class InlineAttachmentWorker: ObservableObject {
+    /// Something to base64 encode images
+    private let base64Encoder = Base64Encoder()
+
     /// The presentableBody with the current pre-processing (partial or done)
     @Published var presentableBody: PresentableBody
 
@@ -160,8 +163,8 @@ final class InlineAttachmentWorker: ObservableObject {
 
         // Read the DOM once
         let bodyParameters = await readPresentableBody()
-        var mutableMailBody = NSMutableString(string: bodyParameters.bodyString ?? "")
-        var mutableCompactBody = NSMutableString(string: bodyParameters.compactBody ?? "")
+        var mailBody = bodyParameters.bodyString
+        var compactBody = bodyParameters.compactBody
         let detachedBody = bodyParameters.detachedBody
 
         // Prepare the new DOM with the loaded images
@@ -175,28 +178,28 @@ final class InlineAttachmentWorker: ObservableObject {
                 continue
             }
 
-            replaceContentIdForBase64Image(
-                in: &mutableMailBody,
+            base64Encoder.replaceContentIdForBase64Image(
+                in: &mailBody,
                 contentId: contentId,
                 mimeType: attachment.mimeType,
                 contentBase64Encoded: base64Image
             )
 
-            replaceContentIdForBase64Image(
-                in: &mutableCompactBody,
+            base64Encoder.replaceContentIdForBase64Image(
+                in: &compactBody,
                 contentId: contentId,
                 mimeType: attachment.mimeType,
                 contentBase64Encoded: base64Image
             )
         }
 
-        let bodyValue = String(mutableMailBody)
-        let compactBody = String(mutableCompactBody)
+        let bodyValue = mailBody
+        let compactBodyCopy = compactBody
         detachedBody?.value = bodyValue
 
         let updatedPresentableBody = PresentableBody(
             body: detachedBody,
-            compactBody: compactBody,
+            compactBody: compactBodyCopy,
             quotes: presentableBody.quotes
         )
 
@@ -205,18 +208,6 @@ final class InlineAttachmentWorker: ObservableObject {
             return
         }
         await setPresentableBody(updatedPresentableBody)
-    }
-
-    private func replaceContentIdForBase64Image(
-        in body: inout NSMutableString,
-        contentId: String,
-        mimeType: String,
-        contentBase64Encoded: String
-    ) {
-        body.replaceOccurrences(of: "cid:\(contentId)",
-                                with: "data:\(mimeType);base64,\(contentBase64Encoded)",
-                                options: [],
-                                range: NSRange(location: 0, length: body.length))
     }
 
     @MainActor private func setPresentableBody(_ body: PresentableBody) {
@@ -234,5 +225,19 @@ final class InlineAttachmentWorker: ObservableObject {
         let detachedBody = presentableBody.body?.detached()
 
         return (mailBody, compactBody, detachedBody)
+    }
+}
+
+struct Base64Encoder {
+    func replaceContentIdForBase64Image(
+        in body: inout String?,
+        contentId: String,
+        mimeType: String,
+        contentBase64Encoded: String
+    ) {
+        body = body?.replacingOccurrences(
+            of: "cid:\(contentId)",
+            with: "data:\(mimeType);base64,\(contentBase64Encoded)"
+        )
     }
 }
