@@ -38,6 +38,7 @@ struct ComposeMessageBodyView: View {
         VStack {
             AttachmentsHeaderView(attachmentsManager: attachmentsManager)
             ComposeEditor(
+                focusedField: _focusedField,
                 draft: draft,
                 attachmentsManager: attachmentsManager,
                 isShowingAI: $isShowingAI,
