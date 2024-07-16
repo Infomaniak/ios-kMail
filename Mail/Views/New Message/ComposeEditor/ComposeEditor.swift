@@ -27,6 +27,8 @@ import SwiftUI
 struct ComposeEditor: View {
     static let customCSS = MessageWebViewUtils.loadCSS(for: .editor).joined()
 
+    @FocusState var focusedField: ComposeViewFieldType?
+
     @State private var toolbar = EditorToolbarView()
     @StateObject private var textAttributes = TextAttributes()
 
@@ -49,6 +51,7 @@ struct ComposeEditor: View {
 
     var body: some View {
         RichEditor(html: $draft.body, textAttributes: textAttributes)
+            .focused($focusedField, equals: .editor)
             .editorInputAccessoryView(toolbar)
             .editorCSS(Self.customCSS)
             .introspectEditor(perform: setupEditor)
