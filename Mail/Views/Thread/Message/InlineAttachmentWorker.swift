@@ -163,38 +163,19 @@ final class InlineAttachmentWorker: ObservableObject {
 
         // Read the DOM once
         let bodyParameters = await readPresentableBody()
-        var mailBody = bodyParameters.bodyString
-        var compactBody = bodyParameters.compactBody
         let detachedBody = bodyParameters.detachedBody
 
-        // Prepare the new DOM with the loaded images
-        for (index, attachment) in attachments.enumerated() {
-            guard !Task.isCancelled else {
-                break
-            }
+        // process compact and base body in parallel
+        async let mailBody = injectImagesInBody(body: bodyParameters.bodyString,
+                                                attachments: attachments,
+                                                base64Images: base64Images)
 
-            guard let contentId = attachment.contentId,
-                  let base64Image = base64Images[safe: index] as? String else {
-                continue
-            }
+        async let compactBody = injectImagesInBody(body: bodyParameters.compactBody,
+                                                   attachments: attachments,
+                                                   base64Images: base64Images)
 
-            bodyImageMutator.replaceContentIdForBase64Image(
-                in: &mailBody,
-                contentId: contentId,
-                mimeType: attachment.mimeType,
-                contentBase64Encoded: base64Image
-            )
-
-            bodyImageMutator.replaceContentIdForBase64Image(
-                in: &compactBody,
-                contentId: contentId,
-                mimeType: attachment.mimeType,
-                contentBase64Encoded: base64Image
-            )
-        }
-
-        let bodyValue = mailBody
-        let compactBodyCopy = compactBody
+        let bodyValue = await mailBody
+        let compactBodyCopy = await compactBody
         detachedBody?.value = bodyValue
 
         let updatedPresentableBody = PresentableBody(
@@ -207,7 +188,38 @@ final class InlineAttachmentWorker: ObservableObject {
         guard !Task.isCancelled else {
             return
         }
+
         await setPresentableBody(updatedPresentableBody)
+    }
+
+    /// Inject base64 images in a body
+    private func injectImagesInBody(body: String?,
+                                    attachments: ArraySlice<Attachment>,
+                                    base64Images: [String?]) async -> String? {
+        guard let body = body,
+              !body.isEmpty else {
+            return nil
+        }
+
+        var workingBody = body
+        for (index, attachment) in attachments.enumerated() {
+            guard !Task.isCancelled else {
+                break
+            }
+
+            guard let contentId = attachment.contentId,
+                  let base64Image = base64Images[safe: index] as? String else {
+                continue
+            }
+
+            bodyImageMutator.replaceContentIdForBase64Image(
+                in: &workingBody,
+                contentId: contentId,
+                mimeType: attachment.mimeType,
+                contentBase64Encoded: base64Image
+            )
+        }
+        return workingBody
     }
 
     @MainActor private func setPresentableBody(_ body: PresentableBody) {
@@ -231,12 +243,12 @@ final class InlineAttachmentWorker: ObservableObject {
 /// Something to insert base64 image into a mail body. Easily testable.
 struct BodyImageMutator {
     func replaceContentIdForBase64Image(
-        in body: inout String?,
+        in body: inout String,
         contentId: String,
         mimeType: String,
         contentBase64Encoded: String
     ) {
-        body = body?.replacingOccurrences(
+        body = body.replacingOccurrences(
             of: "cid:\(contentId)",
             with: "data:\(mimeType);base64,\(contentBase64Encoded)"
         )
