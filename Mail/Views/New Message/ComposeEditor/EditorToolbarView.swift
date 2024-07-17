@@ -17,7 +17,7 @@
  */
 
 import Combine
-import InfomaniakRichEditor
+import InfomaniakRichHTMLEditor
 import MailCore
 import SwiftUI
 import UIKit

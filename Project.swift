@@ -212,7 +212,7 @@ let project = Project(name: "Mail",
                                       .external(name: "VersionChecker"),
                                       .external(name: "SwiftModalPresentation"),
                                       .external(name: "SVGKit"),
-                                      .external(name: "InfomaniakRichEditor")
+                                      .external(name: "InfomaniakRichHTMLEditor")
                                   ],
                                   settings: .settings(base: Constants.baseSettings)),
                           .target(name: "MailCoreUI",

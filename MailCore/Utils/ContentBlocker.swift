@@ -17,7 +17,7 @@
  */
 
 import Foundation
-import InfomaniakRichEditor
+import InfomaniakRichHTMLEditor
 import SwiftSoup
 import WebKit
 
@@ -36,7 +36,7 @@ public class ContentBlocker {
                         trigger: ContentRuleTrigger(urlFilter: $0))
         } + [
             ContentRule(action: ContentRuleAction(type: .ignorePreviousRules), trigger: ContentRuleTrigger(
-                urlFilter: "\(Bundle(for: RichEditorView.self).bundleURL.absoluteURL).*"
+                urlFilter: "\(Bundle(for: RichHTMLEditorView.self).bundleURL.absoluteURL).*"
             ))
         ]
 

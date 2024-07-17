@@ -16,7 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakRichEditor
+import InfomaniakRichHTMLEditor
 import MailCore
 import MailCoreUI
 import PhotosUI
@@ -50,7 +50,7 @@ struct ComposeEditor: View {
     }
 
     var body: some View {
-        RichEditor(html: $draft.body, textAttributes: textAttributes)
+        RichHTMLEditor(html: $draft.body, textAttributes: textAttributes)
             .focused($focusedField, equals: .editor)
             .editorInputAccessoryView(toolbar)
             .editorCSS(Self.customCSS)
@@ -73,7 +73,7 @@ struct ComposeEditor: View {
             }
     }
 
-    private func setupEditor(_ editor: RichEditorView) {
+    private func setupEditor(_ editor: RichHTMLEditorView) {
         Task {
             let contentBlocker = ContentBlocker(webView: editor.webView)
             try? await contentBlocker.setRemoteContentBlocked(isRemoteContentBlocked)
