@@ -238,21 +238,41 @@ struct BodyImageProcessor {
 
     /// Try to compress the attachment with the best matched algorithm. Trade CPU cycles to reduce render time and memory usage.
     private func compressedBase64ImageAndMime(attachmentData: Data, attachmentMime: String) -> ImageBase64AndMime {
-        guard #available(iOS 17.0, *) else {
-            let base64String = attachmentData.base64EncodedString()
-            return ImageBase64AndMime(base64String, attachmentMime)
+        if #available(iOS 17.0, *) {
+            // On iOS17 Safari _and_ iOS has support for heic. Quality is unchanged. Size is halved.
+            let image = UIImage(data: attachmentData)
+            guard let imageCompressed = image?.heicData(),
+                  imageCompressed.count < attachmentData.count else {
+                let base64String = attachmentData.base64EncodedString()
+                return ImageBase64AndMime(base64String, attachmentMime)
+            }
+
+            let base64String = imageCompressed.base64EncodedString()
+            return ImageBase64AndMime(base64String, "image/heic")
         }
 
-        // On iOS17 Safari _and_ iOS has support for heic. Quality is unchanged. Size is halved.
-        let image = UIImage(data: attachmentData)
-        guard let imageCompressed = image?.heicData(),
-              imageCompressed.count < attachmentData.count else {
-            let base64String = attachmentData.base64EncodedString()
-            return ImageBase64AndMime(base64String, attachmentMime)
-        }
+        // On ancient devices, we rely on jpg compression
+        // to accelerate rendering and reduce memory usage at the cost of some quality.
+        else {
+            let image = UIImage(data: attachmentData)
 
-        let base64String = imageCompressed.base64EncodedString()
-        return ImageBase64AndMime(base64String, "image/heic")
+            // On large files (> 5M) we do not see artifacting with low quality, even zooming within the webview
+            let compressionQuality: CGFloat
+            if attachmentData.count > 5_000_000 {
+                compressionQuality = 0.1
+            } else {
+                compressionQuality = 0.4
+            }
+
+            guard let imageCompressed = image?.jpegData(compressionQuality: compressionQuality),
+                  imageCompressed.count < attachmentData.count else {
+                let base64String = attachmentData.base64EncodedString()
+                return ImageBase64AndMime(base64String, attachmentMime)
+            }
+
+            let base64String = imageCompressed.base64EncodedString()
+            return ImageBase64AndMime(base64String, "image/jpeg")
+        }
     }
 
     /// Inject base64 images in a body
