@@ -271,6 +271,15 @@
       }
     },
     {
+      "identity" : "swift-rich-html-editor",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/swift-rich-html-editor.git",
+      "state" : {
+        "revision" : "077b5be117cbcc3e40faed0b3b11577c424ac116",
+        "version" : "1.0.0"
+      }
+    },
+    {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-syntax",
