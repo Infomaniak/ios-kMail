@@ -21,6 +21,7 @@ import MailCore
 import MailCoreUI
 import PhotosUI
 import RealmSwift
+import Sentry
 import SwiftModalPresentation
 import SwiftUI
 
@@ -52,10 +53,11 @@ struct ComposeEditor: View {
     var body: some View {
         RichHTMLEditor(html: $draft.body, textAttributes: textAttributes)
             .focused($focusedField, equals: .editor)
+            .onAppear(perform: setupToolbar)
             .editorInputAccessoryView(toolbar)
             .editorCSS(Self.customCSS)
             .introspectEditor(perform: setupEditor)
-            .onAppear(perform: setupToolbar)
+            .onJavaScriptFunctionFail(perform: reportJavaScriptError)
             .customAlert(isPresented: $isShowingLinkAlert) {
                 AddLinkView(actionHandler: didCreateLink)
             }
@@ -130,6 +132,14 @@ struct ComposeEditor: View {
             draft: draft,
             disposition: AttachmentDisposition.defaultDisposition
         )
+    }
+
+    private func reportJavaScriptError(_ error: any Error, function: String) {
+        SentrySDK.capture(error: error) { scope in
+            scope.setExtras([
+                "Executed JS Function": function
+            ])
+        }
     }
 }
 
