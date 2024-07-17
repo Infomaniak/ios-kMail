@@ -46,6 +46,6 @@ let package = Package(
         .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0")),
         .package(url: "https://github.com/Wouter01/SwiftUI-Macros.git", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/SVGKit/SVGKit.git", branch: "3.x"),
-        .package(path: "/Users/valentinperignon/Developer/packages/infomaniak/swift-rich-editor"),
+        .package(path: "/Users/valentinperignon/Developer/packages/infomaniak/swift-rich-html-editor"),
     ]
 )

@@ -17,7 +17,7 @@
  */
 
 import InfomaniakDI
-import InfomaniakRichEditor
+import InfomaniakRichHTMLEditor
 import MailCore
 import MailCoreUI
 import MailResources
