@@ -27,19 +27,19 @@ import SwiftUI
 struct ComposeEditor: View {
     static let customCSS = MessageWebViewUtils.loadCSS(for: .editor).joined()
 
-    @FocusState var focusedField: ComposeViewFieldType?
+    @EnvironmentObject private var attachmentsManager: AttachmentsManager
 
     @State private var toolbar = EditorToolbarView()
     @StateObject private var textAttributes = TextAttributes()
 
-    @ModalState(context: ContextKeys.compose) var isShowingLinkAlert = false
-    @ModalState(context: ContextKeys.compose) var isShowingFileSelection = false
-    @ModalState(context: ContextKeys.compose) var isShowingPhotoLibrary = false
-    @ModalState(context: ContextKeys.compose) var isShowingCamera = false
+    @ModalState(context: ContextKeys.compose) private var isShowingLinkAlert = false
+    @ModalState(context: ContextKeys.compose) private var isShowingFileSelection = false
+    @ModalState(context: ContextKeys.compose) private var isShowingPhotoLibrary = false
+    @ModalState(context: ContextKeys.compose) private var isShowingCamera = false
+
+    @FocusState var focusedField: ComposeViewFieldType?
 
     @ObservedRealmObject var draft: Draft
-
-    @ObservedObject var attachmentsManager: AttachmentsManager
 
     @Binding var isShowingAI: Bool
 
@@ -137,11 +137,11 @@ struct ComposeEditor: View {
     let draft = Draft()
     return ComposeEditor(
         draft: draft,
-        attachmentsManager: AttachmentsManager(
-            draftLocalUUID: draft.localUUID,
-            mailboxManager: PreviewHelper.sampleMailboxManager
-        ),
         isShowingAI: .constant(false),
         messageReply: nil
     )
+    .environmentObject(AttachmentsManager(
+        draftLocalUUID: draft.localUUID,
+        mailboxManager: PreviewHelper.sampleMailboxManager
+    ))
 }
