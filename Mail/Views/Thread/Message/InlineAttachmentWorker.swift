@@ -28,7 +28,7 @@ import SwiftUI
 ///
 /// Call `start()` to begin processing, call `stop` to make sure internal Task is cancelled.
 final class InlineAttachmentWorker: ObservableObject {
-    private let bodyImageMutator = BodyImageMutator()
+    private let bodyImageProcessor = BodyImageProcessor()
 
     /// The presentableBody with the current pre-processing (partial or done)
     @Published var presentableBody: PresentableBody
@@ -141,21 +141,7 @@ final class InlineAttachmentWorker: ObservableObject {
             return
         }
 
-        // Download and encode all images for the current chunk in parallel.
-        // Force a fixed max concurrency to be a nice citizen to the network.
-        let base64Images: [String?] = await attachments
-            .concurrentMap(customConcurrency: Constants.concurrentNetworkCalls) { attachment in
-                do {
-                    let attachmentData = try await mailboxManager.attachmentData(attachment)
-                    let base64String = attachmentData.base64EncodedString()
-                    return base64String
-                } catch {
-                    DDLogError("Error \(error) : Failed to fetch data  for attachment: \(attachment)")
-                    return nil
-                }
-            }
-
-        assert(base64Images.count == attachments.count, "Arrays count should match")
+        let base64Images = await bodyImageProcessor.fetchBase64Images(attachments, mailboxManager: mailboxManager)
 
         guard !Task.isCancelled else {
             return
@@ -166,13 +152,13 @@ final class InlineAttachmentWorker: ObservableObject {
         let detachedBody = bodyParameters.detachedBody
 
         // process compact and base body in parallel
-        async let mailBody = injectImagesInBody(body: bodyParameters.bodyString,
-                                                attachments: attachments,
-                                                base64Images: base64Images)
+        async let mailBody = bodyImageProcessor.injectImagesInBody(body: bodyParameters.bodyString,
+                                                                   attachments: attachments,
+                                                                   base64Images: base64Images)
 
-        async let compactBody = injectImagesInBody(body: bodyParameters.compactBody,
-                                                   attachments: attachments,
-                                                   base64Images: base64Images)
+        async let compactBody = bodyImageProcessor.injectImagesInBody(body: bodyParameters.compactBody,
+                                                                      attachments: attachments,
+                                                                      base64Images: base64Images)
 
         let bodyValue = await mailBody
         let compactBodyCopy = await compactBody
@@ -192,36 +178,6 @@ final class InlineAttachmentWorker: ObservableObject {
         await setPresentableBody(updatedPresentableBody)
     }
 
-    /// Inject base64 images in a body
-    private func injectImagesInBody(body: String?,
-                                    attachments: ArraySlice<Attachment>,
-                                    base64Images: [String?]) async -> String? {
-        guard let body = body,
-              !body.isEmpty else {
-            return nil
-        }
-
-        var workingBody = body
-        for (index, attachment) in attachments.enumerated() {
-            guard !Task.isCancelled else {
-                break
-            }
-
-            guard let contentId = attachment.contentId,
-                  let base64Image = base64Images[safe: index] as? String else {
-                continue
-            }
-
-            bodyImageMutator.replaceContentIdForBase64Image(
-                in: &workingBody,
-                contentId: contentId,
-                mimeType: attachment.mimeType,
-                contentBase64Encoded: base64Image
-            )
-        }
-        return workingBody
-    }
-
     @MainActor private func setPresentableBody(_ body: PresentableBody) {
         presentableBody = body
     }
@@ -237,6 +193,96 @@ final class InlineAttachmentWorker: ObservableObject {
         let detachedBody = presentableBody.body?.detached()
 
         return (mailBody, compactBody, detachedBody)
+    }
+}
+
+/// Something to package a base64 encoded image and its mime type
+typealias ImageBase64AndMime = (imageEncoded: String, mimeType: String)
+
+/// Download compress and format images into a mail body
+struct BodyImageProcessor {
+    private let bodyImageMutator = BodyImageMutator()
+
+    /// Download and encode all images for the current chunk in parallel.
+    public func fetchBase64Images(_ attachments: ArraySlice<Attachment>,
+                                  mailboxManager: MailboxManager) async -> [ImageBase64AndMime?] {
+        // Force a fixed max concurrency to be a nice citizen to the network.
+        let base64Images: [ImageBase64AndMime?] = await attachments
+            .concurrentMap(customConcurrency: Constants.concurrentNetworkCalls) { attachment in
+                do {
+                    let attachmentData = try await mailboxManager.attachmentData(attachment)
+
+                    // Skip compression on non static images types or already heic sources
+                    guard attachment.mimeType.contains("jpg")
+                        || attachment.mimeType.contains("jpeg")
+                        || attachment.mimeType.contains("png") else {
+                        let base64String = attachmentData.base64EncodedString()
+                        return ImageBase64AndMime(base64String, attachment.mimeType)
+                    }
+
+                    let compressedImage = self.compressedBase64ImageAndMime(
+                        attachmentData: attachmentData,
+                        attachmentMime: attachment.mimeType
+                    )
+                    return compressedImage
+
+                } catch {
+                    DDLogError("Error \(error) : Failed to fetch data  for attachment: \(attachment)")
+                    return nil
+                }
+            }
+
+        assert(base64Images.count == attachments.count, "Arrays count should match")
+        return base64Images
+    }
+
+    /// Try to compress the attachment with the best matched algorithm. Trade CPU cycles to reduce render time and memory usage.
+    private func compressedBase64ImageAndMime(attachmentData: Data, attachmentMime: String) -> ImageBase64AndMime {
+        guard #available(iOS 17.0, *) else {
+            let base64String = attachmentData.base64EncodedString()
+            return ImageBase64AndMime(base64String, attachmentMime)
+        }
+
+        // On iOS17 Safari _and_ iOS has support for heic. Quality is unchanged. Size is halved.
+        let image = UIImage(data: attachmentData)
+        guard let imageCompressed = image?.heicData(),
+              imageCompressed.count < attachmentData.count else {
+            let base64String = attachmentData.base64EncodedString()
+            return ImageBase64AndMime(base64String, attachmentMime)
+        }
+
+        let base64String = imageCompressed.base64EncodedString()
+        return ImageBase64AndMime(base64String, "image/heic")
+    }
+
+    /// Inject base64 images in a body
+    public func injectImagesInBody(body: String?,
+                                   attachments: ArraySlice<Attachment>,
+                                   base64Images: [ImageBase64AndMime?]) async -> String? {
+        guard let body = body,
+              !body.isEmpty else {
+            return nil
+        }
+
+        var workingBody = body
+        for (index, attachment) in attachments.enumerated() {
+            guard !Task.isCancelled else {
+                break
+            }
+
+            guard let contentId = attachment.contentId,
+                  let base64Image = base64Images[safe: index] as? ImageBase64AndMime else {
+                continue
+            }
+
+            bodyImageMutator.replaceContentIdForBase64Image(
+                in: &workingBody,
+                contentId: contentId,
+                mimeType: base64Image.mimeType,
+                contentBase64Encoded: base64Image.imageEncoded
+            )
+        }
+        return workingBody
     }
 }
 
