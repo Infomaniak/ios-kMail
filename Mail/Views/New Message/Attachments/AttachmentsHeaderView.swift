@@ -22,7 +22,7 @@ import RealmSwift
 import SwiftUI
 
 struct AttachmentsHeaderView: View {
-    @ObservedObject var attachmentsManager: AttachmentsManager
+    @EnvironmentObject private var attachmentsManager: AttachmentsManager
 
     var body: some View {
         ZStack {

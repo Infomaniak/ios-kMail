@@ -16,8 +16,6 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
-import InfomaniakRichEditor
 import MailCore
 import MailCoreUI
 import RealmSwift
@@ -28,19 +26,16 @@ struct ComposeMessageBodyView: View {
 
     @ObservedRealmObject var draft: Draft
 
-    @ObservedObject var attachmentsManager: AttachmentsManager
-
     @Binding var isShowingAI: Bool
 
     let messageReply: MessageReply?
 
     var body: some View {
         VStack {
-            AttachmentsHeaderView(attachmentsManager: attachmentsManager)
+            AttachmentsHeaderView()
             ComposeEditor(
                 focusedField: _focusedField,
                 draft: draft,
-                attachmentsManager: attachmentsManager,
                 isShowingAI: $isShowingAI,
                 messageReply: messageReply
             )
@@ -53,11 +48,11 @@ struct ComposeMessageBodyView: View {
     return ComposeMessageBodyView(
         focusedField: .init(),
         draft: draft,
-        attachmentsManager: AttachmentsManager(
-            draftLocalUUID: draft.localUUID,
-            mailboxManager: PreviewHelper.sampleMailboxManager
-        ),
         isShowingAI: .constant(false),
         messageReply: nil
     )
+    .environmentObject(AttachmentsManager(
+        draftLocalUUID: draft.localUUID,
+        mailboxManager: PreviewHelper.sampleMailboxManager
+    ))
 }
