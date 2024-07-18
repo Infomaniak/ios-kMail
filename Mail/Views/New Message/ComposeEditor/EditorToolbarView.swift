@@ -17,6 +17,8 @@
  */
 
 import Combine
+import InfomaniakCoreUI
+import InfomaniakDI
 import InfomaniakRichHTMLEditor
 import MailCore
 import SwiftUI
@@ -24,6 +26,8 @@ import UIKit
 
 final class EditorToolbarView: UIToolbar {
     private static let flexibleSpaceItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+
+    @LazyInjectService private var matomo: MatomoUtils
 
     private var type = EditorToolbarStyle.main
 
@@ -83,6 +87,10 @@ final class EditorToolbarView: UIToolbar {
     @objc private func didTapOnBarButtonItem(_ sender: UIBarButtonItem) {
         guard let action = EditorToolbarAction(rawValue: sender.tag) else {
             return
+        }
+
+        if let matomoName = action.matomoName {
+            matomo.track(eventWithCategory: .editorActions, name: matomoName)
         }
 
         switch action {
