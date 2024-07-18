@@ -23,7 +23,7 @@ import ProjectDescriptionHelpers
 let project = Project(name: "Mail",
                       packages: [],
                       targets: [
-                          .target(name: "Infomaniak Mail",
+                          .target(name: "Infomaniak_Mail",
                                   destinations: Constants.destinations,
                                   product: .app,
                                   bundleId: "com.infomaniak.mail",
@@ -61,7 +61,17 @@ let project = Project(name: "Mail",
                                   infoPlist: "MailTests/Info.plist",
                                   sources: "MailTests/**",
                                   dependencies: [
-                                      .target(name: "Infomaniak Mail")
+                                      .target(name: "Infomaniak_Mail")
+                                  ],
+                                  settings: .settings(base: Constants.testSettings)),
+                          .target(name: "MailAPITests",
+                                  destinations: Constants.destinations,
+                                  product: .unitTests,
+                                  bundleId: "com.infomaniak.mail.apitests",
+                                  infoPlist: "MailTests/Info.plist",
+                                  sources: "MailAPITests/**",
+                                  dependencies: [
+                                      .target(name: "Infomaniak_Mail")
                                   ],
                                   settings: .settings(base: Constants.testSettings)),
                           .target(name: "MailUITests",
@@ -71,7 +81,7 @@ let project = Project(name: "Mail",
                                   infoPlist: "MailTests/Info.plist",
                                   sources: "MailUITests/**",
                                   dependencies: [
-                                      .target(name: "Infomaniak Mail"),
+                                      .target(name: "Infomaniak_Mail"),
                                       .target(name: "MailResources")
                                   ],
                                   settings: .settings(base: Constants.testSettings)),

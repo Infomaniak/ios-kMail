@@ -22,7 +22,7 @@ import InfomaniakLogin
 @testable import MailCore
 import XCTest
 
-class FakeTokenDelegate: RefreshTokenDelegate {
+class MCKTokenDelegate: RefreshTokenDelegate {
     func didUpdateToken(newToken: ApiToken, oldToken: ApiToken) {
         // Nothing to do
     }
@@ -41,7 +41,7 @@ final class MailApiTests: XCTestCase {
                              tokenType: "",
                              userId: Env.userId,
                              expirationDate: Date(timeIntervalSinceNow: TimeInterval(Int.max)))
-        return MailApiFetcher(token: token, delegate: FakeTokenDelegate())
+        return MailApiFetcher(token: token, delegate: MCKTokenDelegate())
     }()
 
     // MARK: - Tests setup

@@ -38,7 +38,7 @@ final class MailboxManagerTests: XCTestCase {
                              tokenType: "",
                              userId: Env.userId,
                              expirationDate: Date(timeIntervalSinceNow: TimeInterval(Int.max)))
-        mailboxManager.apiFetcher.setToken(token, delegate: FakeTokenDelegate())
+        mailboxManager.apiFetcher.setToken(token, delegate: MCKTokenDelegate())
     }
 
     // MARK: Tests methods

@@ -30,5 +30,9 @@ jobs:
           echo -e "enum Env {\n static let token = \"$ACCESS_TOKEN\"\n static let userId = $USER_ID\n static let mailboxId = $MAILBOX_ID\n}" > $ENV_PATH
       - name: Build
         run: tuist install && tuist build --generate "Infomaniak Mail"
-      - name: Test
-        run: tuist test Mail --test-targets MailTests/MailApiTests MailTests/UTContactManager
+      - name: API Tests
+        run: tuist test Mail --test-targets MailAPITests
+      - name: Integration and Unit Tests
+        run: tuist test Mail --test-targets MailTests
+      - name: Unit Tests
+        run: tuist test Mail --test-targets MailUITests
