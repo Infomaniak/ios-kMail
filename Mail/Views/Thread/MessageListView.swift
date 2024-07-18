@@ -45,14 +45,12 @@ struct MessageListView: View {
                             VStack(spacing: 0) {
                                 MessageView(
                                     message: message,
-                                    isMessageExpanded: isExpanded(message: message, from: messages),
                                     threadForcedExpansion: $messageExpansion
                                 )
                                 if divider(for: message) {
                                     IKDivider(type: .full)
                                 }
                             }
-                            .id(message.uid)
                         }
                     }
                 }

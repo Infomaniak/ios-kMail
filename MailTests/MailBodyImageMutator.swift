@@ -21,7 +21,7 @@ import MailResources
 @testable import SwiftSoup
 import XCTest
 
-final class MailBase64Encoder: XCTestCase {
+final class MailBodyImageMutator: XCTestCase {
     // MARK: - Test simple image
 
     func testEncodeSomeImage() {
@@ -38,8 +38,8 @@ final class MailBase64Encoder: XCTestCase {
         </body>
         </html>
         """
-        var processedBody: String? = htmlBody
-        let base64Encoder = Base64Encoder()
+        var processedBody = htmlBody
+        let bodyImageMutator = BodyImageMutator()
         guard let imageData = MailResourcesAsset.allFolders.image.pngData() else {
             XCTFail("Unexpected")
             return
@@ -47,19 +47,14 @@ final class MailBase64Encoder: XCTestCase {
         let imageBase64 = imageData.base64EncodedString()
 
         // WHEN
-        base64Encoder.replaceContentIdForBase64Image(
+        bodyImageMutator.replaceContentIdForBase64Image(
             in: &processedBody,
             contentId: contentId,
             mimeType: mimeType,
-            contentData: imageData
+            contentBase64Encoded: imageBase64
         )
 
         // THEN
-        guard let processedBody else {
-            XCTFail("Unexpected")
-            return
-        }
-
         XCTAssertNotEqual(htmlBody, processedBody)
         XCTAssertGreaterThan(processedBody.count, htmlBody.count, "processed body should be longer with the image")
 
@@ -100,25 +95,21 @@ final class MailBase64Encoder: XCTestCase {
         </body>
         </html>
         """
-        var processedBody: String? = htmlBody
-        let base64Encoder = Base64Encoder()
+        var processedBody = htmlBody
+        let bodyImageMutator = BodyImageMutator()
         let imageData = Data()
         let expectedResult = "data:image/png;base64,"
 
         // WHEN
-        base64Encoder.replaceContentIdForBase64Image(
+        let imageBase64 = imageData.base64EncodedString()
+        bodyImageMutator.replaceContentIdForBase64Image(
             in: &processedBody,
             contentId: contentId,
             mimeType: mimeType,
-            contentData: imageData
+            contentBase64Encoded: imageBase64
         )
 
         // THEN
-        guard let processedBody else {
-            XCTFail("Unexpected")
-            return
-        }
-
         XCTAssertNotEqual(htmlBody, processedBody)
         XCTAssertGreaterThan(processedBody.count, htmlBody.count, "processed body should be longer with the image")
 

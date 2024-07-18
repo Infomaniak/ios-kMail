@@ -31,7 +31,8 @@ struct MessageBodyView: View {
 
     @StateObject private var model = WebViewModel()
 
-    @Binding var presentableBody: PresentableBody
+    let presentableBody: PresentableBody
+    let isMessagePreprocessed: Bool
     var blockRemoteContent: Bool
     @Binding var displayContentBlockedActionView: Bool
 
@@ -51,6 +52,9 @@ struct MessageBodyView: View {
                         loadBody(blockRemoteContent: blockRemoteContent)
                     }
                     .onChange(of: presentableBody) { _ in
+                        loadBody(blockRemoteContent: blockRemoteContent)
+                    }
+                    .onChange(of: isMessagePreprocessed) { _ in
                         loadBody(blockRemoteContent: blockRemoteContent)
                     }
                     .onChange(of: model.showBlockQuote) { _ in
@@ -119,7 +123,8 @@ struct MessageBodyView: View {
 
 #Preview {
     MessageBodyView(
-        presentableBody: .constant(PreviewHelper.samplePresentableBody),
+        presentableBody: PreviewHelper.samplePresentableBody,
+        isMessagePreprocessed: true,
         blockRemoteContent: false,
         displayContentBlockedActionView: .constant(false),
         messageUid: "message_uid"

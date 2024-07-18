@@ -39,39 +39,43 @@ struct MessageView: View {
 
     @EnvironmentObject var mailboxManager: MailboxManager
 
-    @State var presentableBody: PresentableBody
     @State var isHeaderExpanded = false
-    @State var isMessageExpanded: Bool
     @Binding private var threadForcedExpansion: [String: MessageExpansionType]
 
-    /// True once we finished preprocessing the content
-    @State var isMessagePreprocessed = false
-
     @State private var isShowingErrorLoading = false
-
-    /// Something to preprocess inline attachments
-    @State var inlineAttachmentWorker: InlineAttachmentWorker?
 
     @State var displayContentBlockedActionView = false
 
     @ObservedRealmObject var message: Message
+
+    /// Something to preprocess inline attachments
+    @StateObject var inlineAttachmentWorker: InlineAttachmentWorker
 
     private var isRemoteContentBlocked: Bool {
         return (UserDefaults.shared.displayExternalContent == .askMe || message.folder?.role == .spam)
             && !message.localSafeDisplay
     }
 
-    init(message: Message, isMessageExpanded: Bool = false, threadForcedExpansion: Binding<[String: MessageExpansionType]>) {
+    private var isMessageExpanded: Bool {
+        threadForcedExpansion[message.uid] == .expanded
+    }
+
+    init(message: Message, threadForcedExpansion: Binding<[String: MessageExpansionType]>) {
         self.message = message
-        presentableBody = PresentableBody(message: message)
-        self.isMessageExpanded = isMessageExpanded
         _threadForcedExpansion = threadForcedExpansion
+        _inlineAttachmentWorker = StateObject(wrappedValue: InlineAttachmentWorker(messageUid: message.uid))
     }
 
     var body: some View {
         ZStack {
             VStack(spacing: 0) {
-                MessageHeaderView(message: message, isHeaderExpanded: $isHeaderExpanded, isMessageExpanded: $isMessageExpanded)
+                MessageHeaderView(message: message,
+                                  isHeaderExpanded: $isHeaderExpanded,
+                                  isMessageExpanded: Binding(get: {
+                                      isMessageExpanded
+                                  }, set: { newValue in
+                                      threadForcedExpansion[message.uid] = newValue ? .expanded : .collapsed
+                                  }))
 
                 if isMessageExpanded {
                     VStack(spacing: UIPadding.regular) {
@@ -89,7 +93,8 @@ struct MessageView: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         } else {
                             MessageBodyView(
-                                presentableBody: $presentableBody,
+                                presentableBody: inlineAttachmentWorker.presentableBody,
+                                isMessagePreprocessed: inlineAttachmentWorker.isMessagePreprocessed,
                                 blockRemoteContent: isRemoteContentBlocked,
                                 displayContentBlockedActionView: $displayContentBlockedActionView,
                                 messageUid: message.uid
@@ -108,26 +113,19 @@ struct MessageView: View {
                 await fetchMessageAndEventCalendar()
             }
             .onDisappear {
-                inlineAttachmentWorker?.stop()
-                inlineAttachmentWorker = nil
+                inlineAttachmentWorker.stop()
             }
             .onChange(of: message.fullyDownloaded) { _ in
                 prepareBodyIfNeeded()
             }
-            .onChange(of: isMessageExpanded) { _ in
+            .onChange(of: isMessageExpanded) { newValue in
+                guard isMessageExpanded != newValue else { return }
                 prepareBodyIfNeeded()
-            }
-            .onChange(of: threadForcedExpansion[message.uid]) { newValue in
-                if newValue == .expanded {
-                    withAnimation {
-                        isMessageExpanded = true
-                    }
-                }
             }
             .accessibilityAction(named: MailResourcesStrings.Localizable.expandMessage) {
                 guard isMessageInteractive else { return }
                 withAnimation {
-                    isMessageExpanded.toggle()
+                    threadForcedExpansion[message.uid] = isMessageExpanded ? .collapsed : .expanded
                 }
             }
         }
@@ -166,6 +164,17 @@ struct MessageView: View {
     }
 }
 
+/// MessageView code related to pre-processing
+extension MessageView {
+    func prepareBodyIfNeeded() {
+        guard message.fullyDownloaded, isMessageExpanded else {
+            return
+        }
+
+        inlineAttachmentWorker.start(mailboxManager: mailboxManager)
+    }
+}
+
 #Preview("Message collapsed") {
     MessageView(
         message: PreviewHelper.sampleMessage,
@@ -178,7 +187,6 @@ struct MessageView: View {
 #Preview("Message expanded") {
     MessageView(
         message: PreviewHelper.sampleMessage,
-        isMessageExpanded: true,
         threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .expanded])
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
