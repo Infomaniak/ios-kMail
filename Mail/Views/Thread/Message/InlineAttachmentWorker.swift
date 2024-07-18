@@ -217,7 +217,7 @@ struct BodyImageProcessor {
                         return ImageBase64AndMime(base64String, attachment.mimeType)
                     }
 
-                    let compressedImage = self.compressedBase64ImageAndMime(
+                    let compressedImage = compressedBase64ImageAndMime(
                         attachmentData: attachmentData,
                         attachmentMime: attachment.mimeType
                     )
@@ -256,8 +256,7 @@ struct BodyImageProcessor {
     public func injectImagesInBody(body: String?,
                                    attachments: ArraySlice<Attachment>,
                                    base64Images: [ImageBase64AndMime?]) async -> String? {
-        guard let body = body,
-              !body.isEmpty else {
+        guard let body, !body.isEmpty else {
             return nil
         }
 
