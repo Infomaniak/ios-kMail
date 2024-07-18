@@ -50,7 +50,7 @@ final class InlineAttachmentWorker: ObservableObject {
     }
 
     deinit {
-        self.stop()
+        stop()
     }
 
     func stop() {
@@ -65,9 +65,6 @@ final class InlineAttachmentWorker: ObservableObject {
         }
 
         self.mailboxManager = mailboxManager
-
-        let uuid = UUID().uuidString
-        let messageUid = messageUid
         processing = Task { [weak self] in
             guard let message = mailboxManager.transactionExecutor.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?
                 .freeze() else {
