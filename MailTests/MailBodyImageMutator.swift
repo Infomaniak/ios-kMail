@@ -38,7 +38,7 @@ final class MailBodyImageMutator: XCTestCase {
         </body>
         </html>
         """
-        var processedBody: String? = htmlBody
+        var processedBody = htmlBody
         let bodyImageMutator = BodyImageMutator()
         guard let imageData = MailResourcesAsset.allFolders.image.pngData() else {
             XCTFail("Unexpected")
@@ -55,11 +55,6 @@ final class MailBodyImageMutator: XCTestCase {
         )
 
         // THEN
-        guard let processedBody else {
-            XCTFail("Unexpected")
-            return
-        }
-
         XCTAssertNotEqual(htmlBody, processedBody)
         XCTAssertGreaterThan(processedBody.count, htmlBody.count, "processed body should be longer with the image")
 
@@ -100,7 +95,7 @@ final class MailBodyImageMutator: XCTestCase {
         </body>
         </html>
         """
-        var processedBody: String? = htmlBody
+        var processedBody = htmlBody
         let bodyImageMutator = BodyImageMutator()
         let imageData = Data()
         let expectedResult = "data:image/png;base64,"
@@ -115,11 +110,6 @@ final class MailBodyImageMutator: XCTestCase {
         )
 
         // THEN
-        guard let processedBody else {
-            XCTFail("Unexpected")
-            return
-        }
-
         XCTAssertNotEqual(htmlBody, processedBody)
         XCTAssertGreaterThan(processedBody.count, htmlBody.count, "processed body should be longer with the image")
 
