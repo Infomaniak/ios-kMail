@@ -207,6 +207,9 @@ public enum Constants {
     /// Batch size of inline attachments during processing.
     public static let inlineAttachmentBatchSize = 10
 
+    /// Max parallelism that works well with network requests.
+    public static let concurrentNetworkCalls = 4
+
     public static let appGroupIdentifier = "group.com.infomaniak"
 
     /// Decodes the date according to the string format, yyyy-MM-dd or ISO 8601
