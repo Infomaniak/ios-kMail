@@ -148,8 +148,12 @@ public extension DraftContentManager {
         async let draftBodyResult = try await loadCompleteDraftBody()
         async let signature = await loadMostFittingSignature()
 
+        let currentBody = try await draftBodyResult.body
+        let cleanedBody = try await SwiftSoupUtils(fromHTML: currentBody).cleanBody()
+        let cleanedHTML = try cleanedBody.body()?.html()
+
         try await writeCompleteDraft(
-            completeBody: draftBodyResult.body,
+            completeBody: cleanedHTML ?? currentBody,
             signature: signature,
             shouldAddSignatureText: draftBodyResult.shouldAddSignatureText,
             attachments: draftBodyResult.attachments
@@ -160,11 +164,12 @@ public extension DraftContentManager {
 
     func replaceContent(subject: String? = nil, body: String) async {
         guard let draft = try? getFrozenDraft() else { return }
-        guard let parsedMessage = try? await SwiftSoup.parse(draft.body) else { return }
+        guard let document = try? await SwiftSoup.parse(draft.body),
+              let cleanedDocument = try? await SwiftSoupUtils(document: document).cleanBody() else { return }
 
         var extractedElements = ""
         for itemToExtract in Draft.appendedHTMLElements {
-            if let element = try? await SwiftSoupUtils(document: parsedMessage).extractHTML(".\(itemToExtract)") {
+            if let element = try? await SwiftSoupUtils(document: cleanedDocument).extractHTML(".\(itemToExtract)") {
                 extractedElements.append(element)
             }
         }
@@ -271,7 +276,6 @@ extension DraftContentManager {
     private func appendTextLine(to element: Element, text: String) throws {
         let div = try element.appendElement("div")
         try div.text(text)
-        try div.appendElement("br")
     }
 
     private func appendRecipientLine(to element: Element, title: String, recipients: List<Recipient>) throws {
