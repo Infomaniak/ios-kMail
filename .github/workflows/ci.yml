@@ -31,8 +31,8 @@ jobs:
       - name: Build
         run: tuist install && tuist build --generate "Infomaniak Mail"
       - name: API Tests
-        run: tuist test Mail --test-targets MailAPITests
-      - name: Integration and Unit Tests
-        run: tuist test Mail --test-targets MailTests
+        run: tuist test MailAPITests
+      - name: UI Tests
+        run: tuist test Mail
       - name: Unit Tests
-        run: tuist test Mail --test-targets MailUITests
+        run: tuist test Mail-Workspace

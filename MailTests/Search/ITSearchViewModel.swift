@@ -238,6 +238,7 @@ final class MCKMailboxManageable_SearchViewModel: MailboxManageable, MCKTransact
 
 // MARK: - ITSearchViewModel
 
+// TODO: Fixme; commented tests ?
 final class ITSearchViewModel: XCTestCase {
     /// Tests removed temporarly
     /// Uncomment when all MailboxManager are MailboxManageable
