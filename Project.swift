@@ -223,6 +223,7 @@ let project = Project(name: "Mail",
                                   sources: "MailCoreUI/**",
                                   dependencies: [
                                       .target(name: "MailCore"),
+                                      .external(name: "avif"),
                                       .external(name: "SwiftUIIntrospect-Static"),
                                       .external(name: "InfomaniakOnboarding"),
                                       .external(name: "SQRichTextEditor"),

@@ -17,6 +17,7 @@ let packageSettings = PackageSettings(
 let package = Package(
     name: "Dependencies",
     dependencies: [
+        .package(url: "https://github.com/awxkee/avif.swift.git", .upToNextMajor(from: "1.6.0")),
         .package(url: "https://github.com/apple/swift-algorithms", .upToNextMajor(from: "1.2.0")),
         .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "6.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "2.0.0")),

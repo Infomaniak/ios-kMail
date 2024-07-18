@@ -17,6 +17,7 @@
  */
 
 import Algorithms
+import avif
 import CocoaLumberjackSwift
 import Foundation
 import InfomaniakConcurrency
@@ -235,21 +236,22 @@ struct BodyImageProcessor {
 
     /// Try to compress the attachment with the best matched algorithm. Trade CPU cycles to reduce render time and memory usage.
     private func compressedBase64ImageAndMime(attachmentData: Data, attachmentMime: String) -> ImageBase64AndMime {
-        guard #available(iOS 17.0, *) else {
+        // Safari16 has support for AV1 for still images. Quality is unchanged. Size is halved.
+        guard #available(iOS 16.0, *) else {
             let base64String = attachmentData.base64EncodedString()
             return ImageBase64AndMime(base64String, attachmentMime)
         }
 
-        // On iOS17 Safari _and_ iOS has support for heic. Quality is unchanged. Size is halved.
-        let image = UIImage(data: attachmentData)
-        guard let imageCompressed = image?.heicData(),
+        guard let image = UIImage(data: attachmentData),
+              let imageCompressed: Data = try? AVIFEncoder.encode(image: image, quality: 0.7, speed: 7),
               imageCompressed.count < attachmentData.count else {
             let base64String = attachmentData.base64EncodedString()
             return ImageBase64AndMime(base64String, attachmentMime)
         }
 
+        DDLogInfo("image compression ratio :\(attachmentData.count / imageCompressed.count)")
         let base64String = imageCompressed.base64EncodedString()
-        return ImageBase64AndMime(base64String, "image/heic")
+        return ImageBase64AndMime(base64String, "image/avif")
     }
 
     /// Inject base64 images in a body

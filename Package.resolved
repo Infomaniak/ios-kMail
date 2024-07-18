@@ -19,6 +19,15 @@
       }
     },
     {
+      "identity" : "avif.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/awxkee/avif.swift.git",
+      "state" : {
+        "revision" : "349ecd8752838feb71f9d4e017fb480aa38f984b",
+        "version" : "1.6.0"
+      }
+    },
+    {
       "identity" : "cocoalumberjack",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack",
@@ -115,6 +124,51 @@
       "state" : {
         "revision" : "2ef543ee21d63734e1c004ad6c870255e8716c50",
         "version" : "7.12.0"
+      }
+    },
+    {
+      "identity" : "libaom.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/awxkee/libaom.swift.git",
+      "state" : {
+        "revision" : "506308364f5f83e3ae2797521d9b3958205ec0e8",
+        "version" : "1.0.4"
+      }
+    },
+    {
+      "identity" : "libdav1d.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/awxkee/libdav1d.swift.git",
+      "state" : {
+        "revision" : "b4c002ba08f35806b7bfc3c0f65c626e3308e6c8",
+        "version" : "1.1.0"
+      }
+    },
+    {
+      "identity" : "libsvtav1enc.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/awxkee/libsvtav1enc.swift",
+      "state" : {
+        "revision" : "fff1840be980fb2a9b7b3a0245499db95ff753df",
+        "version" : "1.0.3"
+      }
+    },
+    {
+      "identity" : "libwebp-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/awxkee/libwebp-ios.git",
+      "state" : {
+        "revision" : "09ab26afc64c55a49332c396c4b465c278fcb05f",
+        "version" : "1.1.1"
+      }
+    },
+    {
+      "identity" : "libyuv.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/awxkee/libyuv.swift.git",
+      "state" : {
+        "revision" : "6ccc8fc35d5f6e5b419c0792f0b1de8e5a448e45",
+        "version" : "1.0.1"
       }
     },
     {
