@@ -34,7 +34,7 @@ final class InlineAttachmentWorker: ObservableObject {
     @Published var presentableBody: PresentableBody
 
     /// Set to true when done processing
-    @Published var isMessagePreprocessed: Bool
+    private var isMessagePreprocessed: Bool
 
     var mailboxManager: MailboxManager?
 

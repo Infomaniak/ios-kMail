@@ -32,7 +32,7 @@ struct MessageBodyView: View {
     @StateObject private var model = WebViewModel()
 
     let presentableBody: PresentableBody
-    let isMessagePreprocessed: Bool
+
     var blockRemoteContent: Bool
     @Binding var displayContentBlockedActionView: Bool
 
@@ -45,23 +45,20 @@ struct MessageBodyView: View {
             VStack {
                 if presentableBody.body != nil {
                     WebView(model: model, messageUid: messageUid) {
-                        loadBody(blockRemoteContent: blockRemoteContent)
+                        loadBody(presentableBody: presentableBody, blockRemoteContent: blockRemoteContent)
                     }
                     .frame(height: model.webViewHeight)
                     .onAppear {
-                        loadBody(blockRemoteContent: blockRemoteContent)
+                        loadBody(presentableBody: presentableBody, blockRemoteContent: blockRemoteContent)
                     }
-                    .onChange(of: presentableBody) { _ in
-                        loadBody(blockRemoteContent: blockRemoteContent)
-                    }
-                    .onChange(of: isMessagePreprocessed) { _ in
-                        loadBody(blockRemoteContent: blockRemoteContent)
+                    .onChange(of: presentableBody) { newPresentableBody in
+                        loadBody(presentableBody: newPresentableBody, blockRemoteContent: blockRemoteContent)
                     }
                     .onChange(of: model.showBlockQuote) { _ in
-                        loadBody(blockRemoteContent: blockRemoteContent)
+                        loadBody(presentableBody: presentableBody, blockRemoteContent: blockRemoteContent)
                     }
                     .onChange(of: blockRemoteContent) { newValue in
-                        loadBody(blockRemoteContent: newValue)
+                        loadBody(presentableBody: presentableBody, blockRemoteContent: newValue)
                     }
 
                     if !presentableBody.quotes.isEmpty {
@@ -108,15 +105,19 @@ struct MessageBodyView: View {
         }
     }
 
-    private func loadBody(blockRemoteContent: Bool) {
+    private func loadBody(presentableBody: PresentableBody, blockRemoteContent: Bool) {
+        let uid = messageUid
+
         Task {
             let loadResult = try await model.loadBody(
                 presentableBody: presentableBody,
                 blockRemoteContent: blockRemoteContent,
-                messageUid: messageUid
+                messageUid: uid
             )
 
-            displayContentBlockedActionView = (loadResult == .remoteContentBlocked)
+            Task { @MainActor in
+                displayContentBlockedActionView = (loadResult == .remoteContentBlocked)
+            }
         }
     }
 }
@@ -124,7 +125,6 @@ struct MessageBodyView: View {
 #Preview {
     MessageBodyView(
         presentableBody: PreviewHelper.samplePresentableBody,
-        isMessagePreprocessed: true,
         blockRemoteContent: false,
         displayContentBlockedActionView: .constant(false),
         messageUid: "message_uid"

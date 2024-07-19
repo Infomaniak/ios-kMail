@@ -37,6 +37,7 @@ final class WebViewModel: NSObject, ObservableObject {
     let contentBlocker: ContentBlocker
 
     let style: String = MessageWebViewUtils.generateCSS(for: .message)
+    let worker: WebViewModelOperations
 
     enum LoadResult: Equatable {
         case remoteContentBlocked
@@ -55,6 +56,7 @@ final class WebViewModel: NSObject, ObservableObject {
 
         webView = WKWebView(frame: .zero, configuration: configuration)
         contentBlocker = ContentBlocker(webView: webView)
+        worker = WebViewModelOperations(webView: webView, contentBlocker: contentBlocker)
 
         super.init()
 
@@ -71,35 +73,12 @@ final class WebViewModel: NSObject, ObservableObject {
     }
 
     func loadBody(presentableBody: PresentableBody, blockRemoteContent: Bool, messageUid: String) async throws -> LoadResult {
-        var messageBody = showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody
-
-        if messageBody != nil, let subBodies = presentableBody.body?.subBody {
-            messageBody! += formatSubBodyContent(subBodies: subBodies, messageUid: messageUid)
-        }
-
-        let loadResult = await loadHTMLString(value: messageBody, blockRemoteContent: blockRemoteContent)
-        return loadResult
-    }
-
-    private func formatSubBodyContent(subBodies: List<SubBody>, messageUid: String) -> String {
-        let subBodiesContent = subBodies.reduce("") {
-            var partialResult = $0
-
-            guard let bodyValue = $1.value else {
-                return partialResult
-            }
-
-            if !partialResult.isEmpty {
-                partialResult += "<br/>"
-            }
-            return partialResult + "<blockquote>\(bodyValue)</blockquote>"
-        }
-
-        if !subBodiesContent.isEmpty {
-            SentryDebug.sendSubBodiesTrigger(messageUid: messageUid)
-        }
-
-        return subBodiesContent
+        return try await worker.loadBody(
+            presentableBody: presentableBody,
+            blockRemoteContent: blockRemoteContent,
+            messageUid: messageUid,
+            showBlockQuote: showBlockQuote
+        )
     }
 
     private func setUpWebViewConfiguration() {

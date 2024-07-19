@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2023 Infomaniak Network SA
+ Copyright (C) 2024 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -18,10 +18,58 @@
 
 import CocoaLumberjackSwift
 import MailCore
+import RealmSwift
 import SwiftSoup
+import WebKit
 
-extension WebViewModel {
-    func loadHTMLString(value: String?, blockRemoteContent: Bool) async -> LoadResult {
+/// Something to process webview mutations on an isolated actor
+actor WebViewModelOperations {
+    let webView: WKWebView
+    let contentBlocker: ContentBlocker
+    let style: String = MessageWebViewUtils.generateCSS(for: .message)
+
+    init(webView: WKWebView, contentBlocker: ContentBlocker) {
+        self.webView = webView
+        self.contentBlocker = contentBlocker
+    }
+
+    func loadBody(presentableBody: PresentableBody,
+                  blockRemoteContent: Bool,
+                  messageUid: String,
+                  showBlockQuote: Bool) async throws -> WebViewModel
+        .LoadResult {
+        var messageBody = showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody
+
+        if messageBody != nil, let subBodies = presentableBody.body?.subBody {
+            messageBody! += formatSubBodyContent(subBodies: subBodies, messageUid: messageUid)
+        }
+
+        let loadResult = await loadHTMLString(value: messageBody, blockRemoteContent: blockRemoteContent)
+        return loadResult
+    }
+
+    private func formatSubBodyContent(subBodies: List<SubBody>, messageUid: String) -> String {
+        let subBodiesContent = subBodies.reduce("") {
+            var partialResult = $0
+
+            guard let bodyValue = $1.value else {
+                return partialResult
+            }
+
+            if !partialResult.isEmpty {
+                partialResult += "<br/>"
+            }
+            return partialResult + "<blockquote>\(bodyValue)</blockquote>"
+        }
+
+        if !subBodiesContent.isEmpty {
+            SentryDebug.sendSubBodiesTrigger(messageUid: messageUid)
+        }
+
+        return subBodiesContent
+    }
+
+    private func loadHTMLString(value: String?, blockRemoteContent: Bool) async -> WebViewModel.LoadResult {
         guard let rawHTML = value else { return .errorEmptyInputValue }
 
         do {
@@ -36,6 +84,7 @@ extension WebViewModel {
 
             try await contentBlocker.setRemoteContentBlocked(blockRemoteContent)
             let hasRemoteContent = try contentBlocker.documentHasRemoteContent(safeDocument)
+
             await webView.loadHTMLString(finalHtml, baseURL: nil)
 
             if hasRemoteContent {
@@ -50,7 +99,7 @@ extension WebViewModel {
     }
 
     /// Adds a viewport if necessary or change the value of the current one to `Constants.viewportContent`
-    private func updateHeadContent(of document: Document) throws {
+    private func updateHeadContent(of document: SwiftSoup.Document) throws {
         let head = document.head()
         if let viewport = try head?.select("meta[name=\"viewport\"]"), !viewport.isEmpty() {
             try viewport.attr("content", Constants.viewportContent)
@@ -61,7 +110,7 @@ extension WebViewModel {
     }
 
     /// Wraps the message body in a div
-    private func wrapBody(document: Document, inID id: String) throws {
+    private func wrapBody(document: SwiftSoup.Document, inID id: String) throws {
         if let bodyContent = document.body()?.childNodesCopy() {
             document.body()?.empty()
             try document.body()?
@@ -74,7 +123,7 @@ extension WebViewModel {
     /// Adds breakpoints if the body contains text with words that are too long
     /// Sometimes the WebView needs indication to break certain content like URLs, so the algorithm
     /// inserts a `<wbr>` Element where a character string can be broken
-    private func breakLongWords(of document: Document) throws {
+    private func breakLongWords(of document: SwiftSoup.Document) throws {
         guard let body = document.body() else { return }
         try breakLongWords(of: body)
     }
