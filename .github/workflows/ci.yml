@@ -31,4 +31,4 @@ jobs:
       - name: Build
         run: tuist install && tuist build --generate "Infomaniak Mail"
       - name: Test
-        run: tuist test Mail --test-targets MailTests/MailApiTests MailTests/UTContactManager
+	run: tuist test Mail  --skip-ui-tests
