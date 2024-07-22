@@ -26,10 +26,19 @@ import XCTest
 final class MailboxManagerTests: XCTestCase {
     static var mailboxManager: MailboxManager!
 
-    override class func setUp() {
-        super.setUp()
-        @InjectService var accountManager: AccountManager
-        mailboxManager = accountManager.getMailboxManager(for: Env.mailboxId, userId: Env.userId)
+    override func setUp() async throws {
+        try await super.setUp()
+
+        MockingHelper.clearRegisteredTypes()
+
+        let accountManager = AccountManager()
+        let accountManagerFactory = Factory(type: AccountManager.self) { _, _ in
+            accountManager
+        }
+
+        MockingHelper.registerConcreteTypes(configuration: .realApp, extraFactories: [accountManagerFactory])
+
+        MailboxManagerTests.mailboxManager = accountManager.getMailboxManager(for: Env.mailboxId, userId: Env.userId)
 
         let token = ApiToken(accessToken: Env.token,
                              expiresIn: Int.max,
@@ -38,7 +47,7 @@ final class MailboxManagerTests: XCTestCase {
                              tokenType: "",
                              userId: Env.userId,
                              expirationDate: Date(timeIntervalSinceNow: TimeInterval(Int.max)))
-        mailboxManager.apiFetcher.setToken(token, delegate: FakeTokenDelegate())
+        MailboxManagerTests.mailboxManager.apiFetcher.setToken(token, delegate: FakeTokenDelegate())
     }
 
     // MARK: Tests methods
