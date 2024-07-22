@@ -217,6 +217,13 @@ struct BodyImageProcessor {
                         return ImageBase64AndMime(base64String, attachment.mimeType)
                     }
 
+                    // Skip compression with lockdown mode enables as images can glitch
+                    let isLockdownModeEnabled = (UserDefaults.standard.object(forKey: "LDMGlobalEnabled") as? Bool) ?? false
+                    guard !isLockdownModeEnabled else {
+                        let base64String = attachmentData.base64EncodedString()
+                        return ImageBase64AndMime(base64String, attachment.mimeType)
+                    }
+
                     let compressedImage = compressedBase64ImageAndMime(
                         attachmentData: attachmentData,
                         attachmentMime: attachment.mimeType
