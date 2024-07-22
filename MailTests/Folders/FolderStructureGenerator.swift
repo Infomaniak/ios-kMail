@@ -46,7 +46,14 @@ public struct FolderStructureGenerator {
             Recipient.self,
             Draft.self,
             Signature.self,
-            SearchHistory.self
+            SearchHistory.self,
+            Bimi.self,
+            File.self,
+            Attendee.self,
+            SubBody.self,
+            CalendarEvent.self,
+            CalendarEventResponse.self,
+            SwissTransferAttachment.self
         ])
 
         // It's a unit test
