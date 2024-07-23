@@ -38,7 +38,11 @@ final class MailboxManagerTests: XCTestCase {
 
         MockingHelper.registerConcreteTypes(configuration: .realApp, extraFactories: [accountManagerFactory])
 
-        MailboxManagerTests.mailboxManager = accountManager.getMailboxManager(for: Env.mailboxId, userId: Env.userId)
+        guard let mailboxManager = accountManager.getMailboxManager(for: Env.mailboxId, userId: Env.userId) else {
+            fatalError("John Appleseed is missing")
+        }
+
+        MailboxManagerTests.mailboxManager = mailboxManager
 
         let token = ApiToken(accessToken: Env.token,
                              expiresIn: Int.max,
@@ -48,9 +52,8 @@ final class MailboxManagerTests: XCTestCase {
                              userId: Env.userId,
                              expirationDate: Date(timeIntervalSinceNow: TimeInterval(Int.max)))
 
-        let apiFetcher = MailboxManagerTests.mailboxManager.apiFetcher
+        let apiFetcher = mailboxManager.apiFetcher
         let fakeTokenDelegate = MCKTokenDelegate()
-
         apiFetcher.setToken(token, delegate: fakeTokenDelegate)
     }
 
