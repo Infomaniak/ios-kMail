@@ -59,7 +59,7 @@ struct AttachmentPreview: View {
 
                 ToolbarItemGroup(placement: .bottomBar) {
                     Button {
-                        matomo.track(eventWithCategory: .message, name: "download")
+                        matomo.track(eventWithCategory: .message, name: "share")
                         downloadedAttachmentURL = IdentifiableURL(url: attachment.getLocalURL(mailboxManager: mailboxManager))
                     } label: {
                         Label {
@@ -87,6 +87,7 @@ struct AttachmentPreview: View {
 
                     if platformDetector.isMac {
                         Button {
+                            matomo.track(eventWithCategory: .message, name: "download")
                             downloadedAttachmentURLForMac = IdentifiableURL(url: attachment
                                 .getLocalURL(mailboxManager: mailboxManager))
                         } label: {
