@@ -85,6 +85,27 @@ struct AttachmentPreview: View {
                         }
                     }
 
+                    if platformDetector.isMac {
+                        Button {
+                            downloadedAttachmentURLForMac = IdentifiableURL(url: attachment
+                                .getLocalURL(mailboxManager: mailboxManager))
+                        } label: {
+                            Label {
+                                Text(MailResourcesStrings.Localizable.buttonDownload)
+                                    .font(MailTextStyle.labelSecondary.font)
+                            } icon: {
+                                Image(systemName: "square.and.arrow.down")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: IKIcon.Size.large.rawValue, height: IKIcon.Size.large.rawValue)
+                            }
+                            .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
+                        }
+                        .sheet(item: $downloadedAttachmentURLForMac) { downloadedAttachmentURLForMac in
+                            DocumentPicker(pickerType: .exportContent([downloadedAttachmentURLForMac.url]))
+                        }
+                    }
+
                     Spacer()
 
                     Button {
