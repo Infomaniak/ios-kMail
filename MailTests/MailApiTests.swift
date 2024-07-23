@@ -33,6 +33,13 @@ class FakeTokenDelegate: RefreshTokenDelegate {
 }
 
 final class MailApiTests: XCTestCase {
+    override class func setUp() {
+        super.setUp()
+
+        MockingHelper.clearRegisteredTypes()
+        MockingHelper.registerConcreteTypes(configuration: .minimal)
+    }
+
     let currentApiFetcher: MailApiFetcher = {
         let token = ApiToken(accessToken: Env.token,
                              expiresIn: Int.max,
