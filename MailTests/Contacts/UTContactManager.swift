@@ -22,7 +22,12 @@ import XCTest
 final class UTContactManager: XCTestCase {
     let contactManager = ContactManager(userId: 0, apiFetcher: MailApiFetcher())
 
-    override func setUpWithError() throws {}
+    override class func setUp() {
+        super.setUp()
+
+        MockingHelper.clearRegisteredTypes()
+        MockingHelper.registerConcreteTypes(configuration: .minimal)
+    }
 
     func generateFakeContacts(count: Int) {
         do {

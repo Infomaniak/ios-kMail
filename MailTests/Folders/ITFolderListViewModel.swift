@@ -214,6 +214,13 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
 
 /// Integration tests of the FolderListViewModel
 final class ITFolderListViewModel: XCTestCase {
+    override class func setUp() {
+        super.setUp()
+
+        MockingHelper.clearRegisteredTypes()
+        MockingHelper.registerConcreteTypes(configuration: .minimal)
+    }
+
     @MainActor func testInitAndFetchFromDB() {
         // GIVEN
         let folderGenerator = FolderStructureGenerator(maxDepth: 5, maxElementsPerLevel: 5)
@@ -259,6 +266,13 @@ final class ITFolderListViewModel: XCTestCase {
 
 /// Integration tests of the FolderListViewModelWorker
 final class ITFolderListViewModelWorker: XCTestCase {
+    override class func setUp() {
+        super.setUp()
+
+        MockingHelper.clearRegisteredTypes()
+        MockingHelper.registerConcreteTypes(configuration: .minimal)
+    }
+
     func testFilterAndSortFolders_noSearch() async {
         // GIVEN
         let folderGenerator = FolderStructureGenerator(maxDepth: 5, maxElementsPerLevel: 5)
