@@ -51,7 +51,9 @@ public enum MockingHelper {
         // override with extra
         factories += extraFactories
 
-        factories.registerFactoriesInDI()
+        for factory in factories {
+            SimpleResolver.sharedResolver.store(factory: factory)
+        }
     }
 
     /// Clear stored types in DI
