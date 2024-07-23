@@ -22,14 +22,13 @@ import MailResources
 import XCTest
 
 final class MailBodyImageMutator: XCTestCase {
-    
     override class func setUp() {
         super.setUp()
-        
+
         MockingHelper.clearRegisteredTypes()
         MockingHelper.registerConcreteTypes(configuration: .minimal)
     }
-    
+
     // MARK: - Test simple image
 
     func testEncodeSomeImage() {
