@@ -63,10 +63,13 @@ struct AttachmentPreview: View {
                         downloadedAttachmentURL = IdentifiableURL(url: attachment.getLocalURL(mailboxManager: mailboxManager))
                     } label: {
                         Label {
-                            Text(MailResourcesStrings.Localizable.buttonDownload)
+                            Text(MailResourcesStrings.Localizable.buttonShare)
                                 .font(MailTextStyle.labelSecondary.font)
                         } icon: {
-                            IKIcon(MailResourcesAsset.download, size: .large)
+                            Image(systemName: "square.and.arrow.up")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: IKIcon.Size.large.rawValue, height: IKIcon.Size.large.rawValue)
                         }
                         .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                     }
