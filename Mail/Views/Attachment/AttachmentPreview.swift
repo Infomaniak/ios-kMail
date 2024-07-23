@@ -29,6 +29,7 @@ import SwiftUI
 
 struct AttachmentPreview: View {
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.verticalSizeClass) private var sizeClass
@@ -36,6 +37,10 @@ struct AttachmentPreview: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ModalState(wrappedValue: nil, context: ContextKeys.attachmentDownload) private var downloadedAttachmentURL: IdentifiableURL?
+    @ModalState(
+        wrappedValue: nil,
+        context: ContextKeys.attachmentDownload
+    ) private var downloadedAttachmentURLForMac: IdentifiableURL?
 
     @ObservedRealmObject var attachment: MailCore.Attachment
 
