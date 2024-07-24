@@ -29,7 +29,6 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/ios-version-checker", .upToNextMajor(from: "6.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-onboarding", .upToNextMajor(from: "1.0.3")),
         .package(url: "https://github.com/Infomaniak/swift-modal-presentation", .upToNextMajor(from: "1.0.0")),
-        .package(url: "https://github.com/Infomaniak/SQRichTextEditor", .upToNextMajor(from: "1.1.2")),
         .package(url: "https://github.com/Infomaniak/SwiftSoup", .upToNextMajor(from: "1.1.0")),
         .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.21.0")),
         .package(url: "https://github.com/Alamofire/Alamofire", .upToNextMajor(from: "5.2.2")),
@@ -47,5 +46,6 @@ let package = Package(
         .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0")),
         .package(url: "https://github.com/Wouter01/SwiftUI-Macros.git", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/SVGKit/SVGKit.git", branch: "3.x"),
+        .package(url: "https://github.com/Infomaniak/swift-rich-html-editor.git", .upToNextMajor(from: "1.1.1")),
     ]
 )

@@ -60,7 +60,6 @@ struct NewMessageAlert: Identifiable {
 }
 
 enum NewMessageAlertType {
-    case link(handler: (String) -> Void)
     case emptySubject(handler: () -> Void)
 }
 
@@ -80,11 +79,9 @@ struct ComposeMessageView: View {
     @ModalState(context: ContextKeys.compose) private var isShowingCancelAttachmentsError = false
     @ModalState(wrappedValue: nil, context: ContextKeys.compose) private var isShowingAlert: NewMessageAlert?
     @State private var autocompletionType: ComposeViewFieldType?
-    @State private var editorFocus = false
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
 
-    @State private var editorModel = RichTextEditorModel()
     @Weak private var scrollView: UIScrollView?
 
     @StateObject private var attachmentsManager: AttachmentsManager
@@ -92,12 +89,7 @@ struct ComposeMessageView: View {
 
     @ObservedRealmObject private var draft: Draft
 
-    @FocusState private var focusedField: ComposeViewFieldType? {
-        willSet {
-            let editorInFocus = (newValue == .editor)
-            editorFocus = editorInFocus
-        }
-    }
+    @FocusState private var focusedField: ComposeViewFieldType?
 
     private let messageReply: MessageReply?
     private let draftContentManager: DraftContentManager
@@ -105,8 +97,7 @@ struct ComposeMessageView: View {
     private let htmlAttachments: [HTMLAttachable]
 
     private var isSendButtonDisabled: Bool {
-        let disabledState = draft.recipientsAreEmpty
-            || !attachmentsManager.allAttachmentsUploaded
+        let disabledState = draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded
         return disabledState
     }
 
@@ -158,15 +149,21 @@ struct ComposeMessageView: View {
 
                 if autocompletionType == nil && !isLoadingContent {
                     ComposeMessageBodyView(
+                        focusedField: _focusedField,
                         draft: draft,
-                        editorModel: $editorModel,
-                        editorFocus: $editorFocus,
-                        isShowingAIPrompt: $aiModel.isShowingPrompt,
-                        isShowingAlert: $isShowingAlert,
-                        attachmentsManager: attachmentsManager,
+                        isShowingAI: $aiModel.isShowingPrompt,
                         messageReply: messageReply
                     )
+                    .environmentObject(attachmentsManager)
                 }
+            }
+        }
+        .availableSpatialTapGesture { location in
+            // If the user directly tap on the UIScrollView, and not a
+            // subview like a TextField, we should target the editor
+            let targetView = scrollView?.hitTest(location, with: nil)
+            if targetView is UIScrollView {
+                focusedField = .editor
             }
         }
         .composeMessageToolbar(dismissHandler: didTouchDismiss)
@@ -184,20 +181,10 @@ struct ComposeMessageView: View {
                 progressView
             }
         }
-        .introspect(.scrollView, on: .iOS(.v15, .v16, .v17)) { scrollView in
+        .introspect(.scrollView, on: .iOS(.v15, .v16, .v17, .v18)) { scrollView in
             guard self.scrollView != scrollView else { return }
             self.scrollView = scrollView
             scrollView.keyboardDismissMode = .interactive
-        }
-        .onChange(of: editorModel.height) { _ in
-            guard let scrollView else { return }
-
-            let fullSize = scrollView.contentSize.height
-            let realPosition = (fullSize - editorModel.height) + editorModel.cursorPosition
-
-            guard realPosition >= 0 else { return }
-            let rect = CGRect(x: 0, y: realPosition, width: 1, height: 1)
-            scrollView.scrollRectToVisible(rect, animated: true)
         }
         .onChange(of: autocompletionType) { newValue in
             guard newValue != nil else { return }
@@ -260,8 +247,6 @@ struct ComposeMessageView: View {
         }
         .customAlert(item: $isShowingAlert) { alert in
             switch alert.type {
-            case .link(let handler):
-                AddLinkView(actionHandler: handler)
             case .emptySubject(let handler):
                 EmptySubjectView(actionHandler: handler)
             }

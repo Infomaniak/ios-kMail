@@ -35,6 +35,8 @@ public struct SwiftSoupUtils {
 
     public func cleanBody() async throws -> Document {
         let cleanedDocument = try SwiftSoup.Cleaner(headWhitelist: nil, bodyWhitelist: .extendedBodyWhitelist).clean(document)
+        try unwrapDoubleBody(of: cleanedDocument)
+
         return cleanedDocument
     }
 
@@ -47,6 +49,8 @@ public struct SwiftSoupUtils {
         for metaRefreshTag in metaRefreshTags {
             try metaRefreshTag.parent()?.removeChild(metaRefreshTag)
         }
+
+        try unwrapDoubleBody(of: cleanedDocument)
 
         return cleanedDocument
     }
@@ -64,6 +68,21 @@ public struct SwiftSoupUtils {
 
     public func extractText() async throws -> String? {
         return try document.body()?.text()
+    }
+
+    // When we call the method clean from SwiftSoup, it might wrap the
+    // body in another body.
+    // We want to unwrap this nested body.
+    private func unwrapDoubleBody(of document: Document) throws {
+        guard let body = document.body() else {
+            return
+        }
+
+        guard body.childNodeSize() == 1 && body.children().count == 1 && body.child(0).tagName() == "body" else {
+            return
+        }
+
+        try body.child(0).unwrap()
     }
 }
 

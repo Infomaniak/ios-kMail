@@ -21,16 +21,27 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
+import SwiftRegex
 import SwiftUI
 
 struct AddLinkView: View {
+    @State private var text = ""
     @State private var url = ""
-    @FocusState private var isFocused: Bool
+
+    @FocusState private var firstFieldIsFocused: Bool
 
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var matomo: MatomoUtils
 
-    var actionHandler: ((String) -> Void)?
+    var actionHandler: ((URL, String) -> Void)?
+
+    private var textPlaceholder: String {
+        if url.isEmpty {
+            return MailResourcesStrings.Localizable.addLinkTextPlaceholder
+        } else {
+            return url
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -38,39 +49,45 @@ struct AddLinkView: View {
                 .textStyle(.bodyMedium)
                 .padding(.bottom, UIPadding.alertTitleBottom)
 
-            TextField(MailResourcesStrings.Localizable.urlPlaceholder, text: $url)
-                .textFieldStyle(.roundedBorder)
-                .focused($isFocused)
-                .keyboardType(.URL)
-                .disableAutocorrection(true)
-                .autocapitalization(.none)
-                .textContentType(.URL)
-                .textStyle(.body)
-                .padding(.bottom, UIPadding.alertDescriptionBottom)
+            VStack(spacing: UIPadding.regular) {
+                TextField(textPlaceholder, text: $text)
+                    .focused($firstFieldIsFocused)
+
+                TextField(MailResourcesStrings.Localizable.urlPlaceholder, text: $url)
+                    .keyboardType(.URL)
+                    .disableAutocorrection(true)
+                    .autocapitalization(.none)
+                    .textContentType(.URL)
+            }
+            .textFieldStyle(.roundedBorder)
+            .textStyle(.body)
+            .padding(.bottom, UIPadding.alertDescriptionBottom)
 
             ModalButtonsView(
                 primaryButtonTitle: MailResourcesStrings.Localizable.buttonValid,
-                primaryButtonEnabled: !url.isEmpty
-            ) {
-                matomo.track(eventWithCategory: .editorActions, name: "addLinkConfirm")
-
-                guard var urlComponents = URLComponents(string: url) else {
-                    snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarInvalidUrl)
-                    return
-                }
-                if urlComponents.scheme == nil {
-                    urlComponents.scheme = URLConstants.schemeUrl
-                }
-                guard let url = urlComponents.url?.absoluteString else {
-                    snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarInvalidUrl)
-                    return
-                }
-                actionHandler?(url)
-            }
+                primaryButtonEnabled: !url.isEmpty,
+                primaryButtonAction: didTapPrimaryButton
+            )
         }
         .onAppear {
-            isFocused = true
+            firstFieldIsFocused = true
         }
+    }
+
+    private func didTapPrimaryButton() {
+        matomo.track(eventWithCategory: .editorActions, name: "addLinkConfirm")
+
+        var correctlyFormattedURL = url
+        if Regex(pattern: "^\\w+:")?.matches(in: url).isEmpty != false {
+            correctlyFormattedURL = "https://\(correctlyFormattedURL)"
+        }
+
+        guard let url = URL(string: correctlyFormattedURL) else {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarInvalidUrl)
+            return
+        }
+
+        actionHandler?(url, text)
     }
 }
 

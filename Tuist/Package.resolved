@@ -217,15 +217,6 @@
       }
     },
     {
-      "identity" : "sqrichtexteditor",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/SQRichTextEditor",
-      "state" : {
-        "revision" : "18835a4a423b1b34269dd47460c796096a6d13b3",
-        "version" : "1.1.2"
-      }
-    },
-    {
       "identity" : "svgkit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/SVGKit/SVGKit.git",
@@ -277,6 +268,15 @@
       "state" : {
         "revision" : "0a5bc04095a675662cf24757cc0640aa2204253b",
         "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "swift-rich-html-editor",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/swift-rich-html-editor.git",
+      "state" : {
+        "revision" : "0d8f02c669f2a787596e1b84be6f1e172ef5694e",
+        "version" : "1.1.1"
       }
     },
     {

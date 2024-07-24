@@ -16,95 +16,43 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
 import RealmSwift
-import SwiftModalPresentation
 import SwiftUI
 
 struct ComposeMessageBodyView: View {
-    @State private var isShowingCamera = false
-    @ModalState(context: ContextKeys.compose) private var isShowingFileSelection = false
-    @ModalState(context: ContextKeys.compose) private var isShowingPhotoLibrary = false
+    @FocusState var focusedField: ComposeViewFieldType?
 
     @ObservedRealmObject var draft: Draft
 
-    @Binding var editorModel: RichTextEditorModel
-    @Binding var editorFocus: Bool
-    @Binding var isShowingAIPrompt: Bool
-    @Binding var isShowingAlert: NewMessageAlert?
-
-    @ObservedObject var attachmentsManager: AttachmentsManager
+    @Binding var isShowingAI: Bool
 
     let messageReply: MessageReply?
 
-    private var isRemoteContentBlocked: Bool {
-        return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.frozenMessage.localSafeDisplay == false
-    }
-
     var body: some View {
         VStack {
-            AttachmentsHeaderView(attachmentsManager: attachmentsManager)
-
-            RichTextEditor(
-                model: $editorModel,
-                body: $draft.body,
-                isShowingCamera: $isShowingCamera,
-                isShowingFileSelection: $isShowingFileSelection,
-                isShowingPhotoLibrary: $isShowingPhotoLibrary,
-                becomeFirstResponder: $editorFocus,
-                isShowingAIPrompt: $isShowingAIPrompt,
-                isShowingAlert: $isShowingAlert,
-                blockRemoteContent: isRemoteContentBlocked
+            AttachmentsHeaderView()
+            ComposeEditor(
+                focusedField: _focusedField,
+                draft: draft,
+                isShowingAI: $isShowingAI,
+                messageReply: messageReply
             )
-            .ignoresSafeArea(.all, edges: .bottom)
-            .frame(height: editorModel.height + 20)
-            .padding(.vertical, value: .verySmall)
-        }
-        .fullScreenCover(isPresented: $isShowingCamera) {
-            CameraPicker { data in
-                attachmentsManager.importAttachments(
-                    attachments: [data],
-                    draft: draft,
-                    disposition: AttachmentDisposition.defaultDisposition
-                )
-            }
-            .ignoresSafeArea()
-        }
-        .sheet(isPresented: $isShowingFileSelection) {
-            DocumentPicker(pickerType: .selectContent([.item]) { urls in
-                attachmentsManager.importAttachments(
-                    attachments: urls,
-                    draft: draft,
-                    disposition: AttachmentDisposition.defaultDisposition
-                )
-            })
-            .ignoresSafeArea()
-        }
-        .sheet(isPresented: $isShowingPhotoLibrary) {
-            ImagePicker { results in
-                attachmentsManager.importAttachments(
-                    attachments: results,
-                    draft: draft,
-                    disposition: AttachmentDisposition.defaultDisposition
-                )
-            }
-            .ignoresSafeArea()
         }
     }
 }
 
 #Preview {
     let draft = Draft()
-    return ComposeMessageBodyView(draft: draft,
-                                  editorModel: .constant(RichTextEditorModel()),
-                                  editorFocus: .constant(false),
-                                  isShowingAIPrompt: .constant(false),
-                                  isShowingAlert: .constant(nil),
-                                  attachmentsManager: AttachmentsManager(
-                                      draftLocalUUID: draft.localUUID,
-                                      mailboxManager: PreviewHelper.sampleMailboxManager
-                                  ),
-                                  messageReply: nil)
+    return ComposeMessageBodyView(
+        focusedField: .init(),
+        draft: draft,
+        isShowingAI: .constant(false),
+        messageReply: nil
+    )
+    .environmentObject(AttachmentsManager(
+        draftLocalUUID: draft.localUUID,
+        mailboxManager: PreviewHelper.sampleMailboxManager
+    ))
 }

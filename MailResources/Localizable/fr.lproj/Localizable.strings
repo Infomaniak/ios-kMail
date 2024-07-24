@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: fr, French
  * Tagged: ios
- * Exported by: Ambroise Decouttere
- * Exported at: Mon, 01 Jul 2024 13:28:52 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Tue, 09 Jul 2024 08:28:40 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -99,6 +99,9 @@
 
 /* loco:65982378414cb87ae7017bd3 */
 "activeFocusFilterTitle" = "Filtrage des boîtes aux lettres";
+
+/* loco:668cd87ac01614f14603ac92 */
+"addLinkTextPlaceholder" = "Texte à afficher";
 
 /* loco:63ecf9b0415fc86eea26ec03 */
 "addUnknownRecipientAlreadyUsed" = "L’adresse mail est déjà utilisée";
