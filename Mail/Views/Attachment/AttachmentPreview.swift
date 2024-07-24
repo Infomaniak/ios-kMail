@@ -114,21 +114,23 @@ struct AttachmentPreview: View {
 
                     Spacer()
 
-                    Button {
-                        let attachmentURL = attachment.getLocalURL(mailboxManager: mailboxManager)
-                        do {
-                            try DeeplinkService().shareFileToKdrive(attachmentURL)
-                        } catch {
-                            SentrySDK.capture(error: error)
+                    if !platformDetector.isMac {
+                        Button {
+                            let attachmentURL = attachment.getLocalURL(mailboxManager: mailboxManager)
+                            do {
+                                try DeeplinkService().shareFileToKdrive(attachmentURL)
+                            } catch {
+                                SentrySDK.capture(error: error)
+                            }
+                        } label: {
+                            Label {
+                                Text(MailResourcesStrings.Localizable.buttonOpenKdrive)
+                                    .font(MailTextStyle.labelSecondary.font)
+                            } icon: {
+                                IKIcon(MailResourcesAsset.kdriveLogo, size: .large)
+                            }
+                            .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                         }
-                    } label: {
-                        Label {
-                            Text(MailResourcesStrings.Localizable.buttonOpenKdrive)
-                                .font(MailTextStyle.labelSecondary.font)
-                        } icon: {
-                            IKIcon(MailResourcesAsset.kdriveLogo, size: .large)
-                        }
-                        .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                     }
                 }
             }
