@@ -27,5 +27,7 @@ jobs:
         run: |
           touch $ENV_PATH
           echo -e "enum Env {\n static let testAccountEmail = \"$UITEST_ACCOUNT_EMAIL\"\n static let testAccountPassword = \"$UITEST_ACCOUNT_PASSWORD\"\n}" > $ENV_PATH
+      - name: Setup
+        run: tuist install && tuist generate
       - name: UITest
-        run: tuist install && tuist test --device "iPhone 15 Pro" --test-targets "Infomaniak MailUITests/MailUITests"
+        run: tuist test --device "iPhone 15 Pro" --test-targets "Infomaniak MailUITests/MailUITests"
