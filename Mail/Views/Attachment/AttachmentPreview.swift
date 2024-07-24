@@ -29,6 +29,7 @@ import SwiftUI
 
 struct AttachmentPreview: View {
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.verticalSizeClass) private var sizeClass
@@ -36,6 +37,10 @@ struct AttachmentPreview: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ModalState(wrappedValue: nil, context: ContextKeys.attachmentDownload) private var downloadedAttachmentURL: IdentifiableURL?
+    @ModalState(
+        wrappedValue: nil,
+        context: ContextKeys.attachmentDownload
+    ) private var downloadedAttachmentURLForMac: IdentifiableURL?
 
     @ObservedRealmObject var attachment: MailCore.Attachment
 
@@ -59,14 +64,17 @@ struct AttachmentPreview: View {
 
                 ToolbarItemGroup(placement: .bottomBar) {
                     Button {
-                        matomo.track(eventWithCategory: .message, name: "download")
+                        matomo.track(eventWithCategory: .message, name: "share")
                         downloadedAttachmentURL = IdentifiableURL(url: attachment.getLocalURL(mailboxManager: mailboxManager))
                     } label: {
                         Label {
-                            Text(MailResourcesStrings.Localizable.buttonDownload)
+                            Text(MailResourcesStrings.Localizable.buttonShare)
                                 .font(MailTextStyle.labelSecondary.font)
                         } icon: {
-                            IKIcon(MailResourcesAsset.download, size: .large)
+                            Image(systemName: "square.and.arrow.up")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: IKIcon.Size.large.rawValue, height: IKIcon.Size.large.rawValue)
                         }
                         .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                     }
@@ -82,23 +90,47 @@ struct AttachmentPreview: View {
                         }
                     }
 
+                    if platformDetector.isMac {
+                        Button {
+                            matomo.track(eventWithCategory: .message, name: "download")
+                            downloadedAttachmentURLForMac = IdentifiableURL(url: attachment
+                                .getLocalURL(mailboxManager: mailboxManager))
+                        } label: {
+                            Label {
+                                Text(MailResourcesStrings.Localizable.buttonDownload)
+                                    .font(MailTextStyle.labelSecondary.font)
+                            } icon: {
+                                Image(systemName: "square.and.arrow.down")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: IKIcon.Size.large.rawValue, height: IKIcon.Size.large.rawValue)
+                            }
+                            .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
+                        }
+                        .sheet(item: $downloadedAttachmentURLForMac) { downloadedAttachmentURLForMac in
+                            DocumentPicker(pickerType: .exportContent([downloadedAttachmentURLForMac.url]))
+                        }
+                    }
+
                     Spacer()
 
-                    Button {
-                        let attachmentURL = attachment.getLocalURL(mailboxManager: mailboxManager)
-                        do {
-                            try DeeplinkService().shareFileToKdrive(attachmentURL)
-                        } catch {
-                            SentrySDK.capture(error: error)
+                    if !platformDetector.isMac {
+                        Button {
+                            let attachmentURL = attachment.getLocalURL(mailboxManager: mailboxManager)
+                            do {
+                                try DeeplinkService().shareFileToKdrive(attachmentURL)
+                            } catch {
+                                SentrySDK.capture(error: error)
+                            }
+                        } label: {
+                            Label {
+                                Text(MailResourcesStrings.Localizable.buttonOpenKdrive)
+                                    .font(MailTextStyle.labelSecondary.font)
+                            } icon: {
+                                IKIcon(MailResourcesAsset.kdriveLogo, size: .large)
+                            }
+                            .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                         }
-                    } label: {
-                        Label {
-                            Text(MailResourcesStrings.Localizable.buttonOpenKdrive)
-                                .font(MailTextStyle.labelSecondary.font)
-                        } icon: {
-                            IKIcon(MailResourcesAsset.kdriveLogo, size: .large)
-                        }
-                        .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                     }
                 }
             }
