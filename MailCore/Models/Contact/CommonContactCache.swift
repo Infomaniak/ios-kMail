@@ -48,6 +48,12 @@ public enum CommonContactCache {
             return cachedContact
         }
 
+        let expiringActivity = ExpiringActivity(id: "getOrCreateContact - create")
+        expiringActivity.start()
+        defer {
+            expiringActivity.endAll()
+        }
+
         let contact: CommonContact
         switch contactConfiguration {
         case .correspondent(let correspondent, let bimi, let contextMailboxManager):
