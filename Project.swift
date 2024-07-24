@@ -21,7 +21,11 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project(name: "Mail",
-                      packages: [],
+                      options: .options(
+                          automaticSchemesOptions: .enabled(
+                              targetSchemesGrouping: .singleScheme
+                          )
+                      ),
                       targets: [
                           .target(name: "Infomaniak Mail",
                                   destinations: Constants.destinations,
@@ -54,7 +58,7 @@ let project = Project(name: "Mail",
                                       "hostname": .environmentVariable(value: "\(ProcessInfo.processInfo.hostName).",
                                                                        isEnabled: true)
                                   ]),
-                          .target(name: "Infomaniak MailTests",
+                          .target(name: "MailTests",
                                   destinations: Constants.destinations,
                                   product: .unitTests,
                                   bundleId: "com.infomaniak.mail.tests",
@@ -65,7 +69,7 @@ let project = Project(name: "Mail",
                                       .target(name: "Infomaniak Mail")
                                   ],
                                   settings: .settings(base: Constants.testSettings)),
-                          .target(name: "Infomaniak MailUITests",
+                          .target(name: "MailUITests",
                                   destinations: Constants.destinations,
                                   product: .uiTests,
                                   bundleId: "com.infomaniak.mail.uitests",
