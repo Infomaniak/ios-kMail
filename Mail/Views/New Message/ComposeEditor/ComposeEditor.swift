@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import CocoaLumberjackSwift
 import InfomaniakRichHTMLEditor
 import MailCore
 import MailCoreUI
@@ -102,7 +103,7 @@ struct ComposeEditor: View {
         case .programMessage:
             showWorkInProgressSnackBar()
         default:
-            print("Action not handled.")
+            DDLogWarn("EditorToolbarAction not handled by ComposeEditor.")
         }
     }
 
