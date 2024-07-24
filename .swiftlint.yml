@@ -33,8 +33,7 @@ opt_in_rules:
 analyzer_rules:
  - unused_import
 excluded:
- - .tuist-bin/*
  - Derived/Sources/*
  - DerivedData/
  - Derived/
- - .build/
+ - Tuist/.build/
