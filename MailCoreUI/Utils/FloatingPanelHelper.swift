@@ -51,6 +51,7 @@ public extension View {
         }
     }
 
+    @MainActor
     func ikPresentationCornerRadius(_ cornerRadius: CGFloat?) -> some View {
         if #available(iOS 16.4, *) {
             return presentationCornerRadius(cornerRadius)
