@@ -42,10 +42,13 @@ final class NotificationService: UNNotificationServiceExtension {
         ModelMigrator().migrateRealmIfNeeded()
     }
 
-    func prepareEmptyMessageNotification(in mailbox: Mailbox) {
-        bestAttemptContent?.title = mailbox.email
+    func prepareBaseEmptyMessageNotification() {
         bestAttemptContent?.body = MailResourcesStrings.Localizable.notificationNewEmail
         bestAttemptContent?.sound = .default
+    }
+
+    func prepareEmptyMessageNotification(in mailbox: Mailbox) {
+        bestAttemptContent?.title = mailbox.email
         if #available(iOSApplicationExtension 16.0, *) {
             bestAttemptContent?.filterCriteria = MailboxInfosManager.getObjectId(
                 mailboxId: mailbox.mailboxId,
@@ -65,6 +68,9 @@ final class NotificationService: UNNotificationServiceExtension {
         guard let bestAttemptContent else { return }
 
         Task {
+            // Prepare a base notification in case we can't get mailbox
+            prepareBaseEmptyMessageNotification()
+
             let userInfos = bestAttemptContent.userInfo
             guard let mailboxId = userInfos[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
                   let userId = userInfos[NotificationsHelper.UserInfoKeys.userId] as? Int,
