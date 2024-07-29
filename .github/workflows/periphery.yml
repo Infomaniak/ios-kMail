@@ -18,7 +18,7 @@ jobs:
         with:
           cache: false
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Periphery
         id: periphery
         run: ./scripts/periphery.sh --clean
