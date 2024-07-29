@@ -24,9 +24,9 @@ let project = Project(name: "Mail",
                       options: .options(
                           automaticSchemesOptions: .enabled(
                             targetSchemesGrouping: .byNameSuffix(
-                              build: Set(["kDrive", "Extension"]),
+                              build: Set(["Mail", "Extension"]),
                               test: Set(["Tests"]),
-                              run: Set(["kDrive", "Extension"])
+                              run: Set(["Mail", "Extension"])
                             )
                           )
                       ),
