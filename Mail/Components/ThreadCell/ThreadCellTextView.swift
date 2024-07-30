@@ -21,12 +21,13 @@ import SwiftUI
 
 struct ThreadCellTextView: View {
     public enum ThreadCellTextType {
+        case email
         case subject
         case preview
 
         public var style: MailTextStyle {
             switch self {
-            case .subject:
+            case .email, .subject:
                 return .body
             case .preview:
                 return .bodySmallSecondary
