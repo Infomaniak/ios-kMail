@@ -24,63 +24,63 @@ import InfomaniakLogin
 import XCTest
 
 /* FIXME: Broken DI
-final class MailboxManagerTests: XCTestCase {
-    static var mailboxManager: MailboxManager!
+ final class MailboxManagerTests: XCTestCase {
+     static var mailboxManager: MailboxManager!
 
-    override class func setUp() {
-        super.setUp()
+     override class func setUp() {
+         super.setUp()
 
-        MockingHelper.clearRegisteredTypes()
+         MockingHelper.clearRegisteredTypes()
 
-        let accountManager = AccountManager()
-        let accountManagerFactory = Factory(type: AccountManager.self) { _, _ in
-            accountManager
-        }
+         let accountManager = AccountManager()
+         let accountManagerFactory = Factory(type: AccountManager.self) { _, _ in
+             accountManager
+         }
 
-        MockingHelper.registerConcreteTypes(configuration: .realApp, extraFactories: [accountManagerFactory])
+         MockingHelper.registerConcreteTypes(configuration: .realApp, extraFactories: [accountManagerFactory])
 
-        guard let mailboxManager = accountManager.getMailboxManager(for: Env.mailboxId, userId: Env.userId) else {
-            fatalError("John Appleseed is missing")
-        }
+         guard let mailboxManager = accountManager.getMailboxManager(for: Env.mailboxId, userId: Env.userId) else {
+             fatalError("John Appleseed is missing")
+         }
 
-        MailboxManagerTests.mailboxManager = mailboxManager
+         MailboxManagerTests.mailboxManager = mailboxManager
 
-        let token = ApiToken(accessToken: Env.token,
-                             expiresIn: Int.max,
-                             refreshToken: "",
-                             scope: "",
-                             tokenType: "",
-                             userId: Env.userId,
-                             expirationDate: Date(timeIntervalSinceNow: TimeInterval(Int.max)))
+         let token = ApiToken(accessToken: Env.token,
+                              expiresIn: Int.max,
+                              refreshToken: "",
+                              scope: "",
+                              tokenType: "",
+                              userId: Env.userId,
+                              expirationDate: Date(timeIntervalSinceNow: TimeInterval(Int.max)))
 
-        let apiFetcher = mailboxManager.apiFetcher
-        let fakeTokenDelegate = MCKTokenDelegate()
-        apiFetcher.setToken(token, delegate: fakeTokenDelegate)
-    }
+         let apiFetcher = mailboxManager.apiFetcher
+         let fakeTokenDelegate = MCKTokenDelegate()
+         apiFetcher.setToken(token, delegate: fakeTokenDelegate)
+     }
 
-    // MARK: Tests methods
+     // MARK: Tests methods
 
-    func testFolders() async throws {
-        try await MailboxManagerTests.mailboxManager.refreshAllFolders()
-    }
+     func testFolders() async throws {
+         try await MailboxManagerTests.mailboxManager.refreshAllFolders()
+     }
 
-    func testThreads() async throws {
-        let folders = try await MailboxManagerTests.mailboxManager.apiFetcher
-            .folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
-        try await MailboxManagerTests.mailboxManager.apiFetcher.threads(
-            mailbox: MailboxManagerTests.mailboxManager.mailbox,
-            folderId: folders[0].remoteId
-        )
-    }
+     func testThreads() async throws {
+         let folders = try await MailboxManagerTests.mailboxManager.apiFetcher
+             .folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
+         try await MailboxManagerTests.mailboxManager.apiFetcher.threads(
+             mailbox: MailboxManagerTests.mailboxManager.mailbox,
+             folderId: folders[0].remoteId
+         )
+     }
 
-    func testMessage() async throws {
-        let folders = try await MailboxManagerTests.mailboxManager.apiFetcher
-            .folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
-        let threadResult = try await MailboxManagerTests.mailboxManager.apiFetcher.threads(
-            mailbox: MailboxManagerTests.mailboxManager.mailbox,
-            folderId: folders[0].remoteId
-        )
-        try await MailboxManagerTests.mailboxManager.message(message: threadResult.threads![0].messages[0])
-    }
-}
-*/
+     func testMessage() async throws {
+         let folders = try await MailboxManagerTests.mailboxManager.apiFetcher
+             .folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
+         let threadResult = try await MailboxManagerTests.mailboxManager.apiFetcher.threads(
+             mailbox: MailboxManagerTests.mailboxManager.mailbox,
+             folderId: folders[0].remoteId
+         )
+         try await MailboxManagerTests.mailboxManager.message(message: threadResult.threads![0].messages[0])
+     }
+ }
+ */
