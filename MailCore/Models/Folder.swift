@@ -119,6 +119,10 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var cursor: String?
     @Persisted public var remainingOldMessagesToFetch = Constants.messageQuantityLimit
     @Persisted public var isHistoryComplete = false
+    /// List of old Messages UIDs of this Folder that we need to fetch.
+    /// When first opening the Folder, we get the full list of UIDs, and we store it.
+    /// Then, we'll be able to go through it as we want to fetch the old Messages.
+    @Persisted public var oldMessagesUidsToFetch: RealmSwift.List<Int>
     @Persisted public var isExpanded = true
 
     /// Date of last threads update
