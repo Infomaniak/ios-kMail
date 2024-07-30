@@ -20,6 +20,7 @@ import MailCore
 import SwiftUI
 
 struct ThreadCellBodyView: View, Equatable {
+    let email: String?
     let subject: String
     let preview: String
     let density: ThreadDensity
