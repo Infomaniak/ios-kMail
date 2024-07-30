@@ -33,6 +33,10 @@ struct ThreadCellBodyView: View, Equatable {
     var body: some View {
         VStack(alignment: .leading, spacing: UIPadding.verySmall) {
             if density == .compact {
+                if let email {
+                    ThreadCellTextView(text: "<\(email)>", type: .email)
+                }
+
                 HStack(spacing: UIPadding.verySmall) {
                     ThreadCellActionView(lastAction: lastAction)
                     ThreadCellTextView(text: subject, type: .subject)
@@ -40,6 +44,10 @@ struct ThreadCellBodyView: View, Equatable {
                     ThreadCellDetailsView(hasAttachments: hasAttachments, isFlagged: isFlagged)
                 }
             } else {
+                if let email {
+                    ThreadCellTextView(text: "<\(email)>", type: .email)
+                }
+
                 HStack(spacing: UIPadding.verySmall) {
                     ThreadCellActionView(lastAction: lastAction)
                     ThreadCellTextView(text: subject, type: .subject)
