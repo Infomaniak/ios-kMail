@@ -98,7 +98,7 @@ struct MailboxesManagementView: View {
                     HStack(spacing: UIPadding.regular) {
                         IKIcon(MailResourcesAsset.plusCircle, size: .large)
 
-                        Text(MailResourcesStrings.Localizable.buttonAddExistinglAddress)
+                        Text(MailResourcesStrings.Localizable.buttonAddExistingAddress)
                             .textStyle(.body)
                             .lineLimit(1)
                             .frame(maxWidth: .infinity, alignment: .leading)
