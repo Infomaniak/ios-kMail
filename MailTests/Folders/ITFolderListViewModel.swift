@@ -274,25 +274,38 @@ final class ITFolderListViewModelWorker: XCTestCase {
         MockingHelper.registerConcreteTypes(configuration: .minimal)
     }
 
-    /* FIXME: Flaky test
-     func testFilterAndSortFolders_noSearch() async {
-         // GIVEN
-         let folderGenerator = FolderStructureGenerator(maxDepth: 5, maxElementsPerLevel: 5)
-         let folderRealmResults = folderGenerator.inMemoryRealm.objects(Folder.self).freezeIfNeeded()
-         print("generated \(folderRealmResults.count) folders")
+    func testFilterAndSortFolders_noSearch() async {
+        // GIVEN
+        let folderGenerator = FolderStructureGenerator(maxDepth: 5, maxElementsPerLevel: 5)
+        let folderRealmResults = folderGenerator.inMemoryRealm.objects(Folder.self).freezeIfNeeded()
+        let expectedFoldersWithRole = folderGenerator.foldersWithRole.map { $0.freeze() }
+        let expectedFrozenFolders = folderGenerator.folders.map { $0.freeze() }
 
-         let worker = FolderListViewModelWorker()
+        print(
+            """
+            generated \(folderRealmResults.count) folders,
+            withRole \(expectedFoldersWithRole.count)
+            all \(expectedFrozenFolders.count)
+            """
+        )
 
-         // WHEN
-         let result = await worker.filterAndSortFolders(folderRealmResults, searchQuery: "")
+        let worker = FolderListViewModelWorker()
 
-         // THEN
-         XCTAssertGreaterThan(folderGenerator.foldersWithRole.count, 0)
-         XCTAssertGreaterThan(folderGenerator.folders.count, 0)
-         XCTAssertEqual(result.roleFolders.count, folderGenerator.foldersWithRole.count)
-         XCTAssertEqual(result.userFolders.count, folderGenerator.folders.count)
-     }
-     */
+        // WHEN
+        let result = await worker.filterAndSortFolders(folderRealmResults, searchQuery: "")
+
+        // THEN
+        XCTAssertGreaterThan(expectedFoldersWithRole.count, 0)
+        XCTAssertGreaterThan(expectedFrozenFolders.count, 0)
+        XCTAssertEqual(result.roleFolders.count,
+                       expectedFoldersWithRole.count,
+                       """
+                       expecting roleFolders count:\(expectedFoldersWithRole.count) got \(result.roleFolders.count)
+                       expectation: \(expectedFoldersWithRole)
+                       result: \(result.roleFolders)
+                       """)
+        XCTAssertEqual(result.userFolders.count, expectedFrozenFolders.count)
+    }
 
     func testFilterAndSortFolders_SearchRandomElement() async {
         // GIVEN
