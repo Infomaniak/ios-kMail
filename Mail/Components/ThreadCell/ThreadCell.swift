@@ -175,6 +175,7 @@ struct ThreadCell: View {
                 )
 
                 ThreadCellBodyView(
+                    email: thread.folder?.role == .spam ? dataHolder.recipientToDisplay?.email : nil,
                     subject: dataHolder.subject,
                     preview: dataHolder.preview,
                     density: density,
