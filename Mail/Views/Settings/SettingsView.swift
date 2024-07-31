@@ -211,6 +211,10 @@ struct SettingsView: View {
                     ) {
                         SettingsDataManagementView()
                     }
+
+                    SettingsSubMenuCell(
+                        title: MailResourcesStrings.Localizable.settingsAccountManagementTitle
+                    ) {}
                 }
             }
         }
