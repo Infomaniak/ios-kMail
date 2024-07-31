@@ -4,7 +4,7 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: elena willen
- * Exported at: Wed, 31 Jul 2024 11:16:40 +0200
+ * Exported at: Wed, 31 Jul 2024 15:28:16 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -314,7 +314,7 @@
 "buttonAddEmailAddress" = "Aggiungere un indirizzo e-mail";
 
 /* loco:66a9f94b98b834125d06aa46 */
-"buttonAddExistinglAddress" = "Aggiungere un indirizzo esistente";
+"buttonAddExistingAddress" = "Aggiungere un indirizzo esistente";
 
 /* loco:6437c062dd576a7631052413 */
 "buttonAttachMailbox" = "Aggiungi l’indirizzo e-mail";
@@ -1164,6 +1164,9 @@
 
 /* loco:62bb14784ae7d90af73a4c93 */
 "settingsAccentColorDescription" = "Scegliere il colore d’accento per l’applicazione";
+
+/* loco:66aa2edfd301963193056853 */
+"settingsAccountManagementTitle" = "Gestione dei conti";
 
 /* loco:65391d2584dd77c18b02f0e2 */
 "settingsAiEngineDescription" = "Selezionare l’assistente di scrittura";
