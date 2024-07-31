@@ -108,6 +108,7 @@ struct MailboxesManagementView: View {
                 }
                 .sheet(isPresented: $isShowingAddMailboxView) {
                     AddMailboxView()
+                        .sheetViewStyle()
                 }
             }
         }
