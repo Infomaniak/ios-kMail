@@ -88,6 +88,19 @@ struct MailboxesManagementView: View {
                 .task {
                     try? await updateAccount()
                 }
+
+                Button {} label: {
+                    HStack(spacing: UIPadding.regular) {
+                        IKIcon(MailResourcesAsset.plusCircle, size: .large)
+
+                        Text(MailResourcesStrings.Localizable.buttonAddExistinglAddress)
+                            .textStyle(.body)
+                            .lineLimit(1)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(UIPadding.menuDrawerCell)
+                }
             }
         }
         .onChange(of: mailboxManager.mailbox.id) { _ in
