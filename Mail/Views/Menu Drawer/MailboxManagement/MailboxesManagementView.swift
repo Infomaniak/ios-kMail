@@ -23,6 +23,7 @@ import MailCore
 import MailCoreUI
 import MailResources
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 
 struct MailboxesManagementView: View {
@@ -41,6 +42,8 @@ struct MailboxesManagementView: View {
         }(),
         sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
     ) private var mailboxes
+
+    @ModalState private var isShowingAddMailboxView = false
 
     private var hasOtherMailboxes: Bool {
         return !mailboxes.where {
@@ -89,7 +92,9 @@ struct MailboxesManagementView: View {
                     try? await updateAccount()
                 }
 
-                Button {} label: {
+                Button {
+                    isShowingAddMailboxView = true
+                } label: {
                     HStack(spacing: UIPadding.regular) {
                         IKIcon(MailResourcesAsset.plusCircle, size: .large)
 
@@ -100,6 +105,9 @@ struct MailboxesManagementView: View {
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(UIPadding.menuDrawerCell)
+                }
+                .sheet(isPresented: $isShowingAddMailboxView) {
+                    AddMailboxView()
                 }
             }
         }
