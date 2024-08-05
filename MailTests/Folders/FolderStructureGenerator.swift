@@ -16,8 +16,13 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// swiftlint:disable all
+// swiftformat:disable all
+
+
 import Foundation
-import InfomaniakCore
+@testable import InfomaniakCore
+@testable import InfomaniakCoreDB
 import InfomaniakLogin
 @testable import MailCore
 @testable import RealmSwift
@@ -25,42 +30,24 @@ import XCTest
 
 /// Like in vidja games, you can start form noise (random stuff) to build a world.
 /// So here I build a N dimensional array of [Folders] given random data
-public struct FolderStructureGenerator {
+public final class FolderStructureGenerator {
+    public let transactionable: TransactionExecutor
     public let maxDepth: Int
     public let maxElementsPerLevel: Int
 
     /// Folders structure generated at init. Added to `inMemoryRealm`
-    public var folders = [Folder]()
+    public var frozenFolders: [Folder] {
+        _frozenFolders
+    }
+
+    var _frozenFolders = [Folder]()
 
     /// Folders with a random Role. Added to `inMemoryRealm`
-    public var foldersWithRole = [Folder]()
-
-    var inMemoryRealm: Realm {
-        let identifier = "MockRealm"
-        let configuration = Realm.Configuration(inMemoryIdentifier: identifier, objectTypes: [
-            Folder.self,
-            Thread.self,
-            Message.self,
-            Body.self,
-            Attachment.self,
-            Recipient.self,
-            Draft.self,
-            Signature.self,
-            SearchHistory.self,
-            Bimi.self,
-            File.self,
-            Attendee.self,
-            SubBody.self,
-            CalendarEvent.self,
-            CalendarEventResponse.self,
-            SwissTransferAttachment.self
-        ])
-
-        // It's a unit test
-        // swiftlint:disable:next force_try
-        let realm = try! Realm(configuration: configuration)
-        return realm
+    public var frozenFoldersWithRole: [Folder]! {
+        _frozenFoldersWithRole
     }
+
+    var _frozenFoldersWithRole = [Folder]()
 
     /// Init of UTFoldableFolderGenerator
     /// - Parameters:
@@ -69,21 +56,34 @@ public struct FolderStructureGenerator {
     public init(maxDepth: Int, maxElementsPerLevel: Int) {
         assert(maxDepth >= 0, "maxDepth should be positive integer. Got:\(maxDepth)")
         assert(maxElementsPerLevel >= 0, "maxElementsPerLevel should be positive integer. Got:\(maxElementsPerLevel)")
-
+        
         self.maxDepth = maxDepth
         self.maxElementsPerLevel = maxElementsPerLevel
-
+        
+        let realmAccessor = InMemoryRealmAccessor()
+        
+        self.transactionable = TransactionExecutor(realmAccessible: realmAccessor)
+        
         // Building the depth of my array to be tested
         let randomDepth = (0 ..< maxElementsPerLevel).map { _ in Int.random(in: 0 ... maxDepth) }
-
+        
         // Start to populate it
-        folders = randomDepth.map {
-            folder(withChildren: buildBranch(depth: $0))
+        _frozenFolders = randomDepth.map { depth in
+            var folder: Folder!
+            try! transactionable.writeTransaction { writableRealm in
+                let childrenBranch = try! buildBranch(depth: depth, writableRealm: writableRealm)
+                folder = self.folder(withChildren: childrenBranch, writableRealm: writableRealm)
+            }
+            return folder.freezeIfNeeded()
         }
-
+        
         // Produce folders with a role
-        foldersWithRole = FolderRole.allCases.map { role in
-            folder(withChildren: [], role: role)
+        _frozenFoldersWithRole = FolderRole.allCases.map { role in
+            var folder: Folder!
+            try! transactionable.writeTransaction { writableRealm in
+                folder = self.folder(withChildren: [], role: role, writableRealm: writableRealm)
+            }
+            return folder.freeze()
         }
     }
 
@@ -123,7 +123,7 @@ public struct FolderStructureGenerator {
     ]
 
     /// Recursively builds a branch of Folders
-    func buildBranch(depth: Int) -> [Folder] {
+    func buildBranch(depth: Int, writableRealm: Realm) throws -> [Folder] {
         guard depth > 0 else {
             return []
         }
@@ -132,14 +132,18 @@ public struct FolderStructureGenerator {
         for _ in 0 ..< elementsCountForDepth {
             let nextDepth = depth - 1
             if nextDepth > 0 {
-                let subBranch = folder(withChildren: buildBranch(depth: nextDepth))
+                let childrenBranch = try buildBranch(depth: nextDepth, writableRealm: writableRealm)
+                let subBranch = folder(withChildren: childrenBranch, writableRealm: writableRealm)
                 buffer.append(subBranch)
             }
         }
+        
         return buffer
     }
 
-    private func folder(withChildren children: [Folder], role: FolderRole? = nil) -> Folder {
+    private func folder(withChildren children: [Folder],
+                               role: FolderRole? = nil,
+                               writableRealm: Realm) -> Folder {
         let folder = Folder(remoteId: randomID,
                             path: randomPath,
                             name: randomWord,
@@ -147,11 +151,7 @@ public struct FolderStructureGenerator {
                             isFavorite: randomFavorite,
                             separator: "some",
                             children: children)
-        // It's a unit test
-        // swiftlint:disable:next force_try
-        try! inMemoryRealm.write {
-            inMemoryRealm.add(folder, update: .modified)
-        }
+        writableRealm.add(folder, update: .modified)
         return folder
     }
 
@@ -173,5 +173,48 @@ public struct FolderStructureGenerator {
 
     var randomFavorite: Bool {
         Bool.random()
+    }
+
+    deinit {
+        try? transactionable.writeTransaction { writableRealm in
+            writableRealm.deleteAll()
+        }
+    }
+
+}
+
+/// Something to access the in memory realm
+final class InMemoryRealmAccessor: RealmAccessible {
+    let inMemoryRealm: Realm  = {
+        let identifier = "MockRealm-\(UUID().uuidString)"
+        let configuration = Realm.Configuration(inMemoryIdentifier: identifier, objectTypes: [
+            Folder.self,
+            Thread.self,
+            Message.self,
+            Body.self,
+            Attachment.self,
+            Recipient.self,
+            Draft.self,
+            Signature.self,
+            SearchHistory.self,
+            Bimi.self,
+            File.self,
+            Attendee.self,
+            SubBody.self,
+            CalendarEvent.self,
+            CalendarEventResponse.self,
+            SwissTransferAttachment.self
+        ])
+
+        // It's a unit test
+        // swiftlint:disable:next force_try
+        let realm = try! Realm(configuration: configuration)
+        return realm
+    }()
+    
+    // MARK: RealmAccessible
+
+    func getRealm() -> RealmSwift.Realm {
+        inMemoryRealm
     }
 }

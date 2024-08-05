@@ -71,13 +71,13 @@ final class MCKMailboxManageable_SearchViewModel: MailboxManageable, MCKTransact
     }
 
     var contactManager: MailCore.ContactManageable {
-        MCKContactManageable_FolderListViewModel(realmConfiguration: realmConfiguration)
+        MCKContactManageable_FolderListViewModel(transactionExecutor: transactionExecutor)
     }
 
     func refreshAllFolders() async throws {}
 
     func getFolder(with role: MailCore.FolderRole) -> MailCore.Folder? {
-        folderGenerator.foldersWithRole.first { folder in
+        folderGenerator.frozenFoldersWithRole.first { folder in
             guard let folderRole = folder.role else {
                 return false
             }
@@ -87,7 +87,7 @@ final class MCKMailboxManageable_SearchViewModel: MailboxManageable, MCKTransact
     }
 
     func getFrozenFolders(using realm: RealmSwift.Realm?) -> [MailCore.Folder] {
-        folderGenerator.folders
+        folderGenerator.frozenFolders
     }
 
     func createFolder(name: String, parent: MailCore.Folder?) async throws -> MailCore.Folder {
