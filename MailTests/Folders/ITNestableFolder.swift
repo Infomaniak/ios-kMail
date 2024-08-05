@@ -71,7 +71,7 @@ final class ITNestableFolder: XCTestCase {
     func testFlatFolderStructureCorrectness() {
         // GIVEN
         let arrayShapeTester = ArrayShapeCompare()
-        let folderStructure = FolderStructureGenerator(maxDepth: maxDepth, maxElementsPerLevel: maxElementsPerLevel).folders
+        let folderStructure = FolderStructureGenerator(maxDepth: maxDepth, maxElementsPerLevel: maxElementsPerLevel).frozenFolders
 
         // WHEN
         let nestedFolders = NestableFolder.createFoldersHierarchy(from: folderStructure)

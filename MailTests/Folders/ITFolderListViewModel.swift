@@ -27,15 +27,11 @@ import InfomaniakLogin
 import XCTest
 
 struct MCKContactManageable_FolderListViewModel: ContactManageable, MCKTransactionablePassthrough {
-    var transactionExecutor: Transactionable!
-
-    var realmConfiguration: RealmSwift.Realm.Configuration
-
-    init(realmConfiguration: RealmSwift.Realm.Configuration) {
-        self.realmConfiguration = realmConfiguration
-        let realmAccessor = MailCoreRealmAccessor(realmConfiguration: realmConfiguration)
-        transactionExecutor = TransactionExecutor(realmAccessible: realmAccessor)
+    var realmConfiguration: RealmSwift.Realm.Configuration {
+        fatalError("Unexpected")
     }
+
+    let transactionExecutor: Transactionable!
 
     func frozenContacts(matching string: String, fetchLimit: Int?) -> any Collection<MailCore.MergedContact> { [] }
 
@@ -55,11 +51,11 @@ struct MCKContactManageable_FolderListViewModel: ContactManageable, MCKTransacti
 }
 
 /// A MailboxManageable used to test the FolderListViewModel
-struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransactionablePassthrough, RealmAccessible {
+struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransactionablePassthrough /* , RealmAccessible */ {
     let mailbox = Mailbox()
 
     var contactManager: MailCore.ContactManageable {
-        MCKContactManageable_FolderListViewModel(realmConfiguration: realmConfiguration)
+        MCKContactManageable_FolderListViewModel(transactionExecutor: transactionExecutor)
     }
 
     func refreshAllFolders() async throws {}
@@ -120,15 +116,9 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
 
     func addToSearchHistory(value: String) async {}
 
-    let realm: Realm
     var transactionExecutor: Transactionable!
-    init(realm: Realm) {
-        self.realm = realm
-        transactionExecutor = TransactionExecutor(realmAccessible: self)
-    }
-
-    func getRealm() -> Realm {
-        realm
+    init(transactionExecutor: Transactionable) {
+        self.transactionExecutor = transactionExecutor
     }
 
     func draftWithPendingAction() -> RealmSwift.Results<MailCore.Draft> {
@@ -191,7 +181,7 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
     }
 
     var realmConfiguration: RealmSwift.Realm.Configuration {
-        realm.configuration
+        fatalError("Unexpected")
     }
 
     func draft(messageUid: String) -> MailCore.Draft? { nil }
@@ -222,13 +212,15 @@ final class ITFolderListViewModel: XCTestCase {
         MockingHelper.registerConcreteTypes(configuration: .minimal)
     }
 
-    @MainActor func testInitAndFetchFromDB() {
+    @MainActor func testInitAndFetchFromDB() throws {
         // GIVEN
         let folderGenerator = FolderStructureGenerator(maxDepth: 5, maxElementsPerLevel: 5)
-        let folderRealmResults = folderGenerator.inMemoryRealm.objects(Folder.self).freezeIfNeeded()
-        print("generated \(folderRealmResults.count) folders")
 
-        let mailboxManager = MCKMailboxManageable_FolderListViewModel(realm: folderGenerator.inMemoryRealm)
+        let folderRealmResults = folderGenerator.transactionable.fetchResults(ofType: Folder.self) { partial in
+            partial
+        }.freezeIfNeeded()
+
+        let mailboxManager = MCKMailboxManageable_FolderListViewModel(transactionExecutor: folderGenerator.transactionable)
 
         let roleFolderExpectation = XCTestExpectation(description: "[roleFolders] should be updated.")
         let userFolderExpectation = XCTestExpectation(description: "[userFolders] should be updated.")
@@ -258,10 +250,10 @@ final class ITFolderListViewModel: XCTestCase {
         }.store(in: &cancellable)
 
         wait(for: asyncExpectations, timeout: 10.0)
-        XCTAssertGreaterThan(folderGenerator.foldersWithRole.count, 0)
-        XCTAssertGreaterThan(folderGenerator.folders.count, 0)
-        XCTAssertEqual(folderListViewModel.roleFolders.count, folderGenerator.foldersWithRole.count)
-        XCTAssertEqual(folderListViewModel.userFolders.count, folderGenerator.folders.count)
+        XCTAssertGreaterThan(folderGenerator.frozenFoldersWithRole.count, 0)
+        XCTAssertGreaterThan(folderGenerator.frozenFolders.count, 0)
+        XCTAssertEqual(folderListViewModel.roleFolders.count, folderGenerator.frozenFoldersWithRole.count)
+        XCTAssertEqual(folderListViewModel.userFolders.count, folderGenerator.frozenFolders.count)
     }
 }
 
@@ -274,20 +266,15 @@ final class ITFolderListViewModelWorker: XCTestCase {
         MockingHelper.registerConcreteTypes(configuration: .minimal)
     }
 
-    func testFilterAndSortFolders_noSearch() async {
+    func testFilterAndSortFolders_noSearch() async throws {
         // GIVEN
         let folderGenerator = FolderStructureGenerator(maxDepth: 5, maxElementsPerLevel: 5)
-        let folderRealmResults = folderGenerator.inMemoryRealm.objects(Folder.self).freezeIfNeeded()
-        let expectedFoldersWithRole = folderGenerator.foldersWithRole.map { $0.freeze() }
-        let expectedFrozenFolders = folderGenerator.folders.map { $0.freeze() }
+        let folderRealmResults = folderGenerator.transactionable.fetchResults(ofType: Folder.self) { partial in
+            partial
+        }.freezeIfNeeded()
 
-        print(
-            """
-            generated \(folderRealmResults.count) folders,
-            withRole \(expectedFoldersWithRole.count)
-            all \(expectedFrozenFolders.count)
-            """
-        )
+        let expectedFoldersWithRole = folderGenerator.frozenFoldersWithRole.map { $0.freeze() }
+        let expectedFrozenFolders = folderGenerator.frozenFolders.map { $0.freeze() }
 
         let worker = FolderListViewModelWorker()
 
@@ -307,10 +294,12 @@ final class ITFolderListViewModelWorker: XCTestCase {
         XCTAssertEqual(result.userFolders.count, expectedFrozenFolders.count)
     }
 
-    func testFilterAndSortFolders_SearchRandomElement() async {
+    func testFilterAndSortFolders_SearchRandomElement() async throws {
         // GIVEN
         let folderGenerator = FolderStructureGenerator(maxDepth: 5, maxElementsPerLevel: 5)
-        let folderRealmResults = folderGenerator.inMemoryRealm.objects(Folder.self).freezeIfNeeded()
+        let folderRealmResults = folderGenerator.transactionable.fetchResults(ofType: Folder.self) { partial in
+            partial
+        }.freezeIfNeeded()
         guard let randomFolder = folderRealmResults.randomElement() else {
             XCTFail("Unexpected")
             return
@@ -332,11 +321,13 @@ final class ITFolderListViewModelWorker: XCTestCase {
         XCTAssertEqual(matchingFolder.frozenContent.localizedName, randomFolder.localizedName, "We expect the names to match")
     }
 
-    func testFilterAndSortFolders_SearchNoMatch() async {
+    func testFilterAndSortFolders_SearchNoMatch() async throws {
         // GIVEN
         let searchString = "nope"
         let folderGenerator = FolderStructureGenerator(maxDepth: 5, maxElementsPerLevel: 5)
-        let folderRealmResults = folderGenerator.inMemoryRealm.objects(Folder.self).freezeIfNeeded()
+        let folderRealmResults = folderGenerator.transactionable.fetchResults(ofType: Folder.self) { partial in
+            partial
+        }.freezeIfNeeded()
         print("generated \(folderRealmResults.count) folders")
 
         XCTAssertFalse(FolderStructureGenerator.wordDictionary.contains(searchString), "We should not have a match")
