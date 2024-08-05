@@ -76,16 +76,13 @@ public extension MailboxManager {
         var messagesUids: MessagesUids
 
         if previousCursor == nil {
-            /// Get first page of uids
-            let messageUidsResult = try await apiFetcher.messagesUids(
-                mailboxUuid: mailbox.uuid,
-                folderId: folder.remoteId,
-                paginationInfo: nil
-            )
-            messagesUids = MessagesUids(
-                addedShortUids: messageUidsResult.messageShortUids,
-                cursor: messageUidsResult.cursor
-            )
+            if folder.messages.isEmpty {
+                try? writeTransaction { writableRealm in
+                    let freshFolder = folder.fresh(using: writableRealm)
+                    freshFolder?.resetHistoryInfo()
+                }
+            }
+            messagesUids = try await fetchOldMessagesUids(folder: folder)
         } else {
             /// Get delta from last cursor
             let messageDeltaResult = try await apiFetcher.messagesDelta(
@@ -115,9 +112,6 @@ public extension MailboxManager {
                 return
             }
 
-            if previousCursor == nil && messagesUids.addedShortUids.count < Constants.pageSize {
-                folder.completeHistoryInfo()
-            }
             if let newUnreadCount = messagesUids.folderUnreadCount {
                 folder.remoteUnreadCount = newUnreadCount
             }
@@ -143,7 +137,7 @@ public extension MailboxManager {
         if previousCursor != nil {
             /// We will now fetch new messages
             try await catchLostOffsetMessageError(folder: folder, isRetrying: isRetrying) {
-                while try await fetchOnePage(folder: folder, direction: .following) {
+                while try await fetchOneNewPage(folder: folder) {
                     guard !Task.isCancelled else { return }
                 }
             }
@@ -163,29 +157,55 @@ public extension MailboxManager {
             logError(.missingFolder)
             return
         }
+
         /// Fetch old messages until folder history is completed
-        var remainingOldMessagesToFetch = folderPrevious.remainingOldMessagesToFetch
-        while remainingOldMessagesToFetch > 0 {
+        var messagesToFetch = min(
+            folderPrevious.remainingOldMessagesToFetch,
+            folderPrevious.oldMessagesUidsToFetch.count
+        )
+        while messagesToFetch > 0 {
             guard !Task.isCancelled else { return }
 
-            if try await !fetchOnePage(folder: folder, direction: .previous) {
-                break
-            }
+            try await fetchOneOldPage(folder: folder)
 
-            remainingOldMessagesToFetch -= Constants.pageSize
+            messagesToFetch -= Constants.pageSize
         }
     }
 
-    /// This function will try to get following/previous page of MessagesUids of a folder.
+    /// This function get all the messages uids from the chosen folder
+    private func fetchOldMessagesUids(folder: Folder) async throws -> MessagesUids {
+        /// Get ALL uids
+        let messageUidsResult = try await apiFetcher.messagesUids(
+            mailboxUuid: mailbox.uuid,
+            folderId: folder.remoteId,
+            paginationInfo: nil,
+            shouldGetAll: true
+        )
+
+        try? writeTransaction { writableRealm in
+            guard let folder = folder.fresh(using: writableRealm) else {
+                self.logError(.missingFolder)
+                return
+            }
+
+            folder.oldMessagesUidsToFetch = messageUidsResult.messageShortUids.toRealmList()
+            folder.cursor = messageUidsResult.cursor
+        }
+
+        return MessagesUids(
+            addedShortUids: [],
+            cursor: messageUidsResult.cursor
+        )
+    }
+
+    /// This function will try to get following page of MessagesUids of a folder.
     /// It will try different offset in case the offset uid used doesn't exist anymore.
     /// - Parameters:
     ///   - folder: Given folder
     ///   - direction: Following or previous page to get
     ///   - backoffIndex: index used in case the offset of the last call doesn't exist
     /// - Returns: MessageUidsResult
-    func messageUidsWithBackOff(folder: Folder,
-                                direction: NewMessagesDirection? = nil,
-                                backoffIndex: Int = 0) async throws -> MessageUidsResult {
+    func messageUidsWithBackOff(folder: Folder, backoffIndex: Int = 0) async throws -> MessageUidsResult {
         let backoffSequence = [1, 1, 2, 8, 34, 144]
         guard backoffIndex < backoffSequence.count else {
             throw MailError.lostOffsetMessage
@@ -203,10 +223,7 @@ public extension MailboxManager {
                 return false
             }
 
-            if direction == .following {
-                return firstMessageShortUid > secondMessageShortUid
-            }
-            return firstMessageShortUid < secondMessageShortUid
+            return firstMessageShortUid > secondMessageShortUid
         }
 
         let backoffOffset = backoffSequence[backoffIndex] - 1
@@ -218,9 +235,8 @@ public extension MailboxManager {
         }
 
         if currentOffset >= 0,
-           let offset = sortedMessages[currentOffset].shortUid?.toString(),
-           let direction {
-            paginationInfo = PaginationInfo(offsetUid: offset, direction: direction)
+           let offset = sortedMessages[currentOffset].shortUid?.toString() {
+            paginationInfo = PaginationInfo(offsetUid: offset, direction: .following)
         }
 
         do {
@@ -232,23 +248,19 @@ public extension MailboxManager {
             return result
         } catch let error as MailError where error == MailApiError.apiMessageNotFound {
             try await Task.sleep(nanoseconds: UInt64(0.5 * Double(NSEC_PER_SEC)))
-            let result = try await messageUidsWithBackOff(
-                folder: folder,
-                direction: direction,
-                backoffIndex: backoffIndex + 1
-            )
+            let result = try await messageUidsWithBackOff(folder: folder, backoffIndex: backoffIndex + 1)
 
             return result
         }
     }
 
-    /// Fetch one page of message for a given folder
+    /// Following page
     /// - Parameters:
     ///   - folder: Given folder
     ///   - direction: Following or previous page to fetch
     /// - Returns: Returns if there are other pages to fetch
-    func fetchOnePage(folder: Folder, direction: NewMessagesDirection? = nil) async throws -> Bool {
-        let messageUidsResult = try await messageUidsWithBackOff(folder: folder, direction: direction)
+    func fetchOneNewPage(folder: Folder) async throws -> Bool {
+        let messageUidsResult = try await messageUidsWithBackOff(folder: folder)
 
         let messagesUids = MessagesUids(
             addedShortUids: messageUidsResult.messageShortUids,
@@ -256,34 +268,31 @@ public extension MailboxManager {
         )
 
         try await handleMessagesUids(messageUids: messagesUids, folder: folder)
-
-        switch direction {
-        case .previous:
-            var onePage = false
-            try? writeTransaction { writableRealm in
-                let freshFolder = folder.fresh(using: writableRealm)
-                if messagesUids.addedShortUids.count < Constants.pageSize || messagesUids.addedShortUids.contains("1") {
-                    freshFolder?.completeHistoryInfo()
-                    onePage = false
-                } else {
-                    freshFolder?.remainingOldMessagesToFetch -= Constants.pageSize
-                    onePage = true
-                }
-            }
-            return onePage
-        case .following:
-            break
-        case .none:
-            try? writeTransaction { writableRealm in
-                let freshFolder = folder.fresh(using: writableRealm)
-                freshFolder?.resetHistoryInfo()
-
-                if messagesUids.addedShortUids.count < Constants.pageSize {
-                    freshFolder?.completeHistoryInfo()
-                }
-            }
-        }
         return messagesUids.addedShortUids.count == Constants.pageSize
+    }
+
+    /// Previous page
+    /// - Parameters:
+    ///   - folder: Given folder
+    ///   - direction: Following or previous page to fetch
+    /// - Returns: Returns if there are other pages to fetch
+    func fetchOneOldPage(folder: Folder) async throws {
+        let nextUids: [String] = Array(folder.oldMessagesUidsToFetch[0 ..< Constants.pageSize])
+
+        if !nextUids.isEmpty {
+            let messagesUids = MessagesUids(
+                addedShortUids: nextUids,
+                cursor: folder.cursor ?? ""
+            )
+
+            try await handleMessagesUids(messageUids: messagesUids, folder: folder)
+        }
+
+        try? writeTransaction { writableRealm in
+            let freshFolder = folder.fresh(using: writableRealm)
+            freshFolder?.oldMessagesUidsToFetch.removeSubrange(0 ..< Constants.pageSize)
+            freshFolder?.remainingOldMessagesToFetch -= Constants.pageSize
+        }
     }
 
     // MARK: - Handle MessagesUids
@@ -593,8 +602,7 @@ public extension MailboxManager {
                 writableRealm.delete(folder.threads)
                 folder.lastUpdate = nil
                 folder.unreadCount = 0
-                folder.remainingOldMessagesToFetch = Constants.messageQuantityLimit
-                folder.isHistoryComplete = false
+                folder.resetHistoryInfo()
                 folder.cursor = nil
             }
             try await messages(folder: folder, isRetrying: true)

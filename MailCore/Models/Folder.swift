@@ -118,11 +118,10 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var toolType: ToolFolderType?
     @Persisted public var cursor: String?
     @Persisted public var remainingOldMessagesToFetch = Constants.messageQuantityLimit
-    @Persisted public var isHistoryComplete = false
     /// List of old Messages UIDs of this Folder that we need to fetch.
     /// When first opening the Folder, we get the full list of UIDs, and we store it.
     /// Then, we'll be able to go through it as we want to fetch the old Messages.
-    @Persisted public var oldMessagesUidsToFetch: RealmSwift.List<Int>
+    @Persisted public var oldMessagesUidsToFetch: RealmSwift.List<String>
     @Persisted public var isExpanded = true
 
     /// Date of last threads update
@@ -130,6 +129,10 @@ public class Folder: Object, Codable, Comparable, Identifiable {
 
     public var listChildren: AnyRealmCollection<Folder>? {
         children.isEmpty ? nil : AnyRealmCollection(children)
+    }
+
+    public var isHistoryComplete: Bool {
+        return oldMessagesUidsToFetch.isEmpty
     }
 
     public var parent: Folder? {
@@ -199,14 +202,9 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         unreadCount = threads.where { $0.unseenMessages > 0 }.count
     }
 
-    public func completeHistoryInfo() {
-        remainingOldMessagesToFetch = 0
-        isHistoryComplete = true
-    }
-
     public func resetHistoryInfo() {
         remainingOldMessagesToFetch = Constants.messageQuantityLimit
-        isHistoryComplete = false
+        oldMessagesUidsToFetch.removeAll()
     }
 
     public func resetFolder() {
