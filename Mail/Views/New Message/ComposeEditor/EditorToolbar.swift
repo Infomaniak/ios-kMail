@@ -145,7 +145,7 @@ enum EditorToolbarAction: Int {
         case .takePhoto:
             return MailResourcesStrings.Localizable.buttonCamera
         case .link:
-            return MailResourcesStrings.Localizable.buttonLink
+            return MailResourcesStrings.Localizable.buttonHyperlink
         case .programMessage:
             return MailResourcesStrings.Localizable.buttonSchedule
         }
