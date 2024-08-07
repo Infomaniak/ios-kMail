@@ -64,8 +64,15 @@ public extension MailboxManager {
     func messages(folder: Folder, isRetrying: Bool = false) async throws {
         guard !Task.isCancelled else { return }
 
-        let freshFolder = folder.fresh(transactionable: self)
-        let previousCursor = freshFolder?.cursor
+        let liveFolder = folder.fresh(transactionable: self)
+        if let liveFolder, liveFolder.messages.isEmpty {
+            try? writeTransaction { writableRealm in
+                let freshFolder = folder.fresh(using: writableRealm)
+                freshFolder?.resetFolder()
+            }
+        }
+
+        let previousCursor = liveFolder?.cursor
         var messagesUids: MessagesUids
 
         if previousCursor == nil {

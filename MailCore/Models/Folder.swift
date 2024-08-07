@@ -205,6 +205,11 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         isHistoryComplete = false
     }
 
+    public func resetFolder() {
+        cursor = nil
+        resetHistoryInfo()
+    }
+
     public func isParent(of folder: Folder) -> Bool {
         let myComponents = path.components(separatedBy: separator)
         let folderComponents = folder.path.components(separatedBy: separator)
