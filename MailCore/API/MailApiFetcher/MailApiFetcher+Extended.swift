@@ -73,30 +73,38 @@ public extension MailApiFetcher {
     }
 
     @discardableResult
-    func markAsSeen(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
-        try await perform(request: authenticatedRequest(.messageSeen(uuid: mailbox.uuid),
-                                                        method: .post,
-                                                        parameters: ["uids": messages.map(\.uid)]))
+    func markAsSeen(mailbox: Mailbox, messages: [Message]) async throws -> [MessageActionResult] {
+        try await batchOver(values: messages.map(\.uid), limit: 1000) { chunk in
+            try await self.perform(request: self.authenticatedRequest(.messageSeen(uuid: mailbox.uuid),
+                                                                      method: .post,
+                                                                      parameters: ["uids": chunk]))
+        }
     }
 
     @discardableResult
-    func markAsUnseen(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
-        try await perform(request: authenticatedRequest(.messageUnseen(uuid: mailbox.uuid),
-                                                        method: .post,
-                                                        parameters: ["uids": messages.map(\.uid)]))
+    func markAsUnseen(mailbox: Mailbox, messages: [Message]) async throws -> [MessageActionResult] {
+        try await batchOver(values: messages.map(\.uid), limit: 1000) { chunk in
+            try await self.perform(request: self.authenticatedRequest(.messageUnseen(uuid: mailbox.uuid),
+                                                                      method: .post,
+                                                                      parameters: ["uids": chunk]))
+        }
     }
 
-    func move(mailbox: Mailbox, messages: [Message], destinationId: String) async throws -> UndoResponse {
-        try await perform(request: authenticatedRequest(.moveMessages(uuid: mailbox.uuid),
-                                                        method: .post,
-                                                        parameters: ["uids": messages.map(\.uid), "to": destinationId]))
+    func move(mailbox: Mailbox, messages: [Message], destinationId: String) async throws -> [UndoResponse] {
+        try await batchOver(values: messages.map(\.uid), limit: 1000) { chunk in
+            try await self.perform(request: self.authenticatedRequest(.moveMessages(uuid: mailbox.uuid),
+                                                                      method: .post,
+                                                                      parameters: ["uids": chunk, "to": destinationId]))
+        }
     }
 
     @discardableResult
-    func delete(mailbox: Mailbox, messages: [Message]) async throws -> Empty {
-        try await perform(request: authenticatedRequest(.deleteMessages(uuid: mailbox.uuid),
-                                                        method: .post,
-                                                        parameters: ["uids": messages.map(\.uid)]))
+    func delete(mailbox: Mailbox, messages: [Message]) async throws -> [Empty] {
+        try await batchOver(values: messages.map(\.uid), limit: 1000) { chunk in
+            try await self.perform(request: self.authenticatedRequest(.deleteMessages(uuid: mailbox.uuid),
+                                                                      method: .post,
+                                                                      parameters: ["uids": chunk]))
+        }
     }
 
     func messagesUids(

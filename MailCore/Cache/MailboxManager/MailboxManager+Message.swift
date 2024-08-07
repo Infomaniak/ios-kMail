@@ -127,34 +127,35 @@ public extension MailboxManager {
 
         do {
             if starred {
-                _ = try await star(messages: messages)
+                try await star(messages: messages)
             } else {
-                _ = try await unstar(messages: messages)
+                try await unstar(messages: messages)
             }
         } catch {
             await updateLocally(.star, value: !starred, messages: messages)
         }
     }
 
-    private func star(messages: [Message]) async throws -> MessageActionResult {
-        let response = try await apiFetcher.star(mailbox: mailbox, messages: messages)
+    private func star(messages: [Message]) async throws {
+        _ = try await apiFetcher.star(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages, additionalFolder: nil)
-        return response
     }
 
-    private func unstar(messages: [Message]) async throws -> MessageActionResult {
-        let response = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
+    private func unstar(messages: [Message]) async throws {
+        _ = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages, additionalFolder: nil)
-        return response
     }
 
-    private func undoAction(for cancellableResponse: UndoResponse, and messages: [Message]) -> UndoAction {
+    private func undoAction(for cancellableResponses: [UndoResponse], and messages: [Message]) -> UndoAction {
         let afterUndo = {
             try await self.refreshFolder(from: messages, additionalFolder: nil)
             return true
         }
         let undo = {
-            try await self.apiFetcher.undoAction(resource: cancellableResponse.undoResource)
+            let results = try await cancellableResponses.asyncMap { cancellableResponse in
+                try await self.apiFetcher.undoAction(resource: cancellableResponse.undoResource)
+            }
+            return !results.contains { $0 == false }
         }
         return UndoAction(undo: undo, afterUndo: afterUndo)
     }

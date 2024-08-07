@@ -110,16 +110,20 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(.resource(resource), method: .post))
     }
 
-    func star(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
-        try await perform(request: authenticatedRequest(.star(uuid: mailbox.uuid),
-                                                        method: .post,
-                                                        parameters: ["uids": messages.map(\.uid)]))
+    func star(mailbox: Mailbox, messages: [Message]) async throws -> [MessageActionResult] {
+        try await batchOver(values: messages.map(\.uid), limit: 1000) { chunk in
+            try await self.perform(request: self.authenticatedRequest(.star(uuid: mailbox.uuid),
+                                                                      method: .post,
+                                                                      parameters: ["uids": chunk]))
+        }
     }
 
-    func unstar(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
-        try await perform(request: authenticatedRequest(.unstar(uuid: mailbox.uuid),
-                                                        method: .post,
-                                                        parameters: ["uids": messages.map(\.uid)]))
+    func unstar(mailbox: Mailbox, messages: [Message]) async throws -> [MessageActionResult] {
+        try await batchOver(values: messages.map(\.uid), limit: 1000) { chunk in
+            try await self.perform(request: self.authenticatedRequest(.unstar(uuid: mailbox.uuid),
+                                                                      method: .post,
+                                                                      parameters: ["uids": chunk]))
+        }
     }
 
     @discardableResult

@@ -54,9 +54,9 @@ public protocol MailApiCommonFetchable {
 
     func undoAction(resource: String) async throws -> Bool
 
-    func star(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult
+    func star(mailbox: Mailbox, messages: [Message]) async throws -> [MessageActionResult]
 
-    func unstar(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult
+    func unstar(mailbox: Mailbox, messages: [Message]) async throws -> [MessageActionResult]
 
     func downloadAttachments(message: Message) async throws -> URL
 
@@ -106,13 +106,13 @@ public protocol MailApiExtendedFetchable {
 
     func message(message: Message) async throws -> Message
 
-    func markAsSeen(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult
+    func markAsSeen(mailbox: Mailbox, messages: [Message]) async throws -> [MessageActionResult]
 
-    func markAsUnseen(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult
+    func markAsUnseen(mailbox: Mailbox, messages: [Message]) async throws -> [MessageActionResult]
 
-    func move(mailbox: Mailbox, messages: [Message], destinationId: String) async throws -> UndoResponse
+    func move(mailbox: Mailbox, messages: [Message], destinationId: String) async throws -> [UndoResponse]
 
-    func delete(mailbox: Mailbox, messages: [Message]) async throws -> Empty
+    func delete(mailbox: Mailbox, messages: [Message]) async throws -> [Empty]
 
     func attachment(attachment: Attachment) async throws -> Data
 
