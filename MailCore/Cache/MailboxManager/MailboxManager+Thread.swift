@@ -76,12 +76,6 @@ public extension MailboxManager {
         var messagesUids: MessagesUids
 
         if previousCursor == nil {
-            if folder.messages.isEmpty {
-                try? writeTransaction { writableRealm in
-                    let freshFolder = folder.fresh(using: writableRealm)
-                    freshFolder?.resetHistoryInfo()
-                }
-            }
             messagesUids = try await fetchOldMessagesUids(folder: folder)
         } else {
             /// Get delta from last cursor
