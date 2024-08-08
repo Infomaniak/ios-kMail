@@ -79,13 +79,24 @@ public extension MailboxManager {
         }
     }
 
-    func move(messages: [Message], to folderRole: FolderRole) async throws -> UndoAction {
+    func move(messages: [Message], to folderRole: FolderRole, origin: Folder? = nil) async throws -> UndoAction {
         guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
-        return try await move(messages: messages, to: folder)
+        return try await move(messages: messages, to: folder, origin: origin)
     }
 
-    func move(messages: [Message], to folder: Folder) async throws -> UndoAction {
-        let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder.remoteId)
+    func move(messages: [Message], to folder: Folder, origin: Folder? = nil) async throws -> UndoAction {
+        let originalThreads = messages.flatMap { $0.threads.filter { $0.folder == origin } }
+        await markMovedLocally(true, threads: originalThreads)
+
+        let response = await apiFetcher.batchOver(values: messages, limit: 1000) { chunk in
+            do {
+                return try await self.apiFetcher.move(mailbox: self.mailbox, messages: chunk, destinationId: folder.remoteId)
+            } catch {
+                await self.markMovedLocally(false, threads: originalThreads)
+            }
+            return nil
+        }
+
         Task {
             try await refreshFolder(from: messages, additionalFolder: folder)
         }

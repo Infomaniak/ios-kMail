@@ -44,8 +44,8 @@ public protocol MailboxManagerMessageable {
     func attachmentData(_ attachment: Attachment) async throws -> Data
     func saveAttachmentLocally(attachment: Attachment) async
     func markAsSeen(message: Message, seen: Bool) async throws
-    func move(messages: [Message], to folderRole: FolderRole) async throws -> UndoAction
-    func move(messages: [Message], to folder: Folder) async throws -> UndoAction
+    func move(messages: [Message], to folderRole: FolderRole, origin: Folder?) async throws -> UndoAction
+    func move(messages: [Message], to folder: Folder, origin: Folder?) async throws -> UndoAction
     func delete(messages: [Message]) async throws
 }
 

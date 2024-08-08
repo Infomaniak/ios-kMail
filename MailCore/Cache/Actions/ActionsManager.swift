@@ -197,15 +197,10 @@ public class ActionsManager: ObservableObject {
     }
 
     private func performMove(messages: [Message], from originFolder: Folder?, to folderRole: FolderRole) async throws {
-        let originalThreads = messages.flatMap { $0.threads.filter { $0.folder == originFolder } }
-        await mailboxManager.markMovedLocally(true, threads: originalThreads)
-
         let moveTask = Task {
             do {
-                let undoAction = try await mailboxManager.move(messages: messages, to: folderRole)
-                return undoAction
+                return try await mailboxManager.move(messages: messages, to: folderRole, origin: originFolder)
             } catch {
-                await mailboxManager.markMovedLocally(false, threads: originalThreads)
                 throw error
             }
         }
@@ -224,15 +219,14 @@ public class ActionsManager: ObservableObject {
     public func performMove(messages: [Message], from originFolder: Folder?, to destinationFolder: Folder) async throws {
         let messagesFromFolder = messages.fromFolderOrSearch(originFolder: originFolder)
 
-        let originalThreads = messagesFromFolder.flatMap { $0.threads.filter { $0.folder == originFolder } }
-        await mailboxManager.markMovedLocally(true, threads: originalThreads)
-
         let moveTask = Task {
             do {
-                let undoAction = try await mailboxManager.move(messages: messagesFromFolder, to: destinationFolder)
-                return undoAction
+                return try await mailboxManager.move(
+                    messages: messagesFromFolder,
+                    to: destinationFolder,
+                    origin: originFolder
+                )
             } catch {
-                await mailboxManager.markMovedLocally(false, threads: originalThreads)
                 throw error
             }
         }
