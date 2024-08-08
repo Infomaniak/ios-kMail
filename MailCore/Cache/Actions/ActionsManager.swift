@@ -200,8 +200,6 @@ public class ActionsManager: ObservableObject {
         let moveTask = Task {
             do {
                 return try await mailboxManager.move(messages: messages, to: folderRole, origin: originFolder)
-            } catch {
-                throw error
             }
         }
 
@@ -226,8 +224,6 @@ public class ActionsManager: ObservableObject {
                     to: destinationFolder,
                     origin: originFolder
                 )
-            } catch {
-                throw error
             }
         }
 
