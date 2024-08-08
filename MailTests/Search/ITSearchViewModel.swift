@@ -187,11 +187,12 @@ final class MCKMailboxManageable_SearchViewModel: MailboxManageable, MCKTransact
 
     func markAsSeen(message: MailCore.Message, seen: Bool) async throws {}
 
-    func move(messages: [MailCore.Message], to folderRole: MailCore.FolderRole) async throws -> MailCore.UndoAction {
+    func move(messages: [MailCore.Message], to folderRole: MailCore.FolderRole, origin: Folder?) async throws -> MailCore
+        .UndoAction {
         fatalError("Unexpected")
     }
 
-    func move(messages: [MailCore.Message], to folder: MailCore.Folder) async throws -> MailCore.UndoAction {
+    func move(messages: [MailCore.Message], to folder: MailCore.Folder, origin: Folder?) async throws -> MailCore.UndoAction {
         fatalError("Unexpected")
     }
 
