@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/johnpatrickmorgan/NavigationBackport",
       "state" : {
-        "revision" : "1487a52298c92c69309c042f7d6c9ead518845d5",
-        "version" : "0.9.3"
+        "revision" : "d1759195a9be9f182b105b1ccaceff573218af6f",
+        "version" : "0.9.4"
       }
     },
     {
@@ -194,8 +194,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "7339fcbab2ded21fe5753687022f2b673a1a1865",
-        "version" : "8.31.1"
+        "revision" : "f8d9bc344a052a26f51c8cecec93724b871ef36b",
+        "version" : "8.33.0"
       }
     },
     {
@@ -275,8 +275,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/swift-rich-html-editor.git",
       "state" : {
-        "revision" : "0d8f02c669f2a787596e1b84be6f1e172ef5694e",
-        "version" : "1.1.1"
+        "revision" : "eba94eddbb0a0e57ee78227ef790e7ecc02148ce",
+        "version" : "1.2.0"
       }
     },
     {
@@ -284,8 +284,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-syntax",
       "state" : {
-        "revision" : "303e5c5c36d6a558407d364878df131c3546fad8",
-        "version" : "510.0.2"
+        "revision" : "2bc86522d115234d1f588efe2bcb4ce4be8f8b82",
+        "version" : "510.0.3"
       }
     },
     {
