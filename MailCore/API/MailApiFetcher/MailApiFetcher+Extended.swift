@@ -73,21 +73,17 @@ public extension MailApiFetcher {
     }
 
     @discardableResult
-    func markAsSeen(mailbox: Mailbox, messages: [Message]) async throws -> [MessageActionResult] {
-        try await batchOver(values: messages.map(\.uid), limit: 1000) { chunk in
-            try await self.perform(request: self.authenticatedRequest(.messageSeen(uuid: mailbox.uuid),
-                                                                      method: .post,
-                                                                      parameters: ["uids": chunk]))
-        }
+    func markAsSeen(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
+        try await perform(request: authenticatedRequest(.messageSeen(uuid: mailbox.uuid),
+                                                        method: .post,
+                                                        parameters: ["uids": messages.map(\.uid)]))
     }
 
     @discardableResult
-    func markAsUnseen(mailbox: Mailbox, messages: [Message]) async throws -> [MessageActionResult] {
-        try await batchOver(values: messages.map(\.uid), limit: 1000) { chunk in
-            try await self.perform(request: self.authenticatedRequest(.messageUnseen(uuid: mailbox.uuid),
-                                                                      method: .post,
-                                                                      parameters: ["uids": chunk]))
-        }
+    func markAsUnseen(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
+        try await perform(request: authenticatedRequest(.messageUnseen(uuid: mailbox.uuid),
+                                                        method: .post,
+                                                        parameters: ["uids": messages.map(\.uid)]))
     }
 
     func move(mailbox: Mailbox, messages: [Message], destinationId: String) async throws -> [UndoResponse] {
