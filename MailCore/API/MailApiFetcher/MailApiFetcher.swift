@@ -96,7 +96,7 @@ public final class MailApiFetcher: ApiFetcher, MailApiFetchable {
     ///   - perform: Request to perform
     /// - Returns: Array of the perform return type
     func batchOver<Input, Output>(values: [Input], limit: Int,
-                                  perform: @escaping ([Input]) async throws -> Output) async throws -> [Output] {
+                                  perform: @escaping ([Input]) async throws -> Output) async rethrows -> [Output] {
         let chunks = values.chunks(ofCount: limit)
         return try await chunks.asyncMap { chunk in
             try await perform(Array(chunk))

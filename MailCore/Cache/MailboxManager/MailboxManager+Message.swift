@@ -104,14 +104,22 @@ public extension MailboxManager {
     func markAsSeen(messages: [Message], seen: Bool) async throws {
         await updateLocally(.seen, value: seen, messages: messages)
 
-        do {
-            if seen {
-                try await apiFetcher.markAsSeen(mailbox: mailbox, messages: messages)
-            } else {
-                try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
+        if seen {
+            _ = await apiFetcher.batchOver(values: messages, limit: 3) { chunk in
+                do {
+                    try await self.apiFetcher.markAsSeen(mailbox: self.mailbox, messages: chunk)
+                } catch {
+                    await self.updateLocally(.seen, value: !seen, messages: chunk)
+                }
             }
-        } catch {
-            await updateLocally(.seen, value: !seen, messages: messages)
+        } else {
+            _ = await apiFetcher.batchOver(values: messages, limit: 3) { chunk in
+                do {
+                    try await self.apiFetcher.markAsUnseen(mailbox: self.mailbox, messages: chunk)
+                } catch {
+                    await self.updateLocally(.seen, value: !seen, messages: chunk)
+                }
+            }
         }
 
         try await refreshFolder(from: messages, additionalFolder: nil)
@@ -125,24 +133,24 @@ public extension MailboxManager {
     func star(messages: [Message], starred: Bool) async throws {
         await updateLocally(.star, value: starred, messages: messages)
 
-        do {
-            if starred {
-                try await star(messages: messages)
-            } else {
-                try await unstar(messages: messages)
+        if starred {
+            _ = await apiFetcher.batchOver(values: messages, limit: 1000) { chunk in
+                do {
+                    _ = try await self.apiFetcher.star(mailbox: self.mailbox, messages: chunk)
+                } catch {
+                    await self.updateLocally(.star, value: !starred, messages: chunk)
+                }
             }
-        } catch {
-            await updateLocally(.star, value: !starred, messages: messages)
+        } else {
+            _ = await apiFetcher.batchOver(values: messages, limit: 1000) { chunk in
+                do {
+                    _ = try await self.apiFetcher.unstar(mailbox: self.mailbox, messages: chunk)
+                } catch {
+                    await self.updateLocally(.star, value: !starred, messages: chunk)
+                }
+            }
         }
-    }
 
-    private func star(messages: [Message]) async throws {
-        _ = try await apiFetcher.star(mailbox: mailbox, messages: messages)
-        try await refreshFolder(from: messages, additionalFolder: nil)
-    }
-
-    private func unstar(messages: [Message]) async throws {
-        _ = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages, additionalFolder: nil)
     }
 
