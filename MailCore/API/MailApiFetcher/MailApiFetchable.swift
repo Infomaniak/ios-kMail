@@ -96,10 +96,7 @@ public protocol MailApiExtendedFetchable {
 
     func flushFolder(mailbox: Mailbox, folderId: String) async throws -> Bool
 
-    func messagesUids(mailboxUuid: String,
-                      folderId: String,
-                      paginationInfo: PaginationInfo?,
-                      shouldGetAll: Bool) async throws -> MessageUidsResult
+    func messagesUids(mailboxUuid: String, folderId: String) async throws -> MessageUidsResult
 
     func messagesByUids(mailboxUuid: String, folderId: String, messageUids: [String]) async throws -> MessageByUidsResult
 

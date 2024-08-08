@@ -50,16 +50,6 @@ public extension String {
     }
 }
 
-public enum NewMessagesDirection: String {
-    case previous
-    case following
-}
-
-public struct PaginationInfo {
-    let offsetUid: String
-    let direction: NewMessagesDirection
-}
-
 /// Class used to get a page of shortUids
 public final class MessageUidsResult: Decodable {
     public let messageShortUids: [String]

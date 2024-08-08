@@ -104,18 +104,8 @@ public extension MailApiFetcher {
         }
     }
 
-    func messagesUids(
-        mailboxUuid: String,
-        folderId: String,
-        paginationInfo: PaginationInfo? = nil,
-        shouldGetAll: Bool = false
-    ) async throws -> MessageUidsResult {
-        try await perform(request: authenticatedRequest(.messagesUids(
-            mailboxUuid: mailboxUuid,
-            folderId: folderId,
-            shouldGetAll: shouldGetAll,
-            paginationInfo: paginationInfo
-        )))
+    func messagesUids(mailboxUuid: String, folderId: String) async throws -> MessageUidsResult {
+        try await perform(request: authenticatedRequest(.messagesUids(mailboxUuid: mailboxUuid, folderId: folderId)))
     }
 
     func messagesByUids(mailboxUuid: String, folderId: String, messageUids: [String]) async throws -> MessageByUidsResult {

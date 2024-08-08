@@ -159,19 +159,10 @@ public extension Endpoint {
         )
     }
 
-    static func messagesUids(mailboxUuid: String, folderId: String, shouldGetAll: Bool,
-                             paginationInfo: PaginationInfo?) -> Endpoint {
+    static func messagesUids(mailboxUuid: String, folderId: String) -> Endpoint {
         var queryItems = [URLQueryItem]()
-        if shouldGetAll {
-            queryItems.append(URLQueryItem(name: "messages", value: Constants.numberOfOldUidsToFetch.toString()))
-            queryItems.append(URLQueryItem(name: "order_by", value: "date_desc"))
-        } else {
-            queryItems.append(URLQueryItem(name: "messages", value: Constants.pageSize.toString()))
-            if let paginationInfo {
-                queryItems.append(URLQueryItem(name: "uid_offset", value: paginationInfo.offsetUid))
-                queryItems.append(URLQueryItem(name: "direction", value: paginationInfo.direction.rawValue))
-            }
-        }
+        queryItems.append(URLQueryItem(name: "messages", value: Constants.numberOfOldUidsToFetch.toString()))
+        queryItems.append(URLQueryItem(name: "order_by", value: "date_desc"))
 
         let endpoint = Endpoint(hostKeypath: \.preprodHost, path: "/api/mail/\(mailboxUuid)/folder/\(folderId)/mobile")
         return endpoint.appending(path: "/messages-uids", queryItems: queryItems)
