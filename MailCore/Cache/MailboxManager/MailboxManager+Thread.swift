@@ -65,18 +65,12 @@ public extension MailboxManager {
         guard !Task.isCancelled else { return }
 
         let liveFolder = folder.fresh(transactionable: self)
-        if let liveFolder, liveFolder.messages.isEmpty {
-            try? writeTransaction { writableRealm in
-                let freshFolder = folder.fresh(using: writableRealm)
-                freshFolder?.resetFolder()
-            }
-        }
-
         let previousCursor = liveFolder?.cursor
+        var newCursor: String
         var messagesUids: MessagesUids
 
         if previousCursor == nil {
-            messagesUids = try await fetchOldMessagesUids(folder: folder)
+            newCursor = try await fetchOldMessagesUids(folder: folder)
         } else {
             /// Get delta from last cursor
             let messageDeltaResult = try await apiFetcher.messagesDelta(
@@ -84,19 +78,19 @@ public extension MailboxManager {
                 folderId: folder.remoteId,
                 signature: previousCursor!
             )
-            /// WARNING:
-            /// We're not adding addedShortUids because newMessage will be fetched later in the function
+
             messagesUids = MessagesUids(
-                addedShortUids: [],
+                addedShortUids: messageDeltaResult.addedShortUids,
                 deletedUids: messageDeltaResult.deletedShortUids
                     .map { Constants.longUid(from: $0, folderId: folder.remoteId) },
                 updated: messageDeltaResult.updated,
                 cursor: messageDeltaResult.cursor,
                 folderUnreadCount: messageDeltaResult.unreadCount
             )
-        }
 
-        try await handleMessagesUids(messageUids: messagesUids, folder: folder)
+            newCursor = messageDeltaResult.cursor
+            try await handleDelta(messageUids: messagesUids, folder: folder)
+        }
 
         guard !Task.isCancelled else { return }
 
@@ -106,23 +100,20 @@ public extension MailboxManager {
                 return
             }
 
-            if let newUnreadCount = messagesUids.folderUnreadCount {
-                folder.remoteUnreadCount = newUnreadCount
-            }
             folder.computeUnreadCount()
-            folder.cursor = messagesUids.cursor
+            folder.cursor = newCursor
             folder.lastUpdate = Date()
 
             SentryDebug.searchForOrphanMessages(
                 folderId: folder.remoteId,
                 using: writableRealm,
                 previousCursor: previousCursor,
-                newCursor: messagesUids.cursor
+                newCursor: newCursor
             )
             SentryDebug.searchForOrphanThreads(
                 using: writableRealm,
                 previousCursor: previousCursor,
-                newCursor: messagesUids.cursor
+                newCursor: newCursor
             )
 
             self.deleteOrphanMessagesAndThreads(writableRealm: writableRealm, folderId: folder.remoteId)
@@ -130,10 +121,8 @@ public extension MailboxManager {
 
         if previousCursor != nil {
             /// We will now fetch new messages
-            try await catchLostOffsetMessageError(folder: folder, isRetrying: isRetrying) {
-                while try await fetchOneNewPage(folder: folder) {
-                    guard !Task.isCancelled else { return }
-                }
+            while try await fetchOneNewPage(folder: folder) {
+                guard !Task.isCancelled else { return }
             }
         }
 
@@ -167,14 +156,9 @@ public extension MailboxManager {
     }
 
     /// This function get all the messages uids from the chosen folder
-    private func fetchOldMessagesUids(folder: Folder) async throws -> MessagesUids {
+    private func fetchOldMessagesUids(folder: Folder) async throws -> String {
         /// Get ALL uids
-        let messageUidsResult = try await apiFetcher.messagesUids(
-            mailboxUuid: mailbox.uuid,
-            folderId: folder.remoteId,
-            paginationInfo: nil,
-            shouldGetAll: true
-        )
+        let messageUidsResult = try await apiFetcher.messagesUids(mailboxUuid: mailbox.uuid, folderId: folder.remoteId)
 
         try? writeTransaction { writableRealm in
             guard let folder = folder.fresh(using: writableRealm) else {
@@ -183,69 +167,9 @@ public extension MailboxManager {
             }
 
             folder.oldMessagesUidsToFetch = messageUidsResult.messageShortUids.toRealmList()
-            folder.cursor = messageUidsResult.cursor
         }
 
-        return MessagesUids(
-            addedShortUids: [],
-            cursor: messageUidsResult.cursor
-        )
-    }
-
-    /// This function will try to get following page of MessagesUids of a folder.
-    /// It will try different offset in case the offset uid used doesn't exist anymore.
-    /// - Parameters:
-    ///   - folder: Given folder
-    ///   - direction: Following or previous page to get
-    ///   - backoffIndex: index used in case the offset of the last call doesn't exist
-    /// - Returns: MessageUidsResult
-    func messageUidsWithBackOff(folder: Folder, backoffIndex: Int = 0) async throws -> MessageUidsResult {
-        let backoffSequence = [1, 1, 2, 8, 34, 144]
-        guard backoffIndex < backoffSequence.count else {
-            throw MailError.lostOffsetMessage
-        }
-
-        SentryDebug.addBackoffBreadcrumb(folder: folder, index: backoffIndex)
-
-        var paginationInfo: PaginationInfo?
-        let sortedMessages = fetchResults(ofType: Message.self) { partial in
-            partial.where { $0.folderId == folder.remoteId && !$0.fromSearch }
-        }.sorted {
-            guard let firstMessageShortUid = $0.shortUid,
-                  let secondMessageShortUid = $1.shortUid else {
-                SentryDebug.castToShortUidFailed(firstUid: $0.uid, secondUid: $1.uid)
-                return false
-            }
-
-            return firstMessageShortUid > secondMessageShortUid
-        }
-
-        let backoffOffset = backoffSequence[backoffIndex] - 1
-        let currentOffset = min(backoffOffset, sortedMessages.count - 1)
-
-        // We already did one call and last call was already above sortedMessages.count so we stop wasting more calls
-        if backoffIndex > 0 && backoffSequence[backoffIndex - 1] - 1 > sortedMessages.count - 1 {
-            throw MailError.lostOffsetMessage
-        }
-
-        if currentOffset >= 0,
-           let offset = sortedMessages[currentOffset].shortUid?.toString() {
-            paginationInfo = PaginationInfo(offsetUid: offset, direction: .following)
-        }
-
-        do {
-            let result = try await apiFetcher.messagesUids(
-                mailboxUuid: mailbox.uuid,
-                folderId: folder.remoteId,
-                paginationInfo: paginationInfo
-            )
-            return result
-        } catch let error as MailError where error == MailApiError.apiMessageNotFound {
-            try await Task.sleep(nanoseconds: UInt64(0.5 * Double(NSEC_PER_SEC)))
-            let result = try await messageUidsWithBackOff(folder: folder, backoffIndex: backoffIndex + 1)
-
-            return result
-        }
+        return messageUidsResult.cursor
     }
 
     /// Following page
@@ -254,15 +178,17 @@ public extension MailboxManager {
     ///   - direction: Following or previous page to fetch
     /// - Returns: Returns if there are other pages to fetch
     func fetchOneNewPage(folder: Folder) async throws -> Bool {
-        let messageUidsResult = try await messageUidsWithBackOff(folder: folder)
+        let nextUids: [String] = Array(folder.newMessagesUidsToFetch[0 ..< Constants.pageSize])
+        try await addMessages(shortUids: nextUids, folder: folder)
 
-        let messagesUids = MessagesUids(
-            addedShortUids: messageUidsResult.messageShortUids,
-            cursor: messageUidsResult.cursor
-        )
+        try writeTransaction { writableRealm in
+            let liveFolder = folder.fresh(using: writableRealm)
+            liveFolder?.newMessagesUidsToFetch.removeSubrange(0 ..< Constants.pageSize)
+        }
 
-        try await handleMessagesUids(messageUids: messagesUids, folder: folder)
-        return messagesUids.addedShortUids.count == Constants.pageSize
+        // TODO: - Bof ca
+        let liveFolder = folder.fresh(transactionable: self)
+        return !(liveFolder?.newMessagesUidsToFetch.isEmpty ?? true)
     }
 
     /// Previous page
@@ -272,15 +198,7 @@ public extension MailboxManager {
     /// - Returns: Returns if there are other pages to fetch
     func fetchOneOldPage(folder: Folder) async throws {
         let nextUids: [String] = Array(folder.oldMessagesUidsToFetch[0 ..< Constants.pageSize])
-
-        if !nextUids.isEmpty {
-            let messagesUids = MessagesUids(
-                addedShortUids: nextUids,
-                cursor: folder.cursor ?? ""
-            )
-
-            try await handleMessagesUids(messageUids: messagesUids, folder: folder)
-        }
+        try await addMessages(shortUids: nextUids, folder: folder)
 
         try? writeTransaction { writableRealm in
             let freshFolder = folder.fresh(using: writableRealm)
@@ -291,43 +209,24 @@ public extension MailboxManager {
 
     // MARK: - Handle MessagesUids
 
-    /// Handle MessagesUids
+    /// Handle MessagesUids from Delta
     /// Will delete, update and add messages from uids
     /// - Parameters:
     ///   - messageUids: Given MessagesUids
     ///   - folder: Given folder
-    private func handleMessagesUids(messageUids: MessagesUids, folder: Folder) async throws {
-        let startDate = Date(timeIntervalSinceNow: -5 * 60)
-        let ignoredIds = folder.fresh(transactionable: self)?.threads
-            .where { $0.date > startDate }
-            .map(\.uid) ?? []
+    private func handleDelta(messageUids: MessagesUids, folder: Folder) async throws {
         await deleteMessages(uids: messageUids.deletedUids)
-        var shouldIgnoreNextEvents = SentryDebug.captureWrongDate(
-            step: "After delete",
-            startDate: startDate,
-            folder: folder,
-            alreadyWrongIds: ignoredIds,
-            transactionable: self
-        )
+
         await updateMessages(updates: messageUids.updated, folder: folder)
-        if !shouldIgnoreNextEvents {
-            shouldIgnoreNextEvents = SentryDebug.captureWrongDate(
-                step: "After updateMessages",
-                startDate: startDate,
-                folder: folder,
-                alreadyWrongIds: ignoredIds,
-                transactionable: self
-            )
-        }
-        try await addMessages(shortUids: messageUids.addedShortUids, folder: folder, newCursor: messageUids.cursor)
-        if !shouldIgnoreNextEvents {
-            _ = SentryDebug.captureWrongDate(
-                step: "After addMessages",
-                startDate: startDate,
-                folder: folder,
-                alreadyWrongIds: ignoredIds,
-                transactionable: self
-            )
+
+        // Add Uids to fetch in the folder
+        try? writeTransaction { writableRealm in
+            let freshFolder = folder.fresh(using: writableRealm)
+            freshFolder?.newMessagesUidsToFetch.append(objectsIn: messageUids.addedShortUids)
+
+            if let newUnreadCount = messageUids.folderUnreadCount {
+                folder.remoteUnreadCount = newUnreadCount
+            }
         }
     }
 
@@ -416,7 +315,7 @@ public extension MailboxManager {
         }
     }
 
-    private func addMessages(shortUids: [String], folder: Folder, newCursor: String?) async throws {
+    private func addMessages(shortUids: [String], folder: Folder) async throws {
         guard !shortUids.isEmpty && !Task.isCancelled else { return }
 
         let uniqueUids: [String] = getUniqueUids(folder: folder, remoteUids: shortUids)
@@ -430,13 +329,6 @@ public extension MailboxManager {
             if let folder = folder.fresh(using: writableRealm) {
                 createThreads(messageByUids: messageByUidsResult, folder: folder, writableRealm: writableRealm)
             }
-
-            SentryDebug.sendMissingMessagesSentry(
-                sentUids: uniqueUids,
-                receivedMessages: messageByUidsResult.messages,
-                folder: folder,
-                newCursor: newCursor
-            )
         }
     }
 
@@ -566,42 +458,6 @@ public extension MailboxManager {
     }
 
     // MARK: - Utils
-
-    /// Execute block
-    /// Reinit folder if block failed and not already a retry
-    /// - Parameters:
-    ///   - folder: Given folder
-    ///   - isRetrying: is function already called from a retry
-    ///   - block: Block to execute
-    private func catchLostOffsetMessageError(folder: Folder, isRetrying: Bool, block: () async throws -> Void) async throws {
-        do {
-            try await block()
-        } catch let error as MailError where error == MailApiError.lostOffsetMessage {
-            guard !isRetrying else {
-                DDLogError("We couldn't rebuild folder history even after retrying from scratch")
-                SentryDebug.failedResetingAfterBackoff(folder: folder)
-                throw MailError.unknownError
-            }
-
-            DDLogWarn("resetHistoryInfo because of lostOffsetMessageError")
-            SentryDebug.addResetingFolderBreadcrumb(folder: folder)
-
-            try? writeTransaction { writableRealm in
-                guard let folder = folder.fresh(using: writableRealm) else {
-                    self.logError(.missingFolder)
-                    return
-                }
-
-                writableRealm.delete(folder.messages)
-                writableRealm.delete(folder.threads)
-                folder.lastUpdate = nil
-                folder.unreadCount = 0
-                folder.resetHistoryInfo()
-                folder.cursor = nil
-            }
-            try await messages(folder: folder, isRetrying: true)
-        }
-    }
 
     private func deleteOrphanMessagesAndThreads(writableRealm: Realm, folderId: String) {
         let orphanMessages = writableRealm.objects(Message.self).where { $0.folderId == folderId }
