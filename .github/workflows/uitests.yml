@@ -18,7 +18,7 @@ jobs:
         with:
           cache: false
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Create test env
         env:
           ENV_PATH: "MailUITests/Env.swift"
@@ -27,5 +27,7 @@ jobs:
         run: |
           touch $ENV_PATH
           echo -e "enum Env {\n static let testAccountEmail = \"$UITEST_ACCOUNT_EMAIL\"\n static let testAccountPassword = \"$UITEST_ACCOUNT_PASSWORD\"\n}" > $ENV_PATH
+      - name: Setup
+        run: tuist install && tuist generate
       - name: UITest
-        run: tuist install && tuist test Mail --device "iPhone 15 Pro" --test-targets MailUITests/MailUITests
+        run: tuist test Mail-Workspace --device "iPhone 15 Pro" --test-targets "MailUITests/MailUITests"

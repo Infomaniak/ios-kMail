@@ -21,7 +21,15 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project(name: "Mail",
-                      packages: [],
+                      options: .options(
+                          automaticSchemesOptions: .enabled(
+                            targetSchemesGrouping: .byNameSuffix(
+                              build: Set(["Mail", "Extension"]),
+                              test: Set(["Tests"]),
+                              run: Set(["Mail", "Extension"])
+                            )
+                          )
+                      ),
                       targets: [
                           .target(name: "Infomaniak Mail",
                                   destinations: Constants.destinations,
@@ -58,7 +66,8 @@ let project = Project(name: "Mail",
                                   destinations: Constants.destinations,
                                   product: .unitTests,
                                   bundleId: "com.infomaniak.mail.tests",
-                                  infoPlist: "MailTests/Info.plist",
+                                  deploymentTargets: Constants.deploymentTarget,
+                                  infoPlist: .default,
                                   sources: "MailTests/**",
                                   dependencies: [
                                       .target(name: "Infomaniak Mail")
@@ -68,7 +77,8 @@ let project = Project(name: "Mail",
                                   destinations: Constants.destinations,
                                   product: .uiTests,
                                   bundleId: "com.infomaniak.mail.uitests",
-                                  infoPlist: "MailTests/Info.plist",
+                                  deploymentTargets: Constants.deploymentTarget,
+                                  infoPlist: .default,
                                   sources: "MailUITests/**",
                                   dependencies: [
                                       .target(name: "Infomaniak Mail"),

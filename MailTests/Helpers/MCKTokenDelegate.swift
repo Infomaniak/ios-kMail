@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2022 Infomaniak Network SA
+ Copyright (C) 2024 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -16,21 +16,15 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import XCTest
+import InfomaniakCore
+import InfomaniakLogin
 
-/// Sanity checks of SWIFT_ACTIVE_COMPILATION_CONDITIONS
-final class TestsPreconditions: XCTestCase {
-    func testTestFlagIsSet() {
-        // WHEN
-        #if !TEST
-        XCTFail("the TEST flag is expected to be set in test target")
-        #endif
+public class MCKTokenDelegate: RefreshTokenDelegate {
+    public func didUpdateToken(newToken: ApiToken, oldToken: ApiToken) {
+        // Nothing to do
     }
 
-    func testDebugFlagIsSet() {
-        // WHEN
-        #if !DEBUG
-        XCTFail("the TEST flag is expected to be set in test target")
-        #endif
+    public func didFailRefreshToken(_ token: ApiToken) {
+        // Nothing to do
     }
 }
