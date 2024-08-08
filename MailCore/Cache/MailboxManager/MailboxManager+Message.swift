@@ -88,7 +88,7 @@ public extension MailboxManager {
         let originalThreads = messages.flatMap { $0.threads.filter { $0.folder == origin } }
         await markMovedLocally(true, threads: originalThreads)
 
-        let response = await apiFetcher.batchOver(values: messages, limit: 1000) { chunk in
+        let response = await apiFetcher.batchOver(values: messages, chunkSize: Constants.apiLimit) { chunk in
             do {
                 return try await self.apiFetcher.move(mailbox: self.mailbox, messages: chunk, destinationId: folder.remoteId)
             } catch {
@@ -116,7 +116,7 @@ public extension MailboxManager {
         await updateLocally(.seen, value: seen, messages: messages)
 
         if seen {
-            _ = await apiFetcher.batchOver(values: messages, limit: 3) { chunk in
+            _ = await apiFetcher.batchOver(values: messages, chunkSize: Constants.apiLimit) { chunk in
                 do {
                     try await self.apiFetcher.markAsSeen(mailbox: self.mailbox, messages: chunk)
                 } catch {
@@ -124,7 +124,7 @@ public extension MailboxManager {
                 }
             }
         } else {
-            _ = await apiFetcher.batchOver(values: messages, limit: 3) { chunk in
+            _ = await apiFetcher.batchOver(values: messages, chunkSize: Constants.apiLimit) { chunk in
                 do {
                     try await self.apiFetcher.markAsUnseen(mailbox: self.mailbox, messages: chunk)
                 } catch {
@@ -145,17 +145,17 @@ public extension MailboxManager {
         await updateLocally(.star, value: starred, messages: messages)
 
         if starred {
-            _ = await apiFetcher.batchOver(values: messages, limit: 1000) { chunk in
+            _ = await apiFetcher.batchOver(values: messages, chunkSize: Constants.apiLimit) { chunk in
                 do {
-                    _ = try await self.apiFetcher.star(mailbox: self.mailbox, messages: chunk)
+                    try await self.apiFetcher.star(mailbox: self.mailbox, messages: chunk)
                 } catch {
                     await self.updateLocally(.star, value: !starred, messages: chunk)
                 }
             }
         } else {
-            _ = await apiFetcher.batchOver(values: messages, limit: 1000) { chunk in
+            _ = await apiFetcher.batchOver(values: messages, chunkSize: Constants.apiLimit) { chunk in
                 do {
-                    _ = try await self.apiFetcher.unstar(mailbox: self.mailbox, messages: chunk)
+                    try await self.apiFetcher.unstar(mailbox: self.mailbox, messages: chunk)
                 } catch {
                     await self.updateLocally(.star, value: !starred, messages: chunk)
                 }

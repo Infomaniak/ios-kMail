@@ -97,7 +97,7 @@ public extension MailApiFetcher {
 
     @discardableResult
     func delete(mailbox: Mailbox, messages: [Message]) async throws -> [Empty] {
-        try await batchOver(values: messages.map(\.uid), limit: 1000) { chunk in
+        try await batchOver(values: messages.map(\.uid), chunkSize: Constants.apiLimit) { chunk in
             try await self.perform(request: self.authenticatedRequest(.deleteMessages(uuid: mailbox.uuid),
                                                                       method: .post,
                                                                       parameters: ["uids": chunk]))
