@@ -192,6 +192,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         folder.cursor = savedFolder.cursor
         folder.remainingOldMessagesToFetch = savedFolder.remainingOldMessagesToFetch
         folder.oldMessagesUidsToFetch = savedFolder.oldMessagesUidsToFetch
+        folder.newMessagesUidsToFetch = savedFolder.newMessagesUidsToFetch
         folder.isExpanded = savedFolder.isExpanded
     }
 
