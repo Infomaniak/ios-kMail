@@ -49,15 +49,7 @@ public enum DesktopWindowIdentifier {
     public static let settingsWindowIdentifier = "settings"
     public static let composeWindowIdentifier = "compose"
     public static let threadWindowIdentifier = "thread"
-
-    @MainActor
-    public static func mainWindowIdentifier(currentViewState: RootViewState) -> String {
-        if case .mainView(let mainViewState) = currentViewState.state {
-            return "Main-\(mainViewState.mailboxManager.mailbox.objectId)"
-        } else {
-            return "Main"
-        }
-    }
+    public static let mainWindowIdentifier = "main"
 }
 
 public struct URLConstants {

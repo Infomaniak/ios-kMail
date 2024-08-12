@@ -29,8 +29,6 @@ struct NewWindowCommand: View {
 
     @Environment(\.openWindow) private var openWindow
 
-    let rootViewState: RootViewState
-
     var body: some View {
         Button(MailResourcesStrings.Localizable.buttonNewWindow) {
             newWindow()
@@ -38,8 +36,8 @@ struct NewWindowCommand: View {
         .keyboardShortcut("n", modifiers: [.option, .command])
     }
 
-    @MainActor func newWindow() {
+    func newWindow() {
         matomo.track(eventWithCategory: .menuAction, name: "newWindow")
-        openWindow(id: DesktopWindowIdentifier.mainWindowIdentifier(currentViewState: rootViewState))
+        openWindow(id: DesktopWindowIdentifier.mainWindowIdentifier)
     }
 }
