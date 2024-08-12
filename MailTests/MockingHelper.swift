@@ -18,7 +18,9 @@
 
 import Foundation
 @testable import Infomaniak_Mail
+@testable import InfomaniakCore
 @testable import InfomaniakDI
+@testable import InfomaniakLogin
 @testable import MailCore
 
 public enum MockingConfiguration {
@@ -59,5 +61,30 @@ public enum MockingHelper {
     /// Clear stored types in DI
     static func clearRegisteredTypes() {
         SimpleResolver.sharedResolver.removeAll()
+    }
+
+    static func getTestMailboxManager() -> MailboxManager {
+        let token = ApiToken(accessToken: Env.token,
+                             expiresIn: Int.max,
+                             refreshToken: "",
+                             scope: "",
+                             tokenType: "",
+                             userId: Env.userId,
+                             expirationDate: Date(timeIntervalSinceNow: TimeInterval(Int.max)))
+        let account = Account(apiToken: token)
+        let mailbox = Mailbox()
+        mailbox.userId = token.userId
+        mailbox.mailboxId = Env.mailboxId
+        mailbox.uuid = Env.mailboxUuid
+        let apiFetcher = MailApiFetcher(token: token, delegate: MCKTokenDelegate())
+        let contactManager = ContactManager(userId: Env.userId, apiFetcher: MailApiFetcher())
+
+        let mailboxManager = MailboxManager(
+            account: account,
+            mailbox: mailbox,
+            apiFetcher: apiFetcher,
+            contactManager: contactManager
+        )
+        return mailboxManager
     }
 }

@@ -25,4 +25,6 @@ enum Env_Sample {
 
     // Set the id of the test mailbox
     static let mailboxId = 01234
+
+    static let mailboxUuid = "<mailboxUuid>"
 }
