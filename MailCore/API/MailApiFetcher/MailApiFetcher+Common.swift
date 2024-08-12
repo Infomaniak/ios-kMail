@@ -110,12 +110,14 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(.resource(resource), method: .post))
     }
 
+    @discardableResult
     func star(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
         try await perform(request: authenticatedRequest(.star(uuid: mailbox.uuid),
                                                         method: .post,
                                                         parameters: ["uids": messages.map(\.uid)]))
     }
 
+    @discardableResult
     func unstar(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult {
         try await perform(request: authenticatedRequest(.unstar(uuid: mailbox.uuid),
                                                         method: .post,

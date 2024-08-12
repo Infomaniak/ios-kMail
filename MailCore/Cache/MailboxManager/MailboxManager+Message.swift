@@ -79,13 +79,24 @@ public extension MailboxManager {
         }
     }
 
-    func move(messages: [Message], to folderRole: FolderRole) async throws -> UndoAction {
+    func move(messages: [Message], to folderRole: FolderRole, origin: Folder? = nil) async throws -> UndoAction {
         guard let folder = getFolder(with: folderRole)?.freeze() else { throw MailError.folderNotFound }
-        return try await move(messages: messages, to: folder)
+        return try await move(messages: messages, to: folder, origin: origin)
     }
 
-    func move(messages: [Message], to folder: Folder) async throws -> UndoAction {
-        let response = try await apiFetcher.move(mailbox: mailbox, messages: messages, destinationId: folder.remoteId)
+    func move(messages: [Message], to folder: Folder, origin: Folder? = nil) async throws -> UndoAction {
+        let originalThreads = messages.flatMap { $0.threads.filter { $0.folder == origin } }
+        await markMovedLocally(true, threads: originalThreads)
+
+        let response = await apiFetcher.batchOver(values: messages, chunkSize: Constants.apiLimit) { chunk in
+            do {
+                return try await self.apiFetcher.move(mailbox: self.mailbox, messages: chunk, destinationId: folder.remoteId)
+            } catch {
+                await self.markMovedLocally(false, threads: originalThreads)
+            }
+            return nil
+        }
+
         Task {
             try await refreshFolder(from: messages, additionalFolder: folder)
         }
@@ -104,14 +115,22 @@ public extension MailboxManager {
     func markAsSeen(messages: [Message], seen: Bool) async throws {
         await updateLocally(.seen, value: seen, messages: messages)
 
-        do {
-            if seen {
-                try await apiFetcher.markAsSeen(mailbox: mailbox, messages: messages)
-            } else {
-                try await apiFetcher.markAsUnseen(mailbox: mailbox, messages: messages)
+        if seen {
+            _ = await apiFetcher.batchOver(values: messages, chunkSize: Constants.apiLimit) { chunk in
+                do {
+                    try await self.apiFetcher.markAsSeen(mailbox: self.mailbox, messages: chunk)
+                } catch {
+                    await self.updateLocally(.seen, value: !seen, messages: chunk)
+                }
             }
-        } catch {
-            await updateLocally(.seen, value: !seen, messages: messages)
+        } else {
+            _ = await apiFetcher.batchOver(values: messages, chunkSize: Constants.apiLimit) { chunk in
+                do {
+                    try await self.apiFetcher.markAsUnseen(mailbox: self.mailbox, messages: chunk)
+                } catch {
+                    await self.updateLocally(.seen, value: !seen, messages: chunk)
+                }
+            }
         }
 
         try await refreshFolder(from: messages, additionalFolder: nil)
@@ -125,36 +144,37 @@ public extension MailboxManager {
     func star(messages: [Message], starred: Bool) async throws {
         await updateLocally(.star, value: starred, messages: messages)
 
-        do {
-            if starred {
-                _ = try await star(messages: messages)
-            } else {
-                _ = try await unstar(messages: messages)
+        if starred {
+            _ = await apiFetcher.batchOver(values: messages, chunkSize: Constants.apiLimit) { chunk in
+                do {
+                    try await self.apiFetcher.star(mailbox: self.mailbox, messages: chunk)
+                } catch {
+                    await self.updateLocally(.star, value: !starred, messages: chunk)
+                }
             }
-        } catch {
-            await updateLocally(.star, value: !starred, messages: messages)
+        } else {
+            _ = await apiFetcher.batchOver(values: messages, chunkSize: Constants.apiLimit) { chunk in
+                do {
+                    try await self.apiFetcher.unstar(mailbox: self.mailbox, messages: chunk)
+                } catch {
+                    await self.updateLocally(.star, value: !starred, messages: chunk)
+                }
+            }
         }
-    }
 
-    private func star(messages: [Message]) async throws -> MessageActionResult {
-        let response = try await apiFetcher.star(mailbox: mailbox, messages: messages)
         try await refreshFolder(from: messages, additionalFolder: nil)
-        return response
     }
 
-    private func unstar(messages: [Message]) async throws -> MessageActionResult {
-        let response = try await apiFetcher.unstar(mailbox: mailbox, messages: messages)
-        try await refreshFolder(from: messages, additionalFolder: nil)
-        return response
-    }
-
-    private func undoAction(for cancellableResponse: UndoResponse, and messages: [Message]) -> UndoAction {
+    private func undoAction(for cancellableResponses: [UndoResponse], and messages: [Message]) -> UndoAction {
         let afterUndo = {
             try await self.refreshFolder(from: messages, additionalFolder: nil)
             return true
         }
         let undo = {
-            try await self.apiFetcher.undoAction(resource: cancellableResponse.undoResource)
+            let results = try await cancellableResponses.asyncMap { cancellableResponse in
+                try await self.apiFetcher.undoAction(resource: cancellableResponse.undoResource)
+            }
+            return !results.contains { $0 == false }
         }
         return UndoAction(undo: undo, afterUndo: afterUndo)
     }

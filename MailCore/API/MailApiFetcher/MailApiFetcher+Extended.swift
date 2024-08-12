@@ -89,14 +89,19 @@ public extension MailApiFetcher {
     func move(mailbox: Mailbox, messages: [Message], destinationId: String) async throws -> UndoResponse {
         try await perform(request: authenticatedRequest(.moveMessages(uuid: mailbox.uuid),
                                                         method: .post,
-                                                        parameters: ["uids": messages.map(\.uid), "to": destinationId]))
+                                                        parameters: [
+                                                            "uids": messages.map(\.uid),
+                                                            "to": destinationId
+                                                        ]))
     }
 
     @discardableResult
-    func delete(mailbox: Mailbox, messages: [Message]) async throws -> Empty {
-        try await perform(request: authenticatedRequest(.deleteMessages(uuid: mailbox.uuid),
-                                                        method: .post,
-                                                        parameters: ["uids": messages.map(\.uid)]))
+    func delete(mailbox: Mailbox, messages: [Message]) async throws -> [Empty] {
+        try await batchOver(values: messages.map(\.uid), chunkSize: Constants.apiLimit) { chunk in
+            try await self.perform(request: self.authenticatedRequest(.deleteMessages(uuid: mailbox.uuid),
+                                                                      method: .post,
+                                                                      parameters: ["uids": chunk]))
+        }
     }
 
     func messagesUids(

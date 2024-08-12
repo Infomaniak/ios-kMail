@@ -17,7 +17,9 @@
  */
 
 import Alamofire
+import Algorithms
 import Foundation
+import InfomaniakConcurrency
 import InfomaniakCore
 import InfomaniakDI
 import InfomaniakLogin
@@ -85,5 +87,20 @@ public final class MailApiFetcher: ApiFetcher, MailApiFetchable {
                 throw error
             }
         }
+    }
+
+    /// Create batches of the given values to perform the given request
+    /// - Parameters:
+    ///   - values: Data to batch
+    ///   - chunkSize: Chunk size
+    ///   - perform: Request to perform
+    /// - Returns: Array of the perform return type
+    func batchOver<Input, Output>(values: [Input], chunkSize: Int,
+                                  perform: @escaping (([Input]) async throws -> Output?)) async rethrows -> [Output] {
+        let chunks = values.chunks(ofCount: chunkSize)
+        let responses = try await chunks.asyncMap { chunk in
+            try await perform(Array(chunk))
+        }
+        return responses.compactMap { $0 }
     }
 }
