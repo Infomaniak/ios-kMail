@@ -51,7 +51,11 @@ struct LoadMoreButton: View {
                     Task {
                         await tryOrDisplayError {
                             matomo.track(eventWithCategory: .threadList, name: "loadMore")
-                            _ = try await mailboxManager.fetchOneOldPage(folder: currentFolder)
+
+                            var threadsCreated = 0
+                            while threadsCreated < Constants.oldPageSize / 2 {
+                                threadsCreated += try await mailboxManager.fetchOneOldPage(folder: currentFolder)
+                            }
                             isLoadingMore = false
                         }
                     }

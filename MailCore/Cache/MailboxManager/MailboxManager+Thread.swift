@@ -196,9 +196,12 @@ public extension MailboxManager {
     /// - Parameters:
     ///   - folder: Given folder
     ///   - direction: Following or previous page to fetch
-    /// - Returns: Returns if there are other pages to fetch
-    func fetchOneOldPage(folder: Folder) async throws {
-        guard let liveFolder = folder.fresh(transactionable: self) else { return }
+    /// - Returns: Returns number of threads created
+    func fetchOneOldPage(folder: Folder) async throws -> Int {
+        guard let liveFolder = folder.fresh(transactionable: self) else { return 0 }
+
+        let threadsCount = liveFolder.threads.count
+        var newThreadsCount = 0
 
         let range: Range = 0 ..< min(liveFolder.oldMessagesUidsToFetch.count, Constants.oldPageSize)
         let nextUids: [String] = Array(liveFolder.oldMessagesUidsToFetch[range])
@@ -208,7 +211,10 @@ public extension MailboxManager {
             let freshFolder = folder.fresh(using: writableRealm)
             freshFolder?.oldMessagesUidsToFetch.removeSubrange(range)
             freshFolder?.remainingOldMessagesToFetch -= Constants.oldPageSize
+            newThreadsCount = freshFolder?.threads.count ?? 0
         }
+
+        return newThreadsCount - threadsCount
     }
 
     // MARK: - Handle MessagesUids
