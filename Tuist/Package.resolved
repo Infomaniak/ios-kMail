@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-onboarding",
       "state" : {
-        "revision" : "20bfdc24830cf64521aea3ecb01b88f70b02e32c",
-        "version" : "1.0.4"
+        "revision" : "85257ac8c76050acf057d37ff35fc9f8d0f82fda",
+        "version" : "1.0.5"
       }
     },
     {
@@ -176,8 +176,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "60867846a0aca0c7da5e482282b293236f730216",
-        "version" : "14.11.0"
+        "revision" : "c2552e1d36867cb42b28130e894a81fc17081062",
+        "version" : "14.12.0"
       }
     },
     {
@@ -185,8 +185,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "13b12f8665f0c8173693a4d3f6e6d32b5a24d9a9",
-        "version" : "10.52.2"
+        "revision" : "5221a83dc720823e3017493394d00d49ccf13446",
+        "version" : "10.52.3"
       }
     },
     {
@@ -222,7 +222,7 @@
       "location" : "https://github.com/SVGKit/SVGKit.git",
       "state" : {
         "branch" : "3.x",
-        "revision" : "02421928cab787faaffb2403d47c39392936fbc7"
+        "revision" : "1b8a3cf210ab4681c18fbb62059bbdbb37dd649a"
       }
     },
     {
