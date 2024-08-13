@@ -149,7 +149,7 @@ public extension MailboxManager {
 
             try await fetchOneOldPage(folder: folder)
 
-            messagesToFetch -= Constants.pageSize
+            messagesToFetch -= Constants.oldPageSize
         }
     }
 
@@ -178,9 +178,9 @@ public extension MailboxManager {
     func fetchOneNewPage(folder: Folder) async throws -> Bool {
         guard let liveFolder = folder.fresh(transactionable: self),
               !liveFolder.newMessagesUidsToFetch.isEmpty else { return false }
-        let fetchAgain = liveFolder.newMessagesUidsToFetch.count > Constants.pageSize
+        let fetchAgain = liveFolder.newMessagesUidsToFetch.count > Constants.newPageSize
 
-        let range: Range = 0 ..< min(liveFolder.newMessagesUidsToFetch.count, Constants.pageSize)
+        let range: Range = 0 ..< min(liveFolder.newMessagesUidsToFetch.count, Constants.newPageSize)
         let nextUids: [String] = Array(liveFolder.newMessagesUidsToFetch[range])
         try await addMessages(shortUids: nextUids, folder: folder)
 
@@ -200,14 +200,14 @@ public extension MailboxManager {
     func fetchOneOldPage(folder: Folder) async throws {
         guard let liveFolder = folder.fresh(transactionable: self) else { return }
 
-        let range: Range = 0 ..< min(liveFolder.oldMessagesUidsToFetch.count, Constants.pageSize)
+        let range: Range = 0 ..< min(liveFolder.oldMessagesUidsToFetch.count, Constants.oldPageSize)
         let nextUids: [String] = Array(liveFolder.oldMessagesUidsToFetch[range])
         try await addMessages(shortUids: nextUids, folder: folder)
 
         try? writeTransaction { writableRealm in
             let freshFolder = folder.fresh(using: writableRealm)
             freshFolder?.oldMessagesUidsToFetch.removeSubrange(range)
-            freshFolder?.remainingOldMessagesToFetch -= Constants.pageSize
+            freshFolder?.remainingOldMessagesToFetch -= Constants.oldPageSize
         }
     }
 
