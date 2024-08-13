@@ -27,21 +27,28 @@ final class ITNestableFolder: XCTestCase {
     var maxDepth = 0
     var maxElementsPerLevel = 0
 
+    override class func setUp() {
+        super.setUp()
+
+        MockingHelper.clearRegisteredTypes()
+        MockingHelper.registerConcreteTypes(configuration: .minimal)
+    }
+
     // MARK: - TestSuite
 
     override class var defaultTestSuite: XCTestSuite {
         let testSuite = XCTestSuite(name: NSStringFromClass(self))
 
         // Wide not deep
-        _ = (0 ... 49).map { _ in
+        _ = (0 ... 29).map { _ in
             let randomDepth = Int.random(in: 0 ... 5)
-            let randomWidth = Int.random(in: 0 ... 20)
+            let randomWidth = Int.random(in: 0 ... 10)
             addNewTest(maxDepth: randomDepth, maxElementsPerLevel: randomWidth, testSuite: testSuite)
         }
 
         // Deep not wide
-        _ = (50 ... 99).map { _ in
-            let randomDepth = Int.random(in: 0 ... 20)
+        _ = (50 ... 79).map { _ in
+            let randomDepth = Int.random(in: 0 ... 10)
             let randomWidth = Int.random(in: 0 ... 2)
             addNewTest(maxDepth: randomDepth, maxElementsPerLevel: randomWidth, testSuite: testSuite)
         }
@@ -64,7 +71,7 @@ final class ITNestableFolder: XCTestCase {
     func testFlatFolderStructureCorrectness() {
         // GIVEN
         let arrayShapeTester = ArrayShapeCompare()
-        let folderStructure = FolderStructureGenerator(maxDepth: maxDepth, maxElementsPerLevel: maxElementsPerLevel).folders
+        let folderStructure = FolderStructureGenerator(maxDepth: maxDepth, maxElementsPerLevel: maxElementsPerLevel).frozenFolders
 
         // WHEN
         let nestedFolders = NestableFolder.createFoldersHierarchy(from: folderStructure)

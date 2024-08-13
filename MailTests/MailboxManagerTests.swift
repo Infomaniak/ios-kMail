@@ -28,41 +28,79 @@ final class MailboxManagerTests: XCTestCase {
 
     override class func setUp() {
         super.setUp()
-        @InjectService var accountManager: AccountManager
-        mailboxManager = accountManager.getMailboxManager(for: Env.mailboxId, userId: Env.userId)
 
-        let token = ApiToken(accessToken: Env.token,
-                             expiresIn: Int.max,
-                             refreshToken: "",
-                             scope: "",
-                             tokenType: "",
-                             userId: Env.userId,
-                             expirationDate: Date(timeIntervalSinceNow: TimeInterval(Int.max)))
-        mailboxManager.apiFetcher.setToken(token, delegate: FakeTokenDelegate())
+        MockingHelper.clearRegisteredTypes()
+
+        let accountManager = AccountManager()
+        let accountManagerFactory = Factory(type: AccountManager.self) { _, _ in
+            accountManager
+        }
+
+        MockingHelper.registerConcreteTypes(configuration: .realApp, extraFactories: [accountManagerFactory])
+
+        MailboxManagerTests.mailboxManager = MockingHelper.getTestMailboxManager()
+    }
+
+    override func setUp() {
+        do {
+            try MailboxManagerTests.mailboxManager.writeTransaction { realm in
+                realm.deleteAll()
+            }
+        } catch {
+            fatalError("Could't cleanup realm before tests\(error)")
+        }
     }
 
     // MARK: Tests methods
 
     func testFolders() async throws {
+        // GIVEN
+
+        // WHEN
+        let missingInboxFolder = MailboxManagerTests.mailboxManager.getFolder(with: .inbox)
         try await MailboxManagerTests.mailboxManager.refreshAllFolders()
+        let inboxFolder = MailboxManagerTests.mailboxManager.getFolder(with: .inbox)
+
+        // THEN
+        XCTAssertNil(missingInboxFolder, "Inbox shouldn't exist before fetch")
+        XCTAssertNotNil(inboxFolder, "Inbox should exist after fetch")
     }
 
     func testThreads() async throws {
-        let folders = try await MailboxManagerTests.mailboxManager.apiFetcher
-            .folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
-        try await MailboxManagerTests.mailboxManager.apiFetcher.threads(
-            mailbox: MailboxManagerTests.mailboxManager.mailbox,
-            folderId: folders[0].remoteId
-        )
+        // GIVEN
+        try await MailboxManagerTests.mailboxManager.refreshAllFolders()
+        let inboxFolder = MailboxManagerTests.mailboxManager.getFolder(with: .inbox)!
+        let previousUpdateDate = inboxFolder.lastUpdate
+
+        // WHEN
+        try await MailboxManagerTests.mailboxManager.threads(folder: inboxFolder.freezeIfNeeded())
+        let inboxFolderAfterFetch = MailboxManagerTests.mailboxManager.getFolder(with: .inbox)!
+        let currentUpdateDate = inboxFolderAfterFetch.lastUpdate
+
+        // THEN
+        XCTAssertNotEqual(previousUpdateDate, currentUpdateDate, "lastUpdate dates should be different")
     }
 
     func testMessage() async throws {
+        // GIVEN
         let folders = try await MailboxManagerTests.mailboxManager.apiFetcher
             .folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
         let threadResult = try await MailboxManagerTests.mailboxManager.apiFetcher.threads(
             mailbox: MailboxManagerTests.mailboxManager.mailbox,
             folderId: folders[0].remoteId
         )
+
+        // WHEN
+        let messageBeforeDownload = threadResult.threads![0].messages[0]
         try await MailboxManagerTests.mailboxManager.message(message: threadResult.threads![0].messages[0])
+        let messageAfterDownload = MailboxManagerTests.mailboxManager.transactionExecutor.fetchObject(
+            ofType: Message.self,
+            forPrimaryKey: messageBeforeDownload.uid
+        )
+
+        // THEN
+        XCTAssertFalse(messageBeforeDownload.fullyDownloaded, "Message shouldn't be downloaded right after fetch")
+        XCTAssertNotNil(messageAfterDownload, "Complete Message should exist in database")
+        XCTAssertTrue(messageAfterDownload?.fullyDownloaded == true, "Complete Message should be fully downloaded")
     }
 }

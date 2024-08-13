@@ -18,17 +18,18 @@ jobs:
         with:
           cache: false
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
       - name: Create test env
         env:
           ENV_PATH: "MailTests/Env.swift"
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           USER_ID: ${{ secrets.USER_ID }}
           MAILBOX_ID: ${{ secrets.MAILBOX_ID }}
+          MAILBOX_UUID: ${{ secrets.MAILBOX_UUID }}
         run: |
           touch $ENV_PATH
-          echo -e "enum Env {\n static let token = \"$ACCESS_TOKEN\"\n static let userId = $USER_ID\n static let mailboxId = $MAILBOX_ID\n}" > $ENV_PATH
+          echo -e "enum Env {\n static let token = \"$ACCESS_TOKEN\"\n static let userId = $USER_ID\n static let mailboxId = $MAILBOX_ID\n static let mailboxUuid = \"$MAILBOX_UUID\"\n}" > $ENV_PATH
       - name: Build
-        run: tuist install && tuist build --generate "Infomaniak Mail"
-      - name: Test
-        run: tuist test Mail --test-targets MailTests/MailApiTests MailTests/UTContactManager
+        run: tuist install && tuist build --clean "Infomaniak Mail"
+      - name: Unit and Integration Tests
+        run: tuist test Mail-Workspace --skip-ui-tests
