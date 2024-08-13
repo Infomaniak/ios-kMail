@@ -119,11 +119,9 @@ public extension MailboxManager {
             self.deleteOrphanMessagesAndThreads(writableRealm: writableRealm, folderId: folder.remoteId)
         }
 
-        if previousCursor != nil {
-            /// We will now fetch new messages
-            while try await fetchOneNewPage(folder: folder) {
-                guard !Task.isCancelled else { return }
-            }
+        /// We will now fetch new messages
+        while try await fetchOneNewPage(folder: folder) {
+            guard !Task.isCancelled else { return }
         }
 
         if folder.role == .inbox,
@@ -178,17 +176,20 @@ public extension MailboxManager {
     ///   - direction: Following or previous page to fetch
     /// - Returns: Returns if there are other pages to fetch
     func fetchOneNewPage(folder: Folder) async throws -> Bool {
-        let nextUids: [String] = Array(folder.newMessagesUidsToFetch[0 ..< Constants.pageSize])
+        guard let liveFolder = folder.fresh(transactionable: self),
+              !liveFolder.newMessagesUidsToFetch.isEmpty else { return false }
+        let fetchAgain = liveFolder.newMessagesUidsToFetch.count > Constants.pageSize
+
+        let range: Range = 0 ..< min(liveFolder.newMessagesUidsToFetch.count, Constants.pageSize)
+        let nextUids: [String] = Array(liveFolder.newMessagesUidsToFetch[range])
         try await addMessages(shortUids: nextUids, folder: folder)
 
         try writeTransaction { writableRealm in
-            let liveFolder = folder.fresh(using: writableRealm)
-            liveFolder?.newMessagesUidsToFetch.removeSubrange(0 ..< Constants.pageSize)
+            let freshFolder = folder.fresh(using: writableRealm)
+            freshFolder?.newMessagesUidsToFetch.removeSubrange(range)
         }
 
-        // TODO: - Bof ca
-        let liveFolder = folder.fresh(transactionable: self)
-        return !(liveFolder?.newMessagesUidsToFetch.isEmpty ?? true)
+        return fetchAgain
     }
 
     /// Previous page
@@ -197,12 +198,15 @@ public extension MailboxManager {
     ///   - direction: Following or previous page to fetch
     /// - Returns: Returns if there are other pages to fetch
     func fetchOneOldPage(folder: Folder) async throws {
-        let nextUids: [String] = Array(folder.oldMessagesUidsToFetch[0 ..< Constants.pageSize])
+        guard let liveFolder = folder.fresh(transactionable: self) else { return }
+
+        let range: Range = 0 ..< min(liveFolder.oldMessagesUidsToFetch.count, Constants.pageSize)
+        let nextUids: [String] = Array(liveFolder.oldMessagesUidsToFetch[range])
         try await addMessages(shortUids: nextUids, folder: folder)
 
         try? writeTransaction { writableRealm in
             let freshFolder = folder.fresh(using: writableRealm)
-            freshFolder?.oldMessagesUidsToFetch.removeSubrange(0 ..< Constants.pageSize)
+            freshFolder?.oldMessagesUidsToFetch.removeSubrange(range)
             freshFolder?.remainingOldMessagesToFetch -= Constants.pageSize
         }
     }
@@ -225,7 +229,7 @@ public extension MailboxManager {
             freshFolder?.newMessagesUidsToFetch.append(objectsIn: messageUids.addedShortUids)
 
             if let newUnreadCount = messageUids.folderUnreadCount {
-                folder.remoteUnreadCount = newUnreadCount
+                freshFolder?.remoteUnreadCount = newUnreadCount
             }
         }
     }

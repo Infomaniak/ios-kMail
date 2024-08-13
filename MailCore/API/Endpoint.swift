@@ -162,10 +162,10 @@ public extension Endpoint {
     static func messagesUids(mailboxUuid: String, folderId: String) -> Endpoint {
         var queryItems = [URLQueryItem]()
         queryItems.append(URLQueryItem(name: "messages", value: Constants.numberOfOldUidsToFetch.toString()))
-        queryItems.append(URLQueryItem(name: "order_by", value: "date_desc"))
+        queryItems.append(URLQueryItem(name: "direction", value: "desc"))
 
         let endpoint = Endpoint(hostKeypath: \.preprodHost, path: "/api/mail/\(mailboxUuid)/folder/\(folderId)/mobile")
-        return endpoint.appending(path: "/messages-uids", queryItems: queryItems)
+        return endpoint.appending(path: "/date-ordered-messages-uids", queryItems: queryItems)
 //        return .messages(mailboxUuid: mailboxUuid, folderId: folderId).appending(path: "/messages-uids", queryItems: queryItems)
     }
 

@@ -52,12 +52,22 @@ public extension String {
 
 /// Class used to get a page of shortUids
 public final class MessageUidsResult: Decodable {
-    public let messageShortUids: [String]
+    public let messageShortUids: [String] // TODO: - Use [Int]
     public let cursor: String
 
     private enum CodingKeys: String, CodingKey {
         case messageShortUids = "messagesUids"
         case cursor = "signature"
+    }
+
+    // FIXME: Remove this constructor when mixed Int/String arrayis fixed by backend
+    public required init(from decoder: Decoder) throws {
+        let container: KeyedDecodingContainer<CodingKeys> = try decoder.container(keyedBy: CodingKeys.self)
+
+        let messageShortUids = try container.decode([Int].self, forKey: .messageShortUids)
+        self.messageShortUids = messageShortUids.map { "\($0)" }
+
+        cursor = try container.decode(String.self, forKey: .cursor)
     }
 }
 
