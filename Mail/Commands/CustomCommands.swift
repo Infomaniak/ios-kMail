@@ -48,7 +48,7 @@ struct CustomCommands: Commands {
             if #available(iOS 16.0, *) {
                 NewMessageCommand(mailboxManager: mainViewState?.mailboxManager)
 
-                NewWindowCommand(rootViewState: rootViewState)
+                NewWindowCommand()
             }
         }
 
