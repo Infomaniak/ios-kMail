@@ -175,9 +175,11 @@ final class MCKMailboxManageable_SearchViewModel: MailboxManageable, MCKTransact
 
     func deleteOrphanDrafts() async {}
 
-    func messages(folder: MailCore.Folder, isRetrying: Bool) async throws {}
+    func messages(folder: MailCore.Folder) async throws {}
 
-    func fetchOnePage(folder: MailCore.Folder, direction: MailCore.NewMessagesDirection?) async throws -> Bool { false }
+    func fetchOneNewPage(folder: MailCore.Folder) async throws -> Bool { false }
+
+    func fetchOneOldPage(folder: MailCore.Folder) async throws -> Int { 0 }
 
     func message(message: MailCore.Message) async throws {}
 
