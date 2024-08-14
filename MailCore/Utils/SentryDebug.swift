@@ -35,23 +35,6 @@ public enum SentryDebug {
     // MARK: - Errors
 
     public static let knownDebugDate = Date(timeIntervalSince1970: 1_893_456_000)
-    static func sendMissingMessagesSentry(sentUids: [String], receivedMessages: [Message], folder: Folder, newCursor: String?) {
-        if receivedMessages.count != sentUids.count {
-            let receivedUids = Set(receivedMessages.map { Constants.shortUid(from: $0.uid) })
-            let missingUids = sentUids.filter { !receivedUids.contains($0) }
-            if !missingUids.isEmpty {
-                SentrySDK.capture(message: "We tried to download some Messages, but they were nowhere to be found") { scope in
-                    scope.setLevel(.error)
-                    scope.setContext(
-                        value: ["uids": "\(missingUids.map { Constants.longUid(from: $0, folderId: folder.remoteId) })",
-                                "previousCursor": folder.cursor ?? "No cursor",
-                                "newCursor": newCursor ?? "No cursor"],
-                        key: "missingMessages"
-                    )
-                }
-            }
-        }
-    }
 
     static func searchForOrphanMessages(
         folderId: String,
@@ -95,50 +78,6 @@ public enum SentryDebug {
             scope.setContext(value: ["id": "\(thread.lastMessageFromFolder?.uid ?? "nil")"],
                              key: "lastMessageFromFolder")
             scope.setContext(value: ["date before error": thread.date], key: "thread")
-        }
-    }
-
-    static func captureWrongDate(
-        step: String,
-        startDate: Date,
-        folder: Folder,
-        alreadyWrongIds: [String],
-        transactionable: Transactionable
-    ) -> Bool {
-        guard let freshFolder = folder.fresh(transactionable: transactionable) else { return false }
-
-        let threads = freshFolder.threads
-            .where { $0.date > startDate }
-            .filter { !alreadyWrongIds.contains($0.uid) }
-            .filter {
-                !$0.messages.map(\.date).contains($0.date)
-            }
-        guard !threads.isEmpty else { return false }
-
-        SentrySDK.capture(message: "No corresponding message date for thread on step \(step)") { scope in
-            scope.setLevel(.error)
-            scope.setContext(value: ["threads": Array(threads).map {
-                [
-                    "uid": "\($0.uid)",
-                    "messageIds": "\($0.messageIds.joined(separator: ","))",
-                    "lastMessageFromFolder": $0.lastMessageFromFolder?.uid ?? "nil",
-                    "messages": Array($0.messages)
-                        .map { ["message uid": $0.uid, "message date": $0.date] }
-                ]
-            }],
-            key: "threads")
-        }
-        return true
-    }
-
-    static func castToShortUidFailed(firstUid: String, secondUid: String) {
-        SentrySDK.capture(message: "Failed casting to short Uid") { scope in
-            scope.setLevel(.error)
-            scope.setContext(
-                value: ["firstUid": firstUid,
-                        "secondUid": secondUid],
-                key: "Uids"
-            )
         }
     }
 
@@ -238,29 +177,6 @@ public enum SentryDebug {
         SentrySDK.capture(message: "Update token infinite token") { scope in
             scope.setContext(value: additionalData,
                              key: "Migration context")
-        }
-    }
-
-    static func addBackoffBreadcrumb(folder: Folder, index: Int) {
-        let breadcrumb = Breadcrumb()
-        breadcrumb.message = "Backoff \(index) for folder \(folder.matomoName) - \(folder.remoteId)"
-        breadcrumb.level = .warning
-        breadcrumb.type = "debug"
-        SentrySDK.addBreadcrumb(breadcrumb)
-    }
-
-    static func addResetingFolderBreadcrumb(folder: Folder) {
-        let breadcrumb = Breadcrumb()
-        breadcrumb.message = "Reseting folder after failed backoff \(folder.matomoName) - \(folder.remoteId)"
-        breadcrumb.level = .warning
-        breadcrumb.type = "debug"
-        SentrySDK.addBreadcrumb(breadcrumb)
-    }
-
-    static func failedResetingAfterBackoff(folder: Folder) {
-        SentrySDK.capture(message: "Failed reseting folder after backoff") { scope in
-            scope.setContext(value: ["Folder": ["Id": folder.id, "name": folder.matomoName]],
-                             key: "Folder context")
         }
     }
 

@@ -60,8 +60,7 @@ public extension MailboxManager {
     /// Fetch messages for a given folder
     /// - Parameters:
     ///   - folder: Folder to fetch
-    ///   - isRetrying: is function called from a retry ?
-    func messages(folder: Folder, isRetrying: Bool = false) async throws {
+    func messages(folder: Folder) async throws {
         guard !Task.isCancelled else { return }
 
         let liveFolder = folder.fresh(transactionable: self)

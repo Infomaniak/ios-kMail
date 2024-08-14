@@ -38,7 +38,7 @@ public protocol MailboxManagerMailboxable {
 
 /// An abstract interface on the `MailboxManager` related to messages
 public protocol MailboxManagerMessageable {
-    func messages(folder: Folder, isRetrying: Bool) async throws
+    func messages(folder: Folder) async throws
     func fetchOneNewPage(folder: Folder) async throws -> Bool
     func fetchOneOldPage(folder: Folder) async throws -> Int
     func message(message: Message) async throws
