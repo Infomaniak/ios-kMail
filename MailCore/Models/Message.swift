@@ -21,6 +21,7 @@ import InfomaniakCore
 import InfomaniakCoreDB
 import MailResources
 import RealmSwift
+import Sentry
 
 // TODO: move to core
 public extension String {
@@ -89,11 +90,13 @@ public final class MessageDeltaResult: Decodable {
             self.deletedShortUids = deletedShortUids
         } else {
             deletedShortUids = try container.decode([Int].self, forKey: .deletedShortUids).map { "\($0)" }
+            SentrySDK.capture(message: "Received deleted Delta as [Int]")
         }
         if let addedShortUids = try? container.decode([String].self, forKey: .addedShortUids) {
             self.addedShortUids = addedShortUids
         } else {
             addedShortUids = try container.decode([Int].self, forKey: .addedShortUids).map { "\($0)" }
+            SentrySDK.capture(message: "Received added Delta as [Int]")
         }
         updated = try container.decode([MessageFlags].self, forKey: .updated)
         cursor = try container.decode(String.self, forKey: .cursor)
