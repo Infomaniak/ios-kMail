@@ -23,7 +23,7 @@ import MailResources
 
 extension ApiError: CustomStringConvertible {}
 
-public class AFErrorWithContext: MailError {
+public class AFErrorWithContext: MailError, CustomStringConvertible {
     public let request: DataRequest
     public let afError: AFError
 
@@ -31,6 +31,10 @@ public class AFErrorWithContext: MailError {
         self.request = request
         self.afError = afError
         super.init(code: "afErrorWithContext", shouldDisplay: false)
+    }
+
+    public var description: String {
+        return afError.localizedDescription
     }
 }
 
