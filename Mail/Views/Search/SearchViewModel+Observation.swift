@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import RealmSwift
 import SwiftUI
 
 extension SearchViewModel {
@@ -39,21 +40,26 @@ extension SearchViewModel {
 
             switch changes {
             case .initial(let results):
-                let frozenResults = Array(results.freezeIfNeeded())
-                Task {
-                    await MainActor.run {
-                        withAnimation {
-                            self.frozenThreads = frozenResults
-                        }
-                        self.isLoading = false
-
-                        // start observing loaded results
-                        self.observeSearchResultsChanges()
-                    }
-                }
-
+                addSearchResults(results: results)
+            case .update(let results, _, _, _):
+                addSearchResults(results: results)
             default:
                 break
+            }
+        }
+    }
+
+    private func addSearchResults(results: Results<Thread>) {
+        let frozenResults = Array(results.freezeIfNeeded())
+        Task {
+            await MainActor.run {
+                withAnimation {
+                    self.frozenThreads = frozenResults
+                }
+                self.isLoading = false
+
+                // start observing loaded results
+                self.observeSearchResultsChanges()
             }
         }
     }
