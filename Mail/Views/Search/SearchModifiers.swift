@@ -47,6 +47,15 @@ struct SearchToolbar: ViewModifier {
     @ObservedObject var viewModel: SearchViewModel
     @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
 
+    private var selectAllButtonTitle: String {
+        if multipleSelectionViewModel.selectedItems.count == viewModel.frozenThreads.count {
+            return MailResourcesStrings.Localizable.buttonUnselectAll
+
+        } else {
+            return MailResourcesStrings.Localizable.buttonSelectAll
+        }
+    }
+
     func body(content: Content) -> some View {
         content
             .toolbar {
@@ -79,6 +88,17 @@ struct SearchToolbar: ViewModifier {
                             viewModel.clearSearch()
                         }
                         .frame(maxWidth: .infinity)
+                    }
+                }
+
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    if multipleSelectionViewModel.isEnabled {
+                        Button(selectAllButtonTitle) {
+                            withAnimation(.default.speed(2)) {
+                                multipleSelectionViewModel.selectAll(threads: viewModel.frozenThreads)
+                            }
+                        }
+                        .animation(nil, value: multipleSelectionViewModel.selectedItems)
                     }
                 }
             }
