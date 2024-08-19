@@ -25,10 +25,6 @@ public extension ApiEnvironment {
     var mailHost: String {
         return "mail.\(host)"
     }
-
-    var preprodHost: String {
-        return "mail-mr-5439.\(ApiEnvironment.preprod.host)"
-    }
 }
 
 // MARK: - Endpoints
@@ -164,9 +160,10 @@ public extension Endpoint {
         queryItems.append(URLQueryItem(name: "messages", value: Constants.numberOfOldUidsToFetch.toString()))
         queryItems.append(URLQueryItem(name: "direction", value: "desc"))
 
-        let endpoint = Endpoint(hostKeypath: \.preprodHost, path: "/api/mail/\(mailboxUuid)/folder/\(folderId)/mobile")
-        return endpoint.appending(path: "/date-ordered-messages-uids", queryItems: queryItems)
-//        return .messages(mailboxUuid: mailboxUuid, folderId: folderId).appending(path: "/messages-uids", queryItems: queryItems)
+        return messages(mailboxUuid: mailboxUuid, folderId: folderId).appending(
+            path: "/date-ordered-messages-uids",
+            queryItems: queryItems
+        )
     }
 
     static func messagesByUids(mailboxUuid: String, folderId: String, messagesUids: [String]) -> Endpoint {
