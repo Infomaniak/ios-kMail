@@ -109,7 +109,7 @@ struct SearchToolbar: ViewModifier {
                             text: action.shortTitle ?? action.title,
                             icon: action.icon
                         ) {
-                            let allMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
+                            let allMessages = multipleSelectionViewModel.selectedItems.threads.flatMap(\.messages)
                             multipleSelectionViewModel.disable()
                             Task {
                                 matomo.trackBulkEvent(
@@ -136,7 +136,7 @@ struct SearchToolbar: ViewModifier {
                         text: MailResourcesStrings.Localizable.buttonMore,
                         icon: MailResourcesAsset.plusActions.swiftUIImage
                     ) {
-                        multipleSelectedMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
+                        multipleSelectedMessages = multipleSelectionViewModel.selectedItems.threads.flatMap(\.messages)
                     }
                 }
             }
