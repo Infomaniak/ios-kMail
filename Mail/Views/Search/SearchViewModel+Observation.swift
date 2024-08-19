@@ -87,10 +87,15 @@ extension SearchViewModel {
             }
 
             switch changes {
-            case .update(let results, _, _, let modificationIndexes):
+            case .update(let results, _, _, _):
                 let frozenResults = Array(results.freezeIfNeeded())
-                refreshObservedSearchResults(allFrozen: frozenResults, changes: modificationIndexes)
 
+                Task { @MainActor in
+                    withAnimation {
+                        self.frozenThreads = frozenResults
+                    }
+                    self.isLoading = false
+                }
             default:
                 break
             }
@@ -99,28 +104,5 @@ extension SearchViewModel {
 
     func stopObserveSearchResultsChanges() {
         observationSearchResultsChangesToken?.invalidate()
-    }
-
-    /// Update search result threads on observation change.
-    private func refreshObservedSearchResults(allFrozen: [Thread], changes: [Int]) {
-        Task {
-            for index in changes {
-                guard let updatedThread = allFrozen[safe: index] else {
-                    continue
-                }
-
-                // Swap the updated thread at index
-                await MainActor.run {
-                    withAnimation {
-                        self.frozenThreads[index] = updatedThread
-                    }
-                }
-            }
-
-            // finish by changing the loading state
-            await MainActor.run {
-                self.isLoading = false
-            }
-        }
     }
 }
