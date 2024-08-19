@@ -55,7 +55,10 @@ struct LoadMoreButton: View {
                             var threadsCreated = 0
                             var numberOfCall = 0
                             while threadsCreated < Constants.oldPageSize / 2 && numberOfCall < 5 {
-                                threadsCreated += try await mailboxManager.fetchOneOldPage(folder: currentFolder)
+                                guard let newThreadsAdded = try await mailboxManager.fetchOneOldPage(folder: currentFolder) else {
+                                    break
+                                }
+                                threadsCreated += newThreadsAdded
                                 numberOfCall += 1
                             }
                             isLoadingMore = false

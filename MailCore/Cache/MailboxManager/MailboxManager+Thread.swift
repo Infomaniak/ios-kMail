@@ -139,14 +139,10 @@ public extension MailboxManager {
         }
 
         /// Fetch old messages until folder history is completed
-        var messagesToFetch = min(
-            folderPrevious.remainingOldMessagesToFetch,
-            folderPrevious.oldMessagesUidsToFetch.count
-        )
+        var messagesToFetch = folderPrevious.remainingOldMessagesToFetch
         while messagesToFetch > 0 {
             guard !Task.isCancelled else { return }
-
-            try await fetchOneOldPage(folder: folder)
+            guard try await fetchOneOldPage(folder: folder) != nil else { return }
 
             messagesToFetch -= Constants.oldPageSize
         }
@@ -173,11 +169,10 @@ public extension MailboxManager {
     /// - Parameters:
     ///   - folder: Given folder
     ///   - direction: Following or previous page to fetch
-    /// - Returns: Returns if there are other pages to fetch
+    /// - Returns: Returns if we got a new page
     func fetchOneNewPage(folder: Folder) async throws -> Bool {
         guard let liveFolder = folder.fresh(transactionable: self),
               !liveFolder.newMessagesUidsToFetch.isEmpty else { return false }
-        let fetchAgain = liveFolder.newMessagesUidsToFetch.count > Constants.newPageSize
 
         let range: Range = 0 ..< min(liveFolder.newMessagesUidsToFetch.count, Constants.newPageSize)
         let nextUids: [String] = Array(liveFolder.newMessagesUidsToFetch[range])
@@ -188,16 +183,17 @@ public extension MailboxManager {
             freshFolder?.newMessagesUidsToFetch.removeSubrange(range)
         }
 
-        return fetchAgain
+        return true
     }
 
     /// Previous page
     /// - Parameters:
     ///   - folder: Given folder
     ///   - direction: Following or previous page to fetch
-    /// - Returns: Returns number of threads created
-    func fetchOneOldPage(folder: Folder) async throws -> Int {
-        guard let liveFolder = folder.fresh(transactionable: self) else { return 0 }
+    /// - Returns: Returns number of threads created (`nil` if nothing to fetch)
+    func fetchOneOldPage(folder: Folder) async throws -> Int? {
+        guard let liveFolder = folder.fresh(transactionable: self),
+              !liveFolder.oldMessagesUidsToFetch.isEmpty else { return nil }
 
         let threadsCount = liveFolder.threads.count
         var newThreadsCount = 0
