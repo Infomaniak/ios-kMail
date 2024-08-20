@@ -47,6 +47,15 @@ struct SearchToolbar: ViewModifier {
     @ObservedObject var viewModel: SearchViewModel
     @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
 
+    private var selectAllButtonTitle: String {
+        if multipleSelectionViewModel.selectedItems.count == viewModel.frozenThreads.count {
+            return MailResourcesStrings.Localizable.buttonUnselectAll
+
+        } else {
+            return MailResourcesStrings.Localizable.buttonSelectAll
+        }
+    }
+
     func body(content: Content) -> some View {
         content
             .toolbar {
@@ -81,6 +90,17 @@ struct SearchToolbar: ViewModifier {
                         .frame(maxWidth: .infinity)
                     }
                 }
+
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    if multipleSelectionViewModel.isEnabled {
+                        Button(selectAllButtonTitle) {
+                            withAnimation(.default.speed(2)) {
+                                multipleSelectionViewModel.selectAll(threads: viewModel.frozenThreads)
+                            }
+                        }
+                        .animation(nil, value: multipleSelectionViewModel.selectedItems)
+                    }
+                }
             }
             .bottomBar(isVisible: multipleSelectionViewModel.isEnabled) {
                 HStack(spacing: 0) {
@@ -89,7 +109,7 @@ struct SearchToolbar: ViewModifier {
                             text: action.shortTitle ?? action.title,
                             icon: action.icon
                         ) {
-                            let allMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
+                            let allMessages = multipleSelectionViewModel.selectedItems.threads.flatMap(\.messages)
                             multipleSelectionViewModel.disable()
                             Task {
                                 matomo.trackBulkEvent(
@@ -116,7 +136,7 @@ struct SearchToolbar: ViewModifier {
                         text: MailResourcesStrings.Localizable.buttonMore,
                         icon: MailResourcesAsset.plusActions.swiftUIImage
                     ) {
-                        multipleSelectedMessages = multipleSelectionViewModel.selectedItems.flatMap(\.messages)
+                        multipleSelectedMessages = multipleSelectionViewModel.selectedItems.threads.flatMap(\.messages)
                     }
                 }
             }

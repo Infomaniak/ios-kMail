@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import RealmSwift
 import SwiftUI
 
 extension SearchViewModel {
@@ -39,21 +40,26 @@ extension SearchViewModel {
 
             switch changes {
             case .initial(let results):
-                let frozenResults = Array(results.freezeIfNeeded())
-                Task {
-                    await MainActor.run {
-                        withAnimation {
-                            self.frozenThreads = frozenResults
-                        }
-                        self.isLoading = false
-
-                        // start observing loaded results
-                        self.observeSearchResultsChanges()
-                    }
-                }
-
+                addSearchResults(results: results)
+            case .update(let results, _, _, _):
+                addSearchResults(results: results)
             default:
                 break
+            }
+        }
+    }
+
+    private func addSearchResults(results: Results<Thread>) {
+        let frozenResults = Array(results.freezeIfNeeded())
+        Task {
+            await MainActor.run {
+                withAnimation {
+                    self.frozenThreads = frozenResults
+                }
+                self.isLoading = false
+
+                // start observing loaded results
+                self.observeSearchResultsChanges()
             }
         }
     }
@@ -81,10 +87,15 @@ extension SearchViewModel {
             }
 
             switch changes {
-            case .update(let results, _, _, let modificationIndexes):
+            case .update(let results, _, _, _):
                 let frozenResults = Array(results.freezeIfNeeded())
-                refreshObservedSearchResults(allFrozen: frozenResults, changes: modificationIndexes)
 
+                Task { @MainActor in
+                    withAnimation {
+                        self.frozenThreads = frozenResults
+                    }
+                    self.isLoading = false
+                }
             default:
                 break
             }
@@ -93,28 +104,5 @@ extension SearchViewModel {
 
     func stopObserveSearchResultsChanges() {
         observationSearchResultsChangesToken?.invalidate()
-    }
-
-    /// Update search result threads on observation change.
-    private func refreshObservedSearchResults(allFrozen: [Thread], changes: [Int]) {
-        Task {
-            for index in changes {
-                guard let updatedThread = allFrozen[safe: index] else {
-                    continue
-                }
-
-                // Swap the updated thread at index
-                await MainActor.run {
-                    withAnimation {
-                        self.frozenThreads[index] = updatedThread
-                    }
-                }
-            }
-
-            // finish by changing the loading state
-            await MainActor.run {
-                self.isLoading = false
-            }
-        }
     }
 }
