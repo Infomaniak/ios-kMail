@@ -149,7 +149,7 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
 
     func fetchOneNewPage(folder: MailCore.Folder) async throws -> Bool { false }
 
-    func fetchOneOldPage(folder: MailCore.Folder) async throws -> Int { 0 }
+    func fetchOneOldPage(folder: MailCore.Folder) async throws -> Int? { nil }
 
     func message(message: MailCore.Message) async throws {}
 
