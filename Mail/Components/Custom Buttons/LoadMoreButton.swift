@@ -44,26 +44,7 @@ struct LoadMoreButton: View {
                     .frame(maxWidth: .infinity)
             } else if shouldDisplay {
                 Button(MailResourcesStrings.Localizable.buttonLoadMore) {
-                    withAnimation {
-                        isLoadingMore = true
-                    }
-
-                    Task {
-                        await tryOrDisplayError {
-                            matomo.track(eventWithCategory: .threadList, name: "loadMore")
-
-                            var threadsCreated = 0
-                            var numberOfCall = 0
-                            while threadsCreated < Constants.oldPageSize / 2 && numberOfCall < 5 {
-                                guard let newThreadsAdded = try await mailboxManager.fetchOneOldPage(folder: currentFolder) else {
-                                    break
-                                }
-                                threadsCreated += newThreadsAdded
-                                numberOfCall += 1
-                            }
-                            isLoadingMore = false
-                        }
-                    }
+                    loadMore()
                 }
                 .buttonStyle(.ikLink())
                 .controlSize(.small)
@@ -71,5 +52,28 @@ struct LoadMoreButton: View {
         }
         .padding(.vertical, value: .small)
         .threadListCellAppearance()
+    }
+
+    private func loadMore() {
+        withAnimation {
+            isLoadingMore = true
+        }
+
+        Task {
+            await tryOrDisplayError {
+                matomo.track(eventWithCategory: .threadList, name: "loadMore")
+
+                var threadsCreated = 0
+                var numberOfCall = 0
+                while threadsCreated < Constants.oldPageSize / 2 && numberOfCall < 5 {
+                    guard let newThreadsAdded = try await mailboxManager.fetchOneOldPage(folder: currentFolder) else {
+                        break
+                    }
+                    threadsCreated += newThreadsAdded
+                    numberOfCall += 1
+                }
+                isLoadingMore = false
+            }
+        }
     }
 }
