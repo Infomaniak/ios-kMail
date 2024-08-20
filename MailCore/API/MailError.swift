@@ -23,7 +23,7 @@ import MailResources
 
 extension ApiError: CustomStringConvertible {}
 
-public class AFErrorWithContext: MailError {
+public class AFErrorWithContext: MailError, CustomStringConvertible {
     public let request: DataRequest
     public let afError: AFError
 
@@ -31,6 +31,10 @@ public class AFErrorWithContext: MailError {
         self.request = request
         self.afError = afError
         super.init(code: "afErrorWithContext", shouldDisplay: false)
+    }
+
+    public var description: String {
+        return afError.localizedDescription
     }
 }
 
@@ -75,7 +79,6 @@ public class MailError: LocalizedError, Encodable {
     public static let noConnection = MailError(code: "noConnection",
                                                localizedDescription: MailResourcesStrings.Localizable.noConnection,
                                                shouldDisplay: true)
-    static let lostOffsetMessage = MailError(code: "lostOffsetMessage")
 
     /// After an update from the server we are still without a default signature
     public static let defaultSignatureMissing = MailError(code: "defaultSignatureMissing")

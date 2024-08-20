@@ -155,7 +155,9 @@ public enum Constants {
     }
 
     public static let messageQuantityLimit = 500
-    public static let pageSize = 50 // API Limit: 200
+    public static let numberOfOldUidsToFetch = 10000
+    public static let oldPageSize = 50
+    public static let newPageSize = 200
     public static let contactSuggestionLimit = 5
 
     public static let apiLimit = 1000
