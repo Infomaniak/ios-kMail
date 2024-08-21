@@ -44,7 +44,7 @@ struct ExtendedFAB: View {
                     .clipped()
             }
         }
-        .buttonStyle(.ikFloatingAppButton(isExtended: isExtended))
+        .buttonStyle(.ikFloatingActionButton(isExtended: isExtended))
         .ikSensoryFeedback(.impact(weight: .heavy), trigger: didTapButton)
     }
 }

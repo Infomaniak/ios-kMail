@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -38,7 +39,7 @@ struct SettingsDataManagementDetailView: View {
                 Text(description)
                     .textStyle(.body)
                     .multilineTextAlignment(.leading)
-                    .padding(IKPadding.medium)
+                    .padding(value: .medium)
 
                 SettingsToggleCell(
                     title: MailResourcesStrings.Localizable.settingsAuthorizeTracking,

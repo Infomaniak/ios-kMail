@@ -17,6 +17,7 @@
  */
 
 import Combine
+import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
 import RealmSwift
