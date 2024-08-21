@@ -96,7 +96,7 @@ struct AIPromptView: View {
                     aiModel.addInitialPrompt(prompt)
                     dismiss()
                 }
-                .buttonStyle(.ikPlain)
+                .buttonStyle(.ikBorderedProminent)
                 .ikButtonPrimaryStyle(MailResourcesAsset.aiColor.swiftUIColor)
                 .ikButtonSecondaryStyle(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
                 .disabled(prompt.isEmpty)

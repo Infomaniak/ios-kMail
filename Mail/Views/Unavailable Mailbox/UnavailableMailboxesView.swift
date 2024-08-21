@@ -64,7 +64,7 @@ struct UnavailableMailboxesView: View {
                     } label: {
                         Text(MailResourcesStrings.Localizable.buttonAddEmailAddress)
                     }
-                    .buttonStyle(.ikPlain)
+                    .buttonStyle(.ikBorderedProminent)
                     .simultaneousGesture(
                         TapGesture()
                             .onEnded {
@@ -80,7 +80,7 @@ struct UnavailableMailboxesView: View {
                         Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
                             .textStyle(.bodyMediumAccent)
                     }
-                    .buttonStyle(.ikLink())
+                    .buttonStyle(.ikBorderless)
                     .simultaneousGesture(
                         TapGesture()
                             .onEnded {

@@ -50,7 +50,7 @@ struct SettingsNotificationsView: View {
                         Button(MailResourcesStrings.Localizable.warningNotificationsDisabledButton) {
                             DeeplinkConstants.presentsNotificationSettings()
                         }
-                        .buttonStyle(.ikLink(isInlined: true))
+                        .buttonStyle(.ikBorderless(isInlined: true))
                     }
                     .padding(value: .medium)
                     .frame(maxWidth: .infinity)

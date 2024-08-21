@@ -79,7 +79,7 @@ struct SyncCopyPasswordView: View {
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "copyPassword")
                     copyPassword()
                 }
-                .buttonStyle(.ikPlain)
+                .buttonStyle(.ikBorderedProminent)
                 .ikButtonFullWidth(true)
                 .controlSize(.large)
                 .ikButtonLoading(applicationPassword == nil)

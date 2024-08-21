@@ -70,7 +70,7 @@ struct MessageBodyView: View {
                             : MailResourcesStrings.Localizable.messageShowQuotedText) {
                                 model.showBlockQuote.toggle()
                             }
-                            .buttonStyle(.ikLink(isInlined: true))
+                            .buttonStyle(.ikBorderless(isInlined: true))
                             .controlSize(.small)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, value: .medium)

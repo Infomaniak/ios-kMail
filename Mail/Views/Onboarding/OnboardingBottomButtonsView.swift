@@ -42,13 +42,13 @@ struct OnboardingBottomButtonsView: View {
             Button(MailResourcesStrings.Localizable.buttonLogin) {
                 loginHandler.login()
             }
-            .buttonStyle(.ikPlain)
+            .buttonStyle(.ikBorderedProminent)
             .ikButtonLoading(loginHandler.isLoading)
 
             Button(MailResourcesStrings.Localizable.buttonCreateAccount) {
                 isPresentingCreateAccount.toggle()
             }
-            .buttonStyle(.ikLink())
+            .buttonStyle(.ikBorderless)
             .disabled(loginHandler.isLoading)
         }
         .ikButtonFullWidth(true)

@@ -62,7 +62,7 @@ struct AuthorizationView: View {
         WaveView(slides: slides, selectedSlide: $selection, isScrollEnabled: isScrollEnabled) { _ in
             VStack(spacing: IKPadding.small) {
                 Button(MailResourcesStrings.Localizable.contentDescriptionButtonNext, action: nextButtonClicked)
-                    .buttonStyle(.ikPlain)
+                    .buttonStyle(.ikBorderedProminent)
                     .controlSize(.large)
                     .ikButtonFullWidth(true)
             }

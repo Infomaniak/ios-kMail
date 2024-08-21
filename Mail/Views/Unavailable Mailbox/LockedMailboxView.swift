@@ -43,7 +43,7 @@ struct LockedMailboxView: View {
             Button(MailResourcesStrings.Localizable.externalDialogConfirmButton) {
                 dismiss()
             }
-            .buttonStyle(.ikPlain)
+            .buttonStyle(.ikBorderedProminent)
             .controlSize(.large)
             .ikButtonFullWidth(true)
         }

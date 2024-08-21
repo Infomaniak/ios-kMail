@@ -94,7 +94,7 @@ struct AttachmentsView: View {
                         .multilineTextAlignment(.leading)
 
                     Button(MailResourcesStrings.Localizable.buttonDownloadAll, action: downloadAllAttachments)
-                        .buttonStyle(.ikLink(isInlined: true))
+                        .buttonStyle(.ikBorderless(isInlined: true))
                         .controlSize(.small)
                         .ikButtonLoading(downloadInProgress)
                 }

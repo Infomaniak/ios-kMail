@@ -52,7 +52,7 @@ struct UpdateVersionView: View {
             } label: {
                 Text(MailResourcesStrings.Localizable.moreInfo)
             }
-            .buttonStyle(.ikLink())
+            .buttonStyle(.ikBorderless)
             .controlSize(.small)
             .padding(.leading, value: .medium)
 

@@ -43,7 +43,7 @@ struct SettingsDataManagementView: View {
                 Button(MailResourcesStrings.Localizable.settingsDataManagementSourceCode) {
                     openURL(URLConstants.githubRepository.url)
                 }
-                .buttonStyle(.ikLink(isInlined: true))
+                .buttonStyle(.ikBorderless(isInlined: true))
                 .padding(IKPadding.medium)
 
                 ForEach(DataManagement.allCases, id: \.self) { item in

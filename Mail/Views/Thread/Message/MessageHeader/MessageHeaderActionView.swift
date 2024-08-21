@@ -59,7 +59,7 @@ struct MessageHeaderActionView<Content: View>: View {
         message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
     ) {
         Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
-            .buttonStyle(.ikLink(isInlined: true))
+            .buttonStyle(.ikBorderless(isInlined: true))
             .controlSize(.small)
     }
 }

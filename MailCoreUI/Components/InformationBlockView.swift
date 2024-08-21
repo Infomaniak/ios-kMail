@@ -79,7 +79,7 @@ public struct InformationBlockView: View {
 
                 if let buttonTitle, let buttonAction {
                     Button(buttonTitle, action: buttonAction)
-                        .buttonStyle(.ikLink(isInlined: true))
+                        .buttonStyle(.ikBorderless(isInlined: true))
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)

@@ -66,7 +66,7 @@ struct SelectComposeMailboxView: View {
             Button(MailResourcesStrings.Localizable.buttonContinue) {
                 viewModel.validateMailboxChoice(viewModel.selectedMailbox)
             }
-            .buttonStyle(.ikPlain)
+            .buttonStyle(.ikBorderedProminent)
             .controlSize(.large)
             .ikButtonFullWidth(true)
             .padding(.horizontal, value: .small)

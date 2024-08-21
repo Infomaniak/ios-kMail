@@ -63,7 +63,7 @@ struct SyncDownloadProfileView: View {
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "download")
                     downloadProfile()
                 }
-                .buttonStyle(.ikPlain)
+                .buttonStyle(.ikBorderedProminent)
                 .ikButtonFullWidth(true)
                 .controlSize(.large)
                 .ikButtonLoading(isDownloadingConfig)

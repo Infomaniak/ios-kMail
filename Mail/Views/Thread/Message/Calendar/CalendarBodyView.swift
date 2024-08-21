@@ -44,7 +44,7 @@ struct CalendarBodyView: View {
                 Text(MailResourcesStrings.Localizable.buttonOpenMyCalendar)
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.ikPlain)
+            .buttonStyle(.ikBorderedProminent)
             .ikButtonLoading(isLoadingCalendarButton)
             .padding(.horizontal, value: .medium)
         }

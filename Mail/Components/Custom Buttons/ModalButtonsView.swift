@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -38,7 +39,7 @@ struct ModalButtonsView: View {
                     secondaryButtonAction?()
                     dismiss()
                 }
-                .buttonStyle(.ikLink())
+                .buttonStyle(.ikBorderless)
                 .keyboardShortcut(.cancelAction)
             }
 
@@ -50,7 +51,7 @@ struct ModalButtonsView: View {
                     dismiss()
                 }
             }
-            .buttonStyle(.ikPlain)
+            .buttonStyle(.ikBorderedProminent)
             .disabled(!primaryButtonEnabled)
             .ikButtonLoading(isButtonLoading)
             .keyboardShortcut(.defaultAction)

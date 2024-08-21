@@ -45,7 +45,7 @@ struct MessageSubHeaderView: View {
                         $message.localSafeDisplay.wrappedValue = true
                     }
                 }
-                .buttonStyle(.ikLink(isInlined: true))
+                .buttonStyle(.ikBorderless(isInlined: true))
                 .controlSize(.small)
             }
         }

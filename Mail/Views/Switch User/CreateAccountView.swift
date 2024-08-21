@@ -86,7 +86,7 @@ struct CreateAccountView: View {
                 matomo.track(eventWithCategory: .account, name: "openCreationWebview")
                 isPresentingCreateAccount = true
             }
-            .buttonStyle(.ikPlain)
+            .buttonStyle(.ikBorderedProminent)
             .ikButtonLoading(loginHandler.isLoading)
             .ikButtonFullWidth(true)
             .controlSize(.large)

@@ -106,7 +106,7 @@ struct AccountView: View {
                         Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
                             .textStyle(.bodyMediumAccent)
                     }
-                    .buttonStyle(.ikLink())
+                    .buttonStyle(.ikBorderless)
                 }
                 .zIndex(0)
                 .padding(.horizontal, value: .medium)
@@ -121,13 +121,13 @@ struct AccountView: View {
                     matomo.track(eventWithCategory: .account, name: "logOut")
                     isShowingLogoutAlert.toggle()
                 }
-                .buttonStyle(.ikPlain)
+                .buttonStyle(.ikBorderedProminent)
 
                 Button(MailResourcesStrings.Localizable.buttonAccountDelete, role: .destructive) {
                     matomo.track(eventWithCategory: .account, name: "deleteAccount")
                     presentedAccountDeletionToken = tokenStore.tokenFor(userId: account.userId)
                 }
-                .buttonStyle(.ikLink())
+                .buttonStyle(.ikBorderless)
             }
             .ikButtonFullWidth(true)
             .controlSize(.large)

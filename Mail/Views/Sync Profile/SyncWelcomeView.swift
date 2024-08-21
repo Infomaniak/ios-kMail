@@ -42,7 +42,7 @@ struct SyncWelcomeView: View {
                 matomo.track(eventWithCategory: .syncAutoConfig, name: "start")
                 navigationPath.append(.downloadProfile)
             }
-            .buttonStyle(.ikPlain)
+            .buttonStyle(.ikBorderedProminent)
             .controlSize(.large)
             .ikButtonFullWidth(true)
             .padding(.horizontal, value: .large)

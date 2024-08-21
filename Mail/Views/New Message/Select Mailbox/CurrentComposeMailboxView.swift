@@ -64,7 +64,7 @@ struct CurrentComposeMailboxView: View {
                     Button(MailResourcesStrings.Localizable.buttonContinue) {
                         viewModel.validateMailboxChoice(viewModel.defaultMailbox)
                     }
-                    .buttonStyle(.ikPlain)
+                    .buttonStyle(.ikBorderedProminent)
 
                     NavigationLink(destination: SelectComposeMailboxView(
                         composeMessageIntent: $composeMessageIntent,
@@ -73,7 +73,7 @@ struct CurrentComposeMailboxView: View {
                         Text(MailResourcesStrings.Localizable.buttonSendWithDifferentAddress)
                             .textStyle(.bodyMediumAccent)
                     }
-                    .buttonStyle(.ikLink())
+                    .buttonStyle(.ikBorderless)
                     .padding(.bottom, IKPadding.onBoardingBottomButtons)
                 }
                 .ikButtonFullWidth(true)

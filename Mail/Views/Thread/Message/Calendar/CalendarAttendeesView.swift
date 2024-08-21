@@ -58,7 +58,7 @@ struct CalendarAttendeesView: View {
                 .textStyle(.bodyAccent)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .buttonStyle(.ikLink(isInlined: true))
+            .buttonStyle(.ikBorderless(isInlined: true))
             .padding(.horizontal, value: .medium)
 
             if isShowingAttendees {
