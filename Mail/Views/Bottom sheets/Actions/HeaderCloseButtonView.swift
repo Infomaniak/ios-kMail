@@ -34,7 +34,7 @@ struct HeaderCloseButtonView: View {
                 .frame(maxWidth: .infinity)
         }
         .padding(.trailing, IKIcon.Size.small.rawValue)
-        .padding(.bottom, value: .regular)
+        .padding(.bottom, value: .medium)
     }
 }
 

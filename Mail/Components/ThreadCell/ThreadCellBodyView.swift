@@ -31,13 +31,13 @@ struct ThreadCellBodyView: View, Equatable {
     let isFlagged: Bool
 
     var body: some View {
-        VStack(alignment: .leading, spacing: UIPadding.verySmall) {
+        VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
             if density == .compact {
                 if let email {
                     ThreadCellTextView(text: "<\(email)>", type: .email)
                 }
 
-                HStack(spacing: UIPadding.verySmall) {
+                HStack(spacing: IKPadding.extraSmall) {
                     ThreadCellActionView(lastAction: lastAction)
                     ThreadCellTextView(text: subject, type: .subject)
                     MessageFolderTag(title: folderName)
@@ -48,13 +48,13 @@ struct ThreadCellBodyView: View, Equatable {
                     ThreadCellTextView(text: "<\(email)>", type: .email)
                 }
 
-                HStack(spacing: UIPadding.verySmall) {
+                HStack(spacing: IKPadding.extraSmall) {
                     ThreadCellActionView(lastAction: lastAction)
                     ThreadCellTextView(text: subject, type: .subject)
                     ThreadCellDetailsView(hasAttachments: hasAttachments, isFlagged: isFlagged)
                 }
 
-                HStack(spacing: UIPadding.verySmall) {
+                HStack(spacing: IKPadding.extraSmall) {
                     ThreadCellTextView(text: preview, type: .preview)
                     MessageFolderTag(title: folderName)
                 }

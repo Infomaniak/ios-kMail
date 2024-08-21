@@ -47,9 +47,9 @@ struct AddLinkView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.urlEntryTitle)
                 .textStyle(.bodyMedium)
-                .padding(.bottom, UIPadding.alertTitleBottom)
+                .padding(.bottom, IKPadding.alertTitleBottom)
 
-            VStack(spacing: UIPadding.regular) {
+            VStack(spacing: IKPadding.medium) {
                 TextField(textPlaceholder, text: $text)
                     .focused($firstFieldIsFocused)
 
@@ -61,7 +61,7 @@ struct AddLinkView: View {
             }
             .textFieldStyle(.roundedBorder)
             .textStyle(.body)
-            .padding(.bottom, UIPadding.alertDescriptionBottom)
+            .padding(.bottom, IKPadding.alertDescriptionBottom)
 
             ModalButtonsView(
                 primaryButtonTitle: MailResourcesStrings.Localizable.buttonValid,

@@ -17,6 +17,7 @@
  */
 
 import Combine
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -70,8 +71,8 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
     let dragIndicator: Visibility
     let title: String?
 
-    private let topPadding = UIPadding.medium
-    private let titleSpacing = UIPadding.small
+    private let topPadding = IKPadding.large
+    private let titleSpacing = IKPadding.small
 
     private var backportDragIndicator: Backport<Any>.Visibility {
         switch dragIndicator {
@@ -97,7 +98,7 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
     }
 
     public func body(content: Content) -> some View {
-        VStack(spacing: UIPadding.small) {
+        VStack(spacing: IKPadding.small) {
             if let title {
                 Text(title)
                     .font(.headline)
@@ -106,7 +107,7 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
 
             ScrollView {
                 content
-                    .padding(.bottom, value: .regular)
+                    .padding(.bottom, value: .medium)
             }
             .introspect(.scrollView, on: .iOS(.v15)) { scrollView in
                 guard !currentDetents.contains(.large) else { return }
@@ -133,8 +134,8 @@ public struct SelfSizingPanelViewModifier: ViewModifier {
     let dragIndicator: Visibility
     let title: String?
 
-    private let topPadding = UIPadding.medium
-    private let titleSpacing = UIPadding.small
+    private let topPadding = IKPadding.large
+    private let titleSpacing = IKPadding.small
 
     private var headerSize: CGFloat {
         guard title != nil else {
@@ -158,7 +159,7 @@ public struct SelfSizingPanelViewModifier: ViewModifier {
 
             ScrollView {
                 content
-                    .padding(.bottom, value: .regular)
+                    .padding(.bottom, value: .medium)
             }
             .introspect(.scrollView, on: .iOS(.v16, .v17)) { scrollView in
                 let totalPanelContentHeight = scrollView.contentSize.height + headerSize

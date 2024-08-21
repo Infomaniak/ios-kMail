@@ -36,8 +36,8 @@ struct FloatingActionButtonModifier: ViewModifier {
 
             if isEnabled {
                 ExtendedFAB(title: title, icon: icon, isExtended: isExtended, action: action)
-                    .padding(.trailing, value: .medium)
-                    .padding(.bottom, UIPadding.floatingButtonBottom)
+                    .padding(.trailing, value: .large)
+                    .padding(.bottom, IKPadding.floatingButtonBottom)
                     .modifier(snackBarAwareModifier)
                     .accessibilityLabel(title)
                     .overlay {

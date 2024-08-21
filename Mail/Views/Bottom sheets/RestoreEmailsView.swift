@@ -41,7 +41,7 @@ struct RestoreEmailsView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.restoreEmailsTitle)
                 .textStyle(.bodyMedium)
-                .padding(.bottom, value: .regular)
+                .padding(.bottom, value: .medium)
 
             Text(MailResourcesStrings.Localizable.restoreEmailsText)
                 .textStyle(.bodySecondary)
@@ -51,7 +51,7 @@ struct RestoreEmailsView: View {
                         noSelectionText: pickerNoSelectionText,
                         selection: $selectedDate,
                         items: availableDates.map(mapDates))
-                .padding(.bottom, value: .medium)
+                .padding(.bottom, value: .large)
                 .onChange(of: selectedDate) { _ in
                     matomo.track(eventWithCategory: .restoreEmailsBottomSheet, action: .input, name: "selectDate")
                 }
@@ -61,7 +61,7 @@ struct RestoreEmailsView: View {
                              primaryButtonAction: restoreEmails,
                              secondaryButtonAction: dismiss.callAsFunction)
         }
-        .padding(.horizontal, isCompactWindow ? UIPadding.bottomSheetHorizontal : 0)
+        .padding(.horizontal, isCompactWindow ? IKPadding.bottomSheetHorizontal : 0)
         .task {
             await tryOrDisplayError {
                 let backupsList = try await mailboxManager.apiFetcher.listBackups(mailbox: mailboxManager.mailbox).backups

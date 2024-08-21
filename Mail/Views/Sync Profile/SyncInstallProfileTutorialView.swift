@@ -62,11 +62,11 @@ struct SyncInstallProfileTutorialView: View {
     var body: some View {
         ScrollView {
             VStack {
-                VStack(spacing: UIPadding.regular) {
+                VStack(spacing: IKPadding.medium) {
                     Text(MailResourcesStrings.Localizable.syncTutorialInstallProfileTitle)
                         .textStyle(.header2)
                         .multilineTextAlignment(.center)
-                    VStack(alignment: .leading, spacing: UIPadding.regular) {
+                    VStack(alignment: .leading, spacing: IKPadding.medium) {
                         ForEach(steps.indices, id: \.self) { index in
                             if let stepMarkdown = try? AttributedString(markdown: "\(index + 1)\\. \(steps[index])") {
                                 Text(stepMarkdown)
@@ -82,7 +82,7 @@ struct SyncInstallProfileTutorialView: View {
                     }
                     .textStyle(.bodySecondary)
                 }
-                .padding(value: .medium)
+                .padding(value: .large)
 
                 TabView {
                     ForEach(tutorialStepImages) { step in
@@ -90,11 +90,11 @@ struct SyncInstallProfileTutorialView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .clipShape(RoundedRectangle(cornerRadius: UIConstants.buttonsRadius))
-                            .padding(.bottom, value: .large)
+                            .padding(.bottom, value: .extraLarge)
                     }
                 }
                 .tabViewStyle(.page)
-                .frame(height: 256 + UIPadding.large)
+                .frame(height: 256 + IKPadding.extraLarge)
             }
         }
         .toolbar {
@@ -103,7 +103,7 @@ struct SyncInstallProfileTutorialView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            VStack(spacing: UIPadding.small) {
+            VStack(spacing: IKPadding.small) {
                 Button(MailResourcesStrings.Localizable.buttonGoToSettings) {
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "openSettings")
                     @InjectService var platformDetector: PlatformDetectable
@@ -127,8 +127,8 @@ struct SyncInstallProfileTutorialView: View {
             }
             .controlSize(.large)
             .ikButtonFullWidth(true)
-            .padding(.top, value: .verySmall)
-            .padding(.horizontal, value: .medium)
+            .padding(.top, value: .extraSmall)
+            .padding(.horizontal, value: .large)
             .background(MailResourcesAsset.backgroundColor.swiftUIColor)
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                 withAnimation {

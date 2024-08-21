@@ -33,7 +33,7 @@ struct CalendarAttendeeCell: View {
     }
 
     var body: some View {
-        HStack(spacing: UIPadding.small) {
+        HStack(spacing: IKPadding.small) {
             AttendeeAvatarView(attendee: attendee)
 
             VStack(alignment: .leading, spacing: 0) {
@@ -47,7 +47,7 @@ struct CalendarAttendeeCell: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, value: .small)
-        .padding(.horizontal, value: .regular)
+        .padding(.horizontal, value: .medium)
     }
 }
 

@@ -78,7 +78,7 @@ struct MessageView: View {
                                   }))
 
                 if isMessageExpanded {
-                    VStack(spacing: UIPadding.regular) {
+                    VStack(spacing: IKPadding.medium) {
                         if isMessageInteractive {
                             MessageSubHeaderView(
                                 message: message,
@@ -89,7 +89,7 @@ struct MessageView: View {
                         if isShowingErrorLoading {
                             Text(MailResourcesStrings.Localizable.errorLoadingMessage)
                                 .textStyle(.bodySmallItalicSecondary)
-                                .padding(.horizontal, value: .regular)
+                                .padding(.horizontal, value: .medium)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                         } else {
                             MessageBodyView(

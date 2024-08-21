@@ -28,8 +28,8 @@ struct ThreadCellHeaderView: View, Equatable {
     let showDraftPrefix: Bool
 
     var body: some View {
-        HStack(spacing: UIPadding.small) {
-            HStack(spacing: UIPadding.small) {
+        HStack(spacing: IKPadding.small) {
+            HStack(spacing: IKPadding.small) {
                 if showDraftPrefix {
                     Text("\(MailResourcesStrings.Localizable.draftPrefix)")
                         .textStyle(.bodyMediumError)

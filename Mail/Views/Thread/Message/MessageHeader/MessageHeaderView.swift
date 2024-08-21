@@ -38,7 +38,7 @@ struct MessageHeaderView: View {
     @Binding var isMessageExpanded: Bool
 
     var body: some View {
-        VStack(spacing: UIPadding.regular) {
+        VStack(spacing: IKPadding.medium) {
             MessageHeaderSummaryView(message: message,
                                      isMessageExpanded: $isMessageExpanded,
                                      isHeaderExpanded: $isHeaderExpanded,
@@ -50,7 +50,7 @@ struct MessageHeaderView: View {
             }
         }
         .contentShape(Rectangle())
-        .padding(value: .regular)
+        .padding(value: .medium)
         .onTapGesture {
             guard isMessageInteractive else { return }
 

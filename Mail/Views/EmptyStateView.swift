@@ -34,17 +34,17 @@ struct EmptyStateView: View {
     var body: some View {
         VStack(spacing: 0) {
             image
-                .padding(.bottom, value: .medium)
+                .padding(.bottom, value: .large)
 
             Text(title)
                 .textStyle(.header2)
-                .padding(.bottom, value: .verySmall)
+                .padding(.bottom, value: .extraSmall)
             Text(description)
                 .textStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
         }
-        .padding(.horizontal, value: .large)
-        .padding(.bottom, withFABPadding ? UIPadding.floatingButtonBottom + 56 : 0)
+        .padding(.horizontal, value: .extraLarge)
+        .padding(.bottom, withFABPadding ? IKPadding.floatingButtonBottom + 56 : 0)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Empty\(matomoName)View"])
         .ignoresSafeArea(.keyboard)

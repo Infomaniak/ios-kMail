@@ -37,8 +37,8 @@ struct SuperCollapsedView: View {
             Button(action: action) {
                 Text(MailResourcesStrings.Localizable.superCollapsedBlock(count))
                     .textStyle(.bodyAccent)
-                    .padding(.vertical, UIPadding.small)
-                    .padding(.horizontal, UIPadding.medium)
+                    .padding(.vertical, IKPadding.small)
+                    .padding(.horizontal, IKPadding.large)
                     .frame(minHeight: 40)
                     .background(
                         RoundedRectangle(cornerRadius: 16)

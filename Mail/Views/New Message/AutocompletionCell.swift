@@ -29,7 +29,7 @@ struct AutocompletionCell: View {
     let unknownRecipient: Bool
 
     var body: some View {
-        HStack(spacing: UIPadding.intermediate) {
+        HStack(spacing: IKPadding.intermediate) {
             Button {
                 addRecipient(recipient)
             } label: {
@@ -47,7 +47,7 @@ struct AutocompletionCell: View {
                     .foregroundStyle(MailResourcesAsset.textTertiaryColor)
             }
         }
-        .padding(.horizontal, value: .regular)
+        .padding(.horizontal, value: .medium)
     }
 }
 

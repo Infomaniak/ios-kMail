@@ -29,7 +29,7 @@ struct AIHeaderView: View {
     let style: Style
 
     var body: some View {
-        HStack(spacing: UIPadding.small) {
+        HStack(spacing: IKPadding.small) {
             if style == .bottomSheet {
                 IKIcon(MailResourcesAsset.aiWriter, size: .large)
                     .foregroundStyle(MailResourcesAsset.aiColor)

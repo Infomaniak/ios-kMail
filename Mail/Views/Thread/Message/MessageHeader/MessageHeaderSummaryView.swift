@@ -66,12 +66,12 @@ struct MessageHeaderSummaryView: View {
                     .disabled(!isMessageInteractive)
                 }
 
-                VStack(alignment: .leading, spacing: UIPadding.verySmall) {
+                VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
                     if message.isDraft {
                         Text(MailResourcesStrings.Localizable.messageIsDraftOption)
                             .textStyle(.bodyMediumError)
                     } else {
-                        HStack(alignment: .firstTextBaseline, spacing: UIPadding.small) {
+                        HStack(alignment: .firstTextBaseline, spacing: IKPadding.small) {
                             VStack {
                                 ForEach(message.from) { recipient in
                                     let contactConfiguration = ContactConfiguration.correspondent(

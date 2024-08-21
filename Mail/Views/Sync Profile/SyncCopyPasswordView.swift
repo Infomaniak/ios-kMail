@@ -34,16 +34,16 @@ struct SyncCopyPasswordView: View {
     @Binding var navigationPath: [SyncProfileStep]
 
     var body: some View {
-        VStack(spacing: UIPadding.regular) {
+        VStack(spacing: IKPadding.medium) {
             Text(MailResourcesStrings.Localizable.syncTutorialCopyPasswordTitle)
                 .textStyle(.header2)
                 .multilineTextAlignment(.center)
 
-            VStack(spacing: UIPadding.large) {
+            VStack(spacing: IKPadding.extraLarge) {
                 MailResourcesAsset.lock.swiftUIImage
 
                 if let applicationPassword {
-                    HStack(spacing: UIPadding.regular) {
+                    HStack(spacing: IKPadding.medium) {
                         SecureField("", text: .constant(applicationPassword))
                             .textContentType(.password)
                             .disabled(true)
@@ -54,7 +54,7 @@ struct SyncCopyPasswordView: View {
                         } label: {
                             IKIcon(MailResourcesAsset.duplicate)
                         }
-                        .padding(.trailing, value: .regular)
+                        .padding(.trailing, value: .medium)
                     }
                     .background {
                         RoundedRectangle(cornerRadius: 4, style: .continuous)
@@ -68,13 +68,13 @@ struct SyncCopyPasswordView: View {
                     .multilineTextAlignment(.leading)
                     .textStyle(.bodySecondary)
             }
-            .padding(value: .medium)
+            .padding(value: .large)
 
             Spacer()
         }
-        .padding(value: .medium)
+        .padding(value: .large)
         .safeAreaInset(edge: .bottom) {
-            VStack(spacing: UIPadding.small) {
+            VStack(spacing: IKPadding.small) {
                 Button(MailResourcesStrings.Localizable.buttonCopyPassword) {
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "copyPassword")
                     copyPassword()
@@ -84,8 +84,8 @@ struct SyncCopyPasswordView: View {
                 .controlSize(.large)
                 .ikButtonLoading(applicationPassword == nil)
             }
-            .padding(.horizontal, value: .medium)
-            .padding(.bottom, UIPadding.onBoardingBottomButtons)
+            .padding(.horizontal, value: .large)
+            .padding(.bottom, IKPadding.onBoardingBottomButtons)
         }
         .toolbar {
             ToolbarItem(placement: .principal) {

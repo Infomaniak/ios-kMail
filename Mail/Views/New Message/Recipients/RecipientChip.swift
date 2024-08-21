@@ -44,7 +44,7 @@ struct RecipientChip: View {
         } content: {
             RecipientCell(recipient: recipient)
                 .padding(.vertical, value: .small)
-                .padding(.horizontal, value: .regular)
+                .padding(.horizontal, value: .medium)
                 .frame(maxWidth: 600)
                 .environmentObject(mailboxManager)
 

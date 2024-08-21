@@ -38,7 +38,7 @@ struct OnboardingBottomButtonsView: View {
     }
 
     var body: some View {
-        VStack(spacing: UIPadding.small) {
+        VStack(spacing: IKPadding.small) {
             Button(MailResourcesStrings.Localizable.buttonLogin) {
                 loginHandler.login()
             }
@@ -68,8 +68,8 @@ struct OnboardingBottomButtonsView: View {
                 .controlSize(.large)
             }
         }
-        .padding(.horizontal, value: .medium)
-        .padding(.bottom, UIPadding.onBoardingBottomButtons)
+        .padding(.horizontal, value: .large)
+        .padding(.bottom, IKPadding.onBoardingBottomButtons)
         .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $loginHandler.isPresentingErrorAlert) {
             // Use default button
         } message: {

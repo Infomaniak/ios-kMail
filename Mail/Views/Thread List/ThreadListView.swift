@@ -99,7 +99,7 @@ struct ThreadListView: View {
                     }
 
                     if threadDensity == .compact {
-                        ListVerticalInsetView(height: UIPadding.verySmall)
+                        ListVerticalInsetView(height: IKPadding.extraSmall)
                     }
 
                     if Constants.isUsingABreakableOSVersion && !hasDismissedUpdateVersionView && viewModel.frozenFolder

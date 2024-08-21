@@ -60,14 +60,14 @@ struct AuthorizationView: View {
 
     var body: some View {
         WaveView(slides: slides, selectedSlide: $selection, isScrollEnabled: isScrollEnabled) { _ in
-            VStack(spacing: UIPadding.small) {
+            VStack(spacing: IKPadding.small) {
                 Button(MailResourcesStrings.Localizable.contentDescriptionButtonNext, action: nextButtonClicked)
                     .buttonStyle(.ikPlain)
                     .controlSize(.large)
                     .ikButtonFullWidth(true)
             }
-            .padding(.horizontal, value: .medium)
-            .padding(.bottom, UIPadding.onBoardingBottomButtons)
+            .padding(.horizontal, value: .large)
+            .padding(.bottom, IKPadding.onBoardingBottomButtons)
         }
         .ignoresSafeArea()
         .matomoView(view: [MatomoUtils.View.onboarding.displayName, "Authorization"])

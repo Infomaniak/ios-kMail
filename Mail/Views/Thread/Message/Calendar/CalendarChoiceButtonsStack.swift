@@ -34,8 +34,8 @@ struct CalendarChoiceButtonsStack: View {
     }
 
     var body: some View {
-        WrappingHStack(AttendeeState.allCases, id: \.self, spacing: .constant(UIPadding.small),
-                       lineSpacing: UIPadding.small) { choice in
+        WrappingHStack(AttendeeState.allCases, id: \.self, spacing: .constant(IKPadding.small),
+                       lineSpacing: IKPadding.small) { choice in
             CalendarChoiceButton(
                 selectedChoice: $selectedChoice,
                 choice: choice,

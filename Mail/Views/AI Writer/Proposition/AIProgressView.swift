@@ -25,7 +25,7 @@ struct AIProgressView: View {
         ProgressView()
             .controlSize(.large)
             .padding(.top, 64)
-            .padding(.bottom, value: .medium)
+            .padding(.bottom, value: .large)
             .frame(maxWidth: .infinity)
             .background {
                 Rectangle()

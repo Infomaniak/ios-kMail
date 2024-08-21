@@ -31,20 +31,20 @@ struct SettingsDataManagementView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 accentColor.dataPrivacyImage.swiftUIImage
-                    .padding(.bottom, value: .medium)
+                    .padding(.bottom, value: .large)
                     .frame(maxWidth: .infinity)
 
                 Text(MailResourcesStrings.Localizable.settingsDataManagementDescription)
                     .textStyle(.body)
                     .multilineTextAlignment(.leading)
-                    .padding(.bottom, value: .regular)
-                    .padding(.horizontal, value: .regular)
+                    .padding(.bottom, value: .medium)
+                    .padding(.horizontal, value: .medium)
 
                 Button(MailResourcesStrings.Localizable.settingsDataManagementSourceCode) {
                     openURL(URLConstants.githubRepository.url)
                 }
                 .buttonStyle(.ikLink(isInlined: true))
-                .padding(UIPadding.regular)
+                .padding(IKPadding.medium)
 
                 ForEach(DataManagement.allCases, id: \.self) { item in
                     SettingsSubMenuCell(title: item.title, icon: item.image) {

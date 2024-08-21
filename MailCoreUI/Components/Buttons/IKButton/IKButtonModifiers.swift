@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -87,7 +88,7 @@ struct IKButtonLayout: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .padding(.horizontal, isInlined ? 0 : UIPadding.medium)
+            .padding(.horizontal, isInlined ? 0 : IKPadding.large)
             .frame(height: buttonHeight)
     }
 }

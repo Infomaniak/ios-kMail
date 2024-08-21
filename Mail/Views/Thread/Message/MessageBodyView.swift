@@ -73,7 +73,7 @@ struct MessageBodyView: View {
                             .buttonStyle(.ikLink(isInlined: true))
                             .controlSize(.small)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal, value: .regular)
+                            .padding(.horizontal, value: .medium)
                     }
                 }
             }

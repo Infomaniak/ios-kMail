@@ -29,10 +29,10 @@ struct PromptAIEngineOptionView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(alignment: .leading, spacing: UIPadding.regular) {
+                VStack(alignment: .leading, spacing: IKPadding.medium) {
                     Text(MailResourcesStrings.Localizable.settingsAiEngineDescription)
                         .textStyle(.bodyMedium)
-                        .padding(.horizontal, value: .regular)
+                        .padding(.horizontal, value: .medium)
 
                     AIEngineOptionView(matomoCategory: .promptAIEngine) {
                         dismiss()

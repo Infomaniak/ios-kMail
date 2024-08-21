@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import SwiftUI
 
@@ -37,7 +38,7 @@ public struct MoreRecipientsChip: View {
     public var body: some View {
         Text("+\(count)")
             .textStyle(.bodyAccent)
-            .padding(EdgeInsets(uiEdgeInsets: UIPadding.recipientChip))
+            .padding(EdgeInsets(uiEdgeInsets: IKPadding.recipientChip))
             .background(
                 RoundedRectangle(cornerRadius: 50)
                     .fill(accentColor.secondary.swiftUIColor)

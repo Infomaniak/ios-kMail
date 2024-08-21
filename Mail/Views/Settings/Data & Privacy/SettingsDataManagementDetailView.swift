@@ -32,13 +32,13 @@ struct SettingsDataManagementDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 image
-                    .padding(.vertical, value: .regular)
+                    .padding(.vertical, value: .medium)
                     .frame(maxWidth: .infinity)
 
                 Text(description)
                     .textStyle(.body)
                     .multilineTextAlignment(.leading)
-                    .padding(UIPadding.regular)
+                    .padding(IKPadding.medium)
 
                 SettingsToggleCell(
                     title: MailResourcesStrings.Localizable.settingsAuthorizeTracking,

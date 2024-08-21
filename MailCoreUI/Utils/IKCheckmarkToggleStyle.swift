@@ -31,7 +31,7 @@ public struct IKCheckmarkToggleStyle: ToggleStyle {
         Button {
             configuration.isOn.toggle()
         } label: {
-            HStack(spacing: UIPadding.small) {
+            HStack(spacing: IKPadding.small) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 2)
                         .stroke(MailResourcesAsset.textTertiaryColor.swiftUIColor, lineWidth: 1)

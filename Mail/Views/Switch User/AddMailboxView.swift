@@ -49,7 +49,7 @@ struct AddMailboxView: View {
 
                 Text(MailResourcesStrings.Localizable.attachMailboxDescription2)
                     .textStyle(.bodySecondary)
-                    .padding(.bottom, value: .regular)
+                    .padding(.bottom, value: .medium)
 
                 TextField(
                     MailResourcesStrings.Localizable.attachMailboxInputHint,
@@ -75,7 +75,7 @@ struct AddMailboxView: View {
                             lineWidth: 1
                         )
                 }
-                .padding(.bottom, value: .verySmall)
+                .padding(.bottom, value: .extraSmall)
 
                 Group {
                     if showInvalidEmailError {
@@ -86,12 +86,12 @@ struct AddMailboxView: View {
                     }
                 }
                 .textStyle(.labelError)
-                .padding(.bottom, value: .regular)
+                .padding(.bottom, value: .medium)
 
                 SecureField(MailResourcesStrings.Localizable.attachMailboxPasswordInputHint, text: $password)
                     .textContentType(.password)
                     .padding([.vertical, .leading], value: .intermediate)
-                    .padding(.trailing, value: .regular)
+                    .padding(.trailing, value: .medium)
                     .overlay {
                         RoundedRectangle(cornerRadius: 4, style: .continuous)
                             .stroke(
@@ -105,7 +105,7 @@ struct AddMailboxView: View {
                     .textStyle(.labelError)
                     .opacity(showError ? 1 : 0)
             }
-            .padding(value: .regular)
+            .padding(value: .medium)
         }
         .safeAreaInset(edge: .bottom) {
             Button(MailResourcesStrings.Localizable.buttonAttachMailbox, action: addMailbox)
@@ -114,8 +114,8 @@ struct AddMailboxView: View {
                 .ikButtonFullWidth(true)
                 .controlSize(.large)
                 .disabled(buttonDisabled)
-                .padding(.horizontal, value: .medium)
-                .padding(.bottom, value: .regular)
+                .padding(.horizontal, value: .large)
+                .padding(.bottom, value: .medium)
         }
         .navigationBarTitle(MailResourcesStrings.Localizable.attachMailboxTitle, displayMode: .inline)
     }

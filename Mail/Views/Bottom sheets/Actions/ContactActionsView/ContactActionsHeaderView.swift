@@ -33,7 +33,7 @@ struct ContactActionsHeaderView: View {
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: UIPadding.medium) {
+        VStack(alignment: .leading, spacing: IKPadding.large) {
             HStack {
                 AvatarView(mailboxManager: mailboxManager, contactConfiguration: .contact(contact: displayablePerson), size: 40)
                     .accessibilityHidden(true)
@@ -58,6 +58,6 @@ struct ContactActionsHeaderView: View {
             }
         }
         .accessibilityElement(children: .combine)
-        .padding(.horizontal, value: .regular)
+        .padding(.horizontal, value: .medium)
     }
 }

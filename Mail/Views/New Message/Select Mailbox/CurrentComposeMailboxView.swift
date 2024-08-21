@@ -47,12 +47,12 @@ struct CurrentComposeMailboxView: View {
         NavigationView {
             VStack(spacing: 0) {
                 accentColor.mailboxImage.swiftUIImage
-                    .padding(.bottom, value: .regular)
+                    .padding(.bottom, value: .medium)
 
                 Text(MailResourcesStrings.Localizable.composeMailboxCurrentTitle)
                     .textStyle(.header2)
                     .multilineTextAlignment(.center)
-                    .padding(.bottom, value: .medium)
+                    .padding(.bottom, value: .large)
 
                 if let defaultMailbox = viewModel.defaultMailbox,
                    let mailboxManager = accountManager.getMailboxManager(for: defaultMailbox) {
@@ -60,7 +60,7 @@ struct CurrentComposeMailboxView: View {
                         .frame(maxHeight: .infinity, alignment: .top)
                 }
 
-                VStack(spacing: UIPadding.regular) {
+                VStack(spacing: IKPadding.medium) {
                     Button(MailResourcesStrings.Localizable.buttonContinue) {
                         viewModel.validateMailboxChoice(viewModel.defaultMailbox)
                     }
@@ -74,13 +74,13 @@ struct CurrentComposeMailboxView: View {
                             .textStyle(.bodyMediumAccent)
                     }
                     .buttonStyle(.ikLink())
-                    .padding(.bottom, UIPadding.onBoardingBottomButtons)
+                    .padding(.bottom, IKPadding.onBoardingBottomButtons)
                 }
                 .ikButtonFullWidth(true)
                 .controlSize(.large)
                 .padding(.horizontal, value: .small)
             }
-            .padding(.horizontal, value: .regular)
+            .padding(.horizontal, value: .medium)
             .mailboxCellStyle(.account)
             .onAppear(perform: viewModel.initDefaultAccountAndMailbox)
             .backButtonDisplayMode(.minimal)

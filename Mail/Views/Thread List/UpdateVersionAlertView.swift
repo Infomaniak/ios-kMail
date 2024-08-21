@@ -32,7 +32,7 @@ struct UpdateVersionAlertView: View {
     var onDismiss: (() -> Void)?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: UIPadding.medium) {
+        VStack(alignment: .leading, spacing: IKPadding.large) {
             Text(MailResourcesStrings.Localizable.updateVersionTitle)
                 .textStyle(.bodyMedium)
             Text(MailResourcesStrings.Localizable.updateVersionDescription)

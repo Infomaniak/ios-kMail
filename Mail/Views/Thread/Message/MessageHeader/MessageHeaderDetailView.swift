@@ -32,7 +32,7 @@ struct MessageHeaderDetailView: View {
     @State private var labelWidth: CGFloat = 100
 
     var body: some View {
-        VStack(alignment: .leading, spacing: UIPadding.small) {
+        VStack(alignment: .leading, spacing: IKPadding.small) {
             RecipientLabel(
                 labelWidth: $labelWidth,
                 title: MailResourcesStrings.Localizable.fromTitle,

@@ -30,7 +30,7 @@ struct UpdateVersionView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .iconAndMultilineTextAlignment, spacing: UIPadding.small) {
+            HStack(alignment: .iconAndMultilineTextAlignment, spacing: IKPadding.small) {
                 IKIcon(MailResourcesAsset.warning)
                     .alignmentGuide(.iconAndMultilineTextAlignment) { d in
                         d[VerticalAlignment.center]
@@ -42,8 +42,8 @@ struct UpdateVersionView: View {
                         (d.height - (d[.lastTextBaseline] - d[.firstTextBaseline])) / 2
                     }
             }
-            .padding(.top, value: .regular)
-            .padding(.horizontal, value: .regular)
+            .padding(.top, value: .medium)
+            .padding(.horizontal, value: .medium)
             .frame(maxWidth: .infinity, alignment: .leading)
 
             Button {
@@ -54,7 +54,7 @@ struct UpdateVersionView: View {
             }
             .buttonStyle(.ikLink())
             .controlSize(.small)
-            .padding(.leading, value: .regular)
+            .padding(.leading, value: .medium)
 
             IKDivider(type: .full)
         }

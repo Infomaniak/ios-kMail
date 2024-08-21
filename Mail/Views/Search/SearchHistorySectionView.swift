@@ -39,7 +39,7 @@ struct SearchHistorySectionView: View {
 
                 if let history = searchHistory?.history {
                     ForEach(history, id: \.self) { searchItem in
-                        HStack(spacing: UIPadding.regular) {
+                        HStack(spacing: IKPadding.medium) {
                             IKIcon(MailResourcesAsset.clock, size: .large)
                                 .foregroundStyle(.tint)
 
@@ -66,14 +66,14 @@ struct SearchHistorySectionView: View {
                                 await viewModel.fetchThreads()
                             }
                         }
-                        .padding(value: .regular)
+                        .padding(value: .medium)
                     }
                 }
             } header: {
                 if viewModel.searchState == .history && searchHistory?.history.isEmpty == false {
                     Text(MailResourcesStrings.Localizable.recentSearchesTitle)
                         .textStyle(.bodySmallSecondary)
-                        .padding(.horizontal, value: .regular)
+                        .padding(.horizontal, value: .medium)
                 }
             }
             .listRowSeparator(.hidden)

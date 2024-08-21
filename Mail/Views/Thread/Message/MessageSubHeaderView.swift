@@ -52,7 +52,7 @@ struct MessageSubHeaderView: View {
 
         if let event = message.calendarEventResponse?.frozenEvent, event.type == .event {
             CalendarView(event: event)
-                .padding(.horizontal, value: .regular)
+                .padding(.horizontal, value: .medium)
         }
 
         if !message.attachments.filter({ $0.disposition == .attachment || $0.contentId == nil }).isEmpty || message

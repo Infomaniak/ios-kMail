@@ -78,7 +78,7 @@ struct SearchFilterFolderCell: View {
                 }
             }
         } label: {
-            HStack(spacing: UIPadding.searchFolderCellSpacing) {
+            HStack(spacing: IKPadding.searchFolderCellSpacing) {
                 if isSelected {
                     IKIcon(MailResourcesAsset.check, size: .small)
                 }

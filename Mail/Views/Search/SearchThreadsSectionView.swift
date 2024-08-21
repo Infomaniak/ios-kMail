@@ -52,7 +52,7 @@ struct SearchThreadsSectionView: View {
                 if !viewModel.frozenThreads.isEmpty {
                     Text(MailResourcesStrings.Localizable.searchAllMessages)
                         .textStyle(.bodySmallSecondary)
-                        .padding(.horizontal, value: .regular)
+                        .padding(.horizontal, value: .medium)
                 }
             } footer: {
                 if viewModel.isLoading {

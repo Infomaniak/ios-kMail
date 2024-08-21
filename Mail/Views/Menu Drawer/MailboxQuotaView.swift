@@ -33,7 +33,7 @@ struct MailboxQuotaView: View {
     }
 
     var body: some View {
-        HStack(spacing: UIPadding.menuDrawerCellSpacing) {
+        HStack(spacing: IKPadding.menuDrawerCellSpacing) {
             ProgressView(value: quotas.progression)
                 .progressViewStyle(QuotaCircularProgressViewStyle())
 
@@ -41,7 +41,7 @@ struct MailboxQuotaView: View {
                 .textStyle(.bodyMedium)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(UIPadding.menuDrawerCell)
+        .padding(IKPadding.menuDrawerCell)
     }
 }
 

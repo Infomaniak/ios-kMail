@@ -146,22 +146,22 @@ final class SyncedAuthenticator: OAuthAuthenticator {
         // It is necessary that the app stays awake while we refresh the token
         let expiringActivity = ExpiringActivity()
         expiringActivity.start()
-        networkLoginService.refreshToken(token: credential) { token, error in
-            // New token has been fetched correctly
-            if let token {
-                Log.tokenAuthentication(
-                    "Refreshing token - Success with remote",
-                    oldToken: credential,
-                    newToken: token,
-                    level: .info
-                )
-
-                self.refreshTokenDelegate?.didUpdateToken(newToken: token, oldToken: credential)
-                completion(.success(token))
-            } else {
-                completion(self.handleFailedRefreshingToken(oldToken: credential, newToken: token, error: error))
-            }
-            expiringActivity.endAll()
+        networkLoginService.refreshToken(token: credential) { token in
+//            // New token has been fetched correctly
+//            if let token {
+//                Log.tokenAuthentication(
+//                    "Refreshing token - Success with remote",
+//                    oldToken: credential,
+//                    newToken: token,
+//                    level: .info
+//                )
+//
+//                self.refreshTokenDelegate?.didUpdateToken(newToken: token, oldToken: credential)
+//                completion(.success(token))
+//            } else {
+//                completion(self.handleFailedRefreshingToken(oldToken: credential, newToken: token, error: error))
+//            }
+//            expiringActivity.endAll()
         }
     }
 }

@@ -38,7 +38,7 @@ struct SyncDownloadProfileView: View {
     @Binding var navigationPath: [SyncProfileStep]
 
     var body: some View {
-        VStack(spacing: UIPadding.regular) {
+        VStack(spacing: IKPadding.medium) {
             Text(MailResourcesStrings.Localizable.syncTutorialDownloadProfileTitle)
                 .textStyle(.header2)
                 .multilineTextAlignment(.center)
@@ -51,14 +51,14 @@ struct SyncDownloadProfileView: View {
                 .aspectRatio(contentMode: .fit)
             Spacer()
         }
-        .padding(value: .medium)
+        .padding(value: .large)
         .toolbar {
             ToolbarItem(placement: .principal) {
                 SyncStepToolbarItem(step: 1, totalSteps: 3)
             }
         }
         .safeAreaInset(edge: .bottom) {
-            VStack(spacing: UIPadding.small) {
+            VStack(spacing: IKPadding.small) {
                 Button(MailResourcesStrings.Localizable.buttonDownload) {
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "download")
                     downloadProfile()
@@ -68,8 +68,8 @@ struct SyncDownloadProfileView: View {
                 .controlSize(.large)
                 .ikButtonLoading(isDownloadingConfig)
             }
-            .padding(.horizontal, value: .medium)
-            .padding(.bottom, UIPadding.onBoardingBottomButtons)
+            .padding(.horizontal, value: .large)
+            .padding(.bottom, IKPadding.onBoardingBottomButtons)
         }
         .sheet(isPresented: $isConfigWebViewPresented) {
             navigationPath.append(.copyPassword)

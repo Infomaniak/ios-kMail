@@ -78,12 +78,12 @@ struct AccountListView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: UIPadding.small) {
+            VStack(spacing: IKPadding.small) {
                 ForEach(Array(viewModel.accounts.keys)) { account in
                     AccountCellView(selectedUserId: $viewModel.selectedUserId, mailboxManager: mailboxManager, account: account)
                 }
             }
-            .padding(.horizontal, value: .regular)
+            .padding(.horizontal, value: .medium)
             .padding(.bottom, 120)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)

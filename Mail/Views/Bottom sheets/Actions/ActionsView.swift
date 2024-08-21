@@ -45,8 +45,8 @@ struct ActionsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: UIPadding.small) {
-            HStack(alignment: .top, spacing: UIPadding.regular) {
+        VStack(alignment: .leading, spacing: IKPadding.small) {
+            HStack(alignment: .top, spacing: IKPadding.medium) {
                 ForEach(quickActions) { action in
                     QuickActionView(
                         targetMessages: targetMessages,
@@ -57,7 +57,7 @@ struct ActionsView: View {
                     .frame(maxWidth: .infinity)
                 }
             }
-            .padding(.horizontal, UIPadding.regular)
+            .padding(.horizontal, IKPadding.medium)
 
             VStack(alignment: .leading, spacing: 0) {
                 ForEach(listActions) { action in
@@ -112,7 +112,7 @@ struct QuickActionView: View {
                 }
             }
         } label: {
-            VStack(spacing: UIPadding.small) {
+            VStack(spacing: IKPadding.small) {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(accentColor.secondary.swiftUIColor)
                     .frame(maxWidth: 56, maxHeight: 56)
@@ -121,7 +121,7 @@ struct QuickActionView: View {
                         action.icon
                             .resizable()
                             .scaledToFit()
-                            .padding(value: .regular)
+                            .padding(value: .medium)
                     }
 
                 let title = action.shortTitle ?? action.title
@@ -164,7 +164,7 @@ struct MessageActionView: View {
 struct ActionButtonLabel: View {
     let action: Action
     var body: some View {
-        HStack(spacing: UIPadding.regular) {
+        HStack(spacing: IKPadding.medium) {
             action.icon
                 .resizable()
                 .scaledToFit()
@@ -176,6 +176,6 @@ struct ActionButtonLabel: View {
                 .textStyle(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(value: .regular)
+        .padding(value: .medium)
     }
 }

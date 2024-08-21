@@ -50,7 +50,7 @@ struct FlushFolderView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            VStack(alignment: .leading, spacing: UIPadding.small) {
+            VStack(alignment: .leading, spacing: IKPadding.small) {
                 Text(label)
                     .textStyle(.bodySmall)
 
@@ -64,7 +64,7 @@ struct FlushFolderView: View {
                         }
                     }
                 } label: {
-                    HStack(spacing: UIPadding.small) {
+                    HStack(spacing: IKPadding.small) {
                         IKIcon(MailResourcesAsset.bin)
                         Text(button)
                     }
@@ -73,7 +73,7 @@ struct FlushFolderView: View {
                 .buttonStyle(.ikLink(isInlined: true))
                 .controlSize(.small)
             }
-            .padding(value: .regular)
+            .padding(value: .medium)
 
             IKDivider(type: .full)
         }

@@ -27,7 +27,7 @@ struct SettingsSubMenuLabel: View {
     var icon: Image?
 
     var body: some View {
-        HStack(spacing: UIPadding.regular) {
+        HStack(spacing: IKPadding.medium) {
             icon
 
             VStack(alignment: .leading) {

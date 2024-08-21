@@ -77,7 +77,7 @@ struct CreateFolderView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.newFolderDialogTitle)
                 .textStyle(.bodyMedium)
-                .padding(.bottom, UIPadding.alertTitleBottom)
+                .padding(.bottom, IKPadding.alertTitleBottom)
 
             TextField(MailResourcesStrings.Localizable.createFolderName, text: $folderName)
                 .onChange(of: folderName, perform: checkFolderName)
@@ -93,7 +93,7 @@ struct CreateFolderView: View {
 
             Text(error?.errorDescription ?? "")
                 .textStyle(.labelError)
-                .padding(.top, value: .verySmall)
+                .padding(.top, value: .extraSmall)
                 .opacity(error == nil ? 0 : 1)
                 .padding(.bottom, value: .small)
 

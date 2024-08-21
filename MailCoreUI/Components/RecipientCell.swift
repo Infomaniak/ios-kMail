@@ -47,7 +47,7 @@ public struct RecipientCell: View {
     }
 
     public var body: some View {
-        HStack(spacing: UIPadding.small) {
+        HStack(spacing: IKPadding.small) {
             AvatarView(
                 mailboxManager: mailboxManager,
                 contactConfiguration: .correspondent(

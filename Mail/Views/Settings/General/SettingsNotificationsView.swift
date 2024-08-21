@@ -43,7 +43,7 @@ struct SettingsNotificationsView: View {
         VStack(alignment: .leading, spacing: 0) {
             List {
                 if showWarning {
-                    VStack(alignment: .leading, spacing: UIPadding.small) {
+                    VStack(alignment: .leading, spacing: IKPadding.small) {
                         Text(MailResourcesStrings.Localizable.warningNotificationsDisabledDescription)
                             .textStyle(.bodySecondary)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -52,7 +52,7 @@ struct SettingsNotificationsView: View {
                         }
                         .buttonStyle(.ikLink(isInlined: true))
                     }
-                    .padding(value: .regular)
+                    .padding(value: .medium)
                     .frame(maxWidth: .infinity)
                     .background(
                         RoundedRectangle(cornerRadius: 8)

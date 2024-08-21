@@ -37,7 +37,7 @@ public struct SearchTextField: View {
     }
 
     public var body: some View {
-        HStack(spacing: UIPadding.small) {
+        HStack(spacing: IKPadding.small) {
             Button(action: onSubmit) {
                 IKIcon(MailResourcesAsset.search)
                     .foregroundStyle(MailResourcesAsset.textTertiaryColor)

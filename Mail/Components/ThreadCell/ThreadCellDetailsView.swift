@@ -26,7 +26,7 @@ struct ThreadCellDetailsView: View {
     let isFlagged: Bool
 
     var body: some View {
-        HStack(spacing: UIPadding.small) {
+        HStack(spacing: IKPadding.small) {
             if hasAttachments {
                 IKIcon(MailResourcesAsset.attachment)
                     .foregroundStyle(MailResourcesAsset.textPrimaryColor)

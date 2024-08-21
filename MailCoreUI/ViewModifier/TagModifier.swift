@@ -28,7 +28,7 @@ public struct TagModifier: ViewModifier {
         content
             .foregroundStyle(foregroundColor)
             .textStyle(.bodySmallSecondary)
-            .padding(.horizontal, value: .verySmall)
+            .padding(.horizontal, value: .extraSmall)
             .padding(.vertical, 1)
             .background(backgroundColor.swiftUIColor)
             .cornerRadius(4)

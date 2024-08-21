@@ -32,7 +32,7 @@ struct ExternalRecipientView: View {
             Text(isDraft ? MailResourcesStrings.Localizable.externalDialogTitleRecipient : MailResourcesStrings.Localizable
                 .externalDialogTitleExpeditor)
                 .textStyle(.bodyMedium)
-                .padding(.bottom, UIPadding.alertTitleBottom)
+                .padding(.bottom, IKPadding.alertTitleBottom)
 
             switch externalTagSate {
             case .none:
@@ -42,12 +42,12 @@ struct ExternalRecipientView: View {
                     .externalDialogDescriptionRecipient(recipient.email) : MailResourcesStrings.Localizable
                     .externalDialogDescriptionExpeditor(recipient.email))
                     .textStyle(.bodySecondary)
-                    .padding(.bottom, UIPadding.alertDescriptionBottom)
+                    .padding(.bottom, IKPadding.alertDescriptionBottom)
             case .many:
                 Text(isDraft ? MailResourcesStrings.Localizable.externalDialogDescriptionRecipientPlural : MailResourcesStrings
                     .Localizable.externalDialogDescriptionExpeditorPlural)
                     .textStyle(.bodySecondary)
-                    .padding(.bottom, UIPadding.alertDescriptionBottom)
+                    .padding(.bottom, IKPadding.alertDescriptionBottom)
             }
 
             ModalButtonsView(

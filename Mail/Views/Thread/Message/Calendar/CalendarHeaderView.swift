@@ -25,14 +25,14 @@ struct CalendarHeaderView: View {
     let title: String
 
     var body: some View {
-        HStack(spacing: UIPadding.small) {
+        HStack(spacing: IKPadding.small) {
             IKIcon(MailResourcesAsset.logoCalendar, size: .large)
             Text(title)
                 .lineLimit(1)
                 .textStyle(.bodyMedium)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, value: .regular)
+        .padding(.horizontal, value: .medium)
         .padding(.vertical, value: .small)
         .background(MailResourcesAsset.textFieldColor.swiftUIColor)
     }

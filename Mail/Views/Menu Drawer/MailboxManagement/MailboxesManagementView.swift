@@ -56,7 +56,7 @@ struct MailboxesManagementView: View {
                     matomo.track(eventWithCategory: .menuDrawer, name: "mailboxes", value: navigationDrawerState.showMailboxes)
                 }
             } label: {
-                HStack(spacing: UIPadding.menuDrawerCellSpacing) {
+                HStack(spacing: IKPadding.menuDrawerCellSpacing) {
                     IKIcon(MailResourcesAsset.envelope, size: .large)
                         .foregroundStyle(.tint)
 
@@ -70,7 +70,7 @@ struct MailboxesManagementView: View {
                     }
                 }
                 .environment(\.isEnabled, true)
-                .padding(UIPadding.menuDrawerCell)
+                .padding(IKPadding.menuDrawerCell)
             }
             .disabled(!hasOtherMailboxes)
 
@@ -82,7 +82,7 @@ struct MailboxesManagementView: View {
                     ) { mailbox in
                         MailboxCell(mailbox: mailbox)
                             .mailboxCellStyle(.menuDrawer)
-                            .padding(UIPadding.menuDrawerCell)
+                            .padding(IKPadding.menuDrawerCell)
                     }
                 }
                 .task {

@@ -53,7 +53,7 @@ struct AIPropositionView: View {
                         .frame(height: textPlainHeight)
                         .tint(MailResourcesAsset.aiColor.swiftUIColor)
                     }
-                    .padding([.horizontal, .bottom], value: .regular)
+                    .padding([.horizontal, .bottom], value: .medium)
                 }
                 .background(MailResourcesAsset.backgroundColor.swiftUIColor)
                 .overlay(alignment: .bottom) {
@@ -123,7 +123,7 @@ struct AIPropositionView: View {
                             .buttonStyle(.ikPlain)
                         }
                     }
-                    .padding(.bottom, value: .verySmall)
+                    .padding(.bottom, value: .extraSmall)
                 }
             }
             .introspect(.viewController, on: .iOS(.v15, .v16, .v17)) { viewController in

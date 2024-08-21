@@ -120,7 +120,7 @@ struct ThreadListHeader: View {
             }
         }
         .padding(.top, value: .small)
-        .padding([.leading, .trailing, .bottom], value: .regular)
+        .padding([.leading, .trailing, .bottom], value: .medium)
         .background(accentColor.navBarBackground.swiftUIColor)
     }
 }

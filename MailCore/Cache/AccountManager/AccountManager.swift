@@ -32,12 +32,13 @@ import SwiftUI
 public extension InfomaniakNetworkLoginable {
     func apiToken(using code: String, codeVerifier: String) async throws -> ApiToken {
         try await withCheckedThrowingContinuation { continuation in
-            getApiTokenUsing(code: code, codeVerifier: codeVerifier) { token, error in
-                if let token {
-                    continuation.resume(returning: token)
-                } else {
-                    continuation.resume(throwing: error ?? MailError.unknownError)
-                }
+            getApiTokenUsing(code: code, codeVerifier: codeVerifier) { result in
+//                switch result {
+//                case .success(let token):
+//                    continuation.resume(returning: token)
+//                case .failure(let error):
+//                    continuation.resume(throwing: error)
+//                }
             }
         }
     }
@@ -521,8 +522,8 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
 
         networkLoginService.deleteApiToken(token: removedToken) { error in
-            self.logError(.failedToDeleteAPIToken(wrapping: error))
-            DDLogError("Failed to delete api token: \(error.localizedDescription)")
+//            self.logError(.failedToDeleteAPIToken(wrapping: error))
+//            DDLogError("Failed to delete api token: \(error.localizedDescription)")
         }
     }
 

@@ -51,7 +51,7 @@ struct ThreadCellActionView: View {
             .scaledToFit()
             .frame(width: 16)
             .foregroundStyle(MailResourcesAsset.textSecondaryColor)
-            .padding(.trailing, value: .verySmall)
+            .padding(.trailing, value: .extraSmall)
             .accessibilityLabel(accessibilityLabel)
     }
 }

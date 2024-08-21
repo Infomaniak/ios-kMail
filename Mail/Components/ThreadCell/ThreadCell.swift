@@ -148,7 +148,7 @@ struct ThreadCell: View {
     // MARK: - Views
 
     var body: some View {
-        HStack(spacing: UIPadding.small) {
+        HStack(spacing: IKPadding.small) {
             UnreadIndicatorView(hidden: !thread.hasUnseenMessages)
                 .accessibilityLabel(additionalAccessibilityLabel)
                 .accessibilityHidden(additionalAccessibilityLabel.isEmpty)
@@ -162,9 +162,9 @@ struct ThreadCell: View {
                 contactConfiguration: dataHolder.contactConfiguration(bimi: thread.bimi, contextMailboxManager: mailboxManager),
                 avatarTapped: avatarTapped
             )
-            .padding(.trailing, value: .verySmall)
+            .padding(.trailing, value: .extraSmall)
 
-            VStack(alignment: .leading, spacing: UIPadding.verySmall) {
+            VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
                 ThreadCellHeaderView(
                     recipientsTitle: thread.formatted(contextMailboxManager: mailboxManager,
                                                       style: dataHolder.isInWrittenByMeFolder ? .to : .from),
@@ -191,7 +191,7 @@ struct ThreadCell: View {
             )
         }
         .padding(.leading, value: .small)
-        .padding(.trailing, value: .regular)
+        .padding(.trailing, value: .medium)
         .padding(.vertical, density.cellVerticalPadding)
         .clipped()
         .accessibilityElement(children: .combine)

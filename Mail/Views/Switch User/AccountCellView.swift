@@ -95,7 +95,7 @@ struct AccountHeaderCell: View {
             }
         }
         .padding(.vertical, value: .small)
-        .padding(.horizontal, value: .regular)
+        .padding(.horizontal, value: .medium)
         .background {
             RoundedRectangle(cornerRadius: 8)
                 .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)

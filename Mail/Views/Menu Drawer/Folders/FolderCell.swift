@@ -162,13 +162,13 @@ struct FolderCellContent: View {
             if canHaveChevron {
                 Button(action: collapseFolder) {
                     ChevronIcon(direction: frozenFolder.isExpanded ? .up : .down)
-                        .padding(value: .regular)
+                        .padding(value: .medium)
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandFolder(frozenFolder.name))
                 .opacity(level == 0 && !frozenFolder.children.isEmpty ? 1 : 0)
             }
 
-            HStack(spacing: UIPadding.menuDrawerCellSpacing) {
+            HStack(spacing: IKPadding.menuDrawerCellSpacing) {
                 frozenFolder.icon
                     .resizable()
                     .scaledToFit()
@@ -182,8 +182,8 @@ struct FolderCellContent: View {
                 accessory
             }
         }
-        .padding(.leading, UIPadding.menuDrawerSubFolder * CGFloat(level))
-        .padding(canHaveChevron ? UIPadding.menuDrawerCellWithChevron : UIPadding.menuDrawerCell)
+        .padding(.leading, IKPadding.menuDrawerSubFolder * CGFloat(level))
+        .padding(canHaveChevron ? IKPadding.menuDrawerCellWithChevron : IKPadding.menuDrawerCell)
         .background(background)
     }
 

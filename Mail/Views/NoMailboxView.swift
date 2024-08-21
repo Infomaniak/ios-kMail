@@ -36,7 +36,7 @@ struct NoMailboxView: View {
 
     var body: some View {
         WaveView(slides: [slide], selectedSlide: .constant(0)) { _ in
-            VStack(spacing: UIPadding.small) {
+            VStack(spacing: IKPadding.small) {
                 Button(MailResourcesStrings.Localizable.buttonAddEmailAddress) {
                     openURL(URLConstants.ikMe.url)
                 }
@@ -49,8 +49,8 @@ struct NoMailboxView: View {
             }
             .controlSize(.large)
             .ikButtonFullWidth(true)
-            .padding(.horizontal, value: .medium)
-            .padding(.bottom, UIPadding.onBoardingBottomButtons)
+            .padding(.horizontal, value: .large)
+            .padding(.bottom, IKPadding.onBoardingBottomButtons)
         }
         .ignoresSafeArea()
         .matomoView(view: ["NoMailboxView"])

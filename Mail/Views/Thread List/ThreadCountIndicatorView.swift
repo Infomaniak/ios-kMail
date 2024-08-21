@@ -26,7 +26,7 @@ struct ThreadCountIndicatorView: View {
     var body: some View {
         Text("\(messagesCount)")
             .textStyle(hasUnseenMessages ? .labelMedium : .labelSecondary)
-            .padding(.horizontal, value: .verySmall)
+            .padding(.horizontal, value: .extraSmall)
             .padding(.vertical, 1)
             .lineLimit(1)
             .clipShape(RoundedRectangle(cornerRadius: 3))

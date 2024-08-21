@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -39,7 +40,7 @@ public struct IKFloatingAppButtonStyle: ButtonStyle {
             .labelStyle(.ikLabel)
             .modifier(IKButtonLoadingModifier(isPlain: true))
             .font(MailTextStyle.bodyMedium.font)
-            .padding(.horizontal, UIPadding.regular)
+            .padding(.horizontal, value: .medium)
             .frame(width: isExtended ? nil : size, height: size)
             .modifier(IKButtonFilledModifier())
             .modifier(IKButtonScaleAnimationModifier(isPressed: configuration.isPressed))

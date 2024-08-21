@@ -59,9 +59,9 @@ struct AttachmentsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: UIPadding.regular) {
+        VStack(alignment: .leading, spacing: IKPadding.medium) {
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: UIPadding.small) {
+                HStack(spacing: IKPadding.small) {
                     ForEach(attachments) { attachment in
                         Button {
                             openAttachment(attachment)
@@ -79,15 +79,15 @@ struct AttachmentsView: View {
                         }
                     }
                 }
-                .padding(.horizontal, value: .regular)
+                .padding(.horizontal, value: .medium)
                 .padding(.vertical, 1)
             }
 
-            HStack(alignment: .iconAndMultilineTextAlignment, spacing: UIPadding.small) {
+            HStack(alignment: .iconAndMultilineTextAlignment, spacing: IKPadding.small) {
                 IKIcon(MailResourcesAsset.attachment)
                     .foregroundStyle(MailResourcesAsset.textSecondaryColor)
 
-                VStack(alignment: .leading, spacing: UIPadding.verySmall) {
+                VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
                     Text("\(formattedText) (\(formattedSize))")
                         .textStyle(.bodySmallSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -99,7 +99,7 @@ struct AttachmentsView: View {
                         .ikButtonLoading(downloadInProgress)
                 }
             }
-            .padding(.horizontal, value: .regular)
+            .padding(.horizontal, value: .medium)
         }
         .task {
             try? await mailboxManager.swissTransferAttachment(message: message)

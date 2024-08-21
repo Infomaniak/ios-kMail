@@ -35,7 +35,7 @@ struct FullRecipientsList: View {
     let type: ComposeViewFieldType
 
     var body: some View {
-        WrappingHStack(recipients.indices, spacing: .constant(UIPadding.small), lineSpacing: UIPadding.small) { i in
+        WrappingHStack(recipients.indices, spacing: .constant(IKPadding.small), lineSpacing: IKPadding.small) { i in
             RecipientChip(recipient: recipients[i], fieldType: type, focusedField: _focusedField) {
                 remove(recipientAt: i)
             } switchFocusHandler: {

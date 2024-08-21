@@ -64,8 +64,8 @@ public class RecipientChipLabel: UILabel, UIKeyInput {
 
     override public var intrinsicContentSize: CGSize {
         var contentSize = super.intrinsicContentSize
-        contentSize.height += UIPadding.recipientChip.top + UIPadding.recipientChip.bottom
-        contentSize.width += UIPadding.recipientChip.left + UIPadding.recipientChip.right
+        contentSize.height += IKPadding.recipientChip.top + IKPadding.recipientChip.bottom
+        contentSize.width += IKPadding.recipientChip.left + IKPadding.recipientChip.right
         return contentSize
     }
 
@@ -97,7 +97,7 @@ public class RecipientChipLabel: UILabel, UIKeyInput {
     }
 
     override public func drawText(in rect: CGRect) {
-        super.drawText(in: rect.inset(by: UIPadding.recipientChip))
+        super.drawText(in: rect.inset(by: IKPadding.recipientChip))
     }
 
     override public func becomeFirstResponder() -> Bool {
