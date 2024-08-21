@@ -148,8 +148,7 @@ struct AIPropositionView: View {
                     }
                 }
             }
-            .ikButtonPrimaryStyle(MailResourcesAsset.aiColor.swiftUIColor)
-            .ikButtonSecondaryStyle(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
+            .ikButtonTheme(.aiWriter)
             .tint(MailResourcesAsset.aiColor.swiftUIColor)
             .matomoView(view: ["AI", "Proposition"])
         }
