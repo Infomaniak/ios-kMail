@@ -61,7 +61,6 @@ public struct ToolbarButton: View {
         Button(action: action) {
             ToolbarButtonLabel(text: text, icon: icon)
         }
-        .frame(maxWidth: .infinity)
     }
 }
 

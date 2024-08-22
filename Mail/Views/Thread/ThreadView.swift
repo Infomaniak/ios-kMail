@@ -166,13 +166,11 @@ struct ThreadView: View {
                             .sheetViewStyle()
                     }
                 }
-                Spacer()
             }
             ActionsPanelButton(messages: thread.messages.toArray(), originFolder: thread.folder, panelSource: .messageList) {
                 ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
                                    icon: MailResourcesAsset.plusActions.swiftUIImage)
             }
-            .frame(maxWidth: .infinity)
         }
         .customAlert(item: $nearestFlushAlert) { item in
             FlushFolderAlertView(flushAlert: item)
