@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -27,7 +28,7 @@ struct LockedMailboxView: View {
     let email: String
 
     var body: some View {
-        VStack(spacing: UIPadding.regular) {
+        VStack(spacing: IKPadding.medium) {
             MailResourcesAsset.mailboxError.swiftUIImage
                 .resizable()
                 .scaledToFit()
@@ -38,17 +39,17 @@ struct LockedMailboxView: View {
             Text(MailResourcesStrings.Localizable.lockedMailboxBottomSheetDescription)
                 .textStyle(.bodySecondary)
                 .multilineTextAlignment(.center)
-                .padding(.vertical, value: .medium)
+                .padding(.vertical, value: .large)
 
             Button(MailResourcesStrings.Localizable.externalDialogConfirmButton) {
                 dismiss()
             }
-            .buttonStyle(.ikPlain)
+            .buttonStyle(.ikBorderedProminent)
             .controlSize(.large)
             .ikButtonFullWidth(true)
         }
-        .padding(.horizontal, value: .medium)
-        .padding(.top, value: .regular)
+        .padding(.horizontal, value: .large)
+        .padding(.top, value: .medium)
         .matomoView(view: ["LockedMailboxView"])
     }
 }

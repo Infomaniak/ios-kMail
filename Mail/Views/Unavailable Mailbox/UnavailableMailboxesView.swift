@@ -34,14 +34,14 @@ struct UnavailableMailboxesView: View {
 
     var body: some View {
         NavigationView {
-            VStack(spacing: UIPadding.regular) {
+            VStack(spacing: IKPadding.medium) {
                 ScrollView {
-                    VStack(spacing: UIPadding.regular) {
+                    VStack(spacing: IKPadding.medium) {
                         MailResourcesAsset.logoText.swiftUIImage
                             .resizable()
                             .scaledToFit()
                             .frame(height: UIConstants.onboardingLogoHeight)
-                            .padding(.vertical, UIPadding.onBoardingLogoTop)
+                            .padding(.vertical, IKPadding.onBoardingLogoTop)
 
                         InformationBlockView(
                             icon: MailResourcesAsset.warningFill.swiftUIImage,
@@ -58,13 +58,13 @@ struct UnavailableMailboxesView: View {
 
                 Spacer()
 
-                VStack(spacing: UIPadding.small) {
+                VStack(spacing: IKPadding.small) {
                     NavigationLink(isActive: $isShowingAddMailboxView) {
                         AddMailboxView()
                     } label: {
                         Text(MailResourcesStrings.Localizable.buttonAddEmailAddress)
                     }
-                    .buttonStyle(.ikPlain)
+                    .buttonStyle(.ikBorderedProminent)
                     .simultaneousGesture(
                         TapGesture()
                             .onEnded {
@@ -80,7 +80,7 @@ struct UnavailableMailboxesView: View {
                         Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
                             .textStyle(.bodyMediumAccent)
                     }
-                    .buttonStyle(.ikLink())
+                    .buttonStyle(.ikBorderless)
                     .simultaneousGesture(
                         TapGesture()
                             .onEnded {
@@ -91,7 +91,7 @@ struct UnavailableMailboxesView: View {
                 .controlSize(.large)
                 .ikButtonFullWidth(true)
             }
-            .padding(.horizontal, value: .regular)
+            .padding(.horizontal, value: .medium)
             .frame(maxWidth: 900)
             .matomoView(view: ["UnavailableMailboxesView"])
         }

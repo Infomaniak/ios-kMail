@@ -52,9 +52,9 @@ struct MenuHeaderView: View {
 
                 settingsButton
             }
-            .padding(.vertical, value: .regular)
-            .padding(.leading, value: .medium)
-            .padding(.trailing, value: .verySmall)
+            .padding(.vertical, value: .medium)
+            .padding(.leading, value: .large)
+            .padding(.trailing, value: .extraSmall)
             .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
             .clipped()
             .shadow(color: MailResourcesAsset.menuDrawerShadowColor.swiftUIColor, radius: 1, x: 0, y: 2)

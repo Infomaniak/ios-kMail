@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -43,7 +44,7 @@ struct AttendeeAvatarView: View {
             Circle()
                 .stroke(MailResourcesAsset.backgroundColor.swiftUIColor, lineWidth: UIConstants.avatarBorderLineWidth)
         }
-        .padding([.bottom, .trailing], UIPadding.verySmall)
+        .padding([.bottom, .trailing], IKPadding.extraSmall)
         .overlay(alignment: .bottomTrailing) {
             if let state = attendee.state {
                 Circle()

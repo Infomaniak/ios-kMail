@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -39,13 +40,13 @@ struct SearchContactsSectionView: View {
                         }
                 }
                 .padding(.vertical, threadDensity.cellVerticalPadding)
-                .padding(.leading, UIPadding.small + UIConstants.unreadIconSize + UIPadding.small)
-                .padding(.trailing, value: .regular)
+                .padding(.leading, IKPadding.small + UIConstants.unreadIconSize + IKPadding.small)
+                .padding(.trailing, value: .medium)
             } header: {
                 if !viewModel.frozenContacts.isEmpty {
                     Text(MailResourcesStrings.Localizable.contactsSearch)
                         .textStyle(.bodySmallSecondary)
-                        .padding(.horizontal, value: .regular)
+                        .padding(.horizontal, value: .medium)
                 }
             }
             .listRowInsets(.init())

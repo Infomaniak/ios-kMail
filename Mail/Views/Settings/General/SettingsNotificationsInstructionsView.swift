@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
@@ -23,7 +24,7 @@ import SwiftUI
 
 struct SettingsNotificationsInstructionsView: View {
     var body: some View {
-        VStack(alignment: .leading, spacing: UIPadding.medium) {
+        VStack(alignment: .leading, spacing: IKPadding.large) {
             Text(MailResourcesStrings.Localizable.alertNotificationsDisabledTitle)
                 .textStyle(.bodyMedium)
             Text(LocalizedStringKey(MailResourcesStrings.Localizable.alertNotificationsDisabledDescription))

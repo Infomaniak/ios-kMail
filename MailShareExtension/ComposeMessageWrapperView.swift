@@ -132,11 +132,11 @@ struct PleaseLoginView: View {
             Button(MailResourcesStrings.Localizable.buttonClose) {
                 tapHandler(())
             }
-            .buttonStyle(.ikPlain)
+            .buttonStyle(.ikBorderedProminent)
             .ikButtonFullWidth(true)
             .controlSize(.large)
-            .padding(.horizontal, value: .medium)
-            .padding(.bottom, UIPadding.onBoardingBottomButtons)
+            .padding(.horizontal, value: .large)
+            .padding(.bottom, IKPadding.onBoardingBottomButtons)
         }
         .ignoresSafeArea()
     }

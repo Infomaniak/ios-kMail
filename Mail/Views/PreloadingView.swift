@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -45,7 +46,7 @@ struct PreloadingView: View {
             MailResourcesAsset.backgroundBlueNavBarColor.swiftUIColor
                 .ignoresSafeArea()
 
-            VStack(spacing: UIPadding.medium) {
+            VStack(spacing: IKPadding.large) {
                 MailResourcesAsset.splashscreenMail.swiftUIImage
                     .frame(maxWidth: 204)
                     .padding(.top, -28)
@@ -58,7 +59,7 @@ struct PreloadingView: View {
         .safeAreaInset(edge: .bottom) {
             MailResourcesAsset.splashscreenInfomaniak.swiftUIImage
                 .frame(width: 178)
-                .padding(.bottom, value: .regular)
+                .padding(.bottom, value: .medium)
         }
         .task(id: currentAccount.id) {
             do {

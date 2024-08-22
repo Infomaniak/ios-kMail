@@ -17,8 +17,8 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreUI
 import InfomaniakDI
-import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
@@ -34,7 +34,7 @@ struct SearchFilterHeaderView: View {
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: shouldShowHorizontalScrollbar) {
-            HStack(spacing: UIPadding.small) {
+            HStack(spacing: IKPadding.small) {
                 ForEach(viewModel.filters) { filter in
                     if filter == .folder {
                         SearchFilterFolderCell(
@@ -55,8 +55,8 @@ struct SearchFilterHeaderView: View {
                     }
                 }
             }
-            .padding(value: .regular)
-            .padding(.bottom, shouldShowHorizontalScrollbar ? UIPadding.verySmall : 0)
+            .padding(value: .medium)
+            .padding(.bottom, shouldShowHorizontalScrollbar ? IKPadding.extraSmall : 0)
         }
     }
 }

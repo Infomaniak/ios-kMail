@@ -53,7 +53,7 @@ struct AIPropositionView: View {
                         .frame(height: textPlainHeight)
                         .tint(MailResourcesAsset.aiColor.swiftUIColor)
                     }
-                    .padding([.horizontal, .bottom], value: .regular)
+                    .padding([.horizontal, .bottom], value: .medium)
                 }
                 .background(MailResourcesAsset.backgroundColor.swiftUIColor)
                 .overlay(alignment: .bottom) {
@@ -112,7 +112,7 @@ struct AIPropositionView: View {
                                     IKIcon(MailResourcesAsset.plus)
                                 }
                             }
-                            .buttonStyle(.ikPlain)
+                            .buttonStyle(.ikBorderedProminent)
                         case .loadingError:
                             Button(MailResourcesStrings.Localizable.aiButtonRetry) {
                                 matomo.track(eventWithCategory: .aiWriter, name: "retry")
@@ -120,10 +120,10 @@ struct AIPropositionView: View {
                                 willShowAIPrompt = true
                                 dismiss()
                             }
-                            .buttonStyle(.ikPlain)
+                            .buttonStyle(.ikBorderedProminent)
                         }
                     }
-                    .padding(.bottom, value: .verySmall)
+                    .padding(.bottom, value: .extraSmall)
                 }
             }
             .introspect(.viewController, on: .iOS(.v15, .v16, .v17)) { viewController in
@@ -148,8 +148,7 @@ struct AIPropositionView: View {
                     }
                 }
             }
-            .ikButtonPrimaryStyle(MailResourcesAsset.aiColor.swiftUIColor)
-            .ikButtonSecondaryStyle(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
+            .ikButtonTheme(.aiWriter)
             .tint(MailResourcesAsset.aiColor.swiftUIColor)
             .matomoView(view: ["AI", "Proposition"])
         }

@@ -35,7 +35,7 @@ public struct SyncStepToolbarItem: View {
                 .padding(value: .small)
                 .background(RoundedRectangle(cornerRadius: 8).fill(MailResourcesAsset.textFieldBorder.swiftUIColor))
         }
-        .padding(value: .regular)
+        .padding(value: .medium)
     }
 }
 

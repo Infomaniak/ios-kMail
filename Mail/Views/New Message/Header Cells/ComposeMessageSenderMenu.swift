@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -76,8 +77,8 @@ struct ComposeMessageSenderMenu: View {
                     }
                     .disabled(!canSelectSignature)
                 }
-                .padding(.vertical, UIPadding.composeViewHeaderCellLargeVertical)
-                .padding(.horizontal, UIPadding.composeViewHeaderHorizontal)
+                .padding(.vertical, IKPadding.composeViewHeaderCellLargeVertical)
+                .padding(.horizontal, IKPadding.composeViewHeaderHorizontal)
 
                 IKDivider()
             }

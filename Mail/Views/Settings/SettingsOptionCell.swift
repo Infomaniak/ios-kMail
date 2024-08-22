@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -62,9 +63,9 @@ struct SettingsOptionCell: View {
     var body: some View {
         Button(action: action) {
             VStack(spacing: 0) {
-                HStack(alignment: .settingsOptionCellCheckmark, spacing: UIPadding.regular) {
-                    VStack(alignment: .leading, spacing: UIPadding.small) {
-                        HStack(spacing: UIPadding.regular) {
+                HStack(alignment: .settingsOptionCellCheckmark, spacing: IKPadding.medium) {
+                    VStack(alignment: .leading, spacing: IKPadding.small) {
+                        HStack(spacing: IKPadding.medium) {
                             icon?
                                 .resizable()
                                 .scaledToFit()

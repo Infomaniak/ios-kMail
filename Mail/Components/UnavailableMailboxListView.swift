@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources
@@ -52,7 +53,7 @@ struct UnavailableMailboxListView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 32) {
             if !passwordBlockedMailboxes.isEmpty {
-                VStack(alignment: .leading, spacing: UIPadding.intermediate) {
+                VStack(alignment: .leading, spacing: IKPadding.intermediate) {
                     Text(MailResourcesStrings.Localizable.blockedPasswordTitlePlural)
                     ForEach(passwordBlockedMailboxes) { mailbox in
                         MailboxCell(mailbox: mailbox)

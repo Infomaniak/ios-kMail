@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import InfomaniakOnboarding
 import MailCore
 import MailResources
@@ -36,21 +37,21 @@ struct NoMailboxView: View {
 
     var body: some View {
         WaveView(slides: [slide], selectedSlide: .constant(0)) { _ in
-            VStack(spacing: UIPadding.small) {
+            VStack(spacing: IKPadding.small) {
                 Button(MailResourcesStrings.Localizable.buttonAddEmailAddress) {
                     openURL(URLConstants.ikMe.url)
                 }
-                .buttonStyle(.ikPlain)
+                .buttonStyle(.ikBorderedProminent)
 
                 Button(MailResourcesStrings.Localizable.buttonLogInDifferentAccount) {
                     isShowingLoginView = true
                 }
-                .buttonStyle(.ikLink())
+                .buttonStyle(.ikBorderless)
             }
             .controlSize(.large)
             .ikButtonFullWidth(true)
-            .padding(.horizontal, value: .medium)
-            .padding(.bottom, UIPadding.onBoardingBottomButtons)
+            .padding(.horizontal, value: .large)
+            .padding(.bottom, IKPadding.onBoardingBottomButtons)
         }
         .ignoresSafeArea()
         .matomoView(view: ["NoMailboxView"])

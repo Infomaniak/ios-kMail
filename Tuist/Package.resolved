@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-bug-tracker",
       "state" : {
-        "revision" : "87f990917a8de59ef37768d0b14f75d4abfe8993",
-        "version" : "6.0.0"
+        "revision" : "02275afb3808ff01f1047bf0215326601ce177c3",
+        "version" : "7.0.0"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "6c175294c2ff03c43eb7c9bd32ebd3a8c6448b0d",
-        "version" : "11.0.0"
+        "revision" : "0bfba5628ea517d0a21f5e8d30bb9fff0ce21718",
+        "version" : "12.0.0"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "f6aa4a07a6668c86e9665be93cc6199c1dd64895",
-        "version" : "10.0.0"
+        "revision" : "d1d2116bdf4e82a8619e88671e0c10c0246b7c46",
+        "version" : "11.0.0"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-create-account",
       "state" : {
-        "revision" : "4379f1fc92d2db1a72eebbd69814562e671a7710",
-        "version" : "9.0.0"
+        "revision" : "67b8f4e56fba899a0981e5c5a50ae43879c44189",
+        "version" : "10.0.0"
       }
     },
     {
@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-login",
       "state" : {
-        "revision" : "7214a97f73b9b19858d3b3139a2fe47be86e142e",
-        "version" : "6.0.2"
+        "revision" : "b12bf4fbbfe0edf10d2516503e97a9f212d1cd5b",
+        "version" : "7.0.1"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-notifications",
       "state" : {
-        "revision" : "b638cbf6f218ff7ebccd2aa219e69f3cf696d30a",
-        "version" : "7.0.0"
+        "revision" : "153cfbd0460a9fa806b1f4911abedd16df8ddaee",
+        "version" : "8.0.0"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-version-checker",
       "state" : {
-        "revision" : "c8fd02352bfc6bede63e41bdb21f2472f7bc1612",
-        "version" : "6.0.0"
+        "revision" : "9489d605aa7213ef4213b99e26be6f36f67d0bcc",
+        "version" : "7.0.0"
       }
     },
     {

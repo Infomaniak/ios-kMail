@@ -33,10 +33,10 @@ struct ReportPhishingView: View {
             Text(MailResourcesStrings.Localizable.reportPhishingTitle)
                 .textStyle(.bodyMedium)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.bottom, UIPadding.alertTitleBottom)
+                .padding(.bottom, IKPadding.alertTitleBottom)
             Text(MailResourcesStrings.Localizable.reportPhishingDescription)
                 .textStyle(.bodySecondary)
-                .padding(.bottom, UIPadding.alertDescriptionBottom)
+                .padding(.bottom, IKPadding.alertDescriptionBottom)
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm, primaryButtonAction: report)
         }
     }

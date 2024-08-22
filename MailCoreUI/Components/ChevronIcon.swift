@@ -69,7 +69,7 @@ public struct ChevronButton: View {
             }
         } label: {
             ChevronIcon(direction: isExpanded ? .up : .down, shapeStyle: color)
-                .padding(value: .regular)
+                .padding(value: .medium)
         }
     }
 }

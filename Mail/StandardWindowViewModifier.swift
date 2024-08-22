@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import MailCore
+import MailCoreUI
 import SwiftUI
 
 extension View {
@@ -33,6 +34,7 @@ struct StandardWindowViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .detectCompactWindow()
+            .ikButtonTheme(.mail)
             .onAppear {
                 updateUI(accent: accentColor, theme: theme)
             }

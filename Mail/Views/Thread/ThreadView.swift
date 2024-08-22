@@ -68,14 +68,14 @@ struct ThreadView: View {
                 }
                 .frame(width: 0, height: 0)
 
-                VStack(alignment: .leading, spacing: UIPadding.small) {
+                VStack(alignment: .leading, spacing: IKPadding.small) {
                     Text(thread.formattedSubject)
                         .textStyle(.header2)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .multilineTextAlignment(.leading)
                         .lineSpacing(8)
 
-                    WrappingHStack(lineSpacing: UIPadding.small) {
+                    WrappingHStack(lineSpacing: IKPadding.small) {
                         let externalTag = thread.displayExternalRecipientState(
                             mailboxManager: mailboxManager,
                             recipientsList: thread.from
@@ -100,8 +100,8 @@ struct ThreadView: View {
                     }
                 }
                 .padding(.top, value: .small)
-                .padding(.bottom, value: .regular)
-                .padding(.horizontal, value: .regular)
+                .padding(.bottom, value: .medium)
+                .padding(.horizontal, value: .medium)
 
                 MessageListView(messages: thread.messages.toArray())
             }

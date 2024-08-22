@@ -33,7 +33,7 @@ struct AskForReviewView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.reviewAlertTitle)
                 .textStyle(.bodyMedium)
-                .padding(.bottom, UIPadding.alertTitleBottom)
+                .padding(.bottom, IKPadding.alertTitleBottom)
 
             ModalButtonsView(
                 primaryButtonTitle: MailResourcesStrings.Localizable.buttonYes,

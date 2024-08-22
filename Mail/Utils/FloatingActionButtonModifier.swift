@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -36,8 +37,8 @@ struct FloatingActionButtonModifier: ViewModifier {
 
             if isEnabled {
                 ExtendedFAB(title: title, icon: icon, isExtended: isExtended, action: action)
-                    .padding(.trailing, value: .medium)
-                    .padding(.bottom, UIPadding.floatingButtonBottom)
+                    .padding(.trailing, value: .large)
+                    .padding(.bottom, IKPadding.floatingButtonBottom)
                     .modifier(snackBarAwareModifier)
                     .accessibilityLabel(title)
                     .overlay {

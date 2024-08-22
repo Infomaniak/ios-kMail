@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -26,7 +27,7 @@ struct SelectedMailboxView: View {
     let selectedMailboxManager: MailboxManager
 
     var body: some View {
-        HStack(spacing: UIPadding.small) {
+        HStack(spacing: IKPadding.small) {
             AvatarView(
                 mailboxManager: selectedMailboxManager,
                 contactConfiguration: .user(user: selectedMailboxManager.account.user),
@@ -40,7 +41,7 @@ struct SelectedMailboxView: View {
         }
         .lineLimit(1)
         .padding(.vertical, value: .small)
-        .padding(.horizontal, value: .regular)
+        .padding(.horizontal, value: .medium)
         .background(
             RoundedRectangle(cornerRadius: 8)
                 .fill(MailResourcesAsset.textFieldColor.swiftUIColor)

@@ -31,11 +31,11 @@ struct AlertView<Content>: View where Content: View {
                 .ignoresSafeArea()
 
             content
-                .padding(value: .medium)
+                .padding(value: .large)
                 .background(MailResourcesAsset.backgroundTertiaryColor.swiftUIColor)
                 .cornerRadius(16)
                 .frame(maxWidth: UIConstants.componentsMaxWidth)
-                .padding(value: .medium)
+                .padding(value: .large)
         }
         .opacity(isShowing ? 1 : 0)
         .background(ClearFullScreenView())

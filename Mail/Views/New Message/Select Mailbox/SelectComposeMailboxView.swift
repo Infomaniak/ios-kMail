@@ -36,12 +36,12 @@ struct SelectComposeMailboxView: View {
     var body: some View {
         VStack(spacing: 0) {
             accentColor.mailboxImage.swiftUIImage
-                .padding(.bottom, value: .regular)
+                .padding(.bottom, value: .medium)
 
             Text(MailResourcesStrings.Localizable.composeMailboxSelectionTitle)
                 .textStyle(.header2)
                 .multilineTextAlignment(.center)
-                .padding(.bottom, value: .regular)
+                .padding(.bottom, value: .medium)
 
             ScrollView {
                 VStack(spacing: 0) {
@@ -60,20 +60,20 @@ struct SelectComposeMailboxView: View {
                let mailboxManager = accountManager.getMailboxManager(for: selectedMailbox) {
                 SelectedMailboxView(selectedMailboxManager: mailboxManager)
                     .padding(.horizontal, value: .small)
-                    .padding(.bottom, value: .regular)
+                    .padding(.bottom, value: .medium)
             }
 
             Button(MailResourcesStrings.Localizable.buttonContinue) {
                 viewModel.validateMailboxChoice(viewModel.selectedMailbox)
             }
-            .buttonStyle(.ikPlain)
+            .buttonStyle(.ikBorderedProminent)
             .controlSize(.large)
             .ikButtonFullWidth(true)
             .padding(.horizontal, value: .small)
             .disabled(!viewModel.selectionMade)
         }
-        .padding(.horizontal, value: .regular)
-        .padding(.bottom, UIPadding.onBoardingBottomButtons)
+        .padding(.horizontal, value: .medium)
+        .padding(.bottom, IKPadding.onBoardingBottomButtons)
         .mailboxCellStyle(.account)
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "SelectComposeMailboxView"])
     }

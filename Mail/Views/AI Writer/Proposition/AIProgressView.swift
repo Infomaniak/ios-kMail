@@ -16,7 +16,6 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
 import MailResources
 import SwiftUI
 
@@ -25,7 +24,7 @@ struct AIProgressView: View {
         ProgressView()
             .controlSize(.large)
             .padding(.top, 64)
-            .padding(.bottom, value: .medium)
+            .padding(.bottom, value: .large)
             .frame(maxWidth: .infinity)
             .background {
                 Rectangle()

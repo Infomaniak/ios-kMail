@@ -32,11 +32,11 @@ struct ReplaceMessageSubjectView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.aiReplaceSubjectTitle)
                 .textStyle(.bodyMedium)
-                .padding(.bottom, UIPadding.alertTitleBottom)
+                .padding(.bottom, IKPadding.alertTitleBottom)
 
             Text(MailResourcesStrings.Localizable.aiReplaceSubjectDescription(subject))
                 .textStyle(.bodySecondary)
-                .padding(.bottom, UIPadding.alertDescriptionBottom)
+                .padding(.bottom, IKPadding.alertDescriptionBottom)
 
             ModalButtonsView(
                 primaryButtonTitle: MailResourcesStrings.Localizable.aiReplacementDialogPositiveButton,

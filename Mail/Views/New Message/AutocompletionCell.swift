@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -29,7 +30,7 @@ struct AutocompletionCell: View {
     let unknownRecipient: Bool
 
     var body: some View {
-        HStack(spacing: UIPadding.intermediate) {
+        HStack(spacing: IKPadding.intermediate) {
             Button {
                 addRecipient(recipient)
             } label: {
@@ -47,7 +48,7 @@ struct AutocompletionCell: View {
                     .foregroundStyle(MailResourcesAsset.textTertiaryColor)
             }
         }
-        .padding(.horizontal, value: .regular)
+        .padding(.horizontal, value: .medium)
     }
 }
 

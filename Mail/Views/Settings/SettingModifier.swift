@@ -22,7 +22,7 @@ import SwiftUI
 struct SettingsItemModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .padding(value: .regular)
+            .padding(value: .medium)
     }
 }
 

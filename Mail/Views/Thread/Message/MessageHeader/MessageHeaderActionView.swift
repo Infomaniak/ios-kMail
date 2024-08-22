@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -44,10 +45,10 @@ struct MessageHeaderActionView<Content: View>: View {
                 HStack {
                     actions()
                 }
-                .padding(.leading, iconSize + UIPadding.small)
+                .padding(.leading, iconSize + IKPadding.small)
             }
-            .padding(.vertical, value: .verySmall)
-            .padding(.horizontal, value: .regular)
+            .padding(.vertical, value: .extraSmall)
+            .padding(.horizontal, value: .medium)
             IKDivider()
         }
     }
@@ -59,7 +60,7 @@ struct MessageHeaderActionView<Content: View>: View {
         message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
     ) {
         Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
-            .buttonStyle(.ikLink(isInlined: true))
+            .buttonStyle(.ikBorderless(isInlined: true))
             .controlSize(.small)
     }
 }

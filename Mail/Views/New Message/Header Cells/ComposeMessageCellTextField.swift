@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
 import SwiftUI
@@ -31,7 +32,7 @@ struct ComposeMessageCellTextField: View {
     var body: some View {
         if autocompletionType == nil {
             VStack(spacing: 0) {
-                HStack(alignment: .top, spacing: UIPadding.small) {
+                HStack(alignment: .top, spacing: IKPadding.small) {
                     Text(type.title)
                         .textStyle(.bodySecondary)
 
@@ -40,8 +41,8 @@ struct ComposeMessageCellTextField: View {
                         .textStyle(.body)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.vertical, UIPadding.composeViewHeaderCellLargeVertical)
-                .padding(.horizontal, UIPadding.composeViewHeaderHorizontal)
+                .padding(.vertical, IKPadding.composeViewHeaderCellLargeVertical)
+                .padding(.horizontal, IKPadding.composeViewHeaderHorizontal)
 
                 IKDivider()
             }

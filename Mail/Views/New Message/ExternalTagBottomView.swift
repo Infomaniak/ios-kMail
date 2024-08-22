@@ -34,12 +34,12 @@ struct ExternalTagBottomView: View {
 
     var body: some View {
         if isShowingExternalTag && externalTag.shouldDisplay {
-            HStack(spacing: UIPadding.small) {
+            HStack(spacing: IKPadding.small) {
                 Button {
                     matomo.track(eventWithCategory: .externals, name: "bannerInfo")
                     isShowingExternalTagAlert = true
                 } label: {
-                    HStack(spacing: UIPadding.small) {
+                    HStack(spacing: IKPadding.small) {
                         Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
                             .font(MailTextStyle.bodySmallMedium.font)
 
@@ -58,7 +58,7 @@ struct ExternalTagBottomView: View {
                     IKIcon(MailResourcesAsset.close)
                 }
             }
-            .padding(value: .regular)
+            .padding(value: .medium)
             .foregroundStyle(MailResourcesAsset.onTagExternalColor)
             .background(MailResourcesAsset.yellowColor.swiftUIColor)
         }

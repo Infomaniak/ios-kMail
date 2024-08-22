@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -54,7 +55,7 @@ public struct SelectionBackground: View {
 
     public init(
         selectionType: SelectionBackgroundKind,
-        paddingLeading: CGFloat = UIPadding.small,
+        paddingLeading: CGFloat = IKPadding.small,
         withAnimation: Bool = true,
         accentColor: AccentColor
     ) {

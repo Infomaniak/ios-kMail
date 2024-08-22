@@ -32,7 +32,7 @@ struct MailboxListView: View {
             HStack(alignment: .center, spacing: 0) {
                 Text(MailResourcesStrings.Localizable.buttonAccountAssociatedEmailAddresses)
                     .textStyle(.bodySmallSecondary)
-                    .padding([.top, .bottom, .leading], value: .regular)
+                    .padding([.top, .bottom, .leading], value: .medium)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 NavigationLink {
@@ -40,7 +40,7 @@ struct MailboxListView: View {
                 } label: {
                     IKIcon(MailResourcesAsset.addCircle)
                         .foregroundStyle(.tint)
-                        .padding(value: .regular)
+                        .padding(value: .medium)
                         .accessibilityLabel(MailResourcesStrings.Localizable.buttonAddEmailAddress)
                 }
             }
@@ -48,7 +48,7 @@ struct MailboxListView: View {
             if let currentMailbox {
                 MailboxCell(mailbox: currentMailbox, isSelected: true)
                     .mailboxCellStyle(.account)
-                    .padding(value: .regular)
+                    .padding(value: .medium)
             }
 
             ForEachMailboxView(
@@ -57,7 +57,7 @@ struct MailboxListView: View {
             ) { mailbox in
                 MailboxCell(mailbox: mailbox)
                     .mailboxCellStyle(.account)
-                    .padding(value: .regular)
+                    .padding(value: .medium)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

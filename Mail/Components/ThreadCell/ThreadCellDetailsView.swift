@@ -16,7 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
+import InfomaniakCoreUI
 import MailCoreUI
 import MailResources
 import SwiftUI
@@ -26,7 +26,7 @@ struct ThreadCellDetailsView: View {
     let isFlagged: Bool
 
     var body: some View {
-        HStack(spacing: UIPadding.small) {
+        HStack(spacing: IKPadding.small) {
             if hasAttachments {
                 IKIcon(MailResourcesAsset.attachment)
                     .foregroundStyle(MailResourcesAsset.textPrimaryColor)

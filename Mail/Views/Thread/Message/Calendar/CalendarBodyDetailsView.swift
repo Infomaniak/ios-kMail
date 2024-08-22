@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -32,7 +33,7 @@ struct CalendarLabelStyle: LabelStyle {
     let warning: CalendarEventWarning?
 
     func makeBody(configuration: Configuration) -> some View {
-        HStack(spacing: UIPadding.regular) {
+        HStack(spacing: IKPadding.medium) {
             configuration.icon
                 .frame(width: IKIcon.Size.large.rawValue, height: IKIcon.Size.large.rawValue)
                 .foregroundStyle(warning?.color ?? MailResourcesAsset.textSecondaryColor.swiftUIColor)
@@ -62,7 +63,7 @@ struct CalendarBodyDetailsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: UIPadding.regular) {
+        VStack(alignment: .leading, spacing: IKPadding.medium) {
             if let warning = event.warning {
                 Label { Text(warning.label) } icon: { IKIcon(MailResourcesAsset.warningFill, size: .large) }
                     .labelStyle(.calendar(warning))
@@ -83,7 +84,7 @@ struct CalendarBodyDetailsView: View {
                 CalendarChoiceButtonsStack(currentState: frozenMe?.state, messageUid: event.parent?.message?.uid)
             }
         }
-        .padding(.horizontal, value: .regular)
+        .padding(.horizontal, value: .medium)
     }
 }
 

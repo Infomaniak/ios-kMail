@@ -32,11 +32,11 @@ struct EmptySubjectView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.emailWithoutSubjectTitle)
                 .textStyle(.bodyMedium)
-                .padding(.bottom, UIPadding.alertTitleBottom)
+                .padding(.bottom, IKPadding.alertTitleBottom)
 
             Text(MailResourcesStrings.Localizable.emailWithoutSubjectDescription)
                 .textStyle(.body)
-                .padding(.bottom, UIPadding.alertDescriptionBottom)
+                .padding(.bottom, IKPadding.alertDescriptionBottom)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonContinue) {
                 matomo.track(eventWithCategory: .newMessage, name: "sendWithoutSubjectConfirm")

@@ -34,7 +34,7 @@ struct AIEngineOptionView: View {
     private let engines = Array(AIEngine.allCases)
 
     var body: some View {
-        VStack(spacing: UIPadding.regular) {
+        VStack(spacing: IKPadding.medium) {
             VStack(spacing: 0) {
                 ForEach(engines, id: \.rawValue) { option in
                     SettingsOptionCell(value: option, isSelected: option == aiEngine, isLast: option == engines.last) {
@@ -50,7 +50,7 @@ struct AIEngineOptionView: View {
                 message: MailResourcesStrings.Localizable.aiEngineWarning,
                 iconColor: MailResourcesAsset.textSecondaryColor.swiftUIColor
             )
-            .padding(.horizontal, value: .regular)
+            .padding(.horizontal, value: .medium)
         }
     }
 }

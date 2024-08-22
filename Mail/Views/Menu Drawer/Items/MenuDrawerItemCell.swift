@@ -38,7 +38,7 @@ struct MenuDrawerItemCell: View {
             matomo.track(eventWithCategory: .menuDrawer, name: matomoName)
             action()
         } label: {
-            HStack(spacing: UIPadding.menuDrawerCellSpacing) {
+            HStack(spacing: IKPadding.menuDrawerCellSpacing) {
                 IKIcon(icon, size: .large)
 
                 Text(label)
@@ -46,7 +46,7 @@ struct MenuDrawerItemCell: View {
                     .multilineTextAlignment(.leading)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(UIPadding.menuDrawerCell)
+            .padding(IKPadding.menuDrawerCell)
         }
     }
 }

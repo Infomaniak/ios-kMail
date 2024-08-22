@@ -73,8 +73,8 @@ struct AccountView: View {
                     contactConfiguration: .user(user: account.user),
                     size: AccountView.avatarViewSize
                 )
-                .padding(.bottom, value: .regular)
-                .padding(.top, value: .medium)
+                .padding(.bottom, value: .medium)
+                .padding(.top, value: .large)
                 .background {
                     if EasterEgg.halloween.shouldTrigger() {
                         LottieView(animation: LottieAnimation.named(
@@ -94,11 +94,11 @@ struct AccountView: View {
                 VStack(spacing: 0) {
                     Text(account.user.displayName)
                         .textStyle(.header2)
-                        .padding(.bottom, value: .verySmall)
+                        .padding(.bottom, value: .extraSmall)
 
                     Text(account.user.email)
                         .textStyle(.bodySmallSecondary)
-                        .padding(.bottom, value: .regular)
+                        .padding(.bottom, value: .medium)
 
                     NavigationLink {
                         AccountListView(mailboxManager: mailboxManager)
@@ -106,33 +106,33 @@ struct AccountView: View {
                         Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
                             .textStyle(.bodyMediumAccent)
                     }
-                    .buttonStyle(.ikLink())
+                    .buttonStyle(.ikBorderless)
                 }
                 .zIndex(0)
-                .padding(.horizontal, value: .regular)
+                .padding(.horizontal, value: .medium)
 
                 MailboxListView(currentMailbox: mailboxManager.mailbox)
 
                 Spacer()
             }
 
-            VStack(spacing: UIPadding.small) {
+            VStack(spacing: IKPadding.small) {
                 Button(MailResourcesStrings.Localizable.buttonAccountDisconnect) {
                     matomo.track(eventWithCategory: .account, name: "logOut")
                     isShowingLogoutAlert.toggle()
                 }
-                .buttonStyle(.ikPlain)
+                .buttonStyle(.ikBorderedProminent)
 
                 Button(MailResourcesStrings.Localizable.buttonAccountDelete, role: .destructive) {
                     matomo.track(eventWithCategory: .account, name: "deleteAccount")
                     presentedAccountDeletionToken = tokenStore.tokenFor(userId: account.userId)
                 }
-                .buttonStyle(.ikLink())
+                .buttonStyle(.ikBorderless)
             }
             .ikButtonFullWidth(true)
             .controlSize(.large)
-            .padding(.horizontal, value: .medium)
-            .padding(.bottom, value: .regular)
+            .padding(.horizontal, value: .large)
+            .padding(.bottom, value: .medium)
         }
         .onAppear {
             isLottieAnimationVisible = true

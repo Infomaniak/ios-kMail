@@ -37,20 +37,20 @@ struct UserFoldersListView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(spacing: UIPadding.menuDrawerCellChevronSpacing) {
+            HStack(spacing: IKPadding.menuDrawerCellChevronSpacing) {
                 Button {
                     withAnimation {
                         isExpanded.toggle()
                         matomo.track(eventWithCategory: .menuDrawer, name: "customFolders", value: isExpanded)
                     }
                 } label: {
-                    HStack(spacing: UIPadding.menuDrawerCellChevronSpacing) {
+                    HStack(spacing: IKPadding.menuDrawerCellChevronSpacing) {
                         ChevronIcon(direction: isExpanded ? .up : .down)
                         Text(MailResourcesStrings.Localizable.buttonFolders)
                             .textStyle(.bodySmallSecondary)
                         Spacer()
                     }
-                    .padding(value: .regular)
+                    .padding(value: .medium)
                 }
                 .frame(maxWidth: .infinity)
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandCustomFolders)
@@ -60,7 +60,7 @@ struct UserFoldersListView: View {
                     isShowingCreateFolderAlert.toggle()
                 } label: {
                     IKIcon(MailResourcesAsset.addCircle)
-                        .padding(value: .regular)
+                        .padding(value: .medium)
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable.newFolderDialogTitle)
                 .customAlert(isPresented: $isShowingCreateFolderAlert) {
@@ -72,7 +72,7 @@ struct UserFoldersListView: View {
                 if folders.isEmpty {
                     Text(MailResourcesStrings.Localizable.noFolderTitle)
                         .textStyle(.bodySmallSecondary)
-                        .padding(value: .regular)
+                        .padding(value: .medium)
                 } else {
                     FoldersListView(folders: folders)
                 }

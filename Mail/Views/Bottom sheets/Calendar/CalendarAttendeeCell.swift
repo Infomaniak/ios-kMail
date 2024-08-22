@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
 import SwiftUI
@@ -33,7 +34,7 @@ struct CalendarAttendeeCell: View {
     }
 
     var body: some View {
-        HStack(spacing: UIPadding.small) {
+        HStack(spacing: IKPadding.small) {
             AttendeeAvatarView(attendee: attendee)
 
             VStack(alignment: .leading, spacing: 0) {
@@ -47,7 +48,7 @@ struct CalendarAttendeeCell: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, value: .small)
-        .padding(.horizontal, value: .regular)
+        .padding(.horizontal, value: .medium)
     }
 }
 

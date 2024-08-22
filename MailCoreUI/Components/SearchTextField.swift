@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -37,7 +38,7 @@ public struct SearchTextField: View {
     }
 
     public var body: some View {
-        HStack(spacing: UIPadding.small) {
+        HStack(spacing: IKPadding.small) {
             Button(action: onSubmit) {
                 IKIcon(MailResourcesAsset.search)
                     .foregroundStyle(MailResourcesAsset.textTertiaryColor)

@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import SwiftUI
 
@@ -24,7 +25,7 @@ struct OnboardingTextView: View {
     let description: String
 
     var body: some View {
-        VStack(spacing: UIPadding.medium) {
+        VStack(spacing: IKPadding.large) {
             Text(title)
                 .textStyle(.header2)
 

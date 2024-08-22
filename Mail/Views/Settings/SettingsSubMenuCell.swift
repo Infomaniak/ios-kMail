@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
 import NavigationBackport
@@ -27,7 +28,7 @@ struct SettingsSubMenuLabel: View {
     var icon: Image?
 
     var body: some View {
-        HStack(spacing: UIPadding.regular) {
+        HStack(spacing: IKPadding.medium) {
             icon
 
             VStack(alignment: .leading) {

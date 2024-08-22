@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -54,7 +55,7 @@ public struct AttachmentView<Content: View>: View {
     }
 
     public var body: some View {
-        HStack(spacing: UIPadding.small) {
+        HStack(spacing: IKPadding.small) {
             IKIcon(icon, size: .large)
                 .foregroundStyle(MailResourcesAsset.textSecondaryColor)
 
@@ -72,7 +73,7 @@ public struct AttachmentView<Content: View>: View {
         }
         .frame(maxWidth: 200)
         .padding(.horizontal, value: .small)
-        .padding(.vertical, value: .verySmall)
+        .padding(.vertical, value: .extraSmall)
         .overlay {
             RoundedRectangle(cornerRadius: 8)
                 .stroke(MailResourcesAsset.elementsColor.swiftUIColor)

@@ -49,8 +49,8 @@ struct AIPromptView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: UIPadding.regular) {
-            HStack(spacing: UIPadding.regular) {
+        VStack(alignment: .leading, spacing: IKPadding.medium) {
+            HStack(spacing: IKPadding.medium) {
                 AIHeaderView(style: .bottomSheet)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -75,7 +75,7 @@ struct AIPromptView: View {
                             hasFocusedEditor = true
                         }
                         textView.backgroundColor = .clear
-                        textView.textContainerInset = UIPadding.aiTextEditor
+                        textView.textContainerInset = IKPadding.aiTextEditor
                         textView.font = .systemFont(ofSize: 16)
                     }
                     .frame(maxHeight: isCompactWindow ? nil : 128)
@@ -96,13 +96,12 @@ struct AIPromptView: View {
                     aiModel.addInitialPrompt(prompt)
                     dismiss()
                 }
-                .buttonStyle(.ikPlain)
-                .ikButtonPrimaryStyle(MailResourcesAsset.aiColor.swiftUIColor)
-                .ikButtonSecondaryStyle(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
+                .buttonStyle(.ikBorderedProminent)
+                .ikButtonTheme(.aiWriter)
                 .disabled(prompt.isEmpty)
             }
         }
-        .padding(isCompactWindow ? UIPadding.regular : 0)
+        .padding(isCompactWindow ? IKPadding.medium : 0)
         .onAppear {
             if aiModel.keepConversationWhenPropositionIsDismissed,
                let initialMessage = aiModel.conversation.first(where: { $0.type == .user }) {

@@ -44,27 +44,27 @@ struct CalendarAttendeesView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: UIPadding.regular) {
+        VStack(alignment: .leading, spacing: IKPadding.medium) {
             Button {
                 withAnimation {
                     isShowingAttendees.toggle()
                     matomoUtils.track(eventWithCategory: .calendarEvent, name: "attendees", value: isShowingAttendees)
                 }
             } label: {
-                HStack(spacing: UIPadding.small) {
+                HStack(spacing: IKPadding.small) {
                     Text(MailResourcesStrings.Localizable.buttonAttendees)
                     ChevronIcon(direction: isShowingAttendees ? .up : .down, shapeStyle: .tint)
                 }
                 .textStyle(.bodyAccent)
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .buttonStyle(.ikLink(isInlined: true))
-            .padding(.horizontal, value: .regular)
+            .buttonStyle(.ikBorderless(isInlined: true))
+            .padding(.horizontal, value: .medium)
 
             if isShowingAttendees {
-                VStack(alignment: .leading, spacing: UIPadding.regular) {
+                VStack(alignment: .leading, spacing: IKPadding.medium) {
                     if let organizerContact {
-                        HStack(spacing: UIPadding.small) {
+                        HStack(spacing: IKPadding.small) {
                             AvatarView(
                                 mailboxManager: mailboxManager,
                                 contactConfiguration: .contact(contact: organizerContact),
@@ -74,20 +74,20 @@ struct CalendarAttendeesView: View {
                             Text(MailResourcesStrings.Localizable.calendarOrganizerName(organizerContact.fullName))
                                 .textStyle(.body)
                         }
-                        .padding(.horizontal, value: .regular)
+                        .padding(.horizontal, value: .medium)
                     }
 
                     Button {
                         isShowingAllAttendees = true
                         matomoUtils.track(eventWithCategory: .calendarEvent, name: "seeAllAttendees")
                     } label: {
-                        HStack(spacing: UIPadding.small) {
+                        HStack(spacing: IKPadding.small) {
                             CalendarAttendeesStack(attendees: attendees)
                             Text(MailResourcesStrings.Localizable.buttonSee)
                                 .textStyle(.bodyAccent)
                         }
                     }
-                    .padding(.horizontal, UIPadding.regular - UIConstants.avatarBorderLineWidth / 2)
+                    .padding(.horizontal, IKPadding.medium - UIConstants.avatarBorderLineWidth / 2)
                 }
             }
         }

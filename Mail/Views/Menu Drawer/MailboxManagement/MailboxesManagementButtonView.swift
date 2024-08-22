@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -50,7 +51,7 @@ struct MailboxesManagementButtonView: View {
         Button {
             handleAction?()
         } label: {
-            HStack(spacing: UIPadding.regular) {
+            HStack(spacing: IKPadding.medium) {
                 icon
                     .resizable()
                     .scaledToFit()

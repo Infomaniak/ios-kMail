@@ -31,13 +31,13 @@ struct ReplaceMessageBodyView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.aiReplacementDialogTitle)
                 .textStyle(.bodyMedium)
-                .padding(.bottom, UIPadding.alertTitleBottom)
+                .padding(.bottom, IKPadding.alertTitleBottom)
 
-            VStack(alignment: .leading, spacing: UIPadding.medium) {
+            VStack(alignment: .leading, spacing: IKPadding.large) {
                 Text(MailResourcesStrings.Localizable.aiReplacementDialogDescription)
             }
             .textStyle(.bodySecondary)
-            .padding(.bottom, UIPadding.alertDescriptionBottom)
+            .padding(.bottom, IKPadding.alertDescriptionBottom)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.aiReplacementDialogPositiveButton) {
                 matomo.track(eventWithCategory: .aiWriter, name: "replacePropositionConfirm")

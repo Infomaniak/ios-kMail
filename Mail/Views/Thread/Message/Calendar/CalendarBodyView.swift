@@ -33,7 +33,7 @@ struct CalendarBodyView: View {
     let event: CalendarEvent
 
     var body: some View {
-        VStack(alignment: .leading, spacing: UIPadding.regular) {
+        VStack(alignment: .leading, spacing: IKPadding.medium) {
             CalendarBodyDetailsView(event: event)
 
             if !event.attendees.isEmpty {
@@ -44,11 +44,11 @@ struct CalendarBodyView: View {
                 Text(MailResourcesStrings.Localizable.buttonOpenMyCalendar)
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(.ikPlain)
+            .buttonStyle(.ikBorderedProminent)
             .ikButtonLoading(isLoadingCalendarButton)
-            .padding(.horizontal, value: .regular)
+            .padding(.horizontal, value: .medium)
         }
-        .padding(.vertical, value: .regular)
+        .padding(.vertical, value: .medium)
     }
 
     private func addEventToCalendar() {

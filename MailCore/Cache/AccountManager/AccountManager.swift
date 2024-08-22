@@ -29,20 +29,6 @@ import RealmSwift
 import Sentry
 import SwiftUI
 
-public extension InfomaniakNetworkLoginable {
-    func apiToken(using code: String, codeVerifier: String) async throws -> ApiToken {
-        try await withCheckedThrowingContinuation { continuation in
-            getApiTokenUsing(code: code, codeVerifier: codeVerifier) { token, error in
-                if let token {
-                    continuation.resume(returning: token)
-                } else {
-                    continuation.resume(throwing: error ?? MailError.unknownError)
-                }
-            }
-        }
-    }
-}
-
 public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     @LazyInjectService var networkLoginService: InfomaniakNetworkLoginable
     @LazyInjectService var tokenStore: TokenStore
@@ -224,7 +210,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     public func createAndSetCurrentAccount(code: String, codeVerifier: String) async throws -> Account {
-        let token = try await networkLoginService.apiToken(using: code, codeVerifier: codeVerifier)
+        let token = try await networkLoginService.apiTokenUsing(code: code, codeVerifier: codeVerifier)
         SentryDebug.setUserId(token.userId)
 
         do {
@@ -520,7 +506,8 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             return
         }
 
-        networkLoginService.deleteApiToken(token: removedToken) { error in
+        networkLoginService.deleteApiToken(token: removedToken) { result in
+            guard case .failure(let error) = result else { return }
             self.logError(.failedToDeleteAPIToken(wrapping: error))
             DDLogError("Failed to delete api token: \(error.localizedDescription)")
         }

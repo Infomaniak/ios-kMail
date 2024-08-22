@@ -41,20 +41,20 @@ struct CreateAccountView: View {
     var body: some View {
         VStack(spacing: 0) {
             CloseButton(size: .regular, dismissAction: dismiss)
-                .padding(.top, UIPadding.onBoardingLogoTop)
-                .padding(.top, value: .verySmall)
+                .padding(.top, IKPadding.onBoardingLogoTop)
+                .padding(.top, value: .extraSmall)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             accentColor.createAccountImage.swiftUIImage
                 .resizable()
                 .scaledToFit()
-                .padding(.top, value: .medium)
-                .padding(.bottom, value: .large)
+                .padding(.top, value: .large)
+                .padding(.bottom, value: .extraLarge)
 
             Text(MailResourcesStrings.Localizable.newAccountTitle)
                 .textStyle(.header1)
                 .multilineTextAlignment(.center)
-                .padding(.bottom, value: .medium)
+                .padding(.bottom, value: .large)
 
             HStack {
                 Text(MailResourcesStrings.Localizable.newAccountStorageMail)
@@ -73,11 +73,11 @@ struct CreateAccountView: View {
                     .multilineTextAlignment(.center)
             }
             .fixedSize(horizontal: false, vertical: true)
-            .padding(.bottom, value: .medium)
+            .padding(.bottom, value: .large)
 
             Text(MailResourcesStrings.Localizable.newAccountDescription)
                 .textStyle(.bodySmallSecondary)
-                .padding(.bottom, value: .medium)
+                .padding(.bottom, value: .large)
                 .multilineTextAlignment(.center)
 
             Spacer()
@@ -86,13 +86,13 @@ struct CreateAccountView: View {
                 matomo.track(eventWithCategory: .account, name: "openCreationWebview")
                 isPresentingCreateAccount = true
             }
-            .buttonStyle(.ikPlain)
+            .buttonStyle(.ikBorderedProminent)
             .ikButtonLoading(loginHandler.isLoading)
             .ikButtonFullWidth(true)
             .controlSize(.large)
-            .padding(.bottom, value: .regular)
+            .padding(.bottom, value: .medium)
         }
-        .padding(.horizontal, value: .medium)
+        .padding(.horizontal, value: .large)
         .sheet(isPresented: $isPresentingCreateAccount) {
             RegisterView(registrationProcess: .mail) { viewController in
                 guard let viewController else { return }

@@ -44,14 +44,14 @@ struct SettingsThreadDensityOptionView: View {
             .onChange(of: selectedValue) { newValue in
                 matomo.track(eventWithCategory: .settingsDensity, name: newValue.rawValue)
             }
-            .padding([.horizontal, .top], value: .regular)
-            .padding(.bottom, value: .medium)
+            .padding([.horizontal, .top], value: .medium)
+            .padding(.bottom, value: .large)
 
             selectedValue.image?
                 .resizable()
                 .scaledToFit()
                 .shadow(color: .black.opacity(0.15), radius: 3, x: 0, y: 0)
-                .padding(.horizontal, value: .regular)
+                .padding(.horizontal, value: .medium)
 
             Spacer()
         }

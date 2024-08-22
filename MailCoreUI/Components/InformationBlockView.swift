@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -48,7 +49,7 @@ public struct InformationBlockView: View {
     }
 
     public var body: some View {
-        HStack(alignment: .iconAndMultilineTextAlignment, spacing: UIPadding.intermediate) {
+        HStack(alignment: .iconAndMultilineTextAlignment, spacing: IKPadding.intermediate) {
             icon
                 .resizable()
                 .scaledToFit()
@@ -59,8 +60,8 @@ public struct InformationBlockView: View {
                     d[VerticalAlignment.center]
                 }
 
-            VStack(alignment: .leading, spacing: UIPadding.intermediate) {
-                VStack(alignment: .leading, spacing: UIPadding.intermediate) {
+            VStack(alignment: .leading, spacing: IKPadding.intermediate) {
+                VStack(alignment: .leading, spacing: IKPadding.intermediate) {
                     if let title {
                         Text(title)
                             .textStyle(.bodyMedium)
@@ -78,7 +79,7 @@ public struct InformationBlockView: View {
 
                 if let buttonTitle, let buttonAction {
                     Button(buttonTitle, action: buttonAction)
-                        .buttonStyle(.ikLink(isInlined: true))
+                        .buttonStyle(.ikBorderless(isInlined: true))
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
@@ -91,7 +92,7 @@ public struct InformationBlockView: View {
                     }
             }
         }
-        .padding(value: .regular)
+        .padding(value: .medium)
         .background(MailResourcesAsset.textFieldColor.swiftUIColor)
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }

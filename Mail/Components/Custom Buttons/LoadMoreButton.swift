@@ -46,7 +46,7 @@ struct LoadMoreButton: View {
                 Button(MailResourcesStrings.Localizable.buttonLoadMore) {
                     loadMore()
                 }
-                .buttonStyle(.ikLink())
+                .buttonStyle(.ikBorderless)
                 .controlSize(.small)
             }
         }

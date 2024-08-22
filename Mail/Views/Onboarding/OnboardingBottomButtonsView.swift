@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -38,17 +39,17 @@ struct OnboardingBottomButtonsView: View {
     }
 
     var body: some View {
-        VStack(spacing: UIPadding.small) {
+        VStack(spacing: IKPadding.small) {
             Button(MailResourcesStrings.Localizable.buttonLogin) {
                 loginHandler.login()
             }
-            .buttonStyle(.ikPlain)
+            .buttonStyle(.ikBorderedProminent)
             .ikButtonLoading(loginHandler.isLoading)
 
             Button(MailResourcesStrings.Localizable.buttonCreateAccount) {
                 isPresentingCreateAccount.toggle()
             }
-            .buttonStyle(.ikLink())
+            .buttonStyle(.ikBorderless)
             .disabled(loginHandler.isLoading)
         }
         .ikButtonFullWidth(true)
@@ -68,8 +69,8 @@ struct OnboardingBottomButtonsView: View {
                 .controlSize(.large)
             }
         }
-        .padding(.horizontal, value: .medium)
-        .padding(.bottom, UIPadding.onBoardingBottomButtons)
+        .padding(.horizontal, value: .large)
+        .padding(.bottom, IKPadding.onBoardingBottomButtons)
         .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $loginHandler.isPresentingErrorAlert) {
             // Use default button
         } message: {

@@ -125,18 +125,18 @@ struct DiscoveryBottomSheetView: View {
                 .multilineTextAlignment(.center)
                 .textStyle(.bodySecondary)
 
-            VStack(spacing: UIPadding.small) {
+            VStack(spacing: IKPadding.small) {
                 Button(item.primaryButtonLabel, action: nowButton)
-                    .buttonStyle(.ikPlain)
+                    .buttonStyle(.ikBorderedProminent)
 
                 Button(MailResourcesStrings.Localizable.buttonLater, action: laterButton)
-                    .buttonStyle(.ikLink())
+                    .buttonStyle(.ikBorderless)
             }
             .ikButtonFullWidth(true)
             .controlSize(.large)
         }
-        .padding(.horizontal, value: .medium)
-        .padding(.top, value: .regular)
+        .padding(.horizontal, value: .large)
+        .padding(.top, value: .medium)
     }
 }
 
@@ -147,7 +147,7 @@ struct DiscoveryAlertView: View {
     let laterButton: () -> Void
 
     var body: some View {
-        VStack(spacing: UIPadding.medium) {
+        VStack(spacing: IKPadding.large) {
             item.image.swiftUIImage
 
             Text(item.title)

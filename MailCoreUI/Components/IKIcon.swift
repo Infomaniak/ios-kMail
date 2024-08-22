@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -51,7 +52,7 @@ public struct IKIcon: View {
 }
 
 #Preview {
-    HStack(spacing: UIPadding.regular) {
+    HStack(spacing: IKPadding.medium) {
         IKIcon(MailResourcesAsset.pencilPlain, size: .small)
         IKIcon(MailResourcesAsset.pencilPlain, size: .regular)
         IKIcon(MailResourcesAsset.pencilPlain, size: .large)

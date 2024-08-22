@@ -139,13 +139,13 @@ struct MenuDrawerItemsListView<Content: View>: View {
                         }
                     }
                 } label: {
-                    HStack(spacing: UIPadding.menuDrawerCellChevronSpacing) {
+                    HStack(spacing: IKPadding.menuDrawerCellChevronSpacing) {
                         ChevronIcon(direction: isExpanded ? .up : .down)
                         Text(title)
                             .textStyle(.bodySmallSecondary)
                         Spacer()
                     }
-                    .padding(value: .regular)
+                    .padding(value: .medium)
                 }
             }
 

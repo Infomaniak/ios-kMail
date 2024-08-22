@@ -31,7 +31,7 @@ struct LockedAppView: View {
 
     var body: some View {
         ZStack {
-            VStack(spacing: UIPadding.medium) {
+            VStack(spacing: IKPadding.large) {
                 MailResourcesAsset.lock.swiftUIImage
                     .frame(width: 187, height: 187)
 
@@ -48,15 +48,15 @@ struct LockedAppView: View {
                 Spacer()
 
                 Button(MailResourcesStrings.Localizable.buttonUnlock, action: unlockApp)
-                    .buttonStyle(.ikPlain)
+                    .buttonStyle(.ikBorderedProminent)
                     .controlSize(.large)
                     .ikButtonFullWidth(true)
                     .ikButtonLoading(isEvaluatingPolicy)
             }
-            .padding(.top, UIPadding.onBoardingLogoTop)
-            .padding(.bottom, value: .large)
+            .padding(.top, IKPadding.onBoardingLogoTop)
+            .padding(.bottom, value: .extraLarge)
         }
-        .padding(.horizontal, value: .medium)
+        .padding(.horizontal, value: .large)
         .onAppear {
             unlockApp()
         }

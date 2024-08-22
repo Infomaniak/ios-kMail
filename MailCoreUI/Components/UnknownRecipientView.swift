@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -24,7 +25,7 @@ public struct UnknownRecipientView: View {
     let size: CGFloat
 
     private var iconSize: CGFloat {
-        return size - 2 * UIPadding.small
+        return size - 2 * IKPadding.small
     }
 
     public init(size: CGFloat) {

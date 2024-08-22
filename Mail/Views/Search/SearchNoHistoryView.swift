@@ -24,7 +24,7 @@ struct SearchNoHistoryView: View {
     var body: some View {
         Text(MailResourcesStrings.Localizable.emptyStateHistoryDescription)
             .textStyle(.bodySmallSecondary)
-            .padding(value: .regular)
+            .padding(value: .medium)
             .listRowSeparator(.hidden)
             .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
             .listRowInsets(.init())
