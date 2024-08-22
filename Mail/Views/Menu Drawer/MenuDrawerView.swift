@@ -44,6 +44,9 @@ class NavigationDrawerState: ObservableObject {
 }
 
 struct NavigationDrawer: View {
+    private static let maxWidth: CGFloat = 352
+    private static let trailingPadding: CGFloat = 64
+
     @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
     @GestureState private var isDragGestureActive = false
@@ -66,8 +69,8 @@ struct NavigationDrawer: View {
                 GeometryReader { geometryProxy in
                     HStack {
                         MenuDrawerView()
-                            .frame(maxWidth: UIConstants.menuDrawerMaxWidth)
-                            .padding(.trailing, UIConstants.menuDrawerTrailingSpacing)
+                            .frame(maxWidth: Self.maxWidth)
+                            .padding(.trailing, Self.trailingPadding)
                             .offset(x: navigationDrawerState.isOpen ? offsetWidth : -geometryProxy.size.width)
                         Spacer()
                     }

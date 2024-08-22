@@ -20,6 +20,8 @@ import MailCore
 import SwiftUI
 
 public struct UnreadIndicatorView: View {
+    public static let size: CGFloat = 8
+
     let hidden: Bool
 
     public init(hidden: Bool = false) {
@@ -28,7 +30,7 @@ public struct UnreadIndicatorView: View {
 
     public var body: some View {
         Circle()
-            .frame(width: UIConstants.unreadIconSize, height: UIConstants.unreadIconSize)
+            .frame(width: Self.size, height: Self.size)
             .foregroundStyle(hidden ? .clear : .accentColor)
     }
 }

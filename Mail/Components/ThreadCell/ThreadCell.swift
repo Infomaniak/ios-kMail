@@ -187,7 +187,7 @@ struct ThreadCell: View {
                 )
             }
             .animation(
-                isMultipleSelectionEnabled ? .threadListSlide : .threadListSlide.delay(UIConstants.checkboxDisappearOffsetDelay),
+                isMultipleSelectionEnabled ? .threadListSlide : .threadListSlide.delay(0.35),
                 value: isMultipleSelectionEnabled
             )
         }
@@ -205,7 +205,7 @@ struct ThreadCell: View {
         withAnimation {
             if isEnabled {
                 // We should wait a bit before showing the checkbox
-                DispatchQueue.main.asyncAfter(deadline: .now() + UIConstants.checkboxAppearDelay) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                     shouldDisplayCheckbox = true
                 }
             } else {

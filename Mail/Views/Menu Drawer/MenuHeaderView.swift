@@ -30,7 +30,7 @@ struct MenuHeaderView: View {
     @EnvironmentObject private var mainViewState: MainViewState
 
     private var menuDrawerLogoHeight: CGFloat {
-        platformDetector.isMac ? UIConstants.menuDrawerLogoMacOSHeight : UIConstants.menuDrawerLogoHeight
+        platformDetector.isMac ? 48 : 32
     }
 
     var body: some View {
