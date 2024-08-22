@@ -29,21 +29,6 @@ import RealmSwift
 import Sentry
 import SwiftUI
 
-public extension InfomaniakNetworkLoginable {
-    func apiToken(using code: String, codeVerifier: String) async throws -> ApiToken {
-        try await withCheckedThrowingContinuation { continuation in
-            getApiTokenUsing(code: code, codeVerifier: codeVerifier) { result in
-                switch result {
-                case .success(let token):
-                    continuation.resume(returning: token)
-                case .failure(let error):
-                    continuation.resume(throwing: error)
-                }
-            }
-        }
-    }
-}
-
 public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     @LazyInjectService var networkLoginService: InfomaniakNetworkLoginable
     @LazyInjectService var tokenStore: TokenStore
@@ -225,7 +210,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     public func createAndSetCurrentAccount(code: String, codeVerifier: String) async throws -> Account {
-        let token = try await networkLoginService.apiToken(using: code, codeVerifier: codeVerifier)
+        let token = try await networkLoginService.apiTokenUsing(code: code, codeVerifier: codeVerifier)
         SentryDebug.setUserId(token.userId)
 
         do {
