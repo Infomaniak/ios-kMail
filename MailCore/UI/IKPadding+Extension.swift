@@ -22,7 +22,7 @@ import SwiftUI
 public extension IKPadding {
     // MARK: OnBoarding
 
-    static let onBoardingLogoTop = extraLarge
+    static let onBoardingLogoTop = large
     static let onBoardingBottomButtons = medium
 
     // MARK: Menu
@@ -31,7 +31,7 @@ public extension IKPadding {
     static let menuDrawerCellWithChevron = EdgeInsets(top: 2, leading: 0, bottom: 2, trailing: medium)
     static let menuDrawerCellSpacing = medium
     static let menuDrawerCellChevronSpacing = intermediate
-    static let menuDrawerSubFolder = extraLarge
+    static let menuDrawerSubFolder = large
 
     // MARK: Compose Message
 
@@ -40,13 +40,13 @@ public extension IKPadding {
 
     // MARK: Alerts
 
-    static let alertTitleBottom = extraLarge
-    static let alertDescriptionBottom = extraLarge
+    static let alertTitleBottom = large
+    static let alertDescriptionBottom = large
 
     // MARK: Misc
 
-    static let floatingButtonBottom = extraLarge
-    static let bottomSheetHorizontal = extraLarge
+    static let floatingButtonBottom = large
+    static let bottomSheetHorizontal = large
     static let recipientChip = UIEdgeInsets(top: extraSmall, left: small, bottom: extraSmall, right: small)
     static let aiTextEditor = UIEdgeInsets(top: small, left: small, bottom: small, right: small)
     static let searchFolderCellSpacing = small
