@@ -22,7 +22,7 @@ import SwiftUI
 
 struct ComposeMessageScene: Scene {
     var body: some Scene {
-        if #available(iOS 16.0, *) {
+        if #available(iOS 16.1, *) {
             WindowGroup(
                 MailResourcesStrings.Localizable.settingsTitle,
                 id: DesktopWindowIdentifier.composeWindowIdentifier,

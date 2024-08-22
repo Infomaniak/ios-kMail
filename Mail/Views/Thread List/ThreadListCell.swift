@@ -98,7 +98,6 @@ struct ThreadListCell: View {
             multipleSelectionViewModel: multipleSelectionViewModel,
             nearestFlushAlert: $flushAlert
         )
-        .threadListCellAppearance()
         .accessibilityAction(named: MailResourcesStrings.Localizable.enableMultiSelection) {
             didOptionalTapCell()
         }

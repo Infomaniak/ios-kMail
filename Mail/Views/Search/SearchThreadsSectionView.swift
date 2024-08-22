@@ -34,16 +34,20 @@ struct SearchThreadsSectionView: View {
         if viewModel.searchState == .results {
             Section {
                 ForEach(viewModel.frozenThreads) { thread in
-                    ThreadListCell(
-                        viewModel: viewModel,
-                        multipleSelectionViewModel: multipleSelectionViewModel,
-                        thread: thread,
-                        threadDensity: threadDensity,
-                        accentColor: accentColor,
-                        isSelected: mainViewState.selectedThread?.uid == thread.uid,
-                        isMultiSelected: multipleSelectionViewModel.selectedItems.ids.contains(thread.id),
-                        flushAlert: .constant(nil)
-                    )
+                    // ZStack is needed for lazy ForEach on iOS 18
+                    ZStack {
+                        ThreadListCell(
+                            viewModel: viewModel,
+                            multipleSelectionViewModel: multipleSelectionViewModel,
+                            thread: thread,
+                            threadDensity: threadDensity,
+                            accentColor: accentColor,
+                            isSelected: mainViewState.selectedThread?.uid == thread.uid,
+                            isMultiSelected: multipleSelectionViewModel.selectedItems.ids.contains(thread.id),
+                            flushAlert: .constant(nil)
+                        )
+                    }
+                    .threadListCellAppearance()
                     .onAppear {
                         viewModel.loadNextPageIfNeeded(currentItem: thread)
                     }
