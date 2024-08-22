@@ -111,14 +111,19 @@ struct ThreadListView: View {
                     ForEach(viewModel.sections ?? []) { section in
                         Section {
                             ForEach(section.threads) { thread in
-                                ThreadListCell(viewModel: viewModel,
-                                               multipleSelectionViewModel: multipleSelectionViewModel,
-                                               thread: thread,
-                                               threadDensity: threadDensity,
-                                               accentColor: accentColor,
-                                               isSelected: mainViewState.selectedThread?.uid == thread.uid,
-                                               isMultiSelected: multipleSelectionViewModel.selectedItems.ids.contains(thread.id),
-                                               flushAlert: $flushAlert)
+                                // ZStack is needed for lazy ForEach on iOS 18
+                                ZStack {
+                                    ThreadListCell(viewModel: viewModel,
+                                                   multipleSelectionViewModel: multipleSelectionViewModel,
+                                                   thread: thread,
+                                                   threadDensity: threadDensity,
+                                                   accentColor: accentColor,
+                                                   isSelected: mainViewState.selectedThread?.uid == thread.uid,
+                                                   isMultiSelected: multipleSelectionViewModel.selectedItems.ids
+                                                       .contains(thread.id),
+                                                   flushAlert: $flushAlert)
+                                }
+                                .threadListCellAppearance()
                             }
                         } header: {
                             if threadDensity != .compact {
