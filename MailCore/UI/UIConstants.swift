@@ -83,7 +83,6 @@ public extension UIConstants {
     static let navbarIconsSpace: CGFloat = navbarIconSize * 3 + (navbarIconPadding * 5)
 
     static let onboardingLogoHeight: CGFloat = 56
-    static let onboardingButtonHeight: CGFloat = 104
 
     static let menuDrawerMaxWidth: CGFloat = 352
     static let menuDrawerTrailingSpacing: CGFloat = 64
@@ -99,13 +98,10 @@ public extension UIConstants {
     static let bottomBarHorizontalMinimumSpace: CGFloat = 8
 
     static let buttonsRadius: CGFloat = 16
-    static let buttonsIconSize: CGFloat = 16
 
     static let componentsMaxWidth: CGFloat = 496
 
-    static let buttonExtraLargeHeight: CGFloat = 64
     static let buttonLargeHeight: CGFloat = 56
-    static let buttonRegularHeight: CGFloat = 40
 
     static let aiPromptSheetHeight: CGFloat = 232
 
