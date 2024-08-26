@@ -203,7 +203,8 @@ final class InMemoryRealmAccessor: RealmAccessible {
             SubBody.self,
             CalendarEvent.self,
             CalendarEventResponse.self,
-            SwissTransferAttachment.self
+            SwissTransferAttachment.self,
+            MessageUid.self
         ])
 
         // It's a unit test
