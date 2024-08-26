@@ -102,6 +102,19 @@ public enum ToolFolderType: String, PersistableEnum {
     case search
 }
 
+public class MessageUid: EmbeddedObject {
+    @Persisted public var uid: String
+
+    override public init() {
+        super.init()
+    }
+
+    public convenience init(uid: String) {
+        self.init()
+        self.uid = uid
+    }
+}
+
 public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted(primaryKey: true) public var remoteId: String
     @Persisted public var path: String
@@ -121,9 +134,9 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     /// List of old Messages UIDs of this Folder that we need to fetch.
     /// When first opening the Folder, we get the full list of UIDs, and we store it.
     /// Then, we'll be able to go through it as we want to fetch the old Messages.
-    @Persisted public var oldMessagesUidsToFetch: RealmSwift.List<String>
+    @Persisted public var oldMessagesUidsToFetch: RealmSwift.List<MessageUid>
     /// List of new Messages UIDs of this Folder that we need to fetch.
-    @Persisted public var newMessagesUidsToFetch: RealmSwift.List<String>
+    @Persisted public var newMessagesUidsToFetch: RealmSwift.List<MessageUid>
     @Persisted public var isExpanded = true
 
     /// Date of last threads update
