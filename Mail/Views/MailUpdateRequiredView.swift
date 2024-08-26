@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -33,7 +34,7 @@ struct MailUpdateRequiredView: View {
         buttonStyle: .init(
             background: .accentColor,
             textStyle: .init(font: MailTextStyle.bodyAccent.font, color: UserDefaults.shared.accentColor.onAccent.swiftUIColor),
-            height: UIConstants.buttonLargeHeight,
+            height: IKButtonHeight.large,
             radius: UIConstants.buttonsRadius
         )
     )

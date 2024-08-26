@@ -16,45 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
 import MailResources
 import SwiftUI
-import UIKit
-
-public enum BarAppearanceConstants {
-    public static let threadViewNavigationBarAppearance: UINavigationBarAppearance = {
-        let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.configureWithTransparentBackground()
-        navigationBarAppearance.backgroundColor = MailResourcesAsset.backgroundColor.color
-        navigationBarAppearance.shadowColor = MailResourcesAsset.backgroundColor.color
-        return navigationBarAppearance
-    }()
-
-    public static let threadViewNavigationBarScrolledAppearance: UINavigationBarAppearance = {
-        let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.configureWithDefaultBackground()
-        navigationBarAppearance.backgroundColor = MailResourcesAsset.backgroundTabBarColor.color
-        return navigationBarAppearance
-    }()
-
-    public static let threadListNavigationBarAppearance: UINavigationBarAppearance = {
-        let navigationBarAppearance = UINavigationBarAppearance()
-        navigationBarAppearance.configureWithTransparentBackground()
-        navigationBarAppearance.backgroundColor = UserDefaults.shared.accentColor.navBarBackground.color
-        navigationBarAppearance.largeTitleTextAttributes = [
-            .foregroundColor: MailResourcesAsset.textPrimaryColor.color,
-            .font: UIFont.systemFont(ofSize: 22, weight: .semibold)
-        ]
-        return navigationBarAppearance
-    }()
-
-    public static let threadViewToolbarAppearance: UIToolbarAppearance = {
-        let toolbarAppearance = UIToolbarAppearance()
-        toolbarAppearance.configureWithOpaqueBackground()
-        toolbarAppearance.backgroundColor = MailResourcesAsset.backgroundTabBarColor.color
-        return toolbarAppearance
-    }()
-}
 
 public enum UIConstants {}
 
@@ -77,37 +40,11 @@ public extension UIConstants {
 // MARK: - Elements sizing
 
 public extension UIConstants {
-    static let navbarIconSize: CGFloat = 24
-    static let navbarIconPadding: CGFloat = 16
-    // size of 3 icons + 5 paddings between them
-    static let navbarIconsSpace: CGFloat = navbarIconSize * 3 + (navbarIconPadding * 5)
-
     static let onboardingLogoHeight: CGFloat = 56
-    static let onboardingButtonHeight: CGFloat = 104
-
-    static let menuDrawerMaxWidth: CGFloat = 352
-    static let menuDrawerTrailingSpacing: CGFloat = 64
-    static let menuDrawerLogoHeight: CGFloat = 48
-    static let menuDrawerLogoMacOSHeight: CGFloat = 32
-    static let menuDrawerQuotaSize: CGFloat = 40
-
-    static let unreadIconSize: CGFloat = 8
-    static let checkboxSize: CGFloat = 32
-    static let checkmarkSize: CGFloat = 14
-    static let checkboxLargeSize: CGFloat = 40
-
-    static let bottomBarHorizontalMinimumSpace: CGFloat = 8
 
     static let buttonsRadius: CGFloat = 16
-    static let buttonsIconSize: CGFloat = 16
 
     static let componentsMaxWidth: CGFloat = 496
-
-    static let buttonExtraLargeHeight: CGFloat = 64
-    static let buttonLargeHeight: CGFloat = 56
-    static let buttonRegularHeight: CGFloat = 40
-
-    static let aiPromptSheetHeight: CGFloat = 232
 
     static let avatarBorderLineWidth: CGFloat = 1
 }
@@ -115,9 +52,6 @@ public extension UIConstants {
 // MARK: - Animations
 
 public extension UIConstants {
-    static let checkboxAppearDelay = 0.2
-    static let checkboxDisappearOffsetDelay = 0.35
-
     static var modalCloseDelay: DispatchTime {
         DispatchTime.now() + 0.75
     }
@@ -140,12 +74,4 @@ public extension UIConstants {
         toolbar.layer.shadowRadius = 2
         toolbar.layer.masksToBounds = false
     }
-}
-
-// MARK: - Misc
-
-public extension UIConstants {
-    static let menuDrawerMaximumSubFolderLevel = 2
-
-    static let scrollObserverThreshold: ClosedRange<CGFloat> = -80 ... 80
 }

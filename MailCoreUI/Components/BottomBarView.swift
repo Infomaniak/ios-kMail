@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -60,9 +61,9 @@ public struct BottomBarView<Items: View>: View {
 
     public var body: some View {
         HStack {
-            Spacer(minLength: UIConstants.bottomBarHorizontalMinimumSpace)
+            Spacer(minLength: IKPadding.small)
             items()
-            Spacer(minLength: UIConstants.bottomBarHorizontalMinimumSpace)
+            Spacer(minLength: IKPadding.small)
         }
         .modifier(snackBarAwareModifier)
         .padding(.top, value: .small)

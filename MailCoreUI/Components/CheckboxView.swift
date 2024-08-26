@@ -20,6 +20,17 @@ import MailCore
 import MailResources
 import SwiftUI
 
+extension ThreadDensity {
+    var checkboxSize: CGFloat {
+        switch self {
+        case .compact, .normal:
+            return 32
+        case .large:
+            return 40
+        }
+    }
+}
+
 public struct CheckboxView: View {
     let accentColor: AccentColor
     let isSelected: Bool
@@ -28,7 +39,7 @@ public struct CheckboxView: View {
     public init(isSelected: Bool, density: ThreadDensity, accentColor: AccentColor) {
         self.isSelected = isSelected
         self.accentColor = accentColor
-        size = density == .large ? UIConstants.checkboxLargeSize : UIConstants.checkboxSize
+        size = density.checkboxSize
     }
 
     public var body: some View {
@@ -39,7 +50,7 @@ public struct CheckboxView: View {
                 .frame(width: size, height: size)
             MailResourcesAsset.check.swiftUIImage
                 .foregroundStyle(accentColor.onAccent)
-                .frame(height: UIConstants.checkmarkSize)
+                .frame(height: 16)
                 .opacity(isSelected ? 1 : 0)
         }
         .animation(nil, value: isSelected)

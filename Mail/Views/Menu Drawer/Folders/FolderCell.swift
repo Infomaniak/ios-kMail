@@ -127,6 +127,8 @@ struct FolderCell: View {
 }
 
 struct FolderCellContent: View {
+    private static let maximumSubFolderLevel = 2
+
     @LazyInjectService private var matomo: MatomoUtils
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -152,7 +154,7 @@ struct FolderCellContent: View {
     init(frozenFolder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false) {
         assert(frozenFolder.isFrozen, "expecting frozenFolder to be frozen")
         self.frozenFolder = frozenFolder
-        self.level = min(level, UIConstants.menuDrawerMaximumSubFolderLevel)
+        self.level = min(level, Self.maximumSubFolderLevel)
         self.isCurrentFolder = isCurrentFolder
         self.canCollapseSubFolders = canCollapseSubFolders
     }

@@ -90,11 +90,9 @@ struct ThreadListToolbar: ViewModifier {
                                 MenuDrawerButton()
                             }
 
-                            let textMaxWidth = isCompactWindow ? UIScreen.main.bounds.size.width - geometry.safeAreaInsets
-                                .leading - geometry.safeAreaInsets.trailing - UIConstants.navbarIconsSpace : 215
                             Text(viewModel.frozenFolder.localizedName)
                                 .textStyle(.header1)
-                                .frame(maxWidth: textMaxWidth, alignment: .leading)
+                                .frame(maxWidth: maxTextWidth(geometry), alignment: .leading)
                         }
                     }
 
@@ -177,5 +175,19 @@ struct ThreadListToolbar: ViewModifier {
                 )
                 .navigationBarTitleDisplayMode(.inline)
         }
+    }
+
+    private func maxTextWidth(_ proxy: GeometryProxy) -> CGFloat {
+        guard isCompactWindow else {
+            return 215
+        }
+
+        let safeAreaHorizontalInsets = proxy.safeAreaInsets.leading + proxy.safeAreaInsets.trailing
+
+        let toolbarIconSize: CGFloat = 24
+        let toolbarIconPadding: CGFloat = 16
+        let toolbarIconsSpace = toolbarIconSize * 3 + (toolbarIconPadding * 5)
+
+        return max(0, proxy.size.width - safeAreaHorizontalInsets - toolbarIconsSpace)
     }
 }

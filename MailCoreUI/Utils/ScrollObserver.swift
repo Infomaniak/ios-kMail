@@ -25,6 +25,8 @@ public final class ScrollObserver: ObservableObject {
         case none, top, bottom
     }
 
+    private static let threshold: ClosedRange<CGFloat> = -80 ... 80
+
     @Published public var scrollDirection = ScrollDirection.none
 
     public var shouldObserve = true
@@ -62,7 +64,7 @@ public final class ScrollObserver: ObservableObject {
         }
 
         let difference = lastContentOffset - offset
-        guard !UIConstants.scrollObserverThreshold.contains(difference) else { return }
+        guard !Self.threshold.contains(difference) else { return }
         let newDirection: ScrollDirection = difference > 0 ? .top : .bottom
         updateScrollDirection(offset: offset, direction: newDirection)
     }
