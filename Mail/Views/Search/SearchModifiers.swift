@@ -103,41 +103,39 @@ struct SearchToolbar: ViewModifier {
                 }
             }
             .bottomBar(isVisible: multipleSelectionViewModel.isEnabled) {
-                HStack(spacing: 0) {
-                    ForEach(multipleSelectionViewModel.toolbarActions) { action in
-                        ToolbarButton(
-                            text: action.shortTitle ?? action.title,
-                            icon: action.icon
-                        ) {
-                            let allMessages = multipleSelectionViewModel.selectedItems.threads.flatMap(\.messages)
-                            multipleSelectionViewModel.disable()
-                            Task {
-                                matomo.trackBulkEvent(
-                                    eventWithCategory: .threadActions,
-                                    name: action.matomoName.capitalized,
-                                    numberOfItems: multipleSelectionViewModel.selectedItems.count
-                                )
+                ForEach(multipleSelectionViewModel.toolbarActions) { action in
+                    ToolbarButton(
+                        text: action.shortTitle ?? action.title,
+                        icon: action.icon
+                    ) {
+                        let allMessages = multipleSelectionViewModel.selectedItems.threads.flatMap(\.messages)
+                        multipleSelectionViewModel.disable()
+                        Task {
+                            matomo.trackBulkEvent(
+                                eventWithCategory: .threadActions,
+                                name: action.matomoName.capitalized,
+                                numberOfItems: multipleSelectionViewModel.selectedItems.count
+                            )
 
-                                try await actionsManager.performAction(
-                                    target: allMessages,
-                                    action: action,
-                                    origin: .multipleSelection(
-                                        originFolder: viewModel.frozenSearchFolder,
-                                        nearestMessagesToMoveSheet: $messagesToMove
-                                    )
+                            try await actionsManager.performAction(
+                                target: allMessages,
+                                action: action,
+                                origin: .multipleSelection(
+                                    originFolder: viewModel.frozenSearchFolder,
+                                    nearestMessagesToMoveSheet: $messagesToMove
                                 )
+                            )
 
-                                viewModel.refreshSearchIfNeeded(action: action)
-                            }
+                            viewModel.refreshSearchIfNeeded(action: action)
                         }
                     }
+                }
 
-                    ToolbarButton(
-                        text: MailResourcesStrings.Localizable.buttonMore,
-                        icon: MailResourcesAsset.plusActions.swiftUIImage
-                    ) {
-                        multipleSelectedMessages = multipleSelectionViewModel.selectedItems.threads.flatMap(\.messages)
-                    }
+                ToolbarButton(
+                    text: MailResourcesStrings.Localizable.buttonMore,
+                    icon: MailResourcesAsset.plusActions.swiftUIImage
+                ) {
+                    multipleSelectedMessages = multipleSelectionViewModel.selectedItems.threads.flatMap(\.messages)
                 }
             }
             .actionsPanel(

@@ -112,46 +112,44 @@ struct ThreadListToolbar: ViewModifier {
                     }
                 }
                 .bottomBar(isVisible: multipleSelectionViewModel.isEnabled) {
-                    HStack(spacing: 0) {
-                        ForEach(multipleSelectionViewModel.toolbarActions) { action in
-                            ToolbarButton(
-                                text: action.shortTitle ?? action.title,
-                                icon: action.icon
-                            ) {
-                                let allMessages = multipleSelectionViewModel.selectedItems.threads.flatMap(\.messages)
-                                multipleSelectionViewModel.disable()
-                                let originFolder = viewModel.frozenFolder
-                                Task {
-                                    matomo.trackBulkEvent(
-                                        eventWithCategory: .threadActions,
-                                        name: action.matomoName.capitalized,
-                                        numberOfItems: multipleSelectionViewModel.selectedItems.count
-                                    )
-
-                                    try await actionsManager.performAction(
-                                        target: allMessages,
-                                        action: action,
-                                        origin: .multipleSelection(
-                                            originFolder: originFolder,
-                                            nearestFlushAlert: $flushAlert,
-                                            nearestMessagesToMoveSheet: $messagesToMove
-                                        )
-                                    )
-                                }
-                            }
-                            .accessibilityLabel(action.title)
-                            .accessibilityAddTraits(.isButton)
-                        }
-
+                    ForEach(multipleSelectionViewModel.toolbarActions) { action in
                         ToolbarButton(
-                            text: MailResourcesStrings.Localizable.buttonMore,
-                            icon: MailResourcesAsset.plusActions.swiftUIImage
+                            text: action.shortTitle ?? action.title,
+                            icon: action.icon
                         ) {
-                            multipleSelectedMessages = multipleSelectionViewModel.selectedItems.threads.flatMap(\.messages)
+                            let allMessages = multipleSelectionViewModel.selectedItems.threads.flatMap(\.messages)
+                            multipleSelectionViewModel.disable()
+                            let originFolder = viewModel.frozenFolder
+                            Task {
+                                matomo.trackBulkEvent(
+                                    eventWithCategory: .threadActions,
+                                    name: action.matomoName.capitalized,
+                                    numberOfItems: multipleSelectionViewModel.selectedItems.count
+                                )
+
+                                try await actionsManager.performAction(
+                                    target: allMessages,
+                                    action: action,
+                                    origin: .multipleSelection(
+                                        originFolder: originFolder,
+                                        nearestFlushAlert: $flushAlert,
+                                        nearestMessagesToMoveSheet: $messagesToMove
+                                    )
+                                )
+                            }
                         }
-                        .accessibilityLabel(MailResourcesStrings.Localizable.buttonMore)
+                        .accessibilityLabel(action.title)
                         .accessibilityAddTraits(.isButton)
                     }
+
+                    ToolbarButton(
+                        text: MailResourcesStrings.Localizable.buttonMore,
+                        icon: MailResourcesAsset.plusActions.swiftUIImage
+                    ) {
+                        multipleSelectedMessages = multipleSelectionViewModel.selectedItems.threads.flatMap(\.messages)
+                    }
+                    .accessibilityLabel(MailResourcesStrings.Localizable.buttonMore)
+                    .accessibilityAddTraits(.isButton)
                 }
                 .actionsPanel(
                     messages: $multipleSelectedMessages,

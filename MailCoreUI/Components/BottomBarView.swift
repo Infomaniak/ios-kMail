@@ -47,23 +47,23 @@ public struct BottomBarView<Items: View>: View {
     @State private var hasBottomSafeArea: Bool
     @State private var snackBarAwareModifier: SnackBarAwareModifier
 
-    @ViewBuilder let items: () -> Items
+    private let items: Items
 
     public init(
         hasBottomSafeArea: Bool = true,
         snackBarAwareModifier: SnackBarAwareModifier = SnackBarAwareModifier(inset: 0),
-        items: @escaping () -> Items
+        items: () -> Items
     ) {
         self.hasBottomSafeArea = hasBottomSafeArea
         self.snackBarAwareModifier = snackBarAwareModifier
-        self.items = items
+        self.items = items()
     }
 
     public var body: some View {
         HStack {
-            Spacer(minLength: IKPadding.small)
-            items()
-            Spacer(minLength: IKPadding.small)
+            items
+                .padding(.horizontal, value: .small)
+                .frame(maxWidth: .infinity)
         }
         .modifier(snackBarAwareModifier)
         .padding(.top, value: .small)
@@ -91,7 +91,10 @@ public struct BottomBarView<Items: View>: View {
         }
         .navigationTitle("Title")
         .bottomBar {
-            Text("Coucou")
+            Text("C1")
+            Text("C2")
+            Text("C3")
+            Text("C4")
         }
     }
 }
