@@ -62,7 +62,7 @@ struct SettingsView: View {
                     }
 
                     SettingsSubMenuCell(
-                        title: MailResourcesStrings.Localizable.buttonAddExistinglAddress
+                        title: MailResourcesStrings.Localizable.buttonAddExistingAddress
                     ) {
                         AddMailboxView()
                     }

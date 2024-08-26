@@ -95,7 +95,7 @@ struct MailboxesManagementView: View {
                 Button {
                     isShowingAddMailboxView = true
                 } label: {
-                    HStack(spacing: UIPadding.regular) {
+                    HStack(spacing: IKPadding.medium) {
                         IKIcon(MailResourcesAsset.plusCircle, size: .large)
 
                         Text(MailResourcesStrings.Localizable.buttonAddExistingAddress)
@@ -104,7 +104,7 @@ struct MailboxesManagementView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(UIPadding.menuDrawerCell)
+                    .padding(IKPadding.menuDrawerCell)
                 }
                 .sheet(isPresented: $isShowingAddMailboxView) {
                     AddMailboxView()
