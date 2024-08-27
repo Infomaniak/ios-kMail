@@ -18,12 +18,21 @@
 
 import InfomaniakCore
 import InfomaniakCoreUI
+import InfomaniakDI
+import InfomaniakLogin
 import MailCore
 import MailCoreUI
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 struct SettingsAccountManagementView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var tokenStore: TokenStore
+
+    @ModalState(wrappedValue: nil, context: ContextKeys.account) private var presentedAccountDeletionToken: ApiToken?
+    @State private var delegate = AccountViewDelegate()
+
     let account: Account
 
     var body: some View {
@@ -48,11 +57,27 @@ struct SettingsAccountManagementView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
                 IKDivider(type: .menu)
+
+                Button {
+                    matomo.track(eventWithCategory: .account, name: "deleteAccount")
+                    presentedAccountDeletionToken = tokenStore.tokenFor(userId: account.userId)
+                } label: {
+                    HStack(spacing: IKPadding.medium) {
+                        IKIcon(MailResourcesAsset.bin, size: .large)
+                        Text(MailResourcesStrings.Localizable.buttonAccountDelete)
+                    }
+                    .textStyle(.bodyError)
+                }
+                .buttonStyle(.ikBorderless(isInlined: true))
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsAccountManagementTitle, displayMode: .inline)
         .padding(.horizontal, value: .medium)
+        .sheet(item: $presentedAccountDeletionToken) { userToken in
+            DeleteAccountView(token: userToken, delegate: delegate)
+        }
     }
 }
 
