@@ -215,7 +215,9 @@ struct SettingsView: View {
                     SettingsSubMenuCell(
                         title: MailResourcesStrings.Localizable.settingsAccountManagementTitle
                     ) {
-                        SettingsAccountManagementView()
+                        if let account = accountManager.getCurrentAccount() {
+                            SettingsAccountManagementView(account: account)
+                        }
                     }
                 }
             }

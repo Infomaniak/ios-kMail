@@ -16,15 +16,46 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
 
 struct SettingsAccountManagementView: View {
-    var body: some View {}
+    let account: Account
+
+    var body: some View {
+        ScrollView {
+            VStack(spacing: IKPadding.medium) {
+                VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
+                    Text(MailResourcesStrings.Localizable.usernameTitle)
+                        .textStyle(.header2)
+                    Text(account.user.displayName)
+                        .textStyle(.bodySecondary)
+                }
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
+                    Text(MailResourcesStrings.Localizable.attachMailboxInputHint)
+                        .textStyle(.header2)
+                    Text(account.user.email)
+                        .textStyle(.bodySecondary)
+                }
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                IKDivider(type: .menu)
+            }
+        }
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+        .navigationBarTitle(MailResourcesStrings.Localizable.settingsAccountManagementTitle, displayMode: .inline)
+        .padding(.horizontal, value: .medium)
+    }
 }
 
 #Preview {
-    SettingsAccountManagementView()
+    SettingsAccountManagementView(account: PreviewHelper.sampleAccount)
 }
