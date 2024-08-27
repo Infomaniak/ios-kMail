@@ -70,6 +70,13 @@ struct SettingsAccountManagementView: View {
                 }
                 .buttonStyle(.ikBorderless(isInlined: true))
                 .frame(maxWidth: .infinity, alignment: .leading)
+
+                InformationBlockView(
+                    icon: MailResourcesAsset.warningFill.swiftUIImage,
+                    message: MailResourcesStrings.Localizable.deleteAccountWarning,
+                    iconColor: MailResourcesAsset.orangeColor.swiftUIColor
+                )
+                .padding(.top, value: .small)
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
