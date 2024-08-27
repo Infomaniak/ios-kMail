@@ -643,6 +643,9 @@
 /* loco:6294648c19755a1ae9494462 */
 "dateTitle" = "Data:";
 
+/* loco:66cdadf9bc780d2bbd033462 */
+"deleteAccountWarning" = "La cancellazione dell’account sarà definitiva. Non sarà possibile riattivare l’account.";
+
 /* loco:627e3fa5774ef45bfd4d3b92 */
 "draftFolder" = "Bozze";
 
@@ -1692,6 +1695,9 @@
 
 /* loco:641d60b6f5c19a18734d9192 */
 "urlUserReportiOS" = "https://feedback.userreport.com/b0fada78-1555-4c59-abad-423e887534d5/";
+
+/* loco:66cdb381f11974e3d00d5703 */
+"usernameTitle" = "Nome utente";
 
 /* loco:65957e6e7dfe315a5d02add2 */
 "warningEventHasPassed" = "Questo evento è già passato";

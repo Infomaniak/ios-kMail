@@ -643,6 +643,9 @@
 /* loco:6294648c19755a1ae9494462 */
 "dateTitle" = "Date:";
 
+/* loco:66cdadf9bc780d2bbd033462 */
+"deleteAccountWarning" = "The deletion of your account will be final. You will not be able to reactivate your account.";
+
 /* loco:627e3fa5774ef45bfd4d3b92 */
 "draftFolder" = "Drafts";
 
@@ -1692,6 +1695,9 @@
 
 /* loco:641d60b6f5c19a18734d9192 */
 "urlUserReportiOS" = "https://feedback.userreport.com/5f64b035-33e5-4e71-9572-dc9d1d451c18/";
+
+/* loco:66cdb381f11974e3d00d5703 */
+"usernameTitle" = "Username";
 
 /* loco:65957e6e7dfe315a5d02add2 */
 "warningEventHasPassed" = "This event has already passed";
