@@ -159,7 +159,7 @@ public extension MailboxManager {
                 return
             }
 
-            folder.oldMessagesUidsToFetch = messageUidsResult.messageShortUids.toRealmList()
+            folder.oldMessagesUidsToFetch = messageUidsResult.messageShortUids.map { MessageUid(uid: $0) }.toRealmList()
         }
 
         return messageUidsResult.cursor
@@ -175,12 +175,13 @@ public extension MailboxManager {
               !liveFolder.newMessagesUidsToFetch.isEmpty else { return false }
 
         let range: Range = 0 ..< min(liveFolder.newMessagesUidsToFetch.count, Constants.newPageSize)
-        let nextUids: [String] = Array(liveFolder.newMessagesUidsToFetch[range])
+        let nextUids: [String] = liveFolder.newMessagesUidsToFetch[range].map { $0.uid }
         try await addMessages(shortUids: nextUids, folder: folder)
 
         try writeTransaction { writableRealm in
-            let freshFolder = folder.fresh(using: writableRealm)
-            freshFolder?.newMessagesUidsToFetch.removeSubrange(range)
+            guard let freshFolder = folder.fresh(using: writableRealm) else { return }
+            let uidsToRemove = freshFolder.newMessagesUidsToFetch.where { $0.uid.in(nextUids) }
+            writableRealm.delete(uidsToRemove)
         }
 
         return true
@@ -199,14 +200,16 @@ public extension MailboxManager {
         var newThreadsCount = 0
 
         let range: Range = 0 ..< min(liveFolder.oldMessagesUidsToFetch.count, Constants.oldPageSize)
-        let nextUids: [String] = Array(liveFolder.oldMessagesUidsToFetch[range])
+        let nextUids: [String] = liveFolder.oldMessagesUidsToFetch[range].map { $0.uid }
         try await addMessages(shortUids: nextUids, folder: folder)
 
         try? writeTransaction { writableRealm in
-            let freshFolder = folder.fresh(using: writableRealm)
-            freshFolder?.oldMessagesUidsToFetch.removeSubrange(range)
-            freshFolder?.remainingOldMessagesToFetch -= Constants.oldPageSize
-            newThreadsCount = freshFolder?.threads.count ?? 0
+            guard let freshFolder = folder.fresh(using: writableRealm) else { return }
+            let uidsToRemove = freshFolder.oldMessagesUidsToFetch.where { $0.uid.in(nextUids) }
+            writableRealm.delete(uidsToRemove)
+
+            freshFolder.remainingOldMessagesToFetch -= Constants.oldPageSize
+            newThreadsCount = freshFolder.threads.count
         }
 
         return newThreadsCount - threadsCount
@@ -227,7 +230,7 @@ public extension MailboxManager {
         // Add Uids to fetch in the folder
         try? writeTransaction { writableRealm in
             let freshFolder = folder.fresh(using: writableRealm)
-            freshFolder?.newMessagesUidsToFetch.append(objectsIn: messageUids.addedShortUids)
+            freshFolder?.newMessagesUidsToFetch.append(objectsIn: messageUids.addedShortUids.map { MessageUid(uid: $0) })
 
             if let newUnreadCount = messageUids.folderUnreadCount {
                 freshFolder?.remoteUnreadCount = newUnreadCount

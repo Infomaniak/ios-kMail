@@ -74,7 +74,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 33,
+            schemaVersion: 34,
             migrationBlock: { migration, oldSchemaVersion in
                 // No migration needed from 0 to 16
                 if oldSchemaVersion < 17 {
@@ -111,7 +111,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 Attendee.self,
                 Bimi.self,
                 SwissTransferAttachment.self,
-                File.self
+                File.self,
+                MessageUid.self
             ]
         )
 
@@ -191,8 +192,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         folder.lastUpdate = savedFolder.lastUpdate
         folder.cursor = savedFolder.cursor
         folder.remainingOldMessagesToFetch = savedFolder.remainingOldMessagesToFetch
-        folder.oldMessagesUidsToFetch = savedFolder.oldMessagesUidsToFetch
-        folder.newMessagesUidsToFetch = savedFolder.newMessagesUidsToFetch
+        folder.oldMessagesUidsToFetch = savedFolder.oldMessagesUidsToFetch.detached()
+        folder.newMessagesUidsToFetch = savedFolder.newMessagesUidsToFetch.detached()
         folder.isExpanded = savedFolder.isExpanded
     }
 
