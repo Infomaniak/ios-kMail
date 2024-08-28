@@ -30,14 +30,14 @@ struct LogoutConfirmationView: View {
     @LazyInjectService private var notificationService: InfomaniakNotifications
     @LazyInjectService private var accountManager: AccountManager
 
-    let account: Account
+    let user: UserProfile
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.confirmLogoutTitle)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, IKPadding.alertTitleBottom)
-            Text(MailResourcesStrings.Localizable.confirmLogoutDescription(account.user?.email ?? ""))
+            Text(MailResourcesStrings.Localizable.confirmLogoutDescription(user.email))
                 .textStyle(.bodySecondary)
                 .padding(.bottom, IKPadding.alertDescriptionBottom)
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm, primaryButtonAction: logout)
@@ -47,11 +47,11 @@ struct LogoutConfirmationView: View {
     private func logout() async {
         matomo.track(eventWithCategory: .account, name: "logOutConfirm")
 
-        await notificationService.removeStoredTokenFor(userId: account.userId)
+        await notificationService.removeStoredTokenFor(userId: user.id)
 
-        accountManager.removeTokenAndAccount(account: account)
+        accountManager.removeTokenAndAccountFor(userId: user.id)
         if let nextAccount = accountManager.accounts.first {
-            accountManager.switchAccount(newAccount: nextAccount)
+            accountManager.switchAccount(newUserId: nextAccount.userId)
         }
         accountManager.saveAccounts()
 
@@ -60,5 +60,5 @@ struct LogoutConfirmationView: View {
 }
 
 #Preview {
-    LogoutConfirmationView(account: PreviewHelper.sampleAccount)
+    LogoutConfirmationView(user: PreviewHelper.sampleUser)
 }

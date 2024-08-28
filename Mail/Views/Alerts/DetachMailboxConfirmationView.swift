@@ -62,7 +62,7 @@ struct DetachMailboxConfirmationView: View {
         matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailboxConfirm")
         await tryOrDisplayError {
             try await accountManager.detachMailbox(mailbox: mailbox)
-            navigationState.transitionToRootViewDestination(.mainView)
+            navigationState.transitionToMainViewIfPossible(targetAccount: nil, targetMailbox: nil)
         }
     }
 }

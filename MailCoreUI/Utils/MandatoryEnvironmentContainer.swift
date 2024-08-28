@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2022 Infomaniak Network SA
+ Copyright (C) 2024 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -17,14 +17,30 @@
  */
 
 import Foundation
-import InfomaniakCore
-import SwiftUI
-import SwiftUIMacros
 
-public extension EnvironmentValues {
-    @EnvironmentKey
-    var isCompactWindow = true
+public struct MandatoryEnvironmentContainer<T> {
+    public var value: T {
+        #if DEBUG
+        guard let _value else {
+            fatalError("Container not initialized in the view tree")
+        }
+        return _value
+        #else
+        return _value!
+        #endif
+    }
 
-    @EnvironmentKey
-    var currentUser: MandatoryEnvironmentContainer<UserProfile> = MandatoryEnvironmentContainer.emptyDefaultValue()
+    private let _value: T?
+
+    public init(value: T) {
+        _value = value
+    }
+
+    private init(value: T?) {
+        _value = value
+    }
+
+    public static func emptyDefaultValue() -> MandatoryEnvironmentContainer<T> {
+        MandatoryEnvironmentContainer(value: nil)
+    }
 }

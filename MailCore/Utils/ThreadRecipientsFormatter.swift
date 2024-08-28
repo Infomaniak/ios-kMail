@@ -17,20 +17,22 @@
  */
 
 import Foundation
+import InfomaniakCore
 import MailResources
 
 public extension FormatStyle where Self == Thread.FormatStyle {
     static func recipientNameList(
+        contextUser: UserProfile,
         contextMailboxManager: MailboxManager,
         style: Thread.FormatStyle.Style
     ) -> Self {
-        .init(contextMailboxManager: contextMailboxManager, style: style)
+        .init(contextUser: contextUser, contextMailboxManager: contextMailboxManager, style: style)
     }
 }
 
 public extension Thread {
-    func formatted(contextMailboxManager: MailboxManager, style: Thread.FormatStyle.Style) -> String {
-        Self.FormatStyle(contextMailboxManager: contextMailboxManager, style: style).format(self)
+    func formatted(contextUser: UserProfile, contextMailboxManager: MailboxManager, style: Thread.FormatStyle.Style) -> String {
+        Self.FormatStyle(contextUser: contextUser, contextMailboxManager: contextMailboxManager, style: style).format(self)
     }
 
     struct FormatStyle: Foundation.FormatStyle, Codable, Equatable, Hashable {
@@ -42,10 +44,12 @@ public extension Thread {
         }
 
         private let style: Style
+        private let contextUser: UserProfile
         private let contextMailboxManager: MailboxManager
 
-        public init(contextMailboxManager: MailboxManager, style: Style) {
+        public init(contextUser: UserProfile, contextMailboxManager: MailboxManager, style: Style) {
             self.style = style
+            self.contextUser = contextUser
             self.contextMailboxManager = contextMailboxManager
         }
 
@@ -65,6 +69,7 @@ public extension Thread {
             case 1:
                 let contactConfiguration = ContactConfiguration.correspondent(
                     correspondent: fromArray[0],
+                    contextUser: contextUser,
                     contextMailboxManager: contextMailboxManager
                 )
                 let contact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
@@ -75,6 +80,7 @@ public extension Thread {
                     .map {
                         let contactConfiguration = ContactConfiguration.correspondent(
                             correspondent: $0,
+                            contextUser: contextUser,
                             contextMailboxManager: contextMailboxManager
                         )
                         let contact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
@@ -88,6 +94,7 @@ public extension Thread {
             guard let to = thread.to.first else { return MailResourcesStrings.Localizable.unknownRecipientTitle }
             let contact = CommonContactCache.getOrCreateContact(contactConfiguration: .correspondent(
                 correspondent: to,
+                contextUser: contextUser,
                 contextMailboxManager: contextMailboxManager
             ))
             return contact.formatted()

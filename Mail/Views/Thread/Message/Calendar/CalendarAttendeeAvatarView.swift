@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
@@ -23,6 +24,8 @@ import MailResources
 import SwiftUI
 
 struct AttendeeAvatarView: View {
+    @Environment(\.currentUser) private var currentUser
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let attendee: Attendee
@@ -30,6 +33,7 @@ struct AttendeeAvatarView: View {
     private var cachedContact: CommonContact {
         return CommonContactCache.getOrCreateContact(contactConfiguration: .correspondent(
             correspondent: attendee,
+            contextUser: currentUser.value,
             contextMailboxManager: mailboxManager
         ))
     }

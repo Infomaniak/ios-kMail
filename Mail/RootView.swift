@@ -17,6 +17,7 @@
  */
 
 import MailCore
+import MailCoreUI
 import SwiftUI
 
 struct RootView: View {
@@ -27,9 +28,10 @@ struct RootView: View {
             switch rootViewState.state {
             case .appLocked:
                 LockedAppView()
-            case .mainView(let mainViewState):
+            case .mainView(let currentUser, let mainViewState):
                 SplitView(mailboxManager: mainViewState.mailboxManager)
                     .environmentObject(mainViewState)
+                    .environment(\.currentUser, MandatoryEnvironmentContainer(value: currentUser))
             case .onboarding:
                 OnboardingView()
             case .authorization:
@@ -40,8 +42,8 @@ struct RootView: View {
                 UnavailableMailboxesView()
             case .updateRequired:
                 MailUpdateRequiredView()
-            case .preloading(let currentAccount):
-                PreloadingView(currentAccount: currentAccount)
+            case .preloading:
+                PreloadingView()
             }
         }
     }

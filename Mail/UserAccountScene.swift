@@ -62,11 +62,12 @@ struct UserAccountScene: Scene {
                 id: DesktopWindowIdentifier.settingsWindowIdentifier,
                 for: SettingsViewConfig.self
             ) { $config in
-                if case .mainView(let mainViewState) = rootViewState.state,
+                if case .mainView(let user, let mainViewState) = rootViewState.state,
                    let baseNavigationPath = config?.baseNavigationPath {
                     SettingsNavigationView(baseNavigationPath: baseNavigationPath)
                         .standardWindow()
                         .environmentObject(mainViewState.mailboxManager)
+                        .environment(\.currentUser, MandatoryEnvironmentContainer(value: user))
                 }
             }
             .defaultAppStorage(.shared)
@@ -95,14 +96,14 @@ struct UserAccountScene: Scene {
                 let versionStatus = try await VersionChecker.standard.checkAppVersionStatus(platform: platform)
                 switch versionStatus {
                 case .updateIsRequired:
-                    rootViewState.transitionToRootViewDestination(.updateRequired)
+                    rootViewState.transitionToRootViewState(.updateRequired)
                 case .canBeUpdated:
-                    if case .mainView(let mainViewState) = rootViewState.state {
+                    if case .mainView(_, let mainViewState) = rootViewState.state {
                         mainViewState.isShowingUpdateAvailable = true
                     }
                 case .isUpToDate:
                     if rootViewState.state == .updateRequired {
-                        rootViewState.transitionToRootViewDestination(.mainView)
+                        rootViewState.transitionToMainViewIfPossible(targetAccount: nil, targetMailbox: nil)
                     }
                 }
             } catch {

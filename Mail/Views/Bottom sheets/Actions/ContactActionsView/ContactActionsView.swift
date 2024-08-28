@@ -24,6 +24,7 @@ import MailCoreUI
 import SwiftUI
 
 struct ContactActionsView: View {
+    @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let recipient: Recipient
@@ -44,6 +45,7 @@ struct ContactActionsView: View {
             let contactConfiguration = ContactConfiguration.correspondent(
                 correspondent: recipient,
                 associatedBimi: bimi,
+                contextUser: currentUser.value,
                 contextMailboxManager: mailboxManager
             )
             let contact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)

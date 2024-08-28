@@ -35,9 +35,9 @@ final class AccountViewDelegate: DeleteAccountDelegate {
     @MainActor func didCompleteDeleteAccount() {
         Task {
             guard let account = accountManager.getCurrentAccount() else { return }
-            accountManager.removeTokenAndAccount(account: account)
+            accountManager.removeTokenAndAccountFor(userId: account.userId)
             if let nextAccount = accountManager.accounts.first {
-                accountManager.switchAccount(newAccount: nextAccount)
+                accountManager.switchAccount(newUserId: nextAccount.userId)
             }
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackBarAccountDeleted)
             accountManager.saveAccounts()
@@ -56,6 +56,8 @@ struct AccountView: View {
 
     private static let avatarViewSize: CGFloat = 104
 
+    @Environment(\.currentUser) private var currentUser
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ModalState(context: ContextKeys.account) private var isShowingLogoutAlert = false
@@ -63,14 +65,14 @@ struct AccountView: View {
     @State private var delegate = AccountViewDelegate()
     @State private var isLottieAnimationVisible = false
 
-    let account: Account
+    let user: UserProfile
 
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
                 AvatarView(
                     mailboxManager: mailboxManager,
-                    contactConfiguration: .user(user: account.user),
+                    contactConfiguration: .user(user: currentUser.value),
                     size: AccountView.avatarViewSize
                 )
                 .padding(.bottom, value: .medium)
@@ -92,11 +94,11 @@ struct AccountView: View {
                 .zIndex(1)
 
                 VStack(spacing: 0) {
-                    Text(account.user.displayName)
+                    Text(user.displayName)
                         .textStyle(.header2)
                         .padding(.bottom, value: .extraSmall)
 
-                    Text(account.user.email)
+                    Text(user.email)
                         .textStyle(.bodySmallSecondary)
                         .padding(.bottom, value: .medium)
 
@@ -125,7 +127,7 @@ struct AccountView: View {
 
                 Button(MailResourcesStrings.Localizable.buttonAccountDelete, role: .destructive) {
                     matomo.track(eventWithCategory: .account, name: "deleteAccount")
-                    presentedAccountDeletionToken = tokenStore.tokenFor(userId: account.userId)
+                    presentedAccountDeletionToken = tokenStore.tokenFor(userId: user.id)
                 }
                 .buttonStyle(.ikBorderless)
             }
@@ -146,7 +148,7 @@ struct AccountView: View {
             DeleteAccountView(token: userToken, delegate: delegate)
         }
         .customAlert(isPresented: $isShowingLogoutAlert) {
-            LogoutConfirmationView(account: account)
+            LogoutConfirmationView(user: user)
         }
         .sheetViewStyle()
         .matomoView(view: [MatomoUtils.View.accountView.displayName, "Main"])
@@ -160,5 +162,5 @@ extension ApiToken: Identifiable {
 }
 
 #Preview {
-    AccountView(account: PreviewHelper.sampleAccount)
+    AccountView(user: PreviewHelper.sampleUser)
 }

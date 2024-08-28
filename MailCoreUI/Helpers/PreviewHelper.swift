@@ -167,6 +167,14 @@ public enum PreviewHelper {
         expirationDate: Date()
     ))
 
+    public static let sampleUser = UserProfile(
+        id: 1,
+        displayName: "John Appleseed",
+        firstName: "John",
+        lastName: "Appleseed",
+        email: "mobiletest@ik.me"
+    )
+
     public static let sampleDraftContentManager = DraftContentManager(
         incompleteDraft: Draft(),
         messageReply: nil,

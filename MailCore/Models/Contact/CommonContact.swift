@@ -44,16 +44,20 @@ public final class CommonContact: Identifiable {
     }
 
     /// Init form a `Correspondent` in the context of a mailbox
-    init(correspondent: any Correspondent, associatedBimi: Bimi?, contextMailboxManager: MailboxManager) {
+    init(
+        correspondent: any Correspondent,
+        associatedBimi: Bimi?,
+        contextUser: UserProfile,
+        contextMailboxManager: MailboxManager
+    ) {
         email = correspondent.email
         id = correspondent.id.hashValue
 
         if correspondent.isMe(currentMailboxEmail: contextMailboxManager.mailbox.email) {
             fullName = MailResourcesStrings.Localizable.contactMe
             color = UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
-            if let currentUser = contextMailboxManager.account.user,
-               correspondent.isCurrentUser(currentAccountEmail: currentUser.email),
-               let avatarString = currentUser.avatar,
+            if correspondent.isCurrentUser(currentAccountEmail: contextUser.email),
+               let avatarString = contextUser.avatar,
                let avatarURL = URL(string: avatarString) {
                 avatarImageRequest = AvatarImageRequest(imageRequest: ImageRequest(url: avatarURL), shouldAuthenticate: false)
             } else {
