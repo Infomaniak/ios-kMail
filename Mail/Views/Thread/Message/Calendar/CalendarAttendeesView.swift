@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
@@ -26,6 +27,8 @@ import SwiftUI
 
 struct CalendarAttendeesView: View {
     @LazyInjectService private var matomoUtils: MatomoUtils
+
+    @Environment(\.currentUser) private var currentUser
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -39,6 +42,7 @@ struct CalendarAttendeesView: View {
         guard let organizer else { return nil }
         return CommonContactCache.getOrCreateContact(contactConfiguration: .correspondent(
             correspondent: organizer,
+            contextUser: currentUser.value,
             contextMailboxManager: mailboxManager
         ))
     }

@@ -29,6 +29,8 @@ import RealmSwift
 import Sentry
 import SwiftUI
 
+extension InfomaniakCore.UserProfile: Identifiable {}
+
 public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     @LazyInjectService var networkLoginService: InfomaniakNetworkLoginable
     @LazyInjectService var tokenStore: TokenStore
@@ -139,7 +141,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         // remove accounts with no user
         for account in accounts where account.user == nil {
-            removeAccount(toDeleteAccount: account)
+            removeAccountFor(userId: account.userId)
         }
     }
 
@@ -202,7 +204,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         tokenStore.removeTokenFor(userId: token.userId)
         if let account = account(for: token.userId),
            account.userId == currentUserId {
-            removeAccount(toDeleteAccount: account)
+            removeAccountFor(userId: account.userId)
             Task { @MainActor in
                 NotificationsHelper.sendDisconnectedNotification()
             }
@@ -216,8 +218,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         do {
             return try await createAndSetCurrentAccount(token: token)
         } catch {
-            let partiallyCreatedAccount = Account(apiToken: token)
-            removeTokenAndAccount(account: partiallyCreatedAccount)
+            removeTokenAndAccountFor(userId: token.userId)
             throw error
         }
     }
@@ -271,7 +272,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         let fetchedMailboxes = try await apiFetcher.mailboxes()
         guard !fetchedMailboxes.isEmpty else {
-            removeAccount(toDeleteAccount: account)
+            removeAccountFor(userId: account.userId)
             throw MailError.noMailbox
         }
 
@@ -370,9 +371,10 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         currentMailboxId = 0
     }
 
-    public func switchAccount(newAccount: Account) {
+    public func switchAccount(newUserId: Int) {
+        guard let newAccount = accounts.values.first(where: { $0.userId == newUserId }) else { return }
         setCurrentAccount(account: newAccount)
-        let mailboxes = mailboxInfosManager.getMailboxes(for: newAccount.userId)
+        let mailboxes = mailboxInfosManager.getMailboxes(for: newUserId)
         if let defaultMailbox = (mailboxes.first(where: \.isPrimary) ?? mailboxes.first) {
             setCurrentMailboxForCurrentAccount(mailbox: defaultMailbox)
         }
@@ -475,31 +477,31 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     public func addAccount(account: Account, token: ApiToken) {
         if accounts.values.contains(account) {
-            removeAccount(toDeleteAccount: account)
+            removeAccountFor(userId: token.userId)
         }
         accounts.append(account)
         tokenStore.addToken(newToken: token)
         saveAccounts()
     }
 
-    public func removeAccount(toDeleteAccount: Account) {
-        if currentAccount == toDeleteAccount {
+    public func removeAccountFor(userId: Int) {
+        if currentAccount?.userId == userId {
             currentAccount = nil
             currentMailboxId = 0
             currentUserId = 0
         }
-        MailboxManager.deleteUserMailbox(userId: toDeleteAccount.userId)
-        ContactManager.deleteUserContacts(userId: toDeleteAccount.userId)
-        mailboxInfosManager.removeMailboxesFor(userId: toDeleteAccount.userId)
+        MailboxManager.deleteUserMailbox(userId: userId)
+        ContactManager.deleteUserContacts(userId: userId)
+        mailboxInfosManager.removeMailboxesFor(userId: userId)
         mailboxManagers.removeAll()
         contactManagers.removeAll()
         apiFetchers.removeAll()
-        accounts.removeAll { $0 == toDeleteAccount }
+        accounts.removeAll { $0.userId == userId }
     }
 
-    public func removeTokenAndAccount(account: Account) {
-        let removedToken = tokenStore.removeTokenFor(userId: account.userId)
-        removeAccount(toDeleteAccount: account)
+    public func removeTokenAndAccountFor(userId: Int) {
+        let removedToken = tokenStore.removeTokenFor(userId: userId)
+        removeAccountFor(userId: userId)
 
         guard let removedToken else {
             logError(.failedToRemoveToken)

@@ -24,22 +24,22 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct AccountButton: View {
+    @Environment(\.currentUser) private var currentUser
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @ModalState private var presentedCurrentAccount: Account?
+    @ModalState private var presentedUser: UserProfile?
 
     var body: some View {
         Button {
-            presentedCurrentAccount = mailboxManager.account
+            presentedUser = currentUser.value
         } label: {
-            if let currentAccountUser = mailboxManager.account.user {
-                AvatarView(mailboxManager: mailboxManager,
-                           contactConfiguration: .user(user: currentAccountUser))
-                    .accessibilityLabel(MailResourcesStrings.Localizable.titleMyAccount)
-            }
+            AvatarView(mailboxManager: mailboxManager,
+                       contactConfiguration: .user(user: currentUser.value))
+                .accessibilityLabel(MailResourcesStrings.Localizable.titleMyAccount)
         }
-        .sheet(item: $presentedCurrentAccount) { account in
-            AccountView(account: account)
+        .sheet(item: $presentedUser) { user in
+            AccountView(user: user)
         }
     }
 }

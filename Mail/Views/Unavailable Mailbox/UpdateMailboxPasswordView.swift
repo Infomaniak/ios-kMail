@@ -141,7 +141,7 @@ struct UpdateMailboxPasswordView: View {
             isLoading = true
             do {
                 try await accountManager.updateMailboxPassword(mailbox: mailbox, password: updatedMailboxPassword)
-                navigationState.transitionToRootViewDestination(.mainView)
+                navigationState.transitionToMainViewIfPossible(targetAccount: nil, targetMailbox: mailbox)
             } catch let error as MailApiError where error == .apiInvalidPassword {
                 withAnimation {
                     isShowingError = true

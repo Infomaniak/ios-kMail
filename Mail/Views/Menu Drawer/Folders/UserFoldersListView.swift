@@ -87,4 +87,5 @@ struct UserFoldersListView: View {
             mailboxManager: PreviewHelper.sampleMailboxManager,
             selectedFolder: PreviewHelper.sampleFolder
         ))
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

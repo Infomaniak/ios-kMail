@@ -78,7 +78,7 @@ struct OnboardingBottomButtonsView: View {
         }
         .onChange(of: loginHandler.shouldShowEmptyMailboxesView) { shouldShowEmptyMailboxesView in
             if shouldShowEmptyMailboxesView {
-                navigationState.transitionToRootViewDestination(.noMailboxes)
+                navigationState.transitionToRootViewState(.noMailboxes)
             }
         }
         .sheet(isPresented: $isPresentingCreateAccount) {

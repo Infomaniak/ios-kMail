@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -35,6 +36,7 @@ struct OpenThreadIntentView: View, IntentViewable {
     let openThreadIntent: OpenThreadIntent
 
     struct ResolvedIntent {
+        let user: InfomaniakCore.UserProfile
         let mailboxManager: MailboxManager
         let currentFolder: Folder
         let thread: Thread
@@ -53,6 +55,7 @@ struct OpenThreadIntentView: View, IntentViewable {
                         selectedFolder: resolvedIntent.currentFolder
                     )
                 ))
+                .environment(\.currentUser, MandatoryEnvironmentContainer(value: resolvedIntent.user))
         } else {
             ProgressView()
                 .progressViewStyle(.circular)
@@ -63,10 +66,11 @@ struct OpenThreadIntentView: View, IntentViewable {
     }
 
     func initFromIntent() async {
-        guard let mailboxManager = accountManager.getMailboxManager(
-            for: openThreadIntent.mailboxId,
-            userId: openThreadIntent.userId
-        ) else {
+        guard let user = accountManager.account(for: openThreadIntent.userId)?.user,
+              let mailboxManager = accountManager.getMailboxManager(
+                  for: openThreadIntent.mailboxId,
+                  userId: openThreadIntent.userId
+              ) else {
             dismiss()
             snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
             return
@@ -95,6 +99,7 @@ struct OpenThreadIntentView: View, IntentViewable {
             }
 
             resolvedIntent.wrappedValue = ResolvedIntent(
+                user: user,
                 mailboxManager: mailboxManager,
                 currentFolder: folder,
                 thread: thread,

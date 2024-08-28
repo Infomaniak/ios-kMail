@@ -114,7 +114,7 @@ public struct MessageActionHandler: MessageActionHandlable {
             if accountManager.getCurrentAccount()?.userId != mailboxManager.mailbox.userId {
                 if let switchedAccount = accountManager.accounts.values
                     .first(where: { $0.userId == mailboxManager.mailbox.userId }) {
-                    accountManager.switchAccount(newAccount: switchedAccount)
+                    accountManager.switchAccount(newUserId: switchedAccount.userId)
                     accountManager.switchMailbox(newMailbox: mailbox)
                 }
             } else {

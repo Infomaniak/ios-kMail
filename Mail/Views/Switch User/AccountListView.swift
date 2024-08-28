@@ -34,7 +34,7 @@ final class AccountListViewModel: ObservableObject {
         return accountManager.currentUserId
     }()
 
-    @Published var accounts = [Account: [Mailbox]]()
+    @Published var accounts = [InfomaniakCore.UserProfile: [Mailbox]]()
 
     // periphery:ignore - We need to keep a reference to this to keep receiving events (automatically removed on deinit)
     private var mailboxObservationToken: NotificationToken?
@@ -60,7 +60,7 @@ final class AccountListViewModel: ObservableObject {
 
     private func handleMailboxChanged(_ mailboxes: [Mailbox]) {
         for account in accountManager.accounts {
-            accounts[account] = mailboxes.filter { $0.userId == account.userId }
+            accounts[account.user] = mailboxes.filter { $0.userId == account.userId }
         }
     }
 }
@@ -79,8 +79,8 @@ struct AccountListView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: IKPadding.small) {
-                ForEach(Array(viewModel.accounts.keys)) { account in
-                    AccountCellView(selectedUserId: $viewModel.selectedUserId, mailboxManager: mailboxManager, account: account)
+                ForEach(Array(viewModel.accounts.keys)) { user in
+                    AccountCellView(selectedUserId: $viewModel.selectedUserId, mailboxManager: mailboxManager, user: user)
                 }
             }
             .padding(.horizontal, value: .medium)
