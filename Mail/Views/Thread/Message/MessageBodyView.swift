@@ -34,9 +34,9 @@ struct MessageBodyView: View {
     let presentableBody: PresentableBody
     let isMessagePreprocessed: Bool
     var blockRemoteContent: Bool
-    @Binding var displayContentBlockedActionView: Bool
-
     let messageUid: String
+
+    @Binding var displayContentBlockedActionView: Bool
 
     private let printNotificationPublisher = NotificationCenter.default.publisher(for: Notification.Name.printNotification)
 
@@ -44,7 +44,7 @@ struct MessageBodyView: View {
         ZStack {
             VStack {
                 if presentableBody.body != nil {
-                    WebView(model: model, messageUid: messageUid) {
+                    WebView(webView: model.webView, messageUid: messageUid) {
                         loadBody(blockRemoteContent: blockRemoteContent)
                     }
                     .frame(height: model.webViewHeight)
@@ -88,7 +88,7 @@ struct MessageBodyView: View {
         }
     }
 
-    func printMessage() {
+    private func printMessage() {
         let printController = UIPrintInteractionController.shared
         let printFormatter = model.webView.viewPrintFormatter()
         printController.printFormatter = printFormatter
@@ -126,7 +126,7 @@ struct MessageBodyView: View {
         presentableBody: PreviewHelper.samplePresentableBody,
         isMessagePreprocessed: true,
         blockRemoteContent: false,
-        displayContentBlockedActionView: .constant(false),
-        messageUid: "message_uid"
+        messageUid: "message_uid",
+        displayContentBlockedActionView: .constant(false)
     )
 }
