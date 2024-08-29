@@ -169,6 +169,8 @@ extension Action: RawRepresentable {
 }
 
 public extension Action {
+    // MARK: Mail actions
+
     static let delete = Action(
         id: "delete",
         title: MailResourcesStrings.Localizable.actionDelete,
@@ -346,5 +348,20 @@ public extension Action {
         title: MailResourcesStrings.Localizable.shareEmail,
         iconResource: MailResourcesAsset.emailActionShare,
         matomoName: "shareLink"
+    )
+
+    // MARK: Account Actions
+
+    static let addAccount = Action(
+        id: "addAccount",
+        title: MailResourcesStrings.Localizable.buttonAddAccount,
+        iconResource: MailResourcesAsset.plusThin,
+        matomoName: "" // TODO:
+    )
+    static let logoutAccount = Action(
+        id: "logoutAccount",
+        title: MailResourcesStrings.Localizable.buttonAccountLogOut,
+        iconResource: MailResourcesAsset.logout,
+        matomoName: "" // TODO:
     )
 }
