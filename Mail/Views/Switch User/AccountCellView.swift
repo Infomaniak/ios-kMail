@@ -95,15 +95,6 @@ struct AccountHeaderCell: View {
             }
         }
         .padding(.vertical, value: .small)
-        .padding(.horizontal, value: .medium)
-        .background {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
-        }
     }
 }
 
