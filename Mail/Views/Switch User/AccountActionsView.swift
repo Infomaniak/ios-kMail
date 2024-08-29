@@ -25,10 +25,12 @@ import SwiftUI
 
 struct AccountActionsView: View {
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var orientationManager: OrientationManageable
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ModalState(context: ContextKeys.account) private var isShowingLogoutAlert = false
+    @State var isShowingNewAccountView = false
 
     private var actions: [Action] {
         return [.addAccount, .logoutAccount]
@@ -44,6 +46,11 @@ struct AccountActionsView: View {
                 }
             }
         }
+        .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
+            orientationManager.setOrientationLock(.all)
+        }, content: {
+            SingleOnboardingView()
+        })
         .customAlert(isPresented: $isShowingLogoutAlert) {
             LogoutConfirmationView(account: mailboxManager.account)
         }
@@ -63,7 +70,8 @@ struct AccountActionsView: View {
     }
 
     private func addAccount() {
-        // TODO: handle action
+        matomo.track(eventWithCategory: .account, name: "add")
+        isShowingNewAccountView.toggle()
     }
 
     private func logoutAccount() {
