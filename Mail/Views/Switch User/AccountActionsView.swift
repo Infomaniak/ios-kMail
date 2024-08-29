@@ -16,10 +16,20 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
+import InfomaniakDI
 import MailCore
+import MailCoreUI
+import SwiftModalPresentation
 import SwiftUI
 
 struct AccountActionsView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @ModalState(context: ContextKeys.account) private var isShowingLogoutAlert = false
+
     private var actions: [Action] {
         return [.addAccount, .logoutAccount]
     }
@@ -33,6 +43,9 @@ struct AccountActionsView: View {
                     ActionButtonLabel(action: action)
                 }
             }
+        }
+        .customAlert(isPresented: $isShowingLogoutAlert) {
+            LogoutConfirmationView(account: mailboxManager.account)
         }
     }
 
@@ -54,7 +67,8 @@ struct AccountActionsView: View {
     }
 
     private func logoutAccount() {
-        // TODO: handle action
+        matomo.track(eventWithCategory: .account, name: "logOut")
+        isShowingLogoutAlert.toggle()
     }
 }
 
