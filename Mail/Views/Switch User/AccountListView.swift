@@ -78,20 +78,22 @@ struct AccountListView: View {
 
     var body: some View {
         ScrollView {
+            Text(MailResourcesStrings.Localizable.titleMyAccount)
+                .textStyle(.bodyMedium)
+
             VStack(spacing: IKPadding.small) {
                 ForEach(Array(viewModel.accounts.keys)) { account in
                     AccountCellView(selectedUserId: $viewModel.selectedUserId, mailboxManager: mailboxManager, account: account)
                 }
             }
             .padding(.horizontal, value: .medium)
-            .padding(.bottom, 120)
+
+            IKDivider()
+
+            AccountActionsView()
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)
-        .floatingActionButton(icon: MailResourcesAsset.plus, title: MailResourcesStrings.Localizable.buttonAddAccount) {
-            matomo.track(eventWithCategory: .account, name: "add")
-            isShowingNewAccountView = true
-        }
         .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
             orientationManager.setOrientationLock(.all)
         }, content: {
