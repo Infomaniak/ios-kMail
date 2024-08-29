@@ -25,8 +25,6 @@ import SwiftUI
 struct MailboxListView: View {
     @Environment(\.currentUser) private var currentUser
 
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
     let currentMailbox: Mailbox?
 
     var body: some View {

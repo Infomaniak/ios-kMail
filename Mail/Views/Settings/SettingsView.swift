@@ -34,7 +34,6 @@ struct SettingsView: View {
 
     @Environment(\.currentUser) private var currentUser
 
-    @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
 
     @AppStorage(UserDefaults.shared.key(.aiEngine)) private var aiEngine = DefaultPreferences.aiEngine
