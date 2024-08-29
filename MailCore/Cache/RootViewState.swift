@@ -72,12 +72,13 @@ public class RootViewState: ObservableObject {
     public init() {
         @InjectService var accountManager: AccountManager
 
-        account = accountManager.getCurrentAccount()
         state = .preloading
 
         accountManagerObservation = accountManager.objectWillChange.receive(on: RunLoop.main).sink { [weak self] in
-            self?.account = accountManager.getCurrentAccount()
-            self?.transitionToMainViewIfPossible(targetAccount: self?.account, targetMailbox: nil)
+            Task {
+                self?.account = accountManager.getCurrentAccount()
+                await self?.transitionToMainViewIfPossible(targetAccount: self?.account, targetMailbox: nil)
+            }
         }
     }
 
@@ -87,7 +88,7 @@ public class RootViewState: ObservableObject {
         }
     }
 
-    public func transitionToMainViewIfPossible(targetAccount: Account?, targetMailbox: Mailbox?) {
+    public func transitionToMainViewIfPossible(targetAccount: Account?, targetMailbox: Mailbox?) async {
         @InjectService var accountManager: AccountManager
         @InjectService var mailboxInfosManager: MailboxInfosManager
 
@@ -109,9 +110,10 @@ public class RootViewState: ObservableObject {
         }
 
         if let targetMailboxManager,
-           let initialFolder = targetMailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
+           let initialFolder = targetMailboxManager.getFolder(with: .inbox)?.freezeIfNeeded(),
+           let currentUser = await accountManager.getCurrentUser() {
             transitionToRootViewState(.mainView(
-                currentAccount.user,
+                currentUser,
                 MainViewState(
                     mailboxManager: targetMailboxManager,
                     selectedFolder: initialFolder
@@ -121,9 +123,9 @@ public class RootViewState: ObservableObject {
             let mailboxes = mailboxInfosManager.getMailboxes(for: currentAccount.userId)
 
             if !mailboxes.isEmpty && mailboxes.allSatisfy({ !$0.isAvailable }) {
-                return transitionToRootViewState(.unavailableMailboxes)
+                transitionToRootViewState(.unavailableMailboxes)
             } else {
-                return transitionToRootViewState(.preloading)
+                transitionToRootViewState(.preloading)
             }
         }
     }

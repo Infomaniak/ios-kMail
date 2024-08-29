@@ -103,7 +103,7 @@ struct UserAccountScene: Scene {
                     }
                 case .isUpToDate:
                     if rootViewState.state == .updateRequired {
-                        rootViewState.transitionToMainViewIfPossible(targetAccount: nil, targetMailbox: nil)
+                        await rootViewState.transitionToMainViewIfPossible(targetAccount: nil, targetMailbox: nil)
                     }
                 }
             } catch {

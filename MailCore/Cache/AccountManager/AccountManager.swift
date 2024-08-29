@@ -85,6 +85,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     public let accounts = SendableArray<Account>()
+    public let userProfileStore = UserProfileStore()
     private let mailboxManagers = SendableDictionary<String, MailboxManager>()
     private let contactManagers = SendableDictionary<String, ContactManager>()
     private let apiFetchers = SendableDictionary<Int, MailApiFetcher>()
@@ -116,6 +117,10 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         return currentAccount
     }
 
+    public func getCurrentUser() async -> InfomaniakCore.UserProfile? {
+        return await userProfileStore.getUserProfile(id: currentUserId)
+    }
+
     public func forceReload() {
         currentMailboxId = UserDefaults.shared.currentMailboxId
         currentUserId = UserDefaults.shared.currentMailUserId
@@ -137,11 +142,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         // Also update current account reference to prevent mismatch
         if let account = accounts.values.first(where: { $0.userId == currentAccount?.userId }) {
             currentAccount = account
-        }
-
-        // remove accounts with no user
-        for account in accounts where account.user == nil {
-            removeAccountFor(userId: account.userId)
         }
     }
 
@@ -224,7 +224,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     private func createAndSetCurrentAccount(token: ApiToken) async throws -> Account {
         let apiFetcher = MailApiFetcher(token: token, delegate: self)
-        let user = try await apiFetcher.userProfile(ignoreDefaultAvatar: true, dateFormat: .iso8601)
+        let user = try await userProfileStore.updateUserProfile(with: apiFetcher)
 
         let mailboxesResponse = try await apiFetcher.mailboxes()
         guard !mailboxesResponse.isEmpty else {
@@ -234,7 +234,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         matomo.track(eventWithCategory: .userInfo, action: .data, name: "nbMailboxes", value: Float(mailboxesResponse.count))
 
         let newAccount = Account(apiToken: token)
-        newAccount.user = user
         addAccount(account: newAccount, token: token)
 
         try? await featureFlagsManager.fetchFlags()
@@ -264,8 +263,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
 
         let apiFetcher = getApiFetcher(for: account.userId, token: token)
-        let user = try await apiFetcher.userProfile(ignoreDefaultAvatar: true, dateFormat: .iso8601)
-        account.user = user
+        let user = try await userProfileStore.updateUserProfile(with: apiFetcher)
 
         try? await featureFlagsManager.fetchFlags()
 
@@ -518,12 +516,12 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         return accounts.values.first { $0.userId == userId }
     }
 
-    public func enableBugTrackerIfAvailable() {
-        if let currentAccount,
-           let token = tokenStore.tokenFor(userId: currentAccount.userId),
-           currentAccount.user?.isStaff == true {
+    public func enableBugTrackerIfAvailable() async {
+        if let currentUser = await userProfileStore.getUserProfile(id: currentUserId),
+           let token = tokenStore.tokenFor(userId: currentUser.id),
+           currentUser.isStaff == true {
             bugTracker.activateOnScreenshot()
-            let apiFetcher = getApiFetcher(for: currentAccount.userId, token: token)
+            let apiFetcher = getApiFetcher(for: currentUser.id, token: token)
             bugTracker.configure(with: apiFetcher)
         } else {
             bugTracker.stopActivatingOnScreenshot()

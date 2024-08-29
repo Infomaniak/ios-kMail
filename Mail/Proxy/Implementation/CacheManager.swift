@@ -30,13 +30,13 @@ public final class CacheManager: CacheManageable {
     public func refreshCacheData(account: Account?) {
         guard let account else { return }
 
-        // Try to enable at least once before attempting fetching new user
-        accountManager.enableBugTrackerIfAvailable()
-
         Task {
+            // Try to enable at least once before attempting fetching new user
+            await accountManager.enableBugTrackerIfAvailable()
+
             do {
                 try await accountManager.updateUser(for: account)
-                accountManager.enableBugTrackerIfAvailable()
+                await accountManager.enableBugTrackerIfAvailable()
 
                 guard CNContactStore.authorizationStatus(for: .contacts) != .notDetermined else {
                     return

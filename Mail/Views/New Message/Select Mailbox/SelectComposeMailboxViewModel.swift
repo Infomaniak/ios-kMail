@@ -48,12 +48,17 @@ final class SelectComposeMailboxViewModel: ObservableObject {
     }
 
     func listProfiles() {
-        userProfiles = accountManager.accounts.compactMap { $0.user }.sorted { lhs, rhs in
-            if (lhs.id == accountManager.currentUserId) != (rhs.id == accountManager.currentUserId) {
-                return lhs.id == accountManager.currentUserId
-            } else {
-                return lhs.displayName < rhs.displayName
-            }
+        Task {
+            userProfiles = await accountManager.accounts
+                .asyncMap { await accountManager.userProfileStore.getUserProfile(id: $0.userId) }
+                .compactMap { $0 }
+                .sorted { lhs, rhs in
+                    if (lhs.id == accountManager.currentUserId) != (rhs.id == accountManager.currentUserId) {
+                        return lhs.id == accountManager.currentUserId
+                    } else {
+                        return lhs.displayName < rhs.displayName
+                    }
+                }
         }
     }
 

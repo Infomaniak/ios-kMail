@@ -66,7 +66,7 @@ struct OpenThreadIntentView: View, IntentViewable {
     }
 
     func initFromIntent() async {
-        guard let user = accountManager.account(for: openThreadIntent.userId)?.user,
+        guard let user = await accountManager.userProfileStore.getUserProfile(id: openThreadIntent.userId),
               let mailboxManager = accountManager.getMailboxManager(
                   for: openThreadIntent.mailboxId,
                   userId: openThreadIntent.userId

@@ -44,13 +44,22 @@ final class AccountListViewModel: ObservableObject {
             partial.sorted(by: \.mailboxId)
         }
 
-        mailboxObservationToken = mailboxes.observe(on: DispatchQueue.main) { [weak self] results in
+        mailboxObservationToken = mailboxes.observe { results in
             switch results {
             case .initial(let mailboxes):
-                self?.handleMailboxChanged(Array(mailboxes))
+                let frozenMailboxes = mailboxes.freezeIfNeeded()
+                Task { @MainActor [weak self] in
+                    guard let newAccounts = await self?.handleMailboxChanged(Array(frozenMailboxes)) else { return }
+
+                    self?.accounts = newAccounts
+                }
             case .update(let mailboxes, _, _, _):
-                withAnimation {
-                    self?.handleMailboxChanged(Array(mailboxes))
+                let frozenMailboxes = mailboxes.freezeIfNeeded()
+                Task { @MainActor [weak self] in
+                    guard let newAccounts = await self?.handleMailboxChanged(Array(frozenMailboxes)) else { return }
+                    withAnimation {
+                        self?.accounts = newAccounts
+                    }
                 }
             case .error:
                 break
@@ -58,10 +67,14 @@ final class AccountListViewModel: ObservableObject {
         }
     }
 
-    private func handleMailboxChanged(_ mailboxes: [Mailbox]) {
+    private func handleMailboxChanged(_ mailboxes: [Mailbox]) async -> [InfomaniakCore.UserProfile: [Mailbox]] {
+        var newAccounts = [InfomaniakCore.UserProfile: [Mailbox]]()
         for account in accountManager.accounts {
-            accounts[account.user] = mailboxes.filter { $0.userId == account.userId }
+            guard let user = await accountManager.userProfileStore.getUserProfile(id: account.id) else { continue }
+            newAccounts[user] = mailboxes.filter { $0.userId == account.userId }
         }
+
+        return newAccounts
     }
 }
 

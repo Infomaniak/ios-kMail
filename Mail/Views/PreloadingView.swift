@@ -70,7 +70,7 @@ struct PreloadingView: View {
                     if targetMailboxManager.getFolder(with: .inbox) == nil {
                         try await targetMailboxManager.refreshAllFolders()
                     }
-                    rootViewState.transitionToMainViewIfPossible(
+                    await rootViewState.transitionToMainViewIfPossible(
                         targetAccount: currentAccount,
                         targetMailbox: targetMailboxManager.mailbox
                     )
@@ -83,7 +83,7 @@ struct PreloadingView: View {
                     try await currentMailboxManager.refreshAllFolders()
                 }
 
-                rootViewState.transitionToMainViewIfPossible(targetAccount: currentAccount, targetMailbox: nil)
+                await rootViewState.transitionToMainViewIfPossible(targetAccount: currentAccount, targetMailbox: nil)
             } catch let error as MailError where error == MailError.noMailbox {
                 rootViewState.transitionToRootViewState(.noMailboxes)
             } catch {
