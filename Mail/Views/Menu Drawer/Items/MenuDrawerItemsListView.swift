@@ -76,8 +76,6 @@ struct MenuDrawerItemsHelpListView: View {
     @Environment(\.openURL) private var openURL
     @Environment(\.currentUser) private var currentUser
 
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
     @ModalState private var isShowingHelp = false
     @ModalState private var isShowingBugTracker = false
     @ModalState private var isShowingUpdateVersionAlert = false

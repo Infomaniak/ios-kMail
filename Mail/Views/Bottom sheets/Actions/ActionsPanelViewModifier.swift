@@ -72,7 +72,6 @@ struct ActionsPanelViewModifier: ViewModifier {
         content.adaptivePanel(item: $messages) { messages in
             ActionsView(
                 user: currentUser.value,
-                mailboxManager: mailboxManager,
                 target: messages,
                 origin: origin,
                 completionHandler: completionHandler

@@ -31,7 +31,6 @@ struct ActionsView: View {
     private let completionHandler: ((Action) -> Void)?
 
     init(user: UserProfile,
-         mailboxManager: MailboxManager,
          target messages: [Message],
          origin: ActionOrigin,
          completionHandler: ((Action) -> Void)? = nil) {
@@ -82,7 +81,6 @@ struct ActionsView: View {
 #Preview {
     ActionsView(
         user: PreviewHelper.sampleUser,
-        mailboxManager: PreviewHelper.sampleMailboxManager,
         target: PreviewHelper.sampleThread.messages.toArray(),
         origin: .toolbar(originFolder: nil)
     )
