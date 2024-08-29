@@ -78,7 +78,8 @@ struct AccountListView: View {
 
     var body: some View {
         ScrollView {
-            Text(MailResourcesStrings.Localizable.titleMyAccount)
+            Text(viewModel.accounts.count > 1 ? MailResourcesStrings.Localizable.titleMyAccounts : MailResourcesStrings
+                .Localizable.titleMyAccount)
                 .textStyle(.bodyMedium)
 
             VStack(spacing: IKPadding.small) {
