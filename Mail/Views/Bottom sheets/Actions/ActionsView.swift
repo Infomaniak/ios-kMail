@@ -165,6 +165,18 @@ struct MessageActionView: View {
 
 struct ActionButtonLabel: View {
     let action: Action
+
+    var titleColor: MailResourcesColors {
+        switch action {
+        case .reportDisplayProblem:
+            return MailResourcesAsset.princeColor
+        case .logoutAccount:
+            return MailResourcesAsset.redColor
+        default:
+            return MailResourcesAsset.textPrimaryColor
+        }
+    }
+
     var body: some View {
         HStack(spacing: IKPadding.medium) {
             action.icon
@@ -173,8 +185,7 @@ struct ActionButtonLabel: View {
                 .frame(width: 24, height: 24)
                 .foregroundStyle(action == .reportDisplayProblem ? MailResourcesAsset.princeColor.swiftUIColor : .accentColor)
             Text(action.title)
-                .foregroundStyle(action == .reportDisplayProblem ? MailResourcesAsset.princeColor : MailResourcesAsset
-                    .textPrimaryColor)
+                .foregroundStyle(titleColor)
                 .textStyle(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
