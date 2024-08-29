@@ -59,6 +59,23 @@ public final class Signature: Object, Codable, Identifiable {
         id
     }
 
+    override public init() {
+        super.init()
+    }
+
+    public init(from decoder: any Decoder) throws {
+        super.init()
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(Int.self, forKey: .id)
+        name = try container.decode(String.self, forKey: .name)
+        content = try container.decode(String.self, forKey: .content)
+        senderName = try container.decode(String.self, forKey: .senderName)
+        senderEmail = try container.decodeIfPresent(String.self, forKey: .senderEmail) ?? ""
+        senderEmailIdn = try container.decode(String.self, forKey: .senderEmailIdn)
+        isDefault = try container.decode(Bool.self, forKey: .isDefault)
+        position = try container.decode(SignaturePosition.self, forKey: .position)
+    }
+
     override public func isEqual(_ object: Any?) -> Bool {
         guard let object = object as? Self else {
             return false
