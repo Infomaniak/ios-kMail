@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "0bfba5628ea517d0a21f5e8d30bb9fff0ce21718",
-        "version" : "12.0.0"
+        "branch" : "user-profile-store",
+        "revision" : "1788209c7f7a20a842d58d70922476b361b85df4"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/johnpatrickmorgan/NavigationBackport",
       "state" : {
-        "revision" : "d1759195a9be9f182b105b1ccaceff573218af6f",
-        "version" : "0.9.4"
+        "revision" : "77f389dbc2c3fcce25c7c2b4cea0aa7a33a4a8ab",
+        "version" : "0.9.5"
       }
     },
     {
@@ -185,8 +185,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "5221a83dc720823e3017493394d00d49ccf13446",
-        "version" : "10.52.3"
+        "revision" : "9815e6c29d43cb5314add5dff8705c5476ab556c",
+        "version" : "10.53.0"
       }
     },
     {
@@ -194,8 +194,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "e2ac1723a4a9632e291c171b6e25a0c403b0fecb",
-        "version" : "8.35.0"
+        "revision" : "5575af93efb776414f243e93d6af9f6258dc539a",
+        "version" : "8.36.0"
       }
     },
     {

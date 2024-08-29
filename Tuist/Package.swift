@@ -21,7 +21,7 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "7.0.1")),
         .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "2.0.0")),
         .package(url: "https://github.com/Infomaniak/swift-concurrency", .upToNextMajor(from: "0.0.5")),
-        .package(url: "https://github.com/Infomaniak/ios-core", .upToNextMajor(from: "12.0.0")),
+        .package(url: "https://github.com/Infomaniak/ios-core", branch: "user-profile-store"),
         .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "11.1.0")),
         .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "8.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "10.0.0")),
