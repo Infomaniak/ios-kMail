@@ -304,6 +304,9 @@
 /* loco:628216272fd1aa2f0249a892 */
 "buttonAccountDisconnect" = "Konto abmelden";
 
+/* loco:66d057655e6c36f415058842 */
+"buttonAccountLogOut" = "Abmelden";
+
 /* loco:6282142ca5e6f61ada1c4014 */
 "buttonAccountSwitch" = "Konto ändern";
 
