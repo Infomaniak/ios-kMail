@@ -38,8 +38,8 @@ struct AccountButton: View {
                     .accessibilityLabel(MailResourcesStrings.Localizable.titleMyAccount)
             }
         }
-        .sheet(item: $presentedCurrentAccount) { account in
-            AccountView(account: account)
+        .floatingPanel(item: $presentedCurrentAccount) { _ in
+            AccountListView(mailboxManager: mailboxManager)
         }
     }
 }
