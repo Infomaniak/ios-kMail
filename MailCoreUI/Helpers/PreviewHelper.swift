@@ -53,8 +53,7 @@ public enum PreviewHelper {
         )
         let apiFetcher = MailApiFetcher(token: fakeToken, delegate: PreviewHelperRefreshTokenDelegate())
         let contactManager = ContactManager(userId: 0, apiFetcher: apiFetcher)
-        return MailboxManager(account: PreviewHelper.sampleAccount,
-                              mailbox: sampleMailbox,
+        return MailboxManager(mailbox: sampleMailbox,
                               apiFetcher: apiFetcher,
                               contactManager: contactManager)
     }()

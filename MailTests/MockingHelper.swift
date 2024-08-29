@@ -71,7 +71,6 @@ public enum MockingHelper {
                              tokenType: "",
                              userId: Env.userId,
                              expirationDate: Date(timeIntervalSinceNow: TimeInterval(Int.max)))
-        let account = Account(apiToken: token)
         let mailbox = Mailbox()
         mailbox.userId = token.userId
         mailbox.mailboxId = Env.mailboxId
@@ -80,7 +79,6 @@ public enum MockingHelper {
         let contactManager = ContactManager(userId: Env.userId, apiFetcher: MailApiFetcher())
 
         let mailboxManager = MailboxManager(
-            account: account,
             mailbox: mailbox,
             apiFetcher: apiFetcher,
             contactManager: contactManager
