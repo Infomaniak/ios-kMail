@@ -45,10 +45,10 @@ struct SelectComposeMailboxView: View {
 
             ScrollView {
                 VStack(spacing: 0) {
-                    ForEach(viewModel.accounts) { account in
+                    ForEach(viewModel.userProfiles) { userProfile in
                         AccountMailboxesListView(
-                            user: account.user,
-                            selectedMailbox: viewModel.selectedMailbox,
+                            user: userProfile,
+                            selectedMailbox: viewModel.selectedMailbox?.mailbox,
                             selectMailbox: viewModel.selectMailbox
                         )
                         .padding(.top, value: .small)
@@ -56,16 +56,14 @@ struct SelectComposeMailboxView: View {
                 }
             }
 
-            if let selectedMailbox = viewModel.selectedMailbox,
-               let mailboxManager = accountManager.getMailboxManager(for: selectedMailbox),
-               let user = accountManager.account(for: selectedMailbox.userId)?.user {
-                SelectedMailboxView(selectedUser: user, selectedMailboxManager: mailboxManager)
+            if let selectedMailbox = viewModel.selectedMailbox {
+                SelectedMailboxView(selectedUser: selectedMailbox.user, selectedMailboxManager: selectedMailbox.mailboxManager)
                     .padding(.horizontal, value: .small)
                     .padding(.bottom, value: .medium)
             }
 
             Button(MailResourcesStrings.Localizable.buttonContinue) {
-                viewModel.validateMailboxChoice(viewModel.selectedMailbox)
+                viewModel.validateMailboxChoice(viewModel.selectedMailbox?.mailbox)
             }
             .buttonStyle(.ikBorderedProminent)
             .controlSize(.large)
