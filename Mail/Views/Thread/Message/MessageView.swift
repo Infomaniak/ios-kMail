@@ -38,19 +38,16 @@ struct MessageView: View {
 
     @Environment(\.isMessageInteractive) private var isMessageInteractive
 
-    @EnvironmentObject var mailboxManager: MailboxManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State var isHeaderExpanded = false
-    @Binding private var threadForcedExpansion: [String: MessageExpansionType]
-
+    @State private var isHeaderExpanded = false
     @State private var isShowingErrorLoading = false
+    @State private var displayContentBlockedActionView = false
+    @StateObject private var inlineAttachmentWorker: InlineAttachmentWorker
 
-    @State var displayContentBlockedActionView = false
+    @Binding var threadForcedExpansion: [String: MessageExpansionType]
 
     @ObservedRealmObject var message: Message
-
-    /// Something to preprocess inline attachments
-    @StateObject var inlineAttachmentWorker: InlineAttachmentWorker
 
     private var isRemoteContentBlocked: Bool {
         return (UserDefaults.shared.displayExternalContent == .askMe || message.folder?.role == .spam)
@@ -68,66 +65,65 @@ struct MessageView: View {
     }
 
     var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                MessageHeaderView(message: message,
-                                  isHeaderExpanded: $isHeaderExpanded,
-                                  isMessageExpanded: Binding(get: {
-                                      isMessageExpanded
-                                  }, set: { newValue in
-                                      threadForcedExpansion[message.uid] = newValue ? .expanded : .collapsed
-                                  }))
+        VStack(spacing: 0) {
+            MessageHeaderView(
+                message: message,
+                isHeaderExpanded: $isHeaderExpanded,
+                isMessageExpanded: Binding(get: {
+                    isMessageExpanded
+                }, set: { newValue in
+                    threadForcedExpansion[message.uid] = newValue ? .expanded : .collapsed
+                })
+            )
 
-                if isMessageExpanded {
-                    VStack(spacing: IKPadding.medium) {
-                        if isMessageInteractive {
-                            MessageSubHeaderView(
-                                message: message,
-                                displayContentBlockedActionView: $displayContentBlockedActionView
-                            )
-                        }
+            if isMessageExpanded {
+                VStack(spacing: IKPadding.medium) {
+                    if isMessageInteractive {
+                        MessageSubHeaderView(
+                            message: message,
+                            displayContentBlockedActionView: $displayContentBlockedActionView
+                        )
+                    }
 
-                        if isShowingErrorLoading {
-                            Text(MailResourcesStrings.Localizable.errorLoadingMessage)
-                                .textStyle(.bodySmallItalicSecondary)
-                                .padding(.horizontal, value: .medium)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        } else {
-                            MessageBodyView(
-                                presentableBody: inlineAttachmentWorker.presentableBody,
-                                isMessagePreprocessed: inlineAttachmentWorker.isMessagePreprocessed,
-                                blockRemoteContent: isRemoteContentBlocked,
-                                displayContentBlockedActionView: $displayContentBlockedActionView,
-                                messageUid: message.uid
-                            )
-                        }
+                    if isShowingErrorLoading {
+                        Text(MailResourcesStrings.Localizable.errorLoadingMessage)
+                            .textStyle(.bodySmallItalicSecondary)
+                            .padding(.horizontal, value: .medium)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    } else {
+                        MessageBodyView(
+                            presentableBody: inlineAttachmentWorker.presentableBody,
+                            isMessagePreprocessed: inlineAttachmentWorker.isMessagePreprocessed,
+                            blockRemoteContent: isRemoteContentBlocked,
+                            messageUid: message.uid,
+                            displayContentBlockedActionView: $displayContentBlockedActionView
+                        )
                     }
                 }
             }
-            .onAppear {
-                prepareBodyIfNeeded()
-            }
-            .task {
-                await fetchMessageAndEventCalendar()
-            }
-            .task(id: isMessageExpanded) {
-                await fetchMessageAndEventCalendar()
-            }
-            .onDisappear {
-                inlineAttachmentWorker.stop()
-            }
-            .onChange(of: message.fullyDownloaded) { _ in
-                prepareBodyIfNeeded()
-            }
-            .onChange(of: isMessageExpanded) { newValue in
-                guard isMessageExpanded != newValue else { return }
-                prepareBodyIfNeeded()
-            }
-            .accessibilityAction(named: MailResourcesStrings.Localizable.expandMessage) {
-                guard isMessageInteractive else { return }
-                withAnimation {
-                    threadForcedExpansion[message.uid] = isMessageExpanded ? .collapsed : .expanded
-                }
+        }
+        .onAppear {
+            prepareBodyIfNeeded()
+        }
+        .task {
+            await fetchMessageAndEventCalendar()
+        }
+        .task(id: isMessageExpanded) {
+            await fetchMessageAndEventCalendar()
+        }
+        .onDisappear {
+            inlineAttachmentWorker.stop()
+        }
+        .onChange(of: message.fullyDownloaded) { _ in
+            prepareBodyIfNeeded()
+        }
+        .onChange(of: isMessageExpanded) { _ in
+            prepareBodyIfNeeded()
+        }
+        .accessibilityAction(named: MailResourcesStrings.Localizable.expandMessage) {
+            guard isMessageInteractive else { return }
+            withAnimation {
+                threadForcedExpansion[message.uid] = isMessageExpanded ? .collapsed : .expanded
             }
         }
     }

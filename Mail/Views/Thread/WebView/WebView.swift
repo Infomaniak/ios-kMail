@@ -47,19 +47,31 @@ extension WKWebView {
 }
 
 final class WebViewController: UIViewController {
-    var openURL: OpenURLAction?
-    var onWebKitProcessTerminated: (() -> Void)?
-    var model: WebViewModel?
-    var messageUid: String?
+    let messageUid: String
+    let openURL: OpenURLAction
+    let webView: WKWebView
+    let onWebKitProcessTerminated: (() -> Void)?
 
     private let widthSubject = PassthroughSubject<Double, Never>()
     private var widthSubscriber: AnyCancellable?
 
+    init(messageUid: String, openURL: OpenURLAction, webView: WKWebView, onWebKitProcessTerminated: (() -> Void)?) {
+        self.messageUid = messageUid
+        self.openURL = openURL
+        self.webView = webView
+        self.onWebKitProcessTerminated = onWebKitProcessTerminated
+
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     override func loadView() {
         view = UIView()
-        guard let webView = model?.webView else {
-            return
-        }
+
         // In some cases the UIWebView was still owned by an other UIViewController
         webView.removeFromSuperview()
         view.addSubview(webView)
@@ -104,7 +116,7 @@ final class WebViewController: UIViewController {
     }
 
     private func normalizeMessageWidth(webViewWidth width: CGFloat) async throws {
-        try await model?.webView.evaluateJavaScript(.normalizeMessageWidth(width, messageUid ?? ""))
+        try await webView.evaluateJavaScript(.normalizeMessageWidth(width, messageUid))
     }
 }
 
@@ -127,14 +139,14 @@ extension WebViewController: WKNavigationDelegate {
     ) {
         if let url = navigationAction.request.url, Constants.isMailTo(url) {
             decisionHandler(.cancel)
-            openURL?(url)
+            openURL(url)
             return
         }
 
         if navigationAction.navigationType == .linkActivated {
             if let url = navigationAction.request.url {
                 decisionHandler(.cancel)
-                openURL?(url)
+                openURL(url)
             }
         } else {
             decisionHandler(.allow)
@@ -147,18 +159,19 @@ extension WebViewController: WKNavigationDelegate {
 }
 
 struct WebView: UIViewControllerRepresentable {
-    @Environment(\.openURL) private var openUrl
+    @Environment(\.openURL) private var openURL
 
-    let model: WebViewModel
+    let webView: WKWebView
     let messageUid: String
     var onWebKitProcessTerminated: (() -> Void)?
 
     func makeUIViewController(context: Context) -> WebViewController {
-        let controller = WebViewController()
-        controller.openURL = openUrl
-        controller.model = model
-        controller.messageUid = messageUid
-        controller.onWebKitProcessTerminated = onWebKitProcessTerminated
+        let controller = WebViewController(
+            messageUid: messageUid,
+            openURL: openURL,
+            webView: webView,
+            onWebKitProcessTerminated: onWebKitProcessTerminated
+        )
         return controller
     }
 

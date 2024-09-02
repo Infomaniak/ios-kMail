@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import Shimmer
 import SwiftUI
 
@@ -28,7 +29,7 @@ public struct ShimmerView: View {
         )
         .redacted(reason: .placeholder)
         .shimmering()
-        .padding(.horizontal, 16)
+        .padding(.horizontal, IKPadding.medium)
     }
 }
 
