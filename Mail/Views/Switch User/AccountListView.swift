@@ -69,7 +69,6 @@ struct AccountListView: View {
     @StateObject private var viewModel = AccountListViewModel()
     @State var isShowingNewAccountView = false
 
-    @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var accountManager: AccountManager
 
