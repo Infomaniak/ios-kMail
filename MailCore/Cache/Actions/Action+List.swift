@@ -356,12 +356,12 @@ public extension Action {
         id: "addAccount",
         title: MailResourcesStrings.Localizable.buttonAddAccount,
         iconResource: MailResourcesAsset.plusThin,
-        matomoName: "" // TODO:
+        matomoName: "add"
     )
     static let logoutAccount = Action(
         id: "logoutAccount",
         title: MailResourcesStrings.Localizable.buttonAccountLogOut,
         iconResource: MailResourcesAsset.logout,
-        matomoName: "" // TODO:
+        matomoName: "logout"
     )
 }

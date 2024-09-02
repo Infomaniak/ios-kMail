@@ -61,21 +61,21 @@ struct AccountActionsView: View {
     private func handleAction(_ action: Action) {
         switch action {
         case .addAccount:
-            addAccount()
+            addAccount(action)
         case .logoutAccount:
-            logoutAccount()
+            logoutAccount(action)
         default:
             return
         }
     }
 
-    private func addAccount() {
-        matomo.track(eventWithCategory: .account, name: "add")
+    private func addAccount(_ action: Action) {
+        matomo.track(eventWithCategory: .account, name: action.matomoName)
         isShowingNewAccountView.toggle()
     }
 
-    private func logoutAccount() {
-        matomo.track(eventWithCategory: .account, name: "logOut")
+    private func logoutAccount(_ action: Action) {
+        matomo.track(eventWithCategory: .account, name: action.matomoName)
         isShowingLogoutAlert.toggle()
     }
 }
