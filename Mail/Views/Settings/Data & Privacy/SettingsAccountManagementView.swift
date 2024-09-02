@@ -23,15 +23,38 @@ import InfomaniakLogin
 import MailCore
 import MailCoreUI
 import MailResources
+import Sentry
 import SwiftModalPresentation
 import SwiftUI
+
+final class SettingsAccountManagementViewDelegate: DeleteAccountDelegate {
+    @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
+    @MainActor func didCompleteDeleteAccount() {
+        Task {
+            guard let account = accountManager.getCurrentAccount() else { return }
+            accountManager.removeTokenAndAccount(account: account)
+            if let nextAccount = accountManager.accounts.first {
+                accountManager.switchAccount(newAccount: nextAccount)
+            }
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackBarAccountDeleted)
+            accountManager.saveAccounts()
+        }
+    }
+
+    @MainActor func didFailDeleteAccount(error: InfomaniakLoginError) {
+        SentrySDK.capture(error: error)
+        snackbarPresenter.show(message: "Failed to delete account")
+    }
+}
 
 struct SettingsAccountManagementView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var tokenStore: TokenStore
 
     @ModalState(wrappedValue: nil, context: ContextKeys.account) private var presentedAccountDeletionToken: ApiToken?
-    @State private var delegate = AccountViewDelegate()
+    @State private var delegate = SettingsAccountManagementViewDelegate()
 
     let account: Account
 
@@ -85,6 +108,12 @@ struct SettingsAccountManagementView: View {
         .sheet(item: $presentedAccountDeletionToken) { userToken in
             DeleteAccountView(token: userToken, delegate: delegate)
         }
+    }
+}
+
+extension ApiToken: Identifiable {
+    public var id: String {
+        return "\(userId)\(accessToken)"
     }
 }
 
