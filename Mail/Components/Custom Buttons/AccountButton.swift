@@ -26,11 +26,11 @@ import SwiftUI
 struct AccountButton: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @ModalState private var presentedCurrentAccount: Account?
+    @State var isShowingNewAccountListView = false
 
     var body: some View {
         Button {
-            presentedCurrentAccount = mailboxManager.account
+            isShowingNewAccountListView.toggle()
         } label: {
             if let currentAccountUser = mailboxManager.account.user {
                 AvatarView(mailboxManager: mailboxManager,
@@ -38,7 +38,7 @@ struct AccountButton: View {
                     .accessibilityLabel(MailResourcesStrings.Localizable.titleMyAccount)
             }
         }
-        .floatingPanel(item: $presentedCurrentAccount) { _ in
+        .floatingPanel(isPresented: $isShowingNewAccountListView) {
             AccountListView(mailboxManager: mailboxManager)
         }
     }
