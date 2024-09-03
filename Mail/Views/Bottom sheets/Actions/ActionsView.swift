@@ -166,6 +166,17 @@ struct MessageActionView: View {
 struct ActionButtonLabel: View {
     let action: Action
 
+    var iconColor: MailResourcesColors {
+        switch action {
+        case .reportDisplayProblem:
+            return MailResourcesAsset.princeColor
+        case .logoutAccount:
+            return MailResourcesAsset.redColor
+        default:
+            return UserDefaults.shared.accentColor.primary
+        }
+    }
+
     var titleColor: MailResourcesColors {
         switch action {
         case .reportDisplayProblem:
@@ -183,7 +194,7 @@ struct ActionButtonLabel: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 24, height: 24)
-                .foregroundStyle(action == .reportDisplayProblem ? MailResourcesAsset.princeColor.swiftUIColor : .accentColor)
+                .foregroundStyle(iconColor)
             Text(action.title)
                 .foregroundStyle(titleColor)
                 .textStyle(.body)

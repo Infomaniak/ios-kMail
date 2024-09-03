@@ -92,7 +92,6 @@ struct AccountListView: View {
 
             AccountActionsView()
         }
-        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)
         .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
             orientationManager.setOrientationLock(.all)
