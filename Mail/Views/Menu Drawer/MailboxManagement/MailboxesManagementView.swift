@@ -96,7 +96,9 @@ struct MailboxesManagementView: View {
                     isShowingAddMailboxView = true
                 } label: {
                     HStack(spacing: IKPadding.medium) {
-                        IKIcon(MailResourcesAsset.plusCircle, size: .large)
+                        MailResourcesAsset.plusCircle.swiftUIImage
+                            .iconSize(.large)
+                            .foregroundStyle(.tint)
 
                         Text(MailResourcesStrings.Localizable.buttonAddExistingAddress)
                             .textStyle(.body)

@@ -30,7 +30,7 @@ struct AccountActionsView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ModalState(context: ContextKeys.account) private var isShowingLogoutAlert = false
-    @State var isShowingNewAccountView = false
+    @State private var isShowingNewAccountView = false
 
     private var actions: [Action] {
         return [.addAccount, .logoutAccount]

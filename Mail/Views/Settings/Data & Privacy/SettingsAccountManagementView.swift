@@ -60,7 +60,7 @@ struct SettingsAccountManagementView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: IKPadding.medium) {
+            VStack(alignment: .leading, spacing: IKPadding.medium) {
                 VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
                     Text(MailResourcesStrings.Localizable.usernameTitle)
                         .textStyle(.header2)
@@ -68,7 +68,6 @@ struct SettingsAccountManagementView: View {
                         .textStyle(.bodySecondary)
                 }
                 .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .leading)
 
                 VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
                     Text(MailResourcesStrings.Localizable.attachMailboxInputHint)
@@ -77,7 +76,6 @@ struct SettingsAccountManagementView: View {
                         .textStyle(.bodySecondary)
                 }
                 .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .leading)
 
                 IKDivider(type: .menu)
 
@@ -86,13 +84,13 @@ struct SettingsAccountManagementView: View {
                     presentedAccountDeletionToken = tokenStore.tokenFor(userId: account.userId)
                 } label: {
                     HStack(spacing: IKPadding.medium) {
-                        IKIcon(MailResourcesAsset.bin, size: .large)
+                        MailResourcesAsset.bin.swiftUIImage
+                            .iconSize(.large)
                         Text(MailResourcesStrings.Localizable.buttonAccountDelete)
                     }
                     .textStyle(.bodyError)
                 }
                 .buttonStyle(.ikBorderless(isInlined: true))
-                .frame(maxWidth: .infinity, alignment: .leading)
 
                 InformationBlockView(
                     icon: MailResourcesAsset.warningFill.swiftUIImage,

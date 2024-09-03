@@ -67,7 +67,7 @@ final class AccountListViewModel: ObservableObject {
 
 struct AccountListView: View {
     @StateObject private var viewModel = AccountListViewModel()
-    @State var isShowingNewAccountView = false
+    @State private var isShowingNewAccountView = false
 
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var accountManager: AccountManager

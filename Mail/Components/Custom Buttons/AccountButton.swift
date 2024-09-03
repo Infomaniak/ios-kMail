@@ -26,11 +26,11 @@ import SwiftUI
 struct AccountButton: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State var isShowingNewAccountListView = false
+    @State private var isShowingNewAccountListView = false
 
     var body: some View {
         Button {
-            isShowingNewAccountListView.toggle()
+            isShowingNewAccountListView = true
         } label: {
             if let currentAccountUser = mailboxManager.account.user {
                 AvatarView(mailboxManager: mailboxManager,
