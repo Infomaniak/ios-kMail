@@ -4,7 +4,7 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: elena willen
- * Exported at: Wed, 31 Jul 2024 15:28:16 +0200
+ * Exported at: Tue, 03 Sep 2024 11:04:35 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -317,7 +317,7 @@
 "buttonAddEmailAddress" = "Aggiungere un indirizzo e-mail";
 
 /* loco:66a9f94b98b834125d06aa46 */
-"buttonAddExistingAddress" = "Aggiungere un indirizzo esistente";
+"buttonAddExistingAddress" = "Aggiungi un indirizzo esistente";
 
 /* loco:6437c062dd576a7631052413 */
 "buttonAttachMailbox" = "Aggiungi l’indirizzo e-mail";
