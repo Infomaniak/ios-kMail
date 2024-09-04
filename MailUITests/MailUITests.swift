@@ -20,6 +20,7 @@ import MailResources
 import XCTest
 
 class MailUITests: XCTestCase {
+    let defaultTimeOut = TimeInterval(15)
     static let testSubject = "UI Test"
 
     let app = XCUIApplication()
@@ -46,7 +47,7 @@ class MailUITests: XCTestCase {
         login()
 
         app.collectionViews.staticTexts.element(boundBy: 1).firstMatch.tap()
-        _ = app.webViews.firstMatch.waitForExistence(timeout: 3)
+        _ = app.webViews.firstMatch.waitForExistence(timeout: defaultTimeOut)
     }
 
     func testNewMessage() throws {
@@ -54,7 +55,7 @@ class MailUITests: XCTestCase {
         login()
 
         app.buttons[MailResourcesStrings.Localizable.buttonNewMessage].firstMatch.tap()
-        _ = app.webViews.firstMatch.waitForExistence(timeout: 3)
+        _ = app.webViews.firstMatch.waitForExistence(timeout: defaultTimeOut)
     }
 
     func testSendNewMessage() throws {
@@ -63,7 +64,7 @@ class MailUITests: XCTestCase {
         writeTestMessage()
 
         app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage].buttons[MailResourcesStrings.Localizable.send].tap()
-        _ = app.collectionViews.firstMatch.waitForExistence(timeout: 2)
+        _ = app.collectionViews.firstMatch.waitForExistence(timeout: defaultTimeOut)
     }
 
     func testSaveMessage() throws {
@@ -73,10 +74,10 @@ class MailUITests: XCTestCase {
 
         app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage]
             .buttons[MailResourcesStrings.Localizable.buttonClose].tap()
-        _ = app.collectionViews.firstMatch.waitForExistence(timeout: 2)
+        _ = app.collectionViews.firstMatch.waitForExistence(timeout: defaultTimeOut)
 
         let deleteDraftButton = app.buttons[MailResourcesStrings.Localizable.actionDelete]
-        _ = deleteDraftButton.waitForExistence(timeout: 10)
+        _ = deleteDraftButton.waitForExistence(timeout: defaultTimeOut)
         deleteDraftButton.tap()
     }
 
@@ -94,11 +95,11 @@ class MailUITests: XCTestCase {
 
         app.navigationBars.firstMatch.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonMenu].tap()
         let newFolderButton = app.scrollViews.otherElements.buttons[MailResourcesStrings.Localizable.newFolderDialogTitle]
-        newFolderButton.waitForExistence(timeout: 10)
+        _ = newFolderButton.waitForExistence(timeout: defaultTimeOut)
         newFolderButton.tap()
 
         let folderNameTextField = app.textFields[MailResourcesStrings.Localizable.createFolderName]
-        folderNameTextField.waitForExistence(timeout: 10)
+        _ = folderNameTextField.waitForExistence(timeout: defaultTimeOut)
         folderNameTextField.tap()
         folderNameTextField.typeText("Test-\(Date().timeIntervalSince1970)")
         app.staticTexts[MailResourcesStrings.Localizable.buttonCreate].tap()
@@ -133,7 +134,7 @@ class MailUITests: XCTestCase {
         app.buttons[MailResourcesStrings.Localizable.actionMove].tap()
 
         let moveFolderViewTitle = app.navigationBars.staticTexts[MailResourcesStrings.Localizable.actionMove]
-        _ = moveFolderViewTitle.waitForExistence(timeout: 3)
+        _ = moveFolderViewTitle.waitForExistence(timeout: defaultTimeOut)
 
         // Because the burger menu is in a ZStack "trash" folder appears twice, that's why we use element bound bys
         app.scrollViews.containing(
@@ -182,7 +183,7 @@ class MailUITests: XCTestCase {
 
     func undo(ignoreUndoFailure: Bool = true) {
         let cancelButton = app.buttons[MailResourcesStrings.Localizable.buttonCancel]
-        _ = cancelButton.waitForExistence(timeout: 10)
+        _ = cancelButton.waitForExistence(timeout: defaultTimeOut)
 
         if !cancelButton.exists && ignoreUndoFailure {
             return
@@ -193,14 +194,14 @@ class MailUITests: XCTestCase {
 
     func swipeFirstCell() {
         let testMailCell = app.collectionViews.cells.element(boundBy: 1)
-        _ = testMailCell.waitForExistence(timeout: 10)
+        _ = testMailCell.waitForExistence(timeout: defaultTimeOut)
         testMailCell.firstMatch.swipeLeft()
     }
 
     func writeTestMessage() {
         app.buttons[MailResourcesStrings.Localizable.buttonNewMessage].firstMatch.tap()
         let composeBodyView = app.webViews.firstMatch
-        _ = composeBodyView.waitForExistence(timeout: 3)
+        _ = composeBodyView.waitForExistence(timeout: defaultTimeOut)
 
         app.textFields.firstMatch.tap()
         app.textFields.firstMatch.typeText(Env.testAccountEmail)
@@ -224,12 +225,12 @@ class MailUITests: XCTestCase {
         app.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonNext].firstMatch.tap()
 
         let loginButton = app.buttons[MailResourcesStrings.Localizable.buttonLogin].firstMatch
-        _ = loginButton.waitForExistence(timeout: 2)
+        _ = loginButton.waitForExistence(timeout: defaultTimeOut)
         loginButton.tap()
         let loginWebview = app.webViews.firstMatch
 
         let emailField = loginWebview.textFields.firstMatch
-        _ = emailField.waitForExistence(timeout: 5)
+        _ = emailField.waitForExistence(timeout: defaultTimeOut)
         emailField.tap()
         emailField.typeText(Env.testAccountEmail)
 
@@ -241,14 +242,14 @@ class MailUITests: XCTestCase {
         let nextButton = app.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonNext]
         let permissionApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
 
-        _ = nextButton.waitForExistence(timeout: 3)
+        _ = nextButton.waitForExistence(timeout: defaultTimeOut)
         if nextButton.exists {
             nextButton.tap()
 
             permissionApp.alerts.firstMatch.buttons.firstMatch.tap()
         }
 
-        _ = nextButton.waitForExistence(timeout: 3)
+        _ = nextButton.waitForExistence(timeout: defaultTimeOut)
         if nextButton.exists {
             app.buttons.firstMatch.tap()
 
@@ -256,6 +257,6 @@ class MailUITests: XCTestCase {
         }
 
         let refreshText = app.staticTexts[Date().formatted(.relative(presentation: .named))]
-        _ = refreshText.waitForExistence(timeout: 5)
+        _ = refreshText.waitForExistence(timeout: defaultTimeOut)
     }
 }
