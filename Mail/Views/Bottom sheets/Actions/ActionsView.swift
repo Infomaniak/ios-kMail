@@ -130,6 +130,7 @@ struct QuickActionView: View {
                     .lineLimit(title.split(separator: " ").count > 1 ? nil : 1)
             }
         }
+        .accessibilityIdentifier(action.accessibilityIdentifier)
     }
 }
 
@@ -158,6 +159,7 @@ struct MessageActionView: View {
         } label: {
             ActionButtonLabel(action: action)
         }
+        .accessibilityIdentifier(action.accessibilityIdentifier)
     }
 }
 

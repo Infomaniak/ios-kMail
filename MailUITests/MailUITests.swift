@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import XCTest
 
@@ -151,24 +152,24 @@ class MailUITests: XCTestCase {
         swipeFirstCell()
 
         app.collectionViews.buttons[MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu].tap()
-        app.buttons[MailResourcesStrings.Localizable.actionDelete].tap()
+        app.buttons[Action.delete.accessibilityIdentifier].tap()
 
         undo()
 
         swipeFirstCell()
 
         app.collectionViews.buttons[MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu].tap()
-        app.buttons[MailResourcesStrings.Localizable.actionArchive].tap()
+        app.buttons[Action.archive.accessibilityIdentifier].tap()
 
         undo()
 
         swipeFirstCell()
 
         app.collectionViews.buttons[MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu].tap()
-        if app.buttons[MailResourcesStrings.Localizable.actionMarkAsRead].exists {
-            app.buttons[MailResourcesStrings.Localizable.actionMarkAsRead].tap()
+        if app.buttons[Action.markAsRead.accessibilityIdentifier].exists {
+            app.buttons[Action.markAsRead.accessibilityIdentifier].tap()
         } else {
-            app.buttons[MailResourcesStrings.Localizable.actionMarkAsUnread].tap()
+            app.buttons[Action.markAsUnread.accessibilityIdentifier].tap()
         }
 
         swipeFirstCell()
