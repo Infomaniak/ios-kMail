@@ -45,7 +45,7 @@ struct StandardWindowViewModifier: ViewModifier {
                 updateUI(accent: newAccentColor, theme: theme)
             }
         #if targetEnvironment(macCatalyst)
-            .introspect(.window, on: .iOS(.v16, .v17)) { window in
+            .introspect(.window, on: .iOS(.v16, .v17, .v18)) { window in
                 if let titlebar = window.windowScene?.titlebar {
                     titlebar.titleVisibility = .hidden
                     titlebar.toolbar = nil
