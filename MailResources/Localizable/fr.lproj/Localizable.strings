@@ -4,7 +4,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: elena willen
- * Exported at: Wed, 31 Jul 2024 15:28:16 +0200
+ * Exported at: Wed, 04 Sep 2024 11:22:24 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1664,7 +1664,7 @@
 "titleMyAccount" = "Mon compte";
 
 /* loco:62860a56f6ea2c34fb742092 */
-"titleMyAccounts" = "Mes comptes";
+"titleMyAccount-plural" = "Mes comptes";
 
 /* loco:62665fa13789aa7e8353ad62 */
 "toTitle" = "À :";

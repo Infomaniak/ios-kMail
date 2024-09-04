@@ -35,7 +35,7 @@ struct AccountButton: View {
             if let currentAccountUser = mailboxManager.account.user {
                 AvatarView(mailboxManager: mailboxManager,
                            contactConfiguration: .user(user: currentAccountUser))
-                    .accessibilityLabel(MailResourcesStrings.Localizable.titleMyAccount)
+                    .accessibilityLabel(MailResourcesStrings.Localizable.titleMyAccount(1))
             }
         }
         .floatingPanel(isPresented: $isShowingNewAccountListView) {

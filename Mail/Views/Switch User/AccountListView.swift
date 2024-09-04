@@ -77,8 +77,7 @@ struct AccountListView: View {
 
     var body: some View {
         ScrollView {
-            Text(viewModel.accounts.count > 1 ? MailResourcesStrings.Localizable.titleMyAccounts : MailResourcesStrings
-                .Localizable.titleMyAccount)
+            Text(MailResourcesStrings.Localizable.titleMyAccount(viewModel.accounts.count))
                 .textStyle(.bodyMedium)
 
             VStack(spacing: IKPadding.small) {
@@ -92,7 +91,6 @@ struct AccountListView: View {
 
             AccountActionsView()
         }
-        .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)
         .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
             orientationManager.setOrientationLock(.all)
         }, content: {
