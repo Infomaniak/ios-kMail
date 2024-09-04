@@ -43,6 +43,9 @@ struct ShortcutModifier: ViewModifier {
                 Button(MailResourcesStrings.Localizable.actionDelete, action: shortcutDelete)
                     .keyboardShortcut(.delete, modifiers: [])
 
+                Button(MailResourcesStrings.Localizable.actionDelete, action: shortcutDelete)
+                    .keyboardShortcut("\u{007F}", modifiers: [])
+
                 Button(MailResourcesStrings.Localizable.actionReply, action: shortcutReply)
                     .keyboardShortcut("r")
 
