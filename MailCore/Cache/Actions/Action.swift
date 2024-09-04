@@ -29,6 +29,10 @@ public struct Action: Identifiable, Hashable, Equatable {
         return Image(iconName, bundle: MailResourcesResources.bundle)
     }
 
+    public var accessibilityIdentifier: String {
+        return "action/\(id)"
+    }
+
     public let tintColorName: String?
     public var tintColor: Color? {
         guard let tintColorName else { return nil }
