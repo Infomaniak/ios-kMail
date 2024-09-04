@@ -364,4 +364,10 @@ public extension Action {
         iconResource: MailResourcesAsset.logout,
         matomoName: "logout"
     )
+    static let deleteAccount = Action(
+        id: "deleteAccount",
+        title: MailResourcesStrings.Localizable.buttonAccountDelete,
+        iconResource: MailResourcesAsset.bin,
+        matomoName: "deleteAccount"
+    )
 }

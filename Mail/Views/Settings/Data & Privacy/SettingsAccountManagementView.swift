@@ -60,47 +60,43 @@ struct SettingsAccountManagementView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: IKPadding.medium) {
-                VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
-                    Text(MailResourcesStrings.Localizable.usernameTitle)
-                        .textStyle(.header2)
-                    Text(account.user.displayName)
-                        .textStyle(.bodySecondary)
-                }
-                .lineLimit(1)
+            VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: IKPadding.medium) {
+                    VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
+                        Text(MailResourcesStrings.Localizable.usernameTitle)
+                            .textStyle(.header2)
+                        Text(account.user.displayName)
+                            .textStyle(.bodySecondary)
+                    }
+                    .lineLimit(1)
 
-                VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
-                    Text(MailResourcesStrings.Localizable.attachMailboxInputHint)
-                        .textStyle(.header2)
-                    Text(account.user.email)
-                        .textStyle(.bodySecondary)
+                    VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
+                        Text(MailResourcesStrings.Localizable.attachMailboxInputHint)
+                            .textStyle(.header2)
+                        Text(account.user.email)
+                            .textStyle(.bodySecondary)
+                    }
+                    .lineLimit(1)
                 }
-                .lineLimit(1)
+                .padding(value: .medium)
 
-                IKDivider(type: .menu)
+                IKDivider()
 
                 Button {
-                    matomo.track(eventWithCategory: .account, name: "deleteAccount")
+                    matomo.track(eventWithCategory: .account, name: Action.deleteAccount.matomoName)
                     presentedAccountDeletionToken = tokenStore.tokenFor(userId: account.userId)
                 } label: {
-                    HStack(spacing: IKPadding.medium) {
-                        MailResourcesAsset.bin.swiftUIImage
-                            .iconSize(.large)
-                        Text(MailResourcesStrings.Localizable.buttonAccountDelete)
-                    }
-                    .textStyle(.bodyError)
+                    ActionButtonLabel(action: Action.deleteAccount)
                 }
-                .buttonStyle(.ikBorderless(isInlined: true))
-
-                InformationBlockView(
-                    icon: MailResourcesAsset.warningFill.swiftUIImage,
-                    message: MailResourcesStrings.Localizable.deleteAccountWarning,
-                    iconColor: MailResourcesAsset.orangeColor.swiftUIColor
-                )
-                .padding(.top, value: .small)
             }
+
+            InformationBlockView(
+                icon: MailResourcesAsset.warningFill.swiftUIImage,
+                message: MailResourcesStrings.Localizable.deleteAccountWarning,
+                iconColor: MailResourcesAsset.orangeColor.swiftUIColor
+            )
+            .padding(value: .medium)
         }
-        .padding(.horizontal, value: .medium)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsAccountManagementTitle, displayMode: .inline)
         .sheet(item: $presentedAccountDeletionToken) { userToken in

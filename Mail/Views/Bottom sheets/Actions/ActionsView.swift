@@ -170,7 +170,7 @@ struct ActionButtonLabel: View {
         switch action {
         case .reportDisplayProblem:
             return MailResourcesAsset.princeColor
-        case .logoutAccount:
+        case .logoutAccount, .deleteAccount:
             return MailResourcesAsset.redColor
         default:
             return UserDefaults.shared.accentColor.primary
@@ -181,7 +181,7 @@ struct ActionButtonLabel: View {
         switch action {
         case .reportDisplayProblem:
             return MailResourcesAsset.princeColor
-        case .logoutAccount:
+        case .logoutAccount, .deleteAccount:
             return MailResourcesAsset.redColor
         default:
             return MailResourcesAsset.textPrimaryColor
