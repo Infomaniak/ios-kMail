@@ -29,27 +29,21 @@ struct SuperCollapsedView: View {
         ZStack {
             Rectangle()
                 .strokeBorder(MailResourcesAsset.textFieldColor.swiftUIColor, lineWidth: 1)
-                .background {
-                    Rectangle()
-                        .fill(MailResourcesAsset.backgroundCardSelectedColor.swiftUIColor)
-                }
+                .background(MailResourcesAsset.backgroundCardSelectedColor.swiftUIColor)
                 .frame(height: 8)
 
             Button(action: action) {
                 Text(MailResourcesStrings.Localizable.superCollapsedBlock(count))
                     .textStyle(.bodyAccent)
-                    .padding(.vertical, IKPadding.small)
-                    .padding(.horizontal, IKPadding.large)
+                    .padding(.vertical, value: .small)
+                    .padding(.horizontal, value: .large)
                     .frame(minHeight: 40)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .strokeBorder(MailResourcesAsset.textFieldColor.swiftUIColor, lineWidth: 1)
-                            .background {
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(MailResourcesAsset.backgroundCardSelectedColor.swiftUIColor)
-                            }
-                    )
             }
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .strokeBorder(MailResourcesAsset.textFieldColor.swiftUIColor, lineWidth: 1)
+                    .background(MailResourcesAsset.backgroundCardSelectedColor.swiftUIColor, in: .rect(cornerRadius: 16))
+            )
         }
     }
 }

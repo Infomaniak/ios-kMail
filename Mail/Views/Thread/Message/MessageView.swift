@@ -40,7 +40,6 @@ struct MessageView: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var isHeaderExpanded = false
     @State private var isShowingErrorLoading = false
     @State private var displayContentBlockedActionView = false
     @StateObject private var inlineAttachmentWorker: InlineAttachmentWorker
@@ -68,7 +67,6 @@ struct MessageView: View {
         VStack(spacing: 0) {
             MessageHeaderView(
                 message: message,
-                isHeaderExpanded: $isHeaderExpanded,
                 isMessageExpanded: Binding(get: {
                     isMessageExpanded
                 }, set: { newValue in

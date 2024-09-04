@@ -28,10 +28,12 @@ import SwiftUI
 import WrappingHStack
 
 private struct ScrollOffsetPreferenceKey: PreferenceKey {
-    static var defaultValue: CGPoint = .zero
+    static var defaultValue: CGFloat = .zero
 
-    static func reduce(value: inout CGPoint, nextValue: () -> CGPoint) {
-        // No need to implement it
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        let nextVal = nextValue()
+        value = nextVal
+        print("NEW \(value) - \(nextVal)")
     }
 }
 
@@ -59,21 +61,23 @@ struct ThreadView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 0) {
-                GeometryReader { proxy in
-                    Color.clear.preference(
-                        key: ScrollOffsetPreferenceKey.self,
-                        value: proxy.frame(in: .named("scrollView")).origin
-                    )
-                }
-                .frame(width: 0, height: 0)
-
+            VStack(spacing: IKPadding.medium) {
                 VStack(alignment: .leading, spacing: IKPadding.small) {
                     Text(thread.formattedSubject)
                         .textStyle(.header2)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .multilineTextAlignment(.leading)
                         .lineSpacing(8)
+                        .padding(.top, value: .small)
+                        .overlay {
+                            GeometryReader { proxy in
+                                Color.clear
+                                    .preference(
+                                        key: ScrollOffsetPreferenceKey.self,
+                                        value: proxy.frame(in: .named("scrollView")).maxY
+                                    )
+                            }
+                        }
 
                     WrappingHStack(lineSpacing: IKPadding.small) {
                         let externalTag = thread.displayExternalRecipientState(
@@ -99,8 +103,6 @@ struct ThreadView: View {
                         MessageFolderTag(title: thread.searchFolderName, inThreadHeader: true)
                     }
                 }
-                .padding(.top, value: .small)
-                .padding(.bottom, value: .medium)
                 .padding(.horizontal, value: .medium)
 
                 MessageListView(messages: thread.messages.toArray())
@@ -109,7 +111,7 @@ struct ThreadView: View {
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .coordinateSpace(name: "scrollView")
         .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
-            displayNavigationTitle = offset.y < -85
+            displayNavigationTitle = offset < 0
         }
         .onAppear {
             matomo.trackThreadInfo(of: thread)
@@ -123,7 +125,7 @@ struct ThreadView: View {
                 await markThreadAsReadIfNeeded(thread: newValue)
             }
         }
-        .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
+        .navigationTitle(displayNavigationTitle ? thread.formattedSubject : " ")
         .navigationBarThreadViewStyle(appearance: displayNavigationTitle ? BarAppearanceConstants
             .threadViewNavigationBarScrolledAppearance : BarAppearanceConstants.threadViewNavigationBarAppearance)
         .backButtonDisplayMode(.minimal)

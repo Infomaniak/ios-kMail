@@ -28,9 +28,9 @@ enum MessageExpansionType: Equatable {
 }
 
 struct MessageListView: View {
-    let messages: [Message]
-
     @State private var messageExpansion = [String: MessageExpansionType]()
+
+    let messages: [Message]
 
     var body: some View {
         ScrollViewReader { proxy in
