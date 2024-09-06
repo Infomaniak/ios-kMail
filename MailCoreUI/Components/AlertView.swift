@@ -48,7 +48,7 @@ struct AlertView<Content>: View where Content: View {
                 }
             }
         }
-        .introspect(.viewController, on: .iOS(.v15, .v16, .v17)) { viewController in
+        .introspect(.viewController, on: .iOS(.v15, .v16, .v17, .v18)) { viewController in
             viewController.modalTransitionStyle = .crossDissolve
         }
     }

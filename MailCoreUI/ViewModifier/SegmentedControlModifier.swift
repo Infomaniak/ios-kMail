@@ -26,7 +26,7 @@ public struct SegmentedControlModifier: ViewModifier {
 
     public func body(content: Content) -> some View {
         content
-            .introspect(.picker(style: .segmented), on: .iOS(.v15, .v16, .v17)) { segmentedControl in
+            .introspect(.picker(style: .segmented), on: .iOS(.v15, .v16, .v17, .v18)) { segmentedControl in
                 segmentedControl.selectedSegmentTintColor = accentColor.primary.color
                 segmentedControl.setTitleTextAttributes([.foregroundColor: accentColor.onAccent.color], for: .selected)
                 segmentedControl.setTitleTextAttributes([.foregroundColor: accentColor.primary.color], for: .normal)

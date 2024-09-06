@@ -24,7 +24,7 @@ public struct BackButtonDisplayModeModifier: ViewModifier {
 
     public func body(content: Content) -> some View {
         content
-            .introspect(.viewController, on: .iOS(.v15, .v16, .v17)) { viewController in
+            .introspect(.viewController, on: .iOS(.v15, .v16, .v17, .v18)) { viewController in
                 viewController.navigationItem.backButtonDisplayMode = displayMode
             }
     }

@@ -52,7 +52,7 @@ public struct SearchTextField: View {
                 .onSubmit {
                     onSubmit()
                 }
-                .introspect(.textField, on: .iOS(.v15, .v16, .v17)) { textField in
+                .introspect(.textField, on: .iOS(.v15, .v16, .v17, .v18)) { textField in
                     guard !initialFocusDone else { return }
                     DispatchQueue.main.async {
                         textField.becomeFirstResponder()

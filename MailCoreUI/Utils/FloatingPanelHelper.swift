@@ -161,7 +161,7 @@ public struct SelfSizingPanelViewModifier: ViewModifier {
                 content
                     .padding(.bottom, value: .medium)
             }
-            .introspect(.scrollView, on: .iOS(.v16, .v17)) { scrollView in
+            .introspect(.scrollView, on: .iOS(.v16, .v17, .v18)) { scrollView in
                 let totalPanelContentHeight = scrollView.contentSize.height + headerSize
                 guard selection != .height(totalPanelContentHeight) else { return }
 
