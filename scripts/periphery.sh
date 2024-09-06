@@ -3,7 +3,7 @@
 eval "$($HOME/.local/bin/mise activate bash --shims)"
 
 tuist install
-tuist generate -n
+tuist generate --no-open
 
 
 # Perform the periphery scan and handle directory removal based on argument
