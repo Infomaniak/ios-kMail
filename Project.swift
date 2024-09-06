@@ -23,11 +23,7 @@ import ProjectDescriptionHelpers
 let project = Project(name: "Mail",
                       options: .options(
                           automaticSchemesOptions: .enabled(
-                            targetSchemesGrouping: .byNameSuffix(
-                              build: Set(["Mail", "Extension"]),
-                              test: Set(["Tests"]),
-                              run: Set(["Mail", "Extension"])
-                            )
+                              targetSchemesGrouping: .notGrouped
                           )
                       ),
                       targets: [
@@ -55,7 +51,9 @@ let project = Project(name: "Mail",
                                       .target(name: "MailNotificationServiceExtension"),
                                       .target(name: "MailNotificationContentExtension"),
                                       .target(name: "MailShareExtension"),
-                                      .target(name: "MailAppIntentsExtension")
+                                      .target(name: "MailAppIntentsExtension"),
+                                      .external(name: "RealmSwift"),
+                                      .external(name: "Realm"),
                                   ],
                                   settings: .settings(base: Constants.baseSettings),
                                   environmentVariables: [
@@ -70,7 +68,9 @@ let project = Project(name: "Mail",
                                   infoPlist: .default,
                                   sources: "MailTests/**",
                                   dependencies: [
-                                      .target(name: "Infomaniak Mail")
+                                      .target(name: "Infomaniak Mail"),
+                                      .external(name: "RealmSwift"),
+                                      .external(name: "Realm")
                                   ],
                                   settings: .settings(base: Constants.testSettings)),
                           .target(name: "MailUITests",
@@ -82,7 +82,9 @@ let project = Project(name: "Mail",
                                   sources: "MailUITests/**",
                                   dependencies: [
                                       .target(name: "Infomaniak Mail"),
-                                      .target(name: "MailResources")
+                                      .target(name: "MailResources"),
+                                      .external(name: "RealmSwift"),
+                                      .external(name: "Realm")
                                   ],
                                   settings: .settings(base: Constants.testSettings)),
                           .target(name: "MailShareExtension",
@@ -105,7 +107,9 @@ let project = Project(name: "Mail",
                                   scripts: [Constants.swiftlintScript],
                                   dependencies: [
                                       .target(name: "MailCore"),
-                                      .target(name: "MailCoreUI")
+                                      .target(name: "MailCoreUI"),
+                                      .external(name: "RealmSwift"),
+                                      .external(name: "Realm"),
                                   ],
                                   settings: .settings(base: Constants.baseSettings)),
                           .target(name: "MailNotificationServiceExtension",
@@ -126,7 +130,9 @@ let project = Project(name: "Mail",
                                   sources: "MailNotificationServiceExtension/**",
                                   entitlements: "MailResources/Mail.entitlements",
                                   dependencies: [
-                                      .target(name: "MailCore")
+                                      .target(name: "MailCore"),
+                                      .external(name: "RealmSwift"),
+                                      .external(name: "Realm"),
                                   ],
                                   settings: .settings(base: Constants.baseSettings)),
                           .target(name: "MailNotificationContentExtension",
@@ -147,6 +153,8 @@ let project = Project(name: "Mail",
                                   dependencies: [
                                       .target(name: "MailCore"),
                                       .target(name: "MailCoreUI"),
+                                      .external(name: "RealmSwift"),
+                                      .external(name: "Realm"),
                                       .sdk(name: "UserNotifications", type: .framework),
                                       .sdk(name: "UserNotificationsUI", type: .framework)
                                   ],
@@ -172,7 +180,9 @@ let project = Project(name: "Mail",
                                   ],
                                   entitlements: "MailResources/Mail.entitlements",
                                   dependencies: [
-                                      .target(name: "MailCore")
+                                      .target(name: "MailCore"),
+                                      .external(name: "RealmSwift"),
+                                      .external(name: "Realm")
                                   ],
                                   settings: .settings(base: Constants.baseSettings)),
                           .target(name: "MailResources",
@@ -216,6 +226,7 @@ let project = Project(name: "Mail",
                                       .external(name: "InfomaniakBugTracker"),
                                       .external(name: "InfomaniakCreateAccount"),
                                       .external(name: "RealmSwift"),
+                                      .external(name: "Realm"),
                                       .external(name: "SwiftRegex"),
                                       .external(name: "Nuke"),
                                       .external(name: "NukeUI"),
@@ -245,5 +256,12 @@ let project = Project(name: "Mail",
                                       .external(name: "SwiftUIBackports")
                                   ],
                                   settings: .settings(base: Constants.baseSettings))
+                      ],
+                      schemes: [
+                          .scheme(name: "Infomaniak Mail",
+                                  shared: true,
+                                  buildAction: .buildAction(targets: ["Infomaniak Mail"]),
+                                  testAction: .targets(["MailTests", "MailUITests"]),
+                                  runAction: .runAction(executable: "Infomaniak Mail")),
                       ],
                       fileHeaderTemplate: .file("file-header-template.txt"))
