@@ -40,9 +40,10 @@ extension View {
 struct ActionsPanelViewModifier: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @ModalState private var reportForJunkMessage: Message?
+    @ModalState private var reportForJunkMessage: [Message]?
     @ModalState private var reportedForDisplayProblemMessage: Message?
     @ModalState private var reportedForPhishingMessage: Message?
+    @ModalState private var blockSender: [Message]?
     @ModalState private var messagesToMove: [Message]?
     @ModalState private var flushAlert: FlushAlertState?
     @ModalState private var shareMailLink: ShareMailLinkResult?
@@ -59,6 +60,7 @@ struct ActionsPanelViewModifier: ViewModifier {
             originFolder: originFolder?.freezeIfNeeded(),
             nearestFlushAlert: $flushAlert,
             nearestMessagesToMoveSheet: $messagesToMove,
+            nearestBlockSender: $blockSender,
             nearestReportJunkMessageActionsPanel: $reportForJunkMessage,
             nearestReportedForPhishingMessageAlert: $reportedForPhishingMessage,
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
@@ -80,7 +82,10 @@ struct ActionsPanelViewModifier: ViewModifier {
             .sheetViewStyle()
         }
         .floatingPanel(item: $reportForJunkMessage) { reportForJunkMessage in
-            ReportJunkView(reportedMessage: reportForJunkMessage, origin: origin)
+            ReportJunkView(reportedMessages: reportForJunkMessage, origin: origin)
+        }
+        .floatingPanel(item: $blockSender) { blockSender in
+            BlockSenderView(reportedMessages: blockSender, origin: origin)
         }
         .customAlert(item: $reportedForDisplayProblemMessage) { message in
             ReportDisplayProblemView(message: message)

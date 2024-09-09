@@ -24,13 +24,15 @@ import MailCoreUI
 import MailResources
 import SwiftUI
 
+private let sampleMessages = Array(repeating: PreviewHelper.sampleMessage, count: 6)
+
 struct ReportJunkView: View {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     @Environment(\.dismiss) private var dismiss
 
-    let reportedMessage: Message
-    let actions: [Action] = [.spam, .phishing, .block]
+    let reportedMessages: [Message]
+    let actions: [Action] = [.spam, .phishing, .blockList]
     let origin: ActionOrigin
 
     var body: some View {
@@ -47,7 +49,7 @@ struct ReportJunkView: View {
                     IKDivider()
                 }
 
-                MessageActionView(targetMessages: [reportedMessage], action: action, origin: origin)
+                MessageActionView(targetMessages: reportedMessages, action: action, origin: origin)
             }
         }
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ReportJunkView"])
@@ -55,6 +57,6 @@ struct ReportJunkView: View {
 }
 
 #Preview {
-    ReportJunkView(reportedMessage: PreviewHelper.sampleMessage, origin: .floatingPanel(source: .threadList))
+    ReportJunkView(reportedMessages: sampleMessages, origin: .floatingPanel(source: .threadList))
         .accentColor(AccentColor.pink.primary.swiftUIColor)
 }

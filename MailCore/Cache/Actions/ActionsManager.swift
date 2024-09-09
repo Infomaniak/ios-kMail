@@ -167,8 +167,7 @@ public class ActionsManager: ObservableObject {
             }
         case .reportJunk:
             Task { @MainActor in
-                assert(messagesWithDuplicates.count <= 1, "More than one message was passed for junk report")
-                origin.nearestReportJunkMessageActionsPanel?.wrappedValue = messagesWithDuplicates.first
+                origin.nearestReportJunkMessageActionsPanel?.wrappedValue = messagesWithDuplicates
             }
         case .spam:
             let messagesFromFolder = messagesWithDuplicates.fromFolderOrSearch(originFolder: origin.frozenFolder)
@@ -185,6 +184,10 @@ public class ActionsManager: ObservableObject {
             guard let message = messagesWithDuplicates.first else { return }
             try await mailboxManager.apiFetcher.blockSender(message: message)
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted(1))
+        case .blockList:
+            Task { @MainActor in
+                origin.nearestBlockSender?.wrappedValue = messagesWithDuplicates
+            }
         case .shareMailLink:
             guard let message = messagesWithDuplicates.first else { return }
             let result = try await mailboxManager.apiFetcher.shareMailLink(message: message)

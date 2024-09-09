@@ -283,6 +283,12 @@
 /* loco:6266649755d41301973d0c43 */
 "bccTitle" = "Bcc:";
 
+/* loco:669a5cc96c0dbf9fe909b662 */
+"blockAnExpeditorTitle" = "Block a sender";
+
+/* loco:66dee0ef5c6d656046044445 */
+"blockExpeditorTitle" = "Block %s";
+
 /* loco:649ea00ef9c6ecfe620a0b62 */
 "blockedPasswordTitle" = "Blocked password";
 
@@ -333,6 +339,9 @@
 
 /* loco:651ebd40ccc14ebdca0313a5 */
 "buttonBackToApp" = "Back to the Mail application";
+
+/* loco:66db0113e0da22884c09f724 */
+"buttonBlockAnExpeditor" = "Block";
 
 /* loco:62b2d43771635f1d1f0da462 */
 "buttonBold" = "Bold";
@@ -537,6 +546,9 @@
 
 /* loco:63a473bcf3bb7f422358cfd2 */
 "confirmLogoutTitle" = "Log out";
+
+/* loco:66db00746332bbedae01f2f2 */
+"confirmationToBlockAnExpeditorText" = "This e-mail and all future messages from %s will be moved to the Junk Mail folder.";
 
 /* loco:62737dea7bd28e302301e5c2 */
 "contactActionAddToContacts" = "Add to contacts";
