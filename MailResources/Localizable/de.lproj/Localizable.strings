@@ -283,6 +283,12 @@
 /* loco:6266649755d41301973d0c43 */
 "bccTitle" = "Bcc:";
 
+/* loco:669a5cc96c0dbf9fe909b662 */
+"blockAnExpeditorTitle" = "Einen Absender blockieren";
+
+/* loco:66dee0ef5c6d656046044445 */
+"blockExpeditorTitle" = "Block %s";
+
 /* loco:649ea00ef9c6ecfe620a0b62 */
 "blockedPasswordTitle" = "Passwort blockiert";
 
