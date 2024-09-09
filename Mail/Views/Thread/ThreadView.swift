@@ -25,7 +25,6 @@ import MailResources
 import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
-import WrappingHStack
 
 private struct ScrollOffsetPreferenceKey: PreferenceKey {
     static var defaultValue: CGFloat = .zero
@@ -50,7 +49,6 @@ struct ThreadView: View {
     @State private var replyOrReplyAllMessage: Message?
     @State private var messagesToMove: [Message]?
 
-    @ModalState private var isShowingExternalTagAlert = false
     @ModalState private var nearestFlushAlert: FlushAlertState?
 
     @ObservedRealmObject var thread: Thread
@@ -79,29 +77,13 @@ struct ThreadView: View {
                             }
                         }
 
-                    WrappingHStack(lineSpacing: IKPadding.small) {
-                        let externalTag = thread.displayExternalRecipientState(
+                    ThreadTagsListView(
+                        externalTag: thread.displayExternalRecipientState(
                             mailboxManager: mailboxManager,
                             recipientsList: thread.from
-                        )
-                        if externalTag.shouldDisplay {
-                            Button {
-                                matomo.track(eventWithCategory: .externals, name: "threadTag")
-                                isShowingExternalTagAlert = true
-                            } label: {
-                                Text(MailResourcesStrings.Localizable.externalTag)
-                                    .tagModifier(
-                                        foregroundColor: MailResourcesAsset.onTagExternalColor,
-                                        backgroundColor: MailResourcesAsset.yellowColor
-                                    )
-                            }
-                            .customAlert(isPresented: $isShowingExternalTagAlert) {
-                                ExternalRecipientView(externalTagSate: externalTag, isDraft: false)
-                            }
-                        }
-
-                        MessageFolderTag(title: thread.searchFolderName, inThreadHeader: true)
-                    }
+                        ),
+                        searchFolderName: thread.searchFolderName
+                    )
                 }
                 .padding(.horizontal, value: .medium)
 
