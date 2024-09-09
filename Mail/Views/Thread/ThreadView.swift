@@ -23,38 +23,31 @@ import MailCore
 import MailCoreUI
 import MailResources
 import RealmSwift
-import SwiftModalPresentation
 import SwiftUI
 
 private struct ScrollOffsetPreferenceKey: PreferenceKey {
     static var defaultValue: CGFloat = .zero
 
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        let nextVal = nextValue()
-        value = nextVal
-        print("NEW \(value) - \(nextVal)")
+        // No need to implement it
     }
 }
 
 struct ThreadView: View {
-    private static let standardActions: [Action] = [.reply, .forward, .archive, .delete]
-    private static let archiveActions: [Action] = [.reply, .forward, .openMovePanel, .delete]
-
     @LazyInjectService private var matomo: MatomoUtils
 
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
 
     @State private var displayNavigationTitle = false
-    @State private var replyOrReplyAllMessage: Message?
-    @State private var messagesToMove: [Message]?
-
-    @ModalState private var nearestFlushAlert: FlushAlertState?
 
     @ObservedRealmObject var thread: Thread
 
-    private var toolbarActions: [Action] {
-        thread.folder?.role == .archive ? Self.archiveActions : Self.standardActions
+    private var externalTag: DisplayExternalRecipientStatus.State {
+        thread.displayExternalRecipientState(
+            mailboxManager: mailboxManager,
+            recipientsList: thread.from
+        )
     }
 
     var body: some View {
@@ -63,7 +56,6 @@ struct ThreadView: View {
                 VStack(alignment: .leading, spacing: IKPadding.small) {
                     Text(thread.formattedSubject)
                         .textStyle(.header2)
-                        .frame(maxWidth: .infinity, alignment: .leading)
                         .multilineTextAlignment(.leading)
                         .lineSpacing(8)
                         .padding(.top, value: .small)
@@ -77,13 +69,7 @@ struct ThreadView: View {
                             }
                         }
 
-                    ThreadTagsListView(
-                        externalTag: thread.displayExternalRecipientState(
-                            mailboxManager: mailboxManager,
-                            recipientsList: thread.from
-                        ),
-                        searchFolderName: thread.searchFolderName
-                    )
+                    ThreadTagsListView(externalTag: externalTag, searchFolderName: thread.searchFolderName)
                 }
                 .padding(.horizontal, value: .medium)
 
@@ -111,54 +97,11 @@ struct ThreadView: View {
         .navigationBarThreadViewStyle(appearance: displayNavigationTitle ? BarAppearanceConstants
             .threadViewNavigationBarScrolledAppearance : BarAppearanceConstants.threadViewNavigationBarAppearance)
         .backButtonDisplayMode(.minimal)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button {
-                    let messages = thread.messages.freeze().toArray()
-                    let originFolder = thread.folder?.freezeIfNeeded()
-                    Task {
-                        await tryOrDisplayError {
-                            try await actionsManager.performAction(
-                                target: messages,
-                                action: thread.flagged ? .unstar : .star,
-                                origin: .toolbar(originFolder: originFolder)
-                            )
-                        }
-                    }
-                } label: {
-                    (thread.flagged ? MailResourcesAsset.starFull : MailResourcesAsset.star)
-                        .swiftUIImage
-                        .foregroundStyle(thread.flagged ? MailResourcesAsset.yellowColor.swiftUIColor : .accentColor)
-                }
-            }
-        }
-        .bottomBar {
-            ForEach(toolbarActions) { action in
-                if action == .reply {
-                    ToolbarButton(text: action.title, icon: action.icon) {
-                        didTap(action: action)
-                    }
-                    .adaptivePanel(item: $replyOrReplyAllMessage) { message in
-                        ReplyActionsView(message: message)
-                    }
-                } else {
-                    ToolbarButton(text: action.title, icon: action.icon) {
-                        didTap(action: action)
-                    }
-                    .sheet(item: $messagesToMove) { messages in
-                        MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
-                            .sheetViewStyle()
-                    }
-                }
-            }
-            ActionsPanelButton(messages: thread.messages.toArray(), originFolder: thread.folder, panelSource: .messageList) {
-                ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
-                                   icon: MailResourcesAsset.plusActions.swiftUIImage)
-            }
-        }
-        .customAlert(item: $nearestFlushAlert) { item in
-            FlushFolderAlertView(flushAlert: item)
-        }
+        .threadViewToolbar(
+            isFlagged: thread.flagged,
+            frozenFolder: thread.folder?.freezeIfNeeded(),
+            frozenMessages: thread.messages.freezeIfNeeded().toArray()
+        )
         .matomoView(view: [MatomoUtils.View.threadView.displayName, "Main"])
     }
 
@@ -171,34 +114,6 @@ struct ThreadView: View {
             action: .markAsRead,
             origin: .toolbar(originFolder: originFolder)
         )
-    }
-
-    private func didTap(action: Action) {
-        matomo.track(eventWithCategory: .threadActions, name: action.matomoName)
-
-        let messages = thread.messages.freezeIfNeeded().toArray()
-
-        if action == .reply,
-           let message = messages.lastMessageToExecuteAction(currentMailboxEmail: mailboxManager.mailbox.email),
-           message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
-            replyOrReplyAllMessage = message
-            return
-        }
-
-        if action == .openMovePanel {
-            messagesToMove = messages
-        }
-
-        let originFolder = thread.folder?.freezeIfNeeded()
-        Task {
-            await tryOrDisplayError {
-                try await actionsManager.performAction(
-                    target: messages,
-                    action: action,
-                    origin: .toolbar(originFolder: originFolder, nearestFlushAlert: $nearestFlushAlert)
-                )
-            }
-        }
     }
 }
 
