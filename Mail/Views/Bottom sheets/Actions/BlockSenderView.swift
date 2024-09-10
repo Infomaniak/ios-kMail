@@ -39,7 +39,7 @@ struct BlockSenderView: View {
         Array(
             Set(
                 reportedMessages
-                    .flatMap(\.from)
+                    .compactMap(\.from.first)
                     .filter { recipient in
                         !recipient.isMe(currentMailboxEmail: mailboxManager.mailbox.email)
                     }
@@ -49,7 +49,7 @@ struct BlockSenderView: View {
 
     private func getMessages(for recipient: Recipient) -> [Message] {
         return reportedMessages.filter { message in
-            message.from.contains(where: { $0 == recipient })
+            message.from.contains(where: {$0 == recipient})
         }
     }
 
