@@ -32,7 +32,6 @@ struct BlockSenderView: View {
     @State private var selectedRecipient: Recipient?
 
     let reportedMessages: [Message]
-    let action: Action = .block
     let origin: ActionOrigin
 
     var recipients: [Recipient] {
