@@ -49,6 +49,7 @@ struct BlockSenderView: View {
     private func getMessages(for recipient: Recipient) -> [Message] {
         return reportedMessages.filter { message in
             message.from.contains(where: {$0 == recipient})
+            
         }
     }
 
@@ -82,7 +83,6 @@ struct BlockSenderView: View {
         }
     }
 }
-
 
 #Preview {
     BlockSenderView(reportedMessages: PreviewHelper.sampleMessages, origin: .floatingPanel(source: .threadList))
