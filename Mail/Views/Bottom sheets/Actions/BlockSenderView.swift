@@ -25,10 +25,8 @@ import MailResources
 import SwiftModalPresentation
 import SwiftUI
 
-private let sampleMessages = Array(repeating: PreviewHelper.sampleMessage, count: 6)
-
 struct BlockSenderView: View {
-    @LazyInjectService private var platformDetector: PlatformDetectable
+    @LazyInjectService private var matomo: MatomoUtils
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var mailboxManager: MailboxManager
     @State private var selectedRecipient: Recipient?
@@ -36,6 +34,7 @@ struct BlockSenderView: View {
     let reportedMessages: [Message]
     let action: Action = .block
     let origin: ActionOrigin
+
     var recipients: [Recipient] {
         Array(
             Set(
@@ -48,6 +47,12 @@ struct BlockSenderView: View {
         )
     }
 
+    private func getMessages(for recipient: Recipient) -> [Message] {
+        return reportedMessages.filter { message in
+            message.from.contains(where: { $0 == recipient })
+        }
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             Text(MailResourcesStrings.Localizable.blockAnExpeditorTitle)
@@ -56,6 +61,7 @@ struct BlockSenderView: View {
             ForEach(recipients) { recipient in
                 Button {
                     selectedRecipient = recipient
+                    matomo.track(eventWithCategory: .blockUserAction, name: "selectUser")
                 } label: {
                     RecipientCell(recipient: recipient)
                         .padding(.horizontal, value: .medium)
@@ -65,15 +71,22 @@ struct BlockSenderView: View {
                     IKDivider()
                 }
             }
-            .customAlert(item: $selectedRecipient) { recipient in
-                ConfirmationBlockRecipientView(recipient: recipient)
-            }
+        }
+        .customAlert(item: $selectedRecipient) { recipient in
+            let messages = getMessages(for: recipient)
+            ConfirmationBlockRecipientView(
+                recipient: recipient,
+                reportedMessages: messages,
+                origin: origin,
+                onDismiss: { dismiss() }
+            )
         }
     }
 }
 
+
 #Preview {
-    BlockSenderView(reportedMessages: sampleMessages, origin: .floatingPanel(source: .threadList))
+    BlockSenderView(reportedMessages: PreviewHelper.sampleMessages, origin: .floatingPanel(source: .threadList))
         .accentColor(AccentColor.pink.primary.swiftUIColor)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }

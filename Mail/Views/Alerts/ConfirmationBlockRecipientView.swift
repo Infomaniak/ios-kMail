@@ -27,7 +27,14 @@ import SwiftUI
 struct ConfirmationBlockRecipientView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var actionsManager: ActionsManager
+
     let recipient: Recipient
+    let reportedMessages: [Message]
+    let action: Action = .block
+    let origin: ActionOrigin
+    var onDismiss: (() -> Void)?
+
     var contact: CommonContact {
         return CommonContactCache.getOrCreateContact(contactConfiguration: .correspondent(
             correspondent: recipient,
@@ -47,12 +54,24 @@ struct ConfirmationBlockRecipientView: View {
                 .padding(.bottom, IKPadding.alertDescriptionBottom)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonBlockAnExpeditor) {
-                matomo.track(eventWithCategory: .newMessage, name: "sendWithoutSubjectConfirm")
+                Task {
+                    matomo.track(eventWithCategory: .blockUserAction, name: "confirmSelectedUser")
+                    try await actionsManager.performAction(
+                        target: reportedMessages,
+                        action: action,
+                        origin: origin
+                    )
+                    onDismiss?()
+                }
             }
         }
     }
 }
 
 #Preview {
-    ConfirmationBlockRecipientView(recipient: PreviewHelper.sampleRecipient1)
+    ConfirmationBlockRecipientView(
+        recipient: PreviewHelper.sampleRecipient1,
+        reportedMessages: PreviewHelper.sampleMessages,
+        origin: .floatingPanel(source: .threadList)
+    )
 }

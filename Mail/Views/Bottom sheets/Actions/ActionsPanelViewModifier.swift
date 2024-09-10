@@ -40,10 +40,10 @@ extension View {
 struct ActionsPanelViewModifier: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @ModalState private var reportForJunkMessage: [Message]?
+    @ModalState private var reportForJunkMessages: [Message]?
     @ModalState private var reportedForDisplayProblemMessage: Message?
     @ModalState private var reportedForPhishingMessage: Message?
-    @ModalState private var blockSender: [Message]?
+    @ModalState private var blockSenderMessages: [Message]?
     @ModalState private var messagesToMove: [Message]?
     @ModalState private var flushAlert: FlushAlertState?
     @ModalState private var shareMailLink: ShareMailLinkResult?
@@ -60,8 +60,8 @@ struct ActionsPanelViewModifier: ViewModifier {
             originFolder: originFolder?.freezeIfNeeded(),
             nearestFlushAlert: $flushAlert,
             nearestMessagesToMoveSheet: $messagesToMove,
-            nearestBlockSender: $blockSender,
-            nearestReportJunkMessageActionsPanel: $reportForJunkMessage,
+            nearestBlockSender: $blockSenderMessages,
+            nearestReportJunkMessageActionsPanel: $reportForJunkMessages,
             nearestReportedForPhishingMessageAlert: $reportedForPhishingMessage,
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
             nearestShareMailLinkPanel: $shareMailLink
@@ -81,11 +81,11 @@ struct ActionsPanelViewModifier: ViewModifier {
             )
             .sheetViewStyle()
         }
-        .floatingPanel(item: $reportForJunkMessage) { reportForJunkMessage in
-            ReportJunkView(reportedMessages: reportForJunkMessage, origin: origin)
+        .floatingPanel(item: $reportForJunkMessages) { reportForJunkMessages in
+            ReportJunkView(reportedMessages: reportForJunkMessages, origin: origin)
         }
-        .floatingPanel(item: $blockSender) { blockSender in
-            BlockSenderView(reportedMessages: blockSender, origin: origin)
+        .floatingPanel(item: $blockSenderMessages) { blockSenderMessages in
+            BlockSenderView(reportedMessages: blockSenderMessages, origin: origin)
         }
         .customAlert(item: $reportedForDisplayProblemMessage) { message in
             ReportDisplayProblemView(message: message)

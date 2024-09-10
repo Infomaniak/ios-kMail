@@ -128,6 +128,11 @@ public enum PreviewHelper {
                                               forwarded: false,
                                               flagged: false,
                                               hasUnsubscribeLink: true)
+    
+    public static let sampleMessages = Array(
+        repeating: PreviewHelper.sampleMessage,
+        count: 6
+    )
 
     public static let samplePresentableBody = PresentableBody(message: sampleMessage)
 
