@@ -18,8 +18,9 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakLogin
 
 /// Something that can manipulate cached data
 public protocol CacheManageable {
-    func refreshCacheData(account: Account?)
+    func refreshCacheData(account: ApiToken?)
 }

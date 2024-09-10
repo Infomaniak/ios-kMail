@@ -104,7 +104,7 @@ public enum SentryDebug {
         }
     }
 
-    public static func captureNoTokenError(account: Account?) {
+    public static func captureNoTokenError(account: ApiToken?) {
         SentrySDK.capture(message: "Account with no token") { scope in
             scope.setLevel(.info)
             scope.setExtra(value: "account", key: "\(account?.userId ?? -1)")

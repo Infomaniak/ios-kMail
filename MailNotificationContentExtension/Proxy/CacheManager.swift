@@ -18,10 +18,11 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakLogin
 
 /// A cache manager that works in Extension mode
 public final class CacheManager: CacheManageable {
-    public func refreshCacheData(account: Account?) {
+    public func refreshCacheData(account: ApiToken?) {
         // NOOP in shareExtension
     }
 }

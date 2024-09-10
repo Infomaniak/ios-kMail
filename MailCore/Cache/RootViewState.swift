@@ -22,6 +22,7 @@ import Foundation
 import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
+import InfomaniakLogin
 import SwiftUI
 
 public enum RootViewType: Equatable {
@@ -67,7 +68,7 @@ public class RootViewState: ObservableObject {
 
     @Published public private(set) var state: RootViewType
 
-    public private(set) var account: Account?
+    public private(set) var account: ApiToken?
 
     public init() {
         @InjectService var accountManager: AccountManager
@@ -88,7 +89,7 @@ public class RootViewState: ObservableObject {
         }
     }
 
-    public func transitionToMainViewIfPossible(targetAccount: Account?, targetMailbox: Mailbox?) async {
+    public func transitionToMainViewIfPossible(targetAccount: ApiToken?, targetMailbox: Mailbox?) async {
         @InjectService var accountManager: AccountManager
         @InjectService var mailboxInfosManager: MailboxInfosManager
 

@@ -40,7 +40,6 @@ final class AccountViewDelegate: DeleteAccountDelegate {
                 accountManager.switchAccount(newUserId: nextAccount.userId)
             }
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackBarAccountDeleted)
-            accountManager.saveAccounts()
         }
     }
 

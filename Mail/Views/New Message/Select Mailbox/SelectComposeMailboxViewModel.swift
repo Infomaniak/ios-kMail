@@ -50,7 +50,7 @@ final class SelectComposeMailboxViewModel: ObservableObject {
     func listProfiles() {
         Task {
             userProfiles = await accountManager.accounts
-                .asyncMap { await accountManager.userProfileStore.getUserProfile(id: $0.userId) }
+                .asyncMap { await self.accountManager.userProfileStore.getUserProfile(id: $0.userId) }
                 .compactMap { $0 }
                 .sorted { lhs, rhs in
                     if (lhs.id == accountManager.currentUserId) != (rhs.id == accountManager.currentUserId) {

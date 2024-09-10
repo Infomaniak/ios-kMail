@@ -21,13 +21,14 @@ import Contacts
 import Foundation
 import InfomaniakCore
 import InfomaniakDI
+import InfomaniakLogin
 import MailCore
 
 @available(iOSApplicationExtension, unavailable)
 public final class CacheManager: CacheManageable {
     @LazyInjectService private var accountManager: AccountManager
 
-    public func refreshCacheData(account: Account?) {
+    public func refreshCacheData(account: ApiToken?) {
         guard let account else { return }
 
         Task {

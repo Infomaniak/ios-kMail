@@ -47,7 +47,7 @@ struct UserAccountScene: Scene {
                 .standardWindow()
                 .environmentObject(rootViewState)
                 .sceneLifecycle(willEnterForeground: willEnterForeground, didEnterBackground: didEnterBackground)
-                .task(id: rootViewState.account) {
+                .task(id: rootViewState.account?.userId) {
                     cacheManager.refreshCacheData(account: rootViewState.account)
                 }
         }

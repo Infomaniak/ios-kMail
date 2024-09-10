@@ -70,7 +70,7 @@ final class AccountListViewModel: ObservableObject {
     private func handleMailboxChanged(_ mailboxes: [Mailbox]) async -> [InfomaniakCore.UserProfile: [Mailbox]] {
         var newAccounts = [InfomaniakCore.UserProfile: [Mailbox]]()
         for account in accountManager.accounts {
-            guard let user = await accountManager.userProfileStore.getUserProfile(id: account.id) else { continue }
+            guard let user = await accountManager.userProfileStore.getUserProfile(id: account.userId) else { continue }
             newAccounts[user] = mailboxes.filter { $0.userId == account.userId }
         }
 
