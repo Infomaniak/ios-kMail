@@ -27,36 +27,44 @@ import SwiftUI
 
 struct BlockSenderView: View {
     @LazyInjectService private var matomo: MatomoUtils
+
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var mailboxManager: MailboxManager
+
     @State private var selectedRecipient: Recipient?
 
     let reportedMessages: [Message]
     let origin: ActionOrigin
 
-    var recipients: [Recipient] {
-        Array(
-            Set(
-                reportedMessages
-                    .compactMap(\.from.first)
-                    .filter { recipient in
-                        !recipient.isMe(currentMailboxEmail: mailboxManager.mailbox.email)
+    private var recipients: [Recipient] {
+        reportedMessages
+            .compactMap(\.from.first)
+            .filter { recipient in
+                !recipient.isMe(currentMailboxEmail: mailboxManager.mailbox.email)
+            }
+            .reduce(into: [String: Recipient]()) { uniqueRecipients, recipient in
+                if let existingRecipient = uniqueRecipients[recipient.email] {
+                    if (existingRecipient.name.isEmpty) && !(recipient.name.isEmpty) {
+                        uniqueRecipients[recipient.email] = recipient
                     }
-            )
-        )
-    }
-
-    private func getMessages(for recipient: Recipient) -> [Message] {
-        return reportedMessages.filter { message in
-            message.from.contains(where: { $0 == recipient })
-        }
+                } else {
+                    uniqueRecipients[recipient.email] = recipient
+                }
+            }
+            .values
+            .sorted {
+                let name1 = ($0.name.isEmpty ? $0.email : $0.name).lowercased()
+                let name2 = ($1.name.isEmpty ? $1.email : $1.name).lowercased()
+                return name1 < name2
+            }
     }
 
     var body: some View {
         VStack(spacing: 0) {
             Text(MailResourcesStrings.Localizable.blockAnExpeditorTitle)
                 .textStyle(.bodyMedium)
-                .padding(.bottom, value: .small)
+                .padding(.bottom, value: .medium)
+
             ForEach(recipients) { recipient in
                 Button {
                     selectedRecipient = recipient
@@ -72,13 +80,18 @@ struct BlockSenderView: View {
             }
         }
         .customAlert(item: $selectedRecipient) { recipient in
-            let messages = getMessages(for: recipient)
             ConfirmationBlockRecipientView(
                 recipient: recipient,
-                reportedMessages: messages,
+                reportedMessages: getMessages(for: recipient),
                 origin: origin,
                 onDismiss: { dismiss() }
             )
+        }
+    }
+
+    private func getMessages(for recipient: Recipient) -> [Message] {
+        return reportedMessages.filter { message in
+            message.from.contains(where: { $0 == recipient })
         }
     }
 }

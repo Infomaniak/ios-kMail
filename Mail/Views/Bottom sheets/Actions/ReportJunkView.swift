@@ -24,16 +24,25 @@ import MailCoreUI
 import MailResources
 import SwiftUI
 
-private let sampleMessages = Array(repeating: PreviewHelper.sampleMessage, count: 6)
-
 struct ReportJunkView: View {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
+    @EnvironmentObject private var mailboxManager: MailboxManager
     @Environment(\.dismiss) private var dismiss
 
     let reportedMessages: [Message]
-    let actions: [Action] = [.spam, .phishing, .blockList]
     let origin: ActionOrigin
+
+    private var filteredActions: [Action] {
+        let currentUserEmail = mailboxManager.mailbox.email
+        let uniqueSenders = Set(reportedMessages.compactMap { $0.from.first?.email })
+
+        if uniqueSenders == [currentUserEmail] {
+            return [.spam, .phishing]
+        } else {
+            return [.spam, .phishing, .blockList]
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -44,8 +53,8 @@ struct ReportJunkView: View {
                 .padding(.horizontal, value: .medium)
             }
 
-            ForEach(actions) { action in
-                if action != actions.first {
+            ForEach(filteredActions) { action in
+                if action != filteredActions.first {
                     IKDivider()
                 }
                 MessageActionView(targetMessages: reportedMessages, action: action, origin: origin)
@@ -56,6 +65,6 @@ struct ReportJunkView: View {
 }
 
 #Preview {
-    ReportJunkView(reportedMessages: sampleMessages, origin: .floatingPanel(source: .threadList))
+    ReportJunkView(reportedMessages: PreviewHelper.sampleMessages, origin: .floatingPanel(source: .threadList))
         .accentColor(AccentColor.pink.primary.swiftUIColor)
 }
