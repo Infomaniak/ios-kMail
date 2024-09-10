@@ -134,7 +134,7 @@ final class InlineAttachmentWorker: ObservableObject {
         }
 
         guard let mailboxManager else {
-            DDLogError("processInlineAttachments will fail without a mailboxManager")
+            Logger.general.error("processInlineAttachments will fail without a mailboxManager")
             return
         }
 
@@ -231,7 +231,7 @@ struct BodyImageProcessor {
                     return compressedImage
 
                 } catch {
-                    DDLogError("Error \(error) : Failed to fetch data  for attachment: \(attachment)")
+                    Logger.general.error("Error \(error) : Failed to fetch data  for attachment: \(attachment)")
                     return nil
                 }
             }

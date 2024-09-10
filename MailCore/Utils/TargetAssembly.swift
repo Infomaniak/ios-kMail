@@ -130,7 +130,7 @@ open class TargetAssembly {
     }
 
     open class func getTargetServices() -> [Factory] {
-        DDLogWarn("targetServices is not implemented in subclass ? Did you forget to override ?")
+        Logger.general.error("targetServices is not implemented in subclass ? Did you forget to override ?")
         return []
     }
 

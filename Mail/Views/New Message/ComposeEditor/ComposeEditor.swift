@@ -103,7 +103,7 @@ struct ComposeEditor: View {
         case .programMessage:
             showWorkInProgressSnackBar()
         default:
-            DDLogWarn("EditorToolbarAction not handled by ComposeEditor.")
+            Logger.view.warning("EditorToolbarAction not handled by ComposeEditor.")
         }
     }
 

@@ -43,7 +43,7 @@ public final class CacheManager: CacheManageable {
                 }
                 try await accountManager.currentContactManager?.refreshContactsAndAddressBooksIfNeeded()
             } catch {
-                DDLogError("Error while updating user account: \(error)")
+                Logger.general.error("Error while updating user account: \(error)")
             }
         }
     }

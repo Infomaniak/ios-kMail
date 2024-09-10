@@ -20,6 +20,7 @@ import CocoaLumberjackSwift
 import Foundation
 import MailResources
 import SwiftSoup
+import MailCore
 
 public enum MessageBodyUtils {
     private static var quoteDescriptors = [
@@ -89,7 +90,7 @@ public enum MessageBodyUtils {
             do {
                 return try await extractQuotesFromBody(messageBody)
             } catch {
-                DDLogError("Error splitting blockquote \(error)")
+                Logger.general.error("Error splitting blockquote \(error)")
                 return MessageBodyQuote(messageBody: messageBody)
             }
         }

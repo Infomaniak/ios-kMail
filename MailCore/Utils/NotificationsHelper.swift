@@ -54,7 +54,7 @@ public enum NotificationsHelper {
         do {
             try await UNUserNotificationCenter.current().requestAuthorization(options: options)
         } catch {
-            DDLogError("User has declined notifications")
+            Logger.general.error("User has declined notifications")
         }
     }
 

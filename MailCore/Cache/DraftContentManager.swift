@@ -347,7 +347,7 @@ extension DraftContentManager {
 
             NotificationCenter.default.post(name: .updateComposeMessageBody, object: nil)
         } catch {
-            DDLogError("An error occurred while transforming the DOM of the draft: \(error)")
+            Logger.general.error("An error occurred while transforming the DOM of the draft: \(error)")
         }
     }
 

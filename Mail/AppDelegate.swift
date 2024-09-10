@@ -42,7 +42,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // Prevent window restoration on macOS
         UserDefaults.standard.set(false, forKey: "NSQuitAlwaysKeepsWindows")
 
-        DDLogInfo("Application starting in foreground ? \(applicationState.applicationState != .background)")
+        Logger.general.info("Application starting in foreground ? \(self.applicationState.applicationState != .background)")
 
         // Register actions for notifications of incoming emails.
         notificationActions.registerEmailActionNotificationGroup()
@@ -69,7 +69,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        DDLogError("Failed registering for notifications: \(error)")
+        Logger.general.error("Failed registering for notifications: \(error)")
     }
 
     func application(_ application: UIApplication,

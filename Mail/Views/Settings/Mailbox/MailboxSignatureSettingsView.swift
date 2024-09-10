@@ -70,7 +70,7 @@ struct MailboxSignatureSettingsView: View {
             do {
                 try await mailboxManager.refreshAllSignatures()
             } catch {
-                DDLogError("Error fetching signatures: \(error.localizedDescription)")
+                Logger.view.error("Error fetching signatures: \(error.localizedDescription)")
             }
         }
     }

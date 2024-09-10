@@ -94,7 +94,7 @@ public final class UserAlertDisplayer: UserAlertDisplayable {
 
     private func presentInLocalNotification(message: String, action: UserAlertAction?) {
         if action != nil {
-            DDLogError("Action not implemented in notifications for now")
+            Logger.general.error("Action not implemented in notifications for now")
         }
 
         let content = UNMutableNotificationContent()
@@ -105,7 +105,7 @@ public final class UserAlertDisplayer: UserAlertDisplayable {
         let request = UNNotificationRequest(identifier: uuidString, content: content, trigger: trigger)
         let notificationCenter = UNUserNotificationCenter.current()
         notificationCenter.add(request) { error in
-            DDLogError("UserAlertDisplayer local notification error:\(String(describing: error)) ")
+            Logger.general.error("UserAlertDisplayer local notification error:\(String(describing: error)) ")
         }
 
         // Self destruct this notification, as used only for user feedback

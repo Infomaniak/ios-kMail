@@ -58,10 +58,10 @@ public final class ContactManager: ObservableObject, ContactManageable {
                 attributes: nil
             )
 
-            DDLogInfo(
-                "App contacts working path is: \(fileManager.urls(for: .documentDirectory, in: .userDomainMask).first?.absoluteString ?? "")"
+            Logger.general.info(
+                "App contacts working path is: \(self.fileManager.urls(for: .documentDirectory, in: .userDomainMask).first?.absoluteString ?? "")"
             )
-            DDLogInfo("Group container path is: \(groupDirectoryURL.absoluteString)")
+            Logger.general.info("Group container path is: \(self.groupDirectoryURL.absoluteString)")
         }
     }
 
@@ -98,7 +98,7 @@ public final class ContactManager: ObservableObject, ContactManageable {
         let refreshIntervalSeconds = 60.0
         if let lastRefreshDate,
            lastRefreshDate.addingTimeInterval(refreshIntervalSeconds) > Date() {
-            DDLogInfo("Skip updating contacts, we updated less than \(Int(refreshIntervalSeconds)) seconds ago")
+            Logger.general.info("Skip updating contacts, we updated less than \(Int(refreshIntervalSeconds)) seconds ago")
             return
         }
 
@@ -109,7 +109,7 @@ public final class ContactManager: ObservableObject, ContactManageable {
     public func refreshContactsAndAddressBooks() async throws {
         // We do not run an update of contacts in extension mode as we are too resource constrained
         guard !Bundle.main.isExtension else {
-            DDLogInfo("Skip updating contacts, we are in extension mode")
+            Logger.general.info("Skip updating contacts, we are in extension mode")
             return
         }
 
@@ -144,7 +144,7 @@ public final class ContactManager: ObservableObject, ContactManageable {
             if let matches = Regex(pattern: "(\\d+).realm.*")?.firstMatch(in: file.lastPathComponent), matches.count > 1 {
                 let fileUserId = matches[1]
                 if Int(fileUserId) == userId {
-                    DDLogInfo("Deleting file: \(file.lastPathComponent)")
+                    Logger.general.info("Deleting file: \(file.lastPathComponent)")
                     try? FileManager.default.removeItem(at: file)
                 }
             }

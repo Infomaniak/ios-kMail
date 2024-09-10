@@ -58,11 +58,11 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
             rootDocumentsURL = appGroupPathProvider.realmRootURL
             cacheDirectoryURL = appGroupPathProvider.cacheDirectoryURL
 
-            DDLogInfo("groupDirectoryURL: \(groupDirectoryURL)")
-            DDLogInfo(
-                "App working path is: \(fileManager.urls(for: .documentDirectory, in: .userDomainMask).first?.absoluteString ?? "")"
+            Logger.general.info("groupDirectoryURL: \(self.groupDirectoryURL)")
+            Logger.general.info(
+                "App working path is: \(self.fileManager.urls(for: .documentDirectory, in: .userDomainMask).first?.absoluteString ?? "")"
             )
-            DDLogInfo("Group container path is: \(groupDirectoryURL.absoluteString)")
+            Logger.general.info("Group container path is: \(self.groupDirectoryURL.absoluteString)")
         }
     }
 
@@ -134,7 +134,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 let fileUserId = matches[1]
                 let fileMailboxId = matches[2]
                 if Int(fileUserId) == userId && (mailboxId == nil || Int(fileMailboxId) == mailboxId) {
-                    DDLogInfo("Deleting file: \(file.lastPathComponent)")
+                    Logger.general.info("Deleting file: \(file.lastPathComponent)")
                     try? FileManager.default.removeItem(at: file)
                 }
             }
