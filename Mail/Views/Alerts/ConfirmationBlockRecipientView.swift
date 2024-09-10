@@ -31,7 +31,6 @@ struct ConfirmationBlockRecipientView: View {
 
     let recipient: Recipient
     let reportedMessages: [Message]
-    let action: Action = .block
     let origin: ActionOrigin
     var onDismiss: (() -> Void)?
 
@@ -58,7 +57,7 @@ struct ConfirmationBlockRecipientView: View {
                     matomo.track(eventWithCategory: .blockUserAction, name: "confirmSelectedUser")
                     try await actionsManager.performAction(
                         target: reportedMessages,
-                        action: action,
+                        action: .block,
                         origin: origin
                     )
                     onDismiss?()
