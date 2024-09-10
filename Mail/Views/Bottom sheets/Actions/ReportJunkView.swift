@@ -48,7 +48,6 @@ struct ReportJunkView: View {
                 if action != actions.first {
                     IKDivider()
                 }
-
                 MessageActionView(targetMessages: reportedMessages, action: action, origin: origin)
             }
         }
