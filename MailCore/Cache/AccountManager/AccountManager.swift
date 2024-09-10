@@ -104,8 +104,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         case missingAPIFetcher
         case failedToRemoveToken
         case failedToDeleteAPIToken(wrapping: Error)
-        case failedToLoadAccounts(wrapping: Error)
-        case failedToSaveAccounts(wrapping: Error)
     }
 
     public init() {
