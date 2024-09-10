@@ -48,8 +48,7 @@ struct BlockSenderView: View {
 
     private func getMessages(for recipient: Recipient) -> [Message] {
         return reportedMessages.filter { message in
-            message.from.contains(where: {$0 == recipient})
-            
+            message.from.contains(where: { $0 == recipient })
         }
     }
 
