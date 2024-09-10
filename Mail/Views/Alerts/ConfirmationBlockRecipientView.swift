@@ -26,7 +26,7 @@ import SwiftUI
 
 struct ConfirmationBlockRecipientView: View {
     @LazyInjectService private var matomo: MatomoUtils
-    
+
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
 
