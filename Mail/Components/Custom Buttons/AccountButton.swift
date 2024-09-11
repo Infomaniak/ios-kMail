@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -24,6 +25,8 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct AccountButton: View {
+    @LazyInjectService private var accountManager: AccountManager
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingNewAccountListView = false
@@ -38,7 +41,10 @@ struct AccountButton: View {
                     .accessibilityLabel(MailResourcesStrings.Localizable.titleMyAccount(1))
             }
         }
-        .floatingPanel(isPresented: $isShowingNewAccountListView) {
+        .floatingPanel(
+            isPresented: $isShowingNewAccountListView,
+            title: MailResourcesStrings.Localizable.titleMyAccount(accountManager.accounts.count)
+        ) {
             AccountListView(mailboxManager: mailboxManager)
         }
     }

@@ -78,10 +78,6 @@ struct AccountListView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 0) {
-                Text(MailResourcesStrings.Localizable.titleMyAccount(viewModel.accounts.count))
-                    .textStyle(.bodyMedium)
-                    .padding(.bottom, value: .medium)
-
                 VStack(spacing: IKPadding.extraSmall) {
                     ForEach(Array(viewModel.accounts.keys)) { account in
                         AccountCellView(
