@@ -186,7 +186,16 @@ public class ActionsManager: ObservableObject {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted(1))
         case .blockList:
             Task { @MainActor in
-                origin.nearestBlockSender?.wrappedValue = messagesWithDuplicates
+
+                let uniqueRecipient = self.getUniqueRecipients(reportedMessages: messages)
+                if uniqueRecipient.count > 1 {
+                    origin.nearestBlockSendersList?.wrappedValue = BlockRecipientState(blocklist: uniqueRecipient)
+                } else if let recipient = uniqueRecipient.first {
+                    origin.nearestBlockSender?.wrappedValue = BlockRecipientAlertState(
+                        recipient: recipient.key,
+                        message: messages.first!
+                    )
+                }
             }
         case .shareMailLink:
             guard let message = messagesWithDuplicates.first else { return }
@@ -305,5 +314,31 @@ public class ActionsManager: ObservableObject {
             return MailResourcesStrings.Localizable
                 .snackbarThreadDeletedPermanently(messages.uniqueThreadsInFolder(originFolder).count)
         }
+    }
+
+    private func getUniqueRecipients(reportedMessages messages: [Message]) -> [Recipient: Message] {
+        var uniqueRecipients = [String: Recipient]()
+        var recipientToMessage = [Recipient: Message]()
+
+        for reportedMessage in messages {
+            guard let recipient = reportedMessage.from.first,
+                  !recipient.isMe(currentMailboxEmail: mailboxManager.mailbox.email)
+            else {
+                continue
+            }
+
+            if let existingRecipient = uniqueRecipients[recipient.email] {
+                if (existingRecipient.name.isEmpty) && !(recipient.name.isEmpty) {
+                    let message = recipientToMessage[existingRecipient]
+                    uniqueRecipients[recipient.email] = recipient
+                    recipientToMessage[recipient] = message
+                    recipientToMessage[existingRecipient] = nil
+                }
+            } else {
+                uniqueRecipients[recipient.email] = recipient
+                recipientToMessage[recipient] = reportedMessage
+            }
+        }
+        return recipientToMessage
     }
 }

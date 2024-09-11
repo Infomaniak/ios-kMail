@@ -31,7 +31,7 @@ struct ConfirmationBlockRecipientView: View {
     @EnvironmentObject private var actionsManager: ActionsManager
 
     let recipient: Recipient
-    let reportedMessages: [Message]
+    let reportedMessage: Message
     let origin: ActionOrigin
     var onDismiss: (() -> Void)?
 
@@ -56,7 +56,7 @@ struct ConfirmationBlockRecipientView: View {
                 Task {
                     matomo.track(eventWithCategory: .blockUserAction, name: "confirmSelectedUser")
                     try await actionsManager.performAction(
-                        target: reportedMessages,
+                        target: [reportedMessage],
                         action: .block,
                         origin: origin
                     )
@@ -70,7 +70,7 @@ struct ConfirmationBlockRecipientView: View {
 #Preview {
     ConfirmationBlockRecipientView(
         recipient: PreviewHelper.sampleRecipient1,
-        reportedMessages: PreviewHelper.sampleMessages,
+        reportedMessage: PreviewHelper.sampleMessage,
         origin: .floatingPanel(source: .threadList)
     )
 }

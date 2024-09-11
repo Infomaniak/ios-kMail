@@ -134,6 +134,8 @@ public enum PreviewHelper {
         count: 6
     )
 
+    public static let sampleRecipientWithMessage = [PreviewHelper.sampleRecipient1: sampleMessage]
+
     public static let samplePresentableBody = PresentableBody(message: sampleMessage)
 
     public static let sampleRecipient1 = Recipient(email: "from@example.com", name: "John Doe")

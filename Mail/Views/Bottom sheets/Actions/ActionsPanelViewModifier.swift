@@ -18,6 +18,7 @@
 
 import Foundation
 import MailCore
+import MailResources
 import SwiftModalPresentation
 import SwiftUI
 
@@ -43,7 +44,8 @@ struct ActionsPanelViewModifier: ViewModifier {
     @ModalState private var reportForJunkMessages: [Message]?
     @ModalState private var reportedForDisplayProblemMessage: Message?
     @ModalState private var reportedForPhishingMessage: Message?
-    @ModalState private var blockSenderMessages: [Message]?
+    @ModalState private var blockSender: BlockRecipientAlertState?
+    @ModalState private var blockSendersList: BlockRecipientState?
     @ModalState private var messagesToMove: [Message]?
     @ModalState private var flushAlert: FlushAlertState?
     @ModalState private var shareMailLink: ShareMailLinkResult?
@@ -60,7 +62,8 @@ struct ActionsPanelViewModifier: ViewModifier {
             originFolder: originFolder?.freezeIfNeeded(),
             nearestFlushAlert: $flushAlert,
             nearestMessagesToMoveSheet: $messagesToMove,
-            nearestBlockSender: $blockSenderMessages,
+            nearestBlockSender: $blockSender,
+            nearestBlockSendersList: $blockSendersList,
             nearestReportJunkMessageActionsPanel: $reportForJunkMessages,
             nearestReportedForPhishingMessageAlert: $reportedForPhishingMessage,
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
@@ -84,8 +87,16 @@ struct ActionsPanelViewModifier: ViewModifier {
         .floatingPanel(item: $reportForJunkMessages) { reportForJunkMessages in
             ReportJunkView(reportedMessages: reportForJunkMessages, origin: origin)
         }
-        .floatingPanel(item: $blockSenderMessages) { blockSenderMessages in
-            BlockSenderView(reportedMessages: blockSenderMessages, origin: origin)
+        .floatingPanel(item: $blockSendersList,
+                       title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
+            BlockSenderView(reportedRecipientWithMessage: blockSenderState.blocklist, origin: origin)
+        }
+        .customAlert(item: $blockSender) { blockSenderState in
+            ConfirmationBlockRecipientView(
+                recipient: blockSenderState.recipient,
+                reportedMessage: blockSenderState.message,
+                origin: origin
+            )
         }
         .customAlert(item: $reportedForDisplayProblemMessage) { message in
             ReportDisplayProblemView(message: message)
