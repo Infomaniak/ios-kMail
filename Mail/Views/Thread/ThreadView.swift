@@ -25,14 +25,6 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-private struct ScrollOffsetPreferenceKey: PreferenceKey {
-    static var defaultValue: CGFloat = .zero
-
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        // No need to implement it
-    }
-}
-
 struct ThreadView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
@@ -55,19 +47,7 @@ struct ThreadView: View {
             VStack(spacing: IKPadding.medium) {
                 VStack(alignment: .leading, spacing: IKPadding.small) {
                     Text(thread.formattedSubject)
-                        .textStyle(.header2)
-                        .multilineTextAlignment(.leading)
-                        .lineSpacing(8)
-                        .padding(.top, value: .small)
-                        .overlay {
-                            GeometryReader { proxy in
-                                Color.clear
-                                    .preference(
-                                        key: ScrollOffsetPreferenceKey.self,
-                                        value: proxy.frame(in: .named("scrollView")).maxY
-                                    )
-                            }
-                        }
+                        .threadTitle()
 
                     ThreadTagsListView(externalTag: externalTag, searchFolderName: thread.searchFolderName)
                 }
@@ -93,7 +73,7 @@ struct ThreadView: View {
                 await markThreadAsReadIfNeeded(thread: newValue)
             }
         }
-        .navigationTitle(displayNavigationTitle ? thread.formattedSubject : " ")
+        .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
         .navigationBarThreadViewStyle(appearance: displayNavigationTitle ? BarAppearanceConstants
             .threadViewNavigationBarScrolledAppearance : BarAppearanceConstants.threadViewNavigationBarAppearance)
         .backButtonDisplayMode(.minimal)
