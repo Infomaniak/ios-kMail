@@ -57,11 +57,12 @@ public final class ContactManager: ObservableObject, ContactManageable {
                 withIntermediateDirectories: true,
                 attributes: nil
             )
-
+            let fileManagerURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first?.absoluteString ?? ""
             Logger.general.info(
-                "App contacts working path is: \(self.fileManager.urls(for: .documentDirectory, in: .userDomainMask).first?.absoluteString ?? "")"
+                "App contacts working path is: \(fileManagerURL)"
             )
-            Logger.general.info("Group container path is: \(self.groupDirectoryURL.absoluteString)")
+            let groupDirectoryURL = groupDirectoryURL.absoluteString
+            Logger.general.info("Group container path is: \(groupDirectoryURL)")
         }
     }
 

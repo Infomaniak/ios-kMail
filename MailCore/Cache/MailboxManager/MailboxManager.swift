@@ -57,12 +57,15 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
             groupDirectoryURL = appGroupPathProvider.groupDirectoryURL
             rootDocumentsURL = appGroupPathProvider.realmRootURL
             cacheDirectoryURL = appGroupPathProvider.cacheDirectoryURL
-
-            Logger.general.info("groupDirectoryURL: \(self.groupDirectoryURL)")
-            Logger.general.info(
-                "App working path is: \(self.fileManager.urls(for: .documentDirectory, in: .userDomainMask).first?.absoluteString ?? "")"
-            )
-            Logger.general.info("Group container path is: \(self.groupDirectoryURL.absoluteString)")
+            
+            let groupDirectoryURLBefore = groupDirectoryURL
+            Logger.general.info("groupDirectoryURLBefore: \(groupDirectoryURLBefore)")
+            
+            let fileManagerUrl = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first?.absoluteString ?? ""
+            Logger.general.info("App working path is: \(fileManagerUrl)")
+            
+            let groupDirectoryURLAfter = groupDirectoryURL.absoluteString
+            Logger.general.info("Group container path is: \(groupDirectoryURLAfter)")
         }
     }
 

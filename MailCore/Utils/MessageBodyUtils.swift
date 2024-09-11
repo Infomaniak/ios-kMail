@@ -18,9 +18,9 @@
 
 import CocoaLumberjackSwift
 import Foundation
+import MailCore
 import MailResources
 import SwiftSoup
-import MailCore
 
 public enum MessageBodyUtils {
     private static var quoteDescriptors = [

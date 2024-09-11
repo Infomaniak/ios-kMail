@@ -42,7 +42,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         // Prevent window restoration on macOS
         UserDefaults.standard.set(false, forKey: "NSQuitAlwaysKeepsWindows")
 
-        Logger.general.info("Application starting in foreground ? \(self.applicationState.applicationState != .background)")
+        let isInForeground = applicationState.applicationState != .background
+        Logger.general.info("Application starting in foreground ? \(isInForeground)")
 
         // Register actions for notifications of incoming emails.
         notificationActions.registerEmailActionNotificationGroup()

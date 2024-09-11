@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2024 Infomaniak Network SA
@@ -19,14 +18,12 @@
 
 import OSLog
 
-extension Logger {
-
+public extension Logger {
     private static var subsystem = Bundle.main.bundleIdentifier ?? "com.infomaniak.mail"
 
-    public static let view = Logger(subsystem: subsystem, category: "view")
+    static let view = Logger(subsystem: subsystem, category: "view")
 
-    public static let general = Logger(subsystem: subsystem, category: "general")
+    static let general = Logger(subsystem: subsystem, category: "general")
 
-    public static let debug = Logger(subsystem: subsystem, category: "debug")
-
+    static let debug = Logger(subsystem: subsystem, category: "debug")
 }
