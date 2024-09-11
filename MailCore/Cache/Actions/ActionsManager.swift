@@ -189,9 +189,9 @@ public class ActionsManager: ObservableObject {
 
                 let uniqueRecipient = self.getUniqueRecipients(reportedMessages: messages)
                 if uniqueRecipient.count > 1 {
-                    origin.nearestBlockSendersList?.wrappedValue = BlockRecipientState(blocklist: uniqueRecipient)
+                    origin.nearestBlockSendersList?.wrappedValue = BlockRecipientState(recipientsToMessage: uniqueRecipient)
                 } else if let recipient = uniqueRecipient.first {
-                    origin.nearestBlockSender?.wrappedValue = BlockRecipientAlertState(
+                    origin.nearestBlockSenderAlert?.wrappedValue = BlockRecipientAlertState(
                         recipient: recipient.key,
                         message: messages.first!
                     )

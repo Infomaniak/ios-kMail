@@ -44,7 +44,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     @ModalState private var reportForJunkMessages: [Message]?
     @ModalState private var reportedForDisplayProblemMessage: Message?
     @ModalState private var reportedForPhishingMessage: Message?
-    @ModalState private var blockSender: BlockRecipientAlertState?
+    @ModalState private var blockSenderAlert: BlockRecipientAlertState?
     @ModalState private var blockSendersList: BlockRecipientState?
     @ModalState private var messagesToMove: [Message]?
     @ModalState private var flushAlert: FlushAlertState?
@@ -62,7 +62,7 @@ struct ActionsPanelViewModifier: ViewModifier {
             originFolder: originFolder?.freezeIfNeeded(),
             nearestFlushAlert: $flushAlert,
             nearestMessagesToMoveSheet: $messagesToMove,
-            nearestBlockSender: $blockSender,
+            nearestBlockSender: $blockSenderAlert,
             nearestBlockSendersList: $blockSendersList,
             nearestReportJunkMessageActionsPanel: $reportForJunkMessages,
             nearestReportedForPhishingMessageAlert: $reportedForPhishingMessage,
@@ -89,9 +89,9 @@ struct ActionsPanelViewModifier: ViewModifier {
         }
         .floatingPanel(item: $blockSendersList,
                        title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
-            BlockSenderView(reportedRecipientWithMessage: blockSenderState.blocklist, origin: origin)
+            BlockSenderView(recipientsToMessage: blockSenderState.blocklist, origin: origin)
         }
-        .customAlert(item: $blockSender) { blockSenderState in
+        .customAlert(item: $blockSenderAlert) { blockSenderState in
             ConfirmationBlockRecipientView(
                 recipient: blockSenderState.recipient,
                 reportedMessage: blockSenderState.message,

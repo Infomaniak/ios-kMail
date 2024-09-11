@@ -20,8 +20,8 @@ import Foundation
 
 public struct BlockRecipientState: Identifiable {
     public var id = UUID()
-    public let blocklist: [Recipient: Message]
-    public init(blocklist: [Recipient: Message]) {
+    public let recipientsToMessage: [Recipient: Message]
+    public init(recipientsToMessage: [Recipient: Message]) {
         self.blocklist = blocklist
     }
 }

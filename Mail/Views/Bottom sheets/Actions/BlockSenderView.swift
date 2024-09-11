@@ -34,7 +34,7 @@ struct BlockSenderView: View {
     @State private var selectedRecipient: Recipient?
     @State private var recipients = [Recipient]()
 
-    let reportedRecipientWithMessage: [Recipient: Message]
+    let recipientsToMessage: [Recipient: Message]
     let origin: ActionOrigin
 
     var body: some View {
@@ -56,14 +56,14 @@ struct BlockSenderView: View {
         .customAlert(item: $selectedRecipient) { recipient in
             ConfirmationBlockRecipientView(
                 recipient: recipient,
-                reportedMessage: reportedRecipientWithMessage[recipient]!,
+                reportedMessage: recipientsToMessage[recipient]!,
                 origin: origin
             ) {
                 dismiss()
             }
         }
         .onAppear {
-            recipients = reportedRecipientWithMessage.keys
+            recipients = recipientsToMessage.keys
                 .sorted {
                     let name1 = ($0.name.isEmpty ? $0.email : $0.name)
                     let name2 = ($1.name.isEmpty ? $1.email : $1.name)
@@ -75,7 +75,7 @@ struct BlockSenderView: View {
 
 #Preview {
     BlockSenderView(
-        reportedRecipientWithMessage: PreviewHelper.sampleRecipientWithMessage,
+        recipientsToMessage: PreviewHelper.sampleRecipientWithMessage,
         origin: .floatingPanel(source: .threadList)
     )
     .accentColor(AccentColor.pink.primary.swiftUIColor)
