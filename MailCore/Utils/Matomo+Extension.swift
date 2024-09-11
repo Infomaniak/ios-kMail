@@ -65,6 +65,7 @@ public extension MatomoUtils.EventCategory {
     // Actions
 
     static let attachmentActions = MatomoUtils.EventCategory(displayName: "attachmentActions")
+    static let blockUserAction = MatomoUtils.EventCategory(displayName: "blockUserAction")
     static let bottomSheetMessageActions = MatomoUtils.EventCategory(displayName: "bottomSheetMessageActions")
     static let bottomSheetThreadActions = MatomoUtils.EventCategory(displayName: "bottomSheetThreadActions")
     static let contactActions = MatomoUtils.EventCategory(displayName: "contactActions")

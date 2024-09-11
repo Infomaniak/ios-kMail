@@ -39,7 +39,9 @@ public struct ActionOrigin {
     private(set) var nearestMessagesActionsPanel: Binding<[Message]?>?
     private(set) var nearestFlushAlert: Binding<FlushAlertState?>?
     private(set) var nearestMessagesToMoveSheet: Binding<[Message]?>?
-    private(set) var nearestReportJunkMessageActionsPanel: Binding<Message?>?
+    private(set) var nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>?
+    private(set) var nearestBlockSendersList: Binding<BlockRecipientState?>?
+    private(set) var nearestReportJunkMessageActionsPanel: Binding<[Message]?>?
     private(set) var nearestReportedForPhishingMessageAlert: Binding<Message?>?
     private(set) var nearestReportedForDisplayProblemMessageAlert: Binding<Message?>?
     private(set) var nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>?
@@ -50,7 +52,9 @@ public struct ActionOrigin {
         nearestMessagesActionsPanel: Binding<[Message]?>? = nil,
         nearestFlushAlert: Binding<FlushAlertState?>? = nil,
         nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
-        nearestReportJunkMessageActionsPanel: Binding<Message?>? = nil,
+        nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>? = nil,
+        nearestBlockSendersList: Binding<BlockRecipientState?>? = nil,
+        nearestReportJunkMessageActionsPanel: Binding<[Message]?>? = nil,
         nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
         nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
         nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil
@@ -60,6 +64,8 @@ public struct ActionOrigin {
         self.nearestMessagesActionsPanel = nearestMessagesActionsPanel
         self.nearestFlushAlert = nearestFlushAlert
         self.nearestMessagesToMoveSheet = nearestMessagesToMoveSheet
+        self.nearestBlockSenderAlert = nearestBlockSenderAlert
+        self.nearestBlockSendersList = nearestBlockSendersList
         self.nearestReportJunkMessageActionsPanel = nearestReportJunkMessageActionsPanel
         self.nearestReportedForPhishingMessageAlert = nearestReportedForPhishingMessageAlert
         self.nearestReportedForDisplayProblemMessageAlert = nearestReportedForDisplayProblemMessageAlert
@@ -75,7 +81,9 @@ public struct ActionOrigin {
                                      originFolder: Folder? = nil,
                                      nearestFlushAlert: Binding<FlushAlertState?>? = nil,
                                      nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
-                                     nearestReportJunkMessageActionsPanel: Binding<Message?>? = nil,
+                                     nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>? = nil,
+                                     nearestBlockSendersList: Binding<BlockRecipientState?>? = nil,
+                                     nearestReportJunkMessageActionsPanel: Binding<[Message]?>? = nil,
                                      nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
                                      nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
                                      nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil) -> ActionOrigin {
@@ -84,6 +92,8 @@ public struct ActionOrigin {
             folder: originFolder,
             nearestFlushAlert: nearestFlushAlert,
             nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
+            nearestBlockSenderAlert: nearestBlockSenderAlert,
+            nearestBlockSendersList: nearestBlockSendersList,
             nearestReportJunkMessageActionsPanel: nearestReportJunkMessageActionsPanel,
             nearestReportedForPhishingMessageAlert: nearestReportedForPhishingMessageAlert,
             nearestReportedForDisplayProblemMessageAlert: nearestReportedForDisplayProblemMessageAlert,

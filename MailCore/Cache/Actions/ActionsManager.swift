@@ -167,8 +167,7 @@ public class ActionsManager: ObservableObject {
             }
         case .reportJunk:
             Task { @MainActor in
-                assert(messagesWithDuplicates.count <= 1, "More than one message was passed for junk report")
-                origin.nearestReportJunkMessageActionsPanel?.wrappedValue = messagesWithDuplicates.first
+                origin.nearestReportJunkMessageActionsPanel?.wrappedValue = messagesWithDuplicates
             }
         case .spam:
             let messagesFromFolder = messagesWithDuplicates.fromFolderOrSearch(originFolder: origin.frozenFolder)
@@ -185,6 +184,19 @@ public class ActionsManager: ObservableObject {
             guard let message = messagesWithDuplicates.first else { return }
             try await mailboxManager.apiFetcher.blockSender(message: message)
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted(1))
+        case .blockList:
+            Task { @MainActor in
+
+                let uniqueRecipient = self.getUniqueRecipients(reportedMessages: messages)
+                if uniqueRecipient.count > 1 {
+                    origin.nearestBlockSendersList?.wrappedValue = BlockRecipientState(recipientsToMessage: uniqueRecipient)
+                } else if let recipient = uniqueRecipient.first {
+                    origin.nearestBlockSenderAlert?.wrappedValue = BlockRecipientAlertState(
+                        recipient: recipient.key,
+                        message: messages.first!
+                    )
+                }
+            }
         case .shareMailLink:
             guard let message = messagesWithDuplicates.first else { return }
             let result = try await mailboxManager.apiFetcher.shareMailLink(message: message)
@@ -302,5 +314,31 @@ public class ActionsManager: ObservableObject {
             return MailResourcesStrings.Localizable
                 .snackbarThreadDeletedPermanently(messages.uniqueThreadsInFolder(originFolder).count)
         }
+    }
+
+    private func getUniqueRecipients(reportedMessages messages: [Message]) -> [Recipient: Message] {
+        var uniqueRecipients = [String: Recipient]()
+        var recipientToMessage = [Recipient: Message]()
+
+        for reportedMessage in messages {
+            guard let recipient = reportedMessage.from.first,
+                  !recipient.isMe(currentMailboxEmail: mailboxManager.mailbox.email)
+            else {
+                continue
+            }
+
+            if let existingRecipient = uniqueRecipients[recipient.email] {
+                if (existingRecipient.name.isEmpty) && !(recipient.name.isEmpty) {
+                    let message = recipientToMessage[existingRecipient]
+                    uniqueRecipients[recipient.email] = recipient
+                    recipientToMessage[recipient] = message
+                    recipientToMessage[existingRecipient] = nil
+                }
+            } else {
+                uniqueRecipients[recipient.email] = recipient
+                recipientToMessage[recipient] = reportedMessage
+            }
+        }
+        return recipientToMessage
     }
 }

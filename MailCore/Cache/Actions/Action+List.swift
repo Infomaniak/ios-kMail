@@ -111,7 +111,7 @@ extension Action: CaseIterable {
         let star = messages.allSatisfy(\.flagged)
 
         let listActions: [Action] = [
-            spam ? .nonSpam : .spam,
+            spam ? .nonSpam : .reportJunk,
             star ? .unstar : .star
         ]
 
@@ -125,7 +125,7 @@ extension Action: CaseIterable {
         let showUnstar = messages.contains { $0.flagged }
 
         let spam = originFolder?.role == .spam
-        let spamAction: Action? = spam ? .nonSpam : .spam
+        let spamAction: Action? = spam ? .nonSpam : .reportJunk
 
         let tempListActions: [Action?] = [
             .openMovePanel,
@@ -274,6 +274,12 @@ public extension Action {
     )
     static let block = Action(
         id: "block",
+        title: MailResourcesStrings.Localizable.actionBlockSender,
+        iconResource: MailResourcesAsset.blockUser,
+        matomoName: "blockUser"
+    )
+    static let blockList = Action(
+        id: "blockList",
         title: MailResourcesStrings.Localizable.actionBlockSender,
         iconResource: MailResourcesAsset.blockUser,
         matomoName: "blockUser"

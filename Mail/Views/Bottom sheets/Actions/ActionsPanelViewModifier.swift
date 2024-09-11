@@ -18,6 +18,7 @@
 
 import Foundation
 import MailCore
+import MailResources
 import SwiftModalPresentation
 import SwiftUI
 
@@ -40,9 +41,11 @@ extension View {
 struct ActionsPanelViewModifier: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @ModalState private var reportForJunkMessage: Message?
+    @ModalState private var reportForJunkMessages: [Message]?
     @ModalState private var reportedForDisplayProblemMessage: Message?
     @ModalState private var reportedForPhishingMessage: Message?
+    @ModalState private var blockSenderAlert: BlockRecipientAlertState?
+    @ModalState private var blockSendersList: BlockRecipientState?
     @ModalState private var messagesToMove: [Message]?
     @ModalState private var flushAlert: FlushAlertState?
     @ModalState private var shareMailLink: ShareMailLinkResult?
@@ -59,7 +62,9 @@ struct ActionsPanelViewModifier: ViewModifier {
             originFolder: originFolder?.freezeIfNeeded(),
             nearestFlushAlert: $flushAlert,
             nearestMessagesToMoveSheet: $messagesToMove,
-            nearestReportJunkMessageActionsPanel: $reportForJunkMessage,
+            nearestBlockSenderAlert: $blockSenderAlert,
+            nearestBlockSendersList: $blockSendersList,
+            nearestReportJunkMessageActionsPanel: $reportForJunkMessages,
             nearestReportedForPhishingMessageAlert: $reportedForPhishingMessage,
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
             nearestShareMailLinkPanel: $shareMailLink
@@ -79,8 +84,19 @@ struct ActionsPanelViewModifier: ViewModifier {
             )
             .sheetViewStyle()
         }
-        .floatingPanel(item: $reportForJunkMessage) { reportForJunkMessage in
-            ReportJunkView(reportedMessage: reportForJunkMessage, origin: origin)
+        .floatingPanel(item: $reportForJunkMessages) { reportForJunkMessages in
+            ReportJunkView(reportedMessages: reportForJunkMessages, origin: origin)
+        }
+        .floatingPanel(item: $blockSendersList,
+                       title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
+            BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: origin)
+        }
+        .customAlert(item: $blockSenderAlert) { blockSenderState in
+            ConfirmationBlockRecipientView(
+                recipient: blockSenderState.recipient,
+                reportedMessage: blockSenderState.message,
+                origin: origin
+            )
         }
         .customAlert(item: $reportedForDisplayProblemMessage) { message in
             ReportDisplayProblemView(message: message)

@@ -27,11 +27,22 @@ import SwiftUI
 struct ReportJunkView: View {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
+    @EnvironmentObject private var mailboxManager: MailboxManager
     @Environment(\.dismiss) private var dismiss
 
-    let reportedMessage: Message
-    let actions: [Action] = [.spam, .phishing, .block]
+    let reportedMessages: [Message]
     let origin: ActionOrigin
+
+    private var filteredActions: [Action] {
+        let currentUserEmail = mailboxManager.mailbox.email
+        let uniqueSenders = Set(reportedMessages.compactMap { $0.from.first?.email })
+
+        if uniqueSenders == [currentUserEmail] {
+            return [.spam, .phishing]
+        } else {
+            return [.spam, .phishing, .blockList]
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -42,12 +53,11 @@ struct ReportJunkView: View {
                 .padding(.horizontal, value: .medium)
             }
 
-            ForEach(actions) { action in
-                if action != actions.first {
+            ForEach(filteredActions) { action in
+                if action != filteredActions.first {
                     IKDivider()
                 }
-
-                MessageActionView(targetMessages: [reportedMessage], action: action, origin: origin)
+                MessageActionView(targetMessages: reportedMessages, action: action, origin: origin)
             }
         }
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ReportJunkView"])
@@ -55,6 +65,6 @@ struct ReportJunkView: View {
 }
 
 #Preview {
-    ReportJunkView(reportedMessage: PreviewHelper.sampleMessage, origin: .floatingPanel(source: .threadList))
+    ReportJunkView(reportedMessages: PreviewHelper.sampleMessages, origin: .floatingPanel(source: .threadList))
         .accentColor(AccentColor.pink.primary.swiftUIColor)
 }
