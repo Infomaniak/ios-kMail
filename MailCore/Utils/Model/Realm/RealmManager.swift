@@ -43,7 +43,7 @@ public struct RealmManager: RealmManageable {
             ], key: "Realm")
         }
 
-        DDLogError("Realm files \(realmInConflict) will be deleted")
+        Logger.general.error("Realm files \(realmInConflict) will be deleted")
 
         _ = try? Realm.deleteFiles(for: configuration)
     }

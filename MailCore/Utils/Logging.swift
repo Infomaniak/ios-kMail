@@ -23,6 +23,7 @@ import Foundation
 import InfomaniakCore
 import InfomaniakDI
 import InfomaniakLogin
+import OSLog
 import RealmSwift
 import Sentry
 
@@ -45,7 +46,7 @@ public enum Logging {
     ///   - realmConfiguration: The configuration of the current Realm
     public static func reportRealmOpeningError(_ error: Error, realmConfiguration: Realm.Configuration, afterRetry: Bool) {
         let realmInConflict = realmConfiguration.fileURL?.lastPathComponent ?? ""
-        DDLogError("Unable to load Realm files \(realmInConflict) after a retry:\(afterRetry)")
+        Logger.general.error("Unable to load Realm files \(realmInConflict) after a retry:\(afterRetry)")
 
         SentrySDK.capture(error: error) { scope in
             scope.setContext(value: [
@@ -120,7 +121,7 @@ public enum Logging {
                     try FileManager.default.removeItem(at: fileURL)
                 }
             } catch {
-                DDLogError("resetAppForUITestsIfNeeded \(error)")
+                Logger.general.error("resetAppForUITestsIfNeeded \(error)")
             }
         }
         #endif
@@ -156,11 +157,11 @@ public enum Log {
                                        data: metadata)
 
         if level == .error {
-            DDLogError(message)
-            DDLogError("old token: \(oldTokenMetadata)")
-            DDLogError("new token: \(newTokenMetadata)")
+            Logger.general.error("\(message)")
+            Logger.general.error("old token: \(String(describing: oldTokenMetadata))")
+            Logger.general.error("new token: \(String(describing: newTokenMetadata))")
         } else {
-            DDLogInfo(message)
+            Logger.general.error("\(message)")
         }
     }
 }

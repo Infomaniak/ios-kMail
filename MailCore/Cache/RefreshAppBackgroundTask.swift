@@ -59,7 +59,7 @@ public class RefreshAppBackgroundTask: BackgroundTaskable {
         do {
             try BGTaskScheduler.shared.submit(request)
         } catch {
-            DDLogError("Could not schedule app refresh: \(error)")
+            Logger.general.error("Could not schedule app refresh: \(error)")
         }
     }
 

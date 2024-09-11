@@ -210,7 +210,7 @@ public final class AttachmentsManagerWorker {
                 return attachmentTitle
 
             } catch {
-                DDLogError("Error while creating attachment: \(error.localizedDescription)")
+                Logger.general.error("Error while creating attachment: \(error.localizedDescription)")
                 await updateAttachmentUploadError(localAttachment, error: error)
                 return nil
             }

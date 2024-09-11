@@ -44,7 +44,7 @@ extension WebViewModel {
                 return .noRemoteContent
             }
         } catch {
-            DDLogError("An error occurred while parsing body \(error)")
+            Logger.general.error("An error occurred while parsing body \(error)")
             return .errorParsingBody
         }
     }
