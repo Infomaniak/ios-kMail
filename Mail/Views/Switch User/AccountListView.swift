@@ -77,19 +77,28 @@ struct AccountListView: View {
 
     var body: some View {
         ScrollView {
-            Text(MailResourcesStrings.Localizable.titleMyAccount(viewModel.accounts.count))
-                .textStyle(.bodyMedium)
+            VStack(spacing: 0) {
+                Text(MailResourcesStrings.Localizable.titleMyAccount(viewModel.accounts.count))
+                    .textStyle(.bodyMedium)
+                    .padding(.bottom, value: .medium)
 
-            VStack(spacing: IKPadding.small) {
-                ForEach(Array(viewModel.accounts.keys)) { account in
-                    AccountCellView(selectedUserId: $viewModel.selectedUserId, mailboxManager: mailboxManager, account: account)
+                VStack(spacing: IKPadding.extraSmall) {
+                    ForEach(Array(viewModel.accounts.keys)) { account in
+                        AccountCellView(
+                            selectedUserId: $viewModel.selectedUserId,
+                            mailboxManager: mailboxManager,
+                            account: account
+                        )
+                        .padding(.horizontal, value: .medium)
+                    }
                 }
+
+                IKDivider()
+                    .padding(.vertical, value: .small)
+
+                AccountActionsView()
+                    .padding(.horizontal, value: .small)
             }
-            .padding(.horizontal, value: .medium)
-
-            IKDivider()
-
-            AccountActionsView()
         }
         .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
             orientationManager.setOrientationLock(.all)

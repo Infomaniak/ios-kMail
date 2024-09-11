@@ -37,7 +37,7 @@ struct AccountActionsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(spacing: 0) {
             ForEach(actions) { action in
                 Button {
                     handleAction(action)
