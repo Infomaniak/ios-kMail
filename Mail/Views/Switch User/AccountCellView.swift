@@ -75,6 +75,7 @@ struct AccountHeaderCell: View {
     var body: some View {
         HStack {
             AvatarView(mailboxManager: mailboxManager, contactConfiguration: .user(user: account.user), size: 40)
+
             VStack(alignment: .leading, spacing: 0) {
                 Text(account.user.displayName)
                     .textStyle(.bodyMedium)
@@ -87,7 +88,8 @@ struct AccountHeaderCell: View {
             switch type {
             case .switchAccount:
                 if isSelected {
-                    IKIcon(MailResourcesAsset.check)
+                    MailResourcesAsset.check.swiftUIImage
+                        .iconSize(.medium)
                         .foregroundStyle(.tint)
                 }
             case .selectComposeMailbox:
@@ -95,15 +97,6 @@ struct AccountHeaderCell: View {
             }
         }
         .padding(.vertical, value: .small)
-        .padding(.horizontal, value: .medium)
-        .background {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
-        }
     }
 }
 

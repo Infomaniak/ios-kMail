@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: it, Italian
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Tue, 09 Jul 2024 08:28:40 +0200
+ * Exported by: elena willen
+ * Exported at: Wed, 04 Sep 2024 11:22:24 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -304,6 +304,9 @@
 /* loco:628216272fd1aa2f0249a892 */
 "buttonAccountDisconnect" = "Disconnettere l’account";
 
+/* loco:66d057655e6c36f415058842 */
+"buttonAccountLogOut" = "Disconnettersi";
+
 /* loco:6282142ca5e6f61ada1c4014 */
 "buttonAccountSwitch" = "Modifica del conto";
 
@@ -312,6 +315,9 @@
 
 /* loco:62cbe10de2840a0cdc2be0d2 */
 "buttonAddEmailAddress" = "Aggiungere un indirizzo e-mail";
+
+/* loco:66a9f94b98b834125d06aa46 */
+"buttonAddExistingAddress" = "Aggiungi un indirizzo esistente";
 
 /* loco:6437c062dd576a7631052413 */
 "buttonAttachMailbox" = "Aggiungi l’indirizzo e-mail";
@@ -639,6 +645,9 @@
 
 /* loco:6294648c19755a1ae9494462 */
 "dateTitle" = "Data:";
+
+/* loco:66cdadf9bc780d2bbd033462 */
+"deleteAccountWarning" = "La cancellazione dell’account sarà definitiva. Non sarà possibile riattivare l’account.";
 
 /* loco:627e3fa5774ef45bfd4d3b92 */
 "draftFolder" = "Bozze";
@@ -1162,6 +1171,9 @@
 /* loco:62bb14784ae7d90af73a4c93 */
 "settingsAccentColorDescription" = "Scegliere il colore d’accento per l’applicazione";
 
+/* loco:66aa2edfd301963193056853 */
+"settingsAccountManagementTitle" = "Gestione dei conti";
+
 /* loco:65391d2584dd77c18b02f0e2 */
 "settingsAiEngineDescription" = "Selezionare l’assistente di scrittura";
 
@@ -1652,7 +1664,7 @@
 "titleMyAccount" = "Il mio account";
 
 /* loco:62860a56f6ea2c34fb742092 */
-"titleMyAccounts" = "I miei conti";
+"titleMyAccount-plural" = "I miei conti";
 
 /* loco:62665fa13789aa7e8353ad62 */
 "toTitle" = "A:";
@@ -1686,6 +1698,9 @@
 
 /* loco:641d60b6f5c19a18734d9192 */
 "urlUserReportiOS" = "https://feedback.userreport.com/b0fada78-1555-4c59-abad-423e887534d5/";
+
+/* loco:66cdb381f11974e3d00d5703 */
+"usernameTitle" = "Nome utente";
 
 /* loco:65957e6e7dfe315a5d02add2 */
 "warningEventHasPassed" = "Questo evento è già passato";

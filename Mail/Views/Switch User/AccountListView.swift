@@ -67,9 +67,8 @@ final class AccountListViewModel: ObservableObject {
 
 struct AccountListView: View {
     @StateObject private var viewModel = AccountListViewModel()
-    @State var isShowingNewAccountView = false
+    @State private var isShowingNewAccountView = false
 
-    @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var accountManager: AccountManager
 
@@ -78,19 +77,28 @@ struct AccountListView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: IKPadding.small) {
-                ForEach(Array(viewModel.accounts.keys)) { account in
-                    AccountCellView(selectedUserId: $viewModel.selectedUserId, mailboxManager: mailboxManager, account: account)
+            VStack(spacing: 0) {
+                Text(MailResourcesStrings.Localizable.titleMyAccount(viewModel.accounts.count))
+                    .textStyle(.bodyMedium)
+                    .padding(.bottom, value: .medium)
+
+                VStack(spacing: IKPadding.extraSmall) {
+                    ForEach(Array(viewModel.accounts.keys)) { account in
+                        AccountCellView(
+                            selectedUserId: $viewModel.selectedUserId,
+                            mailboxManager: mailboxManager,
+                            account: account
+                        )
+                        .padding(.horizontal, value: .medium)
+                    }
                 }
+
+                IKDivider()
+                    .padding(.vertical, value: .small)
+
+                AccountActionsView()
+                    .padding(.horizontal, value: .small)
             }
-            .padding(.horizontal, value: .medium)
-            .padding(.bottom, 120)
-        }
-        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)
-        .floatingActionButton(icon: MailResourcesAsset.plus, title: MailResourcesStrings.Localizable.buttonAddAccount) {
-            matomo.track(eventWithCategory: .account, name: "add")
-            isShowingNewAccountView = true
         }
         .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
             orientationManager.setOrientationLock(.all)
