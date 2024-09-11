@@ -30,7 +30,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var applicationState: ApplicationStatable
     @LazyInjectService private var notificationService: InfomaniakNotifications
     @LazyInjectService private var tokenStore: TokenStore
     @LazyInjectService private var notificationActions: NotificationActionsRegistrable
