@@ -22,7 +22,7 @@ public struct BlockRecipientState: Identifiable {
     public var id = UUID()
     public let recipientsToMessage: [Recipient: Message]
     public init(recipientsToMessage: [Recipient: Message]) {
-        self.blocklist = blocklist
+        blocklist = blocklist
     }
 }
 
