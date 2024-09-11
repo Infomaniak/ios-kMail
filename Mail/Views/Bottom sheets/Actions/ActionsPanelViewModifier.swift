@@ -62,7 +62,7 @@ struct ActionsPanelViewModifier: ViewModifier {
             originFolder: originFolder?.freezeIfNeeded(),
             nearestFlushAlert: $flushAlert,
             nearestMessagesToMoveSheet: $messagesToMove,
-            nearestBlockSender: $blockSenderAlert,
+            nearestBlockSenderAlert: $blockSenderAlert,
             nearestBlockSendersList: $blockSendersList,
             nearestReportJunkMessageActionsPanel: $reportForJunkMessages,
             nearestReportedForPhishingMessageAlert: $reportedForPhishingMessage,
@@ -89,7 +89,7 @@ struct ActionsPanelViewModifier: ViewModifier {
         }
         .floatingPanel(item: $blockSendersList,
                        title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
-            BlockSenderView(recipientsToMessage: blockSenderState.blocklist, origin: origin)
+            BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: origin)
         }
         .customAlert(item: $blockSenderAlert) { blockSenderState in
             ConfirmationBlockRecipientView(

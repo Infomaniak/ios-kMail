@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: en, English
  * Tagged: ios
- * Exported by: elena willen
- * Exported at: Wed, 04 Sep 2024 11:22:24 +0200
+ * Exported by: Matthieu Déglon
+ * Exported at: Wed, 11 Sep 2024 15:20:23 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -418,9 +418,6 @@
 /* loco:6425777e2343387912223aa2 */
 "buttonLater" = "Later";
 
-/* loco:665868ebce4392ec5d0e94f2 */
-"buttonLink" = "Add a hyperlink";
-
 /* loco:645b485e158c37a429012092 */
 "buttonLoadMore" = "Load more conversations";
 
@@ -548,7 +545,7 @@
 "confirmLogoutTitle" = "Log out";
 
 /* loco:66db00746332bbedae01f2f2 */
-"confirmationToBlockAnExpeditorText" = "This e-mail and all future messages from %s will be moved to the Junk Mail folder.";
+"confirmationToBlockAnExpeditorText" = "This email and all future messages from %s will be moved to the Junk Mail folder.";
 
 /* loco:62737dea7bd28e302301e5c2 */
 "contactActionAddToContacts" = "Add to contacts";

@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: it, Italian
  * Tagged: ios
- * Exported by: elena willen
- * Exported at: Wed, 04 Sep 2024 11:22:24 +0200
+ * Exported by: Matthieu Déglon
+ * Exported at: Wed, 11 Sep 2024 15:20:23 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -283,6 +283,12 @@
 /* loco:6266649755d41301973d0c43 */
 "bccTitle" = "Bcc:";
 
+/* loco:669a5cc96c0dbf9fe909b662 */
+"blockAnExpeditorTitle" = "Blocca un mittente";
+
+/* loco:66dee0ef5c6d656046044445 */
+"blockExpeditorTitle" = "Blocca %s";
+
 /* loco:649ea00ef9c6ecfe620a0b62 */
 "blockedPasswordTitle" = "Password bloccata";
 
@@ -333,6 +339,9 @@
 
 /* loco:651ebd40ccc14ebdca0313a5 */
 "buttonBackToApp" = "Torna all’applicazione Mail";
+
+/* loco:66db0113e0da22884c09f724 */
+"buttonBlockAnExpeditor" = "Blocca";
 
 /* loco:62b2d43771635f1d1f0da462 */
 "buttonBold" = "In grassetto";
@@ -408,9 +417,6 @@
 
 /* loco:6425777e2343387912223aa2 */
 "buttonLater" = "Più tardi";
-
-/* loco:665868ebce4392ec5d0e94f2 */
-"buttonLink" = "Aggiungere un collegamento ipertestuale";
 
 /* loco:645b485e158c37a429012092 */
 "buttonLoadMore" = "Carica altre conversazioni";
@@ -537,6 +543,9 @@
 
 /* loco:63a473bcf3bb7f422358cfd2 */
 "confirmLogoutTitle" = "Disconnettersi";
+
+/* loco:66db00746332bbedae01f2f2 */
+"confirmationToBlockAnExpeditorText" = "Questa e-mail e tutti i futuri messaggi di %s saranno spostati nella cartella della posta indesiderata.";
 
 /* loco:62737dea7bd28e302301e5c2 */
 "contactActionAddToContacts" = "Aggiungi ai contatti";
