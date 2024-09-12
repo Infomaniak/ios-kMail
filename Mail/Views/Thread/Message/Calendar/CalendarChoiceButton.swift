@@ -37,7 +37,8 @@ struct CalendarChoiceButton: View {
     var body: some View {
         Button(action: sendReply) {
             HStack(spacing: IKPadding.small) {
-                IKIcon(choice.icon)
+                choice.icon
+                    .iconSize(.medium)
                     .foregroundStyle(choice.color)
                 Text(choice.label)
                     .textStyle(.bodyMediumSecondary)

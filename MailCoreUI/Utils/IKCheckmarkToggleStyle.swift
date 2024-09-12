@@ -41,7 +41,8 @@ public struct IKCheckmarkToggleStyle: ToggleStyle {
                         RoundedRectangle(cornerRadius: 2)
                             .fill(.tint)
 
-                        IKIcon(MailResourcesAsset.check)
+                        MailResourcesAsset.check
+                            .iconSize(.medium)
                             .foregroundStyle(MailResourcesAsset.backgroundColor)
                             .padding(2)
                     }

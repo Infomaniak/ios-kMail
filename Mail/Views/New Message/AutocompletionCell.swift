@@ -44,7 +44,8 @@ struct AutocompletionCell: View {
             .opacity(alreadyAppend && !unknownRecipient ? 0.5 : 1)
 
             if alreadyAppend && !unknownRecipient {
-                IKIcon(MailResourcesAsset.checkmarkCircleFill, size: .large)
+                MailResourcesAsset.checkmarkCircleFill
+                    .iconSize(.large)
                     .foregroundStyle(MailResourcesAsset.textTertiaryColor)
             }
         }

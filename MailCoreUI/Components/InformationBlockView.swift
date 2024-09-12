@@ -85,7 +85,7 @@ public struct InformationBlockView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             if let dismissHandler {
-                CloseButton(size: .regular, dismissHandler: dismissHandler)
+                CloseButton(size: .medium, dismissHandler: dismissHandler)
                     .tint(MailResourcesAsset.textSecondaryColor.swiftUIColor)
                     .alignmentGuide(.iconAndMultilineTextAlignment) { d in
                         d[VerticalAlignment.center]

@@ -41,7 +41,8 @@ struct SearchHistorySectionView: View {
                 if let history = searchHistory?.history {
                     ForEach(history, id: \.self) { searchItem in
                         HStack(spacing: IKPadding.medium) {
-                            IKIcon(MailResourcesAsset.clock, size: .large)
+                            MailResourcesAsset.clock
+                                .iconSize(.large)
                                 .foregroundStyle(.tint)
 
                             Text(searchItem)
@@ -52,7 +53,8 @@ struct SearchHistorySectionView: View {
                             Button {
                                 deleteSearchTapped(searchItem: searchItem)
                             } label: {
-                                IKIcon(MailResourcesAsset.close)
+                                MailResourcesAsset.close
+                                    .iconSize(.medium)
                                     .foregroundStyle(MailResourcesAsset.textSecondaryColor)
                             }
                             .buttonStyle(BorderlessButtonStyle())

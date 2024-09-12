@@ -59,7 +59,8 @@ struct UserFoldersListView: View {
                     matomo.track(eventWithCategory: .createFolder, name: "fromMenuDrawer")
                     isShowingCreateFolderAlert.toggle()
                 } label: {
-                    IKIcon(MailResourcesAsset.addCircle)
+                    MailResourcesAsset.addCircle
+                        .iconSize(.medium)
                         .padding(value: .medium)
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable.newFolderDialogTitle)

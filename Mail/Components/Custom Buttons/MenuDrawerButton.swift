@@ -33,7 +33,8 @@ struct MenuDrawerButton: View {
             matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
             navigationDrawerState.open()
         } label: {
-            IKIcon(MailResourcesAsset.burger, size: .large)
+            MailResourcesAsset.burger
+                .iconSize(.large)
         }
         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonMenu)
     }

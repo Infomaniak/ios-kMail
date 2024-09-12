@@ -54,7 +54,7 @@ struct AIPromptView: View {
                 AIHeaderView(style: .bottomSheet)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                CloseButton(size: .regular, dismissAction: dismiss)
+                CloseButton(size: .medium, dismissAction: dismiss)
                     .tint(MailResourcesAsset.textSecondaryColor)
             }
 

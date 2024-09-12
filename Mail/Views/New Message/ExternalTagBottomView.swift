@@ -43,7 +43,8 @@ struct ExternalTagBottomView: View {
                         Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
                             .font(MailTextStyle.bodySmallMedium.font)
 
-                        IKIcon(MailResourcesAsset.info)
+                        MailResourcesAsset.info
+                            .iconSize(.medium)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -55,7 +56,8 @@ struct ExternalTagBottomView: View {
                     matomo.track(eventWithCategory: .externals, name: "bannerManuallyClosed")
                     isShowingExternalTag = false
                 } label: {
-                    IKIcon(MailResourcesAsset.close)
+                    MailResourcesAsset.close
+                        .iconSize(.medium)
                 }
             }
             .padding(value: .medium)

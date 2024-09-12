@@ -46,7 +46,8 @@ public struct ChevronIcon<ChevronShapeStyle: ShapeStyle>: View {
     }
 
     public var body: some View {
-        IKIcon(MailResourcesAsset.chevronUp, size: .small)
+        MailResourcesAsset.chevronUp
+            .iconSize(.small)
             .rotationEffect(direction.rotationAngle)
             .foregroundStyle(shapeStyle)
     }

@@ -109,7 +109,8 @@ struct AIPropositionView: View {
                                 }
                             } label: {
                                 Label { Text(MailResourcesStrings.Localizable.aiButtonInsert) } icon: {
-                                    IKIcon(MailResourcesAsset.plus)
+                                    MailResourcesAsset.plus
+                                        .iconSize(.medium)
                                 }
                             }
                             .buttonStyle(.ikBorderedProminent)

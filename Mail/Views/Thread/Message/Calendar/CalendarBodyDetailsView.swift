@@ -35,7 +35,7 @@ struct CalendarLabelStyle: LabelStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: IKPadding.medium) {
             configuration.icon
-                .frame(width: IKIcon.Size.large.rawValue, height: IKIcon.Size.large.rawValue)
+                .frame(width: IKIconSize.large.rawValue, height: IKIconSize.large.rawValue)
                 .foregroundStyle(warning?.color ?? MailResourcesAsset.textSecondaryColor.swiftUIColor)
             configuration.title
                 .font(MailTextStyle.body.font)
@@ -65,7 +65,7 @@ struct CalendarBodyDetailsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.medium) {
             if let warning = event.warning {
-                Label { Text(warning.label) } icon: { IKIcon(MailResourcesAsset.warningFill, size: .large) }
+                Label { Text(warning.label) } icon: { MailResourcesAsset.warningFill.iconSize(.large) }
                     .labelStyle(.calendar(warning))
             }
 

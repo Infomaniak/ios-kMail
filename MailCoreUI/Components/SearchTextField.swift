@@ -40,7 +40,8 @@ public struct SearchTextField: View {
     public var body: some View {
         HStack(spacing: IKPadding.small) {
             Button(action: onSubmit) {
-                IKIcon(MailResourcesAsset.search)
+                MailResourcesAsset.search
+                    .iconSize(.medium)
                     .foregroundStyle(MailResourcesAsset.textTertiaryColor)
             }
             TextField(MailResourcesStrings.Localizable.searchFieldPlaceholder, text: $value)
@@ -65,7 +66,8 @@ public struct SearchTextField: View {
                 .padding(.vertical, value: .intermediate)
 
             Button(action: onDelete) {
-                IKIcon(MailResourcesAsset.remove)
+                MailResourcesAsset.remove
+                    .iconSize(.medium)
                     .foregroundStyle(MailResourcesAsset.textTertiaryColor)
             }
             .opacity(value.isEmpty ? 0 : 1)

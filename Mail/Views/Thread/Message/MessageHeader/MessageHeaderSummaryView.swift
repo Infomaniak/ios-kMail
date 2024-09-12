@@ -89,7 +89,8 @@ struct MessageHeaderSummaryView: View {
                             }
 
                             if let bimi = message.bimi, bimi.shouldDisplayBimi {
-                                IKIcon(MailResourcesAsset.checkmarkAuthentication, size: .small)
+                                MailResourcesAsset.checkmarkAuthentication
+                                    .iconSize(.small)
                             }
 
                             MessageHeaderDateView(date: message.date)
@@ -116,7 +117,8 @@ struct MessageHeaderSummaryView: View {
 
             if message.isDraft {
                 Button(role: .destructive, action: deleteDraftTapped) {
-                    IKIcon(MailResourcesAsset.bin, size: .large)
+                    MailResourcesAsset.bin
+                        .iconSize(.large)
                 }
                 .foregroundStyle(MailResourcesAsset.redColor)
             }
@@ -135,13 +137,15 @@ struct MessageHeaderSummaryView: View {
                             )
                         }
                     } label: {
-                        IKIcon(MailResourcesAsset.emailActionReply, size: .large)
+                        MailResourcesAsset.emailActionReply
+                            .iconSize(.large)
                     }
                     .adaptivePanel(item: $replyOrReplyAllMessage) { message in
                         ReplyActionsView(message: message)
                     }
                     ActionsPanelButton(messages: [message], originFolder: message.folder, panelSource: .messageList) {
-                        IKIcon(MailResourcesAsset.plusActions, size: .large)
+                        MailResourcesAsset.plusActions
+                            .iconSize(.large)
                     }
                 }
                 .padding(.leading, 8)

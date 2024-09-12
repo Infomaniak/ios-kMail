@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2022 Infomaniak Network SA
+ Copyright (C) 2024 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -17,33 +17,11 @@
  */
 
 import InfomaniakCoreUI
-import MailCore
-import MailCoreUI
 import MailResources
-import RealmSwift
 import SwiftUI
 
-struct SearchFilterCell: View {
-    public var title: String
-    public var isSelected: Bool
-
-    var body: some View {
-        HStack(spacing: IKPadding.searchFolderCellSpacing) {
-            if isSelected {
-                MailResourcesAsset.check
-                    .iconSize(.small)
-            }
-            Text(title)
-                .font(MailTextStyle.bodyMedium.font)
-        }
-        .filterCellStyle(isSelected: isSelected)
+public extension MailResourcesImages {
+    func iconSize(_ size: IKIconSize) -> some View {
+        swiftUIImage.iconSize(size)
     }
-}
-
-#Preview("Selected") {
-    SearchFilterCell(title: "Lus", isSelected: true)
-}
-
-#Preview("Not Selected") {
-    SearchFilterCell(title: "Lus", isSelected: false)
 }
