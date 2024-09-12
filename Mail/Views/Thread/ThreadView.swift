@@ -67,12 +67,6 @@ struct ThreadView: View {
         .task {
             await markThreadAsReadIfNeeded(thread: thread)
         }
-        .onChange(of: thread) { newValue in
-            guard newValue.uid != thread.uid else { return }
-            Task {
-                await markThreadAsReadIfNeeded(thread: newValue)
-            }
-        }
         .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
         .navigationBarThreadViewStyle(appearance: displayNavigationTitle ? BarAppearanceConstants
             .threadViewNavigationBarScrolledAppearance : BarAppearanceConstants.threadViewNavigationBarAppearance)
@@ -82,6 +76,7 @@ struct ThreadView: View {
             frozenFolder: thread.folder?.freezeIfNeeded(),
             frozenMessages: thread.messages.freezeIfNeeded().toArray()
         )
+        .id(thread.id)
         .matomoView(view: [MatomoUtils.View.threadView.displayName, "Main"])
     }
 
