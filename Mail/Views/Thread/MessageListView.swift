@@ -58,8 +58,7 @@ struct MessageListView: View {
             .onAppear {
                 computeExpansion(from: messages)
 
-                guard messages.count > 1,
-                      let firstExpandedUid = firstExpanded()?.uid else {
+                guard messages.count > 1, let firstExpandedUid = firstExpanded()?.uid else {
                     return
                 }
 
