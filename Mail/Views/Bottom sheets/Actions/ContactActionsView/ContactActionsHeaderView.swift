@@ -43,7 +43,8 @@ struct ContactActionsHeaderView: View {
                         Text(displayablePerson, format: .displayablePerson())
                             .textStyle(.bodyMedium)
                         if let bimi, bimi.shouldDisplayBimi {
-                            IKIcon(MailResourcesAsset.checkmarkAuthentication)
+                            MailResourcesAsset.checkmarkAuthentication
+                                .iconSize(.medium)
                         }
                     }
                     Text(displayablePerson.email)
@@ -52,7 +53,8 @@ struct ContactActionsHeaderView: View {
             }
             if let bimi, bimi.shouldDisplayBimi {
                 HStack {
-                    IKIcon(MailResourcesAsset.checkmarkAuthentication)
+                    MailResourcesAsset.checkmarkAuthentication
+                        .iconSize(.medium)
                     Text(MailResourcesStrings.Localizable.expeditorAuthenticationDescription)
                         .textStyle(.label)
                 }

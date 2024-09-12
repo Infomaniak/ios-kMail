@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUI
 import MailCore
 import MailCoreUI
 import SwiftUI
@@ -26,14 +27,14 @@ struct HeaderCloseButtonView: View {
 
     var body: some View {
         HStack(alignment: .center) {
-            CloseButton(size: .regular, dismissHandler: dismissHandler)
+            CloseButton(size: .medium, dismissHandler: dismissHandler)
 
             Text(title)
                 .font(.headline)
                 .foregroundStyle(MailTextStyle.header2.color)
                 .frame(maxWidth: .infinity)
         }
-        .padding(.trailing, IKIcon.Size.small.rawValue)
+        .padding(.trailing, IKIconSize.small.rawValue)
         .padding(.bottom, value: .medium)
     }
 }

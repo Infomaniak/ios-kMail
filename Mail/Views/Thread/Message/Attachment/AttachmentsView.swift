@@ -84,7 +84,8 @@ struct AttachmentsView: View {
             }
 
             HStack(alignment: .iconAndMultilineTextAlignment, spacing: IKPadding.small) {
-                IKIcon(MailResourcesAsset.attachment)
+                MailResourcesAsset.attachment
+                    .iconSize(.medium)
                     .foregroundStyle(MailResourcesAsset.textSecondaryColor)
 
                 VStack(alignment: .leading, spacing: IKPadding.extraSmall) {

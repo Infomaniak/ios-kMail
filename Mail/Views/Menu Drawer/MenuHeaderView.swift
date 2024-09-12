@@ -72,7 +72,8 @@ struct MenuHeaderView: View {
         Button {
             mainViewState.settingsViewConfig = SettingsViewConfig(baseNavigationPath: [])
         } label: {
-            IKIcon(MailResourcesAsset.cog, size: .large)
+            MailResourcesAsset.cog
+                .iconSize(.large)
         }
         .buttonStyle(.borderless)
         .accessibilityLabel(MailResourcesStrings.Localizable.settingsTitle)

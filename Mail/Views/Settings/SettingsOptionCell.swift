@@ -88,11 +88,12 @@ struct SettingsOptionCell: View {
                     }
 
                     if isSelected {
-                        IKIcon(MailResourcesAsset.check)
+                        MailResourcesAsset.check
+                            .iconSize(.medium)
                             .foregroundStyle(.tint)
-                            .alignmentGuide(.settingsOptionCellCheckmark, computeValue: { dimension in
+                            .alignmentGuide(.settingsOptionCellCheckmark) { dimension in
                                 dimension[VerticalAlignment.center]
-                            })
+                            }
                     }
                 }
                 .settingsItem()

@@ -60,7 +60,8 @@ struct MailboxesManagementView: View {
                 }
             } label: {
                 HStack(spacing: IKPadding.menuDrawerCellSpacing) {
-                    IKIcon(MailResourcesAsset.envelope, size: .large)
+                    MailResourcesAsset.envelope
+                        .iconSize(.large)
                         .foregroundStyle(.tint)
 
                     Text(mailboxManager.mailbox.email)
