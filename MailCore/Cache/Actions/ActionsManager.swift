@@ -93,7 +93,6 @@ extension RandomAccessCollection where Element == Message {
 
 public class ActionsManager: ObservableObject {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
-    @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     private let mailboxManager: MailboxManager
