@@ -357,10 +357,10 @@ public extension Action {
         matomoName: "shareLink"
     )
     static let saveMailInKDrive = Action(
-            id: "saveMailInKDrive",
-            title: MailResourcesStrings.Localizable.saveInkDrive,
-            iconResource: MailResourcesAsset.kdriveLogo,
-            matomoName: "saveInkDrive"
+        id: "saveMailInKDrive",
+        title: MailResourcesStrings.Localizable.saveInkDrive,
+        iconResource: MailResourcesAsset.kdriveLogo,
+        matomoName: "saveInkDrive"
     )
 
     // MARK: Account Actions
