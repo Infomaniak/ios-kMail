@@ -4,7 +4,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Matthieu Déglon
- * Exported at: Wed, 11 Sep 2024 15:20:23 +0200
+ * Exported at: Thu, 12 Sep 2024 08:10:32 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1134,6 +1134,9 @@
 
 /* loco:6527b6ed91798bfb5d0960e2 */
 "reviewAlertTitle" = "Mögen Sie Infomaniak Mail?";
+
+/* loco:66e2826251d88f0bdc097c12 */
+"saveInkDrive" = "Speichern im kDrive";
 
 /* loco:62a9db4ae45f1e29371ff802 */
 "scheduledMessagesFolder" = "Geplante Nachrichten";

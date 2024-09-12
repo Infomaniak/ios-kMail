@@ -44,6 +44,7 @@ public struct ActionOrigin {
     private(set) var nearestReportJunkMessageActionsPanel: Binding<[Message]?>?
     private(set) var nearestReportedForPhishingMessageAlert: Binding<Message?>?
     private(set) var nearestReportedForDisplayProblemMessageAlert: Binding<Message?>?
+    private(set) var nearestSaveInkDrive: Binding<Message?>?
     private(set) var nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>?
 
     init(
@@ -57,6 +58,7 @@ public struct ActionOrigin {
         nearestReportJunkMessageActionsPanel: Binding<[Message]?>? = nil,
         nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
         nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
+        nearestSaveInkDrive: Binding<Message?>? = nil,
         nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil
     ) {
         self.type = type
@@ -69,6 +71,7 @@ public struct ActionOrigin {
         self.nearestReportJunkMessageActionsPanel = nearestReportJunkMessageActionsPanel
         self.nearestReportedForPhishingMessageAlert = nearestReportedForPhishingMessageAlert
         self.nearestReportedForDisplayProblemMessageAlert = nearestReportedForDisplayProblemMessageAlert
+        self.nearestSaveInkDrive = nearestSaveInkDrive
         self.nearestShareMailLinkPanel = nearestShareMailLinkPanel
     }
 
@@ -86,6 +89,7 @@ public struct ActionOrigin {
                                      nearestReportJunkMessageActionsPanel: Binding<[Message]?>? = nil,
                                      nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
                                      nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
+                                     nearestSaveInkDrive: Binding<Message?>? = nil,
                                      nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil) -> ActionOrigin {
         return ActionOrigin(
             type: .floatingPanel(source: source),
@@ -97,6 +101,7 @@ public struct ActionOrigin {
             nearestReportJunkMessageActionsPanel: nearestReportJunkMessageActionsPanel,
             nearestReportedForPhishingMessageAlert: nearestReportedForPhishingMessageAlert,
             nearestReportedForDisplayProblemMessageAlert: nearestReportedForDisplayProblemMessageAlert,
+            nearestSaveInkDrive: nearestSaveInkDrive,
             nearestShareMailLinkPanel: nearestShareMailLinkPanel
         )
     }

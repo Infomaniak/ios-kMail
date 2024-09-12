@@ -21,6 +21,7 @@ import InfomaniakCore
 import InfomaniakCoreUI
 import InfomaniakDI
 import MailResources
+import Sentry
 import SwiftUI
 
 extension [Message]: Identifiable {
@@ -92,6 +93,8 @@ extension RandomAccessCollection where Element == Message {
 
 public class ActionsManager: ObservableObject {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     private let mailboxManager: MailboxManager
     private let mainViewState: MainViewState?
@@ -195,6 +198,17 @@ public class ActionsManager: ObservableObject {
                         recipient: recipient.key,
                         message: messages.first!
                     )
+                }
+            }
+        case .saveMailInKDrive:
+            Task { @MainActor in
+                if !platformDetector.isMac {
+                    do {
+                        let fileURL = try await mailboxManager.apiFetcher.download(message: messages.first!)
+                        try DeeplinkService().shareFileToKdrive(fileURL)
+                    } catch {
+                        SentrySDK.capture(error: error)
+                    }
                 }
             }
         case .shareMailLink:
