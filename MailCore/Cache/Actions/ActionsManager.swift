@@ -200,7 +200,7 @@ public class ActionsManager: ObservableObject {
                     )
                 }
             }
-        case .saveMailInKDrive:
+        case .saveMailInkDrive:
             Task { @MainActor in
                 if !platformDetector.isMac {
                     do {
