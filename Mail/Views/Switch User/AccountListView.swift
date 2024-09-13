@@ -35,25 +35,23 @@ struct AccountListView: View {
     let mailboxManager: MailboxManager?
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                VStack(spacing: IKPadding.extraSmall) {
-                    ForEach(accountManager.accounts.values) { account in
-                        AccountCellView(
-                            selectedUserId: .constant(accountManager.currentUserId),
-                            mailboxManager: mailboxManager,
-                            account: account
-                        )
-                        .padding(.horizontal, value: .medium)
-                    }
+        VStack(spacing: 0) {
+            VStack(spacing: IKPadding.extraSmall) {
+                ForEach(accountManager.accounts.values) { account in
+                    AccountCellView(
+                        selectedUserId: .constant(accountManager.currentUserId),
+                        mailboxManager: mailboxManager,
+                        account: account
+                    )
+                    .padding(.horizontal, value: .medium)
                 }
-
-                IKDivider()
-                    .padding(.vertical, value: .small)
-
-                AccountActionsView()
-                    .padding(.horizontal, value: .small)
             }
+
+            IKDivider()
+                .padding(.vertical, value: .small)
+
+            AccountActionsView()
+                .padding(.horizontal, value: .small)
         }
         .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
             orientationManager.setOrientationLock(.all)
