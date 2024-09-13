@@ -26,7 +26,6 @@ struct MessageFolderTag: View {
     var body: some View {
         if let title {
             Text(title)
-                .lineLimit(1)
                 .truncationMode(inThreadHeader ? .middle : .tail)
                 .tagModifier(
                     foregroundColor: MailResourcesAsset.textSecondaryColor,
