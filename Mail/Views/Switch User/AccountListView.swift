@@ -25,48 +25,7 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-final class AccountListViewModel: ObservableObject {
-    @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
-
-    @Published var selectedUserId: Int? = {
-        @InjectService var accountManager: AccountManager
-        return accountManager.currentUserId
-    }()
-
-    @Published var accounts = [Account: [Mailbox]]()
-
-    // periphery:ignore - We need to keep a reference to this to keep receiving events (automatically removed on deinit)
-    private var mailboxObservationToken: NotificationToken?
-
-    init() {
-        let mailboxes = mailboxInfosManager.fetchResults(ofType: Mailbox.self) { partial in
-            partial.sorted(by: \.mailboxId)
-        }
-
-        mailboxObservationToken = mailboxes.observe(on: DispatchQueue.main) { [weak self] results in
-            switch results {
-            case .initial(let mailboxes):
-                self?.handleMailboxChanged(Array(mailboxes))
-            case .update(let mailboxes, _, _, _):
-                withAnimation {
-                    self?.handleMailboxChanged(Array(mailboxes))
-                }
-            case .error:
-                break
-            }
-        }
-    }
-
-    private func handleMailboxChanged(_ mailboxes: [Mailbox]) {
-        for account in accountManager.accounts {
-            accounts[account] = mailboxes.filter { $0.userId == account.userId }
-        }
-    }
-}
-
 struct AccountListView: View {
-    @StateObject private var viewModel = AccountListViewModel()
     @State private var isShowingNewAccountView = false
 
     @LazyInjectService private var orientationManager: OrientationManageable
@@ -79,9 +38,9 @@ struct AccountListView: View {
         ScrollView {
             VStack(spacing: 0) {
                 VStack(spacing: IKPadding.extraSmall) {
-                    ForEach(Array(viewModel.accounts.keys)) { account in
+                    ForEach(accountManager.accounts.values) { account in
                         AccountCellView(
-                            selectedUserId: $viewModel.selectedUserId,
+                            selectedUserId: .constant(accountManager.currentUserId),
                             mailboxManager: mailboxManager,
                             account: account
                         )
