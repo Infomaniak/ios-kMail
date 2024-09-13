@@ -17,6 +17,8 @@
  */
 
 import Foundation
+import InfomaniakCore
+import InfomaniakDI
 import MailResources
 
 extension Action: CaseIterable {
@@ -77,23 +79,27 @@ extension Action: CaseIterable {
 
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
                                           userIsStaff: Bool) -> (quickActions: [Action], listActions: [Action]) {
+        @LazyInjectService var platformDetector: PlatformDetectable
+
         let archive = message.folder?.role != .archive
         let unread = !message.seen
         let star = message.flagged
         let spam = message.folder?.role == .spam
         let print = origin.type == .floatingPanel(source: .messageList)
-
-        let tempListActions: [Action?] = [
+        var tempListActions: [Action?] = [
             .openMovePanel,
             spam ? .nonSpam : .reportJunk,
             unread ? .markAsRead : .markAsUnread,
             archive ? .archive : .moveToInbox,
             star ? .unstar : .star,
             print ? .print : nil,
-            .saveMailInkDrive,
             .shareMailLink,
             userIsStaff ? .reportDisplayProblem : nil
         ]
+        if !platformDetector.isMac {
+            tempListActions.insert( .saveMailInkDrive, at: 6)
+        }
+
         return (Action.quickActions, tempListActions.compactMap { $0 })
     }
 
