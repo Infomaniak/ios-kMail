@@ -97,7 +97,7 @@ extension Action: CaseIterable {
             userIsStaff ? .reportDisplayProblem : nil
         ]
         if !platformDetector.isMac {
-            tempListActions.insert( .saveMailInkDrive, at: 6)
+            tempListActions.insert(.saveMailInkDrive, at: 6)
         }
 
         return (Action.quickActions, tempListActions.compactMap { $0 })
