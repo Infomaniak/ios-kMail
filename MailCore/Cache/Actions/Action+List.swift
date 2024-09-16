@@ -96,9 +96,7 @@ extension Action: CaseIterable {
             .shareMailLink,
             userIsStaff ? .reportDisplayProblem : nil
         ]
-        if !platformDetector.isMac {
-            tempListActions.insert(.saveMailInkDrive, at: 6)
-        }
+        !platformDetector.isMac ? tempListActions.insert(.saveMailInkDrive, at: 6) : ()
 
         return (Action.quickActions, tempListActions.compactMap { $0 })
     }
@@ -364,7 +362,7 @@ public extension Action {
     )
     static let saveMailInkDrive = Action(
         id: "saveMailInkDrive",
-        title: MailResourcesStrings.Localizable.saveInkDrive,
+        title: MailResourcesStrings.Localizable.saveMailInkDrive,
         iconResource: MailResourcesAsset.kdriveLogo,
         matomoName: "saveInkDrive"
     )
