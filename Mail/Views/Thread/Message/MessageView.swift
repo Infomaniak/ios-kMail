@@ -100,7 +100,7 @@ struct MessageView: View {
                 }
                 .task {
                     do {
-                        try await messagesWorker.loadIfNeeded(message: message.freezeIfNeeded())
+                        try await messagesWorker.fetchAndProcessIfNeeded(message: message.freezeIfNeeded())
                     } catch {
                         isShowingErrorLoading = true
                     }

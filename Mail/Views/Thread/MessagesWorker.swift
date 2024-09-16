@@ -35,20 +35,20 @@ final class MessagesWorker: ObservableObject {
 
     private let messages = [Message]()
 
-    func loadIfNeeded(message: Message) async throws {
+    func fetchAndProcessIfNeeded(message: Message) async throws {
         guard presentableBodies[message.uid] == nil, let mailboxManager = accountManager.currentMailboxManager else {
             return
         }
 
-        try await loadMessageAndCalendar(of: message, with: mailboxManager)
+        try await fetchMessageAndCalendar(of: message, with: mailboxManager)
         await prepareBody(of: message, with: mailboxManager)
     }
 }
 
-// MARK: - Fetch Message and Calendar event
+// MARK: - Fetch Message and Calendar Event
 
 extension MessagesWorker {
-    private func loadMessageAndCalendar(of frozenMessage: Message, with mailboxManager: MailboxManager) async throws {
+    private func fetchMessageAndCalendar(of frozenMessage: Message, with mailboxManager: MailboxManager) async throws {
         async let fetchMessageResult: Void = fetchMessage(of: frozenMessage, with: mailboxManager)
         async let fetchEventCalendar: Void = fetchEventCalendar(of: frozenMessage, with: mailboxManager)
 
@@ -85,11 +85,17 @@ extension MessagesWorker {
 extension MessagesWorker {
     private func prepareBody(of frozenMessage: Message, with mailboxManager: MailboxManager) async {
         guard let message = mailboxManager.transactionExecutor
-            .fetchObject(ofType: Message.self, forPrimaryKey: frozenMessage.uid)?.freezeIfNeeded(),
+            .fetchObject(ofType: Message.self, forPrimaryKey: frozenMessage.uid)?.freeze(),
             let updatedPresentableBody = await MessageBodyUtils.prepareWithPrintOption(message: message) else {
             return
         }
 
-        presentableBodies[message.uid] = updatedPresentableBody
+        setPresentableBody(for: message, presentableBody: updatedPresentableBody)
+
+        // TODO: Insert inline attachments
+    }
+
+    private func setPresentableBody(for message: Message, presentableBody: PresentableBody) {
+        presentableBodies[message.uid] = presentableBody
     }
 }
