@@ -30,7 +30,7 @@ extension MessagesWorker {
 
 @MainActor
 final class MessagesWorker: ObservableObject {
-    @LazyInjectService var accountManager: AccountManager
+    @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @Published var presentableBodies = [String: PresentableBody]()

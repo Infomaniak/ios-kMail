@@ -51,8 +51,6 @@ struct MessageBodyView: View {
                         loadBody(blockRemoteContent: blockRemoteContent, presentableBody: presentableBody)
                     }
                     .onChange(of: presentableBody) { newValue in
-                        print("[PRESENTABLE BODY] From WebView")
-                        dump(newValue.compactBody)
                         loadBody(blockRemoteContent: blockRemoteContent, presentableBody: newValue)
                     }
                     .onChange(of: model.showBlockQuote) { _ in
@@ -63,17 +61,7 @@ struct MessageBodyView: View {
                     }
 
                     if !presentableBody.quotes.isEmpty {
-                        Button(
-                            model.showBlockQuote
-                                ? MailResourcesStrings.Localizable.messageHideQuotedText
-                                : MailResourcesStrings.Localizable.messageShowQuotedText
-                        ) {
-                            model.showBlockQuote.toggle()
-                        }
-                        .buttonStyle(.ikBorderless(isInlined: true))
-                        .controlSize(.small)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, value: .medium)
+                        ShowBlockquoteButton(showBlockquote: $model.showBlockQuote)
                     }
                 }
             }
@@ -110,6 +98,7 @@ struct MessageBodyView: View {
 
     private func loadBody(blockRemoteContent: Bool, presentableBody: PresentableBody?) {
         guard let presentableBody else { return }
+
         Task {
             let loadResult = try await model.loadBody(
                 presentableBody: presentableBody,
