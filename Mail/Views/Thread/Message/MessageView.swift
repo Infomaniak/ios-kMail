@@ -34,16 +34,12 @@ extension EnvironmentValues {
 
 /// Something that can display an email
 struct MessageView: View {
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
-
     @Environment(\.isMessageInteractive) private var isMessageInteractive
 
     @EnvironmentObject private var messagesWorker: MessagesWorker
-    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingErrorLoading = false
     @State private var displayContentBlockedActionView = false
-    @StateObject private var inlineAttachmentWorker: InlineAttachmentWorker
 
     @Binding var threadForcedExpansion: [String: MessageExpansionType]
 
@@ -56,12 +52,6 @@ struct MessageView: View {
 
     private var isMessageExpanded: Bool {
         threadForcedExpansion[message.uid] == .expanded
-    }
-
-    init(message: Message, threadForcedExpansion: Binding<[String: MessageExpansionType]>) {
-        self.message = message
-        _threadForcedExpansion = threadForcedExpansion
-        _inlineAttachmentWorker = StateObject(wrappedValue: InlineAttachmentWorker(messageUid: message.uid))
     }
 
     var body: some View {
@@ -107,24 +97,6 @@ struct MessageView: View {
                 }
             }
         }
-//        .onAppear {
-//            prepareBodyIfNeeded()
-//        }
-//        .task {
-//            await fetchMessageAndEventCalendar()
-//        }
-//        .task(id: isMessageExpanded) {
-//            await fetchMessageAndEventCalendar()
-//        }
-//        .onDisappear {
-//            inlineAttachmentWorker.stop()
-//        }
-//        .onChange(of: message.fullyDownloaded) { _ in
-//            prepareBodyIfNeeded()
-//        }
-//        .onChange(of: isMessageExpanded) { _ in
-//            prepareBodyIfNeeded()
-//        }
         .accessibilityAction(named: MailResourcesStrings.Localizable.expandMessage) {
             guard isMessageInteractive else { return }
             withAnimation {
@@ -132,64 +104,22 @@ struct MessageView: View {
             }
         }
     }
-
-    private func fetchMessageAndEventCalendar() async {
-        guard isMessageExpanded else { return }
-
-        async let fetchMessageResult: Void = fetchMessage()
-        async let fetchEventCalendar: Void = fetchEventCalendar()
-
-        await fetchMessageResult
-        await fetchEventCalendar
-    }
-
-    private func fetchMessage() async {
-        guard message.shouldComplete else { return }
-
-        await tryOrDisplayError {
-            do {
-                try await mailboxManager.message(message: message)
-            } catch let error as MailApiError where error == .apiMessageNotFound {
-                snackbarPresenter.show(message: error.errorDescription ?? "")
-                try await mailboxManager.refreshFolder(from: [message], additionalFolder: nil)
-            } catch let error as AFErrorWithContext where error.afError.isExplicitlyCancelledError {
-                isShowingErrorLoading = false
-            } catch {
-                isShowingErrorLoading = true
-            }
-        }
-    }
-
-    private func fetchEventCalendar() async {
-        try? await mailboxManager.calendarEvent(from: message.uid)
-    }
-}
-
-/// MessageView code related to pre-processing
-extension MessageView {
-    func prepareBodyIfNeeded() {
-        guard message.fullyDownloaded, isMessageExpanded else {
-            return
-        }
-
-        inlineAttachmentWorker.start(mailboxManager: mailboxManager)
-    }
 }
 
 @available(iOS 17.0, *)
 #Preview("Message collapsed", traits: .sizeThatFitsLayout) {
     MessageView(
-        message: PreviewHelper.sampleMessage,
-        threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .collapsed])
+        threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .collapsed]),
+        message: PreviewHelper.sampleMessage
     )
-    .environmentObject(PreviewHelper.sampleMailboxManager)
+    .environmentObject(MessagesWorker())
 }
 
 @available(iOS 17.0, *)
 #Preview("Message expanded", traits: .sizeThatFitsLayout) {
     MessageView(
-        message: PreviewHelper.sampleMessage,
-        threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .expanded])
+        threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .expanded]),
+        message: PreviewHelper.sampleMessage
     )
-    .environmentObject(PreviewHelper.sampleMailboxManager)
+    .environmentObject(MessagesWorker())
 }

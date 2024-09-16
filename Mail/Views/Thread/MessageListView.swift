@@ -44,10 +44,7 @@ struct MessageListView: View {
                             }
                         } else if messageExpansion[message.uid] != .superCollapsed {
                             VStack(spacing: 0) {
-                                MessageView(
-                                    message: message,
-                                    threadForcedExpansion: $messageExpansion
-                                )
+                                MessageView(threadForcedExpansion: $messageExpansion, message: message)
                                 if divider(for: message) {
                                     IKDivider(type: .full)
                                 }
