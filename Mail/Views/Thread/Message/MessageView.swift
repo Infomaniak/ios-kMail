@@ -38,6 +38,7 @@ struct MessageView: View {
 
     @Environment(\.isMessageInteractive) private var isMessageInteractive
 
+    @EnvironmentObject private var messagesWorker: MessagesWorker
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingErrorLoading = false
@@ -90,34 +91,40 @@ struct MessageView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                     } else {
                         MessageBodyView(
-                            presentableBody: inlineAttachmentWorker.presentableBody,
-                            isMessagePreprocessed: inlineAttachmentWorker.isMessagePreprocessed,
+                            presentableBody: messagesWorker.presentableBodies[message.uid],
                             blockRemoteContent: isRemoteContentBlocked,
                             messageUid: message.uid,
                             displayContentBlockedActionView: $displayContentBlockedActionView
                         )
                     }
                 }
+                .task {
+                    do {
+                        try await messagesWorker.loadIfNeeded(message: message.freezeIfNeeded())
+                    } catch {
+                        isShowingErrorLoading = true
+                    }
+                }
             }
         }
-        .onAppear {
-            prepareBodyIfNeeded()
-        }
-        .task {
-            await fetchMessageAndEventCalendar()
-        }
-        .task(id: isMessageExpanded) {
-            await fetchMessageAndEventCalendar()
-        }
-        .onDisappear {
-            inlineAttachmentWorker.stop()
-        }
-        .onChange(of: message.fullyDownloaded) { _ in
-            prepareBodyIfNeeded()
-        }
-        .onChange(of: isMessageExpanded) { _ in
-            prepareBodyIfNeeded()
-        }
+//        .onAppear {
+//            prepareBodyIfNeeded()
+//        }
+//        .task {
+//            await fetchMessageAndEventCalendar()
+//        }
+//        .task(id: isMessageExpanded) {
+//            await fetchMessageAndEventCalendar()
+//        }
+//        .onDisappear {
+//            inlineAttachmentWorker.stop()
+//        }
+//        .onChange(of: message.fullyDownloaded) { _ in
+//            prepareBodyIfNeeded()
+//        }
+//        .onChange(of: isMessageExpanded) { _ in
+//            prepareBodyIfNeeded()
+//        }
         .accessibilityAction(named: MailResourcesStrings.Localizable.expandMessage) {
             guard isMessageInteractive else { return }
             withAnimation {
@@ -130,7 +137,6 @@ struct MessageView: View {
         guard isMessageExpanded else { return }
 
         async let fetchMessageResult: Void = fetchMessage()
-
         async let fetchEventCalendar: Void = fetchEventCalendar()
 
         await fetchMessageResult

@@ -28,6 +28,7 @@ enum MessageExpansionType: Equatable {
 }
 
 struct MessageListView: View {
+    @StateObject private var messagesWorker = MessagesWorker()
     @State private var messageExpansion = [String: MessageExpansionType]()
 
     let messages: [Message]
@@ -69,6 +70,7 @@ struct MessageListView: View {
                     }
                 }
             }
+            .environmentObject(messagesWorker)
             .id(messages.id)
         }
     }

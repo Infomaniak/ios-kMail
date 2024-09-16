@@ -31,8 +31,7 @@ struct MessageBodyView: View {
 
     @StateObject private var model = WebViewModel()
 
-    let presentableBody: PresentableBody
-    let isMessagePreprocessed: Bool
+    let presentableBody: PresentableBody?
     var blockRemoteContent: Bool
     let messageUid: String
 
@@ -43,7 +42,7 @@ struct MessageBodyView: View {
     var body: some View {
         ZStack {
             VStack {
-                if presentableBody.body != nil {
+                if let presentableBody, presentableBody.body != nil {
                     WebView(webView: model.webView, messageUid: messageUid) {
                         loadBody(blockRemoteContent: blockRemoteContent)
                     }
@@ -52,9 +51,6 @@ struct MessageBodyView: View {
                         loadBody(blockRemoteContent: blockRemoteContent)
                     }
                     .onChange(of: presentableBody) { _ in
-                        loadBody(blockRemoteContent: blockRemoteContent)
-                    }
-                    .onChange(of: isMessagePreprocessed) { _ in
                         loadBody(blockRemoteContent: blockRemoteContent)
                     }
                     .onChange(of: model.showBlockQuote) { _ in
@@ -111,6 +107,7 @@ struct MessageBodyView: View {
     }
 
     private func loadBody(blockRemoteContent: Bool) {
+        guard let presentableBody else { return }
         Task {
             let loadResult = try await model.loadBody(
                 presentableBody: presentableBody,
@@ -126,7 +123,6 @@ struct MessageBodyView: View {
 #Preview {
     MessageBodyView(
         presentableBody: PreviewHelper.samplePresentableBody,
-        isMessagePreprocessed: true,
         blockRemoteContent: false,
         messageUid: "message_uid",
         displayContentBlockedActionView: .constant(false)
