@@ -33,7 +33,7 @@ final class MessagesWorker: ObservableObject {
 
     @Published var presentableBodies = [String: PresentableBody]()
 
-    private let messages = [Message]()
+    private let bodyImageProcessor = BodyImageProcessor()
 
     func fetchAndProcessIfNeeded(message: Message) async throws {
         guard presentableBodies[message.uid] == nil, let mailboxManager = accountManager.currentMailboxManager else {
@@ -90,12 +90,66 @@ extension MessagesWorker {
             return
         }
 
-        setPresentableBody(for: message, presentableBody: updatedPresentableBody)
+        setPresentableBody(updatedPresentableBody, for: message)
 
-        // TODO: Insert inline attachments
+        await insertInlineAttachments(for: message, with: mailboxManager)
     }
 
-    private func setPresentableBody(for message: Message, presentableBody: PresentableBody) {
+    private func setPresentableBody(_ presentableBody: PresentableBody, for message: Message) {
         presentableBodies[message.uid] = presentableBody
+    }
+}
+
+// MARK: - Inline attachments
+
+extension MessagesWorker {
+    private func insertInlineAttachments(for frozenMessage: Message, with mailboxManager: MailboxManager) async {
+        let attachmentsArray = frozenMessage.attachments.filter { $0.contentId != nil }.toArray()
+        guard !attachmentsArray.isEmpty else {
+            return
+        }
+
+        let chunks = attachmentsArray.chunks(ofCount: Constants.inlineAttachmentBatchSize)
+        for attachments in chunks {
+            let batchTask = Task {
+                await processInlineAttachments(attachments, for: frozenMessage, with: mailboxManager)
+            }
+            await batchTask.finish()
+        }
+    }
+
+    private func processInlineAttachments(
+        _ attachments: ArraySlice<Attachment>,
+        for frozenMessage: Message,
+        with mailboxManager: MailboxManager
+    ) async {
+        guard let presentableBody = presentableBodies[frozenMessage.uid] else { return }
+
+        let base64Images = await bodyImageProcessor.fetchBase64Images(attachments, mailboxManager: mailboxManager)
+
+        async let mailBody = bodyImageProcessor.injectImagesInBody(
+            body: presentableBody.body?.value,
+            attachments: attachments,
+            base64Images: base64Images
+        )
+        async let compactBody = bodyImageProcessor.injectImagesInBody(
+            body: presentableBody.compactBody,
+            attachments: attachments,
+            base64Images: base64Images
+        )
+
+        let bodyValue = await mailBody
+        let compactBodyCopy = await compactBody
+
+        let body = presentableBody.body?.detached()
+        body?.value = bodyValue
+
+        let updatedPresentableBody = PresentableBody(
+            body: body,
+            compactBody: compactBodyCopy,
+            quotes: presentableBody.quotes
+        )
+
+        setPresentableBody(updatedPresentableBody, for: frozenMessage)
     }
 }
