@@ -44,20 +44,22 @@ struct MessageBodyView: View {
             VStack {
                 if let presentableBody, presentableBody.body != nil {
                     WebView(webView: model.webView, messageUid: messageUid) {
-                        loadBody(blockRemoteContent: blockRemoteContent)
+                        loadBody(blockRemoteContent: blockRemoteContent, presentableBody: presentableBody)
                     }
                     .frame(height: model.webViewHeight)
                     .onAppear {
-                        loadBody(blockRemoteContent: blockRemoteContent)
+                        loadBody(blockRemoteContent: blockRemoteContent, presentableBody: presentableBody)
                     }
-                    .onChange(of: presentableBody) { _ in
-                        loadBody(blockRemoteContent: blockRemoteContent)
+                    .onChange(of: presentableBody) { newValue in
+                        print("[PRESENTABLE BODY] From WebView")
+                        dump(newValue.compactBody)
+                        loadBody(blockRemoteContent: blockRemoteContent, presentableBody: newValue)
                     }
                     .onChange(of: model.showBlockQuote) { _ in
-                        loadBody(blockRemoteContent: blockRemoteContent)
+                        loadBody(blockRemoteContent: blockRemoteContent, presentableBody: presentableBody)
                     }
                     .onChange(of: blockRemoteContent) { newValue in
-                        loadBody(blockRemoteContent: newValue)
+                        loadBody(blockRemoteContent: newValue, presentableBody: presentableBody)
                     }
 
                     if !presentableBody.quotes.isEmpty {
@@ -106,7 +108,7 @@ struct MessageBodyView: View {
         }
     }
 
-    private func loadBody(blockRemoteContent: Bool) {
+    private func loadBody(blockRemoteContent: Bool, presentableBody: PresentableBody?) {
         guard let presentableBody else { return }
         Task {
             let loadResult = try await model.loadBody(
