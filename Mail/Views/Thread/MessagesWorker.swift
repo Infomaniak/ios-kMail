@@ -20,6 +20,8 @@ import Foundation
 import InfomaniakDI
 import MailCore
 
+typealias ImageBase64AndMime = (imageEncoded: String, mimeType: String)
+
 extension MessagesWorker {
     enum WorkerError: Error {
         case cantFetchMessage
