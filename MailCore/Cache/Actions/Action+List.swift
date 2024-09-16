@@ -94,7 +94,7 @@ extension Action: CaseIterable {
             star ? .unstar : .star,
             print ? .print : nil,
             .shareMailLink,
-            !platformDetector.isMac ? .saveMailInkDrive : nil,
+            platformDetector.isMac ? nil : .saveMailInkDrive,
             userIsStaff ? .reportDisplayProblem : nil
         ]
 
