@@ -94,9 +94,9 @@ extension Action: CaseIterable {
             star ? .unstar : .star,
             print ? .print : nil,
             .shareMailLink,
+            !platformDetector.isMac ? .saveMailInkDrive : nil,
             userIsStaff ? .reportDisplayProblem : nil
         ]
-        !platformDetector.isMac ? tempListActions.insert(.saveMailInkDrive, at: 6) : ()
 
         return (Action.quickActions, tempListActions.compactMap { $0 })
     }

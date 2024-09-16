@@ -200,10 +200,10 @@ public class ActionsManager: ObservableObject {
                 }
             }
         case .saveMailInkDrive:
+            guard platformDetector.isMac else {
+                return
+            }
             Task { @MainActor in
-                guard platformDetector.isMac else {
-                    return
-                }
                 do {
                     let fileURL = try await mailboxManager.apiFetcher.download(message: messages.first!)
                     try DeeplinkService().shareFileToKdrive(fileURL)
