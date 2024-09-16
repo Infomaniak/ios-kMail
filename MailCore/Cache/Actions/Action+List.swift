@@ -17,6 +17,8 @@
  */
 
 import Foundation
+import InfomaniakCore
+import InfomaniakDI
 import MailResources
 
 extension Action: CaseIterable {
@@ -77,13 +79,14 @@ extension Action: CaseIterable {
 
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
                                           userIsStaff: Bool) -> (quickActions: [Action], listActions: [Action]) {
+        @LazyInjectService var platformDetector: PlatformDetectable
+
         let archive = message.folder?.role != .archive
         let unread = !message.seen
         let star = message.flagged
         let spam = message.folder?.role == .spam
         let print = origin.type == .floatingPanel(source: .messageList)
-
-        let tempListActions: [Action?] = [
+        var tempListActions: [Action?] = [
             .openMovePanel,
             spam ? .nonSpam : .reportJunk,
             unread ? .markAsRead : .markAsUnread,
@@ -91,8 +94,10 @@ extension Action: CaseIterable {
             star ? .unstar : .star,
             print ? .print : nil,
             .shareMailLink,
+            platformDetector.isMac ? nil : .saveMailInkDrive,
             userIsStaff ? .reportDisplayProblem : nil
         ]
+
         return (Action.quickActions, tempListActions.compactMap { $0 })
     }
 
@@ -354,6 +359,12 @@ public extension Action {
         title: MailResourcesStrings.Localizable.shareEmail,
         iconResource: MailResourcesAsset.emailActionShare,
         matomoName: "shareLink"
+    )
+    static let saveMailInkDrive = Action(
+        id: "saveMailInkDrive",
+        title: MailResourcesStrings.Localizable.saveMailInkDrive,
+        iconResource: MailResourcesAsset.kdriveLogo,
+        matomoName: "saveInkDrive"
     )
 
     // MARK: Account Actions
