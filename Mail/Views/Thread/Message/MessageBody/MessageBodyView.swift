@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2023 Infomaniak Network SA
+ Copyright (C) 2024 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -16,106 +16,51 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
-import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
-import RealmSwift
-import SwiftSoup
 import SwiftUI
 
 struct MessageBodyView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @EnvironmentObject private var messagesWorker: MessagesWorker
 
-    @StateObject private var model = WebViewModel()
-
-    let presentableBody: PresentableBody?
-    var blockRemoteContent: Bool
-    let messageUid: String
+    @State private var isShowingLoadingError = false
 
     @Binding var displayContentBlockedActionView: Bool
 
-    private let printNotificationPublisher = NotificationCenter.default.publisher(for: Notification.Name.printNotification)
+    let isRemoteContentBlocked: Bool
+    let messageUid: String
 
     var body: some View {
         ZStack {
-            VStack {
-                if let presentableBody, presentableBody.body != nil {
-                    WebView(webView: model.webView, messageUid: messageUid) {
-                        loadBody(blockRemoteContent: blockRemoteContent, presentableBody: presentableBody)
-                    }
-                    .frame(height: model.webViewHeight)
-                    .onAppear {
-                        loadBody(blockRemoteContent: blockRemoteContent, presentableBody: presentableBody)
-                    }
-                    .onChange(of: presentableBody) { newValue in
-                        loadBody(blockRemoteContent: blockRemoteContent, presentableBody: newValue)
-                    }
-                    .onChange(of: model.showBlockQuote) { _ in
-                        loadBody(blockRemoteContent: blockRemoteContent, presentableBody: presentableBody)
-                    }
-                    .onChange(of: blockRemoteContent) { newValue in
-                        loadBody(blockRemoteContent: newValue, presentableBody: presentableBody)
-                    }
-
-                    if !presentableBody.quotes.isEmpty {
-                        ShowBlockquoteButton(showBlockquote: $model.showBlockQuote)
-                    }
-                }
-            }
-            .opacity(model.initialContentLoading ? 0 : 1)
-
-            if model.initialContentLoading {
-                ShimmerView()
-            }
-        }
-        .onReceive(printNotificationPublisher) { _ in
-            printMessage()
-        }
-    }
-
-    private func printMessage() {
-        let printController = UIPrintInteractionController.shared
-        let printFormatter = model.webView.viewPrintFormatter()
-        printController.printFormatter = printFormatter
-
-        let completionHandler: UIPrintInteractionController.CompletionHandler = { _, completed, error in
-            if completed {
-                matomo.track(eventWithCategory: .bottomSheetMessageActions, name: "printValidated")
-            } else if let error {
-                snackbarPresenter.show(message: error.localizedDescription)
+            if isShowingLoadingError {
+                Text(MailResourcesStrings.Localizable.errorLoadingMessage)
+                    .textStyle(.bodySmallItalicSecondary)
+                    .padding(value: .medium)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             } else {
-                matomo.track(eventWithCategory: .bottomSheetMessageActions, name: "printCancelled")
+                MessageBodyContentView(
+                    displayContentBlockedActionView: $displayContentBlockedActionView,
+                    presentableBody: messagesWorker.presentableBodies[messageUid],
+                    blockRemoteContent: isRemoteContentBlocked,
+                    messageUid: messageUid
+                )
             }
         }
-
-        Task { @MainActor in
-            printController.present(animated: true, completionHandler: completionHandler)
-        }
-    }
-
-    private func loadBody(blockRemoteContent: Bool, presentableBody: PresentableBody?) {
-        guard let presentableBody else { return }
-
-        Task {
-            let loadResult = try await model.loadBody(
-                presentableBody: presentableBody,
-                blockRemoteContent: blockRemoteContent,
-                messageUid: messageUid
-            )
-
-            displayContentBlockedActionView = (loadResult == .remoteContentBlocked)
+        .task {
+            do {
+                try await messagesWorker.fetchAndProcessIfNeeded(messageUid: messageUid)
+            } catch {
+                isShowingLoadingError = true
+            }
         }
     }
 }
 
 #Preview {
     MessageBodyView(
-        presentableBody: PreviewHelper.samplePresentableBody,
-        blockRemoteContent: false,
-        messageUid: "message_uid",
-        displayContentBlockedActionView: .constant(false)
+        displayContentBlockedActionView: .constant(false),
+        isRemoteContentBlocked: false,
+        messageUid: PreviewHelper.sampleMessage.uid
     )
 }

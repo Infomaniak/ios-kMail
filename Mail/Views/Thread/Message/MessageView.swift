@@ -36,9 +36,6 @@ extension EnvironmentValues {
 struct MessageView: View {
     @Environment(\.isMessageInteractive) private var isMessageInteractive
 
-    @EnvironmentObject private var messagesWorker: MessagesWorker
-
-    @State private var isShowingErrorLoading = false
     @State private var displayContentBlockedActionView = false
 
     @Binding var threadForcedExpansion: [String: MessageExpansionType]
@@ -74,26 +71,11 @@ struct MessageView: View {
                         )
                     }
 
-                    if isShowingErrorLoading {
-                        Text(MailResourcesStrings.Localizable.errorLoadingMessage)
-                            .textStyle(.bodySmallItalicSecondary)
-                            .padding(.horizontal, value: .medium)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                    } else {
-                        MessageBodyView(
-                            presentableBody: messagesWorker.presentableBodies[message.uid],
-                            blockRemoteContent: isRemoteContentBlocked,
-                            messageUid: message.uid,
-                            displayContentBlockedActionView: $displayContentBlockedActionView
-                        )
-                    }
-                }
-                .task {
-                    do {
-                        try await messagesWorker.fetchAndProcessIfNeeded(message: message.freezeIfNeeded())
-                    } catch {
-                        isShowingErrorLoading = true
-                    }
+                    MessageBodyView(
+                        displayContentBlockedActionView: $displayContentBlockedActionView,
+                        isRemoteContentBlocked: isRemoteContentBlocked,
+                        messageUid: message.uid
+                    )
                 }
             }
         }
@@ -112,7 +94,6 @@ struct MessageView: View {
         threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .collapsed]),
         message: PreviewHelper.sampleMessage
     )
-    .environmentObject(MessagesWorker())
 }
 
 @available(iOS 17.0, *)
@@ -121,5 +102,4 @@ struct MessageView: View {
         threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .expanded]),
         message: PreviewHelper.sampleMessage
     )
-    .environmentObject(MessagesWorker())
 }

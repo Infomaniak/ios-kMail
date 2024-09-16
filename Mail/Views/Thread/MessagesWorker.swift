@@ -37,8 +37,12 @@ final class MessagesWorker: ObservableObject {
 
     private let bodyImageProcessor = BodyImageProcessor()
 
-    func fetchAndProcessIfNeeded(message: Message) async throws {
-        guard presentableBodies[message.uid] == nil, let mailboxManager = accountManager.currentMailboxManager else {
+    func fetchAndProcessIfNeeded(messageUid: String) async throws {
+        guard presentableBodies[messageUid] == nil,
+              let mailboxManager = accountManager.currentMailboxManager,
+              let message = mailboxManager.transactionExecutor.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?
+              .freeze()
+        else {
             return
         }
 
