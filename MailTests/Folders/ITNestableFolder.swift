@@ -27,7 +27,7 @@ final class ITNestableFolder: XCTestCase {
     var maxDepth = 0
     var maxElementsPerLevel = 0
 
-    override class func setUp() {
+    override static func setUp() {
         super.setUp()
 
         MockingHelper.clearRegisteredTypes()
@@ -36,7 +36,7 @@ final class ITNestableFolder: XCTestCase {
 
     // MARK: - TestSuite
 
-    override class var defaultTestSuite: XCTestSuite {
+    override static var defaultTestSuite: XCTestSuite {
         let testSuite = XCTestSuite(name: NSStringFromClass(self))
 
         // Wide not deep
@@ -56,7 +56,7 @@ final class ITNestableFolder: XCTestCase {
         return testSuite
     }
 
-    class func addNewTest(maxDepth: Int, maxElementsPerLevel: Int, testSuite: XCTestSuite) {
+    static func addNewTest(maxDepth: Int, maxElementsPerLevel: Int, testSuite: XCTestSuite) {
         for invocation in testInvocations {
             let newTestCase = ITNestableFolder(invocation: invocation)
             newTestCase.maxDepth = maxDepth

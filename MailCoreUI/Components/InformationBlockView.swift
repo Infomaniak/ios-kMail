@@ -116,9 +116,9 @@ public struct InformationBlockView: View {
         message: "Tip",
         iconColor: .blue,
         buttonAction: {},
-        buttonTitle: "Button title"
-    ) {
-    /* Preview */ }
+        buttonTitle: "Button title",
+        dismissHandler: {} // swiftlint:disable:this trailing_closure
+    )
 }
 
 #Preview("Without Title") {

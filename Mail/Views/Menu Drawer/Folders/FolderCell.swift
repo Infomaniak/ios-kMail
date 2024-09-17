@@ -26,7 +26,7 @@ import SwiftUI
 import SwiftUIMacros
 
 extension EnvironmentValues {
-    @EnvironmentValue
+    @EnvironmentKey
     var folderCellType = FolderCell.CellType.menuDrawer
 }
 

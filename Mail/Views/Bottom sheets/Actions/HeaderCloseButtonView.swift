@@ -39,7 +39,7 @@ struct HeaderCloseButtonView: View {
     }
 }
 
-#Preview {
+@available(iOS 17.0, *)
+#Preview(traits: .sizeThatFitsLayout) {
     HeaderCloseButtonView(title: "View") {}
-        .previewLayout(.sizeThatFits)
 }

@@ -24,7 +24,7 @@ import MailCoreUI
 import MailResources
 import SwiftUI
 
-extension MailResourcesImages: Identifiable {
+extension MailResourcesImages: @retroactive Identifiable {
     public var id: String {
         name
     }

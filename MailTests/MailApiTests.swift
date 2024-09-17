@@ -23,7 +23,7 @@ import InfomaniakLogin
 import XCTest
 
 final class MailApiTests: XCTestCase {
-    override class func setUp() {
+    override static func setUp() {
         super.setUp()
 
         MockingHelper.clearRegisteredTypes()

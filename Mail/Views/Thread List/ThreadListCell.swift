@@ -65,15 +65,14 @@ struct ThreadListCell: View {
             density: threadDensity,
             accentColor: accentColor,
             isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
-            isSelected: isMultiSelected,
-            avatarTapped: {
-                if multipleSelectionViewModel.isEnabled {
-                    didTapCell()
-                } else {
-                    didOptionalTapCell()
-                }
+            isSelected: isMultiSelected
+        ) {
+            if multipleSelectionViewModel.isEnabled {
+                didTapCell()
+            } else {
+                didOptionalTapCell()
             }
-        )
+        }
         .background(SelectionBackground(
             selectionType: selectionType,
             paddingLeading: 4,

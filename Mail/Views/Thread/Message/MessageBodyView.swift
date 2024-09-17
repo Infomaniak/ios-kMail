@@ -65,15 +65,17 @@ struct MessageBodyView: View {
                     }
 
                     if !presentableBody.quotes.isEmpty {
-                        Button(model.showBlockQuote
-                            ? MailResourcesStrings.Localizable.messageHideQuotedText
-                            : MailResourcesStrings.Localizable.messageShowQuotedText) {
-                                model.showBlockQuote.toggle()
-                            }
-                            .buttonStyle(.ikBorderless(isInlined: true))
-                            .controlSize(.small)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.horizontal, value: .medium)
+                        Button(
+                            model.showBlockQuote
+                                ? MailResourcesStrings.Localizable.messageHideQuotedText
+                                : MailResourcesStrings.Localizable.messageShowQuotedText
+                        ) {
+                            model.showBlockQuote.toggle()
+                        }
+                        .buttonStyle(.ikBorderless(isInlined: true))
+                        .controlSize(.small)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, value: .medium)
                     }
                 }
             }

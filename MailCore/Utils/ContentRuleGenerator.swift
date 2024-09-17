@@ -58,6 +58,6 @@ public enum ContentRuleGenerator {
 
     public static func generateContentRulesJSON(rules: [ContentRule]) -> String? {
         guard let encodedData = try? jsonEncoder.encode(rules) else { return nil }
-        return String(data: encodedData, encoding: .utf8)
+        return String(decoding: encodedData, as: UTF8.self)
     }
 }

@@ -242,14 +242,14 @@ final class MCKMailboxManageable_SearchViewModel: MailboxManageable, MCKTransact
 // MARK: - ITSearchViewModel
 
 final class ITSearchViewModel: XCTestCase {
-    override class func setUp() {
+    override static func setUp() {
         super.setUp()
 
         MockingHelper.clearRegisteredTypes()
         MockingHelper.registerConcreteTypes(configuration: .minimal)
     }
 
-    /// Tests removed temporarly
+    /// Tests removed temporarily
     /// Uncomment when all MailboxManager are MailboxManageable
 
 //    @MainActor func testInit() {
