@@ -25,8 +25,10 @@ struct BodyImageProcessor {
     private let bodyImageMutator = BodyImageMutator()
 
     /// Download and encode all images for the current chunk in parallel.
-    public func fetchBase64Images(_ attachments: ArraySlice<Attachment>,
-                                  mailboxManager: MailboxManager) async -> [ImageBase64AndMime?] {
+    public func fetchBase64Images(
+        _ attachments: ArraySlice<Attachment>,
+        mailboxManager: MailboxManager
+    ) async -> [ImageBase64AndMime?] {
         // Force a fixed max concurrency to be a nice citizen to the network.
         let base64Images: [ImageBase64AndMime?] = await attachments
             .concurrentMap(customConcurrency: Constants.concurrentNetworkCalls) { attachment in
@@ -53,7 +55,6 @@ struct BodyImageProcessor {
                         attachmentMime: attachment.mimeType
                     )
                     return compressedImage
-
                 } catch {
                     Logger.general.error("Error \(error) : Failed to fetch data  for attachment: \(attachment)")
                     return nil
@@ -71,10 +72,9 @@ struct BodyImageProcessor {
             return ImageBase64AndMime(base64String, attachmentMime)
         }
 
-        // On iOS17 Safari _and_ iOS has support for heic. Quality is unchanged. Size is halved.
+        // On iOS17 Safari and iOS has support for heic. Quality is unchanged. Size is halved.
         let image = UIImage(data: attachmentData)
-        guard let imageCompressed = image?.heicData(),
-              imageCompressed.count < attachmentData.count else {
+        guard let imageCompressed = image?.heicData(), imageCompressed.count < attachmentData.count else {
             let base64String = attachmentData.base64EncodedString()
             return ImageBase64AndMime(base64String, attachmentMime)
         }
@@ -84,9 +84,11 @@ struct BodyImageProcessor {
     }
 
     /// Inject base64 images in a body
-    public func injectImagesInBody(body: String?,
-                                   attachments: ArraySlice<Attachment>,
-                                   base64Images: [ImageBase64AndMime?]) async -> String? {
+    public func injectImagesInBody(
+        body: String?,
+        attachments: ArraySlice<Attachment>,
+        base64Images: [ImageBase64AndMime?]
+    ) async -> String? {
         guard let body, !body.isEmpty else {
             return nil
         }
@@ -113,7 +115,6 @@ struct BodyImageProcessor {
     }
 }
 
-/// Something to insert base64 image into a mail body. Easily testable.
 struct BodyImageMutator {
     func replaceContentIdForBase64Image(
         in body: inout String,

@@ -48,10 +48,12 @@ struct MessageBodyView: View {
             }
         }
         .task {
-            do {
-                try await messagesWorker.fetchAndProcessIfNeeded(messageUid: messageUid)
-            } catch {
-                isShowingLoadingError = true
+            await tryOrDisplayError {
+                do {
+                    try await messagesWorker.fetchAndProcessIfNeeded(messageUid: messageUid)
+                } catch is MessagesWorker.WorkerError {
+                    isShowingLoadingError = true
+                }
             }
         }
     }

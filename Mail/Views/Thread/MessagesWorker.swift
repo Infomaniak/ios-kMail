@@ -67,17 +67,13 @@ extension MessagesWorker {
             return
         }
 
-        await tryOrDisplayError {
-            do {
-                try await mailboxManager.message(message: message)
-            } catch let error as MailApiError where error == .apiMessageNotFound {
-                snackbarPresenter.show(message: error.errorDescription ?? "")
-                try? await mailboxManager.refreshFolder(from: [message], additionalFolder: nil)
-            } catch let error as AFErrorWithContext where error.afError.isExplicitlyCancelledError {
-                throw WorkerError.cantFetchMessage
-            } catch {
-                throw WorkerError.cantFetchMessage
-            }
+        do {
+            try await mailboxManager.message(message: message)
+        } catch let error as MailApiError where error == .apiMessageNotFound {
+            snackbarPresenter.show(message: error.errorDescription ?? "")
+            try? await mailboxManager.refreshFolder(from: [message], additionalFolder: nil)
+        } catch {
+            throw WorkerError.cantFetchMessage
         }
     }
 
