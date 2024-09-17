@@ -20,7 +20,6 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
-import MailResources
 import RealmSwift
 import SwiftSoup
 import SwiftUI
