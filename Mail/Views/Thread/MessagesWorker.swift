@@ -44,6 +44,7 @@ final class MessagesWorker: ObservableObject {
         }
 
         try await fetchMessageAndCalendar(of: messageUid, with: mailboxManager)
+        guard !Task.isCancelled else { return }
         await prepareBodyAndAttachments(of: messageUid, with: mailboxManager)
     }
 }
@@ -92,10 +93,13 @@ extension MessagesWorker {
         }
 
         await prepareBody(of: message)
+        guard !Task.isCancelled else { return }
         await insertInlineAttachments(for: message, with: mailboxManager)
     }
 
     private func prepareBody(of message: Message) async {
+        guard !Task.isCancelled else { return }
+
         guard !hasPresentableBody(messageUid: message.uid),
               let updatedPresentableBody = await MessageBodyUtils.prepareWithPrintOption(message: message) else {
             return
@@ -109,6 +113,8 @@ extension MessagesWorker {
 
 extension MessagesWorker {
     private func insertInlineAttachments(for frozenMessage: Message, with mailboxManager: MailboxManager) async {
+        guard !Task.isCancelled else { return }
+
         guard !hasPresentableBodyWithAllAttachments(messageUid: frozenMessage.uid) else {
             return
         }
@@ -120,13 +126,14 @@ extension MessagesWorker {
 
         let chunks = attachmentsArray.chunks(ofCount: Constants.inlineAttachmentBatchSize)
         for attachments in chunks {
+            guard !Task.isCancelled else { return }
             let batchTask = Task {
                 await processInlineAttachments(attachments, for: frozenMessage, with: mailboxManager)
             }
             await batchTask.finish()
         }
 
-        setReplacesAllAttachments(for: frozenMessage)
+        setReplacedAllAttachments(for: frozenMessage)
     }
 
     private func processInlineAttachments(
@@ -134,6 +141,8 @@ extension MessagesWorker {
         for frozenMessage: Message,
         with mailboxManager: MailboxManager
     ) async {
+        guard !Task.isCancelled else { return }
+
         guard let presentableBody = presentableBodies[frozenMessage.uid] else { return }
 
         let base64Images = await bodyImageProcessor.fetchBase64Images(attachments, mailboxManager: mailboxManager)
@@ -176,12 +185,12 @@ extension MessagesWorker {
         presentableBodies[message.uid] = presentableBody
     }
 
-    private func setReplacesAllAttachments(for message: Message) {
-        replacedAllAttachments[message.uid] = true
-    }
-
     private func hasPresentableBody(messageUid: String) -> Bool {
         return presentableBodies[messageUid] != nil
+    }
+
+    private func setReplacedAllAttachments(for message: Message) {
+        replacedAllAttachments[message.uid] = true
     }
 
     private func hasPresentableBodyWithAllAttachments(messageUid: String) -> Bool {
