@@ -35,28 +35,29 @@ final class MessagesWorker: ObservableObject {
 
     @Published var presentableBodies = [String: PresentableBody]()
 
+    private var replacedAllAttachments = [String: Bool]()
     private let bodyImageProcessor = BodyImageProcessor()
 
     func fetchAndProcessIfNeeded(messageUid: String) async throws {
-        guard presentableBodies[messageUid] == nil,
-              let mailboxManager = accountManager.currentMailboxManager,
-              let message = mailboxManager.transactionExecutor.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?
-              .freeze()
-        else {
+        guard let mailboxManager = accountManager.currentMailboxManager else {
             return
         }
 
-        try await fetchMessageAndCalendar(of: message, with: mailboxManager)
-        await prepareBody(of: message, with: mailboxManager)
+        try await fetchMessageAndCalendar(of: messageUid, with: mailboxManager)
+        await prepareBodyAndAttachments(of: messageUid, with: mailboxManager)
     }
 }
 
 // MARK: - Fetch Message and Calendar Event
 
 extension MessagesWorker {
-    private func fetchMessageAndCalendar(of frozenMessage: Message, with mailboxManager: MailboxManager) async throws {
-        async let fetchMessageResult: Void = fetchMessage(of: frozenMessage, with: mailboxManager)
-        async let fetchEventCalendar: Void = fetchEventCalendar(of: frozenMessage, with: mailboxManager)
+    private func fetchMessageAndCalendar(of messageUid: String, with mailboxManager: MailboxManager) async throws {
+        guard let message = getFrozenMessage(uid: messageUid, with: mailboxManager) else {
+            return
+        }
+
+        async let fetchMessageResult: Void = fetchMessage(of: message, with: mailboxManager)
+        async let fetchEventCalendar: Void = fetchEventCalendar(of: message, with: mailboxManager)
 
         try await fetchMessageResult
         await fetchEventCalendar
@@ -85,20 +86,22 @@ extension MessagesWorker {
 // MARK: - Prepare body
 
 extension MessagesWorker {
-    private func prepareBody(of frozenMessage: Message, with mailboxManager: MailboxManager) async {
-        guard let message = mailboxManager.transactionExecutor
-            .fetchObject(ofType: Message.self, forPrimaryKey: frozenMessage.uid)?.freeze(),
-            let updatedPresentableBody = await MessageBodyUtils.prepareWithPrintOption(message: message) else {
+    private func prepareBodyAndAttachments(of messageUid: String, with mailboxManager: MailboxManager) async {
+        guard let message = getFrozenMessage(uid: messageUid, with: mailboxManager) else {
+            return
+        }
+
+        await prepareBody(of: message)
+        await insertInlineAttachments(for: message, with: mailboxManager)
+    }
+
+    private func prepareBody(of message: Message) async {
+        guard !hasPresentableBody(messageUid: message.uid),
+              let updatedPresentableBody = await MessageBodyUtils.prepareWithPrintOption(message: message) else {
             return
         }
 
         setPresentableBody(updatedPresentableBody, for: message)
-
-        await insertInlineAttachments(for: message, with: mailboxManager)
-    }
-
-    private func setPresentableBody(_ presentableBody: PresentableBody, for message: Message) {
-        presentableBodies[message.uid] = presentableBody
     }
 }
 
@@ -106,6 +109,10 @@ extension MessagesWorker {
 
 extension MessagesWorker {
     private func insertInlineAttachments(for frozenMessage: Message, with mailboxManager: MailboxManager) async {
+        guard !hasPresentableBodyWithAllAttachments(messageUid: frozenMessage.uid) else {
+            return
+        }
+
         let attachmentsArray = frozenMessage.attachments.filter { $0.contentId != nil }.toArray()
         guard !attachmentsArray.isEmpty else {
             return
@@ -118,6 +125,8 @@ extension MessagesWorker {
             }
             await batchTask.finish()
         }
+
+        setReplacesAllAttachments(for: frozenMessage)
     }
 
     private func processInlineAttachments(
@@ -153,5 +162,29 @@ extension MessagesWorker {
         )
 
         setPresentableBody(updatedPresentableBody, for: frozenMessage)
+    }
+}
+
+// MARK: - Utils
+
+extension MessagesWorker {
+    private func getFrozenMessage(uid: String, with mailboxManager: MailboxManager) -> Message? {
+        return mailboxManager.transactionExecutor.fetchObject(ofType: Message.self, forPrimaryKey: uid)?.freeze()
+    }
+
+    private func setPresentableBody(_ presentableBody: PresentableBody, for message: Message) {
+        presentableBodies[message.uid] = presentableBody
+    }
+
+    private func setReplacesAllAttachments(for message: Message) {
+        replacedAllAttachments[message.uid] = true
+    }
+
+    private func hasPresentableBody(messageUid: String) -> Bool {
+        return presentableBodies[messageUid] != nil
+    }
+
+    private func hasPresentableBodyWithAllAttachments(messageUid: String) -> Bool {
+        return replacedAllAttachments[messageUid, default: false]
     }
 }

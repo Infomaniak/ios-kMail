@@ -34,7 +34,7 @@ struct MessageBodyContentView: View {
     @Binding var displayContentBlockedActionView: Bool
 
     let presentableBody: PresentableBody?
-    var blockRemoteContent: Bool
+    let blockRemoteContent: Bool
     let messageUid: String
 
     private let printNotificationPublisher = NotificationCenter.default.publisher(for: Notification.Name.printNotification)
