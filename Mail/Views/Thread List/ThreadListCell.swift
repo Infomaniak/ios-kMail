@@ -102,7 +102,14 @@ struct ThreadListCell: View {
 		}
 		.actionsContextMenu(thread: thread) {
 			Button(action: { didOptionalTapCell() },
-				   label: { Label(Action.activeMultiselect.title, systemImage: "checklist") })
+			       label: { Label {
+			       	Text(Action.activeMultiselect.title)
+			       } icon: {
+			       	Action.activeMultiselect.icon
+			       		.resizable()
+			       		.scaledToFit()
+			       }
+			       })
 		}
 	}
 
