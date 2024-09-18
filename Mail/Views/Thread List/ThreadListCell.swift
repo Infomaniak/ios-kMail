@@ -25,135 +25,135 @@ import MailResources
 import SwiftUI
 
 extension ThreadListCell: Equatable {
-	static func == (lhs: ThreadListCell, rhs: ThreadListCell) -> Bool {
-		return lhs.thread.id == rhs.thread.id
-			&& lhs.thread.messageIds == rhs.thread.messageIds
-			&& lhs.isSelected == rhs.isSelected
-			&& lhs.isMultiSelected == rhs.isMultiSelected
-	}
+    static func == (lhs: ThreadListCell, rhs: ThreadListCell) -> Bool {
+        return lhs.thread.id == rhs.thread.id
+            && lhs.thread.messageIds == rhs.thread.messageIds
+            && lhs.isSelected == rhs.isSelected
+            && lhs.isMultiSelected == rhs.isMultiSelected
+    }
 }
 
 struct ThreadListCell: View {
-	@LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var matomo: MatomoUtils
 
-	@EnvironmentObject private var splitViewManager: SplitViewManager
-	@EnvironmentObject private var mainViewState: MainViewState
-	@EnvironmentObject private var actionsManager: ActionsManager
+    @EnvironmentObject private var splitViewManager: SplitViewManager
+    @EnvironmentObject private var mainViewState: MainViewState
+    @EnvironmentObject private var actionsManager: ActionsManager
 
-	let viewModel: ThreadListable
-	@ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
+    let viewModel: ThreadListable
+    @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
 
-	let thread: Thread
+    let thread: Thread
 
-	let threadDensity: ThreadDensity
-	let accentColor: AccentColor
+    let threadDensity: ThreadDensity
+    let accentColor: AccentColor
 
-	let isSelected: Bool
-	let isMultiSelected: Bool
+    let isSelected: Bool
+    let isMultiSelected: Bool
 
-	@Binding var flushAlert: FlushAlertState?
+    @Binding var flushAlert: FlushAlertState?
 
-	private var selectionType: SelectionBackgroundKind {
-		if multipleSelectionViewModel.isEnabled {
-			return isMultiSelected ? .multiple : .none
-		}
-		return isSelected ? .single : .none
-	}
+    private var selectionType: SelectionBackgroundKind {
+        if multipleSelectionViewModel.isEnabled {
+            return isMultiSelected ? .multiple : .none
+        }
+        return isSelected ? .single : .none
+    }
 
-	var body: some View {
-		ThreadCell(
-			thread: thread,
-			density: threadDensity,
-			accentColor: accentColor,
-			isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
-			isSelected: isMultiSelected,
-			avatarTapped: {
-				if multipleSelectionViewModel.isEnabled {
-					didTapCell()
-				} else {
-					didOptionalTapCell()
-				}
-			}
-		)
-		.background(SelectionBackground(
-			selectionType: selectionType,
-			paddingLeading: 4,
-			withAnimation: false,
-			accentColor: accentColor
-		))
-		.contentShape(Rectangle())
-		.onTapGesture { didTapCell() }
-		.openInWindowOnDoubleTap(
-			windowId: DesktopWindowIdentifier.threadWindowIdentifier,
-			value: OpenThreadIntent.openFromThreadCell(
-				thread: thread,
-				currentFolder: viewModel.frozenFolder,
-				mailboxManager: viewModel.mailboxManager
-			)
-		)
-		.swipeActions(
-			thread: thread,
-			viewModel: viewModel,
-			multipleSelectionViewModel: multipleSelectionViewModel,
-			nearestFlushAlert: $flushAlert
-		)
-		.accessibilityAction(named: MailResourcesStrings.Localizable.buttonMultiselect) {
-			didOptionalTapCell()
-		}
-		.actionsContextMenu(thread: thread) {
-			Button(action: { didOptionalTapCell() },
-			       label: { Label {
-			       	Text(Action.activeMultiselect.title)
-			       } icon: {
-			       	Action.activeMultiselect.icon
-			       		.resizable()
-			       		.scaledToFit()
-			       }
-			       })
-		}
-	}
+    var body: some View {
+        ThreadCell(
+            thread: thread,
+            density: threadDensity,
+            accentColor: accentColor,
+            isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
+            isSelected: isMultiSelected,
+            avatarTapped: {
+                if multipleSelectionViewModel.isEnabled {
+                    didTapCell()
+                } else {
+                    didOptionalTapCell()
+                }
+            }
+        )
+        .background(SelectionBackground(
+            selectionType: selectionType,
+            paddingLeading: 4,
+            withAnimation: false,
+            accentColor: accentColor
+        ))
+        .contentShape(Rectangle())
+        .onTapGesture { didTapCell() }
+        .openInWindowOnDoubleTap(
+            windowId: DesktopWindowIdentifier.threadWindowIdentifier,
+            value: OpenThreadIntent.openFromThreadCell(
+                thread: thread,
+                currentFolder: viewModel.frozenFolder,
+                mailboxManager: viewModel.mailboxManager
+            )
+        )
+        .swipeActions(
+            thread: thread,
+            viewModel: viewModel,
+            multipleSelectionViewModel: multipleSelectionViewModel,
+            nearestFlushAlert: $flushAlert
+        )
+        .accessibilityAction(named: MailResourcesStrings.Localizable.buttonMultiselect) {
+            didOptionalTapCell()
+        }
+        .actionsContextMenu(thread: thread) {
+            Button(action: { didOptionalTapCell() },
+                   label: { Label {
+                       Text(Action.activeMultiselect.title)
+                   } icon: {
+                       Action.activeMultiselect.icon
+                           .resizable()
+                           .scaledToFit()
+                   }
+                   })
+        }
+    }
 
-	private func didTapCell() {
-		viewModel.addCurrentSearchTermToHistoryIfNeeded()
-		if multipleSelectionViewModel.isEnabled {
-			multipleSelectionViewModel.toggleSelection(of: thread)
-		} else {
-			if thread.shouldPresentAsDraft {
-				DraftUtils.editDraft(
-					from: thread,
-					mailboxManager: viewModel.mailboxManager,
-					composeMessageIntent: $mainViewState.composeMessageIntent
-				)
-			} else {
-				splitViewManager.adaptToProminentThreadView()
+    private func didTapCell() {
+        viewModel.addCurrentSearchTermToHistoryIfNeeded()
+        if multipleSelectionViewModel.isEnabled {
+            multipleSelectionViewModel.toggleSelection(of: thread)
+        } else {
+            if thread.shouldPresentAsDraft {
+                DraftUtils.editDraft(
+                    from: thread,
+                    mailboxManager: viewModel.mailboxManager,
+                    composeMessageIntent: $mainViewState.composeMessageIntent
+                )
+            } else {
+                splitViewManager.adaptToProminentThreadView()
 
-				viewModel.onTapCell(thread: thread)
-				mainViewState.selectedThread = thread
-			}
-		}
-	}
+                viewModel.onTapCell(thread: thread)
+                mainViewState.selectedThread = thread
+            }
+        }
+    }
 
-	private func didOptionalTapCell() {
-		guard !multipleSelectionViewModel.isEnabled else { return }
-		multipleSelectionViewModel.feedbackGenerator.prepare()
-		let eventCategory: MatomoUtils.EventCategory = viewModel is SearchViewModel ? .searchMultiSelection : .multiSelection
-		matomo.track(eventWithCategory: eventCategory, action: .longPress, name: "enable")
-		multipleSelectionViewModel.feedbackGenerator.impactOccurred()
-		multipleSelectionViewModel.toggleSelection(of: thread)
-	}
+    private func didOptionalTapCell() {
+        guard !multipleSelectionViewModel.isEnabled else { return }
+        multipleSelectionViewModel.feedbackGenerator.prepare()
+        let eventCategory: MatomoUtils.EventCategory = viewModel is SearchViewModel ? .searchMultiSelection : .multiSelection
+        matomo.track(eventWithCategory: eventCategory, action: .longPress, name: "enable")
+        multipleSelectionViewModel.feedbackGenerator.impactOccurred()
+        multipleSelectionViewModel.toggleSelection(of: thread)
+    }
 }
 
 #Preview {
-	ThreadListCell(
-		viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
-		                               frozenFolder: PreviewHelper.sampleFolder,
-		                               selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner),
-		multipleSelectionViewModel: MultipleSelectionViewModel(fromArchiveFolder: true),
-		thread: PreviewHelper.sampleThread,
-		threadDensity: .large,
-		accentColor: .pink,
-		isSelected: false,
-		isMultiSelected: false,
-		flushAlert: .constant(nil)
-	)
+    ThreadListCell(
+        viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
+                                       frozenFolder: PreviewHelper.sampleFolder,
+                                       selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner),
+        multipleSelectionViewModel: MultipleSelectionViewModel(fromArchiveFolder: true),
+        thread: PreviewHelper.sampleThread,
+        threadDensity: .large,
+        accentColor: .pink,
+        isSelected: false,
+        isMultiSelected: false,
+        flushAlert: .constant(nil)
+    )
 }
