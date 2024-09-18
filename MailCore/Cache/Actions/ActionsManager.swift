@@ -217,6 +217,9 @@ public class ActionsManager: ObservableObject {
             Task { @MainActor in
                 origin.nearestShareMailLinkPanel?.wrappedValue = result
             }
+		case .activeMultiselect:
+			Task { @MainActor in
+			}
         default:
             break
         }

@@ -91,7 +91,6 @@ struct ThreadListCell: View {
 				mailboxManager: viewModel.mailboxManager
 			)
 		)
-		.actionsContextMenu(thread: thread)
 		.swipeActions(
 			thread: thread,
 			viewModel: viewModel,
@@ -101,37 +100,9 @@ struct ThreadListCell: View {
 		.accessibilityAction(named: MailResourcesStrings.Localizable.selectButton) {
 			didOptionalTapCell()
 		}
-		.contextMenu {
+		.actionsContextMenu(thread: thread) {
 			Button(action: { didOptionalTapCell() },
-			       label: { Label(MailResourcesStrings.Localizable.enableMultiSelection, systemImage: "checklist") })
-			ForEach(Action.rightClickActions) { action in
-				ToolbarButton(
-					text: action.shortTitle ?? action.title,
-					icon: action.icon
-				) {
-					let allMessages = multipleSelectionViewModel.selectedItems.threads.flatMap(\.messages)
-					multipleSelectionViewModel.disable()
-					let originFolder = viewModel.frozenFolder
-					Task {
-						matomo.trackBulkEvent(
-							eventWithCategory: .threadActions,
-							name: action.matomoName.capitalized,
-							numberOfItems: multipleSelectionViewModel.selectedItems.count
-						)
-
-						try await actionsManager.performAction(
-							target: Array(self.thread.messages),
-							action: action,
-							origin: .multipleSelection(
-								originFolder: originFolder,
-								nearestFlushAlert: $flushAlert
-							)
-						)
-					}
-				}
-				.accessibilityLabel(action.title)
-				.accessibilityAddTraits(.isButton)
-			}
+				   label: { Label(Action.activeMultiselect.title, systemImage: "checklist") })
 		}
 	}
 

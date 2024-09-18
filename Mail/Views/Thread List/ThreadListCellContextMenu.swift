@@ -23,45 +23,60 @@ import SwiftModalPresentation
 import SwiftUI
 
 extension View {
-    func actionsContextMenu(thread: Thread) -> some View {
-        modifier(ThreadListCellContextMenu(thread: thread))
-    }
+	func actionsContextMenu<V>(thread: Thread, extraMenu: @escaping () -> V) -> some View where V: View {
+		modifier(ThreadListCellContextMenu(thread: thread, extraMenu: extraMenu))
+	}
 }
 
-struct ThreadListCellContextMenu: ViewModifier {
-    @LazyInjectService private var platformDetector: PlatformDetectable
+struct ThreadListCellContextMenu<Contents: View>: ViewModifier {
+	@LazyInjectService private var platformDetector: PlatformDetectable
 
-    @EnvironmentObject private var actionsManager: ActionsManager
-    @EnvironmentObject private var mailboxManager: MailboxManager
+	@EnvironmentObject private var actionsManager: ActionsManager
+	@EnvironmentObject private var mailboxManager: MailboxManager
 
-    @ModalState private var messagesToMove: [Message]?
+	@ModalState private var messagesToMove: [Message]?
 
-    let thread: Thread
+	let thread: Thread
+	@ViewBuilder let extraMenu: Contents
 
-    private var actions: [Action] {
-        return platformDetector.isMac ? Action.rightClickActions : []
-    }
+	private var actions: [Action] {
+		return Action.rightClickActions
+	}
 
-    func body(content: Content) -> some View {
-        content
-            .contextMenu {
-                ForEach(actions) { action in
-                    Button(role: action.isDestructive ? .destructive : nil) {
-                        Task {
-                            try await actionsManager.performAction(
-                                target: thread.messages.toArray(),
-                                action: action,
-                                origin: .swipe(originFolder: thread.folder, nearestMessagesToMoveSheet: $messagesToMove)
-                            )
-                        }
-                    } label: {
-                        Text(action.title)
-                    }
-                }
-            }
-            .sheet(item: $messagesToMove) { messages in
-                MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
-                    .sheetViewStyle()
-            }
-    }
+	func body(content: Content) -> some View {
+		content
+			.contextMenu {
+				extraMenu
+				ForEach(actions) { action in
+					Button(role: isDestructiveAction(action)) {
+						Task {
+							try await actionsManager.performAction(
+								target: thread.messages.toArray(),
+								action: action,
+								origin: .swipe(originFolder: thread.folder, nearestMessagesToMoveSheet: $messagesToMove)
+							)
+						}
+					} label: {
+						Label {
+							Text(action.title)
+						} icon: {
+							action.icon
+								.resizable()
+								.scaledToFit()
+						}
+					}
+				}
+			}
+			.sheet(item: $messagesToMove) { messages in
+				MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
+					.sheetViewStyle()
+			}
+	}
+
+	private func isDestructiveAction(_ action: Action) -> ButtonRole? {
+		guard action == .archive else {
+			return action.isDestructive ? .destructive : nil
+		}
+		return nil
+	}
 }
