@@ -113,6 +113,7 @@ struct SettingsNotificationsView: View {
                 }
             }
         }
+        // swiftlint:disable:next trailing_closure
         .sceneLifecycle(willEnterForeground: {
             settingsNotificationEnabled { enabled in
                 showWarning = !enabled

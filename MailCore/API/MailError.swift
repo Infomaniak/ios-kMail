@@ -21,7 +21,7 @@ import Foundation
 import InfomaniakCore
 import MailResources
 
-extension ApiError: CustomStringConvertible {}
+extension ApiError: @retroactive CustomStringConvertible {}
 
 public class AFErrorWithContext: MailError, CustomStringConvertible {
     public let request: DataRequest

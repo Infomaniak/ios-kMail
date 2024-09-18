@@ -154,22 +154,22 @@ struct MessageHeaderSummaryView: View {
     }
 }
 
-#Preview("Message collapsed") {
-    MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
-                             isMessageExpanded: .constant(false),
-                             isHeaderExpanded: .constant(false)) {
-        // Preview
-    }
-    .environmentObject(PreviewHelper.sampleMailboxManager)
-    .previewLayout(.sizeThatFits)
+@available(iOS 17.0, *)
+#Preview("Message collapsed", traits: .sizeThatFitsLayout) {
+    MessageHeaderSummaryView(
+        message: PreviewHelper.sampleMessage,
+        isMessageExpanded: .constant(false),
+        isHeaderExpanded: .constant(false)
+    ) {}
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }
 
-#Preview("Message expanded") {
-    MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
-                             isMessageExpanded: .constant(true),
-                             isHeaderExpanded: .constant(false)) {
-        // Preview
-    }
-    .environmentObject(PreviewHelper.sampleMailboxManager)
-    .previewLayout(.sizeThatFits)
+@available(iOS 17.0, *)
+#Preview("Message expanded", traits: .sizeThatFitsLayout) {
+    MessageHeaderSummaryView(
+        message: PreviewHelper.sampleMessage,
+        isMessageExpanded: .constant(true),
+        isHeaderExpanded: .constant(false)
+    ) {}
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

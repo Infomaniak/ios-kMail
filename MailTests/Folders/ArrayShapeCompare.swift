@@ -56,7 +56,7 @@ public struct ArrayShapeCompare {
 
 /// Testing that the tool `ArrayShapeCompare` is correct
 final class UTArrayShapeCompare: XCTestCase {
-    override class func setUp() {
+    override static func setUp() {
         super.setUp()
 
         MockingHelper.clearRegisteredTypes()

@@ -197,6 +197,7 @@ struct ThreadListView: View {
         .onChange(of: multipleSelectionViewModel.isEnabled) { isEnabled in
             scrollObserver.shouldObserve = !isEnabled
         }
+        // swiftlint:disable:next trailing_closure
         .sceneLifecycle(willEnterForeground: {
             updateFetchingTask()
         })
@@ -210,6 +211,7 @@ struct ThreadListView: View {
             FlushFolderAlertView(flushAlert: item, folder: viewModel.frozenFolder)
         }
         .customAlert(isPresented: $isShowingUpdateAlert) {
+            // swiftlint:disable:next trailing_closure
             UpdateVersionAlertView(onDismiss: {
                 hasDismissedUpdateVersionView = true
             })

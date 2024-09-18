@@ -26,7 +26,7 @@ import XCTest
 final class MailboxManagerTests: XCTestCase {
     static var mailboxManager: MailboxManager!
 
-    override class func setUp() {
+    override static func setUp() {
         super.setUp()
 
         MockingHelper.clearRegisteredTypes()

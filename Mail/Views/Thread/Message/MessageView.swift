@@ -170,20 +170,20 @@ extension MessageView {
     }
 }
 
-#Preview("Message collapsed") {
+@available(iOS 17.0, *)
+#Preview("Message collapsed", traits: .sizeThatFitsLayout) {
     MessageView(
         message: PreviewHelper.sampleMessage,
         threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .collapsed])
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
-    .previewLayout(.sizeThatFits)
 }
 
-#Preview("Message expanded") {
+@available(iOS 17.0, *)
+#Preview("Message expanded", traits: .sizeThatFitsLayout) {
     MessageView(
         message: PreviewHelper.sampleMessage,
         threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .expanded])
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
-    .previewLayout(.sizeThatFits)
 }

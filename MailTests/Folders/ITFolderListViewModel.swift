@@ -51,7 +51,7 @@ struct MCKContactManageable_FolderListViewModel: ContactManageable, MCKTransacti
 }
 
 /// A MailboxManageable used to test the FolderListViewModel
-struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransactionablePassthrough /* , RealmAccessible */ {
+struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransactionablePassthrough {
     let mailbox = Mailbox()
 
     var contactManager: MailCore.ContactManageable {
@@ -207,7 +207,7 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
 
 /// Integration tests of the FolderListViewModel
 final class ITFolderListViewModel: XCTestCase {
-    override class func setUp() {
+    override static func setUp() {
         super.setUp()
 
         MockingHelper.clearRegisteredTypes()
@@ -261,7 +261,7 @@ final class ITFolderListViewModel: XCTestCase {
 
 /// Integration tests of the FolderListViewModelWorker
 final class ITFolderListViewModelWorker: XCTestCase {
-    override class func setUp() {
+    override static func setUp() {
         super.setUp()
 
         MockingHelper.clearRegisteredTypes()

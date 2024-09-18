@@ -54,6 +54,7 @@ struct ThreadCellDataHolder {
     let isInWrittenByMeFolder: Bool
 
     init(thread: Thread) {
+        // swiftlint:disable:next last_where
         let lastMessageNotFromSent = thread.messages.filter(Self.lastMessageNotFromSentPredicate).last ?? thread.messages.last
 
         date = thread.date.formatted(.thread(.list))

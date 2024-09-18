@@ -24,7 +24,7 @@ import MailResources
 import Sentry
 import SwiftUI
 
-extension [Message]: Identifiable {
+extension [Message]: @retroactive Identifiable {
     public var id: Int {
         var hasher = Hasher()
         forEach { hasher.combine($0.hashValue) }

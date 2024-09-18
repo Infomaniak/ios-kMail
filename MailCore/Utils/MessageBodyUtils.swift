@@ -18,7 +18,6 @@
 
 import CocoaLumberjackSwift
 import Foundation
-import MailCore
 import MailResources
 import SwiftSoup
 

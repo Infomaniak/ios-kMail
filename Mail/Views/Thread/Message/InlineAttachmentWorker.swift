@@ -66,8 +66,10 @@ final class InlineAttachmentWorker: ObservableObject {
 
         self.mailboxManager = mailboxManager
         processing = Task { [weak self] in
-            guard let message = mailboxManager.transactionExecutor.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?
-                .freeze() else {
+            guard let message = mailboxManager.transactionExecutor.fetchObject(
+                ofType: Message.self,
+                forPrimaryKey: self?.messageUid
+            )?.freeze() else {
                 return
             }
 

@@ -153,6 +153,7 @@ struct SplitView: View {
             SafariWebView(url: safariContent.url)
                 .ignoresSafeArea()
         }
+        // swiftlint:disable:next trailing_closure
         .sceneLifecycle(willEnterForeground: {
             Task {
                 // We need to write in Task instead of async let to avoid being cancelled to early

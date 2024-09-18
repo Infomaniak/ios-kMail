@@ -105,7 +105,7 @@ struct SettingsAccountManagementView: View {
     }
 }
 
-extension ApiToken: Identifiable {
+extension ApiToken: @retroactive Identifiable {
     public var id: String {
         return "\(userId)\(accessToken)"
     }

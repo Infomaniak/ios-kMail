@@ -49,5 +49,5 @@ struct SuperCollapsedView: View {
 }
 
 #Preview {
-    SuperCollapsedView(count: 5, action: {})
+    SuperCollapsedView(count: 5) {}
 }

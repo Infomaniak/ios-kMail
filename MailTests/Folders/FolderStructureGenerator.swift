@@ -17,6 +17,7 @@
  */
 
 // swiftlint:disable all
+// swift-format-ignore-file
 // swiftformat:disable all
 
 
@@ -219,3 +220,6 @@ final class InMemoryRealmAccessor: RealmAccessible {
         inMemoryRealm
     }
 }
+
+// swiftlint:enable all
+// swiftformat:enable all
