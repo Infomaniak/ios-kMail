@@ -389,7 +389,7 @@ public extension Action {
 	)
 	static let activeMultiselect = Action(
 		id: "activeMultiselect",
-		title: MailResourcesStrings.Localizable.selectButton,
+		title: MailResourcesStrings.Localizable.buttonMultiselect,
 		iconResource: MailResourcesAsset.checklist,
 		matomoName: "selectAll"
 	)

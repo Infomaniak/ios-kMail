@@ -97,7 +97,7 @@ struct ThreadListCell: View {
 			multipleSelectionViewModel: multipleSelectionViewModel,
 			nearestFlushAlert: $flushAlert
 		)
-		.accessibilityAction(named: MailResourcesStrings.Localizable.selectButton) {
+		.accessibilityAction(named: MailResourcesStrings.Localizable.buttonMultiselect) {
 			didOptionalTapCell()
 		}
 		.actionsContextMenu(thread: thread) {
