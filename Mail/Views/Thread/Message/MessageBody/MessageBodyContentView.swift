@@ -20,62 +20,47 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
-import MailResources
 import RealmSwift
 import SwiftSoup
 import SwiftUI
 
-struct MessageBodyView: View {
+struct MessageBodyContentView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @StateObject private var model = WebViewModel()
 
-    let presentableBody: PresentableBody
-    let isMessagePreprocessed: Bool
-    var blockRemoteContent: Bool
-    let messageUid: String
-
     @Binding var displayContentBlockedActionView: Bool
+
+    let presentableBody: PresentableBody?
+    let blockRemoteContent: Bool
+    let messageUid: String
 
     private let printNotificationPublisher = NotificationCenter.default.publisher(for: Notification.Name.printNotification)
 
     var body: some View {
         ZStack {
             VStack {
-                if presentableBody.body != nil {
+                if let presentableBody, presentableBody.body != nil {
                     WebView(webView: model.webView, messageUid: messageUid) {
-                        loadBody(blockRemoteContent: blockRemoteContent)
+                        loadBody(blockRemoteContent: blockRemoteContent, presentableBody: presentableBody)
                     }
                     .frame(height: model.webViewHeight)
                     .onAppear {
-                        loadBody(blockRemoteContent: blockRemoteContent)
+                        loadBody(blockRemoteContent: blockRemoteContent, presentableBody: presentableBody)
                     }
-                    .onChange(of: presentableBody) { _ in
-                        loadBody(blockRemoteContent: blockRemoteContent)
-                    }
-                    .onChange(of: isMessagePreprocessed) { _ in
-                        loadBody(blockRemoteContent: blockRemoteContent)
+                    .onChange(of: presentableBody) { newValue in
+                        loadBody(blockRemoteContent: blockRemoteContent, presentableBody: newValue)
                     }
                     .onChange(of: model.showBlockQuote) { _ in
-                        loadBody(blockRemoteContent: blockRemoteContent)
+                        loadBody(blockRemoteContent: blockRemoteContent, presentableBody: presentableBody)
                     }
                     .onChange(of: blockRemoteContent) { newValue in
-                        loadBody(blockRemoteContent: newValue)
+                        loadBody(blockRemoteContent: newValue, presentableBody: presentableBody)
                     }
 
                     if !presentableBody.quotes.isEmpty {
-                        Button(
-                            model.showBlockQuote
-                                ? MailResourcesStrings.Localizable.messageHideQuotedText
-                                : MailResourcesStrings.Localizable.messageShowQuotedText
-                        ) {
-                            model.showBlockQuote.toggle()
-                        }
-                        .buttonStyle(.ikBorderless(isInlined: true))
-                        .controlSize(.small)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, value: .medium)
+                        ShowBlockquoteButton(showBlockquote: $model.showBlockQuote)
                     }
                 }
             }
@@ -110,7 +95,9 @@ struct MessageBodyView: View {
         }
     }
 
-    private func loadBody(blockRemoteContent: Bool) {
+    private func loadBody(blockRemoteContent: Bool, presentableBody: PresentableBody?) {
+        guard let presentableBody else { return }
+
         Task {
             let loadResult = try await model.loadBody(
                 presentableBody: presentableBody,
@@ -124,11 +111,10 @@ struct MessageBodyView: View {
 }
 
 #Preview {
-    MessageBodyView(
+    MessageBodyContentView(
+        displayContentBlockedActionView: .constant(false),
         presentableBody: PreviewHelper.samplePresentableBody,
-        isMessagePreprocessed: true,
         blockRemoteContent: false,
-        messageUid: "message_uid",
-        displayContentBlockedActionView: .constant(false)
+        messageUid: "message_uid"
     )
 }

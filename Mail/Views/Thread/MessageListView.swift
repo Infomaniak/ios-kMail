@@ -28,6 +28,7 @@ enum MessageExpansionType: Equatable {
 }
 
 struct MessageListView: View {
+    @StateObject private var messagesWorker = MessagesWorker()
     @State private var messageExpansion = [String: MessageExpansionType]()
 
     let messages: [Message]
@@ -43,10 +44,7 @@ struct MessageListView: View {
                             }
                         } else if messageExpansion[message.uid] != .superCollapsed {
                             VStack(spacing: 0) {
-                                MessageView(
-                                    message: message,
-                                    threadForcedExpansion: $messageExpansion
-                                )
+                                MessageView(threadForcedExpansion: $messageExpansion, message: message)
                                 if divider(for: message) {
                                     IKDivider(type: .full)
                                 }
@@ -58,8 +56,7 @@ struct MessageListView: View {
             .onAppear {
                 computeExpansion(from: messages)
 
-                guard messages.count > 1,
-                      let firstExpandedUid = firstExpanded()?.uid else {
+                guard messages.count > 1, let firstExpandedUid = firstExpanded()?.uid else {
                     return
                 }
 
@@ -70,6 +67,7 @@ struct MessageListView: View {
                     }
                 }
             }
+            .environmentObject(messagesWorker)
             .id(messages.id)
         }
     }

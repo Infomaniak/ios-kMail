@@ -106,10 +106,6 @@ final class ProxyBody: Codable {
         compactBody = nil
         quotes = []
     }
-
-    public init(presentableBody: PresentableBody) {
-        self.init(body: presentableBody.body, compactBody: presentableBody.compactBody, quotes: presentableBody.quotes)
-    }
 }
 
 // MARK: - SubBody
