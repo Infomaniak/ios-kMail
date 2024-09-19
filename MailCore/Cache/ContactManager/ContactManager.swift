@@ -82,7 +82,8 @@ public final class ContactManager: ObservableObject, ContactManageable {
             deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 MergedContact.self,
-                AddressBook.self
+                AddressBook.self,
+                GroupContact.self
             ]
         )
         let realmAccessor = MailCoreRealmAccessor(realmConfiguration: realmConfiguration)
