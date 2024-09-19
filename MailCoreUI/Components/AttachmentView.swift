@@ -46,7 +46,12 @@ public struct AttachmentView<Content: View>: View {
         self.accessory = accessory
     }
 
-    public init(attachment: Attachment, isDownloading: Bool = false, downloadProgress: Double = 0, accessory: @escaping () -> Content? = { EmptyView() }) {
+    public init(
+        attachment: Attachment,
+        isDownloading: Bool = false,
+        downloadProgress: Double = 0,
+        accessory: @escaping () -> Content? = { EmptyView() }
+    ) {
         title = attachment.name
         subtitle = attachment.size.formatted(.defaultByteCount)
         icon = attachment.icon
@@ -55,7 +60,12 @@ public struct AttachmentView<Content: View>: View {
         self.accessory = accessory
     }
 
-    public init(swissTransferFile: File, isDownloading: Bool = false, downloadProgress: Double = 0, accessory: @escaping () -> Content? = { EmptyView() }) {
+    public init(
+        swissTransferFile: File,
+        isDownloading: Bool = false,
+        downloadProgress: Double = 0,
+        accessory: @escaping () -> Content? = { EmptyView() }
+    ) {
         title = swissTransferFile.name
         subtitle = swissTransferFile.size.formatted(.defaultByteCount)
         icon = swissTransferFile.icon
