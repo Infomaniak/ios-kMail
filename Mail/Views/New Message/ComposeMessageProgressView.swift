@@ -25,7 +25,7 @@ struct ComposeMessageProgressView: View {
     var body: some View {
         ProgressView()
             .progressViewStyle(.circular)
-            .composeMessageToolbar {
+            .baseComposeMessageToolbar {
                 dismiss()
                 dismissModal()
             }
