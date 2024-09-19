@@ -27,10 +27,12 @@ public class AddressBook: Object, Codable, Identifiable {
     @Persisted public var id: Int
     @Persisted(primaryKey: true) public var uuid: String
     @Persisted public var isDefault: Bool
+    @Persisted public var groupContact: List<GroupContact>
 
     enum CodingKeys: String, CodingKey {
         case id
         case uuid
         case isDefault = "default"
+        case groupContact = "categories"
     }
 }
