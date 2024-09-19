@@ -66,13 +66,12 @@ struct ThreadListCell: View {
             density: threadDensity,
             accentColor: accentColor,
             isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
-            isSelected: isMultiSelected,
-            avatarTapped: {
-                if multipleSelectionViewModel.isEnabled {
-                    didTapCell()
-                } else {
-                    didOptionalTapCell()
-                }
+            isSelected: isMultiSelected
+        ) {
+            if multipleSelectionViewModel.isEnabled {
+                didTapCell()
+            } else {
+                toggleMultiselection(withImpact: true)
             }
         )
         .background(SelectionBackground(
@@ -97,20 +96,7 @@ struct ThreadListCell: View {
             multipleSelectionViewModel: multipleSelectionViewModel,
             nearestFlushAlert: $flushAlert
         )
-        .accessibilityAction(named: MailResourcesStrings.Localizable.buttonMultiselect) {
-            didOptionalTapCell()
-        }
-        .actionsContextMenu(thread: thread) {
-            Button(action: { didOptionalTapCell() },
-                   label: { Label {
-                       Text(Action.activeMultiselect.title)
-                   } icon: {
-                       Action.activeMultiselect.icon
-                           .resizable()
-                           .scaledToFit()
-                   }
-                   })
-        }
+        .actionsContextMenu(thread: thread, toggleMultiSelectionFunction: toggleMultiselection)
     }
 
     private func didTapCell() {
@@ -133,12 +119,13 @@ struct ThreadListCell: View {
         }
     }
 
-    private func didOptionalTapCell() {
-        guard !multipleSelectionViewModel.isEnabled else { return }
-        multipleSelectionViewModel.feedbackGenerator.prepare()
+    private func toggleMultiselection(withImpact: Bool = false) {
         let eventCategory: MatomoUtils.EventCategory = viewModel is SearchViewModel ? .searchMultiSelection : .multiSelection
         matomo.track(eventWithCategory: eventCategory, action: .longPress, name: "enable")
-        multipleSelectionViewModel.feedbackGenerator.impactOccurred()
+        if withImpact {
+            multipleSelectionViewModel.feedbackGenerator.prepare()
+            multipleSelectionViewModel.feedbackGenerator.impactOccurred()
+        }
         multipleSelectionViewModel.toggleSelection(of: thread)
     }
 }

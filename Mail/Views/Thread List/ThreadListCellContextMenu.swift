@@ -23,12 +23,12 @@ import SwiftModalPresentation
 import SwiftUI
 
 extension View {
-    func actionsContextMenu<V>(thread: Thread, extraMenu: @escaping () -> V) -> some View where V: View {
-        modifier(ThreadListCellContextMenu(thread: thread, extraMenu: extraMenu))
+    func actionsContextMenu(thread: Thread, toggleMultiSelectionFunction: @escaping (Bool) -> Void) -> some View {
+        modifier(ThreadListCellContextMenu(thread: thread, toggleMultiSelectionFunction: toggleMultiSelectionFunction))
     }
 }
 
-struct ThreadListCellContextMenu<Contents: View>: ViewModifier {
+struct ThreadListCellContextMenu: ViewModifier {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     @EnvironmentObject private var actionsManager: ActionsManager
@@ -37,7 +37,7 @@ struct ThreadListCellContextMenu<Contents: View>: ViewModifier {
     @ModalState private var messagesToMove: [Message]?
 
     let thread: Thread
-    @ViewBuilder let extraMenu: Contents
+    let toggleMultiSelectionFunction: (Bool) -> Void
 
     private var actions: [Action] {
         return Action.rightClickActions
@@ -46,15 +46,18 @@ struct ThreadListCellContextMenu<Contents: View>: ViewModifier {
     func body(content: Content) -> some View {
         content
             .contextMenu {
-                extraMenu
                 ForEach(actions) { action in
                     Button(role: isDestructiveAction(action)) {
-                        Task {
-                            try await actionsManager.performAction(
-                                target: thread.messages.toArray(),
-                                action: action,
-                                origin: .swipe(originFolder: thread.folder, nearestMessagesToMoveSheet: $messagesToMove)
-                            )
+                        if action == .activeMultiselect {
+                            toggleMultiSelectionFunction(false)
+                        } else {
+                            Task {
+                                try await actionsManager.performAction(
+                                    target: thread.messages.toArray(),
+                                    action: action,
+                                    origin: .swipe(originFolder: thread.folder, nearestMessagesToMoveSheet: $messagesToMove)
+                                )
+                            }
                         }
                     } label: {
                         Label {

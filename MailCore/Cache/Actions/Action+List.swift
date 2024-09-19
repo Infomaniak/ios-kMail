@@ -23,6 +23,7 @@ import MailResources
 
 extension Action: CaseIterable {
     public static let rightClickActions: [Action] = [
+        .activeMultiselect,
         .reply,
         .replyAll,
         .forward,
