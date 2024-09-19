@@ -23,8 +23,8 @@ import SwiftModalPresentation
 import SwiftUI
 
 extension View {
-    func actionsContextMenu(thread: Thread, toggleMultiSelectionFunction: @escaping (Bool) -> Void) -> some View {
-        modifier(ThreadListCellContextMenu(thread: thread, toggleMultiSelectionFunction: toggleMultiSelectionFunction))
+    func actionsContextMenu(thread: Thread, toggleMultipleSelection: @escaping (Bool) -> Void) -> some View {
+        modifier(ThreadListCellContextMenu(thread: thread, toggleMultipleSelection: toggleMultipleSelection))
     }
 }
 
@@ -35,7 +35,7 @@ struct ThreadListCellContextMenu: ViewModifier {
     @ModalState private var messagesToMove: [Message]?
 
     let thread: Thread
-    let toggleMultiSelectionFunction: (Bool) -> Void
+    let toggleMultipleSelection: (Bool) -> Void
 
     private var actions: [Action] {
         return Action.rightClickActions
@@ -47,7 +47,7 @@ struct ThreadListCellContextMenu: ViewModifier {
                 ForEach(actions) { action in
                     Button(role: isDestructiveAction(action)) {
                         if action == .activeMultiselect {
-                            toggleMultiSelectionFunction(false)
+                            toggleMultipleSelection(false)
                         } else {
                             Task {
                                 try await actionsManager.performAction(
