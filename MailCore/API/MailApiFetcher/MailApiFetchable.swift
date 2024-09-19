@@ -58,7 +58,7 @@ public protocol MailApiCommonFetchable {
 
     func unstar(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult
 
-    func downloadAttachments(message: Message) async throws -> URL
+    func downloadAttachments(message: Message, progressObserver: ((Double) -> Void)?) async throws -> URL
 
     func blockSender(message: Message) async throws -> NullableResponse
 

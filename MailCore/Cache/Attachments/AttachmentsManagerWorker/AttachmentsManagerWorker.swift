@@ -58,7 +58,7 @@ public protocol AttachmentsManagerWorkable {
     func importAttachments(attachments: [Attachable], draft: Draft, disposition: AttachmentDisposition) async
 
     /// Lookup and return _or_ new object representing a finished task instead.
-    @MainActor func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentUploadTask
+    @MainActor func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentTask
 }
 
 /// Transactionable
@@ -80,7 +80,7 @@ public final class AttachmentsManagerWorker {
         return formatter
     }()
 
-    var attachmentUploadTasks = SendableDictionary<String, AttachmentUploadTask>()
+    var attachmentUploadTasks = SendableDictionary<String, AttachmentTask>()
 
     var detachedAttachments: [Attachment] {
         liveAttachments.map { $0.detached() }
@@ -120,7 +120,7 @@ public final class AttachmentsManagerWorker {
     }
 
     func addLocalAttachment(attachment: Attachment) async -> Attachment? {
-        attachmentUploadTasks[attachment.uuid] = await AttachmentUploadTask()
+        attachmentUploadTasks[attachment.uuid] = await AttachmentTask()
 
         var detached: Attachment?
         try? writeTransaction { writableRealm in
@@ -259,9 +259,9 @@ public final class AttachmentsManagerWorker {
         return remoteAttachment
     }
 
-    func attachmentUploadTaskOrCreate(for uuid: String) async -> AttachmentUploadTask {
+    func attachmentUploadTaskOrCreate(for uuid: String) async -> AttachmentTask {
         guard let attachment = attachmentUploadTask(for: uuid) else {
-            let newTask = await AttachmentUploadTask()
+            let newTask = await AttachmentTask()
             attachmentUploadTasks[uuid] = newTask
             return newTask
         }
@@ -269,7 +269,7 @@ public final class AttachmentsManagerWorker {
         return attachment
     }
 
-    func attachmentUploadTask(for uuid: String) -> AttachmentUploadTask? {
+    func attachmentUploadTask(for uuid: String) -> AttachmentTask? {
         guard let attachment = attachmentUploadTasks[uuid] else {
             return nil
         }
@@ -277,11 +277,11 @@ public final class AttachmentsManagerWorker {
         return attachment
     }
 
-    @MainActor private func updateAttachmentUploadTask(_ uploadTask: AttachmentUploadTask, task: Task<String?, Never>?) {
+    @MainActor private func updateAttachmentUploadTask(_ uploadTask: AttachmentTask, task: Task<String?, Never>?) {
         uploadTask.task = task
     }
 
-    @MainActor private func updateAttachmentUploadTaskProgress(_ uploadTask: AttachmentUploadTask, progress: Double) {
+    @MainActor private func updateAttachmentUploadTaskProgress(_ uploadTask: AttachmentTask, progress: Double) {
         uploadTask.progress = progress
     }
 
@@ -318,7 +318,7 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
     }
 
     public var allAttachmentsUploaded: Bool {
-        return attachmentUploadTasks.values.allSatisfy(\.uploadDone)
+        return attachmentUploadTasks.values.allSatisfy(\.attachmentTask)
     }
 
     public func setUpdateDelegate(_ updateDelegate: AttachmentsContentUpdatable) {
@@ -427,9 +427,9 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
         return allSanitizedHtml
     }
 
-    @MainActor public func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentUploadTask {
+    @MainActor public func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentTask {
         guard let attachment = attachmentUploadTask(for: uuid) else {
-            let finishedTask = AttachmentUploadTask()
+            let finishedTask = AttachmentTask()
             updateAttachmentUploadTaskProgress(finishedTask, progress: 1)
             attachmentUploadTasks[uuid] = finishedTask
             return finishedTask

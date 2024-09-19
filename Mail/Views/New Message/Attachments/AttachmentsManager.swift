@@ -46,8 +46,8 @@ import SwiftUI
     func completeUploadedAttachments() async
 
     /// Lookup and return _or_ new object representing a finished task instead.
-    func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentUploadTask
-
+    func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentTask
+//
     /// Removes an attachment for a specific primary key
     /// - Parameter attachmentUUID: primary key of the object
     func removeAttachment(_ attachmentUUID: String)
@@ -101,7 +101,7 @@ import SwiftUI
         await worker.processHTMLAttachments(attachments)
     }
 
-    func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentUploadTask {
+    func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentTask {
         worker.attachmentUploadTaskOrFinishedTask(for: uuid)
     }
 

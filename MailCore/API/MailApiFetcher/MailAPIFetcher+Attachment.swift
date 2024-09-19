@@ -29,23 +29,33 @@ public extension MailApiFetcher {
         return try await request.serializingData().value
     }
 
-    func downloadAttachments(message: Message) async throws -> URL {
-        try await downloadResource(endpoint: .downloadAttachments(messageResource: message.resource))
+    func downloadAttachments(message: Message, progressObserver: ((Double) -> Void)? = nil) async throws -> URL {
+        try await downloadResource(
+            endpoint: .downloadAttachments(messageResource: message.resource),
+            progressObserver: progressObserver
+        )
     }
 
     func swissTransferAttachment(stUuid: String) async throws -> SwissTransferAttachment {
         try await perform(request: authenticatedRequest(.swissTransfer(stUuid: stUuid)))
     }
 
-    func downloadSwissTransferAttachment(stUuid: String, fileUuid: String) async throws -> URL {
-        try await downloadResource(endpoint: .downloadSwissTransferAttachment(stUuid: stUuid, fileUuid: fileUuid))
+    func downloadSwissTransferAttachment(stUuid: String, fileUuid: String,
+                                         progressObserver: ((Double) -> Void)? = nil) async throws -> URL {
+        try await downloadResource(
+            endpoint: .downloadSwissTransferAttachment(stUuid: stUuid, fileUuid: fileUuid),
+            progressObserver: progressObserver
+        )
     }
 
-    func downloadAllSwissTransferAttachment(stUuid: String) async throws -> URL {
-        try await downloadResource(endpoint: .downloadAllSwissTransferAttachments(stUuid: stUuid))
+    func downloadAllSwissTransferAttachment(stUuid: String, progressObserver: ((Double) -> Void)? = nil) async throws -> URL {
+        try await downloadResource(
+            endpoint: .downloadAllSwissTransferAttachments(stUuid: stUuid),
+            progressObserver: progressObserver
+        )
     }
 
-    private func downloadResource(endpoint: Endpoint) async throws -> URL {
+    private func downloadResource(endpoint: Endpoint, progressObserver: ((Double) -> Void)? = nil) async throws -> URL {
         let destination = DownloadRequest.suggestedDownloadDestination(options: [
             .createIntermediateDirectories,
             .removePreviousFile
@@ -54,6 +64,14 @@ public extension MailApiFetcher {
             endpoint.url,
             to: destination
         )
+        if let progressObserver {
+            Task {
+                for await progress in download.downloadProgress() {
+                    progressObserver(progress.fractionCompleted)
+                    print(progress.fractionCompleted)
+                }
+            }
+        }
         return try await download.serializingDownloadedFileURL().value
     }
 }

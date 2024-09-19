@@ -28,14 +28,15 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct AttachmentsView: View {
-    @ModalState private var previewedAttachment: Attachment?
-    @State private var downloadInProgress = false
-    @ModalState private var attachmentsURL: AttachmentsURL?
+    @LazyInjectService private var matomo: MatomoUtils
 
     @EnvironmentObject var mailboxManager: MailboxManager
     @ObservedRealmObject var message: Message
 
-    @LazyInjectService private var matomo: MatomoUtils
+    @ModalState private var previewedAttachment: Attachment?
+    @ModalState private var attachmentsURL: AttachmentsURL?
+    @State private var downloadInProgress = false
+    @State private var downloadProgressState: [String: Double] = [:]
 
     private var attachments: [Attachment] {
         return message.attachments.filter { $0.disposition == .attachment || $0.contentId == nil }
@@ -64,18 +65,34 @@ struct AttachmentsView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: IKPadding.small) {
                     ForEach(attachments) { attachment in
+                        let progress = downloadProgressState[attachment.uuid] ?? 0
                         Button {
                             openAttachment(attachment)
                         } label: {
-                            AttachmentView(attachment: attachment)
+                            AttachmentView(
+                                attachment: attachment
+                            ) {
+                                if progress > 0 && progress < 1 {
+                                    CircleIndeterminateProgressView(progress: progress)
+                                } else {
+                                    nil
+                                }
+                            }
                         }
                     }
                     if let swissTransferAttachment = message.swissTransferAttachment {
                         ForEach(swissTransferAttachment.files) { file in
+                            let progress = downloadProgressState[file.uuid] ?? 0
                             Button {
                                 downloadSwissTransferAttachment(stUuid: swissTransferAttachment.uuid, fileUuid: file.uuid)
                             } label: {
-                                AttachmentView(swissTransferFile: file)
+                                AttachmentView(swissTransferFile: file) {
+                                    if progress > 0 && progress < 1 {
+                                        CircleIndeterminateProgressView(progress: progress)
+                                    } else {
+                                        nil
+                                    }
+                                }
                             }
                         }
                     }
@@ -94,11 +111,21 @@ struct AttachmentsView: View {
                         .textStyle(.bodySmallSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .multilineTextAlignment(.leading)
-
-                    Button(MailResourcesStrings.Localizable.buttonDownloadAll, action: downloadAllAttachments)
+                
+                    HStack{
+                        let progress = downloadProgressState[message.swissTransferAttachment?.uuid ?? ""] ?? 0
+                        CircleIndeterminateProgressView(progress: progress)
+                                .opacity(progress == 1 ? 0 : 1)
+                        Button {
+                            downloadAllAttachments()
+                        } label: {
+                            Text(MailResourcesStrings.Localizable.buttonDownloadAll)
+                            
+                        }
                         .buttonStyle(.ikBorderless(isInlined: true))
                         .controlSize(.small)
-                        .ikButtonLoading(downloadInProgress)
+                    }
+                    
                 }
             }
             .padding(.horizontal, value: .medium)
@@ -132,9 +159,12 @@ struct AttachmentsView: View {
         Task {
             await tryOrDisplayError {
                 let attachmentURL = try await mailboxManager.apiFetcher.downloadSwissTransferAttachment(
-                    stUuid: stUuid,
-                    fileUuid: fileUuid
-                )
+                    stUuid: stUuid, fileUuid: fileUuid
+                ) { progress in
+                    Task { @MainActor in
+                        downloadProgressState[stUuid] = progress
+                    }
+                }
                 attachmentsURL = AttachmentsURL(urls: [attachmentURL])
             }
         }
@@ -154,7 +184,11 @@ struct AttachmentsView: View {
                     if let swissTransferAttachment = message.swissTransferAttachment {
                         group.addTask {
                             try await mailboxManager.apiFetcher
-                                .downloadAllSwissTransferAttachment(stUuid: swissTransferAttachment.uuid)
+                                .downloadAllSwissTransferAttachment(stUuid: swissTransferAttachment.uuid) { progress in
+                                    Task { @MainActor in
+                                        downloadProgressState[swissTransferAttachment.uuid] = progress
+                                    }
+                                }
                         }
                     }
                     for try await url in group {

@@ -18,12 +18,12 @@
 
 import Foundation
 
-/// The progress of uploading an Attachment
-@MainActor public final class AttachmentUploadTask: ObservableObject {
+/// The progress of a task about an  Attachment
+@MainActor public final class AttachmentTask: ObservableObject {
     @Published public var progress: Double = 0
     var task: Task<String?, Never>?
     @Published public var error: MailError?
-    public var uploadDone: Bool {
+    public var attachmentTask: Bool {
         return progress >= 1
     }
 
