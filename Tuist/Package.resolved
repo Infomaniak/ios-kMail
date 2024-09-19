@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ProxymanApp/atlantis",
       "state" : {
-        "revision" : "5145a7041ec71421d09653db87dcc80c81792004",
-        "version" : "1.24.0"
+        "revision" : "523dd773538e1e20036cb2d28f8b9947448c2d20",
+        "version" : "1.25.1"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/johnpatrickmorgan/NavigationBackport",
       "state" : {
-        "revision" : "b648d876f3fbe879c9c3580d3aa6a42e7807a8e3",
-        "version" : "0.9.6"
+        "revision" : "4bc5725695780353d1e80eba0bb3b834b7aa63b2",
+        "version" : "0.10.0"
       }
     },
     {
@@ -222,7 +222,7 @@
       "location" : "https://github.com/SVGKit/SVGKit.git",
       "state" : {
         "branch" : "3.x",
-        "revision" : "1b8a3cf210ab4681c18fbb62059bbdbb37dd649a"
+        "revision" : "cf4dca96801dbbbdb2f37dc8c8571bfaf05c9d41"
       }
     },
     {
