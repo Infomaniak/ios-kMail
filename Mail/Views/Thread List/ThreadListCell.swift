@@ -21,7 +21,6 @@ import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
-import MailResources
 import SwiftUI
 
 extension ThreadListCell: Equatable {
@@ -38,7 +37,6 @@ struct ThreadListCell: View {
 
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var mainViewState: MainViewState
-    @EnvironmentObject private var actionsManager: ActionsManager
 
     let viewModel: ThreadListable
     @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel

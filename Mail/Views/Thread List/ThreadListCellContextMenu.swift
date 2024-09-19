@@ -29,8 +29,6 @@ extension View {
 }
 
 struct ThreadListCellContextMenu: ViewModifier {
-    @LazyInjectService private var platformDetector: PlatformDetectable
-
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mailboxManager: MailboxManager
 
