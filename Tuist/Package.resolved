@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "9238a60839e6f04455441fe4cd924b54827efd6d",
-        "version" : "11.1.0"
+        "revision" : "34eef12b7f54ac9164fbf16645bf398ec04dcbd8",
+        "version" : "12.1.0"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-create-account",
       "state" : {
-        "revision" : "67b8f4e56fba899a0981e5c5a50ae43879c44189",
-        "version" : "10.0.0"
+        "revision" : "cba5a70db3e0168ffa811edeea3fb9cc26bae7d3",
+        "version" : "11.0.0"
       }
     },
     {
