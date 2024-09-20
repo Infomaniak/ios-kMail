@@ -78,7 +78,7 @@ public struct AttachmentView<Content: View>: View {
         HStack(spacing: IKPadding.small) {
             if isDownloading {
                 CircleIndeterminateProgressView(progress: downloadProgress)
-                    .frame(height: IKPadding.large.sign.rawValue.constraintMultiplierTargetValue)
+                    .frame(height: IKPadding.large)
             } else {
                 icon
                     .iconSize(.large)
