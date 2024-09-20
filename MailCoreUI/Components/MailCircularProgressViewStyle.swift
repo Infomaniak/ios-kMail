@@ -16,34 +16,23 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailResources
 import SwiftUI
 
-public struct CircleIndeterminateProgressView: View {
-    let progress: Double
+public struct MailCircularProgressViewStyle: ProgressViewStyle {
+    public init() {}
 
-    public init(progress: Double) {
-        self.progress = progress
-    }
-
-    public var body: some View {
+    public func makeBody(configuration: Configuration) -> some View {
         ZStack {
             Circle()
-                .stroke(lineWidth: 2)
+                .stroke(lineWidth: 3)
                 .opacity(0.1)
-                .foregroundColor(Color.gray)
-                .frame(height: 15)
 
             Circle()
-                .trim(from: 0.0, to: min(progress, 1.0))
-                .stroke(style: StrokeStyle(lineWidth: 2, lineCap: .round, lineJoin: .round))
-                .foregroundColor(Color.accentColor)
-                .rotationEffect(Angle(degrees: 270.0))
-                .animation(.linear, value: progress)
-                .frame(height: 15)
+                .trim(from: 0, to: configuration.fractionCompleted ?? 0)
+                .stroke(Color.accentColor, lineWidth: 3)
+                .rotationEffect(.degrees(-90))
         }
+        .frame(width: 16)
     }
-}
-
-#Preview {
-    CircleIndeterminateProgressView(progress: 1)
 }
