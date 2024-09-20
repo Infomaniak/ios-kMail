@@ -154,9 +154,9 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
     func message(message: MailCore.Message) async throws {}
 
     func attachmentData(_ attachment: MailCore.Attachment, progressObserver: ((Double) -> Void)?) async throws -> Data { Data() }
-    
+
     func saveAttachmentLocally(attachment: MailCore.Attachment, progressObserver: ((Double) -> Void)?) async {}
-    
+
     func markAsSeen(message: MailCore.Message, seen: Bool) async throws {}
 
     func move(messages: [MailCore.Message], to folderRole: MailCore.FolderRole, origin: Folder?) async throws -> MailCore
