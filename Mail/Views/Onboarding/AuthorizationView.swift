@@ -17,7 +17,8 @@
  */
 
 import Contacts
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import InfomaniakOnboarding
 import MailCore

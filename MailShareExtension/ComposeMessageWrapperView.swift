@@ -17,7 +17,7 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import InfomaniakOnboarding
 import Lottie

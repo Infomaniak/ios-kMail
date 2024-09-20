@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCoreUIKit
 import Lottie
 import UIKit
 

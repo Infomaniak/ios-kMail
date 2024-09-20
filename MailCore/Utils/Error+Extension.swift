@@ -18,7 +18,6 @@
 
 import CocoaLumberjackSwift
 import Foundation
-import InfomaniakCoreUI
 import InfomaniakDI
 import Sentry
 
