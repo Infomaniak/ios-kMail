@@ -116,8 +116,8 @@ struct AttachmentsView: View {
                     HStack {
                         let progress = downloadProgressState[message.swissTransferAttachment?.uuid ?? ""] ?? 0
                         if showProgressCircle {
-                            CircleIndeterminateProgressView(progress: progress)
-                                .opacity(progress == 1 ? 0 : 1)
+                            ProgressView(value: progress)
+                                .progressViewStyle(MailCircularProgressViewStyle())
                         }
                         Button {
                             downloadAllAttachments()
@@ -127,7 +127,6 @@ struct AttachmentsView: View {
                         .disabled(isDownloadDisabled)
                         .buttonStyle(.ikBorderless(isInlined: true))
                         .controlSize(.small)
-                        .disabled(isDownloadDisabled)
                     }
                 }
             }
@@ -152,6 +151,7 @@ struct AttachmentsView: View {
     }
 
     private func openAttachment(_ attachment: Attachment) {
+        isDownloadDisabled = true
         matomo.track(eventWithCategory: .attachmentActions, name: "open")
         previewedAttachment = attachment
         if !FileManager.default.fileExists(atPath: attachment.getLocalURL(mailboxManager: mailboxManager).path) {
@@ -165,6 +165,7 @@ struct AttachmentsView: View {
                 downloadProgressState[attachment.uuid] = 1.0
             }
         }
+        isDownloadDisabled = false
     }
 
     private func downloadSwissTransferAttachment(stUuid: String, fileUuid: String) {
