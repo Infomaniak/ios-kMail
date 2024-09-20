@@ -22,6 +22,7 @@ import MailCore
 import MailCoreUI
 import MailResources
 import UIKit
+import SwiftUI
 
 enum EditorToolbarStyle {
     case main
@@ -82,6 +83,35 @@ enum EditorToolbarAction: Int {
             return MailResourcesAsset.hyperlink.image
         case .programMessage:
             return MailResourcesAsset.waitingMessage.image
+        }
+    }
+
+    var swiftUIicon: Image {
+        switch self {
+        case .bold:
+            return MailResourcesAsset.bold.swiftUIImage
+        case .italic:
+            return MailResourcesAsset.italic.swiftUIImage
+        case .underline:
+            return MailResourcesAsset.underline.swiftUIImage
+        case .strikeThrough:
+            return MailResourcesAsset.strikeThrough.swiftUIImage
+        case .unorderedList:
+            return MailResourcesAsset.unorderedList.swiftUIImage
+        case .editText:
+            return MailResourcesAsset.textModes.swiftUIImage
+        case .ai:
+            return MailResourcesAsset.aiWriter.swiftUIImage
+        case .addFile:
+            return MailResourcesAsset.folder.swiftUIImage
+        case .addPhoto:
+            return MailResourcesAsset.pictureLandscape.swiftUIImage
+        case .takePhoto:
+            return MailResourcesAsset.photo.swiftUIImage
+        case .link:
+            return MailResourcesAsset.hyperlink.swiftUIImage
+        case .programMessage:
+            return MailResourcesAsset.waitingMessage.swiftUIImage
         }
     }
 
