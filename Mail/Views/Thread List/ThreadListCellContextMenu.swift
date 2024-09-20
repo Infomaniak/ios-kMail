@@ -46,16 +46,16 @@ struct ThreadListCellContextMenu: ViewModifier {
             .contextMenu {
                 ForEach(actions) { action in
                     Button(role: isDestructiveAction(action)) {
-                        if action == .activeMultiselect {
+                        guard action != .activeMultiselect else {
                             toggleMultipleSelection(false)
-                        } else {
-                            Task {
-                                try await actionsManager.performAction(
-                                    target: thread.messages.toArray(),
-                                    action: action,
-                                    origin: .swipe(originFolder: thread.folder, nearestMessagesToMoveSheet: $messagesToMove)
-                                )
-                            }
+                            return
+                        }
+                        Task {
+                            try await actionsManager.performAction(
+                                target: thread.messages.toArray(),
+                                action: action,
+                                origin: .swipe(originFolder: thread.folder, nearestMessagesToMoveSheet: $messagesToMove)
+                            )
                         }
                     } label: {
                         Label {
@@ -75,9 +75,9 @@ struct ThreadListCellContextMenu: ViewModifier {
     }
 
     private func isDestructiveAction(_ action: Action) -> ButtonRole? {
-        guard action == .archive else {
-            return action.isDestructive ? .destructive : nil
+        guard action != .archive else {
+            return nil
         }
-        return nil
+        return action.isDestructive ? .destructive : nil
     }
 }
