@@ -182,10 +182,10 @@ final class MCKMailboxManageable_SearchViewModel: MailboxManageable, MCKTransact
     func fetchOneOldPage(folder: MailCore.Folder) async throws -> Int? { nil }
 
     func message(message: MailCore.Message) async throws {}
+    
+    func attachmentData(_ attachment: MailCore.Attachment, progressObserver: ((Double) -> Void)?) async throws -> Data { Data() }
 
-    func attachmentData(_ attachment: MailCore.Attachment) async throws -> Data { Data() }
-
-    func saveAttachmentLocally(attachment: MailCore.Attachment) async {}
+    func saveAttachmentLocally(attachment: MailCore.Attachment, progressObserver: ((Double) -> Void)?) async {}
 
     func markAsSeen(message: MailCore.Message, seen: Bool) async throws {}
 
