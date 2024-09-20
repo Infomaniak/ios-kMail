@@ -76,7 +76,7 @@ struct AttachmentUploadCell: View {
         previewedAttachment = attachment
         if !FileManager.default.fileExists(atPath: attachment.getLocalURL(mailboxManager: mailboxManager).path) {
             Task {
-                await mailboxManager.saveAttachmentLocally(attachment: attachment)
+                await mailboxManager.saveAttachmentLocally(attachment: attachment, progressObserver: nil)
             }
         }
     }

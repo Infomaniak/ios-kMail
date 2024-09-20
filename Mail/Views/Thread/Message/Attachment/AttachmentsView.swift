@@ -37,6 +37,7 @@ struct AttachmentsView: View {
     @ModalState private var attachmentsURL: AttachmentsURL?
     @State private var downloadInProgress = false
     @State private var downloadProgressState: [String: Double] = [:]
+    @State private var trackDownloadTask: [String: Task<Void, Error>] = [:]
     @State private var isDownloadDisabled = false
     @State private var showProgressCircle = false
 
@@ -119,12 +120,11 @@ struct AttachmentsView: View {
                                 .opacity(progress == 1 ? 0 : 1)
                         }
                         Button {
-                            showProgressCircle = true
-                            isDownloadDisabled = true
                             downloadAllAttachments()
                         } label: {
                             Text(MailResourcesStrings.Localizable.buttonDownloadAll)
                         }
+                        .disabled(isDownloadDisabled)
                         .buttonStyle(.ikBorderless(isInlined: true))
                         .controlSize(.small)
                         .disabled(isDownloadDisabled)
@@ -144,6 +144,11 @@ struct AttachmentsView: View {
             DocumentPicker(pickerType: .exportContent(attachmentsURL.urls))
                 .ignoresSafeArea()
         }
+        .onDisappear {
+            for (_, task) in trackDownloadTask {
+                task.cancel()
+            }
+        }
     }
 
     private func openAttachment(_ attachment: Attachment) {
@@ -151,33 +156,40 @@ struct AttachmentsView: View {
         previewedAttachment = attachment
         if !FileManager.default.fileExists(atPath: attachment.getLocalURL(mailboxManager: mailboxManager).path) {
             downloadProgressState[attachment.uuid] = 0.0
-            Task { @MainActor in
-                await mailboxManager.saveAttachmentLocally(attachment: attachment)
+            trackDownloadTask[attachment.uuid] = Task { @MainActor in
+                await mailboxManager.saveAttachmentLocally(attachment: attachment) { progress in
+                    Task { @MainActor in
+                        downloadProgressState[attachment.uuid] = progress
+                    }
+                }
                 downloadProgressState[attachment.uuid] = 1.0
             }
         }
     }
 
     private func downloadSwissTransferAttachment(stUuid: String, fileUuid: String) {
+        isDownloadDisabled = true
         matomo.track(eventWithCategory: .attachmentActions, name: "openSwissTransfer")
 
-        Task {
+        trackDownloadTask[fileUuid] = Task {
             await tryOrDisplayError {
                 let attachmentURL = try await mailboxManager.apiFetcher.downloadSwissTransferAttachment(
                     stUuid: stUuid, fileUuid: fileUuid
                 ) { progress in
                     Task { @MainActor in
-                        downloadProgressState[stUuid] = progress
+                        downloadProgressState[fileUuid] = progress
                     }
                 }
                 attachmentsURL = AttachmentsURL(urls: [attachmentURL])
             }
         }
+        isDownloadDisabled = false
     }
 
     private func downloadAllAttachments() {
         downloadInProgress = true
         isDownloadDisabled = true
+        showProgressCircle = true
         Task {
             await tryOrDisplayError {
                 matomo.track(eventWithCategory: .message, name: "downloadAll")

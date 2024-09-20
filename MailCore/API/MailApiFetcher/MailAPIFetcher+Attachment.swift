@@ -21,11 +21,19 @@ import Foundation
 import InfomaniakCore
 
 public extension MailApiFetcher {
-    func attachment(attachment: Attachment) async throws -> Data {
+    func attachment(attachment: Attachment, progressObserver: ((Double) -> Void)? = nil) async throws -> Data {
         guard let resource = attachment.resource else {
             throw MailError.resourceError
         }
         let request = authenticatedRequest(.resource(resource))
+        if let progressObserver {
+            Task {
+                for await progress in request.downloadProgress() {
+                    progressObserver(progress.fractionCompleted)
+                    print("attachement", progress.fractionCompleted)
+                }
+            }
+        }
         return try await request.serializingData().value
     }
 
@@ -68,7 +76,7 @@ public extension MailApiFetcher {
             Task {
                 for await progress in download.downloadProgress() {
                     progressObserver(progress.fractionCompleted)
-                    print(progress.fractionCompleted)
+                    print("Download ressource: \(progress.fractionCompleted)")
                 }
             }
         }

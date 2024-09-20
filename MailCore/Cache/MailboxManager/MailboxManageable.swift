@@ -42,8 +42,8 @@ public protocol MailboxManagerMessageable {
     func fetchOneNewPage(folder: Folder) async throws -> Bool
     func fetchOneOldPage(folder: Folder) async throws -> Int?
     func message(message: Message) async throws
-    func attachmentData(_ attachment: Attachment) async throws -> Data
-    func saveAttachmentLocally(attachment: Attachment) async
+    func attachmentData(_ attachment: Attachment, progressObserver: ((Double) -> Void)?) async throws -> Data
+    func saveAttachmentLocally(attachment: Attachment, progressObserver: ((Double) -> Void)?) async
     func markAsSeen(message: Message, seen: Bool) async throws
     func move(messages: [Message], to folderRole: FolderRole, origin: Folder?) async throws -> UndoAction
     func move(messages: [Message], to folder: Folder, origin: Folder?) async throws -> UndoAction
