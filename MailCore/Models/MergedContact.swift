@@ -73,15 +73,6 @@ public final class MergedContact: Object, Identifiable {
         return true
     }()
 
-    public lazy var color: UIColor = {
-        guard let remoteColorHex,
-              let colorFromHex = UIColor(hex: remoteColorHex) else {
-            return UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
-        }
-
-        return colorFromHex
-    }()
-
     public var avatarImageRequest: ImageRequest? {
         // iOS Avatar
         if let localIdentifier,

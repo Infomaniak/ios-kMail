@@ -19,7 +19,7 @@
 import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import UserNotifications
 

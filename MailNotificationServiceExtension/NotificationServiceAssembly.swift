@@ -18,7 +18,6 @@
 
 import Foundation
 import InfomaniakCore
-import InfomaniakCoreUI
 import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications

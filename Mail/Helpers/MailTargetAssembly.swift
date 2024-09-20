@@ -19,7 +19,7 @@
 import Foundation
 import InfomaniakBugTracker
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications

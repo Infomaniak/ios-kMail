@@ -20,7 +20,7 @@ import CocoaLumberjackSwift
 import Contacts
 import InfomaniakBugTracker
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications

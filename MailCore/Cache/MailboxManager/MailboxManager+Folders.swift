@@ -18,7 +18,6 @@
 
 import Foundation
 import InfomaniakCore
-import InfomaniakCoreUI
 import RealmSwift
 
 // MARK: - Folders

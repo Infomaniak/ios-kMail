@@ -17,7 +17,7 @@
  */
 
 import Combine
-import InfomaniakCoreUI
+import InfomaniakCoreSwiftUI
 import MailCore
 import MailResources
 import SwiftUI

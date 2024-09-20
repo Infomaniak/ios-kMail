@@ -17,7 +17,6 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
 import MailCore
 import RealmSwift
 import SwiftUI

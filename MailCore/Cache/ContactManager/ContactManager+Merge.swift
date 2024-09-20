@@ -19,7 +19,7 @@
 import CocoaLumberjackSwift
 import Contacts
 import Foundation
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 
 extension CNContact {
     var fullName: String {
