@@ -8,7 +8,8 @@ import ProjectDescriptionHelpers
 let packageSettings = PackageSettings(
     productTypes: [
         "RealmSwift": .staticLibrary,
-        "Realm": .staticLibrary
+        "Realm": .staticLibrary,
+        "InfomaniakDI": .framework
     ]
 )
 
