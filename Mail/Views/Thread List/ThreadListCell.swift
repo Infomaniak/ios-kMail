@@ -71,7 +71,7 @@ struct ThreadListCell: View {
             } else {
                 toggleMultipleSelection(withImpact: true)
             }
-        )
+        }
         .background(SelectionBackground(
             selectionType: selectionType,
             paddingLeading: 4,
