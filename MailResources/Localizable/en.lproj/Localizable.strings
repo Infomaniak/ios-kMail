@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: en, English
  * Tagged: ios
- * Exported by: Matthieu Déglon
- * Exported at: Mon, 16 Sep 2024 14:10:01 +0200
+ * Exported by: Jordan Chapelle
+ * Exported at: Fri, 20 Sep 2024 13:36:25 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -435,6 +435,9 @@
 
 /* loco:62567be2708ef36f6e378df2 */
 "buttonMoreStorage" = "Get more storage";
+
+/* loco:66ea743a97d41ebaaa0536f4 */
+"buttonMultiselect" = "Select";
 
 /* loco:6267bafe7edebd666d7d6923 */
 "buttonNewMessage" = "New message";

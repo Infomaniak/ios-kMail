@@ -23,12 +23,13 @@ import MailResources
 
 extension Action: CaseIterable {
     public static let rightClickActions: [Action] = [
+        .activeMultiselect,
         .reply,
         .replyAll,
         .forward,
-        .delete,
+        .openMovePanel,
         .archive,
-        .openMovePanel
+        .delete
     ]
     public static let quickActions: [Action] = [.reply, .replyAll, .forward, .delete]
     public static let swipeActions: [Action] = [
@@ -86,7 +87,7 @@ extension Action: CaseIterable {
         let star = message.flagged
         let spam = message.folder?.role == .spam
         let print = origin.type == .floatingPanel(source: .messageList)
-        let tempListActions: [Action?] = [
+        var tempListActions: [Action?] = [
             .openMovePanel,
             spam ? .nonSpam : .reportJunk,
             unread ? .markAsRead : .markAsUnread,
@@ -386,5 +387,11 @@ public extension Action {
         title: MailResourcesStrings.Localizable.buttonAccountDelete,
         iconResource: MailResourcesAsset.bin,
         matomoName: "deleteAccount"
+    )
+    static let activeMultiselect = Action(
+        id: "activeMultiselect",
+        title: MailResourcesStrings.Localizable.buttonMultiselect,
+        iconResource: MailResourcesAsset.checklist,
+        matomoName: "selectAll"
     )
 }
