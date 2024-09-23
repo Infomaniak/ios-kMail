@@ -24,10 +24,9 @@ import MailCoreUI
 import MailResources
 import SwiftModalPresentation
 import SwiftUI
-import SwiftUIMacros
 
 extension EnvironmentValues {
-    @EnvironmentKey
+    @Entry
     var mailboxCellStyle = MailboxCell.Style.menuDrawer
 }
 

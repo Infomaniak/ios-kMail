@@ -242,8 +242,7 @@ let project = Project(name: "Mail",
                                       .external(name: "WrappingHStack"),
                                       .external(name: "NavigationBackport"),
                                       .external(name: "Popovers"),
-                                      .external(name: "SwiftUIBackports"),
-                                      .external(name: "SwiftUIMacros")
+                                      .external(name: "SwiftUIBackports")
                                   ],
                                   settings: .settings(base: Constants.baseSettings))
                       ],

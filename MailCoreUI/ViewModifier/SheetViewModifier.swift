@@ -19,12 +19,11 @@
 import MailCore
 import MailResources
 import SwiftUI
-import SwiftUIMacros
 
 public typealias DismissModalAction = () -> Void
 
 public extension EnvironmentValues {
-    @EnvironmentKey
+    @Entry
     var dismissModal: DismissModalAction = { /* dismiss nothing by default */ }
 }
 
