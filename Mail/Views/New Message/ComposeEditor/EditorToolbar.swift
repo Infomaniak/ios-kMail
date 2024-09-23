@@ -56,62 +56,33 @@ enum EditorToolbarAction: Int {
     case takePhoto
     case link
     case programMessage
-
-    var icon: UIImage {
+    
+    var icon: MailResourcesImages {
         switch self {
         case .bold:
-            return MailResourcesAsset.bold.image
+            return MailResourcesAsset.bold
         case .italic:
-            return MailResourcesAsset.italic.image
+            return MailResourcesAsset.italic
         case .underline:
-            return MailResourcesAsset.underline.image
+            return MailResourcesAsset.underline
         case .strikeThrough:
-            return MailResourcesAsset.strikeThrough.image
+            return MailResourcesAsset.strikeThrough
         case .unorderedList:
-            return MailResourcesAsset.unorderedList.image
+            return MailResourcesAsset.unorderedList
         case .editText:
-            return MailResourcesAsset.textModes.image
+            return MailResourcesAsset.textModes
         case .ai:
-            return MailResourcesAsset.aiWriter.image
+            return MailResourcesAsset.aiWriter
         case .addFile:
-            return MailResourcesAsset.folder.image
+            return MailResourcesAsset.folder
         case .addPhoto:
-            return MailResourcesAsset.pictureLandscape.image
+            return MailResourcesAsset.pictureLandscape
         case .takePhoto:
-            return MailResourcesAsset.photo.image
+            return MailResourcesAsset.photo
         case .link:
-            return MailResourcesAsset.hyperlink.image
+            return MailResourcesAsset.hyperlink
         case .programMessage:
-            return MailResourcesAsset.waitingMessage.image
-        }
-    }
-
-    var swiftUIicon: Image {
-        switch self {
-        case .bold:
-            return MailResourcesAsset.bold.swiftUIImage
-        case .italic:
-            return MailResourcesAsset.italic.swiftUIImage
-        case .underline:
-            return MailResourcesAsset.underline.swiftUIImage
-        case .strikeThrough:
-            return MailResourcesAsset.strikeThrough.swiftUIImage
-        case .unorderedList:
-            return MailResourcesAsset.unorderedList.swiftUIImage
-        case .editText:
-            return MailResourcesAsset.textModes.swiftUIImage
-        case .ai:
-            return MailResourcesAsset.aiWriter.swiftUIImage
-        case .addFile:
-            return MailResourcesAsset.folder.swiftUIImage
-        case .addPhoto:
-            return MailResourcesAsset.pictureLandscape.swiftUIImage
-        case .takePhoto:
-            return MailResourcesAsset.photo.swiftUIImage
-        case .link:
-            return MailResourcesAsset.hyperlink.swiftUIImage
-        case .programMessage:
-            return MailResourcesAsset.waitingMessage.swiftUIImage
+            return MailResourcesAsset.waitingMessage
         }
     }
 
