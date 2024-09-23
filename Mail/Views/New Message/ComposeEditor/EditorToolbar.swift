@@ -21,8 +21,8 @@ import InfomaniakRichHTMLEditor
 import MailCore
 import MailCoreUI
 import MailResources
-import UIKit
 import SwiftUI
+import UIKit
 
 enum EditorToolbarStyle {
     case main
@@ -56,7 +56,7 @@ enum EditorToolbarAction: Int {
     case takePhoto
     case link
     case programMessage
-    
+
     var icon: MailResourcesImages {
         switch self {
         case .bold:

@@ -52,6 +52,14 @@ struct ComposeEditor: View {
     }
 
     var body: some View {
+        #if os(macOS) || targetEnvironment(macCatalyst)
+        ComposeMessageMacosToolbarView(
+            textAttributes: textAttributes,
+            isShowingLinkAlert: $isShowingLinkAlert,
+            isShowingFileSelection: $isShowingFileSelection
+        )
+        #endif
+        AttachmentsHeaderView()
         RichHTMLEditor(html: $draft.body, textAttributes: textAttributes)
             .focused($focusedField, equals: .editor)
             .onAppear(perform: setupToolbar)

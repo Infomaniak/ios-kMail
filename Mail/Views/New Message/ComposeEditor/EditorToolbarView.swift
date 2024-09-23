@@ -64,7 +64,12 @@ final class EditorToolbarView: UIToolbar {
 
         let actions = type.actions
         let actionItems = actions.map { action in
-            let item = UIBarButtonItem(image: action.icon.image, style: .plain, target: self, action: #selector(didTapOnBarButtonItem))
+            let item = UIBarButtonItem(
+                image: action.icon.image,
+                style: .plain,
+                target: self,
+                action: #selector(didTapOnBarButtonItem)
+            )
             item.tag = action.rawValue
             item.accessibilityLabel = action.accessibilityLabel
             if let textAttributes {

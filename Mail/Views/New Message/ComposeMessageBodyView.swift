@@ -32,8 +32,6 @@ struct ComposeMessageBodyView: View {
 
     var body: some View {
         VStack {
-            ComposeMessageToolbarView()
-            AttachmentsHeaderView()
             ComposeEditor(
                 focusedField: _focusedField,
                 draft: draft,

@@ -72,7 +72,6 @@ struct ComposeMessageHeaderView: View {
                 )
                 .accessibilityLabel(MailResourcesStrings.Localizable.bccTitle)
             }
-
             ComposeMessageCellTextField(
                 text: $draft.subject,
                 focusedField: _focusedField,
