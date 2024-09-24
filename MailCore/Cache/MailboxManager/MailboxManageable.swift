@@ -107,4 +107,4 @@ public protocol MailboxManagerAttachable {
     func swissTransferAttachment(message: Message) async throws
 }
 
-// TODO: write a dedicated protocol for each MailboxManager+<>
+// TODO: write a dedicated protocol for each MailboxManager

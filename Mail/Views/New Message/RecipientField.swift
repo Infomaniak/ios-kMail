@@ -17,7 +17,7 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -72,7 +72,8 @@ struct RecipientField: View {
                 Button {
                     currentText = ""
                 } label: {
-                    IKIcon(MailResourcesAsset.remove)
+                    MailResourcesAsset.remove
+                        .iconSize(.medium)
                 }
                 .foregroundStyle(MailResourcesAsset.textTertiaryColor)
                 .opacity(shouldDisplayEmptyButton ? 1 : 0)

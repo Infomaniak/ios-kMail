@@ -17,7 +17,7 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import InfomaniakLogin
 import MailCore
@@ -87,7 +87,8 @@ struct AccountHeaderCell: View {
             switch type {
             case .switchAccount:
                 if isSelected {
-                    IKIcon(MailResourcesAsset.check)
+                    MailResourcesAsset.check.swiftUIImage
+                        .iconSize(.medium)
                         .foregroundStyle(.tint)
                 }
             case .selectComposeMailbox:
@@ -95,15 +96,6 @@ struct AccountHeaderCell: View {
             }
         }
         .padding(.vertical, value: .small)
-        .padding(.horizontal, value: .medium)
-        .background {
-            RoundedRectangle(cornerRadius: 8)
-                .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
-        }
-        .overlay {
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(MailResourcesAsset.elementsColor.swiftUIColor, lineWidth: 1)
-        }
     }
 }
 

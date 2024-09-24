@@ -23,12 +23,12 @@ import MailResources
 import SwiftUI
 
 extension View {
-    func composeMessageToolbar(dismissHandler: @escaping () -> Void) -> some View {
-        modifier(ComposeMessageToolbarModifier(dismissHandler: dismissHandler))
+    func baseComposeMessageToolbar(dismissHandler: @escaping () -> Void) -> some View {
+        modifier(BaseComposeMessageToolbarModifier(dismissHandler: dismissHandler))
     }
 }
 
-struct ComposeMessageToolbarModifier: ViewModifier {
+struct BaseComposeMessageToolbarModifier: ViewModifier {
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     let dismissHandler: () -> Void

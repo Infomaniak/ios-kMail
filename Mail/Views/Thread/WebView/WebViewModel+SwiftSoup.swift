@@ -28,7 +28,7 @@ extension WebViewModel {
             guard let safeDocument = try? await SwiftSoupUtils(fromHTML: rawHTML).cleanCompleteDocument()
             else { return .errorCleanHTMLContent }
 
-            try updateHeadContent(of: safeDocument)
+            try updateViewportMetaTag(of: safeDocument)
             try wrapBody(document: safeDocument, inID: Constants.divWrapperId)
             try breakLongWords(of: safeDocument)
 
@@ -44,13 +44,13 @@ extension WebViewModel {
                 return .noRemoteContent
             }
         } catch {
-            DDLogError("An error occurred while parsing body \(error)")
+            Logger.general.error("An error occurred while parsing body \(error)")
             return .errorParsingBody
         }
     }
 
     /// Adds a viewport if necessary or change the value of the current one to `Constants.viewportContent`
-    private func updateHeadContent(of document: Document) throws {
+    private func updateViewportMetaTag(of document: Document) throws {
         let head = document.head()
         if let viewport = try head?.select("meta[name=\"viewport\"]"), !viewport.isEmpty() {
             try viewport.attr("content", Constants.viewportContent)
@@ -61,6 +61,7 @@ extension WebViewModel {
     }
 
     /// Wraps the message body in a div
+    /// This step is necessary to munge the email contained in the provided id
     private func wrapBody(document: Document, inID id: String) throws {
         if let bodyContent = document.body()?.childNodesCopy() {
             document.body()?.empty()

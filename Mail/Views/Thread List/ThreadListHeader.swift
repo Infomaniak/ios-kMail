@@ -18,7 +18,7 @@
 
 import Combine
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -133,7 +133,8 @@ struct UnreadToggleStyle: ToggleStyle {
             HStack(spacing: 8) {
                 configuration.label
                 if configuration.isOn {
-                    IKIcon(MailResourcesAsset.close, size: .small)
+                    MailResourcesAsset.close
+                        .iconSize(.small)
                 }
             }
             .textStyle(configuration.isOn ? .bodySmallMediumOnAccent : .bodySmallMediumAccent)

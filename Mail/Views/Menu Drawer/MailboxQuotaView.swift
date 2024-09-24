@@ -17,7 +17,7 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -59,7 +59,8 @@ private struct QuotaCircularProgressViewStyle: ProgressViewStyle {
                 .stroke(Color.accentColor, lineWidth: 4)
                 .rotationEffect(.degrees(-90))
 
-            IKIcon(MailResourcesAsset.drawer)
+            MailResourcesAsset.drawer
+                .iconSize(.medium)
                 .foregroundStyle(.tint)
         }
         .frame(height: 40)

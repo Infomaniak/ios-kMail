@@ -17,7 +17,7 @@
  */
 
 import Combine
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import InfomaniakRichHTMLEditor
 import MailCore

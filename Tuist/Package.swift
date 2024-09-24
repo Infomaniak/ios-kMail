@@ -9,6 +9,7 @@ let packageSettings = PackageSettings(
     productTypes: [
         "RealmSwift": .staticLibrary,
         "Realm": .staticLibrary,
+        "InfomaniakDI": .framework
     ]
 )
 
@@ -22,9 +23,9 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "2.0.0")),
         .package(url: "https://github.com/Infomaniak/swift-concurrency", .upToNextMajor(from: "0.0.5")),
         .package(url: "https://github.com/Infomaniak/ios-core", .upToNextMajor(from: "12.2.0")),
-        .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "11.1.0")),
+        .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "12.1.0")),
         .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "8.0.0")),
-        .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "10.0.0")),
+        .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "11.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-bug-tracker", .upToNextMajor(from: "7.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-version-checker", .upToNextMajor(from: "7.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-onboarding", .upToNextMajor(from: "1.0.3")),
@@ -44,8 +45,7 @@ let package = Package(
         .package(url: "https://github.com/aheze/Popovers", .upToNextMajor(from: "1.3.2")),
         .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1")),
         .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0")),
-        .package(url: "https://github.com/Wouter01/SwiftUI-Macros.git", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/SVGKit/SVGKit.git", branch: "3.x"),
-        .package(url: "https://github.com/Infomaniak/swift-rich-html-editor.git", .upToNextMajor(from: "1.1.1")),
+        .package(url: "https://github.com/Infomaniak/swift-rich-html-editor.git", .upToNextMajor(from: "1.1.1"))
     ]
 )

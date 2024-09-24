@@ -16,7 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
+import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -62,7 +62,8 @@ struct OnboardingBottomButtonsView: View {
                         selection = min(slideCount - 1, selection + 1)
                     }
                 } label: {
-                    IKIcon(MailResourcesAsset.fullArrowRight, size: .large)
+                    MailResourcesAsset.fullArrowRight
+                        .iconSize(.large)
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonNext)
                 .buttonStyle(.ikSquare)

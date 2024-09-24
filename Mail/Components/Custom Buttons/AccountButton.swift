@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -24,22 +25,27 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct AccountButton: View {
+    @LazyInjectService private var accountManager: AccountManager
+
     @Environment(\.currentUser) private var currentUser
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @ModalState private var presentedUser: UserProfile?
+    @State private var isShowingNewAccountListView = false
 
     var body: some View {
         Button {
-            presentedUser = currentUser.value
+            isShowingNewAccountListView = true
         } label: {
             AvatarView(mailboxManager: mailboxManager,
                        contactConfiguration: .user(user: currentUser.value))
-                .accessibilityLabel(MailResourcesStrings.Localizable.titleMyAccount)
+                .accessibilityLabel(MailResourcesStrings.Localizable.titleMyAccount(1))
         }
-        .sheet(item: $presentedUser) { user in
-            AccountView(user: user)
+        .floatingPanel(
+            isPresented: $isShowingNewAccountListView,
+            title: MailResourcesStrings.Localizable.titleMyAccount(accountManager.accounts.count)
+        ) {
+            AccountListView(mailboxManager: mailboxManager)
         }
     }
 }

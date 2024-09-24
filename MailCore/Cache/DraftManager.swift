@@ -18,7 +18,7 @@
 
 import Foundation
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailResources
 import RealmSwift
@@ -40,7 +40,7 @@ actor DraftQueue {
     func beginBackgroundTask(withName name: String, for uuid: String) async {
         let identifier = await UIApplication.shared.beginBackgroundTask(withName: name) { [self] in
             Task {
-                endBackgroundTask(uuid: uuid)
+                await endBackgroundTask(uuid: uuid)
             }
         }
         identifierQueue[uuid] = identifier

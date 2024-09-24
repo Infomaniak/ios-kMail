@@ -17,72 +17,17 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
-import RealmSwift
 import SwiftUI
 
-final class AccountListViewModel: ObservableObject {
-    @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
-
-    @Published var selectedUserId: Int? = {
-        @InjectService var accountManager: AccountManager
-        return accountManager.currentUserId
-    }()
-
-    @Published var accounts = [InfomaniakCore.UserProfile: [Mailbox]]()
-
-    // periphery:ignore - We need to keep a reference to this to keep receiving events (automatically removed on deinit)
-    private var mailboxObservationToken: NotificationToken?
-
-    init() {
-        let mailboxes = mailboxInfosManager.fetchResults(ofType: Mailbox.self) { partial in
-            partial.sorted(by: \.mailboxId)
-        }
-
-        mailboxObservationToken = mailboxes.observe { results in
-            switch results {
-            case .initial(let mailboxes):
-                let frozenMailboxes = mailboxes.freezeIfNeeded()
-                Task { @MainActor [weak self] in
-                    guard let newAccounts = await self?.handleMailboxChanged(Array(frozenMailboxes)) else { return }
-
-                    self?.accounts = newAccounts
-                }
-            case .update(let mailboxes, _, _, _):
-                let frozenMailboxes = mailboxes.freezeIfNeeded()
-                Task { @MainActor [weak self] in
-                    guard let newAccounts = await self?.handleMailboxChanged(Array(frozenMailboxes)) else { return }
-                    withAnimation {
-                        self?.accounts = newAccounts
-                    }
-                }
-            case .error:
-                break
-            }
-        }
-    }
-
-    private func handleMailboxChanged(_ mailboxes: [Mailbox]) async -> [InfomaniakCore.UserProfile: [Mailbox]] {
-        var newAccounts = [InfomaniakCore.UserProfile: [Mailbox]]()
-        for account in accountManager.accounts {
-            guard let user = await accountManager.userProfileStore.getUserProfile(id: account.userId) else { continue }
-            newAccounts[user] = mailboxes.filter { $0.userId == account.userId }
-        }
-
-        return newAccounts
-    }
-}
-
 struct AccountListView: View {
-    @StateObject private var viewModel = AccountListViewModel()
-    @State var isShowingNewAccountView = false
+    @State private var isShowingNewAccountView = false
 
-    @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var accountManager: AccountManager
 
@@ -90,20 +35,23 @@ struct AccountListView: View {
     let mailboxManager: MailboxManager?
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: IKPadding.small) {
-                ForEach(Array(viewModel.accounts.keys)) { user in
-                    AccountCellView(selectedUserId: $viewModel.selectedUserId, mailboxManager: mailboxManager, user: user)
+        VStack(spacing: 0) {
+            VStack(spacing: IKPadding.extraSmall) {
+                ForEach(accountManager.accounts.values) { account in
+                    AccountCellView(
+                        selectedUserId: .constant(accountManager.currentUserId),
+                        mailboxManager: mailboxManager,
+                        user: account.user
+                    )
+                    .padding(.horizontal, value: .medium)
                 }
             }
-            .padding(.horizontal, value: .medium)
-            .padding(.bottom, 120)
-        }
-        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
-        .navigationBarTitle(MailResourcesStrings.Localizable.titleMyAccounts, displayMode: .inline)
-        .floatingActionButton(icon: MailResourcesAsset.plus, title: MailResourcesStrings.Localizable.buttonAddAccount) {
-            matomo.track(eventWithCategory: .account, name: "add")
-            isShowingNewAccountView = true
+
+            IKDivider()
+                .padding(.vertical, value: .small)
+
+            AccountActionsView()
+                .padding(.horizontal, value: .small)
         }
         .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
             orientationManager.setOrientationLock(.all)

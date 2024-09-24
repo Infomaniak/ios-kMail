@@ -17,7 +17,7 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -166,7 +166,7 @@ struct ComposeMessageView: View {
                 focusedField = .editor
             }
         }
-        .composeMessageToolbar(dismissHandler: didTouchDismiss)
+        .baseComposeMessageToolbar(dismissHandler: didTouchDismiss)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: didTouchSend) {

@@ -26,6 +26,7 @@ public struct TagModifier: ViewModifier {
 
     public func body(content: Content) -> some View {
         content
+            .lineLimit(1)
             .foregroundStyle(foregroundColor)
             .textStyle(.bodySmallSecondary)
             .padding(.horizontal, value: .extraSmall)

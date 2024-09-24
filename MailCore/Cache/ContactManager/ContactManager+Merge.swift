@@ -19,7 +19,7 @@
 import CocoaLumberjackSwift
 import Contacts
 import Foundation
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 
 extension CNContact {
     var fullName: String {
@@ -41,17 +41,17 @@ extension ContactManager {
     public func uniqueUpdateContactDBTask(_ apiFetcher: MailApiFetcher) async {
         // We do not run an update of contacts in extension mode as we are too resource constrained
         guard !Bundle.main.isExtension else {
-            DDLogInfo("Skip updating contacts, we are in extension mode")
+            Logger.general.info("Skip updating contacts, we are in extension mode")
             return
         }
 
         // Unique task running
         guard currentMergeRequest == nil else {
-            DDLogInfo("UpdateContactDB is running, exiting …")
+            Logger.general.info("UpdateContactDB is running, exiting …")
             return
         }
 
-        DDLogInfo("Will start updating contacts in DB")
+        Logger.general.info("Will start updating contacts in DB")
 
         // Track background refresh of contacts, and cancel task is system asks to.
         let backgroundTaskTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString) {
@@ -89,7 +89,7 @@ extension ContactManager {
     /// - Parameter remote: a list of remote infomaniak contacts
     func updateContactDB(_ remote: [InfomaniakContact]) async {
         defer {
-            DDLogInfo("Done merging remote and local contacts in DB…")
+            Logger.general.info("Done merging remote and local contacts in DB…")
         }
 
         // Index contacts by id

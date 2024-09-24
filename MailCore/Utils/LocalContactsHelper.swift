@@ -74,7 +74,7 @@ public final class LocalContactsHelper: LocalContactsHelpable {
 
     private func checkAuthorization() async throws {
         switch CNContactStore.authorizationStatus(for: .contacts) {
-        case .authorized:
+        case .authorized, .limited:
             // All ok
             return
         case .restricted, .denied:

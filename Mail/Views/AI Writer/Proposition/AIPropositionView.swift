@@ -16,7 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -109,7 +109,8 @@ struct AIPropositionView: View {
                                 }
                             } label: {
                                 Label { Text(MailResourcesStrings.Localizable.aiButtonInsert) } icon: {
-                                    IKIcon(MailResourcesAsset.plus)
+                                    MailResourcesAsset.plus
+                                        .iconSize(.medium)
                                 }
                             }
                             .buttonStyle(.ikBorderedProminent)

@@ -18,7 +18,6 @@
 
 import Foundation
 import InfomaniakCore
-import InfomaniakCoreUI
 import RealmSwift
 
 // MARK: - Folders
@@ -87,7 +86,7 @@ public extension MailboxManager {
     }
 
     func createFolder(name: String, parent: Folder?) async throws -> Folder {
-        var folder = try await apiFetcher.create(mailbox: mailbox, folder: NewFolder(name: name, path: parent?.path))
+        let folder = try await apiFetcher.create(mailbox: mailbox, folder: NewFolder(name: name, path: parent?.path))
         try writeTransaction { writableRealm in
             writableRealm.add(folder)
             if let parent {

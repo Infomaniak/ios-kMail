@@ -17,16 +17,16 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
-import SwiftUIMacros
 
 extension EnvironmentValues {
-    @EnvironmentValue
+    @Entry
     var folderCellType = FolderCell.CellType.menuDrawer
 }
 
@@ -202,7 +202,8 @@ struct FolderCellContent: View {
                 }
             }
         } else if isCurrentFolder {
-            IKIcon(MailResourcesAsset.check)
+            MailResourcesAsset.check
+                .iconSize(.medium)
         }
     }
 

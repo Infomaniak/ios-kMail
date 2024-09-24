@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreSwiftUI
 import MailResources
 import SwiftUI
 
@@ -46,7 +47,8 @@ public struct ChevronIcon<ChevronShapeStyle: ShapeStyle>: View {
     }
 
     public var body: some View {
-        IKIcon(MailResourcesAsset.chevronUp, size: .small)
+        MailResourcesAsset.chevronUp
+            .iconSize(.small)
             .rotationEffect(direction.rotationAngle)
             .foregroundStyle(shapeStyle)
     }

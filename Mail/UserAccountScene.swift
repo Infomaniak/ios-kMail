@@ -20,7 +20,8 @@ import CocoaLumberjackSwift
 import Contacts
 import InfomaniakBugTracker
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications
@@ -109,7 +110,7 @@ struct UserAccountScene: Scene {
                     }
                 }
             } catch {
-                DDLogError("Error while checking version status: \(error)")
+                Logger.view.error("Error while checking version status: \(error)")
             }
         }
     }

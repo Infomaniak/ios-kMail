@@ -16,7 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
+import InfomaniakCoreSwiftUI
 import MailCore
 import MailResources
 import SwiftUI
@@ -85,7 +85,7 @@ public struct InformationBlockView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             if let dismissHandler {
-                CloseButton(size: .regular, dismissHandler: dismissHandler)
+                CloseButton(size: .medium, dismissHandler: dismissHandler)
                     .tint(MailResourcesAsset.textSecondaryColor.swiftUIColor)
                     .alignmentGuide(.iconAndMultilineTextAlignment) { d in
                         d[VerticalAlignment.center]
@@ -116,9 +116,9 @@ public struct InformationBlockView: View {
         message: "Tip",
         iconColor: .blue,
         buttonAction: {},
-        buttonTitle: "Button title"
-    ) {
-    /* Preview */ }
+        buttonTitle: "Button title",
+        dismissHandler: {} // swiftlint:disable:this trailing_closure
+    )
 }
 
 #Preview("Without Title") {

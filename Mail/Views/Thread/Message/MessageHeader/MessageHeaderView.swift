@@ -17,7 +17,8 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -32,9 +33,10 @@ struct MessageHeaderView: View {
     @EnvironmentObject private var mainViewState: MainViewState
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @State private var isHeaderExpanded = false
+
     @ObservedRealmObject var message: Message
 
-    @Binding var isHeaderExpanded: Bool
     @Binding var isMessageExpanded: Bool
 
     var body: some View {
@@ -83,7 +85,6 @@ struct MessageHeaderView: View {
 #Preview("Message collapsed") {
     MessageHeaderView(
         message: PreviewHelper.sampleMessage,
-        isHeaderExpanded: .constant(false),
         isMessageExpanded: .constant(false)
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
@@ -92,7 +93,6 @@ struct MessageHeaderView: View {
 #Preview("Message expanded") {
     MessageHeaderView(
         message: PreviewHelper.sampleMessage,
-        isHeaderExpanded: .constant(false),
         isMessageExpanded: .constant(true)
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
@@ -101,7 +101,6 @@ struct MessageHeaderView: View {
 #Preview("Message Header View") {
     MessageHeaderView(
         message: PreviewHelper.sampleMessage,
-        isHeaderExpanded: .constant(true),
         isMessageExpanded: .constant(true)
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)

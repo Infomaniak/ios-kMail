@@ -20,7 +20,7 @@ import Combine
 import Contacts
 import Foundation
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import InfomaniakLogin
 import SwiftUI

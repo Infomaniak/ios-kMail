@@ -17,7 +17,8 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import InfomaniakNotifications
 import MailCore
@@ -115,6 +116,7 @@ struct SettingsNotificationsView: View {
                 }
             }
         }
+        // swiftlint:disable:next trailing_closure
         .sceneLifecycle(willEnterForeground: {
             settingsNotificationEnabled { enabled in
                 showWarning = !enabled

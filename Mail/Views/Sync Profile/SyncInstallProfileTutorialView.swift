@@ -17,14 +17,15 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
 
-extension MailResourcesImages: Identifiable {
+extension MailResourcesImages: @retroactive Identifiable {
     public var id: String {
         name
     }

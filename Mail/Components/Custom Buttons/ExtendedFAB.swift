@@ -35,7 +35,8 @@ struct ExtendedFAB: View {
             action()
         } label: {
             HStack(spacing: 0) {
-                IKIcon(icon)
+                icon
+                    .iconSize(.medium)
 
                 Text(title)
                     .lineLimit(1)

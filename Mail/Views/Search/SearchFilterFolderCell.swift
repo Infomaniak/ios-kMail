@@ -16,7 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
+import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -81,7 +81,8 @@ struct SearchFilterFolderCell: View {
         } label: {
             HStack(spacing: IKPadding.searchFolderCellSpacing) {
                 if isSelected {
-                    IKIcon(MailResourcesAsset.check, size: .small)
+                    MailResourcesAsset.check
+                        .iconSize(.small)
                 }
                 Text(selectedFolderName)
                     .font(MailTextStyle.bodyMedium.font)

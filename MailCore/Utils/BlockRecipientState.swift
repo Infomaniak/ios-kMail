@@ -18,29 +18,21 @@
 
 import Foundation
 
-public struct MandatoryEnvironmentContainer<T> {
-    public var value: T {
-        #if DEBUG
-        guard let _value else {
-            fatalError("Container not initialized in the view tree")
-        }
-        return _value
-        #else
-        return _value!
-        #endif
+public struct BlockRecipientState: Identifiable {
+    public var id = UUID()
+    public let recipientsToMessage: [Recipient: Message]
+    public init(recipientsToMessage: [Recipient: Message]) {
+        self.recipientsToMessage = recipientsToMessage
     }
+}
 
-    private let _value: T?
+public struct BlockRecipientAlertState: Identifiable {
+    public var id = UUID()
+    public let recipient: Recipient
+    public let message: Message
 
-    public init(value: T) {
-        _value = value
-    }
-
-    private init(value: T?) {
-        _value = value
-    }
-
-    public static func emptyDefaultValue() -> MandatoryEnvironmentContainer<T> {
-        MandatoryEnvironmentContainer(value: nil)
+    public init(recipient: Recipient, message: Message) {
+        self.recipient = recipient
+        self.message = message
     }
 }

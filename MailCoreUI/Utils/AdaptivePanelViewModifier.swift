@@ -46,9 +46,11 @@ public struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>:
                         panelContent(item).modifier(SelfSizingPanelBackportViewModifier())
                     }
                 } else {
-                    panelContent(item)
-                        .padding()
-                        .frame(idealWidth: 400)
+                    ScrollView {
+                        panelContent(item)
+                    }
+                    .padding(.vertical)
+                    .frame(idealWidth: 400)
                 }
             }
     }

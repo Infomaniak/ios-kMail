@@ -36,7 +36,7 @@ final class WebViewModel: NSObject, ObservableObject {
     let webView: WKWebView
     let contentBlocker: ContentBlocker
 
-    let style: String = MessageWebViewUtils.loadAndFormatCSS(for: .message)
+    let style = MessageWebViewUtils.loadAndFormatCSS(for: .message)
 
     enum LoadResult: Equatable {
         case remoteContentBlocked
@@ -66,8 +66,8 @@ final class WebViewModel: NSObject, ObservableObject {
                 self.initialContentLoading = false
             }
 
-        setUpWebViewConfiguration()
-        loadScripts(configuration: webView.configuration)
+        registerJavaScriptMessageTopics()
+        loadScripts()
     }
 
     func loadBody(presentableBody: PresentableBody, blockRemoteContent: Bool, messageUid: String) async throws -> LoadResult {
@@ -102,26 +102,25 @@ final class WebViewModel: NSObject, ObservableObject {
         return subBodiesContent
     }
 
-    private func setUpWebViewConfiguration() {
-        webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.log.rawValue)
-        webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.sizeChanged.rawValue)
-        webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.overScroll.rawValue)
-        webView.configuration.userContentController.add(self, name: JavaScriptMessageTopic.error.rawValue)
+    private func registerJavaScriptMessageTopics() {
+        for messageTopic in JavaScriptMessageTopic.allCases {
+            webView.configuration.userContentController.add(self, name: messageTopic.rawValue)
+        }
     }
 
-    private func loadScripts(configuration: WKWebViewConfiguration) {
+    private func loadScripts() {
         var scripts = ["javaScriptBridge", "sizeHandler", "fixEmailStyle"]
         #if DEBUG || TEST
         scripts.insert("captureLog", at: 0)
         #endif
 
         for script in scripts {
-            configuration.userContentController
+            webView.configuration.userContentController
                 .addUserScript(named: script, injectionTime: .atDocumentStart, forMainFrameOnly: true)
         }
 
         if let mungeScript = Constants.mungeEmailScript {
-            configuration.userContentController
+            webView.configuration.userContentController
                 .addUserScript(WKUserScript(source: mungeScript, injectionTime: .atDocumentStart, forMainFrameOnly: true))
         }
     }

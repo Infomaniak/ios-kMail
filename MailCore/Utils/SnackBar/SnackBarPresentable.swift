@@ -17,7 +17,7 @@
  */
 
 import Foundation
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import SnackBar
 import UIKit
 

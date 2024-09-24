@@ -89,12 +89,9 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
             }
 
             let messageView = ScrollView {
-                MessageView(
-                    message: message,
-                    threadForcedExpansion: .constant([messageUid: .expanded])
-                )
-                .environment(\.isMessageInteractive, false)
-                .environmentObject(mailboxManager)
+                MessageView(threadForcedExpansion: .constant([messageUid: .expanded]), message: message)
+                    .environment(\.isMessageInteractive, false)
+                    .environmentObject(mailboxManager)
             }
 
             let hostingViewController = UIHostingController(rootView: messageView)

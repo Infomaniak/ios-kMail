@@ -17,17 +17,16 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
 import SwiftModalPresentation
 import SwiftUI
-import SwiftUIMacros
 
 extension EnvironmentValues {
-    @EnvironmentValue
+    @Entry
     var mailboxCellStyle = MailboxCell.Style.menuDrawer
 }
 

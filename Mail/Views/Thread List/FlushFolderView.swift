@@ -16,7 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -65,7 +66,8 @@ struct FlushFolderView: View {
                     }
                 } label: {
                     HStack(spacing: IKPadding.small) {
-                        IKIcon(MailResourcesAsset.bin)
+                        MailResourcesAsset.bin
+                            .iconSize(.medium)
                         Text(button)
                     }
                     .textStyle(.bodySmallAccent)

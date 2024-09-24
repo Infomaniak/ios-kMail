@@ -17,7 +17,7 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -60,6 +60,12 @@ struct SettingsView: View {
                                 MailboxSettingsView(mailboxManager: mailboxManager)
                             }
                         }
+                    }
+
+                    SettingsSubMenuCell(
+                        title: MailResourcesStrings.Localizable.buttonAddExistingAddress
+                    ) {
+                        AddMailboxView()
                     }
 
                     IKDivider()
@@ -205,6 +211,12 @@ struct SettingsView: View {
                         title: MailResourcesStrings.Localizable.settingsDataManagementTitle
                     ) {
                         SettingsDataManagementView()
+                    }
+
+                    SettingsSubMenuCell(
+                        title: MailResourcesStrings.Localizable.settingsAccountManagementTitle
+                    ) {
+                        SettingsAccountManagementView(user: currentUser.value)
                     }
                 }
             }

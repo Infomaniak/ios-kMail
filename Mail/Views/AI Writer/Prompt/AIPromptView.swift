@@ -16,7 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -54,7 +55,7 @@ struct AIPromptView: View {
                 AIHeaderView(style: .bottomSheet)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                CloseButton(size: .regular, dismissAction: dismiss)
+                CloseButton(size: .medium, dismissAction: dismiss)
                     .tint(MailResourcesAsset.textSecondaryColor)
             }
 

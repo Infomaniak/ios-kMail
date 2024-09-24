@@ -17,16 +17,19 @@
  */
 
 import Foundation
+import InfomaniakCore
+import InfomaniakDI
 import MailResources
 
 extension Action: CaseIterable {
     public static let rightClickActions: [Action] = [
+        .activeMultiselect,
         .reply,
         .replyAll,
         .forward,
-        .delete,
+        .openMovePanel,
         .archive,
-        .openMovePanel
+        .delete
     ]
     public static let quickActions: [Action] = [.reply, .replyAll, .forward, .delete]
     public static let swipeActions: [Action] = [
@@ -77,13 +80,14 @@ extension Action: CaseIterable {
 
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
                                           userIsStaff: Bool) -> (quickActions: [Action], listActions: [Action]) {
+        @LazyInjectService var platformDetector: PlatformDetectable
+
         let archive = message.folder?.role != .archive
         let unread = !message.seen
         let star = message.flagged
         let spam = message.folder?.role == .spam
         let print = origin.type == .floatingPanel(source: .messageList)
-
-        let tempListActions: [Action?] = [
+        var tempListActions: [Action?] = [
             .openMovePanel,
             spam ? .nonSpam : .reportJunk,
             unread ? .markAsRead : .markAsUnread,
@@ -91,8 +95,10 @@ extension Action: CaseIterable {
             star ? .unstar : .star,
             print ? .print : nil,
             .shareMailLink,
+            platformDetector.isMac ? nil : .saveMailInkDrive,
             userIsStaff ? .reportDisplayProblem : nil
         ]
+
         return (Action.quickActions, tempListActions.compactMap { $0 })
     }
 
@@ -111,7 +117,7 @@ extension Action: CaseIterable {
         let star = messages.allSatisfy(\.flagged)
 
         let listActions: [Action] = [
-            spam ? .nonSpam : .spam,
+            spam ? .nonSpam : .reportJunk,
             star ? .unstar : .star
         ]
 
@@ -125,7 +131,7 @@ extension Action: CaseIterable {
         let showUnstar = messages.contains { $0.flagged }
 
         let spam = originFolder?.role == .spam
-        let spamAction: Action? = spam ? .nonSpam : .spam
+        let spamAction: Action? = spam ? .nonSpam : .reportJunk
 
         let tempListActions: [Action?] = [
             .openMovePanel,
@@ -169,6 +175,8 @@ extension Action: RawRepresentable {
 }
 
 public extension Action {
+    // MARK: Mail actions
+
     static let delete = Action(
         id: "delete",
         title: MailResourcesStrings.Localizable.actionDelete,
@@ -276,6 +284,12 @@ public extension Action {
         iconResource: MailResourcesAsset.blockUser,
         matomoName: "blockUser"
     )
+    static let blockList = Action(
+        id: "blockList",
+        title: MailResourcesStrings.Localizable.actionBlockSender,
+        iconResource: MailResourcesAsset.blockUser,
+        matomoName: "blockUser"
+    )
     static let phishing = Action(
         id: "phishing",
         title: MailResourcesStrings.Localizable.actionPhishing,
@@ -346,5 +360,38 @@ public extension Action {
         title: MailResourcesStrings.Localizable.shareEmail,
         iconResource: MailResourcesAsset.emailActionShare,
         matomoName: "shareLink"
+    )
+    static let saveMailInkDrive = Action(
+        id: "saveMailInkDrive",
+        title: MailResourcesStrings.Localizable.saveMailInkDrive,
+        iconResource: MailResourcesAsset.kdriveLogo,
+        matomoName: "saveInkDrive"
+    )
+
+    // MARK: Account Actions
+
+    static let addAccount = Action(
+        id: "addAccount",
+        title: MailResourcesStrings.Localizable.buttonAddAccount,
+        iconResource: MailResourcesAsset.plusThin,
+        matomoName: "add"
+    )
+    static let logoutAccount = Action(
+        id: "logoutAccount",
+        title: MailResourcesStrings.Localizable.buttonAccountLogOut,
+        iconResource: MailResourcesAsset.logout,
+        matomoName: "logout"
+    )
+    static let deleteAccount = Action(
+        id: "deleteAccount",
+        title: MailResourcesStrings.Localizable.buttonAccountDelete,
+        iconResource: MailResourcesAsset.bin,
+        matomoName: "deleteAccount"
+    )
+    static let activeMultiselect = Action(
+        id: "activeMultiselect",
+        title: MailResourcesStrings.Localizable.buttonMultiselect,
+        iconResource: MailResourcesAsset.checklist,
+        matomoName: "selectAll"
     )
 }
