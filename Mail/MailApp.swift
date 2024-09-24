@@ -33,7 +33,7 @@ struct MailApp: App {
 
     init() {
         Logging.resetAppForUITestsIfNeeded()
-        DDLogInfo("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
+        Logger.general.info("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
         refreshAppBackgroundTask.register()
     }
 

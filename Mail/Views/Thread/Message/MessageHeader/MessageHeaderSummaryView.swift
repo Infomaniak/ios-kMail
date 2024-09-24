@@ -17,7 +17,8 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -93,7 +94,8 @@ struct MessageHeaderSummaryView: View {
                             }
 
                             if let bimi = message.bimi, bimi.shouldDisplayBimi {
-                                IKIcon(MailResourcesAsset.checkmarkAuthentication, size: .small)
+                                MailResourcesAsset.checkmarkAuthentication
+                                    .iconSize(.small)
                             }
 
                             MessageHeaderDateView(date: message.date)
@@ -120,7 +122,8 @@ struct MessageHeaderSummaryView: View {
 
             if message.isDraft {
                 Button(role: .destructive, action: deleteDraftTapped) {
-                    IKIcon(MailResourcesAsset.bin, size: .large)
+                    MailResourcesAsset.bin
+                        .iconSize(.large)
                 }
                 .foregroundStyle(MailResourcesAsset.redColor)
             }
@@ -139,13 +142,15 @@ struct MessageHeaderSummaryView: View {
                             )
                         }
                     } label: {
-                        IKIcon(MailResourcesAsset.emailActionReply, size: .large)
+                        MailResourcesAsset.emailActionReply
+                            .iconSize(.large)
                     }
                     .adaptivePanel(item: $replyOrReplyAllMessage) { message in
                         ReplyActionsView(message: message)
                     }
                     ActionsPanelButton(messages: [message], originFolder: message.folder, panelSource: .messageList) {
-                        IKIcon(MailResourcesAsset.plusActions, size: .large)
+                        MailResourcesAsset.plusActions
+                            .iconSize(.large)
                     }
                 }
                 .padding(.leading, 8)
@@ -154,22 +159,22 @@ struct MessageHeaderSummaryView: View {
     }
 }
 
-#Preview("Message collapsed") {
-    MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
-                             isMessageExpanded: .constant(false),
-                             isHeaderExpanded: .constant(false)) {
-        // Preview
-    }
-    .environmentObject(PreviewHelper.sampleMailboxManager)
-    .previewLayout(.sizeThatFits)
+@available(iOS 17.0, *)
+#Preview("Message collapsed", traits: .sizeThatFitsLayout) {
+    MessageHeaderSummaryView(
+        message: PreviewHelper.sampleMessage,
+        isMessageExpanded: .constant(false),
+        isHeaderExpanded: .constant(false)
+    ) {}
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }
 
-#Preview("Message expanded") {
-    MessageHeaderSummaryView(message: PreviewHelper.sampleMessage,
-                             isMessageExpanded: .constant(true),
-                             isHeaderExpanded: .constant(false)) {
-        // Preview
-    }
-    .environmentObject(PreviewHelper.sampleMailboxManager)
-    .previewLayout(.sizeThatFits)
+@available(iOS 17.0, *)
+#Preview("Message expanded", traits: .sizeThatFitsLayout) {
+    MessageHeaderSummaryView(
+        message: PreviewHelper.sampleMessage,
+        isMessageExpanded: .constant(true),
+        isHeaderExpanded: .constant(false)
+    ) {}
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

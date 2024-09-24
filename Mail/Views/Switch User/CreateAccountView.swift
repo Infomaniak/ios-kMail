@@ -17,7 +17,8 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakCreateAccount
 import InfomaniakDI
 import InfomaniakLogin
@@ -40,7 +41,7 @@ struct CreateAccountView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            CloseButton(size: .regular, dismissAction: dismiss)
+            CloseButton(size: .medium, dismissAction: dismiss)
                 .padding(.top, IKPadding.onBoardingLogoTop)
                 .padding(.top, value: .extraSmall)
                 .frame(maxWidth: .infinity, alignment: .leading)

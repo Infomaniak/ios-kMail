@@ -17,7 +17,8 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -74,7 +75,7 @@ struct AttachmentPreview: View {
                             Image(systemName: "square.and.arrow.up")
                                 .resizable()
                                 .scaledToFit()
-                                .frame(width: IKIcon.Size.large.rawValue, height: IKIcon.Size.large.rawValue)
+                                .frame(width: IKIconSize.large.rawValue, height: IKIconSize.large.rawValue)
                         }
                         .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                     }
@@ -103,7 +104,7 @@ struct AttachmentPreview: View {
                                 Image(systemName: "square.and.arrow.down")
                                     .resizable()
                                     .scaledToFit()
-                                    .frame(width: IKIcon.Size.large.rawValue, height: IKIcon.Size.large.rawValue)
+                                    .frame(width: IKIconSize.large.rawValue, height: IKIconSize.large.rawValue)
                             }
                             .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                         }
@@ -127,7 +128,8 @@ struct AttachmentPreview: View {
                                 Text(MailResourcesStrings.Localizable.buttonOpenKdrive)
                                     .font(MailTextStyle.labelSecondary.font)
                             } icon: {
-                                IKIcon(MailResourcesAsset.kdriveLogo, size: .large)
+                                MailResourcesAsset.kdriveLogo
+                                    .iconSize(.large)
                             }
                             .dynamicLabelStyle(sizeClass: sizeClass ?? .regular)
                         }

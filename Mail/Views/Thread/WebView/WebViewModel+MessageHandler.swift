@@ -22,7 +22,7 @@ import Sentry
 import WebKit
 
 extension WebViewModel: WKScriptMessageHandler {
-    enum JavaScriptMessageTopic: String {
+    enum JavaScriptMessageTopic: String, CaseIterable {
         case log, sizeChanged, overScroll, error
     }
 

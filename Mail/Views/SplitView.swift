@@ -18,7 +18,7 @@
 
 import Combine
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import Lottie
 import MailCore
@@ -153,6 +153,7 @@ struct SplitView: View {
             SafariWebView(url: safariContent.url)
                 .ignoresSafeArea()
         }
+        // swiftlint:disable:next trailing_closure
         .sceneLifecycle(willEnterForeground: {
             Task {
                 // We need to write in Task instead of async let to avoid being cancelled to early

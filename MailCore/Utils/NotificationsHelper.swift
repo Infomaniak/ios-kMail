@@ -20,7 +20,7 @@ import Atlantis
 import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import InfomaniakNotifications
 import Intents
@@ -54,7 +54,7 @@ public enum NotificationsHelper {
         do {
             try await UNUserNotificationCenter.current().requestAuthorization(options: options)
         } catch {
-            DDLogError("User has declined notifications")
+            Logger.general.error("User has declined notifications")
         }
     }
 

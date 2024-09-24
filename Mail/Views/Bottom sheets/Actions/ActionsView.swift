@@ -17,7 +17,8 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -165,16 +166,38 @@ struct MessageActionView: View {
 
 struct ActionButtonLabel: View {
     let action: Action
+
+    var iconColor: MailResourcesColors {
+        switch action {
+        case .reportDisplayProblem:
+            return MailResourcesAsset.princeColor
+        case .logoutAccount, .deleteAccount:
+            return MailResourcesAsset.redColor
+        default:
+            return UserDefaults.shared.accentColor.primary
+        }
+    }
+
+    var titleColor: MailResourcesColors {
+        switch action {
+        case .reportDisplayProblem:
+            return MailResourcesAsset.princeColor
+        case .logoutAccount, .deleteAccount:
+            return MailResourcesAsset.redColor
+        default:
+            return MailResourcesAsset.textPrimaryColor
+        }
+    }
+
     var body: some View {
         HStack(spacing: IKPadding.medium) {
             action.icon
                 .resizable()
                 .scaledToFit()
                 .frame(width: 24, height: 24)
-                .foregroundStyle(action == .reportDisplayProblem ? MailResourcesAsset.princeColor.swiftUIColor : .accentColor)
+                .foregroundStyle(iconColor)
             Text(action.title)
-                .foregroundStyle(action == .reportDisplayProblem ? MailResourcesAsset.princeColor : MailResourcesAsset
-                    .textPrimaryColor)
+                .foregroundStyle(titleColor)
                 .textStyle(.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }

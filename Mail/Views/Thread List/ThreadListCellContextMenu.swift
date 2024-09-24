@@ -23,30 +23,33 @@ import SwiftModalPresentation
 import SwiftUI
 
 extension View {
-    func actionsContextMenu(thread: Thread) -> some View {
-        modifier(ThreadListCellContextMenu(thread: thread))
+    func actionsContextMenu(thread: Thread, toggleMultipleSelection: @escaping (Bool) -> Void) -> some View {
+        modifier(ThreadListCellContextMenu(thread: thread, toggleMultipleSelection: toggleMultipleSelection))
     }
 }
 
 struct ThreadListCellContextMenu: ViewModifier {
-    @LazyInjectService private var platformDetector: PlatformDetectable
-
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ModalState private var messagesToMove: [Message]?
 
     let thread: Thread
+    let toggleMultipleSelection: (Bool) -> Void
 
     private var actions: [Action] {
-        return platformDetector.isMac ? Action.rightClickActions : []
+        return Action.rightClickActions
     }
 
     func body(content: Content) -> some View {
         content
             .contextMenu {
                 ForEach(actions) { action in
-                    Button(role: action.isDestructive ? .destructive : nil) {
+                    Button(role: isDestructiveAction(action)) {
+                        guard action != .activeMultiselect else {
+                            toggleMultipleSelection(false)
+                            return
+                        }
                         Task {
                             try await actionsManager.performAction(
                                 target: thread.messages.toArray(),
@@ -55,7 +58,13 @@ struct ThreadListCellContextMenu: ViewModifier {
                             )
                         }
                     } label: {
-                        Text(action.title)
+                        Label {
+                            Text(action.title)
+                        } icon: {
+                            action.icon
+                                .resizable()
+                                .scaledToFit()
+                        }
                     }
                 }
             }
@@ -63,5 +72,12 @@ struct ThreadListCellContextMenu: ViewModifier {
                 MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
                     .sheetViewStyle()
             }
+    }
+
+    private func isDestructiveAction(_ action: Action) -> ButtonRole? {
+        guard action != .archive else {
+            return nil
+        }
+        return action.isDestructive ? .destructive : nil
     }
 }

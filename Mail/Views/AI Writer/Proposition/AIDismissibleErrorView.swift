@@ -16,7 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -36,14 +36,15 @@ struct AIDismissibleErrorView: View {
                 InformationBlockView(
                     icon: MailResourcesAsset.warningFill.swiftUIImage,
                     message: error?.localizedDescription ?? "",
-                    iconColor: MailResourcesAsset.orangeColor.swiftUIColor
-                ) {
-                    matomo.track(eventWithCategory: .aiWriter, name: "dismissError")
+                    iconColor: MailResourcesAsset.orangeColor.swiftUIColor,
+                    dismissHandler: { // swiftlint:disable:this trailing_closure
+                        matomo.track(eventWithCategory: .aiWriter, name: "dismissError")
 
-                    withAnimation {
-                        isShowingError = false
+                        withAnimation {
+                            isShowingError = false
+                        }
                     }
-                }
+                )
             }
         }
         .onChange(of: error) { newError in

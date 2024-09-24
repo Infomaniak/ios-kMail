@@ -28,7 +28,8 @@ struct SearchButton: View {
         Button {
             mainViewState.isShowingSearch = true
         } label: {
-            IKIcon(MailResourcesAsset.search, size: .large)
+            MailResourcesAsset.search
+                .iconSize(.large)
                 .accessibilityLabel(MailResourcesStrings.Localizable.searchFolderName)
         }
     }

@@ -38,7 +38,8 @@ struct MailboxListView: View {
                 NavigationLink {
                     AddMailboxView()
                 } label: {
-                    IKIcon(MailResourcesAsset.addCircle)
+                    MailResourcesAsset.addCircle
+                        .iconSize(.medium)
                         .foregroundStyle(.tint)
                         .padding(value: .medium)
                         .accessibilityLabel(MailResourcesStrings.Localizable.buttonAddEmailAddress)

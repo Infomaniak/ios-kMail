@@ -16,19 +16,20 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreSwiftUI
 import MailResources
 import SwiftUI
 
 public struct CloseButton: View {
-    let size: IKIcon.Size?
+    let size: IKIconSize?
     let dismissHandler: () -> Void
 
-    public init(size: IKIcon.Size? = nil, dismissHandler: @escaping () -> Void) {
+    public init(size: IKIconSize? = nil, dismissHandler: @escaping () -> Void) {
         self.size = size
         self.dismissHandler = dismissHandler
     }
 
-    public init(size: IKIcon.Size? = nil, dismissAction: DismissAction) {
+    public init(size: IKIconSize? = nil, dismissAction: DismissAction) {
         self.size = size
         dismissHandler = dismissAction.callAsFunction
     }

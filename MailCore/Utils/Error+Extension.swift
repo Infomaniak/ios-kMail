@@ -18,7 +18,6 @@
 
 import CocoaLumberjackSwift
 import Foundation
-import InfomaniakCoreUI
 import InfomaniakDI
 import Sentry
 
@@ -50,10 +49,10 @@ private func displayErrorIfNeeded(error: Error) {
                 function: #function
             )
         }
-        DDLogError("MailError: \(error)")
+        Logger.general.error("MailError: \(error)")
     } else if error.shouldDisplay {
         snackbarPresenter.show(message: error.localizedDescription)
-        DDLogError("Error: \(error)")
+        Logger.general.error("Error: \(error)")
     }
 }
 

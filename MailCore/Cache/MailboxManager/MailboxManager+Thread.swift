@@ -20,7 +20,6 @@ import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreDB
-import InfomaniakCoreUI
 import RealmSwift
 import Sentry
 

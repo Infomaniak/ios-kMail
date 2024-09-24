@@ -17,7 +17,7 @@
  */
 
 import AuthenticationServices
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakCreateAccount
 import InfomaniakDI
 import InfomaniakLogin

@@ -56,7 +56,7 @@ public final class ConfigWebServer {
                         let configData = try Data(contentsOf: configURL)
                         try writer.write(configData)
                     } catch {
-                        DDLogError("Failed to write config \(error)")
+                        Logger.general.error("Failed to write config \(error)")
                     }
                 }
             } else {
@@ -76,7 +76,7 @@ public final class ConfigWebServer {
         do {
             try server.start()
         } catch {
-            DDLogError("Error starting config server \(error)")
+            Logger.general.error("Error starting config server \(error)")
         }
     }
 

@@ -20,7 +20,7 @@ import CocoaLumberjackSwift
 import Foundation
 import InfomaniakBugTracker
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications
@@ -329,7 +329,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
                 loadedAccounts = savedAccounts
             } catch {
                 logError(.failedToLoadAccounts(wrapping: error))
-                DDLogError("Error loading accounts \(error)")
+                Logger.general.error("Error loading accounts \(error)")
             }
         }
         return loadedAccounts
@@ -346,7 +346,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
                     try data.write(to: groupDirectoryURL.appendingPathComponent("accounts.json"))
                 } catch {
                     logError(.failedToSaveAccounts(wrapping: error))
-                    DDLogError("Error saving accounts \(error)")
+                    Logger.general.error("Error saving accounts \(error)")
                 }
             }
         }
@@ -510,7 +510,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         networkLoginService.deleteApiToken(token: removedToken) { result in
             guard case .failure(let error) = result else { return }
             self.logError(.failedToDeleteAPIToken(wrapping: error))
-            DDLogError("Failed to delete api token: \(error.localizedDescription)")
+            Logger.general.error("Failed to delete api token: \(error.localizedDescription)")
         }
     }
 

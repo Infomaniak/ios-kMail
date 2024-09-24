@@ -17,7 +17,8 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -39,7 +40,8 @@ struct MenuDrawerItemCell: View {
             action()
         } label: {
             HStack(spacing: IKPadding.menuDrawerCellSpacing) {
-                IKIcon(icon, size: .large)
+                icon
+                    .iconSize(.large)
 
                 Text(label)
                     .textStyle(.bodyMedium)

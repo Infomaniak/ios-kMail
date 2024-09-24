@@ -19,12 +19,11 @@
 import Foundation
 import InfomaniakCore
 import SwiftUI
-import SwiftUIMacros
 
 public extension EnvironmentValues {
-    @EnvironmentKey
+    @Entry
     var isCompactWindow = true
 
-    @EnvironmentKey
+    @Entry
     var currentUser: MandatoryEnvironmentContainer<UserProfile> = MandatoryEnvironmentContainer.emptyDefaultValue()
 }

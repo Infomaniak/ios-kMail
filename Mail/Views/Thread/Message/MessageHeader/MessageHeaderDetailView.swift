@@ -17,7 +17,8 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -59,7 +60,8 @@ struct MessageHeaderDetailView: View {
                 )
             }
             HStack {
-                IKIcon(MailResourcesAsset.calendar)
+                MailResourcesAsset.calendar
+                    .iconSize(.medium)
                 Text(message.date.formatted(date: .long, time: .shortened))
             }
             .textStyle(.bodySmallSecondary)

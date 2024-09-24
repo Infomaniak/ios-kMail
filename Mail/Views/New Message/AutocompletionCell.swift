@@ -16,7 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
+import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -44,7 +44,8 @@ struct AutocompletionCell: View {
             .opacity(alreadyAppend && !unknownRecipient ? 0.5 : 1)
 
             if alreadyAppend && !unknownRecipient {
-                IKIcon(MailResourcesAsset.checkmarkCircleFill, size: .large)
+                MailResourcesAsset.checkmarkCircleFill
+                    .iconSize(.large)
                     .foregroundStyle(MailResourcesAsset.textTertiaryColor)
             }
         }

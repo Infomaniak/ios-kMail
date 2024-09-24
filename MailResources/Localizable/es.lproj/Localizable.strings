@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Tue, 09 Jul 2024 08:28:40 +0200
+ * Exported by: Jordan Chapelle
+ * Exported at: Fri, 20 Sep 2024 13:36:25 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -283,6 +283,12 @@
 /* loco:6266649755d41301973d0c43 */
 "bccTitle" = "CCO:";
 
+/* loco:669a5cc96c0dbf9fe909b662 */
+"blockAnExpeditorTitle" = "Bloquear un remitente";
+
+/* loco:66dee0ef5c6d656046044445 */
+"blockExpeditorTitle" = "Bloquear %s";
+
 /* loco:649ea00ef9c6ecfe620a0b62 */
 "blockedPasswordTitle" = "Contraseña bloqueada";
 
@@ -304,6 +310,9 @@
 /* loco:628216272fd1aa2f0249a892 */
 "buttonAccountDisconnect" = "Desconectar cuenta";
 
+/* loco:66d057655e6c36f415058842 */
+"buttonAccountLogOut" = "Cerrar sesión";
+
 /* loco:6282142ca5e6f61ada1c4014 */
 "buttonAccountSwitch" = "Cambiar de cuenta";
 
@@ -312,6 +321,9 @@
 
 /* loco:62cbe10de2840a0cdc2be0d2 */
 "buttonAddEmailAddress" = "Añadir una dirección de correo electrónico";
+
+/* loco:66a9f94b98b834125d06aa46 */
+"buttonAddExistingAddress" = "Añadir una dirección existente";
 
 /* loco:6437c062dd576a7631052413 */
 "buttonAttachMailbox" = "Añadir dirección de correo electrónico";
@@ -327,6 +339,9 @@
 
 /* loco:651ebd40ccc14ebdca0313a5 */
 "buttonBackToApp" = "Volver a la aplicación Mail";
+
+/* loco:66db0113e0da22884c09f724 */
+"buttonBlockAnExpeditor" = "Bloque";
 
 /* loco:62b2d43771635f1d1f0da462 */
 "buttonBold" = "Negrita";
@@ -403,9 +418,6 @@
 /* loco:6425777e2343387912223aa2 */
 "buttonLater" = "Más tarde";
 
-/* loco:665868ebce4392ec5d0e94f2 */
-"buttonLink" = "Añadir un hipervínculo";
-
 /* loco:645b485e158c37a429012092 */
 "buttonLoadMore" = "Cargar más conversaciones";
 
@@ -423,6 +435,9 @@
 
 /* loco:62567be2708ef36f6e378df2 */
 "buttonMoreStorage" = "Más espacio de almacenamiento";
+
+/* loco:66ea743a97d41ebaaa0536f4 */
+"buttonMultiselect" = "Selezionar";
 
 /* loco:6267bafe7edebd666d7d6923 */
 "buttonNewMessage" = "Nuevo mensaje";
@@ -532,6 +547,9 @@
 /* loco:63a473bcf3bb7f422358cfd2 */
 "confirmLogoutTitle" = "Cerrar sesión";
 
+/* loco:66db00746332bbedae01f2f2 */
+"confirmationToBlockAnExpeditorText" = "Este correo electrónico y todos los futuros mensajes de %s se moverán a la carpeta de correo no deseado.";
+
 /* loco:62737dea7bd28e302301e5c2 */
 "contactActionAddToContacts" = "Añadir a contactos";
 
@@ -639,6 +657,9 @@
 
 /* loco:6294648c19755a1ae9494462 */
 "dateTitle" = "Date:";
+
+/* loco:66cdadf9bc780d2bbd033462 */
+"deleteAccountWarning" = "La eliminación de su cuenta será definitiva. No podrá reactivar su cuenta.";
 
 /* loco:627e3fa5774ef45bfd4d3b92 */
 "draftFolder" = "Borradores";
@@ -1117,6 +1138,9 @@
 /* loco:6527b6ed91798bfb5d0960e2 */
 "reviewAlertTitle" = "¿Te gusta Infomaniak Mail?";
 
+/* loco:66e2826251d88f0bdc097c12 */
+"saveMailInkDrive" = "Guardar en kDrive";
+
 /* loco:62a9db4ae45f1e29371ff802 */
 "scheduledMessagesFolder" = "Mensajes programados";
 
@@ -1161,6 +1185,9 @@
 
 /* loco:62bb14784ae7d90af73a4c93 */
 "settingsAccentColorDescription" = "Elija el color de acento para la aplicación";
+
+/* loco:66aa2edfd301963193056853 */
+"settingsAccountManagementTitle" = "Gestión de cuentas";
 
 /* loco:65391d2584dd77c18b02f0e2 */
 "settingsAiEngineDescription" = "Seleccione su asistente de redacción";
@@ -1652,7 +1679,7 @@
 "titleMyAccount" = "Mi cuenta";
 
 /* loco:62860a56f6ea2c34fb742092 */
-"titleMyAccounts" = "Mis cuentas";
+"titleMyAccount-plural" = "Mis cuentas";
 
 /* loco:62665fa13789aa7e8353ad62 */
 "toTitle" = "Para:";
@@ -1686,6 +1713,9 @@
 
 /* loco:641d60b6f5c19a18734d9192 */
 "urlUserReportiOS" = "https://feedback.userreport.com/bc05436b-f496-4b6e-934a-338b4b0f1cda/";
+
+/* loco:66cdb381f11974e3d00d5703 */
+"usernameTitle" = "Nombre de usuario";
 
 /* loco:65957e6e7dfe315a5d02add2 */
 "warningEventHasPassed" = "Este acontecimiento ya ha pasado";

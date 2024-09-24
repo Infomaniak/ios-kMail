@@ -17,7 +17,7 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -55,6 +55,7 @@ struct ThreadCellDataHolder {
     let isInWrittenByMeFolder: Bool
 
     init(thread: Thread) {
+        // swiftlint:disable:next last_where
         let lastMessageNotFromSent = thread.messages.filter(Self.lastMessageNotFromSentPredicate).last ?? thread.messages.last
 
         date = thread.date.formatted(.thread(.list))

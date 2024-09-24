@@ -16,7 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -31,7 +32,8 @@ struct UpdateVersionView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .iconAndMultilineTextAlignment, spacing: IKPadding.small) {
-                IKIcon(MailResourcesAsset.warning)
+                MailResourcesAsset.warning
+                    .iconSize(.medium)
                     .alignmentGuide(.iconAndMultilineTextAlignment) { d in
                         d[VerticalAlignment.center]
                     }

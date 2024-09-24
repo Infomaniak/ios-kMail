@@ -16,7 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -53,7 +53,8 @@ struct AttachmentUploadCell: View {
                     attachmentRemoved(attachment)
                 }
             } label: {
-                IKIcon(MailResourcesAsset.close, size: .small)
+                MailResourcesAsset.close
+                    .iconSize(.small)
                     .foregroundStyle(MailResourcesAsset.textSecondaryColor)
             }
             .buttonStyle(.borderless)

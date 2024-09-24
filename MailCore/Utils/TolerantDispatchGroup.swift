@@ -34,7 +34,7 @@ public class TolerantDispatchGroup {
     public func leave() {
         syncQueue.sync {
             guard callBalancer > 0 else {
-                DDLogWarn("TolerantDispatchGroup: Unbalanced call to leave()")
+                Logger.general.error("TolerantDispatchGroup: Unbalanced call to leave()")
                 return
             }
 

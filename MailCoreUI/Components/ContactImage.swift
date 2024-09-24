@@ -34,6 +34,7 @@ public struct ContactImage: View {
             .scaledToFit()
             .frame(width: size, height: size)
             .clipShape(Circle())
+            .background(.tint, in: .circle)
     }
 }
 

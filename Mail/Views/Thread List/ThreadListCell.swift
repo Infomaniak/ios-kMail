@@ -17,11 +17,10 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
-import MailResources
 import SwiftUI
 
 extension ThreadListCell: Equatable {
@@ -65,15 +64,14 @@ struct ThreadListCell: View {
             density: threadDensity,
             accentColor: accentColor,
             isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
-            isSelected: isMultiSelected,
-            avatarTapped: {
-                if multipleSelectionViewModel.isEnabled {
-                    didTapCell()
-                } else {
-                    didOptionalTapCell()
-                }
+            isSelected: isMultiSelected
+        ) {
+            if multipleSelectionViewModel.isEnabled {
+                didTapCell()
+            } else {
+                toggleMultipleSelection(withImpact: true)
             }
-        )
+        }
         .background(SelectionBackground(
             selectionType: selectionType,
             paddingLeading: 4,
@@ -90,17 +88,13 @@ struct ThreadListCell: View {
                 mailboxManager: viewModel.mailboxManager
             )
         )
-        .actionsContextMenu(thread: thread)
-        .onLongPressGesture { didOptionalTapCell() }
         .swipeActions(
             thread: thread,
             viewModel: viewModel,
             multipleSelectionViewModel: multipleSelectionViewModel,
             nearestFlushAlert: $flushAlert
         )
-        .accessibilityAction(named: MailResourcesStrings.Localizable.enableMultiSelection) {
-            didOptionalTapCell()
-        }
+        .actionsContextMenu(thread: thread, toggleMultipleSelection: toggleMultipleSelection)
     }
 
     private func didTapCell() {
@@ -123,12 +117,13 @@ struct ThreadListCell: View {
         }
     }
 
-    private func didOptionalTapCell() {
-        guard !multipleSelectionViewModel.isEnabled else { return }
-        multipleSelectionViewModel.feedbackGenerator.prepare()
+    private func toggleMultipleSelection(withImpact: Bool = false) {
         let eventCategory: MatomoUtils.EventCategory = viewModel is SearchViewModel ? .searchMultiSelection : .multiSelection
         matomo.track(eventWithCategory: eventCategory, action: .longPress, name: "enable")
-        multipleSelectionViewModel.feedbackGenerator.impactOccurred()
+        if withImpact {
+            multipleSelectionViewModel.feedbackGenerator.prepare()
+            multipleSelectionViewModel.feedbackGenerator.impactOccurred()
+        }
         multipleSelectionViewModel.toggleSelection(of: thread)
     }
 }

@@ -16,7 +16,6 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
 import InfomaniakDI
 import MailCore
 import MailResources

@@ -19,7 +19,7 @@
 import Combine
 import Foundation
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import PhotosUI
 import UniformTypeIdentifiers
 

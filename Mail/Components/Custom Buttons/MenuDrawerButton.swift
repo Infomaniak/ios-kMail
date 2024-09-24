@@ -16,7 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -33,7 +33,8 @@ struct MenuDrawerButton: View {
             matomo.track(eventWithCategory: .menuDrawer, name: "openByButton")
             navigationDrawerState.open()
         } label: {
-            IKIcon(MailResourcesAsset.burger, size: .large)
+            MailResourcesAsset.burger
+                .iconSize(.large)
         }
         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonMenu)
     }

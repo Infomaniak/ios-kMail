@@ -22,7 +22,7 @@ import XCTest
 final class UTContactManager: XCTestCase {
     let contactManager = ContactManager(userId: 0, apiFetcher: MailApiFetcher())
 
-    override class func setUp() {
+    override static func setUp() {
         super.setUp()
 
         MockingHelper.clearRegisteredTypes()

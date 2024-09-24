@@ -17,12 +17,14 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 
 struct MailboxesManagementView: View {
@@ -44,6 +46,8 @@ struct MailboxesManagementView: View {
         sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
     ) private var mailboxes
 
+    @ModalState private var isShowingAddMailboxView = false
+
     private var hasOtherMailboxes: Bool {
         return !mailboxes.where {
             $0.userId == currentUser.value.id && $0.mailboxId != mailboxManager.mailbox.mailboxId
@@ -59,7 +63,8 @@ struct MailboxesManagementView: View {
                 }
             } label: {
                 HStack(spacing: IKPadding.menuDrawerCellSpacing) {
-                    IKIcon(MailResourcesAsset.envelope, size: .large)
+                    MailResourcesAsset.envelope
+                        .iconSize(.large)
                         .foregroundStyle(.tint)
 
                     Text(mailboxManager.mailbox.email)
@@ -89,6 +94,27 @@ struct MailboxesManagementView: View {
                 }
                 .task {
                     try? await updateAccount()
+                }
+
+                Button {
+                    isShowingAddMailboxView = true
+                } label: {
+                    HStack(spacing: IKPadding.medium) {
+                        MailResourcesAsset.plusCircle.swiftUIImage
+                            .iconSize(.large)
+                            .foregroundStyle(.tint)
+
+                        Text(MailResourcesStrings.Localizable.buttonAddExistingAddress)
+                            .textStyle(.body)
+                            .lineLimit(1)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(IKPadding.menuDrawerCell)
+                }
+                .sheet(isPresented: $isShowingAddMailboxView) {
+                    AddMailboxView()
+                        .sheetViewStyle()
                 }
             }
         }

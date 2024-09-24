@@ -25,7 +25,7 @@ public enum Constants {
 
     public static let baseSettings = SettingsDictionary()
         .currentProjectVersion("1")
-        .marketingVersion("1.2.2")
+        .marketingVersion("1.2.4")
         .automaticCodeSigning(devTeam: "864VDCS2QY")
         .merging(["DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER": SettingValue(stringLiteral: "NO")])
 
@@ -36,7 +36,7 @@ public enum Constants {
     public static let destinations = Set<Destination>([.iPhone, .iPad, .macCatalyst])
 
     public static let swiftlintScript = TargetScript.post(path: "scripts/lint.sh", name: "Swiftlint")
-    
+
     public static let stripSymbolsScript = TargetScript.post(
         path: "scripts/strip_symbols.sh",
         name: "Strip Symbols (Release)",

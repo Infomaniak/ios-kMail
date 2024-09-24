@@ -17,7 +17,7 @@
  */
 
 import InfomaniakCore
-import InfomaniakCoreUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import InfomaniakOnboarding
 import Lottie
@@ -28,6 +28,7 @@ import MobileCoreServices
 import Social
 import SwiftUI
 import UIKit
+import UniformTypeIdentifiers
 import VersionChecker
 
 struct ComposeMessageWrapperView: View {
@@ -39,7 +40,7 @@ struct ComposeMessageWrapperView: View {
     let itemProviders: [NSItemProvider]
     let dismissHandler: SimpleClosure
 
-    static let typePropertyList = String(kUTTypePropertyList)
+    static let typePropertyList = UTType.propertyList.identifier
 
     /// All the Attachments that should directly provide URLs and title for a new Email Draft
     var htmlAttachments: [HTMLAttachable] {

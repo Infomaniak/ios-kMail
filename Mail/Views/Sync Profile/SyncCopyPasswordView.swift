@@ -16,7 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
+import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -52,7 +53,8 @@ struct SyncCopyPasswordView: View {
                         Button {
                             copyPassword()
                         } label: {
-                            IKIcon(MailResourcesAsset.duplicate)
+                            MailResourcesAsset.duplicate
+                                .iconSize(.medium)
                         }
                         .padding(.trailing, value: .medium)
                     }

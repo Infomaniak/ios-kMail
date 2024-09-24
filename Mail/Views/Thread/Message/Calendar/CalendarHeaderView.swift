@@ -16,7 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreUI
+import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -27,7 +27,9 @@ struct CalendarHeaderView: View {
 
     var body: some View {
         HStack(spacing: IKPadding.small) {
-            IKIcon(MailResourcesAsset.logoCalendar, size: .large)
+            MailResourcesAsset.logoCalendar
+                .iconSize(.large)
+
             Text(title)
                 .lineLimit(1)
                 .textStyle(.bodyMedium)
