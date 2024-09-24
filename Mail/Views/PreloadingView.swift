@@ -62,7 +62,7 @@ struct PreloadingView: View {
                 .padding(.bottom, value: .medium)
         }
         .task {
-            guard appLaunchCounter.isFirstLaunch else {
+            guard !appLaunchCounter.isFirstLaunch else {
                 tokenStore.removeAllTokens()
                 rootViewState.transitionToRootViewState(.onboarding)
                 return
