@@ -21,6 +21,7 @@ import InfomaniakCoreSwiftUI
 import InfomaniakRichHTMLEditor
 import MailCoreUI
 import MailResources
+import Popovers
 import SwiftUI
 
 struct ComposeMessageMacosToolbarView: View {
@@ -28,7 +29,7 @@ struct ComposeMessageMacosToolbarView: View {
     @Binding var isShowingLinkAlert: Bool
     @Binding var isShowingFileSelection: Bool
 
-    @State private var buttonHover = false
+    @State private var activePopover: String? = nil
 
     let extras: [EditorToolbarItem] = [
         .attachment,
@@ -68,7 +69,25 @@ struct ComposeMessageMacosToolbarView: View {
                                     .padding(IKPadding.medium)
                             }
                         )
+                        .onHover { hover in
+                            activePopover = hover ? item.name : nil
+                        }
                         .buttonStyle(MacosToolbarButtonStyle(isActive: item.isActive(textAttributes)))
+                        .popover(present: Binding<Bool>(
+                            get: { activePopover == item.name },
+                            set: { if !$0 { activePopover = nil } }
+                        ),
+                        attributes: {
+                            $0.sourceFrameInset.top = -8
+                            $0.position = .absolute(originAnchor: .top, popoverAnchor: .bottom)
+                        }) {
+                            Templates.Container(
+                                backgroundColor: MailResourcesAsset.onTagExternalColor.swiftUIColor
+                            ) {
+                                Text(item.name)
+                                    .foregroundColor(.white)
+                            }
+                        }
                     }
                     if allItems.last != items {
                         Divider()
@@ -139,6 +158,27 @@ enum EditorToolbarItem {
         }
     }
 
+    var name: String {
+        switch self {
+        case .attachment:
+            return MailResourcesStrings.Localizable.attachmentActionTitle
+        case .link:
+            return MailResourcesStrings.Localizable.buttonHyperlink
+        case .bold:
+            return MailResourcesStrings.Localizable.buttonBold
+        case .underline:
+            return MailResourcesStrings.Localizable.buttonUnderline
+        case .italic:
+            return MailResourcesStrings.Localizable.buttonItalic
+        case .strikeThrough:
+            return MailResourcesStrings.Localizable.buttonStrikeThrough
+        case .cancel:
+            return MailResourcesStrings.Localizable.buttonCancelFormatting
+        case .unorderedList:
+            return MailResourcesStrings.Localizable.buttonBulletPoint
+        }
+    }
+
     func isActive(_ textAttributes: TextAttributes) -> Bool {
         switch self {
         case .bold:
@@ -177,15 +217,9 @@ struct MacosToolbarButtonStyle: ButtonStyle {
 }
 
 #Preview {
-    VStack {
-        Text("Objet")
-        Spacer()
-        ComposeMessageMacosToolbarView(
-            textAttributes: TextAttributes(),
-            isShowingLinkAlert: .constant(false),
-            isShowingFileSelection: .constant(false)
-        )
-        Spacer()
-        Text("Message")
-    }
+    ComposeMessageMacosToolbarView(
+        textAttributes: TextAttributes(),
+        isShowingLinkAlert: .constant(false),
+        isShowingFileSelection: .constant(false)
+    )
 }
