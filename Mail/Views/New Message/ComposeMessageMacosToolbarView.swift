@@ -29,31 +29,25 @@ struct ComposeMessageMacosToolbarView: View {
     @Binding var isShowingLinkAlert: Bool
     @Binding var isShowingFileSelection: Bool
 
-    @State private var activePopover: String? = nil
-
-    let extras: [EditorToolbarItem] = [
+    let extras: [EditorToolbarAction] = [
         .attachment,
         .link
     ]
 
-    let textFormats: [EditorToolbarItem] = [
+    let textFormats: [EditorToolbarAction] = [
         .bold,
         .underline,
         .italic,
         .strikeThrough,
-        .cancel
+        .cancelFormat
     ]
 
-    let textItems: [EditorToolbarItem] = [
+    let textItems: [EditorToolbarAction] = [
         .unorderedList
     ]
 
-    var allItems: [[EditorToolbarItem]] {
-        [
-            extras,
-            textFormats,
-            textItems
-        ]
+    var allItems: [[EditorToolbarAction]] {
+        [extras, textFormats, textItems]
     }
 
     var body: some View {
@@ -63,32 +57,20 @@ struct ComposeMessageMacosToolbarView: View {
                     ForEach(items, id: \.self) { item in
                         Button(
                             action: {
-                                toolbarItemAction(item)
+                                item.action(
+                                    textAttributes: textAttributes,
+                                    isShowingLinkAlert: &isShowingLinkAlert,
+                                    isShowingFileSelection: &isShowingFileSelection
+                                )
                             }, label: {
-                                item.icon
+                                item.icon.swiftUIImage
                                     .padding(IKPadding.medium)
                             }
                         )
-                        .onHover { hover in
-                            activePopover = hover ? item.name : nil
-                        }
-                        .buttonStyle(MacosToolbarButtonStyle(isActive: item.isActive(textAttributes)))
-                        .popover(present: Binding<Bool>(
-                            get: { activePopover == item.name },
-                            set: { if !$0 { activePopover = nil } }
-                        ),
-                        attributes: {
-                            $0.sourceFrameInset.top = -8
-                            $0.position = .absolute(originAnchor: .top, popoverAnchor: .bottom)
-                        }) {
-                            Templates.Container(
-                                backgroundColor: MailResourcesAsset.onTagExternalColor.swiftUIColor
-                            ) {
-                                Text(item.name)
-                                    .foregroundColor(.white)
-                            }
-                        }
+                        .buttonStyle(MacosToolbarButtonStyle(isActive: item.isSelected(textAttributes: textAttributes)))
+//                        .popoverToolbarHelp(title: item.accessibilityLabel)
                     }
+
                     if allItems.last != items {
                         Divider()
                             .padding(.vertical, value: .medium)
@@ -99,100 +81,6 @@ struct ComposeMessageMacosToolbarView: View {
             .padding(.horizontal, IKPadding.composeViewHeaderHorizontal)
 
             IKDivider()
-        }
-    }
-
-    private func toolbarItemAction(_ item: EditorToolbarItem) {
-        switch item {
-        case .bold:
-            textAttributes.bold()
-        case .underline:
-            textAttributes.underline()
-        case .italic:
-            textAttributes.italic()
-        case .strikeThrough:
-            textAttributes.strikethrough()
-        case .cancel:
-            textAttributes.removeFormat()
-        case .unorderedList:
-            textAttributes.unorderedList()
-        case .link:
-            guard !textAttributes.hasLink else {
-                return textAttributes.unlink()
-            }
-            isShowingLinkAlert = true
-        case .attachment:
-            isShowingFileSelection = true
-        }
-    }
-}
-
-enum EditorToolbarItem {
-    case attachment
-    case link
-    case bold
-    case underline
-    case italic
-    case strikeThrough
-    case cancel
-    case unorderedList
-
-    var icon: Image {
-        switch self {
-        case .attachment:
-            return MailResourcesAsset.newMailToolbarAttachment.swiftUIImage
-        case .link:
-            return MailResourcesAsset.newMailToolbarHyperlink.swiftUIImage
-        case .bold:
-            return MailResourcesAsset.newMailToolbarBold.swiftUIImage
-        case .underline:
-            return MailResourcesAsset.newMailToolbarUnderline.swiftUIImage
-        case .italic:
-            return MailResourcesAsset.newMailToolbarItalic.swiftUIImage
-        case .strikeThrough:
-            return MailResourcesAsset.newMailToolbarStrike.swiftUIImage
-        case .cancel:
-            return MailResourcesAsset.newMailToolbarCancelFormat.swiftUIImage
-        case .unorderedList:
-            return MailResourcesAsset.newMailToolbarList.swiftUIImage
-        }
-    }
-
-    var name: String {
-        switch self {
-        case .attachment:
-            return MailResourcesStrings.Localizable.attachmentActionTitle
-        case .link:
-            return MailResourcesStrings.Localizable.buttonHyperlink
-        case .bold:
-            return MailResourcesStrings.Localizable.buttonBold
-        case .underline:
-            return MailResourcesStrings.Localizable.buttonUnderline
-        case .italic:
-            return MailResourcesStrings.Localizable.buttonItalic
-        case .strikeThrough:
-            return MailResourcesStrings.Localizable.buttonStrikeThrough
-        case .cancel:
-            return MailResourcesStrings.Localizable.buttonCancelFormatting
-        case .unorderedList:
-            return MailResourcesStrings.Localizable.buttonBulletPoint
-        }
-    }
-
-    func isActive(_ textAttributes: TextAttributes) -> Bool {
-        switch self {
-        case .bold:
-            textAttributes.hasBold
-        case .underline:
-            textAttributes.hasUnderline
-        case .italic:
-            textAttributes.hasItalic
-        case .strikeThrough:
-            textAttributes.hasStrikethrough
-        case .unorderedList:
-            textAttributes.hasUnorderedList
-        case .attachment, .link, .cancel:
-            false
         }
     }
 }
@@ -213,6 +101,34 @@ struct MacosToolbarButtonStyle: ButtonStyle {
                     isHovered = hovering
                 }
             }
+    }
+}
+
+struct PopoverToolbarHelp: ViewModifier {
+    @State private var isShowing = false
+    let title: String
+
+    func body(content: Content) -> some View {
+        content
+            .onHover { hover in
+                isShowing = hover
+            }
+            .popover(isPresented: $isShowing, arrowEdge: .bottom) {
+                ZStack {
+                    MailResourcesAsset.onTagExternalColor.swiftUIColor
+                        .scaleEffect(1.5)
+
+                    Text(title)
+                        .foregroundColor(.white)
+                        .padding()
+                }
+            }
+    }
+}
+
+public extension View {
+    func popoverToolbarHelp(title: String) -> some View {
+        modifier(PopoverToolbarHelp(title: title))
     }
 }
 

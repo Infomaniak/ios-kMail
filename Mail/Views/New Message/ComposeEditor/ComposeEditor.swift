@@ -102,7 +102,7 @@ struct ComposeEditor: View {
             isShowingLinkAlert = true
         case .ai:
             isShowingAI = true
-        case .addFile:
+        case .attachment:
             isShowingFileSelection = true
         case .addPhoto:
             isShowingPhotoLibrary = true

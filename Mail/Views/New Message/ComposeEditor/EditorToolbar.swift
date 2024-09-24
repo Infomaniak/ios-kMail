@@ -32,7 +32,7 @@ enum EditorToolbarStyle {
         switch self {
         case .main:
             @InjectService var featureFlagsManageable: FeatureFlagsManageable
-            var mainActions: [EditorToolbarAction] = [.editText, .addFile, .addPhoto, .takePhoto, .link]
+            var mainActions: [EditorToolbarAction] = [.editText, .attachment, .addPhoto, .takePhoto, .link]
             featureFlagsManageable.feature(.aiMailComposer, on: {
                 mainActions.insert(.ai, at: 1)
             }, off: nil)
@@ -44,45 +44,48 @@ enum EditorToolbarStyle {
 }
 
 enum EditorToolbarAction: Int {
+    case attachment
+    case link
     case bold
-    case italic
     case underline
+    case italic
     case strikeThrough
+    case cancelFormat
     case unorderedList
     case editText
     case ai
-    case addFile
     case addPhoto
     case takePhoto
-    case link
     case programMessage
 
     var icon: MailResourcesImages {
         switch self {
         case .bold:
-            return MailResourcesAsset.bold
+            return MailResourcesAsset.newMailToolbarBold
         case .italic:
-            return MailResourcesAsset.italic
+            return MailResourcesAsset.newMailToolbarItalic
         case .underline:
-            return MailResourcesAsset.underline
+            return MailResourcesAsset.newMailToolbarUnderline
         case .strikeThrough:
-            return MailResourcesAsset.strikeThrough
+            return MailResourcesAsset.newMailToolbarStrike
         case .unorderedList:
-            return MailResourcesAsset.unorderedList
+            return MailResourcesAsset.newMailToolbarList
         case .editText:
             return MailResourcesAsset.textModes
         case .ai:
             return MailResourcesAsset.aiWriter
-        case .addFile:
-            return MailResourcesAsset.folder
+        case .attachment:
+            return MailResourcesAsset.newMailToolbarAttachment
         case .addPhoto:
             return MailResourcesAsset.pictureLandscape
         case .takePhoto:
             return MailResourcesAsset.photo
         case .link:
-            return MailResourcesAsset.hyperlink
+            return MailResourcesAsset.newMailToolbarHyperlink
         case .programMessage:
             return MailResourcesAsset.waitingMessage
+        case .cancelFormat:
+            return MailResourcesAsset.newMailToolbarCancelFormat
         }
     }
 
@@ -108,7 +111,7 @@ enum EditorToolbarAction: Int {
             return "unorderedList"
         case .ai:
             return "aiWriter"
-        case .addFile:
+        case .attachment:
             return "importFile"
         case .addPhoto:
             return "importImage"
@@ -139,8 +142,8 @@ enum EditorToolbarAction: Int {
             return MailResourcesStrings.Localizable.buttonEditText
         case .ai:
             return MailResourcesStrings.Localizable.aiDiscoveryTitle
-        case .addFile:
-            return MailResourcesStrings.Localizable.attachmentActionFile
+        case .attachment:
+            return MailResourcesStrings.Localizable.attachmentActionTitle
         case .addPhoto:
             return MailResourcesStrings.Localizable.attachmentActionPhotoLibrary
         case .takePhoto:
@@ -149,6 +152,8 @@ enum EditorToolbarAction: Int {
             return MailResourcesStrings.Localizable.buttonHyperlink
         case .programMessage:
             return MailResourcesStrings.Localizable.buttonSchedule
+        case .cancelFormat:
+            return MailResourcesStrings.Localizable.buttonCancelFormatting
         }
     }
 
@@ -166,8 +171,34 @@ enum EditorToolbarAction: Int {
             return textAttributes.hasUnorderedList
         case .link:
             return textAttributes.hasLink
-        case .editText, .ai, .addFile, .addPhoto, .takePhoto, .programMessage:
+        case .editText, .ai, .attachment, .addPhoto, .takePhoto, .programMessage, .cancelFormat:
             return false
+        }
+    }
+
+    func action(textAttributes: TextAttributes, isShowingLinkAlert: inout Bool, isShowingFileSelection: inout Bool) {
+        switch self {
+        case .bold:
+            textAttributes.bold()
+        case .underline:
+            textAttributes.underline()
+        case .italic:
+            textAttributes.italic()
+        case .strikeThrough:
+            textAttributes.strikethrough()
+        case .cancelFormat:
+            textAttributes.removeFormat()
+        case .unorderedList:
+            textAttributes.unorderedList()
+        case .link:
+            guard !textAttributes.hasLink else {
+                return textAttributes.unlink()
+            }
+            isShowingLinkAlert = true
+        case .attachment:
+            isShowingFileSelection = true
+        default:
+            return
         }
     }
 }
