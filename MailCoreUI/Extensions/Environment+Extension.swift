@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreSwiftUI
 import SwiftUI
 
 public extension EnvironmentValues {
