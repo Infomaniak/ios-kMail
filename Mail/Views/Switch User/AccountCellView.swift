@@ -26,6 +26,27 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
+struct AccountCellPlaceholderView: View {
+    var body: some View {
+        HStack {
+            Circle()
+                .fill(MailResourcesAsset.grayActionColor.swiftUIColor)
+                .frame(width: 40, height: 40)
+            VStack(alignment: .leading, spacing: 0) {
+                Text("user.displayName")
+                    .redacted(reason: .placeholder)
+                    .textStyle(.bodyMedium)
+                Text("user.email")
+                    .redacted(reason: .placeholder)
+                    .textStyle(.bodySecondary)
+            }
+            .lineLimit(1)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.vertical, value: .small)
+    }
+}
+
 struct AccountCellView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var accountManager: AccountManager
