@@ -18,9 +18,8 @@
 
 import Foundation
 import SwiftUI
-import SwiftUIMacros
 
 public extension EnvironmentValues {
-    @EnvironmentKey
+    @Entry
     var isCompactWindow = true
 }

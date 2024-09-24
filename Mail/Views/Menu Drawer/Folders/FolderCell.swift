@@ -24,10 +24,9 @@ import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
-import SwiftUIMacros
 
 extension EnvironmentValues {
-    @EnvironmentKey
+    @Entry
     var folderCellType = FolderCell.CellType.menuDrawer
 }
 

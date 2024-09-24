@@ -25,10 +25,9 @@ import MailCoreUI
 import MailResources
 import RealmSwift
 import SwiftUI
-import SwiftUIMacros
 
 extension EnvironmentValues {
-    @EnvironmentKey
+    @Entry
     var isMessageInteractive = true
 }
 
