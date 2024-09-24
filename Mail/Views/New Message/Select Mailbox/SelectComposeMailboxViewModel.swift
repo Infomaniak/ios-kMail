@@ -49,7 +49,7 @@ final class SelectComposeMailboxViewModel: ObservableObject {
 
     func listProfiles() {
         Task {
-            userProfiles = await accountManager.accounts
+            let fetchedUserProfiles = await accountManager.accounts
                 .asyncMap { await self.accountManager.userProfileStore.getUserProfile(id: $0.userId) }
                 .compactMap { $0 }
                 .sorted { lhs, rhs in
@@ -59,6 +59,10 @@ final class SelectComposeMailboxViewModel: ObservableObject {
                         return lhs.displayName < rhs.displayName
                     }
                 }
+
+            Task { @MainActor in
+                self.userProfiles = fetchedUserProfiles
+            }
         }
     }
 
