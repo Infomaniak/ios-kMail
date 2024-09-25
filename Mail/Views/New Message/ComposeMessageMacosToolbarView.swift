@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2024 Infomaniak Network SA
@@ -105,20 +104,41 @@ struct MacosToolbarButtonStyle: ButtonStyle {
 struct PopoverToolbarHelp: ViewModifier {
     @State private var isShowing = false
     let title: String
+    let placement: 
 
     func body(content: Content) -> some View {
         content
             .onHover { hover in
                 isShowing = hover
             }
-            .popover(isPresented: $isShowing, arrowEdge: .bottom) {
-                ZStack {
-                    MailResourcesAsset.onTagExternalColor.swiftUIColor
-                        .scaleEffect(1.5)
-
+//            .popover(isPresented: $isShowing, arrowEdge: .bottom) {
+//                ZStack {
+//                    MailResourcesAsset.onTagExternalColor.swiftUIColor
+//                        .scaleEffect(1.5)
+//
+//                    Text(title)
+//                        .foregroundColor(MailTextStyle.bodyPopover.color)
+//                        .padding(.horizontal, value: .medium)
+//                }
+//            }
+            .popover(
+                present: $isShowing,
+                attributes: {
+                    $0.sourceFrameInset.top = -8
+                    $0.position = .absolute(
+                        originAnchor: .top,
+                        popoverAnchor: .bottom
+                    )
+                    $0.screenEdgePadding = .zero
+                }
+            ) {
+                Templates.Container(
+                    arrowSide: .bottom(.centered),
+                    backgroundColor: .black
+                ) {
                     Text(title)
-                        .foregroundColor(.white)
-                        .padding()
+                        .foregroundColor(MailTextStyle.bodyPopover.color)
+//                        .padding(.horizontal, value: .medium)
                 }
             }
     }
