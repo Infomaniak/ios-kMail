@@ -19,22 +19,23 @@
 
 import InfomaniakCoreSwiftUI
 import InfomaniakRichHTMLEditor
+import MailCore
 import MailCoreUI
 import MailResources
 import Popovers
 import SwiftUI
 
 struct ComposeMessageMacosToolbarView: View {
-    @ObservedObject public var textAttributes: TextAttributes
+    @ObservedObject var textAttributes: TextAttributes
     @Binding var isShowingLinkAlert: Bool
     @Binding var isShowingFileSelection: Bool
 
-    let extras: [EditorToolbarAction] = [
+    private let extras: [EditorToolbarAction] = [
         .attachment,
         .link
     ]
 
-    let textFormats: [EditorToolbarAction] = [
+    private let textFormats: [EditorToolbarAction] = [
         .bold,
         .underline,
         .italic,
@@ -42,33 +43,31 @@ struct ComposeMessageMacosToolbarView: View {
         .cancelFormat
     ]
 
-    let textItems: [EditorToolbarAction] = [
+    private let textItems: [EditorToolbarAction] = [
         .unorderedList
     ]
 
-    var allItems: [[EditorToolbarAction]] {
+    private var allItems: [[EditorToolbarAction]] {
         [extras, textFormats, textItems]
     }
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack(alignment: .center) {
+            HStack {
                 ForEach(allItems, id: \.self) { items in
                     ForEach(items, id: \.self) { item in
-                        Button(
-                            action: {
-                                item.action(
-                                    textAttributes: textAttributes,
-                                    isShowingLinkAlert: &isShowingLinkAlert,
-                                    isShowingFileSelection: &isShowingFileSelection
-                                )
-                            }, label: {
-                                item.icon.swiftUIImage
-                                    .padding(IKPadding.medium)
-                            }
-                        )
+                        Button {
+                            item.action(
+                                textAttributes: textAttributes,
+                                isShowingLinkAlert: &isShowingLinkAlert,
+                                isShowingFileSelection: &isShowingFileSelection
+                            )
+                        } label: {
+                            item.icon.swiftUIImage
+                                .padding(IKPadding.medium)
+                        }
                         .buttonStyle(MacosToolbarButtonStyle(isActive: item.isSelected(textAttributes: textAttributes)))
-//                        .popoverToolbarHelp(title: item.accessibilityLabel)
+                        .popoverToolbarHelp(title: item.accessibilityLabel)
                     }
 
                     if allItems.last != items {
@@ -95,9 +94,8 @@ struct MacosToolbarButtonStyle: ButtonStyle {
             .background(isActive ? MailResourcesAsset.hoverMenuBackground.swiftUIColor : .clear)
             .foregroundColor(isActive ? .primary : .secondary)
             .cornerRadius(8)
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
             .onHover { hovering in
-                withAnimation(.easeInOut(duration: 0.25)) {
+                withAnimation {
                     isHovered = hovering
                 }
             }
