@@ -23,48 +23,67 @@ import MailCore
 import MailResources
 import SwiftUI
 
+struct SelectableComposeMailbox {
+    let user: UserProfile
+    let mailbox: Mailbox
+    let mailboxManager: MailboxManager
+}
+
 final class SelectComposeMailboxViewModel: ObservableObject {
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
-    @Published private(set) var selectedMailbox: Mailbox?
-    @Published private(set) var defaultMailbox: Mailbox?
+    @Published private(set) var selectedMailbox: SelectableComposeMailbox?
+    @Published private(set) var defaultSelectableMailbox: SelectableComposeMailbox?
     @Published private(set) var selectionMade = false
+    @Published private(set) var userProfiles = [UserProfile]()
 
     private(set) var composeMessageIntent: Binding<ComposeMessageIntent>
-    private(set) var accounts = [Account]()
 
     init(composeMessageIntent: Binding<ComposeMessageIntent>) {
         self.composeMessageIntent = composeMessageIntent
 
-        accounts = accountManager.accounts.sorted { lhs, rhs in
-            if (lhs.userId == accountManager.currentUserId) != (rhs.userId == accountManager.currentUserId) {
-                return lhs.userId == accountManager.currentUserId
+        listProfiles()
+    }
+
+    func listProfiles() {
+        userProfiles = accountManager.accounts.compactMap { $0.user }.sorted { lhs, rhs in
+            if (lhs.id == accountManager.currentUserId) != (rhs.id == accountManager.currentUserId) {
+                return lhs.id == accountManager.currentUserId
             } else {
-                return lhs.user.displayName < rhs.user.displayName
+                return lhs.displayName < rhs.displayName
             }
         }
     }
 
     func initDefaultAccountAndMailbox() {
-        defaultMailbox = accountManager.currentMailboxManager?.mailbox
-        if let defaultMailbox, accountManager.accounts.count == 1 && mailboxInfosManager.getMailboxes().count == 1 {
+        guard let defaultMailbox = accountManager.currentMailboxManager?.mailbox,
+              let mailboxManager = accountManager.getMailboxManager(for: defaultMailbox),
+              let user = userProfiles.first(where: { $0.id == defaultMailbox.userId }) else {
+            return
+        }
+
+        defaultSelectableMailbox = SelectableComposeMailbox(user: user, mailbox: defaultMailbox, mailboxManager: mailboxManager)
+        if accountManager.accounts.count == 1 && mailboxInfosManager.getMailboxes().count == 1 {
             validateMailboxChoice(defaultMailbox)
         }
     }
 
     func selectMailbox(_ mailbox: Mailbox) {
-        guard mailbox.isAvailable else {
+        guard mailbox.isAvailable,
+              let user = userProfiles.first(where: { $0.id == mailbox.userId }),
+              let mailboxManager = accountManager.getMailboxManager(for: mailbox.mailboxId, userId: mailbox.userId) else {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorMailboxUnavailable)
             return
         }
-        selectedMailbox = mailbox
+        selectedMailbox = SelectableComposeMailbox(user: user, mailbox: mailbox, mailboxManager: mailboxManager)
         selectionMade = true
     }
 
     func validateMailboxChoice(_ selectedMailbox: Mailbox?) {
-        guard let mailbox = selectedMailbox, let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
+        guard let mailbox = selectedMailbox,
+              let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
             return
         }

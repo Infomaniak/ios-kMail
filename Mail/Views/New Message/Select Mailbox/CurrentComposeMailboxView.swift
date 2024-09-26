@@ -55,16 +55,17 @@ struct CurrentComposeMailboxView: View {
                     .multilineTextAlignment(.center)
                     .padding(.bottom, value: .large)
 
-                if let defaultMailbox = viewModel.defaultMailbox,
-                   let mailboxManager = accountManager.getMailboxManager(for: defaultMailbox),
-                   let user = accountManager.account(for: defaultMailbox.userId)?.user {
-                    SelectedMailboxView(selectedUser: user, selectedMailboxManager: mailboxManager)
-                        .frame(maxHeight: .infinity, alignment: .top)
+                if let defaultSelectableMailbox = viewModel.defaultSelectableMailbox {
+                    SelectedMailboxView(
+                        selectedUser: defaultSelectableMailbox.user,
+                        selectedMailboxManager: defaultSelectableMailbox.mailboxManager
+                    )
+                    .frame(maxHeight: .infinity, alignment: .top)
                 }
 
                 VStack(spacing: IKPadding.medium) {
                     Button(MailResourcesStrings.Localizable.buttonContinue) {
-                        viewModel.validateMailboxChoice(viewModel.defaultMailbox)
+                        viewModel.validateMailboxChoice(viewModel.defaultSelectableMailbox?.mailbox)
                     }
                     .buttonStyle(.ikBorderedProminent)
 
