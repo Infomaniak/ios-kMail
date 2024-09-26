@@ -84,7 +84,9 @@ struct CurrentComposeMailboxView: View {
             }
             .padding(.horizontal, value: .medium)
             .mailboxCellStyle(.account)
-            .onAppear(perform: viewModel.initDefaultAccountAndMailbox)
+            .task {
+                await viewModel.initProfilesSelectDefaultAccountAndMailbox()
+            }
             .backButtonDisplayMode(.minimal)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
