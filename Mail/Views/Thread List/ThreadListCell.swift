@@ -22,6 +22,7 @@ import InfomaniakDI
 import MailCore
 import MailCoreUI
 import SwiftUI
+import UniformTypeIdentifiers
 
 extension ThreadListCell: Equatable {
     static func == (lhs: ThreadListCell, rhs: ThreadListCell) -> Bool {
@@ -95,6 +96,7 @@ struct ThreadListCell: View {
             nearestFlushAlert: $flushAlert
         )
         .actionsContextMenu(thread: thread, toggleMultipleSelection: toggleMultipleSelection)
+        .draggableThread(thread.uid)
     }
 
     private func didTapCell() {

@@ -208,6 +208,15 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         }
         return result
     }
+
+    public func getThread(from threadId: String) -> Thread? {
+        let threads = transactionExecutor.fetchResults(ofType: Thread.self) { collection in
+            collection
+                .filter("uid == %@", threadId)
+        }
+        guard threads.count == 1 else { return nil }
+        return threads.first
+    }
 }
 
 // MARK: - Equatable conformance

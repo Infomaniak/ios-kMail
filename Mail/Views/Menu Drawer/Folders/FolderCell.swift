@@ -166,7 +166,8 @@ struct FolderCellContent: View {
                     ChevronIcon(direction: frozenFolder.isExpanded ? .up : .down)
                         .padding(value: .medium)
                 }
-                .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandFolder(frozenFolder.name))
+                .accessibilityLabel(MailResourcesStrings.Localizable
+                    .contentDescriptionButtonExpandFolder(frozenFolder.name))
                 .opacity(level == 0 && !frozenFolder.children.isEmpty ? 1 : 0)
             }
 
@@ -187,6 +188,7 @@ struct FolderCellContent: View {
         .padding(.leading, IKPadding.menuDrawerSubFolder * CGFloat(level))
         .padding(canHaveChevron ? IKPadding.menuDrawerCellWithChevron : IKPadding.menuDrawerCell)
         .background(background)
+        .dropThreadHandler(destinationFolder: frozenFolder)
     }
 
     @ViewBuilder
