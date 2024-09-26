@@ -28,6 +28,8 @@ import SwiftUI
 struct ConfirmationBlockRecipientView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
+    @Environment(\.currentUser) private var currentUser
+
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
 
@@ -39,6 +41,7 @@ struct ConfirmationBlockRecipientView: View {
     private var contact: CommonContact {
         return CommonContactCache.getOrCreateContact(contactConfiguration: .correspondent(
             correspondent: recipient,
+            contextUser: currentUser.value,
             contextMailboxManager: mailboxManager
         ))
     }

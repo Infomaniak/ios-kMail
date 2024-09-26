@@ -48,7 +48,7 @@ struct SelectComposeMailboxView: View {
                 VStack(spacing: 0) {
                     ForEach(viewModel.accounts) { account in
                         AccountMailboxesListView(
-                            account: account,
+                            user: account.user,
                             selectedMailbox: viewModel.selectedMailbox,
                             selectMailbox: viewModel.selectMailbox
                         )
@@ -58,8 +58,9 @@ struct SelectComposeMailboxView: View {
             }
 
             if let selectedMailbox = viewModel.selectedMailbox,
-               let mailboxManager = accountManager.getMailboxManager(for: selectedMailbox) {
-                SelectedMailboxView(selectedMailboxManager: mailboxManager)
+               let mailboxManager = accountManager.getMailboxManager(for: selectedMailbox),
+               let user = accountManager.account(for: selectedMailbox.userId)?.user {
+                SelectedMailboxView(selectedUser: user, selectedMailboxManager: mailboxManager)
                     .padding(.horizontal, value: .small)
                     .padding(.bottom, value: .medium)
             }

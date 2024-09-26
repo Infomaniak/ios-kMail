@@ -30,6 +30,7 @@ struct MessageHeaderSummaryView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.isMessageInteractive) private var isMessageInteractive
+    @Environment(\.currentUser) private var currentUser
 
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
@@ -54,7 +55,9 @@ struct MessageHeaderSummaryView: View {
                     } label: {
                         AvatarView(
                             mailboxManager: mailboxManager,
-                            contactConfiguration: .correspondent(correspondent: recipient, associatedBimi: message.bimi,
+                            contactConfiguration: .correspondent(correspondent: recipient,
+                                                                 associatedBimi: message.bimi,
+                                                                 contextUser: currentUser.value,
                                                                  contextMailboxManager: mailboxManager),
                             size: 40
                         )
@@ -77,6 +80,7 @@ struct MessageHeaderSummaryView: View {
                                 ForEach(message.from) { recipient in
                                     let contactConfiguration = ContactConfiguration.correspondent(
                                         correspondent: recipient,
+                                        contextUser: currentUser.value,
                                         contextMailboxManager: mailboxManager
                                     )
                                     let contact = CommonContactCache

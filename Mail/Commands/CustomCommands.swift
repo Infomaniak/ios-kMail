@@ -29,7 +29,7 @@ struct CustomCommands: Commands {
     @ObservedObject var rootViewState: RootViewState
 
     var mainViewState: MainViewState? {
-        if case .mainView(let mainViewState) = rootViewState.state {
+        if case .mainView(_, let mainViewState) = rootViewState.state {
             return mainViewState
         } else {
             return nil

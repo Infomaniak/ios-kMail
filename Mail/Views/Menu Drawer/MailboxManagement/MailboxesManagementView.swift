@@ -33,6 +33,8 @@ struct MailboxesManagementView: View {
     @EnvironmentObject var mailboxManager: MailboxManager
     @EnvironmentObject var navigationDrawerState: NavigationDrawerState
 
+    @Environment(\.currentUser) private var currentUser
+
     @LazyInjectService private var accountManager: AccountManager
 
     @ObservedResults(
@@ -48,7 +50,7 @@ struct MailboxesManagementView: View {
 
     private var hasOtherMailboxes: Bool {
         return !mailboxes.where {
-            $0.userId == mailboxManager.account.userId && $0.mailboxId != mailboxManager.mailbox.mailboxId
+            $0.userId == currentUser.value.id && $0.mailboxId != mailboxManager.mailbox.mailboxId
         }.isEmpty
     }
 
@@ -82,7 +84,7 @@ struct MailboxesManagementView: View {
             if navigationDrawerState.showMailboxes {
                 VStack(alignment: .leading) {
                     ForEachMailboxView(
-                        userId: mailboxManager.account.userId,
+                        userId: currentUser.value.id,
                         excludedMailboxIds: [mailboxManager.mailbox.mailboxId]
                     ) { mailbox in
                         MailboxCell(mailbox: mailbox)

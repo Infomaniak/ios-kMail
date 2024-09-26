@@ -24,13 +24,14 @@ import MailResources
 import SwiftUI
 
 struct SelectedMailboxView: View {
+    let selectedUser: UserProfile
     let selectedMailboxManager: MailboxManager
 
     var body: some View {
         HStack(spacing: IKPadding.small) {
             AvatarView(
                 mailboxManager: selectedMailboxManager,
-                contactConfiguration: .user(user: selectedMailboxManager.account.user),
+                contactConfiguration: .user(user: selectedUser),
                 size: 40
             )
             Text(selectedMailboxManager.mailbox.email)
@@ -50,5 +51,8 @@ struct SelectedMailboxView: View {
 }
 
 #Preview {
-    SelectedMailboxView(selectedMailboxManager: PreviewHelper.sampleMailboxManager)
+    SelectedMailboxView(
+        selectedUser: PreviewHelper.sampleUser,
+        selectedMailboxManager: PreviewHelper.sampleMailboxManager
+    )
 }

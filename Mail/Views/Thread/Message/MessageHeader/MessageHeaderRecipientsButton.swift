@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
@@ -24,6 +25,8 @@ import SwiftUI
 
 struct MessageHeaderRecipientsButton: View {
     @LazyInjectService private var matomo: MatomoUtils
+
+    @Environment(\.currentUser) private var currentUser
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -35,6 +38,7 @@ struct MessageHeaderRecipientsButton: View {
         recipients.map {
             let contactConfiguration = ContactConfiguration.correspondent(
                 correspondent: $0,
+                contextUser: currentUser.value,
                 contextMailboxManager: mailboxManager
             )
             let contact = CommonContactCache

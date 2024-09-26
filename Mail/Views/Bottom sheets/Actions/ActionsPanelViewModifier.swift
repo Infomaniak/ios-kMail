@@ -39,6 +39,8 @@ extension View {
 }
 
 struct ActionsPanelViewModifier: ViewModifier {
+    @Environment(\.currentUser) private var currentUser
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ModalState private var reportForJunkMessages: [Message]?
@@ -73,7 +75,12 @@ struct ActionsPanelViewModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content.adaptivePanel(item: $messages) { messages in
-            ActionsView(mailboxManager: mailboxManager, target: messages, origin: origin, completionHandler: completionHandler)
+            ActionsView(
+                user: currentUser.value,
+                target: messages,
+                origin: origin,
+                completionHandler: completionHandler
+            )
         }
         .sheet(item: $messagesToMove) { messages in
             MoveEmailView(

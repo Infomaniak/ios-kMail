@@ -22,7 +22,7 @@ import InfomaniakCore
 public enum ContactConfiguration: CustomDebugStringConvertible {
     public var debugDescription: String {
         switch self {
-        case .correspondent(let recipient, let bimi, _):
+        case .correspondent(let recipient, let bimi, _, _):
             return ".recipient:\(recipient.name) \(recipient.email) \(bimi?.svgContent ?? "no associated bimi")"
         case .user(let user):
             return ".user:\(user.displayName) \(user.email)"
@@ -33,17 +33,23 @@ public enum ContactConfiguration: CustomDebugStringConvertible {
         }
     }
 
-    case correspondent(correspondent: any Correspondent, associatedBimi: Bimi? = nil, contextMailboxManager: MailboxManager)
+    case correspondent(
+        correspondent: any Correspondent,
+        associatedBimi: Bimi? = nil,
+        contextUser: UserProfile,
+        contextMailboxManager: MailboxManager
+    )
     case user(user: UserProfile)
     case contact(contact: CommonContact)
     case emptyContact
 
     public func freezeIfNeeded() -> Self {
         switch self {
-        case .correspondent(let correspondent, let bimi, let contextMailboxManager):
+        case .correspondent(let correspondent, let bimi, let contextUser, let contextMailboxManager):
             return .correspondent(
                 correspondent: correspondent.freezeIfNeeded(),
                 associatedBimi: bimi?.freezeIfNeeded(),
+                contextUser: contextUser,
                 contextMailboxManager: contextMailboxManager
             )
         default:
@@ -62,10 +68,11 @@ extension ContactConfiguration {
 extension ContactConfiguration: Identifiable {
     public var id: Int {
         switch self {
-        case .correspondent(let correspondent, let bimi, let contextMailboxManager):
+        case .correspondent(let correspondent, let bimi, let contextUser, let contextMailboxManager):
             // One cache entry per correspondent per mailbox
             var hasher = Hasher()
             hasher.combine(correspondent.id)
+            hasher.combine(contextUser.id)
             hasher.combine(contextMailboxManager.mailbox.id)
             hasher.combine(bimi)
             return hasher.finalize()

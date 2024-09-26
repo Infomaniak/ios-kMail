@@ -23,7 +23,6 @@ import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
-import RealmSwift
 import SwiftUI
 
 struct AccountListView: View {
@@ -42,7 +41,7 @@ struct AccountListView: View {
                     AccountCellView(
                         selectedUserId: .constant(accountManager.currentUserId),
                         mailboxManager: mailboxManager,
-                        account: account
+                        user: account.user
                     )
                     .padding(.horizontal, value: .medium)
                 }

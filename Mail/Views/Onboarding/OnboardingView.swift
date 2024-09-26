@@ -165,7 +165,7 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
                 shouldShowEmptyMailboxesView = true
             } catch {
                 if let previousAccount {
-                    accountManager.switchAccount(newAccount: previousAccount)
+                    accountManager.switchAccount(newUserId: previousAccount.userId)
                 }
                 snackbarPresenter.show(message: error.localizedDescription)
                 SentryDebug.loginError(error: error, step: "createAndSetCurrentAccount")

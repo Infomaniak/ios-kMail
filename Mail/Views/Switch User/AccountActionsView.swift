@@ -27,7 +27,7 @@ struct AccountActionsView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var orientationManager: OrientationManageable
 
-    @EnvironmentObject private var mailboxManager: MailboxManager
+    @Environment(\.currentUser) private var currentUser
 
     @ModalState(context: ContextKeys.account) private var isShowingLogoutAlert = false
     @State private var isShowingNewAccountView = false
@@ -52,7 +52,7 @@ struct AccountActionsView: View {
             SingleOnboardingView()
         })
         .customAlert(isPresented: $isShowingLogoutAlert) {
-            LogoutConfirmationView(account: mailboxManager.account)
+            LogoutConfirmationView(user: currentUser.value)
         }
     }
 

@@ -35,10 +35,10 @@ struct AccountCellView: View {
     @Binding var selectedUserId: Int?
 
     let mailboxManager: MailboxManager?
-    let account: Account
+    let user: InfomaniakCore.UserProfile
 
     private var isSelected: Bool {
-        return selectedUserId == account.userId
+        return selectedUserId == user.id
     }
 
     var body: some View {
@@ -47,19 +47,19 @@ struct AccountCellView: View {
 
             matomo.track(eventWithCategory: .account, name: "switch")
             dismissModal()
-            accountManager.switchAccount(newAccount: account)
+            accountManager.switchAccount(newUserId: user.id)
         } label: {
-            AccountHeaderCell(account: account, mailboxManager: mailboxManager, isSelected: Binding(get: {
+            AccountHeaderCell(user: user, mailboxManager: mailboxManager, isSelected: Binding(get: {
                 isSelected
             }, set: {
-                selectedUserId = $0 ? account.userId : nil
+                selectedUserId = $0 ? user.id : nil
             }))
         }
     }
 }
 
 struct AccountHeaderCell: View {
-    let account: Account
+    let user: InfomaniakCore.UserProfile
 
     /// Optional as this view can be displayed from a context without a mailboxManager available
     let mailboxManager: MailboxManager?
@@ -74,12 +74,11 @@ struct AccountHeaderCell: View {
 
     var body: some View {
         HStack {
-            AvatarView(mailboxManager: mailboxManager, contactConfiguration: .user(user: account.user), size: 40)
-
+            AvatarView(mailboxManager: mailboxManager, contactConfiguration: .user(user: user), size: 40)
             VStack(alignment: .leading, spacing: 0) {
-                Text(account.user.displayName)
+                Text(user.displayName)
                     .textStyle(.bodyMedium)
-                Text(account.user.email)
+                Text(user.email)
                     .textStyle(.bodySecondary)
             }
             .lineLimit(1)
@@ -104,14 +103,6 @@ struct AccountHeaderCell: View {
     AccountCellView(
         selectedUserId: .constant(nil),
         mailboxManager: nil,
-        account: Account(apiToken: ApiToken(
-            accessToken: "",
-            expiresIn: .max,
-            refreshToken: "",
-            scope: "",
-            tokenType: "",
-            userId: 0,
-            expirationDate: .distantFuture
-        ))
+        user: PreviewHelper.sampleUser
     )
 }

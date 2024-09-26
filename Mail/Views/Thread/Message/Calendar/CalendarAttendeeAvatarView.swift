@@ -23,6 +23,8 @@ import MailResources
 import SwiftUI
 
 struct AttendeeAvatarView: View {
+    @Environment(\.currentUser) private var currentUser
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let attendee: Attendee
@@ -30,6 +32,7 @@ struct AttendeeAvatarView: View {
     private var cachedContact: CommonContact {
         return CommonContactCache.getOrCreateContact(contactConfiguration: .correspondent(
             correspondent: attendee,
+            contextUser: currentUser.value,
             contextMailboxManager: mailboxManager
         ))
     }

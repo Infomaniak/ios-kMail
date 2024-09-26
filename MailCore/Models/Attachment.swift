@@ -121,7 +121,7 @@ public class Attachment: /* Hashable, */ EmbeddedObject, Codable, Identifiable {
     }
 
     public func getLocalURL(mailboxManager: MailboxManager) -> URL {
-        getLocalURL(userId: mailboxManager.account.userId, mailboxId: mailboxManager.mailbox.mailboxId)
+        getLocalURL(userId: mailboxManager.mailbox.userId, mailboxId: mailboxManager.mailbox.mailboxId)
     }
 
     public func update(with remoteAttachment: Attachment) {

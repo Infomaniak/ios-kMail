@@ -39,8 +39,6 @@ struct PreloadingView: View {
 
     @EnvironmentObject private var rootViewState: RootViewState
 
-    let currentAccount: Account
-
     var body: some View {
         ZStack(alignment: Alignment(horizontal: .center, vertical: .splashScreenIconAlignment)) {
             MailResourcesAsset.backgroundBlueNavBarColor.swiftUIColor
@@ -61,25 +59,41 @@ struct PreloadingView: View {
                 .frame(width: 178)
                 .padding(.bottom, value: .medium)
         }
-        .task(id: currentAccount.id) {
+        .task {
+            guard let currentAccount = accountManager.getCurrentAccount() else {
+                rootViewState.transitionToRootViewState(.onboarding)
+                return
+            }
+
             do {
+                if let targetMailboxManager = accountManager.currentMailboxManager {
+                    if targetMailboxManager.getFolder(with: .inbox) == nil {
+                        try await targetMailboxManager.refreshAllFolders()
+                    }
+                    rootViewState.transitionToMainViewIfPossible(
+                        targetAccount: currentAccount,
+                        targetMailbox: targetMailboxManager.mailbox
+                    )
+                    return
+                }
+
                 try await accountManager.updateUser(for: currentAccount)
 
                 if let currentMailboxManager = accountManager.currentMailboxManager {
                     try await currentMailboxManager.refreshAllFolders()
                 }
 
-                rootViewState.transitionToRootViewDestination(.mainView)
+                rootViewState.transitionToMainViewIfPossible(targetAccount: currentAccount, targetMailbox: nil)
             } catch let error as MailError where error == MailError.noMailbox {
-                rootViewState.transitionToRootViewDestination(.noMailboxes)
+                rootViewState.transitionToRootViewState(.noMailboxes)
             } catch {
-                rootViewState.transitionToRootViewDestination(.onboarding)
+                rootViewState.transitionToRootViewState(.onboarding)
             }
         }
     }
 }
 
 #Preview {
-    PreloadingView(currentAccount: PreviewHelper.sampleAccount)
+    PreloadingView()
         .environmentObject(RootViewState())
 }

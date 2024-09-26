@@ -35,7 +35,6 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     public let transactionExecutor: Transactionable
 
     public let mailbox: Mailbox
-    public let account: Account
 
     public let apiFetcher: MailApiFetcher
     public let contactManager: ContactManageable
@@ -69,8 +68,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         }
     }
 
-    public init(account: Account, mailbox: Mailbox, apiFetcher: MailApiFetcher, contactManager: ContactManageable) {
-        self.account = account
+    public init(mailbox: Mailbox, apiFetcher: MailApiFetcher, contactManager: ContactManageable) {
         self.mailbox = mailbox
         self.apiFetcher = apiFetcher
         self.contactManager = contactManager

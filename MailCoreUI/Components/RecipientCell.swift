@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import MailCore
 import SwiftUI
@@ -37,6 +38,7 @@ public extension View {
 }
 
 public struct RecipientCell: View {
+    @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let recipient: Recipient
@@ -53,6 +55,7 @@ public struct RecipientCell: View {
                 mailboxManager: mailboxManager,
                 contactConfiguration: .correspondent(
                     correspondent: recipient.freezeIfNeeded(),
+                    contextUser: currentUser.value,
                     contextMailboxManager: mailboxManager
                 ),
                 size: 40

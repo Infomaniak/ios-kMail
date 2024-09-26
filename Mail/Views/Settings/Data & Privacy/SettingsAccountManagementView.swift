@@ -35,9 +35,9 @@ final class SettingsAccountManagementViewDelegate: DeleteAccountDelegate {
     @MainActor func didCompleteDeleteAccount() {
         Task {
             guard let account = accountManager.getCurrentAccount() else { return }
-            accountManager.removeTokenAndAccount(account: account)
+            accountManager.removeTokenAndAccountFor(userId: account.userId)
             if let nextAccount = accountManager.accounts.first {
-                accountManager.switchAccount(newAccount: nextAccount)
+                accountManager.switchAccount(newUserId: nextAccount.userId)
             }
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackBarAccountDeleted)
             accountManager.saveAccounts()

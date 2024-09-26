@@ -32,7 +32,8 @@ struct SettingsView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var platformDetector: PlatformDetectable
 
-    @EnvironmentObject private var mailboxManager: MailboxManager
+    @Environment(\.currentUser) private var currentUser
+
     @EnvironmentObject private var mainViewState: MainViewState
 
     @AppStorage(UserDefaults.shared.key(.aiEngine)) private var aiEngine = DefaultPreferences.aiEngine
@@ -53,7 +54,7 @@ struct SettingsView: View {
                 Group {
                     SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsSectionEmailAddresses)
 
-                    ForEachMailboxView(userId: mailboxManager.account.userId) { mailbox in
+                    ForEachMailboxView(userId: currentUser.value.id) { mailbox in
                         if let mailboxManager = accountManager.getMailboxManager(for: mailbox) {
                             SettingsSubMenuCell(title: mailbox.email) {
                                 MailboxSettingsView(mailboxManager: mailboxManager)

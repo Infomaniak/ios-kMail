@@ -23,7 +23,7 @@ import RealmSwift
 import SwiftUI
 
 struct MailboxListView: View {
-    @EnvironmentObject private var mailboxManager: MailboxManager
+    @Environment(\.currentUser) private var currentUser
 
     let currentMailbox: Mailbox?
 
@@ -53,7 +53,7 @@ struct MailboxListView: View {
             }
 
             ForEachMailboxView(
-                userId: mailboxManager.account.userId,
+                userId: currentUser.value.id,
                 excludedMailboxIds: [currentMailbox?.mailboxId].compactMap { $0 }
             ) { mailbox in
                 MailboxCell(mailbox: mailbox)

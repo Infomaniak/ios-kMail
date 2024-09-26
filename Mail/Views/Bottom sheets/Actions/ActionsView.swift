@@ -31,11 +31,11 @@ struct ActionsView: View {
     private let origin: ActionOrigin
     private let completionHandler: ((Action) -> Void)?
 
-    init(mailboxManager: MailboxManager,
+    init(user: UserProfile,
          target messages: [Message],
          origin: ActionOrigin,
          completionHandler: ((Action) -> Void)? = nil) {
-        let userIsStaff = mailboxManager.account.user?.isStaff ?? false
+        let userIsStaff = user.isStaff ?? false
         let actions = Action.actionsForMessages(messages, origin: origin, userIsStaff: userIsStaff)
         quickActions = actions.quickActions
         listActions = actions.listActions
@@ -81,7 +81,7 @@ struct ActionsView: View {
 
 #Preview {
     ActionsView(
-        mailboxManager: PreviewHelper.sampleMailboxManager,
+        user: PreviewHelper.sampleUser,
         target: PreviewHelper.sampleThread.messages.toArray(),
         origin: .toolbar(originFolder: nil)
     )

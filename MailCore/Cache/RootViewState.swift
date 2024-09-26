@@ -39,32 +39,23 @@ public enum RootViewType: Equatable {
             return true
         case (.updateRequired, .updateRequired):
             return true
-        case (.mainView(let lhsMainViewState), .mainView(let rhsMainViewState)):
-            return lhsMainViewState.mailboxManager == rhsMainViewState.mailboxManager
-        case (.preloading(let lhsAccount), .preloading(let rhsAccount)):
-            return lhsAccount == rhsAccount
+        case (.mainView(let lhsUser, let lhsMainViewState), .mainView(let rhsUser, let rhsMainViewState)):
+            return lhsUser.id == rhsUser.id && lhsMainViewState.mailboxManager == rhsMainViewState.mailboxManager
+        case (.preloading, .preloading):
+            return true
         default:
             return false
         }
     }
 
     case appLocked
-    case mainView(MainViewState)
+    case mainView(UserProfile, MainViewState)
     case onboarding
     case authorization
     case noMailboxes
     case unavailableMailboxes
     case updateRequired
-    case preloading(Account)
-}
-
-public enum RootViewDestination {
-    case appLocked
-    case mainView
-    case onboarding
-    case noMailboxes
-    case unavailableMailboxes
-    case updateRequired
+    case preloading
 }
 
 /// Something that represents the state of the root view
@@ -82,64 +73,65 @@ public class RootViewState: ObservableObject {
         @InjectService var accountManager: AccountManager
 
         account = accountManager.getCurrentAccount()
-        state = RootViewState.getMainViewStateIfPossible()
+        state = .preloading
 
         accountManagerObservation = accountManager.objectWillChange.receive(on: RunLoop.main).sink { [weak self] in
             self?.account = accountManager.getCurrentAccount()
-            withAnimation {
-                self?.state = RootViewState.getMainViewStateIfPossible()
-            }
+            self?.transitionToMainViewIfPossible(targetAccount: self?.account, targetMailbox: nil)
         }
     }
 
-    static func getMainViewStateIfPossible() -> RootViewType {
+    public func transitionToRootViewState(_ newState: RootViewType) {
+        withAnimation {
+            state = newState
+        }
+    }
+
+    public func transitionToMainViewIfPossible(targetAccount: Account?, targetMailbox: Mailbox?) {
         @InjectService var accountManager: AccountManager
         @InjectService var mailboxInfosManager: MailboxInfosManager
 
-        guard let currentAccount = accountManager.getCurrentAccount() else {
-            return .onboarding
+        guard let currentAccount = targetAccount ?? accountManager.getCurrentAccount() else {
+            transitionToRootViewState(.onboarding)
+            return
         }
 
         guard CNContactStore.authorizationStatus(for: .contacts) != .notDetermined else {
-            return .authorization
+            transitionToRootViewState(.authorization)
+            return
         }
 
-        if let currentMailboxManager = accountManager.currentMailboxManager,
-           let initialFolder = currentMailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
-            return .mainView(MainViewState(mailboxManager: currentMailboxManager, selectedFolder: initialFolder))
+        let targetMailboxManager: MailboxManager?
+        if let targetMailbox {
+            targetMailboxManager = accountManager.getMailboxManager(for: targetMailbox)
+        } else {
+            targetMailboxManager = accountManager.currentMailboxManager
+        }
+
+        if let targetMailboxManager,
+           let initialFolder = targetMailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
+            transitionToRootViewState(.mainView(
+                currentAccount.user,
+                MainViewState(
+                    mailboxManager: targetMailboxManager,
+                    selectedFolder: initialFolder
+                )
+            ))
         } else {
             let mailboxes = mailboxInfosManager.getMailboxes(for: currentAccount.userId)
 
             if !mailboxes.isEmpty && mailboxes.allSatisfy({ !$0.isAvailable }) {
-                return .unavailableMailboxes
+                return transitionToRootViewState(.unavailableMailboxes)
             } else {
-                return .preloading(currentAccount)
-            }
-        }
-    }
-
-    public func transitionToRootViewDestination(_ destination: RootViewDestination) {
-        withAnimation {
-            switch destination {
-            case .appLocked:
-                state = .appLocked
-            case .mainView:
-                state = RootViewState.getMainViewStateIfPossible()
-            case .onboarding:
-                state = .onboarding
-            case .noMailboxes:
-                state = .noMailboxes
-            case .unavailableMailboxes:
-                state = .unavailableMailboxes
-            case .updateRequired:
-                state = .updateRequired
+                return transitionToRootViewState(.preloading)
             }
         }
     }
 
     public func transitionToLockViewIfNeeded() {
-        if UserDefaults.shared.isAppLockEnabled && appLockHelper.isAppLocked && account != nil {
-            transitionToRootViewDestination(.appLocked)
+        @InjectService var accountManager: AccountManager
+        if UserDefaults.shared.isAppLockEnabled && appLockHelper.isAppLocked && !accountManager.accounts.isEmpty {
+            transitionToRootViewState(.appLocked)
         }
     }
 }

@@ -22,6 +22,7 @@ import MailCoreUI
 import SwiftUI
 
 struct CalendarAttendeeCell: View {
+    @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let attendee: Attendee
@@ -29,6 +30,7 @@ struct CalendarAttendeeCell: View {
     private var cachedContact: CommonContact {
         return CommonContactCache.getOrCreateContact(contactConfiguration: .correspondent(
             correspondent: attendee,
+            contextUser: currentUser.value,
             contextMailboxManager: mailboxManager
         ))
     }

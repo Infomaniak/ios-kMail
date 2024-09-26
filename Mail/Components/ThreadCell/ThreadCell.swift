@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
@@ -79,11 +80,13 @@ struct ThreadCellDataHolder {
         }
     }
 
-    func contactConfiguration(bimi: Bimi?, contextMailboxManager: MailboxManager) -> ContactConfiguration {
+    func contactConfiguration(bimi: Bimi?, contextUser: UserProfile,
+                              contextMailboxManager: MailboxManager) -> ContactConfiguration {
         if let recipientToDisplay {
             return .correspondent(
                 correspondent: recipientToDisplay,
                 associatedBimi: bimi,
+                contextUser: contextUser,
                 contextMailboxManager: contextMailboxManager
             )
         } else {
@@ -102,6 +105,7 @@ extension ThreadCell: Equatable {
 }
 
 struct ThreadCell: View {
+    @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     /// With normal or compact density, the checkbox should appear and disappear at different times of the cell offset.
@@ -161,15 +165,20 @@ struct ThreadCell: View {
                 isSelected: isSelected,
                 isMultipleSelectionEnabled: isMultipleSelectionEnabled,
                 shouldDisplayCheckbox: shouldDisplayCheckbox,
-                contactConfiguration: dataHolder.contactConfiguration(bimi: thread.bimi, contextMailboxManager: mailboxManager),
+                contactConfiguration: dataHolder.contactConfiguration(bimi: thread.bimi,
+                                                                      contextUser: currentUser.value,
+                                                                      contextMailboxManager: mailboxManager),
                 avatarTapped: avatarTapped
             )
             .padding(.trailing, value: .extraSmall)
 
             VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
                 ThreadCellHeaderView(
-                    recipientsTitle: thread.formatted(contextMailboxManager: mailboxManager,
-                                                      style: dataHolder.isInWrittenByMeFolder ? .to : .from),
+                    recipientsTitle: thread.formatted(
+                        contextUser: currentUser.value,
+                        contextMailboxManager: mailboxManager,
+                        style: dataHolder.isInWrittenByMeFolder ? .to : .from
+                    ),
                     messageCount: thread.messages.count,
                     prominentMessageCount: thread.hasUnseenMessages,
                     formattedDate: dataHolder.date,

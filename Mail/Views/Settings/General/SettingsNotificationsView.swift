@@ -31,6 +31,8 @@ struct SettingsNotificationsView: View {
     @LazyInjectService private var notificationService: InfomaniakNotifications
     @LazyInjectService private var matomo: MatomoUtils
 
+    @Environment(\.currentUser) private var currentUser
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @AppStorage(UserDefaults.shared.key(.notificationsEnabled)) private var notificationsEnabled = DefaultPreferences
@@ -78,7 +80,7 @@ struct SettingsNotificationsView: View {
                     IKDivider()
                         .settingsCell()
 
-                    ForEachMailboxView(userId: mailboxManager.account.userId) { mailbox in
+                    ForEachMailboxView(userId: currentUser.value.id) { mailbox in
                         Toggle(isOn: Binding(get: {
                             notificationsEnabled && subscribedTopics?.contains(mailbox.notificationTopicName) == true
                         }, set: { on in

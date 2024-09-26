@@ -25,19 +25,19 @@ import SwiftUI
 struct AccountMailboxesListView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    let account: Account
+    let user: UserProfile
     var selectedMailbox: Mailbox?
 
     let selectMailbox: (Mailbox) -> Void
 
     var body: some View {
         Menu {
-            ForEachMailboxView(userId: account.userId) { mailbox in
+            ForEachMailboxView(userId: user.id) { mailbox in
                 AccountMailboxCell(mailbox: mailbox, selectedMailbox: selectedMailbox, selectMailbox: selectMailbox)
             }
         } label: {
             AccountHeaderCell(
-                account: account,
+                user: user,
                 mailboxManager: mailboxManager,
                 isSelected: .constant(false),
                 type: .selectComposeMailbox
@@ -48,7 +48,7 @@ struct AccountMailboxesListView: View {
 
 #Preview {
     AccountMailboxesListView(
-        account: PreviewHelper.sampleAccount,
+        user: PreviewHelper.sampleUser,
         selectedMailbox: PreviewHelper.sampleMailbox
     ) { _ in }
 }

@@ -56,8 +56,9 @@ struct CurrentComposeMailboxView: View {
                     .padding(.bottom, value: .large)
 
                 if let defaultMailbox = viewModel.defaultMailbox,
-                   let mailboxManager = accountManager.getMailboxManager(for: defaultMailbox) {
-                    SelectedMailboxView(selectedMailboxManager: mailboxManager)
+                   let mailboxManager = accountManager.getMailboxManager(for: defaultMailbox),
+                   let user = accountManager.account(for: defaultMailbox.userId)?.user {
+                    SelectedMailboxView(selectedUser: user, selectedMailboxManager: mailboxManager)
                         .frame(maxHeight: .infinity, alignment: .top)
                 }
 

@@ -52,8 +52,7 @@ public enum PreviewHelper {
         )
         let apiFetcher = MailApiFetcher(token: fakeToken, delegate: PreviewHelperRefreshTokenDelegate())
         let contactManager = ContactManager(userId: 0, apiFetcher: apiFetcher)
-        return MailboxManager(account: PreviewHelper.sampleAccount,
-                              mailbox: sampleMailbox,
+        return MailboxManager(mailbox: sampleMailbox,
                               apiFetcher: apiFetcher,
                               contactManager: contactManager)
     }()
@@ -172,6 +171,14 @@ public enum PreviewHelper {
         userId: 0,
         expirationDate: Date()
     ))
+
+    public static let sampleUser = UserProfile(
+        id: 1,
+        displayName: "John Appleseed",
+        firstName: "John",
+        lastName: "Appleseed",
+        email: "mobiletest@ik.me"
+    )
 
     public static let sampleDraftContentManager = DraftContentManager(
         incompleteDraft: Draft(),

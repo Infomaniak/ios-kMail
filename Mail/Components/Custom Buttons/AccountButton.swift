@@ -27,6 +27,8 @@ import SwiftUI
 struct AccountButton: View {
     @LazyInjectService private var accountManager: AccountManager
 
+    @Environment(\.currentUser) private var currentUser
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingNewAccountListView = false
@@ -35,11 +37,9 @@ struct AccountButton: View {
         Button {
             isShowingNewAccountListView = true
         } label: {
-            if let currentAccountUser = mailboxManager.account.user {
-                AvatarView(mailboxManager: mailboxManager,
-                           contactConfiguration: .user(user: currentAccountUser))
-                    .accessibilityLabel(MailResourcesStrings.Localizable.titleMyAccount(1))
-            }
+            AvatarView(mailboxManager: mailboxManager,
+                       contactConfiguration: .user(user: currentUser.value))
+                .accessibilityLabel(MailResourcesStrings.Localizable.titleMyAccount(1))
         }
         .floatingPanel(
             isPresented: $isShowingNewAccountListView,

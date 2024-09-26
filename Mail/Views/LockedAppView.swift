@@ -72,7 +72,7 @@ struct LockedAppView: View {
             if await (try? appLockHelper.evaluatePolicy(reason: MailResourcesStrings.Localizable.lockAppTitle)) == true {
                 appLockHelper.setTime()
                 Task {
-                    navigationState.transitionToRootViewDestination(.mainView)
+                    navigationState.transitionToMainViewIfPossible(targetAccount: nil, targetMailbox: nil)
                 }
             } else {
                 isEvaluatingPolicy = false
