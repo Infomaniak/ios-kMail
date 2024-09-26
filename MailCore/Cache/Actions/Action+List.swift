@@ -87,7 +87,7 @@ extension Action: CaseIterable {
         let star = message.flagged
         let spam = message.folder?.role == .spam
         let print = origin.type == .floatingPanel(source: .messageList)
-        var tempListActions: [Action?] = [
+        let tempListActions: [Action?] = [
             .openMovePanel,
             spam ? .nonSpam : .reportJunk,
             unread ? .markAsRead : .markAsUnread,
@@ -392,6 +392,6 @@ public extension Action {
         id: "activeMultiselect",
         title: MailResourcesStrings.Localizable.buttonMultiselect,
         iconResource: MailResourcesAsset.checklist,
-        matomoName: "selectAll"
+        matomoName: ""
     )
 }
