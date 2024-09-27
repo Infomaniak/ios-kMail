@@ -74,7 +74,29 @@ struct DraggableThread: ViewModifier {
     func body(content: Content) -> some View {
         if #available(macCatalyst 16.0, iOS 16.0, *) {
             content
-                .draggable(DraggedThread(threadIds: draggedThreadId))
+                .draggable(DraggedThread(threadIds: draggedThreadId)) {
+                    ZStack(alignment: .bottomTrailing) {
+                        Image(systemName: "envelope.fill")
+                            .font(MailTextStyle.labelDraggableThread.font)
+                            .padding(value: .small)
+                        Text("\(draggedThreadId.count)")
+                            .padding(value: .small)
+                            .background(MailTextStyle.bodySmallAccent.color)
+                            .font(MailTextStyle.bodySmallAccent.font)
+                            .clipShape(Circle())
+                    }
+//                    ZStack(alignment: .bottomTrailing) {
+//                        Image(systemName: "envelope.fill")
+//                            .font(MailTextStyle.labelDraggableThread.font)
+//                        Text("\(draggedThreadId.count)")
+//                            .padding(value: .small)
+//                            .background(MailTextStyle.bodySmallAccent.color)
+//                            .font(MailTextStyle.bodySmallAccent.font)
+//                            .clipShape(Circle())
+//                            .offset(x: 10, y: 10)
+//                    }
+//                    .padding(value: .medium)
+                }
         } else {
             content
         }
