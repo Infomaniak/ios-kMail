@@ -48,7 +48,7 @@ struct UserAccountScene: Scene {
                 .standardWindow()
                 .environmentObject(rootViewState)
                 .sceneLifecycle(willEnterForeground: willEnterForeground, didEnterBackground: didEnterBackground)
-                .task(id: rootViewState.account) {
+                .task(id: rootViewState.account?.userId) {
                     cacheManager.refreshCacheData(account: rootViewState.account)
                 }
         }
@@ -76,8 +76,10 @@ struct UserAccountScene: Scene {
     }
 
     private func willEnterForeground() {
-        appLaunchCounter.increase()
-        reviewManager.decreaseOpeningUntilReview()
+        if rootViewState.state != .onboarding && rootViewState.state != .preloading {
+            appLaunchCounter.increase()
+            reviewManager.decreaseOpeningUntilReview()
+        }
         cacheManager.refreshCacheData(account: rootViewState.account)
         rootViewState.transitionToLockViewIfNeeded()
         checkAppVersion()
@@ -104,7 +106,7 @@ struct UserAccountScene: Scene {
                     }
                 case .isUpToDate:
                     if rootViewState.state == .updateRequired {
-                        rootViewState.transitionToMainViewIfPossible(targetAccount: nil, targetMailbox: nil)
+                        await rootViewState.transitionToMainViewIfPossible(targetAccount: nil, targetMailbox: nil)
                     }
                 }
             } catch {

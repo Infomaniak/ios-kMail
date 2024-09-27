@@ -29,7 +29,7 @@ struct AccountOptionsProvider: DynamicOptionsProvider {
         var accountSections = [ItemSection]()
         let groupedMailboxes = Dictionary(grouping: mailboxInfosManager.getMailboxes(), by: \.userId)
         for group in groupedMailboxes {
-            let accountName = accountManager.accounts.first { $0.userId == group.key }?.user?.email
+            let accountName = await accountManager.userProfileStore.getUserProfile(id: group.key)?.email
             accountSections.append(IntentItemSection(
                 "\(accountName ?? "")",
                 items: group.value.map { AccountEntity(id: $0.objectId, mailbox: $0.email) }

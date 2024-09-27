@@ -26,8 +26,6 @@ import NavigationBackport
 import SwiftUI
 
 struct SelectComposeMailboxView: View {
-    @LazyInjectService private var accountManager: AccountManager
-
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @Binding var composeMessageIntent: ComposeMessageIntent

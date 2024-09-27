@@ -162,16 +162,6 @@ public enum PreviewHelper {
 
     public static let sampleMergedContact = MergedContact(email: "mergedContact@example.com", local: nil, remote: nil)
 
-    public static let sampleAccount = Account(apiToken: ApiToken(
-        accessToken: "",
-        expiresIn: 0,
-        refreshToken: "",
-        scope: "",
-        tokenType: "",
-        userId: 0,
-        expirationDate: Date()
-    ))
-
     public static let sampleUser = UserProfile(
         id: 1,
         displayName: "John Appleseed",

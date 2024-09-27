@@ -46,7 +46,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     public static let appGroup = "group." + group
     public static let accessGroup: String = AccountManager.appIdentifierPrefix + AccountManager.group
 
-    @SendableProperty private var currentAccount: Account?
+    @SendableProperty private var currentAccount: ApiToken?
 
     public var currentUserId: Int {
         didSet {
@@ -67,6 +67,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         if let currentMailboxManager = getMailboxManager(for: currentMailboxId, userId: currentUserId) {
             return currentMailboxManager
         } else if let newCurrentMailbox = mailboxInfosManager.getMailboxes(for: currentUserId)
+            .sorted(by: { lhs, rhs in return lhs.isPrimary })
             .first(where: \.isAvailable) {
             setCurrentMailboxForCurrentAccount(mailbox: newCurrentMailbox)
             return getMailboxManager(for: newCurrentMailbox)
@@ -84,7 +85,11 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         return apiFetchers[currentUserId]
     }
 
-    public let accounts = SendableArray<Account>()
+    public var accounts: [ApiToken] {
+        return Array(tokenStore.getAllTokens().values)
+    }
+
+    public let userProfileStore = UserProfileStore()
     private let mailboxManagers = SendableDictionary<String, MailboxManager>()
     private let contactManagers = SendableDictionary<String, ContactManager>()
     private let apiFetchers = SendableDictionary<Int, MailApiFetcher>()
@@ -99,28 +104,11 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         case missingAPIFetcher
         case failedToRemoveToken
         case failedToDeleteAPIToken(wrapping: Error)
-        case failedToLoadAccounts(wrapping: Error)
-        case failedToSaveAccounts(wrapping: Error)
     }
 
     public init() {
         currentMailboxId = UserDefaults.shared.currentMailboxId
         currentUserId = UserDefaults.shared.currentMailUserId
-
-        forceReload()
-    }
-
-    // MARK: - Mailbox
-
-    public func getCurrentAccount() -> Account? {
-        return currentAccount
-    }
-
-    public func forceReload() {
-        currentMailboxId = UserDefaults.shared.currentMailboxId
-        currentUserId = UserDefaults.shared.currentMailUserId
-
-        reloadTokensAndAccounts()
 
         if let account = account(for: currentUserId) ?? accounts.first {
             setCurrentAccount(account: account)
@@ -129,20 +117,14 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
-    public func reloadTokensAndAccounts() {
-        accounts.removeAll()
-        let newAccounts = loadAccounts()
-        accounts.append(contentsOf: newAccounts)
+    // MARK: - Mailbox
 
-        // Also update current account reference to prevent mismatch
-        if let account = accounts.values.first(where: { $0.userId == currentAccount?.userId }) {
-            currentAccount = account
-        }
+    public func getCurrentAccount() -> ApiToken? {
+        return currentAccount
+    }
 
-        // remove accounts with no user
-        for account in accounts where account.user == nil {
-            removeAccountFor(userId: account.userId)
-        }
+    public func getCurrentUser() async -> InfomaniakCore.UserProfile? {
+        return await userProfileStore.getUserProfile(id: currentUserId)
     }
 
     public func getMailboxManager(for mailbox: Mailbox) -> MailboxManager? {
@@ -210,7 +192,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
-    public func createAndSetCurrentAccount(code: String, codeVerifier: String) async throws -> Account {
+    public func createAndSetCurrentAccount(code: String, codeVerifier: String) async throws -> ApiToken {
         let token = try await networkLoginService.apiTokenUsing(code: code, codeVerifier: codeVerifier)
         SentryDebug.setUserId(token.userId)
 
@@ -222,9 +204,9 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
-    private func createAndSetCurrentAccount(token: ApiToken) async throws -> Account {
+    private func createAndSetCurrentAccount(token: ApiToken) async throws -> ApiToken {
         let apiFetcher = MailApiFetcher(token: token, delegate: self)
-        let user = try await apiFetcher.userProfile(ignoreDefaultAvatar: true, dateFormat: .iso8601)
+        let user = try await userProfileStore.updateUserProfile(with: apiFetcher)
 
         let mailboxesResponse = try await apiFetcher.mailboxes()
         guard !mailboxesResponse.isEmpty else {
@@ -233,9 +215,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         matomo.track(eventWithCategory: .userInfo, action: .data, name: "nbMailboxes", value: Float(mailboxesResponse.count))
 
-        let newAccount = Account(apiToken: token)
-        newAccount.user = user
-        addAccount(account: newAccount, token: token)
+        addAccount(token: token)
 
         try? await featureFlagsManager.fetchFlags()
 
@@ -247,16 +227,14 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             let currentMailboxManager = getMailboxManager(for: mainMailbox)
             try? await currentMailboxManager?.refreshAllFolders()
 
-            setCurrentAccount(account: newAccount)
+            setCurrentAccount(account: token)
             setCurrentMailboxForCurrentAccount(mailbox: mainMailbox)
         }
 
-        saveAccounts()
-
-        return newAccount
+        return token
     }
 
-    public func updateUser(for account: Account?) async throws {
+    public func updateUser(for account: ApiToken?) async throws {
         guard let account,
               let token = tokenStore.tokenFor(userId: account.userId) else {
             SentryDebug.captureNoTokenError(account: account)
@@ -264,8 +242,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
 
         let apiFetcher = getApiFetcher(for: account.userId, token: token)
-        let user = try await apiFetcher.userProfile(ignoreDefaultAvatar: true, dateFormat: .iso8601)
-        account.user = user
+        let user = try await userProfileStore.updateUserProfile(with: apiFetcher)
 
         try? await featureFlagsManager.fetchFlags()
 
@@ -292,8 +269,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         if currentMailboxManager?.mailbox.isAvailable == false {
             switchToFirstValidMailboxManager()
         }
-
-        saveAccounts()
     }
 
     private func fetchMailboxesMetadata(mailboxes: [Mailbox], apiFetcher: MailApiFetcher) async {
@@ -317,41 +292,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
-    public func loadAccounts() -> [Account] {
-        var loadedAccounts = [Account]()
-        if let groupDirectoryURL = FileManager.default
-            .containerURL(forSecurityApplicationGroupIdentifier: AccountManager.appGroup)?
-            .appendingPathComponent("preferences", isDirectory: true) {
-            let decoder = JSONDecoder()
-            do {
-                let data = try Data(contentsOf: groupDirectoryURL.appendingPathComponent("accounts.json"))
-                let savedAccounts = try decoder.decode([Account].self, from: data)
-                loadedAccounts = savedAccounts
-            } catch {
-                logError(.failedToLoadAccounts(wrapping: error))
-                Logger.general.error("Error loading accounts \(error)")
-            }
-        }
-        return loadedAccounts
-    }
-
-    public func saveAccounts() {
-        if let groupDirectoryURL = FileManager.default
-            .containerURL(forSecurityApplicationGroupIdentifier: AccountManager.appGroup)?
-            .appendingPathComponent("preferences/", isDirectory: true) {
-            let encoder = JSONEncoder()
-            if let data = try? encoder.encode(accounts.values) {
-                do {
-                    try FileManager.default.createDirectory(atPath: groupDirectoryURL.path, withIntermediateDirectories: true)
-                    try data.write(to: groupDirectoryURL.appendingPathComponent("accounts.json"))
-                } catch {
-                    logError(.failedToSaveAccounts(wrapping: error))
-                    Logger.general.error("Error saving accounts \(error)")
-                }
-            }
-        }
-    }
-
     public func switchToFirstValidMailboxManager() {
         // Current mailbox is valid
         if let firstValidMailboxManager = currentMailboxManager,
@@ -371,19 +311,17 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     public func switchAccount(newUserId: Int) {
-        guard let newAccount = accounts.values.first(where: { $0.userId == newUserId }) else { return }
+        guard let newAccount = accounts.first(where: { $0.userId == newUserId }) else { return }
         setCurrentAccount(account: newAccount)
         let mailboxes = mailboxInfosManager.getMailboxes(for: newUserId)
         if let defaultMailbox = (mailboxes.first(where: \.isPrimary) ?? mailboxes.first) {
             setCurrentMailboxForCurrentAccount(mailbox: defaultMailbox)
         }
-        saveAccounts()
     }
 
     public func switchMailbox(newMailbox: Mailbox) {
         Task {
             self.setCurrentMailboxForCurrentAccount(mailbox: newMailbox, refresh: false)
-            self.saveAccounts()
             SentryDebug.switchMailboxBreadcrumb(mailboxObjectId: newMailbox.objectId)
 
             guard let mailboxManager = getMailboxManager(for: newMailbox) else {
@@ -459,7 +397,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         try await updateUser(for: currentAccount)
     }
 
-    public func setCurrentAccount(account: Account) {
+    public func setCurrentAccount(account: ApiToken) {
         currentAccount = account
         currentUserId = account.userId
         if !Bundle.main.isExtension {
@@ -474,13 +412,11 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
-    public func addAccount(account: Account, token: ApiToken) {
-        if accounts.values.contains(account) {
+    public func addAccount(token: ApiToken) {
+        if accounts.contains(where: { $0.userId == token.userId }) {
             removeAccountFor(userId: token.userId)
         }
-        accounts.append(account)
         tokenStore.addToken(newToken: token)
-        saveAccounts()
     }
 
     public func removeAccountFor(userId: Int) {
@@ -495,7 +431,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         mailboxManagers.removeAll()
         contactManagers.removeAll()
         apiFetchers.removeAll()
-        accounts.removeAll { $0.userId == userId }
     }
 
     public func removeTokenAndAccountFor(userId: Int) {
@@ -514,16 +449,16 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
-    public func account(for userId: Int) -> Account? {
-        return accounts.values.first { $0.userId == userId }
+    public func account(for userId: Int) -> ApiToken? {
+        return accounts.first { $0.userId == userId }
     }
 
-    public func enableBugTrackerIfAvailable() {
-        if let currentAccount,
-           let token = tokenStore.tokenFor(userId: currentAccount.userId),
-           currentAccount.user?.isStaff == true {
+    public func enableBugTrackerIfAvailable() async {
+        if let currentUser = await userProfileStore.getUserProfile(id: currentUserId),
+           let token = tokenStore.tokenFor(userId: currentUser.id),
+           currentUser.isStaff == true {
             bugTracker.activateOnScreenshot()
-            let apiFetcher = getApiFetcher(for: currentAccount.userId, token: token)
+            let apiFetcher = getApiFetcher(for: currentUser.id, token: token)
             bugTracker.configure(with: apiFetcher)
         } else {
             bugTracker.stopActivatingOnScreenshot()

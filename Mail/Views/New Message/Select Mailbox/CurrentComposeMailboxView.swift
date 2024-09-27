@@ -27,7 +27,6 @@ import NavigationBackport
 import SwiftUI
 
 struct CurrentComposeMailboxView: View {
-    @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -85,7 +84,9 @@ struct CurrentComposeMailboxView: View {
             }
             .padding(.horizontal, value: .medium)
             .mailboxCellStyle(.account)
-            .onAppear(perform: viewModel.initDefaultAccountAndMailbox)
+            .task {
+                await viewModel.initProfilesSelectDefaultAccountAndMailbox()
+            }
             .backButtonDisplayMode(.minimal)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

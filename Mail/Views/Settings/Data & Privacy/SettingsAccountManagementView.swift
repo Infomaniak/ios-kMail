@@ -40,7 +40,6 @@ final class SettingsAccountManagementViewDelegate: DeleteAccountDelegate {
                 accountManager.switchAccount(newUserId: nextAccount.userId)
             }
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackBarAccountDeleted)
-            accountManager.saveAccounts()
         }
     }
 
@@ -57,7 +56,7 @@ struct SettingsAccountManagementView: View {
     @ModalState(wrappedValue: nil, context: ContextKeys.account) private var presentedAccountDeletionToken: ApiToken?
     @State private var delegate = SettingsAccountManagementViewDelegate()
 
-    let account: Account
+    let user: UserProfile
 
     var body: some View {
         ScrollView {
@@ -66,7 +65,7 @@ struct SettingsAccountManagementView: View {
                     VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
                         Text(MailResourcesStrings.Localizable.usernameTitle)
                             .textStyle(.header2)
-                        Text(account.user.displayName)
+                        Text(user.displayName)
                             .textStyle(.bodySecondary)
                     }
                     .lineLimit(1)
@@ -74,7 +73,7 @@ struct SettingsAccountManagementView: View {
                     VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
                         Text(MailResourcesStrings.Localizable.attachMailboxInputHint)
                             .textStyle(.header2)
-                        Text(account.user.email)
+                        Text(user.email)
                             .textStyle(.bodySecondary)
                     }
                     .lineLimit(1)
@@ -85,7 +84,7 @@ struct SettingsAccountManagementView: View {
 
                 Button {
                     matomo.track(eventWithCategory: .account, name: Action.deleteAccount.matomoName)
-                    presentedAccountDeletionToken = tokenStore.tokenFor(userId: account.userId)
+                    presentedAccountDeletionToken = tokenStore.tokenFor(userId: user.id)
                 } label: {
                     ActionButtonLabel(action: Action.deleteAccount)
                 }
@@ -113,5 +112,5 @@ extension ApiToken: @retroactive Identifiable {
 }
 
 #Preview {
-    SettingsAccountManagementView(account: PreviewHelper.sampleAccount)
+    SettingsAccountManagementView(user: PreviewHelper.sampleUser)
 }

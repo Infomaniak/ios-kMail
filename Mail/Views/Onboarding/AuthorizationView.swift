@@ -117,7 +117,7 @@ struct AuthorizationView: View {
     func requestNotificationsAuthorization() {
         Task {
             await NotificationsHelper.askForPermissions()
-            navigationState.transitionToMainViewIfPossible(targetAccount: nil, targetMailbox: nil)
+            await navigationState.transitionToMainViewIfPossible(targetAccount: nil, targetMailbox: nil)
         }
     }
 }

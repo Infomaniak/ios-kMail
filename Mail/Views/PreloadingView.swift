@@ -35,6 +35,8 @@ extension VerticalAlignment {
 }
 
 struct PreloadingView: View {
+    @LazyInjectService private var tokenStore: TokenStore
+    @LazyInjectService private var appLaunchCounter: AppLaunchCounter
     @LazyInjectService private var accountManager: AccountManager
 
     @EnvironmentObject private var rootViewState: RootViewState
@@ -60,6 +62,12 @@ struct PreloadingView: View {
                 .padding(.bottom, value: .medium)
         }
         .task {
+            guard !appLaunchCounter.isFirstLaunch else {
+                tokenStore.removeAllTokens()
+                rootViewState.transitionToRootViewState(.onboarding)
+                return
+            }
+
             guard let currentAccount = accountManager.getCurrentAccount() else {
                 rootViewState.transitionToRootViewState(.onboarding)
                 return
@@ -70,7 +78,7 @@ struct PreloadingView: View {
                     if targetMailboxManager.getFolder(with: .inbox) == nil {
                         try await targetMailboxManager.refreshAllFolders()
                     }
-                    rootViewState.transitionToMainViewIfPossible(
+                    await rootViewState.transitionToMainViewIfPossible(
                         targetAccount: currentAccount,
                         targetMailbox: targetMailboxManager.mailbox
                     )
@@ -83,7 +91,7 @@ struct PreloadingView: View {
                     try await currentMailboxManager.refreshAllFolders()
                 }
 
-                rootViewState.transitionToMainViewIfPossible(targetAccount: currentAccount, targetMailbox: nil)
+                await rootViewState.transitionToMainViewIfPossible(targetAccount: currentAccount, targetMailbox: nil)
             } catch let error as MailError where error == MailError.noMailbox {
                 rootViewState.transitionToRootViewState(.noMailboxes)
             } catch {

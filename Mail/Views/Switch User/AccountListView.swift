@@ -26,10 +26,11 @@ import MailResources
 import SwiftUI
 
 struct AccountListView: View {
-    @State private var isShowingNewAccountView = false
-
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var accountManager: AccountManager
+
+    @State private var isShowingNewAccountView = false
+    @State private var users: [UserProfile]?
 
     /// Optional as this view can be displayed from a context without a mailboxManager available
     let mailboxManager: MailboxManager?
@@ -37,13 +38,20 @@ struct AccountListView: View {
     var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: IKPadding.extraSmall) {
-                ForEach(accountManager.accounts.values) { account in
-                    AccountCellView(
-                        selectedUserId: .constant(accountManager.currentUserId),
-                        mailboxManager: mailboxManager,
-                        user: account.user
-                    )
-                    .padding(.horizontal, value: .medium)
+                if let users {
+                    ForEach(users) { user in
+                        AccountCellView(
+                            selectedUserId: .constant(accountManager.currentUserId),
+                            mailboxManager: mailboxManager,
+                            user: user
+                        )
+                        .padding(.horizontal, value: .medium)
+                    }
+                } else {
+                    ForEach(accountManager.accounts) { _ in
+                        AccountCellPlaceholderView()
+                            .padding(.horizontal, value: .medium)
+                    }
                 }
             }
 
@@ -67,11 +75,18 @@ struct AccountListView: View {
 
     private func updateUsers() async throws {
         await withThrowingTaskGroup(of: Void.self) { group in
+            var storedUsers = [UserProfile]()
             for account in accountManager.accounts {
+                if let user = await accountManager.userProfileStore.getUserProfile(id: account.userId) {
+                    storedUsers.append(user)
+                }
+
                 group.addTask {
                     _ = try await accountManager.updateUser(for: account)
                 }
             }
+
+            users = storedUsers
         }
     }
 }

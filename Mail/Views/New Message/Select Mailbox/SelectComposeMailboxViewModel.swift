@@ -43,21 +43,31 @@ final class SelectComposeMailboxViewModel: ObservableObject {
 
     init(composeMessageIntent: Binding<ComposeMessageIntent>) {
         self.composeMessageIntent = composeMessageIntent
-
-        listProfiles()
     }
 
-    func listProfiles() {
-        userProfiles = accountManager.accounts.compactMap { $0.user }.sorted { lhs, rhs in
-            if (lhs.id == accountManager.currentUserId) != (rhs.id == accountManager.currentUserId) {
-                return lhs.id == accountManager.currentUserId
-            } else {
-                return lhs.displayName < rhs.displayName
+    @MainActor
+    func initProfilesSelectDefaultAccountAndMailbox() async {
+        await listProfiles()
+        initDefaultAccountAndMailbox()
+    }
+
+    @MainActor
+    private func listProfiles() async {
+        let fetchedUserProfiles = await accountManager.accounts
+            .asyncMap { await self.accountManager.userProfileStore.getUserProfile(id: $0.userId) }
+            .compactMap { $0 }
+            .sorted { lhs, rhs in
+                if (lhs.id == accountManager.currentUserId) != (rhs.id == accountManager.currentUserId) {
+                    return lhs.id == accountManager.currentUserId
+                } else {
+                    return lhs.displayName < rhs.displayName
+                }
             }
-        }
+
+        userProfiles = fetchedUserProfiles
     }
 
-    func initDefaultAccountAndMailbox() {
+    private func initDefaultAccountAndMailbox() {
         guard let defaultMailbox = accountManager.currentMailboxManager?.mailbox,
               let mailboxManager = accountManager.getMailboxManager(for: defaultMailbox),
               let user = userProfiles.first(where: { $0.id == defaultMailbox.userId }) else {

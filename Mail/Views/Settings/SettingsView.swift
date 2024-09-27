@@ -213,12 +213,10 @@ struct SettingsView: View {
                         SettingsDataManagementView()
                     }
 
-                    if let account = accountManager.getCurrentAccount() {
-                        SettingsSubMenuCell(
-                            title: MailResourcesStrings.Localizable.settingsAccountManagementTitle
-                        ) {
-                            SettingsAccountManagementView(account: account)
-                        }
+                    SettingsSubMenuCell(
+                        title: MailResourcesStrings.Localizable.settingsAccountManagementTitle
+                    ) {
+                        SettingsAccountManagementView(user: currentUser.value)
                     }
                 }
             }

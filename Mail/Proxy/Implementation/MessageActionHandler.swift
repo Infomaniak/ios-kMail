@@ -112,7 +112,7 @@ public struct MessageActionHandler: MessageActionHandlable {
     private func switchAccountIfNeeded(mailbox: Mailbox, mailboxManager: MailboxManager) {
         if accountManager.currentMailboxManager?.mailbox != mailboxManager.mailbox {
             if accountManager.getCurrentAccount()?.userId != mailboxManager.mailbox.userId {
-                if let switchedAccount = accountManager.accounts.values
+                if let switchedAccount = accountManager.accounts
                     .first(where: { $0.userId == mailboxManager.mailbox.userId }) {
                     accountManager.switchAccount(newUserId: switchedAccount.userId)
                     accountManager.switchMailbox(newMailbox: mailbox)
