@@ -22,7 +22,6 @@ import InfomaniakDI
 import MailCore
 import MailCoreUI
 import SwiftUI
-import UniformTypeIdentifiers
 
 extension ThreadListCell: Equatable {
     static func == (lhs: ThreadListCell, rhs: ThreadListCell) -> Bool {
