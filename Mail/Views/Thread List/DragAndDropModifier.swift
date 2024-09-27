@@ -10,7 +10,7 @@ import SwiftUI
 
 @available(macCatalyst 16.0, iOS 16.0, *)
 struct DraggedThread: Transferable, Codable {
-    let threadId: String
+    let threadIds: [String]
 
     static var transferRepresentation: some TransferRepresentation {
         CodableRepresentation(contentType: .plainText)
@@ -19,15 +19,16 @@ struct DraggedThread: Transferable, Codable {
 
 struct DropThreadHandler: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var actionsManager: ActionsManager
 
     let destinationFolder: Folder
 
     func body(content: Content) -> some View {
         if #available(macCatalyst 16.0, iOS 16.0, *) {
             content
-                .dropDestination(for: DraggedThread.self) { items, _ in
-                    for item in items {
-                        handleDroppedThread(item.threadId)
+                .dropDestination(for: DraggedThread.self) { draggedThreads, _ in
+                    for thread in draggedThreads {
+                        handleDroppedThreads(thread)
                     }
                     return true
                 }
@@ -36,23 +37,44 @@ struct DropThreadHandler: ViewModifier {
         }
     }
 
-    private func handleDroppedThread(_ threadId: String) {
-        if let threadObject = mailboxManager.getThread(from: threadId), let originFolder = threadObject.folder?.freezeIfNeeded() {
-            let messages = threadObject.messages.freezeIfNeeded().toArray()
+    @available(macCatalyst 16.0, iOS 16.0, *)
+    private func handleDroppedThreads(_ draggedThreads: DraggedThread) {
+        var messages: [Message] = []
+        var originFolder: Folder?
+        for threadId in draggedThreads.threadIds {
+            if let threadObject = mailboxManager.getThread(from: threadId),
+               let threadFolder = threadObject.folder?.freezeIfNeeded() {
+                guard !threadFolder.isEqual(destinationFolder) else { return }
+
+                messages += threadObject.messages.freezeIfNeeded().toArray()
+                guard originFolder != nil else {
+                    originFolder = threadFolder
+                    continue
+                }
+            }
+        }
+
+        if let originFolder {
             Task {
-                try await mailboxManager.move(messages: messages, to: destinationFolder, origin: originFolder)
+                await tryOrDisplayError {
+                    try await actionsManager.performMove(
+                        messages: messages,
+                        from: originFolder,
+                        to: destinationFolder
+                    )
+                }
             }
         }
     }
 }
 
 struct DraggableThread: ViewModifier {
-    let draggedThreadId: String
+    let draggedThreadId: [String]
 
     func body(content: Content) -> some View {
         if #available(macCatalyst 16.0, iOS 16.0, *) {
             content
-                .draggable(DraggedThread(threadId: draggedThreadId))
+                .draggable(DraggedThread(threadIds: draggedThreadId))
         } else {
             content
         }
@@ -64,7 +86,7 @@ extension View {
         modifier(DropThreadHandler(destinationFolder: destinationFolder))
     }
 
-    func draggableThread(_ draggedThreadId: String) -> some View {
-        modifier(DraggableThread(draggedThreadId: draggedThreadId))
+    func draggableThread(_ draggedThreadId: String, _ selectedThreadIds: [String]) -> some View {
+        modifier(DraggableThread(draggedThreadId: selectedThreadIds + [draggedThreadId]))
     }
 }

@@ -95,7 +95,6 @@ struct ThreadListCell: View {
             nearestFlushAlert: $flushAlert
         )
         .actionsContextMenu(thread: thread, toggleMultipleSelection: toggleMultipleSelection)
-        .draggableThread(thread.uid)
     }
 
     private func didTapCell() {
