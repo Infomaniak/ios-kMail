@@ -31,9 +31,8 @@ final class MailboxManagerTests: XCTestCase {
 
         MockingHelper.clearRegisteredTypes()
 
-        let accountManager = AccountManager()
         let accountManagerFactory = Factory(type: AccountManager.self) { _, _ in
-            accountManager
+            AccountManager()
         }
 
         MockingHelper.registerConcreteTypes(configuration: .realApp, extraFactories: [accountManagerFactory])
