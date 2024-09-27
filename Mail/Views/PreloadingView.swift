@@ -75,6 +75,10 @@ struct PreloadingView: View {
 
             do {
                 if let targetMailboxManager = accountManager.currentMailboxManager {
+                    if await accountManager.getCurrentUser() == nil {
+                        try await accountManager.updateUser(for: currentAccount)
+                    }
+
                     if targetMailboxManager.getFolder(with: .inbox) == nil {
                         try await targetMailboxManager.refreshAllFolders()
                     }
