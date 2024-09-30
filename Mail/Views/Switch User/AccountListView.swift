@@ -31,23 +31,11 @@ struct AccountListView: View {
 
     @State private var isShowingNewAccountView = false
     @State private var users: [UserProfile]?
-    @Environment(\.presentationMode) var presentationMode
-    @State private var isShowingNewAccountView = false
 
     /// Optional as this view can be displayed from a context without a mailboxManager available
     let mailboxManager: MailboxManager?
 
     var body: some View {
-        HStack {
-            Button(action: {
-                presentationMode.wrappedValue.dismiss()
-            }) {
-                Image(systemName: "xmark")
-                    .foregroundColor(.primary)
-                    .padding()
-            }
-            Spacer()
-        }
         VStack(spacing: 0) {
             VStack(spacing: IKPadding.extraSmall) {
                 if let users {

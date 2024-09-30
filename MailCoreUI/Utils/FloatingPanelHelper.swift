@@ -68,6 +68,8 @@ public extension View {
 public struct SelfSizingPanelBackportViewModifier: ViewModifier {
     @State private var currentDetents: Set<Backport.PresentationDetent> = [.medium]
 
+    @Environment(\.dismiss) private var dismiss
+
     let dragIndicator: Visibility
     let title: String?
 
@@ -101,8 +103,9 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
         VStack(spacing: IKPadding.small) {
             if let title {
                 Text(title)
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
+                    .font(Font(UIFont.preferredFont(forTextStyle: .headline)))
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.top, IKPadding.medium)
             }
 
             ScrollView {
@@ -119,6 +122,16 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
                 }
             }
         }
+        .overlay(alignment: .topTrailing) {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "xmark")
+                    .foregroundColor(.primary)
+            }
+            .padding(.top, IKPadding.medium)
+            .padding(.trailing, IKPadding.medium)
+        }
         .padding(.top, topPadding)
         .backport.presentationDragIndicator(backportDragIndicator)
         .backport.presentationDetents(currentDetents)
@@ -130,6 +143,8 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
 public struct SelfSizingPanelViewModifier: ViewModifier {
     @State private var currentDetents: Set<PresentationDetent> = [.height(0)]
     @State private var selection: PresentationDetent = .height(0)
+
+    @Environment(\.dismiss) private var dismiss
 
     let dragIndicator: Visibility
     let title: String?
@@ -154,7 +169,8 @@ public struct SelfSizingPanelViewModifier: ViewModifier {
             if let title {
                 Text(title)
                     .font(Font(UIFont.preferredFont(forTextStyle: .headline)))
-                    .frame(maxWidth: .infinity)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.top, IKPadding.medium)
             }
 
             ScrollView {
@@ -178,7 +194,16 @@ public struct SelfSizingPanelViewModifier: ViewModifier {
                 }
             }
         }
-        .padding(.top, topPadding)
+        .overlay(alignment: .topTrailing) {
+            Button {
+                dismiss()
+            } label: {
+                Image(systemName: "xmark")
+                    .foregroundColor(.primary)
+            }
+            .padding(.top, IKPadding.medium)
+            .padding(.trailing, IKPadding.medium)
+        }
         .presentationDetents(currentDetents, selection: $selection)
         .presentationDragIndicator(dragIndicator)
         .ikPresentationCornerRadius(20)
