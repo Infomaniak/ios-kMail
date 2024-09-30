@@ -9,6 +9,7 @@ disabled_rules:
  - cyclomatic_complexity
  - inclusive_language
  - for_where
+ - optional_data_string_conversion
 opt_in_rules:
  - closure_end_indentation
  - closure_spacing
