@@ -74,29 +74,25 @@ struct DraggableThread: ViewModifier {
     func body(content: Content) -> some View {
         if #available(macCatalyst 16.0, iOS 16.0, *) {
             content
+                .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 7))
+            #if os(macOS) || targetEnvironment(macCatalyst)
                 .draggable(DraggedThread(threadIds: draggedThreadId)) {
                     ZStack(alignment: .bottomTrailing) {
                         Image(systemName: "envelope.fill")
                             .font(MailTextStyle.labelDraggableThread.font)
                             .padding(value: .small)
-                        Text("\(draggedThreadId.count)")
-                            .padding(value: .small)
-                            .background(MailTextStyle.bodySmallAccent.color)
-                            .font(MailTextStyle.bodySmallAccent.font)
-                            .clipShape(Circle())
+                        if draggedThreadId.count > 1 {
+                            Text("\(draggedThreadId.count)")
+                                .padding(value: .small)
+                                .background(MailTextStyle.bodySmallAccent.color)
+                                .font(MailTextStyle.bodySmallAccent.font)
+                                .clipShape(Circle())
+                        }
                     }
-//                    ZStack(alignment: .bottomTrailing) {
-//                        Image(systemName: "envelope.fill")
-//                            .font(MailTextStyle.labelDraggableThread.font)
-//                        Text("\(draggedThreadId.count)")
-//                            .padding(value: .small)
-//                            .background(MailTextStyle.bodySmallAccent.color)
-//                            .font(MailTextStyle.bodySmallAccent.font)
-//                            .clipShape(Circle())
-//                            .offset(x: 10, y: 10)
-//                    }
-//                    .padding(value: .medium)
                 }
+            #else
+                .draggable(DraggedThread(threadIds: draggedThreadId))
+            #endif
         } else {
             content
         }
@@ -108,7 +104,7 @@ extension View {
         modifier(DropThreadHandler(destinationFolder: destinationFolder))
     }
 
-    func draggableThread(_ draggedThreadId: String, _ selectedThreadIds: [String]) -> some View {
-        modifier(DraggableThread(draggedThreadId: selectedThreadIds + [draggedThreadId]))
+    func draggableThread(_ draggedThreadIds: [String]) -> some View {
+        modifier(DraggableThread(draggedThreadId: draggedThreadIds))
     }
 }

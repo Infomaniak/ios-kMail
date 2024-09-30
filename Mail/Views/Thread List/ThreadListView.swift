@@ -135,7 +135,7 @@ struct ThreadListView: View {
                                                    isMultiSelected: multipleSelectionViewModel.selectedItems.ids
                                                        .contains(thread.id),
                                                    flushAlert: $flushAlert)
-                                        .draggableThread(thread.uid, selectedThreadIds)
+                                        .draggableThread(selectedThreadIds.isEmpty ? [thread.uid] : selectedThreadIds)
                                 }
                                 .threadListCellAppearance()
                                 .tag(thread)
