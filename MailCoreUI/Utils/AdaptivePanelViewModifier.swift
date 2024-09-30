@@ -52,7 +52,7 @@ public struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>:
                     }
                     .padding(.vertical)
                     .frame(idealWidth: 400)
-                    //DO NOT SUPPRESS the scaleEffect, it's required§ for the ActionsViews to be white
+                    // DO NOT SUPPRESS the scaleEffect it's required for the contrast for macOS
                     .background(MailResourcesAsset.backgroundColor.swiftUIColor.scaleEffect(1.5))
                 }
             }
