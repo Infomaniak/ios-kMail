@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailResources
@@ -83,15 +84,20 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
                 return
             }
 
+            guard let currentUser = await accountManager.userProfileStore.getUserProfile(id: userId) else { return }
+
             guard let message = try? await NotificationsHelper.fetchMessage(uid: messageUid, in: mailboxManager) else {
                 stopAnimating(displayError: true)
                 return
             }
 
+            let messageWorker = MessagesWorker()
             let messageView = ScrollView {
                 MessageView(threadForcedExpansion: .constant([messageUid: .expanded]), message: message)
                     .environment(\.isMessageInteractive, false)
+                    .environment(\.currentUser, MandatoryEnvironmentContainer(value: currentUser))
                     .environmentObject(mailboxManager)
+                    .environmentObject(messageWorker)
             }
 
             let hostingViewController = UIHostingController(rootView: messageView)
