@@ -127,7 +127,7 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
                 dismiss()
             } label: {
                 Image(systemName: "xmark")
-                    .foregroundColor(.primary)
+                    .foregroundColor(.accentColor)
             }
             .padding(.top, IKPadding.medium)
             .padding(.trailing, IKPadding.medium)
@@ -199,7 +199,7 @@ public struct SelfSizingPanelViewModifier: ViewModifier {
                 dismiss()
             } label: {
                 Image(systemName: "xmark")
-                    .foregroundColor(.primary)
+                    .foregroundColor(.accentColor)
             }
             .padding(.top, IKPadding.medium)
             .padding(.trailing, IKPadding.medium)
