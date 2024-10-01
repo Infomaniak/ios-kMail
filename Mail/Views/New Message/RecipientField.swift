@@ -51,34 +51,35 @@ struct RecipientField: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            if !recipients.isEmpty {
-                RecipientsList(
-                    focusedField: _focusedField,
-                    recipients: $recipients,
-                    isCurrentFieldFocused: isCurrentFieldFocused,
-                    type: type
-                )
-            }
+        HStack {
+            VStack(spacing: 0) {
+                if !recipients.isEmpty {
+                    RecipientsList(
+                        focusedField: _focusedField,
+                        recipients: $recipients,
+                        isCurrentFieldFocused: isCurrentFieldFocused,
+                        type: type
+                    )
+                }
 
-            HStack {
                 RecipientsTextField(text: $currentText, onSubmit: onSubmit, onBackspace: handleBackspaceTextField)
                     .focused($focusedField, equals: type)
                     .padding(.top, isCurrentFieldFocused && !recipients.isEmpty ? IKPadding.extraSmall : 0)
                     .padding(.top, IKPadding.recipientChip.top)
                     .padding(.bottom, IKPadding.recipientChip.bottom)
                     .frame(width: isExpanded ? nil : 0, height: isExpanded ? nil : 0)
-
-                Button {
-                    currentText = ""
-                } label: {
-                    MailResourcesAsset.remove
-                        .iconSize(.medium)
-                }
-                .foregroundStyle(MailResourcesAsset.textTertiaryColor)
-                .opacity(shouldDisplayEmptyButton ? 1 : 0)
-                .padding(.trailing, IKPadding.medium)
             }
+            .padding(.vertical, value: .intermediate)
+            Button {
+                currentText = ""
+            } label: {
+                MailResourcesAsset.remove
+                    .iconSize(.medium)
+                    .padding(IKPadding.medium)
+                    .border(.red, width: 1)
+            }
+            .foregroundStyle(MailResourcesAsset.textTertiaryColor)
+            .opacity(shouldDisplayEmptyButton ? 1 : 0)
         }
     }
 

@@ -80,7 +80,6 @@ struct ComposeMessageCellRecipients: View {
                             }
                         }
                     }
-                    .padding(.vertical, value: .intermediate)
 
                     if shouldDisplayChevron {
                         Spacer()
