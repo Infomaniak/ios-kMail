@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailResources
 import SwiftUI
 
 public extension View {
@@ -51,6 +52,8 @@ public struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>:
                     }
                     .padding(.vertical)
                     .frame(idealWidth: 400)
+                    // DO NOT SUPPRESS the scaleEffect it's required for the contrast for macOS
+                    .background(MailResourcesAsset.backgroundColor.swiftUIColor.scaleEffect(1.5))
                 }
             }
     }
