@@ -59,18 +59,6 @@ struct ThreadListView: View {
         !networkMonitor.isConnected && viewModel.sections == nil
     }
 
-    private var selectedThreadIds: [String] {
-        if let section = viewModel.sections {
-            return section.flatMap {
-                $0.threads
-                    .filter { multipleSelectionViewModel.selectedItems.ids.contains($0.uid)
-                    }
-                    .map { $0.uid }
-            }
-        }
-        return []
-    }
-
     init(mailboxManager: MailboxManager,
          frozenFolder: Folder,
          selectedThreadOwner: SelectedThreadOwnable) {
@@ -135,7 +123,8 @@ struct ThreadListView: View {
                                                    isMultiSelected: multipleSelectionViewModel.selectedItems.ids
                                                        .contains(thread.id),
                                                    flushAlert: $flushAlert)
-                                        .draggableThread(selectedThreadIds.isEmpty ? [thread.uid] : selectedThreadIds)
+                                        .draggableThread(multipleSelectionViewModel.selectedItems.ids
+                                            .isEmpty ? [thread.uid] : multipleSelectionViewModel.selectedItems.ids)
                                 }
                                 .threadListCellAppearance()
                                 .tag(thread)

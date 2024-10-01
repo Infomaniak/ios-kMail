@@ -210,12 +210,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     }
 
     public func getThread(from threadId: String) -> Thread? {
-        let threads = transactionExecutor.fetchResults(ofType: Thread.self) { collection in
-            collection
-                .filter("uid == %@", threadId)
-        }
-        guard threads.count == 1 else { return nil }
-        return threads.first?.freezeIfNeeded()
+        guard let thread = transactionExecutor.fetchObject(ofType: Thread.self, forPrimaryKey: threadId) else { return nil }
+        return thread.freezeIfNeeded()
     }
 }
 

@@ -85,29 +85,29 @@ struct DropThreadHandler: ViewModifier {
 }
 
 struct DraggableThread: ViewModifier {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
     let draggedThreadId: [String]
 
     func body(content: Content) -> some View {
         if #available(macCatalyst 16.0, iOS 16.0, *) {
             content
-                .contentShape(.dragPreview, RoundedRectangle(cornerRadius: 7))
             #if os(macOS) || targetEnvironment(macCatalyst)
-                .draggable(DraggedThread(threadIds: draggedThreadId)) {
-                    ZStack(alignment: .bottomTrailing) {
-                        Image(systemName: "envelope.fill")
-                            .font(MailTextStyle.labelDraggableThread.font)
+            .draggable(DraggedThread(threadIds: draggedThreadId)) {
+                ZStack(alignment: .bottomTrailing) {
+                    Image(systemName: "envelope.fill")
+                        .font(MailTextStyle.labelDraggableThread.font)
+                        .padding(value: .small)
+                    if draggedThreadId.count > 1 {
+                        Text("\(draggedThreadId.count)")
                             .padding(value: .small)
-                        if draggedThreadId.count > 1 {
-                            Text("\(draggedThreadId.count)")
-                                .padding(value: .small)
-                                .background(MailTextStyle.bodySmallAccent.color)
-                                .font(MailTextStyle.bodySmallAccent.font)
-                                .clipShape(Circle())
-                        }
+                            .background(accentColor.secondary.swiftUIColor)
+                            .font(MailTextStyle.bodySmallAccent.font)
+                            .clipShape(Circle())
                     }
                 }
+            }
             #else
-                .draggable(DraggedThread(threadIds: draggedThreadId))
+            .draggable(DraggedThread(threadIds: draggedThreadId))
             #endif
         } else {
             content
