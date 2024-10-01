@@ -25,9 +25,10 @@ import Popovers
 import SwiftUI
 
 struct ComposeMessageMacosToolbarView: View {
-    @ObservedObject var textAttributes: TextAttributes
     @Binding var isShowingLinkAlert: Bool
     @Binding var isShowingFileSelection: Bool
+
+    @ObservedObject var textAttributes: TextAttributes
 
     private let extras: [EditorToolbarAction] = [
         .attachment,
@@ -52,7 +53,7 @@ struct ComposeMessageMacosToolbarView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HStack {
+            HStack(spacing: IKPadding.extraSmall) {
                 ForEach(allItems, id: \.self) { items in
                     ForEach(items, id: \.self) { item in
                         Button {
@@ -63,7 +64,9 @@ struct ComposeMessageMacosToolbarView: View {
                             )
                         } label: {
                             item.icon.swiftUIImage
-                                .padding(IKPadding.medium)
+                                .resizable()
+                                .frame(width: 16, height: 16)
+                                .padding(value: .small)
                         }
                         .buttonStyle(MacosToolbarButtonStyle(isActive: item.isSelected(textAttributes: textAttributes)))
                         .popoverToolbarHelp(title: item.accessibilityLabel)
@@ -76,6 +79,7 @@ struct ComposeMessageMacosToolbarView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, IKPadding.extraSmall)
             .padding(.horizontal, IKPadding.composeViewHeaderHorizontal)
 
             IKDivider()
@@ -84,15 +88,18 @@ struct ComposeMessageMacosToolbarView: View {
 }
 
 struct MacosToolbarButtonStyle: ButtonStyle {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     @State private var isHovered = false
+
     let isActive: Bool
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .background(isHovered ? MailResourcesAsset.hoverMenuBackground.swiftUIColor : .clear)
-            .background(isActive ? MailResourcesAsset.hoverMenuBackground.swiftUIColor : .clear)
-            .foregroundColor(isActive ? .primary : .secondary)
-            .cornerRadius(8)
+            .background(isActive ? accentColor.secondary.swiftUIColor : .clear)
+            .foregroundColor(.primary)
+            .cornerRadius(2)
             .onHover { hovering in
                 withAnimation {
                     isHovered = hovering
@@ -104,23 +111,12 @@ struct MacosToolbarButtonStyle: ButtonStyle {
 struct PopoverToolbarHelp: ViewModifier {
     @State private var isShowing = false
     let title: String
-    let placement: 
 
     func body(content: Content) -> some View {
         content
-            .onHover { hover in
-                isShowing = hover
+            .onHover { hovering in
+                isShowing = hovering
             }
-//            .popover(isPresented: $isShowing, arrowEdge: .bottom) {
-//                ZStack {
-//                    MailResourcesAsset.onTagExternalColor.swiftUIColor
-//                        .scaleEffect(1.5)
-//
-//                    Text(title)
-//                        .foregroundColor(MailTextStyle.bodyPopover.color)
-//                        .padding(.horizontal, value: .medium)
-//                }
-//            }
             .popover(
                 present: $isShowing,
                 attributes: {
@@ -130,17 +126,35 @@ struct PopoverToolbarHelp: ViewModifier {
                         popoverAnchor: .bottom
                     )
                     $0.screenEdgePadding = .zero
-                }
-            ) {
-                Templates.Container(
-                    arrowSide: .bottom(.centered),
-                    backgroundColor: .black
-                ) {
+                },
+                view: {
                     Text(title)
+                        .padding(value: .medium)
+                        .background(MailResourcesAsset.onTagExternalColor.swiftUIColor)
+                        .clipShape(RoundedRectangle(cornerRadius: 5))
                         .foregroundColor(MailTextStyle.bodyPopover.color)
-//                        .padding(.horizontal, value: .medium)
+                }, background: {
+                    let triangleWidth = 12.0
+                    PopoverReader { context in
+                        Path {
+                            $0.move(to: CGPoint(
+                                x: context.attributes.sourceFrame().midX - triangleWidth,
+                                y: context.frame.maxY
+                            ))
+                            $0.addLine(to: CGPoint(
+                                x: context.attributes.sourceFrame().midX,
+                                y: context.attributes.sourceFrame().minY
+                            ))
+                            $0.addLine(to: CGPoint(
+                                x: context.attributes.sourceFrame().midX + triangleWidth,
+                                y: context.frame.maxY
+                            ))
+                            $0.closeSubpath()
+                        }
+                        .fill(MailResourcesAsset.onTagExternalColor.swiftUIColor)
+                    }
                 }
-            }
+            )
     }
 }
 

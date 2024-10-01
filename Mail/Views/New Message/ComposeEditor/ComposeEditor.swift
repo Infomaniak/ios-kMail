@@ -54,9 +54,9 @@ struct ComposeEditor: View {
     var body: some View {
         #if os(macOS) || targetEnvironment(macCatalyst)
         ComposeMessageMacosToolbarView(
-            textAttributes: textAttributes,
-            isShowingLinkAlert: $isShowingLinkAlert,
-            isShowingFileSelection: $isShowingFileSelection
+            isShowingLinkAlert: $isShowingFileSelection,
+            isShowingFileSelection: $isShowingLinkAlert,
+            textAttributes: textAttributes
         )
         #endif
         AttachmentsHeaderView()
