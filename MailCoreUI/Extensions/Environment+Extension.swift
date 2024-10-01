@@ -23,8 +23,5 @@ import SwiftUI
 
 public extension EnvironmentValues {
     @Entry
-    var isCompactWindow = true
-
-    @Entry
     var currentUser: MandatoryEnvironmentContainer<UserProfile> = MandatoryEnvironmentContainer.emptyDefaultValue()
 }
