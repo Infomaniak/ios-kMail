@@ -29,8 +29,11 @@ extension View {
 }
 
 struct ThreadListCellContextMenu: ViewModifier {
+    @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var actionsManager: ActionsManager
     @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @StateObject var messagesWorker = MessagesWorker()
 
     @ModalState private var messagesToMove: [Message]?
 
@@ -42,36 +45,37 @@ struct ThreadListCellContextMenu: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        content
-            .contextMenu {
-                ForEach(actions) { action in
-                    Button(role: isDestructiveAction(action)) {
-                        guard action != .activeMultiselect else {
-                            toggleMultipleSelection(false)
-                            return
+        if #available(macCatalyst 16.0, iOS 16.0, *) {
+            content
+                .contextMenu {
+                    actionsButtons(actions)
+                } preview: {
+                    if let message = thread.messages.first {
+                        ScrollView {
+                            MessageView(threadForcedExpansion: .constant([message.uid: .expanded]), message: message)
+                                .environment(\.isMessageInteractive, false)
+                                .environment(\.currentUser, currentUser)
+                                .environmentObject(mailboxManager)
+                                .environmentObject(messagesWorker)
                         }
-                        Task {
-                            try await actionsManager.performAction(
-                                target: thread.messages.toArray(),
-                                action: action,
-                                origin: .swipe(originFolder: thread.folder, nearestMessagesToMoveSheet: $messagesToMove)
-                            )
-                        }
-                    } label: {
-                        Label {
-                            Text(action.title)
-                        } icon: {
-                            action.icon
-                                .resizable()
-                                .scaledToFit()
-                        }
+                        .frame(maxHeight: 400)
                     }
                 }
-            }
-            .sheet(item: $messagesToMove) { messages in
-                MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
-                    .sheetViewStyle()
-            }
+                .previewLayout(.sizeThatFits)
+                .sheet(item: $messagesToMove) { messages in
+                    MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
+                        .sheetViewStyle()
+                }
+        } else {
+            content
+                .contextMenu {
+                    actionsButtons(actions)
+                }
+                .sheet(item: $messagesToMove) { messages in
+                    MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
+                        .sheetViewStyle()
+                }
+        }
     }
 
     private func isDestructiveAction(_ action: Action) -> ButtonRole? {
@@ -79,5 +83,31 @@ struct ThreadListCellContextMenu: ViewModifier {
             return nil
         }
         return action.isDestructive ? .destructive : nil
+    }
+
+    private func actionsButtons(_ actions: [Action]) -> some View {
+        ForEach(actions) { action in
+            Button(role: isDestructiveAction(action)) {
+                guard action != .activeMultiselect else {
+                    toggleMultipleSelection(false)
+                    return
+                }
+                Task {
+                    try await actionsManager.performAction(
+                        target: thread.messages.toArray(),
+                        action: action,
+                        origin: .swipe(originFolder: thread.folder, nearestMessagesToMoveSheet: $messagesToMove)
+                    )
+                }
+            } label: {
+                Label {
+                    Text(action.title)
+                } icon: {
+                    action.icon
+                        .resizable()
+                        .scaledToFit()
+                }
+            }
+        }
     }
 }
