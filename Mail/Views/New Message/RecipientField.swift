@@ -77,6 +77,7 @@ struct RecipientField: View {
                 }
                 .foregroundStyle(MailResourcesAsset.textTertiaryColor)
                 .opacity(shouldDisplayEmptyButton ? 1 : 0)
+                .padding(.trailing, IKPadding.medium)
             }
         }
     }
