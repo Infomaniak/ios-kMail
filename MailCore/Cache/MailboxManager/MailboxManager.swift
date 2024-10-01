@@ -215,7 +215,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 .filter("uid == %@", threadId)
         }
         guard threads.count == 1 else { return nil }
-        return threads.first
+        return threads.first?.freezeIfNeeded()
     }
 }
 

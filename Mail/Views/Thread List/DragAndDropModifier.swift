@@ -28,52 +28,57 @@ struct DraggedThread: Transferable, Codable {
     }
 }
 
+extension EnvironmentValues {
+    @Entry
+    var isHovered = false
+}
+
 struct DropThreadHandler: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
+
+    @State private var isDropTargeted = false
 
     let destinationFolder: Folder
 
     func body(content: Content) -> some View {
         if #available(macCatalyst 16.0, iOS 16.0, *) {
             content
+                .contentShape(Rectangle())
                 .dropDestination(for: DraggedThread.self) { draggedThreads, _ in
-                    for thread in draggedThreads {
-                        handleDroppedThreads(thread)
-                    }
+                    let flatThreads = draggedThreads.flatMap(\.threadIds)
+                    handleDroppedThreads(flatThreads)
+
                     return true
+                } isTargeted: {
+                    isDropTargeted = $0
                 }
+                .environment(\.isHovered, isDropTargeted)
         } else {
             content
         }
     }
 
     @available(macCatalyst 16.0, iOS 16.0, *)
-    private func handleDroppedThreads(_ draggedThreads: DraggedThread) {
-        var messages: [Message] = []
-        var originFolder: Folder?
-        for threadId in draggedThreads.threadIds {
-            if let threadObject = mailboxManager.getThread(from: threadId),
-               let threadFolder = threadObject.folder?.freezeIfNeeded() {
-                guard !threadFolder.isEqual(destinationFolder) else { return }
-
-                messages += threadObject.messages.freezeIfNeeded().toArray()
-                guard originFolder != nil else {
-                    originFolder = threadFolder
-                    continue
-                }
-            }
+    private func handleDroppedThreads(_ draggedThreadsIds: [String]) {
+        let threads = draggedThreadsIds.compactMap {
+            mailboxManager.getThread(from: $0)
         }
 
-        if let originFolder {
-            Task {
-                await tryOrDisplayError {
-                    try await actionsManager.performMove(
-                        messages: messages,
-                        from: originFolder,
-                        to: destinationFolder
-                    )
-                }
+        guard let originFolder = threads.first(where: { $0.folder != nil })?.folder,
+              originFolder != destinationFolder else {
+            return
+        }
+
+        let movedMessages = threads.flatMap(\.messages)
+
+        Task {
+            await tryOrDisplayError {
+                try await actionsManager.performMove(
+                    messages: movedMessages,
+                    from: originFolder,
+                    to: destinationFolder
+                )
             }
         }
     }

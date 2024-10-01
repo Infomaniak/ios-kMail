@@ -131,8 +131,6 @@ struct FolderCellContent: View {
 
     @LazyInjectService private var matomo: MatomoUtils
 
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
     @Environment(\.folderCellType) var cellType
 
     private let frozenFolder: Folder
@@ -187,7 +185,7 @@ struct FolderCellContent: View {
         }
         .padding(.leading, IKPadding.menuDrawerSubFolder * CGFloat(level))
         .padding(canHaveChevron ? IKPadding.menuDrawerCellWithChevron : IKPadding.menuDrawerCell)
-        .background(background)
+        .background(FolderCellBackground(isCurrentFolder: isCurrentFolder))
         .dropThreadHandler(destinationFolder: frozenFolder)
     }
 
@@ -209,13 +207,6 @@ struct FolderCellContent: View {
         }
     }
 
-    @ViewBuilder
-    private var background: some View {
-        if cellType == .menuDrawer {
-            SelectionBackground(selectionType: isCurrentFolder ? .folder : .none, paddingLeading: 0, accentColor: accentColor)
-        }
-    }
-
     private func collapseFolder() {
         matomo.track(eventWithCategory: .menuDrawer, name: "collapseFolder", value: !frozenFolder.isExpanded)
 
@@ -223,6 +214,21 @@ struct FolderCellContent: View {
         try? liveFolder.realm?.write {
             liveFolder.isExpanded = !frozenFolder.isExpanded
         }
+    }
+}
+
+struct FolderCellBackground: View {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+    @Environment(\.isHovered) private var isHovered
+
+    let isCurrentFolder: Bool
+
+    var body: some View {
+        SelectionBackground(
+            selectionType: (isCurrentFolder || isHovered) ? .folder : .none,
+            paddingLeading: 0,
+            accentColor: accentColor
+        )
     }
 }
 
