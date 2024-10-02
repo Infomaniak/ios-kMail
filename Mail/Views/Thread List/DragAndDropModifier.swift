@@ -33,7 +33,7 @@ extension EnvironmentValues {
     var isHovered = false
 }
 
-struct DropThreadHandler: ViewModifier {
+struct DropThreadViewModifier: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
 
@@ -59,7 +59,6 @@ struct DropThreadHandler: ViewModifier {
         }
     }
 
-    @available(macCatalyst 16.0, iOS 16.0, *)
     private func handleDroppedThreads(_ draggedThreadsIds: [String]) {
         let threads = draggedThreadsIds.compactMap {
             mailboxManager.getThread(from: $0)
@@ -84,7 +83,7 @@ struct DropThreadHandler: ViewModifier {
     }
 }
 
-struct DraggableThread: ViewModifier {
+struct DraggableThreadViewModifier: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
     let draggedThreadId: [String]
 
@@ -100,9 +99,8 @@ struct DraggableThread: ViewModifier {
                     if draggedThreadId.count > 1 {
                         Text("\(draggedThreadId.count)")
                             .padding(value: .small)
-                            .background(accentColor.secondary.swiftUIColor)
+                            .background(accentColor.secondary.swiftUIColor, in: .circle)
                             .font(MailTextStyle.bodySmallAccent.font)
-                            .clipShape(Circle())
                     }
                 }
             }
@@ -117,10 +115,10 @@ struct DraggableThread: ViewModifier {
 
 extension View {
     func dropThreadHandler(destinationFolder: Folder) -> some View {
-        modifier(DropThreadHandler(destinationFolder: destinationFolder))
+        modifier(DropThreadViewModifier(destinationFolder: destinationFolder))
     }
 
     func draggableThread(_ draggedThreadIds: [String]) -> some View {
-        modifier(DraggableThread(draggedThreadId: draggedThreadIds))
+        modifier(DraggableThreadViewModifier(draggedThreadId: draggedThreadIds))
     }
 }
