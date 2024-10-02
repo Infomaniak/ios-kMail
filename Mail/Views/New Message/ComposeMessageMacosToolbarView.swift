@@ -110,12 +110,13 @@ struct MacosToolbarButtonStyle: ButtonStyle {
 
 struct PopoverToolbarHelp: ViewModifier {
     @State private var isShowing = false
+    @State private var unBouncetimer: Timer?
     let title: String
 
     func body(content: Content) -> some View {
         content
             .onHover { hovering in
-                isShowing = hovering
+                hoverHelp(isHovering: hovering)
             }
             .popover(
                 present: $isShowing,
@@ -134,27 +135,46 @@ struct PopoverToolbarHelp: ViewModifier {
                         .clipShape(RoundedRectangle(cornerRadius: 5))
                         .foregroundColor(MailTextStyle.bodyPopover.color)
                 }, background: {
-                    let triangleWidth = 12.0
                     PopoverReader { context in
-                        Path {
-                            $0.move(to: CGPoint(
-                                x: context.attributes.sourceFrame().midX - triangleWidth,
-                                y: context.frame.maxY
-                            ))
-                            $0.addLine(to: CGPoint(
-                                x: context.attributes.sourceFrame().midX,
-                                y: context.attributes.sourceFrame().minY
-                            ))
-                            $0.addLine(to: CGPoint(
-                                x: context.attributes.sourceFrame().midX + triangleWidth,
-                                y: context.frame.maxY
-                            ))
-                            $0.closeSubpath()
-                        }
+                        popoverArrowBuilder(
+                            arrowWidth: 12.0,
+                            sourceFrame: context.attributes.sourceFrame(),
+                            popoverFrame: context.frame
+                        )
                         .fill(MailResourcesAsset.onTagExternalColor.swiftUIColor)
                     }
                 }
             )
+    }
+
+    private func hoverHelp(isHovering: Bool) {
+        guard isHovering else {
+            unBouncetimer?.invalidate()
+            isShowing = false
+            return
+        }
+        unBouncetimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
+            unBouncetimer = nil
+            isShowing = isHovering
+        }
+    }
+
+    private func popoverArrowBuilder(arrowWidth: CGFloat, sourceFrame: CGRect, popoverFrame: CGRect) -> Path {
+        Path {
+            $0.move(to: CGPoint(
+                x: sourceFrame.midX - arrowWidth,
+                y: popoverFrame.maxY
+            ))
+            $0.addLine(to: CGPoint(
+                x: sourceFrame.midX,
+                y: sourceFrame.minY
+            ))
+            $0.addLine(to: CGPoint(
+                x: sourceFrame.midX + arrowWidth,
+                y: popoverFrame.maxY
+            ))
+            $0.closeSubpath()
+        }
     }
 }
 
@@ -162,12 +182,4 @@ public extension View {
     func popoverToolbarHelp(title: String) -> some View {
         modifier(PopoverToolbarHelp(title: title))
     }
-}
-
-#Preview {
-    ComposeMessageMacosToolbarView(
-        textAttributes: TextAttributes(),
-        isShowingLinkAlert: .constant(false),
-        isShowingFileSelection: .constant(false)
-    )
 }
