@@ -51,7 +51,7 @@ struct RecipientField: View {
     }
 
     var body: some View {
-        HStack {
+        HStack(spacing: 0) {
             VStack(spacing: 0) {
                 if !recipients.isEmpty {
                     RecipientsList(
@@ -70,13 +70,13 @@ struct RecipientField: View {
                     .frame(width: isExpanded ? nil : 0, height: isExpanded ? nil : 0)
             }
             .padding(.vertical, value: .intermediate)
+
             Button {
                 currentText = ""
             } label: {
                 MailResourcesAsset.remove
                     .iconSize(.medium)
-                    .padding(IKPadding.medium)
-                    .border(.red, width: 1)
+                    .padding(value: .medium)
             }
             .foregroundStyle(MailResourcesAsset.textTertiaryColor)
             .opacity(shouldDisplayEmptyButton ? 1 : 0)
