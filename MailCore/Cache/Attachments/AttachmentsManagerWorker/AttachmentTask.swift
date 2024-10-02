@@ -23,7 +23,7 @@ import Foundation
     @Published public var progress: Double = 0
     var task: Task<String?, Never>?
     @Published public var error: MailError?
-    public var attachmentTask: Bool {
+    public var isAttachmentComplete: Bool {
         return progress >= 1
     }
 
