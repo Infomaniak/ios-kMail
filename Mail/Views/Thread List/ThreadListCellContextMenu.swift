@@ -51,17 +51,14 @@ struct ThreadListCellContextMenu: ViewModifier {
                     actionsButtons(actions)
                 } preview: {
                     if let message = thread.messages.first {
-                        ScrollView {
-                            MessageView(threadForcedExpansion: .constant([message.uid: .expanded]), message: message)
-                                .environment(\.isMessageInteractive, false)
-                                .environment(\.currentUser, currentUser)
-                                .environmentObject(mailboxManager)
-                                .environmentObject(messagesWorker)
-                        }
-                        .frame(maxHeight: 400)
+                        MessageView(threadForcedExpansion: .constant([message.uid: .expanded]), message: message)
+                            .environment(\.isMessageInteractive, false)
+                            .environment(\.currentUser, currentUser)
+                            .environmentObject(mailboxManager)
+                            .environmentObject(messagesWorker)
+                            .frame(maxHeight: 400, alignment: .top)
                     }
                 }
-                .previewLayout(.sizeThatFits)
                 .sheet(item: $messagesToMove) { messages in
                     MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
                         .sheetViewStyle()
