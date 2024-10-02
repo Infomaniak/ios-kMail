@@ -17,7 +17,9 @@
  */
 
 import Combine
+import InfomaniakCore
 import InfomaniakCoreSwiftUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -70,6 +72,8 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
 
     @Environment(\.dismiss) private var dismiss
 
+    @LazyInjectService private var platformDetector: PlatformDetectable
+
     let dragIndicator: Visibility
     let title: String?
 
@@ -103,9 +107,8 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
         VStack(spacing: IKPadding.small) {
             if let title {
                 Text(title)
-                    .font(Font(UIFont.preferredFont(forTextStyle: .headline)))
+                    .font(.headline)
                     .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top, IKPadding.medium)
             }
 
             ScrollView {
@@ -123,16 +126,11 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
             }
         }
         .overlay(alignment: .topTrailing) {
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark")
-                    .foregroundColor(.accentColor)
+            if platformDetector.isMac || (!platformDetector.isMac && UIDevice.current.orientation.isLandscape) {
+                CloseButton(dismissAction: dismiss)
+                    .padding([.top, .trailing], value: .medium)
             }
-            .padding(.top, IKPadding.medium)
-            .padding(.trailing, IKPadding.medium)
         }
-        .padding(.top, topPadding)
         .backport.presentationDragIndicator(backportDragIndicator)
         .backport.presentationDetents(currentDetents)
         .ikPresentationCornerRadius(20)
@@ -145,6 +143,8 @@ public struct SelfSizingPanelViewModifier: ViewModifier {
     @State private var selection: PresentationDetent = .height(0)
 
     @Environment(\.dismiss) private var dismiss
+
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     let dragIndicator: Visibility
     let title: String?
@@ -195,14 +195,10 @@ public struct SelfSizingPanelViewModifier: ViewModifier {
             }
         }
         .overlay(alignment: .topTrailing) {
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark")
-                    .foregroundColor(.accentColor)
+            if platformDetector.isMac || (!platformDetector.isMac && UIDevice.current.orientation.isLandscape) {
+                CloseButton(size: .medium, dismissAction: dismiss)
+                    .padding([.top, .trailing], value: .medium)
             }
-            .padding(.top, IKPadding.medium)
-            .padding(.trailing, IKPadding.medium)
         }
         .presentationDetents(currentDetents, selection: $selection)
         .presentationDragIndicator(dragIndicator)

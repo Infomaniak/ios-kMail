@@ -54,6 +54,7 @@ struct AccountListView: View {
                     }
                 }
             }
+
             IKDivider()
                 .padding(.vertical, value: .small)
             AccountActionsView()
