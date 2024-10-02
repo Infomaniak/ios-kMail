@@ -233,24 +233,6 @@ final class ThreadListViewModel: ObservableObject, ThreadListable {
         }
     }
 
-    func nextThread() {
-        guard !filteredThreads.isEmpty,
-              let currentThread = selectedThreadOwner.selectedThread,
-              let currentThreadIndex = filteredThreads.firstIndex(where: { $0.uid == currentThread.uid }),
-              currentThreadIndex < filteredThreads.count - 1 else { return }
-        let newIndex = currentThreadIndex + 1
-        selectedThreadOwner.selectedThread = filteredThreads[newIndex]
-    }
-
-    func previousThread() {
-        guard !filteredThreads.isEmpty,
-              let currentThread = selectedThreadOwner.selectedThread,
-              let currentThreadIndex = filteredThreads.firstIndex(where: { $0.uid == currentThread.uid }),
-              currentThreadIndex > 0 else { return }
-        let newIndex = currentThreadIndex - 1
-        selectedThreadOwner.selectedThread = filteredThreads[newIndex]
-    }
-
     func detectDirection(from newThread: Thread) {
         guard !filteredThreads.isEmpty,
               let initialThread = selectedThreadOwner.selectedThread,
