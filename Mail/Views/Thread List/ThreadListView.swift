@@ -79,7 +79,7 @@ struct ThreadListView: View {
                 .id(viewModel.frozenFolder.id)
 
             ScrollViewReader { proxy in
-                List {
+                List(selection: $mainViewState.selectedThread) {
                     if !viewModel.isEmpty,
                        viewModel.frozenFolder.role == .trash || viewModel.frozenFolder.role == .spam {
                         FlushFolderView(
@@ -125,6 +125,7 @@ struct ThreadListView: View {
                                                    flushAlert: $flushAlert)
                                 }
                                 .threadListCellAppearance()
+                                .tag(thread)
                             }
                         } header: {
                             if threadDensity != .compact {
