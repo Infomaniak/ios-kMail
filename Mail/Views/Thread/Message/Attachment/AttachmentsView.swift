@@ -191,7 +191,7 @@ struct AttachmentsView: View {
         downloadInProgress = true
         isDownloadDisabled = true
         isShowingProgressCircle = true
-        Task {
+        trackDownloadTask[UUID().uuidString] = Task {
             await tryOrDisplayError {
                 matomo.track(eventWithCategory: .message, name: "downloadAll")
 

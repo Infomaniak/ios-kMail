@@ -47,7 +47,7 @@ import SwiftUI
 
     /// Lookup and return _or_ new object representing a finished task instead.
     func attachmentUploadTaskOrFinishedTask(for uuid: String) -> AttachmentTask
-//
+
     /// Removes an attachment for a specific primary key
     /// - Parameter attachmentUUID: primary key of the object
     func removeAttachment(_ attachmentUUID: String)

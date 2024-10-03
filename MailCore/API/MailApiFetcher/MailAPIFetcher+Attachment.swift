@@ -30,7 +30,6 @@ public extension MailApiFetcher {
             Task {
                 for await progress in request.downloadProgress() {
                     progressObserver(progress.fractionCompleted)
-                    print("attachement", progress.fractionCompleted)
                 }
             }
         }
@@ -76,7 +75,6 @@ public extension MailApiFetcher {
             Task {
                 for await progress in download.downloadProgress() {
                     progressObserver(progress.fractionCompleted)
-                    print("Download ressource: \(progress.fractionCompleted)")
                 }
             }
         }
