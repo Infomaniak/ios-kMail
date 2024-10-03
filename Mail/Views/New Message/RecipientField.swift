@@ -93,8 +93,8 @@ struct RecipientField: View {
             }
             .foregroundStyle(MailResourcesAsset.textTertiaryColor)
             .opacity(shouldDisplayEmptyButton ? 1 : 0)
-            .alignmentGuide(.iconAndTextFieldAlignment) {
-                d in d[VerticalAlignment.center]
+            .alignmentGuide(.iconAndTextFieldAlignment) { d in
+                d[VerticalAlignment.center]
             }
         }
     }
