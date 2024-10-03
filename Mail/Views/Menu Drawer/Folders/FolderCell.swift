@@ -220,15 +220,18 @@ struct FolderCellContent: View {
 struct FolderCellBackground: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
     @Environment(\.isHovered) private var isHovered
+    @Environment(\.folderCellType) var cellType
 
     let isCurrentFolder: Bool
 
     var body: some View {
-        SelectionBackground(
-            selectionType: (isCurrentFolder || isHovered) ? .folder : .none,
-            paddingLeading: 0,
-            accentColor: accentColor
-        )
+        if cellType == .menuDrawer {
+            SelectionBackground(
+                selectionType: (isCurrentFolder || isHovered) ? .folder : .none,
+                paddingLeading: 0,
+                accentColor: accentColor
+            )
+        }
     }
 }
 

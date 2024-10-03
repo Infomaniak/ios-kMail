@@ -17,12 +17,13 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import SwiftUI
 
 struct DraggedEnvelopeView: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
     let ammount: Int
-    
+
     var body: some View {
         Image(systemName: "envelope.fill")
             .font(.system(size: UIFontMetrics.default.scaledValue(for: 24)))
