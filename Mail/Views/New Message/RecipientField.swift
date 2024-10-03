@@ -26,6 +26,16 @@ import RealmSwift
 import SwiftUI
 import WrappingHStack
 
+extension VerticalAlignment {
+    private enum IconAndTextFieldAlignment: AlignmentID {
+        static func defaultValue(in d: ViewDimensions) -> CGFloat {
+            d[VerticalAlignment.center]
+        }
+    }
+
+    static let iconAndTextFieldAlignment = VerticalAlignment(IconAndTextFieldAlignment.self)
+}
+
 struct RecipientField: View {
     @FocusState var focusedField: ComposeViewFieldType?
 
@@ -51,32 +61,40 @@ struct RecipientField: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            if !recipients.isEmpty {
-                RecipientsList(
-                    focusedField: _focusedField,
-                    recipients: $recipients,
-                    isCurrentFieldFocused: isCurrentFieldFocused,
-                    type: type
-                )
-            }
+        HStack(alignment: .iconAndTextFieldAlignment, spacing: 0) {
+            VStack(spacing: 0) {
+                if !recipients.isEmpty {
+                    RecipientsList(
+                        focusedField: _focusedField,
+                        recipients: $recipients,
+                        isCurrentFieldFocused: isCurrentFieldFocused,
+                        type: type
+                    )
+                }
 
-            HStack {
                 RecipientsTextField(text: $currentText, onSubmit: onSubmit, onBackspace: handleBackspaceTextField)
                     .focused($focusedField, equals: type)
+                    .alignmentGuide(.iconAndTextFieldAlignment) { d in
+                        d[VerticalAlignment.center]
+                    }
                     .padding(.top, isCurrentFieldFocused && !recipients.isEmpty ? IKPadding.extraSmall : 0)
                     .padding(.top, IKPadding.recipientChip.top)
                     .padding(.bottom, IKPadding.recipientChip.bottom)
                     .frame(width: isExpanded ? nil : 0, height: isExpanded ? nil : 0)
+            }
+            .padding(.vertical, value: .intermediate)
 
-                Button {
-                    currentText = ""
-                } label: {
-                    MailResourcesAsset.remove
-                        .iconSize(.medium)
-                }
-                .foregroundStyle(MailResourcesAsset.textTertiaryColor)
-                .opacity(shouldDisplayEmptyButton ? 1 : 0)
+            Button {
+                currentText = ""
+            } label: {
+                MailResourcesAsset.remove
+                    .iconSize(.medium)
+                    .padding(value: .medium)
+            }
+            .foregroundStyle(MailResourcesAsset.textTertiaryColor)
+            .opacity(shouldDisplayEmptyButton ? 1 : 0)
+            .alignmentGuide(.iconAndTextFieldAlignment) { d in
+                d[VerticalAlignment.center]
             }
         }
     }
