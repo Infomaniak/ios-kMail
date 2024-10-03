@@ -124,7 +124,9 @@ struct ThreadListView: View {
                                                        .contains(thread.id),
                                                    flushAlert: $flushAlert)
                                         .draggableThread(multipleSelectionViewModel.selectedItems.ids
-                                            .isEmpty ? [thread.uid] : multipleSelectionViewModel.selectedItems.ids)
+                                            .isEmpty ? [thread.uid] : multipleSelectionViewModel.selectedItems.ids) {
+                                                multipleSelectionViewModel.selectedItems.removeAll()
+                                        }
                                 }
                                 .threadListCellAppearance()
                                 .tag(thread)

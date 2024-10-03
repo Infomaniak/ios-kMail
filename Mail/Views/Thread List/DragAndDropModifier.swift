@@ -33,6 +33,10 @@ extension EnvironmentValues {
     var isHovered = false
 }
 
+extension Notification.Name {
+    static let dropThreadSuccess = Notification.Name("dropThreadSuccess")
+}
+
 struct DropThreadViewModifier: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
@@ -79,22 +83,32 @@ struct DropThreadViewModifier: ViewModifier {
                     to: destinationFolder
                 )
             }
+            NotificationCenter.default.post(name: .dropThreadSuccess, object: nil)
         }
     }
 }
 
 struct DraggableThreadViewModifier: ViewModifier {
     let draggedThreadId: [String]
+    let onSuccess: () -> Void
 
     func body(content: Content) -> some View {
         if #available(macCatalyst 16.0, iOS 16.0, *) {
             content
+                .onAppear {
+                    NotificationCenter.default.addObserver(forName: .dropThreadSuccess, object: nil, queue: .main) { _ in
+                        onSuccess()
+                    }
+                }
+                .onDisappear {
+                    NotificationCenter.default.removeObserver(self, name: .dropThreadSuccess, object: nil)
+                }
             #if os(macOS) || targetEnvironment(macCatalyst)
-            .draggable(DraggedThread(threadIds: draggedThreadId)) {
-                DraggedEnvelopeView(ammount: draggedThreadId.count)
-            }
+                .draggable(DraggedThread(threadIds: draggedThreadId)) {
+                    DraggedEnvelopeView(ammount: draggedThreadId.count)
+                }
             #else
-            .draggable(DraggedThread(threadIds: draggedThreadId))
+                .draggable(DraggedThread(threadIds: draggedThreadId))
             #endif
         } else {
             content
@@ -107,7 +121,7 @@ extension View {
         modifier(DropThreadViewModifier(destinationFolder: destinationFolder))
     }
 
-    func draggableThread(_ draggedThreadIds: [String]) -> some View {
-        modifier(DraggableThreadViewModifier(draggedThreadId: draggedThreadIds))
+    func draggableThread(_ draggedThreadIds: [String], onSuccess: @escaping () -> Void) -> some View {
+        modifier(DraggableThreadViewModifier(draggedThreadId: draggedThreadIds, onSuccess: onSuccess))
     }
 }
