@@ -71,6 +71,7 @@ struct PreloadingView: View {
     func preloadAndTransitionToRootView() async {
         guard !appLaunchCounter.isFirstLaunch else {
             tokenStore.removeAllTokens()
+            appLaunchCounter.increase()
             rootViewState.transitionToRootViewState(.onboarding)
             return
         }
