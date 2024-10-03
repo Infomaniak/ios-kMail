@@ -196,9 +196,4 @@ public extension MailTextStyle {
         mailFont: .label,
         color: MailResourcesAsset.redColor.swiftUIColor
     )
-
-    static let labelDraggableThread = MailTextStyle(
-        font: .system(size: UIFontMetrics.default.scaledValue(for: 36)),
-        color: .accentColor
-    )
 }

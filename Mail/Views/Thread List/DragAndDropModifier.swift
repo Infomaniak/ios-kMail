@@ -84,7 +84,6 @@ struct DropThreadViewModifier: ViewModifier {
 }
 
 struct DraggableThreadViewModifier: ViewModifier {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
     let draggedThreadId: [String]
 
     func body(content: Content) -> some View {
@@ -92,17 +91,7 @@ struct DraggableThreadViewModifier: ViewModifier {
             content
             #if os(macOS) || targetEnvironment(macCatalyst)
             .draggable(DraggedThread(threadIds: draggedThreadId)) {
-                ZStack(alignment: .bottomTrailing) {
-                    Image(systemName: "envelope.fill")
-                        .font(MailTextStyle.labelDraggableThread.font)
-                        .padding(value: .small)
-                    if draggedThreadId.count > 1 {
-                        Text("\(draggedThreadId.count)")
-                            .padding(value: .small)
-                            .background(accentColor.secondary.swiftUIColor, in: .circle)
-                            .font(MailTextStyle.bodySmallAccent.font)
-                    }
-                }
+                DraggedEnvelopeView(ammount: draggedThreadId.count)
             }
             #else
             .draggable(DraggedThread(threadIds: draggedThreadId))
