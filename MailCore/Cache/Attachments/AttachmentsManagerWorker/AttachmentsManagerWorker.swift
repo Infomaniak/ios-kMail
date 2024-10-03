@@ -318,7 +318,7 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
     }
 
     public var allAttachmentsUploaded: Bool {
-        return attachmentUploadTasks.values.allSatisfy(\.attachmentTask)
+        return attachmentUploadTasks.values.allSatisfy(\.isAttachmentComplete)
     }
 
     public func setUpdateDelegate(_ updateDelegate: AttachmentsContentUpdatable) {

@@ -115,7 +115,7 @@ struct AttachmentsView: View {
 
                     HStack {
                         let progress = downloadProgressState[message.swissTransferAttachment?.uuid ?? ""] ?? 0
-                        if showProgressCircle {
+                        if isShowingProgressCircle {
                             ProgressView(value: progress)
                                 .progressViewStyle(MailCircularProgressViewStyle())
                         }
@@ -190,7 +190,7 @@ struct AttachmentsView: View {
     private func downloadAllAttachments() {
         downloadInProgress = true
         isDownloadDisabled = true
-        showProgressCircle = true
+        isShowingProgressCircle = true
         Task {
             await tryOrDisplayError {
                 matomo.track(eventWithCategory: .message, name: "downloadAll")
@@ -218,7 +218,7 @@ struct AttachmentsView: View {
             }
             downloadInProgress = false
             isDownloadDisabled = false
-            showProgressCircle = false
+            isShowingProgressCircle = false
         }
     }
 }
