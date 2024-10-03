@@ -31,6 +31,13 @@ public protocol ContactFetchable {
     func frozenContactsAsync(matching string: String, fetchLimit: Int?, sorted: ((MergedContact, MergedContact) -> Bool)?) async
         -> any Collection<MergedContact>
 
+    /// Case and diacritic insensitive search for a `GroupContact`
+    /// - Parameters:
+    ///   - string: input string to match against email and name
+    ///   - fetchLimit: limit the query by default to limit memory footprint
+    /// - Returns: The collection of matching contacts.
+    func frozenGroupContacts(matching string: String, fetchLimit: Int?) -> any Collection<GroupContact>
+
     /// Get a contact from a given transactionable
     func getContact(for correspondent: any Correspondent, transactionable: Transactionable) -> MergedContact?
 
@@ -43,6 +50,7 @@ public protocol ContactFetchable {
 public extension ContactManager {
     /// Both *case* insensitive __and__ *diacritic* (accents) insensitive
     static let searchContactInsensitivePredicate = "name contains[cd] %@ OR email contains[cd] %@"
+    static let searchGroupContactInsensitivePredicate = "name contains[cd] %@"
 
     /// Making sure, that by default, we do not overflow memory with too much contacts
     private static let contactFetchLimit = 120
@@ -74,6 +82,25 @@ public extension ContactManager {
     func frozenContactsAsync(matching string: String, fetchLimit: Int?,
                              sorted: ((MergedContact, MergedContact) -> Bool)?) async -> any Collection<MergedContact> {
         return frozenContacts(matching: string, fetchLimit: fetchLimit, sorted: sorted)
+    }
+
+    /// Case and diacritic insensitive search for a `GroupContact`
+    /// - Parameters:
+    ///   - string: input string to match against email and name
+    ///   - fetchLimit: limit the query by default to limit memory footprint
+    /// - Returns: The collection of matching contacts. Frozen.
+    func frozenGroupContacts(matching string: String, fetchLimit: Int?) -> any Collection<GroupContact> {
+        var lazyResults = fetchResults(ofType: GroupContact.self) { partial in
+            partial
+        }
+        lazyResults = lazyResults
+            .filter(Self.searchGroupContactInsensitivePredicate, string, string)
+            .freeze()
+
+        let fetchLimit = min(lazyResults.count, fetchLimit ?? Self.contactFetchLimit)
+
+        let limitedResults = lazyResults[0 ..< fetchLimit]
+        return limitedResults
     }
 
     func getContact(for correspondent: any Correspondent) -> MergedContact? {
