@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "2c80e5cfe88f9f298e79ce6c6b236ded9c2f5deb",
-        "version" : "13.0.0"
+        "revision" : "d83b9df4d8e7880fa8a55807549cac0fc4584ce6",
+        "version" : "13.1.0"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-version-checker",
       "state" : {
-        "revision" : "9489d605aa7213ef4213b99e26be6f36f67d0bcc",
-        "version" : "7.0.0"
+        "revision" : "5b68ced5b52f9c95b6cb6d671273c608ed38d2fc",
+        "version" : "7.0.2"
       }
     },
     {
@@ -176,8 +176,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-core.git",
       "state" : {
-        "revision" : "b36f2436c2746c32b1f93dcc06ea8b859671a767",
-        "version" : "14.12.1"
+        "revision" : "e474a8d2270a8b12ac63ac9504e4757e39814b99",
+        "version" : "14.13.0"
       }
     },
     {
@@ -185,8 +185,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "9b9992d59a5148eb557e6c0445fec05009022c8c",
-        "version" : "10.53.1"
+        "revision" : "863498d37a9f0e72caa65963da9641d8cdfc8228",
+        "version" : "10.54.0"
       }
     },
     {
@@ -222,7 +222,7 @@
       "location" : "https://github.com/SVGKit/SVGKit.git",
       "state" : {
         "branch" : "3.x",
-        "revision" : "cf4dca96801dbbbdb2f37dc8c8571bfaf05c9d41"
+        "revision" : "6f75e96948fa72fa5ebc5d1f0bfa761a5614c546"
       }
     },
     {
