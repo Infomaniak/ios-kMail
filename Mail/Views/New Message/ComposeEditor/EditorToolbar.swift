@@ -156,20 +156,24 @@ enum EditorToolbarAction: Int {
             return MailResourcesStrings.Localizable.buttonCancelFormatting
         }
     }
-    
+
     var keyboardShortcut: KeyboardShortcut? {
         switch self {
         case .bold:
-            return KeyboardShortcut("B", modifiers: [.command])
+            return KeyboardShortcut("B", modifiers: [.command, .shift])
         case .italic:
-            return KeyboardShortcut("I", modifiers: [.command])
+            return KeyboardShortcut("I", modifiers: [.command, .shift])
         case .underline:
-            return KeyboardShortcut("U", modifiers: [.command])
+            return KeyboardShortcut("U", modifiers: [.command, .shift])
         case .strikeThrough:
             return KeyboardShortcut("X", modifiers: [.command, .shift])
         case .unorderedList:
-            return KeyboardShortcut("L", modifiers: [.command])
-        case .editText, .ai, .attachment, .addPhoto, .takePhoto, .link, .programMessage, .cancelFormat:
+            return KeyboardShortcut("L", modifiers: [.command, .shift])
+        case .link:
+            return KeyboardShortcut("K", modifiers: [.command, .shift])
+        case .attachment:
+            return KeyboardShortcut("P", modifiers: [.command, .shift])
+        case .editText, .ai, .addPhoto, .takePhoto, .programMessage, .cancelFormat:
             return nil
         }
     }

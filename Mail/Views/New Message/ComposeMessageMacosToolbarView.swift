@@ -70,6 +70,7 @@ struct ComposeMessageMacosToolbarView: View {
                         }
                         .buttonStyle(MacosToolbarButtonStyle(isActive: item.isSelected(textAttributes: textAttributes)))
                         .popoverToolbarHelp(title: item.accessibilityLabel)
+                        .keyboardToolbarShortcut(item.keyboardShortcut)
                     }
 
                     if allItems.last != items {
@@ -105,81 +106,5 @@ struct MacosToolbarButtonStyle: ButtonStyle {
                     isHovered = hovering
                 }
             }
-    }
-}
-
-struct PopoverToolbarHelp: ViewModifier {
-    @State private var isShowing = false
-    @State private var unBouncetimer: Timer?
-    let title: String
-
-    func body(content: Content) -> some View {
-        content
-            .onHover { hovering in
-                hoverHelp(isHovering: hovering)
-            }
-            .popover(
-                present: $isShowing,
-                attributes: {
-                    $0.sourceFrameInset.top = -8
-                    $0.position = .absolute(
-                        originAnchor: .top,
-                        popoverAnchor: .bottom
-                    )
-                    $0.screenEdgePadding = .zero
-                },
-                view: {
-                    Text(title)
-                        .padding(value: .medium)
-                        .background(MailResourcesAsset.onTagExternalColor.swiftUIColor)
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
-                        .foregroundColor(MailTextStyle.bodyPopover.color)
-                }, background: {
-                    PopoverReader { context in
-                        popoverArrowBuilder(
-                            arrowWidth: 12.0,
-                            sourceFrame: context.attributes.sourceFrame(),
-                            popoverFrame: context.frame
-                        )
-                        .fill(MailResourcesAsset.onTagExternalColor.swiftUIColor)
-                    }
-                }
-            )
-    }
-
-    private func hoverHelp(isHovering: Bool) {
-        guard isHovering else {
-            unBouncetimer?.invalidate()
-            isShowing = false
-            return
-        }
-        unBouncetimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
-            unBouncetimer = nil
-            isShowing = isHovering
-        }
-    }
-
-    private func popoverArrowBuilder(arrowWidth: CGFloat, sourceFrame: CGRect, popoverFrame: CGRect) -> Path {
-        Path {
-            $0.move(to: CGPoint(
-                x: sourceFrame.midX - arrowWidth,
-                y: popoverFrame.maxY
-            ))
-            $0.addLine(to: CGPoint(
-                x: sourceFrame.midX,
-                y: sourceFrame.minY
-            ))
-            $0.addLine(to: CGPoint(
-                x: sourceFrame.midX + arrowWidth,
-                y: popoverFrame.maxY
-            ))
-            $0.closeSubpath()
-        }
-    }
-}
-
-public extension View {
-    func popoverToolbarHelp(title: String) -> some View {
-        modifier(PopoverToolbarHelp(title: title))
     }
 }
