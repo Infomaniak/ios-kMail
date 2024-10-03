@@ -32,7 +32,14 @@ extension VerticalAlignment {
         }
     }
 
+    struct ChevronAlignment: AlignmentID {
+        static func defaultValue(in context: ViewDimensions) -> CGFloat {
+            context[VerticalAlignment.center]
+        }
+    }
+
     static let newMessageCellAlignment = VerticalAlignment(NewMessageCellAlignment.self)
+    static let chevronAlignment = VerticalAlignment(ChevronAlignment.self)
 }
 
 class TextDebounce: ObservableObject {
@@ -64,10 +71,13 @@ struct ComposeMessageCellRecipients: View {
     var body: some View {
         VStack(spacing: 0) {
             if autocompletionType == nil || autocompletionType == type {
-                HStack {
+                HStack(alignment: .chevronAlignment, spacing: 0) {
                     HStack(alignment: .newMessageCellAlignment) {
                         Text(type.title)
                             .textStyle(.bodySecondary)
+                            .alignmentGuide(.chevronAlignment) { d in
+                                d[VerticalAlignment.center]
+                            }
 
                         RecipientField(
                             focusedField: _focusedField,
@@ -80,10 +90,14 @@ struct ComposeMessageCellRecipients: View {
                             }
                         }
                     }
+                    .padding(.vertical, value: .intermediate)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                     if shouldDisplayChevron {
-                        Spacer()
                         ChevronButton(isExpanded: $showRecipientsFields)
+                            .alignmentGuide(.chevronAlignment) { d in
+                                d[VerticalAlignment.center]
+                            }
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
