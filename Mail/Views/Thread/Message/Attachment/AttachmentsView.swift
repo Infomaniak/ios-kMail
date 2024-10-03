@@ -39,7 +39,7 @@ struct AttachmentsView: View {
     @State private var downloadProgressState: [String: Double] = [:]
     @State private var trackDownloadTask: [String: Task<Void, Error>] = [:]
     @State private var isDownloadDisabled = false
-    @State private var showProgressCircle = false
+    @State private var isShowingProgressCircle = false
 
     private var attachments: [Attachment] {
         return message.attachments.filter { $0.disposition == .attachment || $0.contentId == nil }
