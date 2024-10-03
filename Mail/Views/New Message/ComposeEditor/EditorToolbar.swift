@@ -156,6 +156,23 @@ enum EditorToolbarAction: Int {
             return MailResourcesStrings.Localizable.buttonCancelFormatting
         }
     }
+    
+    var keyboardShortcut: KeyboardShortcut? {
+        switch self {
+        case .bold:
+            return KeyboardShortcut("B", modifiers: [.command])
+        case .italic:
+            return KeyboardShortcut("I", modifiers: [.command])
+        case .underline:
+            return KeyboardShortcut("U", modifiers: [.command])
+        case .strikeThrough:
+            return KeyboardShortcut("X", modifiers: [.command, .shift])
+        case .unorderedList:
+            return KeyboardShortcut("L", modifiers: [.command])
+        case .editText, .ai, .attachment, .addPhoto, .takePhoto, .link, .programMessage, .cancelFormat:
+            return nil
+        }
+    }
 
     func isSelected(textAttributes: TextAttributes) -> Bool {
         switch self {
