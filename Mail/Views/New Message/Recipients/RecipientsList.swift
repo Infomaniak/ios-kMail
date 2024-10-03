@@ -33,10 +33,8 @@ struct RecipientsList: View {
         Group {
             if !isCurrentFieldFocused {
                 ShortRecipientsList(recipients: recipients, type: type)
-                    .transition(.opacity.animation(.spring().speed(2)))
             } else {
                 FullRecipientsList(recipients: $recipients, focusedField: _focusedField, type: type)
-                    .transition(.opacity.animation(.spring().speed(2)))
             }
         }
         .alignmentGuide(.newMessageCellAlignment) { d in d[.top] + 21 }
