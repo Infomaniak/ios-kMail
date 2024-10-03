@@ -26,6 +26,16 @@ import RealmSwift
 import SwiftUI
 import WrappingHStack
 
+extension VerticalAlignment {
+    private enum IconAndTextFieldAlignment: AlignmentID {
+        static func defaultValue(in d: ViewDimensions) -> CGFloat {
+            d[VerticalAlignment.center]
+        }
+    }
+
+    static let iconAndTextFieldAlignment = VerticalAlignment(IconAndTextFieldAlignment.self)
+}
+
 struct RecipientField: View {
     @FocusState var focusedField: ComposeViewFieldType?
 
@@ -51,7 +61,7 @@ struct RecipientField: View {
     }
 
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(alignment: .iconAndTextFieldAlignment, spacing: 0) {
             VStack(spacing: 0) {
                 if !recipients.isEmpty {
                     RecipientsList(
@@ -64,6 +74,9 @@ struct RecipientField: View {
 
                 RecipientsTextField(text: $currentText, onSubmit: onSubmit, onBackspace: handleBackspaceTextField)
                     .focused($focusedField, equals: type)
+                    .alignmentGuide(.iconAndTextFieldAlignment) { d in
+                        d[VerticalAlignment.center]
+                    }
                     .padding(.top, isCurrentFieldFocused && !recipients.isEmpty ? IKPadding.extraSmall : 0)
                     .padding(.top, IKPadding.recipientChip.top)
                     .padding(.bottom, IKPadding.recipientChip.bottom)
@@ -80,6 +93,9 @@ struct RecipientField: View {
             }
             .foregroundStyle(MailResourcesAsset.textTertiaryColor)
             .opacity(shouldDisplayEmptyButton ? 1 : 0)
+            .alignmentGuide(.iconAndTextFieldAlignment) {
+                d in d[VerticalAlignment.center]
+            }
         }
     }
 
