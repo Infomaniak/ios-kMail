@@ -90,7 +90,6 @@ struct ComposeMessageCellRecipients: View {
                             }
                         }
                     }
-                    .padding(.vertical, value: .intermediate)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                     if shouldDisplayChevron {

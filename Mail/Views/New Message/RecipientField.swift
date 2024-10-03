@@ -57,7 +57,7 @@ struct RecipientField: View {
     }
 
     private var shouldDisplayEmptyButton: Bool {
-        return isCurrentFieldFocused && !currentText.isEmpty
+        return isExpanded && isCurrentFieldFocused && !currentText.isEmpty
     }
 
     var body: some View {
@@ -84,17 +84,18 @@ struct RecipientField: View {
             }
             .padding(.vertical, value: .intermediate)
 
-            Button {
-                currentText = ""
-            } label: {
-                MailResourcesAsset.remove
-                    .iconSize(.medium)
-                    .padding(value: .medium)
-            }
-            .foregroundStyle(MailResourcesAsset.textTertiaryColor)
-            .opacity(shouldDisplayEmptyButton ? 1 : 0)
-            .alignmentGuide(.iconAndTextFieldAlignment) { d in
-                d[VerticalAlignment.center]
+            if shouldDisplayEmptyButton {
+                Button {
+                    currentText = ""
+                } label: {
+                    MailResourcesAsset.remove
+                        .iconSize(.medium)
+                        .padding(value: .medium)
+                }
+                .foregroundStyle(MailResourcesAsset.textTertiaryColor)
+                .alignmentGuide(.iconAndTextFieldAlignment) { d in
+                    d[VerticalAlignment.center]
+                }
             }
         }
     }
