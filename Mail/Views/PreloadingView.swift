@@ -62,45 +62,49 @@ struct PreloadingView: View {
                 .padding(.bottom, value: .medium)
         }
         .task {
-            guard !appLaunchCounter.isFirstLaunch else {
-                tokenStore.removeAllTokens()
-                rootViewState.transitionToRootViewState(.onboarding)
+            await preloadAndTransitionToRootView()
+        }
+    }
+
+    func preloadAndTransitionToRootView() async {
+        guard !appLaunchCounter.isFirstLaunch else {
+            tokenStore.removeAllTokens()
+            rootViewState.transitionToRootViewState(.onboarding)
+            return
+        }
+
+        guard let currentAccount = accountManager.getCurrentAccount() else {
+            rootViewState.transitionToRootViewState(.onboarding)
+            return
+        }
+
+        do {
+            if let targetMailboxManager = accountManager.currentMailboxManager {
+                if await accountManager.getCurrentUser() == nil {
+                    try await accountManager.updateUser(for: currentAccount)
+                }
+
+                if targetMailboxManager.getFolder(with: .inbox) == nil {
+                    try await targetMailboxManager.refreshAllFolders()
+                }
+                await rootViewState.transitionToMainViewIfPossible(
+                    targetAccount: currentAccount,
+                    targetMailbox: targetMailboxManager.mailbox
+                )
                 return
             }
 
-            guard let currentAccount = accountManager.getCurrentAccount() else {
-                rootViewState.transitionToRootViewState(.onboarding)
-                return
+            try await accountManager.updateUser(for: currentAccount)
+
+            if let currentMailboxManager = accountManager.currentMailboxManager {
+                try await currentMailboxManager.refreshAllFolders()
             }
 
-            do {
-                if let targetMailboxManager = accountManager.currentMailboxManager {
-                    if await accountManager.getCurrentUser() == nil {
-                        try await accountManager.updateUser(for: currentAccount)
-                    }
-
-                    if targetMailboxManager.getFolder(with: .inbox) == nil {
-                        try await targetMailboxManager.refreshAllFolders()
-                    }
-                    await rootViewState.transitionToMainViewIfPossible(
-                        targetAccount: currentAccount,
-                        targetMailbox: targetMailboxManager.mailbox
-                    )
-                    return
-                }
-
-                try await accountManager.updateUser(for: currentAccount)
-
-                if let currentMailboxManager = accountManager.currentMailboxManager {
-                    try await currentMailboxManager.refreshAllFolders()
-                }
-
-                await rootViewState.transitionToMainViewIfPossible(targetAccount: currentAccount, targetMailbox: nil)
-            } catch let error as MailError where error == MailError.noMailbox {
-                rootViewState.transitionToRootViewState(.noMailboxes)
-            } catch {
-                rootViewState.transitionToRootViewState(.onboarding)
-            }
+            await rootViewState.transitionToMainViewIfPossible(targetAccount: currentAccount, targetMailbox: nil)
+        } catch let error as MailError where error == MailError.noMailbox {
+            rootViewState.transitionToRootViewState(.noMailboxes)
+        } catch {
+            rootViewState.transitionToRootViewState(.onboarding)
         }
     }
 }
