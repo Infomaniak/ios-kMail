@@ -80,7 +80,17 @@ struct AutocompletionView: View {
             )
             var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
 
-            let realResults = autocompleteRecipients.filter { !addedRecipients.map(\.email).contains($0.email) }
+        let autocompleteGroupContact = mailboxManager.contactManager.frozenGroupContacts(matching: trimmedSearch, fetchLimit: nil)
+
+        // TODO: Find group or organisation name
+        var autocompleteGroupRecipients = autocompleteGroupContact.map { Recipient(
+            email: "Afficher nom groupe ou organisation ?",
+            name: "Groupe/carnet ? \($0.name)"
+        ) }
+
+        var result = autocompleteRecipients + autocompleteGroupRecipients
+
+        let realResults = autocompleteRecipients.filter { !addedRecipients.map(\.email).contains($0.email) }
 
             shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.email == textDebounce.text)
             if shouldAddUserProposal {
