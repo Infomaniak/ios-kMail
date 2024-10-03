@@ -20,7 +20,7 @@ import Foundation
 import RealmSwift
 
 // AddressBook Categories
-public class GroupContact: EmbeddedObject, Codable {
+public class GroupContact: Object, Codable {
     @Persisted public var id: Int
     @Persisted public var name: String
 }
