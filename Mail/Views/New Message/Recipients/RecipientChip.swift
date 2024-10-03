@@ -24,6 +24,7 @@ import Popovers
 import SwiftUI
 
 struct RecipientChip: View {
+    @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
@@ -45,6 +46,7 @@ struct RecipientChip: View {
                 .padding(.vertical, value: .small)
                 .padding(.horizontal, value: .medium)
                 .frame(maxWidth: 600)
+                .environment(\.currentUser, currentUser)
                 .environmentObject(mailboxManager)
 
             Templates.MenuButton(text: Text(MailResourcesStrings.Localizable.contactActionCopyEmailAddress),
