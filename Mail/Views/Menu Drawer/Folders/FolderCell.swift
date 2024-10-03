@@ -186,7 +186,7 @@ struct FolderCellContent: View {
         .padding(.leading, IKPadding.menuDrawerSubFolder * CGFloat(level))
         .padding(canHaveChevron ? IKPadding.menuDrawerCellWithChevron : IKPadding.menuDrawerCell)
         .background(FolderCellBackground(isCurrentFolder: isCurrentFolder))
-        .dropThreadHandler(destinationFolder: frozenFolder)
+        .dropThreadDestination(destinationFolder: frozenFolder)
     }
 
     @ViewBuilder

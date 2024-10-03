@@ -103,7 +103,7 @@ struct DraggableThreadViewModifier: ViewModifier {
 }
 
 extension View {
-    func dropThreadHandler(destinationFolder: Folder) -> some View {
+    func dropThreadDestination(destinationFolder: Folder) -> some View {
         modifier(DropThreadViewModifier(destinationFolder: destinationFolder))
     }
 
