@@ -109,13 +109,10 @@ struct ThreadListCellContextMenu: ViewModifier {
     }
 
     private func getLastMessage() -> Message? {
-        let foreignMessages = thread.messages
-            .filter { !$0.fromMe(currentMailboxEmail: mailboxManager.mailbox.email) }
-
-        if let unreadForeignMessage = foreignMessages.last(where: { !$0.seen }) {
-            return unreadForeignMessage
+        let isInWrittenByMeFolder = FolderRole.writtenByMeFolders.contains { $0 == thread.folder?.role }
+        if isInWrittenByMeFolder {
+            return thread.lastMessageFromFolder ?? thread.messages.last
         }
-
-        return foreignMessages.isEmpty ? thread.messages.last : foreignMessages.last
+        return thread.messages.last
     }
 }
