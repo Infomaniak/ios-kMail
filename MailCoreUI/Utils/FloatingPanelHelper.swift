@@ -17,7 +17,9 @@
  */
 
 import Combine
+import InfomaniakCore
 import InfomaniakCoreSwiftUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import SwiftUI
@@ -66,6 +68,10 @@ public extension View {
 
 @available(iOS, introduced: 15, deprecated: 16, message: "Use native way")
 public struct SelfSizingPanelBackportViewModifier: ViewModifier {
+    @LazyInjectService private var platformDetector: PlatformDetectable
+
+    @Environment(\.dismiss) private var dismiss
+
     @State private var currentDetents: Set<Backport.PresentationDetent> = [.medium]
 
     let dragIndicator: Visibility
@@ -92,6 +98,14 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
         return topPadding + titleSpacing + UIFont.preferredFont(forTextStyle: .headline).pointSize
     }
 
+    private var shouldShowCloseButton: Bool {
+        return platformDetector.isMac || (UIDevice.current.orientation.isLandscape && UIDevice.current.userInterfaceIdiom != .pad)
+    }
+
+    private var shouldShowHeader: Bool {
+        return title != nil || shouldShowCloseButton
+    }
+
     public init(dragIndicator: Visibility = Visibility.visible, title: String? = nil) {
         self.dragIndicator = dragIndicator
         self.title = title
@@ -99,10 +113,19 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
 
     public func body(content: Content) -> some View {
         VStack(spacing: IKPadding.small) {
-            if let title {
-                Text(title)
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
+            if shouldShowHeader {
+                ZStack {
+                    if let title {
+                        Text(title)
+                            .font(Font(UIFont.preferredFont(forTextStyle: .headline)))
+                    }
+
+                    if shouldShowCloseButton {
+                        CloseButton(size: .medium, dismissAction: dismiss)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .padding(.trailing, value: .medium)
+                    }
+                }
             }
 
             ScrollView {
@@ -128,6 +151,10 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
 
 @available(iOS 16.0, *)
 public struct SelfSizingPanelViewModifier: ViewModifier {
+    @LazyInjectService private var platformDetector: PlatformDetectable
+
+    @Environment(\.dismiss) private var dismiss
+
     @State private var currentDetents: Set<PresentationDetent> = [.height(0)]
     @State private var selection: PresentationDetent = .height(0)
 
@@ -144,6 +171,14 @@ public struct SelfSizingPanelViewModifier: ViewModifier {
         return topPadding + titleSpacing + UIFont.preferredFont(forTextStyle: .headline).pointSize
     }
 
+    private var shouldShowCloseButton: Bool {
+        return platformDetector.isMac || (UIDevice.current.orientation.isLandscape && UIDevice.current.userInterfaceIdiom != .pad)
+    }
+
+    private var shouldShowHeader: Bool {
+        return title != nil || shouldShowCloseButton
+    }
+
     public init(dragIndicator: Visibility = Visibility.visible, title: String? = nil) {
         self.dragIndicator = dragIndicator
         self.title = title
@@ -151,10 +186,19 @@ public struct SelfSizingPanelViewModifier: ViewModifier {
 
     public func body(content: Content) -> some View {
         VStack(spacing: titleSpacing) {
-            if let title {
-                Text(title)
-                    .font(Font(UIFont.preferredFont(forTextStyle: .headline)))
-                    .frame(maxWidth: .infinity)
+            if shouldShowHeader {
+                ZStack {
+                    if let title {
+                        Text(title)
+                            .font(Font(UIFont.preferredFont(forTextStyle: .headline)))
+                    }
+
+                    if shouldShowCloseButton {
+                        CloseButton(size: .medium, dismissAction: dismiss)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .padding(.trailing, value: .medium)
+                    }
+                }
             }
 
             ScrollView {
