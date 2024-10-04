@@ -68,7 +68,6 @@ public extension View {
 
 @available(iOS, introduced: 15, deprecated: 16, message: "Use native way")
 public struct SelfSizingPanelBackportViewModifier: ViewModifier {
-
     @LazyInjectService private var platformDetector: PlatformDetectable
 
     @Environment(\.dismiss) private var dismiss
@@ -99,6 +98,14 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
         return topPadding + titleSpacing + UIFont.preferredFont(forTextStyle: .headline).pointSize
     }
 
+    private var shouldShowCloseButton: Bool {
+        return platformDetector.isMac || UIDevice.current.orientation.isLandscape
+    }
+
+    private var shouldShowZStack: Bool {
+        return title != nil || shouldShowCloseButton
+    }
+
     public init(dragIndicator: Visibility = Visibility.visible, title: String? = nil) {
         self.dragIndicator = dragIndicator
         self.title = title
@@ -106,9 +113,19 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
 
     public func body(content: Content) -> some View {
         VStack(spacing: IKPadding.small) {
-            if let title {
-                Text(title)
-                    .font(.headline)
+            if shouldShowZStack {
+                ZStack {
+                    if let title {
+                        Text(title)
+                            .font(.headline)
+                    }
+
+                    if platformDetector.isMac || shouldShowCloseButton {
+                        CloseButton(size: .medium, dismissAction: dismiss)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .padding(.trailing, value: .medium)
+                    }
+                }
             }
 
             ScrollView {
@@ -125,12 +142,7 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
                 }
             }
         }
-        .overlay(alignment: .topTrailing) {
-            if platformDetector.isMac || (!platformDetector.isMac && UIDevice.current.orientation.isLandscape) {
-                CloseButton(dismissAction: dismiss)
-                    .padding([.top, .trailing], value: .medium)
-            }
-        }
+        .padding(.top, topPadding)
         .backport.presentationDragIndicator(backportDragIndicator)
         .backport.presentationDetents(currentDetents)
         .ikPresentationCornerRadius(20)
@@ -139,12 +151,12 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
 
 @available(iOS 16.0, *)
 public struct SelfSizingPanelViewModifier: ViewModifier {
-    @State private var currentDetents: Set<PresentationDetent> = [.height(0)]
-    @State private var selection: PresentationDetent = .height(0)
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     @Environment(\.dismiss) private var dismiss
 
-    @LazyInjectService private var platformDetector: PlatformDetectable
+    @State private var currentDetents: Set<PresentationDetent> = [.height(0)]
+    @State private var selection: PresentationDetent = .height(0)
 
     let dragIndicator: Visibility
     let title: String?
@@ -159,6 +171,14 @@ public struct SelfSizingPanelViewModifier: ViewModifier {
         return topPadding + titleSpacing + UIFont.preferredFont(forTextStyle: .headline).pointSize
     }
 
+    private var shouldShowCloseButton: Bool {
+        return platformDetector.isMac || UIDevice.current.orientation.isLandscape
+    }
+
+    private var shouldShowZStack: Bool {
+        return title != nil || shouldShowCloseButton
+    }
+
     public init(dragIndicator: Visibility = Visibility.visible, title: String? = nil) {
         self.dragIndicator = dragIndicator
         self.title = title
@@ -166,9 +186,19 @@ public struct SelfSizingPanelViewModifier: ViewModifier {
 
     public func body(content: Content) -> some View {
         VStack(spacing: titleSpacing) {
-            if let title {
-                Text(title)
-                    .font(.headline)
+            if shouldShowZStack {
+                ZStack {
+                    if let title {
+                        Text(title)
+                            .font(.headline)
+                    }
+
+                    if platformDetector.isMac || shouldShowCloseButton {
+                        CloseButton(size: .medium, dismissAction: dismiss)
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .padding(.trailing, value: .medium)
+                    }
+                }
             }
 
             ScrollView {
@@ -192,13 +222,7 @@ public struct SelfSizingPanelViewModifier: ViewModifier {
                 }
             }
         }
-        .padding(.top, value: .medium)
-        .overlay(alignment: .topTrailing) {
-            if platformDetector.isMac || (!platformDetector.isMac && UIDevice.current.orientation.isLandscape) {
-                CloseButton(size: .medium, dismissAction: dismiss)
-                    .padding([.top, .trailing], value: .medium)
-            }
-        }
+        .padding(.top, topPadding)
         .presentationDetents(currentDetents, selection: $selection)
         .presentationDragIndicator(dragIndicator)
         .ikPresentationCornerRadius(20)
