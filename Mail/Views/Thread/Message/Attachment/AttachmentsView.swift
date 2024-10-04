@@ -217,7 +217,7 @@ struct DownloadAllAttachmentsButtonView: View {
         HStack {
             if isShowingProgressCircle {
                 ProgressView(value: progress)
-                    .progressViewStyle(MailCircularProgressViewStyle())
+                    .progressViewStyle(.mailCircularProgress)
             }
 
             Button(action: downloadAllAttachments) {

@@ -19,6 +19,12 @@
 import MailResources
 import SwiftUI
 
+public extension ProgressViewStyle where Self == MailCircularProgressViewStyle {
+    static var mailCircularProgress: Self {
+        MailCircularProgressViewStyle()
+    }
+}
+
 public struct MailCircularProgressViewStyle: ProgressViewStyle {
     public init() {}
 

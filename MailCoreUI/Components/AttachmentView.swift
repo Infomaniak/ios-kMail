@@ -76,7 +76,7 @@ public struct AttachmentView<Content: View>: View {
         HStack(spacing: IKPadding.small) {
             if isDownloading {
                 ProgressView(value: downloadProgress)
-                    .progressViewStyle(MailCircularProgressViewStyle())
+                    .progressViewStyle(.mailCircularProgress)
             } else {
                 icon
                     .iconSize(.large)
