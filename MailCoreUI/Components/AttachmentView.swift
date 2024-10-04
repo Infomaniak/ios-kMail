@@ -27,49 +27,47 @@ public struct AttachmentView<Content: View>: View {
     private let icon: MailResourcesImages
 
     @ViewBuilder let accessory: () -> Content?
-    let isDownloading: Bool
+
     let downloadProgress: Double
+
+    private var isDownloading: Bool {
+        return downloadProgress > 0 && downloadProgress < 1
+    }
 
     public init(
         title: String,
         subtitle: String,
         icon: MailResourcesImages,
-        isDownloading: Bool = false,
         downloadProgress: Double = 0,
         accessory: @escaping () -> Content? = { EmptyView() }
     ) {
         self.title = title
         self.subtitle = subtitle
         self.icon = icon
-        self.isDownloading = isDownloading
         self.downloadProgress = downloadProgress
         self.accessory = accessory
     }
 
     public init(
         attachment: Attachment,
-        isDownloading: Bool = false,
         downloadProgress: Double = 0,
         accessory: @escaping () -> Content? = { EmptyView() }
     ) {
         title = attachment.name
         subtitle = attachment.size.formatted(.defaultByteCount)
         icon = attachment.icon
-        self.isDownloading = isDownloading
         self.downloadProgress = downloadProgress
         self.accessory = accessory
     }
 
     public init(
         swissTransferFile: File,
-        isDownloading: Bool = false,
         downloadProgress: Double = 0,
         accessory: @escaping () -> Content? = { EmptyView() }
     ) {
         title = swissTransferFile.name
         subtitle = swissTransferFile.size.formatted(.defaultByteCount)
         icon = swissTransferFile.icon
-        self.isDownloading = isDownloading
         self.downloadProgress = downloadProgress
         self.accessory = accessory
     }

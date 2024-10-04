@@ -18,7 +18,6 @@
 
 import Foundation
 
-/// The progress of a task about an  Attachment
 @MainActor public final class AttachmentTask: ObservableObject {
     @Published public var progress: Double = 0
     var task: Task<String?, Never>?

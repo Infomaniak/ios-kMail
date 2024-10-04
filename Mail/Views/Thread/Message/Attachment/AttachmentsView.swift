@@ -35,7 +35,6 @@ struct AttachmentsView: View {
 
     @ModalState private var previewedAttachment: Attachment?
     @ModalState private var attachmentsURL: AttachmentsURL?
-    @State private var downloadInProgress = false
     @State private var downloadProgressState: [String: Double] = [:]
     @State private var trackDownloadTask: [String: Task<Void, Error>] = [:]
     @State private var isDownloadDisabled = false
@@ -75,7 +74,6 @@ struct AttachmentsView: View {
                         } label: {
                             AttachmentView(
                                 attachment: attachment,
-                                isDownloading: progress > 0 && progress < 1,
                                 downloadProgress: progress
                             )
                         }
@@ -90,7 +88,6 @@ struct AttachmentsView: View {
                             } label: {
                                 AttachmentView(
                                     swissTransferFile: file,
-                                    isDownloading: progress > 0 && progress < 1,
                                     downloadProgress: progress
                                 )
                             }
@@ -113,21 +110,12 @@ struct AttachmentsView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .multilineTextAlignment(.leading)
 
-                    HStack {
-                        let progress = downloadProgressState[message.swissTransferAttachment?.uuid ?? ""] ?? 0
-                        if isShowingProgressCircle {
-                            ProgressView(value: progress)
-                                .progressViewStyle(MailCircularProgressViewStyle())
-                        }
-                        Button {
-                            downloadAllAttachments()
-                        } label: {
-                            Text(MailResourcesStrings.Localizable.buttonDownloadAll)
-                        }
-                        .disabled(isDownloadDisabled)
-                        .buttonStyle(.ikBorderless(isInlined: true))
-                        .controlSize(.small)
-                    }
+                    DownloadAllAttachmentsButtonView(
+                        progress: downloadProgressState[message.swissTransferAttachment?.uuid ?? ""] ?? 0,
+                        isShowingProgressCircle: isShowingProgressCircle,
+                        isDownloadDisabled: isDownloadDisabled,
+                        downloadAllAttachments: downloadAllAttachments
+                    )
                 }
             }
             .padding(.horizontal, value: .medium)
@@ -188,7 +176,6 @@ struct AttachmentsView: View {
     }
 
     private func downloadAllAttachments() {
-        downloadInProgress = true
         isDownloadDisabled = true
         isShowingProgressCircle = true
         trackDownloadTask[UUID().uuidString] = Task {
@@ -216,9 +203,32 @@ struct AttachmentsView: View {
                     attachmentsURL = AttachmentsURL(urls: urls)
                 }
             }
-            downloadInProgress = false
             isDownloadDisabled = false
             isShowingProgressCircle = false
+        }
+    }
+}
+
+struct DownloadAllAttachmentsButtonView: View {
+    let progress: Double
+    let isShowingProgressCircle: Bool
+    let isDownloadDisabled: Bool
+    let downloadAllAttachments: () -> Void
+
+    var body: some View {
+        HStack {
+            if isShowingProgressCircle {
+                ProgressView(value: progress)
+                    .progressViewStyle(MailCircularProgressViewStyle())
+            }
+            Button {
+                downloadAllAttachments()
+            } label: {
+                Text(MailResourcesStrings.Localizable.buttonDownloadAll)
+            }
+            .disabled(isDownloadDisabled)
+            .buttonStyle(.ikBorderless(isInlined: true))
+            .controlSize(.small)
         }
     }
 }
