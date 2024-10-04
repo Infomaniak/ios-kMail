@@ -17,8 +17,6 @@
  */
 
 import Atlantis
-import CocoaLumberjack
-import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
 import InfomaniakDI
@@ -29,15 +27,8 @@ import Sentry
 
 public enum Logging {
     public static func initLogging() {
-        initLogger()
         initSentry()
         initAtlantis()
-    }
-
-    class LogFormatter: NSObject, DDLogFormatter {
-        func format(message logMessage: DDLogMessage) -> String? {
-            return "[Infomaniak] \(logMessage.message)"
-        }
     }
 
     /// Add a sentry for an error related to opening a realm
@@ -54,11 +45,6 @@ public enum Logging {
                 "after a retry": afterRetry
             ], key: "Realm")
         }
-    }
-
-    private static func initLogger() {
-        DDOSLogger.sharedInstance.logFormatter = LogFormatter()
-        DDLog.add(DDOSLogger.sharedInstance, with: .info)
     }
 
     private static func initSentry() {

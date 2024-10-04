@@ -16,7 +16,6 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CocoaLumberjackSwift
 import Foundation
 import InfomaniakBugTracker
 import InfomaniakCore
@@ -24,6 +23,7 @@ import InfomaniakCoreCommonUI
 import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications
+import OSLog
 
 private let realmRootPath = "mailboxes"
 private let appGroupIdentifier = "group.com.infomaniak.mail"

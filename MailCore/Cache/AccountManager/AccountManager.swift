@@ -16,7 +16,6 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CocoaLumberjackSwift
 import Foundation
 import InfomaniakBugTracker
 import InfomaniakCore
@@ -25,6 +24,7 @@ import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications
 import Nuke
+import OSLog
 import RealmSwift
 import Sentry
 import SwiftUI

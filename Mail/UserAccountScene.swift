@@ -16,7 +16,6 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CocoaLumberjackSwift
 import Contacts
 import InfomaniakBugTracker
 import InfomaniakCore
@@ -28,6 +27,7 @@ import InfomaniakNotifications
 import MailCore
 import MailCoreUI
 import MailResources
+import OSLog
 import SwiftUI
 import UIKit
 import VersionChecker

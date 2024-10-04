@@ -16,10 +16,10 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CocoaLumberjackSwift
 import InfomaniakRichHTMLEditor
 import MailCore
 import MailCoreUI
+import OSLog
 import PhotosUI
 import RealmSwift
 import Sentry

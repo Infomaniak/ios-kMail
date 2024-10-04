@@ -17,7 +17,6 @@
  */
 
 import Atlantis
-import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreCommonUI
@@ -25,6 +24,7 @@ import InfomaniakDI
 import InfomaniakNotifications
 import Intents
 import MailResources
+import OSLog
 import RealmSwift
 import SwiftSoup
 import UIKit

@@ -16,9 +16,9 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CocoaLumberjackSwift
 import Foundation
 import MailResources
+import OSLog
 import SwiftSoup
 
 public enum MessageBodyUtils {
