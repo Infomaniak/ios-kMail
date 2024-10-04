@@ -99,7 +99,7 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
     }
 
     private var shouldShowCloseButton: Bool {
-        return platformDetector.isMac || UIDevice.current.orientation.isLandscape
+        return platformDetector.isMac || (UIDevice.current.orientation.isLandscape && UIDevice.current.userInterfaceIdiom != .pad)
     }
 
     private var shouldShowHeader: Bool {
@@ -172,7 +172,7 @@ public struct SelfSizingPanelViewModifier: ViewModifier {
     }
 
     private var shouldShowCloseButton: Bool {
-        return platformDetector.isMac || UIDevice.current.orientation.isLandscape
+        return platformDetector.isMac || (UIDevice.current.orientation.isLandscape && UIDevice.current.userInterfaceIdiom != .pad)
     }
 
     private var shouldShowHeader: Bool {
