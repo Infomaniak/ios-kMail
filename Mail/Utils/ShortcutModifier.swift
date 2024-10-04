@@ -30,7 +30,6 @@ struct ShortcutModifier: ViewModifier {
     @EnvironmentObject private var mainViewState: MainViewState
 
     @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var platformDetector: PlatformDetectable
 
     @ModalState private var flushAlert: FlushAlertState?
 
@@ -54,12 +53,6 @@ struct ShortcutModifier: ViewModifier {
 
                 Button(MailResourcesStrings.Localizable.shortcutRefreshAction, action: shortcutRefresh)
                     .keyboardShortcut("n", modifiers: [.shift, .command])
-
-                Button(MailResourcesStrings.Localizable.shortcutNextAction, action: shortcutNext)
-                    .keyboardShortcut(.downArrow, modifiers: platformDetector.isMac ? [] : [.command])
-
-                Button(MailResourcesStrings.Localizable.shortcutPreviousAction, action: shortcutPrevious)
-                    .keyboardShortcut(.upArrow, modifiers: platformDetector.isMac ? [] : [.command])
             }
             .frame(width: 0, height: 0)
             .hidden()
@@ -117,18 +110,6 @@ struct ShortcutModifier: ViewModifier {
         Task {
             await viewModel.fetchThreads()
         }
-    }
-
-    private func shortcutNext() {
-        guard !multipleSelectionViewModel.isEnabled else { return }
-        matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "nextThread")
-        viewModel.nextThread()
-    }
-
-    private func shortcutPrevious() {
-        guard !multipleSelectionViewModel.isEnabled else { return }
-        matomo.track(eventWithCategory: .keyboardShortcutActions, action: .input, name: "previousThread")
-        viewModel.previousThread()
     }
 }
 
