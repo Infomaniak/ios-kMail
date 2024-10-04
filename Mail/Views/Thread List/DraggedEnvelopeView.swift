@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2024 Infomaniak Network SA
@@ -21,19 +20,19 @@ import MailCore
 import SwiftUI
 
 struct DraggedEnvelopeView: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-    let ammount: Int
+    let amount: Int
 
     var body: some View {
         Image(systemName: "envelope.fill")
-            .font(.system(size: UIFontMetrics.default.scaledValue(for: 24)))
+            .font(.title)
             .padding(value: .small)
             .overlay(alignment: .bottomTrailing) {
-                if ammount > 1 {
-                    Text("\(ammount)")
+                if amount > 1 {
+                    Text("\(amount)")
                         .padding(.horizontal, value: .small)
                         .padding(.vertical, value: .extraSmall)
-                        .background(accentColor.primary.swiftUIColor, in: .circle)
+                        .background(.red, in: .circle)
+                        .foregroundStyle(.primary)
                         .font(MailTextStyle.bodySmall.font)
                 }
             }

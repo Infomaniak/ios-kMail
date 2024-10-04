@@ -105,7 +105,7 @@ struct DraggableThreadViewModifier: ViewModifier {
                 }
             #if os(macOS) || targetEnvironment(macCatalyst)
                 .draggable(DraggedThread(threadIds: draggedThreadId)) {
-                    DraggedEnvelopeView(ammount: draggedThreadId.count)
+                    DraggedEnvelopeView(amount: draggedThreadId.count)
                 }
             #else
                 .draggable(DraggedThread(threadIds: draggedThreadId))

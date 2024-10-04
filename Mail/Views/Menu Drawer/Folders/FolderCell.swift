@@ -220,7 +220,7 @@ struct FolderCellContent: View {
 struct FolderCellBackground: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
     @Environment(\.isHovered) private var isHovered
-    @Environment(\.folderCellType) var cellType
+    @Environment(\.folderCellType) private var cellType
 
     let isCurrentFolder: Bool
 
