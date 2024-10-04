@@ -143,7 +143,11 @@ final class SearchViewModel: ObservableObject, ThreadListable {
     }
 
     func updateContactSuggestion() {
-        let autocompleteContacts = mailboxManager.contactManager.frozenContacts(matching: searchValue, fetchLimit: nil)
+        let autocompleteContacts = mailboxManager.contactManager.frozenContacts(
+            matching: searchValue,
+            fetchLimit: nil,
+            sorted: nil
+        )
         var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name).freezeIfNeeded() }
 
         // Append typed email

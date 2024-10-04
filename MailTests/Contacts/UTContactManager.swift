@@ -73,7 +73,7 @@ final class UTContactManager: XCTestCase {
         generateFakeContacts(count: 100_000)
         measure {
             // WHEN
-            let matchingContacts = contactManager.frozenContacts(matching: "mail", fetchLimit: nil)
+            let matchingContacts = contactManager.frozenContacts(matching: "mail", fetchLimit: nil, sorted: nil)
             // THEN
             XCTAssertEqual(matchingContacts.isEmpty, false)
         }

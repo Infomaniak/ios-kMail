@@ -26,7 +26,8 @@ public protocol ContactFetchable {
     ///   - string: input string to match against email and name
     ///   - fetchLimit: limit the query by default to limit memory footprint
     /// - Returns: The collection of matching contacts.
-    func frozenContacts(matching string: String, fetchLimit: Int?) -> any Collection<MergedContact>
+    func frozenContacts(matching string: String, fetchLimit: Int?, sorted: ((MergedContact, MergedContact) -> Bool)?)
+        -> any Collection<MergedContact>
 
     /// Get a contact from a given transactionable
     func getContact(for correspondent: any Correspondent, transactionable: Transactionable) -> MergedContact?
@@ -49,7 +50,8 @@ public extension ContactManager {
     ///   - string: input string to match against email and name
     ///   - fetchLimit: limit the query by default to limit memory footprint
     /// - Returns: The collection of matching contacts. Frozen.
-    func frozenContacts(matching string: String, fetchLimit: Int?) -> any Collection<MergedContact> {
+    func frozenContacts(matching string: String, fetchLimit: Int?,
+                        sorted: ((MergedContact, MergedContact) -> Bool)?) -> any Collection<MergedContact> {
         var lazyResults = fetchResults(ofType: MergedContact.self) { partial in
             partial
         }
@@ -57,10 +59,12 @@ public extension ContactManager {
             .filter(Self.searchContactInsensitivePredicate, string, string)
             .freeze()
 
-        let fetchLimit = min(lazyResults.count, fetchLimit ?? Self.contactFetchLimit)
+        var sortedIfNecessary: any Collection<MergedContact> = lazyResults
+        if let sorted {
+            sortedIfNecessary = sortedIfNecessary.sorted(by: sorted)
+        }
 
-        let limitedResults = lazyResults[0 ..< fetchLimit]
-        return limitedResults
+        return sortedIfNecessary.prefix(fetchLimit ?? Self.contactFetchLimit)
     }
 
     func getContact(for correspondent: any Correspondent) -> MergedContact? {

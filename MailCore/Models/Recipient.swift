@@ -101,7 +101,7 @@ public final class Recipient: EmbeddedObject, Correspondent, Codable {
 
         let isAnAlias = mailboxManager.mailbox.aliases.contains(email)
 
-        let isContact = !(mailboxManager.contactManager.frozenContacts(matching: email, fetchLimit: nil)).isEmpty
+        let isContact = !(mailboxManager.contactManager.frozenContacts(matching: email, fetchLimit: nil, sorted: nil)).isEmpty
 
         return !isKnownDomain && !isMailerDeamon && !isAnAlias && !isContact
     }
