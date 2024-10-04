@@ -50,7 +50,7 @@ struct ThreadListCellContextMenu: ViewModifier {
                 .contextMenu {
                     actionsButtons(actions)
                 } preview: {
-                    if let message = thread.messages.first {
+                    if let message = getLastMessage() {
                         MessageView(threadForcedExpansion: .constant([message.uid: .expanded]), message: message)
                             .environment(\.isMessageInteractive, false)
                             .environment(\.currentUser, currentUser)
@@ -106,5 +106,16 @@ struct ThreadListCellContextMenu: ViewModifier {
                 }
             }
         }
+    }
+
+    private func getLastMessage() -> Message? {
+        let foreignMessages = thread.messages
+            .filter { !$0.fromMe(currentMailboxEmail: mailboxManager.mailbox.email) }
+
+        if let unreadForeignMessage = foreignMessages.last(where: { !$0.seen }) {
+            return unreadForeignMessage
+        }
+
+        return foreignMessages.isEmpty ? thread.messages.last : foreignMessages.last
     }
 }
