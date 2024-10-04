@@ -16,11 +16,11 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CocoaLumberjackSwift
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakDI
+import OSLog
 import UserNotifications
 
 // TODO: Move to CoreUI / use with kDrive

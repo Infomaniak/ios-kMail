@@ -16,11 +16,11 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CocoaLumberjackSwift
 import InfomaniakCoreCommonUI
 import MailCore
 import MailCoreUI
 import MailResources
+import OSLog
 import RealmSwift
 import SwiftUI
 

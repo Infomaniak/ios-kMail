@@ -16,9 +16,9 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CocoaLumberjackSwift
 import InfomaniakDI
 import MailCore
+import OSLog
 import SwiftUI
 import UIKit
 

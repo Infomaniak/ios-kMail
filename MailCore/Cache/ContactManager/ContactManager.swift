@@ -16,12 +16,12 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CocoaLumberjackSwift
 import Contacts
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreDB
+import OSLog
 import RealmSwift
 import SwiftRegex
 

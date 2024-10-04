@@ -16,11 +16,11 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CocoaLumberjackSwift
 import Foundation
 import InfomaniakConcurrency
 import InfomaniakCore
 import InfomaniakCoreDB
+import OSLog
 import UniformTypeIdentifiers
 
 /// Abstracts that some attachment was updated

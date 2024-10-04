@@ -16,10 +16,10 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import CocoaLumberjackSwift
 import Contacts
 import Foundation
 import InfomaniakCoreCommonUI
+import OSLog
 
 extension CNContact {
     var fullName: String {
