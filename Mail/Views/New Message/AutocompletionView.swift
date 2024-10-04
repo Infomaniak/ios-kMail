@@ -24,6 +24,8 @@ import RealmSwift
 import SwiftUI
 
 struct AutocompletionView: View {
+    private static let maxAutocompleteCount = 10
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var shouldAddUserProposal = false
@@ -67,7 +69,11 @@ struct AutocompletionView: View {
     private func updateAutocompletion(_ search: String) {
         let trimmedSearch = search.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        let autocompleteContacts = mailboxManager.contactManager.frozenContacts(matching: trimmedSearch, fetchLimit: nil)
+        let autocompleteContacts = mailboxManager.contactManager.frozenContacts(
+            matching: trimmedSearch,
+            fetchLimit: Self.maxAutocompleteCount,
+            sorted: sortByRemoteAndName
+        )
         var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
 
         let realResults = autocompleteRecipients.filter { !addedRecipients.map(\.email).contains($0.email) }
@@ -80,6 +86,14 @@ struct AutocompletionView: View {
             }
 
             autocompletion = autocompleteRecipients
+        }
+    }
+
+    private func sortByRemoteAndName(lhs: MergedContact, rhs: MergedContact) -> Bool {
+        if lhs.isRemote != rhs.isRemote {
+            return lhs.isRemote && !rhs.isRemote
+        } else {
+            return lhs.name.localizedStandardCompare(rhs.name) == .orderedAscending
         }
     }
 }
