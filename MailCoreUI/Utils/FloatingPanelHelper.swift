@@ -102,7 +102,7 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
         return platformDetector.isMac || UIDevice.current.orientation.isLandscape
     }
 
-    private var shouldShowZStack: Bool {
+    private var shouldShowHeader: Bool {
         return title != nil || shouldShowCloseButton
     }
 
@@ -113,14 +113,14 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
 
     public func body(content: Content) -> some View {
         VStack(spacing: IKPadding.small) {
-            if shouldShowZStack {
+            if shouldShowHeader {
                 ZStack {
                     if let title {
                         Text(title)
-                            .font(.headline)
+                            .font(Font(UIFont.preferredFont(forTextStyle: .headline)))
                     }
 
-                    if platformDetector.isMac || shouldShowCloseButton {
+                    if shouldShowCloseButton {
                         CloseButton(size: .medium, dismissAction: dismiss)
                             .frame(maxWidth: .infinity, alignment: .trailing)
                             .padding(.trailing, value: .medium)
@@ -175,7 +175,7 @@ public struct SelfSizingPanelViewModifier: ViewModifier {
         return platformDetector.isMac || UIDevice.current.orientation.isLandscape
     }
 
-    private var shouldShowZStack: Bool {
+    private var shouldShowHeader: Bool {
         return title != nil || shouldShowCloseButton
     }
 
@@ -186,14 +186,14 @@ public struct SelfSizingPanelViewModifier: ViewModifier {
 
     public func body(content: Content) -> some View {
         VStack(spacing: titleSpacing) {
-            if shouldShowZStack {
+            if shouldShowHeader {
                 ZStack {
                     if let title {
                         Text(title)
-                            .font(.headline)
+                            .font(Font(UIFont.preferredFont(forTextStyle: .headline)))
                     }
 
-                    if platformDetector.isMac || shouldShowCloseButton {
+                    if shouldShowCloseButton {
                         CloseButton(size: .medium, dismissAction: dismiss)
                             .frame(maxWidth: .infinity, alignment: .trailing)
                             .padding(.trailing, value: .medium)
