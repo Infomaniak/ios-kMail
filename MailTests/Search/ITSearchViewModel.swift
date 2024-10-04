@@ -39,7 +39,8 @@ struct MCKContactManageable_SearchViewModel: ContactManageable, MCKTransactionab
         transactionExecutor = TransactionExecutor(realmAccessible: realmAccessor)
     }
 
-    func frozenContacts(matching string: String, fetchLimit: Int?) -> any Collection<MailCore.MergedContact> { [] }
+    func frozenContacts(matching string: String, fetchLimit: Int?,
+                        sorted: ((MergedContact, MergedContact) -> Bool)?) -> any Collection<MailCore.MergedContact> { [] }
 
     func getContact(for correspondent: any MailCore.Correspondent) -> MailCore.MergedContact? { nil }
 
