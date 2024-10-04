@@ -58,7 +58,7 @@ public protocol MailApiCommonFetchable {
 
     func unstar(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult
 
-    func downloadAttachments(message: Message) async throws -> URL
+    func downloadAttachments(message: Message, progressObserver: ((Double) -> Void)?) async throws -> URL
 
     func blockSender(message: Message) async throws -> NullableResponse
 
@@ -112,7 +112,7 @@ public protocol MailApiExtendedFetchable {
 
     func delete(mailbox: Mailbox, messages: [Message]) async throws -> [Empty]
 
-    func attachment(attachment: Attachment) async throws -> Data
+    func attachment(attachment: Attachment, progressObserver: ((Double) -> Void)?) async throws -> Data
 
     func draft(mailbox: Mailbox, draftUuid: String) async throws -> Draft
 

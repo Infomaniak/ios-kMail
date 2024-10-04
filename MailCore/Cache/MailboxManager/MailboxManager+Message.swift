@@ -34,12 +34,12 @@ public extension MailboxManager {
         }
     }
 
-    func attachmentData(_ attachment: Attachment) async throws -> Data {
+    func attachmentData(_ attachment: Attachment, progressObserver: ((Double) -> Void)?) async throws -> Data {
         guard !Task.isCancelled else {
             throw CancellationError()
         }
 
-        let data = try await apiFetcher.attachment(attachment: attachment)
+        let data = try await apiFetcher.attachment(attachment: attachment, progressObserver: progressObserver)
 
         let safeAttachment = ThreadSafeReference(to: attachment)
         try? writeTransaction { writableRealm in
@@ -53,9 +53,9 @@ public extension MailboxManager {
         return data
     }
 
-    func saveAttachmentLocally(attachment: Attachment) async {
+    func saveAttachmentLocally(attachment: Attachment, progressObserver: ((Double) -> Void)?) async {
         do {
-            let data = try await attachmentData(attachment)
+            let data = try await attachmentData(attachment, progressObserver: progressObserver)
             let url = attachment.getLocalURL(userId: mailbox.userId, mailboxId: mailbox.mailboxId)
             let parentFolder = url.deletingLastPathComponent()
             if !FileManager.default.fileExists(atPath: parentFolder.path) {

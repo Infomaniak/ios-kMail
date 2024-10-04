@@ -30,11 +30,11 @@ struct AttachmentUploadCell: View {
     private let attachment: Attachment
     private let attachmentRemoved: ((Attachment) -> Void)?
 
-    @ObservedObject var uploadTask: AttachmentUploadTask
+    @ObservedObject var uploadTask: AttachmentTask
 
     @ModalState(wrappedValue: nil, context: ContextKeys.compose) private var previewedAttachment: Attachment?
 
-    init(uploadTask: AttachmentUploadTask, attachment: Attachment, attachmentRemoved: ((Attachment) -> Void)?) {
+    init(uploadTask: AttachmentTask, attachment: Attachment, attachmentRemoved: ((Attachment) -> Void)?) {
         self.uploadTask = uploadTask
         self.attachment = attachment
         self.attachmentRemoved = attachmentRemoved
@@ -76,14 +76,14 @@ struct AttachmentUploadCell: View {
         previewedAttachment = attachment
         if !FileManager.default.fileExists(atPath: attachment.getLocalURL(mailboxManager: mailboxManager).path) {
             Task {
-                await mailboxManager.saveAttachmentLocally(attachment: attachment)
+                await mailboxManager.saveAttachmentLocally(attachment: attachment, progressObserver: nil)
             }
         }
     }
 }
 
 #Preview {
-    AttachmentUploadCell(uploadTask: AttachmentUploadTask(), attachment: PreviewHelper.sampleAttachment) { _ in
+    AttachmentUploadCell(uploadTask: AttachmentTask(), attachment: PreviewHelper.sampleAttachment) { _ in
         /* Preview */
     }
 }

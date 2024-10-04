@@ -33,7 +33,7 @@ struct BodyImageProcessor {
         let base64Images: [ImageBase64AndMime?] = await attachments
             .concurrentMap(customConcurrency: Constants.concurrentNetworkCalls) { attachment in
                 do {
-                    let attachmentData = try await mailboxManager.attachmentData(attachment)
+                    let attachmentData = try await mailboxManager.attachmentData(attachment, progressObserver: nil)
 
                     // Skip compression on non static images types or already heic sources
                     guard attachment.mimeType.contains("jpg")

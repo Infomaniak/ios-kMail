@@ -28,37 +28,60 @@ public struct AttachmentView<Content: View>: View {
 
     @ViewBuilder let accessory: () -> Content?
 
+    let downloadProgress: Double
+
+    private var isDownloading: Bool {
+        return downloadProgress > 0 && downloadProgress < 1
+    }
+
     public init(
         title: String,
         subtitle: String,
         icon: MailResourcesImages,
+        downloadProgress: Double = 0,
         accessory: @escaping () -> Content? = { EmptyView() }
     ) {
         self.title = title
         self.subtitle = subtitle
         self.icon = icon
+        self.downloadProgress = downloadProgress
         self.accessory = accessory
     }
 
-    public init(attachment: Attachment, accessory: @escaping () -> Content? = { EmptyView() }) {
+    public init(
+        attachment: Attachment,
+        downloadProgress: Double = 0,
+        accessory: @escaping () -> Content? = { EmptyView() }
+    ) {
         title = attachment.name
         subtitle = attachment.size.formatted(.defaultByteCount)
         icon = attachment.icon
+        self.downloadProgress = downloadProgress
         self.accessory = accessory
     }
 
-    public init(swissTransferFile: File, accessory: @escaping () -> Content? = { EmptyView() }) {
+    public init(
+        swissTransferFile: File,
+        downloadProgress: Double = 0,
+        accessory: @escaping () -> Content? = { EmptyView() }
+    ) {
         title = swissTransferFile.name
         subtitle = swissTransferFile.size.formatted(.defaultByteCount)
         icon = swissTransferFile.icon
+        self.downloadProgress = downloadProgress
         self.accessory = accessory
     }
 
     public var body: some View {
         HStack(spacing: IKPadding.small) {
-            icon
-                .iconSize(.large)
-                .foregroundStyle(MailResourcesAsset.textSecondaryColor)
+            if isDownloading {
+                ProgressView(value: downloadProgress)
+                    .progressViewStyle(.mailCircularProgress)
+            } else {
+                icon
+                    .iconSize(.large)
+                    .foregroundStyle(MailResourcesAsset.textSecondaryColor)
+            }
 
             VStack(alignment: .leading, spacing: 0) {
                 Text(title)
