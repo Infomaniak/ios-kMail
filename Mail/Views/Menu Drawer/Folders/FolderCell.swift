@@ -131,8 +131,6 @@ struct FolderCellContent: View {
 
     @LazyInjectService private var matomo: MatomoUtils
 
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
     @Environment(\.folderCellType) var cellType
 
     private let frozenFolder: Folder
@@ -166,7 +164,8 @@ struct FolderCellContent: View {
                     ChevronIcon(direction: frozenFolder.isExpanded ? .up : .down)
                         .padding(value: .medium)
                 }
-                .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionButtonExpandFolder(frozenFolder.name))
+                .accessibilityLabel(MailResourcesStrings.Localizable
+                    .contentDescriptionButtonExpandFolder(frozenFolder.name))
                 .opacity(level == 0 && !frozenFolder.children.isEmpty ? 1 : 0)
             }
 
@@ -186,7 +185,8 @@ struct FolderCellContent: View {
         }
         .padding(.leading, IKPadding.menuDrawerSubFolder * CGFloat(level))
         .padding(canHaveChevron ? IKPadding.menuDrawerCellWithChevron : IKPadding.menuDrawerCell)
-        .background(background)
+        .background(FolderCellBackground(isCurrentFolder: isCurrentFolder))
+        .dropThreadDestination(destinationFolder: frozenFolder)
     }
 
     @ViewBuilder
@@ -207,19 +207,30 @@ struct FolderCellContent: View {
         }
     }
 
-    @ViewBuilder
-    private var background: some View {
-        if cellType == .menuDrawer {
-            SelectionBackground(selectionType: isCurrentFolder ? .folder : .none, paddingLeading: 0, accentColor: accentColor)
-        }
-    }
-
     private func collapseFolder() {
         matomo.track(eventWithCategory: .menuDrawer, name: "collapseFolder", value: !frozenFolder.isExpanded)
 
         guard let liveFolder = frozenFolder.thaw() else { return }
         try? liveFolder.realm?.write {
             liveFolder.isExpanded = !frozenFolder.isExpanded
+        }
+    }
+}
+
+struct FolderCellBackground: View {
+    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+    @Environment(\.isHovered) private var isHovered
+    @Environment(\.folderCellType) private var cellType
+
+    let isCurrentFolder: Bool
+
+    var body: some View {
+        if cellType == .menuDrawer {
+            SelectionBackground(
+                selectionType: (isCurrentFolder || isHovered) ? .folder : .none,
+                paddingLeading: 0,
+                accentColor: accentColor
+            )
         }
     }
 }
