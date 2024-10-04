@@ -57,47 +57,37 @@ public final class MergedContact: Object, Identifiable {
     /// Local
     @Persisted public var localIdentifier: String?
 
-    /// `true` if a remote Infomaniak contact was used to create this object
-    public lazy var isRemote = {
-        guard remoteIdentifier != nil else {
-            return false
-        }
-        return true
-    }()
+    public lazy var isRemote = remoteIdentifier != nil
 
-    /// `true` if a local iPhone contact was used to create this object
-    public lazy var isLocal = {
-        guard localIdentifier != nil else {
-            return false
-        }
-        return true
-    }()
+    public lazy var isLocal = localIdentifier != nil
 
     public var avatarImageRequest: ImageRequest? {
-        // iOS Avatar
-        if let localIdentifier,
-           !localIdentifier.isEmpty,
-           let localContact = CNContact.fromUUID(localIdentifier),
-           localContact.imageDataAvailable {
-            var imageRequest = ImageRequest(id: localIdentifier) {
-                guard let imageData = localContact.pngImageData() else {
-                    throw MailError.unknownError
-                }
+        localAvatarImageRequest ?? remoteAvatarImageRequest
+    }
 
-                return imageData
+    private var localAvatarImageRequest: ImageRequest? {
+        guard let localIdentifier, !localIdentifier.isEmpty,
+              let localContact = CNContact.fromUUID(localIdentifier), localContact.imageDataAvailable else {
+            return nil
+        }
+
+        var imageRequest = ImageRequest(id: localIdentifier) {
+            guard let imageData = localContact.pngImageData() else {
+                throw MailError.unknownError
             }
-            imageRequest.options = [.disableDiskCache]
-            return imageRequest
+            return imageData
+        }
+        imageRequest.options = [.disableDiskCache]
+        return imageRequest
+    }
+
+    private var remoteAvatarImageRequest: ImageRequest? {
+        guard let remoteAvatarURL, !remoteAvatarURL.isEmpty else {
+            return nil
         }
 
-        // IK avatar
-        else if let remoteAvatarURL, !remoteAvatarURL.isEmpty {
-            let avatarURL = Endpoint.resource(remoteAvatarURL).url
-            return ImageRequest(url: avatarURL)
-        }
-
-        // nothing
-        return nil
+        let avatarURL = Endpoint.resource(remoteAvatarURL).url
+        return ImageRequest(url: avatarURL)
     }
 
     /// Do not use directly
@@ -109,8 +99,7 @@ public final class MergedContact: Object, Identifiable {
 
         self.email = email
 
-        // Load the object, prefer data from Device
-        populateWithRemote(remote)
+        overrideWithRemote(remote)
         overrideWithLocal(local)
 
         id = MergedContact.computeId(email: email, name: name)
@@ -126,8 +115,8 @@ public final class MergedContact: Object, Identifiable {
         localIdentifier = contact.identifier
     }
 
-    /// IK has _not_ priority over local contacts
-    private func populateWithRemote(_ contact: InfomaniakContact?) {
+    /// IK has priority over local contacts
+    private func overrideWithRemote(_ contact: InfomaniakContact?) {
         guard let contact else {
             return
         }
