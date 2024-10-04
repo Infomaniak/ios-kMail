@@ -68,11 +68,12 @@ public extension View {
 
 @available(iOS, introduced: 15, deprecated: 16, message: "Use native way")
 public struct SelfSizingPanelBackportViewModifier: ViewModifier {
-    @State private var currentDetents: Set<Backport.PresentationDetent> = [.medium]
+
+    @LazyInjectService private var platformDetector: PlatformDetectable
 
     @Environment(\.dismiss) private var dismiss
 
-    @LazyInjectService private var platformDetector: PlatformDetectable
+    @State private var currentDetents: Set<Backport.PresentationDetent> = [.medium]
 
     let dragIndicator: Visibility
     let title: String?
@@ -108,7 +109,6 @@ public struct SelfSizingPanelBackportViewModifier: ViewModifier {
             if let title {
                 Text(title)
                     .font(.headline)
-                    .frame(maxWidth: .infinity, alignment: .center)
             }
 
             ScrollView {
@@ -168,9 +168,7 @@ public struct SelfSizingPanelViewModifier: ViewModifier {
         VStack(spacing: titleSpacing) {
             if let title {
                 Text(title)
-                    .font(Font(UIFont.preferredFont(forTextStyle: .headline)))
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .padding(.top, IKPadding.medium)
+                    .font(.headline)
             }
 
             ScrollView {
@@ -194,6 +192,7 @@ public struct SelfSizingPanelViewModifier: ViewModifier {
                 }
             }
         }
+        .padding(.top, value: .medium)
         .overlay(alignment: .topTrailing) {
             if platformDetector.isMac || (!platformDetector.isMac && UIDevice.current.orientation.isLandscape) {
                 CloseButton(size: .medium, dismissAction: dismiss)
