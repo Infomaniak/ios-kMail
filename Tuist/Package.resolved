@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-bug-tracker",
       "state" : {
-        "revision" : "02275afb3808ff01f1047bf0215326601ce177c3",
-        "version" : "7.0.0"
+        "revision" : "9618c3b593a852ef8a56d14087056b4b9927e8f1",
+        "version" : "7.0.1"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "3275b3dafa41d3bf8e618b715dfac17e236f86b0",
-        "version" : "12.2.0"
+        "branch" : "transitive-dependency",
+        "revision" : "9df81323b8ab150702b59d9ee80fe7fdf37ef30b"
       }
     },
     {
