@@ -38,7 +38,6 @@ struct AttachmentsView: View {
     @State private var downloadProgressState: [String: Double] = [:]
     @State private var trackDownloadTask: [String: Task<Void, Error>] = [:]
     @State private var isDownloadDisabled = false
-    @State private var isShowingProgressCircle = false
 
     private var attachments: [Attachment] {
         return message.attachments.filter { $0.disposition == .attachment || $0.contentId == nil }
@@ -67,28 +66,26 @@ struct AttachmentsView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: IKPadding.small) {
                     ForEach(attachments) { attachment in
-                        let progress = downloadProgressState[attachment.uuid] ?? 0
 
                         Button {
                             openAttachment(attachment)
                         } label: {
                             AttachmentView(
                                 attachment: attachment,
-                                downloadProgress: progress
+                                downloadProgress: downloadProgressState[attachment.uuid] ?? 0
                             )
                         }
                         .disabled(isDownloadDisabled)
                     }
                     if let swissTransferAttachment = message.swissTransferAttachment {
                         ForEach(swissTransferAttachment.files) { file in
-                            let progress = downloadProgressState[file.uuid] ?? 0
 
                             Button {
                                 downloadSwissTransferAttachment(stUuid: swissTransferAttachment.uuid, fileUuid: file.uuid)
                             } label: {
                                 AttachmentView(
                                     swissTransferFile: file,
-                                    downloadProgress: progress
+                                    downloadProgress: downloadProgressState[file.uuid] ?? 0
                                 )
                             }
                             .disabled(isDownloadDisabled)
@@ -111,10 +108,9 @@ struct AttachmentsView: View {
                         .multilineTextAlignment(.leading)
 
                     DownloadAllAttachmentsButtonView(
-                        progress: downloadProgressState[message.swissTransferAttachment?.uuid ?? ""] ?? 0,
-                        isShowingProgressCircle: isShowingProgressCircle,
                         isDownloadDisabled: isDownloadDisabled,
-                        downloadAllAttachments: downloadAllAttachments
+                        downloadAllAttachments: downloadAllAttachments,
+                        progress: downloadProgressState[message.swissTransferAttachment?.uuid ?? ""] ?? 0
                     )
                 }
             }
@@ -177,7 +173,6 @@ struct AttachmentsView: View {
 
     private func downloadAllAttachments() {
         isDownloadDisabled = true
-        isShowingProgressCircle = true
         trackDownloadTask[UUID().uuidString] = Task {
             await tryOrDisplayError {
                 matomo.track(eventWithCategory: .message, name: "downloadAll")
@@ -204,16 +199,19 @@ struct AttachmentsView: View {
                 }
             }
             isDownloadDisabled = false
-            isShowingProgressCircle = false
         }
     }
 }
 
 struct DownloadAllAttachmentsButtonView: View {
-    let progress: Double
-    let isShowingProgressCircle: Bool
     let isDownloadDisabled: Bool
     let downloadAllAttachments: () -> Void
+    let progress: Double?
+
+    var isShowingProgressCircle: Bool {
+        guard let progress else { return false }
+        return progress > 0 && progress < 1
+    }
 
     var body: some View {
         HStack {
@@ -221,9 +219,8 @@ struct DownloadAllAttachmentsButtonView: View {
                 ProgressView(value: progress)
                     .progressViewStyle(MailCircularProgressViewStyle())
             }
-            Button {
-                downloadAllAttachments()
-            } label: {
+
+            Button(action: downloadAllAttachments) {
                 Text(MailResourcesStrings.Localizable.buttonDownloadAll)
             }
             .disabled(isDownloadDisabled)
