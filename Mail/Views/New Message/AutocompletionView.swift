@@ -78,15 +78,12 @@ struct AutocompletionView: View {
 
         let realResults = autocompleteRecipients.filter { !addedRecipients.map(\.email).contains($0.email) }
 
-        withAnimation {
-            shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.email == textDebounce.text)
-            if shouldAddUserProposal {
-                autocompleteRecipients
-                    .append(Recipient(email: textDebounce.text, name: ""))
-            }
-
-            autocompletion = autocompleteRecipients
+        shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.email == textDebounce.text)
+        if shouldAddUserProposal {
+            autocompleteRecipients.append(Recipient(email: textDebounce.text, name: ""))
         }
+
+        autocompletion = autocompleteRecipients
     }
 
     private func sortByRemoteAndName(lhs: MergedContact, rhs: MergedContact) -> Bool {
