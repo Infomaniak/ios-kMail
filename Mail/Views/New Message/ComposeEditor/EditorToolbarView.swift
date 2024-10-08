@@ -64,8 +64,9 @@ final class EditorToolbarView: UIToolbar {
 
         let actions = type.actions
         let actionItems = actions.map { action in
+            let actionImage = action.icon.image.resize(size: CGSize(width: 24, height: 24))
             let item = UIBarButtonItem(
-                image: action.icon.image,
+                image: actionImage,
                 style: .plain,
                 target: self,
                 action: #selector(didTapOnBarButtonItem)
