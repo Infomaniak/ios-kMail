@@ -31,7 +31,7 @@ struct ComposeMessageMacosToolbarView: View {
     @ObservedObject var textAttributes: TextAttributes
 
     private static let extras: [EditorToolbarAction] = [
-        .attachment,
+        .addFile,
         .link
     ]
 

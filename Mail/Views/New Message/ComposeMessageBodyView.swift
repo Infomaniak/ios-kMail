@@ -104,7 +104,7 @@ struct ComposeMessageBodyView: View {
             isShowingLinkAlert = true
         case .ai:
             isShowingAI = true
-        case .attachment:
+        case .addFile:
             isShowingFileSelection = true
         case .addPhoto:
             isShowingPhotoLibrary = true

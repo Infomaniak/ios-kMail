@@ -32,7 +32,7 @@ enum EditorToolbarStyle {
         switch self {
         case .main:
             @InjectService var featureFlagsManageable: FeatureFlagsManageable
-            var mainActions: [EditorToolbarAction] = [.editText, .attachment, .addPhoto, .takePhoto, .link]
+            var mainActions: [EditorToolbarAction] = [.editText, .addFile, .addPhoto, .takePhoto, .link]
             featureFlagsManageable.feature(.aiMailComposer, on: {
                 mainActions.insert(.ai, at: 1)
             }, off: nil)
@@ -44,7 +44,7 @@ enum EditorToolbarStyle {
 }
 
 enum EditorToolbarAction: Int, Identifiable {
-    case attachment
+    case addFile
     case link
     case bold
     case underline
@@ -63,31 +63,31 @@ enum EditorToolbarAction: Int, Identifiable {
     var icon: MailResourcesImages {
         switch self {
         case .bold:
-            return MailResourcesAsset.newMailToolbarBold
+            return MailResourcesAsset.bold
         case .italic:
-            return MailResourcesAsset.newMailToolbarItalic
+            return MailResourcesAsset.italic
         case .underline:
-            return MailResourcesAsset.newMailToolbarUnderline
+            return MailResourcesAsset.underline
         case .strikeThrough:
-            return MailResourcesAsset.newMailToolbarStrike
+            return MailResourcesAsset.strikeThrough
         case .unorderedList:
-            return MailResourcesAsset.newMailToolbarList
+            return MailResourcesAsset.list
         case .editText:
             return MailResourcesAsset.textModes
         case .ai:
             return MailResourcesAsset.aiWriter
-        case .attachment:
-            return MailResourcesAsset.newMailToolbarAttachment
+        case .addFile:
+            return MailResourcesAsset.attachment
         case .addPhoto:
-            return MailResourcesAsset.pictureLandscape
+            return MailResourcesAsset.picture
         case .takePhoto:
             return MailResourcesAsset.photo
         case .link:
-            return MailResourcesAsset.newMailToolbarHyperlink
+            return MailResourcesAsset.hyperlink
         case .programMessage:
             return MailResourcesAsset.waitingMessage
         case .cancelFormat:
-            return MailResourcesAsset.newMailToolbarCancelFormat
+            return MailResourcesAsset.cancelFormat
         }
     }
 
@@ -113,7 +113,7 @@ enum EditorToolbarAction: Int, Identifiable {
             return "unorderedList"
         case .ai:
             return "aiWriter"
-        case .attachment:
+        case .addFile:
             return "importFile"
         case .addPhoto:
             return "importImage"
@@ -144,7 +144,7 @@ enum EditorToolbarAction: Int, Identifiable {
             return MailResourcesStrings.Localizable.buttonEditText
         case .ai:
             return MailResourcesStrings.Localizable.aiDiscoveryTitle
-        case .attachment:
+        case .addFile:
             return MailResourcesStrings.Localizable.attachmentActionTitle
         case .addPhoto:
             return MailResourcesStrings.Localizable.attachmentActionPhotoLibrary
@@ -173,7 +173,7 @@ enum EditorToolbarAction: Int, Identifiable {
             return KeyboardShortcut("L", modifiers: [.command, .shift])
         case .link:
             return KeyboardShortcut("K", modifiers: [.command, .shift])
-        case .attachment:
+        case .addFile:
             return KeyboardShortcut("P", modifiers: [.command, .shift])
         case .editText, .ai, .addPhoto, .takePhoto, .programMessage, .cancelFormat:
             return nil
@@ -194,7 +194,7 @@ enum EditorToolbarAction: Int, Identifiable {
             return textAttributes.hasUnorderedList
         case .link:
             return textAttributes.hasLink
-        case .editText, .ai, .attachment, .addPhoto, .takePhoto, .programMessage, .cancelFormat:
+        case .editText, .ai, .addFile, .addPhoto, .takePhoto, .programMessage, .cancelFormat:
             return false
         }
     }
@@ -218,7 +218,7 @@ enum EditorToolbarAction: Int, Identifiable {
                 return textAttributes.unlink()
             }
             isShowingLinkAlert.wrappedValue = true
-        case .attachment:
+        case .addFile:
             isShowingFileSelection.wrappedValue = true
         default:
             return
