@@ -43,7 +43,7 @@ enum EditorToolbarStyle {
     }
 }
 
-enum EditorToolbarAction: Int {
+enum EditorToolbarAction: Int, Identifiable {
     case attachment
     case link
     case bold
@@ -57,6 +57,8 @@ enum EditorToolbarAction: Int {
     case addPhoto
     case takePhoto
     case programMessage
+
+    var id: Self { self }
 
     var icon: MailResourcesImages {
         switch self {
@@ -197,7 +199,7 @@ enum EditorToolbarAction: Int {
         }
     }
 
-    func action(textAttributes: TextAttributes, isShowingLinkAlert: inout Bool, isShowingFileSelection: inout Bool) {
+    func action(textAttributes: TextAttributes, isShowingLinkAlert: Binding<Bool>, isShowingFileSelection: Binding<Bool>) {
         switch self {
         case .bold:
             textAttributes.bold()
@@ -215,9 +217,9 @@ enum EditorToolbarAction: Int {
             guard !textAttributes.hasLink else {
                 return textAttributes.unlink()
             }
-            isShowingLinkAlert = true
+            isShowingLinkAlert.wrappedValue = true
         case .attachment:
-            isShowingFileSelection = true
+            isShowingFileSelection.wrappedValue = true
         default:
             return
         }

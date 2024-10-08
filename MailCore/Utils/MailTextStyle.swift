@@ -68,11 +68,6 @@ public extension MailTextStyle {
         color: MailResourcesAsset.orangeColor.swiftUIColor
     )
 
-    static let bodyPopover = MailTextStyle(
-        mailFont: .body,
-        color: MailResourcesAsset.textPopover.swiftUIColor
-    )
-
     static let bodyMedium = MailTextStyle(
         mailFont: .body,
         weight: .medium

@@ -54,8 +54,8 @@ struct ComposeEditor: View {
     var body: some View {
         #if os(macOS) || targetEnvironment(macCatalyst)
         ComposeMessageMacosToolbarView(
-            isShowingLinkAlert: $isShowingFileSelection,
-            isShowingFileSelection: $isShowingLinkAlert,
+            isShowingLinkAlert: $isShowingLinkAlert,
+            isShowingFileSelection: $isShowingFileSelection,
             textAttributes: textAttributes
         )
         #endif

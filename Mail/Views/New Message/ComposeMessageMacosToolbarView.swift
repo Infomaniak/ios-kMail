@@ -30,12 +30,12 @@ struct ComposeMessageMacosToolbarView: View {
 
     @ObservedObject var textAttributes: TextAttributes
 
-    private let extras: [EditorToolbarAction] = [
+    private static let extras: [EditorToolbarAction] = [
         .attachment,
         .link
     ]
 
-    private let textFormats: [EditorToolbarAction] = [
+    private static let textFormats: [EditorToolbarAction] = [
         .bold,
         .underline,
         .italic,
@@ -43,43 +43,39 @@ struct ComposeMessageMacosToolbarView: View {
         .cancelFormat
     ]
 
-    private let textItems: [EditorToolbarAction] = [
+    private static let textItems: [EditorToolbarAction] = [
         .unorderedList
     ]
 
-    private var allItems: [[EditorToolbarAction]] {
-        [extras, textFormats, textItems]
-    }
-
+    private static let allItems: [[EditorToolbarAction]] = [extras, textFormats, textItems]
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: IKPadding.extraSmall) {
-                ForEach(allItems, id: \.self) { items in
-                    ForEach(items, id: \.self) { item in
+                ForEach(ComposeMessageMacosToolbarView.allItems, id: \.self) { items in
+                    ForEach(items) { item in
                         Button {
                             item.action(
                                 textAttributes: textAttributes,
-                                isShowingLinkAlert: &isShowingLinkAlert,
-                                isShowingFileSelection: &isShowingFileSelection
+                                isShowingLinkAlert: $isShowingLinkAlert,
+                                isShowingFileSelection: $isShowingFileSelection
                             )
                         } label: {
                             item.icon.swiftUIImage
                                 .resizable()
-                                .frame(width: 16, height: 16)
+                                .iconSize(.medium)
                                 .padding(value: .small)
                         }
-                        .buttonStyle(MacosToolbarButtonStyle(isActive: item.isSelected(textAttributes: textAttributes)))
-                        .popoverToolbarHelp(title: item.accessibilityLabel)
+                        .buttonStyle(.macosToolbarButtonStyle(isActive: item.isSelected(textAttributes: textAttributes)))
+                        .help(item.accessibilityLabel)
                         .keyboardToolbarShortcut(item.keyboardShortcut)
                     }
 
-                    if allItems.last != items {
+                    if ComposeMessageMacosToolbarView.allItems.last != items {
                         Divider()
                             .padding(.vertical, value: .medium)
                     }
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.vertical, IKPadding.extraSmall)
             .padding(.horizontal, IKPadding.composeViewHeaderHorizontal)
 
@@ -95,10 +91,19 @@ struct MacosToolbarButtonStyle: ButtonStyle {
 
     let isActive: Bool
 
+    var backgroundColor: Color {
+        if isActive {
+            return accentColor.secondary.swiftUIColor
+        }
+        if isHovered {
+            return MailResourcesAsset.hoverMenuBackground.swiftUIColor
+        }
+        return .clear
+    }
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .background(isHovered ? MailResourcesAsset.hoverMenuBackground.swiftUIColor : .clear)
-            .background(isActive ? accentColor.secondary.swiftUIColor : .clear)
+            .background(backgroundColor)
             .foregroundColor(.primary)
             .cornerRadius(2)
             .onHover { hovering in
@@ -106,5 +111,11 @@ struct MacosToolbarButtonStyle: ButtonStyle {
                     isHovered = hovering
                 }
             }
+    }
+}
+
+extension ButtonStyle where Self == MacosToolbarButtonStyle {
+    static func macosToolbarButtonStyle(isActive: Bool) -> MacosToolbarButtonStyle {
+        MacosToolbarButtonStyle(isActive: isActive)
     }
 }
