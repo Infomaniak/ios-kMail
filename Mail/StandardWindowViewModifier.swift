@@ -44,6 +44,7 @@ struct StandardWindowViewModifier: ViewModifier {
             .onChange(of: accentColor) { newAccentColor in
                 updateUI(accent: newAccentColor, theme: theme)
             }
+            .preferredColorScheme(theme.colorScheme)
         #if targetEnvironment(macCatalyst)
             .introspect(.window, on: .iOS(.v16, .v17, .v18)) { window in
                 if let titlebar = window.windowScene?.titlebar {
