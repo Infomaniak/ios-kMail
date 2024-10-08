@@ -16,18 +16,20 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreDB
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
 import NavigationBackport
-import RealmSwift
 import SwiftUI
 
 struct ComposeMessageIntentView: View, IntentViewable {
     typealias Intent = ResolvedIntent
 
     struct ResolvedIntent {
+        let currentUser: UserProfile
         let mailboxManager: MailboxManager
         let draft: Draft
         let messageReply: MessageReply?
@@ -64,6 +66,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
                             htmlAttachments: htmlAttachments
                         )
                         .environmentObject(resolvedIntent.mailboxManager)
+                        .environment(\.currentUser, MandatoryEnvironmentContainer(value: resolvedIntent.currentUser))
                     } else {
                         ComposeMessageProgressView()
                             .task {
@@ -79,7 +82,8 @@ struct ComposeMessageIntentView: View, IntentViewable {
 
     func initFromIntent() async {
         guard let mailboxId = composeMessageIntent.mailboxId, let userId = composeMessageIntent.userId,
-              let mailboxManager = accountManager.getMailboxManager(for: mailboxId, userId: userId) else {
+              let mailboxManager = accountManager.getMailboxManager(for: mailboxId, userId: userId),
+              let currentUser = await accountManager.userProfileStore.getUserProfile(id: userId) else {
             dismiss()
             snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
             return
@@ -126,6 +130,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
                 }
 
                 resolvedIntent.wrappedValue = ResolvedIntent(
+                    currentUser: currentUser,
                     mailboxManager: mailboxManager,
                     draft: liveDraft,
                     messageReply: maybeMessageReply
