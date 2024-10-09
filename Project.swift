@@ -20,14 +20,50 @@ import Foundation
 import ProjectDescription
 import ProjectDescriptionHelpers
 
+let sharedCoreUIDependencies: [TargetDependency] = [
+    .external(name: "SwiftUIIntrospect-Static"),
+    .external(name: "InfomaniakOnboarding"),
+    .external(name: "Shimmer"),
+    .external(name: "WrappingHStack"),
+    .external(name: "NavigationBackport"),
+    .external(name: "Popovers"),
+    .external(name: "SwiftUIBackports")
+]
+
+let sharedCoreDependencies: [TargetDependency] = [
+    .target(name: "MailResources"),
+    .external(name: "Algorithms"),
+    .external(name: "Alamofire"),
+    .external(name: "Atlantis"),
+    .external(name: "InfomaniakCore"),
+    .external(name: "InfomaniakCoreDB"),
+    .external(name: "InfomaniakCoreCommonUI"),
+    .external(name: "InfomaniakCoreSwiftUI"),
+    .external(name: "InfomaniakCoreUIKit"),
+    .external(name: "InfomaniakLogin"),
+    .external(name: "InfomaniakDI"),
+    .external(name: "InfomaniakConcurrency"),
+    .external(name: "InfomaniakNotifications"),
+    .external(name: "InfomaniakBugTracker"),
+    .external(name: "InfomaniakCreateAccount"),
+    .external(name: "RealmSwift"),
+    .external(name: "Realm"),
+    .external(name: "SwiftRegex"),
+    .external(name: "Nuke"),
+    .external(name: "NukeUI"),
+    .external(name: "SwiftSoup"),
+    .external(name: "Swifter"),
+    .external(name: "VersionChecker"),
+    .external(name: "SwiftModalPresentation"),
+    .external(name: "SVGKit"),
+    .external(name: "SnackBar"),
+    .external(name: "InfomaniakRichHTMLEditor")
+]
+
 let project = Project(name: "Mail",
                       options: .options(
                           automaticSchemesOptions: .enabled(
-                            targetSchemesGrouping: .byNameSuffix(
-                              build: Set(["Mail", "Extension"]),
-                              test: Set(["Tests"]),
-                              run: Set(["Mail", "Extension"])
-                            )
+                              targetSchemesGrouping: .notGrouped
                           )
                       ),
                       targets: [
@@ -55,8 +91,8 @@ let project = Project(name: "Mail",
                                       .target(name: "MailNotificationServiceExtension"),
                                       .target(name: "MailNotificationContentExtension"),
                                       .target(name: "MailShareExtension"),
-                                      .target(name: "MailAppIntentsExtension")
-                                  ],
+                                      .target(name: "MailAppIntentsExtension"),
+                                  ] + sharedCoreDependencies + sharedCoreUIDependencies,
                                   settings: .settings(base: Constants.baseSettings),
                                   environmentVariables: [
                                       "hostname": .environmentVariable(value: "\(ProcessInfo.processInfo.hostName).",
@@ -70,8 +106,9 @@ let project = Project(name: "Mail",
                                   infoPlist: .default,
                                   sources: "MailTests/**",
                                   dependencies: [
-                                      .target(name: "Infomaniak Mail")
-                                  ],
+                                      .target(name: "Infomaniak Mail"),
+                                      .target(name: "MailCore")
+                                  ] + sharedCoreDependencies,
                                   settings: .settings(base: Constants.testSettings)),
                           .target(name: "MailUITests",
                                   destinations: Constants.destinations,
@@ -82,8 +119,8 @@ let project = Project(name: "Mail",
                                   sources: "MailUITests/**",
                                   dependencies: [
                                       .target(name: "Infomaniak Mail"),
-                                      .target(name: "MailResources")
-                                  ],
+                                      .target(name: "MailCore")
+                                  ] + sharedCoreDependencies,
                                   settings: .settings(base: Constants.testSettings)),
                           .target(name: "MailShareExtension",
                                   destinations: Constants.destinations,
@@ -105,8 +142,8 @@ let project = Project(name: "Mail",
                                   scripts: [Constants.swiftlintScript],
                                   dependencies: [
                                       .target(name: "MailCore"),
-                                      .target(name: "MailCoreUI")
-                                  ],
+                                      .target(name: "MailCoreUI"),
+                                  ] + sharedCoreDependencies + sharedCoreUIDependencies,
                                   settings: .settings(base: Constants.baseSettings)),
                           .target(name: "MailNotificationServiceExtension",
                                   destinations: Constants.destinations,
@@ -125,9 +162,7 @@ let project = Project(name: "Mail",
                                   ]),
                                   sources: "MailNotificationServiceExtension/**",
                                   entitlements: "MailResources/Mail.entitlements",
-                                  dependencies: [
-                                      .target(name: "MailCore")
-                                  ],
+                                  dependencies: [.target(name: "MailCore")] + sharedCoreDependencies,
                                   settings: .settings(base: Constants.baseSettings)),
                           .target(name: "MailNotificationContentExtension",
                                   destinations: Constants.destinations,
@@ -149,7 +184,7 @@ let project = Project(name: "Mail",
                                       .target(name: "MailCoreUI"),
                                       .sdk(name: "UserNotifications", type: .framework),
                                       .sdk(name: "UserNotificationsUI", type: .framework)
-                                  ],
+                                  ] + sharedCoreDependencies  + sharedCoreUIDependencies,
                                   settings: .settings(base: Constants.baseSettings)),
                           .target(name: "MailAppIntentsExtension",
                                   destinations: Constants.destinations,
@@ -171,13 +206,11 @@ let project = Project(name: "Mail",
                                       "MailResources/**/*.stringsdict"
                                   ],
                                   entitlements: "MailResources/Mail.entitlements",
-                                  dependencies: [
-                                      .target(name: "MailCore")
-                                  ],
+                                  dependencies: [.target(name: "MailCore")] + sharedCoreDependencies,
                                   settings: .settings(base: Constants.baseSettings)),
                           .target(name: "MailResources",
                                   destinations: Constants.destinations,
-                                  product: .staticLibrary,
+                                  product: .framework,
                                   bundleId: "com.infomaniak.mail.resources",
                                   deploymentTargets: Constants.deploymentTarget,
                                   infoPlist: .default,
@@ -198,34 +231,9 @@ let project = Project(name: "Mail",
                                   deploymentTargets: Constants.deploymentTarget,
                                   infoPlist: "MailCore/Info.plist",
                                   sources: "MailCore/**",
-                                  dependencies: [
-                                      .target(name: "MailResources"),
-                                      .external(name: "Algorithms"),
-                                      .external(name: "Alamofire"),
-                                      .external(name: "Atlantis"),
-                                      .external(name: "InfomaniakCore"),
-                                      .external(name: "InfomaniakCoreDB"),
-                                      .external(name: "InfomaniakCoreCommonUI"),
-                                      .external(name: "InfomaniakCoreSwiftUI"),
-                                      .external(name: "InfomaniakCoreUIKit"),
-                                      .external(name: "InfomaniakLogin"),
-                                      .external(name: "InfomaniakDI"),
-                                      .external(name: "InfomaniakConcurrency"),
-                                      .external(name: "InfomaniakNotifications"),
-                                      .external(name: "InfomaniakBugTracker"),
-                                      .external(name: "InfomaniakCreateAccount"),
-                                      .external(name: "RealmSwift"),
-                                      .external(name: "SwiftRegex"),
-                                      .external(name: "Nuke"),
-                                      .external(name: "NukeUI"),
-                                      .external(name: "SwiftSoup"),
-                                      .external(name: "Swifter"),
-                                      .external(name: "VersionChecker"),
-                                      .external(name: "SwiftModalPresentation"),
-                                      .external(name: "SVGKit"),
-                                      .external(name: "InfomaniakRichHTMLEditor")
-                                  ],
-                                  settings: .settings(base: Constants.baseSettings)),
+                                  dependencies: sharedCoreDependencies,
+                                  settings: .settings(base:
+                                      Constants.baseSettings.merging(["OTHER_LDFLAGS": "$(inherited) -ObjC"]))),
                           .target(name: "MailCoreUI",
                                   destinations: Constants.destinations,
                                   product: .framework,
@@ -233,16 +241,14 @@ let project = Project(name: "Mail",
                                   deploymentTargets: Constants.deploymentTarget,
                                   infoPlist: "MailCoreUI/Info.plist",
                                   sources: "MailCoreUI/**",
-                                  dependencies: [
-                                      .target(name: "MailCore"),
-                                      .external(name: "SwiftUIIntrospect-Static"),
-                                      .external(name: "InfomaniakOnboarding"),
-                                      .external(name: "Shimmer"),
-                                      .external(name: "WrappingHStack"),
-                                      .external(name: "NavigationBackport"),
-                                      .external(name: "Popovers"),
-                                      .external(name: "SwiftUIBackports")
-                                  ],
+                                  dependencies: [.target(name: "MailCore")] + sharedCoreDependencies + sharedCoreUIDependencies,
                                   settings: .settings(base: Constants.baseSettings))
+                      ],
+                      schemes: [
+                          .scheme(name: "Infomaniak Mail",
+                                  shared: true,
+                                  buildAction: .buildAction(targets: ["Infomaniak Mail"]),
+                                  testAction: .targets(["MailTests", "MailUITests"]),
+                                  runAction: .runAction(executable: "Infomaniak Mail")),
                       ],
                       fileHeaderTemplate: .file("file-header-template.txt"))
