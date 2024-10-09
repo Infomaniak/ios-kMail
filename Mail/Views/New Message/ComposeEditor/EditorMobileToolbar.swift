@@ -24,7 +24,7 @@ import MailResources
 import SwiftUI
 import UIKit
 
-enum EditorToolbarStyle {
+enum EditorMobileToolbarStyle {
     case main
     case textEdition
 

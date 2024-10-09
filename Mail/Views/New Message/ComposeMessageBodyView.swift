@@ -31,7 +31,7 @@ struct ComposeMessageBodyView: View {
 
     @EnvironmentObject private var attachmentsManager: AttachmentsManager
 
-    @State private var toolbar = EditorToolbarView()
+    @State private var toolbar = EditorMobileToolbarView()
     @StateObject private var textAttributes = TextAttributes()
 
     @ModalState(context: ContextKeys.compose) private var isShowingLinkAlert = false
@@ -54,7 +54,7 @@ struct ComposeMessageBodyView: View {
     var body: some View {
         VStack {
             #if os(macOS) || targetEnvironment(macCatalyst)
-            ComposeMessageMacosToolbarView(
+            EditorDesktopToolbarView(
                 isShowingLinkAlert: $isShowingLinkAlert,
                 isShowingFileSelection: $isShowingFileSelection,
                 textAttributes: textAttributes

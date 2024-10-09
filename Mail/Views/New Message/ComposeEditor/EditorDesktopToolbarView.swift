@@ -24,7 +24,7 @@ import MailResources
 import Popovers
 import SwiftUI
 
-struct ComposeMessageMacosToolbarView: View {
+struct EditorDesktopToolbarView: View {
     @Binding var isShowingLinkAlert: Bool
     @Binding var isShowingFileSelection: Bool
 
@@ -51,7 +51,7 @@ struct ComposeMessageMacosToolbarView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: IKPadding.extraSmall) {
-                ForEach(ComposeMessageMacosToolbarView.allItems, id: \.self) { items in
+                ForEach(EditorDesktopToolbarView.allItems, id: \.self) { items in
                     ForEach(items) { item in
                         Button {
                             item.action(
@@ -61,7 +61,6 @@ struct ComposeMessageMacosToolbarView: View {
                             )
                         } label: {
                             item.icon.swiftUIImage
-                                .resizable()
                                 .iconSize(.medium)
                                 .padding(value: .small)
                         }
@@ -70,13 +69,14 @@ struct ComposeMessageMacosToolbarView: View {
                         .keyboardToolbarShortcut(item.keyboardShortcut)
                     }
 
-                    if ComposeMessageMacosToolbarView.allItems.last != items {
+                    if EditorDesktopToolbarView.allItems.last != items {
                         Divider()
-                            .padding(.vertical, value: .medium)
+                            .overlay(MailResourcesAsset.elementsColor.swiftUIColor)
+                            .frame(width: 1, height: 16)
                     }
                 }
             }
-            .padding(.vertical, IKPadding.extraSmall)
+            .padding(.vertical, value: .extraSmall)
             .padding(.horizontal, IKPadding.composeViewHeaderHorizontal)
 
             IKDivider()
@@ -84,7 +84,7 @@ struct ComposeMessageMacosToolbarView: View {
     }
 }
 
-struct MacosToolbarButtonStyle: ButtonStyle {
+struct DesktopToolbarButtonStyle: ButtonStyle {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     @State private var isHovered = false
@@ -104,18 +104,16 @@ struct MacosToolbarButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .background(backgroundColor)
-            .foregroundColor(.primary)
+            .foregroundStyle(MailResourcesAsset.toolbarForegroundColor.swiftUIColor)
             .cornerRadius(2)
             .onHover { hovering in
-                withAnimation {
-                    isHovered = hovering
-                }
+                isHovered = hovering
             }
     }
 }
 
-extension ButtonStyle where Self == MacosToolbarButtonStyle {
-    static func macosToolbarButtonStyle(isActive: Bool) -> MacosToolbarButtonStyle {
-        MacosToolbarButtonStyle(isActive: isActive)
+extension ButtonStyle where Self == DesktopToolbarButtonStyle {
+    static func macosToolbarButtonStyle(isActive: Bool) -> DesktopToolbarButtonStyle {
+        DesktopToolbarButtonStyle(isActive: isActive)
     }
 }
