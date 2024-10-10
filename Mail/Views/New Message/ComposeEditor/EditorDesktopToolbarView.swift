@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCoreSwiftUI
+import InfomaniakDI
 import InfomaniakRichHTMLEditor
 import MailCore
 import MailCoreUI
@@ -25,18 +26,20 @@ import Popovers
 import SwiftUI
 
 struct EditorDesktopToolbarView: View {
+    @InjectService private var featureFlagsManageable: FeatureFlagsManageable
+
     @Binding var isShowingLinkAlert: Bool
     @Binding var isShowingFileSelection: Bool
     @Binding var isShowingAI: Bool
 
     @ObservedObject var textAttributes: TextAttributes
 
-    private static let extras: [EditorToolbarAction] = [
+    private let extras: [EditorToolbarAction] = [
         .addFile,
         .link
     ]
 
-    private static let textFormats: [EditorToolbarAction] = [
+    private let textFormats: [EditorToolbarAction] = [
         .bold,
         .underline,
         .italic,
@@ -44,16 +47,24 @@ struct EditorDesktopToolbarView: View {
         .cancelFormat
     ]
 
-    private static let textItems: [EditorToolbarAction] = [
+    private let textItems: [EditorToolbarAction] = [
         .unorderedList
     ]
 
-    private static let allItems: [[EditorToolbarAction]] = [[.ai], extras, textFormats, textItems]
+    private var allItems: [[EditorToolbarAction]] {
+        var mainItems = [extras, textFormats, textItems]
+
+        featureFlagsManageable.feature(.aiMailComposer, on: {
+            mainItems.insert([.ai], at: 0)
+        }, off: nil)
+
+        return mainItems
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: IKPadding.extraSmall) {
-                ForEach(EditorDesktopToolbarView.allItems, id: \.self) { items in
+                ForEach(allItems, id: \.self) { items in
                     ForEach(items) { item in
                         Button {
                             item.action(
@@ -68,11 +79,12 @@ struct EditorDesktopToolbarView: View {
                                 .padding(value: .small)
                         }
                         .buttonStyle(.macosToolbarButtonStyle(isActive: item.isSelected(textAttributes: textAttributes)))
+                        .foregroundStyle(item.foregroundStyle)
                         .help(item.accessibilityLabel)
                         .keyboardToolbarShortcut(item.keyboardShortcut)
                     }
 
-                    if EditorDesktopToolbarView.allItems.last != items {
+                    if allItems.last != items {
                         Divider()
                             .overlay(MailResourcesAsset.elementsColor.swiftUIColor)
                             .frame(width: 1, height: 16)
@@ -94,7 +106,7 @@ struct DesktopToolbarButtonStyle: ButtonStyle {
 
     let isActive: Bool
 
-    var backgroundColor: Color {
+    private var backgroundColor: Color {
         if isActive {
             return accentColor.secondary.swiftUIColor
         }
@@ -107,7 +119,6 @@ struct DesktopToolbarButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .background(backgroundColor)
-            .foregroundStyle(MailResourcesAsset.toolbarForegroundColor.swiftUIColor)
             .cornerRadius(2)
             .onHover { hovering in
                 isHovered = hovering

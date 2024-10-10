@@ -99,6 +99,14 @@ enum EditorToolbarAction: Int, Identifiable {
         }
     }
 
+    var foregroundStyle: Color {
+        if self == .ai {
+            return MailResourcesAsset.aiColor.swiftUIColor
+        } else {
+            return MailResourcesAsset.toolbarForegroundColor.swiftUIColor
+        }
+    }
+
     var matomoName: String? {
         switch self {
         case .bold:
