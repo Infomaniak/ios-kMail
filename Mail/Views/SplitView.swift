@@ -19,6 +19,7 @@
 import Combine
 import InfomaniakCore
 import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import Lottie
 import MailCore
@@ -50,6 +51,7 @@ public class SplitViewManager: ObservableObject {
 
 struct SplitView: View {
     @Environment(\.openURL) private var openURL
+    @Environment(\.currentUser) private var currentUser
     @Environment(\.isCompactWindow) private var isCompactWindow
 
     @EnvironmentObject private var mainViewState: MainViewState
@@ -144,6 +146,8 @@ struct SplitView: View {
         .sheet(item: $mainViewState.settingsViewConfig,
                desktopIdentifier: DesktopWindowIdentifier.settingsWindowIdentifier) { config in
             SettingsNavigationView(baseNavigationPath: config.baseNavigationPath)
+                // Needed for macOS 12 else environment isn't correctly passed
+                .environment(\.currentUser, MandatoryEnvironmentContainer(value: currentUser.value))
         }
         .sheet(item: $mainViewState.composeMessageIntent,
                desktopIdentifier: DesktopWindowIdentifier.composeWindowIdentifier) { intent in
