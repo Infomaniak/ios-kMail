@@ -118,7 +118,8 @@ extension Action: CaseIterable {
 
         let listActions: [Action] = [
             spam ? .nonSpam : .reportJunk,
-            star ? .unstar : .star
+            star ? .unstar : .star,
+            .saveThreadInkDrive
         ]
 
         return (quickActions, listActions)
@@ -138,7 +139,8 @@ extension Action: CaseIterable {
             spamAction,
             unread ? .markAsUnread : .markAsRead,
             archive ? .archive : .moveToInbox,
-            showUnstar ? .unstar : .star
+            showUnstar ? .unstar : .star,
+            .saveThreadInkDrive
         ]
 
         return (Action.quickActions, tempListActions.compactMap { $0 })
@@ -366,6 +368,12 @@ public extension Action {
         title: MailResourcesStrings.Localizable.saveMailInkDrive,
         iconResource: MailResourcesAsset.kdriveLogo,
         matomoName: "saveInkDrive"
+    )
+    static let saveThreadInkDrive = Action(
+        id: "saveThreadInkDrive",
+        title: MailResourcesStrings.Localizable.saveMailInkDrive,
+        iconResource: MailResourcesAsset.kdriveLogo,
+        matomoName: "saveThreadInkDrive"
     )
 
     // MARK: Account Actions
