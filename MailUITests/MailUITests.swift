@@ -137,7 +137,7 @@ class MailUITests: XCTestCase {
         let moveFolderViewTitle = app.navigationBars.staticTexts[MailResourcesStrings.Localizable.actionMove]
         _ = moveFolderViewTitle.waitForExistence(timeout: defaultTimeOut)
 
-        // Because the burger menu is in a ZStack "trash" folder appears twice, that's why we use element bound bys
+        // Because the burger menu is in a ZStack "trash" folder appears twice, that's why we use element bound by
         app.scrollViews.containing(
             .staticText,
             identifier: MailResourcesStrings.Localizable.trashFolder
@@ -194,7 +194,8 @@ class MailUITests: XCTestCase {
     }
 
     func swipeFirstCell() {
-        let testMailCell = app.collectionViews.cells.element(boundBy: 1)
+        // First cell could be the loading indicator so we get the second one
+        let testMailCell = app.collectionViews.cells.element(boundBy: 2)
         _ = testMailCell.waitForExistence(timeout: defaultTimeOut)
         testMailCell.firstMatch.swipeLeft()
     }
@@ -240,24 +241,31 @@ class MailUITests: XCTestCase {
         passwordField.typeText(Env.testAccountPassword)
         passwordField.typeText("\n")
 
-        let nextButton = app.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonNext]
-        let permissionApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let nowText = MailResourcesStrings.Localizable
+            .threadListHeaderLastUpdate(Date().formatted(.relative(presentation: .named)))
+        let refreshText = app.staticTexts[nowText]
+        let alreadyAskedPermissions = refreshText.waitForExistence(timeout: defaultTimeOut)
 
-        _ = nextButton.waitForExistence(timeout: defaultTimeOut)
-        if nextButton.exists {
-            nextButton.tap()
+        if !alreadyAskedPermissions {
+            let nextButton = app.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonNext]
+            _ = nextButton.waitForExistence(timeout: defaultTimeOut)
 
-            permissionApp.alerts.firstMatch.buttons.firstMatch.tap()
+            let permissionApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+            if nextButton.exists {
+                nextButton.tap()
+
+                permissionApp.alerts.firstMatch.buttons.firstMatch.tap()
+            }
+
+            _ = nextButton.waitForExistence(timeout: defaultTimeOut)
+            if nextButton.exists {
+                app.buttons.firstMatch.tap()
+
+                permissionApp.alerts.firstMatch.buttons.firstMatch.tap()
+            }
+
+            let refreshText = app.staticTexts[nowText]
+            _ = refreshText.waitForExistence(timeout: defaultTimeOut)
         }
-
-        _ = nextButton.waitForExistence(timeout: defaultTimeOut)
-        if nextButton.exists {
-            app.buttons.firstMatch.tap()
-
-            permissionApp.alerts.firstMatch.buttons.firstMatch.tap()
-        }
-
-        let refreshText = app.staticTexts[Date().formatted(.relative(presentation: .named))]
-        _ = refreshText.waitForExistence(timeout: defaultTimeOut)
     }
 }
