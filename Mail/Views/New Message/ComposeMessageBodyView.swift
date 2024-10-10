@@ -57,6 +57,7 @@ struct ComposeMessageBodyView: View {
             EditorDesktopToolbarView(
                 isShowingLinkAlert: $isShowingLinkAlert,
                 isShowingFileSelection: $isShowingFileSelection,
+                isShowingAI: $isShowingAI,
                 textAttributes: textAttributes
             )
             #endif

@@ -27,6 +27,7 @@ import SwiftUI
 struct EditorDesktopToolbarView: View {
     @Binding var isShowingLinkAlert: Bool
     @Binding var isShowingFileSelection: Bool
+    @Binding var isShowingAI: Bool
 
     @ObservedObject var textAttributes: TextAttributes
 
@@ -47,7 +48,8 @@ struct EditorDesktopToolbarView: View {
         .unorderedList
     ]
 
-    private static let allItems: [[EditorToolbarAction]] = [extras, textFormats, textItems]
+    private static let allItems: [[EditorToolbarAction]] = [[.ai], extras, textFormats, textItems]
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(spacing: IKPadding.extraSmall) {
@@ -57,7 +59,8 @@ struct EditorDesktopToolbarView: View {
                             item.action(
                                 textAttributes: textAttributes,
                                 isShowingLinkAlert: $isShowingLinkAlert,
-                                isShowingFileSelection: $isShowingFileSelection
+                                isShowingFileSelection: $isShowingFileSelection,
+                                isShowingAI: $isShowingAI
                             )
                         } label: {
                             item.icon.swiftUIImage

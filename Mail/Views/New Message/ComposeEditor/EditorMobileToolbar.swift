@@ -199,7 +199,12 @@ enum EditorToolbarAction: Int, Identifiable {
         }
     }
 
-    func action(textAttributes: TextAttributes, isShowingLinkAlert: Binding<Bool>, isShowingFileSelection: Binding<Bool>) {
+    func action(
+        textAttributes: TextAttributes,
+        isShowingLinkAlert: Binding<Bool>,
+        isShowingFileSelection: Binding<Bool>,
+        isShowingAI: Binding<Bool>
+    ) {
         switch self {
         case .bold:
             textAttributes.bold()
@@ -220,6 +225,8 @@ enum EditorToolbarAction: Int, Identifiable {
             isShowingLinkAlert.wrappedValue = true
         case .addFile:
             isShowingFileSelection.wrappedValue = true
+        case .ai:
+            isShowingAI.wrappedValue = true
         default:
             return
         }
