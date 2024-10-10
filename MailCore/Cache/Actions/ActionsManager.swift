@@ -200,7 +200,7 @@ public class ActionsManager: ObservableObject {
                 }
             }
         case .saveMailInkDrive:
-            guard platformDetector.isMac else {
+            guard !platformDetector.isMac else {
                 return
             }
             Task { @MainActor in
