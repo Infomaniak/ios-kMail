@@ -39,7 +39,7 @@ struct SettingsNavigationView: View {
             SettingsView()
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        if !platformDetector.isMac {
+                        if !platformDetector.isMac || platformDetector.isLegacyMacCatalyst {
                             CloseButton(dismissAction: dismiss)
                         }
                     }
