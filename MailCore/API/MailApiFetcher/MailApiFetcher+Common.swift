@@ -94,6 +94,19 @@ public extension MailApiFetcher {
         return try await download.serializingDownloadedFileURL().value
     }
 
+    func download(messages: [Message]) async throws -> [URL] {
+        var res: [URL] = []
+        for message in messages {
+            let destination = DownloadRequest.suggestedDownloadDestination(options: [
+                .createIntermediateDirectories,
+                .removePreviousFile
+            ])
+            let download = authenticatedSession.download(Endpoint.resource(message.downloadResource).url, to: destination)
+            res.append(try await download.serializingDownloadedFileURL().value)
+        }
+        return res
+    }
+
     func quotas(mailbox: Mailbox) async throws -> Quotas {
         try await perform(request: authenticatedRequest(.quotas(mailbox: mailbox.mailbox, productId: mailbox.hostingId)))
     }
