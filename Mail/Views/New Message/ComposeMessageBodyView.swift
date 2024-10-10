@@ -16,12 +16,29 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakRichHTMLEditor
 import MailCore
 import MailCoreUI
+import OSLog
+import PhotosUI
 import RealmSwift
+import Sentry
+import SwiftModalPresentation
 import SwiftUI
 
 struct ComposeMessageBodyView: View {
+    static let customCSS = MessageWebViewUtils.loadCSS(for: .editor).joined()
+
+    @EnvironmentObject private var attachmentsManager: AttachmentsManager
+
+    @State private var toolbar = EditorMobileToolbarView()
+    @StateObject private var textAttributes = TextAttributes()
+
+    @ModalState(context: ContextKeys.compose) private var isShowingLinkAlert = false
+    @ModalState(context: ContextKeys.compose) private var isShowingFileSelection = false
+    @ModalState(context: ContextKeys.compose) private var isShowingPhotoLibrary = false
+    @ModalState(context: ContextKeys.compose) private var isShowingCamera = false
+
     @FocusState var focusedField: ComposeViewFieldType?
 
     @ObservedRealmObject var draft: Draft
@@ -30,15 +47,110 @@ struct ComposeMessageBodyView: View {
 
     let messageReply: MessageReply?
 
+    private var isRemoteContentBlocked: Bool {
+        return UserDefaults.shared.displayExternalContent == .askMe && messageReply?.frozenMessage.localSafeDisplay == false
+    }
+
     var body: some View {
         VStack {
-            AttachmentsHeaderView()
-            ComposeEditor(
-                focusedField: _focusedField,
-                draft: draft,
+            #if os(macOS) || targetEnvironment(macCatalyst)
+            EditorDesktopToolbarView(
+                isShowingLinkAlert: $isShowingLinkAlert,
+                isShowingFileSelection: $isShowingFileSelection,
                 isShowingAI: $isShowingAI,
-                messageReply: messageReply
+                textAttributes: textAttributes
             )
+            #endif
+            AttachmentsHeaderView()
+            RichHTMLEditor(html: $draft.body, textAttributes: textAttributes)
+                .focused($focusedField, equals: .editor)
+                .onAppear(perform: setupToolbar)
+                .editorInputAccessoryView(toolbar)
+                .editorCSS(Self.customCSS)
+                .introspectEditor(perform: setupEditor)
+                .onJavaScriptFunctionFail(perform: reportJavaScriptError)
+                .customAlert(isPresented: $isShowingLinkAlert) {
+                    AddLinkView(actionHandler: didCreateLink)
+                }
+                .sheet(isPresented: $isShowingFileSelection) {
+                    DocumentPicker(pickerType: .selectContent([.item], didPickDocument))
+                        .ignoresSafeArea()
+                }
+                .sheet(isPresented: $isShowingPhotoLibrary) {
+                    ImagePicker(completion: didPickImage)
+                        .ignoresSafeArea()
+                }
+                .fullScreenCover(isPresented: $isShowingCamera) {
+                    CameraPicker(completion: didTakePhoto)
+                        .ignoresSafeArea()
+                }
+        }
+    }
+
+    private func setupEditor(_ editor: RichHTMLEditorView) {
+        Task {
+            let contentBlocker = ContentBlocker(webView: editor.webView)
+            try? await contentBlocker.setRemoteContentBlocked(isRemoteContentBlocked)
+        }
+    }
+
+    private func setupToolbar() {
+        toolbar.setTextAttributes(textAttributes)
+        toolbar.mainButtonItemsHandler = didTapMainToolbarButton
+    }
+
+    private func didTapMainToolbarButton(_ action: EditorToolbarAction) {
+        switch action {
+        case .link:
+            isShowingLinkAlert = true
+        case .ai:
+            isShowingAI = true
+        case .addFile:
+            isShowingFileSelection = true
+        case .addPhoto:
+            isShowingPhotoLibrary = true
+        case .takePhoto:
+            isShowingCamera = true
+        case .programMessage:
+            showWorkInProgressSnackBar()
+        default:
+            Logger.view.warning("EditorToolbarAction not handled by ComposeEditor.")
+        }
+    }
+
+    private func didCreateLink(url: URL, text: String) {
+        textAttributes.addLink(url: url, text: text)
+    }
+
+    private func didPickDocument(_ urls: [URL]) {
+        attachmentsManager.importAttachments(
+            attachments: urls,
+            draft: draft,
+            disposition: AttachmentDisposition.defaultDisposition
+        )
+    }
+
+    private func didPickImage(_ results: [PHPickerResult]) {
+        attachmentsManager.importAttachments(
+            attachments: results,
+            draft: draft,
+            disposition: AttachmentDisposition.defaultDisposition
+        )
+    }
+
+    private func didTakePhoto(_ data: Data) {
+        attachmentsManager.importAttachments(
+            attachments: [data],
+            draft: draft,
+            disposition: AttachmentDisposition.defaultDisposition
+        )
+    }
+
+    private func reportJavaScriptError(_ error: any Error, function: String) {
+        SentrySDK.capture(error: error) { scope in
+            scope.setExtras([
+                "Executed JS Function": function
+            ])
         }
     }
 }

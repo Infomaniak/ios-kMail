@@ -46,7 +46,6 @@ public enum FeatureFlag: String, Codable {
 
 public final class FeatureFlagsManager: FeatureFlagsManageable {
     @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var platformDetector: PlatformDetectable
 
     private var enabledFeatures: SendableDictionary<AppFeatureFlags.Key, AppFeatureFlags.Value>
 
@@ -63,13 +62,9 @@ public final class FeatureFlagsManager: FeatureFlagsManageable {
         return userFeatures.contains(feature)
     }
 
+    // periphery:ignore - Reserved for future use
     private func isEnabledLocally(_ feature: FeatureFlag) -> Bool {
-        switch feature {
-        case .aiMailComposer:
-            return !platformDetector.isMac
-        default:
-            return true
-        }
+        true
     }
 
     public func feature(_ feature: FeatureFlag, on: () -> Void, off: (() -> Void)?) {
