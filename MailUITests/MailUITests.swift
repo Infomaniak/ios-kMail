@@ -194,7 +194,8 @@ class MailUITests: XCTestCase {
     }
 
     func swipeFirstCell() {
-        let testMailCell = app.collectionViews.cells.element(boundBy: 1)
+        // First cell could be the loading indicator so we get the second one
+        let testMailCell = app.collectionViews.cells.element(boundBy: 2)
         _ = testMailCell.waitForExistence(timeout: defaultTimeOut)
         testMailCell.firstMatch.swipeLeft()
     }
