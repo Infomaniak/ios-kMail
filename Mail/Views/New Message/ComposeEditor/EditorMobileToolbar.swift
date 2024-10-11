@@ -21,9 +21,10 @@ import InfomaniakRichHTMLEditor
 import MailCore
 import MailCoreUI
 import MailResources
+import SwiftUI
 import UIKit
 
-enum EditorToolbarStyle {
+enum EditorMobileToolbarStyle {
     case main
     case textEdition
 
@@ -42,46 +43,51 @@ enum EditorToolbarStyle {
     }
 }
 
-enum EditorToolbarAction: Int {
+enum EditorToolbarAction: Int, Identifiable {
+    case addFile
+    case link
     case bold
-    case italic
     case underline
+    case italic
     case strikeThrough
+    case cancelFormat
     case unorderedList
     case editText
     case ai
-    case addFile
     case addPhoto
     case takePhoto
-    case link
     case programMessage
 
-    var icon: UIImage {
+    var id: Self { self }
+
+    var icon: MailResourcesImages {
         switch self {
         case .bold:
-            return MailResourcesAsset.bold.image
+            return MailResourcesAsset.bold
         case .italic:
-            return MailResourcesAsset.italic.image
+            return MailResourcesAsset.italic
         case .underline:
-            return MailResourcesAsset.underline.image
+            return MailResourcesAsset.underline
         case .strikeThrough:
-            return MailResourcesAsset.strikeThrough.image
+            return MailResourcesAsset.strikeThrough
         case .unorderedList:
-            return MailResourcesAsset.unorderedList.image
+            return MailResourcesAsset.list
         case .editText:
-            return MailResourcesAsset.textModes.image
+            return MailResourcesAsset.textModes
         case .ai:
-            return MailResourcesAsset.aiWriter.image
+            return MailResourcesAsset.aiWriter
         case .addFile:
-            return MailResourcesAsset.folder.image
+            return MailResourcesAsset.attachment
         case .addPhoto:
-            return MailResourcesAsset.pictureLandscape.image
+            return MailResourcesAsset.picture
         case .takePhoto:
-            return MailResourcesAsset.photo.image
+            return MailResourcesAsset.photo
         case .link:
-            return MailResourcesAsset.hyperlink.image
+            return MailResourcesAsset.hyperlink
         case .programMessage:
-            return MailResourcesAsset.waitingMessage.image
+            return MailResourcesAsset.waitingMessage
+        case .cancelFormat:
+            return MailResourcesAsset.cancelFormat
         }
     }
 
@@ -90,6 +96,14 @@ enum EditorToolbarAction: Int {
             return MailResourcesAsset.aiColor.color
         } else {
             return MailResourcesAsset.textSecondaryColor.color
+        }
+    }
+
+    var foregroundStyle: Color {
+        if self == .ai {
+            return MailResourcesAsset.aiColor.swiftUIColor
+        } else {
+            return MailResourcesAsset.toolbarForegroundColor.swiftUIColor
         }
     }
 
@@ -139,7 +153,7 @@ enum EditorToolbarAction: Int {
         case .ai:
             return MailResourcesStrings.Localizable.aiDiscoveryTitle
         case .addFile:
-            return MailResourcesStrings.Localizable.attachmentActionFile
+            return MailResourcesStrings.Localizable.attachmentActionTitle
         case .addPhoto:
             return MailResourcesStrings.Localizable.attachmentActionPhotoLibrary
         case .takePhoto:
@@ -148,6 +162,29 @@ enum EditorToolbarAction: Int {
             return MailResourcesStrings.Localizable.buttonHyperlink
         case .programMessage:
             return MailResourcesStrings.Localizable.buttonSchedule
+        case .cancelFormat:
+            return MailResourcesStrings.Localizable.buttonCancelFormatting
+        }
+    }
+
+    var keyboardShortcut: KeyboardShortcut? {
+        switch self {
+        case .bold:
+            return KeyboardShortcut("B", modifiers: [.command, .shift])
+        case .italic:
+            return KeyboardShortcut("I", modifiers: [.command, .shift])
+        case .underline:
+            return KeyboardShortcut("U", modifiers: [.command, .shift])
+        case .strikeThrough:
+            return KeyboardShortcut("X", modifiers: [.command, .shift])
+        case .unorderedList:
+            return KeyboardShortcut("L", modifiers: [.command, .shift])
+        case .link:
+            return KeyboardShortcut("K", modifiers: [.command, .shift])
+        case .addFile:
+            return KeyboardShortcut("P", modifiers: [.command, .shift])
+        case .editText, .ai, .addPhoto, .takePhoto, .programMessage, .cancelFormat:
+            return nil
         }
     }
 
@@ -165,8 +202,41 @@ enum EditorToolbarAction: Int {
             return textAttributes.hasUnorderedList
         case .link:
             return textAttributes.hasLink
-        case .editText, .ai, .addFile, .addPhoto, .takePhoto, .programMessage:
+        case .editText, .ai, .addFile, .addPhoto, .takePhoto, .programMessage, .cancelFormat:
             return false
+        }
+    }
+
+    func action(
+        textAttributes: TextAttributes,
+        isShowingLinkAlert: Binding<Bool>,
+        isShowingFileSelection: Binding<Bool>,
+        isShowingAI: Binding<Bool>
+    ) {
+        switch self {
+        case .bold:
+            textAttributes.bold()
+        case .underline:
+            textAttributes.underline()
+        case .italic:
+            textAttributes.italic()
+        case .strikeThrough:
+            textAttributes.strikethrough()
+        case .cancelFormat:
+            textAttributes.removeFormat()
+        case .unorderedList:
+            textAttributes.unorderedList()
+        case .link:
+            guard !textAttributes.hasLink else {
+                return textAttributes.unlink()
+            }
+            isShowingLinkAlert.wrappedValue = true
+        case .addFile:
+            isShowingFileSelection.wrappedValue = true
+        case .ai:
+            isShowingAI.wrappedValue = true
+        default:
+            return
         }
     }
 }

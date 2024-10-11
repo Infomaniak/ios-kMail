@@ -24,12 +24,12 @@ import MailCore
 import SwiftUI
 import UIKit
 
-final class EditorToolbarView: UIToolbar {
+final class EditorMobileToolbarView: UIToolbar {
     private static let flexibleSpaceItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
 
     @LazyInjectService private var matomo: MatomoUtils
 
-    private var type = EditorToolbarStyle.main
+    private var type = EditorMobileToolbarStyle.main
 
     private var textAttributes: TextAttributes?
     private var textAttributesObservation: AnyCancellable?
@@ -59,12 +59,17 @@ final class EditorToolbarView: UIToolbar {
             }
     }
 
-    private func setupType(_ type: EditorToolbarStyle) {
+    private func setupType(_ type: EditorMobileToolbarStyle) {
         self.type = type
 
         let actions = type.actions
         let actionItems = actions.map { action in
-            let item = UIBarButtonItem(image: action.icon, style: .plain, target: self, action: #selector(didTapOnBarButtonItem))
+            let item = UIBarButtonItem(
+                image: action.icon.image,
+                style: .plain,
+                target: self,
+                action: #selector(didTapOnBarButtonItem)
+            )
             item.tag = action.rawValue
             item.accessibilityLabel = action.accessibilityLabel
             if let textAttributes {
@@ -113,7 +118,7 @@ final class EditorToolbarView: UIToolbar {
             } else {
                 mainButtonItemsHandler?(action)
             }
-        case .ai, .addFile, .addPhoto, .takePhoto, .programMessage:
+        case .ai, .addFile, .addPhoto, .takePhoto, .programMessage, .cancelFormat:
             mainButtonItemsHandler?(action)
         }
     }
