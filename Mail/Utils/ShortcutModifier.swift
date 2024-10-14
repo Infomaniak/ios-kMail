@@ -74,6 +74,7 @@ struct ShortcutModifier: ViewModifier {
             guard let unwrapMessages = mainViewState.selectedThread?.messages.toArray() else { return }
             messages = unwrapMessages
         }
+        multipleSelectionViewModel.disable()
         Task {
             try await actionsManager.performAction(
                 target: messages,
