@@ -43,7 +43,9 @@ struct MCKContactManageable_SearchViewModel: ContactManageable, MCKTransactionab
                         sorted: ((MergedContact, MergedContact) -> Bool)?) -> any Collection<MailCore.MergedContact> { [] }
 
     func frozenContactsAsync(matching string: String, fetchLimit: Int?,
-                        sorted: ((MergedContact, MergedContact) -> Bool)?) async -> any Collection<MailCore.MergedContact> { [] }
+                             sorted: ((MergedContact, MergedContact) -> Bool)?) async
+        -> any Collection<MailCore.MergedContact> { [
+    ] }
 
     func getContact(for correspondent: any MailCore.Correspondent) -> MailCore.MergedContact? { nil }
 
