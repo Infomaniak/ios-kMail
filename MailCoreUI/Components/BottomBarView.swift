@@ -27,7 +27,8 @@ public struct BottomBar<Items: View>: ViewModifier {
     public func body(content: Content) -> some View {
         VStack(spacing: 0) {
             content
-            Spacer(minLength: 0)
+                .frame(maxHeight: .infinity, alignment: .top)
+
             if isVisible {
                 BottomBarView(items: items)
             }

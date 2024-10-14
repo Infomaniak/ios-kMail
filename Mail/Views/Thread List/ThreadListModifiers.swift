@@ -22,6 +22,7 @@ import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 extension View {
@@ -59,7 +60,6 @@ struct ThreadListToolbar: ViewModifier {
     @EnvironmentObject private var actionsManager: ActionsManager
 
     @State private var multipleSelectedMessages: [Message]?
-    @State private var messagesToMove: [Message]?
 
     @Binding var flushAlert: FlushAlertState?
 
@@ -133,7 +133,7 @@ struct ThreadListToolbar: ViewModifier {
                                     origin: .multipleSelection(
                                         originFolder: originFolder,
                                         nearestFlushAlert: $flushAlert,
-                                        nearestMessagesToMoveSheet: $messagesToMove
+                                        nearestMessagesToMoveSheet: nil
                                     )
                                 )
                             }
@@ -150,21 +150,14 @@ struct ThreadListToolbar: ViewModifier {
                     }
                     .accessibilityLabel(MailResourcesStrings.Localizable.buttonMore)
                     .accessibilityAddTraits(.isButton)
-                }
-                .actionsPanel(
-                    messages: $multipleSelectedMessages,
-                    originFolder: viewModel.frozenFolder,
-                    panelSource: .threadList
-                ) { _ in
-                    multipleSelectionViewModel.disable()
-                }
-                .sheet(item: $messagesToMove) { messages in
-                    MoveEmailView(
-                        mailboxManager: viewModel.mailboxManager,
-                        movedMessages: messages,
-                        originFolder: viewModel.frozenFolder
-                    )
-                    .sheetViewStyle()
+                    .actionsPanel(
+                        messages: $multipleSelectedMessages,
+                        originFolder: viewModel.frozenFolder,
+                        panelSource: .threadList
+                    ) { action in
+                        guard action != .openMovePanel else { return }
+                        multipleSelectionViewModel.disable()
+                    }
                 }
                 .navigationTitle(
                     multipleSelectionViewModel.isEnabled
