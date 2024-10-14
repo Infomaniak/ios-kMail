@@ -59,31 +59,36 @@ struct AutocompletionView: View {
             }
         }
         .onAppear {
-            updateAutocompletion(textDebounce.text)
+            Task {
+                await updateAutocompletion(textDebounce.text)
+            }
         }
         .onReceive(textDebounce.$text.debounce(for: .milliseconds(150), scheduler: DispatchQueue.main)) { currentValue in
-            updateAutocompletion("\(currentValue)")
+            Task {
+                await updateAutocompletion("\(currentValue)")
+            }
         }
     }
 
-    private func updateAutocompletion(_ search: String) {
+    private func updateAutocompletion(_ search: String) async {
         let trimmedSearch = search.trimmingCharacters(in: .whitespacesAndNewlines)
 
-        let autocompleteContacts = mailboxManager.contactManager.frozenContacts(
-            matching: trimmedSearch,
-            fetchLimit: Self.maxAutocompleteCount,
-            sorted: sortByRemoteAndName
-        )
-        var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
+        Task { @MainActor in
+            let autocompleteContacts = await mailboxManager.contactManager.frozenContactsAsync(
+                matching: trimmedSearch,
+                fetchLimit: Self.maxAutocompleteCount,
+                sorted: sortByRemoteAndName
+            )
+            var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
 
-        let realResults = autocompleteRecipients.filter { !addedRecipients.map(\.email).contains($0.email) }
+            let realResults = autocompleteRecipients.filter { !addedRecipients.map(\.email).contains($0.email) }
 
-        shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.email == textDebounce.text)
-        if shouldAddUserProposal {
-            autocompleteRecipients.append(Recipient(email: textDebounce.text, name: ""))
+            shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.email == textDebounce.text)
+            if shouldAddUserProposal {
+                autocompleteRecipients.append(Recipient(email: textDebounce.text, name: ""))
+            }
+            autocompletion = autocompleteRecipients
         }
-
-        autocompletion = autocompleteRecipients
     }
 
     private func sortByRemoteAndName(lhs: MergedContact, rhs: MergedContact) -> Bool {

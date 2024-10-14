@@ -28,6 +28,8 @@ public protocol ContactFetchable {
     /// - Returns: The collection of matching contacts.
     func frozenContacts(matching string: String, fetchLimit: Int?, sorted: ((MergedContact, MergedContact) -> Bool)?)
         -> any Collection<MergedContact>
+    func frozenContactsAsync(matching string: String, fetchLimit: Int?, sorted: ((MergedContact, MergedContact) -> Bool)?) async
+        -> any Collection<MergedContact>
 
     /// Get a contact from a given transactionable
     func getContact(for correspondent: any Correspondent, transactionable: Transactionable) -> MergedContact?
@@ -50,8 +52,8 @@ public extension ContactManager {
     ///   - string: input string to match against email and name
     ///   - fetchLimit: limit the query by default to limit memory footprint
     /// - Returns: The collection of matching contacts. Frozen.
-    func frozenContacts(matching string: String, fetchLimit: Int?,
-                        sorted: ((MergedContact, MergedContact) -> Bool)?) -> any Collection<MergedContact> {
+    func frozenContacts(matching string: String, fetchLimit: Int? = nil,
+                        sorted: ((MergedContact, MergedContact) -> Bool)? = nil) -> any Collection<MergedContact> {
         var lazyResults = fetchResults(ofType: MergedContact.self) { partial in
             partial
         }
@@ -60,11 +62,18 @@ public extension ContactManager {
             .freeze()
 
         var sortedIfNecessary: any Collection<MergedContact> = lazyResults
-        if let sorted {
-            sortedIfNecessary = sortedIfNecessary.sorted(by: sorted)
+        if let sortClosure = sorted {
+            sortedIfNecessary = sortedIfNecessary.sorted(by: sortClosure)
         }
 
-        return sortedIfNecessary.prefix(fetchLimit ?? Self.contactFetchLimit)
+        let finalFetchLimit = fetchLimit ?? Self.contactFetchLimit
+        return sortedIfNecessary.prefix(finalFetchLimit)
+    }
+
+    /// Async version of fetching frozen contacts
+    func frozenContactsAsync(matching string: String, fetchLimit: Int? = nil,
+                             sorted: ((MergedContact, MergedContact) -> Bool)? = nil) async -> any Collection<MergedContact> {
+        return frozenContacts(matching: string, fetchLimit: fetchLimit, sorted: sorted)
     }
 
     func getContact(for correspondent: any Correspondent) -> MergedContact? {
