@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Alamofire/Alamofire",
       "state" : {
-        "revision" : "f455c2975872ccd2d9c81594c658af65716e9b9a",
-        "version" : "5.9.1"
+        "revision" : "ea6a94b7dddffd0ca4d0f29252d95310b84dec84",
+        "version" : "5.10.0"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-bug-tracker",
       "state" : {
-        "revision" : "02275afb3808ff01f1047bf0215326601ce177c3",
-        "version" : "7.0.0"
+        "revision" : "9618c3b593a852ef8a56d14087056b4b9927e8f1",
+        "version" : "7.0.1"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "3275b3dafa41d3bf8e618b715dfac17e236f86b0",
-        "version" : "12.2.0"
+        "revision" : "caad7e8d0efb94648fd4f8fa5bb4341c1efb25d0",
+        "version" : "12.3.1"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "d83b9df4d8e7880fa8a55807549cac0fc4584ce6",
-        "version" : "13.1.0"
+        "revision" : "1aeba8dae671e8c2d7ea239a9669c0b9e085b2de",
+        "version" : "13.2.0"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/johnpatrickmorgan/NavigationBackport",
       "state" : {
-        "revision" : "4bc5725695780353d1e80eba0bb3b834b7aa63b2",
-        "version" : "0.10.0"
+        "revision" : "4f4c1b201c6e92c9d5236d69f563d5f435d6f340",
+        "version" : "0.11.1"
       }
     },
     {
@@ -194,8 +194,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "5575af93efb776414f243e93d6af9f6258dc539a",
-        "version" : "8.36.0"
+        "revision" : "54cc2e3e4fcbf9d4c7708ce00d3b6eee29aecbb1",
+        "version" : "8.38.0"
       }
     },
     {
@@ -275,8 +275,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/swift-rich-html-editor.git",
       "state" : {
-        "revision" : "eba94eddbb0a0e57ee78227ef790e7ecc02148ce",
-        "version" : "1.2.0"
+        "revision" : "8ce8a211512d09f4e4635c3d936a5693c7ec1c45",
+        "version" : "1.4.0"
       }
     },
     {
