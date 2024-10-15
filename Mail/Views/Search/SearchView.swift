@@ -36,19 +36,20 @@ struct SearchView: View {
     }
 
     var body: some View {
-        Group {
-            VStack(spacing: 0) {
-                Rectangle() // Needed to fix navBar clear color bug
-                    .frame(height: 0.2)
-                    .foregroundStyle(.clear)
-                if !multipleSelectionViewModel.isEnabled {
-                    SearchFilterHeaderView(viewModel: viewModel)
-                }
-                SearchViewList(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
+        VStack(spacing: 0) {
+            Rectangle() // Needed to fix navBar clear color bug
+                .frame(height: 0.2)
+                .foregroundStyle(.clear)
+
+            if !multipleSelectionViewModel.isEnabled {
+                SearchFilterHeaderView(viewModel: viewModel)
             }
-        }
-        .accessibilityAction(.escape) {
-            mainViewState.isShowingSearch = false
+
+            SearchViewList(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
+                .refreshable {
+                    multipleSelectionViewModel.disable()
+                    await viewModel.fetchThreads()
+                }
         }
         .accessibilityAction(.escape) {
             mainViewState.isShowingSearch = false
@@ -57,10 +58,6 @@ struct SearchView: View {
         .navigationBarSearchListStyle()
         .emptyState(isEmpty: viewModel.searchState == .noResults) {
             EmptyStateView.emptySearch
-        }
-        .refreshable {
-            multipleSelectionViewModel.disable()
-            await viewModel.fetchThreads()
         }
         .toolbarAppStyle()
         .searchToolbar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
