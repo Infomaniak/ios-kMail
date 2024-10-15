@@ -205,8 +205,8 @@ public class ActionsManager: ObservableObject {
             }
             Task { @MainActor in
                 do {
-                    let fileURL = try await mailboxManager.apiFetcher.download(message: messages.first!)
-                    try DeeplinkService().shareFileToKdrive(fileURL)
+                    let fileURL = try await mailboxManager.apiFetcher.download(messages: [messages.first!])
+                    try DeeplinkService().shareFilesToKdrive(fileURL)
                 } catch {
                     SentrySDK.capture(error: error)
                 }
@@ -218,7 +218,6 @@ public class ActionsManager: ObservableObject {
             Task { @MainActor in
                 do {
                     let filesURL = try await mailboxManager.apiFetcher.download(messages: messages)
-                    print(filesURL.count)
                     try DeeplinkService().shareFilesToKdrive(filesURL)
                 } catch {
                     SentrySDK.capture(error: error)
