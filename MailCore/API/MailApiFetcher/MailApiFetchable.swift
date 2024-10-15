@@ -46,7 +46,7 @@ public protocol MailApiCommonFetchable {
 
     func threads(from resource: String, searchFilter: [URLQueryItem]) async throws -> ThreadResult
 
-    func download(message: Message) async throws -> URL
+    func download(messages: [Message]) async throws -> [URL]
 
     func quotas(mailbox: Mailbox) async throws -> Quotas
 
