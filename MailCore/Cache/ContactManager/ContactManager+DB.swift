@@ -52,8 +52,8 @@ public extension ContactManager {
     ///   - string: input string to match against email and name
     ///   - fetchLimit: limit the query by default to limit memory footprint
     /// - Returns: The collection of matching contacts. Frozen.
-    func frozenContacts(matching string: String, fetchLimit: Int? = nil,
-                        sorted: ((MergedContact, MergedContact) -> Bool)? = nil) -> any Collection<MergedContact> {
+    func frozenContacts(matching string: String, fetchLimit: Int?,
+                        sorted: ((MergedContact, MergedContact) -> Bool)?) -> any Collection<MergedContact> {
         var lazyResults = fetchResults(ofType: MergedContact.self) { partial in
             partial
         }
@@ -71,8 +71,8 @@ public extension ContactManager {
     }
 
     /// Async version of fetching frozen contacts
-    func frozenContactsAsync(matching string: String, fetchLimit: Int? = nil,
-                             sorted: ((MergedContact, MergedContact) -> Bool)? = nil) async -> any Collection<MergedContact> {
+    func frozenContactsAsync(matching string: String, fetchLimit: Int?,
+                             sorted: ((MergedContact, MergedContact) -> Bool)?) async -> any Collection<MergedContact> {
         return frozenContacts(matching: string, fetchLimit: fetchLimit, sorted: sorted)
     }
 
