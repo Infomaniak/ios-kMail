@@ -250,8 +250,8 @@ final class ITSearchViewModel: XCTestCase {
         MockingHelper.registerConcreteTypes(configuration: .minimal)
     }
 
-    /// Tests removed temporarily
-    /// Uncomment when all MailboxManager are MailboxManageable
+    // Tests removed temporarily
+    // Uncomment when all MailboxManager are MailboxManageable
 
 //    @MainActor func testInit() {
 //        // GIVEN

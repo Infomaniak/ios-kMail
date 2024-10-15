@@ -67,7 +67,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         if let currentMailboxManager = getMailboxManager(for: currentMailboxId, userId: currentUserId) {
             return currentMailboxManager
         } else if let newCurrentMailbox = mailboxInfosManager.getMailboxes(for: currentUserId)
-            .sorted(by: { lhs, rhs in return lhs.isPrimary })
+            .sorted(by: { lhs, _ in return lhs.isPrimary })
             .first(where: \.isAvailable) {
             setCurrentMailboxForCurrentAccount(mailbox: newCurrentMailbox)
             return getMailboxManager(for: newCurrentMailbox)
