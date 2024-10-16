@@ -81,6 +81,7 @@ struct ComposeMessageView: View {
     @State private var autocompletionType: ComposeViewFieldType?
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
+    @State private var isShowingScheduledPanel = false
 
     @Weak private var scrollView: UIScrollView?
 
@@ -168,6 +169,12 @@ struct ComposeMessageView: View {
         }
         .baseComposeMessageToolbar(dismissHandler: didTouchDismiss)
         .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: { isShowingScheduledPanel = true }) {
+                    Label(MailResourcesStrings.Localizable.send, asset: MailResourcesAsset.scheduleSend.swiftUIImage)
+                }
+                .disabled(isSendButtonDisabled)
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: didTouchSend) {
                     Label(MailResourcesStrings.Localizable.send, asset: MailResourcesAsset.send.swiftUIImage)
@@ -271,6 +278,7 @@ struct ComposeMessageView: View {
         }
         .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
+        .scheduledFloatingPanel(isPresented: $isShowingScheduledPanel)
     }
 
     /// Progress view
