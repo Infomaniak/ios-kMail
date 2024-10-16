@@ -95,7 +95,7 @@ extension Action: CaseIterable {
             star ? .unstar : .star,
             print ? .print : nil,
             .shareMailLink,
-            platformDetector.isMac ? nil : .saveMailInkDrive,
+            platformDetector.isMac ? nil : .saveThreadInkDrive,
             userIsStaff ? .reportDisplayProblem : nil
         ]
 
@@ -362,12 +362,6 @@ public extension Action {
         title: MailResourcesStrings.Localizable.shareEmail,
         iconResource: MailResourcesAsset.emailActionShare,
         matomoName: "shareLink"
-    )
-    static let saveMailInkDrive = Action(
-        id: "saveMailInkDrive",
-        title: MailResourcesStrings.Localizable.saveMailInkDrive,
-        iconResource: MailResourcesAsset.kdriveLogo,
-        matomoName: "saveInkDrive"
     )
     static let saveThreadInkDrive = Action(
         id: "saveThreadInkDrive",
