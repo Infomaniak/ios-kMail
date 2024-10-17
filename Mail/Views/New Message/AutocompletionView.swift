@@ -58,10 +58,8 @@ struct AutocompletionView: View {
                 }
             }
         }
-        .onAppear {
-            Task {
-                await updateAutocompletion(textDebounce.text)
-            }
+        .task {
+            await updateAutocompletion(textDebounce.text)
         }
         .onReceive(textDebounce.$text.debounce(for: .milliseconds(150), scheduler: DispatchQueue.main)) { currentValue in
             Task {

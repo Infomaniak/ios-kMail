@@ -62,8 +62,8 @@ public extension ContactManager {
             .freeze()
 
         var sortedIfNecessary: any Collection<MergedContact> = lazyResults
-        if let sortClosure = sorted {
-            sortedIfNecessary = sortedIfNecessary.sorted(by: sortClosure)
+        if let sorted {
+            sortedIfNecessary = sortedIfNecessary.sorted(by: sorted)
         }
 
         let finalFetchLimit = fetchLimit ?? Self.contactFetchLimit
