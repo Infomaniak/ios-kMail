@@ -28,6 +28,8 @@ public protocol ContactFetchable {
     /// - Returns: The collection of matching contacts.
     func frozenContacts(matching string: String, fetchLimit: Int?, sorted: ((MergedContact, MergedContact) -> Bool)?)
         -> any Collection<MergedContact>
+    func frozenContactsAsync(matching string: String, fetchLimit: Int?, sorted: ((MergedContact, MergedContact) -> Bool)?) async
+        -> any Collection<MergedContact>
 
     /// Get a contact from a given transactionable
     func getContact(for correspondent: any Correspondent, transactionable: Transactionable) -> MergedContact?
@@ -64,7 +66,14 @@ public extension ContactManager {
             sortedIfNecessary = sortedIfNecessary.sorted(by: sorted)
         }
 
-        return sortedIfNecessary.prefix(fetchLimit ?? Self.contactFetchLimit)
+        let finalFetchLimit = fetchLimit ?? Self.contactFetchLimit
+        return sortedIfNecessary.prefix(finalFetchLimit)
+    }
+
+    /// Async version of fetching frozen contacts
+    func frozenContactsAsync(matching string: String, fetchLimit: Int?,
+                             sorted: ((MergedContact, MergedContact) -> Bool)?) async -> any Collection<MergedContact> {
+        return frozenContacts(matching: string, fetchLimit: fetchLimit, sorted: sorted)
     }
 
     func getContact(for correspondent: any Correspondent) -> MergedContact? {
