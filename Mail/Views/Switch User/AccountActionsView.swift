@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
@@ -29,8 +30,8 @@ struct AccountActionsView: View {
 
     @Environment(\.currentUser) private var currentUser
 
-    @ModalState(context: ContextKeys.account) private var isShowingLogoutAlert = false
     @State private var isShowingNewAccountView = false
+    @State private var presentedLoggingOutUser: UserProfile?
 
     private var actions: [Action] {
         return [.addAccount, .logoutAccount]
@@ -51,32 +52,24 @@ struct AccountActionsView: View {
         }, content: {
             SingleOnboardingView()
         })
-        .customAlert(isPresented: $isShowingLogoutAlert) {
-            LogoutConfirmationView(user: currentUser.value)
+        .customAlert(item: $presentedLoggingOutUser) { user in
+            LogoutConfirmationView(user: user)
         }
     }
 
     // MARK: - Actions
 
     private func handleAction(_ action: Action) {
+        matomo.track(eventWithCategory: .account, name: action.matomoName)
+
         switch action {
         case .addAccount:
-            addAccount(action)
+            isShowingNewAccountView.toggle()
         case .logoutAccount:
-            logoutAccount(action)
+            presentedLoggingOutUser = currentUser.value
         default:
             return
         }
-    }
-
-    private func addAccount(_ action: Action) {
-        matomo.track(eventWithCategory: .account, name: action.matomoName)
-        isShowingNewAccountView.toggle()
-    }
-
-    private func logoutAccount(_ action: Action) {
-        matomo.track(eventWithCategory: .account, name: action.matomoName)
-        isShowingLogoutAlert.toggle()
     }
 }
 
