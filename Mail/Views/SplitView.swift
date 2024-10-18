@@ -66,6 +66,7 @@ struct SplitView: View {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var platformDetector: PlatformDetectable
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
+    @LazyInjectService private var cacheManager: CacheManageable
 
     let mailboxManager: MailboxManager
 
@@ -157,20 +158,10 @@ struct SplitView: View {
             SafariWebView(url: safariContent.url)
                 .ignoresSafeArea()
         }
-        // swiftlint:disable:next trailing_closure
-        .sceneLifecycle(willEnterForeground: {
-            Task {
-                // We need to write in Task instead of async let to avoid being cancelled to early
-                Task {
-                    await fetchFolders()
-                }
-                Task {
-                    try await mailboxManager.refreshAllSignatures()
-                }
-                guard !platformDetector.isDebug else { return }
-                mainViewState.isShowingSyncDiscovery = platformDetector.isMac ? false : shouldShowSync()
-            }
-        })
+        .task(id: currentUser.value.id) {
+            await cacheManager.refreshCacheDataFor(userId: currentUser.value.id)
+        }
+        .sceneLifecycle(willEnterForeground: willEnterForeground)
         .onOpenURL { url in
             handleOpenUrl(url)
         }
@@ -210,6 +201,23 @@ struct SplitView: View {
         .environmentObject(mailboxManager)
         .environmentObject(ActionsManager(mailboxManager: mailboxManager, mainViewState: mainViewState))
         .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
+    }
+
+    private func willEnterForeground() {
+        Task {
+            // We need to write in Task instead of async let to avoid being cancelled too early
+            Task {
+                await cacheManager.refreshCacheDataFor(userId: currentUser.value.id)
+            }
+            Task {
+                await fetchFolders()
+            }
+            Task {
+                try await mailboxManager.refreshAllSignatures()
+            }
+            guard !platformDetector.isDebug else { return }
+            mainViewState.isShowingSyncDiscovery = platformDetector.isMac ? false : shouldShowSync()
+        }
     }
 
     private func setupBehaviour(orientation: UIInterfaceOrientation) {

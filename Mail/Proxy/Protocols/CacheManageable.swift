@@ -22,5 +22,5 @@ import InfomaniakLogin
 
 /// Something that can manipulate cached data
 public protocol CacheManageable {
-    func refreshCacheData(account: ApiToken?)
+    func refreshCacheDataFor(userId: Int) async
 }
