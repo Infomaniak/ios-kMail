@@ -26,6 +26,7 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
     case archive = "ARCHIVE"
     case commercial = "COMMERCIAL"
     case draft = "DRAFT"
+    case scheduledDrafts = "SCHEDULED_DRAFTS"
     case inbox = "INBOX"
     case sent = "SENT"
     case socialNetworks = "SOCIALNETWORKS"
@@ -40,6 +41,8 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return MailResourcesStrings.Localizable.commercialFolder
         case .draft:
             return MailResourcesStrings.Localizable.draftFolder
+        case .scheduledDrafts:
+            return MailResourcesStrings.Localizable.scheduledMessagesFolder
         case .inbox:
             return MailResourcesStrings.Localizable.inboxFolder
         case .sent:
@@ -56,10 +59,12 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
     public var order: Int {
         switch self {
         case .archive:
-            return 8
+            return 9
         case .commercial:
             return 2
         case .draft:
+            return 6
+        case .scheduledDrafts:
             return 5
         case .inbox:
             return 1
@@ -68,9 +73,9 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
         case .socialNetworks:
             return 3
         case .spam:
-            return 6
-        case .trash:
             return 7
+        case .trash:
+            return 8
         }
     }
 
@@ -82,6 +87,8 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return MailResourcesAsset.promotions
         case .draft:
             return MailResourcesAsset.draft
+        case .scheduledDrafts:
+            return MailResourcesAsset.scheduleSend
         case .inbox:
             return MailResourcesAsset.drawer
         case .sent:
@@ -95,7 +102,7 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
         }
     }
 
-    public static let writtenByMeFolders: [FolderRole] = [.sent, .draft]
+    public static let writtenByMeFolders: [FolderRole] = [.sent, .draft, .scheduledDrafts]
 }
 
 public enum ToolFolderType: String, PersistableEnum {

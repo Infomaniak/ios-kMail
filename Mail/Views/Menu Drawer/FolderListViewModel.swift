@@ -111,7 +111,7 @@ struct FolderListViewModelWorker {
     private func filterFolders(_ folders: Results<Folder>, searchQuery: String) -> [Folder] {
         guard !searchQuery.isEmpty else {
             // swiftlint:disable:next empty_count
-            return Array(folders.where { $0.parents.count == 0 })
+            return Array(folders.where { $0.parents.count == 0 || $0.role != nil })
         }
 
         return folders.filter {
