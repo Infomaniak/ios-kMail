@@ -25,27 +25,41 @@ import MailCore
 import OSLog
 
 @available(iOSApplicationExtension, unavailable)
-public final class CacheManager: CacheManageable {
+public actor CacheManager: CacheManageable {
     @LazyInjectService private var accountManager: AccountManager
 
-    public func refreshCacheData(account: ApiToken?) {
-        guard let account else { return }
+    private var refreshCacheDataTaskForUserId: [Int: Task<Void, Never>] = [:]
 
-        Task {
-            // Try to enable at least once before attempting fetching new user
+    public func refreshCacheDataFor(userId: Int) async {
+        if let refreshCacheDataTask = refreshCacheDataTaskForUserId[userId] {
+            await refreshCacheDataTask.value
+            return
+        }
+
+        refreshCacheDataTaskForUserId[userId] = Task {
+            await uniqueRefreshCacheDataFor(userId: userId)
+            refreshCacheDataTaskForUserId[userId] = nil
+        }
+
+        await refreshCacheDataTaskForUserId[userId]?.value
+    }
+
+    private func uniqueRefreshCacheDataFor(userId: Int) async {
+        guard let account = accountManager.account(for: userId) else { return }
+
+        // Try to enable at least once before attempting fetching new user
+        await accountManager.enableBugTrackerIfAvailable()
+
+        do {
+            try await accountManager.updateUser(for: account)
             await accountManager.enableBugTrackerIfAvailable()
 
-            do {
-                try await accountManager.updateUser(for: account)
-                await accountManager.enableBugTrackerIfAvailable()
-
-                guard CNContactStore.authorizationStatus(for: .contacts) != .notDetermined else {
-                    return
-                }
-                try await accountManager.currentContactManager?.refreshContactsAndAddressBooksIfNeeded()
-            } catch {
-                Logger.general.error("Error while updating user account: \(error)")
+            guard CNContactStore.authorizationStatus(for: .contacts) != .notDetermined else {
+                return
             }
+            try await accountManager.currentContactManager?.refreshContactsAndAddressBooksIfNeeded()
+        } catch {
+            Logger.general.error("Error while updating user account: \(error)")
         }
     }
 }
