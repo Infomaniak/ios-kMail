@@ -48,8 +48,12 @@ struct FullRecipientsList: View {
     }
 
     @MainActor private func remove(recipientAt: Int) {
+        guard $recipients.count > recipientAt else { return }
+
         matomo.track(eventWithCategory: .newMessage, name: "deleteRecipient")
-        if recipients[recipientAt].isExternal(mailboxManager: mailboxManager) {
+
+        let recipient = $recipients[recipientAt].wrappedValue
+        if recipient.isExternal(mailboxManager: mailboxManager) {
             matomo.track(eventWithCategory: .externals, name: "deleteRecipient")
         }
 
