@@ -28,7 +28,7 @@ import OSLog
 private let realmRootPath = "mailboxes"
 private let appGroupIdentifier = "group.com.infomaniak.mail"
 
-private let loginConfig = InfomaniakLogin.Config(clientId: "E90BC22D-67A8-452C-BE93-28DA33588CA4", accessType: nil)
+private let loginConfig = InfomaniakLogin.Config(clientId: "E90BC22D-67A8-452C-BE93-28DA33588CA4", loginURL: URL(string: "https://login.preprod.dev.infomaniak.ch/")!, accessType: nil)
 
 extension [Factory] {
     func registerFactoriesInDI() {
