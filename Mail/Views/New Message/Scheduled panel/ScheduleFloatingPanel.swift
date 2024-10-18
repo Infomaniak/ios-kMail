@@ -45,8 +45,3 @@ struct ScheduleFloatingPanel: ViewModifier {
             }
     }
 }
-
-#Preview {
-    Text("Oui c'est moi")
-        .scheduleFloatingPanel(isPresented: .constant(true))
-}
