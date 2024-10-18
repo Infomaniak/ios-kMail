@@ -50,10 +50,11 @@ struct ReportDisplayProblemView: View {
     private func report() async {
         await tryOrDisplayError {
             // Download message
-            let fileURL = try await mailboxManager.apiFetcher.download(message: message)
+            let fileURL = try await mailboxManager.apiFetcher.download(messages: [message])
+            guard let firstFileURL = fileURL.first else { throw MailError.unknownError }
             // Send it via Sentry
-            let fileAttachment = Attachment(path: fileURL.path,
-                                            filename: fileURL.lastPathComponent,
+            let fileAttachment = Attachment(path: firstFileURL.path,
+                                            filename: firstFileURL.lastPathComponent,
                                             contentType: "message/rfc822")
             _ = SentrySDK.capture(message: "Message display problem reported") { scope in
                 scope.addAttachment(fileAttachment)
