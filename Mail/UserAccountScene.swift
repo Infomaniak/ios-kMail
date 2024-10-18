@@ -38,7 +38,6 @@ struct UserAccountScene: Scene {
     @LazyInjectService private var refreshAppBackgroundTask: RefreshAppBackgroundTask
     @LazyInjectService private var reviewManager: ReviewManageable
     @LazyInjectService private var platformDetector: PlatformDetectable
-    @LazyInjectService private var cacheManager: CacheManageable
 
     @StateObject private var rootViewState = RootViewState()
 
@@ -48,9 +47,6 @@ struct UserAccountScene: Scene {
                 .standardWindow()
                 .environmentObject(rootViewState)
                 .sceneLifecycle(willEnterForeground: willEnterForeground, didEnterBackground: didEnterBackground)
-                .task(id: rootViewState.account?.userId) {
-                    cacheManager.refreshCacheData(account: rootViewState.account)
-                }
         }
         .commands {
             CustomCommands(rootViewState: rootViewState)
@@ -80,7 +76,6 @@ struct UserAccountScene: Scene {
             appLaunchCounter.increase()
             reviewManager.decreaseOpeningUntilReview()
         }
-        cacheManager.refreshCacheData(account: rootViewState.account)
         rootViewState.transitionToLockViewIfNeeded()
         checkAppVersion()
     }

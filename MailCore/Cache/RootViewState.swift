@@ -68,8 +68,6 @@ public class RootViewState: ObservableObject {
 
     @Published public private(set) var state: RootViewType
 
-    public private(set) var account: ApiToken?
-
     public init() {
         @InjectService var accountManager: AccountManager
 
@@ -77,8 +75,8 @@ public class RootViewState: ObservableObject {
 
         accountManagerObservation = accountManager.objectWillChange.receive(on: RunLoop.main).sink { [weak self] in
             Task {
-                self?.account = accountManager.getCurrentAccount()
-                await self?.transitionToMainViewIfPossible(targetAccount: self?.account, targetMailbox: nil)
+                let account = accountManager.getCurrentAccount()
+                await self?.transitionToMainViewIfPossible(targetAccount: account, targetMailbox: nil)
             }
         }
     }
