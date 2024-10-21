@@ -22,7 +22,7 @@ import InfomaniakLogin
 
 /// A cache manager that works in Extension mode
 public final class CacheManager: CacheManageable {
-    public func refreshCacheData(account: ApiToken?) {
+    public func refreshCacheDataFor(userId: Int) async {
         // NOOP in shareExtension
     }
 }
