@@ -57,11 +57,8 @@ extension MessagesWorker {
             return
         }
 
-        async let fetchMessageResult: Void = fetchMessage(of: message, with: mailboxManager)
-        async let fetchEventCalendar: Void = fetchEventCalendar(of: message, with: mailboxManager)
-
-        try await fetchMessageResult
-        await fetchEventCalendar
+        try await fetchMessage(of: message, with: mailboxManager)
+        await fetchEventCalendar(of: message, with: mailboxManager)
     }
 
     private func fetchMessage(of message: Message, with mailboxManager: MailboxManager) async throws {
