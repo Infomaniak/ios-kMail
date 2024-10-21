@@ -95,7 +95,7 @@ extension Action: CaseIterable {
             star ? .unstar : .star,
             print ? .print : nil,
             .shareMailLink,
-            platformDetector.isMac ? nil : .saveMailInkDrive,
+            platformDetector.isMac ? nil : .saveThreadInkDrive,
             userIsStaff ? .reportDisplayProblem : nil
         ]
 
@@ -118,7 +118,8 @@ extension Action: CaseIterable {
 
         let listActions: [Action] = [
             spam ? .nonSpam : .reportJunk,
-            star ? .unstar : .star
+            star ? .unstar : .star,
+            .saveThreadInkDrive
         ]
 
         return (quickActions, listActions)
@@ -138,7 +139,8 @@ extension Action: CaseIterable {
             spamAction,
             unread ? .markAsUnread : .markAsRead,
             archive ? .archive : .moveToInbox,
-            showUnstar ? .unstar : .star
+            showUnstar ? .unstar : .star,
+            .saveThreadInkDrive
         ]
 
         return (Action.quickActions, tempListActions.compactMap { $0 })
@@ -361,11 +363,11 @@ public extension Action {
         iconResource: MailResourcesAsset.emailActionShare,
         matomoName: "shareLink"
     )
-    static let saveMailInkDrive = Action(
-        id: "saveMailInkDrive",
+    static let saveThreadInkDrive = Action(
+        id: "saveThreadInkDrive",
         title: MailResourcesStrings.Localizable.saveMailInkDrive,
         iconResource: MailResourcesAsset.kdriveLogo,
-        matomoName: "saveInkDrive"
+        matomoName: "saveThreadInkDrive"
     )
 
     // MARK: Account Actions
