@@ -31,15 +31,15 @@ enum ScheduleSendOption: String, Identifiable {
     var date: Date? {
         switch self {
         case .thisAfternoon:
-            return dateFromNow(hour: 14, of: (.day, 0))
+            return dateFromNow(setHour: 14, addDay: 0, addWeek: 0)
         case .thisEvening:
-            return dateFromNow(hour: 18, of: (.day, 0))
+            return dateFromNow(setHour: 18, addDay: 0, addWeek: 0)
         case .tomorrowMorning:
-            return dateFromNow(hour: 8, of: (.day, 1))
+            return dateFromNow(setHour: 8, addDay: 1, addWeek: 0)
         case .nextWeekMorning:
-            return dateFromNow(hour: 8, of: (.weekday, 1))
+            return dateFromNow(setHour: 8, addDay: 0, addWeek: 1)
         case .nextWeekAfternoon:
-            return dateFromNow(hour: 18, of: (.weekday, 1))
+            return dateFromNow(setHour: 18, addDay: 0, addWeek: 1)
         }
     }
 
@@ -78,11 +78,9 @@ enum ScheduleSendOption: String, Identifiable {
         return date.ISO8601Format().replacingOccurrences(of: "Z", with: "+00:00")
     }
 
-    private func dateFromNow(hour: Int, of: (Calendar.Component, Int)) -> Date? {
-        let calendar = Calendar.current
-        if let startDate = calendar.date(byAdding: of.0, value: of.1, to: .now) {
-            return calendar.date(bySettingHour: hour, minute: 0, second: 0, of: startDate)
-        }
-        return nil
+    private func dateFromNow(setHour: Int, addDay: Int, addWeek: Int) -> Date? {
+        guard let dateWithHour = Calendar.current.date(bySetting: .hour, value: setHour, of: .now) else { return nil }
+        guard let dateWithDay = Calendar.current.date(byAdding: .day, value: addDay, to: dateWithHour) else { return nil }
+        return Calendar.current.date(byAdding: .weekOfYear, value: addWeek, to: dateWithDay)
     }
 }
