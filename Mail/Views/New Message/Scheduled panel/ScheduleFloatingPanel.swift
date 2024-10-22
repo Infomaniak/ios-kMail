@@ -17,28 +17,46 @@
  */
 
 import InfomaniakCoreSwiftUI
+import MailCore
 import MailCoreUI
 import MailResources
+import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
 
 extension View {
-    func scheduleFloatingPanel(isPresented: Binding<Bool>) -> some View {
-        modifier(ScheduleFloatingPanel(isPresented: isPresented, lastSchedule: .distantFuture))
+    func scheduleFloatingPanel(draft: Draft, mailboxManager: MailboxManager, isPresented: Binding<Bool>, dismissMessageView: @escaping () -> Void) -> some View {
+        modifier(ScheduleFloatingPanel(
+            draft: draft,
+            mailBoxManager: mailboxManager,
+            isPresented: isPresented,
+            lastSchedule: .distantFuture,
+            dismissMessageView: dismissMessageView
+        ))
     }
 }
 
 struct ScheduleFloatingPanel: ViewModifier {
+    let draft: Draft
+    let mailBoxManager: MailboxManager
     @Binding var isPresented: Bool
 
     @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var customSchedule: Bool
 
     let lastSchedule: Date?
+    let dismissMessageView: () -> Void
 
     func body(content: Content) -> some View {
         content
             .floatingPanel(isPresented: $isPresented) {
-                ScheduleFloatingPanelView(isPresented: $isPresented, customSchedule: $customSchedule, lastSchedule: lastSchedule)
+                ScheduleFloatingPanelView(
+                    draft: draft,
+                    isPresented: $isPresented,
+                    customSchedule: $customSchedule,
+                    lastSchedule: lastSchedule,
+                    mailboxManager: mailBoxManager,
+                    dismissMessageView: dismissMessageView
+                )
             }
             .customAlert(isPresented: $customSchedule) {
                 ScheduleModalView(isFloatingPanelPresented: $isPresented)
