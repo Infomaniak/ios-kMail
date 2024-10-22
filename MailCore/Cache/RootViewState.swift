@@ -96,7 +96,8 @@ public class RootViewState: ObservableObject {
             return
         }
 
-        guard CNContactStore.authorizationStatus(for: .contacts) != .notDetermined else {
+        guard CNContactStore.authorizationStatus(for: .contacts) != .notDetermined,
+              await UNUserNotificationCenter.current().notificationSettings().authorizationStatus != .notDetermined else {
             transitionToRootViewState(.authorization)
             return
         }
