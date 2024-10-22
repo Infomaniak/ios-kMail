@@ -65,7 +65,7 @@ enum NewMessageAlertType {
 
 struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.dismissModal) var dismissModal
+    @Environment(\.dismissModal) private var dismissModal
     @EnvironmentObject private var mainViewState: MainViewState
 
     @LazyInjectService private var matomo: MatomoUtils
@@ -278,7 +278,7 @@ struct ComposeMessageView: View {
         }
         .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
-        .scheduleFloatingPanel(isPresented: $isShowingSchedulePanel)
+        .scheduleFloatingPanel(draft: draft, mailboxManager: mailboxManager, isPresented: $isShowingSchedulePanel, dismissMessageView: dismissMessageView)
     }
 
     /// Progress view
@@ -336,7 +336,7 @@ struct ComposeMessageView: View {
         matomo.trackSendMessage(draft: draft, sentWithExternals: sentWithExternals)
         if let liveDraft = draft.thaw() {
             try? liveDraft.realm?.write {
-                liveDraft.action = .send
+                liveDraft.action = draft.scheduleDate == nil ? .send : .schedule
             }
         }
         dismissMessageView()
