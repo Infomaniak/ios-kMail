@@ -16,17 +16,26 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
+import RealmSwift
 import SwiftUI
 
 struct ScheduleFloatingPanelView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismissModal) private var dismissModal
+    @LazyInjectService private var draftManager: DraftManager
+    @ObservedRealmObject var draft: Draft
+
     @Binding var isPresented: Bool
     @Binding var customSchedule: Bool
 
     let lastSchedule: Date?
     let hasScheduleSendEnabled = true
+    let mailboxManager: MailboxManager
+    let dismissMessageView: () -> Void
 
     private var scheduleOptions: [ScheduleSendOption] {
         guard !isWeekend() else { return [.nextWeekMorning, .nextWeekAfternoon] }
@@ -48,7 +57,7 @@ struct ScheduleFloatingPanelView: View {
             Text("Schedule Send")
                 .font(.title3)
             if let lastSchedule {
-                Button(action: { print("Ziz") }) {
+                Button(action: { sendSchedule(lastSchedule.ISO8601Format()) }) {
                     ScheduleFloatingPanelRow(
                         title: "Dernier horaire choisi",
                         icon: MailResourcesAsset.lastSchedule.swiftUIImage,
@@ -60,7 +69,11 @@ struct ScheduleFloatingPanelView: View {
                 IKDivider()
             }
             ForEach(scheduleOptions) { option in
-                Button(action: { print("oui") }, label: {
+                Button(action: {
+                    if let formatDate = option.iso8601 {
+                        sendSchedule(formatDate)
+                    }
+                }, label: {
                     ScheduleFloatingPanelRow(
                         title: option.title,
                         icon: option.icon,
@@ -71,33 +84,51 @@ struct ScheduleFloatingPanelView: View {
                 .padding(.horizontal, value: .medium)
                 IKDivider()
             }
-            if hasScheduleSendEnabled {
-                Button(action: {
-                    isPresented = false
-                    customSchedule = true
-                }) {
-                    HStack {
-                        Label {
-                            Text("Horaire personnalisé")
-                        } icon: {
-                            MailResourcesAsset.customSchedule.swiftUIImage
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        Image(systemName: "chevron.right")
-                    }
-                    .font(MailTextStyle.bodySmall.font)
-                }
-                .padding(.vertical, value: .small)
-                .padding(.horizontal, value: .medium)
-            }
+            CustomScheduleButton(isPresented: $isPresented, customSchedule: $customSchedule, hasScheduleSendEnabled: hasScheduleSendEnabled)
         }
     }
 
-    func isWeekend() -> Bool {
+    private func isWeekend() -> Bool {
         [1, 7].contains(Calendar.current.component(.weekday, from: Date.now))
     }
 
-    func setSchedule(scheduleDate: Date) {
-        print("setSchedule")
+    private func sendSchedule(_ scheduleDateIso8601: String) {
+        print("sendSChedule")
+//        isPresented = false
+        $draft.action.wrappedValue = .schedule
+        $draft.scheduleDate.wrappedValue = scheduleDateIso8601
+        $draft.delay.wrappedValue = nil
+        dismissMessageView()
+    }
+}
+
+struct CustomScheduleButton: View {
+    @Binding var isPresented: Bool
+    @Binding var customSchedule: Bool
+
+    let hasScheduleSendEnabled: Bool
+
+    var body: some View {
+        if hasScheduleSendEnabled {
+            Button(action: showCustomSchedulePicker) {
+                HStack {
+                    Label {
+                        Text("Horaire personnalisé")
+                    } icon: {
+                        MailResourcesAsset.customSchedule.swiftUIImage
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    Image(systemName: "chevron.right")
+                }
+                .font(MailTextStyle.bodySmall.font)
+            }
+            .padding(.vertical, value: .small)
+            .padding(.horizontal, value: .medium)
+        }
+    }
+
+    func showCustomSchedulePicker() {
+        isPresented = false
+        customSchedule = true
     }
 }
