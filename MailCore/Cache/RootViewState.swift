@@ -21,6 +21,7 @@ import Contacts
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreCommonUI
+import InfomaniakCoreDB
 import InfomaniakDI
 import InfomaniakLogin
 import SwiftUI
