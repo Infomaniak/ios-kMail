@@ -16,8 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
 import MailResources
+import SwiftUI
 
 enum ScheduleSendOption: String, Identifiable {
     case thisAfternoon
@@ -71,6 +71,11 @@ enum ScheduleSendOption: String, Identifiable {
         case .nextWeekAfternoon:
             return MailResourcesAsset.nextWeek.swiftUIImage
         }
+    }
+
+    var iso8601: String? {
+        guard let date = date else { return nil }
+        return date.ISO8601Format().replacingOccurrences(of: "Z", with: "+00:00")
     }
 
     private func dateFromNow(hour: Int, of: (Calendar.Component, Int)) -> Date? {
