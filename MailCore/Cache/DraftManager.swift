@@ -183,7 +183,7 @@ public final class DraftManager {
                             )
                         case .save:
                             await self.saveDraftRemotely(draft: draft, mailboxManager: mailboxManager, showSnackbar: showSnackbar)
-                        case .send:
+                        case .send, .schedule:
                             sendDate = await self.send(draft: draft, mailboxManager: mailboxManager, showSnackbar: showSnackbar)
                         default:
                             break

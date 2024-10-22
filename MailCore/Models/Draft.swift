@@ -32,14 +32,15 @@ public enum SaveDraftOption: String, Codable, PersistableEnum {
     case initialSave
     case save
     case send
+    case schedule
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         switch self {
         case .initialSave, .save:
             try container.encode(SaveDraftOption.save.rawValue)
-        case .send:
-            try container.encode(SaveDraftOption.send.rawValue)
+        case .send, .schedule:
+            try container.encode(rawValue)
         }
     }
 }
@@ -81,6 +82,7 @@ public final class Draft: Object, Codable, Identifiable {
     @Persisted public var action: SaveDraftOption?
     @Persisted public var delay: Int?
     @Persisted public var rawSignature: String?
+    @Persisted public var scheduleDate: String?
 
     /// Public facing "body", wrapping `bodyData`
     public var body: String {
@@ -131,6 +133,7 @@ public final class Draft: Object, Codable, Identifiable {
         case attachments
         case action
         case delay
+        case scheduleDate
     }
 
     override public init() { /* Realm needs an empty constructor */ }
@@ -160,6 +163,7 @@ public final class Draft: Object, Codable, Identifiable {
         priority = try values.decode(MessagePriority.self, forKey: .priority)
         swissTransferUuid = try values.decodeIfPresent(String.self, forKey: .swissTransferUuid)
         attachments = try values.decode(List<Attachment>.self, forKey: .attachments)
+        scheduleDate = try values.decode(String.self, forKey: .scheduleDate)
     }
 
     public convenience init(localUUID: String = UUID().uuidString,
@@ -282,7 +286,11 @@ public final class Draft: Object, Codable, Identifiable {
         let attachmentsArray = Array(attachments.compactMap { $0.uuid })
         try container.encode(attachmentsArray, forKey: .attachments)
         try container.encode(action, forKey: .action)
-        try container.encode(delay, forKey: .delay)
+        if let scheduleDate {
+            try container.encode(scheduleDate, forKey: .scheduleDate)
+        } else {
+            try container.encode(delay, forKey: .delay)
+        }
     }
 }
 
