@@ -178,6 +178,8 @@ public final class Message: Object, Decodable, Identifiable {
     @Persisted public var hasAttachments: Bool
     @Persisted public var seen: Bool
     @Persisted public var scheduled: Bool
+    @Persisted public var isScheduledDraft: Bool?
+    @Persisted public var scheduleDate: Date?
     @Persisted public var forwarded: Bool
     @Persisted public var flagged: Bool
     @Persisted public var hasUnsubscribeLink: Bool?
@@ -310,6 +312,8 @@ public final class Message: Object, Decodable, Identifiable {
         case hasAttachments
         case seen
         case scheduled
+        case isScheduledDraft
+        case scheduleDate
         case forwarded
         case flagged
         case hasUnsubscribeLink
@@ -369,10 +373,12 @@ public final class Message: Object, Decodable, Identifiable {
 
         preview = try values.decode(String.self, forKey: .preview)
         answered = try values.decode(Bool.self, forKey: .answered)
-        isDraft = try values.decode(Bool.self, forKey: .isDraft)
+        isDraft = try values.decodeIfPresent(Bool.self, forKey: .isDraft) ?? false
         hasAttachments = try values.decode(Bool.self, forKey: .hasAttachments)
         seen = try values.decode(Bool.self, forKey: .seen)
         scheduled = try values.decode(Bool.self, forKey: .scheduled)
+        isScheduledDraft = try values.decodeIfPresent(Bool.self, forKey: .isScheduledDraft)
+        scheduleDate = try values.decodeIfPresent(Date.self, forKey: .scheduleDate)
         forwarded = try values.decode(Bool.self, forKey: .forwarded)
         flagged = try values.decode(Bool.self, forKey: .flagged)
         hasUnsubscribeLink = try values.decodeIfPresent(Bool.self, forKey: .hasUnsubscribeLink)
@@ -405,6 +411,8 @@ public final class Message: Object, Decodable, Identifiable {
         hasAttachments: Bool,
         seen: Bool,
         scheduled: Bool,
+        isScheduledDraft: Bool? = nil,
+        scheduleDate: Date? = nil,
         forwarded: Bool,
         flagged: Bool,
         hasUnsubscribeLink: Bool? = nil,
@@ -437,6 +445,8 @@ public final class Message: Object, Decodable, Identifiable {
         self.hasAttachments = hasAttachments
         self.seen = seen
         self.scheduled = scheduled
+        self .isScheduledDraft = isScheduledDraft
+        self.scheduleDate = scheduleDate
         self.forwarded = forwarded
         self.flagged = flagged
         self.hasUnsubscribeLink = hasUnsubscribeLink
