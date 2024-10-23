@@ -24,8 +24,6 @@ import RealmSwift
 import SwiftUI
 
 struct ScheduleFloatingPanelView: View {
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.dismissModal) private var dismissModal
     @LazyInjectService private var draftManager: DraftManager
     @ObservedRealmObject var draft: Draft
 
@@ -56,35 +54,17 @@ struct ScheduleFloatingPanelView: View {
         VStack {
             Text("Schedule Send")
                 .font(.title3)
-            if let lastSchedule {
-                Button(action: { sendSchedule(lastSchedule.ISO8601Format()) }) {
-                    ScheduleFloatingPanelRow(
-                        title: "Dernier horaire choisi",
-                        icon: MailResourcesAsset.lastSchedule.swiftUIImage,
-                        scheduleDate: lastSchedule
-                    )
-                }
-                .padding(.vertical, value: .small)
-                .padding(.horizontal, value: .medium)
-                IKDivider()
-            }
             ForEach(scheduleOptions) { option in
-                Button(action: {
-                    if let formatDate = option.iso8601 {
-                        sendSchedule(formatDate)
-                    }
-                }, label: {
-                    ScheduleFloatingPanelRow(
-                        title: option.title,
-                        icon: option.icon,
-                        scheduleDate: option.date
-                    )
-                })
-                .padding(.vertical, value: .small)
-                .padding(.horizontal, value: .medium)
-                IKDivider()
+                ScheduleOptionButton(option: option, setScheduleAction: setSchedule)
+                if option != scheduleOptions.last {
+                    IKDivider()
+                }
             }
-            CustomScheduleButton(isPresented: $isPresented, customSchedule: $customSchedule, hasScheduleSendEnabled: hasScheduleSendEnabled)
+            CustomScheduleButton(
+                isPresented: $isPresented,
+                customSchedule: $customSchedule,
+                hasScheduleSendEnabled: hasScheduleSendEnabled
+            )
         }
     }
 
@@ -92,9 +72,7 @@ struct ScheduleFloatingPanelView: View {
         [1, 7].contains(Calendar.current.component(.weekday, from: Date.now))
     }
 
-    private func sendSchedule(_ scheduleDateIso8601: String) {
-        print("sendSChedule")
-//        isPresented = false
+    private func setSchedule(_ scheduleDateIso8601: String) {
         $draft.action.wrappedValue = .schedule
         $draft.scheduleDate.wrappedValue = scheduleDateIso8601
         $draft.delay.wrappedValue = nil
@@ -110,6 +88,7 @@ struct CustomScheduleButton: View {
 
     var body: some View {
         if hasScheduleSendEnabled {
+            IKDivider()
             Button(action: showCustomSchedulePicker) {
                 HStack {
                     Label {
@@ -130,5 +109,26 @@ struct CustomScheduleButton: View {
     func showCustomSchedulePicker() {
         isPresented = false
         customSchedule = true
+    }
+}
+
+struct ScheduleOptionButton: View {
+    let option: ScheduleSendOption
+    let setScheduleAction: (String) -> Void
+
+    var body: some View {
+        Button(action: {
+            if let formatDate = option.iso8601 {
+                setScheduleAction(formatDate)
+            }
+        }, label: {
+            ScheduleFloatingPanelRow(
+                title: option.title,
+                icon: option.icon,
+                scheduleDate: option.date
+            )
+        })
+        .padding(.vertical, value: .small)
+        .padding(.horizontal, value: .medium)
     }
 }

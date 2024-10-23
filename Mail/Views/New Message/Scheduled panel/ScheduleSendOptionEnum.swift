@@ -19,14 +19,15 @@
 import MailResources
 import SwiftUI
 
-enum ScheduleSendOption: String, Identifiable {
+enum ScheduleSendOption: Identifiable, Equatable {
     case thisAfternoon
     case thisEvening
     case tomorrowMorning
     case nextWeekMorning
     case nextWeekAfternoon
+    case lastSchedule(value: Date)
 
-    var id: Self { self }
+    var id: UUID { UUID() }
 
     var date: Date? {
         switch self {
@@ -40,21 +41,25 @@ enum ScheduleSendOption: String, Identifiable {
             return dateFromNow(setHour: 8, addDay: 0, addWeek: 1)
         case .nextWeekAfternoon:
             return dateFromNow(setHour: 18, addDay: 0, addWeek: 1)
+        case .lastSchedule(let value):
+            return value
         }
     }
 
     var title: String {
         switch self {
         case .thisAfternoon:
-            return "thisAfternoon"
+            return "Cet après-midi"
         case .thisEvening:
-            return "thisEvening"
+            return "Ce soir"
         case .tomorrowMorning:
-            return "tomorrowMorning"
+            return "Demain matin"
         case .nextWeekMorning:
-            return "nextWeekMorning"
+            return "La semaine prochaine"
         case .nextWeekAfternoon:
-            return "nextWeekAfternoon"
+            return "La semaine prochaine 2"
+        case .lastSchedule:
+            return "Dernier schedule"
         }
     }
 
@@ -70,6 +75,8 @@ enum ScheduleSendOption: String, Identifiable {
             return MailResourcesAsset.nextWeek.swiftUIImage
         case .nextWeekAfternoon:
             return MailResourcesAsset.nextWeek.swiftUIImage
+        case .lastSchedule:
+            return MailResourcesAsset.lastSchedule.swiftUIImage
         }
     }
 
