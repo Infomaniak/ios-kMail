@@ -278,7 +278,12 @@ struct ComposeMessageView: View {
         }
         .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
-        .scheduleFloatingPanel(draft: draft, mailboxManager: mailboxManager, isPresented: $isShowingSchedulePanel, dismissMessageView: dismissMessageView)
+        .scheduleFloatingPanel(
+            draft: draft,
+            mailboxManager: mailboxManager,
+            isPresented: $isShowingSchedulePanel,
+            dismissMessageView: dismissMessageView
+        )
     }
 
     /// Progress view

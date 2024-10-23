@@ -81,7 +81,7 @@ enum ScheduleSendOption: Identifiable, Equatable {
     }
 
     var iso8601: String? {
-        guard let date = date else { return nil }
+        guard let date else { return nil }
         return date.ISO8601Format().replacingOccurrences(of: "Z", with: "+00:00")
     }
 
