@@ -189,7 +189,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     public var permanentlyDeleteContent: Bool {
-        return [FolderRole.draft, FolderRole.spam, FolderRole.trash].contains(role)
+        return [FolderRole.draft, FolderRole.spam, FolderRole.trash, FolderRole.scheduledDrafts].contains(role)
     }
 
     public var shouldWarnBeforeDeletion: Bool {
