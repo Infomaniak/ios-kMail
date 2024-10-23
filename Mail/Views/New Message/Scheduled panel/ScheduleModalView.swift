@@ -16,8 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
 import MailResources
+import SwiftUI
 
 struct ScheduleModalView: View {
     @Binding var isFloatingPanelPresented: Bool
