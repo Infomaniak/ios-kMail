@@ -16,9 +16,9 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCoreUI
 import MailResources
 import SwiftUI
-import MailCoreUI
 
 struct HeaderDateView: View {
     let date: Date
