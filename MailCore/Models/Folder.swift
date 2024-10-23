@@ -171,7 +171,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     public var formattedUnreadCount: String {
-        let realCount = (role == .draft ? threads.count : unreadCount)
+        let realCount = ((role == .draft || role == .scheduledDrafts) ? threads.count : unreadCount)
         if realCount >= 100 {
             return "99+"
         }
