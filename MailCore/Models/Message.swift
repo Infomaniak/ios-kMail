@@ -445,7 +445,7 @@ public final class Message: Object, Decodable, Identifiable {
         self.hasAttachments = hasAttachments
         self.seen = seen
         self.scheduled = scheduled
-        self .isScheduledDraft = isScheduledDraft
+        self.isScheduledDraft = isScheduledDraft
         self.scheduleDate = scheduleDate
         self.forwarded = forwarded
         self.flagged = flagged

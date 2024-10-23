@@ -25,7 +25,12 @@ import SwiftModalPresentation
 import SwiftUI
 
 extension View {
-    func scheduleFloatingPanel(draft: Draft, mailboxManager: MailboxManager, isPresented: Binding<Bool>, dismissMessageView: @escaping () -> Void) -> some View {
+    func scheduleFloatingPanel(
+        draft: Draft,
+        mailboxManager: MailboxManager,
+        isPresented: Binding<Bool>,
+        dismissMessageView: @escaping () -> Void
+    ) -> some View {
         modifier(ScheduleFloatingPanel(
             draft: draft,
             mailBoxManager: mailboxManager,
