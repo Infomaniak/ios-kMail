@@ -99,7 +99,7 @@ struct MessageHeaderSummaryView: View {
                                     .iconSize(.small)
                             }
 
-                            MessageHeaderDateView(date: message.date)
+                            HeaderDateView(date: message.date, format: .header)
                         }
                         .accessibilityElement(children: .combine)
                         .accessibilityAddTraits(.isButton)

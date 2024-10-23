@@ -16,13 +16,21 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailResources
 import SwiftUI
+import MailCoreUI
 
-struct MessageHeaderDateView: View {
+struct HeaderDateView: View {
     let date: Date
+    let format: Date.ThreadFormatStyle.Style
 
     var body: some View {
-        Text(date, format: .thread(.header))
+        if date > .now {
+            MailResourcesAsset.clock
+                .iconSize(.small)
+                .foregroundStyle(MailResourcesAsset.orangeColor)
+        }
+        Text(date, format: .thread(format))
             .lineLimit(1)
             .layoutPriority(1)
             .textStyle(.labelSecondary)
@@ -31,9 +39,10 @@ struct MessageHeaderDateView: View {
 
 #Preview {
     VStack {
-        MessageHeaderDateView(date: .now)
-        MessageHeaderDateView(date: .yesterday)
-        MessageHeaderDateView(date: .lastWeek)
-        MessageHeaderDateView(date: Date(timeIntervalSince1970: 0))
+        HeaderDateView(date: .now, format: .header)
+        HeaderDateView(date: .yesterday, format: .list)
+        HeaderDateView(date: .lastWeek, format: .header)
+        HeaderDateView(date: Date(timeIntervalSince1970: 0), format: .list)
+        HeaderDateView(date: .distantFuture, format: .header)
     }
 }
