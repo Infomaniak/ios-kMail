@@ -224,9 +224,6 @@ struct SettingsView: View {
         .onChange(of: threadMode) { _ in
             accountManager.updateConversationSettings()
         }
-        .sheet(isPresented: $isShowingSyncProfile) {
-            SyncProfileNavigationView()
-        }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsTitle, displayMode: .inline)
         .backButtonDisplayMode(.minimal)

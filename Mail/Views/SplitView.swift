@@ -141,7 +141,7 @@ struct SplitView: View {
                 openURL(settingsUrl)
             }
         }
-        .sheet(isPresented: $mainViewState.isShowingSyncProfile) {
+        .fullScreenCover(isPresented: $mainViewState.isShowingSyncProfile) {
             SyncProfileNavigationView()
         }
         .sheet(item: $mainViewState.settingsViewConfig,
