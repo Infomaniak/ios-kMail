@@ -50,7 +50,7 @@ struct MessageScheduleHeaderView: View {
                 .frame(height: 20)
 
             Button("Modifier") {
-                modifySchedule()
+                modifyMessage = true
             }
             .buttonStyle(.ikBorderless(isInlined: true))
             .controlSize(.small)
@@ -67,8 +67,7 @@ struct MessageScheduleHeaderView: View {
                 .font(.subheadline)
                 ModalButtonsView(primaryButtonTitle: "Modifier",
                                  secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
-                                 primaryButtonAction: { print("oui") },
-                                 secondaryButtonAction: { print("non") })
+                                 primaryButtonAction: modifySchedule)
             }
         }
     }
@@ -80,7 +79,9 @@ struct MessageScheduleHeaderView: View {
     }
 
     private func modifySchedule() {
-        modifyMessage = true
+        Task {
+            try await mailboxManager.apiFetcher.deleteSchedule(draftResource: draftResource)
+        }
     }
 }
 
