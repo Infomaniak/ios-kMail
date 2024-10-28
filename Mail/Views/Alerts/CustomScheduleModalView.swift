@@ -18,20 +18,24 @@
 
 import MailResources
 import SwiftUI
+import InfomaniakCoreSwiftUI
 
-struct ScheduleModalView: View {
+struct CustomScheduleModalView: View {
     @Binding var isFloatingPanelPresented: Bool
+    @Binding var selectedDate: Date
 
-    @State private var selectedDate: Date = .now
+    let confirmAction: () -> Void
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(alignment: .leading, spacing: 0) {
             Text("Choisir une date et une heure")
-            DatePicker("", selection: $selectedDate)
+                .textStyle(.bodyMedium)
+                .padding(.bottom, IKPadding.alertTitleBottom)
+            DatePicker("", selection: $selectedDate, in: .now...)
                 .labelsHidden()
-            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonYes,
+            ModalButtonsView(primaryButtonTitle: "Programmer",
                              secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
-                             primaryButtonAction: { print("oui") },
+                             primaryButtonAction: { confirmAction() },
                              secondaryButtonAction: { isFloatingPanelPresented = true })
         }
     }

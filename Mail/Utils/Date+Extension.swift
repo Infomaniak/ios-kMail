@@ -52,4 +52,11 @@ extension Date {
         components.second = -1
         return Calendar.current.date(byAdding: components, to: startOfMonth)!
     }
+
+    var ISO8601WithTimeZone: String {
+        let formatter = ISO8601DateFormatter()
+        formatter.timeZone = .current
+        formatter.formatOptions = [.withInternetDateTime, .withTimeZone]
+        return formatter.string(from: self)
+    }
 }
