@@ -32,35 +32,31 @@ struct SyncProfileNavigationView: View {
     @State private var navigationPath: [SyncProfileStep] = []
 
     var body: some View {
-        if #available(iOS 16.0, *) {
-            NavigationStack(path: $navigationPath) {
-                SyncWelcomeView(navigationPath: $navigationPath)
-                    .navigationDestination(for: SyncProfileStep.self) { step in
-                        Group {
-                            switch step {
-                            case .downloadProfile:
-                                SyncDownloadProfileView(navigationPath: $navigationPath)
-                            case .copyPassword:
-                                SyncCopyPasswordView(navigationPath: $navigationPath)
-                            case .installProfile:
-                                SyncInstallProfileTutorialView()
-                            }
-                        }
-                        .backButtonDisplayMode(.minimal)
-                        .navigationBarTitleDisplayMode(.inline)
-                        .environment(\.dismissModal) { dismiss() }
-                    }
-                    .toolbar {
-                        ToolbarItem(placement: .cancellationAction) {
-                            CloseButton(dismissAction: dismiss)
+        NBNavigationStack(path: $navigationPath) {
+            SyncWelcomeView(navigationPath: $navigationPath)
+                .nbNavigationDestination(for: SyncProfileStep.self) { step in
+                    Group {
+                        switch step {
+                        case .downloadProfile:
+                            SyncDownloadProfileView(navigationPath: $navigationPath)
+                        case .copyPassword:
+                            SyncCopyPasswordView(navigationPath: $navigationPath)
+                        case .installProfile:
+                            SyncInstallProfileTutorialView()
                         }
                     }
                     .backButtonDisplayMode(.minimal)
-            }
-
-        } else {
-            Text("Not supported")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .environment(\.dismissModal) { dismiss() }
+                }
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        CloseButton(dismissAction: dismiss)
+                    }
+                }
+                .backButtonDisplayMode(.minimal)
         }
+        .nbUseNavigationStack(.whenAvailable)
     }
 }
 
