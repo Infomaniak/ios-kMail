@@ -171,4 +171,8 @@ public extension MailApiFetcher {
         // TODO: Remove try? when bug will be fixed from API
         return try? await perform(request: authenticatedRequest(.resource(draftResource), method: .delete))
     }
+
+    func changeDraftSchedule(draftResource: String, scheduleDateIso8601: String) async throws -> Empty {
+        return try await perform(request: authenticatedRequest(.draftSchedule(draftResource: draftResource), method: .put, parameters: ["schedule_date": scheduleDateIso8601]))
+    }
 }

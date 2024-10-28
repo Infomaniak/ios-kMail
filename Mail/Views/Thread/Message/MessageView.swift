@@ -63,6 +63,12 @@ struct MessageView: View {
 
             if isMessageExpanded {
                 VStack(spacing: IKPadding.medium) {
+                    if let isScheduledDraft = message.isScheduledDraft, isScheduledDraft,
+                       let scheduleDate = message.scheduleDate,
+                       let draftResources = message.draftResource {
+                        MessageScheduleHeaderView(scheduleDate: scheduleDate, draftResource: draftResources)
+                    }
+
                     if isMessageInteractive {
                         MessageSubHeaderView(
                             message: message,

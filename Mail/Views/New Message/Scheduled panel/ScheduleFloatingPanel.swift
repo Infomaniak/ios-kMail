@@ -64,7 +64,7 @@ struct ScheduleFloatingPanel: ViewModifier {
                 )
             }
             .customAlert(isPresented: $customSchedule) {
-                ScheduleModalView(isFloatingPanelPresented: $isPresented)
+                CustomScheduleModalView(isFloatingPanelPresented: $isPresented, selectedDate: .constant(.now), confirmAction: { print("oui oui baguette") })
             }
     }
 }

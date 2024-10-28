@@ -209,6 +209,10 @@ public extension Endpoint {
         return .draft(uuid: uuid).appending(path: "/\(draftUuid)")
     }
 
+    static func draftSchedule(draftResource: String) -> Endpoint {
+        return .resource(draftResource).appending(path: "/schedule")
+    }
+
     static func messageSeen(uuid: String) -> Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/message/seen")
     }
