@@ -75,7 +75,8 @@ struct ThreadListView: View {
         VStack(spacing: 0) {
             ThreadListHeader(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
                              folder: viewModel.frozenFolder,
-                             unreadFilterOn: $viewModel.filterUnreadOn)
+                             unreadFilterOn: $viewModel.filterUnreadOn,
+                             isRefreshing: viewModel.loadingPageTaskId != nil)
                 .id(viewModel.frozenFolder.id)
 
             ScrollViewReader { proxy in
@@ -88,15 +89,6 @@ struct ThreadListView: View {
                             flushAlert: $flushAlert
                         )
                         .threadListCellAppearance()
-                    }
-
-                    if let loadingPageTaskId = viewModel.loadingPageTaskId,
-                       !isRefreshing {
-                        ProgressView()
-                            .id(loadingPageTaskId)
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, value: .small)
-                            .threadListCellAppearance()
                     }
 
                     if threadDensity == .compact {

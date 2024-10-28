@@ -1,10 +1,10 @@
 /*
- * Loco ios export: iOS Localizable.strings
+ * Loco ios export: Xcode Strings (legacy)
  * Project: kMail
  * Locale: fr, French
  * Tagged: ios
- * Exported by: Jordan Chapelle
- * Exported at: Tue, 24 Sep 2024 11:25:55 +0200
+ * Exported by: Baptiste Griva
+ * Exported at: Mon, 28 Oct 2024 14:20:07 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -306,9 +306,6 @@
 
 /* loco:628216026aae4d7bc05773c3 */
 "buttonAccountDelete" = "Supprimer mon compte";
-
-/* loco:628216272fd1aa2f0249a892 */
-"buttonAccountDisconnect" = "Me déconnecter de ce compte";
 
 /* loco:66d057655e6c36f415058842 */
 "buttonAccountLogOut" = "Se déconnecter";
@@ -1037,7 +1034,7 @@
 "noValidMailboxTitle" = "Aucune boîte valide n’a été trouvée. Ne peut être corrigé que sur le webmail pour l’instant.";
 
 /* loco:62baab4c017b586c23177d62 */
-"notificationGeneralChannelName" = "Notification générales";
+"notificationGeneralChannelName" = "Notifications générales";
 
 /* loco:641c3d9b723c7f035409c3d2 */
 "notificationNewEmail" = "Nouvel e-mail";
@@ -1659,6 +1656,9 @@
 
 /* loco:63d7e73a70ff84756f78f0b3 */
 "threadListHeaderUnreadCountMore" = "99+ non lus";
+
+/* loco:671f821cbd4358e9af00c172 */
+"threadListHeaderUpdating" = "Récupération en cours";
 
 /* loco:6267f93e15e2421b9677e212 */
 "threadListSectionLastWeek" = "La semaine dernière";

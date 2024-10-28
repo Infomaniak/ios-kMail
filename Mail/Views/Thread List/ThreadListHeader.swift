@@ -84,12 +84,15 @@ struct ThreadListHeader: View {
     let isMultipleSelectionEnabled: Bool
 
     @Binding var unreadFilterOn: Bool
+    private var isRefreshing: Bool
 
     init(isMultipleSelectionEnabled: Bool,
          folder: Folder,
-         unreadFilterOn: Binding<Bool>) {
+         unreadFilterOn: Binding<Bool>,
+         isRefreshing: Bool) {
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
         _unreadFilterOn = unreadFilterOn
+        self.isRefreshing = isRefreshing
         _folderObserver = StateObject(wrappedValue: ThreadListHeaderFolderObserver(folder: folder))
     }
 
@@ -99,9 +102,17 @@ struct ThreadListHeader: View {
                 if !networkMonitor.isConnected {
                     NoNetworkView()
                 }
-                if let lastUpdateText = folderObserver.lastUpdateText {
-                    Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
-                        .textStyle(.bodySmallSecondary)
+                if isRefreshing {
+                    HStack {
+                        ProgressView().padding(.trailing, 2)
+                        Text(MailResourcesStrings.Localizable.threadListHeaderUpdating)
+                            .textStyle(.bodySmallSecondary)
+                    }
+                } else {
+                    if let lastUpdateText = folderObserver.lastUpdateText {
+                        Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
+                            .textStyle(.bodySmallSecondary)
+                    }
                 }
             }
             Spacer()
@@ -120,7 +131,7 @@ struct ThreadListHeader: View {
             }
         }
         .padding(.top, value: .small)
-        .padding([.leading, .trailing, .bottom], value: .medium)
+        .padding([.leading, .trailing, .bottom], value: .large)
         .background(accentColor.navBarBackground.swiftUIColor)
     }
 }
@@ -155,11 +166,13 @@ extension ToggleStyle where Self == UnreadToggleStyle {
 #Preview {
     ThreadListHeader(isMultipleSelectionEnabled: false,
                      folder: PreviewHelper.sampleFolder,
-                     unreadFilterOn: .constant(false))
+                     unreadFilterOn: .constant(false),
+                     isRefreshing: false)
 }
 
 #Preview {
     ThreadListHeader(isMultipleSelectionEnabled: false,
                      folder: PreviewHelper.sampleFolder,
-                     unreadFilterOn: .constant(true))
+                     unreadFilterOn: .constant(true),
+                     isRefreshing: false)
 }

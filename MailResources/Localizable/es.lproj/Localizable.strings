@@ -1,10 +1,10 @@
 /*
- * Loco ios export: iOS Localizable.strings
+ * Loco ios export: Xcode Strings (legacy)
  * Project: kMail
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Jordan Chapelle
- * Exported at: Tue, 24 Sep 2024 11:25:55 +0200
+ * Exported by: Baptiste Griva
+ * Exported at: Mon, 28 Oct 2024 14:20:07 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -306,9 +306,6 @@
 
 /* loco:628216026aae4d7bc05773c3 */
 "buttonAccountDelete" = "Eliminar cuenta";
-
-/* loco:628216272fd1aa2f0249a892 */
-"buttonAccountDisconnect" = "Desconectar cuenta";
 
 /* loco:66d057655e6c36f415058842 */
 "buttonAccountLogOut" = "Cerrar sesión";
@@ -1659,6 +1656,9 @@
 
 /* loco:63d7e73a70ff84756f78f0b3 */
 "threadListHeaderUnreadCountMore" = "99 no leídos";
+
+/* loco:671f821cbd4358e9af00c172 */
+"threadListHeaderUpdating" = "Recuperación en curso";
 
 /* loco:6267f93e15e2421b9677e212 */
 "threadListSectionLastWeek" = "La semana pasada";
