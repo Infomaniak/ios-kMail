@@ -33,6 +33,7 @@ struct CustomScheduleModalView: View {
                 .padding(.bottom, IKPadding.alertTitleBottom)
             DatePicker("", selection: $selectedDate, in: .now...)
                 .labelsHidden()
+                .padding(.bottom, IKPadding.alertDescriptionBottom)
             ModalButtonsView(primaryButtonTitle: "Programmer",
                              secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                              primaryButtonAction: { confirmAction() },
