@@ -44,8 +44,6 @@ struct SettingsView: View {
     @AppStorage(UserDefaults.shared.key(.threadMode)) private var threadMode = DefaultPreferences.threadMode
     @AppStorage(UserDefaults.shared.key(.autoAdvance)) private var autoAdvance = DefaultPreferences.autoAdvance
 
-    @State private var isShowingSyncProfile = false
-
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
@@ -223,9 +221,6 @@ struct SettingsView: View {
         }
         .onChange(of: threadMode) { _ in
             accountManager.updateConversationSettings()
-        }
-        .sheet(isPresented: $isShowingSyncProfile) {
-            SyncProfileNavigationView()
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsTitle, displayMode: .inline)
