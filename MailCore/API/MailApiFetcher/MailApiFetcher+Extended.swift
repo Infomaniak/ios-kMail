@@ -144,15 +144,7 @@ public extension MailApiFetcher {
         return try await perform(request: authenticatedRequest(.resource(resource)))
     }
 
-    func send(mailbox: Mailbox, draft: Draft) async throws -> SendResponse {
-        try await perform(request: authenticatedRequest(
-            draft.remoteUUID.isEmpty ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.remoteUUID),
-            method: draft.remoteUUID.isEmpty ? .post : .put,
-            parameters: draft
-        ))
-    }
-
-    func save(mailbox: Mailbox, draft: Draft) async throws -> DraftResponse {
+    func send<T: Decodable>(mailbox: Mailbox, draft: Draft) async throws -> T {
         try await perform(request: authenticatedRequest(
             draft.remoteUUID.isEmpty ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.remoteUUID),
             method: draft.remoteUUID.isEmpty ? .post : .put,
