@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCore
 import InfomaniakCoreCommonUI
 
 public actor RefreshActor {
@@ -51,7 +52,9 @@ public actor RefreshActor {
         }
 
         // Track progress in background with a cancelation handler
-        let backgroundTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString) {
+        let expiringActivity = ExpiringActivity(id: #function + UUID().uuidString)
+        expiringActivity.start()
+        if expiringActivity.shouldTerminate {
             updateFolders.cancel()
 
             Task {
@@ -61,7 +64,7 @@ public actor RefreshActor {
 
         await updateFolders.finish()
 
-        await backgroundTracker.end()
+        expiringActivity.endAll()
     }
 
     public func refreshFolderContent(_ folder: Folder) async {

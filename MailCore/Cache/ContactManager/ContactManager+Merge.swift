@@ -18,6 +18,7 @@
 
 import Contacts
 import Foundation
+import InfomaniakCore
 import InfomaniakCoreCommonUI
 import OSLog
 
@@ -54,7 +55,9 @@ extension ContactManager {
         Logger.general.info("Will start updating contacts in DB")
 
         // Track background refresh of contacts, and cancel task is system asks to.
-        let backgroundTaskTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString) {
+        let expiringActivity = ExpiringActivity(id: #function + UUID().uuidString)
+        expiringActivity.start()
+        if expiringActivity.shouldTerminate {
             self.currentMergeRequest?.cancel()
         }
 
@@ -76,7 +79,7 @@ extension ContactManager {
         await updateTask.finish()
 
         // Making sure to terminate BG work tracker
-        await backgroundTaskTracker.end()
+        expiringActivity.endAll()
 
         // cleanup
         currentMergeRequest = nil
