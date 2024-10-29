@@ -55,6 +55,8 @@ final class WebViewController: UIViewController {
     private let widthSubject = PassthroughSubject<Double, Never>()
     private var widthSubscriber: AnyCancellable?
 
+    private var hasFinishedLoading = false
+
     init(messageUid: String, openURL: OpenURLAction, webView: WKWebView, onWebKitProcessTerminated: (() -> Void)?) {
         self.messageUid = messageUid
         self.openURL = openURL
@@ -116,6 +118,7 @@ final class WebViewController: UIViewController {
     }
 
     private func normalizeMessageWidth(webViewWidth width: CGFloat) async throws {
+        guard hasFinishedLoading else { return }
         try await webView.evaluateJavaScript(.normalizeMessageWidth(width, messageUid))
     }
 }
@@ -126,6 +129,8 @@ extension WebViewController: WKNavigationDelegate {
             // Fix CSS properties and adapt the mail to the screen size once the resources are loaded
             let readyState = try await webView.evaluateJavaScript(.documentReadyState) as? String
             guard readyState == "complete" else { return }
+
+            hasFinishedLoading = true
 
             try await webView.evaluateJavaScript(.removeAllProperties)
             try await normalizeMessageWidth(webViewWidth: webView.frame.width)
