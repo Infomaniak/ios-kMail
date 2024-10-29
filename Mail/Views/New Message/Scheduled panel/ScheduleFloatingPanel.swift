@@ -42,8 +42,12 @@ extension View {
 }
 
 struct ScheduleFloatingPanel: ViewModifier {
-    let draft: Draft
+    @ObservedRealmObject var draft: Draft
+
+    @State private var selectedDate = Date.now
+
     let mailBoxManager: MailboxManager
+
     @Binding var isPresented: Bool
 
     @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var customSchedule: Bool
@@ -64,7 +68,17 @@ struct ScheduleFloatingPanel: ViewModifier {
                 )
             }
             .customAlert(isPresented: $customSchedule) {
-                CustomScheduleModalView(isFloatingPanelPresented: $isPresented, selectedDate: .constant(.now), confirmAction: { print("oui oui baguette") })
+                CustomScheduleModalView(
+                    isFloatingPanelPresented: $isPresented,
+                    confirmAction: setCustomSchedule
+                )
             }
+    }
+
+    private func setCustomSchedule(_ scheduleDate: Date) {
+        $draft.action.wrappedValue = .schedule
+        $draft.scheduleDate.wrappedValue = scheduleDate.ISO8601WithTimeZone
+        $draft.delay.wrappedValue = nil
+        dismissMessageView()
     }
 }
