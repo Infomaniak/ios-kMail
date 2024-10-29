@@ -129,8 +129,8 @@ public final class DraftManager {
         return updatedDraft
     }
 
-    public func send(draft initialDraft: Draft, mailboxManager: MailboxManager, retry: Bool = true,
-                     showSnackbar: Bool) async -> Date? {
+    public func sendOrSchedule(draft initialDraft: Draft, mailboxManager: MailboxManager, retry: Bool = true,
+                               showSnackbar: Bool) async -> Date? {
         if showSnackbar {
             alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
         }
@@ -142,11 +142,18 @@ public final class DraftManager {
         let draft = updateSubjectIfNeeded(draft: initialDraft)
 
         do {
-            let cancelableResponse = try await mailboxManager.send(draft: draft)
-            if showSnackbar {
-                alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent)
+            if draft.action == .send {
+                let sendResponse = try await mailboxManager.send(draft: draft)
+                sendDate = sendResponse.scheduledDate
+                if showSnackbar {
+                    alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent)
+                }
+            } else if draft.action == .schedule {
+                try await mailboxManager.schedule(draft: draft)
+                if showSnackbar {
+                    alertDisplayable.show(message: "Schedule bien enregistré.")
+                }
             }
-            sendDate = cancelableResponse.scheduledDate
         } catch {
             // Refresh signatures and retry with default signature on missing identity
             if retry,
@@ -156,7 +163,12 @@ public final class DraftManager {
                 guard let updatedDraft = await setDefaultSignature(draft: draft, mailboxManager: mailboxManager) else {
                     return nil
                 }
-                return await send(draft: updatedDraft, mailboxManager: mailboxManager, retry: false, showSnackbar: showSnackbar)
+                return await sendOrSchedule(
+                    draft: updatedDraft,
+                    mailboxManager: mailboxManager,
+                    retry: false,
+                    showSnackbar: showSnackbar
+                )
             }
 
             if showSnackbar {
@@ -184,7 +196,11 @@ public final class DraftManager {
                         case .save:
                             await self.saveDraftRemotely(draft: draft, mailboxManager: mailboxManager, showSnackbar: showSnackbar)
                         case .send, .schedule:
-                            sendDate = await self.send(draft: draft, mailboxManager: mailboxManager, showSnackbar: showSnackbar)
+                            sendDate = await self.sendOrSchedule(
+                                draft: draft,
+                                mailboxManager: mailboxManager,
+                                showSnackbar: showSnackbar
+                            )
                         default:
                             break
                         }

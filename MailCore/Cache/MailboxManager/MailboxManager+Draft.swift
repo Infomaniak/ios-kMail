@@ -18,6 +18,7 @@
 
 import Foundation
 import RealmSwift
+import Alamofire
 
 // MARK: - Draft
 
@@ -58,10 +59,10 @@ public extension MailboxManager {
 
     func send(draft: Draft) async throws -> SendResponse {
         do {
-            let cancelableResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
+            let sendResponse: SendResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
             // Once the draft has been sent, we can delete it from Realm
             try await deleteLocally(draft: draft)
-            return cancelableResponse
+            return sendResponse
         } catch let error as AFErrorWithContext where (200 ... 299).contains(error.request.response?.statusCode ?? 0) {
             // Status code is valid but something went wrong eg. we couldn't parse the response
             try await deleteLocally(draft: draft)
@@ -80,7 +81,7 @@ public extension MailboxManager {
 
     func save(draft: Draft) async throws {
         do {
-            let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
+            let saveResponse: DraftResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
             try? writeTransaction { writableRealm in
                 // Update draft in Realm
                 guard let liveDraft = writableRealm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
@@ -92,6 +93,22 @@ public extension MailboxManager {
                 liveDraft.messageUid = saveResponse.uid
                 liveDraft.action = nil
             }
+        } catch let error as MailApiError {
+            // Do not delete draft on invalid identity
+            guard error != MailApiError.apiIdentityNotFound else {
+                throw error
+            }
+
+            // The api returned an error for now we can do nothing about it so we delete the draft
+            try await deleteLocally(draft: draft)
+            throw error
+        }
+    }
+
+    func schedule(draft: Draft) async throws {
+        do {
+            let _: Empty = try await apiFetcher.send(mailbox: mailbox, draft: draft)
+            try await deleteLocally(draft: draft)
         } catch let error as MailApiError {
             // Do not delete draft on invalid identity
             guard error != MailApiError.apiIdentityNotFound else {
