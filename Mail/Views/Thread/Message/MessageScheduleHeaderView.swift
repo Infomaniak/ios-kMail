@@ -27,8 +27,6 @@ import SwiftUI
 struct MessageScheduleHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var selectedDate = Date.now
-
     let scheduleDate: Date
     let draftResource: String
 
@@ -56,7 +54,7 @@ struct MessageScheduleHeaderView: View {
             .controlSize(.small)
         }
         .customAlert(isPresented: $customSchedule) {
-            CustomScheduleModalView(isFloatingPanelPresented: .constant(false), selectedDate: $selectedDate, confirmAction: changeScheduleDate)
+            CustomScheduleModalView(isFloatingPanelPresented: .constant(false), confirmAction: changeScheduleDate)
         }
         .customAlert(isPresented: $modifyMessage) {
             VStack(alignment: .leading, spacing: 16) {
@@ -72,7 +70,7 @@ struct MessageScheduleHeaderView: View {
         }
     }
 
-    private func changeScheduleDate() {
+    private func changeScheduleDate(_ selectedDate: Date) {
         Task {
             try await mailboxManager.apiFetcher.changeDraftSchedule(draftResource: draftResource, scheduleDateIso8601: selectedDate.ISO8601WithTimeZone)
         }
@@ -80,6 +78,7 @@ struct MessageScheduleHeaderView: View {
 
     private func modifySchedule() {
         Task {
+            
             try await mailboxManager.apiFetcher.deleteSchedule(draftResource: draftResource)
         }
     }

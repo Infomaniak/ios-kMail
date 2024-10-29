@@ -22,9 +22,9 @@ import InfomaniakCoreSwiftUI
 
 struct CustomScheduleModalView: View {
     @Binding var isFloatingPanelPresented: Bool
-    @Binding var selectedDate: Date
+    @State var selectedDate: Date = .now
 
-    let confirmAction: () -> Void
+    let confirmAction: (Date) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -36,7 +36,7 @@ struct CustomScheduleModalView: View {
                 .padding(.bottom, IKPadding.alertDescriptionBottom)
             ModalButtonsView(primaryButtonTitle: "Programmer",
                              secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
-                             primaryButtonAction: { confirmAction() },
+                             primaryButtonAction: { confirmAction(selectedDate) },
                              secondaryButtonAction: { isFloatingPanelPresented = true })
         }
     }
