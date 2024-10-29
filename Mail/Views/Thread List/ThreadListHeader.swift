@@ -19,6 +19,7 @@
 import Combine
 import InfomaniakCore
 import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -116,7 +117,8 @@ struct ThreadListHeader: View {
                     }
                 }
             }
-            Spacer()
+            .frame(maxWidth: .infinity, alignment: .leading)
+
             if folderObserver.unreadCount > 0 && !isMultipleSelectionEnabled {
                 Toggle(isOn: $unreadFilterOn) {
                     Text(folderObserver.unreadCount < 100 ? MailResourcesStrings.Localizable
@@ -129,10 +131,12 @@ struct ThreadListHeader: View {
                         matomo.track(eventWithCategory: .threadList, name: "unreadFilter")
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .trailing)
             }
         }
         .padding(.top, value: .small)
-        .padding([.leading, .trailing, .bottom], value: .medium)
+        .padding(.bottom, value: .intermediate)
+        .padding([.leading, .trailing], value: .medium)
         .background(accentColor.navBarBackground.swiftUIColor)
     }
 }
@@ -142,7 +146,7 @@ struct UnreadToggleStyle: ToggleStyle {
         Button {
             configuration.isOn.toggle()
         } label: {
-            HStack(spacing: 8) {
+            HStack(spacing: IKPadding.small) {
                 configuration.label
                 if configuration.isOn {
                     MailResourcesAsset.close
@@ -150,8 +154,8 @@ struct UnreadToggleStyle: ToggleStyle {
                 }
             }
             .textStyle(configuration.isOn ? .bodySmallMediumOnAccent : .bodySmallMediumAccent)
-            .padding(.vertical, 4)
-            .padding(.horizontal, 8)
+            .padding(.vertical, IKPadding.extraSmall)
+            .padding(.horizontal, IKPadding.small)
             .background(
                 Capsule()
                     .fill(configuration.isOn ? Color.accentColor : MailResourcesAsset.backgroundColor.swiftUIColor)
