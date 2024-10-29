@@ -32,6 +32,12 @@ extension CNContact {
     }
 }
 
+extension ContactManager: ExpiringActivityDelegate {
+    public func backgroundActivityExpiring() {
+        currentMergeRequest?.cancel()
+    }
+}
+
 extension ContactManager {
     // MARK: - Public
 
@@ -55,11 +61,8 @@ extension ContactManager {
         Logger.general.info("Will start updating contacts in DB")
 
         // Track background refresh of contacts, and cancel task is system asks to.
-        let expiringActivity = ExpiringActivity(id: #function + UUID().uuidString)
+        let expiringActivity = ExpiringActivity(id: #function + UUID().uuidString, delegate: self)
         expiringActivity.start()
-        if expiringActivity.shouldTerminate {
-            self.currentMergeRequest?.cancel()
-        }
 
         let updateTask = Task {
             // Fetch remote contacts

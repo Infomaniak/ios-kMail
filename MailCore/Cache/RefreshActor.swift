@@ -20,6 +20,18 @@ import Foundation
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 
+class CancelableTaskExpiringActivity: ExpiringActivityDelegate {
+    let cancelClosure: () -> Void
+
+    init(cancelClosure: @escaping () -> Void) {
+        self.cancelClosure = cancelClosure
+    }
+
+    func backgroundActivityExpiring() {
+        cancelClosure()
+    }
+}
+
 public actor RefreshActor {
     weak var mailboxManager: MailboxManager?
 
@@ -51,16 +63,16 @@ public actor RefreshActor {
             }
         }
 
-        // Track progress in background with a cancelation handler
-        let expiringActivity = ExpiringActivity(id: #function + UUID().uuidString)
-        expiringActivity.start()
-        if expiringActivity.shouldTerminate {
+        let cancelableTaskExpiringActivity = CancelableTaskExpiringActivity {
             updateFolders.cancel()
 
             Task {
                 await self.cancelRefresh()
             }
         }
+        // Track progress in background with a cancelation handler
+        let expiringActivity = ExpiringActivity(id: #function + UUID().uuidString, delegate: cancelableTaskExpiringActivity)
+        expiringActivity.start()
 
         await updateFolders.finish()
 
