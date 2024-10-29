@@ -118,9 +118,7 @@ public protocol MailApiExtendedFetchable {
 
     func draft(from message: Message) async throws -> Draft
 
-    func send(mailbox: Mailbox, draft: Draft) async throws -> SendResponse
-
-    func save(mailbox: Mailbox, draft: Draft) async throws -> DraftResponse
+    func send<T: Decodable>(mailbox: Mailbox, draft: Draft) async throws -> T
 
     func deleteDraft(mailbox: Mailbox, draftId: String) async throws -> Empty?
 
