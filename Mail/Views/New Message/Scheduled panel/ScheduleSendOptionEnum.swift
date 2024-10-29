@@ -82,12 +82,13 @@ enum ScheduleSendOption: Identifiable, Equatable {
 
     var iso8601: String? {
         guard let date else { return nil }
-        return date.ISO8601Format().replacingOccurrences(of: "Z", with: "+00:00")
+        return date.ISO8601WithTimeZone
     }
 
     private func dateFromNow(setHour: Int, addDay: Int, addWeek: Int) -> Date? {
-        guard let dateWithHour = Calendar.current.date(bySetting: .hour, value: setHour, of: .now) else { return nil }
-        guard let dateWithDay = Calendar.current.date(byAdding: .day, value: addDay, to: dateWithHour) else { return nil }
-        return Calendar.current.date(byAdding: .weekOfYear, value: addWeek, to: dateWithDay)
+        let startOfDay = Calendar.current.startOfDay(for: .now)
+        guard let dateWithDay = Calendar.current.date(byAdding: .day, value: addDay, to: startOfDay) else { return nil }
+        guard let dateWithHour = Calendar.current.date(bySetting: .hour, value: setHour, of: dateWithDay) else { return nil }
+        return Calendar.current.date(byAdding: .weekOfYear, value: addWeek, to: dateWithHour)
     }
 }
