@@ -54,8 +54,12 @@ extension WebViewModel: WKScriptMessageHandler {
     private func sendOverScrollMessage(_ message: WKScriptMessage) {
         guard let data = message.body as? [String: Any] else { return }
 
+        let clientWidth = data["clientWidth"] as? CGFloat ?? .infinity
         SentrySDK.capture(message: "After zooming the mail it can still scroll.") { scope in
-            scope.setTags(["messageUid": data["messageId"] as? String ?? ""])
+            scope.setTags([
+                "messageUid": data["messageId"] as? String ?? "",
+                "isClientWidthEmpty": String(clientWidth <= 0)
+            ])
             scope.setExtras([
                 "clientWidth": data["clientWidth"] as Any,
                 "scrollWidth": data["scrollWidth"] as Any
@@ -64,10 +68,10 @@ extension WebViewModel: WKScriptMessageHandler {
     }
 
     private func sendJavaScriptError(_ message: WKScriptMessage) {
-        guard let data = message.body as? [String: String] else { return }
+        guard let data = message.body as? [String: Any] else { return }
 
         SentrySDK.capture(message: "JavaScript returned an error when displaying an email.") { scope in
-            scope.setTags(["messageUid": data["messageId"] ?? ""])
+            scope.setTags(["messageUid": data["messageId"] as? String ?? ""])
             scope.setExtras([
                 "errorName": data["errorName"] as Any,
                 "errorMessage": data["errorMessage"] as Any,

@@ -19,6 +19,7 @@
 import Combine
 import InfomaniakDI
 import MailCore
+import Sentry
 import SwiftUI
 import WebKit
 
@@ -90,7 +91,7 @@ final class WebViewController: UIViewController {
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
             .sink { [weak self] newWidth in
                 Task {
-                    try await self?.normalizeMessageWidth(webViewWidth: CGFloat(newWidth))
+                    try await self?.normalizeMessageWidth(webViewWidth: CGFloat(newWidth), fromWidthSubscriber: true)
                 }
             }
     }
@@ -117,9 +118,27 @@ final class WebViewController: UIViewController {
         #endif
     }
 
-    private func normalizeMessageWidth(webViewWidth width: CGFloat) async throws {
+    private func normalizeMessageWidth(webViewWidth width: CGFloat, fromWidthSubscriber: Bool = false) async throws {
         guard hasFinishedLoading else { return }
         try await webView.evaluateJavaScript(.normalizeMessageWidth(width, messageUid))
+
+        // Sometimes we have a width equals to zero, we want to understand what happens in this case
+        if width >= 0 {
+            reportNullSize(givenWidth: width, fromWidthSubscriber: fromWidthSubscriber)
+        }
+    }
+
+    private func reportNullSize(givenWidth: CGFloat, fromWidthSubscriber: Bool) {
+        SentrySDK.capture(message: "Munge Mail: Width is equal to 0.") { [self] scope in
+            scope.setLevel(.warning)
+            scope.setTags(["messageUid": messageUid])
+            scope.setExtras([
+                "givenWidth": givenWidth,
+                "frameWidth": view.frame.width,
+                "frameHeight": view.frame.height,
+                "fromWidthSubscriber": fromWidthSubscriber
+            ])
+        }
     }
 }
 
