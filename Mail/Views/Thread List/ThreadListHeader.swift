@@ -103,8 +103,9 @@ struct ThreadListHeader: View {
                     NoNetworkView()
                 }
                 if isRefreshing {
-                    HStack {
-                        ProgressView().padding(.trailing, 2)
+                    HStack(spacing: 8) {
+                        ProgressView()
+                            .controlSize(.small)
                         Text(MailResourcesStrings.Localizable.threadListHeaderUpdating)
                             .textStyle(.bodySmallSecondary)
                     }
@@ -131,7 +132,7 @@ struct ThreadListHeader: View {
             }
         }
         .padding(.top, value: .small)
-        .padding([.leading, .trailing, .bottom], value: .large)
+        .padding([.leading, .trailing, .bottom], value: .medium)
         .background(accentColor.navBarBackground.swiftUIColor)
     }
 }
