@@ -18,7 +18,6 @@
 
 import Combine
 import InfomaniakCore
-import InfomaniakCoreSwiftUI
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
