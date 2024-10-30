@@ -41,12 +41,16 @@ extension CNContact {
     }
 }
 
-public final class MergedContact: Object, Identifiable {
+public final class MergedContact: Object, Identifiable, ContactAutocompletable {
+    public var stringId: String {
+        return id
+    }
+
     private static let contactFormatter = CNContactFormatter()
 
     /// Shared
     @Persisted(primaryKey: true) public var id: String
-    @Persisted public var email: String
+    @Persisted public var email: String?
     @Persisted public var name: String
 
     /// Remote

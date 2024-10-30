@@ -49,7 +49,9 @@ class TextDebounce: ObservableObject {
 struct ComposeMessageCellRecipients: View {
     @StateObject private var textDebounce = TextDebounce()
 
-    @State private var autocompletion = [Recipient]()
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @State private var autocompletion = [any ContactAutocompletable]()
 
     @Binding var recipients: RealmSwift.List<Recipient>
     @Binding var showRecipientsFields: Bool
@@ -130,23 +132,35 @@ struct ComposeMessageCellRecipients: View {
         }
     }
 
-    @MainActor private func addNewRecipient(_ recipient: Recipient) {
+    @MainActor private func addNewRecipient(_ contact: any ContactAutocompletable) {
         matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
 
-        guard Constants.isEmailAddress(recipient.email) else {
-            snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
-            return
+        if let mergedContact = contact as? MergedContact {
+            $recipients.append(Recipient(email: mergedContact.email ?? "", name: mergedContact.name))
+        } else if let groupeContact = contact as? GroupContact {
+            let groupeContacts = mailboxManager.contactManager.getContacts(with: groupeContact.id)
+
+            var groupContactRecipients = groupeContacts.map {
+                $recipients.append(Recipient(email: $0.email ?? "", name: $0.name))
+            }
         }
 
-        guard !recipients.contains(where: { $0.isSameCorrespondent(as: recipient) }) else {
-            snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientAlreadyUsed)
-            return
-        }
+        // TODO: à implémenter
+        //        guard Constants.isEmailAddress(recipient.email) else {
+        //            snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
+        //            return
+        //        }
+        //
+        //        guard !recipients.contains(where: { $0.isSameCorrespondent(as: recipient) }) else {
+        //            snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientAlreadyUsed)
+        //            return
+        //        }
+        //
+        //        withAnimation {
+        //            recipient.isAddedByMe = true
+        //            $recipients.append(recipient)
+        //        }
 
-        withAnimation {
-            recipient.isAddedByMe = true
-            $recipients.append(recipient)
-        }
         textDebounce.text = ""
     }
 }

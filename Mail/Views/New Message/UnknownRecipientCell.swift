@@ -22,11 +22,7 @@ import MailResources
 import SwiftUI
 
 public struct UnknownRecipientCell: View {
-    let recipient: Recipient
-
-    public init(recipient: Recipient) {
-        self.recipient = recipient
-    }
+    let email: String
 
     public var body: some View {
         HStack(spacing: 8) {
@@ -36,7 +32,7 @@ public struct UnknownRecipientCell: View {
             VStack(alignment: .leading) {
                 Text(MailResourcesStrings.Localizable.addUnknownRecipientTitle)
                     .textStyle(.bodyMedium)
-                Text(recipient.email)
+                Text(email)
                     .textStyle(.bodySecondary)
             }
         }
@@ -45,5 +41,5 @@ public struct UnknownRecipientCell: View {
 }
 
 #Preview {
-    UnknownRecipientCell(recipient: PreviewHelper.sampleRecipient1)
+    UnknownRecipientCell(email: PreviewHelper.sampleRecipient1.email)
 }

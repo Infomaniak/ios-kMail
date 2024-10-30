@@ -23,8 +23,8 @@ import MailResources
 import SwiftUI
 
 struct AutocompletionCell: View {
-    let addRecipient: @MainActor (Recipient) -> Void
-    let recipient: Recipient
+    let addRecipient: @MainActor (any ContactAutocompletable) -> Void
+    let autocompletion: any ContactAutocompletable
     var highlight: String?
     let alreadyAppend: Bool
     let unknownRecipient: Bool
@@ -32,12 +32,12 @@ struct AutocompletionCell: View {
     var body: some View {
         HStack(spacing: IKPadding.intermediate) {
             Button {
-                addRecipient(recipient)
+                addRecipient(autocompletion)
             } label: {
-                if unknownRecipient {
-                    UnknownRecipientCell(recipient: recipient)
+                if unknownRecipient, let email = autocompletion.email {
+                    UnknownRecipientCell(email: email)
                 } else {
-                    RecipientCell(recipient: recipient, highlight: highlight)
+                    RecipientCell(contact: autocompletion, highlight: highlight)
                 }
             }
             .allowsHitTesting(!alreadyAppend || unknownRecipient)
@@ -56,7 +56,7 @@ struct AutocompletionCell: View {
 #Preview {
     AutocompletionCell(
         addRecipient: { _ in /* Preview */ },
-        recipient: PreviewHelper.sampleRecipient1,
+        autocompletion: PreviewHelper.sampleMergedContact,
         alreadyAppend: false,
         unknownRecipient: false
     )
