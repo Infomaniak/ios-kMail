@@ -175,7 +175,8 @@ extension ContactManager {
                 continue
             }
 
-            let id = MergedContact.computeId(email: mergedContact.email, name: mergedContact.name)
+            // TODO: Handle optional emai
+            let id = MergedContact.computeId(email: mergedContact.email ?? "", name: mergedContact.name)
             if newMergedContacts[id] == nil {
                 idsToDelete.append(id)
             }
