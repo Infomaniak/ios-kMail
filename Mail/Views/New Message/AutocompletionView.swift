@@ -32,23 +32,26 @@ struct AutocompletionView: View {
 
     @ObservedObject var textDebounce: TextDebounce
 
-    @Binding var autocompletion: [Recipient]
+    @Binding var autocompletion: [any ContactAutocompletable]
     @Binding var addedRecipients: RealmSwift.List<Recipient>
 
-    let addRecipient: @MainActor (Recipient) -> Void
+    let addRecipient: @MainActor (any ContactAutocompletable) -> Void
 
     var body: some View {
         LazyVStack(spacing: IKPadding.small) {
-            ForEach(autocompletion) { recipient in
-                let isLastRecipient = autocompletion.last?.isSameCorrespondent(as: recipient) == true
+            // TODO: Fix conformance Identifiable
+            ForEach(autocompletion, id: \.stringId) { contact in
+                let isLastRecipient =
+                    false // TODO: A implémenter -> autocompletion.last?.isSameCorrespondent(as: recipient) == true
                 let isUserProposal = shouldAddUserProposal && isLastRecipient
 
                 VStack(alignment: .leading, spacing: IKPadding.small) {
                     AutocompletionCell(
                         addRecipient: addRecipient,
-                        recipient: recipient,
+                        autocompletion: contact,
                         highlight: textDebounce.text,
-                        alreadyAppend: addedRecipients.contains { $0.isSameCorrespondent(as: recipient) },
+                        alreadyAppend: false,
+                        // TODO: A implémenter -> addedRecipients.contains { $0.isSameCorrespondent(as: recipient) },
                         unknownRecipient: isUserProposal
                     )
 
@@ -77,25 +80,23 @@ struct AutocompletionView: View {
                 fetchLimit: Self.maxAutocompleteCount,
                 sorted: sortByRemoteAndName
             )
-            var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
 
-        let autocompleteGroupContact = mailboxManager.contactManager.frozenGroupContacts(matching: trimmedSearch, fetchLimit: nil)
+        let autocompleteGroupContacts = mailboxManager.contactManager.frozenGroupContacts(
+            matching: trimmedSearch,
+            fetchLimit: nil
+        )
 
-        // TODO: Find group or organisation name
-        var autocompleteGroupRecipients = autocompleteGroupContact.map { Recipient(
-            email: "Afficher nom groupe ou organisation ?",
-            name: "Groupe/carnet ? \($0.name)"
-        ) }
+        let result: [any ContactAutocompletable] = Array(autocompleteContacts) + Array(autocompleteGroupContacts)
 
-        var result = autocompleteRecipients + autocompleteGroupRecipients
+//    TODO: A implémenter
+//        let realResults = autocompleteRecipients.filter { !addedRecipients.map(\.email).contains($0.email) }
+//
+//        shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.email == textDebounce.text)
+//        if shouldAddUserProposal {
+//            autocompleteRecipients.append(Recipient(email: textDebounce.text, name: ""))
+//        }
 
-        let realResults = autocompleteRecipients.filter { !addedRecipients.map(\.email).contains($0.email) }
-
-            shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.email == textDebounce.text)
-            if shouldAddUserProposal {
-                autocompleteRecipients.append(Recipient(email: textDebounce.text, name: ""))
-            }
-            autocompletion = autocompleteRecipients
+            autocompletion = result
         }
     }
 

@@ -20,7 +20,20 @@ import Foundation
 import RealmSwift
 
 // AddressBook Categories
-public class GroupContact: Object, Codable {
+public class GroupContact: Object, Codable, ContactAutocompletable {
     @Persisted public var id: Int
     @Persisted public var name: String
+
+    public var stringId: String {
+        return String(id)
+    }
+
+    public var email: String?
+}
+
+// TODO: A déplacer
+public protocol ContactAutocompletable: Identifiable {
+    var stringId: String { get }
+    var name: String { get }
+    var email: String? { get }
 }
