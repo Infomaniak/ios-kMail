@@ -18,6 +18,7 @@
 
 import Combine
 import InfomaniakCore
+import InfomaniakCoreSwiftUI
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
@@ -104,7 +105,7 @@ struct ThreadListHeader: View {
                     NoNetworkView()
                 }
                 if isRefreshing {
-                    HStack(spacing: 8) {
+                    HStack(spacing: IKPadding.small) {
                         ProgressView()
                             .controlSize(.small)
                         Text(MailResourcesStrings.Localizable.threadListHeaderUpdating)
