@@ -45,6 +45,9 @@ public protocol ContactFetchable {
     func getContact(for correspondent: any Correspondent) -> MergedContact?
     func addressBook(with id: Int) -> AddressBook?
     func addContact(recipient: Recipient) async throws
+
+    /// Get a contact from group contact (categories)
+    func getContacts(with groupContactId: Int) -> [MergedContact]
 }
 
 public extension ContactManager {
@@ -138,5 +141,17 @@ public extension ContactManager {
         try writeTransaction { writableRealm in
             writableRealm.add(mergedContact, update: .modified)
         }
+    }
+
+    func getContacts(with groupContactId: Int) -> [MergedContact] {
+        // TODO: To implement
+//        let frozenContacts = fetchResults(ofType: MergedContact.self) { partial in
+//            partial
+//                .where { $0.groupContactId == groupContactId }
+//                .freezeIfNeeded()
+//        }
+//
+//        return Array(frozenContacts)
+        return []
     }
 }
