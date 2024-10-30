@@ -77,7 +77,7 @@ struct UserFoldersListView: View {
                         .textStyle(.bodySmallSecondary)
                         .padding(value: .medium)
                 } else {
-                    FoldersListView(folders: folders)
+                    FoldersListView(folders: folders, isUserFoldersList: true)
                 }
             }
         }

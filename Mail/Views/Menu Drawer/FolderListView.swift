@@ -34,7 +34,7 @@ struct FolderListView: View {
 
     var body: some View {
         Group {
-            FoldersListView(folders: viewModel.roleFolders)
+            FoldersListView(folders: viewModel.roleFolders, isUserFoldersList: false)
             IKDivider(type: .menu)
             UserFoldersListView(folders: viewModel.userFolders)
         }
