@@ -20,25 +20,48 @@ import InfomaniakCore
 import MailCore
 import RealmSwift
 import SwiftUI
+import MailResources
 
 struct FoldersListView: View {
     @EnvironmentObject private var mainViewState: MainViewState
 
     private let folders: [NestableFolder]
     private let hasSubFolders: Bool
+    private let isUserFoldersList: Bool
 
-    init(folders: [NestableFolder]) {
+    init(folders: [NestableFolder], isUserFoldersList: Bool) {
         self.folders = folders
+        self.isUserFoldersList = isUserFoldersList
         hasSubFolders = folders.contains { !$0.children.isEmpty }
     }
 
     var body: some View {
         VStack(spacing: 0) {
             ForEach(folders) { folder in
-                FolderCell(folder: folder,
-                           currentFolderId: mainViewState.selectedFolder.remoteId,
-                           canCollapseSubFolders: hasSubFolders,
-                           matomoCategory: .menuDrawer)
+
+                if isUserFoldersList {
+                    FolderCell(folder: folder,
+                               currentFolderId: mainViewState.selectedFolder.remoteId,
+                               canCollapseSubFolders: hasSubFolders,
+                               matomoCategory: .menuDrawer)
+                        .contextMenu {
+                            Button {
+                                print("Dossier modifié")
+                            } label: {
+                                Label("Modifier", image: MailResourcesAsset.pencilPlain.name)
+                            }
+                            Button {
+                                print("Dossier supprimé")
+                            } label: {
+                                Label("Supprimer", image: MailResourcesAsset.bin.name)
+                            }
+                        }
+                } else {
+                    FolderCell(folder: folder,
+                               currentFolderId: mainViewState.selectedFolder.remoteId,
+                               canCollapseSubFolders: hasSubFolders,
+                               matomoCategory: .menuDrawer)
+                }
             }
         }
     }
