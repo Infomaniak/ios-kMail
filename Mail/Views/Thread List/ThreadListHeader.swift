@@ -19,6 +19,7 @@
 import Combine
 import InfomaniakCore
 import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -84,12 +85,15 @@ struct ThreadListHeader: View {
     let isMultipleSelectionEnabled: Bool
 
     @Binding var unreadFilterOn: Bool
+    private var isRefreshing: Bool
 
     init(isMultipleSelectionEnabled: Bool,
          folder: Folder,
-         unreadFilterOn: Binding<Bool>) {
+         unreadFilterOn: Binding<Bool>,
+         isRefreshing: Bool) {
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
         _unreadFilterOn = unreadFilterOn
+        self.isRefreshing = isRefreshing
         _folderObserver = StateObject(wrappedValue: ThreadListHeaderFolderObserver(folder: folder))
     }
 
@@ -99,12 +103,22 @@ struct ThreadListHeader: View {
                 if !networkMonitor.isConnected {
                     NoNetworkView()
                 }
-                if let lastUpdateText = folderObserver.lastUpdateText {
-                    Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
-                        .textStyle(.bodySmallSecondary)
+                if isRefreshing {
+                    HStack(spacing: 8) {
+                        ProgressView()
+                            .controlSize(.small)
+                        Text(MailResourcesStrings.Localizable.threadListHeaderUpdating)
+                            .textStyle(.bodySmallSecondary)
+                    }
+                } else {
+                    if let lastUpdateText = folderObserver.lastUpdateText {
+                        Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
+                            .textStyle(.bodySmallSecondary)
+                    }
                 }
             }
-            Spacer()
+            .frame(maxWidth: .infinity, alignment: .leading)
+
             if folderObserver.unreadCount > 0 && !isMultipleSelectionEnabled {
                 Toggle(isOn: $unreadFilterOn) {
                     Text(folderObserver.unreadCount < 100 ? MailResourcesStrings.Localizable
@@ -117,10 +131,12 @@ struct ThreadListHeader: View {
                         matomo.track(eventWithCategory: .threadList, name: "unreadFilter")
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .trailing)
             }
         }
         .padding(.top, value: .small)
-        .padding([.leading, .trailing, .bottom], value: .medium)
+        .padding(.bottom, value: .intermediate)
+        .padding([.leading, .trailing], value: .medium)
         .background(accentColor.navBarBackground.swiftUIColor)
     }
 }
@@ -130,7 +146,7 @@ struct UnreadToggleStyle: ToggleStyle {
         Button {
             configuration.isOn.toggle()
         } label: {
-            HStack(spacing: 8) {
+            HStack(spacing: IKPadding.small) {
                 configuration.label
                 if configuration.isOn {
                     MailResourcesAsset.close
@@ -138,8 +154,8 @@ struct UnreadToggleStyle: ToggleStyle {
                 }
             }
             .textStyle(configuration.isOn ? .bodySmallMediumOnAccent : .bodySmallMediumAccent)
-            .padding(.vertical, 4)
-            .padding(.horizontal, 8)
+            .padding(.vertical, IKPadding.extraSmall)
+            .padding(.horizontal, IKPadding.small)
             .background(
                 Capsule()
                     .fill(configuration.isOn ? Color.accentColor : MailResourcesAsset.backgroundColor.swiftUIColor)
@@ -155,11 +171,13 @@ extension ToggleStyle where Self == UnreadToggleStyle {
 #Preview {
     ThreadListHeader(isMultipleSelectionEnabled: false,
                      folder: PreviewHelper.sampleFolder,
-                     unreadFilterOn: .constant(false))
+                     unreadFilterOn: .constant(false),
+                     isRefreshing: false)
 }
 
 #Preview {
     ThreadListHeader(isMultipleSelectionEnabled: false,
                      folder: PreviewHelper.sampleFolder,
-                     unreadFilterOn: .constant(true))
+                     unreadFilterOn: .constant(true),
+                     isRefreshing: false)
 }
