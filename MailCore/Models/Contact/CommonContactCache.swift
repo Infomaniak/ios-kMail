@@ -70,6 +70,9 @@ public enum CommonContactCache {
             contact = wrappedContact
         case .emptyContact:
             contact = CommonContact.emptyContact
+        case .groupContact:
+            // TODO: To implement
+            contact = CommonContact.emptyContact
         }
 
         // Store the object in cache
