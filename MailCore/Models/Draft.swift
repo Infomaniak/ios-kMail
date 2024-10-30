@@ -163,7 +163,7 @@ public final class Draft: Object, Codable, Identifiable {
         priority = try values.decode(MessagePriority.self, forKey: .priority)
         swissTransferUuid = try values.decodeIfPresent(String.self, forKey: .swissTransferUuid)
         attachments = try values.decode(List<Attachment>.self, forKey: .attachments)
-        scheduleDate = try values.decode(String.self, forKey: .scheduleDate)
+        scheduleDate = try values.decodeIfPresent(String.self, forKey: .scheduleDate)
     }
 
     public convenience init(localUUID: String = UUID().uuidString,
