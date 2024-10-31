@@ -99,6 +99,13 @@ public extension MailboxManager {
         return frozenFolder
     }
 
+    func deleteFolder(name: String, folder: Folder) async throws {
+        try await apiFetcher.delete(mailbox: mailbox, folder: folder)
+//        try writeTransaction { writableRealm in
+//            writableRealm.delete(folder)
+//        }
+    }
+
     // MARK: RefreshActor
 
     func flushFolder(folder: Folder) async throws -> Bool {

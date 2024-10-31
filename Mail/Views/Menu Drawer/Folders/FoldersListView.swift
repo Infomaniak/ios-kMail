@@ -18,12 +18,13 @@
 
 import InfomaniakCore
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
-import MailResources
 
 struct FoldersListView: View {
     @EnvironmentObject private var mainViewState: MainViewState
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     private let folders: [NestableFolder]
     private let hasSubFolders: Bool
@@ -39,29 +40,36 @@ struct FoldersListView: View {
         VStack(spacing: 0) {
             ForEach(folders) { folder in
 
-                if isUserFoldersList {
-                    FolderCell(folder: folder,
-                               currentFolderId: mainViewState.selectedFolder.remoteId,
-                               canCollapseSubFolders: hasSubFolders,
-                               matomoCategory: .menuDrawer)
-                        .contextMenu {
+                FolderCell(folder: folder,
+                           currentFolderId: mainViewState.selectedFolder.remoteId,
+                           canCollapseSubFolders: hasSubFolders,
+                           matomoCategory: .menuDrawer)
+                    .contextMenu {
+                        if isUserFoldersList {
                             Button {
                                 print("Dossier modifié")
                             } label: {
                                 Label("Modifier", image: MailResourcesAsset.pencilPlain.name)
                             }
                             Button {
+                                Task {
+                                    do {
+//                                        try await mailboxManager.createFolder(name: "Dossier4", parent: nil)
+                                        try await mailboxManager.deleteFolder(
+                                            name: folder.frozenContent.name,
+                                            folder: folder.frozenContent
+                                        )
+
+                                    } catch {
+                                        print("error")
+                                    }
+                                }
                                 print("Dossier supprimé")
                             } label: {
                                 Label("Supprimer", image: MailResourcesAsset.bin.name)
                             }
                         }
-                } else {
-                    FolderCell(folder: folder,
-                               currentFolderId: mainViewState.selectedFolder.remoteId,
-                               canCollapseSubFolders: hasSubFolders,
-                               matomoCategory: .menuDrawer)
-                }
+                    }
             }
         }
     }
