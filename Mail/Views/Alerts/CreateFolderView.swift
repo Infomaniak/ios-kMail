@@ -41,6 +41,7 @@ struct CreateFolderView: View {
     @FocusState private var isFocused
 
     let mode: Mode
+    let folder: Folder?
 
     private var isButtonEnabled: Bool {
         return !folderName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && error == nil
@@ -49,6 +50,7 @@ struct CreateFolderView: View {
     enum Mode {
         case create
         case move(moveHandler: MoveEmailView.MoveHandler)
+        case modify
 
         var buttonTitle: String {
             switch self {
@@ -56,6 +58,8 @@ struct CreateFolderView: View {
                 return MailResourcesStrings.Localizable.buttonCreate
             case .move:
                 return MailResourcesStrings.Localizable.newFolderDialogMovePositiveButton
+            case .modify:
+                return MailResourcesStrings.Localizable.buttonValid
             }
         }
     }
@@ -99,12 +103,24 @@ struct CreateFolderView: View {
                 .padding(.bottom, value: .small)
 
             ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: isButtonEnabled) {
-                matomo.track(eventWithCategory: .createFolder, name: "confirm")
-                await tryOrDisplayError {
-                    let folder = try await mailboxManager.createFolder(name: folderName, parent: nil)
-                    if case .move(let moveHandler) = mode {
-                        moveHandler(folder)
-                        NotificationCenter.default.post(Notification(name: .dismissMoveSheet))
+                switch mode {
+                case .modify:
+                    if folder != nil {
+                        await tryOrDisplayError {
+                            let folder = try await mailboxManager.modifyFolder(
+                                name: folderName,
+                                folder: folder!
+                            )
+                        }
+                    }
+                default:
+                    await tryOrDisplayError {
+                        matomo.track(eventWithCategory: .createFolder, name: "confirm")
+                        let folder = try await mailboxManager.createFolder(name: folderName, parent: nil)
+                        if case .move(let moveHandler) = mode {
+                            moveHandler(folder)
+                            NotificationCenter.default.post(Notification(name: .dismissMoveSheet))
+                        }
                     }
                 }
             }
@@ -138,8 +154,8 @@ struct CreateFolderView: View {
 
 #Preview {
     Group {
-        CreateFolderView(mode: .create)
-        CreateFolderView(mode: .move { _ in /* Preview */ })
+        CreateFolderView(mode: .create, folder: nil)
+        CreateFolderView(mode: .move { _ in /* Preview */ }, folder: nil)
     }
     .environmentObject(PreviewHelper.sampleMailboxManager)
 }

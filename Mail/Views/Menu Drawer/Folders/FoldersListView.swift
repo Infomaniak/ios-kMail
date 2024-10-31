@@ -20,11 +20,14 @@ import InfomaniakCore
 import MailCore
 import MailResources
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 
 struct FoldersListView: View {
     @EnvironmentObject private var mainViewState: MainViewState
     @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @ModalState private var isShowingCreateFolderAlert = false
 
     private let folders: [NestableFolder]
     private let hasSubFolders: Bool
@@ -49,7 +52,7 @@ struct FoldersListView: View {
                             Button {
                                 Task {
                                     do {
-                                        try await mailboxManager.modifyFolder(name: "RENAME", folder: folder.frozenContent)
+                                        isShowingCreateFolderAlert.toggle()
 
                                     } catch {
                                         print("error")
@@ -73,6 +76,9 @@ struct FoldersListView: View {
                                 Label("Supprimer", image: MailResourcesAsset.bin.name)
                             }
                         }
+                    }
+                    .customAlert(isPresented: $isShowingCreateFolderAlert) {
+                        CreateFolderView(mode: .modify, folder: folder.frozenContent)
                     }
             }
         }
