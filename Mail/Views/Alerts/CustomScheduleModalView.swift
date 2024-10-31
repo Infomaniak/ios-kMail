@@ -16,9 +16,9 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreSwiftUI
 import MailResources
 import SwiftUI
-import InfomaniakCoreSwiftUI
 
 struct CustomScheduleModalView: View {
     @Binding var isFloatingPanelPresented: Bool

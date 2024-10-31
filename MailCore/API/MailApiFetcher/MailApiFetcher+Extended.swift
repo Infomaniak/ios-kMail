@@ -165,7 +165,11 @@ public extension MailApiFetcher {
     }
 
     func changeDraftSchedule(draftResource: String, scheduleDateIso8601: String) async throws -> Empty {
-        return try await perform(request: authenticatedRequest(.draftSchedule(draftResource: draftResource), method: .put, parameters: ["schedule_date": scheduleDateIso8601]))
+        return try await perform(request: authenticatedRequest(
+            .draftSchedule(draftResource: draftResource),
+            method: .put,
+            parameters: ["schedule_date": scheduleDateIso8601]
+        ))
     }
 
     func deleteSchedule(draftResource: String) async throws -> Empty {
