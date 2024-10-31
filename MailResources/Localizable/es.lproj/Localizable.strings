@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Baptiste Griva
- * Exported at: Mon, 28 Oct 2024 14:20:07 +0100
+ * Exported by: Jordan Chapelle
+ * Exported at: Thu, 31 Oct 2024 17:07:21 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -379,6 +379,9 @@
 /* loco:62b1c0de630e5a572542c032 */
 "buttonCreateFolder" = "Añadir una carpeta";
 
+/* loco:6723a4468cf8e4d10e094606 */
+"buttonCustomSchedule" = "Horario personalizado";
+
 /* loco:64abb7007886284b68017193 */
 "buttonDetachMailbox" = "separar dirección";
 
@@ -430,6 +433,9 @@
 /* loco:65855b1bac34d439fd02e7e2 */
 "buttonMaybe" = "Quizás";
 
+/* loco:6723a53b28105b82c404e163 */
+"buttonModify" = "para modificar";
+
 /* loco:6284fd623d98060ac31f76d5 */
 "buttonMore" = "Más";
 
@@ -460,11 +466,17 @@
 /* loco:64a2b7a35386a9ec49013e42 */
 "buttonRequestPassword" = "Solicitar contraseña";
 
+/* loco:6723a9568fe8ffe07203af72 */
+"buttonReschedule" = "Reprogramar";
+
 /* loco:62567b81c34ca7494235e273 */
 "buttonRestoreEmails" = "Restaurar correos electrónicos";
 
 /* loco:62b2e4a24486732cbc2f04d3 */
 "buttonSchedule" = "Programar un correo electrónico para enviarlo más tarde";
+
+/* loco:6723a2a5f3c615913002d152 */
+"buttonScheduleTitle" = "Cronograma";
 
 /* loco:65957d479527393708069ee2 */
 "buttonSee" = "Véase";
@@ -655,6 +667,9 @@
 /* loco:62b1c1491ea473352a4fb205 */
 "createFolderParent" = "Carpeta principal";
 
+/* loco:6723a25570ccbbb9b709fb62 */
+"datePickerTitle" = "Elige una fecha y hora";
+
 /* loco:6294648c19755a1ae9494462 */
 "dateTitle" = "Date:";
 
@@ -675,6 +690,12 @@
 
 /* loco:6364d5ac2e2f281d52389ee2 */
 "draftPrefix" = "(Borrador)";
+
+/* loco:6723aa01f9685843aa0de8a3 */
+"editSendDescription" = "Programmazione annullata. Questo messaggio verrà spostato nelle tue bozze per essere inviato quando vuoi.";
+
+/* loco:6723a9b2b22031bf3701ae62 */
+"editSendTitle" = "Editar envío";
 
 /* loco:64243b4a9a9a1f26302e33f3 */
 "emailWithoutSubjectDescription" = "Está a punto de enviar un mensaje sin asunto. ¿Desea continuar?";
@@ -904,6 +925,9 @@
 /* loco:627a3c64f10f5f31f53e1c02 */
 "inboxFolder" = "Bandeja de entrada";
 
+/* loco:672398789bd6d8d56802d212 */
+"lastSelectedSchedule" = "Último horario seleccionado";
+
 /* loco:62c427c7ad522f1ff078a162 */
 "loadingText" = "Cargando…";
 
@@ -1011,6 +1035,12 @@
 
 /* loco:6266655afabeeb6bc774c932 */
 "newMessagePlaceholderTitle" = "Escriba su mensaje";
+
+/* loco:6723980d4062e74f78028152 */
+"nextMondayAfternoon" = "lunes por la tarde";
+
+/* loco:67238d29fe561f9d0a0f5732 */
+"nextMondayMorning" = "El lunes próximo";
 
 /* loco:62fb875a6743ac5a237b07e3 */
 "noBodyTitle" = "Este mensaje está vacío.";
@@ -1149,6 +1179,12 @@
 
 /* loco:66e2826251d88f0bdc097c12 */
 "saveMailInkDrive" = "Guardar en kDrive";
+
+/* loco:6723a3818bedb42b0805f613 */
+"scheduleSendingTitle" = "Programar envío";
+
+/* loco:6723a770a20911146d083622 */
+"scheduledEmailHeader" = "Este correo electrónico se enviará en esta fecha: %@";
 
 /* loco:62a9db4ae45f1e29371ff802 */
 "scheduledMessagesFolder" = "Mensajes programados";
@@ -1624,6 +1660,12 @@
 /* loco:651ec8814a88e40c620a2f32 */
 "syncTutorialStepCount" = "%1$d de %2$d";
 
+/* loco:672386513ba28533830dc293 */
+"thisAfternoon" = "Esta tarde";
+
+/* loco:67238c432a68eb6c2600fc52 */
+"thisEvening" = "Esta noche";
+
 /* loco:63f380d5d0a8f81b511bf704 */
 "threadListDeletionConfirmationAlertDescription" = "¿Estás seguro de que quieres borrar este mensaje permanentemente?";
 
@@ -1695,6 +1737,9 @@
 
 /* loco:62665fa13789aa7e8353ad62 */
 "toTitle" = "Para:";
+
+/* loco:67238cec47b13a82520c0245 */
+"tomorrowMorning" = "Mañana por la mañana";
 
 /* loco:641db88f88b1f63cb05aad52 */
 "tooManyRecipients" = "No puede añadir esta dirección porque ha alcanzado el límite de destinatarios";

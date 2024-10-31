@@ -36,15 +36,15 @@ struct ScheduleFloatingPanelView: View {
     let dismissMessageView: () -> Void
 
     private var scheduleOptions: [ScheduleSendOption] {
-        guard !isWeekend() else { return [.nextWeekMorning, .nextWeekAfternoon] }
+        guard !isWeekend() else { return [.nextMondayMorning, .nextMondayAfternoon] }
 
         switch Calendar.current.component(.hour, from: Date.now) {
         case 0 ... 13:
-            return [.thisAfternoon, .tomorrowMorning, .nextWeekMorning]
+            return [.thisAfternoon, .tomorrowMorning, .nextMondayMorning]
         case 14 ... 19:
-            return [.thisEvening, .tomorrowMorning, .nextWeekMorning]
+            return [.thisEvening, .tomorrowMorning, .nextMondayMorning]
         case 20 ... 23:
-            return [.tomorrowMorning, .nextWeekMorning]
+            return [.tomorrowMorning, .nextMondayMorning]
         default:
             return []
         }
@@ -52,7 +52,7 @@ struct ScheduleFloatingPanelView: View {
 
     var body: some View {
         VStack {
-            Text("Schedule Send")
+            Text(MailResourcesStrings.Localizable.scheduleSendingTitle)
                 .font(.title3)
             ForEach(scheduleOptions) { option in
                 ScheduleOptionButton(option: option, setScheduleAction: setSchedule)
@@ -92,12 +92,12 @@ struct CustomScheduleButton: View {
             Button(action: showCustomSchedulePicker) {
                 HStack {
                     Label {
-                        Text("Horaire personnalisé")
+                        Text(MailResourcesStrings.Localizable.buttonCustomSchedule)
                     } icon: {
                         MailResourcesAsset.customSchedule.swiftUIImage
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    Image(systemName: "chevron.right")
+                    MailResourcesAsset.chevronRight.swiftUIImage
                 }
                 .font(MailTextStyle.bodySmall.font)
             }

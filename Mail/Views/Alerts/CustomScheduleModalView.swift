@@ -28,13 +28,13 @@ struct CustomScheduleModalView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Choisir une date et une heure")
+            Text(MailResourcesStrings.Localizable.datePickerTitle)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, IKPadding.alertTitleBottom)
             DatePicker("", selection: $selectedDate, in: .now...)
                 .labelsHidden()
                 .padding(.bottom, IKPadding.alertDescriptionBottom)
-            ModalButtonsView(primaryButtonTitle: "Programmer",
+            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonScheduleTitle,
                              secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                              primaryButtonAction: { confirmAction(selectedDate) },
                              secondaryButtonAction: { isFloatingPanelPresented = true })

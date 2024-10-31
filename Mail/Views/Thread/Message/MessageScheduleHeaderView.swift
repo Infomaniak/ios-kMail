@@ -36,9 +36,9 @@ struct MessageScheduleHeaderView: View {
     var body: some View {
         MessageHeaderActionView(
             icon: MailResourcesAsset.scheduleSend.swiftUIImage,
-            message: "Cet e-mail sera envoyé à cette date : \(DateFormatter.localizedString(from: scheduleDate, dateStyle: .full, timeStyle: .short))"
+            message: MailResourcesStrings.Localizable.scheduledEmailHeader(DateFormatter.localizedString(from: scheduleDate, dateStyle: .full, timeStyle: .short))
         ) {
-            Button("Reprogrammer") {
+            Button(MailResourcesStrings.Localizable.buttonReschedule) {
                 customSchedule = true
             }
             .buttonStyle(.ikBorderless(isInlined: true))
@@ -47,7 +47,7 @@ struct MessageScheduleHeaderView: View {
             Divider()
                 .frame(height: 20)
 
-            Button("Modifier") {
+            Button(MailResourcesStrings.Localizable.buttonModify) {
                 modifyMessage = true
             }
             .buttonStyle(.ikBorderless(isInlined: true))
@@ -58,12 +58,10 @@ struct MessageScheduleHeaderView: View {
         }
         .customAlert(isPresented: $modifyMessage) {
             VStack(alignment: .leading, spacing: 16) {
-                Text("Modifier l'envoie")
-                Text(
-                    "Programmation annulée. Ce message sera déplacé dans vos brouillons pour être envoyé quand vous le souhaitez."
-                )
+                Text(MailResourcesStrings.Localizable.editSendTitle)
+                Text(MailResourcesStrings.Localizable.editSendDescription)
                 .font(.subheadline)
-                ModalButtonsView(primaryButtonTitle: "Modifier",
+                ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonModify,
                                  secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                                  primaryButtonAction: modifySchedule)
             }
