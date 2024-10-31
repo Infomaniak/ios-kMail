@@ -36,7 +36,11 @@ struct MessageScheduleHeaderView: View {
     var body: some View {
         MessageHeaderActionView(
             icon: MailResourcesAsset.scheduleSend.swiftUIImage,
-            message: MailResourcesStrings.Localizable.scheduledEmailHeader(DateFormatter.localizedString(from: scheduleDate, dateStyle: .full, timeStyle: .short))
+            message: MailResourcesStrings.Localizable.scheduledEmailHeader(DateFormatter.localizedString(
+                from: scheduleDate,
+                dateStyle: .full,
+                timeStyle: .short
+            ))
         ) {
             Button(MailResourcesStrings.Localizable.buttonReschedule) {
                 customSchedule = true
@@ -60,7 +64,7 @@ struct MessageScheduleHeaderView: View {
             VStack(alignment: .leading, spacing: 16) {
                 Text(MailResourcesStrings.Localizable.editSendTitle)
                 Text(MailResourcesStrings.Localizable.editSendDescription)
-                .font(.subheadline)
+                    .font(.subheadline)
                 ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonModify,
                                  secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                                  primaryButtonAction: modifySchedule)
@@ -70,13 +74,15 @@ struct MessageScheduleHeaderView: View {
 
     private func changeScheduleDate(_ selectedDate: Date) {
         Task {
-            try await mailboxManager.apiFetcher.changeDraftSchedule(draftResource: draftResource, scheduleDateIso8601: selectedDate.ISO8601WithTimeZone)
+            try await mailboxManager.apiFetcher.changeDraftSchedule(
+                draftResource: draftResource,
+                scheduleDateIso8601: selectedDate.ISO8601WithTimeZone
+            )
         }
     }
 
     private func modifySchedule() {
         Task {
-            
             try await mailboxManager.apiFetcher.deleteSchedule(draftResource: draftResource)
         }
     }
