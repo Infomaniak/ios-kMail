@@ -23,8 +23,8 @@ enum ScheduleSendOption: Identifiable, Equatable {
     case thisAfternoon
     case thisEvening
     case tomorrowMorning
-    case nextWeekMorning
-    case nextWeekAfternoon
+    case nextMondayMorning
+    case nextMondayAfternoon
     case lastSchedule(value: Date)
 
     var id: UUID { UUID() }
@@ -37,10 +37,10 @@ enum ScheduleSendOption: Identifiable, Equatable {
             return dateFromNow(setHour: 18, addDay: 0, addWeek: 0)
         case .tomorrowMorning:
             return dateFromNow(setHour: 8, addDay: 1, addWeek: 0)
-        case .nextWeekMorning:
-            return dateFromNow(setHour: 8, addDay: 0, addWeek: 1)
-        case .nextWeekAfternoon:
-            return dateFromNow(setHour: 18, addDay: 0, addWeek: 1)
+        case .nextMondayMorning:
+            return nextMonday(setHour: 8)
+        case .nextMondayAfternoon:
+            return nextMonday(setHour: 14)
         case .lastSchedule(let value):
             return value
         }
@@ -49,17 +49,17 @@ enum ScheduleSendOption: Identifiable, Equatable {
     var title: String {
         switch self {
         case .thisAfternoon:
-            return "Cet après-midi"
+            return MailResourcesStrings.Localizable.thisAfternoon
         case .thisEvening:
-            return "Ce soir"
+            return MailResourcesStrings.Localizable.thisEvening
         case .tomorrowMorning:
-            return "Demain matin"
-        case .nextWeekMorning:
-            return "La semaine prochaine"
-        case .nextWeekAfternoon:
-            return "La semaine prochaine 2"
+            return MailResourcesStrings.Localizable.tomorrowMorning
+        case .nextMondayMorning:
+            return MailResourcesStrings.Localizable.nextMondayMorning
+        case .nextMondayAfternoon:
+            return MailResourcesStrings.Localizable.nextMondayAfternoon
         case .lastSchedule:
-            return "Dernier schedule"
+            return MailResourcesStrings.Localizable.lastSelectedSchedule
         }
     }
 
@@ -71,9 +71,9 @@ enum ScheduleSendOption: Identifiable, Equatable {
             return MailResourcesAsset.todayEvening.swiftUIImage
         case .tomorrowMorning:
             return MailResourcesAsset.tomorrowMorning.swiftUIImage
-        case .nextWeekMorning:
+        case .nextMondayMorning:
             return MailResourcesAsset.nextWeek.swiftUIImage
-        case .nextWeekAfternoon:
+        case .nextMondayAfternoon:
             return MailResourcesAsset.nextWeek.swiftUIImage
         case .lastSchedule:
             return MailResourcesAsset.lastSchedule.swiftUIImage
@@ -90,5 +90,10 @@ enum ScheduleSendOption: Identifiable, Equatable {
         guard let dateWithDay = Calendar.current.date(byAdding: .day, value: addDay, to: startOfDay) else { return nil }
         guard let dateWithHour = Calendar.current.date(bySetting: .hour, value: setHour, of: dateWithDay) else { return nil }
         return Calendar.current.date(byAdding: .weekOfYear, value: addWeek, to: dateWithHour)
+    }
+
+    private func nextMonday(setHour: Int) -> Date? {
+        guard let nextMonday = Calendar.current.date(bySetting: .weekday, value: 2, of: .now) else { return nil }
+        return Calendar.current.date(bySetting: .hour, value: setHour, of: nextMonday)
     }
 }
