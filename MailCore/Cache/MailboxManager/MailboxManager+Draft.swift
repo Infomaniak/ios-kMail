@@ -16,9 +16,9 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Alamofire
 import Foundation
 import RealmSwift
-import Alamofire
 
 // MARK: - Draft
 
@@ -126,24 +126,24 @@ public extension MailboxManager {
         try await apiFetcher.deleteDraft(mailbox: mailbox, draftId: draft.remoteUUID)
     }
 
-    func delete(draftMessage: Message) async throws {
-        guard let draftResource = draftMessage.draftResource else {
+    func delete(draftMessages: [Message]) async throws {
+        let draftResources = draftMessages.compactMap { $0.draftResource }
+        guard draftResources.count == draftResources.count else {
             throw MailError.resourceError
         }
 
-        let draft = fetchObject(ofType: Draft.self) { partial in
-            partial
-                .where { $0.remoteUUID == draftResource }
-                .first?
-                .freeze()
-        }
+        let drafts = fetchResults(ofType: Draft.self, filtering: { draft in
+            draft
+                .filter("remoteUUID IN %@", draftResources)
+                .freezeIfNeeded()
+        })
 
-        if let draft {
-            try await deleteLocally(draft: draft)
-        }
+        try await deleteLocally(drafts: Array(drafts))
 
-        try await apiFetcher.deleteDraft(draftResource: draftResource)
-        try await refreshFolder(from: [draftMessage], additionalFolder: nil)
+        for resource in draftResources {
+            try await apiFetcher.deleteDraft(draftResource: resource)
+        }
+        try await refreshFolder(from: draftMessages, additionalFolder: nil)
     }
 
     func deleteLocally(draft: Draft) async throws {
@@ -154,6 +154,13 @@ public extension MailboxManager {
             }
 
             writableRealm.delete(liveDraft)
+        }
+    }
+
+    func deleteLocally(drafts: [Draft]) async throws {
+        try? writeTransaction { writableRealm in
+            let liveDrafts = writableRealm.objects(Draft.self)
+            writableRealm.delete(liveDrafts)
         }
     }
 
