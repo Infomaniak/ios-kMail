@@ -34,17 +34,19 @@ struct ThreadCellAvatarCheckboxView: View {
     var body: some View {
         Group {
             if density == .large {
-                ZStack {
-                    AvatarView(mailboxManager: mailboxManager, contactConfiguration: contactConfiguration, size: 40)
-                        .opacity(isSelected ? 0 : 1)
-                        .onTapGesture {
-                            avatarTapped?()
-                        }
-                    CheckboxView(isSelected: isSelected, density: density, accentColor: accentColor)
-                        .opacity(isSelected ? 1 : 0)
+                Button {
+                    avatarTapped?()
+                } label: {
+                    ZStack {
+                        AvatarView(mailboxManager: mailboxManager, contactConfiguration: contactConfiguration, size: 40)
+                            .opacity(isSelected ? 0 : 1)
+                        CheckboxView(isSelected: isSelected, density: density, accentColor: accentColor)
+                            .opacity(isSelected ? 1 : 0)
+                    }
+                    .animation(nil, value: isSelected)
                 }
+                .buttonStyle(.plain)
                 .accessibility(hidden: true)
-                .animation(nil, value: isSelected)
             } else if isMultipleSelectionEnabled {
                 CheckboxView(isSelected: isSelected, density: density, accentColor: accentColor)
                     .opacity(shouldDisplayCheckbox ? 1 : 0)
