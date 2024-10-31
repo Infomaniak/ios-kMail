@@ -107,7 +107,7 @@ struct CreateFolderView: View {
                 case .modify:
                     if folder != nil {
                         await tryOrDisplayError {
-                            let folder = try await mailboxManager.modifyFolder(
+                            try await mailboxManager.modifyFolder(
                                 name: folderName,
                                 folder: folder!
                             )
@@ -127,6 +127,9 @@ struct CreateFolderView: View {
         }
         .onAppear {
             isFocused = true
+            if folder != nil {
+                folderName = folder!.name
+            }
         }
         .accessibilityAction(.escape) {
             dismiss()
