@@ -54,7 +54,12 @@ struct FoldersListView: View {
                                 currentFolder = folder.frozenContent
                                 isShowingCreateFolderAlert.toggle()
                             } label: {
-                                Label("Modifier", image: MailResourcesAsset.pencilPlain.name)
+                                Label {
+                                    Text("Renommer")
+                                } icon: {
+                                    MailResourcesAsset.pencilPlain.swiftUIImage
+                                }
+
                             }
                             Button {
                                 Task {
@@ -68,7 +73,11 @@ struct FoldersListView: View {
                                     }
                                 }
                             } label: {
-                                Label("Supprimer", image: MailResourcesAsset.bin.name)
+                                Label {
+                                    Text("Supprimer")
+                                } icon: {
+                                    MailResourcesAsset.bin.swiftUIImage
+                                }
                             }
                         }
                     }

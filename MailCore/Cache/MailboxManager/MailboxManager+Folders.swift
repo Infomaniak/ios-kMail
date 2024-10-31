@@ -100,16 +100,18 @@ public extension MailboxManager {
 
     func deleteFolder(folder: Folder) async throws {
         try await apiFetcher.delete(mailbox: mailbox, folder: folder)
-//        try writeTransaction { writableRealm in
-//            writableRealm.delete(folder)
-//        }
+        guard let liveFolder = folder.thaw() else { return }
+        try writeTransaction { writableRealm in
+            writableRealm.delete(liveFolder)
+        }
     }
 
     func modifyFolder(name: String, folder: Folder) async throws {
         try await apiFetcher.modify(mailbox: mailbox, folder: folder, name: name)
-//        try writeTransaction { writableRealm in
-//            writableRealm.delete(folder)
-//        }
+        guard let liveFolder = folder.thaw() else { return }
+        try writeTransaction { writableRealm in
+            writableRealm.add(liveFolder, update: .modified)
+        }
     }
 
     // MARK: RefreshActor

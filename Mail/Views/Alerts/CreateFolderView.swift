@@ -37,6 +37,7 @@ struct CreateFolderView: View {
 
     @State private var folderName = ""
     @State private var error: FolderError?
+    @State private var isModifyView = false
 
     @FocusState private var isFocused
 
@@ -80,7 +81,7 @@ struct CreateFolderView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(MailResourcesStrings.Localizable.newFolderDialogTitle)
+            Text(isModifyView ? "Renommer le dossier" : MailResourcesStrings.Localizable.newFolderDialogTitle)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, IKPadding.alertTitleBottom)
 
@@ -89,7 +90,7 @@ struct CreateFolderView: View {
                 .padding(value: .intermediate)
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
-                        .stroke(error == nil ? MailResourcesAsset.textFieldBorder.swiftUIColor : MailResourcesAsset.redColor
+                        .stroke(isModifyView || error == nil ? MailResourcesAsset.textFieldBorder.swiftUIColor : MailResourcesAsset.redColor
                             .swiftUIColor)
                         .animation(.easeInOut, value: error)
                 )
@@ -99,21 +100,18 @@ struct CreateFolderView: View {
             Text(error?.errorDescription ?? "")
                 .textStyle(.labelError)
                 .padding(.top, value: .extraSmall)
-                .opacity(error == nil ? 0 : 1)
+                .opacity(isModifyView || error == nil ? 0 : 1)
                 .padding(.bottom, value: .small)
 
             ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: isButtonEnabled) {
-                switch mode {
-                case .modify:
-                    if folder != nil {
-                        await tryOrDisplayError {
-                            try await mailboxManager.modifyFolder(
-                                name: folderName,
-                                folder: folder!
-                            )
-                        }
+                if folder != nil && isModifyView {
+                    await tryOrDisplayError {
+                        try await mailboxManager.modifyFolder(
+                            name: folderName,
+                            folder: folder!
+                        )
                     }
-                default:
+                } else {
                     await tryOrDisplayError {
                         matomo.track(eventWithCategory: .createFolder, name: "confirm")
                         let folder = try await mailboxManager.createFolder(name: folderName, parent: nil)
@@ -129,6 +127,12 @@ struct CreateFolderView: View {
             isFocused = true
             if folder != nil {
                 folderName = folder!.name
+            }
+            switch mode {
+            case .modify:
+                isModifyView = true
+            default:
+                return
             }
         }
         .accessibilityAction(.escape) {
