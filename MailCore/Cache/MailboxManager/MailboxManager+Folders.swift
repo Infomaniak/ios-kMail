@@ -98,8 +98,15 @@ public extension MailboxManager {
         return frozenFolder
     }
 
-    func deleteFolder(name: String, folder: Folder) async throws {
+    func deleteFolder(folder: Folder) async throws {
         try await apiFetcher.delete(mailbox: mailbox, folder: folder)
+//        try writeTransaction { writableRealm in
+//            writableRealm.delete(folder)
+//        }
+    }
+
+    func modifyFolder(name: String, folder: Folder) async throws -> Folder {
+        try await apiFetcher.modify(mailbox: mailbox, folder: folder, name: name)
 //        try writeTransaction { writableRealm in
 //            writableRealm.delete(folder)
 //        }
