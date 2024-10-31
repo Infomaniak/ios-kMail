@@ -74,7 +74,8 @@ public protocol MailboxManagerFolderable {
     func getFolder(with role: FolderRole) -> Folder?
     func getFrozenFolders() -> [Folder]
     func createFolder(name: String, parent: Folder?) async throws -> Folder
-    func deleteFolder(name: String, folder: Folder) async throws
+    func modifyFolder(name: String, folder: Folder) async throws -> Folder
+    func deleteFolder(folder: Folder) async throws
     func flushFolder(folder: Folder) async throws -> Bool
     func refreshFolder(from messages: [Message], additionalFolder: Folder?) async throws
     func refreshFolderContent(_ folder: Folder) async

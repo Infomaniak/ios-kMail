@@ -47,16 +47,21 @@ struct FoldersListView: View {
                     .contextMenu {
                         if isUserFoldersList {
                             Button {
-                                print("Dossier modifié")
+                                Task {
+                                    do {
+                                        try await mailboxManager.modifyFolder(name: "RENAME", folder: folder.frozenContent)
+
+                                    } catch {
+                                        print("error")
+                                    }
+                                }
                             } label: {
                                 Label("Modifier", image: MailResourcesAsset.pencilPlain.name)
                             }
                             Button {
                                 Task {
                                     do {
-//                                        try await mailboxManager.createFolder(name: "Dossier4", parent: nil)
                                         try await mailboxManager.deleteFolder(
-                                            name: folder.frozenContent.name,
                                             folder: folder.frozenContent
                                         )
 
@@ -64,7 +69,6 @@ struct FoldersListView: View {
                                         print("error")
                                     }
                                 }
-                                print("Dossier supprimé")
                             } label: {
                                 Label("Supprimer", image: MailResourcesAsset.bin.name)
                             }
