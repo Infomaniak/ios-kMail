@@ -258,7 +258,7 @@ public class ActionsManager: ObservableObject {
         if originFolder?.permanentlyDeleteContent == true {
             let permanentlyDeleteTask = Task {
                 guard originFolder?.role != .scheduledDrafts else {
-                    try await mailboxManager.delete(draftMessage: messages.first!)
+                    try await mailboxManager.delete(draftMessages: messages)
                     return
                 }
                 try await mailboxManager.delete(messages: messages)

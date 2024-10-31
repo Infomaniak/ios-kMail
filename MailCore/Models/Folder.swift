@@ -193,7 +193,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     public var shouldWarnBeforeDeletion: Bool {
-        permanentlyDeleteContent && role != .draft
+        permanentlyDeleteContent && (role != .draft && role != .scheduledDrafts)
     }
 
     public var matomoName: String {

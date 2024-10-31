@@ -62,8 +62,9 @@ public protocol MailboxManagerDraftable {
     func send(draft: Draft) async throws -> SendResponse
     func save(draft: Draft) async throws
     func delete(draft: Draft) async throws
-    func delete(draftMessage: Message) async throws
+    func delete(draftMessages: [Message]) async throws
     func deleteLocally(draft: Draft) async throws
+    func deleteLocally(drafts: [Draft]) async throws
     func deleteOrphanDrafts() async
 }
 
