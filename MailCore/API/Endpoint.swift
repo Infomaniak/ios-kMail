@@ -141,9 +141,13 @@ public extension Endpoint {
     static func folders(uuid: String) -> Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/folder")
     }
-    
+
     static func folder(uuid: String, folderUUID: String) -> Endpoint {
         return .folders(uuid: uuid).appending(path: "/\(folderUUID)")
+    }
+
+    static func modifyFolder(mailboxUuid: String, folderId: String) -> Endpoint {
+        return .folders(uuid: mailboxUuid).appending(path: "/\(folderId)/rename")
     }
 
     static func flushFolder(mailboxUuid: String, folderId: String) -> Endpoint {
