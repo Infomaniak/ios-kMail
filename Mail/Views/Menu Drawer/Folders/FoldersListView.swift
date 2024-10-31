@@ -28,6 +28,7 @@ struct FoldersListView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ModalState private var isShowingCreateFolderAlert = false
+    @State private var currentFolder: Folder?
 
     private let folders: [NestableFolder]
     private let hasSubFolders: Bool
@@ -50,14 +51,8 @@ struct FoldersListView: View {
                     .contextMenu {
                         if isUserFoldersList {
                             Button {
-                                Task {
-                                    do {
-                                        isShowingCreateFolderAlert.toggle()
-
-                                    } catch {
-                                        print("error")
-                                    }
-                                }
+                                currentFolder = folder.frozenContent
+                                isShowingCreateFolderAlert.toggle()
                             } label: {
                                 Label("Modifier", image: MailResourcesAsset.pencilPlain.name)
                             }
@@ -69,7 +64,7 @@ struct FoldersListView: View {
                                         )
 
                                     } catch {
-                                        print("error")
+                                        print(error)
                                     }
                                 }
                             } label: {
@@ -78,7 +73,7 @@ struct FoldersListView: View {
                         }
                     }
                     .customAlert(isPresented: $isShowingCreateFolderAlert) {
-                        CreateFolderView(mode: .modify, folder: folder.frozenContent)
+                        CreateFolderView(mode: .modify, folder: currentFolder)
                     }
             }
         }
