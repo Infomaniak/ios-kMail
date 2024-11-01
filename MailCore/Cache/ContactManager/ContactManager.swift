@@ -116,7 +116,8 @@ public final class ContactManager: ObservableObject, ContactManageable {
 
         do {
             // Track background refresh of addressBooks
-            let backgroundTaskTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
+            let expiringActivity = ExpiringActivity(id: #function + UUID().uuidString)
+            expiringActivity.start()
 
             // Fetch remote content
             async let addressBooksRequest = apiFetcher.addressBooks().addressbooks
@@ -126,7 +127,7 @@ public final class ContactManager: ObservableObject, ContactManageable {
             try? writeTransaction { writableRealm in
                 writableRealm.add(addressBooks, update: .modified)
             }
-            await backgroundTaskTracker.end()
+            expiringActivity.endAll()
 
             // Process Contacts
             await uniqueUpdateContactDBTask(apiFetcher)

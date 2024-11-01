@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
@@ -67,7 +68,8 @@ public struct MessageActionHandler: MessageActionHandlable {
     }
 
     func handleArchiveOnNotification(messageUid: String, mailboxManager: MailboxManager) async throws {
-        let backgroundTaskTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
+        let expiringActivity = ExpiringActivity(id: #function + UUID().uuidString)
+        expiringActivity.start()
 
         matomo.track(eventWithCategory: .notificationActions, name: ActionNames.archive)
 
@@ -77,11 +79,12 @@ public struct MessageActionHandler: MessageActionHandlable {
 
         matomo.track(eventWithCategory: .notificationActions, name: ActionNames.archiveExecuted)
 
-        await backgroundTaskTracker.end()
+        expiringActivity.endAll()
     }
 
     func handleDeleteOnNotification(messageUid: String, mailboxManager: MailboxManager) async throws {
-        let backgroundTaskTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString)
+        let expiringActivity = ExpiringActivity(id: #function + UUID().uuidString)
+        expiringActivity.start()
 
         matomo.track(eventWithCategory: .notificationActions, name: ActionNames.delete)
 
@@ -91,7 +94,7 @@ public struct MessageActionHandler: MessageActionHandlable {
 
         matomo.track(eventWithCategory: .notificationActions, name: ActionNames.deleteExecuted)
 
-        await backgroundTaskTracker.end()
+        expiringActivity.endAll()
     }
 
     /// - Private

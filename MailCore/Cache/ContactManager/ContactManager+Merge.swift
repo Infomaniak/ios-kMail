@@ -18,6 +18,7 @@
 
 import Contacts
 import Foundation
+import InfomaniakCore
 import InfomaniakCoreCommonUI
 import OSLog
 
@@ -28,6 +29,12 @@ extension CNContact {
          We trim the name in case givenName or familyName is empty
          */
         return (givenName + " " + familyName).trimmingCharacters(in: .whitespaces)
+    }
+}
+
+extension ContactManager: ExpiringActivityDelegate {
+    public func backgroundActivityExpiring() {
+        currentMergeRequest?.cancel()
     }
 }
 
@@ -54,9 +61,8 @@ extension ContactManager {
         Logger.general.info("Will start updating contacts in DB")
 
         // Track background refresh of contacts, and cancel task is system asks to.
-        let backgroundTaskTracker = await ApplicationBackgroundTaskTracker(identifier: #function + UUID().uuidString) {
-            self.currentMergeRequest?.cancel()
-        }
+        let expiringActivity = ExpiringActivity(id: #function + UUID().uuidString, delegate: self)
+        expiringActivity.start()
 
         let updateTask = Task {
             // Fetch remote contacts
@@ -76,7 +82,7 @@ extension ContactManager {
         await updateTask.finish()
 
         // Making sure to terminate BG work tracker
-        await backgroundTaskTracker.end()
+        expiringActivity.endAll()
 
         // cleanup
         currentMergeRequest = nil
