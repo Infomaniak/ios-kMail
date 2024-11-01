@@ -67,7 +67,10 @@ struct FoldersListView: View {
                                         try await mailboxManager.deleteFolder(
                                             folder: folder.frozenContent
                                         )
-
+                                        if mainViewState.selectedFolder.remoteId == folder.frozenContent.remoteId,
+                                           let inbox = mailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
+                                            mainViewState.selectedFolder = inbox
+                                        }
                                     } catch {
                                         print(error)
                                     }
