@@ -38,6 +38,7 @@ struct CreateFolderView: View {
     @State private var folderName = ""
     @State private var error: FolderError?
     @State private var isModifyView = false
+    @State private var isInitialName = false
 
     @FocusState private var isFocused
 
@@ -81,7 +82,8 @@ struct CreateFolderView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(isModifyView ? "Renommer le dossier" : MailResourcesStrings.Localizable.newFolderDialogTitle)
+            Text(isModifyView ? MailResourcesStrings.Localizable.renameFolder : MailResourcesStrings.Localizable
+                .newFolderDialogTitle)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, IKPadding.alertTitleBottom)
 
@@ -90,7 +92,8 @@ struct CreateFolderView: View {
                 .padding(value: .intermediate)
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
-                        .stroke(isModifyView || error == nil ? MailResourcesAsset.textFieldBorder.swiftUIColor : MailResourcesAsset.redColor
+                        .stroke(isInitialName || error == nil ? MailResourcesAsset.textFieldBorder
+                            .swiftUIColor : MailResourcesAsset.redColor
                             .swiftUIColor)
                         .animation(.easeInOut, value: error)
                 )
@@ -100,7 +103,7 @@ struct CreateFolderView: View {
             Text(error?.errorDescription ?? "")
                 .textStyle(.labelError)
                 .padding(.top, value: .extraSmall)
-                .opacity(isModifyView || error == nil ? 0 : 1)
+                .opacity(isInitialName || error == nil ? 0 : 1)
                 .padding(.bottom, value: .small)
 
             ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: isButtonEnabled) {
@@ -145,6 +148,14 @@ struct CreateFolderView: View {
         guard !trimmedName.isEmpty else {
             withAnimation { error = nil }
             return
+        }
+
+        if folder != nil {
+            if folderName == folder!.name {
+                isInitialName = true
+            } else {
+                isInitialName = false
+            }
         }
 
         withAnimation {
