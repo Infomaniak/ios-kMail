@@ -58,7 +58,11 @@ struct MessageScheduleHeaderView: View {
             .controlSize(.small)
         }
         .customAlert(isPresented: $customSchedule) {
-            CustomScheduleModalView(isFloatingPanelPresented: .constant(false), confirmAction: changeScheduleDate)
+            CustomScheduleModalView(
+                isFloatingPanelPresented: .constant(false),
+                selectedDate: .constant(.now),
+                confirmAction: changeScheduleDate
+            )
         }
         .customAlert(isPresented: $modifyMessage) {
             VStack(alignment: .leading, spacing: 16) {
@@ -74,16 +78,26 @@ struct MessageScheduleHeaderView: View {
 
     private func changeScheduleDate(_ selectedDate: Date) {
         Task {
-            try await mailboxManager.apiFetcher.changeDraftSchedule(
-                draftResource: draftResource,
-                scheduleDateIso8601: selectedDate.ISO8601WithTimeZone
-            )
+            await tryOrDisplayError {
+                try await mailboxManager.apiFetcher.changeDraftSchedule(
+                    draftResource: draftResource,
+                    scheduleDateIso8601: selectedDate.ISO8601WithTimeZone
+                )
+                if let scheduleFolder = try await mailboxManager.getFolder(with: .scheduledDrafts)?.freezeIfNeeded() {
+                    try await mailboxManager.refreshFolderContent(scheduleFolder)
+                }
+            }
         }
     }
 
     private func modifySchedule() {
         Task {
-            try await mailboxManager.apiFetcher.deleteSchedule(draftResource: draftResource)
+            await tryOrDisplayError {
+                try await mailboxManager.apiFetcher.deleteSchedule(draftResource: draftResource)
+                if let scheduleFolder = try await mailboxManager.getFolder(with: .scheduledDrafts)?.freezeIfNeeded() {
+                    try await mailboxManager.refreshFolderContent(scheduleFolder)
+                }
+            }
         }
     }
 }

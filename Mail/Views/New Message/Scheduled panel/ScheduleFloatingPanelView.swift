@@ -30,10 +30,10 @@ struct ScheduleFloatingPanelView: View {
     @Binding var isPresented: Bool
     @Binding var customSchedule: Bool
 
-    let lastSchedule: Date?
+    let lastScheduleInterval: Double
     let hasScheduleSendEnabled = true
-    let mailboxManager: MailboxManager
     let dismissMessageView: () -> Void
+    let setScheduleAction: (Date) -> Void
 
     private var scheduleOptions: [ScheduleSendOption] {
         guard !isWeekend() else { return [.nextMondayMorning, .nextMondayAfternoon] }
@@ -54,8 +54,15 @@ struct ScheduleFloatingPanelView: View {
         VStack {
             Text(MailResourcesStrings.Localizable.scheduleSendingTitle)
                 .font(.title3)
+            if lastScheduleInterval > Date.now.timeIntervalSince1970 {
+                ScheduleOptionButton(
+                    option: .lastSchedule(value: Date(timeIntervalSince1970: lastScheduleInterval)),
+                    setScheduleAction: setScheduleAction
+                )
+                IKDivider()
+            }
             ForEach(scheduleOptions) { option in
-                ScheduleOptionButton(option: option, setScheduleAction: setSchedule)
+                ScheduleOptionButton(option: option, setScheduleAction: setScheduleAction)
                 if option != scheduleOptions.last {
                     IKDivider()
                 }
@@ -70,13 +77,6 @@ struct ScheduleFloatingPanelView: View {
 
     private func isWeekend() -> Bool {
         [1, 7].contains(Calendar.current.component(.weekday, from: Date.now))
-    }
-
-    private func setSchedule(_ scheduleDateIso8601: String) {
-        $draft.action.wrappedValue = .schedule
-        $draft.scheduleDate.wrappedValue = scheduleDateIso8601
-        $draft.delay.wrappedValue = nil
-        dismissMessageView()
     }
 }
 
@@ -114,11 +114,11 @@ struct CustomScheduleButton: View {
 
 struct ScheduleOptionButton: View {
     let option: ScheduleSendOption
-    let setScheduleAction: (String) -> Void
+    let setScheduleAction: (Date) -> Void
 
     var body: some View {
         Button(action: {
-            if let formatDate = option.iso8601 {
+            if let formatDate = option.date {
                 setScheduleAction(formatDate)
             }
         }, label: {

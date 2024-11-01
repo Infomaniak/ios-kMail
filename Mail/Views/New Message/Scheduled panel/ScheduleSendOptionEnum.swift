@@ -94,6 +94,11 @@ enum ScheduleSendOption: Identifiable, Equatable {
     private func nextMonday(setHour: Int) -> Date? {
         let todayMidDay = Calendar.current.startOfDay(for: .now).addingTimeInterval(43200)
         print(DateFormatter.localizedString(from: todayMidDay, dateStyle: .medium, timeStyle: .medium))
-        return Calendar.current.nextDate(after: todayMidDay, matching: .init(hour: setHour, weekday: 2), matchingPolicy: .nextTime, direction: .forward)
+        return Calendar.current.nextDate(
+            after: todayMidDay,
+            matching: .init(hour: setHour, weekday: 2),
+            matchingPolicy: .nextTime,
+            direction: .forward
+        )
     }
 }

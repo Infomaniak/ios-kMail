@@ -35,13 +35,14 @@ extension View {
             draft: draft,
             mailBoxManager: mailboxManager,
             isPresented: isPresented,
-            lastSchedule: .distantFuture,
             dismissMessageView: dismissMessageView
         ))
     }
 }
 
 struct ScheduleFloatingPanel: ViewModifier {
+    @AppStorage(UserDefaults.shared.key(.lastScheduleInterval)) private var lastScheduleInterval: Double = 0
+
     @ObservedRealmObject var draft: Draft
 
     @State private var selectedDate = Date.now
@@ -52,7 +53,6 @@ struct ScheduleFloatingPanel: ViewModifier {
 
     @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var customSchedule: Bool
 
-    let lastSchedule: Date?
     let dismissMessageView: () -> Void
 
     func body(content: Content) -> some View {
@@ -62,23 +62,32 @@ struct ScheduleFloatingPanel: ViewModifier {
                     draft: draft,
                     isPresented: $isPresented,
                     customSchedule: $customSchedule,
-                    lastSchedule: lastSchedule,
-                    mailboxManager: mailBoxManager,
-                    dismissMessageView: dismissMessageView
+                    lastScheduleInterval: lastScheduleInterval,
+                    dismissMessageView: dismissMessageView,
+                    setScheduleAction: setSchedule
                 )
             }
             .customAlert(isPresented: $customSchedule) {
                 CustomScheduleModalView(
                     isFloatingPanelPresented: $isPresented,
-                    confirmAction: setCustomSchedule
+                    selectedDate: $selectedDate,
+                    confirmAction: setSchedule
                 )
             }
     }
 
-    private func setCustomSchedule(_ scheduleDate: Date) {
+    private func setSchedule(_ scheduleDate: Date) {
+        lastScheduleInterval = scheduleDate.timeIntervalSince1970
         $draft.action.wrappedValue = .schedule
         $draft.scheduleDate.wrappedValue = scheduleDate.ISO8601WithTimeZone
         $draft.delay.wrappedValue = nil
         dismissMessageView()
+        Task {
+            await tryOrDisplayError {
+                if let scheduleFolder = try await mailBoxManager.getFolder(with: .scheduledDrafts)?.freezeIfNeeded() {
+                    try await mailBoxManager.refreshFolderContent(scheduleFolder)
+                }
+            }
+        }
     }
 }
