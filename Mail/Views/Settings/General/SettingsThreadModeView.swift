@@ -75,7 +75,7 @@ struct SettingsThreadModeView: View {
                 ) {
                     selectedValue = threadModeUpdate.newSetting
                     Task {
-                        accountManager.updateConversationSettings()
+                        await accountManager.cleanAllRealms()
                         UserDefaults.shared.threadMode = selectedValue
                     }
                 }
