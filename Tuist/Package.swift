@@ -28,7 +28,7 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "12.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-bug-tracker", .upToNextMajor(from: "7.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-version-checker", .upToNextMajor(from: "7.0.0")),
-        .package(url: "https://github.com/Infomaniak/ios-onboarding", .upToNextMajor(from: "1.0.3")),
+        .package(url: "https://github.com/Infomaniak/ios-onboarding", .upToNextMajor(from: "1.1.0")),
         .package(url: "https://github.com/Infomaniak/swift-modal-presentation", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/Infomaniak/SwiftSoup", .upToNextMajor(from: "1.1.0")),
         .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.21.0")),
