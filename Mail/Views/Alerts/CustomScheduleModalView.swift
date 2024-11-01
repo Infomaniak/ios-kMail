@@ -22,7 +22,7 @@ import SwiftUI
 
 struct CustomScheduleModalView: View {
     @Binding var isFloatingPanelPresented: Bool
-    @State var selectedDate: Date = .now
+    @Binding var selectedDate: Date
 
     let confirmAction: (Date) -> Void
 
