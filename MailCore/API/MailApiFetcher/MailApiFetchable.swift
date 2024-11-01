@@ -69,6 +69,8 @@ public protocol MailApiCommonFetchable {
     @discardableResult
     func delete(mailbox: Mailbox, folder: Folder) async throws -> Empty?
 
+    func modify(mailbox: Mailbox, folder: Folder, name: String) async throws -> Folder
+
     func createAttachment(mailbox: Mailbox,
                           attachmentData: Data,
                           attachment: Attachment,
