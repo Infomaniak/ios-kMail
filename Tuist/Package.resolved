@@ -21,7 +21,7 @@
     {
       "identity" : "cocoalumberjack",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack",
+      "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack.git",
       "state" : {
         "revision" : "4b8714a7fb84d42393314ce897127b3939885ec3",
         "version" : "3.8.5"
@@ -95,7 +95,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-onboarding",
       "state" : {
-        "revision" : "639f24fbed01d6f084d63d3ddbd7108d1af2cc25",
+        "revision" : "e91ec14a43ac0a32d158aba72af7d4789e30d01c",
         "version" : "1.1.0"
       }
     },
