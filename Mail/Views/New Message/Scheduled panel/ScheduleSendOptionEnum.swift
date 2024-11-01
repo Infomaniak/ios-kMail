@@ -32,11 +32,11 @@ enum ScheduleSendOption: Identifiable, Equatable {
     var date: Date? {
         switch self {
         case .thisAfternoon:
-            return dateFromNow(setHour: 14, addDay: 0, addWeek: 0)
+            return dateFromNow(setHour: 14)
         case .thisEvening:
-            return dateFromNow(setHour: 18, addDay: 0, addWeek: 0)
+            return dateFromNow(setHour: 18)
         case .tomorrowMorning:
-            return dateFromNow(setHour: 8, addDay: 1, addWeek: 0)
+            return dateFromNow(setHour: 8, tomorrow: true)
         case .nextMondayMorning:
             return nextMonday(setHour: 8)
         case .nextMondayAfternoon:
@@ -85,15 +85,15 @@ enum ScheduleSendOption: Identifiable, Equatable {
         return date.ISO8601WithTimeZone
     }
 
-    private func dateFromNow(setHour: Int, addDay: Int, addWeek: Int) -> Date? {
+    private func dateFromNow(setHour: Int, tomorrow: Bool = false) -> Date? {
         let startOfDay = Calendar.current.startOfDay(for: .now)
-        guard let dateWithDay = Calendar.current.date(byAdding: .day, value: addDay, to: startOfDay) else { return nil }
-        guard let dateWithHour = Calendar.current.date(bySetting: .hour, value: setHour, of: dateWithDay) else { return nil }
-        return Calendar.current.date(byAdding: .weekOfYear, value: addWeek, to: dateWithHour)
+        guard let dateWithDay = Calendar.current.date(byAdding: .day, value: tomorrow ? 1 : 0, to: startOfDay) else { return nil }
+        return Calendar.current.date(bySetting: .hour, value: setHour, of: dateWithDay)
     }
 
     private func nextMonday(setHour: Int) -> Date? {
-        guard let nextMonday = Calendar.current.date(bySetting: .weekday, value: 2, of: .now) else { return nil }
-        return Calendar.current.date(bySetting: .hour, value: setHour, of: nextMonday)
+        let todayMidDay = Calendar.current.startOfDay(for: .now).addingTimeInterval(43200)
+        print(DateFormatter.localizedString(from: todayMidDay, dateStyle: .medium, timeStyle: .medium))
+        return Calendar.current.nextDate(after: todayMidDay, matching: .init(hour: setHour, weekday: 2), matchingPolicy: .nextTime, direction: .forward)
     }
 }
