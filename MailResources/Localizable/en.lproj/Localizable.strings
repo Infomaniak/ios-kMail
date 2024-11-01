@@ -4,7 +4,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Jordan Chapelle
- * Exported at: Thu, 31 Oct 2024 17:07:21 +0100
+ * Exported at: Fri, 01 Nov 2024 09:54:33 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -57,6 +57,9 @@
 
 /* loco:629f0f8232570829c53e38e2 */
 "actionPrint" = "Print";
+
+/* loco:67247bd43e094b31a70e2272 */
+"actionRename" = "Rename";
 
 /* loco:6284fd413d98060ac31f76d2 */
 "actionReply" = "Reply";
@@ -1150,6 +1153,9 @@
 /* loco:62baabfc07e6a001ca19e535 */
 "refreshTokenError" = "You have been disconnected";
 
+/* loco:67247c6c7e4e57666a017942 */
+"renameFolder" = "Rename the folder";
+
 /* loco:62cd640724b16d271d296bc2 */
 "reportDisplayProblemDescription" = "Do you agree to share your data with our developers so that they can help you with your problem?";
 
@@ -1572,6 +1578,9 @@
 
 /* loco:62c2f9feea59c120ad52bc23 */
 "snackbarRestorationLaunched" = "Launching the restoration";
+
+/* loco:6724945abc76f1f0d105ff12 */
+"snackbarScheduleSaved" = "The message will be sent on %@";
 
 /* loco:62ab4ab51521a800290a7c32 */
 "snackbarSenderBlacklisted" = "Sender successfully blacklisted";
