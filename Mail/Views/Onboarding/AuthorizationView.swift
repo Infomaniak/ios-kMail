@@ -60,7 +60,7 @@ struct AuthorizationView: View {
     private var slides = Slide.authorizationSlides
 
     var body: some View {
-        WaveView(slides: slides, selectedSlide: $selection, isScrollEnabled: isScrollEnabled) { _ in
+        WaveView(slides: slides, selectedSlide: $selection, isScrollEnabled: isScrollEnabled, isPageIndicatorHidden: true) { _ in
             VStack(spacing: IKPadding.small) {
                 Button(MailResourcesStrings.Localizable.contentDescriptionButtonNext, action: nextButtonClicked)
                     .buttonStyle(.ikBorderedProminent)

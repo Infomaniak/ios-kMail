@@ -27,6 +27,7 @@ struct WaveView<BottomView: View>: UIViewControllerRepresentable {
     @Binding var selectedSlide: Int
 
     let isScrollEnabled: Bool
+    let isPageIndicatorHidden: Bool
     let slides: [Slide]
     let headerImage: UIImage?
 
@@ -39,6 +40,7 @@ struct WaveView<BottomView: View>: UIViewControllerRepresentable {
         slides: [Slide],
         selectedSlide: Binding<Int>,
         isScrollEnabled: Bool = true,
+        isPageIndicatorHidden: Bool = false,
         headerImage: UIImage? = MailResourcesAsset.logoText.image,
         dismissHandler: (() -> Void)? = nil,
         shouldAnimateBottomViewForIndex: @escaping (Int) -> Bool = { _ in return false },
@@ -51,6 +53,7 @@ struct WaveView<BottomView: View>: UIViewControllerRepresentable {
         self.dismissHandler = dismissHandler
         self.shouldAnimateBottomViewForIndex = shouldAnimateBottomViewForIndex
         self.bottomView = bottomView
+        self.isPageIndicatorHidden = isPageIndicatorHidden
     }
 
     func makeUIViewController(context: Context) -> OnboardingViewController {
@@ -60,7 +63,7 @@ struct WaveView<BottomView: View>: UIViewControllerRepresentable {
             pageIndicatorColor: accentColor.primary.color,
             isScrollEnabled: isScrollEnabled,
             dismissHandler: dismissHandler,
-            isPageIndicatorHidden: true
+            isPageIndicatorHidden: isPageIndicatorHidden
         )
 
         let controller = OnboardingViewController(configuration: configuration)
