@@ -150,8 +150,10 @@ public final class DraftManager {
                 }
             } else if draft.action == .schedule {
                 try await mailboxManager.schedule(draft: draft)
-                if showSnackbar {
-                    alertDisplayable.show(message: "Schedule bien enregistré.")
+                if showSnackbar, let scheduleDate = draft.scheduleDate,
+                   let date = ISO8601DateFormatter().date(from: scheduleDate) {
+                    let formattedDate = DateFormatter.localizedString(from: date, dateStyle: .medium, timeStyle: .short)
+                    alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarScheduleSaved(formattedDate))
                 }
             }
         } catch {

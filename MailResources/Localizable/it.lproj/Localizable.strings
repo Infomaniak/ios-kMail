@@ -4,7 +4,7 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: Jordan Chapelle
- * Exported at: Thu, 31 Oct 2024 17:07:21 +0100
+ * Exported at: Fri, 01 Nov 2024 09:54:33 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -57,6 +57,9 @@
 
 /* loco:629f0f8232570829c53e38e2 */
 "actionPrint" = "Stampa";
+
+/* loco:67247bd43e094b31a70e2272 */
+"actionRename" = "Rinominare";
 
 /* loco:6284fd413d98060ac31f76d2 */
 "actionReply" = "Rispondi";
@@ -668,7 +671,7 @@
 "createFolderParent" = "Cartella dei genitori";
 
 /* loco:6723a25570ccbbb9b709fb62 */
-"datePickerTitle" = "Scegli una data e un'ora";
+"datePickerTitle" = "Scegli una data e un’ora";
 
 /* loco:6294648c19755a1ae9494462 */
 "dateTitle" = "Data:";
@@ -692,7 +695,7 @@
 "draftPrefix" = "(Bozza)";
 
 /* loco:6723aa01f9685843aa0de8a3 */
-"editSendDescription" = "Programming cancelled. This message will be moved to your drafts to be sent whenever you want.";
+"editSendDescription" = "Programmazione annullata. Questo messaggio verrà spostato nelle tue bozze per essere inviato quando vuoi.";
 
 /* loco:6723a9b2b22031bf3701ae62 */
 "editSendTitle" = "Modifica invio";
@@ -1150,6 +1153,9 @@
 /* loco:62baabfc07e6a001ca19e535 */
 "refreshTokenError" = "Sei stato disconnesso";
 
+/* loco:67247c6c7e4e57666a017942 */
+"renameFolder" = "Rinominare la cartella";
+
 /* loco:62cd640724b16d271d296bc2 */
 "reportDisplayProblemDescription" = "Accettate di condividere i vostri dati con i nostri sviluppatori in modo che possano aiutarvi a risolvere il vostro problema?";
 
@@ -1181,7 +1187,7 @@
 "saveMailInkDrive" = "Salva in kDrive";
 
 /* loco:6723a3818bedb42b0805f613 */
-"scheduleSendingTitle" = "Pianifica l'invio";
+"scheduleSendingTitle" = "Pianifica l’invio";
 
 /* loco:6723a770a20911146d083622 */
 "scheduledEmailHeader" = "Questa email verrà inviata in questa data: %@";
@@ -1572,6 +1578,9 @@
 
 /* loco:62c2f9feea59c120ad52bc23 */
 "snackbarRestorationLaunched" = "Avvio del restauro";
+
+/* loco:6724945abc76f1f0d105ff12 */
+"snackbarScheduleSaved" = "Il messaggio verrà inviato il %@";
 
 /* loco:62ab4ab51521a800290a7c32 */
 "snackbarSenderBlacklisted" = "Mittente inserito nella lista nera con successo";

@@ -4,7 +4,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Jordan Chapelle
- * Exported at: Thu, 31 Oct 2024 17:07:21 +0100
+ * Exported at: Fri, 01 Nov 2024 09:54:33 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -57,6 +57,9 @@
 
 /* loco:629f0f8232570829c53e38e2 */
 "actionPrint" = "Imprimer";
+
+/* loco:67247bd43e094b31a70e2272 */
+"actionRename" = "Renommer";
 
 /* loco:6284fd413d98060ac31f76d2 */
 "actionReply" = "Répondre";
@@ -695,7 +698,7 @@
 "editSendDescription" = "Programmation annulée. Ce message sera déplacé dans vos brouillons pour être envoyé quand vous le souhaitez.";
 
 /* loco:6723a9b2b22031bf3701ae62 */
-"editSendTitle" = "Modifier l'envoie";
+"editSendTitle" = "Modifier l’envoie";
 
 /* loco:64243b4a9a9a1f26302e33f3 */
 "emailWithoutSubjectDescription" = "Vous êtes sur le point d’envoyer un message sans objet. Voulez-vous continuer ?";
@@ -1150,6 +1153,9 @@
 /* loco:62baabfc07e6a001ca19e535 */
 "refreshTokenError" = "Vous avez été déconnecté";
 
+/* loco:67247c6c7e4e57666a017942 */
+"renameFolder" = "Renommer le dossier";
+
 /* loco:62cd640724b16d271d296bc2 */
 "reportDisplayProblemDescription" = "Acceptez-vous de partager vos données avec nos développeurs pour qu’ils puissent vous aider concernant votre problème ?";
 
@@ -1572,6 +1578,9 @@
 
 /* loco:62c2f9feea59c120ad52bc23 */
 "snackbarRestorationLaunched" = "Lancement de la restauration";
+
+/* loco:6724945abc76f1f0d105ff12 */
+"snackbarScheduleSaved" = "Le message sera envoyé le %@";
 
 /* loco:62ab4ab51521a800290a7c32 */
 "snackbarSenderBlacklisted" = "Expéditeur blacklisté avec succès";
