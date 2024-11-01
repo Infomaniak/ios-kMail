@@ -465,7 +465,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
-    public func updateConversationSettings() {
+    public func cleanAllRealms() async {
         for account in accounts {
             for mailbox in mailboxInfosManager.getMailboxes(for: account.userId) {
                 if let mailboxManager = getMailboxManager(for: mailbox) {

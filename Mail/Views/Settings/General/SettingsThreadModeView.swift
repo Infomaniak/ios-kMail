@@ -31,6 +31,7 @@ struct ThreadModeSettingUpdate: Identifiable {
 
 struct SettingsThreadModeView: View {
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var accountManager: AccountManager
 
     @State private var selectedValue: ThreadMode
     @ModalState(wrappedValue: nil, context: ContextKeys.settings) private var threadModeSettingUpdate: ThreadModeSettingUpdate?
@@ -73,7 +74,10 @@ struct SettingsThreadModeView: View {
                     secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel
                 ) {
                     selectedValue = threadModeUpdate.newSetting
-                    UserDefaults.shared.threadMode = selectedValue
+                    Task {
+                        await accountManager.cleanAllRealms()
+                        UserDefaults.shared.threadMode = selectedValue
+                    }
                 }
             }
         }

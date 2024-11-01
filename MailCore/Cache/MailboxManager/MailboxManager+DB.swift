@@ -20,20 +20,18 @@ import Foundation
 
 public extension MailboxManager {
     func cleanRealm() {
-        Task {
-            try? writeTransaction { writableRealm in
-                let threads = writableRealm.objects(Thread.self)
-                writableRealm.delete(threads)
+        try? writeTransaction { writableRealm in
+            let threads = writableRealm.objects(Thread.self)
+            writableRealm.delete(threads)
 
-                let messages = writableRealm.objects(Message.self)
-                writableRealm.delete(messages)
+            let messages = writableRealm.objects(Message.self)
+            writableRealm.delete(messages)
 
-                let folders = writableRealm.objects(Folder.self)
-                for folder in folders {
-                    folder.cursor = nil
-                    folder.resetHistoryInfo()
-                    folder.computeUnreadCount()
-                }
+            let folders = writableRealm.objects(Folder.self)
+            for folder in folders {
+                folder.cursor = nil
+                folder.resetHistoryInfo()
+                folder.computeUnreadCount()
             }
         }
     }
