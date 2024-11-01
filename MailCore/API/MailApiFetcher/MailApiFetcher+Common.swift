@@ -158,7 +158,7 @@ public extension MailApiFetcher {
     }
 
     @discardableResult
-    func modify(mailbox: Mailbox, folder: Folder, name: String) async throws -> Empty? {
+    func modify(mailbox: Mailbox, folder: Folder, name: String) async throws -> Folder {
         let newName = ModifyFolder(name: name)
         return try await perform(request: authenticatedRequest(
             .modifyFolder(mailboxUuid: mailbox.uuid, folderId: folder.remoteId),
