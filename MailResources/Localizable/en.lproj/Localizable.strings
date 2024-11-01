@@ -4,7 +4,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Baptiste Griva
- * Exported at: Mon, 28 Oct 2024 14:20:07 +0100
+ * Exported at: Fri, 01 Nov 2024 08:03:40 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -57,6 +57,9 @@
 
 /* loco:629f0f8232570829c53e38e2 */
 "actionPrint" = "Print";
+
+/* loco:67247bd43e094b31a70e2272 */
+"actionRename" = "Rename";
 
 /* loco:6284fd413d98060ac31f76d2 */
 "actionReply" = "Reply";
@@ -379,6 +382,9 @@
 /* loco:62b1c0de630e5a572542c032 */
 "buttonCreateFolder" = "Add a folder";
 
+/* loco:6723a4468cf8e4d10e094606 */
+"buttonCustomSchedule" = "Custom schedule";
+
 /* loco:64abb7007886284b68017193 */
 "buttonDetachMailbox" = "detach mailbox";
 
@@ -430,6 +436,9 @@
 /* loco:65855b1bac34d439fd02e7e2 */
 "buttonMaybe" = "Maybe";
 
+/* loco:6723a53b28105b82c404e163 */
+"buttonModify" = "Modify";
+
 /* loco:6284fd623d98060ac31f76d5 */
 "buttonMore" = "More";
 
@@ -460,11 +469,17 @@
 /* loco:64a2b7a35386a9ec49013e42 */
 "buttonRequestPassword" = "Request password";
 
+/* loco:6723a9568fe8ffe07203af72 */
+"buttonReschedule" = "Reschedule";
+
 /* loco:62567b81c34ca7494235e273 */
 "buttonRestoreEmails" = "Restore emails";
 
 /* loco:62b2e4a24486732cbc2f04d3 */
 "buttonSchedule" = "Schedule email to send later";
+
+/* loco:6723a2a5f3c615913002d152 */
+"buttonScheduleTitle" = "Schedule";
 
 /* loco:65957d479527393708069ee2 */
 "buttonSee" = "See";
@@ -655,6 +670,9 @@
 /* loco:62b1c1491ea473352a4fb205 */
 "createFolderParent" = "Parent folder";
 
+/* loco:6723a25570ccbbb9b709fb62 */
+"datePickerTitle" = "Choose a date and time";
+
 /* loco:6294648c19755a1ae9494462 */
 "dateTitle" = "Date:";
 
@@ -666,6 +684,12 @@
 
 /* loco:6364d5ac2e2f281d52389ee2 */
 "draftPrefix" = "(Draft)";
+
+/* loco:6723aa01f9685843aa0de8a3 */
+"editSendDescription" = "Programming cancelled. This message will be moved to your drafts to be sent whenever you want.";
+
+/* loco:6723a9b2b22031bf3701ae62 */
+"editSendTitle" = "Edit Send";
 
 /* loco:64243b4a9a9a1f26302e33f3 */
 "emailWithoutSubjectDescription" = "You are about to send a message without a subject. Do you want to continue?";
@@ -895,6 +919,9 @@
 /* loco:627a3c64f10f5f31f53e1c02 */
 "inboxFolder" = "Inbox";
 
+/* loco:672398789bd6d8d56802d212 */
+"lastSelectedSchedule" = "Last selected schedule";
+
 /* loco:62c427c7ad522f1ff078a162 */
 "loadingText" = "Loading…";
 
@@ -1002,6 +1029,12 @@
 
 /* loco:6266655afabeeb6bc774c932 */
 "newMessagePlaceholderTitle" = "Type your message";
+
+/* loco:6723980d4062e74f78028152 */
+"nextMondayAfternoon" = "Monday afternoon";
+
+/* loco:67238d29fe561f9d0a0f5732 */
+"nextMondayMorning" = "Next monday";
 
 /* loco:62fb875a6743ac5a237b07e3 */
 "noBodyTitle" = "This message is empty.";
@@ -1111,6 +1144,9 @@
 /* loco:62baabfc07e6a001ca19e535 */
 "refreshTokenError" = "You have been disconnected";
 
+/* loco:67247c6c7e4e57666a017942 */
+"renameFolder" = "Rename the folder";
+
 /* loco:62cd640724b16d271d296bc2 */
 "reportDisplayProblemDescription" = "Do you agree to share your data with our developers so that they can help you with your problem?";
 
@@ -1140,6 +1176,12 @@
 
 /* loco:66e2826251d88f0bdc097c12 */
 "saveMailInkDrive" = "Save in kDrive";
+
+/* loco:6723a3818bedb42b0805f613 */
+"scheduleSendingTitle" = "Schedule sending";
+
+/* loco:6723a770a20911146d083622 */
+"scheduledEmailHeader" = "This email will be sent on this date: %@";
 
 /* loco:62a9db4ae45f1e29371ff802 */
 "scheduledMessagesFolder" = "Scheduled messages";
@@ -1615,6 +1657,12 @@
 /* loco:651ec8814a88e40c620a2f32 */
 "syncTutorialStepCount" = "%1$d of %2$d";
 
+/* loco:672386513ba28533830dc293 */
+"thisAfternoon" = "This afternoon";
+
+/* loco:67238c432a68eb6c2600fc52 */
+"thisEvening" = "This evening";
+
 /* loco:63f380d5d0a8f81b511bf704 */
 "threadListDeletionConfirmationAlertDescription" = "Are you sure you want to delete this message permanently?";
 
@@ -1686,6 +1734,9 @@
 
 /* loco:62665fa13789aa7e8353ad62 */
 "toTitle" = "To:";
+
+/* loco:67238cec47b13a82520c0245 */
+"tomorrowMorning" = "Tomorrow morning";
 
 /* loco:641db88f88b1f63cb05aad52 */
 "tooManyRecipients" = "You can’t add this address because you have reached the limit of recipients";

@@ -107,10 +107,11 @@ public extension MailboxManager {
     }
 
     func modifyFolder(name: String, folder: Folder) async throws {
-        try await apiFetcher.modify(mailbox: mailbox, folder: folder, name: name)
+        let modifiedFolder = try await apiFetcher.modify(mailbox: mailbox, folder: folder, name: name)
         guard let liveFolder = folder.thaw() else { return }
         try writeTransaction { writableRealm in
-            writableRealm.add(liveFolder, update: .modified)
+            writableRealm.delete(liveFolder)
+            writableRealm.add(modifiedFolder, update: .modified)
         }
     }
 

@@ -48,6 +48,7 @@ struct FoldersListView: View {
                            currentFolderId: mainViewState.selectedFolder.remoteId,
                            canCollapseSubFolders: hasSubFolders,
                            matomoCategory: .menuDrawer)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor))
                     .contextMenu {
                         if isUserFoldersList {
                             Button {
@@ -55,11 +56,10 @@ struct FoldersListView: View {
                                 isShowingCreateFolderAlert.toggle()
                             } label: {
                                 Label {
-                                    Text("Renommer")
+                                    Text(MailResourcesStrings.Localizable.actionRename)
                                 } icon: {
                                     MailResourcesAsset.pencilPlain.swiftUIImage
                                 }
-
                             }
                             Button {
                                 Task {
@@ -74,7 +74,7 @@ struct FoldersListView: View {
                                 }
                             } label: {
                                 Label {
-                                    Text("Supprimer")
+                                    Text(MailResourcesStrings.Localizable.actionDelete)
                                 } icon: {
                                     MailResourcesAsset.bin.swiftUIImage
                                 }
