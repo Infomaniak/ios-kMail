@@ -37,11 +37,13 @@ public extension MailboxManager {
         var roles: [FolderRole] {
             switch folder.role {
             case .inbox:
-                return [.sent, .draft]
+                return [.sent, .draft, .scheduledDrafts]
             case .sent:
-                return [.inbox, .draft]
+                return [.inbox, .draft, .scheduledDrafts]
             case .draft:
-                return [.inbox, .sent]
+                return [.inbox, .sent, .scheduledDrafts]
+            case .scheduledDrafts:
+                return [.inbox, .sent, .draft]
             default:
                 return []
             }
