@@ -82,12 +82,5 @@ struct ScheduleFloatingPanel: ViewModifier {
         $draft.scheduleDate.wrappedValue = scheduleDate.ISO8601WithTimeZone
         $draft.delay.wrappedValue = nil
         dismissMessageView()
-        Task {
-            await tryOrDisplayError {
-                if let scheduleFolder = try await mailBoxManager.getFolder(with: .scheduledDrafts)?.freezeIfNeeded() {
-                    try await mailBoxManager.refreshFolderContent(scheduleFolder)
-                }
-            }
-        }
     }
 }
