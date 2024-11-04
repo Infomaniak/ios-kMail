@@ -38,3 +38,4 @@ excluded:
  - DerivedData/
  - Derived/
  - Tuist/.build/
+ - Tuist/DerivedData/
