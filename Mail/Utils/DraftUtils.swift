@@ -53,6 +53,19 @@ enum DraftUtils {
         }
     }
 
+    public static func editDraft(
+        from draft: Draft,
+        mailboxManager: MailboxManageable,
+        composeMessageIntent: Binding<ComposeMessageIntent?>
+    ) {
+        let draftDetached = draft.detached()
+        matomoOpenDraft(isLoadedRemotely: false)
+        composeMessageIntent.wrappedValue = ComposeMessageIntent.existing(
+            draft: draftDetached,
+            originMailboxManager: mailboxManager
+        )
+    }
+
     private static func matomoOpenDraft(isLoadedRemotely: Bool) {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .newMessage, name: "openFromDraft")
