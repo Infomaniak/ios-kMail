@@ -1582,6 +1582,9 @@
 /* loco:62c2f9feea59c120ad52bc23 */
 "snackbarRestorationLaunched" = "Launching the restoration";
 
+/* loco:672b6a80c4e88a09f20598f2 */
+"snackbarSaveInDraft" = "Your message has been saved in drafts.";
+
 /* loco:6724945abc76f1f0d105ff12 */
 "snackbarScheduleSaved" = "The message will be sent on %@";
 
