@@ -144,6 +144,10 @@ public extension MailApiFetcher {
         return try await perform(request: authenticatedRequest(.resource(resource)))
     }
 
+    func draft(draftResource: String) async throws -> Draft {
+        return try await perform(request: authenticatedRequest(.resource(draftResource)))
+    }
+
     func send<T: Decodable>(mailbox: Mailbox, draft: Draft) async throws -> T {
         try await perform(request: authenticatedRequest(
             draft.remoteUUID.isEmpty ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.remoteUUID),
@@ -166,13 +170,16 @@ public extension MailApiFetcher {
 
     func changeDraftSchedule(draftResource: String, scheduleDateIso8601: String) async throws -> Empty {
         return try await perform(request: authenticatedRequest(
-            .draftSchedule(draftResource: draftResource),
+            .draftSchedule(draftAction: draftResource.appending("/schedule")),
             method: .put,
             parameters: ["schedule_date": scheduleDateIso8601]
         ))
     }
 
-    func deleteSchedule(draftResource: String) async throws -> Empty {
-        return try await perform(request: authenticatedRequest(.draftSchedule(draftResource: draftResource), method: .delete))
+    func deleteSchedule(draftAction: String) async throws {
+        let _: Empty = try await perform(request: authenticatedRequest(
+            .draftSchedule(draftAction: draftAction),
+            method: .delete
+        ))
     }
 }

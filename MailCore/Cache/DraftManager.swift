@@ -130,9 +130,13 @@ public final class DraftManager {
     }
 
     public func sendOrSchedule(draft initialDraft: Draft, mailboxManager: MailboxManager, retry: Bool = true,
-                               showSnackbar: Bool) async -> Date? {
+                               showSnackbar: Bool, changeFolderAction: ((Folder) -> Void)?) async -> Date? {
         if showSnackbar {
-            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
+            if initialDraft.action == .schedule {
+                alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarScheduling)
+            } else {
+                alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
+            }
         }
 
         var sendDate: Date?
@@ -149,11 +153,15 @@ public final class DraftManager {
                     alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent)
                 }
             } else if draft.action == .schedule {
-                try await mailboxManager.schedule(draft: draft)
+                let scheduleResponse = try await mailboxManager.schedule(draft: draft)
                 if showSnackbar, let scheduleDate = draft.scheduleDate,
                    let date = ISO8601DateFormatter().date(from: scheduleDate) {
-                    let formattedDate = DateFormatter.localizedString(from: date, dateStyle: .medium, timeStyle: .short)
-                    alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarScheduleSaved(formattedDate))
+                    showScheduledSnackBar(
+                        date: date,
+                        scheduleAction: scheduleResponse.scheduleAction,
+                        mailboxManager: mailboxManager,
+                        changeFolderAction: changeFolderAction
+                    )
                 }
             }
         } catch {
@@ -169,7 +177,8 @@ public final class DraftManager {
                     draft: updatedDraft,
                     mailboxManager: mailboxManager,
                     retry: false,
-                    showSnackbar: showSnackbar
+                    showSnackbar: showSnackbar,
+                    changeFolderAction: changeFolderAction
                 )
             }
 
@@ -181,7 +190,7 @@ public final class DraftManager {
         return sendDate
     }
 
-    public func syncDraft(mailboxManager: MailboxManager, showSnackbar: Bool) {
+    public func syncDraft(mailboxManager: MailboxManager, showSnackbar: Bool, changeFolderAction: ((Folder) -> Void)? = nil) {
         let drafts = mailboxManager.draftWithPendingAction().freezeIfNeeded()
         Task {
             let latestSendDate = await withTaskGroup(of: Date?.self, returning: Date?.self) { group in
@@ -201,7 +210,8 @@ public final class DraftManager {
                             sendDate = await self.sendOrSchedule(
                                 draft: draft,
                                 mailboxManager: mailboxManager,
-                                showSnackbar: showSnackbar
+                                showSnackbar: showSnackbar,
+                                changeFolderAction: changeFolderAction
                             )
                         default:
                             break
@@ -298,5 +308,35 @@ public final class DraftManager {
             liveDraft.subject = String(subject[..<index])
         }
         return liveDraft.freeze()
+    }
+
+    private func showScheduledSnackBar(
+        date: Date,
+        scheduleAction: String,
+        mailboxManager: MailboxManager,
+        changeFolderAction: ((Folder) -> Void)?
+    ) {
+        let formattedDate = DateFormatter.localizedString(from: date, dateStyle: .medium, timeStyle: .short)
+        let changeFolderAlertAction = UserAlertAction(MailResourcesStrings.Localizable.draftFolder) {
+            if let draftFolder = mailboxManager.getFolder(with: .draft) {
+                changeFolderAction!(draftFolder)
+            }
+        }
+        let cancelButtonAlertAction = UserAlertAction(MailResourcesStrings.Localizable.buttonCancel) {
+            Task {
+                await mailboxManager.moveScheduleToDraft(draftAction: scheduleAction)
+                if changeFolderAction != nil {
+                    self.alertDisplayable.show(
+                        message: MailResourcesStrings.Localizable.snackbarDraftSaved,
+                        action: changeFolderAlertAction
+                    )
+                }
+            }
+        }
+
+        alertDisplayable.show(
+            message: MailResourcesStrings.Localizable.snackbarScheduleSaved(formattedDate),
+            action: cancelButtonAlertAction
+        )
     }
 }
