@@ -208,8 +208,8 @@ public extension Endpoint {
         return .draft(uuid: uuid).appending(path: "/\(draftUuid)")
     }
 
-    static func draftSchedule(draftResource: String) -> Endpoint {
-        return .resource(draftResource).appending(path: "/schedule")
+    static func draftSchedule(draftAction: String) -> Endpoint {
+        return .resource(draftAction)
     }
 
     static func messageSeen(uuid: String) -> Endpoint {
