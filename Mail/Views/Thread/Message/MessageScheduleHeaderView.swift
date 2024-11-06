@@ -65,14 +65,7 @@ struct MessageScheduleHeaderView: View {
             )
         }
         .customAlert(isPresented: $modifyMessage) {
-            VStack(alignment: .leading, spacing: 16) {
-                Text(MailResourcesStrings.Localizable.editSendTitle)
-                Text(MailResourcesStrings.Localizable.editSendDescription)
-                    .font(.subheadline)
-                ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonModify,
-                                 secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
-                                 primaryButtonAction: modifySchedule)
-            }
+            ModifiyMessageScheduleAlertView(draftResource: draftResource)
         }
     }
 
@@ -89,24 +82,4 @@ struct MessageScheduleHeaderView: View {
             }
         }
     }
-
-    private func modifySchedule() {
-        Task {
-            await tryOrDisplayError {
-                try await mailboxManager.apiFetcher.deleteSchedule(draftResource: draftResource)
-                if let scheduleFolder = try await mailboxManager.getFolder(with: .scheduledDrafts)?.freezeIfNeeded() {
-                    try await mailboxManager.refreshFolderContent(scheduleFolder)
-                }
-            }
-        }
-    }
-}
-
-#Preview {
-    VStack(spacing: IKPadding.medium) {
-        IKDivider()
-        MessageScheduleHeaderView(scheduleDate: .now, draftResource: "")
-        IKDivider()
-    }
-    .ignoresSafeArea()
 }
