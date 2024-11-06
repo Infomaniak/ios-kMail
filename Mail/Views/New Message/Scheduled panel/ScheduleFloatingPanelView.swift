@@ -52,7 +52,7 @@ struct ScheduleFloatingPanelView: View {
 
     var body: some View {
         VStack {
-            if lastScheduleInterval > Date.now.timeIntervalSince1970 {
+            if lastScheduleInterval > Date.now.timeIntervalSince1970 + 5 * 60 {
                 ScheduleOptionButton(
                     option: .lastSchedule(value: Date(timeIntervalSince1970: lastScheduleInterval)),
                     setScheduleAction: setScheduleAction

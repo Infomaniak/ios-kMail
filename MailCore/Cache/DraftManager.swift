@@ -154,8 +154,7 @@ public final class DraftManager {
                 }
             } else if draft.action == .schedule {
                 let scheduleResponse = try await mailboxManager.schedule(draft: draft)
-                if showSnackbar, let scheduleDate = draft.scheduleDate,
-                   let date = ISO8601DateFormatter().date(from: scheduleDate) {
+                if showSnackbar, let date = draft.scheduleDate {
                     showScheduledSnackBar(
                         date: date,
                         scheduleAction: scheduleResponse.scheduleAction,

@@ -74,7 +74,7 @@ struct MessageScheduleHeaderView: View {
             await tryOrDisplayError {
                 try await mailboxManager.apiFetcher.changeDraftSchedule(
                     draftResource: draftResource,
-                    scheduleDateIso8601: selectedDate.ISO8601WithTimeZone
+                    scheduleDate: selectedDate
                 )
                 if let scheduleFolder = try await mailboxManager.getFolder(with: .scheduledDrafts)?.freezeIfNeeded() {
                     try await mailboxManager.refreshFolderContent(scheduleFolder)
