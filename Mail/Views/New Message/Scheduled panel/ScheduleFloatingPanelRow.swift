@@ -29,13 +29,14 @@ struct ScheduleFloatingPanelRow: View {
             HStack {
                 Label {
                     Text(title)
+                        .textStyle(.body)
                 } icon: {
                     icon
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                Text(DateFormatter.localizedString(from: scheduleDate, dateStyle: .medium, timeStyle: .short))
+                Text(scheduleDate.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute()))
+                    .textStyle(.bodySmallSecondary)
             }
-            .font(MailTextStyle.bodySmall.font)
         }
     }
 }
