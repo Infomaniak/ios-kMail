@@ -75,7 +75,7 @@ struct MessageHeaderSummaryView: View {
                         Text(MailResourcesStrings.Localizable.messageIsDraftOption)
                             .textStyle(.bodyMediumError)
                     } else {
-                        HStack(alignment: .firstTextBaseline, spacing: IKPadding.small) {
+                        HStack(spacing: IKPadding.small) {
                             VStack {
                                 ForEach(message.from) { recipient in
                                     let contactConfiguration = ContactConfiguration.correspondent(
