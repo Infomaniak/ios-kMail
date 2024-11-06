@@ -105,10 +105,11 @@ public extension MailboxManager {
         }
     }
 
-    func schedule(draft: Draft) async throws {
+    func schedule(draft: Draft) async throws -> ScheduleResponse {
         do {
-            let _: Empty = try await apiFetcher.send(mailbox: mailbox, draft: draft)
+            let scheduleResponse: ScheduleResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
             try await deleteLocally(draft: draft)
+            return scheduleResponse
         } catch let error as MailApiError {
             // Do not delete draft on invalid identity
             guard error != MailApiError.apiIdentityNotFound else {
@@ -181,5 +182,33 @@ public extension MailboxManager {
                 }
             }
         }
+    }
+
+    func moveScheduleToDraft(draftResource: String) async {
+        await moveScheduleToDraft(draftAction: draftResource.appending("/schedule"))
+    }
+
+    func moveScheduleToDraft(draftAction: String) async {
+        do {
+            try await apiFetcher.deleteSchedule(draftAction: draftAction)
+            if let scheduledDraftsFolder = getFolder(with: .scheduledDrafts) {
+                await refreshFolderContent(scheduledDraftsFolder.freezeIfNeeded())
+            }
+        } catch {
+            print(error)
+        }
+    }
+
+    func loadRemotely(from draftResource: String) async -> Draft? {
+        do {
+            let draft = try await apiFetcher.draft(draftResource: draftResource)
+            try? writeTransaction { realm in
+                realm.add(draft, update: .modified)
+            }
+            return draft.freeze()
+        } catch {
+            print(error)
+        }
+        return nil
     }
 }
