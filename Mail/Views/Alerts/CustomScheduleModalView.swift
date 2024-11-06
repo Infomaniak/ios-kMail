@@ -16,7 +16,10 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
+import MailCore
+import MailCoreUI
 import MailResources
 import SwiftUI
 
@@ -24,7 +27,13 @@ struct CustomScheduleModalView: View {
     @Binding var isFloatingPanelPresented: Bool
     @Binding var selectedDate: Date
 
+    @State private var isShowingError = false
+
     let confirmAction: (Date) -> Void
+
+    var isTooShort: Bool {
+        selectedDate < Date.now.addingTimeInterval(5 * 60)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -33,11 +42,30 @@ struct CustomScheduleModalView: View {
                 .padding(.bottom, IKPadding.alertTitleBottom)
             DatePicker("", selection: $selectedDate, in: .now...)
                 .labelsHidden()
+                .onChange(of: selectedDate) { newDate in
+                    isShowingError = newDate > Date.now.addingTimeInterval(5 * 60) ? false : true
+                }
+
+            Text(MailResourcesStrings.Localizable.errorScheduleTooShort)
+                .textStyle(.labelError)
+                .padding(.top, value: .extraSmall)
+                .opacity(isShowingError ? 1 : 0)
                 .padding(.bottom, IKPadding.alertDescriptionBottom)
+
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonScheduleTitle,
                              secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
-                             primaryButtonAction: { confirmAction(selectedDate) },
+                             primaryButtonEnabled: !isShowingError,
+                             primaryButtonDismiss: !isTooShort,
+                             primaryButtonAction: executeActionIfPossible,
                              secondaryButtonAction: { isFloatingPanelPresented = true })
         }
+    }
+
+    private func executeActionIfPossible() {
+        guard !isTooShort else {
+            isShowingError = true
+            return
+        }
+        confirmAction(selectedDate)
     }
 }
