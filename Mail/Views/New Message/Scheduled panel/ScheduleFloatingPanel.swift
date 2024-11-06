@@ -79,7 +79,7 @@ struct ScheduleFloatingPanel: ViewModifier {
     private func setSchedule(_ scheduleDate: Date) {
         lastScheduleInterval = scheduleDate.timeIntervalSince1970
         $draft.action.wrappedValue = .schedule
-        $draft.scheduleDate.wrappedValue = scheduleDate.ISO8601WithTimeZone
+        $draft.scheduleDate.wrappedValue = scheduleDate
         $draft.delay.wrappedValue = nil
         dismissMessageView()
     }

@@ -80,11 +80,6 @@ enum ScheduleSendOption: Identifiable, Equatable {
         }
     }
 
-    var iso8601: String? {
-        guard let date else { return nil }
-        return date.ISO8601WithTimeZone
-    }
-
     private func dateFromNow(setHour: Int, tomorrow: Bool = false) -> Date? {
         let startOfDay = Calendar.current.startOfDay(for: .now)
         guard let dateWithDay = Calendar.current.date(byAdding: .day, value: tomorrow ? 1 : 0, to: startOfDay) else { return nil }

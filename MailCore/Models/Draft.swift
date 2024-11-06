@@ -82,7 +82,7 @@ public final class Draft: Object, Codable, Identifiable {
     @Persisted public var action: SaveDraftOption?
     @Persisted public var delay: Int?
     @Persisted public var rawSignature: String?
-    @Persisted public var scheduleDate: String?
+    @Persisted public var scheduleDate: Date?
 
     /// Public facing "body", wrapping `bodyData`
     public var body: String {
@@ -163,7 +163,7 @@ public final class Draft: Object, Codable, Identifiable {
         priority = try values.decode(MessagePriority.self, forKey: .priority)
         swissTransferUuid = try values.decodeIfPresent(String.self, forKey: .swissTransferUuid)
         attachments = try values.decode(List<Attachment>.self, forKey: .attachments)
-        scheduleDate = try values.decodeIfPresent(String.self, forKey: .scheduleDate)
+        scheduleDate = try values.decodeIfPresent(Date.self, forKey: .scheduleDate)
     }
 
     public convenience init(localUUID: String = UUID().uuidString,
@@ -287,7 +287,7 @@ public final class Draft: Object, Codable, Identifiable {
         try container.encode(attachmentsArray, forKey: .attachments)
         try container.encode(action, forKey: .action)
         if let scheduleDate {
-            try container.encode(scheduleDate, forKey: .scheduleDate)
+            try container.encode(scheduleDate.ISO8601WithTimeZone, forKey: .scheduleDate)
         } else {
             try container.encode(delay, forKey: .delay)
         }
