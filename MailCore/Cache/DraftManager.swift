@@ -327,7 +327,7 @@ public final class DraftManager {
                 await mailboxManager.moveScheduleToDraft(draftAction: scheduleAction)
                 if changeFolderAction != nil {
                     self.alertDisplayable.show(
-                        message: MailResourcesStrings.Localizable.snackbarDraftSaved,
+                        message: MailResourcesStrings.Localizable.snackbarSaveInDraft,
                         action: changeFolderAlertAction
                     )
                 }
