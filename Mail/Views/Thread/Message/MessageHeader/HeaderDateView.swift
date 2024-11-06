@@ -19,21 +19,24 @@
 import MailCoreUI
 import MailResources
 import SwiftUI
+import InfomaniakCoreSwiftUI
 
 struct HeaderDateView: View {
     let date: Date
     let format: Date.ThreadFormatStyle.Style
 
     var body: some View {
-        if date > .now {
-            MailResourcesAsset.clock
-                .iconSize(.small)
-                .foregroundStyle(MailResourcesAsset.orangeColor)
+        HStack(spacing: IKPadding.small) {
+            if date > .now {
+                MailResourcesAsset.clock
+                    .iconSize(.small)
+            }
+            Text(date, format: .thread(format))
+                .lineLimit(1)
+                .layoutPriority(1)
+                .textStyle(.labelSecondary)
         }
-        Text(date, format: .thread(format))
-            .lineLimit(1)
-            .layoutPriority(1)
-            .textStyle(.labelSecondary)
+        .foregroundStyle(MailResourcesAsset.scheduleDateColor.swiftUIColor)
     }
 }
 
