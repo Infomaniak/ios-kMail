@@ -52,19 +52,17 @@ struct ScheduleFloatingPanelView: View {
 
     var body: some View {
         VStack {
-            Text(MailResourcesStrings.Localizable.scheduleSendingTitle)
-                .font(.title3)
             if lastScheduleInterval > Date.now.timeIntervalSince1970 {
                 ScheduleOptionButton(
                     option: .lastSchedule(value: Date(timeIntervalSince1970: lastScheduleInterval)),
                     setScheduleAction: setScheduleAction
                 )
-                IKDivider()
+                IKDivider(type: .full)
             }
             ForEach(scheduleOptions) { option in
                 ScheduleOptionButton(option: option, setScheduleAction: setScheduleAction)
                 if option != scheduleOptions.last {
-                    IKDivider()
+                    IKDivider(type: .full)
                 }
             }
             CustomScheduleButton(
@@ -73,6 +71,7 @@ struct ScheduleFloatingPanelView: View {
                 hasScheduleSendEnabled: hasScheduleSendEnabled
             )
         }
+        .padding(.horizontal, value: .medium)
     }
 
     private func isWeekend() -> Bool {
@@ -88,21 +87,20 @@ struct CustomScheduleButton: View {
 
     var body: some View {
         if hasScheduleSendEnabled {
-            IKDivider()
+            IKDivider(type: .full)
             Button(action: showCustomSchedulePicker) {
                 HStack {
                     Label {
                         Text(MailResourcesStrings.Localizable.buttonCustomSchedule)
+                            .textStyle(.body)
                     } icon: {
                         MailResourcesAsset.customSchedule.swiftUIImage
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     MailResourcesAsset.chevronRight.swiftUIImage
                 }
-                .font(MailTextStyle.bodySmall.font)
             }
             .padding(.vertical, value: .small)
-            .padding(.horizontal, value: .medium)
         }
     }
 
@@ -129,6 +127,5 @@ struct ScheduleOptionButton: View {
             )
         })
         .padding(.vertical, value: .small)
-        .padding(.horizontal, value: .medium)
     }
 }

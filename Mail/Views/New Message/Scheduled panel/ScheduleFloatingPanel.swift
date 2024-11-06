@@ -57,7 +57,7 @@ struct ScheduleFloatingPanel: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .floatingPanel(isPresented: $isPresented) {
+            .floatingPanel(isPresented: $isPresented, title: MailResourcesStrings.Localizable.scheduleSendingTitle) {
                 ScheduleFloatingPanelView(
                     draft: draft,
                     isPresented: $isPresented,
