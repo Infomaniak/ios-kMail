@@ -28,6 +28,7 @@ struct ModalButtonsView: View {
     let primaryButtonTitle: String
     var secondaryButtonTitle: String? = MailResourcesStrings.Localizable.buttonCancel
     var primaryButtonEnabled = true
+    var primaryButtonDismiss = true
     let primaryButtonAction: () async -> Void
     var secondaryButtonAction: (() -> Void)?
 
@@ -47,7 +48,9 @@ struct ModalButtonsView: View {
                     isButtonLoading = true
                     await primaryButtonAction()
                     isButtonLoading = false
-                    dismiss()
+                    if primaryButtonDismiss {
+                        dismiss()
+                    }
                 }
             }
             .buttonStyle(.ikBorderedProminent)
