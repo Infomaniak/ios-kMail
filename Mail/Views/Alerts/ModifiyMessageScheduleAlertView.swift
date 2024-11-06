@@ -17,10 +17,16 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
+import MailCore
 import MailResources
+import SwiftUI
 
 struct ModifiyMessageScheduleAlertView: View {
+    @EnvironmentObject private var mainViewState: MainViewState
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
+    let draftResource: String
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(MailResourcesStrings.Localizable.editSendTitle)
@@ -31,8 +37,21 @@ struct ModifiyMessageScheduleAlertView: View {
                              primaryButtonAction: modifySchedule)
         }
     }
+
+    private func modifySchedule() {
+        Task {
+            await mailboxManager.moveScheduleToDraft(draftResource: draftResource)
+            if let draft = await mailboxManager.loadRemotely(from: draftResource) {
+                DraftUtils.editDraft(
+                    from: draft,
+                    mailboxManager: mailboxManager,
+                    composeMessageIntent: $mainViewState.composeMessageIntent
+                )
+            }
+        }
+    }
 }
 
 #Preview {
-    ModifiyMessageScheduleAlertView()
+    ModifiyMessageScheduleAlertView(draftResource: "")
 }
