@@ -835,6 +835,9 @@
 /* loco:649424a6e244ffcc6c011135 */
 "errorRefusedSender" = "Il server respinge il mittente";
 
+/* loco:672900a15da35624510b2c32 */
+"errorScheduleTooShort" = "Il tempo minimo di consegna è di 5 minuti.";
+
 /* loco:6448ef7a5b39bc7e040ce0b3 */
 "errorSendLimitExceeded" = "Limite d’invio raggiunto";
 
@@ -1581,6 +1584,9 @@
 
 /* loco:6724945abc76f1f0d105ff12 */
 "snackbarScheduleSaved" = "Il messaggio verrà inviato il %@";
+
+/* loco:6729d83e9f7d15aea0033402 */
+"snackbarScheduling" = "Il messaggio è in fase di programmazione";
 
 /* loco:62ab4ab51521a800290a7c32 */
 "snackbarSenderBlacklisted" = "Mittente inserito nella lista nera con successo";

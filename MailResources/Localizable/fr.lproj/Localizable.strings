@@ -835,6 +835,9 @@
 /* loco:649424a6e244ffcc6c011135 */
 "errorRefusedSender" = "Le serveur refuse l’expéditeur";
 
+/* loco:672900a15da35624510b2c32 */
+"errorScheduleTooShort" = "Le délai minimum est de 5 minutes.";
+
 /* loco:6448ef7a5b39bc7e040ce0b3 */
 "errorSendLimitExceeded" = "Limite d’envoi atteinte";
 
@@ -1581,6 +1584,9 @@
 
 /* loco:6724945abc76f1f0d105ff12 */
 "snackbarScheduleSaved" = "Le message sera envoyé le %@";
+
+/* loco:6729d83e9f7d15aea0033402 */
+"snackbarScheduling" = "Le message est en cours de planification";
 
 /* loco:62ab4ab51521a800290a7c32 */
 "snackbarSenderBlacklisted" = "Expéditeur blacklisté avec succès";
