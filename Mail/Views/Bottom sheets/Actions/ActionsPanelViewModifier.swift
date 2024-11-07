@@ -27,12 +27,14 @@ extension View {
         messages: Binding<[Message]?>,
         originFolder: Folder?,
         panelSource: ActionOrigin.FloatingPanelSource,
+        popoverArrowEdge: Edge,
         completionHandler: ((Action) -> Void)? = nil
     ) -> some View {
         return modifier(ActionsPanelViewModifier(
             messages: messages,
             originFolder: originFolder,
             panelSource: panelSource,
+            popoverArrowEdge: popoverArrowEdge,
             completionHandler: completionHandler
         ))
     }
@@ -55,7 +57,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     @Binding var messages: [Message]?
     let originFolder: Folder?
     let panelSource: ActionOrigin.FloatingPanelSource
-
+    var popoverArrowEdge: Edge
     var completionHandler: ((Action) -> Void)?
 
     private var origin: ActionOrigin {
@@ -74,7 +76,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     }
 
     func body(content: Content) -> some View {
-        content.adaptivePanel(item: $messages) { messages in
+        content.adaptivePanel(item: $messages, popoverArrowEdge: popoverArrowEdge) { messages in
             ActionsView(
                 user: currentUser.value,
                 target: messages,

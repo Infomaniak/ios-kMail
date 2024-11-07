@@ -153,7 +153,8 @@ struct ThreadListToolbar: ViewModifier {
                     .actionsPanel(
                         messages: $multipleSelectedMessages,
                         originFolder: viewModel.frozenFolder,
-                        panelSource: .threadList
+                        panelSource: .threadList,
+                        popoverArrowEdge: .bottom
                     ) { action in
                         guard action != .openMovePanel else { return }
                         multipleSelectionViewModel.disable()

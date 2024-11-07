@@ -141,7 +141,8 @@ struct SearchToolbar: ViewModifier {
             .actionsPanel(
                 messages: $multipleSelectedMessages,
                 originFolder: viewModel.frozenSearchFolder,
-                panelSource: .threadList
+                panelSource: .threadList,
+                popoverArrowEdge: .leading
             ) { action in
                 viewModel.refreshSearchIfNeeded(action: action)
                 multipleSelectionViewModel.disable()
