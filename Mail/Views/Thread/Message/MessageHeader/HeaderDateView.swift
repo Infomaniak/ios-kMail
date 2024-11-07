@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCoreSwiftUI
+import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
@@ -24,17 +25,18 @@ import SwiftUI
 struct HeaderDateView: View {
     let date: Date
     let format: Date.ThreadFormatStyle.Style
+    var isScheduled: Bool { date > .now }
 
     var body: some View {
         HStack(spacing: IKPadding.small) {
-            if date > .now {
+            if isScheduled {
                 MailResourcesAsset.clock2
                     .iconSize(.small)
             }
             Text(date, format: .thread(format))
                 .lineLimit(1)
                 .layoutPriority(1)
-                .textStyle(.labelSecondary)
+                .textStyle(isScheduled ? .labelSchedule : .labelSecondary)
         }
         .foregroundStyle(MailResourcesAsset.scheduleDateColor.swiftUIColor)
     }
