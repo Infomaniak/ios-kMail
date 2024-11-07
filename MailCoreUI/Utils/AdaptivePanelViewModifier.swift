@@ -21,26 +21,26 @@ import MailResources
 import SwiftUI
 
 public extension View {
-    func adaptivePanel<Item: Identifiable, Content: View>(item: Binding<Item?>,
-                                                          @ViewBuilder content: @escaping (Item) -> Content) -> some View {
-        return modifier(AdaptivePanelViewModifier(item: item, panelContent: content))
+    func adaptivePanel<Item: Identifiable, Content: View>(
+        item: Binding<Item?>,
+        popoverArrowEdge: Edge = .top,
+        @ViewBuilder content: @escaping (Item) -> Content
+    ) -> some View {
+        return modifier(AdaptivePanelViewModifier(item: item, popoverArrowEdge: popoverArrowEdge, panelContent: content))
     }
 }
 
-public struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>: ViewModifier {
+struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>: ViewModifier {
     @Environment(\.isCompactWindow) private var isCompactWindow
 
     @Binding var item: Item?
+
+    var popoverArrowEdge: Edge
     @ViewBuilder let panelContent: (Item) -> PanelContent
 
-    public init(item: Binding<Item?>, panelContent: @escaping (Item) -> PanelContent) {
-        _item = item
-        self.panelContent = panelContent
-    }
-
-    public func body(content: Content) -> some View {
+    func body(content: Content) -> some View {
         content
-            .popover(item: $item) { item in
+            .workaroundPopover(item: $item, arrowEdge: popoverArrowEdge) { item in
                 if isCompactWindow {
                     if #available(iOS 16.0, *) {
                         panelContent(item).modifier(SelfSizingPanelViewModifier())
@@ -57,5 +57,46 @@ public struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>:
                     .background(MailResourcesAsset.backgroundColor.swiftUIColor.scaleEffect(1.5))
                 }
             }
+    }
+}
+
+// MARK: - WorkaroundPopover
+
+private extension View {
+    func workaroundPopover<Item: Identifiable, Content: View>(
+        item: Binding<Item?>,
+        arrowEdge: Edge,
+        @ViewBuilder content: @escaping (Item) -> Content
+    ) -> some View {
+        modifier(WorkaroundPopover(item: item, arrowEdge: arrowEdge, panelContent: content))
+    }
+}
+
+// FIXME: Remove this workaround when the Release Candidate of Xcode 16.2 is release
+/// iOS 18.1 introduces an issue with the popover (135231043) fixed by iOS 18.2 (the bug is also visible on iOS 18.0)
+///
+/// In this specific version of iOS, the `popover` type signature has been changed. The `arrowEdge: Edge?`
+/// parameter is no longer optional with the default value of nil. The default value is now `Edge.top`
+/// which causes the popover to be hidden in some cases.
+///
+/// Therefore for iOS 18.1 and later versions (while we build with Xcode 16.1) we have to provide a value for `arrowEdge`.
+private struct WorkaroundPopover<Item: Identifiable, PanelContent: View>: ViewModifier {
+    @Binding var item: Item?
+
+    let arrowEdge: Edge
+    @ViewBuilder let panelContent: (Item) -> PanelContent
+
+    func body(content: Content) -> some View {
+        if #available(iOS 18.0, *) {
+            content
+                .popover(item: $item, arrowEdge: arrowEdge) { item in
+                    panelContent(item)
+                }
+        } else {
+            content
+                .popover(item: $item) { item in
+                    panelContent(item)
+                }
+        }
     }
 }

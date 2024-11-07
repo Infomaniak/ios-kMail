@@ -103,7 +103,12 @@ struct ThreadListSwipeActions: ViewModifier {
                     edgeActions([swipeFullTrailing, swipeTrailing])
                 }
             }
-            .actionsPanel(messages: $actionPanelMessages, originFolder: thread.folder, panelSource: .threadList) { action in
+            .actionsPanel(
+                messages: $actionPanelMessages,
+                originFolder: thread.folder,
+                panelSource: .threadList,
+                popoverArrowEdge: .leading
+            ) { action in
                 viewModel.refreshSearchIfNeeded(action: action)
             }
             .sheet(item: $messagesToMove) { messages in

@@ -69,7 +69,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                         ToolbarButton(text: action.title, icon: action.icon) {
                             didTap(action: action)
                         }
-                        .adaptivePanel(item: $replyOrReplyAllMessage) { message in
+                        .adaptivePanel(item: $replyOrReplyAllMessage, popoverArrowEdge: .bottom) { message in
                             ReplyActionsView(message: message)
                         }
                     } else {
@@ -82,7 +82,12 @@ struct ThreadViewToolbarModifier: ViewModifier {
                         }
                     }
                 }
-                ActionsPanelButton(messages: frozenMessages, originFolder: frozenFolder, panelSource: .messageList) {
+                ActionsPanelButton(
+                    messages: frozenMessages,
+                    originFolder: frozenFolder,
+                    panelSource: .messageList,
+                    popoverArrowEdge: .bottom
+                ) {
                     ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
                                        icon: MailResourcesAsset.plusActions.swiftUIImage)
                 }
