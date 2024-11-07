@@ -16,10 +16,10 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreSwiftUI
 import MailCoreUI
 import MailResources
 import SwiftUI
-import InfomaniakCoreSwiftUI
 
 struct HeaderDateView: View {
     let date: Date
@@ -28,7 +28,7 @@ struct HeaderDateView: View {
     var body: some View {
         HStack(spacing: IKPadding.small) {
             if date > .now {
-                MailResourcesAsset.clock
+                MailResourcesAsset.clock2
                     .iconSize(.small)
             }
             Text(date, format: .thread(format))
