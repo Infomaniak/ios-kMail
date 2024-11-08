@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCoreSwiftUI
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -42,6 +43,7 @@ extension View {
 
 struct ScheduleFloatingPanel: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.lastScheduleInterval)) private var lastScheduleInterval: Double = 0
+    @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
 
     @ObservedRealmObject var draft: Draft
 
@@ -68,11 +70,15 @@ struct ScheduleFloatingPanel: ViewModifier {
                 )
             }
             .customAlert(isPresented: $customSchedule) {
-                CustomScheduleModalView(
-                    isFloatingPanelPresented: $isPresented,
-                    selectedDate: $selectedDate,
-                    confirmAction: setSchedule
-                )
+                if featureFlagsManager.isEnabled(.scheduleSendDraft) {
+                    CustomScheduleModalView(
+                        isFloatingPanelPresented: $isPresented,
+                        selectedDate: $selectedDate,
+                        confirmAction: setSchedule
+                    )
+                } else {
+                    NoScheduleFeatureModalView(isFloatingPanelPresented: $isPresented)
+                }
             }
     }
 
@@ -82,5 +88,30 @@ struct ScheduleFloatingPanel: ViewModifier {
         $draft.scheduleDate.wrappedValue = scheduleDate
         $draft.delay.wrappedValue = nil
         dismissMessageView()
+    }
+}
+
+// STUB:
+struct NoScheduleFeatureModalView: View {
+    @Binding var isFloatingPanelPresented: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text(MailResourcesStrings.Localizable.disabledFeatureFlagTitle)
+                .textStyle(.bodyMedium)
+                .padding(.bottom, IKPadding.alertTitleBottom)
+            MailResourcesAsset.disabledFeatureFlag.swiftUIImage
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.bottom, IKPadding.alertDescriptionBottom)
+            Text(MailResourcesStrings.Localizable.disabledFeatureFlagDescription)
+                .textStyle(.body)
+                .padding(.bottom, IKPadding.alertDescriptionBottom)
+            ModalButtonsView(
+                primaryButtonTitle: MailResourcesStrings.Localizable.buttonClose,
+                secondaryButtonTitle: ""
+            ) {
+                isFloatingPanelPresented = true
+            }
+        }
     }
 }
