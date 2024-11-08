@@ -250,7 +250,11 @@ struct ComposeMessageView: View {
                 mainViewState.isShowingReviewAlert = reviewManager.shouldRequestReview()
             }
 
-            draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: shouldShowSnackbar, changeFolderAction: mainViewState.changeSelectedFolder)
+            draftManager.syncDraft(
+                mailboxManager: mailboxManager,
+                showSnackbar: shouldShowSnackbar,
+                changeFolderAction: mainViewState.changeSelectedFolder
+            )
         }
         .customAlert(item: $isShowingAlert) { alert in
             switch alert.type {
