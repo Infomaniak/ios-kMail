@@ -31,8 +31,12 @@ struct CustomScheduleModalView: View {
 
     let confirmAction: (Date) -> Void
 
+    var startingDate: Date {
+        Date.now.addingTimeInterval(5 * 60)
+    }
+
     var isTooShort: Bool {
-        selectedDate < Date.now.addingTimeInterval(5 * 60)
+        selectedDate < startingDate
     }
 
     var body: some View {
@@ -40,10 +44,10 @@ struct CustomScheduleModalView: View {
             Text(MailResourcesStrings.Localizable.datePickerTitle)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, IKPadding.alertTitleBottom)
-            DatePicker("", selection: $selectedDate, in: .now...)
+            DatePicker("", selection: $selectedDate, in: startingDate...)
                 .labelsHidden()
                 .onChange(of: selectedDate) { newDate in
-                    isShowingError = newDate > Date.now.addingTimeInterval(5 * 60) ? false : true
+                    isShowingError = newDate > startingDate ? false : true
                 }
 
             Text(MailResourcesStrings.Localizable.errorScheduleTooShort)
