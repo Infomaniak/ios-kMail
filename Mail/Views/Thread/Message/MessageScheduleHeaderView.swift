@@ -26,12 +26,19 @@ import SwiftUI
 
 struct MessageScheduleHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
+    @State private var selectedDate: Date
 
     let scheduleDate: Date
     let draftResource: String
 
     @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var customSchedule: Bool
     @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var modifyMessage: Bool
+
+    init(scheduleDate: Date, draftResource: String) {
+        _selectedDate = .init(initialValue: scheduleDate)
+        self.scheduleDate = scheduleDate
+        self.draftResource = draftResource
+    }
 
     var body: some View {
         MessageHeaderActionView(
@@ -60,7 +67,7 @@ struct MessageScheduleHeaderView: View {
         .customAlert(isPresented: $customSchedule) {
             CustomScheduleModalView(
                 isFloatingPanelPresented: .constant(false),
-                selectedDate: .constant(.now),
+                selectedDate: $selectedDate,
                 confirmAction: changeScheduleDate
             )
         }
@@ -76,8 +83,10 @@ struct MessageScheduleHeaderView: View {
                     draftResource: draftResource,
                     scheduleDate: selectedDate
                 )
-                if let scheduleFolder = try await mailboxManager.getFolder(with: .scheduledDrafts)?.freezeIfNeeded() {
-                    try await mailboxManager.refreshFolderContent(scheduleFolder)
+                try await mailboxManager.refreshAllSignatures()
+                if let scheduleFolder = try await mailboxManager.getFolder(with: .scheduledDrafts) {
+                    let freezedFolder = scheduleFolder.freezeIfNeeded()
+                    try await mailboxManager.refreshFolderContent(freezedFolder)
                 }
             }
         }
