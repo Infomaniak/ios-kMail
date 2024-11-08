@@ -96,10 +96,10 @@ struct FolderListViewModelWorker {
         assert(folders.isFrozen, "Expecting frozen objects")
         let filteredFolders = filterFolders(folders, searchQuery: searchQuery)
 
-        let sortedRoleFolders = filteredFolders.filter { !$0.isUserFolder }
+        let sortedRoleFolders = filteredFolders.filter { $0.role != nil }
             .sorted()
 
-        let sortedUserFolders = filteredFolders.filter { $0.isUserFolder }
+        let sortedUserFolders = filteredFolders.filter { $0.role == nil }
             .sortedByFavoriteAndName()
 
         let roleFolders = createFoldersHierarchy(from: sortedRoleFolders, searchQuery: searchQuery)
@@ -111,9 +111,7 @@ struct FolderListViewModelWorker {
     private func filterFolders(_ folders: Results<Folder>, searchQuery: String) -> [Folder] {
         guard !searchQuery.isEmpty else {
             // swiftlint:disable:next empty_count
-            return Array(folders.where { $0.parents.count == 0 || $0.role != nil }).filter { folder in
-                folder.shouldBeDisplayed
-            }
+            return Array(folders.filter { ($0.parents.count == 0 || $0.role != nil) && $0.shouldBeDisplayed })
         }
 
         return folders.filter {

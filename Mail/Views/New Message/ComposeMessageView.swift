@@ -173,7 +173,7 @@ struct ComposeMessageView: View {
                 Button(action: { isShowingSchedulePanel = true }) {
                     Label(MailResourcesStrings.Localizable.send, asset: MailResourcesAsset.scheduleSend.swiftUIImage)
                 }
-//                .disabled(isSendButtonDisabled)
+                .disabled(isSendButtonDisabled)
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: didTouchSend) {

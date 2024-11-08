@@ -176,11 +176,6 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return true
     }
 
-    public var isUserFolder: Bool {
-        if role != nil { return false }
-        return true
-    }
-
     public var formattedUnreadCount: String {
         let realCount = ((role == .draft || role == .scheduledDrafts) ? threads.count : unreadCount)
         if realCount >= 100 {
