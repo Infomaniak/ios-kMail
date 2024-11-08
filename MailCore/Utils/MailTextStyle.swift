@@ -197,8 +197,8 @@ public extension MailTextStyle {
         color: MailResourcesAsset.redColor.swiftUIColor
     )
 
-    static let labelSchedule = MailTextStyle(
+    static let labelWarning = MailTextStyle(
         mailFont: .label,
-        color: MailResourcesAsset.scheduleDateColor.swiftUIColor
+        color: MailResourcesAsset.orangeColor.swiftUIColor
     )
 }
