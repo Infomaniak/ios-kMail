@@ -25,21 +25,27 @@ import SwiftUI
 
 struct ScheduleFloatingPanelView: View {
     @LazyInjectService private var draftManager: DraftManager
+
     @ObservedRealmObject var draft: Draft
 
     @Binding var isPresented: Bool
     @Binding var customSchedule: Bool
 
     let lastScheduleInterval: Double
-    let hasScheduleSendEnabled = true
     let dismissMessageView: () -> Void
     let setScheduleAction: (Date) -> Void
 
+    var isWeekend: Bool {
+        [1, 7].contains(Calendar.current.component(.weekday, from: Date.now))
+    }
+
     private var scheduleOptions: [ScheduleSendOption] {
-        guard !isWeekend() else { return [.nextMondayMorning, .nextMondayAfternoon] }
+        guard !isWeekend else { return [.nextMondayMorning, .nextMondayAfternoon] }
 
         switch Calendar.current.component(.hour, from: Date.now) {
-        case 0 ... 13:
+        case 0 ... 7:
+            return [.laterThisMorning, .tomorrowMorning, .nextMondayMorning]
+        case 8 ... 13:
             return [.thisAfternoon, .tomorrowMorning, .nextMondayMorning]
         case 14 ... 19:
             return [.thisEvening, .tomorrowMorning, .nextMondayMorning]
@@ -61,21 +67,14 @@ struct ScheduleFloatingPanelView: View {
             }
             ForEach(scheduleOptions) { option in
                 ScheduleOptionButton(option: option, setScheduleAction: setScheduleAction)
-                if option != scheduleOptions.last {
-                    IKDivider(type: .full)
-                }
+                IKDivider(type: .full)
             }
             CustomScheduleButton(
                 isPresented: $isPresented,
-                customSchedule: $customSchedule,
-                hasScheduleSendEnabled: hasScheduleSendEnabled
+                customSchedule: $customSchedule
             )
         }
         .padding(.horizontal, value: .medium)
-    }
-
-    private func isWeekend() -> Bool {
-        [1, 7].contains(Calendar.current.component(.weekday, from: Date.now))
     }
 }
 
@@ -83,25 +82,20 @@ struct CustomScheduleButton: View {
     @Binding var isPresented: Bool
     @Binding var customSchedule: Bool
 
-    let hasScheduleSendEnabled: Bool
-
     var body: some View {
-        if hasScheduleSendEnabled {
-            IKDivider(type: .full)
-            Button(action: showCustomSchedulePicker) {
-                HStack {
-                    Label {
-                        Text(MailResourcesStrings.Localizable.buttonCustomSchedule)
-                            .textStyle(.body)
-                    } icon: {
-                        MailResourcesAsset.customSchedule.swiftUIImage
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    MailResourcesAsset.chevronRight.swiftUIImage
+        Button(action: showCustomSchedulePicker) {
+            HStack {
+                Label {
+                    Text(MailResourcesStrings.Localizable.buttonCustomSchedule)
+                        .textStyle(.body)
+                } icon: {
+                    MailResourcesAsset.customSchedule.swiftUIImage
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                MailResourcesAsset.chevronRight.swiftUIImage
             }
-            .padding(.vertical, value: .small)
         }
+        .padding(.vertical, value: .small)
     }
 
     func showCustomSchedulePicker() {
