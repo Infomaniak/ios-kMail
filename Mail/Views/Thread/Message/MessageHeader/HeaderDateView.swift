@@ -30,15 +30,14 @@ struct HeaderDateView: View {
     var body: some View {
         HStack(spacing: IKPadding.small) {
             if isScheduled {
-                MailResourcesAsset.clock2
+                MailResourcesAsset.clockThick
                     .iconSize(.small)
             }
             Text(date, format: .thread(format))
                 .lineLimit(1)
                 .layoutPriority(1)
-                .textStyle(isScheduled ? .labelSchedule : .labelSecondary)
         }
-        .foregroundStyle(MailResourcesAsset.scheduleDateColor.swiftUIColor)
+        .textStyle(isScheduled ? .labelWarning : .labelSecondary)
     }
 }
 
