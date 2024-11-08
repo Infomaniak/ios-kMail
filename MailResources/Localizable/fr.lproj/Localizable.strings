@@ -4,7 +4,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Jordan Chapelle
- * Exported at: Fri, 01 Nov 2024 09:54:33 +0100
+ * Exported at: Fri, 08 Nov 2024 16:59:12 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -933,6 +933,9 @@
 
 /* loco:672398789bd6d8d56802d212 */
 "lastSelectedSchedule" = "Dernier horaire choisi";
+
+/* loco:672e306d38f5c72b20044c32 */
+"laterThisMorning" = "Plus tard ce matin";
 
 /* loco:62c427c7ad522f1ff078a162 */
 "loadingText" = "Chargement…";

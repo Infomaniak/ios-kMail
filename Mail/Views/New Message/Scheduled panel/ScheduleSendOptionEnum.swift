@@ -20,6 +20,7 @@ import MailResources
 import SwiftUI
 
 enum ScheduleSendOption: Identifiable, Equatable {
+    case laterThisMorning
     case thisAfternoon
     case thisEvening
     case tomorrowMorning
@@ -31,6 +32,8 @@ enum ScheduleSendOption: Identifiable, Equatable {
 
     var date: Date? {
         switch self {
+        case .laterThisMorning:
+            return dateFromNow(setHour: 8)
         case .thisAfternoon:
             return dateFromNow(setHour: 14)
         case .thisEvening:
@@ -48,6 +51,8 @@ enum ScheduleSendOption: Identifiable, Equatable {
 
     var title: String {
         switch self {
+        case .laterThisMorning:
+            return MailResourcesStrings.Localizable.laterThisMorning
         case .thisAfternoon:
             return MailResourcesStrings.Localizable.thisAfternoon
         case .thisEvening:
@@ -65,6 +70,8 @@ enum ScheduleSendOption: Identifiable, Equatable {
 
     var icon: Image {
         switch self {
+        case .laterThisMorning:
+            return MailResourcesAsset.lastSchedule.swiftUIImage
         case .thisAfternoon:
             return MailResourcesAsset.todayAfternoon.swiftUIImage
         case .thisEvening:
@@ -88,7 +95,6 @@ enum ScheduleSendOption: Identifiable, Equatable {
 
     private func nextMonday(setHour: Int) -> Date? {
         let todayMidDay = Calendar.current.startOfDay(for: .now).addingTimeInterval(43200)
-        print(DateFormatter.localizedString(from: todayMidDay, dateStyle: .medium, timeStyle: .medium))
         return Calendar.current.nextDate(
             after: todayMidDay,
             matching: .init(hour: setHour, weekday: 2),
