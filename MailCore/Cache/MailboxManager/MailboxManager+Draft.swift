@@ -129,15 +129,15 @@ public extension MailboxManager {
 
     func delete(draftMessages: [Message]) async throws {
         let draftResources = draftMessages.compactMap { $0.draftResource }
-        guard draftResources.count == draftResources.count else {
+        guard draftResources.count == draftMessages.count else {
             throw MailError.resourceError
         }
 
-        let drafts = fetchResults(ofType: Draft.self, filtering: { draft in
+        let drafts = fetchResults(ofType: Draft.self) { draft in
             draft
                 .filter("remoteUUID IN %@", draftResources)
                 .freezeIfNeeded()
-        })
+        }
 
         try await deleteLocally(drafts: Array(drafts))
 
