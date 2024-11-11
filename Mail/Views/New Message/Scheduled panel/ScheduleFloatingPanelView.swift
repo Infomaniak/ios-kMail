@@ -28,7 +28,6 @@ struct ScheduleFloatingPanelView: View {
 
     @ObservedRealmObject var draft: Draft
 
-    @Binding var isPresented: Bool
     @Binding var customSchedule: Bool
     @Binding var isShowingDiscovery: Bool
 
@@ -71,7 +70,6 @@ struct ScheduleFloatingPanelView: View {
                 IKDivider(type: .full)
             }
             CustomScheduleButton(
-                isPresented: $isPresented,
                 customSchedule: $customSchedule,
                 isShowingDiscovery: $isShowingDiscovery
             )
@@ -81,9 +79,9 @@ struct ScheduleFloatingPanelView: View {
 }
 
 struct CustomScheduleButton: View {
+    @Environment(\.dismiss) private var dismiss
     @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
 
-    @Binding var isPresented: Bool
     @Binding var customSchedule: Bool
     @Binding var isShowingDiscovery: Bool
 
@@ -104,12 +102,12 @@ struct CustomScheduleButton: View {
     }
 
     func showCustomSchedulePicker() {
-        isPresented = false
         if featureFlagsManager.isEnabled(.scheduleSendDraft) {
             customSchedule = true
         } else {
             isShowingDiscovery = true
         }
+        dismiss()
     }
 }
 

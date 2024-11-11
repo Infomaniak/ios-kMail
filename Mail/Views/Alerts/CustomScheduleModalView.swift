@@ -24,7 +24,7 @@ import MailResources
 import SwiftUI
 
 struct CustomScheduleModalView: View {
-    @Binding var isFloatingPanelPresented: Bool
+    @Binding var panelShouldBeShown: Bool
     @Binding var selectedDate: Date
 
     @State private var isShowingError = false
@@ -61,7 +61,7 @@ struct CustomScheduleModalView: View {
                              primaryButtonEnabled: !isShowingError,
                              primaryButtonDismiss: !isTooShort,
                              primaryButtonAction: executeActionIfPossible,
-                             secondaryButtonAction: { isFloatingPanelPresented = true })
+                             secondaryButtonAction: { panelShouldBeShown = true })
         }
     }
 
