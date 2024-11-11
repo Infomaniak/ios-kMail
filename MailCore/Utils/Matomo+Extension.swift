@@ -53,6 +53,7 @@ public extension MatomoUtils.EventCategory {
     static let promptAIEngine = MatomoUtils.EventCategory(displayName: "promptAiEngine")
     static let replyBottomSheet = MatomoUtils.EventCategory(displayName: "replyBottomSheet")
     static let restoreEmailsBottomSheet = MatomoUtils.EventCategory(displayName: "restoreEmailsBottomSheet")
+    static let scheduleSend = MatomoUtils.EventCategory(displayName: "scheduleSend")
     static let search = MatomoUtils.EventCategory(displayName: "search")
     static let setAsDefaultApp = MatomoUtils.EventCategory(displayName: "setAsDefaultApp")
     static let snackbar = MatomoUtils.EventCategory(displayName: "snackbar")

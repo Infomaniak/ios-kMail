@@ -30,6 +30,7 @@ struct ScheduleFloatingPanelView: View {
 
     @Binding var isPresented: Bool
     @Binding var customSchedule: Bool
+    @Binding var isShowingDiscovery: Bool
 
     let lastScheduleInterval: Double
     let dismissMessageView: () -> Void
@@ -71,7 +72,8 @@ struct ScheduleFloatingPanelView: View {
             }
             CustomScheduleButton(
                 isPresented: $isPresented,
-                customSchedule: $customSchedule
+                customSchedule: $customSchedule,
+                isShowingDiscovery: $isShowingDiscovery
             )
         }
         .padding(.horizontal, value: .medium)
@@ -79,8 +81,11 @@ struct ScheduleFloatingPanelView: View {
 }
 
 struct CustomScheduleButton: View {
+    @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
+
     @Binding var isPresented: Bool
     @Binding var customSchedule: Bool
+    @Binding var isShowingDiscovery: Bool
 
     var body: some View {
         Button(action: showCustomSchedulePicker) {
@@ -100,7 +105,11 @@ struct CustomScheduleButton: View {
 
     func showCustomSchedulePicker() {
         isPresented = false
-        customSchedule = true
+        if featureFlagsManager.isEnabled(.scheduleSendDraft) {
+            customSchedule = true
+        } else {
+            isShowingDiscovery = true
+        }
     }
 }
 
