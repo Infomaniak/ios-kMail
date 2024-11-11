@@ -65,7 +65,7 @@ struct MessageScheduleHeaderView: View {
         }
         .customAlert(isPresented: $customSchedule) {
             CustomScheduleModalView(
-                isFloatingPanelPresented: .constant(false),
+                panelShouldBeShown: .constant(false),
                 selectedDate: $selectedDate,
                 confirmAction: changeScheduleDate
             )

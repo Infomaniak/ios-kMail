@@ -48,6 +48,7 @@ struct ScheduleFloatingPanel: ViewModifier {
 
     @State private var selectedDate = Date.now
     @State private var isShowingDiscovery = false
+    @State private var panelShouldBeShown = false
 
     let mailBoxManager: MailboxManager
 
@@ -59,15 +60,9 @@ struct ScheduleFloatingPanel: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .floatingPanel(isPresented: $isShowingDiscovery) {
-                DiscoveryView(item: .scheduleDiscovery, isShowingLaterButton: false) { _ in
-                    isPresented = true
-                }
-            }
             .floatingPanel(isPresented: $isPresented, title: MailResourcesStrings.Localizable.scheduleSendingTitle) {
                 ScheduleFloatingPanelView(
                     draft: draft,
-                    isPresented: $isPresented,
                     customSchedule: $customSchedule,
                     isShowingDiscovery: $isShowingDiscovery,
                     lastScheduleInterval: lastScheduleInterval,
@@ -77,10 +72,21 @@ struct ScheduleFloatingPanel: ViewModifier {
             }
             .customAlert(isPresented: $customSchedule) {
                 CustomScheduleModalView(
-                    isFloatingPanelPresented: $isPresented,
+                    panelShouldBeShown: $panelShouldBeShown,
                     selectedDate: $selectedDate,
                     confirmAction: setSchedule
                 )
+                .onDisappear {
+                    if panelShouldBeShown {
+                        isPresented = true
+                        panelShouldBeShown = false
+                    }
+                }
+            }
+            .discoveryPresenter(isPresented: $isShowingDiscovery) {
+                DiscoveryView(item: .scheduleDiscovery, isShowingLaterButton: false) { _ in
+                    isPresented = true
+                }
             }
     }
 
