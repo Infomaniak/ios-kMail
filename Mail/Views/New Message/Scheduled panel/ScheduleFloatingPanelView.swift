@@ -78,39 +78,6 @@ struct ScheduleFloatingPanelView: View {
     }
 }
 
-struct CustomScheduleButton: View {
-    @Environment(\.dismiss) private var dismiss
-    @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
-
-    @Binding var customSchedule: Bool
-    @Binding var isShowingDiscovery: Bool
-
-    var body: some View {
-        Button(action: showCustomSchedulePicker) {
-            HStack {
-                Label {
-                    Text(MailResourcesStrings.Localizable.buttonCustomSchedule)
-                        .textStyle(.body)
-                } icon: {
-                    MailResourcesAsset.customSchedule.swiftUIImage
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                MailResourcesAsset.chevronRight.swiftUIImage
-            }
-        }
-        .padding(.vertical, value: .small)
-    }
-
-    func showCustomSchedulePicker() {
-        if featureFlagsManager.isEnabled(.scheduleSendDraft) {
-            customSchedule = true
-        } else {
-            isShowingDiscovery = true
-        }
-        dismiss()
-    }
-}
-
 struct ScheduleOptionButton: View {
     let option: ScheduleSendOption
     let setScheduleAction: (Date) -> Void

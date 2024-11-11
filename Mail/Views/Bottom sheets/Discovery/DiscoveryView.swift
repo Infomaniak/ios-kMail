@@ -83,7 +83,7 @@ struct DiscoveryView: View {
     @State private var willDiscoverNewFeature = false
 
     let item: DiscoveryItem
-    var isShowingLaterButton: Bool = true
+    var isShowingLaterButton = true
 
     var onAppear: (() -> Void)?
     let completionHandler: (Bool) -> Void
