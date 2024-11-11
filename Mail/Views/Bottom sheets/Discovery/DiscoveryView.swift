@@ -64,6 +64,14 @@ public extension DiscoveryItem {
         primaryButtonLabel: MailResourcesStrings.Localizable.buttonSetNow,
         matomoCategory: .setAsDefaultApp
     )
+
+    static let scheduleDiscovery = DiscoveryItem(
+        image: MailResourcesAsset.disabledFeatureFlag,
+        title: MailResourcesStrings.Localizable.disabledFeatureFlagTitle,
+        description: MailResourcesStrings.Localizable.disabledFeatureFlagDescription,
+        primaryButtonLabel: MailResourcesStrings.Localizable.buttonClose,
+        matomoCategory: .scheduleSend
+    )
 }
 
 struct DiscoveryView: View {
@@ -75,6 +83,7 @@ struct DiscoveryView: View {
     @State private var willDiscoverNewFeature = false
 
     let item: DiscoveryItem
+    var isShowingLaterButton: Bool = true
 
     var onAppear: (() -> Void)?
     let completionHandler: (Bool) -> Void
@@ -82,9 +91,17 @@ struct DiscoveryView: View {
     var body: some View {
         Group {
             if isCompactWindow {
-                DiscoveryBottomSheetView(item: item, nowButton: didTouchNowButton, laterButton: didTouchLaterButton)
+                DiscoveryBottomSheetView(
+                    item: item,
+                    nowButton: didTouchNowButton,
+                    laterButton: isShowingLaterButton ? didTouchLaterButton : nil
+                )
             } else {
-                DiscoveryAlertView(item: item, nowButton: didTouchNowButton, laterButton: didTouchLaterButton)
+                DiscoveryAlertView(
+                    item: item,
+                    nowButton: didTouchNowButton,
+                    laterButton: isShowingLaterButton ? didTouchLaterButton : nil
+                )
             }
         }
         .onAppear {
@@ -113,7 +130,7 @@ struct DiscoveryBottomSheetView: View {
     let item: DiscoveryItem
 
     let nowButton: () -> Void
-    let laterButton: () -> Void
+    let laterButton: (() -> Void)?
 
     var body: some View {
         VStack(spacing: IKPadding.huge) {
@@ -131,8 +148,10 @@ struct DiscoveryBottomSheetView: View {
                 Button(item.primaryButtonLabel, action: nowButton)
                     .buttonStyle(.ikBorderedProminent)
 
-                Button(MailResourcesStrings.Localizable.buttonLater, action: laterButton)
-                    .buttonStyle(.ikBorderless)
+                if let laterButton {
+                    Button(MailResourcesStrings.Localizable.buttonLater, action: laterButton)
+                        .buttonStyle(.ikBorderless)
+                }
             }
             .ikButtonFullWidth(true)
             .controlSize(.large)
@@ -146,7 +165,7 @@ struct DiscoveryAlertView: View {
     let item: DiscoveryItem
 
     let nowButton: () -> Void
-    let laterButton: () -> Void
+    let laterButton: (() -> Void)?
 
     var body: some View {
         VStack(spacing: IKPadding.large) {
@@ -160,12 +179,19 @@ struct DiscoveryAlertView: View {
                 .multilineTextAlignment(.center)
                 .textStyle(.bodySecondary)
 
-            ModalButtonsView(
-                primaryButtonTitle: item.primaryButtonLabel,
-                secondaryButtonTitle: MailResourcesStrings.Localizable.buttonLater,
-                primaryButtonAction: nowButton,
-                secondaryButtonAction: laterButton
-            )
+            if let laterButton {
+                ModalButtonsView(
+                    primaryButtonTitle: item.primaryButtonLabel,
+                    secondaryButtonTitle: MailResourcesStrings.Localizable.buttonLater,
+                    primaryButtonAction: nowButton,
+                    secondaryButtonAction: laterButton
+                )
+            } else {
+                ModalButtonsView(
+                    primaryButtonTitle: item.primaryButtonLabel,
+                    primaryButtonAction: nowButton
+                )
+            }
         }
     }
 }
