@@ -43,11 +43,11 @@ extension View {
 
 struct ScheduleFloatingPanel: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.lastScheduleInterval)) private var lastScheduleInterval: Double = 0
-    @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
 
     @ObservedRealmObject var draft: Draft
 
     @State private var selectedDate = Date.now
+    @State private var isShowingDiscovery = false
 
     let mailBoxManager: MailboxManager
 
@@ -59,26 +59,28 @@ struct ScheduleFloatingPanel: ViewModifier {
 
     func body(content: Content) -> some View {
         content
+            .floatingPanel(isPresented: $isShowingDiscovery) {
+                DiscoveryView(item: .scheduleDiscovery, isShowingLaterButton: false) { _ in
+                    isPresented = true
+                }
+            }
             .floatingPanel(isPresented: $isPresented, title: MailResourcesStrings.Localizable.scheduleSendingTitle) {
                 ScheduleFloatingPanelView(
                     draft: draft,
                     isPresented: $isPresented,
                     customSchedule: $customSchedule,
+                    isShowingDiscovery: $isShowingDiscovery,
                     lastScheduleInterval: lastScheduleInterval,
                     dismissMessageView: dismissMessageView,
                     setScheduleAction: setSchedule
                 )
             }
             .customAlert(isPresented: $customSchedule) {
-                if featureFlagsManager.isEnabled(.scheduleSendDraft) {
-                    CustomScheduleModalView(
-                        isFloatingPanelPresented: $isPresented,
-                        selectedDate: $selectedDate,
-                        confirmAction: setSchedule
-                    )
-                } else {
-                    NoScheduleFeatureModalView(isFloatingPanelPresented: $isPresented)
-                }
+                CustomScheduleModalView(
+                    isFloatingPanelPresented: $isPresented,
+                    selectedDate: $selectedDate,
+                    confirmAction: setSchedule
+                )
             }
     }
 
@@ -88,30 +90,5 @@ struct ScheduleFloatingPanel: ViewModifier {
         $draft.scheduleDate.wrappedValue = scheduleDate
         $draft.delay.wrappedValue = nil
         dismissMessageView()
-    }
-}
-
-// STUB:
-struct NoScheduleFeatureModalView: View {
-    @Binding var isFloatingPanelPresented: Bool
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text(MailResourcesStrings.Localizable.disabledFeatureFlagTitle)
-                .textStyle(.bodyMedium)
-                .padding(.bottom, IKPadding.alertTitleBottom)
-            MailResourcesAsset.disabledFeatureFlag.swiftUIImage
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.bottom, IKPadding.alertDescriptionBottom)
-            Text(MailResourcesStrings.Localizable.disabledFeatureFlagDescription)
-                .textStyle(.body)
-                .padding(.bottom, IKPadding.alertDescriptionBottom)
-            ModalButtonsView(
-                primaryButtonTitle: MailResourcesStrings.Localizable.buttonClose,
-                secondaryButtonTitle: ""
-            ) {
-                isFloatingPanelPresented = true
-            }
-        }
     }
 }
