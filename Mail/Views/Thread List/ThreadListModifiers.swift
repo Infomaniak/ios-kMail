@@ -156,7 +156,7 @@ struct ThreadListToolbar: ViewModifier {
                         panelSource: .threadList,
                         popoverArrowEdge: .bottom
                     ) { action in
-                        guard action != .openMovePanel else { return }
+                        guard action.shouldDisableMultipleSelection else { return }
                         multipleSelectionViewModel.disable()
                     }
                 }

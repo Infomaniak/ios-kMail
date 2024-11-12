@@ -139,6 +139,8 @@ struct MessageActionView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var actionsManager: ActionsManager
 
+    @State private var isLoading = false
+
     let targetMessages: [Message]
     let action: Action
     let origin: ActionOrigin
@@ -146,7 +148,11 @@ struct MessageActionView: View {
 
     var body: some View {
         Button {
-            dismiss()
+            if action.shouldDismiss {
+                dismiss()
+            } else {
+                isLoading = true
+            }
             Task {
                 await tryOrDisplayError {
                     try await actionsManager.performAction(
@@ -156,9 +162,10 @@ struct MessageActionView: View {
                     )
                     completionHandler?(action)
                 }
+                isLoading = false
             }
         } label: {
-            ActionButtonLabel(action: action)
+            ActionButtonLabel(action: action, isLoading: isLoading)
         }
         .accessibilityIdentifier(action.accessibilityIdentifier)
     }
@@ -166,6 +173,7 @@ struct MessageActionView: View {
 
 struct ActionButtonLabel: View {
     let action: Action
+    var isLoading = false
 
     var iconColor: MailResourcesColors {
         switch action {
@@ -191,11 +199,16 @@ struct ActionButtonLabel: View {
 
     var body: some View {
         HStack(spacing: IKPadding.medium) {
-            action.icon
-                .resizable()
-                .scaledToFit()
-                .frame(width: 24, height: 24)
-                .foregroundStyle(iconColor)
+            if isLoading {
+                ProgressView()
+                    .frame(width: 24, height: 24)
+            } else {
+                action.icon
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+                    .foregroundStyle(iconColor)
+            }
             Text(action.title)
                 .foregroundStyle(titleColor)
                 .textStyle(.body)
