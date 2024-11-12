@@ -78,6 +78,14 @@ extension Action: CaseIterable {
         }
     }
 
+    public var shouldDismiss: Bool {
+        return ![.saveThreadInkDrive].contains(self)
+    }
+
+    public var shouldDisableMultipleSelection: Bool {
+        return ![.openMovePanel, .saveThreadInkDrive].contains(self)
+    }
+
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
                                           userIsStaff: Bool) -> (quickActions: [Action], listActions: [Action]) {
         @LazyInjectService var platformDetector: PlatformDetectable
