@@ -86,7 +86,7 @@ public extension MailApiFetcher {
     }
 
     func download(messages: [Message]) async throws -> [URL] {
-        var res: [URL] = []
+        var downloadedMessageURLs: [URL] = []
         let temporaryDirectory = FileManager.default.temporaryDirectory
 
         for message in messages {
@@ -100,9 +100,9 @@ public extension MailApiFetcher {
 
             let download = authenticatedSession.download(Endpoint.resource(message.downloadResource).url, to: destination)
             let messageUrl = try await download.serializingDownloadedFileURL().value
-            res.append(messageUrl)
+            downloadedMessageURLs.append(messageUrl)
         }
-        return res
+        return downloadedMessageURLs
     }
 
     func quotas(mailbox: Mailbox) async throws -> Quotas {
