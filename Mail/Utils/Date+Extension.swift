@@ -52,4 +52,8 @@ extension Date {
         components.second = -1
         return Calendar.current.date(byAdding: components, to: startOfMonth)!
     }
+
+    static var minimumScheduleDelay: Date {
+        Date.now.addingTimeInterval(5 * 60)
+    }
 }
