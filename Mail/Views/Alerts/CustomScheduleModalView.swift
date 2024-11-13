@@ -24,19 +24,22 @@ import MailResources
 import SwiftUI
 
 struct CustomScheduleModalView: View {
-    @Binding var panelShouldBeShown: Bool
-    @Binding var selectedDate: Date
-
     @State private var isShowingError = false
+    @State private var selectedDate: Date
 
+    let startingDate: Date
     let confirmAction: (Date) -> Void
-
-    var startingDate: Date {
-        Date.now.addingTimeInterval(5 * 60)
-    }
+    let cancelAction: () -> Void
 
     var isTooShort: Bool {
         selectedDate < startingDate
+    }
+
+    init(startingDate: Date, confirmAction: @escaping (Date) -> Void, cancelAction: (() -> Void)? = nil) {
+        _selectedDate = .init(initialValue: startingDate)
+        self.startingDate = startingDate
+        self.confirmAction = confirmAction
+        self.cancelAction = cancelAction ?? {}
     }
 
     var body: some View {
@@ -44,7 +47,7 @@ struct CustomScheduleModalView: View {
             Text(MailResourcesStrings.Localizable.datePickerTitle)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, IKPadding.alertTitleBottom)
-            DatePicker("", selection: $selectedDate, in: startingDate...)
+            DatePicker("", selection: $selectedDate, in: Date.minimumScheduleDelay...)
                 .labelsHidden()
                 .onChange(of: selectedDate) { newDate in
                     isShowingError = newDate > startingDate ? false : true
@@ -61,7 +64,7 @@ struct CustomScheduleModalView: View {
                              primaryButtonEnabled: !isShowingError,
                              primaryButtonDismiss: !isTooShort,
                              primaryButtonAction: executeActionIfPossible,
-                             secondaryButtonAction: { panelShouldBeShown = true })
+                             secondaryButtonAction: cancelAction)
         }
     }
 
