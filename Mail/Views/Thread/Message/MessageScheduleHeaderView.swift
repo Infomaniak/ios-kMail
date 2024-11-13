@@ -25,19 +25,12 @@ import SwiftUI
 
 struct MessageScheduleHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @State private var selectedDate: Date
 
     let scheduleDate: Date
     let draftResource: String
 
     @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var customSchedule: Bool
     @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var modifyMessage: Bool
-
-    init(scheduleDate: Date, draftResource: String) {
-        _selectedDate = .init(initialValue: scheduleDate)
-        self.scheduleDate = scheduleDate
-        self.draftResource = draftResource
-    }
 
     var body: some View {
         MessageHeaderActionView(
@@ -65,8 +58,7 @@ struct MessageScheduleHeaderView: View {
         }
         .customAlert(isPresented: $customSchedule) {
             CustomScheduleModalView(
-                panelShouldBeShown: .constant(false),
-                selectedDate: $selectedDate,
+                startingDate: scheduleDate,
                 confirmAction: changeScheduleDate
             )
         }

@@ -46,7 +46,6 @@ struct ScheduleFloatingPanel: ViewModifier {
 
     @ObservedRealmObject var draft: Draft
 
-    @State private var selectedDate = Date.now
     @State private var isShowingDiscovery = false
     @State private var panelShouldBeShown = false
 
@@ -72,9 +71,9 @@ struct ScheduleFloatingPanel: ViewModifier {
             }
             .customAlert(isPresented: $customSchedule) {
                 CustomScheduleModalView(
-                    panelShouldBeShown: $panelShouldBeShown,
-                    selectedDate: $selectedDate,
-                    confirmAction: setSchedule
+                    startingDate: draft.scheduleDate ?? Date.minimumScheduleDelay,
+                    confirmAction: setSchedule,
+                    cancelAction: { panelShouldBeShown = true }
                 )
                 .onDisappear {
                     if panelShouldBeShown {
