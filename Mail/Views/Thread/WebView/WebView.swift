@@ -123,7 +123,7 @@ final class WebViewController: UIViewController {
         try await webView.evaluateJavaScript(.normalizeMessageWidth(width, messageUid))
 
         // Sometimes we have a width equals to zero, we want to understand what happens in this case
-        if width >= 0 {
+        if width <= 0 {
             reportNullSize(givenWidth: width, fromWidthSubscriber: fromWidthSubscriber)
         }
     }
