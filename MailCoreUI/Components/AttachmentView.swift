@@ -99,8 +99,8 @@ public struct AttachmentView<Content: View>: View {
         .padding(.horizontal, value: .small)
         .padding(.vertical, value: .extraSmall)
         .overlay {
-            RoundedRectangle(cornerRadius: 8)
-                .stroke(MailResourcesAsset.elementsColor.swiftUIColor)
+            RoundedRectangle(cornerRadius: 6)
+                .strokeBorder(MailResourcesAsset.elementsColor.swiftUIColor)
         }
     }
 }
