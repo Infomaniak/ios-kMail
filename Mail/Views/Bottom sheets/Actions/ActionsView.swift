@@ -204,9 +204,7 @@ struct ActionButtonLabel: View {
                     .frame(width: 24, height: 24)
             } else {
                 action.icon
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 24, height: 24)
+                    .iconSize(.large)
                     .foregroundStyle(iconColor)
             }
             Text(action.title)
