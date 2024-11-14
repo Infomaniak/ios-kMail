@@ -16,6 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
+import InfomaniakDI
 import SwiftUI
 import UIKit
 import UniformTypeIdentifiers
@@ -30,19 +32,24 @@ public struct DocumentPicker: UIViewControllerRepresentable {
 
     let pickerType: PickerType
 
+    private var shouldCopyDocuments: Bool {
+        @InjectService var platformDetector: PlatformDetectable
+        return !platformDetector.isMacCatalyst
+    }
+
     public init(pickerType: PickerType) {
         self.pickerType = pickerType
     }
 
-    public func makeCoordinator() -> DocumentPicker.Coordinator {
-        return DocumentPicker.Coordinator(parent: self)
+    public func makeCoordinator() -> Coordinator {
+        return Coordinator(parent: self)
     }
 
     public func makeUIViewController(context: Context) -> UIDocumentPickerViewController {
         let picker: UIDocumentPickerViewController
         switch pickerType {
         case .selectContent(let types, _):
-            picker = UIDocumentPickerViewController(forOpeningContentTypes: types, asCopy: true)
+            picker = UIDocumentPickerViewController(forOpeningContentTypes: types, asCopy: shouldCopyDocuments)
             picker.allowsMultipleSelection = true
         case .exportContent(let urls):
             picker = UIDocumentPickerViewController(forExporting: urls, asCopy: true)
