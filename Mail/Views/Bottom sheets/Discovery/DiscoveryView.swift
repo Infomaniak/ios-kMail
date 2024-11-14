@@ -88,19 +88,23 @@ struct DiscoveryView: View {
     var onAppear: (() -> Void)?
     let completionHandler: (Bool) -> Void
 
+    private var laterButtonAction: (() -> Void)? {
+        isShowingLaterButton ? didTouchLaterButton : nil
+    }
+
     var body: some View {
         Group {
             if isCompactWindow {
                 DiscoveryBottomSheetView(
                     item: item,
                     nowButton: didTouchNowButton,
-                    laterButton: isShowingLaterButton ? didTouchLaterButton : nil
+                    laterButton: laterButtonAction
                 )
             } else {
                 DiscoveryAlertView(
                     item: item,
                     nowButton: didTouchNowButton,
-                    laterButton: isShowingLaterButton ? didTouchLaterButton : nil
+                    laterButton: laterButtonAction
                 )
             }
         }

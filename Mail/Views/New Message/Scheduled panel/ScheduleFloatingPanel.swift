@@ -27,15 +27,15 @@ import SwiftUI
 
 extension View {
     func scheduleFloatingPanel(
+        isPresented: Binding<Bool>,
         draft: Draft,
         mailboxManager: MailboxManager,
-        isPresented: Binding<Bool>,
         dismissMessageView: @escaping () -> Void
     ) -> some View {
         modifier(ScheduleFloatingPanel(
+            isPresented: isPresented,
             draft: draft,
             mailBoxManager: mailboxManager,
-            isPresented: isPresented,
             dismissMessageView: dismissMessageView
         ))
     }
@@ -44,26 +44,24 @@ extension View {
 struct ScheduleFloatingPanel: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.lastScheduleInterval)) private var lastScheduleInterval: Double = 0
 
-    @ObservedRealmObject var draft: Draft
-
     @State private var isShowingDiscovery = false
     @State private var panelShouldBeShown = false
-
-    let mailBoxManager: MailboxManager
+    @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var customSchedule: Bool
 
     @Binding var isPresented: Bool
 
-    @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var customSchedule: Bool
+    @ObservedRealmObject var draft: Draft
 
+    let mailBoxManager: MailboxManager
     let dismissMessageView: () -> Void
 
     func body(content: Content) -> some View {
         content
             .floatingPanel(isPresented: $isPresented, title: MailResourcesStrings.Localizable.scheduleSendingTitle) {
                 ScheduleFloatingPanelView(
-                    draft: draft,
                     customSchedule: $customSchedule,
                     isShowingDiscovery: $isShowingDiscovery,
+                    draft: draft,
                     lastScheduleInterval: lastScheduleInterval,
                     dismissMessageView: dismissMessageView,
                     setScheduleAction: setSchedule

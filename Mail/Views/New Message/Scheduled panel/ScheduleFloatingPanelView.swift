@@ -26,16 +26,16 @@ import SwiftUI
 struct ScheduleFloatingPanelView: View {
     @LazyInjectService private var draftManager: DraftManager
 
-    @ObservedRealmObject var draft: Draft
-
     @Binding var customSchedule: Bool
     @Binding var isShowingDiscovery: Bool
+
+    @ObservedRealmObject var draft: Draft
 
     let lastScheduleInterval: Double
     let dismissMessageView: () -> Void
     let setScheduleAction: (Date) -> Void
 
-    var isWeekend: Bool {
+    private var isWeekend: Bool {
         [1, 7].contains(Calendar.current.component(.weekday, from: Date.now))
     }
 
@@ -59,15 +59,13 @@ struct ScheduleFloatingPanelView: View {
     var body: some View {
         VStack {
             if lastScheduleInterval > Date.minimumScheduleDelay.timeIntervalSince1970 {
-                ScheduleOptionButton(
+                ScheduleOptionButtonRow(
                     option: .lastSchedule(value: Date(timeIntervalSince1970: lastScheduleInterval)),
                     setScheduleAction: setScheduleAction
                 )
-                IKDivider(type: .full)
             }
             ForEach(scheduleOptions) { option in
-                ScheduleOptionButton(option: option, setScheduleAction: setScheduleAction)
-                IKDivider(type: .full)
+                ScheduleOptionButtonRow(option: option, setScheduleAction: setScheduleAction)
             }
             CustomScheduleButton(
                 customSchedule: $customSchedule,
@@ -75,25 +73,5 @@ struct ScheduleFloatingPanelView: View {
             )
         }
         .padding(.horizontal, value: .medium)
-    }
-}
-
-struct ScheduleOptionButton: View {
-    let option: ScheduleSendOption
-    let setScheduleAction: (Date) -> Void
-
-    var body: some View {
-        Button(action: {
-            if let formatDate = option.date {
-                setScheduleAction(formatDate)
-            }
-        }, label: {
-            ScheduleFloatingPanelRow(
-                title: option.title,
-                icon: option.icon,
-                scheduleDate: option.date
-            )
-        })
-        .padding(.vertical, value: .small)
     }
 }

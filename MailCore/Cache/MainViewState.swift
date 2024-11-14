@@ -66,9 +66,4 @@ public class MainViewState: ObservableObject, SelectedThreadOwnable {
         self.mailboxManager = mailboxManager
         self.selectedFolder = selectedFolder
     }
-
-    public func changeSelectedFolder(to folder: Folder) {
-        let freezeFolder = folder.freezeIfNeeded()
-        selectedFolder = freezeFolder
-    }
 }

@@ -196,9 +196,4 @@ public extension MailTextStyle {
         mailFont: .label,
         color: MailResourcesAsset.redColor.swiftUIColor
     )
-
-    static let labelWarning = MailTextStyle(
-        mailFont: .label,
-        color: MailResourcesAsset.orangeColor.swiftUIColor
-    )
 }

@@ -26,11 +26,11 @@ import SwiftUI
 struct MessageScheduleHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    let scheduleDate: Date
-    let draftResource: String
-
     @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var customSchedule: Bool
     @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var modifyMessage: Bool
+
+    let scheduleDate: Date
+    let draftResource: String
 
     var body: some View {
         MessageHeaderActionView(
