@@ -75,14 +75,15 @@ struct ThreadListCell: View {
                     toggleMultipleSelection(withImpact: true)
                 }
             }
+            .background(SelectionBackground(
+                selectionType: selectionType,
+                paddingLeading: 4,
+                withAnimation: false,
+                accentColor: accentColor
+            ))
+            .contentShape(.rect)
         }
         .buttonStyle(.plain)
-        .background(SelectionBackground(
-            selectionType: selectionType,
-            paddingLeading: 4,
-            withAnimation: false,
-            accentColor: accentColor
-        ))
         .openInWindowOnDoubleTap(
             windowId: DesktopWindowIdentifier.threadWindowIdentifier,
             value: OpenThreadIntent.openFromThreadCell(
