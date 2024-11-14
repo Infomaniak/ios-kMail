@@ -26,6 +26,7 @@ public extension IKButtonTheme {
     static let mail = IKButtonTheme(
         primary: TintShapeStyle.tint,
         secondary: UserDefaults.shared.accentColor.onAccent.swiftUIColor,
+        tertiary: MailResourcesAsset.elementsColor.swiftUIColor,
         disabledPrimary: MailResourcesAsset.textTertiaryColor.swiftUIColor,
         disabledSecondary: MailTextStyle.bodyMediumOnDisabled.color,
         error: MailResourcesAsset.redColor.swiftUIColor,
@@ -36,6 +37,7 @@ public extension IKButtonTheme {
     static let aiWriter = IKButtonTheme(
         primary: MailResourcesAsset.aiColor.swiftUIColor,
         secondary: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
+        tertiary: MailResourcesAsset.elementsColor.swiftUIColor,
         disabledPrimary: IKButtonTheme.mail.disabledPrimary,
         disabledSecondary: IKButtonTheme.mail.disabledSecondary,
         error: IKButtonTheme.mail.error,

@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "82fa2c1f0fc4b6d0f520697bb073a7acddd52833",
-        "version" : "12.5.0"
+        "revision" : "57997b754ed76d1ec912d44d21014da64ceb19f5",
+        "version" : "12.5.2"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "e0afbab522df72496b92042ee65c20f8d593a3f7",
-        "version" : "13.4.0"
+        "revision" : "ebb347ef1ea69e595179ba7162da6be925dbea98",
+        "version" : "14.0.1"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-create-account",
       "state" : {
-        "revision" : "d31cec0fe149e506c0b2d07142fe47187e395eba",
-        "version" : "12.0.0"
+        "revision" : "ddd58db77bcbde2ca012b964bd59b8b0269d94e4",
+        "version" : "13.0.0"
       }
     },
     {
@@ -194,8 +194,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "0b8ba88f5fd70062887d55f87a970c59b1ceebcf",
-        "version" : "8.39.0"
+        "revision" : "0ffc3c6287461962cb2a81e57fc0ee0335d8d56a",
+        "version" : "8.40.1"
       }
     },
     {
@@ -222,7 +222,7 @@
       "location" : "https://github.com/SVGKit/SVGKit.git",
       "state" : {
         "branch" : "3.x",
-        "revision" : "6f75e96948fa72fa5ebc5d1f0bfa761a5614c546"
+        "revision" : "466ecd4842c85e1ebeafb26fe775f9b189db6d60"
       }
     },
     {
