@@ -42,8 +42,8 @@ struct EmptyStateView: View {
                 .padding(.bottom, value: .extraSmall)
             Text(description)
                 .textStyle(.bodySecondary)
-                .multilineTextAlignment(.center)
         }
+        .multilineTextAlignment(.center)
         .padding(.horizontal, value: .extraLarge)
         .padding(.bottom, withFABPadding ? IKPadding.floatingButtonBottom + 56 : 0)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
