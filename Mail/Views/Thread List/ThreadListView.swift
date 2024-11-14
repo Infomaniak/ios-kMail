@@ -59,6 +59,19 @@ struct ThreadListView: View {
         !networkMonitor.isConnected && viewModel.sections == nil
     }
 
+    private var selection: Binding<Thread?>? {
+        if #available(iOS 16.4, *) {
+            return Binding(get: {
+                mainViewState.selectedThread
+            }, set: { newValue in
+                guard !multipleSelectionViewModel.isEnabled else { return }
+                mainViewState.selectedThread = newValue
+            })
+        } else {
+            return nil
+        }
+    }
+
     init(mailboxManager: MailboxManager,
          frozenFolder: Folder,
          selectedThreadOwner: SelectedThreadOwnable) {
@@ -80,7 +93,7 @@ struct ThreadListView: View {
                 .id(viewModel.frozenFolder.id)
 
             ScrollViewReader { proxy in
-                List(selection: $mainViewState.selectedThread) {
+                List(selection: selection) {
                     if !viewModel.isEmpty,
                        viewModel.frozenFolder.role == .trash || viewModel.frozenFolder.role == .spam {
                         FlushFolderView(

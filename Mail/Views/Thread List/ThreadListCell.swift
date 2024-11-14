@@ -59,27 +59,31 @@ struct ThreadListCell: View {
     }
 
     var body: some View {
-        ThreadCell(
-            thread: thread,
-            density: threadDensity,
-            accentColor: accentColor,
-            isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
-            isSelected: isMultiSelected
-        ) {
-            if multipleSelectionViewModel.isEnabled {
-                didTapCell()
-            } else {
-                toggleMultipleSelection(withImpact: true)
+        Button {
+            didTapCell()
+        } label: {
+            ThreadCell(
+                thread: thread,
+                density: threadDensity,
+                accentColor: accentColor,
+                isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
+                isSelected: isMultiSelected
+            ) {
+                if multipleSelectionViewModel.isEnabled {
+                    didTapCell()
+                } else {
+                    toggleMultipleSelection(withImpact: true)
+                }
             }
+            .background(SelectionBackground(
+                selectionType: selectionType,
+                paddingLeading: 4,
+                withAnimation: false,
+                accentColor: accentColor
+            ))
+            .contentShape(.rect)
         }
-        .background(SelectionBackground(
-            selectionType: selectionType,
-            paddingLeading: 4,
-            withAnimation: false,
-            accentColor: accentColor
-        ))
-        .contentShape(Rectangle())
-        .onTapGesture { didTapCell() }
+        .buttonStyle(.plain)
         .openInWindowOnDoubleTap(
             windowId: DesktopWindowIdentifier.threadWindowIdentifier,
             value: OpenThreadIntent.openFromThreadCell(

@@ -55,10 +55,7 @@ extension Set<MultipleSelectedThread> {
 class MultipleSelectionViewModel: ObservableObject {
     @LazyInjectService private var matomo: MatomoUtils
 
-    var isEnabled: Bool {
-        return !selectedItems.isEmpty
-    }
-
+    @Published var isEnabled = false
     @Published var selectedItems = Set<MultipleSelectedThread>()
     @Published var toolbarActions = [Action]()
 
@@ -73,6 +70,7 @@ class MultipleSelectionViewModel: ObservableObject {
     func disable() {
         withAnimation {
             selectedItems.removeAll()
+            isEnabled = false
         }
     }
 
@@ -85,6 +83,28 @@ class MultipleSelectionViewModel: ObservableObject {
                 selectedItems.insert(multipleSelectedThread)
             }
             setActions()
+
+            updateEnabledState()
+        }
+    }
+
+    private func updateEnabledState() {
+        if #available(iOS 18, *) {
+            isEnabled = !selectedItems.isEmpty
+        } else {
+            /*
+             Workaround under iOS 18, the last touch would deselect last item but also navigate.
+             We disable selection state only on next run loop to avoid this issue.
+             */
+            if selectedItems.isEmpty {
+                Task { @MainActor in
+                    withAnimation {
+                        isEnabled = false
+                    }
+                }
+            } else {
+                isEnabled = true
+            }
         }
     }
 
