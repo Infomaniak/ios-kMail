@@ -31,7 +31,7 @@ struct CustomScheduleModalView: View {
     let confirmAction: (Date) -> Void
     let cancelAction: () -> Void
 
-    var isTooShort: Bool {
+    private var isDelayTooShort: Bool {
         selectedDate < startingDate
     }
 
@@ -62,14 +62,14 @@ struct CustomScheduleModalView: View {
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonScheduleTitle,
                              secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                              primaryButtonEnabled: !isShowingError,
-                             primaryButtonDismiss: !isTooShort,
+                             primaryButtonDismiss: !isDelayTooShort,
                              primaryButtonAction: executeActionIfPossible,
                              secondaryButtonAction: cancelAction)
         }
     }
 
     private func executeActionIfPossible() {
-        guard !isTooShort else {
+        guard !isDelayTooShort else {
             isShowingError = true
             return
         }
