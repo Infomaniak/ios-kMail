@@ -22,8 +22,9 @@ import MailResources
 import SwiftUI
 
 struct CustomScheduleButton: View {
-    @Environment(\.dismiss) private var dismiss
     @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
+
+    @Environment(\.dismiss) private var dismiss
 
     @Binding var customSchedule: Bool
     @Binding var isShowingDiscovery: Bool

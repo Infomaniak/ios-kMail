@@ -64,16 +64,16 @@ enum NewMessageAlertType {
 }
 
 struct ComposeMessageView: View {
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.dismissModal) private var dismissModal
-    @EnvironmentObject private var mainViewState: MainViewState
-
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var platformDetector: PlatformDetectable
     @LazyInjectService private var draftManager: DraftManager
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
     @LazyInjectService private var reviewManager: ReviewManageable
+
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismissModal) private var dismissModal
+    @EnvironmentObject private var mainViewState: MainViewState
 
     @State private var isLoadingContent = true
     @ModalState(context: ContextKeys.compose) private var isShowingCancelAttachmentsError = false
@@ -88,9 +88,9 @@ struct ComposeMessageView: View {
     @StateObject private var attachmentsManager: AttachmentsManager
     @StateObject private var aiModel: AIModel
 
-    @ObservedRealmObject private var draft: Draft
-
     @FocusState private var focusedField: ComposeViewFieldType?
+
+    @ObservedRealmObject private var draft: Draft
 
     private let messageReply: MessageReply?
     private let draftContentManager: DraftContentManager
@@ -253,7 +253,7 @@ struct ComposeMessageView: View {
             draftManager.syncDraft(
                 mailboxManager: mailboxManager,
                 showSnackbar: shouldShowSnackbar,
-                changeFolderAction: mainViewState.changeSelectedFolder
+                changeFolderAction: changeSelectedFolder
             )
         }
         .customAlert(item: $isShowingAlert) { alert in
@@ -283,9 +283,9 @@ struct ComposeMessageView: View {
         .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
         .scheduleFloatingPanel(
+            isPresented: $isShowingSchedulePanel,
             draft: draft,
             mailboxManager: mailboxManager,
-            isPresented: $isShowingSchedulePanel,
             dismissMessageView: dismissMessageView
         )
     }
@@ -349,6 +349,11 @@ struct ComposeMessageView: View {
             }
         }
         dismissMessageView()
+    }
+
+    public func changeSelectedFolder(to folder: Folder) {
+        let freezeFolder = folder.freezeIfNeeded()
+        mainViewState.selectedFolder = freezeFolder
     }
 }
 
