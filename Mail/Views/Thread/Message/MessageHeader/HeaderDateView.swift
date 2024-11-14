@@ -25,7 +25,7 @@ import SwiftUI
 struct HeaderDateView: View {
     let date: Date
     let format: Date.ThreadFormatStyle.Style
-    var isScheduled: Bool { date > .now }
+    private var isScheduled: Bool { date > .now }
 
     var body: some View {
         HStack(spacing: IKPadding.small) {
