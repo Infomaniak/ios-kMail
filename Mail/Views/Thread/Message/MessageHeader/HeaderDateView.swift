@@ -32,12 +32,13 @@ struct HeaderDateView: View {
             if isScheduled {
                 MailResourcesAsset.clockThick
                     .iconSize(.small)
+                    .foregroundStyle(MailResourcesAsset.coralColor)
             }
             Text(date, format: .thread(format))
                 .lineLimit(1)
                 .layoutPriority(1)
+                .textStyle(.labelSecondary)
         }
-        .textStyle(isScheduled ? .labelWarning : .labelSecondary)
     }
 }
 
