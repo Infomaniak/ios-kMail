@@ -42,7 +42,7 @@ let project = Project(name: "Mail",
                                       "Mail/**/LaunchScreen.storyboard",
                                       "Mail/Assets.xcassets", // Needed for AppIcon
                                       "MailResources/**/PrivacyInfo.xcprivacy",
-                                      "MailResources/**/InfoPlist.strings"
+                                      "Mail/Localizable/**/InfoPlist.strings"
                                   ],
                                   entitlements: "MailResources/Mail.entitlements",
                                   scripts: [

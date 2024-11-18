@@ -1,0 +1,33 @@
+/*
+ * Loco ios export: iOS InfoPlist.strings
+ * Project: kMail
+ * Release: Working copy
+ * Locale: en, English
+ * Tagged: ios-info-plist
+ * Exported by: Charlene Hoareau
+ * Exported at: Tue, 02 Apr 2024 15:07:21 +0200
+ */
+
+/* loco:62ce828ff799954b2054aac2 */
+NSCameraUsageDescription = "Camera will be used to attach photo to your email";
+
+/* loco:62bd538485526660827f95d2 */
+NSContactsUsageDescription = "Local contacts will be used to show recipient info. We will NOT send them to the server.";
+
+/* loco:62bd4fa9c71d395cd431e6a2 */
+NSFaceIDUsageDescription = "Face ID will be used to unlock the application.";
+
+/* loco:650001c07121218fa306c072 */
+NSPhotoLibraryAddUsageDescription = "Photo access will be used to save pictures in your photo library.";
+
+/* loco:6500020fc1619e44fa0c5d52 */
+NSPhotoLibraryUsageDescription = "Photo access will be used to save pictures in your photo library.";
+
+/* loco:660bfd6073d23c2eb30ab462 */
+shortcutNewMessageTitle = "New Message";
+
+/* loco:660bfde7e7a382d89e07fe92 */
+shortcutSearchTitle = "Search";
+
+/* loco:660bfe8fd1bd42615e0cdbb2 */
+shortcutSupportTitle = "Help & Support";
