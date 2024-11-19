@@ -18,16 +18,17 @@
 
 import InfomaniakDI
 import MailCore
+import MailCoreUI
 import MailResources
 import SwiftUI
 
-struct CustomScheduleButton: View {
-    @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
-
+struct CustomScheduleButtonRow: View {
     @Environment(\.dismiss) private var dismiss
 
     @Binding var customSchedule: Bool
     @Binding var isShowingDiscovery: Bool
+
+    let isFree: Bool
 
     var body: some View {
         Button(action: showCustomSchedulePicker) {
@@ -39,17 +40,18 @@ struct CustomScheduleButton: View {
                     MailResourcesAsset.customSchedule.swiftUIImage
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                MailResourcesAsset.chevronRight.swiftUIImage
+
+                ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor)
             }
         }
         .padding(.vertical, value: .small)
     }
 
-    func showCustomSchedulePicker() {
-        if featureFlagsManager.isEnabled(.scheduleSendDraft) {
-            customSchedule = true
-        } else {
+    private func showCustomSchedulePicker() {
+        if isFree {
             isShowingDiscovery = true
+        } else {
+            customSchedule = true
         }
         dismiss()
     }

@@ -31,6 +31,7 @@ struct ScheduleFloatingPanelView: View {
 
     @ObservedRealmObject var draft: Draft
 
+    let isFree: Bool
     let lastScheduleInterval: Double
     let dismissMessageView: () -> Void
     let setScheduleAction: (Date) -> Void
@@ -67,9 +68,10 @@ struct ScheduleFloatingPanelView: View {
             ForEach(scheduleOptions) { option in
                 ScheduleOptionButtonRow(option: option, setScheduleAction: setScheduleAction)
             }
-            CustomScheduleButton(
+            CustomScheduleButtonRow(
                 customSchedule: $customSchedule,
-                isShowingDiscovery: $isShowingDiscovery
+                isShowingDiscovery: $isShowingDiscovery,
+                isFree: isFree
             )
         }
         .padding(.horizontal, value: .medium)
