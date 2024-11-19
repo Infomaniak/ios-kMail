@@ -71,9 +71,10 @@ struct ScheduleFloatingPanel: ViewModifier {
             .customAlert(isPresented: $customSchedule) {
                 CustomScheduleModalView(
                     startingDate: draft.scheduleDate ?? Date.minimumScheduleDelay,
-                    confirmAction: setSchedule,
-                    cancelAction: { panelShouldBeShown = true }
-                )
+                    confirmAction: setSchedule
+                ) {
+                    panelShouldBeShown = true
+                }
                 .onDisappear {
                     if panelShouldBeShown {
                         isPresented = true

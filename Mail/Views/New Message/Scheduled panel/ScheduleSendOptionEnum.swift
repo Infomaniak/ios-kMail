@@ -71,19 +71,19 @@ enum ScheduleSendOption: Identifiable, Equatable {
     var icon: Image {
         switch self {
         case .laterThisMorning:
-            return MailResourcesAsset.lastSchedule.swiftUIImage
+            return MailResourcesAsset.clockArrowCounterclockwise.swiftUIImage
         case .thisAfternoon:
-            return MailResourcesAsset.todayAfternoon.swiftUIImage
+            return MailResourcesAsset.sunHalf.swiftUIImage
         case .thisEvening:
-            return MailResourcesAsset.todayEvening.swiftUIImage
+            return MailResourcesAsset.moon.swiftUIImage
         case .tomorrowMorning:
-            return MailResourcesAsset.tomorrowMorning.swiftUIImage
+            return MailResourcesAsset.sun.swiftUIImage
         case .nextMondayMorning:
-            return MailResourcesAsset.nextWeek.swiftUIImage
+            return MailResourcesAsset.arrowBackward.swiftUIImage
         case .nextMondayAfternoon:
-            return MailResourcesAsset.nextWeek.swiftUIImage
+            return MailResourcesAsset.sunHalf.swiftUIImage
         case .lastSchedule:
-            return MailResourcesAsset.lastSchedule.swiftUIImage
+            return MailResourcesAsset.clockArrowCounterclockwise.swiftUIImage
         }
     }
 

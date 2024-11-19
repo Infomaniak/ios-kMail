@@ -37,7 +37,7 @@ struct CustomScheduleButtonRow: View {
                     Text(MailResourcesStrings.Localizable.buttonCustomSchedule)
                         .textStyle(.body)
                 } icon: {
-                    MailResourcesAsset.customSchedule.swiftUIImage
+                    MailResourcesAsset.pencil.swiftUIImage
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
