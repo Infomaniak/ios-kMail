@@ -174,7 +174,7 @@ struct ComposeMessageView: View {
                     Button {
                         isShowingSchedulePanel = true
                     } label: {
-                        Label(MailResourcesStrings.Localizable.send, asset: MailResourcesAsset.scheduleSend.swiftUIImage)
+                        Label(MailResourcesStrings.Localizable.send, asset: MailResourcesAsset.clockPaperplane.swiftUIImage)
                     }
                     .disabled(isSendButtonDisabled)
                 }

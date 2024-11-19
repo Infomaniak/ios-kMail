@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -58,7 +59,7 @@ struct ScheduleFloatingPanelView: View {
     }
 
     var body: some View {
-        VStack {
+        VStack(spacing: IKPadding.small) {
             if lastScheduleInterval > Date.minimumScheduleDelay.timeIntervalSince1970 {
                 ScheduleOptionButtonRow(
                     option: .lastSchedule(value: Date(timeIntervalSince1970: lastScheduleInterval)),
@@ -74,6 +75,6 @@ struct ScheduleFloatingPanelView: View {
                 isFree: isFree
             )
         }
-        .padding(.horizontal, value: .medium)
+        .padding(value: .medium)
     }
 }
