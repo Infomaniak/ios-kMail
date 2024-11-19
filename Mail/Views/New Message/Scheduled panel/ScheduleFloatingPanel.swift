@@ -62,6 +62,7 @@ struct ScheduleFloatingPanel: ViewModifier {
                     customSchedule: $customSchedule,
                     isShowingDiscovery: $isShowingDiscovery,
                     draft: draft,
+                    isFree: mailBoxManager.mailbox.isFree,
                     lastScheduleInterval: lastScheduleInterval,
                     dismissMessageView: dismissMessageView,
                     setScheduleAction: setSchedule

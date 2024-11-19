@@ -26,6 +26,7 @@ import SwiftUI
 struct MessageScheduleHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @State private var floatingPanel = false
     @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var customSchedule: Bool
     @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var modifyMessage: Bool
 
@@ -75,9 +76,9 @@ struct MessageScheduleHeaderView: View {
                     scheduleDate: selectedDate
                 )
                 try await mailboxManager.refreshAllSignatures()
-                if let scheduleFolder = try await mailboxManager.getFolder(with: .scheduledDrafts) {
+                if let scheduleFolder = mailboxManager.getFolder(with: .scheduledDrafts) {
                     let freezedFolder = scheduleFolder.freezeIfNeeded()
-                    try await mailboxManager.refreshFolderContent(freezedFolder)
+                    await mailboxManager.refreshFolderContent(freezedFolder)
                 }
             }
         }
