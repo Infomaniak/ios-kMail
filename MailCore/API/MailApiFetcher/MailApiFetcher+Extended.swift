@@ -168,8 +168,8 @@ public extension MailApiFetcher {
         return try? await perform(request: authenticatedRequest(.resource(draftResource), method: .delete))
     }
 
-    func changeDraftSchedule(draftResource: String, scheduleDate: Date) async throws -> Empty {
-        return try await perform(request: authenticatedRequest(
+    func changeDraftSchedule(draftResource: String, scheduleDate: Date) async throws {
+        let _: Empty = try await perform(request: authenticatedRequest(
             .draftSchedule(draftAction: draftResource.appending("/schedule")),
             method: .put,
             parameters: ["schedule_date": scheduleDate.ISO8601WithTimeZone]

@@ -286,11 +286,9 @@ public final class Draft: Object, Codable, Identifiable {
         let attachmentsArray = Array(attachments.compactMap { $0.uuid })
         try container.encode(attachmentsArray, forKey: .attachments)
         try container.encode(action, forKey: .action)
-        if let scheduleDate {
-            try container.encode(scheduleDate.ISO8601WithTimeZone, forKey: .scheduleDate)
-        } else {
-            try container.encode(delay, forKey: .delay)
-        }
+        try container.encodeIfPresent(delay, forKey: .delay)
+        // FIXME: Should encode the date as an object, not a string <ISO8601WithTimeZone>
+        try container.encodeIfPresent(scheduleDate?.ISO8601WithTimeZone, forKey: .scheduleDate)
     }
 }
 
