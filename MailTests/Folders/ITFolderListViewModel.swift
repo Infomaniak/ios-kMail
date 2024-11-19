@@ -144,9 +144,11 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
 
     func delete(draft: MailCore.Draft) async throws {}
 
-    func delete(draftMessage: MailCore.Message) async throws {}
+    func delete(messages: [MailCore.Message]) async throws {}
 
     func deleteLocally(draft: MailCore.Draft) async throws {}
+
+    func deleteLocally(drafts: [MailCore.Draft]) async throws {}
 
     func deleteOrphanDrafts() async {}
 
@@ -173,7 +175,7 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
         fatalError("Unexpected")
     }
 
-    func delete(messages: [MailCore.Message]) async throws {}
+    func delete(draftMessages: [MailCore.Message]) async throws {}
 
     func calendarEvent(from messageUid: String) async throws {
         fatalError("Unexpected")
