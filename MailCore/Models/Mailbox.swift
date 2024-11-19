@@ -61,8 +61,12 @@ public class Mailbox: Object, Codable, Identifiable {
         return uuid
     }
 
+    public var isConsideredLocked: Bool {
+        return isLocked || !isValid
+    }
+
     public var isAvailable: Bool {
-        return isPasswordValid && !isLocked
+        return isPasswordValid && !isConsideredLocked
     }
 
     public var notificationTopicName: String {

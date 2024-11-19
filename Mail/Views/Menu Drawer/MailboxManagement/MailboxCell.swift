@@ -64,7 +64,7 @@ struct MailboxCell: View {
                 isShowingUpdatePasswordView = true
                 return
             }
-            guard !mailbox.isLocked else {
+            guard !mailbox.isConsideredLocked else {
                 isShowingLockedView = true
                 return
             }
