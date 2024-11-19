@@ -35,7 +35,7 @@ struct MessageScheduleHeaderView: View {
 
     var body: some View {
         MessageHeaderActionView(
-            icon: MailResourcesAsset.scheduleSend.swiftUIImage,
+            icon: MailResourcesAsset.clockPaperplane.swiftUIImage,
             message: MailResourcesStrings.Localizable.scheduledEmailHeader(DateFormatter.localizedString(
                 from: scheduleDate,
                 dateStyle: .full,

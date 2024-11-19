@@ -88,7 +88,7 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
         case .draft:
             return MailResourcesAsset.draft
         case .scheduledDrafts:
-            return MailResourcesAsset.scheduleSend
+            return MailResourcesAsset.clockPaperplane
         case .inbox:
             return MailResourcesAsset.drawer
         case .sent:
