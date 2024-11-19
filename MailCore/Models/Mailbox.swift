@@ -35,7 +35,7 @@ public class Mailbox: Object, Codable, Identifiable {
     @Persisted public var isPrimary: Bool
     @Persisted public var passwordStatus: String
     @Persisted public var isPasswordValid: Bool
-    @Persisted public var isValid: Bool
+    @Persisted public var isValidInLDAP: Bool
     @Persisted public var isLocked: Bool
     @Persisted public var hasSocialAndCommercialFiltering: Bool
     @Persisted public var showConfigModal: Bool
@@ -62,7 +62,7 @@ public class Mailbox: Object, Codable, Identifiable {
     }
 
     public var isConsideredLocked: Bool {
-        return isLocked || !isValid
+        return isLocked || !isValidInLDAP
     }
 
     public var isAvailable: Bool {
@@ -84,7 +84,7 @@ public class Mailbox: Object, Codable, Identifiable {
         case isPrimary
         case passwordStatus
         case isPasswordValid
-        case isValid
+        case isValidInLDAP = "isValid"
         case isLocked
         case hasSocialAndCommercialFiltering
         case showConfigModal
@@ -112,7 +112,7 @@ public class Mailbox: Object, Codable, Identifiable {
         isPrimary: Bool,
         passwordStatus: String,
         isPasswordValid: Bool,
-        isValid: Bool,
+        isValidInLDAP: Bool,
         isLocked: Bool,
         hasSocialAndCommercialFiltering: Bool,
         showConfigModal: Bool,
@@ -135,7 +135,7 @@ public class Mailbox: Object, Codable, Identifiable {
         self.isPrimary = isPrimary
         self.passwordStatus = passwordStatus
         self.isPasswordValid = isPasswordValid
-        self.isValid = isValid
+        self.isValidInLDAP = isValidInLDAP
         self.isLocked = isLocked
         self.hasSocialAndCommercialFiltering = hasSocialAndCommercialFiltering
         self.showConfigModal = showConfigModal
@@ -159,7 +159,7 @@ public class Mailbox: Object, Codable, Identifiable {
         isPrimary = try container.decode(Bool.self, forKey: .isPrimary)
         passwordStatus = try container.decode(String.self, forKey: .passwordStatus)
         isPasswordValid = try container.decode(Bool.self, forKey: .isPasswordValid)
-        isValid = try container.decode(Bool.self, forKey: .isValid)
+        isValidInLDAP = try container.decode(Bool.self, forKey: .isValidInLDAP)
         isLocked = try container.decode(Bool.self, forKey: .isLocked)
         hasSocialAndCommercialFiltering = try container.decode(Bool.self, forKey: .hasSocialAndCommercialFiltering)
         showConfigModal = try container.decode(Bool.self, forKey: .showConfigModal)

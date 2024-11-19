@@ -26,7 +26,7 @@ import RealmSwift
 extension MailboxInfosManager: RealmConfigurable {}
 
 public final class MailboxInfosManager {
-    private static let currentDbVersion: UInt64 = 7
+    private static let currentDbVersion: UInt64 = 8
     private let dbName = "MailboxInfos.realm"
 
     public let realmConfiguration: Realm.Configuration
@@ -43,6 +43,13 @@ public final class MailboxInfosManager {
                 if oldSchemaVersion < 6 {
                     migration.enumerateObjects(ofType: Mailbox.className()) { _, newObject in
                         newObject!["aliases"] = List<String>()
+                    }
+                }
+
+                // Renamed `isValid` to `isValidInLDAP`
+                if oldSchemaVersion < 8 {
+                    migration.enumerateObjects(ofType: Mailbox.className()) { oldObject, newObject in
+                        newObject!["isValidInLDAP"] = oldObject!["isValid"]
                     }
                 }
             },

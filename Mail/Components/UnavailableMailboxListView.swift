@@ -33,7 +33,7 @@ struct UnavailableMailboxListView: View {
         where: { mailbox in
             @InjectService var accountManager: AccountManager
             return mailbox.userId == accountManager.currentUserId && mailbox.isPasswordValid == false && mailbox
-                .isLocked == false && mailbox.isValid == true
+                .isLocked == false && mailbox.isValidInLDAP == true
         },
         sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
     ) private var passwordBlockedMailboxes
@@ -46,7 +46,7 @@ struct UnavailableMailboxListView: View {
         }(),
         where: { mailbox in
             @InjectService var accountManager: AccountManager
-            return mailbox.userId == accountManager.currentUserId && (mailbox.isLocked == true || mailbox.isValid == false)
+            return mailbox.userId == accountManager.currentUserId && (mailbox.isLocked == true || mailbox.isValidInLDAP == false)
         },
         sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
     ) private var lockedMailboxes
