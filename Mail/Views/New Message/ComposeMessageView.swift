@@ -170,10 +170,14 @@ struct ComposeMessageView: View {
         .baseComposeMessageToolbar(dismissHandler: didTouchDismiss)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: { isShowingSchedulePanel = true }) {
-                    Label(MailResourcesStrings.Localizable.send, asset: MailResourcesAsset.scheduleSend.swiftUIImage)
+                if featureFlagsManager.isEnabled(.scheduleSendDraft) {
+                    Button {
+                        isShowingSchedulePanel = true
+                    } label: {
+                        Label(MailResourcesStrings.Localizable.send, asset: MailResourcesAsset.scheduleSend.swiftUIImage)
+                    }
+                    .disabled(isSendButtonDisabled)
                 }
-                .disabled(isSendButtonDisabled)
             }
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: didTouchSend) {
