@@ -28,20 +28,23 @@ import SwiftUI
 extension View {
     func scheduleFloatingPanel(
         isPresented: Binding<Bool>,
-        draft: Draft,
+        draftSaveOption: Binding<SaveDraftOption?>,
+        draftDate: Binding<Date?>,
         mailboxManager: MailboxManager,
-        dismissMessageView: @escaping () -> Void
+        completionHandler: @escaping () -> Void
     ) -> some View {
         modifier(ScheduleFloatingPanel(
             isPresented: isPresented,
-            draft: draft,
+            draftSaveOption: draftSaveOption,
+            draftDate: draftDate,
             mailBoxManager: mailboxManager,
-            dismissMessageView: dismissMessageView
+            completionHandler: completionHandler
         ))
     }
 }
 
 struct ScheduleFloatingPanel: ViewModifier {
+    @Environment(\.dismiss) private var dismiss
     @AppStorage(UserDefaults.shared.key(.lastScheduleInterval)) private var lastScheduleInterval: Double = 0
 
     @State private var isShowingDiscovery = false
@@ -49,11 +52,11 @@ struct ScheduleFloatingPanel: ViewModifier {
     @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var customSchedule: Bool
 
     @Binding var isPresented: Bool
-
-    @ObservedRealmObject var draft: Draft
+    @Binding var draftSaveOption: SaveDraftOption?
+    @Binding var draftDate: Date?
 
     let mailBoxManager: MailboxManager
-    let dismissMessageView: () -> Void
+    let completionHandler: () -> Void
 
     func body(content: Content) -> some View {
         content
@@ -61,16 +64,14 @@ struct ScheduleFloatingPanel: ViewModifier {
                 ScheduleFloatingPanelView(
                     customSchedule: $customSchedule,
                     isShowingDiscovery: $isShowingDiscovery,
-                    draft: draft,
                     isFree: mailBoxManager.mailbox.isFree,
                     lastScheduleInterval: lastScheduleInterval,
-                    dismissMessageView: dismissMessageView,
                     setScheduleAction: setSchedule
                 )
             }
             .customAlert(isPresented: $customSchedule) {
                 CustomScheduleModalView(
-                    startingDate: draft.scheduleDate ?? Date.minimumScheduleDelay,
+                    startingDate: draftDate ?? Date.minimumScheduleDelay,
                     confirmAction: setSchedule
                 ) {
                     panelShouldBeShown = true
@@ -90,10 +91,10 @@ struct ScheduleFloatingPanel: ViewModifier {
     }
 
     private func setSchedule(_ scheduleDate: Date) {
+        dismiss()
         lastScheduleInterval = scheduleDate.timeIntervalSince1970
-        $draft.action.wrappedValue = .schedule
-        $draft.scheduleDate.wrappedValue = scheduleDate
-        $draft.delay.wrappedValue = nil
-        dismissMessageView()
+        draftSaveOption = .schedule
+        draftDate = scheduleDate
+        completionHandler()
     }
 }
