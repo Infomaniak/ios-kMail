@@ -100,9 +100,7 @@ public final class DraftManager {
             // show error if needed
             else {
                 guard error.shouldDisplay else { return }
-                if showSnackbar {
-                    alertDisplayable.show(message: error.localizedDescription)
-                }
+                alertDisplayable.show(message: error.localizedDescription, shouldShow: showSnackbar)
             }
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
@@ -131,12 +129,10 @@ public final class DraftManager {
 
     public func sendOrSchedule(draft initialDraft: Draft, mailboxManager: MailboxManager, retry: Bool = true,
                                showSnackbar: Bool, changeFolderAction: ((Folder) -> Void)?) async -> Date? {
-        if showSnackbar {
-            if initialDraft.action == .schedule {
-                alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarScheduling)
-            } else {
-                alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
-            }
+        if initialDraft.action == .schedule {
+            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarScheduling, shouldShow: showSnackbar)
+        } else {
+            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending, shouldShow: showSnackbar)
         }
 
         var sendDate: Date?
@@ -149,9 +145,7 @@ public final class DraftManager {
             if draft.action == .send {
                 let sendResponse = try await mailboxManager.send(draft: draft)
                 sendDate = sendResponse.scheduledDate
-                if showSnackbar {
-                    alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent)
-                }
+                alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent, shouldShow: showSnackbar)
             } else if draft.action == .schedule {
                 let draft = removeDelay(draft: draft)
                 let scheduleResponse = try await mailboxManager.schedule(draft: draft)
@@ -182,9 +176,7 @@ public final class DraftManager {
                 )
             }
 
-            if showSnackbar {
-                alertDisplayable.show(message: error.localizedDescription)
-            }
+            alertDisplayable.show(message: error.localizedDescription, shouldShow: showSnackbar)
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
         return sendDate
