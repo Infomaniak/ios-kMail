@@ -38,6 +38,12 @@ public protocol UserAlertDisplayable {
     ///   - message: The message to display
     ///   - action:  Title and closure associated with the action
     func show(message: String, action: UserAlertAction)
+
+    /// Will present a snackbar while main app is opened, a local notification in Extension or Background.
+    /// - Parameters:
+    ///   - message: The message to display
+    ///   - shouldShow: The boolean to show or not the snackbar
+    func show(message: String, shouldShow: Bool)
 }
 
 public typealias UserAlertAction = (name: String, closure: () -> Void)
@@ -57,6 +63,11 @@ public final class UserAlertDisplayer: UserAlertDisplayable {
 
     public func show(message: String, action: UserAlertAction) {
         showInContext(message: message, action: action)
+    }
+
+    public func show(message: String, shouldShow: Bool) {
+        guard shouldShow else { return }
+        show(message: message)
     }
 
     // MARK: - private
