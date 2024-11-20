@@ -153,6 +153,7 @@ public final class DraftManager {
                     alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent)
                 }
             } else if draft.action == .schedule {
+                let draft = removeDelay(draft: draft)
                 let scheduleResponse = try await mailboxManager.schedule(draft: draft)
                 if showSnackbar, let date = draft.scheduleDate {
                     showScheduledSnackBar(
@@ -337,5 +338,16 @@ public final class DraftManager {
             message: MailResourcesStrings.Localizable.snackbarScheduleSaved(formattedDate),
             action: cancelButtonAlertAction
         )
+    }
+
+    private func removeDelay(draft: Draft) -> Draft {
+        guard draft.delay != nil, let liveDraft = draft.thaw() else {
+            return draft
+        }
+
+        try? liveDraft.realm?.write {
+            liveDraft.delay = nil
+        }
+        return liveDraft.freeze()
     }
 }
