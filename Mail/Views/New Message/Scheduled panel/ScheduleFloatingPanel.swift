@@ -44,7 +44,6 @@ extension View {
 }
 
 struct ScheduleFloatingPanel: ViewModifier {
-    @Environment(\.dismiss) private var dismiss
     @AppStorage(UserDefaults.shared.key(.lastScheduleInterval)) private var lastScheduleInterval: Double = 0
 
     @State private var isShowingDiscovery = false
@@ -91,7 +90,6 @@ struct ScheduleFloatingPanel: ViewModifier {
     }
 
     private func setSchedule(_ scheduleDate: Date) {
-        dismiss()
         lastScheduleInterval = scheduleDate.timeIntervalSince1970
         draftSaveOption = .schedule
         draftDate = scheduleDate
