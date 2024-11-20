@@ -50,7 +50,7 @@ struct CustomScheduleModalView: View {
             DatePicker("", selection: $selectedDate, in: Date.minimumScheduleDelay...)
                 .labelsHidden()
                 .onChange(of: selectedDate) { newDate in
-                    isShowingError = newDate > startingDate ? false : true
+                    isShowingError = newDate > startingDate
                 }
 
             Text(MailResourcesStrings.Localizable.errorScheduleTooShort)
