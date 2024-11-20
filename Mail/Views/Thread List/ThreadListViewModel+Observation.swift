@@ -84,7 +84,11 @@ extension ThreadListViewModel {
                 guard let firstDate = $0.value.first?.date,
                       let secondDate = $1.value.first?.date else { return false }
 
-                return firstDate > secondDate
+                if frozenFolder.role == .scheduledDrafts {
+                    return firstDate < secondDate
+                } else {
+                    return firstDate > secondDate
+                }
             }
 
         var threads = [Thread]()
