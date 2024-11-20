@@ -26,8 +26,8 @@ import SwiftUI
 struct MessageScheduleHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var floatingPanel = false
-    @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var customSchedule: Bool
+    @State private var reschedulePanel = false
+    @State private var rescheduleDate: Date?
     @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var modifyMessage: Bool
 
     let scheduleDate: Date
@@ -43,7 +43,7 @@ struct MessageScheduleHeaderView: View {
             ))
         ) {
             Button(MailResourcesStrings.Localizable.buttonReschedule) {
-                customSchedule = true
+                reschedulePanel = true
             }
             .buttonStyle(.ikBorderless(isInlined: true))
             .controlSize(.small)
@@ -57,18 +57,21 @@ struct MessageScheduleHeaderView: View {
             .buttonStyle(.ikBorderless(isInlined: true))
             .controlSize(.small)
         }
-        .customAlert(isPresented: $customSchedule) {
-            CustomScheduleModalView(
-                startingDate: scheduleDate,
-                confirmAction: changeScheduleDate
-            )
+        .scheduleFloatingPanel(
+            isPresented: $reschedulePanel,
+            draftSaveOption: .constant(.schedule),
+            draftDate: $rescheduleDate,
+            mailboxManager: mailboxManager
+        ) {
+            changeScheduleDate(rescheduleDate)
         }
         .customAlert(isPresented: $modifyMessage) {
             ModifiyMessageScheduleAlertView(draftResource: draftResource)
         }
     }
 
-    private func changeScheduleDate(_ selectedDate: Date) {
+    private func changeScheduleDate(_ selectedDate: Date?) {
+        guard let selectedDate else { return }
         Task {
             await tryOrDisplayError {
                 try await mailboxManager.apiFetcher.changeDraftSchedule(

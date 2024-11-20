@@ -288,9 +288,10 @@ struct ComposeMessageView: View {
         .matomoView(view: ["ComposeMessage"])
         .scheduleFloatingPanel(
             isPresented: $isShowingSchedulePanel,
-            draft: draft,
+            draftSaveOption: $draft.action,
+            draftDate: $draft.scheduleDate,
             mailboxManager: mailboxManager,
-            dismissMessageView: dismissMessageView
+            completionHandler: dismissMessageView
         )
     }
 
