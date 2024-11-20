@@ -30,9 +30,7 @@ struct UnavailableMailboxListView: View {
             @InjectService var mailboxInfosManager: MailboxInfosManager
             return mailboxInfosManager.realmConfiguration
         }(),
-        where: { mailbox in
-            isCurrentUserMailbox(mailbox) && mailbox.isPasswordValid == false && !isMailboxConsideredLocked(mailbox)
-        },
+        where: filterPasswordBlockedMailboxes,
         sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
     ) private var passwordBlockedMailboxes
 
@@ -42,9 +40,7 @@ struct UnavailableMailboxListView: View {
             @InjectService var mailboxInfosManager: MailboxInfosManager
             return mailboxInfosManager.realmConfiguration
         }(),
-        where: { mailbox in
-            isCurrentUserMailbox(mailbox) && isMailboxConsideredLocked(mailbox)
-        },
+        where: filterLockedMailboxes,
         sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
     ) private var lockedMailboxes
 
@@ -73,6 +69,14 @@ struct UnavailableMailboxListView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.top, IKPadding.large)
+    }
+
+    private static func filterPasswordBlockedMailboxes(_ mailbox: Query<Mailbox>) -> Query<Bool> {
+        return isCurrentUserMailbox(mailbox) && mailbox.isPasswordValid == false && !isMailboxConsideredLocked(mailbox)
+    }
+
+    private static func filterLockedMailboxes(_ mailbox: Query<Mailbox>) -> Query<Bool> {
+        return isCurrentUserMailbox(mailbox) && isMailboxConsideredLocked(mailbox)
     }
 
     private static func isCurrentUserMailbox(_ mailbox: Query<Mailbox>) -> Query<Bool> {
