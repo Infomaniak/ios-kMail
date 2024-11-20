@@ -30,11 +30,8 @@ struct ScheduleFloatingPanelView: View {
     @Binding var customSchedule: Bool
     @Binding var isShowingDiscovery: Bool
 
-    @ObservedRealmObject var draft: Draft
-
     let isFree: Bool
     let lastScheduleInterval: Double
-    let dismissMessageView: () -> Void
     let setScheduleAction: (Date) -> Void
 
     private var isWeekend: Bool {
