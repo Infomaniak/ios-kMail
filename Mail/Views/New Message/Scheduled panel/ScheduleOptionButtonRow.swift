@@ -20,6 +20,8 @@ import MailCoreUI
 import SwiftUI
 
 struct ScheduleOptionButtonRow: View {
+    @Environment(\.dismiss) private var dismiss
+
     let option: ScheduleSendOption
     let setScheduleAction: (Date) -> Void
 
@@ -27,6 +29,7 @@ struct ScheduleOptionButtonRow: View {
         if let scheduleDate = option.date {
             Button {
                 setScheduleAction(scheduleDate)
+                dismiss()
             } label: {
                 HStack {
                     Label {
