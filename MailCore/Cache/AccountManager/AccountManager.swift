@@ -294,14 +294,13 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     public func switchToFirstValidMailboxManager() {
         // Current mailbox is valid
-        if let firstValidMailboxManager = currentMailboxManager,
-           !firstValidMailboxManager.mailbox.isLocked && firstValidMailboxManager.mailbox.isPasswordValid {
+        if let firstValidMailboxManager = currentMailboxManager, firstValidMailboxManager.mailbox.isAvailable {
             return
         }
 
         // At least one mailbox is valid
         let mailboxes = mailboxInfosManager.getMailboxes(for: currentUserId)
-        if let firstValidMailbox = mailboxes.first(where: { !$0.isLocked && $0.isPasswordValid && $0.userId == currentUserId }) {
+        if let firstValidMailbox = mailboxes.first(where: { $0.isAvailable && $0.userId == currentUserId }) {
             switchMailbox(newMailbox: firstValidMailbox)
             return
         }

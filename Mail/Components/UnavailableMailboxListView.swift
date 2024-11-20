@@ -30,10 +30,7 @@ struct UnavailableMailboxListView: View {
             @InjectService var mailboxInfosManager: MailboxInfosManager
             return mailboxInfosManager.realmConfiguration
         }(),
-        where: { mailbox in
-            @InjectService var accountManager: AccountManager
-            return mailbox.userId == accountManager.currentUserId && mailbox.isPasswordValid == false
-        },
+        where: filterPasswordBlockedMailboxes,
         sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
     ) private var passwordBlockedMailboxes
 
@@ -43,10 +40,7 @@ struct UnavailableMailboxListView: View {
             @InjectService var mailboxInfosManager: MailboxInfosManager
             return mailboxInfosManager.realmConfiguration
         }(),
-        where: { mailbox in
-            @InjectService var accountManager: AccountManager
-            return mailbox.userId == accountManager.currentUserId && mailbox.isLocked == true
-        },
+        where: filterLockedMailboxes,
         sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
     ) private var lockedMailboxes
 
@@ -63,7 +57,7 @@ struct UnavailableMailboxListView: View {
             }
 
             if !lockedMailboxes.isEmpty {
-                VStack(alignment: .leading, spacing: 12) {
+                VStack(alignment: .leading, spacing: IKPadding.intermediate) {
                     Text(MailResourcesStrings.Localizable.lockedMailboxTitlePlural)
                     ForEach(lockedMailboxes) { mailbox in
                         MailboxCell(mailbox: mailbox)
@@ -74,7 +68,24 @@ struct UnavailableMailboxListView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.top, 24)
+        .padding(.top, IKPadding.large)
+    }
+
+    private static func filterPasswordBlockedMailboxes(_ mailbox: Query<Mailbox>) -> Query<Bool> {
+        return isCurrentUserMailbox(mailbox) && mailbox.isPasswordValid == false && !isMailboxConsideredLocked(mailbox)
+    }
+
+    private static func filterLockedMailboxes(_ mailbox: Query<Mailbox>) -> Query<Bool> {
+        return isCurrentUserMailbox(mailbox) && isMailboxConsideredLocked(mailbox)
+    }
+
+    private static func isCurrentUserMailbox(_ mailbox: Query<Mailbox>) -> Query<Bool> {
+        @InjectService var accountManager: AccountManager
+        return mailbox.userId == accountManager.currentUserId
+    }
+
+    private static func isMailboxConsideredLocked(_ mailbox: Query<Mailbox>) -> Query<Bool> {
+        return mailbox.isLocked == true || mailbox.isValidInLDAP == false
     }
 }
 

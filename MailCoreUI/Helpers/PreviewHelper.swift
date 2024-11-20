@@ -67,7 +67,7 @@ public enum PreviewHelper {
                                               isPrimary: true,
                                               passwordStatus: "",
                                               isPasswordValid: true,
-                                              isValid: true,
+                                              isValidInLDAP: true,
                                               isLocked: false,
                                               hasSocialAndCommercialFiltering: false,
                                               showConfigModal: false,
