@@ -39,3 +39,24 @@ excluded:
  - Derived/
  - Tuist/.build/
  - Tuist/DerivedData/
+custom_rules:
+  private_state:
+    included:
+      - ".*\\.swift"
+    regex: "@State\\s+var"
+    message: "State should be private"
+  private_environment_object:
+    included:
+      - ".*\\.swift"
+    regex: "@EnvironmentObject\\s+var"
+    message: "EnvironmentObject should be private"
+  private_environment:
+    included:
+      - ".*\\.swift"
+    regex: "@Environment\\([^)]*\\)\\s+var"
+    message: "Environment should be private"
+  private_lazy_inject_service:
+    included:
+      - ".*\\.swift"
+    regex: "@LazyInjectService\\s+var"
+    message: "LazyInjectService should be private"
