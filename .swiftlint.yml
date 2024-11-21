@@ -39,3 +39,14 @@ excluded:
  - Derived/
  - Tuist/.build/
  - Tuist/DerivedData/
+custom_rules:
+  private_state:
+    included:
+      - ".*\\.swift"
+    regex: "@State\\s+var"
+    message: "State should be private"
+  private_state_object:
+    included:
+      - ".*\\.swift"
+    regex: "@StateObject\\s+var"
+    message: "StateObject should be private"
