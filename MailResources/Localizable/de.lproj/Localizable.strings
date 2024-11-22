@@ -994,6 +994,12 @@
 /* loco:6400bafe3dae40636c716ea2 */
 "messageShowQuotedText" = "Anzeigen der Konversation";
 
+/* loco:6723980d4062e74f78028152 */
+"mondayAfternoon" = "Montagnachmittag";
+
+/* loco:673effba4883a6c33a0a7113 */
+"mondayMorning" = "Montagmorgen";
+
 /* loco:66334ad612173107a60187e4 */
 "moreInfo" = "Weitere Informationen";
 
@@ -1042,11 +1048,8 @@
 /* loco:6266655afabeeb6bc774c932 */
 "newMessagePlaceholderTitle" = "Geben Sie Ihre Nachricht ein";
 
-/* loco:6723980d4062e74f78028152 */
-"nextMondayAfternoon" = "Montagnachmittag";
-
 /* loco:67238d29fe561f9d0a0f5732 */
-"nextMondayMorning" = "Nächsten Montag";
+"nextMonday" = "Nächsten Montag";
 
 /* loco:62fb875a6743ac5a237b07e3 */
 "noBodyTitle" = "Diese Nachricht ist leer.";

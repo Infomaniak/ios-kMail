@@ -43,11 +43,11 @@ struct ScheduleFloatingPanelView: View {
 
         switch Calendar.current.component(.hour, from: Date.now) {
         case 0 ... 7:
-            return [.laterThisMorning, .tomorrowMorning, .nextMondayMorning]
+            return [.laterThisMorning, .tomorrowMorning, .nextMonday]
         case 8 ... 13:
-            return [.thisAfternoon, .tomorrowMorning, .nextMondayMorning]
+            return [.thisAfternoon, .tomorrowMorning, .nextMonday]
         case 14 ... 19:
-            return [.thisEvening, .tomorrowMorning, .nextMondayMorning]
+            return [.thisEvening, .tomorrowMorning, .nextMonday]
         case 20 ... 23:
             return [.tomorrowMorning, .nextMondayMorning]
         default:
