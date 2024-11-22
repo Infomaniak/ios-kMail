@@ -997,6 +997,12 @@
 /* loco:6400bafe3dae40636c716ea2 */
 "messageShowQuotedText" = "Afficher la conversation";
 
+/* loco:6723980d4062e74f78028152 */
+"mondayAfternoon" = "Lundi après-midi";
+
+/* loco:673effba4883a6c33a0a7113 */
+"mondayMorning" = "Lundi matin";
+
 /* loco:66334ad612173107a60187e4 */
 "moreInfo" = "En savoir plus";
 
@@ -1045,11 +1051,8 @@
 /* loco:6266655afabeeb6bc774c932 */
 "newMessagePlaceholderTitle" = "Rédigez votre message";
 
-/* loco:6723980d4062e74f78028152 */
-"nextMondayAfternoon" = "Lundi après-midi";
-
 /* loco:67238d29fe561f9d0a0f5732 */
-"nextMondayMorning" = "Lundi prochain";
+"nextMonday" = "Lundi prochain";
 
 /* loco:62fb875a6743ac5a237b07e3 */
 "noBodyTitle" = "Ce message est vide.";
