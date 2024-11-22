@@ -24,6 +24,7 @@ enum ScheduleSendOption: Identifiable, Equatable {
     case thisAfternoon
     case thisEvening
     case tomorrowMorning
+    case nextMonday
     case nextMondayMorning
     case nextMondayAfternoon
     case lastSchedule(value: Date)
@@ -40,7 +41,7 @@ enum ScheduleSendOption: Identifiable, Equatable {
             return dateFromNow(setHour: 18)
         case .tomorrowMorning:
             return dateFromNow(setHour: 8, tomorrow: true)
-        case .nextMondayMorning:
+        case .nextMondayMorning, .nextMonday:
             return nextMonday(setHour: 8)
         case .nextMondayAfternoon:
             return nextMonday(setHour: 14)
@@ -59,10 +60,12 @@ enum ScheduleSendOption: Identifiable, Equatable {
             return MailResourcesStrings.Localizable.thisEvening
         case .tomorrowMorning:
             return MailResourcesStrings.Localizable.tomorrowMorning
+        case .nextMonday:
+            return MailResourcesStrings.Localizable.nextMonday
         case .nextMondayMorning:
-            return MailResourcesStrings.Localizable.nextMondayMorning
+            return MailResourcesStrings.Localizable.mondayMorning
         case .nextMondayAfternoon:
-            return MailResourcesStrings.Localizable.nextMondayAfternoon
+            return MailResourcesStrings.Localizable.mondayAfternoon
         case .lastSchedule:
             return MailResourcesStrings.Localizable.lastSelectedSchedule
         }
@@ -71,17 +74,19 @@ enum ScheduleSendOption: Identifiable, Equatable {
     var icon: Image {
         switch self {
         case .laterThisMorning:
-            return MailResourcesAsset.clockArrowCounterclockwise.swiftUIImage
+            return MailResourcesAsset.sunHorizon.swiftUIImage
         case .thisAfternoon:
-            return MailResourcesAsset.sunHalf.swiftUIImage
+            return MailResourcesAsset.sunFilledRighthalf.swiftUIImage
         case .thisEvening:
             return MailResourcesAsset.moon.swiftUIImage
         case .tomorrowMorning:
             return MailResourcesAsset.sun.swiftUIImage
-        case .nextMondayMorning:
+        case .nextMonday:
             return MailResourcesAsset.arrowBackward.swiftUIImage
+        case .nextMondayMorning:
+            return MailResourcesAsset.sun.swiftUIImage
         case .nextMondayAfternoon:
-            return MailResourcesAsset.sunHalf.swiftUIImage
+            return MailResourcesAsset.sunFilledRighthalf.swiftUIImage
         case .lastSchedule:
             return MailResourcesAsset.clockArrowCounterclockwise.swiftUIImage
         }
