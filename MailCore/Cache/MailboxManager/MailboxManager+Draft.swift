@@ -159,8 +159,10 @@ public extension MailboxManager {
     }
 
     func deleteLocally(drafts: [Draft]) async throws {
+        let localUuids = drafts.map(\.localUUID)
         try? writeTransaction { writableRealm in
-            let liveDrafts = writableRealm.objects(Draft.self)
+            let liveDrafts = writableRealm.objects(Draft.self).filter("localUUID IN %@", localUuids)
+
             writableRealm.delete(liveDrafts)
         }
     }
