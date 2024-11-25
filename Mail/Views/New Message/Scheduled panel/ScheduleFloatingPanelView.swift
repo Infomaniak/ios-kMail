@@ -18,15 +18,11 @@
 
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
-import MailCore
 import MailCoreUI
-import MailResources
 import RealmSwift
 import SwiftUI
 
 struct ScheduleFloatingPanelView: View {
-    @LazyInjectService private var draftManager: DraftManager
-
     @Binding var customSchedule: Bool
     @Binding var isShowingDiscovery: Bool
 
