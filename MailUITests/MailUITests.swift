@@ -64,7 +64,8 @@ class MailUITests: XCTestCase {
         login()
         writeTestMessage()
 
-        app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage].buttons[MailResourcesStrings.Localizable.send].tap()
+        app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage].buttons[MailResourcesStrings.Localizable.send]
+            .firstMatch.tap()
         _ = app.collectionViews.firstMatch.waitForExistence(timeout: defaultTimeOut)
     }
 
@@ -74,10 +75,10 @@ class MailUITests: XCTestCase {
         writeTestMessage()
 
         app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage]
-            .buttons[MailResourcesStrings.Localizable.buttonClose].tap()
+            .buttons[MailResourcesStrings.Localizable.buttonClose].firstMatch.tap()
         _ = app.collectionViews.firstMatch.waitForExistence(timeout: defaultTimeOut)
 
-        let deleteDraftButton = app.buttons[MailResourcesStrings.Localizable.actionDelete]
+        let deleteDraftButton = app.buttons[MailResourcesStrings.Localizable.actionDelete].firstMatch
         _ = deleteDraftButton.waitForExistence(timeout: defaultTimeOut)
         deleteDraftButton.tap()
     }
@@ -86,8 +87,8 @@ class MailUITests: XCTestCase {
         launchAppFromScratch()
         login()
 
-        app.navigationBars.firstMatch.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonMenu].tap()
-        app.scrollViews.otherElements.staticTexts[MailResourcesStrings.Localizable.archiveFolder].tap()
+        app.navigationBars.firstMatch.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonMenu].firstMatch.tap()
+        app.scrollViews.otherElements.staticTexts[MailResourcesStrings.Localizable.archiveFolder].firstMatch.tap()
     }
 
     func testCreateFolder() {
@@ -111,7 +112,7 @@ class MailUITests: XCTestCase {
         login()
         swipeFirstCell()
 
-        app.collectionViews.buttons[MailResourcesStrings.Localizable.actionDelete].tap()
+        app.collectionViews.buttons[Action.delete.accessibilityIdentifier].firstMatch.tap()
 
         undo()
     }
@@ -121,7 +122,7 @@ class MailUITests: XCTestCase {
         login()
         swipeFirstCell()
 
-        app.collectionViews.buttons[MailResourcesStrings.Localizable.actionDelete].tap()
+        app.collectionViews.buttons[Action.delete.accessibilityIdentifier].firstMatch.tap()
 
         undo(ignoreUndoFailure: false)
     }
@@ -151,39 +152,39 @@ class MailUITests: XCTestCase {
         login()
         swipeFirstCell()
 
-        app.collectionViews.buttons[MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu].tap()
+        app.collectionViews.buttons[MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu].firstMatch.tap()
         app.buttons[Action.delete.accessibilityIdentifier].tap()
 
         undo()
 
         swipeFirstCell()
 
-        app.collectionViews.buttons[MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu].tap()
-        app.buttons[Action.archive.accessibilityIdentifier].tap()
+        app.collectionViews.buttons[MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu].firstMatch.tap()
+        app.buttons[Action.archive.accessibilityIdentifier].firstMatch.tap()
 
         undo()
 
         swipeFirstCell()
 
-        app.collectionViews.buttons[MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu].tap()
-        if app.buttons[Action.markAsRead.accessibilityIdentifier].exists {
-            app.buttons[Action.markAsRead.accessibilityIdentifier].tap()
+        app.collectionViews.buttons[MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu].firstMatch.tap()
+        if app.buttons[Action.markAsRead.accessibilityIdentifier].firstMatch.exists {
+            app.buttons[Action.markAsRead.accessibilityIdentifier].firstMatch.tap()
         } else {
-            app.buttons[Action.markAsUnread.accessibilityIdentifier].tap()
+            app.buttons[Action.markAsUnread.accessibilityIdentifier].firstMatch.tap()
         }
 
         swipeFirstCell()
 
-        app.collectionViews.buttons[MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu].tap()
-        if app.buttons[MailResourcesStrings.Localizable.actionMarkAsUnread].exists {
-            app.buttons[MailResourcesStrings.Localizable.actionMarkAsUnread].tap()
+        app.collectionViews.buttons[MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu].firstMatch.tap()
+        if app.buttons[MailResourcesStrings.Localizable.actionMarkAsUnread].firstMatch.exists {
+            app.buttons[MailResourcesStrings.Localizable.actionMarkAsUnread].firstMatch.tap()
         } else {
-            app.buttons[MailResourcesStrings.Localizable.actionMarkAsRead].tap()
+            app.buttons[MailResourcesStrings.Localizable.actionMarkAsRead].firstMatch.tap()
         }
     }
 
     func undo(ignoreUndoFailure: Bool = true) {
-        let cancelButton = app.buttons[MailResourcesStrings.Localizable.buttonCancel]
+        let cancelButton = app.buttons[MailResourcesStrings.Localizable.buttonCancel].firstMatch
         _ = cancelButton.waitForExistence(timeout: defaultTimeOut)
 
         if !cancelButton.exists && ignoreUndoFailure {
@@ -195,9 +196,9 @@ class MailUITests: XCTestCase {
 
     func swipeFirstCell() {
         // First cell could be the loading indicator so we get the second one
-        let testMailCell = app.collectionViews.cells.element(boundBy: 2)
+        let testMailCell = app.collectionViews.containing(.button, identifier: "ThreadListCell").firstMatch
         _ = testMailCell.waitForExistence(timeout: defaultTimeOut)
-        testMailCell.firstMatch.swipeLeft()
+        testMailCell.swipeLeft()
     }
 
     func writeTestMessage() {
@@ -209,13 +210,9 @@ class MailUITests: XCTestCase {
         app.textFields.firstMatch.typeText(Env.testAccountEmail)
         app.textFields.firstMatch.typeText("\n")
 
-        let scrollViewsQuery = app.scrollViews
-        let textView = scrollViewsQuery.otherElements.containing(
-            .staticText,
-            identifier: MailResourcesStrings.Localizable.fromTitle
-        ).children(matching: .textView).element(boundBy: 1)
-        textView.tap()
-        textView.typeText(MailUITests.testSubject)
+        let subjectTextField = app.textFields[MailResourcesStrings.Localizable.subjectTitle].firstMatch
+        subjectTextField.tap()
+        subjectTextField.typeText(MailUITests.testSubject)
 
         composeBodyView.tap()
         composeBodyView.typeText(MailResourcesStrings.Localizable.aiPromptExample1)
@@ -229,42 +226,48 @@ class MailUITests: XCTestCase {
         let loginButton = app.buttons[MailResourcesStrings.Localizable.buttonLogin].firstMatch
         _ = loginButton.waitForExistence(timeout: defaultTimeOut)
         loginButton.tap()
-        let loginWebview = app.webViews.firstMatch
+        let loginWebView = app.webViews.firstMatch
 
-        let emailField = loginWebview.textFields.firstMatch
+        let emailField = loginWebView.textFields.firstMatch
         _ = emailField.waitForExistence(timeout: defaultTimeOut)
         emailField.tap()
         emailField.typeText(Env.testAccountEmail)
 
-        let passwordField = loginWebview.secureTextFields.firstMatch
+        let passwordField = loginWebView.secureTextFields.firstMatch
         passwordField.tap()
         passwordField.typeText(Env.testAccountPassword)
         passwordField.typeText("\n")
 
         let nowText = MailResourcesStrings.Localizable
             .threadListHeaderLastUpdate(Date().formatted(.relative(presentation: .named)))
-        let refreshText = app.staticTexts[nowText]
+        let refreshText = app.staticTexts[nowText].firstMatch
         let alreadyAskedPermissions = refreshText.waitForExistence(timeout: defaultTimeOut)
 
         if !alreadyAskedPermissions {
-            let nextButton = app.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonNext]
+            let nextButton = app.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonNext].firstMatch
             _ = nextButton.waitForExistence(timeout: defaultTimeOut)
 
             let permissionApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
             if nextButton.exists {
                 nextButton.tap()
 
-                permissionApp.alerts.firstMatch.buttons.firstMatch.tap()
+                let authorizeButton = permissionApp.alerts.firstMatch.buttons.firstMatch
+                if authorizeButton.exists {
+                    authorizeButton.tap()
+                }
             }
 
             _ = nextButton.waitForExistence(timeout: defaultTimeOut)
             if nextButton.exists {
                 app.buttons.firstMatch.tap()
 
-                permissionApp.alerts.firstMatch.buttons.firstMatch.tap()
+                let authorizeButton = permissionApp.alerts.firstMatch.buttons.firstMatch
+                if authorizeButton.exists {
+                    authorizeButton.tap()
+                }
             }
 
-            let refreshText = app.staticTexts[nowText]
+            let refreshText = app.staticTexts[nowText].firstMatch
             _ = refreshText.waitForExistence(timeout: defaultTimeOut)
         }
     }

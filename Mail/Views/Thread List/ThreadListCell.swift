@@ -84,6 +84,7 @@ struct ThreadListCell: View {
             .contentShape(.rect)
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("ThreadListCell")
         .openInWindowOnDoubleTap(
             windowId: DesktopWindowIdentifier.threadWindowIdentifier,
             value: OpenThreadIntent.openFromThreadCell(

@@ -39,6 +39,7 @@ struct ComposeMessageCellTextField: View {
                     AxisTextField("", text: $text, axis: .vertical)
                         .focused($focusedField, equals: .subject)
                         .textStyle(.body)
+                        .accessibilityIdentifier(type.title)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.vertical, IKPadding.composeViewHeaderCellLargeVertical)

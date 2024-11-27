@@ -68,6 +68,7 @@ private struct SwipeActionView: View {
                 .labelStyle(.iconOnly)
         }
         .tint(action.tintColor)
+        .accessibilityIdentifier(action.accessibilityIdentifier)
     }
 }
 
