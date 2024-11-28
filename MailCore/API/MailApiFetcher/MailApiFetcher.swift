@@ -63,11 +63,10 @@ public final class MailApiFetcher: ApiFetcher, MailApiFetchable {
                         rawJson = String(decoding: data, as: UTF8.self)
                     }
 
+                    let requestId = request.response?.value(forHTTPHeaderField: "x-request-id") ?? "No request Id"
                     SentrySDK.capture(error: error) { scope in
                         scope.setExtras(["Request URL": request.request?.url?.absoluteString ?? "No URL",
-                                         "Request Id": request.request?
-                                             .value(forHTTPHeaderField: RequestContextIdAdaptor.requestContextIdHeader) ??
-                                             "No request Id",
+                                         "Request Id": requestId,
                                          "Decoded type": String(describing: T.self),
                                          "Raw JSON": rawJson])
                     }
