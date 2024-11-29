@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Alamofire/Alamofire",
       "state" : {
-        "revision" : "e16d3481f5ed35f0472cb93350085853d754913f",
-        "version" : "5.10.1"
+        "revision" : "513364f870f6bfc468f9d2ff0a95caccc10044c5",
+        "version" : "5.10.2"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-onboarding",
       "state" : {
-        "revision" : "e91ec14a43ac0a32d158aba72af7d4789e30d01c",
-        "version" : "1.1.0"
+        "revision" : "5dc2e9caac6c9a7548d2980983c4566b4d0e1237",
+        "version" : "1.1.1"
       }
     },
     {
@@ -194,8 +194,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "0ffc3c6287461962cb2a81e57fc0ee0335d8d56a",
-        "version" : "8.40.1"
+        "revision" : "56bfb7e723c76614be4c0861ee820ccbaed14c6d",
+        "version" : "8.41.0"
       }
     },
     {
@@ -222,7 +222,7 @@
       "location" : "https://github.com/SVGKit/SVGKit.git",
       "state" : {
         "branch" : "3.x",
-        "revision" : "466ecd4842c85e1ebeafb26fe775f9b189db6d60"
+        "revision" : "1e49cd52e1738cd2635889571f7b2474ce0d1763"
       }
     },
     {
@@ -248,8 +248,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log",
       "state" : {
-        "revision" : "9cb486020ebf03bfa5b5df985387a14a98744537",
-        "version" : "1.6.1"
+        "revision" : "96a2f8a0fa41e9e09af4585e2724c4e825410b91",
+        "version" : "1.6.2"
       }
     },
     {
