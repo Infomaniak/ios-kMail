@@ -199,18 +199,18 @@ public class ActionsManager: ObservableObject {
                     )
                 }
             }
-        case .saveMailInkDrive:
+        case .saveThreadInkDrive:
             guard !platformDetector.isMac else {
                 return
             }
-            Task { @MainActor in
+            await Task { @MainActor in
                 do {
-                    let fileURL = try await mailboxManager.apiFetcher.download(message: messages.first!)
-                    try DeeplinkService().shareFileToKdrive(fileURL)
+                    let filesURL = try await mailboxManager.apiFetcher.download(messages: messages)
+                    try DeeplinkService().shareFilesToKdrive(filesURL)
                 } catch {
                     SentrySDK.capture(error: error)
                 }
-            }
+            }.value
         case .shareMailLink:
             guard let message = messagesWithDuplicates.first else { return }
             let result = try await mailboxManager.apiFetcher.shareMailLink(message: message)
