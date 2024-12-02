@@ -1199,7 +1199,7 @@
 "scheduleSendingTitle" = "Programmer l’envoi";
 
 /* loco:6723a770a20911146d083622 */
-"scheduledEmailHeader" = "Cet e-mail sera envoyé à cette date: %@";
+"scheduledEmailHeader" = "Cet e-mail sera envoyé à cette date : %@";
 
 /* loco:62a9db4ae45f1e29371ff802 */
 "scheduledMessagesFolder" = "Messages programmés";

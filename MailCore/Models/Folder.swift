@@ -32,6 +32,8 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
     case socialNetworks = "SOCIALNETWORKS"
     case spam = "SPAM"
     case trash = "TRASH"
+    // TODO: Handle snoozed folder
+    case snoozed = "SNOOZED"
 
     public var localizedName: String {
         switch self {
@@ -53,6 +55,8 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return MailResourcesStrings.Localizable.spamFolder
         case .trash:
             return MailResourcesStrings.Localizable.trashFolder
+        case .snoozed: // TODO
+            return ""
         }
     }
 
@@ -76,6 +80,8 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return 7
         case .trash:
             return 8
+        case .snoozed: // TODO
+            return 10
         }
     }
 
@@ -99,6 +105,8 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return MailResourcesAsset.spam
         case .trash:
             return MailResourcesAsset.bin
+        case .snoozed: // TODO
+            return MailResourcesAsset.clock
         }
     }
 
@@ -171,7 +179,8 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     public var shouldBeDisplayed: Bool {
-        guard name != ".ik" else { return false }
+        // TODO: Remove snoozed folder from here
+        guard name != ".ik" && role != .snoozed else { return false }
         guard !(role == .scheduledDrafts && threads.isEmpty) else { return false }
         return true
     }
