@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreSwiftUI
 import MailCoreUI
 import SwiftUI
 
@@ -35,8 +36,10 @@ struct ScheduleOptionButtonRow: View {
                     Label {
                         Text(option.title)
                             .textStyle(.body)
+                            .padding(.leading, value: .medium)
                     } icon: {
                         option.icon
+                            .iconSize(.large)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
 
