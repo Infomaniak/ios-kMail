@@ -30,35 +30,14 @@ struct ScheduleFloatingPanelView: View {
     let lastScheduleInterval: Double
     let setScheduleAction: (Date) -> Void
 
-    private var isWeekend: Bool {
-        [1, 7].contains(Calendar.current.component(.weekday, from: Date.now))
-    }
-
     private var scheduleOptions: [ScheduleSendOption] {
-        guard !isWeekend else { return [.nextMondayMorning, .nextMondayAfternoon] }
-
-        switch Calendar.current.component(.hour, from: Date.now) {
-        case 0 ... 7:
-            return [.laterThisMorning, .tomorrowMorning, .nextMonday]
-        case 8 ... 13:
-            return [.thisAfternoon, .tomorrowMorning, .nextMonday]
-        case 14 ... 19:
-            return [.thisEvening, .tomorrowMorning, .nextMonday]
-        case 20 ... 23:
-            return [.tomorrowMorning, .nextMondayMorning]
-        default:
-            return []
-        }
+        var allCases = ScheduleSendOption.allCases
+        allCases.insert(ScheduleSendOption.lastSchedule(value: Date(timeIntervalSince1970: lastScheduleInterval)), at: 0)
+        return allCases.filter { $0.shouldBeDisplayedNow }
     }
 
     var body: some View {
         VStack(spacing: IKPadding.small) {
-            if lastScheduleInterval > Date.minimumScheduleDelay.timeIntervalSince1970 {
-                ScheduleOptionButtonRow(
-                    option: .lastSchedule(value: Date(timeIntervalSince1970: lastScheduleInterval)),
-                    setScheduleAction: setScheduleAction
-                )
-            }
             ForEach(scheduleOptions) { option in
                 ScheduleOptionButtonRow(option: option, setScheduleAction: setScheduleAction)
             }
