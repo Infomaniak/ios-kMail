@@ -92,6 +92,37 @@ enum ScheduleSendOption: Identifiable, Equatable {
         }
     }
 
+    var shouldBeDisplayedNow: Bool {
+        let weekday = Calendar.current.component(.weekday, from: Date.now)
+        let hour = Calendar.current.component(.hour, from: .now)
+        let minute = Calendar.current.component(.minute, from: .now)
+
+        switch self {
+        case .laterThisMorning:
+            return hour < 7 || (hour == 7 && minute < 55)
+        case .thisAfternoon:
+            return hour < 13 || (hour == 13 && minute < 55)
+        case .thisEvening:
+            return (hour > 7 && hour < 17) || (hour == 17 && minute < 55)
+        case .tomorrowMorning, .nextMonday:
+            return true
+        case .nextMondayMorning, .nextMondayAfternoon:
+            return weekday == 1 || weekday == 7
+        case .lastSchedule(let value):
+            return value > .minimumScheduleDelay
+        }
+    }
+
+    static var allCases: [ScheduleSendOption] = [
+        .laterThisMorning,
+        .thisAfternoon,
+        .thisEvening,
+        .tomorrowMorning,
+        .nextMonday,
+        .nextMondayMorning,
+        .nextMondayAfternoon
+    ]
+
     private func dateFromNow(setHour: Int, tomorrow: Bool = false) -> Date? {
         let startOfDay = Calendar.current.startOfDay(for: .now)
         guard let dateWithDay = Calendar.current.date(byAdding: .day, value: tomorrow ? 1 : 0, to: startOfDay) else { return nil }
