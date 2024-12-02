@@ -18,27 +18,75 @@
 
 import InfomaniakCore
 import MailCore
+import MailResources
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 
 struct FoldersListView: View {
     @EnvironmentObject private var mainViewState: MainViewState
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @ModalState private var isShowingCreateFolderAlert = false
+    @State private var currentFolder: Folder?
 
     private let folders: [NestableFolder]
     private let hasSubFolders: Bool
+    private let isUserFoldersList: Bool
 
-    init(folders: [NestableFolder]) {
+    init(folders: [NestableFolder], isUserFoldersList: Bool) {
         self.folders = folders
+        self.isUserFoldersList = isUserFoldersList
         hasSubFolders = folders.contains { !$0.children.isEmpty }
     }
 
     var body: some View {
         VStack(spacing: 0) {
             ForEach(folders) { folder in
+
                 FolderCell(folder: folder,
                            currentFolderId: mainViewState.selectedFolder.remoteId,
                            canCollapseSubFolders: hasSubFolders,
                            matomoCategory: .menuDrawer)
+                    .background(RoundedRectangle(cornerRadius: 10).fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor))
+                    .contextMenu {
+                        if isUserFoldersList {
+                            Button {
+                                currentFolder = folder.frozenContent
+                                isShowingCreateFolderAlert.toggle()
+                            } label: {
+                                Label {
+                                    Text(MailResourcesStrings.Localizable.actionRename)
+                                } icon: {
+                                    MailResourcesAsset.pencilPlain.swiftUIImage
+                                }
+                            }
+                            Button {
+                                Task {
+                                    do {
+                                        try await mailboxManager.deleteFolder(
+                                            folder: folder.frozenContent
+                                        )
+                                        if mainViewState.selectedFolder.remoteId == folder.frozenContent.remoteId,
+                                           let inbox = mailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
+                                            mainViewState.selectedFolder = inbox
+                                        }
+                                    } catch {
+                                        print(error)
+                                    }
+                                }
+                            } label: {
+                                Label {
+                                    Text(MailResourcesStrings.Localizable.actionDelete)
+                                } icon: {
+                                    MailResourcesAsset.bin.swiftUIImage
+                                }
+                            }
+                        }
+                    }
+                    .customAlert(isPresented: $isShowingCreateFolderAlert) {
+                        CreateFolderView(mode: .modify, folder: currentFolder)
+                    }
             }
         }
     }

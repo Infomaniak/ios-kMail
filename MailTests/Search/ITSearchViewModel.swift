@@ -100,6 +100,14 @@ final class MCKMailboxManageable_SearchViewModel: MailboxManageable, MCKTransact
         fatalError("Unexpected")
     }
 
+    func deleteFolder(name: String, folder: MailCore.Folder) async throws {
+        fatalError("Unexpected")
+    }
+
+    func modifyFolder(name: String, folder: MailCore.Folder) async throws {
+        fatalError("Unexpected")
+    }
+
     func flushFolder(folder: MailCore.Folder) async throws -> Bool { false }
 
     func refreshFolder(from messages: [MailCore.Message], additionalFolder: MailCore.Folder?) async throws {}

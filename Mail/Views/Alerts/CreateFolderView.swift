@@ -37,10 +37,13 @@ struct CreateFolderView: View {
 
     @State private var folderName = ""
     @State private var error: FolderError?
+    @State private var isModifyView = false
+    @State private var isInitialName = false
 
     @FocusState private var isFocused
 
     let mode: Mode
+    let folder: Folder?
 
     private var isButtonEnabled: Bool {
         return !folderName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && error == nil
@@ -49,6 +52,7 @@ struct CreateFolderView: View {
     enum Mode {
         case create
         case move(moveHandler: MoveEmailView.MoveHandler)
+        case modify
 
         var buttonTitle: String {
             switch self {
@@ -56,6 +60,8 @@ struct CreateFolderView: View {
                 return MailResourcesStrings.Localizable.buttonCreate
             case .move:
                 return MailResourcesStrings.Localizable.newFolderDialogMovePositiveButton
+            case .modify:
+                return MailResourcesStrings.Localizable.buttonValid
             }
         }
     }
@@ -76,7 +82,8 @@ struct CreateFolderView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(MailResourcesStrings.Localizable.newFolderDialogTitle)
+            Text(isModifyView ? MailResourcesStrings.Localizable.renameFolder : MailResourcesStrings.Localizable
+                .newFolderDialogTitle)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, IKPadding.alertTitleBottom)
 
@@ -85,7 +92,8 @@ struct CreateFolderView: View {
                 .padding(value: .intermediate)
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
-                        .stroke(error == nil ? MailResourcesAsset.textFieldBorder.swiftUIColor : MailResourcesAsset.redColor
+                        .stroke(isInitialName || error == nil ? MailResourcesAsset.textFieldBorder
+                            .swiftUIColor : MailResourcesAsset.redColor
                             .swiftUIColor)
                         .animation(.easeInOut, value: error)
                 )
@@ -95,22 +103,40 @@ struct CreateFolderView: View {
             Text(error?.errorDescription ?? "")
                 .textStyle(.labelError)
                 .padding(.top, value: .extraSmall)
-                .opacity(error == nil ? 0 : 1)
+                .opacity(isInitialName || error == nil ? 0 : 1)
                 .padding(.bottom, value: .small)
 
             ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: isButtonEnabled) {
-                matomo.track(eventWithCategory: .createFolder, name: "confirm")
-                await tryOrDisplayError {
-                    let folder = try await mailboxManager.createFolder(name: folderName, parent: nil)
-                    if case .move(let moveHandler) = mode {
-                        moveHandler(folder)
-                        NotificationCenter.default.post(Notification(name: .dismissMoveSheet))
+                if folder != nil && isModifyView {
+                    await tryOrDisplayError {
+                        try await mailboxManager.modifyFolder(
+                            name: folderName,
+                            folder: folder!
+                        )
+                    }
+                } else {
+                    await tryOrDisplayError {
+                        matomo.track(eventWithCategory: .createFolder, name: "confirm")
+                        let folder = try await mailboxManager.createFolder(name: folderName, parent: nil)
+                        if case .move(let moveHandler) = mode {
+                            moveHandler(folder)
+                            NotificationCenter.default.post(Notification(name: .dismissMoveSheet))
+                        }
                     }
                 }
             }
         }
         .onAppear {
             isFocused = true
+            if folder != nil {
+                folderName = folder!.name
+            }
+            switch mode {
+            case .modify:
+                isModifyView = true
+            default:
+                return
+            }
         }
         .accessibilityAction(.escape) {
             dismiss()
@@ -122,6 +148,14 @@ struct CreateFolderView: View {
         guard !trimmedName.isEmpty else {
             withAnimation { error = nil }
             return
+        }
+
+        if folder != nil {
+            if folderName == folder!.name {
+                isInitialName = true
+            } else {
+                isInitialName = false
+            }
         }
 
         withAnimation {
@@ -138,8 +172,8 @@ struct CreateFolderView: View {
 
 #Preview {
     Group {
-        CreateFolderView(mode: .create)
-        CreateFolderView(mode: .move { _ in /* Preview */ })
+        CreateFolderView(mode: .create, folder: nil)
+        CreateFolderView(mode: .move { _ in /* Preview */ }, folder: nil)
     }
     .environmentObject(PreviewHelper.sampleMailboxManager)
 }

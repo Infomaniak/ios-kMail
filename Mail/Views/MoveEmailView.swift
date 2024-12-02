@@ -80,7 +80,7 @@ struct MoveEmailView: View {
         .customAlert(isPresented: $isShowingCreateFolderAlert) {
             CreateFolderView(mode: .move { newFolder in
                 move(to: newFolder)
-            })
+            }, folder: nil)
         }
     }
 
