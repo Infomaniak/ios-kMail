@@ -209,13 +209,8 @@ class MailUITests: XCTestCase {
         app.textFields.firstMatch.typeText(Env.testAccountEmail)
         app.textFields.firstMatch.typeText("\n")
 
-        let scrollViewsQuery = app.scrollViews
-        let textView = scrollViewsQuery.otherElements.containing(
-            .staticText,
-            identifier: MailResourcesStrings.Localizable.fromTitle
-        ).children(matching: .textView).element(boundBy: 1)
-        textView.tap()
-        textView.typeText(MailUITests.testSubject)
+        app.textFields[MailResourcesStrings.Localizable.subjectTitle].tap()
+        app.textFields[MailResourcesStrings.Localizable.subjectTitle].typeText(MailUITests.testSubject)
 
         composeBodyView.tap()
         composeBodyView.typeText(MailResourcesStrings.Localizable.aiPromptExample1)
