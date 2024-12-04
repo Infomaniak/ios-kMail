@@ -54,6 +54,9 @@ public enum Logging {
             options.dsn = "https://b7e4f5e8fd464659a8e83ead7015e070@sentry-mobile.infomaniak.com/5"
             options.enableUIViewControllerTracing = false
             options.enableUserInteractionTracing = false
+            options.enableNetworkTracking = false
+            options.enableNetworkBreadcrumbs = false
+            options.enableSwizzling = false // We can disable swizzling because we only used it for networking
             options.enableMetricKit = true
 
             options.beforeSend = { event in
