@@ -35,8 +35,8 @@ struct AutocompletionCell: View {
             Button {
                 addRecipient(autocompletion)
             } label: {
-                if unknownRecipient, let email = autocompletion.email {
-                    UnknownRecipientCell(email: email)
+                if unknownRecipient {
+                    UnknownRecipientCell(email: autocompletion.autocompletableName)
                 } else {
                     RecipientCell(contact: autocompletion, highlight: highlight)
                 }

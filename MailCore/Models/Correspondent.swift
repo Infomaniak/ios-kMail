@@ -61,8 +61,4 @@ public extension Correspondent {
 
         return isPlusMe
     }
-
-    func isSameCorrespondent(as correspondent: any Correspondent) -> Bool {
-        return email == correspondent.email && name == correspondent.name
-    }
 }

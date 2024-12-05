@@ -70,8 +70,10 @@ public enum CommonContactCache {
             contact = wrappedContact
         case .emptyContact:
             contact = CommonContact.emptyContact
-        case .groupContact:
+        case .groupContact(let groupContact):
             // TODO: To implement
+            contact = CommonContact.emptyContact
+        case .addressBook(let addressBook):
             contact = CommonContact.emptyContact
         }
 
