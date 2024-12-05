@@ -38,6 +38,13 @@ public protocol ContactFetchable {
     /// - Returns: The collection of matching contacts.
     func frozenGroupContacts(matching string: String, fetchLimit: Int?) -> any Collection<GroupContact>
 
+    /// Case and diacritic insensitive search for a `AddressBookContact`
+    /// - Parameters:
+    ///   - string: input string to match against email and name
+    ///   - fetchLimit: limit the query by default to limit memory footprint
+    /// - Returns: The collection of matching contacts.
+    func frozenAddressBookContacts(matching string: String, fetchLimit: Int?) -> any Collection<AddressBook>
+
     /// Get a contact from a given transactionable
     func getContact(for correspondent: any Correspondent, transactionable: Transactionable) -> MergedContact?
 
@@ -48,6 +55,9 @@ public protocol ContactFetchable {
 
     /// Get a contact from group contact (categories)
     func getContacts(with groupContactId: Int) -> [MergedContact]
+
+    /// Get a contact from adressbook
+    func getContacts(for addressbookId: Int) -> [MergedContact]
 }
 
 public extension ContactManager {
@@ -106,6 +116,25 @@ public extension ContactManager {
         return limitedResults
     }
 
+    /// Case and diacritic insensitive search for a `AddressBookContact`
+    /// - Parameters:
+    ///   - string: input string to match against email and name
+    ///   - fetchLimit: limit the query by default to limit memory footprint
+    /// - Returns: The collection of matching contacts.
+    func frozenAddressBookContacts(matching string: String, fetchLimit: Int?) -> any Collection<AddressBook> {
+        var lazyResults = fetchResults(ofType: AddressBook.self) { partial in
+            partial
+        }
+        lazyResults = lazyResults
+            .filter(Self.searchGroupContactInsensitivePredicate, string, string)
+            .freeze()
+
+        let fetchLimit = min(lazyResults.count, fetchLimit ?? Self.contactFetchLimit)
+
+        let limitedResults = lazyResults[0 ..< fetchLimit]
+        return limitedResults
+    }
+
     func getContact(for correspondent: any Correspondent) -> MergedContact? {
         getContact(for: correspondent, transactionable: self)
     }
@@ -116,6 +145,24 @@ public extension ContactManager {
             let result = matched.filter("name ==[c] %@", correspondent.name).first ?? matched.first
             return result
         }
+    }
+
+    func getContacts(with groupContactId: Int) -> [MergedContact] {
+        // TODO: To implement
+        let frozenContacts = fetchResults(ofType: MergedContact.self) { partial in
+            partial
+                .where { $0.groupContactId == [groupContactId] }
+        }
+        return Array(frozenContacts.freezeIfNeeded())
+    }
+
+    func getContacts(for addressbookId: Int) -> [MergedContact] {
+        let contacts = fetchResults(ofType: MergedContact.self) { partial in
+            partial
+                .where { $0.remoteAddressBookId == addressbookId }
+        }
+
+        return Array(contacts.freezeIfNeeded())
     }
 
     func addressBook(with id: Int) -> AddressBook? {
@@ -141,17 +188,5 @@ public extension ContactManager {
         try writeTransaction { writableRealm in
             writableRealm.add(mergedContact, update: .modified)
         }
-    }
-
-    func getContacts(with groupContactId: Int) -> [MergedContact] {
-        // TODO: To implement
-//        let frozenContacts = fetchResults(ofType: MergedContact.self) { partial in
-//            partial
-//                .where { $0.groupContactId == groupContactId }
-//                .freezeIfNeeded()
-//        }
-//
-//        return Array(frozenContacts)
-        return []
     }
 }

@@ -28,8 +28,10 @@ public enum ContactConfiguration: CustomDebugStringConvertible {
             return ".user:\(user.displayName) \(user.email)"
         case .contact(let contact):
             return ".contact:\(contact.fullName) \(contact.email)"
-        case .groupContact:
+        case .groupContact(let groupContactId):
             return ".groupContact"
+        case .addressBook(let addressBookId):
+            return ".addressBook"
         case .emptyContact:
             return ".emptyContact"
         }
@@ -43,7 +45,8 @@ public enum ContactConfiguration: CustomDebugStringConvertible {
     )
     case user(user: UserProfile)
     case contact(contact: CommonContact)
-    case groupContact
+    case groupContact(group: GroupContact)
+    case addressBook(adressbook: AddressBook)
     case emptyContact
 
     public func freezeIfNeeded() -> Self {
@@ -85,9 +88,10 @@ extension ContactConfiguration: Identifiable {
             return wrappedContact.id
         case .emptyContact:
             return CommonContact.emptyContact.id
-        case .groupContact:
-            // TODO: To implement
-            return CommonContact.emptyContact.id
+        case .groupContact(let groupContact):
+            return groupContact.id
+        case .addressBook(let addressBook):
+            return addressBook.id
         }
     }
 }
