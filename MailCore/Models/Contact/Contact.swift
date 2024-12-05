@@ -34,7 +34,7 @@ public struct InfomaniakContact: Codable, Identifiable {
     public var favorite: Bool?
     public var nickname: String?
     public var organization: String?
-    public var groupContactId: [Int]
+    public var groupContactId: RealmSwift.List<Int>?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -73,6 +73,6 @@ public struct InfomaniakContact: Codable, Identifiable {
         favorite = try values.decodeIfPresent(Bool.self, forKey: .favorite)
         nickname = try values.decodeIfPresent(String.self, forKey: .nickname)
         organization = try values.decodeIfPresent(String.self, forKey: .organization)
-        groupContactId = try values.decode([Int].self, forKey: .groupContactId)
+        groupContactId = try values.decodeIfPresent(RealmSwift.List<Int>.self, forKey: .groupContactId)
     }
 }
