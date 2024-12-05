@@ -24,6 +24,20 @@ import MailCoreUI
 import RealmSwift
 import SwiftUI
 
+extension Recipient: @retroactive ContactAutocompletable {
+    public var contactId: String {
+        return id
+    }
+
+    public var autocompletableName: String {
+        return name
+    }
+
+    public func isSameContactAutocompletable(as contactAutoCompletable: any ContactAutocompletable) -> Bool {
+        return contactId == contactAutoCompletable.contactId
+    }
+}
+
 struct AutocompletionView: View {
     private static let maxAutocompleteCount = 10
 
@@ -41,9 +55,8 @@ struct AutocompletionView: View {
     var body: some View {
         LazyVStack(spacing: IKPadding.mini) {
             // TODO: Fix conformance Identifiable
-            ForEach(autocompletion, id: \.stringId) { contact in
-                let isLastRecipient =
-                    false // TODO: A implémenter -> autocompletion.last?.isSameCorrespondent(as: recipient) == true
+            ForEach(autocompletion, id: \.contactId) { contact in
+                let isLastRecipient = autocompletion.last?.isSameContactAutocompletable(as: contact) == true
                 let isUserProposal = shouldAddUserProposal && isLastRecipient
 
                 VStack(alignment: .leading, spacing: IKPadding.mini) {
@@ -51,8 +64,7 @@ struct AutocompletionView: View {
                         addRecipient: addRecipient,
                         autocompletion: contact,
                         highlight: textDebounce.text,
-                        alreadyAppend: false,
-                        // TODO: A implémenter -> addedRecipients.contains { $0.isSameCorrespondent(as: recipient) },
+                        alreadyAppend: addedRecipients.contains { $0.id == contact.contactId },
                         unknownRecipient: isUserProposal
                     )
 
@@ -76,26 +88,32 @@ struct AutocompletionView: View {
         let trimmedSearch = search.trimmingCharacters(in: .whitespacesAndNewlines)
 
         Task { @MainActor in
-            let autocompleteContacts = await mailboxManager.contactManager.frozenContactsAsync(
+            let autocompleteContacts = await Array(mailboxManager.contactManager.frozenContactsAsync(
                 matching: trimmedSearch,
                 fetchLimit: Self.maxAutocompleteCount,
                 sorted: sortByRemoteAndName
-            )
+            ))
 
-        let autocompleteGroupContacts = mailboxManager.contactManager.frozenGroupContacts(
-            matching: trimmedSearch,
-            fetchLimit: nil
-        )
+            let autocompleteGroupContacts = Array(mailboxManager.contactManager.frozenGroupContacts(
+                matching: trimmedSearch,
+                fetchLimit: nil
+            ))
 
-        let result: [any ContactAutocompletable] = Array(autocompleteContacts) + Array(autocompleteGroupContacts)
+            let autocompleteAddressBookContacts = Array(mailboxManager.contactManager.frozenAddressBookContacts(
+                matching: trimmedSearch,
+                fetchLimit: nil
+            ))
 
-//    TODO: A implémenter
-//        let realResults = autocompleteRecipients.filter { !addedRecipients.map(\.email).contains($0.email) }
-//
-//        shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.email == textDebounce.text)
-//        if shouldAddUserProposal {
-//            autocompleteRecipients.append(Recipient(email: textDebounce.text, name: ""))
-//        }
+            var result: [any ContactAutocompletable] = autocompleteContacts + autocompleteGroupContacts +
+                autocompleteAddressBookContacts
+
+            let realResults = autocompleteGroupContacts.filter { !addedRecipients.map(\.email).contains($0.autocompletableName) }
+
+            shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.autocompletableName == textDebounce.text)
+
+            if shouldAddUserProposal {
+                result.append(MergedContact(email: textDebounce.text, local: nil, remote: nil))
+            }
 
             autocompletion = result
         }
