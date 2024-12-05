@@ -47,7 +47,6 @@ public struct RecipientCell: View {
 
     let highlight: String?
 
-    // TODO: Change contactConfig
     public init(recipient: Recipient, contactConfiguration: ContactConfiguration = .emptyContact, highlight: String? = nil) {
         title = recipient.name
         subtitle = recipient.email
@@ -56,7 +55,6 @@ public struct RecipientCell: View {
         self.highlight = highlight
     }
 
-    // TODO: Change contactConfig + subtitle
     public init(
         contact: any ContactAutocompletable,
         contactConfiguration: ContactConfiguration = .emptyContact,
