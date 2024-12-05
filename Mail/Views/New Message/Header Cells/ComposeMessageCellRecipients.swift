@@ -136,33 +136,59 @@ struct ComposeMessageCellRecipients: View {
     @MainActor private func addNewRecipient(_ contact: any ContactAutocompletable) {
         matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
 
-        if let mergedContact = contact as? MergedContact {
-            $recipients.append(Recipient(email: mergedContact.email ?? "", name: mergedContact.name))
-        } else if let groupeContact = contact as? GroupContact {
-            let groupeContacts = mailboxManager.contactManager.getContacts(with: groupeContact.id)
+        do {
+            let mergedContacts = extractContacts(contact)
+            let validContacts = try recipientCheck(mergedContacts: mergedContacts)
+            convertMergedContactsToRecipients(validContacts)
 
-            var groupContactRecipients = groupeContacts.map {
-                $recipients.append(Recipient(email: $0.email ?? "", name: $0.name))
-            }
+            print(recipients)
+        } catch RecipientError.invalidEmail {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
+        } catch RecipientError.duplicateContact {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientAlreadyUsed)
+        } catch {
+            print("")
         }
 
-        // TODO: à implémenter
-        //        guard Constants.isEmailAddress(recipient.email) else {
-        //            snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
-        //            return
-        //        }
-        //
-        //        guard !recipients.contains(where: { $0.isSameCorrespondent(as: recipient) }) else {
-        //            snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientAlreadyUsed)
-        //            return
-        //        }
-        //
-        //        withAnimation {
-        //            recipient.isAddedByMe = true
-        //            $recipients.append(recipient)
-        //        }
-
         textDebounce.text = ""
+    }
+
+    private func extractContacts(_ contacts: any ContactAutocompletable) -> [MergedContact] {
+        var mergedContacts: [MergedContact] = []
+        if let mergedContact = contacts as? MergedContact {
+            mergedContacts.append(mergedContact)
+        } else if let groupeContact = contacts as? GroupContact {
+            let groupeContacts = mailboxManager.contactManager.getContacts(with: groupeContact.id)
+            mergedContacts.append(contentsOf: groupeContacts)
+        } else if let addressBookContact = contacts as? AddressBook {
+            let addressBookContacts = mailboxManager.contactManager.getContacts(for: addressBookContact.id)
+            mergedContacts.append(contentsOf: addressBookContacts)
+        }
+        return mergedContacts
+    }
+
+    private func recipientCheck(mergedContacts: [MergedContact]) throws -> [MergedContact] {
+        let invalidEmailContacts = mergedContacts.filter { !Constants.isEmailAddress($0.email) }
+        if !invalidEmailContacts.isEmpty {
+            throw RecipientError.invalidEmail
+        }
+
+        let validContacts = mergedContacts.filter { contact in
+            !recipients.contains(where: { $0.email == contact.email })
+        }
+
+        if validContacts.count < mergedContacts.count {
+            throw RecipientError.duplicateContact
+        }
+
+        return validContacts
+    }
+
+    private func convertMergedContactsToRecipients(_ mergedContacts: [MergedContact]) {
+        for mergedContact in mergedContacts {
+            let newRecipient = Recipient(email: mergedContact.email, name: mergedContact.name)
+            $recipients.append(newRecipient)
+        }
     }
 }
 

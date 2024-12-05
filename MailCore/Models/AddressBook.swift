@@ -26,13 +26,35 @@ public struct AddressBookResult: Codable {
 public class AddressBook: Object, Codable, ObjectKeyIdentifiable {
     @Persisted public var id: Int
     @Persisted(primaryKey: true) public var uuid: String
+    @Persisted public var name: String
     @Persisted public var isDefault: Bool
     @Persisted public var groupContact: List<GroupContact>
+//    @Persisted public var isDynamicOrganisationMemberDirectory: Bool
 
     enum CodingKeys: String, CodingKey {
         case id
         case uuid
+        case name
         case isDefault = "default"
         case groupContact = "categories"
+//        case isDynamicOrganisationMemberDirectory = "dynamic_organisation_member_directory"
+    }
+
+//    var displayName: String {
+//            if isDynamicOrganisationMemberDirectory {
+//                return "Dynamic Organisation Member Directory"
+//            } else {
+//                return name
+//            }
+//        }
+}
+
+extension AddressBook: ContactAutocompletable {
+    public var contactId: String {
+        return String(id)
+    }
+
+    public var autocompletableName: String {
+        return name
     }
 }

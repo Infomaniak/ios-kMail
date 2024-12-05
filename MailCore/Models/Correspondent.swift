@@ -46,23 +46,4 @@ public extension Correspondent {
     func isMe(currentMailboxEmail: String) -> Bool {
         return currentMailboxEmail == email
     }
-
-    func isMeOrPlusMe(currentMailboxEmail: String) -> Bool {
-        let userEmail = currentMailboxEmail.lowercased()
-        let correspondentEmail = email.lowercased()
-
-        let isRealMe = userEmail == correspondentEmail
-        if isRealMe {
-            return true
-        }
-
-        let (start, end) = userEmail.getStartAndEndOfPlusEmail()
-        let isPlusMe = correspondentEmail.hasPrefix(start) && correspondentEmail.hasSuffix(end)
-
-        return isPlusMe
-    }
-
-    func isSameCorrespondent(as correspondent: any Correspondent) -> Bool {
-        return email == correspondent.email && name == correspondent.name
-    }
 }
