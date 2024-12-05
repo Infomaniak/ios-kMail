@@ -71,7 +71,6 @@ public enum CommonContactCache {
         case .emptyContact:
             contact = CommonContact.emptyContact
         case .groupContact(let groupContact):
-            // TODO: To implement
             contact = CommonContact.emptyContact
         case .addressBook(let addressBook):
             contact = CommonContact.emptyContact

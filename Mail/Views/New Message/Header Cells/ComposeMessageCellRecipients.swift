@@ -174,7 +174,7 @@ struct ComposeMessageCellRecipients: View {
         }
 
         let validContacts = mergedContacts.filter { contact in
-            !recipients.contains(where: { $0.email == contact.email })
+            !recipients.contains(where: { $0.email == contact.email } )
         }
 
         if validContacts.count < mergedContacts.count {
