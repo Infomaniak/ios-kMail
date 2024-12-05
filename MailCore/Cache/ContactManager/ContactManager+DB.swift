@@ -148,7 +148,6 @@ public extension ContactManager {
     }
 
     func getContacts(with groupContactId: Int) -> [MergedContact] {
-        // TODO: To implement
         let frozenContacts = fetchResults(ofType: MergedContact.self) { partial in
             partial
                 .where { $0.groupContactId == [groupContactId] }
