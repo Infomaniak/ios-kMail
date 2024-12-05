@@ -148,8 +148,7 @@ final class SearchViewModel: ObservableObject, ThreadListable {
             fetchLimit: nil,
             sorted: nil
         )
-        // TODO: Handle optional email
-        var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email ?? "", name: $0.name).freezeIfNeeded() }
+        var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name).freezeIfNeeded() }
 
         // Append typed email
         if Constants.isEmailAddress(searchValue) && !frozenContacts

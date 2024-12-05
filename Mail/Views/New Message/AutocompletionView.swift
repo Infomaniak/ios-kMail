@@ -54,7 +54,6 @@ struct AutocompletionView: View {
 
     var body: some View {
         LazyVStack(spacing: IKPadding.mini) {
-            // TODO: Fix conformance Identifiable
             ForEach(autocompletion, id: \.contactId) { contact in
                 let isLastRecipient = autocompletion.last?.isSameContactAutocompletable(as: contact) == true
                 let isUserProposal = shouldAddUserProposal && isLastRecipient
