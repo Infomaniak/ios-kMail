@@ -16,25 +16,18 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import RealmSwift
+import Foundation
+import InfomaniakCoreCommonUI
 
-// AddressBook Categories
-public class GroupContact: Object, Codable {
-    @Persisted public var id: Int
+public protocol ContactAutocompletable {
+    var contactId: String { get }
+    var autocompletableName: String { get }
 
-    @Persisted public var name: String
-
-    public func isSameContactAutocompletable(as contactAutoCompletable: any ContactAutocompletable) -> Bool {
-        return name == contactAutoCompletable.autocompletableName
-    }
+    func isSameContactAutocompletable(as contactAutoCompletable: any ContactAutocompletable) -> Bool
 }
 
-extension GroupContact: ContactAutocompletable {
-    public var contactId: String {
-        return String(id)
-    }
-
-    public var autocompletableName: String {
-        return name
+public extension ContactAutocompletable {
+    func isSameContactAutocompletable(as contactAutoCompletable: any ContactAutocompletable) -> Bool {
+        return false
     }
 }

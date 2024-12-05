@@ -63,9 +63,9 @@ public struct RecipientCell: View {
         contactConfiguration: ContactConfiguration = .emptyContact,
         highlight: String? = nil
     ) {
-        title = contact.name
-        if let email = contact.email {
-            subtitle = email
+        title = contact.autocompletableName
+        if title == contact.autocompletableName {
+            subtitle = title
         } else {
             subtitle = "Nom de l'organisation"
         }
