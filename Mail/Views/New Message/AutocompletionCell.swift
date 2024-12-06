@@ -30,6 +30,16 @@ struct AutocompletionCell: View {
     let alreadyAppend: Bool
     let unknownRecipient: Bool
 
+    var contactConfiguration: ContactConfiguration {
+        if let groupContact = autocompletion as? GroupContact {
+            return .groupContact(group: groupContact)
+        } else if let addressBook = autocompletion as? AddressBook {
+            return .addressBook(addressbook: addressBook)
+        } else {
+            return .emptyContact
+        }
+    }
+
     var body: some View {
         HStack(spacing: IKPadding.small) {
             Button {
@@ -38,7 +48,7 @@ struct AutocompletionCell: View {
                 if unknownRecipient {
                     UnknownRecipientCell(email: autocompletion.autocompletableName)
                 } else {
-                    RecipientCell(contact: autocompletion, highlight: highlight)
+                    RecipientCell(contact: autocompletion, contactConfiguration: contactConfiguration, highlight: highlight)
                 }
             }
             .allowsHitTesting(!alreadyAppend || unknownRecipient)
