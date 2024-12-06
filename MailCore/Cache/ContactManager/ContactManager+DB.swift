@@ -149,8 +149,7 @@ public extension ContactManager {
 
     func getContacts(with groupContactId: Int) -> [MergedContact] {
         let frozenContacts = fetchResults(ofType: MergedContact.self) { partial in
-            partial
-                .where { $0.groupContactId == [groupContactId] }
+            partial.filter("ANY remoteGroupContactId == %@", groupContactId)
         }
         return Array(frozenContacts.freezeIfNeeded())
     }
@@ -160,7 +159,6 @@ public extension ContactManager {
             partial
                 .where { $0.remoteAddressBookId == addressbookId }
         }
-
         return Array(contacts.freezeIfNeeded())
     }
 
