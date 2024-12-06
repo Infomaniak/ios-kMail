@@ -16,30 +16,35 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreSwiftUI
 import MailCore
-import MailCoreUI
 import MailResources
 import SwiftUI
 
-public struct UnknownRecipientCell: View {
-    let email: String
+struct GroupRecipientsView: View {
+    let size: CGFloat
+
+    private var iconSize: CGFloat {
+        return size - 2 * IKPadding.small
+    }
+
+    public init(size: CGFloat) {
+        self.size = size
+    }
 
     public var body: some View {
-        HStack(spacing: 8) {
-            UnknownRecipientView(size: 40)
-                .accessibilityHidden(true)
-
-            VStack(alignment: .leading) {
-                Text(MailResourcesStrings.Localizable.addUnknownRecipientTitle)
-                    .textStyle(.bodyMedium)
-                Text(email)
-                    .textStyle(.bodySecondary)
+        Circle()
+            .fill(Color.accentColor)
+            .frame(width: size, height: size)
+            .overlay {
+                MailResourcesAsset.teamsUser.swiftUIImage
+                    .resizable()
+                    .foregroundStyle(MailResourcesAsset.backgroundColor)
+                    .frame(width: iconSize, height: iconSize)
             }
-        }
-        .recipientCellModifier()
     }
 }
 
 #Preview {
-    UnknownRecipientCell(email: PreviewHelper.sampleRecipient1.email)
+    GroupRecipientsView(size: 40)
 }

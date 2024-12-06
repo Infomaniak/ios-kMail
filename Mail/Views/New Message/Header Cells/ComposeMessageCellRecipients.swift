@@ -49,7 +49,9 @@ class TextDebounce: ObservableObject {
 struct ComposeMessageCellRecipients: View {
     @StateObject private var textDebounce = TextDebounce()
 
-    @State private var autocompletion = [Recipient]()
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @State private var autocompletion = [any ContactAutocompletable]()
 
     @Binding var recipients: RealmSwift.List<Recipient>
     @Binding var showRecipientsFields: Bool
@@ -130,24 +132,62 @@ struct ComposeMessageCellRecipients: View {
         }
     }
 
-    @MainActor private func addNewRecipient(_ recipient: Recipient) {
+    @MainActor private func addNewRecipient(_ contact: any ContactAutocompletable) {
         matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
 
-        guard Constants.isEmailAddress(recipient.email) else {
+        do {
+            let mergedContacts = extractContacts(contact)
+            let validContacts = try recipientCheck(mergedContacts: mergedContacts)
+            convertMergedContactsToRecipients(validContacts)
+
+            print(recipients)
+        } catch RecipientError.invalidEmail {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
-            return
-        }
-
-        guard !recipients.contains(where: { $0.isSameCorrespondent(as: recipient) }) else {
+        } catch RecipientError.duplicateContact {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientAlreadyUsed)
-            return
+        } catch {
+            print("")
         }
 
-        withAnimation {
-            recipient.isAddedByMe = true
-            $recipients.append(recipient)
-        }
         textDebounce.text = ""
+    }
+
+    private func extractContacts(_ contacts: any ContactAutocompletable) -> [MergedContact] {
+        var mergedContacts: [MergedContact] = []
+        if let mergedContact = contacts as? MergedContact {
+            mergedContacts.append(mergedContact)
+        } else if let groupeContact = contacts as? GroupContact {
+            let groupeContacts = mailboxManager.contactManager.getContacts(with: groupeContact.id)
+            mergedContacts.append(contentsOf: groupeContacts)
+        } else if let addressBookContact = contacts as? AddressBook {
+            let addressBookContacts = mailboxManager.contactManager.getContacts(for: addressBookContact.id)
+            mergedContacts.append(contentsOf: addressBookContacts)
+        }
+        return mergedContacts
+    }
+
+    private func recipientCheck(mergedContacts: [MergedContact]) throws -> [MergedContact] {
+        let invalidEmailContacts = mergedContacts.filter { !Constants.isEmailAddress($0.email) }
+        if !invalidEmailContacts.isEmpty {
+            throw RecipientError.invalidEmail
+        }
+
+        let validContacts = mergedContacts.filter { contact in
+            !recipients.contains(where: { $0.email == contact.email } )
+        }
+
+        if validContacts.count < mergedContacts.count {
+            throw RecipientError.duplicateContact
+        }
+
+        return validContacts
+    }
+
+    private func convertMergedContactsToRecipients(_ mergedContacts: [MergedContact]) {
+        for mergedContact in mergedContacts {
+            let newRecipient = Recipient(email: mergedContact.email, name: mergedContact.name)
+            $recipients.append(newRecipient)
+        }
     }
 }
 
