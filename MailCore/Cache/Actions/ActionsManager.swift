@@ -267,6 +267,10 @@ public class ActionsManager: ObservableObject {
     private func performDelete(messages: [Message], originFolder: Folder?) async throws {
         if originFolder?.permanentlyDeleteContent == true {
             let permanentlyDeleteTask = Task {
+                guard originFolder?.role != .scheduledDrafts else {
+                    try await mailboxManager.delete(draftMessages: messages)
+                    return
+                }
                 try await mailboxManager.delete(messages: messages)
             }
 
