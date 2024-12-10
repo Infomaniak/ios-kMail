@@ -186,31 +186,26 @@ public extension MailboxManager {
         }
     }
 
-    func moveScheduleToDraft(draftResource: String) async {
-        await moveScheduleToDraft(draftAction: draftResource.appending("/schedule"))
+    func moveScheduleToDraft(draftResource: String) async throws {
+        try await moveScheduleToDraft(draftAction: draftResource.appending("/schedule"))
     }
 
-    func moveScheduleToDraft(draftAction: String) async {
-        do {
-            try await apiFetcher.deleteSchedule(draftAction: draftAction)
-            if let scheduledDraftsFolder = getFolder(with: .scheduledDrafts) {
-                await refreshFolderContent(scheduledDraftsFolder.freezeIfNeeded())
-            }
-        } catch {
-            print(error)
+    func moveScheduleToDraft(draftAction: String) async throws {
+        try await apiFetcher.deleteSchedule(draftAction: draftAction)
+        guard let scheduledDraftsFolder = getFolder(with: .scheduledDrafts) else {
+            logError(.missingDraft)
+            return
         }
+
+        await refreshFolderContent(scheduledDraftsFolder.freezeIfNeeded())
     }
 
-    func loadRemotely(from draftResource: String) async -> Draft? {
-        do {
-            let draft = try await apiFetcher.draft(draftResource: draftResource)
-            try? writeTransaction { realm in
-                realm.add(draft, update: .modified)
-            }
-            return draft.freeze()
-        } catch {
-            print(error)
+    func loadRemotely(from draftResource: String) async throws -> Draft? {
+        let draft = try await apiFetcher.draft(draftResource: draftResource)
+        try? writeTransaction { realm in
+            realm.add(draft, update: .modified)
         }
-        return nil
+
+        return draft.freeze()
     }
 }
