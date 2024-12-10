@@ -31,15 +31,17 @@ struct ScheduleFloatingPanelView: View {
     let setScheduleAction: (Date) -> Void
 
     private var scheduleOptions: [ScheduleSendOption] {
-        var allCases = ScheduleSendOption.allCases
-        allCases.insert(ScheduleSendOption.lastSchedule(value: Date(timeIntervalSince1970: lastScheduleInterval)), at: 0)
-        return allCases.filter { $0.shouldBeDisplayedNow }
+        var allSimpleCases = ScheduleSendOption.allSimpleCases
+        allSimpleCases.insert(ScheduleSendOption.lastSchedule(value: Date(timeIntervalSince1970: lastScheduleInterval)), at: 0)
+        return allSimpleCases.filter { $0.shouldBeDisplayedNow }
     }
 
     var body: some View {
         VStack(spacing: IKPadding.small) {
             ForEach(scheduleOptions) { option in
-                ScheduleOptionButtonRow(option: option, setScheduleAction: setScheduleAction)
+                ScheduleOptionView(option: option, setScheduleAction: setScheduleAction)
+
+                IKDivider(type: .full)
             }
             CustomScheduleButtonRow(
                 customSchedule: $customSchedule,
