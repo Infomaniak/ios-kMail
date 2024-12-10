@@ -147,9 +147,9 @@ public final class DraftManager {
                 sendDate = sendResponse.scheduledDate
                 alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent, shouldShow: showSnackbar)
             } else if draft.action == .schedule {
-                let draft = removeDelay(draft: draft)
-                let scheduleResponse = try await mailboxManager.schedule(draft: draft)
-                if showSnackbar, let date = draft.scheduleDate {
+                let draftWithoutDelay = removeDelay(draft: draft)
+                let scheduleResponse = try await mailboxManager.schedule(draft: draftWithoutDelay)
+                if showSnackbar, let date = draftWithoutDelay.scheduleDate, let changeFolderAction {
                     showScheduledSnackBar(
                         date: date,
                         scheduleAction: scheduleResponse.scheduleAction,
@@ -306,18 +306,20 @@ public final class DraftManager {
         date: Date,
         scheduleAction: String,
         mailboxManager: MailboxManager,
-        changeFolderAction: ((Folder) -> Void)?
+        changeFolderAction: @escaping (Folder) -> Void
     ) {
         let formattedDate = DateFormatter.localizedString(from: date, dateStyle: .medium, timeStyle: .short)
         let changeFolderAlertAction = UserAlertAction(MailResourcesStrings.Localizable.draftFolder) {
-            if let draftFolder = mailboxManager.getFolder(with: .draft) {
-                changeFolderAction!(draftFolder)
+            guard let draftFolder = mailboxManager.getFolder(with: .draft) else {
+                mailboxManager.logError(.missingFolder)
+                return
             }
+            changeFolderAction(draftFolder)
         }
         let cancelButtonAlertAction = UserAlertAction(MailResourcesStrings.Localizable.buttonCancel) {
             Task {
-                await mailboxManager.moveScheduleToDraft(draftAction: scheduleAction)
-                if changeFolderAction != nil {
+                await tryOrDisplayError {
+                    try await mailboxManager.moveScheduleToDraft(draftAction: scheduleAction)
                     self.alertDisplayable.show(
                         message: MailResourcesStrings.Localizable.snackbarSaveInDraft,
                         action: changeFolderAlertAction
