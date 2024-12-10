@@ -836,7 +836,7 @@
 "errorRefusedSender" = "Il server respinge il mittente";
 
 /* loco:672900a15da35624510b2c32 */
-"errorScheduleTooShort" = "Il tempo minimo di consegna è di 5 minuti.";
+"errorScheduleDelayTooShort" = "Il tempo minimo di consegna è di 5 minuti.";
 
 /* loco:6448ef7a5b39bc7e040ce0b3 */
 "errorSendLimitExceeded" = "Limite d’invio raggiunto";
