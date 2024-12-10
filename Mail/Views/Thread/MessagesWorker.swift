@@ -30,19 +30,19 @@ extension MessagesWorker {
 
 @MainActor
 final class MessagesWorker: ObservableObject {
-    @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @Published var presentableBodies = [String: PresentableBody]()
 
     private var replacedAllAttachments = [String: Bool]()
     private let bodyImageProcessor = BodyImageProcessor()
+    private let mailboxManager: MailboxManager
+
+    init(mailboxManager: MailboxManager) {
+        self.mailboxManager = mailboxManager
+    }
 
     func fetchAndProcessIfNeeded(messageUid: String) async throws {
-        guard let mailboxManager = accountManager.currentMailboxManager else {
-            return
-        }
-
         try await fetchMessageAndCalendar(of: messageUid, with: mailboxManager)
         guard !Task.isCancelled else { return }
         await prepareBodyAndAttachments(of: messageUid, with: mailboxManager)
