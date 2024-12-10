@@ -99,7 +99,7 @@ struct MessageBodyContentView: View {
         guard let presentableBody else { return }
 
         Task {
-            let loadResult = try await model.loadBody(
+            let loadResult = await model.loadBody(
                 presentableBody: presentableBody,
                 blockRemoteContent: blockRemoteContent,
                 messageUid: messageUid

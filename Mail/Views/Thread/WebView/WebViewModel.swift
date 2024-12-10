@@ -69,7 +69,7 @@ final class WebViewModel: NSObject, ObservableObject {
         loadScripts()
     }
 
-    func loadBody(presentableBody: PresentableBody, blockRemoteContent: Bool, messageUid: String) async throws -> LoadResult {
+    func loadBody(presentableBody: PresentableBody, blockRemoteContent: Bool, messageUid: String) async -> LoadResult {
         var messageBody = showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody
 
         if messageBody != nil, let subBodies = presentableBody.body?.subBody {
