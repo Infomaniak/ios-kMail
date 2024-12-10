@@ -88,7 +88,7 @@ enum ScheduleSendOption: Identifiable, Equatable {
         case .nextMondayAfternoon:
             return MailResourcesAsset.sunFilledRighthalf.swiftUIImage
         case .lastSchedule:
-            return MailResourcesAsset.clockArrowCounterclockwise.swiftUIImage
+            return MailResourcesAsset.clockCounterclockwise.swiftUIImage
         }
     }
 
@@ -113,7 +113,7 @@ enum ScheduleSendOption: Identifiable, Equatable {
         }
     }
 
-    static var allCases: [ScheduleSendOption] = [
+    static var allSimpleCases: [ScheduleSendOption] = [
         .laterThisMorning,
         .thisAfternoon,
         .thisEvening,

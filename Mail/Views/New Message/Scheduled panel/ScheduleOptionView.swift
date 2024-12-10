@@ -20,11 +20,13 @@ import InfomaniakCoreSwiftUI
 import MailCoreUI
 import SwiftUI
 
-struct ScheduleOptionButtonRow: View {
+struct ScheduleOptionView: View {
     @Environment(\.dismiss) private var dismiss
 
     let option: ScheduleSendOption
     let setScheduleAction: (Date) -> Void
+
+    let dateFormat = Date.FormatStyle.dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute()
 
     var body: some View {
         if let scheduleDate = option.date {
@@ -36,32 +38,29 @@ struct ScheduleOptionButtonRow: View {
                     Label {
                         Text(option.title)
                             .textStyle(.body)
-                            .padding(.leading, value: .medium)
                     } icon: {
                         option.icon
-                            .iconSize(.large)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .labelStyle(.ikLabel(IKPadding.medium))
 
-                    Text(scheduleDate.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute()))
+                    Text(scheduleDate.formatted(dateFormat))
                         .textStyle(.bodySmallSecondary)
                 }
             }
             .padding(.vertical, value: .small)
-
-            IKDivider(type: .full)
         }
     }
 }
 
 #Preview {
-    ScheduleOptionButtonRow(option: .nextMondayAfternoon) { date in
+    ScheduleOptionView(option: .nextMondayAfternoon) { date in
         print("Button \(date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute())) clicked !")
     }
-    ScheduleOptionButtonRow(option: .lastSchedule(value: .now)) { date in
+    ScheduleOptionView(option: .lastSchedule(value: .now)) { date in
         print("Button \(date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute())) clicked !")
     }
-    ScheduleOptionButtonRow(option: .thisAfternoon) { date in
+    ScheduleOptionView(option: .thisAfternoon) { date in
         print("Button \(date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute())) clicked !")
     }
 }
