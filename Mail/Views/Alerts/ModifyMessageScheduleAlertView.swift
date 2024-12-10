@@ -16,21 +16,23 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreSwiftUI
 import MailCore
 import MailResources
 import SwiftUI
 
-struct ModifiyMessageScheduleAlertView: View {
+struct ModifyMessageScheduleAlertView: View {
     @EnvironmentObject private var mainViewState: MainViewState
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let draftResource: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: IKPadding.medium) {
             Text(MailResourcesStrings.Localizable.editSendTitle)
+                .textStyle(.bodyMedium)
             Text(MailResourcesStrings.Localizable.editSendDescription)
-                .font(.subheadline)
+                .textStyle(.body)
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonModify,
                              secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                              primaryButtonAction: modifySchedule)
@@ -39,8 +41,10 @@ struct ModifiyMessageScheduleAlertView: View {
 
     private func modifySchedule() {
         Task {
-            await mailboxManager.moveScheduleToDraft(draftResource: draftResource)
-            if let draft = await mailboxManager.loadRemotely(from: draftResource) {
+            await tryOrDisplayError {
+                try await mailboxManager.moveScheduleToDraft(draftResource: draftResource)
+                guard let draft = try await mailboxManager.loadRemotely(from: draftResource) else { return }
+
                 DraftUtils.editDraft(
                     from: draft,
                     mailboxManager: mailboxManager,
@@ -52,5 +56,5 @@ struct ModifiyMessageScheduleAlertView: View {
 }
 
 #Preview {
-    ModifiyMessageScheduleAlertView(draftResource: "")
+    ModifyMessageScheduleAlertView(draftResource: "")
 }
