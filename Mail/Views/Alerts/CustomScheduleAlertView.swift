@@ -23,7 +23,7 @@ import MailCoreUI
 import MailResources
 import SwiftUI
 
-struct CustomScheduleModalView: View {
+struct CustomScheduleAlertView: View {
     @State private var isShowingError = false
     @State private var selectedDate: Date
 
@@ -46,14 +46,18 @@ struct CustomScheduleModalView: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.datePickerTitle)
                 .textStyle(.bodyMedium)
-                .padding(.bottom, IKPadding.alertTitleBottom)
-            DatePicker("", selection: $selectedDate, in: Date.minimumScheduleDelay...)
-                .labelsHidden()
-                .onChange(of: selectedDate) { newDate in
-                    isShowingError = newDate < Date.minimumScheduleDelay
-                }
+//                .padding(.bottom, IKPadding.alertTitleBottom)
+            DatePicker(
+                MailResourcesStrings.Localizable.datePickerTitle,
+                selection: $selectedDate,
+                in: Date.minimumScheduleDelay...
+            )
+            .labelsHidden()
+            .onChange(of: selectedDate) { newDate in
+                isShowingError = newDate < Date.minimumScheduleDelay
+            }
 
-            Text(MailResourcesStrings.Localizable.errorScheduleTooShort)
+            Text(MailResourcesStrings.Localizable.errorScheduleDelayTooShort)
                 .textStyle(.labelError)
                 .padding(.top, value: .extraSmall)
                 .opacity(isShowingError ? 1 : 0)

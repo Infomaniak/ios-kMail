@@ -28,7 +28,7 @@ struct MessageScheduleHeaderView: View {
 
     @State private var reschedulePanel = false
     @State private var rescheduleDate: Date?
-    @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var modifyMessage: Bool
+    @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var isModifyingMessage: Bool
 
     let scheduleDate: Date
     let draftResource: String
@@ -52,7 +52,7 @@ struct MessageScheduleHeaderView: View {
                 .frame(height: 20)
 
             Button(MailResourcesStrings.Localizable.buttonModify) {
-                modifyMessage = true
+                isModifyingMessage = true
             }
             .buttonStyle(.ikBorderless(isInlined: true))
             .controlSize(.small)
@@ -65,8 +65,8 @@ struct MessageScheduleHeaderView: View {
         ) {
             changeScheduleDate(rescheduleDate)
         }
-        .customAlert(isPresented: $modifyMessage) {
-            ModifiyMessageScheduleAlertView(draftResource: draftResource)
+        .customAlert(isPresented: $isModifyingMessage) {
+            ModifyMessageScheduleAlertView(draftResource: draftResource)
         }
     }
 
