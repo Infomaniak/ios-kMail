@@ -55,7 +55,7 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return MailResourcesStrings.Localizable.spamFolder
         case .trash:
             return MailResourcesStrings.Localizable.trashFolder
-        case .snoozed: // TODO
+        case .snoozed: // TODO:
             return ""
         }
     }
@@ -80,7 +80,7 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return 7
         case .trash:
             return 8
-        case .snoozed: // TODO
+        case .snoozed: // TODO:
             return 10
         }
     }
@@ -105,7 +105,7 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return MailResourcesAsset.spam
         case .trash:
             return MailResourcesAsset.bin
-        case .snoozed: // TODO
+        case .snoozed: // TODO:
             return MailResourcesAsset.clock
         }
     }
