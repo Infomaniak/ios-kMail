@@ -65,7 +65,7 @@ public extension DiscoveryItem {
     )
 
     static let scheduleDiscovery = DiscoveryItem(
-        image: MailResourcesAsset.disabledFeatureFlag,
+        image: MailResourcesAsset.updateRequired,
         title: MailResourcesStrings.Localizable.disabledFeatureFlagTitle,
         description: MailResourcesStrings.Localizable.disabledFeatureFlagDescription,
         primaryButtonLabel: MailResourcesStrings.Localizable.buttonClose,
