@@ -185,6 +185,10 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return true
     }
 
+    public var hasLimitedSwipeActions: Bool {
+        return [.draft, .scheduledDrafts].contains(role)
+    }
+
     public var formattedUnreadCount: String {
         let realCount = ((role == .draft || role == .scheduledDrafts) ? threads.count : unreadCount)
         if realCount >= 100 {
