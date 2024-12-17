@@ -92,6 +92,8 @@ final class MCKMailboxManageable_SearchViewModel: MailboxManageable, MCKTransact
         }
     }
 
+    func deleteFolder(folder: MailCore.Folder) async throws {}
+
     func getFrozenFolders(using realm: RealmSwift.Realm?) -> [MailCore.Folder] {
         folderGenerator.frozenFolders
     }
