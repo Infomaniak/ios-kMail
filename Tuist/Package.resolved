@@ -21,7 +21,7 @@
     {
       "identity" : "cocoalumberjack",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack.git",
+      "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack",
       "state" : {
         "revision" : "4b8714a7fb84d42393314ce897127b3939885ec3",
         "version" : "3.8.5"
@@ -239,8 +239,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/swift-concurrency",
       "state" : {
-        "revision" : "55fe7541cbfcfb4b73e7836b390e2c566a9ba910",
-        "version" : "0.0.6"
+        "revision" : "97ae7c9b998a43812d3f57ae106cb447a853bf3b",
+        "version" : "1.0.0"
       }
     },
     {
