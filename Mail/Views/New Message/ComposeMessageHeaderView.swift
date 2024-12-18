@@ -58,7 +58,6 @@ struct ComposeMessageHeaderView: View {
                 focusedField: _focusedField,
                 type: .to,
                 areCCAndBCCEmpty: draft.cc.isEmpty && draft.bcc.isEmpty,
-                totalRecipients: totalRecipients,
                 isRecipientLimitExceeded: isRecipientLimitExceeded
             )
             .accessibilityLabel(MailResourcesStrings.Localizable.toTitle)
@@ -70,7 +69,6 @@ struct ComposeMessageHeaderView: View {
                     autocompletionType: $autocompletionType,
                     focusedField: _focusedField,
                     type: .cc,
-                    totalRecipients: totalRecipients,
                     isRecipientLimitExceeded: isRecipientLimitExceeded
                 )
                 .accessibilityLabel(MailResourcesStrings.Localizable.ccTitle)
@@ -81,7 +79,6 @@ struct ComposeMessageHeaderView: View {
                     autocompletionType: $autocompletionType,
                     focusedField: _focusedField,
                     type: .bcc,
-                    totalRecipients: totalRecipients,
                     isRecipientLimitExceeded: isRecipientLimitExceeded
                 )
                 .accessibilityLabel(MailResourcesStrings.Localizable.bccTitle)
