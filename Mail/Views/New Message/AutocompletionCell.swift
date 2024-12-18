@@ -56,7 +56,7 @@ struct AutocompletionCell: View {
     init(
         addRecipient: @escaping @MainActor (any ContactAutocompletable) -> Void,
         autocompletion: any ContactAutocompletable,
-        hightlight: String?,
+        highlight: String?,
         alreadyAppend: Bool,
         unknownRecipient: Bool,
         title: String,
@@ -64,6 +64,7 @@ struct AutocompletionCell: View {
     ) {
         self.addRecipient = addRecipient
         self.autocompletion = autocompletion
+        self.highlight = highlight
         self.alreadyAppend = alreadyAppend
         self.unknownRecipient = unknownRecipient
         self.title = title
@@ -86,23 +87,6 @@ struct AutocompletionCell: View {
     }
 
     init(
-        addRecipient: @escaping @MainActor (AddressBook) -> Void,
-        autocompletion: AddressBook,
-        highlight: String?,
-        alreadyAppend: Bool,
-        unknownRecipient: Bool,
-        title: String,
-        subtitle: String
-    ) {
-        self.addRecipient = { addRecipient($0 as! AddressBook) }
-        self.autocompletion = autocompletion
-        self.alreadyAppend = alreadyAppend
-        self.unknownRecipient = unknownRecipient
-        self.title = title
-        self.subtitle = autocompletion.name
-    }
-
-    init(
         addRecipient: @escaping @MainActor (GroupContact) -> Void,
         autocompletion: GroupContact,
         highlight: String?,
@@ -113,6 +97,24 @@ struct AutocompletionCell: View {
     ) {
         self.addRecipient = { addRecipient($0 as! GroupContact) }
         self.autocompletion = autocompletion
+        self.alreadyAppend = alreadyAppend
+        self.unknownRecipient = unknownRecipient
+        self.title = title
+        self.subtitle = autocompletion.name
+    }
+
+    init(
+        addRecipient: @escaping @MainActor (AddressBook) -> Void,
+        autocompletion: AddressBook,
+        highlight: String?,
+        alreadyAppend: Bool,
+        unknownRecipient: Bool,
+        title: String,
+        subtitle: String
+    ) {
+        self.addRecipient = { addRecipient($0 as! AddressBook) }
+        self.autocompletion = autocompletion
+        self.highlight = highlight
         self.alreadyAppend = alreadyAppend
         self.unknownRecipient = unknownRecipient
         self.title = title
@@ -151,7 +153,7 @@ struct AutocompletionCell: View {
     AutocompletionCell(
         addRecipient: { _ in /* Preview */ },
         autocompletion: PreviewHelper.sampleMergedContact,
-        hightlight: "",
+        highlight: "",
         alreadyAppend: false,
         unknownRecipient: false,
         title: "",

@@ -38,8 +38,6 @@ extension Recipient: @retroactive ContactAutocompletable {
 }
 
 struct AutocompletionView: View {
-    private static let maxAutocompleteCount = 10
-
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var shouldAddUserProposal = false
@@ -70,7 +68,7 @@ struct AutocompletionView: View {
                         AutocompletionCell(
                             addRecipient: addRecipient,
                             autocompletion: groupContact,
-                            hightlight: textDebounce.text,
+                            highlight: textDebounce.text,
                             alreadyAppend: addedRecipients.contains { $0.id == contact.contactId },
                             unknownRecipient: isUserProposal,
                             title: groupContact.name,
@@ -80,7 +78,7 @@ struct AutocompletionView: View {
                         AutocompletionCell(
                             addRecipient: addRecipient,
                             autocompletion: addressBookContact,
-                            hightlight: textDebounce.text,
+                            highlight: textDebounce.text,
                             alreadyAppend: addedRecipients.contains { $0.id == contact.contactId },
                             unknownRecipient: isUserProposal,
                             title: addressBookContact.name,
