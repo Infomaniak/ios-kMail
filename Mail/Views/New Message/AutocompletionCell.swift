@@ -100,7 +100,7 @@ struct AutocompletionCell: View {
         self.alreadyAppend = alreadyAppend
         self.unknownRecipient = unknownRecipient
         self.title = title
-        self.subtitle = "Organisation " + autocompletion.name
+        self.subtitle = autocompletion.name
     }
 
     init(
@@ -117,7 +117,7 @@ struct AutocompletionCell: View {
         self.alreadyAppend = alreadyAppend
         self.unknownRecipient = unknownRecipient
         self.title = title
-        self.subtitle = "Carnet d'adresse de " + autocompletion.name
+        self.subtitle = autocompletion.name
     }
 
     var body: some View {
