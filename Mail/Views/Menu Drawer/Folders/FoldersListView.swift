@@ -27,7 +27,7 @@ import SwiftUI
 struct FoldersListView: View {
     @EnvironmentObject private var mainViewState: MainViewState
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @ModalState private var currentFolder: Folder?
+    @State private var currentFolder: Folder?
 
     private let folders: [NestableFolder]
     private let hasSubFolders: Bool
@@ -79,8 +79,8 @@ struct FoldersListView: View {
                             }
                         }
                     }
-                    .customAlert(item: $currentFolder) { _ in
-                        CreateFolderView(mode: .modify, folder: currentFolder)
+                    .customAlert(item: $currentFolder) { folder in
+                        CreateFolderView(mode: .modify, folder: folder)
                     }
             }
         }
