@@ -42,8 +42,8 @@ public struct RecipientCell: View {
     @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    let title: String
-    let subtitle: String
+    var title: String
+    var subtitle: String
     let avatarConfiguration: ContactConfiguration
 
     let highlight: String?
@@ -59,14 +59,12 @@ public struct RecipientCell: View {
     public init(
         contact: any ContactAutocompletable,
         contactConfiguration: ContactConfiguration = .emptyContact,
-        highlight: String? = nil
+        highlight: String? = nil,
+        title: String,
+        subtitle: String
     ) {
-        title = contact.autocompletableName
-        if title == contact.autocompletableName {
-            subtitle = title
-        } else {
-            subtitle = "Nom de l'organisation"
-        }
+        self.title = title
+        self.subtitle = subtitle
         avatarConfiguration = contactConfiguration
 
         self.highlight = highlight

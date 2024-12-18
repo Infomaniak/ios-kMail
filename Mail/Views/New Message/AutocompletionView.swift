@@ -59,14 +59,35 @@ struct AutocompletionView: View {
                 let isUserProposal = shouldAddUserProposal && isLastRecipient
 
                 VStack(alignment: .leading, spacing: IKPadding.mini) {
-                    AutocompletionCell(
-                        addRecipient: addRecipient,
-                        autocompletion: contact,
-                        highlight: textDebounce.text,
-                        alreadyAppend: addedRecipients.contains { $0.id == contact.contactId },
-                        unknownRecipient: isUserProposal
-                    )
-
+                    if let mergedContact = contact as? MergedContact {
+                        AutocompletionCell(
+                            addRecipient: addRecipient,
+                            autocompletion: mergedContact,
+                            highlight: textDebounce.text,
+                            alreadyAppend: addedRecipients.contains { $0.id == contact.contactId },
+                            unknownRecipient: isUserProposal
+                        )
+                    } else if let groupContact = contact as? GroupContact {
+                        AutocompletionCell(
+                            addRecipient: addRecipient,
+                            autocompletion: groupContact,
+                            hightlight: textDebounce.text,
+                            alreadyAppend: addedRecipients.contains { $0.id == contact.contactId },
+                            unknownRecipient: isUserProposal,
+                            title: groupContact.name,
+                            subtitle: groupContact.autocompletableName
+                        )
+                    } else if let addressBookContact = contact as? AddressBook {
+                        AutocompletionCell(
+                            addRecipient: addRecipient,
+                            autocompletion: addressBookContact,
+                            hightlight: textDebounce.text,
+                            alreadyAppend: addedRecipients.contains { $0.id == contact.contactId },
+                            unknownRecipient: isUserProposal,
+                            title: addressBookContact.name,
+                            subtitle: addressBookContact.autocompletableName
+                        )
+                    }
                     if !isLastRecipient {
                         IKDivider()
                     }
@@ -85,36 +106,47 @@ struct AutocompletionView: View {
 
     private func updateAutocompletion(_ search: String) async {
         let trimmedSearch = search.trimmingCharacters(in: .whitespacesAndNewlines)
+        let counter = 10
 
         Task { @MainActor in
             let autocompleteContacts = await Array(mailboxManager.contactManager.frozenContactsAsync(
                 matching: trimmedSearch,
-                fetchLimit: Self.maxAutocompleteCount,
+                fetchLimit: counter,
                 sorted: sortByRemoteAndName
             ))
 
             let autocompleteGroupContacts = Array(mailboxManager.contactManager.frozenGroupContacts(
                 matching: trimmedSearch,
-                fetchLimit: nil
+                fetchLimit: counter
             ))
 
             let autocompleteAddressBookContacts = Array(mailboxManager.contactManager.frozenAddressBookContacts(
                 matching: trimmedSearch,
-                fetchLimit: nil
+                fetchLimit: counter
             ))
 
-            var result: [any ContactAutocompletable] = autocompleteContacts + autocompleteGroupContacts +
+            var combinedResults: [any ContactAutocompletable] = autocompleteContacts + autocompleteGroupContacts +
                 autocompleteAddressBookContacts
 
-            let realResults = autocompleteGroupContacts.filter { !addedRecipients.map(\.email).contains($0.autocompletableName) }
+            let realResults = autocompleteGroupContacts.filter {
+                !addedRecipients.map(\.email).contains($0.autocompletableName)
+            }
 
             shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.autocompletableName == textDebounce.text)
 
             if shouldAddUserProposal {
-                result.append(MergedContact(email: textDebounce.text, local: nil, remote: nil))
+                combinedResults.append(MergedContact(email: textDebounce.text, local: nil, remote: nil))
             }
 
-            autocompletion = result
+            combinedResults.sort { lhs, rhs in
+                guard let lhsContact = lhs as? MergedContact,
+                      let rhsContact = rhs as? MergedContact else { return false }
+                return sortByRemoteAndName(lhs: lhsContact, rhs: rhsContact)
+            }
+
+            let result = combinedResults.prefix(10)
+
+            autocompletion = Array(result)
         }
     }
 

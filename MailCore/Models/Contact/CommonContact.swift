@@ -44,7 +44,7 @@ public final class CommonContact: Identifiable {
     }
 
     /// Init form a `Correspondent` in the context of a mailbox
-    init(
+    public init(
         correspondent: any Correspondent,
         associatedBimi: Bimi?,
         contextUser: UserProfile,

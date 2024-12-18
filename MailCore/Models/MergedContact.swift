@@ -40,7 +40,7 @@ extension CNContact {
     }
 }
 
-public final class MergedContact: Object, Identifiable {
+public final class MergedContact: Object, Identifiable, Correspondent {
     private static let contactFormatter = CNContactFormatter()
 
     /// Shared
