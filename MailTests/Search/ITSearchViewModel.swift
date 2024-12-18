@@ -51,6 +51,14 @@ struct MCKContactManageable_SearchViewModel: ContactManageable, MCKTransactionab
 
     func getContact(for correspondent: any Correspondent, transactionable: Transactionable) -> MergedContact? { nil }
 
+    func frozenGroupContacts(matching string: String, fetchLimit: Int?) -> any Collection<MailCore.GroupContact> { [] }
+
+    func frozenAddressBookContacts(matching string: String, fetchLimit: Int?) -> any Collection<MailCore.AddressBook> { [] }
+
+    func getContacts(with groupContactId: Int) -> [MailCore.MergedContact] { [] }
+
+    func getContacts(for addressbookId: Int) -> [MailCore.MergedContact] { [] }
+
     func addressBook(with id: Int) -> MailCore.AddressBook? { nil }
 
     func addContact(recipient: MailCore.Recipient) async throws {}
