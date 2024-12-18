@@ -236,7 +236,8 @@ public enum SentryDebug {
         if let possibleAfError {
             if possibleAfError.isExplicitlyCancelledError {
                 return false
-            } else if (possibleAfError.underlyingError as? NSError)?.code == NSURLErrorNotConnectedToInternet {
+            } else if [NSURLErrorNotConnectedToInternet, NSURLErrorTimedOut]
+                .contains((possibleAfError.underlyingError as? NSError)?.code) {
                 return false
             } else {
                 return true
