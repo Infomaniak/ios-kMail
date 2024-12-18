@@ -51,7 +51,6 @@ public struct RecipientCell: View {
         title = recipient.name
         subtitle = recipient.email
         avatarConfiguration = contactConfiguration
-
         self.highlight = highlight
     }
 
