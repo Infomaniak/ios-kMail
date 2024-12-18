@@ -81,8 +81,8 @@ struct AutocompletionCell: View {
         self.autocompletion = autocompletion
         self.alreadyAppend = alreadyAppend
         self.unknownRecipient = unknownRecipient
-        self.title = autocompletion.name
-        self.subtitle = autocompletion.email
+        title = autocompletion.name
+        subtitle = autocompletion.email
     }
 
     init(
@@ -131,8 +131,7 @@ struct AutocompletionCell: View {
                                   contactConfiguration: contactConfiguration,
                                   highlight: highlight,
                                   title: title,
-                                  subtitle: subtitle
-                    )
+                                  subtitle: subtitle)
                 }
             }
             .allowsHitTesting(!alreadyAppend || unknownRecipient)
