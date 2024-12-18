@@ -66,7 +66,6 @@ struct ComposeMessageCellRecipients: View {
     let type: ComposeViewFieldType
     var areCCAndBCCEmpty = false
 
-    let totalRecipients: Int
     let isRecipientLimitExceeded: Bool
 
     /// It should be displayed only for the field to if cc and bcc are empty and when autocompletion is not displayed
@@ -209,7 +208,6 @@ struct ComposeMessageCellRecipients: View {
         showRecipientsFields: .constant(false),
         autocompletionType: .constant(nil),
         type: .bcc,
-        totalRecipients: 0,
         isRecipientLimitExceeded: false
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
