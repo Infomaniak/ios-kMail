@@ -24,20 +24,100 @@ import MailResources
 import SwiftUI
 
 struct AutocompletionCell: View {
+    @Environment(\.currentUser) private var currentUser
+
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     let addRecipient: @MainActor (any ContactAutocompletable) -> Void
     let autocompletion: any ContactAutocompletable
     var highlight: String?
     let alreadyAppend: Bool
     let unknownRecipient: Bool
+    let title: String
+    let subtitle: String
 
     var contactConfiguration: ContactConfiguration {
         if let groupContact = autocompletion as? GroupContact {
             return .groupContact(group: groupContact)
         } else if let addressBook = autocompletion as? AddressBook {
             return .addressBook(addressbook: addressBook)
+        } else if let mergedContact = autocompletion as? MergedContact {
+            let contact = CommonContact(
+                correspondent: mergedContact,
+                associatedBimi: nil,
+                contextUser: currentUser.value,
+                contextMailboxManager: mailboxManager
+            )
+            return .contact(contact: contact)
         } else {
             return .emptyContact
         }
+    }
+
+    init(
+        addRecipient: @escaping @MainActor (any ContactAutocompletable) -> Void,
+        autocompletion: any ContactAutocompletable,
+        hightlight: String?,
+        alreadyAppend: Bool,
+        unknownRecipient: Bool,
+        title: String,
+        subtitle: String
+    ) {
+        self.addRecipient = addRecipient
+        self.autocompletion = autocompletion
+        self.alreadyAppend = alreadyAppend
+        self.unknownRecipient = unknownRecipient
+        self.title = title
+        self.subtitle = subtitle
+    }
+
+    init(
+        addRecipient: @escaping @MainActor (MergedContact) -> Void,
+        autocompletion: MergedContact,
+        highlight: String?,
+        alreadyAppend: Bool,
+        unknownRecipient: Bool
+    ) {
+        self.addRecipient = { addRecipient($0 as! MergedContact) }
+        self.autocompletion = autocompletion
+        self.alreadyAppend = alreadyAppend
+        self.unknownRecipient = unknownRecipient
+        self.title = autocompletion.name
+        self.subtitle = autocompletion.email
+    }
+
+    init(
+        addRecipient: @escaping @MainActor (AddressBook) -> Void,
+        autocompletion: AddressBook,
+        highlight: String?,
+        alreadyAppend: Bool,
+        unknownRecipient: Bool,
+        title: String,
+        subtitle: String
+    ) {
+        self.addRecipient = { addRecipient($0 as! AddressBook) }
+        self.autocompletion = autocompletion
+        self.alreadyAppend = alreadyAppend
+        self.unknownRecipient = unknownRecipient
+        self.title = title
+        self.subtitle = "Organisation " + autocompletion.name
+    }
+
+    init(
+        addRecipient: @escaping @MainActor (GroupContact) -> Void,
+        autocompletion: GroupContact,
+        highlight: String?,
+        alreadyAppend: Bool,
+        unknownRecipient: Bool,
+        title: String,
+        subtitle: String
+    ) {
+        self.addRecipient = { addRecipient($0 as! GroupContact) }
+        self.autocompletion = autocompletion
+        self.alreadyAppend = alreadyAppend
+        self.unknownRecipient = unknownRecipient
+        self.title = title
+        self.subtitle = "Carnet d'adresse de " + autocompletion.name
     }
 
     var body: some View {
@@ -48,7 +128,12 @@ struct AutocompletionCell: View {
                 if unknownRecipient {
                     UnknownRecipientCell(email: autocompletion.autocompletableName)
                 } else {
-                    RecipientCell(contact: autocompletion, contactConfiguration: contactConfiguration, highlight: highlight)
+                    RecipientCell(contact: autocompletion,
+                                  contactConfiguration: contactConfiguration,
+                                  highlight: highlight,
+                                  title: title,
+                                  subtitle: subtitle
+                    )
                 }
             }
             .allowsHitTesting(!alreadyAppend || unknownRecipient)
@@ -68,8 +153,11 @@ struct AutocompletionCell: View {
     AutocompletionCell(
         addRecipient: { _ in /* Preview */ },
         autocompletion: PreviewHelper.sampleMergedContact,
+        hightlight: "",
         alreadyAppend: false,
-        unknownRecipient: false
+        unknownRecipient: false,
+        title: "",
+        subtitle: ""
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
 }
