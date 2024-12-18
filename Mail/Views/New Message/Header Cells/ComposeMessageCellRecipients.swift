@@ -180,7 +180,7 @@ struct ComposeMessageCellRecipients: View {
         }
 
         let uniqueContacts = mergedContacts.filter { contact in
-            !recipients.contains(where: { $0.email == contact.email })
+            !recipients.contains(where: { $0.email == contact.email } )
         }
 
         if uniqueContacts.count < mergedContacts.count {
