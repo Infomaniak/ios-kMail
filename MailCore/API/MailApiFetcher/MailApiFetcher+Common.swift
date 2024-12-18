@@ -148,11 +148,10 @@ public extension MailApiFetcher {
     }
 
     func modify(mailbox: Mailbox, folder: Folder, name: String) async throws -> Folder {
-        let newName = ModifyFolder(name: name)
         return try await perform(request: authenticatedRequest(
             .modifyFolder(mailboxUuid: mailbox.uuid, folderId: folder.remoteId),
             method: .post,
-            parameters: newName
+            parameters: ["name": name]
         ))
     }
 
