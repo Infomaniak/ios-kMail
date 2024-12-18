@@ -65,6 +65,9 @@ struct ComposeMessageCellRecipients: View {
     let type: ComposeViewFieldType
     var areCCAndBCCEmpty = false
 
+    let totalRecipients: Int
+    let isRecipientLimitExceeded: Bool
+
     /// It should be displayed only for the field to if cc and bcc are empty and when autocompletion is not displayed
     private var shouldDisplayChevron: Bool {
         return type == .to && autocompletionType == nil && areCCAndBCCEmpty
@@ -135,18 +138,21 @@ struct ComposeMessageCellRecipients: View {
     @MainActor private func addNewRecipient(_ contact: any ContactAutocompletable) {
         matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
 
+        if isRecipientLimitExceeded {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorTooManyRecipients)
+            return
+        }
+
         do {
             let mergedContacts = extractContacts(contact)
             let validContacts = try recipientCheck(mergedContacts: mergedContacts)
             convertMergedContactsToRecipients(validContacts)
-
-            print(recipients)
         } catch RecipientError.invalidEmail {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
         } catch RecipientError.duplicateContact {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientAlreadyUsed)
         } catch {
-            print("")
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
         }
 
         textDebounce.text = ""
@@ -172,15 +178,20 @@ struct ComposeMessageCellRecipients: View {
             throw RecipientError.invalidEmail
         }
 
-        let validContacts = mergedContacts.filter { contact in
-            !recipients.contains(where: { $0.email == contact.email } )
+        let uniqueContacts = mergedContacts.filter { contact in
+            !recipients.contains(where: { $0.email == contact.email })
         }
 
-        if validContacts.count < mergedContacts.count {
+        if uniqueContacts.count < mergedContacts.count {
             throw RecipientError.duplicateContact
         }
 
-        return validContacts
+        let remainingCapacity = 100 - recipients.count
+        if recipients.count + mergedContacts.count > 100 {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorTooManyRecipients)
+        }
+
+        return Array(uniqueContacts.prefix(max(remainingCapacity, 0)))
     }
 
     private func convertMergedContactsToRecipients(_ mergedContacts: [MergedContact]) {
@@ -196,7 +207,9 @@ struct ComposeMessageCellRecipients: View {
         recipients: .constant(PreviewHelper.sampleRecipientsList),
         showRecipientsFields: .constant(false),
         autocompletionType: .constant(nil),
-        type: .bcc
+        type: .bcc,
+        totalRecipients: 0,
+        isRecipientLimitExceeded: false
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
 }
