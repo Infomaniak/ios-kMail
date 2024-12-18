@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreSwiftUI
 import MailCore
 import MailResources
 import RealmSwift
@@ -26,34 +27,28 @@ import SwiftUI
 struct FoldersListView: View {
     @EnvironmentObject private var mainViewState: MainViewState
     @EnvironmentObject private var mailboxManager: MailboxManager
-
-    @ModalState private var isShowingCreateFolderAlert = false
-    @State private var currentFolder: Folder?
+    @ModalState private var currentFolder: Folder?
 
     private let folders: [NestableFolder]
     private let hasSubFolders: Bool
-    private let isUserFoldersList: Bool
-
-    init(folders: [NestableFolder], isUserFoldersList: Bool) {
+    init(folders: [NestableFolder]) {
         self.folders = folders
-        self.isUserFoldersList = isUserFoldersList
         hasSubFolders = folders.contains { !$0.children.isEmpty }
     }
 
     var body: some View {
         VStack(spacing: 0) {
             ForEach(folders) { folder in
-
                 FolderCell(folder: folder,
                            currentFolderId: mainViewState.selectedFolder.remoteId,
                            canCollapseSubFolders: hasSubFolders,
                            matomoCategory: .menuDrawer)
-                    .background(RoundedRectangle(cornerRadius: 10).fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor))
+                    .background(RoundedRectangle(cornerRadius: IKRadius.medium)
+                        .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor))
                     .contextMenu {
-                        if isUserFoldersList {
+                        if folder.frozenContent.role == nil {
                             Button {
                                 currentFolder = folder.frozenContent
-                                isShowingCreateFolderAlert.toggle()
                             } label: {
                                 Label {
                                     Text(MailResourcesStrings.Localizable.actionRename)
@@ -84,7 +79,7 @@ struct FoldersListView: View {
                             }
                         }
                     }
-                    .customAlert(isPresented: $isShowingCreateFolderAlert) {
+                    .customAlert(item: $currentFolder) { _ in
                         CreateFolderView(mode: .modify, folder: currentFolder)
                     }
             }
