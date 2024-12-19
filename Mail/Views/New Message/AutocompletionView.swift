@@ -132,17 +132,19 @@ struct AutocompletionView: View {
 
             shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.autocompletableName == textDebounce.text)
 
-            if shouldAddUserProposal {
-                combinedResults.append(MergedContact(email: textDebounce.text, local: nil, remote: nil))
-            }
-
             combinedResults.sort { lhs, rhs in
                 guard let lhsContact = lhs as? MergedContact,
                       let rhsContact = rhs as? MergedContact else { return false }
                 return sortByRemoteAndName(lhs: lhsContact, rhs: rhsContact)
             }
 
-            let result = combinedResults.prefix(10)
+            var result = combinedResults.prefix(10)
+
+            if shouldAddUserProposal {
+                let mergedContact = MergedContact(email: textDebounce.text, local: nil, remote: nil)
+                mergedContact.name = textDebounce.text
+                result.append(mergedContact)
+            }
 
             autocompletion = Array(result)
         }

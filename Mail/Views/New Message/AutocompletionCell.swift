@@ -81,9 +81,10 @@ struct AutocompletionCell: View {
     ) {
         self.addRecipient = { addRecipient($0 as! MergedContact) }
         self.autocompletion = autocompletion
+        self.highlight = highlight
         self.alreadyAppend = alreadyAppend
         self.unknownRecipient = unknownRecipient
-        title = autocompletion.name
+        title = autocompletion.email
         subtitle = autocompletion.email
     }
 
@@ -98,6 +99,7 @@ struct AutocompletionCell: View {
     ) {
         self.addRecipient = { addRecipient($0 as! GroupContact) }
         self.autocompletion = autocompletion
+        self.highlight = highlight
         self.alreadyAppend = alreadyAppend
         self.unknownRecipient = unknownRecipient
         self.title = title
