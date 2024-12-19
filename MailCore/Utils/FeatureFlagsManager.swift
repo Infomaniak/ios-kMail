@@ -26,6 +26,7 @@ import SwiftUI
 public enum FeatureFlag: String, Codable {
     case aiMailComposer = "ai-mail-composer"
     case bimi
+    case scheduleSendDraft = "schedule-send-draft"
     case unknown
 
     public init(from decoder: Decoder) throws {

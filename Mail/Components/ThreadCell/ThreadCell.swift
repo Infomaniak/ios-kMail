@@ -43,9 +43,6 @@ struct ThreadCellDataHolder {
     /// Sender of the last message that is not in the Sent folder, otherwise the last message of the thread
     let recipientToDisplay: Recipient?
 
-    /// Date of the last message of the folder, otherwise the last message of the thread
-    let date: String
-
     /// Subject of the first message
     let subject: String
 
@@ -57,8 +54,6 @@ struct ThreadCellDataHolder {
     init(thread: Thread) {
         // swiftlint:disable:next last_where
         let lastMessageNotFromSent = thread.messages.filter(Self.lastMessageNotFromSentPredicate).last ?? thread.messages.last
-
-        date = thread.date.formatted(.thread(.list))
 
         subject = thread.formattedSubject
 
@@ -181,7 +176,7 @@ struct ThreadCell: View {
                     ),
                     messageCount: thread.messages.count,
                     prominentMessageCount: thread.hasUnseenMessages,
-                    formattedDate: dataHolder.date,
+                    date: thread.date,
                     showDraftPrefix: thread.hasDrafts
                 )
 
