@@ -319,7 +319,7 @@ public final class DraftManager {
         let cancelButtonAlertAction = UserAlertAction(MailResourcesStrings.Localizable.buttonCancel) {
             Task {
                 await tryOrDisplayError {
-                    try await mailboxManager.moveScheduleToDraft(draftAction: scheduleAction)
+                    try await mailboxManager.moveScheduleToDraft(scheduleAction: scheduleAction)
                     self.alertDisplayable.show(
                         message: MailResourcesStrings.Localizable.snackbarSaveInDraft,
                         action: changeFolderAlertAction

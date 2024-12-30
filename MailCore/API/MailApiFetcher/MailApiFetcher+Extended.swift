@@ -176,7 +176,7 @@ public extension MailApiFetcher {
         ))
     }
 
-    func deleteSchedule(draftAction: String) async throws {
+    func deleteSchedule(scheduleAction: String) async throws {
         let _: Empty = try await perform(request: authenticatedRequest(
             .draftSchedule(draftAction: draftAction),
             method: .delete
