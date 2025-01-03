@@ -310,7 +310,7 @@ public class ActionsManager: ObservableObject {
             if uniqueThreadCount == 1 {
                 return MailResourcesStrings.Localizable.snackbarThreadMoved(destinationFolderName)
             } else {
-                return MailResourcesStrings.Localizable.snackbarThreadsMoved(destinationFolderName)
+                return MailResourcesStrings.Localizable.snackbarThreadMovedPlural(destinationFolderName)
             }
         }
     }

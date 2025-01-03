@@ -4,7 +4,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Jordan Chapelle
- * Exported at: Fri, 08 Nov 2024 16:59:12 +0100
+ * Exported at: Fri, 03 Jan 2025 14:31:10 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1621,11 +1621,11 @@
 /* loco:62ab221b4956e9775f391ca6 */
 "snackbarThreadMoved" = "Conversation déplacée vers %@";
 
+/* loco:62ab2274c8d2fe4bb7134de4 */
+"snackbarThreadMoved-plural" = "Conversations déplacées vers %@";
+
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "Conversations déplacées vers %@";
-
-/* loco:62ab2274c8d2fe4bb7134de4 */
-"snackbarThreadsMoved" = "Conversations déplacées vers %@";
 
 /* loco:62a33e2d0c5ac4438c366a32 */
 "socialNetworksFolder" = "Réseaux sociaux";
