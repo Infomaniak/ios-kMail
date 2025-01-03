@@ -188,7 +188,6 @@ public class ActionsManager: ObservableObject {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted(1))
         case .blockList:
             Task { @MainActor in
-
                 let uniqueRecipient = self.getUniqueRecipients(reportedMessages: messages)
                 if uniqueRecipient.count > 1 {
                     origin.nearestBlockSendersList?.wrappedValue = BlockRecipientState(recipientsToMessage: uniqueRecipient)
@@ -200,17 +199,8 @@ public class ActionsManager: ObservableObject {
                 }
             }
         case .saveThreadInkDrive:
-            guard !platformDetector.isMac else {
-                return
-            }
-            await Task { @MainActor in
-                do {
-                    let filesURL = try await mailboxManager.apiFetcher.download(messages: messages)
-                    try DeeplinkService().shareFilesToKdrive(filesURL)
-                } catch {
-                    SentrySDK.capture(error: error)
-                }
-            }.value
+            guard !platformDetector.isMac else { return }
+            origin.messagesToDownload?.wrappedValue = messages
         case .shareMailLink:
             guard let message = messagesWithDuplicates.first else { return }
             let result = try await mailboxManager.apiFetcher.shareMailLink(message: message)
@@ -316,7 +306,7 @@ public class ActionsManager: ObservableObject {
             if uniqueThreadCount == 1 {
                 return MailResourcesStrings.Localizable.snackbarThreadMoved(destinationFolderName)
             } else {
-                return MailResourcesStrings.Localizable.snackbarThreadsMoved(destinationFolderName)
+                return MailResourcesStrings.Localizable.snackbarThreadMovedPlural(destinationFolderName)
             }
         }
     }
