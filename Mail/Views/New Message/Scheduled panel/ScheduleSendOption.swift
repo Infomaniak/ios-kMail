@@ -94,16 +94,14 @@ enum ScheduleSendOption: Identifiable, Equatable {
 
     var shouldBeDisplayedNow: Bool {
         let weekday = Calendar.current.component(.weekday, from: Date.now)
-        let hour = Calendar.current.component(.hour, from: .now)
-        let minute = Calendar.current.component(.minute, from: .now)
 
         switch self {
         case .laterThisMorning:
-            return hour < 7 || (hour == 7 && minute < 55)
+            return isInTimeWindow(firstHour: 0, lastHour: 7)
         case .thisAfternoon:
-            return hour < 13 || (hour == 13 && minute < 55)
+            return isInTimeWindow(firstHour: 7, lastHour: 13)
         case .thisEvening:
-            return (hour > 7 && hour < 17) || (hour == 17 && minute < 55)
+            return isInTimeWindow(firstHour: 13, lastHour: 17)
         case .tomorrowMorning, .nextMonday:
             return true
         case .nextMondayMorning, .nextMondayAfternoon:
@@ -137,5 +135,12 @@ enum ScheduleSendOption: Identifiable, Equatable {
             matchingPolicy: .nextTime,
             direction: .forward
         )
+    }
+
+    private func isInTimeWindow(firstHour: Int, lastHour: Int) -> Bool {
+        let hour = Calendar.current.component(.hour, from: .now)
+        let minute = Calendar.current.component(.minute, from: .now)
+
+        return (hour > firstHour && hour < lastHour) || (firstHour == 17 && minute < 55)
     }
 }
