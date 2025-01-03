@@ -129,7 +129,7 @@ struct MessageHeaderSummaryView: View {
                 .foregroundStyle(MailResourcesAsset.redColor)
             }
 
-            if isMessageExpanded && isMessageInteractive {
+            if isMessageExpanded && isMessageInteractive && !(message.isScheduledDraft ?? false) {
                 HStack(spacing: 20) {
                     Button {
                         matomo.track(eventWithCategory: .messageActions, name: "reply")
