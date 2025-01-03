@@ -187,11 +187,11 @@ public extension MailboxManager {
     }
 
     func moveScheduleToDraft(draftResource: String) async throws {
-        try await moveScheduleToDraft(draftAction: draftResource.appending("/schedule"))
+        try await moveScheduleToDraft(scheduleAction: draftResource.appending("/schedule"))
     }
 
     func moveScheduleToDraft(scheduleAction: String) async throws {
-        try await apiFetcher.deleteSchedule(scheduleAction: draftAction)
+        try await apiFetcher.deleteSchedule(scheduleAction: scheduleAction)
         guard let scheduledDraftsFolder = getFolder(with: .scheduledDrafts) else {
             logError(.missingDraft)
             return
