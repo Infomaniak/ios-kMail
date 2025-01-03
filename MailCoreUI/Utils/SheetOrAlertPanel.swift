@@ -45,10 +45,10 @@ public struct SheetOrAlertPanel<ModalContent: View>: ViewModifier {
             .sheet(isPresented: Binding(get: { isCompactWindow && isPresented }, set: { isPresented = $0 })) {
                 if #available(iOS 16.0, *) {
                     modalContent()
-                        .modifier(SelfSizingPanelViewModifier())
+                        .modifier(SelfSizingPanelViewModifier(bottomPadding: IKPadding.medium))
                 } else {
                     modalContent()
-                        .modifier(SelfSizingPanelBackportViewModifier())
+                        .modifier(SelfSizingPanelBackportViewModifier(bottomPadding: IKPadding.medium))
                 }
             }
             .customAlert(isPresented: Binding(get: { !isCompactWindow && isPresented }, set: { isPresented = $0 })) {
