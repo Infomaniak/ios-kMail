@@ -1,4 +1,4 @@
-name: SwiftLint
+name: Build and Upload on AppStoreConnect
 
 on:
   push:
@@ -39,8 +39,7 @@ jobs:
           SENTRY_URL: ${{ secrets.SENTRY_URL }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-          GITHUB_REF_NAME: "Beta-1.2.8-b1"
-        run: ./scripts/build_and_upload.sh Beta-1.2.8-b1
+        run: ./scripts/build_and_upload.sh $GITHUB_REF_NAME
       - name: Cleanup
         if: always()
         run: rm -rf ./private_keys
