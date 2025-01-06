@@ -50,14 +50,14 @@ struct ThreadViewToolbarModifier: ViewModifier {
     let frozenMessages: [Message]
 
     private var toolbarActions: [Action] {
-        guard !containsScheduleDrafts else {
+        switch frozenFolder?.role {
+        case .archive:
+            return Self.archiveActions
+        case .scheduledDrafts:
             return Self.scheduleActions
+        default:
+            return Self.standardActions
         }
-        return frozenFolder?.role == .archive ? Self.archiveActions : Self.standardActions
-    }
-
-    private var containsScheduleDrafts: Bool {
-        return frozenFolder?.role == .scheduledDrafts || frozenMessages.contains { $0.isScheduledDraft ?? false }
     }
 
     func body(content: Content) -> some View {
@@ -90,7 +90,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                         }
                     }
                 }
-                if !containsScheduleDrafts {
+                if frozenFolder?.role != .scheduledDrafts {
                     ActionsPanelButton(
                         messages: frozenMessages,
                         originFolder: frozenFolder,
