@@ -324,11 +324,10 @@ public extension MailboxManager {
     private func addMessages(shortUids: [String], folder: Folder) async throws {
         guard !shortUids.isEmpty && !Task.isCancelled else { return }
 
-        let uniqueUids: [String] = getUniqueUids(folder: folder, remoteUids: shortUids)
         let messageByUidsResult = try await apiFetcher.messagesByUids(
             mailboxUuid: mailbox.uuid,
             folderId: folder.remoteId,
-            messageUids: uniqueUids
+            messageUids: shortUids
         )
 
         try? writeTransaction { writableRealm in
@@ -518,18 +517,6 @@ public extension MailboxManager {
         for folder in folders {
             folder.computeUnreadCount()
         }
-    }
-
-    private func getUniqueUids(folder: Folder, remoteUids: [String]) -> [String] {
-        let localUids = Set(folder.threads.map { Constants.shortUid(from: $0.uid) })
-        let remoteUidsSet = Set(remoteUids)
-        var uniqueUids: Set<String> = Set()
-        if localUids.isEmpty {
-            uniqueUids = remoteUidsSet
-        } else {
-            uniqueUids = remoteUidsSet.subtracting(localUids)
-        }
-        return uniqueUids.toArray()
     }
 
     // MARK: - Other
