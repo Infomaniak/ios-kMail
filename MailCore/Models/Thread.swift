@@ -166,7 +166,7 @@ public class Thread: Object, Decodable, Identifiable {
 
         let shouldAddMessage: Bool
         switch folderRole {
-        case .draft:
+        case .draft, .scheduledDrafts:
             shouldAddMessage = false
         case .trash:
             shouldAddMessage = newMessage.inTrash
