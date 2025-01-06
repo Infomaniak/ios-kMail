@@ -63,8 +63,7 @@ public extension MailboxManager {
 
         let liveFolder = folder.fresh(transactionable: self)
         let previousCursor = liveFolder?.cursor
-        var newCursor: String
-        var messagesUids: MessagesUids
+        let newCursor: String
 
         if previousCursor == nil {
             newCursor = try await fetchOldMessagesUids(folder: folder)
@@ -76,10 +75,9 @@ public extension MailboxManager {
                 signature: previousCursor!
             )
 
-            messagesUids = MessagesUids(
+            let messagesUids = MessagesUids(
                 addedShortUids: messageDeltaResult.addedShortUids,
-                deletedUids: messageDeltaResult.deletedShortUids
-                    .map { Constants.longUid(from: $0, folderId: folder.remoteId) },
+                deletedUids: messageDeltaResult.deletedShortUids.map { Constants.longUid(from: $0, folderId: folder.remoteId) },
                 updated: messageDeltaResult.updated,
                 cursor: messageDeltaResult.cursor,
                 folderUnreadCount: messageDeltaResult.unreadCount
