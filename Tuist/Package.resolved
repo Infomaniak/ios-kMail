@@ -21,7 +21,7 @@
     {
       "identity" : "cocoalumberjack",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack",
+      "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack.git",
       "state" : {
         "revision" : "4b8714a7fb84d42393314ce897127b3939885ec3",
         "version" : "3.8.5"
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-bug-tracker",
       "state" : {
-        "revision" : "9618c3b593a852ef8a56d14087056b4b9927e8f1",
-        "version" : "7.0.1"
+        "revision" : "8b417950e0c27983359d8fe605f66cf8050e703c",
+        "version" : "8.0.1"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "e0eca0781740231a95c0f32dc0ae5e2f92867a4e",
-        "version" : "12.8.0"
+        "revision" : "eaf53f35780befa26d2ac30c8262d7529352bfb9",
+        "version" : "13.0.0"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "0b0a5782dfbe09c08ba102177d6398a8ef180a8d",
-        "version" : "14.2.0"
+        "revision" : "ab6c8412f09af1dd55b62c0d888cb6fb3984fb18",
+        "version" : "16.0.0"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-create-account",
       "state" : {
-        "revision" : "ddd58db77bcbde2ca012b964bd59b8b0269d94e4",
-        "version" : "13.0.0"
+        "revision" : "4612dbc8ea1d8069dcd90701dcb42eb57bcf0aef",
+        "version" : "15.0.0"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-notifications",
       "state" : {
-        "revision" : "153cfbd0460a9fa806b1f4911abedd16df8ddaee",
-        "version" : "8.0.0"
+        "revision" : "3d5a2855394a8a6f73ab56a25b8e0000ddc3d042",
+        "version" : "9.0.0"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-onboarding",
       "state" : {
-        "revision" : "58426ccfa0addfdceaac79020d177a80dc109f49",
-        "version" : "1.2.1"
+        "revision" : "aeec72fba628a17e868e8fcecea6134c35a0ebf2",
+        "version" : "1.2.2"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-version-checker",
       "state" : {
-        "revision" : "5b68ced5b52f9c95b6cb6d671273c608ed38d2fc",
-        "version" : "7.0.2"
+        "revision" : "7027616a4fc3d5b1464f55c934111724356ebac3",
+        "version" : "8.0.0"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/johnpatrickmorgan/NavigationBackport",
       "state" : {
-        "revision" : "4f4c1b201c6e92c9d5236d69f563d5f435d6f340",
-        "version" : "0.11.1"
+        "revision" : "5a966a6010dcc6575a1931ca577b8ab19008166d",
+        "version" : "0.11.3"
       }
     },
     {
@@ -185,8 +185,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/realm-swift",
       "state" : {
-        "revision" : "5553cfd1c789efdb3d6daf7f0cc0733cfe601846",
-        "version" : "10.54.1"
+        "revision" : "a3abcdf95a3176f5ad990239920aad4ef86e00de",
+        "version" : "10.54.2"
       }
     },
     {
@@ -194,8 +194,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "56bfb7e723c76614be4c0861ee820ccbaed14c6d",
-        "version" : "8.41.0"
+        "revision" : "f45e9c62d7a4d9258ac3cf35a3acf9dbab4481d1",
+        "version" : "8.43.0"
       }
     },
     {
@@ -222,7 +222,7 @@
       "location" : "https://github.com/SVGKit/SVGKit.git",
       "state" : {
         "branch" : "3.x",
-        "revision" : "1e49cd52e1738cd2635889571f7b2474ce0d1763"
+        "revision" : "026d2168d07b621e4701a8b2aac6c1eaf05c1df5"
       }
     },
     {

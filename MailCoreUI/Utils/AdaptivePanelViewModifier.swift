@@ -43,9 +43,9 @@ struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>: ViewMo
             .workaroundPopover(item: $item, arrowEdge: popoverArrowEdge) { item in
                 if isCompactWindow {
                     if #available(iOS 16.0, *) {
-                        panelContent(item).modifier(SelfSizingPanelViewModifier())
+                        panelContent(item).modifier(SelfSizingPanelViewModifier(bottomPadding: IKPadding.medium))
                     } else {
-                        panelContent(item).modifier(SelfSizingPanelBackportViewModifier())
+                        panelContent(item).modifier(SelfSizingPanelBackportViewModifier(bottomPadding: IKPadding.medium))
                     }
                 } else {
                     ScrollView {
