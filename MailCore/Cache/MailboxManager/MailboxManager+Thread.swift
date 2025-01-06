@@ -65,14 +65,12 @@ public extension MailboxManager {
         let previousCursor = liveFolder?.cursor
         let newCursor: String
 
-        if previousCursor == nil {
-            newCursor = try await fetchOldMessagesUids(folder: folder)
-        } else {
+        if let previousCursor {
             /// Get delta from last cursor
             let messageDeltaResult = try await apiFetcher.messagesDelta(
                 mailboxUUid: mailbox.uuid,
                 folderId: folder.remoteId,
-                signature: previousCursor!
+                signature: previousCursor
             )
 
             let messagesUids = MessagesUids(
@@ -85,6 +83,8 @@ public extension MailboxManager {
 
             newCursor = messageDeltaResult.cursor
             try await handleDelta(messageUids: messagesUids, folder: folder)
+        } else {
+            newCursor = try await fetchOldMessagesUids(folder: folder)
         }
 
         guard !Task.isCancelled else { return }
