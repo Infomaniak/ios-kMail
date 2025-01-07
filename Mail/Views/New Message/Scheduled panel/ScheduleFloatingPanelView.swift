@@ -43,7 +43,7 @@ struct ScheduleFloatingPanelView: View {
 
                 IKDivider(type: .full)
             }
-            CustomScheduleButtonRow(
+            CustomScheduleButton(
                 customSchedule: $customSchedule,
                 isShowingDiscovery: $isShowingDiscovery,
                 isFree: isFree
