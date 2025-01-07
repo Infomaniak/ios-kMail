@@ -22,7 +22,7 @@ import MailCoreUI
 import MailResources
 import SwiftUI
 
-struct CustomScheduleButtonRow: View {
+struct CustomScheduleButton: View {
     @Environment(\.dismiss) private var dismiss
 
     @Binding var customSchedule: Bool
