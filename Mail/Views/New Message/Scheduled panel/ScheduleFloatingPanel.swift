@@ -83,7 +83,7 @@ struct ScheduleFloatingPanel: ViewModifier {
                 }
             }
             .discoveryPresenter(isPresented: $isShowingDiscovery) {
-                DiscoveryView(item: .scheduleDiscovery, isShowingLaterButton: false) { _ in
+                DiscoveryView(item: .scheduleDiscovery) { _ in
                     isPresented = true
                 }
             }

@@ -24,12 +24,16 @@ import MailCore
 import MailResources
 import SwiftUI
 
-public struct DiscoveryItem {
+public struct DiscoveryItem: Equatable {
     public let image: MailResourcesImages
     public let title: String
     public let description: String
     public let primaryButtonLabel: String
     public let matomoCategory: MatomoUtils.EventCategory
+
+    public static func == (lhs: DiscoveryItem, rhs: DiscoveryItem) -> Bool {
+        lhs.title == rhs.title && lhs.description == rhs.description
+    }
 }
 
 public extension DiscoveryItem {
@@ -83,14 +87,9 @@ struct DiscoveryView: View {
     @State private var willDiscoverNewFeature = false
 
     let item: DiscoveryItem
-    var isShowingLaterButton = true
 
     var onAppear: (() -> Void)?
     let completionHandler: (Bool) -> Void
-
-    private var laterButtonAction: (() -> Void)? {
-        isShowingLaterButton ? didTouchLaterButton : nil
-    }
 
     var body: some View {
         Group {
@@ -98,13 +97,13 @@ struct DiscoveryView: View {
                 DiscoveryBottomSheetView(
                     item: item,
                     nowButton: didTouchNowButton,
-                    laterButton: laterButtonAction
+                    laterButton: didTouchLaterButton
                 )
             } else {
                 DiscoveryAlertView(
                     item: item,
                     nowButton: didTouchNowButton,
-                    laterButton: laterButtonAction
+                    laterButton: didTouchLaterButton
                 )
             }
         }
@@ -134,7 +133,12 @@ struct DiscoveryBottomSheetView: View {
     let item: DiscoveryItem
 
     let nowButton: () -> Void
-    let laterButton: (() -> Void)?
+    let laterButton: () -> Void
+
+    var shouldDisplayLaterButton: Bool {
+        guard item != .scheduleDiscovery else { return false }
+        return true
+    }
 
     var body: some View {
         VStack(spacing: IKPadding.huge) {
@@ -152,7 +156,7 @@ struct DiscoveryBottomSheetView: View {
                 Button(item.primaryButtonLabel, action: nowButton)
                     .buttonStyle(.ikBorderedProminent)
 
-                if let laterButton {
+                if shouldDisplayLaterButton {
                     Button(MailResourcesStrings.Localizable.buttonLater, action: laterButton)
                         .buttonStyle(.ikBorderless)
                 }
