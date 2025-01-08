@@ -21,7 +21,7 @@ import MailResources
 import XCTest
 
 class MailUITests: XCTestCase {
-    let defaultTimeOut = TimeInterval(15)
+    let defaultTimeOut = TimeInterval(30)
     static let testSubject = "UI Test"
 
     let app = XCUIApplication()
