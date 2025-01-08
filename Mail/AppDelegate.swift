@@ -38,8 +38,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication,
                      willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
-        // Prevent window restoration on macOS
-        UserDefaults.standard.set(false, forKey: "NSQuitAlwaysKeepsWindows")
+        // Enable window restoration on macOS
+        UserDefaults.standard.set(true, forKey: "NSQuitAlwaysKeepsWindows")
 
         // Register actions for notifications of incoming emails.
         notificationActions.registerEmailActionNotificationGroup()
