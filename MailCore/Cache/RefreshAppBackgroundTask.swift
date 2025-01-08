@@ -18,6 +18,7 @@
 
 import BackgroundTasks
 import Foundation
+import InfomaniakConcurrency
 import InfomaniakDI
 import OSLog
 import SwiftUI
@@ -40,7 +41,8 @@ public protocol BackgroundTaskable {
 public class RefreshAppBackgroundTask: BackgroundTaskable {
     let backgroundTaskIdentifier = "com.infomaniak.mail.background-refresh"
 
-    @LazyInjectService var accountManager: AccountManager
+    @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
 
     public init() {
         // Exposed for DI
@@ -64,18 +66,49 @@ public class RefreshAppBackgroundTask: BackgroundTaskable {
     }
 
     public func run() async {
-        guard let currentMailboxManager = accountManager.currentMailboxManager,
-              let inboxFolder = currentMailboxManager.getFolder(with: .inbox),
-              inboxFolder.cursor != nil else {
-            // We do nothing if we don't have an initial cursor
+        guard !accountManager.accounts.isEmpty else {
             BGTaskScheduler.shared.cancelAllTaskRequests()
             return
         }
 
-        // Every time we execute a task we schedule a new task for next time
+        let notificationCenter = UNUserNotificationCenter.current()
+        let deliveredNotifications = await notificationCenter.deliveredNotifications()
+
+        let mailboxObjectIds: [String] = deliveredNotifications.compactMap { notification in
+            let content = notification.request.content
+
+            guard let mailboxId = content.userInfo[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
+                  let userId = content.userInfo[NotificationsHelper.UserInfoKeys.userId] as? Int else {
+                return nil
+            }
+
+            return MailboxInfosManager.getObjectId(mailboxId: mailboxId, userId: userId)
+        }
+
+        let uniqueMailboxObjectIds = Set(mailboxObjectIds)
+
+        let mailboxManagersToRefresh: [(MailboxManager, Folder)] = uniqueMailboxObjectIds.compactMap { mailboxObjectId in
+            guard let mailbox = mailboxInfosManager.getMailbox(objectId: mailboxObjectId),
+                  let mailboxManager = accountManager.getMailboxManager(for: mailbox),
+                  let inboxFolder = mailboxManager.getFolder(with: .inbox)?.freezeIfNeeded(),
+                  inboxFolder.cursor != nil else {
+                return nil
+            }
+
+            return (mailboxManager, inboxFolder)
+        }
+
+        guard !mailboxManagersToRefresh.isEmpty else {
+            BGTaskScheduler.shared.cancelAllTaskRequests()
+            return
+        }
+
+        // Only reschedule if we have at least one mailbox correctly init
         scheduleForBackgroundLaunch()
 
-        await currentMailboxManager.refreshFolderContent(inboxFolder.freezeIfNeeded())
+        await mailboxManagersToRefresh.concurrentForEach { mailboxManager, inboxFolder in
+            await mailboxManager.refreshFolderContent(inboxFolder)
+        }
 
         await NotificationsHelper.clearAlreadyReadNotifications()
 
