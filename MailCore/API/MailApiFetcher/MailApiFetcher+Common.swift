@@ -18,6 +18,7 @@
 
 import Alamofire
 import Foundation
+import InfomaniakConcurrency
 import InfomaniakCore
 import InfomaniakLogin
 
@@ -86,10 +87,9 @@ public extension MailApiFetcher {
     }
 
     func download(messages: [Message]) async throws -> [URL] {
-        var downloadedMessageURLs: [URL] = []
         let temporaryDirectory = FileManager.default.temporaryDirectory
 
-        for message in messages {
+        return try await messages.concurrentMap { message in
             let directoryURL = temporaryDirectory.appendingPathComponent(message.uid, isDirectory: true)
             let destination: DownloadRequest.Destination = { _, response in
                 (
@@ -98,11 +98,10 @@ public extension MailApiFetcher {
                 )
             }
 
-            let download = authenticatedSession.download(Endpoint.resource(message.downloadResource).url, to: destination)
+            let download = self.authenticatedSession.download(Endpoint.resource(message.downloadResource).url, to: destination)
             let messageUrl = try await download.serializingDownloadedFileURL().value
-            downloadedMessageURLs.append(messageUrl)
+            return messageUrl
         }
-        return downloadedMessageURLs
     }
 
     func quotas(mailbox: Mailbox) async throws -> Quotas {
