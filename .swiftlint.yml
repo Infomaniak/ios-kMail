@@ -50,6 +50,11 @@ custom_rules:
       - ".*\\.swift"
     regex: "@StateObject\\s+var"
     message: "StateObject should be private"
+  private_modal_state:
+    included:
+      - ".*\\.swift"
+    regex: "@ModalState\\s+var"
+    message: "ModalState should be private"
   private_environment:
     included:
       - ".*\\.swift"
