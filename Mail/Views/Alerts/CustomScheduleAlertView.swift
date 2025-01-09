@@ -18,12 +18,15 @@
 
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
 
 struct CustomScheduleAlertView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @State private var isShowingError = false
     @State private var selectedDate: Date
 
@@ -78,5 +81,6 @@ struct CustomScheduleAlertView: View {
             return
         }
         confirmAction(selectedDate)
+        matomo.track(eventWithCategory: .scheduleSend, name: "customSchedule")
     }
 }
