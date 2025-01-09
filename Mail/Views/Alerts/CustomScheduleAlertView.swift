@@ -29,7 +29,7 @@ struct CustomScheduleAlertView: View {
 
     let startingDate: Date
     let confirmAction: (Date) -> Void
-    let cancelAction: () -> Void
+    let cancelAction: (() -> Void)?
 
     private var isDelayTooShort: Bool {
         selectedDate < Date.minimumScheduleDelay
@@ -39,14 +39,14 @@ struct CustomScheduleAlertView: View {
         _selectedDate = .init(initialValue: startingDate)
         self.startingDate = startingDate
         self.confirmAction = confirmAction
-        self.cancelAction = cancelAction ?? {}
+        self.cancelAction = cancelAction
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(MailResourcesStrings.Localizable.datePickerTitle)
                 .textStyle(.bodyMedium)
-//                .padding(.bottom, IKPadding.alertTitleBottom)
+                .padding(.bottom, IKPadding.alertTitleBottom)
             DatePicker(
                 MailResourcesStrings.Localizable.datePickerTitle,
                 selection: $selectedDate,
