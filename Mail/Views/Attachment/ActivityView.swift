@@ -19,7 +19,7 @@
 import SwiftUI
 
 struct ActivityView: UIViewControllerRepresentable {
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) private var dismiss
 
     let activityItems: [Any]
 

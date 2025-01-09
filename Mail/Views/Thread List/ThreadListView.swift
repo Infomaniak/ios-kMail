@@ -46,8 +46,8 @@ struct ThreadListView: View {
     @ModalState private var isShowingUpdateAlert = false
     @ModalState private var flushAlert: FlushAlertState?
 
-    @StateObject var viewModel: ThreadListViewModel
-    @StateObject var multipleSelectionViewModel: MultipleSelectionViewModel
+    @StateObject private var viewModel: ThreadListViewModel
+    @StateObject private var multipleSelectionViewModel: MultipleSelectionViewModel
     @StateObject private var scrollObserver = ScrollObserver()
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
 

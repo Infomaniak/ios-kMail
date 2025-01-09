@@ -78,7 +78,7 @@ struct MessageHeaderDetailView: View {
 }
 
 struct RecipientLabel: View {
-    @EnvironmentObject var mailboxManager: MailboxManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @Binding var labelWidth: CGFloat
     let title: String

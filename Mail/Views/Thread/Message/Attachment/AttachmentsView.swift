@@ -30,7 +30,7 @@ import SwiftUI
 struct AttachmentsView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @EnvironmentObject var mailboxManager: MailboxManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
     @ObservedRealmObject var message: Message
 
     @ModalState private var previewedAttachment: Attachment?

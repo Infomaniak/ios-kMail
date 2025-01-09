@@ -30,8 +30,8 @@ import SwiftUI
 struct MailboxesManagementView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @EnvironmentObject var mailboxManager: MailboxManager
-    @EnvironmentObject var navigationDrawerState: NavigationDrawerState
+    @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
     @Environment(\.currentUser) private var currentUser
 

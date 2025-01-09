@@ -37,7 +37,7 @@ struct SettingsNotificationsView: View {
 
     @AppStorage(UserDefaults.shared.key(.notificationsEnabled)) private var notificationsEnabled = DefaultPreferences
         .notificationsEnabled
-    @State var subscribedTopics: [String]?
+    @State private var subscribedTopics: [String]?
 
     @ModalState(context: ContextKeys.settings) private var showAlertNotification = false
     @State private var showWarning = false

@@ -23,7 +23,7 @@ import SwiftUI
 struct ModalButtonsView: View {
     @Environment(\.dismiss) private var dismiss
 
-    @State var isButtonLoading = false
+    @State private var isButtonLoading = false
 
     let primaryButtonTitle: String
     var secondaryButtonTitle: String? = MailResourcesStrings.Localizable.buttonCancel

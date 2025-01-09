@@ -40,8 +40,8 @@ struct FolderCell: View {
     @Environment(\.folderCellType) private var cellType
     @Environment(\.isCompactWindow) private var isCompactWindow
 
-    @EnvironmentObject var mainViewState: MainViewState
-    @EnvironmentObject var navigationDrawerState: NavigationDrawerState
+    @EnvironmentObject private var mainViewState: MainViewState
+    @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
     let folder: NestableFolder
     var level = 0
@@ -131,7 +131,7 @@ struct FolderCellContent: View {
 
     @LazyInjectService private var matomo: MatomoUtils
 
-    @Environment(\.folderCellType) var cellType
+    @Environment(\.folderCellType) private var cellType
 
     private let frozenFolder: Folder
     private let level: Int

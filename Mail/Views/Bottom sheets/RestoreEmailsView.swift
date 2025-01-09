@@ -26,7 +26,7 @@ import MailResources
 import SwiftUI
 
 struct RestoreEmailsView: View {
-    @EnvironmentObject var mailboxManager: MailboxManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.isCompactWindow) private var isCompactWindow
