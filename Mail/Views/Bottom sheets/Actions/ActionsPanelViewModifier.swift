@@ -118,8 +118,8 @@ struct ActionsPanelViewModifier: ViewModifier {
         .customAlert(item: $flushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: originFolder)
         }
-        .customAlert(item: $messagesToDownload) { message in
-            ConfirmationSaveThreadInKdrive(targetMessages: message)
+        .customAlert(item: $messagesToDownload) { messages in
+            ConfirmationSaveThreadInKdrive(targetMessages: messages)
         }
         .sheet(item: $shareMailLink) { shareMailLinkResult in
             if #available(iOS 16.0, *) {
