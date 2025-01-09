@@ -192,9 +192,7 @@ struct ActionButtonLabel: View {
     var body: some View {
         HStack(spacing: IKPadding.medium) {
             action.icon
-                .resizable()
-                .scaledToFit()
-                .frame(width: 24, height: 24)
+                .iconSize(.large)
                 .foregroundStyle(iconColor)
             Text(action.title)
                 .foregroundStyle(titleColor)

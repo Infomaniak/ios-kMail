@@ -661,6 +661,15 @@
 /* loco:66cdadf9bc780d2bbd033462 */
 "deleteAccountWarning" = "The deletion of your account will be final. You will not be able to reactivate your account.";
 
+/* loco:672e3534c133d192fb0acc92 */
+"disabledFeatureFlagDescription" = "You will soon be able to unlock the limits of your ik.me email address\n(storage limit, custom schedule, sending and more…)";
+
+/* loco:672e34e12d859bafeb03be32 */
+"disabledFeatureFlagTitle" = "Need more storage and features?";
+
+/* loco:6777dbf1dc5a5d9dbf09db92 */
+"downloadAlertDescription" = "The download may take some time.";
+
 /* loco:627e3fa5774ef45bfd4d3b92 */
 "draftFolder" = "Drafts";
 

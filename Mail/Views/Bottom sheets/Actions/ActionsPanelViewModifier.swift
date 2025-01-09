@@ -53,6 +53,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     @ModalState private var messagesToMove: [Message]?
     @ModalState private var flushAlert: FlushAlertState?
     @ModalState private var shareMailLink: ShareMailLinkResult?
+    @ModalState private var messagesToDownload: [Message]?
 
     @Binding var messages: [Message]?
     let originFolder: Folder?
@@ -71,7 +72,8 @@ struct ActionsPanelViewModifier: ViewModifier {
             nearestReportJunkMessageActionsPanel: $reportForJunkMessages,
             nearestReportedForPhishingMessageAlert: $reportedForPhishingMessage,
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
-            nearestShareMailLinkPanel: $shareMailLink
+            nearestShareMailLinkPanel: $shareMailLink,
+            messagesToDownload: $messagesToDownload
         )
     }
 
@@ -115,6 +117,9 @@ struct ActionsPanelViewModifier: ViewModifier {
         }
         .customAlert(item: $flushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: originFolder)
+        }
+        .customAlert(item: $messagesToDownload) { messages in
+            ConfirmationSaveThreadInKdrive(targetMessages: messages)
         }
         .sheet(item: $shareMailLink) { shareMailLinkResult in
             if #available(iOS 16.0, *) {

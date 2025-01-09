@@ -45,6 +45,7 @@ public struct ActionOrigin {
     private(set) var nearestReportedForPhishingMessageAlert: Binding<Message?>?
     private(set) var nearestReportedForDisplayProblemMessageAlert: Binding<Message?>?
     private(set) var nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>?
+    private(set) var messagesToDownload: Binding<[Message]?>?
 
     init(
         type: ActionOriginType,
@@ -57,7 +58,8 @@ public struct ActionOrigin {
         nearestReportJunkMessageActionsPanel: Binding<[Message]?>? = nil,
         nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
         nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
-        nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil
+        nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
+        messagesToDownload: Binding<[Message]?>? = nil
     ) {
         self.type = type
         frozenFolder = folder?.freezeIfNeeded()
@@ -70,6 +72,7 @@ public struct ActionOrigin {
         self.nearestReportedForPhishingMessageAlert = nearestReportedForPhishingMessageAlert
         self.nearestReportedForDisplayProblemMessageAlert = nearestReportedForDisplayProblemMessageAlert
         self.nearestShareMailLinkPanel = nearestShareMailLinkPanel
+        self.messagesToDownload = messagesToDownload
     }
 
     public static func toolbar(originFolder: Folder? = nil,
@@ -86,7 +89,8 @@ public struct ActionOrigin {
                                      nearestReportJunkMessageActionsPanel: Binding<[Message]?>? = nil,
                                      nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
                                      nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
-                                     nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil) -> ActionOrigin {
+                                     nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
+                                     messagesToDownload: Binding<[Message]?>? = nil) -> ActionOrigin {
         return ActionOrigin(
             type: .floatingPanel(source: source),
             folder: originFolder,
@@ -97,7 +101,8 @@ public struct ActionOrigin {
             nearestReportJunkMessageActionsPanel: nearestReportJunkMessageActionsPanel,
             nearestReportedForPhishingMessageAlert: nearestReportedForPhishingMessageAlert,
             nearestReportedForDisplayProblemMessageAlert: nearestReportedForDisplayProblemMessageAlert,
-            nearestShareMailLinkPanel: nearestShareMailLinkPanel
+            nearestShareMailLinkPanel: nearestShareMailLinkPanel,
+            messagesToDownload: messagesToDownload
         )
     }
 
