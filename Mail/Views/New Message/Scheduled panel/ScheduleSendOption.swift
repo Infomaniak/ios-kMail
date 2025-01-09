@@ -111,6 +111,27 @@ enum ScheduleSendOption: Identifiable, Equatable {
         }
     }
 
+    var matomoName: String {
+        switch self {
+        case .laterThisMorning:
+            "laterThisMorning"
+        case .thisAfternoon:
+            "thisAfternoon"
+        case .thisEvening:
+            "thisEvening"
+        case .tomorrowMorning:
+            "tomorrowMorning"
+        case .nextMonday:
+            "nextMonday"
+        case .nextMondayMorning:
+            "nextMondayMorning"
+        case .nextMondayAfternoon:
+            "nextMondayAfternoon"
+        case .lastSchedule(let value):
+            "lastSchedule"
+        }
+    }
+
     static var allSimpleCases: [ScheduleSendOption] = [
         .laterThisMorning,
         .thisAfternoon,

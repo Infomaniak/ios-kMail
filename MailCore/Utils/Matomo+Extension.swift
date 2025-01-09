@@ -53,7 +53,6 @@ public extension MatomoUtils.EventCategory {
     static let promptAIEngine = MatomoUtils.EventCategory(displayName: "promptAiEngine")
     static let replyBottomSheet = MatomoUtils.EventCategory(displayName: "replyBottomSheet")
     static let restoreEmailsBottomSheet = MatomoUtils.EventCategory(displayName: "restoreEmailsBottomSheet")
-    static let scheduleSend = MatomoUtils.EventCategory(displayName: "scheduleSend")
     static let search = MatomoUtils.EventCategory(displayName: "search")
     static let setAsDefaultApp = MatomoUtils.EventCategory(displayName: "setAsDefaultApp")
     static let snackbar = MatomoUtils.EventCategory(displayName: "snackbar")
@@ -94,6 +93,9 @@ public extension MatomoUtils.EventCategory {
     static let settingsThreadMode = MatomoUtils.EventCategory(displayName: "settingsThreadMode")
     static let settingsAutoAdvance = MatomoUtils.EventCategory(displayName: "settingsAutoAdvance")
     static let settingsDataPrivacy = MatomoUtils.EventCategory(displayName: "settingsDataPrivacy")
+
+    // Schedule send
+    static let scheduleSend = MatomoUtils.EventCategory(displayName: "scheduleSend")
 }
 
 // MARK: - Helpers

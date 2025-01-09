@@ -16,11 +16,16 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
+import InfomaniakDI
+import MailCore
 import MailCoreUI
 import SwiftUI
 
 struct ScheduleOptionView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @Environment(\.dismiss) private var dismiss
 
     let option: ScheduleSendOption
@@ -31,6 +36,7 @@ struct ScheduleOptionView: View {
     var body: some View {
         if let scheduleDate = option.date {
             Button {
+                matomo.track(eventWithCategory: .scheduleSend, name: option.matomoName)
                 setScheduleAction(scheduleDate)
                 dismiss()
             } label: {
