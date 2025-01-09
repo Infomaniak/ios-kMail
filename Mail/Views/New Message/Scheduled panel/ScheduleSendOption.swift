@@ -29,7 +29,7 @@ enum ScheduleSendOption: Identifiable, Equatable {
     case nextMondayAfternoon
     case lastSchedule(value: Date)
 
-    var id: UUID { UUID() }
+    var id: String { title }
 
     var date: Date? {
         switch self {
