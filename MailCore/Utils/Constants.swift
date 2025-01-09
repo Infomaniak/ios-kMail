@@ -31,6 +31,7 @@ public enum DeeplinkConstants {
 
     public static func presentsNotificationSettings() {
         @InjectService var platformDetector: PlatformDetectable
+        // swiftlint:disable:next private_environment
         @Environment(\.openURL) var openURL
 
         let settingsURL: URL?

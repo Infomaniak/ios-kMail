@@ -65,7 +65,7 @@ enum NewMessageAlertType {
 
 struct ComposeMessageView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.dismissModal) var dismissModal
+    @Environment(\.dismissModal) private var dismissModal
     @EnvironmentObject private var mainViewState: MainViewState
 
     @LazyInjectService private var matomo: MatomoUtils

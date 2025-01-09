@@ -50,3 +50,13 @@ custom_rules:
       - ".*\\.swift"
     regex: "@StateObject\\s+var"
     message: "StateObject should be private"
+  private_environment:
+    included:
+      - ".*\\.swift"
+    regex: "@Environment\\([^)]*\\)\\s+var"
+    message: "Environment should be private"
+  private_environment_object:
+    included:
+      - ".*\\.swift"
+    regex: "@EnvironmentObject\\s+var"
+    message: "EnvironmentObject should be private"

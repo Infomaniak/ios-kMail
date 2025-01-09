@@ -26,7 +26,7 @@ import SwiftUI
 struct LockedAppView: View {
     @LazyInjectService var appLockHelper: AppLockHelper
 
-    @EnvironmentObject var navigationState: RootViewState
+    @EnvironmentObject private var navigationState: RootViewState
 
     @State private var isEvaluatingPolicy = false
 
