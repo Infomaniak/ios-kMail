@@ -139,7 +139,7 @@ public extension Endpoint {
     }
 
     static func folders(uuid: String) -> Endpoint {
-        return .mailbox(uuid: uuid).appending(path: "/folder")
+        return .mailbox(uuid: uuid).appending(path: "/folder", queryItems: [URLQueryItem(name: "with", value: "ik-static")])
     }
 
     static func flushFolder(mailboxUuid: String, folderId: String) -> Endpoint {
@@ -206,6 +206,10 @@ public extension Endpoint {
 
     static func draft(uuid: String, draftUuid: String) -> Endpoint {
         return .draft(uuid: uuid).appending(path: "/\(draftUuid)")
+    }
+
+    static func draftSchedule(draftAction: String) -> Endpoint {
+        return .resource(draftAction)
     }
 
     static func messageSeen(uuid: String) -> Endpoint {

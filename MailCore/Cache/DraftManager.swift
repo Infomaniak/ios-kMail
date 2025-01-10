@@ -100,9 +100,7 @@ public final class DraftManager {
             // show error if needed
             else {
                 guard error.shouldDisplay else { return }
-                if showSnackbar {
-                    alertDisplayable.show(message: error.localizedDescription)
-                }
+                alertDisplayable.show(message: error.localizedDescription, shouldShow: showSnackbar)
             }
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
@@ -129,10 +127,12 @@ public final class DraftManager {
         return updatedDraft
     }
 
-    public func send(draft initialDraft: Draft, mailboxManager: MailboxManager, retry: Bool = true,
-                     showSnackbar: Bool) async -> Date? {
-        if showSnackbar {
-            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending)
+    public func sendOrSchedule(draft initialDraft: Draft, mailboxManager: MailboxManager, retry: Bool = true,
+                               showSnackbar: Bool, changeFolderAction: ((Folder) -> Void)?) async -> Date? {
+        if initialDraft.action == .schedule {
+            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarScheduling, shouldShow: showSnackbar)
+        } else {
+            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending, shouldShow: showSnackbar)
         }
 
         var sendDate: Date?
@@ -142,11 +142,22 @@ public final class DraftManager {
         let draft = updateSubjectIfNeeded(draft: initialDraft)
 
         do {
-            let cancelableResponse = try await mailboxManager.send(draft: draft)
-            if showSnackbar {
-                alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent)
+            if draft.action == .send {
+                let sendResponse = try await mailboxManager.send(draft: draft)
+                sendDate = sendResponse.scheduledDate
+                alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent, shouldShow: showSnackbar)
+            } else if draft.action == .schedule {
+                let draftWithoutDelay = removeDelay(draft: draft)
+                let scheduleResponse = try await mailboxManager.schedule(draft: draftWithoutDelay)
+                if showSnackbar, let date = draftWithoutDelay.scheduleDate, let changeFolderAction {
+                    showScheduledSnackBar(
+                        date: date,
+                        scheduleAction: scheduleResponse.scheduleAction,
+                        mailboxManager: mailboxManager,
+                        changeFolderAction: changeFolderAction
+                    )
+                }
             }
-            sendDate = cancelableResponse.scheduledDate
         } catch {
             // Refresh signatures and retry with default signature on missing identity
             if retry,
@@ -156,18 +167,22 @@ public final class DraftManager {
                 guard let updatedDraft = await setDefaultSignature(draft: draft, mailboxManager: mailboxManager) else {
                     return nil
                 }
-                return await send(draft: updatedDraft, mailboxManager: mailboxManager, retry: false, showSnackbar: showSnackbar)
+                return await sendOrSchedule(
+                    draft: updatedDraft,
+                    mailboxManager: mailboxManager,
+                    retry: false,
+                    showSnackbar: showSnackbar,
+                    changeFolderAction: changeFolderAction
+                )
             }
 
-            if showSnackbar {
-                alertDisplayable.show(message: error.localizedDescription)
-            }
+            alertDisplayable.show(message: error.localizedDescription, shouldShow: showSnackbar)
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
         return sendDate
     }
 
-    public func syncDraft(mailboxManager: MailboxManager, showSnackbar: Bool) {
+    public func syncDraft(mailboxManager: MailboxManager, showSnackbar: Bool, changeFolderAction: ((Folder) -> Void)? = nil) {
         let drafts = mailboxManager.draftWithPendingAction().freezeIfNeeded()
         Task {
             let latestSendDate = await withTaskGroup(of: Date?.self, returning: Date?.self) { group in
@@ -183,8 +198,13 @@ public final class DraftManager {
                             )
                         case .save:
                             await self.saveDraftRemotely(draft: draft, mailboxManager: mailboxManager, showSnackbar: showSnackbar)
-                        case .send:
-                            sendDate = await self.send(draft: draft, mailboxManager: mailboxManager, showSnackbar: showSnackbar)
+                        case .send, .schedule:
+                            sendDate = await self.sendOrSchedule(
+                                draft: draft,
+                                mailboxManager: mailboxManager,
+                                showSnackbar: showSnackbar,
+                                changeFolderAction: changeFolderAction
+                            )
                         default:
                             break
                         }
@@ -278,6 +298,49 @@ public final class DraftManager {
 
         try? liveDraft.realm?.write {
             liveDraft.subject = String(subject[..<index])
+        }
+        return liveDraft.freeze()
+    }
+
+    private func showScheduledSnackBar(
+        date: Date,
+        scheduleAction: String,
+        mailboxManager: MailboxManager,
+        changeFolderAction: @escaping (Folder) -> Void
+    ) {
+        let formattedDate = DateFormatter.localizedString(from: date, dateStyle: .medium, timeStyle: .short)
+        let changeFolderAlertAction = UserAlertAction(MailResourcesStrings.Localizable.draftFolder) {
+            guard let draftFolder = mailboxManager.getFolder(with: .draft) else {
+                mailboxManager.logError(.missingFolder)
+                return
+            }
+            changeFolderAction(draftFolder)
+        }
+        let cancelButtonAlertAction = UserAlertAction(MailResourcesStrings.Localizable.buttonCancel) {
+            Task {
+                await tryOrDisplayError {
+                    try await mailboxManager.moveScheduleToDraft(scheduleAction: scheduleAction)
+                    self.alertDisplayable.show(
+                        message: MailResourcesStrings.Localizable.snackbarSaveInDraft,
+                        action: changeFolderAlertAction
+                    )
+                }
+            }
+        }
+
+        alertDisplayable.show(
+            message: MailResourcesStrings.Localizable.snackbarScheduleSaved(formattedDate),
+            action: cancelButtonAlertAction
+        )
+    }
+
+    private func removeDelay(draft: Draft) -> Draft {
+        guard draft.delay != nil, let liveDraft = draft.thaw() else {
+            return draft
+        }
+
+        try? liveDraft.realm?.write {
+            liveDraft.delay = nil
         }
         return liveDraft.freeze()
     }

@@ -25,7 +25,7 @@ struct ThreadCellHeaderView: View, Equatable {
     let recipientsTitle: String
     let messageCount: Int
     let prominentMessageCount: Bool
-    let formattedDate: String
+    let date: Date
     let showDraftPrefix: Bool
 
     var body: some View {
@@ -49,11 +49,7 @@ struct ThreadCellHeaderView: View, Equatable {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            Text(formattedDate)
-                .textStyle(.bodySmallSecondary)
-                .lineLimit(1)
-                .layoutPriority(1)
-                .accessibilityHidden(true)
+            HeaderDateView(date: date, format: .list)
         }
     }
 }
