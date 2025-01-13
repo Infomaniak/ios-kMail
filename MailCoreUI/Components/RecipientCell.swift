@@ -41,11 +41,30 @@ public struct RecipientCell: View {
     @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    let recipient: Recipient
+    var title: String
+    var subtitle: String
+    let avatarConfiguration: ContactConfiguration
+
     let highlight: String?
 
-    public init(recipient: Recipient, highlight: String? = nil) {
-        self.recipient = recipient
+    public init(recipient: Recipient, contactConfiguration: ContactConfiguration = .emptyContact, highlight: String? = nil) {
+        title = recipient.name
+        subtitle = recipient.email
+        avatarConfiguration = contactConfiguration
+        self.highlight = highlight
+    }
+
+    public init(
+        contact: any ContactAutocompletable,
+        contactConfiguration: ContactConfiguration = .emptyContact,
+        highlight: String? = nil,
+        title: String,
+        subtitle: String
+    ) {
+        self.title = title
+        self.subtitle = subtitle
+        avatarConfiguration = contactConfiguration
+
         self.highlight = highlight
     }
 
@@ -53,23 +72,19 @@ public struct RecipientCell: View {
         HStack(spacing: IKPadding.small) {
             AvatarView(
                 mailboxManager: mailboxManager,
-                contactConfiguration: .correspondent(
-                    correspondent: recipient.freezeIfNeeded(),
-                    contextUser: currentUser.value,
-                    contextMailboxManager: mailboxManager
-                ),
+                contactConfiguration: avatarConfiguration,
                 size: 40
             )
             .accessibilityHidden(true)
 
-            if recipient.name.isEmpty {
-                Text(highlightedAttributedString(from: recipient.email))
+            if title.isEmpty {
+                Text(highlightedAttributedString(from: subtitle))
                     .textStyle(.bodyMedium)
             } else {
                 VStack(alignment: .leading) {
-                    Text(highlightedAttributedString(from: recipient.name))
+                    Text(highlightedAttributedString(from: title))
                         .textStyle(.bodyMedium)
-                    Text(highlightedAttributedString(from: recipient.email))
+                    Text(highlightedAttributedString(from: subtitle))
                         .textStyle(.bodySecondary)
                 }
             }
@@ -89,9 +104,9 @@ public struct RecipientCell: View {
 }
 
 #Preview {
-    RecipientCell(recipient: PreviewHelper.sampleRecipient1)
+    RecipientCell(recipient: PreviewHelper.sampleRecipient1, contactConfiguration: .emptyContact)
 }
 
 #Preview {
-    RecipientCell(recipient: PreviewHelper.sampleRecipient3)
+    RecipientCell(recipient: PreviewHelper.sampleRecipient3, contactConfiguration: .emptyContact)
 }

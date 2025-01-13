@@ -26,11 +26,25 @@ public struct AddressBookResult: Codable {
 public class AddressBook: Object, Codable, Identifiable {
     @Persisted public var id: Int
     @Persisted(primaryKey: true) public var uuid: String
+    @Persisted public var name: String
     @Persisted public var isDefault: Bool
+    @Persisted public var groupContact: List<GroupContact>
 
     enum CodingKeys: String, CodingKey {
         case id
         case uuid
+        case name
         case isDefault = "default"
+        case groupContact = "categories"
+    }
+}
+
+extension AddressBook: ContactAutocompletable {
+    public var contactId: String {
+        return String(id)
+    }
+
+    public var autocompletableName: String {
+        return name
     }
 }
