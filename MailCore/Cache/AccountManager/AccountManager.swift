@@ -182,13 +182,10 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
                 key: "Token Infos"
             )
         }
-        tokenStore.removeTokenFor(userId: token.userId)
-        if let account = account(for: token.userId),
-           account.userId == currentUserId {
-            removeAccountFor(userId: account.userId)
-            Task { @MainActor in
-                NotificationsHelper.sendDisconnectedNotification()
-            }
+
+        removeTokenAndAccountFor(userId: token.userId)
+        Task { @MainActor in
+            NotificationsHelper.sendDisconnectedNotification()
         }
     }
 
