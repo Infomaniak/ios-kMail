@@ -58,6 +58,11 @@ public protocol ContactFetchable {
 
     /// Get a contact from adressbook
     func getContacts(for addressbookId: Int) -> [MergedContact]
+
+    /// Get the `AddressBook` by the `GroupContact`'s ID
+    /// - Parameter groupContactId: The ID of the `GroupContact` to look up
+    /// - Returns: The `AddressBook` that contains the `GroupContact`, or `nil` if not found
+    func getAddressBook(for groupContactId: Int) -> AddressBook?
 }
 
 public extension ContactManager {
@@ -170,6 +175,13 @@ public extension ContactManager {
         fetchObject(ofType: AddressBook.self) { partial in
             partial.where { $0.isDefault == true }.first
         }
+    }
+
+    func getAddressBook(for groupContactId: Int) -> AddressBook? {
+        let addressBooks = fetchResults(ofType: AddressBook.self) { partial in
+            partial.filter("ANY groupContact.id == %@", groupContactId)
+        }
+        return addressBooks.first
     }
 
     func addContact(recipient: Recipient) async throws {
