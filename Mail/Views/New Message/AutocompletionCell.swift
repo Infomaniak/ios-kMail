@@ -25,16 +25,15 @@ import SwiftUI
 
 struct AutocompletionCell: View {
     @Environment(\.currentUser) private var currentUser
-
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let addRecipient: @MainActor (any ContactAutocompletable) -> Void
     let autocompletion: any ContactAutocompletable
-    var highlight: String?
     let alreadyAppend: Bool
     let unknownRecipient: Bool
     let title: String
-    let subtitle: String
+    @State private var subtitle: String
+    var highlight: String?
 
     var contactConfiguration: ContactConfiguration {
         if let groupContact = autocompletion as? GroupContact {
@@ -59,69 +58,28 @@ struct AutocompletionCell: View {
         autocompletion: any ContactAutocompletable,
         highlight: String?,
         alreadyAppend: Bool,
-        unknownRecipient: Bool,
-        title: String,
-        subtitle: String
-    ) {
-        self.addRecipient = addRecipient
-        self.autocompletion = autocompletion
-        self.highlight = highlight
-        self.alreadyAppend = alreadyAppend
-        self.unknownRecipient = unknownRecipient
-        self.title = title
-        self.subtitle = subtitle
-    }
-
-    init(
-        addRecipient: @escaping @MainActor (MergedContact) -> Void,
-        autocompletion: MergedContact,
-        highlight: String?,
-        alreadyAppend: Bool,
         unknownRecipient: Bool
     ) {
-        self.addRecipient = { addRecipient($0 as! MergedContact) }
+        self.addRecipient = { addRecipient($0) }
         self.autocompletion = autocompletion
         self.highlight = highlight
         self.alreadyAppend = alreadyAppend
         self.unknownRecipient = unknownRecipient
-        title = autocompletion.email
-        subtitle = autocompletion.email
-    }
 
-    init(
-        addRecipient: @escaping @MainActor (GroupContact) -> Void,
-        autocompletion: GroupContact,
-        highlight: String?,
-        alreadyAppend: Bool,
-        unknownRecipient: Bool,
-        title: String,
-        subtitle: String
-    ) {
-        self.addRecipient = { addRecipient($0 as! GroupContact) }
-        self.autocompletion = autocompletion
-        self.highlight = highlight
-        self.alreadyAppend = alreadyAppend
-        self.unknownRecipient = unknownRecipient
-        self.title = title
-        self.subtitle = autocompletion.name
-    }
-
-    init(
-        addRecipient: @escaping @MainActor (AddressBook) -> Void,
-        autocompletion: AddressBook,
-        highlight: String?,
-        alreadyAppend: Bool,
-        unknownRecipient: Bool,
-        title: String,
-        subtitle: String
-    ) {
-        self.addRecipient = { addRecipient($0 as! AddressBook) }
-        self.autocompletion = autocompletion
-        self.highlight = highlight
-        self.alreadyAppend = alreadyAppend
-        self.unknownRecipient = unknownRecipient
-        self.title = title
-        self.subtitle = autocompletion.name
+        switch autocompletion {
+        case let mergedContact as MergedContact:
+            title = mergedContact.name
+            _subtitle = State(initialValue: mergedContact.email)
+        case let groupContact as GroupContact:
+            title = MailResourcesStrings.Localizable.groupContactsTitle(groupContact.name)
+            _subtitle = State(initialValue: "")
+        case let addressBook as AddressBook:
+            title = MailResourcesStrings.Localizable.addressBookTitle(addressBook.name)
+            _subtitle = State(initialValue: addressBook.name)
+        default:
+            title = ""
+            _subtitle = State(initialValue: "")
+        }
     }
 
     var body: some View {
@@ -149,6 +107,13 @@ struct AutocompletionCell: View {
             }
         }
         .padding(.horizontal, value: .medium)
+        .task {
+            if let groupContact = autocompletion as? GroupContact {
+                subtitle = MailResourcesStrings.Localizable
+                    .addressBookTitle(mailboxManager.contactManager.getAddressBook(for: groupContact.id)?.name ?? groupContact
+                        .name)
+            }
+        }
     }
 }
 
@@ -158,9 +123,7 @@ struct AutocompletionCell: View {
         autocompletion: PreviewHelper.sampleMergedContact,
         highlight: "",
         alreadyAppend: false,
-        unknownRecipient: false,
-        title: "",
-        subtitle: ""
+        unknownRecipient: false
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
 }

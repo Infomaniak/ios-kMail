@@ -21,10 +21,10 @@ import MailCoreUI
 import MailResources
 import SwiftUI
 
-public struct UnknownRecipientCell: View {
+struct UnknownRecipientCell: View {
     let email: String
 
-    public var body: some View {
+    var body: some View {
         HStack(spacing: 8) {
             UnknownRecipientView(size: 40)
                 .accessibilityHidden(true)

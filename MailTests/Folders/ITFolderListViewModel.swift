@@ -56,6 +56,8 @@ struct MCKContactManageable_FolderListViewModel: ContactManageable, MCKTransacti
 
     func addContact(recipient: MailCore.Recipient) async throws {}
 
+    func getAddressBook(for groupContactId: Int) -> MailCore.AddressBook? { nil }
+
     func refreshContactsAndAddressBooksIfNeeded() async throws {}
 
     func refreshContactsAndAddressBooks() async throws {}
