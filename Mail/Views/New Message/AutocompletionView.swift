@@ -57,35 +57,14 @@ struct AutocompletionView: View {
                 let isUserProposal = shouldAddUserProposal && isLastRecipient
 
                 VStack(alignment: .leading, spacing: IKPadding.mini) {
-                    if let mergedContact = contact as? MergedContact {
-                        AutocompletionCell(
-                            addRecipient: addRecipient,
-                            autocompletion: mergedContact,
-                            highlight: textDebounce.text,
-                            alreadyAppend: addedRecipients.contains { $0.id == contact.contactId },
-                            unknownRecipient: isUserProposal
-                        )
-                    } else if let groupContact = contact as? GroupContact {
-                        AutocompletionCell(
-                            addRecipient: addRecipient,
-                            autocompletion: groupContact,
-                            highlight: textDebounce.text,
-                            alreadyAppend: addedRecipients.contains { $0.id == contact.contactId },
-                            unknownRecipient: isUserProposal,
-                            title: groupContact.name,
-                            subtitle: groupContact.autocompletableName
-                        )
-                    } else if let addressBookContact = contact as? AddressBook {
-                        AutocompletionCell(
-                            addRecipient: addRecipient,
-                            autocompletion: addressBookContact,
-                            highlight: textDebounce.text,
-                            alreadyAppend: addedRecipients.contains { $0.id == contact.contactId },
-                            unknownRecipient: isUserProposal,
-                            title: addressBookContact.name,
-                            subtitle: addressBookContact.autocompletableName
-                        )
-                    }
+                    AutocompletionCell(
+                        addRecipient: addRecipient,
+                        autocompletion: contact,
+                        highlight: textDebounce.text,
+                        alreadyAppend: addedRecipients.contains { $0.id == contact.contactId },
+                        unknownRecipient: isUserProposal
+                    )
+
                     if !isLastRecipient {
                         IKDivider()
                     }
@@ -131,12 +110,6 @@ struct AutocompletionView: View {
             }
 
             shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.autocompletableName == textDebounce.text)
-
-            combinedResults.sort { lhs, rhs in
-                guard let lhsContact = lhs as? MergedContact,
-                      let rhsContact = rhs as? MergedContact else { return false }
-                return sortByRemoteAndName(lhs: lhsContact, rhs: rhsContact)
-            }
 
             var result = combinedResults.prefix(10)
 
