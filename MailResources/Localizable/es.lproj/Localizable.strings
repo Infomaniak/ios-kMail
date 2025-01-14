@@ -115,6 +115,9 @@
 /* loco:63ecd31247f7a57fc228b532 */
 "addUnknownRecipientTitle" = "Añadir un destinatario";
 
+/* loco:6784cd26a547d567fc0a7222 */
+"addressBookTitle" = "Libreta de direcciones: %@";
+
 /* loco:65081b4d5787de874c0dec32 */
 "aiButtonInsert" = "Inserte";
 
@@ -551,10 +554,10 @@
 "commercialFolder" = "Promociones";
 
 /* loco:65c25397da1981a2280677ce */
-"composeMailboxCurrentTitle" = "Envíe un mensaje con la dirección :";
+"composeMailboxCurrentTitle" = "Envíe un mensaje con la dirección:";
 
 /* loco:65e833228a845e47d60a4612 */
-"composeMailboxSelectionTitle" = "Seleccione la dirección de envío :";
+"composeMailboxSelectionTitle" = "Seleccione la dirección de envío:";
 
 /* loco:63a474bd648cd86d56444012 */
 "confirmLogoutDescription" = "¿Seguro que quieres desconectarte de %@?";
@@ -919,6 +922,9 @@
 /* loco:62665f7d647475580e06e912 */
 "fromTitle" = "De:";
 
+/* loco:6784cd82593faaee6e0cb7b2 */
+"groupContactsTitle" = "Grupo: %@";
+
 /* loco:62c466f080a5557baa2d0d84 */
 "helpChatbot" = "Chatbot";
 
@@ -933,6 +939,9 @@
 
 /* loco:672398789bd6d8d56802d212 */
 "lastSelectedSchedule" = "Último horario seleccionado";
+
+/* loco:672e306d38f5c72b20044c32 */
+"laterThisMorning" = "Más tarde esta mañana";
 
 /* loco:62c427c7ad522f1ff078a162 */
 "loadingText" = "Cargando…";
@@ -1618,11 +1627,11 @@
 /* loco:62ab221b4956e9775f391ca6 */
 "snackbarThreadMoved" = "Conversación trasladada a %@";
 
+/* loco:62ab2274c8d2fe4bb7134de4 */
+"snackbarThreadMoved-plural" = "Conversaciones trasladadas a %@";
+
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "";
-
-/* loco:62ab2274c8d2fe4bb7134de4 */
-"snackbarThreadsMoved" = "Conversaciones trasladadas a %@";
 
 /* loco:62a33e2d0c5ac4438c366a32 */
 "socialNetworksFolder" = "Redes sociales";
