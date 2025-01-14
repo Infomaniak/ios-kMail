@@ -162,6 +162,6 @@ enum ScheduleSendOption: Identifiable, Equatable {
         let hour = Calendar.current.component(.hour, from: .now)
         let minute = Calendar.current.component(.minute, from: .now)
 
-        return (hour > firstHour && hour < lastHour) || (firstHour == 17 && minute < 55)
+        return (hour > firstHour && hour < lastHour) || (hour == lastHour && minute < 55)
     }
 }

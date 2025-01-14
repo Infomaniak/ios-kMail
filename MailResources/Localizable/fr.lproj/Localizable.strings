@@ -115,6 +115,9 @@
 /* loco:63ecd31247f7a57fc228b532 */
 "addUnknownRecipientTitle" = "Ajouter un destinataire";
 
+/* loco:6784cd26a547d567fc0a7222 */
+"addressBookTitle" = "Carnet d'adresses : %@";
+
 /* loco:65081b4d5787de874c0dec32 */
 "aiButtonInsert" = "Insérer";
 
@@ -918,6 +921,9 @@
 
 /* loco:62665f7d647475580e06e912 */
 "fromTitle" = "De :";
+
+/* loco:6784cd82593faaee6e0cb7b2 */
+"groupContactsTitle" = "Groupe : %@";
 
 /* loco:62c466f080a5557baa2d0d84 */
 "helpChatbot" = "Chatbot";
