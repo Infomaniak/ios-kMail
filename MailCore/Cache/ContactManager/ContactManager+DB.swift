@@ -127,9 +127,16 @@ public extension ContactManager {
     ///   - fetchLimit: limit the query by default to limit memory footprint
     /// - Returns: The collection of matching contacts.
     func frozenAddressBookContacts(matching string: String, fetchLimit: Int?) -> any Collection<AddressBook> {
-        var lazyResults = fetchResults(ofType: AddressBook.self) { partial in
+        let mergedContacts = fetchResults(ofType: MergedContact.self) { partial in
             partial
         }
+
+        let mergedContactIds = Array(mergedContacts.compactMap { $0.remoteAddressBookId })
+
+        var lazyResults = fetchResults(ofType: AddressBook.self) { partial in
+            partial.where { $0.id.in(mergedContactIds) }
+        }
+
         lazyResults = lazyResults
             .filter(Self.searchGroupContactInsensitivePredicate, string, string)
             .freeze()
