@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Alamofire
 import Foundation
 import RealmSwift
 
@@ -58,10 +59,10 @@ public extension MailboxManager {
 
     func send(draft: Draft) async throws -> SendResponse {
         do {
-            let cancelableResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
+            let sendResponse: SendResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
             // Once the draft has been sent, we can delete it from Realm
             try await deleteLocally(draft: draft)
-            return cancelableResponse
+            return sendResponse
         } catch let error as AFErrorWithContext where (200 ... 299).contains(error.request.response?.statusCode ?? 0) {
             // Status code is valid but something went wrong eg. we couldn't parse the response
             try await deleteLocally(draft: draft)
@@ -80,7 +81,7 @@ public extension MailboxManager {
 
     func save(draft: Draft) async throws {
         do {
-            let saveResponse = try await apiFetcher.save(mailbox: mailbox, draft: draft)
+            let saveResponse: DraftResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
             try? writeTransaction { writableRealm in
                 // Update draft in Realm
                 guard let liveDraft = writableRealm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
@@ -104,29 +105,46 @@ public extension MailboxManager {
         }
     }
 
+    func schedule(draft: Draft) async throws -> ScheduleResponse {
+        do {
+            let scheduleResponse: ScheduleResponse = try await apiFetcher.send(mailbox: mailbox, draft: draft)
+            try await deleteLocally(draft: draft)
+            return scheduleResponse
+        } catch let error as MailApiError {
+            // Do not delete draft on invalid identity
+            guard error != MailApiError.apiIdentityNotFound else {
+                throw error
+            }
+
+            // The api returned an error for now we can do nothing about it so we delete the draft
+            try await deleteLocally(draft: draft)
+            throw error
+        }
+    }
+
     func delete(draft: Draft) async throws {
         try await deleteLocally(draft: draft)
         try await apiFetcher.deleteDraft(mailbox: mailbox, draftId: draft.remoteUUID)
     }
 
-    func delete(draftMessage: Message) async throws {
-        guard let draftResource = draftMessage.draftResource else {
+    func delete(draftMessages: [Message]) async throws {
+        let draftResources = draftMessages.compactMap { $0.draftResource }
+        guard draftResources.count == draftMessages.count else {
             throw MailError.resourceError
         }
 
-        let draft = fetchObject(ofType: Draft.self) { partial in
-            partial
-                .where { $0.remoteUUID == draftResource }
-                .first?
-                .freeze()
+        let drafts = fetchResults(ofType: Draft.self) { draft in
+            draft
+                .filter("remoteUUID IN %@", draftResources)
+                .freezeIfNeeded()
         }
 
-        if let draft {
-            try await deleteLocally(draft: draft)
-        }
+        try await deleteLocally(drafts: Array(drafts))
 
-        try await apiFetcher.deleteDraft(draftResource: draftResource)
-        try await refreshFolder(from: [draftMessage], additionalFolder: nil)
+        for resource in draftResources {
+            try await apiFetcher.deleteDraft(draftResource: resource)
+        }
+        try await refreshFolder(from: draftMessages, additionalFolder: nil)
     }
 
     func deleteLocally(draft: Draft) async throws {
@@ -137,6 +155,15 @@ public extension MailboxManager {
             }
 
             writableRealm.delete(liveDraft)
+        }
+    }
+
+    func deleteLocally(drafts: [Draft]) async throws {
+        let localUuids = drafts.map(\.localUUID)
+        try? writeTransaction { writableRealm in
+            let liveDrafts = writableRealm.objects(Draft.self).filter("localUUID IN %@", localUuids)
+
+            writableRealm.delete(liveDrafts)
         }
     }
 
@@ -157,5 +184,28 @@ public extension MailboxManager {
                 }
             }
         }
+    }
+
+    func moveScheduleToDraft(draftResource: String) async throws {
+        try await moveScheduleToDraft(scheduleAction: draftResource.appending("/schedule"))
+    }
+
+    func moveScheduleToDraft(scheduleAction: String) async throws {
+        try await apiFetcher.deleteSchedule(scheduleAction: scheduleAction)
+        guard let scheduledDraftsFolder = getFolder(with: .scheduledDrafts) else {
+            logError(.missingDraft)
+            return
+        }
+
+        await refreshFolderContent(scheduledDraftsFolder.freezeIfNeeded())
+    }
+
+    func loadRemotely(from draftResource: String) async throws -> Draft? {
+        let draft = try await apiFetcher.draft(draftResource: draftResource)
+        try? writeTransaction { realm in
+            realm.add(draft, update: .modified)
+        }
+
+        return draft.freeze()
     }
 }

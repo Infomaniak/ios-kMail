@@ -93,6 +93,9 @@ public extension MatomoUtils.EventCategory {
     static let settingsThreadMode = MatomoUtils.EventCategory(displayName: "settingsThreadMode")
     static let settingsAutoAdvance = MatomoUtils.EventCategory(displayName: "settingsAutoAdvance")
     static let settingsDataPrivacy = MatomoUtils.EventCategory(displayName: "settingsDataPrivacy")
+
+    // Schedule send
+    static let scheduleSend = MatomoUtils.EventCategory(displayName: "scheduleSend")
 }
 
 // MARK: - Helpers

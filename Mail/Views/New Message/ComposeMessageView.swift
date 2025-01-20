@@ -64,10 +64,6 @@ enum NewMessageAlertType {
 }
 
 struct ComposeMessageView: View {
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.dismissModal) private var dismissModal
-    @EnvironmentObject private var mainViewState: MainViewState
-
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var platformDetector: PlatformDetectable
     @LazyInjectService private var draftManager: DraftManager
@@ -75,21 +71,26 @@ struct ComposeMessageView: View {
     @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
     @LazyInjectService private var reviewManager: ReviewManageable
 
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.dismissModal) private var dismissModal
+    @EnvironmentObject private var mainViewState: MainViewState
+
     @State private var isLoadingContent = true
     @ModalState(context: ContextKeys.compose) private var isShowingCancelAttachmentsError = false
     @ModalState(wrappedValue: nil, context: ContextKeys.compose) private var isShowingAlert: NewMessageAlert?
     @State private var autocompletionType: ComposeViewFieldType?
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
+    @State private var isShowingSchedulePanel = false
 
     @Weak private var scrollView: UIScrollView?
 
     @StateObject private var attachmentsManager: AttachmentsManager
     @StateObject private var aiModel: AIModel
 
-    @ObservedRealmObject private var draft: Draft
-
     @FocusState private var focusedField: ComposeViewFieldType?
+
+    @ObservedRealmObject private var draft: Draft
 
     private let messageReply: MessageReply?
     private let draftContentManager: DraftContentManager
@@ -169,6 +170,16 @@ struct ComposeMessageView: View {
         .baseComposeMessageToolbar(dismissHandler: didTouchDismiss)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
+                if featureFlagsManager.isEnabled(.scheduleSendDraft) {
+                    Button {
+                        isShowingSchedulePanel = true
+                    } label: {
+                        Label(MailResourcesStrings.Localizable.send, asset: MailResourcesAsset.clockPaperplane.swiftUIImage)
+                    }
+                    .disabled(isSendButtonDisabled)
+                }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: didTouchSend) {
                     Label(MailResourcesStrings.Localizable.send, asset: MailResourcesAsset.send.swiftUIImage)
                 }
@@ -243,7 +254,11 @@ struct ComposeMessageView: View {
                 mainViewState.isShowingReviewAlert = reviewManager.shouldRequestReview()
             }
 
-            draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: shouldShowSnackbar)
+            draftManager.syncDraft(
+                mailboxManager: mailboxManager,
+                showSnackbar: shouldShowSnackbar,
+                changeFolderAction: changeSelectedFolder
+            )
         }
         .customAlert(item: $isShowingAlert) { alert in
             switch alert.type {
@@ -271,6 +286,13 @@ struct ComposeMessageView: View {
         }
         .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
+        .scheduleFloatingPanel(
+            isPresented: $isShowingSchedulePanel,
+            draftSaveOption: $draft.action,
+            draftDate: $draft.scheduleDate,
+            mailboxManager: mailboxManager,
+            completionHandler: dismissMessageView
+        )
     }
 
     /// Progress view
@@ -328,10 +350,15 @@ struct ComposeMessageView: View {
         matomo.trackSendMessage(draft: draft, sentWithExternals: sentWithExternals)
         if let liveDraft = draft.thaw() {
             try? liveDraft.realm?.write {
-                liveDraft.action = .send
+                liveDraft.action = draft.scheduleDate == nil ? .send : .schedule
             }
         }
         dismissMessageView()
+    }
+
+    public func changeSelectedFolder(to folder: Folder) {
+        let freezeFolder = folder.freezeIfNeeded()
+        mainViewState.selectedFolder = freezeFolder
     }
 }
 
