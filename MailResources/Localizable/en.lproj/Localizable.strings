@@ -838,8 +838,14 @@
 /* loco:649424a6e244ffcc6c011135 */
 "errorRefusedSender" = "The server is refusing the sender";
 
-/* loco:672900a15da35624510b2c32 */
-"errorScheduleDelayTooShort" = "The minimum delay is 5 minutes.";
+/* loco:6749c9680660e7ec7e077c86 */
+"errorScheduleDelayTooShort" = "You can’t schedule an email less than %d minute in the future";
+
+/* loco:678f61b9f7e8ef480f043962 */
+"errorScheduleDelayTooShort-plural" = "You can’t schedule an email less than %d minutes in the future";
+
+/* loco:678f61ea3e289bc90a0b8952 */
+"errorScheduleDelayTooShort-plural-many" = "";
 
 /* loco:6448ef7a5b39bc7e040ce0b3 */
 "errorSendLimitExceeded" = "Sending limit reached";
