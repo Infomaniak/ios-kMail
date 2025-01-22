@@ -839,7 +839,7 @@
 "errorRefusedSender" = "Der Server lehnt den Absender ab";
 
 /* loco:6749c9680660e7ec7e077c86 */
-"errorScheduleDelayTooShort" = "Wählen Sie ein zukünftiges Datum, das mindestens %d Minuten in der Zukunft liegt";
+"errorScheduleDelayTooShort" = "Sie können E-Mails frühestens in %d Minute senden";
 
 /* loco:678f61b9f7e8ef480f043962 */
 "errorScheduleDelayTooShort-plural" = "Wählen Sie ein zukünftiges Datum, das mindestens %d Minuten in der Zukunft liegt";
@@ -1724,10 +1724,10 @@
 "threadListEmptyFolderAlertDescription" = "Sind Sie sicher, dass Sie alle Nachrichten in diesem Ordner dauerhaft löschen wollen?";
 
 /* loco:63ebae36eeb4ae34ef49ba42 */
-"threadListEmptySpamButton" = "Leerer Spam";
+"threadListEmptySpamButton" = "Spam leeren";
 
 /* loco:63ebad842446f5106c0058b2 */
-"threadListEmptyTrashButton" = "Leeren Mülleimer";
+"threadListEmptyTrashButton" = "Papierkorb leeren";
 
 /* loco:62bc355b27ec7c112e166eb2 */
 "threadListHeaderLastUpdate" = "Aktualisiert %@";

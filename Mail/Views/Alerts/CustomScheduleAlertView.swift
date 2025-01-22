@@ -34,17 +34,10 @@ struct CustomScheduleAlertView: View {
     let confirmAction: (Date) -> Void
     let cancelAction: (() -> Void)?
 
-    let maximumDelay = Date.now.addingTimeInterval(60 * 60 * 24 * 365 * 10)
+    private let maximumDelay = Date.now.addingTimeInterval(60 * 60 * 24 * 365 * 10)
 
     private var isDelayTooShort: Bool {
         selectedDate < Date.minimumScheduleDelay
-    }
-
-    private var errorMessage: String {
-        guard selectedDate > Date.minimumScheduleDelay else {
-            return MailResourcesStrings.Localizable.errorScheduleDelayTooShort(5)
-        }
-        return MailResourcesStrings.Localizable.errorScheduleDelayTooLongPlural(10)
     }
 
     init(startingDate: Date, confirmAction: @escaping (Date) -> Void, cancelAction: (() -> Void)? = nil) {
@@ -69,7 +62,7 @@ struct CustomScheduleAlertView: View {
                 isShowingError = newDate < Date.minimumScheduleDelay || newDate > maximumDelay
             }
 
-            Text(errorMessage)
+            Text(MailResourcesStrings.Localizable.errorScheduleDelayTooShort(5))
                 .textStyle(.labelError)
                 .padding(.top, value: .extraSmall)
                 .opacity(isShowingError ? 1 : 0)

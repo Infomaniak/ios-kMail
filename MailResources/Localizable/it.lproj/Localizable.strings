@@ -839,7 +839,7 @@
 "errorRefusedSender" = "Il server respinge il mittente";
 
 /* loco:6749c9680660e7ec7e077c86 */
-"errorScheduleDelayTooShort" = "Non puoi programmare l'invio di una e-mail tra meno di %d minuto";
+"errorScheduleDelayTooShort" = "Non puoi programmare l’invio di una e-mail tra meno di %d minuto";
 
 /* loco:678f61b9f7e8ef480f043962 */
 "errorScheduleDelayTooShort-plural" = "Non puoi programmare l’invio di una e-mail tra meno di %d minuti";
