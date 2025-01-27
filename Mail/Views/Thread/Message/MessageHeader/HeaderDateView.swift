@@ -25,6 +25,7 @@ import SwiftUI
 struct HeaderDateView: View {
     let date: Date
     let format: Date.ThreadFormatStyle.Style
+
     private var isScheduled: Bool { date > .now }
 
     var body: some View {
@@ -45,9 +46,9 @@ struct HeaderDateView: View {
 #Preview {
     VStack {
         HeaderDateView(date: .now, format: .header)
-        HeaderDateView(date: .yesterday, format: .list)
-        HeaderDateView(date: .lastWeek, format: .header)
-        HeaderDateView(date: Date(timeIntervalSince1970: 0), format: .list)
+        HeaderDateView(date: .now.addingTimeInterval(3600), format: .header)
+        HeaderDateView(date: .now.addingTimeInterval(86400), format: .header)
+        HeaderDateView(date: .now.addingTimeInterval(172_800), format: .header)
         HeaderDateView(date: .distantFuture, format: .header)
     }
 }
