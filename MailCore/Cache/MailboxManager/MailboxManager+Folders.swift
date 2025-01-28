@@ -29,7 +29,8 @@ public extension MailboxManager {
             return
         }
 
-        let folderResult = try await apiFetcher.folders(mailbox: mailbox)
+        let folderResultRaw = try await apiFetcher.folders(mailbox: mailbox)
+        let folderResult = folderResultRaw.filter { $0.role != .unknown }
         let newFolders = getSubFolders(from: folderResult)
 
         try? writeTransaction { writableRealm in

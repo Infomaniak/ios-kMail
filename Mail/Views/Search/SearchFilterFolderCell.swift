@@ -51,7 +51,7 @@ struct SearchFilterFolderCell: View {
     )
 
     private var sortedFolders: [Folder] {
-        return folders.sorted()
+        return folders.filter(\.shouldBeDisplayed).sorted()
     }
 
     var body: some View {

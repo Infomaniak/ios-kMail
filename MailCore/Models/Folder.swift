@@ -32,8 +32,7 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
     case socialNetworks = "SOCIALNETWORKS"
     case spam = "SPAM"
     case trash = "TRASH"
-    // TODO: Handle snoozed folder
-    case snoozed = "SNOOZED"
+    case unknown
 
     public var localizedName: String {
         switch self {
@@ -55,7 +54,7 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return MailResourcesStrings.Localizable.spamFolder
         case .trash:
             return MailResourcesStrings.Localizable.trashFolder
-        case .snoozed: // TODO:
+        case .unknown:
             return ""
         }
     }
@@ -80,8 +79,8 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return 7
         case .trash:
             return 8
-        case .snoozed: // TODO:
-            return 10
+        case .unknown:
+            return 0
         }
     }
 
@@ -105,12 +104,19 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return MailResourcesAsset.spam
         case .trash:
             return MailResourcesAsset.bin
-        case .snoozed: // TODO:
-            return MailResourcesAsset.clock
+        case .unknown:
+            return MailResourcesAsset.circleQuestionmark
         }
     }
 
     public static let writtenByMeFolders: [FolderRole] = [.sent, .draft, .scheduledDrafts]
+
+    public init(from decoder: any Decoder) throws {
+        let singleKeyContainer = try decoder.singleValueContainer()
+        let value = try singleKeyContainer.decode(String.self)
+
+        self = FolderRole(rawValue: value) ?? .unknown
+    }
 }
 
 public enum ToolFolderType: String, PersistableEnum {
@@ -179,8 +185,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     public var shouldBeDisplayed: Bool {
-        // TODO: Remove snoozed folder from here
-        guard name != ".ik" && role != .snoozed else { return false }
+        guard name != ".ik" && role != .unknown else { return false }
         guard !(role == .scheduledDrafts && threads.isEmpty) else { return false }
         return true
     }
