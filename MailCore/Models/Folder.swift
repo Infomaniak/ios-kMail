@@ -190,6 +190,10 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return true
     }
 
+    public var shouldBeAscending: Bool {
+        return [.scheduledDrafts].contains(role)
+    }
+
     public var hasLimitedSwipeActions: Bool {
         return [.draft, .scheduledDrafts].contains(role)
     }
