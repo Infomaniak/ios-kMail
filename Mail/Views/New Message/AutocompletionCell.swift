@@ -75,7 +75,7 @@ struct AutocompletionCell: View {
             _subtitle = State(initialValue: "")
         case let addressBook as AddressBook:
             title = MailResourcesStrings.Localizable.addressBookTitle(addressBook.name)
-            _subtitle = State(initialValue: addressBook.name)
+            _subtitle = State(initialValue: MailResourcesStrings.Localizable.organizationName(addressBook.name))
         default:
             title = ""
             _subtitle = State(initialValue: "")
