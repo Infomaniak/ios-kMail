@@ -34,7 +34,7 @@ struct CustomScheduleAlertView: View {
     let confirmAction: (Date) -> Void
     let cancelAction: (() -> Void)?
 
-    private let maximumDelay = Date.now.addingTimeInterval(60 * 60 * 24 * 365 * 10)
+    private let maximumDelay = Date.now.addingTimeInterval(60 * 60 * 24 * 365 * 10) // 10 years
 
     private var isDelayTooShort: Bool {
         selectedDate < Date.minimumScheduleDelay
@@ -52,6 +52,7 @@ struct CustomScheduleAlertView: View {
             Text(MailResourcesStrings.Localizable.datePickerTitle)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, IKPadding.alertTitleBottom)
+
             DatePicker(
                 MailResourcesStrings.Localizable.datePickerTitle,
                 selection: $selectedDate,
@@ -62,7 +63,7 @@ struct CustomScheduleAlertView: View {
                 isShowingError = newDate < Date.minimumScheduleDelay || newDate > maximumDelay
             }
 
-            Text(MailResourcesStrings.Localizable.errorScheduleDelayTooShort(5))
+            Text(MailResourcesStrings.Localizable.errorScheduleDelayTooShortPlural(5))
                 .textStyle(.labelError)
                 .padding(.top, value: .extraSmall)
                 .opacity(isShowingError ? 1 : 0)
@@ -71,16 +72,15 @@ struct CustomScheduleAlertView: View {
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonScheduleTitle,
                              secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                              primaryButtonEnabled: !isShowingError,
-                             primaryButtonDismiss: !isDelayTooShort,
                              primaryButtonAction: executeActionIfPossible,
                              secondaryButtonAction: cancelAction)
         }
     }
 
-    private func executeActionIfPossible() {
+    private func executeActionIfPossible() throws {
         guard !isDelayTooShort else {
             isShowingError = true
-            return
+            throw MailError.tooShortScheduleDelay
         }
         confirmAction(selectedDate)
         matomo.track(eventWithCategory: .scheduleSend, name: "customSchedule")
