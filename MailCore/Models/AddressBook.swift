@@ -49,21 +49,21 @@ public final class AddressBook: Object, Codable, Identifiable {
 
     public init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let id = try container.decode(Int.self, forKey: .id)
-        let uuid = try container.decode(String.self, forKey: .uuid)
-        let name = try container.decode(String.self, forKey: .name)
-        let isDefault = try container.decode(Bool.self, forKey: .isDefault)
-        let groupContact = try container.decode(List<GroupContact>.self, forKey: .groupContact)
-        let organization = try container.decode(String.self, forKey: .organization)
-        let isDynamicOrganisation = try container.decode(Bool.self, forKey: .isDynamicOrganisation)
+        let decodedId = try container.decode(Int.self, forKey: .id)
+        let decodedUuid = try container.decode(String.self, forKey: .uuid)
+        let decodedName = try container.decode(String.self, forKey: .name)
+        let decodedIsDefault = try container.decode(Bool.self, forKey: .isDefault)
+        let decodedGroupContacts = try container.decode(List<GroupContact>.self, forKey: .groupContact)
+        let decodedOrganization = try container.decode(String.self, forKey: .organization)
+        let decodedIsDynamicOrganisation = try container.decode(Bool.self, forKey: .isDynamicOrganisation)
 
         super.init()
 
-        self.id = id
-        self.name = isDynamicOrganisation ? organization : name
-        self.uuid = uuid
-        self.isDefault = isDefault
-        self.groupContact = groupContact
+        id = decodedId
+        name = decodedIsDynamicOrganisation ? decodedOrganization : decodedName
+        uuid = decodedUuid
+        isDefault = decodedIsDefault
+        groupContact = decodedGroupContacts
     }
 }
 
