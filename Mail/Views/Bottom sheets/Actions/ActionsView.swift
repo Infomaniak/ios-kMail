@@ -46,7 +46,7 @@ struct ActionsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: IKPadding.small) {
+        VStack(alignment: .leading, spacing: IKPadding.mini) {
             HStack(alignment: .top, spacing: IKPadding.medium) {
                 ForEach(quickActions) { action in
                     QuickActionView(
@@ -113,7 +113,7 @@ struct QuickActionView: View {
                 }
             }
         } label: {
-            VStack(spacing: IKPadding.small) {
+            VStack(spacing: IKPadding.mini) {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(accentColor.secondary.swiftUIColor)
                     .frame(maxWidth: 56, maxHeight: 56)

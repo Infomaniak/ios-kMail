@@ -26,7 +26,7 @@ struct CalendarHeaderView: View {
     let title: String
 
     var body: some View {
-        HStack(spacing: IKPadding.small) {
+        HStack(spacing: IKPadding.mini) {
             MailResourcesAsset.logoCalendar
                 .iconSize(.large)
 
@@ -36,7 +36,7 @@ struct CalendarHeaderView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, value: .medium)
-        .padding(.vertical, value: .small)
+        .padding(.vertical, value: .mini)
         .background(MailResourcesAsset.textFieldColor.swiftUIColor)
     }
 }

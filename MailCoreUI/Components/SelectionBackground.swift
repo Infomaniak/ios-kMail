@@ -55,7 +55,7 @@ public struct SelectionBackground: View {
 
     public init(
         selectionType: SelectionBackgroundKind,
-        paddingLeading: CGFloat = IKPadding.small,
+        paddingLeading: CGFloat = IKPadding.mini,
         withAnimation: Bool = true,
         accentColor: AccentColor
     ) {

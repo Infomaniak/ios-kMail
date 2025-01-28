@@ -105,7 +105,7 @@ struct ThreadListView: View {
                     }
 
                     if threadDensity == .compact {
-                        ListVerticalInsetView(height: IKPadding.extraSmall)
+                        ListVerticalInsetView(height: IKPadding.micro)
                     }
 
                     if Constants.isUsingABreakableOSVersion && !hasDismissedUpdateVersionView && viewModel.frozenFolder

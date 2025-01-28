@@ -40,7 +40,7 @@ struct ExtendedFAB: View {
 
                 Text(title)
                     .lineLimit(1)
-                    .padding(.leading, value: .small)
+                    .padding(.leading, value: .mini)
                     .frame(width: isExtended ? nil : 0)
                     .clipped()
             }

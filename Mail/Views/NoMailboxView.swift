@@ -37,7 +37,7 @@ struct NoMailboxView: View {
 
     var body: some View {
         WaveView(slides: [slide], selectedSlide: .constant(0)) { _ in
-            VStack(spacing: IKPadding.small) {
+            VStack(spacing: IKPadding.mini) {
                 Button(MailResourcesStrings.Localizable.buttonAddEmailAddress) {
                     openURL(URLConstants.ikMe.url)
                 }

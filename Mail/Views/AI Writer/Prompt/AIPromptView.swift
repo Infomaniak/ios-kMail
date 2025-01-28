@@ -64,7 +64,7 @@ struct AIPromptView: View {
                     Text(placeholder)
                         .foregroundStyle(Color(UIColor.placeholderText))
                         .textStyle(.body)
-                        .padding([.vertical, .horizontal], value: .small)
+                        .padding([.vertical, .horizontal], value: .mini)
                         .padding(.horizontal, 5)
                 }
 

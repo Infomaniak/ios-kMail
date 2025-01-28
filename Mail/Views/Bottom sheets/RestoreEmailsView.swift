@@ -46,7 +46,7 @@ struct RestoreEmailsView: View {
 
             Text(MailResourcesStrings.Localizable.restoreEmailsText)
                 .textStyle(.bodySecondary)
-                .padding(.bottom, value: .small)
+                .padding(.bottom, value: .mini)
 
             LargePicker(title: MailResourcesStrings.Localizable.restoreEmailsBackupDate,
                         noSelectionText: pickerNoSelectionText,

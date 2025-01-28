@@ -30,7 +30,7 @@ struct AIHeaderView: View {
     let style: Style
 
     var body: some View {
-        HStack(spacing: IKPadding.small) {
+        HStack(spacing: IKPadding.mini) {
             if style == .bottomSheet {
                 MailResourcesAsset.aiWriter
                     .iconSize(.large)

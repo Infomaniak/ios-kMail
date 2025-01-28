@@ -43,7 +43,7 @@ struct RecipientChip: View {
             $0.popoverAnchor = .topLeft
         } content: {
             RecipientCell(recipient: recipient)
-                .padding(.vertical, value: .small)
+                .padding(.vertical, value: .mini)
                 .padding(.horizontal, value: .medium)
                 .frame(maxWidth: 600)
                 .environment(\.currentUser, currentUser)

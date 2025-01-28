@@ -40,7 +40,7 @@ struct SyncCopyPasswordView: View {
                 .textStyle(.header2)
                 .multilineTextAlignment(.center)
 
-            VStack(spacing: IKPadding.extraLarge) {
+            VStack(spacing: IKPadding.giant) {
                 MailResourcesAsset.lock.swiftUIImage
 
                 if let applicationPassword {
@@ -48,7 +48,7 @@ struct SyncCopyPasswordView: View {
                         SecureField("", text: .constant(applicationPassword))
                             .textContentType(.password)
                             .disabled(true)
-                            .padding([.vertical, .leading], value: .intermediate)
+                            .padding([.vertical, .leading], value: .small)
 
                         Button {
                             copyPassword()
@@ -76,7 +76,7 @@ struct SyncCopyPasswordView: View {
         }
         .padding(value: .large)
         .safeAreaInset(edge: .bottom) {
-            VStack(spacing: IKPadding.small) {
+            VStack(spacing: IKPadding.mini) {
                 Button(MailResourcesStrings.Localizable.buttonCopyPassword) {
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "copyPassword")
                     copyPassword()

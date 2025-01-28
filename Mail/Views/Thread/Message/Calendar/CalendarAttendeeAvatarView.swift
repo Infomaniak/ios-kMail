@@ -47,7 +47,7 @@ struct AttendeeAvatarView: View {
             Circle()
                 .stroke(MailResourcesAsset.backgroundColor.swiftUIColor, lineWidth: UIConstants.avatarBorderLineWidth)
         }
-        .padding([.bottom, .trailing], IKPadding.extraSmall)
+        .padding([.bottom, .trailing], IKPadding.micro)
         .overlay(alignment: .bottomTrailing) {
             if let state = attendee.state {
                 Circle()

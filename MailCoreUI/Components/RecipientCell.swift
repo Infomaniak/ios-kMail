@@ -50,7 +50,7 @@ public struct RecipientCell: View {
     }
 
     public var body: some View {
-        HStack(spacing: IKPadding.small) {
+        HStack(spacing: IKPadding.mini) {
             AvatarView(
                 mailboxManager: mailboxManager,
                 contactConfiguration: .correspondent(

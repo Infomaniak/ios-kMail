@@ -30,7 +30,7 @@ struct AutocompletionCell: View {
     let unknownRecipient: Bool
 
     var body: some View {
-        HStack(spacing: IKPadding.intermediate) {
+        HStack(spacing: IKPadding.small) {
             Button {
                 addRecipient(recipient)
             } label: {

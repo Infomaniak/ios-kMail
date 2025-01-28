@@ -39,7 +39,7 @@ struct OnboardingBottomButtonsView: View {
     }
 
     var body: some View {
-        VStack(spacing: IKPadding.small) {
+        VStack(spacing: IKPadding.mini) {
             Button(MailResourcesStrings.Localizable.buttonLogin) {
                 loginHandler.login()
             }

@@ -50,14 +50,14 @@ struct SelectComposeMailboxView: View {
                             selectedMailbox: viewModel.selectedMailbox?.mailbox,
                             selectMailbox: viewModel.selectMailbox
                         )
-                        .padding(.top, value: .small)
+                        .padding(.top, value: .mini)
                     }
                 }
             }
 
             if let selectedMailbox = viewModel.selectedMailbox {
                 SelectedMailboxView(selectedUser: selectedMailbox.user, selectedMailboxManager: selectedMailbox.mailboxManager)
-                    .padding(.horizontal, value: .small)
+                    .padding(.horizontal, value: .mini)
                     .padding(.bottom, value: .medium)
             }
 
@@ -67,7 +67,7 @@ struct SelectComposeMailboxView: View {
             .buttonStyle(.ikBorderedProminent)
             .controlSize(.large)
             .ikButtonFullWidth(true)
-            .padding(.horizontal, value: .small)
+            .padding(.horizontal, value: .mini)
             .disabled(!viewModel.selectionMade)
         }
         .padding(.horizontal, value: .medium)

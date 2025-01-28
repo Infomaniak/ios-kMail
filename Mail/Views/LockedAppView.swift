@@ -55,7 +55,7 @@ struct LockedAppView: View {
                     .ikButtonLoading(isEvaluatingPolicy)
             }
             .padding(.top, IKPadding.onBoardingLogoTop)
-            .padding(.bottom, value: .extraLarge)
+            .padding(.bottom, value: .giant)
         }
         .padding(.horizontal, value: .large)
         .onAppear {

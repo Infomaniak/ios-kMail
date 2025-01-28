@@ -42,7 +42,7 @@ struct ContactActionsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: IKPadding.small) {
+        VStack(alignment: .leading, spacing: IKPadding.mini) {
             let contactConfiguration = ContactConfiguration.correspondent(
                 correspondent: recipient,
                 associatedBimi: bimi,

@@ -39,12 +39,12 @@ struct EmptyStateView: View {
 
             Text(title)
                 .textStyle(.header2)
-                .padding(.bottom, value: .extraSmall)
+                .padding(.bottom, value: .micro)
             Text(description)
                 .textStyle(.bodySecondary)
         }
         .multilineTextAlignment(.center)
-        .padding(.horizontal, value: .extraLarge)
+        .padding(.horizontal, value: .giant)
         .padding(.bottom, withFABPadding ? IKPadding.floatingButtonBottom + 56 : 0)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Empty\(matomoName)View"])

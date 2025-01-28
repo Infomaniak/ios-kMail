@@ -77,12 +77,12 @@ struct RecipientField: View {
                     .alignmentGuide(.iconAndTextFieldAlignment) { d in
                         d[VerticalAlignment.center]
                     }
-                    .padding(.top, isCurrentFieldFocused && !recipients.isEmpty ? IKPadding.extraSmall : 0)
+                    .padding(.top, isCurrentFieldFocused && !recipients.isEmpty ? IKPadding.micro : 0)
                     .padding(.top, IKPadding.recipientChip.top)
                     .padding(.bottom, IKPadding.recipientChip.bottom)
                     .frame(width: isExpanded ? nil : 0, height: isExpanded ? nil : 0)
             }
-            .padding(.vertical, value: .intermediate)
+            .padding(.vertical, value: .small)
 
             if shouldDisplayEmptyButton {
                 Button {

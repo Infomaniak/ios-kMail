@@ -124,7 +124,7 @@ struct AIPropositionView: View {
                             .buttonStyle(.ikBorderedProminent)
                         }
                     }
-                    .padding(.bottom, value: .extraSmall)
+                    .padding(.bottom, value: .micro)
                 }
             }
             .introspect(.viewController, on: .iOS(.v15, .v16, .v17, .v18)) { viewController in

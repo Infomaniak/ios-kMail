@@ -37,7 +37,7 @@ struct AIEngineOptionButton: View {
 
             isShowingAIEngineChoice = true
         } label: {
-            HStack(spacing: IKPadding.small) {
+            HStack(spacing: IKPadding.mini) {
                 Text(MailResourcesStrings.Localizable.aiGenerationTitlePrompt)
                     .foregroundStyle(MailResourcesAsset.textPrimaryColor)
 

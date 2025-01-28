@@ -80,7 +80,7 @@ struct CurrentComposeMailboxView: View {
                 }
                 .ikButtonFullWidth(true)
                 .controlSize(.large)
-                .padding(.horizontal, value: .small)
+                .padding(.horizontal, value: .mini)
             }
             .padding(.horizontal, value: .medium)
             .mailboxCellStyle(.account)

@@ -34,7 +34,7 @@ struct ThreadTagsListView: View {
     let searchFolderName: String?
 
     var body: some View {
-        WrappingHStack(lineSpacing: IKPadding.small) {
+        WrappingHStack(lineSpacing: IKPadding.mini) {
             if externalTag.shouldDisplay {
                 Button {
                     matomo.track(eventWithCategory: .externals, name: "threadTag")

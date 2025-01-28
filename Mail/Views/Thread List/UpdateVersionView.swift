@@ -31,7 +31,7 @@ struct UpdateVersionView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .iconAndMultilineTextAlignment, spacing: IKPadding.small) {
+            HStack(alignment: .iconAndMultilineTextAlignment, spacing: IKPadding.mini) {
                 MailResourcesAsset.warning
                     .iconSize(.medium)
                     .alignmentGuide(.iconAndMultilineTextAlignment) { d in

@@ -25,7 +25,7 @@ public struct UnknownRecipientView: View {
     let size: CGFloat
 
     private var iconSize: CGFloat {
-        return size - 2 * IKPadding.small
+        return size - 2 * IKPadding.mini
     }
 
     public init(size: CGFloat) {

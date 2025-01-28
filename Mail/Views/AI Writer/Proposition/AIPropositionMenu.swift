@@ -61,7 +61,7 @@ struct AIPropositionMenu: View {
                 }
             }
         } label: {
-            HStack(spacing: IKPadding.small) {
+            HStack(spacing: IKPadding.mini) {
                 MailResourcesAsset.pencil
                     .iconSize(.large)
 

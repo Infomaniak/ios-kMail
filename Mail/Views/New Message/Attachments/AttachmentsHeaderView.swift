@@ -29,7 +29,7 @@ struct AttachmentsHeaderView: View {
         ZStack {
             if !attachmentsManager.liveAttachments.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: IKPadding.small) {
+                    HStack(spacing: IKPadding.mini) {
                         ForEach(attachmentsManager.liveAttachments) { attachment in
                             AttachmentUploadCell(
                                 uploadTask: attachmentsManager.attachmentUploadTaskOrFinishedTask(for: attachment.uuid),

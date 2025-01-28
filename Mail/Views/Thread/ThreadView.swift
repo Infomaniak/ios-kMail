@@ -46,7 +46,7 @@ struct ThreadView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: IKPadding.medium) {
-                VStack(alignment: .leading, spacing: IKPadding.small) {
+                VStack(alignment: .leading, spacing: IKPadding.mini) {
                     Text(thread.formattedSubject)
                         .threadTitle()
 

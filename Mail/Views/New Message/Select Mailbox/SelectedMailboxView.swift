@@ -28,7 +28,7 @@ struct SelectedMailboxView: View {
     let selectedMailboxManager: MailboxManager
 
     var body: some View {
-        HStack(spacing: IKPadding.small) {
+        HStack(spacing: IKPadding.mini) {
             AvatarView(
                 mailboxManager: selectedMailboxManager,
                 contactConfiguration: .user(user: selectedUser),
@@ -41,7 +41,7 @@ struct SelectedMailboxView: View {
                 .foregroundStyle(MailResourcesAsset.greenColor)
         }
         .lineLimit(1)
-        .padding(.vertical, value: .small)
+        .padding(.vertical, value: .mini)
         .padding(.horizontal, value: .medium)
         .background(
             RoundedRectangle(cornerRadius: 8)

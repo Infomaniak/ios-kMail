@@ -126,7 +126,7 @@ struct DiscoveryBottomSheetView: View {
                 .multilineTextAlignment(.center)
                 .textStyle(.bodySecondary)
 
-            VStack(spacing: IKPadding.small) {
+            VStack(spacing: IKPadding.mini) {
                 Button(item.primaryButtonLabel, action: nowButton)
                     .buttonStyle(.ikBorderedProminent)
 

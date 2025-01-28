@@ -40,7 +40,7 @@ struct SearchContactsSectionView: View {
                         }
                 }
                 .padding(.vertical, threadDensity.cellVerticalPadding)
-                .padding(.leading, IKPadding.small + UnreadIndicatorView.size + IKPadding.small)
+                .padding(.leading, IKPadding.mini + UnreadIndicatorView.size + IKPadding.mini)
                 .padding(.trailing, value: .medium)
             } header: {
                 if !viewModel.frozenContacts.isEmpty {

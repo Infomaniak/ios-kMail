@@ -63,7 +63,7 @@ struct EditorDesktopToolbarView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(spacing: IKPadding.extraSmall) {
+            HStack(spacing: IKPadding.micro) {
                 ForEach(allItems, id: \.self) { items in
                     ForEach(items) { item in
                         Button {
@@ -76,7 +76,7 @@ struct EditorDesktopToolbarView: View {
                         } label: {
                             item.icon.swiftUIImage
                                 .iconSize(.medium)
-                                .padding(value: .small)
+                                .padding(value: .mini)
                         }
                         .buttonStyle(.macosToolbarButtonStyle(isActive: item.isSelected(textAttributes: textAttributes)))
                         .foregroundStyle(item.foregroundStyle)
@@ -91,7 +91,7 @@ struct EditorDesktopToolbarView: View {
                     }
                 }
             }
-            .padding(.vertical, value: .extraSmall)
+            .padding(.vertical, value: .micro)
             .padding(.horizontal, IKPadding.composeViewHeaderHorizontal)
 
             IKDivider()

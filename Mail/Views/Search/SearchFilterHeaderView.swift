@@ -34,7 +34,7 @@ struct SearchFilterHeaderView: View {
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: shouldShowHorizontalScrollbar) {
-            HStack(spacing: IKPadding.small) {
+            HStack(spacing: IKPadding.mini) {
                 ForEach(viewModel.filters) { filter in
                     if filter == .folder {
                         SearchFilterFolderCell(
@@ -56,7 +56,7 @@ struct SearchFilterHeaderView: View {
                 }
             }
             .padding(value: .medium)
-            .padding(.bottom, shouldShowHorizontalScrollbar ? IKPadding.extraSmall : 0)
+            .padding(.bottom, shouldShowHorizontalScrollbar ? IKPadding.micro : 0)
         }
     }
 }

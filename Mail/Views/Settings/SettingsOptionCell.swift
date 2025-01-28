@@ -64,7 +64,7 @@ struct SettingsOptionCell: View {
         Button(action: action) {
             VStack(spacing: 0) {
                 HStack(alignment: .settingsOptionCellCheckmark, spacing: IKPadding.medium) {
-                    VStack(alignment: .leading, spacing: IKPadding.small) {
+                    VStack(alignment: .leading, spacing: IKPadding.mini) {
                         HStack(spacing: IKPadding.medium) {
                             icon?
                                 .resizable()

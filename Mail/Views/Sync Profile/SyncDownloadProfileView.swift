@@ -59,7 +59,7 @@ struct SyncDownloadProfileView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            VStack(spacing: IKPadding.small) {
+            VStack(spacing: IKPadding.mini) {
                 Button(MailResourcesStrings.Localizable.buttonDownload) {
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "download")
                     downloadProfile()

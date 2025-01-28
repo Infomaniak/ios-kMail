@@ -32,7 +32,7 @@ struct ModalButtonsView: View {
     var secondaryButtonAction: (() -> Void)?
 
     var body: some View {
-        HStack(spacing: IKPadding.extraSmall) {
+        HStack(spacing: IKPadding.micro) {
             if let secondaryButtonTitle {
                 Button(secondaryButtonTitle) {
                     secondaryButtonAction?()

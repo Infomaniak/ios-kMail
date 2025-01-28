@@ -43,14 +43,14 @@ struct CreateAccountView: View {
         VStack(spacing: 0) {
             CloseButton(size: .medium, dismissAction: dismiss)
                 .padding(.top, IKPadding.onBoardingLogoTop)
-                .padding(.top, value: .extraSmall)
+                .padding(.top, value: .micro)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             accentColor.createAccountImage.swiftUIImage
                 .resizable()
                 .scaledToFit()
                 .padding(.top, value: .large)
-                .padding(.bottom, value: .extraLarge)
+                .padding(.bottom, value: .giant)
 
             Text(MailResourcesStrings.Localizable.newAccountTitle)
                 .textStyle(.header1)
@@ -61,14 +61,14 @@ struct CreateAccountView: View {
                 Text(MailResourcesStrings.Localizable.newAccountStorageMail)
                     .textStyle(.labelMediumAccent)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(value: .small)
+                    .padding(value: .mini)
                     .background(accentColor.secondary.swiftUIColor)
                     .clipShape(Capsule())
                     .multilineTextAlignment(.center)
                 Text(MailResourcesStrings.Localizable.newAccountStorageDrive)
                     .textStyle(.labelMediumAccent)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(value: .small)
+                    .padding(value: .mini)
                     .background(accentColor.secondary.swiftUIColor)
                     .clipShape(Capsule())
                     .multilineTextAlignment(.center)

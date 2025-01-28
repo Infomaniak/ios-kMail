@@ -73,7 +73,7 @@ public struct AttachmentView<Content: View>: View {
     }
 
     public var body: some View {
-        HStack(spacing: IKPadding.small) {
+        HStack(spacing: IKPadding.mini) {
             if isDownloading {
                 ProgressView(value: downloadProgress)
                     .progressViewStyle(.mailCircularProgress)
@@ -96,8 +96,8 @@ public struct AttachmentView<Content: View>: View {
             accessory()
         }
         .frame(maxWidth: 200)
-        .padding(.horizontal, value: .small)
-        .padding(.vertical, value: .extraSmall)
+        .padding(.horizontal, value: .mini)
+        .padding(.vertical, value: .micro)
         .overlay {
             RoundedRectangle(cornerRadius: 6)
                 .strokeBorder(MailResourcesAsset.elementsColor.swiftUIColor)

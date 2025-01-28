@@ -50,7 +50,7 @@ struct LoadMoreButton: View {
                 .controlSize(.small)
             }
         }
-        .padding(.vertical, value: .small)
+        .padding(.vertical, value: .mini)
         .threadListCellAppearance()
     }
 

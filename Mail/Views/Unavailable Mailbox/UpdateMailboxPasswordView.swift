@@ -50,13 +50,13 @@ struct UpdateMailboxPasswordView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 32) {
-                VStack(alignment: .leading, spacing: IKPadding.small) {
+                VStack(alignment: .leading, spacing: IKPadding.mini) {
                     Text(MailResourcesStrings.Localizable.enterPasswordDescription1)
                         .textStyle(.bodySecondary)
                     Text(MailResourcesStrings.Localizable.enterPasswordDescription2(mailbox.email))
                         .textStyle(.bodySecondary)
 
-                    HStack(spacing: IKPadding.extraSmall) {
+                    HStack(spacing: IKPadding.micro) {
                         Text(MailResourcesStrings.Localizable.enterPasswordOrDescription)
                             .textStyle(.bodySecondary)
 
@@ -72,7 +72,7 @@ struct UpdateMailboxPasswordView: View {
                 VStack(alignment: .leading) {
                     SecureField(MailResourcesStrings.Localizable.enterPasswordTitle, text: $updatedMailboxPassword)
                         .textContentType(.password)
-                        .padding(.vertical, value: .intermediate)
+                        .padding(.vertical, value: .small)
                         .padding(.horizontal, value: .medium)
                         .overlay {
                             RoundedRectangle(cornerRadius: 4, style: .continuous)
@@ -96,7 +96,7 @@ struct UpdateMailboxPasswordView: View {
             .padding()
         }
         .safeAreaInset(edge: .bottom) {
-            VStack(spacing: IKPadding.small) {
+            VStack(spacing: IKPadding.mini) {
                 Button(MailResourcesStrings.Localizable.buttonConfirm) {
                     matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "updatePassword")
                     updateMailboxPassword()

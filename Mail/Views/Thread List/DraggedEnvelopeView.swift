@@ -25,12 +25,12 @@ struct DraggedEnvelopeView: View {
     var body: some View {
         Image(systemName: "envelope.fill")
             .font(.title)
-            .padding(value: .small)
+            .padding(value: .mini)
             .overlay(alignment: .bottomTrailing) {
                 if amount > 1 {
                     Text("\(amount)")
-                        .padding(.horizontal, value: .small)
-                        .padding(.vertical, value: .extraSmall)
+                        .padding(.horizontal, value: .mini)
+                        .padding(.vertical, value: .micro)
                         .background(.red, in: .circle)
                         .foregroundStyle(.primary)
                         .font(MailTextStyle.bodySmall.font)

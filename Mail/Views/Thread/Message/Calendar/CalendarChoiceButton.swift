@@ -37,15 +37,15 @@ struct CalendarChoiceButton: View {
 
     var body: some View {
         Button(action: sendReply) {
-            HStack(spacing: IKPadding.small) {
+            HStack(spacing: IKPadding.mini) {
                 choice.icon
                     .iconSize(.medium)
                     .foregroundStyle(choice.color)
                 Text(choice.label)
                     .textStyle(.bodyMediumSecondary)
             }
-            .padding(.horizontal, value: .intermediate)
-            .padding(.vertical, value: .small)
+            .padding(.horizontal, value: .small)
+            .padding(.vertical, value: .mini)
             .overlay {
                 RoundedRectangle(cornerRadius: UIConstants.buttonsRadius)
                     .stroke(isSelected ? choice.color : MailResourcesAsset.textFieldBorder.swiftUIColor)
