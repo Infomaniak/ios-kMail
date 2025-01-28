@@ -115,7 +115,7 @@ struct DiscoveryBottomSheetView: View {
     let laterButton: () -> Void
 
     var body: some View {
-        VStack(spacing: 32) {
+        VStack(spacing: IKPadding.huge) {
             item.image.swiftUIImage
 
             Text(item.title)

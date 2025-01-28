@@ -49,7 +49,7 @@ struct UpdateMailboxPasswordView: View {
     let mailbox: Mailbox
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 32) {
+            VStack(alignment: .leading, spacing: IKPadding.huge) {
                 VStack(alignment: .leading, spacing: IKPadding.mini) {
                     Text(MailResourcesStrings.Localizable.enterPasswordDescription1)
                         .textStyle(.bodySecondary)

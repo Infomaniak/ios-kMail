@@ -45,7 +45,7 @@ struct UnavailableMailboxListView: View {
     ) private var lockedMailboxes
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 32) {
+        VStack(alignment: .leading, spacing: IKPadding.huge) {
             if !passwordBlockedMailboxes.isEmpty {
                 VStack(alignment: .leading, spacing: IKPadding.small) {
                     Text(MailResourcesStrings.Localizable.blockedPasswordTitlePlural)
