@@ -23,12 +23,15 @@ public struct AddressBookResult: Codable {
     var addressbooks: [AddressBook]
 }
 
-public class AddressBook: Object, Codable, ObjectKeyIdentifiable {
+public final class AddressBook: Object, Codable, Identifiable {
     @Persisted public var id: Int
     @Persisted(primaryKey: true) public var uuid: String
     @Persisted public var name: String
     @Persisted public var isDefault: Bool
     @Persisted public var groupContact: List<GroupContact>
+
+    private var organization = ""
+    private var isDynamicOrganisation = false
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -36,6 +39,31 @@ public class AddressBook: Object, Codable, ObjectKeyIdentifiable {
         case name
         case isDefault = "default"
         case groupContact = "categories"
+        case organization = "accountName"
+        case isDynamicOrganisation = "isDynamicOrganisationMemberDirectory"
+    }
+
+    override public init() {
+        super.init()
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let id = try container.decode(Int.self, forKey: .id)
+        let uuid = try container.decode(String.self, forKey: .uuid)
+        let name = try container.decode(String.self, forKey: .name)
+        let isDefault = try container.decode(Bool.self, forKey: .isDefault)
+        let groupContact = try container.decode(List<GroupContact>.self, forKey: .groupContact)
+        let organization = try container.decode(String.self, forKey: .organization)
+        let isDynamicOrganisation = try container.decode(Bool.self, forKey: .isDynamicOrganisation)
+
+        super.init()
+
+        self.id = id
+        self.name = isDynamicOrganisation ? organization : name
+        self.uuid = uuid
+        self.isDefault = isDefault
+        self.groupContact = groupContact
     }
 }
 

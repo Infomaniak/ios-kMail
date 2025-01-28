@@ -39,6 +39,8 @@ extension Recipient: @retroactive ContactAutocompletable {
 }
 
 struct AutocompletionView: View {
+    private static let maxAutocompleteCount = 10
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var shouldAddUserProposal = false
@@ -83,23 +85,22 @@ struct AutocompletionView: View {
 
     private func updateAutocompletion(_ search: String) async {
         let trimmedSearch = search.trimmingCharacters(in: .whitespacesAndNewlines)
-        let counter = 10
 
         Task { @MainActor in
             let autocompleteContacts = await Array(mailboxManager.contactManager.frozenContactsAsync(
                 matching: trimmedSearch,
-                fetchLimit: counter,
+                fetchLimit: Self.maxAutocompleteCount,
                 sorted: sortByRemoteAndName
             ))
 
             let autocompleteGroupContacts = Array(mailboxManager.contactManager.frozenGroupContacts(
                 matching: trimmedSearch,
-                fetchLimit: counter
+                fetchLimit: Self.maxAutocompleteCount
             ))
 
             let autocompleteAddressBookContacts = Array(mailboxManager.contactManager.frozenAddressBookContacts(
                 matching: trimmedSearch,
-                fetchLimit: counter
+                fetchLimit: Self.maxAutocompleteCount
             ))
 
             var combinedResults: [any ContactAutocompletable] = autocompleteContacts + autocompleteGroupContacts +

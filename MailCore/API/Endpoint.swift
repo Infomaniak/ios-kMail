@@ -82,7 +82,7 @@ public extension Endpoint {
     static var addressBooks: Endpoint {
         return .base.appending(
             path: "/pim/addressbook",
-            queryItems: [URLQueryItem(name: "with", value: "categories")]
+            queryItems: [URLQueryItem(name: "with", value: "categories,account_name")]
         )
     }
 
