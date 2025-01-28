@@ -71,7 +71,7 @@ struct ScheduleFloatingPanel: ViewModifier {
             .customAlert(isPresented: $customSchedule) {
                 CustomScheduleAlertView(
                     startingDate: draftDate ?? Date.minimumScheduleDelay,
-                    confirmAction: setSchedule
+                    confirmAction: setCustomSchedule
                 ) {
                     panelShouldBeShown = true
                 }
@@ -90,9 +90,13 @@ struct ScheduleFloatingPanel: ViewModifier {
     }
 
     private func setSchedule(_ scheduleDate: Date) {
-        lastScheduleInterval = scheduleDate.timeIntervalSince1970
         draftSaveOption = .schedule
         draftDate = scheduleDate
         completionHandler()
+    }
+
+    private func setCustomSchedule(_ scheduleDate: Date) {
+        lastScheduleInterval = scheduleDate.timeIntervalSince1970
+        setSchedule(scheduleDate)
     }
 }
