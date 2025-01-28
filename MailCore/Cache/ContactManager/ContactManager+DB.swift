@@ -69,6 +69,7 @@ public extension ContactManager {
     /// Both *case* insensitive __and__ *diacritic* (accents) insensitive
     static let searchContactInsensitivePredicate = "name contains[cd] %@ OR email contains[cd] %@"
     static let searchGroupContactInsensitivePredicate = "name contains[cd] %@"
+    static let searchAddressBookInsensitivePredicate = "name contains[cd] %@"
 
     /// Making sure, that by default, we do not overflow memory with too much contacts
     private static let contactFetchLimit = 120
@@ -138,7 +139,7 @@ public extension ContactManager {
         }
 
         lazyResults = lazyResults
-            .filter(Self.searchGroupContactInsensitivePredicate, string, string)
+            .filter(Self.searchAddressBookInsensitivePredicate, string, string)
             .freeze()
 
         let fetchLimit = min(lazyResults.count, fetchLimit ?? Self.contactFetchLimit)
