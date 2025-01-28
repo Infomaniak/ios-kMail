@@ -698,7 +698,7 @@
 "draftPrefix" = "(Borrador)";
 
 /* loco:6723aa01f9685843aa0de8a3 */
-"editSendDescription" = "Programmazione annullata. Questo messaggio verrà spostato nelle tue bozze per essere inviato quando vuoi.";
+"editSendDescription" = "Este mensaje se moverá a tus borradores para que puedas enviarlo cuando lo desees.";
 
 /* loco:6723a9b2b22031bf3701ae62 */
 "editSendTitle" = "Editar envío";

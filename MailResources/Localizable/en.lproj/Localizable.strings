@@ -698,7 +698,7 @@
 "draftPrefix" = "(Draft)";
 
 /* loco:6723aa01f9685843aa0de8a3 */
-"editSendDescription" = "Programming cancelled. This message will be moved to your drafts to be sent whenever you want.";
+"editSendDescription" = "This message will be moved to your drafts to be sent whenever you want.";
 
 /* loco:6723a9b2b22031bf3701ae62 */
 "editSendTitle" = "Edit Send";

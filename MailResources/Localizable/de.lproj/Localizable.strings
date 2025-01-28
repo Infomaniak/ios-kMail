@@ -698,7 +698,7 @@
 "draftPrefix" = "(Entwurf)";
 
 /* loco:6723aa01f9685843aa0de8a3 */
-"editSendDescription" = "Programmierung abgebrochen. Diese Nachricht wird in Ihre Entwürfe verschoben, damit Sie sie senden können, wann immer Sie möchten.";
+"editSendDescription" = "Diese Nachricht wird in Ihre Entwürfe verschoben, damit Sie sie senden können, wann immer Sie möchten.";
 
 /* loco:6723a9b2b22031bf3701ae62 */
 "editSendTitle" = "Senden bearbeiten";

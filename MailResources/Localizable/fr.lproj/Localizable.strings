@@ -698,7 +698,7 @@
 "draftPrefix" = "(Brouillon)";
 
 /* loco:6723aa01f9685843aa0de8a3 */
-"editSendDescription" = "Programmation annulée. Ce message sera déplacé dans vos brouillons pour être envoyé quand vous le souhaitez.";
+"editSendDescription" = "Ce message sera déplacé dans vos brouillons pour être envoyé quand vous le souhaitez.";
 
 /* loco:6723a9b2b22031bf3701ae62 */
 "editSendTitle" = "Modifier l’envoi";
