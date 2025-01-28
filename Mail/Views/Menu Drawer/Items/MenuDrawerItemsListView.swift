@@ -93,7 +93,7 @@ struct MenuDrawerItemsHelpListView: View {
                     sendFeedback()
                 }
             }
-            MenuDrawerItemCell(icon: MailResourcesAsset.help,
+            MenuDrawerItemCell(icon: MailResourcesAsset.circleQuestionmark,
                                label: MailResourcesStrings.Localizable.buttonHelp,
                                matomoName: "help") {
                 isShowingHelp = true

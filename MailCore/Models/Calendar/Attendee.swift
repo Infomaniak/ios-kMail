@@ -31,7 +31,7 @@ public enum AttendeeState: String, CaseIterable, Codable, PersistableEnum {
         case .yes:
             return MailResourcesAsset.checkmarkCircleFill
         case .maybe:
-            return MailResourcesAsset.questionmarkCircleFill
+            return MailResourcesAsset.circleQuestionmarkFilled
         case .no:
             return MailResourcesAsset.crossCircleFill
         }
