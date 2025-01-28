@@ -21,7 +21,7 @@
     {
       "identity" : "cocoalumberjack",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack",
+      "location" : "https://github.com/CocoaLumberjack/CocoaLumberjack.git",
       "state" : {
         "revision" : "4b8714a7fb84d42393314ce897127b3939885ec3",
         "version" : "3.8.5"
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "ab6c8412f09af1dd55b62c0d888cb6fb3984fb18",
-        "version" : "16.0.0"
+        "branch" : "chore-update-paddings",
+        "revision" : "c4d9dcc19b0ea5d5bf1f9917a156156c05848007"
       }
     },
     {

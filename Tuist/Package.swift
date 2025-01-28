@@ -26,7 +26,7 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "2.0.2")),
         .package(url: "https://github.com/Infomaniak/swift-concurrency", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-core", .upToNextMajor(from: "13.0.0")),
-        .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "16.0.0")),
+        .package(url: "https://github.com/Infomaniak/ios-core-ui", branch: "chore-update-paddings"),
         .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "9.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "15.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-bug-tracker", .upToNextMajor(from: "8.0.0")),
