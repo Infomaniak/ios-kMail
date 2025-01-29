@@ -218,7 +218,7 @@ final class ITFolderListViewModel: XCTestCase {
         super.setUp()
 
         MockingHelper.clearRegisteredTypes()
-        MockingHelper.registerConcreteTypes(configuration: .minimal)
+        MockingHelper.registerConcreteTypes(configuration: .realApp)
     }
 
     @MainActor func testInitAndFetchFromDB() throws {
@@ -272,7 +272,7 @@ final class ITFolderListViewModelWorker: XCTestCase {
         super.setUp()
 
         MockingHelper.clearRegisteredTypes()
-        MockingHelper.registerConcreteTypes(configuration: .minimal)
+        MockingHelper.registerConcreteTypes(configuration: .realApp)
     }
 
     func testFilterAndSortFolders_noSearch() async throws {

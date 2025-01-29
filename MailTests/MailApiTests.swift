@@ -27,7 +27,7 @@ final class MailApiTests: XCTestCase {
         super.setUp()
 
         MockingHelper.clearRegisteredTypes()
-        MockingHelper.registerConcreteTypes(configuration: .minimal)
+        MockingHelper.registerConcreteTypes(configuration: .realApp)
     }
 
     let currentApiFetcher: MailApiFetcher = {

@@ -254,7 +254,7 @@ final class ITSearchViewModel: XCTestCase {
         super.setUp()
 
         MockingHelper.clearRegisteredTypes()
-        MockingHelper.registerConcreteTypes(configuration: .minimal)
+        MockingHelper.registerConcreteTypes(configuration: .realApp)
     }
 
     // Tests removed temporarily

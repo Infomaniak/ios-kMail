@@ -43,7 +43,9 @@ public enum MockingHelper {
 
         switch configuration {
         case .realApp:
-            factories += TargetAssembly.getTargetServices() + TargetAssembly.getCommonServices()
+            factories += TargetAssembly.getTargetServices() + TargetAssembly.getCommonServices() +
+                MailTargetAssembly.getTargetServices() +
+                CommonAppAndShareTargetAssembly.getCommonServices()
 
         case .minimal:
             // TODO: Add mocks
