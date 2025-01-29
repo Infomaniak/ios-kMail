@@ -30,7 +30,6 @@ struct CustomScheduleAlertView: View {
     @State private var isShowingError = false
     @State private var selectedDate: Date
 
-    let startingDate: Date
     let confirmAction: (Date) -> Void
     let cancelAction: (() -> Void)?
 
@@ -42,7 +41,6 @@ struct CustomScheduleAlertView: View {
 
     init(startingDate: Date, confirmAction: @escaping (Date) -> Void, cancelAction: (() -> Void)? = nil) {
         _selectedDate = .init(initialValue: startingDate)
-        self.startingDate = startingDate
         self.confirmAction = confirmAction
         self.cancelAction = cancelAction
     }
