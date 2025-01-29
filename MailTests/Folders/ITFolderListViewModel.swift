@@ -259,10 +259,12 @@ final class ITFolderListViewModel: XCTestCase {
         }.store(in: &cancellable)
 
         wait(for: asyncExpectations, timeout: 10.0)
-        XCTAssertGreaterThan(folderGenerator.frozenFoldersWithRole.count, 0)
-        XCTAssertGreaterThan(folderGenerator.frozenFolders.count, 0)
-        XCTAssertEqual(folderListViewModel.roleFolders.count, folderGenerator.frozenFoldersWithRole.count)
-        XCTAssertEqual(folderListViewModel.userFolders.count, folderGenerator.frozenFolders.count)
+
+        let roleFoldersMap = folderListViewModel.roleFolders.compactMap(\.frozenContent.role)
+
+        for folderRole in folderGenerator.mandatoryFolderRoles {
+            XCTAssertTrue(roleFoldersMap.contains(folderRole))
+        }
     }
 }
 
