@@ -36,7 +36,7 @@ public final class FolderStructureGenerator {
     public let maxDepth: Int
     public let maxElementsPerLevel: Int
 
-    public let mandatoryFolderRoles: [FolderRole] = [.inbox, .sent]
+    public let mandatoryFolderRoles: [FolderRole] = [.inbox, .sent, .draft, .trash]
 
     /// Folders structure generated at init. Added to `inMemoryRealm`
     public var frozenFolders: [Folder] {

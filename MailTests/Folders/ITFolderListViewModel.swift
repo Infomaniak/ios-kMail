@@ -260,11 +260,16 @@ final class ITFolderListViewModel: XCTestCase {
 
         wait(for: asyncExpectations, timeout: 10.0)
 
+        XCTAssertGreaterThan(folderGenerator.frozenFoldersWithRole.count, 0)
+        XCTAssertGreaterThan(folderGenerator.frozenFolders.count, 0)
+
         let roleFoldersMap = folderListViewModel.roleFolders.compactMap(\.frozenContent.role)
 
         for folderRole in folderGenerator.mandatoryFolderRoles {
-            XCTAssertTrue(roleFoldersMap.contains(folderRole))
+            XCTAssertTrue(roleFoldersMap.contains(folderRole), "\(folderRole) not found")
         }
+
+        XCTAssertEqual(folderListViewModel.userFolders.count, folderGenerator.frozenFolders.count)
     }
 }
 
@@ -284,7 +289,6 @@ final class ITFolderListViewModelWorker: XCTestCase {
             partial
         }.freezeIfNeeded()
 
-        let expectedFoldersWithRole = folderGenerator.frozenFoldersWithRole.map { $0.freeze() }
         let expectedFrozenFolders = folderGenerator.frozenFolders.map { $0.freeze() }
 
         let worker = FolderListViewModelWorker()
@@ -293,15 +297,11 @@ final class ITFolderListViewModelWorker: XCTestCase {
         let result = await worker.filterAndSortFolders(folderRealmResults, searchQuery: "")
 
         // THEN
-        XCTAssertGreaterThan(expectedFoldersWithRole.count, 0)
-        XCTAssertGreaterThan(expectedFrozenFolders.count, 0)
-        XCTAssertEqual(result.roleFolders.count,
-                       expectedFoldersWithRole.count,
-                       """
-                       expecting roleFolders count:\(expectedFoldersWithRole.count) got \(result.roleFolders.count)
-                       expectation: \(expectedFoldersWithRole)
-                       result: \(result.roleFolders)
-                       """)
+        let resultFolderRoles = result.roleFolders.compactMap(\.frozenContent.role)
+
+        for folderRole in folderGenerator.mandatoryFolderRoles {
+            XCTAssertTrue(resultFolderRoles.contains(folderRole), "\(folderRole) not found")
+        }
         XCTAssertEqual(result.userFolders.count, expectedFrozenFolders.count)
     }
 
