@@ -17,6 +17,7 @@
  */
 
 import Combine
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI

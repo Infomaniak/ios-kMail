@@ -16,7 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreSwiftUI
+import DesignSystem
 import SwiftUI
 
 public extension IKPadding {
@@ -27,15 +27,15 @@ public extension IKPadding {
 
     // MARK: Menu
 
-    static let menuDrawerCell = EdgeInsets(top: intermediate, leading: medium, bottom: intermediate, trailing: medium)
+    static let menuDrawerCell = EdgeInsets(top: small, leading: medium, bottom: small, trailing: medium)
     static let menuDrawerCellWithChevron = EdgeInsets(top: 2, leading: 0, bottom: 2, trailing: medium)
     static let menuDrawerCellSpacing = medium
-    static let menuDrawerCellChevronSpacing = intermediate
+    static let menuDrawerCellChevronSpacing = small
     static let menuDrawerSubFolder = large
 
     // MARK: Compose Message
 
-    static let composeViewHeaderCellLargeVertical = intermediate + recipientChip.top
+    static let composeViewHeaderCellLargeVertical = small + recipientChip.top
     static let composeViewHeaderHorizontal = medium
 
     // MARK: Alerts
@@ -47,7 +47,7 @@ public extension IKPadding {
 
     static let floatingButtonBottom = large
     static let bottomSheetHorizontal = large
-    static let recipientChip = UIEdgeInsets(top: extraSmall, left: small, bottom: extraSmall, right: small)
-    static let aiTextEditor = UIEdgeInsets(top: small, left: small, bottom: small, right: small)
-    static let searchFolderCellSpacing = small
+    static let recipientChip = UIEdgeInsets(top: micro, left: mini, bottom: micro, right: mini)
+    static let aiTextEditor = UIEdgeInsets(top: mini, left: mini, bottom: mini, right: mini)
+    static let searchFolderCellSpacing = mini
 }

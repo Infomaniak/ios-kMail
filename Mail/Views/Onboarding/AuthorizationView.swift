@@ -17,6 +17,7 @@
  */
 
 import Contacts
+import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
