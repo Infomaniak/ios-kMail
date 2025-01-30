@@ -128,7 +128,7 @@ enum ScheduleSendOption: Identifiable, Equatable {
         case .nextMondayAfternoon:
             "nextMondayAfternoon"
         case .lastSchedule(let value):
-            "lastSchedule"
+            "lastSelectedSchedule"
         }
     }
 
