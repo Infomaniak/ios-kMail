@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import MailCoreUI
 import MailResources
 import SwiftUI
@@ -40,7 +41,7 @@ struct ExtendedFAB: View {
 
                 Text(title)
                     .lineLimit(1)
-                    .padding(.leading, value: .small)
+                    .padding(.leading, value: .mini)
                     .frame(width: isExtended ? nil : 0)
                     .clipped()
             }

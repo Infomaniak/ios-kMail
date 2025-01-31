@@ -62,12 +62,12 @@ public struct BottomBarView<Items: View>: View {
     public var body: some View {
         HStack {
             items
-                .padding(.horizontal, value: .small)
+                .padding(.horizontal, value: .mini)
                 .frame(maxWidth: .infinity)
         }
         .modifier(snackBarAwareModifier)
-        .padding(.top, value: .small)
-        .padding(.bottom, value: hasBottomSafeArea ? .extraSmall : .small)
+        .padding(.top, value: .mini)
+        .padding(.bottom, value: hasBottomSafeArea ? .micro : .mini)
         .background(MailResourcesAsset.backgroundTabBarColor.swiftUIColor)
         .overlay(alignment: .top) {
             Divider()

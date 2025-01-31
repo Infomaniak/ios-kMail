@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailResources
 import SwiftUI
@@ -32,7 +33,7 @@ struct ModalButtonsView: View {
     var secondaryButtonAction: (() -> Void)?
 
     var body: some View {
-        HStack(spacing: IKPadding.extraSmall) {
+        HStack(spacing: IKPadding.micro) {
             if let secondaryButtonTitle {
                 Button(secondaryButtonTitle) {
                     secondaryButtonAction?()

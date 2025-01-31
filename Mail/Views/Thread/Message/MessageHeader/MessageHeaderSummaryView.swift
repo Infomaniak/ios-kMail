@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -70,12 +71,12 @@ struct MessageHeaderSummaryView: View {
                     .disabled(!isMessageInteractive)
                 }
 
-                VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
+                VStack(alignment: .leading, spacing: IKPadding.micro) {
                     if message.isDraft {
                         Text(MailResourcesStrings.Localizable.messageIsDraftOption)
                             .textStyle(.bodyMediumError)
                     } else {
-                        HStack(alignment: .firstTextBaseline, spacing: IKPadding.small) {
+                        HStack(alignment: .firstTextBaseline, spacing: IKPadding.mini) {
                             VStack {
                                 ForEach(message.from) { recipient in
                                     let contactConfiguration = ContactConfiguration.correspondent(

@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -46,7 +47,7 @@ struct ThreadView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: IKPadding.medium) {
-                VStack(alignment: .leading, spacing: IKPadding.small) {
+                VStack(alignment: .leading, spacing: IKPadding.mini) {
                     Text(thread.formattedSubject)
                         .threadTitle()
 

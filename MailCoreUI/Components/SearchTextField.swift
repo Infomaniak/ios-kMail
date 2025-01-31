@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailCore
 import MailResources
@@ -38,7 +39,7 @@ public struct SearchTextField: View {
     }
 
     public var body: some View {
-        HStack(spacing: IKPadding.small) {
+        HStack(spacing: IKPadding.mini) {
             Button(action: onSubmit) {
                 MailResourcesAsset.search
                     .iconSize(.medium)
@@ -63,7 +64,7 @@ public struct SearchTextField: View {
                 .accessibilityAction(.escape) {
                     mainViewState.isShowingSearch = false
                 }
-                .padding(.vertical, value: .intermediate)
+                .padding(.vertical, value: .small)
 
             Button(action: onDelete) {
                 MailResourcesAsset.remove
@@ -72,7 +73,7 @@ public struct SearchTextField: View {
             }
             .opacity(value.isEmpty ? 0 : 1)
         }
-        .padding(.horizontal, value: .intermediate)
+        .padding(.horizontal, value: .small)
         .background {
             RoundedRectangle(cornerRadius: 27)
                 .foregroundStyle(MailResourcesAsset.textFieldColor)

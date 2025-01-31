@@ -44,7 +44,7 @@ struct OnboardingThemePickerView: View {
             .introspect(.picker(style: .segmented), on: .iOS(.v15, .v16, .v17, .v18)) { segmentedControl in
                 setSegmentedControlStyle(segmentedControl)
             }
-            .padding(.top, 32)
+            .padding(.top, value: .huge)
             .frame(maxWidth: 256)
             .onChange(of: accentColor) { newValue in
                 matomo.track(eventWithCategory: .onboarding, name: "switchColor\(newValue.rawValue.capitalized)")

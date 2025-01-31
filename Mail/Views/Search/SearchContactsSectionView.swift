@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
@@ -40,7 +41,7 @@ struct SearchContactsSectionView: View {
                         }
                 }
                 .padding(.vertical, threadDensity.cellVerticalPadding)
-                .padding(.leading, IKPadding.small + UnreadIndicatorView.size + IKPadding.small)
+                .padding(.leading, IKPadding.mini + UnreadIndicatorView.size + IKPadding.mini)
                 .padding(.trailing, value: .medium)
             } header: {
                 if !viewModel.frozenContacts.isEmpty {

@@ -44,7 +44,7 @@ struct AddMailboxView: View {
             VStack(alignment: .leading, spacing: 0) {
                 Text(MailResourcesStrings.Localizable.attachMailboxDescription1)
                     .textStyle(.bodySecondary)
-                    .padding(.bottom, value: .small)
+                    .padding(.bottom, value: .mini)
 
                 Text(MailResourcesStrings.Localizable.attachMailboxDescription2)
                     .textStyle(.bodySecondary)
@@ -64,7 +64,7 @@ struct AddMailboxView: View {
                 .textContentType(.emailAddress)
                 .keyboardType(.emailAddress)
                 .autocorrectionDisabled()
-                .padding(value: .intermediate)
+                .padding(value: .small)
                 .overlay {
                     RoundedRectangle(cornerRadius: 4, style: .continuous)
                         .stroke(
@@ -74,7 +74,7 @@ struct AddMailboxView: View {
                             lineWidth: 1
                         )
                 }
-                .padding(.bottom, value: .extraSmall)
+                .padding(.bottom, value: .micro)
 
                 Group {
                     if showInvalidEmailError {
@@ -89,7 +89,7 @@ struct AddMailboxView: View {
 
                 SecureField(MailResourcesStrings.Localizable.attachMailboxPasswordInputHint, text: $password)
                     .textContentType(.password)
-                    .padding([.vertical, .leading], value: .intermediate)
+                    .padding([.vertical, .leading], value: .small)
                     .padding(.trailing, value: .medium)
                     .overlay {
                         RoundedRectangle(cornerRadius: 4, style: .continuous)

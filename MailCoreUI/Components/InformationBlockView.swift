@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailCore
 import MailResources
@@ -49,7 +50,7 @@ public struct InformationBlockView: View {
     }
 
     public var body: some View {
-        HStack(alignment: .iconAndMultilineTextAlignment, spacing: IKPadding.intermediate) {
+        HStack(alignment: .iconAndMultilineTextAlignment, spacing: IKPadding.small) {
             icon
                 .resizable()
                 .scaledToFit()
@@ -60,8 +61,8 @@ public struct InformationBlockView: View {
                     d[VerticalAlignment.center]
                 }
 
-            VStack(alignment: .leading, spacing: IKPadding.intermediate) {
-                VStack(alignment: .leading, spacing: IKPadding.intermediate) {
+            VStack(alignment: .leading, spacing: IKPadding.small) {
+                VStack(alignment: .leading, spacing: IKPadding.small) {
                     if let title {
                         Text(title)
                             .textStyle(.bodyMedium)

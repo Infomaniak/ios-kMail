@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import MailCore
@@ -50,7 +51,7 @@ public struct RecipientCell: View {
     }
 
     public var body: some View {
-        HStack(spacing: IKPadding.small) {
+        HStack(spacing: IKPadding.mini) {
             AvatarView(
                 mailboxManager: mailboxManager,
                 contactConfiguration: .correspondent(

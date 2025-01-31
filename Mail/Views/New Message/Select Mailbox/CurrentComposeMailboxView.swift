@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -80,7 +81,7 @@ struct CurrentComposeMailboxView: View {
                 }
                 .ikButtonFullWidth(true)
                 .controlSize(.large)
-                .padding(.horizontal, value: .small)
+                .padding(.horizontal, value: .mini)
             }
             .padding(.horizontal, value: .medium)
             .mailboxCellStyle(.account)

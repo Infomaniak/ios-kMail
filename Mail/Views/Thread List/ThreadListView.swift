@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -105,7 +106,7 @@ struct ThreadListView: View {
                     }
 
                     if threadDensity == .compact {
-                        ListVerticalInsetView(height: IKPadding.extraSmall)
+                        ListVerticalInsetView(height: IKPadding.micro)
                     }
 
                     if Constants.isUsingABreakableOSVersion && !hasDismissedUpdateVersionView && viewModel.frozenFolder

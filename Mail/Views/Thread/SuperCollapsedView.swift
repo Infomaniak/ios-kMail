@@ -34,7 +34,7 @@ struct SuperCollapsedView: View {
             Button(action: action) {
                 Text(MailResourcesStrings.Localizable.superCollapsedBlock(count))
                     .textStyle(.bodyAccent)
-                    .padding(.vertical, value: .small)
+                    .padding(.vertical, value: .mini)
                     .padding(.horizontal, value: .large)
                     .frame(minHeight: 40)
             }

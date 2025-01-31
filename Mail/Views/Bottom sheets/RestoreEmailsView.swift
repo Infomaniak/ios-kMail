@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -46,7 +47,7 @@ struct RestoreEmailsView: View {
 
             Text(MailResourcesStrings.Localizable.restoreEmailsText)
                 .textStyle(.bodySecondary)
-                .padding(.bottom, value: .small)
+                .padding(.bottom, value: .mini)
 
             LargePicker(title: MailResourcesStrings.Localizable.restoreEmailsBackupDate,
                         noSelectionText: pickerNoSelectionText,

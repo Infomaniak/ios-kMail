@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -37,7 +38,7 @@ struct AccountListView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            VStack(spacing: IKPadding.extraSmall) {
+            VStack(spacing: IKPadding.micro) {
                 if let users {
                     ForEach(users) { user in
                         AccountCellView(
@@ -56,10 +57,10 @@ struct AccountListView: View {
             }
 
             IKDivider()
-                .padding(.vertical, value: .small)
+                .padding(.vertical, value: .mini)
 
             AccountActionsView()
-                .padding(.horizontal, value: .small)
+                .padding(.horizontal, value: .mini)
         }
         .fullScreenCover(isPresented: $isShowingNewAccountView, onDismiss: {
             orientationManager.setOrientationLock(.all)

@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
@@ -112,7 +113,7 @@ struct ComposeMessageCellRecipients: View {
                     addedRecipients: $recipients,
                     addRecipient: addNewRecipient
                 )
-                .padding(.top, value: .small)
+                .padding(.top, value: .mini)
             }
         }
         .contentShape(Rectangle())

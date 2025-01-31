@@ -43,7 +43,7 @@ struct AccountCellPlaceholderView: View {
             .lineLimit(1)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding(.vertical, value: .small)
+        .padding(.vertical, value: .mini)
     }
 }
 
@@ -116,7 +116,7 @@ struct AccountHeaderCell: View {
                 ChevronIcon(direction: .down)
             }
         }
-        .padding(.vertical, value: .small)
+        .padding(.vertical, value: .mini)
     }
 }
 

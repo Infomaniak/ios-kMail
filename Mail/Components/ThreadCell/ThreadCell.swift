@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import MailCore
@@ -154,7 +155,7 @@ struct ThreadCell: View {
     // MARK: - Views
 
     var body: some View {
-        HStack(spacing: IKPadding.small) {
+        HStack(spacing: IKPadding.mini) {
             UnreadIndicatorView(hidden: !thread.hasUnseenMessages)
                 .accessibilityLabel(additionalAccessibilityLabel)
                 .accessibilityHidden(additionalAccessibilityLabel.isEmpty)
@@ -170,9 +171,9 @@ struct ThreadCell: View {
                                                                       contextMailboxManager: mailboxManager),
                 avatarTapped: avatarTapped
             )
-            .padding(.trailing, value: .extraSmall)
+            .padding(.trailing, value: .micro)
 
-            VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
+            VStack(alignment: .leading, spacing: IKPadding.micro) {
                 ThreadCellHeaderView(
                     recipientsTitle: thread.formatted(
                         contextUser: currentUser.value,
@@ -201,7 +202,7 @@ struct ThreadCell: View {
                 value: isMultipleSelectionEnabled
             )
         }
-        .padding(.leading, value: .small)
+        .padding(.leading, value: .mini)
         .padding(.trailing, value: .medium)
         .padding(.vertical, density.cellVerticalPadding)
         .clipped()

@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
@@ -30,7 +31,7 @@ struct AutocompletionCell: View {
     let unknownRecipient: Bool
 
     var body: some View {
-        HStack(spacing: IKPadding.intermediate) {
+        HStack(spacing: IKPadding.small) {
             Button {
                 addRecipient(recipient)
             } label: {

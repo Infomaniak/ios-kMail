@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
@@ -55,7 +56,7 @@ struct LockedAppView: View {
                     .ikButtonLoading(isEvaluatingPolicy)
             }
             .padding(.top, IKPadding.onBoardingLogoTop)
-            .padding(.bottom, value: .extraLarge)
+            .padding(.bottom, value: .giant)
         }
         .padding(.horizontal, value: .large)
         .onAppear {

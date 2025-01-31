@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
@@ -64,7 +65,7 @@ struct AIPromptView: View {
                     Text(placeholder)
                         .foregroundStyle(Color(UIColor.placeholderText))
                         .textStyle(.body)
-                        .padding([.vertical, .horizontal], value: .small)
+                        .padding([.vertical, .horizontal], value: .mini)
                         .padding(.horizontal, 5)
                 }
 

@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
@@ -45,9 +46,9 @@ struct MessageHeaderActionView<Content: View>: View {
                 HStack {
                     actions()
                 }
-                .padding(.leading, iconSize + IKPadding.small)
+                .padding(.leading, iconSize + IKPadding.mini)
             }
-            .padding(.vertical, value: .extraSmall)
+            .padding(.vertical, value: .micro)
             .padding(.horizontal, value: .medium)
             IKDivider()
         }

@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -33,7 +34,7 @@ struct MessageHeaderDetailView: View {
     @State private var labelWidth: CGFloat = 100
 
     var body: some View {
-        VStack(alignment: .leading, spacing: IKPadding.small) {
+        VStack(alignment: .leading, spacing: IKPadding.mini) {
             RecipientLabel(
                 labelWidth: $labelWidth,
                 title: MailResourcesStrings.Localizable.fromTitle,

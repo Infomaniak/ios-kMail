@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
@@ -35,12 +36,12 @@ struct ExternalTagBottomView: View {
 
     var body: some View {
         if isShowingExternalTag && externalTag.shouldDisplay {
-            HStack(spacing: IKPadding.small) {
+            HStack(spacing: IKPadding.mini) {
                 Button {
                     matomo.track(eventWithCategory: .externals, name: "bannerInfo")
                     isShowingExternalTagAlert = true
                 } label: {
-                    HStack(spacing: IKPadding.small) {
+                    HStack(spacing: IKPadding.mini) {
                         Text(MailResourcesStrings.Localizable.externalDialogTitleRecipient)
                             .font(MailTextStyle.bodySmallMedium.font)
 

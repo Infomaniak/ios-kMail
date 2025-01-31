@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailCore
 import MailResources
@@ -29,7 +30,7 @@ struct AttachmentsHeaderView: View {
         ZStack {
             if !attachmentsManager.liveAttachments.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: IKPadding.small) {
+                    HStack(spacing: IKPadding.mini) {
                         ForEach(attachmentsManager.liveAttachments) { attachment in
                             AttachmentUploadCell(
                                 uploadTask: attachmentsManager.attachmentUploadTaskOrFinishedTask(for: attachment.uuid),

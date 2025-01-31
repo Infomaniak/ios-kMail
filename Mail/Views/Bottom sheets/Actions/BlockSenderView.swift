@@ -45,7 +45,7 @@ struct BlockSenderView: View {
                 } label: {
                     RecipientCell(recipient: recipient)
                         .padding(.horizontal, value: .medium)
-                        .padding(.vertical, value: .small)
+                        .padding(.vertical, value: .mini)
                 }
                 if recipient != recipients.last {
                     IKDivider()

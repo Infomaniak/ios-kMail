@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
@@ -36,7 +37,7 @@ struct FullRecipientsList: View {
     let type: ComposeViewFieldType
 
     var body: some View {
-        WrappingHStack(recipients.indices, spacing: .constant(IKPadding.small), lineSpacing: IKPadding.small) { i in
+        WrappingHStack(recipients.indices, spacing: .constant(IKPadding.mini), lineSpacing: IKPadding.mini) { i in
             RecipientChip(recipient: recipients[i], fieldType: type, focusedField: _focusedField) {
                 remove(recipientAt: i)
             } switchFocusHandler: {

@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailCore
 import MailResources
@@ -32,7 +33,7 @@ public struct IKCheckmarkToggleStyle: ToggleStyle {
         Button {
             configuration.isOn.toggle()
         } label: {
-            HStack(spacing: IKPadding.small) {
+            HStack(spacing: IKPadding.mini) {
                 ZStack {
                     RoundedRectangle(cornerRadius: 2)
                         .stroke(MailResourcesAsset.textTertiaryColor.swiftUIColor, lineWidth: 1)

@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -46,7 +47,7 @@ struct SettingsNotificationsView: View {
         VStack(alignment: .leading, spacing: 0) {
             List {
                 if showWarning {
-                    VStack(alignment: .leading, spacing: IKPadding.small) {
+                    VStack(alignment: .leading, spacing: IKPadding.mini) {
                         Text(MailResourcesStrings.Localizable.warningNotificationsDisabledDescription)
                             .textStyle(.bodySecondary)
                             .frame(maxWidth: .infinity, alignment: .leading)

@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -91,11 +92,11 @@ struct SyncInstallProfileTutorialView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .clipShape(RoundedRectangle(cornerRadius: UIConstants.buttonsRadius))
-                            .padding(.bottom, value: .extraLarge)
+                            .padding(.bottom, value: .giant)
                     }
                 }
                 .tabViewStyle(.page)
-                .frame(height: 256 + IKPadding.extraLarge)
+                .frame(height: 256 + IKPadding.giant)
             }
         }
         .toolbar {
@@ -104,7 +105,7 @@ struct SyncInstallProfileTutorialView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            VStack(spacing: IKPadding.small) {
+            VStack(spacing: IKPadding.mini) {
                 Button(MailResourcesStrings.Localizable.buttonGoToSettings) {
                     matomo.track(eventWithCategory: .syncAutoConfig, name: "openSettings")
                     @InjectService var platformDetector: PlatformDetectable
@@ -128,7 +129,7 @@ struct SyncInstallProfileTutorialView: View {
             }
             .controlSize(.large)
             .ikButtonFullWidth(true)
-            .padding(.top, value: .extraSmall)
+            .padding(.top, value: .micro)
             .padding(.horizontal, value: .large)
             .background(MailResourcesAsset.backgroundColor.swiftUIColor)
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in

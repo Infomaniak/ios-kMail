@@ -17,6 +17,7 @@
  */
 
 import Combine
+import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
@@ -38,12 +39,12 @@ struct AutocompletionView: View {
     let addRecipient: @MainActor (Recipient) -> Void
 
     var body: some View {
-        LazyVStack(spacing: IKPadding.small) {
+        LazyVStack(spacing: IKPadding.mini) {
             ForEach(autocompletion) { recipient in
                 let isLastRecipient = autocompletion.last?.isSameCorrespondent(as: recipient) == true
                 let isUserProposal = shouldAddUserProposal && isLastRecipient
 
-                VStack(alignment: .leading, spacing: IKPadding.small) {
+                VStack(alignment: .leading, spacing: IKPadding.mini) {
                     AutocompletionCell(
                         addRecipient: addRecipient,
                         recipient: recipient,

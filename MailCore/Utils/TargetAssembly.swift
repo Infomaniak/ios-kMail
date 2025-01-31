@@ -39,9 +39,6 @@ extension [Factory] {
 /// Each target should subclass `TargetAssembly` and override `getTargetServices` to provide additional, target related, services.
 open class TargetAssembly {
     public init() {
-        // Setup date encoding
-        ApiFetcher.decoder.dateDecodingStrategy = .iso8601
-
         // Setup debug stack early
         Logging.initLogging()
 

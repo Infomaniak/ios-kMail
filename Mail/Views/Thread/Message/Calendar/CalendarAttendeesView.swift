@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -56,7 +57,7 @@ struct CalendarAttendeesView: View {
                     matomoUtils.track(eventWithCategory: .calendarEvent, name: "attendees", value: isShowingAttendees)
                 }
             } label: {
-                HStack(spacing: IKPadding.small) {
+                HStack(spacing: IKPadding.mini) {
                     Text(MailResourcesStrings.Localizable.buttonAttendees)
                     ChevronIcon(direction: isShowingAttendees ? .up : .down, shapeStyle: .tint)
                 }
@@ -69,7 +70,7 @@ struct CalendarAttendeesView: View {
             if isShowingAttendees {
                 VStack(alignment: .leading, spacing: IKPadding.medium) {
                     if let organizerContact {
-                        HStack(spacing: IKPadding.small) {
+                        HStack(spacing: IKPadding.mini) {
                             AvatarView(
                                 mailboxManager: mailboxManager,
                                 contactConfiguration: .contact(contact: organizerContact),
@@ -86,7 +87,7 @@ struct CalendarAttendeesView: View {
                         isShowingAllAttendees = true
                         matomoUtils.track(eventWithCategory: .calendarEvent, name: "seeAllAttendees")
                     } label: {
-                        HStack(spacing: IKPadding.small) {
+                        HStack(spacing: IKPadding.mini) {
                             CalendarAttendeesStack(attendees: attendees)
                             Text(MailResourcesStrings.Localizable.buttonSee)
                                 .textStyle(.bodyAccent)

@@ -28,7 +28,7 @@ struct SettingsSectionTitleView: View {
             .textStyle(.bodySmallSecondary)
             .padding(.horizontal, value: .medium)
             .padding(.top, value: .medium)
-            .padding(.bottom, value: .small)
+            .padding(.bottom, value: .mini)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(MailResourcesAsset.backgroundColor.swiftUIColor)
     }

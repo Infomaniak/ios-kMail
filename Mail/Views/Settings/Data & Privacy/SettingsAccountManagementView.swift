@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -62,7 +63,7 @@ struct SettingsAccountManagementView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 VStack(alignment: .leading, spacing: IKPadding.medium) {
-                    VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
+                    VStack(alignment: .leading, spacing: IKPadding.micro) {
                         Text(MailResourcesStrings.Localizable.usernameTitle)
                             .textStyle(.header2)
                         Text(user.displayName)
@@ -70,7 +71,7 @@ struct SettingsAccountManagementView: View {
                     }
                     .lineLimit(1)
 
-                    VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
+                    VStack(alignment: .leading, spacing: IKPadding.micro) {
                         Text(MailResourcesStrings.Localizable.attachMailboxInputHint)
                             .textStyle(.header2)
                         Text(user.email)

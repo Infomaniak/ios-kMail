@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailCoreUI
 import MailResources
@@ -26,7 +27,7 @@ struct ThreadCellDetailsView: View {
     let isFlagged: Bool
 
     var body: some View {
-        HStack(spacing: IKPadding.small) {
+        HStack(spacing: IKPadding.mini) {
             if hasAttachments {
                 MailResourcesAsset.attachment
                     .iconSize(.medium)

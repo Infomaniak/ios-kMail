@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -82,7 +83,7 @@ struct CreateFolderView: View {
 
             TextField(MailResourcesStrings.Localizable.createFolderName, text: $folderName)
                 .onChange(of: folderName, perform: checkFolderName)
-                .padding(value: .intermediate)
+                .padding(value: .small)
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
                         .stroke(error == nil ? MailResourcesAsset.textFieldBorder.swiftUIColor : MailResourcesAsset.redColor
@@ -94,9 +95,9 @@ struct CreateFolderView: View {
 
             Text(error?.errorDescription ?? "")
                 .textStyle(.labelError)
-                .padding(.top, value: .extraSmall)
+                .padding(.top, value: .micro)
                 .opacity(error == nil ? 0 : 1)
-                .padding(.bottom, value: .small)
+                .padding(.bottom, value: .mini)
 
             ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: isButtonEnabled) {
                 matomo.track(eventWithCategory: .createFolder, name: "confirm")

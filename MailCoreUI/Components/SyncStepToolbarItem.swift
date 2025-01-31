@@ -32,7 +32,7 @@ public struct SyncStepToolbarItem: View {
         VStack {
             Text(MailResourcesStrings.Localizable.syncTutorialStepCount(step, totalSteps))
                 .textStyle(.bodyMedium)
-                .padding(value: .small)
+                .padding(value: .mini)
                 .background(RoundedRectangle(cornerRadius: 8).fill(MailResourcesAsset.textFieldBorder.swiftUIColor))
         }
         .padding(value: .medium)

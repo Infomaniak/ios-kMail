@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
@@ -115,7 +116,7 @@ struct DiscoveryBottomSheetView: View {
     let laterButton: () -> Void
 
     var body: some View {
-        VStack(spacing: 32) {
+        VStack(spacing: IKPadding.huge) {
             item.image.swiftUIImage
 
             Text(item.title)
@@ -126,7 +127,7 @@ struct DiscoveryBottomSheetView: View {
                 .multilineTextAlignment(.center)
                 .textStyle(.bodySecondary)
 
-            VStack(spacing: IKPadding.small) {
+            VStack(spacing: IKPadding.mini) {
                 Button(item.primaryButtonLabel, action: nowButton)
                     .buttonStyle(.ikBorderedProminent)
 

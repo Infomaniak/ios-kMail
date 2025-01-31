@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
@@ -59,7 +60,7 @@ struct UnavailableMailboxesView: View {
 
                 Spacer()
 
-                VStack(spacing: IKPadding.small) {
+                VStack(spacing: IKPadding.mini) {
                     NavigationLink(isActive: $isShowingAddMailboxView) {
                         AddMailboxView()
                     } label: {

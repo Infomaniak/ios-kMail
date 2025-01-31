@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
@@ -39,7 +40,7 @@ struct OnboardingBottomButtonsView: View {
     }
 
     var body: some View {
-        VStack(spacing: IKPadding.small) {
+        VStack(spacing: IKPadding.mini) {
             Button(MailResourcesStrings.Localizable.buttonLogin) {
                 loginHandler.login()
             }

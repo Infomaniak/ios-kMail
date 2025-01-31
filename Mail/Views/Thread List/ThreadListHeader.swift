@@ -17,6 +17,7 @@
  */
 
 import Combine
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -104,7 +105,7 @@ struct ThreadListHeader: View {
                     NoNetworkView()
                 }
                 if isRefreshing {
-                    HStack(spacing: IKPadding.small) {
+                    HStack(spacing: IKPadding.mini) {
                         ProgressView()
                             .controlSize(.small)
                         Text(MailResourcesStrings.Localizable.threadListHeaderUpdating)
@@ -134,8 +135,8 @@ struct ThreadListHeader: View {
                 .frame(maxWidth: .infinity, alignment: .trailing)
             }
         }
-        .padding(.top, value: .small)
-        .padding(.bottom, value: .intermediate)
+        .padding(.top, value: .mini)
+        .padding(.bottom, value: .small)
         .padding([.leading, .trailing], value: .medium)
         .background(accentColor.navBarBackground.swiftUIColor)
     }
@@ -146,7 +147,7 @@ struct UnreadToggleStyle: ToggleStyle {
         Button {
             configuration.isOn.toggle()
         } label: {
-            HStack(spacing: IKPadding.small) {
+            HStack(spacing: IKPadding.mini) {
                 configuration.label
                 if configuration.isOn {
                     MailResourcesAsset.close
@@ -154,8 +155,8 @@ struct UnreadToggleStyle: ToggleStyle {
                 }
             }
             .textStyle(configuration.isOn ? .bodySmallMediumOnAccent : .bodySmallMediumAccent)
-            .padding(.vertical, IKPadding.extraSmall)
-            .padding(.horizontal, IKPadding.small)
+            .padding(.vertical, IKPadding.micro)
+            .padding(.horizontal, IKPadding.mini)
             .background(
                 Capsule()
                     .fill(configuration.isOn ? Color.accentColor : MailResourcesAsset.backgroundColor.swiftUIColor)

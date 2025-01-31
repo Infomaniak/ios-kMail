@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
@@ -51,7 +52,7 @@ struct FlushFolderView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            VStack(alignment: .leading, spacing: IKPadding.small) {
+            VStack(alignment: .leading, spacing: IKPadding.mini) {
                 Text(label)
                     .textStyle(.bodySmall)
 
@@ -65,7 +66,7 @@ struct FlushFolderView: View {
                         }
                     }
                 } label: {
-                    HStack(spacing: IKPadding.small) {
+                    HStack(spacing: IKPadding.mini) {
                         MailResourcesAsset.bin
                             .iconSize(.medium)
                         Text(button)

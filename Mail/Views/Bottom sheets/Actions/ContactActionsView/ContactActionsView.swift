@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -42,7 +43,7 @@ struct ContactActionsView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: IKPadding.small) {
+        VStack(alignment: .leading, spacing: IKPadding.mini) {
             let contactConfiguration = ContactConfiguration.correspondent(
                 correspondent: recipient,
                 associatedBimi: bimi,

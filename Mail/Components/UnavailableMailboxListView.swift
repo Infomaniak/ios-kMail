@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
@@ -45,9 +46,9 @@ struct UnavailableMailboxListView: View {
     ) private var lockedMailboxes
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 32) {
+        VStack(alignment: .leading, spacing: IKPadding.huge) {
             if !passwordBlockedMailboxes.isEmpty {
-                VStack(alignment: .leading, spacing: IKPadding.intermediate) {
+                VStack(alignment: .leading, spacing: IKPadding.small) {
                     Text(MailResourcesStrings.Localizable.blockedPasswordTitlePlural)
                     ForEach(passwordBlockedMailboxes) { mailbox in
                         MailboxCell(mailbox: mailbox)
@@ -57,7 +58,7 @@ struct UnavailableMailboxListView: View {
             }
 
             if !lockedMailboxes.isEmpty {
-                VStack(alignment: .leading, spacing: IKPadding.intermediate) {
+                VStack(alignment: .leading, spacing: IKPadding.small) {
                     Text(MailResourcesStrings.Localizable.lockedMailboxTitlePlural)
                     ForEach(lockedMailboxes) { mailbox in
                         MailboxCell(mailbox: mailbox)

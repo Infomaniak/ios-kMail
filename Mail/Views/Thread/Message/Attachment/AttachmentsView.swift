@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -64,7 +65,7 @@ struct AttachmentsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.medium) {
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: IKPadding.small) {
+                HStack(spacing: IKPadding.mini) {
                     ForEach(attachments) { attachment in
 
                         Button {
@@ -96,12 +97,12 @@ struct AttachmentsView: View {
                 .padding(.vertical, 1)
             }
 
-            HStack(alignment: .iconAndMultilineTextAlignment, spacing: IKPadding.small) {
+            HStack(alignment: .iconAndMultilineTextAlignment, spacing: IKPadding.mini) {
                 MailResourcesAsset.attachment
                     .iconSize(.medium)
                     .foregroundStyle(MailResourcesAsset.textSecondaryColor)
 
-                VStack(alignment: .leading, spacing: IKPadding.extraSmall) {
+                VStack(alignment: .leading, spacing: IKPadding.micro) {
                     Text("\(formattedText) (\(formattedSize))")
                         .textStyle(.bodySmallSecondary)
                         .frame(maxWidth: .infinity, alignment: .leading)

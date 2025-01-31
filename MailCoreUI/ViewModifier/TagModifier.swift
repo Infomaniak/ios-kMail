@@ -29,7 +29,7 @@ public struct TagModifier: ViewModifier {
             .lineLimit(1)
             .foregroundStyle(foregroundColor)
             .textStyle(.bodySmallSecondary)
-            .padding(.horizontal, value: .extraSmall)
+            .padding(.horizontal, value: .micro)
             .padding(.vertical, 1)
             .background(backgroundColor.swiftUIColor)
             .cornerRadius(4)

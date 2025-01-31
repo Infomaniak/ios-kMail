@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailCore
 import SwiftUI
@@ -35,8 +36,8 @@ struct CalendarChoiceButtonsStack: View {
     }
 
     var body: some View {
-        WrappingHStack(AttendeeState.allCases, id: \.self, spacing: .constant(IKPadding.small),
-                       lineSpacing: IKPadding.small) { choice in
+        WrappingHStack(AttendeeState.allCases, id: \.self, spacing: .constant(IKPadding.mini),
+                       lineSpacing: IKPadding.mini) { choice in
             CalendarChoiceButton(
                 selectedChoice: $selectedChoice,
                 choice: choice,

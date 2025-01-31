@@ -38,7 +38,7 @@ struct ThreadTitleModifier: ViewModifier {
             .textStyle(.header2)
             .multilineTextAlignment(.leading)
             .lineSpacing(8)
-            .padding(.top, value: .small)
+            .padding(.top, value: .mini)
             .overlay {
                 GeometryReader { proxy in
                     Color.clear
