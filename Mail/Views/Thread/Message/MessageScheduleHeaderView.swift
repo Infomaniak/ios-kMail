@@ -27,7 +27,7 @@ struct MessageScheduleHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
 
-    @State private var reschedulePanel = false
+    @State private var isShowingReschedulePanel = false
     @State private var rescheduleDate: Date?
 
     let scheduleDate: Date
@@ -43,7 +43,7 @@ struct MessageScheduleHeaderView: View {
             ))
         ) {
             Button(MailResourcesStrings.Localizable.buttonReschedule) {
-                reschedulePanel = true
+                isShowingReschedulePanel = true
             }
             .buttonStyle(.ikBorderless(isInlined: true))
             .controlSize(.small)
@@ -58,7 +58,7 @@ struct MessageScheduleHeaderView: View {
             .controlSize(.small)
         }
         .scheduleFloatingPanel(
-            isPresented: $reschedulePanel,
+            isPresented: $isShowingReschedulePanel,
             draftSaveOption: .constant(.schedule),
             draftDate: $rescheduleDate,
             mailboxManager: mailboxManager
