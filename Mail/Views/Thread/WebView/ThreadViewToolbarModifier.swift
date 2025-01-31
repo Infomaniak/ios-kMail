@@ -33,7 +33,7 @@ extension View {
 struct ThreadViewToolbarModifier: ViewModifier {
     private static let standardActions: [Action] = [.reply, .forward, .archive, .delete]
     private static let archiveActions: [Action] = [.reply, .forward, .openMovePanel, .delete]
-    private static let scheduleActions: [Action] = [.saveThreadInkDrive, .delete]
+    private static let scheduleActions: [Action] = [.delete]
 
     @LazyInjectService private var matomo: MatomoUtils
 
