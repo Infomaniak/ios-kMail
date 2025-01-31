@@ -35,6 +35,7 @@ class MailUITests: XCTestCase {
         if resetData {
             app.launchArguments += ["resetData"]
         }
+        app.launchArguments += ["disableAnimations"]
         app.launch()
     }
 
