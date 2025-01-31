@@ -38,6 +38,12 @@ class MailUITests: XCTestCase {
         app.launch()
     }
 
+    func wait(delay: TimeInterval = 5) {
+        let delayExpectation = XCTestExpectation()
+        delayExpectation.isInverted = true
+        wait(for: [delayExpectation], timeout: delay)
+    }
+
     func testLogin() throws {
         launchAppFromScratch()
         login()
@@ -48,14 +54,6 @@ class MailUITests: XCTestCase {
         login()
 
         app.collectionViews.staticTexts.element(boundBy: 1).firstMatch.tap()
-        _ = app.webViews.firstMatch.waitForExistence(timeout: defaultTimeOut)
-    }
-
-    func testNewMessage() throws {
-        launchAppFromScratch()
-        login()
-
-        app.buttons[MailResourcesStrings.Localizable.buttonNewMessage].firstMatch.tap()
         _ = app.webViews.firstMatch.waitForExistence(timeout: defaultTimeOut)
     }
 
@@ -76,18 +74,25 @@ class MailUITests: XCTestCase {
 
         app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage]
             .buttons[MailResourcesStrings.Localizable.buttonClose].firstMatch.tap()
-        _ = app.collectionViews.firstMatch.waitForExistence(timeout: defaultTimeOut)
 
         let deleteDraftButton = app.buttons[MailResourcesStrings.Localizable.actionDelete].firstMatch
         _ = deleteDraftButton.waitForExistence(timeout: defaultTimeOut)
         deleteDraftButton.tap()
     }
 
+    func tapMenuButton() {
+        let menuButton = app.navigationBars.firstMatch.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonMenu]
+            .firstMatch
+        _ = menuButton.waitForExistence(timeout: defaultTimeOut)
+        menuButton.tap()
+    }
+
     func testSwitchFolder() {
         launchAppFromScratch()
         login()
 
-        app.navigationBars.firstMatch.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonMenu].firstMatch.tap()
+        tapMenuButton()
+
         app.scrollViews.otherElements.staticTexts[MailResourcesStrings.Localizable.archiveFolder].firstMatch.tap()
     }
 
@@ -95,7 +100,8 @@ class MailUITests: XCTestCase {
         launchAppFromScratch()
         login()
 
-        app.navigationBars.firstMatch.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonMenu].tap()
+        tapMenuButton()
+
         let newFolderButton = app.scrollViews.otherElements.buttons[MailResourcesStrings.Localizable.newFolderDialogTitle]
         _ = newFolderButton.waitForExistence(timeout: defaultTimeOut)
         newFolderButton.tap()
@@ -112,7 +118,9 @@ class MailUITests: XCTestCase {
         login()
         swipeFirstCell()
 
-        app.collectionViews.buttons[Action.delete.accessibilityIdentifier].firstMatch.tap()
+        let deleteButton = app.collectionViews.buttons[Action.delete.accessibilityIdentifier].firstMatch
+        _ = deleteButton.waitForExistence(timeout: defaultTimeOut)
+        deleteButton.tap()
 
         undo()
     }
@@ -122,7 +130,9 @@ class MailUITests: XCTestCase {
         login()
         swipeFirstCell()
 
-        app.collectionViews.buttons[Action.delete.accessibilityIdentifier].firstMatch.tap()
+        let deleteButton = app.collectionViews.buttons[Action.delete.accessibilityIdentifier].firstMatch
+        _ = deleteButton.waitForExistence(timeout: defaultTimeOut)
+        deleteButton.tap()
 
         undo(ignoreUndoFailure: false)
     }
@@ -132,7 +142,7 @@ class MailUITests: XCTestCase {
         login()
         swipeFirstCell()
 
-        app.collectionViews.buttons[MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu].tap()
+        tapSwipeActionQuickActionsMenu()
         app.buttons[MailResourcesStrings.Localizable.actionMove].tap()
 
         let moveFolderViewTitle = app.navigationBars.staticTexts[MailResourcesStrings.Localizable.actionMove]
@@ -147,26 +157,33 @@ class MailUITests: XCTestCase {
         undo()
     }
 
+    func tapSwipeActionQuickActionsMenu() {
+        let quickActionsMenuButton = app.collectionViews
+            .buttons[MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu].firstMatch
+        _ = quickActionsMenuButton.waitForExistence(timeout: defaultTimeOut)
+        quickActionsMenuButton.tap()
+    }
+
     func testMoreSwipeAction() {
         launchAppFromScratch()
         login()
         swipeFirstCell()
 
-        app.collectionViews.buttons[MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu].firstMatch.tap()
+        tapSwipeActionQuickActionsMenu()
         app.buttons[Action.delete.accessibilityIdentifier].tap()
 
         undo()
 
         swipeFirstCell()
 
-        app.collectionViews.buttons[MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu].firstMatch.tap()
+        tapSwipeActionQuickActionsMenu()
         app.buttons[Action.archive.accessibilityIdentifier].firstMatch.tap()
 
         undo()
 
         swipeFirstCell()
 
-        app.collectionViews.buttons[MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu].firstMatch.tap()
+        tapSwipeActionQuickActionsMenu()
         if app.buttons[Action.markAsRead.accessibilityIdentifier].firstMatch.exists {
             app.buttons[Action.markAsRead.accessibilityIdentifier].firstMatch.tap()
         } else {
@@ -175,7 +192,7 @@ class MailUITests: XCTestCase {
 
         swipeFirstCell()
 
-        app.collectionViews.buttons[MailResourcesStrings.Localizable.settingsSwipeActionQuickActionsMenu].firstMatch.tap()
+        tapSwipeActionQuickActionsMenu()
         if app.buttons[MailResourcesStrings.Localizable.actionMarkAsUnread].firstMatch.exists {
             app.buttons[MailResourcesStrings.Localizable.actionMarkAsUnread].firstMatch.tap()
         } else {
@@ -202,7 +219,10 @@ class MailUITests: XCTestCase {
     }
 
     func writeTestMessage() {
-        app.buttons[MailResourcesStrings.Localizable.buttonNewMessage].firstMatch.tap()
+        let newMessageButton = app.buttons[MailResourcesStrings.Localizable.buttonNewMessage].firstMatch
+        _ = newMessageButton.waitForExistence(timeout: defaultTimeOut)
+        newMessageButton.tap()
+
         let composeBodyView = app.webViews.firstMatch
         _ = composeBodyView.waitForExistence(timeout: defaultTimeOut)
 
@@ -216,6 +236,8 @@ class MailUITests: XCTestCase {
 
         composeBodyView.tap()
         composeBodyView.typeText(MailResourcesStrings.Localizable.aiPromptExample1)
+
+        wait(delay: 5)
     }
 
     func login() {
