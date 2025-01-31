@@ -113,6 +113,10 @@ public extension FormatStyle where Self == Date.FormatStyle {
     static func thread(_ style: Date.ThreadFormatStyle.Style) -> Date.ThreadFormatStyle {
         return .init(style: style)
     }
+
+    static var schedule: Date.FormatStyle {
+        return .dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute()
+    }
 }
 
 // MARK: ByteCount

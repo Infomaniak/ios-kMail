@@ -31,8 +31,6 @@ struct ScheduleOptionView: View {
     let option: ScheduleSendOption
     let setScheduleAction: (Date) -> Void
 
-    let dateFormat = Date.FormatStyle.dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute()
-
     var body: some View {
         if let scheduleDate = option.date {
             Button {
@@ -50,7 +48,7 @@ struct ScheduleOptionView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .labelStyle(.ikLabel(IKPadding.medium))
 
-                    Text(scheduleDate.formatted(dateFormat))
+                    Text(scheduleDate, format: .schedule)
                         .textStyle(.bodySmallSecondary)
                 }
             }
@@ -61,12 +59,12 @@ struct ScheduleOptionView: View {
 
 #Preview {
     ScheduleOptionView(option: .nextMondayAfternoon) { date in
-        print("Button \(date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute())) clicked !")
+        print("Button \(date.formatted(.schedule)) clicked !")
     }
     ScheduleOptionView(option: .lastSchedule(value: .now)) { date in
-        print("Button \(date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute())) clicked !")
+        print("Button \(date.formatted(.schedule)) clicked !")
     }
     ScheduleOptionView(option: .thisAfternoon) { date in
-        print("Button \(date.formatted(.dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute())) clicked !")
+        print("Button \(date.formatted(.schedule)) clicked !")
     }
 }
