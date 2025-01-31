@@ -16,7 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreSwiftUI
+import DesignSystem
 import InfomaniakDI
 import MailCoreUI
 import RealmSwift

@@ -16,8 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreCommonUI
-import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -63,7 +63,7 @@ struct CustomScheduleAlertView: View {
 
             Text(MailResourcesStrings.Localizable.errorScheduleDelayTooShortPlural(5))
                 .textStyle(.labelError)
-                .padding(.top, value: .extraSmall)
+                .padding(.top, value: .micro)
                 .opacity(isShowingError ? 1 : 0)
                 .padding(.bottom, IKPadding.alertDescriptionBottom)
 
