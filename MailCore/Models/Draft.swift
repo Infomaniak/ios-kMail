@@ -287,8 +287,7 @@ public final class Draft: Object, Codable, Identifiable {
         try container.encode(attachmentsArray, forKey: .attachments)
         try container.encode(action, forKey: .action)
         try container.encodeIfPresent(delay, forKey: .delay)
-        // FIXME: Should encode the date as an object, not a string <ISO8601WithTimeZone>
-        try container.encodeIfPresent(scheduleDate?.ISO8601WithTimeZone, forKey: .scheduleDate)
+        try container.encodeIfPresent(scheduleDate, forKey: .scheduleDate)
     }
 }
 

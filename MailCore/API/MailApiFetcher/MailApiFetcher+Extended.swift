@@ -172,7 +172,7 @@ public extension MailApiFetcher {
         let _: Empty = try await perform(request: authenticatedRequest(
             .draftSchedule(draftAction: draftResource.appending("/schedule")),
             method: .put,
-            parameters: ["schedule_date": scheduleDate.ISO8601WithTimeZone]
+            parameters: ["schedule_date": scheduleDate]
         ))
     }
 
