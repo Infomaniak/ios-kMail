@@ -28,7 +28,23 @@ import UIKit
 
 public extension ApiFetcher {
     convenience init(token: ApiToken, delegate: RefreshTokenDelegate) {
-        self.init()
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+
+        let encoder = JSONEncoder()
+        encoder.keyEncodingStrategy = .convertToSnakeCase
+
+        let formatter = ISO8601DateFormatter()
+        formatter.timeZone = .current
+        formatter.formatOptions = [.withInternetDateTime, .withTimeZone]
+        encoder.dateEncodingStrategy = .custom { date, encoder in
+            var container = encoder.singleValueContainer()
+            try container.encode(formatter.string(from: date))
+        }
+
+        self.init(decoder: decoder, bodyEncoder: encoder)
+
         createAuthenticatedSession(token,
                                    authenticator: SyncedAuthenticator(refreshTokenDelegate: delegate),
                                    additionalAdapters: [UserAgentAdapter()])
@@ -44,7 +60,7 @@ public final class MailApiFetcher: ApiFetcher, MailApiFetchable {
     }()
 
     override public func perform<T: Decodable>(request: DataRequest,
-                                               decoder: JSONDecoder = ApiFetcher.decoder) async throws -> ValidServerResponse<T> {
+                                               overrideDecoder: JSONDecoder? = nil) async throws -> ValidServerResponse<T> {
         do {
             return try await super.perform(request: request.validate(statusCode: handledHttpStatus))
         } catch InfomaniakError.apiError(let apiError) {
