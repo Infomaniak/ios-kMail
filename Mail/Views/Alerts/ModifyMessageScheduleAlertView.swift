@@ -39,18 +39,16 @@ struct ModifyMessageScheduleAlertView: View {
         }
     }
 
-    private func modifySchedule() {
-        Task {
-            await tryOrDisplayError {
-                try await mailboxManager.moveScheduleToDraft(draftResource: draftResource)
-                guard let draft = try await mailboxManager.loadRemotely(from: draftResource) else { return }
+    private func modifySchedule() async {
+        await tryOrDisplayError {
+            try await mailboxManager.moveScheduleToDraft(draftResource: draftResource)
+            guard let draft = try await mailboxManager.loadRemotely(from: draftResource) else { return }
 
-                DraftUtils.editDraft(
-                    from: draft,
-                    mailboxManager: mailboxManager,
-                    composeMessageIntent: $mainViewState.composeMessageIntent
-                )
-            }
+            DraftUtils.editDraft(
+                from: draft,
+                mailboxManager: mailboxManager,
+                composeMessageIntent: $mainViewState.composeMessageIntent
+            )
         }
     }
 }

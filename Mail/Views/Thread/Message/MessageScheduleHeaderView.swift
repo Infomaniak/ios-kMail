@@ -25,10 +25,10 @@ import SwiftUI
 
 struct MessageScheduleHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var mainViewState: MainViewState
 
     @State private var reschedulePanel = false
     @State private var rescheduleDate: Date?
-    @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var isModifyingMessage: Bool
 
     let scheduleDate: Date
     let draftResource: String
@@ -52,7 +52,7 @@ struct MessageScheduleHeaderView: View {
                 .frame(height: 20)
 
             Button(MailResourcesStrings.Localizable.buttonModify) {
-                isModifyingMessage = true
+                mainViewState.modifiedScheduleDraftResource = ModifiedScheduleDraftResource(draftResource: draftResource)
             }
             .buttonStyle(.ikBorderless(isInlined: true))
             .controlSize(.small)
@@ -64,9 +64,6 @@ struct MessageScheduleHeaderView: View {
             mailboxManager: mailboxManager
         ) {
             changeScheduleDate(rescheduleDate)
-        }
-        .customAlert(isPresented: $isModifyingMessage) {
-            ModifyMessageScheduleAlertView(draftResource: draftResource)
         }
     }
 
