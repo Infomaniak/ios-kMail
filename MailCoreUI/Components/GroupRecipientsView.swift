@@ -16,7 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakCoreSwiftUI
+import DesignSystem
 import MailCore
 import MailResources
 import SwiftUI
@@ -25,7 +25,7 @@ struct GroupRecipientsView: View {
     let size: CGFloat
 
     private var iconSize: CGFloat {
-        return size - 2 * IKPadding.small
+        return size - 2 * IKPadding.mini
     }
 
     public init(size: CGFloat) {
