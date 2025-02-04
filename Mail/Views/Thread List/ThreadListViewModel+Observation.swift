@@ -32,11 +32,11 @@ extension ThreadListViewModel {
             threadResults = folder.threads
                 .where { $0.isMovedOutLocally == false }
                 .filter(predicate + " OR uid == %@", selectedThreadOwner.selectedThread?.uid ?? "")
-                .sorted(by: \.date, ascending: false)
+                .sorted(by: \.date, ascending: folder.shouldBeAscending)
         } else {
             threadResults = folder.threads
                 .where { $0.isMovedOutLocally == false }
-                .sorted(by: \.date, ascending: false)
+                .sorted(by: \.date, ascending: folder.shouldBeAscending)
         }
 
         return threadResults
@@ -84,7 +84,11 @@ extension ThreadListViewModel {
                 guard let firstDate = $0.value.first?.date,
                       let secondDate = $1.value.first?.date else { return false }
 
-                return firstDate > secondDate
+                if frozenFolder.shouldBeAscending {
+                    return firstDate < secondDate
+                } else {
+                    return firstDate > secondDate
+                }
             }
 
         var threads = [Thread]()

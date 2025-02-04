@@ -45,3 +45,9 @@ public struct UndoResponse: Decodable, CancelableResponse {
         return undoResource
     }
 }
+
+public struct ScheduleResponse: Decodable {
+    public let uuid: String
+    public let uid: String
+    public let scheduleAction: String
+}

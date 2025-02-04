@@ -31,7 +31,7 @@ final class ITNestableFolder: XCTestCase {
         super.setUp()
 
         MockingHelper.clearRegisteredTypes()
-        MockingHelper.registerConcreteTypes(configuration: .minimal)
+        MockingHelper.registerConcreteTypes(configuration: .realApp)
     }
 
     // MARK: - TestSuite

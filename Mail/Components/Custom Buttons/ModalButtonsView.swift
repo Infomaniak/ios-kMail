@@ -18,7 +18,9 @@
 
 import DesignSystem
 import InfomaniakCoreSwiftUI
+import MailCore
 import MailResources
+import OSLog
 import SwiftUI
 
 struct ModalButtonsView: View {
@@ -29,7 +31,7 @@ struct ModalButtonsView: View {
     let primaryButtonTitle: String
     var secondaryButtonTitle: String? = MailResourcesStrings.Localizable.buttonCancel
     var primaryButtonEnabled = true
-    let primaryButtonAction: () async -> Void
+    let primaryButtonAction: () async throws -> Void
     var secondaryButtonAction: (() -> Void)?
 
     var body: some View {
@@ -46,9 +48,13 @@ struct ModalButtonsView: View {
             Button(primaryButtonTitle) {
                 Task {
                     isButtonLoading = true
-                    await primaryButtonAction()
+                    do {
+                        try await primaryButtonAction()
+                        dismiss()
+                    } catch {
+                        Logger.view.warning("\(error)")
+                    }
                     isButtonLoading = false
-                    dismiss()
                 }
             }
             .buttonStyle(.ikBorderedProminent)

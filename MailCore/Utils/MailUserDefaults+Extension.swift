@@ -53,6 +53,7 @@ public extension UserDefaults.Keys {
     static let hasDismissedUpdateVersionView = UserDefaults.Keys(rawValue: "hasDismissedUpdateVersionView")
     static let matomoAuthorized = UserDefaults.Keys(rawValue: "matomoAuthorized")
     static let sentryAuthorized = UserDefaults.Keys(rawValue: "sentryAuthorized")
+    static let lastScheduleInterval = UserDefaults.Keys(rawValue: "lastCustomSchedule")
 }
 
 public extension UserDefaults {

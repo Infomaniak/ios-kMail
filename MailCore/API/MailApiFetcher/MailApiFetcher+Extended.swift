@@ -144,15 +144,11 @@ public extension MailApiFetcher {
         return try await perform(request: authenticatedRequest(.resource(resource)))
     }
 
-    func send(mailbox: Mailbox, draft: Draft) async throws -> SendResponse {
-        try await perform(request: authenticatedRequest(
-            draft.remoteUUID.isEmpty ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.remoteUUID),
-            method: draft.remoteUUID.isEmpty ? .post : .put,
-            parameters: draft
-        ))
+    func draft(draftResource: String) async throws -> Draft {
+        return try await perform(request: authenticatedRequest(.resource(draftResource)))
     }
 
-    func save(mailbox: Mailbox, draft: Draft) async throws -> DraftResponse {
+    func send<T: Decodable>(mailbox: Mailbox, draft: Draft) async throws -> T {
         try await perform(request: authenticatedRequest(
             draft.remoteUUID.isEmpty ? .draft(uuid: mailbox.uuid) : .draft(uuid: mailbox.uuid, draftUuid: draft.remoteUUID),
             method: draft.remoteUUID.isEmpty ? .post : .put,
@@ -170,5 +166,20 @@ public extension MailApiFetcher {
     func deleteDraft(draftResource: String) async throws -> Empty? {
         // TODO: Remove try? when bug will be fixed from API
         return try? await perform(request: authenticatedRequest(.resource(draftResource), method: .delete))
+    }
+
+    func changeDraftSchedule(draftResource: String, scheduleDate: Date) async throws {
+        let _: Empty = try await perform(request: authenticatedRequest(
+            .draftSchedule(draftAction: draftResource.appending("/schedule")),
+            method: .put,
+            parameters: ["schedule_date": scheduleDate]
+        ))
+    }
+
+    func deleteSchedule(scheduleAction: String) async throws {
+        let _: Empty = try await perform(request: authenticatedRequest(
+            .draftSchedule(draftAction: scheduleAction),
+            method: .delete
+        ))
     }
 }

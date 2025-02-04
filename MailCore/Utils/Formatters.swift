@@ -44,10 +44,16 @@ public extension Date {
         }
 
         private func formatToCustomRelative(_ date: Date) -> String {
-            if date > .now {
-                return date.formatted(date: .numeric, time: .omitted)
-            } else if Calendar.current.isDateInToday(date) {
+            if Calendar.current.isDateInToday(date) {
                 return date.formatted(date: .omitted, time: .shortened)
+            } else if date > .now {
+                let dateFormatter = DateFormatter()
+
+                dateFormatter.dateStyle = date > .now.addingTimeInterval(86400 * 2) ? .short : .long
+                dateFormatter.timeStyle = .short
+                dateFormatter.doesRelativeDateFormatting = true
+
+                return dateFormatter.string(from: date)
             } else if Calendar.current.isDateInYesterday(date) {
                 let dateMidnight = Calendar.current.date(bySettingHour: 0, minute: 0, second: 0, of: date)!
                 return dateMidnight.formatted(.relative(presentation: .named))
@@ -62,7 +68,13 @@ public extension Date {
 
         private func formatToMessageHeaderRelative(_ date: Date) -> String {
             if date > .now {
-                return date.formatted(date: .numeric, time: .shortened)
+                let dateFormatter = DateFormatter()
+
+                dateFormatter.dateStyle = .long
+                dateFormatter.timeStyle = .short
+                dateFormatter.doesRelativeDateFormatting = true
+
+                return dateFormatter.string(from: date)
             } else if Calendar.current.isDateInToday(date) {
                 return date.formatted(date: .omitted, time: .shortened)
             } else if Calendar.current.isDateInYesterday(date) {
@@ -100,6 +112,10 @@ public extension FormatStyle where Self == Date.FormatStyle {
 
     static func thread(_ style: Date.ThreadFormatStyle.Style) -> Date.ThreadFormatStyle {
         return .init(style: style)
+    }
+
+    static var schedule: Date.FormatStyle {
+        return .dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute()
     }
 }
 

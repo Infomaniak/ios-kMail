@@ -228,6 +228,9 @@ struct ThreadListView: View {
                 hasDismissedUpdateVersionView = true
             })
         }
+        .customAlert(item: $mainViewState.modifiedScheduleDraftResource) { container in
+            ModifyMessageScheduleAlertView(draftResource: container.draftResource)
+        }
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Main"])
     }
 

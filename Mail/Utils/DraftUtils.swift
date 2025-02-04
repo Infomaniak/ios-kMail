@@ -30,13 +30,8 @@ enum DraftUtils {
         composeMessageIntent: Binding<ComposeMessageIntent?>
     ) {
         guard let message = thread.messages.first else { return }
-        // If we already have the draft locally, present it directly
-        if let draft = mailboxManager.draft(messageUid: message.uid)?.detached() {
-            matomoOpenDraft(isLoadedRemotely: false)
-            composeMessageIntent.wrappedValue = ComposeMessageIntent.existing(draft: draft, originMailboxManager: mailboxManager)
-        } else {
-            DraftUtils.editDraft(from: message, mailboxManager: mailboxManager, composeMessageIntent: composeMessageIntent)
-        }
+
+        DraftUtils.editDraft(from: message, mailboxManager: mailboxManager, composeMessageIntent: composeMessageIntent)
     }
 
     public static func editDraft(
@@ -56,6 +51,19 @@ enum DraftUtils {
                 originMailboxManager: mailboxManager
             )
         }
+    }
+
+    public static func editDraft(
+        from draft: Draft,
+        mailboxManager: MailboxManageable,
+        composeMessageIntent: Binding<ComposeMessageIntent?>
+    ) {
+        let draftDetached = draft.detached()
+        matomoOpenDraft(isLoadedRemotely: false)
+        composeMessageIntent.wrappedValue = ComposeMessageIntent.existing(
+            draft: draftDetached,
+            originMailboxManager: mailboxManager
+        )
     }
 
     private static func matomoOpenDraft(isLoadedRemotely: Bool) {

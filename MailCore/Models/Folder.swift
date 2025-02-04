@@ -26,11 +26,13 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
     case archive = "ARCHIVE"
     case commercial = "COMMERCIAL"
     case draft = "DRAFT"
+    case scheduledDrafts = "SCHEDULED_DRAFTS"
     case inbox = "INBOX"
     case sent = "SENT"
     case socialNetworks = "SOCIALNETWORKS"
     case spam = "SPAM"
     case trash = "TRASH"
+    case unknown
 
     public var localizedName: String {
         switch self {
@@ -40,6 +42,8 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return MailResourcesStrings.Localizable.commercialFolder
         case .draft:
             return MailResourcesStrings.Localizable.draftFolder
+        case .scheduledDrafts:
+            return MailResourcesStrings.Localizable.scheduledMessagesFolder
         case .inbox:
             return MailResourcesStrings.Localizable.inboxFolder
         case .sent:
@@ -50,16 +54,20 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return MailResourcesStrings.Localizable.spamFolder
         case .trash:
             return MailResourcesStrings.Localizable.trashFolder
+        case .unknown:
+            return ""
         }
     }
 
     public var order: Int {
         switch self {
         case .archive:
-            return 8
+            return 9
         case .commercial:
             return 2
         case .draft:
+            return 6
+        case .scheduledDrafts:
             return 5
         case .inbox:
             return 1
@@ -68,9 +76,11 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
         case .socialNetworks:
             return 3
         case .spam:
-            return 6
-        case .trash:
             return 7
+        case .trash:
+            return 8
+        case .unknown:
+            return 0
         }
     }
 
@@ -82,6 +92,8 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return MailResourcesAsset.promotions
         case .draft:
             return MailResourcesAsset.draft
+        case .scheduledDrafts:
+            return MailResourcesAsset.clockPaperplane
         case .inbox:
             return MailResourcesAsset.drawer
         case .sent:
@@ -92,10 +104,19 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return MailResourcesAsset.spam
         case .trash:
             return MailResourcesAsset.bin
+        case .unknown:
+            return MailResourcesAsset.circleQuestionmark
         }
     }
 
-    public static let writtenByMeFolders: [FolderRole] = [.sent, .draft]
+    public static let writtenByMeFolders: [FolderRole] = [.sent, .draft, .scheduledDrafts]
+
+    public init(from decoder: any Decoder) throws {
+        let singleKeyContainer = try decoder.singleValueContainer()
+        let value = try singleKeyContainer.decode(String.self)
+
+        self = FolderRole(rawValue: value) ?? .unknown
+    }
 }
 
 public enum ToolFolderType: String, PersistableEnum {
@@ -163,8 +184,22 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return asset.swiftUIImage
     }
 
+    public var shouldBeDisplayed: Bool {
+        guard name != ".ik" && role != .unknown else { return false }
+        guard !(role == .scheduledDrafts && threads.isEmpty) else { return false }
+        return true
+    }
+
+    public var shouldBeAscending: Bool {
+        return [.scheduledDrafts].contains(role)
+    }
+
+    public var hasLimitedSwipeActions: Bool {
+        return [.draft, .scheduledDrafts].contains(role)
+    }
+
     public var formattedUnreadCount: String {
-        let realCount = (role == .draft ? threads.count : unreadCount)
+        let realCount = ((role == .draft || role == .scheduledDrafts) ? threads.count : unreadCount)
         if realCount >= 100 {
             return "99+"
         }
@@ -182,11 +217,11 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     public var permanentlyDeleteContent: Bool {
-        return [FolderRole.draft, FolderRole.spam, FolderRole.trash].contains(role)
+        return [FolderRole.draft, FolderRole.spam, FolderRole.trash, FolderRole.scheduledDrafts].contains(role)
     }
 
     public var shouldWarnBeforeDeletion: Bool {
-        permanentlyDeleteContent && role != .draft
+        permanentlyDeleteContent && (role != .draft && role != .scheduledDrafts)
     }
 
     public var matomoName: String {

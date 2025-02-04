@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2022 Infomaniak Network SA
+ Copyright (C) 2025 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -16,24 +16,13 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
+import Foundation
 
-struct MessageHeaderDateView: View {
-    let date: Date
+public struct ModifiedScheduleDraftResource: Identifiable, Equatable, Sendable {
+    public var id: String { draftResource }
+    public let draftResource: String
 
-    var body: some View {
-        Text(date, format: .thread(.header))
-            .lineLimit(1)
-            .layoutPriority(1)
-            .textStyle(.labelSecondary)
-    }
-}
-
-#Preview {
-    VStack {
-        MessageHeaderDateView(date: .now)
-        MessageHeaderDateView(date: .yesterday)
-        MessageHeaderDateView(date: .lastWeek)
-        MessageHeaderDateView(date: Date(timeIntervalSince1970: 0))
+    public init(draftResource: String) {
+        self.draftResource = draftResource
     }
 }

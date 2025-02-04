@@ -77,7 +77,7 @@ struct MessageHeaderView: View {
         matomo.track(eventWithCategory: .messageActions, name: "deleteDraft")
         Task {
             await tryOrDisplayError {
-                try await mailboxManager.delete(draftMessage: message)
+                try await mailboxManager.delete(draftMessages: [message])
             }
         }
     }

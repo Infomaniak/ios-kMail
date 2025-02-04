@@ -33,6 +33,7 @@ extension View {
 struct ThreadViewToolbarModifier: ViewModifier {
     private static let standardActions: [Action] = [.reply, .forward, .archive, .delete]
     private static let archiveActions: [Action] = [.reply, .forward, .openMovePanel, .delete]
+    private static let scheduleActions: [Action] = [.delete]
 
     @LazyInjectService private var matomo: MatomoUtils
 
@@ -49,7 +50,14 @@ struct ThreadViewToolbarModifier: ViewModifier {
     let frozenMessages: [Message]
 
     private var toolbarActions: [Action] {
-        frozenFolder?.role == .archive ? Self.archiveActions : Self.standardActions
+        switch frozenFolder?.role {
+        case .archive:
+            return Self.archiveActions
+        case .scheduledDrafts:
+            return Self.scheduleActions
+        default:
+            return Self.standardActions
+        }
     }
 
     func body(content: Content) -> some View {
@@ -82,14 +90,16 @@ struct ThreadViewToolbarModifier: ViewModifier {
                         }
                     }
                 }
-                ActionsPanelButton(
-                    messages: frozenMessages,
-                    originFolder: frozenFolder,
-                    panelSource: .messageList,
-                    popoverArrowEdge: .bottom
-                ) {
-                    ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
-                                       icon: MailResourcesAsset.plusActions.swiftUIImage)
+                if frozenFolder?.role != .scheduledDrafts {
+                    ActionsPanelButton(
+                        messages: frozenMessages,
+                        originFolder: frozenFolder,
+                        panelSource: .messageList,
+                        popoverArrowEdge: .bottom
+                    ) {
+                        ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
+                                           icon: MailResourcesAsset.plusActions.swiftUIImage)
+                    }
                 }
             }
             .customAlert(item: $nearestFlushAlert) { item in

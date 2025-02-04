@@ -93,13 +93,16 @@ public extension MatomoUtils.EventCategory {
     static let settingsThreadMode = MatomoUtils.EventCategory(displayName: "settingsThreadMode")
     static let settingsAutoAdvance = MatomoUtils.EventCategory(displayName: "settingsAutoAdvance")
     static let settingsDataPrivacy = MatomoUtils.EventCategory(displayName: "settingsDataPrivacy")
+
+    // Schedule send
+    static let scheduleSend = MatomoUtils.EventCategory(displayName: "scheduleSend")
 }
 
 // MARK: - Helpers
 
 public extension MatomoUtils {
     func trackSendMessage(draft: Draft, sentWithExternals: Bool) {
-        track(eventWithCategory: .newMessage, name: "sendMail")
+        track(eventWithCategory: .newMessage, name: draft.scheduleDate == nil ? "scheduleDraft" : "sendMail")
 
         track(eventWithCategory: .newMessage, action: .data, name: "numberOfTo", value: Float(draft.to.count))
         track(eventWithCategory: .newMessage, action: .data, name: "numberOfCc", value: Float(draft.cc.count))

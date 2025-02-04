@@ -93,12 +93,12 @@ struct ThreadListSwipeActions: ViewModifier {
     func body(content: Content) -> some View {
         content
             .swipeActions(edge: .leading) {
-                if viewModel.frozenFolder.role != .draft {
+                if !viewModel.frozenFolder.hasLimitedSwipeActions {
                     edgeActions([swipeFullLeading, swipeLeading])
                 }
             }
             .swipeActions(edge: .trailing) {
-                if viewModel.frozenFolder.role == .draft {
+                if viewModel.frozenFolder.hasLimitedSwipeActions {
                     edgeActions([.delete])
                 } else {
                     edgeActions([swipeFullTrailing, swipeTrailing])

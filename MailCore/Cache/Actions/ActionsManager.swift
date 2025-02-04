@@ -257,6 +257,10 @@ public class ActionsManager: ObservableObject {
     private func performDelete(messages: [Message], originFolder: Folder?) async throws {
         if originFolder?.permanentlyDeleteContent == true {
             let permanentlyDeleteTask = Task {
+                guard originFolder?.role != .scheduledDrafts else {
+                    try await mailboxManager.delete(draftMessages: messages)
+                    return
+                }
                 try await mailboxManager.delete(messages: messages)
             }
 
@@ -306,7 +310,7 @@ public class ActionsManager: ObservableObject {
             if uniqueThreadCount == 1 {
                 return MailResourcesStrings.Localizable.snackbarThreadMoved(destinationFolderName)
             } else {
-                return MailResourcesStrings.Localizable.snackbarThreadsMoved(destinationFolderName)
+                return MailResourcesStrings.Localizable.snackbarThreadMovedPlural(destinationFolderName)
             }
         }
     }
