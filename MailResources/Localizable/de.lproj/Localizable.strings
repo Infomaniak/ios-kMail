@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: de, German
  * Tagged: ios
- * Exported by: Jordan Chapelle
- * Exported at: Fri, 01 Nov 2024 09:54:33 +0100
+ * Exported by: Valentin Perignon
+ * Exported at: Wed, 05 Feb 2025 10:28:51 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -482,7 +482,7 @@
 "buttonSchedule" = "Planen Sie den Versand von E-Mails für einen späteren Zeitpunkt";
 
 /* loco:6723a2a5f3c615913002d152 */
-"buttonScheduleTitle" = "Zeitplan";
+"buttonScheduleTitle" = "Programmieren";
 
 /* loco:65957d479527393708069ee2 */
 "buttonSee" = "Siehe";
@@ -1638,6 +1638,9 @@
 
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "";
+
+/* loco:67a32e4384fbf4226404e972 */
+"snoozedFolder" = "In der Warteschlange";
 
 /* loco:62a33e2d0c5ac4438c366a32 */
 "socialNetworksFolder" = "Soziale Netzwerke";
