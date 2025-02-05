@@ -29,7 +29,7 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
     case inbox = "INBOX"
     case scheduledDrafts = "SCHEDULED_DRAFTS"
     case sent = "SENT"
-    case snooze = "SNOOZE"
+    case snoozed = "SNOOZED"
     case socialNetworks = "SOCIALNETWORKS"
     case spam = "SPAM"
     case trash = "TRASH"
@@ -49,7 +49,7 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return MailResourcesStrings.Localizable.inboxFolder
         case .sent:
             return MailResourcesStrings.Localizable.sentFolder
-        case .snooze:
+        case .snoozed:
             return MailResourcesStrings.Localizable.snoozedFolder
         case .socialNetworks:
             return MailResourcesStrings.Localizable.socialNetworksFolder
@@ -72,7 +72,7 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return 3
         case .sent:
             return 4
-        case .snooze:
+        case .snoozed:
             return 5
         case .scheduledDrafts:
             return 6
@@ -103,7 +103,7 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return MailResourcesAsset.drawer
         case .sent:
             return MailResourcesAsset.send
-        case .snooze:
+        case .snoozed:
             return MailResourcesAsset.alarmClock
         case .socialNetworks:
             return MailResourcesAsset.socialMedia
@@ -193,7 +193,10 @@ public class Folder: Object, Codable, Comparable, Identifiable {
 
     public var shouldBeDisplayed: Bool {
         guard name != ".ik" && role != .unknown else { return false }
-        guard !(role == .scheduledDrafts && threads.isEmpty) else { return false }
+
+        if role == .scheduledDrafts || role == .snoozed {
+            return !threads.isEmpty
+        }
         return true
     }
 
