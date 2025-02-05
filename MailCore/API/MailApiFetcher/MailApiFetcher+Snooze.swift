@@ -20,6 +20,7 @@ import Alamofire
 import Foundation
 import InfomaniakCore
 
+/// implementing `MailApiCommonFetchable`
 public extension MailApiFetcher {
     func snooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws {
         let _: Empty = try await perform(
