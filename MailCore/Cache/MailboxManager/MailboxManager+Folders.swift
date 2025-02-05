@@ -120,8 +120,11 @@ public extension MailboxManager {
     private func filterOutUnknownFolders(_ folders: [Folder]) -> [Folder] {
         let filteredFolders: [Folder] = folders.compactMap { folder in
             guard folder.role != .unknown else { return nil }
+
+            let filteredChildren = filterOutUnknownFolders(Array(folder.children))
             folder.children.removeAll()
-            folder.children.insert(objectsIn: filterOutUnknownFolders(Array(folder.children)))
+            folder.children.insert(objectsIn: filteredChildren)
+
             return folder
         }
 
