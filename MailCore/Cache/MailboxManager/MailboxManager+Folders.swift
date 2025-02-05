@@ -29,9 +29,9 @@ public extension MailboxManager {
             return
         }
 
-        let folderResultRaw = try await apiFetcher.folders(mailbox: mailbox)
-        let folderResult = folderResultRaw.filter { $0.role != .unknown }
-        let newFolders = getSubFolders(from: folderResult)
+        let folderResult = try await apiFetcher.folders(mailbox: mailbox)
+        let filteredFolderResult = filterOutUnknownFolders(folderResult)
+        let newFolders = getSubFolders(from: filteredFolderResult)
 
         try? writeTransaction { writableRealm in
             // Update folders in Realm
@@ -43,7 +43,7 @@ public extension MailboxManager {
             let cachedFolders = writableRealm.objects(Folder.self)
 
             // Remove old folders
-            writableRealm.add(folderResult, update: .modified)
+            writableRealm.add(filteredFolderResult, update: .modified)
             let toDeleteFolders = Set(cachedFolders).subtracting(Set(newFolders))
                 .filter { $0.remoteId != Constants.searchFolderId }
             var toDeleteThreads = [Thread]()
@@ -115,5 +115,19 @@ public extension MailboxManager {
 
     func cancelRefresh() async {
         await refreshActor.cancelRefresh()
+    }
+
+    private func filterOutUnknownFolders(_ folders: [Folder]) -> [Folder] {
+        let filteredFolders: [Folder] = folders.compactMap { folder in
+            guard folder.role != .unknown else { return nil }
+
+            let filteredChildren = filterOutUnknownFolders(Array(folder.children))
+            folder.children.removeAll()
+            folder.children.insert(objectsIn: filteredChildren)
+
+            return folder
+        }
+
+        return filteredFolders
     }
 }
