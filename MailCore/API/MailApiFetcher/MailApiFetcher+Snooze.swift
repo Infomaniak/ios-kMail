@@ -16,6 +16,43 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Alamofire
 import Foundation
+import InfomaniakCore
 
-public extension MailApiFetcher {}
+public extension MailApiFetcher {
+    func snooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws {
+        let _: Empty = try await perform(
+            request: authenticatedRequest(
+                .snooze(uuid: mailbox.uuid),
+                method: .post,
+                parameters: MessagesToSnooze(endDate: date, uids: messages.map(\.uid))
+            )
+        )
+    }
+
+    func updateSnooze(messages: [Message], until date: Date) async throws {
+        // TODO: API Should be updated to allow batch actions
+        for message in messages {
+            let _: Empty = try await perform(
+                request: authenticatedRequest(
+                    .snoozeAction(resource: ""),
+                    method: .put,
+                    parameters: ["end_date": date]
+                )
+            )
+        }
+    }
+
+    func deleteSnooze(messages: [Message]) async throws {
+        // TODO: API Should be updated to allow batch actions
+        for message in messages {
+            let _: Empty = try await perform(
+                request: authenticatedRequest(
+                    .snoozeAction(resource: ""),
+                    method: .delete
+                )
+            )
+        }
+    }
+}
