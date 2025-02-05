@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct MessagesToSnooze: Codable, Sendable {
+struct MessagesToSnooze: Encodable, Sendable {
     let endDate: Date
     let uids: [String]
 }
