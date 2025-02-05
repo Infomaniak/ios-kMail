@@ -26,9 +26,10 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
     case archive = "ARCHIVE"
     case commercial = "COMMERCIAL"
     case draft = "DRAFT"
-    case scheduledDrafts = "SCHEDULED_DRAFTS"
     case inbox = "INBOX"
+    case scheduledDrafts = "SCHEDULED_DRAFTS"
     case sent = "SENT"
+    case snooze = "SNOOZE"
     case socialNetworks = "SOCIALNETWORKS"
     case spam = "SPAM"
     case trash = "TRASH"
@@ -48,6 +49,8 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return MailResourcesStrings.Localizable.inboxFolder
         case .sent:
             return MailResourcesStrings.Localizable.sentFolder
+        case .snooze:
+            return MailResourcesStrings.Localizable.snoozedFolder
         case .socialNetworks:
             return MailResourcesStrings.Localizable.socialNetworksFolder
         case .spam:
@@ -61,24 +64,26 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
 
     public var order: Int {
         switch self {
-        case .archive:
-            return 9
-        case .commercial:
-            return 2
-        case .draft:
-            return 6
-        case .scheduledDrafts:
-            return 5
         case .inbox:
             return 1
-        case .sent:
-            return 4
+        case .commercial:
+            return 2
         case .socialNetworks:
             return 3
-        case .spam:
+        case .sent:
+            return 4
+        case .snooze:
+            return 5
+        case .scheduledDrafts:
+            return 6
+        case .draft:
             return 7
-        case .trash:
+        case .spam:
             return 8
+        case .trash:
+            return 9
+        case .archive:
+            return 10
         case .unknown:
             return 0
         }
@@ -98,6 +103,8 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return MailResourcesAsset.drawer
         case .sent:
             return MailResourcesAsset.send
+        case .snooze:
+            return MailResourcesAsset.alarmClock
         case .socialNetworks:
             return MailResourcesAsset.socialMedia
         case .spam:
