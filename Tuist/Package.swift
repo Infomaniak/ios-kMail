@@ -12,6 +12,7 @@ let packageSettings = PackageSettings(
         "Atlantis": .staticFramework,
         "CocoaLumberjackSwift": .framework,
         "CocoaLumberjack": .framework,
+        "DesignSystem": .framework,
         "InfomaniakBugTracker": .framework,
         "InfomaniakConcurrency": .staticFramework,
         "InfomaniakCoreCommonUI": .framework,
