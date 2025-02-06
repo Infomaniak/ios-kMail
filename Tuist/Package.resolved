@@ -73,6 +73,15 @@
       }
     },
     {
+      "identity" : "ios-features",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/ios-features",
+      "state" : {
+        "branch" : "myksuite",
+        "revision" : "c678214ed6331594df744ebb191b0789ddff694a"
+      }
+    },
+    {
       "identity" : "ios-login",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-login",
