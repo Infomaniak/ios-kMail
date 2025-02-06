@@ -23,6 +23,8 @@ import InfomaniakPrivacyManagement
 import MailCore
 import MailCoreUI
 import MailResources
+import MyKSuite
+import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
 
@@ -32,6 +34,7 @@ struct SettingsView: View {
     @LazyInjectService private var featureFlagsManageable: FeatureFlagsManageable
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var platformDetector: PlatformDetectable
+    @LazyInjectService private var myKSuiteStore: MyKSuiteStore
 
     @Environment(\.currentUser) private var currentUser
 
@@ -47,15 +50,55 @@ struct SettingsView: View {
     @AppStorage(UserDefaults.shared.key(.matomoAuthorized)) private var matomoAuthorized: Bool = DefaultPreferences
         .matomoAuthorized
 
+    @State private var isShowingMyKSuiteDashboard = false
+    @State private var myKSuiteMailbox: Mailbox?
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
+                // MARK: - Section: my kSuite
+
+                if mainViewState.mailboxManager.mailbox.isFree {
+                    Group {
+                        SettingsSectionTitleView(title: "!my kSuite")
+
+                        if let myKSuiteMailbox, let mailboxManager = accountManager.getMailboxManager(for: myKSuiteMailbox) {
+                            SettingsSubMenuCell(title: myKSuiteMailbox.email) {
+                                MailboxSettingsView(mailboxManager: mailboxManager)
+                            }
+                        }
+
+                        SettingsSubMenuLabel(title: "!Mon abonnement")
+                            .onTapGesture {
+                                isShowingMyKSuiteDashboard = true
+                            }
+                            .sheet(isPresented: $isShowingMyKSuiteDashboard) {
+                                MyKSuiteDashboardView(
+                                    apiFetcher: mainViewState.mailboxManager.apiFetcher,
+                                    userId: currentUser.value.id,
+                                    userAvatar: nil
+                                )
+                            }
+                    }
+                    .task {
+                        let configuration = {
+                            @InjectService var mailboxInfosManager: MailboxInfosManager
+                            return mailboxInfosManager.realmConfiguration
+                        }()
+                        let mailboxes = ObservedResults(Mailbox.self, configuration: configuration) {
+                            $0.userId == currentUser.value.id && $0.isFree
+                        }
+                        myKSuiteMailbox = mailboxes.wrappedValue.first
+                    }
+                }
+
                 // MARK: - Section: Email Addresses
 
                 Group {
                     SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsSectionEmailAddresses)
 
-                    ForEachMailboxView(userId: currentUser.value.id) { mailbox in
+                    ForEachMailboxView(userId: currentUser.value.id,
+                                       excludedMailboxIds: [myKSuiteMailbox?.mailboxId ?? 0]) { mailbox in
                         if let mailboxManager = accountManager.getMailboxManager(for: mailbox) {
                             SettingsSubMenuCell(title: mailbox.email) {
                                 MailboxSettingsView(mailboxManager: mailboxManager)

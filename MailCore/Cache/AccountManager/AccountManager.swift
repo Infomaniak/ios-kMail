@@ -206,7 +206,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     private func createAndSetCurrentAccount(token: ApiToken) async throws -> ApiToken {
         let apiFetcher = MailApiFetcher(token: token, delegate: self)
         let user = try await userProfileStore.updateUserProfile(with: apiFetcher)
-        try await myKSuiteStore.updateMyKSuite(with: apiFetcher)
+        try await myKSuiteStore.updateMyKSuite(with: apiFetcher, id: user.id)
 
         let mailboxesResponse = try await apiFetcher.mailboxes()
         guard !mailboxesResponse.isEmpty else {
@@ -243,7 +243,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         let apiFetcher = getApiFetcher(for: account.userId, token: token)
         let user = try await userProfileStore.updateUserProfile(with: apiFetcher)
-        try await myKSuiteStore.updateMyKSuite(with: apiFetcher)
+        try await myKSuiteStore.updateMyKSuite(with: apiFetcher, id: user.id)
 
         try? await featureFlagsManager.fetchFlags()
 
