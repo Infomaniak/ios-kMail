@@ -1039,6 +1039,9 @@
 /* loco:638f6ec13ee2595d320a7242 */
 "multipleSelectionCount-plural-many" = "%d de sélectionnés";
 
+/* loco:67a4d86fe5d5c084180d2eb2 */
+"myKSuiteSubscriptionTitle" = "Mon abonnement";
+
 /* loco:64c21d831dadd3122c0c73f2 */
 "newAccountDescription" = "Communiquez et stockez vos documents et photos dans un écosystème sans publicité qui respecte votre vie privée";
 

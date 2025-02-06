@@ -60,7 +60,7 @@ struct SettingsView: View {
 
                 if mainViewState.mailboxManager.mailbox.isFree {
                     Group {
-                        SettingsSectionTitleView(title: "!my kSuite")
+                        SettingsSectionTitleView(title: "my kSuite")
 
                         if let myKSuiteMailbox, let mailboxManager = accountManager.getMailboxManager(for: myKSuiteMailbox) {
                             SettingsSubMenuCell(title: myKSuiteMailbox.email) {
@@ -68,7 +68,7 @@ struct SettingsView: View {
                             }
                         }
 
-                        SettingsSubMenuLabel(title: "!Mon abonnement")
+                        SettingsSubMenuLabel(title: MailResourcesStrings.Localizable.myKSuiteSubscriptionTitle)
                             .onTapGesture {
                                 isShowingMyKSuiteDashboard = true
                             }
