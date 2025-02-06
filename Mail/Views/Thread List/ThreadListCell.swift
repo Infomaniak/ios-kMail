@@ -35,8 +35,10 @@ extension ThreadListCell: Equatable {
 struct ThreadListCell: View {
     @LazyInjectService private var matomo: MatomoUtils
 
+    @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var mainViewState: MainViewState
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     let viewModel: ThreadListable
     @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
@@ -64,6 +66,8 @@ struct ThreadListCell: View {
         } label: {
             ThreadCell(
                 thread: thread,
+                contextUser: currentUser.value,
+                contextMailboxManager: mailboxManager,
                 density: threadDensity,
                 accentColor: accentColor,
                 isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,

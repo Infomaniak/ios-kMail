@@ -37,24 +37,22 @@ extension ThreadDensity {
 }
 
 extension ThreadCell: Equatable {
+    // TODO: Maybe remove this check now that we don't have performance issues ?
     static func == (lhs: ThreadCell, rhs: ThreadCell) -> Bool {
         return lhs.thread.id == rhs.thread.id
-            && lhs.thread.messageIds == rhs.thread.messageIds
             && lhs.isSelected == rhs.isSelected
             && lhs.isMultipleSelectionEnabled == rhs.isMultipleSelectionEnabled
+            && lhs.thread == rhs.thread
     }
 }
 
 struct ThreadCell: View {
-    @Environment(\.currentUser) private var currentUser
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
     /// With normal or compact density, the checkbox should appear and disappear at different times of the cell offset.
     @State private var shouldDisplayCheckbox = false
 
-    let thread: Thread
+    // let thread: Thread
 
-    let dataHolder: ThreadUI
+    let thread: ThreadUI
 
     let accentColor: AccentColor
     let density: ThreadDensity
@@ -75,15 +73,15 @@ struct ThreadCell: View {
 
     init(
         thread: Thread,
+        contextUser: UserProfile,
+        contextMailboxManager: MailboxManager,
         density: ThreadDensity,
         accentColor: AccentColor,
         isMultipleSelectionEnabled: Bool = false,
         isSelected: Bool = false,
         avatarTapped: (() -> Void)? = nil
     ) {
-        self.thread = thread
-
-        dataHolder = ThreadUI(thread: thread)
+        self.thread = ThreadUI(thread: thread, contextUser: contextUser, contextMailboxManager: contextMailboxManager)
 
         self.density = density
         self.accentColor = accentColor
@@ -106,30 +104,24 @@ struct ThreadCell: View {
                 isSelected: isSelected,
                 isMultipleSelectionEnabled: isMultipleSelectionEnabled,
                 shouldDisplayCheckbox: shouldDisplayCheckbox,
-                contactConfiguration: dataHolder.contactConfiguration(bimi: thread.bimi,
-                                                                      contextUser: currentUser.value,
-                                                                      contextMailboxManager: mailboxManager),
+                contactConfiguration: thread.contactConfiguration,
                 avatarTapped: avatarTapped
             )
             .padding(.trailing, value: .micro)
 
             VStack(alignment: .leading, spacing: IKPadding.micro) {
                 ThreadCellHeaderView(
-                    recipientsTitle: thread.formatted(
-                        contextUser: currentUser.value,
-                        contextMailboxManager: mailboxManager,
-                        style: dataHolder.isInWrittenByMeFolder ? .to : .from
-                    ),
-                    messageCount: thread.messages.count,
+                    recipientsTitle: thread.recipientsTitle,
+                    messageCount: thread.messageCount,
                     prominentMessageCount: thread.hasUnseenMessages,
                     date: thread.date,
                     showDraftPrefix: thread.hasDrafts
                 )
 
                 ThreadCellBodyView(
-                    email: thread.folder?.role == .spam ? dataHolder.recipientToDisplay?.email : nil,
-                    subject: dataHolder.subject,
-                    preview: dataHolder.preview,
+                    email: thread.additionalEmail,
+                    subject: thread.subject,
+                    preview: thread.preview,
                     density: density,
                     folderName: thread.searchFolderName,
                     lastAction: thread.lastAction,
@@ -169,16 +161,22 @@ struct ThreadCell: View {
 #Preview {
     List {
         ThreadCell(thread: PreviewHelper.sampleThread,
+                   contextUser: PreviewHelper.sampleUser,
+                   contextMailboxManager: PreviewHelper.sampleMailboxManager,
                    density: .large,
                    accentColor: .blue,
                    isMultipleSelectionEnabled: false,
                    isSelected: false)
         ThreadCell(thread: PreviewHelper.sampleThread,
+                   contextUser: PreviewHelper.sampleUser,
+                   contextMailboxManager: PreviewHelper.sampleMailboxManager,
                    density: .normal,
                    accentColor: .blue,
                    isMultipleSelectionEnabled: false,
                    isSelected: false)
         ThreadCell(thread: PreviewHelper.sampleThread,
+                   contextUser: PreviewHelper.sampleUser,
+                   contextMailboxManager: PreviewHelper.sampleMailboxManager,
                    density: .compact,
                    accentColor: .blue,
                    isMultipleSelectionEnabled: false,

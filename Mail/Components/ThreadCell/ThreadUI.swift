@@ -35,12 +35,27 @@ struct ThreadUI: Identifiable, Equatable {
     /// Subject of the first message
     let subject: String
 
+    let additionalEmail: String?
+
     /// Last message of the thread, except for the Sent folder where we use the last message of the folder
     let preview: String
 
     let isInWrittenByMeFolder: Bool
 
-    init(thread: Thread) {
+    let recipientsTitle: String
+    let messageCount: Int
+    let date: Date
+    let searchFolderName: String?
+    let lastAction: ThreadLastAction?
+
+    let hasUnseenMessages: Bool
+    let hasAttachments: Bool
+    let hasDrafts: Bool
+    let flagged: Bool
+
+    let contactConfiguration: ContactConfiguration
+
+    init(thread: Thread, contextUser: UserProfile, contextMailboxManager: MailboxManager) {
         id = thread.id
 
         // swiftlint:disable:next last_where
@@ -59,24 +74,61 @@ struct ThreadUI: Identifiable, Equatable {
             content = thread.messages.last?.preview
         }
 
+        recipientsTitle = thread.formatted(
+            contextUser: contextUser,
+            contextMailboxManager: contextMailboxManager,
+            style: isInWrittenByMeFolder ? .to : .from
+        )
+
         if let content, !content.isEmpty {
             preview = content
         } else {
             preview = MailResourcesStrings.Localizable.noBodyTitle
         }
-    }
 
-    func contactConfiguration(bimi: Bimi?, contextUser: UserProfile,
-                              contextMailboxManager: MailboxManager) -> ContactConfiguration {
+        messageCount = thread.messages.count
+        date = thread.date
+
+        additionalEmail = thread.folder?.role == .spam ? recipientToDisplay?.email : nil
+        searchFolderName = thread.searchFolderName
+
+        lastAction = thread.lastAction
+        hasUnseenMessages = thread.hasUnseenMessages
+        hasAttachments = thread.hasAttachments
+        hasDrafts = thread.hasDrafts
+        flagged = thread.flagged
+
         if let recipientToDisplay {
-            return .correspondent(
+            contactConfiguration = .correspondent(
                 correspondent: recipientToDisplay,
-                associatedBimi: bimi,
+                associatedBimi: thread.bimi,
                 contextUser: contextUser,
                 contextMailboxManager: contextMailboxManager
             )
         } else {
-            return .emptyContact
+            contactConfiguration = .emptyContact
         }
+    }
+
+    func resolveThread(contextMailboxManager: MailboxManager) -> Thread? {
+        contextMailboxManager.getThread(from: id)
+    }
+
+    static func == (lhs: ThreadUI, rhs: ThreadUI) -> Bool {
+        return lhs.id == rhs.id &&
+            lhs.recipientToDisplay == rhs.recipientToDisplay &&
+            lhs.subject == rhs.subject &&
+            lhs.additionalEmail == rhs.additionalEmail &&
+            lhs.preview == rhs.preview &&
+            lhs.isInWrittenByMeFolder == rhs.isInWrittenByMeFolder &&
+            lhs.recipientsTitle == rhs.recipientsTitle &&
+            lhs.messageCount == rhs.messageCount &&
+            lhs.date == rhs.date &&
+            lhs.searchFolderName == rhs.searchFolderName &&
+            lhs.lastAction == rhs.lastAction &&
+            lhs.hasUnseenMessages == rhs.hasUnseenMessages &&
+            lhs.hasAttachments == rhs.hasAttachments &&
+            lhs.hasDrafts == rhs.hasDrafts &&
+            lhs.flagged == rhs.flagged
     }
 }
