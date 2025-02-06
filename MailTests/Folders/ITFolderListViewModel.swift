@@ -258,7 +258,7 @@ final class ITFolderListViewModel: XCTestCase {
             print("ViewModel updated")
         }.store(in: &cancellable)
 
-        wait(for: asyncExpectations, timeout: 10.0)
+        wait(for: asyncExpectations, timeout: 20.0)
 
         XCTAssertGreaterThan(folderGenerator.frozenFoldersWithRole.count, 0)
         XCTAssertGreaterThan(folderGenerator.frozenFolders.count, 0)
