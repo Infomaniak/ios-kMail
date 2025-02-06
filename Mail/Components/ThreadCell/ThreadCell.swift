@@ -36,61 +36,6 @@ extension ThreadDensity {
     }
 }
 
-struct ThreadCellDataHolder {
-    static let lastMessageNotFromSentPredicate = NSPredicate(
-        format: "SUBQUERY(folders, $folder, $folder.role != %@).@count > 0",
-        FolderRole.sent.rawValue
-    )
-    /// Sender of the last message that is not in the Sent folder, otherwise the last message of the thread
-    let recipientToDisplay: Recipient?
-
-    /// Subject of the first message
-    let subject: String
-
-    /// Last message of the thread, except for the Sent folder where we use the last message of the folder
-    let preview: String
-
-    let isInWrittenByMeFolder: Bool
-
-    init(thread: Thread) {
-        // swiftlint:disable:next last_where
-        let lastMessageNotFromSent = thread.messages.filter(Self.lastMessageNotFromSentPredicate).last ?? thread.messages.last
-
-        subject = thread.formattedSubject
-
-        isInWrittenByMeFolder = FolderRole.writtenByMeFolders.contains { $0 == thread.folder?.role }
-
-        let content: String?
-        if isInWrittenByMeFolder {
-            recipientToDisplay = lastMessageNotFromSent?.to.first
-            content = (thread.lastMessageFromFolder ?? thread.messages.last)?.preview
-        } else {
-            recipientToDisplay = lastMessageNotFromSent?.from.first
-            content = thread.messages.last?.preview
-        }
-
-        if let content, !content.isEmpty {
-            preview = content
-        } else {
-            preview = MailResourcesStrings.Localizable.noBodyTitle
-        }
-    }
-
-    func contactConfiguration(bimi: Bimi?, contextUser: UserProfile,
-                              contextMailboxManager: MailboxManager) -> ContactConfiguration {
-        if let recipientToDisplay {
-            return .correspondent(
-                correspondent: recipientToDisplay,
-                associatedBimi: bimi,
-                contextUser: contextUser,
-                contextMailboxManager: contextMailboxManager
-            )
-        } else {
-            return .emptyContact
-        }
-    }
-}
-
 extension ThreadCell: Equatable {
     static func == (lhs: ThreadCell, rhs: ThreadCell) -> Bool {
         return lhs.thread.id == rhs.thread.id
@@ -109,7 +54,7 @@ struct ThreadCell: View {
 
     let thread: Thread
 
-    let dataHolder: ThreadCellDataHolder
+    let dataHolder: ThreadUI
 
     let accentColor: AccentColor
     let density: ThreadDensity
@@ -138,7 +83,7 @@ struct ThreadCell: View {
     ) {
         self.thread = thread
 
-        dataHolder = ThreadCellDataHolder(thread: thread)
+        dataHolder = ThreadUI(thread: thread)
 
         self.density = density
         self.accentColor = accentColor
