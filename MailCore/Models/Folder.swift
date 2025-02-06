@@ -212,12 +212,20 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return [.draft, .scheduledDrafts].contains(role)
     }
 
+    private var unreadCountToDisplay: Int {
+        switch role {
+        case .draft, .scheduledDrafts, .snoozed:
+            return threads.count
+        default:
+            return unreadCount
+        }
+    }
+
     public var formattedUnreadCount: String {
-        let realCount = ((role == .draft || role == .scheduledDrafts) ? threads.count : unreadCount)
-        if realCount >= 100 {
+        if unreadCountToDisplay >= 100 {
             return "99+"
         }
-        return realCount > 0 ? "\(realCount)" : ""
+        return unreadCountToDisplay > 0 ? "\(unreadCountToDisplay)" : ""
     }
 
     public var formattedPath: String {

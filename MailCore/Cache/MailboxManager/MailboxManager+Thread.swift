@@ -57,7 +57,7 @@ public extension MailboxManager {
         try await messages(folder: folder)
         fetchCurrentFolderCompleted()
 
-        var folderRolesToFetch = Set<FolderRole>([.inbox, .sent, .snoozed, .draft, .scheduledDrafts])
+        var folderRolesToFetch = Set<FolderRole>([.inbox, .sent, .draft, .scheduledDrafts])
         guard let currentRole = folder.role, folderRolesToFetch.contains(currentRole) else { return }
 
         folderRolesToFetch.remove(currentRole)
