@@ -29,7 +29,11 @@ jobs:
         run: |
           touch $ENV_PATH
           echo -e "enum Env {\n static let token = \"$ACCESS_TOKEN\"\n static let userId = $USER_ID\n static let mailboxId = $MAILBOX_ID\n static let mailboxUuid = \"$MAILBOX_UUID\"\n}" > $ENV_PATH
+      - name: Generate
+        run: tuist install && tuist generate
+      - name: Check implicit imports
+        run: tuist inspect implicit-imports
       - name: Build
-        run: tuist install && tuist generate && tuist build --clean "Infomaniak Mail"
+        run: tuist build --clean "Infomaniak Mail"
       - name: Unit and Integration Tests
         run: tuist test Mail-Workspace --skip-ui-tests
