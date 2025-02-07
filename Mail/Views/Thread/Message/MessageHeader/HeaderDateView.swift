@@ -29,7 +29,7 @@ struct HeaderDateView: View {
     private var isScheduled: Bool { date > .now }
 
     var body: some View {
-        HStack(spacing: IKPadding.small) {
+        HStack(spacing: IKPadding.micro) {
             if isScheduled {
                 MailResourcesAsset.clockThick
                     .iconSize(.small)
