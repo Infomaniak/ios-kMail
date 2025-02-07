@@ -27,7 +27,10 @@ public enum Constants {
         .currentProjectVersion("1")
         .marketingVersion("1.3.0")
         .automaticCodeSigning(devTeam: "864VDCS2QY")
-        .merging(["DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER": SettingValue(stringLiteral: "NO")])
+        .merging([
+            "DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER": SettingValue(stringLiteral: "NO"),
+            "TARGETED_DEVICE_FAMILY": SettingValue(stringLiteral: "1,2")
+        ])
 
     public static let deploymentTarget = DeploymentTargets.iOS("15.0")
 
