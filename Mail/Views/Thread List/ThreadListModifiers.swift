@@ -117,7 +117,7 @@ struct ThreadListToolbar: ViewModifier {
                             text: action.shortTitle ?? action.title,
                             icon: action.icon
                         ) {
-                            let allMessages = multipleSelectionViewModel.selectedItems.threads.flatMap(\.messages)
+                            let allMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
                             multipleSelectionViewModel.disable()
                             let originFolder = viewModel.frozenFolder
                             Task {
@@ -146,7 +146,7 @@ struct ThreadListToolbar: ViewModifier {
                         text: MailResourcesStrings.Localizable.buttonMore,
                         icon: MailResourcesAsset.plusActions.swiftUIImage
                     ) {
-                        multipleSelectedMessages = multipleSelectionViewModel.selectedItems.threads.flatMap(\.messages)
+                        multipleSelectedMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
                     }
                     .accessibilityLabel(MailResourcesStrings.Localizable.buttonMore)
                     .accessibilityAddTraits(.isButton)
