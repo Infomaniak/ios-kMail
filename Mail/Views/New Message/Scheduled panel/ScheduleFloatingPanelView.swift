@@ -37,18 +37,18 @@ struct ScheduleFloatingPanelView: View {
     }
 
     var body: some View {
-        VStack(spacing: IKPadding.small) {
+        VStack(spacing: 0) {
             ForEach(scheduleOptions) { option in
                 ScheduleOptionView(option: option, setScheduleAction: setScheduleAction)
 
-                IKDivider(type: .full)
+                IKDivider(type: .item)
             }
+
             CustomScheduleButton(
                 customSchedule: $customSchedule,
                 isShowingMyKSuiteUpgrade: $isShowingMyKSuiteUpgrade,
                 isMyKSuiteStandard: isMyKSuiteStandard
             )
         }
-        .padding(value: .medium)
     }
 }
