@@ -69,7 +69,7 @@ struct ShortcutModifier: ViewModifier {
 
         let messages: [Message]
         if multipleSelectionViewModel.isEnabled {
-            messages = multipleSelectionViewModel.selectedItems.threads.flatMap(\.messages)
+            messages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
         } else {
             guard let unwrapMessages = mainViewState.selectedThread?.messages.toArray() else { return }
             messages = unwrapMessages

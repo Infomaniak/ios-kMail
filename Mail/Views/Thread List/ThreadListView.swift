@@ -126,11 +126,10 @@ struct ThreadListView: View {
                                                    threadDensity: threadDensity,
                                                    accentColor: accentColor,
                                                    isSelected: mainViewState.selectedThread?.uid == thread.uid,
-                                                   isMultiSelected: multipleSelectionViewModel.selectedItems.ids
-                                                       .contains(thread.id),
+                                                   isMultiSelected: multipleSelectionViewModel.selectedItems[thread.uid] != nil,
                                                    flushAlert: $flushAlert)
-                                        .draggableThread(multipleSelectionViewModel.selectedItems.ids
-                                            .isEmpty ? [thread.uid] : multipleSelectionViewModel.selectedItems.ids) {
+                                        .draggableThread(multipleSelectionViewModel.selectedItems.isEmpty ?
+                                            [thread.uid] : Array(multipleSelectionViewModel.selectedItems.keys)) {
                                                 multipleSelectionViewModel.selectedItems.removeAll()
                                         }
                                 }

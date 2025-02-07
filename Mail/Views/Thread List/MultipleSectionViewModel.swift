@@ -16,47 +16,18 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Foundation
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import SwiftUI
 
-struct MultipleSelectedThread: Hashable {
-    let id: String
-    let thread: Thread
-
-    init(thread: Thread) {
-        id = thread.id
-        self.thread = thread
-    }
-
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-
-    static func == (lhs: MultipleSelectedThread, rhs: MultipleSelectedThread) -> Bool {
-        return lhs.id == rhs.id
-    }
-}
-
-extension Set<MultipleSelectedThread> {
-    var threads: [Thread] {
-        map { $0.thread }
-    }
-
-    var ids: [String] {
-        map { $0.id }
-    }
-}
-
 @MainActor
 class MultipleSelectionViewModel: ObservableObject {
     @LazyInjectService private var matomo: MatomoUtils
 
     @Published var isEnabled = false
-    @Published var selectedItems = Set<MultipleSelectedThread>()
+    @Published var selectedItems = [String: Thread]()
     @Published var toolbarActions = [Action]()
 
     let fromArchiveFolder: Bool
@@ -76,11 +47,10 @@ class MultipleSelectionViewModel: ObservableObject {
 
     func toggleSelection(of thread: Thread) {
         withAnimation(.default.speed(2)) {
-            let multipleSelectedThread = MultipleSelectedThread(thread: thread)
-            if let threadIndex = selectedItems.firstIndex(of: multipleSelectedThread) {
-                selectedItems.remove(at: threadIndex)
+            if selectedItems[thread.uid] != nil {
+                selectedItems.removeValue(forKey: thread.uid)
             } else {
-                selectedItems.insert(multipleSelectedThread)
+                selectedItems[thread.uid] = thread
             }
             setActions()
 
@@ -116,15 +86,15 @@ class MultipleSelectionViewModel: ObservableObject {
             disable()
             matomo.track(eventWithCategory: .multiSelection, name: "none")
         } else {
-            selectedItems = Set(threads.map { MultipleSelectedThread(thread: $0) })
+            selectedItems = Dictionary(uniqueKeysWithValues: threads.map { ($0.uid, $0) })
             matomo.track(eventWithCategory: .multiSelection, name: "all")
         }
         setActions()
     }
 
     private func setActions() {
-        let read = selectedItems.threads.contains { $0.unseenMessages != 0 } ? Action.markAsRead : Action.markAsUnread
-        let star = selectedItems.threads.allSatisfy(\.flagged) ? Action.unstar : Action.star
+        let read = selectedItems.values.contains { $0.unseenMessages != 0 } ? Action.markAsRead : Action.markAsUnread
+        let star = selectedItems.values.allSatisfy(\.flagged) ? Action.unstar : Action.star
         let archive = fromArchiveFolder ? Action.openMovePanel : Action.archive
         toolbarActions = [read, archive, star, .delete]
     }
