@@ -65,7 +65,7 @@ struct CustomScheduleAlertView: View {
                 .textStyle(.labelError)
                 .padding(.top, value: .micro)
                 .opacity(isShowingError ? 1 : 0)
-                .padding(.bottom, IKPadding.alertDescriptionBottom)
+                .padding(.bottom, value: .mini)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonScheduleTitle,
                              secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
