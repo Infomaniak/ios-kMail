@@ -38,21 +38,19 @@ struct ScheduleOptionView: View {
                 setScheduleAction(scheduleDate)
                 dismiss()
             } label: {
-                HStack {
-                    Label {
-                        Text(option.title)
-                            .textStyle(.body)
-                    } icon: {
-                        option.icon
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .labelStyle(.ikLabel(IKPadding.medium))
+                HStack(spacing: IKPadding.medium) {
+                    option.icon
+                        .iconSize(.large)
+
+                    Text(option.title)
+                        .textStyle(.body)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                     Text(scheduleDate, format: .schedule)
                         .textStyle(.bodySmallSecondary)
                 }
             }
-            .padding(.vertical, value: .small)
+            .padding(value: .medium)
         }
     }
 }

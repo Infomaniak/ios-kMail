@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -32,19 +33,18 @@ struct CustomScheduleButton: View {
 
     var body: some View {
         Button(action: showCustomSchedulePicker) {
-            HStack {
-                Label {
-                    Text(MailResourcesStrings.Localizable.buttonCustomSchedule)
-                        .textStyle(.body)
-                } icon: {
-                    MailResourcesAsset.pencil.swiftUIImage
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
+            HStack(spacing: IKPadding.medium) {
+                MailResourcesAsset.pencil
+                    .iconSize(.large)
+
+                Text(MailResourcesStrings.Localizable.buttonCustomSchedule)
+                    .textStyle(.body)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor)
             }
         }
-        .padding(.vertical, value: .small)
+        .padding(value: .medium)
     }
 
     private func showCustomSchedulePicker() {
