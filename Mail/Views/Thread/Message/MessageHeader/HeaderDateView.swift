@@ -35,6 +35,7 @@ struct HeaderDateView: View {
                     .iconSize(.small)
                     .foregroundStyle(MailResourcesAsset.coralColor)
             }
+
             Text(date, format: .thread(format))
                 .lineLimit(1)
                 .layoutPriority(1)

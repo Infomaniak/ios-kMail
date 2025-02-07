@@ -51,8 +51,7 @@ struct MessageHeaderSummaryView: View {
             HStack(alignment: .center) {
                 if let recipient = message.from.first {
                     Button {
-                        matomo.track(eventWithCategory: .message, name: "selectAvatar")
-                        contactViewRecipient = recipient
+                        didTapAvatar(of: recipient)
                     } label: {
                         AvatarView(
                             mailboxManager: mailboxManager,
@@ -76,33 +75,25 @@ struct MessageHeaderSummaryView: View {
                         Text(MailResourcesStrings.Localizable.messageIsDraftOption)
                             .textStyle(.bodyMediumError)
                     } else {
-                        HStack(alignment: .firstTextBaseline, spacing: IKPadding.mini) {
-                            VStack {
-                                ForEach(message.from) { recipient in
-                                    let contactConfiguration = ContactConfiguration.correspondent(
-                                        correspondent: recipient,
-                                        contextUser: currentUser.value,
-                                        contextMailboxManager: mailboxManager
-                                    )
-                                    let contact = CommonContactCache
-                                        .getOrCreateContact(contactConfiguration: contactConfiguration)
-
-                                    Text(contact,
-                                         format: .displayablePerson())
-                                        .lineLimit(1)
-                                        .textStyle(.bodyMedium)
+                        HStack(spacing: IKPadding.mini) {
+                            HStack(spacing: IKPadding.micro) {
+                                VStack {
+                                    ForEach(message.from) { recipient in
+                                        Text(contact(for: recipient), format: .displayablePerson())
+                                            .lineLimit(1)
+                                            .textStyle(.bodyMedium)
+                                    }
                                 }
-                            }
 
-                            if let bimi = message.bimi, bimi.shouldDisplayBimi {
-                                MailResourcesAsset.checkmarkAuthentication
-                                    .iconSize(.small)
+                                if let bimi = message.bimi, bimi.shouldDisplayBimi {
+                                    MailResourcesAsset.checkmarkAuthentication
+                                        .iconSize(.small)
+                                }
                             }
 
                             HeaderDateView(date: message.date, format: .header)
                         }
                         .accessibilityElement(children: .combine)
-                        .accessibilityAddTraits(.isButton)
                     }
 
                     Group {
@@ -116,8 +107,7 @@ struct MessageHeaderSummaryView: View {
                     .lineLimit(1)
                     .accessibilityAddTraits(.isButton)
                 }
-                .accessibilityHint(MailResourcesStrings.Localizable
-                    .contentDescriptionButtonExpandRecipients)
+                .accessibilityHint(MailResourcesStrings.Localizable.contentDescriptionButtonExpandRecipients)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -130,33 +120,52 @@ struct MessageHeaderSummaryView: View {
             }
 
             if isMessageExpanded && isMessageInteractive && !(message.isScheduledDraft ?? false) {
-                HStack(spacing: 20) {
-                    Button {
-                        matomo.track(eventWithCategory: .messageActions, name: "reply")
-                        if message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
-                            replyOrReplyAllMessage = message
-                        } else {
-                            mainViewState.composeMessageIntent = .replyingTo(
-                                message: message,
-                                replyMode: .reply,
-                                originMailboxManager: mailboxManager
-                            )
-                        }
-                    } label: {
+                HStack(spacing: IKPadding.medium) {
+                    Button(action: replyToMessage) {
                         MailResourcesAsset.emailActionReply
                             .iconSize(.large)
                     }
                     .adaptivePanel(item: $replyOrReplyAllMessage) { message in
                         ReplyActionsView(message: message)
                     }
+
                     ActionsPanelButton(messages: [message], originFolder: message.folder, panelSource: .messageList) {
                         MailResourcesAsset.plusActions
                             .iconSize(.large)
                     }
                 }
-                .padding(.leading, 8)
+                .padding(.leading, value: .mini)
             }
         }
+    }
+
+    private func didTapAvatar(of recipient: Recipient) {
+        matomo.track(eventWithCategory: .message, name: "selectAvatar")
+        contactViewRecipient = recipient
+    }
+
+    private func replyToMessage() {
+        matomo.track(eventWithCategory: .messageActions, name: "reply")
+        if message.canReplyAll(currentMailboxEmail: mailboxManager.mailbox.email) {
+            replyOrReplyAllMessage = message
+        } else {
+            mainViewState.composeMessageIntent = .replyingTo(
+                message: message,
+                replyMode: .reply,
+                originMailboxManager: mailboxManager
+            )
+        }
+    }
+
+    private func contact(for recipient: Recipient) -> CommonContact {
+        let contactConfiguration = ContactConfiguration.correspondent(
+            correspondent: recipient,
+            contextUser: currentUser.value,
+            contextMailboxManager: mailboxManager
+        )
+        let contact = CommonContactCache.getOrCreateContact(contactConfiguration: contactConfiguration)
+
+        return contact
     }
 }
 
