@@ -18,6 +18,7 @@
 
 import Foundation
 import RealmSwift
+import MailResources
 
 public struct AddressBookResult: Codable {
     var addressbooks: [AddressBook]
@@ -54,7 +55,7 @@ public final class AddressBook: Object, Codable, Identifiable {
         let decodedName = try container.decode(String.self, forKey: .name)
         let decodedIsDefault = try container.decode(Bool.self, forKey: .isDefault)
         let decodedGroupContacts = try container.decode(List<GroupContact>.self, forKey: .groupContact)
-        let decodedOrganization = try container.decode(String.self, forKey: .organization)
+        let decodedOrganization = try container.decodeIfPresent(String.self, forKey: .organization) ?? MailResourcesStrings.Localizable.otherOrganisation
         let decodedIsDynamicOrganisation = try container.decode(Bool.self, forKey: .isDynamicOrganisation)
 
         super.init()
