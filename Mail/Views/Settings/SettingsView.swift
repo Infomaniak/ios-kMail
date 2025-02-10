@@ -79,6 +79,8 @@ struct SettingsView: View {
                                     userAvatar: nil
                                 )
                             }
+
+                        IKDivider()
                     }
                     .task {
                         let configuration = {
