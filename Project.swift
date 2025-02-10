@@ -76,11 +76,7 @@ let project = Project(name: "Mail",
                                       .external(name: "VersionChecker"),
                                       .external(name: "WrappingHStack")
                                   ],
-                                  settings: .settings(base: Constants.baseSettings),
-                                  environmentVariables: [
-                                      "hostname": .environmentVariable(value: "\(ProcessInfo.processInfo.hostName).",
-                                                                       isEnabled: true)
-                                  ]),
+                                  settings: .settings(base: Constants.baseSettings)),
                           .target(name: "MailTests",
                                   destinations: Constants.destinations,
                                   product: .unitTests,
@@ -345,6 +341,10 @@ let project = Project(name: "Mail",
                                   shared: true,
                                   buildAction: .buildAction(targets: ["Infomaniak Mail"]),
                                   testAction: .targets(["MailTests", "MailUITests"]),
-                                  runAction: .runAction(executable: "Infomaniak Mail"))
+                                  runAction: .runAction(executable: "Infomaniak Mail",
+                                                        arguments: .arguments(environmentVariables: [
+                                                            "hostname": .environmentVariable(value: "\(ProcessInfo.processInfo.hostName).",
+                                                                                             isEnabled: true)
+                                                        ])))
                       ],
                       fileHeaderTemplate: .file("file-header-template.txt"))
