@@ -17,13 +17,18 @@
  */
 
 import DesignSystem
+import InfomaniakCore
 import InfomaniakCoreSwiftUI
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
 
 struct QuotasAlertView: View {
+    @AppStorage(UserDefaults.shared.key(.nextShowQuotasAlert)) private var nextShowQuotasAlert = 0
+    @InjectService private var appLaunchCounter: AppLaunchCounter
+
     let mailbox: Mailbox
 
     private var type: AlertType {
@@ -33,7 +38,7 @@ struct QuotasAlertView: View {
 
         if quotas.progression >= 1.0 {
             return .full
-        } else if quotas.progression > 0.85 {
+        } else if quotas.progression > 0.85 && nextShowQuotasAlert < appLaunchCounter.value {
             return .notFull
         }
         return .none
@@ -67,7 +72,7 @@ struct QuotasAlertView: View {
 
                 if type == .notFull {
                     Button {
-                        // Dismiss alert
+                        nextShowQuotasAlert = appLaunchCounter.value + 5
                     } label: {
                         MailResourcesAsset.close.swiftUIImage
                             .iconSize(.medium)

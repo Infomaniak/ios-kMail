@@ -54,6 +54,7 @@ public extension UserDefaults.Keys {
     static let matomoAuthorized = UserDefaults.Keys(rawValue: "matomoAuthorized")
     static let sentryAuthorized = UserDefaults.Keys(rawValue: "sentryAuthorized")
     static let lastScheduleInterval = UserDefaults.Keys(rawValue: "lastCustomSchedule")
+    static let nextShowQuotasAlert = UserDefaults.Keys(rawValue: "nextShowQuotasAlert")
 }
 
 public extension UserDefaults {
@@ -314,6 +315,15 @@ public extension UserDefaults {
         }
         set {
             set(newValue.rawValue, forKey: key(.autoAdvance))
+        }
+    }
+
+    var nextShowQuotasAlert: Int {
+        get {
+            return integer(forKey: key(.nextShowQuotasAlert))
+        }
+        set {
+            set(newValue, forKey: key(.nextShowQuotasAlert))
         }
     }
 }
