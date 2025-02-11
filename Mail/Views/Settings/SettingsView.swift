@@ -75,9 +75,14 @@ struct SettingsView: View {
                             .sheet(isPresented: $isShowingMyKSuiteDashboard) {
                                 MyKSuiteDashboardView(
                                     apiFetcher: mainViewState.mailboxManager.apiFetcher,
-                                    userId: currentUser.value.id,
-                                    userAvatar: nil
-                                )
+                                    userId: currentUser.value.id
+                                ) {
+                                    AvatarView(
+                                        mailboxManager: mainViewState.mailboxManager,
+                                        contactConfiguration: .user(user: currentUser.value),
+                                        size: 24
+                                    )
+                                }
                             }
 
                         IKDivider()
