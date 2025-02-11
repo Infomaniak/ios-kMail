@@ -19,6 +19,7 @@
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakDI
+import InfomaniakPrivacyManagement
 import MailCore
 import MailCoreUI
 import MailResources
@@ -43,6 +44,8 @@ struct SettingsView: View {
     @AppStorage(UserDefaults.shared.key(.externalContent)) private var externalContent = DefaultPreferences.externalContent
     @AppStorage(UserDefaults.shared.key(.threadMode)) private var threadMode = DefaultPreferences.threadMode
     @AppStorage(UserDefaults.shared.key(.autoAdvance)) private var autoAdvance = DefaultPreferences.autoAdvance
+    @AppStorage(UserDefaults.shared.key(.matomoAuthorized)) private var matomoAuthorized: Bool = DefaultPreferences
+        .matomoAuthorized
 
     var body: some View {
         ScrollView {
@@ -208,7 +211,21 @@ struct SettingsView: View {
                     SettingsSubMenuCell(
                         title: MailResourcesStrings.Localizable.settingsDataManagementTitle
                     ) {
-                        SettingsDataManagementView()
+                        PrivacyManagementView(
+                            urlRepository: URLConstants.githubRepository.url,
+                            backgroundColor: MailResourcesAsset.backgroundColor.swiftUIColor,
+                            illustration: accentColor.dataPrivacyImage.swiftUIImage,
+                            userDefaultStore: .shared,
+                            userDefaultKeyMatomo: UserDefaults.shared.key(.matomoAuthorized),
+                            userDefaultKeySentry: UserDefaults.shared.key(.sentryAuthorized)
+                        )
+                        .onChange(of: matomoAuthorized) { newValue in
+                            #if DEBUG && !TEST
+                            matomo.optOut(true)
+                            #else
+                            matomo.optOut(!newValue)
+                            #endif
+                        }
                     }
 
                     SettingsSubMenuCell(

@@ -1267,9 +1267,6 @@
 /* loco:627a306b1e32027c033896b2 */
 "settingsAppLock" = "Bloqueo de aplicaciones";
 
-/* loco:6616826f71895b3f5e022484 */
-"settingsAuthorizeTracking" = "Autorizar el seguimiento";
-
 /* loco:65b275e7c53c28d1410bf342 */
 "settingsAutoAdvanceDescription" = "Seleccione qué mostrar cuando se archiva o elimina un mensaje";
 
@@ -1308,12 +1305,6 @@
 
 /* loco:627a53b37b420855254af032 */
 "settingsCancellationPeriodTitle" = "Enviar plazo de anulación";
-
-/* loco:6616815d2f83f25c2c0023e2 */
-"settingsDataManagementDescription" = "Puede personalizar los datos de uso y funcionamiento que Infomaniak recupera para corregir errores y mejorar la aplicación. Ambas herramientas están alojadas y gestionadas exclusivamente por nosotros.\n\nInfomaniak respeta su privacidad: el código fuente de esta aplicación puede verificarse, la información recopilada es anónima y sus datos personales permanecen estrictamente confidenciales y nunca se comparten con terceros.";
-
-/* loco:661e2f0a9eed20101603dc02 */
-"settingsDataManagementSourceCode" = "Ver código fuente";
 
 /* loco:661680f35cb9d448bb047913 */
 "settingsDataManagementTitle" = "Gestión de datos";
@@ -1371,12 +1362,6 @@
 
 /* loco:627a3ba7d5f44d600a6f1803 */
 "settingsMailboxGeneralSignature" = "Configuración de la firma";
-
-/* loco:661682154ac22eb334026eb3 */
-"settingsMatomoDescription" = "Matomo es una herramienta de análisis alojada y gestionada exclusivamente por Infomaniak para comprender cómo se utiliza la aplicación.\n\nEl estudio de estos datos permite a nuestro equipo mejorar continuamente la interfaz de la aplicación.";
-
-/* loco:661681a7717583be6201ecc2 */
-"settingsMatomoTitle" = "Matomo";
 
 /* loco:627a418d50aa01240d501ae4 */
 "settingsOptionAlways" = "Siempre";
@@ -1452,12 +1437,6 @@
 
 /* loco:627a2f67a6d27d332a2f4926 */
 "settingsSendTitle" = "Enviar";
-
-/* loco:66168246bbff09cbe6030855 */
-"settingsSentryDescription" = "Sentry es una herramienta alojada y gestionada en exclusiva por Infomaniak para supervisar la estabilidad de la aplicación en tiempo real e informar automáticamente de cualquier error técnico a nuestros desarrolladores.\n\nEstos datos permiten a nuestro equipo corregir y optimizar rápidamente la aplicación, lo que se traduce en una mejor experiencia de usuario para usted.";
-
-/* loco:661681c0c840865b4a0756b3 */
-"settingsSentryTitle" = "Sentry";
 
 /* loco:644f6a7bf8a5eec20801ac93 */
 "settingsSignatureDescription" = "Seleccione una firma por defecto";

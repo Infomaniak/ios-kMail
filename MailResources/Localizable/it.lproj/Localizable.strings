@@ -1267,9 +1267,6 @@
 /* loco:627a306b1e32027c033896b2 */
 "settingsAppLock" = "Blocco dell’app";
 
-/* loco:6616826f71895b3f5e022484 */
-"settingsAuthorizeTracking" = "Autorizza il tracciamento";
-
 /* loco:65b275e7c53c28d1410bf342 */
 "settingsAutoAdvanceDescription" = "Selezionare cosa visualizzare quando un messaggio viene archiviato o eliminato";
 
@@ -1308,12 +1305,6 @@
 
 /* loco:627a53b37b420855254af032 */
 "settingsCancellationPeriodTitle" = "Periodo di cancellazione dell’invio";
-
-/* loco:6616815d2f83f25c2c0023e2 */
-"settingsDataManagementDescription" = "È possibile personalizzare i dati di utilizzo e operativi che Infomaniak recupera per correggere i bug e migliorare l’applicazione. Entrambi gli strumenti sono ospitati e gestiti esclusivamente da noi.\n\nInfomaniak rispetta la vostra privacy: il codice sorgente di questa applicazione può essere verificato, le informazioni raccolte sono anonime e i vostri dati personali rimangono strettamente confidenziali e non vengono mai condivisi con terze parti.";
-
-/* loco:661e2f0a9eed20101603dc02 */
-"settingsDataManagementSourceCode" = "Vedi il codice sorgente";
 
 /* loco:661680f35cb9d448bb047913 */
 "settingsDataManagementTitle" = "Gestione dei dati";
@@ -1371,12 +1362,6 @@
 
 /* loco:627a3ba7d5f44d600a6f1803 */
 "settingsMailboxGeneralSignature" = "Impostazioni della firma";
-
-/* loco:661682154ac22eb334026eb3 */
-"settingsMatomoDescription" = "Matomo è uno strumento di analisi ospitato e gestito esclusivamente da Infomaniak per capire come viene utilizzata l’applicazione.\n\nStudiando questi dati, il nostro team è in grado di migliorare continuamente l’interfaccia dell’applicazione.";
-
-/* loco:661681a7717583be6201ecc2 */
-"settingsMatomoTitle" = "Matomo";
 
 /* loco:627a418d50aa01240d501ae4 */
 "settingsOptionAlways" = "Mostra sempre";
@@ -1452,12 +1437,6 @@
 
 /* loco:627a2f67a6d27d332a2f4926 */
 "settingsSendTitle" = "Invia";
-
-/* loco:66168246bbff09cbe6030855 */
-"settingsSentryDescription" = "Sentry è uno strumento ospitato e gestito esclusivamente da Infomaniak per monitorare la stabilità dell’applicazione in tempo reale e segnalare automaticamente eventuali errori tecnici ai nostri sviluppatori.\n\nQuesti dati consentono al nostro team di correggere e ottimizzare rapidamente l’applicazione, migliorando l’esperienza dell’utente.";
-
-/* loco:661681c0c840865b4a0756b3 */
-"settingsSentryTitle" = "Sentry";
 
 /* loco:644f6a7bf8a5eec20801ac93 */
 "settingsSignatureDescription" = "Seleziona una firma predefinita";

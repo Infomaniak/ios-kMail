@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: en, English
  * Tagged: ios
- * Exported by: Jordan Chapelle
- * Exported at: Fri, 01 Nov 2024 09:54:33 +0100
+ * Exported by: Matthieu Déglon
+ * Exported at: Tue, 11 Feb 2025 07:51:22 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -405,6 +405,9 @@
 
 /* loco:62567a5b3e928d1b5930fc02 */
 "buttonFolders" = "Folders";
+
+/* loco:67a9bc304b02c0c7bc094dc2 */
+"buttonFreeTrial" = "Try for free";
 
 /* loco:651ebfd6a9604ddb660b5e12 */
 "buttonGoToSettings" = "Go to settings";
@@ -1039,6 +1042,21 @@
 /* loco:638f6ec13ee2595d320a7242 */
 "multipleSelectionCount-plural-many" = "";
 
+/* loco:67a9ba0103b091bbbc0837c2 */
+"myKSuiteQuotasAlertDescription" = "Once you have reached this limit, you will no longer be able to send or receive messages. Free up space or upgrade to my kSuite+.";
+
+/* loco:67a9b93a6990d405bc07fd62 */
+"myKSuiteQuotasAlertFullDescription" = "Free up space or upgrade to my kSuite+.";
+
+/* loco:67a9b8d18256be1bd103fdb2 */
+"myKSuiteQuotasAlertFullTitle" = "Receiving and sending messages blocked";
+
+/* loco:67a9b90e2acef5d4c50ddd02 */
+"myKSuiteQuotasAlertTitle" = "Storage limit almost reached";
+
+/* loco:67a4d86fe5d5c084180d2eb2 */
+"myKSuiteSubscriptionTitle" = "My subscription";
+
 /* loco:64c21d831dadd3122c0c73f2 */
 "newAccountDescription" = "Communicate and store your documents and photos in an ad-free ecosystem that respects your privacy";
 
@@ -1146,6 +1164,12 @@
 
 /* loco:62c2ef4a24eb9878221dcd63 */
 "onBoardingTitle4" = "Get started!";
+
+/* loco:67986c43729fae7515071032 */
+"organizationName" = "Organization: %@";
+
+/* loco:67a9f9906c6c8012a50b7782 */
+"otherOrganisation" = "Other";
 
 /* loco:62a9db9c563de5001402e482 */
 "pendingMessagesFolder" = "Pending messages";
@@ -1267,9 +1291,6 @@
 /* loco:627a306b1e32027c033896b2 */
 "settingsAppLock" = "App lock";
 
-/* loco:6616826f71895b3f5e022484 */
-"settingsAuthorizeTracking" = "Authorize tracking";
-
 /* loco:65b275e7c53c28d1410bf342 */
 "settingsAutoAdvanceDescription" = "Select what to display when a message is archived or deleted";
 
@@ -1308,12 +1329,6 @@
 
 /* loco:627a53b37b420855254af032 */
 "settingsCancellationPeriodTitle" = "Send cancellation period";
-
-/* loco:6616815d2f83f25c2c0023e2 */
-"settingsDataManagementDescription" = "You can customize the usage and operational data that Infomaniak retrieves to correct bugs and enhance the application. Both tools are hosted and managed exclusively by us.\n\nInfomaniak respects your privacy: the source code of this application can be verified, the information collected is anonymous and your personal information remains strictly confidential and is never shared with third parties.";
-
-/* loco:661e2f0a9eed20101603dc02 */
-"settingsDataManagementSourceCode" = "See source code";
 
 /* loco:661680f35cb9d448bb047913 */
 "settingsDataManagementTitle" = "Data management";
@@ -1371,12 +1386,6 @@
 
 /* loco:627a3ba7d5f44d600a6f1803 */
 "settingsMailboxGeneralSignature" = "Signature settings";
-
-/* loco:661682154ac22eb334026eb3 */
-"settingsMatomoDescription" = "Matomo is an analysis tool hosted and managed exclusively by Infomaniak to understand how the application is used.\n\nBy studying this data, our team is able to continually improve the application’s interface.";
-
-/* loco:661681a7717583be6201ecc2 */
-"settingsMatomoTitle" = "Matomo";
 
 /* loco:627a418d50aa01240d501ae4 */
 "settingsOptionAlways" = "Always";
@@ -1452,12 +1461,6 @@
 
 /* loco:627a2f67a6d27d332a2f4926 */
 "settingsSendTitle" = "Send";
-
-/* loco:66168246bbff09cbe6030855 */
-"settingsSentryDescription" = "Sentry is a tool hosted and managed exclusively by Infomaniak to monitor the stability of the application in real time and automatically report any technical errors to our developers.\n\nThis data enables our team to quickly correct and optimise the application, resulting in a better user experience for you.";
-
-/* loco:661681c0c840865b4a0756b3 */
-"settingsSentryTitle" = "Sentry";
 
 /* loco:644f6a7bf8a5eec20801ac93 */
 "settingsSignatureDescription" = "Select a default signature";
@@ -1638,6 +1641,9 @@
 
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "";
+
+/* loco:67a32e4384fbf4226404e972 */
+"snoozedFolder" = "Snoozed";
 
 /* loco:62a33e2d0c5ac4438c366a32 */
 "socialNetworksFolder" = "Social networks";

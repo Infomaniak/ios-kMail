@@ -133,9 +133,9 @@ public enum AccentColor: String, CaseIterable, SettingsOptionEnum {
     public var dataPrivacyImage: MailResourcesImages {
         switch self {
         case .pink:
-            return MailResourcesAsset.dataPrivacyPink
+            return MailResourcesAsset.documentSignaturePencilBulbPink
         case .blue:
-            return MailResourcesAsset.dataPrivacyBlue
+            return MailResourcesAsset.documentSignaturePencilBulbBlue
         }
     }
 
