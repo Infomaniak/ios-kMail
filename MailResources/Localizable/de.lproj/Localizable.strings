@@ -1165,6 +1165,12 @@
 /* loco:62c2ef4a24eb9878221dcd63 */
 "onBoardingTitle4" = "Los geht’s!";
 
+/* loco:67986c43729fae7515071032 */
+"organizationName" = "Organisation: %@";
+
+/* loco:67a9f9906c6c8012a50b7782 */
+"otherOrganisation" = "Andere";
+
 /* loco:62a9db9c563de5001402e482 */
 "pendingMessagesFolder" = "Anhängige Nachrichten";
 
@@ -1635,6 +1641,9 @@
 
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "";
+
+/* loco:67a32e4384fbf4226404e972 */
+"snoozedFolder" = "In der Warteschlange";
 
 /* loco:62a33e2d0c5ac4438c366a32 */
 "socialNetworksFolder" = "Soziale Netzwerke";

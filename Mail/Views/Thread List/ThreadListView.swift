@@ -93,6 +93,8 @@ struct ThreadListView: View {
                              isRefreshing: viewModel.loadingPageTaskId != nil)
                 .id(viewModel.frozenFolder.id)
 
+            QuotasAlertView(mailbox: viewModel.mailboxManager.mailbox)
+
             ScrollViewReader { proxy in
                 List(selection: selection) {
                     if !viewModel.isEmpty,
