@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: de, German
  * Tagged: ios
- * Exported by: Jordan Chapelle
- * Exported at: Fri, 01 Nov 2024 09:54:33 +0100
+ * Exported by: Matthieu Déglon
+ * Exported at: Tue, 11 Feb 2025 07:51:22 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -406,6 +406,9 @@
 /* loco:62567a5b3e928d1b5930fc02 */
 "buttonFolders" = "Ordner";
 
+/* loco:67a9bc304b02c0c7bc094dc2 */
+"buttonFreeTrial" = "Kostenlos ausprobieren";
+
 /* loco:651ebfd6a9604ddb660b5e12 */
 "buttonGoToSettings" = "Zu den Einstellungen gehen";
 
@@ -482,7 +485,7 @@
 "buttonSchedule" = "Planen Sie den Versand von E-Mails für einen späteren Zeitpunkt";
 
 /* loco:6723a2a5f3c615913002d152 */
-"buttonScheduleTitle" = "Zeitplan";
+"buttonScheduleTitle" = "Programmieren";
 
 /* loco:65957d479527393708069ee2 */
 "buttonSee" = "Siehe";
@@ -1039,6 +1042,21 @@
 /* loco:638f6ec13ee2595d320a7242 */
 "multipleSelectionCount-plural-many" = "";
 
+/* loco:67a9ba0103b091bbbc0837c2 */
+"myKSuiteQuotasAlertDescription" = "Wenn Sie dieses Limit erreicht haben, können Sie keine Nachrichten mehr senden oder empfangen. Geben Sie Speicherplatz frei oder wechseln Sie zu my kSuite+.";
+
+/* loco:67a9b93a6990d405bc07fd62 */
+"myKSuiteQuotasAlertFullDescription" = "Geben Sie Speicherplatz frei oder wechseln Sie zu my kSuite+.";
+
+/* loco:67a9b8d18256be1bd103fdb2 */
+"myKSuiteQuotasAlertFullTitle" = "Empfang und Versand von Nachrichten blockiert";
+
+/* loco:67a9b90e2acef5d4c50ddd02 */
+"myKSuiteQuotasAlertTitle" = "Speichergrenze fast erreicht";
+
+/* loco:67a4d86fe5d5c084180d2eb2 */
+"myKSuiteSubscriptionTitle" = "Mein Abonnement";
+
 /* loco:64c21d831dadd3122c0c73f2 */
 "newAccountDescription" = "Kommunizieren und speichern Sie Ihre Dokumente und Fotos in einem werbefreien Ökosystem, das Ihre Privatsphäre respektiert";
 
@@ -1267,9 +1285,6 @@
 /* loco:627a306b1e32027c033896b2 */
 "settingsAppLock" = "App-Sperre";
 
-/* loco:6616826f71895b3f5e022484 */
-"settingsAuthorizeTracking" = "Verfolgung genehmigen";
-
 /* loco:65b275e7c53c28d1410bf342 */
 "settingsAutoAdvanceDescription" = "Auswählen, was angezeigt werden soll, wenn eine Nachricht archiviert oder gelöscht wird";
 
@@ -1308,12 +1323,6 @@
 
 /* loco:627a53b37b420855254af032 */
 "settingsCancellationPeriodTitle" = "Kündigungsfrist senden";
-
-/* loco:6616815d2f83f25c2c0023e2 */
-"settingsDataManagementDescription" = "Sie können die Nutzungs- und Betriebsdaten, die Infomaniak abruft, individuell anpassen, um Fehler zu beheben und die Anwendung zu verbessern. Beide Tools werden ausschliesslich von uns gehostet und verwaltet.\n\nInfomaniak respektiert Ihre Privatsphäre: Der Quellcode dieser Anwendung kann überprüft werden, die gesammelten Informationen sind anonym und Ihre persönlichen Daten werden streng vertraulich behandelt und niemals an Dritte weitergegeben.";
-
-/* loco:661e2f0a9eed20101603dc02 */
-"settingsDataManagementSourceCode" = "Siehe Quellcode";
 
 /* loco:661680f35cb9d448bb047913 */
 "settingsDataManagementTitle" = "Verwaltung der Daten";
@@ -1371,12 +1380,6 @@
 
 /* loco:627a3ba7d5f44d600a6f1803 */
 "settingsMailboxGeneralSignature" = "Signatur-Einstellungen";
-
-/* loco:661682154ac22eb334026eb3 */
-"settingsMatomoDescription" = "Matomo ist ein Analysetool, das ausschliesslich von Infomaniak gehostet und verwaltet wird, um zu verstehen, wie die Anwendung genutzt wird.\n\nDurch die Untersuchung dieser Daten kann unser Team die Schnittstelle der Anwendung kontinuierlich verbessern.";
-
-/* loco:661681a7717583be6201ecc2 */
-"settingsMatomoTitle" = "Matomo";
 
 /* loco:627a418d50aa01240d501ae4 */
 "settingsOptionAlways" = "Immer";
@@ -1452,12 +1455,6 @@
 
 /* loco:627a2f67a6d27d332a2f4926 */
 "settingsSendTitle" = "Senden Sie";
-
-/* loco:66168246bbff09cbe6030855 */
-"settingsSentryDescription" = "Sentry ist ein Tool, das ausschliesslich von Infomaniak gehostet und verwaltet wird, um die Stabilität der Anwendung in Echtzeit zu überwachen und unseren Entwicklern automatisch alle technischen Fehler zu melden.\n\nAnhand dieser Daten kann unser Team die Anwendung schnell korrigieren und optimieren, was zu einem besseren Nutzererlebnis für Sie führt.";
-
-/* loco:661681c0c840865b4a0756b3 */
-"settingsSentryTitle" = "Sentry";
 
 /* loco:644f6a7bf8a5eec20801ac93 */
 "settingsSignatureDescription" = "Wählen Sie eine Standardsignatur";
