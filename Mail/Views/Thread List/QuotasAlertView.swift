@@ -72,7 +72,7 @@ struct QuotasAlertView: View {
 
                 if type == .notFull {
                     Button {
-                        nextShowQuotasAlert = appLaunchCounter.value + 5
+                        nextShowQuotasAlert = appLaunchCounter.value + 10
                     } label: {
                         MailResourcesAsset.close.swiftUIImage
                             .iconSize(.medium)
