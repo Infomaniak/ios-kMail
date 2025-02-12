@@ -33,7 +33,7 @@ struct SettingsView: View {
     @LazyInjectService private var appLockHelper: AppLockHelper
     @LazyInjectService private var featureFlagsManageable: FeatureFlagsManageable
     @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var platformDetector: PlatformDetectable
+    @InjectService private var platformDetector: PlatformDetectable
     @InjectService private var myKSuiteStore: MyKSuiteStore
 
     @Environment(\.currentUser) private var currentUser

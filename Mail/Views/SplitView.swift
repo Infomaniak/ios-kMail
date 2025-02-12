@@ -33,7 +33,7 @@ import SwiftUI
 @_spi(Advanced) import SwiftUIIntrospect
 
 public class SplitViewManager: ObservableObject {
-    @LazyInjectService private var platformDetector: PlatformDetectable
+    @InjectService private var platformDetector: PlatformDetectable
 
     var splitViewController: UISplitViewController?
 
@@ -64,7 +64,7 @@ struct SplitView: View {
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var orientationManager: OrientationManageable
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
-    @LazyInjectService private var platformDetector: PlatformDetectable
+    @InjectService private var platformDetector: PlatformDetectable
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
     @LazyInjectService private var cacheManager: CacheManageable
 

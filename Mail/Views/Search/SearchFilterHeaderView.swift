@@ -25,7 +25,7 @@ import MailResources
 import SwiftUI
 
 struct SearchFilterHeaderView: View {
-    @LazyInjectService private var platformDetector: PlatformDetectable
+    @InjectService private var platformDetector: PlatformDetectable
 
     @ObservedObject var viewModel: SearchViewModel
 

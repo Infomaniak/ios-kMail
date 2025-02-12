@@ -33,7 +33,7 @@ public extension View {
 
 @available(iOS 16.0, *)
 public struct OpenInWindowOnDoubleTapModifier<Value: Codable & Hashable>: ViewModifier {
-    @LazyInjectService private var platformDetector: PlatformDetectable
+    @InjectService private var platformDetector: PlatformDetectable
 
     @Environment(\.openWindow) private var openWindow
 

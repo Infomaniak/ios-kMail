@@ -32,7 +32,7 @@ struct MenuDrawerItemsAdvancedListView: View {
     @EnvironmentObject private var mainViewState: MainViewState
 
     @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var platformDetector: PlatformDetectable
+    @InjectService private var platformDetector: PlatformDetectable
 
     @Environment(\.openURL) private var openURL
 

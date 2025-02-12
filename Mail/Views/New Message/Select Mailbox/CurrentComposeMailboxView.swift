@@ -28,7 +28,7 @@ import NavigationBackport
 import SwiftUI
 
 struct CurrentComposeMailboxView: View {
-    @LazyInjectService private var platformDetector: PlatformDetectable
+    @InjectService private var platformDetector: PlatformDetectable
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
