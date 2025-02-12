@@ -24,9 +24,9 @@ import SwiftUI
 
 struct ScheduleFloatingPanelView: View {
     @Binding var customSchedule: Bool
-    @Binding var isShowingDiscovery: Bool
+    @Binding var isShowingMyKSuiteUpgrade: Bool
 
-    let isFree: Bool
+    let isMyKSuiteStandard: Bool
     let lastScheduleInterval: Double
     let setScheduleAction: (Date) -> Void
 
@@ -45,8 +45,8 @@ struct ScheduleFloatingPanelView: View {
             }
             CustomScheduleButton(
                 customSchedule: $customSchedule,
-                isShowingDiscovery: $isShowingDiscovery,
-                isFree: isFree
+                isShowingMyKSuiteUpgrade: $isShowingMyKSuiteUpgrade,
+                isMyKSuiteStandard: isMyKSuiteStandard
             )
         }
         .padding(value: .medium)

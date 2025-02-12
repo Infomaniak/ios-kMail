@@ -20,15 +20,16 @@ import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
+import MyKSuite
 import SwiftUI
 
 struct CustomScheduleButton: View {
     @Environment(\.dismiss) private var dismiss
 
     @Binding var customSchedule: Bool
-    @Binding var isShowingDiscovery: Bool
+    @Binding var isShowingMyKSuiteUpgrade: Bool
 
-    let isFree: Bool
+    let isMyKSuiteStandard: Bool
 
     var body: some View {
         Button(action: showCustomSchedulePicker) {
@@ -41,6 +42,14 @@ struct CustomScheduleButton: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
+                if isMyKSuiteStandard {
+                    MyKSuiteResources.Assets.myKSuitePlusLogo.swiftUIImage
+                        .padding(.horizontal, value: .mini)
+                        .padding(.vertical, value: .micro)
+                        .background(MailResourcesAsset.myKSuiteBackgroundColor.swiftUIColor)
+                        .clipShape(Capsule())
+                }
+
                 ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor)
             }
         }
@@ -48,8 +57,8 @@ struct CustomScheduleButton: View {
     }
 
     private func showCustomSchedulePicker() {
-        if isFree {
-            isShowingDiscovery = true
+        if isMyKSuiteStandard {
+            isShowingMyKSuiteUpgrade = true
         } else {
             customSchedule = true
         }
