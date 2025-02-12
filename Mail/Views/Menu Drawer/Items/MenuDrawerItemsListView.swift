@@ -31,8 +31,8 @@ import SwiftUI
 struct MenuDrawerItemsAdvancedListView: View {
     @EnvironmentObject private var mainViewState: MainViewState
 
-    @LazyInjectService private var matomo: MatomoUtils
     @InjectService private var platformDetector: PlatformDetectable
+    @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.openURL) private var openURL
 

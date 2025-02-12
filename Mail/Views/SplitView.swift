@@ -50,6 +50,13 @@ public class SplitViewManager: ObservableObject {
 }
 
 struct SplitView: View {
+    @InjectService private var platformDetector: PlatformDetectable
+    @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var orientationManager: OrientationManageable
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var appLaunchCounter: AppLaunchCounter
+    @LazyInjectService private var cacheManager: CacheManageable
+
     @Environment(\.openURL) private var openURL
     @Environment(\.currentUser) private var currentUser
     @Environment(\.isCompactWindow) private var isCompactWindow
@@ -60,13 +67,6 @@ struct SplitView: View {
 
     @StateObject private var navigationDrawerController = NavigationDrawerState()
     @StateObject private var splitViewManager = SplitViewManager()
-
-    @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var orientationManager: OrientationManageable
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
-    @InjectService private var platformDetector: PlatformDetectable
-    @LazyInjectService private var appLaunchCounter: AppLaunchCounter
-    @LazyInjectService private var cacheManager: CacheManageable
 
     let mailboxManager: MailboxManager
 

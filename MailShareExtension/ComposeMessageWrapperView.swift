@@ -33,7 +33,7 @@ import UniformTypeIdentifiers
 import VersionChecker
 
 struct ComposeMessageWrapperView: View {
-    @LazyInjectService private var accountManager: AccountManager
+    @InjectService private var accountManager: AccountManager
     @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
 
     @State private var versionStatus: VersionStatus?

@@ -51,7 +51,7 @@ enum AuthorizationSlide: Int {
 }
 
 struct AuthorizationView: View {
-    @LazyInjectService private var accountManager: AccountManager
+    @InjectService private var accountManager: AccountManager
 
     @EnvironmentObject private var navigationState: RootViewState
 
