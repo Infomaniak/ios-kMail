@@ -194,7 +194,6 @@ public extension MailboxManager {
     /// Previous page
     /// - Parameters:
     ///   - folder: Given folder
-    ///   - direction: Following or previous page to fetch
     /// - Returns: Returns number of threads created (`nil` if nothing to fetch)
     func fetchOneOldPage(folder: Folder) async throws -> Int? {
         guard let liveFolder = folder.fresh(transactionable: self) else { return nil }
@@ -337,7 +336,7 @@ public extension MailboxManager {
     /// - Parameters:
     ///   - messageByUids: MessageByUidsResult (list of message)
     ///   - folder: Given folder
-    ///   - realm: Given realm
+    ///   - writableRealm: Given realm
     private func createThreads(messageByUids: MessageByUidsResult, folder: Folder, writableRealm: Realm) {
         var threadsToUpdate = Set<Thread>()
         for message in messageByUids.messages {
