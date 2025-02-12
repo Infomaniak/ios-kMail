@@ -80,6 +80,12 @@ public struct MessageActionResult: Codable {
     public var flagged: Int
 }
 
+public enum SnoozeState: String, Sendable, Codable, PersistableEnum {
+    case snoozed
+    case unsnoozed
+    case wasSnoozed
+}
+
 /// A Message has :
 /// - Many threads
 /// - One originalThread: parent thread
@@ -133,6 +139,10 @@ public final class Message: Object, Decodable, Identifiable {
     @Persisted public var calendarEventResponse: CalendarEventResponse?
 
     @Persisted public var swissTransferAttachment: SwissTransferAttachment?
+
+    @Persisted public var snoozeAction: String?
+    @Persisted public var snoozeEndDate: Date?
+    @Persisted public var snoozeState: SnoozeState?
 
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
@@ -254,6 +264,9 @@ public final class Message: Object, Decodable, Identifiable {
         case flagged
         case hasUnsubscribeLink
         case bimi
+        case snoozeAction
+        case snoozeEndDate
+        case snoozeState
     }
 
     override init() {
@@ -319,6 +332,10 @@ public final class Message: Object, Decodable, Identifiable {
         flagged = try values.decode(Bool.self, forKey: .flagged)
         hasUnsubscribeLink = try values.decodeIfPresent(Bool.self, forKey: .hasUnsubscribeLink)
         bimi = try values.decodeIfPresent(Bimi.self, forKey: .bimi)
+
+        snoozeAction = try values.decodeIfPresent(String.self, forKey: .snoozeAction)
+        snoozeEndDate = try values.decodeIfPresent(Date.self, forKey: .snoozeEndDate)
+        snoozeState = try values.decodeIfPresent(SnoozeState.self, forKey: .snoozeState)
     }
 
     public convenience init(
@@ -352,7 +369,10 @@ public final class Message: Object, Decodable, Identifiable {
         forwarded: Bool,
         flagged: Bool,
         hasUnsubscribeLink: Bool? = nil,
-        bimi: Bimi? = nil
+        bimi: Bimi? = nil,
+        snoozeAction: String? = nil,
+        snoozeEndDate: Date? = nil,
+        snoozeState: SnoozeState? = nil
     ) {
         self.init()
 
@@ -388,6 +408,9 @@ public final class Message: Object, Decodable, Identifiable {
         self.hasUnsubscribeLink = hasUnsubscribeLink
         self.bimi = bimi
         fullyDownloaded = true
+        self.snoozeAction = snoozeAction
+        self.snoozeEndDate = snoozeEndDate
+        self.snoozeState = snoozeState
     }
 
     public func toThread() -> Thread {
