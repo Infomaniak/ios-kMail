@@ -58,15 +58,6 @@ struct QuotasAlertView: View {
 
                     Text(type.description)
                         .font(MailTextStyle.label.font)
-
-//                    Button {
-//                        // Free trial
-//                    } label: {
-//                        Text(MailResourcesStrings.Localizable.buttonFreeTrial)
-//                            .font(MailTextStyle.bodySmall.font)
-//                            .padding(.vertical, value: .mini)
-//                    }
-//                    .buttonStyle(.ikBorderless(isInlined: true))
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
