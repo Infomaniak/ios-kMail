@@ -34,6 +34,7 @@ struct SettingsView: View {
     @LazyInjectService private var featureFlagsManageable: FeatureFlagsManageable
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var platformDetector: PlatformDetectable
+    @InjectService private var myKSuiteStore: MyKSuiteStore
 
     @Environment(\.currentUser) private var currentUser
 
@@ -51,13 +52,14 @@ struct SettingsView: View {
 
     @State private var isShowingMyKSuiteDashboard = false
     @State private var myKSuiteMailbox: Mailbox?
+    @State private var myKSuite: MyKSuite?
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
                 // MARK: - Section: my kSuite
 
-                if mainViewState.mailboxManager.mailbox.isFree {
+                if let myKSuite {
                     Group {
                         SettingsSectionTitleView(title: "my kSuite")
 
@@ -85,16 +87,6 @@ struct SettingsView: View {
                             }
 
                         IKDivider()
-                    }
-                    .task {
-                        let configuration = {
-                            @InjectService var mailboxInfosManager: MailboxInfosManager
-                            return mailboxInfosManager.realmConfiguration
-                        }()
-                        let mailboxes = ObservedResults(Mailbox.self, configuration: configuration) {
-                            $0.userId == currentUser.value.id && $0.isFree
-                        }
-                        myKSuiteMailbox = mailboxes.wrappedValue.first
                     }
                 }
 
@@ -289,6 +281,19 @@ struct SettingsView: View {
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsTitle, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "General"])
+        .task {
+            await loadMyKSuite()
+        }
+    }
+
+    func loadMyKSuite() async {
+        myKSuite = await myKSuiteStore.getMyKSuite(id: currentUser.value.id)
+
+        @InjectService var mailboxInfosManager: MailboxInfosManager
+        let mailboxes = ObservedResults(Mailbox.self, configuration: mailboxInfosManager.realmConfiguration) {
+            $0.userId == currentUser.value.id && $0.isFree
+        }
+        myKSuiteMailbox = mailboxes.wrappedValue.first
     }
 }
 
