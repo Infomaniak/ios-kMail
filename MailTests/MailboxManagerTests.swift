@@ -84,9 +84,10 @@ final class MailboxManagerTests: XCTestCase {
         // GIVEN
         let folders = try await MailboxManagerTests.mailboxManager.apiFetcher
             .folders(mailbox: MailboxManagerTests.mailboxManager.mailbox)
+        let inboxFolder = folders.first { $0.role == .inbox }!
         let threadResult = try await MailboxManagerTests.mailboxManager.apiFetcher.threads(
             mailbox: MailboxManagerTests.mailboxManager.mailbox,
-            folderId: folders[0].remoteId
+            folderId: inboxFolder.remoteId
         )
 
         // WHEN
