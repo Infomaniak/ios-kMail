@@ -22,6 +22,29 @@ import InfomaniakCoreDB
 import RealmSwift
 import Sentry
 
+enum PageDirection {
+    case future
+    case past
+
+    var pageSize: Int {
+        switch self {
+        case .future:
+            return Constants.newPageSize
+        case .past:
+            return Constants.oldPageSize
+        }
+    }
+
+    var uidsToFetch: KeyPath<Folder, List<MessageUid>> {
+        switch self {
+        case .future:
+            return \.oldMessagesUidsToFetch
+        case .past:
+            return \.newMessagesUidsToFetch
+        }
+    }
+}
+
 // MARK: - Thread
 
 public extension MailboxManager {
@@ -117,7 +140,7 @@ public extension MailboxManager {
         }
 
         /// We will now fetch new messages
-        while try await fetchOneNewPage(folder: folder) {
+        while try await fetchOnePage(folder: folder, direction: .future) {
             guard !Task.isCancelled else { return }
         }
 
@@ -163,23 +186,24 @@ public extension MailboxManager {
         return messageUidsResult.cursor
     }
 
-    /// Following page
-    /// - Parameters:
-    ///   - folder: Given folder
-    ///   - direction: Following or previous page to fetch
-    /// - Returns: Returns if we got a new page
-    func fetchOneNewPage(folder: Folder) async throws -> Bool {
-        guard let liveFolder = folder.fresh(transactionable: self),
-              !liveFolder.newMessagesUidsToFetch.isEmpty else { return false }
+    private func fetchOnePage(folder: Folder, direction: PageDirection) async throws -> Bool {
+        guard let liveFolder = folder.fresh(transactionable: self) else { return false }
 
-        let range: Range = 0 ..< min(liveFolder.newMessagesUidsToFetch.count, Constants.newPageSize)
-        let nextUids: [String] = liveFolder.newMessagesUidsToFetch[range].map { $0.uid }
+        let uidsToFetch = liveFolder[keyPath: direction.uidsToFetch]
+        guard !uidsToFetch.isEmpty else { return false }
+
+        let range = 0 ..< min(uidsToFetch.count, direction.pageSize)
+        let nextUids: [String] = uidsToFetch[range].map { $0.uid }
         try await addMessages(shortUids: nextUids, folder: folder)
 
-        try writeTransaction { writableRealm in
+        try? writeTransaction { writableRealm in
             guard let freshFolder = folder.fresh(using: writableRealm) else { return }
-            let uidsToRemove = freshFolder.newMessagesUidsToFetch.where { $0.uid.in(nextUids) }
+            let uidsToRemove = freshFolder[keyPath: direction.uidsToFetch].where { $0.uid.in(nextUids) }
             writableRealm.delete(uidsToRemove)
+
+            if direction == .past {
+                freshFolder.remainingOldMessagesToFetch -= direction.pageSize
+            }
         }
 
         return true
@@ -191,26 +215,14 @@ public extension MailboxManager {
     ///   - direction: Following or previous page to fetch
     /// - Returns: Returns number of threads created (`nil` if nothing to fetch)
     func fetchOneOldPage(folder: Folder) async throws -> Int? {
-        guard let liveFolder = folder.fresh(transactionable: self),
-              !liveFolder.oldMessagesUidsToFetch.isEmpty else { return nil }
+        guard let liveFolder = folder.fresh(transactionable: self) else { return nil }
+        let initialThreadsCount = liveFolder.threads.count
 
-        let threadsCount = liveFolder.threads.count
-        var newThreadsCount = 0
+        guard try await fetchOnePage(folder: folder, direction: .past),
+              let freshFolder = folder.fresh(transactionable: self) else { return nil }
 
-        let range: Range = 0 ..< min(liveFolder.oldMessagesUidsToFetch.count, Constants.oldPageSize)
-        let nextUids: [String] = liveFolder.oldMessagesUidsToFetch[range].map { $0.uid }
-        try await addMessages(shortUids: nextUids, folder: folder)
-
-        try? writeTransaction { writableRealm in
-            guard let freshFolder = folder.fresh(using: writableRealm) else { return }
-            let uidsToRemove = freshFolder.oldMessagesUidsToFetch.where { $0.uid.in(nextUids) }
-            writableRealm.delete(uidsToRemove)
-
-            freshFolder.remainingOldMessagesToFetch -= Constants.oldPageSize
-            newThreadsCount = freshFolder.threads.count
-        }
-
-        return newThreadsCount - threadsCount
+        let newThreadsCount = freshFolder.threads.count
+        return newThreadsCount - initialThreadsCount
     }
 
     // MARK: - Handle MessagesUids
