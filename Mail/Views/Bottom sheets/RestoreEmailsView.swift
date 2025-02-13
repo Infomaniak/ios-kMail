@@ -58,10 +58,13 @@ struct RestoreEmailsView: View {
                     matomo.track(eventWithCategory: .restoreEmailsBottomSheet, action: .input, name: "selectDate")
                 }
 
-            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirmRestoreEmails,
-                             primaryButtonEnabled: !availableDates.isEmpty,
-                             primaryButtonAction: restoreEmails,
-                             secondaryButtonAction: dismiss.callAsFunction)
+            ModalButtonsView(
+                primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirmRestoreEmails,
+                secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
+                primaryButtonEnabled: !availableDates.isEmpty,
+                primaryButtonAction: restoreEmails,
+                secondaryButtonAction: dismiss.callAsFunction
+            )
         }
         .padding(.horizontal, isCompactWindow ? IKPadding.bottomSheetHorizontal : 0)
         .task {
