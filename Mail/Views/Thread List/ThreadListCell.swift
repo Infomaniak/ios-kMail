@@ -33,13 +33,11 @@ extension ThreadListCell: Equatable {
 }
 
 struct ThreadListCell: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @EnvironmentObject private var splitViewManager: SplitViewManager
     @EnvironmentObject private var mainViewState: MainViewState
 
     let viewModel: ThreadListable
-    @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
+    let multipleSelectionViewModel: MultipleSelectionViewModel
 
     let thread: Thread
 
@@ -123,6 +121,7 @@ struct ThreadListCell: View {
     }
 
     private func toggleMultipleSelection(withImpact: Bool = false) {
+        @InjectService var matomo: MatomoUtils
         let eventCategory: MatomoUtils.EventCategory = viewModel is SearchViewModel ? .searchMultiSelection : .multiSelection
         matomo.track(eventWithCategory: eventCategory, action: .longPress, name: "enable")
         if withImpact {
