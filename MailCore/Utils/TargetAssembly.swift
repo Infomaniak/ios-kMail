@@ -23,6 +23,7 @@ import InfomaniakCoreCommonUI
 import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications
+import MyKSuite
 import OSLog
 
 private let realmRootPath = "mailboxes"
@@ -122,6 +123,9 @@ open class TargetAssembly {
                     contactCache.countLimit = Constants.contactCacheExtensionMaxCount
                 }
                 return contactCache
+            },
+            Factory(type: MyKSuiteStore.self) { _, _ in
+                MyKSuiteStore()
             }
         ]
     }

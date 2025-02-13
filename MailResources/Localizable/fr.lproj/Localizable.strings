@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: fr, French
  * Tagged: ios
- * Exported by: Jordan Chapelle
- * Exported at: Fri, 03 Jan 2025 14:31:10 +0100
+ * Exported by: Ambroise Decouttere
+ * Exported at: Tue, 11 Feb 2025 08:35:29 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -116,7 +116,7 @@
 "addUnknownRecipientTitle" = "Ajouter un destinataire";
 
 /* loco:6784cd26a547d567fc0a7222 */
-"addressBookTitle" = "Carnet d'adresses : %@";
+"addressBookTitle" = "Carnet d’adresses : %@";
 
 /* loco:65081b4d5787de874c0dec32 */
 "aiButtonInsert" = "Insérer";
@@ -405,6 +405,9 @@
 
 /* loco:62567a5b3e928d1b5930fc02 */
 "buttonFolders" = "Dossiers";
+
+/* loco:67a9bc304b02c0c7bc094dc2 */
+"buttonFreeTrial" = "Essayer gratuitement";
 
 /* loco:651ebfd6a9604ddb660b5e12 */
 "buttonGoToSettings" = "Accéder aux réglages";
@@ -1039,6 +1042,21 @@
 /* loco:638f6ec13ee2595d320a7242 */
 "multipleSelectionCount-plural-many" = "%d de sélectionnés";
 
+/* loco:67a9ba0103b091bbbc0837c2 */
+"myKSuiteQuotasAlertDescription" = "Une fois atteinte, vous ne pourrez plus recevoir ou envoyer de messages. Libérez de l’espace ou faites évoluer votre offre vers my kSuite+.";
+
+/* loco:67a9b93a6990d405bc07fd62 */
+"myKSuiteQuotasAlertFullDescription" = "Libérer de l’espace ou faites évoluer votre offre vers my kSuite+.";
+
+/* loco:67a9b8d18256be1bd103fdb2 */
+"myKSuiteQuotasAlertFullTitle" = "Réception et envoi de messages bloqués";
+
+/* loco:67a9b90e2acef5d4c50ddd02 */
+"myKSuiteQuotasAlertTitle" = "Limite de stockage presque atteinte";
+
+/* loco:67a4d86fe5d5c084180d2eb2 */
+"myKSuiteSubscriptionTitle" = "Mon abonnement";
+
 /* loco:64c21d831dadd3122c0c73f2 */
 "newAccountDescription" = "Communiquez et stockez vos documents et photos dans un écosystème sans publicité qui respecte votre vie privée";
 
@@ -1146,6 +1164,12 @@
 
 /* loco:62c2ef4a24eb9878221dcd63 */
 "onBoardingTitle4" = "Lancez vous !";
+
+/* loco:67986c43729fae7515071032 */
+"organizationName" = "Organisation : %@";
+
+/* loco:67a9f9906c6c8012a50b7782 */
+"otherOrganisation" = "Autre";
 
 /* loco:62a9db9c563de5001402e482 */
 "pendingMessagesFolder" = "Messages en attente";
@@ -1617,6 +1641,9 @@
 
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "Conversations déplacées vers %@";
+
+/* loco:67a32e4384fbf4226404e972 */
+"snoozedFolder" = "En attente";
 
 /* loco:62a33e2d0c5ac4438c366a32 */
 "socialNetworksFolder" = "Réseaux sociaux";

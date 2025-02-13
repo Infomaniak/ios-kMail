@@ -21,6 +21,7 @@ import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
+import MyKSuite
 import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
@@ -46,7 +47,7 @@ extension View {
 struct ScheduleFloatingPanel: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.lastScheduleInterval)) private var lastScheduleInterval: Double = 0
 
-    @State private var isShowingDiscovery = false
+    @State private var isShowingMyKSuiteUpgrade = false
     @State private var panelShouldBeShown = false
     @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var customSchedule: Bool
 
@@ -62,8 +63,8 @@ struct ScheduleFloatingPanel: ViewModifier {
             .floatingPanel(isPresented: $isPresented, title: MailResourcesStrings.Localizable.scheduleSendingTitle) {
                 ScheduleFloatingPanelView(
                     customSchedule: $customSchedule,
-                    isShowingDiscovery: $isShowingDiscovery,
-                    isFree: mailBoxManager.mailbox.isFree,
+                    isShowingMyKSuiteUpgrade: $isShowingMyKSuiteUpgrade,
+                    isMyKSuiteStandard: mailBoxManager.mailbox.isFree && mailBoxManager.mailbox.isLimited,
                     lastScheduleInterval: lastScheduleInterval,
                     setScheduleAction: setSchedule
                 )
@@ -82,11 +83,7 @@ struct ScheduleFloatingPanel: ViewModifier {
                     }
                 }
             }
-            .discoveryPresenter(isPresented: $isShowingDiscovery) {
-                DiscoveryView(item: .scheduleDiscovery) { _ in
-                    isPresented = true
-                }
-            }
+            .myKSuitePanel(isPresented: $isShowingMyKSuiteUpgrade, configuration: .mail)
     }
 
     private func setSchedule(_ scheduleDate: Date) {

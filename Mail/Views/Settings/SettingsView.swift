@@ -23,6 +23,8 @@ import InfomaniakPrivacyManagement
 import MailCore
 import MailCoreUI
 import MailResources
+import MyKSuite
+import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
 
@@ -32,6 +34,7 @@ struct SettingsView: View {
     @LazyInjectService private var featureFlagsManageable: FeatureFlagsManageable
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var platformDetector: PlatformDetectable
+    @InjectService private var myKSuiteStore: MyKSuiteStore
 
     @Environment(\.currentUser) private var currentUser
 
@@ -47,15 +50,53 @@ struct SettingsView: View {
     @AppStorage(UserDefaults.shared.key(.matomoAuthorized)) private var matomoAuthorized: Bool = DefaultPreferences
         .matomoAuthorized
 
+    @State private var isShowingMyKSuiteDashboard = false
+    @State private var myKSuiteMailbox: Mailbox?
+    @State private var myKSuite: MyKSuite?
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
+                // MARK: - Section: my kSuite
+
+                if let myKSuite {
+                    Group {
+                        SettingsSectionTitleView(title: "my kSuite")
+
+                        if let myKSuiteMailbox, let mailboxManager = accountManager.getMailboxManager(for: myKSuiteMailbox) {
+                            SettingsSubMenuCell(title: myKSuiteMailbox.email) {
+                                MailboxSettingsView(mailboxManager: mailboxManager)
+                            }
+                        }
+
+                        SettingsSubMenuLabel(title: MailResourcesStrings.Localizable.myKSuiteSubscriptionTitle)
+                            .onTapGesture {
+                                isShowingMyKSuiteDashboard = true
+                            }
+                            .sheet(isPresented: $isShowingMyKSuiteDashboard) {
+                                MyKSuiteDashboardView(
+                                    apiFetcher: mainViewState.mailboxManager.apiFetcher,
+                                    userId: currentUser.value.id
+                                ) {
+                                    AvatarView(
+                                        mailboxManager: mainViewState.mailboxManager,
+                                        contactConfiguration: .user(user: currentUser.value),
+                                        size: 24
+                                    )
+                                }
+                            }
+
+                        IKDivider()
+                    }
+                }
+
                 // MARK: - Section: Email Addresses
 
                 Group {
                     SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsSectionEmailAddresses)
 
-                    ForEachMailboxView(userId: currentUser.value.id) { mailbox in
+                    ForEachMailboxView(userId: currentUser.value.id,
+                                       excludedMailboxIds: [myKSuiteMailbox?.mailboxId ?? 0]) { mailbox in
                         if let mailboxManager = accountManager.getMailboxManager(for: mailbox) {
                             SettingsSubMenuCell(title: mailbox.email) {
                                 MailboxSettingsView(mailboxManager: mailboxManager)
@@ -240,6 +281,19 @@ struct SettingsView: View {
         .navigationBarTitle(MailResourcesStrings.Localizable.settingsTitle, displayMode: .inline)
         .backButtonDisplayMode(.minimal)
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "General"])
+        .task {
+            await loadMyKSuite()
+        }
+    }
+
+    func loadMyKSuite() async {
+        myKSuite = await myKSuiteStore.getMyKSuite(id: currentUser.value.id)
+
+        @InjectService var mailboxInfosManager: MailboxInfosManager
+        let mailboxes = ObservedResults(Mailbox.self, configuration: mailboxInfosManager.realmConfiguration) {
+            $0.userId == currentUser.value.id && $0.isFree
+        }
+        myKSuiteMailbox = mailboxes.wrappedValue.first
     }
 }
 

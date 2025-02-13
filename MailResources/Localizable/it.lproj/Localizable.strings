@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: it, Italian
  * Tagged: ios
- * Exported by: Jordan Chapelle
- * Exported at: Fri, 01 Nov 2024 09:54:33 +0100
+ * Exported by: Ambroise Decouttere
+ * Exported at: Tue, 11 Feb 2025 08:35:29 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -406,6 +406,9 @@
 /* loco:62567a5b3e928d1b5930fc02 */
 "buttonFolders" = "Cartelle";
 
+/* loco:67a9bc304b02c0c7bc094dc2 */
+"buttonFreeTrial" = "Prova gratis";
+
 /* loco:651ebfd6a9604ddb660b5e12 */
 "buttonGoToSettings" = "Vai alle impostazioni";
 
@@ -482,7 +485,7 @@
 "buttonSchedule" = "Programmare l’invio di un’e-mail in un secondo momento";
 
 /* loco:6723a2a5f3c615913002d152 */
-"buttonScheduleTitle" = "Programma";
+"buttonScheduleTitle" = "Pianifica";
 
 /* loco:65957d479527393708069ee2 */
 "buttonSee" = "Vedi";
@@ -1039,6 +1042,21 @@
 /* loco:638f6ec13ee2595d320a7242 */
 "multipleSelectionCount-plural-many" = "";
 
+/* loco:67a9ba0103b091bbbc0837c2 */
+"myKSuiteQuotasAlertDescription" = "Una volta raggiunto questo limite, non sarà più possibile inviare o ricevere messaggi. Liberate spazio o passate a my kSuite+.";
+
+/* loco:67a9b93a6990d405bc07fd62 */
+"myKSuiteQuotasAlertFullDescription" = "Liberate spazio o passate alla my kSuite+.";
+
+/* loco:67a9b8d18256be1bd103fdb2 */
+"myKSuiteQuotasAlertFullTitle" = "Blocco della ricezione e dell’invio di messaggi";
+
+/* loco:67a9b90e2acef5d4c50ddd02 */
+"myKSuiteQuotasAlertTitle" = "Limite di memoria quasi raggiunto";
+
+/* loco:67a4d86fe5d5c084180d2eb2 */
+"myKSuiteSubscriptionTitle" = "Il mio abbonamento";
+
 /* loco:64c21d831dadd3122c0c73f2 */
 "newAccountDescription" = "Comunicare e archiviare documenti e foto in un ecosistema privo di pubblicità che rispetta la vostra privacy";
 
@@ -1146,6 +1164,12 @@
 
 /* loco:62c2ef4a24eb9878221dcd63 */
 "onBoardingTitle4" = "Inizia!";
+
+/* loco:67986c43729fae7515071032 */
+"organizationName" = "Organizzazione: %@";
+
+/* loco:67a9f9906c6c8012a50b7782 */
+"otherOrganisation" = "Altro";
 
 /* loco:62a9db9c563de5001402e482 */
 "pendingMessagesFolder" = "Messaggi in sospeso";
@@ -1617,6 +1641,9 @@
 
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "";
+
+/* loco:67a32e4384fbf4226404e972 */
+"snoozedFolder" = "In attesa";
 
 /* loco:62a33e2d0c5ac4438c366a32 */
 "socialNetworksFolder" = "Social Network";
