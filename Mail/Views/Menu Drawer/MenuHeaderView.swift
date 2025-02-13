@@ -25,7 +25,7 @@ import SwiftUI
 import UIKit
 
 struct MenuHeaderView: View {
-    @LazyInjectService private var platformDetector: PlatformDetectable
+    @InjectService private var platformDetector: PlatformDetectable
 
     @EnvironmentObject private var mainViewState: MainViewState
 

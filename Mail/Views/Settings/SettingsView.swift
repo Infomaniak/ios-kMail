@@ -29,12 +29,12 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct SettingsView: View {
-    @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var appLockHelper: AppLockHelper
-    @LazyInjectService private var featureFlagsManageable: FeatureFlagsManageable
-    @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var platformDetector: PlatformDetectable
+    @InjectService private var accountManager: AccountManager
+    @InjectService private var appLockHelper: AppLockHelper
+    @InjectService private var featureFlagsManageable: FeatureFlagsManageable
+    @InjectService private var platformDetector: PlatformDetectable
     @InjectService private var myKSuiteStore: MyKSuiteStore
+    @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.currentUser) private var currentUser
 

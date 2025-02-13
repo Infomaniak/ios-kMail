@@ -25,7 +25,7 @@ import MailResources
 import SwiftUI
 
 struct ReportJunkView: View {
-    @LazyInjectService private var platformDetector: PlatformDetectable
+    @InjectService private var platformDetector: PlatformDetectable
 
     @EnvironmentObject private var mailboxManager: MailboxManager
     @Environment(\.dismiss) private var dismiss

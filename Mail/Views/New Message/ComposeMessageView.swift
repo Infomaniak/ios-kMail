@@ -64,11 +64,11 @@ enum NewMessageAlertType {
 }
 
 struct ComposeMessageView: View {
+    @InjectService private var platformDetector: PlatformDetectable
+    @InjectService private var featureFlagsManager: FeatureFlagsManageable
     @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var platformDetector: PlatformDetectable
     @LazyInjectService private var draftManager: DraftManager
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
-    @LazyInjectService private var featureFlagsManager: FeatureFlagsManageable
     @LazyInjectService private var reviewManager: ReviewManageable
 
     @Environment(\.dismiss) private var dismiss

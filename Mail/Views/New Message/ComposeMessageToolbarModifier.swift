@@ -29,7 +29,7 @@ extension View {
 }
 
 struct BaseComposeMessageToolbarModifier: ViewModifier {
-    @LazyInjectService private var platformDetector: PlatformDetectable
+    @InjectService private var platformDetector: PlatformDetectable
 
     let dismissHandler: () -> Void
 

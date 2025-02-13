@@ -28,7 +28,7 @@ import SwiftUI
 
 struct AccountListView: View {
     @LazyInjectService private var orientationManager: OrientationManageable
-    @LazyInjectService private var accountManager: AccountManager
+    @InjectService private var accountManager: AccountManager
 
     @State private var isShowingNewAccountView = false
     @State private var users: [UserProfile]?

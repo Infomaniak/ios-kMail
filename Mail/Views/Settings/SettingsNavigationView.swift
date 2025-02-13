@@ -24,7 +24,7 @@ import NavigationBackport
 import SwiftUI
 
 struct SettingsNavigationView: View {
-    @LazyInjectService private var platformDetector: PlatformDetectable
+    @InjectService private var platformDetector: PlatformDetectable
 
     @Environment(\.dismiss) private var dismiss
 

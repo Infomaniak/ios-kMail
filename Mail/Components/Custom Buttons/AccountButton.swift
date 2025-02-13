@@ -25,7 +25,7 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct AccountButton: View {
-    @LazyInjectService private var accountManager: AccountManager
+    @InjectService private var accountManager: AccountManager
 
     @Environment(\.currentUser) private var currentUser
 
