@@ -41,9 +41,11 @@ public final class ScrollObserver: ObservableObject {
     public func observeValue(scrollView: UIScrollView) {
         guard subscriber == nil else { return }
 
-        subscriber = scrollView.publisher(for: \.contentOffset).sink { newValue in
-            self.scrollViewDidScroll(offset: newValue.y)
-        }
+        subscriber = scrollView.publisher(for: \.contentOffset)
+            .throttle(for: .milliseconds(100), scheduler: DispatchQueue.main, latest: true)
+            .sink { newValue in
+                self.scrollViewDidScroll(offset: newValue.y)
+            }
         self.scrollView = scrollView
     }
 
