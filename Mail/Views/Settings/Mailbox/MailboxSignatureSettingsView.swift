@@ -40,12 +40,16 @@ struct MailboxSignatureSettingsView: View {
                 SettingsSectionTitleView(title: MailResourcesStrings.Localizable.settingsSignatureDescription)
                     .settingsCell()
 
-                SettingsOptionCell(
-                    title: MailResourcesStrings.Localizable.selectSignatureNone,
-                    isSelected: signatures.defaultSignature == nil,
-                    isLast: false
-                ) {
-                    setAsDefault(nil)
+                if signatures.defaultSignature != nil && mailboxManager.mailbox.isFree && mailboxManager.mailbox.isLimited {
+                    SettingsMyKSuiteOptionCell(title: MailResourcesStrings.Localizable.selectSignatureNone, isLast: false)
+                } else {
+                    SettingsOptionCell(
+                        title: MailResourcesStrings.Localizable.selectSignatureNone,
+                        isSelected: signatures.defaultSignature == nil,
+                        isLast: false
+                    ) {
+                        setAsDefault(nil)
+                    }
                 }
 
                 ForEach(signatures) { signature in
