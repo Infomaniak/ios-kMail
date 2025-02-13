@@ -69,6 +69,14 @@ struct SplitView: View {
     @StateObject private var navigationDrawerController = NavigationDrawerState()
     @StateObject private var splitViewManager = SplitViewManager()
 
+    @LazyInjectService private var accountManager: AccountManager
+    @LazyInjectService private var orientationManager: OrientationManageable
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var platformDetector: PlatformDetectable
+    @LazyInjectService private var appLaunchCounter: AppLaunchCounter
+    @LazyInjectService private var cacheManager: CacheManageable
+    @LazyInjectService private var matomo: MatomoUtils
+
     let mailboxManager: MailboxManager
 
     var body: some View {
@@ -122,6 +130,11 @@ struct SplitView: View {
         .discoveryPresenter(isPresented: $mainViewState.isShowingUpdateAvailable) {
             DiscoveryView(item: .updateDiscovery) { willUpdate in
                 guard willUpdate else { return }
+                if willUpdate {
+                    matomo.track(eventWithCategory: .aiWriter, name: "discoverNow")
+                } else {
+                    matomo.track(eventWithCategory: .aiWriter, name: "discoverLater")
+                }
                 let url: URLConstants = Bundle.main.isRunningInTestFlight ? .testFlight : .appStore
                 openURL(url.url)
             }
@@ -131,6 +144,11 @@ struct SplitView: View {
                 UserDefaults.shared.shouldPresentSyncDiscovery = false
             } completionHandler: { willSync in
                 guard willSync else { return }
+                if willSync {
+                    matomo.track(eventWithCategory: .aiWriter, name: "discoverNow")
+                } else {
+                    matomo.track(eventWithCategory: .aiWriter, name: "discoverLater")
+                }
                 mainViewState.isShowingSyncProfile = true
             }
         }
@@ -139,6 +157,11 @@ struct SplitView: View {
                 UserDefaults.shared.shouldPresentSetAsDefaultDiscovery = false
             } completionHandler: { willSetAsDefault in
                 guard willSetAsDefault, let settingsUrl = URL(string: UIApplication.openSettingsURLString) else { return }
+                if willSetAsDefault {
+                    matomo.track(eventWithCategory: .aiWriter, name: "discoverNow")
+                } else {
+                    matomo.track(eventWithCategory: .aiWriter, name: "discoverLater")
+                }
                 openURL(settingsUrl)
             }
         }
