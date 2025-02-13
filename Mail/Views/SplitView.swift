@@ -323,7 +323,6 @@ struct SplitView: View {
             openURL(URLConstants.chatbot.url)
         }
 
-        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .homeScreenShortcuts, name: homeScreenShortcut.rawValue)
     }
 
