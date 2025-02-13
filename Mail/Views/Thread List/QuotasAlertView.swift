@@ -40,7 +40,7 @@ struct QuotasAlertView: View {
         if quotas.progression >= 1.0 {
             return .full
         } else if quotas.progression > 0.85 && nextShowQuotasAlert < appLaunchCounter.value {
-            return .notFull
+            return .almostFull
         }
         return .none
     }
@@ -62,7 +62,7 @@ struct QuotasAlertView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                if type == .notFull {
+                if type == .almostFull {
                     Button {
                         nextShowQuotasAlert = appLaunchCounter.value + nextShowCounter
                     } label: {
@@ -80,7 +80,7 @@ struct QuotasAlertView: View {
 
     enum AlertType {
         case full
-        case notFull
+        case almostFull
         case none
 
         var background: Color {
