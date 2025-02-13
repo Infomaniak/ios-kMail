@@ -30,6 +30,7 @@ struct QuotasAlertView: View {
     @InjectService private var appLaunchCounter: AppLaunchCounter
 
     let mailbox: Mailbox
+    private let nextShowCounter = 10
 
     private var type: AlertType {
         guard mailbox.isFree && mailbox.isLimited, let quotas = mailbox.quotas else {
@@ -63,7 +64,7 @@ struct QuotasAlertView: View {
 
                 if type == .notFull {
                     Button {
-                        nextShowQuotasAlert = appLaunchCounter.value + 10
+                        nextShowQuotasAlert = appLaunchCounter.value + nextShowCounter
                     } label: {
                         MailResourcesAsset.close.swiftUIImage
                             .iconSize(.medium)
