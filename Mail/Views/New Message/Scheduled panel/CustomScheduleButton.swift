@@ -43,11 +43,7 @@ struct CustomScheduleButton: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
                 if isMyKSuiteStandard {
-                    MyKSuiteResources.Assets.myKSuitePlusLogo.swiftUIImage
-                        .padding(.horizontal, value: .mini)
-                        .padding(.vertical, value: .micro)
-                        .background(MailResourcesAsset.myKSuiteBackgroundColor.swiftUIColor)
-                        .clipShape(Capsule())
+                    MyKSuitePlusChip()
                 }
 
                 ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor)

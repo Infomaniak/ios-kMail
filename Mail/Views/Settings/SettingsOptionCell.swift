@@ -33,13 +33,10 @@ extension VerticalAlignment {
     static let settingsOptionCellCheckmark = VerticalAlignment(SettingsOptionCellCheckmark.self)
 }
 
-struct SettingsOptionCell: View {
-    let title: String
-    let icon: Image?
-    let hint: String?
-    let isSelected: Bool
-    let isLast: Bool
-    let action: () -> Void
+extension SettingsOptionCell where TrailingView == EmptyView {
+    init(value: any SettingsOptionEnum, isSelected: Bool, isLast: Bool, action: @escaping () -> Void) {
+        self.init(title: value.title, icon: value.image, hint: value.hint, isSelected: isSelected, isLast: isLast, action: action)
+    }
 
     init(
         title: String,
@@ -49,16 +46,42 @@ struct SettingsOptionCell: View {
         isLast: Bool,
         action: @escaping () -> Void
     ) {
+        self.init(
+            title: title,
+            icon: icon,
+            hint: hint,
+            isSelected: isSelected,
+            isLast: isLast,
+            action: action
+        ) {}
+    }
+}
+
+struct SettingsOptionCell<TrailingView: View>: View {
+    let title: String
+    let icon: Image?
+    let hint: String?
+    let isSelected: Bool
+    let isLast: Bool
+    let trailingView: () -> TrailingView
+    let action: () -> Void
+
+    init(
+        title: String,
+        icon: Image? = nil,
+        hint: String? = nil,
+        isSelected: Bool = false,
+        isLast: Bool,
+        action: @escaping () -> Void,
+        @ViewBuilder trailingView: @escaping () -> TrailingView
+    ) {
         self.title = title
         self.icon = icon
         self.hint = hint
         self.isSelected = isSelected
         self.isLast = isLast
+        self.trailingView = trailingView
         self.action = action
-    }
-
-    init(value: any SettingsOptionEnum, isSelected: Bool, isLast: Bool, action: @escaping () -> Void) {
-        self.init(title: value.title, icon: value.image, hint: value.hint, isSelected: isSelected, isLast: isLast, action: action)
     }
 
     var body: some View {
@@ -87,6 +110,8 @@ struct SettingsOptionCell: View {
                                 .multilineTextAlignment(.leading)
                         }
                     }
+
+                    trailingView()
 
                     if isSelected {
                         MailResourcesAsset.check

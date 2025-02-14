@@ -25,9 +25,15 @@ import RealmSwift
 import SwiftUI
 
 struct MailboxSignatureSettingsView: View {
-    @ObservedResults(Signature.self) var signatures
+    @State private var isShowingMyKSuiteUpgrade = false
+
+    @ObservedResults(Signature.self) private var signatures
 
     let mailboxManager: MailboxManager
+
+    private var isKSuiteLimited: Bool {
+        signatures.defaultSignature != nil && mailboxManager.mailbox.isFree && mailboxManager.mailbox.isLimited
+    }
 
     init(mailboxManager: MailboxManager) {
         self.mailboxManager = mailboxManager
@@ -45,7 +51,15 @@ struct MailboxSignatureSettingsView: View {
                     isSelected: signatures.defaultSignature == nil,
                     isLast: false
                 ) {
-                    setAsDefault(nil)
+                    if isKSuiteLimited {
+                        isShowingMyKSuiteUpgrade = true
+                    } else {
+                        setAsDefault(nil)
+                    }
+                } trailingView: {
+                    if isKSuiteLimited {
+                        MyKSuitePlusChip()
+                    }
                 }
 
                 ForEach(signatures) { signature in
@@ -66,6 +80,7 @@ struct MailboxSignatureSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .backButtonDisplayMode(.minimal)
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "Signatures"])
+        .myKSuitePanel(isPresented: $isShowingMyKSuiteUpgrade, configuration: .mail)
         .task {
             do {
                 try await mailboxManager.refreshAllSignatures()
