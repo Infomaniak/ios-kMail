@@ -20,8 +20,10 @@ import MailResources
 import MyKSuite
 import SwiftUI
 
-struct MyKSuitePlusChip: View {
-    var body: some View {
+public struct MyKSuitePlusChip: View {
+    public init() {}
+
+    public var body: some View {
         MyKSuiteResources.Assets.myKSuitePlusLogo.swiftUIImage
             .padding(.horizontal, value: .mini)
             .padding(.vertical, value: .micro)
