@@ -57,6 +57,7 @@ struct SplitView: View {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
     @LazyInjectService private var cacheManager: CacheManageable
+    @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.openURL) private var openURL
     @Environment(\.currentUser) private var currentUser
@@ -68,14 +69,6 @@ struct SplitView: View {
 
     @StateObject private var navigationDrawerController = NavigationDrawerState()
     @StateObject private var splitViewManager = SplitViewManager()
-
-    @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var orientationManager: OrientationManageable
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
-    @LazyInjectService private var platformDetector: PlatformDetectable
-    @LazyInjectService private var appLaunchCounter: AppLaunchCounter
-    @LazyInjectService private var cacheManager: CacheManageable
-    @LazyInjectService private var matomo: MatomoUtils
 
     let mailboxManager: MailboxManager
 
