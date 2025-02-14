@@ -234,6 +234,10 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return "\(folderName)Folder"
     }
 
+    public var shouldContainsSingleMessageThreads: Bool {
+        return role == .draft || role == .scheduledDrafts
+    }
+
     public static func < (lhs: Folder, rhs: Folder) -> Bool {
         if let lhsRole = lhs.role, let rhsRole = rhs.role {
             return lhsRole.order < rhsRole.order

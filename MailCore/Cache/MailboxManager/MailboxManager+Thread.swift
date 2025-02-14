@@ -455,11 +455,12 @@ public extension MailboxManager {
     }
 
     private func createNewThreadIfRequired(for message: Message, folder: Folder, existingThreads: [Thread]) -> Thread? {
-        guard folder.role != .draft else {
+        guard !folder.shouldContainsSingleMessageThreads else {
             let thread = message.toThread().detached()
             folder.threads.insert(thread)
             return thread
         }
+
         guard !existingThreads.contains(where: { $0.folder == folder }) else {
             logError(.missingFolder)
             return nil
