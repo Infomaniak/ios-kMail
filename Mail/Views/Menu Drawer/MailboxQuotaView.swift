@@ -29,7 +29,7 @@ struct MailboxQuotaView: View {
 
     private var progressString: String {
         return MailResourcesStrings.Localizable.menuDrawerMailboxStorage(
-            Int64(quotas.size * 1024).formatted(.defaultByteCount),
+            Int64(quotas.byteSize).formatted(.defaultByteCount),
             Constants.sizeLimit.formatted(.defaultByteCount)
         )
     }
