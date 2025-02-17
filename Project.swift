@@ -127,7 +127,7 @@ let project = Project(name: "Mail",
                                   resources: [
                                       "MailShareExtension/**/*.js" // Needed for NSExtensionJavaScriptPreprocessingFile
                                   ],
-                                  entitlements: "MailShareExtension/ShareExtension.entitlements",
+                                  entitlements: "MailResources/MailExtensions.entitlements",
                                   scripts: [Constants.swiftlintScript],
                                   dependencies: [
                                       .target(name: "MailCore"),
@@ -174,7 +174,7 @@ let project = Project(name: "Mail",
                                       ]
                                   ]),
                                   sources: "MailNotificationServiceExtension/**",
-                                  entitlements: "MailResources/Mail.entitlements",
+                                  entitlements: "MailResources/MailExtensions.entitlements",
                                   dependencies: [
                                       .target(name: "MailCore"),
                                       .target(name: "MailResources"),
@@ -199,7 +199,7 @@ let project = Project(name: "Mail",
                                             "Mail/Utils/**",
                                             "Mail/Views/**",
                                             "Mail/Proxy/Protocols/**"],
-                                  entitlements: "MailNotificationContentExtension/MailNotificationContentExtension.entitlements",
+                                  entitlements: "MailResources/MailExtensions.entitlements",
                                   scripts: [Constants.swiftlintScript],
                                   dependencies: [
                                       .target(name: "MailCore"),
@@ -251,7 +251,7 @@ let project = Project(name: "Mail",
                                       "MailResources/**/*.strings",
                                       "MailResources/**/*.stringsdict"
                                   ],
-                                  entitlements: "MailResources/Mail.entitlements",
+                                  entitlements: "MailResources/MailExtensions.entitlements",
                                   dependencies: [
                                       .target(name: "MailCore"),
                                       .external(name: "InfomaniakDI")
