@@ -54,11 +54,10 @@ struct QuotasAlertView: View {
 
                 VStack(alignment: .leading, spacing: IKPadding.micro) {
                     Text(type.title)
-                        .font(MailTextStyle.bodySmallMedium.font)
-                        .foregroundStyle(type.titleColor)
+                        .textStyle(.bodySmallMedium)
 
                     Text(type.description)
-                        .font(MailTextStyle.label.font)
+                        .textStyle(.label)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -74,7 +73,7 @@ struct QuotasAlertView: View {
             }
             .padding(.horizontal, value: .medium)
             .padding(.vertical, value: .mini)
-            .background(type.background)
+            .background(MailResourcesAsset.hoverMenuBackground.swiftUIColor)
         }
     }
 
@@ -83,21 +82,12 @@ struct QuotasAlertView: View {
         case almostFull
         case none
 
-        var background: Color {
-            switch self {
-            case .full:
-                return MailResourcesAsset.ksuiteRedBackground.swiftUIColor
-            default:
-                return MailResourcesAsset.ksuiteYellowBackground.swiftUIColor
-            }
-        }
-
         var iconColor: Color {
             switch self {
             case .full:
-                return MailResourcesAsset.redDarkColor.swiftUIColor
+                return MailResourcesAsset.redColor.swiftUIColor
             default:
-                return MailResourcesAsset.orangeDarkColor.swiftUIColor
+                return MailResourcesAsset.orangeColor.swiftUIColor
             }
         }
 
@@ -116,15 +106,6 @@ struct QuotasAlertView: View {
                 return MailResourcesStrings.Localizable.myKSuiteQuotasAlertFullDescription
             default:
                 return MailResourcesStrings.Localizable.myKSuiteQuotasAlertDescription
-            }
-        }
-
-        var titleColor: Color {
-            switch self {
-            case .full:
-                return MailResourcesAsset.redUltraDarkColor.swiftUIColor
-            default:
-                return MailResourcesAsset.orangeUltraDarkColor.swiftUIColor
             }
         }
     }
