@@ -76,7 +76,7 @@ public final class ScrollObserver: ObservableObject {
 
         guard scrollDirection != direction else { return }
         Task { @MainActor [direction] in
-            withAnimation {
+            withAnimation(.bouncy.speed(1.5)) {
                 scrollDirection = direction
             }
         }
