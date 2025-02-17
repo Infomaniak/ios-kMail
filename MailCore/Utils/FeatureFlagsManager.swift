@@ -37,10 +37,6 @@ public enum FeatureFlag: String, Codable {
             self = featureFlag
         } else {
             self = .unknown
-            SentrySDK.capture(message: "FeatureFlag: Unknown feature") { scope in
-                scope.setLevel(.info)
-                scope.setExtra(value: rawString, key: "Feature name")
-            }
         }
     }
 }
