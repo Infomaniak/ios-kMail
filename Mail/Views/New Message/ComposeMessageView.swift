@@ -258,7 +258,9 @@ struct ComposeMessageView: View {
                 mailboxManager: mailboxManager,
                 showSnackbar: shouldShowSnackbar,
                 changeFolderAction: changeSelectedFolder
-            )
+            ) {
+                mainViewState.isShowingMyKSuiteUpgrade = true
+            }
         }
         .customAlert(item: $isShowingAlert) { alert in
             switch alert.type {

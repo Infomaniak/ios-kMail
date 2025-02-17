@@ -25,6 +25,7 @@ import Lottie
 import MailCore
 import MailCoreUI
 import MailResources
+import MyKSuite
 import NavigationBackport
 import RealmSwift
 import SwiftModalPresentation
@@ -141,6 +142,7 @@ struct SplitView: View {
                 openURL(settingsUrl)
             }
         }
+        .myKSuitePanel(isPresented: $mainViewState.isShowingMyKSuiteUpgrade, configuration: .mail)
         .fullScreenCover(isPresented: $mainViewState.isShowingSyncProfile) {
             SyncProfileNavigationView()
         }

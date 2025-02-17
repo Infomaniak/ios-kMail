@@ -65,6 +65,14 @@ public class MailApiError: MailError {
         localizedDescription: MailResourcesStrings.Localizable.aiErrorTooManyRequests
     )
 
+    /// Sent limit reached
+    public static let sentLimitReached = MailApiError(
+        code: "send__server_rate_limit_exceeded",
+        localizedDescription: MailResourcesStrings.Localizable
+            .errorSendLimitExceeded,
+        shouldDisplay: true
+    )
+
     static let allErrors: [MailApiError] = [
         // General
         MailApiError(code: "not_authorized"),
@@ -131,11 +139,10 @@ public class MailApiError: MailError {
         MailApiError(code: "send__server_refused_all_recipients",
                      localizedDescription: MailResourcesStrings.Localizable.errorRefusedRecipients,
                      shouldDisplay: true),
-        MailApiError(code: "send__server_rate_limit_exceeded",
-                     localizedDescription: MailResourcesStrings.Localizable.errorSendLimitExceeded,
-                     shouldDisplay: true),
+        sentLimitReached,
         MailApiError(code: "send__server_unknown_error"),
-        MailApiError(code: "send__server_daily_limit_reached"),
+
+        MailApiError(code: "send__server_daily_limit_reached"), // This ?
         MailApiError(code: "send__spam_rejected"),
         MailApiError(code: "send__sender_mismatch"),
 

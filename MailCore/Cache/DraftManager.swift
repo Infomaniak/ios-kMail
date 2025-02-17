@@ -127,8 +127,14 @@ public final class DraftManager {
         return updatedDraft
     }
 
-    public func sendOrSchedule(draft initialDraft: Draft, mailboxManager: MailboxManager, retry: Bool = true,
-                               showSnackbar: Bool, changeFolderAction: ((Folder) -> Void)?) async -> Date? {
+    public func sendOrSchedule(
+        draft initialDraft: Draft,
+        mailboxManager: MailboxManager,
+        retry: Bool = true,
+        showSnackbar: Bool,
+        changeFolderAction: ((Folder) -> Void)?,
+        myKSuiteUpgradeAction: (() -> Void)? = nil
+    ) async -> Date? {
         if initialDraft.action == .schedule {
             alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarScheduling, shouldShow: showSnackbar)
         } else {
@@ -174,15 +180,42 @@ public final class DraftManager {
                     showSnackbar: showSnackbar,
                     changeFolderAction: changeFolderAction
                 )
-            }
+            } else if let mailError = error as? MailApiError,
+                      mailError == MailApiError.sentLimitReached,
+                      mailboxManager.mailbox.isFree && mailboxManager.mailbox.isLimited {
+                Task {
+                    guard let liveDraft = draft.thaw() else { return }
+                    try liveDraft.realm?.write {
+                        liveDraft.action = .save
+                    }
 
-            alertDisplayable.show(message: error.localizedDescription, shouldShow: showSnackbar)
+                    await saveDraftRemotely(
+                        draft: liveDraft.freeze(),
+                        mailboxManager: mailboxManager,
+                        retry: false,
+                        showSnackbar: false
+                    )
+                }
+                alertDisplayable.show(
+                    message: MailResourcesStrings.Localizable.errorSendLimitExceeded,
+                    action: (MailResourcesStrings.Localizable.buttonUpgrade, {
+                        myKSuiteUpgradeAction?()
+                    })
+                )
+            } else {
+                alertDisplayable.show(message: error.localizedDescription, shouldShow: showSnackbar)
+            }
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
         return sendDate
     }
 
-    public func syncDraft(mailboxManager: MailboxManager, showSnackbar: Bool, changeFolderAction: ((Folder) -> Void)? = nil) {
+    public func syncDraft(
+        mailboxManager: MailboxManager,
+        showSnackbar: Bool,
+        changeFolderAction: ((Folder) -> Void)? = nil,
+        myKSuiteUpgradeAction: (() -> Void)? = nil
+    ) {
         let drafts = mailboxManager.draftWithPendingAction().freezeIfNeeded()
         Task {
             let latestSendDate = await withTaskGroup(of: Date?.self, returning: Date?.self) { group in
@@ -203,7 +236,8 @@ public final class DraftManager {
                                 draft: draft,
                                 mailboxManager: mailboxManager,
                                 showSnackbar: showSnackbar,
-                                changeFolderAction: changeFolderAction
+                                changeFolderAction: changeFolderAction,
+                                myKSuiteUpgradeAction: myKSuiteUpgradeAction
                             )
                         default:
                             break
