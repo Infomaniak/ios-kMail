@@ -1058,7 +1058,7 @@
 "myKSuiteQuotasAlertTitle" = "Storage limit almost reached";
 
 /* loco:67b2f1476031ed89500715a3 */
-"myKSuiteSpaceFullAlert" = "There is not enough storage space to carry out this action.";
+"myKSuiteSpaceFullAlert" = "There is not enough storage space to perform this action.";
 
 /* loco:67a4d86fe5d5c084180d2eb2 */
 "myKSuiteSubscriptionTitle" = "My subscription";

@@ -1058,7 +1058,7 @@
 "myKSuiteQuotasAlertTitle" = "Limite di memoria quasi raggiunto";
 
 /* loco:67b2f1476031ed89500715a3 */
-"myKSuiteSpaceFullAlert" = "Non c'è spazio sufficiente per eseguire questa azione.";
+"myKSuiteSpaceFullAlert" = "Lo spazio di memoria non è sufficiente per eseguire questa azione.";
 
 /* loco:67a4d86fe5d5c084180d2eb2 */
 "myKSuiteSubscriptionTitle" = "Il mio abbonamento";
