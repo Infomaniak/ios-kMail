@@ -142,7 +142,7 @@ public class MailApiError: MailError {
         sentLimitReached,
         MailApiError(code: "send__server_unknown_error"),
 
-        MailApiError(code: "send__server_daily_limit_reached"), // This ?
+        MailApiError(code: "send__server_daily_limit_reached"),
         MailApiError(code: "send__spam_rejected"),
         MailApiError(code: "send__sender_mismatch"),
 

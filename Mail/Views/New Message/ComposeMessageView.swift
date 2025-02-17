@@ -327,6 +327,23 @@ struct ComposeMessageView: View {
             return
         }
 
+        guard let quotas = mailboxManager.mailbox.quotas, quotas.size < Constants.sizeLimit else {
+            Task {
+                if let liveDraft = draft.thaw() {
+                    try? liveDraft.realm?.write {
+                        liveDraft.action = .save
+                    }
+                }
+            }
+            snackbarPresenter.show(
+                message: MailResourcesStrings.Localizable.myKSuiteSpaceFullAlert,
+                action: IKSnackBar.Action(title: MailResourcesStrings.Localizable.buttonUpgrade) {
+                    mainViewState.isShowingMyKSuiteUpgrade = true
+                }
+            )
+            return
+        }
+
         sendDraft()
 
         if !Bundle.main.isExtension && !platformDetector.isMac {
