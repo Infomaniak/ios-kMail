@@ -181,8 +181,7 @@ public final class DraftManager {
                     changeFolderAction: changeFolderAction
                 )
             } else if let mailError = error as? MailApiError,
-                      mailError == MailApiError.sentLimitReached,
-                      mailboxManager.mailbox.isFree && mailboxManager.mailbox.isLimited {
+                      mailError == MailApiError.sentLimitReached {
                 Task {
                     guard let liveDraft = draft.thaw() else { return }
                     try liveDraft.realm?.write {
@@ -196,12 +195,16 @@ public final class DraftManager {
                         showSnackbar: false
                     )
                 }
-                alertDisplayable.show(
-                    message: MailResourcesStrings.Localizable.errorSendLimitExceeded,
-                    action: (MailResourcesStrings.Localizable.buttonUpgrade, {
-                        myKSuiteUpgradeAction?()
-                    })
-                )
+                if mailboxManager.mailbox.isFree && mailboxManager.mailbox.isLimited {
+                    alertDisplayable.show(
+                        message: MailResourcesStrings.Localizable.errorSendLimitExceeded,
+                        action: (MailResourcesStrings.Localizable.buttonUpgrade, {
+                            myKSuiteUpgradeAction?()
+                        })
+                    )
+                } else {
+                    alertDisplayable.show(message: error.localizedDescription, shouldShow: showSnackbar)
+                }
             } else {
                 alertDisplayable.show(message: error.localizedDescription, shouldShow: showSnackbar)
             }
