@@ -163,12 +163,12 @@ final class ProxySubBody: Codable {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         body = try values.decode(ProxyBody.self, forKey: .body)
 
-        name = try values.decode(String.self, forKey: .name)
-        type = try values.decode(String.self, forKey: .type)
-        date = try values.decode(Date.self, forKey: .date)
-        subject = try values.decode(String.self, forKey: .subject)
-        from = try values.decode([Recipient].self, forKey: .from)
-        to = try values.decode([Recipient].self, forKey: .to)
+        name = try values.decodeIfPresent(String.self, forKey: .name)
+        type = try values.decodeIfPresent(String.self, forKey: .type)
+        date = try values.decodeIfPresent(Date.self, forKey: .date)
+        subject = try values.decodeIfPresent(String.self, forKey: .subject)
+        from = try values.decodeIfPresent([Recipient].self, forKey: .from) ?? []
+        to = try values.decodeIfPresent([Recipient].self, forKey: .to) ?? []
 
         if let partId = try? values.decode(Int.self, forKey: .partId) {
             self.partId = "\(partId)"
