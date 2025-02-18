@@ -60,7 +60,7 @@ public extension Endpoint {
         )
     }
 
-    private static func mailbox(uuid: String) -> Endpoint {
+    internal static func mailbox(uuid: String) -> Endpoint {
         return .base.appending(path: "/mail/\(uuid)")
     }
 
