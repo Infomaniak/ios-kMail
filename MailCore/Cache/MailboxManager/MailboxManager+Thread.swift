@@ -194,11 +194,7 @@ public extension MailboxManager {
                 freshFolder.remainingOldMessagesToFetch -= direction.pageSize
             }
 
-            let threads = writableRealm.objects(Thread.self).where { thread in
-                thread.folderId == freshFolder.remoteId
-            }
-            freshFolder.threads.removeAll()
-            freshFolder.threads.insert(objectsIn: threads)
+            refreshFolderThreads(folder: freshFolder, using: writableRealm)
         }
 
         return true
@@ -457,7 +453,6 @@ public extension MailboxManager {
         }
 
         guard !existingThreads.contains(where: { $0.folderId == folder.remoteId }) else {
-            logError(.missingFolder)
             return nil
         }
 
@@ -531,6 +526,14 @@ public extension MailboxManager {
         realm.add(thread)
 
         return thread
+    }
+
+    private func refreshFolderThreads(folder: Folder, using realm: Realm) {
+        let threads = realm.objects(Thread.self).where { thread in
+            thread.folderId == folder.remoteId
+        }
+        folder.threads.removeAll()
+        folder.threads.insert(objectsIn: threads)
     }
 
     // MARK: - Other
