@@ -23,6 +23,7 @@ import MailResources
 import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
+import DesignSystem
 
 struct FoldersListView: View {
     @EnvironmentObject private var mainViewState: MainViewState
