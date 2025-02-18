@@ -29,12 +29,13 @@ struct HeaderDateView: View {
     private var isScheduled: Bool { date > .now }
 
     var body: some View {
-        HStack(spacing: IKPadding.small) {
+        HStack(spacing: IKPadding.micro) {
             if isScheduled {
                 MailResourcesAsset.clockThick
                     .iconSize(.small)
                     .foregroundStyle(MailResourcesAsset.coralColor)
             }
+
             Text(date, format: .thread(format))
                 .lineLimit(1)
                 .layoutPriority(1)
