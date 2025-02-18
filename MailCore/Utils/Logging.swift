@@ -24,6 +24,7 @@ import InfomaniakLogin
 import OSLog
 import RealmSwift
 import Sentry
+import UIKit
 
 public enum Logging {
     private static var sentryEnvironment: String = Bundle.main.isRunningInTestFlight ? "testflight" : "production"
@@ -86,8 +87,11 @@ public enum Logging {
         #endif
     }
 
-    public static func resetAppForUITestsIfNeeded() {
+    public static func prepareAppForUITestsIfNeeded() {
         #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("disableAnimations") {
+            UIView.setAnimationsEnabled(false)
+        }
         if ProcessInfo.processInfo.arguments.contains("resetData") {
             UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
             UserDefaults.shared.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)

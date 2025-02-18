@@ -88,36 +88,4 @@ public extension IKSnackBar {
         }
         return snackbar
     }
-
-    @discardableResult
-    @MainActor
-    static func showCancelableSnackBar(
-        message: String,
-        cancelSuccessMessage: String,
-        duration: SnackBar.Duration = .lengthLong,
-        undoAction: UndoAction
-    ) -> IKSnackBar? {
-        return IKSnackBar.showMailSnackBar(
-            message: message,
-            duration: duration,
-            action: .init(title: MailResourcesStrings.Localizable.buttonCancel) {
-                @InjectService var snackbarPresenter: SnackBarPresentable
-                Task {
-                    do {
-                        @InjectService var matomo: MatomoUtils
-                        matomo.track(eventWithCategory: .snackbar, name: "undo")
-
-                        let undoSucceeded = try await undoAction.undo()
-
-                        if undoSucceeded {
-                            snackbarPresenter.show(message: cancelSuccessMessage)
-                            _ = try await undoAction.afterUndo?()
-                        }
-                    } catch {
-                        snackbarPresenter.show(message: error.localizedDescription)
-                    }
-                }
-            }
-        )
-    }
 }
