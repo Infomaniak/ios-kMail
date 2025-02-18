@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import MailCore
@@ -23,7 +24,6 @@ import MailResources
 import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
-import DesignSystem
 
 struct FoldersListView: View {
     @EnvironmentObject private var mainViewState: MainViewState
