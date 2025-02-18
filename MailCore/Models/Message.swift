@@ -144,12 +144,6 @@ public struct MessageActionResult: Codable {
     public var flagged: Int
 }
 
-public enum SnoozeState: String, Sendable, Codable, PersistableEnum {
-    case snoozed
-    case unsnoozed
-    case wasSnoozed
-}
-
 /// A Message has :
 /// - Many threads
 /// - One originalThread: parent thread
@@ -491,7 +485,10 @@ public final class Message: Object, Decodable, Identifiable {
             flagged: flagged,
             answered: answered,
             forwarded: forwarded,
-            bimi: bimi
+            bimi: bimi,
+            snoozeAction: snoozeAction,
+            snoozeEndDate: snoozeEndDate,
+            snoozeState: snoozeState
         )
         thread.messageIds = linkedUids
         thread.folderId = folderId

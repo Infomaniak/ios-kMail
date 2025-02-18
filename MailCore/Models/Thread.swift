@@ -58,6 +58,10 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var duplicates = List<Message>()
     @Persisted public var messageIds: MutableSet<String>
 
+    @Persisted public var snoozeAction: String?
+    @Persisted public var snoozeEndDate: Date?
+    @Persisted public var snoozeState: SnoozeState?
+
     /// This property is used to remove threads from list before network call is finished
     @Persisted public var isMovedOutLocally = false
 
@@ -143,6 +147,10 @@ public class Thread: Object, Decodable, Identifiable {
         lastAction = getLastAction()
 
         subject = messages.first?.subject
+
+        snoozeAction = lastMessageFromFolder?.snoozeAction
+        snoozeEndDate = lastMessageFromFolder?.snoozeEndDate
+        snoozeState = lastMessageFromFolder?.snoozeState
     }
 
     private func getLastAction() -> ThreadLastAction? {
@@ -219,6 +227,9 @@ public class Thread: Object, Decodable, Identifiable {
         case answered
         case forwarded
         case bimi
+        case snoozeAction
+        case snoozeEndDate
+        case snoozeState
     }
 
     public convenience init(
@@ -234,7 +245,10 @@ public class Thread: Object, Decodable, Identifiable {
         flagged: Bool,
         answered: Bool,
         forwarded: Bool,
-        bimi: Bimi? = nil
+        bimi: Bimi? = nil,
+        snoozeAction: String? = nil,
+        snoozeEndDate: Date? = nil,
+        snoozeState: SnoozeState? = nil
     ) {
         self.init()
 
@@ -251,6 +265,9 @@ public class Thread: Object, Decodable, Identifiable {
         self.answered = answered
         self.forwarded = forwarded
         self.bimi = bimi
+        self.snoozeAction = snoozeAction
+        self.snoozeEndDate = snoozeEndDate
+        self.snoozeState = snoozeState
     }
 
     public required init(from decoder: Decoder) throws {
@@ -270,6 +287,9 @@ public class Thread: Object, Decodable, Identifiable {
         answered = try container.decode(Bool.self, forKey: .answered)
         forwarded = try container.decode(Bool.self, forKey: .forwarded)
         bimi = try container.decodeIfPresent(Bimi.self, forKey: .bimi)
+        snoozeAction = try container.decodeIfPresent(String.self, forKey: .snoozeAction)
+        snoozeEndDate = try container.decodeIfPresent(Date.self, forKey: .snoozeEndDate)
+        snoozeState = try container.decodeIfPresent(SnoozeState.self, forKey: .snoozeState)
     }
 
     override public init() {
