@@ -252,6 +252,12 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         }
     }
 
+    func threadBelongsToFolder(_ thread: Query<Thread>) -> Query<Bool> {
+        let isThreadInFolder = thread.folderId == remoteId
+        // TODO: Add condition for INBOX and SNOOZED
+        return isThreadInFolder
+    }
+
     public func computeUnreadCount() {
         unreadCount = threads.where { $0.unseenMessages > 0 }.count
     }

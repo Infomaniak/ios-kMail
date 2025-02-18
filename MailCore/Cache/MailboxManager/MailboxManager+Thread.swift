@@ -541,8 +541,9 @@ public extension MailboxManager {
 
     private func refreshFolderThreads(folder: Folder, using realm: Realm) {
         let threads = realm.objects(Thread.self).where { thread in
-            thread.folderId == folder.remoteId
+            folder.threadBelongsToFolder(thread)
         }
+
         folder.threads.removeAll()
         folder.threads.insert(objectsIn: threads)
     }
