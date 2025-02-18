@@ -85,7 +85,7 @@ enum EditorToolbarAction: Int, Identifiable {
         case .link:
             return MailResourcesAsset.hyperlink
         case .programMessage:
-            return MailResourcesAsset.waitingMessage
+            return MailResourcesAsset.alarmClock
         case .cancelFormat:
             return MailResourcesAsset.cancelFormat
         }
