@@ -73,7 +73,7 @@ public class Thread: Object, Decodable, Identifiable {
 
     public var messageInFolderCount: Int {
         guard !fromSearch else { return 1 }
-        return messages.filter { $0.folderId == self.folder?.remoteId }.count
+        return messages.filter { $0.folderId == self.folderId }.count
     }
 
     public var lastMessageFromFolder: Message? {
@@ -82,7 +82,7 @@ public class Thread: Object, Decodable, Identifiable {
             return messages.last
         }
 
-        return messages.last { $0.folderId == folder?.remoteId }
+        return messages.last { $0.folderId == folderId }
     }
 
     public var formattedSubject: String {
@@ -156,13 +156,18 @@ public class Thread: Object, Decodable, Identifiable {
         return .forward
     }
 
-    func addMessageIfNeeded(newMessage: Message) {
+    func addMessageIfNeeded(newMessage: Message, using realm: Realm) {
         messageIds.insert(objectsIn: newMessage.linkedUids)
 
-        let folderRole = folder?.role
+        guard let folder = realm.object(ofType: Folder.self, forPrimaryKey: folderId) else {
+            return
+        }
+        let folderRole = folder.role
 
         // If the Message is deleted, but we are not in the Trash: ignore it, just leave.
-        if folderRole != .trash && newMessage.inTrash { return }
+        if folderRole != .trash && newMessage.inTrash {
+            return
+        }
 
         let shouldAddMessage: Bool
         switch folderRole {
@@ -184,7 +189,7 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     private func addDuplicatedMessage(twinMessage: Message, newMessage: Message) {
-        let isTwinTheRealMessage = twinMessage.folderId == folder?.remoteId
+        let isTwinTheRealMessage = twinMessage.folderId == folderId
         if isTwinTheRealMessage {
             duplicates.append(newMessage)
         } else {

@@ -38,9 +38,9 @@ enum PageDirection {
     var uidsToFetch: KeyPath<Folder, List<MessageUid>> {
         switch self {
         case .future:
-            return \.oldMessagesUidsToFetch
-        case .past:
             return \.newMessagesUidsToFetch
+        case .past:
+            return \.oldMessagesUidsToFetch
         }
     }
 }
@@ -204,6 +204,12 @@ public extension MailboxManager {
             if direction == .past {
                 freshFolder.remainingOldMessagesToFetch -= direction.pageSize
             }
+
+            let threads = writableRealm.objects(Thread.self).where { thread in
+                thread.folderId == freshFolder.remoteId
+            }
+            freshFolder.threads.removeAll()
+            freshFolder.threads.insert(objectsIn: threads)
         }
 
         return true
@@ -363,7 +369,7 @@ public extension MailboxManager {
                 SentrySDK.capture(message: "Found already existing message") { scope in
                     scope.setContext(value: ["Message": ["uid": message.uid,
                                                          "messageId": message.messageId],
-                                             "Folder": ["id": message.folder?.remoteId,
+                                             "Folder": ["id": message.folderId,
                                                         "name": message.folder?.matomoName,
                                                         "cursor": message.folder?.cursor]],
                                      key: "Message context")
@@ -382,7 +388,7 @@ public extension MailboxManager {
                     using: writableRealm
                 )
             } else {
-                createSingleMessageThread(message: message, folder: folder, threadsToUpdate: &threadsToUpdate)
+                createSingleMessageThread(message: message, threadsToUpdate: &threadsToUpdate, using: writableRealm)
             }
 
             if let message = writableRealm.objects(Message.self).where({ $0.uid == message.uid }).first {
@@ -419,7 +425,8 @@ public extension MailboxManager {
         if let newThread = createNewThreadIfRequired(
             for: message,
             folder: folder,
-            existingThreads: existingThreads
+            existingThreads: existingThreads,
+            using: realm
         ) {
             threadsToUpdate.insert(newThread)
         }
@@ -430,7 +437,7 @@ public extension MailboxManager {
         for thread in existingThreads {
             for existingMessage in allExistingMessages {
                 if !thread.messages.map(\.uid).contains(existingMessage.uid) {
-                    thread.addMessageIfNeeded(newMessage: existingMessage.fresh(using: realm) ?? existingMessage)
+                    thread.addMessageIfNeeded(newMessage: existingMessage.fresh(using: realm) ?? existingMessage, using: realm)
                 }
             }
 
@@ -448,29 +455,27 @@ public extension MailboxManager {
     ///   - message: Given message
     ///   - folder: Given folder
     ///   - threadsToUpdate: List of thread to update after thread's creation
-    private func createSingleMessageThread(message: Message, folder: Folder, threadsToUpdate: inout Set<Thread>) {
-        let thread = message.toThread().detached()
-        folder.threads.insert(thread)
+    private func createSingleMessageThread(message: Message, threadsToUpdate: inout Set<Thread>, using realm: Realm) {
+        let thread = insertMessageToRealm(message: message, using: realm)
         threadsToUpdate.insert(thread)
     }
 
-    private func createNewThreadIfRequired(for message: Message, folder: Folder, existingThreads: [Thread]) -> Thread? {
+    private func createNewThreadIfRequired(for message: Message, folder: Folder, existingThreads: [Thread],
+                                           using realm: Realm) -> Thread? {
         guard !folder.shouldContainsSingleMessageThreads else {
-            let thread = message.toThread().detached()
-            folder.threads.insert(thread)
+            let thread = insertMessageToRealm(message: message, using: realm)
             return thread
         }
 
-        guard !existingThreads.contains(where: { $0.folder == folder }) else {
+        guard !existingThreads.contains(where: { $0.folderId == folder.remoteId }) else {
             logError(.missingFolder)
             return nil
         }
 
-        let thread = message.toThread().detached()
-        folder.threads.insert(thread)
+        let thread = insertMessageToRealm(message: message, using: realm)
 
         let refMessages = existingThreads.flatMap(\.messages).toSet()
-        addPreviousMessagesTo(newThread: thread, from: refMessages)
+        addPreviousMessagesTo(newThread: thread, from: refMessages, using: realm)
 
         return thread
     }
@@ -510,10 +515,10 @@ public extension MailboxManager {
         return foldersCount != threadCount
     }
 
-    private func addPreviousMessagesTo(newThread: Thread, from refMessages: Set<Message>) {
+    private func addPreviousMessagesTo(newThread: Thread, from refMessages: Set<Message>, using realm: Realm) {
         for message in refMessages {
             newThread.messageIds.insert(objectsIn: message.linkedUids)
-            newThread.addMessageIfNeeded(newMessage: message)
+            newThread.addMessageIfNeeded(newMessage: message, using: realm)
         }
     }
 
@@ -530,6 +535,13 @@ public extension MailboxManager {
         for folder in folders {
             folder.computeUnreadCount()
         }
+    }
+
+    private func insertMessageToRealm(message: Message, using realm: Realm) -> Thread {
+        let thread = message.toThread().detached()
+        realm.add(thread)
+
+        return thread
     }
 
     // MARK: - Other
