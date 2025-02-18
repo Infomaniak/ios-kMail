@@ -127,7 +127,7 @@ public final class DraftManager {
         return updatedDraft
     }
 
-    public func sendOrSchedule(
+    private func sendOrSchedule(
         draft initialDraft: Draft,
         mailboxManager: MailboxManager,
         retry: Bool = true,
@@ -182,19 +182,6 @@ public final class DraftManager {
                 )
             } else if let mailError = error as? MailApiError,
                       mailError == MailApiError.sentLimitReached {
-                Task {
-                    guard let liveDraft = draft.thaw() else { return }
-                    try liveDraft.realm?.write {
-                        liveDraft.action = .save
-                    }
-
-                    await saveDraftRemotely(
-                        draft: liveDraft.freeze(),
-                        mailboxManager: mailboxManager,
-                        retry: false,
-                        showSnackbar: false
-                    )
-                }
                 if mailboxManager.mailbox.isFree && mailboxManager.mailbox.isLimited {
                     alertDisplayable.show(
                         message: MailResourcesStrings.Localizable.errorSendLimitExceeded,
@@ -205,12 +192,29 @@ public final class DraftManager {
                 } else {
                     alertDisplayable.show(message: error.localizedDescription, shouldShow: showSnackbar)
                 }
+
+                await saveDraftAfterQuotaFail(draft: draft, mailboxManager: mailboxManager)
             } else {
                 alertDisplayable.show(message: error.localizedDescription, shouldShow: showSnackbar)
             }
         }
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
         return sendDate
+    }
+
+    private func saveDraftAfterQuotaFail(draft: Draft, mailboxManager: MailboxManager) async {
+        guard let liveDraft = draft.thaw() else { return }
+
+        try? liveDraft.realm?.write {
+            liveDraft.action = .initialSave
+        }
+
+        await saveDraftRemotely(
+            draft: liveDraft.freeze(),
+            mailboxManager: mailboxManager,
+            retry: false,
+            showSnackbar: false
+        )
     }
 
     public func syncDraft(
