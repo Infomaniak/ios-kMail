@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: de, German
  * Tagged: ios
- * Exported by: Matthieu Déglon
- * Exported at: Tue, 11 Feb 2025 07:51:22 +0100
+ * Exported by: Ambroise Decouttere
+ * Exported at: Mon, 17 Feb 2025 09:43:14 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -532,6 +532,9 @@
 /* loco:642572dc0839911c7350abf2 */
 "buttonUpdate" = "Aktualisieren";
 
+/* loco:67b2f0bc599c9faeb6006952 */
+"buttonUpgrade" = "Upgrade";
+
 /* loco:62b42d5d2b411f48ef2eb982 */
 "buttonValid" = "Validieren Sie";
 
@@ -1053,6 +1056,9 @@
 
 /* loco:67a9b90e2acef5d4c50ddd02 */
 "myKSuiteQuotasAlertTitle" = "Speichergrenze fast erreicht";
+
+/* loco:67b2f1476031ed89500715a3 */
+"myKSuiteSpaceFullAlert" = "Es gibt nicht genügend Speicherplatz, um diese Aktion durchzuführen.";
 
 /* loco:67a4d86fe5d5c084180d2eb2 */
 "myKSuiteSubscriptionTitle" = "Mein Abonnement";

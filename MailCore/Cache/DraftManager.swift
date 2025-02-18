@@ -127,8 +127,14 @@ public final class DraftManager {
         return updatedDraft
     }
 
-    public func sendOrSchedule(draft initialDraft: Draft, mailboxManager: MailboxManager, retry: Bool = true,
-                               showSnackbar: Bool, changeFolderAction: ((Folder) -> Void)?) async -> Date? {
+    private func sendOrSchedule(
+        draft initialDraft: Draft,
+        mailboxManager: MailboxManager,
+        retry: Bool = true,
+        showSnackbar: Bool,
+        changeFolderAction: ((Folder) -> Void)?,
+        myKSuiteUpgradeAction: (() -> Void)? = nil
+    ) async -> Date? {
         if initialDraft.action == .schedule {
             alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarScheduling, shouldShow: showSnackbar)
         } else {
@@ -158,31 +164,93 @@ public final class DraftManager {
                     )
                 }
             }
+        } catch let error as MailApiError where error == .sentLimitReached {
+            await handleSentQuotaError(
+                failingDraft: draft,
+                mailboxManager: mailboxManager,
+                showSnackbar: showSnackbar,
+                myKSuiteUpgradeAction: myKSuiteUpgradeAction
+            )
+        } catch let error as MailApiError where error == .apiIdentityNotFound {
+            sendDate = await handleIdentityNotFoundError(
+                failingDraft: draft,
+                mailboxManager: mailboxManager,
+                retry: retry,
+                showSnackbar: showSnackbar,
+                changeFolderAction: changeFolderAction
+            )
         } catch {
-            // Refresh signatures and retry with default signature on missing identity
-            if retry,
-               let mailError = error as? MailApiError,
-               mailError == MailApiError.apiIdentityNotFound {
-                try? await mailboxManager.refreshAllSignatures()
-                guard let updatedDraft = await setDefaultSignature(draft: draft, mailboxManager: mailboxManager) else {
-                    return nil
-                }
-                return await sendOrSchedule(
-                    draft: updatedDraft,
-                    mailboxManager: mailboxManager,
-                    retry: false,
-                    showSnackbar: showSnackbar,
-                    changeFolderAction: changeFolderAction
-                )
-            }
-
             alertDisplayable.show(message: error.localizedDescription, shouldShow: showSnackbar)
         }
+
         await draftQueue.endBackgroundTask(uuid: draft.localUUID)
         return sendDate
     }
 
-    public func syncDraft(mailboxManager: MailboxManager, showSnackbar: Bool, changeFolderAction: ((Folder) -> Void)? = nil) {
+    private func handleSentQuotaError(failingDraft draft: Draft,
+                                      mailboxManager: MailboxManager,
+                                      showSnackbar: Bool,
+                                      myKSuiteUpgradeAction: (() -> Void)?) async {
+        if mailboxManager.mailbox.isFree && mailboxManager.mailbox.isLimited {
+            alertDisplayable.show(
+                message: MailResourcesStrings.Localizable.errorSendLimitExceeded,
+                action: (MailResourcesStrings.Localizable.buttonUpgrade, {
+                    myKSuiteUpgradeAction?()
+                })
+            )
+        } else {
+            alertDisplayable.show(message: MailApiError.sentLimitReached.localizedDescription, shouldShow: showSnackbar)
+        }
+
+        await saveDraftAfterQuotaFail(draft: draft, mailboxManager: mailboxManager)
+    }
+
+    private func handleIdentityNotFoundError(failingDraft draft: Draft,
+                                             mailboxManager: MailboxManager,
+                                             retry: Bool,
+                                             showSnackbar: Bool,
+                                             changeFolderAction: ((Folder) -> Void)?) async -> Date? {
+        // Refresh signatures and retry with default signature on missing identity
+        guard retry else {
+            alertDisplayable.show(message: MailApiError.apiIdentityNotFound.localizedDescription, shouldShow: showSnackbar)
+            return nil
+        }
+
+        try? await mailboxManager.refreshAllSignatures()
+        guard let updatedDraft = await setDefaultSignature(draft: draft, mailboxManager: mailboxManager) else {
+            return nil
+        }
+
+        return await sendOrSchedule(
+            draft: updatedDraft,
+            mailboxManager: mailboxManager,
+            retry: false,
+            showSnackbar: showSnackbar,
+            changeFolderAction: changeFolderAction
+        )
+    }
+
+    private func saveDraftAfterQuotaFail(draft: Draft, mailboxManager: MailboxManager) async {
+        guard let liveDraft = draft.thaw() else { return }
+
+        try? liveDraft.realm?.write {
+            liveDraft.action = .initialSave
+        }
+
+        await saveDraftRemotely(
+            draft: liveDraft.freeze(),
+            mailboxManager: mailboxManager,
+            retry: false,
+            showSnackbar: false
+        )
+    }
+
+    public func syncDraft(
+        mailboxManager: MailboxManager,
+        showSnackbar: Bool,
+        changeFolderAction: ((Folder) -> Void)? = nil,
+        myKSuiteUpgradeAction: (() -> Void)? = nil
+    ) {
         let drafts = mailboxManager.draftWithPendingAction().freezeIfNeeded()
         Task {
             let latestSendDate = await withTaskGroup(of: Date?.self, returning: Date?.self) { group in
@@ -203,7 +271,8 @@ public final class DraftManager {
                                 draft: draft,
                                 mailboxManager: mailboxManager,
                                 showSnackbar: showSnackbar,
-                                changeFolderAction: changeFolderAction
+                                changeFolderAction: changeFolderAction,
+                                myKSuiteUpgradeAction: myKSuiteUpgradeAction
                             )
                         default:
                             break

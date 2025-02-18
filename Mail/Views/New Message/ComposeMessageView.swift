@@ -258,7 +258,9 @@ struct ComposeMessageView: View {
                 mailboxManager: mailboxManager,
                 showSnackbar: shouldShowSnackbar,
                 changeFolderAction: changeSelectedFolder
-            )
+            ) {
+                mainViewState.isShowingMyKSuiteUpgrade = true
+            }
         }
         .customAlert(item: $isShowingAlert) { alert in
             switch alert.type {
@@ -322,6 +324,23 @@ struct ComposeMessageView: View {
         guard !draft.subject.isEmpty else {
             matomo.track(eventWithCategory: .newMessage, name: "sendWithoutSubject")
             isShowingAlert = NewMessageAlert(type: .emptySubject(handler: sendDraft))
+            return
+        }
+
+        guard let quotas = mailboxManager.mailbox.quotas, quotas.progression < 1 else {
+            Task {
+                if let liveDraft = draft.thaw() {
+                    try? liveDraft.realm?.write {
+                        liveDraft.action = .save
+                    }
+                }
+            }
+            snackbarPresenter.show(
+                message: MailResourcesStrings.Localizable.myKSuiteSpaceFullAlert,
+                action: IKSnackBar.Action(title: MailResourcesStrings.Localizable.buttonUpgrade) {
+                    mainViewState.isShowingMyKSuiteUpgrade = true
+                }
+            )
             return
         }
 

@@ -69,7 +69,7 @@ public extension MailboxManager {
             throw error
         } catch let error as MailApiError {
             // Do not delete draft on invalid identity
-            guard error != MailApiError.apiIdentityNotFound else {
+            guard error != MailApiError.apiIdentityNotFound && error != MailApiError.sentLimitReached else {
                 throw error
             }
 

@@ -4,7 +4,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Ambroise Decouttere
- * Exported at: Tue, 11 Feb 2025 08:35:29 +0100
+ * Exported at: Mon, 17 Feb 2025 09:43:14 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -532,6 +532,9 @@
 /* loco:642572dc0839911c7350abf2 */
 "buttonUpdate" = "Mettre à jour";
 
+/* loco:67b2f0bc599c9faeb6006952 */
+"buttonUpgrade" = "Évoluer";
+
 /* loco:62b42d5d2b411f48ef2eb982 */
 "buttonValid" = "Valider";
 
@@ -1053,6 +1056,9 @@
 
 /* loco:67a9b90e2acef5d4c50ddd02 */
 "myKSuiteQuotasAlertTitle" = "Limite de stockage presque atteinte";
+
+/* loco:67b2f1476031ed89500715a3 */
+"myKSuiteSpaceFullAlert" = "L’espace de stockage n’est pas suffisant pour effectuer cette action.";
 
 /* loco:67a4d86fe5d5c084180d2eb2 */
 "myKSuiteSubscriptionTitle" = "Mon abonnement";
