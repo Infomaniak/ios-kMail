@@ -65,6 +65,8 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
 
     func refreshAllFolders() async throws {}
 
+    func deleteFolder(folder: MailCore.Folder) async throws {}
+
     func getFrozenFolders(with role: MailCore.FolderRole) -> MailCore.Folder? {
         fatalError("Unexpected")
     }
@@ -82,6 +84,14 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
     }
 
     func createFolder(name: String, parent: MailCore.Folder?) async throws -> MailCore.Folder {
+        fatalError("Unexpected")
+    }
+
+    func deleteFolder(name: String, folder: MailCore.Folder) async throws {
+        fatalError("Unexpected")
+    }
+
+    func modifyFolder(name: String, folder: MailCore.Folder) async throws {
         fatalError("Unexpected")
     }
 

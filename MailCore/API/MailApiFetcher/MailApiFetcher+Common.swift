@@ -149,6 +149,22 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(.folders(uuid: mailbox.uuid), method: .post, parameters: folder))
     }
 
+    @discardableResult
+    func delete(mailbox: Mailbox, folder: Folder) async throws -> Empty? {
+        try await perform(request: authenticatedRequest(
+            .folder(uuid: mailbox.uuid, folderUUID: folder.remoteId),
+            method: .delete
+        ))
+    }
+
+    func modify(mailbox: Mailbox, folder: Folder, name: String) async throws -> Folder {
+        return try await perform(request: authenticatedRequest(
+            .modifyFolder(mailboxUuid: mailbox.uuid, folderId: folder.remoteId),
+            method: .post,
+            parameters: ["name": name]
+        ))
+    }
+
     func createAttachment(
         mailbox: Mailbox,
         attachmentData: Data,
