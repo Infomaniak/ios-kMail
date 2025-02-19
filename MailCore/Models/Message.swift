@@ -134,9 +134,9 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     @Persisted public var swissTransferAttachment: SwissTransferAttachment?
 
+    @Persisted public var snoozeState: SnoozeState?
     @Persisted public var snoozeAction: String?
     @Persisted public var snoozeEndDate: Date?
-    @Persisted public var snoozeState: SnoozeState?
 
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
@@ -262,9 +262,9 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case flagged
         case hasUnsubscribeLink
         case bimi
+        case snoozeState
         case snoozeAction
         case snoozeEndDate
-        case snoozeState
     }
 
     override init() {
@@ -330,10 +330,9 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         flagged = try values.decode(Bool.self, forKey: .flagged)
         hasUnsubscribeLink = try values.decodeIfPresent(Bool.self, forKey: .hasUnsubscribeLink)
         bimi = try values.decodeIfPresent(Bimi.self, forKey: .bimi)
-
+        snoozeState = try values.decodeIfPresent(SnoozeState.self, forKey: .snoozeState)
         snoozeAction = try values.decodeIfPresent(String.self, forKey: .snoozeAction)
         snoozeEndDate = try values.decodeIfPresent(Date.self, forKey: .snoozeEndDate)
-        snoozeState = try values.decodeIfPresent(SnoozeState.self, forKey: .snoozeState)
     }
 
     public convenience init(
@@ -368,9 +367,9 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         flagged: Bool,
         hasUnsubscribeLink: Bool? = nil,
         bimi: Bimi? = nil,
+        snoozeState: SnoozeState? = nil,
         snoozeAction: String? = nil,
-        snoozeEndDate: Date? = nil,
-        snoozeState: SnoozeState? = nil
+        snoozeEndDate: Date? = nil
     ) {
         self.init()
 
@@ -406,9 +405,9 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         self.hasUnsubscribeLink = hasUnsubscribeLink
         self.bimi = bimi
         fullyDownloaded = true
+        self.snoozeState = snoozeState
         self.snoozeAction = snoozeAction
         self.snoozeEndDate = snoozeEndDate
-        self.snoozeState = snoozeState
     }
 
     public func toThread() -> Thread {
@@ -426,9 +425,9 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
             answered: answered,
             forwarded: forwarded,
             bimi: bimi,
+            snoozeState: snoozeState,
             snoozeAction: snoozeAction,
-            snoozeEndDate: snoozeEndDate,
-            snoozeState: snoozeState
+            snoozeEndDate: snoozeEndDate
         )
         thread.messageIds = linkedUids
         thread.folderId = folderId
