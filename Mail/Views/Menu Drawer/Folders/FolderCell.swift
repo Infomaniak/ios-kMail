@@ -192,9 +192,9 @@ struct FolderCellContent: View {
         .background(FolderCellBackground(isCurrentFolder: isCurrentFolder))
         .dropThreadDestination(destinationFolder: frozenFolder)
         .contextMenu {
-            if self.frozenFolder.role == nil {
+            if frozenFolder.role == nil {
                 Button {
-                    currentFolder = self.frozenFolder
+                    currentFolder = frozenFolder
                 } label: {
                     Label {
                         Text(MailResourcesStrings.Localizable.actionRename)
@@ -206,9 +206,9 @@ struct FolderCellContent: View {
                     Task {
                         await tryOrDisplayError {
                             try await mailboxManager.deleteFolder(
-                                folder: self.frozenFolder
+                                folder: frozenFolder
                             )
-                            if mainViewState.selectedFolder.remoteId == self.frozenFolder.remoteId,
+                            if mainViewState.selectedFolder.remoteId == frozenFolder.remoteId,
                                let inbox = mailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
                                 mainViewState.selectedFolder = inbox
                             }
