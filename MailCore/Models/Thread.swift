@@ -58,6 +58,10 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var duplicates = List<Message>()
     @Persisted public var messageIds: MutableSet<String>
 
+    @Persisted public var snoozeState: SnoozeState?
+    @Persisted public var snoozeAction: String?
+    @Persisted public var snoozeEndDate: Date?
+
     /// This property is used to remove threads from list before network call is finished
     @Persisted public var isMovedOutLocally = false
 
@@ -143,6 +147,19 @@ public class Thread: Object, Decodable, Identifiable {
         lastAction = getLastAction()
 
         subject = messages.first?.subject
+
+        updateSnooze()
+    }
+
+    private func updateSnooze() {
+        let messagesThatCanBeSnoozed = Array(messages) + Array(duplicates)
+        for message in messagesThatCanBeSnoozed {
+            if let snoozeState = message.snoozeState {
+                self.snoozeState = snoozeState
+                snoozeAction = message.snoozeAction
+                snoozeEndDate = message.snoozeEndDate
+            }
+        }
     }
 
     private func getLastAction() -> ThreadLastAction? {
@@ -219,6 +236,9 @@ public class Thread: Object, Decodable, Identifiable {
         case answered
         case forwarded
         case bimi
+        case snoozeState
+        case snoozeAction
+        case snoozeEndDate
     }
 
     public convenience init(
@@ -234,7 +254,10 @@ public class Thread: Object, Decodable, Identifiable {
         flagged: Bool,
         answered: Bool,
         forwarded: Bool,
-        bimi: Bimi? = nil
+        bimi: Bimi? = nil,
+        snoozeState: SnoozeState? = nil,
+        snoozeAction: String? = nil,
+        snoozeEndDate: Date? = nil
     ) {
         self.init()
 
@@ -251,6 +274,9 @@ public class Thread: Object, Decodable, Identifiable {
         self.answered = answered
         self.forwarded = forwarded
         self.bimi = bimi
+        self.snoozeState = snoozeState
+        self.snoozeAction = snoozeAction
+        self.snoozeEndDate = snoozeEndDate
     }
 
     public required init(from decoder: Decoder) throws {
@@ -270,6 +296,9 @@ public class Thread: Object, Decodable, Identifiable {
         answered = try container.decode(Bool.self, forKey: .answered)
         forwarded = try container.decode(Bool.self, forKey: .forwarded)
         bimi = try container.decodeIfPresent(Bimi.self, forKey: .bimi)
+        snoozeState = try container.decodeIfPresent(SnoozeState.self, forKey: .snoozeState)
+        snoozeAction = try container.decodeIfPresent(String.self, forKey: .snoozeAction)
+        snoozeEndDate = try container.decodeIfPresent(Date.self, forKey: .snoozeEndDate)
     }
 
     override public init() {
