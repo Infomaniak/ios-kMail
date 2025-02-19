@@ -16,30 +16,18 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
-import MailCoreUI
-import MailResources
-import SwiftUI
+import Foundation
+import InfomaniakCoreCommonUI
 
-struct UnknownRecipientCell: View {
-    let email: String
+public protocol ContactAutocompletable {
+    var contactId: String { get }
+    var autocompletableName: String { get }
 
-    var body: some View {
-        HStack(spacing: 8) {
-            UnknownRecipientView(size: 40)
-                .accessibilityHidden(true)
-
-            VStack(alignment: .leading) {
-                Text(MailResourcesStrings.Localizable.addUnknownRecipientTitle)
-                    .textStyle(.bodyMedium)
-                Text(email)
-                    .textStyle(.bodySecondary)
-            }
-        }
-        .recipientCellModifier()
-    }
+    func isSameContactAutocompletable(as contactAutoCompletable: any ContactAutocompletable) -> Bool
 }
 
-#Preview {
-    UnknownRecipientCell(email: PreviewHelper.sampleRecipient1.email)
+public extension ContactAutocompletable {
+    func isSameContactAutocompletable(as contactAutoCompletable: any ContactAutocompletable) -> Bool {
+        return false
+    }
 }
