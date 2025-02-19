@@ -21,5 +21,5 @@ import RealmSwift
 public enum SnoozeState: String, Sendable, Codable, PersistableEnum {
     case snoozed
     case unsnoozed
-    case wasSnoozed
+    case wasSnoozed = "was_snoozed"
 }
