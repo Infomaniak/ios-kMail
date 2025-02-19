@@ -133,11 +133,14 @@ struct FolderCellContent: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.folderCellType) private var cellType
+    @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var mainViewState: MainViewState
 
     private let frozenFolder: Folder
     private let level: Int
     private let isCurrentFolder: Bool
     private let canCollapseSubFolders: Bool
+    @State private var currentFolder: Folder?
 
     private var textStyle: MailTextStyle {
         if cellType == .menuDrawer {
@@ -188,6 +191,41 @@ struct FolderCellContent: View {
         .padding(canHaveChevron ? IKPadding.menuDrawerCellWithChevron : IKPadding.menuDrawerCell)
         .background(FolderCellBackground(isCurrentFolder: isCurrentFolder))
         .dropThreadDestination(destinationFolder: frozenFolder)
+        .contextMenu {
+            if self.frozenFolder.role == nil {
+                Button {
+                    currentFolder = self.frozenFolder
+                } label: {
+                    Label {
+                        Text(MailResourcesStrings.Localizable.actionRename)
+                    } icon: {
+                        MailResourcesAsset.pencilPlain.swiftUIImage
+                    }
+                }
+                Button {
+                    Task {
+                        await tryOrDisplayError {
+                            try await mailboxManager.deleteFolder(
+                                folder: self.frozenFolder
+                            )
+                            if mainViewState.selectedFolder.remoteId == self.frozenFolder.remoteId,
+                               let inbox = mailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
+                                mainViewState.selectedFolder = inbox
+                            }
+                        }
+                    }
+                } label: {
+                    Label {
+                        Text(MailResourcesStrings.Localizable.actionDelete)
+                    } icon: {
+                        MailResourcesAsset.bin.swiftUIImage
+                    }
+                }
+            }
+        }
+        .customAlert(item: $currentFolder) { folder in
+            CreateFolderView(mode: .modify, folder: folder)
+        }
     }
 
     @ViewBuilder

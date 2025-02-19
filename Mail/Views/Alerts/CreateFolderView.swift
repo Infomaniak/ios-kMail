@@ -157,14 +157,6 @@ struct CreateFolderView: View {
             return
         }
 
-        if folder != nil {
-            if folderName == folder!.name {
-                isInitialName = true
-            } else {
-                isInitialName = false
-            }
-        }
-
         withAnimation {
             if trimmedName.count >= Constants.maxFolderNameLength {
                 error = .nameTooLong

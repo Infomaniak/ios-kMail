@@ -46,43 +46,6 @@ struct FoldersListView: View {
                            matomoCategory: .menuDrawer)
                     .background(RoundedRectangle(cornerRadius: IKRadius.medium)
                         .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor))
-                    .contextMenu {
-                        if folder.frozenContent.role == nil {
-                            Button {
-                                currentFolder = folder.frozenContent
-                            } label: {
-                                Label {
-                                    Text(MailResourcesStrings.Localizable.actionRename)
-                                } icon: {
-                                    MailResourcesAsset.pencilPlain.swiftUIImage
-                                }
-                            }
-                            Button {
-                                Task {
-                                    do {
-                                        try await mailboxManager.deleteFolder(
-                                            folder: folder.frozenContent
-                                        )
-                                        if mainViewState.selectedFolder.remoteId == folder.frozenContent.remoteId,
-                                           let inbox = mailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
-                                            mainViewState.selectedFolder = inbox
-                                        }
-                                    } catch {
-                                        print(error)
-                                    }
-                                }
-                            } label: {
-                                Label {
-                                    Text(MailResourcesStrings.Localizable.actionDelete)
-                                } icon: {
-                                    MailResourcesAsset.bin.swiftUIImage
-                                }
-                            }
-                        }
-                    }
-                    .customAlert(item: $currentFolder) { folder in
-                        CreateFolderView(mode: .modify, folder: folder)
-                    }
             }
         }
     }
