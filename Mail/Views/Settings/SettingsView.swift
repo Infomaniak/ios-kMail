@@ -59,14 +59,14 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 0) {
                 // MARK: - Section: my kSuite
 
-                if let myKSuite {
+                if myKSuite != nil,
+                   let myKSuiteMailbox,
+                   let mailboxManager = accountManager.getMailboxManager(for: myKSuiteMailbox) {
                     Group {
                         SettingsSectionTitleView(title: "my kSuite")
 
-                        if let myKSuiteMailbox, let mailboxManager = accountManager.getMailboxManager(for: myKSuiteMailbox) {
-                            SettingsSubMenuCell(title: myKSuiteMailbox.email) {
-                                MailboxSettingsView(mailboxManager: mailboxManager)
-                            }
+                        SettingsSubMenuCell(title: myKSuiteMailbox.email) {
+                            MailboxSettingsView(mailboxManager: mailboxManager)
                         }
 
                         SettingsSubMenuLabel(title: MailResourcesStrings.Localizable.myKSuiteSubscriptionTitle)
@@ -75,11 +75,11 @@ struct SettingsView: View {
                             }
                             .sheet(isPresented: $isShowingMyKSuiteDashboard) {
                                 MyKSuiteDashboardView(
-                                    apiFetcher: mainViewState.mailboxManager.apiFetcher,
+                                    apiFetcher: mailboxManager.apiFetcher,
                                     userId: currentUser.value.id
                                 ) {
                                     AvatarView(
-                                        mailboxManager: mainViewState.mailboxManager,
+                                        mailboxManager: mailboxManager,
                                         contactConfiguration: .user(user: currentUser.value),
                                         size: 24
                                     )
@@ -288,6 +288,8 @@ struct SettingsView: View {
 
     func loadMyKSuite() async {
         myKSuite = await myKSuiteStore.getMyKSuite(id: currentUser.value.id)
+
+        guard myKSuite != nil else { return }
 
         @InjectService var mailboxInfosManager: MailboxInfosManager
         let mailboxes = ObservedResults(Mailbox.self, configuration: mailboxInfosManager.realmConfiguration) {
