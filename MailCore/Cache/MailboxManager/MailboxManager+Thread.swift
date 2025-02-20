@@ -116,7 +116,7 @@ public extension MailboxManager {
                 newCursor: newCursor
             )
 
-            self.deleteOrphanMessagesAndThreads(writableRealm: writableRealm, folderId: folder.remoteId)
+            self.deleteOrphanMessages(writableRealm: writableRealm, folderId: folder.remoteId)
         }
 
         /// We will now fetch new messages
@@ -456,13 +456,11 @@ public extension MailboxManager {
 
     // MARK: - Utils
 
-    private func deleteOrphanMessagesAndThreads(writableRealm: Realm, folderId: String) {
+    private func deleteOrphanMessages(writableRealm: Realm, folderId: String) {
         let orphanMessages = writableRealm.objects(Message.self).where { $0.folderId == folderId }
             .filter { $0.threads.isEmpty && $0.threadsDuplicatedIn.isEmpty }
-        let orphanThreads = writableRealm.objects(Thread.self).filter { $0.folder == nil }
 
         writableRealm.delete(orphanMessages)
-        writableRealm.delete(orphanThreads)
     }
 
     private func removeDuplicatedThreads(
