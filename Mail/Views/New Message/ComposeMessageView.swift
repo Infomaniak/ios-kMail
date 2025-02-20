@@ -327,7 +327,9 @@ struct ComposeMessageView: View {
             return
         }
 
-        guard let quotas = mailboxManager.mailbox.quotas, quotas.progression < 1 else {
+        let mailbox = mailboxManager.mailbox
+        let mailboxIsFull = mailbox.quotas?.progression ?? 0 >= 1
+        if mailbox.isFree && mailbox.isLimited && mailboxIsFull {
             Task {
                 if let liveDraft = draft.thaw() {
                     try? liveDraft.realm?.write {
