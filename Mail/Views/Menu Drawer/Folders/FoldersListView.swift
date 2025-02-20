@@ -27,8 +27,6 @@ import SwiftUI
 
 struct FoldersListView: View {
     @EnvironmentObject private var mainViewState: MainViewState
-    @EnvironmentObject private var mailboxManager: MailboxManager
-    @State private var currentFolder: Folder?
 
     private let folders: [NestableFolder]
     private let hasSubFolders: Bool
