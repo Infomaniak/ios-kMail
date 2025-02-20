@@ -36,7 +36,7 @@ struct CreateFolderView: View {
     // swiftlint:disable:next empty_count
     @ObservedResults(Folder.self, where: { $0.parents.count == 0 }) private var folders
 
-    @State private var folderName = ""
+    @State private var folderName: String
     @State private var error: FolderError?
 
     @FocusState private var isFocused
@@ -78,7 +78,7 @@ struct CreateFolderView: View {
         }
     }
 
-    var isModifying: Bool {
+    private var isModifying: Bool {
         switch mode {
         case .modify:
             return true
@@ -89,6 +89,11 @@ struct CreateFolderView: View {
 
     init(mode: Mode) {
         self.mode = mode
+        if case .modify(let modifiedFolder) = mode {
+            _folderName = State(initialValue: modifiedFolder.name)
+        } else {
+            _folderName = State(initialValue: "")
+        }
         isFocused = true
     }
 
@@ -100,6 +105,7 @@ struct CreateFolderView: View {
                 .padding(.bottom, IKPadding.alertTitleBottom)
 
             TextField(MailResourcesStrings.Localizable.createFolderName, text: $folderName)
+                .multilineTextAlignment(.leading)
                 .onChange(of: folderName, perform: checkFolderName)
                 .padding(value: .small)
                 .overlay(

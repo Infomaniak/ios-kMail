@@ -270,6 +270,8 @@ struct FolderCellBackground: View {
                 paddingLeading: 0,
                 accentColor: accentColor
             )
+            .background(RoundedRectangle(cornerRadius: IKRadius.medium)
+                .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor))
         }
     }
 }
