@@ -38,12 +38,10 @@ struct CreateFolderView: View {
 
     @State private var folderName = ""
     @State private var error: FolderError?
-    @State private var isInitialName = false
 
     @FocusState private var isFocused
 
     private let mode: Mode
-    private let folder: Folder?
 
     private var isButtonEnabled: Bool {
         return !folderName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && error == nil
@@ -52,7 +50,7 @@ struct CreateFolderView: View {
     enum Mode {
         case create
         case move(moveHandler: MoveEmailView.MoveHandler)
-        case modify
+        case modify(modifiedFolder: Folder)
 
         var buttonTitle: String {
             switch self {
@@ -89,13 +87,9 @@ struct CreateFolderView: View {
         }
     }
 
-    init(mode: Mode, folder: Folder? = nil) {
+    init(mode: Mode) {
         self.mode = mode
-        self.folder = folder
         isFocused = true
-        if let folderName = folder?.name {
-            self.folderName = folderName
-        }
     }
 
     var body: some View {
@@ -110,7 +104,7 @@ struct CreateFolderView: View {
                 .padding(value: .small)
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
-                        .stroke(isInitialName || error == nil ? MailResourcesAsset.textFieldBorder
+                        .stroke(error == nil ? MailResourcesAsset.textFieldBorder
                             .swiftUIColor : MailResourcesAsset.redColor
                             .swiftUIColor)
                         .animation(.easeInOut, value: error)
@@ -121,27 +115,27 @@ struct CreateFolderView: View {
             Text(error?.errorDescription ?? "")
                 .textStyle(.labelError)
                 .padding(.top, value: .micro)
-                .opacity(isInitialName || error == nil ? 0 : 1)
+                .opacity(error == nil ? 0 : 1)
                 .padding(.bottom, value: .mini)
 
             ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: isButtonEnabled) {
-                guard let folder, isModifying else {
-                    await tryOrDisplayError {
-                        matomo.track(eventWithCategory: .createFolder, name: "confirm")
-                        let folder = try await mailboxManager.createFolder(name: folderName, parent: nil)
-                        if case .move(let moveHandler) = mode {
-                            moveHandler(folder)
-                            NotificationCenter.default.post(Notification(name: .dismissMoveSheet))
-                        }
-                    }
-                    return
-                }
-
+                matomo.track(eventWithCategory: .createFolder, name: "confirm")
                 await tryOrDisplayError {
-                    try await mailboxManager.modifyFolder(
-                        name: folderName,
-                        folder: folder
-                    )
+                    switch mode {
+                    case .create:
+                        _ = try await mailboxManager.createFolder(name: folderName, parent: nil)
+
+                    case .move(let moveHandler):
+                        let folder = try await mailboxManager.createFolder(name: folderName, parent: nil)
+                        moveHandler(folder)
+                        NotificationCenter.default.post(Notification(name: .dismissMoveSheet))
+
+                    case .modify(let modifiedFolder):
+                        try await mailboxManager.modifyFolder(
+                            name: folderName,
+                            folder: modifiedFolder
+                        )
+                    }
                 }
             }
         }
