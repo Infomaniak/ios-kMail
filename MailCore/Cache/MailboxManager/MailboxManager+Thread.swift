@@ -57,7 +57,7 @@ public extension MailboxManager {
         try await messages(folder: folder)
         fetchCurrentFolderCompleted()
 
-        var folderRolesToFetch = Set<FolderRole>([.inbox, .sent, .draft, .scheduledDrafts])
+        var folderRolesToFetch = Set<FolderRole>([.inbox, .sent, .draft, .scheduledDrafts, .snoozed])
         guard let currentRole = folder.role, folderRolesToFetch.contains(currentRole) else { return }
 
         folderRolesToFetch.remove(currentRole)
@@ -517,7 +517,7 @@ public extension MailboxManager {
 
     private func refreshFolderThreads(folder: Folder, using realm: Realm) {
         let threads = realm.objects(Thread.self).where { thread in
-            folder.threadBelongsToFolder(thread)
+            folder.threadBelongsToFolder(thread, using: realm)
         }
 
         folder.threads.removeAll()
