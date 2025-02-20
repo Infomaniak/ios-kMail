@@ -283,10 +283,20 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         }
     }
 
-    func threadBelongsToFolder(_ thread: Query<Thread>) -> Query<Bool> {
-        let isThreadInFolder = thread.folderId == remoteId
-        // TODO: Add condition for INBOX and SNOOZED
-        return isThreadInFolder
+    public func threadBelongsToFolder(_ thread: Query<Thread>, using realm: Realm) -> Query<Bool> {
+        let isThreadInCurrentFolder = thread.folderId == remoteId
+
+        switch role {
+        case .inbox:
+            return isThreadInCurrentFolder && thread.snoozeState != .snoozed
+        case .snoozed:
+            guard let inbox = realm.objects(Folder.self).where({ $0.role == .inbox }).first else {
+                return thread.snoozeState == .snoozed
+            }
+            return thread.folderId == inbox.remoteId && thread.snoozeState == .snoozed
+        default:
+            return isThreadInCurrentFolder
+        }
     }
 
     public func computeUnreadCount() {
