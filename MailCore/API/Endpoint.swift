@@ -23,7 +23,7 @@ import InfomaniakCore
 
 public extension ApiEnvironment {
     var mailHost: String {
-        return "mail.\(host)"
+        return "mail-mr-6237.\(host)"
     }
 }
 
@@ -50,7 +50,7 @@ public extension Endpoint {
     }
 
     private static var base: Endpoint {
-        return Endpoint(hostKeypath: \.mailHost, path: "/api")
+        return Endpoint(hostKeypath: \.mailHost, path: "/api", apiEnvironment: .preprod)
     }
 
     static var mailboxes: Endpoint {
@@ -157,10 +157,7 @@ public extension Endpoint {
     // MARK: - New Routes
 
     static func messages(mailboxUuid: String, folderId: String) -> Endpoint {
-        return Endpoint(
-            hostKeypath: \.mailHost,
-            path: "/api/mail/\(mailboxUuid)/folder/\(folderId)/mobile"
-        )
+        return .base.appending(path: "/mail/\(mailboxUuid)/folder/\(folderId)/mobile")
     }
 
     static func messagesUids(mailboxUuid: String, folderId: String) -> Endpoint {
