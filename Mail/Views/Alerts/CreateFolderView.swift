@@ -36,7 +36,7 @@ struct CreateFolderView: View {
     // swiftlint:disable:next empty_count
     @ObservedResults(Folder.self, where: { $0.parents.count == 0 }) private var folders
 
-    @State private var folderName: String
+    @State private var folderName = ""
     @State private var error: FolderError?
 
     @FocusState private var isFocused
@@ -89,12 +89,6 @@ struct CreateFolderView: View {
 
     init(mode: Mode) {
         self.mode = mode
-        if case .modify(let modifiedFolder) = mode {
-            _folderName = State(initialValue: modifiedFolder.name)
-        } else {
-            _folderName = State(initialValue: "")
-        }
-        isFocused = true
     }
 
     var body: some View {
@@ -144,6 +138,12 @@ struct CreateFolderView: View {
                     }
                 }
             }
+        }
+        .onAppear {
+            if case .modify(let modifiedFolder) = mode {
+                folderName = modifiedFolder.name
+            }
+            isFocused = true
         }
         .accessibilityAction(.escape) {
             dismiss()
