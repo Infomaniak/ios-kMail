@@ -92,11 +92,21 @@ final class MCKMailboxManageable_SearchViewModel: MailboxManageable, MCKTransact
         }
     }
 
+    func deleteFolder(folder: MailCore.Folder) async throws {}
+
     func getFrozenFolders(using realm: RealmSwift.Realm?) -> [MailCore.Folder] {
         folderGenerator.frozenFolders
     }
 
     func createFolder(name: String, parent: MailCore.Folder?) async throws -> MailCore.Folder {
+        fatalError("Unexpected")
+    }
+
+    func deleteFolder(name: String, folder: MailCore.Folder) async throws {
+        fatalError("Unexpected")
+    }
+
+    func modifyFolder(name: String, folder: MailCore.Folder) async throws {
         fatalError("Unexpected")
     }
 

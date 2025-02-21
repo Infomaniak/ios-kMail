@@ -16,9 +16,13 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
+import InfomaniakCoreSwiftUI
 import MailCore
+import MailResources
 import RealmSwift
+import SwiftModalPresentation
 import SwiftUI
 
 struct FoldersListView: View {
@@ -26,7 +30,6 @@ struct FoldersListView: View {
 
     private let folders: [NestableFolder]
     private let hasSubFolders: Bool
-
     init(folders: [NestableFolder]) {
         self.folders = folders
         hasSubFolders = folders.contains { !$0.children.isEmpty }
@@ -39,6 +42,8 @@ struct FoldersListView: View {
                            currentFolderId: mainViewState.selectedFolder.remoteId,
                            canCollapseSubFolders: hasSubFolders,
                            matomoCategory: .menuDrawer)
+                    .background(RoundedRectangle(cornerRadius: IKRadius.medium)
+                        .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor))
             }
         }
     }

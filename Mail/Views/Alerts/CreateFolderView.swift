@@ -41,7 +41,7 @@ struct CreateFolderView: View {
 
     @FocusState private var isFocused
 
-    let mode: Mode
+    private let mode: Mode
 
     private var isButtonEnabled: Bool {
         return !folderName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && error == nil
@@ -50,6 +50,7 @@ struct CreateFolderView: View {
     enum Mode {
         case create
         case move(moveHandler: MoveEmailView.MoveHandler)
+        case modify(modifiedFolder: Folder)
 
         var buttonTitle: String {
             switch self {
@@ -57,6 +58,8 @@ struct CreateFolderView: View {
                 return MailResourcesStrings.Localizable.buttonCreate
             case .move:
                 return MailResourcesStrings.Localizable.newFolderDialogMovePositiveButton
+            case .modify:
+                return MailResourcesStrings.Localizable.buttonValid
             }
         }
     }
@@ -75,18 +78,34 @@ struct CreateFolderView: View {
         }
     }
 
+    private var isModifying: Bool {
+        switch mode {
+        case .modify:
+            return true
+        default:
+            return false
+        }
+    }
+
+    init(mode: Mode) {
+        self.mode = mode
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(MailResourcesStrings.Localizable.newFolderDialogTitle)
+            Text(isModifying ? MailResourcesStrings.Localizable.renameFolder : MailResourcesStrings.Localizable
+                .newFolderDialogTitle)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, IKPadding.alertTitleBottom)
 
             TextField(MailResourcesStrings.Localizable.createFolderName, text: $folderName)
+                .multilineTextAlignment(.leading)
                 .onChange(of: folderName, perform: checkFolderName)
                 .padding(value: .small)
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
-                        .stroke(error == nil ? MailResourcesAsset.textFieldBorder.swiftUIColor : MailResourcesAsset.redColor
+                        .stroke(error == nil ? MailResourcesAsset.textFieldBorder
+                            .swiftUIColor : MailResourcesAsset.redColor
                             .swiftUIColor)
                         .animation(.easeInOut, value: error)
                 )
@@ -102,15 +121,28 @@ struct CreateFolderView: View {
             ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: isButtonEnabled) {
                 matomo.track(eventWithCategory: .createFolder, name: "confirm")
                 await tryOrDisplayError {
-                    let folder = try await mailboxManager.createFolder(name: folderName, parent: nil)
-                    if case .move(let moveHandler) = mode {
+                    switch mode {
+                    case .create:
+                        _ = try await mailboxManager.createFolder(name: folderName, parent: nil)
+
+                    case .move(let moveHandler):
+                        let folder = try await mailboxManager.createFolder(name: folderName, parent: nil)
                         moveHandler(folder)
                         NotificationCenter.default.post(Notification(name: .dismissMoveSheet))
+
+                    case .modify(let modifiedFolder):
+                        try await mailboxManager.modifyFolder(
+                            name: folderName,
+                            folder: modifiedFolder
+                        )
                     }
                 }
             }
         }
         .onAppear {
+            if case .modify(let modifiedFolder) = mode {
+                folderName = modifiedFolder.name
+            }
             isFocused = true
         }
         .accessibilityAction(.escape) {

@@ -133,11 +133,14 @@ struct FolderCellContent: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.folderCellType) private var cellType
+    @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var mainViewState: MainViewState
 
     private let frozenFolder: Folder
     private let level: Int
     private let isCurrentFolder: Bool
     private let canCollapseSubFolders: Bool
+    @State private var currentFolder: Folder?
 
     private var textStyle: MailTextStyle {
         if cellType == .menuDrawer {
@@ -188,6 +191,41 @@ struct FolderCellContent: View {
         .padding(canHaveChevron ? IKPadding.menuDrawerCellWithChevron : IKPadding.menuDrawerCell)
         .background(FolderCellBackground(isCurrentFolder: isCurrentFolder))
         .dropThreadDestination(destinationFolder: frozenFolder)
+        .contextMenu {
+            if frozenFolder.role == nil {
+                Button {
+                    currentFolder = frozenFolder
+                } label: {
+                    Label {
+                        Text(MailResourcesStrings.Localizable.actionRename)
+                    } icon: {
+                        MailResourcesAsset.pencilPlain.swiftUIImage
+                    }
+                }
+                Button {
+                    Task {
+                        await tryOrDisplayError {
+                            try await mailboxManager.deleteFolder(
+                                folder: frozenFolder
+                            )
+                            if mainViewState.selectedFolder.remoteId == frozenFolder.remoteId,
+                               let inbox = mailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
+                                mainViewState.selectedFolder = inbox
+                            }
+                        }
+                    }
+                } label: {
+                    Label {
+                        Text(MailResourcesStrings.Localizable.actionDelete)
+                    } icon: {
+                        MailResourcesAsset.bin.swiftUIImage
+                    }
+                }
+            }
+        }
+        .customAlert(item: $currentFolder) { folder in
+            CreateFolderView(mode: .modify(modifiedFolder: folder))
+        }
     }
 
     @ViewBuilder
@@ -232,6 +270,8 @@ struct FolderCellBackground: View {
                 paddingLeading: 0,
                 accentColor: accentColor
             )
+            .background(RoundedRectangle(cornerRadius: IKRadius.medium)
+                .fill(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor))
         }
     }
 }
