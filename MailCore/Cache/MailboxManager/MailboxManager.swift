@@ -40,7 +40,6 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     public let contactManager: ContactManageable
 
     enum ErrorDomain: Error {
-        case missingMessage
         case missingFolder
         case missingDraft
     }
