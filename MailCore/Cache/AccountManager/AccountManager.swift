@@ -98,13 +98,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     /// Local error handling
     enum ErrorDomain: Error {
-        case mailboxManagerMissing
-        case mailboxFolderMissing
-        case mailboxMissing
-        case currentSubscriptionMissing
-        case topicMismatch
-        case missingAPIFetcher
-        case failedToRemoveToken
         case failedToDeleteAPIToken(wrapping: Error)
     }
 
@@ -325,24 +318,17 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             SentryDebug.switchMailboxBreadcrumb(mailboxObjectId: newMailbox.objectId)
 
             guard let mailboxManager = getMailboxManager(for: newMailbox) else {
-                logError(.mailboxManagerMissing)
                 return
             }
 
             guard mailboxManager.getFolder(with: .inbox)?.cursor == nil else {
-                logError(.mailboxFolderMissing)
                 return
             }
 
             let notificationTopicName = newMailbox.notificationTopicName
             let currentSubscription = await notificationService.subscriptionForUser(id: currentUserId)
-            guard let currentTopics = currentSubscription?.topics else {
-                logError(.currentSubscriptionMissing)
-                return
-            }
-
-            guard !currentTopics.contains(notificationTopicName) else {
-                logError(.topicMismatch)
+            guard let currentTopics = currentSubscription?.topics,
+                  !currentTopics.contains(notificationTopicName) else {
                 return
             }
 
@@ -353,7 +339,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     public func addMailbox(mail: String, password: String) async throws {
         guard let apiFetcher = currentApiFetcher else {
-            logError(.missingAPIFetcher)
             return
         }
 
@@ -362,7 +347,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         let mailboxes = mailboxInfosManager.getMailboxes(for: currentUserId)
         guard let addedMailbox = mailboxes.first(where: { $0.email == mail }) else {
-            logError(.mailboxMissing)
             return
         }
 
@@ -372,7 +356,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     public func updateMailboxPassword(mailbox: Mailbox, password: String) async throws {
         guard let apiFetcher = currentApiFetcher else {
-            logError(.missingAPIFetcher)
             return
         }
 
@@ -382,7 +365,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     public func askMailboxPassword(mailbox: Mailbox) async throws {
         guard let apiFetcher = currentApiFetcher else {
-            logError(.missingAPIFetcher)
             return
         }
         try await apiFetcher.askMailboxPassword(mailbox: mailbox)
@@ -390,7 +372,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     public func detachMailbox(mailbox: Mailbox) async throws {
         guard let apiFetcher = currentApiFetcher else {
-            logError(.missingAPIFetcher)
             return
         }
         _ = try await apiFetcher.detachMailbox(mailbox: mailbox)
@@ -437,10 +418,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         let removedToken = tokenStore.removeTokenFor(userId: userId)
         removeAccountFor(userId: userId)
 
-        guard let removedToken else {
-            logError(.failedToRemoveToken)
-            return
-        }
+        guard let removedToken else { return }
 
         networkLoginService.deleteApiToken(token: removedToken) { result in
             guard case .failure(let error) = result else { return }

@@ -40,7 +40,6 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     public let contactManager: ContactManageable
 
     enum ErrorDomain: Error {
-        case missingMessage
         case missingFolder
         case missingDraft
     }
@@ -161,7 +160,6 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         using realm: Realm
     ) {
         guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else {
-            logError(.missingMessage)
             return
         }
         message.inTrash = savedMessage.inTrash
@@ -186,7 +184,6 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         using realm: Realm
     ) {
         guard let savedFolder = realm.object(ofType: Folder.self, forPrimaryKey: folder.remoteId) else {
-            logError(.missingFolder)
             return
         }
         folder.unreadCount = savedFolder.unreadCount
