@@ -226,9 +226,16 @@ class MailUITests: XCTestCase {
         let composeBodyView = app.webViews.firstMatch
         _ = composeBodyView.waitForExistence(timeout: defaultTimeOut)
 
-        app.textFields.firstMatch.tap()
-        app.textFields.firstMatch.typeText(Env.testAccountEmail)
-        app.textFields.firstMatch.typeText("\n")
+        let laterButton = app.buttons[MailResourcesStrings.Localizable.buttonLater].firstMatch
+        if laterButton.waitForExistence(timeout: defaultTimeOut) {
+            laterButton.tap()
+        }
+
+        let toTextField = app.textFields.firstMatch
+        _ = toTextField.waitForExistence(timeout: defaultTimeOut)
+        toTextField.tap()
+        toTextField.typeText(Env.testAccountEmail)
+        toTextField.typeText("\n")
 
         let subjectTextField = app.textFields[MailResourcesStrings.Localizable.subjectTitle].firstMatch
         subjectTextField.tap()
@@ -237,7 +244,7 @@ class MailUITests: XCTestCase {
         composeBodyView.tap()
         composeBodyView.typeText(MailResourcesStrings.Localizable.aiPromptExample1)
 
-        wait(delay: 5)
+        wait(delay: 15)
     }
 
     func login() {
@@ -259,6 +266,8 @@ class MailUITests: XCTestCase {
         passwordField.tap()
         passwordField.typeText(Env.testAccountPassword)
         passwordField.typeText("\n")
+
+        wait(delay: 15)
 
         let nowText = MailResourcesStrings.Localizable
             .threadListHeaderLastUpdate(Date().formatted(.relative(presentation: .named)))
@@ -292,5 +301,7 @@ class MailUITests: XCTestCase {
             let refreshText = app.staticTexts[nowText].firstMatch
             _ = refreshText.waitForExistence(timeout: defaultTimeOut)
         }
+
+        wait(delay: 15)
     }
 }
