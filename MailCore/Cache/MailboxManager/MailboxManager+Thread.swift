@@ -91,23 +91,14 @@ public extension MailboxManager {
         let newCursor: String
 
         if let previousCursor {
-            /// Get delta from last cursor
-            let messageDeltaResult = try await apiFetcher.messagesDelta(
+            let messagesDelta = try await apiFetcher.messagesDelta(
                 mailboxUUid: mailbox.uuid,
                 folderId: folder.remoteId,
                 signature: previousCursor
             )
 
-            let messagesUids = MessagesUids(
-                addedShortUids: messageDeltaResult.addedShortUids,
-                deletedUids: messageDeltaResult.deletedShortUids.map { Constants.longUid(from: $0, folderId: folder.remoteId) },
-                updated: messageDeltaResult.updated,
-                cursor: messageDeltaResult.cursor,
-                folderUnreadCount: messageDeltaResult.unreadCount
-            )
-
-            newCursor = messageDeltaResult.cursor
-            try await handleDelta(messageUids: messagesUids, folder: folder)
+            newCursor = messagesDelta.cursor
+            try await handleDelta(messagesDelta: messagesDelta, folder: folder)
         } else {
             newCursor = try await fetchOldMessagesUids(folder: folder)
         }
@@ -232,25 +223,24 @@ public extension MailboxManager {
     /// Handle MessagesUids from Delta
     /// Will delete, update and add messages from uids
     /// - Parameters:
-    ///   - messageUids: Given MessagesUids
+    ///   - messageDelta: The list added/updated/deleted message uids
     ///   - folder: Given folder
-    private func handleDelta(messageUids: MessagesUids, folder: Folder) async throws {
-        await deleteMessages(uids: messageUids.deletedUids)
+    private func handleDelta(messagesDelta: MessagesDelta, folder: Folder) async throws {
+        await deleteMessages(uids: messagesDelta.deletedShortUids, folder: folder)
 
-        await updateMessages(updates: messageUids.updated, folder: folder)
+        await updateMessages(updates: messagesDelta.updated, folder: folder)
 
         // Add Uids to fetch in the folder
         try? writeTransaction { writableRealm in
             let freshFolder = folder.fresh(using: writableRealm)
-            freshFolder?.newMessagesUidsToFetch.append(objectsIn: messageUids.addedShortUids.map { MessageUid(uid: $0) })
+            let messageUids = messagesDelta.addedShortUids.map { MessageUid(uid: $0) }
+            freshFolder?.newMessagesUidsToFetch.append(objectsIn: messageUids)
 
-            if let newUnreadCount = messageUids.folderUnreadCount {
-                freshFolder?.remoteUnreadCount = newUnreadCount
-            }
+            freshFolder?.remoteUnreadCount = messagesDelta.unreadCount
         }
     }
 
-    private func deleteMessages(uids: [String]) async {
+    private func deleteMessages(uids: [String], folder: Folder) async {
         guard !uids.isEmpty,
               !Task.isCancelled else {
             return
@@ -263,7 +253,8 @@ public extension MailboxManager {
         let batchSize = 100
         for index in stride(from: 0, to: uids.count, by: batchSize) {
             try? writeTransaction { writableRealm in
-                let uidsBatch = Array(uids[index ..< min(index + batchSize, uids.count)])
+                let shortUidsBatch = Array(uids[index ..< min(index + batchSize, uids.count)])
+                let uidsBatch = shortUidsBatch.map { Constants.longUid(from: $0, folderId: folder.remoteId) }
 
                 let messagesToDelete = writableRealm.objects(Message.self).where { $0.uid.in(uidsBatch) }
                 var threadsToUpdate = Set<Thread>()

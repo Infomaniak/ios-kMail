@@ -112,24 +112,6 @@ public struct MessagesUids {
     public var folderUnreadCount: Int?
 }
 
-public class MessageFlags: Decodable {
-    public let shortUid: String
-    public let answered: Bool
-    public let isFavorite: Bool
-    public let forwarded: Bool
-    public let scheduled: Bool
-    public let seen: Bool
-
-    private enum CodingKeys: String, CodingKey {
-        case shortUid = "uid"
-        case answered
-        case isFavorite = "flagged"
-        case forwarded
-        case scheduled
-        case seen
-    }
-}
-
 public enum MessagePriority: String, Codable, PersistableEnum {
     case low, normal, high
 }
