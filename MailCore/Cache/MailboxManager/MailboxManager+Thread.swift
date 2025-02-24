@@ -80,7 +80,7 @@ public extension MailboxManager {
         let newCursor: String
 
         if let previousCursor {
-            newCursor = try await getMessagesDelta(previousCursor: previousCursor, folder: folder)
+            newCursor = try await getMessagesDelta(signature: previousCursor, folder: folder)
         } else {
             newCursor = try await fetchOldMessagesUids(folder: folder)
         }
@@ -142,13 +142,12 @@ public extension MailboxManager {
         }
     }
 
-    private func getMessagesDelta(previousCursor: String, folder: Folder) async throws -> String {
+    private func getMessagesDelta(signature: String, folder: Folder) async throws -> String {
         let messagesDelta = try await apiFetcher.messagesDelta(
             mailboxUUid: mailbox.uuid,
             folderId: folder.remoteId,
-            signature: previousCursor
+            signature: signature
         )
-
         try await handleDelta(messagesDelta: messagesDelta, folder: folder)
 
         return messagesDelta.cursor
@@ -221,7 +220,9 @@ public extension MailboxManager {
     private func handleDelta(messagesDelta: MessagesDelta, folder: Folder) async throws {
         await deleteMessages(uids: messagesDelta.deletedShortUids, folder: folder)
 
-        await updateMessages(updates: messagesDelta.updated, folder: folder)
+        if case .messages(let updatedDelta) = messagesDelta.updated {
+            await updateMessages(updates: updatedDelta, folder: folder)
+        }
 
         // Add Uids to fetch in the folder
         try? writeTransaction { writableRealm in

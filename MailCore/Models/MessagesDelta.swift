@@ -19,10 +19,16 @@
 import Foundation
 import Sentry
 
-public struct MessagesDelta: Decodable {
+public enum DeltaFlags: Sendable {
+    case messages([MessageFlags])
+    case snoozed([SnoozedFlags])
+    case unknown
+}
+
+public struct MessagesDelta: Decodable, Sendable {
     public let deletedShortUids: [String]
     public let addedShortUids: [String]
-    public let updated: [MessageFlags]
+    public let updated: DeltaFlags
     public let cursor: String
     public let unreadCount: Int
 
@@ -50,13 +56,20 @@ public struct MessagesDelta: Decodable {
             addedShortUids = try container.decode([Int].self, forKey: .addedShortUids).map { "\($0)" }
             SentrySDK.capture(message: "Received added Delta as [Int]")
         }
-        updated = try container.decode([MessageFlags].self, forKey: .updated)
         cursor = try container.decode(String.self, forKey: .cursor)
         unreadCount = try container.decode(Int.self, forKey: .unreadCount)
+
+        if let messageFlags = try? container.decode([MessageFlags].self, forKey: .updated) {
+            updated = .messages(messageFlags)
+        } else if let snoozedFlags = try? container.decode([SnoozedFlags].self, forKey: .updated) {
+            updated = .snoozed(snoozedFlags)
+        } else {
+            updated = .unknown
+        }
     }
 }
 
-public class MessageFlags: Decodable {
+public struct MessageFlags: Codable, Sendable {
     public let shortUid: String
     public let answered: Bool
     public let isFavorite: Bool
@@ -72,4 +85,8 @@ public class MessageFlags: Decodable {
         case scheduled
         case seen
     }
+}
+
+public struct SnoozedFlags: Codable, Sendable {
+    public let snoozeEndDate: Date
 }
