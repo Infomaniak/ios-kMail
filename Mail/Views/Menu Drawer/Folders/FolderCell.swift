@@ -32,8 +32,6 @@ extension EnvironmentValues {
 }
 
 struct FolderCell: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     enum CellType {
         case menuDrawer, move
     }
@@ -76,6 +74,7 @@ struct FolderCell: View {
                     ThreadListManagerView()
                 } label: {
                     Button {
+                        @InjectService var matomo: MatomoUtils
                         if let matomoCategory {
                             matomo.track(eventWithCategory: matomoCategory, name: folder.frozenContent.matomoName)
                         }
@@ -119,6 +118,7 @@ struct FolderCell: View {
     }
 
     private func updateFolder() {
+        @InjectService var matomo: MatomoUtils
         if let matomoCategory {
             matomo.track(eventWithCategory: matomoCategory, name: folder.frozenContent.matomoName)
         }
@@ -129,8 +129,6 @@ struct FolderCell: View {
 
 struct FolderCellContent: View {
     private static let maximumSubFolderLevel = 2
-
-    @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.folderCellType) private var cellType
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -247,6 +245,7 @@ struct FolderCellContent: View {
     }
 
     private func collapseFolder() {
+        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .menuDrawer, name: "collapseFolder", value: !frozenFolder.isExpanded)
 
         guard let liveFolder = frozenFolder.thaw() else { return }
