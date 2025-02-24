@@ -168,7 +168,7 @@ struct MenuDrawerView: View {
 
 struct AppVersionView: View {
     var body: some View {
-        Text(Constants.appVersionLabel())
+        Text(Constants.appVersionLabel)
             .textStyle(.labelSecondary)
     }
 }

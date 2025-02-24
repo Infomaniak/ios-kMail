@@ -176,9 +176,7 @@ public enum Constants {
         return longUid.components(separatedBy: "@")[0]
     }
 
-    public static func appVersionLabel() -> String {
-        return CorePlatform.appVersionLabel(fallbackAppName: "Mail")
-    }
+    public static let appVersionLabel = CorePlatform.appVersionLabel(fallbackAppName: "Mail")
 
     public static let searchFolderId = "search_folder_id"
 
