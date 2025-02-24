@@ -80,14 +80,7 @@ public extension MailboxManager {
         let newCursor: String
 
         if let previousCursor {
-            let messagesDelta = try await apiFetcher.messagesDelta(
-                mailboxUUid: mailbox.uuid,
-                folderId: folder.remoteId,
-                signature: previousCursor
-            )
-
-            newCursor = messagesDelta.cursor
-            try await handleDelta(messagesDelta: messagesDelta, folder: folder)
+            newCursor = try await getMessagesDelta(previousCursor: previousCursor, folder: folder)
         } else {
             newCursor = try await fetchOldMessagesUids(folder: folder)
         }
@@ -147,6 +140,18 @@ public extension MailboxManager {
 
             messagesToFetch -= Constants.oldPageSize
         }
+    }
+
+    private func getMessagesDelta(previousCursor: String, folder: Folder) async throws -> String {
+        let messagesDelta = try await apiFetcher.messagesDelta(
+            mailboxUUid: mailbox.uuid,
+            folderId: folder.remoteId,
+            signature: previousCursor
+        )
+
+        try await handleDelta(messagesDelta: messagesDelta, folder: folder)
+
+        return messagesDelta.cursor
     }
 
     /// This function get all the messages uids from the chosen folder
