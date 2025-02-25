@@ -80,23 +80,7 @@ public extension MailboxManager {
         let newCursor: String
 
         if let previousCursor {
-            /// Get delta from last cursor
-            let messageDeltaResult = try await apiFetcher.messagesDelta(
-                mailboxUUid: mailbox.uuid,
-                folderId: folder.remoteId,
-                signature: previousCursor
-            )
-
-            let messagesUids = MessagesUids(
-                addedShortUids: messageDeltaResult.addedShortUids,
-                deletedUids: messageDeltaResult.deletedShortUids.map { Constants.longUid(from: $0, folderId: folder.remoteId) },
-                updated: messageDeltaResult.updated,
-                cursor: messageDeltaResult.cursor,
-                folderUnreadCount: messageDeltaResult.unreadCount
-            )
-
-            newCursor = messageDeltaResult.cursor
-            try await handleDelta(messageUids: messagesUids, folder: folder)
+            newCursor = try await getMessagesDelta(signature: previousCursor, folder: folder)
         } else {
             newCursor = try await fetchOldMessagesUids(folder: folder)
         }
@@ -156,6 +140,17 @@ public extension MailboxManager {
 
             messagesToFetch -= Constants.oldPageSize
         }
+    }
+
+    private func getMessagesDelta(signature: String, folder: Folder) async throws -> String {
+        let messagesDelta = try await apiFetcher.messagesDelta(
+            mailboxUUid: mailbox.uuid,
+            folderId: folder.remoteId,
+            signature: signature
+        )
+        try await handleDelta(messagesDelta: messagesDelta, folder: folder)
+
+        return messagesDelta.cursor
     }
 
     /// This function get all the messages uids from the chosen folder
@@ -220,25 +215,29 @@ public extension MailboxManager {
     /// Handle MessagesUids from Delta
     /// Will delete, update and add messages from uids
     /// - Parameters:
-    ///   - messageUids: Given MessagesUids
+    ///   - messageDelta: The list added/updated/deleted message uids
     ///   - folder: Given folder
-    private func handleDelta(messageUids: MessagesUids, folder: Folder) async throws {
-        await deleteMessages(uids: messageUids.deletedUids)
+    private func handleDelta(messagesDelta: MessagesDelta, folder: Folder) async throws {
+        switch messagesDelta.updated {
+        case .messages(let flags):
+            await deleteMessages(uids: messagesDelta.deletedShortUids, folder: folder)
+            await updateMessages(updates: flags, folder: folder)
+        case .snoozed(let flags):
+            try await updateSnoozedMessages(deleted: messagesDelta.deletedShortUids, updates: flags)
+        default:
+            break
+        }
 
-        await updateMessages(updates: messageUids.updated, folder: folder)
-
-        // Add Uids to fetch in the folder
         try? writeTransaction { writableRealm in
             let freshFolder = folder.fresh(using: writableRealm)
-            freshFolder?.newMessagesUidsToFetch.append(objectsIn: messageUids.addedShortUids.map { MessageUid(uid: $0) })
+            let messageUids = messagesDelta.addedShortUids.map { MessageUid(uid: $0) }
+            freshFolder?.newMessagesUidsToFetch.append(objectsIn: messageUids)
 
-            if let newUnreadCount = messageUids.folderUnreadCount {
-                freshFolder?.remoteUnreadCount = newUnreadCount
-            }
+            freshFolder?.remoteUnreadCount = messagesDelta.unreadCount
         }
     }
 
-    private func deleteMessages(uids: [String]) async {
+    private func deleteMessages(uids: [String], folder: Folder) async {
         guard !uids.isEmpty,
               !Task.isCancelled else {
             return
@@ -251,7 +250,8 @@ public extension MailboxManager {
         let batchSize = 100
         for index in stride(from: 0, to: uids.count, by: batchSize) {
             try? writeTransaction { writableRealm in
-                let uidsBatch = Array(uids[index ..< min(index + batchSize, uids.count)])
+                let shortUidsBatch = Array(uids[index ..< min(index + batchSize, uids.count)])
+                let uidsBatch = shortUidsBatch.map { Constants.longUid(from: $0, folderId: folder.remoteId) }
 
                 let messagesToDelete = writableRealm.objects(Message.self).where { $0.uid.in(uidsBatch) }
                 var threadsToUpdate = Set<Thread>()
@@ -320,6 +320,46 @@ public extension MailboxManager {
                 }
             }
             self.updateThreads(threads: threadsToUpdate, realm: writableRealm)
+        }
+    }
+
+    private func updateSnoozedMessages(deleted: [String], updates: [SnoozedFlags]) async throws {
+        guard !Task.isCancelled else { return }
+
+        try? writeTransaction { writableRealm in
+            guard let inbox = writableRealm.objects(Folder.self).where({ $0.role == .inbox }).first else { return }
+
+            var threadsToUpdate = Set<Thread>()
+
+            for uidToDelete in deleted {
+                let longUid = Constants.longUid(from: uidToDelete, folderId: inbox.remoteId)
+                guard let flaggedMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: longUid) else { continue }
+
+                for parent in flaggedMessage.threads {
+                    for message in parent.messages {
+                        message.snoozeState = nil
+                        message.snoozeAction = nil
+                        message.snoozeEndDate = nil
+                    }
+
+                    threadsToUpdate.insert(parent)
+                }
+            }
+
+            for flag in updates {
+                let longUid = Constants.longUid(from: flag.shortUid, folderId: inbox.remoteId)
+                guard let flaggedMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: longUid) else { continue }
+
+                for parent in flaggedMessage.threads {
+                    for message in parent.messages {
+                        message.snoozeEndDate = flag.snoozeEndDate
+                    }
+
+                    threadsToUpdate.insert(parent)
+                }
+            }
+
+            updateThreads(threads: threadsToUpdate, realm: writableRealm)
         }
     }
 
