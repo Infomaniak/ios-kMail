@@ -218,13 +218,16 @@ public extension MailboxManager {
     ///   - messageDelta: The list added/updated/deleted message uids
     ///   - folder: Given folder
     private func handleDelta(messagesDelta: MessagesDelta, folder: Folder) async throws {
-        await deleteMessages(uids: messagesDelta.deletedShortUids, folder: folder)
-
-        if case .messages(let updatedDelta) = messagesDelta.updated {
-            await updateMessages(updates: updatedDelta, folder: folder)
+        switch messagesDelta.updated {
+        case .messages(let flags):
+            await deleteMessages(uids: messagesDelta.deletedShortUids, folder: folder)
+            await updateMessages(updates: flags, folder: folder)
+        case .snoozed(let flags):
+            try await updateSnoozedMessages(deleted: messagesDelta.deletedShortUids, updates: flags)
+        default:
+            break
         }
 
-        // Add Uids to fetch in the folder
         try? writeTransaction { writableRealm in
             let freshFolder = folder.fresh(using: writableRealm)
             let messageUids = messagesDelta.addedShortUids.map { MessageUid(uid: $0) }
@@ -317,6 +320,46 @@ public extension MailboxManager {
                 }
             }
             self.updateThreads(threads: threadsToUpdate, realm: writableRealm)
+        }
+    }
+
+    private func updateSnoozedMessages(deleted: [String], updates: [SnoozedFlags]) async throws {
+        guard !Task.isCancelled else { return }
+
+        try? writeTransaction { writableRealm in
+            guard let inbox = writableRealm.objects(Folder.self).where({ $0.role == .inbox }).first else { return }
+
+            var threadsToUpdate = Set<Thread>()
+
+            for uidToDelete in deleted {
+                let longUid = Constants.longUid(from: uidToDelete, folderId: inbox.remoteId)
+                guard let flaggedMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: longUid) else { continue }
+
+                for parent in flaggedMessage.threads {
+                    for message in parent.messages {
+                        message.snoozeState = nil
+                        message.snoozeAction = nil
+                        message.snoozeEndDate = nil
+                    }
+
+                    threadsToUpdate.insert(parent)
+                }
+            }
+
+            for flag in updates {
+                let longUid = Constants.longUid(from: flag.shortUid, folderId: inbox.remoteId)
+                guard let flaggedMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: longUid) else { continue }
+
+                for parent in flaggedMessage.threads {
+                    for message in parent.messages {
+                        message.snoozeEndDate = flag.snoozeEndDate
+                    }
+
+                    threadsToUpdate.insert(parent)
+                }
+            }
+
+            updateThreads(threads: threadsToUpdate, realm: writableRealm)
         }
     }
 
