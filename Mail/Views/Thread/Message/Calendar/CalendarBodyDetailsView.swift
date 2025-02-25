@@ -71,8 +71,12 @@ struct CalendarBodyDetailsView: View {
 
             Group {
                 Label(event.formattedDateTime, asset: MailResourcesAsset.calendarBadgeClock.swiftUIImage)
-                if let location = event.location, !location.isEmpty {
-                    Label(location, asset: MailResourcesAsset.pin.swiftUIImage)
+                if let bookableResource = event.bookableResource {
+                    Label(bookableResource.name, asset: MailResourcesAsset.door.swiftUIImage)
+                } else {
+                    if let location = event.location, !location.isEmpty {
+                        Label(location, asset: MailResourcesAsset.pin.swiftUIImage)
+                    }
                 }
                 if !iAmInvited && !event.attendees.isEmpty {
                     Label(MailResourcesStrings.Localizable.calendarNotInvited, asset: MailResourcesAsset.socialMedia.swiftUIImage)
