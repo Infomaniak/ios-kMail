@@ -138,7 +138,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 SwissTransferAttachment.self,
                 File.self,
                 MessageUid.self,
-                MessageHeaders.self
+                MessageHeaders.self,
+                BookableResource.self
             ]
         )
 
