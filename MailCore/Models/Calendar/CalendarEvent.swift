@@ -64,6 +64,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
     @Persisted public var end: Date
     @Persisted public var status: CalendarEventStatus?
     @Persisted public var attendees: RealmSwift.List<Attendee>
+    @Persisted public var bookableResource: BookableResource?
 
     @Persisted(originProperty: "userStoredEvent") public var userStoredParent: LinkingObjects<CalendarEventResponse>
     @Persisted(originProperty: "attachmentEvent") public var attachmentParent: LinkingObjects<CalendarEventResponse>
@@ -118,7 +119,8 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         start: Date,
         end: Date,
         status: CalendarEventStatus?,
-        attendees: RealmSwift.List<Attendee>
+        attendees: RealmSwift.List<Attendee>,
+        bookableResource: BookableResource? = nil
     ) {
         self.id = id
         self.type = type
@@ -129,6 +131,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         self.end = end
         self.status = status
         self.attendees = attendees
+        self.bookableResource = bookableResource
     }
 
     // We need to create our own init
@@ -143,6 +146,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         isFullDay = try container.decode(Bool.self, forKey: .isFullDay)
         status = try? container.decode(CalendarEventStatus?.self, forKey: .status)
         attendees = try container.decode(List<Attendee>.self, forKey: .attendees)
+        bookableResource = try container.decodeIfPresent(BookableResource.self, forKey: .bookableResource)
 
         let startString = try container.decode(String.self, forKey: .start)
         start = Constants.decodeDateCorrectly(startString) ?? .now
@@ -160,6 +164,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         case end
         case status
         case attendees
+        case bookableResource
     }
 
     public func getMyFrozenAttendee(currentMailboxEmail: String) -> Attendee? {
