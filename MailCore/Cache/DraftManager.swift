@@ -198,6 +198,7 @@ public final class DraftManager {
                     myKSuiteUpgradeAction?()
                 })
             )
+            matomo.track(eventWithCategory: .newMessage, name: "trySendingWithDailyLimitReached")
         } else {
             alertDisplayable.show(message: MailApiError.sentLimitReached.localizedDescription, shouldShow: showSnackbar)
         }
