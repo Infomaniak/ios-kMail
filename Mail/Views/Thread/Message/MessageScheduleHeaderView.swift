@@ -61,7 +61,8 @@ struct MessageScheduleHeaderView: View {
             isPresented: $isShowingReschedulePanel,
             draftSaveOption: .constant(.schedule),
             draftDate: $rescheduleDate,
-            mailboxManager: mailboxManager
+            mailboxManager: mailboxManager,
+            origin: .snooze
         ) {
             changeScheduleDate(rescheduleDate)
         }
