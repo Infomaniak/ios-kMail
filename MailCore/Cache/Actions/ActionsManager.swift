@@ -278,7 +278,7 @@ public class ActionsManager: ObservableObject {
         guard let message else { return }
 
         if let undoAction {
-            IKSnackBar.showCancelableSnackBar(
+            showCancelableSnackBar(
                 message: message,
                 cancelSuccessMessage: MailResourcesStrings.Localizable.snackbarMoveCancelled,
                 undoAction: undoAction
@@ -286,6 +286,33 @@ public class ActionsManager: ObservableObject {
         } else {
             snackbarPresenter.show(message: message)
         }
+    }
+
+    private func showCancelableSnackBar(
+        message: String,
+        cancelSuccessMessage: String,
+        undoAction: UndoAction
+    ) {
+        return snackbarPresenter.show(
+            message: message,
+            action: .init(title: MailResourcesStrings.Localizable.buttonCancel) {
+                Task { [weak self] in
+                    do {
+                        @InjectService var matomo: MatomoUtils
+                        matomo.track(eventWithCategory: .snackbar, name: "undo")
+
+                        let undoSucceeded = try await undoAction.undo()
+
+                        if undoSucceeded {
+                            self?.snackbarPresenter.show(message: cancelSuccessMessage)
+                            _ = try await undoAction.afterUndo?()
+                        }
+                    } catch {
+                        self?.snackbarPresenter.show(message: error.localizedDescription)
+                    }
+                }
+            }
+        )
     }
 
     private func replyOrForward(messages: [Message], mode: ReplyMode) throws {
