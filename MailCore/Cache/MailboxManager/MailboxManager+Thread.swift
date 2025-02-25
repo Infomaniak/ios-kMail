@@ -57,7 +57,7 @@ public extension MailboxManager {
         try await messages(folder: folder)
         fetchCurrentFolderCompleted()
 
-        var folderRolesToFetch = Set<FolderRole>([.inbox, .sent, .draft, .scheduledDrafts])
+        var folderRolesToFetch = Set<FolderRole>([.inbox, .sent, .draft, .scheduledDrafts, .snoozed])
         guard let currentRole = folder.role, folderRolesToFetch.contains(currentRole) else { return }
 
         folderRolesToFetch.remove(currentRole)
@@ -125,7 +125,7 @@ public extension MailboxManager {
                 newCursor: newCursor
             )
 
-            self.deleteOrphanMessagesAndThreads(writableRealm: writableRealm, folderId: folder.remoteId)
+            self.deleteOrphanMessages(writableRealm: writableRealm, folderId: folder.remoteId)
         }
 
         /// We will now fetch new messages
@@ -203,7 +203,6 @@ public extension MailboxManager {
     /// Previous page
     /// - Parameters:
     ///   - folder: Given folder
-    ///   - direction: Following or previous page to fetch
     /// - Returns: Returns number of threads created (`nil` if nothing to fetch)
     func fetchOneOldPage(folder: Folder) async throws -> Int? {
         guard let liveFolder = folder.fresh(transactionable: self) else { return nil }
@@ -346,7 +345,7 @@ public extension MailboxManager {
     /// - Parameters:
     ///   - messageByUids: MessageByUidsResult (list of message)
     ///   - folder: Given folder
-    ///   - realm: Given realm
+    ///   - writableRealm: Given realm
     private func createThreads(messageByUids: MessageByUidsResult, folder: Folder, writableRealm: Realm) {
         var threadsToUpdate = Set<Thread>()
         for message in messageByUids.messages {
@@ -466,13 +465,11 @@ public extension MailboxManager {
 
     // MARK: - Utils
 
-    private func deleteOrphanMessagesAndThreads(writableRealm: Realm, folderId: String) {
+    private func deleteOrphanMessages(writableRealm: Realm, folderId: String) {
         let orphanMessages = writableRealm.objects(Message.self).where { $0.folderId == folderId }
             .filter { $0.threads.isEmpty && $0.threadsDuplicatedIn.isEmpty }
-        let orphanThreads = writableRealm.objects(Thread.self).filter { $0.folder == nil }
 
         writableRealm.delete(orphanMessages)
-        writableRealm.delete(orphanThreads)
     }
 
     private func removeDuplicatedThreads(
@@ -530,7 +527,7 @@ public extension MailboxManager {
 
     private func refreshFolderThreads(folder: Folder, using realm: Realm) {
         let threads = realm.objects(Thread.self).where { thread in
-            folder.threadBelongsToFolder(thread)
+            folder.threadBelongsToFolder(thread, using: realm)
         }
 
         folder.threads.removeAll()
