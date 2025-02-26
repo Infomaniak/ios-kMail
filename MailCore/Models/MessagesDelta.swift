@@ -19,27 +19,10 @@
 import Foundation
 import Sentry
 
-public enum DeltaFlagsType: Sendable {
-    case messages([MessageFlags])
-    case snoozed([SnoozedFlags])
-    case unknown
-
-    public var flags: [DeltaFlags] {
-        switch self {
-        case .messages(let deltaFlags):
-            return deltaFlags
-        case .snoozed(let deltaFlags):
-            return deltaFlags
-        case .unknown:
-            return []
-        }
-    }
-}
-
-public struct MessagesDelta: Decodable, Sendable {
+public struct MessagesDelta<Flags: DeltaFlags>: Decodable, Sendable {
     public let deletedShortUids: [String]
     public let addedShortUids: [String]
-    public let updated: DeltaFlagsType
+    public let updated: [Flags]
     public let cursor: String
     public let unreadCount: Int
 
@@ -69,14 +52,7 @@ public struct MessagesDelta: Decodable, Sendable {
         }
         cursor = try container.decode(String.self, forKey: .cursor)
         unreadCount = try container.decode(Int.self, forKey: .unreadCount)
-
-        if let messageFlags = try? container.decode([MessageFlags].self, forKey: .updated) {
-            updated = .messages(messageFlags)
-        } else if let snoozedFlags = try? container.decode([SnoozedFlags].self, forKey: .updated) {
-            updated = .snoozed(snoozedFlags)
-        } else {
-            updated = .unknown
-        }
+        updated = try container.decode([Flags].self, forKey: .updated)
     }
 }
 
