@@ -108,11 +108,9 @@ struct AutocompletionCell: View {
         }
         .padding(.horizontal, value: .medium)
         .task {
-            if let groupContact = autocompletion as? GroupContact {
-                subtitle = MailResourcesStrings.Localizable
-                    .addressBookTitle(mailboxManager.contactManager.getAddressBook(for: groupContact.id)?.name ?? groupContact
-                        .name)
-            }
+            guard let groupContact = autocompletion as? GroupContact else { return }
+            subtitle = MailResourcesStrings.Localizable
+                .addressBookTitle(mailboxManager.contactManager.getAddressBook(for: groupContact.id)?.name ?? groupContact.name)
         }
     }
 }
