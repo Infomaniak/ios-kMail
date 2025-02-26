@@ -61,6 +61,7 @@ public extension MatomoUtils.EventCategory {
     static let updateVersion = MatomoUtils.EventCategory(displayName: "updateVersion")
     static let userInfo = MatomoUtils.EventCategory(displayName: "userInfo")
     static let easterEgg = MatomoUtils.EventCategory(displayName: "easterEgg")
+    static let myKSuite = MatomoUtils.EventCategory(displayName: "myKSuite")
     static let myKSuiteUpgrade = MatomoUtils.EventCategory(displayName: "myKSuiteUpgradeBottomSheet")
 
     // Actions
