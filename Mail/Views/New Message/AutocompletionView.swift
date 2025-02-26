@@ -103,7 +103,7 @@ struct AutocompletionView: View {
                 fetchLimit: Self.maxAutocompleteCount
             ))
 
-            var combinedResults: [any ContactAutocompletable] = autocompleteContacts + autocompleteGroupContacts +
+            let combinedResults: [any ContactAutocompletable] = autocompleteContacts + autocompleteGroupContacts +
                 autocompleteAddressBookContacts
 
             let realResults = autocompleteGroupContacts.filter {
