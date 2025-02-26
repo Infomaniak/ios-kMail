@@ -21,7 +21,11 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-public enum AttendeeState: String, CaseIterable, Codable, PersistableEnum {
+public enum AttendeeState: String, CaseIterable, Codable, PersistableEnum, Identifiable {
+    public var id: Self {
+        return self
+    }
+
     case yes = "ACCEPTED"
     case maybe = "TENTATIVE"
     case no = "DECLINED"

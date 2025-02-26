@@ -19,8 +19,8 @@
 import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailCore
+import MailCoreUI
 import SwiftUI
-import WrappingHStack
 
 struct CalendarChoiceButtonsStack: View {
     @State private var selectedChoice: AttendeeState?
@@ -36,8 +36,9 @@ struct CalendarChoiceButtonsStack: View {
     }
 
     var body: some View {
-        WrappingHStack(AttendeeState.allCases, id: \.self, spacing: .constant(IKPadding.mini),
-                       lineSpacing: IKPadding.mini) { choice in
+        BackportedFlowLayout(AttendeeState.allCases,
+                             verticalSpacing: IKPadding.mini,
+                             horizontalSpacing: IKPadding.mini) { choice in
             CalendarChoiceButton(
                 selectedChoice: $selectedChoice,
                 choice: choice,
