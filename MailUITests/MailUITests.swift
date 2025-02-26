@@ -31,6 +31,14 @@ class MailUITests: XCTestCase {
         continueAfterFailure = false
     }
 
+    override func tearDown() async throws {
+        if let failureCount = testRun?.failureCount, failureCount > 0 {
+            let screenshot = await XCUIScreen.main.screenshot()
+            let attach = XCTAttachment(screenshot: screenshot)
+            add(attach)
+        }
+    }
+
     func launchAppFromScratch(resetData: Bool = true) {
         if resetData {
             app.launchArguments += ["resetData"]
