@@ -63,7 +63,7 @@ struct RecipientField: View {
 
     var body: some View {
         HStack(alignment: .iconAndTextFieldAlignment, spacing: 0) {
-            VStack(spacing: 0) {
+            VStack(alignment: .leading, spacing: 0) {
                 if !recipients.isEmpty {
                     RecipientsList(
                         focusedField: _focusedField,

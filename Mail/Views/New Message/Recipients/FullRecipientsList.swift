@@ -24,7 +24,6 @@ import MailCore
 import MailCoreUI
 import RealmSwift
 import SwiftUI
-import WrappingHStack
 
 struct FullRecipientsList: View {
     @LazyInjectService private var matomo: MatomoUtils
@@ -37,27 +36,25 @@ struct FullRecipientsList: View {
     let type: ComposeViewFieldType
 
     var body: some View {
-        WrappingHStack(recipients.indices, spacing: .constant(IKPadding.mini), lineSpacing: IKPadding.mini) { i in
-            RecipientChip(recipient: recipients[i], fieldType: type, focusedField: _focusedField) {
-                remove(recipientAt: i)
+        BackportedFlowLayout(recipients, verticalSpacing: IKPadding.mini, horizontalSpacing: IKPadding.mini) { recipient in
+            RecipientChip(recipient: recipient, fieldType: type, focusedField: _focusedField) {
+                remove(recipient: recipient)
             } switchFocusHandler: {
                 switchFocus()
             }
-            .focused($focusedField, equals: .chip(type.hashValue, recipients[i]))
+            .focused($focusedField, equals: .chip(type.hashValue, recipient))
             .environmentObject(mailboxManager)
         }
     }
 
-    @MainActor private func remove(recipientAt: Int) {
-        guard $recipients.count > recipientAt else { return }
-
+    @MainActor private func remove(recipient: Recipient) {
         matomo.track(eventWithCategory: .newMessage, name: "deleteRecipient")
 
-        let recipient = $recipients[recipientAt].wrappedValue
         if recipient.isExternal(mailboxManager: mailboxManager) {
             matomo.track(eventWithCategory: .externals, name: "deleteRecipient")
         }
 
+        guard let recipientAt = $recipients.wrappedValue.firstIndex(of: recipient) else { return }
         withAnimation {
             $recipients.remove(at: recipientAt)
         }
