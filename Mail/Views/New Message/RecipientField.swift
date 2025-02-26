@@ -25,7 +25,6 @@ import MailCoreUI
 import MailResources
 import RealmSwift
 import SwiftUI
-import WrappingHStack
 
 extension VerticalAlignment {
     private enum IconAndTextFieldAlignment: AlignmentID {
