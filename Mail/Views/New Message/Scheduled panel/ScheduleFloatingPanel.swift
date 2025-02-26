@@ -27,27 +27,12 @@ import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
 
-enum ScheduleFloatingPanelOrigin {
-    case snooze
-    case schedule
-
-    var matomoName: String {
-        switch self {
-        case .snooze:
-            "snoozeCustomDate"
-        case .schedule:
-            "scheduledCustomDate"
-        }
-    }
-}
-
 extension View {
     func scheduleFloatingPanel(
         isPresented: Binding<Bool>,
         draftSaveOption: Binding<SaveDraftOption?>,
         draftDate: Binding<Date?>,
         mailboxManager: MailboxManager,
-        origin: ScheduleFloatingPanelOrigin,
         completionHandler: @escaping () -> Void
     ) -> some View {
         modifier(ScheduleFloatingPanel(
@@ -55,7 +40,6 @@ extension View {
             draftSaveOption: draftSaveOption,
             draftDate: draftDate,
             mailBoxManager: mailboxManager,
-            origin: origin,
             completionHandler: completionHandler
         ))
     }
@@ -63,7 +47,6 @@ extension View {
 
 struct ScheduleFloatingPanel: ViewModifier {
     @AppStorage(UserDefaults.shared.key(.lastScheduleInterval)) private var lastScheduleInterval: Double = 0
-    @LazyInjectService private var matomo: MatomoUtils
 
     @State private var isShowingMyKSuiteUpgrade = false
     @State private var panelShouldBeShown = false
@@ -74,7 +57,6 @@ struct ScheduleFloatingPanel: ViewModifier {
     @Binding var draftDate: Date?
 
     let mailBoxManager: MailboxManager
-    let origin: ScheduleFloatingPanelOrigin
     let completionHandler: () -> Void
 
     func body(content: Content) -> some View {
@@ -103,10 +85,6 @@ struct ScheduleFloatingPanel: ViewModifier {
                 }
             }
             .myKSuitePanel(isPresented: $isShowingMyKSuiteUpgrade, configuration: .mail)
-            .onChange(of: isShowingMyKSuiteUpgrade) { value in
-                guard value else { return }
-                matomo.track(eventWithCategory: .myKSuiteUpgrade, name: origin.matomoName)
-            }
     }
 
     private func setSchedule(_ scheduleDate: Date) {
