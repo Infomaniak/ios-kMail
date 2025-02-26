@@ -19,27 +19,10 @@
 import Foundation
 import Sentry
 
-public enum DeltaFlagsType: Sendable {
-    case messages([MessageFlags])
-    case snoozed([SnoozedFlags])
-    case unknown
-
-    public var flags: [DeltaFlags] {
-        switch self {
-        case .messages(let deltaFlags):
-            return deltaFlags
-        case .snoozed(let deltaFlags):
-            return deltaFlags
-        case .unknown:
-            return []
-        }
-    }
-}
-
-public struct MessagesDelta: Decodable, Sendable {
+public struct MessagesDelta<Flags: DeltaFlags>: Decodable, Sendable {
     public let deletedShortUids: [String]
     public let addedShortUids: [String]
-    public let updated: DeltaFlagsType
+    public let updated: [Flags]
     public let cursor: String
     public let unreadCount: Int
 
