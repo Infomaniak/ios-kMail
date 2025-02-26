@@ -294,7 +294,6 @@ struct ComposeMessageView: View {
             draftSaveOption: $draft.action,
             draftDate: $draft.scheduleDate,
             mailboxManager: mailboxManager,
-            origin: .schedule,
             completionHandler: dismissMessageView
         )
     }

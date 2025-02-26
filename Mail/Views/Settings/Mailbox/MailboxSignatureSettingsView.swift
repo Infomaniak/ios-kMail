@@ -26,7 +26,7 @@ import RealmSwift
 import SwiftUI
 
 struct MailboxSignatureSettingsView: View {
-    @InjectService private var matomo: MatomoUtils
+    @LazyInjectService private var matomo: MatomoUtils
 
     @State private var isShowingMyKSuiteUpgrade = false
 
