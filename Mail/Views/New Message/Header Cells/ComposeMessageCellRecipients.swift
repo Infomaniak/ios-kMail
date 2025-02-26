@@ -162,9 +162,9 @@ struct ComposeMessageCellRecipients: View {
         var mergedContacts: [MergedContact] = []
         if let mergedContact = contacts as? MergedContact {
             mergedContacts.append(mergedContact)
-        } else if let groupeContact = contacts as? GroupContact {
-            let groupeContacts = mailboxManager.contactManager.getContacts(with: groupeContact.id)
-            mergedContacts.append(contentsOf: groupeContacts)
+        } else if let groupContact = contacts as? GroupContact {
+            let groupContacts = mailboxManager.contactManager.getContacts(with: groupContact.id)
+            mergedContacts.append(contentsOf: groupContacts)
         } else if let addressBookContact = contacts as? AddressBook {
             let addressBookContacts = mailboxManager.contactManager.getContacts(for: addressBookContact.id)
             mergedContacts.append(contentsOf: addressBookContacts)
