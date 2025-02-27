@@ -168,10 +168,6 @@ public enum Constants {
     public static let shortDateFormatter = Date.FormatStyle.dateTime.month(.wide)
     public static let longDateFormatter = shortDateFormatter.year()
 
-    public static func longUid(from shortUid: String, folderId: String) -> String {
-        return "\(shortUid)@\(folderId)"
-    }
-
     public static func shortUid(from longUid: String) -> String {
         return longUid.components(separatedBy: "@")[0]
     }
