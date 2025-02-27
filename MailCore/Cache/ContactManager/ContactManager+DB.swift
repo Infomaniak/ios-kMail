@@ -62,7 +62,7 @@ public protocol ContactFetchable {
     /// Get the `AddressBook` by the `GroupContact`'s ID
     /// - Parameter groupContactId: The ID of the `GroupContact` to look up
     /// - Returns: The `AddressBook` that contains the `GroupContact`, or `nil` if not found
-    func getAddressBook(for groupContactId: Int) -> AddressBook?
+    func getFrozenAddressBook(for groupContactId: Int) async -> AddressBook?
 }
 
 public extension ContactManager {
@@ -185,11 +185,11 @@ public extension ContactManager {
         }
     }
 
-    func getAddressBook(for groupContactId: Int) -> AddressBook? {
+    func getFrozenAddressBook(for groupContactId: Int) async -> AddressBook? {
         let addressBooks = fetchResults(ofType: AddressBook.self) { partial in
             partial.filter("ANY groupContact.id == %@", groupContactId)
         }
-        return addressBooks.first
+        return addressBooks.first?.freeze()
     }
 
     func addContact(recipient: Recipient) async throws {

@@ -63,7 +63,7 @@ struct MCKContactManageable_SearchViewModel: ContactManageable, MCKTransactionab
 
     func addContact(recipient: MailCore.Recipient) async throws {}
 
-    func getAddressBook(for groupContactId: Int) -> MailCore.AddressBook? { nil }
+    func getFrozenAddressBook(for groupContactId: Int) async -> MailCore.AddressBook? { nil }
 
     func refreshContactsAndAddressBooksIfNeeded() async throws {}
 
