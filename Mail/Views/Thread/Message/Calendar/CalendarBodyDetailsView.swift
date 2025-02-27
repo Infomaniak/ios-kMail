@@ -22,7 +22,6 @@ import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
-import WrappingHStack
 
 extension LabelStyle where Self == CalendarLabelStyle {
     static func calendar(_ warning: CalendarEventWarning? = nil) -> CalendarLabelStyle {
