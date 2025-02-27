@@ -90,6 +90,7 @@ struct ComposeMessageView: View {
 
     @FocusState private var focusedField: ComposeViewFieldType?
 
+    // TODO: Technically, this can be invalidated too
     @ObservedRealmObject private var draft: Draft
 
     private let messageReply: MessageReply?
@@ -116,11 +117,7 @@ struct ComposeMessageView: View {
 
         _draft = ObservedRealmObject(wrappedValue: draft)
 
-        let currentDraftContentManager = DraftContentManager(
-            incompleteDraft: draft,
-            messageReply: messageReply,
-            mailboxManager: mailboxManager
-        )
+        let currentDraftContentManager = DraftContentManager(messageReply: messageReply, mailboxManager: mailboxManager)
         draftContentManager = currentDraftContentManager
 
         self.mailboxManager = mailboxManager
@@ -209,7 +206,7 @@ struct ComposeMessageView: View {
         .task {
             do {
                 isLoadingContent = true
-                currentSignature = try await draftContentManager.prepareCompleteDraft()
+                currentSignature = try await draftContentManager.prepareCompleteDraft(incompleteDraft: draft)
 
                 async let _ = attachmentsManager.completeUploadedAttachments()
                 async let _ = attachmentsManager.processHTMLAttachments(htmlAttachments)

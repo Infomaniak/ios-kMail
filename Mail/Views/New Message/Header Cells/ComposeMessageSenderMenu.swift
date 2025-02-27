@@ -33,6 +33,7 @@ struct ComposeMessageSenderMenu: View {
 
     let autocompletionType: ComposeViewFieldType?
     let type: ComposeViewFieldType
+    let incompleteDraft: Draft
 
     private var canSelectSignature: Bool {
         !signatures.isEmpty
@@ -46,12 +47,14 @@ struct ComposeMessageSenderMenu: View {
         currentSignature: Binding<Signature?>,
         mailboxManager: MailboxManager,
         autocompletionType: ComposeViewFieldType?,
-        type: ComposeViewFieldType
+        type: ComposeViewFieldType,
+        incompleteDraft: Draft
     ) {
         _currentSignature = currentSignature
         _signatures = ObservedResults(Signature.self, configuration: mailboxManager.realmConfiguration)
         self.autocompletionType = autocompletionType
         self.type = type
+        self.incompleteDraft = incompleteDraft
     }
 
     var body: some View {
@@ -62,9 +65,13 @@ struct ComposeMessageSenderMenu: View {
                         .textStyle(.bodySecondary)
 
                     Menu {
-                        SenderMenuCell(currentSignature: $currentSignature, signature: nil)
+                        SenderMenuCell(currentSignature: $currentSignature, signature: nil, incompleteDraft: incompleteDraft)
                         ForEach(signatures) { signature in
-                            SenderMenuCell(currentSignature: $currentSignature, signature: signature)
+                            SenderMenuCell(
+                                currentSignature: $currentSignature,
+                                signature: signature,
+                                incompleteDraft: incompleteDraft
+                            )
                         }
                     } label: {
                         Text(signatureLabel)
@@ -88,10 +95,12 @@ struct ComposeMessageSenderMenu: View {
 }
 
 #Preview {
+    let draft = Draft()
     ComposeMessageSenderMenu(
         currentSignature: .constant(nil),
         mailboxManager: PreviewHelper.sampleMailboxManager,
         autocompletionType: nil,
-        type: .from
+        type: .from,
+        incompleteDraft: draft
     )
 }

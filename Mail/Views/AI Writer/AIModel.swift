@@ -244,7 +244,7 @@ extension AIModel {
             name: shouldReplaceBody ? "replaceProposition" : "insertProposition"
         )
 
-        await draftContentManager.replaceContent(subject: subject, body: body)
+        await draftContentManager.replaceContent(subject: subject, body: body, draftPrimaryKey: draft.localUUID)
         withAnimation {
             isShowingProposition = false
         }

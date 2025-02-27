@@ -171,7 +171,6 @@ public enum PreviewHelper {
     )
 
     public static let sampleDraftContentManager = DraftContentManager(
-        incompleteDraft: Draft(),
         messageReply: nil,
         mailboxManager: sampleMailboxManager
     )
