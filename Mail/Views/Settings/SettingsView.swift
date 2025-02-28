@@ -72,6 +72,7 @@ struct SettingsView: View {
                         SettingsSubMenuLabel(title: MailResourcesStrings.Localizable.myKSuiteSubscriptionTitle)
                             .onTapGesture {
                                 isShowingMyKSuiteDashboard = true
+                                matomo.track(eventWithCategory: .myKSuite, name: "openDashboard")
                             }
                             .sheet(isPresented: $isShowingMyKSuiteDashboard) {
                                 MyKSuiteDashboardView(

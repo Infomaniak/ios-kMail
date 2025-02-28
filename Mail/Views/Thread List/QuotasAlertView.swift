@@ -18,6 +18,7 @@
 
 import DesignSystem
 import InfomaniakCore
+import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
@@ -28,6 +29,7 @@ import SwiftUI
 struct QuotasAlertView: View {
     @AppStorage(UserDefaults.shared.key(.nextShowQuotasAlert)) private var nextShowQuotasAlert = 0
     @InjectService private var appLaunchCounter: AppLaunchCounter
+    @LazyInjectService private var matomo: MatomoUtils
 
     let mailbox: Mailbox
     private let nextShowCounter = 10
@@ -64,6 +66,7 @@ struct QuotasAlertView: View {
                 if type == .almostFull {
                     Button {
                         nextShowQuotasAlert = appLaunchCounter.value + nextShowCounter
+                        matomo.track(eventWithCategory: .myKSuite, name: "closeStorageWarningBanner")
                     } label: {
                         MailResourcesAsset.close.swiftUIImage
                             .iconSize(.medium)

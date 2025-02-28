@@ -260,6 +260,7 @@ struct ComposeMessageView: View {
                 changeFolderAction: changeSelectedFolder
             ) {
                 mainViewState.isShowingMyKSuiteUpgrade = true
+                matomo.track(eventWithCategory: .myKSuiteUpgrade, name: "dailyLimitReachedUpgrade")
             }
         }
         .customAlert(item: $isShowingAlert) { alert in
@@ -330,6 +331,7 @@ struct ComposeMessageView: View {
         let mailbox = mailboxManager.mailbox
         let mailboxIsFull = mailbox.quotas?.progression ?? 0 >= 1
         if mailbox.isFree && mailbox.isLimited && mailboxIsFull {
+            matomo.track(eventWithCategory: .newMessage, name: "trySendingWithMailboxFull")
             Task {
                 if let liveDraft = draft.thaw() {
                     try? liveDraft.realm?.write {
@@ -341,6 +343,7 @@ struct ComposeMessageView: View {
                 message: MailResourcesStrings.Localizable.myKSuiteSpaceFullAlert,
                 action: IKSnackBar.Action(title: MailResourcesStrings.Localizable.buttonUpgrade) {
                     mainViewState.isShowingMyKSuiteUpgrade = true
+                    matomo.track(eventWithCategory: .myKSuiteUpgrade, name: "notEnoughStorageUpgrade")
                 }
             )
             return
