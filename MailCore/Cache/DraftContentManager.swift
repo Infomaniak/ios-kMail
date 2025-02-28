@@ -43,10 +43,8 @@ public class DraftContentManager: ObservableObject {
 
     private let messageReply: MessageReply?
     private let mailboxManager: MailboxManager
-    private let incompleteDraft: Draft
 
-    public init(incompleteDraft: Draft, messageReply: MessageReply?, mailboxManager: MailboxManager) {
-        self.incompleteDraft = incompleteDraft.freezeIfNeeded()
+    public init(messageReply: MessageReply?, mailboxManager: MailboxManager) {
         self.messageReply = messageReply
         self.mailboxManager = mailboxManager
     }
@@ -55,7 +53,7 @@ public class DraftContentManager: ObservableObject {
 // MARK: - Load data
 
 extension DraftContentManager {
-    private func loadCompleteDraftBody() async throws -> CompleteDraftResult {
+    private func loadCompleteDraftBody(incompleteDraft: Draft) async throws -> CompleteDraftResult {
         var completeDraftBody: String
         var attachments = [Attachment]()
         let shouldAddSignatureText: Bool
@@ -76,7 +74,7 @@ extension DraftContentManager {
             shouldAddSignatureText = true
         } else if incompleteDraft.isLoadedRemotely {
             // Draft loaded remotely
-            completeDraftBody = try await loadCompleteDraftIfNeeded()
+            completeDraftBody = try await loadCompleteDraftIfNeeded(incompleteDraft: incompleteDraft)
             shouldAddSignatureText = false
         } else if !incompleteDraft.remoteUUID.isEmpty {
             // Draft loaded remotely but we have it locally
@@ -120,7 +118,7 @@ extension DraftContentManager {
         return attachments
     }
 
-    private func loadCompleteDraftIfNeeded() async throws -> String {
+    private func loadCompleteDraftIfNeeded(incompleteDraft: Draft) async throws -> String {
         guard let associatedMessage = mailboxManager.fetchObject(ofType: Message.self,
                                                                  forPrimaryKey: incompleteDraft.messageUid)?
             .freeze()
@@ -144,9 +142,9 @@ extension DraftContentManager {
 // MARK: - Write draft
 
 public extension DraftContentManager {
-    func prepareCompleteDraft() async throws -> Signature? {
-        async let draftBodyResult = try await loadCompleteDraftBody()
-        async let signature = await loadMostFittingSignature()
+    func prepareCompleteDraft(incompleteDraft: Draft) async throws -> Signature? {
+        async let draftBodyResult = try await loadCompleteDraftBody(incompleteDraft: incompleteDraft)
+        async let signature = await loadMostFittingSignature(draftPrimaryKey: incompleteDraft.localUUID)
 
         let currentBody = try await draftBodyResult.body
         let cleanedBody = try await SwiftSoupUtils(fromHTML: currentBody).cleanBody()
@@ -156,14 +154,15 @@ public extension DraftContentManager {
             completeBody: cleanedHTML ?? currentBody,
             signature: signature,
             shouldAddSignatureText: draftBodyResult.shouldAddSignatureText,
-            attachments: draftBodyResult.attachments
+            attachments: draftBodyResult.attachments,
+            draftPrimaryKey: incompleteDraft.localUUID
         )
 
         return await signature
     }
 
-    func replaceContent(subject: String? = nil, body: String) async {
-        guard let draft = try? getFrozenDraft() else { return }
+    func replaceContent(subject: String? = nil, body: String, draftPrimaryKey: String) async {
+        guard let draft = try? getFrozenDraft(draftPrimaryKey: draftPrimaryKey) else { return }
         guard let document = try? await SwiftSoup.parse(draft.body),
               let cleanedDocument = try? await SwiftSoupUtils(document: document).cleanBody() else { return }
 
@@ -191,11 +190,12 @@ public extension DraftContentManager {
         completeBody: String,
         signature: Signature?,
         shouldAddSignatureText: Bool,
-        attachments: [Attachment]
+        attachments: [Attachment],
+        draftPrimaryKey: String
     ) throws {
         var fetchedDraft: Draft?
         try mailboxManager.writeTransaction { writableRealm in
-            guard let liveIncompleteDraft = getLiveDraft(realm: writableRealm) else {
+            guard let liveIncompleteDraft = getLiveDraft(realm: writableRealm, draftPrimaryKey: draftPrimaryKey) else {
                 return
             }
 
@@ -315,9 +315,9 @@ extension DraftContentManager {
 // MARK: - Signatures
 
 extension DraftContentManager {
-    public func updateSignature(with newSignature: Signature?) {
+    public func updateSignature(with newSignature: Signature?, draftPrimaryKey: String) {
         do {
-            let liveIncompleteDraft = try getLiveDraft()
+            let liveIncompleteDraft = try getLiveDraft(draftPrimaryKey: draftPrimaryKey)
 
             let parsedMessage = try SwiftSoup.parse(liveIncompleteDraft.body)
             // If we find the previous signature, we replace it with the new one
@@ -352,12 +352,13 @@ extension DraftContentManager {
     }
 
     /// Load best signature from local DB
-    private func loadMostFittingSignature() async -> Signature? {
+    private func loadMostFittingSignature(draftPrimaryKey: String) async -> Signature? {
         let storedSignatures = mailboxManager.getStoredSignatures()
         let defaultSignature = getDefaultSignature(userSignatures: storedSignatures)
 
         // If draft already has an identity, return corresponding signature
-        if let storedDraft = mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID),
+        if let storedDraft = mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: draftPrimaryKey),
+           // incompleteDraft.localUUID),
            let identityId = storedDraft.identityId {
             return getSignature(for: identityId, userSignatures: storedSignatures) ?? defaultSignature
         }
@@ -459,21 +460,21 @@ extension DraftContentManager {
         return try await loadReplyingMessage(messageReply.frozenMessage).body?.freezeIfNeeded()
     }
 
-    private func getLiveDraft(realm: Realm) -> Draft? {
-        guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID) else {
+    private func getLiveDraft(realm: Realm, draftPrimaryKey: String) -> Draft? {
+        guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draftPrimaryKey) else {
             return nil
         }
         return liveDraft
     }
 
-    private func getLiveDraft() throws -> Draft {
-        guard let liveDraft = mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: incompleteDraft.localUUID) else {
+    private func getLiveDraft(draftPrimaryKey: String) throws -> Draft {
+        guard let liveDraft = mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: draftPrimaryKey) else {
             throw MailError.unknownError
         }
         return liveDraft
     }
 
-    private func getFrozenDraft() throws -> Draft {
-        return try getLiveDraft().freezeIfNeeded()
+    private func getFrozenDraft(draftPrimaryKey: String) throws -> Draft {
+        return try getLiveDraft(draftPrimaryKey: draftPrimaryKey).freezeIfNeeded()
     }
 }
