@@ -38,7 +38,8 @@ public extension Endpoint {
         } else if let queryItems {
             mergedQueryItems?.append(contentsOf: queryItems)
         }
-        return Endpoint(hostKeypath: \.mailHost, path: components?.path ?? resource, queryItems: mergedQueryItems)
+
+        return .mailHost.appending(path: components?.path ?? resource, queryItems: mergedQueryItems)
     }
 
     private static var baseManager: Endpoint {
@@ -49,8 +50,12 @@ public extension Endpoint {
         return .baseManager.appending(path: "/\(hostingId)/mailboxes/\(mailboxName)")
     }
 
+    private static var mailHost: Endpoint {
+        return Endpoint(hostKeypath: \.mailHost, path: "", apiEnvironment: .preprod)
+    }
+
     private static var base: Endpoint {
-        return Endpoint(hostKeypath: \.mailHost, path: "/api", apiEnvironment: .preprod)
+        return .mailHost.appending(path: "/api")
     }
 
     static var mailboxes: Endpoint {
@@ -274,7 +279,7 @@ public extension Endpoint {
     }
 
     static func bimiSvgUrl(bimi: Bimi) -> Endpoint {
-        return Endpoint(hostKeypath: \.mailHost, path: "\(bimi.svgContent)")
+        return .mailHost.appending(path: "\(bimi.svgContent)")
     }
 
     static func swissTransfer(stUuid: String) -> Endpoint {
