@@ -387,17 +387,18 @@ public extension MailboxManager {
     private func createThreads(messageByUids: MessageByUidsResult, folder: Folder, writableRealm: Realm) {
         var threadsToUpdate = Set<Thread>()
         for message in messageByUids.messages {
-            guard writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) == nil else {
-                SentrySDK.capture(message: "Found already existing message") { scope in
-                    scope.setContext(value: ["Message": ["uid": message.uid,
-                                                         "messageId": message.messageId],
-                                             "Folder": ["id": message.folderId,
-                                                        "name": message.folder?.matomoName,
-                                                        "cursor": message.folder?.cursor]],
-                                     key: "Message context")
+            if let oldMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) {
+                if folder.shouldOverrideMessage {
+                    upsertMessage(
+                        oldMessage: oldMessage,
+                        newMessage: message,
+                        threadsToUpdate: &threadsToUpdate,
+                        using: writableRealm
+                    )
                 }
                 continue
             }
+
             message.inTrash = folder.role == .trash
             message.computeReference()
 
@@ -417,6 +418,7 @@ public extension MailboxManager {
                 folder.messages.insert(message)
             }
         }
+
         updateThreads(threads: threadsToUpdate, realm: writableRealm)
     }
 
@@ -499,6 +501,14 @@ public extension MailboxManager {
         addPreviousMessagesTo(newThread: thread, from: refMessages, using: realm)
 
         return thread
+    }
+
+    private func upsertMessage(oldMessage: Message, newMessage: Message, threadsToUpdate: inout Set<Thread>, using realm: Realm) {
+        realm.add(newMessage, update: .modified)
+
+        for thread in oldMessage.threads {
+            threadsToUpdate.insert(thread)
+        }
     }
 
     // MARK: - Utils

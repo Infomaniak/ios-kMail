@@ -269,6 +269,14 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return role == .draft || role == .scheduledDrafts
     }
 
+    public var shouldOverrideMessage: Bool {
+        if role == .inbox || role == .snoozed {
+            return true
+        } else {
+            return false
+        }
+    }
+
     public static func < (lhs: Folder, rhs: Folder) -> Bool {
         if let lhsRole = lhs.role, let rhsRole = rhs.role {
             return lhsRole.order < rhsRole.order
