@@ -167,7 +167,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
             message.fullyDownloaded = savedMessage.fullyDownloaded
         }
         if keepProperties.contains(.body), let body = savedMessage.body {
-            message.body = Body(value: body.freeze())
+            message.body = Body(value: body)
         }
         if keepProperties.contains(.localSafeDisplay) {
             message.localSafeDisplay = savedMessage.localSafeDisplay
