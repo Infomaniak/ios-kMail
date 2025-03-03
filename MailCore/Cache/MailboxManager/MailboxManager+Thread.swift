@@ -551,7 +551,6 @@ public extension MailboxManager {
     }
 
     private func updateThreads(threads: Set<Thread>, realm: Realm) {
-        let folders = Set(threads.compactMap(\.folder))
         for thread in threads {
             do {
                 try thread.recomputeOrFail()
@@ -560,7 +559,25 @@ public extension MailboxManager {
                 realm.delete(thread)
             }
         }
-        for folder in folders {
+
+        recomputeUnreadCount(of: threads, realm: realm)
+    }
+
+    /// Refresh the unread count of the folders of the given threads
+    /// When we refresh a thread from INBOX or SNOOZED, we should refresh both folders
+    private func recomputeUnreadCount(of threads: Set<Thread>, realm: Realm) {
+        var foldersToRefresh = Set(threads.compactMap(\.folder))
+        let folderRolesToRefresh = Set(foldersToRefresh.compactMap(\.role))
+
+        let folderRolesToRefreshTogether = Set([FolderRole.inbox, FolderRole.snoozed])
+        if !folderRolesToRefresh.union(folderRolesToRefreshTogether).isEmpty {
+            for folderRole in folderRolesToRefreshTogether {
+                guard let folder = getFolder(with: folderRole) else { continue }
+                foldersToRefresh.insert(folder)
+            }
+        }
+
+        for folder in foldersToRefresh {
             folder.computeUnreadCount()
         }
     }
