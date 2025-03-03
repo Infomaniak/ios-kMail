@@ -90,7 +90,6 @@ struct ComposeMessageView: View {
 
     @FocusState private var focusedField: ComposeViewFieldType?
 
-    // TODO: Technically, this can be invalidated too
     @ObservedRealmObject private var draft: Draft
 
     private let messageReply: MessageReply?
