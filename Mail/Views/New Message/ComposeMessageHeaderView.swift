@@ -41,7 +41,7 @@ struct ComposeMessageHeaderView: View {
                 mailboxManager: mailboxManager,
                 autocompletionType: autocompletionType,
                 type: .from,
-                incompleteDraft: draft
+                draft: draft
             )
 
             ComposeMessageCellRecipients(

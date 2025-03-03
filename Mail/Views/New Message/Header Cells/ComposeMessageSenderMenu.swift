@@ -33,7 +33,7 @@ struct ComposeMessageSenderMenu: View {
 
     let autocompletionType: ComposeViewFieldType?
     let type: ComposeViewFieldType
-    let incompleteDraft: Draft
+    let draft: Draft
 
     private var canSelectSignature: Bool {
         !signatures.isEmpty
@@ -48,13 +48,13 @@ struct ComposeMessageSenderMenu: View {
         mailboxManager: MailboxManager,
         autocompletionType: ComposeViewFieldType?,
         type: ComposeViewFieldType,
-        incompleteDraft: Draft
+        draft: Draft
     ) {
         _currentSignature = currentSignature
         _signatures = ObservedResults(Signature.self, configuration: mailboxManager.realmConfiguration)
         self.autocompletionType = autocompletionType
         self.type = type
-        self.incompleteDraft = incompleteDraft
+        self.draft = draft
     }
 
     var body: some View {
@@ -65,12 +65,12 @@ struct ComposeMessageSenderMenu: View {
                         .textStyle(.bodySecondary)
 
                     Menu {
-                        SenderMenuCell(currentSignature: $currentSignature, signature: nil, incompleteDraft: incompleteDraft)
+                        SenderMenuCell(currentSignature: $currentSignature, signature: nil, draft: draft)
                         ForEach(signatures) { signature in
                             SenderMenuCell(
                                 currentSignature: $currentSignature,
                                 signature: signature,
-                                incompleteDraft: incompleteDraft
+                                draft: draft
                             )
                         }
                     } label: {
@@ -101,6 +101,6 @@ struct ComposeMessageSenderMenu: View {
         mailboxManager: PreviewHelper.sampleMailboxManager,
         autocompletionType: nil,
         type: .from,
-        incompleteDraft: draft
+        draft: draft
     )
 }

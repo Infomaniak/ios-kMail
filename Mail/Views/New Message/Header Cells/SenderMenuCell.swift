@@ -32,7 +32,7 @@ struct SenderMenuCell: View {
     @Binding var currentSignature: Signature?
 
     let signature: Signature?
-    let incompleteDraft: Draft
+    let draft: Draft
 
     private var signatureLabel: String {
         signature?.formatted(style: .option) ?? MailResourcesStrings.Localizable.selectSignatureNone
@@ -45,7 +45,7 @@ struct SenderMenuCell: View {
             withAnimation {
                 currentSignature = signature
             }
-            draftContentManager.updateSignature(with: signature, draftPrimaryKey: incompleteDraft.localUUID)
+            draftContentManager.updateSignature(with: signature, draftPrimaryKey: draft.localUUID)
         } label: {
             Label {
                 Text(signatureLabel)
@@ -63,5 +63,5 @@ struct SenderMenuCell: View {
 
 #Preview {
     let draft = Draft()
-    SenderMenuCell(currentSignature: .constant(nil), signature: Signature(), incompleteDraft: draft)
+    SenderMenuCell(currentSignature: .constant(nil), signature: Signature(), draft: draft)
 }
