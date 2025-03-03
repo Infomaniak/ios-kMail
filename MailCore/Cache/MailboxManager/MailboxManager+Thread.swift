@@ -573,7 +573,7 @@ public extension MailboxManager {
 
     private func computeLongMessageUid(shortUid: String, in folder: Folder, using realm: Realm) -> String {
         let sourceFolderId = folder.getThreadsSource(using: realm)
-        return "\(shortUid)@\(sourceFolderId)"
+        return "\(shortUid)@\(sourceFolderId.remoteId)"
     }
 
     // MARK: - Other
