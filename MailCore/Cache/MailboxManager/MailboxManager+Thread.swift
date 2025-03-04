@@ -503,7 +503,6 @@ public extension MailboxManager {
 
     private func addPreviousMessagesTo(newThread: Thread, from refMessages: Set<Message>, using realm: Realm) {
         for message in refMessages {
-            newThread.messageIds.insert(objectsIn: message.linkedUids)
             newThread.addMessageIfNeeded(newMessage: message, using: realm)
         }
     }
