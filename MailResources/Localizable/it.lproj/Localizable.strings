@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: it, Italian
  * Tagged: ios
- * Exported by: Ambroise Decouttere
- * Exported at: Mon, 17 Feb 2025 09:43:14 +0100
+ * Exported by: Baptiste Griva
+ * Exported at: Tue, 04 Mar 2025 10:21:43 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1086,6 +1086,9 @@
 
 /* loco:6266655afabeeb6bc774c932 */
 "newMessagePlaceholderTitle" = "Digitare il messaggio";
+
+/* loco:67c6c5212e72fc8285013f82 */
+"nextEventOccurrence" = "Evento ricorrente, prossima ricorrenza il";
 
 /* loco:67238d29fe561f9d0a0f5732 */
 "nextMonday" = "Lunedì prossimo";
