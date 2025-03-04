@@ -33,27 +33,6 @@ public struct MessagesDelta: Decodable {
         case cursor = "signature"
         case unreadCount
     }
-
-    // FIXME: Remove this constructor when mixed Int/String array is fixed by backend
-    public init(from decoder: Decoder) throws {
-        let container: KeyedDecodingContainer<CodingKeys> = try decoder.container(keyedBy: CodingKeys.self)
-
-        if let deletedShortUids = try? container.decode([String].self, forKey: .deletedShortUids) {
-            self.deletedShortUids = deletedShortUids
-        } else {
-            deletedShortUids = try container.decode([Int].self, forKey: .deletedShortUids).map { "\($0)" }
-            SentrySDK.capture(message: "Received deleted Delta as [Int]")
-        }
-        if let addedShortUids = try? container.decode([String].self, forKey: .addedShortUids) {
-            self.addedShortUids = addedShortUids
-        } else {
-            addedShortUids = try container.decode([Int].self, forKey: .addedShortUids).map { "\($0)" }
-            SentrySDK.capture(message: "Received added Delta as [Int]")
-        }
-        updated = try container.decode([MessageFlags].self, forKey: .updated)
-        cursor = try container.decode(String.self, forKey: .cursor)
-        unreadCount = try container.decode(Int.self, forKey: .unreadCount)
-    }
 }
 
 public class MessageFlags: Decodable {
