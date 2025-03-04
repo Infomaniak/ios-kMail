@@ -528,8 +528,9 @@ public extension MailboxManager {
                 return
             }
 
+            let resultThreads = result.threads?.map { Thread(value: $0) } ?? []
             let fetchedThreads = MutableSet<Thread>()
-            fetchedThreads.insert(objectsIn: result.threads ?? [])
+            fetchedThreads.insert(objectsIn: resultThreads)
 
             for thread in fetchedThreads {
                 for message in thread.messages {
