@@ -311,6 +311,10 @@ public extension MailboxManager {
             message.snoozeAction = nil
             message.snoozeEndDate = nil
         }
+
+        try? writeTransaction { writableRealm in
+            refreshFolderThreads(folder: folder, using: writableRealm)
+        }
     }
 
     private func handleUpdatedMessages(messagesDelta: MessagesDelta<MessageFlags>, folder: Folder) async {
@@ -590,12 +594,14 @@ public extension MailboxManager {
     }
 
     private func refreshFolderThreads(folder: Folder, using realm: Realm) {
+        guard let freshFolder = folder.fresh(transactionable: self) else { return }
+
         let threads = realm.objects(Thread.self).where { thread in
-            folder.threadBelongsToFolder(thread, using: realm)
+            freshFolder.threadBelongsToFolder(thread, using: realm)
         }
 
-        folder.threads.removeAll()
-        folder.threads.insert(objectsIn: threads)
+        freshFolder.threads.removeAll()
+        freshFolder.threads.insert(objectsIn: threads)
     }
 
     private func computeLongMessageUid(shortUid: String, in folder: Folder, using realm: Realm) -> String {
