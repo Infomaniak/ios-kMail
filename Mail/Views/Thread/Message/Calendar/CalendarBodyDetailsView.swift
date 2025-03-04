@@ -17,6 +17,7 @@
  */
 
 import DesignSystem
+import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
@@ -49,6 +50,18 @@ struct CalendarBodyDetailsView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let event: CalendarEvent
+    let calendar: Calendar
+    let parser: RruleDecoder
+
+    init(event: CalendarEvent) {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+
+        self.calendar = calendar
+        parser = RruleDecoder(frequency: .daily, interval: nil, calendar: calendar, end: nil, count: nil, byDay: nil)
+
+        self.event = event
+    }
 
     private var frozenMe: Attendee? {
         return event.getMyFrozenAttendee(currentMailboxEmail: mailboxManager.mailbox.email)
@@ -71,6 +84,15 @@ struct CalendarBodyDetailsView: View {
 
             Group {
                 Label(event.formattedDateTime, asset: MailResourcesAsset.calendarBadgeClock.swiftUIImage)
+                if let rrule = event.rrule {
+                    if let nextOccurrence = try? parser.getNextOccurrence(rrule, event.start) {
+                        Label(
+                            MailResourcesStrings.Localizable.nextEventOccurrence + " " + nextOccurrence
+                                .formatted(.calendarDateFull),
+                            asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
+                        )
+                    }
+                }
                 if let bookableResource = event.bookableResource {
                     Label(bookableResource.name, asset: MailResourcesAsset.door.swiftUIImage)
                 } else {
