@@ -234,6 +234,10 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return "\(folderName)Folder"
     }
 
+    public var shouldContainsSingleMessageThreads: Bool {
+        return role == .draft || role == .scheduledDrafts
+    }
+
     public static func < (lhs: Folder, rhs: Folder) -> Bool {
         if let lhsRole = lhs.role, let rhsRole = rhs.role {
             return lhsRole.order < rhsRole.order
@@ -246,6 +250,12 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         } else {
             return lhs.isFavorite
         }
+    }
+
+    func threadBelongsToFolder(_ thread: Query<Thread>) -> Query<Bool> {
+        let isThreadInFolder = thread.folderId == remoteId
+        // TODO: Add condition for INBOX and SNOOZED
+        return isThreadInFolder
     }
 
     public func computeUnreadCount() {
