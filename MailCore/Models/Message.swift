@@ -174,6 +174,19 @@ public final class Message: Object, Decodable, Identifiable {
         return Array(dup)
     }
 
+    public var notInlineAttachments: [Attachment] {
+        attachments
+            .filter { attachment in
+                if attachment.disposition == .attachment || attachment.contentId == nil {
+                    return true
+                } else if let contentId = attachment.contentId {
+                    return self.body?.value?.contains(contentId) == false
+                } else {
+                    return false
+                }
+            }
+    }
+
     public func fromMe(currentMailboxEmail: String) -> Bool {
         return from.contains { $0.isMe(currentMailboxEmail: currentMailboxEmail) }
     }

@@ -41,7 +41,7 @@ struct AttachmentsView: View {
     @State private var isDownloadDisabled = false
 
     private var attachments: [Attachment] {
-        return message.attachments.filter { $0.disposition == .attachment || $0.contentId == nil }
+        return message.notInlineAttachments
     }
 
     private var formattedText: String {
