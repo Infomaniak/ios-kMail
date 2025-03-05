@@ -43,7 +43,6 @@ struct ThreadListView: View {
 
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
-    @State private var firstLaunch = true
     @ModalState private var isShowingUpdateAlert = false
     @ModalState private var flushAlert: FlushAlertState?
 
@@ -214,11 +213,8 @@ struct ThreadListView: View {
         .sceneLifecycle(willEnterForeground: {
             updateFetchingTask()
         })
-        .task {
-            if firstLaunch {
-                updateFetchingTask()
-                firstLaunch = false
-            }
+        .task(id: viewModel.mailboxManager.mailbox.id) {
+            updateFetchingTask()
         }
         .customAlert(item: $flushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: viewModel.frozenFolder)

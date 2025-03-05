@@ -167,6 +167,10 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         children.isEmpty ? nil : AnyRealmCollection(children)
     }
 
+    public var id: String {
+        remoteId
+    }
+
     public var isHistoryComplete: Bool {
         return oldMessagesUidsToFetch.isEmpty
     }
