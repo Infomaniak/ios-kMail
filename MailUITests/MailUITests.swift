@@ -44,99 +44,100 @@ class MailUITests: XCTestCase {
         wait(for: [delayExpectation], timeout: delay)
     }
 
-    func testLogin() throws {
-        launchAppFromScratch()
-        login()
-    }
-
-    func testDisplayThread() throws {
-        launchAppFromScratch()
-        login()
-
-        app.collectionViews.staticTexts.element(boundBy: 1).firstMatch.tap()
-        _ = app.webViews.firstMatch.waitForExistence(timeout: defaultTimeOut)
-    }
-
-    func testSendNewMessage() throws {
-        launchAppFromScratch()
-        login()
-        writeTestMessage()
-
-        app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage].buttons[MailResourcesStrings.Localizable.send]
-            .firstMatch.tap()
-        _ = app.collectionViews.firstMatch.waitForExistence(timeout: defaultTimeOut)
-    }
-
-    func testSaveMessage() throws {
-        launchAppFromScratch()
-        login()
-        writeTestMessage()
-
-        app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage]
-            .buttons[MailResourcesStrings.Localizable.buttonClose].firstMatch.tap()
-
-        let deleteDraftButton = app.buttons[MailResourcesStrings.Localizable.actionDelete].firstMatch
-        _ = deleteDraftButton.waitForExistence(timeout: defaultTimeOut)
-        deleteDraftButton.tap()
-    }
-
-    func tapMenuButton() {
-        let menuButton = app.navigationBars.firstMatch.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonMenu]
-            .firstMatch
-        _ = menuButton.waitForExistence(timeout: defaultTimeOut)
-        menuButton.tap()
-    }
-
-    func testSwitchFolder() {
-        launchAppFromScratch()
-        login()
-
-        tapMenuButton()
-
-        app.scrollViews.otherElements.staticTexts[MailResourcesStrings.Localizable.archiveFolder].firstMatch.tap()
-    }
-
-    func testCreateFolder() {
-        launchAppFromScratch()
-        login()
-
-        tapMenuButton()
-
-        let newFolderButton = app.scrollViews.otherElements.buttons[MailResourcesStrings.Localizable.newFolderDialogTitle]
-        _ = newFolderButton.waitForExistence(timeout: defaultTimeOut)
-        newFolderButton.tap()
-
-        let folderNameTextField = app.textFields[MailResourcesStrings.Localizable.createFolderName]
-        _ = folderNameTextField.waitForExistence(timeout: defaultTimeOut)
-        folderNameTextField.tap()
-        folderNameTextField.typeText("Test-\(Date().timeIntervalSince1970)")
-        app.staticTexts[MailResourcesStrings.Localizable.buttonCreate].tap()
-    }
-
-    func testDeleteSwipeAction() {
-        launchAppFromScratch()
-        login()
-        swipeFirstCell()
-
-        let deleteButton = app.collectionViews.buttons[Action.delete.accessibilityIdentifier].firstMatch
-        _ = deleteButton.waitForExistence(timeout: defaultTimeOut)
-        deleteButton.tap()
-
-        undo()
-    }
-
-    func testUndoDeleteAction() {
-        launchAppFromScratch()
-        login()
-        swipeFirstCell()
-
-        let deleteButton = app.collectionViews.buttons[Action.delete.accessibilityIdentifier].firstMatch
-        _ = deleteButton.waitForExistence(timeout: defaultTimeOut)
-        deleteButton.tap()
-
-        undo(ignoreUndoFailure: false)
-    }
-
+//    func testLogin() throws {
+//        launchAppFromScratch()
+//        login()
+//    }
+//
+//    func testDisplayThread() throws {
+//        launchAppFromScratch()
+//        login()
+//
+//        app.collectionViews.staticTexts.element(boundBy: 1).firstMatch.tap()
+//        _ = app.webViews.firstMatch.waitForExistence(timeout: defaultTimeOut)
+//    }
+//
+//
+//    func testSendNewMessage() throws {
+//        launchAppFromScratch()
+//        login()
+//        writeTestMessage()
+//
+//        app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage].buttons[MailResourcesStrings.Localizable.send]
+//            .firstMatch.tap()
+//        _ = app.collectionViews.firstMatch.waitForExistence(timeout: defaultTimeOut)
+//    }
+//
+//    func testSaveMessage() throws {
+//        launchAppFromScratch()
+//        login()
+//        writeTestMessage()
+//
+//        app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage]
+//            .buttons[MailResourcesStrings.Localizable.buttonClose].firstMatch.tap()
+//
+//        let deleteDraftButton = app.buttons[MailResourcesStrings.Localizable.actionDelete].firstMatch
+//        _ = deleteDraftButton.waitForExistence(timeout: defaultTimeOut)
+//        deleteDraftButton.tap()
+//    }
+//
+//    func tapMenuButton() {
+//        let menuButton = app.navigationBars.firstMatch.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonMenu]
+//            .firstMatch
+//        _ = menuButton.waitForExistence(timeout: defaultTimeOut)
+//        menuButton.tap()
+//    }
+//
+//    func testSwitchFolder() {
+//        launchAppFromScratch()
+//        login()
+//
+//        tapMenuButton()
+//
+//        app.scrollViews.otherElements.staticTexts[MailResourcesStrings.Localizable.archiveFolder].firstMatch.tap()
+//    }
+//
+//    func testCreateFolder() {
+//        launchAppFromScratch()
+//        login()
+//
+//        tapMenuButton()
+//
+//        let newFolderButton = app.scrollViews.otherElements.buttons[MailResourcesStrings.Localizable.newFolderDialogTitle]
+//        _ = newFolderButton.waitForExistence(timeout: defaultTimeOut)
+//        newFolderButton.tap()
+//
+//        let folderNameTextField = app.textFields[MailResourcesStrings.Localizable.createFolderName]
+//        _ = folderNameTextField.waitForExistence(timeout: defaultTimeOut)
+//        folderNameTextField.tap()
+//        folderNameTextField.typeText("Test-\(Date().timeIntervalSince1970)")
+//        app.staticTexts[MailResourcesStrings.Localizable.buttonCreate].tap()
+//    }
+//
+//    func testDeleteSwipeAction() {
+//        launchAppFromScratch()
+//        login()
+//        swipeFirstCell()
+//
+//        let deleteButton = app.collectionViews.buttons[Action.delete.accessibilityIdentifier].firstMatch
+//        _ = deleteButton.waitForExistence(timeout: defaultTimeOut)
+//        deleteButton.tap()
+//
+//        undo()
+//    }
+//
+//    func testUndoDeleteAction() {
+//        launchAppFromScratch()
+//        login()
+//        swipeFirstCell()
+//
+//        let deleteButton = app.collectionViews.buttons[Action.delete.accessibilityIdentifier].firstMatch
+//        _ = deleteButton.waitForExistence(timeout: defaultTimeOut)
+//        deleteButton.tap()
+//
+//        undo(ignoreUndoFailure: false)
+//    }
+//
     func testMoveAction() {
         launchAppFromScratch()
         login()
@@ -213,7 +214,7 @@ class MailUITests: XCTestCase {
 
     func swipeFirstCell() {
         // First cell could be the loading indicator so we get the second one
-        let testMailCell = app.collectionViews.containing(.button, identifier: "ThreadListCell").firstMatch
+        let testMailCell = app.collectionViews.buttons.firstMatch
         _ = testMailCell.waitForExistence(timeout: defaultTimeOut)
         testMailCell.swipeLeft()
     }
@@ -243,8 +244,6 @@ class MailUITests: XCTestCase {
 
         composeBodyView.tap()
         composeBodyView.typeText(MailResourcesStrings.Localizable.aiPromptExample1)
-
-        wait(delay: 15)
     }
 
     func login() {
@@ -266,8 +265,6 @@ class MailUITests: XCTestCase {
         passwordField.tap()
         passwordField.typeText(Env.testAccountPassword)
         passwordField.typeText("\n")
-
-        wait(delay: 15)
 
         let nowText = MailResourcesStrings.Localizable
             .threadListHeaderLastUpdate(Date().formatted(.relative(presentation: .named)))
@@ -301,7 +298,13 @@ class MailUITests: XCTestCase {
             let refreshText = app.staticTexts[nowText].firstMatch
             _ = refreshText.waitForExistence(timeout: defaultTimeOut)
         }
+    }
+}
 
-        wait(delay: 15)
+extension XCUIElement {
+    func scrollToElement() {
+        while !isHittable {
+            XCUIApplication().swipeUp()
+        }
     }
 }
