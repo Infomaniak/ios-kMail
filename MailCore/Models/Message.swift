@@ -134,6 +134,10 @@ public final class Message: Object, Decodable, Identifiable {
 
     @Persisted public var swissTransferAttachment: SwissTransferAttachment?
 
+    @Persisted public var snoozeState: SnoozeState?
+    @Persisted public var snoozeAction: String?
+    @Persisted public var snoozeEndDate: Date?
+
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
     }
@@ -254,6 +258,9 @@ public final class Message: Object, Decodable, Identifiable {
         case flagged
         case hasUnsubscribeLink
         case bimi
+        case snoozeState
+        case snoozeAction
+        case snoozeEndDate
     }
 
     override init() {
@@ -319,6 +326,9 @@ public final class Message: Object, Decodable, Identifiable {
         flagged = try values.decode(Bool.self, forKey: .flagged)
         hasUnsubscribeLink = try values.decodeIfPresent(Bool.self, forKey: .hasUnsubscribeLink)
         bimi = try values.decodeIfPresent(Bimi.self, forKey: .bimi)
+        snoozeState = try values.decodeIfPresent(SnoozeState.self, forKey: .snoozeState)
+        snoozeAction = try values.decodeIfPresent(String.self, forKey: .snoozeAction)
+        snoozeEndDate = try values.decodeIfPresent(Date.self, forKey: .snoozeEndDate)
     }
 
     public convenience init(
@@ -352,7 +362,10 @@ public final class Message: Object, Decodable, Identifiable {
         forwarded: Bool,
         flagged: Bool,
         hasUnsubscribeLink: Bool? = nil,
-        bimi: Bimi? = nil
+        bimi: Bimi? = nil,
+        snoozeState: SnoozeState? = nil,
+        snoozeAction: String? = nil,
+        snoozeEndDate: Date? = nil
     ) {
         self.init()
 
@@ -388,6 +401,9 @@ public final class Message: Object, Decodable, Identifiable {
         self.hasUnsubscribeLink = hasUnsubscribeLink
         self.bimi = bimi
         fullyDownloaded = true
+        self.snoozeState = snoozeState
+        self.snoozeAction = snoozeAction
+        self.snoozeEndDate = snoozeEndDate
     }
 
     public func toThread() -> Thread {
@@ -404,7 +420,10 @@ public final class Message: Object, Decodable, Identifiable {
             flagged: flagged,
             answered: answered,
             forwarded: forwarded,
-            bimi: bimi
+            bimi: bimi,
+            snoozeState: snoozeState,
+            snoozeAction: snoozeAction,
+            snoozeEndDate: snoozeEndDate
         )
         thread.messageIds = linkedUids
         thread.folderId = folderId
