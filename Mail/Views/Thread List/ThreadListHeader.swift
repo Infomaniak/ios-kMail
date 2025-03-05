@@ -122,9 +122,8 @@ struct ThreadListHeader: View {
 
             if folderObserver.unreadCount > 0 && !isMultipleSelectionEnabled {
                 Toggle(isOn: $unreadFilterOn) {
-                    Text(folderObserver.unreadCount < 100 ? MailResourcesStrings.Localizable
-                        .threadListHeaderUnreadCount(folderObserver.unreadCount) : MailResourcesStrings.Localizable
-                        .threadListHeaderUnreadCountMore)
+                    Text(MailResourcesStrings.Localizable
+                        .threadListHeaderUnreadCount(folderObserver.unreadCount.formatted(.indicatorCappedCount)))
                 }
                 .toggleStyle(.unread)
                 .onChange(of: unreadFilterOn) { newValue in

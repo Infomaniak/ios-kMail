@@ -72,7 +72,7 @@ struct MailboxesManagementButtonView: View {
                         ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textPrimaryColor.swiftUIColor)
                     case .menuDrawer:
                         if let detailNumber {
-                            Text(detailNumber < 100 ? "\(detailNumber)" : "99+")
+                            Text(detailNumber, format: .indicatorCappedCount)
                                 .textStyle(.bodySmallMediumAccent)
                         } else if mailbox.remoteUnseenMessages != 0 {
                             UnreadIndicatorView()

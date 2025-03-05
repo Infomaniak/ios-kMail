@@ -143,6 +143,11 @@ public class MessageUid: EmbeddedObject {
     }
 }
 
+public enum FolderCountDisplay: Sendable {
+    case count(Int)
+    case indicator
+}
+
 public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted(primaryKey: true) public var remoteId: String
     @Persisted public var path: String
@@ -212,20 +217,24 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return [.draft, .scheduledDrafts].contains(role)
     }
 
-    private var unreadCountToDisplay: Int {
+    public var countToDisplay: FolderCountDisplay? {
         switch role {
-        case .draft, .scheduledDrafts, .snoozed:
-            return threads.count
-        default:
-            return unreadCount
-        }
-    }
+        case .sent, .trash:
+            return nil
 
-    public var formattedUnreadCount: String {
-        if unreadCountToDisplay >= 100 {
-            return "99+"
+        case .draft, .scheduledDrafts, .snoozed:
+            guard !threads.isEmpty else { return nil }
+            return .count(threads.count)
+
+        default:
+            if unreadCount <= 0 && remoteUnreadCount > 0 {
+                return .indicator
+            } else if unreadCount > 0 {
+                return .count(unreadCount)
+            } else {
+                return nil
+            }
         }
-        return unreadCountToDisplay > 0 ? "\(unreadCountToDisplay)" : ""
     }
 
     public var formattedPath: String {
