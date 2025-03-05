@@ -269,6 +269,14 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return role == .draft || role == .scheduledDrafts
     }
 
+    public var shouldOverrideMessage: Bool {
+        if role == .inbox || role == .snoozed {
+            return true
+        } else {
+            return false
+        }
+    }
+
     public static func < (lhs: Folder, rhs: Folder) -> Bool {
         if let lhsRole = lhs.role, let rhsRole = rhs.role {
             return lhsRole.order < rhsRole.order
@@ -283,17 +291,23 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         }
     }
 
+    public func getThreadsSource(using realm: Realm) -> Folder {
+        if role == .snoozed,
+           let inbox = realm.objects(Folder.self).where({ $0.role == .inbox }).first {
+            return inbox
+        } else {
+            return self
+        }
+    }
+
     public func threadBelongsToFolder(_ thread: Query<Thread>, using realm: Realm) -> Query<Bool> {
-        let isThreadInCurrentFolder = thread.folderId == remoteId
+        let isThreadInCurrentFolder = thread.folderId == getThreadsSource(using: realm).remoteId
 
         switch role {
         case .inbox:
             return isThreadInCurrentFolder && thread.snoozeState != .snoozed
         case .snoozed:
-            guard let inbox = realm.objects(Folder.self).where({ $0.role == .inbox }).first else {
-                return thread.snoozeState == .snoozed
-            }
-            return thread.folderId == inbox.remoteId && thread.snoozeState == .snoozed
+            return isThreadInCurrentFolder && thread.snoozeState == .snoozed
         default:
             return isThreadInCurrentFolder
         }
