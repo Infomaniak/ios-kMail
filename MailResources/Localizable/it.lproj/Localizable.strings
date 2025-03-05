@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: it, Italian
  * Tagged: ios
- * Exported by: Ambroise Decouttere
- * Exported at: Mon, 17 Feb 2025 09:43:14 +0100
+ * Exported by: Valentin Perignon
+ * Exported at: Wed, 05 Mar 2025 14:14:15 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1192,9 +1192,6 @@
 /* loco:64a3d65f003e64f9790f5ed2 */
 "popupDetachMailboxTitle" = "Staccare l’indirizzo";
 
-/* loco:660d031f55535d66db02f2f2 */
-"publicFolderSubtitle" = "Questo spazio appartiene a %@ e centralizza i file condivisi della tua organizzazione.";
-
 /* loco:664ef6e5f66217322302f962 */
 "readFAQ" = "Leggi le FAQ";
 
@@ -1752,9 +1749,6 @@
 
 /* loco:638f6f782bdb800e9d6c3682 */
 "threadListHeaderUnreadCount-plural-many" = "";
-
-/* loco:63d7e73a70ff84756f78f0b3 */
-"threadListHeaderUnreadCountMore" = "99 non letti";
 
 /* loco:671f821cbd4358e9af00c172 */
 "threadListHeaderUpdating" = "Recupero in corso";

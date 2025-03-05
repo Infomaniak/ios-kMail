@@ -49,7 +49,7 @@ enum PageDirection {
 
 public extension MailboxManager {
     /// Fetch messages for given folder
-    /// Then fetch messages for `inbox`, `sent` and `draft` folder if needed
+    /// Then fetch messages of folder with roles if needed
     /// - Parameters:
     ///   - folder: Folder to fetch messages from
     ///   - fetchCurrentFolderCompleted: Completion once the messages have been fetched
@@ -57,22 +57,11 @@ public extension MailboxManager {
         try await messages(folder: folder)
         fetchCurrentFolderCompleted()
 
-        var roles: [FolderRole] {
-            switch folder.role {
-            case .inbox:
-                return [.sent, .draft, .scheduledDrafts]
-            case .sent:
-                return [.inbox, .draft, .scheduledDrafts]
-            case .draft:
-                return [.inbox, .sent, .scheduledDrafts]
-            case .scheduledDrafts:
-                return [.inbox, .sent, .draft]
-            default:
-                return []
-            }
-        }
+        var folderRolesToFetch = Set<FolderRole>([.inbox, .sent, .draft, .scheduledDrafts])
+        guard let currentRole = folder.role, folderRolesToFetch.contains(currentRole) else { return }
 
-        for folderRole in roles {
+        folderRolesToFetch.remove(currentRole)
+        for folderRole in folderRolesToFetch {
             guard !Task.isCancelled else { break }
             if let realFolder = getFolder(with: folderRole) {
                 try await messages(folder: realFolder.freezeIfNeeded())

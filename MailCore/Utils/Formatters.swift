@@ -126,3 +126,23 @@ public extension FormatStyle where Self == ByteCountFormatStyle {
         return .byteCount(style: .binary)
     }
 }
+
+// MARK: Int
+
+public struct CappedCountFormatStyle: FormatStyle, Sendable {
+    let maximum: Int
+
+    public func format(_ value: Int) -> String {
+        if value > maximum {
+            return "\(maximum)+"
+        } else {
+            return "\(value)"
+        }
+    }
+}
+
+public extension FormatStyle where Self == CappedCountFormatStyle {
+    static var indicatorCappedCount: CappedCountFormatStyle {
+        return CappedCountFormatStyle(maximum: 99)
+    }
+}

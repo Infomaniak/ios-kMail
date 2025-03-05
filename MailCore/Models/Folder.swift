@@ -26,9 +26,10 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
     case archive = "ARCHIVE"
     case commercial = "COMMERCIAL"
     case draft = "DRAFT"
-    case scheduledDrafts = "SCHEDULED_DRAFTS"
     case inbox = "INBOX"
+    case scheduledDrafts = "SCHEDULED_DRAFTS"
     case sent = "SENT"
+    case snoozed = "SNOOZED"
     case socialNetworks = "SOCIALNETWORKS"
     case spam = "SPAM"
     case trash = "TRASH"
@@ -48,6 +49,8 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return MailResourcesStrings.Localizable.inboxFolder
         case .sent:
             return MailResourcesStrings.Localizable.sentFolder
+        case .snoozed:
+            return MailResourcesStrings.Localizable.snoozedFolder
         case .socialNetworks:
             return MailResourcesStrings.Localizable.socialNetworksFolder
         case .spam:
@@ -61,24 +64,26 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
 
     public var order: Int {
         switch self {
-        case .archive:
-            return 9
-        case .commercial:
-            return 2
-        case .draft:
-            return 6
-        case .scheduledDrafts:
-            return 5
         case .inbox:
             return 1
-        case .sent:
-            return 4
+        case .commercial:
+            return 2
         case .socialNetworks:
             return 3
-        case .spam:
+        case .sent:
+            return 4
+        case .snoozed:
+            return 5
+        case .scheduledDrafts:
+            return 6
+        case .draft:
             return 7
-        case .trash:
+        case .spam:
             return 8
+        case .trash:
+            return 9
+        case .archive:
+            return 10
         case .unknown:
             return 0
         }
@@ -98,6 +103,8 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return MailResourcesAsset.drawer
         case .sent:
             return MailResourcesAsset.send
+        case .snoozed:
+            return MailResourcesAsset.alarmClock
         case .socialNetworks:
             return MailResourcesAsset.socialMedia
         case .spam:
@@ -134,6 +141,11 @@ public class MessageUid: EmbeddedObject {
         self.init()
         self.uid = uid
     }
+}
+
+public enum FolderCountDisplay: Sendable {
+    case count(Int)
+    case indicator
 }
 
 public class Folder: Object, Codable, Comparable, Identifiable {
@@ -190,7 +202,10 @@ public class Folder: Object, Codable, Comparable, Identifiable {
 
     public var shouldBeDisplayed: Bool {
         guard name != ".ik" && role != .unknown else { return false }
-        guard !(role == .scheduledDrafts && threads.isEmpty) else { return false }
+
+        if role == .scheduledDrafts || role == .snoozed {
+            return !threads.isEmpty
+        }
         return true
     }
 
@@ -202,12 +217,24 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return [.draft, .scheduledDrafts].contains(role)
     }
 
-    public var formattedUnreadCount: String {
-        let realCount = ((role == .draft || role == .scheduledDrafts) ? threads.count : unreadCount)
-        if realCount >= 100 {
-            return "99+"
+    public var countToDisplay: FolderCountDisplay? {
+        switch role {
+        case .sent, .trash:
+            return nil
+
+        case .draft, .scheduledDrafts, .snoozed:
+            guard !threads.isEmpty else { return nil }
+            return .count(threads.count)
+
+        default:
+            if unreadCount <= 0 && remoteUnreadCount > 0 {
+                return .indicator
+            } else if unreadCount > 0 {
+                return .count(unreadCount)
+            } else {
+                return nil
+            }
         }
-        return realCount > 0 ? "\(realCount)" : ""
     }
 
     public var formattedPath: String {

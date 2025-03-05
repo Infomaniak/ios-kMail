@@ -229,14 +229,15 @@ struct FolderCellContent: View {
     @ViewBuilder
     private var accessory: some View {
         if cellType == .menuDrawer {
-            if frozenFolder.role != .sent && frozenFolder.role != .trash {
-                if !frozenFolder.formattedUnreadCount.isEmpty {
-                    Text(frozenFolder.formattedUnreadCount)
-                        .textStyle(.bodySmallMediumAccent)
-                } else if frozenFolder.remoteUnreadCount > 0 {
-                    UnreadIndicatorView()
-                        .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUnreadPastille)
-                }
+            switch frozenFolder.countToDisplay {
+            case .count(let count):
+                Text(count, format: .indicatorCappedCount)
+                    .textStyle(.bodySmallMediumAccent)
+            case .indicator:
+                UnreadIndicatorView()
+                    .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUnreadPastille)
+            case .none:
+                EmptyView()
             }
         } else if isCurrentFolder {
             MailResourcesAsset.check
