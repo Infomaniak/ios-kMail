@@ -47,7 +47,7 @@ struct ActionsPanelViewModifier: ViewModifier {
 
     @ModalState private var reportForJunkMessages: [Message]?
     @ModalState private var reportedForDisplayProblemMessage: Message?
-    @ModalState private var reportedForPhishingMessage: Message?
+    @ModalState private var reportedForPhishingMessage: [Message]?
     @ModalState private var blockSenderAlert: BlockRecipientAlertState?
     @ModalState private var blockSendersList: BlockRecipientState?
     @ModalState private var messagesToMove: [Message]?
@@ -112,8 +112,8 @@ struct ActionsPanelViewModifier: ViewModifier {
         .customAlert(item: $reportedForDisplayProblemMessage) { message in
             ReportDisplayProblemView(message: message)
         }
-        .customAlert(item: $reportedForPhishingMessage) { message in
-            ReportPhishingView(message: message)
+        .customAlert(item: $reportedForPhishingMessage) { messages in
+            ReportPhishingView(messagesWithDuplicates: messages, completionHandler: completionHandler)
         }
         .customAlert(item: $flushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: originFolder)

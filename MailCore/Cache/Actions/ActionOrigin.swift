@@ -42,7 +42,7 @@ public struct ActionOrigin {
     private(set) var nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>?
     private(set) var nearestBlockSendersList: Binding<BlockRecipientState?>?
     private(set) var nearestReportJunkMessageActionsPanel: Binding<[Message]?>?
-    private(set) var nearestReportedForPhishingMessageAlert: Binding<Message?>?
+    private(set) var nearestReportedForPhishingMessageAlert: Binding<[Message]?>?
     private(set) var nearestReportedForDisplayProblemMessageAlert: Binding<Message?>?
     private(set) var nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>?
     private(set) var messagesToDownload: Binding<[Message]?>?
@@ -56,7 +56,7 @@ public struct ActionOrigin {
         nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>? = nil,
         nearestBlockSendersList: Binding<BlockRecipientState?>? = nil,
         nearestReportJunkMessageActionsPanel: Binding<[Message]?>? = nil,
-        nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
+        nearestReportedForPhishingMessageAlert: Binding<[Message]?>? = nil,
         nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
         nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
         messagesToDownload: Binding<[Message]?>? = nil
@@ -87,7 +87,7 @@ public struct ActionOrigin {
                                      nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>? = nil,
                                      nearestBlockSendersList: Binding<BlockRecipientState?>? = nil,
                                      nearestReportJunkMessageActionsPanel: Binding<[Message]?>? = nil,
-                                     nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
+                                     nearestReportedForPhishingMessageAlert: Binding<[Message]?>? = nil,
                                      nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
                                      nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
                                      messagesToDownload: Binding<[Message]?>? = nil) -> ActionOrigin {
