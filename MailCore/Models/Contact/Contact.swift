@@ -35,6 +35,7 @@ public struct InfomaniakContact: Codable, Identifiable {
     public var nickname: String?
     public var organization: String?
     public var groupContactId: List<Int>?
+    public var contactedTimes: Int?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -51,6 +52,7 @@ public struct InfomaniakContact: Codable, Identifiable {
         case nickname
         case organization
         case groupContactId = "categories"
+        case contactedTimes
     }
 
     public init(from decoder: Decoder) throws {
@@ -74,5 +76,6 @@ public struct InfomaniakContact: Codable, Identifiable {
         nickname = try values.decodeIfPresent(String.self, forKey: .nickname)
         organization = try values.decodeIfPresent(String.self, forKey: .organization)
         groupContactId = try values.decodeIfPresent(List<Int>.self, forKey: .groupContactId)
+        contactedTimes = try values.decodeIfPresent(Int.self, forKey: .contactedTimes)
     }
 }

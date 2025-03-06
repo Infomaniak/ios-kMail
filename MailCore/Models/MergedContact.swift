@@ -54,6 +54,7 @@ public final class MergedContact: Object, Identifiable, Correspondent {
     @Persisted public var remoteIdentifier: String?
     @Persisted public var remoteAddressBookId: Int?
     @Persisted public var remoteGroupContactId: List<Int>
+    @Persisted public var remoteContactedTimes: Int?
 
     /// Local
     @Persisted public var localIdentifier: String?
@@ -130,6 +131,7 @@ public final class MergedContact: Object, Identifiable, Correspondent {
         remoteIdentifier = contact.id
         remoteAddressBookId = contact.addressbookId
         remoteGroupContactId = contact.groupContactId ?? List<Int>()
+        remoteContactedTimes = contact.contactedTimes
     }
 
     static func computeId(email: String, name: String?) -> String {
