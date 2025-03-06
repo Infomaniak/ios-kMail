@@ -300,6 +300,25 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         }
     }
 
+    public func getAssociatedFolders(using realm: Realm) -> [Folder] {
+        switch role {
+        case .inbox:
+            guard let snoozed = realm.objects(Folder.self).where({ $0.role == .snoozed }).first else {
+                return []
+            }
+            return [snoozed]
+
+        case .snoozed:
+            guard let inbox = realm.objects(Folder.self).where({ $0.role == .inbox }).first else {
+                return []
+            }
+            return [inbox]
+
+        default:
+            return []
+        }
+    }
+
     public func threadBelongsToFolder(_ thread: Query<Thread>, using realm: Realm) -> Query<Bool> {
         let isThreadInCurrentFolder = thread.folderId == getThreadsSource(using: realm).remoteId
 
