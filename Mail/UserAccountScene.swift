@@ -94,18 +94,22 @@ struct UserAccountScene: Scene {
                 let versionStatus = try await VersionChecker.standard.checkAppVersionStatus(platform: platform)
                 switch versionStatus {
                 case .updateIsRequired:
+                    print("fdsfsd")
                     rootViewState.transitionToRootViewState(.updateRequired)
                 case .canBeUpdated:
+                    print("fdsfdsdssd")
                     if case .mainView(_, let mainViewState) = rootViewState.state {
                         mainViewState.isShowingUpdateAvailable = true
                     }
                 case .isUpToDate:
+                    print("fdsfsdsad")
+
                     if rootViewState.state == .updateRequired {
                         await rootViewState.transitionToMainViewIfPossible(targetAccount: nil, targetMailbox: nil)
                     }
                 }
             } catch {
-                Logger.view.error("Error while checking version status: \(error)")
+                Logger.general.error("Error while checking version status: \(error)")
             }
         }
     }

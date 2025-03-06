@@ -30,6 +30,7 @@ import NavigationBackport
 import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
+import VersionChecker
 
 @_spi(Advanced) import SwiftUIIntrospect
 
@@ -58,6 +59,7 @@ struct SplitView: View {
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
     @LazyInjectService private var cacheManager: CacheManageable
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var reviewManager: ReviewManageable
 
     @Environment(\.openURL) private var openURL
     @Environment(\.currentUser) private var currentUser
@@ -121,15 +123,13 @@ struct SplitView: View {
             }
         }
         .discoveryPresenter(isPresented: $mainViewState.isShowingUpdateAvailable) {
-            DiscoveryView(item: .updateDiscovery) { willUpdate in
-                guard willUpdate else { return }
+            UpdateVersionView(image: MailResourcesAsset.documentStarsRocket.swiftUIImage) { willUpdate in
                 if willUpdate {
-                    matomo.track(eventWithCategory: .aiWriter, name: "discoverNow")
+                    openURL(URLConstants.getCurrentURL().url)
+                    matomo.track(eventWithCategory: .appUpdate, name: "discoverNow")
                 } else {
-                    matomo.track(eventWithCategory: .aiWriter, name: "discoverLater")
+                    matomo.track(eventWithCategory: .appUpdate, name: "discoverLater")
                 }
-                let url: URLConstants = Bundle.main.isRunningInTestFlight ? .testFlight : .appStore
-                openURL(url.url)
             }
         }
         .discoveryPresenter(isPresented: $mainViewState.isShowingSyncDiscovery) {
@@ -212,7 +212,24 @@ struct SplitView: View {
             setupBehaviour(orientation: interfaceOrientation)
         }
         .customAlert(isPresented: $mainViewState.isShowingReviewAlert) {
-            AskForReviewView()
+            AskForReviewView(
+                appName: Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String,
+                feedbackURL: MailResourcesStrings.Localizable.urlUserReportiOS,
+                reviewManager: reviewManager,
+                onLike: {
+                    matomo.track(eventWithCategory: .appReview, name: "like")
+                    UserDefaults.shared.appReview = .readyForReview
+                    reviewManager.requestReview()
+                },
+                onDislike: { userReportURL in
+                    matomo.track(eventWithCategory: .appReview, name: "dislike")
+                    // Ask for feedback
+                    if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
+                        UserDefaults.shared.appReview = .feedback
+                        mainViewState.isShowingSafariView = IdentifiableURL(url: userReportURL)
+                    }
+                }
+            )
         }
         .environmentObject(splitViewManager)
         .environmentObject(navigationDrawerController)
