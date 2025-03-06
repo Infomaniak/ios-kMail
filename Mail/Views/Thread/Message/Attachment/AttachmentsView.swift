@@ -40,9 +40,7 @@ struct AttachmentsView: View {
     @State private var trackDownloadTask: [String: Task<Void, Error>] = [:]
     @State private var isDownloadDisabled = false
 
-    private var attachments: [Attachment] {
-        return message.notInlineAttachments
-    }
+    let attachments: [Attachment]
 
     private var formattedText: String {
         var text = [String]()
@@ -232,5 +230,5 @@ struct DownloadAllAttachmentsButtonView: View {
 }
 
 #Preview {
-    AttachmentsView(message: PreviewHelper.sampleMessage)
+    AttachmentsView(message: PreviewHelper.sampleMessage, attachments: [])
 }

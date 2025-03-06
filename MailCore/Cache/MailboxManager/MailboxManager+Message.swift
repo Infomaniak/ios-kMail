@@ -28,6 +28,16 @@ public extension MailboxManager {
         let completedMessage = try await apiFetcher.message(message: message)
         completedMessage.fullyDownloaded = true
 
+        for attachment in completedMessage.attachments {
+            if attachment.disposition == .attachment || attachment.contentId == nil {
+                attachment.isInline = false
+            } else if let contentId = attachment.contentId {
+                attachment.isInline = completedMessage.body?.value?.contains(contentId) == true
+            } else {
+                attachment.isInline = true
+            }
+        }
+
         // Update message in Realm
         try? writeTransaction { writableRealm in
             writableRealm.add(completedMessage, update: .modified)
