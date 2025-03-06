@@ -391,14 +391,9 @@ public extension MailboxManager {
     private func createThreads(messageByUids: MessageByUidsResult, folder: Folder, writableRealm: Realm) {
         var threadsToUpdate = Set<Thread>()
         for message in messageByUids.messages {
-            if let oldMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) {
+            if let existingMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) {
                 if folder.shouldOverrideMessage {
-                    upsertMessage(
-                        oldMessage: oldMessage,
-                        newMessage: message,
-                        threadsToUpdate: &threadsToUpdate,
-                        using: writableRealm
-                    )
+                    upsertMessage(message, oldMessage: existingMessage, threadsToUpdate: &threadsToUpdate, using: writableRealm)
                 }
                 continue
             }
@@ -507,8 +502,9 @@ public extension MailboxManager {
         return thread
     }
 
-    private func upsertMessage(oldMessage: Message, newMessage: Message, threadsToUpdate: inout Set<Thread>, using realm: Realm) {
-        realm.add(newMessage, update: .modified)
+    private func upsertMessage(_ message: Message, oldMessage: Message, threadsToUpdate: inout Set<Thread>, using realm: Realm) {
+        keepCacheAttributes(for: message, keepProperties: .standard, using: realm)
+        realm.add(message, update: .modified)
 
         for thread in oldMessage.threads {
             threadsToUpdate.insert(thread)
