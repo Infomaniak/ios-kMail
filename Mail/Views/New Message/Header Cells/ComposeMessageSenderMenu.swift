@@ -24,6 +24,40 @@ import MailCoreUI
 import RealmSwift
 import SwiftUI
 
+extension ComposeMessageSenderMenu: Equatable {
+    static func == (lhs: ComposeMessageSenderMenu, rhs: ComposeMessageSenderMenu) -> Bool {
+        return lhs.autocompletionType == rhs.autocompletionType
+            && lhs.draft.localUUID == rhs.draft.localUUID
+            && lhs.currentSignature?.id == rhs.currentSignature?.id
+            && lhs.currentSignature?.name == rhs.currentSignature?.name
+            && lhs.currentSignature?.senderName == rhs.currentSignature?.senderName
+            && lhs.currentSignature?.senderEmailIdn == rhs.currentSignature?.senderEmailIdn
+            && equalsSignatures(lhsSignatures: lhs.signatures, rhsSignatures: rhs.signatures)
+    }
+
+    static func equalsSignatures(lhsSignatures: Results<Signature>, rhsSignatures: Results<Signature>) -> Bool {
+        guard lhsSignatures.count == rhsSignatures.count else {
+            return false
+        }
+
+        for index in 0 ..< lhsSignatures.count {
+            let lhsSignature = lhsSignatures[index]
+            let rhsSignature = rhsSignatures[index]
+
+            let signaturesEqual = lhsSignature.id == rhsSignature.id
+                && lhsSignature.name == rhsSignature.name
+                && lhsSignature.senderName == rhsSignature.senderName
+                && lhsSignature.senderEmailIdn == rhsSignature.senderEmailIdn
+
+            if !signaturesEqual {
+                return false
+            }
+        }
+
+        return true
+    }
+}
+
 struct ComposeMessageSenderMenu: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
