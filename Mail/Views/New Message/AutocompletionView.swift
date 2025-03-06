@@ -24,20 +24,6 @@ import MailCoreUI
 import RealmSwift
 import SwiftUI
 
-extension Recipient: @retroactive ContactAutocompletable {
-    public var contactId: String {
-        return id
-    }
-
-    public var autocompletableName: String {
-        return name
-    }
-
-    public func isSameContactAutocompletable(as contactAutoCompletable: any ContactAutocompletable) -> Bool {
-        return contactId == contactAutoCompletable.contactId
-    }
-}
-
 struct AutocompletionView: View {
     private static let maxAutocompleteCount = 10
 

@@ -31,9 +31,6 @@ public final class AddressBook: Object, Codable, Identifiable {
     @Persisted public var isDefault: Bool
     @Persisted public var groupContact: List<GroupContact>
 
-    private var organization = ""
-    private var isDynamicOrganisation = false
-
     enum CodingKeys: String, CodingKey {
         case id
         case uuid
@@ -54,7 +51,7 @@ public final class AddressBook: Object, Codable, Identifiable {
         let decodedUuid = try container.decode(String.self, forKey: .uuid)
         let decodedName = try container.decode(String.self, forKey: .name)
         let decodedIsDefault = try container.decode(Bool.self, forKey: .isDefault)
-        let decodedGroupContacts = try container.decode(List<GroupContact>.self, forKey: .groupContact)
+        let decodedGroupContacts = try container.decode([GroupContact].self, forKey: .groupContact)
         let decodedOrganization = try container.decodeIfPresent(String.self, forKey: .organization) ?? MailResourcesStrings
             .Localizable.otherOrganisation
         let decodedIsDynamicOrganisation = try container.decode(Bool.self, forKey: .isDynamicOrganisation)
@@ -62,10 +59,19 @@ public final class AddressBook: Object, Codable, Identifiable {
         super.init()
 
         id = decodedId
-        name = decodedIsDynamicOrganisation ? decodedOrganization : decodedName
         uuid = decodedUuid
+        name = decodedIsDynamicOrganisation ? decodedOrganization : decodedName
         isDefault = decodedIsDefault
-        groupContact = decodedGroupContacts
+        groupContact.append(objectsIn: decodedGroupContacts)
+    }
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(uuid, forKey: .uuid)
+        try container.encode(name, forKey: .name)
+        try container.encode(isDefault, forKey: .isDefault)
+        try container.encode(Array(groupContact), forKey: .groupContact)
     }
 }
 
