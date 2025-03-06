@@ -154,7 +154,9 @@ struct ComposeMessageCellRecipients: View {
         } catch {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
         }
-
+        withAnimation {
+            contact
+        }
         textDebounce.text = ""
     }
 
@@ -197,7 +199,10 @@ struct ComposeMessageCellRecipients: View {
     private func convertMergedContactsToRecipients(_ mergedContacts: [MergedContact]) {
         for mergedContact in mergedContacts {
             let newRecipient = Recipient(email: mergedContact.email, name: mergedContact.name)
-            $recipients.append(newRecipient)
+            withAnimation {
+                newRecipient.isAddedByMe = true
+                $recipients.append(newRecipient)
+            }
         }
     }
 }

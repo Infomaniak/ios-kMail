@@ -115,3 +115,17 @@ public final class Recipient: EmbeddedObject, Correspondent, Codable {
         return email == recipient.email
     }
 }
+
+extension Recipient: ContactAutocompletable {
+    public var contactId: String {
+        return id
+    }
+
+    public var autocompletableName: String {
+        return name
+    }
+
+    public func isSameContactAutocompletable(as contactAutoCompletable: any ContactAutocompletable) -> Bool {
+        return contactId == contactAutoCompletable.contactId
+    }
+}
