@@ -200,7 +200,7 @@ public extension MailboxManager {
                 freshFolder.remainingOldMessagesToFetch -= direction.pageSize
             }
 
-            refreshFolderThreads(folder: freshFolder, using: writableRealm)
+            refreshFolderThreads(folder: freshFolder, refreshAssociatedFolders: folder.role == .snoozed, using: writableRealm)
         }
 
         return true
@@ -313,7 +313,7 @@ public extension MailboxManager {
         }
 
         try? writeTransaction { writableRealm in
-            refreshFolderThreads(folder: folder, using: writableRealm)
+            refreshFolderThreads(folder: folder, refreshAssociatedFolders: true, using: writableRealm)
         }
     }
 
@@ -593,7 +593,17 @@ public extension MailboxManager {
         return thread
     }
 
-    private func refreshFolderThreads(folder: Folder, using realm: Realm) {
+    private func refreshFolderThreads(folder: Folder, refreshAssociatedFolders: Bool, using realm: Realm) {
+        upsertThreads(in: folder, using: realm)
+
+        if refreshAssociatedFolders {
+            for associatedFolder in folder.getAssociatedFolders(using: realm) {
+                upsertThreads(in: associatedFolder, using: realm)
+            }
+        }
+    }
+
+    private func upsertThreads(in folder: Folder, using realm: Realm) {
         guard let freshFolder = folder.fresh(transactionable: self) else { return }
 
         let threads = realm.objects(Thread.self).where { thread in
