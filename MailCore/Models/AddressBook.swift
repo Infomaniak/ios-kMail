@@ -17,19 +17,19 @@
  */
 
 import Foundation
-import MailResources
 import RealmSwift
 
-public struct AddressBookResult: Codable {
+public struct AddressBookResult: Decodable {
     var addressbooks: [AddressBook]
 }
 
-public final class AddressBook: Object, Codable, Identifiable {
+public final class AddressBook: Object, Decodable, Identifiable {
     @Persisted public var id: Int
     @Persisted(primaryKey: true) public var uuid: String
     @Persisted public var name: String
     @Persisted public var isDefault: Bool
     @Persisted public var groupContact: List<GroupContact>
+    @Persisted public var isDynamicOrganisation: Bool
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -52,26 +52,16 @@ public final class AddressBook: Object, Codable, Identifiable {
         let decodedName = try container.decode(String.self, forKey: .name)
         let decodedIsDefault = try container.decode(Bool.self, forKey: .isDefault)
         let decodedGroupContacts = try container.decode([GroupContact].self, forKey: .groupContact)
-        let decodedOrganization = try container.decodeIfPresent(String.self, forKey: .organization) ?? MailResourcesStrings
-            .Localizable.otherOrganisation
         let decodedIsDynamicOrganisation = try container.decode(Bool.self, forKey: .isDynamicOrganisation)
 
         super.init()
 
         id = decodedId
         uuid = decodedUuid
-        name = decodedIsDynamicOrganisation ? decodedOrganization : decodedName
+        name = decodedName
         isDefault = decodedIsDefault
         groupContact.append(objectsIn: decodedGroupContacts)
-    }
-
-    public func encode(to encoder: any Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(id, forKey: .id)
-        try container.encode(uuid, forKey: .uuid)
-        try container.encode(name, forKey: .name)
-        try container.encode(isDefault, forKey: .isDefault)
-        try container.encode(Array(groupContact), forKey: .groupContact)
+        isDynamicOrganisation = decodedIsDynamicOrganisation
     }
 }
 
