@@ -176,7 +176,7 @@ public class ActionsManager: ObservableObject {
             try await performMove(messages: messagesFromFolder, from: origin.frozenFolder, to: .spam)
         case .phishing:
             Task { @MainActor in
-                origin.nearestReportedForPhishingMessageAlert?.wrappedValue = messagesWithDuplicates.first
+                origin.nearestReportedForPhishingMessageAlert?.wrappedValue = messagesWithDuplicates
             }
         case .reportDisplayProblem:
             Task { @MainActor in

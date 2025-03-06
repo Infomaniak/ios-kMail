@@ -27,7 +27,9 @@ import SwiftUI
 struct ReportPhishingView: View {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @EnvironmentObject private var mailboxManager: MailboxManager
-    let message: Message
+    let messagesWithDuplicates: [Message]
+
+    var completionHandler: ((Action) -> Void)?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -44,18 +46,24 @@ struct ReportPhishingView: View {
 
     private func report() async {
         await tryOrDisplayError {
-            let response = try await mailboxManager.apiFetcher.reportPhishing(message: message)
-            if response {
-                var messages = [message.freezeIfNeeded()]
-                messages.append(contentsOf: message.duplicates)
-                _ = try await mailboxManager.move(messages: messages, to: .spam)
+            var lastResponse = false
+            for message in messagesWithDuplicates {
+                lastResponse = try await mailboxManager.apiFetcher.reportPhishing(message: message)
+            }
+
+            if lastResponse {
+                var messagesFreeze = messagesWithDuplicates.map { $0.freezeIfNeeded() }
+                _ = try await mailboxManager.move(messages: messagesFreeze, to: .spam)
                 snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarReportPhishingConfirmation)
             }
         }
+
+        guard let completionHandler = completionHandler else { return }
+        completionHandler(.spam)
     }
 }
 
 #Preview {
-    ReportPhishingView(message: PreviewHelper.sampleMessage)
+    ReportPhishingView(messagesWithDuplicates: PreviewHelper.sampleMessages)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }
