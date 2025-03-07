@@ -89,6 +89,7 @@ public final class Message: Object, Decodable, Identifiable {
     @Persisted public var messageId: String?
     @Persisted public var subject: String?
     @Persisted public var priority: MessagePriority
+    @Persisted public var internalDate: Date
     @Persisted public var date: Date
     @Persisted public var size: Int
     @Persisted public var from: List<Recipient>
@@ -232,6 +233,7 @@ public final class Message: Object, Decodable, Identifiable {
         case messageId = "msgId"
         case subject
         case priority
+        case internalDate
         case date
         case size
         case from
@@ -281,10 +283,11 @@ public final class Message: Object, Decodable, Identifiable {
         }
         subject = try values.decodeIfPresent(String.self, forKey: .subject)
         priority = try values.decode(MessagePriority.self, forKey: .priority)
+        internalDate = try values.decode(Date.self, forKey: .internalDate)
         if let date = (try? values.decode(Date.self, forKey: .date)) {
             self.date = date
         } else {
-            date = Date()
+            date = try values.decode(Date.self, forKey: .internalDate)
             SentryDebug.nilDateParsingBreadcrumb(uid: uid)
         }
         size = try values.decode(Int.self, forKey: .size)
@@ -340,6 +343,7 @@ public final class Message: Object, Decodable, Identifiable {
         msgId: String,
         subject: String? = nil,
         priority: MessagePriority,
+        internalDate: Date,
         date: Date,
         size: Int,
         from: [Recipient],
@@ -377,6 +381,7 @@ public final class Message: Object, Decodable, Identifiable {
         messageId = msgId
         self.subject = subject
         self.priority = priority
+        self.internalDate = internalDate
         self.date = date
         self.size = size
         self.from = from.toRealmList()
