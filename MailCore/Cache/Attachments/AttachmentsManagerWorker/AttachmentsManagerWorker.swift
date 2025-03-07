@@ -371,7 +371,7 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
         await updateDelegate?.contentWillChange()
     }
 
-    public func processHTMLAttachments(_ htmlAttachments: [HTMLAttachable]) async {
+    public func processHTMLAttachments(_ htmlAttachments: [HTMLAttachable], draftContentManager: DraftContentManager) async {
         // Get first usable title
         let anyUsableTitle = await anyUsableTitle(in: htmlAttachments)
 
@@ -403,6 +403,8 @@ extension AttachmentsManagerWorker: AttachmentsManagerWorkable {
 
             writableRealm.add(draftInContext, update: .modified)
         }
+
+        await draftContentManager.refreshFromExternalEvent()
     }
 
     private func anyUsableTitle(in textAttachments: [TextAttachable]) async -> String {

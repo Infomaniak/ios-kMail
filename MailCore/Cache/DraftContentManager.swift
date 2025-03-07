@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Combine
 import Foundation
 import MailResources
 import OSLog
@@ -41,12 +42,53 @@ public class DraftContentManager: ObservableObject {
         let shouldAddSignatureText: Bool
     }
 
+    private let draftLocalUUID: String
     private let messageReply: MessageReply?
     private let mailboxManager: MailboxManager
+    private var draftContentObservation: AnyCancellable?
 
-    public init(messageReply: MessageReply?, mailboxManager: MailboxManager) {
+    @Published public var draftContent = ""
+
+    public init(draftLocalUUID: String, messageReply: MessageReply?, mailboxManager: MailboxManager) {
+        self.draftLocalUUID = draftLocalUUID
         self.messageReply = messageReply
         self.mailboxManager = mailboxManager
+        draftContentObservation = _draftContent
+            .projectedValue
+            .throttle(for: .milliseconds(1000), scheduler: DispatchQueue.global(qos: .userInitiated), latest: true)
+            .sink { newBody in
+                Task { [weak self] in
+                    await self?.saveDraftBody(newBody: newBody)
+                }
+            }
+    }
+
+    public func refreshFromExternalEvent() async {
+        guard let refreshedBody = mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: draftLocalUUID)?.body else {
+            return
+        }
+
+        await Task { @MainActor in
+            draftContent = refreshedBody
+        }.value
+    }
+
+    private func saveDraftBody(newBody: String) async {
+        do {
+            try mailboxManager.writeTransaction { realm in
+                guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draftLocalUUID) else {
+                    throw MailError.unknownError
+                }
+
+                liveDraft.body = newBody
+            }
+        } catch {
+            Logger.general.error("Error saving draft body \(error)")
+        }
+    }
+
+    public func saveCurrentDraftBody() async {
+        await saveDraftBody(newBody: draftContent)
     }
 }
 
@@ -173,6 +215,7 @@ public extension DraftContentManager {
             }
         }
 
+        let updatedDraftBody = "<p>\(body.withNewLineIntoHTML)</p>\(extractedElements)"
         try? mailboxManager.writeTransaction { realm in
             guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else {
                 return
@@ -181,9 +224,12 @@ public extension DraftContentManager {
             if let subject {
                 liveDraft.subject = subject
             }
-            liveDraft.body = "<p>\(body.withNewLineIntoHTML)</p>\(extractedElements)"
+            liveDraft.body = updatedDraftBody
         }
-        NotificationCenter.default.post(name: .updateComposeMessageBody, object: nil)
+
+        await Task { @MainActor in
+            self.draftContent = updatedDraftBody
+        }.value
     }
 
     private func writeCompleteDraft(
@@ -334,7 +380,8 @@ extension DraftContentManager {
                 try signatureDiv.html(newSignature.content)
             }
 
-            try? mailboxManager.writeTransaction { _ in
+            let updatedDraftContent = try parsedMessage.outerHtml()
+            try mailboxManager.writeTransaction { _ in
                 var identityId: String?
                 if let newSignature {
                     identityId = "\(newSignature.id)"
@@ -342,10 +389,12 @@ extension DraftContentManager {
                 // Keep up to date the rawSignature
                 liveIncompleteDraft.rawSignature = newSignature?.content
                 liveIncompleteDraft.identityId = identityId
-                liveIncompleteDraft.body = try parsedMessage.outerHtml()
+                liveIncompleteDraft.body = draftContent
             }
 
-            NotificationCenter.default.post(name: .updateComposeMessageBody, object: nil)
+            Task { @MainActor in
+                self.draftContent = updatedDraftContent
+            }
         } catch {
             Logger.general.error("An error occurred while transforming the DOM of the draft: \(error)")
         }
