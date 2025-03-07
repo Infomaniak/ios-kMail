@@ -159,7 +159,6 @@ struct AIPropositionView: View {
 #Preview {
     AIPropositionView(aiModel: AIModel(
         mailboxManager: PreviewHelper.sampleMailboxManager,
-        draftContentManager: PreviewHelper.sampleDraftContentManager,
         draft: Draft(),
         isReplying: false
     ))

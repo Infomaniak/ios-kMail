@@ -85,6 +85,7 @@ struct ComposeMessageView: View {
 
     @Weak private var scrollView: UIScrollView?
 
+    @StateObject private var draftContentManager: DraftContentManager
     @StateObject private var attachmentsManager: AttachmentsManager
     @StateObject private var aiModel: AIModel
 
@@ -93,7 +94,6 @@ struct ComposeMessageView: View {
     @ObservedRealmObject private var draft: Draft
 
     private let messageReply: MessageReply?
-    private let draftContentManager: DraftContentManager
     private let mailboxManager: MailboxManager
     private let htmlAttachments: [HTMLAttachable]
 
@@ -116,8 +116,11 @@ struct ComposeMessageView: View {
 
         _draft = ObservedRealmObject(wrappedValue: draft)
 
-        let currentDraftContentManager = DraftContentManager(messageReply: messageReply, mailboxManager: mailboxManager)
-        draftContentManager = currentDraftContentManager
+        _draftContentManager = StateObject(wrappedValue: DraftContentManager(
+            draftLocalUUID: draft.localUUID,
+            messageReply: messageReply,
+            mailboxManager: mailboxManager
+        ))
 
         self.mailboxManager = mailboxManager
         _attachmentsManager = StateObject(wrappedValue: AttachmentsManager(draftLocalUUID: draft.localUUID,
@@ -126,7 +129,6 @@ struct ComposeMessageView: View {
 
         _aiModel = StateObject(wrappedValue: AIModel(
             mailboxManager: mailboxManager,
-            draftContentManager: currentDraftContentManager,
             draft: draft,
             isReplying: messageReply?.isReplying == true
         ))
@@ -147,6 +149,7 @@ struct ComposeMessageView: View {
                 if autocompletionType == nil && !isLoadingContent {
                     ComposeMessageBodyView(
                         focusedField: _focusedField,
+                        draftBody: $draftContentManager.draftContent,
                         draft: draft,
                         isShowingAI: $aiModel.isShowingPrompt,
                         messageReply: messageReply
@@ -207,9 +210,16 @@ struct ComposeMessageView: View {
                 isLoadingContent = true
                 currentSignature = try await draftContentManager.prepareCompleteDraft(incompleteDraft: draft)
 
-                async let _ = attachmentsManager.completeUploadedAttachments()
-                async let _ = attachmentsManager.processHTMLAttachments(htmlAttachments)
+                await withTaskGroup(of: Void.self) { group in
+                    group.addTask {
+                        await attachmentsManager.completeUploadedAttachments()
+                    }
+                    group.addTask {
+                        await attachmentsManager.processHTMLAttachments(htmlAttachments, draftContentManager: draftContentManager)
+                    }
+                }
 
+                aiModel.draftContentManager = draftContentManager
                 isLoadingContent = false
             } catch {
                 snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
@@ -314,7 +324,11 @@ struct ComposeMessageView: View {
             isShowingCancelAttachmentsError = true
             return
         }
-        dismissMessageView()
+
+        Task {
+            await draftContentManager.saveCurrentDraftBody()
+            dismissMessageView()
+        }
     }
 
     private func didTouchSend() {

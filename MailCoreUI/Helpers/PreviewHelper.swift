@@ -173,6 +173,7 @@ public enum PreviewHelper {
     )
 
     public static let sampleDraftContentManager = DraftContentManager(
+        draftLocalUUID: "",
         messageReply: nil,
         mailboxManager: sampleMailboxManager
     )
