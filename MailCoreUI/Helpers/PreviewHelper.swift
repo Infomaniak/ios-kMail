@@ -102,6 +102,7 @@ public enum PreviewHelper {
                                               msgId: "",
                                               subject: "Test message",
                                               priority: .normal,
+                                              internalDate: SentryDebug.knownDebugDate,
                                               date: SentryDebug.knownDebugDate,
                                               size: 0,
                                               from: [sampleRecipient1],
