@@ -94,6 +94,14 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                     migration.deleteData(forType: Thread.className())
                     migration.deleteData(forType: Message.className())
                 }
+                if oldSchemaVersion < 36 {
+                    migration.enumerateObjects(ofType: Message.className()) { oldObject, newObject in
+                        newObject?["internalDate"] = oldObject?["date"]
+                    }
+                    migration.enumerateObjects(ofType: Thread.className()) { oldObject, newObject in
+                        newObject?["internalDate"] = oldObject?["date"]
+                    }
+                }
             },
             objectTypes: [
                 Folder.self,
