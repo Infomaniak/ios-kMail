@@ -29,7 +29,17 @@ struct ReportPhishingView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
     let messagesWithDuplicates: [Message]
 
+    let distinctMessageCount: Int
+
     var completionHandler: ((Action) -> Void)?
+
+    var reportPhishingDescription: String {
+        if distinctMessageCount <= 1 {
+            return MailResourcesStrings.Localizable.reportPhishingDescription
+        } else {
+            return MailResourcesStrings.Localizable.reportPhishingDescriptionPlural
+        }
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -37,7 +47,7 @@ struct ReportPhishingView: View {
                 .textStyle(.bodyMedium)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, IKPadding.alertTitleBottom)
-            Text(MailResourcesStrings.Localizable.reportPhishingDescription)
+            Text(reportPhishingDescription)
                 .textStyle(.bodySecondary)
                 .padding(.bottom, IKPadding.alertDescriptionBottom)
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm, primaryButtonAction: report)
@@ -52,7 +62,7 @@ struct ReportPhishingView: View {
             }
 
             if lastResponse {
-                var messagesFreeze = messagesWithDuplicates.map { $0.freezeIfNeeded() }
+                let messagesFreeze = messagesWithDuplicates.map { $0.freezeIfNeeded() }
                 _ = try await mailboxManager.move(messages: messagesFreeze, to: .spam)
                 snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarReportPhishingConfirmation)
             }
@@ -64,6 +74,6 @@ struct ReportPhishingView: View {
 }
 
 #Preview {
-    ReportPhishingView(messagesWithDuplicates: PreviewHelper.sampleMessages)
+    ReportPhishingView(messagesWithDuplicates: PreviewHelper.sampleMessages, distinctMessageCount: 1)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }
