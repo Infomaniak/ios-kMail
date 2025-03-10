@@ -107,7 +107,6 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @Published var isLoading = false
-    @Published var isPresentingErrorAlert = false
     @Published var shouldShowEmptyMailboxesView = false
 
     nonisolated func didCompleteLoginWith(code: String, verifier: String) {
@@ -177,7 +176,7 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
     private func loginFailed(error: Error) {
         isLoading = false
         guard (error as? ASWebAuthenticationSessionError)?.code != .canceledLogin else { return }
-        isPresentingErrorAlert = true
+        snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorLoginDescription)
         SentryDebug.loginError(error: error, step: "loginFailed")
     }
 }

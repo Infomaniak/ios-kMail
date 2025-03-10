@@ -73,11 +73,6 @@ struct OnboardingBottomButtonsView: View {
         }
         .padding(.horizontal, value: .large)
         .padding(.bottom, IKPadding.onBoardingBottomButtons)
-        .alert(MailResourcesStrings.Localizable.errorLoginTitle, isPresented: $loginHandler.isPresentingErrorAlert) {
-            // Use default button
-        } message: {
-            Text(MailResourcesStrings.Localizable.errorLoginDescription)
-        }
         .onChange(of: loginHandler.shouldShowEmptyMailboxesView) { shouldShowEmptyMailboxesView in
             if shouldShowEmptyMailboxesView {
                 navigationState.transitionToRootViewState(.noMailboxes)
