@@ -78,10 +78,6 @@ extension Action: CaseIterable {
         }
     }
 
-    public var shouldDismiss: Bool {
-        return ![.saveThreadInkDrive].contains(self)
-    }
-
     public var shouldDisableMultipleSelection: Bool {
         return ![.openMovePanel, .saveThreadInkDrive, .shareMailLink].contains(self)
     }
