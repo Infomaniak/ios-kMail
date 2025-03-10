@@ -330,7 +330,7 @@ public class ActionsManager: ObservableObject {
 
         for reportedMessage in messages {
             guard let recipient = reportedMessage.from.first,
-                  !recipient.isMe(currentMailboxEmail: mailboxManager.mailbox.email)
+                  !recipient.isMeOrPlusMe(currentMailboxEmail: mailboxManager.mailbox.email)
             else {
                 continue
             }
