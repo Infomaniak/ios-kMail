@@ -91,6 +91,7 @@ public enum PreviewHelper {
                                             from: [sampleRecipient1],
                                             to: [sampleRecipient2],
                                             subject: "Test thread",
+                                            internalDate: SentryDebug.knownDebugDate,
                                             date: SentryDebug.knownDebugDate,
                                             hasAttachments: true,
                                             hasDrafts: false,
