@@ -113,7 +113,11 @@ struct ActionsPanelViewModifier: ViewModifier {
             ReportDisplayProblemView(message: message)
         }
         .customAlert(item: $reportedForPhishingMessage) { messages in
-            ReportPhishingView(messagesWithDuplicates: messages, completionHandler: completionHandler)
+            ReportPhishingView(
+                messagesWithDuplicates: messages,
+                distinctMessageCount: messages.count,
+                completionHandler: completionHandler
+            )
         }
         .customAlert(item: $flushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: originFolder)

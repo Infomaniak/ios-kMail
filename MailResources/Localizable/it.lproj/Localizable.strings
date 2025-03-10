@@ -361,6 +361,9 @@
 /* loco:66f2853e4d75905fd406ea93 */
 "buttonCancelFormatting" = "Annullamento della formattazione";
 
+/* loco:67b32a7057a66d891b06eb35 */
+"buttonCancelReminder" = "Annulla promemoria";
+
 /* loco:62befe9ca822415272753592 */
 "buttonClose" = "Chiudi";
 
@@ -1087,6 +1090,9 @@
 /* loco:6266655afabeeb6bc774c932 */
 "newMessagePlaceholderTitle" = "Digitare il messaggio";
 
+/* loco:67c6c5212e72fc8285013f82 */
+"nextEventOccurrence" = "Evento ricorrente, prossima ricorrenza il";
+
 /* loco:67238d29fe561f9d0a0f5732 */
 "nextMonday" = "Lunedì prossimo";
 
@@ -1212,6 +1218,9 @@
 
 /* loco:62cece41730aa70c5f3da0e2 */
 "reportPhishingDescription" = "Se il messaggio tenta di rubare informazioni sensibili (password, dati bancari, ecc.) e/o si spaccia per un’identità riconosciuta, si tratta di phishing.\n\nSegnalandolo a noi, accelererai l’individuazione di messaggi pericolosi per tutti i nostri utenti.\n\nLa segnalazione sarà inviata al nostro team di sicurezza per l’analisi e l’intervento. L’e-mail verrà inoltre spostata automaticamente nella cartella spam.";
+
+/* loco:67cf0d265a4faa32a10d6db5 */
+"reportPhishingDescription-plural" = "Se questi messaggi tentano di rubare informazioni riservate (password, dati bancari ecc.) e/o si spacciano per identità riconosciute, si tratta di phishing.\n\nSegnalando a noi questi messaggi, potete aiutare ad accelerare il riconoscimento dei messaggi pericolosi per tutti i nostri utenti.\n\nLe segnalazioni verranno inoltrate al nostro team di sicurezza, che li analizzerà e intraprenderà azioni. Le email verranno inoltre spostate automaticamente nella vostra cartella dello spam.";
 
 /* loco:62cecdf0413c882ede7451c2 */
 "reportPhishingTitle" = "Segnala un tentativo di phishing";
@@ -1644,6 +1653,9 @@
 
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "";
+
+/* loco:67b32e5c0e4974a86a00c602 */
+"snoozeAlertTitle" = "In attesa fino al: %@";
 
 /* loco:67a32e4384fbf4226404e972 */
 "snoozedFolder" = "In attesa";

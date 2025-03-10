@@ -361,6 +361,9 @@
 /* loco:66f2853e4d75905fd406ea93 */
 "buttonCancelFormatting" = "Cancel formatting";
 
+/* loco:67b32a7057a66d891b06eb35 */
+"buttonCancelReminder" = "Cancel reminder";
+
 /* loco:62befe9ca822415272753592 */
 "buttonClose" = "Close";
 
@@ -1087,6 +1090,9 @@
 /* loco:6266655afabeeb6bc774c932 */
 "newMessagePlaceholderTitle" = "Type your message";
 
+/* loco:67c6c5212e72fc8285013f82 */
+"nextEventOccurrence" = "Recurring event, next occurrence on";
+
 /* loco:67238d29fe561f9d0a0f5732 */
 "nextMonday" = "Next monday";
 
@@ -1212,6 +1218,9 @@
 
 /* loco:62cece41730aa70c5f3da0e2 */
 "reportPhishingDescription" = "If this message attempts to steal sensitive information (password, bank details, etc.) and/or impersonates a recognised identity then it is phishing.\n\nBy reporting it to us, you speed up the detection of dangerous messages for all our users.\n\nThe report will be sent to our security team for analysis and action. The email will also be automatically moved to your spam folder.";
+
+/* loco:67cf0d265a4faa32a10d6db5 */
+"reportPhishingDescription-plural" = "If these messages attempt to steal sensitive information (passwords, bank details, etc.) and/or impersonate recognized identities, then they are phishing.\n\nBy reporting them to us, you speed up the detection of dangerous messages for all our users.\n\nThe reports will be sent to our security team for analysis and action. The emails will also be automatically moved to your spam folder.";
 
 /* loco:62cecdf0413c882ede7451c2 */
 "reportPhishingTitle" = "Report a phishing attempt";
@@ -1644,6 +1653,9 @@
 
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "";
+
+/* loco:67b32e5c0e4974a86a00c602 */
+"snoozeAlertTitle" = "Snoozed until: %@";
 
 /* loco:67a32e4384fbf4226404e972 */
 "snoozedFolder" = "Snoozed";

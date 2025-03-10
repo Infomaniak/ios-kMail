@@ -361,6 +361,9 @@
 /* loco:66f2853e4d75905fd406ea93 */
 "buttonCancelFormatting" = "Annuler la mise en forme";
 
+/* loco:67b32a7057a66d891b06eb35 */
+"buttonCancelReminder" = "Annuler le rappel";
+
 /* loco:62befe9ca822415272753592 */
 "buttonClose" = "Fermer";
 
@@ -1087,6 +1090,9 @@
 /* loco:6266655afabeeb6bc774c932 */
 "newMessagePlaceholderTitle" = "Rédigez votre message";
 
+/* loco:67c6c5212e72fc8285013f82 */
+"nextEventOccurrence" = "Évènement récurrent, prochaine occurrence le";
+
 /* loco:67238d29fe561f9d0a0f5732 */
 "nextMonday" = "Lundi prochain";
 
@@ -1212,6 +1218,9 @@
 
 /* loco:62cece41730aa70c5f3da0e2 */
 "reportPhishingDescription" = "Si ce message tente de dérober des informations sensibles (mot de passe, données bancaires, etc.) et/ou s’il usurpe une identité reconnue, alors il s’agit d’hameçonnage.\n\nEn nous le signalant, vous accélérez la détection de messages dangereux pour l’ensemble de nos utilisateurs.\n\nLe signalement sera envoyé à notre équipe sécurité pour analyse afin de prendre les mesures nécessaires. L’e-mail sera également déplacé automatiquement dans vos spams.";
+
+/* loco:67cf0d265a4faa32a10d6db5 */
+"reportPhishingDescription-plural" = "Si ces messages tentent de dérober des informations sensibles (mots de passe, données bancaires, etc.) et/ou s’ils usurpent une identité reconnue, alors il s’agit d’hameçonnage.\n\nEn nous les signalant, vous accélérez la détection de messages dangereux pour l’ensemble de nos utilisateurs.\n\nLes signalements seront envoyés à notre équipe sécurité pour analyse afin de prendre les mesures nécessaires. Les e-mails seront également déplacés automatiquement dans vos spams.";
 
 /* loco:62cecdf0413c882ede7451c2 */
 "reportPhishingTitle" = "Signaler une tentative d’hameçonnage";
@@ -1644,6 +1653,9 @@
 
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "Conversations déplacées vers %@";
+
+/* loco:67b32e5c0e4974a86a00c602 */
+"snoozeAlertTitle" = "En attente jusqu’au : %@";
 
 /* loco:67a32e4384fbf4226404e972 */
 "snoozedFolder" = "En attente";
