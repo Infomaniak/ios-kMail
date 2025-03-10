@@ -40,7 +40,8 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var from: List<Recipient>
     @Persisted public var to: List<Recipient>
     @Persisted public var subject: String?
-    @Persisted(indexed: true) public var date: Date
+    @Persisted(indexed: true) public var internalDate: Date
+    @Persisted public var date: Date
     @Persisted public var hasAttachments: Bool
     @Persisted public var hasDrafts: Bool
     @Persisted public var flagged: Bool
@@ -138,8 +139,9 @@ public class Thread: Object, Decodable, Identifiable {
             $0.date.compare($1.date) == .orderedAscending
         }.toRealmList()
 
-        if let lastMessageFromFolderDate = lastMessageFromFolder?.date {
-            date = lastMessageFromFolderDate
+        if let lastMessageFromFolder {
+            internalDate = lastMessageFromFolder.internalDate
+            date = lastMessageFromFolder.date
         } else {
             throw MailError.incoherentThreadDate
         }
@@ -227,6 +229,7 @@ public class Thread: Object, Decodable, Identifiable {
         case from
         case to
         case subject
+        case internalDate
         case date
         case hasAttachments
         case hasDrafts
@@ -246,6 +249,7 @@ public class Thread: Object, Decodable, Identifiable {
         from: [Recipient],
         to: [Recipient],
         subject: String? = nil,
+        internalDate: Date,
         date: Date,
         hasAttachments: Bool,
         hasDrafts: Bool,
@@ -265,6 +269,7 @@ public class Thread: Object, Decodable, Identifiable {
         self.from = from.toRealmList()
         self.to = to.toRealmList()
         self.subject = subject
+        self.internalDate = internalDate
         self.date = date
         self.hasAttachments = hasAttachments
         self.hasDrafts = hasDrafts
@@ -287,6 +292,7 @@ public class Thread: Object, Decodable, Identifiable {
         from = try container.decode(List<Recipient>.self, forKey: .from)
         to = try container.decode(List<Recipient>.self, forKey: .to)
         subject = try container.decode(String?.self, forKey: .subject)
+        internalDate = try container.decode(Date.self, forKey: .internalDate)
         date = try container.decodeIfPresent(Date.self, forKey: .date) ?? Date()
         hasAttachments = try container.decode(Bool.self, forKey: .hasAttachments)
         hasDrafts = try container.decode(Bool.self, forKey: .hasDrafts)
