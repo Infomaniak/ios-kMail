@@ -161,6 +161,7 @@ public extension MailboxManager {
                     unseenMessages: 0,
                     from: Array(message.from.detached()),
                     to: Array(message.to.detached()),
+                    internalDate: newMessage.internalDate,
                     date: newMessage.date,
                     hasAttachments: newMessage.hasAttachments,
                     hasDrafts: newMessage.isDraft,

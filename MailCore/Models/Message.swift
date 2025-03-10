@@ -423,6 +423,7 @@ public final class Message: Object, Decodable, Identifiable {
             from: Array(from),
             to: Array(to),
             subject: subject,
+            internalDate: internalDate,
             date: date,
             hasAttachments: !attachments.isEmpty,
             hasDrafts: !(draftResource?.isEmpty ?? true),
