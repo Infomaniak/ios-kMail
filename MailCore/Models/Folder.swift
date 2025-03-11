@@ -212,8 +212,15 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return true
     }
 
-    public var shouldBeAscending: Bool {
-        return [.scheduledDrafts].contains(role)
+    public var threadsSort: any ThreadsSort {
+        switch role {
+        case .snoozed:
+            return SnoozedThreadsSort()
+        case .scheduledDrafts:
+            return ScheduledThreadsSort()
+        default:
+            return DefaultThreadsSort()
+        }
     }
 
     public var hasLimitedSwipeActions: Bool {
