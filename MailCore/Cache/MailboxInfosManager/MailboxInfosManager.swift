@@ -26,7 +26,7 @@ import RealmSwift
 extension MailboxInfosManager: RealmConfigurable {}
 
 public final class MailboxInfosManager {
-    private static let currentDbVersion: UInt64 = 8
+    private static let currentDbVersion: UInt64 = 9
     private let dbName = "MailboxInfos.realm"
 
     public let realmConfiguration: Realm.Configuration
@@ -53,7 +53,7 @@ public final class MailboxInfosManager {
                     }
                 }
             },
-            objectTypes: [Mailbox.self, MailboxPermissions.self, Quotas.self, ExternalMailInfo.self]
+            objectTypes: [Mailbox.self, MailboxPermissions.self, Quotas.self, ExternalMailInfo.self, SendersRestrictions.self]
         )
 
         let realmAccessor = MailCoreRealmAccessor(realmConfiguration: realmConfiguration)

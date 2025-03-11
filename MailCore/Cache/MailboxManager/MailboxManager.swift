@@ -120,7 +120,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 Bimi.self,
                 SwissTransferAttachment.self,
                 File.self,
-                MessageUid.self
+                MessageUid.self,
+                MessageHeaders.self
             ]
         )
 
