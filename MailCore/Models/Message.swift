@@ -174,6 +174,10 @@ public final class Message: Object, Decodable, Identifiable {
         return Array(dup)
     }
 
+    public var notInlineAttachments: Results<Attachment> {
+        attachments.filter("isInline == false")
+    }
+
     public func fromMe(currentMailboxEmail: String) -> Bool {
         return from.contains { $0.isMe(currentMailboxEmail: currentMailboxEmail) }
     }

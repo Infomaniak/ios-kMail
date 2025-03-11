@@ -55,9 +55,9 @@ struct MessageSubHeaderView: View {
                 .padding(.horizontal, value: .medium)
         }
 
-        if !message.attachments.filter({ $0.disposition == .attachment || $0.contentId == nil }).isEmpty || message
-            .swissTransferUuid != nil {
-            AttachmentsView(message: message)
+        if !message.notInlineAttachments.isEmpty
+            || message.swissTransferUuid != nil {
+            AttachmentsView(message: message, attachments: Array(message.notInlineAttachments))
         }
     }
 }
