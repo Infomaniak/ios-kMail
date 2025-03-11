@@ -295,6 +295,9 @@
 /* loco:66dee0ef5c6d656046044445 */
 "blockExpeditorTitle" = "Block %s";
 
+/* loco:67cff9495697ef40dc013633 */
+"blockMultipleExpeditorsTitle" = "%d Absender blockieren";
+
 /* loco:649ea00ef9c6ecfe620a0b62 */
 "blockedPasswordTitle" = "Passwort blockiert";
 
@@ -576,6 +579,9 @@
 
 /* loco:66db00746332bbedae01f2f2 */
 "confirmationToBlockAnExpeditorText" = "Diese E-Mail und alle zukünftigen Nachrichten von %s werden in den Junk-Mail-Ordner verschoben.";
+
+/* loco:67cffa6132f76065a6002bd2 */
+"confirmationToBlockMultipleExpeditorsText" = "Diese E-Mails und alle zukünftigen Nachrichten ihrer Absender werden in den Junk-Mail-Ordner verschoben.";
 
 /* loco:62737dea7bd28e302301e5c2 */
 "contactActionAddToContacts" = "Zu Kontakten hinzufügen";
