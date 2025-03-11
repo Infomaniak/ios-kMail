@@ -36,6 +36,11 @@ public struct RecipientHolder {
     var bcc = [Recipient]()
 }
 
+public enum RecipientError: Error {
+    case invalidEmail
+    case duplicateContact
+}
+
 public final class Recipient: EmbeddedObject, Correspondent, Codable {
     @Persisted public var email: String
     @Persisted public var name: String
@@ -104,5 +109,23 @@ public final class Recipient: EmbeddedObject, Correspondent, Codable {
         let isContact = !(mailboxManager.contactManager.frozenContacts(matching: email, fetchLimit: nil, sorted: nil)).isEmpty
 
         return !isKnownDomain && !isMailerDeamon && !isAnAlias && !isContact
+    }
+
+    public func isSameRecipient(recipient: Recipient) -> Bool {
+        return email == recipient.email
+    }
+}
+
+extension Recipient: ContactAutocompletable {
+    public var contactId: String {
+        return id
+    }
+
+    public var autocompletableName: String {
+        return name
+    }
+
+    public func isSameContactAutocompletable(as contactAutoCompletable: any ContactAutocompletable) -> Bool {
+        return contactId == contactAutoCompletable.contactId
     }
 }
