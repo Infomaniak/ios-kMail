@@ -64,4 +64,11 @@ public extension String {
         )
         return modString.components(separatedBy: "><")
     }
+
+    func getStartAndEndOfPlusEmail() -> (String, String) {
+        let splittedEmail = split(separator: "@")
+        let fromStartToPlus = String((splittedEmail.first ?? "") + "+")
+        let fromArobaseToEnd = String("@" + (splittedEmail.last ?? ""))
+        return (fromStartToPlus, fromArobaseToEnd)
+    }
 }

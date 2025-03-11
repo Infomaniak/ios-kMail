@@ -179,7 +179,7 @@ public final class Message: Object, Decodable, Identifiable {
     }
 
     public func fromMe(currentMailboxEmail: String) -> Bool {
-        return from.contains { $0.isMe(currentMailboxEmail: currentMailboxEmail) }
+        return from.contains { $0.isMeOrPlusMe(currentMailboxEmail: currentMailboxEmail) }
     }
 
     public func canReplyAll(currentMailboxEmail: String) -> Bool {
@@ -188,10 +188,10 @@ public final class Message: Object, Decodable, Identifiable {
     }
 
     public func recipientsForReplyTo(replyAll: Bool = false, currentMailboxEmail: String) -> RecipientHolder {
-        let cleanedFrom = Array(from.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
-        let cleanedTo = Array(to.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
-        let cleanedReplyTo = Array(replyTo.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
-        let cleanedCc = Array(cc.detached()).filter { !$0.isMe(currentMailboxEmail: currentMailboxEmail) }
+        let cleanedFrom = Array(from.detached()).filter { !$0.isMeOrPlusMe(currentMailboxEmail: currentMailboxEmail) }
+        let cleanedTo = Array(to.detached()).filter { !$0.isMeOrPlusMe(currentMailboxEmail: currentMailboxEmail) }
+        let cleanedReplyTo = Array(replyTo.detached()).filter { !$0.isMeOrPlusMe(currentMailboxEmail: currentMailboxEmail) }
+        let cleanedCc = Array(cc.detached()).filter { !$0.isMeOrPlusMe(currentMailboxEmail: currentMailboxEmail) }
 
         var holder = RecipientHolder()
 
