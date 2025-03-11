@@ -73,11 +73,7 @@ struct ThreadView: View {
         .navigationBarThreadViewStyle(appearance: displayNavigationTitle ? BarAppearanceConstants
             .threadViewNavigationBarScrolledAppearance : BarAppearanceConstants.threadViewNavigationBarAppearance)
         .backButtonDisplayMode(.minimal)
-        .threadViewToolbar(
-            isFlagged: thread.flagged,
-            frozenFolder: thread.folder?.freezeIfNeeded(),
-            frozenMessages: thread.messages.freezeIfNeeded().toArray()
-        )
+        .threadViewToolbar(frozenThread: thread.freezeIfNeeded())
         .id(thread.id)
         .matomoView(view: [MatomoUtils.View.threadView.displayName, "Main"])
     }
