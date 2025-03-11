@@ -66,6 +66,8 @@ public class Thread: Object, Decodable, Identifiable {
     /// This property is used to remove threads from list before network call is finished
     @Persisted public var isMovedOutLocally = false
 
+    @Persisted public var numberOfScheduledDraft = 0
+
     public var id: String {
         return uid
     }
@@ -103,6 +105,10 @@ public class Thread: Object, Decodable, Identifiable {
 
     public var hasUnseenMessages: Bool {
         unseenMessages > 0
+    }
+
+    public var containsOnlyScheduledDrafts: Bool {
+        return numberOfScheduledDraft == messages.count
     }
 
     public func updateUnseenMessages() {
@@ -145,6 +151,8 @@ public class Thread: Object, Decodable, Identifiable {
         } else {
             throw MailError.incoherentThreadDate
         }
+
+        numberOfScheduledDraft = messages.count { $0.isScheduledDraft == true }
 
         lastAction = getLastAction()
 
@@ -280,6 +288,8 @@ public class Thread: Object, Decodable, Identifiable {
         self.snoozeState = snoozeState
         self.snoozeAction = snoozeAction
         self.snoozeEndDate = snoozeEndDate
+
+        numberOfScheduledDraft = messages.count { $0.isScheduledDraft == true }
     }
 
     public required init(from decoder: Decoder) throws {
@@ -303,6 +313,8 @@ public class Thread: Object, Decodable, Identifiable {
         snoozeState = try container.decodeIfPresent(SnoozeState.self, forKey: .snoozeState)
         snoozeAction = try container.decodeIfPresent(String.self, forKey: .snoozeAction)
         snoozeEndDate = try container.decodeIfPresent(Date.self, forKey: .snoozeEndDate)
+
+        numberOfScheduledDraft = messages.count { $0.isScheduledDraft == true }
     }
 
     override public init() {
