@@ -25,8 +25,8 @@ import SwiftModalPresentation
 import SwiftUI
 
 extension View {
-    func threadViewToolbar(isFlagged: Bool, frozenFolder: Folder?, frozenMessages: [Message]) -> some View {
-        modifier(ThreadViewToolbarModifier(isFlagged: isFlagged, frozenFolder: frozenFolder, frozenMessages: frozenMessages))
+    func threadViewToolbar(frozenThread: Thread) -> some View {
+        modifier(ThreadViewToolbarModifier(frozenThread: frozenThread))
     }
 }
 
@@ -45,19 +45,28 @@ struct ThreadViewToolbarModifier: ViewModifier {
 
     @ModalState private var nearestFlushAlert: FlushAlertState?
 
-    let isFlagged: Bool
-    let frozenFolder: Folder?
-    let frozenMessages: [Message]
+    private let frozenThread: Thread
+
+    private let isFlagged: Bool
+    private let frozenFolder: Folder?
+    private let frozenMessages: [Message]
 
     private var toolbarActions: [Action] {
-        switch frozenFolder?.role {
-        case .archive:
-            return Self.archiveActions
-        case .scheduledDrafts:
+        if frozenThread.containsOnlyScheduledDrafts {
             return Self.scheduleActions
-        default:
+        } else if frozenFolder?.role == .archive {
+            return Self.archiveActions
+        } else {
             return Self.standardActions
         }
+    }
+
+    init(frozenThread: Thread) {
+        self.frozenThread = frozenThread
+
+        isFlagged = frozenThread.flagged
+        frozenFolder = frozenThread.folder
+        frozenMessages = frozenThread.messages.toArray()
     }
 
     func body(content: Content) -> some View {
