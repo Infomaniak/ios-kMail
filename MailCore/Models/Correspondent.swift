@@ -52,11 +52,14 @@ public extension Correspondent {
         let correspondentEmail = email.lowercased()
 
         let isRealMe = userEmail == correspondentEmail
+        if isRealMe {
+            return true
+        }
 
         let (start, end) = userEmail.getStartAndEndOfPlusEmail()
         let isPlusMe = correspondentEmail.hasPrefix(start) && correspondentEmail.hasSuffix(end)
 
-        return isRealMe || isPlusMe
+        return isPlusMe
     }
 
     func isSameCorrespondent(as correspondent: any Correspondent) -> Bool {
