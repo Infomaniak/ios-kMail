@@ -40,7 +40,7 @@ public struct SignatureResponse: Decodable {
     }
 }
 
-public final class Signature: Object, Codable, Identifiable {
+public final class Signature: Object, Codable, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) public var id: Int
     @Persisted public var name: String
     @Persisted public var content: String

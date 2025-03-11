@@ -60,7 +60,7 @@ public struct DraftResponse: Codable {
     public var uid: String
 }
 
-public final class Draft: Object, Codable, Identifiable {
+public final class Draft: Object, Codable, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) public var localUUID = UUID().uuidString
     @Persisted public var remoteUUID = ""
     @Persisted public var date = Date()

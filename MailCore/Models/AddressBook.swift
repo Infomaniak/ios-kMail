@@ -23,7 +23,7 @@ public struct AddressBookResult: Codable {
     var addressbooks: [AddressBook]
 }
 
-public class AddressBook: Object, Codable, Identifiable {
+public class AddressBook: Object, Codable, ObjectKeyIdentifiable {
     @Persisted public var id: Int
     @Persisted(primaryKey: true) public var uuid: String
     @Persisted public var isDefault: Bool
