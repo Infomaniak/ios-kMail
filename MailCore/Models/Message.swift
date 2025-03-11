@@ -170,6 +170,16 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         return subject ?? MailResourcesStrings.Localizable.noSubjectTitle
     }
 
+    public var displayDate: DisplayDate {
+        if isScheduledDraft == true {
+            return .scheduled(date)
+        } else if let snoozeEndDate, snoozeState == .snoozed || snoozeState == .unsnoozed {
+            return .snoozed(snoozeEndDate)
+        } else {
+            return .normal(date)
+        }
+    }
+
     public var attachmentsSize: Int64 {
         return attachments.reduce(0) { $0 + $1.size }
     }

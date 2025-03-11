@@ -23,20 +23,18 @@ import MailResources
 import SwiftUI
 
 struct HeaderDateView: View {
-    let date: Date
+    let displayDate: DisplayDate
     let format: Date.ThreadFormatStyle.Style
-
-    private var isScheduled: Bool { date > .now }
 
     var body: some View {
         HStack(spacing: IKPadding.micro) {
-            if isScheduled {
-                MailResourcesAsset.clockThick
+            if let icon = displayDate.icon, let foreground = displayDate.iconForeground {
+                icon
                     .iconSize(.small)
-                    .foregroundStyle(MailResourcesAsset.coralColor)
+                    .foregroundStyle(foreground)
             }
 
-            Text(date, format: .thread(format))
+            Text(displayDate.date, format: .thread(format))
                 .lineLimit(1)
                 .layoutPriority(1)
                 .textStyle(.labelSecondary)
@@ -46,10 +44,8 @@ struct HeaderDateView: View {
 
 #Preview {
     VStack {
-        HeaderDateView(date: .now, format: .header)
-        HeaderDateView(date: .now.addingTimeInterval(3600), format: .header)
-        HeaderDateView(date: .now.addingTimeInterval(86400), format: .header)
-        HeaderDateView(date: .now.addingTimeInterval(172_800), format: .header)
-        HeaderDateView(date: .distantFuture, format: .header)
+        HeaderDateView(displayDate: .normal(.now), format: .header)
+        HeaderDateView(displayDate: .snoozed(.now.addingTimeInterval(3600)), format: .header)
+        HeaderDateView(displayDate: .scheduled(.now.addingTimeInterval(3600)), format: .header)
     }
 }
