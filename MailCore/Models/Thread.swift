@@ -72,6 +72,16 @@ public class Thread: Object, Decodable, Identifiable {
         return uid
     }
 
+    public var displayDate: DisplayDate {
+        if containsOnlyScheduledDrafts {
+            return .scheduled(date)
+        } else if let snoozeEndDate, snoozeState == .snoozed || snoozeState == .unsnoozed {
+            return .snoozed(snoozeEndDate)
+        } else {
+            return .normal(date)
+        }
+    }
+
     /// Parent folder of the thread.
     /// (A thread only has one folder)
     public var folder: Folder? {

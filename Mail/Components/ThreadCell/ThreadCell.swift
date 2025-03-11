@@ -177,7 +177,7 @@ struct ThreadCell: View {
                     ),
                     messageCount: thread.messages.count,
                     prominentMessageCount: thread.hasUnseenMessages,
-                    date: thread.date,
+                    displayDate: thread.displayDate,
                     showDraftPrefix: thread.hasDrafts
                 )
 
