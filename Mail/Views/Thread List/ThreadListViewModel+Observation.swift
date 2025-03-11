@@ -27,16 +27,18 @@ extension ThreadListViewModel {
             return nil
         }
 
+        let threadsSort = folder.threadsSort
+
         let threadResults: Results<Thread>
         if let predicate = filter.predicate {
             threadResults = folder.threads
                 .where { $0.isMovedOutLocally == false }
                 .filter(predicate + " OR uid == %@", selectedThreadOwner.selectedThread?.uid ?? "")
-                .sorted(by: \.date, ascending: folder.shouldBeAscending)
+                .sorted(byKeyPath: threadsSort.propertyName, ascending: threadsSort.isAscending)
         } else {
             threadResults = folder.threads
                 .where { $0.isMovedOutLocally == false }
-                .sorted(by: \.date, ascending: folder.shouldBeAscending)
+                .sorted(byKeyPath: threadsSort.propertyName, ascending: threadsSort.isAscending)
         }
 
         return threadResults
@@ -81,10 +83,13 @@ extension ThreadListViewModel {
     private func mapSectionedResults(results: Results<Thread>) -> (threads: [Thread], sections: [DateSection]) {
         let results = Dictionary(grouping: results.freezeIfNeeded()) { $0.sectionDate }
             .sorted {
-                guard let firstDate = $0.value.first?.date,
-                      let secondDate = $1.value.first?.date else { return false }
+                guard let firstThread = $0.value.first, let secondThread = $1.value.first else { return false }
 
-                if frozenFolder.shouldBeAscending {
+                let threadsSort = frozenFolder.threadsSort
+                guard let firstDate = threadsSort.getReferenceDate(from: firstThread),
+                      let secondDate = threadsSort.getReferenceDate(from: secondThread) else { return false }
+
+                if threadsSort.isAscending {
                     return firstDate < secondDate
                 } else {
                     return firstDate > secondDate
