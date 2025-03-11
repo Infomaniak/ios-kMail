@@ -133,7 +133,6 @@ let project = Project(name: "Mail",
                                       "MailShareExtension/**/*.js" // Needed for NSExtensionJavaScriptPreprocessingFile
                                   ],
                                   entitlements: "MailResources/MailExtensions.entitlements",
-                                  scripts: [Constants.swiftlintScript],
                                   dependencies: [
                                       .target(name: "MailCore"),
                                       .target(name: "MailCoreUI"),
@@ -205,7 +204,6 @@ let project = Project(name: "Mail",
                                             "Mail/Views/**",
                                             "Mail/Proxy/Protocols/**"],
                                   entitlements: "MailResources/MailExtensions.entitlements",
-                                  scripts: [Constants.swiftlintScript],
                                   dependencies: [
                                       .target(name: "MailCore"),
                                       .target(name: "MailCoreUI"),
