@@ -26,7 +26,7 @@ struct ThreadCellHeaderView: View, Equatable {
     let recipientsTitle: String
     let messageCount: Int
     let prominentMessageCount: Bool
-    let date: Date
+    let displayDate: DisplayDate
     let showDraftPrefix: Bool
 
     var body: some View {
@@ -50,7 +50,7 @@ struct ThreadCellHeaderView: View, Equatable {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
-            HeaderDateView(date: date, format: .list)
+            HeaderDateView(displayDate: displayDate, format: .list)
         }
     }
 }
