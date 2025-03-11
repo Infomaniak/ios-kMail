@@ -20,6 +20,60 @@ import Foundation
 import ProjectDescription
 import ProjectDescriptionHelpers
 
+func mainTargetWith(name: String, destinations: [Destination]) -> Target {
+    .target(name: name,
+            destinations: Set(destinations),
+            product: .app,
+            bundleId: "com.infomaniak.mail",
+            deploymentTargets: Constants.deploymentTarget,
+            infoPlist: "Mail/Info.plist",
+            sources: "Mail/**",
+            resources: [
+                "Mail/**/LaunchScreen.storyboard",
+                "Mail/Assets.xcassets", // Needed for AppIcon
+                "MailResources/**/PrivacyInfo.xcprivacy",
+                "Mail/Localizable/**/InfoPlist.strings"
+            ],
+            entitlements: "MailResources/Mail.entitlements",
+            scripts: [
+                Constants.swiftlintScript,
+                Constants.stripSymbolsScript
+            ],
+            dependencies: [
+                .target(name: "MailCore"),
+                .target(name: "MailCoreUI"),
+                .target(name: "MailResources"),
+                .target(name: "MailNotificationServiceExtension"),
+                .target(name: "MailNotificationContentExtension"),
+                .target(name: "MailShareExtension"),
+                .target(name: "MailAppIntentsExtension"),
+                .external(name: "InfomaniakBugTracker"),
+                .external(name: "InfomaniakCoreCommonUI"),
+                .external(name: "InfomaniakCoreDB"),
+                .external(name: "InfomaniakCoreSwiftUI"),
+                .external(name: "InfomaniakCore"),
+                .external(name: "InfomaniakCreateAccount"),
+                .external(name: "InfomaniakDI"),
+                .external(name: "InfomaniakLogin"),
+                .external(name: "InfomaniakNotifications"),
+                .external(name: "InfomaniakOnboarding"),
+                .external(name: "InfomaniakPrivacyManagement"),
+                .external(name: "InfomaniakRichHTMLEditor"),
+                .external(name: "NavigationBackport"),
+                .external(name: "Popovers"),
+                .external(name: "Realm"),
+                .external(name: "RealmSwift"),
+                .external(name: "SwiftModalPresentation"),
+                .external(name: "SwiftRegex"),
+                .external(name: "SwiftSoup"),
+                .external(name: "SwiftUIBackports"),
+                .external(name: "SwiftUIIntrospect"),
+                .external(name: "VersionChecker"),
+                .external(name: "WrappingHStack")
+            ],
+            settings: .settings(base: Constants.baseSettings))
+}
+
 let project = Project(name: "Mail",
                       options: .options(
                           automaticSchemesOptions: .enabled(
@@ -27,57 +81,8 @@ let project = Project(name: "Mail",
                           )
                       ),
                       targets: [
-                          .target(name: "Infomaniak Mail",
-                                  destinations: Constants.destinations,
-                                  product: .app,
-                                  bundleId: "com.infomaniak.mail",
-                                  deploymentTargets: Constants.deploymentTarget,
-                                  infoPlist: "Mail/Info.plist",
-                                  sources: "Mail/**",
-                                  resources: [
-                                      "Mail/**/LaunchScreen.storyboard",
-                                      "Mail/Assets.xcassets", // Needed for AppIcon
-                                      "MailResources/**/PrivacyInfo.xcprivacy",
-                                      "Mail/Localizable/**/InfoPlist.strings"
-                                  ],
-                                  entitlements: "MailResources/Mail.entitlements",
-                                  scripts: [
-                                      Constants.swiftlintScript,
-                                      Constants.stripSymbolsScript
-                                  ],
-                                  dependencies: [
-                                      .target(name: "MailCore"),
-                                      .target(name: "MailCoreUI"),
-                                      .target(name: "MailResources"),
-                                      .target(name: "MailNotificationServiceExtension"),
-                                      .target(name: "MailNotificationContentExtension"),
-                                      .target(name: "MailShareExtension"),
-                                      .target(name: "MailAppIntentsExtension"),
-                                      .external(name: "InfomaniakBugTracker"),
-                                      .external(name: "InfomaniakCoreCommonUI"),
-                                      .external(name: "InfomaniakCoreDB"),
-                                      .external(name: "InfomaniakCoreSwiftUI"),
-                                      .external(name: "InfomaniakCore"),
-                                      .external(name: "InfomaniakCreateAccount"),
-                                      .external(name: "InfomaniakDI"),
-                                      .external(name: "InfomaniakLogin"),
-                                      .external(name: "InfomaniakNotifications"),
-                                      .external(name: "InfomaniakOnboarding"),
-                                      .external(name: "InfomaniakPrivacyManagement"),
-                                      .external(name: "InfomaniakRichHTMLEditor"),
-                                      .external(name: "NavigationBackport"),
-                                      .external(name: "Popovers"),
-                                      .external(name: "Realm"),
-                                      .external(name: "RealmSwift"),
-                                      .external(name: "SwiftModalPresentation"),
-                                      .external(name: "SwiftRegex"),
-                                      .external(name: "SwiftSoup"),
-                                      .external(name: "SwiftUIBackports"),
-                                      .external(name: "SwiftUIIntrospect"),
-                                      .external(name: "VersionChecker"),
-                                      .external(name: "WrappingHStack")
-                                  ],
-                                  settings: .settings(base: Constants.baseSettings)),
+                          mainTargetWith(name: "Infomaniak Mail", destinations: [.iPhone, .iPad]),
+                          mainTargetWith(name: "Infomaniak Mail Lite", destinations: [.macCatalyst]),
                           .target(name: "MailTests",
                                   destinations: Constants.destinations,
                                   product: .unitTests,
