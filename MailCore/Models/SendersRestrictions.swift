@@ -22,9 +22,22 @@ import RealmSwift
 public class SendersRestrictions: Object, Codable {
     @Persisted public var authorizedSenders: List<Sender>
     @Persisted public var blockedSenders: List<Sender>
+
+    enum CodingKeys: String, CodingKey {
+        case authorizedSenders
+        case blockedSenders
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        let authorized: [String] = authorizedSenders.map { $0.email }
+        let blocked: [String] = blockedSenders.map { $0.email }
+
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(authorized, forKey: .authorizedSenders)
+        try container.encode(blocked, forKey: .blockedSenders)
+    }
 }
 
 public class Sender: EmbeddedObject, Codable {
-    @Persisted var email: String
-    @Persisted var locked: Bool
+    @Persisted public var email: String
 }

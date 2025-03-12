@@ -31,6 +31,14 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(.sendersRestrictions(mailbox: mailbox)))
     }
 
+    func updateSendersRestrictions(mailbox: Mailbox, sendersRestrictions: SendersRestrictions) async throws -> Bool {
+        try await perform(request: authenticatedRequest(
+            .mailHosting(mailbox: mailbox),
+            method: .patch,
+            parameters: sendersRestrictions
+        ))
+    }
+
     func featureFlag(_ mailboxUUID: String) async throws -> [FeatureFlag] {
         try await perform(request: authenticatedRequest(.featureFlag(mailboxUUID)))
     }

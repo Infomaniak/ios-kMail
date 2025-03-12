@@ -34,7 +34,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     public let realmConfiguration: Realm.Configuration
     public let transactionExecutor: Transactionable
 
-    public let mailbox: Mailbox
+    public private(set) var mailbox: Mailbox
 
     public let apiFetcher: MailApiFetcher
     public let contactManager: ContactManageable
@@ -217,6 +217,31 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     public func getThread(from threadId: String) -> Thread? {
         guard let thread = transactionExecutor.fetchObject(ofType: Thread.self, forPrimaryKey: threadId) else { return nil }
         return thread.freezeIfNeeded()
+    }
+
+    public func updateMailbox(mailbox: Mailbox) {
+        self.mailbox = mailbox.freezeIfNeeded()
+    }
+
+    private func refreshSendersRestrictions() async throws -> SendersRestrictions {
+        let sendersRestrictions = try await apiFetcher.sendersRestrictions(mailbox: mailbox)
+        mailboxInfosManager.updateSendersRestrictions(mailbox: mailbox, sendersRestrictions: sendersRestrictions) {
+            updateMailbox(mailbox: $0)
+        }
+        return sendersRestrictions
+    }
+
+    public func unblockSender(sender: String) async throws {
+        let sendersRestrictions = try await refreshSendersRestrictions().detached()
+
+        guard let indexToRemove = sendersRestrictions.blockedSenders.firstIndex(where: { $0.email == sender }) else { return }
+        sendersRestrictions.blockedSenders.remove(at: indexToRemove)
+
+        _ = try await apiFetcher.updateSendersRestrictions(mailbox: mailbox, sendersRestrictions: sendersRestrictions)
+
+        mailboxInfosManager.updateSendersRestrictions(mailbox: mailbox, sendersRestrictions: sendersRestrictions) {
+            updateMailbox(mailbox: $0)
+        }
     }
 }
 

@@ -26,6 +26,7 @@ import SwiftUI
 struct MessageHeaderActionView<Content: View>: View {
     let iconSize: CGFloat = 16
     let icon: Image
+    var iconColor: Color = MailResourcesAsset.textSecondaryColor.swiftUIColor
     let message: String
 
     @ViewBuilder var actions: () -> Content
@@ -39,7 +40,7 @@ struct MessageHeaderActionView<Content: View>: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: iconSize)
-                        .foregroundStyle(MailResourcesAsset.textSecondaryColor)
+                        .foregroundStyle(iconColor)
                     Text(message)
                         .textStyle(.labelSecondary)
                 }
@@ -56,12 +57,24 @@ struct MessageHeaderActionView<Content: View>: View {
 }
 
 #Preview {
-    MessageHeaderActionView(
-        icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
-        message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
-    ) {
-        Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
-            .buttonStyle(.ikBorderless(isInlined: true))
-            .controlSize(.small)
+    VStack {
+        MessageHeaderActionView(
+            icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
+            message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
+        ) {
+            Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
+                .buttonStyle(.ikBorderless(isInlined: true))
+                .controlSize(.small)
+        }
+
+        MessageHeaderActionView(
+            icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
+            iconColor: MailResourcesAsset.orangeColor.swiftUIColor,
+            message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
+        ) {
+            Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
+                .buttonStyle(.ikBorderless(isInlined: true))
+                .controlSize(.small)
+        }
     }
 }
