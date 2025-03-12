@@ -26,20 +26,20 @@ public protocol ThreadsSort: Sendable {
 }
 
 public struct DefaultThreadsSort: ThreadsSort {
-    public let propertyName = "date"
+    public let propertyName = "internalDate"
     public let isAscending = false
 
     public func getReferenceDate(from thread: Thread) -> Date? {
-        return thread.date
+        return thread.internalDate
     }
 }
 
 public struct ScheduledThreadsSort: ThreadsSort {
-    public let propertyName = "date"
+    public let propertyName = "internalDate"
     public let isAscending = true
 
     public func getReferenceDate(from thread: Thread) -> Date? {
-        return thread.date
+        return thread.internalDate
     }
 }
 
