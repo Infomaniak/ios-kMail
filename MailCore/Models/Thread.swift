@@ -75,7 +75,7 @@ public class Thread: Object, Decodable, Identifiable {
     public var displayDate: DisplayDate {
         if containsOnlyScheduledDrafts {
             return .scheduled(date)
-        } else if let snoozeEndDate, snoozeState == .snoozed || snoozeState == .unsnoozed {
+        } else if snoozeState == .snoozed || snoozeState == .unsnoozed, snoozeAction != nil, let snoozeEndDate {
             return .snoozed(snoozeEndDate)
         } else {
             return .normal(date)
