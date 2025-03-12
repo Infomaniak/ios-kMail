@@ -51,7 +51,7 @@ public extension Endpoint {
     }
 
     private static var mailHost: Endpoint {
-        return Endpoint(hostKeypath: \.mailHost, path: "", apiEnvironment: .preprod)
+        return Endpoint(hostKeypath: \.mailHost, path: "")
     }
 
     private static var base: Endpoint {
