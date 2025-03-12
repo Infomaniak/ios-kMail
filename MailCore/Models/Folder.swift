@@ -269,6 +269,10 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return role == .draft || role == .scheduledDrafts
     }
 
+    public var shouldRefreshDuplicates: Bool {
+        return role == .snoozed
+    }
+
     public var shouldOverrideMessage: Bool {
         if role == .inbox || role == .snoozed {
             return true

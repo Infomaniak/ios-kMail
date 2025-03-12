@@ -153,7 +153,9 @@ public class Thread: Object, Decodable, Identifiable {
 
     private func updateSnooze() {
         let messagesThatCanBeSnoozed = Array(messages) + Array(duplicates)
-        let lastSnoozedMessage = messagesThatCanBeSnoozed.last { $0.snoozeState != nil }
+        let lastSnoozedMessage = messagesThatCanBeSnoozed.last {
+            $0.snoozeState != nil && $0.snoozeAction != nil && $0.snoozeEndDate != nil
+        }
 
         snoozeState = lastSnoozedMessage?.snoozeState
         snoozeAction = lastSnoozedMessage?.snoozeAction
