@@ -260,7 +260,6 @@ public extension MailboxManager {
 
                 let messagesToDelete = writableRealm.objects(Message.self).where { $0.uid.in(uidsBatch) }
                 var threadsToUpdate = Set<Thread>()
-                var threadsToDelete = Set<Thread>()
                 var draftsToDelete = Set<Draft>()
 
                 for message in messagesToDelete {
@@ -272,8 +271,6 @@ public extension MailboxManager {
                     }
                 }
 
-                let foldersToUpdate = Set(threadsToUpdate.compactMap(\.folder))
-
                 for draft in draftsToDelete {
                     if draft.action == nil {
                         writableRealm.delete(draft)
@@ -283,22 +280,16 @@ public extension MailboxManager {
                 }
 
                 writableRealm.delete(messagesToDelete)
-                for thread in threadsToUpdate where !thread.isInvalidated {
-                    if thread.messageInFolderCount == 0 {
-                        threadsToDelete.insert(thread)
-                    } else {
-                        do {
-                            try thread.recomputeOrFail()
-                        } catch {
-                            threadsToDelete.insert(thread)
-                            SentryDebug.threadHasNilLastMessageFromFolderDate(thread: thread)
-                        }
-                    }
-                }
+
+                let threadsToDelete = threadsToUpdate.filter { $0.messageInFolderCount == 0 }
+                threadsToUpdate.subtract(threadsToDelete)
                 writableRealm.delete(threadsToDelete)
-                for updateFolder in foldersToUpdate {
-                    updateFolder.computeUnreadCount()
-                }
+
+                let recomputedFolders = recomputeThreadsAndUnreadCount(of: threadsToUpdate, in: folder, realm: writableRealm)
+
+                var foldersOfDeletedThreads = Set(threadsToDelete.compactMap(\.folder))
+                foldersOfDeletedThreads.subtract(recomputedFolders)
+                recomputeUnreadCountOfFolders(foldersOfDeletedThreads, realm: writableRealm)
             }
         }
 
@@ -377,7 +368,7 @@ public extension MailboxManager {
                 threadsToUpdate.formUnion(message.threads)
             }
 
-            updateThreads(threads: threadsToUpdate, realm: writableRealm)
+            recomputeThreadsAndUnreadCount(of: threadsToUpdate, in: folder, realm: writableRealm)
         }
     }
 
@@ -418,7 +409,7 @@ public extension MailboxManager {
             }
         }
 
-        updateThreads(threads: threadsToUpdate, realm: writableRealm)
+        recomputeThreadsAndUnreadCount(of: threadsToUpdate, in: folder, realm: writableRealm)
     }
 
     /// Add the given message to existing compatible threads + Create a new thread if needed
@@ -506,9 +497,7 @@ public extension MailboxManager {
         keepCacheAttributes(for: message, keepProperties: .standard, using: realm)
         realm.add(message, update: .modified)
 
-        for thread in oldMessage.threads {
-            threadsToUpdate.insert(thread)
-        }
+        threadsToUpdate.formUnion(oldMessage.threads)
     }
 
     // MARK: - Utils
@@ -550,8 +539,15 @@ public extension MailboxManager {
         }
     }
 
-    private func updateThreads(threads: Set<Thread>, realm: Realm) {
-        for thread in threads {
+    @discardableResult
+    private func recomputeThreadsAndUnreadCount(of threads: Set<Thread>, in folder: Folder, realm: Realm) -> Set<Folder> {
+        var threadsToRecompute = threads
+        if folder.shouldRefreshDuplicates {
+            let duplicatesThreads = Set(threads.flatMap { $0.duplicates.flatMap { $0.threads } })
+            threadsToRecompute.formUnion(duplicatesThreads)
+        }
+
+        for thread in threadsToRecompute {
             do {
                 try thread.recomputeOrFail()
             } catch {
@@ -560,14 +556,23 @@ public extension MailboxManager {
             }
         }
 
-        recomputeUnreadCount(of: threads, realm: realm)
+        return recomputeUnreadCountOfFolders(containing: threadsToRecompute, realm: realm)
     }
 
     /// Refresh the unread count of the folders of the given threads
     /// When we refresh a thread from INBOX or SNOOZED, we should refresh both folders
-    private func recomputeUnreadCount(of threads: Set<Thread>, realm: Realm) {
-        var foldersToRefresh = Set(threads.compactMap(\.folder))
-        let folderRolesToRefresh = Set(foldersToRefresh.compactMap(\.role))
+    @discardableResult
+    private func recomputeUnreadCountOfFolders(containing threads: Set<Thread>, realm: Realm) -> Set<Folder> {
+        let foldersToRefresh = Set(threads.compactMap(\.folder))
+        return recomputeUnreadCountOfFolders(foldersToRefresh, realm: realm)
+    }
+
+    /// Refresh the unread count of the folders of the given threads
+    /// When we refresh a thread from INBOX or SNOOZED, we should refresh both folders
+    @discardableResult
+    private func recomputeUnreadCountOfFolders(_ folders: Set<Folder>, realm: Realm) -> Set<Folder> {
+        var foldersToRefresh = folders
+        let folderRolesToRefresh = Set(folders.compactMap(\.role))
 
         let folderRolesToRefreshTogether = Set([FolderRole.inbox, FolderRole.snoozed])
         if !folderRolesToRefresh.union(folderRolesToRefreshTogether).isEmpty {
@@ -580,6 +585,8 @@ public extension MailboxManager {
         for folder in foldersToRefresh {
             folder.computeUnreadCount()
         }
+
+        return foldersToRefresh
     }
 
     private func insertMessageToRealm(message: Message, using realm: Realm) -> Thread {
