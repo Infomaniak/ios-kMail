@@ -73,12 +73,15 @@ public extension Endpoint {
         return .base.appending(path: "/mail/\(uuid)")
     }
 
+    static func mailHosting(mailbox: Mailbox) -> Endpoint {
+        return .base.appending(path: "/securedProxy/1/mail_hostings/\(mailbox.hostingId)/mailboxes/\(mailbox.mailbox)")
+    }
+
     static func sendersRestrictions(mailbox: Mailbox) -> Endpoint {
-        return .base
-            .appending(
-                path: "/securedProxy/1/mail_hostings/\(mailbox.hostingId)/mailboxes/\(mailbox.mailbox)",
-                queryItems: [URLQueryItem(name: "with", value: "authorized_senders,blocked_senders")]
-            )
+        return .mailHosting(mailbox: mailbox).appending(
+            path: "",
+            queryItems: [URLQueryItem(name: "with", value: "authorized_senders,blocked_senders")]
+        )
     }
 
     static func permissions(mailbox: Mailbox) -> Endpoint {

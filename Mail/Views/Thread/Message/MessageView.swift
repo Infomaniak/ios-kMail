@@ -35,6 +35,8 @@ extension EnvironmentValues {
 struct MessageView: View {
     @Environment(\.isMessageInteractive) private var isMessageInteractive
 
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @State private var displayContentBlockedActionView = false
 
     @Binding var threadForcedExpansion: [String: MessageExpansionType]
@@ -63,6 +65,8 @@ struct MessageView: View {
 
             if isMessageExpanded {
                 VStack(spacing: IKPadding.medium) {
+                    MessageSpamHeaderView(message: message, mailboxManager: mailboxManager)
+
                     if let isScheduledDraft = message.isScheduledDraft, isScheduledDraft,
                        let scheduleDate = message.scheduleDate,
                        let draftResources = message.draftResource {

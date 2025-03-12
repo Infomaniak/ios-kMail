@@ -53,7 +53,14 @@ public final class MailboxInfosManager {
                     }
                 }
             },
-            objectTypes: [Mailbox.self, MailboxPermissions.self, Quotas.self, ExternalMailInfo.self, SendersRestrictions.self]
+            objectTypes: [
+                Mailbox.self,
+                MailboxPermissions.self,
+                Quotas.self,
+                ExternalMailInfo.self,
+                SendersRestrictions.self,
+                Sender.self
+            ]
         )
 
         let realmAccessor = MailCoreRealmAccessor(realmConfiguration: realmConfiguration)
@@ -156,6 +163,18 @@ public final class MailboxInfosManager {
         try? writeTransaction { writableRealm in
             let userMailboxes = writableRealm.objects(Mailbox.self).where { $0.userId == userId }
             writableRealm.delete(userMailboxes)
+        }
+    }
+
+    public func updateSendersRestrictions(
+        mailbox: Mailbox,
+        sendersRestrictions: SendersRestrictions,
+        completion: (Mailbox) -> Void
+    ) {
+        try? writeTransaction { writableRealm in
+            guard let freshMailbox = mailbox.fresh(using: writableRealm) else { return }
+            freshMailbox.sendersRestrictions = sendersRestrictions
+            completion(freshMailbox)
         }
     }
 }
