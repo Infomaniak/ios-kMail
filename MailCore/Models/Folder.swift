@@ -325,12 +325,13 @@ public class Folder: Object, Codable, Comparable, Identifiable {
 
     public func threadBelongsToFolder(_ thread: Query<Thread>, using realm: Realm) -> Query<Bool> {
         let isThreadInCurrentFolder = thread.folderId == getThreadsSource(using: realm).remoteId
+        let isMessageSnoozed = thread.snoozeState == .snoozed && thread.snoozeEndDate != nil && thread.snoozeAction != nil
 
         switch role {
         case .inbox:
-            return isThreadInCurrentFolder && thread.snoozeState != .snoozed
+            return isThreadInCurrentFolder && !isMessageSnoozed
         case .snoozed:
-            return isThreadInCurrentFolder && thread.snoozeState == .snoozed
+            return isThreadInCurrentFolder && isMessageSnoozed
         default:
             return isThreadInCurrentFolder
         }
