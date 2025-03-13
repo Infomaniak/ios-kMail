@@ -289,7 +289,7 @@ public extension MailboxManager {
 
                 let recomputedFolders = recomputeThreadsAndUnreadCount(of: threadsToUpdate, in: folder, realm: writableRealm)
                 foldersOfDeletedThreads.subtract(recomputedFolders)
-                recomputeUnreadCountOfFolders(foldersOfDeletedThreads, realm: writableRealm)
+                recomputeUnreadCountOfFolders(foldersOfDeletedThreads)
             }
         }
 
@@ -556,21 +556,21 @@ public extension MailboxManager {
             }
         }
 
-        return recomputeUnreadCountOfFolders(containing: threadsToRecompute, realm: realm)
+        return recomputeUnreadCountOfFolders(containing: threadsToRecompute)
     }
 
     /// Refresh the unread count of the folders of the given threads
     /// When we refresh a thread from INBOX or SNOOZED, we should refresh both folders
     @discardableResult
-    private func recomputeUnreadCountOfFolders(containing threads: Set<Thread>, realm: Realm) -> Set<Folder> {
+    private func recomputeUnreadCountOfFolders(containing threads: Set<Thread>) -> Set<Folder> {
         let foldersToRefresh = Set(threads.compactMap(\.folder))
-        return recomputeUnreadCountOfFolders(foldersToRefresh, realm: realm)
+        return recomputeUnreadCountOfFolders(foldersToRefresh)
     }
 
     /// Refresh the unread count of the folders of the given threads
     /// When we refresh a thread from INBOX or SNOOZED, we should refresh both folders
     @discardableResult
-    private func recomputeUnreadCountOfFolders(_ folders: Set<Folder>, realm: Realm) -> Set<Folder> {
+    private func recomputeUnreadCountOfFolders(_ folders: Set<Folder>) -> Set<Folder> {
         var foldersToRefresh = folders
         let folderRolesToRefresh = Set(folders.compactMap(\.role))
 
