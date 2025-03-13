@@ -175,6 +175,9 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     /// Date of last threads update
     @Persisted public var lastUpdate: Date?
 
+    @Persisted public var threadsSource: Folder?
+    @Persisted public var associatedFolders: RealmSwift.List<Folder>
+
     public var listChildren: AnyRealmCollection<Folder>? {
         children.isEmpty ? nil : AnyRealmCollection(children)
     }
@@ -295,36 +298,8 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         }
     }
 
-    public func getThreadsSource(using realm: Realm) -> Folder {
-        if role == .snoozed,
-           let inbox = realm.objects(Folder.self).where({ $0.role == .inbox }).first {
-            return inbox
-        } else {
-            return self
-        }
-    }
-
-    public func getAssociatedFolders(using realm: Realm) -> [Folder] {
-        switch role {
-        case .inbox:
-            guard let snoozed = realm.objects(Folder.self).where({ $0.role == .snoozed }).first else {
-                return []
-            }
-            return [snoozed]
-
-        case .snoozed:
-            guard let inbox = realm.objects(Folder.self).where({ $0.role == .inbox }).first else {
-                return []
-            }
-            return [inbox]
-
-        default:
-            return []
-        }
-    }
-
-    public func threadBelongsToFolder(_ thread: Query<Thread>, using realm: Realm) -> Query<Bool> {
-        let isThreadInCurrentFolder = thread.folderId == getThreadsSource(using: realm).remoteId
+    public func threadBelongsToFolder(_ thread: Query<Thread>) -> Query<Bool> {
+        let isThreadInCurrentFolder = thread.folderId == threadsSource?.remoteId ?? ""
         let isMessageSnoozed = thread.snoozeState == .snoozed && thread.snoozeEndDate != nil && thread.snoozeAction != nil
 
         switch role {
