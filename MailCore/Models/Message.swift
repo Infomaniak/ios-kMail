@@ -296,7 +296,6 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
             self.date = date
         } else {
             date = try values.decode(Date.self, forKey: .internalDate)
-            SentryDebug.nilDateParsingBreadcrumb(uid: uid)
         }
         size = try values.decode(Int.self, forKey: .size)
         from = try values.decode(List<Recipient>.self, forKey: .from)
