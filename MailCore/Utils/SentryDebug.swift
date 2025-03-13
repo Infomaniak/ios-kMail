@@ -118,6 +118,7 @@ public enum SentryDebug {
         case syncedAuthenticator = "SyncedAuthenticator"
     }
 
+    // periphery:ignore
     private static func createBreadcrumb(level: SentryLevel,
                                          category: String,
                                          message: String,
@@ -127,14 +128,6 @@ public enum SentryDebug {
         crumb.message = message
         crumb.data = data
         return crumb
-    }
-
-    static func nilDateParsingBreadcrumb(uid: String) {
-        let breadcrumb = createBreadcrumb(level: .warning,
-                                          category: Category.threadAlgorithm.rawValue,
-                                          message: "Nil message date decoded",
-                                          data: ["uid": uid])
-        SentrySDK.addBreadcrumb(breadcrumb)
     }
 
     static func listIncoherentMessageUpdate(messages: [Message], actualSeen: Bool) {
