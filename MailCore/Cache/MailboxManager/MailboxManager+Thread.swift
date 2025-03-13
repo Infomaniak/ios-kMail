@@ -282,12 +282,12 @@ public extension MailboxManager {
                 writableRealm.delete(messagesToDelete)
 
                 let threadsToDelete = threadsToUpdate.filter { $0.messageInFolderCount == 0 }
+                var foldersOfDeletedThreads = Set(threadsToDelete.compactMap(\.folder))
                 threadsToUpdate.subtract(threadsToDelete)
+
                 writableRealm.delete(threadsToDelete)
 
                 let recomputedFolders = recomputeThreadsAndUnreadCount(of: threadsToUpdate, in: folder, realm: writableRealm)
-
-                var foldersOfDeletedThreads = Set(threadsToDelete.compactMap(\.folder))
                 foldersOfDeletedThreads.subtract(recomputedFolders)
                 recomputeUnreadCountOfFolders(foldersOfDeletedThreads, realm: writableRealm)
             }
