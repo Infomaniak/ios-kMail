@@ -19,7 +19,6 @@
 import DesignSystem
 import MailCore
 import MailCoreUI
-import MailResources
 import SwiftUI
 
 struct HeaderDateView: View {

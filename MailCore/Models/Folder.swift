@@ -212,13 +212,6 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return true
     }
 
-    public var acceptsMovedMessages: Bool {
-        if role == .scheduledDrafts || role == .snoozed {
-            return false
-        }
-        return shouldBeDisplayed
-    }
-
     public var threadsSort: any ThreadsSort {
         switch role {
         case .snoozed:

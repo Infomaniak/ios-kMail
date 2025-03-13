@@ -256,7 +256,7 @@ public extension MailboxManager {
         for index in stride(from: 0, to: uidsToDelete.count, by: batchSize) {
             try? writeTransaction { writableRealm in
                 let shortUidsBatch = Array(uidsToDelete[index ..< min(index + batchSize, uidsToDelete.count)])
-                let uidsBatch = shortUidsBatch.map { computeLongMessageUid(shortUid: $0, in: folder, using: writableRealm) }
+                let uidsBatch = shortUidsBatch.map { computeLongMessageUid(shortUid: $0, in: folder) }
 
                 let messagesToDelete = writableRealm.objects(Message.self).where { $0.uid.in(uidsBatch) }
                 var threadsToUpdate = Set<Thread>()
@@ -361,7 +361,7 @@ public extension MailboxManager {
         try? writeTransaction { writableRealm in
             var threadsToUpdate = Set<Thread>()
             for item in items {
-                let messageLongUid = computeLongMessageUid(shortUid: item[keyPath: messageUid], in: folder, using: writableRealm)
+                let messageLongUid = computeLongMessageUid(shortUid: item[keyPath: messageUid], in: folder)
                 guard let message = writableRealm.object(ofType: Message.self, forPrimaryKey: messageLongUid) else { continue }
 
                 action(message, item)
@@ -617,7 +617,7 @@ public extension MailboxManager {
         freshFolder.threads.insert(objectsIn: threads)
     }
 
-    private func computeLongMessageUid(shortUid: String, in folder: Folder, using realm: Realm) -> String {
+    private func computeLongMessageUid(shortUid: String, in folder: Folder) -> String {
         guard let sourceFolder = folder.threadsSource else { return "" }
         return "\(shortUid)@\(sourceFolder.remoteId)"
     }
