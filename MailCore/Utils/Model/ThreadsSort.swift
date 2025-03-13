@@ -35,11 +35,11 @@ public struct DefaultThreadsSort: ThreadsSort {
 }
 
 public struct ScheduledThreadsSort: ThreadsSort {
-    public let propertyName = "internalDate"
+    public let propertyName = "date"
     public let isAscending = true
 
     public func getReferenceDate(from thread: Thread) -> Date? {
-        return thread.internalDate
+        return thread.date
     }
 }
 
