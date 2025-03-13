@@ -84,7 +84,7 @@ public struct MessageActionResult: Codable {
 /// - Many threads
 /// - One originalThread: parent thread
 /// - One folder
-public final class Message: Object, Decodable, Identifiable {
+public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted(primaryKey: true) public var uid = ""
     @Persisted public var messageId: String?
     @Persisted public var subject: String?

@@ -27,7 +27,7 @@ public class SwissTransferAttachment: EmbeddedObject, Codable {
     @Persisted public var files: RealmSwift.List<File>
 }
 
-public class File: EmbeddedObject, Codable, Identifiable {
+public class File: EmbeddedObject, Codable, ObjectKeyIdentifiable {
     @Persisted public var uuid: String
     @Persisted public var name: String
     @Persisted public var size: Int
