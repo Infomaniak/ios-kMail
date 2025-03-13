@@ -175,6 +175,9 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     /// Date of last threads update
     @Persisted public var lastUpdate: Date?
 
+    @Persisted public var threadsSource: Folder?
+    @Persisted public var associatedFolders: RealmSwift.List<Folder>
+
     public var listChildren: AnyRealmCollection<Folder>? {
         children.isEmpty ? nil : AnyRealmCollection(children)
     }
@@ -269,6 +272,18 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return role == .draft || role == .scheduledDrafts
     }
 
+    public var shouldRefreshDuplicates: Bool {
+        return role == .snoozed
+    }
+
+    public var shouldOverrideMessage: Bool {
+        if role == .inbox || role == .snoozed {
+            return true
+        } else {
+            return false
+        }
+    }
+
     public static func < (lhs: Folder, rhs: Folder) -> Bool {
         if let lhsRole = lhs.role, let rhsRole = rhs.role {
             return lhsRole.order < rhsRole.order
@@ -283,17 +298,15 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         }
     }
 
-    public func threadBelongsToFolder(_ thread: Query<Thread>, using realm: Realm) -> Query<Bool> {
-        let isThreadInCurrentFolder = thread.folderId == remoteId
+    public func threadBelongsToFolder(_ thread: Query<Thread>) -> Query<Bool> {
+        let isThreadInCurrentFolder = thread.folderId == threadsSource?.remoteId ?? ""
+        let isMessageSnoozed = thread.snoozeState == .snoozed && thread.snoozeEndDate != nil && thread.snoozeAction != nil
 
         switch role {
         case .inbox:
-            return isThreadInCurrentFolder && thread.snoozeState != .snoozed
+            return isThreadInCurrentFolder && !isMessageSnoozed
         case .snoozed:
-            guard let inbox = realm.objects(Folder.self).where({ $0.role == .inbox }).first else {
-                return thread.snoozeState == .snoozed
-            }
-            return thread.folderId == inbox.remoteId && thread.snoozeState == .snoozed
+            return isThreadInCurrentFolder && isMessageSnoozed
         default:
             return isThreadInCurrentFolder
         }

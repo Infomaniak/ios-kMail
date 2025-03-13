@@ -19,10 +19,10 @@
 import Foundation
 import Sentry
 
-public struct MessagesDelta: Decodable {
+public struct MessagesDelta<Flags: DeltaFlags>: Decodable, Sendable {
     public let deletedShortUids: [String]
     public let addedShortUids: [String]
-    public let updated: [MessageFlags]
+    public let updated: [Flags]
     public let cursor: String
     public let unreadCount: Int
 
@@ -35,7 +35,11 @@ public struct MessagesDelta: Decodable {
     }
 }
 
-public class MessageFlags: Decodable {
+public protocol DeltaFlags: Decodable, Sendable {
+    var shortUid: String { get }
+}
+
+public struct MessageFlags: DeltaFlags {
     public let shortUid: String
     public let answered: Bool
     public let isFavorite: Bool
@@ -50,5 +54,15 @@ public class MessageFlags: Decodable {
         case forwarded
         case scheduled
         case seen
+    }
+}
+
+public struct SnoozedFlags: DeltaFlags {
+    public let shortUid: String
+    public let snoozeEndDate: Date
+
+    private enum CodingKeys: String, CodingKey {
+        case shortUid = "uid"
+        case snoozeEndDate
     }
 }

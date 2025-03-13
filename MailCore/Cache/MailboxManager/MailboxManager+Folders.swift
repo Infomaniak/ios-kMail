@@ -34,9 +34,20 @@ public extension MailboxManager {
         let newFolders = getSubFolders(from: filteredFolderResult)
 
         try? writeTransaction { writableRealm in
-            // Update folders in Realm
+            let foldersByRole = Dictionary(grouping: newFolders, by: \.role)
+
             for folder in newFolders {
                 self.keepCacheAttributes(for: folder, using: writableRealm)
+
+                if folder.role == .inbox, let snoozed = foldersByRole[.snoozed]?.first {
+                    folder.associatedFolders.append(snoozed)
+                    folder.threadsSource = folder
+                } else if folder.role == .snoozed, let inbox = foldersByRole[.inbox]?.first {
+                    folder.associatedFolders.append(inbox)
+                    folder.threadsSource = inbox
+                } else {
+                    folder.threadsSource = folder
+                }
             }
 
             // Get from Realm

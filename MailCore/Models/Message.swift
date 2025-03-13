@@ -148,7 +148,7 @@ public final class Message: Object, Decodable, Identifiable {
 
     /// This is the parent thread situated in the parent folder.
     public var originalThread: Thread? {
-        return threads.first { $0.folder?.remoteId == folderId }
+        return threads.first { $0.folderId == folderId }
     }
 
     /// Parent folder of the message.
