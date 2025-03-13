@@ -38,7 +38,7 @@ struct MenuHeaderView: View {
             ZStack {}
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        logoImage
+                        logoImage(Image(uiImage: MailResourcesAsset.logoText.image))
                     }
                     ToolbarItem(placement: .topBarTrailing) {
                         settingsButton
@@ -46,7 +46,7 @@ struct MenuHeaderView: View {
                 }
         } else {
             HStack {
-                logoImage
+                logoImage(MailResourcesAsset.logoText.swiftUIImage)
 
                 Spacer()
 
@@ -61,8 +61,8 @@ struct MenuHeaderView: View {
         }
     }
 
-    private var logoImage: some View {
-        MailResourcesAsset.logoText.swiftUIImage
+    private func logoImage(_ image: Image) -> some View {
+        image
             .resizable()
             .scaledToFit()
             .frame(height: menuDrawerLogoHeight)
