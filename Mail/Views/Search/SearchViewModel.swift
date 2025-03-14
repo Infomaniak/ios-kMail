@@ -90,7 +90,7 @@ final class SearchViewModel: ObservableObject, ThreadListable {
     var searchState: SearchState {
         if selectedFilters.isEmpty && searchValue.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return .history
-        } else if (frozenThreads.isEmpty && !isLoading) && frozenContacts.isEmpty {
+        } else if !isLoading && lastSearch != nil && frozenThreads.isEmpty && frozenContacts.isEmpty {
             return .noResults
         } else {
             return .results
@@ -114,7 +114,7 @@ final class SearchViewModel: ObservableObject, ThreadListable {
 
     var resourceNext: String?
 
-    var lastSearch = ""
+    var lastSearch: String?
 
     var searchFieldObservation: AnyCancellable?
 
@@ -132,7 +132,7 @@ final class SearchViewModel: ObservableObject, ThreadListable {
             .debounce(for: .seconds(0.3), scheduler: DispatchQueue.main)
             .sink { [weak self] newValue in
                 guard let self,
-                      lastSearch.trimmingCharacters(in: .whitespacesAndNewlines) != newValue
+                      lastSearch?.trimmingCharacters(in: .whitespacesAndNewlines) != newValue
                       .trimmingCharacters(in: .whitespacesAndNewlines) else {
                     return
                 }
