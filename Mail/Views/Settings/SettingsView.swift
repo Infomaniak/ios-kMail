@@ -47,8 +47,6 @@ struct SettingsView: View {
     @AppStorage(UserDefaults.shared.key(.externalContent)) private var externalContent = DefaultPreferences.externalContent
     @AppStorage(UserDefaults.shared.key(.threadMode)) private var threadMode = DefaultPreferences.threadMode
     @AppStorage(UserDefaults.shared.key(.autoAdvance)) private var autoAdvance = DefaultPreferences.autoAdvance
-    @AppStorage(UserDefaults.shared.key(.matomoAuthorized)) private var matomoAuthorized: Bool = DefaultPreferences
-        .matomoAuthorized
 
     @State private var isShowingMyKSuiteDashboard = false
     @State private var myKSuiteMailbox: Mailbox?
@@ -259,15 +257,9 @@ struct SettingsView: View {
                             illustration: accentColor.dataPrivacyImage.swiftUIImage,
                             userDefaultStore: .shared,
                             userDefaultKeyMatomo: UserDefaults.shared.key(.matomoAuthorized),
-                            userDefaultKeySentry: UserDefaults.shared.key(.sentryAuthorized)
+                            userDefaultKeySentry: UserDefaults.shared.key(.sentryAuthorized),
+                            matomo: matomo
                         )
-                        .onChange(of: matomoAuthorized) { newValue in
-                            #if DEBUG && !TEST
-                            matomo.optOut(true)
-                            #else
-                            matomo.optOut(!newValue)
-                            #endif
-                        }
                     }
 
                     SettingsSubMenuCell(

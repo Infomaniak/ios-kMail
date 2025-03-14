@@ -28,6 +28,7 @@ import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
 import SwiftUIIntrospect
+import VersionChecker
 
 struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
@@ -112,7 +113,7 @@ struct ThreadListView: View {
 
                     if Constants.isUsingABreakableOSVersion && !hasDismissedUpdateVersionView && viewModel.frozenFolder
                         .role == .inbox {
-                        UpdateVersionView(isShowingUpdateAlert: $isShowingUpdateAlert)
+                        MailUpdateVersionView(isShowingUpdateAlert: $isShowingUpdateAlert)
                             .threadListCellAppearance()
                     }
 

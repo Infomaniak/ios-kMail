@@ -80,6 +80,10 @@ public struct URLConstants {
         }
         return url
     }
+
+    public static func getCurrentURL() -> URLConstants {
+        Bundle.main.isRunningInTestFlight ? testFlight : appStore
+    }
 }
 
 public enum Constants {
