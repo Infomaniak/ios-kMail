@@ -174,8 +174,12 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         return Array(dup)
     }
 
-    public var notInlineAttachments: Results<Attachment> {
-        attachments.filter("isInline == false")
+    public var notInlineAttachments: [Attachment] {
+        if attachments.isManagedByRealm {
+            return Array(attachments.filter("isInline == false"))
+        } else {
+            return attachments.filter { $0.isInline == false }
+        }
     }
 
     public func fromMe(currentMailboxEmail: String) -> Bool {
