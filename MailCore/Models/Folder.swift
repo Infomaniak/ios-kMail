@@ -72,9 +72,9 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return 3
         case .sent:
             return 4
-        case .snoozed:
-            return 5
         case .scheduledDrafts:
+            return 5
+        case .snoozed:
             return 6
         case .draft:
             return 7
