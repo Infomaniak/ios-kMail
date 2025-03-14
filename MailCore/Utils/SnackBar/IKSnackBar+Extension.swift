@@ -43,8 +43,6 @@ public extension SnackBarStyle {
 }
 
 public extension IKSnackBar {
-    @discardableResult
-    @MainActor
     /// Call this method to display a `SnackBar`
     /// - Parameters:
     ///   - message: The message to display
@@ -52,6 +50,8 @@ public extension IKSnackBar {
     ///   - action: The action to perform if any
     ///   - contextView: Set a context view, when displaying in extension mode for eg.
     /// - Returns: An IKSnackBar if any
+    @discardableResult
+    @MainActor
     static func showMailSnackBar(
         message: String,
         duration: SnackBar.Duration = .lengthLong,
