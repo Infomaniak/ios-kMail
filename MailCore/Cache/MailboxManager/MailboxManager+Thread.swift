@@ -405,7 +405,7 @@ public extension MailboxManager {
             }
 
             if let message = writableRealm.objects(Message.self).where({ $0.uid == message.uid }).first {
-                folder.messages.insert(message)
+                writableRealm.add(message)
             }
         }
 
@@ -597,24 +597,23 @@ public extension MailboxManager {
     }
 
     private func refreshFolderThreads(folder: Folder, refreshAssociatedFolders: Bool, using realm: Realm) {
-        upsertThreads(in: folder, using: realm)
+        upsertThreadsAndMessages(in: folder, using: realm)
 
         if refreshAssociatedFolders {
             for associatedFolder in folder.associatedFolders {
-                upsertThreads(in: associatedFolder, using: realm)
+                upsertThreadsAndMessages(in: associatedFolder, using: realm)
             }
         }
     }
 
-    private func upsertThreads(in folder: Folder, using realm: Realm) {
+    private func upsertThreadsAndMessages(in folder: Folder, using realm: Realm) {
         guard let freshFolder = folder.fresh(transactionable: self) else { return }
 
-        let threads = realm.objects(Thread.self).where { thread in
-            freshFolder.threadBelongsToFolder(thread)
-        }
+        let threads = realm.objects(Thread.self).where { freshFolder.threadBelongsToFolder($0) }
+        freshFolder.threads.upsert(objectsIn: threads)
 
-        freshFolder.threads.removeAll()
-        freshFolder.threads.insert(objectsIn: threads)
+        let messages = realm.objects(Message.self).where { $0.threads.containsAny(in: threads) }
+        freshFolder.messages.upsert(objectsIn: messages)
     }
 
     private func computeLongMessageUid(shortUid: String, in folder: Folder) -> String {

@@ -63,7 +63,7 @@ extension RandomAccessCollection where Element == Message {
     func fromFolderOrSearch(originFolder: Folder?) -> [Message] {
         return originFolder?.toolType == .search ?
             self as! [Message] :
-            filter { $0.folderId == originFolder?.remoteId }
+            filter { $0.folder == originFolder }
     }
 
     /// - Returns: The original message list and their duplicates
