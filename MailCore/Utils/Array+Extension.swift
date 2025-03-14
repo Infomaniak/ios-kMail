@@ -62,3 +62,10 @@ public extension Set {
         return Array(self)
     }
 }
+
+public extension MutableSet {
+    func upsert<S: Sequence>(objectsIn objects: S) where S.Iterator.Element == Element {
+        removeAll()
+        insert(objectsIn: objects)
+    }
+}
