@@ -595,10 +595,8 @@ public extension MailboxManager {
     private func refreshFolderThreads(folder: Folder, using realm: Realm) {
         upsertThreadsAndMessages(in: folder, using: realm)
 
-        if refreshAssociatedFolders {
-            for associatedFolder in folder.associatedFolders {
-                upsertThreadsAndMessages(in: associatedFolder, using: realm)
-            }
+        for associatedFolder in folder.associatedFolders {
+            upsertThreadsAndMessages(in: associatedFolder, using: realm)
         }
     }
 
