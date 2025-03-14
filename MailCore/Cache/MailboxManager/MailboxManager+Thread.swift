@@ -403,10 +403,6 @@ public extension MailboxManager {
             } else {
                 createSingleMessageThread(message: message, threadsToUpdate: &threadsToUpdate, using: writableRealm)
             }
-
-            if let message = writableRealm.objects(Message.self).where({ $0.uid == message.uid }).first {
-                writableRealm.add(message)
-            }
         }
 
         recomputeThreadsAndUnreadCount(of: threadsToUpdate, in: folder, realm: writableRealm)
