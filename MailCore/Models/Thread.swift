@@ -40,7 +40,8 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var from: List<Recipient>
     @Persisted public var to: List<Recipient>
     @Persisted public var subject: String?
-    @Persisted(indexed: true) public var date: Date
+    @Persisted(indexed: true) public var internalDate: Date
+    @Persisted public var date: Date
     @Persisted public var hasAttachments: Bool
     @Persisted public var hasDrafts: Bool
     @Persisted public var flagged: Bool
@@ -58,11 +59,27 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var duplicates = List<Message>()
     @Persisted public var messageIds: MutableSet<String>
 
+    @Persisted public var snoozeState: SnoozeState?
+    @Persisted public var snoozeAction: String?
+    @Persisted public var snoozeEndDate: Date?
+
     /// This property is used to remove threads from list before network call is finished
     @Persisted public var isMovedOutLocally = false
 
+    @Persisted public var numberOfScheduledDraft = 0
+
     public var id: String {
         return uid
+    }
+
+    public var displayDate: DisplayDate {
+        if containsOnlyScheduledDrafts {
+            return .scheduled(date)
+        } else if snoozeState == .snoozed, let snoozeEndDate {
+            return .snoozed(snoozeEndDate)
+        } else {
+            return .normal(date)
+        }
     }
 
     /// Parent folder of the thread.
@@ -100,6 +117,10 @@ public class Thread: Object, Decodable, Identifiable {
         unseenMessages > 0
     }
 
+    public var containsOnlyScheduledDrafts: Bool {
+        return numberOfScheduledDraft == messages.count
+    }
+
     public func updateUnseenMessages() {
         unseenMessages = messages.filter { !$0.seen }.count
     }
@@ -134,15 +155,29 @@ public class Thread: Object, Decodable, Identifiable {
             $0.date.compare($1.date) == .orderedAscending
         }.toRealmList()
 
-        if let lastMessageFromFolderDate = lastMessageFromFolder?.date {
-            date = lastMessageFromFolderDate
+        if let lastMessageFromFolder {
+            internalDate = lastMessageFromFolder.internalDate
+            date = lastMessageFromFolder.date
         } else {
             throw MailError.incoherentThreadDate
         }
 
+        numberOfScheduledDraft = messages.count { $0.isScheduledDraft == true }
+
         lastAction = getLastAction()
 
         subject = messages.first?.subject
+
+        updateSnooze()
+    }
+
+    private func updateSnooze() {
+        let messagesThatCanBeSnoozed = Array(messages) + Array(duplicates)
+        let lastSnoozedMessage = messagesThatCanBeSnoozed.last { $0.snoozeState != nil }
+
+        snoozeState = lastSnoozedMessage?.snoozeState
+        snoozeAction = lastSnoozedMessage?.snoozeAction
+        snoozeEndDate = lastSnoozedMessage?.snoozeEndDate
     }
 
     private func getLastAction() -> ThreadLastAction? {
@@ -212,6 +247,7 @@ public class Thread: Object, Decodable, Identifiable {
         case from
         case to
         case subject
+        case internalDate
         case date
         case hasAttachments
         case hasDrafts
@@ -219,6 +255,9 @@ public class Thread: Object, Decodable, Identifiable {
         case answered
         case forwarded
         case bimi
+        case snoozeState
+        case snoozeAction
+        case snoozeEndDate
     }
 
     public convenience init(
@@ -228,13 +267,17 @@ public class Thread: Object, Decodable, Identifiable {
         from: [Recipient],
         to: [Recipient],
         subject: String? = nil,
+        internalDate: Date,
         date: Date,
         hasAttachments: Bool,
         hasDrafts: Bool,
         flagged: Bool,
         answered: Bool,
         forwarded: Bool,
-        bimi: Bimi? = nil
+        bimi: Bimi? = nil,
+        snoozeState: SnoozeState? = nil,
+        snoozeAction: String? = nil,
+        snoozeEndDate: Date? = nil
     ) {
         self.init()
 
@@ -244,6 +287,7 @@ public class Thread: Object, Decodable, Identifiable {
         self.from = from.toRealmList()
         self.to = to.toRealmList()
         self.subject = subject
+        self.internalDate = internalDate
         self.date = date
         self.hasAttachments = hasAttachments
         self.hasDrafts = hasDrafts
@@ -251,6 +295,11 @@ public class Thread: Object, Decodable, Identifiable {
         self.answered = answered
         self.forwarded = forwarded
         self.bimi = bimi
+        self.snoozeState = snoozeState
+        self.snoozeAction = snoozeAction
+        self.snoozeEndDate = snoozeEndDate
+
+        numberOfScheduledDraft = messages.count { $0.isScheduledDraft == true }
     }
 
     public required init(from decoder: Decoder) throws {
@@ -263,6 +312,7 @@ public class Thread: Object, Decodable, Identifiable {
         from = try container.decode(List<Recipient>.self, forKey: .from)
         to = try container.decode(List<Recipient>.self, forKey: .to)
         subject = try container.decode(String?.self, forKey: .subject)
+        internalDate = try container.decode(Date.self, forKey: .internalDate)
         date = try container.decodeIfPresent(Date.self, forKey: .date) ?? Date()
         hasAttachments = try container.decode(Bool.self, forKey: .hasAttachments)
         hasDrafts = try container.decode(Bool.self, forKey: .hasDrafts)
@@ -270,6 +320,11 @@ public class Thread: Object, Decodable, Identifiable {
         answered = try container.decode(Bool.self, forKey: .answered)
         forwarded = try container.decode(Bool.self, forKey: .forwarded)
         bimi = try container.decodeIfPresent(Bimi.self, forKey: .bimi)
+        snoozeState = try container.decodeIfPresent(SnoozeState.self, forKey: .snoozeState)
+        snoozeAction = try container.decodeIfPresent(String.self, forKey: .snoozeAction)
+        snoozeEndDate = try container.decodeIfPresent(Date.self, forKey: .snoozeEndDate)
+
+        numberOfScheduledDraft = messages.count { $0.isScheduledDraft == true }
     }
 
     override public init() {

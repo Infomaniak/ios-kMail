@@ -89,6 +89,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var messageId: String?
     @Persisted public var subject: String?
     @Persisted public var priority: MessagePriority
+    @Persisted public var internalDate: Date
     @Persisted public var date: Date
     @Persisted public var size: Int
     @Persisted public var from: List<Recipient>
@@ -134,6 +135,10 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     @Persisted public var swissTransferAttachment: SwissTransferAttachment?
 
+    @Persisted public var snoozeState: SnoozeState?
+    @Persisted public var snoozeAction: String?
+    @Persisted public var snoozeEndDate: Date?
+
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
     }
@@ -144,7 +149,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     /// This is the parent thread situated in the parent folder.
     public var originalThread: Thread? {
-        return threads.first { $0.folder?.remoteId == folderId }
+        return threads.first { $0.folderId == folderId }
     }
 
     /// Parent folder of the message.
@@ -163,6 +168,14 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     public var formattedSubject: String {
         return subject ?? MailResourcesStrings.Localizable.noSubjectTitle
+    }
+
+    public var displayDate: DisplayDate {
+        if isScheduledDraft == true {
+            return .scheduled(date)
+        } else {
+            return .normal(date)
+        }
     }
 
     public var attachmentsSize: Int64 {
@@ -232,6 +245,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case messageId = "msgId"
         case subject
         case priority
+        case internalDate
         case date
         case size
         case from
@@ -262,6 +276,9 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case flagged
         case hasUnsubscribeLink
         case bimi
+        case snoozeState
+        case snoozeAction
+        case snoozeEndDate
     }
 
     override init() {
@@ -278,11 +295,11 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         }
         subject = try values.decodeIfPresent(String.self, forKey: .subject)
         priority = try values.decode(MessagePriority.self, forKey: .priority)
+        internalDate = try values.decode(Date.self, forKey: .internalDate)
         if let date = (try? values.decode(Date.self, forKey: .date)) {
             self.date = date
         } else {
-            date = Date()
-            SentryDebug.nilDateParsingBreadcrumb(uid: uid)
+            date = try values.decode(Date.self, forKey: .internalDate)
         }
         size = try values.decode(Int.self, forKey: .size)
         from = try values.decode(List<Recipient>.self, forKey: .from)
@@ -327,6 +344,9 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         flagged = try values.decode(Bool.self, forKey: .flagged)
         hasUnsubscribeLink = try values.decodeIfPresent(Bool.self, forKey: .hasUnsubscribeLink)
         bimi = try values.decodeIfPresent(Bimi.self, forKey: .bimi)
+        snoozeState = try values.decodeIfPresent(SnoozeState.self, forKey: .snoozeState)
+        snoozeAction = try values.decodeIfPresent(String.self, forKey: .snoozeAction)
+        snoozeEndDate = try values.decodeIfPresent(Date.self, forKey: .snoozeEndDate)
     }
 
     public convenience init(
@@ -334,6 +354,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         msgId: String,
         subject: String? = nil,
         priority: MessagePriority,
+        internalDate: Date,
         date: Date,
         size: Int,
         from: [Recipient],
@@ -360,7 +381,10 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         forwarded: Bool,
         flagged: Bool,
         hasUnsubscribeLink: Bool? = nil,
-        bimi: Bimi? = nil
+        bimi: Bimi? = nil,
+        snoozeState: SnoozeState? = nil,
+        snoozeAction: String? = nil,
+        snoozeEndDate: Date? = nil
     ) {
         self.init()
 
@@ -368,6 +392,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         messageId = msgId
         self.subject = subject
         self.priority = priority
+        self.internalDate = internalDate
         self.date = date
         self.size = size
         self.from = from.toRealmList()
@@ -396,6 +421,9 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         self.hasUnsubscribeLink = hasUnsubscribeLink
         self.bimi = bimi
         fullyDownloaded = true
+        self.snoozeState = snoozeState
+        self.snoozeAction = snoozeAction
+        self.snoozeEndDate = snoozeEndDate
     }
 
     public func toThread() -> Thread {
@@ -406,13 +434,17 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
             from: Array(from),
             to: Array(to),
             subject: subject,
+            internalDate: internalDate,
             date: date,
             hasAttachments: !attachments.isEmpty,
             hasDrafts: !(draftResource?.isEmpty ?? true),
             flagged: flagged,
             answered: answered,
             forwarded: forwarded,
-            bimi: bimi
+            bimi: bimi,
+            snoozeState: snoozeState,
+            snoozeAction: snoozeAction,
+            snoozeEndDate: snoozeEndDate
         )
         thread.messageIds = linkedUids
         thread.folderId = folderId

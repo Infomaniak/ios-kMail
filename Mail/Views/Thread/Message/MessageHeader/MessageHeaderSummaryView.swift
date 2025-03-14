@@ -91,7 +91,7 @@ struct MessageHeaderSummaryView: View {
                                 }
                             }
 
-                            HeaderDateView(date: message.date, format: .header)
+                            HeaderDateView(displayDate: message.displayDate, format: .header)
                         }
                         .accessibilityElement(children: .combine)
                     }

@@ -77,10 +77,12 @@ extension Thread {
     }
 
     var sectionDate: String {
-        if let sectionDateInterval = (ReferenceDate.allCases.first { $0.dateInterval.contains(date) }) {
+        let referenceDate = folder?.threadsSort.getReferenceDate(from: self) ?? .now
+
+        if let sectionDateInterval = (ReferenceDate.allCases.first { $0.dateInterval.contains(referenceDate) }) {
             return sectionDateInterval.rawValue
         } else {
-            return "\(date.startOfMonth.timeIntervalSince1970)"
+            return "\(referenceDate.startOfMonth.timeIntervalSince1970)"
         }
     }
 }

@@ -72,9 +72,9 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
             return 3
         case .sent:
             return 4
-        case .snoozed:
-            return 5
         case .scheduledDrafts:
+            return 5
+        case .snoozed:
             return 6
         case .draft:
             return 7
@@ -175,6 +175,9 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     /// Date of last threads update
     @Persisted public var lastUpdate: Date?
 
+    @Persisted public var threadsSource: Folder?
+    @Persisted public var associatedFolders: RealmSwift.List<Folder>
+
     public var listChildren: AnyRealmCollection<Folder>? {
         children.isEmpty ? nil : AnyRealmCollection(children)
     }
@@ -209,8 +212,15 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return true
     }
 
-    public var shouldBeAscending: Bool {
-        return [.scheduledDrafts].contains(role)
+    public var threadsSort: any ThreadsSort {
+        switch role {
+        case .snoozed:
+            return SnoozedThreadsSort()
+        case .scheduledDrafts:
+            return ScheduledThreadsSort()
+        default:
+            return DefaultThreadsSort()
+        }
     }
 
     public var hasLimitedSwipeActions: Bool {
@@ -269,6 +279,18 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return role == .draft || role == .scheduledDrafts
     }
 
+    public var shouldRefreshDuplicates: Bool {
+        return role == .snoozed
+    }
+
+    public var shouldOverrideMessage: Bool {
+        if role == .inbox || role == .snoozed {
+            return true
+        } else {
+            return false
+        }
+    }
+
     public static func < (lhs: Folder, rhs: Folder) -> Bool {
         if let lhsRole = lhs.role, let rhsRole = rhs.role {
             return lhsRole.order < rhsRole.order
@@ -283,10 +305,18 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         }
     }
 
-    func threadBelongsToFolder(_ thread: Query<Thread>) -> Query<Bool> {
-        let isThreadInFolder = thread.folderId == remoteId
-        // TODO: Add condition for INBOX and SNOOZED
-        return isThreadInFolder
+    public func threadBelongsToFolder(_ thread: Query<Thread>) -> Query<Bool> {
+        let isThreadInCurrentFolder = thread.folderId == threadsSource?.remoteId ?? ""
+        let isMessageSnoozed = thread.snoozeState == .snoozed && thread.snoozeEndDate != nil && thread.snoozeAction != nil
+
+        switch role {
+        case .inbox:
+            return isThreadInCurrentFolder && !isMessageSnoozed
+        case .snoozed:
+            return isThreadInCurrentFolder && isMessageSnoozed
+        default:
+            return isThreadInCurrentFolder
+        }
     }
 
     public func computeUnreadCount() {

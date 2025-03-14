@@ -74,7 +74,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 36,
+            schemaVersion: 37,
             migrationBlock: { migration, oldSchemaVersion in
                 // No migration needed from 0 to 16
                 if oldSchemaVersion < 17 {
@@ -93,6 +93,14 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 if oldSchemaVersion < 23 {
                     migration.deleteData(forType: Thread.className())
                     migration.deleteData(forType: Message.className())
+                }
+                if oldSchemaVersion < 37 {
+                    migration.enumerateObjects(ofType: Message.className()) { oldObject, newObject in
+                        newObject?["internalDate"] = oldObject?["date"]
+                    }
+                    migration.enumerateObjects(ofType: Thread.className()) { oldObject, newObject in
+                        newObject?["internalDate"] = oldObject?["date"]
+                    }
                 }
             },
             objectTypes: [

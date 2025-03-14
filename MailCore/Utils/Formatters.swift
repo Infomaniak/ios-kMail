@@ -49,7 +49,7 @@ public extension Date {
             } else if date > .now {
                 let dateFormatter = DateFormatter()
 
-                dateFormatter.dateStyle = date > .now.addingTimeInterval(86400 * 2) ? .short : .long
+                dateFormatter.dateStyle = .short
                 dateFormatter.timeStyle = .short
                 dateFormatter.doesRelativeDateFormatting = true
 
