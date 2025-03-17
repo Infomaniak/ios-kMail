@@ -34,26 +34,42 @@ struct ConfirmationBlockRecipientView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
 
-    let recipient: Recipient
-    let reportedMessage: Message
+    let recipients: [Recipient]
+    let reportedMessages: [Message]
     let origin: ActionOrigin
     var onDismiss: (() -> Void)?
 
-    private var contact: CommonContact {
-        return CommonContactCache.getOrCreateContact(contactConfiguration: .correspondent(
-            correspondent: recipient,
-            contextUser: currentUser.value,
-            contextMailboxManager: mailboxManager
-        ))
+    private var contacts: [CommonContact] {
+        return recipients.map {
+            CommonContactCache.getOrCreateContact(contactConfiguration: .correspondent(
+                correspondent: $0,
+                contextUser: currentUser.value,
+                contextMailboxManager: mailboxManager
+            ))
+        }
+    }
+
+    private var confirmationBlockTexts: (title: String, description: String) {
+        guard contacts.count == 1, let contact = contacts.first else {
+            return (
+                MailResourcesStrings.Localizable.blockMultipleExpeditorsTitle(contacts.count),
+                MailResourcesStrings.Localizable.confirmationToBlockMultipleExpeditorsText
+            )
+        }
+
+        return (
+            MailResourcesStrings.Localizable.blockExpeditorTitle(contact.fullName),
+            MailResourcesStrings.Localizable.confirmationToBlockAnExpeditorText(contact.email)
+        )
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(MailResourcesStrings.Localizable.blockExpeditorTitle(contact.fullName))
+            Text(confirmationBlockTexts.title)
                 .textStyle(.bodyMedium)
                 .padding(.bottom, IKPadding.alertTitleBottom)
 
-            Text(MailResourcesStrings.Localizable.confirmationToBlockAnExpeditorText(recipient.email))
+            Text(confirmationBlockTexts.description)
                 .textStyle(.body)
                 .padding(.bottom, IKPadding.alertDescriptionBottom)
 
@@ -61,7 +77,7 @@ struct ConfirmationBlockRecipientView: View {
                 Task {
                     matomo.track(eventWithCategory: .blockUserAction, name: "confirmSelectedUser")
                     try await actionsManager.performAction(
-                        target: [reportedMessage],
+                        target: reportedMessages,
                         action: .block,
                         origin: origin
                     )
@@ -74,8 +90,8 @@ struct ConfirmationBlockRecipientView: View {
 
 #Preview {
     ConfirmationBlockRecipientView(
-        recipient: PreviewHelper.sampleRecipient1,
-        reportedMessage: PreviewHelper.sampleMessage,
+        recipients: [PreviewHelper.sampleRecipient1],
+        reportedMessages: [PreviewHelper.sampleMessage],
         origin: .floatingPanel(source: .threadList)
     )
 }

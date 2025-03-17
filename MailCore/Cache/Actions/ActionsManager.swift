@@ -183,18 +183,19 @@ public class ActionsManager: ObservableObject {
                 origin.nearestReportedForDisplayProblemMessageAlert?.wrappedValue = messagesWithDuplicates.first
             }
         case .block:
-            guard let message = messagesWithDuplicates.first else { return }
-            try await mailboxManager.apiFetcher.blockSender(message: message)
-            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted(1))
+            for message in messages {
+                try await mailboxManager.apiFetcher.blockSender(message: message)
+            }
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted(messages.count))
         case .blockList:
             Task { @MainActor in
                 let uniqueRecipient = self.getUniqueRecipients(reportedMessages: messages)
-                if uniqueRecipient.count > 1 {
+                if uniqueRecipient.count > 1 && isSingleThread(messages, originFolder: origin.frozenFolder) {
                     origin.nearestBlockSendersList?.wrappedValue = BlockRecipientState(recipientsToMessage: uniqueRecipient)
-                } else if let recipient = uniqueRecipient.first {
+                } else {
                     origin.nearestBlockSenderAlert?.wrappedValue = BlockRecipientAlertState(
-                        recipient: recipient.key,
-                        message: messages.first!
+                        recipient: Array(uniqueRecipient.keys),
+                        message: messages
                     )
                 }
             }
