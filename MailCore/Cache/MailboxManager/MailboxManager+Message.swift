@@ -112,6 +112,25 @@ public extension MailboxManager {
         return undoAction(for: response, and: messages)
     }
 
+    func reportSpam(messages: [Message], origin: Folder?) async throws -> UndoAction {
+        let originalThreads = messages.flatMap { $0.threads.filter { $0.folder == origin } }
+        await markMovedLocally(true, threads: originalThreads)
+
+        let response = await apiFetcher.batchOver(values: messages, chunkSize: Constants.apiLimit) { chunk in
+            do {
+                return try await self.apiFetcher.reportSpams(mailboxUuid: self.mailbox.uuid, messages: chunk)
+            } catch {
+                await self.markMovedLocally(false, threads: originalThreads)
+            }
+            return nil
+        }
+
+        Task {
+            try await refreshFolder(from: messages, additionalFolder: origin) // DEBUG: Origin ou spam?
+        }
+        return undoAction(for: response, and: messages)
+    }
+
     func delete(messages: [Message]) async throws {
         try await apiFetcher.delete(mailbox: mailbox, messages: messages)
         Task {
