@@ -54,11 +54,16 @@ public extension MailboxManager {
     ///   - folder: Folder to fetch messages from
     ///   - fetchCurrentFolderCompleted: Completion once the messages have been fetched
     func threads(@EnsureFrozen folder: Folder, fetchCurrentFolderCompleted: (() -> Void) = {}) async throws {
-        try await messages(folder: folder)
+        if folder.threadsSource == nil {
+            try await refreshAllFolders()
+        }
+        guard let freshFolder = folder.fresh(transactionable: self)?.freeze() else { return }
+
+        try await messages(folder: freshFolder)
         fetchCurrentFolderCompleted()
 
         var folderRolesToFetch = Set<FolderRole>([.inbox, .sent, .draft, .scheduledDrafts, .snoozed])
-        guard let currentRole = folder.role, folderRolesToFetch.contains(currentRole) else { return }
+        guard let currentRole = freshFolder.role, folderRolesToFetch.contains(currentRole) else { return }
 
         folderRolesToFetch.remove(currentRole)
         for folderRole in folderRolesToFetch {
