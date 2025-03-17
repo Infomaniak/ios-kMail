@@ -298,6 +298,49 @@ class MailUITests: XCTestCase {
                 }
             }
 
+            let firstContact = app.cells.firstMatch
+            _ = firstContact.waitForExistence(timeout: defaultTimeOut)
+            if firstContact.exists {
+                firstContact.tap()
+            }
+
+            _ = nextButton.waitForExistence(timeout: defaultTimeOut)
+            if nextButton.exists {
+                app.buttons.firstMatch.tap()
+
+                let authorizeButton = permissionApp.alerts.firstMatch.buttons.firstMatch
+                if authorizeButton.exists {
+                    authorizeButton.tap()
+                }
+            }
+
+            _ = nextButton.waitForExistence(timeout: defaultTimeOut)
+            if nextButton.exists {
+                app.buttons.firstMatch.tap()
+
+                let authorizeButton = permissionApp.alerts.firstMatch.buttons.firstMatch
+                if authorizeButton.exists {
+                    authorizeButton.tap()
+                }
+            }
+            _ = nextButton.waitForExistence(timeout: defaultTimeOut)
+            if nextButton.exists {
+                app.buttons.firstMatch.tap()
+
+                let authorizeButton = permissionApp.alerts.firstMatch.buttons.firstMatch
+                if authorizeButton.exists {
+                    authorizeButton.tap()
+                }
+            }
+            _ = nextButton.waitForExistence(timeout: defaultTimeOut)
+            if nextButton.exists {
+                app.buttons.firstMatch.tap()
+
+                let authorizeButton = permissionApp.alerts.firstMatch.buttons.firstMatch
+                if authorizeButton.exists {
+                    authorizeButton.tap()
+                }
+            }
             let refreshText = app.staticTexts[nowText].firstMatch
             _ = refreshText.waitForExistence(timeout: defaultTimeOut)
         }
