@@ -173,7 +173,8 @@ public class ActionsManager: ObservableObject {
             }
         case .spam:
             let messagesFromFolder = messagesWithDuplicates.fromFolderOrSearch(originFolder: origin.frozenFolder)
-            try await performMove(messages: messagesFromFolder, from: origin.frozenFolder, to: .spam)
+
+            try await performSpam(messages: messagesFromFolder, originFolder: origin.frozenFolder)
         case .phishing:
             Task { @MainActor in
                 origin.nearestReportedForPhishingMessageAlert?.wrappedValue = messagesWithDuplicates
@@ -220,15 +221,12 @@ public class ActionsManager: ObservableObject {
             }
         }
 
-        let undoAction = UndoAction(waitingForAsyncUndoAction: moveTask)
-
-        let snackbarMessage = snackbarMoveMessage(
+        await displayCancelSnackbar(
             for: messages,
             originFolder: originFolder,
-            destinationFolderName: folderRole.localizedName
+            destinationFolderName: folderRole.localizedName,
+            undoAction: UndoAction(waitingForAsyncUndoAction: moveTask)
         )
-
-        async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
     }
 
     public func performMove(messages: [Message], from originFolder: Folder?, to destinationFolder: Folder) async throws {
@@ -244,15 +242,26 @@ public class ActionsManager: ObservableObject {
             }
         }
 
-        let undoAction = UndoAction(waitingForAsyncUndoAction: moveTask)
-
-        let snackbarMessage = snackbarMoveMessage(
+        await displayCancelSnackbar(
             for: messagesFromFolder,
             originFolder: originFolder,
-            destinationFolderName: destinationFolder.localizedName
+            destinationFolderName: destinationFolder.localizedName,
+            undoAction: UndoAction(waitingForAsyncUndoAction: moveTask)
         )
+    }
 
-        async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
+    private func performSpam(messages: [Message], originFolder: Folder?) async throws {
+        let reportTask = Task {
+            do {
+                return try await mailboxManager.reportSpam(messages: messages, origin: originFolder)
+            }
+        }
+        await displayCancelSnackbar(
+            for: messages,
+            originFolder: originFolder,
+            destinationFolderName: FolderRole.spam.localizedName,
+            undoAction: UndoAction(waitingForAsyncUndoAction: reportTask)
+        )
     }
 
     private func performDelete(messages: [Message], originFolder: Folder?) async throws {
@@ -287,6 +296,21 @@ public class ActionsManager: ObservableObject {
         } else {
             snackbarPresenter.show(message: message)
         }
+    }
+
+    private func displayCancelSnackbar(
+        for messages: [Message],
+        originFolder: Folder?,
+        destinationFolderName: String,
+        undoAction: UndoAction
+    ) async {
+        let snackbarMessage = snackbarMoveMessage(
+            for: messages,
+            originFolder: originFolder,
+            destinationFolderName: FolderRole.spam.localizedName
+        )
+
+        async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
     }
 
     private func replyOrForward(messages: [Message], mode: ReplyMode) throws {
@@ -349,5 +373,14 @@ public class ActionsManager: ObservableObject {
             }
         }
         return recipientToMessage
+    }
+
+    private func isSingleThread(_ selectedMessages: [Message], originFolder: Folder?) -> Bool {
+        guard let originFolder, !selectedMessages.isEmpty else {
+            return false
+        }
+
+        let uniqueThreads = Set(selectedMessages.uniqueThreadsInFolder(originFolder))
+        return uniqueThreads.count == 1
     }
 }
