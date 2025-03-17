@@ -104,8 +104,8 @@ struct ActionsPanelViewModifier: ViewModifier {
         }
         .customAlert(item: $blockSenderAlert) { blockSenderState in
             ConfirmationBlockRecipientView(
-                recipient: blockSenderState.recipient,
-                reportedMessage: blockSenderState.message,
+                recipients: blockSenderState.recipient,
+                reportedMessages: blockSenderState.message,
                 origin: origin
             )
         }
