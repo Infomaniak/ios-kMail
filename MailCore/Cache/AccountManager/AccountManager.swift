@@ -199,7 +199,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     private func createAndSetCurrentAccount(token: ApiToken) async throws -> ApiToken {
         let apiFetcher = MailApiFetcher(token: token, delegate: self)
         let user = try await userProfileStore.updateUserProfile(with: apiFetcher)
-        _ = try? await myKSuiteStore.updateMyKSuite(with: apiFetcher, id: user.id)
 
         let mailboxesResponse = try await apiFetcher.mailboxes()
         guard !mailboxesResponse.isEmpty else {
@@ -210,7 +209,11 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         addAccount(token: token)
 
-        try? await featureFlagsManager.fetchFlags()
+        async let _ = fetchExtras(
+            hasFreeMailbox: mailboxesResponse.contains { $0.isFree },
+            apiFetcher: apiFetcher,
+            userId: user.id
+        )
 
         await fetchMailboxesMetadata(mailboxes: mailboxesResponse, apiFetcher: apiFetcher)
 
@@ -236,15 +239,18 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         let apiFetcher = getApiFetcher(for: account.userId, token: token)
         let user = try await userProfileStore.updateUserProfile(with: apiFetcher)
-        _ = try? await myKSuiteStore.updateMyKSuite(with: apiFetcher, id: user.id)
-
-        try? await featureFlagsManager.fetchFlags()
 
         let fetchedMailboxes = try await apiFetcher.mailboxes()
         guard !fetchedMailboxes.isEmpty else {
             removeAccountFor(userId: account.userId)
             throw MailError.noMailbox
         }
+
+        async let _ = fetchExtras(
+            hasFreeMailbox: fetchedMailboxes.contains { $0.isFree },
+            apiFetcher: apiFetcher,
+            userId: user.id
+        )
 
         await fetchMailboxesMetadata(mailboxes: fetchedMailboxes, apiFetcher: apiFetcher)
 
@@ -262,6 +268,17 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         if currentMailboxManager?.mailbox.isAvailable == false {
             switchToFirstValidMailboxManager()
+        }
+    }
+
+    private func fetchExtras(hasFreeMailbox: Bool, apiFetcher: ApiFetcher, userId: Int) async {
+        if hasFreeMailbox {
+            Task {
+                _ = try? await self.myKSuiteStore.updateMyKSuite(with: apiFetcher, id: userId)
+            }
+        }
+        Task {
+            try? await self.featureFlagsManager.fetchFlags()
         }
     }
 
