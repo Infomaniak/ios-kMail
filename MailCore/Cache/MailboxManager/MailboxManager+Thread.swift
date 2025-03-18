@@ -379,7 +379,7 @@ public extension MailboxManager {
                 threadsToUpdate.formUnion(message.threads)
             }
 
-            recomputeThreadsAndUnreadCount(of: threadsToUpdate, in: folder, realm: writableRealm)
+            recomputeThreadsAndUnreadCount(of: threadsToUpdate, realm: writableRealm)
         }
     }
 
@@ -416,7 +416,7 @@ public extension MailboxManager {
             }
         }
 
-        recomputeThreadsAndUnreadCount(of: threadsToUpdate, in: folder, realm: writableRealm)
+        recomputeThreadsAndUnreadCount(of: threadsToUpdate, realm: writableRealm)
     }
 
     /// Add the given message to existing compatible threads + Create a new thread if needed
