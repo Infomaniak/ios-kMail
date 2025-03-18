@@ -344,7 +344,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         flagged = try values.decode(Bool.self, forKey: .flagged)
         hasUnsubscribeLink = try values.decodeIfPresent(Bool.self, forKey: .hasUnsubscribeLink)
         bimi = try values.decodeIfPresent(Bimi.self, forKey: .bimi)
-        snoozeState = try values.decodeIfPresent(SnoozeState.self, forKey: .snoozeState)
+        snoozeState = try? values.decodeIfPresent(SnoozeState.self, forKey: .snoozeState)
         snoozeAction = try values.decodeIfPresent(String.self, forKey: .snoozeAction)
         snoozeEndDate = try values.decodeIfPresent(Date.self, forKey: .snoozeEndDate)
     }
