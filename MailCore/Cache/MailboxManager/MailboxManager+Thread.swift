@@ -320,6 +320,12 @@ public extension MailboxManager {
             message.forwarded = flags.forwarded
             message.scheduled = flags.scheduled
             message.seen = flags.seen
+
+            if message.snoozeState == .unsnoozed && message.seen {
+                message.snoozeState = nil
+                message.snoozeAction = nil
+                message.snoozeEndDate = nil
+            }
         }
     }
 
