@@ -137,10 +137,10 @@ public extension MailApiFetcher {
         )))
     }
 
-    func messagesDelta<Flags: DeltaFlags>(mailboxUUid: String, folderId: String,
+    func messagesDelta<Flags: DeltaFlags>(mailboxUuid: String, folderId: String,
                                           signature: String) async throws -> MessagesDelta<Flags> {
         try await perform(request: authenticatedRequest(.messagesDelta(
-            mailboxUuid: mailboxUUid,
+            mailboxUuid: mailboxUuid,
             folderId: folderId,
             signature: signature
         )))
