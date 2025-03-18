@@ -292,7 +292,7 @@ public extension MailboxManager {
 
                 writableRealm.delete(threadsToDelete)
 
-                let recomputedFolders = recomputeThreadsAndUnreadCount(of: threadsToUpdate, in: folder, realm: writableRealm)
+                let recomputedFolders = recomputeThreadsAndUnreadCount(of: threadsToUpdate, realm: writableRealm)
                 foldersOfDeletedThreads.subtract(recomputedFolders)
                 recomputeUnreadCountOfFolders(foldersOfDeletedThreads)
             }
@@ -547,7 +547,7 @@ public extension MailboxManager {
     }
 
     @discardableResult
-    private func recomputeThreadsAndUnreadCount(of threads: Set<Thread>, in folder: Folder, realm: Realm) -> Set<Folder> {
+    private func recomputeThreadsAndUnreadCount(of threads: Set<Thread>, realm: Realm) -> Set<Folder> {
         var threadsToRecompute = threads
         let duplicatesThreads = Set(threads.flatMap { $0.duplicates.flatMap { $0.threads } })
         threadsToRecompute.formUnion(duplicatesThreads)
@@ -556,7 +556,6 @@ public extension MailboxManager {
             do {
                 try thread.recomputeOrFail()
             } catch {
-                SentryDebug.threadHasNilLastMessageFromFolderDate(thread: thread)
                 realm.delete(thread)
             }
         }
