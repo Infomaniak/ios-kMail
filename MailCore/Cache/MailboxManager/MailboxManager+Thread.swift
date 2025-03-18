@@ -549,10 +549,8 @@ public extension MailboxManager {
     @discardableResult
     private func recomputeThreadsAndUnreadCount(of threads: Set<Thread>, in folder: Folder, realm: Realm) -> Set<Folder> {
         var threadsToRecompute = threads
-        if folder.shouldRefreshDuplicates {
-            let duplicatesThreads = Set(threads.flatMap { $0.duplicates.flatMap { $0.threads } })
-            threadsToRecompute.formUnion(duplicatesThreads)
-        }
+        let duplicatesThreads = Set(threads.flatMap { $0.duplicates.flatMap { $0.threads } })
+        threadsToRecompute.formUnion(duplicatesThreads)
 
         for thread in threadsToRecompute {
             do {
