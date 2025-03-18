@@ -117,7 +117,7 @@ public protocol MailApiExtendedFetchable {
 
     func markAsUnseen(mailbox: Mailbox, messages: [Message]) async throws -> MessageActionResult
 
-    func move(mailbox: Mailbox, messages: [Message], destinationId: String) async throws -> UndoResponse
+    func move(mailboxUuid: String, messages: [Message], destinationId: String) async throws -> UndoResponse
 
     func delete(mailbox: Mailbox, messages: [Message]) async throws -> [Empty]
 
