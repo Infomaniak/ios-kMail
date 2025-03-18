@@ -123,7 +123,7 @@ public extension MailboxManager {
 
         let response = await apiFetcher.batchOver(values: messages, chunkSize: Constants.apiLimit) { chunk in
             do {
-                return try await self.apiFetcher.reportSpams(mailboxUuid: self.mailbox.uuid, messages: chunk)
+                return try await action(self.mailbox.uuid, chunk)
             } catch {
                 await self.markMovedLocally(false, threads: originalThreads)
             }

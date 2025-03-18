@@ -107,8 +107,8 @@ public extension MailApiFetcher {
                                                         parameters: ["uids": messages.map(\.uid)]))
     }
 
-    func move(mailbox: Mailbox, messages: [Message], destinationId: String) async throws -> UndoResponse {
-        try await perform(request: authenticatedRequest(.moveMessages(uuid: mailbox.uuid),
+    func move(mailboxUuid: String, messages: [Message], destinationId: String) async throws -> UndoResponse {
+        try await perform(request: authenticatedRequest(.moveMessages(uuid: mailboxUuid),
                                                         method: .post,
                                                         parameters: [
                                                             "uids": messages.map(\.uid),
