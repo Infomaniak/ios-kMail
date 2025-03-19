@@ -169,7 +169,7 @@ public class ActionsManager: ObservableObject {
             }
         case .reportJunk:
             Task { @MainActor in
-                origin.nearestReportJunkMessageActionsPanel?.wrappedValue = messagesWithDuplicates
+                origin.nearestReportJunkMessagesActionsPanel?.wrappedValue = messagesWithDuplicates
             }
         case .spam:
             let messagesFromFolder = messagesWithDuplicates.fromFolderOrSearch(originFolder: origin.frozenFolder)
@@ -180,7 +180,7 @@ public class ActionsManager: ObservableObject {
             }
         case .phishing:
             Task { @MainActor in
-                origin.nearestReportedForPhishingMessageAlert?.wrappedValue = messagesWithDuplicates
+                origin.nearestReportedForPhishingMessagesAlert?.wrappedValue = messagesWithDuplicates
             }
         case .reportDisplayProblem:
             Task { @MainActor in
@@ -198,8 +198,8 @@ public class ActionsManager: ObservableObject {
                     origin.nearestBlockSendersList?.wrappedValue = BlockRecipientState(recipientsToMessage: uniqueRecipient)
                 } else {
                     origin.nearestBlockSenderAlert?.wrappedValue = BlockRecipientAlertState(
-                        recipient: Array(uniqueRecipient.keys),
-                        message: messages
+                        recipients: Array(uniqueRecipient.keys),
+                        messages: messages
                     )
                 }
             }

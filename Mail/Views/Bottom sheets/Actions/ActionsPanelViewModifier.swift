@@ -47,7 +47,7 @@ struct ActionsPanelViewModifier: ViewModifier {
 
     @ModalState private var reportForJunkMessages: [Message]?
     @ModalState private var reportedForDisplayProblemMessage: Message?
-    @ModalState private var reportedForPhishingMessage: [Message]?
+    @ModalState private var reportedForPhishingMessages: [Message]?
     @ModalState private var blockSenderAlert: BlockRecipientAlertState?
     @ModalState private var blockSendersList: BlockRecipientState?
     @ModalState private var messagesToMove: [Message]?
@@ -69,8 +69,8 @@ struct ActionsPanelViewModifier: ViewModifier {
             nearestMessagesToMoveSheet: $messagesToMove,
             nearestBlockSenderAlert: $blockSenderAlert,
             nearestBlockSendersList: $blockSendersList,
-            nearestReportJunkMessageActionsPanel: $reportForJunkMessages,
-            nearestReportedForPhishingMessageAlert: $reportedForPhishingMessage,
+            nearestReportJunkMessagesActionsPanel: $reportForJunkMessages,
+            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
             nearestShareMailLinkPanel: $shareMailLink,
             messagesToDownload: $messagesToDownload
@@ -104,15 +104,15 @@ struct ActionsPanelViewModifier: ViewModifier {
         }
         .customAlert(item: $blockSenderAlert) { blockSenderState in
             ConfirmationBlockRecipientView(
-                recipients: blockSenderState.recipient,
-                reportedMessages: blockSenderState.message,
+                recipients: blockSenderState.recipients,
+                reportedMessages: blockSenderState.messages,
                 origin: origin
             )
         }
         .customAlert(item: $reportedForDisplayProblemMessage) { message in
             ReportDisplayProblemView(message: message)
         }
-        .customAlert(item: $reportedForPhishingMessage) { messages in
+        .customAlert(item: $reportedForPhishingMessages) { messages in
             ReportPhishingView(
                 messagesWithDuplicates: messages,
                 distinctMessageCount: messages.count,
