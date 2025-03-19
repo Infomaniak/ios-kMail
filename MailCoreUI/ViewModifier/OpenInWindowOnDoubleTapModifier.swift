@@ -33,8 +33,6 @@ public extension View {
 
 @available(iOS 16.0, *)
 public struct OpenInWindowOnDoubleTapModifier<Value: Codable & Hashable>: ViewModifier {
-    @InjectService private var platformDetector: PlatformDetectable
-
     @Environment(\.openWindow) private var openWindow
 
     let windowId: String
@@ -43,6 +41,7 @@ public struct OpenInWindowOnDoubleTapModifier<Value: Codable & Hashable>: ViewMo
     public func body(content: Content) -> some View {
         content.simultaneousGesture(
             TapGesture(count: 2).onEnded {
+                @InjectService var platformDetector: PlatformDetectable
                 if platformDetector.isMac {
                     openWindow(
                         id: windowId,

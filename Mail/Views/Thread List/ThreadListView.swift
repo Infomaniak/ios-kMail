@@ -30,9 +30,6 @@ import SwiftUI
 import SwiftUIIntrospect
 
 struct ThreadListView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-    @LazyInjectService private var userActivityController: UserActivityController
-
     @EnvironmentObject private var mainViewState: MainViewState
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
@@ -197,12 +194,15 @@ struct ThreadListView: View {
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage,
                               isExtended: scrollObserver.scrollDirection != .bottom) {
+            @InjectService var matomo: MatomoUtils
             matomo.track(eventWithCategory: .newMessage, name: "openFromFab")
             mainViewState.composeMessageIntent = .new(originMailboxManager: viewModel.mailboxManager)
         }
         .shortcutModifier(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .onAppear {
             networkMonitor.start()
+
+            @InjectService var userActivityController: UserActivityController
             userActivityController.setCurrentActivity(mailbox: viewModel.mailboxManager.mailbox,
                                                       folder: mainViewState.selectedFolder)
         }

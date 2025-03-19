@@ -53,8 +53,6 @@ struct ThreadListCellAppearance: ViewModifier {
 }
 
 struct ThreadListToolbar: ViewModifier {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @Environment(\.isCompactWindow) private var isCompactWindow
 
     @EnvironmentObject private var actionsManager: ActionsManager
@@ -82,6 +80,7 @@ struct ThreadListToolbar: ViewModifier {
                     ToolbarItemGroup(placement: .navigationBarLeading) {
                         if multipleSelectionViewModel.isEnabled {
                             Button(MailResourcesStrings.Localizable.buttonCancel) {
+                                @InjectService var matomo: MatomoUtils
                                 matomo.track(eventWithCategory: .multiSelection, name: "cancel")
                                 multipleSelectionViewModel.disable()
                             }
@@ -121,6 +120,7 @@ struct ThreadListToolbar: ViewModifier {
                             multipleSelectionViewModel.disable()
                             let originFolder = viewModel.frozenFolder
                             Task {
+                                @InjectService var matomo: MatomoUtils
                                 matomo.trackBulkEvent(
                                     eventWithCategory: .threadActions,
                                     name: action.matomoName.capitalized,

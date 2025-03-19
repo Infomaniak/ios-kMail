@@ -77,8 +77,6 @@ class ThreadListHeaderFolderObserver: ObservableObject {
 }
 
 struct ThreadListHeader: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
     @StateObject private var folderObserver: ThreadListHeaderFolderObserver
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
@@ -128,6 +126,7 @@ struct ThreadListHeader: View {
                 .toggleStyle(.unread)
                 .onChange(of: unreadFilterOn) { newValue in
                     if newValue {
+                        @InjectService var matomo: MatomoUtils
                         matomo.track(eventWithCategory: .threadList, name: "unreadFilter")
                     }
                 }
