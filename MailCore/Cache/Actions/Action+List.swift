@@ -83,17 +83,21 @@ extension Action: CaseIterable {
     }
 
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
-                                          userIsStaff: Bool) -> (quickActions: [Action], listActions: [Action]) {
+                                          userIsStaff: Bool,
+                                          userEmail: String) -> (quickActions: [Action], listActions: [Action]) {
         @LazyInjectService var platformDetector: PlatformDetectable
 
+        var spamAction: Action? {
+            guard !message.fromMe(currentMailboxEmail: userEmail) else { return nil }
+            return message.folder?.role == .spam ? .nonSpam : .reportJunk
+        }
         let archive = message.folder?.role != .archive
         let unread = !message.seen
         let star = message.flagged
-        let spam = message.folder?.role == .spam
         let print = origin.type == .floatingPanel(source: .messageList)
         let tempListActions: [Action?] = [
             .openMovePanel,
-            spam ? .nonSpam : .reportJunk,
+            spamAction,
             unread ? .markAsRead : .markAsUnread,
             archive ? .archive : .moveToInbox,
             star ? .unstar : .star,
@@ -106,7 +110,7 @@ extension Action: CaseIterable {
         return (Action.quickActions, tempListActions.compactMap { $0 })
     }
 
-    private static func actionsForMessagesInDifferentThreads(_ messages: [Message], originFolder: Folder?)
+    private static func actionsForMessagesInDifferentThreads(_ messages: [Message], originFolder: Folder?, userEmail: String)
         -> (quickActions: [Action], listActions: [Action]) {
         let unread = messages.allSatisfy(\.seen)
         let archive = originFolder?.role != .archive
@@ -117,26 +121,33 @@ extension Action: CaseIterable {
             .delete
         ]
 
-        let spam = originFolder?.role == .spam
+        var spamAction: Action? {
+            let selfThread = messages.flatMap(\.from).allSatisfy { $0.isMeOrPlusMe(currentMailboxEmail: userEmail) }
+            guard !selfThread else { return nil }
+            return originFolder?.role == .spam ? .nonSpam : .reportJunk
+        }
         let star = messages.allSatisfy(\.flagged)
 
-        let listActions: [Action] = [
-            spam ? .nonSpam : .reportJunk,
+        let tempListActions: [Action?] = [
+            spamAction,
             star ? .unstar : .star,
             .saveThreadInkDrive
         ]
 
-        return (quickActions, listActions)
+        return (quickActions, tempListActions.compactMap { $0 })
     }
 
-    private static func actionsForMessagesInSameThreads(_ messages: [Message], originFolder: Folder?)
+    private static func actionsForMessagesInSameThreads(_ messages: [Message], originFolder: Folder?, userEmail: String)
         -> (quickActions: [Action], listActions: [Action]) {
         let archive = originFolder?.role != .archive
         let unread = messages.allSatisfy(\.seen)
         let showUnstar = messages.contains { $0.flagged }
 
-        let spam = originFolder?.role == .spam
-        let spamAction: Action? = spam ? .nonSpam : .reportJunk
+        var spamAction: Action? {
+            let selfThread = messages.flatMap(\.from).allSatisfy { $0.isMeOrPlusMe(currentMailboxEmail: userEmail) }
+            guard !selfThread else { return nil }
+            return originFolder?.role == .spam ? .nonSpam : .reportJunk
+        }
 
         let tempListActions: [Action?] = [
             .openMovePanel,
@@ -152,13 +163,14 @@ extension Action: CaseIterable {
 
     public static func actionsForMessages(_ messages: [Message],
                                           origin: ActionOrigin,
-                                          userIsStaff: Bool) -> (quickActions: [Action], listActions: [Action]) {
+                                          userIsStaff: Bool,
+                                          userEmail: String) -> (quickActions: [Action], listActions: [Action]) {
         if messages.count == 1, let message = messages.first {
-            return actionsForMessage(message, origin: origin, userIsStaff: userIsStaff)
+            return actionsForMessage(message, origin: origin, userIsStaff: userIsStaff, userEmail: userEmail)
         } else if messages.uniqueThreadsInFolder(origin.frozenFolder).count > 1 {
-            return actionsForMessagesInDifferentThreads(messages, originFolder: origin.frozenFolder)
+            return actionsForMessagesInDifferentThreads(messages, originFolder: origin.frozenFolder, userEmail: userEmail)
         } else {
-            return actionsForMessagesInSameThreads(messages, originFolder: origin.frozenFolder)
+            return actionsForMessagesInSameThreads(messages, originFolder: origin.frozenFolder, userEmail: userEmail)
         }
     }
 }
