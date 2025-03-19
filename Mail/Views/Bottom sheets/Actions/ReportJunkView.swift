@@ -73,8 +73,7 @@ struct ReportJunkView: View {
 #Preview {
     ReportJunkView(
         reportedMessages: PreviewHelper.sampleMessages,
-        origin: .floatingPanel(source: .threadList),
-        completionHandler: { _ in }
-    )
-    .accentColor(AccentColor.pink.primary.swiftUIColor)
+        origin: .floatingPanel(source: .threadList)
+    ) { _ in }
+        .accentColor(AccentColor.pink.primary.swiftUIColor)
 }
