@@ -96,7 +96,7 @@ struct ActionsPanelViewModifier: ViewModifier {
             .sheetViewStyle()
         }
         .floatingPanel(item: $reportForJunkMessages) { reportForJunkMessages in
-            ReportJunkView(reportedMessages: reportForJunkMessages, origin: origin)
+            ReportJunkView(reportedMessages: reportForJunkMessages, origin: origin, completionHandler: completionHandler)
         }
         .floatingPanel(item: $blockSendersList,
                        title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
