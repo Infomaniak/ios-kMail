@@ -146,5 +146,29 @@
 			<string>%d Dateien gesendet von SwissTransfer</string>
 		</dict>
 	</dict>
+	<key>reportPhishingDescription</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Wenn diese Nachricht versucht, vertrauliche Informationen (Passwort, Bankdaten usw.) zu stehlen und/oder sich als eine anerkannte Identität ausgibt, handelt es sich um Phishing.
+
+Indem Sie uns diese Nachricht melden, können Sie die Erkennung gefährlicher Nachrichten für alle unsere Nutzer beschleunigen.
+
+Die Meldung wird an unser Sicherheitsteam weitergeleitet, das sie analysiert und Massnahmen ergreift. Die E-Mail wird ausserdem automatisch in Ihren Spam-Ordner verschoben.</string>
+        <key>other</key>
+        <string>Wenn diese Nachrichten versuchen, vertrauliche Informationen (Passwörter, Bankdaten usw.) zu stehlen und/oder sich als anerkannte Identitäten ausgeben, handeln es sich um Phishing.
+
+Indem Sie uns diese Nachrichten melden, können Sie die Erkennung gefährlicher Nachrichten für alle unsere Nutzer beschleunigen.
+
+Die Meldungen werden an unser Sicherheitsteam weitergeleitet, das sie analysiert und Massnahmen ergreift. Die E-Mails werden ausserdem automatisch in Ihre Spam-Ordner verschoben.</string>
+      </dict>
+    </dict>
 </dict>
 </plist>

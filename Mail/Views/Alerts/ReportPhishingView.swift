@@ -33,21 +33,13 @@ struct ReportPhishingView: View {
 
     var completionHandler: ((Action) -> Void)?
 
-    var reportPhishingDescription: String {
-        if distinctMessageCount <= 1 {
-            return MailResourcesStrings.Localizable.reportPhishingDescription
-        } else {
-            return MailResourcesStrings.Localizable.reportPhishingDescriptionPlural
-        }
-    }
-
     var body: some View {
         VStack(spacing: 0) {
             Text(MailResourcesStrings.Localizable.reportPhishingTitle)
                 .textStyle(.bodyMedium)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, IKPadding.alertTitleBottom)
-            Text(reportPhishingDescription)
+            Text(MailResourcesStrings.Localizable.reportPhishingDescription(distinctMessageCount))
                 .textStyle(.bodySecondary)
                 .padding(.bottom, IKPadding.alertDescriptionBottom)
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm, primaryButtonAction: report)

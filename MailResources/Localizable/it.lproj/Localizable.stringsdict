@@ -146,5 +146,29 @@
 			<string>I miei conti</string>
 		</dict>
 	</dict>
+	<key>reportPhishingDescription</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Se il messaggio tenta di rubare informazioni sensibili (password, dati bancari, ecc.) e/o si spaccia per un’identità riconosciuta, si tratta di phishing.
+
+Segnalandolo a noi, accelererai l’individuazione di messaggi pericolosi per tutti i nostri utenti.
+
+La segnalazione sarà inviata al nostro team di sicurezza per l’analisi e l’intervento. L’e-mail verrà inoltre spostata automaticamente nella cartella spam.</string>
+        <key>other</key>
+        <string>Se questi messaggi tentano di rubare informazioni riservate (password, dati bancari ecc.) e/o si spacciano per identità riconosciute, si tratta di phishing.
+
+Segnalando a noi questi messaggi, potete aiutare ad accelerare il riconoscimento dei messaggi pericolosi per tutti i nostri utenti.
+
+Le segnalazioni verranno inoltrate al nostro team di sicurezza, che li analizzerà e intraprenderà azioni. Le email verranno inoltre spostate automaticamente nella vostra cartella dello spam.</string>
+      </dict>
+    </dict>
 </dict>
 </plist>

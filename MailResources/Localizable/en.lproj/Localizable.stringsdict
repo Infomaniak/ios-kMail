@@ -146,5 +146,29 @@
 			<string>My accounts</string>
 		</dict>
 	</dict>
+	<key>reportPhishingDescription</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>If this message attempts to steal sensitive information (password, bank details, etc.) and/or impersonates a recognised identity then it is phishing.
+
+By reporting it to us, you speed up the detection of dangerous messages for all our users.
+
+The report will be sent to our security team for analysis and action. The email will also be automatically moved to your spam folder.</string>
+        <key>other</key>
+        <string>If these messages attempt to steal sensitive information (passwords, bank details, etc.) and/or impersonate recognized identities, then they are phishing.
+
+By reporting them to us, you speed up the detection of dangerous messages for all our users.
+
+The reports will be sent to our security team for analysis and action. The emails will also be automatically moved to your spam folder.</string>
+      </dict>
+    </dict>
 </dict>
 </plist>
