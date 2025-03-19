@@ -267,7 +267,7 @@ class MailUITests: XCTestCase {
         passwordField.typeText(Env.testAccountPassword)
         passwordField.typeText("\n")
 
-        wait(delay: 15)
+        wait(delay: 5)
 
         let nowText = MailResourcesStrings.Localizable
             .threadListHeaderLastUpdate(Date().formatted(.relative(presentation: .named)))
@@ -278,13 +278,21 @@ class MailUITests: XCTestCase {
             let nextButton = app.buttons[MailResourcesStrings.Localizable.contentDescriptionButtonNext].firstMatch
             _ = nextButton.waitForExistence(timeout: defaultTimeOut)
 
-            let permissionApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
             if nextButton.exists {
                 nextButton.tap()
 
+                let permissionApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
                 let authorizeButton = permissionApp.alerts.firstMatch.buttons.firstMatch
                 if authorizeButton.exists {
                     authorizeButton.tap()
+                }
+
+                let contactsPermissionApp = XCUIApplication(bundleIdentifier: "com.apple.ContactsUI.LimitedAccessPromptView")
+                if contactsPermissionApp.state == .runningForeground {
+                    let shareAll = contactsPermissionApp.buttons.allElementsBoundByIndex[1].firstMatch
+                    if shareAll.exists {
+                        shareAll.tap()
+                    }
                 }
             }
 
@@ -292,55 +300,13 @@ class MailUITests: XCTestCase {
             if nextButton.exists {
                 app.buttons.firstMatch.tap()
 
+                let permissionApp = XCUIApplication(bundleIdentifier: "com.apple.springboard")
                 let authorizeButton = permissionApp.alerts.firstMatch.buttons.firstMatch
                 if authorizeButton.exists {
                     authorizeButton.tap()
                 }
             }
 
-            let firstContact = app.cells.firstMatch
-            _ = firstContact.waitForExistence(timeout: defaultTimeOut)
-            if firstContact.exists {
-                firstContact.tap()
-            }
-
-            _ = nextButton.waitForExistence(timeout: defaultTimeOut)
-            if nextButton.exists {
-                app.buttons.firstMatch.tap()
-
-                let authorizeButton = permissionApp.alerts.firstMatch.buttons.firstMatch
-                if authorizeButton.exists {
-                    authorizeButton.tap()
-                }
-            }
-
-            _ = nextButton.waitForExistence(timeout: defaultTimeOut)
-            if nextButton.exists {
-                app.buttons.firstMatch.tap()
-
-                let authorizeButton = permissionApp.alerts.firstMatch.buttons.firstMatch
-                if authorizeButton.exists {
-                    authorizeButton.tap()
-                }
-            }
-            _ = nextButton.waitForExistence(timeout: defaultTimeOut)
-            if nextButton.exists {
-                app.buttons.firstMatch.tap()
-
-                let authorizeButton = permissionApp.alerts.firstMatch.buttons.firstMatch
-                if authorizeButton.exists {
-                    authorizeButton.tap()
-                }
-            }
-            _ = nextButton.waitForExistence(timeout: defaultTimeOut)
-            if nextButton.exists {
-                app.buttons.firstMatch.tap()
-
-                let authorizeButton = permissionApp.alerts.firstMatch.buttons.firstMatch
-                if authorizeButton.exists {
-                    authorizeButton.tap()
-                }
-            }
             let refreshText = app.staticTexts[nowText].firstMatch
             _ = refreshText.waitForExistence(timeout: defaultTimeOut)
         }
