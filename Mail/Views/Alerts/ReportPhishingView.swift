@@ -68,7 +68,7 @@ struct ReportPhishingView: View {
             }
         }
 
-        guard let completionHandler = completionHandler else { return }
+        guard let completionHandler else { return }
         completionHandler(.spam)
     }
 }

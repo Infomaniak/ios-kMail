@@ -174,7 +174,10 @@ public class ActionsManager: ObservableObject {
         case .spam:
             let messagesFromFolder = messagesWithDuplicates.fromFolderOrSearch(originFolder: origin.frozenFolder)
 
-            try await performSpam(messages: messagesFromFolder, originFolder: origin.frozenFolder)
+            try await performCancelableMove(messages: messagesFromFolder, from: origin.frozenFolder,
+                                            to: .spam) { messages, _, originFolder in
+                try await self.mailboxManager.reportSpam(messages: messages, origin: originFolder)
+            }
         case .phishing:
             Task { @MainActor in
                 origin.nearestReportedForPhishingMessageAlert?.wrappedValue = messagesWithDuplicates
@@ -214,54 +217,54 @@ public class ActionsManager: ObservableObject {
         }
     }
 
-    private func performMove(messages: [Message], from originFolder: Folder?, to folderRole: FolderRole) async throws {
-        let moveTask = Task {
-            do {
-                return try await mailboxManager.move(messages: messages, to: folderRole, origin: originFolder)
-            }
-        }
-
-        await displayCancelSnackbar(
-            for: messages,
-            originFolder: originFolder,
-            destinationFolderName: folderRole.localizedName,
-            undoAction: UndoAction(waitingForAsyncUndoAction: moveTask)
+    public func performMove(messages: [Message], from originFolder: Folder?, to folderRole: FolderRole) async throws {
+        try await performCancelableMove(
+            messages: messages,
+            from: originFolder,
+            to: folderRole,
+            action: mailboxManager.move
         )
     }
 
-    public func performMove(messages: [Message], from originFolder: Folder?, to destinationFolder: Folder) async throws {
-        let messagesFromFolder = messages.fromFolderOrSearch(originFolder: originFolder)
-
-        let moveTask = Task {
-            do {
-                return try await mailboxManager.move(
-                    messages: messagesFromFolder,
-                    to: destinationFolder,
-                    origin: originFolder
-                )
-            }
-        }
-
-        await displayCancelSnackbar(
-            for: messagesFromFolder,
-            originFolder: originFolder,
-            destinationFolderName: destinationFolder.localizedName,
-            undoAction: UndoAction(waitingForAsyncUndoAction: moveTask)
+    public func performMove(messages: [Message], from originFolder: Folder?, to folder: Folder) async throws {
+        try await performCancelableMove(
+            messages: messages,
+            from: originFolder,
+            to: folder,
+            action: mailboxManager.move
         )
     }
 
-    private func performSpam(messages: [Message], originFolder: Folder?) async throws {
-        let reportTask = Task {
-            do {
-                return try await mailboxManager.reportSpam(messages: messages, origin: originFolder)
-            }
+    private func performCancelableMove(
+        messages: [Message],
+        from originFolder: Folder?,
+        to destinationFolderRole: FolderRole,
+        action: @escaping ([Message], Folder, Folder?) async throws -> UndoAction
+    ) async throws {
+        guard let folder = mailboxManager.getFolder(with: destinationFolderRole)?.freeze() else { throw MailError.folderNotFound }
+
+        try await performCancelableMove(messages: messages, from: originFolder, to: folder, action: action)
+    }
+
+    private func performCancelableMove(
+        messages: [Message],
+        from originFolder: Folder?,
+        to destinationFolder: Folder,
+        action: @escaping ([Message], Folder, Folder?) async throws -> UndoAction
+    ) async throws {
+        let task = Task {
+            return try await action(messages, destinationFolder, originFolder)
         }
-        await displayCancelSnackbar(
+
+        let undoAction = UndoAction(waitingForAsyncUndoAction: task)
+
+        let snackbarMessage = snackbarMoveMessage(
             for: messages,
             originFolder: originFolder,
-            destinationFolderName: FolderRole.spam.localizedName,
-            undoAction: UndoAction(waitingForAsyncUndoAction: reportTask)
+            destinationFolderName: destinationFolder.localizedName
         )
+
+        async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
     }
 
     private func performDelete(messages: [Message], originFolder: Folder?) async throws {
@@ -296,21 +299,6 @@ public class ActionsManager: ObservableObject {
         } else {
             snackbarPresenter.show(message: message)
         }
-    }
-
-    private func displayCancelSnackbar(
-        for messages: [Message],
-        originFolder: Folder?,
-        destinationFolderName: String,
-        undoAction: UndoAction
-    ) async {
-        let snackbarMessage = snackbarMoveMessage(
-            for: messages,
-            originFolder: originFolder,
-            destinationFolderName: FolderRole.spam.localizedName
-        )
-
-        async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
     }
 
     private func replyOrForward(messages: [Message], mode: ReplyMode) throws {
