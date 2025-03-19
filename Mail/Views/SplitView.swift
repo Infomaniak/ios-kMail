@@ -223,7 +223,6 @@ struct SplitView: View {
                 },
                 onDislike: { userReportURL in
                     matomo.track(eventWithCategory: .appReview, name: "dislike")
-                    // Ask for feedback
                     if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
                         UserDefaults.shared.appReview = .feedback
                         mainViewState.isShowingSafariView = IdentifiableURL(url: userReportURL)

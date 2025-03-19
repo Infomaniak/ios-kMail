@@ -3,6 +3,16 @@
     {
       "filename" : "document-stars-rocket.svg",
       "idiom" : "universal"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "document-stars-rocket-dark.svg",
+      "idiom" : "universal"
     }
   ],
   "info" : {
