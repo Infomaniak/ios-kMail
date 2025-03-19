@@ -32,6 +32,7 @@ struct ReportJunkView: View {
 
     let reportedMessages: [Message]
     let origin: ActionOrigin
+    var completionHandler: ((Action) -> Void)?
 
     private var filteredActions: [Action] {
         let currentUserEmail = mailboxManager.mailbox.email
@@ -57,7 +58,12 @@ struct ReportJunkView: View {
                 if action != filteredActions.first {
                     IKDivider()
                 }
-                MessageActionView(targetMessages: reportedMessages, action: action, origin: origin)
+                MessageActionView(
+                    targetMessages: reportedMessages,
+                    action: action,
+                    origin: origin,
+                    completionHandler: completionHandler
+                )
             }
         }
         .matomoView(view: [MatomoUtils.View.bottomSheet.displayName, "ReportJunkView"])
@@ -65,6 +71,10 @@ struct ReportJunkView: View {
 }
 
 #Preview {
-    ReportJunkView(reportedMessages: PreviewHelper.sampleMessages, origin: .floatingPanel(source: .threadList))
-        .accentColor(AccentColor.pink.primary.swiftUIColor)
+    ReportJunkView(
+        reportedMessages: PreviewHelper.sampleMessages,
+        origin: .floatingPanel(source: .threadList),
+        completionHandler: { _ in }
+    )
+    .accentColor(AccentColor.pink.primary.swiftUIColor)
 }
