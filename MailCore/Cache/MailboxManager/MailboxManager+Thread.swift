@@ -292,7 +292,7 @@ public extension MailboxManager {
 
                 writableRealm.delete(threadsToDelete)
 
-                let recomputedFolders = recomputeThreadsAndUnreadCount(of: threadsToUpdate, in: folder, realm: writableRealm)
+                let recomputedFolders = recomputeThreadsAndUnreadCount(of: threadsToUpdate, realm: writableRealm)
                 foldersOfDeletedThreads.subtract(recomputedFolders)
                 recomputeUnreadCountOfFolders(foldersOfDeletedThreads)
             }
@@ -320,6 +320,12 @@ public extension MailboxManager {
             message.forwarded = flags.forwarded
             message.scheduled = flags.scheduled
             message.seen = flags.seen
+
+            if message.snoozeState == .unsnoozed && message.seen {
+                message.snoozeState = nil
+                message.snoozeAction = nil
+                message.snoozeEndDate = nil
+            }
         }
     }
 
@@ -373,7 +379,7 @@ public extension MailboxManager {
                 threadsToUpdate.formUnion(message.threads)
             }
 
-            recomputeThreadsAndUnreadCount(of: threadsToUpdate, in: folder, realm: writableRealm)
+            recomputeThreadsAndUnreadCount(of: threadsToUpdate, realm: writableRealm)
         }
     }
 
@@ -410,7 +416,7 @@ public extension MailboxManager {
             }
         }
 
-        recomputeThreadsAndUnreadCount(of: threadsToUpdate, in: folder, realm: writableRealm)
+        recomputeThreadsAndUnreadCount(of: threadsToUpdate, realm: writableRealm)
     }
 
     /// Add the given message to existing compatible threads + Create a new thread if needed
@@ -541,18 +547,15 @@ public extension MailboxManager {
     }
 
     @discardableResult
-    private func recomputeThreadsAndUnreadCount(of threads: Set<Thread>, in folder: Folder, realm: Realm) -> Set<Folder> {
+    private func recomputeThreadsAndUnreadCount(of threads: Set<Thread>, realm: Realm) -> Set<Folder> {
         var threadsToRecompute = threads
-        if folder.shouldRefreshDuplicates {
-            let duplicatesThreads = Set(threads.flatMap { $0.duplicates.flatMap { $0.threads } })
-            threadsToRecompute.formUnion(duplicatesThreads)
-        }
+        let duplicatesThreads = Set(threads.flatMap { $0.duplicates.flatMap { $0.threads } })
+        threadsToRecompute.formUnion(duplicatesThreads)
 
         for thread in threadsToRecompute {
             do {
                 try thread.recomputeOrFail()
             } catch {
-                SentryDebug.threadHasNilLastMessageFromFolderDate(thread: thread)
                 realm.delete(thread)
             }
         }

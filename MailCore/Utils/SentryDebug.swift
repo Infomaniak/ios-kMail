@@ -70,17 +70,6 @@ public enum SentryDebug {
         }
     }
 
-    static func threadHasNilLastMessageFromFolderDate(thread: Thread) {
-        SentrySDK.capture(message: "Thread has nil lastMessageFromFolderDate") { scope in
-            scope.setContext(value: ["dates": "\(thread.messages.map(\.date))",
-                                     "ids": "\(thread.messages.map(\.id))"],
-                             key: "all messages")
-            scope.setContext(value: ["id": "\(thread.lastMessageFromFolder?.uid ?? "nil")"],
-                             key: "lastMessageFromFolder")
-            scope.setContext(value: ["date before error": thread.date], key: "thread")
-        }
-    }
-
     static func messageHasInReplyTo(_ inReplyToList: [String]) {
         SentrySDK.capture(message: "Found an array of inReplyTo") { scope in
             scope.setContext(value: ["ids": inReplyToList.joined(separator: ", ")], key: "inReplyToList")

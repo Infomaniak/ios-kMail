@@ -75,7 +75,7 @@ public class Thread: Object, Decodable, Identifiable {
     public var displayDate: DisplayDate {
         if containsOnlyScheduledDrafts {
             return .scheduled(date)
-        } else if snoozeState == .snoozed, let snoozeEndDate {
+        } else if snoozeState != nil, let snoozeEndDate {
             return .snoozed(snoozeEndDate)
         } else {
             return .normal(date)
@@ -121,8 +121,12 @@ public class Thread: Object, Decodable, Identifiable {
         return numberOfScheduledDraft == messages.count
     }
 
+    private var messagesAndDuplicates: [Message] {
+        return messages.toArray() + duplicates.toArray()
+    }
+
     public func updateUnseenMessages() {
-        unseenMessages = messages.filter { !$0.seen }.count
+        unseenMessages = messagesAndDuplicates.filter { !$0.seen }.count
     }
 
     public func updateFlagged() {
@@ -172,8 +176,7 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     private func updateSnooze() {
-        let messagesThatCanBeSnoozed = Array(messages) + Array(duplicates)
-        let lastSnoozedMessage = messagesThatCanBeSnoozed.last { $0.snoozeState != nil }
+        let lastSnoozedMessage = messagesAndDuplicates.last { $0.snoozeState != nil }
 
         snoozeState = lastSnoozedMessage?.snoozeState
         snoozeAction = lastSnoozedMessage?.snoozeAction
