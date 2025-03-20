@@ -295,6 +295,9 @@
 /* loco:66dee0ef5c6d656046044445 */
 "blockExpeditorTitle" = "Block %s";
 
+/* loco:67cff9495697ef40dc013633 */
+"blockMultipleExpeditorsTitle" = "Block %d senders";
+
 /* loco:649ea00ef9c6ecfe620a0b62 */
 "blockedPasswordTitle" = "Blocked password";
 
@@ -360,6 +363,9 @@
 
 /* loco:66f2853e4d75905fd406ea93 */
 "buttonCancelFormatting" = "Cancel formatting";
+
+/* loco:67b32a7057a66d891b06eb35 */
+"buttonCancelReminder" = "Cancel reminder";
 
 /* loco:62befe9ca822415272753592 */
 "buttonClose" = "Close";
@@ -574,6 +580,9 @@
 /* loco:66db00746332bbedae01f2f2 */
 "confirmationToBlockAnExpeditorText" = "This email and all future messages from %s will be moved to the Junk Mail folder.";
 
+/* loco:67cffa6132f76065a6002bd2 */
+"confirmationToBlockMultipleExpeditorsText" = "These emails and all future messages from their senders will be moved to the Junk Mail folder.";
+
 /* loco:62737dea7bd28e302301e5c2 */
 "contactActionAddToContacts" = "Add to contacts";
 
@@ -747,6 +756,9 @@
 
 /* loco:641178a6902412584c6acf62 */
 "emptyStateTrashTitle" = "Trash is empty";
+
+/* loco:67dbdf7f34b99ad4f10b70e2 */
+"enableFilterButton" = "Enable filter";
 
 /* loco:667bac4f2a74996e510ce652 */
 "enableMultiSelection" = "Enable multiple selection";
@@ -985,6 +997,9 @@
 /* loco:67e26d1c96ffb194f70925b2 */
 "macUsageDisclaimerTitle" = "This app works on macOS, but is optimized for mobile and tablet use.";
 
+/* loco:67d9641e50cf5243690a8f23 */
+"mailApiUnavailable" = "Loading error. Try again, or check the service status if the problem persists.";
+
 /* loco:6639ec5faf37f28888054ea2 */
 "manageSignatures" = "Manage my signatures";
 
@@ -1008,6 +1023,15 @@
 
 /* loco:628b90d373427778f14fd442 */
 "messageIsDraftOption" = "Draft";
+
+/* loco:67dbe703eca211f5e507ba93 */
+"messageIsSpamBecauseSenderIsBlocked" = "This message appears in the spam folder because %@ is on the list of blocked senders.";
+
+/* loco:67dbe2364c46bbd5fc0ffd82 */
+"messageIsSpamShouldActivateFilter" = "This message is considered to be spam. To be safe, we recommend you to activate your spam filter.";
+
+/* loco:67dbe44d3c3b277e70046cc0 */
+"messageIsSpamShouldMoveToSpam" = "This message is considered to be spam. We recommend you to move it to the \"Spam\" folder.";
 
 /* loco:65c35d9e6e00f9b3e60f34d3 */
 "messageMenuTitle" = "Message";
@@ -1035,6 +1059,9 @@
 
 /* loco:62bdb04cdf5d4469a92796d2 */
 "moreStorageTitle" = "Is your box full? Get more storage!";
+
+/* loco:67dbdfb8dbef6f1af2084412 */
+"moveInSpamButton" = "Move in Spam";
 
 /* loco:62b1c0a1e915206f7e2d5764 */
 "moveTitle" = "Which folder do you want to move your email to?";
@@ -1089,6 +1116,9 @@
 
 /* loco:6266655afabeeb6bc774c932 */
 "newMessagePlaceholderTitle" = "Type your message";
+
+/* loco:67c6c5212e72fc8285013f82 */
+"nextEventOccurrence" = "Recurring event, next occurrence on";
 
 /* loco:67238d29fe561f9d0a0f5732 */
 "nextMonday" = "Next monday";
@@ -1215,6 +1245,9 @@
 
 /* loco:62cece41730aa70c5f3da0e2 */
 "reportPhishingDescription" = "If this message attempts to steal sensitive information (password, bank details, etc.) and/or impersonates a recognised identity then it is phishing.\n\nBy reporting it to us, you speed up the detection of dangerous messages for all our users.\n\nThe report will be sent to our security team for analysis and action. The email will also be automatically moved to your spam folder.";
+
+/* loco:67cf0d265a4faa32a10d6db5 */
+"reportPhishingDescription-plural" = "If these messages attempt to steal sensitive information (passwords, bank details, etc.) and/or impersonate recognized identities, then they are phishing.\n\nBy reporting them to us, you speed up the detection of dangerous messages for all our users.\n\nThe reports will be sent to our security team for analysis and action. The emails will also be automatically moved to your spam folder.";
 
 /* loco:62cecdf0413c882ede7451c2 */
 "reportPhishingTitle" = "Report a phishing attempt";
@@ -1648,6 +1681,9 @@
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "";
 
+/* loco:67b32e5c0e4974a86a00c602 */
+"snoozeAlertTitle" = "Snoozed until: %@";
+
 /* loco:67a32e4384fbf4226404e972 */
 "snoozedFolder" = "Snoozed";
 
@@ -1791,6 +1827,9 @@
 
 /* loco:627e40419151de052d2d3962 */
 "trashFolder" = "Trash";
+
+/* loco:67dbdfcf19fc5774b1030c72 */
+"unblockButton" = "Unblock";
 
 /* loco:62b95774aee47c626b773693 */
 "unknownRecipientTitle" = "(unknown)";
