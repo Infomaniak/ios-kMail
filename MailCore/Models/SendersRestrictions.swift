@@ -19,7 +19,7 @@
 import Foundation
 import RealmSwift
 
-public class SendersRestrictions: Object, Codable {
+public class SendersRestrictions: EmbeddedObject, Codable {
     @Persisted public var authorizedSenders: List<Sender>
     @Persisted public var blockedSenders: List<Sender>
 

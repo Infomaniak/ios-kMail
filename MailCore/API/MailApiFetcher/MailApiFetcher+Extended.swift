@@ -39,6 +39,15 @@ public extension MailApiFetcher {
         ))
     }
 
+    func updateSpamFilter(mailbox: Mailbox, value: Bool) async throws -> Bool {
+        let encodedParameters = ["has_move_spam": value]
+        return try await perform(request: authenticatedRequest(
+            .mailHosting(mailbox: mailbox),
+            method: .patch,
+            parameters: encodedParameters
+        ))
+    }
+
     func featureFlag(_ mailboxUUID: String) async throws -> [FeatureFlag] {
         try await perform(request: authenticatedRequest(.featureFlag(mailboxUUID)))
     }

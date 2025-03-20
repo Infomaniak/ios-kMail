@@ -20,46 +20,66 @@ import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
+import RealmSwift
 import SwiftUI
 
 struct MessageSpamHeaderView: View {
     @InjectService private var accountManager: AccountManager
 
     private let mailboxManager: MailboxManager
-    private let message: Message
-    @ObservedObject private var mailbox: Mailbox
+    @ObservedRealmObject private var message: Message
+
+    private var mailbox: Mailbox {
+        mailboxes.first!
+    }
+
+    @ObservedResults(
+        Mailbox.self,
+        configuration: {
+            @InjectService var mailboxInfosManager: MailboxInfosManager
+            return mailboxInfosManager.realmConfiguration
+        }(),
+        where: filterCurrentMailbox,
+        sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
+    ) private var mailboxes
 
     @State private var spamType: SpamHeaderType = .none
     @State private var isButtonLoading = false
 
     init(message: Message, mailboxManager: MailboxManager) {
-        self.message = message
+        _message = ObservedRealmObject(wrappedValue: message)
         self.mailboxManager = mailboxManager
-
-        @InjectService var mailboxInfosManager: MailboxInfosManager
-        mailbox = mailboxManager.mailbox.fresh(transactionable: mailboxInfosManager) ?? mailboxManager.mailbox
-
         _spamType = State(initialValue: spamTypeFor(message: message))
     }
 
     var body: some View {
-        if spamType != .none {
-            MessageHeaderActionView(
-                icon: MailResourcesAsset.warningFill.swiftUIImage,
-                iconColor: MailResourcesAsset.orangeColor.swiftUIColor,
-                message: spamType.message
-            ) {
-                Button {
-                    action()
-                } label: {
-                    Text(spamType.buttonTitle)
+        Group {
+            if spamType != .none {
+                MessageHeaderActionView(
+                    icon: MailResourcesAsset.warningFill.swiftUIImage,
+                    iconColor: MailResourcesAsset.orangeColor.swiftUIColor,
+                    message: spamType.message
+                ) {
+                    Button {
+                        action()
+                    } label: {
+                        Text(spamType.buttonTitle)
+                    }
+                    .buttonStyle(.ikBorderless(isInlined: true))
+                    .controlSize(.small)
+                    .disabled(isButtonLoading)
+                    .ikButtonLoading(isButtonLoading)
                 }
-                .buttonStyle(.ikBorderless(isInlined: true))
-                .controlSize(.small)
-                .disabled(isButtonLoading)
-                .ikButtonLoading(isButtonLoading)
             }
         }
+        .onChange(of: message.headers) { _ in
+            spamType = spamTypeFor(message: message)
+        }
+    }
+
+    private static func filterCurrentMailbox(_ mailbox: Query<Mailbox>) -> Query<Bool> {
+        @InjectService var accountManager: AccountManager
+        return mailbox.userId == accountManager.currentUserId
     }
 
     private func action() {
@@ -71,12 +91,12 @@ struct MessageSpamHeaderView: View {
             case .moveInSpam:
                 _ = try? await mailboxManager.move(messages: [message], to: .spam)
             case .enableSpamFilter:
-                // Enable spam filter
-                return
+                _ = try? await mailboxManager.activateSpamFilter()
             case .unblockRecipient(let sender):
                 try await mailboxManager.unblockSender(sender: sender)
-                spamType = .none
             }
+            spamType = .none
+//            spamType = spamTypeFor(message: message)
             isButtonLoading = false
         }
     }
@@ -84,15 +104,14 @@ struct MessageSpamHeaderView: View {
     private func spamTypeFor(message: Message) -> SpamHeaderType {
         if message.folder?.role != .spam {
             if message.isSpam && !isSenderApproved(sender: message.from.first?.email) {
-                // 1a - Filtre spam desactivé
-                return .enableSpamFilter
-
-                // 1b - Filtre spam activé
-                return .moveInSpam
+                if mailbox.isSpamFilter {
+                    return .moveInSpam
+                } else {
+                    return .enableSpamFilter
+                }
             }
         }
 
-        // 2
         if message.folder?.role == .spam {
             if let sender = message.from.first, !message.isSpam && isSenderBlocked(sender: sender.email) {
                 return .unblockRecipient(sender.email)
