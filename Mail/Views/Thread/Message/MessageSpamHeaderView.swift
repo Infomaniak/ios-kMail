@@ -56,8 +56,8 @@ struct MessageSpamHeaderView: View {
         Group {
             if spamType != .none {
                 MessageHeaderActionView(
-                    icon: MailResourcesAsset.warningFill.swiftUIImage,
-                    iconColor: MailResourcesAsset.orangeColor.swiftUIColor,
+                    icon: spamType.icon,
+                    iconColor: spamType.iconColor,
                     message: spamType.message
                 ) {
                     Button {
@@ -72,7 +72,7 @@ struct MessageSpamHeaderView: View {
                 }
             }
         }
-        .onChange(of: message.headers) { _ in
+        .onChange(of: message.isSpam) { _ in
             spamType = spamTypeFor(message: message)
         }
     }
@@ -138,37 +138,4 @@ struct MessageSpamHeaderView: View {
 
 #Preview {
     MessageSpamHeaderView(message: PreviewHelper.sampleMessage, mailboxManager: PreviewHelper.sampleMailboxManager)
-}
-
-enum SpamHeaderType: Equatable {
-    case none
-    case moveInSpam
-    case enableSpamFilter
-    case unblockRecipient(String)
-
-    var message: String {
-        switch self {
-        case .none:
-            ""
-        case .moveInSpam:
-            "Ce message est considéré comme du spam. Nous vous recommandons de le déplacer dans le dossier \"Spam\"."
-        case .enableSpamFilter:
-            "Ce message est considéré comme du spam. Par sécurité, nous vous recommandons d'activer le filtre anti-spam."
-        case .unblockRecipient(let recipient):
-            "Ce message figure dans les spam car \(recipient) se trouve dans la liste des expéditeurs bloqués."
-        }
-    }
-
-    var buttonTitle: String {
-        switch self {
-        case .none:
-            ""
-        case .moveInSpam:
-            "Déplacer dans Spam"
-        case .enableSpamFilter:
-            "Activer le filtre"
-        case .unblockRecipient:
-            "Débloquer"
-        }
-    }
 }
