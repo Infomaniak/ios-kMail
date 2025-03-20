@@ -288,6 +288,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
                 group.addTask {
                     async let permissions = apiFetcher.permissions(mailbox: mailbox)
                     async let externalMailInfo = apiFetcher.externalMailFlag(mailbox: mailbox)
+                    async let sendersRestrictions = apiFetcher.sendersRestrictions(mailbox: mailbox)
 
                     if mailbox.isLimited {
                         async let quotas = apiFetcher.quotas(mailbox: mailbox)
@@ -296,6 +297,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
                     mailbox.permissions = try? await permissions
                     mailbox.externalMailInfo = try? await externalMailInfo
+                    mailbox.sendersRestrictions = try? await sendersRestrictions
                 }
             }
 

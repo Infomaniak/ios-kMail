@@ -70,6 +70,7 @@ public enum PreviewHelper {
                                               isValidInLDAP: true,
                                               isLocked: false,
                                               hasSocialAndCommercialFiltering: false,
+                                              isSpamFilter: false,
                                               showConfigModal: false,
                                               forceResetPassword: false,
                                               mdaVersion: "",
