@@ -53,6 +53,8 @@ public final class MergedContact: Object, ObjectKeyIdentifiable {
     @Persisted public var remoteColorHex: String?
     @Persisted public var remoteAvatarURL: String?
     @Persisted public var remoteIdentifier: String?
+    @Persisted public var remoteContactedTimes: Int?
+    @Persisted public var remoteOther: Bool
 
     /// Local
     @Persisted public var localIdentifier: String?
@@ -127,6 +129,8 @@ public final class MergedContact: Object, ObjectKeyIdentifiable {
         remoteColorHex = contact.color
         remoteAvatarURL = contact.avatar
         remoteIdentifier = contact.id
+        remoteContactedTimes = contact.contactedTimes
+        remoteOther = contact.other
     }
 
     static func computeId(email: String, name: String?) -> String {
