@@ -292,6 +292,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case snoozeState
         case snoozeAction
         case snoozeEndDate
+        case headers
     }
 
     override init() {
@@ -360,6 +361,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         snoozeState = try? values.decodeIfPresent(SnoozeState.self, forKey: .snoozeState)
         snoozeAction = try values.decodeIfPresent(String.self, forKey: .snoozeAction)
         snoozeEndDate = try values.decodeIfPresent(Date.self, forKey: .snoozeEndDate)
+        headers = try values.decodeIfPresent(MessageHeaders.self, forKey: .headers)
     }
 
     public convenience init(

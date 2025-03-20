@@ -26,7 +26,7 @@ import RealmSwift
 extension MailboxInfosManager: RealmConfigurable {}
 
 public final class MailboxInfosManager {
-    private static let currentDbVersion: UInt64 = 9
+    private static let currentDbVersion: UInt64 = 11
     private let dbName = "MailboxInfos.realm"
 
     public let realmConfiguration: Realm.Configuration
@@ -166,15 +166,17 @@ public final class MailboxInfosManager {
         }
     }
 
-    public func updateSendersRestrictions(
-        mailbox: Mailbox,
-        sendersRestrictions: SendersRestrictions,
-        completion: (Mailbox) -> Void
-    ) {
-        try? writeTransaction { writableRealm in
-            guard let freshMailbox = mailbox.fresh(using: writableRealm) else { return }
-            freshMailbox.sendersRestrictions = sendersRestrictions
-            completion(freshMailbox)
+    public func updateSendersRestrictions(mailboxObjectId: String, sendersRestrictions: SendersRestrictions) {
+        guard let mailbox = getMailbox(objectId: mailboxObjectId, freeze: false) else { return }
+        try? writeTransaction { _ in
+            mailbox.sendersRestrictions = sendersRestrictions
+        }
+    }
+
+    public func updateSpamFilter(mailboxObjectId: String, value: Bool) {
+        guard let mailbox = getMailbox(objectId: mailboxObjectId, freeze: false) else { return }
+        try? writeTransaction { _ in
+            mailbox.isSpamFilter = value
         }
     }
 }

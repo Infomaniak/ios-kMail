@@ -219,15 +219,9 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         return thread.freezeIfNeeded()
     }
 
-    public func updateMailbox(mailbox: Mailbox) {
-        self.mailbox = mailbox.freezeIfNeeded()
-    }
-
     private func refreshSendersRestrictions() async throws -> SendersRestrictions {
         let sendersRestrictions = try await apiFetcher.sendersRestrictions(mailbox: mailbox)
-        mailboxInfosManager.updateSendersRestrictions(mailbox: mailbox, sendersRestrictions: sendersRestrictions) {
-            updateMailbox(mailbox: $0)
-        }
+        mailboxInfosManager.updateSendersRestrictions(mailboxObjectId: mailbox.objectId, sendersRestrictions: sendersRestrictions)
         return sendersRestrictions
     }
 
@@ -239,9 +233,12 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
 
         _ = try await apiFetcher.updateSendersRestrictions(mailbox: mailbox, sendersRestrictions: sendersRestrictions)
 
-        mailboxInfosManager.updateSendersRestrictions(mailbox: mailbox, sendersRestrictions: sendersRestrictions) {
-            updateMailbox(mailbox: $0)
-        }
+        mailboxInfosManager.updateSendersRestrictions(mailboxObjectId: mailbox.objectId, sendersRestrictions: sendersRestrictions)
+    }
+
+    public func activateSpamFilter() async throws {
+        _ = try? await apiFetcher.updateSpamFilter(mailbox: mailbox, value: true)
+        mailboxInfosManager.updateSpamFilter(mailboxObjectId: mailbox.objectId, value: true)
     }
 }
 

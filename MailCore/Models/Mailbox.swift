@@ -38,6 +38,7 @@ public class Mailbox: Object, Codable, Identifiable {
     @Persisted public var isValidInLDAP: Bool
     @Persisted public var isLocked: Bool
     @Persisted public var hasSocialAndCommercialFiltering: Bool
+    @Persisted public var isSpamFilter: Bool
     @Persisted public var showConfigModal: Bool
     @Persisted public var forceResetPassword: Bool
     @Persisted public var mdaVersion: String
@@ -88,6 +89,7 @@ public class Mailbox: Object, Codable, Identifiable {
         case isValidInLDAP = "isValid"
         case isLocked
         case hasSocialAndCommercialFiltering
+        case isSpamFilter
         case showConfigModal
         case forceResetPassword
         case mdaVersion
@@ -116,6 +118,7 @@ public class Mailbox: Object, Codable, Identifiable {
         isValidInLDAP: Bool,
         isLocked: Bool,
         hasSocialAndCommercialFiltering: Bool,
+        isSpamFilter: Bool,
         showConfigModal: Bool,
         forceResetPassword: Bool,
         mdaVersion: String,
@@ -139,6 +142,7 @@ public class Mailbox: Object, Codable, Identifiable {
         self.isValidInLDAP = isValidInLDAP
         self.isLocked = isLocked
         self.hasSocialAndCommercialFiltering = hasSocialAndCommercialFiltering
+        self.isSpamFilter = isSpamFilter
         self.showConfigModal = showConfigModal
         self.forceResetPassword = forceResetPassword
         self.mdaVersion = mdaVersion
@@ -163,6 +167,7 @@ public class Mailbox: Object, Codable, Identifiable {
         isValidInLDAP = try container.decode(Bool.self, forKey: .isValidInLDAP)
         isLocked = try container.decode(Bool.self, forKey: .isLocked)
         hasSocialAndCommercialFiltering = try container.decode(Bool.self, forKey: .hasSocialAndCommercialFiltering)
+        isSpamFilter = try container.decode(Bool.self, forKey: .isSpamFilter)
         showConfigModal = try container.decode(Bool.self, forKey: .showConfigModal)
         forceResetPassword = try container.decode(Bool.self, forKey: .forceResetPassword)
         mdaVersion = try container.decode(String.self, forKey: .mdaVersion)
