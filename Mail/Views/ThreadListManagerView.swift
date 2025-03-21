@@ -28,6 +28,7 @@ struct ThreadListManagerView: View {
 
     private var threadListViewHash: Int {
         var hasher = Hasher()
+        hasher.combine(ObjectIdentifier(mainViewState))
         hasher.combine(mainViewState.selectedFolder.id)
         hasher.combine(mailboxManager.mailbox.id)
         hasher.combine(threadMode)
