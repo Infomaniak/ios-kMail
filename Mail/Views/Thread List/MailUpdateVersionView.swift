@@ -25,7 +25,7 @@ import MailCoreUI
 import MailResources
 import SwiftUI
 
-struct UpdateVersionView: View {
+struct MailUpdateVersionView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @Binding var isShowingUpdateAlert: Bool
@@ -66,5 +66,5 @@ struct UpdateVersionView: View {
 }
 
 #Preview {
-    UpdateVersionView(isShowingUpdateAlert: .constant(true))
+    MailUpdateVersionView(isShowingUpdateAlert: .constant(true))
 }

@@ -43,14 +43,9 @@ struct MailUpdateRequiredView: View {
         UpdateRequiredView(
             image: MailResourcesAsset.updateRequired.swiftUIImage,
             sharedStyle: sharedStyle,
-            updateHandler: updateApp,
+            updateHandler: { openURL(URLConstants.getStoreURL().url) },
             dismissHandler: dismissHandler
         )
-    }
-
-    private func updateApp() {
-        let url: URLConstants = Bundle.main.isRunningInTestFlight ? .testFlight : .appStore
-        openURL(url.url)
     }
 }
 

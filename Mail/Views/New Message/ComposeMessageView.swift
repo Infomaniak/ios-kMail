@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -285,6 +286,12 @@ struct ComposeMessageView: View {
                 UserDefaults.shared.shouldPresentAIFeature = false
             } completionHandler: { willShowAIPrompt in
                 aiModel.isShowingPrompt = willShowAIPrompt
+
+                if willShowAIPrompt {
+                    matomo.track(eventWithCategory: .aiWriter, name: "discoverNow")
+                } else {
+                    matomo.track(eventWithCategory: .aiWriter, name: "discoverLater")
+                }
             }
         }
         .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {

@@ -30,6 +30,7 @@ import NavigationBackport
 import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
+import VersionChecker
 
 @_spi(Advanced) import SwiftUIIntrospect
 
@@ -57,6 +58,8 @@ struct SplitView: View {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
     @LazyInjectService private var cacheManager: CacheManageable
+    @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var reviewManager: ReviewManageable
 
     @Environment(\.openURL) private var openURL
     @Environment(\.currentUser) private var currentUser
@@ -120,10 +123,13 @@ struct SplitView: View {
             }
         }
         .discoveryPresenter(isPresented: $mainViewState.isShowingUpdateAvailable) {
-            DiscoveryView(item: .updateDiscovery) { willUpdate in
-                guard willUpdate else { return }
-                let url: URLConstants = Bundle.main.isRunningInTestFlight ? .testFlight : .appStore
-                openURL(url.url)
+            UpdateVersionView(image: MailResourcesAsset.documentStarsRocket.swiftUIImage) { willUpdate in
+                if willUpdate {
+                    openURL(URLConstants.getStoreURL().url)
+                    matomo.track(eventWithCategory: .appUpdate, name: "discoverNow")
+                } else {
+                    matomo.track(eventWithCategory: .appUpdate, name: "discoverLater")
+                }
             }
         }
         .discoveryPresenter(isPresented: $mainViewState.isShowingSyncDiscovery) {
@@ -131,6 +137,11 @@ struct SplitView: View {
                 UserDefaults.shared.shouldPresentSyncDiscovery = false
             } completionHandler: { willSync in
                 guard willSync else { return }
+                if willSync {
+                    matomo.track(eventWithCategory: .aiWriter, name: "discoverNow")
+                } else {
+                    matomo.track(eventWithCategory: .aiWriter, name: "discoverLater")
+                }
                 mainViewState.isShowingSyncProfile = true
             }
         }
@@ -139,6 +150,11 @@ struct SplitView: View {
                 UserDefaults.shared.shouldPresentSetAsDefaultDiscovery = false
             } completionHandler: { willSetAsDefault in
                 guard willSetAsDefault, let settingsUrl = URL(string: UIApplication.openSettingsURLString) else { return }
+                if willSetAsDefault {
+                    matomo.track(eventWithCategory: .aiWriter, name: "discoverNow")
+                } else {
+                    matomo.track(eventWithCategory: .aiWriter, name: "discoverLater")
+                }
                 openURL(settingsUrl)
             }
         }
@@ -196,7 +212,23 @@ struct SplitView: View {
             setupBehaviour(orientation: interfaceOrientation)
         }
         .customAlert(isPresented: $mainViewState.isShowingReviewAlert) {
-            AskForReviewView()
+            AskForReviewView(
+                appName: Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String,
+                feedbackURL: MailResourcesStrings.Localizable.urlUserReportiOS,
+                reviewManager: reviewManager,
+                onLike: {
+                    matomo.track(eventWithCategory: .appReview, name: "like")
+                    UserDefaults.shared.appReview = .readyForReview
+                    reviewManager.requestReview()
+                },
+                onDislike: { userReportURL in
+                    matomo.track(eventWithCategory: .appReview, name: "dislike")
+                    if let userReportURL = URL(string: MailResourcesStrings.Localizable.urlUserReportiOS) {
+                        UserDefaults.shared.appReview = .feedback
+                        mainViewState.isShowingSafariView = IdentifiableURL(url: userReportURL)
+                    }
+                }
+            )
         }
         .environmentObject(splitViewManager)
         .environmentObject(navigationDrawerController)
@@ -300,7 +332,6 @@ struct SplitView: View {
             openURL(URLConstants.chatbot.url)
         }
 
-        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .homeScreenShortcuts, name: homeScreenShortcut.rawValue)
     }
 

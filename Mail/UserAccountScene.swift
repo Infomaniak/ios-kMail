@@ -105,7 +105,7 @@ struct UserAccountScene: Scene {
                     }
                 }
             } catch {
-                Logger.view.error("Error while checking version status: \(error)")
+                Logger.general.error("Error while checking version status: \(error)")
             }
         }
     }
