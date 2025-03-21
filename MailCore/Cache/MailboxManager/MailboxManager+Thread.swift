@@ -552,15 +552,17 @@ public extension MailboxManager {
         let duplicatesThreads = Set(threads.flatMap { $0.duplicates.flatMap { $0.threads } })
         threadsToRecompute.formUnion(duplicatesThreads)
 
-        for thread in threadsToRecompute {
+        let recomputedThreads = threadsToRecompute.filter { thread in
             do {
                 try thread.recomputeOrFail()
+                return true
             } catch {
                 realm.delete(thread)
+                return false
             }
         }
 
-        return recomputeUnreadCountOfFolders(containing: threadsToRecompute)
+        return recomputeUnreadCountOfFolders(containing: recomputedThreads)
     }
 
     /// Refresh the unread count of the folders of the given threads
