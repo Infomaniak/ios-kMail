@@ -295,6 +295,9 @@
 /* loco:66dee0ef5c6d656046044445 */
 "blockExpeditorTitle" = "Bloquear %s";
 
+/* loco:67cff9495697ef40dc013633 */
+"blockMultipleExpeditorsTitle" = "Bloquear %d remitentes";
+
 /* loco:649ea00ef9c6ecfe620a0b62 */
 "blockedPasswordTitle" = "Contraseña bloqueada";
 
@@ -360,6 +363,9 @@
 
 /* loco:66f2853e4d75905fd406ea93 */
 "buttonCancelFormatting" = "Cancelar formato";
+
+/* loco:67b32a7057a66d891b06eb35 */
+"buttonCancelReminder" = "Cancelar recordatorio";
 
 /* loco:62befe9ca822415272753592 */
 "buttonClose" = "Cerrar";
@@ -573,6 +579,9 @@
 
 /* loco:66db00746332bbedae01f2f2 */
 "confirmationToBlockAnExpeditorText" = "Este correo electrónico y todos los futuros mensajes de %s se moverán a la carpeta de correo no deseado.";
+
+/* loco:67cffa6132f76065a6002bd2 */
+"confirmationToBlockMultipleExpeditorsText" = "Estos correos electrónicos y todos los mensajes futuros de sus remitentes se moverán a la carpeta de Correo no deseado.";
 
 /* loco:62737dea7bd28e302301e5c2 */
 "contactActionAddToContacts" = "Añadir a contactos";
@@ -1087,6 +1096,9 @@
 /* loco:6266655afabeeb6bc774c932 */
 "newMessagePlaceholderTitle" = "Escriba su mensaje";
 
+/* loco:67c6c5212e72fc8285013f82 */
+"nextEventOccurrence" = "Evento recurrente, próxima aparición el";
+
 /* loco:67238d29fe561f9d0a0f5732 */
 "nextMonday" = "El lunes próximo";
 
@@ -1212,6 +1224,9 @@
 
 /* loco:62cece41730aa70c5f3da0e2 */
 "reportPhishingDescription" = "Si este mensaje intenta robar información sensible (contraseña, datos bancarios, etc.) y/o suplanta una identidad reconocida, entonces se trata de phishing.\n\nInformándonos de ello, aceleras la detección de mensajes peligrosos para todos nuestros usuarios.\n\nEl informe se enviará a nuestro equipo de seguridad para que lo analice y actúe en consecuencia. Además, el mensaje se moverá automáticamente a la carpeta de spam.";
+
+/* loco:67cf0d265a4faa32a10d6db5 */
+"reportPhishingDescription-plural" = "Si estos mensajes intentan robar información confidencial (contraseñas, datos bancarios, etc.) y/o se hacen pasar por identidades reconocidas, se trata de phishing.\n\nAl denunciar a nosotros estos mensajes, pueden ayudar a acelerar la detección de mensajes peligrosos para todos nuestros usuarios.\n\nLas denuncias serán remitidas a nuestro equipo de seguridad, que las analizará y tomará medidas. Los correos electrónicos también se moverán automáticamente a su carpeta de spam.";
 
 /* loco:62cecdf0413c882ede7451c2 */
 "reportPhishingTitle" = "Informar de un intento de phishing";
@@ -1644,6 +1659,9 @@
 
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "";
+
+/* loco:67b32e5c0e4974a86a00c602 */
+"snoozeAlertTitle" = "En espera hasta: %@";
 
 /* loco:67a32e4384fbf4226404e972 */
 "snoozedFolder" = "En espera";

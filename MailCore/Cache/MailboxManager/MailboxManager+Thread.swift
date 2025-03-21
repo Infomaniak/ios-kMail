@@ -150,7 +150,7 @@ public extension MailboxManager {
     private func getMessagesDelta(signature: String, folder: Folder) async throws -> String {
         if folder.role == .snoozed {
             let messagesDelta: MessagesDelta<SnoozedFlags> = try await apiFetcher.messagesDelta(
-                mailboxUUid: mailbox.uuid,
+                mailboxUuid: mailbox.uuid,
                 folderId: folder.remoteId,
                 signature: signature
             )
@@ -159,7 +159,7 @@ public extension MailboxManager {
             return messagesDelta.cursor
         } else {
             let messagesDelta: MessagesDelta<MessageFlags> = try await apiFetcher.messagesDelta(
-                mailboxUUid: mailbox.uuid,
+                mailboxUuid: mailbox.uuid,
                 folderId: folder.remoteId,
                 signature: signature
             )

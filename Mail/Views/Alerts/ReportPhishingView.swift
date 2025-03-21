@@ -27,7 +27,11 @@ import SwiftUI
 struct ReportPhishingView: View {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @EnvironmentObject private var mailboxManager: MailboxManager
-    let message: Message
+    let messagesWithDuplicates: [Message]
+
+    let distinctMessageCount: Int
+
+    var completionHandler: ((Action) -> Void)?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -35,7 +39,7 @@ struct ReportPhishingView: View {
                 .textStyle(.bodyMedium)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.bottom, IKPadding.alertTitleBottom)
-            Text(MailResourcesStrings.Localizable.reportPhishingDescription)
+            Text(MailResourcesStrings.Localizable.reportPhishingDescription(distinctMessageCount))
                 .textStyle(.bodySecondary)
                 .padding(.bottom, IKPadding.alertDescriptionBottom)
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm, primaryButtonAction: report)
@@ -44,18 +48,24 @@ struct ReportPhishingView: View {
 
     private func report() async {
         await tryOrDisplayError {
-            let response = try await mailboxManager.apiFetcher.reportPhishing(message: message)
-            if response {
-                var messages = [message.freezeIfNeeded()]
-                messages.append(contentsOf: message.duplicates)
-                _ = try await mailboxManager.move(messages: messages, to: .spam)
+            var lastResponse = false
+            for message in messagesWithDuplicates {
+                lastResponse = try await mailboxManager.apiFetcher.reportPhishing(message: message)
+            }
+
+            if lastResponse {
+                let messagesFreeze = messagesWithDuplicates.map { $0.freezeIfNeeded() }
+                _ = try await mailboxManager.move(messages: messagesFreeze, to: .spam)
                 snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarReportPhishingConfirmation)
             }
         }
+
+        guard let completionHandler else { return }
+        completionHandler(.spam)
     }
 }
 
 #Preview {
-    ReportPhishingView(message: PreviewHelper.sampleMessage)
+    ReportPhishingView(messagesWithDuplicates: PreviewHelper.sampleMessages, distinctMessageCount: 1)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }

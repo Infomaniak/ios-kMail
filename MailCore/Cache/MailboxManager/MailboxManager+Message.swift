@@ -94,12 +94,36 @@ public extension MailboxManager {
     }
 
     func move(messages: [Message], to folder: Folder, origin: Folder? = nil) async throws -> UndoAction {
+        return try await performMoveAction(
+            messages: messages,
+            origin: origin,
+            destination: folder
+        ) { uuid, chunk in
+            try await self.apiFetcher.move(mailboxUuid: uuid, messages: chunk, destinationId: folder.remoteId)
+        }
+    }
+
+    func reportSpam(messages: [Message], origin: Folder?) async throws -> UndoAction {
+        return try await performMoveAction(
+            messages: messages,
+            origin: origin
+        ) { uuid, chunk in
+            try await self.apiFetcher.reportSpams(mailboxUuid: uuid, messages: chunk)
+        }
+    }
+
+    func performMoveAction(
+        messages: [Message],
+        origin: Folder?,
+        destination: Folder? = nil,
+        action: @escaping (String, [Message]) async throws -> UndoResponse
+    ) async throws -> UndoAction {
         let originalThreads = messages.flatMap { $0.threads.filter { $0.folder == origin } }
         await markMovedLocally(true, threads: originalThreads)
 
         let response = await apiFetcher.batchOver(values: messages, chunkSize: Constants.apiLimit) { chunk in
             do {
-                return try await self.apiFetcher.move(mailbox: self.mailbox, messages: chunk, destinationId: folder.remoteId)
+                return try await action(self.mailbox.uuid, chunk)
             } catch {
                 await self.markMovedLocally(false, threads: originalThreads)
             }
@@ -107,7 +131,7 @@ public extension MailboxManager {
         }
 
         Task {
-            try await refreshFolder(from: messages, additionalFolder: folder)
+            try await refreshFolder(from: messages, additionalFolder: origin)
         }
         return undoAction(for: response, and: messages)
     }
