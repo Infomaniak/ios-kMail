@@ -81,7 +81,7 @@ public struct URLConstants {
         return url
     }
 
-    public static func getCurrentURL() -> URLConstants {
+    public static func getStoreURL() -> URLConstants {
         Bundle.main.isRunningInTestFlight ? testFlight : appStore
     }
 }

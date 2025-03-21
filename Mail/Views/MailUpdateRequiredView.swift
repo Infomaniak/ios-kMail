@@ -43,7 +43,7 @@ struct MailUpdateRequiredView: View {
         UpdateRequiredView(
             image: MailResourcesAsset.updateRequired.swiftUIImage,
             sharedStyle: sharedStyle,
-            updateHandler: { openURL(URLConstants.getCurrentURL().url) },
+            updateHandler: { openURL(URLConstants.getStoreURL().url) },
             dismissHandler: dismissHandler
         )
     }

@@ -125,7 +125,7 @@ struct SplitView: View {
         .discoveryPresenter(isPresented: $mainViewState.isShowingUpdateAvailable) {
             UpdateVersionView(image: MailResourcesAsset.documentStarsRocket.swiftUIImage) { willUpdate in
                 if willUpdate {
-                    openURL(URLConstants.getCurrentURL().url)
+                    openURL(URLConstants.getStoreURL().url)
                     matomo.track(eventWithCategory: .appUpdate, name: "discoverNow")
                 } else {
                     matomo.track(eventWithCategory: .appUpdate, name: "discoverLater")
