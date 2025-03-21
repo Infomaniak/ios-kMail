@@ -22,14 +22,16 @@ import InfomaniakCore
 
 /// implementing `MailApiCommonFetchable`
 public extension MailApiFetcher {
+    private static let snoozeAPILimit = 50
+
     func snooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws {
-        let _: Empty = try await perform(
-            request: authenticatedRequest(
+        _ = try await batchOver(values: messages, chunkSize: Self.snoozeAPILimit) { chunk in
+            let _: Empty = try await self.perform(request: self.authenticatedRequest(
                 .snooze(uuid: mailbox.uuid),
                 method: .post,
-                parameters: MessagesToSnooze(endDate: date, uids: messages.map(\.uid))
-            )
-        )
+                parameters: MessagesToSnooze(endDate: date, uids: chunk.map(\.uid))
+            ))
+        }
     }
 
     func updateSnooze(messages: [Message], until date: Date) async throws {
@@ -45,15 +47,14 @@ public extension MailApiFetcher {
         }
     }
 
-    func deleteSnooze(messages: [Message]) async throws {
-        // TODO: API Should be updated to allow batch actions
-        for message in messages {
-            let _: Empty = try await perform(
-                request: authenticatedRequest(
-                    .snoozeAction(resource: ""),
-                    method: .delete
-                )
-            )
+    func deleteSnooze(messages: [Message], mailbox: Mailbox) async throws {
+        // TODO: Replace with Snooze UUID instead of message UID
+        _ = try await batchOver(values: messages, chunkSize: Self.snoozeAPILimit) { chunk in
+            let _: Empty = try await self.perform(request: self.authenticatedRequest(
+                .snooze(uuid: mailbox.uuid),
+                method: .delete,
+                parameters: ["uuids": chunk.map(\.uid)]
+            ))
         }
     }
 }
