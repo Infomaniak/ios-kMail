@@ -21,6 +21,7 @@ import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
+import InfomaniakCoreUIResources
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -91,6 +92,13 @@ struct MenuDrawerItemsHelpListView: View {
                     isShowingUpdateVersionAlert = true
                 } else {
                     sendFeedback()
+                }
+            }
+            if !Bundle.main.isRunningInTestFlight {
+                MenuDrawerItemCell(icon: MailResourcesAsset.laboratoryFlask,
+                                   label: CoreUILocalizable.joinTheBetaButton,
+                                   matomoName: "joinBetaProgram") {
+                    openURL(URLConstants.testFlight.url)
                 }
             }
             MenuDrawerItemCell(icon: MailResourcesAsset.circleQuestionmark,
