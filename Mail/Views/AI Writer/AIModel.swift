@@ -48,9 +48,9 @@ final class AIModel: ObservableObject {
     @ModalPublished(wrappedValue: nil, context: ContextKeys.aiAlert) var isShowingReplaceSubjectAlert: AIProposition?
 
     var keepConversationWhenPropositionIsDismissed = false
+    var draftContentManager: DraftContentManager?
 
     private let mailboxManager: MailboxManager
-    private let draftContentManager: DraftContentManager
     private let draft: Draft
 
     private var contextId: String?
@@ -76,9 +76,8 @@ final class AIModel: ObservableObject {
 
     var isReplying: Bool
 
-    init(mailboxManager: MailboxManager, draftContentManager: DraftContentManager, draft: Draft, isReplying: Bool) {
+    init(mailboxManager: MailboxManager, draft: Draft, isReplying: Bool) {
         self.mailboxManager = mailboxManager
-        self.draftContentManager = draftContentManager
         self.draft = draft
         self.isReplying = isReplying
     }
@@ -144,7 +143,7 @@ extension AIModel {
     }
 
     private func insertReplyingMessageInContext() async throws {
-        guard let replyingBody = try await draftContentManager.getReplyingBody() else { return }
+        guard let replyingBody = try await draftContentManager?.getReplyingBody() else { return }
 
         var replyingString: String?
         if replyingBody.type == .textPlain {
@@ -244,7 +243,7 @@ extension AIModel {
             name: shouldReplaceBody ? "replaceProposition" : "insertProposition"
         )
 
-        await draftContentManager.replaceContent(subject: subject, body: body, draftPrimaryKey: draft.localUUID)
+        await draftContentManager?.replaceContent(subject: subject, body: body, draftPrimaryKey: draft.localUUID)
         withAnimation {
             isShowingProposition = false
         }

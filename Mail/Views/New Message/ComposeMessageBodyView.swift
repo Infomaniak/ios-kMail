@@ -40,9 +40,8 @@ struct ComposeMessageBodyView: View {
     @ModalState(context: ContextKeys.compose) private var isShowingCamera = false
 
     @FocusState var focusedField: ComposeViewFieldType?
-
-    @ObservedRealmObject var draft: Draft
-
+    @Binding var draftBody: String
+    let draft: Draft
     @Binding var isShowingAI: Bool
 
     let messageReply: MessageReply?
@@ -62,7 +61,7 @@ struct ComposeMessageBodyView: View {
             )
             #endif
             AttachmentsHeaderView()
-            RichHTMLEditor(html: $draft.body, textAttributes: textAttributes)
+            RichHTMLEditor(html: $draftBody, textAttributes: textAttributes)
                 .focused($focusedField, equals: .editor)
                 .onAppear(perform: setupToolbar)
                 .editorInputAccessoryView(toolbar)
@@ -159,6 +158,7 @@ struct ComposeMessageBodyView: View {
     let draft = Draft()
     return ComposeMessageBodyView(
         focusedField: .init(),
+        draftBody: .constant(""),
         draft: draft,
         isShowingAI: .constant(false),
         messageReply: nil
