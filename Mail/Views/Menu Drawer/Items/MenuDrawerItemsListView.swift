@@ -95,7 +95,7 @@ struct MenuDrawerItemsHelpListView: View {
                 }
             }
             if !Bundle.main.isRunningInTestFlight {
-                MenuDrawerItemCell(icon: MailResourcesAsset.labFlaskExperiment,
+                MenuDrawerItemCell(icon: MailResourcesAsset.laboratoryFlask,
                                    label: CoreUILocalizable.joinTheBetaButton,
                                    matomoName: "joinBetaProgram") {
                     openURL(URLConstants.testFlight.url)
