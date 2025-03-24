@@ -1648,6 +1648,9 @@
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "";
 
+/* loco:67b32e5c0e4974a86a00c602 */
+"snoozeAlertTitle" = "In attesa fino al: %@";
+
 /* loco:67a32e4384fbf4226404e972 */
 "snoozedFolder" = "In attesa";
 
