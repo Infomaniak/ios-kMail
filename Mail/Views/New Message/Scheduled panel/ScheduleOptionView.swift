@@ -46,7 +46,7 @@ struct ScheduleOptionView: View {
                         .textStyle(.body)
                         .frame(maxWidth: .infinity, alignment: .leading)
 
-                    Text(scheduleDate, format: .schedule)
+                    Text(scheduleDate, format: .scheduleOption)
                         .textStyle(.bodySmallSecondary)
                 }
             }
@@ -57,12 +57,12 @@ struct ScheduleOptionView: View {
 
 #Preview {
     ScheduleOptionView(option: .nextMondayAfternoon) { date in
-        print("Button \(date.formatted(.schedule)) clicked !")
+        print("Button \(date.formatted(.scheduleOption)) clicked !")
     }
     ScheduleOptionView(option: .lastSchedule(value: .now)) { date in
-        print("Button \(date.formatted(.schedule)) clicked !")
+        print("Button \(date.formatted(.scheduleOption)) clicked !")
     }
     ScheduleOptionView(option: .thisAfternoon) { date in
-        print("Button \(date.formatted(.schedule)) clicked !")
+        print("Button \(date.formatted(.scheduleOption)) clicked !")
     }
 }
