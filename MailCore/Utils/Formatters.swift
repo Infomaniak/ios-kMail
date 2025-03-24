@@ -114,7 +114,11 @@ public extension FormatStyle where Self == Date.FormatStyle {
         return .init(style: style)
     }
 
-    static var schedule: Date.FormatStyle {
+    static var messageHeader: Date.FormatStyle {
+        return .dateTime.day().month().year().hour().minute()
+    }
+
+    static var scheduleOption: Date.FormatStyle {
         return .dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute()
     }
 }
