@@ -183,4 +183,8 @@ public extension MailApiFetcher {
             method: .delete
         ))
     }
+
+    func lastSyncDate() async throws -> String? {
+        return try await perform(request: authenticatedRequest(.lastSyncDate()))
+    }
 }

@@ -193,6 +193,7 @@ public enum Constants {
     ]
 
     public static let minimumOpeningBeforeSync = 2
+    public static let nextOpeningBeforeSync = 50
 
     /// A count limit for the Contact cache in Extension mode, where we have strong memory constraints.
     public static let contactCacheExtensionMaxCount = 50
