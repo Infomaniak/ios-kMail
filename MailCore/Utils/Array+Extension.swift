@@ -64,8 +64,10 @@ public extension Set {
 }
 
 public extension MutableSet {
-    func upsert<S: Sequence>(objectsIn objects: S) where S.Iterator.Element == Element {
-        removeAll()
-        insert(objectsIn: objects)
+    func upsert<S: Sequence>(append newObjects: S, remove oldObjects: S) where S.Iterator.Element == Element {
+        for oldObject in oldObjects {
+            remove(oldObject)
+        }
+        insert(objectsIn: newObjects)
     }
 }
