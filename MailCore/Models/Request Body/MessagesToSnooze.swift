@@ -22,3 +22,8 @@ struct MessagesToSnooze: Encodable, Sendable {
     let endDate: Date
     let uids: [String]
 }
+
+struct SnoozedMessagesToUpdate: Encodable, Sendable {
+    let endDate: Date
+    let uuids: [String]
+}
