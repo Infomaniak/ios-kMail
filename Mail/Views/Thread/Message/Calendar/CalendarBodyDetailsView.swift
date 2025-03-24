@@ -59,7 +59,7 @@ struct CalendarBodyDetailsView: View {
         calendar.timeZone = TimeZone(secondsFromGMT: 0)!
 
         self.calendar = calendar
-        parser = RruleDecoder(frequency: .daily, interval: nil, calendar: calendar, end: nil, count: nil, byDay: nil)
+        parser = RruleDecoder()
 
         self.event = event
     }
