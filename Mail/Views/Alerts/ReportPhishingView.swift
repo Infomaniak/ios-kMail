@@ -17,6 +17,7 @@
  */
 
 import DesignSystem
+import InfomaniakConcurrency
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
@@ -49,7 +50,7 @@ struct ReportPhishingView: View {
     private func report() async {
         await tryOrDisplayError {
             var lastResponse = false
-            for message in messagesWithDuplicates {
+            messagesWithDuplicates.concurrentForEach { message in
                 lastResponse = try await mailboxManager.apiFetcher.reportPhishing(message: message)
             }
 
