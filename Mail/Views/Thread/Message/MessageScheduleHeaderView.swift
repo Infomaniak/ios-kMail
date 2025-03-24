@@ -36,11 +36,7 @@ struct MessageScheduleHeaderView: View {
     var body: some View {
         MessageHeaderActionView(
             icon: MailResourcesAsset.clockPaperplane.swiftUIImage,
-            message: MailResourcesStrings.Localizable.scheduledEmailHeader(DateFormatter.localizedString(
-                from: scheduleDate,
-                dateStyle: .full,
-                timeStyle: .short
-            ))
+            message: MailResourcesStrings.Localizable.scheduledEmailHeader(scheduleDate.formatted(.dateTime))
         ) {
             Button(MailResourcesStrings.Localizable.buttonReschedule) {
                 isShowingReschedulePanel = true
