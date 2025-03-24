@@ -22,7 +22,7 @@ import InfomaniakCore
 
 /// implementing `MailApiCommonFetchable`
 public extension MailApiFetcher {
-    private static let snoozeAPILimit = 50
+    private static let snoozeAPILimit = 100
 
     func snooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws {
         _ = try await batchOver(values: messages, chunkSize: Self.snoozeAPILimit) { chunk in
@@ -34,16 +34,14 @@ public extension MailApiFetcher {
         }
     }
 
-    func updateSnooze(messages: [Message], until date: Date) async throws {
-        // TODO: API Should be updated to allow batch actions
-        for message in messages {
-            let _: Empty = try await perform(
-                request: authenticatedRequest(
-                    .snoozeAction(resource: ""),
-                    method: .put,
-                    parameters: ["end_date": date]
-                )
-            )
+    func updateSnooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws {
+        // TODO: Replace with Snooze UUID instead of message UID
+        _ = try await batchOver(values: messages, chunkSize: Self.snoozeAPILimit) { chunk in
+            let _: Empty = try await self.perform(request: self.authenticatedRequest(
+                .snooze(uuid: mailbox.uuid),
+                method: .put,
+                parameters: SnoozedMessagesToUpdate(endDate: date, uuids: chunk.map(\.uid))
+            ))
         }
     }
 
