@@ -102,6 +102,20 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                         newObject?["internalDate"] = oldObject?["date"]
                     }
                 }
+                if oldSchemaVersion < 38 {
+                    let snoozeUUIDParser = SnoozeUUIDParser()
+
+                    migration.enumerateObjects(ofType: Message.className()) { oldObject, newObject in
+                        if let snoozeAction = oldObject?["snoozeAction"] as? String {
+                            newObject?["snoozeUUID"] = snoozeUUIDParser.parse(resource: snoozeAction)
+                        }
+                    }
+                    migration.enumerateObjects(ofType: Thread.className()) { oldObject, newObject in
+                        if let snoozeAction = oldObject?["snoozeAction"] as? String {
+                            newObject?["snoozeUUID"] = snoozeUUIDParser.parse(resource: snoozeAction)
+                        }
+                    }
+                }
             },
             objectTypes: [
                 Folder.self,
