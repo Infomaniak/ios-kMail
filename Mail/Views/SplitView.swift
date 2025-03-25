@@ -27,6 +27,7 @@ import MailCoreUI
 import MailResources
 import MyKSuite
 import NavigationBackport
+import OSLog
 import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
@@ -313,15 +314,16 @@ struct SplitView: View {
         }
 
         do {
-            _ = try await mailboxManager.apiFetcher.lastSyncDate()
-            UserDefaults.shared.shouldPresentSyncDiscovery = false
+            let syncDate = try await mailboxManager.apiFetcher.lastSyncDate()
+            if syncDate == nil {
+                UserDefaults.shared.nextShowSync = appLaunchCounter.value + Constants.nextOpeningBeforeSync
+                UserDefaults.shared.showSyncCounter += 1
+                return true
+            } else {
+                UserDefaults.shared.shouldPresentSyncDiscovery = false
+            }
         } catch {
-            // If data contains null
-            // TODO: - Temporary fix: Need to decode optional correctly
-            guard let e = error as? MailServerError, e.code == "serverError" else { return false }
-            UserDefaults.shared.nextShowSync = appLaunchCounter.value + Constants.nextOpeningBeforeSync
-            UserDefaults.shared.showSyncCounter += 1
-            return true
+            Logger.general.error("Error while fetching last sync date: \(error)")
         }
         return false
     }
