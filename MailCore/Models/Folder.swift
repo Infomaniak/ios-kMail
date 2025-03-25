@@ -315,9 +315,9 @@ public class Folder: Object, Codable, Comparable, Identifiable {
 
         switch role {
         case .inbox:
-            return isThreadInCurrentFolder && !isMessageSnoozed
+            return isThreadInCurrentFolder && !thread.isSnoozed
         case .snoozed:
-            return isThreadInCurrentFolder && isMessageSnoozed
+            return isThreadInCurrentFolder && thread.isSnoozed
         default:
             return isThreadInCurrentFolder
         }
