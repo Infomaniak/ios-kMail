@@ -20,7 +20,7 @@ import RealmSwift
 
 // AddressBook Categories
 public final class GroupContact: Object, Codable {
-    @Persisted public var id: Int
+    @Persisted(primaryKey: true) public var id: Int
 
     @Persisted public var name: String
 

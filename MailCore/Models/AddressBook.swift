@@ -23,7 +23,7 @@ public struct AddressBookResult: Decodable {
     var addressbooks: [AddressBook]
 }
 
-public final class AddressBook: Object, Decodable, Identifiable {
+public final class AddressBook: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var id: Int
     @Persisted(primaryKey: true) public var uuid: String
     @Persisted public var name: String
