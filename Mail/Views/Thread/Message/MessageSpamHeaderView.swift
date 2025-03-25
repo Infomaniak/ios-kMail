@@ -95,8 +95,8 @@ struct MessageSpamHeaderView: View {
             case .unblockRecipient(let sender):
                 try await mailboxManager.unblockSender(sender: sender)
             }
-            spamType = .none
-//            spamType = spamTypeFor(message: message)
+//            spamType = .none
+            spamType = spamTypeFor(message: message)
             isButtonLoading = false
         }
     }
