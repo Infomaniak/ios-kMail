@@ -42,8 +42,7 @@ struct MessageScheduleHeaderView: View {
                 isShowingReschedulePanel = true
             }
 
-            Divider()
-                .frame(height: 20)
+            MessageHeaderDivider()
 
             Button(MailResourcesStrings.Localizable.buttonModify) {
                 mainViewState.modifiedScheduleDraftResource = ModifiedScheduleDraftResource(draftResource: draftResource)
