@@ -41,8 +41,6 @@ struct MessageScheduleHeaderView: View {
             Button(MailResourcesStrings.Localizable.buttonReschedule) {
                 isShowingReschedulePanel = true
             }
-            .buttonStyle(.ikBorderless(isInlined: true))
-            .controlSize(.small)
 
             Divider()
                 .frame(height: 20)
@@ -50,8 +48,6 @@ struct MessageScheduleHeaderView: View {
             Button(MailResourcesStrings.Localizable.buttonModify) {
                 mainViewState.modifiedScheduleDraftResource = ModifiedScheduleDraftResource(draftResource: draftResource)
             }
-            .buttonStyle(.ikBorderless(isInlined: true))
-            .controlSize(.small)
         }
         .scheduleFloatingPanel(
             isPresented: $isShowingReschedulePanel,

@@ -46,6 +46,8 @@ struct MessageHeaderActionView<Content: View>: View {
                 HStack {
                     actions()
                 }
+                .buttonStyle(.ikBorderless(isInlined: true))
+                .controlSize(.small)
                 .padding(.leading, iconSize + IKPadding.mini)
             }
             .padding(.vertical, value: .micro)
@@ -61,7 +63,5 @@ struct MessageHeaderActionView<Content: View>: View {
         message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
     ) {
         Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
-            .buttonStyle(.ikBorderless(isInlined: true))
-            .controlSize(.small)
     }
 }
