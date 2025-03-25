@@ -22,8 +22,4 @@ public extension Endpoint {
     static func snooze(uuid: String) -> Endpoint {
         return .mailbox(uuid: uuid).appending(path: "snoozes")
     }
-
-    static func snoozeAction(resource: String) -> Endpoint {
-        return .resource(resource)
-    }
 }
