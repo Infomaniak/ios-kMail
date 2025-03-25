@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: it, Italian
  * Tagged: ios
- * Exported by: Baptiste Griva
- * Exported at: Tue, 25 Mar 2025 09:51:23 +0100
+ * Exported by: Valentin Perignon
+ * Exported at: Tue, 25 Mar 2025 14:17:20 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -360,6 +360,9 @@
 
 /* loco:66f2853e4d75905fd406ea93 */
 "buttonCancelFormatting" = "Annullamento della formattazione";
+
+/* loco:67b32a7057a66d891b06eb35 */
+"buttonCancelReminder" = "Annulla promemoria";
 
 /* loco:62befe9ca822415272753592 */
 "buttonClose" = "Chiudi";
