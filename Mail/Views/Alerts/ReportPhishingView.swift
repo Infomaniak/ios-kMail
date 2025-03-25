@@ -49,15 +49,16 @@ struct ReportPhishingView: View {
 
     private func report() async {
         await tryOrDisplayError {
-            var lastResponse = false
-            messagesWithDuplicates.concurrentForEach { message in
-                lastResponse = try await mailboxManager.apiFetcher.reportPhishing(message: message)
+            let latestResponses = try await messagesWithDuplicates.concurrentMap { message in
+                try await mailboxManager.apiFetcher.reportPhishing(message: message)
             }
 
-            if lastResponse {
+            if latestResponses.allSatisfy({ $0 == true }) {
                 let messagesFreeze = messagesWithDuplicates.map { $0.freezeIfNeeded() }
                 _ = try await mailboxManager.move(messages: messagesFreeze, to: .spam)
                 snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarReportPhishingConfirmation)
+            } else {
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarReportPhishingError)
             }
         }
 

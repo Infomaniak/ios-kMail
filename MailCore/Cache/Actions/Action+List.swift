@@ -79,7 +79,7 @@ extension Action: CaseIterable {
     }
 
     public var shouldDisableMultipleSelection: Bool {
-        return ![.openMovePanel, .saveThreadInkDrive, .shareMailLink, .reportJunk].contains(self)
+        return ![.openMovePanel, .saveThreadInkDrive, .shareMailLink, .reportJunk, .phishing, .block, .blockList].contains(self)
     }
 
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,

@@ -1639,6 +1639,9 @@
 /* loco:62ab4ae387f65e26e577dd42 */
 "snackbarReportPhishingConfirmation" = "Signalement effectué avec succès";
 
+/* loco:67e265b380b26e5cb8004cb2 */
+"snackbarReportPhishingError" = "Une erreur s’est produite lors du signalement, veuillez réessayer.";
+
 /* loco:62c2f9feea59c120ad52bc23 */
 "snackbarRestorationLaunched" = "Lancement de la restauration";
 

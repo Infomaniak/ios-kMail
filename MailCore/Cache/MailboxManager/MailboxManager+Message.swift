@@ -101,8 +101,7 @@ public extension MailboxManager {
     func move(messages: [Message], to folder: Folder, origin: Folder? = nil) async throws -> UndoAction {
         return try await performMoveAction(
             messages: messages,
-            origin: origin,
-            destination: folder
+            origin: origin
         ) { uuid, chunk in
             try await self.apiFetcher.move(mailboxUuid: uuid, messages: chunk, destinationId: folder.remoteId)
         }
@@ -120,7 +119,6 @@ public extension MailboxManager {
     func performMoveAction(
         messages: [Message],
         origin: Folder?,
-        destination: Folder? = nil,
         action: @escaping (String, [Message]) async throws -> UndoResponse
     ) async throws -> UndoAction {
         let originalThreads = messages.flatMap { $0.threads.filter { $0.folder == origin } }
