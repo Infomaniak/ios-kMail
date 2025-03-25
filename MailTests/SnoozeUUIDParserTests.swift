@@ -47,18 +47,18 @@ final class SnoozeUUIDParserTests: XCTestCase {
     }
 
     func testExtractUUIDFromActualResource() {
-        let parser = SnoozeUUIDParser()
-
         let dataSet: [(input: String, output: String)] = [
             (
-                "/api/mail/c33185f8-36b1-346b-a14e-cd84dbb46294/snoozes/9e83f293-42f6-4276-8486-da6f2f6cda73",
-                "9e83f293-42f6-4276-8486-da6f2f6cda73"
+                "/api/mail/c33185f8-63b3-346d-a14e-cd84dbb46294/snoozes/9e82f294-42f6-4276-8486-da6f2f6cda73",
+                "9e82f294-42f6-4276-8486-da6f2f6cda73"
             ),
             (
-                "/api/mail/c34285f7-36b1-347c-a14e-ce84dbb44294/snoozes/9e83f293-47e0-43f0-947c-776d90329967",
-                "9e83f293-47e0-43f0-947c-776d90329967"
+                "/api/mail/c34275f7-64c2-347c-a23e-ce84dbb44294/snoozes/9e82f294-47e0-43f0-947c-776d90329967",
+                "9e82f294-47e0-43f0-947c-776d90329967"
             )
         ]
+
+        let parser = SnoozeUUIDParser()
         for data in dataSet {
             let result = parser.parse(resource: data.input)
             XCTAssertEqual(result, data.output)
@@ -66,18 +66,18 @@ final class SnoozeUUIDParserTests: XCTestCase {
     }
 
     func testExtractUUIDFromTransformedResource() {
-        let parser = SnoozeUUIDParser()
-
         let dataSet: [(input: String, output: String)] = [
             (
-                "/api/mail/c33185f8-36b1-346b-a14e-cd84dbb46294/snoozed/9e83f293-42f6-4276-8486-da6f2f6cda73/add",
-                "9e83f293-42f6-4276-8486-da6f2f6cda73"
+                "/api/mail/c33185f7-31b1-264c-b14e-cd84dbb46294/snoozed/9e82f294-42f6-4276-8486-da6f2f6cda73/add",
+                "9e82f294-42f6-4276-8486-da6f2f6cda73"
             ),
             (
-                "/api/mail/add-snooze/9e83f293-47e0-43f0-947c-776d90329967",
-                "9e83f293-47e0-43f0-947c-776d90329967"
+                "/api/mail/add-snooze/9e82f294-47e0-43f0-947c-776d90329967",
+                "9e82f294-47e0-43f0-947c-776d90329967"
             )
         ]
+
+        let parser = SnoozeUUIDParser()
         for data in dataSet {
             let result = parser.parse(resource: data.input)
             XCTAssertEqual(result, data.output)
