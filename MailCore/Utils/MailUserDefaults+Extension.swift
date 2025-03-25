@@ -57,6 +57,7 @@ public extension UserDefaults.Keys {
     static let nextShowQuotasAlert = UserDefaults.Keys(rawValue: "nextShowQuotasAlert")
     static let nextShowSync = UserDefaults.Keys(rawValue: "nextShowSync")
     static let showSyncCounter = UserDefaults.Keys(rawValue: "showSyncCounter")
+    static let hasDismissedMacDisclaimerView = UserDefaults.Keys(rawValue: "hasDismissedMacDisclaimerView")
 }
 
 public extension UserDefaults {

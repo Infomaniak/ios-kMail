@@ -33,6 +33,7 @@ import VersionChecker
 struct ThreadListView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var userActivityController: UserActivityController
+    @InjectService var platformDetector: PlatformDetectable
 
     @EnvironmentObject private var mainViewState: MainViewState
 
@@ -41,6 +42,9 @@ struct ThreadListView: View {
     @AppStorage(UserDefaults.shared.key(.hasDismissedUpdateVersionView)) private var hasDismissedUpdateVersionView =
         DefaultPreferences
             .hasDismissedUpdateVersionView
+    @AppStorage(UserDefaults.shared.key(.hasDismissedMacDisclaimerView)) private var hasDismissedMacDisclaimerView =
+        DefaultPreferences
+            .hasDismissedMacDisclaimerView
 
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
@@ -114,6 +118,11 @@ struct ThreadListView: View {
                     if Constants.isUsingABreakableOSVersion && !hasDismissedUpdateVersionView && viewModel.frozenFolder
                         .role == .inbox {
                         MailUpdateVersionView(isShowingUpdateAlert: $isShowingUpdateAlert)
+                            .threadListCellAppearance()
+                    }
+
+                    if platformDetector.isMac && !hasDismissedMacDisclaimerView {
+                        MacUsageDisclaimerView(hasDismissedMacDisclaimerView: $hasDismissedMacDisclaimerView)
                             .threadListCellAppearance()
                     }
 
