@@ -72,20 +72,18 @@ struct MessageSpamHeaderView: View {
     }
 
     private func spamTypeFor(message: Message) -> SpamHeaderType {
-        if message.folder?.role != .spam {
-            if message.isSpam && !isSenderApproved(sender: message.from.first?.email) {
-                if mailbox.isSpamFilter {
-                    return .moveInSpam
-                } else {
-                    return .enableSpamFilter
-                }
+        if message.folder?.role != .spam,
+           message.isSpam && !isSenderApproved(sender: message.from.first?.email) {
+            if mailbox.isSpamFilter {
+                return .moveInSpam
+            } else {
+                return .enableSpamFilter
             }
         }
 
-        if message.folder?.role == .spam {
-            if let sender = message.from.first, !message.isSpam && isSenderBlocked(sender: sender.email) {
-                return .unblockRecipient(sender.email)
-            }
+        if message.folder?.role == .spam,
+           let sender = message.from.first, !message.isSpam && isSenderBlocked(sender: sender.email) {
+            return .unblockRecipient(sender.email)
         }
 
         return .none
