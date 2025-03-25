@@ -50,6 +50,8 @@ struct MessageHeaderActionView<Content: View>: View {
                 HStack {
                     actions()
                 }
+                .buttonStyle(.ikBorderless(isInlined: true))
+                .controlSize(.small)
                 .padding(.leading, iconSize + IKPadding.mini)
             }
             .padding(.bottom, value: .micro)
