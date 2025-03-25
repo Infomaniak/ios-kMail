@@ -194,7 +194,7 @@ public extension MailboxManager {
 
         let range = 0 ..< min(uidsToFetch.count, direction.pageSize)
         let nextUids: [String] = uidsToFetch[range].map { $0.uid }
-        try await addMessages(shortUids: nextUids, folder: folder)
+        let impactedThreads = try await addMessages(shortUids: nextUids, folder: folder)
 
         try? writeTransaction { writableRealm in
             guard let freshFolder = folder.fresh(using: writableRealm) else { return }
@@ -205,7 +205,7 @@ public extension MailboxManager {
                 freshFolder.remainingOldMessagesToFetch -= direction.pageSize
             }
 
-            refreshFolderThreads(folder: freshFolder, using: writableRealm)
+            refreshFolderThreads(threads: impactedThreads, folder: freshFolder)
         }
 
         return true
@@ -302,14 +302,15 @@ public extension MailboxManager {
     }
 
     private func handleDeletedMessages(messagesDelta: MessagesDelta<SnoozedFlags>, folder: Folder) async {
-        await updateMessages(with: messagesDelta.deletedShortUids, in: folder, messageUid: \.self) { message, _ in
+        let updatedThreads = await updateMessages(with: messagesDelta.deletedShortUids, in: folder,
+                                                  messageUid: \.self) { message, _ in
             message.snoozeState = nil
             message.snoozeAction = nil
             message.snoozeEndDate = nil
         }
 
-        try? writeTransaction { writableRealm in
-            refreshFolderThreads(folder: folder, using: writableRealm)
+        try? writeTransaction { _ in
+            refreshFolderThreads(threads: updatedThreads, folder: folder)
         }
     }
 
@@ -345,8 +346,8 @@ public extension MailboxManager {
         }
     }
 
-    private func addMessages(shortUids: [String], folder: Folder) async throws {
-        guard !shortUids.isEmpty && !Task.isCancelled else { return }
+    private func addMessages(shortUids: [String], folder: Folder) async throws -> Set<Thread> {
+        guard !shortUids.isEmpty && !Task.isCancelled else { return [] }
 
         let messageByUidsResult = try await apiFetcher.messagesByUids(
             mailboxUuid: mailbox.uuid,
@@ -354,23 +355,25 @@ public extension MailboxManager {
             messageUids: shortUids
         )
 
+        var impactedThreads = Set<Thread>()
         try? writeTransaction { writableRealm in
-            if let folder = folder.fresh(using: writableRealm) {
-                createThreads(messageByUids: messageByUidsResult, folder: folder, writableRealm: writableRealm)
-            }
+            guard let folder = folder.fresh(using: writableRealm) else { return }
+            impactedThreads = createThreads(messageByUids: messageByUidsResult, folder: folder, writableRealm: writableRealm)
         }
+        return impactedThreads
     }
 
+    @discardableResult
     private func updateMessages<T>(
         with items: [T],
         in folder: Folder,
         messageUid: KeyPath<T, String>,
         perform action: (Message, T) -> Void
-    ) async {
-        guard !Task.isCancelled else { return }
+    ) async -> Set<Thread> {
+        guard !Task.isCancelled else { return [] }
 
+        var threadsToUpdate = Set<Thread>()
         try? writeTransaction { writableRealm in
-            var threadsToUpdate = Set<Thread>()
             for item in items {
                 let messageLongUid = computeLongMessageUid(shortUid: item[keyPath: messageUid], in: folder)
                 guard let message = writableRealm.object(ofType: Message.self, forPrimaryKey: messageLongUid) else { continue }
@@ -381,6 +384,8 @@ public extension MailboxManager {
 
             recomputeThreadsAndUnreadCount(of: threadsToUpdate, realm: writableRealm)
         }
+
+        return threadsToUpdate
     }
 
     // MARK: - Thread creation
@@ -390,7 +395,7 @@ public extension MailboxManager {
     ///   - messageByUids: MessageByUidsResult (list of message)
     ///   - folder: Given folder
     ///   - writableRealm: Given realm
-    private func createThreads(messageByUids: MessageByUidsResult, folder: Folder, writableRealm: Realm) {
+    private func createThreads(messageByUids: MessageByUidsResult, folder: Folder, writableRealm: Realm) -> Set<Thread> {
         var threadsToUpdate = Set<Thread>()
         for message in messageByUids.messages {
             if let existingMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) {
@@ -417,6 +422,8 @@ public extension MailboxManager {
         }
 
         recomputeThreadsAndUnreadCount(of: threadsToUpdate, realm: writableRealm)
+
+        return threadsToUpdate
     }
 
     /// Add the given message to existing compatible threads + Create a new thread if needed
@@ -602,22 +609,24 @@ public extension MailboxManager {
         return thread
     }
 
-    private func refreshFolderThreads(folder: Folder, using realm: Realm) {
-        upsertThreadsAndMessages(in: folder, using: realm)
+    private func refreshFolderThreads(threads: Set<Thread>, folder: Folder) {
+        upsertThreadsAndMessages(threads: threads, in: folder)
 
         for associatedFolder in folder.associatedFolders {
-            upsertThreadsAndMessages(in: associatedFolder, using: realm)
+            upsertThreadsAndMessages(threads: threads, in: associatedFolder)
         }
     }
 
-    private func upsertThreadsAndMessages(in folder: Folder, using realm: Realm) {
+    private func upsertThreadsAndMessages(threads: Set<Thread>, in folder: Folder) {
         guard let freshFolder = folder.fresh(transactionable: self) else { return }
 
-        let threads = realm.objects(Thread.self).where { freshFolder.threadBelongsToFolder($0) }
-        freshFolder.threads.upsert(objectsIn: threads)
+        let threadsToAdd = threads.filter { freshFolder.threadBelongsToFolder($0) }
+        let threadsToDelete = threads.subtracting(threadsToAdd)
+        freshFolder.threads.upsert(append: threadsToAdd, remove: threadsToDelete)
 
-        let messages = realm.objects(Message.self).where { $0.threads.containsAny(in: threads) }
-        freshFolder.messages.upsert(objectsIn: messages)
+        let messagesToAdd = Set(threadsToAdd.flatMap(\.messages)).filter { $0.folderId == folder.remoteId }
+        let messagesToDelete = Set(threadsToDelete.flatMap(\.messages)).filter { $0.folderId == folder.remoteId }
+        freshFolder.messages.upsert(append: messagesToAdd, remove: messagesToDelete)
     }
 
     private func computeLongMessageUid(shortUid: String, in folder: Folder) -> String {
