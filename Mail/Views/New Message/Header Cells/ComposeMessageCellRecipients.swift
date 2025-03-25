@@ -154,9 +154,6 @@ struct ComposeMessageCellRecipients: View {
         } catch {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
         }
-        withAnimation {
-            contact
-        }
         textDebounce.text = ""
     }
 
