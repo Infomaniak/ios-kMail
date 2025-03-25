@@ -24,66 +24,37 @@ import RealmSwift
 import SwiftUI
 
 struct MessageSpamHeaderView: View {
-    @InjectService private var accountManager: AccountManager
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
-    private let mailboxManager: MailboxManager
-    @ObservedRealmObject private var message: Message
+    @ObservedRealmObject var message: Message
+    @ObservedRealmObject var mailbox: Mailbox
 
-    private var mailbox: Mailbox {
-        mailboxes.first!
-    }
-
-    @ObservedResults(
-        Mailbox.self,
-        configuration: {
-            @InjectService var mailboxInfosManager: MailboxInfosManager
-            return mailboxInfosManager.realmConfiguration
-        }(),
-        where: filterCurrentMailbox,
-        sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
-    ) private var mailboxes
-
-    @State private var spamType: SpamHeaderType = .none
     @State private var isButtonLoading = false
 
-    init(message: Message, mailboxManager: MailboxManager) {
-        _message = ObservedRealmObject(wrappedValue: message)
-        self.mailboxManager = mailboxManager
-        _spamType = State(initialValue: spamTypeFor(message: message))
-    }
-
     var body: some View {
-        Group {
-            if spamType != .none {
-                MessageHeaderActionView(
-                    icon: spamType.icon,
-                    iconColor: spamType.iconColor,
-                    message: spamType.message
-                ) {
-                    Button {
-                        action()
-                    } label: {
-                        Text(spamType.buttonTitle)
-                    }
-                    .buttonStyle(.ikBorderless(isInlined: true))
-                    .controlSize(.small)
-                    .disabled(isButtonLoading)
-                    .ikButtonLoading(isButtonLoading)
+        let spamType = spamTypeFor(message: message)
+        if spamType != .none {
+            MessageHeaderActionView(
+                icon: spamType.icon,
+                iconColor: spamType.iconColor,
+                message: spamType.message
+            ) {
+                Button {
+                    action()
+                } label: {
+                    Text(spamType.buttonTitle)
                 }
+                .buttonStyle(.ikBorderless(isInlined: true))
+                .controlSize(.small)
+                .disabled(isButtonLoading)
+                .ikButtonLoading(isButtonLoading)
             }
         }
-        .onChange(of: message.isSpam) { _ in
-            spamType = spamTypeFor(message: message)
-        }
-    }
-
-    private static func filterCurrentMailbox(_ mailbox: Query<Mailbox>) -> Query<Bool> {
-        @InjectService var accountManager: AccountManager
-        return mailbox.userId == accountManager.currentUserId
     }
 
     private func action() {
         isButtonLoading = true
+        let spamType = spamTypeFor(message: message)
         Task {
             switch spamType {
             case .none:
@@ -95,8 +66,7 @@ struct MessageSpamHeaderView: View {
             case .unblockRecipient(let sender):
                 try await mailboxManager.unblockSender(sender: sender)
             }
-//            spamType = .none
-            spamType = spamTypeFor(message: message)
+
             isButtonLoading = false
         }
     }
@@ -122,14 +92,16 @@ struct MessageSpamHeaderView: View {
     }
 
     private func isSenderApproved(sender: String?) -> Bool {
-        guard let sender, let sendersRestrictions = mailbox.sendersRestrictions else {
+        guard let sender,
+              let sendersRestrictions = mailbox.sendersRestrictions else {
             return false
         }
         return sendersRestrictions.authorizedSenders.contains { $0.email == sender }
     }
 
     private func isSenderBlocked(sender: String?) -> Bool {
-        guard let sender, let sendersRestrictions = mailbox.sendersRestrictions else {
+        guard let sender,
+              let sendersRestrictions = mailbox.sendersRestrictions else {
             return false
         }
         return sendersRestrictions.blockedSenders.contains { $0.email == sender }
@@ -137,5 +109,5 @@ struct MessageSpamHeaderView: View {
 }
 
 #Preview {
-    MessageSpamHeaderView(message: PreviewHelper.sampleMessage, mailboxManager: PreviewHelper.sampleMailboxManager)
+    MessageSpamHeaderView(message: PreviewHelper.sampleMessage, mailbox: PreviewHelper.sampleMailboxManager.mailbox)
 }

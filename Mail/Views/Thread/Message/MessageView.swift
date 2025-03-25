@@ -65,7 +65,7 @@ struct MessageView: View {
 
             if isMessageExpanded {
                 VStack(spacing: IKPadding.medium) {
-                    MessageSpamHeaderView(message: message, mailboxManager: mailboxManager)
+                    MessageSpamHeaderView(message: message, mailbox: mailboxManager.mailbox)
 
                     if let isScheduledDraft = message.isScheduledDraft, isScheduledDraft,
                        let scheduleDate = message.scheduleDate,
