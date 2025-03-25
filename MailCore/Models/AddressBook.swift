@@ -20,7 +20,11 @@ import Foundation
 import RealmSwift
 
 public struct AddressBookResult: Decodable {
-    var addressbooks: [AddressBook]
+    let addressBooks: [AddressBook]
+
+    enum CodingKeys: String, CodingKey {
+        case addressBooks = "addressbooks"
+    }
 }
 
 public final class AddressBook: Object, Decodable, ObjectKeyIdentifiable {

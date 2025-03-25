@@ -46,7 +46,7 @@ public enum ContactConfiguration: CustomDebugStringConvertible {
     case user(user: UserProfile)
     case contact(contact: CommonContact)
     case groupContact(group: GroupContact)
-    case addressBook(addressbook: AddressBook)
+    case addressBook(addressBook: AddressBook)
     case emptyContact
 
     public func freezeIfNeeded() -> Self {

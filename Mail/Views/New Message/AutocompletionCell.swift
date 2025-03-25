@@ -39,7 +39,7 @@ struct AutocompletionCell: View {
         if let groupContact = autocompletion as? GroupContact {
             return .groupContact(group: groupContact)
         } else if let addressBook = autocompletion as? AddressBook {
-            return .addressBook(addressbook: addressBook)
+            return .addressBook(addressBook: addressBook)
         } else if let mergedContact = autocompletion as? MergedContact {
             let contact = CommonContact(
                 correspondent: mergedContact,

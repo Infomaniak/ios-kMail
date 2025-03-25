@@ -56,8 +56,8 @@ public protocol ContactFetchable {
     /// Get a contact from group contact (categories)
     func getContacts(with groupContactId: Int) -> [MergedContact]
 
-    /// Get a contact from adressbook
-    func getContacts(for addressbookId: Int) -> [MergedContact]
+    /// Get a contact from adressBook
+    func getContacts(for addressBookId: Int) -> [MergedContact]
 
     /// Get the `AddressBook` by the `GroupContact`'s ID
     /// - Parameter groupContactId: The ID of the `GroupContact` to look up
@@ -167,10 +167,10 @@ public extension ContactManager {
         return Array(frozenContacts.freezeIfNeeded())
     }
 
-    func getContacts(for addressbookId: Int) -> [MergedContact] {
+    func getContacts(for addressBookId: Int) -> [MergedContact] {
         let contacts = fetchResults(ofType: MergedContact.self) { partial in
             partial
-                .where { $0.remoteAddressBookId == addressbookId }
+                .where { $0.remoteAddressBookId == addressBookId }
         }
         return Array(contacts.freezeIfNeeded())
     }

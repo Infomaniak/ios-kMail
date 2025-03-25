@@ -50,7 +50,7 @@ struct MCKContactManageable_FolderListViewModel: ContactManageable, MCKTransacti
 
     func getContacts(with groupContactId: Int) -> [MailCore.MergedContact] { [] }
 
-    func getContacts(for addressbookId: Int) -> [MailCore.MergedContact] { [] }
+    func getContacts(for addressBookId: Int) -> [MailCore.MergedContact] { [] }
 
     func addressBook(with id: Int) -> MailCore.AddressBook? { nil }
 

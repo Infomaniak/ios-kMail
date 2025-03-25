@@ -57,7 +57,7 @@ struct MCKContactManageable_SearchViewModel: ContactManageable, MCKTransactionab
 
     func getContacts(with groupContactId: Int) -> [MailCore.MergedContact] { [] }
 
-    func getContacts(for addressbookId: Int) -> [MailCore.MergedContact] { [] }
+    func getContacts(for addressBookId: Int) -> [MailCore.MergedContact] { [] }
 
     func addressBook(with id: Int) -> MailCore.AddressBook? { nil }
 
