@@ -462,7 +462,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
             forwarded: forwarded,
             bimi: bimi,
             snoozeState: snoozeState,
-            snoozeAction: snoozeUUID,
+            snoozeUUID: snoozeUUID,
             snoozeEndDate: snoozeEndDate
         )
         thread.messageIds = linkedUids
