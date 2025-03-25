@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: en, English
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Wed, 05 Mar 2025 14:14:15 +0100
+ * Exported by: Baptiste Griva
+ * Exported at: Tue, 25 Mar 2025 09:51:23 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -981,6 +981,9 @@
 
 /* loco:665ed97d84c0a50abb0783d3 */
 "lockedMailboxViewTitle" = "Some of your mailboxes are blocked";
+
+/* loco:67e26d1c96ffb194f70925b2 */
+"macUsageDisclaimerTitle" = "This app works on macOS, but is optimized for mobile and tablet use.";
 
 /* loco:6639ec5faf37f28888054ea2 */
 "manageSignatures" = "Manage my signatures";

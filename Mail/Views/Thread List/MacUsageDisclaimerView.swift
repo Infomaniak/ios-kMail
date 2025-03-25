@@ -39,7 +39,7 @@ struct MacUsageDisclaimerView: View {
                         d[VerticalAlignment.center]
                     }
 
-                Text("Cette application fonctionne sur macOS, mais est optimisée pour un usage mobile et tablette.")
+                Text(MailResourcesStrings.Localizable.macUsageDisclaimerTitle)
                     .textStyle(.bodySmall)
                     .alignmentGuide(.iconAndMultilineTextAlignment) { d in
                         (d.height - (d[.lastTextBaseline] - d[.firstTextBaseline])) / 2
@@ -53,7 +53,7 @@ struct MacUsageDisclaimerView: View {
                 matomo.track(eventWithCategory: .updateVersion, name: "Understand")
                 hasDismissedMacDisclaimerView = true
             } label: {
-                Text("Compris")
+                Text(MailResourcesStrings.Localizable.externalDialogConfirmButton)
             }
             .buttonStyle(.ikBorderless)
             .controlSize(.small)
