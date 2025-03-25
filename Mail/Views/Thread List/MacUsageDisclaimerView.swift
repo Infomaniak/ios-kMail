@@ -26,8 +26,6 @@ import MailResources
 import SwiftUI
 
 struct MacUsageDisclaimerView: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @Binding var hasDismissedMacDisclaimerView: Bool
 
     var body: some View {
@@ -50,7 +48,6 @@ struct MacUsageDisclaimerView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             Button {
-                matomo.track(eventWithCategory: .updateVersion, name: "Understand")
                 hasDismissedMacDisclaimerView = true
             } label: {
                 Text(MailResourcesStrings.Localizable.externalDialogConfirmButton)
