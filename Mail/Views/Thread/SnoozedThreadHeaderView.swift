@@ -26,8 +26,16 @@ struct SnoozedThreadHeaderView: View {
         MessageHeaderActionView(
             icon: MailResourcesAsset.alarmClockFilled.swiftUIImage,
             message: MailResourcesStrings.Localizable.snoozeAlertTitle(date.formatted(.messageHeader))
-        ) {}
+        ) {
+            Button(MailResourcesStrings.Localizable.buttonModify, action: edit)
+            MessageHeaderDivider()
+            Button(MailResourcesStrings.Localizable.buttonCancelReminder, action: cancel)
+        }
     }
+
+    private func edit() {}
+
+    private func cancel() {}
 }
 
 #Preview {
