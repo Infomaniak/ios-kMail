@@ -43,4 +43,5 @@ public enum DefaultPreferences {
     public static let hasDismissedUpdateVersionView = false
     public static let matomoAuthorized = true
     public static let sentryAuthorized = true
+    public static let hasDismissedMacDisclaimerView = false
 }
