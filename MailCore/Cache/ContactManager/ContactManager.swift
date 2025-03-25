@@ -82,7 +82,8 @@ public final class ContactManager: ObservableObject, ContactManageable {
             deleteRealmIfMigrationNeeded: true,
             objectTypes: [
                 MergedContact.self,
-                AddressBook.self
+                AddressBook.self,
+                GroupContact.self
             ]
         )
         let realmAccessor = MailCoreRealmAccessor(realmConfiguration: realmConfiguration)
@@ -120,7 +121,7 @@ public final class ContactManager: ObservableObject, ContactManageable {
             expiringActivity.start()
 
             // Fetch remote content
-            async let addressBooksRequest = apiFetcher.addressBooks().addressbooks
+            async let addressBooksRequest = apiFetcher.addressBooks().addressBooks
 
             // Process addressBooks
             let addressBooks = try await addressBooksRequest

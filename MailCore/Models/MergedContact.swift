@@ -22,7 +22,6 @@ import InfomaniakCore
 import InfomaniakDI
 import Nuke
 import RealmSwift
-import SwiftUI
 import UIKit
 
 extension CNContact {
@@ -41,7 +40,7 @@ extension CNContact {
     }
 }
 
-public final class MergedContact: Object, ObjectKeyIdentifiable {
+public final class MergedContact: Object, Identifiable, Correspondent {
     private static let contactFormatter = CNContactFormatter()
 
     /// Shared
@@ -53,6 +52,8 @@ public final class MergedContact: Object, ObjectKeyIdentifiable {
     @Persisted public var remoteColorHex: String?
     @Persisted public var remoteAvatarURL: String?
     @Persisted public var remoteIdentifier: String?
+    @Persisted public var remoteAddressBookId: Int?
+    @Persisted public var remoteGroupContactId: List<Int>
 
     /// Local
     @Persisted public var localIdentifier: String?
@@ -127,10 +128,26 @@ public final class MergedContact: Object, ObjectKeyIdentifiable {
         remoteColorHex = contact.color
         remoteAvatarURL = contact.avatar
         remoteIdentifier = contact.id
+        remoteAddressBookId = contact.addressbookId
+        remoteGroupContactId = contact.groupContactId ?? List<Int>()
     }
 
     static func computeId(email: String, name: String?) -> String {
         guard let name, email != name && !name.isEmpty else { return email }
         return name + email
+    }
+}
+
+extension MergedContact: ContactAutocompletable {
+    public var contactId: String {
+        return String(id)
+    }
+
+    public var autocompletableName: String {
+        return name
+    }
+
+    public func isSameContactAutocompletable(as contactAutoCompletable: any ContactAutocompletable) -> Bool {
+        return contactId == contactAutoCompletable.contactId
     }
 }

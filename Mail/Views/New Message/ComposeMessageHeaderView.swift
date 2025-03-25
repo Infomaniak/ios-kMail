@@ -34,6 +34,14 @@ struct ComposeMessageHeaderView: View {
     @Binding var autocompletionType: ComposeViewFieldType?
     @Binding var currentSignature: Signature?
 
+    private var totalRecipients: Int {
+        return draft.to.count + draft.cc.count + draft.bcc.count
+    }
+
+    private var isRecipientLimitExceeded: Bool {
+        return totalRecipients > 99
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             ComposeMessageSenderMenu(
@@ -50,7 +58,8 @@ struct ComposeMessageHeaderView: View {
                 autocompletionType: $autocompletionType,
                 focusedField: _focusedField,
                 type: .to,
-                areCCAndBCCEmpty: draft.cc.isEmpty && draft.bcc.isEmpty
+                areCCAndBCCEmpty: draft.cc.isEmpty && draft.bcc.isEmpty,
+                isRecipientLimitExceeded: isRecipientLimitExceeded
             )
             .accessibilityLabel(MailResourcesStrings.Localizable.toTitle)
 
@@ -60,7 +69,8 @@ struct ComposeMessageHeaderView: View {
                     showRecipientsFields: $showRecipientsFields,
                     autocompletionType: $autocompletionType,
                     focusedField: _focusedField,
-                    type: .cc
+                    type: .cc,
+                    isRecipientLimitExceeded: isRecipientLimitExceeded
                 )
                 .accessibilityLabel(MailResourcesStrings.Localizable.ccTitle)
 
@@ -69,7 +79,8 @@ struct ComposeMessageHeaderView: View {
                     showRecipientsFields: $showRecipientsFields,
                     autocompletionType: $autocompletionType,
                     focusedField: _focusedField,
-                    type: .bcc
+                    type: .bcc,
+                    isRecipientLimitExceeded: isRecipientLimitExceeded
                 )
                 .accessibilityLabel(MailResourcesStrings.Localizable.bccTitle)
             }

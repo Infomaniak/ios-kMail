@@ -70,6 +70,10 @@ public enum CommonContactCache {
             contact = wrappedContact
         case .emptyContact:
             contact = CommonContact.emptyContact
+        case .groupContact(let groupContact):
+            contact = CommonContact.emptyContact
+        case .addressBook(let addressBook):
+            contact = CommonContact.emptyContact
         }
 
         // Store the object in cache

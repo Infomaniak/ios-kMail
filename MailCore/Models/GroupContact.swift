@@ -16,30 +16,25 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
-import MailCoreUI
-import MailResources
-import SwiftUI
+import RealmSwift
 
-struct UnknownRecipientCell: View {
-    let email: String
+// AddressBook Categories
+public final class GroupContact: Object, Codable {
+    @Persisted(primaryKey: true) public var id: Int
 
-    var body: some View {
-        HStack(spacing: 8) {
-            UnknownRecipientView(size: 40)
-                .accessibilityHidden(true)
+    @Persisted public var name: String
 
-            VStack(alignment: .leading) {
-                Text(MailResourcesStrings.Localizable.addUnknownRecipientTitle)
-                    .textStyle(.bodyMedium)
-                Text(email)
-                    .textStyle(.bodySecondary)
-            }
-        }
-        .recipientCellModifier()
+    public func isSameContactAutocompletable(as contactAutoCompletable: any ContactAutocompletable) -> Bool {
+        return name == contactAutoCompletable.autocompletableName
     }
 }
 
-#Preview {
-    UnknownRecipientCell(email: PreviewHelper.sampleRecipient1.email)
+extension GroupContact: ContactAutocompletable {
+    public var contactId: String {
+        return String(id)
+    }
+
+    public var autocompletableName: String {
+        return name
+    }
 }

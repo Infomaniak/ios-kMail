@@ -50,7 +50,9 @@ class TextDebounce: ObservableObject {
 struct ComposeMessageCellRecipients: View {
     @StateObject private var textDebounce = TextDebounce()
 
-    @State private var autocompletion = [Recipient]()
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @State private var autocompletion = [any ContactAutocompletable]()
 
     @Binding var recipients: RealmSwift.List<Recipient>
     @Binding var showRecipientsFields: Bool
@@ -63,6 +65,8 @@ struct ComposeMessageCellRecipients: View {
 
     let type: ComposeViewFieldType
     var areCCAndBCCEmpty = false
+
+    let isRecipientLimitExceeded: Bool
 
     /// It should be displayed only for the field to if cc and bcc are empty and when autocompletion is not displayed
     private var shouldDisplayChevron: Bool {
@@ -131,24 +135,72 @@ struct ComposeMessageCellRecipients: View {
         }
     }
 
-    @MainActor private func addNewRecipient(_ recipient: Recipient) {
+    @MainActor private func addNewRecipient(_ contact: any ContactAutocompletable) {
         matomo.track(eventWithCategory: .newMessage, name: "addNewRecipient")
 
-        guard Constants.isEmailAddress(recipient.email) else {
+        if isRecipientLimitExceeded {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorTooManyRecipients)
+            return
+        }
+
+        do {
+            let mergedContacts = extractContacts(contact)
+            let validContacts = try recipientCheck(mergedContacts: mergedContacts)
+            convertMergedContactsToRecipients(validContacts)
+        } catch RecipientError.invalidEmail {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientInvalidEmail)
-            return
-        }
-
-        guard !recipients.contains(where: { $0.isSameCorrespondent(as: recipient) }) else {
+        } catch RecipientError.duplicateContact {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.addUnknownRecipientAlreadyUsed)
-            return
-        }
-
-        withAnimation {
-            recipient.isAddedByMe = true
-            $recipients.append(recipient)
+        } catch {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
         }
         textDebounce.text = ""
+    }
+
+    private func extractContacts(_ contacts: any ContactAutocompletable) -> [MergedContact] {
+        var mergedContacts: [MergedContact] = []
+        if let mergedContact = contacts as? MergedContact {
+            mergedContacts.append(mergedContact)
+        } else if let groupContact = contacts as? GroupContact {
+            let groupContacts = mailboxManager.contactManager.getContacts(with: groupContact.id)
+            mergedContacts.append(contentsOf: groupContacts)
+        } else if let addressBookContact = contacts as? AddressBook {
+            let addressBookContacts = mailboxManager.contactManager.getContacts(for: addressBookContact.id)
+            mergedContacts.append(contentsOf: addressBookContacts)
+        }
+        return mergedContacts
+    }
+
+    private func recipientCheck(mergedContacts: [MergedContact]) throws -> [MergedContact] {
+        let invalidEmailContacts = mergedContacts.filter { !Constants.isEmailAddress($0.email) }
+        if !invalidEmailContacts.isEmpty {
+            throw RecipientError.invalidEmail
+        }
+
+        let uniqueContacts = mergedContacts.filter { contact in
+            !recipients.contains { $0.email == contact.email }
+        }
+
+        if uniqueContacts.count < mergedContacts.count {
+            throw RecipientError.duplicateContact
+        }
+
+        let remainingCapacity = 100 - recipients.count
+        if recipients.count + mergedContacts.count > 100 {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorTooManyRecipients)
+        }
+
+        return Array(uniqueContacts.prefix(max(remainingCapacity, 0)))
+    }
+
+    private func convertMergedContactsToRecipients(_ mergedContacts: [MergedContact]) {
+        for mergedContact in mergedContacts {
+            let newRecipient = Recipient(email: mergedContact.email, name: mergedContact.name)
+            withAnimation {
+                newRecipient.isAddedByMe = true
+                $recipients.append(newRecipient)
+            }
+        }
     }
 }
 
@@ -157,7 +209,8 @@ struct ComposeMessageCellRecipients: View {
         recipients: .constant(PreviewHelper.sampleRecipientsList),
         showRecipientsFields: .constant(false),
         autocompletionType: .constant(nil),
-        type: .bcc
+        type: .bcc,
+        isRecipientLimitExceeded: false
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
 }

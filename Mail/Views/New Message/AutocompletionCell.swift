@@ -24,21 +24,82 @@ import MailResources
 import SwiftUI
 
 struct AutocompletionCell: View {
-    let addRecipient: @MainActor (Recipient) -> Void
-    let recipient: Recipient
-    var highlight: String?
+    @Environment(\.currentUser) private var currentUser
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @State private var subtitle: String
+
+    let addRecipient: @MainActor (any ContactAutocompletable) -> Void
+    let autocompletion: any ContactAutocompletable
     let alreadyAppend: Bool
     let unknownRecipient: Bool
+    let title: String
+    let highlight: String?
+
+    var contactConfiguration: ContactConfiguration {
+        if let groupContact = autocompletion as? GroupContact {
+            return .groupContact(group: groupContact)
+        } else if let addressBook = autocompletion as? AddressBook {
+            return .addressBook(addressBook: addressBook)
+        } else if let mergedContact = autocompletion as? MergedContact {
+            let contact = CommonContact(
+                correspondent: mergedContact,
+                associatedBimi: nil,
+                contextUser: currentUser.value,
+                contextMailboxManager: mailboxManager
+            )
+            return .contact(contact: contact)
+        } else {
+            return .emptyContact
+        }
+    }
+
+    init(
+        addRecipient: @escaping @MainActor (any ContactAutocompletable) -> Void,
+        autocompletion: any ContactAutocompletable,
+        highlight: String?,
+        alreadyAppend: Bool,
+        unknownRecipient: Bool
+    ) {
+        self.addRecipient = { addRecipient($0) }
+        self.autocompletion = autocompletion
+        self.highlight = highlight
+        self.alreadyAppend = alreadyAppend
+        self.unknownRecipient = unknownRecipient
+
+        switch autocompletion {
+        case let mergedContact as MergedContact:
+            title = mergedContact.name
+            _subtitle = State(initialValue: mergedContact.email)
+        case let groupContact as GroupContact:
+            title = MailResourcesStrings.Localizable.groupContactsTitle(groupContact.name)
+            _subtitle = State(initialValue: "")
+        case let addressBook as AddressBook:
+            title = MailResourcesStrings.Localizable.addressBookTitle(addressBook.name)
+
+            let computedOrganization = addressBook.isDynamicOrganisation ? MailResourcesStrings.Localizable
+                .otherOrganisation : addressBook.name
+
+            _subtitle = State(initialValue: MailResourcesStrings.Localizable.organizationName(computedOrganization))
+        default:
+            title = ""
+            _subtitle = State(initialValue: "")
+        }
+    }
 
     var body: some View {
         HStack(spacing: IKPadding.small) {
             Button {
-                addRecipient(recipient)
+                addRecipient(autocompletion)
             } label: {
                 if unknownRecipient {
-                    UnknownRecipientCell(recipient: recipient)
+                    UnknownRecipientCell(email: autocompletion.autocompletableName)
                 } else {
-                    RecipientCell(recipient: recipient, highlight: highlight)
+                    RecipientCell(contact: autocompletion,
+                                  contactConfiguration: contactConfiguration,
+                                  highlight: highlight,
+                                  title: title,
+                                  subtitle: subtitle)
                 }
             }
             .allowsHitTesting(!alreadyAppend || unknownRecipient)
@@ -51,13 +112,24 @@ struct AutocompletionCell: View {
             }
         }
         .padding(.horizontal, value: .medium)
+        .task {
+            guard let groupContact = autocompletion as? GroupContact else { return }
+
+            if let addressBookName = await mailboxManager.contactManager.getFrozenAddressBook(for: groupContact.id)?.name,
+               !addressBookName.isEmpty {
+                subtitle = MailResourcesStrings.Localizable.addressBookTitle(addressBookName)
+            } else {
+                subtitle = MailResourcesStrings.Localizable.addressBookTitle(groupContact.name)
+            }
+        }
     }
 }
 
 #Preview {
     AutocompletionCell(
         addRecipient: { _ in /* Preview */ },
-        recipient: PreviewHelper.sampleRecipient1,
+        autocompletion: PreviewHelper.sampleMergedContact,
+        highlight: "",
         alreadyAppend: false,
         unknownRecipient: false
     )

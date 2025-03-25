@@ -33,23 +33,23 @@ struct AutocompletionView: View {
 
     @ObservedObject var textDebounce: TextDebounce
 
-    @Binding var autocompletion: [Recipient]
+    @Binding var autocompletion: [any ContactAutocompletable]
     @Binding var addedRecipients: RealmSwift.List<Recipient>
 
-    let addRecipient: @MainActor (Recipient) -> Void
+    let addRecipient: @MainActor (any ContactAutocompletable) -> Void
 
     var body: some View {
         LazyVStack(spacing: IKPadding.mini) {
-            ForEach(autocompletion) { recipient in
-                let isLastRecipient = autocompletion.last?.isSameCorrespondent(as: recipient) == true
+            ForEach(autocompletion, id: \.contactId) { contact in
+                let isLastRecipient = autocompletion.last?.isSameContactAutocompletable(as: contact) == true
                 let isUserProposal = shouldAddUserProposal && isLastRecipient
 
                 VStack(alignment: .leading, spacing: IKPadding.mini) {
                     AutocompletionCell(
                         addRecipient: addRecipient,
-                        recipient: recipient,
+                        autocompletion: contact,
                         highlight: textDebounce.text,
-                        alreadyAppend: addedRecipients.contains { $0.isSameCorrespondent(as: recipient) },
+                        alreadyAppend: addedRecipients.contains { $0.id == contact.contactId },
                         unknownRecipient: isUserProposal
                     )
 
@@ -73,24 +73,44 @@ struct AutocompletionView: View {
         let trimmedSearch = search.trimmingCharacters(in: .whitespacesAndNewlines)
 
         Task { @MainActor in
-            let autocompleteContacts = await mailboxManager.contactManager.frozenContactsAsync(
+            let autocompleteContacts = await Array(mailboxManager.contactManager.frozenContactsAsync(
                 matching: trimmedSearch,
                 fetchLimit: Self.maxAutocompleteCount,
                 sorted: sortByRemoteAndName
-            )
-            var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name) }
+            ))
 
-            let realResults = autocompleteRecipients.filter { !addedRecipients.map(\.email).contains($0.email) }
+            let autocompleteGroupContacts = Array(mailboxManager.contactManager.frozenGroupContacts(
+                matching: trimmedSearch,
+                fetchLimit: Self.maxAutocompleteCount
+            ))
 
-            shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.email == textDebounce.text)
-            if shouldAddUserProposal {
-                autocompleteRecipients.append(Recipient(email: textDebounce.text, name: ""))
+            let autocompleteAddressBookContacts = Array(mailboxManager.contactManager.frozenAddressBookContacts(
+                matching: trimmedSearch,
+                fetchLimit: Self.maxAutocompleteCount
+            ))
+
+            let combinedResults: [any ContactAutocompletable] = autocompleteContacts + autocompleteGroupContacts +
+                autocompleteAddressBookContacts
+
+            let realResults = autocompleteGroupContacts.filter {
+                !addedRecipients.map(\.email).contains($0.autocompletableName)
             }
-            autocompletion = autocompleteRecipients
+
+            shouldAddUserProposal = !(realResults.count == 1 && realResults.first?.autocompletableName == textDebounce.text)
+
+            guard shouldAddUserProposal else {
+                autocompletion = Array(combinedResults.prefix(10))
+                return
+            }
+
+            let mergedContact = MergedContact(email: textDebounce.text, local: nil, remote: nil)
+            mergedContact.name = textDebounce.text
+
+            autocompletion = combinedResults.prefix(10) + [mergedContact]
         }
     }
 
-    private func sortByRemoteAndName(lhs: MergedContact, rhs: MergedContact) -> Bool {
+    private nonisolated func sortByRemoteAndName(lhs: MergedContact, rhs: MergedContact) -> Bool {
         if lhs.isRemote != rhs.isRemote {
             return lhs.isRemote && !rhs.isRemote
         } else {

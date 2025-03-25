@@ -19,18 +19,62 @@
 import Foundation
 import RealmSwift
 
-public struct AddressBookResult: Codable {
-    var addressbooks: [AddressBook]
+public struct AddressBookResult: Decodable {
+    let addressBooks: [AddressBook]
+
+    enum CodingKeys: String, CodingKey {
+        case addressBooks = "addressbooks"
+    }
 }
 
-public class AddressBook: Object, Codable, ObjectKeyIdentifiable {
+public final class AddressBook: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var id: Int
     @Persisted(primaryKey: true) public var uuid: String
+    @Persisted public var name: String
     @Persisted public var isDefault: Bool
+    @Persisted public var groupContact: List<GroupContact>
+    @Persisted public var isDynamicOrganisation: Bool
 
     enum CodingKeys: String, CodingKey {
         case id
         case uuid
+        case name
         case isDefault = "default"
+        case groupContact = "categories"
+        case organization = "accountName"
+        case isDynamicOrganisation = "isDynamicOrganisationMemberDirectory"
+    }
+
+    override public init() {
+        super.init()
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let decodedId = try container.decode(Int.self, forKey: .id)
+        let decodedUuid = try container.decode(String.self, forKey: .uuid)
+        let decodedName = try container.decode(String.self, forKey: .name)
+        let decodedIsDefault = try container.decode(Bool.self, forKey: .isDefault)
+        let decodedGroupContacts = try container.decode([GroupContact].self, forKey: .groupContact)
+        let decodedIsDynamicOrganisation = try container.decode(Bool.self, forKey: .isDynamicOrganisation)
+
+        super.init()
+
+        id = decodedId
+        uuid = decodedUuid
+        name = decodedName
+        isDefault = decodedIsDefault
+        groupContact.append(objectsIn: decodedGroupContacts)
+        isDynamicOrganisation = decodedIsDynamicOrganisation
+    }
+}
+
+extension AddressBook: ContactAutocompletable {
+    public var contactId: String {
+        return String(id)
+    }
+
+    public var autocompletableName: String {
+        return name
     }
 }
