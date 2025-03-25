@@ -65,7 +65,7 @@ public struct AvatarView: View {
                 GroupRecipientsView(size: size)
             } else if case .groupContact = contactConfiguration {
                 GroupRecipientsView(size: size)
-            } else if case .contact(let contact) = contactConfiguration {
+            } else if case .contact = contactConfiguration {
                 let avatarImageRequest = getAvatarImageRequest()
                 LazyImage(request: avatarImageRequest) { state in
                     if let image = state.image {
