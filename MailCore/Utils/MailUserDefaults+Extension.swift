@@ -55,6 +55,8 @@ public extension UserDefaults.Keys {
     static let sentryAuthorized = UserDefaults.Keys(rawValue: "sentryAuthorized")
     static let lastScheduleInterval = UserDefaults.Keys(rawValue: "lastCustomSchedule")
     static let nextShowQuotasAlert = UserDefaults.Keys(rawValue: "nextShowQuotasAlert")
+    static let nextShowSync = UserDefaults.Keys(rawValue: "nextShowSync")
+    static let showSyncCounter = UserDefaults.Keys(rawValue: "showSyncCounter")
 }
 
 public extension UserDefaults {
@@ -324,6 +326,27 @@ public extension UserDefaults {
         }
         set {
             set(newValue, forKey: key(.nextShowQuotasAlert))
+        }
+    }
+
+    var nextShowSync: Int {
+        get {
+            if object(forKey: key(.nextShowSync)) == nil {
+                set(Constants.minimumOpeningBeforeSync, forKey: key(.nextShowSync))
+            }
+            return integer(forKey: key(.nextShowSync))
+        }
+        set {
+            set(newValue, forKey: key(.nextShowSync))
+        }
+    }
+
+    var showSyncCounter: Int {
+        get {
+            return integer(forKey: key(.showSyncCounter))
+        }
+        set {
+            set(newValue, forKey: key(.showSyncCounter))
         }
     }
 }

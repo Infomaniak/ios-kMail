@@ -27,6 +27,7 @@ import MailCoreUI
 import MailResources
 import MyKSuite
 import NavigationBackport
+import OSLog
 import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
@@ -134,7 +135,11 @@ struct SplitView: View {
         }
         .discoveryPresenter(isPresented: $mainViewState.isShowingSyncDiscovery) {
             DiscoveryView(item: .syncDiscovery) {
-                UserDefaults.shared.shouldPresentSyncDiscovery = false
+                guard UserDefaults.shared.showSyncCounter < 3 else {
+                    UserDefaults.shared.shouldPresentSyncDiscovery = false
+                    return
+                }
+                UserDefaults.shared.nextShowSync = appLaunchCounter.value + Constants.nextOpeningBeforeSync
             } completionHandler: { willSync in
                 guard willSync else { return }
                 if willSync {
@@ -250,7 +255,7 @@ struct SplitView: View {
                 try await mailboxManager.refreshAllSignatures()
             }
             guard !platformDetector.isDebug else { return }
-            mainViewState.isShowingSyncDiscovery = platformDetector.isMac ? false : shouldShowSync()
+            mainViewState.isShowingSyncDiscovery = platformDetector.isMac ? false : await shouldShowSync()
         }
     }
 
@@ -296,17 +301,31 @@ struct SplitView: View {
         }
     }
 
-    private func shouldShowSync() -> Bool {
+    private func shouldShowSync() async -> Bool {
+        guard UserDefaults.shared.shouldPresentSyncDiscovery else { return false }
+
         guard !mainViewState.isShowingUpdateAvailable else {
             // We don't want to show both DiscoveryView at the same time
             return false
         }
-        guard UserDefaults.shared.shouldPresentSyncDiscovery,
-              !appLaunchCounter.isFirstLaunch else {
+
+        guard UserDefaults.shared.nextShowSync <= appLaunchCounter.value else {
             return false
         }
 
-        return appLaunchCounter.value > Constants.minimumOpeningBeforeSync
+        do {
+            let syncDate = try await mailboxManager.apiFetcher.lastSyncDate()
+            if syncDate == nil {
+                UserDefaults.shared.nextShowSync = appLaunchCounter.value + Constants.nextOpeningBeforeSync
+                UserDefaults.shared.showSyncCounter += 1
+                return true
+            } else {
+                UserDefaults.shared.shouldPresentSyncDiscovery = false
+            }
+        } catch {
+            Logger.general.error("Error while fetching last sync date: \(error)")
+        }
+        return false
     }
 
     private func handleOpenUrl(_ url: URL) {

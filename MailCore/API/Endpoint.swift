@@ -25,6 +25,10 @@ public extension ApiEnvironment {
     var mailHost: String {
         return "mail.\(host)"
     }
+
+    var calendarHost: String {
+        return "calendar.\(host)"
+    }
 }
 
 // MARK: - Endpoints
@@ -296,5 +300,13 @@ public extension Endpoint {
 
     static func share(messageResource: String) -> Endpoint {
         return .resource(messageResource).appending(path: "/share")
+    }
+
+    static func lastSyncDate() -> Endpoint {
+        return Endpoint(
+            hostKeypath: \.calendarHost,
+            path: "/api/sync-connection",
+            queryItems: [URLQueryItem(name: "os", value: "ios")]
+        )
     }
 }
