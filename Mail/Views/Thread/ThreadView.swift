@@ -46,7 +46,7 @@ struct ThreadView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: IKPadding.medium) {
+            VStack(spacing: IKPadding.mini) {
                 VStack(alignment: .leading, spacing: IKPadding.mini) {
                     Text(thread.formattedSubject)
                         .threadTitle()
@@ -54,6 +54,10 @@ struct ThreadView: View {
                     ThreadTagsListView(externalTag: externalTag, searchFolderName: thread.searchFolderName)
                 }
                 .padding(.horizontal, value: .medium)
+
+                if thread.isSnoozed, let snoozeEndDate = thread.snoozeEndDate {
+                    SnoozedThreadHeaderView(date: snoozeEndDate)
+                }
 
                 MessageListView(messages: thread.messages.toArray(), mailboxManager: mailboxManager)
             }
