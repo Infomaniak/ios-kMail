@@ -136,7 +136,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var swissTransferAttachment: SwissTransferAttachment?
 
     @Persisted public var snoozeState: SnoozeState?
-    @Persisted public var snoozeAction: String?
+    @Persisted public var snoozeUUID: String?
     @Persisted public var snoozeEndDate: Date?
 
     public var shortUid: Int? {
@@ -344,8 +344,12 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         flagged = try values.decode(Bool.self, forKey: .flagged)
         hasUnsubscribeLink = try values.decodeIfPresent(Bool.self, forKey: .hasUnsubscribeLink)
         bimi = try values.decodeIfPresent(Bimi.self, forKey: .bimi)
+
         snoozeState = try? values.decodeIfPresent(SnoozeState.self, forKey: .snoozeState)
-        snoozeAction = try values.decodeIfPresent(String.self, forKey: .snoozeAction)
+        if let snoozeAction = try values.decodeIfPresent(String.self, forKey: .snoozeAction) {
+            let snoozeUUIDParser = SnoozeUUIDParser()
+            snoozeUUID = snoozeUUIDParser.parse(resource: snoozeAction)
+        }
         snoozeEndDate = try values.decodeIfPresent(Date.self, forKey: .snoozeEndDate)
     }
 
@@ -383,7 +387,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         hasUnsubscribeLink: Bool? = nil,
         bimi: Bimi? = nil,
         snoozeState: SnoozeState? = nil,
-        snoozeAction: String? = nil,
+        snoozeUUID: String? = nil,
         snoozeEndDate: Date? = nil
     ) {
         self.init()
@@ -422,7 +426,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         self.bimi = bimi
         fullyDownloaded = true
         self.snoozeState = snoozeState
-        self.snoozeAction = snoozeAction
+        self.snoozeUUID = snoozeUUID
         self.snoozeEndDate = snoozeEndDate
     }
 
@@ -443,7 +447,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
             forwarded: forwarded,
             bimi: bimi,
             snoozeState: snoozeState,
-            snoozeAction: snoozeAction,
+            snoozeAction: snoozeUUID,
             snoozeEndDate: snoozeEndDate
         )
         thread.messageIds = linkedUids

@@ -179,7 +179,7 @@ public class Thread: Object, Decodable, Identifiable {
         let lastSnoozedMessage = messagesAndDuplicates.last { $0.snoozeState != nil }
 
         snoozeState = lastSnoozedMessage?.snoozeState
-        snoozeAction = lastSnoozedMessage?.snoozeAction
+        snoozeAction = lastSnoozedMessage?.snoozeUUID
         snoozeEndDate = lastSnoozedMessage?.snoozeEndDate
     }
 
