@@ -27,13 +27,14 @@ struct AutocompletionCell: View {
     @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @State private var subtitle: String
+
     let addRecipient: @MainActor (any ContactAutocompletable) -> Void
     let autocompletion: any ContactAutocompletable
     let alreadyAppend: Bool
     let unknownRecipient: Bool
     let title: String
-    @State private var subtitle: String
-    var highlight: String?
+    let highlight: String?
 
     var contactConfiguration: ContactConfiguration {
         if let groupContact = autocompletion as? GroupContact {

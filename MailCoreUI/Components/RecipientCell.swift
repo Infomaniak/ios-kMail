@@ -42,8 +42,8 @@ public struct RecipientCell: View {
     @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    var title: String
-    var subtitle: String
+    let title: String
+    let subtitle: String
     let avatarConfiguration: ContactConfiguration
 
     let highlight: String?
