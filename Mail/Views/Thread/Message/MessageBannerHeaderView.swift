@@ -25,12 +25,13 @@ import SwiftUI
 struct MessageBannerHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @State private var isButtonLoading = false
+
     @ObservedRealmObject var message: Message
     @ObservedRealmObject var mailbox: Mailbox
 
-    @State private var isButtonLoading = false
-
     @Binding var displayContentBlockedActionView: Bool
+
     private var isRemoteContentBlocked: Bool {
         return (UserDefaults.shared.displayExternalContent == .askMe || message.folder?.role == .spam)
             && !message.localSafeDisplay
