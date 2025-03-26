@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Baptiste Griva
- * Exported at: Tue, 25 Mar 2025 09:51:23 +0100
+ * Exported by: Valentin Perignon
+ * Exported at: Tue, 25 Mar 2025 14:17:20 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -360,6 +360,9 @@
 
 /* loco:66f2853e4d75905fd406ea93 */
 "buttonCancelFormatting" = "Cancelar formato";
+
+/* loco:67b32a7057a66d891b06eb35 */
+"buttonCancelReminder" = "Cancelar recordatorio";
 
 /* loco:62befe9ca822415272753592 */
 "buttonClose" = "Cerrar";
@@ -1647,6 +1650,9 @@
 
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "";
+
+/* loco:67b32e5c0e4974a86a00c602 */
+"snoozeAlertTitle" = "En espera hasta: %@";
 
 /* loco:67a32e4384fbf4226404e972 */
 "snoozedFolder" = "En espera";

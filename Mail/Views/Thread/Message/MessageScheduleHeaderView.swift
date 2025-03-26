@@ -36,26 +36,17 @@ struct MessageScheduleHeaderView: View {
     var body: some View {
         MessageHeaderActionView(
             icon: MailResourcesAsset.clockPaperplane.swiftUIImage,
-            message: MailResourcesStrings.Localizable.scheduledEmailHeader(DateFormatter.localizedString(
-                from: scheduleDate,
-                dateStyle: .full,
-                timeStyle: .short
-            ))
+            message: MailResourcesStrings.Localizable.scheduledEmailHeader(scheduleDate.formatted(.dateTime))
         ) {
             Button(MailResourcesStrings.Localizable.buttonReschedule) {
                 isShowingReschedulePanel = true
             }
-            .buttonStyle(.ikBorderless(isInlined: true))
-            .controlSize(.small)
 
-            Divider()
-                .frame(height: 20)
+            MessageHeaderDivider()
 
             Button(MailResourcesStrings.Localizable.buttonModify) {
                 mainViewState.modifiedScheduleDraftResource = ModifiedScheduleDraftResource(draftResource: draftResource)
             }
-            .buttonStyle(.ikBorderless(isInlined: true))
-            .controlSize(.small)
         }
         .scheduleFloatingPanel(
             isPresented: $isShowingReschedulePanel,
