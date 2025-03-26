@@ -36,7 +36,7 @@ struct MessageScheduleHeaderView: View {
     var body: some View {
         MessageHeaderActionView(
             icon: MailResourcesAsset.clockPaperplane.swiftUIImage,
-            message: MailResourcesStrings.Localizable.scheduledEmailHeader(scheduleDate.formatted(.dateTime))
+            message: MailResourcesStrings.Localizable.scheduledEmailHeader(scheduleDate.formatted(.messageHeader))
         ) {
             Button(MailResourcesStrings.Localizable.buttonReschedule) {
                 isShowingReschedulePanel = true
@@ -53,13 +53,13 @@ struct MessageScheduleHeaderView: View {
             draftSaveOption: .constant(.schedule),
             draftDate: $rescheduleDate,
             mailboxManager: mailboxManager
-        ) {
-            changeScheduleDate(rescheduleDate)
-        }
+        )
+        .onChange(of: rescheduleDate, perform: changeScheduleDate)
     }
 
     private func changeScheduleDate(_ selectedDate: Date?) {
         guard let selectedDate else { return }
+
         Task {
             await tryOrDisplayError {
                 try await mailboxManager.apiFetcher.changeDraftSchedule(
@@ -68,8 +68,8 @@ struct MessageScheduleHeaderView: View {
                 )
                 try await mailboxManager.refreshAllSignatures()
                 if let scheduleFolder = mailboxManager.getFolder(with: .scheduledDrafts) {
-                    let freezedFolder = scheduleFolder.freezeIfNeeded()
-                    await mailboxManager.refreshFolderContent(freezedFolder)
+                    let frozenFolder = scheduleFolder.freezeIfNeeded()
+                    await mailboxManager.refreshFolderContent(frozenFolder)
                 }
             }
         }
