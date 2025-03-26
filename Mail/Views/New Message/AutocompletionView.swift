@@ -111,8 +111,8 @@ struct AutocompletionView: View {
     }
 
     private nonisolated func sortByRemoteAndName(lhs: MergedContact, rhs: MergedContact) -> Bool {
-        var lhsWeight: Int = lhs.remoteContactedTimes ?? 0
-        var rhsWeight: Int = rhs.remoteContactedTimes ?? 0
+        var lhsWeight = lhs.remoteContactedTimes ?? 0
+        var rhsWeight = rhs.remoteContactedTimes ?? 0
 
         if rhs.name.isEmpty || rhs.remoteOther {
             rhsWeight = -1

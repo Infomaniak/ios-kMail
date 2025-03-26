@@ -76,7 +76,7 @@ public struct InfomaniakContact: Codable, Identifiable {
         nickname = try values.decodeIfPresent(String.self, forKey: .nickname)
         organization = try values.decodeIfPresent(String.self, forKey: .organization)
         groupContactId = try values.decodeIfPresent(List<Int>.self, forKey: .groupContactId)
-        if let rawContactedTimes = try values.decodeIfPresent([String: Int].self, forKey: .contactedTimes) {
+        if let rawContactedTimes = try? values.decodeIfPresent([String: Int].self, forKey: .contactedTimes) {
             contactedTimes = rawContactedTimes.reduce(into: 0) { result, element in
                 result += element.value
             }
