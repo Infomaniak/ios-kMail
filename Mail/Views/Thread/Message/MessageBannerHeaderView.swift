@@ -16,14 +16,13 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
 import RealmSwift
 import SwiftUI
 
-struct MessageSpamHeaderView: View {
+struct MessageBannerHeaderView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ObservedRealmObject var message: Message
@@ -31,13 +30,20 @@ struct MessageSpamHeaderView: View {
 
     @State private var isButtonLoading = false
 
+    @Binding var displayContentBlockedActionView: Bool
+    private var isRemoteContentBlocked: Bool {
+        return (UserDefaults.shared.displayExternalContent == .askMe || message.folder?.role == .spam)
+            && !message.localSafeDisplay
+    }
+
     var body: some View {
         let spamType = spamTypeFor(message: message)
         if spamType != .none {
             MessageHeaderActionView(
                 icon: spamType.icon,
                 iconColor: spamType.iconColor,
-                message: spamType.message
+                message: spamType.message,
+                isFirst: true
             ) {
                 Button {
                     action()
@@ -48,6 +54,22 @@ struct MessageSpamHeaderView: View {
                 .controlSize(.small)
                 .disabled(isButtonLoading)
                 .ikButtonLoading(isButtonLoading)
+            }
+        }
+
+        if isRemoteContentBlocked && displayContentBlockedActionView {
+            MessageHeaderActionView(
+                icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
+                message: MailResourcesStrings.Localizable.alertBlockedImagesDescription,
+                isFirst: spamType == .none
+            ) {
+                Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) {
+                    withAnimation {
+                        $message.localSafeDisplay.wrappedValue = true
+                    }
+                }
+                .buttonStyle(.ikBorderless(isInlined: true))
+                .controlSize(.small)
             }
         }
     }
@@ -107,5 +129,9 @@ struct MessageSpamHeaderView: View {
 }
 
 #Preview {
-    MessageSpamHeaderView(message: PreviewHelper.sampleMessage, mailbox: PreviewHelper.sampleMailboxManager.mailbox)
+    MessageBannerHeaderView(
+        message: PreviewHelper.sampleMessage,
+        mailbox: PreviewHelper.sampleMailbox,
+        displayContentBlockedActionView: .constant(true)
+    )
 }
