@@ -34,7 +34,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     public let realmConfiguration: Realm.Configuration
     public let transactionExecutor: Transactionable
 
-    public private(set) var mailbox: Mailbox
+    public let mailbox: Mailbox
 
     public let apiFetcher: MailApiFetcher
     public let contactManager: ContactManageable
