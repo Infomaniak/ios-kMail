@@ -195,19 +195,20 @@ final class InMemoryRealmAccessor: RealmAccessible {
             Thread.self,
             Message.self,
             Body.self,
+            SubBody.self,
             Attachment.self,
             Recipient.self,
             Draft.self,
             Signature.self,
             SearchHistory.self,
-            Bimi.self,
-            File.self,
-            Attendee.self,
-            SubBody.self,
-            CalendarEvent.self,
             CalendarEventResponse.self,
+            CalendarEvent.self,
+            Attendee.self,
+            Bimi.self,
             SwissTransferAttachment.self,
-            MessageUid.self
+            File.self,
+            MessageUid.self,
+            MessageHeaders.self
         ])
 
         // It's a unit test
