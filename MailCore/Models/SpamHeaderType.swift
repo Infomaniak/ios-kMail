@@ -19,16 +19,13 @@
 import MailResources
 import SwiftUI
 
-public enum SpamHeaderType: Equatable {
-    case none
+public enum SpamHeaderType {
     case moveInSpam
     case enableSpamFilter
     case unblockRecipient(String)
 
     public var message: String {
         switch self {
-        case .none:
-            ""
         case .moveInSpam:
             MailResourcesStrings.Localizable.messageIsSpamShouldMoveToSpam
         case .enableSpamFilter:
@@ -40,8 +37,6 @@ public enum SpamHeaderType: Equatable {
 
     public var buttonTitle: String {
         switch self {
-        case .none:
-            ""
         case .moveInSpam:
             MailResourcesStrings.Localizable.moveInSpamButton
         case .enableSpamFilter:

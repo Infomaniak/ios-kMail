@@ -39,7 +39,7 @@ struct MessageBannerHeaderView: View {
 
     var body: some View {
         let spamType = spamTypeFor(message: message)
-        if spamType != .none {
+        if let spamType {
             MessageHeaderActionView(
                 icon: spamType.icon,
                 iconColor: spamType.iconColor,
@@ -62,7 +62,7 @@ struct MessageBannerHeaderView: View {
             MessageHeaderActionView(
                 icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
                 message: MailResourcesStrings.Localizable.alertBlockedImagesDescription,
-                isFirst: spamType == .none
+                isFirst: spamType == nil
             ) {
                 Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) {
                     withAnimation {
@@ -80,21 +80,21 @@ struct MessageBannerHeaderView: View {
         let spamType = spamTypeFor(message: message)
         Task {
             switch spamType {
-            case .none:
-                return
             case .moveInSpam:
                 _ = try? await mailboxManager.move(messages: [message], to: .spam)
             case .enableSpamFilter:
                 _ = try? await mailboxManager.activateSpamFilter()
             case .unblockRecipient(let sender):
                 try await mailboxManager.unblockSender(sender: sender)
+            case .none:
+                break
             }
 
             isButtonLoading = false
         }
     }
 
-    private func spamTypeFor(message: Message) -> SpamHeaderType {
+    private func spamTypeFor(message: Message) -> SpamHeaderType? {
         if message.folder?.role != .spam,
            message.isSpam && !isSenderApproved(sender: message.from.first?.email) {
             if mailbox.isSpamFilter {
@@ -109,7 +109,7 @@ struct MessageBannerHeaderView: View {
             return .unblockRecipient(sender.email)
         }
 
-        return .none
+        return nil
     }
 
     private func isSenderApproved(sender: String?) -> Bool {
