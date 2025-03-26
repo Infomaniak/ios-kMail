@@ -80,6 +80,14 @@ public struct MessageActionResult: Codable {
     public var flagged: Int
 }
 
+public class MessageHeaders: EmbeddedObject, Codable {
+    @Persisted public var xInfomaniakSpam: String
+
+    private enum CodingKeys: String, CodingKey {
+        case xInfomaniakSpam = "x-infomaniak-spam"
+    }
+}
+
 /// A Message has :
 /// - Many threads
 /// - One originalThread: parent thread
@@ -121,6 +129,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var flagged: Bool
     @Persisted public var hasUnsubscribeLink: Bool?
     @Persisted public var bimi: Bimi?
+    @Persisted private var headers: MessageHeaders?
     /// Threads where the message can be found
     @Persisted(originProperty: "messages") var threads: LinkingObjects<Thread>
     @Persisted(originProperty: "messages") private var folders: LinkingObjects<Folder>
@@ -145,6 +154,10 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     public var recipients: [Recipient] {
         return Array(to) + Array(cc)
+    }
+
+    public var isSpam: Bool {
+        headers?.xInfomaniakSpam == "spam"
     }
 
     /// This is the parent thread situated in the parent folder.
@@ -279,6 +292,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case snoozeState
         case snoozeAction
         case snoozeEndDate
+        case headers
     }
 
     override init() {
@@ -347,6 +361,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         snoozeState = try? values.decodeIfPresent(SnoozeState.self, forKey: .snoozeState)
         snoozeAction = try values.decodeIfPresent(String.self, forKey: .snoozeAction)
         snoozeEndDate = try values.decodeIfPresent(Date.self, forKey: .snoozeEndDate)
+        headers = try? values.decodeIfPresent(MessageHeaders.self, forKey: .headers)
     }
 
     public convenience init(

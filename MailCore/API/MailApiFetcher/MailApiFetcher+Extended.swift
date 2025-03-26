@@ -27,6 +27,27 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(.permissions(mailbox: mailbox)))
     }
 
+    func sendersRestrictions(mailbox: Mailbox) async throws -> SendersRestrictions {
+        try await perform(request: authenticatedRequest(.sendersRestrictions(mailbox: mailbox)))
+    }
+
+    func updateSendersRestrictions(mailbox: Mailbox, sendersRestrictions: SendersRestrictions) async throws -> Bool {
+        try await perform(request: authenticatedRequest(
+            .mailHosting(mailbox: mailbox),
+            method: .patch,
+            parameters: sendersRestrictions
+        ))
+    }
+
+    func updateSpamFilter(mailbox: Mailbox, value: Bool) async throws -> Bool {
+        let encodedParameters = ["has_move_spam": value]
+        return try await perform(request: authenticatedRequest(
+            .mailHosting(mailbox: mailbox),
+            method: .patch,
+            parameters: encodedParameters
+        ))
+    }
+
     func featureFlag(_ mailboxUUID: String) async throws -> [FeatureFlag] {
         try await perform(request: authenticatedRequest(.featureFlag(mailboxUUID)))
     }

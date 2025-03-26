@@ -83,6 +83,8 @@ public protocol MailApiCommonFetchable {
 public protocol MailApiExtendedFetchable {
     func permissions(mailbox: Mailbox) async throws -> MailboxPermissions
 
+    func sendersRestrictions(mailbox: Mailbox) async throws -> SendersRestrictions
+
     /// Get feature flags for a specific mailbox uuid
     func featureFlag(_ mailboxUUID: String) async throws -> [FeatureFlag]
 

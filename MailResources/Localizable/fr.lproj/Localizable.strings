@@ -295,6 +295,9 @@
 /* loco:66dee0ef5c6d656046044445 */
 "blockExpeditorTitle" = "Bloquer %s";
 
+/* loco:67cff9495697ef40dc013633 */
+"blockMultipleExpeditorsTitle" = "Bloquer %d expéditeurs";
+
 /* loco:649ea00ef9c6ecfe620a0b62 */
 "blockedPasswordTitle" = "Mot de passe bloqué";
 
@@ -360,6 +363,9 @@
 
 /* loco:66f2853e4d75905fd406ea93 */
 "buttonCancelFormatting" = "Annuler la mise en forme";
+
+/* loco:67b32a7057a66d891b06eb35 */
+"buttonCancelReminder" = "Annuler le rappel";
 
 /* loco:62befe9ca822415272753592 */
 "buttonClose" = "Fermer";
@@ -574,6 +580,9 @@
 /* loco:66db00746332bbedae01f2f2 */
 "confirmationToBlockAnExpeditorText" = "Cet e-mail et tous les futurs messages de %s seront déplacés dans le dossier Courrier indésirable.";
 
+/* loco:67cffa6132f76065a6002bd2 */
+"confirmationToBlockMultipleExpeditorsText" = "Ces e-mails et tous les futurs messages de leurs expéditeurs seront déplacés dans le dossier Courrier indésirable.";
+
 /* loco:62737dea7bd28e302301e5c2 */
 "contactActionAddToContacts" = "Ajouter aux contacts";
 
@@ -747,6 +756,9 @@
 
 /* loco:641178a6902412584c6acf62 */
 "emptyStateTrashTitle" = "La corbeille est vide";
+
+/* loco:67dbdf7f34b99ad4f10b70e2 */
+"enableFilterButton" = "Activer le filtre";
 
 /* loco:667bac4f2a74996e510ce652 */
 "enableMultiSelection" = "Activer la sélection multiple";
@@ -985,6 +997,9 @@
 /* loco:67e26d1c96ffb194f70925b2 */
 "macUsageDisclaimerTitle" = "Cette application fonctionne sur macOS, mais elle est optimisée pour une utilisation sur mobile et tablette.";
 
+/* loco:67d9641e50cf5243690a8f23 */
+"mailApiUnavailable" = "Erreur de chargement. Réessayez ou consultez l’état des services si le problème persiste.";
+
 /* loco:6639ec5faf37f28888054ea2 */
 "manageSignatures" = "Gérer mes signatures";
 
@@ -1008,6 +1023,15 @@
 
 /* loco:628b90d373427778f14fd442 */
 "messageIsDraftOption" = "Brouillon";
+
+/* loco:67dbe703eca211f5e507ba93 */
+"messageIsSpamBecauseSenderIsBlocked" = "Ce message figure dans les spam car %@ se trouve dans la liste des expéditeurs bloqués.";
+
+/* loco:67dbe2364c46bbd5fc0ffd82 */
+"messageIsSpamShouldActivateFilter" = "Ce message est considéré comme du spam. Par sécurité, nous vous recommandons d’activer le filtre anti-spam.";
+
+/* loco:67dbe44d3c3b277e70046cc0 */
+"messageIsSpamShouldMoveToSpam" = "Ce message est considéré comme du spam. Nous vous recommandons de le placer dans le dossier \"Spam\".";
 
 /* loco:65c35d9e6e00f9b3e60f34d3 */
 "messageMenuTitle" = "Message";
@@ -1035,6 +1059,9 @@
 
 /* loco:62bdb04cdf5d4469a92796d2 */
 "moreStorageTitle" = "Votre boîte est pleine ? Obtenez plus de stockage !";
+
+/* loco:67dbdfb8dbef6f1af2084412 */
+"moveInSpamButton" = "Déplacer dans Spam";
 
 /* loco:62b1c0a1e915206f7e2d5764 */
 "moveTitle" = "Dans quel dossier souhaitez-vous déplacer votre e-mail ?";
@@ -1089,6 +1116,9 @@
 
 /* loco:6266655afabeeb6bc774c932 */
 "newMessagePlaceholderTitle" = "Rédigez votre message";
+
+/* loco:67c6c5212e72fc8285013f82 */
+"nextEventOccurrence" = "Évènement récurrent, prochaine occurrence le";
 
 /* loco:67238d29fe561f9d0a0f5732 */
 "nextMonday" = "Lundi prochain";
@@ -1215,6 +1245,9 @@
 
 /* loco:62cece41730aa70c5f3da0e2 */
 "reportPhishingDescription" = "Si ce message tente de dérober des informations sensibles (mot de passe, données bancaires, etc.) et/ou s’il usurpe une identité reconnue, alors il s’agit d’hameçonnage.\n\nEn nous le signalant, vous accélérez la détection de messages dangereux pour l’ensemble de nos utilisateurs.\n\nLe signalement sera envoyé à notre équipe sécurité pour analyse afin de prendre les mesures nécessaires. L’e-mail sera également déplacé automatiquement dans vos spams.";
+
+/* loco:67cf0d265a4faa32a10d6db5 */
+"reportPhishingDescription-plural" = "Si ces messages tentent de dérober des informations sensibles (mots de passe, données bancaires, etc.) et/ou s’ils usurpent une identité reconnue, alors il s’agit d’hameçonnage.\n\nEn nous les signalant, vous accélérez la détection de messages dangereux pour l’ensemble de nos utilisateurs.\n\nLes signalements seront envoyés à notre équipe sécurité pour analyse afin de prendre les mesures nécessaires. Les e-mails seront également déplacés automatiquement dans vos spams.";
 
 /* loco:62cecdf0413c882ede7451c2 */
 "reportPhishingTitle" = "Signaler une tentative d’hameçonnage";
@@ -1648,6 +1681,9 @@
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "Conversations déplacées vers %@";
 
+/* loco:67b32e5c0e4974a86a00c602 */
+"snoozeAlertTitle" = "En attente jusqu’au : %@";
+
 /* loco:67a32e4384fbf4226404e972 */
 "snoozedFolder" = "En attente";
 
@@ -1791,6 +1827,9 @@
 
 /* loco:627e40419151de052d2d3962 */
 "trashFolder" = "Corbeille";
+
+/* loco:67dbdfcf19fc5774b1030c72 */
+"unblockButton" = "Débloquer";
 
 /* loco:62b95774aee47c626b773693 */
 "unknownRecipientTitle" = "(inconnu)";

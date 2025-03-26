@@ -40,7 +40,8 @@ struct MessageScheduleHeaderView: View {
                 from: scheduleDate,
                 dateStyle: .full,
                 timeStyle: .short
-            ))
+            )),
+            isFirst: true
         ) {
             Button(MailResourcesStrings.Localizable.buttonReschedule) {
                 isShowingReschedulePanel = true

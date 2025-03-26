@@ -27,12 +27,15 @@ struct MessageHeaderActionView<Content: View>: View {
     let iconSize: CGFloat = 16
     let icon: Image
     let message: String
+    let isFirst: Bool
 
     @ViewBuilder var actions: () -> Content
 
     var body: some View {
         VStack(alignment: .leading) {
-            IKDivider()
+            if isFirst {
+                IKDivider()
+            }
             VStack(alignment: .leading) {
                 HStack {
                     icon
@@ -42,13 +45,15 @@ struct MessageHeaderActionView<Content: View>: View {
                         .foregroundStyle(MailResourcesAsset.textSecondaryColor)
                     Text(message)
                         .textStyle(.labelSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 HStack {
                     actions()
                 }
                 .padding(.leading, iconSize + IKPadding.mini)
             }
-            .padding(.vertical, value: .micro)
+            .padding(.bottom, value: .micro)
+            .padding(.top, isFirst ? IKPadding.micro : 0)
             .padding(.horizontal, value: .medium)
             IKDivider()
         }
@@ -56,12 +61,25 @@ struct MessageHeaderActionView<Content: View>: View {
 }
 
 #Preview {
-    MessageHeaderActionView(
-        icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
-        message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
-    ) {
-        Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
-            .buttonStyle(.ikBorderless(isInlined: true))
-            .controlSize(.small)
+    VStack {
+        MessageHeaderActionView(
+            icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
+            message: MailResourcesStrings.Localizable.alertBlockedImagesDescription,
+            isFirst: true
+        ) {
+            Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
+                .buttonStyle(.ikBorderless(isInlined: true))
+                .controlSize(.small)
+        }
+
+        MessageHeaderActionView(
+            icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
+            message: MailResourcesStrings.Localizable.alertBlockedImagesDescription,
+            isFirst: false
+        ) {
+            Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
+                .buttonStyle(.ikBorderless(isInlined: true))
+                .controlSize(.small)
+        }
     }
 }

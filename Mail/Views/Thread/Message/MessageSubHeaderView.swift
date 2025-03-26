@@ -20,35 +20,22 @@ import InfomaniakCore
 import InfomaniakDI
 import MailCore
 import MailCoreUI
-import MailResources
 import RealmSwift
 import SwiftUI
 
 struct MessageSubHeaderView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @ObservedRealmObject var message: Message
 
     @Binding var displayContentBlockedActionView: Bool
 
-    private var isRemoteContentBlocked: Bool {
-        return (UserDefaults.shared.displayExternalContent == .askMe || message.folder?.role == .spam)
-            && !message.localSafeDisplay
-    }
-
     var body: some View {
-        if isRemoteContentBlocked && displayContentBlockedActionView {
-            MessageHeaderActionView(
-                icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
-                message: MailResourcesStrings.Localizable.alertBlockedImagesDescription
-            ) {
-                Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) {
-                    withAnimation {
-                        $message.localSafeDisplay.wrappedValue = true
-                    }
-                }
-                .buttonStyle(.ikBorderless(isInlined: true))
-                .controlSize(.small)
-            }
-        }
+        MessageBannerHeaderView(
+            message: message,
+            mailbox: mailboxManager.mailbox,
+            displayContentBlockedActionView: $displayContentBlockedActionView
+        )
 
         if let event = message.calendarEventResponse?.frozenEvent, event.type == .event {
             CalendarView(event: event)
