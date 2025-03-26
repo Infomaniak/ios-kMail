@@ -42,7 +42,6 @@ struct MessageBannerHeaderView: View {
         if let spamType {
             MessageHeaderActionView(
                 icon: spamType.icon,
-                iconColor: spamType.iconColor,
                 message: spamType.message,
                 isFirst: true
             ) {

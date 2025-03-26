@@ -54,13 +54,4 @@ public enum SpamHeaderType {
             MailResourcesAsset.warningFill.swiftUIImage
         }
     }
-
-    public var iconColor: Color {
-        switch self {
-        case .unblockRecipient:
-            MailResourcesAsset.primaryBlueColor.swiftUIColor
-        default:
-            MailResourcesAsset.orangeColor.swiftUIColor
-        }
-    }
 }

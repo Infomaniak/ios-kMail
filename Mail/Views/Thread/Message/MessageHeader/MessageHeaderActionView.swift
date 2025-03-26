@@ -26,7 +26,6 @@ import SwiftUI
 struct MessageHeaderActionView<Content: View>: View {
     let iconSize: CGFloat = 16
     let icon: Image
-    var iconColor: Color = MailResourcesAsset.textSecondaryColor.swiftUIColor
     let message: String
     let isFirst: Bool
 
@@ -43,7 +42,7 @@ struct MessageHeaderActionView<Content: View>: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: iconSize)
-                        .foregroundStyle(iconColor)
+                        .foregroundStyle(MailResourcesAsset.textSecondaryColor)
                     Text(message)
                         .textStyle(.labelSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -75,7 +74,6 @@ struct MessageHeaderActionView<Content: View>: View {
 
         MessageHeaderActionView(
             icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
-            iconColor: MailResourcesAsset.orangeColor.swiftUIColor,
             message: MailResourcesStrings.Localizable.alertBlockedImagesDescription,
             isFirst: false
         ) {
