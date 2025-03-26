@@ -33,7 +33,7 @@ extension View {
         draftSaveOption: Binding<SaveDraftOption?>,
         draftDate: Binding<Date?>,
         mailboxManager: MailboxManager,
-        completionHandler: @escaping () -> Void
+        completionHandler: (() -> Void)? = nil
     ) -> some View {
         modifier(ScheduleFloatingPanel(
             isPresented: isPresented,
@@ -57,7 +57,7 @@ struct ScheduleFloatingPanel: ViewModifier {
     @Binding var draftDate: Date?
 
     let mailBoxManager: MailboxManager
-    let completionHandler: () -> Void
+    let completionHandler: (() -> Void)?
 
     func body(content: Content) -> some View {
         content
@@ -90,7 +90,7 @@ struct ScheduleFloatingPanel: ViewModifier {
     private func setSchedule(_ scheduleDate: Date) {
         draftSaveOption = .schedule
         draftDate = scheduleDate
-        completionHandler()
+        completionHandler?()
     }
 
     private func setCustomSchedule(_ scheduleDate: Date) {
