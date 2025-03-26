@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ProxymanApp/atlantis",
       "state" : {
-        "revision" : "7246950a6a36454ed1d7830166284f202dc14ad2",
-        "version" : "1.26.0"
+        "revision" : "6e1059fdd2cd971e449b5c2f8219274797cd5d69",
+        "version" : "1.27.0"
       }
     },
     {
@@ -203,8 +203,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "21223d1c864db0561d91f48d80f269a363a1625d",
-        "version" : "8.47.0"
+        "revision" : "4589f82132097558d386710b139bfe9c35c64d4a",
+        "version" : "8.48.0"
       }
     },
     {
