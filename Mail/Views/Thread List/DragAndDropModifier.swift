@@ -95,13 +95,8 @@ struct DraggableThreadViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         if #available(macCatalyst 16.0, iOS 16.0, *) {
             content
-                .onAppear {
-                    NotificationCenter.default.addObserver(forName: .dropThreadSuccess, object: nil, queue: .main) { _ in
-                        onSuccess()
-                    }
-                }
-                .onDisappear {
-                    NotificationCenter.default.removeObserver(self, name: .dropThreadSuccess, object: nil)
+                .onReceive(NotificationCenter.default.publisher(for: .dropThreadSuccess)) { _ in
+                    onSuccess()
                 }
             #if os(macOS) || targetEnvironment(macCatalyst)
                 .draggable(DraggedThread(threadIds: draggedThreadId)) {
