@@ -39,6 +39,7 @@ extension View {
             isPresented: isPresented,
             draftSaveOption: draftSaveOption,
             draftDate: draftDate,
+            type: .scheduledDraft, // TODO: Change it if necessary
             mailBoxManager: mailboxManager,
             completionHandler: completionHandler
         ))
@@ -56,6 +57,7 @@ struct ScheduleFloatingPanel: ViewModifier {
     @Binding var draftSaveOption: SaveDraftOption?
     @Binding var draftDate: Date?
 
+    let type: ScheduleType
     let mailBoxManager: MailboxManager
     let completionHandler: (() -> Void)?
 
@@ -71,10 +73,7 @@ struct ScheduleFloatingPanel: ViewModifier {
                 )
             }
             .customAlert(isPresented: $customSchedule) {
-                CustomScheduleAlertView(
-                    startingDate: draftDate ?? Date.minimumScheduleDelay,
-                    confirmAction: setCustomSchedule
-                ) {
+                CustomScheduleAlertView(type: type, date: draftDate ?? .minimumScheduleDelay, confirmAction: setCustomSchedule) {
                     panelShouldBeShown = true
                 }
                 .onDisappear {
