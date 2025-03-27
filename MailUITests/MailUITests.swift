@@ -262,7 +262,8 @@ class MailUITests: XCTestCase {
         emailField.tap()
         emailField.typeText(Env.testAccountEmail)
 
-        let passwordField = loginWebView.secureTextFields.firstMatch
+        let passwordField = loginWebView.textViews.secureTextFields.firstMatch
+        passwordField.tap()
         passwordField.tap()
         passwordField.typeText(Env.testAccountPassword)
         passwordField.typeText("\n")
