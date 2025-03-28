@@ -17,6 +17,7 @@
  */
 
 import DesignSystem
+import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -25,12 +26,15 @@ import MyKSuite
 import SwiftUI
 
 struct CustomScheduleButton: View {
-    @Environment(\.dismiss) private var dismiss
+    @LazyInjectService private var matomo: MatomoUtils
 
-    @Binding var customSchedule: Bool
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @Binding var isShowingCustomScheduleAlert: Bool
     @Binding var isShowingMyKSuiteUpgrade: Bool
 
-    let isMyKSuiteStandard: Bool
+    let type: ScheduleType
 
     var body: some View {
         Button(action: showCustomSchedulePicker) {
@@ -42,7 +46,7 @@ struct CustomScheduleButton: View {
                     .textStyle(.body)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                if isMyKSuiteStandard {
+                if mailboxManager.mailbox.isMyKSuiteFree {
                     MyKSuitePlusChip()
                 }
 
@@ -53,11 +57,24 @@ struct CustomScheduleButton: View {
     }
 
     private func showCustomSchedulePicker() {
-        if isMyKSuiteStandard {
+        if mailboxManager.mailbox.isMyKSuiteFree {
+            let eventName = type == .scheduledDraft ? "scheduledCustomDate" : "snoozeCustomDate"
+            matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: eventName)
             isShowingMyKSuiteUpgrade = true
         } else {
-            customSchedule = true
+            matomo.track(eventWithCategory: type.matomoCategory, name: "customSchedule")
+            isShowingCustomScheduleAlert = true
         }
+
         dismiss()
     }
+}
+
+#Preview {
+    CustomScheduleButton(
+        isShowingCustomScheduleAlert: .constant(true),
+        isShowingMyKSuiteUpgrade: .constant(false),
+        type: .scheduledDraft
+    )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }

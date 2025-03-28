@@ -28,7 +28,6 @@ struct MessageScheduleHeaderView: View {
     @EnvironmentObject private var mainViewState: MainViewState
 
     @State private var isShowingReschedulePanel = false
-    @State private var rescheduleDate: Date?
 
     let scheduleDate: Date
     let draftResource: String
@@ -36,7 +35,7 @@ struct MessageScheduleHeaderView: View {
     var body: some View {
         MessageHeaderActionView(
             icon: MailResourcesAsset.clockPaperplane.swiftUIImage,
-            message: MailResourcesStrings.Localizable.scheduledEmailHeader(scheduleDate.formatted(.dateTime))
+            message: MailResourcesStrings.Localizable.scheduledEmailHeader(scheduleDate.formatted(.messageHeader))
         ) {
             Button(MailResourcesStrings.Localizable.buttonReschedule) {
                 isShowingReschedulePanel = true
@@ -50,16 +49,12 @@ struct MessageScheduleHeaderView: View {
         }
         .scheduleFloatingPanel(
             isPresented: $isShowingReschedulePanel,
-            draftSaveOption: .constant(.schedule),
-            draftDate: $rescheduleDate,
-            mailboxManager: mailboxManager
-        ) {
-            changeScheduleDate(rescheduleDate)
-        }
+            type: .scheduledDraft,
+            completionHandler: changeScheduleDate
+        )
     }
 
-    private func changeScheduleDate(_ selectedDate: Date?) {
-        guard let selectedDate else { return }
+    private func changeScheduleDate(_ selectedDate: Date) {
         Task {
             await tryOrDisplayError {
                 try await mailboxManager.apiFetcher.changeDraftSchedule(
@@ -68,8 +63,8 @@ struct MessageScheduleHeaderView: View {
                 )
                 try await mailboxManager.refreshAllSignatures()
                 if let scheduleFolder = mailboxManager.getFolder(with: .scheduledDrafts) {
-                    let freezedFolder = scheduleFolder.freezeIfNeeded()
-                    await mailboxManager.refreshFolderContent(freezedFolder)
+                    let frozenFolder = scheduleFolder.freezeIfNeeded()
+                    await mailboxManager.refreshFolderContent(frozenFolder)
                 }
             }
         }

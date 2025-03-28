@@ -25,23 +25,32 @@ import MailCoreUI
 import MailResources
 import SwiftUI
 
+extension ScheduleType {
+    var alertErrorMessage: String {
+        let limit = Int(minimumInterval / 60)
+
+        switch self {
+        case .scheduledDraft:
+            return MailResourcesStrings.Localizable.errorScheduleDelayTooShort(limit)
+        case .snooze:
+            return MailResourcesStrings.Localizable.errorScheduledSnoozeDelayTooShort(limit)
+        }
+    }
+}
+
 struct CustomScheduleAlertView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @State private var isShowingError = false
     @State private var selectedDate: Date
 
+    let type: ScheduleType
     let confirmAction: (Date) -> Void
     let cancelAction: (() -> Void)?
 
-    private let maximumDelay = Date.now.addingTimeInterval(60 * 60 * 24 * 365 * 10) // 10 years
-
-    private var isDelayTooShort: Bool {
-        selectedDate < Date.minimumScheduleDelay
-    }
-
-    init(startingDate: Date, confirmAction: @escaping (Date) -> Void, cancelAction: (() -> Void)? = nil) {
-        _selectedDate = .init(initialValue: startingDate)
+    init(type: ScheduleType, date: Date?, confirmAction: @escaping (Date) -> Void, cancelAction: (() -> Void)? = nil) {
+        _selectedDate = .init(wrappedValue: date ?? type.minimumDate)
+        self.type = type
         self.confirmAction = confirmAction
         self.cancelAction = cancelAction
     }
@@ -55,33 +64,43 @@ struct CustomScheduleAlertView: View {
             DatePicker(
                 MailResourcesStrings.Localizable.datePickerTitle,
                 selection: $selectedDate,
-                in: Date.minimumScheduleDelay.addingTimeInterval(60) ... maximumDelay
+                in: type.minimumDate ... type.maximumDate
             )
             .labelsHidden()
             .onChange(of: selectedDate) { newDate in
-                isShowingError = newDate < Date.minimumScheduleDelay || newDate > maximumDelay
+                isShowingError = !type.isDateInValidTimeframe(newDate)
             }
 
-            Text(MailResourcesStrings.Localizable.errorScheduleDelayTooShortPlural(5))
+            Text(type.alertErrorMessage)
                 .textStyle(.labelError)
                 .padding(.top, value: .micro)
                 .opacity(isShowingError ? 1 : 0)
                 .padding(.bottom, value: .mini)
 
-            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonScheduleTitle,
-                             secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
-                             primaryButtonEnabled: !isShowingError,
-                             primaryButtonAction: executeActionIfPossible,
-                             secondaryButtonAction: cancelAction)
+            ModalButtonsView(
+                primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm,
+                secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
+                primaryButtonEnabled: !isShowingError,
+                primaryButtonAction: executeActionIfPossible,
+                secondaryButtonAction: cancelAction
+            )
         }
     }
 
     private func executeActionIfPossible() throws {
-        guard !isDelayTooShort else {
+        guard type.isDateInValidTimeframe(selectedDate) else {
             isShowingError = true
             throw MailError.tooShortScheduleDelay
         }
+
         confirmAction(selectedDate)
-        matomo.track(eventWithCategory: .scheduleSend, name: "customSchedule")
+        UserDefaults.shared[keyPath: type.lastCustomScheduleDateKeyPath] = selectedDate
+        matomo.track(eventWithCategory: type.matomoCategory, name: "customSchedule")
+    }
+}
+
+#Preview {
+    CustomScheduleAlertView(type: .scheduledDraft, date: .now) { date in
+        print("Selected Date: \(date)")
     }
 }

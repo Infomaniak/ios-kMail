@@ -35,7 +35,7 @@ struct MailboxSignatureSettingsView: View {
     let mailboxManager: MailboxManager
 
     private var isKSuiteLimited: Bool {
-        signatures.defaultSignature != nil && mailboxManager.mailbox.isFree && mailboxManager.mailbox.isLimited
+        signatures.defaultSignature != nil && mailboxManager.mailbox.isMyKSuiteFree
     }
 
     init(mailboxManager: MailboxManager) {
@@ -56,7 +56,7 @@ struct MailboxSignatureSettingsView: View {
                 ) {
                     if isKSuiteLimited {
                         isShowingMyKSuiteUpgrade = true
-                        matomo.track(eventWithCategory: .myKSuiteUpgrade, name: "emptySignature")
+                        matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "emptySignature")
                     } else {
                         setAsDefault(nil)
                     }
