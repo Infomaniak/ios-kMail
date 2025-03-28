@@ -25,51 +25,6 @@ import MailCoreUI
 import MailResources
 import SwiftUI
 
-enum ScheduleType: Sendable {
-    case scheduledDraft
-    case snooze
-
-    var matomoCategory: MatomoUtils.EventCategory {
-        switch self {
-        case .scheduledDraft:
-            return .scheduleSend
-        case .snooze:
-            return .snooze
-        }
-    }
-
-    private var minimumInterval: TimeInterval {
-        return 60 * 5 // 5 minutes
-    }
-
-    private var maximumInterval: TimeInterval {
-        switch self {
-        case .scheduledDraft:
-            return 60 * 60 * 24 * 365 * 10 // 10 years
-        case .snooze:
-            return 60 * 60 * 24 * 365 // 1 year
-        }
-    }
-
-    var minimumDate: Date {
-        return .now.addingTimeInterval(minimumInterval)
-    }
-
-    var maximumDate: Date {
-        return .now.addingTimeInterval(maximumInterval)
-    }
-
-    func isDateInValidTimeframe(_ date: Date) -> Bool {
-        let minimumDateDelta = Calendar.current.compare(date, to: minimumDate, toGranularity: .minute)
-        let isTooEarly = minimumDateDelta == .orderedAscending
-
-        let maximumDateDelta = Calendar.current.compare(date, to: maximumDate, toGranularity: .minute)
-        let isTooLate = maximumDateDelta == .orderedDescending
-
-        return !isTooEarly && !isTooLate
-    }
-}
-
 extension ScheduleType {
     var alertErrorMessage: String {
         let limit = Int(minimumInterval / 60)
