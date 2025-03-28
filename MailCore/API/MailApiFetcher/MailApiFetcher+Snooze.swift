@@ -20,9 +20,10 @@ import Alamofire
 import Foundation
 import InfomaniakCore
 
-/// implementing `MailApiCommonFetchable`
+/// Implementing `MailApiCommonFetchable`
 public extension MailApiFetcher {
-    private static let snoozeAPILimit = 100
+    private static let snoozeAPILimit = 200
+    private static let editSnoozeAPILimit = 100
 
     func snooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws {
         _ = try await batchOver(values: messages, chunkSize: Self.snoozeAPILimit) { chunk in
@@ -35,21 +36,21 @@ public extension MailApiFetcher {
     }
 
     func updateSnooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws {
-        _ = try await batchOver(values: messages, chunkSize: Self.snoozeAPILimit) { chunk in
+        _ = try await batchOver(values: messages, chunkSize: Self.editSnoozeAPILimit) { chunk in
             let _: Empty = try await self.perform(request: self.authenticatedRequest(
                 .snooze(uuid: mailbox.uuid),
                 method: .put,
-                parameters: SnoozedMessagesToUpdate(endDate: date, uuids: chunk.compactMap(\.snoozeUUID))
+                parameters: SnoozedMessagesToUpdate(endDate: date, uuids: chunk.compactMap(\.snoozeUuid))
             ))
         }
     }
 
     func deleteSnooze(messages: [Message], mailbox: Mailbox) async throws {
-        _ = try await batchOver(values: messages, chunkSize: Self.snoozeAPILimit) { chunk in
+        _ = try await batchOver(values: messages, chunkSize: Self.editSnoozeAPILimit) { chunk in
             let _: Empty = try await self.perform(request: self.authenticatedRequest(
                 .snooze(uuid: mailbox.uuid),
                 method: .delete,
-                parameters: ["uuids": chunk.compactMap(\.snoozeUUID)]
+                parameters: ["uuids": chunk.compactMap(\.snoozeUuid)]
             ))
         }
     }
