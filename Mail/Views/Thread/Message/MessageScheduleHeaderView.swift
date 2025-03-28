@@ -28,7 +28,6 @@ struct MessageScheduleHeaderView: View {
     @EnvironmentObject private var mainViewState: MainViewState
 
     @State private var isShowingReschedulePanel = false
-    @State private var rescheduleDate: Date?
 
     let scheduleDate: Date
     let draftResource: String
@@ -50,16 +49,12 @@ struct MessageScheduleHeaderView: View {
         }
         .scheduleFloatingPanel(
             isPresented: $isShowingReschedulePanel,
-            draftSaveOption: .constant(.schedule),
-            draftDate: $rescheduleDate,
-            mailboxManager: mailboxManager
+            type: .scheduledDraft,
+            completionHandler: changeScheduleDate
         )
-        .onChange(of: rescheduleDate, perform: changeScheduleDate)
     }
 
-    private func changeScheduleDate(_ selectedDate: Date?) {
-        guard let selectedDate else { return }
-
+    private func changeScheduleDate(_ selectedDate: Date) {
         Task {
             await tryOrDisplayError {
                 try await mailboxManager.apiFetcher.changeDraftSchedule(

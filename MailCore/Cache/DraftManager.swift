@@ -191,7 +191,7 @@ public final class DraftManager {
                                       mailboxManager: MailboxManager,
                                       showSnackbar: Bool,
                                       myKSuiteUpgradeAction: (() -> Void)?) async {
-        if mailboxManager.mailbox.isFree && mailboxManager.mailbox.isLimited {
+        if mailboxManager.mailbox.isMyKSuiteFree {
             alertDisplayable.show(
                 message: MailResourcesStrings.Localizable.errorSendLimitExceeded,
                 action: (MailResourcesStrings.Localizable.buttonUpgrade, {

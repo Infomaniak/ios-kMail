@@ -27,58 +27,63 @@ import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
 
+extension ScheduleType {
+    var floatingPanelTitle: String {
+        switch self {
+        case .scheduledDraft:
+            return MailResourcesStrings.Localizable.scheduleSendingTitle
+        case .snooze:
+            return MailResourcesStrings.Localizable.actionSnooze
+        }
+    }
+}
+
 extension View {
     func scheduleFloatingPanel(
         isPresented: Binding<Bool>,
-        draftSaveOption: Binding<SaveDraftOption?>,
-        draftDate: Binding<Date?>,
-        mailboxManager: MailboxManager,
-        completionHandler: (() -> Void)? = nil
+        type: ScheduleType,
+        initialDate: Date? = nil,
+        completionHandler: @escaping (Date) -> Void
     ) -> some View {
-        modifier(ScheduleFloatingPanel(
-            isPresented: isPresented,
-            draftSaveOption: draftSaveOption,
-            draftDate: draftDate,
-            type: .scheduledDraft, // TODO: Change it if necessary
-            mailBoxManager: mailboxManager,
-            completionHandler: completionHandler
-        ))
+        modifier(
+            ScheduleFloatingPanel(
+                isShowingFloatingPanel: isPresented,
+                type: type,
+                initialDate: initialDate,
+                completionHandler: completionHandler
+            )
+        )
     }
 }
 
 struct ScheduleFloatingPanel: ViewModifier {
-    @AppStorage(UserDefaults.shared.key(.lastScheduleInterval)) private var lastScheduleInterval: Double = 0
-
     @State private var isShowingMyKSuiteUpgrade = false
     @State private var panelShouldBeShown = false
-    @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var customSchedule: Bool
+    @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var isShowingCustomScheduleAlert: Bool
 
-    @Binding var isPresented: Bool
-    @Binding var draftSaveOption: SaveDraftOption?
-    @Binding var draftDate: Date?
+    @Binding var isShowingFloatingPanel: Bool
 
     let type: ScheduleType
-    let mailBoxManager: MailboxManager
-    let completionHandler: (() -> Void)?
+    let initialDate: Date?
+    let completionHandler: (Date) -> Void
 
     func body(content: Content) -> some View {
         content
-            .floatingPanel(isPresented: $isPresented, title: MailResourcesStrings.Localizable.scheduleSendingTitle) {
+            .floatingPanel(isPresented: $isShowingFloatingPanel, title: type.floatingPanelTitle) {
                 ScheduleFloatingPanelView(
-                    customSchedule: $customSchedule,
+                    isShowingCustomScheduleAlert: $isShowingCustomScheduleAlert,
                     isShowingMyKSuiteUpgrade: $isShowingMyKSuiteUpgrade,
-                    isMyKSuiteStandard: mailBoxManager.mailbox.isFree && mailBoxManager.mailbox.isLimited,
-                    lastScheduleInterval: lastScheduleInterval,
-                    setScheduleAction: setSchedule
+                    type: type,
+                    setScheduleAction: completionHandler
                 )
             }
-            .customAlert(isPresented: $customSchedule) {
-                CustomScheduleAlertView(type: type, date: draftDate, confirmAction: setCustomSchedule) {
+            .customAlert(isPresented: $isShowingCustomScheduleAlert) {
+                CustomScheduleAlertView(type: type, date: initialDate, confirmAction: completionHandler) {
                     panelShouldBeShown = true
                 }
                 .onDisappear {
                     if panelShouldBeShown {
-                        isPresented = true
+                        isShowingFloatingPanel = true
                         panelShouldBeShown = false
                     }
                 }
@@ -87,13 +92,7 @@ struct ScheduleFloatingPanel: ViewModifier {
     }
 
     private func setSchedule(_ scheduleDate: Date) {
-        draftSaveOption = .schedule
-        draftDate = scheduleDate
-        completionHandler?()
-    }
-
-    private func setCustomSchedule(_ scheduleDate: Date) {
-        lastScheduleInterval = scheduleDate.timeIntervalSince1970
-        setSchedule(scheduleDate)
+//        draftSaveOption = .schedule
+//        draftDate = scheduleDate
     }
 }
