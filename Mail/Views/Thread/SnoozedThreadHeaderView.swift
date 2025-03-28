@@ -20,6 +20,8 @@ import MailResources
 import SwiftUI
 
 struct SnoozedThreadHeaderView: View {
+    @State private var isShowingScheduleFloatingPanel = false
+
     let date: Date
     let shouldDisplayActions: Bool
 
@@ -34,9 +36,21 @@ struct SnoozedThreadHeaderView: View {
             MessageHeaderDivider()
             Button(MailResourcesStrings.Localizable.buttonCancelReminder, action: cancel)
         }
+        .scheduleFloatingPanel(
+            isPresented: $isShowingScheduleFloatingPanel,
+            type: .snooze,
+            initialDate: date,
+            completionHandler: updateSnoozeDate
+        )
     }
 
-    private func edit() {}
+    private func edit() {
+        isShowingScheduleFloatingPanel = true
+    }
+
+    private func updateSnoozeDate(_ newDate: Date) {
+
+    }
 
     private func cancel() {}
 }
