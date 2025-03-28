@@ -30,7 +30,7 @@ struct ScheduleOptionView: View {
 
     let type: ScheduleType
     let option: ScheduleSendOption
-    let setScheduleAction: (Date) -> Void
+    let completionHandler: (Date) -> Void
 
     var body: some View {
         if let scheduleDate = option.date {
@@ -55,7 +55,7 @@ struct ScheduleOptionView: View {
         guard let scheduleDate = option.date else { return }
 
         matomo.track(eventWithCategory: type.matomoCategory, name: option.matomoName)
-        setScheduleAction(scheduleDate)
+        completionHandler(scheduleDate)
         dismiss()
     }
 }
