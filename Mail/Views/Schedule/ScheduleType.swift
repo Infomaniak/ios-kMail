@@ -32,11 +32,24 @@ enum ScheduleType: Sendable {
         }
     }
 
-    private var minimumInterval: TimeInterval {
+    var lastCustomScheduleDateKeyPath: ReferenceWritableKeyPath<UserDefaults, Date> {
+        switch self {
+        case .scheduledDraft:
+            return \.lastCustomScheduledDraftDate
+        case .snooze:
+            return \.lastCustomSnoozeDate
+        }
+    }
+}
+
+// MARK: - Minimum and maximum date
+
+extension ScheduleType {
+    internal var minimumInterval: TimeInterval {
         return 60 * 5 // 5 minutes
     }
 
-    private var maximumInterval: TimeInterval {
+    internal var maximumInterval: TimeInterval {
         switch self {
         case .scheduledDraft:
             return 60 * 60 * 24 * 365 * 10 // 10 years

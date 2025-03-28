@@ -23,32 +23,41 @@ import RealmSwift
 import SwiftUI
 
 struct ScheduleFloatingPanelView: View {
-    @Binding var customSchedule: Bool
+    @Binding var isShowingCustomScheduleAlert: Bool
     @Binding var isShowingMyKSuiteUpgrade: Bool
 
-    let isMyKSuiteStandard: Bool
-    let lastScheduleInterval: Double
+    let type: ScheduleType
     let setScheduleAction: (Date) -> Void
 
     private var scheduleOptions: [ScheduleSendOption] {
+        let lastScheduledDate = UserDefaults.shared[keyPath: type.lastCustomScheduleDateKeyPath]
+
         var allSimpleCases = ScheduleSendOption.allSimpleCases
-        allSimpleCases.insert(ScheduleSendOption.lastSchedule(value: Date(timeIntervalSince1970: lastScheduleInterval)), at: 0)
+        allSimpleCases.insert(ScheduleSendOption.lastSchedule(value: lastScheduledDate), at: 0)
         return allSimpleCases.filter { $0.shouldBeDisplayedNow }
     }
 
     var body: some View {
         VStack(spacing: 0) {
             ForEach(scheduleOptions) { option in
-                ScheduleOptionView(option: option, setScheduleAction: setScheduleAction)
+                ScheduleOptionView(type: type, option: option, setScheduleAction: setScheduleAction)
 
                 IKDivider(type: .item)
             }
 
             CustomScheduleButton(
-                customSchedule: $customSchedule,
+                isShowingCustomScheduleAlert: $isShowingCustomScheduleAlert,
                 isShowingMyKSuiteUpgrade: $isShowingMyKSuiteUpgrade,
-                isMyKSuiteStandard: isMyKSuiteStandard
+                type: type
             )
         }
     }
+}
+
+#Preview {
+    ScheduleFloatingPanelView(
+        isShowingCustomScheduleAlert: .constant(false),
+        isShowingMyKSuiteUpgrade: .constant(false),
+        type: .scheduledDraft
+    ) { _ in }
 }
