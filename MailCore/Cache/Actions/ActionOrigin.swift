@@ -41,8 +41,8 @@ public struct ActionOrigin {
     private(set) var nearestMessagesToMoveSheet: Binding<[Message]?>?
     private(set) var nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>?
     private(set) var nearestBlockSendersList: Binding<BlockRecipientState?>?
-    private(set) var nearestReportJunkMessageActionsPanel: Binding<[Message]?>?
-    private(set) var nearestReportedForPhishingMessageAlert: Binding<Message?>?
+    private(set) var nearestReportJunkMessagesActionsPanel: Binding<[Message]?>?
+    private(set) var nearestReportedForPhishingMessagesAlert: Binding<[Message]?>?
     private(set) var nearestReportedForDisplayProblemMessageAlert: Binding<Message?>?
     private(set) var nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>?
     private(set) var messagesToDownload: Binding<[Message]?>?
@@ -55,8 +55,8 @@ public struct ActionOrigin {
         nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
         nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>? = nil,
         nearestBlockSendersList: Binding<BlockRecipientState?>? = nil,
-        nearestReportJunkMessageActionsPanel: Binding<[Message]?>? = nil,
-        nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
+        nearestReportJunkMessagesActionsPanel: Binding<[Message]?>? = nil,
+        nearestReportedForPhishingMessagesAlert: Binding<[Message]?>? = nil,
         nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
         nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
         messagesToDownload: Binding<[Message]?>? = nil
@@ -68,8 +68,8 @@ public struct ActionOrigin {
         self.nearestMessagesToMoveSheet = nearestMessagesToMoveSheet
         self.nearestBlockSenderAlert = nearestBlockSenderAlert
         self.nearestBlockSendersList = nearestBlockSendersList
-        self.nearestReportJunkMessageActionsPanel = nearestReportJunkMessageActionsPanel
-        self.nearestReportedForPhishingMessageAlert = nearestReportedForPhishingMessageAlert
+        self.nearestReportJunkMessagesActionsPanel = nearestReportJunkMessagesActionsPanel
+        self.nearestReportedForPhishingMessagesAlert = nearestReportedForPhishingMessagesAlert
         self.nearestReportedForDisplayProblemMessageAlert = nearestReportedForDisplayProblemMessageAlert
         self.nearestShareMailLinkPanel = nearestShareMailLinkPanel
         self.messagesToDownload = messagesToDownload
@@ -86,8 +86,8 @@ public struct ActionOrigin {
                                      nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
                                      nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>? = nil,
                                      nearestBlockSendersList: Binding<BlockRecipientState?>? = nil,
-                                     nearestReportJunkMessageActionsPanel: Binding<[Message]?>? = nil,
-                                     nearestReportedForPhishingMessageAlert: Binding<Message?>? = nil,
+                                     nearestReportJunkMessagesActionsPanel: Binding<[Message]?>? = nil,
+                                     nearestReportedForPhishingMessagesAlert: Binding<[Message]?>? = nil,
                                      nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
                                      nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
                                      messagesToDownload: Binding<[Message]?>? = nil) -> ActionOrigin {
@@ -98,8 +98,8 @@ public struct ActionOrigin {
             nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
             nearestBlockSenderAlert: nearestBlockSenderAlert,
             nearestBlockSendersList: nearestBlockSendersList,
-            nearestReportJunkMessageActionsPanel: nearestReportJunkMessageActionsPanel,
-            nearestReportedForPhishingMessageAlert: nearestReportedForPhishingMessageAlert,
+            nearestReportJunkMessagesActionsPanel: nearestReportJunkMessagesActionsPanel,
+            nearestReportedForPhishingMessagesAlert: nearestReportedForPhishingMessagesAlert,
             nearestReportedForDisplayProblemMessageAlert: nearestReportedForDisplayProblemMessageAlert,
             nearestShareMailLinkPanel: nearestShareMailLinkPanel,
             messagesToDownload: messagesToDownload
