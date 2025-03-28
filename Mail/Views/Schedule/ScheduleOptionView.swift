@@ -28,16 +28,13 @@ struct ScheduleOptionView: View {
 
     @Environment(\.dismiss) private var dismiss
 
+    let type: ScheduleType
     let option: ScheduleSendOption
     let setScheduleAction: (Date) -> Void
 
     var body: some View {
         if let scheduleDate = option.date {
-            Button {
-                matomo.track(eventWithCategory: .scheduleSend, name: option.matomoName)
-                setScheduleAction(scheduleDate)
-                dismiss()
-            } label: {
+            Button(action: didTapOption) {
                 HStack(spacing: IKPadding.medium) {
                     option.icon
                         .iconSize(.large)
@@ -53,16 +50,24 @@ struct ScheduleOptionView: View {
             .padding(value: .medium)
         }
     }
+
+    private func didTapOption() {
+        guard let scheduleDate = option.date else { return }
+
+        matomo.track(eventWithCategory: type.matomoCategory, name: option.matomoName)
+        setScheduleAction(scheduleDate)
+        dismiss()
+    }
 }
 
 #Preview {
-    ScheduleOptionView(option: .nextMondayAfternoon) { date in
+    ScheduleOptionView(type: .scheduledDraft, option: .nextMondayAfternoon) { date in
         print("Button \(date.formatted(.scheduleOption)) clicked !")
     }
-    ScheduleOptionView(option: .lastSchedule(value: .now)) { date in
+    ScheduleOptionView(type: .snooze, option: .lastSchedule(value: .now)) { date in
         print("Button \(date.formatted(.scheduleOption)) clicked !")
     }
-    ScheduleOptionView(option: .thisAfternoon) { date in
+    ScheduleOptionView(type: .scheduledDraft, option: .thisAfternoon) { date in
         print("Button \(date.formatted(.scheduleOption)) clicked !")
     }
 }

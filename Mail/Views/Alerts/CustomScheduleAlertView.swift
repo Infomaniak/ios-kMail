@@ -94,6 +94,7 @@ struct CustomScheduleAlertView: View {
         }
 
         confirmAction(selectedDate)
+        UserDefaults.shared[keyPath: type.lastCustomScheduleDateKeyPath] = selectedDate
         matomo.track(eventWithCategory: type.matomoCategory, name: "customSchedule")
     }
 }

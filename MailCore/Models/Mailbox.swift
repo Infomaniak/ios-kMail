@@ -75,6 +75,10 @@ public class Mailbox: Object, Codable, Identifiable {
         return "mailbox-\(mailboxId)"
     }
 
+    public var isMyKSuiteFree: Bool {
+        return isFree && isLimited
+    }
+
     enum CodingKeys: String, CodingKey {
         case uuid
         case email
