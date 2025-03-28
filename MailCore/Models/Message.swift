@@ -145,7 +145,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var swissTransferAttachment: SwissTransferAttachment?
 
     @Persisted public var snoozeState: SnoozeState?
-    @Persisted public var snoozeUUID: String?
+    @Persisted public var snoozeUuid: String?
     @Persisted public var snoozeEndDate: Date?
 
     public var shortUid: Int? {
@@ -290,7 +290,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case hasUnsubscribeLink
         case bimi
         case snoozeState
-        case snoozeAction
+        case snoozeUuid
         case snoozeEndDate
         case headers
     }
@@ -360,10 +360,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         bimi = try values.decodeIfPresent(Bimi.self, forKey: .bimi)
 
         snoozeState = try? values.decodeIfPresent(SnoozeState.self, forKey: .snoozeState)
-        if let snoozeAction = try values.decodeIfPresent(String.self, forKey: .snoozeAction) {
-            let snoozeUUIDParser = SnoozeUUIDParser()
-            snoozeUUID = snoozeUUIDParser.parse(resource: snoozeAction)
-        }
+        snoozeUuid = try? values.decodeIfPresent(String.self, forKey: .snoozeUuid)
         snoozeEndDate = try values.decodeIfPresent(Date.self, forKey: .snoozeEndDate)
         headers = try? values.decodeIfPresent(MessageHeaders.self, forKey: .headers)
     }
@@ -402,7 +399,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         hasUnsubscribeLink: Bool? = nil,
         bimi: Bimi? = nil,
         snoozeState: SnoozeState? = nil,
-        snoozeUUID: String? = nil,
+        snoozeUuid: String? = nil,
         snoozeEndDate: Date? = nil
     ) {
         self.init()
@@ -441,7 +438,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         self.bimi = bimi
         fullyDownloaded = true
         self.snoozeState = snoozeState
-        self.snoozeUUID = snoozeUUID
+        self.snoozeUuid = snoozeUuid
         self.snoozeEndDate = snoozeEndDate
     }
 
@@ -462,7 +459,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
             forwarded: forwarded,
             bimi: bimi,
             snoozeState: snoozeState,
-            snoozeUUID: snoozeUUID,
+            snoozeUuid: snoozeUuid,
             snoozeEndDate: snoozeEndDate
         )
         thread.messageIds = linkedUids

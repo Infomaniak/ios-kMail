@@ -305,7 +305,7 @@ public extension MailboxManager {
         let updatedThreads = await updateMessages(with: messagesDelta.deletedShortUids, in: folder,
                                                   messageUid: \.self) { message, _ in
             message.snoozeState = nil
-            message.snoozeUUID = nil
+            message.snoozeUuid = nil
             message.snoozeEndDate = nil
         }
 
@@ -324,7 +324,7 @@ public extension MailboxManager {
 
             if message.snoozeState == .unsnoozed && message.seen {
                 message.snoozeState = nil
-                message.snoozeUUID = nil
+                message.snoozeUuid = nil
                 message.snoozeEndDate = nil
             }
         }

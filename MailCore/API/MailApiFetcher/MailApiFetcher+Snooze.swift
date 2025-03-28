@@ -39,7 +39,7 @@ public extension MailApiFetcher {
             let _: Empty = try await self.perform(request: self.authenticatedRequest(
                 .snooze(uuid: mailbox.uuid),
                 method: .put,
-                parameters: SnoozedMessagesToUpdate(endDate: date, uuids: chunk.compactMap(\.snoozeUUID))
+                parameters: SnoozedMessagesToUpdate(endDate: date, uuids: chunk.compactMap(\.snoozeUuid))
             ))
         }
     }
@@ -49,7 +49,7 @@ public extension MailApiFetcher {
             let _: Empty = try await self.perform(request: self.authenticatedRequest(
                 .snooze(uuid: mailbox.uuid),
                 method: .delete,
-                parameters: ["uuids": chunk.compactMap(\.snoozeUUID)]
+                parameters: ["uuids": chunk.compactMap(\.snoozeUuid)]
             ))
         }
     }
