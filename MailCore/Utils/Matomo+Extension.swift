@@ -46,7 +46,7 @@ public extension MatomoUtils.EventCategory {
     static let message = MatomoUtils.EventCategory(displayName: "message")
     static let multiSelection = MatomoUtils.EventCategory(displayName: "multiSelection")
     static let myKSuite = MatomoUtils.EventCategory(displayName: "myKSuite")
-    static let myKSuiteUpgrade = MatomoUtils.EventCategory(displayName: "myKSuiteUpgradeBottomSheet")
+    static let myKSuiteUpgradeBottomSheet = MatomoUtils.EventCategory(displayName: "myKSuiteUpgradeBottomSheet")
     static let newMessage = MatomoUtils.EventCategory(displayName: "newMessage")
     static let noValidMailboxes = MatomoUtils.EventCategory(displayName: "noValidMailboxes")
     static let onboarding = MatomoUtils.EventCategory(displayName: "onboarding")
