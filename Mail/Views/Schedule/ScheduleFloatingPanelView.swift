@@ -27,7 +27,7 @@ struct ScheduleFloatingPanelView: View {
     @Binding var isShowingMyKSuiteUpgrade: Bool
 
     let type: ScheduleType
-    let setScheduleAction: (Date) -> Void
+    let completionHandler: (Date) -> Void
 
     private var scheduleOptions: [ScheduleSendOption] {
         let lastScheduledDate = UserDefaults.shared[keyPath: type.lastCustomScheduleDateKeyPath]
@@ -40,7 +40,7 @@ struct ScheduleFloatingPanelView: View {
     var body: some View {
         VStack(spacing: 0) {
             ForEach(scheduleOptions) { option in
-                ScheduleOptionView(type: type, option: option, setScheduleAction: setScheduleAction)
+                ScheduleOptionView(type: type, option: option, completionHandler: completionHandler)
 
                 IKDivider(type: .item)
             }
