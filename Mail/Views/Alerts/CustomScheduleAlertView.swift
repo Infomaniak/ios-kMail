@@ -38,33 +38,41 @@ enum ScheduleType: Sendable {
         }
     }
 
-    var minimumInterval: TimeInterval {
-        return 5
+    private var minimumInterval: TimeInterval {
+        return 60 * 5 // 5 minutes
+    }
+
+    private var maximumInterval: TimeInterval {
+        switch self {
+        case .scheduledDraft:
+            return 60 * 60 * 24 * 365 * 10 // 10 years
+        case .snooze:
+            return 60 * 60 * 24 * 365 // 1 year
+        }
     }
 
     var minimumDate: Date {
         return .now.addingTimeInterval(minimumInterval)
     }
 
-    var maximumInterval: TimeInterval {
-        switch self {
-        case .scheduledDraft:
-            // 10 years
-            return 60 * 60 * 24 * 365 * 10
-        case .snooze:
-            // 1 year
-            return 60 * 60 * 24 * 365
-        }
-    }
-
     var maximumDate: Date {
         return .now.addingTimeInterval(maximumInterval)
+    }
+
+    func isDateInValidTimeframe(_ date: Date) -> Bool {
+        let minimumDateDelta = Calendar.current.compare(date, to: minimumDate, toGranularity: .minute)
+        let isTooEarly = minimumDateDelta == .orderedAscending
+
+        let maximumDateDelta = Calendar.current.compare(date, to: maximumDate, toGranularity: .minute)
+        let isTooLate = maximumDateDelta == .orderedDescending
+
+        return !isTooEarly && !isTooLate
     }
 }
 
 extension ScheduleType {
     var alertErrorMessage: String {
-        let limit = Int(minimumInterval)
+        let limit = Int(minimumInterval / 60)
 
         switch self {
         case .scheduledDraft:
@@ -85,11 +93,8 @@ struct CustomScheduleAlertView: View {
     let confirmAction: (Date) -> Void
     let cancelAction: (() -> Void)?
 
-    private let minimumMinutesDifference = 5
-    private let limitFutureDate = Date.now.advanced(by: 60 * 60 * 24 * 365 * 10) // 10 years
-
-    init(type: ScheduleType, date: Date, confirmAction: @escaping (Date) -> Void, cancelAction: (() -> Void)? = nil) {
-        _selectedDate = .init(wrappedValue: date)
+    init(type: ScheduleType, date: Date?, confirmAction: @escaping (Date) -> Void, cancelAction: (() -> Void)? = nil) {
+        _selectedDate = .init(wrappedValue: date ?? type.minimumDate)
         self.type = type
         self.confirmAction = confirmAction
         self.cancelAction = cancelAction
@@ -101,13 +106,15 @@ struct CustomScheduleAlertView: View {
                 .textStyle(.bodyMedium)
                 .padding(.bottom, IKPadding.alertTitleBottom)
 
-            DatePicker(MailResourcesStrings.Localizable.datePickerTitle,
-                       selection: $selectedDate,
-                       in: type.minimumDate ... type.maximumDate)
-                .labelsHidden()
-                .onChange(of: selectedDate) { newDate in
-                    isShowingError = !isSelectedTimeValid(newDate)
-                }
+            DatePicker(
+                MailResourcesStrings.Localizable.datePickerTitle,
+                selection: $selectedDate,
+                in: type.minimumDate ... type.maximumDate
+            )
+            .labelsHidden()
+            .onChange(of: selectedDate) { newDate in
+                isShowingError = !type.isDateInValidTimeframe(newDate)
+            }
 
             Text(type.alertErrorMessage)
                 .textStyle(.labelError)
@@ -115,32 +122,24 @@ struct CustomScheduleAlertView: View {
                 .opacity(isShowingError ? 1 : 0)
                 .padding(.bottom, value: .mini)
 
-            ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonScheduleTitle,
-                             secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
-                             primaryButtonEnabled: !isShowingError,
-                             primaryButtonAction: executeActionIfPossible,
-                             secondaryButtonAction: cancelAction)
+            ModalButtonsView(
+                primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm,
+                secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
+                primaryButtonEnabled: !isShowingError,
+                primaryButtonAction: executeActionIfPossible,
+                secondaryButtonAction: cancelAction
+            )
         }
     }
 
     private func executeActionIfPossible() throws {
-        guard isSelectedTimeValid(selectedDate) else {
+        guard type.isDateInValidTimeframe(selectedDate) else {
             isShowingError = true
             throw MailError.tooShortScheduleDelay
         }
 
         confirmAction(selectedDate)
         matomo.track(eventWithCategory: type.matomoCategory, name: "customSchedule")
-    }
-
-    private func isSelectedTimeValid(_ date: Date) -> Bool {
-        let minutesDelta = Calendar.current.dateComponents([.minute], from: .now, to: selectedDate).minute ?? 0
-        let meetsTimeThreshold = minutesDelta >= 5
-
-        let compareWithLimitFutureDate = Calendar.current.compare(date, to: limitFutureDate, toGranularity: .minute)
-        let isWithinFutureLimit = compareWithLimitFutureDate == .orderedAscending || compareWithLimitFutureDate == .orderedSame
-
-        return meetsTimeThreshold && isWithinFutureLimit
     }
 }
 
