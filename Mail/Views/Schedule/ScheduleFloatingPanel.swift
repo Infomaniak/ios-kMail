@@ -74,7 +74,7 @@ struct ScheduleFloatingPanel: ViewModifier {
                     isShowingCustomScheduleAlert: $isShowingCustomScheduleAlert,
                     isShowingMyKSuiteUpgrade: $isShowingMyKSuiteUpgrade,
                     type: type,
-                    setScheduleAction: completionHandler
+                    completionHandler: completionHandler
                 )
             }
             .customAlert(isPresented: $isShowingCustomScheduleAlert) {
@@ -89,10 +89,5 @@ struct ScheduleFloatingPanel: ViewModifier {
                 }
             }
             .myKSuitePanel(isPresented: $isShowingMyKSuiteUpgrade, configuration: .mail)
-    }
-
-    private func setSchedule(_ scheduleDate: Date) {
-//        draftSaveOption = .schedule
-//        draftDate = scheduleDate
     }
 }

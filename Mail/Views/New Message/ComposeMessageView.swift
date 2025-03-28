@@ -338,8 +338,12 @@ struct ComposeMessageView: View {
     }
 
     private func didScheduleDraft(_ date: Date) {
-        draft.action = .schedule
-        draft.date = date
+        if let liveDraft = draft.thaw() {
+            try? liveDraft.realm?.write {
+                liveDraft.scheduleDate = date
+                liveDraft.action = .schedule
+            }
+        }
 
         dismissMessageView()
     }
@@ -353,7 +357,7 @@ struct ComposeMessageView: View {
 
         let mailbox = mailboxManager.mailbox
         let mailboxIsFull = mailbox.quotas?.progression ?? 0 >= 1
-        if mailbox.isFree && mailbox.isLimited && mailboxIsFull {
+        if mailbox.isMyKSuiteFree && mailboxIsFull {
             matomo.track(eventWithCategory: .newMessage, name: "trySendingWithMailboxFull")
             Task {
                 if let liveDraft = draft.thaw() {
