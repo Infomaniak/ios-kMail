@@ -4,7 +4,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Thu, 27 Mar 2025 09:44:02 +0100
+ * Exported at: Fri, 28 Mar 2025 08:43:38 +0100
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -81,6 +81,9 @@
 
 /* loco:62e14df023e4fb767e2391a4 */
 "actionShortStar" = "Favoris";
+
+/* loco:67dd6c6da35d6a6731037c12 */
+"actionSnooze" = "Mettre en attente";
 
 /* loco:629f0e67a7c8ea4e366cf342 */
 "actionSpam" = "Signaler comme spam";
@@ -487,9 +490,6 @@
 /* loco:62b2e4a24486732cbc2f04d3 */
 "buttonSchedule" = "Programmer l’envoi de l’e-mail";
 
-/* loco:6723a2a5f3c615913002d152 */
-"buttonScheduleTitle" = "Programmer";
-
 /* loco:65957d479527393708069ee2 */
 "buttonSee" = "Consulter";
 
@@ -857,7 +857,7 @@
 "errorScheduleDelayTooShort" = "Vous ne pouvez pas programmer un e-mail dans moins de %d minutes";
 
 /* loco:67e3ecd6b4a0b7e90d00c382 */
-"errorScheduledSnoozeDelayTooShort" = "Le délai minimum pour programmer un rappel est de %d minutes";
+"errorScheduledSnoozeDelayTooShort" = "Le délai minimum pour mettre un e-mail en attente est de %d minutes";
 
 /* loco:6448ef7a5b39bc7e040ce0b3 */
 "errorSendLimitExceeded" = "Limite d’envoi atteinte";
