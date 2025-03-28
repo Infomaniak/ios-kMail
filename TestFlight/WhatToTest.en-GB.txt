@@ -1,1 +1,4 @@
-- my kSuite
+- Block / Unblock message banner
+- Address book 
+- Improved contact sorting
+- Bug fixes
