@@ -21,6 +21,7 @@ import MailResources
 import SwiftUI
 
 struct SnoozedThreadHeaderView: View {
+    @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingScheduleFloatingPanel = false
@@ -58,9 +59,9 @@ struct SnoozedThreadHeaderView: View {
         Task {
             do {
                 try await mailboxManager.updateSnooze(messages: [lastMessageFromThread], until: newDate)
+                dismiss()
             } catch {
                 // TODO: Do something
-                print(error)
             }
         }
     }
@@ -71,6 +72,7 @@ struct SnoozedThreadHeaderView: View {
         Task {
             do {
                 try await mailboxManager.deleteSnooze(messages: [lastMessageFromThread])
+                dismiss()
             } catch {
                 // TODO: Do something
                 print(error)

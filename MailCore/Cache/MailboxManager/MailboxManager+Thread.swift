@@ -624,8 +624,12 @@ public extension MailboxManager {
         let threadsToDelete = threads.subtracting(threadsToAdd)
         freshFolder.threads.upsert(append: threadsToAdd, remove: threadsToDelete)
 
-        let messagesToAdd = Set(threadsToAdd.flatMap(\.messages)).filter { $0.folderId == folder.remoteId }
-        let messagesToDelete = Set(threadsToDelete.flatMap(\.messages)).filter { $0.folderId == folder.remoteId }
+        let messagesToAdd = Set(threadsToAdd.flatMap { thread in
+            thread.messages.filter { $0.originalThread?.uid == thread.uid }
+        })
+        let messagesToDelete = Set(threadsToDelete.flatMap { thread in
+            thread.messages.filter { $0.originalThread?.uid == thread.uid }
+        })
         freshFolder.messages.upsert(append: messagesToAdd, remove: messagesToDelete)
     }
 
