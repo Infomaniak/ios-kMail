@@ -20,6 +20,6 @@ import InfomaniakCore
 
 public extension Endpoint {
     static func snooze(uuid: String) -> Endpoint {
-        return .mailbox(uuid: uuid).appending(path: "snoozes")
+        return .mailbox(uuid: uuid).appending(path: "/snoozes")
     }
 }
