@@ -311,7 +311,6 @@ public class Folder: Object, Codable, Comparable, Identifiable {
 
     public func threadBelongsToFolder(_ thread: Thread) -> Bool {
         let isThreadInCurrentFolder = thread.folderId == threadsSource?.remoteId ?? ""
-        let isMessageSnoozed = thread.snoozeState == .snoozed && thread.snoozeEndDate != nil && thread.snoozeUuid != nil
 
         switch role {
         case .inbox:
