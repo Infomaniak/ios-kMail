@@ -15,8 +15,6 @@
 		<string>group.com.infomaniak.mail</string>
 		<string>group.com.infomaniak</string>
 	</array>
-	<key>com.apple.security.device.camera</key>
-	<true/>
 	<key>com.apple.security.files.user-selected.read-write</key>
 	<true/>
 	<key>com.apple.security.network.client</key>
