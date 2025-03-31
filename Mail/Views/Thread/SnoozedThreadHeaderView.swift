@@ -16,14 +16,18 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
 struct SnoozedThreadHeaderView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @State private var isShowingScheduleFloatingPanel = false
 
     let date: Date
     let shouldDisplayActions: Bool
+    let lastMessageFromThread: Message?
 
     var body: some View {
         MessageHeaderActionView(
@@ -49,12 +53,32 @@ struct SnoozedThreadHeaderView: View {
     }
 
     private func updateSnoozeDate(_ newDate: Date) {
+        guard let lastMessageFromThread else { return }
 
+        Task {
+            do {
+                try await mailboxManager.updateSnooze(messages: [lastMessageFromThread], until: newDate)
+            } catch {
+                // TODO: Do something
+                print(error)
+            }
+        }
     }
 
-    private func cancel() {}
+    private func cancel() {
+        guard let lastMessageFromThread else { return }
+
+        Task {
+            do {
+                try await mailboxManager.deleteSnooze(messages: [lastMessageFromThread])
+            } catch {
+                // TODO: Do something
+                print(error)
+            }
+        }
+    }
 }
 
 #Preview {
-    SnoozedThreadHeaderView(date: .now, shouldDisplayActions: true)
+    SnoozedThreadHeaderView(date: .now, shouldDisplayActions: true, lastMessageFromThread: nil)
 }
