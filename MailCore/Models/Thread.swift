@@ -126,7 +126,7 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public var isSnoozed: Bool {
-        snoozeState == .snoozed && snoozeEndDate != nil && snoozeUUID != nil
+        snoozeState == .snoozed && snoozeEndDate != nil && snoozeUuid != nil
     }
 
     public func updateUnseenMessages() {

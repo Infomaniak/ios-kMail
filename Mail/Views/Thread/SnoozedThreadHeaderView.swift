@@ -25,7 +25,8 @@ struct SnoozedThreadHeaderView: View {
     var body: some View {
         MessageHeaderActionView(
             icon: MailResourcesAsset.alarmClockFilled.swiftUIImage,
-            message: MailResourcesStrings.Localizable.snoozeAlertTitle(date.formatted(.messageHeader))
+            message: MailResourcesStrings.Localizable.snoozeAlertTitle(date.formatted(.messageHeader)),
+            isFirst: true
         ) {
             Button(MailResourcesStrings.Localizable.buttonModify, action: edit)
             MessageHeaderDivider()
