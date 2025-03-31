@@ -113,8 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-version-checker",
       "state" : {
-        "revision" : "fe053759c7f92d873cdf6e46ede34f28ca91df07",
-        "version" : "10.1.1"
+        "revision" : "e7e5aa360056392a78b885d052e63bf76bc19947",
+        "version" : "10.1.2"
       }
     },
     {
