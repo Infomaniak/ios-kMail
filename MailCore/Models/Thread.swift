@@ -60,7 +60,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var messageIds: MutableSet<String>
 
     @Persisted public var snoozeState: SnoozeState?
-    @Persisted public var snoozeAction: String?
+    @Persisted public var snoozeUuid: String?
     @Persisted public var snoozeEndDate: Date?
 
     /// This property is used to remove threads from list before network call is finished
@@ -179,7 +179,7 @@ public class Thread: Object, Decodable, Identifiable {
         let lastSnoozedMessage = messagesAndDuplicates.last { $0.snoozeState != nil }
 
         snoozeState = lastSnoozedMessage?.snoozeState
-        snoozeAction = lastSnoozedMessage?.snoozeAction
+        snoozeUuid = lastSnoozedMessage?.snoozeUuid
         snoozeEndDate = lastSnoozedMessage?.snoozeEndDate
     }
 
@@ -259,7 +259,7 @@ public class Thread: Object, Decodable, Identifiable {
         case forwarded
         case bimi
         case snoozeState
-        case snoozeAction
+        case snoozeUuid
         case snoozeEndDate
     }
 
@@ -279,7 +279,7 @@ public class Thread: Object, Decodable, Identifiable {
         forwarded: Bool,
         bimi: Bimi? = nil,
         snoozeState: SnoozeState? = nil,
-        snoozeAction: String? = nil,
+        snoozeUuid: String? = nil,
         snoozeEndDate: Date? = nil
     ) {
         self.init()
@@ -299,7 +299,7 @@ public class Thread: Object, Decodable, Identifiable {
         self.forwarded = forwarded
         self.bimi = bimi
         self.snoozeState = snoozeState
-        self.snoozeAction = snoozeAction
+        self.snoozeUuid = snoozeUuid
         self.snoozeEndDate = snoozeEndDate
 
         numberOfScheduledDraft = messages.count { $0.isScheduledDraft == true }
@@ -324,7 +324,7 @@ public class Thread: Object, Decodable, Identifiable {
         forwarded = try container.decode(Bool.self, forKey: .forwarded)
         bimi = try container.decodeIfPresent(Bimi.self, forKey: .bimi)
         snoozeState = try container.decodeIfPresent(SnoozeState.self, forKey: .snoozeState)
-        snoozeAction = try container.decodeIfPresent(String.self, forKey: .snoozeAction)
+        snoozeUuid = try container.decodeIfPresent(String.self, forKey: .snoozeUuid)
         snoozeEndDate = try container.decodeIfPresent(Date.self, forKey: .snoozeEndDate)
 
         numberOfScheduledDraft = messages.count { $0.isScheduledDraft == true }
