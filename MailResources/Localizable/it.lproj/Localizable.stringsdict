@@ -170,5 +170,69 @@ Segnalando a noi questi messaggi, potete aiutare ad accelerare il riconoscimento
 Le segnalazioni verranno inoltrate al nostro team di sicurezza, che li analizzerà e intraprenderà azioni. Le email verranno inoltre spostate automaticamente nella vostra cartella dello spam.</string>
       </dict>
     </dict>
+	<key>snackbarUnsnoozeSuccess</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@value@</string>
+		<key>value</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Promemoria annullato. Il tuo messaggio è tornato nella tua casella di posta</string>
+			<key>other</key>
+			<string>Promemoria annullati. I tuoi messaggi sono tornati nella tua casella di posta</string>
+		</dict>
+	</dict>
+	<key>snoozeArchiveConfirmAlertDescription</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@value@</string>
+		<key>value</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Questa conversazione non sarà più posticipata e verrà archiviata</string>
+			<key>other</key>
+			<string>Queste conversazioni non saranno più posticipate e verranno archiviate</string>
+		</dict>
+	</dict>
+	<key>snoozeDeleteConfirmAlertDescription</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@value@</string>
+		<key>value</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Questa conversazione non sarà più posticipata e verrà eliminata</string>
+			<key>other</key>
+			<string>Queste conversazioni non saranno più posticipate e verranno eliminate</string>
+		</dict>
+	</dict>
+	<key>snoozeMoveConfirmAlertDescription</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@value@</string>
+		<key>value</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Questa conversazione non sarà più posticipata e verrà spostata</string>
+			<key>other</key>
+			<string>Queste conversazioni non saranno più posticipate e verranno spostate</string>
+		</dict>
+	</dict>
 </dict>
 </plist>
