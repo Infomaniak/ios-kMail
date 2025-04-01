@@ -257,6 +257,10 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return names.reversed().joined(separator: " > ")
     }
 
+    public var canAccessSnoozeActions: Bool {
+        return role == .inbox || role == .snoozed
+    }
+
     public var permanentlyDeleteContent: Bool {
         return [FolderRole.draft, FolderRole.spam, FolderRole.trash, FolderRole.scheduledDrafts].contains(role)
     }
