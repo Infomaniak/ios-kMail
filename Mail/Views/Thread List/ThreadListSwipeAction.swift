@@ -74,6 +74,7 @@ private struct SwipeActionView: View {
 
 struct ThreadListSwipeActions: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var mainViewState: MainViewState
 
     @AppStorage(UserDefaults.shared.key(.swipeFullLeading)) private var swipeFullLeading = DefaultPreferences.swipeFullLeading
     @AppStorage(UserDefaults.shared.key(.swipeLeading)) private var swipeLeading = DefaultPreferences.swipeLeading
@@ -87,8 +88,6 @@ struct ThreadListSwipeActions: ViewModifier {
     let thread: Thread
     let viewModel: ThreadListable
     let multipleSelectionViewModel: MultipleSelectionViewModel
-
-    @Binding var flushAlert: FlushAlertState?
 
     func body(content: Content) -> some View {
         content
@@ -126,7 +125,7 @@ struct ThreadListSwipeActions: ViewModifier {
                 SwipeActionView(
                     actionPanelMessages: $actionPanelMessages,
                     moveSheetMessages: $messagesToMove,
-                    flushAlert: $flushAlert,
+                    flushAlert: $mainViewState.flushAlert,
                     viewModel: viewModel,
                     thread: thread,
                     action: action
@@ -139,12 +138,10 @@ struct ThreadListSwipeActions: ViewModifier {
 extension View {
     func swipeActions(thread: Thread,
                       viewModel: ThreadListable,
-                      multipleSelectionViewModel: MultipleSelectionViewModel,
-                      nearestFlushAlert: Binding<FlushAlertState?>) -> some View {
+                      multipleSelectionViewModel: MultipleSelectionViewModel) -> some View {
         modifier(ThreadListSwipeActions(thread: thread,
                                         viewModel: viewModel,
-                                        multipleSelectionViewModel: multipleSelectionViewModel,
-                                        flushAlert: nearestFlushAlert))
+                                        multipleSelectionViewModel: multipleSelectionViewModel))
     }
 }
 

@@ -43,8 +43,7 @@ struct SearchThreadsSectionView: View {
                             threadDensity: threadDensity,
                             accentColor: accentColor,
                             isSelected: mainViewState.selectedThread?.uid == thread.uid,
-                            isMultiSelected: multipleSelectionViewModel.selectedItems[thread.uid] != nil,
-                            flushAlert: .constant(nil)
+                            isMultiSelected: multipleSelectionViewModel.selectedItems[thread.uid] != nil
                         )
                     }
                     .threadListCellAppearance()

@@ -47,8 +47,6 @@ struct ThreadListCell: View {
     let isSelected: Bool
     let isMultiSelected: Bool
 
-    @Binding var flushAlert: FlushAlertState?
-
     private var selectionType: SelectionBackgroundKind {
         if multipleSelectionViewModel.isEnabled {
             return isMultiSelected ? .multiple : .none
@@ -94,8 +92,7 @@ struct ThreadListCell: View {
         .swipeActions(
             thread: thread,
             viewModel: viewModel,
-            multipleSelectionViewModel: multipleSelectionViewModel,
-            nearestFlushAlert: $flushAlert
+            multipleSelectionViewModel: multipleSelectionViewModel
         )
         .actionsContextMenu(thread: thread, toggleMultipleSelection: toggleMultipleSelection)
     }
@@ -142,7 +139,6 @@ struct ThreadListCell: View {
         threadDensity: .large,
         accentColor: .pink,
         isSelected: false,
-        isMultiSelected: false,
-        flushAlert: .constant(nil)
+        isMultiSelected: false
     )
 }
