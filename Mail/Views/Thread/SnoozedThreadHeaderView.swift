@@ -21,12 +21,14 @@ import SwiftUI
 
 struct SnoozedThreadHeaderView: View {
     let date: Date
+    let shouldDisplayActions: Bool
 
     var body: some View {
         MessageHeaderActionView(
             icon: MailResourcesAsset.alarmClockFilled.swiftUIImage,
             message: MailResourcesStrings.Localizable.snoozeAlertTitle(date.formatted(.messageHeader)),
-            isFirst: true
+            isFirst: true,
+            shouldDisplayActions: shouldDisplayActions
         ) {
             Button(MailResourcesStrings.Localizable.buttonModify, action: edit)
             MessageHeaderDivider()
@@ -40,5 +42,5 @@ struct SnoozedThreadHeaderView: View {
 }
 
 #Preview {
-    SnoozedThreadHeaderView(date: .now)
+    SnoozedThreadHeaderView(date: .now, shouldDisplayActions: true)
 }

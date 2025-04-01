@@ -36,6 +36,7 @@ struct MessageHeaderActionView<Content: View>: View {
     let icon: Image
     let message: String
     let isFirst: Bool
+    var shouldDisplayActions = true
 
     @ViewBuilder var actions: () -> Content
 
@@ -44,6 +45,7 @@ struct MessageHeaderActionView<Content: View>: View {
             if isFirst {
                 IKDivider()
             }
+
             VStack(alignment: .leading) {
                 HStack(spacing: IKPadding.small) {
                     icon
@@ -56,16 +58,19 @@ struct MessageHeaderActionView<Content: View>: View {
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
-                HStack {
-                    actions()
+                if shouldDisplayActions {
+                    HStack {
+                        actions()
+                    }
+                    .buttonStyle(.ikBorderless(isInlined: true))
+                    .controlSize(.small)
+                    .padding(.leading, iconSize + IKPadding.small)
                 }
-                .buttonStyle(.ikBorderless(isInlined: true))
-                .controlSize(.small)
-                .padding(.leading, iconSize + IKPadding.small)
             }
             .padding(.bottom, value: .micro)
             .padding(.top, isFirst ? IKPadding.micro : 0)
             .padding(.horizontal, value: .medium)
+
             IKDivider()
         }
     }
