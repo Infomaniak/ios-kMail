@@ -95,7 +95,7 @@ extension Action: CaseIterable {
         let unread = !message.seen
         let star = message.flagged
         let print = origin.type == .floatingPanel(source: .messageList)
-        var tempListActions: [Action?] = [
+        let tempListActions: [Action?] = [
             .openMovePanel,
             spamAction,
             unread ? .markAsRead : .markAsUnread,
@@ -107,13 +107,9 @@ extension Action: CaseIterable {
             userIsStaff ? .reportDisplayProblem : nil
         ]
 
-        if message.isSnoozed {
-            tempListActions.insert(contentsOf: [.modifySnooze, .cancelSnooze], at: 0)
-        } else {
-            tempListActions.insert(.snooze, at: 0)
-        }
+        let listActions = snoozedActions + tempListActions.compactMap { $0 }
 
-        return (Action.quickActions, tempListActions.compactMap { $0 })
+        return (Action.quickActions, listActions)
     }
 
     private static func actionsForMessagesInDifferentThreads(_ messages: [Message], originFolder: Folder?, userEmail: String)
@@ -155,7 +151,8 @@ extension Action: CaseIterable {
             return originFolder?.role == .spam ? .nonSpam : .reportJunk
         }
 
-        var tempListActions: [Action?] = [
+        let snoozedActions = snoozedActions(messages, folder: originFolder)
+        let tempListActions: [Action?] = [
             .openMovePanel,
             spamAction,
             unread ? .markAsUnread : .markAsRead,
@@ -163,14 +160,22 @@ extension Action: CaseIterable {
             showUnstar ? .unstar : .star,
             .saveThreadInkDrive
         ]
+        let listActions = snoozedActions + tempListActions.compactMap { $0 }
 
-        if messages.allSatisfy(\.isSnoozed) {
-            tempListActions.insert(contentsOf: [.modifySnooze, .cancelSnooze], at: 0)
+        return (Action.quickActions, listActions)
+    }
+
+    private static func snoozedActions(_ messages: [Message], folder: Folder?) -> [Action] {
+        guard folder?.canAccessSnoozeActions == true else { return [] }
+
+        let messagesFromFolder = messages.filter { $0.folder == folder }
+        guard !messagesFromFolder.isEmpty else { return [] }
+
+        if messagesFromFolder.allSatisfy(\.isSnoozed) {
+            return [.modifySnooze, .cancelSnooze]
         } else {
-            tempListActions.insert(.snooze, at: 0)
+            return [.snooze]
         }
-
-        return (Action.quickActions, tempListActions.compactMap { $0 })
     }
 
     public static func actionsForMessages(_ messages: [Message],

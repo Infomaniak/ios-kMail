@@ -58,7 +58,7 @@ struct ThreadView: View {
                 if thread.isSnoozed, let snoozeEndDate = thread.snoozeEndDate {
                     SnoozedThreadHeaderView(
                         date: snoozeEndDate,
-                        shouldDisplayActions: thread.folder?.canAccessSnoozeActions ?? false;
+                        shouldDisplayActions: thread.folder?.canAccessSnoozeActions ?? false,
                         lastMessageFromThread: thread.lastMessageFromFolder
                     )
                 }
