@@ -95,7 +95,7 @@ extension Action: CaseIterable {
         let unread = !message.seen
         let star = message.flagged
         let print = origin.type == .floatingPanel(source: .messageList)
-        let tempListActions: [Action?] = [
+        var tempListActions: [Action?] = [
             .openMovePanel,
             spamAction,
             unread ? .markAsRead : .markAsUnread,
@@ -106,6 +106,12 @@ extension Action: CaseIterable {
             platformDetector.isMac ? nil : .saveThreadInkDrive,
             userIsStaff ? .reportDisplayProblem : nil
         ]
+
+        if message.isSnoozed {
+            tempListActions.insert(contentsOf: [.modifySnooze, .cancelSnooze], at: 0)
+        } else {
+            tempListActions.insert(.snooze, at: 0)
+        }
 
         return (Action.quickActions, tempListActions.compactMap { $0 })
     }
@@ -149,7 +155,7 @@ extension Action: CaseIterable {
             return originFolder?.role == .spam ? .nonSpam : .reportJunk
         }
 
-        let tempListActions: [Action?] = [
+        var tempListActions: [Action?] = [
             .openMovePanel,
             spamAction,
             unread ? .markAsUnread : .markAsRead,
@@ -157,6 +163,12 @@ extension Action: CaseIterable {
             showUnstar ? .unstar : .star,
             .saveThreadInkDrive
         ]
+
+        if messages.allSatisfy(\.isSnoozed) {
+            tempListActions.insert(contentsOf: [.modifySnooze, .cancelSnooze], at: 0)
+        } else {
+            tempListActions.insert(.snooze, at: 0)
+        }
 
         return (Action.quickActions, tempListActions.compactMap { $0 })
     }
@@ -193,6 +205,27 @@ extension Action: RawRepresentable {
 }
 
 public extension Action {
+    // MARK: Thread actions
+
+    static let snooze = Action(
+        id: "snooze",
+        title: MailResourcesStrings.Localizable.actionSnooze,
+        iconResource: MailResourcesAsset.alarmClock,
+        matomoName: "snooze"
+    )
+    static let modifySnooze = Action(
+        id: "modifySnooze",
+        title: MailResourcesStrings.Localizable.actionModifySnooze,
+        iconResource: MailResourcesAsset.alarmClock,
+        matomoName: "modifySnooze"
+    )
+    static let cancelSnooze = Action(
+        id: "cancelSnooze",
+        title: MailResourcesStrings.Localizable.actionCancelSnooze,
+        iconResource: MailResourcesAsset.circleCross,
+        matomoName: "cancelSnooze"
+    )
+
     // MARK: Mail actions
 
     static let delete = Action(
