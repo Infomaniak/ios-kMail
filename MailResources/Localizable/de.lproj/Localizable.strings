@@ -1157,7 +1157,7 @@
 "notificationGeneralChannelName" = "Allgemeine Benachrichtigungen";
 
 /* loco:641c3d9b723c7f035409c3d2 */
-"notificationNewEmail" = "Neue Email";
+"notificationNewEmail" = "Sie haben möglicherweise neue Nachrichten erhalten";
 
 /* loco:64ba47ab214bcfcf4c056014 */
 "notificationTitleArchive" = "Archiviert";
