@@ -26,6 +26,7 @@ public struct ActionOrigin {
         case toolbar
         case multipleSelection
         case shortcut
+        case threadHeader
     }
 
     public enum FloatingPanelSource {
@@ -45,6 +46,7 @@ public struct ActionOrigin {
     private(set) var nearestReportedForPhishingMessagesAlert: Binding<[Message]?>?
     private(set) var nearestReportedForDisplayProblemMessageAlert: Binding<Message?>?
     private(set) var nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>?
+    private(set) var nearestSchedulePanel: Binding<Bool>?
     private(set) var messagesToDownload: Binding<[Message]?>?
 
     init(
@@ -59,6 +61,7 @@ public struct ActionOrigin {
         nearestReportedForPhishingMessagesAlert: Binding<[Message]?>? = nil,
         nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
         nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
+        nearestSchedulePanel: Binding<Bool>? = nil,
         messagesToDownload: Binding<[Message]?>? = nil
     ) {
         self.type = type
@@ -72,6 +75,7 @@ public struct ActionOrigin {
         self.nearestReportedForPhishingMessagesAlert = nearestReportedForPhishingMessagesAlert
         self.nearestReportedForDisplayProblemMessageAlert = nearestReportedForDisplayProblemMessageAlert
         self.nearestShareMailLinkPanel = nearestShareMailLinkPanel
+        self.nearestSchedulePanel = nearestSchedulePanel
         self.messagesToDownload = messagesToDownload
     }
 
@@ -133,5 +137,9 @@ public struct ActionOrigin {
     public static func shortcut(originFolder: Folder? = nil,
                                 nearestFlushAlert: Binding<FlushAlertState?>? = nil) -> ActionOrigin {
         ActionOrigin(type: .shortcut, folder: originFolder, nearestFlushAlert: nearestFlushAlert)
+    }
+
+    public static func threadHeader(originFolder: Folder? = nil, nearestSchedulePanel: Binding<Bool>? = nil) -> ActionOrigin {
+        return ActionOrigin(type: .threadHeader, folder: originFolder, nearestSchedulePanel: nearestSchedulePanel)
     }
 }

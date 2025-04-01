@@ -23,19 +23,24 @@ import SwiftUI
 struct SnoozedThreadHeaderView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var actionsManager: ActionsManager
 
     @State private var isShowingScheduleFloatingPanel = false
 
     let date: Date
-    let shouldDisplayActions: Bool
-    let lastMessageFromThread: Message?
+    let messages: [Message]
+    let folder: Folder?
+
+    private var origin: ActionOrigin {
+        return .threadHeader(originFolder: folder, nearestSchedulePanel: $isShowingScheduleFloatingPanel)
+    }
 
     var body: some View {
         MessageHeaderActionView(
             icon: MailResourcesAsset.alarmClockFilled.swiftUIImage,
             message: MailResourcesStrings.Localizable.snoozeAlertTitle(date.formatted(.messageHeader)),
             isFirst: true,
-            shouldDisplayActions: shouldDisplayActions
+            shouldDisplayActions: folder?.canAccessSnoozeActions ?? false
         ) {
             Button(MailResourcesStrings.Localizable.buttonModify, action: edit)
             MessageHeaderDivider()
@@ -54,11 +59,9 @@ struct SnoozedThreadHeaderView: View {
     }
 
     private func updateSnoozeDate(_ newDate: Date) {
-        guard let lastMessageFromThread else { return }
-
         Task {
             do {
-                try await mailboxManager.updateSnooze(messages: [lastMessageFromThread], until: newDate)
+                try await mailboxManager.updateSnooze(messages: messages, until: newDate)
                 dismiss()
             } catch {
                 // TODO: Do something
@@ -67,20 +70,12 @@ struct SnoozedThreadHeaderView: View {
     }
 
     private func cancel() {
-        guard let lastMessageFromThread else { return }
-
         Task {
-            do {
-                try await mailboxManager.deleteSnooze(messages: [lastMessageFromThread])
-                dismiss()
-            } catch {
-                // TODO: Do something
-                print(error)
-            }
+            try await actionsManager.performAction(target: messages, action: .cancelSnooze, origin: origin)
         }
     }
 }
 
 #Preview {
-    SnoozedThreadHeaderView(date: .now, shouldDisplayActions: true, lastMessageFromThread: nil)
+    SnoozedThreadHeaderView(date: .now, messages: [], folder: nil)
 }

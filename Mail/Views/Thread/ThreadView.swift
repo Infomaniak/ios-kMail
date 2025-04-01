@@ -56,11 +56,7 @@ struct ThreadView: View {
                 .padding(.horizontal, value: .medium)
 
                 if thread.isSnoozed, let snoozeEndDate = thread.snoozeEndDate {
-                    SnoozedThreadHeaderView(
-                        date: snoozeEndDate,
-                        shouldDisplayActions: thread.folder?.canAccessSnoozeActions ?? false,
-                        lastMessageFromThread: thread.lastMessageFromFolder
-                    )
+                    SnoozedThreadHeaderView(date: snoozeEndDate, messages: thread.messages.toArray(), folder: thread.folder)
                 }
 
                 MessageListView(messages: thread.messages.toArray(), mailboxManager: mailboxManager)
