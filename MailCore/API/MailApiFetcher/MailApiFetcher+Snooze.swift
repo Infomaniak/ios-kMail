@@ -20,7 +20,6 @@ import Alamofire
 import Foundation
 import InfomaniakCore
 
-/// Implementing `MailApiCommonFetchable`
 public extension MailApiFetcher {
     private static let snoozeAPILimit = 200
     private static let editSnoozeAPILimit = 100
