@@ -22,7 +22,6 @@ import SwiftUI
 
 struct SnoozedThreadHeaderView: View {
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var actionsManager: ActionsManager
 
     @State private var isShowingScheduleFloatingPanel = false
@@ -55,17 +54,15 @@ struct SnoozedThreadHeaderView: View {
     }
 
     private func edit() {
-        isShowingScheduleFloatingPanel = true
+        Task {
+            try await actionsManager.performAction(target: messages, action: .modifySnooze, origin: origin)
+        }
     }
 
     private func updateSnoozeDate(_ newDate: Date) {
         Task {
-            do {
-                try await mailboxManager.updateSnooze(messages: messages, until: newDate)
-                dismiss()
-            } catch {
-                // TODO: Do something
-            }
+            try await actionsManager.performSnooze(messages: messages, date: newDate, originFolder: folder)
+            dismiss()
         }
     }
 
