@@ -43,6 +43,15 @@ extension RandomAccessCollection where Element == Message {
         return last
     }
 
+    func lastMessagesToExecuteAction(currentMailboxEmail: String, currentFolder: Folder?) -> [Message] {
+        if isSingleMessage(currentFolder: currentFolder) || currentFolder?.toolType == .search {
+            return Array(self)
+        } else {
+            return uniqueThreadsInFolder(currentFolder)
+                .compactMap { $0.lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail) }
+        }
+    }
+
     /// - Returns: The `lastMessageToExecuteAction` to execute an action for each unique thread.
     ///
     /// - For a list of messages coming from different threads: `lastMessageToExecuteAction` for each unique thread in the given
@@ -50,20 +59,14 @@ extension RandomAccessCollection where Element == Message {
     ///
     /// - For a list of messages all coming from the same thread: `lastMessageToExecuteAction`
     func lastMessagesAndDuplicatesToExecuteAction(currentMailboxEmail: String, currentFolder: Folder?) -> [Message] {
-        if isSingleMessage(currentFolder: currentFolder) || currentFolder?.toolType == .search {
-            return addingDuplicates()
-        } else {
-            return uniqueThreadsInFolder(currentFolder)
-                .compactMap { $0.lastMessageToExecuteAction(currentMailboxEmail: currentMailboxEmail)
-                }
-                .addingDuplicates()
-        }
+        let messages = lastMessagesToExecuteAction(currentMailboxEmail: currentMailboxEmail, currentFolder: currentFolder)
+        return messages.addingDuplicates()
     }
 
     func fromFolderOrSearch(originFolder: Folder?) -> [Message] {
         return originFolder?.toolType == .search ?
             self as! [Message] :
-            filter { $0.folder?.remoteId == originFolder?.remoteId }
+            filter { $0.folderId == originFolder?.remoteId }
     }
 
     /// - Returns: The original message list and their duplicates
@@ -73,7 +76,7 @@ extension RandomAccessCollection where Element == Message {
 
     /// - Returns: An array of unique threads to which the given messages belong in a given folder
     func uniqueThreadsInFolder(_ folder: Folder?) -> [Thread] {
-        return Set(flatMap(\.threads)).filter { $0.folder?.remoteId == folder?.remoteId }.toArray()
+        return Set(flatMap(\.threads)).filter { $0.folder == folder }.toArray()
     }
 
     /// Check if the given list is only composed of one message.
@@ -215,6 +218,22 @@ public class ActionsManager: ObservableObject {
             let result = try await mailboxManager.apiFetcher.shareMailLink(message: message)
             Task { @MainActor in
                 origin.nearestShareMailLinkPanel?.wrappedValue = result
+            }
+        case .snooze:
+            // TODO: Show snooze
+            print("TODO: Snooze action")
+        case .modifySnooze:
+            print("TODO")
+        case .cancelSnooze:
+            let messagesToExecuteAction = messages.lastMessagesToExecuteAction(
+                currentMailboxEmail: mailboxManager.mailbox.email,
+                currentFolder: origin.frozenFolder
+            )
+            try await mailboxManager.deleteSnooze(messages: messagesToExecuteAction)
+
+            Task { @MainActor in
+                snackbarPresenter
+                    .show(message: MailResourcesStrings.Localizable.snackbarUnsnoozeSuccess(messagesToExecuteAction.count))
             }
         default:
             break
