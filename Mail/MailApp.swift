@@ -18,6 +18,7 @@
 
 import InfomaniakDI
 import MailCore
+import Nuke
 import OSLog
 import SwiftUI
 import UIKit
@@ -35,6 +36,7 @@ struct MailApp: App {
         Logging.resetAppForUITestsIfNeeded()
         Logger.general.info("Application starting in foreground ? \(UIApplication.shared.applicationState != .background)")
         refreshAppBackgroundTask.register()
+        ImagePipeline.shared = ImagePipeline(configuration: .withDataCache)
     }
 
     var body: some Scene {
