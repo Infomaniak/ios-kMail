@@ -308,16 +308,6 @@ public class ActionsManager: ObservableObject {
         }
     }
 
-    private func performSnooze(_ messages: [Message], date: Date) async throws {
-        // TODO: Snooze message
-    }
-
-    private func performModifySnooze(_ messages: [Message], date: Date) async throws {
-        try await mailboxManager.updateSnooze(messages: messages, until: date)
-
-        snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarSnoozeSuccess(date.formatted()))
-    }
-
     public func performSnooze(messages: [Message], date: Date, originFolder: Folder?) async throws {
         let messagesToExecuteAction = messages.lastMessagesToExecuteAction(
             currentMailboxEmail: mailboxManager.mailbox.email,
@@ -325,10 +315,12 @@ public class ActionsManager: ObservableObject {
         )
 
         if messagesToExecuteAction.allSatisfy(\.isSnoozed) {
-            try await performModifySnooze(messagesToExecuteAction, date: date)
+            try await mailboxManager.updateSnooze(messages: messages, until: date)
         } else {
-            try await performSnooze(messagesToExecuteAction, date: date)
+            try await mailboxManager.snooze(messages: messages, until: date)
         }
+
+        snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarSnoozeSuccess(date.formatted()))
     }
 
     @MainActor
