@@ -24,7 +24,7 @@ extension View {
         messages: [Message]?,
         initialDate: Date?,
         folder: Folder?,
-        completionHandler: (() -> Void)? = nil
+        completionHandler: ((Action) -> Void)? = nil
     ) -> some View {
         modifier(
             SnoozedFloatingPanel(
@@ -45,7 +45,7 @@ struct SnoozedFloatingPanel: ViewModifier {
     let messages: [Message]?
     let initialDate: Date?
     let folder: Folder?
-    let completionHandler: (() -> Void)?
+    let completionHandler: ((Action) -> Void)?
 
     func body(content: Content) -> some View {
         content
@@ -64,8 +64,8 @@ struct SnoozedFloatingPanel: ViewModifier {
         guard let messages else { return }
 
         Task {
-            try await actionsManager.performSnooze(messages: messages, date: date, originFolder: folder)
-            completionHandler?()
+            let action = try await actionsManager.performSnooze(messages: messages, date: date, originFolder: folder)
+            completionHandler?(action)
         }
     }
 }
