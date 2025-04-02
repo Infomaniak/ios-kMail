@@ -194,7 +194,11 @@ public class ActionsManager: ObservableObject {
         case .blockList:
             Task { @MainActor in
                 let uniqueRecipient = self.getUniqueRecipients(reportedMessages: messages)
-                if uniqueRecipient.count > 1 && isSingleThread(messages, originFolder: origin.frozenFolder) {
+                if isMultipleRecipientSingleThread(
+                    messages,
+                    originFolder: origin.frozenFolder,
+                    uniqueRecipientCount: uniqueRecipient.count
+                ) {
                     origin.nearestBlockSendersList?.wrappedValue = BlockRecipientState(recipientsToMessage: uniqueRecipient)
                 } else {
                     origin.nearestBlockSenderAlert?.wrappedValue = BlockRecipientAlertState(
@@ -363,8 +367,9 @@ public class ActionsManager: ObservableObject {
         return recipientToMessage
     }
 
-    private func isSingleThread(_ selectedMessages: [Message], originFolder: Folder?) -> Bool {
-        guard let originFolder, !selectedMessages.isEmpty else {
+    private func isMultipleRecipientSingleThread(_ selectedMessages: [Message], originFolder: Folder?,
+                                                 uniqueRecipientCount: Int) -> Bool {
+        guard let originFolder, !selectedMessages.isEmpty, uniqueRecipientCount > 1 else {
             return false
         }
 
