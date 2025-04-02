@@ -221,7 +221,7 @@ public class ActionsManager: ObservableObject {
             }
         case .snooze, .modifySnooze:
             Task { @MainActor in
-                origin.nearestSchedulePanel?.wrappedValue = true
+                origin.nearestMessagesToSnooze?.wrappedValue = messages
             }
         case .cancelSnooze:
             let messagesToExecuteAction = messages.lastMessagesToExecuteAction(
@@ -315,9 +315,9 @@ public class ActionsManager: ObservableObject {
         )
 
         if messagesToExecuteAction.allSatisfy(\.isSnoozed) {
-            try await mailboxManager.updateSnooze(messages: messages, until: date)
+            try await mailboxManager.updateSnooze(messages: messagesToExecuteAction, until: date)
         } else {
-            try await mailboxManager.snooze(messages: messages, until: date)
+            try await mailboxManager.snooze(messages: messagesToExecuteAction, until: date)
         }
 
         snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarSnoozeSuccess(date.formatted()))

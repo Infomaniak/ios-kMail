@@ -24,14 +24,14 @@ struct SnoozedThreadHeaderView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var actionsManager: ActionsManager
 
-    @State private var isShowingScheduleFloatingPanel = false
+    @State private var messagesToSnooze: [Message]?
 
     let date: Date
     let messages: [Message]
     let folder: Folder?
 
     private var origin: ActionOrigin {
-        return .threadHeader(originFolder: folder, nearestSchedulePanel: $isShowingScheduleFloatingPanel)
+        return .threadHeader(originFolder: folder, nearestMessagesToSnooze: $messagesToSnooze)
     }
 
     var body: some View {
@@ -45,24 +45,17 @@ struct SnoozedThreadHeaderView: View {
             MessageHeaderDivider()
             Button(MailResourcesStrings.Localizable.buttonCancelReminder, action: cancel)
         }
-        .scheduleFloatingPanel(
-            isPresented: $isShowingScheduleFloatingPanel,
-            type: .snooze,
+        .snoozedFloatingPanel(
+            messages: messagesToSnooze,
             initialDate: date,
-            completionHandler: updateSnoozeDate
+            folder: folder,
+            completionHandler: dismiss.callAsFunction
         )
     }
 
     private func edit() {
         Task {
             try await actionsManager.performAction(target: messages, action: .modifySnooze, origin: origin)
-        }
-    }
-
-    private func updateSnoozeDate(_ newDate: Date) {
-        Task {
-            try await actionsManager.performSnooze(messages: messages, date: newDate, originFolder: folder)
-            dismiss()
         }
     }
 
