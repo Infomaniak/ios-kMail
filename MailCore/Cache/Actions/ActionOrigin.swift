@@ -46,7 +46,7 @@ public struct ActionOrigin {
     private(set) var nearestReportedForPhishingMessagesAlert: Binding<[Message]?>?
     private(set) var nearestReportedForDisplayProblemMessageAlert: Binding<Message?>?
     private(set) var nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>?
-    private(set) var nearestSchedulePanel: Binding<Bool>?
+    private(set) var nearestMessagesToSnooze: Binding<[Message]?>?
     private(set) var messagesToDownload: Binding<[Message]?>?
 
     init(
@@ -61,7 +61,7 @@ public struct ActionOrigin {
         nearestReportedForPhishingMessagesAlert: Binding<[Message]?>? = nil,
         nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
         nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
-        nearestSchedulePanel: Binding<Bool>? = nil,
+        nearestMessagesToSnooze: Binding<[Message]?>? = nil,
         messagesToDownload: Binding<[Message]?>? = nil
     ) {
         self.type = type
@@ -75,7 +75,7 @@ public struct ActionOrigin {
         self.nearestReportedForPhishingMessagesAlert = nearestReportedForPhishingMessagesAlert
         self.nearestReportedForDisplayProblemMessageAlert = nearestReportedForDisplayProblemMessageAlert
         self.nearestShareMailLinkPanel = nearestShareMailLinkPanel
-        self.nearestSchedulePanel = nearestSchedulePanel
+        self.nearestMessagesToSnooze = nearestMessagesToSnooze
         self.messagesToDownload = messagesToDownload
     }
 
@@ -94,6 +94,7 @@ public struct ActionOrigin {
                                      nearestReportedForPhishingMessagesAlert: Binding<[Message]?>? = nil,
                                      nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
                                      nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
+                                     nearestMessagesToSnooze: Binding<[Message]?>? = nil,
                                      messagesToDownload: Binding<[Message]?>? = nil) -> ActionOrigin {
         return ActionOrigin(
             type: .floatingPanel(source: source),
@@ -106,6 +107,7 @@ public struct ActionOrigin {
             nearestReportedForPhishingMessagesAlert: nearestReportedForPhishingMessagesAlert,
             nearestReportedForDisplayProblemMessageAlert: nearestReportedForDisplayProblemMessageAlert,
             nearestShareMailLinkPanel: nearestShareMailLinkPanel,
+            nearestMessagesToSnooze: nearestMessagesToSnooze,
             messagesToDownload: messagesToDownload
         )
     }
@@ -139,7 +141,7 @@ public struct ActionOrigin {
         ActionOrigin(type: .shortcut, folder: originFolder, nearestFlushAlert: nearestFlushAlert)
     }
 
-    public static func threadHeader(originFolder: Folder? = nil, nearestSchedulePanel: Binding<Bool>? = nil) -> ActionOrigin {
-        return ActionOrigin(type: .threadHeader, folder: originFolder, nearestSchedulePanel: nearestSchedulePanel)
+    public static func threadHeader(originFolder: Folder? = nil, nearestMessagesToSnooze: Binding<[Message]?>? = nil) -> ActionOrigin {
+        return ActionOrigin(type: .threadHeader, folder: originFolder, nearestMessagesToSnooze: nearestMessagesToSnooze)
     }
 }
