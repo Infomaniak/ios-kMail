@@ -18,7 +18,7 @@
 
 import Foundation
 
-public struct FlushAlertState: Identifiable {
+public struct FlushAlertState: Identifiable, Equatable {
     public let id = UUID()
     public let deletedMessages: Int?
     public let completion: () async -> Void
@@ -26,5 +26,9 @@ public struct FlushAlertState: Identifiable {
     public init(deletedMessages: Int? = nil, completion: @escaping () async -> Void) {
         self.deletedMessages = deletedMessages
         self.completion = completion
+    }
+
+    public static func == (lhs: FlushAlertState, rhs: FlushAlertState) -> Bool {
+        return lhs.id == rhs.id
     }
 }

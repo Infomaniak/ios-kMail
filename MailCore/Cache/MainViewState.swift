@@ -36,6 +36,7 @@ public class MainViewState: ObservableObject, SelectedThreadOwnable {
     @ModalPublished public var isShowingUpdateAvailable = false
     @ModalPublished public var isShowingSetAppAsDefaultDiscovery = false
     @ModalPublished public var isShowingMyKSuiteUpgrade = false
+    @ModalPublished public var flushAlert: FlushAlertState?
     @ModalPublished public var modifiedScheduleDraftResource: ModifiedScheduleDraftResource?
     @Published public var isShowingChristmasEasterEgg = false
 

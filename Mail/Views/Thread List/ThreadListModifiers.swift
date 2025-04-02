@@ -30,16 +30,8 @@ extension View {
         modifier(ThreadListCellAppearance())
     }
 
-    func threadListToolbar(
-        flushAlert: Binding<FlushAlertState?>,
-        viewModel: ThreadListViewModel,
-        multipleSelectionViewModel: MultipleSelectionViewModel
-    ) -> some View {
-        modifier(ThreadListToolbar(
-            flushAlert: flushAlert,
-            viewModel: viewModel,
-            multipleSelectionViewModel: multipleSelectionViewModel
-        ))
+    func threadListToolbar(viewModel: ThreadListViewModel, multipleSelectionViewModel: MultipleSelectionViewModel) -> some View {
+        modifier(ThreadListToolbar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel))
     }
 }
 
@@ -58,10 +50,9 @@ struct ThreadListToolbar: ViewModifier {
     @Environment(\.isCompactWindow) private var isCompactWindow
 
     @EnvironmentObject private var actionsManager: ActionsManager
+    @EnvironmentObject private var mainViewState: MainViewState
 
     @State private var multipleSelectedMessages: [Message]?
-
-    @Binding var flushAlert: FlushAlertState?
 
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
@@ -132,7 +123,7 @@ struct ThreadListToolbar: ViewModifier {
                                     action: action,
                                     origin: .multipleSelection(
                                         originFolder: originFolder,
-                                        nearestFlushAlert: $flushAlert,
+                                        nearestFlushAlert: $mainViewState.flushAlert,
                                         nearestMessagesToMoveSheet: nil
                                     )
                                 )

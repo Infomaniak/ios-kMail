@@ -47,7 +47,6 @@ struct ThreadListView: View {
     @State private var fetchingTask: Task<Void, Never>?
     @State private var isRefreshing = false
     @ModalState private var isShowingUpdateAlert = false
-    @ModalState private var flushAlert: FlushAlertState?
 
     @StateObject private var viewModel: ThreadListViewModel
     @StateObject private var multipleSelectionViewModel: MultipleSelectionViewModel
@@ -104,7 +103,7 @@ struct ThreadListView: View {
                         FlushFolderView(
                             folder: viewModel.frozenFolder,
                             mailboxManager: viewModel.mailboxManager,
-                            flushAlert: $flushAlert
+                            flushAlert: $mainViewState.flushAlert
                         )
                         .threadListCellAppearance()
                     }
@@ -135,8 +134,7 @@ struct ThreadListView: View {
                                                    threadDensity: threadDensity,
                                                    accentColor: accentColor,
                                                    isSelected: mainViewState.selectedThread?.uid == thread.uid,
-                                                   isMultiSelected: multipleSelectionViewModel.selectedItems[thread.uid] != nil,
-                                                   flushAlert: $flushAlert)
+                                                   isMultiSelected: multipleSelectionViewModel.selectedItems[thread.uid] != nil)
                                         .draggableThread(multipleSelectionViewModel.selectedItems.isEmpty ?
                                             [thread.uid] : Array(multipleSelectionViewModel.selectedItems.keys)) {
                                                 multipleSelectionViewModel.selectedItems.removeAll()
@@ -198,9 +196,7 @@ struct ThreadListView: View {
                 isRefreshing = false
             }
         }
-        .threadListToolbar(flushAlert: $flushAlert,
-                           viewModel: viewModel,
-                           multipleSelectionViewModel: multipleSelectionViewModel)
+        .threadListToolbar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage,
@@ -224,7 +220,7 @@ struct ThreadListView: View {
         .task(id: viewModel.mailboxManager.mailbox.id) {
             updateFetchingTask()
         }
-        .customAlert(item: $flushAlert) { item in
+        .customAlert(item: $mainViewState.flushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: viewModel.frozenFolder)
         }
         .customAlert(isPresented: $isShowingUpdateAlert) {
