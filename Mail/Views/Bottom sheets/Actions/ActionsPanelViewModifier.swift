@@ -151,6 +151,6 @@ struct ActionsPanelViewModifier: ViewModifier {
             messages: messagesToSnooze,
             initialDate: initialSnoozedDate,
             folder: originFolder?.freezeIfNeeded()
-        )
+        ) { completionHandler?(.snooze) }
     }
 }
