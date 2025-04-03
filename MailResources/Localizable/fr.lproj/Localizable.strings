@@ -578,10 +578,10 @@
 "confirmLogoutTitle" = "Me déconnecter";
 
 /* loco:66db00746332bbedae01f2f2 */
-"confirmationToBlockAnExpeditorText" = "Cet e-mail et tous les futurs messages de %s seront déplacés dans le dossier Courrier indésirable.";
+"confirmationToBlockAnExpeditorText" = "Tous les futurs messages de %s seront déplacés dans le dossier Courrier indésirable.";
 
 /* loco:67cffa6132f76065a6002bd2 */
-"confirmationToBlockMultipleExpeditorsText" = "Ces e-mails et tous les futurs messages de leurs expéditeurs seront déplacés dans le dossier Courrier indésirable.";
+"confirmationToBlockMultipleExpeditorsText" = "Tous les futurs messages de leurs expéditeurs seront déplacés dans le dossier Courrier indésirable.";
 
 /* loco:62737dea7bd28e302301e5c2 */
 "contactActionAddToContacts" = "Ajouter aux contacts";
