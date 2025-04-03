@@ -54,8 +54,6 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var searchFolderName: String?
     @Persisted public var bimi: Bimi?
 
-    @Persisted public var isDraft = false
-
     @Persisted public var duplicates = List<Message>()
     @Persisted public var messageIds: MutableSet<String>
 
