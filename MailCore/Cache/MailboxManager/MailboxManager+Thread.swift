@@ -638,7 +638,7 @@ public extension MailboxManager {
 
     func saveSearchThreads(result: ThreadResult, searchFolder: Folder) async {
         try? writeTransaction { writableRealm in
-            guard let searchFolder = searchFolder.fresh(using: writableRealm) else {
+            guard let liveSearchFolder = searchFolder.fresh(using: writableRealm) else {
                 self.logError(.missingFolder)
                 return
             }
@@ -657,15 +657,15 @@ public extension MailboxManager {
             }
 
             if result.currentOffset == 0 {
-                self.clearSearchResults(searchFolder: searchFolder, writableRealm: writableRealm)
+                self.clearSearchResults(searchFolder: liveSearchFolder, writableRealm: writableRealm)
 
                 // Update thread in Realm
                 // Clean old threads after fetching first page
-                searchFolder.lastUpdate = Date()
+                liveSearchFolder.lastUpdate = Date()
             }
 
             writableRealm.add(fetchedThreads, update: .modified)
-            searchFolder.threads.insert(objectsIn: fetchedThreads)
+            liveSearchFolder.threads.insert(objectsIn: fetchedThreads)
         }
     }
 }
