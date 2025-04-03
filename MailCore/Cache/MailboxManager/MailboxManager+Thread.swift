@@ -508,7 +508,7 @@ public extension MailboxManager {
     }
 
     private func upsertMessage(_ message: Message, oldMessage: Message, threadsToUpdate: inout Set<Thread>, using realm: Realm) {
-        keepCacheAttributes(for: message, keepProperties: .standard, using: realm)
+        keepCacheAttributes(forLiveMessage: message, keepProperties: .standard, using: realm)
         realm.add(message, update: .modified)
 
         threadsToUpdate.formUnion(oldMessage.threads)
@@ -652,7 +652,7 @@ public extension MailboxManager {
                 guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: messageUid) else {
                     continue
                 }
-                self.keepCacheAttributes(for: liveMessage, keepProperties: .standard, using: writableRealm)
+                self.keepCacheAttributes(forLiveMessage: liveMessage, keepProperties: .standard, using: writableRealm)
                 writableRealm.add(liveMessage, update: .modified)
             }
 
