@@ -106,12 +106,14 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                     let snoozeUUIDParser = SnoozeUUIDParser()
 
                     migration.enumerateObjects(ofType: Message.className()) { oldObject, newObject in
-                        if let snoozeAction = oldObject?["snoozeAction"] as? String {
+                        if oldObject?.objectSchema["snoozeAction"] != nil,
+                           let snoozeAction = oldObject?["snoozeAction"] as? String {
                             newObject?["snoozeUuid"] = snoozeUUIDParser.parse(resource: snoozeAction)
                         }
                     }
                     migration.enumerateObjects(ofType: Thread.className()) { oldObject, newObject in
-                        if let snoozeAction = oldObject?["snoozeAction"] as? String {
+                        if oldObject?.objectSchema["snoozeAction"] != nil,
+                           let snoozeAction = oldObject?["snoozeAction"] as? String {
                             newObject?["snoozeUuid"] = snoozeUUIDParser.parse(resource: snoozeAction)
                         }
                     }
