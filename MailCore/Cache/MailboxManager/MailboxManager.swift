@@ -180,28 +180,28 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     }
 
     func keepCacheAttributes(
-        for message: Message,
+        forLiveMessage liveMessage: Message,
         keepProperties: MessagePropertiesOptions,
         using realm: Realm
     ) {
-        guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else {
+        guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: liveMessage.uid) else {
             return
         }
-        message.inTrash = savedMessage.inTrash
+        liveMessage.inTrash = savedMessage.inTrash
         if keepProperties.contains(.fullyDownloaded) {
-            message.fullyDownloaded = savedMessage.fullyDownloaded
+            liveMessage.fullyDownloaded = savedMessage.fullyDownloaded
         }
         if keepProperties.contains(.body), let body = savedMessage.body {
-            message.body = Body(value: body)
+            liveMessage.body = Body(value: body)
         }
         if keepProperties.contains(.localSafeDisplay) {
-            message.localSafeDisplay = savedMessage.localSafeDisplay
+            liveMessage.localSafeDisplay = savedMessage.localSafeDisplay
         }
         if keepProperties.contains(.attachments) {
             let attachments = savedMessage.attachments.map { Attachment(value: $0.freeze()) }
             let attachmentsList = List<Attachment>()
             attachmentsList.append(objectsIn: attachments)
-            message.attachments = attachmentsList
+            liveMessage.attachments = attachmentsList
         }
     }
 
