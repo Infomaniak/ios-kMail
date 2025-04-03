@@ -20,15 +20,17 @@ import Foundation
 import Nuke
 
 struct AttachmentCacheHelper {
+    let pipeline: ImagePipeline
+
     func getCache(resource: String?) -> Data? {
         guard let resource, let resourceURL = URL(string: resource) else { return nil }
         let request = ImageRequest(url: resourceURL)
-        return ImagePipeline.shared.cache.cachedData(for: request)
+        return pipeline.cache.cachedData(for: request)
     }
 
     func storeCache(resource: String?, data: Data) {
         guard let resource, let resourceURL = URL(string: resource) else { return }
         let request = ImageRequest(url: resourceURL)
-        ImagePipeline.shared.cache.storeCachedData(data, for: request)
+        pipeline.cache.storeCachedData(data, for: request)
     }
 }

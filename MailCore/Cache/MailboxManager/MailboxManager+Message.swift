@@ -49,13 +49,12 @@ public extension MailboxManager {
             throw CancellationError()
         }
 
-        let attachmentCacheHelper = AttachmentCacheHelper()
-        let data: Data
-        if let cachedData = attachmentCacheHelper.getCache(resource: attachment.resource) {
-            data = cachedData
+        @InjectService var cacheHelper: AttachmentCacheHelper
+        if let cachedData = cacheHelper.getCache(resource: attachment.resource) {
+            return cachedData
         } else {
-            data = try await apiFetcher.attachment(attachment: attachment, progressObserver: progressObserver)
-            attachmentCacheHelper.storeCache(resource: attachment.resource, data: data)
+            let data = try await apiFetcher.attachment(attachment: attachment, progressObserver: progressObserver)
+            cacheHelper.storeCache(resource: attachment.resource, data: data)
 
             let safeAttachment = ThreadSafeReference(to: attachment)
             try? writeTransaction { writableRealm in
@@ -65,9 +64,8 @@ public extension MailboxManager {
 
                 liveAttachment.saved = true
             }
+            return data
         }
-
-        return data
     }
 
     func saveAttachmentLocally(attachment: Attachment, progressObserver: ((Double) -> Void)?) async {
