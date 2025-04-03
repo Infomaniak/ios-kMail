@@ -56,15 +56,15 @@ public extension MailboxManager {
         } else {
             data = try await apiFetcher.attachment(attachment: attachment, progressObserver: progressObserver)
             attachmentCacheHelper.storeCache(resource: attachment.resource, data: data)
-        }
 
-        let safeAttachment = ThreadSafeReference(to: attachment)
-        try? writeTransaction { writableRealm in
-            guard let liveAttachment = writableRealm.resolve(safeAttachment) else {
-                return
+            let safeAttachment = ThreadSafeReference(to: attachment)
+            try? writeTransaction { writableRealm in
+                guard let liveAttachment = writableRealm.resolve(safeAttachment) else {
+                    return
+                }
+
+                liveAttachment.saved = true
             }
-
-            liveAttachment.saved = true
         }
 
         return data
