@@ -184,7 +184,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         keepProperties: MessagePropertiesOptions,
         using realm: Realm
     ) {
-        guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: liveMessage.uid) else {
+        guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: liveMessage.uid)?.freeze() else {
             return
         }
         liveMessage.inTrash = savedMessage.inTrash
