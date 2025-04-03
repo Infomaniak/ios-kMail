@@ -24,6 +24,7 @@ import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications
 import MyKSuite
+import Nuke
 import OSLog
 
 private let realmRootPath = "mailboxes"
@@ -126,6 +127,9 @@ open class TargetAssembly {
             },
             Factory(type: MyKSuiteStore.self) { _, _ in
                 MyKSuiteStore()
+            },
+            Factory(type: AttachmentCacheHelper.self) { _, _ in
+                AttachmentCacheHelper(pipeline: ImagePipeline(configuration: .withDataCache))
             }
         ]
     }
