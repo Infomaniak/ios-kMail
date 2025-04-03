@@ -199,7 +199,9 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         }
         if keepProperties.contains(.attachments) {
             let attachments = savedMessage.attachments.map { Attachment(value: $0.freeze()) }
-            message.attachments.append(objectsIn: attachments)
+            let attachmentsList = List<Attachment>()
+            attachmentsList.append(objectsIn: attachments)
+            message.attachments = attachmentsList
         }
     }
 
