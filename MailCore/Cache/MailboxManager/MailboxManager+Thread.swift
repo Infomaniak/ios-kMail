@@ -647,10 +647,10 @@ public extension MailboxManager {
             let fetchedThreads = MutableSet<Thread>()
             fetchedThreads.insert(objectsIn: resultThreads)
 
-            for thread in fetchedThreads {
-                for message in thread.messages {
-                    self.keepCacheAttributes(for: message, keepProperties: .standard, using: writableRealm)
-                }
+            let allFetchedMessages: [Message] = fetchedThreads.flatMap { Array($0.messages) }
+            let allUniqueFetchedMessages = Set(allFetchedMessages)
+            for message in allUniqueFetchedMessages {
+                self.keepCacheAttributes(for: message, keepProperties: .standard, using: writableRealm)
             }
 
             if result.currentOffset == 0 {
