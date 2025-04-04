@@ -508,7 +508,7 @@ public extension MailboxManager {
     }
 
     private func upsertMessage(_ message: Message, oldMessage: Message, threadsToUpdate: inout Set<Thread>, using realm: Realm) {
-        keepCacheAttributes(for: message, keepProperties: .standard, using: realm)
+        keepCacheAttributes(forLiveMessage: message, keepProperties: .standard, using: realm)
         realm.add(message, update: .modified)
 
         threadsToUpdate.formUnion(oldMessage.threads)
@@ -638,7 +638,7 @@ public extension MailboxManager {
 
     func saveSearchThreads(result: ThreadResult, searchFolder: Folder) async {
         try? writeTransaction { writableRealm in
-            guard let searchFolder = searchFolder.fresh(using: writableRealm) else {
+            guard let liveSearchFolder = searchFolder.fresh(using: writableRealm) else {
                 self.logError(.missingFolder)
                 return
             }
@@ -647,22 +647,25 @@ public extension MailboxManager {
             let fetchedThreads = MutableSet<Thread>()
             fetchedThreads.insert(objectsIn: resultThreads)
 
-            for thread in fetchedThreads {
-                for message in thread.messages {
-                    self.keepCacheAttributes(for: message, keepProperties: .standard, using: writableRealm)
+            let allUniqueFetchedMessagesUids = Set(fetchedThreads.flatMap { $0.messages.map(\.uid) })
+            for messageUid in allUniqueFetchedMessagesUids {
+                guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: messageUid) else {
+                    continue
                 }
+                self.keepCacheAttributes(forLiveMessage: liveMessage, keepProperties: .standard, using: writableRealm)
+                writableRealm.add(liveMessage, update: .modified)
             }
 
             if result.currentOffset == 0 {
-                self.clearSearchResults(searchFolder: searchFolder, writableRealm: writableRealm)
+                self.clearSearchResults(searchFolder: liveSearchFolder, writableRealm: writableRealm)
 
                 // Update thread in Realm
                 // Clean old threads after fetching first page
-                searchFolder.lastUpdate = Date()
+                liveSearchFolder.lastUpdate = Date()
             }
 
             writableRealm.add(fetchedThreads, update: .modified)
-            searchFolder.threads.insert(objectsIn: fetchedThreads)
+            liveSearchFolder.threads.insert(objectsIn: fetchedThreads)
         }
     }
 }
