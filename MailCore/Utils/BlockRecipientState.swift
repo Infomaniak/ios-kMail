@@ -28,11 +28,11 @@ public struct BlockRecipientState: Identifiable {
 
 public struct BlockRecipientAlertState: Identifiable {
     public var id = UUID()
-    public let recipient: Recipient
-    public let message: Message
+    public let recipients: [Recipient]
+    public let messages: [Message]
 
-    public init(recipient: Recipient, message: Message) {
-        self.recipient = recipient
-        self.message = message
+    public init(recipients: [Recipient], messages: [Message]) {
+        self.recipients = recipients
+        self.messages = messages
     }
 }

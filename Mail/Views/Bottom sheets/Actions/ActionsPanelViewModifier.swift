@@ -47,7 +47,7 @@ struct ActionsPanelViewModifier: ViewModifier {
 
     @ModalState private var reportForJunkMessages: [Message]?
     @ModalState private var reportedForDisplayProblemMessage: Message?
-    @ModalState private var reportedForPhishingMessage: Message?
+    @ModalState private var reportedForPhishingMessages: [Message]?
     @ModalState private var blockSenderAlert: BlockRecipientAlertState?
     @ModalState private var blockSendersList: BlockRecipientState?
     @ModalState private var messagesToMove: [Message]?
@@ -69,8 +69,8 @@ struct ActionsPanelViewModifier: ViewModifier {
             nearestMessagesToMoveSheet: $messagesToMove,
             nearestBlockSenderAlert: $blockSenderAlert,
             nearestBlockSendersList: $blockSendersList,
-            nearestReportJunkMessageActionsPanel: $reportForJunkMessages,
-            nearestReportedForPhishingMessageAlert: $reportedForPhishingMessage,
+            nearestReportJunkMessagesActionsPanel: $reportForJunkMessages,
+            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
             nearestShareMailLinkPanel: $shareMailLink,
             messagesToDownload: $messagesToDownload
@@ -96,7 +96,7 @@ struct ActionsPanelViewModifier: ViewModifier {
             .sheetViewStyle()
         }
         .floatingPanel(item: $reportForJunkMessages) { reportForJunkMessages in
-            ReportJunkView(reportedMessages: reportForJunkMessages, origin: origin)
+            ReportJunkView(reportedMessages: reportForJunkMessages, origin: origin, completionHandler: completionHandler)
         }
         .floatingPanel(item: $blockSendersList,
                        title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
@@ -104,16 +104,20 @@ struct ActionsPanelViewModifier: ViewModifier {
         }
         .customAlert(item: $blockSenderAlert) { blockSenderState in
             ConfirmationBlockRecipientView(
-                recipient: blockSenderState.recipient,
-                reportedMessage: blockSenderState.message,
+                recipients: blockSenderState.recipients,
+                reportedMessages: blockSenderState.messages,
                 origin: origin
             )
         }
         .customAlert(item: $reportedForDisplayProblemMessage) { message in
             ReportDisplayProblemView(message: message)
         }
-        .customAlert(item: $reportedForPhishingMessage) { message in
-            ReportPhishingView(message: message)
+        .customAlert(item: $reportedForPhishingMessages) { messages in
+            ReportPhishingView(
+                messagesWithDuplicates: messages,
+                distinctMessageCount: messages.count,
+                completionHandler: completionHandler
+            )
         }
         .customAlert(item: $flushAlert) { item in
             FlushFolderAlertView(flushAlert: item, folder: originFolder)

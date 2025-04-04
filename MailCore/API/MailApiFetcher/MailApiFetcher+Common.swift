@@ -145,6 +145,14 @@ public extension MailApiFetcher {
                                                         parameters: ["type": "phishing"]))
     }
 
+    func reportSpams(mailboxUuid: String, messages: [Message]) async throws -> UndoResponse {
+        try await perform(request: authenticatedRequest(
+            .spam(uuid: mailboxUuid),
+            method: .post,
+            parameters: ["uids": messages.map(\.uid)]
+        ))
+    }
+
     func create(mailbox: Mailbox, folder: NewFolder) async throws -> Folder {
         try await perform(request: authenticatedRequest(.folders(uuid: mailbox.uuid), method: .post, parameters: folder))
     }

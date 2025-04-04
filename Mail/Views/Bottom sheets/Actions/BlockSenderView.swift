@@ -54,8 +54,8 @@ struct BlockSenderView: View {
         }
         .customAlert(item: $selectedRecipient) { recipient in
             ConfirmationBlockRecipientView(
-                recipient: recipient,
-                reportedMessage: recipientsToMessage[recipient]!,
+                recipients: [recipient],
+                reportedMessages: [recipientsToMessage[recipient]!],
                 origin: origin
             ) {
                 dismiss()

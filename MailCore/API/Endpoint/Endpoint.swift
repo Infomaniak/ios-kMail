@@ -276,6 +276,10 @@ public extension Endpoint {
         return .resource(messageResource).appending(path: "/report")
     }
 
+    static func spam(uuid: String) -> Endpoint {
+        return .mailbox(uuid: uuid).appending(path: "/message/spam")
+    }
+
     static func createAttachment(uuid: String) -> Endpoint {
         return .draft(uuid: uuid).appending(path: "/attachment")
     }

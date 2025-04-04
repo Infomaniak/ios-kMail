@@ -578,10 +578,10 @@
 "confirmLogoutTitle" = "Log out";
 
 /* loco:66db00746332bbedae01f2f2 */
-"confirmationToBlockAnExpeditorText" = "This email and all future messages from %s will be moved to the Junk Mail folder.";
+"confirmationToBlockAnExpeditorText" = "All future messages from %s will be moved to the Junk Mail folder.";
 
 /* loco:67cffa6132f76065a6002bd2 */
-"confirmationToBlockMultipleExpeditorsText" = "These emails and all future messages from their senders will be moved to the Junk Mail folder.";
+"confirmationToBlockMultipleExpeditorsText" = "All future messages from these senders will be moved to the Junk folder.";
 
 /* loco:62737dea7bd28e302301e5c2 */
 "contactActionAddToContacts" = "Add to contacts";
@@ -1638,6 +1638,9 @@
 
 /* loco:62ab4ae387f65e26e577dd42 */
 "snackbarReportPhishingConfirmation" = "Successfully reported";
+
+/* loco:67e265b380b26e5cb8004cb2 */
+"snackbarReportPhishingError" = "An error occurred while reporting, please try again.";
 
 /* loco:62c2f9feea59c120ad52bc23 */
 "snackbarRestorationLaunched" = "Launching the restoration";

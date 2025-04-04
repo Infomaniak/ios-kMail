@@ -169,32 +169,41 @@ public class ActionsManager: ObservableObject {
             }
         case .reportJunk:
             Task { @MainActor in
-                origin.nearestReportJunkMessageActionsPanel?.wrappedValue = messagesWithDuplicates
+                origin.nearestReportJunkMessagesActionsPanel?.wrappedValue = messagesWithDuplicates
             }
         case .spam:
             let messagesFromFolder = messagesWithDuplicates.fromFolderOrSearch(originFolder: origin.frozenFolder)
-            try await performMove(messages: messagesFromFolder, from: origin.frozenFolder, to: .spam)
+
+            try await performCancelableMove(messages: messagesFromFolder, from: origin.frozenFolder,
+                                            to: .spam) { messages, _, originFolder in
+                try await self.mailboxManager.reportSpam(messages: messages, origin: originFolder)
+            }
         case .phishing:
             Task { @MainActor in
-                origin.nearestReportedForPhishingMessageAlert?.wrappedValue = messagesWithDuplicates.first
+                origin.nearestReportedForPhishingMessagesAlert?.wrappedValue = messagesWithDuplicates
             }
         case .reportDisplayProblem:
             Task { @MainActor in
                 origin.nearestReportedForDisplayProblemMessageAlert?.wrappedValue = messagesWithDuplicates.first
             }
         case .block:
-            guard let message = messagesWithDuplicates.first else { return }
-            try await mailboxManager.apiFetcher.blockSender(message: message)
-            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted(1))
+            for message in messages {
+                try await mailboxManager.apiFetcher.blockSender(message: message)
+            }
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarSenderBlacklisted(messages.count))
         case .blockList:
             Task { @MainActor in
                 let uniqueRecipient = self.getUniqueRecipients(reportedMessages: messages)
-                if uniqueRecipient.count > 1 {
+                if isMultipleRecipientSingleThread(
+                    messages,
+                    originFolder: origin.frozenFolder,
+                    uniqueRecipientCount: uniqueRecipient.count
+                ) {
                     origin.nearestBlockSendersList?.wrappedValue = BlockRecipientState(recipientsToMessage: uniqueRecipient)
-                } else if let recipient = uniqueRecipient.first {
+                } else {
                     origin.nearestBlockSenderAlert?.wrappedValue = BlockRecipientAlertState(
-                        recipient: recipient.key,
-                        message: messages.first!
+                        recipients: Array(uniqueRecipient.keys),
+                        messages: messages
                     )
                 }
             }
@@ -212,41 +221,49 @@ public class ActionsManager: ObservableObject {
         }
     }
 
-    private func performMove(messages: [Message], from originFolder: Folder?, to folderRole: FolderRole) async throws {
-        let moveTask = Task {
-            do {
-                return try await mailboxManager.move(messages: messages, to: folderRole, origin: originFolder)
-            }
+    public func performMove(messages: [Message], from originFolder: Folder?, to folderRole: FolderRole) async throws {
+        try await performCancelableMove(
+            messages: messages,
+            from: originFolder,
+            to: folderRole,
+            action: mailboxManager.move
+        )
+    }
+
+    public func performMove(messages: [Message], from originFolder: Folder?, to folder: Folder) async throws {
+        try await performCancelableMove(
+            messages: messages,
+            from: originFolder,
+            to: folder,
+            action: mailboxManager.move
+        )
+    }
+
+    private func performCancelableMove(
+        messages: [Message],
+        from originFolder: Folder?,
+        to destinationFolderRole: FolderRole,
+        action: @escaping ([Message], Folder, Folder?) async throws -> UndoAction
+    ) async throws {
+        guard let folder = mailboxManager.getFolder(with: destinationFolderRole)?.freeze() else { throw MailError.folderNotFound }
+
+        try await performCancelableMove(messages: messages, from: originFolder, to: folder, action: action)
+    }
+
+    private func performCancelableMove(
+        messages: [Message],
+        from originFolder: Folder?,
+        to destinationFolder: Folder,
+        action: @escaping ([Message], Folder, Folder?) async throws -> UndoAction
+    ) async throws {
+        let task = Task {
+            return try await action(messages, destinationFolder, originFolder)
         }
 
-        let undoAction = UndoAction(waitingForAsyncUndoAction: moveTask)
+        let undoAction = UndoAction(waitingForAsyncUndoAction: task)
 
         let snackbarMessage = snackbarMoveMessage(
             for: messages,
-            originFolder: originFolder,
-            destinationFolderName: folderRole.localizedName
-        )
-
-        async let _ = await displayResultSnackbar(message: snackbarMessage, undoAction: undoAction)
-    }
-
-    public func performMove(messages: [Message], from originFolder: Folder?, to destinationFolder: Folder) async throws {
-        let messagesFromFolder = messages.fromFolderOrSearch(originFolder: originFolder)
-
-        let moveTask = Task {
-            do {
-                return try await mailboxManager.move(
-                    messages: messagesFromFolder,
-                    to: destinationFolder,
-                    origin: originFolder
-                )
-            }
-        }
-
-        let undoAction = UndoAction(waitingForAsyncUndoAction: moveTask)
-
-        let snackbarMessage = snackbarMoveMessage(
-            for: messagesFromFolder,
             originFolder: originFolder,
             destinationFolderName: destinationFolder.localizedName
         )
@@ -348,5 +365,15 @@ public class ActionsManager: ObservableObject {
             }
         }
         return recipientToMessage
+    }
+
+    private func isMultipleRecipientSingleThread(_ selectedMessages: [Message], originFolder: Folder?,
+                                                 uniqueRecipientCount: Int) -> Bool {
+        guard let originFolder, !selectedMessages.isEmpty, uniqueRecipientCount > 1 else {
+            return false
+        }
+
+        let uniqueThreads = Set(selectedMessages.uniqueThreadsInFolder(originFolder))
+        return uniqueThreads.count == 1
     }
 }
