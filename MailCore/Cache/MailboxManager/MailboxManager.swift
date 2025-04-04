@@ -192,7 +192,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
             liveMessage.fullyDownloaded = savedMessage.fullyDownloaded
         }
         if keepProperties.contains(.body), let body = savedMessage.body {
-            liveMessage.body = Body(value: body).detached()
+            liveMessage.body = body.detached()
         }
         if keepProperties.contains(.localSafeDisplay) {
             liveMessage.localSafeDisplay = savedMessage.localSafeDisplay
