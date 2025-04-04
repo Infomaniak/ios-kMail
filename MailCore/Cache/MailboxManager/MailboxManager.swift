@@ -198,7 +198,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
             liveMessage.localSafeDisplay = savedMessage.localSafeDisplay
         }
         if keepProperties.contains(.attachments) {
-            let attachments = savedMessage.attachments.map { Attachment(value: $0.freeze()) }
+            let attachments = savedMessage.attachments.map { $0.detached() }
             let attachmentsList = List<Attachment>()
             attachmentsList.append(objectsIn: attachments)
             liveMessage.attachments = attachmentsList
