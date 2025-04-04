@@ -29,7 +29,7 @@ struct ScheduleOptionView: View {
     @Environment(\.dismiss) private var dismiss
 
     let type: ScheduleType
-    let option: ScheduleSendOption
+    let option: ScheduleOption
     let completionHandler: (Date) -> Void
 
     var body: some View {
