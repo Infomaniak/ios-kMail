@@ -1,4 +1,2 @@
-- Bandeau de bloquage/débloquage dans les messages
-- Carnet d'addresses 
-- Amélioration du tri des contacts
-- Correction de bugs
+- Correction d'un bug faisant clignoter les avatars
+- Correction d'un crash au lancement

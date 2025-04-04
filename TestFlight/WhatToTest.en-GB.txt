@@ -1,4 +1,2 @@
-- Block / Unblock message banner
-- Address book 
-- Improved contact sorting
-- Bug fixes
+- Prevent contact flickering
+- Prevent crash on launch 
