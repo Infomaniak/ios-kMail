@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakDI
 import MailResources
 import RealmSwift
 import SwiftUI
@@ -258,7 +259,12 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     public var canAccessSnoozeActions: Bool {
-        return role == .inbox || role == .snoozed
+        @InjectService var featureFlagsManageable: FeatureFlagsManageable
+        let isFeatureFlagEnabled = featureFlagsManageable.isEnabled(.mailSnooze)
+        let isModeCorrect = UserDefaults.shared.threadMode == .conversation
+        let isFolderCorrect = role == .inbox || role == .snoozed
+        
+        return isModeCorrect && isFeatureFlagEnabled && isFolderCorrect
     }
 
     public var permanentlyDeleteContent: Bool {

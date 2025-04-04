@@ -79,13 +79,25 @@ extension Action: CaseIterable {
     }
 
     public var shouldDisableMultipleSelection: Bool {
-        return ![.openMovePanel, .saveThreadInkDrive, .shareMailLink, .reportJunk, .phishing, .block, .blockList, .snooze, .modifySnooze].contains(self)
+        return ![
+            .openMovePanel,
+            .saveThreadInkDrive,
+            .shareMailLink,
+            .reportJunk,
+            .phishing,
+            .block,
+            .blockList,
+            .snooze,
+            .modifySnooze
+        ].contains(self)
     }
 
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String) -> (quickActions: [Action], listActions: [Action]) {
         @LazyInjectService var platformDetector: PlatformDetectable
+
+        let snoozedActions = snoozedActions([message], folder: origin.frozenFolder)
 
         var spamAction: Action? {
             guard !message.fromMe(currentMailboxEmail: userEmail) else { return nil }
@@ -123,6 +135,8 @@ extension Action: CaseIterable {
             .delete
         ]
 
+        let snoozedActions = snoozedActions(messages, folder: originFolder)
+
         var spamAction: Action? {
             let selfThread = messages.flatMap(\.from).allSatisfy { $0.isMeOrPlusMe(currentMailboxEmail: userEmail) }
             guard !selfThread else { return nil }
@@ -136,7 +150,9 @@ extension Action: CaseIterable {
             .saveThreadInkDrive
         ]
 
-        return (quickActions, tempListActions.compactMap { $0 })
+        let listActions = snoozedActions + tempListActions.compactMap { $0 }
+
+        return (quickActions, listActions)
     }
 
     private static func actionsForMessagesInSameThreads(_ messages: [Message], originFolder: Folder?, userEmail: String)
@@ -168,7 +184,7 @@ extension Action: CaseIterable {
     private static func snoozedActions(_ messages: [Message], folder: Folder?) -> [Action] {
         guard folder?.canAccessSnoozeActions == true else { return [] }
 
-        let messagesFromFolder = messages.filter { $0.folder == folder }
+        let messagesFromFolder = messages.filter { $0.folder?.remoteId == folder?.remoteId }
         guard !messagesFromFolder.isEmpty else { return [] }
 
         if messagesFromFolder.allSatisfy(\.isSnoozed) {
