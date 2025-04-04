@@ -581,7 +581,7 @@
 "confirmationToBlockAnExpeditorText" = "Todos los futuros mensajes de %s se moverán a la carpeta de correo no deseado.";
 
 /* loco:67cffa6132f76065a6002bd2 */
-"confirmationToBlockMultipleExpeditorsText" = "Todos los mensajes futuros de sus remitentes se moverán a la carpeta de Correo no deseado.";
+"confirmationToBlockMultipleExpeditorsText" = "Todos los mensajes futuros de estos remitentes se moverán a la carpeta de correo no deseado.";
 
 /* loco:62737dea7bd28e302301e5c2 */
 "contactActionAddToContacts" = "Añadir a contactos";
