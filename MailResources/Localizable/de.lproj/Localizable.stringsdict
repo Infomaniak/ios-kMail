@@ -170,5 +170,69 @@ Indem Sie uns diese Nachrichten melden, können Sie die Erkennung gefährlicher 
 Die Meldungen werden an unser Sicherheitsteam weitergeleitet, das sie analysiert und Massnahmen ergreift. Die E-Mails werden ausserdem automatisch in Ihre Spam-Ordner verschoben.</string>
       </dict>
     </dict>
+	<key>snackbarUnsnoozeSuccess</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@value@</string>
+		<key>value</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Erinnerung storniert. Ihre Nachricht ist zurück in Ihrem Posteingang</string>
+			<key>other</key>
+			<string>Erinnerungen storniert. Ihre Nachrichten sind zurück in Ihrem Posteingang</string>
+		</dict>
+	</dict>
+	<key>snoozeArchiveConfirmAlertDescription</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@value@</string>
+		<key>value</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Diese Unterhaltung wird nicht mehr schlummern und wird archiviert</string>
+			<key>other</key>
+			<string>Diese Unterhaltungen werden nicht mehr schlummern und werden archiviert</string>
+		</dict>
+	</dict>
+	<key>snoozeDeleteConfirmAlertDescription</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@value@</string>
+		<key>value</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Diese Unterhaltung wird nicht mehr schlummern und wird gelöscht</string>
+			<key>other</key>
+			<string>Diese Unterhaltungen werden nicht mehr schlummern und werden gelöscht</string>
+		</dict>
+	</dict>
+	<key>snoozeMoveConfirmAlertDescription</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@value@</string>
+		<key>value</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Diese Unterhaltung wird nicht mehr schlummern und wird verschoben</string>
+			<key>other</key>
+			<string>Diese Unterhaltungen werden nicht mehr schlummern und werden verschoben</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

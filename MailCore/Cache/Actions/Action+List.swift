@@ -79,13 +79,25 @@ extension Action: CaseIterable {
     }
 
     public var shouldDisableMultipleSelection: Bool {
-        return ![.openMovePanel, .saveThreadInkDrive, .shareMailLink, .reportJunk, .phishing, .block, .blockList].contains(self)
+        return ![
+            .openMovePanel,
+            .saveThreadInkDrive,
+            .shareMailLink,
+            .reportJunk,
+            .phishing,
+            .block,
+            .blockList,
+            .snooze,
+            .modifySnooze
+        ].contains(self)
     }
 
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String) -> (quickActions: [Action], listActions: [Action]) {
         @LazyInjectService var platformDetector: PlatformDetectable
+
+        let snoozedActions = snoozedActions([message], folder: origin.frozenFolder)
 
         var spamAction: Action? {
             guard !message.fromMe(currentMailboxEmail: userEmail) else { return nil }
@@ -107,7 +119,9 @@ extension Action: CaseIterable {
             userIsStaff ? .reportDisplayProblem : nil
         ]
 
-        return (Action.quickActions, tempListActions.compactMap { $0 })
+        let listActions = snoozedActions + tempListActions.compactMap { $0 }
+
+        return (Action.quickActions, listActions)
     }
 
     private static func actionsForMessagesInDifferentThreads(_ messages: [Message], originFolder: Folder?, userEmail: String)
@@ -120,6 +134,8 @@ extension Action: CaseIterable {
             archive ? .archive : .moveToInbox,
             .delete
         ]
+
+        let snoozedActions = snoozedActions(messages, folder: originFolder)
 
         var spamAction: Action? {
             let selfThread = messages.flatMap(\.from).allSatisfy { $0.isMeOrPlusMe(currentMailboxEmail: userEmail) }
@@ -134,7 +150,9 @@ extension Action: CaseIterable {
             .saveThreadInkDrive
         ]
 
-        return (quickActions, tempListActions.compactMap { $0 })
+        let listActions = snoozedActions + tempListActions.compactMap { $0 }
+
+        return (quickActions, listActions)
     }
 
     private static func actionsForMessagesInSameThreads(_ messages: [Message], originFolder: Folder?, userEmail: String)
@@ -149,6 +167,7 @@ extension Action: CaseIterable {
             return originFolder?.role == .spam ? .nonSpam : .reportJunk
         }
 
+        let snoozedActions = snoozedActions(messages, folder: originFolder)
         let tempListActions: [Action?] = [
             .openMovePanel,
             spamAction,
@@ -157,8 +176,22 @@ extension Action: CaseIterable {
             showUnstar ? .unstar : .star,
             .saveThreadInkDrive
         ]
+        let listActions = snoozedActions + tempListActions.compactMap { $0 }
 
-        return (Action.quickActions, tempListActions.compactMap { $0 })
+        return (Action.quickActions, listActions)
+    }
+
+    private static func snoozedActions(_ messages: [Message], folder: Folder?) -> [Action] {
+        guard folder?.canAccessSnoozeActions == true else { return [] }
+
+        let messagesFromFolder = messages.filter { $0.folder?.remoteId == folder?.remoteId }
+        guard !messagesFromFolder.isEmpty else { return [] }
+
+        if messagesFromFolder.allSatisfy(\.isSnoozed) {
+            return [.modifySnooze, .cancelSnooze]
+        } else {
+            return [.snooze]
+        }
     }
 
     public static func actionsForMessages(_ messages: [Message],
@@ -193,6 +226,27 @@ extension Action: RawRepresentable {
 }
 
 public extension Action {
+    // MARK: Thread actions
+
+    static let snooze = Action(
+        id: "snooze",
+        title: MailResourcesStrings.Localizable.actionSnooze,
+        iconResource: MailResourcesAsset.alarmClock,
+        matomoName: "snooze"
+    )
+    static let modifySnooze = Action(
+        id: "modifySnooze",
+        title: MailResourcesStrings.Localizable.actionModifySnooze,
+        iconResource: MailResourcesAsset.alarmClock,
+        matomoName: "modifySnooze"
+    )
+    static let cancelSnooze = Action(
+        id: "cancelSnooze",
+        title: MailResourcesStrings.Localizable.actionCancelSnooze,
+        iconResource: MailResourcesAsset.circleCross,
+        matomoName: "cancelSnooze"
+    )
+
     // MARK: Mail actions
 
     static let delete = Action(

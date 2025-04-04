@@ -16,31 +16,55 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import MailResources
 import SwiftUI
 
 struct SnoozedThreadHeaderView: View {
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var actionsManager: ActionsManager
+
+    @State private var messagesToSnooze: [Message]?
+
     let date: Date
-    let shouldDisplayActions: Bool
+    let messages: [Message]
+    let folder: Folder?
+
+    private var origin: ActionOrigin {
+        return .threadHeader(originFolder: folder, nearestMessagesToSnooze: $messagesToSnooze)
+    }
 
     var body: some View {
         MessageHeaderActionView(
             icon: MailResourcesAsset.alarmClockFilled.swiftUIImage,
             message: MailResourcesStrings.Localizable.snoozeAlertTitle(date.formatted(.messageHeader)),
             isFirst: true,
-            shouldDisplayActions: shouldDisplayActions
+            shouldDisplayActions: folder?.canAccessSnoozeActions ?? false
         ) {
             Button(MailResourcesStrings.Localizable.buttonModify, action: edit)
             MessageHeaderDivider()
             Button(MailResourcesStrings.Localizable.buttonCancelReminder, action: cancel)
         }
+        .snoozedFloatingPanel(
+            messages: messagesToSnooze,
+            initialDate: date,
+            folder: folder
+        ) { _ in dismiss() }
     }
 
-    private func edit() {}
+    private func edit() {
+        Task {
+            try await actionsManager.performAction(target: messages, action: .modifySnooze, origin: origin)
+        }
+    }
 
-    private func cancel() {}
+    private func cancel() {
+        Task {
+            try await actionsManager.performAction(target: messages, action: .cancelSnooze, origin: origin)
+        }
+    }
 }
 
 #Preview {
-    SnoozedThreadHeaderView(date: .now, shouldDisplayActions: true)
+    SnoozedThreadHeaderView(date: .now, messages: [], folder: nil)
 }
