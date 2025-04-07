@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Baptiste Griva
- * Exported at: Tue, 25 Mar 2025 09:51:23 +0100
+ * Exported by: Valentin Perignon
+ * Exported at: Mon, 31 Mar 2025 16:15:55 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -22,6 +22,9 @@
 /* loco:629f0f37ccbf1e53bf0ab752 */
 "actionBlockSender" = "Bloquear remitente";
 
+/* loco:67e690c60b27fb17340e57b2 */
+"actionCancelSnooze" = "Cancelar el aplazamiento";
+
 /* loco:629f0e12701ef82cde591a62 */
 "actionDelete" = "Borrar";
 
@@ -37,6 +40,9 @@
 /* loco:62a1e691ede283161606f7f4 */
 "actionMarkAsUnread" = "Marcar como no leído";
 
+/* loco:67e68dbbdfc30429280f7db3 */
+"actionModifySnooze" = "Modificar el aplazamiento";
+
 /* loco:629f0e49b7fae5715e13e972 */
 "actionMove" = "Mover";
 
@@ -51,9 +57,6 @@
 
 /* loco:629f0f6557b1a86b24759543 */
 "actionPhishing" = "Informar sobre phishing";
-
-/* loco:629f0e5a701ef82cde591a67 */
-"actionPostpone" = "Aplazar";
 
 /* loco:629f0f8232570829c53e38e2 */
 "actionPrint" = "Imprimir";
@@ -84,6 +87,9 @@
 
 /* loco:62e14df023e4fb767e2391a4 */
 "actionShortStar" = "Favoritos";
+
+/* loco:67dd6c6da35d6a6731037c12 */
+"actionSnooze" = "Poner en espera";
 
 /* loco:629f0e67a7c8ea4e366cf342 */
 "actionSpam" = "Notificar spam";
@@ -490,9 +496,6 @@
 /* loco:62b2e4a24486732cbc2f04d3 */
 "buttonSchedule" = "Programar un correo electrónico para enviarlo más tarde";
 
-/* loco:6723a2a5f3c615913002d152 */
-"buttonScheduleTitle" = "Programar";
-
 /* loco:65957d479527393708069ee2 */
 "buttonSee" = "Véase";
 
@@ -856,14 +859,11 @@
 /* loco:649424a6e244ffcc6c011135 */
 "errorRefusedSender" = "El servidor rechaza el remitente";
 
-/* loco:6749c9680660e7ec7e077c86 */
-"errorScheduleDelayTooShort" = "No puedes programar un correo electrónico para dentro de menos de %d minuto";
-
 /* loco:678f61b9f7e8ef480f043962 */
-"errorScheduleDelayTooShort-plural" = "No puedes programar un correo electrónico para dentro de menos de %d minutos";
+"errorScheduleDelayTooShort" = "No puedes programar un correo electrónico para dentro de menos de %d minutos";
 
-/* loco:678f61ea3e289bc90a0b8952 */
-"errorScheduleDelayTooShort-plural-many" = "";
+/* loco:67e3ecd6b4a0b7e90d00c382 */
+"errorScheduledSnoozeDelayTooShort" = "El tiempo mínimo para aplazar un correo electrónico es de %d minutos";
 
 /* loco:6448ef7a5b39bc7e040ce0b3 */
 "errorSendLimitExceeded" = "Límite de envío alcanzado";
@@ -1663,6 +1663,15 @@
 /* loco:638f6f0d5075370cf374e2a2 */
 "snackbarSenderBlacklisted-plural-many" = "";
 
+/* loco:67ea70102a2bbfe96e02d072 */
+"snackbarSnoozeSuccess" = "Recibirás un recordatorio de este mensaje %@";
+
+/* loco:67ea7126fa3c72bf060a7722 */
+"snackbarSnoozeSuccess-plural" = "Recibirás un recordatorio de estos mensajes %@";
+
+/* loco:67ea722654038d4994095fc2 */
+"snackbarSnoozeSuccess-plural-many" = "";
+
 /* loco:653fa9122f7b384757074432 */
 "snackbarSubjectCopiedToClipboard" = "Tema copiado en el portapapeles";
 
@@ -1684,8 +1693,44 @@
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "";
 
+/* loco:67ea73cd7e04d40c390da0f6 */
+"snackbarUnsnoozeSuccess" = "Recordatorio cancelado. Tu mensaje ha vuelto a tu bandeja de entrada";
+
+/* loco:67ea74b9c68f97079b03ab24 */
+"snackbarUnsnoozeSuccess-plural" = "Recordatorios cancelados. Tus mensajes han vuelto a tu bandeja de entrada";
+
+/* loco:67ea75009e0f50f0ea00f134 */
+"snackbarUnsnoozeSuccess-plural-many" = "";
+
 /* loco:67b32e5c0e4974a86a00c602 */
 "snoozeAlertTitle" = "En espera hasta: %@";
+
+/* loco:67ea90d1ed66875aaf0d73c2 */
+"snoozeArchiveConfirmAlertDescription" = "Esta conversación ya no estará en espera y será archivada";
+
+/* loco:67ea9699542059731b0bf7a3 */
+"snoozeArchiveConfirmAlertDescription-plural" = "Estas conversaciones ya no estarán en espera y serán archivadas";
+
+/* loco:67ea96c7adc66e9a8f06edc6 */
+"snoozeArchiveConfirmAlertDescription-plural-many" = "";
+
+/* loco:67ea90d9bf43214ba80e1bc3 */
+"snoozeDeleteConfirmAlertDescription" = "Esta conversación ya no estará en espera y será eliminada";
+
+/* loco:67ea96217cc35c6df507ce32 */
+"snoozeDeleteConfirmAlertDescription-plural" = "Estas conversaciones ya no estarán en espera y serán eliminadas";
+
+/* loco:67ea965556e7d71125025b63 */
+"snoozeDeleteConfirmAlertDescription-plural-many" = "";
+
+/* loco:67ea90c5bf43214ba80e1bc2 */
+"snoozeMoveConfirmAlertDescription" = "Esta conversación ya no estará en espera y será movida";
+
+/* loco:67ea9706fffbe6d2a80edda2 */
+"snoozeMoveConfirmAlertDescription-plural" = "Estas conversaciones ya no estarán en espera y serán movidas";
+
+/* loco:67ea972f14ecc86d5c0500d5 */
+"snoozeMoveConfirmAlertDescription-plural-many" = "";
 
 /* loco:67a32e4384fbf4226404e972 */
 "snoozedFolder" = "En espera";

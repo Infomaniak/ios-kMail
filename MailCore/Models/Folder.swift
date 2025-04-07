@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakDI
 import MailResources
 import RealmSwift
 import SwiftUI
@@ -257,6 +258,15 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         return names.reversed().joined(separator: " > ")
     }
 
+    public var canAccessSnoozeActions: Bool {
+        @InjectService var featureFlagsManageable: FeatureFlagsManageable
+        let isFeatureFlagEnabled = featureFlagsManageable.isEnabled(.mailSnooze)
+        let isModeCorrect = UserDefaults.shared.threadMode == .conversation
+        let isFolderCorrect = role == .inbox || role == .snoozed
+
+        return isModeCorrect && isFeatureFlagEnabled && isFolderCorrect
+    }
+
     public var permanentlyDeleteContent: Bool {
         return [FolderRole.draft, FolderRole.spam, FolderRole.trash, FolderRole.scheduledDrafts].contains(role)
     }
@@ -307,13 +317,12 @@ public class Folder: Object, Codable, Comparable, Identifiable {
 
     public func threadBelongsToFolder(_ thread: Thread) -> Bool {
         let isThreadInCurrentFolder = thread.folderId == threadsSource?.remoteId ?? ""
-        let isMessageSnoozed = thread.snoozeState == .snoozed && thread.snoozeEndDate != nil && thread.snoozeUuid != nil
 
         switch role {
         case .inbox:
-            return isThreadInCurrentFolder && !isMessageSnoozed
+            return isThreadInCurrentFolder && !thread.isSnoozed
         case .snoozed:
-            return isThreadInCurrentFolder && isMessageSnoozed
+            return isThreadInCurrentFolder && thread.isSnoozed
         default:
             return isThreadInCurrentFolder
         }

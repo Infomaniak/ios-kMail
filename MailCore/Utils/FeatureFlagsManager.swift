@@ -27,6 +27,7 @@ public enum FeatureFlag: String, Codable {
     case aiMailComposer = "ai-mail-composer"
     case bimi
     case scheduleSendDraft = "schedule-send-draft"
+    case mailSnooze = "mail-snooze"
     case unknown
 
     public init(from decoder: Decoder) throws {

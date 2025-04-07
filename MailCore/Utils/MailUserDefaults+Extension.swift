@@ -53,11 +53,12 @@ public extension UserDefaults.Keys {
     static let hasDismissedUpdateVersionView = UserDefaults.Keys(rawValue: "hasDismissedUpdateVersionView")
     static let matomoAuthorized = UserDefaults.Keys(rawValue: "matomoAuthorized")
     static let sentryAuthorized = UserDefaults.Keys(rawValue: "sentryAuthorized")
-    static let lastScheduleInterval = UserDefaults.Keys(rawValue: "lastCustomSchedule")
     static let nextShowQuotasAlert = UserDefaults.Keys(rawValue: "nextShowQuotasAlert")
     static let nextShowSync = UserDefaults.Keys(rawValue: "nextShowSync")
     static let showSyncCounter = UserDefaults.Keys(rawValue: "showSyncCounter")
     static let hasDismissedMacDisclaimerView = UserDefaults.Keys(rawValue: "hasDismissedMacDisclaimerView")
+    static let lastCustomScheduledDraftDate = UserDefaults.Keys(rawValue: "lastCustomScheduledDraftDate")
+    static let lastCustomSnoozeDate = UserDefaults.Keys(rawValue: "lastCustomSnoozeDate")
 }
 
 public extension UserDefaults {
@@ -348,6 +349,26 @@ public extension UserDefaults {
         }
         set {
             set(newValue, forKey: key(.showSyncCounter))
+        }
+    }
+
+    var lastCustomScheduledDraftDate: Date {
+        get {
+            let timeIntervalSince1970 = double(forKey: key(.lastCustomScheduledDraftDate))
+            return Date(timeIntervalSince1970: timeIntervalSince1970)
+        }
+        set {
+            set(newValue.timeIntervalSince1970, forKey: key(.lastCustomScheduledDraftDate))
+        }
+    }
+
+    var lastCustomSnoozeDate: Date {
+        get {
+            let timeIntervalSince1970 = double(forKey: key(.lastCustomSnoozeDate))
+            return Date(timeIntervalSince1970: timeIntervalSince1970)
+        }
+        set {
+            set(newValue.timeIntervalSince1970, forKey: key(.lastCustomSnoozeDate))
         }
     }
 }

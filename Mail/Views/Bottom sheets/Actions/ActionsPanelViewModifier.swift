@@ -53,6 +53,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     @ModalState private var messagesToMove: [Message]?
     @ModalState private var flushAlert: FlushAlertState?
     @ModalState private var shareMailLink: ShareMailLinkResult?
+    @ModalState private var messagesToSnooze: [Message]?
     @ModalState private var messagesToDownload: [Message]?
 
     @Binding var messages: [Message]?
@@ -73,8 +74,18 @@ struct ActionsPanelViewModifier: ViewModifier {
             nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
             nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
             nearestShareMailLinkPanel: $shareMailLink,
+            nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload
         )
+    }
+
+    private var initialSnoozedDate: Date? {
+        guard let messages,
+              let initialDate = messages.first?.snoozeEndDate,
+              messages.allSatisfy({ $0.isSnoozed && $0.snoozeEndDate == initialDate })
+        else { return nil }
+
+        return initialDate
     }
 
     func body(content: Content) -> some View {
@@ -136,5 +147,10 @@ struct ActionsPanelViewModifier: ViewModifier {
                     .backport.presentationDetents([.medium, .large])
             }
         }
+        .snoozedFloatingPanel(
+            messages: messagesToSnooze,
+            initialDate: initialSnoozedDate,
+            folder: originFolder?.freezeIfNeeded()
+        ) { completionHandler?($0) }
     }
 }

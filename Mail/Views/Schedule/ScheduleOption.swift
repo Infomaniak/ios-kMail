@@ -19,7 +19,7 @@
 import MailResources
 import SwiftUI
 
-enum ScheduleSendOption: Identifiable, Equatable {
+enum ScheduleOption: Identifiable, Equatable {
     case laterThisMorning
     case thisAfternoon
     case thisEvening
@@ -107,7 +107,7 @@ enum ScheduleSendOption: Identifiable, Equatable {
         case .nextMondayMorning, .nextMondayAfternoon:
             return weekday == 1 || weekday == 7
         case .lastSchedule(let value):
-            return value > .minimumScheduleDelay
+            return value >= .minimumScheduleDelay
         }
     }
 
@@ -127,12 +127,12 @@ enum ScheduleSendOption: Identifiable, Equatable {
             "nextMondayMorning"
         case .nextMondayAfternoon:
             "nextMondayAfternoon"
-        case .lastSchedule(let value):
+        case .lastSchedule:
             "lastSelectedSchedule"
         }
     }
 
-    static var allSimpleCases: [ScheduleSendOption] = [
+    static var allSimpleCases: [ScheduleOption] = [
         .laterThisMorning,
         .thisAfternoon,
         .thisEvening,

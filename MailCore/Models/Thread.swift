@@ -125,6 +125,10 @@ public class Thread: Object, Decodable, Identifiable {
         return messages.toArray() + duplicates.toArray()
     }
 
+    public var isSnoozed: Bool {
+        snoozeState == .snoozed && snoozeEndDate != nil && snoozeUuid != nil
+    }
+
     public func updateUnseenMessages() {
         unseenMessages = messagesAndDuplicates.filter { !$0.seen }.count
     }

@@ -23,11 +23,20 @@ import MailCoreUI
 import MailResources
 import SwiftUI
 
+struct MessageHeaderDivider: View {
+    var body: some View {
+        Divider()
+            .frame(width: 1, height: 20)
+            .overlay(MailResourcesAsset.elementsColor.swiftUIColor)
+    }
+}
+
 struct MessageHeaderActionView<Content: View>: View {
     let iconSize: CGFloat = 16
     let icon: Image
     let message: String
     let isFirst: Bool
+    var shouldDisplayActions = true
 
     @ViewBuilder var actions: () -> Content
 
@@ -36,8 +45,9 @@ struct MessageHeaderActionView<Content: View>: View {
             if isFirst {
                 IKDivider()
             }
+
             VStack(alignment: .leading) {
-                HStack {
+                HStack(spacing: IKPadding.small) {
                     icon
                         .resizable()
                         .aspectRatio(contentMode: .fit)
@@ -47,14 +57,20 @@ struct MessageHeaderActionView<Content: View>: View {
                         .textStyle(.labelSecondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                HStack {
-                    actions()
+
+                if shouldDisplayActions {
+                    HStack {
+                        actions()
+                    }
+                    .buttonStyle(.ikBorderless(isInlined: true))
+                    .controlSize(.small)
+                    .padding(.leading, iconSize + IKPadding.small)
                 }
-                .padding(.leading, iconSize + IKPadding.mini)
             }
             .padding(.bottom, value: .micro)
             .padding(.top, isFirst ? IKPadding.micro : 0)
             .padding(.horizontal, value: .medium)
+
             IKDivider()
         }
     }

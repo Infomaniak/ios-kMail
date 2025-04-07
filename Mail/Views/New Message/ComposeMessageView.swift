@@ -267,7 +267,7 @@ struct ComposeMessageView: View {
                 changeFolderAction: changeSelectedFolder
             ) {
                 mainViewState.isShowingMyKSuiteUpgrade = true
-                matomo.track(eventWithCategory: .myKSuiteUpgrade, name: "dailyLimitReachedUpgrade")
+                matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "dailyLimitReachedUpgrade")
             }
         }
         .customAlert(item: $isShowingAlert) { alert in
@@ -304,10 +304,9 @@ struct ComposeMessageView: View {
         .matomoView(view: ["ComposeMessage"])
         .scheduleFloatingPanel(
             isPresented: $isShowingSchedulePanel,
-            draftSaveOption: $draft.action,
-            draftDate: $draft.scheduleDate,
-            mailboxManager: mailboxManager,
-            completionHandler: dismissMessageView
+            type: .scheduledDraft,
+            initialDate: draft.scheduleDate,
+            completionHandler: didScheduleDraft
         )
     }
 
@@ -338,6 +337,17 @@ struct ComposeMessageView: View {
         }
     }
 
+    private func didScheduleDraft(_ date: Date) {
+        if let liveDraft = draft.thaw() {
+            try? liveDraft.realm?.write {
+                liveDraft.scheduleDate = date
+                liveDraft.action = .schedule
+            }
+        }
+
+        dismissMessageView()
+    }
+
     private func didTouchSend() {
         guard !draft.subject.isEmpty else {
             matomo.track(eventWithCategory: .newMessage, name: "sendWithoutSubject")
@@ -347,7 +357,7 @@ struct ComposeMessageView: View {
 
         let mailbox = mailboxManager.mailbox
         let mailboxIsFull = mailbox.quotas?.progression ?? 0 >= 1
-        if mailbox.isFree && mailbox.isLimited && mailboxIsFull {
+        if mailbox.isMyKSuiteFree && mailboxIsFull {
             matomo.track(eventWithCategory: .newMessage, name: "trySendingWithMailboxFull")
             Task {
                 if let liveDraft = draft.thaw() {
@@ -360,7 +370,7 @@ struct ComposeMessageView: View {
                 message: MailResourcesStrings.Localizable.myKSuiteSpaceFullAlert,
                 action: IKSnackBar.Action(title: MailResourcesStrings.Localizable.buttonUpgrade) {
                     mainViewState.isShowingMyKSuiteUpgrade = true
-                    matomo.track(eventWithCategory: .myKSuiteUpgrade, name: "notEnoughStorageUpgrade")
+                    matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
                 }
             )
             return
