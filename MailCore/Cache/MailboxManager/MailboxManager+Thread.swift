@@ -292,7 +292,7 @@ public extension MailboxManager {
 
                 writableRealm.delete(threadsToDelete)
 
-                let recomputedFolders = recomputeThreadsAndUnreadCount(of: threadsToUpdate, realm: writableRealm)
+                let (_, recomputedFolders) = recomputeThreadsAndUnreadCount(of: threadsToUpdate, realm: writableRealm)
                 foldersOfDeletedThreads.subtract(recomputedFolders)
                 recomputeUnreadCountOfFolders(foldersOfDeletedThreads)
             }
@@ -421,9 +421,8 @@ public extension MailboxManager {
             }
         }
 
-        recomputeThreadsAndUnreadCount(of: threadsToUpdate, realm: writableRealm)
-
-        return threadsToUpdate
+        let (updatedThreads, _) = recomputeThreadsAndUnreadCount(of: threadsToUpdate, realm: writableRealm)
+        return updatedThreads
     }
 
     /// Add the given message to existing compatible threads + Create a new thread if needed
@@ -554,7 +553,7 @@ public extension MailboxManager {
     }
 
     @discardableResult
-    private func recomputeThreadsAndUnreadCount(of threads: Set<Thread>, realm: Realm) -> Set<Folder> {
+    private func recomputeThreadsAndUnreadCount(of threads: Set<Thread>, realm: Realm) -> (Set<Thread>, Set<Folder>) {
         var threadsToRecompute = threads
         let duplicatesThreads = Set(threads.flatMap { $0.duplicates.flatMap { $0.threads } })
         threadsToRecompute.formUnion(duplicatesThreads)
@@ -569,7 +568,7 @@ public extension MailboxManager {
             }
         }
 
-        return recomputeUnreadCountOfFolders(containing: recomputedThreads)
+        return (recomputedThreads, recomputeUnreadCountOfFolders(containing: recomputedThreads))
     }
 
     /// Refresh the unread count of the folders of the given threads
