@@ -76,7 +76,7 @@ extension RandomAccessCollection where Element == Message {
 
     /// - Returns: An array of unique threads to which the given messages belong in a given folder
     func uniqueThreadsInFolder(_ folder: Folder?) -> [Thread] {
-        return Set(flatMap(\.threads)).filter { $0.folder == folder }.toArray()
+        return Set(flatMap(\.threads)).filter { $0.folder?.remoteId == folder?.remoteId }.toArray()
     }
 
     /// Check if the given list is only composed of one message.
@@ -86,7 +86,7 @@ extension RandomAccessCollection where Element == Message {
             return false
         }
 
-        guard let firstMessageThread = first?.threads.first(where: { $0.folder == currentFolder }) else {
+        guard let firstMessageThread = first?.threads.first(where: { $0.folder?.remoteId == currentFolder?.remoteId }) else {
             return false
         }
 
