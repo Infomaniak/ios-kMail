@@ -45,11 +45,11 @@ enum ScheduleType: Sendable {
 // MARK: - Minimum and maximum date
 
 extension ScheduleType {
-    internal var minimumInterval: TimeInterval {
+    var minimumInterval: TimeInterval {
         return 60 * 5 // 5 minutes
     }
 
-    internal var maximumInterval: TimeInterval {
+    var maximumInterval: TimeInterval {
         switch self {
         case .scheduledDraft:
             return 60 * 60 * 24 * 365 * 10 // 10 years

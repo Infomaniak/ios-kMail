@@ -263,7 +263,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         let isFeatureFlagEnabled = featureFlagsManageable.isEnabled(.mailSnooze)
         let isModeCorrect = UserDefaults.shared.threadMode == .conversation
         let isFolderCorrect = role == .inbox || role == .snoozed
-        
+
         return isModeCorrect && isFeatureFlagEnabled && isFolderCorrect
     }
 

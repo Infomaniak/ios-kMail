@@ -141,7 +141,8 @@ public struct ActionOrigin {
         ActionOrigin(type: .shortcut, folder: originFolder, nearestFlushAlert: nearestFlushAlert)
     }
 
-    public static func threadHeader(originFolder: Folder? = nil, nearestMessagesToSnooze: Binding<[Message]?>? = nil) -> ActionOrigin {
+    public static func threadHeader(originFolder: Folder? = nil,
+                                    nearestMessagesToSnooze: Binding<[Message]?>? = nil) -> ActionOrigin {
         return ActionOrigin(type: .threadHeader, folder: originFolder, nearestMessagesToSnooze: nearestMessagesToSnooze)
     }
 }
