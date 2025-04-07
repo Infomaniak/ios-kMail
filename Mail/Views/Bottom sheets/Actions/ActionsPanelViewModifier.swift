@@ -80,9 +80,9 @@ struct ActionsPanelViewModifier: ViewModifier {
     }
 
     private var initialSnoozedDate: Date? {
-        guard let messages,
-              let initialDate = messages.first?.snoozeEndDate,
-              messages.allSatisfy({ $0.isSnoozed && $0.snoozeEndDate == initialDate })
+        guard let messagesToSnooze,
+              let initialDate = messagesToSnooze.first?.snoozeEndDate,
+              messagesToSnooze.allSatisfy({ $0.isSnoozed && $0.snoozeEndDate == initialDate })
         else { return nil }
 
         return initialDate
