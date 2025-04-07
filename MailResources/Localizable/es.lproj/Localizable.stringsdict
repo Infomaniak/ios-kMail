@@ -170,5 +170,69 @@ Al denunciar a nosotros estos mensajes, pueden ayudar a acelerar la detección d
 Las denuncias serán remitidas a nuestro equipo de seguridad, que las analizará y tomará medidas. Los correos electrónicos también se moverán automáticamente a su carpeta de spam.</string>
       </dict>
     </dict>
+	<key>snackbarUnsnoozeSuccess</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@value@</string>
+		<key>value</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Recordatorio cancelado. Tu mensaje ha vuelto a tu bandeja de entrada</string>
+			<key>other</key>
+			<string>Recordatorios cancelados. Tus mensajes han vuelto a tu bandeja de entrada</string>
+		</dict>
+	</dict>
+	<key>snoozeArchiveConfirmAlertDescription</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@value@</string>
+		<key>value</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Esta conversación ya no estará en espera y será archivada</string>
+			<key>other</key>
+			<string>Estas conversaciones ya no estarán en espera y serán archivadas</string>
+		</dict>
+	</dict>
+	<key>snoozeDeleteConfirmAlertDescription</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@value@</string>
+		<key>value</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Esta conversación ya no estará en espera y será eliminada</string>
+			<key>other</key>
+			<string>Estas conversaciones ya no estarán en espera y serán eliminadas</string>
+		</dict>
+	</dict>
+	<key>snoozeMoveConfirmAlertDescription</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@value@</string>
+		<key>value</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Esta conversación ya no estará en espera y será movida</string>
+			<key>other</key>
+			<string>Estas conversaciones ya no estarán en espera y serán movidas</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

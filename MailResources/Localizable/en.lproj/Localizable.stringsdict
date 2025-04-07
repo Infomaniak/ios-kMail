@@ -170,5 +170,69 @@ By reporting them to us, you speed up the detection of dangerous messages for al
 The reports will be sent to our security team for analysis and action. The emails will also be automatically moved to your spam folder.</string>
       </dict>
     </dict>
+	<key>snackbarUnsnoozeSuccess</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@value@</string>
+		<key>value</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Reminder canceled. Your message is back in your inbox</string>
+			<key>other</key>
+			<string>Reminders canceled. Your messages are back in your inbox</string>
+		</dict>
+	</dict>
+	<key>snoozeArchiveConfirmAlertDescription</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@value@</string>
+		<key>value</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>This conversation will no longer be snoozed and will be archived</string>
+			<key>other</key>
+			<string>These conversations will no longer be snoozed and will be archived</string>
+		</dict>
+	</dict>
+	<key>snoozeDeleteConfirmAlertDescription</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@value@</string>
+		<key>value</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>This conversation will no longer be snoozed and will be deleted</string>
+			<key>other</key>
+			<string>These conversations will no longer be snoozed and will be deleted</string>
+		</dict>
+	</dict>
+	<key>snoozeMoveConfirmAlertDescription</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@value@</string>
+		<key>value</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>This conversation will no longer be snoozed and will be moved</string>
+			<key>other</key>
+			<string>These conversations will no longer be snoozed and will be moved</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

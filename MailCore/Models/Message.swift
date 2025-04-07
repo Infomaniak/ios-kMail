@@ -175,6 +175,10 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         return isDraft || !fullyDownloaded
     }
 
+    public var isSnoozed: Bool {
+        snoozeState == .snoozed && snoozeEndDate != nil && snoozeUuid != nil
+    }
+
     public var formattedFrom: String {
         from.first?.htmlDescription ?? MailResourcesStrings.Localizable.unknownRecipientTitle
     }
