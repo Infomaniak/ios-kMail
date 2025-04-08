@@ -33,6 +33,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
         let mailboxManager: MailboxManager
         let draft: Draft
         let messageReply: MessageReply?
+        let mainViewState: MainViewState
     }
 
     @LazyInjectService private var accountManager: AccountManager
@@ -66,6 +67,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
                             htmlAttachments: htmlAttachments
                         )
                         .environmentObject(resolvedIntent.mailboxManager)
+                        .environmentObject(resolvedIntent.mainViewState)
                         .environment(\.currentUser, MandatoryEnvironmentContainer(value: resolvedIntent.currentUser))
                     } else {
                         ComposeMessageProgressView()
@@ -123,7 +125,9 @@ struct ComposeMessageIntentView: View, IntentViewable {
             writeDraftToRealm(mailboxManager, draft: draftToWrite)
 
             Task { @MainActor [maybeMessageReply] in
-                guard let liveDraft = mailboxManager.draft(localUuid: draftLocalUUID) else {
+                guard let liveDraft = mailboxManager.draft(localUuid: draftLocalUUID),
+                      let mainViewState = getMainViewState(mailboxManager: mailboxManager)
+                else {
                     dismiss()
                     snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
                     return
@@ -133,12 +137,24 @@ struct ComposeMessageIntentView: View, IntentViewable {
                     currentUser: currentUser,
                     mailboxManager: mailboxManager,
                     draft: liveDraft,
-                    messageReply: maybeMessageReply
+                    messageReply: maybeMessageReply,
+                    mainViewState: mainViewState
                 )
             }
         } else {
             dismiss()
             snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
+        }
+    }
+
+    func getMainViewState(mailboxManager: MailboxManager) -> MainViewState? {
+        @InjectService var mainViewStateStore: MainViewStateStore
+        if let mainViewState = mainViewStateStore.getExistingMainViewState(for: mailboxManager) {
+            return mainViewState
+        } else if let inboxFolder = mailboxManager.getFolder(with: .inbox) {
+            return mainViewStateStore.getOrCreateMainViewState(for: mailboxManager, initialFolder: inboxFolder)
+        } else {
+            return nil
         }
     }
 

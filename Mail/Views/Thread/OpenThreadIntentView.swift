@@ -47,15 +47,19 @@ struct OpenThreadIntentView: View, IntentViewable {
 
     var body: some View {
         if let resolvedIntent = resolvedIntent.wrappedValue {
+            @InjectService var mainViewStateStore: MainViewStateStore
+            let mainViewState = mainViewStateStore.getOrCreateMainViewState(
+                for: resolvedIntent.mailboxManager,
+                initialFolder: resolvedIntent.currentFolder
+            )
+
             ThreadView(thread: resolvedIntent.thread)
                 .environmentObject(resolvedIntent.mailboxManager)
                 .environmentObject(ActionsManager(
                     mailboxManager: resolvedIntent.mailboxManager,
-                    mainViewState: MainViewState(
-                        mailboxManager: resolvedIntent.mailboxManager,
-                        selectedFolder: resolvedIntent.currentFolder
-                    )
+                    mainViewState: mainViewState
                 ))
+                .environmentObject(mainViewState)
                 .environment(\.currentUser, MandatoryEnvironmentContainer(value: resolvedIntent.user))
         } else {
             ProgressView()

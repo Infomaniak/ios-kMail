@@ -130,6 +130,9 @@ open class TargetAssembly {
             },
             Factory(type: AttachmentCacheHelper.self) { _, _ in
                 AttachmentCacheHelper(pipeline: ImagePipeline(configuration: .withDataCache))
+            },
+            Factory(type: MainViewStateStore.self) { _, _ in
+                MainViewStateStore()
             }
         ]
     }
