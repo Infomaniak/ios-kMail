@@ -91,6 +91,7 @@ public class RootViewState: ObservableObject {
     public func transitionToMainViewIfPossible(targetAccount: ApiToken?, targetMailbox: Mailbox?) async {
         @InjectService var accountManager: AccountManager
         @InjectService var mailboxInfosManager: MailboxInfosManager
+        @InjectService var mainViewStateStore: MainViewStateStore
 
         guard let currentAccount = targetAccount ?? accountManager.getCurrentAccount() else {
             transitionToRootViewState(.onboarding)
@@ -115,10 +116,7 @@ public class RootViewState: ObservableObject {
            let currentUser = await accountManager.getCurrentUser() {
             transitionToRootViewState(.mainView(
                 currentUser,
-                MainViewState(
-                    mailboxManager: targetMailboxManager,
-                    selectedFolder: initialFolder
-                )
+                mainViewStateStore.getOrCreateMainViewState(for: targetMailboxManager, initialFolder: initialFolder)
             ))
         } else {
             let mailboxes = mailboxInfosManager.getMailboxes(for: currentAccount.userId)
