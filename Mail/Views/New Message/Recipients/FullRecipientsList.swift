@@ -54,7 +54,7 @@ struct FullRecipientsList: View {
             matomo.track(eventWithCategory: .externals, name: "deleteRecipient")
         }
 
-        guard let recipientAt = $recipients.wrappedValue.firstIndex(of: recipient) else { return }
+        guard let recipientAt = $recipients.wrappedValue.firstIndex(where: { $0.id == recipient.id }) else { return }
         withAnimation {
             $recipients.remove(at: recipientAt)
         }
