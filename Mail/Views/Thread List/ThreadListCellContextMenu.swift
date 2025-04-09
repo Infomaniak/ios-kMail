@@ -29,49 +29,124 @@ extension View {
 }
 
 struct ThreadListCellContextMenu: ViewModifier {
-    @EnvironmentObject private var actionsManager: ActionsManager
+    @Environment(\.currentUser) private var currentUser
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @ModalState private var reportForJunkMessages: [Message]?
+    @ModalState private var reportedForDisplayProblemMessage: Message?
+    @ModalState private var reportedForPhishingMessages: [Message]?
+    @ModalState private var blockSenderAlert: BlockRecipientAlertState?
+    @ModalState private var blockSendersList: BlockRecipientState?
     @ModalState private var messagesToMove: [Message]?
+    @ModalState private var flushAlert: FlushAlertState?
+    @ModalState private var shareMailLink: ShareMailLinkResult?
+    @ModalState private var messagesToSnooze: [Message]?
+    @ModalState private var messagesToDownload: [Message]?
 
     let thread: Thread
     let toggleMultipleSelection: (Bool) -> Void
 
-    private var actions: [Action] {
-        return Action.rightClickActions
+    private var actions: (quickActions: [Action], listActions: [Action]) {
+        let actions = Action.actionsForMessages(
+            thread.messages.toArray(),
+            origin: .contextMenu(),
+            userIsStaff: currentUser.value.isStaff ?? false,
+            userEmail: currentUser.value.email
+        )
+        return actions
+    }
+
+    private var origin: ActionOrigin {
+        .contextMenu(
+            originFolder: thread.folder?.freezeIfNeeded(),
+            nearestFlushAlert: $flushAlert,
+            nearestMessagesToMoveSheet: $messagesToMove,
+            nearestBlockSenderAlert: $blockSenderAlert,
+            nearestBlockSendersList: $blockSendersList,
+            nearestReportJunkMessagesActionsPanel: $reportForJunkMessages,
+            nearestReportedForPhishingMessagesAlert: $reportedForPhishingMessages,
+            nearestReportedForDisplayProblemMessageAlert: $reportedForDisplayProblemMessage,
+            nearestShareMailLinkPanel: $shareMailLink,
+            nearestMessagesToSnooze: $messagesToSnooze,
+            messagesToDownload: $messagesToDownload
+        )
     }
 
     func body(content: Content) -> some View {
         content
             .contextMenu {
-                ForEach(actions) { action in
-                    Button(role: isDestructiveAction(action)) {
-                        guard action != .activeMultiselect else {
-                            toggleMultipleSelection(false)
-                            return
-                        }
-                        Task {
-                            try await actionsManager.performAction(
-                                target: thread.messages.toArray(),
-                                action: action,
-                                origin: .swipe(originFolder: thread.folder, nearestMessagesToMoveSheet: $messagesToMove)
-                            )
-                        }
-                    } label: {
-                        Label {
-                            Text(action.title)
-                        } icon: {
-                            action.icon
-                                .resizable()
-                                .scaledToFit()
-                        }
-                    }
+                ControlGroup {
+                    ActionButtonList(
+                        messagesToMove: $messagesToMove,
+                        actions: actions.quickActions,
+                        messages: thread.messages.toArray(),
+                        folder: thread.folder,
+                        origin: origin,
+                        toggleMultipleSelection: toggleMultipleSelection
+                    )
+                }
+                .modifier(controlGroupStyleCompactStyle())
+
+                ActionButtonList(
+                    messagesToMove: $messagesToMove,
+                    actions: actions.listActions,
+                    messages: thread.messages.toArray(),
+                    folder: thread.folder,
+                    origin: origin,
+                    toggleMultipleSelection: toggleMultipleSelection
+                )
+            }
+            .modifier(ActionAlertsViewModifier(
+                reportForJunkMessages: $reportForJunkMessages,
+                reportedForDisplayProblemMessage: $reportedForDisplayProblemMessage,
+                reportedForPhishingMessages: $reportedForPhishingMessages,
+                blockSenderAlert: $blockSenderAlert,
+                blockSendersList: $blockSendersList,
+                messagesToMove: $messagesToMove,
+                flushAlert: $flushAlert,
+                shareMailLink: $shareMailLink,
+                messagesToSnooze: $messagesToSnooze,
+                messagesToDownload: $messagesToDownload,
+                originFolder: thread.folder,
+                origin: origin
+            ))
+    }
+}
+
+struct ActionButtonList: View {
+    @EnvironmentObject private var actionsManager: ActionsManager
+
+    @Binding var messagesToMove: [Message]?
+
+    let actions: [Action]
+    let messages: [Message]
+    let folder: Folder?
+    let origin: ActionOrigin
+    let toggleMultipleSelection: (Bool) -> Void
+
+    var body: some View {
+        ForEach(actions) { action in
+            Button(role: isDestructiveAction(action)) {
+                guard action != .activeMultiSelect else {
+                    toggleMultipleSelection(false)
+                    return
+                }
+                Task {
+                    try await actionsManager.performAction(
+                        target: messages,
+                        action: action,
+                        origin: origin
+                    )
+                }
+            } label: {
+                Label {
+                    Text(action.title)
+                } icon: {
+                    action.icon
                 }
             }
-            .sheet(item: $messagesToMove) { messages in
-                MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: thread.folder)
-                    .sheetViewStyle()
-            }
+        }
     }
 
     private func isDestructiveAction(_ action: Action) -> ButtonRole? {
@@ -79,5 +154,16 @@ struct ThreadListCellContextMenu: ViewModifier {
             return nil
         }
         return action.isDestructive(for: thread) ? .destructive : nil
+    }
+}
+
+struct controlGroupStyleCompactStyle: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 16.4, *) {
+            content
+                .controlGroupStyle(.compactMenu)
+        } else {
+            content
+        }
     }
 }
