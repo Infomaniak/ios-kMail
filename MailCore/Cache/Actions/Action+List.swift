@@ -117,10 +117,9 @@ extension Action: CaseIterable {
             messages.contains { $0.flagged } ? .unstar : .star
         }
         var printAction: Action? {
-            guard messagesType == .single else { return nil }
-            return origin.type == .floatingPanel(source: .messageList) ? .print : nil
+            guard messagesType == .single, origin.type == .floatingPanel(source: .messageList) else { return nil }
+            return .print
         }
-
         var reportDisplayProblemAction: Action? {
             guard userIsStaff, messagesType == .single else { return nil }
             return .reportDisplayProblem
