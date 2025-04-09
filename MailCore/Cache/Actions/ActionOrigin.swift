@@ -151,7 +151,30 @@ public struct ActionOrigin {
         return ActionOrigin(type: .threadHeader, folder: originFolder, nearestMessagesToSnooze: nearestMessagesToSnooze)
     }
 
-    public static func contextMenu(originFolder: Folder? = nil) -> ActionOrigin {
-        return ActionOrigin(type: .contextMenu, folder: originFolder)
+    public static func contextMenu(originFolder: Folder? = nil,
+                                   nearestFlushAlert: Binding<FlushAlertState?>? = nil,
+                                   nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
+                                   nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>? = nil,
+                                   nearestBlockSendersList: Binding<BlockRecipientState?>? = nil,
+                                   nearestReportJunkMessagesActionsPanel: Binding<[Message]?>? = nil,
+                                   nearestReportedForPhishingMessagesAlert: Binding<[Message]?>? = nil,
+                                   nearestReportedForDisplayProblemMessageAlert: Binding<Message?>? = nil,
+                                   nearestShareMailLinkPanel: Binding<ShareMailLinkResult?>? = nil,
+                                   nearestMessagesToSnooze: Binding<[Message]?>? = nil,
+                                   messagesToDownload: Binding<[Message]?>? = nil) -> ActionOrigin {
+        return ActionOrigin(
+            type: .contextMenu,
+            folder: originFolder,
+            nearestFlushAlert: nearestFlushAlert,
+            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
+            nearestBlockSenderAlert: nearestBlockSenderAlert,
+            nearestBlockSendersList: nearestBlockSendersList,
+            nearestReportJunkMessagesActionsPanel: nearestReportJunkMessagesActionsPanel,
+            nearestReportedForPhishingMessagesAlert: nearestReportedForPhishingMessagesAlert,
+            nearestReportedForDisplayProblemMessageAlert: nearestReportedForDisplayProblemMessageAlert,
+            nearestShareMailLinkPanel: nearestShareMailLinkPanel,
+            nearestMessagesToSnooze: nearestMessagesToSnooze,
+            messagesToDownload: messagesToDownload
+        )
     }
 }
