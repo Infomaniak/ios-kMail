@@ -31,10 +31,6 @@ extension View {
 }
 
 struct ThreadViewToolbarModifier: ViewModifier {
-    private static let standardActions: [Action] = [.reply, .forward, .archive, .delete]
-    private static let archiveActions: [Action] = [.reply, .forward, .openMovePanel, .delete]
-    private static let scheduleActions: [Action] = [.delete]
-
     @LazyInjectService private var matomo: MatomoUtils
 
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -51,14 +47,13 @@ struct ThreadViewToolbarModifier: ViewModifier {
     private let frozenFolder: Folder?
     private let frozenMessages: [Message]
 
-    private var toolbarActions: [Action] {
-        if frozenThread.containsOnlyScheduledDrafts {
-            return Self.scheduleActions
-        } else if frozenFolder?.role == .archive {
-            return Self.archiveActions
-        } else {
-            return Self.standardActions
-        }
+    private var toolbarActions: (quickActions: [Action], listActions: [Action]) {
+        return Action.actionsForMessages(
+            frozenMessages,
+            origin: .contextMenu(),
+            userIsStaff: false,
+            userEmail: mailboxManager.mailbox.email
+        )
     }
 
     init(frozenThread: Thread) {
@@ -81,7 +76,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                 }
             }
             .bottomBar {
-                ForEach(toolbarActions) { action in
+                ForEach(toolbarActions.quickActions) { action in
                     if action == .reply {
                         ToolbarButton(text: action.title, icon: action.icon) {
                             didTap(action: action)
