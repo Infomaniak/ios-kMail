@@ -1,2 +1,3 @@
-- Prevent contact flickering
-- Prevent crash on launch 
+- Snooze messages
+- Fix displaying BIMI
+- Fix removing recipient in compose view

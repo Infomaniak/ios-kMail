@@ -1,2 +1,3 @@
-- Correction d'un bug faisant clignoter les avatars
-- Correction d'un crash au lancement
+- Mise en attente de messages
+- Correction de l'affichage des BIMI
+- Correction d'un problème de suppression de destinataire dans la vue de composition
