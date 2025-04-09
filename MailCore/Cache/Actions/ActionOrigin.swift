@@ -27,6 +27,7 @@ public struct ActionOrigin {
         case multipleSelection
         case shortcut
         case threadHeader
+        case contextMenu
     }
 
     public enum FloatingPanelSource {
@@ -148,5 +149,9 @@ public struct ActionOrigin {
     public static func threadHeader(originFolder: Folder? = nil,
                                     nearestMessagesToSnooze: Binding<[Message]?>? = nil) -> ActionOrigin {
         return ActionOrigin(type: .threadHeader, folder: originFolder, nearestMessagesToSnooze: nearestMessagesToSnooze)
+    }
+
+    public static func contextMenu(originFolder: Folder? = nil) -> ActionOrigin {
+        return ActionOrigin(type: .contextMenu, folder: originFolder)
     }
 }
