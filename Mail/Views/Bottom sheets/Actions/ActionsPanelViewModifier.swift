@@ -43,8 +43,6 @@ extension View {
 struct ActionsPanelViewModifier: ViewModifier {
     @Environment(\.currentUser) private var currentUser
 
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
     @ModalState private var reportForJunkMessages: [Message]?
     @ModalState private var reportedForDisplayProblemMessage: Message?
     @ModalState private var reportedForPhishingMessages: [Message]?
@@ -97,61 +95,22 @@ struct ActionsPanelViewModifier: ViewModifier {
                 completionHandler: completionHandler
             )
         }
-        .sheet(item: $messagesToMove) { messages in
-            MoveEmailView(
-                mailboxManager: mailboxManager,
-                movedMessages: messages,
-                originFolder: originFolder,
-                completion: completionHandler
-            )
-            .sheetViewStyle()
-        }
-        .floatingPanel(item: $reportForJunkMessages) { reportForJunkMessages in
-            ReportJunkView(reportedMessages: reportForJunkMessages, origin: origin, completionHandler: completionHandler)
-        }
-        .floatingPanel(item: $blockSendersList,
-                       title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
-            BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: origin)
-        }
-        .customAlert(item: $blockSenderAlert) { blockSenderState in
-            ConfirmationBlockRecipientView(
-                recipients: blockSenderState.recipients,
-                reportedMessages: blockSenderState.messages,
-                origin: origin
-            )
-        }
-        .customAlert(item: $reportedForDisplayProblemMessage) { message in
-            ReportDisplayProblemView(message: message)
-        }
-        .customAlert(item: $reportedForPhishingMessages) { messages in
-            ReportPhishingView(
-                messagesWithDuplicates: messages,
-                distinctMessageCount: messages.count,
-                completionHandler: completionHandler
-            )
-        }
-        .customAlert(item: $destructiveAlert) { item in
-            DestructiveActionAlertView(destructiveAlert: item)
-        }
-        .customAlert(item: $messagesToDownload) { messages in
-            ConfirmationSaveThreadInKdrive(targetMessages: messages)
-        }
-        .sheet(item: $shareMailLink) { shareMailLinkResult in
-            if #available(iOS 16.0, *) {
-                ActivityView(activityItems: [shareMailLinkResult.url])
-                    .ignoresSafeArea(edges: [.bottom])
-                    .presentationDetents([.medium, .large])
-            } else {
-                ActivityView(activityItems: [shareMailLinkResult.url])
-                    .ignoresSafeArea(edges: [.bottom])
-                    .backport.presentationDetents([.medium, .large])
-            }
-        }
-        .snoozedFloatingPanel(
-            messages: messagesToSnooze,
-            initialDate: initialSnoozedDate,
-            folder: originFolder?.freezeIfNeeded(),
+        .modifier(ActionAlertsViewModifier(
+            reportForJunkMessages: $reportForJunkMessages,
+            reportedForDisplayProblemMessage: $reportedForDisplayProblemMessage,
+            reportedForPhishingMessages: $reportedForPhishingMessages,
+            blockSenderAlert: $blockSenderAlert,
+            blockSendersList: $blockSendersList,
+            messagesToMove: $messagesToMove,
+            flushAlert: $flushAlert,
+            shareMailLink: $shareMailLink,
+            messagesToSnooze: $messagesToSnooze,
+            messagesToDownload: $messagesToDownload,
+            originFolder: originFolder,
+            origin: origin,
             completionHandler: completionHandler
-        )
+        ))
     }
 }
+
+
