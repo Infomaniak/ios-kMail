@@ -131,7 +131,7 @@ extension Action: CaseIterable {
             }
         }
 
-        let listActions: [Action?] = [
+        var listActions: [Action?] = [
             origin.type == .contextMenu ? .activeMultiSelect : nil,
             messagesType != .multipleInDifferentThreads ? .openMovePanel : nil,
             spamAction,
@@ -143,6 +143,8 @@ extension Action: CaseIterable {
             platformDetector.isMac ? nil : .saveThreadInkDrive,
             reportDisplayProblemAction
         ]
+
+        listActions = snoozedActions(messages, folder: origin.frozenFolder) + listActions
 
         return (quickActions.compactMap { $0 }, listActions.compactMap { $0 })
     }
