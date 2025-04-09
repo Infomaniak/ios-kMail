@@ -429,8 +429,8 @@ public extension Action {
         iconResource: MailResourcesAsset.bin,
         matomoName: "deleteAccount"
     )
-    static let activeMultiselect = Action(
-        id: "activeMultiselect",
+    static let activeMultiSelect = Action(
+        id: "activeMultiSelect",
         title: MailResourcesStrings.Localizable.buttonMultiselect,
         iconResource: MailResourcesAsset.checklist,
         matomoName: ""
