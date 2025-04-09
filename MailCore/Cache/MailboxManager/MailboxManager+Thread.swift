@@ -141,10 +141,29 @@ public extension MailboxManager {
         var messagesToFetch = folderPrevious.remainingOldMessagesToFetch
         while messagesToFetch > 0 {
             guard !Task.isCancelled else { return }
-            guard try await fetchOneOldPage(folder: folder) != nil else { return }
+            guard try await fetchOneOldPage(folder: folder) != nil else { break }
 
             messagesToFetch -= Constants.oldPageSize
         }
+
+        if folder.role == .inbox {
+            guard !Task.isCancelled else { return }
+            unsnoozeThreadsWithNewMessage(in: folder)
+        }
+    }
+
+    private func unsnoozeThreadsWithNewMessage(in folder: Folder) {
+        let threadsToUnsnooze = fetchResults(ofType: Thread.self) { partial in
+            partial.where { thread in
+                let isInFolder = thread.folderId == folder.remoteId
+                let isSnoozed = thread.snoozeState == .snoozed && thread.snoozeUuid != nil && thread.snoozeEndDate != nil
+                let isLastMessageFromThreadNotSnoozed = thread.isLastMessageFromFolderSnoozed == false
+
+                return isInFolder && isSnoozed && isLastMessageFromThreadNotSnoozed
+            }
+        }
+
+        
     }
 
     private func getMessagesDelta(signature: String, folder: Folder) async throws -> String {
