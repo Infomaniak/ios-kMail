@@ -121,6 +121,10 @@ public extension FormatStyle where Self == Date.FormatStyle {
     static var scheduleOption: Date.FormatStyle {
         return .dateTime.weekday(.abbreviated).day().month(.abbreviated).hour().minute()
     }
+
+    static var snoozeSnackbar: Date.FormatStyle {
+        return .dateTime.weekday(.wide).day().month().hour().minute()
+    }
 }
 
 // MARK: ByteCount
