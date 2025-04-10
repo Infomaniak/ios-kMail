@@ -137,7 +137,7 @@ struct ThreadListView: View {
                                                    isMultiSelected: multipleSelectionViewModel.selectedItems[thread.uid] != nil)
                                         .draggableThread(multipleSelectionViewModel.selectedItems.isEmpty ?
                                             [thread.uid] : Array(multipleSelectionViewModel.selectedItems.keys)) {
-                                                multipleSelectionViewModel.selectedItems.removeAll()
+                                                multipleSelectionViewModel.disable()
                                         }
                                 }
                                 .threadListCellAppearance()
