@@ -31,8 +31,6 @@ extension View {
 struct ThreadListCellContextMenu: ViewModifier {
     @Environment(\.currentUser) private var currentUser
 
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
     @ModalState private var reportForJunkMessages: [Message]?
     @ModalState private var reportedForDisplayProblemMessage: Message?
     @ModalState private var reportedForPhishingMessages: [Message]?
@@ -80,7 +78,6 @@ struct ThreadListCellContextMenu: ViewModifier {
                     ActionButtonList(
                         actions: actions.quickActions,
                         messages: thread.messages.toArray(),
-                        folder: thread.folder,
                         origin: origin,
                         toggleMultipleSelection: toggleMultipleSelection
                     )
@@ -90,7 +87,6 @@ struct ThreadListCellContextMenu: ViewModifier {
                 ActionButtonList(
                     actions: actions.listActions,
                     messages: thread.messages.toArray(),
-                    folder: thread.folder,
                     origin: origin,
                     toggleMultipleSelection: toggleMultipleSelection
                 )
