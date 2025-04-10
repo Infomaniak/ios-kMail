@@ -18,7 +18,6 @@
 
 import Foundation
 import MailCore
-import MailResources
 import SwiftModalPresentation
 import SwiftUI
 
@@ -75,15 +74,6 @@ struct ActionsPanelViewModifier: ViewModifier {
             nearestMessagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload
         )
-    }
-
-    private var initialSnoozedDate: Date? {
-        guard let messagesToSnooze,
-              let initialDate = messagesToSnooze.first?.snoozeEndDate,
-              messagesToSnooze.allSatisfy({ $0.isSnoozed && $0.snoozeEndDate == initialDate })
-        else { return nil }
-
-        return initialDate
     }
 
     func body(content: Content) -> some View {
