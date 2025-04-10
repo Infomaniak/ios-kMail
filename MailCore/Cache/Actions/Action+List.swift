@@ -101,13 +101,18 @@ extension Action: CaseIterable {
     public static func actionsForMessages(_ messages: [Message],
                                           origin: ActionOrigin,
                                           userIsStaff: Bool,
-                                          userEmail: String) -> (quickActions: [Action], listActions: [Action]) {
+                                          userEmail: String)
+        -> Action.Lists {
         @LazyInjectService var platformDetector: PlatformDetectable
 
         let messagesType = MessagesType(messages, frozenFolder: origin.frozenFolder)
 
         let unreadAction: Action = messages.allSatisfy(\.seen) ? .markAsUnread : .markAsRead
-        let archiveAction: Action = origin.frozenFolder?.role != .archive ? .archive : .moveToInbox
+        var archiveAction: Action? {
+            guard origin.type != .floatingPanel(source: .messageList),
+                  origin.type != .floatingPanel(source: .messageDetails) else { return nil }
+            return origin.frozenFolder?.role != .archive ? .archive : .moveToInbox
+        }
         var spamAction: Action? {
             let selfThread = messages.flatMap(\.from).allSatisfy { $0.isMeOrPlusMe(currentMailboxEmail: userEmail) }
             guard !selfThread else { return nil }
@@ -116,40 +121,53 @@ extension Action: CaseIterable {
         var starAction: Action {
             messages.contains { $0.flagged } ? .unstar : .star
         }
-        var printAction: Action? {
-            guard messagesType == .single, origin.type == .floatingPanel(source: .messageList) else { return nil }
-            return .print
-        }
         var reportDisplayProblemAction: Action? {
-            guard userIsStaff, messagesType == .single else { return nil }
+            guard userIsStaff, messagesType.isSingle else { return nil }
             return .reportDisplayProblem
         }
 
-        var quickActions: [Action?] {
-            switch messagesType {
-            case .single, .multipleInSameThread:
-                [.reply, .replyAll, .forward, .delete]
-            case .multipleInDifferentThreads:
-                [.openMovePanel, unreadAction, archiveAction, .delete]
-            }
+        var quickActions: [Action] {
+            guard messagesType.isSingle, origin.type == .floatingPanel(source: .messageDetails) else { return [] }
+
+            return [.reply, .replyAll, .forward, .delete]
         }
 
         var listActions: [Action?] = [
             origin.type == .contextMenu ? .activeMultiSelect : nil,
-            messagesType != .multipleInDifferentThreads ? .openMovePanel : nil,
-            spamAction,
-            messagesType != .multipleInDifferentThreads ? unreadAction : nil,
-            messagesType != .multipleInDifferentThreads ? archiveAction : nil,
-            starAction,
-            printAction,
-            messagesType == .single ? .shareMailLink : nil,
-            platformDetector.isMac ? nil : .saveThreadInkDrive,
-            reportDisplayProblemAction
+            .openMovePanel,
+            spamAction
         ]
+
+        if (messagesType == .single && origin.type != .floatingPanel(source: .threadList)) || origin
+            .type == .floatingPanel(source: .messageList) {
+            listActions += [
+                unreadAction,
+                starAction,
+                archiveAction,
+                messagesType.isSingle ? .print : nil,
+                messagesType.isSingle ? .shareMailLink : nil,
+                platformDetector.isMac ? nil : .saveThreadInkDrive,
+                reportDisplayProblemAction
+            ]
+        }
 
         listActions = snoozedActions(messages, folder: origin.frozenFolder) + listActions
 
-        return (quickActions.compactMap { $0 }, listActions.compactMap { $0 })
+        var bottomBarActions: [Action] = []
+        if origin.type != .contextMenu {
+            switch messagesType {
+            case .single, .multipleInSameThread:
+                bottomBarActions = [.reply, .forward, .archive, .delete]
+            case .multipleInDifferentThreads:
+                bottomBarActions = [unreadAction, .archive, starAction, .delete]
+            }
+        }
+
+        return Action.Lists(
+            quickActions: quickActions,
+            listActions: listActions.compactMap { $0 },
+            bottomBarActions: bottomBarActions
+        )
     }
 
     private enum MessagesType {
@@ -166,6 +184,14 @@ extension Action: CaseIterable {
                 self = .multipleInDifferentThreads
             }
         }
+
+        var isSingle: Bool { return self == .single }
+    }
+
+    public struct Lists {
+        public let quickActions: [Action]
+        public let listActions: [Action]
+        public let bottomBarActions: [Action]
     }
 }
 

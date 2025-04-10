@@ -47,10 +47,10 @@ struct ThreadViewToolbarModifier: ViewModifier {
     private let frozenFolder: Folder?
     private let frozenMessages: [Message]
 
-    private var toolbarActions: (quickActions: [Action], listActions: [Action]) {
+    private var toolbarActions: Action.Lists {
         return Action.actionsForMessages(
             frozenMessages,
-            origin: .contextMenu(),
+            origin: .floatingPanel(source: .threadList),
             userIsStaff: false,
             userEmail: mailboxManager.mailbox.email
         )
@@ -76,7 +76,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                 }
             }
             .bottomBar {
-                ForEach(toolbarActions.quickActions) { action in
+                ForEach(toolbarActions.bottomBarActions) { action in
                     if action == .reply {
                         ToolbarButton(text: action.title, icon: action.icon) {
                             didTap(action: action)

@@ -47,10 +47,10 @@ struct ThreadListCellContextMenu: ViewModifier {
     let thread: Thread
     let toggleMultipleSelection: (Bool) -> Void
 
-    private var actions: (quickActions: [Action], listActions: [Action]) {
+    private var actions: Action.Lists {
         let actions = Action.actionsForMessages(
             thread.messages.toArray(),
-            origin: .contextMenu(),
+            origin: origin,
             userIsStaff: currentUser.value.isStaff ?? false,
             userEmail: currentUser.value.email
         )
@@ -78,7 +78,6 @@ struct ThreadListCellContextMenu: ViewModifier {
             .contextMenu {
                 ControlGroup {
                     ActionButtonList(
-                        messagesToMove: $messagesToMove,
                         actions: actions.quickActions,
                         messages: thread.messages.toArray(),
                         folder: thread.folder,
@@ -89,7 +88,6 @@ struct ThreadListCellContextMenu: ViewModifier {
                 .modifier(controlGroupStyleCompactStyle())
 
                 ActionButtonList(
-                    messagesToMove: $messagesToMove,
                     actions: actions.listActions,
                     messages: thread.messages.toArray(),
                     folder: thread.folder,
@@ -116,8 +114,6 @@ struct ThreadListCellContextMenu: ViewModifier {
 
 struct ActionButtonList: View {
     @EnvironmentObject private var actionsManager: ActionsManager
-
-    @Binding var messagesToMove: [Message]?
 
     let actions: [Action]
     let messages: [Message]

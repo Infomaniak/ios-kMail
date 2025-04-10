@@ -27,8 +27,7 @@ import SwiftUI
 
 struct ActionsView: View {
     private let targetMessages: [Message]
-    private let quickActions: [Action]
-    private let listActions: [Action]
+    private let actionsLists: Action.Lists
     private let origin: ActionOrigin
     private let completionHandler: ((Action) -> Void)?
 
@@ -37,33 +36,33 @@ struct ActionsView: View {
          origin: ActionOrigin,
          completionHandler: ((Action) -> Void)? = nil) {
         let userIsStaff = user.isStaff ?? false
-        let actions = Action.actionsForMessages(messages, origin: origin, userIsStaff: userIsStaff, userEmail: user.email)
-        quickActions = actions.quickActions
-        listActions = actions.listActions
 
         targetMessages = messages
+        actionsLists = Action.actionsForMessages(messages, origin: origin, userIsStaff: userIsStaff, userEmail: user.email)
         self.origin = origin
         self.completionHandler = completionHandler
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.mini) {
-            HStack(alignment: .top, spacing: IKPadding.medium) {
-                ForEach(quickActions) { action in
-                    QuickActionView(
-                        targetMessages: targetMessages,
-                        action: action,
-                        origin: origin,
-                        completionHandler: completionHandler
-                    )
-                    .frame(maxWidth: .infinity)
+            if !actionsLists.quickActions.isEmpty {
+                HStack(alignment: .top, spacing: IKPadding.medium) {
+                    ForEach(actionsLists.quickActions) { action in
+                        QuickActionView(
+                            targetMessages: targetMessages,
+                            action: action,
+                            origin: origin,
+                            completionHandler: completionHandler
+                        )
+                        .frame(maxWidth: .infinity)
+                    }
                 }
+                .padding(.horizontal, IKPadding.medium)
             }
-            .padding(.horizontal, IKPadding.medium)
 
             VStack(alignment: .leading, spacing: 0) {
-                ForEach(listActions) { action in
-                    if action != listActions.first {
+                ForEach(actionsLists.listActions) { action in
+                    if action != actionsLists.listActions.first {
                         IKDivider()
                     }
 
