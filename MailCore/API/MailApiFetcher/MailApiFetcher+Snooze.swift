@@ -45,7 +45,9 @@ public extension MailApiFetcher {
     }
 
     func deleteSnooze(message: Message, mailbox: Mailbox) async throws {
-        guard let snoozeUuid = message.snoozeUuid else { return }
+        guard let snoozeUuid = message.snoozeUuid else {
+            throw MailError.missingSnoozeUUID
+        }
 
         let _: Empty = try await perform(
             request: authenticatedRequest(
