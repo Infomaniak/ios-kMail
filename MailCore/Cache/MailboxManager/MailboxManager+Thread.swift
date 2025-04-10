@@ -525,7 +525,7 @@ public extension MailboxManager {
             partial.where { thread in
                 let isInFolder = thread.folderId == folder.remoteId
                 let isSnoozed = thread.snoozeState == .snoozed && thread.snoozeUuid != nil && thread.snoozeEndDate != nil
-                let isLastMessageFromThreadNotSnoozed = thread.isLastMessageFromFolderSnoozed == false
+                let isLastMessageFromThreadNotSnoozed = !thread.isLastMessageFromFolderSnoozed
 
                 return isInFolder && isSnoozed && isLastMessageFromThreadNotSnoozed
             }
