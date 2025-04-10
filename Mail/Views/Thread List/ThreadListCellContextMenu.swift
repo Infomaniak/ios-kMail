@@ -108,47 +108,6 @@ struct ThreadListCellContextMenu: ViewModifier {
     }
 }
 
-struct ActionButtonList: View {
-    @EnvironmentObject private var actionsManager: ActionsManager
-
-    let actions: [Action]
-    let messages: [Message]
-    let folder: Folder?
-    let origin: ActionOrigin
-    let toggleMultipleSelection: (Bool) -> Void
-
-    var body: some View {
-        ForEach(actions) { action in
-            Button(role: isDestructiveAction(action)) {
-                guard action != .activeMultiSelect else {
-                    toggleMultipleSelection(false)
-                    return
-                }
-                Task {
-                    try await actionsManager.performAction(
-                        target: messages,
-                        action: action,
-                        origin: origin
-                    )
-                }
-            } label: {
-                Label {
-                    Text(action.title)
-                } icon: {
-                    action.icon
-                }
-            }
-        }
-    }
-
-    private func isDestructiveAction(_ action: Action) -> ButtonRole? {
-        guard action != .archive else {
-            return nil
-        }
-        return action.isDestructive ? .destructive : nil
-    }
-}
-
 struct controlGroupStyleCompactStyle: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 16.4, *) {
