@@ -332,7 +332,8 @@ public class ActionsManager: ObservableObject {
         if snoozeCount == 0 {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
         } else {
-            snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarSnoozeSuccess(date.formatted()))
+            snackbarPresenter
+                .show(message: MailResourcesStrings.Localizable.snackbarSnoozeSuccess(date.formatted(.snoozeSnackbar)))
         }
 
         return allMessagesAreSnoozed ? .modifySnooze : .snooze
