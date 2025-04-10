@@ -543,25 +543,13 @@ public extension MailboxManager {
                 self.manuallyUnsnoozeThreadInRealm(thread: thread)
                 return nil
             } catch {
-                SentrySDK.capture(message: "Impossible to automatically unsnooze thread") { scope in
-                    scope.setLevel(.error)
-                    let errorCore = (error as? MailError)?.code ?? "NA"
-                    scope.setExtra(value: errorCore, key: "MailError")
-                    scope.setContext(
-                        value: [
-                            "Error": error,
-                            "Description": error.localizedDescription
-                        ],
-                        key: "Underlying error"
-                    )
-                }
+                SentryDebug.captureManuallyUnsnoozeError(error: error)
                 return nil
             }
         }
 
+        guard !Task.isCancelled, !unsnoozedMessages.isEmpty else { return }
         Task {
-            guard !Task.isCancelled, !unsnoozedMessages.isEmpty else { return }
-
             if let snoozedFolder = getFolder(with: .snoozed)?.freezeIfNeeded() {
                 await refreshFolderContent(snoozedFolder)
             }
