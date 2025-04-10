@@ -33,6 +33,7 @@ public struct ActionOrigin {
     public enum FloatingPanelSource {
         case threadList
         case messageList
+        case messageDetails
     }
 
     public private(set) var type: ActionOriginType
