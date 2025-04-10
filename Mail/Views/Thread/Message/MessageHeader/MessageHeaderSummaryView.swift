@@ -129,7 +129,7 @@ struct MessageHeaderSummaryView: View {
                         ReplyActionsView(message: message)
                     }
 
-                    ActionsPanelButton(messages: [message], originFolder: message.folder, panelSource: .messageList) {
+                    ActionsPanelButton(messages: [message], originFolder: message.folder, panelSource: .messageDetails) {
                         MailResourcesAsset.plusActions
                             .iconSize(.large)
                     }

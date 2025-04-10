@@ -112,5 +112,3 @@ struct ActionsPanelViewModifier: ViewModifier {
         ))
     }
 }
-
-
