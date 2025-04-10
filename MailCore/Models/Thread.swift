@@ -287,7 +287,8 @@ public class Thread: Object, Decodable, Identifiable {
         bimi: Bimi? = nil,
         snoozeState: SnoozeState? = nil,
         snoozeUuid: String? = nil,
-        snoozeEndDate: Date? = nil
+        snoozeEndDate: Date? = nil,
+        isLastMessageFromFolderSnoozed: Bool = false
     ) {
         self.init()
 
@@ -308,6 +309,7 @@ public class Thread: Object, Decodable, Identifiable {
         self.snoozeState = snoozeState
         self.snoozeUuid = snoozeUuid
         self.snoozeEndDate = snoozeEndDate
+        self.isLastMessageFromFolderSnoozed = isLastMessageFromFolderSnoozed
 
         numberOfScheduledDraft = messages.count { $0.isScheduledDraft == true }
     }

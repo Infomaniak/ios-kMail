@@ -464,7 +464,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
             bimi: bimi,
             snoozeState: snoozeState,
             snoozeUuid: snoozeUuid,
-            snoozeEndDate: snoozeEndDate
+            snoozeEndDate: snoozeEndDate,
+            isLastMessageFromFolderSnoozed: isSnoozed
         )
         thread.messageIds = linkedUids
         thread.folderId = folderId
