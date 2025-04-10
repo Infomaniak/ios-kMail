@@ -173,7 +173,6 @@ public class MailApiError: MailError {
         // Snooze
         apiMessageNotSnoozed,
         MailApiError(code: "mail__message_snooze_already_scheduled"),
-        MailApiError(code: "mail__message_not_snoozed"),
         MailApiError(code: "mail__message_max_number_of_scheduled_snooze_reached"),
         MailApiError(code: "mail__message_cannot_be_snooze")
     ]

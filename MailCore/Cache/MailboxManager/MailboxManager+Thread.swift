@@ -529,20 +529,18 @@ public extension MailboxManager {
 
                 return isInFolder && isSnoozed && isLastMessageFromThreadNotSnoozed
             }
-        }.freeze()
+        }.freezeIfNeeded()
 
         guard !threadsToUnsnooze.isEmpty else { return }
 
         let unsnoozedMessages: [String] = await Array(threadsToUnsnooze).concurrentCompactMap(customConcurrency: 4) { thread in
-            guard let lastMessageSnoozed = thread.messages.last(where: { $0.isSnoozed }) else {
-                return nil
-            }
+            guard let lastMessageSnoozed = thread.messages.last(where: { $0.isSnoozed }) else { return nil }
 
             do {
                 try await self.apiFetcher.deleteSnooze(message: lastMessageSnoozed, mailbox: self.mailbox)
                 return lastMessageSnoozed.uid
             } catch let error as MailApiError where error == .apiMessageNotSnoozed {
-                self.unsnoozeThreadInRealm()
+                self.manuallyUnsnoozeThreadInRealm(thread: thread)
                 return nil
             } catch {
                 SentrySDK.capture(message: "Impossible to automatically unsnooze thread") { scope in
@@ -571,8 +569,22 @@ public extension MailboxManager {
         }
     }
 
-    private func unsnoozeThreadInRealm() {
+    private func manuallyUnsnoozeThreadInRealm(thread: Thread) {
+        try? writeTransaction { writableRealm in
+            guard let freshThread = thread.fresh(using: writableRealm) else { return }
 
+            for message in freshThread.messages {
+                message.snoozeState = nil
+                message.snoozeUuid = nil
+                message.snoozeEndDate = nil
+            }
+
+            try? freshThread.recomputeOrFail()
+            let duplicatesThreads = Set(freshThread.duplicates.flatMap { $0.threads })
+            for duplicateThread in duplicatesThreads {
+                try? duplicateThread.recomputeOrFail()
+            }
+        }
     }
 
     // MARK: - Utils
