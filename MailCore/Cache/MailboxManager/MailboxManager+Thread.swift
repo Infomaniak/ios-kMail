@@ -48,6 +48,8 @@ enum PageDirection {
 // MARK: - Thread
 
 public extension MailboxManager {
+    private static let maxParallelUnsnooze = 4
+
     /// Fetch messages for given folder
     /// Then fetch messages of folder with roles if needed
     /// - Parameters:
@@ -141,9 +143,14 @@ public extension MailboxManager {
         var messagesToFetch = folderPrevious.remainingOldMessagesToFetch
         while messagesToFetch > 0 {
             guard !Task.isCancelled else { return }
-            guard try await fetchOneOldPage(folder: folder) != nil else { return }
+            guard try await fetchOneOldPage(folder: folder) != nil else { break }
 
             messagesToFetch -= Constants.oldPageSize
+        }
+
+        if folder.role == .inbox {
+            guard !Task.isCancelled else { return }
+            try await unsnoozeThreadsWithNewMessage(in: folder)
         }
     }
 
@@ -511,6 +518,68 @@ public extension MailboxManager {
         realm.add(message, update: .modified)
 
         threadsToUpdate.formUnion(oldMessage.threads)
+    }
+
+    // MARK: - Handle snoozed threads
+
+    private func unsnoozeThreadsWithNewMessage(in folder: Folder) async throws {
+        guard UserDefaults.shared.threadMode == .conversation else { return }
+
+        let frozenThreadsToUnsnooze = fetchResults(ofType: Thread.self) { partial in
+            partial.where { thread in
+                let isInFolder = thread.folderId == folder.remoteId
+                let isSnoozed = thread.snoozeState == .snoozed && thread.snoozeUuid != nil && thread.snoozeEndDate != nil
+                let isLastMessageFromFolderNotSnoozed = !thread.isLastMessageFromFolderSnoozed
+
+                return isInFolder && isSnoozed && isLastMessageFromFolderNotSnoozed
+            }
+        }.freeze()
+
+        guard !frozenThreadsToUnsnooze.isEmpty else { return }
+
+        let unsnoozedMessages: [String] = await Array(frozenThreadsToUnsnooze).concurrentCompactMap(
+            customConcurrency: Self.maxParallelUnsnooze
+        ) { thread in
+            guard let lastMessageSnoozed = thread.messages.last(where: { $0.isSnoozed }),
+                  thread.lastMessageFromFolder?.isSnoozed == false else {
+                return nil
+            }
+
+            do {
+                try await self.apiFetcher.deleteSnooze(message: lastMessageSnoozed, mailbox: self.mailbox)
+                return lastMessageSnoozed.uid
+            } catch let error as MailApiError where error == .apiMessageNotSnoozed || error == .apiObjectNotFound {
+                self.manuallyUnsnoozeThreadInRealm(thread: thread)
+                return nil
+            } catch {
+                SentryDebug.captureManuallyUnsnoozeError(error: error)
+                return nil
+            }
+        }
+
+        guard !Task.isCancelled, !unsnoozedMessages.isEmpty else { return }
+        Task {
+            guard let snoozedFolder = getFolder(with: .snoozed)?.freezeIfNeeded() else { return }
+            await refreshFolderContent(snoozedFolder)
+        }
+    }
+
+    private func manuallyUnsnoozeThreadInRealm(thread: Thread) {
+        try? writeTransaction { writableRealm in
+            guard let freshThread = thread.fresh(using: writableRealm) else { return }
+
+            for message in freshThread.messages {
+                message.snoozeState = nil
+                message.snoozeUuid = nil
+                message.snoozeEndDate = nil
+            }
+
+            try? freshThread.recomputeOrFail()
+            let duplicatesThreads = Set(freshThread.duplicates.flatMap { $0.threads })
+            for duplicateThread in duplicatesThreads {
+                try? duplicateThread.recomputeOrFail()
+            }
+        }
     }
 
     // MARK: - Utils

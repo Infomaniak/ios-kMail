@@ -50,8 +50,7 @@ public class MailApiError: MailError {
     /// The server does not know bout the identity used in the request
     public static let apiIdentityNotFound = MailApiError(code: MailApiErrorCode.identityNotFound, shouldDisplay: false)
 
-    /// The context id for the conversation with the AI has expired
-    public static let apiAIContextIdExpired = MailApiError(code: "object_not_found")
+    public static let apiObjectNotFound = MailApiError(code: "object_not_found")
 
     /// Maximum number of syntax tokens for a conversation with the AI reached
     public static let apiAIMaxSyntaxTokensReached = MailApiError(
@@ -73,11 +72,14 @@ public class MailApiError: MailError {
         shouldDisplay: true
     )
 
+    public static let apiMessageNotSnoozed = MailApiError(code: "mail__message_not_snoozed")
+
     static let allErrors: [MailApiError] = [
         // General
         MailApiError(code: "not_authorized"),
         apiInvalidCredential,
         apiInvalidPassword,
+        apiObjectNotFound,
 
         // Folder
         MailApiError(code: "folder__unable_to_create"),
@@ -164,9 +166,14 @@ public class MailApiError: MailError {
         apiIdentityNotFound,
 
         // AI Writer
-        apiAIContextIdExpired,
         apiAIMaxSyntaxTokensReached,
-        apiAITooManyRequests
+        apiAITooManyRequests,
+
+        // Snooze
+        apiMessageNotSnoozed,
+        MailApiError(code: "mail__message_snooze_already_scheduled"),
+        MailApiError(code: "mail__message_max_number_of_scheduled_snooze_reached"),
+        MailApiError(code: "mail__message_cannot_be_snooze")
     ]
 
     static func mailApiErrorFromCode(_ code: String) -> MailApiError? {

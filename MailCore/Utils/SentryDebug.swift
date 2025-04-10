@@ -100,6 +100,21 @@ public enum SentryDebug {
         }
     }
 
+    public static func captureManuallyUnsnoozeError(error: Error) {
+        SentrySDK.capture(message: "Impossible to manually unsnooze thread") { scope in
+            scope.setLevel(.error)
+            let errorCode = (error as? MailError)?.code ?? "NA"
+            scope.setExtra(value: errorCode, key: "MailError")
+            scope.setContext(
+                value: [
+                    "Error": error,
+                    "Description": error.localizedDescription
+                ],
+                key: "Underlying error"
+            )
+        }
+    }
+
     // MARK: - Breadcrumb
 
     public enum Category: String {

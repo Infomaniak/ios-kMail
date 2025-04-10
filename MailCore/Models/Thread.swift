@@ -62,6 +62,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var snoozeState: SnoozeState?
     @Persisted public var snoozeUuid: String?
     @Persisted public var snoozeEndDate: Date?
+    @Persisted public var isLastMessageFromFolderSnoozed = false
 
     /// This property is used to remove threads from list before network call is finished
     @Persisted public var isMovedOutLocally = false
@@ -185,6 +186,8 @@ public class Thread: Object, Decodable, Identifiable {
         snoozeState = lastSnoozedMessage?.snoozeState
         snoozeUuid = lastSnoozedMessage?.snoozeUuid
         snoozeEndDate = lastSnoozedMessage?.snoozeEndDate
+
+        isLastMessageFromFolderSnoozed = lastMessageFromFolder?.isSnoozed == true
     }
 
     private func getLastAction() -> ThreadLastAction? {
@@ -284,7 +287,8 @@ public class Thread: Object, Decodable, Identifiable {
         bimi: Bimi? = nil,
         snoozeState: SnoozeState? = nil,
         snoozeUuid: String? = nil,
-        snoozeEndDate: Date? = nil
+        snoozeEndDate: Date? = nil,
+        isLastMessageFromFolderSnoozed: Bool = false
     ) {
         self.init()
 
@@ -305,6 +309,7 @@ public class Thread: Object, Decodable, Identifiable {
         self.snoozeState = snoozeState
         self.snoozeUuid = snoozeUuid
         self.snoozeEndDate = snoozeEndDate
+        self.isLastMessageFromFolderSnoozed = isLastMessageFromFolderSnoozed
 
         numberOfScheduledDraft = messages.count { $0.isScheduledDraft == true }
     }

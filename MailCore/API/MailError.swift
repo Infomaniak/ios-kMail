@@ -86,6 +86,8 @@ public class MailError: LocalizedError, Encodable {
     public static let noCalendarAttachmentFound = MailError(code: "noCalendarAttachmentFound")
 
     public static let tooShortScheduleDelay = MailError(code: "tooShortScheduleDelay")
+
+    public static let missingSnoozeUUID = MailError(code: "missingSnoozeUUID")
 }
 
 extension MailError: Identifiable {

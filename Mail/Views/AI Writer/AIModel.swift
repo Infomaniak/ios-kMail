@@ -134,7 +134,7 @@ extension AIModel {
                     mailbox: mailboxManager.mailbox
                 )
                 handleAIResponse(response)
-            } catch let error as MailApiError where error == .apiAIContextIdExpired {
+            } catch let error as MailApiError where error == .apiObjectNotFound {
                 await executeShortcutAndRecreateConversation(shortcut)
             } catch {
                 handleError(error)

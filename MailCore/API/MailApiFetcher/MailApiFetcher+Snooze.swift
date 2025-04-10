@@ -27,7 +27,7 @@ public extension MailApiFetcher {
     func snooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws {
         _ = try await batchOver(values: messages, chunkSize: Self.snoozeAPILimit) { chunk in
             let _: Empty = try await self.perform(request: self.authenticatedRequest(
-                .snooze(uuid: mailbox.uuid),
+                .snooze(mailboxUuid: mailbox.uuid),
                 method: .post,
                 parameters: MessagesToSnooze(endDate: date, uids: chunk.map(\.uid))
             ))
@@ -37,17 +37,30 @@ public extension MailApiFetcher {
     func updateSnooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws {
         _ = try await batchOver(values: messages, chunkSize: Self.editSnoozeAPILimit) { chunk in
             let _: Empty = try await self.perform(request: self.authenticatedRequest(
-                .snooze(uuid: mailbox.uuid),
+                .snooze(mailboxUuid: mailbox.uuid),
                 method: .put,
                 parameters: SnoozedMessagesToUpdate(endDate: date, uuids: chunk.compactMap(\.snoozeUuid))
             ))
         }
     }
 
+    func deleteSnooze(message: Message, mailbox: Mailbox) async throws {
+        guard let snoozeUuid = message.snoozeUuid else {
+            throw MailError.missingSnoozeUUID
+        }
+
+        let _: Empty = try await perform(
+            request: authenticatedRequest(
+                .snoozeAction(mailboxUuid: mailbox.uuid, snoozeUuid: snoozeUuid),
+                method: .delete
+            )
+        )
+    }
+
     func deleteSnooze(messages: [Message], mailbox: Mailbox) async throws {
         _ = try await batchOver(values: messages, chunkSize: Self.editSnoozeAPILimit) { chunk in
             let _: Empty = try await self.perform(request: self.authenticatedRequest(
-                .snooze(uuid: mailbox.uuid),
+                .snooze(mailboxUuid: mailbox.uuid),
                 method: .delete,
                 parameters: ["uuids": chunk.compactMap(\.snoozeUuid)]
             ))
