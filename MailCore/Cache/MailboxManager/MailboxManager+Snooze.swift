@@ -19,24 +19,30 @@
 import Foundation
 
 public extension MailboxManager {
-    func snooze(messages: [Message], until date: Date) async throws {
-        try await apiFetcher.snooze(messages: messages, until: date, mailbox: mailbox)
+    func snooze(messages: [Message], until date: Date) async throws -> [SnoozeAPIResponse] {
+        let response = try await apiFetcher.snooze(messages: messages, until: date, mailbox: mailbox)
         Task {
             try await refreshFolder(from: messages, additionalFolder: nil)
         }
+
+        return response
     }
 
-    func updateSnooze(messages: [Message], until date: Date) async throws {
-        try await apiFetcher.updateSnooze(messages: messages, until: date, mailbox: mailbox)
+    func updateSnooze(messages: [Message], until date: Date) async throws -> [SnoozeUpdatedAPIResponse] {
+        let response = try await apiFetcher.updateSnooze(messages: messages, until: date, mailbox: mailbox)
         Task {
             try await refreshFolder(from: messages, additionalFolder: nil)
         }
+
+        return response
     }
 
-    func deleteSnooze(messages: [Message]) async throws {
-        try await apiFetcher.deleteSnooze(messages: messages, mailbox: mailbox)
+    func deleteSnooze(messages: [Message]) async throws -> [SnoozeCancelledAPIResponse] {
+        let response = try await apiFetcher.deleteSnooze(messages: messages, mailbox: mailbox)
         Task {
             try await refreshFolder(from: messages, additionalFolder: nil)
         }
+
+        return response
     }
 }

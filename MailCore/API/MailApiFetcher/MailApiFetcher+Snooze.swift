@@ -24,9 +24,9 @@ public extension MailApiFetcher {
     private static let snoozeAPILimit = 200
     private static let editSnoozeAPILimit = 100
 
-    func snooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws {
-        _ = try await batchOver(values: messages, chunkSize: Self.snoozeAPILimit) { chunk in
-            let _: Empty = try await self.perform(request: self.authenticatedRequest(
+    func snooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws -> [SnoozeAPIResponse] {
+        return try await batchOver(values: messages, chunkSize: Self.snoozeAPILimit) { chunk in
+            return try await self.perform(request: self.authenticatedRequest(
                 .snooze(mailboxUuid: mailbox.uuid),
                 method: .post,
                 parameters: MessagesToSnooze(endDate: date, uids: chunk.map(\.uid))
@@ -34,9 +34,9 @@ public extension MailApiFetcher {
         }
     }
 
-    func updateSnooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws {
-        _ = try await batchOver(values: messages, chunkSize: Self.editSnoozeAPILimit) { chunk in
-            let _: Empty = try await self.perform(request: self.authenticatedRequest(
+    func updateSnooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws -> [SnoozeUpdatedAPIResponse] {
+        return try await batchOver(values: messages, chunkSize: Self.editSnoozeAPILimit) { chunk in
+            return try await self.perform(request: self.authenticatedRequest(
                 .snooze(mailboxUuid: mailbox.uuid),
                 method: .put,
                 parameters: SnoozedMessagesToUpdate(endDate: date, uuids: chunk.compactMap(\.snoozeUuid))
@@ -57,9 +57,9 @@ public extension MailApiFetcher {
         )
     }
 
-    func deleteSnooze(messages: [Message], mailbox: Mailbox) async throws {
-        _ = try await batchOver(values: messages, chunkSize: Self.editSnoozeAPILimit) { chunk in
-            let _: Empty = try await self.perform(request: self.authenticatedRequest(
+    func deleteSnooze(messages: [Message], mailbox: Mailbox) async throws -> [SnoozeCancelledAPIResponse] {
+        return try await batchOver(values: messages, chunkSize: Self.editSnoozeAPILimit) { chunk in
+            return try await self.perform(request: self.authenticatedRequest(
                 .snooze(mailboxUuid: mailbox.uuid),
                 method: .delete,
                 parameters: ["uuids": chunk.compactMap(\.snoozeUuid)]

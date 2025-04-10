@@ -170,9 +170,9 @@ public protocol MailApiCalendarFetchable {
 }
 
 public protocol MailApiSnoozeFetchable {
-    func snooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws
+    func snooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws -> [SnoozeAPIResponse]
 
-    func updateSnooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws
+    func updateSnooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws -> [SnoozeUpdatedAPIResponse]
 
-    func deleteSnooze(messages: [Message], mailbox: Mailbox) async throws
+    func deleteSnooze(messages: [Message], mailbox: Mailbox) async throws -> [SnoozeCancelledAPIResponse]
 }
