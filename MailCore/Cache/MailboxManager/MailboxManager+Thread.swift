@@ -48,6 +48,8 @@ enum PageDirection {
 // MARK: - Thread
 
 public extension MailboxManager {
+    private static let maxParallelUnsnooze = 4
+
     /// Fetch messages for given folder
     /// Then fetch messages of folder with roles if needed
     /// - Parameters:
@@ -521,7 +523,7 @@ public extension MailboxManager {
     // MARK: - Handle snoozed threads
 
     private func unsnoozeThreadsWithNewMessage(in folder: Folder) async throws {
-        let threadsToUnsnooze = fetchResults(ofType: Thread.self) { partial in
+        let frozenThreadsToUnsnooze = fetchResults(ofType: Thread.self) { partial in
             partial.where { thread in
                 let isInFolder = thread.folderId == folder.remoteId
                 let isSnoozed = thread.snoozeState == .snoozed && thread.snoozeUuid != nil && thread.snoozeEndDate != nil
@@ -529,11 +531,13 @@ public extension MailboxManager {
 
                 return isInFolder && isSnoozed && isLastMessageFromThreadNotSnoozed
             }
-        }.freezeIfNeeded()
+        }.freeze()
 
-        guard !threadsToUnsnooze.isEmpty else { return }
+        guard !frozenThreadsToUnsnooze.isEmpty else { return }
 
-        let unsnoozedMessages: [String] = await Array(threadsToUnsnooze).concurrentCompactMap(customConcurrency: 4) { thread in
+        let unsnoozedMessages: [String] = await Array(frozenThreadsToUnsnooze).concurrentCompactMap(
+            customConcurrency: Self.maxParallelUnsnooze
+        ) { thread in
             guard let lastMessageSnoozed = thread.messages.last(where: { $0.isSnoozed }) else { return nil }
 
             do {

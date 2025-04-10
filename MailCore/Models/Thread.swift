@@ -62,7 +62,7 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var snoozeState: SnoozeState?
     @Persisted public var snoozeUuid: String?
     @Persisted public var snoozeEndDate: Date?
-    @Persisted public var isLastMessageFromFolderSnoozed: Bool
+    @Persisted public var isLastMessageFromFolderSnoozed = false
 
     /// This property is used to remove threads from list before network call is finished
     @Persisted public var isMovedOutLocally = false
