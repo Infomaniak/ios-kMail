@@ -152,41 +152,6 @@ public extension MailboxManager {
         }
     }
 
-    private func unsnoozeThreadsWithNewMessage(in folder: Folder) async throws {
-        let threadsToUnsnooze = fetchResults(ofType: Thread.self) { partial in
-            partial.where { thread in
-                let isInFolder = thread.folderId == folder.remoteId
-                let isSnoozed = thread.snoozeState == .snoozed && thread.snoozeUuid != nil && thread.snoozeEndDate != nil
-                let isLastMessageFromThreadNotSnoozed = thread.isLastMessageFromFolderSnoozed == false
-
-                return isInFolder && isSnoozed && isLastMessageFromThreadNotSnoozed
-            }
-        }.freeze()
-
-        guard !threadsToUnsnooze.isEmpty else { return }
-
-        await Array(threadsToUnsnooze).concurrentForEach(customConcurrency: 4) { thread in
-            guard let lastMessageSnoozed = thread.messages.last(where: { $0.isSnoozed }) else {
-                return
-            }
-
-            do {
-                try await self.apiFetcher.deleteSnooze(message: lastMessageSnoozed, mailbox: self.mailbox)
-            } catch let error as MailApiError where error == .apiMessageSnoozeAlreadyScheduled {
-                // TODO: Do something
-            } catch {
-                print("Error")
-            }
-        }
-
-        Task {
-            if let snoozedFolder = getFolder(with: .snoozed)?.freezeIfNeeded() {
-                await refreshFolderContent(snoozedFolder)
-            }
-            await refreshFolderContent(folder)
-        }
-    }
-
     private func getMessagesDelta(signature: String, folder: Folder) async throws -> String {
         if folder.role == .snoozed {
             let messagesDelta: MessagesDelta<SnoozedFlags> = try await apiFetcher.messagesDelta(
@@ -551,6 +516,63 @@ public extension MailboxManager {
         realm.add(message, update: .modified)
 
         threadsToUpdate.formUnion(oldMessage.threads)
+    }
+
+    // MARK: - Handle snoozed threads
+
+    private func unsnoozeThreadsWithNewMessage(in folder: Folder) async throws {
+        let threadsToUnsnooze = fetchResults(ofType: Thread.self) { partial in
+            partial.where { thread in
+                let isInFolder = thread.folderId == folder.remoteId
+                let isSnoozed = thread.snoozeState == .snoozed && thread.snoozeUuid != nil && thread.snoozeEndDate != nil
+                let isLastMessageFromThreadNotSnoozed = thread.isLastMessageFromFolderSnoozed == false
+
+                return isInFolder && isSnoozed && isLastMessageFromThreadNotSnoozed
+            }
+        }.freeze()
+
+        guard !threadsToUnsnooze.isEmpty else { return }
+
+        let unsnoozedMessages: [String] = await Array(threadsToUnsnooze).concurrentCompactMap(customConcurrency: 4) { thread in
+            guard let lastMessageSnoozed = thread.messages.last(where: { $0.isSnoozed }) else {
+                return nil
+            }
+
+            do {
+                try await self.apiFetcher.deleteSnooze(message: lastMessageSnoozed, mailbox: self.mailbox)
+                return lastMessageSnoozed.uid
+            } catch let error as MailApiError where error == .apiMessageNotSnoozed {
+                self.unsnoozeThreadInRealm()
+                return nil
+            } catch {
+                SentrySDK.capture(message: "Impossible to automatically unsnooze thread") { scope in
+                    scope.setLevel(.error)
+                    let errorCore = (error as? MailError)?.code ?? "NA"
+                    scope.setExtra(value: errorCore, key: "MailError")
+                    scope.setContext(
+                        value: [
+                            "Error": error,
+                            "Description": error.localizedDescription
+                        ],
+                        key: "Underlying error"
+                    )
+                }
+                return nil
+            }
+        }
+
+        Task {
+            guard !Task.isCancelled, !unsnoozedMessages.isEmpty else { return }
+
+            if let snoozedFolder = getFolder(with: .snoozed)?.freezeIfNeeded() {
+                await refreshFolderContent(snoozedFolder)
+            }
+            await refreshFolderContent(folder)
+        }
+    }
+
+    private func unsnoozeThreadInRealm() {
+
     }
 
     // MARK: - Utils
