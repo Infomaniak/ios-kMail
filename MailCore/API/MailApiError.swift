@@ -73,6 +73,8 @@ public class MailApiError: MailError {
         shouldDisplay: true
     )
 
+    public static let apiMessageSnoozeAlreadyScheduled = MailApiError(code: "mail__message_snooze_already_scheduled")
+
     static let allErrors: [MailApiError] = [
         // General
         MailApiError(code: "not_authorized"),
@@ -166,7 +168,13 @@ public class MailApiError: MailError {
         // AI Writer
         apiAIContextIdExpired,
         apiAIMaxSyntaxTokensReached,
-        apiAITooManyRequests
+        apiAITooManyRequests,
+
+        // Snooze
+        apiMessageSnoozeAlreadyScheduled,
+        MailApiError(code: "mail__message_not_snoozed"),
+        MailApiError(code: "mail__message_max_number_of_scheduled_snooze_reached"),
+        MailApiError(code: "mail__message_cannot_be_snooze")
     ]
 
     static func mailApiErrorFromCode(_ code: String) -> MailApiError? {

@@ -19,7 +19,11 @@
 import InfomaniakCore
 
 public extension Endpoint {
-    static func snooze(uuid: String) -> Endpoint {
-        return .mailbox(uuid: uuid).appending(path: "/snoozes")
+    static func snooze(mailboxUuid: String) -> Endpoint {
+        return .mailbox(uuid: mailboxUuid).appending(path: "/snoozes")
+    }
+
+    static func snoozeAction(mailboxUuid: String, snoozeUuid: String) -> Endpoint {
+        return .snooze(mailboxUuid: mailboxUuid).appending(path: "/\(snoozeUuid)")
     }
 }

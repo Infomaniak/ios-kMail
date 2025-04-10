@@ -148,11 +148,11 @@ public extension MailboxManager {
 
         if folder.role == .inbox {
             guard !Task.isCancelled else { return }
-            unsnoozeThreadsWithNewMessage(in: folder)
+            try await unsnoozeThreadsWithNewMessage(in: folder)
         }
     }
 
-    private func unsnoozeThreadsWithNewMessage(in folder: Folder) {
+    private func unsnoozeThreadsWithNewMessage(in folder: Folder) async throws {
         let threadsToUnsnooze = fetchResults(ofType: Thread.self) { partial in
             partial.where { thread in
                 let isInFolder = thread.folderId == folder.remoteId
@@ -161,9 +161,30 @@ public extension MailboxManager {
 
                 return isInFolder && isSnoozed && isLastMessageFromThreadNotSnoozed
             }
+        }.freeze()
+
+        guard !threadsToUnsnooze.isEmpty else { return }
+
+        await Array(threadsToUnsnooze).concurrentForEach(customConcurrency: 4) { thread in
+            guard let lastMessageSnoozed = thread.messages.last(where: { $0.isSnoozed }) else {
+                return
+            }
+
+            do {
+                try await self.apiFetcher.deleteSnooze(message: lastMessageSnoozed, mailbox: self.mailbox)
+            } catch let error as MailApiError where error == .apiMessageSnoozeAlreadyScheduled {
+                // TODO: Do something
+            } catch {
+                print("Error")
+            }
         }
 
-        
+        Task {
+            if let snoozedFolder = getFolder(with: .snoozed)?.freezeIfNeeded() {
+                await refreshFolderContent(snoozedFolder)
+            }
+            await refreshFolderContent(folder)
+        }
     }
 
     private func getMessagesDelta(signature: String, folder: Folder) async throws -> String {
