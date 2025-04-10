@@ -523,6 +523,8 @@ public extension MailboxManager {
     // MARK: - Handle snoozed threads
 
     private func unsnoozeThreadsWithNewMessage(in folder: Folder) async throws {
+        guard UserDefaults.shared.threadMode == .conversation else { return }
+
         let frozenThreadsToUnsnooze = fetchResults(ofType: Thread.self) { partial in
             partial.where { thread in
                 let isInFolder = thread.folderId == folder.remoteId
@@ -543,7 +545,7 @@ public extension MailboxManager {
             do {
                 try await self.apiFetcher.deleteSnooze(message: lastMessageSnoozed, mailbox: self.mailbox)
                 return lastMessageSnoozed.uid
-            } catch let error as MailApiError where error == .apiMessageNotSnoozed {
+            } catch let error as MailApiError where error == .apiMessageNotSnoozed || error == .apiObjectNotFound {
                 self.manuallyUnsnoozeThreadInRealm(thread: thread)
                 return nil
             } catch {
@@ -554,10 +556,8 @@ public extension MailboxManager {
 
         guard !Task.isCancelled, !unsnoozedMessages.isEmpty else { return }
         Task {
-            if let snoozedFolder = getFolder(with: .snoozed)?.freezeIfNeeded() {
-                await refreshFolderContent(snoozedFolder)
-            }
-            await refreshFolderContent(folder)
+            guard let snoozedFolder = getFolder(with: .snoozed)?.freezeIfNeeded() else  { return }
+            await refreshFolderContent(snoozedFolder)
         }
     }
 
