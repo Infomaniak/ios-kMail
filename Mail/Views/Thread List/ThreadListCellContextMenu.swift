@@ -82,7 +82,7 @@ struct ThreadListCellContextMenu: ViewModifier {
                         toggleMultipleSelection: toggleMultipleSelection
                     )
                 }
-                .modifier(controlGroupStyleCompactStyle())
+                .modifier(controlGroupCompactStyle())
 
                 ActionButtonList(
                     actions: actions.listActions,
@@ -108,7 +108,7 @@ struct ThreadListCellContextMenu: ViewModifier {
     }
 }
 
-struct controlGroupStyleCompactStyle: ViewModifier {
+struct controlGroupCompactStyle: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 16.4, *) {
             content
