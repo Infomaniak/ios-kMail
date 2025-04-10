@@ -82,7 +82,7 @@ struct ThreadListCellContextMenu: ViewModifier {
                         toggleMultipleSelection: toggleMultipleSelection
                     )
                 }
-                .modifier(controlGroupStyleCompactStyle())
+                .modifier(controlGroupCompactStyle())
 
                 ActionButtonList(
                     actions: actions.listActions,
