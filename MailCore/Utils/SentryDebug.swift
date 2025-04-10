@@ -101,10 +101,10 @@ public enum SentryDebug {
     }
 
     public static func captureManuallyUnsnoozeError(error: Error) {
-        SentrySDK.capture(message: "Impossible to automatically unsnooze thread") { scope in
+        SentrySDK.capture(message: "Impossible to manually unsnooze thread") { scope in
             scope.setLevel(.error)
-            let errorCore = (error as? MailError)?.code ?? "NA"
-            scope.setExtra(value: errorCore, key: "MailError")
+            let errorCode = (error as? MailError)?.code ?? "NA"
+            scope.setExtra(value: errorCode, key: "MailError")
             scope.setContext(
                 value: [
                     "Error": error,

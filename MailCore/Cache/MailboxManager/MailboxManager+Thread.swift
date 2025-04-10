@@ -529,9 +529,9 @@ public extension MailboxManager {
             partial.where { thread in
                 let isInFolder = thread.folderId == folder.remoteId
                 let isSnoozed = thread.snoozeState == .snoozed && thread.snoozeUuid != nil && thread.snoozeEndDate != nil
-                let isLastMessageFromThreadNotSnoozed = !thread.isLastMessageFromFolderSnoozed
+                let isLastMessageFromFolderNotSnoozed = !thread.isLastMessageFromFolderSnoozed
 
-                return isInFolder && isSnoozed && isLastMessageFromThreadNotSnoozed
+                return isInFolder && isSnoozed && isLastMessageFromFolderNotSnoozed
             }
         }.freeze()
 
@@ -540,7 +540,10 @@ public extension MailboxManager {
         let unsnoozedMessages: [String] = await Array(frozenThreadsToUnsnooze).concurrentCompactMap(
             customConcurrency: Self.maxParallelUnsnooze
         ) { thread in
-            guard let lastMessageSnoozed = thread.messages.last(where: { $0.isSnoozed }) else { return nil }
+            guard let lastMessageSnoozed = thread.messages.last(where: { $0.isSnoozed }),
+                  thread.lastMessageFromFolder?.isSnoozed == false else {
+                return nil
+            }
 
             do {
                 try await self.apiFetcher.deleteSnooze(message: lastMessageSnoozed, mailbox: self.mailbox)

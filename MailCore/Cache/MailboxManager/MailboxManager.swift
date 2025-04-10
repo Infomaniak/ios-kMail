@@ -118,22 +118,6 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                         }
                     }
                 }
-                if oldSchemaVersion < 40 {
-                    migration.enumerateObjects(ofType: Thread.className()) { _, newObject in
-                        if let messages = newObject?["messages"] as? List<MigrationObject>,
-                           let lastMessageFromFolder = messages.last(where: {
-                               $0["folderId"] as? String == newObject?["folderId"] as? String
-                           }) {
-                            let snoozeState = lastMessageFromFolder["snoozeState"] as? String?
-                            let snoozeEndDate = lastMessageFromFolder["snoozeEndDate"] as? Date?
-                            let snoozeUuid = lastMessageFromFolder["snoozeUuid"] as? String?
-                            let isSnoozed = snoozeState == SnoozeState.snoozed
-                                .rawValue && snoozeEndDate != nil && snoozeUuid != nil
-
-                            newObject?["isLastMessageFromFolderSnoozed"] = isSnoozed
-                        }
-                    }
-                }
             },
             objectTypes: [
                 Folder.self,
