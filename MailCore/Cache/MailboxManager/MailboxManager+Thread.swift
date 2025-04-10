@@ -556,7 +556,7 @@ public extension MailboxManager {
 
         guard !Task.isCancelled, !unsnoozedMessages.isEmpty else { return }
         Task {
-            guard let snoozedFolder = getFolder(with: .snoozed)?.freezeIfNeeded() else  { return }
+            guard let snoozedFolder = getFolder(with: .snoozed)?.freezeIfNeeded() else { return }
             await refreshFolderContent(snoozedFolder)
         }
     }
