@@ -53,6 +53,9 @@ public class DraftContentManager: ObservableObject {
         self.draftLocalUUID = draftLocalUUID
         self.messageReply = messageReply
         self.mailboxManager = mailboxManager
+    }
+
+    public func startObservingDraft() {
         draftContentObservation = _draftContent
             .projectedValue
             .throttle(for: .milliseconds(1000), scheduler: DispatchQueue.global(qos: .userInitiated), latest: true)
