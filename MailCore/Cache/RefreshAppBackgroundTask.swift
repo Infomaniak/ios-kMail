@@ -71,21 +71,10 @@ public class RefreshAppBackgroundTask: BackgroundTaskable {
             return
         }
 
-        let notificationCenter = UNUserNotificationCenter.current()
-        let deliveredNotifications = await notificationCenter.deliveredNotifications()
+        let mailboxWithNotificationsObjectIds = await getMailboxWithNotifications()
+        let mailboxWithUnreadObjectIds = getMailboxWithUnreadMessages()
 
-        let mailboxObjectIds: [String] = deliveredNotifications.compactMap { notification in
-            let content = notification.request.content
-
-            guard let mailboxId = content.userInfo[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
-                  let userId = content.userInfo[NotificationsHelper.UserInfoKeys.userId] as? Int else {
-                return nil
-            }
-
-            return MailboxInfosManager.getObjectId(mailboxId: mailboxId, userId: userId)
-        }
-
-        let uniqueMailboxObjectIds = Set(mailboxObjectIds)
+        let uniqueMailboxObjectIds = Set(mailboxWithNotificationsObjectIds + mailboxWithUnreadObjectIds)
 
         let mailboxManagersToRefresh: [(MailboxManager, Folder)] = uniqueMailboxObjectIds.compactMap { mailboxObjectId in
             guard let mailbox = mailboxInfosManager.getMailbox(objectId: mailboxObjectId),
@@ -130,5 +119,37 @@ public class RefreshAppBackgroundTask: BackgroundTaskable {
                     handleAppRefresh.cancel()
                 }
             }
+    }
+
+    private func getMailboxWithNotifications() async -> [String] {
+        let notificationCenter = UNUserNotificationCenter.current()
+        let deliveredNotifications = await notificationCenter.deliveredNotifications()
+
+        let mailboxObjectIds: [String] = deliveredNotifications.compactMap { notification in
+            let content = notification.request.content
+
+            guard let mailboxId = content.userInfo[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
+                  let userId = content.userInfo[NotificationsHelper.UserInfoKeys.userId] as? Int else {
+                return nil
+            }
+
+            return MailboxInfosManager.getObjectId(mailboxId: mailboxId, userId: userId)
+        }
+
+        return mailboxObjectIds
+    }
+
+    private func getMailboxWithUnreadMessages() -> [String] {
+        let mailboxObjectIds: [String] = accountManager.accounts.compactMap { account in
+            for mailbox in mailboxInfosManager.getMailboxes(for: account.userId) {
+                if let mailboxManager = accountManager.getMailboxManager(for: mailbox),
+                   (mailboxManager.getFolder(with: .inbox)?.unreadCount ?? 0) > 0 {
+                    return mailbox.objectId
+                }
+            }
+            return nil
+        }
+
+        return mailboxObjectIds
     }
 }
