@@ -53,6 +53,9 @@ public class DraftContentManager: ObservableObject {
         self.draftLocalUUID = draftLocalUUID
         self.messageReply = messageReply
         self.mailboxManager = mailboxManager
+    }
+
+    public func startObservingDraft() {
         draftContentObservation = _draftContent
             .projectedValue
             .throttle(for: .milliseconds(1000), scheduler: DispatchQueue.global(qos: .userInitiated), latest: true)
@@ -238,14 +241,13 @@ public extension DraftContentManager {
         shouldAddSignatureText: Bool,
         attachments: [Attachment],
         draftPrimaryKey: String
-    ) throws {
-        var fetchedDraft: Draft?
+    ) async throws {
+        var updatedDraftBody: String?
         try mailboxManager.writeTransaction { writableRealm in
             guard let liveIncompleteDraft = getLiveDraft(realm: writableRealm, draftPrimaryKey: draftPrimaryKey) else {
                 return
             }
 
-            fetchedDraft = liveIncompleteDraft
             if let signature, liveIncompleteDraft.identityId == nil || liveIncompleteDraft.identityId?.isEmpty == true {
                 liveIncompleteDraft.identityId = "\(signature.id)"
                 if shouldAddSignatureText {
@@ -259,11 +261,17 @@ public extension DraftContentManager {
             for attachment in attachments {
                 liveIncompleteDraft.attachments.append(attachment)
             }
+
+            updatedDraftBody = liveIncompleteDraft.body
         }
 
-        guard fetchedDraft != nil else {
+        guard let updatedDraftBody else {
             throw MailError.unknownError
         }
+
+        await Task { @MainActor in
+            self.draftContent = updatedDraftBody
+        }.value
     }
 }
 

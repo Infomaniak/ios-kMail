@@ -221,6 +221,8 @@ struct ComposeMessageView: View {
                 }
 
                 aiModel.draftContentManager = draftContentManager
+                draftContentManager.startObservingDraft()
+
                 isLoadingContent = false
             } catch {
                 snackbarPresenter.show(message: MailError.unknownError.errorDescription ?? "")
