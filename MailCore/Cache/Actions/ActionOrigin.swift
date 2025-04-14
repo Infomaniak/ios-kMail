@@ -27,11 +27,14 @@ public struct ActionOrigin {
         case multipleSelection
         case shortcut
         case threadHeader
+        case contextMenu
     }
 
     public enum FloatingPanelSource {
         case threadList
         case messageList
+        case messageDetails
+        case contextMenu
     }
 
     public private(set) var type: ActionOriginType
