@@ -135,8 +135,8 @@ extension Action: CaseIterable {
             spamAction
         ]
 
-        if (messagesType == .single && origin.type != .floatingPanel(source: .threadList)) || origin
-            .type == .floatingPanel(source: .messageList) {
+        if (messagesType == .single && origin.type != .floatingPanel(source: .threadList))
+            || origin.type == .floatingPanel(source: .messageList) {
             listActions += [
                 unreadAction,
                 starAction,
