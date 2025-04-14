@@ -56,7 +56,8 @@ struct ThreadListCellContextMenu: ViewModifier {
     }
 
     private var origin: ActionOrigin {
-        .contextMenu(
+        .floatingPanel(
+            source: .contextMenu,
             originFolder: thread.folder?.freezeIfNeeded(),
             nearestFlushAlert: $flushAlert,
             nearestMessagesToMoveSheet: $messagesToMove,
