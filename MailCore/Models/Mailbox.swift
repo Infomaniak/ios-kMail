@@ -33,15 +33,10 @@ public class Mailbox: Object, Codable, Identifiable {
     @Persisted public var mailboxId: Int
     @Persisted public var hostingId: Int
     @Persisted public var isPrimary: Bool
-    @Persisted public var passwordStatus: String
     @Persisted public var isPasswordValid: Bool
     @Persisted public var isValidInLDAP: Bool
     @Persisted public var isLocked: Bool
-    @Persisted public var hasSocialAndCommercialFiltering: Bool
     @Persisted public var isSpamFilter: Bool
-    @Persisted public var showConfigModal: Bool
-    @Persisted public var forceResetPassword: Bool
-    @Persisted public var mdaVersion: String
     @Persisted public var isLimited: Bool
     @Persisted public var isFree: Bool
     @Persisted public var dailyLimit: Int
@@ -88,15 +83,10 @@ public class Mailbox: Object, Codable, Identifiable {
         case mailboxId
         case hostingId
         case isPrimary
-        case passwordStatus
         case isPasswordValid
         case isValidInLDAP = "isValid"
         case isLocked
-        case hasSocialAndCommercialFiltering
         case isSpamFilter
-        case showConfigModal
-        case forceResetPassword
-        case mdaVersion
         case isLimited
         case isFree
         case dailyLimit
@@ -117,15 +107,10 @@ public class Mailbox: Object, Codable, Identifiable {
         mailboxId: Int,
         hostingId: Int,
         isPrimary: Bool,
-        passwordStatus: String,
         isPasswordValid: Bool,
         isValidInLDAP: Bool,
         isLocked: Bool,
-        hasSocialAndCommercialFiltering: Bool,
         isSpamFilter: Bool,
-        showConfigModal: Bool,
-        forceResetPassword: Bool,
-        mdaVersion: String,
         isLimited: Bool,
         isFree: Bool,
         dailyLimit: Int,
@@ -141,15 +126,10 @@ public class Mailbox: Object, Codable, Identifiable {
         self.mailboxId = mailboxId
         self.hostingId = hostingId
         self.isPrimary = isPrimary
-        self.passwordStatus = passwordStatus
         self.isPasswordValid = isPasswordValid
         self.isValidInLDAP = isValidInLDAP
         self.isLocked = isLocked
-        self.hasSocialAndCommercialFiltering = hasSocialAndCommercialFiltering
         self.isSpamFilter = isSpamFilter
-        self.showConfigModal = showConfigModal
-        self.forceResetPassword = forceResetPassword
-        self.mdaVersion = mdaVersion
         self.isLimited = isLimited
         self.isFree = isFree
         self.dailyLimit = dailyLimit
@@ -166,15 +146,10 @@ public class Mailbox: Object, Codable, Identifiable {
         mailboxId = try container.decode(Int.self, forKey: .mailboxId)
         hostingId = try container.decode(Int.self, forKey: .hostingId)
         isPrimary = try container.decode(Bool.self, forKey: .isPrimary)
-        passwordStatus = try container.decode(String.self, forKey: .passwordStatus)
         isPasswordValid = try container.decode(Bool.self, forKey: .isPasswordValid)
         isValidInLDAP = try container.decode(Bool.self, forKey: .isValidInLDAP)
         isLocked = try container.decode(Bool.self, forKey: .isLocked)
-        hasSocialAndCommercialFiltering = try container.decode(Bool.self, forKey: .hasSocialAndCommercialFiltering)
         isSpamFilter = try container.decode(Bool.self, forKey: .isSpamFilter)
-        showConfigModal = try container.decode(Bool.self, forKey: .showConfigModal)
-        forceResetPassword = try container.decode(Bool.self, forKey: .forceResetPassword)
-        mdaVersion = try container.decode(String.self, forKey: .mdaVersion)
         isLimited = try container.decode(Bool.self, forKey: .isLimited)
         isFree = try container.decode(Bool.self, forKey: .isFree)
         dailyLimit = try container.decode(Int.self, forKey: .dailyLimit)
