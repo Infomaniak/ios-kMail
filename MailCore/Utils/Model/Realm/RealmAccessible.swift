@@ -19,6 +19,7 @@
 import Foundation
 import InfomaniakCoreDB
 import InfomaniakDI
+import OSLog
 import Realm
 import RealmSwift
 
@@ -41,14 +42,19 @@ extension MailCoreRealmAccessible {
             let realm = try Realm(configuration: realmConfiguration)
             realm.refresh()
             return realm
-        } catch let error as RLMError
-            where error.code == .fail && (error.userInfo[RLMErrorCodeNameKey] as? String) == "InvalidSchemaVersion" {
+        } catch let error as RLMError where error.code == .fail || error.code == .schemaMismatch {
             // If scheme version is invalid simply delete the current realm and retry with a new one
             // (we still report the error just in case because it shouldn't happen in production)
             Logging.reportRealmOpeningError(error, realmConfiguration: realmConfiguration, afterRetry: !canRetry)
 
             @InjectService var realmManager: RealmManageable
             realmManager.deleteFiles(for: realmConfiguration)
+
+            #if DEBUG
+            Logger.general.error("Realm files will be deleted, you can resume the app with the debugger")
+            // This will force the execution to breakpoint, to give a chance to the dev for debugging
+            raise(SIGINT)
+            #endif
 
             return getRealm(canRetry: false)
         } catch {
