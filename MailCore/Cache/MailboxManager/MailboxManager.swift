@@ -42,6 +42,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
     enum ErrorDomain: Error {
         case missingFolder
         case missingDraft
+        case tooManyDiffs
     }
 
     public final class MailboxManagerConstants {
