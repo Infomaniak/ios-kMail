@@ -35,6 +35,29 @@ public struct MessagesDelta<Flags: DeltaFlags>: Decodable, Sendable {
     }
 }
 
+public extension MessagesDelta {
+    func ensureValidDelta() throws {
+        let deletedCount = deletedShortUids.count
+        let addedCount = addedShortUids.count
+        let updatedCount = updated.count
+
+        guard deletedCount < Constants.maxChangesCount,
+              addedCount < Constants.maxChangesCount,
+              updatedCount < Constants.maxChangesCount else {
+            SentrySDK.capture(message: "tooManyDiffs") { scope in
+                scope.setExtras([
+                    "cursor": cursor,
+                    "deletedCount": deletedCount,
+                    "addedCount": addedCount,
+                    "updatedCount": updatedCount
+                ])
+            }
+
+            throw MailboxManager.ErrorDomain.tooManyDiffs
+        }
+    }
+}
+
 public protocol DeltaFlags: Decodable, Sendable {
     var shortUid: String { get }
 }
