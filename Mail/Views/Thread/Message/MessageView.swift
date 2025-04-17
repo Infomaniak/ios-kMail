@@ -41,6 +41,8 @@ struct MessageView: View {
 
     @ObservedRealmObject var message: Message
 
+    private let isSingleMessage: Bool
+
     private var isRemoteContentBlocked: Bool {
         return (UserDefaults.shared.displayExternalContent == .askMe || message.folder?.role == .spam)
             && !message.localSafeDisplay
@@ -50,6 +52,12 @@ struct MessageView: View {
         threadForcedExpansion[message.uid] == .expanded
     }
 
+    init(threadForcedExpansion: Binding<[String: MessageExpansionType]>, message: Message, isSingleMessage: Bool) {
+        _threadForcedExpansion = threadForcedExpansion
+        self.message = message
+        self.isSingleMessage = isSingleMessage
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             MessageHeaderView(
@@ -57,6 +65,7 @@ struct MessageView: View {
                 isMessageExpanded: Binding(get: {
                     isMessageExpanded
                 }, set: { newValue in
+                    guard !isSingleMessage else { return }
                     threadForcedExpansion[message.uid] = newValue ? .expanded : .collapsed
                 })
             )
@@ -97,7 +106,8 @@ struct MessageView: View {
 #Preview("Message collapsed", traits: .sizeThatFitsLayout) {
     MessageView(
         threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .collapsed]),
-        message: PreviewHelper.sampleMessage
+        message: PreviewHelper.sampleMessage,
+        isSingleMessage: true
     )
 }
 
@@ -105,6 +115,7 @@ struct MessageView: View {
 #Preview("Message expanded", traits: .sizeThatFitsLayout) {
     MessageView(
         threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .expanded]),
-        message: PreviewHelper.sampleMessage
+        message: PreviewHelper.sampleMessage,
+        isSingleMessage: false
     )
 }
