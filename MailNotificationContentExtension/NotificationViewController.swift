@@ -93,7 +93,7 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
 
             let messageWorker = MessagesWorker(mailboxManager: mailboxManager)
             let messageView = ScrollView {
-                MessageView(threadForcedExpansion: .constant([messageUid: .expanded]), message: message, isSingleMessage: true)
+                MessageView(threadForcedExpansion: .constant([messageUid: .expanded]), message: message)
                     .environment(\.isMessageInteractive, false)
                     .environment(\.currentUser, MandatoryEnvironmentContainer(value: currentUser))
                     .environmentObject(mailboxManager)
