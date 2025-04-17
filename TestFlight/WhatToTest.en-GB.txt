@@ -1,3 +1,2 @@
-- Snooze messages
-- Fix displaying BIMI
-- Fix removing recipient in compose view
+- Update unread badge in the background
+- Block collapsing threads with only one message
