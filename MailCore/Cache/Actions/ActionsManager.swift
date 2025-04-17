@@ -228,12 +228,7 @@ public class ActionsManager: ObservableObject {
                 currentMailboxEmail: mailboxManager.mailbox.email,
                 currentFolder: origin.frozenFolder
             )
-            try await mailboxManager.deleteSnooze(messages: messagesToExecuteAction)
-
-            Task { @MainActor in
-                snackbarPresenter
-                    .show(message: MailResourcesStrings.Localizable.snackbarUnsnoozeSuccess(messagesToExecuteAction.count))
-            }
+            try await performDeleteSnooze(messages: messagesToExecuteAction)
         default:
             break
         }
@@ -314,16 +309,38 @@ public class ActionsManager: ObservableObject {
             currentFolder: originFolder
         )
 
+        var snoozeCount = 0
         let allMessagesAreSnoozed = messagesToExecuteAction.allSatisfy(\.isSnoozed)
         if allMessagesAreSnoozed {
-            try await mailboxManager.updateSnooze(messages: messagesToExecuteAction, until: date)
+            let response = try await mailboxManager.updateSnooze(messages: messagesToExecuteAction, until: date)
+            snoozeCount = response.reduce(0) { $0 + $1.updated.count }
         } else {
-            try await mailboxManager.snooze(messages: messagesToExecuteAction, until: date)
+            let response = try await mailboxManager.snooze(messages: messagesToExecuteAction, until: date)
+            snoozeCount = response.reduce(0) { $0 + $1.snoozeActions.count }
         }
 
-        snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarSnoozeSuccess(date.formatted()))
+        if snoozeCount == 0 {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
+        } else {
+            snackbarPresenter
+                .show(message: MailResourcesStrings.Localizable.snackbarSnoozeSuccess(date.formatted(.snoozeSnackbar)))
+        }
 
         return allMessagesAreSnoozed ? .modifySnooze : .snooze
+    }
+
+    private func performDeleteSnooze(messages: [Message]) async throws {
+        let response = try await mailboxManager.deleteSnooze(messages: messages)
+        let deletedSnoozeCount = response.reduce(0) { $0 + $1.cancelled.count }
+
+        Task { @MainActor in
+            if deletedSnoozeCount == 0 {
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
+            } else {
+                snackbarPresenter
+                    .show(message: MailResourcesStrings.Localizable.snackbarUnsnoozeSuccess(deletedSnoozeCount))
+            }
+        }
     }
 
     @MainActor
