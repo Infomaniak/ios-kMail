@@ -228,17 +228,7 @@ public class ActionsManager: ObservableObject {
                 currentMailboxEmail: mailboxManager.mailbox.email,
                 currentFolder: origin.frozenFolder
             )
-            let response = try await mailboxManager.deleteSnooze(messages: messagesToExecuteAction)
-            let deletedSnoozeCount = response.reduce(0) { $0 + $1.cancelled.count }
-
-            Task { @MainActor in
-                if deletedSnoozeCount == 0 {
-                    snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
-                } else {
-                    snackbarPresenter
-                        .show(message: MailResourcesStrings.Localizable.snackbarUnsnoozeSuccess(deletedSnoozeCount))
-                }
-            }
+            try await performDeleteSnooze(messages: messagesToExecuteAction)
         default:
             break
         }
@@ -337,6 +327,20 @@ public class ActionsManager: ObservableObject {
         }
 
         return allMessagesAreSnoozed ? .modifySnooze : .snooze
+    }
+
+    private func performDeleteSnooze(messages: [Message]) async throws {
+        let response = try await mailboxManager.deleteSnooze(messages: messages)
+        let deletedSnoozeCount = response.reduce(0) { $0 + $1.cancelled.count }
+
+        Task { @MainActor in
+            if deletedSnoozeCount == 0 {
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
+            } else {
+                snackbarPresenter
+                    .show(message: MailResourcesStrings.Localizable.snackbarUnsnoozeSuccess(deletedSnoozeCount))
+            }
+        }
     }
 
     @MainActor
