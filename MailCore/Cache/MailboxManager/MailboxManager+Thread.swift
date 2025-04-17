@@ -87,7 +87,14 @@ public extension MailboxManager {
         let newCursor: String
 
         if let previousCursor {
-            newCursor = try await getMessagesDelta(signature: previousCursor, folder: folder)
+            do {
+                newCursor = try await getMessagesDelta(signature: previousCursor, folder: folder)
+            } catch ErrorDomain.tooManyDiffs {
+                try await resetFolder(folder)
+
+                // fetch folder as if we had no cursor
+                newCursor = try await fetchOldMessagesUids(folder: folder)
+            }
         } else {
             newCursor = try await fetchOldMessagesUids(folder: folder)
         }
@@ -161,6 +168,9 @@ public extension MailboxManager {
                 folderId: folder.remoteId,
                 signature: signature
             )
+
+            try messagesDelta.ensureValidDelta()
+
             await handleDelta(messagesDelta: messagesDelta, folder: folder)
 
             return messagesDelta.cursor
@@ -170,6 +180,9 @@ public extension MailboxManager {
                 folderId: folder.remoteId,
                 signature: signature
             )
+
+            try messagesDelta.ensureValidDelta()
+
             await handleDelta(messagesDelta: messagesDelta, folder: folder)
 
             return messagesDelta.cursor
@@ -589,6 +602,21 @@ public extension MailboxManager {
             .filter { $0.threads.isEmpty && $0.threadsDuplicatedIn.isEmpty }
 
         writableRealm.delete(orphanMessages)
+    }
+
+    private func resetFolder(_ folder: Folder) async throws {
+        try writeTransaction { realm in
+            guard let liveFolder = folder.fresh(using: realm) else { return }
+
+            liveFolder.remainingOldMessagesToFetch = Constants.messageQuantityLimit
+            liveFolder.oldMessagesUidsToFetch.removeAll()
+            liveFolder.newMessagesUidsToFetch.removeAll()
+            realm.delete(liveFolder.threads)
+            realm.delete(liveFolder.messages)
+            liveFolder.lastUpdate = nil
+            liveFolder.cursor = nil
+            liveFolder.unreadCount = 0
+        }
     }
 
     private func removeDuplicatedThreads(
