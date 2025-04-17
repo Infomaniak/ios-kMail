@@ -57,6 +57,7 @@ struct MessageView: View {
                 isMessageExpanded: Binding(get: {
                     isMessageExpanded
                 }, set: { newValue in
+                    guard threadForcedExpansion.count > 1 else { return }
                     threadForcedExpansion[message.uid] = newValue ? .expanded : .collapsed
                 })
             )
