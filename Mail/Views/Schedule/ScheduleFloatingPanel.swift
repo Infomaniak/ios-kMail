@@ -41,6 +41,7 @@ extension View {
     func scheduleFloatingPanel(
         isPresented: Binding<Bool>,
         type: ScheduleType,
+        isUpdating: Bool,
         initialDate: Date? = nil,
         completionHandler: @escaping (Date) -> Void
     ) -> some View {
@@ -48,6 +49,7 @@ extension View {
             ScheduleFloatingPanel(
                 isShowingFloatingPanel: isPresented,
                 type: type,
+                isUpdating: isUpdating,
                 initialDate: initialDate,
                 completionHandler: completionHandler
             )
@@ -63,6 +65,7 @@ struct ScheduleFloatingPanel: ViewModifier {
     @Binding var isShowingFloatingPanel: Bool
 
     let type: ScheduleType
+    let isUpdating: Bool
     let initialDate: Date?
     let completionHandler: (Date) -> Void
 
@@ -77,7 +80,7 @@ struct ScheduleFloatingPanel: ViewModifier {
                 )
             }
             .customAlert(isPresented: $isShowingCustomScheduleAlert) {
-                CustomScheduleAlertView(type: type, date: initialDate, confirmAction: completionHandler) {
+                CustomScheduleAlertView(type: type, date: initialDate, isUpdating: isUpdating, confirmAction: completionHandler) {
                     panelShouldBeShown = true
                 }
                 .onDisappear {

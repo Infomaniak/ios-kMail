@@ -307,6 +307,7 @@ struct ComposeMessageView: View {
         .scheduleFloatingPanel(
             isPresented: $isShowingSchedulePanel,
             type: .scheduledDraft,
+            isUpdating: false,
             initialDate: draft.scheduleDate,
             completionHandler: didScheduleDraft
         )
