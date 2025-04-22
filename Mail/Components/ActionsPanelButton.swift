@@ -42,7 +42,7 @@ struct ActionsPanelButton<Content: View>: View {
             panelSource: panelSource,
             popoverArrowEdge: popoverArrowEdge
         ) { action in
-            if action == .markAsUnread || action == .snooze || action == .modifySnooze {
+            if action == .markAsUnread {
                 dismiss()
             }
         }
