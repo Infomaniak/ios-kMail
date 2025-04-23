@@ -75,5 +75,5 @@ struct FlushFolderAlertView: View {
 }
 
 #Preview {
-    FlushFolderAlertView(flushAlert: DestructiveActionAlertState { /* Preview */ })
+    FlushFolderAlertView(flushAlert: DestructiveActionAlertState(type: .delete) { /* Preview */ })
 }

@@ -60,7 +60,7 @@ struct FlushFolderView: View {
                     matomo.track(eventWithCategory: .threadList, name: "empty\(folder.matomoName.capitalized)")
 
                     let frozenFolder = folder.freezeIfNeeded()
-                    flushAlert = DestructiveActionAlertState {
+                    flushAlert = DestructiveActionAlertState(type: .delete) {
                         await tryOrDisplayError {
                             _ = try await mailboxManager.flushFolder(folder: frozenFolder)
                         }

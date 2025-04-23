@@ -17,13 +17,23 @@
  */
 
 import Foundation
+import MailResources
+
+public enum DestructiveActionAlertType {
+    case delete
+    case deleteSnooze
+    case archiveSnooze
+    case moveSnooze
+}
 
 public struct DestructiveActionAlertState: Identifiable, Equatable {
     public let id = UUID()
+    public let type: DestructiveActionAlertType
     public let impactedMessages: Int?
     public let completion: () async -> Void
 
-    public init(impactedMessages: Int? = nil, completion: @escaping () async -> Void) {
+    public init(type: DestructiveActionAlertType, impactedMessages: Int? = nil, completion: @escaping () async -> Void) {
+        self.type = type
         self.impactedMessages = impactedMessages
         self.completion = completion
     }

@@ -114,6 +114,7 @@ public class ActionsManager: ObservableObject {
             guard origin.frozenFolder?.shouldWarnBeforeDeletion != true else {
                 Task { @MainActor in
                     origin.nearestFlushAlert?.wrappedValue = DestructiveActionAlertState(
+                        type: .delete,
                         impactedMessages: messagesWithDuplicates.uniqueThreadsInFolder(origin.frozenFolder).count
                     ) {
                         await tryOrDisplayError { [weak self] in
