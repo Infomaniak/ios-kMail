@@ -18,17 +18,17 @@
 
 import Foundation
 
-public struct FlushAlertState: Identifiable, Equatable {
+public struct DestructiveActionAlertState: Identifiable, Equatable {
     public let id = UUID()
-    public let deletedMessages: Int?
+    public let impactedMessages: Int?
     public let completion: () async -> Void
 
-    public init(deletedMessages: Int? = nil, completion: @escaping () async -> Void) {
-        self.deletedMessages = deletedMessages
+    public init(impactedMessages: Int? = nil, completion: @escaping () async -> Void) {
+        self.impactedMessages = impactedMessages
         self.completion = completion
     }
 
-    public static func == (lhs: FlushAlertState, rhs: FlushAlertState) -> Bool {
+    public static func == (lhs: DestructiveActionAlertState, rhs: DestructiveActionAlertState) -> Bool {
         return lhs.id == rhs.id
     }
 }

@@ -43,7 +43,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
     @State private var replyOrReplyAllMessage: Message?
     @State private var messagesToMove: [Message]?
 
-    @ModalState private var nearestFlushAlert: FlushAlertState?
+    @ModalState private var nearestFlushAlert: DestructiveActionAlertState?
 
     private let frozenThread: Thread
 

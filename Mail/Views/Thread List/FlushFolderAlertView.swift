@@ -27,16 +27,16 @@ import SwiftUI
 struct FlushFolderAlertView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    let flushAlert: FlushAlertState
+    let flushAlert: DestructiveActionAlertState
     var frozenFolder: Folder?
 
-    init(flushAlert: FlushAlertState, folder: Folder? = nil) {
+    init(flushAlert: DestructiveActionAlertState, folder: Folder? = nil) {
         self.flushAlert = flushAlert
         frozenFolder = folder?.freezeIfNeeded()
     }
 
     private var title: String {
-        if let deletedMessagesCount = flushAlert.deletedMessages {
+        if let deletedMessagesCount = flushAlert.impactedMessages {
             return MailResourcesStrings.Localizable.threadListDeletionConfirmationAlertTitle(deletedMessagesCount)
         }
 
@@ -51,7 +51,7 @@ struct FlushFolderAlertView: View {
     }
 
     private var description: String {
-        if let deletedMessagesCount = flushAlert.deletedMessages {
+        if let deletedMessagesCount = flushAlert.impactedMessages {
             return MailResourcesStrings.Localizable.threadListDeletionConfirmationAlertDescription(deletedMessagesCount)
         }
         return MailResourcesStrings.Localizable.threadListEmptyFolderAlertDescription
@@ -65,7 +65,7 @@ struct FlushFolderAlertView: View {
                 .textStyle(.body)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm) {
-                if let frozenFolder, flushAlert.deletedMessages == nil {
+                if let frozenFolder, flushAlert.impactedMessages == nil {
                     matomo.track(eventWithCategory: .threadList, name: "empty\(frozenFolder.matomoName.capitalized)Confirm")
                 }
                 await flushAlert.completion()
@@ -75,5 +75,5 @@ struct FlushFolderAlertView: View {
 }
 
 #Preview {
-    FlushFolderAlertView(flushAlert: FlushAlertState { /* Preview */ })
+    FlushFolderAlertView(flushAlert: DestructiveActionAlertState { /* Preview */ })
 }

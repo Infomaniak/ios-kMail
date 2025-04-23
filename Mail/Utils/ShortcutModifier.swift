@@ -31,7 +31,7 @@ struct ShortcutModifier: ViewModifier {
 
     @LazyInjectService private var matomo: MatomoUtils
 
-    @ModalState private var flushAlert: FlushAlertState?
+    @ModalState private var flushAlert: DestructiveActionAlertState?
 
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel

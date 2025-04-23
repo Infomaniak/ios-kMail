@@ -33,7 +33,7 @@ private struct SwipeActionView: View {
 
     @Binding var actionPanelMessages: [Message]?
     @Binding var moveSheetMessages: [Message]?
-    @Binding var flushAlert: FlushAlertState?
+    @Binding var flushAlert: DestructiveActionAlertState?
 
     let viewModel: ThreadListable
     let thread: Thread

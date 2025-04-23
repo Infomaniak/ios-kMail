@@ -40,7 +40,7 @@ struct FlushFolderView: View {
     let folder: Folder
     let mailboxManager: MailboxManager
 
-    @Binding var flushAlert: FlushAlertState?
+    @Binding var flushAlert: DestructiveActionAlertState?
 
     private var label: String {
         Self.labels[folder.role ?? .trash] ?? ""
@@ -60,7 +60,7 @@ struct FlushFolderView: View {
                     matomo.track(eventWithCategory: .threadList, name: "empty\(folder.matomoName.capitalized)")
 
                     let frozenFolder = folder.freezeIfNeeded()
-                    flushAlert = FlushAlertState {
+                    flushAlert = DestructiveActionAlertState {
                         await tryOrDisplayError {
                             _ = try await mailboxManager.flushFolder(folder: frozenFolder)
                         }

@@ -113,16 +113,16 @@ public class ActionsManager: ObservableObject {
         case .delete:
             guard origin.frozenFolder?.shouldWarnBeforeDeletion != true else {
                 Task { @MainActor in
-                    origin.nearestFlushAlert?
-                        .wrappedValue = FlushAlertState(deletedMessages: messagesWithDuplicates
-                            .uniqueThreadsInFolder(origin.frozenFolder).count) {
-                                await tryOrDisplayError { [weak self] in
-                                    try await self?.performDelete(
-                                        messages: messagesWithDuplicates,
-                                        originFolder: origin.frozenFolder
-                                    )
-                                }
+                    origin.nearestFlushAlert?.wrappedValue = DestructiveActionAlertState(
+                        impactedMessages: messagesWithDuplicates.uniqueThreadsInFolder(origin.frozenFolder).count
+                    ) {
+                        await tryOrDisplayError { [weak self] in
+                            try await self?.performDelete(
+                                messages: messagesWithDuplicates,
+                                originFolder: origin.frozenFolder
+                            )
                         }
+                    }
                 }
                 return
             }

@@ -38,7 +38,7 @@ public struct ActionOrigin {
     public private(set) var frozenFolder: Folder?
 
     private(set) var nearestMessagesActionsPanel: Binding<[Message]?>?
-    private(set) var nearestFlushAlert: Binding<FlushAlertState?>?
+    private(set) var nearestFlushAlert: Binding<DestructiveActionAlertState?>?
     private(set) var nearestMessagesToMoveSheet: Binding<[Message]?>?
     private(set) var nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>?
     private(set) var nearestBlockSendersList: Binding<BlockRecipientState?>?
@@ -53,7 +53,7 @@ public struct ActionOrigin {
         type: ActionOriginType,
         folder: Folder? = nil,
         nearestMessagesActionsPanel: Binding<[Message]?>? = nil,
-        nearestFlushAlert: Binding<FlushAlertState?>? = nil,
+        nearestFlushAlert: Binding<DestructiveActionAlertState?>? = nil,
         nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
         nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>? = nil,
         nearestBlockSendersList: Binding<BlockRecipientState?>? = nil,
@@ -80,13 +80,13 @@ public struct ActionOrigin {
     }
 
     public static func toolbar(originFolder: Folder? = nil,
-                               nearestFlushAlert: Binding<FlushAlertState?>? = nil) -> ActionOrigin {
+                               nearestFlushAlert: Binding<DestructiveActionAlertState?>? = nil) -> ActionOrigin {
         return ActionOrigin(type: .toolbar, folder: originFolder, nearestFlushAlert: nearestFlushAlert)
     }
 
     public static func floatingPanel(source: FloatingPanelSource,
                                      originFolder: Folder? = nil,
-                                     nearestFlushAlert: Binding<FlushAlertState?>? = nil,
+                                     nearestFlushAlert: Binding<DestructiveActionAlertState?>? = nil,
                                      nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
                                      nearestBlockSenderAlert: Binding<BlockRecipientAlertState?>? = nil,
                                      nearestBlockSendersList: Binding<BlockRecipientState?>? = nil,
@@ -113,7 +113,7 @@ public struct ActionOrigin {
     }
 
     public static func multipleSelection(originFolder: Folder? = nil,
-                                         nearestFlushAlert: Binding<FlushAlertState?>? = nil,
+                                         nearestFlushAlert: Binding<DestructiveActionAlertState?>? = nil,
                                          nearestMessagesToMoveSheet: Binding<[Message]?>? = nil) -> ActionOrigin {
         return ActionOrigin(
             type: .multipleSelection,
@@ -127,7 +127,7 @@ public struct ActionOrigin {
         originFolder: Folder? = nil,
         nearestMessagesActionsPanel: Binding<[Message]?>? = nil,
         nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
-        nearestFlushAlert: Binding<FlushAlertState?>? = nil
+        nearestFlushAlert: Binding<DestructiveActionAlertState?>? = nil
     ) -> ActionOrigin {
         return ActionOrigin(type: .swipe,
                             folder: originFolder,
@@ -137,7 +137,7 @@ public struct ActionOrigin {
     }
 
     public static func shortcut(originFolder: Folder? = nil,
-                                nearestFlushAlert: Binding<FlushAlertState?>? = nil) -> ActionOrigin {
+                                nearestFlushAlert: Binding<DestructiveActionAlertState?>? = nil) -> ActionOrigin {
         ActionOrigin(type: .shortcut, folder: originFolder, nearestFlushAlert: nearestFlushAlert)
     }
 

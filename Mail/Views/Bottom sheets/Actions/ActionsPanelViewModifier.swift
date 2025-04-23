@@ -51,7 +51,7 @@ struct ActionsPanelViewModifier: ViewModifier {
     @ModalState private var blockSenderAlert: BlockRecipientAlertState?
     @ModalState private var blockSendersList: BlockRecipientState?
     @ModalState private var messagesToMove: [Message]?
-    @ModalState private var flushAlert: FlushAlertState?
+    @ModalState private var flushAlert: DestructiveActionAlertState?
     @ModalState private var shareMailLink: ShareMailLinkResult?
     @ModalState private var messagesToSnooze: [Message]?
     @ModalState private var messagesToDownload: [Message]?
