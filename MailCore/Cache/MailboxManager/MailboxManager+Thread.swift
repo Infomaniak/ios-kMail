@@ -366,7 +366,7 @@ public extension MailboxManager {
         }
     }
 
-    private func addMessages(shortUids: [String], folder: Folder) async throws -> Set<Thread> {
+    private func addMessages(shortUids: [String], folder: Folder) async throws -> Set<String> {
         guard !shortUids.isEmpty && !Task.isCancelled else { return [] }
 
         let messageByUidsResult = try await apiFetcher.messagesByUids(
@@ -375,7 +375,7 @@ public extension MailboxManager {
             messageUids: shortUids
         )
 
-        var impactedThreads = Set<Thread>()
+        var impactedThreads = Set<String>()
         try? writeTransaction { writableRealm in
             guard let folder = folder.fresh(using: writableRealm) else { return }
             impactedThreads = createThreads(messageByUids: messageByUidsResult, folder: folder, writableRealm: writableRealm)
@@ -389,7 +389,7 @@ public extension MailboxManager {
         in folder: Folder,
         messageUid: KeyPath<T, String>,
         perform action: (Message, T) -> Void
-    ) async -> Set<Thread> {
+    ) async -> Set<String> {
         guard !Task.isCancelled else { return [] }
 
         var threadsToUpdate = Set<Thread>()
@@ -405,7 +405,7 @@ public extension MailboxManager {
             recomputeThreadsAndUnreadCount(of: threadsToUpdate, realm: writableRealm)
         }
 
-        return threadsToUpdate
+        return Set(threadsToUpdate.map(\.uid))
     }
 
     // MARK: - Thread creation
@@ -415,7 +415,7 @@ public extension MailboxManager {
     ///   - messageByUids: MessageByUidsResult (list of message)
     ///   - folder: Given folder
     ///   - writableRealm: Given realm
-    private func createThreads(messageByUids: MessageByUidsResult, folder: Folder, writableRealm: Realm) -> Set<Thread> {
+    private func createThreads(messageByUids: MessageByUidsResult, folder: Folder, writableRealm: Realm) -> Set<String> {
         var threadsToUpdate = Set<Thread>()
         for message in messageByUids.messages {
             if let existingMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) {
@@ -442,7 +442,7 @@ public extension MailboxManager {
         }
 
         let (updatedThreads, _) = recomputeThreadsAndUnreadCount(of: threadsToUpdate, realm: writableRealm)
-        return updatedThreads
+        return Set(updatedThreads.map(\.uid))
     }
 
     /// Add the given message to existing compatible threads + Create a new thread if needed
@@ -705,9 +705,13 @@ public extension MailboxManager {
         return thread
     }
 
-    private func refreshFolderThreads(threads: Set<Thread>, folder: Folder) {
-        upsertThreadsAndMessages(threads: threads, in: folder)
+    private func refreshFolderThreads(threads: Set<String>, folder: Folder) {
+        let threadsFromRealm = fetchResults(ofType: Thread.self) { partial in
+            return partial.where { $0.uid.in(threads) }
+        }
+        let threads = Set(threadsFromRealm)
 
+        upsertThreadsAndMessages(threads: threads, in: folder)
         for associatedFolder in folder.associatedFolders {
             upsertThreadsAndMessages(threads: threads, in: associatedFolder)
         }
