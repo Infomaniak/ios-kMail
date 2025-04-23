@@ -214,7 +214,7 @@ public extension MailboxManager {
 
         let range = 0 ..< min(uidsToFetch.count, direction.pageSize)
         let nextUids: [String] = uidsToFetch[range].map { $0.uid }
-        let impactedThreads = try await addMessages(shortUids: nextUids, folder: folder)
+        let impactedThreadUids = try await addMessages(shortUids: nextUids, folder: folder)
 
         try? writeTransaction { writableRealm in
             guard let freshFolder = folder.fresh(using: writableRealm) else { return }
@@ -225,7 +225,7 @@ public extension MailboxManager {
                 freshFolder.remainingOldMessagesToFetch -= direction.pageSize
             }
 
-            refreshFolderThreads(threads: impactedThreads, folder: freshFolder)
+            refreshFolderThreads(threadUids: impactedThreadUids, folder: freshFolder)
         }
 
         return true
@@ -322,15 +322,18 @@ public extension MailboxManager {
     }
 
     private func handleDeletedMessages(messagesDelta: MessagesDelta<SnoozedFlags>, folder: Folder) async {
-        let updatedThreads = await updateMessages(with: messagesDelta.deletedShortUids, in: folder,
-                                                  messageUid: \.self) { message, _ in
+        let updatedThreadUids = await updateMessages(
+            with: messagesDelta.deletedShortUids,
+            in: folder,
+            messageUid: \.self
+        ) { message, _ in
             message.snoozeState = nil
             message.snoozeUuid = nil
             message.snoozeEndDate = nil
         }
 
         try? writeTransaction { _ in
-            refreshFolderThreads(threads: updatedThreads, folder: folder)
+            refreshFolderThreads(threadUids: updatedThreadUids, folder: folder)
         }
     }
 
@@ -375,12 +378,12 @@ public extension MailboxManager {
             messageUids: shortUids
         )
 
-        var impactedThreads = Set<String>()
+        var impactedThreadUids = Set<String>()
         try? writeTransaction { writableRealm in
             guard let folder = folder.fresh(using: writableRealm) else { return }
-            impactedThreads = createThreads(messageByUids: messageByUidsResult, folder: folder, writableRealm: writableRealm)
+            impactedThreadUids = createThreads(messageByUids: messageByUidsResult, folder: folder, writableRealm: writableRealm)
         }
-        return impactedThreads
+        return impactedThreadUids
     }
 
     @discardableResult
@@ -705,9 +708,9 @@ public extension MailboxManager {
         return thread
     }
 
-    private func refreshFolderThreads(threads: Set<String>, folder: Folder) {
+    private func refreshFolderThreads(threadUids: Set<String>, folder: Folder) {
         let threadsFromRealm = fetchResults(ofType: Thread.self) { partial in
-            return partial.where { $0.uid.in(threads) }
+            return partial.where { $0.uid.in(threadUids) }
         }
         let threads = Set(threadsFromRealm)
 
