@@ -24,6 +24,55 @@ import MailCore
 import MailResources
 import SwiftUI
 
+extension DestructiveActionAlertState {
+    func title(in folder: Folder?) -> String {
+        switch type {
+        case .delete:
+            if let impactedMessages {
+                return MailResourcesStrings.Localizable.threadListDeletionConfirmationAlertTitle(impactedMessages)
+            } else {
+                switch folder?.role {
+                case .spam:
+                    return MailResourcesStrings.Localizable.threadListEmptySpamButton
+                case .trash:
+                    return MailResourcesStrings.Localizable.threadListEmptyTrashButton
+                default:
+                    return ""
+                }
+            }
+
+        case .deleteSnooze:
+            return "!TODO"
+
+        case .archiveSnooze:
+            return "!TODO"
+
+        case .moveSnooze:
+            return "!TODO"
+        }
+    }
+
+    var description: String {
+        switch type {
+        case .delete:
+            if let impactedMessages {
+                return MailResourcesStrings.Localizable.threadListDeletionConfirmationAlertDescription(impactedMessages)
+            } else {
+                return MailResourcesStrings.Localizable.threadListEmptyFolderAlertDescription
+            }
+
+        case .deleteSnooze:
+            return "!TODO"
+
+        case .archiveSnooze:
+            return "!TODO"
+
+        case .moveSnooze:
+            return "!TODO"
+        }
+    }
+}
+
 struct FlushFolderAlertView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
@@ -35,33 +84,11 @@ struct FlushFolderAlertView: View {
         frozenFolder = folder?.freezeIfNeeded()
     }
 
-    private var title: String {
-        if let deletedMessagesCount = flushAlert.impactedMessages {
-            return MailResourcesStrings.Localizable.threadListDeletionConfirmationAlertTitle(deletedMessagesCount)
-        }
-
-        switch frozenFolder?.role {
-        case .spam:
-            return MailResourcesStrings.Localizable.threadListEmptySpamButton
-        case .trash:
-            return MailResourcesStrings.Localizable.threadListEmptyTrashButton
-        default:
-            return ""
-        }
-    }
-
-    private var description: String {
-        if let deletedMessagesCount = flushAlert.impactedMessages {
-            return MailResourcesStrings.Localizable.threadListDeletionConfirmationAlertDescription(deletedMessagesCount)
-        }
-        return MailResourcesStrings.Localizable.threadListEmptyFolderAlertDescription
-    }
-
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.large) {
-            Text(title)
+            Text(flushAlert.title(in: frozenFolder))
                 .textStyle(.bodyMedium)
-            Text(description)
+            Text(flushAlert.description)
                 .textStyle(.body)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm) {

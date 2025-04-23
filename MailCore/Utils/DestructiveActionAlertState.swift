@@ -17,7 +17,6 @@
  */
 
 import Foundation
-import MailResources
 
 public enum DestructiveActionAlertType {
     case delete
