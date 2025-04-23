@@ -60,7 +60,7 @@ struct ShortcutModifier: ViewModifier {
             content
         }
         .customAlert(item: $flushAlert) { item in
-            FlushFolderAlertView(flushAlert: item, folder: viewModel.frozenFolder)
+            DestructiveActionAlertView(flushAlert: item, folder: viewModel.frozenFolder)
         }
     }
 

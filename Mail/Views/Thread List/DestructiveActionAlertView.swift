@@ -73,7 +73,7 @@ extension DestructiveActionAlertState {
     }
 }
 
-struct FlushFolderAlertView: View {
+struct DestructiveActionAlertView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     let flushAlert: DestructiveActionAlertState
@@ -102,5 +102,5 @@ struct FlushFolderAlertView: View {
 }
 
 #Preview {
-    FlushFolderAlertView(flushAlert: DestructiveActionAlertState(type: .delete) { /* Preview */ })
+    DestructiveActionAlertView(flushAlert: DestructiveActionAlertState(type: .delete) { /* Preview */ })
 }

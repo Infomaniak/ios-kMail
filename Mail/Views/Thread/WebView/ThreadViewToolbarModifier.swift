@@ -112,7 +112,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                 }
             }
             .customAlert(item: $nearestFlushAlert) { item in
-                FlushFolderAlertView(flushAlert: item)
+                DestructiveActionAlertView(flushAlert: item)
             }
     }
 
