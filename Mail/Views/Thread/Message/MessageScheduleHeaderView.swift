@@ -55,6 +55,8 @@ struct MessageScheduleHeaderView: View {
         .scheduleFloatingPanel(
             isPresented: $isShowingReschedulePanel,
             type: .scheduledDraft,
+            isUpdating: true,
+            initialDate: scheduleDate,
             completionHandler: changeScheduleDate
         )
     }

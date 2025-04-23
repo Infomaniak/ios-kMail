@@ -45,12 +45,28 @@ struct CustomScheduleAlertView: View {
     @State private var selectedDate: Date
 
     let type: ScheduleType
+    let isUpdating: Bool
     let confirmAction: (Date) -> Void
     let cancelAction: (() -> Void)?
 
-    init(type: ScheduleType, date: Date?, confirmAction: @escaping (Date) -> Void, cancelAction: (() -> Void)? = nil) {
+    private var buttonConfirmLabel: String {
+        if isUpdating {
+            return MailResourcesStrings.Localizable.buttonModify
+        } else {
+            return MailResourcesStrings.Localizable.buttonConfirm
+        }
+    }
+
+    init(
+        type: ScheduleType,
+        date: Date?,
+        isUpdating: Bool,
+        confirmAction: @escaping (Date) -> Void,
+        cancelAction: (() -> Void)? = nil
+    ) {
         _selectedDate = .init(wrappedValue: date ?? type.minimumDate)
         self.type = type
+        self.isUpdating = isUpdating
         self.confirmAction = confirmAction
         self.cancelAction = cancelAction
     }
@@ -78,7 +94,7 @@ struct CustomScheduleAlertView: View {
                 .padding(.bottom, value: .mini)
 
             ModalButtonsView(
-                primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm,
+                primaryButtonTitle: buttonConfirmLabel,
                 secondaryButtonTitle: MailResourcesStrings.Localizable.buttonCancel,
                 primaryButtonEnabled: !isShowingError,
                 primaryButtonAction: executeActionIfPossible,
@@ -100,7 +116,7 @@ struct CustomScheduleAlertView: View {
 }
 
 #Preview {
-    CustomScheduleAlertView(type: .scheduledDraft, date: .now) { date in
+    CustomScheduleAlertView(type: .scheduledDraft, date: .now, isUpdating: false) { date in
         print("Selected Date: \(date)")
     }
 }

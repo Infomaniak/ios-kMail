@@ -47,6 +47,11 @@ struct SnoozedFloatingPanel: ViewModifier {
     let folder: Folder?
     let completionHandler: ((Action) -> Void)?
 
+    private var isUpdating: Bool {
+        let messagesInFolder = messages?.filter { $0.folder?.remoteId == folder?.remoteId } ?? []
+        return messagesInFolder.allSatisfy(\.isSnoozed)
+    }
+
     func body(content: Content) -> some View {
         content
             .onChange(of: messages) { newValue in
@@ -55,6 +60,7 @@ struct SnoozedFloatingPanel: ViewModifier {
             .scheduleFloatingPanel(
                 isPresented: $isShowingPanel,
                 type: .snooze,
+                isUpdating: isUpdating,
                 initialDate: initialDate,
                 completionHandler: handleSelectedDate
             )
