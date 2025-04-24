@@ -31,6 +31,19 @@ public struct NestableFolder: Identifiable {
     /// `NestableFolder` childs
     public let children: [NestableFolder]
 
+    public var hasSubFolders: Bool {
+        let filteredChild = children.filter { $0.frozenContent.role == nil }
+        if !filteredChild.isEmpty {
+            return true
+        }
+        for child in children {
+            if child.hasSubFolders {
+                return true
+            }
+        }
+        return false
+    }
+
     public init(content: Folder, children: [NestableFolder]) {
         frozenContent = content.freezeIfNeeded()
         self.children = children

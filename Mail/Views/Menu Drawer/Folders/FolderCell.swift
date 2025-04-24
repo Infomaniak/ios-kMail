@@ -63,7 +63,8 @@ struct FolderCell: View {
                         frozenFolder: folder.frozenContent,
                         level: level,
                         isCurrentFolder: isCurrentFolder,
-                        canCollapseSubFolders: canCollapseSubFolders
+                        canCollapseSubFolders: canCollapseSubFolders,
+                        shouldHaveChevron: folder.hasSubFolders
                     )
                 }
                 .accessibilityAction(.default) {
@@ -86,7 +87,8 @@ struct FolderCell: View {
                             frozenFolder: folder.frozenContent,
                             level: level,
                             isCurrentFolder: isCurrentFolder,
-                            canCollapseSubFolders: canCollapseSubFolders
+                            canCollapseSubFolders: canCollapseSubFolders,
+                            shouldHaveChevron: folder.hasSubFolders
                         )
                     }
                 }
@@ -95,15 +97,17 @@ struct FolderCell: View {
                 }
             }
 
-            if folder.frozenContent.isExpanded || cellType == .move {
+            if (folder.frozenContent.isExpanded && folder.hasSubFolders) || cellType == .move {
                 ForEach(folder.children) { child in
-                    FolderCell(
-                        folder: child,
-                        level: level + 1,
-                        currentFolderId: currentFolderId,
-                        canCollapseSubFolders: canCollapseSubFolders,
-                        customCompletion: customCompletion
-                    )
+                    if child.frozenContent.role == nil || child.hasSubFolders {
+                        FolderCell(
+                            folder: child,
+                            level: level + 1,
+                            currentFolderId: currentFolderId,
+                            canCollapseSubFolders: canCollapseSubFolders,
+                            customCompletion: customCompletion
+                        )
+                    }
                 }
             }
         }
@@ -152,12 +156,15 @@ struct FolderCellContent: View {
         canCollapseSubFolders && cellType == .menuDrawer
     }
 
-    init(frozenFolder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false) {
+    private var shouldHaveChevron: Bool
+
+    init(frozenFolder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false, shouldHaveChevron: Bool) {
         assert(frozenFolder.isFrozen, "expecting frozenFolder to be frozen")
         self.frozenFolder = frozenFolder
         self.level = min(level, Self.maximumSubFolderLevel)
         self.isCurrentFolder = isCurrentFolder
         self.canCollapseSubFolders = canCollapseSubFolders
+        self.shouldHaveChevron = shouldHaveChevron && level == 0
     }
 
     var body: some View {
@@ -169,7 +176,7 @@ struct FolderCellContent: View {
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable
                     .contentDescriptionButtonExpandFolder(frozenFolder.name))
-                .opacity(level == 0 && !frozenFolder.children.isEmpty ? 1 : 0)
+                .opacity(shouldHaveChevron ? 1 : 0)
             }
 
             HStack(spacing: IKPadding.menuDrawerCellSpacing) {
