@@ -123,7 +123,7 @@ struct ThreadListToolbar: ViewModifier {
                                     action: action,
                                     origin: .multipleSelection(
                                         originFolder: originFolder,
-                                        nearestFlushAlert: $mainViewState.flushAlert,
+                                        nearestDestructiveAlert: $mainViewState.destructiveAlert,
                                         nearestMessagesToMoveSheet: nil
                                     )
                                 )

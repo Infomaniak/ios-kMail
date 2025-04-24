@@ -76,31 +76,31 @@ extension DestructiveActionAlertState {
 struct DestructiveActionAlertView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    let flushAlert: DestructiveActionAlertState
+    let destructiveAlert: DestructiveActionAlertState
     var frozenFolder: Folder?
 
-    init(flushAlert: DestructiveActionAlertState, folder: Folder? = nil) {
-        self.flushAlert = flushAlert
+    init(destructiveAlert: DestructiveActionAlertState, folder: Folder? = nil) {
+        self.destructiveAlert = destructiveAlert
         frozenFolder = folder?.freezeIfNeeded()
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.large) {
-            Text(flushAlert.title(in: frozenFolder))
+            Text(destructiveAlert.title(in: frozenFolder))
                 .textStyle(.bodyMedium)
-            Text(flushAlert.description)
+            Text(destructiveAlert.description)
                 .textStyle(.body)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm) {
-                if let frozenFolder, flushAlert.impactedMessages == nil {
+                if let frozenFolder, destructiveAlert.impactedMessages == nil {
                     matomo.track(eventWithCategory: .threadList, name: "empty\(frozenFolder.matomoName.capitalized)Confirm")
                 }
-                await flushAlert.completion()
+                await destructiveAlert.completion()
             }
         }
     }
 }
 
 #Preview {
-    DestructiveActionAlertView(flushAlert: DestructiveActionAlertState(type: .delete) { /* Preview */ })
+    DestructiveActionAlertView(destructiveAlert: DestructiveActionAlertState(type: .delete) { /* Preview */ })
 }

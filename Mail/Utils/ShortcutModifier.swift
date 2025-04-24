@@ -31,7 +31,7 @@ struct ShortcutModifier: ViewModifier {
 
     @LazyInjectService private var matomo: MatomoUtils
 
-    @ModalState private var flushAlert: DestructiveActionAlertState?
+    @ModalState private var destructiveAlert: DestructiveActionAlertState?
 
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
@@ -59,8 +59,8 @@ struct ShortcutModifier: ViewModifier {
 
             content
         }
-        .customAlert(item: $flushAlert) { item in
-            DestructiveActionAlertView(flushAlert: item, folder: viewModel.frozenFolder)
+        .customAlert(item: $destructiveAlert) { item in
+            DestructiveActionAlertView(destructiveAlert: item, folder: viewModel.frozenFolder)
         }
     }
 
@@ -79,7 +79,7 @@ struct ShortcutModifier: ViewModifier {
             try await actionsManager.performAction(
                 target: messages,
                 action: .delete,
-                origin: .shortcut(originFolder: viewModel.frozenFolder, nearestFlushAlert: $flushAlert)
+                origin: .shortcut(originFolder: viewModel.frozenFolder, nearestDestructiveAlert: $destructiveAlert)
             )
         }
     }
