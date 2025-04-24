@@ -101,7 +101,7 @@ public extension MatomoUtils.EventCategory {
 
 public extension MatomoUtils {
     func trackSendMessage(draft: Draft, sentWithExternals: Bool) {
-        track(eventWithCategory: .newMessage, name: draft.scheduleDate == nil ? "scheduleDraft" : "sendMail")
+        track(eventWithCategory: .newMessage, name: draft.scheduleDate == nil ? "sendMail" : "scheduleDraft")
 
         track(eventWithCategory: .newMessage, action: .data, name: "numberOfTo", value: Float(draft.to.count))
         track(eventWithCategory: .newMessage, action: .data, name: "numberOfCc", value: Float(draft.cc.count))
