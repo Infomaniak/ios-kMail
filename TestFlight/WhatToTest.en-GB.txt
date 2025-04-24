@@ -1,2 +1,2 @@
-- Update unread badge in the background
-- Block collapsing threads with only one message
+- Improved message snoozing feature
+- Bug fixes

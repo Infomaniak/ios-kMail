@@ -1,2 +1,2 @@
-- Mise à jour du badge non lus en arrière-plan
-- Bloquage du repliement des messages dans les conversations de un message
+- Amélioration de la fonctionnalité de mise en attente de messages
+- Corrections de bugs
