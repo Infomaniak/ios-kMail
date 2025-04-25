@@ -4,7 +4,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Mon, 31 Mar 2025 16:15:55 +0200
+ * Exported at: Fri, 25 Apr 2025 11:19:29 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -280,15 +280,6 @@
 /* loco:6374f6a12619632e014135d2 */
 "attachmentFileLimitReached" = "Les fichiers que vous essayez d’envoyer dépassent la limite de 25 Mo pour les pièces jointes";
 
-/* loco:6267b1e1002a8716d553ad94 */
-"attachmentQuantity" = "%d pièce jointe";
-
-/* loco:6267b57fcc702828232d6f02 */
-"attachmentQuantity-plural" = "%d pièces jointes";
-
-/* loco:638f6e49a7896c4df9647362 */
-"attachmentQuantity-plural-many" = "%d de pièces jointes";
-
 /* loco:659665294692c252640fa103 */
 "attendeesListTitle" = "Liste des participants (%d)";
 
@@ -303,15 +294,6 @@
 
 /* loco:67cff9495697ef40dc013633 */
 "blockMultipleExpeditorsTitle" = "Bloquer %d expéditeurs";
-
-/* loco:649ea00ef9c6ecfe620a0b62 */
-"blockedPasswordTitle" = "Mot de passe bloqué";
-
-/* loco:649ea1ed3c1546646f049403 */
-"blockedPasswordTitle-plural" = "Mots de passe bloqués";
-
-/* loco:64ad0c0b88d6fd5fec0b0533 */
-"blockedPasswordTitle-plural-many" = "Mots de passe bloqués";
 
 /* loco:62cd641b15742c678d4c30e2 */
 "buttonAccept" = "Accepter";
@@ -925,15 +907,6 @@
 /* loco:62a9dbdf0bddbc02ce031ba2 */
 "favoritesFolder" = "Favoris";
 
-/* loco:66587f0c073fdbd3d8051342 */
-"fileQuantity" = "%d fichier envoyé via SwissTransfer";
-
-/* loco:66587fa3e58bc83def020512 */
-"fileQuantity-plural" = "%d fichiers envoyés via SwissTransfer";
-
-/* loco:6658833c09d08ba3a705fca2 */
-"fileQuantity-plural-many" = "%d de fichiers envoyés via SwissTransfer";
-
 /* loco:65982105ed32c3578b07f9c2 */
 "filterFocusAllowedMailboxesTitle" = "Boîtes aux lettres autorisées";
 
@@ -978,15 +951,6 @@
 
 /* loco:64999ba3e6d90f26b6023952 */
 "lockedMailboxBottomSheetTitle" = "L’adresse %@ est bloquée";
-
-/* loco:649e9f941e62d5ca5f032305 */
-"lockedMailboxTitle" = "Adresse mail bloquée";
-
-/* loco:649adbc029c685e8c20dc096 */
-"lockedMailboxTitle-plural" = "Adresses mail bloquées";
-
-/* loco:64ad0bf21a8c5c3877078262 */
-"lockedMailboxTitle-plural-many" = "Adresses mail bloquées";
 
 /* loco:649adc1b599c6ce9d6099fa2 */
 "lockedMailboxViewDescription" = "Pour plus d’informations :";
@@ -1065,15 +1029,6 @@
 
 /* loco:62b1c0a1e915206f7e2d5764 */
 "moveTitle" = "Dans quel dossier souhaitez-vous déplacer votre e-mail ?";
-
-/* loco:62de4beb1a10d74d4c7e6df2 */
-"multipleSelectionCount" = "%d sélectionné";
-
-/* loco:62de4c63f1fea7507653c564 */
-"multipleSelectionCount-plural" = "%d sélectionnés";
-
-/* loco:638f6ec13ee2595d320a7242 */
-"multipleSelectionCount-plural-many" = "%d de sélectionnés";
 
 /* loco:67a9ba0103b091bbbc0837c2 */
 "myKSuiteQuotasAlertDescription" = "Une fois atteinte, vous ne pourrez plus recevoir ou envoyer de messages. Libérez de l’espace ou faites évoluer votre offre vers my kSuite+.";
@@ -1242,12 +1197,6 @@
 
 /* loco:62cd63dab9cd016ad83df012 */
 "reportDisplayProblemTitle" = "Signaler un problème d’affichage";
-
-/* loco:62cece41730aa70c5f3da0e2 */
-"reportPhishingDescription" = "Si ce message tente de dérober des informations sensibles (mot de passe, données bancaires, etc.) et/ou s’il usurpe une identité reconnue, alors il s’agit d’hameçonnage.\n\nEn nous le signalant, vous accélérez la détection de messages dangereux pour l’ensemble de nos utilisateurs.\n\nLe signalement sera envoyé à notre équipe sécurité pour analyse afin de prendre les mesures nécessaires. L’e-mail sera également déplacé automatiquement dans vos spams.";
-
-/* loco:67cf0d265a4faa32a10d6db5 */
-"reportPhishingDescription-plural" = "Si ces messages tentent de dérober des informations sensibles (mots de passe, données bancaires, etc.) et/ou s’ils usurpent une identité reconnue, alors il s’agit d’hameçonnage.\n\nEn nous les signalant, vous accélérez la détection de messages dangereux pour l’ensemble de nos utilisateurs.\n\nLes signalements seront envoyés à notre équipe sécurité pour analyse afin de prendre les mesures nécessaires. Les e-mails seront également déplacés automatiquement dans vos spams.";
 
 /* loco:62cecdf0413c882ede7451c2 */
 "reportPhishingTitle" = "Signaler une tentative d’hameçonnage";
@@ -1654,35 +1603,14 @@
 /* loco:6729d83e9f7d15aea0033402 */
 "snackbarScheduling" = "Le message est en cours de planification";
 
-/* loco:62ab4ab51521a800290a7c32 */
-"snackbarSenderBlacklisted" = "Expéditeur blacklisté avec succès";
-
-/* loco:638f5f3f40687b206c230e62 */
-"snackbarSenderBlacklisted-plural" = "Expéditeurs blacklistés avec succès";
-
-/* loco:638f6f0d5075370cf374e2a2 */
-"snackbarSenderBlacklisted-plural-many" = "Expéditeurs blacklistés avec succès";
-
 /* loco:67ea70102a2bbfe96e02d072 */
 "snackbarSnoozeSuccess" = "Vous recevrez un rappel de ce message %@";
-
-/* loco:67ea7126fa3c72bf060a7722 */
-"snackbarSnoozeSuccess-plural" = "Vous recevrez un rappel de ces messages %@";
 
 /* loco:67ea722654038d4994095fc2 */
 "snackbarSnoozeSuccess-plural-many" = "Vous recevrez un rappel de ces messages %@";
 
 /* loco:653fa9122f7b384757074432 */
 "snackbarSubjectCopiedToClipboard" = "Objet copié dans le presse-papiers";
-
-/* loco:638f5a17e9a49034ae006a92 */
-"snackbarThreadDeletedPermanently" = "Conversation supprimée";
-
-/* loco:638f61c30f52e171f83f4ce2 */
-"snackbarThreadDeletedPermanently-plural" = "Conversations supprimées";
-
-/* loco:638f6f33a6d6283e9b3411a2 */
-"snackbarThreadDeletedPermanently-plural-many" = "Conversations supprimées";
 
 /* loco:62ab221b4956e9775f391ca6 */
 "snackbarThreadMoved" = "Conversation déplacée vers %@";
@@ -1693,44 +1621,8 @@
 /* loco:638f6f4f55158c5b515a5ff2 */
 "snackbarThreadMoved-plural-many" = "Conversations déplacées vers %@";
 
-/* loco:67ea73cd7e04d40c390da0f6 */
-"snackbarUnsnoozeSuccess" = "Rappel annulé. Votre message est revenu dans votre boîte de réception";
-
-/* loco:67ea74b9c68f97079b03ab24 */
-"snackbarUnsnoozeSuccess-plural" = "Rappels annulés. Vos messages sont revenus dans votre boîte de réception";
-
-/* loco:67ea75009e0f50f0ea00f134 */
-"snackbarUnsnoozeSuccess-plural-many" = "Rappels annulés. Vos messages sont revenus dans votre boîte de réception";
-
 /* loco:67b32e5c0e4974a86a00c602 */
 "snoozeAlertTitle" = "En attente jusqu’au : %@";
-
-/* loco:67ea90d1ed66875aaf0d73c2 */
-"snoozeArchiveConfirmAlertDescription" = "Cette conversation ne sera plus en attente et sera archivée";
-
-/* loco:67ea9699542059731b0bf7a3 */
-"snoozeArchiveConfirmAlertDescription-plural" = "Ces conversations ne seront plus en attente et seront archivées";
-
-/* loco:67ea96c7adc66e9a8f06edc6 */
-"snoozeArchiveConfirmAlertDescription-plural-many" = "Ces conversations ne seront plus en attente et seront archivées";
-
-/* loco:67ea90d9bf43214ba80e1bc3 */
-"snoozeDeleteConfirmAlertDescription" = "Cette conversation ne sera plus en attente et sera supprimée";
-
-/* loco:67ea96217cc35c6df507ce32 */
-"snoozeDeleteConfirmAlertDescription-plural" = "Ces conversations ne seront plus en attente et seront supprimées";
-
-/* loco:67ea965556e7d71125025b63 */
-"snoozeDeleteConfirmAlertDescription-plural-many" = "Ces conversations ne seront plus en attente et seront supprimées";
-
-/* loco:67ea90c5bf43214ba80e1bc2 */
-"snoozeMoveConfirmAlertDescription" = "Cette conversation ne sera plus en attente et sera déplacée";
-
-/* loco:67ea9706fffbe6d2a80edda2 */
-"snoozeMoveConfirmAlertDescription-plural" = "Ces conversations ne seront plus en attente et seront déplacées";
-
-/* loco:67ea972f14ecc86d5c0500d5 */
-"snoozeMoveConfirmAlertDescription-plural-many" = "Ces conversations ne seront plus en attente et seront déplacées";
 
 /* loco:67a32e4384fbf4226404e972 */
 "snoozedFolder" = "En attente";
@@ -1798,21 +1690,6 @@
 /* loco:67238c432a68eb6c2600fc52 */
 "thisEvening" = "Ce soir";
 
-/* loco:63f380d5d0a8f81b511bf704 */
-"threadListDeletionConfirmationAlertDescription" = "Êtes-vous sûr de vouloir supprimer ce message définitivement ?";
-
-/* loco:63f377ed99071860fb4439d2 */
-"threadListDeletionConfirmationAlertDescription-plural" = "Êtes-vous sûr de vouloir supprimer ces messages définitivement ?";
-
-/* loco:641b1d7a9c76fa6987570e72 */
-"threadListDeletionConfirmationAlertDescription-plural-many" = "Êtes-vous sûr de vouloir supprimer ces messages définitivement ?";
-
-/* loco:63edf25697f024075b239532 */
-"threadListDeletionConfirmationAlertTitle" = "Supprimer %d message";
-
-/* loco:63edf28c20221c0f3a6d30a2 */
-"threadListDeletionConfirmationAlertTitle-plural" = "Supprimer %d messages";
-
 /* loco:6412e19cf8d74923f83fd492 */
 "threadListEmptyDraftButton" = "Vider les brouillons";
 
@@ -1857,12 +1734,6 @@
 
 /* loco:63ebabc469ccbb24d90659c2 */
 "threadListTrashHint" = "Les messages placés dans la corbeille pendant plus de 30 jours seront automatiquement supprimés.";
-
-/* loco:62860a31425f1905bb227912 */
-"titleMyAccount" = "Mon compte";
-
-/* loco:62860a56f6ea2c34fb742092 */
-"titleMyAccount-plural" = "Mes comptes";
 
 /* loco:62665fa13789aa7e8353ad62 */
 "toTitle" = "À :";
