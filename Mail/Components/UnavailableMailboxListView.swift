@@ -49,7 +49,7 @@ struct UnavailableMailboxListView: View {
         VStack(alignment: .leading, spacing: IKPadding.huge) {
             if !passwordBlockedMailboxes.isEmpty {
                 VStack(alignment: .leading, spacing: IKPadding.small) {
-                    Text(MailResourcesStrings.Localizable.blockedPasswordTitlePlural)
+                    Text(MailResourcesStrings.Localizable.blockedPasswordTitle(passwordBlockedMailboxes.count))
                     ForEach(passwordBlockedMailboxes) { mailbox in
                         MailboxCell(mailbox: mailbox)
                             .mailboxCellStyle(.blockedPassword)
@@ -59,7 +59,7 @@ struct UnavailableMailboxListView: View {
 
             if !lockedMailboxes.isEmpty {
                 VStack(alignment: .leading, spacing: IKPadding.small) {
-                    Text(MailResourcesStrings.Localizable.lockedMailboxTitlePlural)
+                    Text(MailResourcesStrings.Localizable.lockedMailboxTitle(lockedMailboxes.count))
                     ForEach(lockedMailboxes) { mailbox in
                         MailboxCell(mailbox: mailbox)
                             .mailboxCellStyle(.locked)
