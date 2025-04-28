@@ -1,152 +1,96 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+ Loco ios export: Xcode Stringsdict (legacy)
+ Project: kMail
+ Locale: en, English
+ Tagged: ios-stringsdict
+ Exported by: Valentin Perignon
+ Exported at: Fri, 25 Apr 2025 11:19:29 +0200
+-->
 <plist version="1.0">
-<dict>
-	<key>attachmentQuantity</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@items@</string>
-		<key>items</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>%d attachment</string>
-			<key>other</key>
-			<string>%d attachments</string>
-		</dict>
-	</dict>
-	<key>folderMessageCount</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@items@</string>
-		<key>items</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>This folder contains %d message</string>
-			<key>other</key>
-			<string>This folder contains %d messages</string>
-		</dict>
-	</dict>
-	<key>multipleSelectionCount</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@items@</string>
-		<key>items</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>%d selected</string>
-			<key>other</key>
-			<string>%d selected</string>
-		</dict>
-	</dict>
-	<key>snackbarSenderBlacklisted</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@items@</string>
-		<key>items</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>Sender successfully blacklisted</string>
-			<key>other</key>
-			<string>Senders successfully blacklisted</string>
-		</dict>
-	</dict>
-	<key>snackbarThreadDeletedPermanently</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@items@</string>
-		<key>items</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>Conversation deleted</string>
-			<key>other</key>
-			<string>Conversations deleted</string>
-		</dict>
-	</dict>
-	<key>threadListDeletionConfirmationAlertDescription</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@items@</string>
-		<key>items</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>Are you sure you want to delete this message permanently?</string>
-			<key>other</key>
-			<string>Are you sure you want to delete these messages permanently?</string>
-		</dict>
-	</dict>
-	<key>threadListDeletionConfirmationAlertTitle</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@items@</string>
-		<key>items</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>Delete %d message</string>
-			<key>other</key>
-			<string>Delete %d messages</string>
-		</dict>
-	</dict>
-	<key>fileQuantity</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@items@</string>
-		<key>items</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>%d file sent by SwissTransfer</string>
-			<key>other</key>
-			<string>%d files sent by SwissTransfer</string>
-		</dict>
-	</dict>
-	<key>titleMyAccount</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@items@</string>
-		<key>items</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>My account</string>
-			<key>other</key>
-			<string>My accounts</string>
-		</dict>
-	</dict>
-	<key>reportPhishingDescription</key>
+  <dict>
+    <key>attachmentQuantity</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d attachment</string>
+        <key>other</key>
+        <string>%d attachments</string>
+      </dict>
+    </dict>
+    <key>blockedPasswordTitle</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Blocked password</string>
+        <key>other</key>
+        <string>Blocked passwords</string>
+      </dict>
+    </dict>
+    <key>fileQuantity</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d file sent by SwissTransfer</string>
+        <key>other</key>
+        <string>%d files sent by SwissTransfer</string>
+      </dict>
+    </dict>
+    <key>lockedMailboxTitle</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Blocked mailbox</string>
+        <key>other</key>
+        <string>Blocked mailboxes</string>
+      </dict>
+    </dict>
+    <key>multipleSelectionCount</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d selected</string>
+        <key>other</key>
+        <string>%d selected</string>
+      </dict>
+    </dict>
+    <key>reportPhishingDescription</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
       <string>%#@value@</string>
@@ -170,69 +114,149 @@ By reporting them to us, you speed up the detection of dangerous messages for al
 The reports will be sent to our security team for analysis and action. The emails will also be automatically moved to your spam folder.</string>
       </dict>
     </dict>
-	<key>snackbarUnsnoozeSuccess</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@value@</string>
-		<key>value</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>Reminder canceled. Your message is back in your inbox</string>
-			<key>other</key>
-			<string>Reminders canceled. Your messages are back in your inbox</string>
-		</dict>
-	</dict>
-	<key>snoozeArchiveConfirmAlertDescription</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@value@</string>
-		<key>value</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>This conversation will no longer be snoozed and will be archived</string>
-			<key>other</key>
-			<string>These conversations will no longer be snoozed and will be archived</string>
-		</dict>
-	</dict>
-	<key>snoozeDeleteConfirmAlertDescription</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@value@</string>
-		<key>value</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>This conversation will no longer be snoozed and will be deleted</string>
-			<key>other</key>
-			<string>These conversations will no longer be snoozed and will be deleted</string>
-		</dict>
-	</dict>
-	<key>snoozeMoveConfirmAlertDescription</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@value@</string>
-		<key>value</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>one</key>
-			<string>This conversation will no longer be snoozed and will be moved</string>
-			<key>other</key>
-			<string>These conversations will no longer be snoozed and will be moved</string>
-		</dict>
-	</dict>
-</dict>
+    <key>snackbarSenderBlacklisted</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Sender successfully blacklisted</string>
+        <key>other</key>
+        <string>Senders successfully blacklisted</string>
+      </dict>
+    </dict>
+    <key>snackbarThreadDeletedPermanently</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Conversation deleted</string>
+        <key>other</key>
+        <string>Conversations deleted</string>
+      </dict>
+    </dict>
+    <key>snackbarUnsnoozeSuccess</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Reminder canceled. Your message is back in your inbox</string>
+        <key>other</key>
+        <string>Reminders canceled. Your messages are back in your inbox</string>
+      </dict>
+    </dict>
+    <key>snoozeArchiveConfirmAlertDescription</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>This conversation will no longer be snoozed and will be archived</string>
+        <key>other</key>
+        <string>These conversations will no longer be snoozed and will be archived</string>
+      </dict>
+    </dict>
+    <key>snoozeDeleteConfirmAlertDescription</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>This conversation will no longer be snoozed and will be deleted</string>
+        <key>other</key>
+        <string>These conversations will no longer be snoozed and will be deleted</string>
+      </dict>
+    </dict>
+    <key>snoozeMoveConfirmAlertDescription</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>This conversation will no longer be snoozed and will be moved</string>
+        <key>other</key>
+        <string>These conversations will no longer be snoozed and will be moved</string>
+      </dict>
+    </dict>
+    <key>threadListDeletionConfirmationAlertDescription</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Are you sure you want to delete this message permanently?</string>
+        <key>other</key>
+        <string>Are you sure you want to delete these messages permanently?</string>
+      </dict>
+    </dict>
+    <key>threadListDeletionConfirmationAlertTitle</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Delete %d message</string>
+        <key>other</key>
+        <string>Delete %d messages</string>
+      </dict>
+    </dict>
+    <key>titleMyAccount</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>My account</string>
+        <key>other</key>
+        <string>My accounts</string>
+      </dict>
+    </dict>
+  </dict>
 </plist>
