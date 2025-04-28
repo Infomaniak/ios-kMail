@@ -19,21 +19,20 @@
 import Foundation
 
 public enum DestructiveActionAlertType {
-    case delete
-    case deleteSnooze
-    case archiveSnooze
-    case moveSnooze
+    case permanentlyDelete(Int)
+    case flushFolder(Folder?)
+    case deleteSnooze(Int)
+    case archiveSnooze(Int)
+    case moveSnooze(Int)
 }
 
 public struct DestructiveActionAlertState: Identifiable, Equatable {
     public let id = UUID()
     public let type: DestructiveActionAlertType
-    public let impactedMessages: Int?
     public let completion: () async -> Void
 
-    public init(type: DestructiveActionAlertType, impactedMessages: Int? = nil, completion: @escaping () async -> Void) {
+    public init(type: DestructiveActionAlertType, completion: @escaping () async -> Void) {
         self.type = type
-        self.impactedMessages = impactedMessages
         self.completion = completion
     }
 

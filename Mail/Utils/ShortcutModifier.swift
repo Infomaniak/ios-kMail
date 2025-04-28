@@ -60,7 +60,7 @@ struct ShortcutModifier: ViewModifier {
             content
         }
         .customAlert(item: $destructiveAlert) { item in
-            DestructiveActionAlertView(destructiveAlert: item, folder: viewModel.frozenFolder)
+            DestructiveActionAlertView(destructiveAlert: item)
         }
     }
 

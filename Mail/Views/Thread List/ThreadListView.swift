@@ -221,7 +221,7 @@ struct ThreadListView: View {
             updateFetchingTask()
         }
         .customAlert(item: $mainViewState.destructiveAlert) { item in
-            DestructiveActionAlertView(destructiveAlert: item, folder: viewModel.frozenFolder)
+            DestructiveActionAlertView(destructiveAlert: item)
         }
         .customAlert(isPresented: $isShowingUpdateAlert) {
             // swiftlint:disable:next trailing_closure

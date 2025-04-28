@@ -25,50 +25,48 @@ import MailResources
 import SwiftUI
 
 extension DestructiveActionAlertState {
-    func title(in folder: Folder?) -> String {
+    var title: String {
         switch type {
-        case .delete:
-            if let impactedMessages {
-                return MailResourcesStrings.Localizable.threadListDeletionConfirmationAlertTitle(impactedMessages)
-            } else {
-                switch folder?.role {
-                case .spam:
-                    return MailResourcesStrings.Localizable.threadListEmptySpamButton
-                case .trash:
-                    return MailResourcesStrings.Localizable.threadListEmptyTrashButton
-                default:
-                    return ""
-                }
+        case .flushFolder(let frozenFolder):
+            switch frozenFolder?.role {
+            case .spam:
+                return MailResourcesStrings.Localizable.threadListEmptySpamButton
+            case .trash:
+                return MailResourcesStrings.Localizable.threadListEmptyTrashButton
+            default:
+                return ""
             }
 
+        case .permanentlyDelete(let impactedMessages):
+            return MailResourcesStrings.Localizable.threadListDeletionConfirmationAlertTitle(impactedMessages)
+
         case .deleteSnooze:
-            return "!TODO"
+            return MailResourcesStrings.Localizable.actionDelete
 
         case .archiveSnooze:
-            return "!TODO"
+            return MailResourcesStrings.Localizable.actionArchive
 
         case .moveSnooze:
-            return "!TODO"
+            return MailResourcesStrings.Localizable.actionMove
         }
     }
 
     var description: String {
         switch type {
-        case .delete:
-            if let impactedMessages {
-                return MailResourcesStrings.Localizable.threadListDeletionConfirmationAlertDescription(impactedMessages)
-            } else {
-                return MailResourcesStrings.Localizable.threadListEmptyFolderAlertDescription
-            }
+        case .flushFolder:
+            return MailResourcesStrings.Localizable.threadListEmptyFolderAlertDescription
 
-        case .deleteSnooze:
-            return "!TODO"
+        case .permanentlyDelete(let impactedMessages):
+            return MailResourcesStrings.Localizable.threadListDeletionConfirmationAlertDescription(impactedMessages)
 
-        case .archiveSnooze:
-            return "!TODO"
+        case .deleteSnooze(let impactedMessages):
+            return MailResourcesStrings.Localizable.snoozeDeleteConfirmAlertDescription(impactedMessages)
 
-        case .moveSnooze:
-            return "!TODO"
+        case .archiveSnooze(let impactedMessages):
+            return MailResourcesStrings.Localizable.snoozeArchiveConfirmAlertDescription(impactedMessages)
+
+        case .moveSnooze(let impactedMessages):
+            return MailResourcesStrings.Localizable.snoozeArchiveConfirmAlertDescription(impactedMessages)
         }
     }
 }
@@ -77,22 +75,20 @@ struct DestructiveActionAlertView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     let destructiveAlert: DestructiveActionAlertState
-    var frozenFolder: Folder?
 
-    init(destructiveAlert: DestructiveActionAlertState, folder: Folder? = nil) {
+    init(destructiveAlert: DestructiveActionAlertState) {
         self.destructiveAlert = destructiveAlert
-        frozenFolder = folder?.freezeIfNeeded()
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.large) {
-            Text(destructiveAlert.title(in: frozenFolder))
+            Text(destructiveAlert.title)
                 .textStyle(.bodyMedium)
             Text(destructiveAlert.description)
                 .textStyle(.body)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm) {
-                if let frozenFolder, destructiveAlert.impactedMessages == nil {
+                if case let .flushFolder(frozenFolder) = destructiveAlert.type, let frozenFolder {
                     matomo.track(eventWithCategory: .threadList, name: "empty\(frozenFolder.matomoName.capitalized)Confirm")
                 }
                 await destructiveAlert.completion()
@@ -102,5 +98,5 @@ struct DestructiveActionAlertView: View {
 }
 
 #Preview {
-    DestructiveActionAlertView(destructiveAlert: DestructiveActionAlertState(type: .delete) { /* Preview */ })
+    DestructiveActionAlertView(destructiveAlert: DestructiveActionAlertState(type: .deleteSnooze(10)) { /* Preview */ })
 }

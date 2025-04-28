@@ -131,7 +131,7 @@ struct ActionsPanelViewModifier: ViewModifier {
             )
         }
         .customAlert(item: $destructiveAlert) { item in
-            DestructiveActionAlertView(destructiveAlert: item, folder: originFolder)
+            DestructiveActionAlertView(destructiveAlert: item)
         }
         .customAlert(item: $messagesToDownload) { messages in
             ConfirmationSaveThreadInKdrive(targetMessages: messages)
