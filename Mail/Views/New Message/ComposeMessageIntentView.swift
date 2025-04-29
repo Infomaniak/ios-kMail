@@ -151,7 +151,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
         @InjectService var mainViewStateStore: MainViewStateStore
         if let mainViewState = mainViewStateStore.getExistingMainViewState(for: mailboxManager) {
             return mainViewState
-        } else if let inboxFolder = mailboxManager.getFolder(with: .inbox) {
+        } else if let inboxFolder = mailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
             return mainViewStateStore.getOrCreateMainViewState(for: mailboxManager, initialFolder: inboxFolder)
         } else {
             return nil
