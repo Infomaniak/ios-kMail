@@ -65,6 +65,17 @@ class MailUITests: XCTestCase {
         app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage].buttons[MailResourcesStrings.Localizable.send]
             .firstMatch.tap()
         _ = app.collectionViews.firstMatch.waitForExistence(timeout: defaultTimeOut)
+
+        refreshThreadList()
+
+        let newEmail = app.collectionViews.staticTexts[MailUITests.testSubject].firstMatch
+        XCTAssertTrue(newEmail.waitForExistence(timeout: defaultTimeOut))
+
+        swipeFirstCell()
+
+        let deleteButton = app.collectionViews.buttons[Action.delete.accessibilityIdentifier].firstMatch
+        _ = deleteButton.waitForExistence(timeout: defaultTimeOut)
+        deleteButton.tap()
     }
 
     func testSaveMessage() throws {
@@ -200,6 +211,12 @@ class MailUITests: XCTestCase {
         }
     }
 
+    func refreshThreadList() {
+        let threadList = app.collectionViews.firstMatch
+        _ = threadList.waitForExistence(timeout: defaultTimeOut)
+        threadList.swipeDown()
+    }
+
     func undo(ignoreUndoFailure: Bool = true) {
         let cancelButton = app.buttons[MailResourcesStrings.Localizable.buttonCancel].firstMatch
         _ = cancelButton.waitForExistence(timeout: defaultTimeOut)
@@ -213,7 +230,7 @@ class MailUITests: XCTestCase {
 
     func swipeFirstCell() {
         // First cell could be the loading indicator so we get the second one
-        let testMailCell = app.collectionViews.containing(.button, identifier: "ThreadListCell").firstMatch
+        let testMailCell = app.collectionViews.cells.element(boundBy: 1)
         _ = testMailCell.waitForExistence(timeout: defaultTimeOut)
         testMailCell.swipeLeft()
     }
