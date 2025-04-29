@@ -1,2 +1,1 @@
-- Improved message snoozing feature
-- Bug fixes
+- Bug fixes and minor improvements
