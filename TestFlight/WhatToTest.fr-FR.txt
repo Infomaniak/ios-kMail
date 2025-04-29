@@ -1,2 +1,1 @@
-- Amélioration de la fonctionnalité de mise en attente de messages
-- Corrections de bugs
+- Corrections de bugs et améliorations mineures
