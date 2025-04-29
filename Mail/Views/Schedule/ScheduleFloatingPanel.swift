@@ -19,6 +19,7 @@
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
+import MailCore
 import MailCoreUI
 import MailResources
 import MyKSuite
@@ -58,6 +59,8 @@ extension View {
 }
 
 struct ScheduleFloatingPanel: ViewModifier {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @State private var isShowingMyKSuiteUpgrade = false
     @State private var panelShouldBeShown = false
     @ModalState(wrappedValue: false, context: ContextKeys.schedule) private var isShowingCustomScheduleAlert: Bool
@@ -78,6 +81,7 @@ struct ScheduleFloatingPanel: ViewModifier {
                     type: type,
                     completionHandler: completionHandler
                 )
+                .environmentObject(mailboxManager)
             }
             .customAlert(isPresented: $isShowingCustomScheduleAlert) {
                 CustomScheduleAlertView(type: type, date: initialDate, isUpdating: isUpdating, confirmAction: completionHandler) {
