@@ -39,8 +39,6 @@ public struct Action: Identifiable, Hashable, Equatable {
         return Color(tintColorName, bundle: MailResourcesResources.bundle)
     }
 
-    public let isDestructive: Bool
-
     public let matomoName: String
 
     init(
@@ -49,7 +47,6 @@ public struct Action: Identifiable, Hashable, Equatable {
         shortTitle: String? = nil,
         iconResource: MailResourcesImages,
         tintColorResource: MailResourcesColors? = nil,
-        isDestructive: Bool = false,
         matomoName: String
     ) {
         self.id = id
@@ -57,7 +54,6 @@ public struct Action: Identifiable, Hashable, Equatable {
         self.shortTitle = shortTitle
         iconName = iconResource.name
         tintColorName = tintColorResource?.name
-        self.isDestructive = isDestructive
         self.matomoName = matomoName
     }
 
@@ -84,6 +80,24 @@ public struct Action: Identifiable, Hashable, Equatable {
         }
 
         return self
+    }
+
+    public func isDestructive(for thread: Thread) -> Bool {
+        guard thread.folder?.shouldWarnBeforeDeletion == false else {
+            return false
+        }
+
+        switch self {
+        case .delete, .archive, .moveToInbox:
+            if thread.isSnoozed {
+                return false
+            }
+            return true
+        case .spam:
+            return true
+        default:
+            return false
+        }
     }
 }
 

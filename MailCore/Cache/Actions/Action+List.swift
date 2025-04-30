@@ -220,7 +220,6 @@ extension Action: RawRepresentable {
         shortTitle = action.shortTitle
         iconName = action.iconName
         tintColorName = action.tintColorName
-        isDestructive = action.isDestructive
         matomoName = action.matomoName
     }
 }
@@ -254,7 +253,6 @@ public extension Action {
         title: MailResourcesStrings.Localizable.actionDelete,
         iconResource: MailResourcesAsset.bin,
         tintColorResource: MailResourcesAsset.swipeDeleteColor,
-        isDestructive: true,
         matomoName: "delete"
     )
     static let reply = Action(
@@ -274,7 +272,6 @@ public extension Action {
         title: MailResourcesStrings.Localizable.actionArchive,
         iconResource: MailResourcesAsset.archives,
         tintColorResource: MailResourcesAsset.swipeArchiveColor,
-        isDestructive: true,
         matomoName: "archive"
     )
     static let forward = Action(
@@ -340,7 +337,6 @@ public extension Action {
         shortTitle: MailResourcesStrings.Localizable.actionShortSpam,
         iconResource: MailResourcesAsset.spam,
         tintColorResource: MailResourcesAsset.swipeSpamColor,
-        isDestructive: true,
         matomoName: "spam"
     )
     static let nonSpam = Action(
@@ -386,7 +382,6 @@ public extension Action {
         shortTitle: MailResourcesStrings.Localizable.inboxFolder,
         iconResource: MailResourcesAsset.drawerDownload,
         tintColorResource: MailResourcesAsset.grayActionColor,
-        isDestructive: true,
         matomoName: "moveToInbox"
     )
     static let writeEmailAction = Action(
