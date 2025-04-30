@@ -104,10 +104,6 @@ extension Action: CaseIterable {
 
         let messagesType = MessagesType(messages, frozenFolder: origin.frozenFolder)
 
-        guard messagesType != .scheduled else {
-            return Action.Lists(quickActions: [], listActions: [], bottomBarActions: [.delete])
-        }
-
         let unreadAction: Action = messages.allSatisfy(\.seen) ? .markAsUnread : .markAsRead
         var archiveAction: Action? {
             guard origin.type != .floatingPanel(source: .messageList),
@@ -128,8 +124,7 @@ extension Action: CaseIterable {
         }
 
         var quickActions: [Action] {
-            guard [.single, .spam].contains(messagesType),
-                  origin.type == .floatingPanel(source: .messageDetails) else { return [] }
+            guard messagesType.isSingle, origin.type == .floatingPanel(source: .messageDetails) else { return [] }
 
             return [.reply, .replyAll, .forward, .delete]
         }
@@ -158,12 +153,10 @@ extension Action: CaseIterable {
         var bottomBarActions: [Action] = []
         if origin.type != .contextMenu {
             switch messagesType {
-            case .single, .multipleInSameThread, .spam:
+            case .single, .multipleInSameThread:
                 bottomBarActions = [.reply, .forward, .archive, .delete]
             case .multipleInDifferentThreads:
                 bottomBarActions = [unreadAction, .archive, starAction, .delete]
-            case .scheduled:
-                bottomBarActions = [.delete]
             }
         }
 
@@ -178,8 +171,6 @@ extension Action: CaseIterable {
         case single
         case multipleInSameThread
         case multipleInDifferentThreads
-        case scheduled
-        case spam
 
         init(_ messages: [Message], frozenFolder: Folder?) {
             if messages.count == 1 {
