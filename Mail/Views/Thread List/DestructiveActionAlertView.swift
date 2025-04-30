@@ -88,7 +88,7 @@ struct DestructiveActionAlertView: View {
                 .textStyle(.body)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm) {
-                if case let .flushFolder(frozenFolder) = destructiveAlert.type, let frozenFolder {
+                if case .flushFolder(let frozenFolder) = destructiveAlert.type, let frozenFolder {
                     matomo.track(eventWithCategory: .threadList, name: "empty\(frozenFolder.matomoName.capitalized)Confirm")
                 }
                 await destructiveAlert.completion()
