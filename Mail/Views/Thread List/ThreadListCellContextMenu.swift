@@ -46,13 +46,12 @@ struct ThreadListCellContextMenu: ViewModifier {
     let toggleMultipleSelection: (Bool) -> Void
 
     private var actions: Action.Lists {
-        let actions = Action.actionsForMessages(
+        Action.actionsForMessages(
             thread.messages.toArray(),
             origin: origin,
             userIsStaff: currentUser.value.isStaff ?? false,
             userEmail: currentUser.value.email
         )
-        return actions
     }
 
     private var origin: ActionOrigin {
