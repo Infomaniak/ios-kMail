@@ -81,7 +81,10 @@ extension Action: CaseIterable {
             .block,
             .blockList,
             .snooze,
-            .modifySnooze
+            .modifySnooze,
+            .star,
+            .markAsRead,
+            .markAsUnread
         ].contains(self)
     }
 
@@ -102,8 +105,14 @@ extension Action: CaseIterable {
                                           origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String) -> Action.Lists {
-        guard messages.contains(where: { $0.isScheduledDraft == true }) == false else {
-            return Action.Lists(quickActions: [], listActions: [.delete], bottomBarActions: [.delete])
+        guard !messages.allSatisfy({ $0.isScheduledDraft == true }),
+              !messages.allSatisfy({ $0.isDraft })
+        else {
+            return Action.Lists(
+                quickActions: [],
+                listActions: origin.type == .floatingPanel(source: .contextMenu) ? [.activeMultiSelect] : [],
+                bottomBarActions: [.delete]
+            )
         }
         return actionsForNormalMessages(messages, origin: origin, userIsStaff: userIsStaff, userEmail: userEmail)
     }
@@ -121,7 +130,9 @@ extension Action: CaseIterable {
         var archiveAction: Action? {
             guard origin.type != .floatingPanel(source: .messageList),
                   origin.type != .floatingPanel(source: .messageDetails),
-                  origin.frozenFolder?.role != .spam else { return nil }
+                  origin.frozenFolder?.role != .spam,
+                  !messages.allSatisfy(\.isSnoozed)
+            else { return nil }
             return origin.frozenFolder?.role != .archive ? .archive : .moveToInbox
         }
         var spamAction: Action? {
@@ -136,21 +147,24 @@ extension Action: CaseIterable {
             guard userIsStaff, messagesType.isSingle else { return nil }
             return .reportDisplayProblem
         }
+        var deleteAction: Action? {
+            guard !messages.contains(where: { $0.isScheduledDraft == true }) else { return nil }
+            return .delete
+        }
 
         var quickActions: [Action] {
-            guard messagesType.isSingle, origin.type == .floatingPanel(source: .messageDetails) else { return [] }
+            guard messagesType.isSingle,
+                  origin.type.isListed
+            else { return [] }
 
             return [.reply, .replyAll, .forward, .delete]
         }
 
-        var listActions: [Action?] = [
-            origin.type == .contextMenu ? .activeMultiSelect : nil,
-            .openMovePanel,
-            spamAction
-        ]
+        var listActions: [Action?] = [origin.type == .floatingPanel(source: .contextMenu) ? .activeMultiSelect : nil] +
+            snoozedActions(messages, folder: origin.frozenFolder) +
+            [.openMovePanel, spamAction]
 
-        if (messagesType == .single && origin.type != .floatingPanel(source: .threadList))
-            || origin.type == .floatingPanel(source: .messageList) {
+        if messagesType.isSingle && origin.type.isListed {
             listActions += [
                 unreadAction,
                 starAction,
@@ -162,15 +176,12 @@ extension Action: CaseIterable {
             ]
         }
 
-        listActions = snoozedActions(messages, folder: origin.frozenFolder) + listActions
-
-        var bottomBarActions: [Action?] = []
-        if origin.type != .contextMenu {
+        var bottomBarActions: [Action?] {
             switch messagesType {
             case .single, .multipleInSameThread:
-                bottomBarActions = [.reply, .forward, archiveAction, .delete]
+                [.reply, .forward, archiveAction, .delete]
             case .multipleInDifferentThreads:
-                bottomBarActions = [unreadAction, archiveAction, starAction, .delete]
+                [unreadAction, archiveAction, starAction, .delete]
             }
         }
 
