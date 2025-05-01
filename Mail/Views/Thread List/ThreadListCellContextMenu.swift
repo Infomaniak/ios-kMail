@@ -71,12 +71,20 @@ struct ThreadListCellContextMenu: ViewModifier {
         )
     }
 
+    private var controlGroupActions: [Action] {
+        if actions.quickActions.isEmpty {
+            return actions.bottomBarActions
+        } else {
+            return actions.quickActions
+        }
+    }
+
     func body(content: Content) -> some View {
         content
             .contextMenu {
                 ControlGroup {
                     ActionButtonList(
-                        actions: actions.quickActions,
+                        actions: controlGroupActions,
                         messages: thread.messages.toArray(),
                         origin: origin,
                         toggleMultipleSelection: toggleMultipleSelection
