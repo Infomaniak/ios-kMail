@@ -27,6 +27,15 @@ public struct ActionOrigin {
         case multipleSelection
         case shortcut
         case threadHeader
+
+        var isListed: Bool {
+            switch self {
+            case .floatingPanel(source: .messageList), .floatingPanel(source: .contextMenu):
+                true
+            default:
+                false
+            }
+        }
     }
 
     public enum FloatingPanelSource {
