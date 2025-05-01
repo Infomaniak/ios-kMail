@@ -89,10 +89,7 @@ public struct Action: Identifiable, Hashable, Equatable {
 
         switch self {
         case .delete, .archive, .moveToInbox:
-            if thread.isSnoozed {
-                return false
-            }
-            return true
+            return !thread.isSnoozed
         case .spam:
             return true
         default:
