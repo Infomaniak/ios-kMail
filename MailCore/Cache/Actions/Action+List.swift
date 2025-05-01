@@ -101,7 +101,17 @@ extension Action: CaseIterable {
     public static func actionsForMessages(_ messages: [Message],
                                           origin: ActionOrigin,
                                           userIsStaff: Bool,
-                                          userEmail: String)
+                                          userEmail: String) -> Action.Lists {
+        guard messages.contains(where: { $0.isScheduledDraft == true }) == false else {
+            return Action.Lists(quickActions: [], listActions: [.delete], bottomBarActions: [.delete])
+        }
+        return actionsForNormalMessages(messages, origin: origin, userIsStaff: userIsStaff, userEmail: userEmail)
+    }
+
+    private static func actionsForNormalMessages(_ messages: [Message],
+                                                 origin: ActionOrigin,
+                                                 userIsStaff: Bool,
+                                                 userEmail: String)
         -> Action.Lists {
         @LazyInjectService var platformDetector: PlatformDetectable
 
