@@ -76,10 +76,6 @@ struct DestructiveActionAlertView: View {
 
     let destructiveAlert: DestructiveActionAlertState
 
-    init(destructiveAlert: DestructiveActionAlertState) {
-        self.destructiveAlert = destructiveAlert
-    }
-
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.large) {
             Text(destructiveAlert.title)

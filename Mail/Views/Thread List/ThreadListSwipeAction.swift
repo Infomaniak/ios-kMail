@@ -40,7 +40,6 @@ private struct SwipeActionView: View {
     let action: Action
 
     private var isDestructive: Bool {
-        let shouldWarnBeforeDeletion = thread.folder?.shouldWarnBeforeDeletion ?? false
         guard networkMonitor.isConnected else { return false }
         return action.isDestructive(for: thread)
     }
