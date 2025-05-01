@@ -110,7 +110,8 @@ extension Action: CaseIterable {
         let unreadAction: Action = messages.allSatisfy(\.seen) ? .markAsUnread : .markAsRead
         var archiveAction: Action? {
             guard origin.type != .floatingPanel(source: .messageList),
-                  origin.type != .floatingPanel(source: .messageDetails) else { return nil }
+                  origin.type != .floatingPanel(source: .messageDetails),
+                  origin.frozenFolder?.role != .spam else { return nil }
             return origin.frozenFolder?.role != .archive ? .archive : .moveToInbox
         }
         var spamAction: Action? {
@@ -153,20 +154,20 @@ extension Action: CaseIterable {
 
         listActions = snoozedActions(messages, folder: origin.frozenFolder) + listActions
 
-        var bottomBarActions: [Action] = []
+        var bottomBarActions: [Action?] = []
         if origin.type != .contextMenu {
             switch messagesType {
             case .single, .multipleInSameThread:
-                bottomBarActions = [.reply, .forward, .archive, .delete]
+                bottomBarActions = [.reply, .forward, archiveAction, .delete]
             case .multipleInDifferentThreads:
-                bottomBarActions = [unreadAction, .archive, starAction, .delete]
+                bottomBarActions = [unreadAction, archiveAction, starAction, .delete]
             }
         }
 
         return Action.Lists(
             quickActions: quickActions,
             listActions: listActions.compactMap { $0 },
-            bottomBarActions: bottomBarActions
+            bottomBarActions: bottomBarActions.compactMap { $0 }
         )
     }
 
