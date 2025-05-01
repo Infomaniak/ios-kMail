@@ -90,7 +90,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                         }
                     }
                 }
-                if frozenFolder?.role != .scheduledDrafts {
+                if !(toolbarActions.listActions.isEmpty && toolbarActions.quickActions.isEmpty) {
                     ActionsPanelButton(
                         messages: frozenMessages,
                         originFolder: frozenFolder,
