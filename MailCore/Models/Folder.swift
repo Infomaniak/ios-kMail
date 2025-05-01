@@ -301,6 +301,15 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         }
     }
 
+    public var isDroppable: Bool {
+        switch role {
+        case .scheduledDrafts, .draft, .snoozed, .sent:
+            return false
+        default:
+            return true
+        }
+    }
+
     public static func < (lhs: Folder, rhs: Folder) -> Bool {
         if let lhsRole = lhs.role, let rhsRole = rhs.role {
             return lhsRole.order < rhsRole.order
