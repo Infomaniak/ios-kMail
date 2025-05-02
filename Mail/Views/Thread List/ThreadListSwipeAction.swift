@@ -33,15 +33,15 @@ private struct SwipeActionView: View {
 
     @Binding var actionPanelMessages: [Message]?
     @Binding var moveSheetMessages: [Message]?
-    @Binding var flushAlert: FlushAlertState?
+    @Binding var destructiveAlert: DestructiveActionAlertState?
 
     let viewModel: ThreadListable
     let thread: Thread
     let action: Action
 
     private var isDestructive: Bool {
-        let shouldWarnBeforeDeletion = thread.folder?.shouldWarnBeforeDeletion ?? false
-        return action.isDestructive && networkMonitor.isConnected && !shouldWarnBeforeDeletion
+        guard networkMonitor.isConnected else { return false }
+        return action.isDestructive(for: thread)
     }
 
     var body: some View {
@@ -56,7 +56,7 @@ private struct SwipeActionView: View {
                             originFolder: thread.folder,
                             nearestMessagesActionsPanel: $actionPanelMessages,
                             nearestMessagesToMoveSheet: $moveSheetMessages,
-                            nearestFlushAlert: $flushAlert
+                            nearestDestructiveAlert: $destructiveAlert
                         )
                     )
 
@@ -125,7 +125,7 @@ struct ThreadListSwipeActions: ViewModifier {
                 SwipeActionView(
                     actionPanelMessages: $actionPanelMessages,
                     moveSheetMessages: $messagesToMove,
-                    flushAlert: $mainViewState.flushAlert,
+                    destructiveAlert: $mainViewState.destructiveAlert,
                     viewModel: viewModel,
                     thread: thread,
                     action: action
@@ -149,7 +149,7 @@ extension View {
     SwipeActionView(
         actionPanelMessages: .constant(nil),
         moveSheetMessages: .constant(nil),
-        flushAlert: .constant(nil),
+        destructiveAlert: .constant(nil),
         viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                        frozenFolder: PreviewHelper.sampleFolder,
                                        selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner),

@@ -18,17 +18,25 @@
 
 import Foundation
 
-public struct FlushAlertState: Identifiable, Equatable {
+public enum DestructiveActionAlertType {
+    case permanentlyDelete(Int)
+    case flushFolder(Folder?)
+    case deleteSnooze(Int)
+    case archiveSnooze(Int)
+    case moveSnooze(Int)
+}
+
+public struct DestructiveActionAlertState: Identifiable, Equatable {
     public let id = UUID()
-    public let deletedMessages: Int?
+    public let type: DestructiveActionAlertType
     public let completion: () async -> Void
 
-    public init(deletedMessages: Int? = nil, completion: @escaping () async -> Void) {
-        self.deletedMessages = deletedMessages
+    public init(type: DestructiveActionAlertType, completion: @escaping () async -> Void) {
+        self.type = type
         self.completion = completion
     }
 
-    public static func == (lhs: FlushAlertState, rhs: FlushAlertState) -> Bool {
+    public static func == (lhs: DestructiveActionAlertState, rhs: DestructiveActionAlertState) -> Bool {
         return lhs.id == rhs.id
     }
 }

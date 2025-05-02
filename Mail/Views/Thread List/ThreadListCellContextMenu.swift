@@ -78,6 +78,6 @@ struct ThreadListCellContextMenu: ViewModifier {
         guard action != .archive else {
             return nil
         }
-        return action.isDestructive ? .destructive : nil
+        return action.isDestructive(for: thread) ? .destructive : nil
     }
 }

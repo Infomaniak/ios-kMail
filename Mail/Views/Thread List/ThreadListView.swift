@@ -103,7 +103,7 @@ struct ThreadListView: View {
                         FlushFolderView(
                             folder: viewModel.frozenFolder,
                             mailboxManager: viewModel.mailboxManager,
-                            flushAlert: $mainViewState.flushAlert
+                            destructiveAlert: $mainViewState.destructiveAlert
                         )
                         .threadListCellAppearance()
                     }
@@ -220,8 +220,8 @@ struct ThreadListView: View {
         .task(id: viewModel.mailboxManager.mailbox.id) {
             updateFetchingTask()
         }
-        .customAlert(item: $mainViewState.flushAlert) { item in
-            FlushFolderAlertView(flushAlert: item, folder: viewModel.frozenFolder)
+        .customAlert(item: $mainViewState.destructiveAlert) { item in
+            DestructiveActionAlertView(destructiveAlert: item)
         }
         .customAlert(isPresented: $isShowingUpdateAlert) {
             // swiftlint:disable:next trailing_closure

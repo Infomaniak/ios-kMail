@@ -112,18 +112,12 @@ public class ActionsManager: ObservableObject {
         switch action {
         case .delete:
             guard origin.frozenFolder?.shouldWarnBeforeDeletion != true else {
-                Task { @MainActor in
-                    origin.nearestFlushAlert?
-                        .wrappedValue = FlushAlertState(deletedMessages: messagesWithDuplicates
-                            .uniqueThreadsInFolder(origin.frozenFolder).count) {
-                                await tryOrDisplayError { [weak self] in
-                                    try await self?.performDelete(
-                                        messages: messagesWithDuplicates,
-                                        originFolder: origin.frozenFolder
-                                    )
-                                }
-                        }
-                }
+                await showWarningDeletionAlert(origin: origin, messagesWithDuplicates: messagesWithDuplicates)
+                return
+            }
+
+            guard !messagesWithDuplicates.contains(where: { $0.isSnoozed }) else {
+                await showWarningDeleteSnoozeAlert(origin: origin, messagesWithDuplicates: messagesWithDuplicates)
                 return
             }
 
@@ -136,6 +130,11 @@ public class ActionsManager: ObservableObject {
             try replyOrForward(messages: messagesWithDuplicates, mode: .forward)
         case .archive:
             let messagesFromFolder = messagesWithDuplicates.fromFolderOrSearch(originFolder: origin.frozenFolder)
+            guard !messagesWithDuplicates.contains(where: { $0.isSnoozed }) else {
+                await showWarningArchiveSnoozeAlert(origin: origin, messagesFromFolder: messagesFromFolder)
+                return
+            }
+
             try await performMove(messages: messagesFromFolder, from: origin.frozenFolder, to: .archive)
         case .markAsRead:
             try await mailboxManager.markAsSeen(messages: messagesWithDuplicates, seen: true)
@@ -146,6 +145,10 @@ public class ActionsManager: ObservableObject {
             )
             try await mailboxManager.markAsSeen(messages: messagesToExecuteAction, seen: false)
         case .openMovePanel:
+            guard !messagesWithDuplicates.contains(where: { $0.isSnoozed }) else {
+                await showWarningMoveSnoozeAlert(origin: origin, messagesWithDuplicates: messagesWithDuplicates)
+                return
+            }
             Task { @MainActor in
                 origin.nearestMessagesToMoveSheet?.wrappedValue = messagesWithDuplicates
             }
@@ -355,6 +358,56 @@ public class ActionsManager: ObservableObject {
             )
         } else {
             snackbarPresenter.show(message: message)
+        }
+    }
+
+    @MainActor
+    private func showWarningDeletionAlert(origin: ActionOrigin, messagesWithDuplicates: [Message]) {
+        origin.nearestDestructiveAlert?.wrappedValue = DestructiveActionAlertState(
+            type: .permanentlyDelete(messagesWithDuplicates.uniqueThreadsInFolder(origin.frozenFolder).count)
+        ) {
+            await tryOrDisplayError { [weak self] in
+                try await self?.performDelete(
+                    messages: messagesWithDuplicates,
+                    originFolder: origin.frozenFolder
+                )
+            }
+        }
+    }
+
+    @MainActor
+    private func showWarningDeleteSnoozeAlert(origin: ActionOrigin, messagesWithDuplicates: [Message]) {
+        origin.nearestDestructiveAlert?.wrappedValue = DestructiveActionAlertState(
+            type: .deleteSnooze(messagesWithDuplicates.uniqueThreadsInFolder(origin.frozenFolder).count)
+        ) {
+            await tryOrDisplayError { [weak self] in
+                try await self?.performDelete(
+                    messages: messagesWithDuplicates,
+                    originFolder: origin.frozenFolder
+                )
+            }
+        }
+    }
+
+    @MainActor
+    private func showWarningArchiveSnoozeAlert(origin: ActionOrigin, messagesFromFolder: [Message]) {
+        origin.nearestDestructiveAlert?.wrappedValue = DestructiveActionAlertState(
+            type: .archiveSnooze(messagesFromFolder.uniqueThreadsInFolder(origin.frozenFolder).count)
+        ) {
+            await tryOrDisplayError { [weak self] in
+                try await self?.performMove(messages: messagesFromFolder, from: origin.frozenFolder, to: .archive)
+            }
+        }
+    }
+
+    @MainActor
+    private func showWarningMoveSnoozeAlert(origin: ActionOrigin, messagesWithDuplicates: [Message]) {
+        origin.nearestDestructiveAlert?.wrappedValue = DestructiveActionAlertState(
+            type: .moveSnooze(messagesWithDuplicates.uniqueThreadsInFolder(origin.frozenFolder).count)
+        ) {
+            tryOrDisplayError {
+                origin.nearestMessagesToMoveSheet?.wrappedValue = messagesWithDuplicates
+            }
         }
     }
 

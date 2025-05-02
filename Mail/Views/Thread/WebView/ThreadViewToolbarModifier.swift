@@ -43,7 +43,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
     @State private var replyOrReplyAllMessage: Message?
     @State private var messagesToMove: [Message]?
 
-    @ModalState private var nearestFlushAlert: FlushAlertState?
+    @ModalState private var destructiveAlert: DestructiveActionAlertState?
 
     private let frozenThread: Thread
 
@@ -111,8 +111,8 @@ struct ThreadViewToolbarModifier: ViewModifier {
                     }
                 }
             }
-            .customAlert(item: $nearestFlushAlert) { item in
-                FlushFolderAlertView(flushAlert: item)
+            .customAlert(item: $destructiveAlert) { item in
+                DestructiveActionAlertView(destructiveAlert: item)
             }
     }
 
@@ -147,7 +147,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                 try await actionsManager.performAction(
                     target: frozenMessages,
                     action: action,
-                    origin: .toolbar(originFolder: frozenFolder, nearestFlushAlert: $nearestFlushAlert)
+                    origin: .toolbar(originFolder: frozenFolder, nearestDestructiveAlert: $destructiveAlert)
                 )
             }
         }
