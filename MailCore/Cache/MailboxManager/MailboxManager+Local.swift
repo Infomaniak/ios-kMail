@@ -68,10 +68,19 @@ public extension MailboxManager {
         }
     }
 
-    func markMovedLocally(_ movedLocally: Bool, threads: [Thread]) async {
+    func markMovedLocallyIfNecessary(_ movedLocally: Bool, messages: [Message], folder: Folder?) async {
+        var threadsByMessages = [String: [Message]]()
+        for message in messages {
+            guard let thread = message.threads.first(where: { $0.folderId == folder?.remoteId }),
+                  message.folderId == folder?.remoteId else { continue }
+
+            threadsByMessages[thread.uid, default: []].append(message)
+        }
+
         try? writeTransaction { writableRealm in
-            for thread in threads {
-                guard let liveThread = writableRealm.object(ofType: Thread.self, forPrimaryKey: thread.uid) else {
+            for (threadUid, messages) in threadsByMessages {
+                guard let liveThread = writableRealm.object(ofType: Thread.self, forPrimaryKey: threadUid),
+                      liveThread.messages.where({ $0.folderId.equals(liveThread.folderId) }).count == messages.count else {
                     continue
                 }
 

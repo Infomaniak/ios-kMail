@@ -121,14 +121,13 @@ public extension MailboxManager {
         origin: Folder?,
         action: @escaping (String, [Message]) async throws -> UndoResponse
     ) async throws -> UndoAction {
-        let originalThreads = messages.flatMap { $0.threads.filter { $0.folder == origin } }
-        await markMovedLocally(true, threads: originalThreads)
+        await markMovedLocallyIfNecessary(true, messages: messages, folder: origin)
 
         let response = await apiFetcher.batchOver(values: messages, chunkSize: Constants.apiLimit) { chunk in
             do {
                 return try await action(self.mailbox.uuid, chunk)
             } catch {
-                await self.markMovedLocally(false, threads: originalThreads)
+                await self.markMovedLocallyIfNecessary(false, messages: messages, folder: origin)
             }
             return nil
         }
