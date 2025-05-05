@@ -49,6 +49,8 @@ public extension MailboxManager {
                 } else {
                     folder.threadsSource = folder
                 }
+
+                folder.isWritable = folder.toolType == nil && folder.role?.isWritable ?? true
             }
 
             // Get from Realm

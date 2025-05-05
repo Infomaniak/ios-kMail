@@ -119,6 +119,15 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
 
     public static let writtenByMeFolders: [FolderRole] = [.sent, .draft, .scheduledDrafts]
 
+    public var isWritable: Bool {
+        switch self {
+        case .sent, .draft, .scheduledDrafts, .snoozed:
+            false
+        default:
+            true
+        }
+    }
+
     public init(from decoder: any Decoder) throws {
         let singleKeyContainer = try decoder.singleValueContainer()
         let value = try singleKeyContainer.decode(String.self)
@@ -178,6 +187,8 @@ public class Folder: Object, Codable, Comparable, Identifiable {
 
     @Persisted public var threadsSource: Folder?
     @Persisted public var associatedFolders: RealmSwift.List<Folder>
+
+    @Persisted public var isWritable: Bool = true
 
     public var listChildren: AnyRealmCollection<Folder>? {
         children.isEmpty ? nil : AnyRealmCollection(children)
@@ -301,15 +312,6 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         }
     }
 
-    public var isDroppable: Bool {
-        switch role {
-        case .scheduledDrafts, .draft, .snoozed, .sent:
-            return false
-        default:
-            return true
-        }
-    }
-
     public static func < (lhs: Folder, rhs: Folder) -> Bool {
         if let lhsRole = lhs.role, let rhsRole = rhs.role {
             return lhsRole.order < rhsRole.order
@@ -396,6 +398,8 @@ public class Folder: Object, Codable, Comparable, Identifiable {
         self.children.insert(objectsIn: children)
 
         self.toolType = toolType
+
+        isWritable = toolType == nil && role?.isWritable ?? true
     }
 }
 
