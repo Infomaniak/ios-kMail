@@ -147,10 +147,6 @@ extension Action: CaseIterable {
             guard userIsStaff, messagesType.isSingle else { return nil }
             return .reportDisplayProblem
         }
-        var deleteAction: Action? {
-            guard !messages.contains(where: { $0.isScheduledDraft == true }) else { return nil }
-            return .delete
-        }
 
         var quickActions: [Action] {
             guard messagesType.isSingle,
