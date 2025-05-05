@@ -30,7 +30,7 @@ public struct ActionOrigin {
 
         var isListed: Bool {
             switch self {
-            case .floatingPanel(source: .messageList), .floatingPanel(source: .contextMenu):
+            case .floatingPanel(source: .messageList), .floatingPanel(source: .contextMenu), .floatingPanel(source: .swipe):
                 true
             default:
                 false
@@ -43,6 +43,7 @@ public struct ActionOrigin {
         case messageList
         case messageDetails
         case contextMenu
+        case swipe
     }
 
     public private(set) var type: ActionOriginType
