@@ -37,7 +37,7 @@ struct ThreadListCellContextMenu: ViewModifier {
     @ModalState private var blockSenderAlert: BlockRecipientAlertState?
     @ModalState private var blockSendersList: BlockRecipientState?
     @ModalState private var messagesToMove: [Message]?
-    @ModalState private var flushAlert: FlushAlertState?
+    @ModalState private var destructiveAlert: DestructiveActionAlertState?
     @ModalState private var shareMailLink: ShareMailLinkResult?
     @ModalState private var messagesToSnooze: [Message]?
     @ModalState private var messagesToDownload: [Message]?
@@ -58,7 +58,7 @@ struct ThreadListCellContextMenu: ViewModifier {
         .floatingPanel(
             source: .contextMenu,
             originFolder: thread.folder?.freezeIfNeeded(),
-            nearestFlushAlert: $flushAlert,
+            nearestDestructiveAlert: $destructiveAlert,
             nearestMessagesToMoveSheet: $messagesToMove,
             nearestBlockSenderAlert: $blockSenderAlert,
             nearestBlockSendersList: $blockSendersList,
@@ -86,15 +86,17 @@ struct ThreadListCellContextMenu: ViewModifier {
                     ActionButtonList(
                         actions: controlGroupActions,
                         messages: thread.messages.toArray(),
+                        thread: thread,
                         origin: origin,
                         toggleMultipleSelection: toggleMultipleSelection
                     )
                 }
-                .modifier(controlGroupCompactStyle())
+                .modifier(controlGroupStyleCompactStyle())
 
                 ActionButtonList(
                     actions: actions.listActions,
                     messages: thread.messages.toArray(),
+                    thread: thread,
                     origin: origin,
                     toggleMultipleSelection: toggleMultipleSelection
                 )
@@ -106,54 +108,13 @@ struct ThreadListCellContextMenu: ViewModifier {
                 blockSenderAlert: $blockSenderAlert,
                 blockSendersList: $blockSendersList,
                 messagesToMove: $messagesToMove,
-                flushAlert: $flushAlert,
+                destructiveAlert: $destructiveAlert,
                 shareMailLink: $shareMailLink,
                 messagesToSnooze: $messagesToSnooze,
                 messagesToDownload: $messagesToDownload,
                 originFolder: thread.folder,
                 origin: origin
             ))
-    }
-}
-
-struct ActionButtonList: View {
-    @EnvironmentObject private var actionsManager: ActionsManager
-
-    let actions: [Action]
-    let messages: [Message]
-    let folder: Folder?
-    let origin: ActionOrigin
-    let toggleMultipleSelection: (Bool) -> Void
-
-    var body: some View {
-        ForEach(actions) { action in
-            Button(role: isDestructiveAction(action)) {
-                guard action != .activeMultiSelect else {
-                    toggleMultipleSelection(false)
-                    return
-                }
-                Task {
-                    try await actionsManager.performAction(
-                        target: messages,
-                        action: action,
-                        origin: origin
-                    )
-                }
-            } label: {
-                Label {
-                    Text(action.title)
-                } icon: {
-                    action.icon
-                }
-            }
-        }
-    }
-
-    private func isDestructiveAction(_ action: Action) -> ButtonRole? {
-        guard action != .archive else {
-            return nil
-        }
-        return action.isDestructive(for: thread) ? .destructive : nil
     }
 }
 
