@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakDI
+import OrderedCollections
 import RealmSwift
 
 // MARK: - Message
@@ -99,18 +100,18 @@ public extension MailboxManager {
     }
 
     func move(messages: [Message], to folder: Folder, origin: Folder? = nil) async throws -> UndoAction {
-        return try await performMoveAction(
-            messages: messages,
-            origin: origin
-        ) { uuid, chunk in
+        return try await performMoveAction(messages: messages, from: origin, to: folder) { uuid, chunk in
             try await self.apiFetcher.move(mailboxUuid: uuid, messages: chunk, destinationId: folder.remoteId)
         }
     }
 
     func reportSpam(messages: [Message], origin: Folder?) async throws -> UndoAction {
+        guard let spamFolder = getFolder(with: .spam)?.freeze() else { throw MailError.folderNotFound }
+
         return try await performMoveAction(
             messages: messages,
-            origin: origin
+            from: origin,
+            to: spamFolder,
         ) { uuid, chunk in
             try await self.apiFetcher.reportSpams(mailboxUuid: uuid, messages: chunk)
         }
@@ -118,7 +119,8 @@ public extension MailboxManager {
 
     func performMoveAction(
         messages: [Message],
-        origin: Folder?,
+        from origin: Folder?,
+        to destination: Folder,
         action: @escaping (String, [Message]) async throws -> UndoResponse
     ) async throws -> UndoAction {
         await markMovedLocallyIfNecessary(true, messages: messages, folder: origin)
@@ -133,9 +135,9 @@ public extension MailboxManager {
         }
 
         Task {
-            try await refreshFolder(from: messages, additionalFolder: origin)
+            try await refreshFolder(from: messages, additionalFolder: destination)
         }
-        return undoAction(for: response, and: messages)
+        return undoAction(for: response, messages: messages, origin: origin, destination: destination)
     }
 
     func delete(messages: [Message]) async throws {
@@ -200,9 +202,15 @@ public extension MailboxManager {
         try await refreshFolder(from: messages, additionalFolder: nil)
     }
 
-    private func undoAction(for cancellableResponses: [UndoResponse], and messages: [Message]) -> UndoAction {
+    private func undoAction(
+        for cancellableResponses: [UndoResponse],
+        messages: [Message],
+        origin: Folder?,
+        destination: Folder?
+    ) -> UndoAction {
         let afterUndo = {
-            try await self.refreshFolder(from: messages, additionalFolder: nil)
+            let foldersToRefresh = [destination, origin].compactMap(\.self) + messages.compactMap(\.folder)
+            try await self.refreshFolders(folders: OrderedSet(foldersToRefresh))
             return true
         }
         let undo = {
