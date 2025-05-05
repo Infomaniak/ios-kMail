@@ -113,7 +113,7 @@ struct ThreadListSwipeActions: ViewModifier {
             .actionsPanel(
                 messages: $actionPanelMessages,
                 originFolder: thread.folder,
-                panelSource: .threadList,
+                panelSource: .swipe,
                 popoverArrowEdge: .leading
             ) { action in
                 viewModel.refreshSearchIfNeeded(action: action)
