@@ -92,7 +92,7 @@ struct ActionsPanelViewModifier: ViewModifier {
             blockSenderAlert: $blockSenderAlert,
             blockSendersList: $blockSendersList,
             messagesToMove: $messagesToMove,
-            flushAlert: $flushAlert,
+            destructiveAlert: $destructiveAlert,
             shareMailLink: $shareMailLink,
             messagesToSnooze: $messagesToSnooze,
             messagesToDownload: $messagesToDownload,

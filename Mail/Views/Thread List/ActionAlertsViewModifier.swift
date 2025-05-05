@@ -31,7 +31,7 @@ struct ActionAlertsViewModifier: ViewModifier {
     @Binding var blockSenderAlert: BlockRecipientAlertState?
     @Binding var blockSendersList: BlockRecipientState?
     @Binding var messagesToMove: [Message]?
-    @Binding var flushAlert: FlushAlertState?
+    @Binding var destructiveAlert: DestructiveActionAlertState?
     @Binding var shareMailLink: ShareMailLinkResult?
     @Binding var messagesToSnooze: [Message]?
     @Binding var messagesToDownload: [Message]?
@@ -84,8 +84,8 @@ struct ActionAlertsViewModifier: ViewModifier {
                     completionHandler: completionHandler
                 )
             }
-            .customAlert(item: $flushAlert) { item in
-                FlushFolderAlertView(flushAlert: item, folder: originFolder)
+            .customAlert(item: $destructiveAlert) { item in
+                DestructiveActionAlertView(destructiveAlert: item)
             }
             .customAlert(item: $messagesToDownload) { messages in
                 ConfirmationSaveThreadInKdrive(targetMessages: messages)
