@@ -28,6 +28,7 @@ struct ActionButtonList: View {
 
     let actions: [Action]
     let messages: [Message]
+    let thread: Thread
     let origin: ActionOrigin
     let toggleMultipleSelection: (Bool) -> Void
 
@@ -59,6 +60,6 @@ struct ActionButtonList: View {
         guard action != .archive else {
             return nil
         }
-        return action.isDestructive ? .destructive : nil
+        return action.isDestructive(for: thread) ? .destructive : nil
     }
 }
