@@ -63,8 +63,7 @@ struct FolderCell: View {
                         frozenFolder: folder.frozenContent,
                         level: level,
                         isCurrentFolder: isCurrentFolder,
-                        canCollapseSubFolders: canCollapseSubFolders,
-                        shouldHaveChevron: folder.hasSubFolders
+                        canCollapseSubFolders: canCollapseSubFolders
                     )
                 }
                 .accessibilityAction(.default) {
@@ -87,8 +86,7 @@ struct FolderCell: View {
                             frozenFolder: folder.frozenContent,
                             level: level,
                             isCurrentFolder: isCurrentFolder,
-                            canCollapseSubFolders: canCollapseSubFolders,
-                            shouldHaveChevron: folder.hasSubFolders
+                            canCollapseSubFolders: canCollapseSubFolders
                         )
                     }
                 }
@@ -97,9 +95,9 @@ struct FolderCell: View {
                 }
             }
 
-            if (folder.frozenContent.isExpanded && folder.hasSubFolders) || cellType == .move {
+            if (folder.frozenContent.isExpanded && folder.frozenContent.hasSubFolders) || cellType == .move {
                 ForEach(folder.children) { child in
-                    if child.frozenContent.role == nil || child.hasSubFolders {
+                    if child.frozenContent.role == nil || child.frozenContent.hasSubFolders {
                         FolderCell(
                             folder: child,
                             level: level + 1,
@@ -158,13 +156,13 @@ struct FolderCellContent: View {
 
     private var shouldHaveChevron: Bool
 
-    init(frozenFolder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false, shouldHaveChevron: Bool) {
+    init(frozenFolder: Folder, level: Int, isCurrentFolder: Bool, canCollapseSubFolders: Bool = false) {
         assert(frozenFolder.isFrozen, "expecting frozenFolder to be frozen")
         self.frozenFolder = frozenFolder
         self.level = min(level, Self.maximumSubFolderLevel)
         self.isCurrentFolder = isCurrentFolder
         self.canCollapseSubFolders = canCollapseSubFolders
-        self.shouldHaveChevron = shouldHaveChevron && level == 0
+        shouldHaveChevron = frozenFolder.hasSubFolders && level == 0
     }
 
     var body: some View {

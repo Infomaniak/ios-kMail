@@ -32,7 +32,7 @@ struct FoldersListView: View {
     private let hasSubFolders: Bool
     init(folders: [NestableFolder]) {
         self.folders = folders
-        hasSubFolders = folders.contains { $0.hasSubFolders }
+        hasSubFolders = folders.contains { $0.frozenContent.hasSubFolders }
     }
 
     var body: some View {

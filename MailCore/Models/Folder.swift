@@ -188,6 +188,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var threadsSource: Folder?
     @Persisted public var associatedFolders: RealmSwift.List<Folder>
 
+    @Persisted public var hasSubFolders = false
     @Persisted public var isAcceptingMove = true
 
     public var listChildren: AnyRealmCollection<Folder>? {
