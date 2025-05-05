@@ -131,7 +131,7 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public var isDraggable: Bool {
-        !isSnoozed && !containsOnlyScheduledDrafts && !shouldPresentAsDraft
+        !containsOnlyScheduledDrafts && !shouldPresentAsDraft
     }
 
     public func updateUnseenMessages() {

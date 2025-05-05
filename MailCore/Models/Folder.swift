@@ -188,7 +188,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var threadsSource: Folder?
     @Persisted public var associatedFolders: RealmSwift.List<Folder>
 
-    @Persisted public var isWritable: Bool = true
+    @Persisted public var isWritable = true
 
     public var listChildren: AnyRealmCollection<Folder>? {
         children.isEmpty ? nil : AnyRealmCollection(children)
