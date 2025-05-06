@@ -191,7 +191,7 @@ struct FolderCellContent: View {
         .background(FolderCellBackground(isCurrentFolder: isCurrentFolder))
         .dropThreadDestination(destinationFolder: frozenFolder, enabled: frozenFolder.isAcceptingMove)
         .contextMenu {
-            if frozenFolder.role == nil {
+            if frozenFolder.role == nil && cellType != .move {
                 Button {
                     currentFolder = frozenFolder
                 } label: {
