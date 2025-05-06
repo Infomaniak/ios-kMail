@@ -209,8 +209,11 @@ public extension MailboxManager {
         destination: Folder?
     ) -> UndoAction {
         let afterUndo = {
-            let foldersToRefresh = [destination, origin].compactMap(\.self) + messages.compactMap(\.folder)
-            try await self.refreshFolders(folders: OrderedSet(foldersToRefresh))
+            // We must refresh the destination folder before the source folder
+            // This is important so that messages are removed and then added in the correct order
+            let foldersToRefresh = OrderedSet([destination, origin].compactMap(\.self) + messages.compactMap(\.folder))
+
+            try await self.refreshFolders(folders: foldersToRefresh)
             return true
         }
         let undo = {
