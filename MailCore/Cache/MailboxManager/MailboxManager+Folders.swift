@@ -18,6 +18,7 @@
 
 import Foundation
 import InfomaniakCore
+import OrderedCollections
 import RealmSwift
 
 // MARK: - Folders
@@ -127,6 +128,10 @@ public extension MailboxManager {
 
     func flushFolder(folder: Folder) async throws -> Bool {
         return try await refreshActor.flushFolder(folder: folder, mailbox: mailbox, apiFetcher: apiFetcher)
+    }
+
+    func refreshFolders(folders: OrderedSet<Folder>) async throws {
+        try await refreshActor.refreshFolders(folders: folders)
     }
 
     func refreshFolder(from messages: [Message], additionalFolder: Folder?) async throws {

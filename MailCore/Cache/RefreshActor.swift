@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import Collections
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreCommonUI
@@ -47,19 +48,11 @@ public actor RefreshActor {
         return response
     }
 
-    public func refreshFolder(from messages: [Message], additionalFolder: Folder?) async throws {
+    public func refreshFolders(folders: OrderedSet<Folder>) async throws {
         let updateFolders = Task {
-            var folders = messages.map(\.folder)
-            if let additionalFolder {
-                folders.append(additionalFolder)
-            }
-
-            let orderedSet = NSOrderedSet(array: folders as [Any])
-
-            for folder in orderedSet {
+            for folder in folders {
                 guard !Task.isCancelled else { break }
-                guard let impactedFolder = folder as? Folder else { continue }
-                await refreshFolderContent(impactedFolder)
+                await refreshFolderContent(folder)
             }
         }
 
@@ -77,6 +70,15 @@ public actor RefreshActor {
         await updateFolders.finish()
 
         expiringActivity.endAll()
+    }
+
+    public func refreshFolder(from messages: [Message], additionalFolder: Folder?) async throws {
+        var folders = messages.compactMap(\.folder)
+        if let additionalFolder {
+            folders.append(additionalFolder)
+        }
+
+        try await refreshFolders(folders: OrderedSet(folders))
     }
 
     public func refreshFolderContent(_ folder: Folder) async {
