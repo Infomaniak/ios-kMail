@@ -32,17 +32,7 @@ extension Action: CaseIterable {
         .delete
     ]
     public static let quickActions: [Action] = [.reply, .replyAll, .forward, .delete]
-    public static let swipeActions: [Action] = [
-        .delete,
-        .archive,
-        .markAsRead,
-        .openMovePanel,
-        .star,
-        .snooze,
-        .spam,
-        .quickActionPanel,
-        .noAction
-    ]
+
     public static let allCases: [Action] = [
         .delete,
         .reply,
@@ -94,6 +84,26 @@ extension Action: CaseIterable {
             .snooze,
             .modifySnooze
         ].contains(self)
+    }
+
+    public static func allAvailableSwipeActions() -> [Action] {
+        @InjectService var featureFlagsManageable: FeatureFlagsManageable
+        let isFeatureFlagEnabled = featureFlagsManageable.isEnabled(.mailSnooze)
+        let isModeCorrect = UserDefaults.shared.threadMode == .conversation
+        let hasAccessToSnoozeFeature = isFeatureFlagEnabled && isModeCorrect
+
+        let actions: [Action?] = [
+            .delete,
+            .archive,
+            .markAsRead,
+            .openMovePanel,
+            .star,
+            hasAccessToSnoozeFeature ? .snooze : nil,
+            .spam,
+            .quickActionPanel,
+            .noAction
+        ]
+        return actions.compactMap { $0 }
     }
 
     private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
