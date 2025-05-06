@@ -134,11 +134,12 @@ struct FolderCellContent: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
 
+    @State private var currentFolder: Folder?
+
     private let frozenFolder: Folder
     private let level: Int
     private let isCurrentFolder: Bool
     private let canCollapseSubFolders: Bool
-    @State private var currentFolder: Folder?
 
     private var textStyle: MailTextStyle {
         if cellType == .menuDrawer {
