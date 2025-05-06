@@ -231,6 +231,7 @@ public extension Action {
         id: "snooze",
         title: MailResourcesStrings.Localizable.actionSnooze,
         iconResource: MailResourcesAsset.alarmClock,
+        tintColorResource: MailResourcesAsset.swipeSnoozeColor,
         matomoName: "snooze"
     )
     static let modifySnooze = Action(
