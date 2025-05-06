@@ -47,9 +47,7 @@ struct MoveEmailView: View {
         self.originFolder = originFolder
         self.completion = completion
         _viewModel =
-            StateObject(wrappedValue: FolderListViewModel(mailboxManager: mailboxManager) {
-                $0.toolType == nil && $0.role != .draft && $0.role != .scheduledDrafts && $0.role != .snoozed
-            })
+            StateObject(wrappedValue: FolderListViewModel(mailboxManager: mailboxManager) { $0.isAcceptingMove })
     }
 
     var body: some View {

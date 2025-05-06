@@ -44,9 +44,10 @@ struct DropThreadViewModifier: ViewModifier {
     @State private var isDropTargeted = false
 
     let destinationFolder: Folder
+    let enabled: Bool
 
     func body(content: Content) -> some View {
-        if #available(macCatalyst 16.0, iOS 16.0, *) {
+        if #available(macCatalyst 16.0, iOS 16.0, *), enabled {
             content
                 .contentShape(Rectangle())
                 .dropDestination(for: DraggedThread.self) { draggedThreads, _ in
@@ -90,10 +91,11 @@ struct DropThreadViewModifier: ViewModifier {
 
 struct DraggableThreadViewModifier: ViewModifier {
     let draggedThreadId: [String]
+    let enabled: Bool
     let onSuccess: () -> Void
 
     func body(content: Content) -> some View {
-        if #available(macCatalyst 16.0, iOS 16.0, *) {
+        if #available(macCatalyst 16.0, iOS 16.0, *), enabled {
             content
                 .onReceive(NotificationCenter.default.publisher(for: .dropThreadSuccess)) { _ in
                     onSuccess()
@@ -112,11 +114,11 @@ struct DraggableThreadViewModifier: ViewModifier {
 }
 
 extension View {
-    func dropThreadDestination(destinationFolder: Folder) -> some View {
-        modifier(DropThreadViewModifier(destinationFolder: destinationFolder))
+    func dropThreadDestination(destinationFolder: Folder, enabled: Bool) -> some View {
+        modifier(DropThreadViewModifier(destinationFolder: destinationFolder, enabled: enabled))
     }
 
-    func draggableThread(_ draggedThreadIds: [String], onSuccess: @escaping () -> Void) -> some View {
-        modifier(DraggableThreadViewModifier(draggedThreadId: draggedThreadIds, onSuccess: onSuccess))
+    func draggableThread(_ draggedThreadIds: [String], enabled: Bool, onSuccess: @escaping () -> Void) -> some View {
+        modifier(DraggableThreadViewModifier(draggedThreadId: draggedThreadIds, enabled: enabled, onSuccess: onSuccess))
     }
 }

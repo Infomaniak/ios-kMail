@@ -136,7 +136,8 @@ struct ThreadListView: View {
                                                    isSelected: mainViewState.selectedThread?.uid == thread.uid,
                                                    isMultiSelected: multipleSelectionViewModel.selectedItems[thread.uid] != nil)
                                         .draggableThread(multipleSelectionViewModel.selectedItems.isEmpty ?
-                                            [thread.uid] : Array(multipleSelectionViewModel.selectedItems.keys)) {
+                                            [thread.uid] : Array(multipleSelectionViewModel.selectedItems.keys),
+                                            enabled: thread.isMovable) {
                                                 multipleSelectionViewModel.disable()
                                         }
                                 }

@@ -188,7 +188,7 @@ struct FolderCellContent: View {
         .padding(.leading, IKPadding.menuDrawerSubFolder * CGFloat(level))
         .padding(canHaveChevron ? IKPadding.menuDrawerCellWithChevron : IKPadding.menuDrawerCell)
         .background(FolderCellBackground(isCurrentFolder: isCurrentFolder))
-        .dropThreadDestination(destinationFolder: frozenFolder)
+        .dropThreadDestination(destinationFolder: frozenFolder, enabled: frozenFolder.isAcceptingMove)
         .contextMenu {
             if frozenFolder.role == nil {
                 Button {

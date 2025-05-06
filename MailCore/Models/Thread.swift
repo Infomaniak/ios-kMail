@@ -130,6 +130,10 @@ public class Thread: Object, Decodable, Identifiable {
         snoozeState == .snoozed && snoozeEndDate != nil && snoozeUuid != nil
     }
 
+    public var isMovable: Bool {
+        messages.allSatisfy(\.isMovable)
+    }
+
     public func updateUnseenMessages() {
         unseenMessages = messagesAndDuplicates.filter { !$0.seen }.count
     }
