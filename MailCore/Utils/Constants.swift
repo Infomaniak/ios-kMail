@@ -231,8 +231,7 @@ public enum Constants {
     }
 
     public static func displayAlert(text: String) {
-        let uiAlertController = UIAlertController(title: "Debug", message: text, preferredStyle: .alert)
-        uiAlertController.addAction(UIAlertAction(title: "OK", style: .default))
-        UIApplication.shared.keyWindow?.rootViewController?.present(uiAlertController, animated: true)
+        @InjectService var alertPresenter: SnackBarPresentable
+        alertPresenter.show(message: text)
     }
 }
