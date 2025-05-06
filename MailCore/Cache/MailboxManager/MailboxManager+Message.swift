@@ -111,7 +111,7 @@ public extension MailboxManager {
         return try await performMoveAction(
             messages: messages,
             from: origin,
-            to: spamFolder,
+            to: spamFolder
         ) { uuid, chunk in
             try await self.apiFetcher.reportSpams(mailboxUuid: uuid, messages: chunk)
         }
