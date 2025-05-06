@@ -135,6 +135,7 @@ extension Action: CaseIterable {
             else { return nil }
             return origin.frozenFolder?.role != .archive ? .archive : .moveToInbox
         }
+        let openMovePanelAction: Action? = messages.allSatisfy(\.isMovable) ? .openMovePanel : nil
         var spamAction: Action? {
             let selfThread = messages.flatMap(\.from).allSatisfy { $0.isMeOrPlusMe(currentMailboxEmail: userEmail) }
             guard !selfThread else { return nil }
@@ -158,7 +159,7 @@ extension Action: CaseIterable {
 
         var listActions: [Action?] = [origin.type == .floatingPanel(source: .contextMenu) ? .activeMultiSelect : nil] +
             snoozedActions(messages, folder: origin.frozenFolder) +
-            [.openMovePanel, spamAction]
+            [openMovePanelAction, spamAction]
 
         if messagesType.isSingle && origin.type.isListed {
             listActions += [
