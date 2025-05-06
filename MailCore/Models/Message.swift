@@ -212,6 +212,10 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         }
     }
 
+    public var isMovable: Bool {
+        return !isDraft && !(isScheduledDraft ?? false)
+    }
+
     public func fromMe(currentMailboxEmail: String) -> Bool {
         return from.contains { $0.isMeOrPlusMe(currentMailboxEmail: currentMailboxEmail) }
     }

@@ -130,8 +130,8 @@ public class Thread: Object, Decodable, Identifiable {
         snoozeState == .snoozed && snoozeEndDate != nil && snoozeUuid != nil
     }
 
-    public var isDraggable: Bool {
-        !containsOnlyScheduledDrafts && !shouldPresentAsDraft
+    public var isMovable: Bool {
+        messages.allSatisfy(\.isMovable)
     }
 
     public func updateUnseenMessages() {
