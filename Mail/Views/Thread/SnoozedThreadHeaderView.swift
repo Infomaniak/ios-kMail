@@ -46,7 +46,7 @@ struct SnoozedThreadHeaderView: View {
             Button(MailResourcesStrings.Localizable.buttonCancelReminder, action: cancel)
         }
         .snoozedFloatingPanel(
-            messages: messagesToSnooze,
+            messages: $messagesToSnooze,
             initialDate: date,
             folder: folder
         ) { _ in dismiss() }

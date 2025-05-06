@@ -148,7 +148,7 @@ struct ActionsPanelViewModifier: ViewModifier {
             }
         }
         .snoozedFloatingPanel(
-            messages: messagesToSnooze,
+            messages: $messagesToSnooze,
             initialDate: initialSnoozedDate,
             folder: originFolder?.freezeIfNeeded()
         ) { completionHandler?($0) }

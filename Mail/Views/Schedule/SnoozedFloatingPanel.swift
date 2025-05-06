@@ -21,7 +21,7 @@ import SwiftUI
 
 extension View {
     func snoozedFloatingPanel(
-        messages: [Message]?,
+        messages: Binding<[Message]?>,
         initialDate: Date?,
         folder: Folder?,
         completionHandler: ((Action) -> Void)? = nil
@@ -42,7 +42,8 @@ struct SnoozedFloatingPanel: ViewModifier {
 
     @State private var isShowingPanel = false
 
-    let messages: [Message]?
+    @Binding var messages: [Message]?
+
     let initialDate: Date?
     let folder: Folder?
     let completionHandler: ((Action) -> Void)?
@@ -56,6 +57,10 @@ struct SnoozedFloatingPanel: ViewModifier {
         content
             .onChange(of: messages) { newValue in
                 isShowingPanel = newValue != nil
+            }
+            .onChange(of: isShowingPanel) { newValue in
+                guard newValue == false else { return }
+                messages = nil
             }
             .scheduleFloatingPanel(
                 isPresented: $isShowingPanel,

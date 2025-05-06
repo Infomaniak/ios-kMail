@@ -127,13 +127,17 @@ public struct ActionOrigin {
         originFolder: Folder? = nil,
         nearestMessagesActionsPanel: Binding<[Message]?>? = nil,
         nearestMessagesToMoveSheet: Binding<[Message]?>? = nil,
-        nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil
+        nearestDestructiveAlert: Binding<DestructiveActionAlertState?>? = nil,
+        nearestMessagesToSnooze: Binding<[Message]?>? = nil
     ) -> ActionOrigin {
-        return ActionOrigin(type: .swipe,
-                            folder: originFolder,
-                            nearestMessagesActionsPanel: nearestMessagesActionsPanel,
-                            nearestDestructiveAlert: nearestDestructiveAlert,
-                            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet)
+        return ActionOrigin(
+            type: .swipe,
+            folder: originFolder,
+            nearestMessagesActionsPanel: nearestMessagesActionsPanel,
+            nearestDestructiveAlert: nearestDestructiveAlert,
+            nearestMessagesToMoveSheet: nearestMessagesToMoveSheet,
+            nearestMessagesToSnooze: nearestMessagesToSnooze
+        )
     }
 
     public static func shortcut(originFolder: Folder? = nil,
