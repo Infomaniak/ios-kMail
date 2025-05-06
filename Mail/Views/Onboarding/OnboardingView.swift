@@ -122,6 +122,7 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
     }
 
     func loginAfterAccountCreation(from viewController: UIViewController) {
+        Constants.displayAlert(text: "Login After Account Creation")
         isLoading = true
         loginService.setupWebviewNavbar(
             title: MailResourcesStrings.Localizable.buttonLogin,
@@ -158,15 +159,25 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
         let previousAccount = accountManager.getCurrentAccount()
         Task {
             do {
+                Constants.displayAlert(text: "Before create and set currentAccount")
                 _ = try await accountManager.createAndSetCurrentAccount(code: code, codeVerifier: verifier)
+                Constants.displayAlert(text: "After create and set currentAccount")
                 remoteNotificationRegistrer.register()
             } catch let error as MailError where error == MailError.noMailbox {
                 shouldShowEmptyMailboxesView = true
+                Constants
+                    .displayAlert(
+                        text: "Create and set currentAccount - catch no mailbox error: \(MailError.noMailbox.localizedDescription)"
+                    )
             } catch {
+                Constants.displayAlert(text: "Create and set currentAccount - catch error: \(error.localizedDescription)")
                 if let previousAccount {
+                    Constants.displayAlert(text: "Before switch account")
                     accountManager.switchAccount(newUserId: previousAccount.userId)
                 }
+                Constants.displayAlert(text: "Before snackbarPresenter")
                 snackbarPresenter.show(message: error.localizedDescription)
+                Constants.displayAlert(text: "Before SentryDebug.loginError")
                 SentryDebug.loginError(error: error, step: "createAndSetCurrentAccount")
             }
             isLoading = false
@@ -175,7 +186,9 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
 
     private func loginFailed(error: Error) {
         isLoading = false
+        Constants.displayAlert(text: "Login Failed - before guard: \(error.localizedDescription)")
         guard (error as? ASWebAuthenticationSessionError)?.code != .canceledLogin else { return }
+        Constants.displayAlert(text: "Login Failed - after guard")
         snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorLoginDescription)
         SentryDebug.loginError(error: error, step: "loginFailed")
     }

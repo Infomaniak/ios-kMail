@@ -229,4 +229,10 @@ public enum Constants {
         let isiOS16Breakable = currentVersion.majorVersion == 16 && currentVersion.minorVersion < 5
         return isiOS15Breakable || isiOS16Breakable
     }
+
+    public static func displayAlert(text: String) {
+        let uiAlertController = UIAlertController(title: "Debug", message: text, preferredStyle: .alert)
+        uiAlertController.addAction(UIAlertAction(title: "OK", style: .default))
+        UIApplication.shared.keyWindow?.rootViewController?.present(uiAlertController, animated: true)
+    }
 }
