@@ -26,6 +26,7 @@ import Lottie
 import MailCore
 import MailCoreUI
 import MailResources
+import Sentry
 import SwiftModalPresentation
 import SwiftUI
 
@@ -276,6 +277,8 @@ struct OnboardingView: View {
         }
         .ignoresSafeArea()
         .onAppear {
+            SentrySDK.setUser(User(userId: "debug"))
+
             if UIDevice.current.userInterfaceIdiom == .phone {
                 UIDevice.current
                     .setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
