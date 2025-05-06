@@ -278,6 +278,7 @@ struct OnboardingView: View {
         .ignoresSafeArea()
         .onAppear {
             SentrySDK.setUser(User(userId: "debug"))
+            Constants.displayAlert(text: "Debug user set - App Version \(Constants.appVersionLabel)")
 
             if UIDevice.current.userInterfaceIdiom == .phone {
                 UIDevice.current
