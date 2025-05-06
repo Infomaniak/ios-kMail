@@ -119,7 +119,7 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
 
     public static let writtenByMeFolders: [FolderRole] = [.sent, .draft, .scheduledDrafts]
 
-    public var isWritable: Bool {
+    public var isAcceptingMove: Bool {
         switch self {
         case .sent, .draft, .scheduledDrafts, .snoozed:
             false
@@ -188,7 +188,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     @Persisted public var threadsSource: Folder?
     @Persisted public var associatedFolders: RealmSwift.List<Folder>
 
-    @Persisted public var isWritable = true
+    @Persisted public var isAcceptingMove = true
 
     public var listChildren: AnyRealmCollection<Folder>? {
         children.isEmpty ? nil : AnyRealmCollection(children)
@@ -399,7 +399,7 @@ public class Folder: Object, Codable, Comparable, Identifiable {
 
         self.toolType = toolType
 
-        isWritable = toolType == nil && role?.isWritable ?? true
+        isAcceptingMove = toolType == nil && role?.isAcceptingMove ?? true
     }
 }
 

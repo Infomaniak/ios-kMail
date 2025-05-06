@@ -50,7 +50,7 @@ public extension MailboxManager {
                     folder.threadsSource = folder
                 }
 
-                folder.isWritable = folder.toolType == nil && folder.role?.isWritable ?? true
+                folder.isAcceptingMove = folder.toolType == nil && folder.role?.isAcceptingMove ?? true
             }
 
             // Get from Realm
