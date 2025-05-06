@@ -34,12 +34,13 @@ extension Action: CaseIterable {
     public static let quickActions: [Action] = [.reply, .replyAll, .forward, .delete]
     public static let swipeActions: [Action] = [
         .delete,
+        .archive,
         .markAsRead,
         .openMovePanel,
         .star,
+        .snooze,
         .spam,
         .quickActionPanel,
-        .archive,
         .noAction
     ]
     public static let allCases: [Action] = [
@@ -66,7 +67,10 @@ extension Action: CaseIterable {
         .addContactsAction,
         .copyEmailAction,
         .noAction,
-        .quickActionPanel
+        .quickActionPanel,
+        .snooze,
+        .modifySnooze,
+        .cancelSnooze
     ]
 
     public var refreshSearchResult: Bool {
