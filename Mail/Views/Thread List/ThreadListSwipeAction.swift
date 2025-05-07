@@ -126,8 +126,7 @@ struct ThreadListSwipeActions: ViewModifier {
                 messages: $messagesToSnooze,
                 initialDate: nil,
                 folder: folder
-            ) { _ in
-            }
+            )
     }
 
     @MainActor @ViewBuilder
