@@ -24,6 +24,7 @@ extension View {
         messages: Binding<[Message]?>,
         initialDate: Date?,
         folder: Folder?,
+        dismissView: (() -> Void)? = nil,
         completionHandler: ((Action) -> Void)? = nil
     ) -> some View {
         modifier(
@@ -31,6 +32,7 @@ extension View {
                 messages: messages,
                 initialDate: initialDate,
                 folder: folder,
+                dismissView: dismissView,
                 completionHandler: completionHandler
             )
         )
@@ -46,6 +48,7 @@ struct SnoozedFloatingPanel: ViewModifier {
 
     let initialDate: Date?
     let folder: Folder?
+    let dismissView: (() -> Void)?
     let completionHandler: ((Action) -> Void)?
 
     private var isUpdating: Bool {
@@ -59,7 +62,7 @@ struct SnoozedFloatingPanel: ViewModifier {
                 isShowingPanel = newValue != nil
             }
             .onChange(of: isShowingPanel) { newValue in
-                guard newValue == false else { return }
+                guard !newValue else { return }
                 messages = nil
             }
             .scheduleFloatingPanel(
@@ -67,6 +70,7 @@ struct SnoozedFloatingPanel: ViewModifier {
                 type: .snooze,
                 isUpdating: isUpdating,
                 initialDate: initialDate,
+                dismissView: dismissView,
                 completionHandler: handleSelectedDate
             )
     }
