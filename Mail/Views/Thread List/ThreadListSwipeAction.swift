@@ -86,7 +86,7 @@ struct ThreadListSwipeActions: ViewModifier {
 
     @State private var actionPanelMessages: [Message]?
     @ModalState private var messagesToMove: [Message]?
-    @State private var messagesToSnooze: [Message]?
+    @ModalState private var messagesToSnooze: [Message]?
 
     let thread: Thread
     let viewModel: ThreadListable
@@ -132,7 +132,7 @@ struct ThreadListSwipeActions: ViewModifier {
     @MainActor @ViewBuilder
     private func edgeActions(_ actions: [Action]) -> some View {
         if !multipleSelectionViewModel.isEnabled {
-            ForEach(actions.filter { $0 != .noAction }.map { $0.inverseActionIfNeeded(for: thread) }) { action in
+            ForEach(filterAvailableActions(actions)) { action in
                 SwipeActionView(
                     actionPanelMessages: $actionPanelMessages,
                     moveSheetMessages: $messagesToMove,
@@ -144,6 +144,22 @@ struct ThreadListSwipeActions: ViewModifier {
                 )
             }
         }
+    }
+
+    private func filterAvailableActions(_ actions: [Action]) -> [Action] {
+        let realActions = actions.map { $0.inverseActionIfNeeded(for: thread) }
+        let availableActions = realActions.filter { action in
+            switch action {
+            case .noAction:
+                return false
+            case .snooze:
+                return folder?.canAccessSnoozeActions == true
+            default:
+                return true
+            }
+        }
+
+        return availableActions
     }
 }
 
