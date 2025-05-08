@@ -261,6 +261,19 @@ public extension Action {
         matomoName: "cancelSnooze"
     )
 
+    static let snoozed = Action(
+        id: "fakeSnooze",
+        title: "",
+        iconResource: MailResourcesAsset.alarmClock,
+        matomoName: ""
+    )
+    static let modifiedSnoozed = Action(
+        id: "fakeModifiedSnooze",
+        title: "",
+        iconResource: MailResourcesAsset.alarmClock,
+        matomoName: ""
+    )
+
     // MARK: Mail actions
 
     static let delete = Action(

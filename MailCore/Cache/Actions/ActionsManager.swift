@@ -329,7 +329,7 @@ public class ActionsManager: ObservableObject {
                 .show(message: MailResourcesStrings.Localizable.snackbarSnoozeSuccess(date.formatted(.snoozeSnackbar)))
         }
 
-        return allMessagesAreSnoozed ? .modifySnooze : .snooze
+        return allMessagesAreSnoozed ? .modifiedSnoozed : .snoozed
     }
 
     private func performDeleteSnooze(messages: [Message]) async throws {
