@@ -123,7 +123,7 @@ struct ThreadListSwipeActions: ViewModifier {
                     .sheetViewStyle()
             }
             .snoozedFloatingPanel(
-                messages: $messagesToSnooze,
+                messages: messagesToSnooze,
                 initialDate: nil,
                 folder: folder
             ) { messagesToSnooze = nil }
