@@ -40,7 +40,8 @@ public extension MailApiFetcher {
         let _: Empty = try await perform(
             request: authenticatedRequest(
                 .snoozeAction(mailboxUuid: mailbox.uuid, snoozeUuid: snoozeUuid),
-                method: .put
+                method: .put,
+                parameters: ["end_date": date]
             )
         )
     }

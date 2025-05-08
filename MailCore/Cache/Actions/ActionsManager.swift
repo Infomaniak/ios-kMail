@@ -325,14 +325,27 @@ public class ActionsManager: ObservableObject {
         if snoozeCount == 0 {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
         } else {
-            snackbarPresenter
-                .show(message: MailResourcesStrings.Localizable.snackbarSnoozeSuccess(date.formatted(.snoozeSnackbar)))
+            snackbarPresenter.show(
+                message: MailResourcesStrings.Localizable.snackbarSnoozeSuccess(date.formatted(.snoozeSnackbar))
+            )
         }
 
         return allMessagesAreSnoozed ? .modifiedSnoozed : .snoozed
     }
 
     private func performDeleteSnooze(messages: [Message]) async throws {
+        if messages.count == 1, let message = messages.first {
+            try await deleteSnooze(message: message)
+        } else {
+            try await deleteSnooze(messages: messages)
+        }
+    }
+
+    private func deleteSnooze(message: Message) async throws {
+        try await mailboxManager.deleteSnooze(message: message)
+    }
+
+    private func deleteSnooze(messages: [Message]) async throws {
         let response = try await mailboxManager.deleteSnooze(messages: messages)
         let deletedSnoozeCount = response.reduce(0) { $0 + $1.cancelled.count }
 
