@@ -44,6 +44,7 @@ extension View {
         type: ScheduleType,
         isUpdating: Bool,
         initialDate: Date? = nil,
+        dismissView: (() -> Void)? = nil,
         completionHandler: @escaping (Date) -> Void
     ) -> some View {
         modifier(
@@ -52,6 +53,7 @@ extension View {
                 type: type,
                 isUpdating: isUpdating,
                 initialDate: initialDate,
+                dismissView: dismissView,
                 completionHandler: completionHandler
             )
         )
@@ -70,6 +72,7 @@ struct ScheduleFloatingPanel: ViewModifier {
     let type: ScheduleType
     let isUpdating: Bool
     let initialDate: Date?
+    let dismissView: (() -> Void)?
     let completionHandler: (Date) -> Void
 
     func body(content: Content) -> some View {
@@ -91,9 +94,16 @@ struct ScheduleFloatingPanel: ViewModifier {
                     if panelShouldBeShown {
                         isShowingFloatingPanel = true
                         panelShouldBeShown = false
+                    } else {
+                        dismissView?()
                     }
                 }
             }
             .myKSuitePanel(isPresented: $isShowingMyKSuiteUpgrade, configuration: .mail)
+            .onChange(of: isShowingFloatingPanel) { newValue in
+                if !newValue && !isShowingCustomScheduleAlert {
+                    dismissView?()
+                }
+            }
     }
 }

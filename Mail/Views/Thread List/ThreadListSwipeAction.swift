@@ -34,6 +34,7 @@ private struct SwipeActionView: View {
     @Binding var actionPanelMessages: [Message]?
     @Binding var moveSheetMessages: [Message]?
     @Binding var destructiveAlert: DestructiveActionAlertState?
+    @Binding var nearestMessagesToSnooze: [Message]?
 
     let viewModel: ThreadListable
     let thread: Thread
@@ -56,7 +57,8 @@ private struct SwipeActionView: View {
                             originFolder: thread.folder,
                             nearestMessagesActionsPanel: $actionPanelMessages,
                             nearestMessagesToMoveSheet: $moveSheetMessages,
-                            nearestDestructiveAlert: $destructiveAlert
+                            nearestDestructiveAlert: $destructiveAlert,
+                            nearestMessagesToSnooze: $nearestMessagesToSnooze
                         )
                     )
 
@@ -84,10 +86,15 @@ struct ThreadListSwipeActions: ViewModifier {
 
     @State private var actionPanelMessages: [Message]?
     @ModalState private var messagesToMove: [Message]?
+    @ModalState private var messagesToSnooze: [Message]?
 
     let thread: Thread
     let viewModel: ThreadListable
     let multipleSelectionViewModel: MultipleSelectionViewModel
+
+    private var folder: Folder? {
+        return viewModel is SearchViewModel ? viewModel.frozenFolder : thread.folder
+    }
 
     func body(content: Content) -> some View {
         content
@@ -112,26 +119,47 @@ struct ThreadListSwipeActions: ViewModifier {
                 viewModel.refreshSearchIfNeeded(action: action)
             }
             .sheet(item: $messagesToMove) { messages in
-                let originFolder: Folder? = viewModel is SearchViewModel ? viewModel.frozenFolder : thread.folder
-                MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: originFolder)
+                MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: folder)
                     .sheetViewStyle()
             }
+            .snoozedFloatingPanel(
+                messages: messagesToSnooze,
+                initialDate: nil,
+                folder: folder
+            ) { messagesToSnooze = nil }
     }
 
     @MainActor @ViewBuilder
     private func edgeActions(_ actions: [Action]) -> some View {
         if !multipleSelectionViewModel.isEnabled {
-            ForEach(actions.filter { $0 != .noAction }.map { $0.inverseActionIfNeeded(for: thread) }) { action in
+            ForEach(filterAvailableActions(actions)) { action in
                 SwipeActionView(
                     actionPanelMessages: $actionPanelMessages,
                     moveSheetMessages: $messagesToMove,
                     destructiveAlert: $mainViewState.destructiveAlert,
+                    nearestMessagesToSnooze: $messagesToSnooze,
                     viewModel: viewModel,
                     thread: thread,
                     action: action
                 )
             }
         }
+    }
+
+    private func filterAvailableActions(_ actions: [Action]) -> [Action] {
+        let realActions = actions.map { $0.inverseActionIfNeeded(for: thread) }
+        let availableActions = realActions.filter { action in
+            switch action {
+            case .noAction:
+                return false
+            case .snooze:
+                return folder?.canAccessSnoozeActions == true
+            default:
+                return true
+            }
+        }
+
+        return availableActions
     }
 }
 
@@ -150,6 +178,7 @@ extension View {
         actionPanelMessages: .constant(nil),
         moveSheetMessages: .constant(nil),
         destructiveAlert: .constant(nil),
+        nearestMessagesToSnooze: .constant(nil),
         viewModel: ThreadListViewModel(mailboxManager: PreviewHelper.sampleMailboxManager,
                                        frozenFolder: PreviewHelper.sampleFolder,
                                        selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner),

@@ -24,6 +24,7 @@ extension View {
         messages: [Message]?,
         initialDate: Date?,
         folder: Folder?,
+        dismissView: (() -> Void)? = nil,
         completionHandler: ((Action) -> Void)? = nil
     ) -> some View {
         modifier(
@@ -31,6 +32,7 @@ extension View {
                 messages: messages,
                 initialDate: initialDate,
                 folder: folder,
+                dismissView: dismissView,
                 completionHandler: completionHandler
             )
         )
@@ -45,6 +47,7 @@ struct SnoozedFloatingPanel: ViewModifier {
     let messages: [Message]?
     let initialDate: Date?
     let folder: Folder?
+    let dismissView: (() -> Void)?
     let completionHandler: ((Action) -> Void)?
 
     private var isUpdating: Bool {
@@ -62,6 +65,7 @@ struct SnoozedFloatingPanel: ViewModifier {
                 type: .snooze,
                 isUpdating: isUpdating,
                 initialDate: initialDate,
+                dismissView: dismissView,
                 completionHandler: handleSelectedDate
             )
     }

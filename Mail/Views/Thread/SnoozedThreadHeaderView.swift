@@ -48,8 +48,9 @@ struct SnoozedThreadHeaderView: View {
         .snoozedFloatingPanel(
             messages: messagesToSnooze,
             initialDate: date,
-            folder: folder
-        ) { _ in dismiss() }
+            folder: folder,
+            completionHandler: didSnooze
+        )
     }
 
     private func edit() {
@@ -62,6 +63,10 @@ struct SnoozedThreadHeaderView: View {
         Task {
             try await actionsManager.performAction(target: messages, action: .cancelSnooze, origin: origin)
         }
+    }
+
+    private func didSnooze(_: Action) {
+        dismiss()
     }
 }
 
