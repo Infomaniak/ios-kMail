@@ -28,6 +28,13 @@ public extension MailboxManager {
         return response
     }
 
+    func updateSnooze(message: Message, until date: Date) async throws {
+        try await apiFetcher.updateSnooze(message: message, until: date, mailbox: mailbox)
+        Task {
+            try await refreshFolder(from: [message], additionalFolder: nil)
+        }
+    }
+
     func updateSnooze(messages: [Message], until date: Date) async throws -> [SnoozeUpdatedAPIResponse] {
         let response = try await apiFetcher.updateSnooze(messages: messages, until: date, mailbox: mailbox)
         Task {
@@ -35,6 +42,13 @@ public extension MailboxManager {
         }
 
         return response
+    }
+
+    func deleteSnooze(message: Message) async throws {
+        try await apiFetcher.deleteSnooze(message: message, mailbox: mailbox)
+        Task {
+            try await refreshFolder(from: [message], additionalFolder: nil)
+        }
     }
 
     func deleteSnooze(messages: [Message]) async throws -> [SnoozeCancelledAPIResponse] {
