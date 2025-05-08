@@ -143,9 +143,9 @@ struct SplitView: View {
             } completionHandler: { willSync in
                 guard willSync else { return }
                 if willSync {
-                    matomo.track(eventWithCategory: .aiWriter, name: "discoverNow")
+                    matomo.track(eventWithCategory: .syncAutoConfig, name: "discoverNow")
                 } else {
-                    matomo.track(eventWithCategory: .aiWriter, name: "discoverLater")
+                    matomo.track(eventWithCategory: .syncAutoConfig, name: "discoverLater")
                 }
                 mainViewState.isShowingSyncProfile = true
             }
@@ -156,9 +156,9 @@ struct SplitView: View {
             } completionHandler: { willSetAsDefault in
                 guard willSetAsDefault, let settingsUrl = URL(string: UIApplication.openSettingsURLString) else { return }
                 if willSetAsDefault {
-                    matomo.track(eventWithCategory: .aiWriter, name: "discoverNow")
+                    matomo.track(eventWithCategory: .setAsDefaultApp, name: "discoverNow")
                 } else {
-                    matomo.track(eventWithCategory: .aiWriter, name: "discoverLater")
+                    matomo.track(eventWithCategory: .setAsDefaultApp, name: "discoverLater")
                 }
                 openURL(settingsUrl)
             }
