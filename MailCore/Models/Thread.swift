@@ -148,8 +148,14 @@ public class Thread: Object, Decodable, Identifiable {
               let message = messages.first else {
             return
         }
-        let parentFolder = realm.object(ofType: Folder.self, forPrimaryKey: message.folderId)
-        searchFolderName = parentFolder?.localizedName
+
+        if isSnoozed {
+            let snoozedFolder = realm.objects(Folder.self).where { $0.role == .snoozed }
+            searchFolderName = snoozedFolder.first?.localizedName
+        } else {
+            let parentFolder = realm.object(ofType: Folder.self, forPrimaryKey: message.folderId)
+            searchFolderName = parentFolder?.localizedName
+        }
     }
 
     /// Re-generate `Thread` properties given the messages it contains.
