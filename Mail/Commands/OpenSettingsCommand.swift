@@ -32,6 +32,7 @@ struct OpenSettingsCommand: View {
         Button(MailResourcesStrings.Localizable.settingsTitle) {
             openSettings()
         }
+        .keyboardShortcut(",", modifiers: [.command])
     }
 
     func openSettings() {
