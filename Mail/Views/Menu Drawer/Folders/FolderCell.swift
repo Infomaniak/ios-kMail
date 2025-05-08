@@ -134,11 +134,12 @@ struct FolderCellContent: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
     @EnvironmentObject private var mainViewState: MainViewState
 
+    @State private var currentFolder: Folder?
+
     private let frozenFolder: Folder
     private let level: Int
     private let isCurrentFolder: Bool
     private let canCollapseSubFolders: Bool
-    @State private var currentFolder: Folder?
 
     private var textStyle: MailTextStyle {
         if cellType == .menuDrawer {
@@ -190,7 +191,7 @@ struct FolderCellContent: View {
         .background(FolderCellBackground(isCurrentFolder: isCurrentFolder))
         .dropThreadDestination(destinationFolder: frozenFolder, enabled: frozenFolder.isAcceptingMove)
         .contextMenu {
-            if frozenFolder.role == nil {
+            if frozenFolder.role == nil && cellType != .move {
                 Button {
                     currentFolder = frozenFolder
                 } label: {
