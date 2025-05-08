@@ -21,6 +21,7 @@ import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
+import MailResources
 import SwiftUI
 
 extension ThreadListCell: Equatable {
@@ -77,7 +78,7 @@ struct ThreadListCell: View {
                 withAnimation: false,
                 accentColor: accentColor
             ))
-            .contentShape(.rect)
+            .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier("ThreadListCell")
