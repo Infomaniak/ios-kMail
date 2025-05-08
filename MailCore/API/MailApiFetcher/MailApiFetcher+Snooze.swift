@@ -34,6 +34,17 @@ public extension MailApiFetcher {
         }
     }
 
+    func updateSnooze(message: Message, until date: Date, mailbox: Mailbox) async throws {
+        guard let snoozeUuid = message.snoozeUuid else { throw MailError.missingSnoozeUUID }
+
+        let _: Empty = try await perform(
+            request: authenticatedRequest(
+                .snoozeAction(mailboxUuid: mailbox.uuid, snoozeUuid: snoozeUuid),
+                method: .put
+            )
+        )
+    }
+
     func updateSnooze(messages: [Message], until date: Date, mailbox: Mailbox) async throws -> [SnoozeUpdatedAPIResponse] {
         return try await batchOver(values: messages, chunkSize: Self.editSnoozeAPILimit) { chunk in
             return try await self.perform(request: self.authenticatedRequest(
@@ -45,9 +56,7 @@ public extension MailApiFetcher {
     }
 
     func deleteSnooze(message: Message, mailbox: Mailbox) async throws {
-        guard let snoozeUuid = message.snoozeUuid else {
-            throw MailError.missingSnoozeUUID
-        }
+        guard let snoozeUuid = message.snoozeUuid else { throw MailError.missingSnoozeUUID }
 
         let _: Empty = try await perform(
             request: authenticatedRequest(
