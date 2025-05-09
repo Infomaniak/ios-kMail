@@ -455,15 +455,15 @@ extension ActionsManager {
 
         let allMessagesAreSnoozed = messagesToExecuteAction.allSatisfy(\.isSnoozed)
         if allMessagesAreSnoozed {
-            try await snooze(messages: messagesToExecuteAction, date: date)
-            return .snoozed
-        } else {
             if messagesToExecuteAction.count == 1, let message = messagesToExecuteAction.first {
                 try await modifySnooze(message: message, date: date)
             } else {
                 try await modifySnooze(messages: messagesToExecuteAction, date: date)
             }
             return .modifiedSnoozed
+        } else {
+            try await snooze(messages: messagesToExecuteAction, date: date)
+            return .snoozed
         }
     }
 

@@ -87,7 +87,11 @@ public class MailError: LocalizedError, Encodable {
 
     public static let tooShortScheduleDelay = MailError(code: "tooShortScheduleDelay")
 
-    public static let missingSnoozeUUID = MailError(code: "missingSnoozeUUID")
+    public static let missingSnoozeUUID = MailError(
+        code: "missingSnoozeUUID",
+        localizedDescription: MailResourcesStrings.Localizable.errorMessageNotSnoozed,
+        shouldDisplay: true
+    )
 }
 
 extension MailError: Identifiable {
