@@ -1,1 +1,3 @@
+- Mise en attente avec action de balayage
+- Correction de la navigation dans la recherche
 - Corrections de bugs et améliorations mineures
