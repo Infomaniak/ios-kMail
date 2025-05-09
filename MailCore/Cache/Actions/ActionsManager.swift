@@ -484,6 +484,7 @@ extension ActionsManager {
 
     private func modifySnooze(message: Message, date: Date) async throws {
         try await mailboxManager.updateSnooze(message: message, until: date)
+        showSnoozeCompletedSnackar(messagesSnoozed: 1, date: date)
     }
 
     private func modifySnooze(messages: [Message], date: Date) async throws {
@@ -491,6 +492,18 @@ extension ActionsManager {
 
         let snoozeCount = response.reduce(0) { $0 + $1.updated.count }
         showSnoozeCompletedSnackar(messagesSnoozed: snoozeCount, date: date)
+    }
+
+    private func deleteSnooze(message: Message) async throws {
+        try await mailboxManager.deleteSnooze(message: message)
+        showDeleteSnoozeCompletedSnackar(snoozedDeleted: 1)
+    }
+
+    private func deleteSnooze(messages: [Message]) async throws {
+        let response = try await mailboxManager.deleteSnooze(messages: messages)
+
+        let deletedSnoozeCount = response.reduce(0) { $0 + $1.cancelled.count }
+        showDeleteSnoozeCompletedSnackar(snoozedDeleted: deletedSnoozeCount)
     }
 
     private func showSnoozeCompletedSnackar(messagesSnoozed: Int, date: Date) {
@@ -503,21 +516,12 @@ extension ActionsManager {
         }
     }
 
-    private func deleteSnooze(message: Message) async throws {
-        try await mailboxManager.deleteSnooze(message: message)
-    }
-
-    private func deleteSnooze(messages: [Message]) async throws {
-        let response = try await mailboxManager.deleteSnooze(messages: messages)
-        let deletedSnoozeCount = response.reduce(0) { $0 + $1.cancelled.count }
-
-        Task { @MainActor in
-            if deletedSnoozeCount == 0 {
-                snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
-            } else {
-                snackbarPresenter
-                    .show(message: MailResourcesStrings.Localizable.snackbarUnsnoozeSuccess(deletedSnoozeCount))
-            }
+    private func showDeleteSnoozeCompletedSnackar(snoozedDeleted: Int) {
+        if snoozedDeleted == 0 {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
+        } else {
+            snackbarPresenter
+                .show(message: MailResourcesStrings.Localizable.snackbarUnsnoozeSuccess(snoozedDeleted))
         }
     }
 }
