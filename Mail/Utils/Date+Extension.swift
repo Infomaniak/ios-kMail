@@ -23,6 +23,10 @@ extension Date {
         Calendar.current.date(byAdding: .day, value: -1, to: .now)!
     }
 
+    static var tomorrow: Date {
+        Calendar.current.date(byAdding: .day, value: 1, to: .now)!
+    }
+
     static var lastWeek: Date {
         Calendar.current.date(byAdding: .weekOfYear, value: -1, to: .now)!
     }

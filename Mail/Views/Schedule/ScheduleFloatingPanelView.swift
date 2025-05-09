@@ -32,9 +32,9 @@ struct ScheduleFloatingPanelView: View {
     private var scheduleOptions: [ScheduleOption] {
         let lastScheduledDate = UserDefaults.shared[keyPath: type.lastCustomScheduleDateKeyPath]
 
-        var allSimpleCases = ScheduleOption.allSimpleCases
+        var allSimpleCases = ScheduleOption.allPresetOptions
         allSimpleCases.insert(ScheduleOption.lastSchedule(value: lastScheduledDate), at: 0)
-        return allSimpleCases.filter { $0.shouldBeDisplayedNow }
+        return allSimpleCases.filter { $0.canBeDisplayed }
     }
 
     var body: some View {
