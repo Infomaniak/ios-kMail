@@ -82,6 +82,7 @@ struct ScheduleFloatingPanel: ViewModifier {
                     isShowingCustomScheduleAlert: $isShowingCustomScheduleAlert,
                     isShowingMyKSuiteUpgrade: $isShowingMyKSuiteUpgrade,
                     type: type,
+                    initialDate: initialDate,
                     completionHandler: completionHandler
                 )
                 .environmentObject(mailboxManager)
