@@ -306,59 +306,6 @@ public class ActionsManager: ObservableObject {
         }
     }
 
-    public func performSnooze(messages: [Message], date: Date, originFolder: Folder?) async throws -> Action {
-        let messagesToExecuteAction = messages.lastMessagesToExecuteAction(
-            currentMailboxEmail: mailboxManager.mailbox.email,
-            currentFolder: originFolder
-        )
-
-        var snoozeCount = 0
-        let allMessagesAreSnoozed = messagesToExecuteAction.allSatisfy(\.isSnoozed)
-        if allMessagesAreSnoozed {
-            let response = try await mailboxManager.updateSnooze(messages: messagesToExecuteAction, until: date)
-            snoozeCount = response.reduce(0) { $0 + $1.updated.count }
-        } else {
-            let response = try await mailboxManager.snooze(messages: messagesToExecuteAction, until: date)
-            snoozeCount = response.reduce(0) { $0 + $1.snoozeActions.count }
-        }
-
-        if snoozeCount == 0 {
-            snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
-        } else {
-            snackbarPresenter.show(
-                message: MailResourcesStrings.Localizable.snackbarSnoozeSuccess(date.formatted(.snoozeSnackbar))
-            )
-        }
-
-        return allMessagesAreSnoozed ? .modifiedSnoozed : .snoozed
-    }
-
-    private func performDeleteSnooze(messages: [Message]) async throws {
-        if messages.count == 1, let message = messages.first {
-            try await deleteSnooze(message: message)
-        } else {
-            try await deleteSnooze(messages: messages)
-        }
-    }
-
-    private func deleteSnooze(message: Message) async throws {
-        try await mailboxManager.deleteSnooze(message: message)
-    }
-
-    private func deleteSnooze(messages: [Message]) async throws {
-        let response = try await mailboxManager.deleteSnooze(messages: messages)
-        let deletedSnoozeCount = response.reduce(0) { $0 + $1.cancelled.count }
-
-        Task { @MainActor in
-            if deletedSnoozeCount == 0 {
-                snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
-            } else {
-                snackbarPresenter
-                    .show(message: MailResourcesStrings.Localizable.snackbarUnsnoozeSuccess(deletedSnoozeCount))
-            }
-        }
-    }
-
     @MainActor
     private func displayResultSnackbar(message: String?, undoAction: UndoAction?) {
         guard let message else { return }
@@ -494,5 +441,83 @@ public class ActionsManager: ObservableObject {
 
         let uniqueThreads = Set(selectedMessages.uniqueThreadsInFolder(originFolder))
         return uniqueThreads.count == 1
+    }
+}
+
+// MARK: - Snooze
+
+extension ActionsManager {
+    public func performSnooze(messages: [Message], date: Date, originFolder: Folder?) async throws -> Action {
+        let messagesToExecuteAction = messages.lastMessagesToExecuteAction(
+            currentMailboxEmail: mailboxManager.mailbox.email,
+            currentFolder: originFolder
+        )
+
+        let allMessagesAreSnoozed = messagesToExecuteAction.allSatisfy(\.isSnoozed)
+        if allMessagesAreSnoozed {
+            try await snooze(messages: messagesToExecuteAction, date: date)
+            return .snoozed
+        } else {
+            if messagesToExecuteAction.count == 1, let message = messagesToExecuteAction.first {
+                try await modifySnooze(message: message, date: date)
+            } else {
+                try await modifySnooze(messages: messagesToExecuteAction, date: date)
+            }
+            return .modifiedSnoozed
+        }
+    }
+
+    private func performDeleteSnooze(messages: [Message]) async throws {
+        if messages.count == 1, let message = messages.first {
+            try await deleteSnooze(message: message)
+        } else {
+            try await deleteSnooze(messages: messages)
+        }
+    }
+
+    private func snooze(messages: [Message], date: Date) async throws {
+        let response = try await mailboxManager.snooze(messages: messages, until: date)
+
+        let snoozeCount = response.reduce(0) { $0 + $1.snoozeActions.count }
+        showSnoozeCompletedSnackar(messagesSnoozed: snoozeCount, date: date)
+    }
+
+    private func modifySnooze(message: Message, date: Date) async throws {
+        try await mailboxManager.updateSnooze(message: message, until: date)
+    }
+
+    private func modifySnooze(messages: [Message], date: Date) async throws {
+        let response = try await mailboxManager.updateSnooze(messages: messages, until: date)
+
+        let snoozeCount = response.reduce(0) { $0 + $1.updated.count }
+        showSnoozeCompletedSnackar(messagesSnoozed: snoozeCount, date: date)
+    }
+
+    private func showSnoozeCompletedSnackar(messagesSnoozed: Int, date: Date) {
+        if messagesSnoozed == 0 {
+            snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
+        } else {
+            snackbarPresenter.show(
+                message: MailResourcesStrings.Localizable.snackbarSnoozeSuccess(date.formatted(.snoozeSnackbar))
+            )
+        }
+    }
+
+    private func deleteSnooze(message: Message) async throws {
+        try await mailboxManager.deleteSnooze(message: message)
+    }
+
+    private func deleteSnooze(messages: [Message]) async throws {
+        let response = try await mailboxManager.deleteSnooze(messages: messages)
+        let deletedSnoozeCount = response.reduce(0) { $0 + $1.cancelled.count }
+
+        Task { @MainActor in
+            if deletedSnoozeCount == 0 {
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorUnknown)
+            } else {
+                snackbarPresenter
+                    .show(message: MailResourcesStrings.Localizable.snackbarUnsnoozeSuccess(deletedSnoozeCount))
+            }
+        }
     }
 }
