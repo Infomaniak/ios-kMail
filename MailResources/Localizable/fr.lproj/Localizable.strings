@@ -4,7 +4,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Fri, 25 Apr 2025 11:19:29 +0200
+ * Exported at: Thu, 08 May 2025 08:09:40 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -820,8 +820,20 @@
 /* loco:65d4ae8ef9b6570a070b3e92 */
 "errorMailboxUnavailable" = "Cette adresse mail n’est pas disponible";
 
+/* loco:680b69620fe68fbfc80ac583 */
+"errorMaxNumberOfScheduledSnoozeReached" = "Vous avez atteint le nombre maximal de mises en attente programmées";
+
+/* loco:680b8d7f855ff2c2e708b282 */
+"errorMessageCannotBeSnoozed" = "Ce message ne peut pas être mis en attente";
+
 /* loco:645c9af969688c1b200ad4a2 */
 "errorMessageNotFound" = "Message introuvable";
+
+/* loco:680b6895a9a8ec84c3020a73 */
+"errorMessageNotSnoozed" = "Ce message n’est pas mis en attente";
+
+/* loco:680b692fe83f3ba1df0a2895 */
+"errorMessageSnoozeAlreadyScheduled" = "Une mise en attente est déjà programmée pour ce message";
 
 /* loco:6494050cd62813225a066fb2 */
 "errorMoveDestinationNotFound" = "Le dossier de destination n’existe pas";

@@ -72,7 +72,11 @@ public class MailApiError: MailError {
         shouldDisplay: true
     )
 
-    public static let apiMessageNotSnoozed = MailApiError(code: "mail__message_not_snoozed")
+    public static let apiMessageNotSnoozed = MailApiError(
+        code: "mail__message_not_snoozed",
+        localizedDescription: MailResourcesStrings.Localizable.errorMessageNotSnoozed,
+        shouldDisplay: true
+    )
 
     static let allErrors: [MailApiError] = [
         // General
@@ -171,9 +175,21 @@ public class MailApiError: MailError {
 
         // Snooze
         apiMessageNotSnoozed,
-        MailApiError(code: "mail__message_snooze_already_scheduled"),
-        MailApiError(code: "mail__message_max_number_of_scheduled_snooze_reached"),
-        MailApiError(code: "mail__message_cannot_be_snooze")
+        MailApiError(
+            code: "mail__message_snooze_already_scheduled",
+            localizedDescription: MailResourcesStrings.Localizable.errorMessageSnoozeAlreadyScheduled,
+            shouldDisplay: true
+        ),
+        MailApiError(
+            code: "mail__message_max_number_of_scheduled_snooze_reached",
+            localizedDescription: MailResourcesStrings.Localizable.errorMaxNumberOfScheduledSnoozeReached,
+            shouldDisplay: true
+        ),
+        MailApiError(
+            code: "mail__message_cannot_be_snooze",
+            localizedDescription: MailResourcesStrings.Localizable.errorMessageCannotBeSnoozed,
+            shouldDisplay: true
+        )
     ]
 
     static func mailApiErrorFromCode(_ code: String) -> MailApiError? {

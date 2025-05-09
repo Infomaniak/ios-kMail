@@ -74,8 +74,10 @@ struct SnoozedFloatingPanel: ViewModifier {
         guard let messages else { return }
 
         Task {
-            let action = try await actionsManager.performSnooze(messages: messages, date: date, originFolder: folder)
-            completionHandler?(action)
+            await tryOrDisplayError {
+                let action = try await actionsManager.performSnooze(messages: messages, date: date, originFolder: folder)
+                completionHandler?(action)
+            }
         }
     }
 }
