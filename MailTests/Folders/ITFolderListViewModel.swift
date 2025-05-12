@@ -345,11 +345,11 @@ final class ITFolderListViewModelWorker: XCTestCase {
 
         // THEN
         XCTAssertGreaterThanOrEqual(allFolders.count, 1, "There should be at least one match")
-        guard let matchingFolder = allFolders.first else {
-            XCTFail("Unexpected")
-            return
-        }
-        XCTAssertEqual(matchingFolder.frozenContent.localizedName, randomFolder.localizedName, "We expect the names to match")
+
+        XCTAssertTrue(
+            allFolders.contains { $0.frozenContent.id == randomFolder.id },
+            "We expect the results to contain the folder"
+        )
     }
 
     func testFilterAndSortFolders_SearchNoMatch() async throws {
