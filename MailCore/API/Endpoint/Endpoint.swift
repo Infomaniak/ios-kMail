@@ -23,7 +23,7 @@ import InfomaniakCore
 
 public extension ApiEnvironment {
     var mailHost: String {
-        return "mail.\(host)"
+        return "mail-mr-6725.\(host)"
     }
 
     var calendarHost: String {
@@ -55,7 +55,7 @@ public extension Endpoint {
     }
 
     private static var mailHost: Endpoint {
-        return Endpoint(hostKeypath: \.mailHost, path: "")
+        return Endpoint(hostKeypath: \.mailHost, path: "", apiEnvironment: .preprod)
     }
 
     private static var base: Endpoint {
