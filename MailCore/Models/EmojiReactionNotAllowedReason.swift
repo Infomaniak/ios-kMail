@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import MailResources
 import RealmSwift
 
 public enum EmojiReactionNotAllowedReason: String, Decodable, PersistableEnum {
@@ -38,5 +39,33 @@ public enum EmojiReactionNotAllowedReason: String, Decodable, PersistableEnum {
         let rawString = try container.decode(String.self)
 
         self = EmojiReactionNotAllowedReason(rawValue: rawString) ?? .unknown
+    }
+
+    public var error: MailApiError {
+        switch self {
+        case .folderNotAllowedDraft:
+            return .emojiReactionFolderNotAllowedDraft
+        case .folderNotAllowedScheduledDraft:
+            return .emojiReactionFolderNotAllowedScheduledDraft
+        case .folderNotAllowedSpam:
+            return .emojiReactionFolderNotAllowedSpam
+        case .folderNotAllowedTrash:
+            return .emojiReactionFolderNotAllowedTrash
+        case .messageInReplyToNotValid:
+            return .emojiReactionMessageInReplyToNotValid
+        case .messageInReplyToNotAllowed:
+            return .emojiReactionMessageInReplyToNotAllowed
+        case .tooManyRecipients:
+            return .emojiReactionMaxRecipient
+        case .recipientNotAllowed:
+            return .emojiReactionRecipientNotAllowed
+        }
+    }
+
+    public var localizedDescription: String {
+        guard let errorDescription = error.errorDescription else {
+            return MailResourcesStrings.Localizable.errorUnknown
+        }
+        return errorDescription
     }
 }
