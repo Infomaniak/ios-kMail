@@ -78,6 +78,49 @@ public class MailApiError: MailError {
         shouldDisplay: true
     )
 
+    public static let emojiReactionFolderNotAllowedDraft = MailApiError(
+        code: "emoji_reaction__folder_not_allowed_draft",
+        localizedDescription: "!TODO",
+        shouldDisplay: true
+    )
+    public static let emojiReactionFolderNotAllowedScheduledDraft = MailApiError(
+        code: "emoji_reaction__folder_not_allowed_scheduled_draft",
+        localizedDescription: "!TODO",
+        shouldDisplay: true
+    )
+    public static let emojiReactionFolderNotAllowedSpam = MailApiError(
+        code: "emoji_reaction__folder_not_allowed_spam",
+        localizedDescription: "!TODO",
+        shouldDisplay: true
+    )
+    public static let emojiReactionFolderNotAllowedTrash = MailApiError(
+        code: "emoji_reaction__folder_not_allowed_scheduled_trash",
+        localizedDescription: "!TODO",
+        shouldDisplay: true
+    )
+
+    public static let emojiReactionMessageInReplyToNotAllowed = MailApiError(
+        code: "emoji_reaction__message_in_reply_to_not_allowed",
+        localizedDescription: "!TODO",
+        shouldDisplay: true
+    )
+    public static let emojiReactionMessageInReplyToNotValid = MailApiError(
+        code: "emoji_reaction__message_in_reply_to_not_valid",
+        localizedDescription: "!TODO",
+        shouldDisplay: true
+    )
+
+    public static let emojiReactionMaxRecipient = MailApiError(
+        code: "emoji_reaction__max_recipient",
+        localizedDescription: "!TODO",
+        shouldDisplay: true
+    )
+    public static let emojiReactionRecipientNotAllowed = MailApiError(
+        code: "emoji_reaction__recipient_not_allowed",
+        localizedDescription: "!TODO",
+        shouldDisplay: true
+    )
+
     static let allErrors: [MailApiError] = [
         // General
         MailApiError(code: "not_authorized"),
@@ -188,6 +231,26 @@ public class MailApiError: MailError {
         MailApiError(
             code: "mail__message_cannot_be_snooze",
             localizedDescription: MailResourcesStrings.Localizable.errorMessageCannotBeSnoozed,
+            shouldDisplay: true
+        ),
+
+        // Emoji Reaction
+        emojiReactionFolderNotAllowedDraft,
+        emojiReactionFolderNotAllowedScheduledDraft,
+        emojiReactionFolderNotAllowedSpam,
+        emojiReactionFolderNotAllowedTrash,
+        emojiReactionMessageInReplyToNotAllowed,
+        emojiReactionMessageInReplyToNotValid,
+        emojiReactionMaxRecipient,
+        emojiReactionRecipientNotAllowed,
+        MailApiError(
+            code: "emoji_reaction__max_reaction_reached",
+            localizedDescription: "!TODO",
+            shouldDisplay: true
+        ),
+        MailApiError(
+            code: "emoji_reaction__already_used",
+            localizedDescription: "!TODO",
             shouldDisplay: true
         )
     ]
