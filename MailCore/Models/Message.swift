@@ -88,6 +88,19 @@ public class MessageHeaders: EmbeddedObject, Codable {
     }
 }
 
+public enum ReactionEmojiNotAllowedReason: String, Decodable, PersistableEnum {
+    case folderDraftNotAllowed = "folder_not_allowed_draft"
+    case folderScheduledDraftNotAllowed = "folder_not_allowed_scheduled_draft"
+    case folderSpamNotAllowed = "folder_not_allowed_spam"
+    case folderTrashNotAllowed = "folder_not_allowed_scheduled_trash"
+
+    case messageInReplyToNotValid = "message_in_reply_to_not_valid"
+    case messageInReplyToNotAllowed = "message_in_reply_to_not_allowed"
+
+    case tooManyRecipients = "max_recipient"
+    case userCannotReact = "recipient_not_allowed"
+}
+
 /// A Message has :
 /// - Many threads
 /// - One originalThread: parent thread
@@ -149,6 +162,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var snoozeEndDate: Date?
 
     @Persisted public var reactionEmoji: String?
+    @Persisted public var reactionEmojiNotAllowedReason: ReactionEmojiNotAllowedReason?
+
     @Persisted public var reactions: Map<String, RecipientsList?>
 
     public var shortUid: Int? {
@@ -303,6 +318,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case snoozeState
         case snoozeUuid
         case snoozeEndDate
+        case reactionEmoji
+        case reactionEmojiNotAllowedReason
         case headers
     }
 
@@ -373,6 +390,13 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         snoozeState = try? values.decodeIfPresent(SnoozeState.self, forKey: .snoozeState)
         snoozeUuid = try? values.decodeIfPresent(String.self, forKey: .snoozeUuid)
         snoozeEndDate = try values.decodeIfPresent(Date.self, forKey: .snoozeEndDate)
+
+        reactionEmoji = try values.decodeIfPresent(String.self, forKey: .reactionEmoji)
+        reactionEmojiNotAllowedReason = try values.decodeIfPresent(
+            ReactionEmojiNotAllowedReason.self,
+            forKey: .reactionEmojiNotAllowedReason
+        )
+
         headers = try? values.decodeIfPresent(MessageHeaders.self, forKey: .headers)
     }
 
