@@ -88,19 +88,6 @@ public class MessageHeaders: EmbeddedObject, Codable {
     }
 }
 
-public enum EmojiReactionNotAllowedReason: String, Decodable, PersistableEnum {
-    case folderDraftNotAllowed = "folder_not_allowed_draft"
-    case folderScheduledDraftNotAllowed = "folder_not_allowed_scheduled_draft"
-    case folderSpamNotAllowed = "folder_not_allowed_spam"
-    case folderTrashNotAllowed = "folder_not_allowed_scheduled_trash"
-
-    case messageInReplyToNotValid = "message_in_reply_to_not_valid"
-    case messageInReplyToNotAllowed = "message_in_reply_to_not_allowed"
-
-    case tooManyRecipients = "max_recipient"
-    case userCannotReact = "recipient_not_allowed"
-}
-
 /// A Message has :
 /// - Many threads
 /// - One originalThread: parent thread
