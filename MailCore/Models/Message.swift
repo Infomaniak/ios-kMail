@@ -148,6 +148,9 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var snoozeUuid: String?
     @Persisted public var snoozeEndDate: Date?
 
+    @Persisted public var isReaction = false
+    @Persisted public var reactions: Map<String, RecipientsList?>
+
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
     }
