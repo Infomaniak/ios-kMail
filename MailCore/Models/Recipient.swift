@@ -41,6 +41,15 @@ public enum RecipientError: Error {
     case duplicateContact
 }
 
+public final class RecipientsList: EmbeddedObject, Encodable {
+    @Persisted public var recipients: RealmSwift.List<Recipient>
+
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.unkeyedContainer()
+        try container.encode(contentsOf: recipients)
+    }
+}
+
 public final class Recipient: EmbeddedObject, Correspondent, Codable {
     @Persisted public var email: String
     @Persisted public var name: String
