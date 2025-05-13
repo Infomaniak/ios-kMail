@@ -27,14 +27,32 @@ struct ScheduleFloatingPanelView: View {
     @Binding var isShowingMyKSuiteUpgrade: Bool
 
     let type: ScheduleType
+    let initialDate: Date?
     let completionHandler: (Date) -> Void
 
     private var scheduleOptions: [ScheduleOption] {
-        let lastScheduledDate = UserDefaults.shared[keyPath: type.lastCustomScheduleDateKeyPath]
+        var seenDateOptions = Set<Date>()
+        if let initialDate {
+            seenDateOptions.insert(initialDate)
+        }
 
-        var allSimpleCases = ScheduleOption.allSimpleCases
-        allSimpleCases.insert(ScheduleOption.lastSchedule(value: lastScheduledDate), at: 0)
-        return allSimpleCases.filter { $0.shouldBeDisplayedNow }
+        var filteredOptions = ScheduleOption.allPresetOptions.filter { option in
+            guard option.canBeDisplayed, let date = option.date else { return false }
+            if seenDateOptions.contains(date) {
+                return false
+            } else {
+                seenDateOptions.insert(date)
+                return true
+            }
+        }
+
+        let lastScheduledDate = UserDefaults.shared[keyPath: type.lastCustomScheduleDateKeyPath]
+        let lastScheduledOption = ScheduleOption.lastSchedule(value: lastScheduledDate)
+        if lastScheduledOption.canBeDisplayed, !seenDateOptions.contains(lastScheduledDate) {
+            filteredOptions.insert(.lastSchedule(value: lastScheduledDate), at: 0)
+        }
+
+        return filteredOptions
     }
 
     var body: some View {
@@ -58,6 +76,7 @@ struct ScheduleFloatingPanelView: View {
     ScheduleFloatingPanelView(
         isShowingCustomScheduleAlert: .constant(false),
         isShowingMyKSuiteUpgrade: .constant(false),
-        type: .scheduledDraft
+        type: .scheduledDraft,
+        initialDate: nil
     ) { _ in }
 }
