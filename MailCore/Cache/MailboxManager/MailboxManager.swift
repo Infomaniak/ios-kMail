@@ -128,6 +128,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 SubBody.self,
                 Attachment.self,
                 Recipient.self,
+                RecipientsList.self,
                 Draft.self,
                 Signature.self,
                 SearchHistory.self,
