@@ -88,7 +88,7 @@ public class MessageHeaders: EmbeddedObject, Codable {
     }
 }
 
-public enum ReactionEmojiNotAllowedReason: String, Decodable, PersistableEnum {
+public enum EmojiReactionNotAllowedReason: String, Decodable, PersistableEnum {
     case folderDraftNotAllowed = "folder_not_allowed_draft"
     case folderScheduledDraftNotAllowed = "folder_not_allowed_scheduled_draft"
     case folderSpamNotAllowed = "folder_not_allowed_spam"
@@ -164,8 +164,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var snoozeUuid: String?
     @Persisted public var snoozeEndDate: Date?
 
-    @Persisted public var reactionEmoji: String?
-    @Persisted public var reactionEmojiNotAllowedReason: ReactionEmojiNotAllowedReason?
+    @Persisted public var emojiReaction: String?
+    @Persisted public var emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason?
 
     @Persisted public var reactions: Map<String, RecipientsList?>
 
@@ -334,8 +334,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case encrypted
         case encryptionPassword
         case cryptPasswordValidity
-        case reactionEmoji
-        case reactionEmojiNotAllowedReason
+        case emojiReaction = "reactionEmoji"
+        case emojiReactionNotAllowedReason = "reactionEmojiNotAllowedReason"
         case headers
     }
 
@@ -410,10 +410,10 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         encryptionPassword = try values.decodeIfPresent(String.self, forKey: .encryptionPassword) ?? ""
         cryptPasswordValidity = try values.decodeIfPresent(Date.self, forKey: .cryptPasswordValidity)
 
-        reactionEmoji = try values.decodeIfPresent(String.self, forKey: .reactionEmoji)
-        reactionEmojiNotAllowedReason = try values.decodeIfPresent(
-            ReactionEmojiNotAllowedReason.self,
-            forKey: .reactionEmojiNotAllowedReason
+        emojiReaction = try values.decodeIfPresent(String.self, forKey: .emojiReaction)
+        emojiReactionNotAllowedReason = try values.decodeIfPresent(
+            EmojiReactionNotAllowedReason.self,
+            forKey: .emojiReactionNotAllowedReason
         )
 
         headers = try? values.decodeIfPresent(MessageHeaders.self, forKey: .headers)
