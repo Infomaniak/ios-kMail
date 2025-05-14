@@ -4,7 +4,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Thu, 08 May 2025 08:09:40 +0200
+ * Exported at: Wed, 14 May 2025 10:26:02 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -780,6 +780,36 @@
 
 /* loco:6449292ce5f4e56abb063f65 */
 "errorEditScheduledMessage" = "Impossible de modifier un message planifié ou envoyé";
+
+/* loco:68244ca1442e5299b205c692 */
+"errorEmojiReactionAlreadyUsed" = "Vous avez déjà réagi avec cette réaction";
+
+/* loco:68243c88cdfe78e1e808d454 */
+"errorEmojiReactionFolderNotAllowedDraft" = "Vous ne pouvez pas réagir à un brouillon";
+
+/* loco:68243d8d8d231d5f830b1ea2 */
+"errorEmojiReactionFolderNotAllowedScheduledDraft" = "Vous ne pouvez pas réagir à un e-mail programmé";
+
+/* loco:68243e8c7dd759b88902ca52 */
+"errorEmojiReactionFolderNotAllowedSpam" = "Vous ne pouvez pas réagir à un e-mail marqué comme spam";
+
+/* loco:68243fd84feaa48af90da202 */
+"errorEmojiReactionFolderNotAllowedTrash" = "Vous ne pouvez pas réagir à un e-mail dans la corbeille";
+
+/* loco:68244c3f594d463b500f9192 */
+"errorEmojiReactionMaxReactionReached" = "Vous avez atteint le nombre maximum de réactions pour cet e-mail";
+
+/* loco:68244a5e63a6d9a5d604f7d2 */
+"errorEmojiReactionMaxRecipient" = "Vous ne pouvez pas réagir à un e-mail avec plus de 20 destinataires";
+
+/* loco:682449de5e1772a511039952 */
+"errorEmojiReactionMessageInReplyToNotAllowed" = "Vous ne pouvez pas réagir à ce type d’e-mail";
+
+/* loco:68244a135e1772a511039956 */
+"errorEmojiReactionMessageInReplyToNotValid" = "Vous ne pouvez pas réagir à cet e-mail";
+
+/* loco:68244bc24720858315077c42 */
+"errorEmojiReactionRecipientNotAllowed" = "Seuls les destinataires et expéditeurs peuvent réagir à cet e-mail";
 
 /* loco:65b90c1464496af26b01ef32 */
 "errorEventCouldNotBeOpenedInMyCalendar" = "Une erreur s’est produite lors de l’ouverture de la manifestation dans Infomaniak Calendar";

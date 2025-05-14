@@ -4,7 +4,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Thu, 08 May 2025 08:09:40 +0200
+ * Exported at: Wed, 14 May 2025 10:26:02 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -780,6 +780,36 @@
 
 /* loco:6449292ce5f4e56abb063f65 */
 "errorEditScheduledMessage" = "Geplante oder versendete Nachrichten können nicht geändert werden";
+
+/* loco:68244ca1442e5299b205c692 */
+"errorEmojiReactionAlreadyUsed" = "Sie haben bereits mit dieser Reaktion reagiert";
+
+/* loco:68243c88cdfe78e1e808d454 */
+"errorEmojiReactionFolderNotAllowedDraft" = "Sie können nicht auf einen Entwurf reagieren";
+
+/* loco:68243d8d8d231d5f830b1ea2 */
+"errorEmojiReactionFolderNotAllowedScheduledDraft" = "Sie können nicht auf eine geplante E-Mail antworten";
+
+/* loco:68243e8c7dd759b88902ca52 */
+"errorEmojiReactionFolderNotAllowedSpam" = "Sie können nicht auf eine als Spam markierte E-Mail reagieren";
+
+/* loco:68243fd84feaa48af90da202 */
+"errorEmojiReactionFolderNotAllowedTrash" = "Sie können nicht auf eine E-Mail im Papierkorb reagieren";
+
+/* loco:68244c3f594d463b500f9192 */
+"errorEmojiReactionMaxReactionReached" = "Sie haben die maximale Anzahl an Reaktionen für diese E-Mail erreicht";
+
+/* loco:68244a5e63a6d9a5d604f7d2 */
+"errorEmojiReactionMaxRecipient" = "Sie können nicht auf eine E-Mail mit mehr als 20 Empfängern reagieren";
+
+/* loco:682449de5e1772a511039952 */
+"errorEmojiReactionMessageInReplyToNotAllowed" = "Sie können nicht auf diese Art von E-Mail reagieren";
+
+/* loco:68244a135e1772a511039956 */
+"errorEmojiReactionMessageInReplyToNotValid" = "Sie können nicht auf diese E-Mail reagieren";
+
+/* loco:68244bc24720858315077c42 */
+"errorEmojiReactionRecipientNotAllowed" = "Nur Empfänger und Absender können auf diese E-Mail reagieren";
 
 /* loco:65b90c1464496af26b01ef32 */
 "errorEventCouldNotBeOpenedInMyCalendar" = "Beim Öffnen des Ereignisses in Infomaniak Calendar ist ein Fehler aufgetreten";
