@@ -778,6 +778,36 @@
 /* loco:6449292ce5f4e56abb063f65 */
 "errorEditScheduledMessage" = "Impossibile modificare un messaggio pianificato o inviato";
 
+/* loco:68244ca1442e5299b205c692 */
+"errorEmojiReactionAlreadyUsed" = "Hai già reagito con questa reazione";
+
+/* loco:68243c88cdfe78e1e808d454 */
+"errorEmojiReactionFolderNotAllowedDraft" = "Non puoi reagire a una bozza";
+
+/* loco:68243d8d8d231d5f830b1ea2 */
+"errorEmojiReactionFolderNotAllowedScheduledDraft" = "Non puoi reagire a un email programmato";
+
+/* loco:68243e8c7dd759b88902ca52 */
+"errorEmojiReactionFolderNotAllowedSpam" = "Non puoi reagire a un’email contrassegnata come spam";
+
+/* loco:68243fd84feaa48af90da202 */
+"errorEmojiReactionFolderNotAllowedTrash" = "Non puoi reagire a un’email nel cestino";
+
+/* loco:68244c3f594d463b500f9192 */
+"errorEmojiReactionMaxReactionReached" = "Hai raggiunto il numero massimo di reazioni per questa email";
+
+/* loco:68244a5e63a6d9a5d604f7d2 */
+"errorEmojiReactionMaxRecipient" = "Non puoi reagire a un’email con più di 20 destinatari";
+
+/* loco:682449de5e1772a511039952 */
+"errorEmojiReactionMessageInReplyToNotAllowed" = "Non puoi reagire a questo tipo di email";
+
+/* loco:68244a135e1772a511039956 */
+"errorEmojiReactionMessageInReplyToNotValid" = "Non puoi reagire a questa email";
+
+/* loco:68244bc24720858315077c42 */
+"errorEmojiReactionRecipientNotAllowed" = "Solo i destinatari e i mittenti possono reagire a questa email";
+
 /* loco:65b90c1464496af26b01ef32 */
 "errorEventCouldNotBeOpenedInMyCalendar" = "Si è verificato un errore durante l’apertura dell’evento in Infomaniak Calendar";
 
