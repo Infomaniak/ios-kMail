@@ -321,8 +321,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case encrypted
         case encryptionPassword
         case cryptPasswordValidity
-        case emojiReaction = "reactionEmoji"
-        case emojiReactionNotAllowedReason = "reactionEmojiNotAllowedReason"
+        case emojiReaction
+        case emojiReactionNotAllowedReason
         case headers
     }
 
