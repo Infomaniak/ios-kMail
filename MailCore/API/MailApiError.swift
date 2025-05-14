@@ -80,44 +80,44 @@ public class MailApiError: MailError {
 
     public static let emojiReactionFolderNotAllowedDraft = MailApiError(
         code: "emoji_reaction__folder_not_allowed_draft",
-        localizedDescription: "!TODO",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionFolderNotAllowedDraft,
         shouldDisplay: true
     )
     public static let emojiReactionFolderNotAllowedScheduledDraft = MailApiError(
         code: "emoji_reaction__folder_not_allowed_scheduled_draft",
-        localizedDescription: "!TODO",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionFolderNotAllowedScheduledDraft,
         shouldDisplay: true
     )
     public static let emojiReactionFolderNotAllowedSpam = MailApiError(
         code: "emoji_reaction__folder_not_allowed_spam",
-        localizedDescription: "!TODO",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionFolderNotAllowedSpam,
         shouldDisplay: true
     )
     public static let emojiReactionFolderNotAllowedTrash = MailApiError(
         code: "emoji_reaction__folder_not_allowed_scheduled_trash",
-        localizedDescription: "!TODO",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionFolderNotAllowedTrash,
         shouldDisplay: true
     )
 
     public static let emojiReactionMessageInReplyToNotAllowed = MailApiError(
         code: "emoji_reaction__message_in_reply_to_not_allowed",
-        localizedDescription: "!TODO",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionMessageInReplyToNotAllowed,
         shouldDisplay: true
     )
     public static let emojiReactionMessageInReplyToNotValid = MailApiError(
         code: "emoji_reaction__message_in_reply_to_not_valid",
-        localizedDescription: "!TODO",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionMessageInReplyToNotValid,
         shouldDisplay: true
     )
 
     public static let emojiReactionMaxRecipient = MailApiError(
         code: "emoji_reaction__max_recipient",
-        localizedDescription: "!TODO",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionMaxRecipient,
         shouldDisplay: true
     )
     public static let emojiReactionRecipientNotAllowed = MailApiError(
         code: "emoji_reaction__recipient_not_allowed",
-        localizedDescription: "!TODO",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionRecipientNotAllowed,
         shouldDisplay: true
     )
 
@@ -245,12 +245,12 @@ public class MailApiError: MailError {
         emojiReactionRecipientNotAllowed,
         MailApiError(
             code: "emoji_reaction__max_reaction_reached",
-            localizedDescription: "!TODO",
+            localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionMaxReactionReached,
             shouldDisplay: true
         ),
         MailApiError(
             code: "emoji_reaction__already_used",
-            localizedDescription: "!TODO",
+            localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionAlreadyUsed,
             shouldDisplay: true
         )
     ]
