@@ -305,8 +305,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case snoozeState
         case snoozeUuid
         case snoozeEndDate
-        case emojiReaction = "reactionEmoji"
-        case emojiReactionNotAllowedReason = "reactionEmojiNotAllowedReason"
+        case emojiReaction
+        case emojiReactionNotAllowedReason
         case headers
     }
 
