@@ -24,6 +24,19 @@ import RealmSwift
 // MARK: - Folders
 
 public extension MailboxManager {
+    func hasSubFolders(folder: Folder) -> Bool {
+        let filteredChild = folder.children.filter { $0.role == nil }
+        if !filteredChild.isEmpty {
+            return true
+        }
+        for child in folder.children {
+            if hasSubFolders(folder: child) {
+                return true
+            }
+        }
+        return false
+    }
+
     /// Get all remote folders in DB
     func refreshAllFolders() async throws {
         guard ReachabilityListener.instance.currentStatus != .offline else {
@@ -32,7 +45,11 @@ public extension MailboxManager {
 
         let folderResult = try await apiFetcher.folders(mailbox: mailbox)
         let filteredFolderResult = filterOutUnknownFolders(folderResult)
+
         let newFolders = getSubFolders(from: filteredFolderResult)
+        for folder in newFolders {
+            folder.hasSubFolders = hasSubFolders(folder: folder)
+        }
 
         try? writeTransaction { writableRealm in
             let foldersByRole = Dictionary(grouping: newFolders, by: \.role)
