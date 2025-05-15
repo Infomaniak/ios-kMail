@@ -109,6 +109,11 @@ public class MailApiError: MailError {
         localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionMessageInReplyToNotValid,
         shouldDisplay: true
     )
+    public static let emojiReactionMessageInReplyToEncrypted = MailApiError(
+        code: "emoji_reaction__message_in_reply_to_encrypted",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionMessageInReplyEncrypted,
+        shouldDisplay: true
+    )
 
     public static let emojiReactionMaxRecipient = MailApiError(
         code: "emoji_reaction__max_recipient",
