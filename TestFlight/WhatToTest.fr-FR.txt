@@ -1,3 +1,3 @@
-- Mise en attente avec action de balayage
-- Correction de la navigation dans la recherche
+- Prévention d'un crash à la récupération des messages
+- Nouvelle icône
 - Corrections de bugs et améliorations mineures
