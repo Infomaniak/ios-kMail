@@ -25,52 +25,16 @@ public enum AIOutputFormat: String, Codable {
     case mail
 }
 
-public enum AIEngine: String, CaseIterable, SettingsOptionEnum, Codable {
-    case falcon
-    case chatGPT = "gpt"
-
-    public var title: String {
-        switch self {
-        case .falcon:
-            return MailResourcesStrings.Localizable.aiEngineFalcon
-        case .chatGPT:
-            return MailResourcesStrings.Localizable.aiEngineChatGpt
-        }
-    }
-
-    public var image: Image? {
-        switch self {
-        case .falcon:
-            return MailResourcesAsset.aiLogo.swiftUIImage
-        case .chatGPT:
-            return MailResourcesAsset.chatGPT.swiftUIImage
-        }
-    }
-
-    public var hint: String? {
-        return nil
-    }
-
-    public var matomoName: String {
-        switch self {
-        case .falcon:
-            return "falcon"
-        case .chatGPT:
-            return "chatGpt"
-        }
-    }
-}
-
 public protocol AIRequest: Codable {
-    var engine: AIEngine { get }
+    var engine: String { get }
 }
 
 public struct AIConversationRequest: AIRequest {
     public let messages: [AIMessage]
+    public let engine = "falcon"
     public let output: AIOutputFormat
-    public let engine: AIEngine
 }
 
 public struct AIShortcutRequest: AIRequest {
-    public let engine: AIEngine
+    public var engine = "falcon"
 }

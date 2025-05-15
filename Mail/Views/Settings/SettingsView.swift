@@ -40,7 +40,6 @@ struct SettingsView: View {
 
     @EnvironmentObject private var mainViewState: MainViewState
 
-    @AppStorage(UserDefaults.shared.key(.aiEngine)) private var aiEngine = DefaultPreferences.aiEngine
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var density = DefaultPreferences.threadDensity
     @AppStorage(UserDefaults.shared.key(.theme)) private var theme = DefaultPreferences.theme
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
@@ -145,14 +144,6 @@ struct SettingsView: View {
                             SettingsSubMenuLabel(title: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle)
                         }
                         .buttonStyle(.plain)
-                    }
-
-                    // MARK: AI Writer
-
-                    if featureFlagsManageable.isEnabled(.aiMailComposer) {
-                        SettingsSubMenuCell(title: MailResourcesStrings.Localizable.aiPromptTitle, subtitle: aiEngine.title) {
-                            SettingsAIEngineOptionView()
-                        }
                     }
 
                     // MARK: Auto Advance

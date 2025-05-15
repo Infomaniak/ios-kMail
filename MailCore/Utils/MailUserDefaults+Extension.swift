@@ -48,7 +48,6 @@ public extension UserDefaults.Keys {
     static let shouldPresentAIFeature = UserDefaults.Keys(rawValue: "shouldPresentAIFeature")
     static let shouldPresentSyncDiscovery = UserDefaults.Keys(rawValue: "shouldPresentSyncDiscovery")
     static let shouldPresentSetAsDefaultDiscovery = UserDefaults.Keys(rawValue: "shouldPresentSetAsDefaultDiscovery")
-    static let aiEngine = UserDefaults.Keys(rawValue: "aiEngine")
     static let autoAdvance = UserDefaults.Keys(rawValue: "autoAdvance")
     static let hasDismissedUpdateVersionView = UserDefaults.Keys(rawValue: "hasDismissedUpdateVersionView")
     static let matomoAuthorized = UserDefaults.Keys(rawValue: "matomoAuthorized")
@@ -301,15 +300,6 @@ public extension UserDefaults {
         }
         set {
             set(newValue, forKey: key(.shouldPresentSetAsDefaultDiscovery))
-        }
-    }
-
-    var aiEngine: AIEngine {
-        get {
-            return AIEngine(rawValue: string(forKey: key(.aiEngine)) ?? "") ?? DefaultPreferences.aiEngine
-        }
-        set {
-            setValue(newValue.rawValue, forKey: key(.aiEngine))
         }
     }
 

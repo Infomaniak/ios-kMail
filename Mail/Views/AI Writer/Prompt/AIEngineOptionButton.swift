@@ -26,32 +26,19 @@ import MailResources
 import SwiftUI
 
 struct AIEngineOptionButton: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
-    @AppStorage(UserDefaults.shared.key(.aiEngine)) private var aiEngine = DefaultPreferences.aiEngine
-
-    @Binding var isShowingAIEngineChoice: Bool
+    private var image: Image {
+        MailResourcesAsset.aiLogo.swiftUIImage
+    }
 
     var body: some View {
-        Button {
-            matomo.track(eventWithCategory: .promptAIEngine, name: "openEngineChoice")
-
-            isShowingAIEngineChoice = true
-        } label: {
-            HStack(spacing: IKPadding.mini) {
-                Text(MailResourcesStrings.Localizable.aiGenerationTitlePrompt)
-                    .foregroundStyle(MailResourcesAsset.textPrimaryColor)
-
-                if let image = aiEngine.image {
-                    image
-                }
-
-                ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textPrimaryColor.swiftUIColor)
-            }
+        HStack(spacing: IKPadding.mini) {
+            Text(MailResourcesStrings.Localizable.aiGenerationTitlePrompt)
+                .foregroundStyle(MailResourcesAsset.textPrimaryColor)
+            image
         }
     }
 }
 
 #Preview {
-    AIEngineOptionButton(isShowingAIEngineChoice: .constant(false))
+    AIEngineOptionButton()
 }

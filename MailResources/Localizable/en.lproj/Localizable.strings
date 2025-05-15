@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: en, English
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Thu, 08 May 2025 08:09:40 +0200
+ * Exported by: Matthieu Déglon
+ * Exported at: Wed, 14 May 2025 15:07:42 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -138,15 +138,6 @@
 
 /* loco:651584a40e0b9f6c680ced32 */
 "aiDiscoveryTitle" = "Write your emails using AI";
-
-/* loco:653922bdcfcd84657f033492 */
-"aiEngineChatGpt" = "ChatGPT";
-
-/* loco:6539230c9770e8ba3102c722 */
-"aiEngineFalcon" = "Sovereign AI";
-
-/* loco:653924b9080dd61d2e016072 */
-"aiEngineWarning" = "By using ChatGPT, your data will be processed by the American company OpenAI. We advise you not to use it for sensitive messages.";
 
 /* loco:6555e85e5cfcd5053e081e92 */
 "aiErrorContextMaxTokenReached" = "The email you’re replying to is too long for the AI to generate a response.\n\nSummarize what you want to say to get its help.";
@@ -1284,9 +1275,6 @@
 
 /* loco:66aa2edfd301963193056853 */
 "settingsAccountManagementTitle" = "Account management";
-
-/* loco:65391d2584dd77c18b02f0e2 */
-"settingsAiEngineDescription" = "Select your AI writing assistant";
 
 /* loco:627a306b1e32027c033896b2 */
 "settingsAppLock" = "App lock";

@@ -50,7 +50,6 @@ public extension MatomoUtils.EventCategory {
     static let newMessage = MatomoUtils.EventCategory(displayName: "newMessage")
     static let noValidMailboxes = MatomoUtils.EventCategory(displayName: "noValidMailboxes")
     static let onboarding = MatomoUtils.EventCategory(displayName: "onboarding")
-    static let promptAIEngine = MatomoUtils.EventCategory(displayName: "promptAiEngine")
     static let replyBottomSheet = MatomoUtils.EventCategory(displayName: "replyBottomSheet")
     static let restoreEmailsBottomSheet = MatomoUtils.EventCategory(displayName: "restoreEmailsBottomSheet")
     static let scheduleSend = MatomoUtils.EventCategory(displayName: "scheduleSend")
@@ -83,7 +82,6 @@ public extension MatomoUtils.EventCategory {
 
     static let settingsGeneral = MatomoUtils.EventCategory(displayName: "settingsGeneral")
     static let settingsAccentColor = MatomoUtils.EventCategory(displayName: "settingsAccentColor")
-    static let settingsAIEngine = MatomoUtils.EventCategory(displayName: "settingsAiEngine")
     static let settingsAutoAdvance = MatomoUtils.EventCategory(displayName: "settingsAutoAdvance")
     static let settingsCancelPeriod = MatomoUtils.EventCategory(displayName: "settingsCancelPeriod")
     static let settingsDataPrivacy = MatomoUtils.EventCategory(displayName: "settingsDataPrivacy")
