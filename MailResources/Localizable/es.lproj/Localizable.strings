@@ -4,7 +4,7 @@
  * Locale: es, Spanish
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Wed, 14 May 2025 10:26:02 +0200
+ * Exported at: Thu, 15 May 2025 16:06:10 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -801,6 +801,9 @@
 
 /* loco:68244a5e63a6d9a5d604f7d2 */
 "errorEmojiReactionMaxRecipient" = "No puedes reaccionar a un correo con más de 20 destinatarios";
+
+/* loco:6825f47d4b237d0e7009d463 */
+"errorEmojiReactionMessageInReplyEncrypted" = "No puedes reaccionar a un correo cifrado";
 
 /* loco:682449de5e1772a511039952 */
 "errorEmojiReactionMessageInReplyToNotAllowed" = "No puedes reaccionar a este tipo de correo";
