@@ -211,6 +211,34 @@ class MailUITests: XCTestCase {
         }
     }
 
+    func testSendMessageToDraftWithAttachment() throws {
+        launchAppFromScratch()
+        login()
+        writeTestMessage()
+
+        let bottomBarButtons = app.toolbars.firstMatch.buttons.allElementsBoundByIndex
+        XCTAssertGreaterThan(bottomBarButtons.count, 3)
+
+        let imagePickerButton = bottomBarButtons[3]
+        XCTAssertTrue(imagePickerButton.waitForExistence(timeout: defaultTimeOut))
+        imagePickerButton.tap()
+
+        let firstPhoto = app.otherElements["photos_layout"].images.firstMatch
+        XCTAssertTrue(firstPhoto.waitForExistence(timeout: defaultTimeOut))
+        firstPhoto.tap()
+
+        let addButton = app.buttons["Add"]
+        XCTAssertTrue(addButton.waitForExistence(timeout: 5))
+        addButton.tap()
+
+        app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage]
+            .buttons[MailResourcesStrings.Localizable.buttonClose].firstMatch.tap()
+
+        let deleteDraftButton = app.buttons[MailResourcesStrings.Localizable.actionDelete].firstMatch
+        _ = deleteDraftButton.waitForExistence(timeout: defaultTimeOut)
+        deleteDraftButton.tap()
+    }
+
     func refreshThreadList() {
         let threadList = app.collectionViews.firstMatch
         _ = threadList.waitForExistence(timeout: defaultTimeOut)
