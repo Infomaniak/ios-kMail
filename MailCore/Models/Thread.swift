@@ -475,6 +475,95 @@ public extension Thread {
 }
 
 public extension Thread {
+    /// Re-generate `Thread` properties given the messages it contains.
+    func recomputeOrFail() throws {
+        messages = messages.sorted { $0.internalDate.compare($1.internalDate) == .orderedAscending }.toRealmList()
+
+        guard let lastMessageFromFolder else {
+            throw MailError.threadHasNoMessageInFolder
+        }
+        
+        resetThread()
+
+        subject = messages.first?.subject
+        internalDate = lastMessageFromFolder.internalDate
+        date = lastMessageFromFolder.date
+        isLastMessageFromFolderSnoozed = lastMessageFromFolder.isSnoozed
+
+        for message in messages {
+            messageIds.insert(objectsIn: message.linkedUids)
+            from.append(objectsIn: message.from.detached())
+            to.append(objectsIn: message.to.detached())
+
+            if !message.seen {
+                unseenMessages += 1
+            }
+            if message.flagged {
+                flagged = true
+            }
+            if message.hasAttachments {
+                hasAttachments = true
+            }
+            if message.isDraft {
+                hasDrafts = true
+            }
+            if message.answered {
+                answered = true
+                forwarded = false
+            }
+            if message.forwarded {
+                answered = false
+                forwarded = true
+            }
+            if message.isScheduledDraft == true {
+                numberOfScheduledDraft += 1
+            }
+            if message.isReaction {
+                reactionsCount += 1
+            }
+
+            updateSnooze(from: message)
+        }
+
+        for duplicate in duplicates {
+            if !duplicate.seen {
+                unseenMessages += 1
+            }
+            updateSnooze(from: duplicate)
+        }
+    }
+
+    private func resetThread() {
+        messageIds = MutableSet()
+        from = List()
+        to = List()
+
+        unseenMessages = 0
+        numberOfScheduledDraft = 0
+        reactionsCount = 0
+
+        flagged = false
+        hasAttachments = false
+        hasDrafts = false
+        answered = false
+        forwarded = false
+        isLastMessageFromFolderSnoozed = false
+
+        snoozeState = nil
+        snoozeUuid = nil
+        snoozeEndDate = nil
+    }
+
+    private func updateSnooze(from message: Message) {
+        guard let messageSnoozeState = message.snoozeState else { return }
+
+        snoozeState = messageSnoozeState
+        snoozeUuid = message.snoozeUuid
+        snoozeEndDate = message.snoozeEndDate
+    }
+}
+
+public extension Thread {
     /// Compute if the thread has external recipients
     func displayExternalRecipientState(mailboxManager: MailboxManager,
                                        recipientsList: List<Recipient>) -> DisplayExternalRecipientStatus.State {
