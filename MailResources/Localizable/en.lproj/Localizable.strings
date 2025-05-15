@@ -799,6 +799,9 @@
 /* loco:68244a5e63a6d9a5d604f7d2 */
 "errorEmojiReactionMaxRecipient" = "You cannot react to an email with more than 20 recipients";
 
+/* loco:6825f47d4b237d0e7009d463 */
+"errorEmojiReactionMessageInReplyEncrypted" = "You cannot react to an encrypted email";
+
 /* loco:682449de5e1772a511039952 */
 "errorEmojiReactionMessageInReplyToNotAllowed" = "You cannot react to this type of email";
 
