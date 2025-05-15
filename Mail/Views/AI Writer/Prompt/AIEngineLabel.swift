@@ -20,25 +20,19 @@ import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
-import MailCore
-import MailCoreUI
 import MailResources
 import SwiftUI
 
-struct AIEngineOptionButton: View {
-    private var image: Image {
-        MailResourcesAsset.aiLogo.swiftUIImage
-    }
-
+struct AIEngineLabel: View {
     var body: some View {
         HStack(spacing: IKPadding.mini) {
             Text(MailResourcesStrings.Localizable.aiGenerationTitlePrompt)
                 .foregroundStyle(MailResourcesAsset.textPrimaryColor)
-            image
+            MailResourcesAsset.aiLogo.swiftUIImage
         }
     }
 }
 
 #Preview {
-    AIEngineOptionButton()
+    AIEngineLabel()
 }

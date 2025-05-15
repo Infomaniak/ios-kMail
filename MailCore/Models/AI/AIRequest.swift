@@ -17,7 +17,6 @@
  */
 
 import Foundation
-import MailResources
 import SwiftUI
 
 public enum AIOutputFormat: String, Codable {
@@ -25,16 +24,7 @@ public enum AIOutputFormat: String, Codable {
     case mail
 }
 
-public protocol AIRequest: Codable {
-    var engine: String { get }
-}
-
-public struct AIConversationRequest: AIRequest {
+public struct AIConversationRequest: Encodable {
     public let messages: [AIMessage]
-    public let engine = "falcon"
     public let output: AIOutputFormat
-}
-
-public struct AIShortcutRequest: AIRequest {
-    public var engine = "falcon"
 }

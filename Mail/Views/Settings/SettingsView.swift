@@ -31,7 +31,6 @@ import SwiftUI
 struct SettingsView: View {
     @InjectService private var accountManager: AccountManager
     @InjectService private var appLockHelper: AppLockHelper
-    @InjectService private var featureFlagsManageable: FeatureFlagsManageable
     @InjectService private var platformDetector: PlatformDetectable
     @InjectService private var myKSuiteStore: MyKSuiteStore
     @LazyInjectService private var matomo: MatomoUtils

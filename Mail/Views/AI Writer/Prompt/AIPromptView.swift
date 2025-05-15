@@ -88,7 +88,7 @@ struct AIPromptView: View {
             }
 
             HStack {
-                AIEngineOptionButton()
+                AIEngineLabel()
 
                 Spacer()
 

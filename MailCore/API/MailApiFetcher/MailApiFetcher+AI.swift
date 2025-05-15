@@ -58,8 +58,7 @@ public extension MailApiFetcher {
     ) async throws -> AIShortcutResponse {
         try await perform(request: authenticatedRequest(
             .aiShortcut(contextId: contextId, shortcut: shortcut.apiName, mailbox: mailbox),
-            method: .patch,
-            parameters: AIShortcutRequest()
+            method: .patch
         ))
     }
 
