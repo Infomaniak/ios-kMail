@@ -57,11 +57,11 @@ struct SettingsView: View {
             VStack(alignment: .leading, spacing: 0) {
                 // MARK: - Section: my kSuite
 
-                if myKSuite != nil,
+                if let myKSuite,
                    let myKSuiteMailbox,
                    let mailboxManager = accountManager.getMailboxManager(for: myKSuiteMailbox) {
                     Group {
-                        SettingsSectionTitleView(title: "my kSuite")
+                        SettingsSectionTitleView(title: myKSuite.isFree ? "my kSuite" : "my kSuite+")
 
                         SettingsSubMenuCell(title: myKSuiteMailbox.email) {
                             MailboxSettingsView(mailboxManager: mailboxManager)
