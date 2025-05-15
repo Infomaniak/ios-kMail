@@ -185,7 +185,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     }
 
     public var isReaction: Bool {
-        emojiReaction != nil && emojiReaction?.isEmpty == false
+        return emojiReaction?.isEmpty == false
     }
 
     public var formattedFrom: String {
