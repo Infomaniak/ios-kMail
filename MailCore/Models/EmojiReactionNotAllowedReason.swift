@@ -28,6 +28,7 @@ public enum EmojiReactionNotAllowedReason: String, Decodable, PersistableEnum {
 
     case messageInReplyToNotValid = "message_in_reply_to_not_valid"
     case messageInReplyToNotAllowed = "message_in_reply_to_not_allowed"
+    case messageInReplyToEncrypted = "message_in_reply_to_encrypted"
 
     case tooManyRecipients = "max_recipient"
     case recipientNotAllowed = "recipient_not_allowed"
@@ -55,6 +56,8 @@ public enum EmojiReactionNotAllowedReason: String, Decodable, PersistableEnum {
             return .emojiReactionMessageInReplyToNotValid
         case .messageInReplyToNotAllowed:
             return .emojiReactionMessageInReplyToNotAllowed
+        case .messageInReplyToEncrypted:
+            return .emojiReactionMessageInReplyToEncrypted
         case .tooManyRecipients:
             return .emojiReactionMaxRecipient
         case .recipientNotAllowed:
