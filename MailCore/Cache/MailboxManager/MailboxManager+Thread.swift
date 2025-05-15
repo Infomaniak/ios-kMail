@@ -396,6 +396,7 @@ public extension MailboxManager {
         guard !Task.isCancelled else { return [] }
 
         var threadsToUpdate = Set<Thread>()
+        var affectedThreadUids = Set<String>()
         try? writeTransaction { writableRealm in
             for item in items {
                 let messageLongUid = computeLongMessageUid(shortUid: item[keyPath: messageUid], in: folder)
@@ -405,10 +406,11 @@ public extension MailboxManager {
                 threadsToUpdate.formUnion(message.threads)
             }
 
-            recomputeThreadsAndUnreadCount(of: threadsToUpdate, realm: writableRealm)
+            let (affectedThreads, _) = recomputeThreadsAndUnreadCount(of: threadsToUpdate, realm: writableRealm)
+            affectedThreadUids = Set(affectedThreads.map(\.uid))
         }
 
-        return Set(threadsToUpdate.map(\.uid))
+        return affectedThreadUids
     }
 
     // MARK: - Thread creation
