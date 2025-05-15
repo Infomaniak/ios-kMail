@@ -184,6 +184,10 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         snoozeState == .snoozed && snoozeEndDate != nil && snoozeUuid != nil
     }
 
+    public var isReaction: Bool {
+        emojiReaction != nil && emojiReaction?.isEmpty == false
+    }
+
     public var formattedFrom: String {
         from.first?.htmlDescription ?? MailResourcesStrings.Localizable.unknownRecipientTitle
     }
