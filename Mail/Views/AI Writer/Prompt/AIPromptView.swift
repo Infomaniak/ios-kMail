@@ -118,6 +118,7 @@ struct AIPromptView: View {
                 matomo.track(eventWithCategory: .aiWriter, name: "dismissPromptWithoutGenerating")
             }
         }
+        .matomoView(view: ["AI", "Prompt"])
     }
 }
 

@@ -17,9 +17,6 @@
  */
 
 import DesignSystem
-import InfomaniakCoreCommonUI
-import InfomaniakCoreSwiftUI
-import InfomaniakDI
 import MailResources
 import SwiftUI
 
