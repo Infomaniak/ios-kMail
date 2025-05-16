@@ -75,6 +75,10 @@ struct ScheduleFloatingPanel: ViewModifier {
     let dismissView: (() -> Void)?
     let completionHandler: (Date) -> Void
 
+    private var isShowingAnyPanel: Bool {
+        return isShowingFloatingPanel || isShowingCustomScheduleAlert
+    }
+
     func body(content: Content) -> some View {
         content
             .floatingPanel(isPresented: $isShowingFloatingPanel, title: type.floatingPanelTitle) {
@@ -86,6 +90,11 @@ struct ScheduleFloatingPanel: ViewModifier {
                     completionHandler: completionHandler
                 )
                 .environmentObject(mailboxManager)
+                .onDisappear {
+                    if !isShowingAnyPanel {
+                        dismissView?()
+                    }
+                }
             }
             .customAlert(isPresented: $isShowingCustomScheduleAlert) {
                 CustomScheduleAlertView(type: type, date: initialDate, isUpdating: isUpdating, confirmAction: completionHandler) {
@@ -95,16 +104,11 @@ struct ScheduleFloatingPanel: ViewModifier {
                     if panelShouldBeShown {
                         isShowingFloatingPanel = true
                         panelShouldBeShown = false
-                    } else {
+                    } else if !isShowingAnyPanel {
                         dismissView?()
                     }
                 }
             }
             .myKSuitePanel(isPresented: $isShowingMyKSuiteUpgrade, configuration: .mail)
-            .onChange(of: isShowingFloatingPanel) { newValue in
-                if !newValue && !isShowingCustomScheduleAlert {
-                    dismissView?()
-                }
-            }
     }
 }
