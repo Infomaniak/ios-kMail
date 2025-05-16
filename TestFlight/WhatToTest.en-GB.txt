@@ -1,3 +1,2 @@
-- Prevent crash when fetching messages
-- New icon
+- Prevent crash when displaying BIMI
 - Other bug fixes and improvements
