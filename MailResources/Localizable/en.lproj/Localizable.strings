@@ -4,7 +4,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Matthieu Déglon
- * Exported at: Wed, 14 May 2025 15:07:42 +0200
+ * Exported at: Fri, 16 May 2025 07:39:08 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -152,7 +152,7 @@
 "aiErrorUnknown" = "An error has occurred. If this error persists, please contact our helpdesk.\nThank you for your patience.";
 
 /* loco:653a132b3b8d3a1f740e06f2 */
-"aiGenerationTitlePrompt" = "Generate with";
+"aiGenerationTitlePrompt" = "Generated with";
 
 /* loco:651549fc352ff768af054453 */
 "aiMenuEditRequest" = "Edit my request";
