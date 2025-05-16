@@ -229,4 +229,9 @@ public enum Constants {
         let isiOS16Breakable = currentVersion.majorVersion == 16 && currentVersion.minorVersion < 5
         return isiOS15Breakable || isiOS16Breakable
     }
+
+    public static func displayAlert(text: String) {
+        @InjectService var alertPresenter: SnackBarPresentable
+        alertPresenter.show(message: text)
+    }
 }
