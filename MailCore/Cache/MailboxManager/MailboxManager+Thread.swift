@@ -658,42 +658,7 @@ public extension MailboxManager {
             }
         }
 
-        recomputeMessageReactions(of: recomputedThreads, realm: realm)
-
         return (recomputedThreads, recomputeUnreadCountOfFolders(containing: recomputedThreads))
-    }
-
-    private func recomputeMessageReactions(of threads: Set<Thread>, realm: Realm) {
-        let reactionMessages = threads.flatMap(\.messages).filter { $0.isReaction }.toSet()
-
-        for reactionMessage in reactionMessages {
-            guard let emojiReaction = reactionMessage.emojiReaction,
-                  let targetMessagesIds = reactionMessage.inReplyTo?.parseMessageIds() else {
-                continue
-            }
-
-            for targetMessageId in targetMessagesIds {
-                guard let targetMessage = realm.objects(Message.self).where({ $0.messageId == targetMessageId }).first else {
-                    continue
-                }
-
-                if reactionMessage.inTrash && !targetMessage.inTrash {
-                    continue
-                }
-
-                let recipientsReactingToMessage = reactionMessage.from.map { $0.detached() }.toArray()
-
-                try? realm.safeWrite {
-                    if let reactionRecipientsResult = targetMessage.reactions[emojiReaction],
-                       let reactionRecipients = reactionRecipientsResult {
-                        reactionRecipients.append(recipients: recipientsReactingToMessage)
-                    } else {
-                        let recipientsList = RecipientsList(recipients: recipientsReactingToMessage)
-                        targetMessage.reactions.updateValue(recipientsList, forKey: emojiReaction)
-                    }
-                }
-            }
-        }
     }
 
     /// Refresh the unread count of the folders of the given threads
