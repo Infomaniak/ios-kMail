@@ -29,8 +29,13 @@ final class SVGImageDecoder: ImageDecoding {
     }
 
     func decode(_ data: Data) throws -> ImageContainer {
-        guard let svgImage = SVGKImage(data: data),
-              let uiImage = SVGKExporterUIImage.export(asUIImage: svgImage) else {
+        guard let svgImage = SVGKImage(data: data) else {
+            throw ImageDecodingError.unknown
+        }
+
+        svgImage.size = CGSize(width: 512, height: 512)
+
+        guard let uiImage = SVGKExporterUIImage.export(asUIImage: svgImage) else {
             throw ImageDecodingError.unknown
         }
 
