@@ -1,3 +1,2 @@
-- Prévention d'un crash à la récupération des messages
-- Nouvelle icône
+- Prévention d'un crash lors de l'affichage d'un BIMI
 - Corrections de bugs et améliorations mineures
