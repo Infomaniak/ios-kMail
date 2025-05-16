@@ -658,37 +658,38 @@ public extension MailboxManager {
             }
         }
 
-        recomputeMessageReactions(of: threads, realm: realm)
+        recomputeMessageReactions(of: recomputedThreads, realm: realm)
 
         return (recomputedThreads, recomputeUnreadCountOfFolders(containing: recomputedThreads))
     }
 
     private func recomputeMessageReactions(of threads: Set<Thread>, realm: Realm) {
-        let messagesOfReaction = threads.flatMap(\.messages)
-            .filter { $0.emojiReaction != nil && $0.emojiReaction?.isEmpty == false }
-            .toSet()
+        let reactionMessages = threads.flatMap(\.messages).filter { $0.isReaction }.toSet()
 
-        for messageOfReaction in messagesOfReaction {
-            guard let reaction = messageOfReaction.emojiReaction,
-                  let targetMessagesIds = messageOfReaction.inReplyTo?.parseMessageIds() else {
+        for reactionMessage in reactionMessages {
+            guard let emojiReaction = reactionMessage.emojiReaction,
+                  let targetMessagesIds = reactionMessage.inReplyTo?.parseMessageIds() else {
                 continue
             }
 
             for targetMessageId in targetMessagesIds {
-                guard let targetMessage = realm.objects(Message.self).where({ $0.messageId == targetMessageId }).first
-                else { continue }
+                guard let targetMessage = realm.objects(Message.self).where({ $0.messageId == targetMessageId }).first else {
+                    continue
+                }
 
-                let recipientsReactingToMessage = messageOfReaction.from.map { $0.detached() }.toArray()
+                if reactionMessage.inTrash && !targetMessage.inTrash {
+                    continue
+                }
+
+                let recipientsReactingToMessage = reactionMessage.from.map { $0.detached() }.toArray()
 
                 try? realm.safeWrite {
-                    let reactionRecipientsResult = targetMessage.reactions[reaction]
-                    if let reactionRecipientsResult, let reactionRecipients = reactionRecipientsResult {
-                        reactionRecipients.recipients.append(objectsIn: recipientsReactingToMessage)
+                    if let reactionRecipientsResult = targetMessage.reactions[emojiReaction],
+                       let reactionRecipients = reactionRecipientsResult {
+                        reactionRecipients.append(recipients: recipientsReactingToMessage)
                     } else {
-                        let recipientsList = RecipientsList()
-                        recipientsList.recipients.append(objectsIn: recipientsReactingToMessage)
-
-                        targetMessage.reactions.updateValue(recipientsList, forKey: reaction)
+                        let recipientsList = RecipientsList(recipients: recipientsReactingToMessage)
+                        targetMessage.reactions.updateValue(recipientsList, forKey: emojiReaction)
                     }
                 }
             }
