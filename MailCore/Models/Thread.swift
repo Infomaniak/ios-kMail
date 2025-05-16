@@ -490,7 +490,14 @@ public extension Thread {
         date = lastMessageFromFolder.date
         isLastMessageFromFolderSnoozed = lastMessageFromFolder.isSnoozed
 
+        var messagesById = [String: Message]()
+        var reactionsByMessageId = [String: Map<String, RecipientsList?>]()
+
         for message in messages {
+            if let messageId = message.messageId {
+                messagesById[messageId] = message
+            }
+
             messageIds.insert(objectsIn: message.linkedUids)
             from.append(objectsIn: message.from.detached())
             to.append(objectsIn: message.to.detached())
@@ -520,6 +527,25 @@ public extension Thread {
             }
             if message.isReaction {
                 reactionsCount += 1
+
+                if let messageTargets = message.inReplyTo?.parseMessageIds(), let emojiReaction = message.emojiReaction {
+                    for messageTarget in messageTargets {
+                        let recipients = message.from.detached().toArray()
+
+                        if let reactions = reactionsByMessageId[messageTarget] {
+                            if let recipientsList = reactions[emojiReaction], let recipientsList {
+                                recipientsList.append(recipients: recipients)
+                            } else {
+                                reactions.updateValue(RecipientsList(recipients: recipients), forKey: emojiReaction)
+                            }
+                        } else {
+                            let reactionsDictionnary = Map<String, RecipientsList?>()
+                            reactionsDictionnary.updateValue(RecipientsList(recipients: recipients), forKey: emojiReaction)
+
+                            reactionsByMessageId[messageTarget] = reactionsDictionnary
+                        }
+                    }
+                }
             }
 
             updateSnooze(from: message)
@@ -530,6 +556,11 @@ public extension Thread {
                 unseenMessages += 1
             }
             updateSnooze(from: duplicate)
+        }
+
+        for (messageId, reactions) in reactionsByMessageId {
+            guard let message = messagesById[messageId] else { continue }
+            message.reactions = reactions
         }
     }
 
