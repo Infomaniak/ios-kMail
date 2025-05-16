@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: de, German
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Thu, 08 May 2025 08:09:40 +0200
+ * Exported by: Matthieu Déglon
+ * Exported at: Fri, 16 May 2025 07:39:08 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -139,15 +139,6 @@
 /* loco:651584a40e0b9f6c680ced32 */
 "aiDiscoveryTitle" = "Schreiben Sie Ihre E-Mails mit KI";
 
-/* loco:653922bdcfcd84657f033492 */
-"aiEngineChatGpt" = "ChatGPT";
-
-/* loco:6539230c9770e8ba3102c722 */
-"aiEngineFalcon" = "Souveräne KI";
-
-/* loco:653924b9080dd61d2e016072 */
-"aiEngineWarning" = "Wenn Sie ChatGPT benutzen, werden Ihre Daten von der US-amerikanischen Firma OpenAI verarbeitet. Wir raten Ihnen, sie nicht für sensible Nachrichten zu verwenden.";
-
 /* loco:6555e85e5cfcd5053e081e92 */
 "aiErrorContextMaxTokenReached" = "Die E-Mail, auf die Sie antworten, ist zu lang, als dass die KI derzeit eine Antwort generieren könnte.\n\nFassen Sie zusammen, was Sie sagen möchten, um ihre Hilfe zu erhalten.";
 
@@ -161,7 +152,7 @@
 "aiErrorUnknown" = "Es ist ein Fehler aufgetreten. Wenn dieser Fehler weiterhin besteht, wenden Sie sich bitte an unseren Support.\nVielen Dank für Ihre Geduld.";
 
 /* loco:653a132b3b8d3a1f740e06f2 */
-"aiGenerationTitlePrompt" = "Erstellt von";
+"aiGenerationTitlePrompt" = "Erzeugt mit";
 
 /* loco:651549fc352ff768af054453 */
 "aiMenuEditRequest" = "Meine Anfrage bearbeiten";
@@ -1284,9 +1275,6 @@
 
 /* loco:66aa2edfd301963193056853 */
 "settingsAccountManagementTitle" = "Kontoführung";
-
-/* loco:65391d2584dd77c18b02f0e2 */
-"settingsAiEngineDescription" = "Wählen Sie Ihren Schreibassistent";
 
 /* loco:627a306b1e32027c033896b2 */
 "settingsAppLock" = "App-Sperre";

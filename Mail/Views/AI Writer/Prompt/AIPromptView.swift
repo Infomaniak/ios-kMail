@@ -36,7 +36,6 @@ struct AIPromptView: View {
     // The focus is done thanks to UIKit, this allows the keyboard to appear more quickly
     @State private var hasFocusedEditor = false
     @State private var prompt = ""
-    @ModalState(context: ContextKeys.aiAlert) private var isShowingAIEngineChoice = false
     @State private var placeholderProposition = Constants.aiPromptExamples.randomElement() ?? MailResourcesStrings.Localizable
         .aiPromptExample1
 
@@ -89,7 +88,7 @@ struct AIPromptView: View {
             }
 
             HStack {
-                AIEngineOptionButton(isShowingAIEngineChoice: $isShowingAIEngineChoice)
+                AIEngineLabel()
 
                 Spacer()
 
@@ -118,9 +117,6 @@ struct AIPromptView: View {
             } else {
                 matomo.track(eventWithCategory: .aiWriter, name: "dismissPromptWithoutGenerating")
             }
-        }
-        .sheet(isPresented: $isShowingAIEngineChoice) {
-            PromptAIEngineOptionView()
         }
         .matomoView(view: ["AI", "Prompt"])
     }

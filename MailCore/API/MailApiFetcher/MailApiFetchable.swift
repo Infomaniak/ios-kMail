@@ -137,17 +137,16 @@ public protocol MailApiExtendedFetchable {
 }
 
 public protocol MailApiAIFetchable {
-    func aiCreateConversation(messages: [AIMessage], output: AIOutputFormat, engine: AIEngine, mailbox: Mailbox) async throws
+    func aiCreateConversation(messages: [AIMessage], output: AIOutputFormat, mailbox: Mailbox) async throws
         -> AIConversationResponse
 
-    func aiShortcut(contextId: String, shortcut: AIShortcutAction, engine: AIEngine, mailbox: Mailbox) async throws
+    func aiShortcut(contextId: String, shortcut: AIShortcutAction, mailbox: Mailbox) async throws
         -> AIShortcutResponse
 
     func aiShortcutAndRecreateConversation(
         shortcut: AIShortcutAction,
         messages: [AIMessage],
         output: AIOutputFormat,
-        engine: AIEngine,
         mailbox: Mailbox
     ) async throws
         -> AIShortcutResponse

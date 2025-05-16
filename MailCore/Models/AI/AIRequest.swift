@@ -17,7 +17,6 @@
  */
 
 import Foundation
-import MailResources
 import SwiftUI
 
 public enum AIOutputFormat: String, Codable {
@@ -25,52 +24,7 @@ public enum AIOutputFormat: String, Codable {
     case mail
 }
 
-public enum AIEngine: String, CaseIterable, SettingsOptionEnum, Codable {
-    case falcon
-    case chatGPT = "gpt"
-
-    public var title: String {
-        switch self {
-        case .falcon:
-            return MailResourcesStrings.Localizable.aiEngineFalcon
-        case .chatGPT:
-            return MailResourcesStrings.Localizable.aiEngineChatGpt
-        }
-    }
-
-    public var image: Image? {
-        switch self {
-        case .falcon:
-            return MailResourcesAsset.aiLogo.swiftUIImage
-        case .chatGPT:
-            return MailResourcesAsset.chatGPT.swiftUIImage
-        }
-    }
-
-    public var hint: String? {
-        return nil
-    }
-
-    public var matomoName: String {
-        switch self {
-        case .falcon:
-            return "falcon"
-        case .chatGPT:
-            return "chatGpt"
-        }
-    }
-}
-
-public protocol AIRequest: Codable {
-    var engine: AIEngine { get }
-}
-
-public struct AIConversationRequest: AIRequest {
+public struct AIConversationRequest: Encodable {
     public let messages: [AIMessage]
     public let output: AIOutputFormat
-    public let engine: AIEngine
-}
-
-public struct AIShortcutRequest: AIRequest {
-    public let engine: AIEngine
 }
