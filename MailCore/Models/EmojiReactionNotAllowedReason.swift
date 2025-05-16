@@ -30,4 +30,13 @@ public enum EmojiReactionNotAllowedReason: String, Decodable, PersistableEnum {
 
     case tooManyRecipients = "max_recipient"
     case recipientNotAllowed = "recipient_not_allowed"
+
+    case unknown
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawString = try container.decode(String.self)
+
+        self = EmojiReactionNotAllowedReason(rawValue: rawString) ?? .unknown
+    }
 }
