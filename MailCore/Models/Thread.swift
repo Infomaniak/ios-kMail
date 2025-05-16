@@ -320,7 +320,7 @@ public extension Thread {
         guard let lastMessageFromFolder else {
             throw MailError.threadHasNoMessageInFolder
         }
-        
+
         resetThread()
 
         subject = messages.first?.subject
