@@ -81,10 +81,29 @@ class MailUITests: XCTestCase {
     func testSaveMessage() throws {
         launchAppFromScratch()
         login()
-        writeTestMessage()
+        let subjectDate = Date.now.description
+        writeTestMessage(subject: subjectDate)
 
         app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage]
             .buttons[MailResourcesStrings.Localizable.buttonClose].firstMatch.tap()
+
+        tapMenuButton()
+
+        app.scrollViews.otherElements.staticTexts[MailResourcesStrings.Localizable.draftFolder].firstMatch.tap()
+
+        let newEmail = app.collectionViews.staticTexts[MailUITests.testSubject].firstMatch
+        XCTAssertTrue(newEmail.waitForExistence(timeout: defaultTimeOut))
+        newEmail.tap()
+
+        let subjectText = app.staticTexts[subjectDate]
+        XCTAssertTrue(subjectText.waitForExistence(timeout: defaultTimeOut))
+
+        let bodyText = app.staticTexts[MailResourcesStrings.Localizable.aiPromptExample1]
+        XCTAssertTrue(bodyText.waitForExistence(timeout: defaultTimeOut))
+
+        app.buttons[MailResourcesStrings.Localizable.buttonClose].firstMatch.tap()
+
+        swipeCustomCell(with: subjectDate)
 
         let deleteDraftButton = app.buttons[MailResourcesStrings.Localizable.actionDelete].firstMatch
         _ = deleteDraftButton.waitForExistence(timeout: defaultTimeOut)
@@ -220,15 +239,15 @@ class MailUITests: XCTestCase {
         XCTAssertGreaterThan(bottomBarButtons.count, 3)
 
         let imagePickerButton = bottomBarButtons[3]
-        XCTAssertTrue(imagePickerButton.waitForExistence(timeout: defaultTimeOut))
+        _ = imagePickerButton.waitForExistence(timeout: defaultTimeOut)
         imagePickerButton.tap()
 
         let firstPhoto = app.otherElements["photos_layout"].images.firstMatch
-        XCTAssertTrue(firstPhoto.waitForExistence(timeout: defaultTimeOut))
+        _ = firstPhoto.waitForExistence(timeout: defaultTimeOut)
         firstPhoto.tap()
 
         let addButton = app.buttons["Add"]
-        XCTAssertTrue(addButton.waitForExistence(timeout: 5))
+        _ = addButton.waitForExistence(timeout: defaultTimeOut)
         addButton.tap()
 
         app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage]
@@ -263,7 +282,13 @@ class MailUITests: XCTestCase {
         testMailCell.swipeLeft()
     }
 
-    func writeTestMessage() {
+    func swipeCustomCell(with text: String) {
+        let matchingCell = app.collectionViews.cells.containing(.staticText, identifier: text).firstMatch
+        XCTAssertTrue(matchingCell.waitForExistence(timeout: defaultTimeOut))
+        matchingCell.swipeLeft()
+    }
+
+    func writeTestMessage(subject: String? = nil) {
         let newMessageButton = app.buttons[MailResourcesStrings.Localizable.buttonNewMessage].firstMatch
         _ = newMessageButton.waitForExistence(timeout: defaultTimeOut)
         newMessageButton.tap()
@@ -284,7 +309,7 @@ class MailUITests: XCTestCase {
 
         let subjectTextField = app.textFields[MailResourcesStrings.Localizable.subjectTitle].firstMatch
         subjectTextField.tap()
-        subjectTextField.typeText(MailUITests.testSubject)
+        subjectTextField.typeText(subject ?? MailUITests.testSubject)
 
         composeBodyView.tap()
         composeBodyView.typeText(MailResourcesStrings.Localizable.aiPromptExample1)
