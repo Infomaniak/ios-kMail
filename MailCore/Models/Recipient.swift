@@ -65,9 +65,22 @@ public final class RecipientsList: EmbeddedObject, Encodable {
         return recipients.contains(where: predicate)
     }
 
+    override public init() {
+        super.init()
+    }
+
+    public convenience init(recipients: [Recipient]) {
+        self.init()
+        self.recipients = recipients.toRealmList()
+    }
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.unkeyedContainer()
         try container.encode(contentsOf: recipients)
+    }
+
+    public func append(recipients: [Recipient]) {
+        self.recipients.append(objectsIn: recipients)
     }
 }
 
