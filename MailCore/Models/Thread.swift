@@ -365,25 +365,7 @@ public extension Thread {
             }
             if message.isReaction {
                 reactionsCount += 1
-
-                if let messageTargets = message.inReplyTo?.parseMessageIds(), let emojiReaction = message.emojiReaction {
-                    for messageTarget in messageTargets {
-                        let recipients = message.from.detached().toArray()
-
-                        if let reactions = reactionsByMessageId[messageTarget] {
-                            if let recipientsList = reactions[emojiReaction], let recipientsList {
-                                recipientsList.append(recipients: recipients)
-                            } else {
-                                reactions.updateValue(RecipientsList(recipients: recipients), forKey: emojiReaction)
-                            }
-                        } else {
-                            let reactionsDictionnary = Map<String, RecipientsList?>()
-                            reactionsDictionnary.updateValue(RecipientsList(recipients: recipients), forKey: emojiReaction)
-
-                            reactionsByMessageId[messageTarget] = reactionsDictionnary
-                        }
-                    }
-                }
+                getReaction(from: message, reactions: &reactionsByMessageId)
             }
 
             updateSnooze(from: message)
@@ -396,10 +378,7 @@ public extension Thread {
             updateSnooze(from: duplicate)
         }
 
-        for (messageId, reactions) in reactionsByMessageId {
-            guard let message = messagesById[messageId] else { continue }
-            message.reactions = reactions
-        }
+        updateReactionsForMessages(reactionsByMessageId, messagesById: messagesById)
     }
 
     private func resetThread() {
@@ -421,6 +400,36 @@ public extension Thread {
         snoozeState = nil
         snoozeUuid = nil
         snoozeEndDate = nil
+    }
+
+    private func getReaction(from message: Message, reactions: inout [String: Map<String, RecipientsList?>]) {
+        guard let emojiReaction = message.emojiReaction, let messageTargets = message.inReplyTo?.parseMessageIds() else {
+            return
+        }
+
+        for messageTarget in messageTargets {
+            let recipients = message.from.detached().toArray()
+
+            if let reactions = reactions[messageTarget] {
+                if let recipientsList = reactions[emojiReaction], let recipientsList {
+                    recipientsList.append(recipients: recipients)
+                } else {
+                    reactions.updateValue(RecipientsList(recipients: recipients), forKey: emojiReaction)
+                }
+            } else {
+                let reactionsDictionnary = Map<String, RecipientsList?>()
+                reactionsDictionnary.updateValue(RecipientsList(recipients: recipients), forKey: emojiReaction)
+
+                reactions[messageTarget] = reactionsDictionnary
+            }
+        }
+    }
+
+    private func updateReactionsForMessages(_ reactions: [String: Map<String, RecipientsList?>], messagesById: [String: Message]) {
+        for (messageId, reactions) in reactions {
+            guard let message = messagesById[messageId] else { continue }
+            message.reactions = reactions
+        }
     }
 
     private func updateSnooze(from message: Message) {
