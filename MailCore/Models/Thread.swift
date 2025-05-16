@@ -320,7 +320,7 @@ public extension Thread {
         guard let lastMessageFromFolder else {
             throw MailError.threadHasNoMessageInFolder
         }
-        
+
         resetThread()
 
         subject = messages.first?.subject
@@ -328,7 +328,14 @@ public extension Thread {
         date = lastMessageFromFolder.date
         isLastMessageFromFolderSnoozed = lastMessageFromFolder.isSnoozed
 
+        var messagesById = [String: Message]()
+        var reactionsByMessageId = [String: Map<String, RecipientsList?>]()
+
         for message in messages {
+            if let messageId = message.messageId {
+                messagesById[messageId] = message
+            }
+
             messageIds.insert(objectsIn: message.linkedUids)
             from.append(objectsIn: message.from.detached())
             to.append(objectsIn: message.to.detached())
@@ -358,6 +365,7 @@ public extension Thread {
             }
             if message.isReaction {
                 reactionsCount += 1
+                getReaction(from: message, reactions: &reactionsByMessageId)
             }
 
             updateSnooze(from: message)
@@ -369,6 +377,8 @@ public extension Thread {
             }
             updateSnooze(from: duplicate)
         }
+
+        updateReactionsForMessages(reactionsByMessageId, messagesById: messagesById)
     }
 
     private func resetThread() {
@@ -390,6 +400,36 @@ public extension Thread {
         snoozeState = nil
         snoozeUuid = nil
         snoozeEndDate = nil
+    }
+
+    private func getReaction(from message: Message, reactions: inout [String: Map<String, RecipientsList?>]) {
+        guard let emojiReaction = message.emojiReaction, let messageTargets = message.inReplyTo?.parseMessageIds() else {
+            return
+        }
+
+        for messageTarget in messageTargets {
+            let recipients = message.from.detached().toArray()
+
+            if let reactions = reactions[messageTarget] {
+                if let recipientsList = reactions[emojiReaction], let recipientsList {
+                    recipientsList.append(recipients: recipients)
+                } else {
+                    reactions.updateValue(RecipientsList(recipients: recipients), forKey: emojiReaction)
+                }
+            } else {
+                let reactionsDictionnary = Map<String, RecipientsList?>()
+                reactionsDictionnary.updateValue(RecipientsList(recipients: recipients), forKey: emojiReaction)
+
+                reactions[messageTarget] = reactionsDictionnary
+            }
+        }
+    }
+
+    private func updateReactionsForMessages(_ reactions: [String: Map<String, RecipientsList?>], messagesById: [String: Message]) {
+        for (messageId, reactions) in reactions {
+            guard let message = messagesById[messageId] else { continue }
+            message.reactions = reactions
+        }
     }
 
     private func updateSnooze(from message: Message) {
