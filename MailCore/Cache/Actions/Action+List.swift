@@ -88,6 +88,26 @@ extension Action: CaseIterable {
         ].contains(self)
     }
 
+    public static func allAvailableSwipeActions() -> [Action] {
+        @InjectService var featureFlagsManageable: FeatureFlagsManageable
+        let isFeatureFlagEnabled = featureFlagsManageable.isEnabled(.mailSnooze)
+        let isModeCorrect = UserDefaults.shared.threadMode == .conversation
+        let hasAccessToSnoozeFeature = isFeatureFlagEnabled && isModeCorrect
+
+        let actions: [Action?] = [
+            .delete,
+            .archive,
+            .markAsRead,
+            .openMovePanel,
+            .star,
+            hasAccessToSnoozeFeature ? .snooze : nil,
+            .spam,
+            .quickActionPanel,
+            .noAction
+        ]
+        return actions.compactMap { $0 }
+    }
+
     private static func snoozedActions(_ messages: [Message], folder: Folder?) -> [Action] {
         guard folder?.canAccessSnoozeActions == true else { return [] }
 
