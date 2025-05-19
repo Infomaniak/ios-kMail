@@ -502,6 +502,8 @@ public extension Thread {
             from.append(objectsIn: message.from.detached())
             to.append(objectsIn: message.to.detached())
 
+            message.reactions = Map()
+
             if !message.seen {
                 unseenMessages += 1
             }
