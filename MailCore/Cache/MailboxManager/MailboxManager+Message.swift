@@ -39,6 +39,10 @@ public extension MailboxManager {
             }
         }
 
+        // FIXME:  /!\ Remove when API is fixed - Should not be merged into main
+        completedMessage.emojiReaction = message.emojiReaction
+        completedMessage.emojiReactionNotAllowedReason = message.emojiReactionNotAllowedReason
+
         // Update message in Realm
         try? writeTransaction { writableRealm in
             writableRealm.add(completedMessage, update: .modified)
