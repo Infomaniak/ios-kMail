@@ -5,11 +5,27 @@
  Project: kMail
  Locale: de, German
  Tagged: ios-stringsdict
- Exported by: Valentin Perignon
- Exported at: Fri, 25 Apr 2025 11:19:29 +0200
+ Exported by: Jordan Chapelle
+ Exported at: Mon, 19 May 2025 12:42:50 +0200
 -->
 <plist version="1.0">
   <dict>
+    <key> threadListDeletionConfirmationAlertTitle</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%d Konversation löschen</string>
+        <key>other</key>
+        <string>%d Konversationen löschen</string>
+      </dict>
+    </dict>
     <key>attachmentQuantity</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
@@ -221,25 +237,9 @@ Die Meldungen werden an unser Sicherheitsteam weitergeleitet, das sie analysiert
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Sind Sie sicher, dass Sie diese Nachricht endgültig löschen wollen?</string>
+        <string>Sind Sie sicher, dass Sie diese Konversation endgültig löschen wollen?</string>
         <key>other</key>
-        <string>Sind Sie sicher, dass Sie diese Nachrichten endgültig löschen wollen?</string>
-      </dict>
-    </dict>
-    <key>threadListDeletionConfirmationAlertTitle</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%#@value@</string>
-      <key>value</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>one</key>
-        <string>%d Nachricht löschen</string>
-        <key>other</key>
-        <string>%d Nachrichten löschen</string>
+        <string>Sind Sie sicher, dass Sie diese Konversationen endgültig löschen wollen?</string>
       </dict>
     </dict>
     <key>titleMyAccount</key>

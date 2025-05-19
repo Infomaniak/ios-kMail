@@ -5,11 +5,27 @@
  Project: kMail
  Locale: es, Spanish
  Tagged: ios-stringsdict
- Exported by: Valentin Perignon
- Exported at: Fri, 25 Apr 2025 11:19:29 +0200
+ Exported by: Jordan Chapelle
+ Exported at: Mon, 19 May 2025 12:42:50 +0200
 -->
 <plist version="1.0">
   <dict>
+    <key> threadListDeletionConfirmationAlertTitle</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Borrar %d conversación</string>
+        <key>other</key>
+        <string>Borrar %d conversaciones</string>
+      </dict>
+    </dict>
     <key>attachmentQuantity</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
@@ -221,25 +237,9 @@ Las denuncias serán remitidas a nuestro equipo de seguridad, que las analizará
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>¿Estás seguro de que quieres borrar este mensaje permanentemente?</string>
+        <string>¿Estás seguro de que quieres borrar este conversación permanentemente?</string>
         <key>other</key>
-        <string>¿Estás seguro de que quieres borrar estos mensajes permanentemente?</string>
-      </dict>
-    </dict>
-    <key>threadListDeletionConfirmationAlertTitle</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%#@value@</string>
-      <key>value</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>one</key>
-        <string>Borrar %d mensaje</string>
-        <key>other</key>
-        <string>Borrar %d mensajes</string>
+        <string>¿Estás seguro de que quieres borrar estos conversaciones permanentemente?</string>
       </dict>
     </dict>
     <key>titleMyAccount</key>
