@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakDI
 import MailResources
 import RealmSwift
 
@@ -91,6 +92,15 @@ public class Thread: Object, Decodable, Identifiable {
             return .snoozed(snoozeEndDate)
         } else {
             return .normal(date)
+        }
+    }
+
+    public var displayMessagesCount: Int {
+        @InjectService var featureFlagManager: FeatureFlagsManageable
+        if featureFlagManager.isEnabled(.mailEmojiReaction) && UserDefaults.shared.threadMode == .conversation {
+            return messages.count - reactionsCount
+        } else {
+            return messages.count
         }
     }
 
@@ -312,6 +322,13 @@ public class Thread: Object, Decodable, Identifiable {
     }
 }
 
+struct MessageReaction: Sendable {
+    let source: String
+    let targets: [String]
+
+    let reaction: String
+}
+
 public extension Thread {
     /// Re-generate `Thread` properties given the messages it contains.
     func recomputeOrFail() throws {
@@ -329,7 +346,7 @@ public extension Thread {
         isLastMessageFromFolderSnoozed = lastMessageFromFolder.isSnoozed
 
         var messagesById = [String: Message]()
-        var reactionsByMessageId = [String: Map<String, RecipientsList?>]()
+        var messageReactions = [MessageReaction]()
 
         for message in messages {
             if let messageId = message.messageId {
@@ -365,9 +382,8 @@ public extension Thread {
             if message.isScheduledDraft == true {
                 numberOfScheduledDraft += 1
             }
-            if message.isReaction {
-                reactionsCount += 1
-                getReaction(from: message, reactions: &reactionsByMessageId)
+            if message.isReaction, let messageReaction = getReaction(from: message) {
+                messageReactions.append(messageReaction)
             }
 
             updateSnooze(from: message)
@@ -380,7 +396,7 @@ public extension Thread {
             updateSnooze(from: duplicate)
         }
 
-        updateReactionsForMessages(reactionsByMessageId, messagesById: messagesById)
+        updateReactionsForMessages(reactions: messageReactions, messagesById: messagesById)
     }
 
     private func resetThread() {
@@ -404,34 +420,49 @@ public extension Thread {
         snoozeEndDate = nil
     }
 
-    private func getReaction(from message: Message, reactions: inout [String: Map<String, RecipientsList?>]) {
-        guard let emojiReaction = message.emojiReaction, let messageTargets = message.inReplyTo?.parseMessageIds() else {
-            return
+    private func getReaction(from message: Message) -> MessageReaction? {
+        guard let messageId = message.messageId,
+              let emojiReaction = message.emojiReaction,
+              let messageTargets = message.inReplyTo?.parseMessageIds() else {
+            return nil
         }
 
-        for messageTarget in messageTargets {
-            let recipients = message.from.detached().toArray()
+        return MessageReaction(source: messageId, targets: messageTargets, reaction: emojiReaction)
+    }
 
-            if let reactions = reactions[messageTarget] {
-                if let recipientsList = reactions[emojiReaction], let recipientsList {
-                    recipientsList.append(recipients: recipients)
-                } else {
-                    reactions.updateValue(RecipientsList(recipients: recipients), forKey: emojiReaction)
+    private func updateReactionsForMessages(reactions: [MessageReaction], messagesById: [String: Message]) {
+        for reaction in reactions {
+            guard let source = messagesById[reaction.source] else { continue }
+
+            var hasAppliedReaction = false
+            for target in reaction.targets {
+                guard let targetMessage = messagesById[target] else { continue }
+                if applyReaction(from: source, to: targetMessage, reaction: reaction.reaction) {
+                    hasAppliedReaction = true
                 }
-            } else {
-                let reactionsDictionnary = Map<String, RecipientsList?>()
-                reactionsDictionnary.updateValue(RecipientsList(recipients: recipients), forKey: emojiReaction)
+            }
 
-                reactions[messageTarget] = reactionsDictionnary
+            if hasAppliedReaction {
+                reactionsCount += 1
             }
         }
     }
 
-    private func updateReactionsForMessages(_ reactions: [String: Map<String, RecipientsList?>], messagesById: [String: Message]) {
-        for (messageId, reactions) in reactions {
-            guard let message = messagesById[messageId] else { continue }
-            message.reactions = reactions
+    private func applyReaction(from source: Message, to target: Message, reaction: String) -> Bool {
+        if folder?.role != .trash && target.inTrash {
+            return false
         }
+
+        let recipients = source.from.detached().toArray()
+
+        if let recipientsListForKey = target.reactions[reaction], let recipientsList = recipientsListForKey {
+            recipientsList.append(recipients: recipients)
+        } else {
+            let recipientsList = RecipientsList(recipients: recipients)
+            target.reactions.updateValue(recipientsList, forKey: reaction)
+        }
+
+        return true
     }
 
     private func updateSnooze(from message: Message) {
