@@ -445,7 +445,9 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         bimi: Bimi? = nil,
         snoozeState: SnoozeState? = nil,
         snoozeUuid: String? = nil,
-        snoozeEndDate: Date? = nil
+        snoozeEndDate: Date? = nil,
+        emojiReaction: String? = nil,
+        emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason? = nil
     ) {
         self.init()
 
@@ -485,6 +487,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         self.snoozeState = snoozeState
         self.snoozeUuid = snoozeUuid
         self.snoozeEndDate = snoozeEndDate
+        self.emojiReaction = emojiReaction
+        self.emojiReactionNotAllowedReason = emojiReactionNotAllowedReason
     }
 
     public func toThread() -> Thread {
