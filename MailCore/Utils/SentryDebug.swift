@@ -36,40 +36,6 @@ public enum SentryDebug {
 
     public static let knownDebugDate = Date(timeIntervalSince1970: 1_893_456_000)
 
-    static func searchForOrphanMessages(
-        folderId: String,
-        using realm: Realm,
-        previousCursor: String?,
-        newCursor: String?
-    ) {
-        let realm = realm
-        let orphanMessages = realm.objects(Message.self).where { $0.folderId == folderId }
-            .filter { $0.threads.isEmpty && $0.threadsDuplicatedIn.isEmpty }
-        if !orphanMessages.isEmpty {
-            SentrySDK.capture(message: "We found some orphan Messages.") { scope in
-                scope.setLevel(.error)
-                scope.setContext(value: ["uids": "\(orphanMessages.map(\.uid).toArray())",
-                                         "previousCursor": previousCursor ?? "No cursor",
-                                         "newCursor": newCursor ?? "No cursor"],
-                                 key: "orphanMessages")
-            }
-        }
-    }
-
-    static func searchForOrphanThreads(using realm: Realm, previousCursor: String?, newCursor: String?) {
-        let realm = realm
-        let orphanThreads = realm.objects(Thread.self).filter { $0.folder == nil }
-        if !orphanThreads.isEmpty {
-            SentrySDK.capture(message: "We found some orphan Threads.") { scope in
-                scope.setLevel(.error)
-                scope.setContext(value: ["uids": "\(orphanThreads.map(\.uid).toArray())",
-                                         "previousCursor": previousCursor ?? "No cursor",
-                                         "newCursor": newCursor ?? "No cursor"],
-                                 key: "orphanThreads")
-            }
-        }
-    }
-
     static func messageHasInReplyTo(_ inReplyToList: [String]) {
         SentrySDK.capture(message: "Found an array of inReplyTo") { scope in
             scope.setContext(value: ["ids": inReplyToList.joined(separator: ", ")], key: "inReplyToList")
