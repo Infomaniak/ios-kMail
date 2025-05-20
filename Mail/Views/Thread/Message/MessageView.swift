@@ -69,11 +69,17 @@ struct MessageView: View {
                         displayContentBlockedActionView: $displayContentBlockedActionView
                     )
 
-                    MessageBodyView(
-                        displayContentBlockedActionView: $displayContentBlockedActionView,
-                        isRemoteContentBlocked: isRemoteContentBlocked,
-                        messageUid: message.uid
-                    )
+                    VStack(alignment: .leading, spacing: 0) {
+                        MessageBodyView(
+                            displayContentBlockedActionView: $displayContentBlockedActionView,
+                            isRemoteContentBlocked: isRemoteContentBlocked,
+                            messageUid: message.uid
+                        )
+
+                        if message.hasReactions {
+                            MessageReactionsView(reactions: message.reactions)
+                        }
+                    }
                 }
             }
         }
