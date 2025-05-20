@@ -96,8 +96,8 @@ public class Thread: Object, Decodable, Identifiable {
     }
 
     public var displayMessagesCount: Int {
-        @InjectService var featureFlagManager: FeatureFlagsManageable
-        if featureFlagManager.isEnabled(.mailEmojiReaction) && UserDefaults.shared.threadMode == .conversation {
+        @InjectService var featureAvailableProvider: FeatureAvailableProvider
+        if featureAvailableProvider.isAvailable(.emojiReaction) {
             return messages.count - reactionsCount
         } else {
             return messages.count
