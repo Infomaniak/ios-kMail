@@ -193,6 +193,11 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         return isDraft || !fullyDownloaded
     }
 
+    public var hasReactions: Bool {
+        // swiftlint:disable:next empty_count
+        return reactions.count > 0
+    }
+
     public var isSnoozed: Bool {
         snoozeState == .snoozed && snoozeEndDate != nil && snoozeUuid != nil
     }
