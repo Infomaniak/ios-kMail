@@ -22,6 +22,8 @@ import RealmSwift
 import SwiftUI
 
 struct MessageReactionsView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     let reactions: Map<String, MailCore.RecipientsList?>
 
     var body: some View {
@@ -41,7 +43,9 @@ struct MessageReactionsView: View {
     }
 
     private func isReactionEnabled(_ emoji: String) -> Bool {
-        return false
+        return reactions[emoji]??.recipients.contains { recipient in
+            recipient.isMe(currentMailboxEmail: mailboxManager.mailbox.email)
+        } ?? false
     }
 
     private func didTapReaction(_ reaction: String) {
