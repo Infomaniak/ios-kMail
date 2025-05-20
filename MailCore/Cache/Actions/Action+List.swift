@@ -87,10 +87,8 @@ extension Action: CaseIterable {
     }
 
     public static func allAvailableSwipeActions() -> [Action] {
-        @InjectService var featureFlagsManageable: FeatureFlagsManageable
-        let isFeatureFlagEnabled = featureFlagsManageable.isEnabled(.mailSnooze)
-        let isModeCorrect = UserDefaults.shared.threadMode == .conversation
-        let hasAccessToSnoozeFeature = isFeatureFlagEnabled && isModeCorrect
+        @InjectService var featureAvailableProvider: FeatureAvailableProvider
+        let hasAccessToSnoozeFeature = featureAvailableProvider.isAvailable(.snooze)
 
         let actions: [Action?] = [
             .delete,
