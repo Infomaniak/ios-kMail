@@ -21,61 +21,58 @@ import MailCore
 import MailResources
 import SwiftUI
 
+extension Color {
+    public static let reactionButtonBackground = MailResourcesAsset.hoverMenuBackground.swiftUIColor
+    public static let reactionButtonBackgroundEnabled = UserDefaults.shared.accentColor.secondary.swiftUIColor
+
+    public static let reactionButtonBorder = MailResourcesAsset.hoverMenuBackground.swiftUIColor
+    public static let reactionButtonBorderEnabled = UserDefaults.shared.accentColor.primary.swiftUIColor
+}
+
 struct ReactionButton: View {
-    @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
-
-    @State private var didReactLocally = false
-
     let emoji: String
     let count: Int
     let hasReacted: Bool
 
-    private var isEnabled: Bool {
-        return hasReacted || didReactLocally
-    }
+    let didTapButton: (String) -> Void
+    let didLongPressButton: (String) -> Void
 
     private var backgroundColor: Color {
-        return isEnabled ? accentColor.secondary.swiftUIColor : MailResourcesAsset.hoverMenuBackground.swiftUIColor
+        return hasReacted ? .reactionButtonBackgroundEnabled : .reactionButtonBackground
     }
 
     private var borderColor: Color {
-        return isEnabled ? accentColor.primary.swiftUIColor : MailResourcesAsset.hoverMenuBackground.swiftUIColor
+        return hasReacted ? .reactionButtonBorderEnabled : .reactionButtonBorder
     }
 
     var body: some View {
         Button {} label: {
-            Text(verbatim: "\(emoji) \(count)")
-                .textStyle(.bodyMedium)
-                .padding(.horizontal, value: .small)
-                .padding(.vertical, value: .mini)
-                .background(backgroundColor, in: .capsule)
-                .overlay {
-                    Capsule()
-                        .stroke(borderColor)
-                }
+            HStack {
+                Text(verbatim: emoji)
+                Text(verbatim: "\(count)")
+            }
+            .textStyle(.bodyMedium)
+            .padding(.horizontal, value: .small)
+            .padding(.vertical, value: .mini)
+            .background(backgroundColor, in: .capsule)
+            .overlay {
+                Capsule()
+                    .stroke(borderColor)
+            }
         }
         .simultaneousGesture(
-            TapGesture().onEnded { _ in didTapButton() }
+            TapGesture().onEnded { _ in didTapButton(emoji) }
         )
         .simultaneousGesture(
-            LongPressGesture().onEnded { _ in didLongPressButton() }
+            LongPressGesture().onEnded { _ in didLongPressButton(emoji) }
         )
-    }
-
-    private func didTapButton() {
-        print("Tap")
-        didReactLocally = true
-    }
-
-    private func didLongPressButton() {
-        print("Long Press")
     }
 }
 
 #Preview {
     HStack {
-        ReactionButton(emoji: "😄", count: 1, hasReacted: false)
-        ReactionButton(emoji: "❤️", count: 12, hasReacted: true)
-        ReactionButton(emoji: "🤯", count: 2, hasReacted: false)
+        ReactionButton(emoji: "😄", count: 1, hasReacted: false, didTapButton: { _ in }, didLongPressButton: { _ in })
+        ReactionButton(emoji: "❤️", count: 12, hasReacted: true, didTapButton: { _ in }, didLongPressButton: { _ in })
+        ReactionButton(emoji: "🤯", count: 2, hasReacted: false, didTapButton: { _ in }, didLongPressButton: { _ in })
     }
 }
