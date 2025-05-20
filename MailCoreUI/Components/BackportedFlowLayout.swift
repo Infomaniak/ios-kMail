@@ -20,9 +20,9 @@ import InfomaniakCoreSwiftUI
 import SwiftUI
 import WrappingHStack
 
-public struct BackportedFlowLayout<Collection: RandomAccessCollection, Content: View>: View
-    where Collection.Element: Identifiable {
+public struct BackportedFlowLayout<Collection: RandomAccessCollection, Content: View, ID: Hashable>: View {
     let elements: Collection
+    let id: KeyPath<Collection.Element, ID>
     let verticalSpacing: CGFloat
     let horizontalSpacing: CGFloat
 
@@ -33,8 +33,23 @@ public struct BackportedFlowLayout<Collection: RandomAccessCollection, Content: 
         verticalSpacing: CGFloat,
         horizontalSpacing: CGFloat,
         @ViewBuilder content: @escaping (Collection.Element) -> Content
+    ) where Collection.Element: Identifiable, ID == Collection.Element.ID {
+        self.elements = elements
+        id = \.id
+        self.verticalSpacing = verticalSpacing
+        self.horizontalSpacing = horizontalSpacing
+        self.content = content
+    }
+
+    public init(
+        _ elements: Collection,
+        id: KeyPath<Collection.Element, ID>,
+        verticalSpacing: CGFloat,
+        horizontalSpacing: CGFloat,
+        @ViewBuilder content: @escaping (Collection.Element) -> Content
     ) {
         self.elements = elements
+        self.id = id
         self.verticalSpacing = verticalSpacing
         self.horizontalSpacing = horizontalSpacing
         self.content = content
@@ -43,13 +58,15 @@ public struct BackportedFlowLayout<Collection: RandomAccessCollection, Content: 
     public var body: some View {
         if #available(iOS 16.0, *) {
             FlowLayout(alignment: .leading, verticalSpacing: verticalSpacing, horizontalSpacing: horizontalSpacing) {
-                ForEach(elements) { element in
+                ForEach(elements, id: id) { element in
                     content(element)
                 }
             }
         } else {
-            WrappingHStack(elements, spacing: .constant(horizontalSpacing), lineSpacing: verticalSpacing) { element in
-                content(element)
+            WrappingHStack(spacing: .constant(horizontalSpacing), lineSpacing: verticalSpacing) {
+                ForEach(elements, id: id) { element in
+                    content(element)
+                }
             }
         }
     }
