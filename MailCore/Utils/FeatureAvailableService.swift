@@ -44,7 +44,7 @@ final class FeatureAvailableService: FeatureAvailableProvider {
     }
 
     private func isEmojiReactionAvailable() -> Bool {
-        @InjectService var featureFlagManager: FeatureFlagsManageable
-        return featureFlagManager.isEnabled(.mailEmojiReaction) && UserDefaults.shared.threadMode == .conversation
+        @InjectService var featureFlagManageable: FeatureFlagsManageable
+        return featureFlagManageable.isEnabled(.mailEmojiReaction) && UserDefaults.shared.threadMode == .conversation
     }
 }
