@@ -111,18 +111,6 @@ public extension MailboxManager {
             folder.cursor = newCursor
             folder.lastUpdate = Date()
 
-            SentryDebug.searchForOrphanMessages(
-                folderId: folder.remoteId,
-                using: writableRealm,
-                previousCursor: previousCursor,
-                newCursor: newCursor
-            )
-            SentryDebug.searchForOrphanThreads(
-                using: writableRealm,
-                previousCursor: previousCursor,
-                newCursor: newCursor
-            )
-
             self.deleteOrphanMessages(writableRealm: writableRealm, folderId: folder.remoteId)
         }
 
