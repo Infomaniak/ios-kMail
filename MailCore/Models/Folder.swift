@@ -271,12 +271,11 @@ public class Folder: Object, Codable, Comparable, Identifiable {
     }
 
     public var canAccessSnoozeActions: Bool {
-        @InjectService var featureFlagsManageable: FeatureFlagsManageable
-        let isFeatureFlagEnabled = featureFlagsManageable.isEnabled(.mailSnooze)
-        let isModeCorrect = UserDefaults.shared.threadMode == .conversation
+        @InjectService var featureAvailableProvider: FeatureAvailableProvider
+        let isFeatureAvailable = featureAvailableProvider.isAvailable(.snooze)
         let isFolderCorrect = role == .inbox || role == .snoozed
 
-        return isModeCorrect && isFeatureFlagEnabled && isFolderCorrect
+        return isFeatureAvailable && isFolderCorrect
     }
 
     public var permanentlyDeleteContent: Bool {
