@@ -444,6 +444,10 @@ public extension Thread {
                 applyReaction(from: source, to: targetMessage, reaction: reaction.reaction)
                 hasAppliedReactionAtLeastOnce = true
             }
+
+            if !hasAppliedReactionAtLeastOnce {
+                messagesWithoutReactions.append(source)
+            }
         }
     }
 
