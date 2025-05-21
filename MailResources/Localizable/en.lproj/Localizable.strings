@@ -745,6 +745,21 @@
 /* loco:667bac4f2a74996e510ce652 */
 "enableMultiSelection" = "Enable multiple selection";
 
+/* loco:682d93b7626b153371041d72 */
+"encryptedMessageDescription" = "This message has been encrypted and will expire 30 days after sending for recipients who cannot benefit from automatic encryption.";
+
+/* loco:682d950703bceff09700fc42 */
+"encryptedMessageReceiverTitle" = "This message has been encrypted by the sender for confidentiality reasons. ";
+
+/* loco:682d92f160a12e1b880ca163 */
+"encryptedMessageTitle" = "This message has been encrypted.";
+
+/* loco:682da1d759d5f52c5a0b4604 */
+"encryptedProtectionAdDescription1" = "Secure your confidential messages with encryption.";
+
+/* loco:682d9e1bb014002f5400a212 */
+"encryptedProtectionAdTitle" = "Protect my message";
+
 /* loco:64a2b619946ed6ede60a85e2 */
 "enterPasswordDescription1" = "Your password has been changed. If you are not the cause, please contact your administrator.";
 
@@ -777,6 +792,39 @@
 
 /* loco:6449292ce5f4e56abb063f65 */
 "errorEditScheduledMessage" = "Scheduled or sent messages cannot be edited";
+
+/* loco:68244ca1442e5299b205c692 */
+"errorEmojiReactionAlreadyUsed" = "You have already reacted with this reaction";
+
+/* loco:68243c88cdfe78e1e808d454 */
+"errorEmojiReactionFolderNotAllowedDraft" = "You cannot react to a draft";
+
+/* loco:68243d8d8d231d5f830b1ea2 */
+"errorEmojiReactionFolderNotAllowedScheduledDraft" = "You cannot react to a scheduled email";
+
+/* loco:68243e8c7dd759b88902ca52 */
+"errorEmojiReactionFolderNotAllowedSpam" = "You cannot react to an email marked as spam";
+
+/* loco:68243fd84feaa48af90da202 */
+"errorEmojiReactionFolderNotAllowedTrash" = "You cannot react to an email in the trash";
+
+/* loco:68244c3f594d463b500f9192 */
+"errorEmojiReactionMaxReactionReached" = "You have reached the maximum number of reactions for this email";
+
+/* loco:68244a5e63a6d9a5d604f7d2 */
+"errorEmojiReactionMaxRecipient" = "You cannot react to an email with more than 20 recipients";
+
+/* loco:6825f47d4b237d0e7009d463 */
+"errorEmojiReactionMessageInReplyEncrypted" = "You cannot react to an encrypted email";
+
+/* loco:682449de5e1772a511039952 */
+"errorEmojiReactionMessageInReplyToNotAllowed" = "You cannot react to this type of email";
+
+/* loco:68244a135e1772a511039956 */
+"errorEmojiReactionMessageInReplyToNotValid" = "You cannot react to this email";
+
+/* loco:68244bc24720858315077c42 */
+"errorEmojiReactionRecipientNotAllowed" = "Only recipients and senders can react to this email";
 
 /* loco:65b90c1464496af26b01ef32 */
 "errorEventCouldNotBeOpenedInMyCalendar" = "An error occurred while opening the event in Infomaniak Calendar";
