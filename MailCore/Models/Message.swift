@@ -51,6 +51,12 @@ public extension String {
     }
 }
 
+public extension Collection where Element == Message {
+    func sortedByDate() -> [Message] {
+        sorted { $0.internalDate.compare($1.internalDate) == .orderedAscending }
+    }
+}
+
 /// Class used to get a page of shortUids
 public final class MessageUidsResult: Decodable {
     public let messageShortUids: [String]
