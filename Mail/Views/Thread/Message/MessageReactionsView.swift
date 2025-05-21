@@ -24,7 +24,7 @@ import SwiftUI
 struct MessageReactionsView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    let reactions: Map<String, MailCore.RecipientsList?>
+    let reactions: MessageReactions
 
     var body: some View {
         ReactionsListView(
@@ -56,5 +56,6 @@ struct MessageReactionsView: View {
 }
 
 #Preview {
-    MessageReactionsView(reactions: Map())
+    MessageReactionsView(reactions: PreviewHelper.reactions)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }
