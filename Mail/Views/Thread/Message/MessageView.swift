@@ -106,6 +106,7 @@ struct MessageView: View {
         threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .collapsed]),
         message: PreviewHelper.sampleMessage
     )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }
 
 @available(iOS 17.0, *)
@@ -114,4 +115,5 @@ struct MessageView: View {
         threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .expanded]),
         message: PreviewHelper.sampleMessage
     )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }
