@@ -745,6 +745,21 @@
 /* loco:667bac4f2a74996e510ce652 */
 "enableMultiSelection" = "Activar la selección múltiple";
 
+/* loco:682d93b7626b153371041d72 */
+"encryptedMessageDescription" = "Este mensaje ha sido encriptado y caducará 30 días después de su envío para los destinatarios que no puedan beneficiarse de la encriptación automática.";
+
+/* loco:682d950703bceff09700fc42 */
+"encryptedMessageReceiverTitle" = "Este mensaje ha sido encriptado por el remitente por razones de confidencialidad.";
+
+/* loco:682d92f160a12e1b880ca163 */
+"encryptedMessageTitle" = "Este mensaje ha sido encriptado.";
+
+/* loco:682da1d759d5f52c5a0b4604 */
+"encryptedProtectionAdDescription1" = "Proteja sus mensajes confidenciales con cifrado.";
+
+/* loco:682d9e1bb014002f5400a212 */
+"encryptedProtectionAdTitle" = "Proteger mi mensaje";
+
 /* loco:64a2b619946ed6ede60a85e2 */
 "enterPasswordDescription1" = "Su contraseña ha sido modificada. Si no es culpa suya, póngase en contacto con su administrador.";
 
@@ -777,6 +792,39 @@
 
 /* loco:6449292ce5f4e56abb063f65 */
 "errorEditScheduledMessage" = "Imposible modificar un mensaje programado o enviado";
+
+/* loco:68244ca1442e5299b205c692 */
+"errorEmojiReactionAlreadyUsed" = "Ya has reaccionado con esta reacción";
+
+/* loco:68243c88cdfe78e1e808d454 */
+"errorEmojiReactionFolderNotAllowedDraft" = "No puedes reaccionar a un borrador";
+
+/* loco:68243d8d8d231d5f830b1ea2 */
+"errorEmojiReactionFolderNotAllowedScheduledDraft" = "No puedes responder a un correo electrónico programado";
+
+/* loco:68243e8c7dd759b88902ca52 */
+"errorEmojiReactionFolderNotAllowedSpam" = "No puedes reaccionar a un correo marcado como spam";
+
+/* loco:68243fd84feaa48af90da202 */
+"errorEmojiReactionFolderNotAllowedTrash" = "No puedes reaccionar a un correo en la papelera";
+
+/* loco:68244c3f594d463b500f9192 */
+"errorEmojiReactionMaxReactionReached" = "Has alcanzado el número máximo de reacciones para este correo";
+
+/* loco:68244a5e63a6d9a5d604f7d2 */
+"errorEmojiReactionMaxRecipient" = "No puedes reaccionar a un correo con más de 20 destinatarios";
+
+/* loco:6825f47d4b237d0e7009d463 */
+"errorEmojiReactionMessageInReplyEncrypted" = "No puedes reaccionar a un correo cifrado";
+
+/* loco:682449de5e1772a511039952 */
+"errorEmojiReactionMessageInReplyToNotAllowed" = "No puedes reaccionar a este tipo de correo";
+
+/* loco:68244a135e1772a511039956 */
+"errorEmojiReactionMessageInReplyToNotValid" = "No puedes reaccionar a este correo";
+
+/* loco:68244bc24720858315077c42 */
+"errorEmojiReactionRecipientNotAllowed" = "Solo los destinatarios y remitentes pueden reaccionar a este correo";
 
 /* loco:65b90c1464496af26b01ef32 */
 "errorEventCouldNotBeOpenedInMyCalendar" = "Se ha producido un error al abrir el evento en Infomaniak Calendar";
