@@ -324,7 +324,7 @@ public class Thread: Object, Decodable, Identifiable {
 public extension Thread {
     /// Re-generate `Thread` properties given the messages it contains.
     func recomputeOrFail() throws {
-        messages = messages.sorted { $0.internalDate.compare($1.internalDate) == .orderedAscending }.toRealmList()
+        messages = messages.sortedByDate().toRealmList()
         messagesWithoutReactions = List()
 
         guard let lastMessageFromFolder else {
