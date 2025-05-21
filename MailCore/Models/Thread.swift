@@ -65,8 +65,6 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var snoozeEndDate: Date?
     @Persisted public var isLastMessageFromFolderSnoozed = false
 
-    @Persisted public var reactionsCount = 0
-
     /// This property is used to remove threads from list before network call is finished
     @Persisted public var isMovedOutLocally = false
 
@@ -102,15 +100,6 @@ public class Thread: Object, Decodable, Identifiable {
             return .snoozed(snoozeEndDate)
         } else {
             return .normal(date)
-        }
-    }
-
-    public var displayMessagesCount: Int {
-        @InjectService var featureAvailableProvider: FeatureAvailableProvider
-        if featureAvailableProvider.isAvailable(.emojiReaction) {
-            return messages.count - reactionsCount
-        } else {
-            return messages.count
         }
     }
 
@@ -343,6 +332,7 @@ public extension Thread {
     /// Re-generate `Thread` properties given the messages it contains.
     func recomputeOrFail() throws {
         messages = messages.sorted { $0.internalDate.compare($1.internalDate) == .orderedAscending }.toRealmList()
+        messagesWithoutReactions = List()
 
         guard let lastMessageFromFolder else {
             throw MailError.threadHasNoMessageInFolder
@@ -394,9 +384,15 @@ public extension Thread {
             }
             if message.isReaction, let messageReaction = getReaction(from: message) {
                 messageReactions.append(messageReaction)
+            } else {
+                messagesWithoutReactions.append(message)
             }
 
             updateSnooze(from: message)
+
+            messagesWithoutReactions = messagesWithoutReactions
+                .sorted { $0.internalDate.compare($1.internalDate) == .orderedAscending }
+                .toRealmList()
         }
 
         for duplicate in duplicates {
@@ -416,7 +412,6 @@ public extension Thread {
 
         unseenMessages = 0
         numberOfScheduledDraft = 0
-        reactionsCount = 0
 
         flagged = false
         hasAttachments = false
@@ -452,8 +447,8 @@ public extension Thread {
                 }
             }
 
-            if hasAppliedReaction {
-                reactionsCount += 1
+            if !hasAppliedReaction {
+                messagesWithoutReactions.append(source)
             }
         }
     }
