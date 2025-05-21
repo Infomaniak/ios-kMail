@@ -42,7 +42,11 @@ public enum RecipientError: Error {
 }
 
 public final class RecipientsList: EmbeddedObject, Encodable {
-    @Persisted public var recipients: RealmSwift.List<Recipient>
+    @Persisted private var recipients: RealmSwift.List<Recipient>
+
+    public var count: Int {
+        recipients.count
+    }
 
     override public init() {
         super.init()
@@ -53,13 +57,17 @@ public final class RecipientsList: EmbeddedObject, Encodable {
         self.recipients = recipients.toRealmList()
     }
 
+    public func append(recipients: [Recipient]) {
+        self.recipients.append(objectsIn: recipients)
+    }
+
+    public func contains(where precidate: (Recipient) -> Bool) -> Bool {
+        return recipients.contains(where: precidate)
+    }
+
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.unkeyedContainer()
         try container.encode(contentsOf: recipients)
-    }
-
-    public func append(recipients: [Recipient]) {
-        self.recipients.append(objectsIn: recipients)
     }
 }
 
