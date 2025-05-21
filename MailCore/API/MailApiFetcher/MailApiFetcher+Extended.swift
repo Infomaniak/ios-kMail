@@ -150,7 +150,8 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(.resource(
             message.resource,
             queryItems: [
-                URLQueryItem(name: "prefered_format", value: "html")
+                URLQueryItem(name: "prefered_format", value: "html"),
+                URLQueryItem(name: "with", value: "auto_uncrypt")
             ]
         )))
     }
