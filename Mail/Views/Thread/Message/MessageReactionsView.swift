@@ -38,22 +38,20 @@ struct MessageReactionsView: View {
         .padding([.horizontal, .bottom], value: .medium)
     }
 
-    private func reactionsCount(for emoji: String) -> Int {
-        return reactions[emoji]??.recipients.count ?? 0
+    private func reactionsCount(for reaction: String) -> Int {
+        return reactions[reaction]??.count ?? 0
     }
 
-    private func isReactionEnabled(_ emoji: String) -> Bool {
-        return reactions[emoji]??.recipients.contains { recipient in
-            recipient.isMe(currentMailboxEmail: mailboxManager.mailbox.email)
-        } ?? false
+    private func isReactionEnabled(_ reaction: String) -> Bool {
+        return reactions[reaction]??.contains { $0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) } ?? false
     }
 
     private func didTapReaction(_ reaction: String) {
-
+        // TODO: Handle in next PR
     }
 
     private func didLongPressReaction(_ reaction: String) {
-
+        // TODO: Handle in next PR
     }
 }
 
