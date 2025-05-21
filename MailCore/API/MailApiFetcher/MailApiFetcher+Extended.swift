@@ -151,7 +151,7 @@ public extension MailApiFetcher {
             message.resource,
             queryItems: [
                 URLQueryItem(name: "prefered_format", value: "html"),
-                URLQueryItem(name: "with", value: "auto_uncrypt,recipient_provider_source")
+                URLQueryItem(name: "with", value: "auto_uncrypt,recipient_provider_source,emoji_reactions_per_message")
             ]
         )))
     }
