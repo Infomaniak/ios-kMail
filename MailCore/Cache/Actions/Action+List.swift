@@ -170,18 +170,17 @@ extension Action: CaseIterable {
         }
 
         var quickActions: [Action] {
-            guard messagesType.isSingle,
-                  origin.type.isListed
+            guard origin.type.isListed
             else { return [] }
 
             return [.reply, .replyAll, .forward, .delete]
         }
 
         var listActions: [Action?] = [origin.type == .floatingPanel(source: .contextMenu) ? .activeMultiSelect : nil] +
-            snoozedActions(messages, folder: origin.frozenFolder) +
+            (origin.type.isListed ? snoozedActions(messages, folder: origin.frozenFolder) : []) +
             [openMovePanelAction, spamAction]
 
-        if messagesType.isSingle && origin.type.isListed {
+        if origin.type.isListed {
             listActions += [
                 unreadAction,
                 starAction,
@@ -217,7 +216,7 @@ extension Action: CaseIterable {
         init(_ messages: [Message], frozenFolder: Folder?) {
             if messages.count == 1 {
                 self = .single
-            } else if messages.uniqueThreadsInFolder(frozenFolder).count > 1 {
+            } else if messages.uniqueThreadsInFolder(frozenFolder).count == 1 {
                 self = .multipleInSameThread
             } else {
                 self = .multipleInDifferentThreads
