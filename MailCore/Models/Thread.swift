@@ -38,6 +38,7 @@ public struct ThreadResult: Decodable {
 public class Thread: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var uid: String
     @Persisted public var messages: List<Message>
+    @Persisted private var messagesWithoutReactions: List<Message>
     @Persisted public var unseenMessages: Int
     @Persisted public var from: List<Recipient>
     @Persisted public var to: List<Recipient>
@@ -74,6 +75,15 @@ public class Thread: Object, Decodable, Identifiable {
 
     public var id: String {
         return uid
+    }
+
+    public var displayMessages: List<Message> {
+        @InjectService var featureAvailableProvider: FeatureAvailableProvider
+        if featureAvailableProvider.isAvailable(.emojiReaction) {
+            return messagesWithoutReactions
+        } else {
+            return messages
+        }
     }
 
     public var lastAction: ThreadLastAction? {
