@@ -150,6 +150,7 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(.resource(
             message.resource,
             queryItems: [
+                URLQueryItem(name: "with", value: "emoji_reactions_per_message"),
                 URLQueryItem(name: "prefered_format", value: "html")
             ]
         )))
