@@ -331,7 +331,7 @@ struct MessageReaction: Sendable {
 public extension Thread {
     /// Re-generate `Thread` properties given the messages it contains.
     func recomputeOrFail() throws {
-        messages = messages.sorted { $0.internalDate.compare($1.internalDate) == .orderedAscending }.toRealmList()
+        messages = messages.sortedByDate().toRealmList()
         messagesWithoutReactions = List()
 
         guard let lastMessageFromFolder else {
@@ -382,17 +382,13 @@ public extension Thread {
             if message.isScheduledDraft == true {
                 numberOfScheduledDraft += 1
             }
-            if message.isReaction, let messageReaction = getReaction(from: message) {
-                messageReactions.append(messageReaction)
+            if message.isReaction, let reaction = getReaction(from: message) {
+                messageReactions.append(reaction)
             } else {
                 messagesWithoutReactions.append(message)
             }
 
             updateSnooze(from: message)
-
-            messagesWithoutReactions = messagesWithoutReactions
-                .sorted { $0.internalDate.compare($1.internalDate) == .orderedAscending }
-                .toRealmList()
         }
 
         for duplicate in duplicates {
@@ -403,6 +399,8 @@ public extension Thread {
         }
 
         updateReactionsForMessages(reactions: messageReactions, messagesById: messagesById)
+
+        messagesWithoutReactions = messagesWithoutReactions.sortedByDate().toRealmList()
     }
 
     private func resetThread() {
@@ -428,9 +426,9 @@ public extension Thread {
     private func getReaction(from message: Message) -> MessageReaction? {
         guard let messageId = message.messageId,
               let emojiReaction = message.emojiReaction,
-              let messageTargets = message.inReplyTo?.parseMessageIds() else {
-            return nil
-        }
+              let messageTargets = message.inReplyTo?.parseMessageIds(),
+              !messageTargets.isEmpty
+        else { return nil }
 
         return MessageReaction(source: messageId, targets: messageTargets, reaction: emojiReaction)
     }
@@ -439,25 +437,17 @@ public extension Thread {
         for reaction in reactions {
             guard let source = messagesById[reaction.source] else { continue }
 
-            var hasAppliedReaction = false
+            var hasAppliedReactionAtLeastOnce = false
             for target in reaction.targets {
                 guard let targetMessage = messagesById[target] else { continue }
-                if applyReaction(from: source, to: targetMessage, reaction: reaction.reaction) {
-                    hasAppliedReaction = true
-                }
-            }
 
-            if !hasAppliedReaction {
-                messagesWithoutReactions.append(source)
+                applyReaction(from: source, to: targetMessage, reaction: reaction.reaction)
+                hasAppliedReactionAtLeastOnce = true
             }
         }
     }
 
-    private func applyReaction(from source: Message, to target: Message, reaction: String) -> Bool {
-        if folder?.role != .trash && target.inTrash {
-            return false
-        }
-
+    private func applyReaction(from source: Message, to target: Message, reaction: String) {
         let recipients = source.from.detached().toArray()
 
         if let recipientsListForKey = target.reactions[reaction], let recipientsList = recipientsListForKey {
@@ -466,8 +456,6 @@ public extension Thread {
             let recipientsList = RecipientsList(recipients: recipients)
             target.reactions.updateValue(recipientsList, forKey: reaction)
         }
-
-        return true
     }
 
     private func updateSnooze(from message: Message) {
