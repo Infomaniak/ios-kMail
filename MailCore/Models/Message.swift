@@ -88,6 +88,8 @@ public class MessageHeaders: EmbeddedObject, Codable {
     }
 }
 
+public typealias MessageReactions = Map<String, RecipientsList?>
+
 /// A Message has :
 /// - Many threads
 /// - One originalThread: parent thread
@@ -154,7 +156,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var emojiReaction: String?
     @Persisted public var emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason?
 
-    @Persisted public var reactions: Map<String, RecipientsList?>
+    @Persisted public var reactions: MessageReactions
 
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
