@@ -61,8 +61,8 @@ public final class RecipientsList: EmbeddedObject, Encodable {
         self.recipients.append(objectsIn: recipients)
     }
 
-    public func contains(where precidate: (Recipient) -> Bool) -> Bool {
-        return recipients.contains(where: precidate)
+    public func contains(where predicate: (Recipient) -> Bool) -> Bool {
+        return recipients.contains(where: predicate)
     }
 
     public func encode(to encoder: any Encoder) throws {
