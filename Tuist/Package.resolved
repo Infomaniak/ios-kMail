@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "17a022ee4c2342ebaa54bfae7509dd459df0b380",
-        "version" : "15.1.0"
+        "revision" : "df97b17e5a4f0117b53ea76c847831745e0d862c",
+        "version" : "15.3.0"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "03e6e939896b16c82bdcda4689b9f24c8b072125",
-        "version" : "18.7.0"
+        "revision" : "23ca340bedafa8505c9e20ab0fbf2a11df890319",
+        "version" : "18.8.0"
       }
     },
     {
@@ -203,8 +203,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "d87b07a27cd9a082d367261d7199a96a54e59f1d",
-        "version" : "8.50.2"
+        "revision" : "11aee2d3efdd74db8ce51533118500d140210292",
+        "version" : "8.51.0"
       }
     },
     {
@@ -248,8 +248,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections",
       "state" : {
-        "revision" : "671108c96644956dddcd89dd59c203dcdb36cec7",
-        "version" : "1.1.4"
+        "revision" : "c1805596154bb3a265fd91b8ac0c4433b4348fb0",
+        "version" : "1.2.0"
       }
     },
     {
