@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -93,7 +94,9 @@ struct MessageBannerHeaderView: View {
                 shouldDisplayActions: fromMe && !message.encryptionPassword.isEmpty
             ) {
                 Button(MailResourcesStrings.Localizable.buttonCopyPassword) {
+                    @LazyInjectService var snackbarPresenter: SnackBarPresentable
                     UIPasteboard.general.string = message.encryptionPassword
+                    snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarPasswordCopied)
                 }
             }
         }
