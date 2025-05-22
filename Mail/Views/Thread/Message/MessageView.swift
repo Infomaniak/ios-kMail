@@ -115,5 +115,7 @@ struct MessageView: View {
         threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .expanded]),
         message: PreviewHelper.sampleMessage
     )
+    .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
     .environmentObject(PreviewHelper.sampleMailboxManager)
+    .environmentObject(MessagesWorker(mailboxManager: PreviewHelper.sampleMailboxManager))
 }
