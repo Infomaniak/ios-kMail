@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -43,7 +44,8 @@ struct CalendarAttendeesStack: View {
             if hiddenAttendees > 0 {
                 InitialsView(
                     initials: "+\(hiddenAttendees)",
-                    color: MailResourcesAsset.textSecondaryColor.color,
+                    backgroundColor: MailResourcesAsset.textSecondaryColor.swiftUIColor,
+                    foregroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
                     size: 32 + UIConstants.avatarBorderLineWidth
                 )
                 .overlay {

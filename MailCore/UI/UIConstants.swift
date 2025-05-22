@@ -34,7 +34,7 @@ public extension UIConstants {
         MailResourcesAsset.tropicalColor,
         MailResourcesAsset.mauveColor,
         MailResourcesAsset.princeColor
-    ].map(\.color)
+    ].map(\.swiftUIColor)
 }
 
 // MARK: - Elements sizing

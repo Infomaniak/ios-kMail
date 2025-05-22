@@ -18,8 +18,10 @@
 
 import Foundation
 import InfomaniakCore
+import InfomaniakCoreSwiftUI
 import MailResources
 import Nuke
+import SwiftUI
 import UIKit
 
 public final class CommonContact: Identifiable {
@@ -31,7 +33,7 @@ public final class CommonContact: Identifiable {
     public let fullName: String
     public let email: String
     public let avatarImageRequest: AvatarImageRequest
-    public let color: UIColor
+    public let color: Color
 
     /// Empty contact
     private init() {
@@ -39,7 +41,7 @@ public final class CommonContact: Identifiable {
         email = recipient.email
         fullName = recipient.name
         id = recipient.id.hashValue
-        color = UIColor.backgroundColor(from: recipient.hash, with: UIConstants.avatarColors)
+        color = Color.backgroundColor(from: recipient.hash, with: UIConstants.avatarColors)
         avatarImageRequest = AvatarImageRequest(imageRequest: nil, shouldAuthenticate: true)
     }
 
@@ -55,7 +57,7 @@ public final class CommonContact: Identifiable {
 
         if correspondent.isMe(currentMailboxEmail: contextMailboxManager.mailbox.email) {
             fullName = MailResourcesStrings.Localizable.contactMe
-            color = UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
+            color = Color.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
             if correspondent.isCurrentUser(currentAccountEmail: contextUser.email),
                let avatarString = contextUser.avatar,
                let avatarURL = URL(string: avatarString) {
@@ -65,7 +67,7 @@ public final class CommonContact: Identifiable {
             }
         } else {
             fullName = correspondent.name.isEmpty ? correspondent.email : correspondent.name
-            color = UIColor.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
+            color = Color.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
             let transactionable = contextMailboxManager.contactManager
             let contactImageRequest = contextMailboxManager.contactManager.getContact(
                 for: correspondent,
@@ -89,7 +91,7 @@ public final class CommonContact: Identifiable {
         id = user.id
         fullName = user.displayName
         email = user.email
-        color = UIColor.backgroundColor(from: user.id, with: UIConstants.avatarColors)
+        color = Color.backgroundColor(from: user.id, with: UIConstants.avatarColors)
         if let avatarString = user.avatar,
            let avatarURL = URL(string: avatarString) {
             avatarImageRequest = AvatarImageRequest(imageRequest: ImageRequest(url: avatarURL), shouldAuthenticate: false)
