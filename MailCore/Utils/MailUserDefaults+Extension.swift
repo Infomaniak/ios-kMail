@@ -48,6 +48,7 @@ public extension UserDefaults.Keys {
     static let shouldPresentAIFeature = UserDefaults.Keys(rawValue: "shouldPresentAIFeature")
     static let shouldPresentSyncDiscovery = UserDefaults.Keys(rawValue: "shouldPresentSyncDiscovery")
     static let shouldPresentSetAsDefaultDiscovery = UserDefaults.Keys(rawValue: "shouldPresentSetAsDefaultDiscovery")
+    static let shouldPresentEncryptAd = UserDefaults.Keys(rawValue: "shouldPresentEncryptAd")
     static let autoAdvance = UserDefaults.Keys(rawValue: "autoAdvance")
     static let hasDismissedUpdateVersionView = UserDefaults.Keys(rawValue: "hasDismissedUpdateVersionView")
     static let matomoAuthorized = UserDefaults.Keys(rawValue: "matomoAuthorized")
@@ -300,6 +301,18 @@ public extension UserDefaults {
         }
         set {
             set(newValue, forKey: key(.shouldPresentSetAsDefaultDiscovery))
+        }
+    }
+
+    var shouldPresentEncryptAd: Bool {
+        get {
+            if object(forKey: key(.shouldPresentEncryptAd)) == nil {
+                set(true, forKey: key(.shouldPresentEncryptAd))
+            }
+            return bool(forKey: key(.shouldPresentEncryptAd))
+        }
+        set {
+            set(newValue, forKey: key(.shouldPresentEncryptAd))
         }
     }
 
