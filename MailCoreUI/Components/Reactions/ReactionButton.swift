@@ -26,7 +26,7 @@ extension Color {
     public static let reactionButtonBackgroundEnabled = UserDefaults.shared.accentColor.secondary.swiftUIColor
 
     public static let reactionButtonBorder = MailResourcesAsset.hoverMenuBackground.swiftUIColor
-    public static let reactionButtonBorderEnabled = UserDefaults.shared.accentColor.primary.swiftUIColor
+    public static let reactionButtonBorderEnabled = Color.accentColor
 }
 
 struct ReactionButton: View {
@@ -45,13 +45,17 @@ struct ReactionButton: View {
         return hasReacted ? .reactionButtonBorderEnabled : .reactionButtonBorder
     }
 
+    private var textStyle: MailTextStyle {
+        return hasReacted ? .bodyMediumAccent : .bodyMedium
+    }
+
     var body: some View {
         Button {} label: {
-            HStack {
+            HStack(spacing: IKPadding.micro) {
                 Text(verbatim: emoji)
                 Text(verbatim: "\(count)")
             }
-            .textStyle(.bodyMedium)
+            .textStyle(textStyle)
             .padding(.horizontal, value: .small)
             .padding(.vertical, value: .mini)
             .background(backgroundColor, in: .capsule)
