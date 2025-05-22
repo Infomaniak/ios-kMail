@@ -5,8 +5,8 @@
  Project: kMail
  Locale: en, English
  Tagged: ios-stringsdict
- Exported by: Jordan Chapelle
- Exported at: Mon, 19 May 2025 12:42:50 +0200
+ Exported by: Ambroise Decouttere
+ Exported at: Wed, 21 May 2025 11:55:13 +0200
 -->
 <plist version="1.0">
   <dict>
@@ -88,6 +88,22 @@
         <string>Blocked mailbox</string>
         <key>other</key>
         <string>Blocked mailboxes</string>
+      </dict>
+    </dict>
+    <key>messageDeletionConfirmationAlertTitle</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Delete %d message</string>
+        <key>other</key>
+        <string>Delete %d messages</string>
       </dict>
     </dict>
     <key>multipleSelectionCount</key>
