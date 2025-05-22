@@ -22,17 +22,16 @@ import InfomaniakDI
 import MailResources
 
 extension Action: CaseIterable {
-    public static let rightClickActions: [Action] = [
-        .activeMultiselect,
-        .reply,
-        .replyAll,
-        .forward,
+    public static let swipeActions: [Action] = [
+        .delete,
+        .markAsRead,
         .openMovePanel,
+        .star,
+        .spam,
+        .quickActionPanel,
         .archive,
-        .delete
+        .noAction
     ]
-    public static let quickActions: [Action] = [.reply, .replyAll, .forward, .delete]
-
     public static let allCases: [Action] = [
         .delete,
         .reply,
@@ -82,7 +81,10 @@ extension Action: CaseIterable {
             .block,
             .blockList,
             .snooze,
-            .modifySnooze
+            .modifySnooze,
+            .star,
+            .markAsRead,
+            .markAsUnread
         ].contains(self)
     }
 
@@ -106,95 +108,6 @@ extension Action: CaseIterable {
         return actions.compactMap { $0 }
     }
 
-    private static func actionsForMessage(_ message: Message, origin: ActionOrigin,
-                                          userIsStaff: Bool,
-                                          userEmail: String) -> (quickActions: [Action], listActions: [Action]) {
-        @LazyInjectService var platformDetector: PlatformDetectable
-
-        let snoozedActions = snoozedActions([message], folder: origin.frozenFolder)
-
-        var spamAction: Action? {
-            guard !message.fromMe(currentMailboxEmail: userEmail) else { return nil }
-            return message.folder?.role == .spam ? .nonSpam : .reportJunk
-        }
-        let archive = message.folder?.role != .archive
-        let unread = !message.seen
-        let star = message.flagged
-        let print = origin.type == .floatingPanel(source: .messageList)
-        let tempListActions: [Action?] = [
-            .openMovePanel,
-            spamAction,
-            unread ? .markAsRead : .markAsUnread,
-            archive ? .archive : .moveToInbox,
-            star ? .unstar : .star,
-            print ? .print : nil,
-            .shareMailLink,
-            platformDetector.isMac ? nil : .saveThreadInkDrive,
-            userIsStaff ? .reportDisplayProblem : nil
-        ]
-
-        let listActions = snoozedActions + tempListActions.compactMap { $0 }
-
-        return (Action.quickActions, listActions)
-    }
-
-    private static func actionsForMessagesInDifferentThreads(_ messages: [Message], originFolder: Folder?, userEmail: String)
-        -> (quickActions: [Action], listActions: [Action]) {
-        let unread = messages.allSatisfy(\.seen)
-        let archive = originFolder?.role != .archive
-        let quickActions: [Action] = [
-            .openMovePanel,
-            unread ? .markAsUnread : .markAsRead,
-            archive ? .archive : .moveToInbox,
-            .delete
-        ]
-
-        let snoozedActions = snoozedActions(messages, folder: originFolder)
-
-        var spamAction: Action? {
-            let selfThread = messages.flatMap(\.from).allSatisfy { $0.isMeOrPlusMe(currentMailboxEmail: userEmail) }
-            guard !selfThread else { return nil }
-            return originFolder?.role == .spam ? .nonSpam : .reportJunk
-        }
-        let star = messages.allSatisfy(\.flagged)
-
-        let tempListActions: [Action?] = [
-            spamAction,
-            star ? .unstar : .star,
-            .saveThreadInkDrive
-        ]
-
-        let listActions = snoozedActions + tempListActions.compactMap { $0 }
-
-        return (quickActions, listActions)
-    }
-
-    private static func actionsForMessagesInSameThreads(_ messages: [Message], originFolder: Folder?, userEmail: String)
-        -> (quickActions: [Action], listActions: [Action]) {
-        let archive = originFolder?.role != .archive
-        let unread = messages.allSatisfy(\.seen)
-        let showUnstar = messages.contains { $0.flagged }
-
-        var spamAction: Action? {
-            let selfThread = messages.flatMap(\.from).allSatisfy { $0.isMeOrPlusMe(currentMailboxEmail: userEmail) }
-            guard !selfThread else { return nil }
-            return originFolder?.role == .spam ? .nonSpam : .reportJunk
-        }
-
-        let snoozedActions = snoozedActions(messages, folder: originFolder)
-        let tempListActions: [Action?] = [
-            .openMovePanel,
-            spamAction,
-            unread ? .markAsUnread : .markAsRead,
-            archive ? .archive : .moveToInbox,
-            showUnstar ? .unstar : .star,
-            .saveThreadInkDrive
-        ]
-        let listActions = snoozedActions + tempListActions.compactMap { $0 }
-
-        return (Action.quickActions, listActions)
-    }
-
     private static func snoozedActions(_ messages: [Message], folder: Folder?) -> [Action] {
         guard folder?.canAccessSnoozeActions == true else { return [] }
 
@@ -211,14 +124,112 @@ extension Action: CaseIterable {
     public static func actionsForMessages(_ messages: [Message],
                                           origin: ActionOrigin,
                                           userIsStaff: Bool,
-                                          userEmail: String) -> (quickActions: [Action], listActions: [Action]) {
-        if messages.count == 1, let message = messages.first {
-            return actionsForMessage(message, origin: origin, userIsStaff: userIsStaff, userEmail: userEmail)
-        } else if messages.uniqueThreadsInFolder(origin.frozenFolder).count > 1 {
-            return actionsForMessagesInDifferentThreads(messages, originFolder: origin.frozenFolder, userEmail: userEmail)
-        } else {
-            return actionsForMessagesInSameThreads(messages, originFolder: origin.frozenFolder, userEmail: userEmail)
+                                          userEmail: String) -> Action.Lists {
+        guard !messages.allSatisfy({ $0.isScheduledDraft == true }),
+              !messages.allSatisfy({ $0.isDraft })
+        else {
+            return Action.Lists(
+                quickActions: [],
+                listActions: origin.type == .floatingPanel(source: .contextMenu) ? [.activeMultiSelect] : [],
+                bottomBarActions: [.delete]
+            )
         }
+        return actionsForNormalMessages(messages, origin: origin, userIsStaff: userIsStaff, userEmail: userEmail)
+    }
+
+    private static func actionsForNormalMessages(_ messages: [Message],
+                                                 origin: ActionOrigin,
+                                                 userIsStaff: Bool,
+                                                 userEmail: String)
+        -> Action.Lists {
+        @LazyInjectService var platformDetector: PlatformDetectable
+
+        let messagesType = MessagesType(messages, frozenFolder: origin.frozenFolder)
+
+        let unreadAction: Action = messages.allSatisfy(\.seen) ? .markAsUnread : .markAsRead
+        var archiveAction: Action? {
+            guard origin.type != .floatingPanel(source: .messageList),
+                  origin.type != .floatingPanel(source: .messageDetails),
+                  origin.frozenFolder?.role != .spam,
+                  !messages.allSatisfy(\.isSnoozed)
+            else { return nil }
+            return origin.frozenFolder?.role != .archive ? .archive : .moveToInbox
+        }
+        let openMovePanelAction: Action? = messages.allSatisfy(\.isMovable) ? .openMovePanel : nil
+        var spamAction: Action? {
+            let selfThread = messages.flatMap(\.from).allSatisfy { $0.isMeOrPlusMe(currentMailboxEmail: userEmail) }
+            guard !selfThread else { return nil }
+            return origin.frozenFolder?.role == .spam ? .nonSpam : .reportJunk
+        }
+        var starAction: Action {
+            messages.contains { $0.flagged } ? .unstar : .star
+        }
+        var reportDisplayProblemAction: Action? {
+            guard userIsStaff, messagesType.isSingle else { return nil }
+            return .reportDisplayProblem
+        }
+
+        var quickActions: [Action] {
+            guard origin.type.isListed
+            else { return [] }
+
+            return [.reply, .replyAll, .forward, .delete]
+        }
+
+        var listActions: [Action?] = [origin.type == .floatingPanel(source: .contextMenu) ? .activeMultiSelect : nil] +
+            (origin.type.isListed ? snoozedActions(messages, folder: origin.frozenFolder) : []) +
+            [openMovePanelAction, spamAction]
+
+        if origin.type.isListed {
+            listActions += [
+                unreadAction,
+                starAction,
+                archiveAction,
+                messagesType.isSingle ? .print : nil,
+                messagesType.isSingle ? .shareMailLink : nil,
+                platformDetector.isMac ? nil : .saveThreadInkDrive,
+                reportDisplayProblemAction
+            ]
+        }
+
+        var bottomBarActions: [Action?] {
+            switch messagesType {
+            case .single, .multipleInSameThread:
+                [.reply, .forward, archiveAction, .delete]
+            case .multipleInDifferentThreads:
+                [unreadAction, archiveAction, starAction, .delete]
+            }
+        }
+
+        return Action.Lists(
+            quickActions: quickActions,
+            listActions: listActions.compactMap { $0 },
+            bottomBarActions: bottomBarActions.compactMap { $0 }
+        )
+    }
+
+    private enum MessagesType {
+        case single
+        case multipleInSameThread
+        case multipleInDifferentThreads
+
+        init(_ messages: [Message], frozenFolder: Folder?) {
+            if messages.count == 1 {
+                self = .single
+            } else if messages.uniqueThreadsInFolder(frozenFolder).count == 1 {
+                self = .multipleInSameThread
+            } else {
+                self = .multipleInDifferentThreads
+            }
+        }
+
+        var isSingle: Bool { return self == .single }
+    }
+
+    public struct Lists {
+        public let quickActions: [Action]
+        public let listActions: [Action]
+        public let bottomBarActions: [Action]
     }
 }
 
@@ -483,8 +494,8 @@ public extension Action {
         iconResource: MailResourcesAsset.bin,
         matomoName: "deleteAccount"
     )
-    static let activeMultiselect = Action(
-        id: "activeMultiselect",
+    static let activeMultiSelect = Action(
+        id: "activeMultiSelect",
         title: MailResourcesStrings.Localizable.buttonMultiselect,
         iconResource: MailResourcesAsset.checklist,
         matomoName: ""

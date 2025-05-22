@@ -27,11 +27,23 @@ public struct ActionOrigin {
         case multipleSelection
         case shortcut
         case threadHeader
+
+        var isListed: Bool {
+            switch self {
+            case .floatingPanel(source: .messageList), .floatingPanel(source: .contextMenu), .floatingPanel(source: .swipe):
+                true
+            default:
+                false
+            }
+        }
     }
 
     public enum FloatingPanelSource {
         case threadList
         case messageList
+        case messageDetails
+        case contextMenu
+        case swipe
     }
 
     public private(set) var type: ActionOriginType
