@@ -4,7 +4,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Ambroise Decouttere
- * Exported at: Wed, 21 May 2025 11:55:13 +0200
+ * Exported at: Mon, 26 May 2025 13:34:42 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -300,6 +300,9 @@
 
 /* loco:6282142ca5e6f61ada1c4014 */
 "buttonAccountSwitch" = "Changer de compte";
+
+/* loco:683451bcff751ab780041822 */
+"buttonActivate" = "Activer";
 
 /* loco:6256793050618f7416758a32 */
 "buttonAddAccount" = "Ajouter un compte";
@@ -739,20 +742,50 @@
 /* loco:667bac4f2a74996e510ce652 */
 "enableMultiSelection" = "Activer la sélection multiple";
 
+/* loco:682dc733bf2f8cb4ec0c7af3 */
+"encryptMessageRecipientsDescription" = "Le message sera chiffré pour l’ensemble de vos destinataires.";
+
+/* loco:682dc013a6784026ab0f1493 */
+"encryptedMessageAddPasswordButton" = "Protéger par mot de passe";
+
+/* loco:682db47edea6856827005263 */
+"encryptedMessageAddPasswordDescription1" = "Le chiffrement automatique n’est pas disponible pour les destinataires suivants :";
+
+/* loco:682db670397e663f210dda62 */
+"encryptedMessageAddPasswordDescription2" = "Ajoutez un mot de passe pour sécuriser le message, puis partagez-le aux destinataires par un autre moyen sécurisé (kChat, SMS, etc.).";
+
+/* loco:682dc33b2841ae542c042092 */
+"encryptedMessageAddPasswordInformation" = "Les destinataires recevront un lien sécurisé, valable 30 jours, et devront saisir le mot de passe pour lire votre message.";
+
 /* loco:682d93b7626b153371041d72 */
 "encryptedMessageDescription" = "Ce message a été chiffré et expirera 30 jours après l’envoi uniquement pour les destinataires ne pouvant bénéficier du chiffrement automatique.";
+
+/* loco:682dc12a45ce97ce870a4524 */
+"encryptedMessageDisableEncryptionButton" = "Désactiver le chiffrement";
+
+/* loco:682dc2113c2020dcd20b82f2 */
+"encryptedMessagePasswordLabel" = "Mot de passe à partager (via kChat, SMS ou autre moyen sécurisé)";
 
 /* loco:682d950703bceff09700fc42 */
 "encryptedMessageReceiverTitle" = "Ce message a été chiffré par l’expéditeur pour des raisons de confidentialité.";
 
+/* loco:68305ea640206c98380caf72 */
+"encryptedMessageSnackbarEncryptionActivated" = "Le chiffrement a bien été activé";
+
 /* loco:682d92f160a12e1b880ca163 */
 "encryptedMessageTitle" = "Ce message a été chiffré.";
 
+/* loco:68340a44f3083453f501d6e2 */
+"encryptedProtectionAdDescription" = "Protégez votre message contre tout accès non autorisé grâce au chiffrement Infomaniak.";
+
 /* loco:682da1d759d5f52c5a0b4604 */
-"encryptedProtectionAdDescription1" = "Sécurisez vos messages confidentiels avec le chiffrement.";
+"encryptedProtectionAdDescription1" = "L’objet du message reste visible mais le contenu est entièrement sécurisé.";
+
+/* loco:682da39ee3005f6c3e0a9802 */
+"encryptedProtectionAdDescription2" = "Un mot de passe sera requis pour les utilisateurs hors Infomaniak.";
 
 /* loco:682d9e1bb014002f5400a212 */
-"encryptedProtectionAdTitle" = "Protéger mon message";
+"encryptedProtectionAdTitle" = "Chiffrez vos messages confidentiels";
 
 /* loco:64a2b619946ed6ede60a85e2 */
 "enterPasswordDescription1" = "Votre mot de passe a été modifié. Si vous n’en êtes pas à l’origine, veuillez contacter votre administrateur.";

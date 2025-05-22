@@ -4,7 +4,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Ambroise Decouttere
- * Exported at: Wed, 21 May 2025 11:55:13 +0200
+ * Exported at: Mon, 26 May 2025 13:34:42 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -300,6 +300,9 @@
 
 /* loco:6282142ca5e6f61ada1c4014 */
 "buttonAccountSwitch" = "Konto ändern";
+
+/* loco:683451bcff751ab780041822 */
+"buttonActivate" = "Aktivieren Sie";
 
 /* loco:6256793050618f7416758a32 */
 "buttonAddAccount" = "Account hinzufügen";
@@ -739,20 +742,50 @@
 /* loco:667bac4f2a74996e510ce652 */
 "enableMultiSelection" = "Aktivieren der Mehrfachauswahl";
 
+/* loco:682dc733bf2f8cb4ec0c7af3 */
+"encryptMessageRecipientsDescription" = "Die Nachricht wird für alle Ihre Empfänger verschlüsselt.";
+
+/* loco:682dc013a6784026ab0f1493 */
+"encryptedMessageAddPasswordButton" = "Mit Passwort schützen";
+
+/* loco:682db47edea6856827005263 */
+"encryptedMessageAddPasswordDescription1" = "Die automatische Verschlüsselung ist für die folgenden Empfänger nicht verfügbar:";
+
+/* loco:682db670397e663f210dda62 */
+"encryptedMessageAddPasswordDescription2" = "Fügen Sie ein Passwort hinzu, um die Nachricht zu sichern, und teilen Sie sie dann über einen anderen sicheren Weg (kChat, SMS usw.) mit den Empfängern.";
+
+/* loco:682dc33b2841ae542c042092 */
+"encryptedMessageAddPasswordInformation" = "Die Empfänger erhalten einen sicheren Link, der 30 Tage lang gültig ist und ein Passwort enthält, mit dem sie Ihre Nachricht lesen können.";
+
 /* loco:682d93b7626b153371041d72 */
 "encryptedMessageDescription" = "Diese Nachricht wurde verschlüsselt und verfällt 30 Tage nach dem Versand für Empfänger, die nicht von der automatischen Verschlüsselung profitieren können.";
+
+/* loco:682dc12a45ce97ce870a4524 */
+"encryptedMessageDisableEncryptionButton" = "Verschlüsselung deaktivieren";
+
+/* loco:682dc2113c2020dcd20b82f2 */
+"encryptedMessagePasswordLabel" = "Passwort zur Freigabe (über kChat, SMS oder andere sichere Weg)";
 
 /* loco:682d950703bceff09700fc42 */
 "encryptedMessageReceiverTitle" = "Diese Nachricht wurde vom Absender aus Gründen der Vertraulichkeit verschlüsselt.";
 
+/* loco:68305ea640206c98380caf72 */
+"encryptedMessageSnackbarEncryptionActivated" = "Die Verschlüsselung wurde aktiviert";
+
 /* loco:682d92f160a12e1b880ca163 */
 "encryptedMessageTitle" = "Diese Nachricht wurde verschlüsselt.";
 
+/* loco:68340a44f3083453f501d6e2 */
+"encryptedProtectionAdDescription" = "Schützen Sie Ihre Nachricht mit der Infomaniak-Verschlüsselung vor unbefugtem Zugriff.";
+
 /* loco:682da1d759d5f52c5a0b4604 */
-"encryptedProtectionAdDescription1" = "Sichern Sie Ihre vertraulichen Nachrichten mit Verschlüsselung.";
+"encryptedProtectionAdDescription1" = "Der Betreff der Nachricht bleibt sichtbar, aber der Inhalt ist vollständig gesichert.";
+
+/* loco:682da39ee3005f6c3e0a9802 */
+"encryptedProtectionAdDescription2" = "Für Nutzer außerhalb von Infomaniak wird ein Passwort benötigt.";
 
 /* loco:682d9e1bb014002f5400a212 */
-"encryptedProtectionAdTitle" = "Meine Nachricht schützen";
+"encryptedProtectionAdTitle" = "Verschlüsseln Sie Ihre vertraulichen Nachrichten";
 
 /* loco:64a2b619946ed6ede60a85e2 */
 "enterPasswordDescription1" = "Ihr Passwort wurde geändert. Wenn es nicht von Ihnen stammt, wenden Sie sich bitte an Ihren Administrator.";
