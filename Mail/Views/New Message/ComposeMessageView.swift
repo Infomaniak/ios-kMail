@@ -334,6 +334,9 @@ struct ComposeMessageView: View {
         .sheet(isPresented: $aiModel.isShowingProposition) {
             AIPropositionView(aiModel: aiModel)
         }
+        .sheet(isPresented: $isShowingEncryptPanel) {
+            EncryptionAdView { enableEncryption() }
+        }
         .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
         .scheduleFloatingPanel(
