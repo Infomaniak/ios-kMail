@@ -208,4 +208,25 @@ public extension MailboxManager {
 
         return draft.freeze()
     }
+
+    func updateRecipientsAutoUncrypt(draft: Draft) {
+        Task {
+            let recipients = draft.to
+            recipients.append(objectsIn: draft.cc)
+            recipients.append(objectsIn: draft.bcc)
+            let filteredRecipients = recipients.filter {
+                $0.autoUncrypt == nil
+            }.toArray()
+
+            let result = try await apiFetcher.autoUncrypt(for: recipients.map(\.email))
+
+            for recipient in filteredRecipients {
+                if let liveRecipient = recipient.thaw() {
+                    try liveRecipient.realm?.write {
+                        liveRecipient.autoUncrypt = result[recipient.email]
+                    }
+                }
+            }
+        }
+    }
 }
