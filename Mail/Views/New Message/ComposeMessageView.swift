@@ -85,6 +85,8 @@ struct ComposeMessageView: View {
     @State private var initialAttachments = [Attachable]()
     @State private var isShowingSchedulePanel = false
 
+    @State private var isShowingEncryptPanel = false
+
     @Weak private var scrollView: UIScrollView?
 
     @StateObject private var draftContentManager: DraftContentManager
@@ -172,6 +174,16 @@ struct ComposeMessageView: View {
         }
         .baseComposeMessageToolbar(dismissHandler: didTouchDismiss)
         .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if featureFlagsManager.isEnabled(.mailComposeEncrypted) {
+                    Button {
+                        didTouchEncrypt()
+                    } label: {
+                        MailResourcesAsset.lockSquare.swiftUIImage
+                    }
+                    .foregroundColor(draft.encrypted ? Color.accentColor : MailResourcesAsset.textSecondaryColor.swiftUIColor)
+                }
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 if featureFlagsManager.isEnabled(.scheduleSendDraft) {
                     Button {
@@ -406,6 +418,36 @@ struct ComposeMessageView: View {
             }
             if !mainViewState.isShowingSetAppAsDefaultDiscovery {
                 mainViewState.isShowingChristmasEasterEgg = true
+            }
+        }
+    }
+
+    private func didTouchEncrypt() {
+        if !draft.encrypted {
+            if UserDefaults.shared.shouldPresentEncryptAd {
+                isShowingEncryptPanel = true
+            } else {
+                enableEncryption()
+            }
+        } else {
+            // Si besoin d'un mot de passe
+
+            // Sinon
+            if let liveDraft = draft.thaw() {
+                try? liveDraft.realm?.write {
+                    liveDraft.encrypted = false
+                    liveDraft.encryptionPassword = ""
+                }
+            }
+        }
+    }
+
+    private func enableEncryption() {
+        mailboxManager.updateRecipientsAutoUncrypt(draft: draft)
+
+        if let liveDraft = draft.thaw() {
+            try? liveDraft.realm?.write {
+                liveDraft.encrypted = true
             }
         }
     }
