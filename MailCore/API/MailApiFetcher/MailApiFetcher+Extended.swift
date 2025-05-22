@@ -209,4 +209,8 @@ public extension MailApiFetcher {
     func lastSyncDate() async throws -> String? {
         return try await perform(request: authenticatedRequest(.lastSyncDate()))
     }
+
+    func autoUncrypt(for recipients: [String]) async throws -> [String: Bool] {
+        return try await perform(request: authenticatedRequest(.autoUncrypt(for: recipients)))
+    }
 }
