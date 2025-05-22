@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreSwiftUI
 import MailCore
 import MailResources
 import NukeUI
@@ -68,20 +69,25 @@ public struct AvatarView: View {
             } else if let avatarImageRequest = getAvatarImageRequest() {
                 LazyImage(request: avatarImageRequest) { state in
                     if let image = state.image {
-                        ContactImage(image: image, size: size)
+                        AvatarImage(image: image, size: size)
                     } else {
-                        InitialsView(
-                            initials: displayablePerson.formatted(style: .initials),
-                            color: displayablePerson.color,
-                            size: size
-                        )
+                        initialsView
                     }
                 }
             } else {
-                InitialsView(initials: displayablePerson.formatted(style: .initials), color: displayablePerson.color, size: size)
+                initialsView
             }
         }
         .accessibilityLabel(MailResourcesStrings.Localizable.contentDescriptionUserAvatar)
+    }
+
+    var initialsView: some View {
+        InitialsView(
+            initials: displayablePerson.formatted(style: .initials),
+            backgroundColor: displayablePerson.color,
+            foregroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
+            size: size
+        )
     }
 
     private func getAvatarImageRequest() -> ImageRequest? {

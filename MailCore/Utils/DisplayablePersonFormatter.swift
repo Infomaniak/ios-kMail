@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InfomaniakCore
 
 public extension FormatStyle where Self == CommonContact.FormatStyle {
     static func displayablePerson(style: CommonContact.FormatStyle.Style = .fullName) -> Self {
@@ -44,49 +45,15 @@ public extension CommonContact {
             self.style = style
         }
 
-        private func formattedFullName(_ displayablePerson: CommonContact) -> String {
-            return displayablePerson.fullName
-        }
-
-        private func formattedShortName(_ displayablePerson: CommonContact) -> String {
-            let formattedFullName = formattedFullName(displayablePerson)
-            if Constants.isEmailAddress(formattedFullName) {
-                return displayablePerson.email.components(separatedBy: "@").first ?? displayablePerson.email
-            }
-
-            return nameComponents(displayablePerson).givenName.removePunctuation
-        }
-
-        public func nameComponents(_ displayablePerson: CommonContact) -> (givenName: String, familyName: String?) {
-            let name = formattedFullName(displayablePerson)
-
-            let components = name.components(separatedBy: .whitespaces)
-            let givenName = components[0]
-            let familyName = components.count > 1 ? components[1] : nil
-            return (givenName, familyName)
-        }
-
-        private func formattedInitials(_ displayablePerson: CommonContact) -> String {
-            let nameComponents = nameComponents(displayablePerson)
-            let initials = [nameComponents.givenName, nameComponents.familyName]
-                .compactMap {
-                    if let firstCharacter = $0?.removePunctuation.first {
-                        return String(firstCharacter)
-                    } else {
-                        return nil
-                    }
-                }
-            return initials.joined().uppercased()
-        }
-
         public func format(_ value: CommonContact) -> String {
+            let nameFormatter = NameFormatter(fullName: value.fullName)
             switch style {
             case .shortName:
-                return formattedShortName(value)
+                return nameFormatter.shortName
             case .fullName:
-                return formattedFullName(value)
+                return nameFormatter.fullName
             case .initials:
-                return formattedInitials(value)
+                return nameFormatter.initials
             }
         }
     }
