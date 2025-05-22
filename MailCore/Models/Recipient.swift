@@ -45,6 +45,7 @@ public final class Recipient: EmbeddedObject, Correspondent, Codable {
     @Persisted public var email: String
     @Persisted public var name: String
     @Persisted public var isAddedByMe = false
+    @Persisted public var autoUncrypt: Bool?
 
     enum CodingKeys: String, CodingKey {
         case email
