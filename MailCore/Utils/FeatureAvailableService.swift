@@ -28,7 +28,9 @@ public protocol FeatureAvailableProvider: Sendable {
     func isAvailable(_ feature: AppFeature) -> Bool
 }
 
-final class FeatureAvailableService: FeatureAvailableProvider {
+struct FeatureAvailableService: FeatureAvailableProvider {
+    @LazyInjectService private var featureFlagManageable: FeatureFlagsManageable
+
     public func isAvailable(_ feature: AppFeature) -> Bool {
         switch feature {
         case .snooze:
@@ -39,12 +41,10 @@ final class FeatureAvailableService: FeatureAvailableProvider {
     }
 
     private func isSnoozeAvailable() -> Bool {
-        @InjectService var featureFlagManageable: FeatureFlagsManageable
         return featureFlagManageable.isEnabled(.mailSnooze) && UserDefaults.shared.threadMode == .conversation
     }
 
     private func isEmojiReactionAvailable() -> Bool {
-        @InjectService var featureFlagManageable: FeatureFlagsManageable
         return featureFlagManageable.isEnabled(.mailEmojiReaction) && UserDefaults.shared.threadMode == .conversation
     }
 }
