@@ -24,6 +24,8 @@ import SwiftUI
 struct MessageReactionsView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @State private var localReactions = Set<String>()
+
     let reactions: MessageReactions
 
     var body: some View {
@@ -39,19 +41,32 @@ struct MessageReactionsView: View {
     }
 
     private func reactionsCount(for reaction: String) -> Int {
-        return reactions[reaction]??.count ?? 0
+        var count = reactions[reaction]??.count ?? 0
+        if localReactions.contains(reaction) && !hasCurrentUserRemotelyReacted(reaction) {
+            count += 1
+        }
+
+        return count
     }
 
     private func isReactionEnabled(_ reaction: String) -> Bool {
-        return reactions[reaction]??.contains { $0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) } ?? false
+        return localReactions.contains(reaction) || hasCurrentUserRemotelyReacted(reaction)
     }
 
     private func didTapReaction(_ reaction: String) {
         // TODO: Handle in next PR
+        withAnimation {
+            localReactions.insert(reaction)
+        }
+
     }
 
     private func didLongPressReaction(_ reaction: String) {
         // TODO: Handle in next PR
+    }
+
+    private func hasCurrentUserRemotelyReacted(_ reaction: String) -> Bool {
+        return reactions[reaction]??.contains { $0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) } ?? false
     }
 }
 
