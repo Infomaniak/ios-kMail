@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -35,6 +36,18 @@ struct MessageBannerHeaderView: View {
     private var isRemoteContentBlocked: Bool {
         return (UserDefaults.shared.displayExternalContent == .askMe || message.folder?.role == .spam)
             && !message.localSafeDisplay
+    }
+
+    private var fromMe: Bool {
+        return message.fromMe(currentMailboxEmail: mailbox.email)
+    }
+
+    private var encryptionTitle: String {
+        guard fromMe else {
+            return MailResourcesStrings.Localizable.encryptedMessageReceiverTitle
+        }
+        return message.encryptionPassword.isEmpty ? MailResourcesStrings.Localizable.encryptedMessageTitle : MailResourcesStrings
+            .Localizable.encryptedMessageDescription
     }
 
     var body: some View {
@@ -70,6 +83,21 @@ struct MessageBannerHeaderView: View {
                 }
                 .buttonStyle(.ikBorderless(isInlined: true))
                 .controlSize(.small)
+            }
+        }
+
+        if message.encrypted {
+            MessageHeaderActionView(
+                icon: MailResourcesAsset.lockSquare.swiftUIImage,
+                message: encryptionTitle,
+                isFirst: spamType == nil && !(isRemoteContentBlocked && displayContentBlockedActionView),
+                shouldDisplayActions: fromMe && !message.encryptionPassword.isEmpty
+            ) {
+                Button(MailResourcesStrings.Localizable.buttonCopyPassword) {
+                    @LazyInjectService var snackbarPresenter: SnackBarPresentable
+                    UIPasteboard.general.string = message.encryptionPassword
+                    snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarPasswordCopied)
+                }
             }
         }
     }
