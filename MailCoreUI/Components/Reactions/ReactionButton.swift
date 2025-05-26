@@ -21,12 +21,21 @@ import MailCore
 import MailResources
 import SwiftUI
 
-extension Color {
-    public static let reactionButtonBackground = MailResourcesAsset.hoverMenuBackground.swiftUIColor
-    public static let reactionButtonBackgroundEnabled = UserDefaults.shared.accentColor.secondary.swiftUIColor
+struct BackportNumericContentTranstion: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 16.0, *) {
+            content
+                .contentTransition(.numericText())
+        } else {
+            content
+        }
+    }
+}
 
-    public static let reactionButtonBorder = MailResourcesAsset.hoverMenuBackground.swiftUIColor
-    public static let reactionButtonBorderEnabled = Color.accentColor
+extension View {
+    func backportNumericContentTranstion() -> some View {
+        modifier(BackportNumericContentTranstion())
+    }
 }
 
 struct ReactionButton: View {
@@ -37,33 +46,16 @@ struct ReactionButton: View {
     let didTapButton: (String) -> Void
     let didLongPressButton: (String) -> Void
 
-    private var backgroundColor: Color {
-        return hasReacted ? .reactionButtonBackgroundEnabled : .reactionButtonBackground
-    }
-
-    private var borderColor: Color {
-        return hasReacted ? .reactionButtonBorderEnabled : .reactionButtonBorder
-    }
-
-    private var textStyle: MailTextStyle {
-        return hasReacted ? .bodyMediumAccent : .bodyMedium
-    }
-
     var body: some View {
         Button {} label: {
             HStack(spacing: IKPadding.micro) {
                 Text(verbatim: emoji)
                 Text(verbatim: "\(count)")
-            }
-            .textStyle(textStyle)
-            .padding(.horizontal, value: .small)
-            .padding(.vertical, value: .mini)
-            .background(backgroundColor, in: .capsule)
-            .overlay {
-                Capsule()
-                    .stroke(borderColor)
+                    .monospacedDigit()
+                    .backportNumericContentTranstion()
             }
         }
+        .buttonStyle(.reaction(isEnabled: hasReacted))
         .simultaneousGesture(
             TapGesture().onEnded { _ in didTapButton(emoji) }
         )
