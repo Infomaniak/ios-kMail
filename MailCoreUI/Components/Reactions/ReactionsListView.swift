@@ -45,14 +45,16 @@ public struct ReactionsListView: View {
     }
 
     public var body: some View {
-        BackportedFlowLayout(reactions, id: \.self, verticalSpacing: IKPadding.mini, horizontalSpacing: IKPadding.mini) { emoji in
-            ReactionButton(
-                emoji: emoji,
-                count: reactionsCountForEmoji(emoji),
-                hasReacted: isReactionEnabled(emoji),
-                didTapButton: didTapButton,
-                didLongPressButton: didLongPressButton
-            )
+        BackportedFlowLayout(verticalSpacing: IKPadding.mini, horizontalSpacing: IKPadding.mini) {
+            ForEach(reactions, id: \.self) { emoji in
+                ReactionButton(
+                    emoji: emoji,
+                    count: reactionsCountForEmoji(emoji),
+                    hasReacted: isReactionEnabled(emoji),
+                    didTapButton: didTapButton,
+                    didLongPressButton: didLongPressButton
+                )
+            }
         }
     }
 
