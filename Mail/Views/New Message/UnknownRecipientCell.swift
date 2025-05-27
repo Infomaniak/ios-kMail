@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import MailCore
 import MailCoreUI
 import MailResources
@@ -25,8 +26,8 @@ struct UnknownRecipientCell: View {
     let email: String
 
     var body: some View {
-        HStack(spacing: 8) {
-            UnknownRecipientView(size: 40)
+        HStack(spacing: IKPadding.mini) {
+            IconAvatarView(type: .unknownRecipient, size: 40)
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading) {

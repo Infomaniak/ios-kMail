@@ -22,14 +22,30 @@ import MailCore
 import MailResources
 import SwiftUI
 
-public struct UnknownRecipientView: View {
+public struct IconAvatarView: View {
+    public enum IconType {
+        case unknownRecipient
+        case groupRecipients
+
+        var icon: Image {
+            switch self {
+            case .unknownRecipient:
+                MailResourcesAsset.userBold.swiftUIImage
+            case .groupRecipients:
+                MailResourcesAsset.teamsUser.swiftUIImage
+            }
+        }
+    }
+
+    let type: IconType
     let size: CGFloat
 
     private var iconSize: CGFloat {
         return size - 2 * IKPadding.mini
     }
 
-    public init(size: CGFloat) {
+    public init(type: IconType, size: CGFloat) {
+        self.type = type
         self.size = size
     }
 
@@ -38,7 +54,7 @@ public struct UnknownRecipientView: View {
             .fill(Color.accentColor)
             .frame(width: size, height: size)
             .overlay {
-                MailResourcesAsset.userBold.swiftUIImage
+                type.icon
                     .resizable()
                     .foregroundStyle(MailResourcesAsset.backgroundColor)
                     .frame(width: iconSize, height: iconSize)
@@ -47,5 +63,8 @@ public struct UnknownRecipientView: View {
 }
 
 #Preview {
-    UnknownRecipientView(size: 40)
+    HStack {
+        IconAvatarView(type: .unknownRecipient, size: 40)
+        IconAvatarView(type: .groupRecipients, size: 40)
+    }
 }
