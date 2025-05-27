@@ -18,6 +18,7 @@
 
 import DesignSystem
 import MailCore
+import MailResources
 import RealmSwift
 import SwiftUI
 
@@ -27,21 +28,22 @@ public struct ReactionsListView: View {
     let reactionsCountForEmoji: (String) -> Int
     let isReactionEnabled: (String) -> Bool
 
-    let didTapButton: (String) -> Void
-    let didLongPressButton: (String) -> Void
+    let didTapReaction: (String) -> Void
+    let didLongPressReaction: (String) -> Void
 
     public init(
         reactions: [String],
         reactionsCountForEmoji: @escaping (String) -> Int,
         isReactionEnabled: @escaping (String) -> Bool,
-        didTapButton: @escaping (String) -> Void,
-        didLongPressButton: @escaping (String) -> Void
+        didTapReaction: @escaping (String) -> Void,
+        didLongPressReaction: @escaping (String) -> Void,
+        didTapAddReaction: @escaping () -> Void
     ) {
         self.reactions = reactions
         self.reactionsCountForEmoji = reactionsCountForEmoji
         self.isReactionEnabled = isReactionEnabled
-        self.didTapButton = didTapButton
-        self.didLongPressButton = didLongPressButton
+        self.didTapReaction = didTapReaction
+        self.didLongPressReaction = didLongPressReaction
     }
 
     public var body: some View {
@@ -51,13 +53,18 @@ public struct ReactionsListView: View {
                     emoji: emoji,
                     count: reactionsCountForEmoji(emoji),
                     isEnabled: isReactionEnabled(emoji),
-                    didTapButton: didTapButton,
-                    didLongPressButton: didLongPressButton
+                    didTapButton: didTapReaction,
+                    didLongPressButton: didLongPressReaction
                 )
             }
+
+            Button(action: {}) {
+                MailResourcesAsset.faceSlightlySmilingCirclePlusSvg.swiftUIImage
+                    .iconSize(.large)
+            }
+            .buttonStyle(.reaction(isEnabled: false, padding: EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)))
         }
     }
-
 }
 
 #Preview {
@@ -65,7 +72,7 @@ public struct ReactionsListView: View {
         reactions: ["😄", "😂"],
         reactionsCountForEmoji: { _ in 0 },
         isReactionEnabled: { _ in false },
-        didTapButton: { _ in },
-        didLongPressButton: { _ in }
+        didTapReaction: { _ in },
+        didLongPressReaction: { _ in }
     )
 }
