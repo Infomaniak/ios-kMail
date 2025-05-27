@@ -191,13 +191,14 @@ extension Action: CaseIterable {
         let starAction: Action = messages.contains { $0.flagged } ? .unstar : .star
         let reportDisplayProblemAction = getReportDisplayProblemAction(userIsStaff: userIsStaff, messagesType: messagesType)
 
-        let quickActions: [Action] = origin.type.isListed ? [.reply, .replyAll, .forward, .delete] : []
+        let quickActions: [Action] = !origin.type.isListed ? [.reply, .replyAll, .forward, .delete] : []
 
         var listActions: [Action?] = [origin.type == .floatingPanel(source: .contextMenu) ? .activeMultiSelect : nil] +
-            (origin.type != .floatingPanel(source: .messageDetails) ? snoozedActions(messages, folder: origin.frozenFolder) : []) +
+            (origin
+                .type != .floatingPanel(source: .messageDetails) ? snoozedActions(messages, folder: origin.frozenFolder) : []) +
             [openMovePanelAction, spamAction]
 
-        if origin.type.isListed {
+        if origin.type != .floatingPanel(source: .threadList) {
             listActions += [
                 unreadAction,
                 starAction,
