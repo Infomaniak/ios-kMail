@@ -25,6 +25,7 @@ struct MessageReactionsView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var localReactions = Set<String>()
+    @State private var isShowingEmojiPicker = false
 
     let reactions: MessageReactions
 
@@ -33,8 +34,8 @@ struct MessageReactionsView: View {
             reactions: reactions.keys,
             reactionsCountForEmoji: reactionsCount,
             isReactionEnabled: isReactionEnabled,
-            didTapButton: didTapReaction,
-            didLongPressButton: didLongPressReaction
+            didTapReaction: didTapReaction,
+            didLongPressReaction: didLongPressReaction
         )
         .padding(.top, value: .small)
         .padding([.horizontal, .bottom], value: .medium)
@@ -58,7 +59,6 @@ struct MessageReactionsView: View {
         withAnimation {
             localReactions.insert(reaction)
         }
-
     }
 
     private func didLongPressReaction(_ reaction: String) {
