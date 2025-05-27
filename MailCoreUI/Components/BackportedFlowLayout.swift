@@ -25,7 +25,7 @@ public struct BackportedFlowLayout<Content: View>: View {
     let horizontalSpacing: CGFloat
     @ViewBuilder let content: () -> Content
 
-    public init(verticalSpacing: CGFloat, horizontalSpacing: CGFloat, content: @escaping () -> Content) {
+    public init(verticalSpacing: CGFloat, horizontalSpacing: CGFloat, @ViewBuilder content: @escaping () -> Content) {
         self.verticalSpacing = verticalSpacing
         self.horizontalSpacing = horizontalSpacing
         self.content = content
