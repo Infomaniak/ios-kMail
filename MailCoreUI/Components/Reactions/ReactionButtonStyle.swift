@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import MailCore
 import MailResources
 import SwiftUI
@@ -29,12 +30,19 @@ public extension Color {
 }
 
 public extension ButtonStyle where Self == ReactionButtonStyle {
-    static func reaction(isEnabled: Bool) -> ReactionButtonStyle {
-        return ReactionButtonStyle(isEnabled: isEnabled)
+    static func reaction(isEnabled: Bool, padding: EdgeInsets? = nil) -> ReactionButtonStyle {
+        return ReactionButtonStyle(isEnabled: isEnabled, padding: padding)
     }
 }
 
 public struct ReactionButtonStyle: ButtonStyle {
+    private static let defaultPaddings: EdgeInsets = .init(
+        top: IKPadding.micro,
+        leading: IKPadding.small,
+        bottom: IKPadding.micro,
+        trailing: IKPadding.small
+    )
+
     private var backgroundColor: Color {
         return isEnabled ? .reactionButtonBackgroundEnabled : .reactionButtonBackground
     }
@@ -48,16 +56,22 @@ public struct ReactionButtonStyle: ButtonStyle {
     }
 
     let isEnabled: Bool
+    let padding: EdgeInsets
+
+    init(isEnabled: Bool, padding: EdgeInsets?) {
+        self.isEnabled = isEnabled
+        self.padding = padding ?? Self.defaultPaddings
+    }
 
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .textStyle(textStyle)
-            .padding(.horizontal, value: .small)
-            .padding(.vertical, value: .mini)
+            .padding(padding)
+            .frame(minHeight: 32)
             .background(backgroundColor, in: .capsule)
             .overlay {
                 Capsule()
-                    .stroke(borderColor)
+                    .strokeBorder(borderColor)
             }
             .opacity(configuration.isPressed ? 0.3 : 1)
     }
@@ -65,12 +79,12 @@ public struct ReactionButtonStyle: ButtonStyle {
 
 #Preview {
     HStack {
-        Button(action: {}) {
+        Button(action: { /* Empty */ }) {
             Text("😄 1")
         }
         .buttonStyle(.reaction(isEnabled: false))
 
-        Button(action: {}) {
+        Button(action: { /* Empty */ }) {
             Text("🗽 3")
         }
         .buttonStyle(.reaction(isEnabled: true))
