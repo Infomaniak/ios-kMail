@@ -194,7 +194,7 @@ extension Action: CaseIterable {
         let quickActions: [Action] = origin.type.isListed ? [.reply, .replyAll, .forward, .delete] : []
 
         var listActions: [Action?] = [origin.type == .floatingPanel(source: .contextMenu) ? .activeMultiSelect : nil] +
-            (origin.type.isListed ? snoozedActions(messages, folder: origin.frozenFolder) : []) +
+            (origin.type != .floatingPanel(source: .messageDetails) ? snoozedActions(messages, folder: origin.frozenFolder) : []) +
             [openMovePanelAction, spamAction]
 
         if origin.type.isListed {
