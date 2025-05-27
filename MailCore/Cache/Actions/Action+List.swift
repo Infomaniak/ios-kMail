@@ -137,6 +137,36 @@ extension Action: CaseIterable {
         return actionsForNormalMessages(messages, origin: origin, userIsStaff: userIsStaff, userEmail: userEmail)
     }
 
+    private static func getArchiveAction(
+        originType: ActionOrigin.ActionOriginType,
+        originFolderRole: FolderRole?,
+        messagesAreSnoozed: Bool
+    ) -> Action? {
+        guard originType != .floatingPanel(source: .messageList),
+              originType != .floatingPanel(source: .messageDetails),
+              originFolderRole != .spam,
+              !messagesAreSnoozed
+        else {
+            return nil
+        }
+        return originFolderRole != .archive ? .archive : .moveToInbox
+    }
+
+    private static func getSpamAction(originFolderRole: FolderRole?, messagesRecipients: [Recipient],
+                                      userEmail: String) -> Action? {
+        guard !messagesRecipients.allSatisfy({ $0.isMeOrPlusMe(currentMailboxEmail: userEmail) }) else {
+            return nil
+        }
+        return originFolderRole == .spam ? .nonSpam : .reportJunk
+    }
+
+    private static func getReportDisplayProblemAction(userIsStaff: Bool, messagesType: MessagesType) -> Action? {
+        guard userIsStaff, messagesType.isSingle else {
+            return nil
+        }
+        return .reportDisplayProblem
+    }
+
     private static func actionsForNormalMessages(_ messages: [Message],
                                                  origin: ActionOrigin,
                                                  userIsStaff: Bool,
@@ -147,34 +177,21 @@ extension Action: CaseIterable {
         let messagesType = MessagesType(messages, frozenFolder: origin.frozenFolder)
 
         let unreadAction: Action = messages.allSatisfy(\.seen) ? .markAsUnread : .markAsRead
-        var archiveAction: Action? {
-            guard origin.type != .floatingPanel(source: .messageList),
-                  origin.type != .floatingPanel(source: .messageDetails),
-                  origin.frozenFolder?.role != .spam,
-                  !messages.allSatisfy(\.isSnoozed)
-            else { return nil }
-            return origin.frozenFolder?.role != .archive ? .archive : .moveToInbox
-        }
+        let archiveAction = getArchiveAction(
+            originType: origin.type,
+            originFolderRole: origin.frozenFolder?.role,
+            messagesAreSnoozed: messages.allSatisfy(\.isSnoozed)
+        )
         let openMovePanelAction: Action? = messages.allSatisfy(\.isMovable) ? .openMovePanel : nil
-        var spamAction: Action? {
-            let selfThread = messages.flatMap(\.from).allSatisfy { $0.isMeOrPlusMe(currentMailboxEmail: userEmail) }
-            guard !selfThread else { return nil }
-            return origin.frozenFolder?.role == .spam ? .nonSpam : .reportJunk
-        }
-        var starAction: Action {
-            messages.contains { $0.flagged } ? .unstar : .star
-        }
-        var reportDisplayProblemAction: Action? {
-            guard userIsStaff, messagesType.isSingle else { return nil }
-            return .reportDisplayProblem
-        }
+        let spamAction = getSpamAction(
+            originFolderRole: origin.frozenFolder?.role,
+            messagesRecipients: messages.flatMap(\.from),
+            userEmail: userEmail
+        )
+        let starAction: Action = messages.contains { $0.flagged } ? .unstar : .star
+        let reportDisplayProblemAction = getReportDisplayProblemAction(userIsStaff: userIsStaff, messagesType: messagesType)
 
-        var quickActions: [Action] {
-            guard origin.type.isListed
-            else { return [] }
-
-            return [.reply, .replyAll, .forward, .delete]
-        }
+        let quickActions: [Action] = origin.type.isListed ? [.reply, .replyAll, .forward, .delete] : []
 
         var listActions: [Action?] = [origin.type == .floatingPanel(source: .contextMenu) ? .activeMultiSelect : nil] +
             (origin.type.isListed ? snoozedActions(messages, folder: origin.frozenFolder) : []) +
