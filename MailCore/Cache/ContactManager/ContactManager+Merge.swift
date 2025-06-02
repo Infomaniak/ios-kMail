@@ -108,6 +108,9 @@ extension ContactManager {
                     if remoteContact.avatar == nil {
                         remoteContactsById[id]?.avatar = contact.avatar
                     }
+                    if let contactGroupIds = contact.groupIds {
+                        remoteContactsById[id]?.groupIds?.formUnion(contactGroupIds)
+                    }
                 } else {
                     remoteContactsById[id] = contact
                 }

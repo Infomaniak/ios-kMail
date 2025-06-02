@@ -34,7 +34,7 @@ public struct InfomaniakContact: Codable, Identifiable {
     public var favorite: Bool?
     public var nickname: String?
     public var organization: String?
-    public var groupContactId: List<Int>?
+    public var groupIds: Set<Int>?
     public var contactedTimes: Int?
 
     enum CodingKeys: String, CodingKey {
@@ -51,7 +51,7 @@ public struct InfomaniakContact: Codable, Identifiable {
         case favorite
         case nickname
         case organization
-        case groupContactId = "categories"
+        case groupIds = "categories"
         case contactedTimes
     }
 
@@ -75,7 +75,10 @@ public struct InfomaniakContact: Codable, Identifiable {
         favorite = try values.decodeIfPresent(Bool.self, forKey: .favorite)
         nickname = try values.decodeIfPresent(String.self, forKey: .nickname)
         organization = try values.decodeIfPresent(String.self, forKey: .organization)
-        groupContactId = try values.decodeIfPresent(List<Int>.self, forKey: .groupContactId)
+        if let groupIds = try values.decodeIfPresent(List<Int>.self, forKey: .groupIds) {
+            self.groupIds = Set(groupIds)
+        }
+
         if let rawContactedTimes = try? values.decodeIfPresent([String: Int].self, forKey: .contactedTimes) {
             contactedTimes = rawContactedTimes.reduce(into: 0) { result, element in
                 result += element.value
