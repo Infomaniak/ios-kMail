@@ -341,7 +341,8 @@ let project = Project(name: "Mail",
                                       .external(name: "Shimmer"),
                                       .external(name: "SwiftUIBackports"),
                                       .external(name: "SwiftUIIntrospect-Static"),
-                                      .external(name: "WrappingHStack")
+                                      .external(name: "WrappingHStack"),
+                                      .external(name: "ElegantEmojiPicker")
                                   ],
                                   settings: .settings(base: Constants.baseSettings))
                       ],
