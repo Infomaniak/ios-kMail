@@ -49,7 +49,6 @@ public final class MergedContact: Object, Identifiable, Correspondent {
     @Persisted public var name: String
 
     /// Remote
-    @Persisted public var remoteColorHex: String?
     @Persisted public var remoteAvatarURL: String?
     @Persisted public var remoteIdentifier: String?
     @Persisted public var remoteAddressBookId: Int?
@@ -127,7 +126,6 @@ public final class MergedContact: Object, Identifiable, Correspondent {
         if let remoteName = contact.name {
             name = remoteName
         }
-        remoteColorHex = contact.color
         remoteAvatarURL = contact.avatar
         remoteIdentifier = contact.id
         remoteAddressBookId = contact.addressbookId
