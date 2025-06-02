@@ -4,7 +4,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Ambroise Decouttere
- * Exported at: Tue, 27 May 2025 10:07:44 +0200
+ * Exported at: Mon, 02 Jun 2025 13:47:30 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -794,10 +794,10 @@
 "encryptedStatePanelEnable" = "Votre message est protégé.";
 
 /* loco:683569e71158a95737058c73 */
-"encryptedStatePanelIncomplete" = "Le chiffrement n‘est pas pris en charge par %d utilisateur.";
+"encryptedStatePanelIncomplete" = "Le chiffrement n‘est pas pris en charge par %d utilisateur. Un mot de passe est requis pour finaliser l'envoi.";
 
 /* loco:68356a5c2f00d8eede0f4352 */
-"encryptedStatePanelIncomplete-plural" = "Le chiffrement n‘est pas pris en charge par %d utilisateurs.";
+"encryptedStatePanelIncomplete-plural" = "Le chiffrement n‘est pas pris en charge par %d utilisateurs. Un mot de passe est requis pour finaliser l'envoi.";
 
 /* loco:68356bbc13c86547d201b995 */
 "encryptedStatePanelStatePartialLabel" = "Partiel";
