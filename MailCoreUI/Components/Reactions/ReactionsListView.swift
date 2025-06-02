@@ -17,12 +17,17 @@
  */
 
 import DesignSystem
+import ElegantEmojiPicker
 import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
 
 public struct ReactionsListView: View {
+    @State private var isShowingEmojiPicker = false
+
+    @Binding var selectedEmoji: Emoji?
+
     let reactions: [String]
 
     let reactionsCountForEmoji: (String) -> Int
@@ -32,13 +37,15 @@ public struct ReactionsListView: View {
     let didLongPressReaction: (String) -> Void
 
     public init(
+        selectedEmoji: Binding<Emoji?>,
         reactions: [String],
         reactionsCountForEmoji: @escaping (String) -> Int,
         isReactionEnabled: @escaping (String) -> Bool,
         didTapReaction: @escaping (String) -> Void,
-        didLongPressReaction: @escaping (String) -> Void,
-        didTapAddReaction: @escaping () -> Void
+        didLongPressReaction: @escaping (String) -> Void
     ) {
+        _selectedEmoji = selectedEmoji
+        
         self.reactions = reactions
         self.reactionsCountForEmoji = reactionsCountForEmoji
         self.isReactionEnabled = isReactionEnabled
@@ -58,17 +65,21 @@ public struct ReactionsListView: View {
                 )
             }
 
-            Button(action: {}) {
+            Button {
+                isShowingEmojiPicker = true
+            } label: {
                 MailResourcesAsset.faceSlightlySmilingCirclePlusSvg.swiftUIImage
                     .iconSize(.large)
             }
             .buttonStyle(.reaction(isEnabled: false, padding: EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)))
+            .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $selectedEmoji)
         }
     }
 }
 
 #Preview {
     ReactionsListView(
+        selectedEmoji: .constant(nil),
         reactions: ["😄", "😂"],
         reactionsCountForEmoji: { _ in 0 },
         isReactionEnabled: { _ in false },
