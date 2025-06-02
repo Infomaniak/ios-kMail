@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "df97b17e5a4f0117b53ea76c847831745e0d862c",
-        "version" : "15.3.0"
+        "revision" : "66723e3466299f0c82d897c551b2974b07e10a2c",
+        "version" : "15.3.1"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "23ca340bedafa8505c9e20ab0fbf2a11df890319",
-        "version" : "18.8.0"
+        "revision" : "fa3afba599b9907b32809767061b83332b237f85",
+        "version" : "18.9.0"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-onboarding",
       "state" : {
-        "revision" : "aeec72fba628a17e868e8fcecea6134c35a0ebf2",
-        "version" : "1.2.2"
+        "revision" : "4852806cba8001d56ded1d305f6427851ec74a48",
+        "version" : "1.2.4"
       }
     },
     {
@@ -131,8 +131,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/airbnb/lottie-spm.git",
       "state" : {
-        "revision" : "8c6edf4f0fa84fe9c058600a4295eb0c01661c69",
-        "version" : "4.5.1"
+        "revision" : "04f2fd18cc9404a0a0917265a449002674f24ec9",
+        "version" : "4.5.2"
       }
     },
     {
@@ -203,8 +203,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "11aee2d3efdd74db8ce51533118500d140210292",
-        "version" : "8.51.0"
+        "revision" : "65b3d2a7608685e8d4a37c68fa2c64f28d0b537e",
+        "version" : "8.51.1"
       }
     },
     {
