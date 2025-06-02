@@ -131,7 +131,8 @@ public final class MergedContact: Object, Identifiable, Correspondent {
         remoteAvatarURL = contact.avatar
         remoteIdentifier = contact.id
         remoteAddressBookId = contact.addressbookId
-        remoteGroupContactId = contact.groupContactId ?? List<Int>()
+        remoteGroupContactId = List<Int>()
+        remoteGroupContactId.append(objectsIn: contact.groupIds ?? [])
         remoteContactedTimes = contact.contactedTimes
         remoteOther = contact.other
     }
