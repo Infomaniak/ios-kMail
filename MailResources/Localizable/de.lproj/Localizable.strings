@@ -4,7 +4,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Ambroise Decouttere
- * Exported at: Mon, 26 May 2025 13:34:42 +0200
+ * Exported at: Tue, 27 May 2025 10:07:44 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -746,7 +746,7 @@
 "encryptMessageRecipientsDescription" = "Die Nachricht wird für alle Ihre Empfänger verschlüsselt.";
 
 /* loco:682dc013a6784026ab0f1493 */
-"encryptedMessageAddPasswordButton" = "Mit Passwort schützen";
+"encryptedMessageAddPasswordButton" = "Mit einem Passwort schützen";
 
 /* loco:682db47edea6856827005263 */
 "encryptedMessageAddPasswordDescription1" = "Die automatische Verschlüsselung ist für die folgenden Empfänger nicht verfügbar:";
@@ -775,6 +775,9 @@
 /* loco:682d92f160a12e1b880ca163 */
 "encryptedMessageTitle" = "Diese Nachricht wurde verschlüsselt.";
 
+/* loco:6835723d74a32502720135c2 */
+"encryptedMessageUpdatePasswordButton" = "Passwort ändern";
+
 /* loco:68340a44f3083453f501d6e2 */
 "encryptedProtectionAdDescription" = "Schützen Sie Ihre Nachricht mit der Infomaniak-Verschlüsselung vor unbefugtem Zugriff.";
 
@@ -786,6 +789,21 @@
 
 /* loco:682d9e1bb014002f5400a212 */
 "encryptedProtectionAdTitle" = "Verschlüsseln Sie Ihre vertraulichen Nachrichten";
+
+/* loco:683569c055f8f2843602af12 */
+"encryptedStatePanelEnable" = "Ihre Nachricht ist geschützt.";
+
+/* loco:683569e71158a95737058c73 */
+"encryptedStatePanelIncomplete" = "Die Verschlüsselung wird von %d Benutzer nicht unterstützt.";
+
+/* loco:68356a5c2f00d8eede0f4352 */
+"encryptedStatePanelIncomplete-plural" = "Die Verschlüsselung wird von %d Benutzern nicht unterstützt.";
+
+/* loco:68356bbc13c86547d201b995 */
+"encryptedStatePanelStatePartialLabel" = "Teilweise";
+
+/* loco:68356b25c1fd44c3770940c2 */
+"encryptedStatePanelTitle" = "Verschlüsselung";
 
 /* loco:64a2b619946ed6ede60a85e2 */
 "enterPasswordDescription1" = "Ihr Passwort wurde geändert. Wenn es nicht von Ihnen stammt, wenden Sie sich bitte an Ihren Administrator.";
