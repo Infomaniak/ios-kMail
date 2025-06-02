@@ -28,6 +28,14 @@
       }
     },
     {
+      "identity" : "elegant-emoji-picker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/Elegant-Emoji-Picker",
+      "state" : {
+        "revision" : "cf211e283de75296dfc63b5b814da8baf87e823d"
+      }
+    },
+    {
       "identity" : "ios-bug-tracker",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-bug-tracker",

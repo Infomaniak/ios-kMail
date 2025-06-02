@@ -16,22 +16,25 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import ElegantEmojiPicker
 import MailCore
 import MailCoreUI
+import OrderedCollections
 import RealmSwift
 import SwiftUI
 
 struct MessageReactionsView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var localReactions = Set<String>()
-    @State private var isShowingEmojiPicker = false
+    @State private var localReactions = OrderedSet<String>()
+    @State private var selectedEmoji: Emoji?
 
     let reactions: MessageReactions
 
     var body: some View {
         ReactionsListView(
-            reactions: reactions.keys,
+            selectedEmoji: $selectedEmoji,
+            reactions: Array(localReactions),
             reactionsCountForEmoji: reactionsCount,
             isReactionEnabled: isReactionEnabled,
             didTapReaction: didTapReaction,
@@ -39,6 +42,15 @@ struct MessageReactionsView: View {
         )
         .padding(.top, value: .small)
         .padding([.horizontal, .bottom], value: .medium)
+        .onAppear {
+            localReactions.formUnion(reactions.keys)
+        }
+        .onChange(of: selectedEmoji) { newValue in
+            guard let newValue else { return }
+            didTapReaction(newValue.emoji)
+
+            selectedEmoji = nil
+        }
     }
 
     private func reactionsCount(for reaction: String) -> Int {
@@ -57,7 +69,7 @@ struct MessageReactionsView: View {
     private func didTapReaction(_ reaction: String) {
         // TODO: Handle in next PR
         withAnimation {
-            localReactions.insert(reaction)
+            localReactions.append(reaction)
         }
     }
 
