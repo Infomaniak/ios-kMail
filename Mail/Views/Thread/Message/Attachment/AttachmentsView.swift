@@ -65,7 +65,6 @@ struct AttachmentsView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: IKPadding.mini) {
                     ForEach(attachments) { attachment in
-
                         Button {
                             openAttachment(attachment)
                         } label: {
@@ -78,7 +77,6 @@ struct AttachmentsView: View {
                     }
                     if let swissTransferAttachment = message.swissTransferAttachment {
                         ForEach(swissTransferAttachment.files) { file in
-
                             Button {
                                 downloadSwissTransferAttachment(stUuid: swissTransferAttachment.uuid, fileUuid: file.uuid)
                             } label: {
