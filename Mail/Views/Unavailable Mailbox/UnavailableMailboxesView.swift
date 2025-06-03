@@ -26,12 +26,12 @@ import MailResources
 import SwiftUI
 
 struct UnavailableMailboxesView: View {
-    @LazyInjectService private var orientationManager: OrientationManageable
-    @LazyInjectService private var matomo: MatomoUtils
+    @InjectService private var matomo: MatomoUtils
+    @InjectService private var accountManager: AccountManager
 
     @Environment(\.openURL) private var openURL
 
-    @State private var isShowingNewAccountView = false
+    @State private var isShowingAccountListView = false
     @State private var isShowingAddMailboxView = false
 
     var body: some View {
@@ -75,20 +75,17 @@ struct UnavailableMailboxesView: View {
                             }
                     )
 
-                    NavigationLink {
-                        // We cannot provide a mailbox manager here
-                        AccountListView(mailboxManager: nil)
-                    } label: {
-                        Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
-                            .textStyle(.bodyMediumAccent)
+                    Button(MailResourcesStrings.Localizable.buttonAccountSwitch) {
+                        isShowingAccountListView = true
+                        matomo.track(eventWithCategory: .noValidMailboxes, name: "switchAccount")
                     }
                     .buttonStyle(.ikBorderless)
-                    .simultaneousGesture(
-                        TapGesture()
-                            .onEnded {
-                                matomo.track(eventWithCategory: .noValidMailboxes, name: "switchAccount")
-                            }
-                    )
+                    .floatingPanel(
+                        isPresented: $isShowingAccountListView,
+                        title: MailResourcesStrings.Localizable.titleMyAccount(accountManager.accounts.count)
+                    ) {
+                        AccountListView(mailboxManager: nil)
+                    }
                 }
                 .controlSize(.large)
                 .ikButtonFullWidth(true)
@@ -98,11 +95,6 @@ struct UnavailableMailboxesView: View {
             .matomoView(view: ["UnavailableMailboxesView"])
         }
         .navigationViewStyle(.stack)
-        .fullScreenCover(isPresented: $isShowingNewAccountView) {
-            orientationManager.setOrientationLock(.all)
-        } content: {
-            SingleOnboardingView()
-        }
     }
 
     private func openFAQ() {
