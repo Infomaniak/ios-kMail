@@ -17,9 +17,11 @@
  */
 
 import DesignSystem
+import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
+import InfomaniakLogin
 import MailCore
 import MailCoreUI
 import MailResources
@@ -31,8 +33,11 @@ struct UnavailableMailboxesView: View {
 
     @Environment(\.openURL) private var openURL
 
-    @State private var isShowingAccountListView = false
+    @State private var presentedSwitchAccountUser: UserProfile?
     @State private var isShowingAddMailboxView = false
+    @State private var currentUser: UserProfile?
+
+    let currentAccount: ApiToken
 
     var body: some View {
         NavigationView {
@@ -75,16 +80,20 @@ struct UnavailableMailboxesView: View {
                             }
                     )
 
-                    Button(MailResourcesStrings.Localizable.buttonAccountSwitch) {
-                        isShowingAccountListView = true
-                        matomo.track(eventWithCategory: .noValidMailboxes, name: "switchAccount")
-                    }
-                    .buttonStyle(.ikBorderless)
-                    .floatingPanel(
-                        isPresented: $isShowingAccountListView,
-                        title: MailResourcesStrings.Localizable.titleMyAccount(accountManager.accounts.count)
-                    ) {
-                        AccountListView(mailboxManager: nil)
+                    if let currentUser {
+                        Button(MailResourcesStrings.Localizable.buttonAccountSwitch) {
+                            presentedSwitchAccountUser = currentUser
+                            matomo.track(eventWithCategory: .noValidMailboxes, name: "switchAccount")
+                        }
+                        .buttonStyle(.ikBorderless)
+                    } else {
+                        Button(MailResourcesStrings.Localizable.buttonAccountLogOut) {
+                            accountManager.removeAccountFor(userId: currentAccount.userId)
+                        }
+                        .buttonStyle(.ikBorderless)
+                        .task {
+                            currentUser = await accountManager.userProfileStore.getUserProfile(id: currentAccount.userId)
+                        }
                     }
                 }
                 .controlSize(.large)
@@ -95,6 +104,13 @@ struct UnavailableMailboxesView: View {
             .matomoView(view: ["UnavailableMailboxesView"])
         }
         .navigationViewStyle(.stack)
+        .floatingPanel(
+            item: $presentedSwitchAccountUser,
+            title: MailResourcesStrings.Localizable.titleMyAccount(accountManager.accounts.count)
+        ) { currentUser in
+            AccountListView(mailboxManager: nil)
+                .environment(\.currentUser, MandatoryEnvironmentContainer(value: currentUser))
+        }
     }
 
     private func openFAQ() {
@@ -104,5 +120,5 @@ struct UnavailableMailboxesView: View {
 }
 
 #Preview {
-    UnavailableMailboxesView()
+    UnavailableMailboxesView(currentAccount: PreviewHelper.sampleMailboxManager.apiFetcher.currentToken!)
 }

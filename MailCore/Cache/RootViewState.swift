@@ -37,8 +37,8 @@ public enum RootViewType: Equatable {
             return true
         case (.noMailboxes, .noMailboxes):
             return true
-        case (.unavailableMailboxes, .unavailableMailboxes):
-            return true
+        case (.unavailableMailboxes(let lhsAccount), .unavailableMailboxes(let rhsAccount)):
+            return lhsAccount.accessToken == rhsAccount.accessToken
         case (.updateRequired, .updateRequired):
             return true
         case (.mainView(let lhsUser, let lhsMainViewState), .mainView(let rhsUser, let rhsMainViewState)):
@@ -55,7 +55,7 @@ public enum RootViewType: Equatable {
     case onboarding
     case authorization
     case noMailboxes
-    case unavailableMailboxes
+    case unavailableMailboxes(ApiToken)
     case updateRequired
     case preloading
 }
@@ -122,7 +122,7 @@ public class RootViewState: ObservableObject {
             let mailboxes = mailboxInfosManager.getMailboxes(for: currentAccount.userId)
 
             if !mailboxes.isEmpty && mailboxes.allSatisfy({ !$0.isAvailable }) {
-                transitionToRootViewState(.unavailableMailboxes)
+                transitionToRootViewState(.unavailableMailboxes(currentAccount))
             } else {
                 transitionToRootViewState(.preloading)
             }

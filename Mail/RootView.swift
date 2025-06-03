@@ -39,8 +39,8 @@ struct RootView: View {
                 AuthorizationView()
             case .noMailboxes:
                 NoMailboxView()
-            case .unavailableMailboxes:
-                UnavailableMailboxesView()
+            case .unavailableMailboxes(let currentAccount):
+                UnavailableMailboxesView(currentAccount: currentAccount)
             case .updateRequired:
                 MailUpdateRequiredView()
             case .preloading:
