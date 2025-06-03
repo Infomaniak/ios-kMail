@@ -22,7 +22,7 @@ import MailCore
 import SwiftModalPresentation
 import SwiftUI
 
-struct ActionButtonList: View {
+struct ActionButtonForEach: View {
     @EnvironmentObject private var actionsManager: ActionsManager
 
     let actions: [Action]
