@@ -240,7 +240,7 @@ public extension Endpoint {
         return .resource(draftAction)
     }
 
-    static func autoUncrypt(for recipients: [String]) -> Endpoint {
+    static func mailHosted(for recipients: [String]) -> Endpoint {
         var queryItems = [URLQueryItem]()
         for recipient in recipients {
             queryItems.append(URLQueryItem(name: "mailboxes[]", value: recipient))
