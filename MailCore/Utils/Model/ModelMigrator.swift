@@ -57,7 +57,7 @@ public struct ModelMigrator {
             try? currentMailboxManager.writeTransaction { _ in }
         }
 
-        if let contactManager = accountManager.currentContactManager {
+        if let contactManager = accountManager.currentMailboxManager?.contactManager {
             // Force migration by performing a transaction
             _ = try? contactManager.writeTransaction { _ in }
         }

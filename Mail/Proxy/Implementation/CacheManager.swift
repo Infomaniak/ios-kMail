@@ -57,7 +57,11 @@ public actor CacheManager: CacheManageable {
             guard CNContactStore.authorizationStatus(for: .contacts) != .notDetermined else {
                 return
             }
-            try await accountManager.currentContactManager?.refreshContactsAndAddressBooksIfNeeded()
+
+            let apiFetcher = accountManager.getApiFetcher(for: account.userId, token: account)
+            let contactManager = accountManager.getContactManager(for: userId, apiFetcher: apiFetcher)
+
+            try await contactManager.refreshContactsAndAddressBooksIfNeeded()
         } catch {
             Logger.general.error("Error while updating user account: \(error)")
         }
