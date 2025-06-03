@@ -175,12 +175,9 @@ struct ComposeMessageView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 if featureFlagsManager.isEnabled(.mailComposeEncrypted) {
-                    Button {
+                    EncryptionButtonView(draft: draft) {
                         didTouchEncrypt()
-                    } label: {
-                        MailResourcesAsset.lockSquare.swiftUIImage
                     }
-                    .foregroundColor(draft.encrypted ? Color.accentColor : MailResourcesAsset.textSecondaryColor.swiftUIColor)
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
