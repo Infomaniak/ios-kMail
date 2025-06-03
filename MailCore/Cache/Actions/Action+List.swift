@@ -167,6 +167,15 @@ extension Action: CaseIterable {
         return .reportDisplayProblem
     }
 
+    private static func getBottomBarActions(messagesType: MessagesType, unreadAction: Action?, archiveAction: Action?, starAction: Action?) -> [Action?] {
+        switch messagesType {
+        case .single, .multipleInSameThread:
+            [.reply, .forward, archiveAction, .delete]
+        case .multipleInDifferentThreads:
+            [unreadAction, archiveAction, starAction, .delete]
+        }
+    }
+
     private static func actionsForNormalMessages(_ messages: [Message],
                                                  origin: ActionOrigin,
                                                  userIsStaff: Bool,
@@ -210,14 +219,7 @@ extension Action: CaseIterable {
             ]
         }
 
-        var bottomBarActions: [Action?] {
-            switch messagesType {
-            case .single, .multipleInSameThread:
-                [.reply, .forward, archiveAction, .delete]
-            case .multipleInDifferentThreads:
-                [unreadAction, archiveAction, starAction, .delete]
-            }
-        }
+        var bottomBarActions = getBottomBarActions(messagesType: messagesType, unreadAction: unreadAction, archiveAction: archiveAction, starAction: starAction)
 
         return Action.Lists(
             quickActions: quickActions,
