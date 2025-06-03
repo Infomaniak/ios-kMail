@@ -29,6 +29,8 @@ struct DetachMailboxConfirmationView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var accountManager: AccountManager
 
+    @Environment(\.currentUser) private var currentUser
+
     @EnvironmentObject private var navigationState: RootViewState
 
     let mailbox: Mailbox
@@ -63,7 +65,7 @@ struct DetachMailboxConfirmationView: View {
     private func detach() async {
         matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailboxConfirm")
         await tryOrDisplayError {
-            try await accountManager.detachMailbox(mailbox: mailbox)
+            try await accountManager.detachMailbox(for: currentUser.value.id, mailbox: mailbox)
             await navigationState.transitionToMainViewIfPossible(targetAccount: nil, targetMailbox: nil)
         }
     }
@@ -71,4 +73,5 @@ struct DetachMailboxConfirmationView: View {
 
 #Preview {
     DetachMailboxConfirmationView(mailbox: PreviewHelper.sampleMailbox)
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

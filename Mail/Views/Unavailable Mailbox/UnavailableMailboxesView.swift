@@ -37,7 +37,7 @@ struct UnavailableMailboxesView: View {
     @State private var isShowingAddMailboxView = false
     @State private var currentUser: UserProfile?
 
-    let currentAccount: ApiToken
+    let currentUserId: Int
 
     var body: some View {
         NavigationView {
@@ -59,26 +59,29 @@ struct UnavailableMailboxesView: View {
                             buttonTitle: MailResourcesStrings.Localizable.readFAQ
                         )
 
-                        UnavailableMailboxListView(currentUserId: currentAccount.userId)
+                        if let currentUser {
+                            UnavailableMailboxListView(currentUserId: currentUser.id)
+                                .environment(\.currentUser, MandatoryEnvironmentContainer(value: currentUser))
+                        }
                     }
                 }
                 .safeAreaInset(edge: .bottom) {
                     VStack(spacing: IKPadding.mini) {
-                        NavigationLink(isActive: $isShowingAddMailboxView) {
-                            AddMailboxView()
-                        } label: {
-                            Text(MailResourcesStrings.Localizable.buttonAddEmailAddress)
-                        }
-                        .buttonStyle(.ikBorderedProminent)
-                        .simultaneousGesture(
-                            TapGesture()
-                                .onEnded {
-                                    matomo.track(eventWithCategory: .noValidMailboxes, name: "addMailbox")
-                                    isShowingAddMailboxView = true
-                                }
-                        )
-
                         if let currentUser {
+                            NavigationLink(isActive: $isShowingAddMailboxView) {
+                                AddMailboxView()
+                            } label: {
+                                Text(MailResourcesStrings.Localizable.buttonAddEmailAddress)
+                            }
+                            .buttonStyle(.ikBorderedProminent)
+                            .simultaneousGesture(
+                                TapGesture()
+                                    .onEnded {
+                                        matomo.track(eventWithCategory: .noValidMailboxes, name: "addMailbox")
+                                        isShowingAddMailboxView = true
+                                    }
+                            )
+
                             Button(MailResourcesStrings.Localizable.buttonAccountSwitch) {
                                 presentedSwitchAccountUser = currentUser
                                 matomo.track(eventWithCategory: .noValidMailboxes, name: "switchAccount")
@@ -86,11 +89,11 @@ struct UnavailableMailboxesView: View {
                             .buttonStyle(.ikBorderless)
                         } else {
                             Button(MailResourcesStrings.Localizable.buttonAccountLogOut) {
-                                accountManager.removeAccountFor(userId: currentAccount.userId)
+                                accountManager.removeAccountFor(userId: currentUserId)
                             }
                             .buttonStyle(.ikBorderless)
                             .task {
-                                currentUser = await accountManager.userProfileStore.getUserProfile(id: currentAccount.userId)
+                                currentUser = await accountManager.userProfileStore.getUserProfile(id: currentUserId)
                             }
                         }
                     }
@@ -119,5 +122,5 @@ struct UnavailableMailboxesView: View {
 }
 
 #Preview {
-    UnavailableMailboxesView(currentAccount: PreviewHelper.sampleMailboxManager.apiFetcher.currentToken!)
+    UnavailableMailboxesView(currentUserId: 0)
 }

@@ -40,7 +40,7 @@ struct RootView: View {
             case .noMailboxes:
                 NoMailboxView()
             case .unavailableMailboxes(let currentAccount):
-                UnavailableMailboxesView(currentAccount: currentAccount)
+                UnavailableMailboxesView(currentUserId: currentAccount.userId)
             case .updateRequired:
                 MailUpdateRequiredView()
             case .preloading:

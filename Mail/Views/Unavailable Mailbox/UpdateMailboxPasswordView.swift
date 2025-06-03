@@ -31,6 +31,8 @@ struct UpdateMailboxPasswordView: View {
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
+    @Environment(\.currentUser) private var currentUser
+
     @EnvironmentObject private var navigationState: RootViewState
 
     @State private var updatedMailboxPassword = ""
@@ -142,7 +144,9 @@ struct UpdateMailboxPasswordView: View {
         Task {
             isLoading = true
             do {
-                try await accountManager.updateMailboxPassword(mailbox: mailbox, password: updatedMailboxPassword)
+                try await accountManager.updateMailboxPassword(for: currentUser.value.id,
+                                                               mailbox: mailbox,
+                                                               password: updatedMailboxPassword)
                 await navigationState.transitionToMainViewIfPossible(targetAccount: nil, targetMailbox: mailbox)
             } catch let error as MailApiError where error == .apiInvalidPassword {
                 withAnimation {
@@ -162,7 +166,7 @@ struct UpdateMailboxPasswordView: View {
     func askMailboxPassword() {
         Task {
             await tryOrDisplayError {
-                try await accountManager.askMailboxPassword(mailbox: mailbox)
+                try await accountManager.askMailboxPassword(for: currentUser.value.id, mailbox: mailbox)
                 snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarMailboxPasswordRequested)
             }
         }
@@ -171,4 +175,5 @@ struct UpdateMailboxPasswordView: View {
 
 #Preview {
     UpdateMailboxPasswordView(mailbox: PreviewHelper.sampleMailbox)
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }
