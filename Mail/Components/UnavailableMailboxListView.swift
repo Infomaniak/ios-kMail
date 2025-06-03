@@ -25,25 +25,29 @@ import RealmSwift
 import SwiftUI
 
 struct UnavailableMailboxListView: View {
-    @ObservedResults(
-        Mailbox.self,
-        configuration: {
-            @InjectService var mailboxInfosManager: MailboxInfosManager
-            return mailboxInfosManager.realmConfiguration
-        }(),
-        where: filterPasswordBlockedMailboxes,
-        sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
-    ) private var passwordBlockedMailboxes
+    @ObservedResults var passwordBlockedMailboxes: Results<Mailbox>
+    @ObservedResults var lockedMailboxes: Results<Mailbox>
 
-    @ObservedResults(
-        Mailbox.self,
-        configuration: {
-            @InjectService var mailboxInfosManager: MailboxInfosManager
-            return mailboxInfosManager.realmConfiguration
-        }(),
-        where: filterLockedMailboxes,
-        sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
-    ) private var lockedMailboxes
+    init(currentUserId: Int) {
+        _passwordBlockedMailboxes = ObservedResults(
+            Mailbox.self,
+            configuration: {
+                @InjectService var mailboxInfosManager: MailboxInfosManager
+                return mailboxInfosManager.realmConfiguration
+            }(),
+            where: { UnavailableMailboxListView.filterPasswordBlockedMailboxes($0, for: currentUserId) },
+            sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
+        )
+        _lockedMailboxes = ObservedResults(
+            Mailbox.self,
+            configuration: {
+                @InjectService var mailboxInfosManager: MailboxInfosManager
+                return mailboxInfosManager.realmConfiguration
+            }(),
+            where: { UnavailableMailboxListView.filterLockedMailboxes($0, for: currentUserId) },
+            sortDescriptor: SortDescriptor(keyPath: \Mailbox.mailboxId)
+        )
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.huge) {
@@ -72,17 +76,18 @@ struct UnavailableMailboxListView: View {
         .padding(.top, IKPadding.large)
     }
 
-    private static func filterPasswordBlockedMailboxes(_ mailbox: Query<Mailbox>) -> Query<Bool> {
-        return isCurrentUserMailbox(mailbox) && mailbox.isPasswordValid == false && !isMailboxConsideredLocked(mailbox)
+    private static func filterPasswordBlockedMailboxes(_ mailbox: Query<Mailbox>, for currentUserId: Int) -> Query<Bool> {
+        return isCurrentUserMailbox(mailbox, for: currentUserId)
+            && mailbox.isPasswordValid == false
+            && !isMailboxConsideredLocked(mailbox)
     }
 
-    private static func filterLockedMailboxes(_ mailbox: Query<Mailbox>) -> Query<Bool> {
-        return isCurrentUserMailbox(mailbox) && isMailboxConsideredLocked(mailbox)
+    private static func filterLockedMailboxes(_ mailbox: Query<Mailbox>, for currentUserId: Int) -> Query<Bool> {
+        return isCurrentUserMailbox(mailbox, for: currentUserId) && isMailboxConsideredLocked(mailbox)
     }
 
-    private static func isCurrentUserMailbox(_ mailbox: Query<Mailbox>) -> Query<Bool> {
-        @InjectService var accountManager: AccountManager
-        return mailbox.userId == accountManager.currentUserId
+    private static func isCurrentUserMailbox(_ mailbox: Query<Mailbox>, for currentUserId: Int) -> Query<Bool> {
+        return mailbox.userId == currentUserId
     }
 
     private static func isMailboxConsideredLocked(_ mailbox: Query<Mailbox>) -> Query<Bool> {
@@ -91,5 +96,5 @@ struct UnavailableMailboxListView: View {
 }
 
 #Preview {
-    UnavailableMailboxListView()
+    UnavailableMailboxListView(currentUserId: 0)
 }

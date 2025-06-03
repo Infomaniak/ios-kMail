@@ -30,6 +30,8 @@ struct AccountListView: View {
     @LazyInjectService private var orientationManager: OrientationManageable
     @InjectService private var accountManager: AccountManager
 
+    @Environment(\.currentUser) private var currentUser
+
     @State private var isShowingNewAccountView = false
     @State private var users: [UserProfile]?
 
@@ -42,7 +44,7 @@ struct AccountListView: View {
                 if let users {
                     ForEach(users) { user in
                         AccountCellView(
-                            selectedUserId: .constant(accountManager.currentUserId),
+                            selectedUserId: .constant(currentUser.value.id),
                             mailboxManager: mailboxManager,
                             user: user
                         )

@@ -16,14 +16,18 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
+import MailCoreUI
 import MailResources
 import SwiftUI
 
 struct AddMailboxView: View {
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
+    @Environment(\.currentUser) private var currentUser
 
     @State private var newAddress = ""
     @State private var password = ""
@@ -123,7 +127,7 @@ struct AddMailboxView: View {
         Task {
             do {
                 isButtonLoading = true
-                try await accountManager.addMailbox(mail: newAddress, password: password)
+                try await accountManager.addMailbox(for: currentUser.value.id, mail: newAddress, password: password)
                 isButtonLoading = false
             } catch let error as MailApiError where error == .apiInvalidCredential {
                 withAnimation {
@@ -144,4 +148,5 @@ struct AddMailboxView: View {
 
 #Preview {
     AddMailboxView()
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

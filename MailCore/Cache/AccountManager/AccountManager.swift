@@ -83,10 +83,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         currentMailboxManager?.contactManager
     }
 
-    public var currentApiFetcher: MailApiFetcher? {
-        return apiFetchers[currentUserId]
-    }
-
     public var accounts: [ApiToken] {
         return Array(tokenStore.getAllTokens().values)
     }
@@ -356,10 +352,12 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
-    public func addMailbox(mail: String, password: String) async throws {
-        guard let apiFetcher = currentApiFetcher else {
+    public func addMailbox(for userId: Int, mail: String, password: String) async throws {
+        guard let token = tokenStore.tokenFor(userId: userId) else {
             return
         }
+
+        let apiFetcher = getApiFetcher(for: userId, token: token)
 
         try await apiFetcher.addMailbox(mail: mail, password: password)
         try await updateUser(for: currentAccount)
@@ -373,26 +371,34 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         switchMailbox(newMailbox: addedMailbox)
     }
 
-    public func updateMailboxPassword(mailbox: Mailbox, password: String) async throws {
-        guard let apiFetcher = currentApiFetcher else {
+    public func updateMailboxPassword(for userId: Int, mailbox: Mailbox, password: String) async throws {
+        guard let token = tokenStore.tokenFor(userId: userId) else {
             return
         }
+
+        let apiFetcher = getApiFetcher(for: userId, token: token)
 
         try await apiFetcher.updateMailboxPassword(mailbox: mailbox, password: password)
         try await updateUser(for: currentAccount)
     }
 
-    public func askMailboxPassword(mailbox: Mailbox) async throws {
-        guard let apiFetcher = currentApiFetcher else {
+    public func askMailboxPassword(for userId: Int, mailbox: Mailbox) async throws {
+        guard let token = tokenStore.tokenFor(userId: userId) else {
             return
         }
+
+        let apiFetcher = getApiFetcher(for: userId, token: token)
+
         try await apiFetcher.askMailboxPassword(mailbox: mailbox)
     }
 
-    public func detachMailbox(mailbox: Mailbox) async throws {
-        guard let apiFetcher = currentApiFetcher else {
+    public func detachMailbox(for userId: Int, mailbox: Mailbox) async throws {
+        guard let token = tokenStore.tokenFor(userId: userId) else {
             return
         }
+
+        let apiFetcher = getApiFetcher(for: userId, token: token)
+
         _ = try await apiFetcher.detachMailbox(mailbox: mailbox)
         try await updateUser(for: currentAccount)
     }

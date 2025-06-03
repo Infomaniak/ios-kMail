@@ -17,22 +17,27 @@
  */
 
 import DesignSystem
+import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
+import InfomaniakLogin
 import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
 
 struct UnavailableMailboxesView: View {
-    @LazyInjectService private var orientationManager: OrientationManageable
-    @LazyInjectService private var matomo: MatomoUtils
+    @InjectService private var matomo: MatomoUtils
+    @InjectService private var accountManager: AccountManager
 
     @Environment(\.openURL) private var openURL
 
-    @State private var isShowingNewAccountView = false
+    @State private var presentedSwitchAccountUser: UserProfile?
     @State private var isShowingAddMailboxView = false
+    @State private var currentUser: UserProfile?
+
+    let currentUserId: Int
 
     var body: some View {
         NavigationView {
@@ -54,54 +59,59 @@ struct UnavailableMailboxesView: View {
                             buttonTitle: MailResourcesStrings.Localizable.readFAQ
                         )
 
-                        UnavailableMailboxListView()
+                        if let currentUser {
+                            UnavailableMailboxListView(currentUserId: currentUser.id)
+                                .environment(\.currentUser, MandatoryEnvironmentContainer(value: currentUser))
+                        }
                     }
                 }
-
-                Spacer()
-
-                VStack(spacing: IKPadding.mini) {
-                    NavigationLink(isActive: $isShowingAddMailboxView) {
-                        AddMailboxView()
-                    } label: {
-                        Text(MailResourcesStrings.Localizable.buttonAddEmailAddress)
-                    }
-                    .buttonStyle(.ikBorderedProminent)
-                    .simultaneousGesture(
-                        TapGesture()
-                            .onEnded {
-                                matomo.track(eventWithCategory: .noValidMailboxes, name: "addMailbox")
-                                isShowingAddMailboxView = true
+                .safeAreaInset(edge: .bottom) {
+                    VStack(spacing: IKPadding.mini) {
+                        if let currentUser {
+                            NavigationLink(isActive: $isShowingAddMailboxView) {
+                                AddMailboxView()
+                            } label: {
+                                Text(MailResourcesStrings.Localizable.buttonAddEmailAddress)
                             }
-                    )
+                            .buttonStyle(.ikBorderedProminent)
+                            .simultaneousGesture(
+                                TapGesture()
+                                    .onEnded {
+                                        matomo.track(eventWithCategory: .noValidMailboxes, name: "addMailbox")
+                                        isShowingAddMailboxView = true
+                                    }
+                            )
 
-                    NavigationLink {
-                        // We cannot provide a mailbox manager here
-                        AccountListView(mailboxManager: nil)
-                    } label: {
-                        Text(MailResourcesStrings.Localizable.buttonAccountSwitch)
-                            .textStyle(.bodyMediumAccent)
-                    }
-                    .buttonStyle(.ikBorderless)
-                    .simultaneousGesture(
-                        TapGesture()
-                            .onEnded {
+                            Button(MailResourcesStrings.Localizable.buttonAccountSwitch) {
+                                presentedSwitchAccountUser = currentUser
                                 matomo.track(eventWithCategory: .noValidMailboxes, name: "switchAccount")
                             }
-                    )
+                            .buttonStyle(.ikBorderless)
+                        } else {
+                            Button(MailResourcesStrings.Localizable.buttonAccountLogOut) {
+                                accountManager.removeAccountFor(userId: currentUserId)
+                            }
+                            .buttonStyle(.ikBorderless)
+                            .task {
+                                currentUser = await accountManager.userProfileStore.getUserProfile(id: currentUserId)
+                            }
+                        }
+                    }
+                    .controlSize(.large)
+                    .ikButtonFullWidth(true)
                 }
-                .controlSize(.large)
-                .ikButtonFullWidth(true)
+                .padding(.horizontal, value: .medium)
+                .frame(maxWidth: 900)
+                .matomoView(view: ["UnavailableMailboxesView"])
             }
-            .padding(.horizontal, value: .medium)
-            .frame(maxWidth: 900)
-            .matomoView(view: ["UnavailableMailboxesView"])
         }
         .navigationViewStyle(.stack)
-        .fullScreenCover(isPresented: $isShowingNewAccountView) {
-            orientationManager.setOrientationLock(.all)
-        } content: {
-            SingleOnboardingView()
+        .floatingPanel(
+            item: $presentedSwitchAccountUser,
+            title: MailResourcesStrings.Localizable.titleMyAccount(accountManager.accounts.count)
+        ) { currentUser in
+            AccountListView(mailboxManager: nil)
+                .environment(\.currentUser, MandatoryEnvironmentContainer(value: currentUser))
         }
     }
 
@@ -112,5 +122,5 @@ struct UnavailableMailboxesView: View {
 }
 
 #Preview {
-    UnavailableMailboxesView()
+    UnavailableMailboxesView(currentUserId: 0)
 }
