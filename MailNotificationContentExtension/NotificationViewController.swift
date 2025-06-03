@@ -75,8 +75,12 @@ class NotificationViewController: UIViewController, UNNotificationContentExtensi
     func didReceive(_ notification: UNNotification) {
         Task {
             let userInfo = notification.request.content.userInfo
+            let userId = userInfo[NotificationsHelper.UserInfoKeys.userId] as? Int
+
+            SentryDebug.setUserId(userId ?? accountManager.currentUserId)
+
             guard let mailboxId = userInfo[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
-                  let userId = userInfo[NotificationsHelper.UserInfoKeys.userId] as? Int,
+                  let userId,
                   let messageUid = userInfo[NotificationsHelper.UserInfoKeys.messageUid] as? String,
                   let mailbox = mailboxInfosManager.getMailbox(id: mailboxId, userId: userId),
                   let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {

@@ -72,8 +72,11 @@ final class NotificationService: UNNotificationServiceExtension {
             prepareBaseEmptyMessageNotification()
 
             let userInfos = bestAttemptContent.userInfo
+            let userId = userInfos[NotificationsHelper.UserInfoKeys.userId] as? Int
+            SentryDebug.setUserId(userId ?? accountManager.currentUserId)
+
             guard let mailboxId = userInfos[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
-                  let userId = userInfos[NotificationsHelper.UserInfoKeys.userId] as? Int,
+                  let userId,
                   let mailbox = mailboxInfosManager.getMailbox(id: mailboxId, userId: userId),
                   let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
                 // This should never happen, we received a notification for an unknown mailbox
