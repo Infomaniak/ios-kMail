@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -85,7 +86,8 @@ struct ComposeMessageView: View {
     @State private var initialAttachments = [Attachable]()
     @State private var isShowingSchedulePanel = false
 
-    @State private var isShowingEncryptPanel = false
+    @State private var isShowingEncryptAdPanel = false
+    @State private var isShowingEncryptStatePanel = false
 
     @Weak private var scrollView: UIScrollView?
 
@@ -332,8 +334,13 @@ struct ComposeMessageView: View {
         .sheet(isPresented: $aiModel.isShowingProposition) {
             AIPropositionView(aiModel: aiModel)
         }
-        .sheet(isPresented: $isShowingEncryptPanel) {
+        .sheet(isPresented: $isShowingEncryptAdPanel) {
             EncryptionAdView { enableEncryption() }
+        }
+        .floatingPanel(isPresented: $isShowingEncryptStatePanel) {
+            EncryptionStateView(password: $draft.encryptionPassword, autoEncryptDisableCount: draft.autoEncryptDisable.count) {
+                disableEncryption()
+            }
         }
         .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
@@ -428,20 +435,12 @@ struct ComposeMessageView: View {
     private func didTouchEncrypt() {
         if !draft.encrypted {
             if UserDefaults.shared.shouldPresentEncryptAd {
-                isShowingEncryptPanel = true
+                isShowingEncryptAdPanel = true
             } else {
                 enableEncryption()
             }
         } else {
-            // Si besoin d'un mot de passe
-
-            // Sinon
-            if let liveDraft = draft.thaw() {
-                try? liveDraft.realm?.write {
-                    liveDraft.encrypted = false
-                    liveDraft.encryptionPassword = ""
-                }
-            }
+            isShowingEncryptStatePanel = true
         }
     }
 
@@ -451,6 +450,15 @@ struct ComposeMessageView: View {
         if let liveDraft = draft.thaw() {
             try? liveDraft.realm?.write {
                 liveDraft.encrypted = true
+            }
+        }
+    }
+
+    private func disableEncryption() {
+        if let liveDraft = draft.thaw() {
+            try? liveDraft.realm?.write {
+                liveDraft.encrypted = false
+                liveDraft.encryptionPassword = ""
             }
         }
     }
