@@ -32,13 +32,28 @@ struct EmojiPickerViewModifier: ViewModifier {
     @Binding var isPresented: Bool
     @Binding var selectedEmoji: Emoji?
 
-    private let emojiPickerConfiguration = ElegantConfiguration(
-        showSearch: true,
+    private let configuration = ElegantConfiguration(
         showRandom: false,
         showReset: false,
         showClose: false,
-        showToolbar: true,
         supportsPreview: false
+    )
+
+    private let localization = ElegantLocalization(
+        searchFieldPlaceholder: MailResourcesStrings.Localizable.searchAction,
+        searchResultsTitle: MailResourcesStrings.Localizable.emojiPickerResultsTitle,
+        searchResultsEmptyTitle: MailResourcesStrings.Localizable.emptyStateSearchTitle,
+        emojiCategoryTitles: [
+            .SmileysAndEmotion: MailResourcesStrings.Localizable.emojiPickerCategorySmileysAndEmotion,
+            .PeopleAndBody: MailResourcesStrings.Localizable.emojiPickerCategoryPeopleAndBody,
+            .AnimalsAndNature: MailResourcesStrings.Localizable.emojiPickerCategoryPeopleAndBody,
+            .FoodAndDrink: MailResourcesStrings.Localizable.emojiPickerCategoryFoodAndDrink,
+            .TravelAndPlaces: MailResourcesStrings.Localizable.emojiPickerCategoryTravelAndPlaces,
+            .Activities: MailResourcesStrings.Localizable.emojiPickerCategoryActivities,
+            .Objects: MailResourcesStrings.Localizable.emojiPickerCategoryObjects,
+            .Symbols: MailResourcesStrings.Localizable.emojiPickerCategorySymbols,
+            .Flags: MailResourcesStrings.Localizable.emojiPickerCategoryFlags
+        ]
     )
 
     private var minSize: CGFloat? {
@@ -65,7 +80,8 @@ struct EmojiPickerViewModifier: ViewModifier {
                 if #available(iOS 16.0, *) {
                     ElegantEmojiPickerView(
                         selectedEmoji: $selectedEmoji,
-                        configuration: emojiPickerConfiguration,
+                        configuration: configuration,
+                        localization: localization,
                         background: backgroundColor
                     )
                     .ignoresSafeArea()
@@ -74,7 +90,7 @@ struct EmojiPickerViewModifier: ViewModifier {
                 } else {
                     ElegantEmojiPickerView(
                         selectedEmoji: $selectedEmoji,
-                        configuration: emojiPickerConfiguration,
+                        configuration: configuration,
                         background: backgroundColor
                     )
                     .ignoresSafeArea()
