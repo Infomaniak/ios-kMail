@@ -4,7 +4,7 @@
  * Locale: en, English
  * Tagged: ios-info-plist
  * Exported by: Valentin Perignon
- * Exported at: Fri, 25 Apr 2025 11:19:29 +0200
+ * Exported at: Tue, 03 Jun 2025 09:31:56 +0200
  */
 
 /* loco:62ce828ff799954b2054aac2 */
@@ -22,11 +22,11 @@
 /* loco:6500020fc1619e44fa0c5d52 */
 "NSPhotoLibraryUsageDescription" = "Photo access will be used to save pictures in your photo library.";
 
+/* loco:660bfde7e7a382d89e07fe92 */
+"searchAction" = "Search";
+
 /* loco:660bfd6073d23c2eb30ab462 */
 "shortcutNewMessageTitle" = "New Message";
-
-/* loco:660bfde7e7a382d89e07fe92 */
-"shortcutSearchTitle" = "Search";
 
 /* loco:660bfe8fd1bd42615e0cdbb2 */
 "shortcutSupportTitle" = "Help & Support";
