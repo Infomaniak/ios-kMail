@@ -83,7 +83,7 @@ struct ThreadListCellContextMenu: ViewModifier {
         content
             .contextMenu {
                 ControlGroup {
-                    ActionButtonList(
+                    ActionButtonForEach(
                         actions: controlGroupActions,
                         messages: thread.messages.toArray(),
                         thread: thread,
@@ -93,7 +93,7 @@ struct ThreadListCellContextMenu: ViewModifier {
                 }
                 .modifier(controlGroupStyleCompactStyle())
 
-                ActionButtonList(
+                ActionButtonForEach(
                     actions: actions.listActions,
                     messages: thread.messages.toArray(),
                     thread: thread,
