@@ -85,7 +85,7 @@ struct ActionsPanelViewModifier: ViewModifier {
                 completionHandler: completionHandler
             )
         }
-        .modifier(ActionAlertsViewModifier(
+        .actionAlertsView(
             reportForJunkMessages: $reportForJunkMessages,
             reportedForDisplayProblemMessage: $reportedForDisplayProblemMessage,
             reportedForPhishingMessages: $reportedForPhishingMessages,
@@ -99,6 +99,6 @@ struct ActionsPanelViewModifier: ViewModifier {
             originFolder: originFolder,
             origin: origin,
             completionHandler: completionHandler
-        ))
+        )
     }
 }

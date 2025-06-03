@@ -22,6 +22,41 @@ import MailResources
 import SwiftModalPresentation
 import SwiftUI
 
+extension View {
+    // swiftlint:disable:next function_parameter_count
+    func actionAlertsView(
+        reportForJunkMessages: Binding<[Message]?>,
+        reportedForDisplayProblemMessage: Binding<Message?>,
+        reportedForPhishingMessages: Binding<[Message]?>,
+        blockSenderAlert: Binding<BlockRecipientAlertState?>,
+        blockSendersList: Binding<BlockRecipientState?>,
+        messagesToMove: Binding<[Message]?>,
+        destructiveAlert: Binding<DestructiveActionAlertState?>,
+        shareMailLink: Binding<ShareMailLinkResult?>,
+        messagesToSnooze: Binding<[Message]?>,
+        messagesToDownload: Binding<[Message]?>,
+        originFolder: Folder? = nil,
+        origin: ActionOrigin,
+        completionHandler: ((Action) -> Void)? = nil
+    ) -> some View {
+        modifier(ActionAlertsViewModifier(
+            reportForJunkMessages: reportForJunkMessages,
+            reportedForDisplayProblemMessage: reportedForDisplayProblemMessage,
+            reportedForPhishingMessages: reportedForPhishingMessages,
+            blockSenderAlert: blockSenderAlert,
+            blockSendersList: blockSendersList,
+            messagesToMove: messagesToMove,
+            destructiveAlert: destructiveAlert,
+            shareMailLink: shareMailLink,
+            messagesToSnooze: messagesToSnooze,
+            messagesToDownload: messagesToDownload,
+            originFolder: originFolder,
+            origin: origin,
+            completionHandler: completionHandler
+        ))
+    }
+}
+
 struct ActionAlertsViewModifier: ViewModifier {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
