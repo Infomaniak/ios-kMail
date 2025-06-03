@@ -101,7 +101,7 @@ struct ThreadListCellContextMenu: ViewModifier {
                     toggleMultipleSelection: toggleMultipleSelection
                 )
             }
-            .modifier(ActionAlertsViewModifier(
+            .actionAlertsView(
                 reportForJunkMessages: $reportForJunkMessages,
                 reportedForDisplayProblemMessage: $reportedForDisplayProblemMessage,
                 reportedForPhishingMessages: $reportedForPhishingMessages,
@@ -114,7 +114,7 @@ struct ThreadListCellContextMenu: ViewModifier {
                 messagesToDownload: $messagesToDownload,
                 originFolder: thread.folder,
                 origin: origin
-            ))
+            )
     }
 }
 
