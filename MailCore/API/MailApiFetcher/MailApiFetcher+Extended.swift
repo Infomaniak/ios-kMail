@@ -210,7 +210,7 @@ public extension MailApiFetcher {
         return try await perform(request: authenticatedRequest(.lastSyncDate()))
     }
 
-    func autoUncrypt(for recipients: [String]) async throws -> [String: Bool] {
-        return try await perform(request: authenticatedRequest(.autoUncrypt(for: recipients)))
+    func mailHosted(for recipients: [String]) async throws -> [MailHosted] {
+        return try await perform(request: authenticatedRequest(.mailHosted(for: recipients)))
     }
 }
