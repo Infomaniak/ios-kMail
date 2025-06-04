@@ -19,7 +19,6 @@
 import InfomaniakRichHTMLEditor
 import MailCore
 import MailCoreUI
-import MailResources
 import OSLog
 import PhotosUI
 import RealmSwift
