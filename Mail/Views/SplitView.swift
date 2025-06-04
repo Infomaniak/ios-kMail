@@ -121,10 +121,7 @@ struct SplitView: View {
                     }
             }
         }
-        .discoveryPresenter(
-            isPresented: $mainViewState.isShowingUpdateAvailable,
-            backgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor
-        ) {
+        .mailDiscoveryPresenter(isPresented: $mainViewState.isShowingUpdateAvailable) {
             UpdateVersionView(image: MailResourcesAsset.documentStarsRocket.swiftUIImage) { willUpdate in
                 if willUpdate {
                     openURL(URLConstants.getStoreURL().url)
@@ -134,10 +131,7 @@ struct SplitView: View {
                 }
             }
         }
-        .discoveryPresenter(
-            isPresented: $mainViewState.isShowingSyncDiscovery,
-            backgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor
-        ) {
+        .mailDiscoveryPresenter(isPresented: $mainViewState.isShowingSyncDiscovery) {
             DiscoveryView(item: .syncDiscovery) {
                 guard UserDefaults.shared.showSyncCounter < 3 else {
                     UserDefaults.shared.shouldPresentSyncDiscovery = false
@@ -154,10 +148,7 @@ struct SplitView: View {
                 mainViewState.isShowingSyncProfile = true
             }
         }
-        .discoveryPresenter(
-            isPresented: $mainViewState.isShowingSetAppAsDefaultDiscovery,
-            backgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor
-        ) {
+        .mailDiscoveryPresenter(isPresented: $mainViewState.isShowingSetAppAsDefaultDiscovery) {
             DiscoveryView(item: .setAsDefaultAppDiscovery) {
                 UserDefaults.shared.shouldPresentSetAsDefaultDiscovery = false
             } completionHandler: { willSetAsDefault in
@@ -221,10 +212,7 @@ struct SplitView: View {
             splitViewManager.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)
         }
-        .customAlert(
-            isPresented: $mainViewState.isShowingReviewAlert,
-            backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
-        ) {
+        .mailCustomAlert(isPresented: $mainViewState.isShowingReviewAlert) {
             AskForReviewView(
                 appName: Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String,
                 feedbackURL: MailResourcesStrings.Localizable.urlUserReportiOS,

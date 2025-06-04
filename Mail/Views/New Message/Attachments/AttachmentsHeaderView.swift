@@ -46,10 +46,7 @@ struct AttachmentsHeaderView: View {
                 .padding(.top, value: .medium)
             }
         }
-        .customAlert(
-            item: $attachmentsManager.globalError,
-            backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
-        ) { error in
+        .mailCustomAlert(item: $attachmentsManager.globalError) { error in
             VStack {
                 Text(error.errorDescription ?? MailError.unknownError.errorDescription ?? "")
                 ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonClose, secondaryButtonTitle: nil) {

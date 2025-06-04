@@ -47,10 +47,7 @@ struct ThreadTagsListView: View {
                             backgroundColor: MailResourcesAsset.yellowColor
                         )
                 }
-                .customAlert(
-                    isPresented: $isShowingExternalTagAlert,
-                    backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
-                ) {
+                .mailCustomAlert(isPresented: $isShowingExternalTagAlert) {
                     ExternalRecipientView(externalTagSate: externalTag, isDraft: false)
                 }
             }

@@ -53,8 +53,7 @@ struct AccountActionsView: View {
         }, content: {
             SingleOnboardingView()
         })
-        .customAlert(item: $presentedLoggingOutUser,
-                     backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor) { user in
+        .mailCustomAlert(item: $presentedLoggingOutUser) { user in
             LogoutConfirmationView(user: user)
         }
     }

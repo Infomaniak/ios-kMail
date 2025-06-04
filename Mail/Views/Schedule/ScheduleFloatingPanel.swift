@@ -96,10 +96,7 @@ struct ScheduleFloatingPanel: ViewModifier {
                     }
                 }
             }
-            .customAlert(
-                isPresented: $isShowingCustomScheduleAlert,
-                backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
-            ) {
+            .mailCustomAlert(isPresented: $isShowingCustomScheduleAlert) {
                 CustomScheduleAlertView(type: type, date: initialDate, isUpdating: isUpdating, confirmAction: completionHandler) {
                     panelShouldBeShown = true
                 }
