@@ -29,7 +29,7 @@ struct OnboardingBottomButtonsView: View {
 
     @ModalState(context: ContextKeys.onboarding) private var isPresentingCreateAccount = false
 
-    @StateObject private var loginHandler = LoginHandler()
+    @ObservedObject var loginHandler: LoginHandler
 
     @Binding var selection: Int
 
@@ -85,5 +85,5 @@ struct OnboardingBottomButtonsView: View {
 }
 
 #Preview {
-    OnboardingBottomButtonsView(selection: .constant(0), slideCount: 4)
+    OnboardingBottomButtonsView(loginHandler: LoginHandler(), selection: .constant(0), slideCount: 4)
 }

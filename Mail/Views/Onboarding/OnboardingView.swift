@@ -248,6 +248,7 @@ extension SlideCollectionViewCell {
 struct OnboardingView: View {
     @LazyInjectService private var orientationManager: OrientationManageable
 
+    @State private var loginHandler = LoginHandler()
     @State private var selectedSlide = 0
 
     private let slides = Slide.onboardingSlides
@@ -257,6 +258,7 @@ struct OnboardingView: View {
             index == slides.count - 1 || (index == slides.count - 2 && selectedSlide == slides.count - 1)
         } bottomView: { _ in
             OnboardingBottomButtonsView(
+                loginHandler: loginHandler,
                 selection: $selectedSlide,
                 slideCount: slides.count
             )
