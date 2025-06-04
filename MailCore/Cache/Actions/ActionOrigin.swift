@@ -28,13 +28,8 @@ public struct ActionOrigin {
         case shortcut
         case threadHeader
 
-        var isListed: Bool {
-            switch self {
-            case .floatingPanel(source: .messageList), .floatingPanel(source: .threadList):
-                true
-            default:
-                false
-            }
+        var isMessageDetails: Bool {
+            self == .floatingPanel(source: .messageDetails)
         }
     }
 
