@@ -4,7 +4,7 @@
  * Locale: es, Spanish
  * Tagged: ios
  * Exported by: Ambroise Decouttere
- * Exported at: Mon, 02 Jun 2025 13:47:30 +0200
+ * Exported at: Wed, 04 Jun 2025 13:31:23 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -361,6 +361,9 @@
 /* loco:64245322f2b3ab37ed1b26b2 */
 "buttonContinue" = "Continuar";
 
+/* loco:68402e5e1ac58935380ac5f2 */
+"buttonCopy" = "Copia";
+
 /* loco:651ebe26c0bfc1baa10da002 */
 "buttonCopyPassword" = "Copiar contraseña";
 
@@ -577,6 +580,9 @@
 /* loco:62ed16680ed9e562702a5ab2 */
 "contactsSearch" = "Contactos";
 
+/* loco:683ed907ce58d366270b42a3 */
+"contentDescriptionAddReaction" = "Añadir una reacción";
+
 /* loco:628c9d1654bb544229106572 */
 "contentDescriptionButtonBack" = "Volver";
 
@@ -703,6 +709,36 @@
 /* loco:64243b2f0c473e027779afc4 */
 "emailWithoutSubjectTitle" = "Asunto vacío";
 
+/* loco:683e9613fc7545b414016b64 */
+"emojiPickerCategoryActivities" = "Actividades";
+
+/* loco:683e95cffc7545b414016b62 */
+"emojiPickerCategoryAnimalsAndNature" = "Animales y naturaleza";
+
+/* loco:683e96446098e5506408c7e2 */
+"emojiPickerCategoryFlags" = "Banderas";
+
+/* loco:683e95e2bc133f5a8e04f803 */
+"emojiPickerCategoryFoodAndDrink" = "Comida y bebida";
+
+/* loco:683e9623bc133f5a8e04f809 */
+"emojiPickerCategoryObjects" = "Objetos";
+
+/* loco:683e9589ea5e56d5540cb632 */
+"emojiPickerCategoryPeopleAndBody" = "Personas y cuerpos";
+
+/* loco:683e957223e8d17078053832 */
+"emojiPickerCategorySmileysAndEmotion" = "Smileys y emociones";
+
+/* loco:683e963722d760019c02cf82 */
+"emojiPickerCategorySymbols" = "Símbolos";
+
+/* loco:683e9600bc133f5a8e04f807 */
+"emojiPickerCategoryTravelAndPlaces" = "Viajes y lugares";
+
+/* loco:683ea3e0df4d9547cb0e54e2 */
+"emojiPickerResultsTitle" = "Resultados";
+
 /* loco:6348008e331e743e77176522 */
 "emptyStateFolderDescription" = "Aquí no hay nada que ver.";
 
@@ -748,14 +784,8 @@
 /* loco:682dc013a6784026ab0f1493 */
 "encryptedMessageAddPasswordButton" = "Proteger con contraseña";
 
-/* loco:682db47edea6856827005263 */
-"encryptedMessageAddPasswordDescription1" = "La encriptación automática no está disponible para los siguientes destinatarios:";
-
-/* loco:682db670397e663f210dda62 */
-"encryptedMessageAddPasswordDescription2" = "Añade una contraseña para proteger el mensaje y compártelo con los destinatarios por otros medios seguros (kChat, SMS, etc.).";
-
 /* loco:682dc33b2841ae542c042092 */
-"encryptedMessageAddPasswordInformation" = "Los destinatarios recibirán un enlace seguro, válido durante 30 días, con la contraseña necesaria para leer su mensaje.";
+"encryptedMessageAddPasswordInformation" = "La contraseña sólo es necesaria para los usuarios externos a Infomaniak. Para ellos, el mensaje caducará 30 días después de su envío.";
 
 /* loco:682d93b7626b153371041d72 */
 "encryptedMessageDescription" = "Este mensaje ha sido encriptado y caducará 30 días después de su envío para los destinatarios que no puedan beneficiarse de la encriptación automática.";
@@ -763,8 +793,11 @@
 /* loco:682dc12a45ce97ce870a4524 */
 "encryptedMessageDisableEncryptionButton" = "Desactivar el cifrado";
 
+/* loco:68402c39c8e3201f22066632 */
+"encryptedMessagePasswordConcernedUserTitle" = "Usuarios afectados";
+
 /* loco:682dc2113c2020dcd20b82f2 */
-"encryptedMessagePasswordLabel" = "Contraseña para compartir (a través de kChat, SMS u otro medio seguro)";
+"encryptedMessagePasswordLabel" = "Comparta esta contraseña de forma segura (kPaste, kChat, SMS...). No podrás copiarla una vez enviada.";
 
 /* loco:682d950703bceff09700fc42 */
 "encryptedMessageReceiverTitle" = "Este mensaje ha sido encriptado por el remitente por razones de confidencialidad.";
@@ -777,6 +810,9 @@
 
 /* loco:6835723d74a32502720135c2 */
 "encryptedMessageUpdatePasswordButton" = "Cambiar contraseña";
+
+/* loco:68402bea6ce8e5fb580b9232 */
+"encryptedPasswordTitle" = "Contraseña";
 
 /* loco:68340a44f3083453f501d6e2 */
 "encryptedProtectionAdDescription" = "Proteja su mensaje contra el acceso no autorizado con el cifrado Infomaniak.";
@@ -792,12 +828,6 @@
 
 /* loco:683569c055f8f2843602af12 */
 "encryptedStatePanelEnable" = "Su mensaje está protegido.";
-
-/* loco:683569e71158a95737058c73 */
-"encryptedStatePanelIncomplete" = "El cifrado no es compatible con el usuario %d. Se requiere una contraseña para completar la transmisión.";
-
-/* loco:68356a5c2f00d8eede0f4352 */
-"encryptedStatePanelIncomplete-plural" = "El cifrado no es compatible con los usuarios %d. Se requiere una contraseña para completar la transmisión.";
 
 /* loco:68356bbc13c86547d201b995 */
 "encryptedStatePanelStatePartialLabel" = "Parcial";
@@ -1329,6 +1359,9 @@
 
 /* loco:62a9db4ae45f1e29371ff802 */
 "scheduledMessagesFolder" = "Mensajes programados";
+
+/* loco:660bfde7e7a382d89e07fe92 */
+"searchAction" = "Buscar en";
 
 /* loco:640836aa0f09a82bfa0da572 */
 "searchAllMessages" = "Todos los mensajes";

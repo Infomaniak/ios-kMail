@@ -6,7 +6,7 @@
  Locale: de, German
  Tagged: ios-stringsdict
  Exported by: Ambroise Decouttere
- Exported at: Mon, 02 Jun 2025 13:47:31 +0200
+ Exported at: Wed, 04 Jun 2025 13:31:23 +0200
 -->
 <plist version="1.0">
   <dict>
@@ -56,6 +56,22 @@
         <string>Passwort blockiert</string>
         <key>other</key>
         <string>Blockierte Passwörter</string>
+      </dict>
+    </dict>
+    <key>encryptedStatePanelIncomplete</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Die Verschlüsselung wird von %d Benutzer nicht unterstützt. Ein Passwort ist erforderlich, um den Versand abzuschließen.</string>
+        <key>other</key>
+        <string>Die Verschlüsselung wird von %d Benutzern nicht unterstützt. Ein Passwort ist erforderlich, um den Versand abzuschließen.</string>
       </dict>
     </dict>
     <key>fileQuantity</key>
