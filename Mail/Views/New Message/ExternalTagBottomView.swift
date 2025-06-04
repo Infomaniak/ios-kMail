@@ -50,10 +50,7 @@ struct ExternalTagBottomView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .customAlert(
-                    isPresented: $isShowingExternalTagAlert,
-                    backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
-                ) {
+                .mailCustomAlert(isPresented: $isShowingExternalTagAlert) {
                     ExternalRecipientView(externalTagSate: externalTag, isDraft: true)
                 }
 

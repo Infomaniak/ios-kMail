@@ -131,20 +131,14 @@ struct AIPropositionView: View {
                 guard let toolbar = viewController.navigationController?.toolbar else { return }
                 UIConstants.applyComposeViewStyle(to: toolbar)
             }
-            .customAlert(
-                isPresented: $aiModel.isShowingReplaceBodyAlert,
-                backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
-            ) {
+            .mailCustomAlert(isPresented: $aiModel.isShowingReplaceBodyAlert) {
                 ReplaceMessageBodyView {
                     Task {
                         await aiModel.splitPropositionAndInsert(shouldReplaceBody: true)
                     }
                 }
             }
-            .customAlert(
-                item: $aiModel.isShowingReplaceSubjectAlert,
-                backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
-            ) { proposition in
+            .mailCustomAlert(item: $aiModel.isShowingReplaceSubjectAlert) { proposition in
                 ReplaceMessageSubjectView(subject: proposition.subject) { shouldReplaceSubject in
                     Task {
                         await aiModel.insertProposition(

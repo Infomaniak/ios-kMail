@@ -52,8 +52,7 @@ struct BlockSenderView: View {
                 }
             }
         }
-        .customAlert(item: $selectedRecipient,
-                     backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor) { recipient in
+        .mailCustomAlert(item: $selectedRecipient) { recipient in
             ConfirmationBlockRecipientView(
                 recipients: [recipient],
                 reportedMessages: [recipientsToMessage[recipient]!],

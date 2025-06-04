@@ -59,8 +59,7 @@ struct ShortcutModifier: ViewModifier {
 
             content
         }
-        .customAlert(item: $destructiveAlert,
-                     backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor) { item in
+        .mailCustomAlert(item: $destructiveAlert) { item in
             DestructiveActionAlertView(destructiveAlert: item)
         }
     }
