@@ -45,10 +45,7 @@ struct AIPromptPresenter<ModalContent: View>: ViewModifier {
                         .backport.presentationDetents([.medium])
                 }
             }
-            .customAlert(
-                isPresented: Binding(get: { !isCompactWindow && isPresented }, set: { isPresented = $0 }),
-                backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
-            ) {
+            .mailCustomAlert(isPresented: Binding(get: { !isCompactWindow && isPresented }, set: { isPresented = $0 })) {
                 modalContent()
             }
     }

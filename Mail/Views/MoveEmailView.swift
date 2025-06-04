@@ -75,10 +75,7 @@ struct MoveEmailView: View {
         }
         .environment(\.folderCellType, .move)
         .matomoView(view: ["MoveEmailView"])
-        .customAlert(
-            isPresented: $isShowingCreateFolderAlert,
-            backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
-        ) {
+        .mailCustomAlert(isPresented: $isShowingCreateFolderAlert) {
             CreateFolderView(mode: .move { newFolder in
                 move(to: newFolder)
             })

@@ -113,21 +113,20 @@ struct ActionsPanelViewModifier: ViewModifier {
                        title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
             BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: origin)
         }
-        .customAlert(item: $blockSenderAlert,
-                     backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor) { blockSenderState in
+        .mailCustomAlert(item: $blockSenderAlert) { blockSenderState in
             ConfirmationBlockRecipientView(
                 recipients: blockSenderState.recipients,
                 reportedMessages: blockSenderState.messages,
                 origin: origin
             )
         }
-        .customAlert(
+        .mailCustomAlert(
             item: $reportedForDisplayProblemMessage,
             backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
         ) { message in
             ReportDisplayProblemView(message: message)
         }
-        .customAlert(
+        .mailCustomAlert(
             item: $reportedForPhishingMessages,
             backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
         ) { messages in
@@ -137,11 +136,10 @@ struct ActionsPanelViewModifier: ViewModifier {
                 completionHandler: completionHandler
             )
         }
-        .customAlert(item: $destructiveAlert, backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor) { item in
+        .mailCustomAlert(item: $destructiveAlert) { item in
             DestructiveActionAlertView(destructiveAlert: item)
         }
-        .customAlert(item: $messagesToDownload,
-                     backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor) { messages in
+        .mailCustomAlert(item: $messagesToDownload) { messages in
             ConfirmationSaveThreadInKdrive(targetMessages: messages)
         }
         .sheet(item: $shareMailLink) { shareMailLinkResult in

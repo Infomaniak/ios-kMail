@@ -53,10 +53,7 @@ public struct SheetOrAlertPanel<ModalContent: View>: ViewModifier {
                         .modifier(SelfSizingPanelBackportViewModifier(bottomPadding: IKPadding.medium))
                 }
             }
-            .customAlert(
-                isPresented: Binding(get: { !isCompactWindow && isPresented }, set: { isPresented = $0 }),
-                backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
-            ) {
+            .mailCustomAlert(isPresented: Binding(get: { !isCompactWindow && isPresented }, set: { isPresented = $0 })) {
                 modalContent()
             }
     }

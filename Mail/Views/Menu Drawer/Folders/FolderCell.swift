@@ -227,8 +227,7 @@ struct FolderCellContent: View {
                 }
             }
         }
-        .customAlert(item: $currentFolder,
-                     backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor) { folder in
+        .mailCustomAlert(item: $currentFolder) { folder in
             CreateFolderView(mode: .modify(modifiedFolder: folder))
         }
     }

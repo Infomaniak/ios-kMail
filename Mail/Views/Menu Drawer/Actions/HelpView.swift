@@ -86,8 +86,7 @@ struct HelpView: View {
         .listStyle(.plain)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .navigationBarTitle(MailResourcesStrings.Localizable.buttonHelp, displayMode: .inline)
-        .customAlert(item: $updateVersionAlert,
-                     backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor) { action in
+        .mailCustomAlert(item: $updateVersionAlert) { action in
             // swiftlint:disable:next trailing_closure
             UpdateVersionAlertView(onLaterPressed: {
                 openURL(action.destination)
