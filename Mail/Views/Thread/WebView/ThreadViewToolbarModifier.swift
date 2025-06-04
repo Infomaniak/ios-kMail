@@ -48,7 +48,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
     private var toolbarActions: Action.Lists {
         return Action.actionsForMessages(
             frozenMessages,
-            origin: .floatingPanel(source: .threadList, originFolder: frozenFolder),
+            origin: .floatingPanel(source: .messageList, originFolder: frozenFolder),
             userIsStaff: false,
             userEmail: mailboxManager.mailbox.email
         )
@@ -74,14 +74,14 @@ struct ThreadViewToolbarModifier: ViewModifier {
             .bottomBar {
                 ForEach(toolbarActions.bottomBarActions) { action in
                     if action == .reply {
-                        ToolbarButton(text: action.title, icon: action.icon) {
+                        ToolbarButton(text: action.shortTitle ?? action.title, icon: action.icon) {
                             didTap(action: action)
                         }
                         .adaptivePanel(item: $replyOrReplyAllMessage, popoverArrowEdge: .bottom) { message in
                             ReplyActionsView(message: message)
                         }
                     } else {
-                        ToolbarButton(text: action.title, icon: action.icon) {
+                        ToolbarButton(text: action.shortTitle ?? action.title, icon: action.icon) {
                             didTap(action: action)
                         }
                         .sheet(item: $messagesToMove) { messages in
