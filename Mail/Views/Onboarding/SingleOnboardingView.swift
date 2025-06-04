@@ -28,11 +28,14 @@ struct SingleOnboardingView: View {
 
     @Environment(\.dismiss) private var dismiss
 
+    @State private var loginHandler = LoginHandler()
+
     private let slides = [Slide.onboardingSlides.last!]
 
     var body: some View {
         WaveView(slides: slides, selectedSlide: .constant(0), dismissHandler: dismiss.callAsFunction) { _ in
             OnboardingBottomButtonsView(
+                loginHandler: loginHandler,
                 selection: .constant(0),
                 slideCount: 1
             )
