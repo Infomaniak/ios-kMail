@@ -113,27 +113,35 @@ struct ActionsPanelViewModifier: ViewModifier {
                        title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
             BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: origin)
         }
-        .customAlert(item: $blockSenderAlert) { blockSenderState in
+        .customAlert(item: $blockSenderAlert,
+                     backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor) { blockSenderState in
             ConfirmationBlockRecipientView(
                 recipients: blockSenderState.recipients,
                 reportedMessages: blockSenderState.messages,
                 origin: origin
             )
         }
-        .customAlert(item: $reportedForDisplayProblemMessage) { message in
+        .customAlert(
+            item: $reportedForDisplayProblemMessage,
+            backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
+        ) { message in
             ReportDisplayProblemView(message: message)
         }
-        .customAlert(item: $reportedForPhishingMessages) { messages in
+        .customAlert(
+            item: $reportedForPhishingMessages,
+            backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
+        ) { messages in
             ReportPhishingView(
                 messagesWithDuplicates: messages,
                 distinctMessageCount: messages.count,
                 completionHandler: completionHandler
             )
         }
-        .customAlert(item: $destructiveAlert) { item in
+        .customAlert(item: $destructiveAlert, backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor) { item in
             DestructiveActionAlertView(destructiveAlert: item)
         }
-        .customAlert(item: $messagesToDownload) { messages in
+        .customAlert(item: $messagesToDownload,
+                     backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor) { messages in
             ConfirmationSaveThreadInKdrive(targetMessages: messages)
         }
         .sheet(item: $shareMailLink) { shareMailLinkResult in

@@ -278,18 +278,23 @@ struct ComposeMessageView: View {
                 matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "dailyLimitReachedUpgrade")
             }
         }
-        .customAlert(item: $isShowingAlert) { alert in
+        .customAlert(item: $isShowingAlert,
+                     backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor) { alert in
             switch alert.type {
             case .emptySubject(let handler):
                 EmptySubjectView(actionHandler: handler)
             }
         }
-        .customAlert(isPresented: $isShowingCancelAttachmentsError) {
+        .customAlert(
+            isPresented: $isShowingCancelAttachmentsError,
+            backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
+        ) {
             AttachmentsUploadInProgressErrorView {
                 dismissMessageView()
             }
         }
-        .discoveryPresenter(isPresented: $aiModel.isShowingDiscovery) {
+        .discoveryPresenter(isPresented: $aiModel.isShowingDiscovery,
+                            backgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor) {
             DiscoveryView(item: .aiDiscovery) {
                 UserDefaults.shared.shouldPresentAIFeature = false
             } completionHandler: { willShowAIPrompt in

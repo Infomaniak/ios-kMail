@@ -135,7 +135,10 @@ struct UpdateMailboxPasswordView: View {
         .navigationTitle(MailResourcesStrings.Localizable.enterPasswordTitle)
         .sheetViewStyle()
         .matomoView(view: ["UpdateMailboxPasswordView"])
-        .customAlert(isPresented: $isShowingDetachMailboxAlertView) {
+        .customAlert(
+            isPresented: $isShowingDetachMailboxAlertView,
+            backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
+        ) {
             DetachMailboxConfirmationView(mailbox: mailbox)
         }
     }

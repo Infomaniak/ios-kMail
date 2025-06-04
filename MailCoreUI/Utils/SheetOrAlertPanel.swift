@@ -19,6 +19,7 @@
 import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailCore
+import MailResources
 import SwiftUI
 import SwiftUIBackports
 
@@ -52,7 +53,10 @@ public struct SheetOrAlertPanel<ModalContent: View>: ViewModifier {
                         .modifier(SelfSizingPanelBackportViewModifier(bottomPadding: IKPadding.medium))
                 }
             }
-            .customAlert(isPresented: Binding(get: { !isCompactWindow && isPresented }, set: { isPresented = $0 })) {
+            .customAlert(
+                isPresented: Binding(get: { !isCompactWindow && isPresented }, set: { isPresented = $0 }),
+                backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
+            ) {
                 modalContent()
             }
     }

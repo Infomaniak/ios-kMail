@@ -66,7 +66,10 @@ struct UserFoldersListView: View {
                         .padding(value: .medium)
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable.newFolderDialogTitle)
-                .customAlert(isPresented: $isShowingCreateFolderAlert) {
+                .customAlert(
+                    isPresented: $isShowingCreateFolderAlert,
+                    backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
+                ) {
                     CreateFolderView(mode: .create)
                 }
             }

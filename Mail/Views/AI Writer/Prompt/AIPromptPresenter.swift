@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailResources
 import SwiftUI
 import SwiftUIBackports
 
@@ -44,7 +45,10 @@ struct AIPromptPresenter<ModalContent: View>: ViewModifier {
                         .backport.presentationDetents([.medium])
                 }
             }
-            .customAlert(isPresented: Binding(get: { !isCompactWindow && isPresented }, set: { isPresented = $0 })) {
+            .customAlert(
+                isPresented: Binding(get: { !isCompactWindow && isPresented }, set: { isPresented = $0 }),
+                backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
+            ) {
                 modalContent()
             }
     }

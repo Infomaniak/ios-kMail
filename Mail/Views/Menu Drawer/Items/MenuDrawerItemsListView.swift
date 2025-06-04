@@ -114,7 +114,10 @@ struct MenuDrawerItemsHelpListView: View {
         .sheet(isPresented: $isShowingBugTracker) {
             BugTrackerView(isPresented: $isShowingBugTracker)
         }
-        .customAlert(isPresented: $isShowingUpdateVersionAlert) {
+        .customAlert(
+            isPresented: $isShowingUpdateVersionAlert,
+            backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
+        ) {
             UpdateVersionAlertView(onLaterPressed: sendFeedback)
         }
     }

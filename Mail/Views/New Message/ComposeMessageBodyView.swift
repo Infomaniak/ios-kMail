@@ -19,6 +19,7 @@
 import InfomaniakRichHTMLEditor
 import MailCore
 import MailCoreUI
+import MailResources
 import OSLog
 import PhotosUI
 import RealmSwift
@@ -68,7 +69,10 @@ struct ComposeMessageBodyView: View {
                 .editorCSS(Self.customCSS)
                 .introspectEditor(perform: setupEditor)
                 .onJavaScriptFunctionFail(perform: reportJavaScriptError)
-                .customAlert(isPresented: $isShowingLinkAlert) {
+                .customAlert(
+                    isPresented: $isShowingLinkAlert,
+                    backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
+                ) {
                     AddLinkView(actionHandler: didCreateLink)
                 }
                 .sheet(isPresented: $isShowingFileSelection) {
