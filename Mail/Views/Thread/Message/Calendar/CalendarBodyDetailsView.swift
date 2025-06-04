@@ -49,6 +49,8 @@ struct CalendarLabelStyle: LabelStyle {
 struct CalendarBodyDetailsView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @State private var nextOccurrence: Date?
+
     let event: CalendarEvent
 
     private var frozenMe: Attendee? {
@@ -72,16 +74,12 @@ struct CalendarBodyDetailsView: View {
 
             Group {
                 Label(event.formattedDateTime, asset: MailResourcesAsset.calendarBadgeClock.swiftUIImage)
-                if let rrule = event.rrule {
-                    if let rule = try? RecurrenceRule(rrule) {
-                        if let nextOccurrence = try? rule.getNextOccurrence(event.start) {
-                            Label(
-                                MailResourcesStrings.Localizable.nextEventOccurrence + " " + nextOccurrence
-                                    .formatted(.calendarDateFull),
-                                asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
-                            )
-                        }
-                    }
+                if let nextOccurrence {
+                    Label(
+                        MailResourcesStrings.Localizable.nextEventOccurrence + " " + nextOccurrence
+                            .formatted(.calendarDateFull),
+                        asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
+                    )
                 }
                 if let bookableResource = event.bookableResource {
                     Label(bookableResource.name, asset: MailResourcesAsset.door.swiftUIImage)
@@ -101,6 +99,14 @@ struct CalendarBodyDetailsView: View {
             }
         }
         .padding(.horizontal, value: .medium)
+        .task {
+            guard let rrule = event.rrule,
+                  let rule = try? RecurrenceRule(rrule),
+                  let nextOccurrence = try? rule.getNextOccurrence(event.start) else {
+                return
+            }
+            self.nextOccurrence = nextOccurrence
+        }
     }
 }
 
