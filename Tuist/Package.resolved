@@ -32,7 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/Elegant-Emoji-Picker",
       "state" : {
-        "revision" : "cf211e283de75296dfc63b5b814da8baf87e823d"
+        "branch" : "feat/support-most-used-emojis",
+        "revision" : "2c6b773e845e3e32227a926f96ce235d40c8da30"
       }
     },
     {

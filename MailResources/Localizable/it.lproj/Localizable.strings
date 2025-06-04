@@ -4,7 +4,7 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Tue, 03 Jun 2025 09:31:55 +0200
+ * Exported at: Wed, 04 Jun 2025 16:31:16 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -717,6 +717,9 @@
 
 /* loco:683e9589ea5e56d5540cb632 */
 "emojiPickerCategoryPeopleAndBody" = "Persone e corpi";
+
+/* loco:6840584159b65ad4a4099ff3 */
+"emojiPickerCategoryRecentlyUsed" = "Utilizzato di recente";
 
 /* loco:683e957223e8d17078053832 */
 "emojiPickerCategorySmileysAndEmotion" = "Faccine ed emozioni";
