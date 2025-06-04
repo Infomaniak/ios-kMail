@@ -21,6 +21,7 @@ import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
+import MailResources
 import SwiftModalPresentation
 import SwiftUI
 
@@ -52,7 +53,8 @@ struct AccountActionsView: View {
         }, content: {
             SingleOnboardingView()
         })
-        .customAlert(item: $presentedLoggingOutUser) { user in
+        .customAlert(item: $presentedLoggingOutUser,
+                     backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor) { user in
             LogoutConfirmationView(user: user)
         }
     }

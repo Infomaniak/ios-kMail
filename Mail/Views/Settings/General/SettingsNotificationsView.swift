@@ -134,7 +134,10 @@ struct SettingsNotificationsView: View {
         .onDisappear {
             updateTopicsForCurrentUserIfNeeded()
         }
-        .customAlert(isPresented: $showAlertNotification) {
+        .customAlert(
+            isPresented: $showAlertNotification,
+            backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
+        ) {
             SettingsNotificationsInstructionsView()
         }
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "Notifications"])
