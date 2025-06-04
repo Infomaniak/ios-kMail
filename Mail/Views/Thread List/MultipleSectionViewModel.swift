@@ -96,6 +96,6 @@ class MultipleSelectionViewModel: ObservableObject {
         let read = selectedItems.values.contains { $0.unseenMessages != 0 } ? Action.markAsRead : Action.markAsUnread
         let star = selectedItems.values.allSatisfy(\.flagged) ? Action.unstar : Action.star
         let archive = fromArchiveFolder ? Action.openMovePanel : Action.archive
-        toolbarActions = [read, archive, star, .delete]
+        toolbarActions = Action.getBottomBarActions(originType: .multipleSelection, unreadAction: read, archiveAction: archive, starAction: star).compactMap { $0 }
     }
 }
