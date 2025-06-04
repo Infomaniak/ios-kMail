@@ -111,7 +111,8 @@ struct ThreadViewToolbarModifier: ViewModifier {
                     }
                 }
             }
-            .customAlert(item: $destructiveAlert) { item in
+            .customAlert(item: $destructiveAlert,
+                         backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor) { item in
                 DestructiveActionAlertView(destructiveAlert: item)
             }
     }
