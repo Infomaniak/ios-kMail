@@ -357,16 +357,20 @@ struct SplitView: View {
     private func handleNotification(_ notification: Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>.Output) {
         guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
 
-        guard let notificationMailboxManager = accountManager.getMailboxManager(for: notificationPayload.mailboxId,
-                                                                                userId: notificationPayload.userId)
-        else { return }
+        let notificationMailboxManager = accountManager.getMailboxManager(for: notificationPayload.mailboxId,
+                                                                          userId: notificationPayload.userId)
+
+        guard let notificationMailboxManager,
+              let inbox = notificationMailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() else { return }
+
         navigationDrawerController.close()
 
         Task {
-            // We haven't switched Env yet so we wait a little bit
-            if notificationMailboxManager != mailboxManager {
-                try? await Task.sleep(nanoseconds: UInt64(0.5 * Double(NSEC_PER_SEC)))
-            }
+            @InjectService var mainViewStateStore: MainViewStateStore
+            let notificationMainViewState = mainViewStateStore.getOrCreateMainViewState(
+                for: notificationMailboxManager,
+                initialFolder: inbox
+            )
 
             let tappedNotificationMessage = notificationMailboxManager.fetchObject(ofType: Message.self,
                                                                                    forPrimaryKey: notificationPayload.messageId)?
@@ -376,13 +380,13 @@ struct SplitView: View {
                 // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in
                 // inbox
                 if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
-                    mainViewState.selectedThread = tappedNotificationThread
+                    notificationMainViewState.selectedThread = tappedNotificationThread
                 } else {
                     snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
                 }
             } else if notification.name == .onUserTappedReplyToNotification {
                 if let tappedNotificationMessage {
-                    mainViewState.composeMessageIntent = .replyingTo(
+                    notificationMainViewState.composeMessageIntent = .replyingTo(
                         message: tappedNotificationMessage,
                         replyMode: .reply,
                         originMailboxManager: mailboxManager
