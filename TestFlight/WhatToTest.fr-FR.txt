@@ -1,2 +1,3 @@
-- Prévention d'un crash lors de l'affichage d'un BIMI
+- Résolution d'un problème empêchant la connexion sur iPadOS
+- Résolution d'un problème dans la vue de composition lors de l'ajout d'un groupe de destinataires
 - Corrections de bugs et améliorations mineures
