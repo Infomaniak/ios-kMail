@@ -62,8 +62,10 @@ public final class CalendarEvent: EmbeddedObject, Codable {
     @Persisted public var isFullDay: Bool
     @Persisted public var start: Date
     @Persisted public var end: Date
+    @Persisted public var rrule: String?
     @Persisted public var status: CalendarEventStatus?
     @Persisted public var attendees: RealmSwift.List<Attendee>
+    @Persisted public var bookableResource: BookableResource?
 
     @Persisted(originProperty: "userStoredEvent") public var userStoredParent: LinkingObjects<CalendarEventResponse>
     @Persisted(originProperty: "attachmentEvent") public var attachmentParent: LinkingObjects<CalendarEventResponse>
@@ -117,8 +119,10 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         isFullDay: Bool,
         start: Date,
         end: Date,
+        rrule: String? = nil,
         status: CalendarEventStatus?,
-        attendees: RealmSwift.List<Attendee>
+        attendees: RealmSwift.List<Attendee>,
+        bookableResource: BookableResource? = nil
     ) {
         self.id = id
         self.type = type
@@ -127,8 +131,10 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         self.isFullDay = isFullDay
         self.start = start
         self.end = end
+        self.rrule = rrule
         self.status = status
         self.attendees = attendees
+        self.bookableResource = bookableResource
     }
 
     // We need to create our own init
@@ -141,8 +147,10 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         title = try container.decode(String.self, forKey: .title)
         location = try container.decode(String?.self, forKey: .location)
         isFullDay = try container.decode(Bool.self, forKey: .isFullDay)
+        rrule = try container.decodeIfPresent(String.self, forKey: .rrule)
         status = try? container.decode(CalendarEventStatus?.self, forKey: .status)
         attendees = try container.decode(List<Attendee>.self, forKey: .attendees)
+        bookableResource = try container.decodeIfPresent(BookableResource.self, forKey: .bookableResource)
 
         let startString = try container.decode(String.self, forKey: .start)
         start = Constants.decodeDateCorrectly(startString) ?? .now
@@ -158,8 +166,10 @@ public final class CalendarEvent: EmbeddedObject, Codable {
         case isFullDay = "fullday"
         case start
         case end
+        case rrule
         case status
         case attendees
+        case bookableResource
     }
 
     public func getMyFrozenAttendee(currentMailboxEmail: String) -> Attendee? {

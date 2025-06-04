@@ -17,6 +17,7 @@
  */
 
 import DesignSystem
+import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
@@ -48,6 +49,8 @@ struct CalendarLabelStyle: LabelStyle {
 struct CalendarBodyDetailsView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @State private var nextOccurrence: Date?
+
     let event: CalendarEvent
 
     private var frozenMe: Attendee? {
@@ -71,9 +74,21 @@ struct CalendarBodyDetailsView: View {
 
             Group {
                 Label(event.formattedDateTime, asset: MailResourcesAsset.calendarBadgeClock.swiftUIImage)
-                if let location = event.location, !location.isEmpty {
+
+                if let nextOccurrence {
+                    Label(
+                        MailResourcesStrings.Localizable.nextEventOccurrence + " " + nextOccurrence
+                            .formatted(.calendarDateFull),
+                        asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
+                    )
+                }
+
+                if let bookableResource = event.bookableResource {
+                    Label(bookableResource.name, asset: MailResourcesAsset.door.swiftUIImage)
+                } else if let location = event.location, !location.isEmpty {
                     Label(location, asset: MailResourcesAsset.pin.swiftUIImage)
                 }
+
                 if !iAmInvited && !event.attendees.isEmpty {
                     Label(MailResourcesStrings.Localizable.calendarNotInvited, asset: MailResourcesAsset.socialMedia.swiftUIImage)
                 }
@@ -85,6 +100,14 @@ struct CalendarBodyDetailsView: View {
             }
         }
         .padding(.horizontal, value: .medium)
+        .task {
+            guard let rrule = event.rrule,
+                  let rule = try? RecurrenceRule(rrule),
+                  let nextOccurrence = try? rule.getNextOccurrence(event.start) else {
+                return
+            }
+            self.nextOccurrence = nextOccurrence
+        }
     }
 }
 
