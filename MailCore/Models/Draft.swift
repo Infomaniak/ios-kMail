@@ -32,6 +32,7 @@ public enum SaveDraftOption: String, Codable, PersistableEnum {
     case initialSave
     case save
     case send
+    case sendReaction
     case schedule
 
     public func encode(to encoder: Encoder) throws {
@@ -39,7 +40,7 @@ public enum SaveDraftOption: String, Codable, PersistableEnum {
         switch self {
         case .initialSave, .save:
             try container.encode(SaveDraftOption.save.rawValue)
-        case .send, .schedule:
+        case .send, .sendReaction, .schedule:
             try container.encode(rawValue)
         }
     }
@@ -83,6 +84,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
     @Persisted public var delay: Int?
     @Persisted public var rawSignature: String?
     @Persisted public var scheduleDate: Date?
+    @Persisted public var emojiReaction: String?
     @Persisted public var encrypted: Bool
     @Persisted public var encryptionPassword: String
 
@@ -149,6 +151,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         case action
         case delay
         case scheduleDate
+        case emojiReaction
         case encrypted
         case encryptionPassword
     }
@@ -181,6 +184,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         swissTransferUuid = try values.decodeIfPresent(String.self, forKey: .swissTransferUuid)
         attachments = try values.decode(List<Attachment>.self, forKey: .attachments)
         scheduleDate = try values.decodeIfPresent(Date.self, forKey: .scheduleDate)
+        emojiReaction = try values.decodeIfPresent(String.self, forKey: .emojiReaction)
         encrypted = try values.decodeIfPresent(Bool.self, forKey: .encrypted) ?? false
         encryptionPassword = try values.decodeIfPresent(String.self, forKey: .encryptionPassword) ?? ""
     }
@@ -204,7 +208,8 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
                             priority: MessagePriority = .normal,
                             swissTransferUuid: String? = nil,
                             attachments: [Attachment]? = nil,
-                            action: SaveDraftOption? = nil) {
+                            action: SaveDraftOption? = nil,
+                            emojiReaction: String? = nil) {
         self.init()
 
         self.localUUID = localUUID
@@ -227,6 +232,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         self.swissTransferUuid = swissTransferUuid
         self.attachments = attachments?.toRealmList() ?? List()
         self.action = action
+        self.emojiReaction = emojiReaction
         encrypted = false
         encryptionPassword = ""
     }
@@ -309,6 +315,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         try container.encode(action, forKey: .action)
         try container.encodeIfPresent(delay, forKey: .delay)
         try container.encodeIfPresent(scheduleDate, forKey: .scheduleDate)
+        try container.encodeIfPresent(emojiReaction, forKey: .emojiReaction)
         try container.encode(encrypted, forKey: .encrypted)
         try container.encode(encryptionPassword, forKey: .encryptionPassword)
     }
