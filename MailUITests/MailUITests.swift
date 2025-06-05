@@ -81,8 +81,8 @@ class MailUITests: XCTestCase {
     func testSaveMessage() throws {
         launchAppFromScratch()
         login()
-        let subjectDate = Date.now.description
-        writeTestMessage(subject: subjectDate)
+        let subject = "\(MailUITests.testSubject) - \(Date().timeIntervalSince1970)"
+        writeTestMessage(subject: subject)
 
         app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage]
             .buttons[MailResourcesStrings.Localizable.buttonClose].firstMatch.tap()
@@ -91,11 +91,11 @@ class MailUITests: XCTestCase {
 
         app.scrollViews.otherElements.staticTexts[MailResourcesStrings.Localizable.draftFolder].firstMatch.tap()
 
-        let newEmail = app.collectionViews.staticTexts[MailUITests.testSubject].firstMatch
+        let newEmail = app.collectionViews.staticTexts[subject].firstMatch
         XCTAssertTrue(newEmail.waitForExistence(timeout: defaultTimeOut))
         newEmail.tap()
 
-        let subjectText = app.staticTexts[subjectDate]
+        let subjectText = app.staticTexts[subject]
         XCTAssertTrue(subjectText.waitForExistence(timeout: defaultTimeOut))
 
         let bodyText = app.staticTexts[MailResourcesStrings.Localizable.aiPromptExample1]
@@ -103,7 +103,7 @@ class MailUITests: XCTestCase {
 
         app.buttons[MailResourcesStrings.Localizable.buttonClose].firstMatch.tap()
 
-        swipeCustomCell(with: subjectDate)
+        swipeCustomCell(with: subject)
 
         let deleteDraftButton = app.buttons[MailResourcesStrings.Localizable.actionDelete].firstMatch
         _ = deleteDraftButton.waitForExistence(timeout: defaultTimeOut)
