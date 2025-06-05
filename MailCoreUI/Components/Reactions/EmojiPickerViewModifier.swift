@@ -83,7 +83,8 @@ struct EmojiPickerViewModifier: ViewModifier {
                         selectedEmoji: $selectedEmoji,
                         configuration: configuration,
                         localization: localization,
-                        background: backgroundColor
+                        background: backgroundColor,
+                        userDefaultsStore: .shared
                     )
                     .ignoresSafeArea()
                     .frame(minWidth: minSize, minHeight: minSize)
@@ -92,7 +93,9 @@ struct EmojiPickerViewModifier: ViewModifier {
                     ElegantEmojiPickerView(
                         selectedEmoji: $selectedEmoji,
                         configuration: configuration,
-                        background: backgroundColor
+                        localization: localization,
+                        background: backgroundColor,
+                        userDefaultsStore: .shared
                     )
                     .ignoresSafeArea()
                     .frame(minWidth: minSize, minHeight: minSize)
