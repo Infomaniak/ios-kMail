@@ -119,8 +119,8 @@ struct AutocompletionCell: View {
 
             if !addressBook.name.isEmpty {
                 subtitle = MailResourcesStrings.Localizable.addressBookTitle(addressBook.name)
-            } else {
-                subtitle = MailResourcesStrings.Localizable.addressBookTitle(addressBook.organization ?? addressBook.name)
+            } else if let organization = addressBook.organization {
+                subtitle = MailResourcesStrings.Localizable.addressBookTitle(organization)
             }
         }
     }
