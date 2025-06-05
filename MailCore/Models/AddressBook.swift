@@ -33,6 +33,7 @@ public final class AddressBook: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var name: String
     @Persisted public var isDefault: Bool
     @Persisted public var groupContact: List<GroupContact>
+    @Persisted public var organization: String
     @Persisted public var isDynamicOrganisation: Bool
 
     enum CodingKeys: String, CodingKey {
@@ -56,6 +57,7 @@ public final class AddressBook: Object, Decodable, ObjectKeyIdentifiable {
         let decodedName = try container.decode(String.self, forKey: .name)
         let decodedIsDefault = try container.decode(Bool.self, forKey: .isDefault)
         let decodedGroupContacts = try container.decode([GroupContact].self, forKey: .groupContact)
+        let decodedOrganization = try container.decode(String.self, forKey: .organization)
         let decodedIsDynamicOrganisation = try container.decode(Bool.self, forKey: .isDynamicOrganisation)
 
         super.init()
@@ -65,6 +67,7 @@ public final class AddressBook: Object, Decodable, ObjectKeyIdentifiable {
         name = decodedName
         isDefault = decodedIsDefault
         groupContact.append(objectsIn: decodedGroupContacts)
+        organization = decodedOrganization
         isDynamicOrganisation = decodedIsDynamicOrganisation
     }
 }
