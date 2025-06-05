@@ -80,6 +80,6 @@ let package = Package(
         .package(url: "https://github.com/SVGKit/SVGKit.git", branch: "3.x"),
         .package(url: "https://github.com/Infomaniak/swift-rich-html-editor.git", .upToNextMajor(from: "2.1.0")),
         .package(url: "https://github.com/apple/swift-collections", .upToNextMajor(from: "1.1.4")),
-        .package(url: "https://github.com/Infomaniak/Elegant-Emoji-Picker", branch: "feat/support-most-used-emojis")
+        .package(url: "https://github.com/Infomaniak/Elegant-Emoji-Picker", .upToNextMajor(from: "1.0.0"))
     ]
 )
