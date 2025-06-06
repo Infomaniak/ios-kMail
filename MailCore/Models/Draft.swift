@@ -32,7 +32,7 @@ public enum SaveDraftOption: String, Codable, PersistableEnum {
     case initialSave
     case save
     case send
-    case sendReaction
+    case sendReaction = "send_reaction"
     case schedule
 
     public func encode(to encoder: Encoder) throws {
@@ -263,6 +263,15 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
                      body: "",
                      to: recipientHolder.to,
                      cc: recipientHolder.cc)
+    }
+
+    public static func reacting(reaction: String, reply: MessageReply, currentMailboxEmail: String) -> Draft {
+        let replyingDraft = Draft.replying(reply: reply, currentMailboxEmail: currentMailboxEmail)
+
+        replyingDraft.action = .sendReaction
+        replyingDraft.emojiReaction = reaction
+
+        return replyingDraft
     }
 
     public func encode(to encoder: Encoder) throws {
