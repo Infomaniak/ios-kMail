@@ -31,10 +31,6 @@ extension View {
 }
 
 struct ThreadViewToolbarModifier: ViewModifier {
-    private static let standardActions: [Action] = [.reply, .forward, .archive, .delete]
-    private static let archiveActions: [Action] = [.reply, .forward, .openMovePanel, .delete]
-    private static let scheduleActions: [Action] = [.delete]
-
     @LazyInjectService private var matomo: MatomoUtils
 
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -45,25 +41,20 @@ struct ThreadViewToolbarModifier: ViewModifier {
 
     @ModalState private var destructiveAlert: DestructiveActionAlertState?
 
-    private let frozenThread: Thread
-
     private let isFlagged: Bool
     private let frozenFolder: Folder?
     private let frozenMessages: [Message]
 
-    private var toolbarActions: [Action] {
-        if frozenThread.containsOnlyScheduledDrafts {
-            return Self.scheduleActions
-        } else if frozenFolder?.role == .archive {
-            return Self.archiveActions
-        } else {
-            return Self.standardActions
-        }
+    private var toolbarActions: Action.Lists {
+        return Action.actionsForMessages(
+            frozenMessages,
+            origin: .floatingPanel(source: .messageList, originFolder: frozenFolder),
+            userIsStaff: false,
+            userEmail: mailboxManager.mailbox.email
+        )
     }
 
     init(frozenThread: Thread) {
-        self.frozenThread = frozenThread
-
         isFlagged = frozenThread.flagged
         frozenFolder = frozenThread.folder
         frozenMessages = frozenThread.messages.toArray()
@@ -81,16 +72,16 @@ struct ThreadViewToolbarModifier: ViewModifier {
                 }
             }
             .bottomBar {
-                ForEach(toolbarActions) { action in
+                ForEach(toolbarActions.bottomBarActions) { action in
                     if action == .reply {
-                        ToolbarButton(text: action.title, icon: action.icon) {
+                        ToolbarButton(text: action.shortTitle ?? action.title, icon: action.icon) {
                             didTap(action: action)
                         }
                         .adaptivePanel(item: $replyOrReplyAllMessage, popoverArrowEdge: .bottom) { message in
                             ReplyActionsView(message: message)
                         }
                     } else {
-                        ToolbarButton(text: action.title, icon: action.icon) {
+                        ToolbarButton(text: action.shortTitle ?? action.title, icon: action.icon) {
                             didTap(action: action)
                         }
                         .sheet(item: $messagesToMove) { messages in
@@ -99,7 +90,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                         }
                     }
                 }
-                if frozenFolder?.role != .scheduledDrafts {
+                if !(toolbarActions.listActions.isEmpty && toolbarActions.quickActions.isEmpty) {
                     ActionsPanelButton(
                         messages: frozenMessages,
                         originFolder: frozenFolder,

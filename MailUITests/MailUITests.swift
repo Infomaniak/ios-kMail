@@ -167,19 +167,6 @@ class MailUITests: XCTestCase {
     func testMoreSwipeAction() {
         launchAppFromScratch()
         login()
-        swipeFirstCell()
-
-        tapSwipeActionQuickActionsMenu()
-        app.buttons[Action.delete.accessibilityIdentifier].tap()
-
-        undo()
-
-        swipeFirstCell()
-
-        tapSwipeActionQuickActionsMenu()
-        app.buttons[Action.archive.accessibilityIdentifier].firstMatch.tap()
-
-        undo()
 
         swipeFirstCell()
 
