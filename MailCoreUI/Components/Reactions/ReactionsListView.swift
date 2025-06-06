@@ -59,7 +59,7 @@ public struct ReactionsListView: View {
                 ReactionButton(
                     emoji: emoji,
                     count: reactionsCountForEmoji(emoji),
-                    isEnabled: isReactionEnabled(emoji),
+                    hasReacted: isReactionEnabled(emoji),
                     didTapButton: didTapReaction,
                     didLongPressButton: didLongPressReaction
                 )
