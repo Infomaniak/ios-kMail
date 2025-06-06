@@ -148,7 +148,7 @@ public final class DraftManager {
         let draft = updateSubjectIfNeeded(draft: initialDraft)
 
         do {
-            if draft.action == .send {
+            if draft.action == .send || draft.action == .sendReaction {
                 let sendResponse = try await mailboxManager.send(draft: draft)
                 sendDate = sendResponse.scheduledDate
                 alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent, shouldShow: showSnackbar)
@@ -267,7 +267,7 @@ public final class DraftManager {
                             )
                         case .save:
                             await self.saveDraftRemotely(draft: draft, mailboxManager: mailboxManager, showSnackbar: showSnackbar)
-                        case .send, .schedule:
+                        case .send, .sendReaction, .schedule:
                             sendDate = await self.sendOrSchedule(
                                 draft: draft,
                                 mailboxManager: mailboxManager,
@@ -297,7 +297,7 @@ public final class DraftManager {
     ///
     /// Present a message with a `delete draft`  action
     @discardableResult
-    public func initialSaveRemotely(draft: Draft, mailboxManager: MailboxManager, showSnackbar: Bool) async -> Bool {
+    private func initialSaveRemotely(draft: Draft, mailboxManager: MailboxManager, showSnackbar: Bool) async -> Bool {
         guard !draft.shouldBeSaved else {
             deleteEmptyDraft(draft: draft, for: mailboxManager)
             return false
