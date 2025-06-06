@@ -114,10 +114,12 @@ public class RootViewState: ObservableObject {
         if let targetMailboxManager,
            let initialFolder = targetMailboxManager.getFolder(with: .inbox)?.freezeIfNeeded(),
            let currentUser = await accountManager.getCurrentUser() {
-            transitionToRootViewState(.mainView(
-                currentUser,
-                mainViewStateStore.getOrCreateMainViewState(for: targetMailboxManager, initialFolder: initialFolder)
-            ))
+            let mainViewState = await mainViewStateStore.getOrCreateMainViewState(
+                for: targetMailboxManager,
+                initialFolder: initialFolder
+            )
+
+            transitionToRootViewState(.mainView(currentUser, mainViewState))
         } else {
             let mailboxes = mailboxInfosManager.getMailboxes(for: currentAccount.userId)
 

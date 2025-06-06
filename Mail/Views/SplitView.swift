@@ -54,9 +54,7 @@ public class SplitViewManager: ObservableObject {
 
 struct SplitView: View {
     @InjectService private var platformDetector: PlatformDetectable
-    @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var orientationManager: OrientationManageable
-    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var appLaunchCounter: AppLaunchCounter
     @LazyInjectService private var cacheManager: CacheManageable
     @LazyInjectService private var matomo: MatomoUtils
@@ -188,10 +186,8 @@ struct SplitView: View {
         .onOpenURL { url in
             handleOpenUrl(url)
         }
-        .onReceive(NotificationCenter.default.publisher(for: .onUserTappedNotification).receive(on: DispatchQueue.main),
-                   perform: handleNotification)
-        .onReceive(NotificationCenter.default.publisher(for: .onUserTappedReplyToNotification).receive(on: DispatchQueue.main),
-                   perform: handleNotification)
+        .onReceive(NotificationCenter.default.publisher(for: .closeDrawer).receive(on: DispatchQueue.main),
+                   perform: handleCloseDrawer)
         .onReceive(NotificationCenter.default.publisher(for: .openNotificationSettings).receive(on: DispatchQueue.main),
                    perform: handleOpenNotificationSettings)
         .onReceive(NotificationCenter.default.publisher(for: .userPerformedHomeScreenShortcut).receive(on: DispatchQueue.main),
@@ -336,8 +332,13 @@ struct SplitView: View {
         }
     }
 
-    private func handleApplicationShortcut(_ notification: Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>
-        .Output) {
+    typealias NotificationPublisher = Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>.Output
+    // periphery:ignore:parameters notification - Needed for signature calling in .onReceive
+    private func handleCloseDrawer(_ notification: NotificationPublisher) {
+        navigationDrawerController.close()
+    }
+
+    private func handleApplicationShortcut(_ notification: NotificationPublisher) {
         guard let shortcut = notification.object as? UIApplicationShortcutItem,
               let homeScreenShortcut = HomeScreenShortcut(shortcutItem: shortcut)
         else { return }
@@ -354,53 +355,8 @@ struct SplitView: View {
         matomo.track(eventWithCategory: .homeScreenShortcuts, name: homeScreenShortcut.rawValue)
     }
 
-    private func handleNotification(_ notification: Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>.Output) {
-        guard let notificationPayload = notification.object as? NotificationTappedPayload else { return }
-
-        let notificationMailboxManager = accountManager.getMailboxManager(for: notificationPayload.mailboxId,
-                                                                          userId: notificationPayload.userId)
-
-        guard let notificationMailboxManager,
-              let inbox = notificationMailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() else { return }
-
-        navigationDrawerController.close()
-
-        Task {
-            @InjectService var mainViewStateStore: MainViewStateStore
-            let notificationMainViewState = mainViewStateStore.getOrCreateMainViewState(
-                for: notificationMailboxManager,
-                initialFolder: inbox
-            )
-
-            let tappedNotificationMessage = notificationMailboxManager.fetchObject(ofType: Message.self,
-                                                                                   forPrimaryKey: notificationPayload.messageId)?
-                .freezeIfNeeded()
-
-            if notification.name == .onUserTappedNotification {
-                // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in
-                // inbox
-                if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
-                    notificationMainViewState.selectedThread = tappedNotificationThread
-                } else {
-                    snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
-                }
-            } else if notification.name == .onUserTappedReplyToNotification {
-                if let tappedNotificationMessage {
-                    notificationMainViewState.composeMessageIntent = .replyingTo(
-                        message: tappedNotificationMessage,
-                        replyMode: .reply,
-                        originMailboxManager: mailboxManager
-                    )
-                } else {
-                    snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
-                }
-            }
-        }
-    }
-
     // periphery:ignore:parameters notification - Needed for signature calling in .onReceive
-    private func handleOpenNotificationSettings(_ notification:
-        Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>.Output) {
+    private func handleOpenNotificationSettings(_ notification: NotificationPublisher) {
         mainViewState.settingsViewConfig = SettingsViewConfig(baseNavigationPath: [.notifications])
     }
 }

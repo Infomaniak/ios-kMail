@@ -76,7 +76,11 @@ final class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
                 mailboxManager: mailboxManager
             )
         case NewMailActionIdentifier.reply:
-            messageActions.handleReplyOnNotification(messageUid: messageUid, mailbox: mailbox, mailboxManager: mailboxManager)
+            await messageActions.handleReplyOnNotification(
+                messageUid: messageUid,
+                mailbox: mailbox,
+                mailboxManager: mailboxManager
+            )
         default:
             break
         }

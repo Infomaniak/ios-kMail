@@ -18,10 +18,9 @@
 
 import Foundation
 
-public class MainViewStateStore {
+public actor MainViewStateStore {
     private var mainViewStates = [String: MainViewState]()
 
-    @MainActor
     public func getOrCreateMainViewState(for mailboxManager: MailboxManager, initialFolder: Folder) -> MainViewState {
         if let mainViewState = mainViewStates[mailboxManager.mailbox.uuid] {
             return mainViewState
@@ -32,7 +31,6 @@ public class MainViewStateStore {
         }
     }
 
-    @MainActor
     public func getExistingMainViewState(for mailboxManager: MailboxManager) -> MainViewState? {
         return mainViewStates[mailboxManager.mailbox.uuid]
     }
