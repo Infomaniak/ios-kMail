@@ -82,7 +82,7 @@ struct MailboxCell: View {
             accountManager.switchMailbox(newMailbox: mailbox)
             navigationDrawerState.close()
         }
-        .floatingPanel(isPresented: $isShowingLockedView) {
+        .mailFloatingPanel(isPresented: $isShowingLockedView) {
             LockedMailboxView(email: mailbox.email)
         }
         .sheet(isPresented: $isShowingUpdatePasswordView) {

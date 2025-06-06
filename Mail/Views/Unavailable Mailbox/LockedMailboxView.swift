@@ -57,7 +57,7 @@ struct LockedMailboxView: View {
 
 #Preview {
     Text("Preview")
-        .floatingPanel(isPresented: .constant(true)) {
+        .mailFloatingPanel(isPresented: .constant(true)) {
             LockedMailboxView(email: PreviewHelper.sampleMailbox.email)
         }
 }

@@ -20,6 +20,7 @@ import DesignSystem
 import InfomaniakCoreCommonUI
 import MailCore
 import MailResources
+import MyKSuite
 import SwiftUI
 
 public extension View {
@@ -123,8 +124,54 @@ public extension View {
         discoveryPresenter(
             isPresented: isPresented,
             bottomPadding: bottomPadding,
-            backgroundColor: backgroundColor,
+            alertBackgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
+            sheetBackgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
             modalContent: modalContent
+        )
+    }
+}
+
+public extension View {
+    func mailFloatingPanel<Content: View>(
+        isPresented: Binding<Bool>,
+        title: String? = nil,
+        bottomPadding: CGFloat = IKPadding.medium,
+        @ViewBuilder content: @escaping () -> Content
+    ) -> some View {
+        floatingPanel(
+            isPresented: isPresented,
+            title: title,
+            backgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
+            bottomPadding: bottomPadding,
+            content: content
+        )
+    }
+
+    func mailFloatingPanel<Item: Identifiable, Content: View>(
+        item: Binding<Item?>,
+        title: String? = nil,
+        bottomPadding: CGFloat = IKPadding.medium,
+        @ViewBuilder content: @escaping (Item) -> Content
+    ) -> some View {
+        floatingPanel(
+            item: item,
+            backgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
+            title: title,
+            bottomPadding: bottomPadding,
+            content: content
+        )
+    }
+}
+
+public extension View {
+    func mailMyKSuiteFloatingPanel(
+        isPresented: Binding<Bool>,
+        configuration: MyKSuiteConfiguration
+    ) -> some View {
+        myKSuitePanel(
+            isPresented: isPresented,
+            backgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
+            configuration: configuration
         )
     }
 }

@@ -161,7 +161,7 @@ struct SplitView: View {
                 openURL(settingsUrl)
             }
         }
-        .myKSuitePanel(isPresented: $mainViewState.isShowingMyKSuiteUpgrade, configuration: .mail)
+        .mailMyKSuiteFloatingPanel(isPresented: $mainViewState.isShowingMyKSuiteUpgrade, configuration: .mail)
         .fullScreenCover(isPresented: $mainViewState.isShowingSyncProfile) {
             SyncProfileNavigationView()
         }

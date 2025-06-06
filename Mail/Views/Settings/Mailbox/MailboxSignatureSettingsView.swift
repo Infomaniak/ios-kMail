@@ -84,7 +84,7 @@ struct MailboxSignatureSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .backButtonDisplayMode(.minimal)
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "Signatures"])
-        .myKSuitePanel(isPresented: $isShowingMyKSuiteUpgrade, configuration: .mail)
+        .mailMyKSuiteFloatingPanel(isPresented: $isShowingMyKSuiteUpgrade, configuration: .mail)
         .task {
             do {
                 try await mailboxManager.refreshAllSignatures()

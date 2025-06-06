@@ -107,7 +107,7 @@ struct UnavailableMailboxesView: View {
             }
         }
         .navigationViewStyle(.stack)
-        .floatingPanel(
+        .mailFloatingPanel(
             item: $presentedSwitchAccountUser,
             title: MailResourcesStrings.Localizable.titleMyAccount(accountManager.accounts.count)
         ) { currentUser in

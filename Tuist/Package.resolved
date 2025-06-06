@@ -48,10 +48,10 @@
     {
       "identity" : "ios-core-ui",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/ios-core-ui/",
+      "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "5d3763a71bebd240bbb685784043192fc444fef2",
-        "version" : "18.10.1"
+        "branch" : "feat/add-background-color-on-alert-presenter",
+        "revision" : "ef337d3e8fa8c89dda7dcef3c53bde9a23680482"
       }
     },
     {
@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
-        "revision" : "8b1be6ee5c0b5f100c31f8c6dcd85cb8b78001a1",
-        "version" : "1.1.0"
+        "branch" : "refactor/add-background-color-floating-panel",
+        "revision" : "8c3c2065e464e770870e79e657991e5a9f46688d"
       }
     },
     {

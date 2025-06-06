@@ -41,7 +41,7 @@ struct AccountButton: View {
                        contactConfiguration: .user(user: currentUser.value))
                 .accessibilityLabel(MailResourcesStrings.Localizable.titleMyAccount(1))
         }
-        .floatingPanel(
+        .mailFloatingPanel(
             isPresented: $isShowingNewAccountListView,
             title: MailResourcesStrings.Localizable.titleMyAccount(accountManager.accounts.count)
         ) {
