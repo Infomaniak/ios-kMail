@@ -1,3 +1,2 @@
-- Resolved a problem preventing login on iPadOS
-- Troubleshooting in compose view when adding a recipient group
-- Bug fixes and minor improvements
+- Fixed a bug preventing opening a notification on app start up
+- Fixed a problem displaying the name of a contact group
