@@ -27,5 +27,5 @@ public struct MessageActionHandler: MessageActionHandlable {
 
     func handleDeleteOnNotification(messageUid: String, mailboxManager: MailboxManager) async throws {}
 
-    func handleReplyOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) {}
+    func handleReplyOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async {}
 }

@@ -42,29 +42,59 @@ public struct MessageActionHandler: MessageActionHandlable {
 
     @LazyInjectService private var accountManager: AccountManager
     @LazyInjectService private var matomo: MatomoUtils
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
+    private enum Action {
+        case tap
+        case reply
+    }
+
+    private func handleNotification(action: Action, messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async {
+        switchAccountIfNeeded(mailbox: mailbox, mailboxManager: mailboxManager)
+
+        guard let inbox = mailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() else { return }
+
+        @InjectService var mainViewStateStore: MainViewStateStore
+        let notificationMainViewState = await mainViewStateStore.getOrCreateMainViewState(
+            for: mailboxManager,
+            initialFolder: inbox
+        )
+
+        let tappedNotificationMessage = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?
+            .freezeIfNeeded()
+
+        switch action {
+        case .tap:
+            // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in
+            // inbox
+            if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
+                NotificationCenter.default.post(name: .closeDrawer, object: nil)
+                notificationMainViewState.selectedThread = tappedNotificationThread
+            } else {
+                snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
+            }
+        case .reply:
+            if let tappedNotificationMessage {
+                NotificationCenter.default.post(name: .closeDrawer, object: nil)
+                notificationMainViewState.composeMessageIntent = .replyingTo(
+                    message: tappedNotificationMessage,
+                    replyMode: .reply,
+                    originMailboxManager: mailboxManager
+                )
+            } else {
+                snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
+            }
+        }
+    }
 
     func handleTapOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async {
         matomo.track(eventWithCategory: .notificationActions, name: ActionNames.open)
-
-        // Switch account if needed
-        switchAccountIfNeeded(mailbox: mailbox, mailboxManager: mailboxManager)
-
-        NotificationCenter.default.post(name: .onUserTappedNotification,
-                                        object: NotificationTappedPayload(userId: mailbox.userId,
-                                                                          mailboxId: mailbox.mailboxId,
-                                                                          messageId: messageUid))
+        await handleNotification(action: .tap, messageUid: messageUid, mailbox: mailbox, mailboxManager: mailboxManager)
     }
 
-    func handleReplyOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) {
+    func handleReplyOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async {
         matomo.track(eventWithCategory: .notificationActions, name: ActionNames.reply)
-
-        // Switch account if needed
-        switchAccountIfNeeded(mailbox: mailbox, mailboxManager: mailboxManager)
-
-        NotificationCenter.default.post(name: .onUserTappedReplyToNotification,
-                                        object: NotificationTappedPayload(userId: mailbox.userId,
-                                                                          mailboxId: mailbox.mailboxId,
-                                                                          messageId: messageUid))
+        await handleNotification(action: .reply, messageUid: messageUid, mailbox: mailbox, mailboxManager: mailboxManager)
     }
 
     func handleArchiveOnNotification(messageUid: String, mailboxManager: MailboxManager) async throws {

@@ -31,5 +31,5 @@ protocol MessageActionHandlable {
     func handleDeleteOnNotification(messageUid: String, mailboxManager: MailboxManager) async throws
 
     /// Present a new `reply to` draft to the user with the correct account
-    func handleReplyOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager)
+    func handleReplyOnNotification(messageUid: String, mailbox: Mailbox, mailboxManager: MailboxManager) async
 }
