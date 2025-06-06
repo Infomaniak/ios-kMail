@@ -23,18 +23,20 @@ import OrderedCollections
 import RealmSwift
 import SwiftUI
 
+import InfomaniakDI
+
 struct MessageReactionsView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var localReactions = OrderedSet<String>()
     @State private var selectedEmoji: Emoji?
 
-    let reactions: MessageReactions
+    let message: Message
 
     var body: some View {
         ReactionsListView(
             selectedEmoji: $selectedEmoji,
-            reactions: Array(localReactions),
+            reactions: message.reactions.keys,
             reactionsCountForEmoji: reactionsCount,
             isReactionEnabled: isReactionEnabled,
             didTapReaction: didTapReaction,
@@ -43,7 +45,7 @@ struct MessageReactionsView: View {
         .padding(.top, value: .small)
         .padding([.horizontal, .bottom], value: .medium)
         .onAppear {
-            localReactions.formUnion(reactions.keys)
+            localReactions.formUnion(message.reactions.keys)
         }
         .onChange(of: selectedEmoji) { newValue in
             guard let newValue else { return }
@@ -54,7 +56,7 @@ struct MessageReactionsView: View {
     }
 
     private func reactionsCount(for reaction: String) -> Int {
-        var count = reactions[reaction]??.count ?? 0
+        var count = message.reactions[reaction]??.count ?? 0
         if localReactions.contains(reaction) && !hasCurrentUserRemotelyReacted(reaction) {
             count += 1
         }
@@ -67,10 +69,22 @@ struct MessageReactionsView: View {
     }
 
     private func didTapReaction(_ reaction: String) {
-        // TODO: Handle in next PR
         withAnimation {
             localReactions.append(reaction)
         }
+
+        let draft = Draft.reacting(
+            reaction: reaction,
+            reply: MessageReply(frozenMessage: message.freezeIfNeeded(), replyMode: .reply),
+            currentMailboxEmail: mailboxManager.mailbox.email
+        )
+
+        try? mailboxManager.writeTransaction { realm in
+            realm.add(draft)
+        }
+
+        @InjectService var draftManager: DraftManager
+        draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: true)
     }
 
     private func didLongPressReaction(_ reaction: String) {
@@ -78,11 +92,11 @@ struct MessageReactionsView: View {
     }
 
     private func hasCurrentUserRemotelyReacted(_ reaction: String) -> Bool {
-        return reactions[reaction]??.contains { $0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) } ?? false
+        return message.reactions[reaction]??.contains { $0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) } ?? false
     }
 }
 
 #Preview {
-    MessageReactionsView(reactions: PreviewHelper.reactions)
+    MessageReactionsView(message: PreviewHelper.sampleMessage)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }
