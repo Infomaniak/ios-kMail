@@ -41,7 +41,7 @@ extension View {
 struct ReactionButton: View {
     let emoji: String
     let count: Int
-    let isEnabled: Bool
+    let hasReacted: Bool
 
     let didTapButton: (String) -> Void
     let didLongPressButton: (String) -> Void
@@ -55,7 +55,7 @@ struct ReactionButton: View {
                     .backportNumericContentTranstion()
             }
         }
-        .buttonStyle(.reaction(isEnabled: isEnabled))
+        .buttonStyle(.reaction(isEnabled: hasReacted))
         .simultaneousGesture(
             TapGesture().onEnded { _ in didTapButton(emoji) }
         )
@@ -67,8 +67,8 @@ struct ReactionButton: View {
 
 #Preview {
     HStack {
-        ReactionButton(emoji: "😄", count: 1, isEnabled: false, didTapButton: { _ in }, didLongPressButton: { _ in })
-        ReactionButton(emoji: "❤️", count: 12, isEnabled: true, didTapButton: { _ in }, didLongPressButton: { _ in })
-        ReactionButton(emoji: "🤯", count: 2, isEnabled: false, didTapButton: { _ in }, didLongPressButton: { _ in })
+        ReactionButton(emoji: "😄", count: 1, hasReacted: false, didTapButton: { _ in }, didLongPressButton: { _ in })
+        ReactionButton(emoji: "❤️", count: 12, hasReacted: true, didTapButton: { _ in }, didLongPressButton: { _ in })
+        ReactionButton(emoji: "🤯", count: 2, hasReacted: false, didTapButton: { _ in }, didLongPressButton: { _ in })
     }
 }
