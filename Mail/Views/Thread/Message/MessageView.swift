@@ -76,7 +76,9 @@ struct MessageView: View {
                             messageUid: message.uid
                         )
 
-                        MessageReactionsView(reactions: message.reactions)
+                        if message.hasReactions {
+                            MessageReactionsView(message: message)
+                        }
                     }
                 }
             }
