@@ -121,14 +121,12 @@ struct ActionsPanelViewModifier: ViewModifier {
             )
         }
         .mailCustomAlert(
-            item: $reportedForDisplayProblemMessage,
-            backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
+            item: $reportedForDisplayProblemMessage
         ) { message in
             ReportDisplayProblemView(message: message)
         }
         .mailCustomAlert(
-            item: $reportedForPhishingMessages,
-            backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor
+            item: $reportedForPhishingMessages
         ) { messages in
             ReportPhishingView(
                 messagesWithDuplicates: messages,

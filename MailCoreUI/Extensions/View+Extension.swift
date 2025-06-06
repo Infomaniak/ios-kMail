@@ -98,19 +98,25 @@ public extension View {
 public extension View {
     func mailCustomAlert<Item, Content>(
         item: Binding<Item?>,
-        backgroundColor: Color = MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
         @ViewBuilder content: @escaping (Item) -> Content
     ) -> some View
         where Item: Identifiable, Content: View {
-        customAlert(item: item, backgroundColor: backgroundColor, content: content)
+        customAlert(
+            item: item,
+            backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
+            content: content
+        )
     }
 
     func mailCustomAlert<Content: View>(
         isPresented: Binding<Bool>,
-        backgroundColor: Color = MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
         @ViewBuilder content: () -> Content
     ) -> some View {
-        customAlert(isPresented: isPresented, backgroundColor: backgroundColor, content: content)
+        customAlert(
+            isPresented: isPresented,
+            backgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
+            content: content
+        )
     }
 }
 
@@ -118,7 +124,6 @@ public extension View {
     func mailDiscoveryPresenter<ModalContent: View>(
         isPresented: Binding<Bool>,
         bottomPadding: CGFloat = IKPadding.medium,
-        backgroundColor: Color = MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
         @ViewBuilder modalContent: @escaping () -> ModalContent
     ) -> some View {
         discoveryPresenter(

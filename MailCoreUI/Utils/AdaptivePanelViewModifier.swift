@@ -45,8 +45,10 @@ struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>: ViewMo
                 if isCompactWindow {
                     if #available(iOS 16.0, *) {
                         panelContent(item).modifier(SelfSizingPanelViewModifier(bottomPadding: IKPadding.medium))
+                            .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
                     } else {
                         panelContent(item).modifier(SelfSizingPanelBackportViewModifier(bottomPadding: IKPadding.medium))
+                            .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
                     }
                 } else {
                     ScrollView {
