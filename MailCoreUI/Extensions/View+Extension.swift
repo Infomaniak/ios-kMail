@@ -16,9 +16,11 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreCommonUI
 import MailCore
 import MailResources
+import MyKSuite
 import SwiftUI
 
 public extension View {
@@ -90,5 +92,86 @@ public extension View {
                 emptyView()
             }
         }
+    }
+}
+
+public extension View {
+    func mailCustomAlert<Item, Content>(
+        item: Binding<Item?>,
+        backgroundColor: Color = MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
+        @ViewBuilder content: @escaping (Item) -> Content
+    ) -> some View
+        where Item: Identifiable, Content: View {
+        customAlert(item: item, backgroundColor: backgroundColor, content: content)
+    }
+
+    func mailCustomAlert<Content: View>(
+        isPresented: Binding<Bool>,
+        backgroundColor: Color = MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        customAlert(isPresented: isPresented, backgroundColor: backgroundColor, content: content)
+    }
+}
+
+public extension View {
+    func mailDiscoveryPresenter<ModalContent: View>(
+        isPresented: Binding<Bool>,
+        bottomPadding: CGFloat = IKPadding.medium,
+        backgroundColor: Color = MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
+        @ViewBuilder modalContent: @escaping () -> ModalContent
+    ) -> some View {
+        discoveryPresenter(
+            isPresented: isPresented,
+            bottomPadding: bottomPadding,
+            alertBackgroundColor: MailResourcesAsset.backgroundTertiaryColor.swiftUIColor,
+            sheetBackgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
+            modalContent: modalContent
+        )
+    }
+}
+
+public extension View {
+    func mailFloatingPanel<Content: View>(
+        isPresented: Binding<Bool>,
+        title: String? = nil,
+        bottomPadding: CGFloat = IKPadding.medium,
+        @ViewBuilder content: @escaping () -> Content
+    ) -> some View {
+        floatingPanel(
+            isPresented: isPresented,
+            title: title,
+            backgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
+            bottomPadding: bottomPadding,
+            content: content
+        )
+    }
+
+    func mailFloatingPanel<Item: Identifiable, Content: View>(
+        item: Binding<Item?>,
+        title: String? = nil,
+        bottomPadding: CGFloat = IKPadding.medium,
+        @ViewBuilder content: @escaping (Item) -> Content
+    ) -> some View {
+        floatingPanel(
+            item: item,
+            backgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
+            title: title,
+            bottomPadding: bottomPadding,
+            content: content
+        )
+    }
+}
+
+public extension View {
+    func mailMyKSuiteFloatingPanel(
+        isPresented: Binding<Bool>,
+        configuration: MyKSuiteConfiguration
+    ) -> some View {
+        myKSuitePanel(
+            isPresented: isPresented,
+            backgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
+            configuration: configuration
+        )
     }
 }

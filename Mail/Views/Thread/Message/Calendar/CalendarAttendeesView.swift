@@ -98,7 +98,7 @@ struct CalendarAttendeesView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .floatingPanel(
+        .mailFloatingPanel(
             isPresented: $isShowingAllAttendees,
             title: MailResourcesStrings.Localizable.attendeesListTitle(attendees.count)
         ) {

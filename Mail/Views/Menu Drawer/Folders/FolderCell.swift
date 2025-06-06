@@ -227,7 +227,7 @@ struct FolderCellContent: View {
                 }
             }
         }
-        .customAlert(item: $currentFolder) { folder in
+        .mailCustomAlert(item: $currentFolder) { folder in
             CreateFolderView(mode: .modify(modifiedFolder: folder))
         }
     }

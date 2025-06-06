@@ -123,7 +123,7 @@ struct SplitView: View {
                     }
             }
         }
-        .discoveryPresenter(isPresented: $mainViewState.isShowingUpdateAvailable) {
+        .mailDiscoveryPresenter(isPresented: $mainViewState.isShowingUpdateAvailable) {
             UpdateVersionView(image: MailResourcesAsset.documentStarsRocket.swiftUIImage) { willUpdate in
                 if willUpdate {
                     openURL(URLConstants.getStoreURL().url)
@@ -133,7 +133,7 @@ struct SplitView: View {
                 }
             }
         }
-        .discoveryPresenter(isPresented: $mainViewState.isShowingSyncDiscovery) {
+        .mailDiscoveryPresenter(isPresented: $mainViewState.isShowingSyncDiscovery) {
             DiscoveryView(item: .syncDiscovery) {
                 guard UserDefaults.shared.showSyncCounter < 3 else {
                     UserDefaults.shared.shouldPresentSyncDiscovery = false
@@ -150,7 +150,7 @@ struct SplitView: View {
                 mainViewState.isShowingSyncProfile = true
             }
         }
-        .discoveryPresenter(isPresented: $mainViewState.isShowingSetAppAsDefaultDiscovery) {
+        .mailDiscoveryPresenter(isPresented: $mainViewState.isShowingSetAppAsDefaultDiscovery) {
             DiscoveryView(item: .setAsDefaultAppDiscovery) {
                 UserDefaults.shared.shouldPresentSetAsDefaultDiscovery = false
             } completionHandler: { willSetAsDefault in
@@ -163,7 +163,7 @@ struct SplitView: View {
                 openURL(settingsUrl)
             }
         }
-        .myKSuitePanel(isPresented: $mainViewState.isShowingMyKSuiteUpgrade, configuration: .mail)
+        .mailMyKSuiteFloatingPanel(isPresented: $mainViewState.isShowingMyKSuiteUpgrade, configuration: .mail)
         .fullScreenCover(isPresented: $mainViewState.isShowingSyncProfile) {
             SyncProfileNavigationView()
         }
@@ -216,7 +216,7 @@ struct SplitView: View {
             splitViewManager.splitViewController = splitViewController
             setupBehaviour(orientation: interfaceOrientation)
         }
-        .customAlert(isPresented: $mainViewState.isShowingReviewAlert) {
+        .mailCustomAlert(isPresented: $mainViewState.isShowingReviewAlert) {
             AskForReviewView(
                 appName: Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as! String,
                 feedbackURL: MailResourcesStrings.Localizable.urlUserReportiOS,
