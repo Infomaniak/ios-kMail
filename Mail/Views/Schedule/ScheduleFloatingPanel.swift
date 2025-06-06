@@ -81,7 +81,7 @@ struct ScheduleFloatingPanel: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .floatingPanel(isPresented: $isShowingFloatingPanel, title: type.floatingPanelTitle) {
+            .mailFloatingPanel(isPresented: $isShowingFloatingPanel, title: type.floatingPanelTitle) {
                 ScheduleFloatingPanelView(
                     isShowingCustomScheduleAlert: $isShowingCustomScheduleAlert,
                     isShowingMyKSuiteUpgrade: $isShowingMyKSuiteUpgrade,
@@ -109,6 +109,6 @@ struct ScheduleFloatingPanel: ViewModifier {
                     }
                 }
             }
-            .myKSuitePanel(isPresented: $isShowingMyKSuiteUpgrade, configuration: .mail)
+            .mailMyKSuiteFloatingPanel(isPresented: $isShowingMyKSuiteUpgrade, configuration: .mail)
     }
 }
