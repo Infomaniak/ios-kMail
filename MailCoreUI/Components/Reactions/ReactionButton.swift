@@ -21,7 +21,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct BackportNumericContentTranstion: ViewModifier {
+struct BackportNumericContentTransition: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 16.0, *) {
             content
@@ -33,8 +33,8 @@ struct BackportNumericContentTranstion: ViewModifier {
 }
 
 extension View {
-    func backportNumericContentTranstion() -> some View {
-        modifier(BackportNumericContentTranstion())
+    func backportNumericContentTransition() -> some View {
+        modifier(BackportNumericContentTransition())
     }
 }
 
@@ -52,7 +52,7 @@ struct ReactionButton: View {
                 Text(verbatim: emoji)
                 Text(verbatim: "\(count)")
                     .monospacedDigit()
-                    .backportNumericContentTranstion()
+                    .backportNumericContentTransition()
             }
         }
         .buttonStyle(.reaction(isEnabled: hasReacted))
