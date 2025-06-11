@@ -63,26 +63,28 @@ public struct MessageActionHandler: MessageActionHandlable {
         let tappedNotificationMessage = mailboxManager.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)?
             .freezeIfNeeded()
 
-        switch action {
-        case .tap:
-            // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in
-            // inbox
-            if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
-                NotificationCenter.default.post(name: .closeDrawer, object: nil)
-                notificationMainViewState.selectedThread = tappedNotificationThread
-            } else {
-                snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
-            }
-        case .reply:
-            if let tappedNotificationMessage {
-                NotificationCenter.default.post(name: .closeDrawer, object: nil)
-                notificationMainViewState.composeMessageIntent = .replyingTo(
-                    message: tappedNotificationMessage,
-                    replyMode: .reply,
-                    originMailboxManager: mailboxManager
-                )
-            } else {
-                snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
+        Task { @MainActor in
+            switch action {
+            case .tap:
+                // Original parent should always be in the inbox but maybe change in a later stage to always find the parent in
+                // inbox
+                if let tappedNotificationThread = tappedNotificationMessage?.originalThread {
+                    NotificationCenter.default.post(name: .closeDrawer, object: nil)
+                    notificationMainViewState.selectedThread = tappedNotificationThread
+                } else {
+                    snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
+                }
+            case .reply:
+                if let tappedNotificationMessage {
+                    NotificationCenter.default.post(name: .closeDrawer, object: nil)
+                    notificationMainViewState.composeMessageIntent = .replyingTo(
+                        message: tappedNotificationMessage,
+                        replyMode: .reply,
+                        originMailboxManager: mailboxManager
+                    )
+                } else {
+                    snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
+                }
             }
         }
     }
