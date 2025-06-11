@@ -20,23 +20,48 @@ import DesignSystem
 import MailCore
 import MailCoreUI
 import MailResources
+import RealmSwift
 import SwiftUI
+import WrappingHStack
 
 struct EncryptionPasswordView: View {
-    let draft: Draft
+    @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var mailboxManager: MailboxManager
+    @ObservedRealmObject var draft: Draft
 
     var body: some View {
-        VStack(alignment: .leading, spacing: IKPadding.huge) {
-            VStack(alignment: .leading, spacing: IKPadding.small) {
-                Text(MailResourcesStrings.Localizable.encryptedMessageAddPasswordInformation)
-                    .textStyle(.bodySecondary)
+        ZStack {
+            NavigationView {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: IKPadding.huge) {
+                        VStack(alignment: .leading, spacing: IKPadding.small) {
+                            Text(MailResourcesStrings.Localizable.encryptedMessageAddPasswordInformation)
+                                .textStyle(.bodySecondary)
 
-                Button {
-                    // En savoir plus
-                } label: {
-                    Text(MailResourcesStrings.Localizable.moreInfo)
-                        .font(MailTextStyle.bodyMedium.font)
+                            Button {
+                                // En savoir plus
+                            } label: {
+                                Text(MailResourcesStrings.Localizable.moreInfo)
+                                    .font(MailTextStyle.bodyMedium.font)
+                            }
+                        }
+
+                        VStack(alignment: .leading, spacing: IKPadding.small) {
+                            Text(MailResourcesStrings.Localizable.encryptedMessagePasswordConcernedUserTitle)
+                                .textStyle(.bodyMedium)
+
+                            WrappingHStack {
+                                ForEach(draft.autoEncryptDisableRecipient, id: \.email) { recipient in
+                                    RecipientChipLabelView(recipient: recipient)
+                                }
+                                .environmentObject(mailboxManager)
+                            }
+                        }
+                    }
+                    .padding(value: .medium)
                 }
+                .navigationTitle(MailResourcesStrings.Localizable.encryptedPasswordProtectionTitle)
+                .navigationBarTitleDisplayMode(.inline)
             }
 
             VStack(alignment: .leading, spacing: IKPadding.small) {
@@ -47,7 +72,7 @@ struct EncryptionPasswordView: View {
                     .textStyle(.bodySmall)
 
                 HStack {
-                    TextField("Password", text: .constant("OUI"))
+                    TextField("Password", text: $draft.encryptionPassword)
 
                     Button {
                         // Generate password
@@ -73,28 +98,33 @@ struct EncryptionPasswordView: View {
                 Button {
                     // Copier
                 } label: {
-                    Text(MailResourcesStrings.Localizable.buttonCopy)
-                        .font(MailTextStyle.bodyMedium.font)
+                    Label {
+                        Text(MailResourcesStrings.Localizable.buttonCopy)
+                    } icon: {
+                        MailResourcesAsset.duplicate.swiftUIImage
+                            .resizable()
+                            .frame(width: 16, height: 16)
+                    }
                 }
+                .buttonStyle(.ikBorderedProminent)
+                .controlSize(.large)
+                .ikButtonFullWidth(true)
+                .padding(.top, value: .small)
             }
-            .padding(value: .large)
+            .padding(.horizontal, value: .medium)
+            .padding(.vertical, value: .small)
             .background {
                 MailResourcesAsset.textFieldColor.swiftUIColor
                     .clipShape(.rect(cornerRadius: IKRadius.large))
             }
-
-            VStack(spacing: IKPadding.small) {
-                Text(MailResourcesStrings.Localizable.encryptedMessagePasswordConcernedUserTitle)
-                    .textStyle(.bodyMedium)
-
-                // TODO: - RecipientChip foreach not-hosted recipient in Draft
-            }
+            .frame(maxHeight: .infinity, alignment: .bottom)
+            .padding(value: .medium)
         }
-        .padding(value: .medium)
         .tint(MailResourcesAsset.sovereignBlueColor.swiftUIColor)
     }
 }
 
 #Preview {
     EncryptionPasswordView(draft: Draft())
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }
