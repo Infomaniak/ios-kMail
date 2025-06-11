@@ -103,6 +103,8 @@ class MailUITests: XCTestCase {
 
         app.buttons[MailResourcesStrings.Localizable.buttonClose].firstMatch.tap()
 
+        wait(delay: 15)
+
         swipeCustomCell(with: subject)
 
         let deleteDraftButton = app.buttons[MailResourcesStrings.Localizable.actionDelete].firstMatch
@@ -250,6 +252,8 @@ class MailUITests: XCTestCase {
         _ = addButton.waitForExistence(timeout: defaultTimeOut)
         addButton.tap()
 
+        wait(delay: 15)
+
         app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage]
             .buttons[MailResourcesStrings.Localizable.buttonClose].firstMatch.tap()
 
@@ -262,6 +266,7 @@ class MailUITests: XCTestCase {
         let threadList = app.collectionViews.firstMatch
         _ = threadList.waitForExistence(timeout: defaultTimeOut)
         threadList.swipeDown()
+        wait(delay: 15)
     }
 
     func undo(ignoreUndoFailure: Bool = true) {
@@ -280,6 +285,7 @@ class MailUITests: XCTestCase {
         let testMailCell = app.collectionViews.cells.element(boundBy: 1)
         _ = testMailCell.waitForExistence(timeout: defaultTimeOut)
         testMailCell.swipeLeft()
+        wait(delay: 15)
     }
 
     func swipeCustomCell(with text: String) {
