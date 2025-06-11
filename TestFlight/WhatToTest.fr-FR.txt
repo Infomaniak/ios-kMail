@@ -1,2 +1,1 @@
-- Correction d'un bug empêchant l'ouverture d'une notification au démarrage de l'app
-- Correction d'un problème d'affichage du nom d'un groupe de contacts
+- Correction d'un crash à l'ouverture d'une notification au démarrage de l'app
