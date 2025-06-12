@@ -96,7 +96,8 @@ struct EncryptionPasswordView: View {
                 }
 
                 Button {
-                    // Copier
+                    UIPasteboard.general.string = draft.encryptionPassword
+                    dismiss()
                 } label: {
                     Label {
                         Text(MailResourcesStrings.Localizable.buttonCopy)
@@ -106,6 +107,7 @@ struct EncryptionPasswordView: View {
                             .frame(width: 16, height: 16)
                     }
                 }
+                .disabled(draft.encryptionPassword.isEmpty)
                 .buttonStyle(.ikBorderedProminent)
                 .controlSize(.large)
                 .ikButtonFullWidth(true)
