@@ -114,7 +114,7 @@ struct MenuDrawerItemsHelpListView: View {
         .sheet(isPresented: $isShowingBugTracker) {
             BugTrackerView(isPresented: $isShowingBugTracker)
         }
-        .customAlert(isPresented: $isShowingUpdateVersionAlert) {
+        .mailCustomAlert(isPresented: $isShowingUpdateVersionAlert) {
             UpdateVersionAlertView(onLaterPressed: sendFeedback)
         }
     }

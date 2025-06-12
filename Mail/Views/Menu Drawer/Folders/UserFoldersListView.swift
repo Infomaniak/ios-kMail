@@ -66,7 +66,7 @@ struct UserFoldersListView: View {
                         .padding(value: .medium)
                 }
                 .accessibilityLabel(MailResourcesStrings.Localizable.newFolderDialogTitle)
-                .customAlert(isPresented: $isShowingCreateFolderAlert) {
+                .mailCustomAlert(isPresented: $isShowingCreateFolderAlert) {
                     CreateFolderView(mode: .create)
                 }
             }

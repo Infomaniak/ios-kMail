@@ -134,7 +134,7 @@ struct SettingsNotificationsView: View {
         .onDisappear {
             updateTopicsForCurrentUserIfNeeded()
         }
-        .customAlert(isPresented: $showAlertNotification) {
+        .mailCustomAlert(isPresented: $showAlertNotification) {
             SettingsNotificationsInstructionsView()
         }
         .matomoView(view: [MatomoUtils.View.settingsView.displayName, "Notifications"])
