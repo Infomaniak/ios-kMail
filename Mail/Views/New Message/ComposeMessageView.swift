@@ -87,6 +87,7 @@ struct ComposeMessageView: View {
 
     @State private var isShowingEncryptAdPanel = false
     @State private var isShowingEncryptStatePanel = false
+    @State private var isShowingEncryptPasswordPanel = false
 
     @Weak private var scrollView: UIScrollView?
 
@@ -316,8 +317,15 @@ struct ComposeMessageView: View {
         .sheet(isPresented: $isShowingEncryptAdPanel) {
             EncryptionAdView { enableEncryption() }
         }
+        .sheet(isPresented: $isShowingEncryptPasswordPanel) {
+            EncryptionPasswordView(draft: draft)
+        }
         .floatingPanel(isPresented: $isShowingEncryptStatePanel) {
-            EncryptionStateView(password: $draft.encryptionPassword, autoEncryptDisableCount: draft.autoEncryptDisable.count) {
+            EncryptionStateView(
+                password: $draft.encryptionPassword,
+                autoEncryptDisableCount: draft.autoEncryptDisable.count,
+                isShowingPasswordView: $isShowingEncryptPasswordPanel
+            ) {
                 disableEncryption()
             }
         }

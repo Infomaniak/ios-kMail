@@ -72,7 +72,7 @@ struct EncryptionPasswordView: View {
                     .textStyle(.bodySmall)
 
                 HStack {
-                    TextField("Password", text: $draft.encryptionPassword)
+                    TextField(MailResourcesStrings.Localizable.encryptedPasswordTitle, text: $draft.encryptionPassword)
 
                     Button {
                         // Generate password

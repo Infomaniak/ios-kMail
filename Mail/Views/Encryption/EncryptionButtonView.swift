@@ -44,5 +44,5 @@ struct EncryptionButtonView: View {
 }
 
 #Preview {
-//    EncryptionButtonView(draft: PreviewHelper.sampleDraft, didTap: <#() -> Void#>)
+    EncryptionButtonView(draft: Draft()) {}
 }

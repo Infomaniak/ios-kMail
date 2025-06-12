@@ -27,6 +27,7 @@ struct EncryptionStateView: View {
 
     @Binding var password: String
     let autoEncryptDisableCount: Int
+    @Binding var isShowingPasswordView: Bool
     let disableEncryption: () -> Void
 
     private var isEncryptionEnabled: Bool {
@@ -61,7 +62,8 @@ struct EncryptionStateView: View {
                 Divider()
 
                 Button {
-                    // TODO: - Password
+                    dismiss()
+                    isShowingPasswordView = true
                 } label: {
                     Label {
                         Text(password.isEmpty ?
@@ -95,5 +97,5 @@ struct EncryptionStateView: View {
 }
 
 #Preview {
-    EncryptionStateView(password: .constant(""), autoEncryptDisableCount: 1) {}
+    EncryptionStateView(password: .constant(""), autoEncryptDisableCount: 1, isShowingPasswordView: .constant(false)) {}
 }
