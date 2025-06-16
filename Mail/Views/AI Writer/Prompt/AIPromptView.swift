@@ -70,7 +70,7 @@ struct AIPromptView: View {
 
                 TextEditor(text: $prompt)
                     .textStyle(.body)
-                    .introspect(.textEditor, on: .iOS(.v15, .v16, .v17, .v18)) { textView in
+                    .introspect(.textEditor, on: .iOS(.v15, .v16, .v17, .v18, .v26)) { textView in
                         if !hasFocusedEditor {
                             textView.becomeFirstResponder()
                             hasFocusedEditor = true

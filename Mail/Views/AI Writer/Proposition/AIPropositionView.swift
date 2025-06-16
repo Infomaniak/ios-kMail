@@ -127,7 +127,7 @@ struct AIPropositionView: View {
                     .padding(.bottom, value: .micro)
                 }
             }
-            .introspect(.viewController, on: .iOS(.v15, .v16, .v17, .v18)) { viewController in
+            .introspect(.viewController, on: .iOS(.v15, .v16, .v17, .v18, .v26)) { viewController in
                 guard let toolbar = viewController.navigationController?.toolbar else { return }
                 UIConstants.applyComposeViewStyle(to: toolbar)
             }
