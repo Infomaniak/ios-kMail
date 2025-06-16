@@ -115,14 +115,13 @@ public class ActionsManager: ObservableObject {
 
     public func performAction(target messages: [Message], action: Action, origin: ActionOrigin) async throws {
         let messagesWithDuplicates = messages.addingDuplicates()
-        let category: MatomoUtils.EventCategory = {
-            if origin.type == .floatingPanel(source: .message) {
-                return .bottomSheetMessageActions
-            } else {
-                return .bottomSheetThreadActions
-            }
-        }()
 
+        let category: MatomoUtils.EventCategory
+        if origin.type == .floatingPanel(source: .message) {
+            category = .bottomSheetMessageActions
+        } else {
+            category = .bottomSheetThreadActions
+        }
         matomo.track(eventWithCategory: category, name: action.matomoName)
 
         switch action {
