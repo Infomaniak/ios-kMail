@@ -30,6 +30,7 @@ struct MessageScheduleHeaderView: View {
 
     let scheduleDate: Date
     let draftResource: String
+    let isLast: Bool
 
     var body: some View {
         MessageHeaderActionView(
@@ -39,7 +40,7 @@ struct MessageScheduleHeaderView: View {
                 dateStyle: .full,
                 timeStyle: .short
             )),
-            isFirst: true
+            isLast: isLast
         ) {
             Button(MailResourcesStrings.Localizable.buttonReschedule) {
                 isShowingReschedulePanel = true
