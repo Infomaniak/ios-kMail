@@ -35,16 +35,14 @@ struct MessageHeaderActionView<Content: View>: View {
     let iconSize: CGFloat = 16
     let icon: Image
     let message: String
-    let isFirst: Bool
+    let isLast: Bool
     var shouldDisplayActions = true
 
     @ViewBuilder var actions: () -> Content
 
     var body: some View {
         VStack(alignment: .leading) {
-            if isFirst {
-                IKDivider()
-            }
+            IKDivider()
 
             VStack(alignment: .leading) {
                 HStack(spacing: IKPadding.small) {
@@ -67,11 +65,13 @@ struct MessageHeaderActionView<Content: View>: View {
                     .padding(.leading, iconSize + IKPadding.small)
                 }
             }
-            .padding(.bottom, value: .micro)
-            .padding(.top, isFirst ? IKPadding.micro : 0)
+            .padding(.bottom, isLast ? IKPadding.micro : 0)
+            .padding(.top, value: .micro)
             .padding(.horizontal, value: .medium)
 
-            IKDivider()
+            if isLast {
+                IKDivider()
+            }
         }
     }
 }
@@ -81,7 +81,7 @@ struct MessageHeaderActionView<Content: View>: View {
         MessageHeaderActionView(
             icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
             message: MailResourcesStrings.Localizable.alertBlockedImagesDescription,
-            isFirst: true
+            isLast: true
         ) {
             Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
                 .buttonStyle(.ikBorderless(isInlined: true))
@@ -91,7 +91,7 @@ struct MessageHeaderActionView<Content: View>: View {
         MessageHeaderActionView(
             icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
             message: MailResourcesStrings.Localizable.alertBlockedImagesDescription,
-            isFirst: false
+            isLast: false
         ) {
             Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
                 .buttonStyle(.ikBorderless(isInlined: true))
