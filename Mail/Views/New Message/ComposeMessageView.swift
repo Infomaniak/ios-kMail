@@ -192,7 +192,7 @@ struct ComposeMessageView: View {
                 progressView
             }
         }
-        .introspect(.scrollView, on: .iOS(.v15, .v16, .v17, .v18)) { scrollView in
+        .introspect(.scrollView, on: .iOS(.v15, .v16, .v17, .v18, .v26)) { scrollView in
             guard self.scrollView != scrollView else { return }
             self.scrollView = scrollView
             scrollView.keyboardDismissMode = .interactive
