@@ -38,7 +38,7 @@ struct SnoozedThreadHeaderView: View {
         MessageHeaderActionView(
             icon: MailResourcesAsset.alarmClockFilled.swiftUIImage,
             message: MailResourcesStrings.Localizable.snoozeAlertTitle(date.formatted(.messageHeader)),
-            isFirst: true,
+            isLast: true,
             shouldDisplayActions: folder?.canAccessSnoozeActions ?? false
         ) {
             Button(MailResourcesStrings.Localizable.buttonModify, action: edit)
