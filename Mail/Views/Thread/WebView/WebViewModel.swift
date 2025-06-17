@@ -109,7 +109,7 @@ final class WebViewModel: NSObject, ObservableObject {
 
     private func loadScripts() {
         var scripts = ["javaScriptBridge", "sizeHandler", "fixEmailStyle"]
-        #if DEBUG || TEST
+        #if DEBUG
         scripts.insert("captureLog", at: 0)
         #endif
 

@@ -73,7 +73,7 @@ public enum Logging {
             options.beforeSend = { event in
                 event.environment = sentryEnvironment
                 // if the application is in debug or test mode discard the events
-                #if DEBUG || TEST
+                #if DEBUG
                 return nil
                 #else
                 if UserDefaults.shared.isSentryAuthorized {
