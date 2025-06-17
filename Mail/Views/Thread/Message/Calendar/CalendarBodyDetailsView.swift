@@ -77,8 +77,7 @@ struct CalendarBodyDetailsView: View {
 
                 if let nextOccurrence {
                     Label(
-                        MailResourcesStrings.Localizable.nextEventOccurrence + " " + nextOccurrence
-                            .formatted(.calendarDateFull),
+                        "\(MailResourcesStrings.Localizable.nextEventOccurrence) \(nextOccurrence.formatted(.calendarDateFull))",
                         asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
                     )
                 }
