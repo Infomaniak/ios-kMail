@@ -111,7 +111,7 @@ final class WebViewController: UIViewController {
         webView.scrollView.alwaysBounceHorizontal = false
         webView.scrollView.contentInsetAdjustmentBehavior = .never
 
-        #if DEBUG && !TEST
+        #if DEBUG
         if #available(iOS 16.4, *) {
             webView.isInspectable = true
         }

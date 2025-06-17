@@ -25,6 +25,16 @@ import OSLog
 import RealmSwift
 import Sentry
 
+public extension PlatformDetectable {
+    var isRunningUITests: Bool {
+        #if DEBUG
+        return ProcessInfo.processInfo.arguments.contains("UI-Testing")
+        #else
+        return false
+        #endif
+    }
+}
+
 public enum Logging {
     private static var sentryEnvironment: String = Bundle.main.isRunningInTestFlight ? "testflight" : "production"
 
@@ -63,7 +73,7 @@ public enum Logging {
             options.beforeSend = { event in
                 event.environment = sentryEnvironment
                 // if the application is in debug or test mode discard the events
-                #if DEBUG || TEST
+                #if DEBUG
                 return nil
                 #else
                 if UserDefaults.shared.isSentryAuthorized {
@@ -77,9 +87,10 @@ public enum Logging {
     }
 
     private static func initAtlantis() {
-        #if DEBUG && !TEST
+        #if DEBUG
         guard let hostname = ProcessInfo.processInfo.environment["hostname"],
-              !hostname.isEmpty else {
+              !hostname.isEmpty
+        else {
             return
         }
         Atlantis.start(hostName: hostname)

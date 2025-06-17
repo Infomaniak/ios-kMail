@@ -88,6 +88,7 @@ struct UserAccountScene: Scene {
     }
 
     private func checkAppVersion() {
+        guard !platformDetector.isRunningUITests else { return }
         Task {
             do {
                 let platform: Platform = platformDetector.isMacCatalyst ? .macOS : .ios
