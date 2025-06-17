@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: en, English
  * Tagged: ios
- * Exported by: Baptiste Griva
- * Exported at: Tue, 01 Jul 2025 13:41:04 +0200
+ * Exported by: Matthieu Déglon
+ * Exported at: Tue, 17 Jun 2025 08:03:16 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1107,6 +1107,9 @@
 
 /* loco:641196a69abab039df3a23f2 */
 "noNetwork" = "No signal";
+
+/* loco:685104677354f872000e5882 */
+"noServersAvailable" = "Servers unavailable";
 
 /* loco:62b9579b3dfaf347e24071f3 */
 "noSubjectTitle" = "(no subject)";
