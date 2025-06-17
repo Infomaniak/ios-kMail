@@ -81,12 +81,7 @@ struct MessageBannerHeaderView: View {
         }
 
         if message.encrypted {
-            MessageHeaderActionView(
-                icon: MailResourcesAsset.lockSquare.swiftUIImage,
-                message: encryptionTitle,
-                isLast: false,
-                shouldDisplayActions: fromMe && !message.encryptionPassword.isEmpty
-            ) {
+            MessageEncryptionHeaderView(message: encryptionTitle) {
                 Button(MailResourcesStrings.Localizable.buttonCopyPassword) {
                     @LazyInjectService var snackbarPresenter: SnackBarPresentable
                     UIPasteboard.general.string = message.encryptionPassword
