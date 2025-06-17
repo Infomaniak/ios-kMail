@@ -92,7 +92,8 @@ struct ThreadListView: View {
             ThreadListHeader(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
                              folder: viewModel.frozenFolder,
                              unreadFilterOn: $viewModel.filterUnreadOn,
-                             isRefreshing: viewModel.loadingPageTaskId != nil)
+                             isRefreshing: viewModel.loadingPageTaskId != nil,
+                             viewModel: viewModel)
                 .id(viewModel.frozenFolder.id)
 
             QuotasAlertView(mailbox: viewModel.mailboxManager.mailbox)
