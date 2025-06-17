@@ -301,6 +301,9 @@
 /* loco:6282142ca5e6f61ada1c4014 */
 "buttonAccountSwitch" = "Changer de compte";
 
+/* loco:683451bcff751ab780041822 */
+"buttonActivate" = "Activer";
+
 /* loco:6256793050618f7416758a32 */
 "buttonAddAccount" = "Ajouter un compte";
 
@@ -357,6 +360,9 @@
 
 /* loco:64245322f2b3ab37ed1b26b2 */
 "buttonContinue" = "Continuer";
+
+/* loco:68402e5e1ac58935380ac5f2 */
+"buttonCopy" = "Copier";
 
 /* loco:651ebe26c0bfc1baa10da002 */
 "buttonCopyPassword" = "Copier le mot de passe";
@@ -745,20 +751,68 @@
 /* loco:667bac4f2a74996e510ce652 */
 "enableMultiSelection" = "Activer la sélection multiple";
 
-/* loco:682d93b7626b153371041d72 */
-"encryptedMessageDescription" = "Ce message a été chiffré et expirera 30 jours après l’envoi uniquement pour les destinataires ne pouvant bénéficier du chiffrement automatique.";
+/* loco:685127b16bc6041b980c7ff2 */
+"encryptedButtonSeeConcernedRecipients" = "Voir les destinataires concernés";
 
-/* loco:682d950703bceff09700fc42 */
-"encryptedMessageReceiverTitle" = "Ce message a été chiffré par l’expéditeur pour des raisons de confidentialité.";
+/* loco:682dc013a6784026ab0f1493 */
+"encryptedMessageAddPasswordButton" = "Protéger avec un mot de passe";
+
+/* loco:682dc12a45ce97ce870a4524 */
+"encryptedMessageDisableEncryptionButton" = "Désactiver le chiffrement";
 
 /* loco:682d92f160a12e1b880ca163 */
-"encryptedMessageTitle" = "Ce message a été chiffré.";
+"encryptedMessageHeader" = "Ce message est chiffré.";
+
+/* loco:685128b75995d6937b0bf022 */
+"encryptedMessageHeaderPasswordDraft" = "Ce message sera chiffré à l’envoi avec un mot de passe pour les destinataires ne pouvant bénéficier du chiffrement automatique.";
+
+/* loco:68512749d747a03491057b24 */
+"encryptedMessageHeaderPasswordExpiryDate" = "Ce message a été chiffré et expirera le %@ uniquement pour les destinataires ne pouvant bénéficier du chiffrement automatique.";
+
+/* loco:685124f05346e841180203d3 */
+"encryptedMessageIncompleteUser" = "Le chiffrement n’est pas pris en charge par %d utilisateur.";
+
+/* loco:6851253688f40779700496e3 */
+"encryptedMessageIncompleteUser-plural" = "Le chiffrement n’est pas pris en charge par %d utilisateurs.";
+
+/* loco:68402c39c8e3201f22066632 */
+"encryptedMessagePasswordConcernedUserTitle" = "Utilisateurs concernés";
+
+/* loco:682dc2113c2020dcd20b82f2 */
+"encryptedMessagePasswordLabel" = "Partagez ce mot de passe de façon sécurisée (kPaste, kChat, SMS…). Vous ne pourrez plus le copier après l’envoi.";
+
+/* loco:68305ea640206c98380caf72 */
+"encryptedMessageSnackbarEncryptionActivated" = "Le chiffrement a bien été activé";
+
+/* loco:6835723d74a32502720135c2 */
+"encryptedMessageUpdatePasswordButton" = "Modifier le mot de passe";
+
+/* loco:684153188e32f600910fa672 */
+"encryptedPasswordProtectionTitle" = "Protection par mot de passe";
+
+/* loco:68340a44f3083453f501d6e2 */
+"encryptedProtectionAdDescription" = "Protégez votre message contre tout accès non autorisé grâce au chiffrement Infomaniak.";
 
 /* loco:682da1d759d5f52c5a0b4604 */
-"encryptedProtectionAdDescription1" = "Sécurisez vos messages confidentiels avec le chiffrement.";
+"encryptedProtectionAdDescription1" = "L’objet du message reste visible mais le contenu est entièrement sécurisé.";
+
+/* loco:682da39ee3005f6c3e0a9802 */
+"encryptedProtectionAdDescription2" = "Un mot de passe sera requis pour les utilisateurs hors Infomaniak.";
 
 /* loco:682d9e1bb014002f5400a212 */
-"encryptedProtectionAdTitle" = "Protéger mon message";
+"encryptedProtectionAdTitle" = "Chiffrez vos messages confidentiels";
+
+/* loco:68512825b90604276308c8a2 */
+"encryptedRecipientRequiringPasswordTitle" = "Destinataires avec mot de passe (%d)";
+
+/* loco:683569c055f8f2843602af12 */
+"encryptedStatePanelEnable" = "Votre message est protégé.";
+
+/* loco:68356bbc13c86547d201b995 */
+"encryptedStatePanelStatePartialLabel" = "Partiel";
+
+/* loco:68356b25c1fd44c3770940c2 */
+"encryptedStatePanelTitle" = "Chiffrement";
 
 /* loco:64a2b619946ed6ede60a85e2 */
 "enterPasswordDescription1" = "Votre mot de passe a été modifié. Si vous n’en êtes pas à l’origine, veuillez contacter votre administrateur.";
