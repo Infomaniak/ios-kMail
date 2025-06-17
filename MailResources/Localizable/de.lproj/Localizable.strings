@@ -4,7 +4,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Ambroise Decouttere
- * Exported at: Wed, 21 May 2025 11:55:13 +0200
+ * Exported at: Tue, 17 Jun 2025 10:57:40 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -301,6 +301,9 @@
 /* loco:6282142ca5e6f61ada1c4014 */
 "buttonAccountSwitch" = "Konto ändern";
 
+/* loco:683451bcff751ab780041822 */
+"buttonActivate" = "Aktivieren Sie";
+
 /* loco:6256793050618f7416758a32 */
 "buttonAddAccount" = "Account hinzufügen";
 
@@ -357,6 +360,9 @@
 
 /* loco:64245322f2b3ab37ed1b26b2 */
 "buttonContinue" = "Weiter";
+
+/* loco:68402e5e1ac58935380ac5f2 */
+"buttonCopy" = "Kopieren";
 
 /* loco:651ebe26c0bfc1baa10da002 */
 "buttonCopyPassword" = "Passwort kopieren";
@@ -739,20 +745,68 @@
 /* loco:667bac4f2a74996e510ce652 */
 "enableMultiSelection" = "Aktivieren der Mehrfachauswahl";
 
-/* loco:682d93b7626b153371041d72 */
-"encryptedMessageDescription" = "Diese Nachricht wurde verschlüsselt und verfällt 30 Tage nach dem Versand für Empfänger, die nicht von der automatischen Verschlüsselung profitieren können.";
+/* loco:685127b16bc6041b980c7ff2 */
+"encryptedButtonSeeConcernedRecipients" = "Betroffene Empfänger ansehen";
 
-/* loco:682d950703bceff09700fc42 */
-"encryptedMessageReceiverTitle" = "Diese Nachricht wurde vom Absender aus Gründen der Vertraulichkeit verschlüsselt.";
+/* loco:682dc013a6784026ab0f1493 */
+"encryptedMessageAddPasswordButton" = "Mit einem Passwort schützen";
+
+/* loco:682dc12a45ce97ce870a4524 */
+"encryptedMessageDisableEncryptionButton" = "Verschlüsselung deaktivieren";
 
 /* loco:682d92f160a12e1b880ca163 */
-"encryptedMessageTitle" = "Diese Nachricht wurde verschlüsselt.";
+"encryptedMessageHeader" = "Diese Nachricht ist verschlüsselt.";
+
+/* loco:685128b75995d6937b0bf022 */
+"encryptedMessageHeaderPasswordDraft" = "Diese Nachricht wird beim Senden mit einem Passwort verschlüsselt, für Empfänger, die nicht von der automatischen Verschlüsselung profitieren können.";
+
+/* loco:68512749d747a03491057b24 */
+"encryptedMessageHeaderPasswordExpiryDate" = "Diese Nachricht wurde verschlüsselt und läuft am %@ nur bei Empfängern ab, die nicht von der automatischen Verschlüsselung profitieren können.";
+
+/* loco:685124f05346e841180203d3 */
+"encryptedMessageIncompleteUser" = "Die Verschlüsselung wird von %d Benutzer nicht unterstützt.";
+
+/* loco:6851253688f40779700496e3 */
+"encryptedMessageIncompleteUser-plural" = "Die Verschlüsselung wird von %d Benutzern nicht unterstützt.";
+
+/* loco:68402c39c8e3201f22066632 */
+"encryptedMessagePasswordConcernedUserTitle" = "Betroffene Nutzer";
+
+/* loco:682dc2113c2020dcd20b82f2 */
+"encryptedMessagePasswordLabel" = "Teilen Sie dieses Passwort auf sichere Weise mit anderen (kPaste, kChat, SMS…). Nach dem Versenden können Sie es nicht mehr kopieren.";
+
+/* loco:68305ea640206c98380caf72 */
+"encryptedMessageSnackbarEncryptionActivated" = "Die Verschlüsselung wurde aktiviert";
+
+/* loco:6835723d74a32502720135c2 */
+"encryptedMessageUpdatePasswordButton" = "Passwort ändern";
+
+/* loco:684153188e32f600910fa672 */
+"encryptedPasswordProtectionTitle" = "Passwortschutz";
+
+/* loco:68340a44f3083453f501d6e2 */
+"encryptedProtectionAdDescription" = "Schützen Sie Ihre Nachricht mit der Infomaniak-Verschlüsselung vor unbefugtem Zugriff.";
 
 /* loco:682da1d759d5f52c5a0b4604 */
-"encryptedProtectionAdDescription1" = "Sichern Sie Ihre vertraulichen Nachrichten mit Verschlüsselung.";
+"encryptedProtectionAdDescription1" = "Der Betreff der Nachricht bleibt sichtbar, aber der Inhalt ist vollständig gesichert.";
+
+/* loco:682da39ee3005f6c3e0a9802 */
+"encryptedProtectionAdDescription2" = "Für Nutzer ausserhalb von Infomaniak wird ein Passwort benötigt.";
 
 /* loco:682d9e1bb014002f5400a212 */
-"encryptedProtectionAdTitle" = "Meine Nachricht schützen";
+"encryptedProtectionAdTitle" = "Verschlüsseln Sie Ihre vertraulichen Nachrichten";
+
+/* loco:68512825b90604276308c8a2 */
+"encryptedRecipientRequiringPasswordTitle" = "Empfänger mit Passwort (%d)";
+
+/* loco:683569c055f8f2843602af12 */
+"encryptedStatePanelEnable" = "Ihre Nachricht ist geschützt.";
+
+/* loco:68356bbc13c86547d201b995 */
+"encryptedStatePanelStatePartialLabel" = "Teilweise";
+
+/* loco:68356b25c1fd44c3770940c2 */
+"encryptedStatePanelTitle" = "Verschlüsselung";
 
 /* loco:64a2b619946ed6ede60a85e2 */
 "enterPasswordDescription1" = "Ihr Passwort wurde geändert. Wenn es nicht von Ihnen stammt, wenden Sie sich bitte an Ihren Administrator.";
