@@ -17,13 +17,12 @@
  */
 
 import ElegantEmojiPicker
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import OrderedCollections
 import RealmSwift
 import SwiftUI
-
-import InfomaniakDI
 
 struct MessageReactionsView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -74,7 +73,7 @@ struct MessageReactionsView: View {
         }
 
         let draft = Draft.reacting(
-            reaction: reaction,
+            with: reaction,
             reply: MessageReply(frozenMessage: message.freezeIfNeeded(), replyMode: .reply),
             currentMailboxEmail: mailboxManager.mailbox.email
         )
