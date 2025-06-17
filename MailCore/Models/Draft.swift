@@ -62,6 +62,8 @@ public struct DraftResponse: Codable {
 }
 
 public final class Draft: Object, Codable, ObjectKeyIdentifiable {
+    private static let reactionDelay = 5
+
     @Persisted(primaryKey: true) public var localUUID = UUID().uuidString
     @Persisted public var remoteUUID = ""
     @Persisted public var date = Date()
@@ -265,11 +267,13 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
                      cc: recipientHolder.cc)
     }
 
-    public static func reacting(reaction: String, reply: MessageReply, currentMailboxEmail: String) -> Draft {
+    public static func reacting(with reaction: String, reply: MessageReply, currentMailboxEmail: String) -> Draft {
         let replyingDraft = Draft.replying(reply: reply, currentMailboxEmail: currentMailboxEmail)
 
+        replyingDraft.delay = Self.reactionDelay
         replyingDraft.action = .sendReaction
         replyingDraft.emojiReaction = reaction
+        replyingDraft.body = "<div>__REACTION_PLACEMENT__<br></div>"
 
         return replyingDraft
     }
