@@ -103,7 +103,6 @@ extension RandomAccessCollection where Element == Message {
 public class ActionsManager: ObservableObject {
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
     @LazyInjectService private var platformDetector: PlatformDetectable
-    @LazyInjectService private var matomo: MatomoUtils
 
     private let mailboxManager: MailboxManager
     private let mainViewState: MainViewState?
@@ -115,14 +114,6 @@ public class ActionsManager: ObservableObject {
 
     public func performAction(target messages: [Message], action: Action, origin: ActionOrigin) async throws {
         let messagesWithDuplicates = messages.addingDuplicates()
-
-        let category: MatomoUtils.EventCategory
-        if origin.type == .floatingPanel(source: .message) {
-            category = .bottomSheetMessageActions
-        } else {
-            category = .bottomSheetThreadActions
-        }
-        matomo.track(eventWithCategory: category, name: action.matomoName)
 
         switch action {
         case .delete:
