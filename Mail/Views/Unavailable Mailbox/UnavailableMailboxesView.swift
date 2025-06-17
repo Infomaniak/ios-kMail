@@ -70,6 +70,7 @@ struct UnavailableMailboxesView: View {
                         if let currentUser {
                             NavigationLink(isActive: $isShowingAddMailboxView) {
                                 AddMailboxView()
+                                    .environment(\.currentUser, MandatoryEnvironmentContainer(value: currentUser))
                             } label: {
                                 Text(MailResourcesStrings.Localizable.buttonAddEmailAddress)
                             }
