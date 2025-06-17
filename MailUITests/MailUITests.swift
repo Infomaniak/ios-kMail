@@ -35,6 +35,7 @@ class MailUITests: XCTestCase {
         if resetData {
             app.launchArguments += ["resetData"]
         }
+        app.launchArguments += ["UI-Testing"]
         app.launch()
     }
 
@@ -301,11 +302,6 @@ class MailUITests: XCTestCase {
 
         let composeBodyView = app.webViews.firstMatch
         _ = composeBodyView.waitForExistence(timeout: defaultTimeOut)
-
-        let laterButton = app.buttons[MailResourcesStrings.Localizable.buttonLater].firstMatch
-        if laterButton.waitForExistence(timeout: defaultTimeOut) {
-            laterButton.tap()
-        }
 
         let toTextField = app.textFields.firstMatch
         _ = toTextField.waitForExistence(timeout: defaultTimeOut)

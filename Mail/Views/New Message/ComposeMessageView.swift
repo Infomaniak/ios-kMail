@@ -240,7 +240,9 @@ struct ComposeMessageView: View {
             )
             initialAttachments = []
 
-            if featureFlagsManager.isEnabled(.aiMailComposer) && UserDefaults.shared.shouldPresentAIFeature {
+            if featureFlagsManager.isEnabled(.aiMailComposer)
+                && UserDefaults.shared.shouldPresentAIFeature
+                && !platformDetector.isRunningUITests {
                 aiModel.isShowingDiscovery = true
                 return
             }
@@ -261,7 +263,8 @@ struct ComposeMessageView: View {
 
             let canShowReview = !Bundle.main.isExtension &&
                 !Bundle.main.isRunningInTestFlight &&
-                !mainViewState.isShowingSetAppAsDefaultDiscovery
+                !mainViewState.isShowingSetAppAsDefaultDiscovery &&
+                !platformDetector.isRunningUITests
             if canShowReview {
                 mainViewState.isShowingReviewAlert = reviewManager.shouldRequestReview()
             }
@@ -384,7 +387,7 @@ struct ComposeMessageView: View {
 
         sendDraft()
 
-        if !Bundle.main.isExtension && !platformDetector.isMac {
+        if !Bundle.main.isExtension && !platformDetector.isMac && !platformDetector.isRunningUITests {
             // We should implement a proper router to avoid doing this
             DispatchQueue.main.asyncAfter(deadline: UIConstants.modalCloseDelay) {
                 mainViewState.isShowingSetAppAsDefaultDiscovery = UserDefaults.shared.shouldPresentSetAsDefaultDiscovery
