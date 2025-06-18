@@ -172,25 +172,25 @@ struct ComposeMessageCellRecipients: View {
     }
 
     private func recipientCheck(mergedContacts: [MergedContact]) throws -> [MergedContact] {
-        let invalidEmailContacts = mergedContacts.filter { !Constants.isEmailAddress($0.email) }
-        if !invalidEmailContacts.isEmpty {
+        let contactsWithValidMail = mergedContacts.filter { Constants.isEmailAddress($0.email) }
+        if contactsWithValidMail.isEmpty {
             throw RecipientError.invalidEmail
         }
 
-        let uniqueContacts = mergedContacts.filter { contact in
+        let newUniqueContacts = contactsWithValidMail.filter { contact in
             !recipients.contains { $0.email == contact.email }
         }
 
-        if uniqueContacts.count < mergedContacts.count {
+        if newUniqueContacts.isEmpty {
             throw RecipientError.duplicateContact
         }
 
         let remainingCapacity = 100 - recipients.count
-        if recipients.count + mergedContacts.count > 100 {
+        if newUniqueContacts.count > remainingCapacity {
             snackbarPresenter.show(message: MailResourcesStrings.Localizable.errorTooManyRecipients)
         }
 
-        return Array(uniqueContacts.prefix(max(remainingCapacity, 0)))
+        return Array(newUniqueContacts.prefix(max(remainingCapacity, 0)))
     }
 
     private func convertMergedContactsToRecipients(_ mergedContacts: [MergedContact]) {
