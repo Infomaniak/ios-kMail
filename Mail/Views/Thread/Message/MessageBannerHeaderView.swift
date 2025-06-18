@@ -33,18 +33,6 @@ struct MessageBannerHeaderView: View {
     @ObservedRealmObject var message: Message
     @ObservedRealmObject var mailbox: Mailbox
 
-    private var fromMe: Bool {
-        return message.fromMe(currentMailboxEmail: mailbox.email)
-    }
-
-    private var encryptionTitle: String {
-        guard fromMe else {
-            return MailResourcesStrings.Localizable.encryptedMessageReceiverTitle
-        }
-        return message.encryptionPassword.isEmpty ? MailResourcesStrings.Localizable.encryptedMessageTitle : MailResourcesStrings
-            .Localizable.encryptedMessageDescription
-    }
-
     var body: some View {
         if let spamType = banners.spamType {
             MessageHeaderActionView(
@@ -80,14 +68,8 @@ struct MessageBannerHeaderView: View {
             }
         }
 
-        if message.encrypted {
-            MessageEncryptionHeaderView(message: encryptionTitle) {
-                Button(MailResourcesStrings.Localizable.buttonCopyPassword) {
-                    @LazyInjectService var snackbarPresenter: SnackBarPresentable
-                    UIPasteboard.general.string = message.encryptionPassword
-                    snackbarPresenter.show(message: MailResourcesStrings.Localizable.snackbarPasswordCopied)
-                }
-            }
+        if banners.contains(where: { $0 == .encrypted }) {
+            MessageEncryptionHeaderView(message: message, mailbox: mailbox)
         }
     }
 

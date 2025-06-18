@@ -17,13 +17,32 @@
  */
 
 import DesignSystem
+import InfomaniakDI
 import MailCore
+import MailCoreUI
 import MailResources
+import RealmSwift
 import SwiftUI
 
-struct MessageEncryptionHeaderView<Content: View>: View {
-    let message: String
-    @ViewBuilder var actions: () -> Content
+struct MessageEncryptionHeaderView: View {
+    @ObservedRealmObject var message: Message
+    @ObservedRealmObject var mailbox: Mailbox
+
+    private var fromMe: Bool {
+        return message.fromMe(currentMailboxEmail: mailbox.email)
+    }
+
+    private var encryptionTitle: String {
+        guard fromMe else {
+            return MailResourcesStrings.Localizable.encryptedMessageHeader
+        }
+
+        if let passwordValidity = message.cryptPasswordValidity {
+            return MailResourcesStrings.Localizable.encryptedMessageHeaderPasswordExpiryDate(passwordValidity)
+        }
+
+        return MailResourcesStrings.Localizable.encryptedMessageHeader
+    }
 
     var body: some View {
         VStack(alignment: .leading) {
@@ -34,14 +53,18 @@ struct MessageEncryptionHeaderView<Content: View>: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 16)
                         .foregroundStyle(MailResourcesAsset.iconSovereignBlueColor)
-                    Text(message)
+                    Text(encryptionTitle)
                         .font(MailTextStyle.labelSecondary.font)
                         .foregroundStyle(MailResourcesAsset.textHeaderSovereignBlueColor.swiftUIColor)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
                 VStack {
-                    actions()
+                    if message.cryptPasswordValidity != nil {
+                        Button(MailResourcesStrings.Localizable.encryptedButtonSeeConcernedRecipients) {
+                            // See recipients
+                        }
+                    }
                 }
                 .tint(MailResourcesAsset.textHeaderSovereignBlueColor.swiftUIColor)
                 .buttonStyle(.ikBorderless(isInlined: true))
@@ -57,7 +80,5 @@ struct MessageEncryptionHeaderView<Content: View>: View {
 }
 
 #Preview {
-    MessageEncryptionHeaderView(message: MailResourcesStrings.Localizable.encryptedMessageDescription) {
-        Button(MailResourcesStrings.Localizable.buttonCopyPassword) { /* Preview */ }
-    }
+    MessageEncryptionHeaderView(message: PreviewHelper.sampleMessage, mailbox: PreviewHelper.sampleMailbox)
 }

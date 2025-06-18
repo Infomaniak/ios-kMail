@@ -131,6 +131,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var bimi: Bimi?
     @Persisted public var encrypted: Bool
     @Persisted public var encryptionPassword: String
+    @Persisted public var cryptPasswordValidity: Date?
     @Persisted private var headers: MessageHeaders?
     /// Threads where the message can be found
     @Persisted(originProperty: "messages") var threads: LinkingObjects<Thread>
@@ -304,6 +305,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case snoozeEndDate
         case encrypted
         case encryptionPassword
+        case cryptPasswordValidity
         case headers
     }
 
@@ -376,6 +378,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         snoozeEndDate = try values.decodeIfPresent(Date.self, forKey: .snoozeEndDate)
         encrypted = try values.decodeIfPresent(Bool.self, forKey: .encrypted) ?? false
         encryptionPassword = try values.decodeIfPresent(String.self, forKey: .encryptionPassword) ?? ""
+        cryptPasswordValidity = try values.decodeIfPresent(Date.self, forKey: .cryptPasswordValidity)
         headers = try? values.decodeIfPresent(MessageHeaders.self, forKey: .headers)
     }
 
