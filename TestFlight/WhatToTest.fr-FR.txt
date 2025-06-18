@@ -1,1 +1,2 @@
-- Correction d'un crash à l'ouverture d'une notification au démarrage de l'app
+- Correction de l'ajout de groupes avec adresses invalides
+- Correction d'un crash lors du rajout d'une adresse mail
