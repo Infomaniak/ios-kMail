@@ -16,14 +16,15 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
 
-struct NoMailApiResponseView: View {
+struct NoMailServersAvailableView: View {
     var body: some View {
-        HStack {
+        HStack(spacing: IKPadding.mini) {
             MailResourcesAsset.noSignal
                 .iconSize(.medium)
             Text(MailResourcesStrings.Localizable.noServersAvailable)
@@ -33,5 +34,5 @@ struct NoMailApiResponseView: View {
 }
 
 #Preview {
-    NoMailApiResponseView()
+    NoMailServersAvailableView()
 }

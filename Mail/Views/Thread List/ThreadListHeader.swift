@@ -80,12 +80,12 @@ class ThreadListHeaderFolderObserver: ObservableObject {
 struct ThreadListHeader: View {
     @LazyInjectService private var matomo: MatomoUtils
 
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
-    @State private var showMailApiUnavailable: Bool
-
+    @State private var showNoMailServersAvailableView: Bool
     @StateObject private var folderObserver: ThreadListHeaderFolderObserver
-    @StateObject private var viewModel: ThreadListViewModel
 
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
@@ -97,14 +97,12 @@ struct ThreadListHeader: View {
     init(isMultipleSelectionEnabled: Bool,
          folder: Folder,
          unreadFilterOn: Binding<Bool>,
-         isRefreshing: Bool,
-         viewModel: ThreadListViewModel) {
+         isRefreshing: Bool) {
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
         _unreadFilterOn = unreadFilterOn
-        _showMailApiUnavailable = State(initialValue: false)
+        _showNoMailServersAvailableView = State(initialValue: false)
         self.isRefreshing = isRefreshing
         _folderObserver = StateObject(wrappedValue: ThreadListHeaderFolderObserver(folder: folder))
-        _viewModel = StateObject(wrappedValue: viewModel)
     }
 
     var body: some View {
@@ -122,13 +120,11 @@ struct ThreadListHeader: View {
                             .textStyle(.bodySmallSecondary)
                     }
                 } else {
-                    if networkMonitor.isConnected && showMailApiUnavailable {
-                        NoMailApiResponseView()
-                    } else {
-                        if let lastUpdateText = folderObserver.lastUpdateText {
-                            Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
-                                .textStyle(.bodySmallSecondary)
-                        }
+                    if showNoMailServersAvailableView {
+                        NoMailServersAvailableView()
+                    } else if let lastUpdateText = folderObserver.lastUpdateText {
+                        Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
+                            .textStyle(.bodySmallSecondary)
                     }
                 }
             }
@@ -160,11 +156,12 @@ struct ThreadListHeader: View {
     private func checkMailApiAvailability() {
         Task {
             do {
-                _ = try await viewModel.mailboxManager.apiFetcher.checkAPIStatus()
-                showMailApiUnavailable = false
+                try await mailboxManager.apiFetcher.checkAPIStatus()
+                showNoMailServersAvailableView = false
             } catch {
-                Logger.general.error("Error while pinging the Mail API: \(error)")
-                showMailApiUnavailable = true
+                if networkMonitor.isConnected {
+                    showNoMailServersAvailableView = true
+                }
             }
         }
     }
@@ -201,22 +198,12 @@ extension ToggleStyle where Self == UnreadToggleStyle {
     ThreadListHeader(isMultipleSelectionEnabled: false,
                      folder: PreviewHelper.sampleFolder,
                      unreadFilterOn: .constant(false),
-                     isRefreshing: false,
-                     viewModel: ThreadListViewModel(
-                         mailboxManager: PreviewHelper.sampleMailboxManager,
-                         frozenFolder: PreviewHelper.sampleFolder,
-                         selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner
-                     ))
+                     isRefreshing: false)
 }
 
 #Preview {
     ThreadListHeader(isMultipleSelectionEnabled: false,
                      folder: PreviewHelper.sampleFolder,
                      unreadFilterOn: .constant(true),
-                     isRefreshing: false,
-                     viewModel: ThreadListViewModel(
-                         mailboxManager: PreviewHelper.sampleMailboxManager,
-                         frozenFolder: PreviewHelper.sampleFolder,
-                         selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner
-                     ))
+                     isRefreshing: false)
 }
