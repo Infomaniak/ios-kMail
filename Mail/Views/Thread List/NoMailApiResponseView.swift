@@ -25,7 +25,7 @@ import SwiftUI
 struct NoMailServersAvailableView: View {
     var body: some View {
         HStack(spacing: IKPadding.mini) {
-            MailResourcesAsset.noSignal
+            MailResourcesAsset.cloudSlash
                 .iconSize(.medium)
             Text(MailResourcesStrings.Localizable.noServersAvailable)
         }
