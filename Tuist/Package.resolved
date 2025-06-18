@@ -51,7 +51,7 @@
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
         "branch" : "refactor/move-camera-picker-to-core-ui",
-        "revision" : "f2930efdc4b038a2c197ac331f1d514bb874dc1b"
+        "revision" : "da7a1af0dd1254675b82d189b8e4efa4cd72f541"
       }
     },
     {

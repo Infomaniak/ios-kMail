@@ -33,6 +33,7 @@ struct ComposeMessageBodyView: View {
     @EnvironmentObject private var attachmentsManager: AttachmentsManager
 
     @State private var toolbar = EditorMobileToolbarView()
+    @State private var selectedImage: UIImage?
     @StateObject private var textAttributes = TextAttributes()
 
     @ModalState(context: ContextKeys.compose) private var isShowingLinkAlert = false
@@ -81,12 +82,16 @@ struct ComposeMessageBodyView: View {
                         .ignoresSafeArea()
                 }
                 .fullScreenCover(isPresented: $isShowingCamera) {
-                    CameraPickerView { image in
-                        if let data = image.jpegData(compressionQuality: 0.5) {
-                            didTakePhoto(data)
-                        }
+                    CameraPickerView(selectedImage: $selectedImage)
+                        .ignoresSafeArea()
+                }
+                .onChange(of: selectedImage) { newImage in
+                    guard let image = newImage,
+                          let data = image.jpegData(compressionQuality: 0.5) else {
+                        return
                     }
-                    .ignoresSafeArea()
+                    didTakePhoto(data)
+                    selectedImage = nil
                 }
         }
     }
