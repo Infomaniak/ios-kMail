@@ -110,6 +110,8 @@ struct ThreadListHeader: View {
             VStack(alignment: .leading) {
                 if !networkMonitor.isConnected {
                     NoNetworkView()
+                } else if showNoMailServersAvailableView {
+                    NoMailServersAvailableView()
                 }
 
                 if isRefreshing {
@@ -119,13 +121,9 @@ struct ThreadListHeader: View {
                         Text(MailResourcesStrings.Localizable.threadListHeaderUpdating)
                             .textStyle(.bodySmallSecondary)
                     }
-                } else {
-                    if showNoMailServersAvailableView {
-                        NoMailServersAvailableView()
-                    } else if let lastUpdateText = folderObserver.lastUpdateText {
-                        Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
-                            .textStyle(.bodySmallSecondary)
-                    }
+                } else if let lastUpdateText = folderObserver.lastUpdateText {
+                    Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
+                        .textStyle(.bodySmallSecondary)
                 }
             }
             .onChange(of: isRefreshing) { _ in
