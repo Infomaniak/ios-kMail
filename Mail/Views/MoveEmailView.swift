@@ -75,7 +75,7 @@ struct MoveEmailView: View {
         }
         .environment(\.folderCellType, .move)
         .matomoView(view: ["MoveEmailView"])
-        .customAlert(isPresented: $isShowingCreateFolderAlert) {
+        .mailCustomAlert(isPresented: $isShowingCreateFolderAlert) {
             CreateFolderView(mode: .move { newFolder in
                 move(to: newFolder)
             })

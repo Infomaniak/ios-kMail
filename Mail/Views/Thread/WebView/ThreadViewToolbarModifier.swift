@@ -111,7 +111,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                     }
                 }
             }
-            .customAlert(item: $destructiveAlert) { item in
+            .mailCustomAlert(item: $destructiveAlert) { item in
                 DestructiveActionAlertView(destructiveAlert: item)
             }
     }

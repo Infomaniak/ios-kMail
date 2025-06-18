@@ -52,7 +52,7 @@ struct AccountActionsView: View {
         }, content: {
             SingleOnboardingView()
         })
-        .customAlert(item: $presentedLoggingOutUser) { user in
+        .mailCustomAlert(item: $presentedLoggingOutUser) { user in
             LogoutConfirmationView(user: user)
         }
     }

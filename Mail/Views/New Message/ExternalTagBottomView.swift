@@ -50,7 +50,7 @@ struct ExternalTagBottomView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .customAlert(isPresented: $isShowingExternalTagAlert) {
+                .mailCustomAlert(isPresented: $isShowingExternalTagAlert) {
                     ExternalRecipientView(externalTagSate: externalTag, isDraft: true)
                 }
 

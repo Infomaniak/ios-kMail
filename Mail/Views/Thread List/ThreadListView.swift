@@ -221,16 +221,16 @@ struct ThreadListView: View {
         .task(id: viewModel.mailboxManager.mailbox.id) {
             updateFetchingTask()
         }
-        .customAlert(item: $mainViewState.destructiveAlert) { item in
+        .mailCustomAlert(item: $mainViewState.destructiveAlert) { item in
             DestructiveActionAlertView(destructiveAlert: item)
         }
-        .customAlert(isPresented: $isShowingUpdateAlert) {
+        .mailCustomAlert(isPresented: $isShowingUpdateAlert) {
             // swiftlint:disable:next trailing_closure
             UpdateVersionAlertView(onDismiss: {
                 hasDismissedUpdateVersionView = true
             })
         }
-        .customAlert(item: $mainViewState.modifiedScheduleDraftResource) { container in
+        .mailCustomAlert(item: $mainViewState.modifiedScheduleDraftResource) { container in
             ModifyMessageScheduleAlertView(draftResource: container.draftResource)
         }
         .matomoView(view: [MatomoUtils.View.threadListView.displayName, "Main"])

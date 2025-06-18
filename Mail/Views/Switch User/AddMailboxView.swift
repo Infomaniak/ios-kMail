@@ -110,6 +110,7 @@ struct AddMailboxView: View {
             }
             .padding(value: .medium)
         }
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .safeAreaInset(edge: .bottom) {
             Button(MailResourcesStrings.Localizable.buttonAttachMailbox, action: addMailbox)
                 .buttonStyle(.ikBorderedProminent)

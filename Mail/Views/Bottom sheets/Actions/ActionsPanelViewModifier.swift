@@ -106,34 +106,38 @@ struct ActionsPanelViewModifier: ViewModifier {
             )
             .sheetViewStyle()
         }
-        .floatingPanel(item: $reportForJunkMessages) { reportForJunkMessages in
+        .mailFloatingPanel(item: $reportForJunkMessages) { reportForJunkMessages in
             ReportJunkView(reportedMessages: reportForJunkMessages, origin: origin, completionHandler: completionHandler)
         }
-        .floatingPanel(item: $blockSendersList,
-                       title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
+        .mailFloatingPanel(item: $blockSendersList,
+                           title: MailResourcesStrings.Localizable.blockAnExpeditorTitle) { blockSenderState in
             BlockSenderView(recipientsToMessage: blockSenderState.recipientsToMessage, origin: origin)
         }
-        .customAlert(item: $blockSenderAlert) { blockSenderState in
+        .mailCustomAlert(item: $blockSenderAlert) { blockSenderState in
             ConfirmationBlockRecipientView(
                 recipients: blockSenderState.recipients,
                 reportedMessages: blockSenderState.messages,
                 origin: origin
             )
         }
-        .customAlert(item: $reportedForDisplayProblemMessage) { message in
+        .mailCustomAlert(
+            item: $reportedForDisplayProblemMessage
+        ) { message in
             ReportDisplayProblemView(message: message)
         }
-        .customAlert(item: $reportedForPhishingMessages) { messages in
+        .mailCustomAlert(
+            item: $reportedForPhishingMessages
+        ) { messages in
             ReportPhishingView(
                 messagesWithDuplicates: messages,
                 distinctMessageCount: messages.count,
                 completionHandler: completionHandler
             )
         }
-        .customAlert(item: $destructiveAlert) { item in
+        .mailCustomAlert(item: $destructiveAlert) { item in
             DestructiveActionAlertView(destructiveAlert: item)
         }
-        .customAlert(item: $messagesToDownload) { messages in
+        .mailCustomAlert(item: $messagesToDownload) { messages in
             ConfirmationSaveThreadInKdrive(targetMessages: messages)
         }
         .sheet(item: $shareMailLink) { shareMailLinkResult in

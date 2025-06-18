@@ -68,7 +68,7 @@ struct ComposeMessageBodyView: View {
                 .editorCSS(Self.customCSS)
                 .introspectEditor(perform: setupEditor)
                 .onJavaScriptFunctionFail(perform: reportJavaScriptError)
-                .customAlert(isPresented: $isShowingLinkAlert) {
+                .mailCustomAlert(isPresented: $isShowingLinkAlert) {
                     AddLinkView(actionHandler: didCreateLink)
                 }
                 .sheet(isPresented: $isShowingFileSelection) {
