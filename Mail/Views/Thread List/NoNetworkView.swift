@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import MailCore
 import MailCoreUI
 import MailResources
@@ -23,7 +24,7 @@ import SwiftUI
 
 struct NoNetworkView: View {
     var body: some View {
-        HStack {
+        HStack(spacing: IKPadding.mini) {
             MailResourcesAsset.noSignal
                 .iconSize(.medium)
             Text(MailResourcesStrings.Localizable.noNetwork)
