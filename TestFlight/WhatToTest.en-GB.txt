@@ -1,1 +1,2 @@
-- Fixed a crash opening a notification on app start up
+- Fixed adding groups with invalid addresses
+- Fixed a crash when adding a mailbox
