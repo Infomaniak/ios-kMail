@@ -25,6 +25,7 @@ struct EncryptionButtonView: View {
     let didTap: () -> Void
 
     private var count: String? {
+        guard draft.encrypted else { return nil }
         guard !draft.autoEncryptDisable.isEmpty else { return nil }
 
         if draft.autoEncryptDisable.count <= 9 {
