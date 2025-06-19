@@ -85,6 +85,17 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
     @Persisted public var scheduleDate: Date?
     @Persisted public var encrypted: Bool
     @Persisted public var encryptionPassword: String
+    @Persisted public var autoEncryptDisable = List<String>()
+
+    public var autoEncryptDisableRecipient: [Recipient] {
+        let result = to.toArray() + cc.toArray() + bcc.toArray()
+        return result.filter { recipient in
+            if !(recipient.isInfomaniakHosted ?? true) {
+                return true
+            }
+            return false
+        }
+    }
 
     /// Public facing "body", wrapping `bodyData`
     public var body: String {

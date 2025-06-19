@@ -220,6 +220,13 @@ public extension MailboxManager {
 
             let result = try await apiFetcher.mailHosted(for: recipients.map(\.email))
 
+            if let liveDraft = draft.thaw() {
+                try liveDraft.realm?.write {
+                    liveDraft.autoEncryptDisable = result.filter { $0.isInfomaniakHosted == false }.map(\.email).toRealmList()
+                }
+            }
+
+            // TODO: - Can remove this ?
             for recipient in filteredRecipients {
                 if let liveRecipient = recipient.thaw() {
                     try liveRecipient.realm?.write {
