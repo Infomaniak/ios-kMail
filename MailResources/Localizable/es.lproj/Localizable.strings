@@ -748,7 +748,7 @@
 /* loco:685127b16bc6041b980c7ff2 */
 "encryptedButtonSeeConcernedRecipients" = "Ver los destinatarios afectados";
 
-/* loco:682dc013a6784026ab0f1493 */
+/* loco:6853c6e1ae6f39008c06cf82 */
 "encryptedMessageAddPasswordButton" = "Proteger con contraseña";
 
 /* loco:682dc12a45ce97ce870a4524 */
@@ -756,9 +756,6 @@
 
 /* loco:682d92f160a12e1b880ca163 */
 "encryptedMessageHeader" = "Este mensaje está encriptado.";
-
-/* loco:685128b75995d6937b0bf022 */
-"encryptedMessageHeaderPasswordDraft" = "Este mensaje se cifrará cuando se envíe, utilizando una contraseña para los destinatarios que no puedan beneficiarse del cifrado automático.";
 
 /* loco:68512749d747a03491057b24 */
 "encryptedMessageHeaderPasswordExpiryDate" = "Este mensaje ha sido encriptado y caducará el %@ sólo para los destinatarios que no puedan beneficiarse de la encriptación automática.";
@@ -801,6 +798,9 @@
 
 /* loco:683569c055f8f2843602af12 */
 "encryptedStatePanelEnable" = "Su mensaje está protegido.";
+
+/* loco:683569e71158a95737058c73 */
+"encryptedStatePanelIncomplete" = "Se requiere una contraseña para completar la transmisión.";
 
 /* loco:68356bbc13c86547d201b995 */
 "encryptedStatePanelStatePartialLabel" = "Parcial";

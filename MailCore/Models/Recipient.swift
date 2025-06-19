@@ -45,6 +45,8 @@ public final class Recipient: EmbeddedObject, Correspondent, Codable {
     @Persisted public var email: String
     @Persisted public var name: String
     @Persisted public var isAddedByMe = false
+    /// Only infomaniak hosted recipients can receive automatically encrypted messages.
+    @Persisted public var isInfomaniakHosted: Bool?
 
     enum CodingKeys: String, CodingKey {
         case email
@@ -94,7 +96,7 @@ public final class Recipient: EmbeddedObject, Correspondent, Codable {
 
         let trustedDomains = externalMailInfo.domains
         let isKnownDomain = trustedDomains.contains { domain in
-            return email.hasSuffix(domain)
+            email.hasSuffix(domain)
         }
 
         let isMailerDeamon: Bool

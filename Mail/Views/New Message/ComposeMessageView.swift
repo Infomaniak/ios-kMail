@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -83,6 +84,9 @@ struct ComposeMessageView: View {
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
     @State private var isShowingSchedulePanel = false
+
+    @State private var isShowingEncryptAdPanel = false
+    @State private var isShowingEncryptStatePanel = false
 
     @Weak private var scrollView: UIScrollView?
 
@@ -169,6 +173,13 @@ struct ComposeMessageView: View {
         }
         .baseComposeMessageToolbar(dismissHandler: didTouchDismiss)
         .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if featureFlagsManager.isEnabled(.mailComposeEncrypted) {
+                    EncryptionButtonView(draft: draft) {
+                        didTouchEncrypt()
+                    }
+                }
+            }
             ToolbarItem(placement: .navigationBarTrailing) {
                 if featureFlagsManager.isEnabled(.scheduleSendDraft) {
                     Button {
@@ -302,6 +313,14 @@ struct ComposeMessageView: View {
         .sheet(isPresented: $aiModel.isShowingProposition) {
             AIPropositionView(aiModel: aiModel)
         }
+        .sheet(isPresented: $isShowingEncryptAdPanel) {
+            EncryptionAdView { enableEncryption() }
+        }
+        .floatingPanel(isPresented: $isShowingEncryptStatePanel) {
+            EncryptionStateView(password: $draft.encryptionPassword, autoEncryptDisableCount: draft.autoEncryptDisable.count) {
+                disableEncryption()
+            }
+        }
         .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
         .scheduleFloatingPanel(
@@ -352,6 +371,11 @@ struct ComposeMessageView: View {
     }
 
     private func didTouchSend() {
+        if draft.encrypted && draft.encryptionPassword.isEmpty && !draft.autoEncryptDisable.isEmpty {
+            isShowingEncryptStatePanel = true
+            return
+        }
+
         guard !draft.subject.isEmpty else {
             matomo.track(eventWithCategory: .newMessage, name: "sendWithoutSubject")
             isShowingAlert = NewMessageAlert(type: .emptySubject(handler: sendDraft))
@@ -388,6 +412,37 @@ struct ComposeMessageView: View {
             }
             if !mainViewState.isShowingSetAppAsDefaultDiscovery {
                 mainViewState.isShowingChristmasEasterEgg = true
+            }
+        }
+    }
+
+    private func didTouchEncrypt() {
+        if !draft.encrypted {
+            if UserDefaults.shared.shouldPresentEncryptAd {
+                isShowingEncryptAdPanel = true
+            } else {
+                enableEncryption()
+            }
+        } else {
+            isShowingEncryptStatePanel = true
+        }
+    }
+
+    private func enableEncryption() {
+        mailboxManager.updateRecipientsAutoUncrypt(draft: draft)
+
+        if let liveDraft = draft.thaw() {
+            try? liveDraft.realm?.write {
+                liveDraft.encrypted = true
+            }
+        }
+    }
+
+    private func disableEncryption() {
+        if let liveDraft = draft.thaw() {
+            try? liveDraft.realm?.write {
+                liveDraft.encrypted = false
+                liveDraft.encryptionPassword = ""
             }
         }
     }

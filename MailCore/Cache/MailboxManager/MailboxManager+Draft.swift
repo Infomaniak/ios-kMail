@@ -208,4 +208,32 @@ public extension MailboxManager {
 
         return draft.freeze()
     }
+
+    func updateRecipientsAutoUncrypt(draft: Draft) {
+        Task {
+            let recipients = draft.to
+            recipients.append(objectsIn: draft.cc)
+            recipients.append(objectsIn: draft.bcc)
+            let filteredRecipients = recipients.filter {
+                $0.isInfomaniakHosted == nil
+            }.toArray()
+
+            let result = try await apiFetcher.mailHosted(for: recipients.map(\.email))
+
+            if let liveDraft = draft.thaw() {
+                try liveDraft.realm?.write {
+                    liveDraft.autoEncryptDisable = result.filter { $0.isInfomaniakHosted == false }.map(\.email).toRealmList()
+                }
+            }
+
+            // TODO: - Can remove this ?
+            for recipient in filteredRecipients {
+                if let liveRecipient = recipient.thaw() {
+                    try liveRecipient.realm?.write {
+                        liveRecipient.isInfomaniakHosted = result.first { $0.email == recipient.email }?.isInfomaniakHosted
+                    }
+                }
+            }
+        }
+    }
 }
