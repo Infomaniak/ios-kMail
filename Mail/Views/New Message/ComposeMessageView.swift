@@ -391,6 +391,11 @@ struct ComposeMessageView: View {
     }
 
     private func didTouchSend() {
+        if draft.encrypted && draft.encryptionPassword.isEmpty && !draft.autoEncryptDisable.isEmpty {
+            isShowingEncryptStatePanel = true
+            return
+        }
+
         guard !draft.subject.isEmpty else {
             matomo.track(eventWithCategory: .newMessage, name: "sendWithoutSubject")
             isShowingAlert = NewMessageAlert(type: .emptySubject(handler: sendDraft))
