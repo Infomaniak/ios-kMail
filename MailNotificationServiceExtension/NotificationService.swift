@@ -30,8 +30,8 @@ final class NotificationService: UNNotificationServiceExtension {
     // periphery:ignore - Making sure the DI is registered at a very early stage of the app launch.
     private let dependencyInjectionHook = NotificationServiceTargetAssembly()
 
-    @LazyInjectService private var accountManager: AccountManager
-    @LazyInjectService private var mailboxInfosManager: MailboxInfosManager
+    @InjectService private var accountManager: AccountManager
+    @InjectService private var mailboxInfosManager: MailboxInfosManager
 
     var contentHandler: ((UNNotificationContent) -> Void)?
     var bestAttemptContent: UNMutableNotificationContent?
@@ -73,6 +73,7 @@ final class NotificationService: UNNotificationServiceExtension {
 
             let userInfos = bestAttemptContent.userInfo
             let userId = userInfos[NotificationsHelper.UserInfoKeys.userId] as? Int
+            // User id can change for each received notification
             SentryDebug.setUserId(userId ?? accountManager.currentUserId)
 
             guard let mailboxId = userInfos[NotificationsHelper.UserInfoKeys.mailboxId] as? Int,
@@ -81,17 +82,16 @@ final class NotificationService: UNNotificationServiceExtension {
                   let mailboxManager = accountManager.getMailboxManager(for: mailbox) else {
                 // This should never happen, we received a notification for an unknown mailbox
                 logNotificationFailed(userInfo: userInfos, type: .mailboxNotFound)
+                accountManager.removeCachedProperties()
                 return contentHandler(bestAttemptContent)
             }
-
-            // User id can change for each received notification
-            SentryDebug.setUserId(userId)
 
             // Prepare a notification in case we can't fetch the message in time / the message doesn't exist anymore
             prepareEmptyMessageNotification(in: mailbox)
             guard let messageUid = userInfos[NotificationsHelper.UserInfoKeys.messageUid] as? String,
                   let fetchedMessage = try? await NotificationsHelper.fetchMessage(uid: messageUid, in: mailboxManager) else {
                 logNotificationFailed(userInfo: userInfos, type: .messageNotFound)
+                accountManager.removeCachedProperties()
                 return contentHandler(bestAttemptContent)
             }
 
@@ -111,18 +111,21 @@ final class NotificationService: UNNotificationServiceExtension {
                    mailboxManager: mailboxManager,
                    incompleteNotification: bestAttemptContent
                ) {
+                accountManager.removeCachedProperties()
                 contentHandler(communicationNotification)
             } else {
                 let normalNotification = await NotificationsHelper.generateNotificationFor(
                     message: fetchedMessage,
                     incompleteNotification: bestAttemptContent
                 )
+                accountManager.removeCachedProperties()
                 contentHandler(normalNotification)
             }
         }
     }
 
     override func serviceExtensionTimeWillExpire() {
+        accountManager.removeCachedProperties()
         if let contentHandler, let bestAttemptContent {
             logNotificationFailed(userInfo: bestAttemptContent.userInfo, type: .expired)
             contentHandler(bestAttemptContent)
