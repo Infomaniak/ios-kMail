@@ -25,7 +25,6 @@ import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
-import OSLog
 import RealmSwift
 import SwiftUI
 
@@ -92,7 +91,7 @@ struct ThreadListHeader: View {
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
-    @State private var showNoMailServersAvailableView: Bool
+    @State private var showNoMailServersAvailableView = false
     @StateObject private var folderObserver: ThreadListHeaderFolderObserver
 
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
@@ -108,7 +107,6 @@ struct ThreadListHeader: View {
          isRefreshing: Bool) {
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
         _unreadFilterOn = unreadFilterOn
-        _showNoMailServersAvailableView = State(initialValue: false)
         self.isRefreshing = isRefreshing
         _folderObserver = StateObject(wrappedValue: ThreadListHeaderFolderObserver(folder: folder))
     }
@@ -162,8 +160,10 @@ struct ThreadListHeader: View {
     private func checkMailApiAvailability() {
         Task {
             do {
-                try await mailboxManager.apiFetcher.checkAPIStatus()
-                showNoMailServersAvailableView = false
+                if !networkMonitor.isConnected {
+                    try await mailboxManager.apiFetcher.checkAPIStatus()
+                    showNoMailServersAvailableView = false
+                }
             } catch {
                 if networkMonitor.isConnected {
                     showNoMailServersAvailableView = true
