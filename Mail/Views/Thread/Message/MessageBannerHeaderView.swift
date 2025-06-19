@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -27,23 +28,17 @@ struct MessageBannerHeaderView: View {
 
     @State private var isButtonLoading = false
 
+    let banners: [MessageBanner]
+
     @ObservedRealmObject var message: Message
     @ObservedRealmObject var mailbox: Mailbox
 
-    @Binding var displayContentBlockedActionView: Bool
-
-    private var isRemoteContentBlocked: Bool {
-        return (UserDefaults.shared.displayExternalContent == .askMe || message.folder?.role == .spam)
-            && !message.localSafeDisplay
-    }
-
     var body: some View {
-        let spamType = spamTypeFor(message: message)
-        if let spamType {
+        if let spamType = banners.spamType {
             MessageHeaderActionView(
                 icon: spamType.icon,
                 message: spamType.message,
-                isFirst: true
+                isLast: banners.isLast(messageBanner: .spam(spamType: spamType))
             ) {
                 Button {
                     action()
@@ -57,11 +52,11 @@ struct MessageBannerHeaderView: View {
             }
         }
 
-        if isRemoteContentBlocked && displayContentBlockedActionView {
+        if banners.contains(where: { $0 == .displayContent }) {
             MessageHeaderActionView(
                 icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
                 message: MailResourcesStrings.Localizable.alertBlockedImagesDescription,
-                isFirst: spamType == nil
+                isLast: banners.isLast(messageBanner: .displayContent)
             ) {
                 Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) {
                     withAnimation {
@@ -72,13 +67,16 @@ struct MessageBannerHeaderView: View {
                 .controlSize(.small)
             }
         }
+
+        if banners.contains(where: { $0 == .encrypted }) {
+            MessageEncryptionHeaderView(message: message, mailbox: mailbox)
+        }
     }
 
     private func action() {
         isButtonLoading = true
-        let spamType = spamTypeFor(message: message)
         Task {
-            switch spamType {
+            switch banners.spamType {
             case .moveInSpam:
                 _ = try? await mailboxManager.move(messages: [message], to: .spam)
             case .enableSpamFilter:
@@ -92,46 +90,12 @@ struct MessageBannerHeaderView: View {
             isButtonLoading = false
         }
     }
-
-    private func spamTypeFor(message: Message) -> SpamHeaderType? {
-        if message.folder?.role != .spam,
-           message.isSpam && !isSenderApproved(sender: message.from.first?.email) {
-            if mailbox.isSpamFilter {
-                return .moveInSpam
-            } else {
-                return .enableSpamFilter
-            }
-        }
-
-        if message.folder?.role == .spam,
-           let sender = message.from.first, !message.isSpam && isSenderBlocked(sender: sender.email) {
-            return .unblockRecipient(sender.email)
-        }
-
-        return nil
-    }
-
-    private func isSenderApproved(sender: String?) -> Bool {
-        guard let sender,
-              let sendersRestrictions = mailbox.sendersRestrictions else {
-            return false
-        }
-        return sendersRestrictions.authorizedSenders.contains { $0.email == sender }
-    }
-
-    private func isSenderBlocked(sender: String?) -> Bool {
-        guard let sender,
-              let sendersRestrictions = mailbox.sendersRestrictions else {
-            return false
-        }
-        return sendersRestrictions.blockedSenders.contains { $0.email == sender }
-    }
 }
 
 #Preview {
     MessageBannerHeaderView(
+        banners: [],
         message: PreviewHelper.sampleMessage,
-        mailbox: PreviewHelper.sampleMailbox,
-        displayContentBlockedActionView: .constant(true)
+        mailbox: PreviewHelper.sampleMailbox
     )
 }
