@@ -72,6 +72,9 @@ struct EncryptionAdView: View {
             .frame(maxHeight: .infinity, alignment: .top)
             .navigationTitle(MailResourcesStrings.Localizable.encryptedProtectionAdTitle)
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                UserDefaults.shared.shouldPresentEncryptAd = false
+            }
         }
     }
 }
