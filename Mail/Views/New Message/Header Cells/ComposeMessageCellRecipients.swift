@@ -17,6 +17,7 @@
  */
 
 import DesignSystem
+import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
@@ -172,7 +173,7 @@ struct ComposeMessageCellRecipients: View {
     }
 
     private func recipientCheck(mergedContacts: [MergedContact]) throws -> [MergedContact] {
-        let contactsWithValidMail = mergedContacts.filter { Constants.isEmailAddress($0.email) }
+        let contactsWithValidMail = mergedContacts.filter { EmailChecker(email: $0.email).validate() }
         if contactsWithValidMail.isEmpty {
             throw RecipientError.invalidEmail
         }

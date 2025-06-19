@@ -99,10 +99,6 @@ public enum Constants {
 
     public static let longTimeout: TimeInterval = 120
 
-    public static let emailPredicate = NSPredicate(format: "SELF MATCHES %@", Constants.mailRegex)
-    public static let mailRegex =
-        "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])"
-
     // It's safe to unwrap because this will always succeed
     // swiftlint:disable:next force_try
     public static let referenceRegex: NSRegularExpression = try! NSRegularExpression(pattern: ">\\s*<|>?\\s+<?")
@@ -120,10 +116,6 @@ public enum Constants {
 
     /// List of feature flags enabled by default (before getting API data)
     public static let defaultFeatureFlags: [FeatureFlag] = []
-
-    public static func isEmailAddress(_ mail: String) -> Bool {
-        return emailPredicate.evaluate(with: mail.lowercased())
-    }
 
     public static func isMailTo(_ url: URL) -> Bool {
         return url.scheme?.caseInsensitiveCompare("mailto") == .orderedSame

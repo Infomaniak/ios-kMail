@@ -72,10 +72,10 @@ public final class Recipient: EmbeddedObject, Correspondent, Codable {
 
         var recipients = [Recipient]()
         for address in addresses {
-            if Constants.isEmailAddress(address) {
+            if EmailChecker(email: address).validate() {
                 recipients.append(Recipient(email: address, name: ""))
             } else if let match = Regex(pattern: "(.+)<(.+)>")?.matches(in: address).first,
-                      match.count >= 3, Constants.isEmailAddress(match[2]) {
+                      match.count >= 3, EmailChecker(email: match[2]).validate() {
                 recipients.append(Recipient(email: match[2], name: match[1].removingPercentEncoding ?? match[1]))
             }
         }

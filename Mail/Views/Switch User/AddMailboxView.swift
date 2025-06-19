@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
@@ -36,7 +37,7 @@ struct AddMailboxView: View {
     @State private var isButtonLoading = false
 
     private var invalidEmailAddress: Bool {
-        return !Constants.isEmailAddress(newAddress)
+        return !EmailChecker(email: newAddress).validate()
     }
 
     private var buttonDisabled: Bool {
