@@ -24,6 +24,15 @@ struct EncryptionButtonView: View {
     let draft: Draft
     let didTap: () -> Void
 
+    private var count: String? {
+        guard !draft.autoEncryptDisable.isEmpty else { return nil }
+
+        if draft.autoEncryptDisable.count <= 9 {
+            return String(draft.autoEncryptDisable.count)
+        }
+        return "+9"
+    }
+
     var body: some View {
         Button {
             didTap()
@@ -33,16 +42,22 @@ struct EncryptionButtonView: View {
         }
         .foregroundColor(draft.encrypted ? Color.accentColor : MailResourcesAsset.textSecondaryColor.swiftUIColor)
         .overlay {
-            if !draft.autoEncryptDisable.isEmpty {
+            if let count {
                 Circle()
                     .fill(MailResourcesAsset.orangeColor.swiftUIColor)
+                    .overlay {
+                        Text(count)
+                            .font(.system(size: 8))
+                            .foregroundStyle(MailResourcesAsset.backgroundTertiaryColor.swiftUIColor)
+                    }
                     .frame(width: 14)
-                    .offset(x: 7, y: -7)
+                    .frame(maxHeight: .infinity, alignment: .top)
+                    .offset(x: 7)
             }
         }
     }
 }
 
 #Preview {
-//    EncryptionButtonView(draft: PreviewHelper.sampleDraft, didTap: <#() -> Void#>)
+    EncryptionButtonView(draft: Draft()) {}
 }
