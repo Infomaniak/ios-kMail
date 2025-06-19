@@ -28,6 +28,8 @@ struct MessageEncryptionHeaderView: View {
     @ObservedRealmObject var message: Message
     @ObservedRealmObject var mailbox: Mailbox
 
+    @State private var isShowingRecipients = false
+
     private var fromMe: Bool {
         return message.fromMe(currentMailboxEmail: mailbox.email)
     }
@@ -38,7 +40,8 @@ struct MessageEncryptionHeaderView: View {
         }
 
         if let passwordValidity = message.cryptPasswordValidity {
-            return MailResourcesStrings.Localizable.encryptedMessageHeaderPasswordExpiryDate(passwordValidity)
+            let date = passwordValidity.formatted(date: .numeric, time: .omitted)
+            return MailResourcesStrings.Localizable.encryptedMessageHeaderPasswordExpiryDate(date)
         }
 
         return MailResourcesStrings.Localizable.encryptedMessageHeader
@@ -62,7 +65,7 @@ struct MessageEncryptionHeaderView: View {
                 VStack {
                     if message.cryptPasswordValidity != nil {
                         Button(MailResourcesStrings.Localizable.encryptedButtonSeeConcernedRecipients) {
-                            // See recipients
+                            isShowingRecipients = true
                         }
                     }
                 }
@@ -76,6 +79,12 @@ struct MessageEncryptionHeaderView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(MailResourcesAsset.backgroundSovereignBlueColor.swiftUIColor)
+        .floatingPanel(
+            isPresented: $isShowingRecipients,
+            title: MailResourcesStrings.Localizable.encryptedRecipientRequiringPasswordTitle(0)
+        ) {
+            EncryptionConcernedRecipientsView()
+        }
     }
 }
 
