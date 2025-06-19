@@ -53,7 +53,7 @@ struct EncryptionStateView: View {
 
                 Text(isEncryptionEnabled ?
                     MailResourcesStrings.Localizable.encryptedStatePanelEnable :
-                    MailResourcesStrings.Localizable.encryptedStatePanelIncomplete(autoEncryptDisableCount))
+                    "\(MailResourcesStrings.Localizable.encryptedMessageIncompleteUser(autoEncryptDisableCount)) \(MailResourcesStrings.Localizable.encryptedStatePanelIncomplete)")
                     .textStyle(.bodySecondary)
             }
 
