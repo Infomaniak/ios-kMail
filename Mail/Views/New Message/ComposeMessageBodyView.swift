@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreSwiftUI
 import InfomaniakRichHTMLEditor
 import MailCore
 import MailCoreUI
@@ -32,6 +33,7 @@ struct ComposeMessageBodyView: View {
     @EnvironmentObject private var attachmentsManager: AttachmentsManager
 
     @State private var toolbar = EditorMobileToolbarView()
+    @State private var selectedImage: UIImage?
     @StateObject private var textAttributes = TextAttributes()
 
     @ModalState(context: ContextKeys.compose) private var isShowingLinkAlert = false
@@ -80,8 +82,16 @@ struct ComposeMessageBodyView: View {
                         .ignoresSafeArea()
                 }
                 .fullScreenCover(isPresented: $isShowingCamera) {
-                    CameraPicker(completion: didTakePhoto)
+                    CameraPickerView(selectedImage: $selectedImage)
                         .ignoresSafeArea()
+                }
+                .onChange(of: selectedImage) { newImage in
+                    guard let image = newImage,
+                          let data = image.jpegData(compressionQuality: 0.5) else {
+                        return
+                    }
+                    didTakePhoto(data)
+                    selectedImage = nil
                 }
         }
     }
