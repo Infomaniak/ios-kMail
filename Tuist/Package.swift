@@ -55,7 +55,7 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "2.0.4")),
         .package(url: "https://github.com/Infomaniak/swift-concurrency", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-core", .upToNextMajor(from: "15.3.0")),
-        .package(url: "https://github.com/Infomaniak/ios-core-ui", branch: "refactor/move-camera-picker-to-core-ui"),
+        .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "19.1.0")),
         .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "11.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "18.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-bug-tracker", .upToNextMajor(from: "12.0.0")),

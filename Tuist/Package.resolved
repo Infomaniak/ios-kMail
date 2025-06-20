@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "branch" : "refactor/move-camera-picker-to-core-ui",
-        "revision" : "c006113d4047ca4d743b877bffdcfeb3f9c25f17"
+        "revision" : "c09f2ba3f338944ad5be76ef86c03b00310663de",
+        "version" : "19.1.0"
       }
     },
     {
