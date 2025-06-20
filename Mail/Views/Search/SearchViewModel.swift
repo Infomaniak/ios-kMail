@@ -151,7 +151,7 @@ final class SearchViewModel: ObservableObject, ThreadListable {
         var autocompleteRecipients = autocompleteContacts.map { Recipient(email: $0.email, name: $0.name).freezeIfNeeded() }
 
         // Append typed email
-        if Constants.isEmailAddress(searchValue) && !frozenContacts
+        if EmailChecker(email: searchValue).validate() && !frozenContacts
             .contains(where: { $0.email.caseInsensitiveCompare(searchValue) == .orderedSame }) {
             autocompleteRecipients.append(Recipient(email: searchValue, name: "").freezeIfNeeded())
         }
