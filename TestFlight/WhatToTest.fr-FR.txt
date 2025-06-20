@@ -1,2 +1,1 @@
-- Correction de l'ajout de groupes avec adresses invalides
-- Correction d'un crash lors du rajout d'une adresse mail
+- Correction de bugs mineurs

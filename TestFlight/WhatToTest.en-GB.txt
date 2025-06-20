@@ -1,2 +1,1 @@
-- Fixed adding groups with invalid addresses
-- Fixed a crash when adding a mailbox
+- Small fixes
