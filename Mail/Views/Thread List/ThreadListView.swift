@@ -84,6 +84,7 @@ struct ThreadListView: View {
             StateObject(wrappedValue: MultipleSelectionViewModel(fromArchiveFolder: frozenFolder.role == .archive))
 
         UITableViewCell.appearance().focusEffect = .none
+        UICollectionViewCell.appearance().focusEffect = .none
     }
 
     var body: some View {
