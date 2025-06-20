@@ -472,4 +472,10 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
             }
         }
     }
+
+    public func removeCachedProperties() {
+        mailboxManagers.removeAll()
+        contactManagers.removeAll()
+        apiFetchers.removeAll()
+    }
 }
