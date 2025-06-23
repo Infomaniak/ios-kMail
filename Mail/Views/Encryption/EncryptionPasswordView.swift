@@ -26,6 +26,7 @@ import WrappingHStack
 
 struct EncryptionPasswordView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
     @EnvironmentObject private var mailboxManager: MailboxManager
     @ObservedRealmObject var draft: Draft
 
@@ -39,7 +40,9 @@ struct EncryptionPasswordView: View {
                                 .textStyle(.bodySecondary)
 
                             Button {
-                                // En savoir plus
+                                if let url = URL(string: "https://faq.infomaniak.com/1582") {
+                                    openURL(url)
+                                }
                             } label: {
                                 Text(MailResourcesStrings.Localizable.moreInfo)
                                     .font(MailTextStyle.bodyMedium.font)
