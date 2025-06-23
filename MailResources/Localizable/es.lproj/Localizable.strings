@@ -4,7 +4,7 @@
  * Locale: es, Spanish
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Wed, 04 Jun 2025 16:31:16 +0200
+ * Exported at: Mon, 23 Jun 2025 09:16:25 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -573,6 +573,9 @@
 
 /* loco:62ed16680ed9e562702a5ab2 */
 "contactsSearch" = "Contactos";
+
+/* loco:683ed907ce58d366270b42a3 */
+"contentDescriptionAddReaction" = "Añadir una reacción";
 
 /* loco:628c9d1654bb544229106572 */
 "contentDescriptionButtonBack" = "Volver";
@@ -1653,6 +1656,9 @@
 
 /* loco:651ebe4a1a15bf27e204db22 */
 "snackbarPasswordCopied" = "La contraseña ha sido copiada";
+
+/* loco:6858ff00a459db58890629f2 */
+"snackbarReactionSent" = "Reacción %@ enviada";
 
 /* loco:62ab4ae387f65e26e577dd42 */
 "snackbarReportPhishingConfirmation" = "Informado con éxito";
