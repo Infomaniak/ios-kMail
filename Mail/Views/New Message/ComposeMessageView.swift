@@ -430,7 +430,7 @@ struct ComposeMessageView: View {
         dismissMessageView()
     }
 
-    public func changeSelectedFolder(to folder: Folder) {
+    private func changeSelectedFolder(to folder: Folder) {
         let freezeFolder = folder.freezeIfNeeded()
         mainViewState.selectedFolder = freezeFolder
     }
