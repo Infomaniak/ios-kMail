@@ -65,14 +65,11 @@ struct EncryptionPasswordView: View {
             }
 
             VStack(alignment: .leading, spacing: IKPadding.small) {
-                Text(MailResourcesStrings.Localizable.encryptedPasswordTitle)
-                    .textStyle(.bodyMedium)
-
                 Text(MailResourcesStrings.Localizable.encryptedMessagePasswordLabel)
                     .textStyle(.bodySmall)
 
                 HStack {
-                    TextField(MailResourcesStrings.Localizable.encryptedPasswordTitle, text: $draft.encryptionPassword)
+                    TextField(MailResourcesStrings.Localizable.enterPasswordTitle, text: $draft.encryptionPassword)
 
                     Button {
                         // Generate password
