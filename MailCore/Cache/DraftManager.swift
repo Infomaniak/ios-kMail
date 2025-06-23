@@ -135,32 +135,31 @@ public final class DraftManager {
         changeFolderAction: ((Folder) -> Void)?,
         myKSuiteUpgradeAction: (() -> Void)? = nil
     ) async -> Date? {
-        if initialDraft.action == .schedule {
-            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarScheduling, shouldShow: showSnackbar)
-        } else {
-            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending, shouldShow: showSnackbar)
-        }
+        showWillSendSnackbar(action: initialDraft.action, showSnackbar: showSnackbar)
 
-        var sendDate: Date?
         await draftQueue.cleanQueueElement(uuid: initialDraft.localUUID)
         await draftQueue.beginBackgroundTask(withName: "Draft Sender", for: initialDraft.localUUID)
 
         let draft = updateSubjectIfNeeded(draft: initialDraft)
 
+        var sendDate: Date?
         do {
             if draft.action == .send || draft.action == .sendReaction {
                 let sendResponse = try await mailboxManager.send(draft: draft)
                 sendDate = sendResponse.scheduledDate
-                alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent, shouldShow: showSnackbar)
+
+                showDidSendSnackbar(draft: draft, showSnackbar: showSnackbar)
             } else if draft.action == .schedule {
                 let draftWithoutDelay = removeDelay(draft: draft)
                 let scheduleResponse = try await mailboxManager.schedule(draft: draftWithoutDelay)
-                if showSnackbar, let date = draftWithoutDelay.scheduleDate, let changeFolderAction {
+
+                if let date = draftWithoutDelay.scheduleDate, let changeFolderAction {
                     showScheduledSnackBar(
                         date: date,
                         scheduleAction: scheduleResponse.scheduleAction,
                         mailboxManager: mailboxManager,
-                        changeFolderAction: changeFolderAction
+                        changeFolderAction: changeFolderAction,
+                        showSnackbar: showSnackbar
                     )
                 }
             }
@@ -372,12 +371,39 @@ public final class DraftManager {
         return liveDraft.freeze()
     }
 
+    private func showWillSendSnackbar(action: SaveDraftOption?, showSnackbar: Bool) {
+        switch action {
+        case .schedule:
+            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarScheduling, shouldShow: showSnackbar)
+        case .send:
+            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending, shouldShow: showSnackbar)
+        default:
+            break
+        }
+    }
+
+    private func showDidSendSnackbar(draft: Draft, showSnackbar: Bool) {
+        switch draft.action {
+        case .send:
+            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent, shouldShow: showSnackbar)
+        case .sendReaction:
+            guard showSnackbar, let reaction = draft.emojiReaction else { return }
+            alertDisplayable
+                .show(message: MailResourcesStrings.Localizable.snackbarReactionSent(reaction), shouldShow: showSnackbar)
+        default:
+            break
+        }
+    }
+
     private func showScheduledSnackBar(
         date: Date,
         scheduleAction: String,
         mailboxManager: MailboxManager,
-        changeFolderAction: @escaping (Folder) -> Void
+        changeFolderAction: @escaping (Folder) -> Void,
+        showSnackbar: Bool
     ) {
+        guard showSnackbar else { return }
+
         let formattedDate = DateFormatter.localizedString(from: date, dateStyle: .medium, timeStyle: .short)
         let changeFolderAlertAction = UserAlertAction(MailResourcesStrings.Localizable.draftFolder) {
             guard let draftFolder = mailboxManager.getFolder(with: .draft) else {
