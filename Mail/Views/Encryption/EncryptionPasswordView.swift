@@ -120,6 +120,40 @@ struct EncryptionPasswordView: View {
             .padding(value: .medium)
         }
         .tint(MailResourcesAsset.sovereignBlueColor.swiftUIColor)
+        .onAppear {
+            if draft.encryptionPassword.isEmpty, let liveDraft = draft.thaw() {
+                try? liveDraft.realm?.write {
+                    liveDraft.encryptionPassword = generateStrongSecurePassword()
+                }
+            }
+        }
+    }
+
+    func generateStrongSecurePassword() -> String {
+        let length = 16
+
+        let lowercase = Array("abcdefghijklmnopqrstuvwxyz")
+        let uppercase = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+        let digits = Array("0123456789")
+        let symbols = Array("!@#$%^&*()-_=+[]{}|;:,.<>?")
+        let all = lowercase + uppercase + digits + symbols
+
+        var randomGenerator = SystemRandomNumberGenerator()
+
+        var passwordChars: [Character] = [
+            lowercase.randomElement(using: &randomGenerator)!,
+            uppercase.randomElement(using: &randomGenerator)!,
+            digits.randomElement(using: &randomGenerator)!,
+            symbols.randomElement(using: &randomGenerator)!
+        ]
+
+        for _ in 4 ..< length {
+            passwordChars.append(all.randomElement(using: &randomGenerator)!)
+        }
+
+        passwordChars.shuffle(using: &randomGenerator)
+
+        return String(passwordChars)
     }
 }
 
