@@ -38,12 +38,14 @@ struct SnoozedThreadHeaderView: View {
         MessageHeaderActionView(
             icon: MailResourcesAsset.alarmClockFilled.swiftUIImage,
             message: MailResourcesStrings.Localizable.snoozeAlertTitle(date.formatted(.messageHeader)),
-            isLast: true,
+            showBottomSeparator: true,
             shouldDisplayActions: folder?.canAccessSnoozeActions ?? false
         ) {
-            Button(MailResourcesStrings.Localizable.buttonModify, action: edit)
-            MessageHeaderDivider()
-            Button(MailResourcesStrings.Localizable.buttonCancelReminder, action: cancel)
+            HStack {
+                Button(MailResourcesStrings.Localizable.buttonModify, action: edit)
+                MessageHeaderDivider()
+                Button(MailResourcesStrings.Localizable.buttonCancelReminder, action: cancel)
+            }
         }
         .snoozedFloatingPanel(
             messages: messagesToSnooze,

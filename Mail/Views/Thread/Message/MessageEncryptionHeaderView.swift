@@ -48,36 +48,19 @@ struct MessageEncryptionHeaderView: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading) {
-            VStack(alignment: .leading) {
-                HStack(alignment: .top, spacing: IKPadding.small) {
-                    MailResourcesAsset.lockSquareFill.swiftUIImage
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 16)
-                        .foregroundStyle(MailResourcesAsset.iconSovereignBlueColor)
-                    Text(encryptionTitle)
-                        .font(MailTextStyle.labelSecondary.font)
-                        .foregroundStyle(MailResourcesAsset.textHeaderSovereignBlueColor.swiftUIColor)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
-
-                VStack {
-                    if message.cryptPasswordValidity != nil {
-                        Button(MailResourcesStrings.Localizable.encryptedButtonSeeConcernedRecipients) {
-                            isShowingRecipients = true
-                        }
-                    }
-                }
-                .tint(MailResourcesAsset.textHeaderSovereignBlueColor.swiftUIColor)
-                .buttonStyle(.ikBorderless(isInlined: true))
-                .controlSize(.small)
-                .padding(.leading, 16 + IKPadding.small)
+        MessageHeaderActionView(
+            icon: MailResourcesAsset.lockSquareFill.swiftUIImage,
+            message: encryptionTitle,
+            showTopSeparator: false,
+            showBottomSeparator: false,
+            iconColor: MailResourcesAsset.iconSovereignBlueColor.swiftUIColor,
+            textColor: MailResourcesAsset.textHeaderSovereignBlueColor.swiftUIColor
+        ) {
+            Button(MailResourcesStrings.Localizable.encryptedButtonSeeConcernedRecipients) {
+                isShowingRecipients = true
             }
-            .padding(.vertical, value: .mini)
-            .padding(.horizontal, value: .medium)
+            .tint(MailResourcesAsset.textHeaderSovereignBlueColor.swiftUIColor)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
         .background(MailResourcesAsset.backgroundSovereignBlueColor.swiftUIColor)
         .floatingPanel(
             isPresented: $isShowingRecipients,
