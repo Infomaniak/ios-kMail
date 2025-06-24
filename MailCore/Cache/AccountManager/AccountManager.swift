@@ -209,7 +209,8 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         await fetchMailboxesMetadata(mailboxes: mailboxesResponse, apiFetcher: apiFetcher)
 
         await mailboxInfosManager.storeMailboxes(user: user, mailboxes: mailboxesResponse)
-        if let mainMailbox = (mailboxesResponse.first(where: { $0.isPrimary }) ?? mailboxesResponse.first)?.freezeIfNeeded() {
+        let availableMailboxes = mailboxesResponse.filter { $0.isAvailable }
+        if let mainMailbox = (availableMailboxes.first(where: { $0.isPrimary }) ?? availableMailboxes.first)?.freezeIfNeeded() {
             await notificationService.updateTopicsIfNeeded([mainMailbox.notificationTopicName], userApiFetcher: apiFetcher)
             let currentMailboxManager = getMailboxManager(for: mainMailbox)
             try? await currentMailboxManager?.refreshAllFolders()
@@ -432,6 +433,11 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         mailboxManagers.removeAll()
         contactManagers.removeAll()
         apiFetchers.removeAll()
+
+        Task {
+            @InjectService var mainViewStateStore: MainViewStateStore
+            await mainViewStateStore.removeMainViewState(for: userId)
+        }
     }
 
     public func removeTokenAndAccountFor(userId: Int) {

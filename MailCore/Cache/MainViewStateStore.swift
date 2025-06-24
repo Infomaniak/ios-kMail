@@ -34,4 +34,10 @@ public actor MainViewStateStore {
     public func getExistingMainViewState(for mailboxManager: MailboxManager) -> MainViewState? {
         return mainViewStates[mailboxManager.mailbox.uuid]
     }
+
+    public func removeMainViewState(for userId: Int) {
+        for (uuid, mainViewState) in mainViewStates where mainViewState.mailboxManager.mailbox.userId == userId {
+            mainViewStates[uuid] = nil
+        }
+    }
 }
