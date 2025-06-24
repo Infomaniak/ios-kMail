@@ -126,7 +126,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
 
             Task { @MainActor [maybeMessageReply] in
                 guard let liveDraft = mailboxManager.draft(localUuid: draftLocalUUID),
-                      let mainViewState = getMainViewState(mailboxManager: mailboxManager)
+                      let mainViewState = await getMainViewState(mailboxManager: mailboxManager)
                 else {
                     dismiss()
                     snackbarPresenter.show(message: MailError.localMessageNotFound.errorDescription ?? "")
@@ -147,12 +147,12 @@ struct ComposeMessageIntentView: View, IntentViewable {
         }
     }
 
-    func getMainViewState(mailboxManager: MailboxManager) -> MainViewState? {
+    func getMainViewState(mailboxManager: MailboxManager) async -> MainViewState? {
         @InjectService var mainViewStateStore: MainViewStateStore
-        if let mainViewState = mainViewStateStore.getExistingMainViewState(for: mailboxManager) {
+        if let mainViewState = await mainViewStateStore.getExistingMainViewState(for: mailboxManager) {
             return mainViewState
         } else if let inboxFolder = mailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
-            return mainViewStateStore.getOrCreateMainViewState(for: mailboxManager, initialFolder: inboxFolder)
+            return await mainViewStateStore.getOrCreateMainViewState(for: mailboxManager, initialFolder: inboxFolder)
         } else {
             return nil
         }

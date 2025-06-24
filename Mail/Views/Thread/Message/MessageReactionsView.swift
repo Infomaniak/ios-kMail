@@ -69,21 +69,27 @@ struct MessageReactionsView: View {
 
     private func didTapReaction(_ reaction: String) {
         withAnimation {
-            localReactions.append(reaction)
+            _ = localReactions.append(reaction)
         }
 
-        let draft = Draft.reacting(
-            with: reaction,
-            reply: MessageReply(frozenMessage: message.freezeIfNeeded(), replyMode: .reply),
-            currentMailboxEmail: mailboxManager.mailbox.email
-        )
+        Task {
+            let messageReply = MessageReply(frozenMessage: message.freezeIfNeeded(), replyMode: .reply)
 
-        try? mailboxManager.writeTransaction { realm in
-            realm.add(draft)
+            let draft = Draft.reacting(with: reaction, reply: messageReply, currentMailboxEmail: mailboxManager.mailbox.email)
+            try? mailboxManager.writeTransaction { realm in
+                realm.add(draft)
+            }
+
+            let draftContentManager = DraftContentManager(
+                draftLocalUUID: draft.localUUID,
+                messageReply: messageReply,
+                mailboxManager: mailboxManager
+            )
+            _ = try? await draftContentManager.prepareCompleteDraft(incompleteDraft: draft.freezeIfNeeded())
+
+            @InjectService var draftManager: DraftManager
+            draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: true)
         }
-
-        @InjectService var draftManager: DraftManager
-        draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: true)
     }
 
     private func didLongPressReaction(_ reaction: String) {
