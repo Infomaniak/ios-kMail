@@ -433,6 +433,11 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         mailboxManagers.removeAll()
         contactManagers.removeAll()
         apiFetchers.removeAll()
+
+        Task {
+            @InjectService var mainViewStateStore: MainViewStateStore
+            await mainViewStateStore.removeMainViewState(for: userId)
+        }
     }
 
     public func removeTokenAndAccountFor(userId: Int) {
