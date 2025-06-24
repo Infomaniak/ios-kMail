@@ -35,7 +35,9 @@ struct MessageSubHeaderView: View {
     private var banners: [MessageBanner] {
         var result = [MessageBanner]()
 
-        if let isScheduledDraft = message.isScheduledDraft, isScheduledDraft, let scheduleDate = message.scheduleDate,
+        if let isScheduledDraft = message.isScheduledDraft,
+           isScheduledDraft,
+           let scheduleDate = message.scheduleDate,
            let draftResource = message.draftResource {
             result.append(.schedule(scheduleDate: scheduleDate, draftResource: draftResource))
         }
@@ -61,17 +63,6 @@ struct MessageSubHeaderView: View {
     }
 
     var body: some View {
-        if let scheduleData = banners.scheduleData {
-            MessageScheduleHeaderView(
-                scheduleDate: scheduleData.scheduleDate,
-                draftResource: scheduleData.draftResource,
-                isLast: banners.isLast(messageBanner: .schedule(
-                    scheduleDate: scheduleData.scheduleDate,
-                    draftResource: scheduleData.draftResource
-                ))
-            )
-        }
-
         if isMessageInteractive {
             MessageBannerHeaderView(
                 banners: banners,
