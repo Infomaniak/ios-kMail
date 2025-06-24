@@ -18,7 +18,11 @@
 
 import Foundation
 
-public enum MessageBanner: Equatable {
+public enum MessageBanner: Equatable, Identifiable, Hashable {
+    public var id: Int {
+        return hashValue
+    }
+
     case schedule(scheduleDate: Date, draftResource: String)
     case spam(spamType: SpamHeaderType)
     case displayContent
@@ -61,7 +65,7 @@ public extension [MessageBanner] {
         return nil
     }
 
-    func isLast(messageBanner: MessageBanner) -> Bool {
+    func shouldShowBottomSeparator(for messageBanner: MessageBanner) -> Bool {
         switch messageBanner {
         case .schedule:
             return count == 1
