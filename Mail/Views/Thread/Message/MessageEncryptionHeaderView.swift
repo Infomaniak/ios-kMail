@@ -56,10 +56,12 @@ struct MessageEncryptionHeaderView: View {
             iconColor: MailResourcesAsset.iconSovereignBlueColor.swiftUIColor,
             textColor: MailResourcesAsset.textHeaderSovereignBlueColor.swiftUIColor
         ) {
-            Button(MailResourcesStrings.Localizable.encryptedButtonSeeConcernedRecipients) {
-                isShowingRecipients = true
+            if message.cryptPasswordValidity != nil {
+                Button(MailResourcesStrings.Localizable.encryptedButtonSeeConcernedRecipients) {
+                    isShowingRecipients = true
+                }
+                .tint(MailResourcesAsset.textHeaderSovereignBlueColor.swiftUIColor)
             }
-            .tint(MailResourcesAsset.textHeaderSovereignBlueColor.swiftUIColor)
         }
         .background(MailResourcesAsset.backgroundSovereignBlueColor.swiftUIColor)
         .floatingPanel(
