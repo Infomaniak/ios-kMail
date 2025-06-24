@@ -209,7 +209,8 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         await fetchMailboxesMetadata(mailboxes: mailboxesResponse, apiFetcher: apiFetcher)
 
         await mailboxInfosManager.storeMailboxes(user: user, mailboxes: mailboxesResponse)
-        if let mainMailbox = (mailboxesResponse.first(where: { $0.isPrimary }) ?? mailboxesResponse.first)?.freezeIfNeeded() {
+        let availableMailboxes = mailboxesResponse.filter { $0.isAvailable }
+        if let mainMailbox = (availableMailboxes.first(where: { $0.isPrimary }) ?? availableMailboxes.first)?.freezeIfNeeded() {
             await notificationService.updateTopicsIfNeeded([mainMailbox.notificationTopicName], userApiFetcher: apiFetcher)
             let currentMailboxManager = getMailboxManager(for: mainMailbox)
             try? await currentMailboxManager?.refreshAllFolders()
