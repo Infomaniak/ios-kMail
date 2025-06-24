@@ -34,57 +34,57 @@ struct MessageBannerHeaderView: View {
     @ObservedRealmObject var mailbox: Mailbox
 
     var body: some View {
-        if let spamType = banners.spamType {
-            MessageHeaderActionView(
-                icon: spamType.icon,
-                message: spamType.message,
-                isLast: banners.isLast(messageBanner: .spam(spamType: spamType))
-            ) {
-                Button {
-                    action()
-                } label: {
-                    Text(spamType.buttonTitle)
-                }
-                .buttonStyle(.ikBorderless(isInlined: true))
-                .controlSize(.small)
-                .disabled(isButtonLoading)
-                .ikButtonLoading(isButtonLoading)
-            }
-        }
-
-        if banners.contains(where: { $0 == .displayContent }) {
-            MessageHeaderActionView(
-                icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
-                message: MailResourcesStrings.Localizable.alertBlockedImagesDescription,
-                isLast: banners.isLast(messageBanner: .displayContent)
-            ) {
-                Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) {
-                    withAnimation {
-                        $message.localSafeDisplay.wrappedValue = true
+        ForEach(banners, id: \.id) { banner in
+            let showBottomSeparator = banners.shouldShowBottomSeparator(for: banner)
+            switch banner {
+            case .displayContent:
+                MessageHeaderActionView(
+                    icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
+                    message: MailResourcesStrings.Localizable.alertBlockedImagesDescription,
+                    showBottomSeparator: showBottomSeparator
+                ) {
+                    Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) {
+                        withAnimation {
+                            $message.localSafeDisplay.wrappedValue = true
+                        }
                     }
                 }
-                .buttonStyle(.ikBorderless(isInlined: true))
-                .controlSize(.small)
+            case .encrypted:
+                MessageEncryptionHeaderView(message: message, mailbox: mailbox)
+            case .schedule(let scheduleDate, let draftResource):
+                MessageScheduleHeaderView(
+                    scheduleDate: scheduleDate,
+                    draftResource: draftResource,
+                    showBottomSeparator: showBottomSeparator
+                )
+            case .spam(let spamType):
+                MessageHeaderActionView(
+                    icon: spamType.icon,
+                    message: spamType.message,
+                    showBottomSeparator: showBottomSeparator
+                ) {
+                    Button {
+                        action(spamType: spamType)
+                    } label: {
+                        Text(spamType.buttonTitle)
+                    }
+                    .disabled(isButtonLoading)
+                    .ikButtonLoading(isButtonLoading)
+                }
             }
-        }
-
-        if banners.contains(where: { $0 == .encrypted }) {
-            MessageEncryptionHeaderView(message: message, mailbox: mailbox)
         }
     }
 
-    private func action() {
+    private func action(spamType: SpamHeaderType) {
         isButtonLoading = true
         Task {
-            switch banners.spamType {
+            switch spamType {
             case .moveInSpam:
                 _ = try? await mailboxManager.move(messages: [message], to: .spam)
             case .enableSpamFilter:
                 _ = try? await mailboxManager.activateSpamFilter()
             case .unblockRecipient(let sender):
                 try await mailboxManager.unblockSender(sender: sender)
-            case .none:
-                break
             }
 
             isButtonLoading = false
