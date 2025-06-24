@@ -19,7 +19,7 @@
 import MailResources
 import SwiftUI
 
-public enum SpamHeaderType: Equatable {
+public enum SpamHeaderType: Equatable, Hashable {
     case moveInSpam
     case enableSpamFilter
     case unblockRecipient(String)
