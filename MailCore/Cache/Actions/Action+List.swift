@@ -138,7 +138,6 @@ extension Action: CaseIterable {
     }
 
     private static func getArchiveAction(
-        originType: ActionOrigin.ActionOriginType,
         originFolderRole: FolderRole?,
         messagesAreSnoozed: Bool
     ) -> Action? {
@@ -190,7 +189,6 @@ extension Action: CaseIterable {
 
         let unreadAction: Action = messages.allSatisfy(\.seen) ? .markAsUnread : .markAsRead
         let archiveAction = getArchiveAction(
-            originType: origin.type,
             originFolderRole: origin.frozenFolder?.role,
             messagesAreSnoozed: messages.allSatisfy(\.isSnoozed)
         )
