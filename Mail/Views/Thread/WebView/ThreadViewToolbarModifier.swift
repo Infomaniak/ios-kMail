@@ -48,7 +48,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
     private var toolbarActions: Action.Lists {
         return Action.actionsForMessages(
             frozenMessages,
-            origin: .floatingPanel(source: .messageList, originFolder: frozenFolder),
+            from: .floatingPanel(source: .messageList, originFolder: frozenFolder),
             userIsStaff: false,
             userEmail: mailboxManager.mailbox.email
         )

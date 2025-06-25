@@ -48,7 +48,7 @@ struct ThreadListCellContextMenu: ViewModifier {
     private var actions: Action.Lists {
         Action.actionsForMessages(
             thread.messages.toArray(),
-            origin: origin,
+            from: origin,
             userIsStaff: currentUser.value.isStaff ?? false,
             userEmail: currentUser.value.email
         )

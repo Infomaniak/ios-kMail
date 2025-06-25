@@ -108,7 +108,7 @@ extension Action: CaseIterable {
         return actions.compactMap { $0 }
     }
 
-    private static func snoozedActions(_ messages: [Message], folder: Folder?) -> [Action] {
+    private static func snoozedActions(for messages: [Message], from folder: Folder?) -> [Action] {
         guard folder?.canAccessSnoozeActions == true else { return [] }
 
         let messagesFromFolder = messages.filter { $0.folder?.remoteId == folder?.remoteId }
@@ -122,7 +122,7 @@ extension Action: CaseIterable {
     }
 
     public static func actionsForMessages(_ messages: [Message],
-                                          origin: ActionOrigin,
+                                          from origin: ActionOrigin,
                                           userIsStaff: Bool,
                                           userEmail: String) -> Action.Lists {
         guard !messages.allSatisfy({ $0.isScheduledDraft == true }),
@@ -134,13 +134,12 @@ extension Action: CaseIterable {
                 bottomBarActions: [.delete]
             )
         }
-        return actionsForNormalMessages(messages, origin: origin, userIsStaff: userIsStaff, userEmail: userEmail)
+        return actionsForNormalMessages(messages, from: origin, userIsStaff: userIsStaff, userEmail: userEmail)
     }
 
-    private static func getArchiveAction(
-        originFolderRole: FolderRole?,
-        messagesAreSnoozed: Bool
-    ) -> Action? {
+    private static func archiveAction(for originFolderRole: FolderRole?,
+
+                                      messagesAreSnoozed: Bool) -> Action? {
         guard originFolderRole != .spam,
               !messagesAreSnoozed
         else {
@@ -149,23 +148,23 @@ extension Action: CaseIterable {
         return originFolderRole != .archive ? .archive : .moveToInbox
     }
 
-    private static func getSpamAction(originFolderRole: FolderRole?, messagesRecipients: [Recipient],
-                                      userEmail: String) -> Action? {
+    private static func spamAction(for originFolderRole: FolderRole?, messagesRecipients: [Recipient],
+                                   userEmail: String) -> Action? {
         guard !messagesRecipients.allSatisfy({ $0.isMeOrPlusMe(currentMailboxEmail: userEmail) }) else {
             return nil
         }
         return originFolderRole == .spam ? .nonSpam : .reportJunk
     }
 
-    private static func getReportDisplayProblemAction(userIsStaff: Bool, isMessageDetails: Bool) -> Action? {
+    private static func reportDisplayProblemAction(userIsStaff: Bool, isMessageDetails: Bool) -> Action? {
         guard userIsStaff, isMessageDetails else {
             return nil
         }
         return .reportDisplayProblem
     }
 
-    public static func getBottomBarActions(
-        originType: ActionOrigin.ActionOriginType,
+    public static func bottomBarActions(
+        for originType: ActionOrigin.ActionOriginType,
         unreadAction: Action,
         archiveAction: Action?,
         starAction: Action
@@ -181,25 +180,25 @@ extension Action: CaseIterable {
     }
 
     private static func actionsForNormalMessages(_ messages: [Message],
-                                                 origin: ActionOrigin,
+                                                 from origin: ActionOrigin,
                                                  userIsStaff: Bool,
                                                  userEmail: String)
         -> Action.Lists {
         @LazyInjectService var platformDetector: PlatformDetectable
 
         let unreadAction: Action = messages.allSatisfy(\.seen) ? .markAsUnread : .markAsRead
-        let archiveAction = getArchiveAction(
-            originFolderRole: origin.frozenFolder?.role,
+        let archiveAction = archiveAction(
+            for: origin.frozenFolder?.role,
             messagesAreSnoozed: messages.allSatisfy(\.isSnoozed)
         )
         let openMovePanelAction: Action? = messages.allSatisfy(\.isMovable) ? .openMovePanel : nil
-        let spamAction = getSpamAction(
-            originFolderRole: origin.frozenFolder?.role,
+        let spamAction = spamAction(
+            for: origin.frozenFolder?.role,
             messagesRecipients: messages.flatMap(\.from),
             userEmail: userEmail
         )
         let starAction: Action = messages.contains { $0.flagged } ? .unstar : .star
-        let reportDisplayProblemAction = getReportDisplayProblemAction(
+        let reportDisplayProblemAction = reportDisplayProblemAction(
             userIsStaff: userIsStaff,
             isMessageDetails: origin.type.isMessageDetails
         )
@@ -207,7 +206,7 @@ extension Action: CaseIterable {
         let quickActions: [Action] = origin.type.isMessageDetails ? [.reply, .replyAll, .forward, .delete] : []
 
         var listActions: [Action?] = [origin.type == .floatingPanel(source: .contextMenu) ? .activeMultiSelect : nil] +
-            (!origin.type.isMessageDetails ? snoozedActions(messages, folder: origin.frozenFolder) : []) +
+            (!origin.type.isMessageDetails ? snoozedActions(for: messages, from: origin.frozenFolder) : []) +
             [openMovePanelAction, spamAction]
 
         if origin.type != .floatingPanel(source: .threadList) {
@@ -221,8 +220,8 @@ extension Action: CaseIterable {
             ]
         }
 
-        let bottomBarActions = getBottomBarActions(
-            originType: origin.type,
+        let bottomBarActions = bottomBarActions(
+            for: origin.type,
             unreadAction: unreadAction,
             archiveAction: archiveAction,
             starAction: starAction

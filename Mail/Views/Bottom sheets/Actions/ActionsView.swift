@@ -38,7 +38,7 @@ struct ActionsView: View {
         let userIsStaff = user.isStaff ?? false
 
         targetMessages = messages
-        actionsLists = Action.actionsForMessages(messages, origin: origin, userIsStaff: userIsStaff, userEmail: user.email)
+        actionsLists = Action.actionsForMessages(messages, from: origin, userIsStaff: userIsStaff, userEmail: user.email)
         self.origin = origin
         self.completionHandler = completionHandler
     }
