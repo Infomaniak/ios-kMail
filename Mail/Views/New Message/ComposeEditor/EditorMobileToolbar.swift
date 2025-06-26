@@ -56,7 +56,6 @@ enum EditorToolbarAction: Int, Identifiable {
     case ai
     case addPhoto
     case takePhoto
-    case programMessage
 
     var id: Self { self }
 
@@ -84,8 +83,6 @@ enum EditorToolbarAction: Int, Identifiable {
             return MailResourcesAsset.photo
         case .link:
             return MailResourcesAsset.hyperlink
-        case .programMessage:
-            return MailResourcesAsset.alarmClock
         case .cancelFormat:
             return MailResourcesAsset.cancelFormat
         }
@@ -129,8 +126,6 @@ enum EditorToolbarAction: Int, Identifiable {
             return "importFromCamera"
         case .link:
             return "addLink"
-        case .programMessage:
-            return "postpone"
         default:
             return nil
         }
@@ -160,8 +155,6 @@ enum EditorToolbarAction: Int, Identifiable {
             return MailResourcesStrings.Localizable.buttonCamera
         case .link:
             return MailResourcesStrings.Localizable.buttonHyperlink
-        case .programMessage:
-            return MailResourcesStrings.Localizable.buttonSchedule
         case .cancelFormat:
             return MailResourcesStrings.Localizable.buttonCancelFormatting
         }
@@ -183,11 +176,12 @@ enum EditorToolbarAction: Int, Identifiable {
             return KeyboardShortcut("K", modifiers: [.command, .shift])
         case .addFile:
             return KeyboardShortcut("P", modifiers: [.command, .shift])
-        case .editText, .ai, .addPhoto, .takePhoto, .programMessage, .cancelFormat:
+        case .editText, .ai, .addAttachment, .addPhoto, .takePhoto, .cancelFormat:
             return nil
         }
     }
 
+    @MainActor
     func isSelected(textAttributes: TextAttributes) -> Bool {
         switch self {
         case .bold:
@@ -202,11 +196,12 @@ enum EditorToolbarAction: Int, Identifiable {
             return textAttributes.hasUnorderedList
         case .link:
             return textAttributes.hasLink
-        case .editText, .ai, .addFile, .addPhoto, .takePhoto, .programMessage, .cancelFormat:
+        case .editText, .ai, .addAttachment, .addFile, .addPhoto, .takePhoto, .cancelFormat:
             return false
         }
     }
 
+    @MainActor
     func action(
         textAttributes: TextAttributes,
         isShowingLinkAlert: Binding<Bool>,

@@ -120,8 +120,6 @@ struct ComposeMessageBodyView: View {
             isShowingPhotoLibrary = true
         case .takePhoto:
             isShowingCamera = true
-        case .programMessage:
-            showWorkInProgressSnackBar()
         default:
             Logger.view.warning("EditorToolbarAction not handled by ComposeEditor.")
         }

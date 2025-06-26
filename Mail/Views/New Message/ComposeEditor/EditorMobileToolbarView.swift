@@ -118,7 +118,7 @@ final class EditorMobileToolbarView: UIToolbar {
             } else {
                 mainButtonItemsHandler?(action)
             }
-        case .ai, .addFile, .addPhoto, .takePhoto, .programMessage, .cancelFormat:
+        case .ai, .addFile, .addAttachment, .addPhoto, .takePhoto, .cancelFormat:
             mainButtonItemsHandler?(action)
         }
     }
