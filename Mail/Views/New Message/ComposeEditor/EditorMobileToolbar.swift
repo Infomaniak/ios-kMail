@@ -44,7 +44,6 @@ enum EditorMobileToolbarStyle {
 }
 
 enum EditorToolbarAction: Int, Identifiable {
-    case addFile
     case link
     case bold
     case underline
@@ -54,6 +53,8 @@ enum EditorToolbarAction: Int, Identifiable {
     case unorderedList
     case editText
     case ai
+    case addAttachment
+    case addFile
     case addPhoto
     case takePhoto
 
@@ -75,6 +76,8 @@ enum EditorToolbarAction: Int, Identifiable {
             return MailResourcesAsset.textModes
         case .ai:
             return MailResourcesAsset.aiWriter
+        case .addAttachment:
+            return MailResourcesAsset.attachment
         case .addFile:
             return MailResourcesAsset.attachment
         case .addPhoto:
@@ -147,6 +150,8 @@ enum EditorToolbarAction: Int, Identifiable {
             return MailResourcesStrings.Localizable.buttonEditText
         case .ai:
             return MailResourcesStrings.Localizable.aiDiscoveryTitle
+        case .addAttachment:
+            return "!Add Attachment"
         case .addFile:
             return MailResourcesStrings.Localizable.attachmentActionTitle
         case .addPhoto:

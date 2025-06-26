@@ -189,6 +189,9 @@ struct ComposeMessageView: View {
                 .disabled(isSendButtonDisabled)
             }
         }
+        .safeAreaInset(edge: .bottom) {
+            NewEditorMobileToolbarView()
+        }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .overlay {
             if isLoadingContent {

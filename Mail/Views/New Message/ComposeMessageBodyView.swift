@@ -66,7 +66,6 @@ struct ComposeMessageBodyView: View {
             RichHTMLEditor(html: $draftBody, textAttributes: textAttributes)
                 .focused($focusedField, equals: .editor)
                 .onAppear(perform: setupToolbar)
-                .editorInputAccessoryView(toolbar)
                 .editorCSS(Self.customCSS)
                 .introspectEditor(perform: setupEditor)
                 .onJavaScriptFunctionFail(perform: reportJavaScriptError)
