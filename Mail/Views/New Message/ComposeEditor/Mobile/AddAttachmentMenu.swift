@@ -59,7 +59,7 @@ struct AddAttachmentMenu: View {
                 Text(action.accessibilityLabel)
             } icon: {
                 action.icon.swiftUIImage
-                    .iconSize(.large)
+                    .iconSize(EditorMobileToolbarView.iconSize)
             }
             .labelStyle(.iconOnly)
         }

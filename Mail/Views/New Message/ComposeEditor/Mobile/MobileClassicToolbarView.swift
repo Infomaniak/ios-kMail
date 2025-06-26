@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
@@ -33,7 +34,7 @@ struct MobileClassicToolbarView: View {
     ]
 
     var body: some View {
-        HStack {
+        HStack(spacing: IKPadding.large) {
             ForEach(actions) { action in
                 switch action {
                 case .addAttachment:

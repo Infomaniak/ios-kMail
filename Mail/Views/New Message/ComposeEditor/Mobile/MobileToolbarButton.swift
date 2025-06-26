@@ -36,7 +36,7 @@ struct MobileToolbarButton: View {
                 Text(text)
             } icon: {
                 icon
-                    .iconSize(.large)
+                    .iconSize(EditorMobileToolbarView.iconSize)
             }
             .labelStyle(.iconOnly)
         }

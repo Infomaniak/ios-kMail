@@ -32,6 +32,8 @@ struct EditorMobileToolbarView: View {
     static let appearAnimation = Self.baseAnimation.delay(0.1)
     static let disappearAnimation = Self.baseAnimation
 
+    static let iconSize = IKIconSize.large
+
     @State private var isShowingClassicOptions = true
     @State private var isShowingFormattingOptions = false
 
@@ -66,9 +68,14 @@ struct EditorMobileToolbarView: View {
         }
         .padding(.vertical, value: .mini)
         .padding(.horizontal, value: .medium)
+        .frame(minHeight: Self.iconSize.rawValue + IKPadding.mini * 2)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .frame(minHeight: IKIconSize.large.rawValue + IKPadding.mini * 2)
-        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+        .background(MailResourcesAsset.backgroundTabBarColor.swiftUIColor)
+        .overlay(alignment: .top) {
+            Divider()
+                .frame(height: 1)
+                .overlay(Color(uiColor: .systemGray3))
+        }
     }
 }
 

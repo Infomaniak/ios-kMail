@@ -22,6 +22,7 @@ import InfomaniakRichHTMLEditor
 import MailCoreUI
 import SwiftModalPresentation
 import SwiftUI
+import DesignSystem
 
 struct MobileFormattingToolbarView: View {
     @ModalState(context: ContextKeys.compose) private var isShowingLinkAlert = false
@@ -31,12 +32,14 @@ struct MobileFormattingToolbarView: View {
     @Binding var isShowingClassicOptions: Bool
     @Binding var isShowingFormattingOptions: Bool
 
-    private let actions: [EditorToolbarAction] = [
-        .bold, .italic, .underline, .strikeThrough, .unorderedList, .link
+    private let actions: [[EditorToolbarAction]] = [
+        [.bold, .italic, .underline, .strikeThrough],
+        [.unorderedList],
+        [.link]
     ]
 
     var body: some View {
-        HStack {
+        HStack(spacing: IKPadding.large) {
             Button("close") {
                 withAnimation(EditorMobileToolbarView.disappearAnimation) {
                     isShowingFormattingOptions = false
@@ -46,13 +49,17 @@ struct MobileFormattingToolbarView: View {
                 }
             }
 
-            ForEach(actions) { action in
-                MobileToolbarButton(toolbarAction: action) {
-                    formatText(for: action)
-                }
-                .tint(action.tint)
-                .mailCustomAlert(isPresented: $isShowingLinkAlert) {
-                    AddLinkView(actionHandler: textAttributes.addLink)
+            ForEach(actions, id: \.self) { groupOfAction in
+                HStack(spacing: 0) {
+                    ForEach(groupOfAction) { action in
+                        MobileToolbarButton(toolbarAction: action) {
+                            formatText(for: action)
+                        }
+                        .tint(action.tint)
+                        .mailCustomAlert(isPresented: $isShowingLinkAlert) {
+                            AddLinkView(actionHandler: textAttributes.addLink)
+                        }
+                    }
                 }
             }
         }
