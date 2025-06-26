@@ -61,8 +61,8 @@ public enum SpamHeaderType: Equatable, Hashable {
             return true
         case (.enableSpamFilter, .enableSpamFilter):
             return true
-        case (.unblockRecipient(let recipient1), .unblockRecipient(let recipient2)):
-            return recipient1 == recipient2
+        case (.unblockRecipient(let lhsRecipient), .unblockRecipient(let rhsRecipient)):
+            return lhsRecipient == rhsRecipient
         default:
             return false
         }
