@@ -17,8 +17,6 @@
  */
 
 import InfomaniakDI
-import MailCore
-import MailResources
 import SwiftUI
 
 /// Something that can manage rotation state

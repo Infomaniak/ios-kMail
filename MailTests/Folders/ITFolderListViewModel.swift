@@ -77,18 +77,6 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
 
     func deleteFolder(folder: MailCore.Folder) async throws {}
 
-    func getFrozenFolders(with role: MailCore.FolderRole) -> MailCore.Folder? {
-        fatalError("Unexpected")
-    }
-
-    func getFrozenFolders(using realm: RealmSwift.Realm?) -> [MailCore.Folder] {
-        fatalError("Unexpected")
-    }
-
-    func getFolders(using realm: RealmSwift.Realm?) -> [MailCore.Folder] {
-        fatalError("Unexpected")
-    }
-
     func getFolder(with role: MailCore.FolderRole) -> MailCore.Folder? {
         fatalError("Unexpected")
     }

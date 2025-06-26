@@ -17,7 +17,6 @@
  */
 
 import Foundation
-import MailCore
 import MailResources
 import SwiftUI
 import UIKit

@@ -17,7 +17,6 @@
  */
 
 import Combine
-@testable import Infomaniak_Mail
 import InfomaniakCore
 import InfomaniakCoreDB
 import InfomaniakLogin

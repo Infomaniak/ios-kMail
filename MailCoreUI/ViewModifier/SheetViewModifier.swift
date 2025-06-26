@@ -16,8 +16,6 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
-import MailResources
 import SwiftUI
 
 public typealias DismissModalAction = () -> Void

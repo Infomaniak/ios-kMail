@@ -16,7 +16,6 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailCore
 import SwiftUI
 
 public struct LoadingButtonProgressView: View {
