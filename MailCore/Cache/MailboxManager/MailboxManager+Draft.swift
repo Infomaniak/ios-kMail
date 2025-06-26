@@ -240,7 +240,7 @@ public extension MailboxManager {
         }
     }
 
-    func updateRecipientsAutoUncrypt(message: Message) {
+    func updateRecipientsAutoEncrypt(message: Message) {
         Task {
             let recipients = message.to
             recipients.append(objectsIn: message.cc)
