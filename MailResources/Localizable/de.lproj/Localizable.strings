@@ -754,8 +754,11 @@
 /* loco:685127b16bc6041b980c7ff2 */
 "encryptedButtonSeeConcernedRecipients" = "Betroffene Empfänger ansehen";
 
-/* loco:682dc013a6784026ab0f1493 */
+/* loco:6853c6e1ae6f39008c06cf82 */
 "encryptedMessageAddPasswordButton" = "Mit einem Passwort schützen";
+
+/* loco:6858f3e7b8bbc61d660d8072 */
+"encryptedMessageAddPasswordInformation" = "Ein Passwort ist nur für Benutzer ausserhalb von Infomaniak erforderlich. Für sie verfällt die Nachricht 30 Tage nach dem Absenden.";
 
 /* loco:682dc12a45ce97ce870a4524 */
 "encryptedMessageDisableEncryptionButton" = "Verschlüsselung deaktivieren";
@@ -763,17 +766,11 @@
 /* loco:682d92f160a12e1b880ca163 */
 "encryptedMessageHeader" = "Diese Nachricht ist verschlüsselt.";
 
-/* loco:685128b75995d6937b0bf022 */
-"encryptedMessageHeaderPasswordDraft" = "Diese Nachricht wird beim Senden mit einem Passwort verschlüsselt, für Empfänger, die nicht von der automatischen Verschlüsselung profitieren können.";
-
 /* loco:68512749d747a03491057b24 */
 "encryptedMessageHeaderPasswordExpiryDate" = "Diese Nachricht wurde verschlüsselt und läuft am %@ nur bei Empfängern ab, die nicht von der automatischen Verschlüsselung profitieren können.";
 
 /* loco:685124f05346e841180203d3 */
 "encryptedMessageIncompleteUser" = "Die Verschlüsselung wird von %d Benutzer nicht unterstützt.";
-
-/* loco:6851253688f40779700496e3 */
-"encryptedMessageIncompleteUser-plural" = "Die Verschlüsselung wird von %d Benutzern nicht unterstützt.";
 
 /* loco:68402c39c8e3201f22066632 */
 "encryptedMessagePasswordConcernedUserTitle" = "Betroffene Nutzer";
@@ -783,6 +780,9 @@
 
 /* loco:68305ea640206c98380caf72 */
 "encryptedMessageSnackbarEncryptionActivated" = "Die Verschlüsselung wurde aktiviert";
+
+/* loco:68590818100485901e03f8c2 */
+"encryptedMessageSnackbarEncryptionDisabled" = "Die Verschlüsselung wurde deaktiviert";
 
 /* loco:6835723d74a32502720135c2 */
 "encryptedMessageUpdatePasswordButton" = "Passwort ändern";
@@ -807,6 +807,9 @@
 
 /* loco:683569c055f8f2843602af12 */
 "encryptedStatePanelEnable" = "Ihre Nachricht ist geschützt.";
+
+/* loco:683569e71158a95737058c73 */
+"encryptedStatePanelIncomplete" = "Ein Passwort ist erforderlich, um den Versand abzuschliessen.";
 
 /* loco:68356bbc13c86547d201b995 */
 "encryptedStatePanelStatePartialLabel" = "Teilweise";
