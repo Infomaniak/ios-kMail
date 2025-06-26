@@ -16,110 +16,176 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Combine
-import InfomaniakCoreCommonUI
-import InfomaniakDI
+import InfomaniakCoreSwiftUI
+import InfomaniakCoreUIResources
 import InfomaniakRichHTMLEditor
-import MailCore
+import MailCoreUI
+import MailResources
 import SwiftUI
-import UIKit
 
-final class EditorMobileToolbarView: UIToolbar {
-    private static let flexibleSpaceItem = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+struct MobileToolbarButton: View {
+    let text: String
+    let icon: Image
+    let action: @MainActor () -> Void
 
-    @LazyInjectService private var matomo: MatomoUtils
-
-    private var type = EditorMobileToolbarStyle.main
-
-    private var textAttributes: TextAttributes?
-    private var textAttributesObservation: AnyCancellable?
-
-    var mainButtonItemsHandler: ((EditorToolbarAction) -> Void)?
-
-    init() {
-        super.init(frame: CGRect(x: 0, y: 0, width: 0, height: 48))
-
-        UIConstants.applyComposeViewStyle(to: self)
-        setupType(.main)
+    init(toolbarAction: EditorToolbarAction, perform actionToPerform: @escaping @MainActor () -> Void) {
+        text = toolbarAction.accessibilityLabel
+        icon = toolbarAction.icon.swiftUIImage
+        action = actionToPerform
     }
 
-    @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    func setTextAttributes(_ textAttributes: TextAttributes) {
-        self.textAttributes = textAttributes
-        textAttributesObservation = textAttributes
-            .objectWillChange
-            .debounce(for: .milliseconds(50), scheduler: DispatchQueue.main)
-            .sink { [weak self] in
-                guard let self else { return }
-                setupType(type)
+    var body: some View {
+        Button(action: action) {
+            Label {
+                Text(text)
+            } icon: {
+                icon
+                    .iconSize(.large)
             }
+            .labelStyle(.iconOnly)
+        }
     }
+}
 
-    private func setupType(_ type: EditorMobileToolbarStyle) {
-        self.type = type
+struct AddAttachmentMenu: View {
+    private let action = EditorToolbarAction.addAttachment
 
-        let actions = type.actions
-        let actionItems = actions.map { action in
-            let item = UIBarButtonItem(
-                image: action.icon.image,
-                style: .plain,
-                target: self,
-                action: #selector(didTapOnBarButtonItem)
-            )
-            item.tag = action.rawValue
-            item.accessibilityLabel = action.accessibilityLabel
-            if let textAttributes {
-                item.isSelected = action.isSelected(textAttributes: textAttributes)
+    let completionHandler: @MainActor (EditorToolbarAction) -> Void
+
+    var body: some View {
+        Menu {
+            Button {
+                completionHandler(.takePhoto)
+            } label: {
+                Label(CoreUILocalizable.buttonUploadFromCamera, image: "")
             }
-            if action == .editText && type == .textEdition {
-                item.tintColor = UserDefaults.shared.accentColor.primary.color
+            Button {
+                completionHandler(.addPhoto)
+            } label: {
+                Label(CoreUILocalizable.buttonUploadFromGallery, image: "")
+            }
+            Button {
+                completionHandler(.addFile)
+            } label: {
+                Label(CoreUILocalizable.buttonUploadFromFiles, image: "")
+            }
+        } label: {
+            Label {
+                Text(action.accessibilityLabel)
+            } icon: {
+                action.icon.swiftUIImage
+                    .iconSize(.large)
+            }
+            .labelStyle(.iconOnly)
+        }
+    }
+}
+
+struct EditorMobileToolbarView: View {
+    @State private var isShowingFormattingOptions = false
+    @State private var isShowingAttachmentMenu = false
+    @State private var isShowingLinkAlert = false
+
+    @ObservedObject var textAttributes: TextAttributes
+
+    @Binding var isShowingAI: Bool
+
+    private let mainActions: [EditorToolbarAction] = [
+        .editText, .ai, .addAttachment
+    ]
+
+    private let formattingOptions: [EditorToolbarAction] = [
+        .bold, .italic, .underline, .strikeThrough, .unorderedList, .link
+    ]
+
+    var body: some View {
+        HStack {
+            if isShowingFormattingOptions {
+                HStack {
+                    Button("close") {
+                        isShowingFormattingOptions = false
+                    }
+
+                    ForEach(formattingOptions) { action in
+                        MobileToolbarButton(toolbarAction: action) {
+                            performToolbarAction(action)
+                        }
+                        .mailCustomAlert(isPresented: $isShowingLinkAlert) {
+                            AddLinkView(actionHandler: didCreateLink)
+                        }
+                    }
+                }
             } else {
-                item.tintColor = action.tint
+                HStack {
+                    ForEach(mainActions) { action in
+                        switch action {
+                        case .addAttachment:
+                            AddAttachmentMenu(completionHandler: performToolbarAction)
+                                .tint(action.tint)
+                        default:
+                            MobileToolbarButton(toolbarAction: action) {
+                                performToolbarAction(action)
+                            }
+                            .tint(action.tint)
+                        }
+                    }
+                }
             }
-
-            return item
         }
-
-        let barButtonItems = Array(actionItems.map { [$0] }.joined(separator: [Self.flexibleSpaceItem]))
-        setItems(barButtonItems, animated: false)
-        setNeedsLayout()
+        .animation(.default, value: isShowingFormattingOptions)
+        .frame(maxWidth: .infinity, alignment: .trailing)
+        .padding()
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
     }
 
-    @objc private func didTapOnBarButtonItem(_ sender: UIBarButtonItem) {
-        guard let action = EditorToolbarAction(rawValue: sender.tag) else {
-            return
-        }
-
-        if let matomoName = action.matomoName {
-            matomo.track(eventWithCategory: .editorActions, name: matomoName)
-        }
-
+    private func performToolbarAction(_ action: EditorToolbarAction) {
         switch action {
         case .editText:
-            setupType(type == .main ? .textEdition : .main)
+            isShowingFormattingOptions = true
+        case .addAttachment:
+            isShowingAttachmentMenu = true
+        case .ai:
+            isShowingAI = true
+        case .link, .bold, .underline, .italic, .strikeThrough, .cancelFormat, .unorderedList:
+            formatText(for: action)
+        case .addFile, .addPhoto, .takePhoto:
+            break
+        }
+    }
+
+    private func formatText(for action: EditorToolbarAction) {
+        switch action {
         case .bold:
-            textAttributes?.bold()
-        case .italic:
-            textAttributes?.italic()
+            textAttributes.bold()
         case .underline:
-            textAttributes?.underline()
+            textAttributes.underline()
+        case .italic:
+            textAttributes.italic()
         case .strikeThrough:
-            textAttributes?.strikethrough()
+            textAttributes.strikethrough()
+        case .cancelFormat:
+            textAttributes.removeFormat()
         case .unorderedList:
-            textAttributes?.unorderedList()
+            textAttributes.unorderedList()
         case .link:
-            guard let textAttributes else { return }
             if textAttributes.hasLink {
                 textAttributes.unlink()
             } else {
-                mainButtonItemsHandler?(action)
+                isShowingLinkAlert = true
             }
-        case .ai, .addFile, .addAttachment, .addPhoto, .takePhoto, .cancelFormat:
-            mainButtonItemsHandler?(action)
+        default:
+            return
         }
     }
+
+    private func didCreateLink(url: URL, text: String) {
+        textAttributes.addLink(url: url, text: text)
+    }
+}
+
+#Preview {
+    EditorMobileToolbarView(
+        textAttributes: TextAttributes(),
+        isShowingAI: .constant(false)
+    )
 }

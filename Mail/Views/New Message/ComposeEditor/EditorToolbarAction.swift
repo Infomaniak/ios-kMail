@@ -24,25 +24,6 @@ import MailResources
 import SwiftUI
 import UIKit
 
-enum EditorMobileToolbarStyle {
-    case main
-    case textEdition
-
-    var actions: [EditorToolbarAction] {
-        switch self {
-        case .main:
-            @InjectService var featureFlagsManageable: FeatureFlagsManageable
-            var mainActions: [EditorToolbarAction] = [.editText, .addFile, .addPhoto, .takePhoto, .link]
-            featureFlagsManageable.feature(.aiMailComposer, on: {
-                mainActions.insert(.ai, at: 1)
-            }, off: nil)
-            return mainActions
-        case .textEdition:
-            return [.editText, .bold, .italic, .underline, .strikeThrough, .unorderedList]
-        }
-    }
-}
-
 enum EditorToolbarAction: Int, Identifiable {
     case link
     case bold
@@ -91,11 +72,11 @@ enum EditorToolbarAction: Int, Identifiable {
         }
     }
 
-    var tint: UIColor {
+    var tint: Color {
         if self == .ai {
-            return MailResourcesAsset.aiColor.color
+            return MailResourcesAsset.aiColor.swiftUIColor
         } else {
-            return MailResourcesAsset.textSecondaryColor.color
+            return MailResourcesAsset.textSecondaryColor.swiftUIColor
         }
     }
 

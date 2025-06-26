@@ -193,7 +193,7 @@ struct ComposeMessageView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            NewEditorMobileToolbarView(textAttributes: textAttributes, isShowingAI: $aiModel.isShowingPrompt)
+            EditorMobileToolbarView(textAttributes: textAttributes, isShowingAI: $aiModel.isShowingPrompt)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .overlay {
