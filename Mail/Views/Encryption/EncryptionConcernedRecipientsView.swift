@@ -38,7 +38,7 @@ struct EncryptionConcernedRecipientsView: View {
             }
         }
         .onAppear {
-            mailboxManager.updateRecipientsAutoUncrypt(message: message)
+            mailboxManager.updateRecipientsAutoEncrypt(message: message)
         }
     }
 }
