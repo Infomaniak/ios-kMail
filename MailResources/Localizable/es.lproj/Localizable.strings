@@ -763,9 +763,6 @@
 /* loco:68512749d747a03491057b24 */
 "encryptedMessageHeaderPasswordExpiryDate" = "Este mensaje ha sido encriptado y caducará el %@ sólo para los destinatarios que no puedan beneficiarse de la encriptación automática.";
 
-/* loco:685124f05346e841180203d3 */
-"encryptedMessageIncompleteUser" = "El cifrado no es compatible con el usuario %d.";
-
 /* loco:68402c39c8e3201f22066632 */
 "encryptedMessagePasswordConcernedUserTitle" = "Usuarios afectados";
 
