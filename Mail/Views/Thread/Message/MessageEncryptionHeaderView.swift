@@ -66,9 +66,10 @@ struct MessageEncryptionHeaderView: View {
         .background(MailResourcesAsset.backgroundSovereignBlueColor.swiftUIColor)
         .mailFloatingPanel(
             isPresented: $isShowingRecipients,
-            title: MailResourcesStrings.Localizable.encryptedRecipientRequiringPasswordTitle(0)
+            title: MailResourcesStrings.Localizable
+                .encryptedRecipientRequiringPasswordTitle(message.autoEncryptDisabledRecipients.count)
         ) {
-            EncryptionConcernedRecipientsView()
+            EncryptionConcernedRecipientsView(message: message)
         }
     }
 }
