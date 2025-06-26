@@ -1,19 +1,5 @@
-clean_build: true
-retain_objc_accessible: true
+project: Mail.xcworkspace
 retain_public: true
 schemes:
 - Infomaniak Mail
-- MailAppIntentsExtension
-- MailCore
-- MailCoreUI
-- MailNotificationServiceExtension
-- MailResources
-- MailShareExtension
-targets:
-- Infomaniak Mail
-- MailAppIntentsExtension
-- MailCore
-- MailNotificationServiceExtension
-- MailResources
-- MailShareExtension
-workspace: Mail.xcworkspace
+- Infomaniak Mail Lite
