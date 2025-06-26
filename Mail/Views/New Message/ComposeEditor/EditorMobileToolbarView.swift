@@ -60,7 +60,6 @@ struct AddAttachmentMenu: View {
     @State private var selectedImage: UIImage?
 
     let draft: Draft
-    let completionHandler: @MainActor (EditorToolbarAction) -> Void
 
     private let action = EditorToolbarAction.addAttachment
 
@@ -139,7 +138,6 @@ struct AddAttachmentMenu: View {
 
 struct EditorMobileToolbarView: View {
     @State private var isShowingFormattingOptions = false
-    @State private var isShowingAttachmentMenu = false
     @State private var isShowingLinkAlert = false
 
     @ObservedObject var textAttributes: TextAttributes
@@ -169,7 +167,7 @@ struct EditorMobileToolbarView: View {
                             performToolbarAction(action)
                         }
                         .mailCustomAlert(isPresented: $isShowingLinkAlert) {
-                            AddLinkView(actionHandler: didCreateLink)
+                            AddLinkView(actionHandler: textAttributes.addLink)
                         }
                     }
                 }
@@ -178,7 +176,7 @@ struct EditorMobileToolbarView: View {
                     ForEach(mainActions) { action in
                         switch action {
                         case .addAttachment:
-                            AddAttachmentMenu(draft: draft, completionHandler: performToolbarAction)
+                            AddAttachmentMenu(draft: draft)
                                 .tint(action.tint)
                         default:
                             MobileToolbarButton(toolbarAction: action) {
@@ -200,13 +198,11 @@ struct EditorMobileToolbarView: View {
         switch action {
         case .editText:
             isShowingFormattingOptions = true
-        case .addAttachment:
-            isShowingAttachmentMenu = true
         case .ai:
             isShowingAI = true
         case .link, .bold, .underline, .italic, .strikeThrough, .cancelFormat, .unorderedList:
             formatText(for: action)
-        case .addFile, .addPhoto, .takePhoto:
+        case .addAttachment, .addFile, .addPhoto, .takePhoto:
             break
         }
     }
@@ -234,10 +230,6 @@ struct EditorMobileToolbarView: View {
         default:
             return
         }
-    }
-
-    private func didCreateLink(url: URL, text: String) {
-        textAttributes.addLink(url: url, text: text)
     }
 }
 
