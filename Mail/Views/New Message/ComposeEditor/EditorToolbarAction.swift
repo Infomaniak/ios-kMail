@@ -22,9 +22,8 @@ import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
-import UIKit
 
-enum EditorToolbarAction: Int, Identifiable {
+enum EditorToolbarAction: Identifiable {
     case link
     case bold
     case underline

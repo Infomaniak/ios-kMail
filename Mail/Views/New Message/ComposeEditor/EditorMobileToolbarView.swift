@@ -19,8 +19,11 @@
 import InfomaniakCoreSwiftUI
 import InfomaniakCoreUIResources
 import InfomaniakRichHTMLEditor
+import MailCore
 import MailCoreUI
 import MailResources
+import PhotosUI
+import SwiftModalPresentation
 import SwiftUI
 
 struct MobileToolbarButton: View {
@@ -48,24 +51,33 @@ struct MobileToolbarButton: View {
 }
 
 struct AddAttachmentMenu: View {
-    private let action = EditorToolbarAction.addAttachment
+    @EnvironmentObject private var attachmentsManager: AttachmentsManager
 
+    @ModalState(context: ContextKeys.compose) private var isShowingFileSelection = false
+    @ModalState(context: ContextKeys.compose) private var isShowingPhotoLibrary = false
+    @ModalState(context: ContextKeys.compose) private var isShowingCamera = false
+
+    @State private var selectedImage: UIImage?
+
+    let draft: Draft
     let completionHandler: @MainActor (EditorToolbarAction) -> Void
+
+    private let action = EditorToolbarAction.addAttachment
 
     var body: some View {
         Menu {
             Button {
-                completionHandler(.takePhoto)
+                isShowingCamera = true
             } label: {
                 Label(CoreUILocalizable.buttonUploadFromCamera, image: "")
             }
             Button {
-                completionHandler(.addPhoto)
+                isShowingPhotoLibrary = true
             } label: {
                 Label(CoreUILocalizable.buttonUploadFromGallery, image: "")
             }
             Button {
-                completionHandler(.addFile)
+                isShowingFileSelection = true
             } label: {
                 Label(CoreUILocalizable.buttonUploadFromFiles, image: "")
             }
@@ -78,6 +90,50 @@ struct AddAttachmentMenu: View {
             }
             .labelStyle(.iconOnly)
         }
+        .onChange(of: selectedImage) { newImage in
+            guard let image = newImage,
+                  let data = image.jpegData(compressionQuality: 0.5) else {
+                return
+            }
+            didTakePhoto(data)
+            selectedImage = nil
+        }
+        .sheet(isPresented: $isShowingFileSelection) {
+            DocumentPicker(pickerType: .selectContent([.item], didPickDocument))
+                .ignoresSafeArea()
+        }
+        .sheet(isPresented: $isShowingPhotoLibrary) {
+            ImagePicker(completion: didPickImage)
+                .ignoresSafeArea()
+        }
+        .fullScreenCover(isPresented: $isShowingCamera) {
+            CameraPickerView(selectedImage: $selectedImage)
+                .ignoresSafeArea()
+        }
+    }
+
+    private func didPickDocument(_ urls: [URL]) {
+        attachmentsManager.importAttachments(
+            attachments: urls,
+            draft: draft,
+            disposition: AttachmentDisposition.defaultDisposition
+        )
+    }
+
+    private func didPickImage(_ results: [PHPickerResult]) {
+        attachmentsManager.importAttachments(
+            attachments: results,
+            draft: draft,
+            disposition: AttachmentDisposition.defaultDisposition
+        )
+    }
+
+    private func didTakePhoto(_ data: Data) {
+        attachmentsManager.importAttachments(
+            attachments: [data],
+            draft: draft,
+            disposition: AttachmentDisposition.defaultDisposition
+        )
     }
 }
 
@@ -89,6 +145,8 @@ struct EditorMobileToolbarView: View {
     @ObservedObject var textAttributes: TextAttributes
 
     @Binding var isShowingAI: Bool
+
+    let draft: Draft
 
     private let mainActions: [EditorToolbarAction] = [
         .editText, .ai, .addAttachment
@@ -120,7 +178,7 @@ struct EditorMobileToolbarView: View {
                     ForEach(mainActions) { action in
                         switch action {
                         case .addAttachment:
-                            AddAttachmentMenu(completionHandler: performToolbarAction)
+                            AddAttachmentMenu(draft: draft, completionHandler: performToolbarAction)
                                 .tint(action.tint)
                         default:
                             MobileToolbarButton(toolbarAction: action) {
@@ -133,7 +191,7 @@ struct EditorMobileToolbarView: View {
             }
         }
         .animation(.default, value: isShowingFormattingOptions)
-        .frame(maxWidth: .infinity, alignment: .trailing)
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
     }
@@ -186,6 +244,7 @@ struct EditorMobileToolbarView: View {
 #Preview {
     EditorMobileToolbarView(
         textAttributes: TextAttributes(),
-        isShowingAI: .constant(false)
+        isShowingAI: .constant(false),
+        draft: Draft()
     )
 }

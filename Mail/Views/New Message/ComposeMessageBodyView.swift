@@ -32,12 +32,8 @@ struct ComposeMessageBodyView: View {
 
     @EnvironmentObject private var attachmentsManager: AttachmentsManager
 
-    @State private var selectedImage: UIImage?
-
     @ModalState(context: ContextKeys.compose) private var isShowingLinkAlert = false
     @ModalState(context: ContextKeys.compose) private var isShowingFileSelection = false
-    @ModalState(context: ContextKeys.compose) private var isShowingPhotoLibrary = false
-    @ModalState(context: ContextKeys.compose) private var isShowingCamera = false
 
     @ObservedObject var textAttributes: TextAttributes
 
@@ -75,22 +71,6 @@ struct ComposeMessageBodyView: View {
                     DocumentPicker(pickerType: .selectContent([.item], didPickDocument))
                         .ignoresSafeArea()
                 }
-                .sheet(isPresented: $isShowingPhotoLibrary) {
-                    ImagePicker(completion: didPickImage)
-                        .ignoresSafeArea()
-                }
-                .fullScreenCover(isPresented: $isShowingCamera) {
-                    CameraPickerView(selectedImage: $selectedImage)
-                        .ignoresSafeArea()
-                }
-                .onChange(of: selectedImage) { newImage in
-                    guard let image = newImage,
-                          let data = image.jpegData(compressionQuality: 0.5) else {
-                        return
-                    }
-                    didTakePhoto(data)
-                    selectedImage = nil
-                }
         }
     }
 
@@ -108,22 +88,6 @@ struct ComposeMessageBodyView: View {
     private func didPickDocument(_ urls: [URL]) {
         attachmentsManager.importAttachments(
             attachments: urls,
-            draft: draft,
-            disposition: AttachmentDisposition.defaultDisposition
-        )
-    }
-
-    private func didPickImage(_ results: [PHPickerResult]) {
-        attachmentsManager.importAttachments(
-            attachments: results,
-            draft: draft,
-            disposition: AttachmentDisposition.defaultDisposition
-        )
-    }
-
-    private func didTakePhoto(_ data: Data) {
-        attachmentsManager.importAttachments(
-            attachments: [data],
             draft: draft,
             disposition: AttachmentDisposition.defaultDisposition
         )
