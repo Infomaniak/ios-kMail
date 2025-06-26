@@ -748,8 +748,11 @@
 /* loco:685127b16bc6041b980c7ff2 */
 "encryptedButtonSeeConcernedRecipients" = "Vedere i destinatari interessati";
 
-/* loco:682dc013a6784026ab0f1493 */
+/* loco:6853c6e1ae6f39008c06cf82 */
 "encryptedMessageAddPasswordButton" = "Proteggere con una password";
+
+/* loco:6858f3e7b8bbc61d660d8072 */
+"encryptedMessageAddPasswordInformation" = "La password è necessaria solo per gli utenti esterni a Infomaniak. Per questi ultimi, il messaggio scadrà 30 giorni dopo l‘invio.";
 
 /* loco:682dc12a45ce97ce870a4524 */
 "encryptedMessageDisableEncryptionButton" = "Disattiva la crittografia";
@@ -757,17 +760,11 @@
 /* loco:682d92f160a12e1b880ca163 */
 "encryptedMessageHeader" = "Questo messaggio è criptato.";
 
-/* loco:685128b75995d6937b0bf022 */
-"encryptedMessageHeaderPasswordDraft" = "Questo messaggio verrà crittografato al momento dell’invio, utilizzando una password per i destinatari che non possono usufruire della crittografia automatica.";
-
 /* loco:68512749d747a03491057b24 */
 "encryptedMessageHeaderPasswordExpiryDate" = "Questo messaggio è stato crittografato e scadrà il %@ solo per i destinatari che non possono usufruire della crittografia automatica.";
 
 /* loco:685124f05346e841180203d3 */
 "encryptedMessageIncompleteUser" = "La crittografia non è supportata dall’utente %d.";
-
-/* loco:6851253688f40779700496e3 */
-"encryptedMessageIncompleteUser-plural" = "La crittografia non è supportata da %d utenti.";
 
 /* loco:68402c39c8e3201f22066632 */
 "encryptedMessagePasswordConcernedUserTitle" = "Utenti interessati";
@@ -777,6 +774,9 @@
 
 /* loco:68305ea640206c98380caf72 */
 "encryptedMessageSnackbarEncryptionActivated" = "La crittografia è stata attivata";
+
+/* loco:68590818100485901e03f8c2 */
+"encryptedMessageSnackbarEncryptionDisabled" = "La crittografia è stata disattivata";
 
 /* loco:6835723d74a32502720135c2 */
 "encryptedMessageUpdatePasswordButton" = "Modifica della password";
@@ -801,6 +801,9 @@
 
 /* loco:683569c055f8f2843602af12 */
 "encryptedStatePanelEnable" = "Il tuo messaggio è protetto.";
+
+/* loco:683569e71158a95737058c73 */
+"encryptedStatePanelIncomplete" = "Per completare la trasmissione è necessaria una password.";
 
 /* loco:68356bbc13c86547d201b995 */
 "encryptedStatePanelStatePartialLabel" = "Parziale";
