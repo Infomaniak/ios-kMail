@@ -32,14 +32,14 @@ struct ComposeMessageBodyView: View {
 
     @EnvironmentObject private var attachmentsManager: AttachmentsManager
 
-    @State private var toolbar = EditorMobileToolbarView()
     @State private var selectedImage: UIImage?
-    @StateObject private var textAttributes = TextAttributes()
 
     @ModalState(context: ContextKeys.compose) private var isShowingLinkAlert = false
     @ModalState(context: ContextKeys.compose) private var isShowingFileSelection = false
     @ModalState(context: ContextKeys.compose) private var isShowingPhotoLibrary = false
     @ModalState(context: ContextKeys.compose) private var isShowingCamera = false
+
+    @ObservedObject var textAttributes: TextAttributes
 
     @FocusState var focusedField: ComposeViewFieldType?
     @Binding var draftBody: String
@@ -65,7 +65,6 @@ struct ComposeMessageBodyView: View {
             AttachmentsHeaderView()
             RichHTMLEditor(html: $draftBody, textAttributes: textAttributes)
                 .focused($focusedField, equals: .editor)
-                .onAppear(perform: setupToolbar)
                 .editorCSS(Self.customCSS)
                 .introspectEditor(perform: setupEditor)
                 .onJavaScriptFunctionFail(perform: reportJavaScriptError)
@@ -99,28 +98,6 @@ struct ComposeMessageBodyView: View {
         Task {
             let contentBlocker = ContentBlocker(webView: editor.webView)
             try? await contentBlocker.setRemoteContentBlocked(isRemoteContentBlocked)
-        }
-    }
-
-    private func setupToolbar() {
-        toolbar.setTextAttributes(textAttributes)
-        toolbar.mainButtonItemsHandler = didTapMainToolbarButton
-    }
-
-    private func didTapMainToolbarButton(_ action: EditorToolbarAction) {
-        switch action {
-        case .link:
-            isShowingLinkAlert = true
-        case .ai:
-            isShowingAI = true
-        case .addFile:
-            isShowingFileSelection = true
-        case .addPhoto:
-            isShowingPhotoLibrary = true
-        case .takePhoto:
-            isShowingCamera = true
-        default:
-            Logger.view.warning("EditorToolbarAction not handled by ComposeEditor.")
         }
     }
 
@@ -164,6 +141,7 @@ struct ComposeMessageBodyView: View {
 #Preview {
     let draft = Draft()
     return ComposeMessageBodyView(
+        textAttributes: TextAttributes(),
         focusedField: .init(),
         draftBody: .constant(""),
         draft: draft,

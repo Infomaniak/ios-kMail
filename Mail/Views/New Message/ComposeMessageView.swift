@@ -90,6 +90,7 @@ struct ComposeMessageView: View {
     @StateObject private var draftContentManager: DraftContentManager
     @StateObject private var attachmentsManager: AttachmentsManager
     @StateObject private var aiModel: AIModel
+    @StateObject private var textAttributes = TextAttributes()
 
     @FocusState private var focusedField: ComposeViewFieldType?
 
@@ -150,6 +151,7 @@ struct ComposeMessageView: View {
 
                 if autocompletionType == nil && !isLoadingContent {
                     ComposeMessageBodyView(
+                        textAttributes: textAttributes,
                         focusedField: _focusedField,
                         draftBody: $draftContentManager.draftContent,
                         draft: draft,
@@ -191,7 +193,7 @@ struct ComposeMessageView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            NewEditorMobileToolbarView(textAttributes: TextAttributes(), isShowingAI: $aiModel.isShowingPrompt)
+            NewEditorMobileToolbarView(textAttributes: textAttributes, isShowingAI: $aiModel.isShowingPrompt)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .overlay {

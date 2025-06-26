@@ -19,6 +19,8 @@
 import InfomaniakCoreSwiftUI
 import InfomaniakCoreUIResources
 import InfomaniakRichHTMLEditor
+import MailCoreUI
+import MailResources
 import SwiftUI
 
 struct MobileToolbarButton: View {
@@ -108,6 +110,9 @@ struct NewEditorMobileToolbarView: View {
                         MobileToolbarButton(toolbarAction: action) {
                             performToolbarAction(action)
                         }
+                        .mailCustomAlert(isPresented: $isShowingLinkAlert) {
+                            AddLinkView(actionHandler: didCreateLink)
+                        }
                     }
                 }
             } else {
@@ -129,6 +134,8 @@ struct NewEditorMobileToolbarView: View {
         }
         .animation(.default, value: isShowingFormattingOptions)
         .frame(maxWidth: .infinity, alignment: .trailing)
+        .padding()
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
     }
 
     private func performToolbarAction(_ action: EditorToolbarAction) {
@@ -141,8 +148,8 @@ struct NewEditorMobileToolbarView: View {
             isShowingAI = true
         case .link, .bold, .underline, .italic, .strikeThrough, .cancelFormat, .unorderedList:
             formatText(for: action)
-        default:
-            print("Coucou")
+        case .addFile, .addPhoto, .takePhoto:
+            break
         }
     }
 
@@ -161,13 +168,18 @@ struct NewEditorMobileToolbarView: View {
         case .unorderedList:
             textAttributes.unorderedList()
         case .link:
-            guard !textAttributes.hasLink else {
-                return textAttributes.unlink()
+            if textAttributes.hasLink {
+                textAttributes.unlink()
+            } else {
+                isShowingLinkAlert = true
             }
-            isShowingLinkAlert = true
         default:
             return
         }
+    }
+
+    private func didCreateLink(url: URL, text: String) {
+        textAttributes.addLink(url: url, text: text)
     }
 }
 
