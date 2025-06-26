@@ -98,7 +98,7 @@ struct ComposeMessageHeaderView: View {
         }
         .onChange(of: totalRecipients) { _ in
             guard draft.encrypted else { return }
-            mailboxManager.updateRecipientsAutoUncrypt(draft: draft)
+            mailboxManager.updateRecipientsAutoEncrypt(draft: draft)
         }
     }
 }
