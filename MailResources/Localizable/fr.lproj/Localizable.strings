@@ -754,8 +754,11 @@
 /* loco:685127b16bc6041b980c7ff2 */
 "encryptedButtonSeeConcernedRecipients" = "Voir les destinataires concernés";
 
-/* loco:682dc013a6784026ab0f1493 */
+/* loco:6853c6e1ae6f39008c06cf82 */
 "encryptedMessageAddPasswordButton" = "Protéger avec un mot de passe";
+
+/* loco:6858f3e7b8bbc61d660d8072 */
+"encryptedMessageAddPasswordInformation" = "Un mot de passe est nécessaire uniquement pour les utilisateurs hors Infomaniak. Pour eux, le message expirera 30 jours après envoi.";
 
 /* loco:682dc12a45ce97ce870a4524 */
 "encryptedMessageDisableEncryptionButton" = "Désactiver le chiffrement";
@@ -763,17 +766,11 @@
 /* loco:682d92f160a12e1b880ca163 */
 "encryptedMessageHeader" = "Ce message est chiffré.";
 
-/* loco:685128b75995d6937b0bf022 */
-"encryptedMessageHeaderPasswordDraft" = "Ce message sera chiffré à l’envoi avec un mot de passe pour les destinataires ne pouvant bénéficier du chiffrement automatique.";
-
 /* loco:68512749d747a03491057b24 */
 "encryptedMessageHeaderPasswordExpiryDate" = "Ce message a été chiffré et expirera le %@ uniquement pour les destinataires ne pouvant bénéficier du chiffrement automatique.";
 
 /* loco:685124f05346e841180203d3 */
 "encryptedMessageIncompleteUser" = "Le chiffrement n’est pas pris en charge par %d utilisateur.";
-
-/* loco:6851253688f40779700496e3 */
-"encryptedMessageIncompleteUser-plural" = "Le chiffrement n’est pas pris en charge par %d utilisateurs.";
 
 /* loco:68402c39c8e3201f22066632 */
 "encryptedMessagePasswordConcernedUserTitle" = "Utilisateurs concernés";
@@ -783,6 +780,9 @@
 
 /* loco:68305ea640206c98380caf72 */
 "encryptedMessageSnackbarEncryptionActivated" = "Le chiffrement a bien été activé";
+
+/* loco:68590818100485901e03f8c2 */
+"encryptedMessageSnackbarEncryptionDisabled" = "Le chiffrement a bien été désactivé";
 
 /* loco:6835723d74a32502720135c2 */
 "encryptedMessageUpdatePasswordButton" = "Modifier le mot de passe";
@@ -807,6 +807,9 @@
 
 /* loco:683569c055f8f2843602af12 */
 "encryptedStatePanelEnable" = "Votre message est protégé.";
+
+/* loco:683569e71158a95737058c73 */
+"encryptedStatePanelIncomplete" = "Un mot de passe est requis pour finaliser l’envoi.";
 
 /* loco:68356bbc13c86547d201b995 */
 "encryptedStatePanelStatePartialLabel" = "Partiel";

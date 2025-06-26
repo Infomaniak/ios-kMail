@@ -754,8 +754,11 @@
 /* loco:685127b16bc6041b980c7ff2 */
 "encryptedButtonSeeConcernedRecipients" = "Ver los destinatarios afectados";
 
-/* loco:682dc013a6784026ab0f1493 */
+/* loco:6853c6e1ae6f39008c06cf82 */
 "encryptedMessageAddPasswordButton" = "Proteger con contraseña";
+
+/* loco:6858f3e7b8bbc61d660d8072 */
+"encryptedMessageAddPasswordInformation" = "La contraseña sólo es necesaria para los usuarios externos a Infomaniak. Para ellos, el mensaje caducará 30 días después de su envío.";
 
 /* loco:682dc12a45ce97ce870a4524 */
 "encryptedMessageDisableEncryptionButton" = "Desactivar el cifrado";
@@ -763,17 +766,11 @@
 /* loco:682d92f160a12e1b880ca163 */
 "encryptedMessageHeader" = "Este mensaje está encriptado.";
 
-/* loco:685128b75995d6937b0bf022 */
-"encryptedMessageHeaderPasswordDraft" = "Este mensaje se cifrará cuando se envíe, utilizando una contraseña para los destinatarios que no puedan beneficiarse del cifrado automático.";
-
 /* loco:68512749d747a03491057b24 */
 "encryptedMessageHeaderPasswordExpiryDate" = "Este mensaje ha sido encriptado y caducará el %@ sólo para los destinatarios que no puedan beneficiarse de la encriptación automática.";
 
 /* loco:685124f05346e841180203d3 */
 "encryptedMessageIncompleteUser" = "El cifrado no es compatible con el usuario %d.";
-
-/* loco:6851253688f40779700496e3 */
-"encryptedMessageIncompleteUser-plural" = "La encriptación no es soportada por %d usuarios.";
 
 /* loco:68402c39c8e3201f22066632 */
 "encryptedMessagePasswordConcernedUserTitle" = "Usuarios afectados";
@@ -783,6 +780,9 @@
 
 /* loco:68305ea640206c98380caf72 */
 "encryptedMessageSnackbarEncryptionActivated" = "Se ha activado el cifrado";
+
+/* loco:68590818100485901e03f8c2 */
+"encryptedMessageSnackbarEncryptionDisabled" = "Se ha desactivado el cifrado";
 
 /* loco:6835723d74a32502720135c2 */
 "encryptedMessageUpdatePasswordButton" = "Cambiar contraseña";
@@ -807,6 +807,9 @@
 
 /* loco:683569c055f8f2843602af12 */
 "encryptedStatePanelEnable" = "Su mensaje está protegido.";
+
+/* loco:683569e71158a95737058c73 */
+"encryptedStatePanelIncomplete" = "Se requiere una contraseña para completar la transmisión.";
 
 /* loco:68356bbc13c86547d201b995 */
 "encryptedStatePanelStatePartialLabel" = "Parcial";
