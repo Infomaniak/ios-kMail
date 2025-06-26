@@ -454,19 +454,17 @@ struct ComposeMessageView: View {
     private func enableEncryption() {
         mailboxManager.updateRecipientsAutoUncrypt(draft: draft)
 
-        if let liveDraft = draft.thaw() {
-            try? liveDraft.realm?.write {
-                liveDraft.encrypted = true
-            }
+        guard let liveDraft = draft.thaw() else { return }
+        try? liveDraft.realm?.write {
+            liveDraft.encrypted = true
         }
     }
 
     private func disableEncryption() {
-        if let liveDraft = draft.thaw() {
-            try? liveDraft.realm?.write {
-                liveDraft.encrypted = false
-                liveDraft.encryptionPassword = ""
-            }
+        guard let liveDraft = draft.thaw() else { return }
+        try? liveDraft.realm?.write {
+            liveDraft.encrypted = false
+            liveDraft.encryptionPassword = ""
         }
     }
 
