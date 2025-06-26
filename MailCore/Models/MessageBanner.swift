@@ -45,26 +45,6 @@ public enum MessageBanner: Equatable, Identifiable, Hashable {
 }
 
 public extension [MessageBanner] {
-    var spamType: SpamHeaderType? {
-        if case .spam(let spamType) = first(where: {
-            if case .spam = $0 { return true }
-            return false
-        }) {
-            return spamType
-        }
-        return nil
-    }
-
-    var scheduleData: (scheduleDate: Date, draftResource: String)? {
-        if case .schedule(let scheduleDate, let draftResource) = first(where: {
-            if case .schedule = $0 { return true }
-            return false
-        }) {
-            return (scheduleDate: scheduleDate, draftResource: draftResource)
-        }
-        return nil
-    }
-
     func shouldShowBottomSeparator(for messageBanner: MessageBanner) -> Bool {
         switch messageBanner {
         case .schedule:
