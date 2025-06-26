@@ -763,9 +763,6 @@
 /* loco:68512749d747a03491057b24 */
 "encryptedMessageHeaderPasswordExpiryDate" = "This message has been encrypted and will expire on %@ only for recipients unable to benefit from automatic encryption.";
 
-/* loco:685124f05346e841180203d3 */
-"encryptedMessageIncompleteUser" = "Encryption is not supported by %d user.";
-
 /* loco:68402c39c8e3201f22066632 */
 "encryptedMessagePasswordConcernedUserTitle" = "Users concerned";
 
