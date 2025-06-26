@@ -18,10 +18,42 @@
 
 import SwiftUI
 
+struct MobileToolbarButton: View {
+    let text: String
+    let icon: Image
+    let action: @MainActor () -> Void
+
+    init(toolbarAction: EditorToolbarAction, perform actionToPerform: @escaping @MainActor () -> Void) {
+        text = toolbarAction.accessibilityLabel
+        icon = toolbarAction.icon.swiftUIImage
+        action = actionToPerform
+    }
+
+    var body: some View {
+        Button(action: action) {
+            Label {
+                Text(text)
+            } icon: {
+                icon
+                    .resizable()
+                    .iconSize(.large)
+            }
+            .labelStyle(.iconOnly)
+        }
+    }
+}
+
+struct AddAttachmentMenu: View {
+    var body: some View {
+
+    }
+}
+
 struct NewEditorMobileToolbarView: View {
     @State private var isShowingFormattingOptions = false
+    @State private var isShowingAttachmentMenu = false
 
-    private let actions: [EditorToolbarAction] = [
+    private let mainActions: [EditorToolbarAction] = [
         .editText, .ai, .addAttachment
     ]
 
@@ -29,58 +61,52 @@ struct NewEditorMobileToolbarView: View {
         .bold, .italic, .underline, .strikeThrough, .link, .unorderedList
     ]
 
+    private var currentActions: [EditorToolbarAction] {
+        if isShowingFormattingOptions {
+            return formattingOptions
+        } else {
+            return mainActions
+        }
+    }
+
     var body: some View {
         HStack {
             if isShowingFormattingOptions {
-                Text("Format")
-            } else {
-                ForEach(actions) { action in
-                    Button {
-                        performToolbarAction(action)
-                    } label: {
-                        Label {
-                            Text(action.accessibilityLabel)
-                        } icon: {
-                            action.icon.swiftUIImage
-                                .resizable()
-                                .iconSize(.large)
-                        }
-                        .labelStyle(.iconOnly)
-                    }
+                Button("close") {
+                    isShowingFormattingOptions = false
+                }
 
+                ForEach(formattingOptions) { action in
+                    MobileToolbarButton(toolbarAction: action) {
+                        performToolbarAction(action)
+                    }
+                }
+            } else {
+                ForEach(currentActions) { action in
+                    switch action {
+                    case .addAttachment:
+                        AddAttachmentMenu()
+                    default:
+                        MobileToolbarButton(toolbarAction: action) {
+                            performToolbarAction(action)
+                        }
+                        .tint(Color(action.tint))
+                    }
                 }
             }
         }
+        .animation(.default, value: isShowingFormattingOptions)
+        .frame(maxWidth: .infinity, alignment: .trailing)
     }
 
     private func performToolbarAction(_ action: EditorToolbarAction) {
         switch action {
-        case .link:
-            break
-        case .bold:
-            break
-        case .underline:
-            break
-        case .italic:
-            break
-        case .strikeThrough:
-            break
-        case .cancelFormat:
-            break
-        case .unorderedList:
-            break
         case .editText:
-            break
-        case .ai:
-            break
+            isShowingFormattingOptions = true
         case .addAttachment:
-            break
-        case .addFile:
-            break
-        case .addPhoto:
-            break
-        case .takePhoto:
-            break
+            isShowingAttachmentMenu = true
+        default:
+            print("Coucou")
         }
     }
 }
