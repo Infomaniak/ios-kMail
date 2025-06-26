@@ -54,7 +54,7 @@ struct EncryptionPasswordView: View {
                                 .textStyle(.bodyMedium)
 
                             WrappingHStack {
-                                ForEach(draft.autoEncryptDisableRecipient, id: \.email) { recipient in
+                                ForEach(draft.autoEncryptDisabledRecipients, id: \.email) { recipient in
                                     RecipientChipLabelView(recipient: recipient)
                                 }
                                 .environmentObject(mailboxManager)
