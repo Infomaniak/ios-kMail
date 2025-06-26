@@ -163,6 +163,15 @@ extension Action: CaseIterable {
         return .reportDisplayProblem
     }
 
+    public static func quickActions(for originType: ActionOrigin.ActionOriginType) -> [Action] {
+        switch originType {
+        case .floatingPanel(source: .swipe), .floatingPanel(source: .messageDetails):
+            [.reply, .replyAll, .forward, .delete]
+        default:
+            []
+        }
+    }
+
     public static func bottomBarActions(
         for originType: ActionOrigin.ActionOriginType,
         unreadAction: Action,
@@ -203,7 +212,7 @@ extension Action: CaseIterable {
             isMessageDetails: origin.type.isMessageDetails
         )
 
-        let quickActions: [Action] = origin.type.isMessageDetails ? [.reply, .replyAll, .forward, .delete] : []
+        let quickActions: [Action] = quickActions(for: origin.type)
 
         var listActions: [Action?] = [origin.type == .floatingPanel(source: .contextMenu) ? .activeMultiSelect : nil] +
             (!origin.type.isMessageDetails ? snoozedActions(for: messages, from: origin.frozenFolder) : []) +
@@ -212,6 +221,7 @@ extension Action: CaseIterable {
         if origin.type != .floatingPanel(source: .threadList) {
             listActions += [
                 unreadAction,
+                origin.type != .floatingPanel(source: .messageList) ? archiveAction : nil,
                 starAction,
                 origin.type.isMessageDetails ? .print : nil,
                 origin.type.isMessageDetails ? .shareMailLink : nil,
