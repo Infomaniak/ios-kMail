@@ -769,9 +769,6 @@
 /* loco:68512749d747a03491057b24 */
 "encryptedMessageHeaderPasswordExpiryDate" = "Questo messaggio è stato crittografato e scadrà il %@ solo per i destinatari che non possono usufruire della crittografia automatica.";
 
-/* loco:685124f05346e841180203d3 */
-"encryptedMessageIncompleteUser" = "La crittografia non è supportata dall’utente %d.";
-
 /* loco:68402c39c8e3201f22066632 */
 "encryptedMessagePasswordConcernedUserTitle" = "Utenti interessati";
 
