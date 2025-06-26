@@ -209,7 +209,7 @@ public extension MailboxManager {
         return draft.freeze()
     }
 
-    func updateRecipientsAutoUncrypt(draft: Draft) {
+    func updateRecipientsAutoEncrypt(draft: Draft) {
         Task {
             let recipients = draft.to
             recipients.append(objectsIn: draft.cc)
