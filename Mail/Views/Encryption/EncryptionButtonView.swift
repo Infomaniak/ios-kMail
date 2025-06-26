@@ -34,6 +34,8 @@ struct EncryptionButtonView: View {
         return "+9"
     }
 
+    private let chipWidth: CGFloat = 14
+
     var body: some View {
         Button {
             didTap()
@@ -51,9 +53,9 @@ struct EncryptionButtonView: View {
                             .font(.system(size: 8))
                             .foregroundStyle(MailResourcesAsset.backgroundTertiaryColor.swiftUIColor)
                     }
-                    .frame(width: 14)
+                    .frame(width: chipWidth)
                     .frame(maxHeight: .infinity, alignment: .top)
-                    .offset(x: 7)
+                    .offset(x: chipWidth / 2)
             }
         }
     }
