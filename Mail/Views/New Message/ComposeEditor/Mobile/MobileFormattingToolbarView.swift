@@ -16,6 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreCommonUI
+import InfomaniakDI
 import InfomaniakRichHTMLEditor
 import MailCoreUI
 import SwiftModalPresentation
@@ -26,6 +28,7 @@ struct MobileFormattingToolbarView: View {
 
     @ObservedObject var textAttributes: TextAttributes
 
+    @Binding var isShowingClassicOptions: Bool
     @Binding var isShowingFormattingOptions: Bool
 
     private let actions: [EditorToolbarAction] = [
@@ -35,13 +38,19 @@ struct MobileFormattingToolbarView: View {
     var body: some View {
         HStack {
             Button("close") {
-                isShowingFormattingOptions = false
+                withAnimation(EditorMobileToolbarView.disappearAnimation) {
+                    isShowingFormattingOptions = false
+                }
+                withAnimation(EditorMobileToolbarView.appearAnimation) {
+                    isShowingClassicOptions = true
+                }
             }
 
             ForEach(actions) { action in
                 MobileToolbarButton(toolbarAction: action) {
                     formatText(for: action)
                 }
+                .tint(action.tint)
                 .mailCustomAlert(isPresented: $isShowingLinkAlert) {
                     AddLinkView(actionHandler: textAttributes.addLink)
                 }
@@ -50,6 +59,11 @@ struct MobileFormattingToolbarView: View {
     }
 
     private func formatText(for action: EditorToolbarAction) {
+        if let matomoName = action.matomoName {
+            @InjectService var matomo: MatomoUtils
+            matomo.track(eventWithCategory: .editorActions, name: matomoName)
+        }
+
         switch action {
         case .bold:
             textAttributes.bold()
@@ -76,5 +90,9 @@ struct MobileFormattingToolbarView: View {
 }
 
 #Preview {
-    MobileFormattingToolbarView(textAttributes: TextAttributes(), isShowingFormattingOptions: .constant(false))
+    MobileFormattingToolbarView(
+        textAttributes: TextAttributes(),
+        isShowingClassicOptions: .constant(false),
+        isShowingFormattingOptions: .constant(false)
+    )
 }

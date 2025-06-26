@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreSwiftUI
 import InfomaniakCoreUIResources
 import InfomaniakRichHTMLEditor
@@ -27,6 +28,11 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct EditorMobileToolbarView: View {
+    private static let baseAnimation = Animation.default.speed(1.75)
+    static let appearAnimation = Self.baseAnimation.delay(0.1)
+    static let disappearAnimation = Self.baseAnimation
+
+    @State private var isShowingClassicOptions = true
     @State private var isShowingFormattingOptions = false
 
     @ObservedObject var textAttributes: TextAttributes
@@ -35,24 +41,33 @@ struct EditorMobileToolbarView: View {
 
     let draft: Draft
 
+    private let transition = AnyTransition.opacity.combined(with: .move(edge: .bottom))
+
     var body: some View {
-        HStack {
-            if isShowingFormattingOptions {
-                MobileFormattingToolbarView(
-                    textAttributes: textAttributes,
-                    isShowingFormattingOptions: $isShowingFormattingOptions
-                )
-            } else {
+        ZStack {
+            if isShowingClassicOptions {
                 MobileClassicToolbarView(
+                    isShowingClassicOptions: $isShowingClassicOptions,
                     isShowingFormattingOptions: $isShowingFormattingOptions,
                     isShowingAI: $isShowingAI,
                     draft: draft
                 )
+                .transition(transition)
+            }
+
+            if isShowingFormattingOptions {
+                MobileFormattingToolbarView(
+                    textAttributes: textAttributes,
+                    isShowingClassicOptions: $isShowingClassicOptions,
+                    isShowingFormattingOptions: $isShowingFormattingOptions
+                )
+                .transition(transition)
             }
         }
-        .animation(.default, value: isShowingFormattingOptions)
+        .padding(.vertical, value: .mini)
+        .padding(.horizontal, value: .medium)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
+        .frame(minHeight: IKIconSize.large.rawValue + IKPadding.mini * 2)
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
     }
 }

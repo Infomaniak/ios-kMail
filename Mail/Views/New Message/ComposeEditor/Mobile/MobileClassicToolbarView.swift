@@ -16,10 +16,13 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
+import InfomaniakCoreCommonUI
+import InfomaniakDI
 import MailCore
+import SwiftUI
 
 struct MobileClassicToolbarView: View {
+    @Binding var isShowingClassicOptions: Bool
     @Binding var isShowingFormattingOptions: Bool
     @Binding var isShowingAI: Bool
 
@@ -47,9 +50,19 @@ struct MobileClassicToolbarView: View {
     }
 
     private func performToolbarAction(_ action: EditorToolbarAction) {
+        if let matomoName = action.matomoName {
+            @InjectService var matomo: MatomoUtils
+            matomo.track(eventWithCategory: .editorActions, name: matomoName)
+        }
+
         switch action {
         case .editText:
-            isShowingFormattingOptions = true
+            withAnimation(EditorMobileToolbarView.disappearAnimation) {
+                isShowingClassicOptions = false
+            }
+            withAnimation(EditorMobileToolbarView.appearAnimation) {
+                isShowingFormattingOptions = true
+            }
         case .ai:
             isShowingAI = true
         case .link, .bold, .underline, .italic, .strikeThrough, .cancelFormat, .unorderedList:
@@ -62,6 +75,7 @@ struct MobileClassicToolbarView: View {
 
 #Preview {
     MobileClassicToolbarView(
+        isShowingClassicOptions: .constant(true),
         isShowingFormattingOptions: .constant(false),
         isShowingAI: .constant(false),
         draft: Draft()
