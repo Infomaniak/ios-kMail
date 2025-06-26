@@ -39,7 +39,6 @@ public extension View {
 }
 
 public struct RecipientCell: View {
-    @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let title: String
@@ -56,7 +55,6 @@ public struct RecipientCell: View {
     }
 
     public init(
-        contact: any ContactAutocompletable,
         contactConfiguration: ContactConfiguration = .emptyContact,
         highlight: String? = nil,
         title: String,
