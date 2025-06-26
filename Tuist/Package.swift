@@ -78,7 +78,7 @@ let package = Package(
         .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1")),
         .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0")),
         .package(url: "https://github.com/SVGKit/SVGKit.git", branch: "3.x"),
-        .package(url: "https://github.com/Infomaniak/swift-rich-html-editor.git", .upToNextMajor(from: "1.1.1")),
+        .package(url: "https://github.com/Infomaniak/swift-rich-html-editor.git", .upToNextMajor(from: "2.1.0")),
         .package(url: "https://github.com/apple/swift-collections", .upToNextMajor(from: "1.1.4"))
     ]
 )
