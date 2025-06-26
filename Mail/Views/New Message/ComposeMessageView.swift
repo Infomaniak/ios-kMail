@@ -20,6 +20,7 @@ import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
+import InfomaniakRichHTMLEditor
 import MailCore
 import MailCoreUI
 import MailResources
@@ -190,7 +191,7 @@ struct ComposeMessageView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            NewEditorMobileToolbarView()
+            NewEditorMobileToolbarView(textAttributes: TextAttributes(), isShowingAI: $aiModel.isShowingPrompt)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .overlay {

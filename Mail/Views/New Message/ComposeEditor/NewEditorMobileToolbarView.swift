@@ -16,6 +16,9 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreSwiftUI
+import InfomaniakCoreUIResources
+import InfomaniakRichHTMLEditor
 import SwiftUI
 
 struct MobileToolbarButton: View {
@@ -35,7 +38,6 @@ struct MobileToolbarButton: View {
                 Text(text)
             } icon: {
                 icon
-                    .resizable()
                     .iconSize(.large)
             }
             .labelStyle(.iconOnly)
@@ -44,53 +46,83 @@ struct MobileToolbarButton: View {
 }
 
 struct AddAttachmentMenu: View {
-    var body: some View {
+    private let action = EditorToolbarAction.addAttachment
 
+    let completionHandler: @MainActor (EditorToolbarAction) -> Void
+
+    var body: some View {
+        Menu {
+            Button {
+                completionHandler(.takePhoto)
+            } label: {
+                Label(CoreUILocalizable.buttonUploadFromCamera, image: "")
+            }
+            Button {
+                completionHandler(.addPhoto)
+            } label: {
+                Label(CoreUILocalizable.buttonUploadFromGallery, image: "")
+            }
+            Button {
+                completionHandler(.addFile)
+            } label: {
+                Label(CoreUILocalizable.buttonUploadFromFiles, image: "")
+            }
+        } label: {
+            Label {
+                Text(action.accessibilityLabel)
+            } icon: {
+                action.icon.swiftUIImage
+                    .iconSize(.large)
+            }
+            .labelStyle(.iconOnly)
+        }
     }
 }
 
 struct NewEditorMobileToolbarView: View {
     @State private var isShowingFormattingOptions = false
     @State private var isShowingAttachmentMenu = false
+    @State private var isShowingLinkAlert = false
+
+    @ObservedObject var textAttributes: TextAttributes
+
+    @Binding var isShowingAI: Bool
 
     private let mainActions: [EditorToolbarAction] = [
         .editText, .ai, .addAttachment
     ]
 
     private let formattingOptions: [EditorToolbarAction] = [
-        .bold, .italic, .underline, .strikeThrough, .link, .unorderedList
+        .bold, .italic, .underline, .strikeThrough, .unorderedList, .link
     ]
-
-    private var currentActions: [EditorToolbarAction] {
-        if isShowingFormattingOptions {
-            return formattingOptions
-        } else {
-            return mainActions
-        }
-    }
 
     var body: some View {
         HStack {
             if isShowingFormattingOptions {
-                Button("close") {
-                    isShowingFormattingOptions = false
-                }
-
-                ForEach(formattingOptions) { action in
-                    MobileToolbarButton(toolbarAction: action) {
-                        performToolbarAction(action)
+                HStack {
+                    Button("close") {
+                        isShowingFormattingOptions = false
                     }
-                }
-            } else {
-                ForEach(currentActions) { action in
-                    switch action {
-                    case .addAttachment:
-                        AddAttachmentMenu()
-                    default:
+
+                    ForEach(formattingOptions) { action in
                         MobileToolbarButton(toolbarAction: action) {
                             performToolbarAction(action)
                         }
-                        .tint(Color(action.tint))
+                    }
+                }
+            } else {
+                HStack {
+                    ForEach(mainActions) { action in
+                        switch action {
+                        case .addAttachment:
+                            AddAttachmentMenu(completionHandler: performToolbarAction)
+                                .tint(Color(action.tint))
+                        default:
+                            MobileToolbarButton(toolbarAction: action) {
+                                performToolbarAction(action)
+                            }
+                            .tint(Color(action.tint))
+                        }
                     }
                 }
             }
@@ -105,12 +137,43 @@ struct NewEditorMobileToolbarView: View {
             isShowingFormattingOptions = true
         case .addAttachment:
             isShowingAttachmentMenu = true
+        case .ai:
+            isShowingAI = true
+        case .link, .bold, .underline, .italic, .strikeThrough, .cancelFormat, .unorderedList:
+            formatText(for: action)
         default:
             print("Coucou")
+        }
+    }
+
+    private func formatText(for action: EditorToolbarAction) {
+        switch action {
+        case .bold:
+            textAttributes.bold()
+        case .underline:
+            textAttributes.underline()
+        case .italic:
+            textAttributes.italic()
+        case .strikeThrough:
+            textAttributes.strikethrough()
+        case .cancelFormat:
+            textAttributes.removeFormat()
+        case .unorderedList:
+            textAttributes.unorderedList()
+        case .link:
+            guard !textAttributes.hasLink else {
+                return textAttributes.unlink()
+            }
+            isShowingLinkAlert = true
+        default:
+            return
         }
     }
 }
 
 #Preview {
-    NewEditorMobileToolbarView()
+    NewEditorMobileToolbarView(
+        textAttributes: TextAttributes(),
+        isShowingAI: .constant(false)
+    )
 }
