@@ -317,7 +317,10 @@ struct ComposeMessageView: View {
             EncryptionAdView { enableEncryption() }
         }
         .floatingPanel(isPresented: $isShowingEncryptStatePanel) {
-            EncryptionStateView(password: $draft.encryptionPassword, autoEncryptDisableCount: draft.autoEncryptDisable.count) {
+            EncryptionStateView(
+                password: $draft.encryptionPassword,
+                autoEncryptDisableCount: draft.autoEncryptDisabledRecipients.count
+            ) {
                 disableEncryption()
             }
         }
@@ -371,7 +374,7 @@ struct ComposeMessageView: View {
     }
 
     private func didTouchSend() {
-        if draft.encrypted && draft.encryptionPassword.isEmpty && !draft.autoEncryptDisable.isEmpty {
+        if draft.encrypted && draft.encryptionPassword.isEmpty && !draft.autoEncryptDisabledRecipients.isEmpty {
             isShowingEncryptStatePanel = true
             return
         }
