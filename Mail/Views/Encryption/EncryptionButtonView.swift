@@ -26,10 +26,10 @@ struct EncryptionButtonView: View {
 
     private var count: String? {
         guard draft.encrypted else { return nil }
-        guard !draft.autoEncryptDisable.isEmpty else { return nil }
+        guard !draft.autoEncryptDisabledRecipients.isEmpty else { return nil }
 
-        if draft.autoEncryptDisable.count <= 9 {
-            return String(draft.autoEncryptDisable.count)
+        if draft.autoEncryptDisabledRecipients.count <= 9 {
+            return String(draft.autoEncryptDisabledRecipients.count)
         }
         return "+9"
     }
