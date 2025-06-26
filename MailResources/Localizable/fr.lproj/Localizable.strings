@@ -769,9 +769,6 @@
 /* loco:68512749d747a03491057b24 */
 "encryptedMessageHeaderPasswordExpiryDate" = "Ce message a été chiffré et expirera le %@ uniquement pour les destinataires ne pouvant bénéficier du chiffrement automatique.";
 
-/* loco:685124f05346e841180203d3 */
-"encryptedMessageIncompleteUser" = "Le chiffrement n’est pas pris en charge par %d utilisateur.";
-
 /* loco:68402c39c8e3201f22066632 */
 "encryptedMessagePasswordConcernedUserTitle" = "Utilisateurs concernés";
 
