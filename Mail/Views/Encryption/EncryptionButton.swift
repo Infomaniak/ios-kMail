@@ -29,7 +29,7 @@ struct EncryptionButton: View {
     let didTap: () -> Void
 
     private var count: Int? {
-        guard draft.encrypted else { return nil }
+        guard draft.encrypted && draft.encryptionPassword.isEmpty else { return nil }
         guard !draft.autoEncryptDisabledRecipients.isEmpty else { return nil }
 
         return draft.autoEncryptDisabledRecipients.count
