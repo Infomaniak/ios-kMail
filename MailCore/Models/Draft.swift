@@ -99,16 +99,6 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         }
     }
 
-    public var autoEncryptDisableRecipient: [Recipient] {
-        let result = to.toArray() + cc.toArray() + bcc.toArray()
-        return result.filter { recipient in
-            if !(recipient.isInfomaniakHosted ?? true) {
-                return true
-            }
-            return false
-        }
-    }
-
     /// Public facing "body", wrapping `bodyData`
     public var body: String {
         get {
