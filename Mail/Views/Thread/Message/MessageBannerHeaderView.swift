@@ -34,7 +34,7 @@ struct MessageBannerHeaderView: View {
     @ObservedRealmObject var mailbox: Mailbox
 
     var body: some View {
-        ForEach(banners, id: \.id) { banner in
+        ForEach(banners) { banner in
             let showBottomSeparator = banners.shouldShowBottomSeparator(for: banner)
             switch banner {
             case .displayContent:
