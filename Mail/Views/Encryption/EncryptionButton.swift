@@ -20,7 +20,7 @@ import MailCore
 import MailResources
 import SwiftUI
 
-struct EncryptionButtonView: View {
+struct EncryptionButton: View {
     let draft: Draft
     let didTap: () -> Void
 
@@ -62,5 +62,5 @@ struct EncryptionButtonView: View {
 }
 
 #Preview {
-    EncryptionButtonView(draft: Draft()) {}
+    EncryptionButton(draft: Draft()) {}
 }
