@@ -25,6 +25,9 @@ import SwiftUI
 struct MobileToolbarButtonStyle: ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
 
+    static let iconSize = IKIconSize.large
+    static let verticalPadding = IKPadding.mini * 2 + IKPadding.micro * 2
+
     let isActivated: Bool
     var customTint: Color?
 
@@ -73,9 +76,10 @@ struct MobileToolbarButton: View {
                 Text(text)
             } icon: {
                 icon
-                    .iconSize(EditorMobileToolbarView.iconSize)
+                    .iconSize(MobileToolbarButtonStyle.iconSize)
             }
         }
         .buttonStyle(MobileToolbarButtonStyle(isActivated: isActivated, customTint: customTint))
+        .animation(nil, value: isActivated)
     }
 }

@@ -28,11 +28,9 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct EditorMobileToolbarView: View {
-    private static let baseAnimation = Animation.default.speed(1.8)
-    static let appearAnimation = Self.baseAnimation.delay(0.1)
+    private static let baseAnimation = Animation.default.speed(2)
+    static let appearAnimation = Self.baseAnimation.delay(0.05)
     static let disappearAnimation = Self.baseAnimation
-
-    static let iconSize = IKIconSize.large
 
     static let colorPrimary = MailResourcesAsset.toolbarForegroundColor.swiftUIColor
     static let colorSecondary = MailResourcesAsset.backgroundColor.swiftUIColor
@@ -71,7 +69,7 @@ struct EditorMobileToolbarView: View {
                 .transition(transition)
             }
         }
-        .frame(minHeight: Self.iconSize.rawValue + IKPadding.mini * 2 + IKPadding.micro * 2)
+        .frame(minHeight: MobileToolbarButtonStyle.iconSize.rawValue + MobileToolbarButtonStyle.verticalPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(Self.colorSecondary)
         .overlay(alignment: .top) {
