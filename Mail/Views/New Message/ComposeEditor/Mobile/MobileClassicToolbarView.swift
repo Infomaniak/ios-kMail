@@ -43,17 +43,15 @@ struct MobileClassicToolbarView: View {
     }()
 
     var body: some View {
-        HStack(spacing: 0) {
+        HStack(spacing: IKPadding.mini) {
             ForEach(actions) { action in
                 switch action {
                 case .addAttachment:
                     AddAttachmentMenu(draft: draft)
-                        .tint(action.tint)
                 default:
-                    MobileToolbarButton(toolbarAction: action) {
+                    MobileToolbarButton(toolbarAction: action, isActivated: false, customTint: action.customTint) {
                         performToolbarAction(action)
                     }
-                    .tint(action.tint)
                     .disabled(isDisabled(action))
                 }
             }

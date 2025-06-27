@@ -50,36 +50,36 @@ struct MobileFormattingToolbarView: View {
     ]
 
     var body: some View {
-        HStack(spacing: IKPadding.medium) {
+        HStack(spacing: IKPadding.mini) {
             Button(action: hideFormattingOptions) {
                 Label {
                     Text(MailResourcesStrings.Localizable.buttonClose)
                 } icon: {
                     Image(systemName: "xmark")
-                        .iconSize(EditorMobileToolbarView.iconSize)
+                        .resizable()
+                        .frame(width: 8, height: 8)
                 }
                 .labelStyle(.iconOnly)
-                .padding(value: .micro)
-                .overlay {
-                    Circle()
-                        .fill()
-                }
+                .foregroundStyle(EditorMobileToolbarView.colorSecondary)
+                .padding(value: .mini)
+                .background(EditorMobileToolbarView.colorPrimary, in: .circle)
+                .padding(.horizontal, value: .mini)
+                .padding(.vertical, value: .small)
             }
-            .buttonStyle(.plain)
             .padding(.leading, value: .medium)
 
             ScrollView(.horizontal) {
-                HStack(spacing: IKPadding.medium) {
+                HStack(spacing: IKPadding.large) {
                     ForEach(actions, id: \.self) { groupOfAction in
                         HStack(spacing: 2) {
                             ForEach(groupOfAction) { action in
                                 MobileToolbarButton(
                                     toolbarAction: action,
-                                    background: action.isSelected(textAttributes: textAttributes) ? .red : .blue
+                                    isActivated: action.isSelected(textAttributes: textAttributes),
+                                    customTint: action.customTint
                                 ) {
                                     formatText(for: action)
                                 }
-                                .tint(action.tint)
                                 .mailCustomAlert(isPresented: $isShowingLinkAlert) {
                                     AddLinkView(actionHandler: textAttributes.addLink)
                                 }

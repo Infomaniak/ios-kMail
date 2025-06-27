@@ -70,19 +70,19 @@ enum EditorToolbarAction: Identifiable {
         }
     }
 
-    var tint: Color {
-        if self == .ai {
-            return MailResourcesAsset.aiColor.swiftUIColor
-        } else {
-            return Color.gray
-        }
-    }
-
     var foregroundStyle: Color {
         if self == .ai {
             return MailResourcesAsset.aiColor.swiftUIColor
         } else {
             return MailResourcesAsset.toolbarForegroundColor.swiftUIColor
+        }
+    }
+
+    var customTint: Color? {
+        if self == .ai {
+            return MailResourcesAsset.aiColor.swiftUIColor
+        } else {
+            return nil
         }
     }
 

@@ -34,8 +34,8 @@ struct EditorMobileToolbarView: View {
 
     static let iconSize = IKIconSize.large
 
-    static let buttonForeground = Color.gray
-    static let buttonBackground = Color.black
+    static let colorPrimary = MailResourcesAsset.toolbarForegroundColor.swiftUIColor
+    static let colorSecondary = MailResourcesAsset.backgroundColor.swiftUIColor
 
     @State private var isShowingClassicOptions = true
     @State private var isShowingFormattingOptions = false
@@ -73,7 +73,7 @@ struct EditorMobileToolbarView: View {
         }
         .frame(minHeight: Self.iconSize.rawValue + IKPadding.mini * 2 + IKPadding.micro * 2)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
+        .background(Self.colorSecondary)
         .overlay(alignment: .top) {
             Divider()
                 .frame(height: 1)

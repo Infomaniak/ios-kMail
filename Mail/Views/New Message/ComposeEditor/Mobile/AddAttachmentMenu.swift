@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreSwiftUI
 import InfomaniakCoreUIResources
 import MailCore
@@ -61,9 +62,8 @@ struct AddAttachmentMenu: View {
                 action.icon.swiftUIImage
                     .iconSize(EditorMobileToolbarView.iconSize)
             }
-            .labelStyle(.iconOnly)
-            .padding(value: .small)
         }
+        .buttonStyle(MobileToolbarButtonStyle(isActivated: false))
         .onChange(of: selectedImage) { newImage in
             guard let image = newImage,
                   let data = image.jpegData(compressionQuality: 0.5) else {

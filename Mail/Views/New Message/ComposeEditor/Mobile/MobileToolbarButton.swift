@@ -16,24 +16,54 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreSwiftUI
+import MailCore
 import MailResources
 import SwiftUI
+
+struct MobileToolbarButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+
+    let isActivated: Bool
+    var customTint: Color?
+
+    private var foreground: Color {
+        return isActivated ? EditorMobileToolbarView.colorSecondary : customTint ?? EditorMobileToolbarView.colorPrimary
+    }
+
+    private var background: Color {
+        return isActivated ? customTint ?? EditorMobileToolbarView.colorPrimary : EditorMobileToolbarView.colorSecondary
+    }
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .labelStyle(.iconOnly)
+            .padding(value: .mini)
+            .background(background, in: .rect(cornerRadius: IKRadius.small))
+            .foregroundStyle(foreground)
+            .padding(.vertical, value: .micro)
+            .opacity(configuration.isPressed || !isEnabled ? 0.2 : 1)
+    }
+}
 
 struct MobileToolbarButton: View {
     let text: String
     let icon: Image
+    let isActivated: Bool
+    let customTint: Color?
     let action: @MainActor () -> Void
-    let background: Color
 
     init(
         toolbarAction: EditorToolbarAction,
-        background: Color = MailResourcesAsset.backgroundColor.swiftUIColor,
+        isActivated: Bool,
+        customTint: Color? = nil,
         perform actionToPerform: @escaping @MainActor () -> Void
     ) {
         text = toolbarAction.accessibilityLabel
         icon = toolbarAction.icon.swiftUIImage
-        self.background = background
+        self.customTint = customTint
+        self.isActivated = isActivated
         action = actionToPerform
     }
 
@@ -45,10 +75,7 @@ struct MobileToolbarButton: View {
                 icon
                     .iconSize(EditorMobileToolbarView.iconSize)
             }
-            .labelStyle(.iconOnly)
-            .padding(value: .mini)
-            .background(background, in: .rect(cornerRadius: 4))
-            .padding(.vertical, value: .micro)
         }
+        .buttonStyle(MobileToolbarButtonStyle(isActivated: isActivated, customTint: customTint))
     }
 }
