@@ -24,14 +24,11 @@ struct EncryptionButton: View {
     let draft: Draft
     let didTap: () -> Void
 
-    private var count: String? {
+    private var count: Int? {
         guard draft.encrypted else { return nil }
         guard !draft.autoEncryptDisabledRecipients.isEmpty else { return nil }
 
-        if draft.autoEncryptDisabledRecipients.count <= 9 {
-            return String(draft.autoEncryptDisabledRecipients.count)
-        }
-        return "+9"
+        return draft.autoEncryptDisabledRecipients.count
     }
 
     private let chipWidth: CGFloat = 14
@@ -49,7 +46,7 @@ struct EncryptionButton: View {
                 Circle()
                     .fill(MailResourcesAsset.orangeColor.swiftUIColor)
                     .overlay {
-                        Text(count)
+                        Text(count, format: .cappedCount(maximum: 9, placement: .before))
                             .font(.system(size: 8))
                             .foregroundStyle(MailResourcesAsset.backgroundTertiaryColor.swiftUIColor)
                     }
