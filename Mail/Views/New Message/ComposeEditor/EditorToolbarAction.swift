@@ -74,7 +74,7 @@ enum EditorToolbarAction: Identifiable {
         if self == .ai {
             return MailResourcesAsset.aiColor.swiftUIColor
         } else {
-            return MailResourcesAsset.textSecondaryColor.swiftUIColor
+            return Color.gray
         }
     }
 

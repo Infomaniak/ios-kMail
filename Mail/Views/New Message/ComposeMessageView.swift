@@ -193,8 +193,13 @@ struct ComposeMessageView: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            EditorMobileToolbarView(textAttributes: textAttributes, isShowingAI: $aiModel.isShowingPrompt, draft: draft)
-                .environmentObject(attachmentsManager)
+            EditorMobileToolbarView(
+                textAttributes: textAttributes,
+                isShowingAI: $aiModel.isShowingPrompt,
+                draft: draft,
+                isEditorFocused: focusedField == .editor
+            )
+            .environmentObject(attachmentsManager)
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .overlay {

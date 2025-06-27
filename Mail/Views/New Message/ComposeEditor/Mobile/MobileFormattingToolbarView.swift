@@ -16,13 +16,24 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import InfomaniakRichHTMLEditor
 import MailCoreUI
+import MailResources
 import SwiftModalPresentation
 import SwiftUI
-import DesignSystem
+
+extension View {
+    func backportScrollBounceBasedOnSize() -> some View {
+        if #available(iOS 16.4, *) {
+            return scrollBounceBehavior(.basedOnSize)
+        } else {
+            return self
+        }
+    }
+}
 
 struct MobileFormattingToolbarView: View {
     @ModalState(context: ContextKeys.compose) private var isShowingLinkAlert = false
@@ -39,29 +50,55 @@ struct MobileFormattingToolbarView: View {
     ]
 
     var body: some View {
-        HStack(spacing: IKPadding.large) {
-            Button("close") {
-                withAnimation(EditorMobileToolbarView.disappearAnimation) {
-                    isShowingFormattingOptions = false
+        HStack(spacing: IKPadding.medium) {
+            Button(action: hideFormattingOptions) {
+                Label {
+                    Text(MailResourcesStrings.Localizable.buttonClose)
+                } icon: {
+                    Image(systemName: "xmark")
+                        .iconSize(EditorMobileToolbarView.iconSize)
                 }
-                withAnimation(EditorMobileToolbarView.appearAnimation) {
-                    isShowingClassicOptions = true
+                .labelStyle(.iconOnly)
+                .padding(value: .micro)
+                .overlay {
+                    Circle()
+                        .fill()
                 }
             }
+            .buttonStyle(.plain)
+            .padding(.leading, value: .medium)
 
-            ForEach(actions, id: \.self) { groupOfAction in
-                HStack(spacing: 0) {
-                    ForEach(groupOfAction) { action in
-                        MobileToolbarButton(toolbarAction: action) {
-                            formatText(for: action)
-                        }
-                        .tint(action.tint)
-                        .mailCustomAlert(isPresented: $isShowingLinkAlert) {
-                            AddLinkView(actionHandler: textAttributes.addLink)
+            ScrollView(.horizontal) {
+                HStack(spacing: IKPadding.medium) {
+                    ForEach(actions, id: \.self) { groupOfAction in
+                        HStack(spacing: 2) {
+                            ForEach(groupOfAction) { action in
+                                MobileToolbarButton(
+                                    toolbarAction: action,
+                                    background: action.isSelected(textAttributes: textAttributes) ? .red : .blue
+                                ) {
+                                    formatText(for: action)
+                                }
+                                .tint(action.tint)
+                                .mailCustomAlert(isPresented: $isShowingLinkAlert) {
+                                    AddLinkView(actionHandler: textAttributes.addLink)
+                                }
+                            }
                         }
                     }
                 }
+                .padding(.trailing, value: .medium)
             }
+            .backportScrollBounceBasedOnSize()
+        }
+    }
+
+    private func hideFormattingOptions() {
+        withAnimation(EditorMobileToolbarView.disappearAnimation) {
+            isShowingFormattingOptions = false
+        }
+        withAnimation(EditorMobileToolbarView.appearAnimation) {
+            isShowingClassicOptions = true
         }
     }
 

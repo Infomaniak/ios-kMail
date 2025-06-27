@@ -17,16 +17,23 @@
  */
 
 import InfomaniakCoreSwiftUI
+import MailResources
 import SwiftUI
 
 struct MobileToolbarButton: View {
     let text: String
     let icon: Image
     let action: @MainActor () -> Void
+    let background: Color
 
-    init(toolbarAction: EditorToolbarAction, perform actionToPerform: @escaping @MainActor () -> Void) {
+    init(
+        toolbarAction: EditorToolbarAction,
+        background: Color = MailResourcesAsset.backgroundColor.swiftUIColor,
+        perform actionToPerform: @escaping @MainActor () -> Void
+    ) {
         text = toolbarAction.accessibilityLabel
         icon = toolbarAction.icon.swiftUIImage
+        self.background = background
         action = actionToPerform
     }
 
@@ -39,6 +46,9 @@ struct MobileToolbarButton: View {
                     .iconSize(EditorMobileToolbarView.iconSize)
             }
             .labelStyle(.iconOnly)
+            .padding(value: .mini)
+            .background(background, in: .rect(cornerRadius: 4))
+            .padding(.vertical, value: .micro)
         }
     }
 }

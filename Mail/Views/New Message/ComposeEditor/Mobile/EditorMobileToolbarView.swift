@@ -28,11 +28,14 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct EditorMobileToolbarView: View {
-    private static let baseAnimation = Animation.default.speed(1.75)
+    private static let baseAnimation = Animation.default.speed(1.8)
     static let appearAnimation = Self.baseAnimation.delay(0.1)
     static let disappearAnimation = Self.baseAnimation
 
     static let iconSize = IKIconSize.large
+
+    static let buttonForeground = Color.gray
+    static let buttonBackground = Color.black
 
     @State private var isShowingClassicOptions = true
     @State private var isShowingFormattingOptions = false
@@ -42,6 +45,7 @@ struct EditorMobileToolbarView: View {
     @Binding var isShowingAI: Bool
 
     let draft: Draft
+    let isEditorFocused: Bool
 
     private let transition = AnyTransition.opacity.combined(with: .move(edge: .bottom))
 
@@ -52,7 +56,8 @@ struct EditorMobileToolbarView: View {
                     isShowingClassicOptions: $isShowingClassicOptions,
                     isShowingFormattingOptions: $isShowingFormattingOptions,
                     isShowingAI: $isShowingAI,
-                    draft: draft
+                    draft: draft,
+                    isEditorFocused: isEditorFocused
                 )
                 .transition(transition)
             }
@@ -66,11 +71,9 @@ struct EditorMobileToolbarView: View {
                 .transition(transition)
             }
         }
-        .padding(.vertical, value: .mini)
-        .padding(.horizontal, value: .medium)
-        .frame(minHeight: Self.iconSize.rawValue + IKPadding.mini * 2)
+        .frame(minHeight: Self.iconSize.rawValue + IKPadding.mini * 2 + IKPadding.micro * 2)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(MailResourcesAsset.backgroundTabBarColor.swiftUIColor)
+        .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .overlay(alignment: .top) {
             Divider()
                 .frame(height: 1)
@@ -83,6 +86,11 @@ struct EditorMobileToolbarView: View {
     EditorMobileToolbarView(
         textAttributes: TextAttributes(),
         isShowingAI: .constant(false),
-        draft: Draft()
+        draft: Draft(),
+        isEditorFocused: true
     )
+    .environmentObject(AttachmentsManager(
+        draftLocalUUID: "",
+        mailboxManager: PreviewHelper.sampleMailboxManager
+    ))
 }

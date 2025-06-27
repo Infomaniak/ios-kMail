@@ -42,17 +42,17 @@ struct AddAttachmentMenu: View {
             Button {
                 isShowingCamera = true
             } label: {
-                Label(CoreUILocalizable.buttonUploadFromCamera, image: "")
+                Label(CoreUILocalizable.buttonUploadFromCamera, asset: EditorToolbarAction.takePhoto.icon.swiftUIImage)
             }
             Button {
                 isShowingPhotoLibrary = true
             } label: {
-                Label(CoreUILocalizable.buttonUploadFromGallery, image: "")
+                Label(CoreUILocalizable.buttonUploadFromGallery, asset: EditorToolbarAction.addPhoto.icon.swiftUIImage)
             }
             Button {
                 isShowingFileSelection = true
             } label: {
-                Label(CoreUILocalizable.buttonUploadFromFiles, image: "")
+                Label(CoreUILocalizable.buttonUploadFromFiles, asset: EditorToolbarAction.addFile.icon.swiftUIImage)
             }
         } label: {
             Label {
@@ -62,6 +62,7 @@ struct AddAttachmentMenu: View {
                     .iconSize(EditorMobileToolbarView.iconSize)
             }
             .labelStyle(.iconOnly)
+            .padding(value: .small)
         }
         .onChange(of: selectedImage) { newImage in
             guard let image = newImage,

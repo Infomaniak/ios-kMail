@@ -20,6 +20,7 @@ import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
+import MailCoreUI
 import SwiftUI
 
 struct MobileClassicToolbarView: View {
@@ -28,13 +29,21 @@ struct MobileClassicToolbarView: View {
     @Binding var isShowingAI: Bool
 
     let draft: Draft
+    let isEditorFocused: Bool
 
-    private let actions: [EditorToolbarAction] = [
-        .editText, .ai, .addAttachment
-    ]
+    private let actions: [EditorToolbarAction] = {
+        var availableOptions: [EditorToolbarAction] = [.editText, .addAttachment]
+
+        @InjectService var featureFlagsManager: FeatureFlagsManageable
+        if featureFlagsManager.isEnabled(.aiMailComposer) {
+            availableOptions.append(.ai)
+        }
+
+        return availableOptions
+    }()
 
     var body: some View {
-        HStack(spacing: IKPadding.large) {
+        HStack(spacing: 0) {
             ForEach(actions) { action in
                 switch action {
                 case .addAttachment:
@@ -45,9 +54,11 @@ struct MobileClassicToolbarView: View {
                         performToolbarAction(action)
                     }
                     .tint(action.tint)
+                    .disabled(isDisabled(action))
                 }
             }
         }
+        .padding(.horizontal, value: .medium)
     }
 
     private func performToolbarAction(_ action: EditorToolbarAction) {
@@ -72,6 +83,14 @@ struct MobileClassicToolbarView: View {
             break
         }
     }
+
+    private func isDisabled(_ action: EditorToolbarAction) -> Bool {
+        if action == .editText {
+            return !isEditorFocused
+        } else {
+            return false
+        }
+    }
 }
 
 #Preview {
@@ -79,6 +98,11 @@ struct MobileClassicToolbarView: View {
         isShowingClassicOptions: .constant(true),
         isShowingFormattingOptions: .constant(false),
         isShowingAI: .constant(false),
-        draft: Draft()
+        draft: Draft(),
+        isEditorFocused: true
     )
+    .environmentObject(AttachmentsManager(
+        draftLocalUUID: "",
+        mailboxManager: PreviewHelper.sampleMailboxManager
+    ))
 }
