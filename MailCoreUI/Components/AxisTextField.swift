@@ -32,7 +32,7 @@ public struct AxisTextField: View {
 
     public var body: some View {
         if #available(iOS 16.0, *) {
-            TextField(localizedStringKey, text: $text, axis: .vertical)
+            TextField(localizedStringKey, text: $text, axis: axis)
         } else {
             TextField(localizedStringKey, text: $text)
         }

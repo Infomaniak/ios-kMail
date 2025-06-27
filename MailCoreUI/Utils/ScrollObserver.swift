@@ -17,7 +17,6 @@
  */
 
 import Combine
-import MailCore
 import SwiftUI
 
 public final class ScrollObserver: ObservableObject {

@@ -19,6 +19,18 @@ jobs:
           cache: false
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Create test env
+        env:
+          ENV_PATH: "MailTests/Env.swift"
+        run: |
+          touch $ENV_PATH
+          echo -e "enum Env {\n static let token = \"\"\n static let userId = 0\n static let mailboxId = 0\n static let mailboxUuid = \"\"\n}" > $ENV_PATH
+      - name: Create ui test env
+        env:
+          ENV_PATH: "MailUITests/Env.swift"
+        run: |
+          touch $ENV_PATH
+          echo -e "enum Env {\n static let testAccountEmail = \"\"\n static let testAccountPassword = \"\"\n}" > $ENV_PATH
       - name: Periphery
         id: periphery
         run: ./scripts/periphery.sh --clean

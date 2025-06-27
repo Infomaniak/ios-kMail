@@ -77,27 +77,11 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
 
     func deleteFolder(folder: MailCore.Folder) async throws {}
 
-    func getFrozenFolders(with role: MailCore.FolderRole) -> MailCore.Folder? {
-        fatalError("Unexpected")
-    }
-
-    func getFrozenFolders(using realm: RealmSwift.Realm?) -> [MailCore.Folder] {
-        fatalError("Unexpected")
-    }
-
-    func getFolders(using realm: RealmSwift.Realm?) -> [MailCore.Folder] {
-        fatalError("Unexpected")
-    }
-
     func getFolder(with role: MailCore.FolderRole) -> MailCore.Folder? {
         fatalError("Unexpected")
     }
 
     func createFolder(name: String, parent: MailCore.Folder?) async throws -> MailCore.Folder {
-        fatalError("Unexpected")
-    }
-
-    func deleteFolder(name: String, folder: MailCore.Folder) async throws {
         fatalError("Unexpected")
     }
 
@@ -150,12 +134,6 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
         fatalError("Unexpected")
     }
 
-    func draft(messageUid: String, using realm: RealmSwift.Realm?) -> MailCore.Draft? { nil }
-
-    func draft(localUuid: String, using realm: RealmSwift.Realm?) -> MailCore.Draft? { nil }
-
-    func draft(remoteUuid: String, using realm: RealmSwift.Realm?) -> MailCore.Draft? { nil }
-
     func send(draft: MailCore.Draft) async throws -> MailCore.SendResponse {
         fatalError("Unexpected")
     }
@@ -173,8 +151,6 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
     func deleteOrphanDrafts() async {}
 
     func messages(folder: MailCore.Folder) async throws {}
-
-    func fetchOneNewPage(folder: MailCore.Folder) async throws -> Bool { false }
 
     func fetchOneOldPage(folder: MailCore.Folder) async throws -> Int? { nil }
 

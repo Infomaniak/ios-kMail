@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// periphery:ignore - We want to provide a sample to duplicate
 enum Env_Sample {
     static let testAccountEmail = ""
 

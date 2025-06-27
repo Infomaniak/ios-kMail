@@ -18,11 +18,9 @@
 
 import Combine
 import Foundation
-@testable import Infomaniak_Mail
 import InfomaniakCore
 import InfomaniakCoreDB
 import InfomaniakLogin
-@testable import MailCore
 @testable import RealmSwift
 import XCTest
 

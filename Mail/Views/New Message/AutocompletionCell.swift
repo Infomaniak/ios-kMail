@@ -95,8 +95,7 @@ struct AutocompletionCell: View {
                 if unknownRecipient {
                     UnknownRecipientCell(email: autocompletion.autocompletableName)
                 } else {
-                    RecipientCell(contact: autocompletion,
-                                  contactConfiguration: contactConfiguration,
+                    RecipientCell(contactConfiguration: contactConfiguration,
                                   highlight: highlight,
                                   title: title,
                                   subtitle: subtitle)

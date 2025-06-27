@@ -19,7 +19,6 @@
 import Foundation
 import InfomaniakCore
 import InfomaniakLogin
-@testable import MailCore
 import XCTest
 
 /// Something to compare the "shape" of abstract n dimensional arrays
