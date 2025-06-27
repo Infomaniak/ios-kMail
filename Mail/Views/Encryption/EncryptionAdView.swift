@@ -31,20 +31,28 @@ struct EncryptionAdView: View {
             VStack(spacing: IKPadding.huge) {
                 MailResourcesAsset.encryptEnvelop.swiftUIImage
 
-                Text(MailResourcesStrings.Localizable.encryptedProtectionAdDescription)
-                    .textStyle(.body)
-
-                VStack(alignment: .leading, spacing: IKPadding.medium) {
-                    Text("• \(MailResourcesStrings.Localizable.encryptedProtectionAdDescription1)")
+                VStack(alignment: .leading, spacing: IKPadding.huge) {
+                    Text(MailResourcesStrings.Localizable.encryptedProtectionAdDescription)
                         .textStyle(.body)
 
-                    Text("• \(MailResourcesStrings.Localizable.encryptedProtectionAdDescription2)")
-                        .textStyle(.body)
+                    VStack(alignment: .leading, spacing: IKPadding.medium) {
+                        HStack(alignment: .top) {
+                            Text("•")
+                            Text(MailResourcesStrings.Localizable.encryptedProtectionAdDescription1)
+                                .textStyle(.body)
+                        }
 
-                    Button {
-                        // En savoir plus
-                    } label: {
-                        Text(MailResourcesStrings.Localizable.moreInfo)
+                        HStack(alignment: .top) {
+                            Text("•")
+                            Text(MailResourcesStrings.Localizable.encryptedProtectionAdDescription2)
+                                .textStyle(.body)
+                        }
+
+                        Button {
+                            // TODO: Add FAQ link
+                        } label: {
+                            Text(MailResourcesStrings.Localizable.moreInfo)
+                        }
                     }
                 }
 
