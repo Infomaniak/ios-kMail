@@ -139,10 +139,20 @@ public extension FormatStyle where Self == ByteCountFormatStyle {
 
 public struct CappedCountFormatStyle: FormatStyle, Sendable {
     let maximum: Int
+    var placement: Placement = .after
+
+    public enum Placement: Codable, Sendable {
+        case before
+        case after
+    }
 
     public func format(_ value: Int) -> String {
         if value > maximum {
-            return "\(maximum)+"
+            if placement == .before {
+                return "+\(maximum)"
+            } else {
+                return "\(maximum)+"
+            }
         } else {
             return "\(value)"
         }
@@ -152,5 +162,9 @@ public struct CappedCountFormatStyle: FormatStyle, Sendable {
 public extension FormatStyle where Self == CappedCountFormatStyle {
     static var indicatorCappedCount: CappedCountFormatStyle {
         return CappedCountFormatStyle(maximum: 99)
+    }
+
+    static func cappedCount(maximum: Int, placement: CappedCountFormatStyle.Placement = .after) -> CappedCountFormatStyle {
+        return CappedCountFormatStyle(maximum: maximum, placement: placement)
     }
 }
