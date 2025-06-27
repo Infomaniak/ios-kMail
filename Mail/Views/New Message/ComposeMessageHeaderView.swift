@@ -96,10 +96,6 @@ struct ComposeMessageHeaderView: View {
         .onAppear {
             showRecipientsFields = !draft.bcc.isEmpty || !draft.cc.isEmpty
         }
-        .task(id: totalRecipients) {
-            guard draft.encrypted else { return }
-            try? await mailboxManager.updateRecipientsAutoEncrypt(draft: draft)
-        }
     }
 }
 

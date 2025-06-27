@@ -21,6 +21,10 @@ import MailResources
 import SwiftUI
 
 struct EncryptionButton: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @State private var isLoadingRecipientsAutoEncrypt = false
+
     let draft: Draft
     let didTap: () -> Void
 
@@ -42,18 +46,34 @@ struct EncryptionButton: View {
         }
         .foregroundColor(draft.encrypted ? Color.accentColor : MailResourcesAsset.textSecondaryColor.swiftUIColor)
         .overlay {
-            if let count {
+            if count != nil || isLoadingRecipientsAutoEncrypt {
                 Circle()
                     .fill(MailResourcesAsset.orangeColor.swiftUIColor)
                     .overlay {
-                        Text(count, format: .cappedCount(maximum: 9, placement: .before))
-                            .font(.system(size: 8))
-                            .foregroundStyle(MailResourcesAsset.backgroundTertiaryColor.swiftUIColor)
+                        if let count {
+                            Text(count, format: .cappedCount(maximum: 9, placement: .before))
+                                .font(.system(size: 8))
+                                .foregroundStyle(MailResourcesAsset.backgroundTertiaryColor.swiftUIColor)
+                                .animation(.default, value: count)
+                        } else if isLoadingRecipientsAutoEncrypt {
+                            Circle()
+                                .fill(Color.white)
+                                .frame(width: 2)
+                        }
                     }
                     .frame(width: chipWidth)
                     .frame(maxHeight: .infinity, alignment: .top)
                     .offset(x: chipWidth / 2)
             }
+        }
+        .task(id: "\(draft.encrypted)-\(draft.allRecipients.count)") {
+            guard draft.encrypted else { return }
+
+            isLoadingRecipientsAutoEncrypt = true
+
+            try? await mailboxManager.updateRecipientsAutoEncrypt(draft: draft)
+
+            isLoadingRecipientsAutoEncrypt = false
         }
     }
 }

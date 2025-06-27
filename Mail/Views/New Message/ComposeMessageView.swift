@@ -234,10 +234,6 @@ struct ComposeMessageView: View {
         .safeAreaInset(edge: .bottom) {
             ExternalTagBottomView(externalTag: draft.displayExternalTag(mailboxManager: mailboxManager))
         }
-        .task(id: draft.encrypted) {
-            guard draft.encrypted else { return }
-            try? await mailboxManager.updateRecipientsAutoEncrypt(draft: draft)
-        }
         .task {
             do {
                 isLoadingContent = true
