@@ -86,9 +86,12 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
     @Persisted public var encrypted: Bool
     @Persisted public var encryptionPassword: String
 
+    public var allRecipients: [Recipient] {
+        return to.toArray() + cc.toArray() + bcc.toArray()
+    }
+
     public var autoEncryptDisabledRecipients: [Recipient] {
-        let result = to.toArray() + cc.toArray() + bcc.toArray()
-        return result.filter { recipient in
+        return allRecipients.filter { recipient in
             if !(recipient.isInfomaniakHosted ?? true) {
                 return true
             }
