@@ -175,7 +175,7 @@ struct ComposeMessageView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 if featureFlagsManager.isEnabled(.mailComposeEncrypted) {
-                    EncryptionButtonView(draft: draft) {
+                    EncryptionButton(draft: draft) {
                         didTouchEncrypt()
                     }
                 }
