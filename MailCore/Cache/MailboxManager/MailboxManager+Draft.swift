@@ -209,34 +209,34 @@ public extension MailboxManager {
         return draft.freeze()
     }
 
-    func updateRecipientsAutoEncrypt(draft: Draft) {
-        Task {
-            let recipients = draft.to
-            recipients.append(objectsIn: draft.cc)
-            recipients.append(objectsIn: draft.bcc)
+    func updateRecipientsAutoEncrypt(draft: Draft) async throws {
+        let recipients = draft.to
+        recipients.append(objectsIn: draft.cc)
+        recipients.append(objectsIn: draft.bcc)
 
-            let result = try await apiFetcher.mailHosted(for: recipients.map(\.email))
+        guard !recipients.isEmpty else { return }
 
-            try writeTransaction { realm in
-                guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else { return }
-                let updatedTo = liveDraft.to.detached()
-                for recipient in updatedTo {
-                    recipient.isInfomaniakHosted = result.first { $0.email == recipient.email }?.isInfomaniakHosted
-                }
-                liveDraft.to = updatedTo
+        let result = try await apiFetcher.mailHosted(for: recipients.map(\.email))
 
-                let updatedCC = liveDraft.cc.detached()
-                for recipient in updatedCC {
-                    recipient.isInfomaniakHosted = result.first { $0.email == recipient.email }?.isInfomaniakHosted
-                }
-                liveDraft.cc = updatedCC
-
-                let updatedBCC = liveDraft.bcc.detached()
-                for recipient in updatedBCC {
-                    recipient.isInfomaniakHosted = result.first { $0.email == recipient.email }?.isInfomaniakHosted
-                }
-                liveDraft.bcc = updatedBCC
+        try writeTransaction { realm in
+            guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else { return }
+            let updatedTo = liveDraft.to.detached()
+            for recipient in updatedTo {
+                recipient.isInfomaniakHosted = result.first { $0.email == recipient.email }?.isInfomaniakHosted
             }
+            liveDraft.to = updatedTo
+
+            let updatedCC = liveDraft.cc.detached()
+            for recipient in updatedCC {
+                recipient.isInfomaniakHosted = result.first { $0.email == recipient.email }?.isInfomaniakHosted
+            }
+            liveDraft.cc = updatedCC
+
+            let updatedBCC = liveDraft.bcc.detached()
+            for recipient in updatedBCC {
+                recipient.isInfomaniakHosted = result.first { $0.email == recipient.email }?.isInfomaniakHosted
+            }
+            liveDraft.bcc = updatedBCC
         }
     }
 }
