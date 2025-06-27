@@ -232,6 +232,10 @@ struct ComposeMessageView: View {
         .safeAreaInset(edge: .bottom) {
             ExternalTagBottomView(externalTag: draft.displayExternalTag(mailboxManager: mailboxManager))
         }
+        .task(id: draft.encrypted) {
+            guard draft.encrypted else { return }
+            try? await mailboxManager.updateRecipientsAutoEncrypt(draft: draft)
+        }
         .task {
             do {
                 isLoadingContent = true
@@ -450,8 +454,6 @@ struct ComposeMessageView: View {
     }
 
     private func enableEncryption() {
-        mailboxManager.updateRecipientsAutoEncrypt(draft: draft)
-
         guard let liveDraft = draft.thaw() else { return }
         try? liveDraft.realm?.write {
             liveDraft.encrypted = true
