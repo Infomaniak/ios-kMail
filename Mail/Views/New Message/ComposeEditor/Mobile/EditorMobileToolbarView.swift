@@ -32,7 +32,7 @@ struct EditorMobileToolbarView: View {
     static let appearAnimation = Self.baseAnimation.delay(0.05)
     static let disappearAnimation = Self.baseAnimation
 
-    static let colorPrimary = MailResourcesAsset.toolbarForegroundColor.swiftUIColor
+    static let colorPrimary = MailResourcesAsset.textSecondaryColor.swiftUIColor
     static let colorSecondary = MailResourcesAsset.backgroundColor.swiftUIColor
 
     @State private var isShowingClassicOptions = true

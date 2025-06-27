@@ -18,7 +18,6 @@
 
 import DesignSystem
 import InfomaniakCoreSwiftUI
-import MailCore
 import MailResources
 import SwiftUI
 
@@ -46,7 +45,7 @@ struct MobileToolbarButtonStyle: ButtonStyle {
             .background(background, in: .rect(cornerRadius: IKRadius.small))
             .foregroundStyle(foreground)
             .padding(.vertical, value: .micro)
-            .opacity(configuration.isPressed || !isEnabled ? 0.2 : 1)
+            .opacity(configuration.isPressed || !isEnabled ? 0.25 : 1)
     }
 }
 
