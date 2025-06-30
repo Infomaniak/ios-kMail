@@ -48,6 +48,9 @@ extension DestructiveActionAlertState {
 
         case .moveSnooze:
             return MailResourcesStrings.Localizable.actionMove
+
+        case .deleteFolder:
+            return MailResourcesStrings.Localizable.deleteFolderDialogTitle
         }
     }
 
@@ -67,6 +70,9 @@ extension DestructiveActionAlertState {
 
         case .moveSnooze(let impactedMessages):
             return MailResourcesStrings.Localizable.snoozeArchiveConfirmAlertDescription(impactedMessages)
+
+        case .deleteFolder(let folder):
+            return MailResourcesStrings.Localizable.deleteFolderDialogDescription(folder?.name ?? "")
         }
     }
 }

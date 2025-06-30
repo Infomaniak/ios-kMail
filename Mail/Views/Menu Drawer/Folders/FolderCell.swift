@@ -24,6 +24,7 @@ import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 extension EnvironmentValues {
@@ -138,6 +139,8 @@ struct FolderCellContent: View {
 
     @State private var currentFolder: Folder?
 
+    @ModalState private var destructiveAlert: DestructiveActionAlertState?
+
     private let frozenFolder: Folder
     private let level: Int
     private let isCurrentFolder: Bool
@@ -207,14 +210,16 @@ struct FolderCellContent: View {
                     }
                 }
                 Button {
-                    Task {
-                        await tryOrDisplayError {
-                            try await mailboxManager.deleteFolder(
-                                folder: frozenFolder
-                            )
-                            if mainViewState.selectedFolder.remoteId == frozenFolder.remoteId,
-                               let inbox = mailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
-                                mainViewState.selectedFolder = inbox
+                    destructiveAlert = DestructiveActionAlertState(type: .deleteFolder(frozenFolder)) {
+                        Task {
+                            await tryOrDisplayError {
+                                try await mailboxManager.deleteFolder(
+                                    folder: frozenFolder
+                                )
+                                if mainViewState.selectedFolder.remoteId == frozenFolder.remoteId,
+                                   let inbox = mailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
+                                    mainViewState.selectedFolder = inbox
+                                }
                             }
                         }
                     }
@@ -229,6 +234,9 @@ struct FolderCellContent: View {
         }
         .mailCustomAlert(item: $currentFolder) { folder in
             CreateFolderView(mode: .modify(modifiedFolder: folder))
+        }
+        .mailCustomAlert(item: $destructiveAlert) { item in
+            DestructiveActionAlertView(destructiveAlert: item)
         }
     }
 

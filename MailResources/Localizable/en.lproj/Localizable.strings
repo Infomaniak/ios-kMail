@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: en, English
  * Tagged: ios
- * Exported by: Matthieu Déglon
- * Exported at: Fri, 16 May 2025 07:39:08 +0200
+ * Exported by: Baptiste Griva
+ * Exported at: Fri, 27 Jun 2025 15:48:29 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -672,6 +672,12 @@
 
 /* loco:66cdadf9bc780d2bbd033462 */
 "deleteAccountWarning" = "The deletion of your account will be final. You will not be able to reactivate your account.";
+
+/* loco:685a98be5d3b4256930591f2 */
+"deleteFolderDialogDescription" = "Would you like to delete the %@ folder and everything it contains? \nThe contents of the folder will be permanently deleted without going through the recycle garbage can.";
+
+/* loco:685a96cac7aa83dd0a0a4332 */
+"deleteFolderDialogTitle" = "Delete folder";
 
 /* loco:672e3534c133d192fb0acc92 */
 "disabledFeatureFlagDescription" = "You will soon be able to unlock the limits of your ik.me email address\n(storage limit, custom schedule, sending and more…)";
