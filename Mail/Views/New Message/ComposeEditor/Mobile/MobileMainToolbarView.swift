@@ -23,7 +23,7 @@ import MailCore
 import MailCoreUI
 import SwiftUI
 
-struct MobileClassicToolbarView: View {
+struct MobileMainToolbarView: View {
     @Binding var isShowingClassicOptions: Bool
     @Binding var isShowingFormattingOptions: Bool
     @Binding var isShowingAI: Bool
@@ -92,7 +92,7 @@ struct MobileClassicToolbarView: View {
 }
 
 #Preview {
-    MobileClassicToolbarView(
+    MobileMainToolbarView(
         isShowingClassicOptions: .constant(true),
         isShowingFormattingOptions: .constant(false),
         isShowingAI: .constant(false),

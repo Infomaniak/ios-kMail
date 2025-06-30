@@ -50,7 +50,7 @@ struct EditorMobileToolbarView: View {
     var body: some View {
         ZStack {
             if isShowingClassicOptions {
-                MobileClassicToolbarView(
+                MobileMainToolbarView(
                     isShowingClassicOptions: $isShowingClassicOptions,
                     isShowingFormattingOptions: $isShowingFormattingOptions,
                     isShowingAI: $isShowingAI,
