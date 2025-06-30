@@ -18,33 +18,11 @@
 
 import InfomaniakDI
 import InfomaniakRichHTMLEditor
-import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
-import UIKit
 
-enum EditorMobileToolbarStyle {
-    case main
-    case textEdition
-
-    var actions: [EditorToolbarAction] {
-        switch self {
-        case .main:
-            @InjectService var featureFlagsManageable: FeatureFlagsManageable
-            var mainActions: [EditorToolbarAction] = [.editText, .addFile, .addPhoto, .takePhoto, .link]
-            featureFlagsManageable.feature(.aiMailComposer, on: {
-                mainActions.insert(.ai, at: 1)
-            }, off: nil)
-            return mainActions
-        case .textEdition:
-            return [.editText, .bold, .italic, .underline, .strikeThrough, .unorderedList]
-        }
-    }
-}
-
-enum EditorToolbarAction: Int, Identifiable {
-    case addFile
+enum EditorToolbarAction: Identifiable {
     case link
     case bold
     case underline
@@ -54,9 +32,10 @@ enum EditorToolbarAction: Int, Identifiable {
     case unorderedList
     case editText
     case ai
+    case addAttachment
+    case addFile
     case addPhoto
     case takePhoto
-    case programMessage
 
     var id: Self { self }
 
@@ -76,6 +55,8 @@ enum EditorToolbarAction: Int, Identifiable {
             return MailResourcesAsset.textModes
         case .ai:
             return MailResourcesAsset.aiWriter
+        case .addAttachment:
+            return MailResourcesAsset.attachment
         case .addFile:
             return MailResourcesAsset.attachment
         case .addPhoto:
@@ -84,18 +65,8 @@ enum EditorToolbarAction: Int, Identifiable {
             return MailResourcesAsset.photo
         case .link:
             return MailResourcesAsset.hyperlink
-        case .programMessage:
-            return MailResourcesAsset.alarmClock
         case .cancelFormat:
             return MailResourcesAsset.cancelFormat
-        }
-    }
-
-    var tint: UIColor {
-        if self == .ai {
-            return MailResourcesAsset.aiColor.color
-        } else {
-            return MailResourcesAsset.textSecondaryColor.color
         }
     }
 
@@ -104,6 +75,14 @@ enum EditorToolbarAction: Int, Identifiable {
             return MailResourcesAsset.aiColor.swiftUIColor
         } else {
             return MailResourcesAsset.toolbarForegroundColor.swiftUIColor
+        }
+    }
+
+    var customTint: Color? {
+        if self == .ai {
+            return MailResourcesAsset.aiColor.swiftUIColor
+        } else {
+            return nil
         }
     }
 
@@ -129,8 +108,6 @@ enum EditorToolbarAction: Int, Identifiable {
             return "importFromCamera"
         case .link:
             return "addLink"
-        case .programMessage:
-            return "postpone"
         default:
             return nil
         }
@@ -152,16 +129,16 @@ enum EditorToolbarAction: Int, Identifiable {
             return MailResourcesStrings.Localizable.buttonEditText
         case .ai:
             return MailResourcesStrings.Localizable.aiDiscoveryTitle
-        case .addFile:
+        case .addAttachment:
             return MailResourcesStrings.Localizable.attachmentActionTitle
+        case .addFile:
+            return MailResourcesStrings.Localizable.attachmentActionFile
         case .addPhoto:
             return MailResourcesStrings.Localizable.attachmentActionPhotoLibrary
         case .takePhoto:
             return MailResourcesStrings.Localizable.buttonCamera
         case .link:
             return MailResourcesStrings.Localizable.buttonHyperlink
-        case .programMessage:
-            return MailResourcesStrings.Localizable.buttonSchedule
         case .cancelFormat:
             return MailResourcesStrings.Localizable.buttonCancelFormatting
         }
@@ -183,11 +160,12 @@ enum EditorToolbarAction: Int, Identifiable {
             return KeyboardShortcut("K", modifiers: [.command, .shift])
         case .addFile:
             return KeyboardShortcut("P", modifiers: [.command, .shift])
-        case .editText, .ai, .addPhoto, .takePhoto, .programMessage, .cancelFormat:
+        case .editText, .ai, .addAttachment, .addPhoto, .takePhoto, .cancelFormat:
             return nil
         }
     }
 
+    @MainActor
     func isSelected(textAttributes: TextAttributes) -> Bool {
         switch self {
         case .bold:
@@ -202,11 +180,12 @@ enum EditorToolbarAction: Int, Identifiable {
             return textAttributes.hasUnorderedList
         case .link:
             return textAttributes.hasLink
-        case .editText, .ai, .addFile, .addPhoto, .takePhoto, .programMessage, .cancelFormat:
+        case .editText, .ai, .addAttachment, .addFile, .addPhoto, .takePhoto, .cancelFormat:
             return false
         }
     }
 
+    @MainActor
     func action(
         textAttributes: TextAttributes,
         isShowingLinkAlert: Binding<Bool>,

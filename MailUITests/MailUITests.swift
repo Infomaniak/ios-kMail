@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreUIResources
 import MailCore
 import MailResources
 import XCTest
@@ -238,12 +239,11 @@ class MailUITests: XCTestCase {
         login()
         writeTestMessage()
 
-        let bottomBarButtons = app.toolbars.firstMatch.buttons.allElementsBoundByIndex
-        XCTAssertGreaterThan(bottomBarButtons.count, 3)
+        let addAttachmentButton = app.buttons[MailResourcesStrings.Localizable.attachmentActionTitle].firstMatch
+        _ = addAttachmentButton.waitForExistence(timeout: defaultTimeOut)
+        addAttachmentButton.tap()
 
-        let imagePickerButton = bottomBarButtons[3]
-        _ = imagePickerButton.waitForExistence(timeout: defaultTimeOut)
-        imagePickerButton.tap()
+        app.buttons[CoreUILocalizable.buttonUploadFromGallery].firstMatch.tap()
 
         let firstPhoto = app.otherElements["photos_layout"].images.firstMatch
         _ = firstPhoto.waitForExistence(timeout: defaultTimeOut)

@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "c09f2ba3f338944ad5be76ef86c03b00310663de",
-        "version" : "19.1.0"
+        "revision" : "af3eb31bdc21ce2603f5bc88f92d73158b7ddb66",
+        "version" : "19.3.0"
       }
     },
     {
@@ -149,8 +149,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/johnpatrickmorgan/NavigationBackport",
       "state" : {
-        "revision" : "5a966a6010dcc6575a1931ca577b8ab19008166d",
-        "version" : "0.11.3"
+        "revision" : "daf05f32b163afdaa5e35a3f76aa809998592eb6",
+        "version" : "0.11.4"
       }
     },
     {
@@ -293,8 +293,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/swift-rich-html-editor.git",
       "state" : {
-        "revision" : "d4e8bd9b1bf62bd2a7ad81ce4e94170b2d6f7ab7",
-        "version" : "1.4.1"
+        "revision" : "53f400840ca3afb3ed16676715f1b69e4abe4f6b",
+        "version" : "2.1.0"
       }
     },
     {

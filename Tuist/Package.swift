@@ -55,7 +55,7 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "2.0.4")),
         .package(url: "https://github.com/Infomaniak/swift-concurrency", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-core", .upToNextMajor(from: "15.3.0")),
-        .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "19.1.0")),
+        .package(url: "https://github.com/Infomaniak/ios-core-ui", .upToNextMajor(from: "19.3.0")),
         .package(url: "https://github.com/Infomaniak/ios-notifications", .upToNextMajor(from: "11.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "18.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-bug-tracker", .upToNextMajor(from: "12.0.0")),
@@ -78,7 +78,7 @@ let package = Package(
         .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1")),
         .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0")),
         .package(url: "https://github.com/SVGKit/SVGKit.git", branch: "3.x"),
-        .package(url: "https://github.com/Infomaniak/swift-rich-html-editor.git", .upToNextMajor(from: "1.1.1")),
+        .package(url: "https://github.com/Infomaniak/swift-rich-html-editor.git", .upToNextMajor(from: "2.1.0")),
         .package(url: "https://github.com/apple/swift-collections", .upToNextMajor(from: "1.1.4"))
     ]
 )
