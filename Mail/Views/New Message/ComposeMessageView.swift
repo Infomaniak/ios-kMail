@@ -103,8 +103,12 @@ struct ComposeMessageView: View {
     private let htmlAttachments: [HTMLAttachable]
 
     private var isSendButtonDisabled: Bool {
-        let disabledState = draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded
-        return disabledState
+        let encryptionReady = draft.encrypted ? draft.allRecipients.allSatisfy { $0.isInfomaniakHosted != nil } : true
+        return draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded || !encryptionReady
+    }
+
+    private var isScheduleSendButtonDisabled: Bool {
+        return draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded || draft.encrypted
     }
 
     // MARK: - Init
@@ -187,7 +191,7 @@ struct ComposeMessageView: View {
                     } label: {
                         Label(MailResourcesStrings.Localizable.send, asset: MailResourcesAsset.clockPaperplane.swiftUIImage)
                     }
-                    .disabled(isSendButtonDisabled)
+                    .disabled(isScheduleSendButtonDisabled)
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
