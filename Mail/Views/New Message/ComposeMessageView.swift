@@ -340,7 +340,7 @@ struct ComposeMessageView: View {
         .sheet(isPresented: $isShowingEncryptAdPanel) {
             EncryptionAdView { enableEncryption() }
         }
-        .floatingPanel(isPresented: $isShowingEncryptStatePanel) {
+        .mailFloatingPanel(isPresented: $isShowingEncryptStatePanel) {
             EncryptionStateView(
                 password: $draft.encryptionPassword,
                 autoEncryptDisableCount: draft.autoEncryptDisabledRecipients.count
