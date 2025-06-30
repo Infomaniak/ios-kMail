@@ -75,7 +75,7 @@ struct EncryptionPasswordView: View {
                         TextField(MailResourcesStrings.Localizable.enterPasswordTitle, text: $draft.encryptionPassword)
 
                         Button {
-                            // Generate password
+                            generatePassword(regenerate: true)
                         } label: {
                             MailResourcesAsset.passwordGenerate.swiftUIImage
                                 .resizable()
@@ -130,39 +130,18 @@ struct EncryptionPasswordView: View {
         }
         .tint(MailResourcesAsset.sovereignBlueColor.swiftUIColor)
         .onAppear {
-            if draft.encryptionPassword.isEmpty, let liveDraft = draft.thaw() {
-                try? liveDraft.realm?.write {
-                    liveDraft.encryptionPassword = generateStrongSecurePassword()
-                }
-            }
+            generatePassword(regenerate: false)
         }
     }
 
-    func generateStrongSecurePassword() -> String {
-        let length = 16
+    func generatePassword(regenerate: Bool) {
+        guard draft.encryptionPassword.isEmpty || regenerate,
+              let liveDraft = draft.thaw() else { return }
 
-        let lowercase = Array("abcdefghijklmnopqrstuvwxyz")
-        let uppercase = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-        let digits = Array("0123456789")
-        let symbols = Array("!@#$%^&*()-_=+[]{}|;:,.<>?")
-        let all = lowercase + uppercase + digits + symbols
-
-        var randomGenerator = SystemRandomNumberGenerator()
-
-        var passwordChars: [Character] = [
-            lowercase.randomElement(using: &randomGenerator)!,
-            uppercase.randomElement(using: &randomGenerator)!,
-            digits.randomElement(using: &randomGenerator)!,
-            symbols.randomElement(using: &randomGenerator)!
-        ]
-
-        for _ in 4 ..< length {
-            passwordChars.append(all.randomElement(using: &randomGenerator)!)
+        let passwordGenerator = SimplePasswordGenerator(passwordLength: 16)
+        try? liveDraft.realm?.write {
+            liveDraft.encryptionPassword = passwordGenerator.generate()
         }
-
-        passwordChars.shuffle(using: &randomGenerator)
-
-        return String(passwordChars)
     }
 }
 
