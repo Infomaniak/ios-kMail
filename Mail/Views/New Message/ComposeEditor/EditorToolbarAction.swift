@@ -130,9 +130,9 @@ enum EditorToolbarAction: Identifiable {
         case .ai:
             return MailResourcesStrings.Localizable.aiDiscoveryTitle
         case .addAttachment:
-            return "!Add Attachment"
-        case .addFile:
             return MailResourcesStrings.Localizable.attachmentActionTitle
+        case .addFile:
+            return MailResourcesStrings.Localizable.attachmentActionFile
         case .addPhoto:
             return MailResourcesStrings.Localizable.attachmentActionPhotoLibrary
         case .takePhoto:
