@@ -149,8 +149,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/johnpatrickmorgan/NavigationBackport",
       "state" : {
-        "revision" : "5a966a6010dcc6575a1931ca577b8ab19008166d",
-        "version" : "0.11.3"
+        "revision" : "daf05f32b163afdaa5e35a3f76aa809998592eb6",
+        "version" : "0.11.4"
       }
     },
     {

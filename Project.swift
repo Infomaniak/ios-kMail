@@ -113,7 +113,7 @@ let project = Project(name: "Mail",
                                   dependencies: [
                                       .target(name: "Infomaniak Mail"),
                                       .target(name: "MailCore"),
-                                      .target(name: "MailResources")
+                                      .external(name: "InfomaniakCoreUIResources")
                                   ],
                                   settings: .settings(base: Constants.testSettings)),
                           .target(name: "MailShareExtension",
