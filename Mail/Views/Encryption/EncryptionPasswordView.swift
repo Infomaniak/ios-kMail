@@ -122,6 +122,11 @@ struct EncryptionPasswordView: View {
                 .frame(maxHeight: .infinity, alignment: .bottom)
                 .padding(value: .medium)
             }
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    CloseButton(dismissAction: dismiss)
+                }
+            }
         }
         .tint(MailResourcesAsset.sovereignBlueColor.swiftUIColor)
         .onAppear {
