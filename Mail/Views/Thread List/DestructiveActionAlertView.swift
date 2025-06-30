@@ -86,12 +86,33 @@ struct DestructiveActionAlertView: View {
         VStack(alignment: .leading, spacing: IKPadding.large) {
             Text(destructiveAlert.title)
                 .textStyle(.bodyMedium)
-            Text(destructiveAlert.description)
-                .textStyle(.body)
+
+            if case .deleteFolder(let folder) = destructiveAlert.type {
+                let attributedDescription: AttributedString = {
+                    var description = AttributedString(destructiveAlert.description)
+                    if let folderName = folder?.name {
+                        if let range = description.range(of: folderName) {
+                            description[range].font = MailTextStyle.bodyMedium.font
+                        }
+                    }
+                    return description
+                }()
+
+                Text(attributedDescription)
+                    .multilineTextAlignment(.leading)
+                    .textStyle(.body)
+            } else {
+                Text(destructiveAlert.description)
+                    .multilineTextAlignment(.leading)
+                    .textStyle(.body)
+            }
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm) {
                 if case .flushFolder(let frozenFolder) = destructiveAlert.type, let frozenFolder {
                     matomo.track(eventWithCategory: .threadList, name: "empty\(frozenFolder.matomoName.capitalized)Confirm")
+                }
+                if case .deleteFolder = destructiveAlert.type {
+                    matomo.track(eventWithCategory: .manageFolder, name: "deleteConfirm")
                 }
                 await destructiveAlert.completion()
             }

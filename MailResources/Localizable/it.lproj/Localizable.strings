@@ -4,7 +4,7 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: Baptiste Griva
- * Exported at: Fri, 27 Jun 2025 15:48:29 +0200
+ * Exported at: Mon, 30 Jun 2025 14:44:13 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -674,7 +674,7 @@
 "deleteAccountWarning" = "La cancellazione dell’account sarà definitiva. Non sarà possibile riattivare l’account.";
 
 /* loco:685a98be5d3b4256930591f2 */
-"deleteFolderDialogDescription" = "Vuoi eliminare la cartella %@ e tutto ciò che contiene?\nIl contenuto della cartella verrà eliminato definitivamente senza passare per il cestino.";
+"deleteFolderDialogDescription" = "Il contenuto della cartella %@ verrà eliminato definitivamente senza passare per il cestino.";
 
 /* loco:685a96cac7aa83dd0a0a4332 */
 "deleteFolderDialogTitle" = "Eliminare la cartella";

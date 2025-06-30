@@ -119,10 +119,10 @@ struct CreateFolderView: View {
                 .padding(.bottom, value: .mini)
 
             ModalButtonsView(primaryButtonTitle: mode.buttonTitle, primaryButtonEnabled: isButtonEnabled) {
-                matomo.track(eventWithCategory: .createFolder, name: "confirm")
                 await tryOrDisplayError {
                     switch mode {
                     case .create:
+                        matomo.track(eventWithCategory: .createFolder, name: "confirm")
                         _ = try await mailboxManager.createFolder(name: folderName, parent: nil)
 
                     case .move(let moveHandler):
@@ -131,6 +131,7 @@ struct CreateFolderView: View {
                         NotificationCenter.default.post(Notification(name: .dismissMoveSheet))
 
                     case .modify(let modifiedFolder):
+                        matomo.track(eventWithCategory: .manageFolder, name: "renameConfirm")
                         try await mailboxManager.modifyFolder(
                             name: folderName,
                             folder: modifiedFolder
