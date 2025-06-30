@@ -27,100 +27,101 @@ import WrappingHStack
 struct EncryptionPasswordView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
+
     @EnvironmentObject private var mailboxManager: MailboxManager
+
     @ObservedRealmObject var draft: Draft
 
     var body: some View {
-        ZStack {
-            NavigationView {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: IKPadding.huge) {
-                        VStack(alignment: .leading, spacing: IKPadding.small) {
-                            Text(MailResourcesStrings.Localizable.encryptedMessageAddPasswordInformation)
-                                .textStyle(.bodySecondary)
+        NavigationView {
+            ScrollView {
+                VStack(alignment: .leading, spacing: IKPadding.huge) {
+                    VStack(alignment: .leading, spacing: IKPadding.small) {
+                        Text(MailResourcesStrings.Localizable.encryptedMessageAddPasswordInformation)
+                            .textStyle(.bodySecondary)
 
-                            Button {
-                                if let url = URL(string: "https://faq.infomaniak.com/1582") {
-                                    openURL(url)
-                                }
-                            } label: {
-                                Text(MailResourcesStrings.Localizable.moreInfo)
-                                    .font(MailTextStyle.bodyMedium.font)
+                        Button {
+                            if let url = URL(string: "https://faq.infomaniak.com/1582") {
+                                openURL(url)
                             }
-                        }
-
-                        VStack(alignment: .leading, spacing: IKPadding.small) {
-                            Text(MailResourcesStrings.Localizable.encryptedMessagePasswordConcernedUserTitle)
-                                .textStyle(.bodyMedium)
-
-                            WrappingHStack {
-                                ForEach(draft.autoEncryptDisabledRecipients, id: \.email) { recipient in
-                                    RecipientChipLabelView(recipient: recipient)
-                                }
-                                .environmentObject(mailboxManager)
-                            }
+                        } label: {
+                            Text(MailResourcesStrings.Localizable.moreInfo)
+                                .font(MailTextStyle.bodyMedium.font)
                         }
                     }
-                    .padding(value: .medium)
+
+                    VStack(alignment: .leading, spacing: IKPadding.small) {
+                        Text(MailResourcesStrings.Localizable.encryptedMessagePasswordConcernedUserTitle)
+                            .textStyle(.bodyMedium)
+
+                        WrappingHStack {
+                            ForEach(draft.autoEncryptDisabledRecipients, id: \.email) { recipient in
+                                RecipientChipLabelView(recipient: recipient)
+                            }
+                            .environmentObject(mailboxManager)
+                        }
+                    }
                 }
-                .navigationTitle(MailResourcesStrings.Localizable.encryptedPasswordProtectionTitle)
-                .navigationBarTitleDisplayMode(.inline)
+                .padding(value: .medium)
             }
+            .navigationTitle(MailResourcesStrings.Localizable.encryptedPasswordProtectionTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .safeAreaInset(edge: .bottom) {
+                VStack(alignment: .leading, spacing: IKPadding.small) {
+                    Text(MailResourcesStrings.Localizable.encryptedMessagePasswordLabel)
+                        .textStyle(.bodySmall)
 
-            VStack(alignment: .leading, spacing: IKPadding.small) {
-                Text(MailResourcesStrings.Localizable.encryptedMessagePasswordLabel)
-                    .textStyle(.bodySmall)
+                    HStack {
+                        TextField(MailResourcesStrings.Localizable.enterPasswordTitle, text: $draft.encryptionPassword)
 
-                HStack {
-                    TextField(MailResourcesStrings.Localizable.enterPasswordTitle, text: $draft.encryptionPassword)
+                        Button {
+                            // Generate password
+                        } label: {
+                            MailResourcesAsset.passwordGenerate.swiftUIImage
+                                .resizable()
+                                .frame(width: 16, height: 16)
+                                .foregroundStyle(MailResourcesAsset.textPrimaryColor.swiftUIColor)
+                        }
+                    }
+                    .padding(value: .small)
+                    .background {
+                        ZStack {
+                            MailResourcesAsset.backgroundColor.swiftUIColor
+                                .clipShape(.rect(cornerRadius: IKRadius.small))
+
+                            RoundedRectangle(cornerRadius: IKRadius.small)
+                                .stroke(lineWidth: 1)
+                                .foregroundColor(MailResourcesAsset.textFieldBorder.swiftUIColor)
+                        }
+                    }
 
                     Button {
-                        // Generate password
+                        UIPasteboard.general.string = draft.encryptionPassword
+                        dismiss()
                     } label: {
-                        MailResourcesAsset.passwordGenerate.swiftUIImage
-                            .resizable()
-                            .frame(width: 16, height: 16)
-                            .foregroundStyle(MailResourcesAsset.textPrimaryColor.swiftUIColor)
+                        Label {
+                            Text(MailResourcesStrings.Localizable.buttonCopy)
+                        } icon: {
+                            MailResourcesAsset.duplicate.swiftUIImage
+                                .resizable()
+                                .frame(width: 16, height: 16)
+                        }
                     }
+                    .disabled(draft.encryptionPassword.isEmpty)
+                    .buttonStyle(.ikBorderedProminent)
+                    .controlSize(.large)
+                    .ikButtonFullWidth(true)
+                    .padding(.top, value: .small)
                 }
-                .padding(value: .small)
+                .padding(.horizontal, value: .medium)
+                .padding(.vertical, value: .small)
                 .background {
-                    ZStack {
-                        MailResourcesAsset.backgroundColor.swiftUIColor
-                            .clipShape(.rect(cornerRadius: IKRadius.small))
-
-                        RoundedRectangle(cornerRadius: IKRadius.small)
-                            .stroke(lineWidth: 1)
-                            .foregroundColor(MailResourcesAsset.textFieldBorder.swiftUIColor)
-                    }
+                    MailResourcesAsset.textFieldColor.swiftUIColor
+                        .clipShape(.rect(cornerRadius: IKRadius.large))
                 }
-
-                Button {
-                    UIPasteboard.general.string = draft.encryptionPassword
-                    dismiss()
-                } label: {
-                    Label {
-                        Text(MailResourcesStrings.Localizable.buttonCopy)
-                    } icon: {
-                        MailResourcesAsset.duplicate.swiftUIImage
-                            .resizable()
-                            .frame(width: 16, height: 16)
-                    }
-                }
-                .disabled(draft.encryptionPassword.isEmpty)
-                .buttonStyle(.ikBorderedProminent)
-                .controlSize(.large)
-                .ikButtonFullWidth(true)
-                .padding(.top, value: .small)
+                .frame(maxHeight: .infinity, alignment: .bottom)
+                .padding(value: .medium)
             }
-            .padding(.horizontal, value: .medium)
-            .padding(.vertical, value: .small)
-            .background {
-                MailResourcesAsset.textFieldColor.swiftUIColor
-                    .clipShape(.rect(cornerRadius: IKRadius.large))
-            }
-            .frame(maxHeight: .infinity, alignment: .bottom)
-            .padding(value: .medium)
         }
         .tint(MailResourcesAsset.sovereignBlueColor.swiftUIColor)
         .onAppear {
