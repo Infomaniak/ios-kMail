@@ -24,22 +24,27 @@ import MailResources
 import SwiftUI
 import UIKit
 
-public struct RecipientChipLabelView: UIViewRepresentable {
+public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
     @Environment(\.isEnabled) private var isEnabled: Bool
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let recipient: Recipient
+
     let removeHandler: (() -> Void)?
     let switchFocusHandler: (() -> Void)?
+
+    let accessory: Accessory?
 
     public init(
         recipient: Recipient,
         removeHandler: (() -> Void)? = nil,
-        switchFocusHandler: (() -> Void)? = nil
+        switchFocusHandler: (() -> Void)? = nil,
+        @ViewBuilder accessory: () -> Accessory
     ) {
         self.recipient = recipient
         self.removeHandler = removeHandler
         self.switchFocusHandler = switchFocusHandler
+        self.accessory = accessory()
     }
 
     public func makeUIView(context: Context) -> RecipientChipLabel {
@@ -49,6 +54,13 @@ public struct RecipientChipLabelView: UIViewRepresentable {
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         label.setContentHuggingPriority(.defaultHigh, for: .vertical)
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+
+        if let accessory {
+            let uiView = UIHostingController(rootView: accessory).view
+            uiView?.backgroundColor = .clear
+            label.accessoryView = uiView
+        }
+
         return label
     }
 
@@ -56,50 +68,88 @@ public struct RecipientChipLabelView: UIViewRepresentable {
         uiLabel.text = recipient.name.isEmpty ? recipient.email : recipient.name
         uiLabel.isExternal = recipient.isExternal(mailboxManager: mailboxManager)
         uiLabel.isUserInteractionEnabled = isEnabled
-        uiLabel.updateColors(isFirstResponder: uiLabel.isFirstResponder)
     }
 }
 
-public class RecipientChipLabel: UILabel, UIKeyInput {
+public extension RecipientChipLabelView where Accessory == Never {
+    init(
+        recipient: Recipient,
+        removeHandler: (() -> Void)? = nil,
+        switchFocusHandler: (() -> Void)? = nil
+    ) {
+        self.recipient = recipient
+        self.removeHandler = removeHandler
+        self.switchFocusHandler = switchFocusHandler
+        accessory = nil
+    }
+}
+
+public class RecipientChipLabel: UIView, UIKeyInput {
+    var text: String? {
+        get { label.text }
+        set { label.text = newValue }
+    }
+
+    var accessoryView: UIView? {
+        willSet {
+            toggleAccessoryView(accessoryView, newValue)
+        }
+    }
+
+    var spacing: CGFloat = 4.0
+
+    var isExternal = false
+
     var removeHandler: (() -> Void)?
     var switchFocusHandler: (() -> Void)?
 
     override public var intrinsicContentSize: CGSize {
-        var contentSize = super.intrinsicContentSize
-        contentSize.height += IKPadding.recipientChip.top + IKPadding.recipientChip.bottom
-        contentSize.width += IKPadding.recipientChip.left + IKPadding.recipientChip.right
-        return contentSize
+        var labelSize = label.intrinsicContentSize
+        labelSize.height += IKPadding.recipientChip.top + IKPadding.recipientChip.bottom
+        labelSize.width += IKPadding.recipientChip.left + IKPadding.recipientChip.right
+
+        var accessoryViewSize = CGSize.zero
+        if let accessoryView {
+            accessoryViewSize = CGSize(
+                width: accessoryView.intrinsicContentSize.width + spacing,
+                height: accessoryView.intrinsicContentSize.height
+            )
+        }
+
+        return CGSize(
+            width: labelSize.width + accessoryViewSize.width,
+            height: max(labelSize.height, accessoryViewSize.height)
+        )
     }
 
     override public var canBecomeFirstResponder: Bool { return isUserInteractionEnabled }
 
     public var hasText = false
-    var isExternal = false
+
+    private let label: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
+        label.font = .systemFont(ofSize: 16)
+        return label
+    }()
+
+    private var accessoryViewConstraints = [NSLayoutConstraint]()
 
     public init(recipient: Recipient, external: Bool) {
         super.init(frame: .zero)
 
-        text = recipient.name.isEmpty ? recipient.email : recipient.name
-        textAlignment = .center
-        numberOfLines = 1
-
-        font = .systemFont(ofSize: 16)
-
-        layer.cornerRadius = intrinsicContentSize.height / 2
-        layer.borderWidth = 1
-        layer.masksToBounds = true
+        label.text = recipient.name.isEmpty ? recipient.email : recipient.name
 
         isExternal = external
         updateColors(isFirstResponder: false)
+
+        setupView()
     }
 
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    override public func drawText(in rect: CGRect) {
-        super.drawText(in: rect.inset(by: IKPadding.recipientChip))
     }
 
     override public func becomeFirstResponder() -> Bool {
@@ -122,16 +172,76 @@ public class RecipientChipLabel: UILabel, UIKeyInput {
         removeHandler?()
     }
 
-    public func updateColors(isFirstResponder: Bool) {
+    private func updateColors(isFirstResponder: Bool) {
         if isExternal {
-            textColor = isFirstResponder ? MailResourcesAsset.onTagExternalColor.color : MailResourcesAsset.textPrimaryColor.color
+            label.textColor = isFirstResponder ? MailResourcesAsset.onTagExternalColor.color : MailResourcesAsset.textPrimaryColor
+                .color
             borderColor = MailResourcesAsset.yellowColor.color
             backgroundColor = isFirstResponder ? MailResourcesAsset.yellowColor.color : MailResourcesAsset.textFieldColor.color
         } else {
-            textColor = isFirstResponder ? UserDefaults.shared.accentColor.secondary.color : .tintColor
+            label.textColor = isFirstResponder ? UserDefaults.shared.accentColor.secondary.color : .tintColor
             borderColor = isFirstResponder ? UserDefaults.shared.accentColor.primary.color : UserDefaults.shared.accentColor
                 .secondary.color
             backgroundColor = isFirstResponder ? .tintColor : UserDefaults.shared.accentColor.secondary.color
         }
     }
+
+    private func setupView() {
+        translatesAutoresizingMaskIntoConstraints = false
+
+        layer.cornerRadius = intrinsicContentSize.height / 2
+        layer.borderWidth = 1
+        layer.masksToBounds = true
+
+        addSubview(label)
+
+        NSLayoutConstraint.activate([
+            label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -IKPadding.recipientChip.right),
+            label.centerYAnchor.constraint(equalTo: centerYAnchor)
+        ])
+    }
+
+    private func toggleAccessoryView(_ oldValue: UIView?, _ newValue: UIView?) {
+        if let oldValue {
+            willRemoveSubview(oldValue)
+            oldValue.removeFromSuperview()
+
+            NSLayoutConstraint.deactivate(accessoryViewConstraints)
+            accessoryViewConstraints = []
+        }
+
+        if let newValue {
+            newValue.translatesAutoresizingMaskIntoConstraints = false
+            addSubview(newValue)
+
+            accessoryViewConstraints = getConstraints(forAccessory: newValue)
+            NSLayoutConstraint.activate(accessoryViewConstraints)
+        }
+
+        setNeedsLayout()
+    }
+
+    private func getConstraints(forAccessory view: UIView) -> [NSLayoutConstraint] {
+        return [
+            view.leadingAnchor.constraint(equalTo: leadingAnchor, constant: IKPadding.recipientChip.left),
+            view.centerYAnchor.constraint(equalTo: centerYAnchor),
+            view.trailingAnchor.constraint(equalTo: label.leadingAnchor, constant: -spacing)
+        ]
+    }
+}
+
+#Preview {
+    VStack {
+        RecipientChipLabelView(recipient: PreviewHelper.sampleRecipient1) {} switchFocusHandler: {}
+
+        RecipientChipLabelView(recipient: PreviewHelper.sampleRecipient1) {} switchFocusHandler: {} accessory: {
+            Image(systemName: "lock")
+                .resizable()
+                .scaledToFit()
+                .foregroundStyle(.tint)
+                .frame(width: 12, height: 12)
+        }
+    }
+    .environmentObject(PreviewHelper.sampleMailboxManager)
+    .tint(UserDefaults.shared.accentColor.primary.swiftUIColor)
 }
