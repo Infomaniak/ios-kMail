@@ -4,7 +4,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Baptiste Griva
- * Exported at: Mon, 30 Jun 2025 14:44:13 +0200
+ * Exported at: Tue, 01 Jul 2025 13:41:04 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -674,7 +674,7 @@
 "deleteAccountWarning" = "The deletion of your account will be final. You will not be able to reactivate your account.";
 
 /* loco:685a98be5d3b4256930591f2 */
-"deleteFolderDialogDescription" = "The contents of the folder %@ will be permanently deleted without going through the recycle garbage can.";
+"deleteFolderDialogDescription" = "The contents of the folder %@ will be permanently deleted without going through the trash.";
 
 /* loco:685a96cac7aa83dd0a0a4332 */
 "deleteFolderDialogTitle" = "Delete folder";

@@ -216,15 +216,14 @@ struct FolderCellContent: View {
                     matomo.track(eventWithCategory: .manageFolder, name: "delete")
 
                     destructiveAlert = DestructiveActionAlertState(type: .deleteFolder(frozenFolder)) {
-                        Task {
-                            await tryOrDisplayError {
-                                try await mailboxManager.deleteFolder(
-                                    folder: frozenFolder
-                                )
-                                if mainViewState.selectedFolder.remoteId == frozenFolder.remoteId,
-                                   let inbox = mailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
-                                    mainViewState.selectedFolder = inbox
-                                }
+                        matomo.track(eventWithCategory: .manageFolder, name: "deleteConfirm")
+                        await tryOrDisplayError {
+                            try await mailboxManager.deleteFolder(
+                                folder: frozenFolder
+                            )
+                            if mainViewState.selectedFolder.remoteId == frozenFolder.remoteId,
+                               let inbox = mailboxManager.getFolder(with: .inbox)?.freezeIfNeeded() {
+                                mainViewState.selectedFolder = inbox
                             }
                         }
                     }

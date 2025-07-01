@@ -4,7 +4,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Baptiste Griva
- * Exported at: Mon, 30 Jun 2025 14:44:13 +0200
+ * Exported at: Tue, 01 Jul 2025 13:41:04 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -674,7 +674,7 @@
 "deleteAccountWarning" = "Die Löschung Ihres Kontos ist endgültig. Sie werden nicht in der Lage sein, Ihr Konto zu reaktivieren.";
 
 /* loco:685a98be5d3b4256930591f2 */
-"deleteFolderDialogDescription" = "Der Inhalt des Ordners %@ wird endgültig gelöscht, ohne den Papierkorb zu durchlaufen.";
+"deleteFolderDialogDescription" = "Der Inhalt des Ordners %@ wird dauerhaft gelöscht, ohne den Papierkorb zu durchlaufen.";
 
 /* loco:685a96cac7aa83dd0a0a4332 */
 "deleteFolderDialogTitle" = "Löschen Sie den Ordner";

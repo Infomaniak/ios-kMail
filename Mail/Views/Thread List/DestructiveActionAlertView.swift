@@ -54,25 +54,31 @@ extension DestructiveActionAlertState {
         }
     }
 
-    var description: String {
+    var description: AttributedString {
         switch type {
         case .flushFolder:
-            return MailResourcesStrings.Localizable.threadListEmptyFolderAlertDescription
+            return AttributedString(MailResourcesStrings.Localizable.threadListEmptyFolderAlertDescription)
 
         case .permanentlyDelete(let impactedMessages):
-            return MailResourcesStrings.Localizable.threadListDeletionConfirmationAlertDescription(impactedMessages)
+            return AttributedString(MailResourcesStrings.Localizable
+                .threadListDeletionConfirmationAlertDescription(impactedMessages))
 
         case .deleteSnooze(let impactedMessages):
-            return MailResourcesStrings.Localizable.snoozeDeleteConfirmAlertDescription(impactedMessages)
+            return AttributedString(MailResourcesStrings.Localizable.snoozeDeleteConfirmAlertDescription(impactedMessages))
 
         case .archiveSnooze(let impactedMessages):
-            return MailResourcesStrings.Localizable.snoozeArchiveConfirmAlertDescription(impactedMessages)
+            return AttributedString(MailResourcesStrings.Localizable.snoozeArchiveConfirmAlertDescription(impactedMessages))
 
         case .moveSnooze(let impactedMessages):
-            return MailResourcesStrings.Localizable.snoozeArchiveConfirmAlertDescription(impactedMessages)
+            return AttributedString(MailResourcesStrings.Localizable.snoozeArchiveConfirmAlertDescription(impactedMessages))
 
         case .deleteFolder(let folder):
-            return MailResourcesStrings.Localizable.deleteFolderDialogDescription(folder?.name ?? "")
+            let folderName = folder?.name ?? ""
+            var description = AttributedString(MailResourcesStrings.Localizable.deleteFolderDialogDescription(folderName))
+            if let range = description.range(of: folderName) {
+                description[range].font = MailTextStyle.bodyMedium.font
+            }
+            return description
         }
     }
 }
@@ -87,32 +93,13 @@ struct DestructiveActionAlertView: View {
             Text(destructiveAlert.title)
                 .textStyle(.bodyMedium)
 
-            if case .deleteFolder(let folder) = destructiveAlert.type {
-                let attributedDescription: AttributedString = {
-                    var description = AttributedString(destructiveAlert.description)
-                    if let folderName = folder?.name {
-                        if let range = description.range(of: folderName) {
-                            description[range].font = MailTextStyle.bodyMedium.font
-                        }
-                    }
-                    return description
-                }()
-
-                Text(attributedDescription)
-                    .multilineTextAlignment(.leading)
-                    .textStyle(.body)
-            } else {
-                Text(destructiveAlert.description)
-                    .multilineTextAlignment(.leading)
-                    .textStyle(.body)
-            }
+            Text(destructiveAlert.description)
+                .multilineTextAlignment(.leading)
+                .textStyle(.body)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm) {
                 if case .flushFolder(let frozenFolder) = destructiveAlert.type, let frozenFolder {
                     matomo.track(eventWithCategory: .threadList, name: "empty\(frozenFolder.matomoName.capitalized)Confirm")
-                }
-                if case .deleteFolder = destructiveAlert.type {
-                    matomo.track(eventWithCategory: .manageFolder, name: "deleteConfirm")
                 }
                 await destructiveAlert.completion()
             }
