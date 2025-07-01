@@ -56,9 +56,7 @@ public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
         if let accessory {
-            let uiView = UIHostingController(rootView: accessory).view
-            uiView?.backgroundColor = .clear
-            label.accessoryView = uiView
+            label.accessoryView = transformAccessoryForUIKit(accessory)
         }
 
         return label
@@ -68,6 +66,19 @@ public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
         uiLabel.text = recipient.name.isEmpty ? recipient.email : recipient.name
         uiLabel.isExternal = recipient.isExternal(mailboxManager: mailboxManager)
         uiLabel.isUserInteractionEnabled = isEnabled
+
+        if let accessory {
+            uiLabel.accessoryView = transformAccessoryForUIKit(accessory)
+        } else {
+            uiLabel.accessoryView = nil
+        }
+        uiLabel.invalidateIntrinsicContentSize()
+    }
+
+    private func transformAccessoryForUIKit<Content: View>(_ view: Content) -> UIView? {
+        let uiView = UIHostingController(rootView: view).view
+        uiView?.backgroundColor = .clear
+        return uiView
     }
 }
 
@@ -109,10 +120,10 @@ public class RecipientChipLabel: UIView, UIKeyInput {
         labelSize.width += IKPadding.recipientChip.left + IKPadding.recipientChip.right
 
         var accessoryViewSize = CGSize.zero
-        if let accessoryView {
+        if let accessoryViewIntrinsicSize = accessoryView?.intrinsicContentSize, accessoryViewIntrinsicSize != .zero {
             accessoryViewSize = CGSize(
-                width: accessoryView.intrinsicContentSize.width + spacing,
-                height: accessoryView.intrinsicContentSize.height
+                width: accessoryViewIntrinsicSize.width + spacing,
+                height: accessoryViewIntrinsicSize.height
             )
         }
 
@@ -210,15 +221,13 @@ public class RecipientChipLabel: UIView, UIKeyInput {
             accessoryViewConstraints = []
         }
 
-        if let newValue {
+        if let newValue, newValue.intrinsicContentSize != .zero {
             newValue.translatesAutoresizingMaskIntoConstraints = false
             addSubview(newValue)
 
             accessoryViewConstraints = getConstraints(forAccessory: newValue)
             NSLayoutConstraint.activate(accessoryViewConstraints)
         }
-
-        setNeedsLayout()
     }
 
     private func getConstraints(forAccessory view: UIView) -> [NSLayoutConstraint] {
@@ -230,16 +239,24 @@ public class RecipientChipLabel: UIView, UIKeyInput {
     }
 }
 
+@available(iOS 17.0, *)
 #Preview {
+    @Previewable @State var isShowingAccessory = true
+
     VStack {
         RecipientChipLabelView(recipient: PreviewHelper.sampleRecipient1) {} switchFocusHandler: {}
 
         RecipientChipLabelView(recipient: PreviewHelper.sampleRecipient1) {} switchFocusHandler: {} accessory: {
-            Image(systemName: "lock")
-                .resizable()
-                .scaledToFit()
-                .foregroundStyle(.tint)
-                .frame(width: 12, height: 12)
+            if isShowingAccessory {
+                Image(systemName: "lock")
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle(.tint)
+                    .frame(width: 12, height: 12)
+            }
+        }
+        .onTapGesture {
+            isShowingAccessory.toggle()
         }
     }
     .environmentObject(PreviewHelper.sampleMailboxManager)
