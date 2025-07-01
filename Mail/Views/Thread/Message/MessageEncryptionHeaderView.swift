@@ -60,7 +60,7 @@ struct MessageEncryptionHeaderView: View {
                 Button(MailResourcesStrings.Localizable.encryptedButtonSeeConcernedRecipients) {
                     isShowingRecipients = true
                 }
-                .tint(MailResourcesAsset.textHeaderSovereignBlueColor.swiftUIColor)
+                .tint(MailResourcesAsset.iconSovereignBlueColor.swiftUIColor)
             }
         }
         .background(MailResourcesAsset.backgroundSovereignBlueColor.swiftUIColor)
