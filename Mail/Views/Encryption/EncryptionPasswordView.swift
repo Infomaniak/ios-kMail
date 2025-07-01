@@ -22,6 +22,7 @@ import MailCoreUI
 import MailResources
 import RealmSwift
 import SwiftUI
+import SwiftUIBackports
 import WrappingHStack
 
 struct EncryptionPasswordView: View {
@@ -95,16 +96,23 @@ struct EncryptionPasswordView: View {
                         }
                     }
 
-                    Button {
-                        UIPasteboard.general.string = draft.encryptionPassword
-                        dismiss()
-                    } label: {
-                        Label {
-                            Text(MailResourcesStrings.Localizable.buttonCopy)
-                        } icon: {
-                            MailResourcesAsset.duplicate.swiftUIImage
-                                .resizable()
-                                .frame(width: 16, height: 16)
+                    Group {
+                        if #available(iOS 16.0, *) {
+                            ShareLink(item: draft.encryptionPassword) {
+                                Label {
+                                    Text(MailResourcesStrings.Localizable.buttonShare)
+                                } icon: {
+                                    MailResourcesAsset.squareArrowUp.swiftUIImage
+                                }
+                            }
+                        } else {
+                            Backport.ShareLink(item: draft.encryptionPassword) {
+                                Label {
+                                    Text(MailResourcesStrings.Localizable.buttonShare)
+                                } icon: {
+                                    MailResourcesAsset.squareArrowUp.swiftUIImage
+                                }
+                            }
                         }
                     }
                     .disabled(draft.encryptionPassword.isEmpty)
