@@ -209,6 +209,7 @@ final class InMemoryRealmAccessor: RealmAccessible {
             File.self,
             MessageUid.self,
             MessageHeaders.self,
+            BookableResource.self,
             MessageReaction.self,
             ReactionAuthor.self
         ])
