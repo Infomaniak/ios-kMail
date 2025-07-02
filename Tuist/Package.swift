@@ -41,7 +41,8 @@ let packageSettings = PackageSettings(
         "SwiftUIIntrospect": .framework,
         "VersionChecker": .framework,
         "WrappingHStack": .framework,
-        "MyKSuite": .framework
+        "MyKSuite": .framework,
+        "ElegantEmojiPicker": .framework
     ]
 )
 
