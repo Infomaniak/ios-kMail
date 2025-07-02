@@ -63,7 +63,7 @@ public struct AvatarView: View {
             if case .emptyContact = contactConfiguration {
                 IconAvatarView(type: .unknownRecipient, size: size)
             } else if case .addressBook = contactConfiguration {
-                IconAvatarView(type: .groupRecipients, size: size)
+                IconAvatarView(type: .addressBook, size: size)
             } else if case .groupContact = contactConfiguration {
                 IconAvatarView(type: .groupRecipients, size: size)
             } else if let avatarImageRequest = getAvatarImageRequest() {
