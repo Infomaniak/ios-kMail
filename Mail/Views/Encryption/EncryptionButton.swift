@@ -35,7 +35,7 @@ struct EncryptionButton: View {
         return draft.autoEncryptDisabledRecipients.count
     }
 
-    private let chipWidth: CGFloat = 14
+    private let badgeWidth: CGFloat = 16
 
     var body: some View {
         Button {
@@ -61,9 +61,9 @@ struct EncryptionButton: View {
                                 .frame(width: 2)
                         }
                     }
-                    .frame(width: chipWidth)
+                    .frame(width: badgeWidth)
                     .frame(maxHeight: .infinity, alignment: .top)
-                    .offset(x: chipWidth / 2)
+                    .offset(x: badgeWidth / 2)
             }
         }
         .task(id: "\(draft.encrypted)-\(draft.allRecipients.count)") {
