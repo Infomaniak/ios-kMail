@@ -322,13 +322,6 @@ public class Thread: Object, Decodable, Identifiable {
     }
 }
 
-struct MessageReaction: Sendable {
-    let source: String
-    let targets: [String]
-
-    let reaction: String
-}
-
 public extension Thread {
     /// Re-generate `Thread` properties given the messages it contains.
     func recomputeOrFail() throws {
