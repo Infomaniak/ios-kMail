@@ -74,11 +74,12 @@ extension DestructiveActionAlertState {
 
         case .deleteFolder(let folder):
             let folderName = folder?.name ?? ""
-            var description = AttributedString(MailResourcesStrings.Localizable.deleteFolderDialogDescription(folderName))
-            if let range = description.range(of: folderName) {
-                description[range].font = MailTextStyle.bodyMedium.font
+            var attributedDescription = AttributedString(MailResourcesStrings.Localizable
+                .deleteFolderDialogDescription(folderName))
+            if let range = attributedDescription.range(of: folderName) {
+                attributedDescription[range].font = MailTextStyle.bodyMedium.font
             }
-            return description
+            return attributedDescription
         }
     }
 }
