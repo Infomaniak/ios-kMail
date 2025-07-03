@@ -30,11 +30,11 @@ public struct IconAvatarView: View {
         var icon: Image {
             switch self {
             case .unknownRecipient:
-                MailResourcesAsset.userBold.swiftUIImage
+                MailResourcesAsset.user.swiftUIImage
             case .groupRecipients:
                 MailResourcesAsset.teamsUser.swiftUIImage
             case .addressBook:
-                MailResourcesAsset.bookUsers.swiftUIImage
+                MailResourcesAsset.bookUser.swiftUIImage
             }
         }
     }
