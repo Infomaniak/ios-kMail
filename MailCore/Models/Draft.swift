@@ -62,6 +62,7 @@ public struct DraftResponse: Codable {
 }
 
 public final class Draft: Object, Codable, ObjectKeyIdentifiable {
+    public static let reactionPlaceholder = "<div>__REACTION_PLACEMENT__<br></div>"
     private static let reactionDelay = 5
 
     @Persisted(primaryKey: true) public var localUUID = UUID().uuidString
@@ -130,6 +131,10 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
 
     public var isLoadedRemotely: Bool {
         messageUid != nil && remoteUUID.isEmpty
+    }
+
+    public var isReaction: Bool {
+        emojiReaction != nil
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -294,7 +299,6 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         replyingDraft.delay = Self.reactionDelay
         replyingDraft.action = .sendReaction
         replyingDraft.emojiReaction = reaction
-        replyingDraft.body = "<div>__REACTION_PLACEMENT__<br></div>"
 
         return replyingDraft
     }
