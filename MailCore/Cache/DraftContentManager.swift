@@ -104,7 +104,7 @@ extension DraftContentManager {
         let shouldAddSignatureText: Bool
 
         if let messageReply {
-            // New draft created either with reply or forward
+            // New draft created either with reply, forward or reaction
             async let completeDraftReplyingBody = try await loadReplyingMessageAndFormat(
                 messageReply.frozenMessage,
                 replyMode: messageReply.replyMode
@@ -114,9 +114,15 @@ extension DraftContentManager {
                 replyMode: messageReply.replyMode
             )
 
-            completeDraftBody = try await completeDraftReplyingBody
             attachments = try await replyingAttachments
-            shouldAddSignatureText = true
+
+            if incompleteDraft.isReaction {
+                completeDraftBody = "\(Draft.reactionPlaceholder)\(try await completeDraftReplyingBody)"
+                shouldAddSignatureText = false
+            } else {
+                completeDraftBody = try await completeDraftReplyingBody
+                shouldAddSignatureText = true
+            }
         } else if incompleteDraft.isLoadedRemotely {
             // Draft loaded remotely
             completeDraftBody = try await loadCompleteDraftIfNeeded(incompleteDraft: incompleteDraft)
