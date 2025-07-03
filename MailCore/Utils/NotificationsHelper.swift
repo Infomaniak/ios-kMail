@@ -26,6 +26,7 @@ import Intents
 import MailResources
 import OSLog
 import RealmSwift
+import SwiftRegex
 import SwiftSoup
 import UIKit
 import UserNotifications
@@ -284,16 +285,9 @@ public enum NotificationsHelper {
             guard let extractedBody = cleanedDocument.body() else { return message.preview }
 
             let rawText = try extractedBody.text(trimAndNormaliseWhitespace: false)
-            let rawTextWithoutNewlines = rawText.replacingOccurrences(of: "\n", with: "")
-            let regex = try NSRegularExpression(pattern: "\\s+")
-            let range = NSRange(rawTextWithoutNewlines.startIndex..., in: rawTextWithoutNewlines)
 
-            let cleanedText = regex.stringByReplacingMatches(
-                in: rawTextWithoutNewlines,
-                options: [],
-                range: range,
-                withTemplate: " "
-            ).trimmingCharacters(in: .whitespacesAndNewlines)
+            guard let regex = Regex(pattern: #"\s+"#) else { return message.preview }
+            let cleanedText = regex.replaceMatches(in: rawText, with: " ").trimmingCharacters(in: .whitespacesAndNewlines)
 
             return cleanedText
 
