@@ -43,9 +43,6 @@ struct MessageReactionsView: View {
         )
         .padding(.top, value: .small)
         .padding([.horizontal, .bottom], value: .medium)
-        .onAppear {
-            localReactions.formUnion(message.reactions.keys)
-        }
         .onChange(of: selectedEmoji) { newValue in
             guard let newValue else { return }
             didTapReaction(newValue.emoji)
@@ -73,19 +70,7 @@ struct MessageReactionsView: View {
         }
 
         Task {
-            let messageReply = MessageReply(frozenMessage: message.freezeIfNeeded(), replyMode: .reply)
-
-            let draft = Draft.reacting(with: reaction, reply: messageReply, currentMailboxEmail: mailboxManager.mailbox.email)
-            try? mailboxManager.writeTransaction { realm in
-                realm.add(draft)
-            }
-
-            let draftContentManager = DraftContentManager(
-                draftLocalUUID: draft.localUUID,
-                messageReply: messageReply,
-                mailboxManager: mailboxManager
-            )
-            _ = try? await draftContentManager.prepareCompleteDraft(incompleteDraft: draft.freezeIfNeeded())
+            await createReactingDraft(reaction)
 
             @InjectService var draftManager: DraftManager
             draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: true)
@@ -98,6 +83,22 @@ struct MessageReactionsView: View {
 
     private func hasCurrentUserRemotelyReacted(_ reaction: String) -> Bool {
         return message.reactions[reaction]??.contains { $0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) } ?? false
+    }
+
+    private func createReactingDraft(_ reaction: String) async {
+        let messageReply = MessageReply(frozenMessage: message.freezeIfNeeded(), replyMode: .reply)
+
+        let draft = Draft.reacting(with: reaction, reply: messageReply, currentMailboxEmail: mailboxManager.mailbox.email)
+        try? mailboxManager.writeTransaction { realm in
+            realm.add(draft)
+        }
+
+        let draftContentManager = DraftContentManager(
+            draftLocalUUID: draft.localUUID,
+            messageReply: messageReply,
+            mailboxManager: mailboxManager
+        )
+        _ = try? await draftContentManager.prepareCompleteDraft(incompleteDraft: draft.freezeIfNeeded())
     }
 }
 
