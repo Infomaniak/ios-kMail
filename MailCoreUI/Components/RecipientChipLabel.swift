@@ -24,9 +24,23 @@ import MailResources
 import SwiftUI
 import UIKit
 
+public extension EnvironmentValues {
+    @Entry
+    var isDraftEncrypted = false
+}
+
+public struct AccessoryRepresentation<Accessory: View> {
+    let id: String
+    let accessory: Accessory
+
+    public init(id: String, @ViewBuilder accessory: () -> Accessory) {
+        self.id = id
+        self.accessory = accessory()
+    }
+}
+
 public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
     @Environment(\.isEnabled) private var isEnabled: Bool
-    @EnvironmentObject private var mailboxManager: MailboxManager
 
     let recipient: Recipient
     var type: RecipientChipType
@@ -34,20 +48,20 @@ public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
     let removeHandler: (() -> Void)?
     let switchFocusHandler: (() -> Void)?
 
-    let accessory: Accessory?
+    let accessoryRepresentation: AccessoryRepresentation<Accessory>?
 
     public init(
         recipient: Recipient,
         type: RecipientChipType = .default,
         removeHandler: (() -> Void)? = nil,
         switchFocusHandler: (() -> Void)? = nil,
-        @ViewBuilder accessory: () -> Accessory
+        accessoryRepresentation: AccessoryRepresentation<Accessory>?
     ) {
         self.recipient = recipient
         self.type = type
         self.removeHandler = removeHandler
         self.switchFocusHandler = switchFocusHandler
-        self.accessory = accessory()
+        self.accessoryRepresentation = accessoryRepresentation
     }
 
     public func makeUIView(context: Context) -> RecipientChipLabel {
@@ -58,8 +72,8 @@ public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
         label.setContentHuggingPriority(.defaultHigh, for: .vertical)
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
-        if let accessory {
-            label.accessoryView = transformAccessoryForUIKit(accessory)
+        if let accessoryRepresentation {
+            label.accessoryView = transformAccessoryForUIKit(accessoryRepresentation.accessory)
         }
 
         return label
@@ -70,12 +84,16 @@ public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
         uiLabel.type = type
         uiLabel.isUserInteractionEnabled = isEnabled
 
-        if let accessory {
-            uiLabel.accessoryView = transformAccessoryForUIKit(accessory)
+        if let accessoryRepresentation {
+            if uiLabel.accessoryId != accessoryRepresentation.id {
+                uiLabel.accessoryId = accessoryRepresentation.id
+                uiLabel.accessoryView = transformAccessoryForUIKit(accessoryRepresentation.accessory)
+                uiLabel.invalidateIntrinsicContentSize()
+            }
         } else {
             uiLabel.accessoryView = nil
+            uiLabel.invalidateIntrinsicContentSize()
         }
-        uiLabel.invalidateIntrinsicContentSize()
     }
 
     private func transformAccessoryForUIKit<Content: View>(_ view: Content) -> UIView? {
@@ -96,7 +114,7 @@ public extension RecipientChipLabelView where Accessory == Never {
         self.type = type
         self.removeHandler = removeHandler
         self.switchFocusHandler = switchFocusHandler
-        accessory = nil
+        accessoryRepresentation = nil
     }
 }
 
@@ -159,6 +177,7 @@ public class RecipientChipLabel: UIView, UIKeyInput {
         set { label.text = newValue }
     }
 
+    var accessoryId: String?
     var accessoryView: UIView? {
         willSet {
             toggleAccessoryView(accessoryView, newValue)
@@ -167,7 +186,11 @@ public class RecipientChipLabel: UIView, UIKeyInput {
 
     var spacing: CGFloat = 4.0
 
-    var type: RecipientChipType
+    var type: RecipientChipType {
+        didSet {
+            updateColors(isFirstResponder: isFirstResponder)
+        }
+    }
 
     var removeHandler: (() -> Void)?
     var switchFocusHandler: (() -> Void)?
@@ -307,19 +330,24 @@ public class RecipientChipLabel: UIView, UIKeyInput {
     VStack {
         RecipientChipLabelView(recipient: PreviewHelper.sampleRecipient1, type: .default) {} switchFocusHandler: {}
 
-        RecipientChipLabelView(recipient: PreviewHelper.sampleRecipient1, type: .default) {} switchFocusHandler: {} accessory: {
-            if isShowingAccessory {
-                Image(systemName: "lock")
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundStyle(.tint)
-                    .frame(width: 12, height: 12)
+        RecipientChipLabelView(
+            recipient: PreviewHelper.sampleRecipient1,
+            type: .default,
+            removeHandler: {},
+            switchFocusHandler: {},
+            accessoryRepresentation: AccessoryRepresentation(id: "Preview") {
+                if isShowingAccessory {
+                    Image(systemName: "lock")
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundStyle(.tint)
+                        .frame(width: 12, height: 12)
+                }
             }
-        }
+        )
         .onTapGesture {
             isShowingAccessory.toggle()
         }
     }
-    .environmentObject(PreviewHelper.sampleMailboxManager)
     .tint(UserDefaults.shared.accentColor.primary.swiftUIColor)
 }
