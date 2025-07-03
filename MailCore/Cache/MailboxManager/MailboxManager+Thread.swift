@@ -411,6 +411,8 @@ public extension MailboxManager {
     private func createThreads(messageByUids: MessageByUidsResult, folder: Folder, writableRealm: Realm) -> Set<String> {
         var threadsToUpdate = Set<Thread>()
         for message in messageByUids.messages {
+            SentryDebug.captureIncorrectSnoozedMessageIfNecessary(message)
+
             if let existingMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: message.uid) {
                 if folder.shouldOverrideMessage {
                     upsertMessage(message, oldMessage: existingMessage, threadsToUpdate: &threadsToUpdate, using: writableRealm)

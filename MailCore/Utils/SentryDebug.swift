@@ -81,6 +81,22 @@ public enum SentryDebug {
         }
     }
 
+    public static func captureIncorrectSnoozedMessageIfNecessary(_ message: Message) {
+        let isIncorrectlySnoozed = message.snoozeState == .snoozed && (message.snoozeUuid == nil || message.snoozeEndDate == nil)
+        let isIncorrectlyUnsnoozed = message.snoozeState == .unsnoozed && message.snoozeEndDate == nil
+
+        if isIncorrectlySnoozed || isIncorrectlyUnsnoozed {
+            SentrySDK.capture(message: "Message contains malformed snoozed or unsnoozed information") { scope in
+                scope.setLevel(.warning)
+                scope.setContext(value: [
+                    "State": message.snoozeState ?? "nil",
+                    "UUID": message.snoozeUuid ?? "nil",
+                    "End Date": message.snoozeEndDate ?? "nil"
+                ], key: "Snooze Data")
+            }
+        }
+    }
+
     // MARK: - Breadcrumb
 
     public enum Category: String {
