@@ -115,12 +115,12 @@ extension DraftContentManager {
             )
 
             attachments = try await replyingAttachments
+            completeDraftBody = try await completeDraftReplyingBody
 
             if incompleteDraft.isReaction {
-                completeDraftBody = "\(Draft.reactionPlaceholder)\(try await completeDraftReplyingBody)"
+                completeDraftBody = "\(Draft.reactionPlaceholder)\(completeDraftBody)"
                 shouldAddSignatureText = false
             } else {
-                completeDraftBody = try await completeDraftReplyingBody
                 shouldAddSignatureText = true
             }
         } else if incompleteDraft.isLoadedRemotely {
