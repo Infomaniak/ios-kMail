@@ -73,10 +73,9 @@ extension DestructiveActionAlertState {
             return AttributedString(MailResourcesStrings.Localizable.snoozeArchiveConfirmAlertDescription(impactedMessages))
 
         case .deleteFolder(let folder):
-            let folderName = folder?.name ?? ""
             var attributedDescription = AttributedString(MailResourcesStrings.Localizable
-                .deleteFolderDialogDescription(folderName))
-            if let range = attributedDescription.range(of: folderName) {
+                .deleteFolderDialogDescription(folder.name))
+            if let range = attributedDescription.range(of: folder.name) {
                 attributedDescription[range].font = MailTextStyle.bodyMedium.font
             }
             return attributedDescription
