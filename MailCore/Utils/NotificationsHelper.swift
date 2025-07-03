@@ -284,7 +284,19 @@ public enum NotificationsHelper {
             guard let extractedBody = cleanedDocument.body() else { return message.preview }
 
             let rawText = try extractedBody.text(trimAndNormaliseWhitespace: false)
-            return rawText.trimmingCharacters(in: .whitespacesAndNewlines)
+            let rawTextWithoutNewlines = rawText.replacingOccurrences(of: "\n", with: "")
+            let regex = try NSRegularExpression(pattern: "\\s+")
+            let range = NSRange(rawTextWithoutNewlines.startIndex..., in: rawTextWithoutNewlines)
+
+            let cleanedText = regex.stringByReplacingMatches(
+                in: rawTextWithoutNewlines,
+                options: [],
+                range: range,
+                withTemplate: " "
+            ).trimmingCharacters(in: .whitespacesAndNewlines)
+
+            return cleanedText
+
         } catch {
             return message.preview
         }
