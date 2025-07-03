@@ -60,8 +60,13 @@ struct RecipientChip: View {
                 removeHandler?()
             }
         } label: { isSelected in
-            RecipientChipLabelView(recipient: recipient, removeHandler: removeAndFocus, switchFocusHandler: switchFocusHandler)
-                .opacity(isSelected ? 0.8 : 1)
+            RecipientChipLabelView(
+                recipient: recipient,
+                type: recipient.isExternal(mailboxManager: mailboxManager) ? .external : .default,
+                removeHandler: removeAndFocus,
+                switchFocusHandler: switchFocusHandler
+            )
+            .opacity(isSelected ? 0.8 : 1)
         }
     }
 
