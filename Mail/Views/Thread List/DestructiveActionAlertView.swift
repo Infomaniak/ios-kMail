@@ -48,25 +48,37 @@ extension DestructiveActionAlertState {
 
         case .moveSnooze:
             return MailResourcesStrings.Localizable.actionMove
+
+        case .deleteFolder:
+            return MailResourcesStrings.Localizable.deleteFolderDialogTitle
         }
     }
 
-    var description: String {
+    var description: AttributedString {
         switch type {
         case .flushFolder:
-            return MailResourcesStrings.Localizable.threadListEmptyFolderAlertDescription
+            return AttributedString(MailResourcesStrings.Localizable.threadListEmptyFolderAlertDescription)
 
         case .permanentlyDelete(let impactedMessages):
-            return MailResourcesStrings.Localizable.threadListDeletionConfirmationAlertDescription(impactedMessages)
+            return AttributedString(MailResourcesStrings.Localizable
+                .threadListDeletionConfirmationAlertDescription(impactedMessages))
 
         case .deleteSnooze(let impactedMessages):
-            return MailResourcesStrings.Localizable.snoozeDeleteConfirmAlertDescription(impactedMessages)
+            return AttributedString(MailResourcesStrings.Localizable.snoozeDeleteConfirmAlertDescription(impactedMessages))
 
         case .archiveSnooze(let impactedMessages):
-            return MailResourcesStrings.Localizable.snoozeArchiveConfirmAlertDescription(impactedMessages)
+            return AttributedString(MailResourcesStrings.Localizable.snoozeArchiveConfirmAlertDescription(impactedMessages))
 
         case .moveSnooze(let impactedMessages):
-            return MailResourcesStrings.Localizable.snoozeArchiveConfirmAlertDescription(impactedMessages)
+            return AttributedString(MailResourcesStrings.Localizable.snoozeArchiveConfirmAlertDescription(impactedMessages))
+
+        case .deleteFolder(let folder):
+            var attributedDescription = AttributedString(MailResourcesStrings.Localizable
+                .deleteFolderDialogDescription(folder.name))
+            if let range = attributedDescription.range(of: folder.name) {
+                attributedDescription[range].font = MailTextStyle.bodyMedium.font
+            }
+            return attributedDescription
         }
     }
 }
@@ -80,7 +92,9 @@ struct DestructiveActionAlertView: View {
         VStack(alignment: .leading, spacing: IKPadding.large) {
             Text(destructiveAlert.title)
                 .textStyle(.bodyMedium)
+
             Text(destructiveAlert.description)
+                .multilineTextAlignment(.leading)
                 .textStyle(.body)
 
             ModalButtonsView(primaryButtonTitle: MailResourcesStrings.Localizable.buttonConfirm) {

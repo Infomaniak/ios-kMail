@@ -24,6 +24,7 @@ import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
+import SwiftModalPresentation
 import SwiftUI
 
 extension EnvironmentValues {
@@ -130,6 +131,8 @@ struct FolderCell: View {
 }
 
 struct FolderCellContent: View {
+    @LazyInjectService var matomo: MatomoUtils
+
     private static let maximumSubFolderLevel = 2
 
     @Environment(\.folderCellType) private var cellType
@@ -137,6 +140,8 @@ struct FolderCellContent: View {
     @EnvironmentObject private var mainViewState: MainViewState
 
     @State private var currentFolder: Folder?
+
+    @ModalState private var destructiveAlert: DestructiveActionAlertState?
 
     private let frozenFolder: Folder
     private let level: Int
@@ -198,6 +203,7 @@ struct FolderCellContent: View {
         .contextMenu {
             if frozenFolder.role == nil && cellType != .move {
                 Button {
+                    matomo.track(eventWithCategory: .manageFolder, name: "rename")
                     currentFolder = frozenFolder
                 } label: {
                     Label {
@@ -207,7 +213,10 @@ struct FolderCellContent: View {
                     }
                 }
                 Button {
-                    Task {
+                    matomo.track(eventWithCategory: .manageFolder, name: "delete")
+
+                    destructiveAlert = DestructiveActionAlertState(type: .deleteFolder(frozenFolder)) {
+                        matomo.track(eventWithCategory: .manageFolder, name: "deleteConfirm")
                         await tryOrDisplayError {
                             try await mailboxManager.deleteFolder(
                                 folder: frozenFolder
@@ -229,6 +238,9 @@ struct FolderCellContent: View {
         }
         .mailCustomAlert(item: $currentFolder) { folder in
             CreateFolderView(mode: .modify(modifiedFolder: folder))
+        }
+        .mailCustomAlert(item: $destructiveAlert) { item in
+            DestructiveActionAlertView(destructiveAlert: item)
         }
     }
 
@@ -252,7 +264,6 @@ struct FolderCellContent: View {
     }
 
     private func collapseFolder() {
-        @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .menuDrawer, name: "collapseFolder", value: !frozenFolder.isExpanded)
 
         guard let liveFolder = frozenFolder.thaw() else { return }
