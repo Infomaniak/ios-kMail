@@ -28,38 +28,27 @@ public struct ReactionsListView: View {
 
     @Binding var selectedEmoji: Emoji?
 
-    let reactions: [String]
-
-    let reactionsCountForEmoji: (String) -> Int
-    let isReactionEnabled: (String) -> Bool
-
+    let reactions: [String: Set<Recipient>]
     let didTapReaction: (String) -> Void
-    let didLongPressReaction: (String) -> Void
 
     public init(
         selectedEmoji: Binding<Emoji?>,
-        reactions: [String],
-        reactionsCountForEmoji: @escaping (String) -> Int,
-        isReactionEnabled: @escaping (String) -> Bool,
-        didTapReaction: @escaping (String) -> Void,
-        didLongPressReaction: @escaping (String) -> Void
+        reactions: [String: Set<Recipient>],
+        didTapReaction: @escaping (String) -> Void
     ) {
         _selectedEmoji = selectedEmoji
         
         self.reactions = reactions
-        self.reactionsCountForEmoji = reactionsCountForEmoji
-        self.isReactionEnabled = isReactionEnabled
         self.didTapReaction = didTapReaction
-        self.didLongPressReaction = didLongPressReaction
     }
 
     public var body: some View {
         BackportedFlowLayout(verticalSpacing: IKPadding.mini, horizontalSpacing: IKPadding.mini) {
-            ForEach(reactions, id: \.self) { emoji in
+            ForEach(Array(reactions.keys), id: \.self) { emoji in
                 ReactionButton(
                     emoji: emoji,
-                    count: reactionsCountForEmoji(emoji),
-                    hasReacted: isReactionEnabled(emoji),
+                    count: reactions[emoji]?.count ?? 0,
+                    hasReacted: false,
                     didTapButton: didTapReaction,
                     didLongPressButton: didLongPressReaction
                 )
@@ -75,15 +64,19 @@ public struct ReactionsListView: View {
             .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $selectedEmoji)
         }
     }
+
+    private func didLongPressReaction(_ reaction: String) -> Void {
+
+    }
 }
 
 #Preview {
     ReactionsListView(
         selectedEmoji: .constant(nil),
-        reactions: ["😄", "😂"],
-        reactionsCountForEmoji: { _ in 0 },
-        isReactionEnabled: { _ in false },
-        didTapReaction: { _ in },
-        didLongPressReaction: { _ in }
+        reactions: [
+            "😄": [PreviewHelper.sampleRecipient1],
+            "😂": [PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2]
+        ],
+        didTapReaction: { _ in }
     )
 }
