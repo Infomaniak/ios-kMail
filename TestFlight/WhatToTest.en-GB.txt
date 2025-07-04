@@ -1,1 +1,2 @@
-- Small fixes
+- Fix disconnect crash
+- Improve notification content density

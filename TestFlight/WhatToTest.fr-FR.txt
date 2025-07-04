@@ -1,1 +1,2 @@
-- Correction de bugs mineurs
+- Correction d'un crash à la déconnexion
+- Affichage du contenu des notifications plus dense
