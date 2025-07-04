@@ -25,13 +25,16 @@ public struct IconAvatarView: View {
     public enum IconType {
         case unknownRecipient
         case groupRecipients
+        case addressBook
 
         var icon: Image {
             switch self {
             case .unknownRecipient:
-                MailResourcesAsset.userBold.swiftUIImage
+                MailResourcesAsset.user.swiftUIImage
             case .groupRecipients:
                 MailResourcesAsset.teamsUser.swiftUIImage
+            case .addressBook:
+                MailResourcesAsset.bookUser.swiftUIImage
             }
         }
     }
