@@ -67,7 +67,7 @@ struct EncryptionButton: View {
             }
         }
         .task(id: "\(draft.encrypted)-\(draft.allRecipients.count)") {
-            guard draft.encrypted else { return }
+            guard draft.encrypted, !draft.allRecipients.isEmpty else { return }
 
             isLoadingRecipientsAutoEncrypt = true
 
