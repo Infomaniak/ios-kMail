@@ -706,6 +706,39 @@
 /* loco:64243b2f0c473e027779afc4 */
 "emailWithoutSubjectTitle" = "Asunto vacío";
 
+/* loco:683e9613fc7545b414016b64 */
+"emojiPickerCategoryActivities" = "Actividades";
+
+/* loco:683e95cffc7545b414016b62 */
+"emojiPickerCategoryAnimalsAndNature" = "Animales y naturaleza";
+
+/* loco:683e96446098e5506408c7e2 */
+"emojiPickerCategoryFlags" = "Banderas";
+
+/* loco:683e95e2bc133f5a8e04f803 */
+"emojiPickerCategoryFoodAndDrink" = "Comida y bebida";
+
+/* loco:683e9623bc133f5a8e04f809 */
+"emojiPickerCategoryObjects" = "Objetos";
+
+/* loco:683e9589ea5e56d5540cb632 */
+"emojiPickerCategoryPeopleAndBody" = "Personas y cuerpos";
+
+/* loco:6840584159b65ad4a4099ff3 */
+"emojiPickerCategoryRecentlyUsed" = "Utilizado recientemente";
+
+/* loco:683e957223e8d17078053832 */
+"emojiPickerCategorySmileysAndEmotion" = "Smileys y emociones";
+
+/* loco:683e963722d760019c02cf82 */
+"emojiPickerCategorySymbols" = "Símbolos";
+
+/* loco:683e9600bc133f5a8e04f807 */
+"emojiPickerCategoryTravelAndPlaces" = "Viajes y lugares";
+
+/* loco:683ea3e0df4d9547cb0e54e2 */
+"emojiPickerResultsTitle" = "Resultados";
+
 /* loco:6348008e331e743e77176522 */
 "emptyStateFolderDescription" = "Aquí no hay nada que ver.";
 
@@ -1623,6 +1656,9 @@
 
 /* loco:651ebe4a1a15bf27e204db22 */
 "snackbarPasswordCopied" = "La contraseña ha sido copiada";
+
+/* loco:6858ff00a459db58890629f2 */
+"snackbarReactionSent" = "Reacción %@ enviada";
 
 /* loco:62ab4ae387f65e26e577dd42 */
 "snackbarReportPhishingConfirmation" = "Informado con éxito";
