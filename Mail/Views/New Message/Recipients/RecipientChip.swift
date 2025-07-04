@@ -47,16 +47,6 @@ struct RecipientChip: View {
         }
     }
 
-    private var accessoryRepresentation: AccessoryRepresentation<EncryptedChipAccessoryView>? {
-        guard isDraftEncrypted else { return nil }
-
-        let isEncrypted = recipient.isInfomaniakHosted == true
-
-        return AccessoryRepresentation(id: isEncrypted ? "lock" : "unlock") {
-            EncryptedChipAccessoryView(isEncrypted: isEncrypted)
-        }
-    }
-
     var body: some View {
         Templates.Menu {
             $0.width = nil
@@ -85,8 +75,7 @@ struct RecipientChip: View {
                 recipient: recipient,
                 type: recipientChipType,
                 removeHandler: removeAndFocus,
-                switchFocusHandler: switchFocusHandler,
-                accessoryRepresentation: accessoryRepresentation
+                switchFocusHandler: switchFocusHandler
             )
             .opacity(isSelected ? 0.8 : 1)
         }

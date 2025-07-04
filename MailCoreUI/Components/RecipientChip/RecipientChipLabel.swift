@@ -29,16 +29,6 @@ public extension EnvironmentValues {
     var isDraftEncrypted = false
 }
 
-public struct AccessoryRepresentation<Accessory: View> {
-    let id: String
-    let accessory: Accessory
-
-    public init(id: String, @ViewBuilder accessory: () -> Accessory) {
-        self.id = id
-        self.accessory = accessory()
-    }
-}
-
 public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
     @Environment(\.isEnabled) private var isEnabled: Bool
 
@@ -48,20 +38,16 @@ public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
     let removeHandler: (() -> Void)?
     let switchFocusHandler: (() -> Void)?
 
-    let accessoryRepresentation: AccessoryRepresentation<Accessory>?
-
     public init(
         recipient: Recipient,
         type: RecipientChipType = .default,
         removeHandler: (() -> Void)? = nil,
         switchFocusHandler: (() -> Void)? = nil,
-        accessoryRepresentation: AccessoryRepresentation<Accessory>?
     ) {
         self.recipient = recipient
         self.type = type
         self.removeHandler = removeHandler
         self.switchFocusHandler = switchFocusHandler
-        self.accessoryRepresentation = accessoryRepresentation
     }
 
     public func makeUIView(context: Context) -> RecipientChipLabel {
@@ -72,8 +58,8 @@ public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
         label.setContentHuggingPriority(.defaultHigh, for: .vertical)
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
-        if let accessoryRepresentation {
-            label.accessoryView = transformAccessoryForUIKit(accessoryRepresentation.accessory)
+        if type == .encrypted {
+            label.updateAccessoryViewIfNeeded(EncryptedChipAccessoryUIView(isEncrypted: recipient.isInfomaniakHosted == true))
         }
 
         return label
@@ -84,22 +70,11 @@ public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
         uiLabel.type = type
         uiLabel.isUserInteractionEnabled = isEnabled
 
-        if let accessoryRepresentation {
-            if uiLabel.accessoryId != accessoryRepresentation.id {
-                uiLabel.accessoryId = accessoryRepresentation.id
-                uiLabel.accessoryView = transformAccessoryForUIKit(accessoryRepresentation.accessory)
-                uiLabel.invalidateIntrinsicContentSize()
-            }
+        if type == .encrypted {
+            uiLabel.updateAccessoryViewIfNeeded(EncryptedChipAccessoryUIView(isEncrypted: recipient.isInfomaniakHosted == true))
         } else {
-            uiLabel.accessoryView = nil
-            uiLabel.invalidateIntrinsicContentSize()
+            uiLabel.updateAccessoryViewIfNeeded(nil)
         }
-    }
-
-    private func transformAccessoryForUIKit<Content: View>(_ view: Content) -> UIView? {
-        let uiView = UIHostingController(rootView: view).view
-        uiView?.backgroundColor = .clear
-        return uiView
     }
 }
 
@@ -114,7 +89,6 @@ public extension RecipientChipLabelView where Accessory == Never {
         self.type = type
         self.removeHandler = removeHandler
         self.switchFocusHandler = switchFocusHandler
-        accessoryRepresentation = nil
     }
 }
 
@@ -177,12 +151,7 @@ public class RecipientChipLabel: UIView, UIKeyInput {
         set { label.text = newValue }
     }
 
-    var accessoryId: String?
-    var accessoryView: UIView? {
-        willSet {
-            toggleAccessoryView(accessoryView, newValue)
-        }
-    }
+    private var accessoryView: EncryptedChipAccessoryUIView?
 
     var spacing: CGFloat = 4.0
 
@@ -201,7 +170,7 @@ public class RecipientChipLabel: UIView, UIKeyInput {
         labelSize.width += IKPadding.recipientChip.left + IKPadding.recipientChip.right
 
         var accessoryViewSize = CGSize.zero
-        if let accessoryViewIntrinsicSize = accessoryView?.intrinsicContentSize, accessoryViewIntrinsicSize != .zero {
+        if let accessoryViewIntrinsicSize = accessoryView?.frame.size, accessoryViewIntrinsicSize != .zero {
             accessoryViewSize = CGSize(
                 width: accessoryViewIntrinsicSize.width + spacing,
                 height: accessoryViewIntrinsicSize.height
@@ -246,11 +215,13 @@ public class RecipientChipLabel: UIView, UIKeyInput {
 
     override public func becomeFirstResponder() -> Bool {
         updateColors(isFirstResponder: true)
+        accessoryView?.setFocused(true)
         return super.becomeFirstResponder()
     }
 
     override public func resignFirstResponder() -> Bool {
         updateColors(isFirstResponder: false)
+        accessoryView?.setFocused(false)
         return super.resignFirstResponder()
     }
 
@@ -296,7 +267,15 @@ public class RecipientChipLabel: UIView, UIKeyInput {
         ])
     }
 
-    private func toggleAccessoryView(_ oldValue: UIView?, _ newValue: UIView?) {
+    func updateAccessoryViewIfNeeded(_ newValue: EncryptedChipAccessoryUIView?) {
+        guard accessoryView?.isEncrypted != newValue?.isEncrypted else { return }
+
+        toggleAccessoryView(accessoryView, newValue)
+        accessoryView = newValue
+        invalidateIntrinsicContentSize()
+    }
+
+    private func toggleAccessoryView(_ oldValue: EncryptedChipAccessoryUIView?, _ newValue: EncryptedChipAccessoryUIView?) {
         if let oldValue {
             willRemoveSubview(oldValue)
             oldValue.removeFromSuperview()
@@ -311,6 +290,7 @@ public class RecipientChipLabel: UIView, UIKeyInput {
 
             accessoryViewConstraints = getConstraints(forAccessory: newValue)
             NSLayoutConstraint.activate(accessoryViewConstraints)
+            newValue.layoutIfNeeded()
         }
     }
 
@@ -334,16 +314,7 @@ public class RecipientChipLabel: UIView, UIKeyInput {
             recipient: PreviewHelper.sampleRecipient1,
             type: .default,
             removeHandler: {},
-            switchFocusHandler: {},
-            accessoryRepresentation: AccessoryRepresentation(id: "Preview") {
-                if isShowingAccessory {
-                    Image(systemName: "lock")
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(.tint)
-                        .frame(width: 12, height: 12)
-                }
-            }
+            switchFocusHandler: {}
         )
         .onTapGesture {
             isShowingAccessory.toggle()
