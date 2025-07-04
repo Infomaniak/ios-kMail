@@ -85,6 +85,7 @@ struct EncryptionButton: View {
         }
         .sheet(isPresented: $isShowingEncryptPasswordPanel) {
             EncryptionPasswordView(draft: draft)
+                .environmentObject(mailboxManager) // For macOS - SwiftUI seems to have issues passing the environment (again)
         }
         .mailFloatingPanel(isPresented: $isShowingEncryptStatePanel) {
             EncryptionStateView(
