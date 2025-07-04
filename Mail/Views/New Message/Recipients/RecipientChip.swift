@@ -25,6 +25,8 @@ import SwiftUI
 
 struct RecipientChip: View {
     @Environment(\.currentUser) private var currentUser
+    @Environment(\.isDraftEncrypted) private var isDraftEncrypted: Bool
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
@@ -35,6 +37,14 @@ struct RecipientChip: View {
     @FocusState var focusedField: ComposeViewFieldType?
     var removeHandler: (() -> Void)?
     var switchFocusHandler: (() -> Void)?
+
+    private var recipientChipType: RecipientChipType {
+        if isDraftEncrypted {
+            return .encrypted
+        } else {
+            return recipient.isExternal(mailboxManager: mailboxManager) ? .external : .default
+        }
+    }
 
     var body: some View {
         Templates.Menu {
@@ -60,8 +70,13 @@ struct RecipientChip: View {
                 removeHandler?()
             }
         } label: { isSelected in
-            RecipientChipLabelView(recipient: recipient, removeHandler: removeAndFocus, switchFocusHandler: switchFocusHandler)
-                .opacity(isSelected ? 0.8 : 1)
+            RecipientChipLabelView(
+                recipient: recipient,
+                type: recipientChipType,
+                removeHandler: removeAndFocus,
+                switchFocusHandler: switchFocusHandler
+            )
+            .opacity(isSelected ? 0.8 : 1)
         }
     }
 
