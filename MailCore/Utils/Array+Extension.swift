@@ -43,6 +43,10 @@ public extension List {
     func toArray() -> [Element] {
         return Array(self)
     }
+
+    func toSet() -> Set<Element> {
+        return Set(self)
+    }
 }
 
 public extension LazyFilterSequence {

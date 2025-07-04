@@ -25,9 +25,12 @@ import RealmSwift
 import SwiftUI
 
 struct MessageReactionsView: View {
+    @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @State private var reactions = [String: Set<Recipient>]()
     @State private var localReactions = OrderedSet<String>()
+
     @State private var selectedEmoji: Emoji?
 
     let message: Message
@@ -35,38 +38,28 @@ struct MessageReactionsView: View {
     var body: some View {
         ReactionsListView(
             selectedEmoji: $selectedEmoji,
-            reactions: message.reactions.keys,
-            reactionsCountForEmoji: reactionsCount,
-            isReactionEnabled: isReactionEnabled,
-            didTapReaction: didTapReaction,
-            didLongPressReaction: didLongPressReaction
+            reactions: reactions,
+            didTapReaction: didTapReaction
         )
         .padding(.top, value: .small)
         .padding([.horizontal, .bottom], value: .medium)
+        .task(id: message.reactions) {
+            reactions = message.reactions.toDictionary()
+        }
         .onChange(of: selectedEmoji) { newValue in
             guard let newValue else { return }
-            didTapReaction(newValue.emoji)
 
+            didTapReaction(newValue.emoji)
             selectedEmoji = nil
         }
-    }
-
-    private func reactionsCount(for reaction: String) -> Int {
-        var count = message.reactions[reaction]??.count ?? 0
-        if localReactions.contains(reaction) && !hasCurrentUserRemotelyReacted(reaction) {
-            count += 1
-        }
-
-        return count
-    }
-
-    private func isReactionEnabled(_ reaction: String) -> Bool {
-        return localReactions.contains(reaction) || hasCurrentUserRemotelyReacted(reaction)
     }
 
     private func didTapReaction(_ reaction: String) {
         withAnimation {
             _ = localReactions.append(reaction)
+
+            let userRecipient = Recipient(email: currentUser.value.email, name: currentUser.value.displayName)
+            reactions[reaction, default: Set()].insert(userRecipient)
         }
 
         Task {
@@ -75,14 +68,6 @@ struct MessageReactionsView: View {
             @InjectService var draftManager: DraftManager
             draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: true)
         }
-    }
-
-    private func didLongPressReaction(_ reaction: String) {
-        // TODO: Handle in next PR
-    }
-
-    private func hasCurrentUserRemotelyReacted(_ reaction: String) -> Bool {
-        return message.reactions[reaction]??.contains { $0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) } ?? false
     }
 
     private func createReactingDraft(_ reaction: String) async {
