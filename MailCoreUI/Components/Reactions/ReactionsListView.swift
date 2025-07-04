@@ -24,6 +24,8 @@ import RealmSwift
 import SwiftUI
 
 public struct ReactionsListView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @State private var isShowingEmojiPicker = false
 
     @Binding var selectedEmoji: Emoji?
@@ -48,7 +50,7 @@ public struct ReactionsListView: View {
                 ReactionButton(
                     emoji: emoji,
                     count: reactions[emoji]?.count ?? 0,
-                    hasReacted: false,
+                    hasReacted: hasCurrentUserReacted(to: emoji),
                     didTapButton: didTapReaction,
                     didLongPressButton: didLongPressReaction
                 )
@@ -67,6 +69,12 @@ public struct ReactionsListView: View {
 
     private func didLongPressReaction(_ reaction: String) -> Void {
 
+    }
+
+    private func hasCurrentUserReacted(to reaction: String) -> Bool {
+        return reactions[reaction]?.contains { recipient in
+            recipient.isMe(currentMailboxEmail: mailboxManager.mailbox.email)
+        } ?? false
     }
 }
 
