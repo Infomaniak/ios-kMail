@@ -163,7 +163,7 @@ public final class CalendarEvent: EmbeddedObject, Codable {
     }
 
     public func getMyFrozenAttendee(currentMailboxEmail: String) -> Attendee? {
-        return attendees.first { $0.isMeOrPlusMe(currentMailboxEmail: currentMailboxEmail) }?.freezeIfNeeded()
+        return attendees.first { $0.isMe(currentMailboxEmail: currentMailboxEmail) }?.freezeIfNeeded()
     }
 
     private func formatStandardDate() -> String {

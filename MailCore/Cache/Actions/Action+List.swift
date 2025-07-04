@@ -152,7 +152,7 @@ extension Action: CaseIterable {
         let snoozedActions = snoozedActions(messages, folder: originFolder)
 
         var spamAction: Action? {
-            let selfThread = messages.flatMap(\.from).allSatisfy { $0.isMeOrPlusMe(currentMailboxEmail: userEmail) }
+            let selfThread = messages.flatMap(\.from).allSatisfy { $0.isMe(currentMailboxEmail: userEmail) }
             guard !selfThread else { return nil }
             return originFolder?.role == .spam ? .nonSpam : .reportJunk
         }
@@ -176,7 +176,7 @@ extension Action: CaseIterable {
         let showUnstar = messages.contains { $0.flagged }
 
         var spamAction: Action? {
-            let selfThread = messages.flatMap(\.from).allSatisfy { $0.isMeOrPlusMe(currentMailboxEmail: userEmail) }
+            let selfThread = messages.flatMap(\.from).allSatisfy { $0.isMe(currentMailboxEmail: userEmail) }
             guard !selfThread else { return nil }
             return originFolder?.role == .spam ? .nonSpam : .reportJunk
         }

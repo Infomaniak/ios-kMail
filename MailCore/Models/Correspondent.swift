@@ -43,7 +43,7 @@ public extension Correspondent {
         return currentAccountEmail == email
     }
 
-    func isMeOrPlusMe(currentMailboxEmail: String) -> Bool {
+    func isMe(currentMailboxEmail: String) -> Bool {
         let userEmail = currentMailboxEmail.lowercased()
         let correspondentEmail = email.lowercased()
 
