@@ -276,7 +276,7 @@ public enum NotificationsHelper {
         }
 
         guard bodyType != .textPlain else {
-            return fullBody.trimmedAndWithoutNewlines
+            return compactBody(from: fullBody) ?? message.preview
         }
 
         do {
@@ -286,13 +286,16 @@ public enum NotificationsHelper {
 
             let rawText = try extractedBody.text(trimAndNormaliseWhitespace: false)
 
-            guard let regex = Regex(pattern: #"\s+"#) else { return message.preview }
-            let cleanedText = regex.replaceMatches(in: rawText, with: " ").trimmingCharacters(in: .whitespacesAndNewlines)
-
-            return cleanedText
-
+            return compactBody(from: rawText) ?? message.preview
         } catch {
             return message.preview
         }
+    }
+
+    private static func compactBody(from body: String) -> String? {
+        guard let regex = Regex(pattern: #"\s+"#) else { return nil }
+        let cleanedText = regex.replaceMatches(in: body, with: " ").trimmedAndWithoutNewlines
+
+        return cleanedText
     }
 }
