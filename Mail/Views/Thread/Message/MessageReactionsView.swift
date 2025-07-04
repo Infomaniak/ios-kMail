@@ -25,6 +25,7 @@ import RealmSwift
 import SwiftUI
 
 struct MessageReactionsView: View {
+    @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var reactions = [String: Set<Recipient>]()
@@ -56,6 +57,9 @@ struct MessageReactionsView: View {
     private func didTapReaction(_ reaction: String) {
         withAnimation {
             _ = localReactions.append(reaction)
+
+            let userRecipient = Recipient(email: currentUser.value.email, name: currentUser.value.displayName)
+            reactions[reaction, default: Set()].insert(userRecipient)
         }
 
         Task {
