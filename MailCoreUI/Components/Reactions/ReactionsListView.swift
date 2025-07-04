@@ -57,7 +57,7 @@ public struct ReactionsListView: View {
             Button {
                 isShowingEmojiPicker = true
             } label: {
-                MailResourcesAsset.faceSlightlySmilingCirclePlusSvg.swiftUIImage
+                MailResourcesAsset.faceSlightlySmilingCirclePlus.swiftUIImage
                     .iconSize(.large)
             }
             .buttonStyle(.reaction(isEnabled: false, padding: EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)))
