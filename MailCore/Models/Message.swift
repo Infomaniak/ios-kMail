@@ -91,10 +91,10 @@ public class MessageHeaders: EmbeddedObject, Codable {
 public typealias MessageReactions = Map<String, RecipientsList?>
 
 public extension MessageReactions {
-    func toDictionary() -> [String: [Recipient]] {
-        var dictionary = [String: [Recipient]]()
+    func toDictionary() -> [String: Set<Recipient>] {
+        var dictionary = [String: Set<Recipient>]()
         for key in keys {
-            guard let recipients = self[key]??.recipients.toArray() else { continue }
+            guard let recipients = self[key]??.recipients.toSet() else { continue }
             dictionary[key] = recipients
         }
 
