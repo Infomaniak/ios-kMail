@@ -39,7 +39,7 @@ public struct ReactionsListView: View {
         didTapReaction: @escaping (String) -> Void
     ) {
         _selectedEmoji = selectedEmoji
-        
+
         self.reactions = reactions
         self.didTapReaction = didTapReaction
     }
@@ -67,9 +67,7 @@ public struct ReactionsListView: View {
         }
     }
 
-    private func didLongPressReaction(_ reaction: String) -> Void {
-
-    }
+    private func didLongPressReaction(_ reaction: String) {}
 
     private func hasCurrentUserReacted(to reaction: String) -> Bool {
         return reactions[reaction]?.contains { recipient in
