@@ -55,7 +55,7 @@ public final class CommonContact: Identifiable {
         email = correspondent.email
         id = correspondent.id.hashValue
 
-        if correspondent.isMe(currentMailboxEmail: contextMailboxManager.mailbox.email) {
+        if correspondent.isMeOrPlusMe(currentMailboxEmail: contextMailboxManager.mailbox.email) {
             fullName = MailResourcesStrings.Localizable.contactMe
             color = Color.backgroundColor(from: email.hash, with: UIConstants.avatarColors)
             if correspondent.isCurrentUser(currentAccountEmail: contextUser.email),
