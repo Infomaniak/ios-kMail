@@ -79,8 +79,13 @@ class ThreadListHeaderFolderObserver: ObservableObject {
 struct ThreadListHeader: View {
     @LazyInjectService private var matomo: MatomoUtils
 
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
+    @State private var showNoMailServersAvailableView = false
     @StateObject private var folderObserver: ThreadListHeaderFolderObserver
+
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
     let isMultipleSelectionEnabled: Bool
@@ -103,7 +108,10 @@ struct ThreadListHeader: View {
             VStack(alignment: .leading) {
                 if !networkMonitor.isConnected {
                     NoNetworkView()
+                } else if showNoMailServersAvailableView {
+                    NoMailServersAvailableView()
                 }
+
                 if isRefreshing {
                     HStack(spacing: IKPadding.mini) {
                         ProgressView()
@@ -111,12 +119,13 @@ struct ThreadListHeader: View {
                         Text(MailResourcesStrings.Localizable.threadListHeaderUpdating)
                             .textStyle(.bodySmallSecondary)
                     }
-                } else {
-                    if let lastUpdateText = folderObserver.lastUpdateText {
-                        Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
-                            .textStyle(.bodySmallSecondary)
-                    }
+                } else if let lastUpdateText = folderObserver.lastUpdateText {
+                    Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
+                        .textStyle(.bodySmallSecondary)
                 }
+            }
+            .onChange(of: isRefreshing) { _ in
+                checkMailApiAvailability()
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -138,6 +147,21 @@ struct ThreadListHeader: View {
         .padding(.bottom, value: .small)
         .padding([.leading, .trailing], value: .medium)
         .background(accentColor.navBarBackground.swiftUIColor)
+    }
+
+    private func checkMailApiAvailability() {
+        Task {
+            do {
+                if !networkMonitor.isConnected {
+                    try await mailboxManager.apiFetcher.checkAPIStatus()
+                    showNoMailServersAvailableView = false
+                }
+            } catch {
+                if networkMonitor.isConnected {
+                    showNoMailServersAvailableView = true
+                }
+            }
+        }
     }
 }
 
