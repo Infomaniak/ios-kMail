@@ -86,9 +86,7 @@ struct ComposeMessageView: View {
     @State private var initialAttachments = [Attachable]()
     @State private var isShowingSchedulePanel = false
 
-    @State private var isShowingEncryptAdPanel = false
     @State private var isShowingEncryptStatePanel = false
-    @State private var isShowingEncryptPasswordPanel = false
 
     @Weak private var scrollView: UIScrollView?
 
@@ -214,6 +212,7 @@ struct ComposeMessageView: View {
                 EditorMobileToolbarView(
                     textAttributes: textAttributes,
                     isShowingAI: $aiModel.isShowingPrompt,
+                    isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
                     draft: draft,
                     isEditorFocused: focusedField == .editor
                 )
@@ -339,21 +338,6 @@ struct ComposeMessageView: View {
         .sheet(isPresented: $aiModel.isShowingProposition) {
             AIPropositionView(aiModel: aiModel)
         }
-        .sheet(isPresented: $isShowingEncryptAdPanel) {
-            EncryptionAdView { enableEncryption() }
-        }
-        .sheet(isPresented: $isShowingEncryptPasswordPanel) {
-            EncryptionPasswordView(draft: draft)
-        }
-        .mailFloatingPanel(isPresented: $isShowingEncryptStatePanel) {
-            EncryptionStateView(
-                password: $draft.encryptionPassword,
-                autoEncryptDisableCount: draft.autoEncryptDisabledRecipients.count,
-                isShowingPasswordView: $isShowingEncryptPasswordPanel
-            ) {
-                disableEncryption()
-            }
-        }
         .environmentObject(draftContentManager)
         .matomoView(view: ["ComposeMessage"])
         .scheduleFloatingPanel(
@@ -446,33 +430,6 @@ struct ComposeMessageView: View {
             if !mainViewState.isShowingSetAppAsDefaultDiscovery {
                 mainViewState.isShowingChristmasEasterEgg = true
             }
-        }
-    }
-
-    private func didTouchEncrypt() {
-        if !draft.encrypted {
-            if UserDefaults.shared.shouldPresentEncryptAd {
-                isShowingEncryptAdPanel = true
-            } else {
-                enableEncryption()
-            }
-        } else {
-            isShowingEncryptStatePanel = true
-        }
-    }
-
-    private func enableEncryption() {
-        guard let liveDraft = draft.thaw() else { return }
-        try? liveDraft.realm?.write {
-            liveDraft.encrypted = true
-        }
-    }
-
-    private func disableEncryption() {
-        guard let liveDraft = draft.thaw() else { return }
-        try? liveDraft.realm?.write {
-            liveDraft.encrypted = false
-            liveDraft.encryptionPassword = ""
         }
     }
 
