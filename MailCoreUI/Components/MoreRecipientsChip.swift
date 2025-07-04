@@ -19,6 +19,7 @@
 import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailCore
+import MailResources
 import SwiftUI
 
 public extension EdgeInsets {
@@ -30,6 +31,8 @@ public extension EdgeInsets {
 public struct MoreRecipientsChip: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
+    @Environment(\.isDraftEncrypted) private var isDraftEncrypted
+
     let count: Int
 
     public init(count: Int) {
@@ -38,11 +41,13 @@ public struct MoreRecipientsChip: View {
 
     public var body: some View {
         Text("+\(count)")
+            .foregroundStyle(isDraftEncrypted ? MailResourcesAsset.textSovereignBlueColor.swiftUIColor : .accentColor)
             .textStyle(.bodyAccent)
             .padding(EdgeInsets(uiEdgeInsets: IKPadding.recipientChip))
             .background(
                 RoundedRectangle(cornerRadius: 50)
-                    .fill(accentColor.secondary.swiftUIColor)
+                    .fill(isDraftEncrypted ?
+                        MailResourcesAsset.backgroundSovereignBlueColor.swiftUIColor : accentColor.secondary.swiftUIColor)
             )
     }
 }
