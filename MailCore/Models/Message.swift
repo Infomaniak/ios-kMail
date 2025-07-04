@@ -90,6 +90,18 @@ public class MessageHeaders: EmbeddedObject, Codable {
 
 public typealias MessageReactions = Map<String, RecipientsList?>
 
+public extension MessageReactions {
+    func toDictionary() -> [String: [Recipient]] {
+        var dictionary = [String: [Recipient]]()
+        for key in keys {
+            guard let recipients = self[key]??.recipients.toArray() else { continue }
+            dictionary[key] = recipients
+        }
+
+        return dictionary
+    }
+}
+
 /// A Message has :
 /// - Many threads
 /// - One originalThread: parent thread
