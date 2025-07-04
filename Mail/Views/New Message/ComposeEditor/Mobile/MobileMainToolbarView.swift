@@ -27,6 +27,7 @@ struct MobileMainToolbarView: View {
     @Binding var isShowingClassicOptions: Bool
     @Binding var isShowingFormattingOptions: Bool
     @Binding var isShowingAI: Bool
+    @Binding var isShowingEncryptStatePanel: Bool
 
     let draft: Draft
     let isEditorFocused: Bool
@@ -38,6 +39,9 @@ struct MobileMainToolbarView: View {
         if featureFlagsManager.isEnabled(.aiMailComposer) {
             availableOptions.append(.ai)
         }
+        if featureFlagsManager.isEnabled(.mailComposeEncrypted) {
+            availableOptions.append(.encryption)
+        }
 
         return availableOptions
     }()
@@ -48,6 +52,8 @@ struct MobileMainToolbarView: View {
                 switch action {
                 case .addAttachment:
                     AddAttachmentMenu(draft: draft)
+                case .encryption:
+                    EncryptionButton(draft: draft, isShowingEncryptStatePanel: $isShowingEncryptStatePanel)
                 default:
                     MobileToolbarButton(toolbarAction: action, isActivated: false, customTint: action.customTint) {
                         performToolbarAction(action)
@@ -77,7 +83,7 @@ struct MobileMainToolbarView: View {
             isShowingAI = true
         case .link, .bold, .underline, .italic, .strikeThrough, .cancelFormat, .unorderedList:
             break
-        case .addAttachment, .addFile, .addPhoto, .takePhoto:
+        case .addAttachment, .addFile, .addPhoto, .takePhoto, .encryption:
             break
         }
     }
@@ -96,6 +102,7 @@ struct MobileMainToolbarView: View {
         isShowingClassicOptions: .constant(true),
         isShowingFormattingOptions: .constant(false),
         isShowingAI: .constant(false),
+        isShowingEncryptStatePanel: .constant(false),
         draft: Draft(),
         isEditorFocused: true
     )

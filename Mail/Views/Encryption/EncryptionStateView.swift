@@ -25,7 +25,7 @@ import SwiftUI
 struct EncryptionStateView: View {
     @Environment(\.dismiss) private var dismiss
 
-    @Binding var password: String
+    let password: String
     let autoEncryptDisableCount: Int
     @Binding var isShowingPasswordView: Bool
     let disableEncryption: () -> Void
@@ -97,5 +97,5 @@ struct EncryptionStateView: View {
 }
 
 #Preview {
-    EncryptionStateView(password: .constant(""), autoEncryptDisableCount: 1, isShowingPasswordView: .constant(false)) {}
+    EncryptionStateView(password: "", autoEncryptDisableCount: 1, isShowingPasswordView: .constant(false)) {}
 }

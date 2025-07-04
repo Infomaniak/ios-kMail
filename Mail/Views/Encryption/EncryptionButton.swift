@@ -18,15 +18,19 @@
 
 import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
 
 struct EncryptionButton: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @State private var isShowingEncryptAdPanel = false
+    @State private var isShowingEncryptPasswordPanel = false
+
     @State private var isLoadingRecipientsAutoEncrypt = false
 
     let draft: Draft
-    let didTap: () -> Void
+    @Binding var isShowingEncryptStatePanel: Bool
 
     private var count: Int? {
         guard draft.encrypted && draft.encryptionPassword.isEmpty else { return nil }
@@ -39,12 +43,13 @@ struct EncryptionButton: View {
 
     var body: some View {
         Button {
-            didTap()
+            didTapEncrypt()
         } label: {
             draft.encrypted ?
                 MailResourcesAsset.lockSquare.swiftUIImage : MailResourcesAsset.unlockSquare.swiftUIImage
         }
-        .foregroundColor(draft.encrypted ? Color.accentColor : MailResourcesAsset.textSecondaryColor.swiftUIColor)
+        .foregroundColor(draft.encrypted ?
+            MailResourcesAsset.sovereignBlueColor.swiftUIColor : MailResourcesAsset.textSecondaryColor.swiftUIColor)
         .overlay {
             if count != nil || isLoadingRecipientsAutoEncrypt {
                 Circle()
@@ -67,7 +72,7 @@ struct EncryptionButton: View {
             }
         }
         .task(id: "\(draft.encrypted)-\(draft.allRecipients.count)") {
-            guard draft.encrypted else { return }
+            guard draft.encrypted, !draft.allRecipients.isEmpty else { return }
 
             isLoadingRecipientsAutoEncrypt = true
 
@@ -75,9 +80,54 @@ struct EncryptionButton: View {
 
             isLoadingRecipientsAutoEncrypt = false
         }
+        .sheet(isPresented: $isShowingEncryptAdPanel) {
+            EncryptionAdView { enableEncryption() }
+        }
+        .sheet(isPresented: $isShowingEncryptPasswordPanel) {
+            EncryptionPasswordView(draft: draft)
+                .environmentObject(mailboxManager) // For macOS - SwiftUI seems to have issues passing the environment (again)
+        }
+        .mailFloatingPanel(isPresented: $isShowingEncryptStatePanel) {
+            EncryptionStateView(
+                password: draft.encryptionPassword,
+                autoEncryptDisableCount: draft.autoEncryptDisabledRecipients.count,
+                isShowingPasswordView: $isShowingEncryptPasswordPanel
+            ) {
+                disableEncryption()
+            }
+        }
+    }
+
+    private func didTapEncrypt() {
+        if !draft.encrypted {
+            if UserDefaults.shared.shouldPresentEncryptAd {
+                isShowingEncryptAdPanel = true
+            } else {
+                enableEncryption()
+            }
+        } else {
+            isShowingEncryptStatePanel = true
+        }
+    }
+
+    private func enableEncryption() {
+        guard let liveDraft = draft.thaw() else { return }
+        try? liveDraft.realm?.write {
+            liveDraft.encrypted = true
+        }
+    }
+
+    private func disableEncryption() {
+        guard let liveDraft = draft.thaw() else { return }
+        try? liveDraft.realm?.write {
+            liveDraft.encrypted = false
+            liveDraft.encryptionPassword = ""
+        }
     }
 }
 
+@available(iOS 17.0, *)
 #Preview {
-    EncryptionButton(draft: Draft()) {}
+    @Previewable @State var isShowingEncryptStatePanel = false
+    EncryptionButton(draft: Draft(), isShowingEncryptStatePanel: $isShowingEncryptStatePanel)
 }
