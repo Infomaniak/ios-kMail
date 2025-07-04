@@ -63,10 +63,7 @@ struct EncryptionPasswordView: View {
                                     recipient: recipient,
                                     type: .encrypted,
                                     removeHandler: nil,
-                                    switchFocusHandler: nil,
-                                    accessoryRepresentation: AccessoryRepresentation(id: "unlock") {
-                                        EncryptedChipAccessoryView(isEncrypted: false)
-                                    }
+                                    switchFocusHandler: nil
                                 )
                             }
                             .environmentObject(mailboxManager)
