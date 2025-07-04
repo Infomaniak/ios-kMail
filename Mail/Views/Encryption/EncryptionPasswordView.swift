@@ -38,25 +38,27 @@ struct EncryptionPasswordView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(alignment: .leading, spacing: IKPadding.huge) {
-                    VStack(alignment: .leading, spacing: IKPadding.small) {
-                        Text(MailResourcesStrings.Localizable.encryptedMessageAddPasswordInformation)
-                            .textStyle(.bodySecondary)
+                VStack {
+                    VStack(alignment: .leading, spacing: IKPadding.huge) {
+                        VStack(alignment: .leading, spacing: IKPadding.small) {
+                            Text(MailResourcesStrings.Localizable.encryptedMessageAddPasswordInformation)
+                                .textStyle(.bodySecondary)
 
-                        Button {
-                            openURL(Self.faqURL)
-                        } label: {
-                            Text(MailResourcesStrings.Localizable.moreInfo)
-                                .font(MailTextStyle.bodyMedium.font)
+                            Button {
+                                openURL(Self.faqURL)
+                            } label: {
+                                Text(MailResourcesStrings.Localizable.moreInfo)
+                                    .font(MailTextStyle.bodyMedium.font)
+                            }
                         }
-                    }
 
-                    VStack(alignment: .leading, spacing: IKPadding.small) {
-                        Text(MailResourcesStrings.Localizable.encryptedMessagePasswordConcernedUserTitle)
-                            .textStyle(.bodyMedium)
+                        VStack(alignment: .leading, spacing: IKPadding.small) {
+                            Text(MailResourcesStrings.Localizable.encryptedMessagePasswordConcernedUserTitle)
+                                .textStyle(.bodyMedium)
 
-                        WrappingHStack {
-                            ForEach(draft.autoEncryptDisabledRecipients, id: \.email) { recipient in
+                            BackportedFlowLayout(draft.autoEncryptDisabledRecipients,
+                                                 verticalSpacing: IKPadding.mini,
+                                                 horizontalSpacing: IKPadding.mini) { recipient in
                                 RecipientChipLabelView(
                                     recipient: recipient,
                                     type: .encrypted,
@@ -73,8 +75,6 @@ struct EncryptionPasswordView: View {
                 }
                 .padding(value: .medium)
             }
-            .navigationTitle(MailResourcesStrings.Localizable.encryptedPasswordProtectionTitle)
-            .navigationBarTitleDisplayMode(.inline)
             .safeAreaInset(edge: .bottom) {
                 VStack(alignment: .leading, spacing: IKPadding.small) {
                     Text(MailResourcesStrings.Localizable.encryptedMessagePasswordLabel)
@@ -135,7 +135,6 @@ struct EncryptionPasswordView: View {
                     MailResourcesAsset.textFieldColor.swiftUIColor
                         .clipShape(.rect(cornerRadius: IKRadius.large))
                 }
-                .frame(maxHeight: .infinity, alignment: .bottom)
                 .padding(value: .medium)
             }
             .toolbar {
@@ -143,7 +142,10 @@ struct EncryptionPasswordView: View {
                     CloseButton(dismissAction: dismiss)
                 }
             }
+            .navigationTitle(MailResourcesStrings.Localizable.encryptedPasswordProtectionTitle)
+            .navigationBarTitleDisplayMode(.inline)
         }
+        .navigationViewStyle(.stack)
         .tint(MailResourcesAsset.sovereignBlueColor.swiftUIColor)
         .onAppear {
             generatePassword(regenerate: false)
