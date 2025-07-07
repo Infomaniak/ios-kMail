@@ -23,6 +23,7 @@ import InfomaniakCoreCommonUI
 import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakNotifications
+import InterAppLogin
 import MailCore
 import MailCoreUI
 
@@ -75,6 +76,9 @@ class MailTargetAssembly: CommonAppAndShareTargetAssembly {
             },
             Factory(type: NotificationActionsRegistrable.self) { _, _ in
                 NotificationActionsRegistrer()
+            },
+            Factory(type: ConnectedAccountManagerable.self) { _, _ in
+                ConnectedAccountManager(currentAppKeychainIdentifier: AppIdentifierBuilder.mailKeychainIdentifier)
             }
         ]
     }

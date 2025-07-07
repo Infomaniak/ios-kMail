@@ -18,6 +18,7 @@
 
 import DesignSystem
 import InfomaniakCoreSwiftUI
+import InterAppLogin
 import MailCore
 import MailCoreUI
 import MailResources
@@ -41,17 +42,17 @@ struct OnboardingBottomButtonsView: View {
 
     var body: some View {
         VStack(spacing: IKPadding.mini) {
-            Button(MailResourcesStrings.Localizable.buttonLogin) {
-                loginHandler.login()
+            ContinueWithAccountView(isLoading: loginHandler.isLoading) {
+                Task { @MainActor in
+                    // We have to wait for closing animation before opening the login WebView modally
+                    try? await Task.sleep(nanoseconds: 500_000_000)
+                    loginHandler.login()
+                }
+            } onLoginWithAccountsPressed: { accounts in
+                loginHandler.loginWith(accounts: accounts)
+            } onCreateAccountPressed: {
+                isPresentingCreateAccount = true
             }
-            .buttonStyle(.ikBorderedProminent)
-            .ikButtonLoading(loginHandler.isLoading)
-
-            Button(MailResourcesStrings.Localizable.buttonCreateAccount) {
-                isPresentingCreateAccount.toggle()
-            }
-            .buttonStyle(.ikBorderless)
-            .disabled(loginHandler.isLoading)
         }
         .ikButtonFullWidth(true)
         .controlSize(.large)
