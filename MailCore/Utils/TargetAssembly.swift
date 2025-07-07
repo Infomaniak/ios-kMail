@@ -35,7 +35,7 @@ extension [Factory] {
 
 /// Each target should subclass `TargetAssembly` and override `getTargetServices` to provide additional, target related, services.
 open class TargetAssembly {
-    private static let apiEnvironment: ApiEnvironment = .prod
+    private static let apiEnvironment: ApiEnvironment = .preprod
     private static let realmRootPath = "mailboxes"
     private static let appGroupIdentifier = "group.com.infomaniak.mail"
 
