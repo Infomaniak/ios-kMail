@@ -54,6 +54,8 @@ func mainTargetWith(name: String, destinations: [Destination]) -> Target {
                 .external(name: "InfomaniakCore"),
                 .external(name: "InfomaniakCreateAccount"),
                 .external(name: "InfomaniakDI"),
+                .external(name: "InfomaniakDeviceCheck"),
+                .external(name: "InterAppLogin"),
                 .external(name: "InfomaniakLogin"),
                 .external(name: "InfomaniakNotifications"),
                 .external(name: "InfomaniakOnboarding"),
