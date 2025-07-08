@@ -37,8 +37,9 @@ extension [Factory] {
 open class TargetAssembly {
     private static let apiEnvironment: ApiEnvironment = .preprod
     private static let realmRootPath = "mailboxes"
-    private static let appGroupIdentifier = "group.com.infomaniak.mail"
+    private static let appGroupIdentifier = "group.\(bundleId)"
 
+    public static let bundleId = "com.infomaniak.mail"
     public static let loginConfig = InfomaniakLogin.Config(
         clientId: "E90BC22D-67A8-452C-BE93-28DA33588CA4",
         loginURL: URL(string: "https://login.\(apiEnvironment.host)/")!,

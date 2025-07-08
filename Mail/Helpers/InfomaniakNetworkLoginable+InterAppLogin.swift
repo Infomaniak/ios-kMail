@@ -39,7 +39,7 @@ extension InfomaniakNetworkLoginable {
         let attestationToken = try await InfomaniakDeviceCheck(environment: deviceCheckEnvironment)
             .generateAttestationFor(
                 targetUrl: TargetAssembly.loginConfig.loginURL.appendingPathComponent("token"),
-                bundleId: "com.infomaniak.mail",
+                bundleId: TargetAssembly.bundleId,
                 bypassValidation: deviceCheckEnvironment == .prod ? false : true
             )
 
