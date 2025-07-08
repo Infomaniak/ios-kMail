@@ -24,11 +24,17 @@ import OrderedCollections
 import RealmSwift
 import SwiftUI
 
+extension UIMessageReaction {
+    init(messageReaction: MessageReaction) {
+        self.init(reaction: messageReaction.reaction, recipients: messageReaction.recipients.toArray())
+    }
+}
+
 struct MessageReactionsView: View {
     @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var reactions = [String: Set<Recipient>]()
+    @State private var reactions = [UIMessageReaction]()
     @State private var localReactions = OrderedSet<String>()
 
     @State private var selectedEmoji: Emoji?
@@ -44,22 +50,21 @@ struct MessageReactionsView: View {
         .padding(.top, value: .small)
         .padding([.horizontal, .bottom], value: .medium)
         .task(id: message.reactions) {
-            reactions = message.reactions.toDictionary()
+            reactions = message.reactions.map(UIMessageReaction.init(messageReaction:))
         }
-        .onChange(of: selectedEmoji) { newValue in
-            guard let newValue else { return }
+        .onChange(of: selectedEmoji, perform: selectEmojiFromPicker)
+    }
 
-            didTapReaction(newValue.emoji)
-            selectedEmoji = nil
-        }
+    private func selectEmojiFromPicker(_ reaction: Emoji?) {
+        guard let reaction else { return }
+
+        didTapReaction(reaction.emoji)
+        selectedEmoji = nil
     }
 
     private func didTapReaction(_ reaction: String) {
         withAnimation {
             _ = localReactions.append(reaction)
-
-            let userRecipient = Recipient(email: currentUser.value.email, name: currentUser.value.displayName)
-            reactions[reaction, default: Set()].insert(userRecipient)
         }
 
         Task {

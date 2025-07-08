@@ -207,11 +207,4 @@ public enum PreviewHelper {
         isOrganizer: false,
         state: .no
     )
-
-    public static let reactions: MessageReactions = {
-        let reactions = MessageReactions()
-        reactions.updateValue(RecipientsList(recipients: [sampleRecipient1, sampleRecipient2]), forKey: "❤️")
-        reactions.updateValue(RecipientsList(recipients: [sampleRecipient1]), forKey: "✌️")
-        return reactions
-    }()
 }
