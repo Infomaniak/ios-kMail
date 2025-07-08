@@ -69,13 +69,13 @@ struct ReactionButton: View {
 #Preview {
     HStack {
         ReactionButton(
-            reaction: UIMessageReaction(reaction: "😄", recipients: []),
+            reaction: UIMessageReaction(reaction: "😄", recipients: [], hasUserReacted: false),
             hasReacted: false,
             didTapButton: { _ in },
             didLongPressButton: { _ in }
         )
         ReactionButton(
-            reaction: UIMessageReaction(reaction: "❤️", recipients: []),
+            reaction: UIMessageReaction(reaction: "❤️", recipients: [], hasUserReacted: false),
             hasReacted: true,
             didTapButton: { _ in },
             didLongPressButton: { _ in }

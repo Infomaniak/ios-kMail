@@ -84,7 +84,7 @@ struct MessageView: View {
                             messageUid: message.uid
                         )
 
-                        MessageReactionsView(message: message)
+                        MessageReactionsView(messageUid: message.uid, messageReactions: message.reactions)
                     }
                 }
             }

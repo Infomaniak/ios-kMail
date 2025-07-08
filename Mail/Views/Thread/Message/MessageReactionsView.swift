@@ -41,14 +41,15 @@ struct MessageReactionsView: View {
     @State private var reactions = [UIMessageReaction]()
     @State private var localReactions = OrderedSet<String>()
 
-    let message: Message
+    let messageUid: String
+    let messageReactions: RealmSwift.List<MessageReaction>
 
     var body: some View {
         ReactionsListView(reactions: reactions, addReaction: addReaction)
             .padding(.top, value: .small)
             .padding([.horizontal, .bottom], value: .medium)
-            .task(id: message.reactions) {
-                reactions = message.reactions.map { reaction in
+            .task(id: messageReactions) {
+                reactions = messageReactions.map { reaction in
                     let hasReacted = reaction.recipients.contains { $0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) }
                     return UIMessageReaction(messageReaction: reaction, hasUserReacted: hasReacted)
                 }
@@ -69,7 +70,10 @@ struct MessageReactionsView: View {
     }
 
     private func createReactingDraft(_ reaction: String) async {
-        let messageReply = MessageReply(frozenMessage: message.freezeIfNeeded(), replyMode: .reply)
+        guard let liveMessage = mailboxManager.transactionExecutor.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)
+        else { return }
+
+        let messageReply = MessageReply(frozenMessage: liveMessage.freezeIfNeeded(), replyMode: .reply)
 
         let draft = Draft.reacting(with: reaction, reply: messageReply, currentMailboxEmail: mailboxManager.mailbox.email)
         try? mailboxManager.writeTransaction { realm in
@@ -86,6 +90,6 @@ struct MessageReactionsView: View {
 }
 
 #Preview {
-    MessageReactionsView(message: PreviewHelper.sampleMessage)
+    MessageReactionsView(messageUid: "", messageReactions: List())
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }
