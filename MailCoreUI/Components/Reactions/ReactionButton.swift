@@ -39,7 +39,8 @@ extension View {
 }
 
 struct ReactionButton: View {
-    let reaction: UIMessageReaction
+    let emoji: String
+    let count: Int
     let hasReacted: Bool
 
     let didTapButton: (String) -> Void
@@ -48,8 +49,8 @@ struct ReactionButton: View {
     var body: some View {
         Button {} label: {
             HStack(spacing: IKPadding.micro) {
-                Text(verbatim: reaction.emoji)
-                Text(verbatim: "\(reaction.recipients.count)")
+                Text(verbatim: emoji)
+                Text(verbatim: "\(count)")
                     .monospacedDigit()
                     .backportNumericContentTransition()
             }
@@ -57,11 +58,11 @@ struct ReactionButton: View {
         .buttonStyle(.reaction(isEnabled: hasReacted))
         .simultaneousGesture(
             TapGesture()
-                .onEnded { _ in didTapButton(reaction.emoji) }
+                .onEnded { _ in didTapButton(emoji) }
         )
         .simultaneousGesture(
             LongPressGesture()
-                .onEnded { _ in didLongPressButton(reaction.emoji) }
+                .onEnded { _ in didLongPressButton(emoji) }
         )
     }
 }
@@ -69,13 +70,15 @@ struct ReactionButton: View {
 #Preview {
     HStack {
         ReactionButton(
-            reaction: UIMessageReaction(reaction: "😄", recipients: [], hasUserReacted: false),
+            emoji: "😄",
+            count: 2,
             hasReacted: false,
             didTapButton: { _ in },
             didLongPressButton: { _ in }
         )
         ReactionButton(
-            reaction: UIMessageReaction(reaction: "❤️", recipients: [], hasUserReacted: false),
+            emoji: "❤️",
+            count: 4,
             hasReacted: true,
             didTapButton: { _ in },
             didLongPressButton: { _ in }
