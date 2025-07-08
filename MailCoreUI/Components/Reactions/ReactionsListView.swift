@@ -95,11 +95,17 @@ public struct ReactionsListView: View {
 
 #Preview {
     ReactionsListView(
-        selectedEmoji: .constant(nil),
         reactions: [
-            UIMessageReaction(reaction: "😄", recipients: [PreviewHelper.sampleRecipient1]),
-            UIMessageReaction(reaction: "😂", recipients: [PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2])
-        ],
-        didTapReaction: { _ in }
-    )
+            UIMessageReaction(
+                reaction: "😄",
+                recipients: [PreviewHelper.sampleRecipient1],
+                hasUserReacted: false
+            ),
+            UIMessageReaction(
+                reaction: "😂",
+                recipients: [PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2],
+                hasUserReacted: false
+            )
+        ]
+    ) { _ in }
 }
