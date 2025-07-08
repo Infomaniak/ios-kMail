@@ -23,6 +23,18 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
+public struct UIMessageReaction: Identifiable {
+    public var id: String { reaction }
+
+    public let reaction: String
+    public let recipients: [Recipient]
+
+    public init(reaction: String, recipients: [Recipient]) {
+        self.reaction = reaction
+        self.recipients = recipients
+    }
+}
+
 public struct ReactionsListView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -30,14 +42,10 @@ public struct ReactionsListView: View {
 
     @Binding var selectedEmoji: Emoji?
 
-    let reactions: [String: Set<Recipient>]
+    let reactions: [UIMessageReaction]
     let didTapReaction: (String) -> Void
 
-    public init(
-        selectedEmoji: Binding<Emoji?>,
-        reactions: [String: Set<Recipient>],
-        didTapReaction: @escaping (String) -> Void
-    ) {
+    public init(selectedEmoji: Binding<Emoji?>, reactions: [UIMessageReaction], didTapReaction: @escaping (String) -> Void) {
         _selectedEmoji = selectedEmoji
 
         self.reactions = reactions
@@ -46,11 +54,11 @@ public struct ReactionsListView: View {
 
     public var body: some View {
         BackportedFlowLayout(verticalSpacing: IKPadding.mini, horizontalSpacing: IKPadding.mini) {
-            ForEach(Array(reactions.keys), id: \.self) { emoji in
+            ForEach(reactions) { reaction in
                 ReactionButton(
-                    emoji: emoji,
-                    count: reactions[emoji]?.count ?? 0,
-                    hasReacted: hasCurrentUserReacted(to: emoji),
+                    emoji: reaction.reaction,
+                    count: reaction.recipients.count,
+                    hasReacted: hasCurrentUserReacted(to: reaction.reaction),
                     didTapButton: didTapReaction,
                     didLongPressButton: didLongPressReaction
                 )
@@ -70,9 +78,7 @@ public struct ReactionsListView: View {
     private func didLongPressReaction(_ reaction: String) {}
 
     private func hasCurrentUserReacted(to reaction: String) -> Bool {
-        return reactions[reaction]?.contains { recipient in
-            recipient.isMe(currentMailboxEmail: mailboxManager.mailbox.email)
-        } ?? false
+        return false
     }
 }
 
@@ -80,8 +86,8 @@ public struct ReactionsListView: View {
     ReactionsListView(
         selectedEmoji: .constant(nil),
         reactions: [
-            "😄": [PreviewHelper.sampleRecipient1],
-            "😂": [PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2]
+            UIMessageReaction(reaction: "😄", recipients: [PreviewHelper.sampleRecipient1]),
+            UIMessageReaction(reaction: "😂", recipients: [PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2])
         ],
         didTapReaction: { _ in }
     )
