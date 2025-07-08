@@ -44,10 +44,12 @@ public struct ReactionsListView: View {
     @State private var selectedEmoji: Emoji?
 
     let reactions: [UIMessageReaction]
+    let localReactions: Set<String>
     let addReaction: (String) -> Void
 
-    public init(reactions: [UIMessageReaction], addReaction: @escaping (String) -> Void) {
+    public init(reactions: [UIMessageReaction], localReactions: Set<String>, addReaction: @escaping (String) -> Void) {
         self.reactions = reactions
+        self.localReactions = localReactions
         self.addReaction = addReaction
     }
 
@@ -56,7 +58,7 @@ public struct ReactionsListView: View {
             ForEach(reactions) { reaction in
                 ReactionButton(
                     reaction: reaction,
-                    hasReacted: hasCurrentUserReacted(to: reaction.emoji),
+                    hasReacted: hasCurrentUserReacted(to: reaction),
                     didTapButton: addReaction,
                     didLongPressButton: didLongPressReaction
                 )
@@ -88,8 +90,8 @@ public struct ReactionsListView: View {
 
     private func didLongPressReaction(_ reaction: String) {}
 
-    private func hasCurrentUserReacted(to reaction: String) -> Bool {
-        return false
+    private func hasCurrentUserReacted(to reaction: UIMessageReaction) -> Bool {
+        return localReactions.contains(reaction.emoji) || reaction.hasUserReacted
     }
 }
 
@@ -106,6 +108,7 @@ public struct ReactionsListView: View {
                 recipients: [PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2],
                 hasUserReacted: false
             )
-        ]
+        ],
+        localReactions: Set()
     ) { _ in }
 }
