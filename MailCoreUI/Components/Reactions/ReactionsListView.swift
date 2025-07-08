@@ -24,13 +24,13 @@ import RealmSwift
 import SwiftUI
 
 public struct UIMessageReaction: Identifiable {
-    public var id: String { reaction }
+    public var id: String { emoji }
 
-    public let reaction: String
+    public let emoji: String
     public let recipients: [Recipient]
 
     public init(reaction: String, recipients: [Recipient]) {
-        self.reaction = reaction
+        self.emoji = reaction
         self.recipients = recipients
     }
 }
@@ -56,9 +56,8 @@ public struct ReactionsListView: View {
         BackportedFlowLayout(verticalSpacing: IKPadding.mini, horizontalSpacing: IKPadding.mini) {
             ForEach(reactions) { reaction in
                 ReactionButton(
-                    emoji: reaction.reaction,
-                    count: reaction.recipients.count,
-                    hasReacted: hasCurrentUserReacted(to: reaction.reaction),
+                    reaction: reaction,
+                    hasReacted: hasCurrentUserReacted(to: reaction.emoji),
                     didTapButton: didTapReaction,
                     didLongPressButton: didLongPressReaction
                 )
@@ -67,8 +66,13 @@ public struct ReactionsListView: View {
             Button {
                 isShowingEmojiPicker = true
             } label: {
-                MailResourcesAsset.faceSlightlySmilingCirclePlus.swiftUIImage
-                    .iconSize(.large)
+                Label {
+                    Text(MailResourcesStrings.Localizable.contentDescriptionAddReaction)
+                } icon: {
+                    MailResourcesAsset.faceSlightlySmilingCirclePlus.swiftUIImage
+                        .iconSize(.large)
+                }
+                .labelStyle(.iconOnly)
             }
             .buttonStyle(.reaction(isEnabled: false, padding: EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)))
             .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $selectedEmoji)
