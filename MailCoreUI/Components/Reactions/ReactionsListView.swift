@@ -57,7 +57,8 @@ public struct ReactionsListView: View {
         BackportedFlowLayout(verticalSpacing: IKPadding.mini, horizontalSpacing: IKPadding.mini) {
             ForEach(reactions) { reaction in
                 ReactionButton(
-                    reaction: reaction,
+                    emoji: reaction.emoji,
+                    count: emojiCount(for: reaction),
                     hasReacted: hasCurrentUserReacted(to: reaction),
                     didTapButton: addReaction,
                     didLongPressButton: didLongPressReaction
@@ -79,6 +80,16 @@ public struct ReactionsListView: View {
             .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $selectedEmoji)
             .onChange(of: selectedEmoji, perform: selectEmojiFromPicker)
         }
+    }
+
+    private func emojiCount(for reaction: UIMessageReaction) -> Int {
+        var count = reaction.recipients.count
+        if localReactions.contains(reaction.emoji)
+                && !reaction.recipients.contains(where: { $0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) }) {
+            count += 1
+        }
+
+        return count
     }
 
     private func selectEmojiFromPicker(_ reaction: Emoji?) {
