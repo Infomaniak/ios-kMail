@@ -16,11 +16,9 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import ElegantEmojiPicker
 import InfomaniakDI
 import MailCore
 import MailCoreUI
-import OrderedCollections
 import RealmSwift
 import SwiftUI
 
@@ -39,13 +37,13 @@ struct MessageReactionsView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var reactions = [UIMessageReaction]()
-    @State private var localReactions = OrderedSet<String>()
+    @State private var localReactions = Set<String>()
 
     let messageUid: String
     let messageReactions: RealmSwift.List<MessageReaction>
 
     var body: some View {
-        ReactionsListView(reactions: reactions, addReaction: addReaction)
+        ReactionsListView(reactions: reactions, localReactions: localReactions, addReaction: addReaction)
             .padding(.top, value: .small)
             .padding([.horizontal, .bottom], value: .medium)
             .task(id: messageReactions) {
@@ -58,7 +56,7 @@ struct MessageReactionsView: View {
 
     private func addReaction(_ reaction: String) {
         withAnimation {
-            _ = localReactions.append(reaction)
+            _ = localReactions.insert(reaction)
         }
 
         Task {
