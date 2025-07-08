@@ -88,17 +88,14 @@ public class MessageHeaders: EmbeddedObject, Codable {
     }
 }
 
-public typealias MessageReactions = Map<String, RecipientsList?>
+public final class MessageReaction: EmbeddedObject {
+    @Persisted public var reaction: String
+    @Persisted public var recipients: List<Recipient>
 
-public extension MessageReactions {
-    func toDictionary() -> [String: Set<Recipient>] {
-        var dictionary = [String: Set<Recipient>]()
-        for key in keys {
-            guard let recipients = self[key]??.recipients.toSet() else { continue }
-            dictionary[key] = recipients
-        }
-
-        return dictionary
+    convenience init(reaction: String, recipients: [Recipient]) {
+        self.init()
+        self.reaction = reaction
+        self.recipients = recipients.toRealmList()
     }
 }
 
@@ -168,7 +165,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var emojiReaction: String?
     @Persisted public var emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason?
 
-    @Persisted public var reactions: MessageReactions
+    @Persisted public var reactions: List<MessageReaction>
 
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
@@ -207,17 +204,16 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         return isDraft || !fullyDownloaded
     }
 
-    public var hasReactions: Bool {
-        // swiftlint:disable:next empty_count
-        return reactions.count > 0
-    }
-
     public var isSnoozed: Bool {
         snoozeState == .snoozed && snoozeEndDate != nil && snoozeUuid != nil
     }
 
     public var isReaction: Bool {
         return emojiReaction?.isEmpty == false
+    }
+
+    public var hasReactions: Bool {
+        return !reactions.isEmpty
     }
 
     public var formattedFrom: String {

@@ -208,7 +208,8 @@ final class InMemoryRealmAccessor: RealmAccessible {
             SwissTransferAttachment.self,
             File.self,
             MessageUid.self,
-            MessageHeaders.self
+            MessageHeaders.self,
+            MessageReactions.self
         ])
 
         // It's a unit test
