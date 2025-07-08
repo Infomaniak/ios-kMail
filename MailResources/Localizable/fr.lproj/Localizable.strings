@@ -574,6 +574,9 @@
 /* loco:62ed16680ed9e562702a5ab2 */
 "contactsSearch" = "Contacts";
 
+/* loco:683ed907ce58d366270b42a3 */
+"contentDescriptionAddReaction" = "Ajouter une réaction";
+
 /* loco:628c9d1654bb544229106572 */
 "contentDescriptionButtonBack" = "Retour";
 
