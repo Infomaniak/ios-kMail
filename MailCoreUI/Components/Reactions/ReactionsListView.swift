@@ -28,10 +28,12 @@ public struct UIMessageReaction: Identifiable {
 
     public let emoji: String
     public let recipients: [Recipient]
+    public let hasUserReacted: Bool
 
-    public init(reaction: String, recipients: [Recipient]) {
+    public init(reaction: String, recipients: [Recipient], hasUserReacted: Bool) {
         self.emoji = reaction
         self.recipients = recipients
+        self.hasUserReacted = hasUserReacted
     }
 }
 
@@ -39,17 +41,14 @@ public struct ReactionsListView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingEmojiPicker = false
-
-    @Binding var selectedEmoji: Emoji?
+    @State private var selectedEmoji: Emoji?
 
     let reactions: [UIMessageReaction]
-    let didTapReaction: (String) -> Void
+    let addReaction: (String) -> Void
 
-    public init(selectedEmoji: Binding<Emoji?>, reactions: [UIMessageReaction], didTapReaction: @escaping (String) -> Void) {
-        _selectedEmoji = selectedEmoji
-
+    public init(reactions: [UIMessageReaction], addReaction: @escaping (String) -> Void) {
         self.reactions = reactions
-        self.didTapReaction = didTapReaction
+        self.addReaction = addReaction
     }
 
     public var body: some View {
@@ -58,7 +57,7 @@ public struct ReactionsListView: View {
                 ReactionButton(
                     reaction: reaction,
                     hasReacted: hasCurrentUserReacted(to: reaction.emoji),
-                    didTapButton: didTapReaction,
+                    didTapButton: addReaction,
                     didLongPressButton: didLongPressReaction
                 )
             }
@@ -76,7 +75,15 @@ public struct ReactionsListView: View {
             }
             .buttonStyle(.reaction(isEnabled: false, padding: EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)))
             .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $selectedEmoji)
+            .onChange(of: selectedEmoji, perform: selectEmojiFromPicker)
         }
+    }
+
+    private func selectEmojiFromPicker(_ reaction: Emoji?) {
+        guard let reaction else { return }
+
+        addReaction(reaction.emoji)
+        selectedEmoji = nil
     }
 
     private func didLongPressReaction(_ reaction: String) {}

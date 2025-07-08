@@ -25,8 +25,12 @@ import RealmSwift
 import SwiftUI
 
 extension UIMessageReaction {
-    init(messageReaction: MessageReaction) {
-        self.init(reaction: messageReaction.reaction, recipients: messageReaction.recipients.toArray())
+    init(messageReaction: MessageReaction, hasUserReacted: Bool) {
+        self.init(
+            reaction: messageReaction.reaction,
+            recipients: messageReaction.recipients.toArray(),
+            hasUserReacted: hasUserReacted
+        )
     }
 }
 
@@ -37,32 +41,21 @@ struct MessageReactionsView: View {
     @State private var reactions = [UIMessageReaction]()
     @State private var localReactions = OrderedSet<String>()
 
-    @State private var selectedEmoji: Emoji?
-
     let message: Message
 
     var body: some View {
-        ReactionsListView(
-            selectedEmoji: $selectedEmoji,
-            reactions: reactions,
-            didTapReaction: didTapReaction
-        )
-        .padding(.top, value: .small)
-        .padding([.horizontal, .bottom], value: .medium)
-        .task(id: message.reactions) {
-            reactions = message.reactions.map(UIMessageReaction.init(messageReaction:))
-        }
-        .onChange(of: selectedEmoji, perform: selectEmojiFromPicker)
+        ReactionsListView(reactions: reactions, addReaction: addReaction)
+            .padding(.top, value: .small)
+            .padding([.horizontal, .bottom], value: .medium)
+            .task(id: message.reactions) {
+                reactions = message.reactions.map { reaction in
+                    let hasReacted = reaction.recipients.contains { $0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) }
+                    return UIMessageReaction(messageReaction: reaction, hasUserReacted: hasReacted)
+                }
+            }
     }
 
-    private func selectEmojiFromPicker(_ reaction: Emoji?) {
-        guard let reaction else { return }
-
-        didTapReaction(reaction.emoji)
-        selectedEmoji = nil
-    }
-
-    private func didTapReaction(_ reaction: String) {
+    private func addReaction(_ reaction: String) {
         withAnimation {
             _ = localReactions.append(reaction)
         }
