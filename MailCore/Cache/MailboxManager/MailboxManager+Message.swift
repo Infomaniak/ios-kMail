@@ -41,6 +41,7 @@ public extension MailboxManager {
 
         // Update message in Realm
         try? writeTransaction { writableRealm in
+            keepCacheAttributes(for: completedMessage, keepProperties: .reactions, using: writableRealm)
             writableRealm.add(completedMessage, update: .modified)
         }
     }
