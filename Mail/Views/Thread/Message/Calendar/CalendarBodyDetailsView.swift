@@ -76,10 +76,17 @@ struct CalendarBodyDetailsView: View {
                 Label(event.formattedDateTime, asset: MailResourcesAsset.calendarBadgeClock.swiftUIImage)
 
                 if let nextOccurrence {
-                    Label(
-                        "\(MailResourcesStrings.Localizable.nextEventOccurrence) \(nextOccurrence.formatted(.calendarDateFull))",
-                        asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
-                    )
+                    if nextOccurrence < Date() {
+                        Label(
+                            "\(MailResourcesStrings.Localizable.lastEventOccurrence) \(nextOccurrence.formatted(.calendarDateFull))",
+                            asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
+                        )
+                    } else {
+                        Label(
+                            "\(MailResourcesStrings.Localizable.nextEventOccurrence) \(nextOccurrence.formatted(.calendarDateFull))",
+                            asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
+                        )
+                    }
                 }
 
                 if let bookableResource = event.bookableResource {
