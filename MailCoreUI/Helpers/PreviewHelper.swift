@@ -207,4 +207,9 @@ public enum PreviewHelper {
         isOrganizer: false,
         state: .no
     )
+
+    public static let reactionsList = [
+        MessageReaction(reaction: "🙂", recipients: sampleRecipients),
+        MessageReaction(reaction: "😊", recipients: [sampleRecipient1])
+    ].toRealmList()
 }
