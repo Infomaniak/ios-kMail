@@ -208,8 +208,9 @@ public enum PreviewHelper {
         state: .no
     )
 
+
     public static let reactionsList = [
-        MessageReaction(reaction: "🙂", recipients: sampleRecipients),
-        MessageReaction(reaction: "😊", recipients: [sampleRecipient1])
-    ].toRealmList()
+        UIMessageReaction(reaction: "🙂", recipients: sampleRecipients, hasUserReacted: true),
+        UIMessageReaction(reaction: "😊", recipients: [sampleRecipient1], hasUserReacted: false)
+    ]
 }
