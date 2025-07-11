@@ -55,15 +55,15 @@ struct MessageReactionsView: View {
     }
 
     private func addReaction(_ reaction: String) {
-        withAnimation {
-            _ = localReactions.insert(reaction)
-        }
+        _ = localReactions.insert(reaction)
 
         Task {
             await createReactingDraft(reaction)
 
             @InjectService var draftManager: DraftManager
             draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: true)
+
+            // TODO: If it fails, remove from localReactions
         }
     }
 
@@ -88,6 +88,6 @@ struct MessageReactionsView: View {
 }
 
 #Preview {
-    MessageReactionsView(messageUid: "", messageReactions: List())
+    MessageReactionsView(messageUid: "", messageReactions: PreviewHelper.reactionsList)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }

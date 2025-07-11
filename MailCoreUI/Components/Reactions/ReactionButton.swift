@@ -53,6 +53,7 @@ struct ReactionButton: View {
                 Text(verbatim: "\(count)")
                     .monospacedDigit()
                     .backportNumericContentTransition()
+                    .animation(.default, value: count)
             }
         }
         .buttonStyle(.reaction(isEnabled: hasReacted))
