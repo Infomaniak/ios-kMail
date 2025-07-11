@@ -92,7 +92,7 @@ public final class MessageReaction: EmbeddedObject {
     @Persisted public var reaction: String
     @Persisted public var recipients: List<Recipient>
 
-    convenience init(reaction: String, recipients: [Recipient]) {
+    public convenience init(reaction: String, recipients: [Recipient]) {
         self.init()
         self.reaction = reaction
         self.recipients = recipients.toRealmList()
