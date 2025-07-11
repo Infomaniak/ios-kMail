@@ -84,8 +84,7 @@ public struct ReactionsListView: View {
 
     private func emojiCount(for reaction: UIMessageReaction) -> Int {
         var count = reaction.recipients.count
-        if localReactions.contains(reaction.emoji)
-                && !reaction.recipients.contains(where: { $0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) }) {
+        if localReactions.contains(reaction.emoji) && !reaction.hasUserReacted {
             count += 1
         }
 
