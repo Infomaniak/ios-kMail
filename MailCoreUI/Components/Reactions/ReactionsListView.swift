@@ -40,6 +40,7 @@ public struct UIMessageReaction: Identifiable {
 public struct ReactionsListView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @State private var isShowingReactionsBottomSheet = false
     @State private var isShowingEmojiPicker = false
     @State private var selectedEmoji: Emoji?
 
@@ -80,6 +81,9 @@ public struct ReactionsListView: View {
             .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $selectedEmoji)
             .onChange(of: selectedEmoji, perform: selectEmojiFromPicker)
         }
+        .sheet(isPresented: $isShowingReactionsBottomSheet) {
+            ReactionsDetailsView(reactions: reactions)
+        }
     }
 
     private func emojiCount(for reaction: UIMessageReaction) -> Int {
@@ -98,7 +102,9 @@ public struct ReactionsListView: View {
         selectedEmoji = nil
     }
 
-    private func didLongPressReaction(_ reaction: String) {}
+    private func didLongPressReaction(_ reaction: String) {
+        isShowingReactionsBottomSheet = true
+    }
 
     private func hasCurrentUserReacted(to reaction: UIMessageReaction) -> Bool {
         return localReactions.contains(reaction.emoji) || reaction.hasUserReacted
@@ -107,18 +113,7 @@ public struct ReactionsListView: View {
 
 #Preview {
     ReactionsListView(
-        reactions: [
-            UIMessageReaction(
-                reaction: "😄",
-                recipients: [PreviewHelper.sampleRecipient1],
-                hasUserReacted: false
-            ),
-            UIMessageReaction(
-                reaction: "😂",
-                recipients: [PreviewHelper.sampleRecipient1, PreviewHelper.sampleRecipient2],
-                hasUserReacted: false
-            )
-        ],
+        reactions: PreviewHelper.reactionsList,
         localReactions: Set()
     ) { _ in }
 }
