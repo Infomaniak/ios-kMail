@@ -19,7 +19,7 @@
 import SwiftUI
 
 extension ReactionsDetailsView {
-    enum SelectionType {
+    enum SelectionType: Hashable {
         case all
         case reaction(UIMessageReaction)
     }
@@ -41,10 +41,12 @@ struct ReactionsDetailsView: View {
                 }
             }
 
-            TabView {
+            TabView(selection: $selectedReaction) {
                 ReactionsList(reactions: reactions)
+                    .tag(SelectionType.all)
                 ForEach(reactions) { reaction in
                     ReactionsList(reaction: reaction)
+                        .tag(SelectionType.reaction(reaction))
                 }
             }
             .tabViewStyle(.page)
