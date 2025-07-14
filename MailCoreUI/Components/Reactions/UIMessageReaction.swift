@@ -1,4 +1,3 @@
-//
 /*
  Infomaniak Mail - iOS App
  Copyright (C) 2025 Infomaniak Network SA
@@ -18,3 +17,34 @@
  */
 
 import Foundation
+import MailCore
+
+public struct UIMessageReaction: Identifiable, Equatable {
+    public var id: String { emoji }
+
+    public let emoji: String
+    public let recipients: [Recipient]
+    public let hasUserReacted: Bool
+
+    public init(reaction: String, recipients: [Recipient], hasUserReacted: Bool) {
+        emoji = reaction
+        self.recipients = recipients
+        self.hasUserReacted = hasUserReacted
+    }
+}
+
+// MARK: - FormatStyle
+
+public extension UIMessageReaction {
+    struct ReactionFormatStyle: FormatStyle {
+        public func format(_ value: UIMessageReaction) -> String {
+            return "\(value.emoji) \(value.recipients.count)"
+        }
+    }
+}
+
+public extension FormatStyle where Self == UIMessageReaction.ReactionFormatStyle {
+    static var reaction: Self {
+        UIMessageReaction.ReactionFormatStyle()
+    }
+}

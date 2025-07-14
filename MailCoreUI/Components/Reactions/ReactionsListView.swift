@@ -23,20 +23,6 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
-public struct UIMessageReaction: Identifiable {
-    public var id: String { emoji }
-
-    public let emoji: String
-    public let recipients: [Recipient]
-    public let hasUserReacted: Bool
-
-    public init(reaction: String, recipients: [Recipient], hasUserReacted: Bool) {
-        self.emoji = reaction
-        self.recipients = recipients
-        self.hasUserReacted = hasUserReacted
-    }
-}
-
 public struct ReactionsListView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -113,7 +99,7 @@ public struct ReactionsListView: View {
 
 #Preview {
     ReactionsListView(
-        reactions: PreviewHelper.reactionsList,
+        reactions: PreviewHelper.uiReactions,
         localReactions: Set()
     ) { _ in }
 }

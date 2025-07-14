@@ -18,14 +18,45 @@
 
 import SwiftUI
 
+extension ReactionsDetailsView {
+    enum SelectionType {
+        case all
+        case reaction(UIMessageReaction)
+    }
+}
+
 struct ReactionsDetailsView: View {
     let reactions: [UIMessageReaction]
+    var initialSelection: SelectionType?
+
+    @State private var selectedReaction = SelectionType.all
 
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            ScrollView(.horizontal) {
+                HStack {
+                    ForEach(reactions) { reaction in
+                        Text(reaction, format: .reaction)
+                    }
+                }
+            }
+
+            TabView {
+                ReactionsList(reactions: reactions)
+                ForEach(reactions) { reaction in
+                    ReactionsList(reaction: reaction)
+                }
+            }
+            .tabViewStyle(.page)
+        }
+        .onAppear {
+            if let initialSelection {
+                selectedReaction = initialSelection
+            }
+        }
     }
 }
 
 #Preview {
-    ReactionsDetailsView(reactions: PreviewHelper.reactionsList)
+    ReactionsDetailsView(reactions: PreviewHelper.uiReactions)
 }
