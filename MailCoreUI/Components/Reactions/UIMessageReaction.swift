@@ -19,7 +19,7 @@
 import Foundation
 import MailCore
 
-public struct UIMessageReaction: Identifiable, Equatable {
+public struct UIMessageReaction: Identifiable, Equatable, Hashable {
     public var id: String { emoji }
 
     public let emoji: String
