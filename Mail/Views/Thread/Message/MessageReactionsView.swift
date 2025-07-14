@@ -88,6 +88,6 @@ struct MessageReactionsView: View {
 }
 
 #Preview {
-    MessageReactionsView(messageUid: "", messageReactions: PreviewHelper.reactionsList)
+    MessageReactionsView(messageUid: "", messageReactions: PreviewHelper.reactions)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }
