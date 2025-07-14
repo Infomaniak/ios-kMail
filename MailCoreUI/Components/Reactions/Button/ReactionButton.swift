@@ -48,7 +48,7 @@ struct ReactionButton: View {
 
     var body: some View {
         Button {} label: {
-            HStack(spacing: IKPadding.micro) {
+            HStack(spacing: 2) {
                 Text(verbatim: emoji)
                 Text(verbatim: "\(count)")
                     .monospacedDigit()
