@@ -63,7 +63,7 @@ struct AddAttachmentMenu: View {
                     .iconSize(MobileToolbarButtonStyle.iconSize)
             }
         }
-        .buttonStyle(MobileToolbarButtonStyle(isActivated: false))
+        .buttonStyle(.mobileToolbar(isActivated: false))
         .onChange(of: selectedImage) { newImage in
             guard let image = newImage,
                   let data = image.jpegData(compressionQuality: 0.5) else {
