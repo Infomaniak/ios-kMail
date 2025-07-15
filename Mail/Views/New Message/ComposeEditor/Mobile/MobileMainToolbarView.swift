@@ -70,6 +70,7 @@ struct MobileMainToolbarView: View {
                 AddAttachmentMenu(draft: draft)
             case .encryption:
                 EncryptionButton(isShowingEncryptStatePanel: $isShowingEncryptStatePanel, draft: draft)
+                    .buttonStyle(.mobileToolbar(isActivated: false, customTint: nil))
             default:
                 MobileToolbarButton(toolbarAction: action, isActivated: false, customTint: action.customTint) {
                     performToolbarAction(action)
