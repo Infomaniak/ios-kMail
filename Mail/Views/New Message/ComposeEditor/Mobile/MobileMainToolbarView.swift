@@ -56,21 +56,26 @@ struct MobileMainToolbarView: View {
 
     var body: some View {
         HStack(spacing: IKPadding.mini) {
-            forEachActions(actions: leadingActions)
+            forEachActions(leadingActions)
             Spacer()
-            forEachActions(actions: trailingActions)
+            forEachActions(trailingActions)
         }
         .padding(.horizontal, value: .medium)
     }
 
-    private func forEachActions(actions: [EditorToolbarAction]) -> some View {
+    private func forEachActions(_ actions: [EditorToolbarAction]) -> some View {
         ForEach(actions) { action in
             switch action {
             case .addAttachment:
                 AddAttachmentMenu(draft: draft)
             case .encryption:
                 EncryptionButton(isShowingEncryptStatePanel: $isShowingEncryptStatePanel, draft: draft)
-                    .buttonStyle(.mobileToolbar(isActivated: false, customTint: nil))
+                    .buttonStyle(
+                        .mobileToolbar(
+                            isActivated: false,
+                            customTint: draft.encrypted ? EncryptionButton.encryptionEnabledForeground : nil
+                        )
+                    )
             default:
                 MobileToolbarButton(toolbarAction: action, isActivated: false, customTint: action.customTint) {
                     performToolbarAction(action)
