@@ -111,6 +111,9 @@ extension ContactManager {
                     if let contactGroupIds = contact.groupIds {
                         remoteContactsById[id]?.groupIds?.formUnion(contactGroupIds)
                     }
+                    if let addressbookIds = contact.addressbookId {
+                        remoteContactsById[id]?.addressbookId?.formUnion(addressbookIds)
+                    }
                 } else {
                     remoteContactsById[id] = contact
                 }

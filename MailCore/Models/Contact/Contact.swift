@@ -25,7 +25,7 @@ public struct InfomaniakContact: Codable {
     public var emails: [String]
     public var name: String?
     public var other: Bool
-    public var addressbookId: Int?
+    public var addressbookId: Set<Int>?
     public var avatar: String?
     public var groupIds: Set<Int>?
     public var contactedTimes: Int?
@@ -52,7 +52,9 @@ public struct InfomaniakContact: Codable {
         emails = try values.decode([String].self, forKey: .emails)
         name = try values.decode(String.self, forKey: .name)
         other = try values.decode(Bool.self, forKey: .other)
-        addressbookId = try values.decodeIfPresent(Int.self, forKey: .addressbookId)
+        if let addressbookId = try values.decodeIfPresent(Int.self, forKey: .addressbookId) {
+            self.addressbookId = [addressbookId]
+        }
         avatar = try values.decodeIfPresent(String.self, forKey: .avatar)
         if let groupIds = try values.decodeIfPresent(List<Int>.self, forKey: .groupIds) {
             self.groupIds = Set(groupIds)
