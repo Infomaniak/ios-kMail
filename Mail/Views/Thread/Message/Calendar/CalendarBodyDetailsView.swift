@@ -75,10 +75,10 @@ struct CalendarBodyDetailsView: View {
             Group {
                 Label(event.formattedDateTime, asset: MailResourcesAsset.calendarBadgeClock.swiftUIImage)
 
-                let calendar = Calendar.current
-                if let nextOccurrence, let currentDay = calendar.dateComponents([.day], from: Date()).day,
-                   let nextOccurrenceDay = calendar.dateComponents([.day], from: nextOccurrence).day {
-                    switch nextOccurrenceDay - currentDay {
+                if let nextOccurrence {
+                    let startOfCurrentDate = Date().startOfDay
+                    let startOfNextDate = nextOccurrence.startOfDay
+                    switch Calendar.current.dateComponents([.day], from: startOfCurrentDate, to: startOfNextDate).day {
                     case 0:
                         if nextOccurrence < Date() {
                             Label(
