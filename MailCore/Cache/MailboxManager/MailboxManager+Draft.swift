@@ -239,35 +239,4 @@ public extension MailboxManager {
             liveDraft.bcc = updatedBCC
         }
     }
-
-    func updateRecipientsAutoEncrypt(message: Message) {
-        Task {
-            let recipients = message.to
-            recipients.append(objectsIn: message.cc)
-            recipients.append(objectsIn: message.bcc)
-
-            let result = try await apiFetcher.mailHosted(for: recipients.map(\.email))
-
-            try writeTransaction { realm in
-                guard let liveMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else { return }
-                let updatedTo = liveMessage.to.detached()
-                for recipient in updatedTo {
-                    recipient.isInfomaniakHosted = result.first { $0.email == recipient.email }?.isInfomaniakHosted
-                }
-                liveMessage.to = updatedTo
-
-                let updatedCC = liveMessage.cc.detached()
-                for recipient in updatedCC {
-                    recipient.isInfomaniakHosted = result.first { $0.email == recipient.email }?.isInfomaniakHosted
-                }
-                liveMessage.cc = updatedCC
-
-                let updatedBCC = liveMessage.bcc.detached()
-                for recipient in updatedBCC {
-                    recipient.isInfomaniakHosted = result.first { $0.email == recipient.email }?.isInfomaniakHosted
-                }
-                liveMessage.bcc = updatedBCC
-            }
-        }
-    }
 }
