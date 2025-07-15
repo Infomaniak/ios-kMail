@@ -18,15 +18,22 @@
 
 import MailCore
 import MailResources
+import RealmSwift
 import SwiftUI
 
 struct EncryptionButton: View {
+    static let encryptionEnabledForeground = MailResourcesAsset.sovereignBlueColor.swiftUIColor
+
     @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @State private var isShowingEncryptAdPanel = false
+    @State private var isShowingEncryptPasswordPanel = false
 
     @State private var isLoadingRecipientsAutoEncrypt = false
 
+    @Binding var isShowingEncryptStatePanel: Bool
+
     let draft: Draft
-    let didTap: () -> Void
 
     private var count: Int? {
         guard draft.encrypted && draft.encryptionPassword.isEmpty else { return nil }
@@ -38,36 +45,40 @@ struct EncryptionButton: View {
     private let badgeWidth: CGFloat = 16
 
     var body: some View {
-        Button {
-            didTap()
-        } label: {
-            draft.encrypted ?
-                MailResourcesAsset.lockSquare.swiftUIImage : MailResourcesAsset.unlockSquare.swiftUIImage
-        }
-        .foregroundColor(draft.encrypted ? Color.accentColor : MailResourcesAsset.textSecondaryColor.swiftUIColor)
-        .overlay {
-            if count != nil || isLoadingRecipientsAutoEncrypt {
-                Circle()
-                    .fill(MailResourcesAsset.orangeColor.swiftUIColor)
-                    .overlay {
-                        if let count {
-                            Text(count, format: .cappedCount(maximum: 9, placement: .before))
-                                .font(.system(size: 8))
-                                .foregroundStyle(MailResourcesAsset.backgroundTertiaryColor.swiftUIColor)
-                                .animation(.default, value: count)
-                        } else if isLoadingRecipientsAutoEncrypt {
-                            Circle()
-                                .fill(Color.white)
-                                .frame(width: 2)
+        Button(action: didTapEncrypt) {
+            Label {
+                Text(MailResourcesStrings.Localizable.encryptedStatePanelTitle)
+            } icon: {
+                draft.encrypted ?
+                    MailResourcesAsset.lockSquare.swiftUIImage : MailResourcesAsset.unlockSquare.swiftUIImage
+            }
+            .labelStyle(.iconOnly)
+            .overlay {
+                if count != nil || isLoadingRecipientsAutoEncrypt {
+                    Circle()
+                        .fill(MailResourcesAsset.orangeColor.swiftUIColor)
+                        .overlay {
+                            if let count {
+                                Text(count, format: .cappedCount(maximum: 9, placement: .before))
+                                    .monospacedDigit()
+                                    .font(.system(size: 8))
+                                    .foregroundStyle(MailResourcesAsset.backgroundTertiaryColor.swiftUIColor)
+                                    .animation(.default, value: count)
+                            } else if isLoadingRecipientsAutoEncrypt {
+                                Circle()
+                                    .fill(.white)
+                                    .frame(width: 2)
+                            }
                         }
-                    }
-                    .frame(width: badgeWidth)
-                    .frame(maxHeight: .infinity, alignment: .top)
-                    .offset(x: badgeWidth / 2)
+                        .frame(width: badgeWidth)
+                        .frame(maxHeight: .infinity, alignment: .top)
+                        .offset(x: badgeWidth / 2)
+                }
             }
         }
+        .foregroundColor(draft.encrypted ? Self.encryptionEnabledForeground : MailResourcesAsset.textSecondaryColor.swiftUIColor)
         .task(id: "\(draft.encrypted)-\(draft.allRecipients.count)") {
-            guard draft.encrypted else { return }
+            guard draft.encrypted, !draft.allRecipients.isEmpty else { return }
 
             isLoadingRecipientsAutoEncrypt = true
 
@@ -75,9 +86,54 @@ struct EncryptionButton: View {
 
             isLoadingRecipientsAutoEncrypt = false
         }
+        .sheet(isPresented: $isShowingEncryptAdPanel) {
+            EncryptionAdView { enableEncryption() }
+        }
+        .sheet(isPresented: $isShowingEncryptPasswordPanel) {
+            EncryptionPasswordView(draft: draft)
+                .environmentObject(mailboxManager) // For macOS - SwiftUI seems to have issues passing the environment (again)
+        }
+        .mailFloatingPanel(isPresented: $isShowingEncryptStatePanel) {
+            EncryptionStateView(
+                password: draft.encryptionPassword,
+                autoEncryptDisableCount: draft.autoEncryptDisabledRecipients.count,
+                isShowingPasswordView: $isShowingEncryptPasswordPanel
+            ) {
+                disableEncryption()
+            }
+        }
+    }
+
+    private func didTapEncrypt() {
+        if !draft.encrypted {
+            if UserDefaults.shared.shouldPresentEncryptAd {
+                isShowingEncryptAdPanel = true
+            } else {
+                enableEncryption()
+            }
+        } else {
+            isShowingEncryptStatePanel = true
+        }
+    }
+
+    private func enableEncryption() {
+        guard let liveDraft = draft.thaw() else { return }
+        try? liveDraft.realm?.write {
+            liveDraft.encrypted = true
+        }
+    }
+
+    private func disableEncryption() {
+        guard let liveDraft = draft.thaw() else { return }
+        try? liveDraft.realm?.write {
+            liveDraft.encrypted = false
+            liveDraft.encryptionPassword = ""
+        }
     }
 }
 
+@available(iOS 17.0, *)
 #Preview {
-    EncryptionButton(draft: Draft()) {}
+    @Previewable @State var isShowingEncryptStatePanel = false
+    EncryptionButton(isShowingEncryptStatePanel: $isShowingEncryptStatePanel, draft: Draft())
 }
