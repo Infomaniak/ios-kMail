@@ -2,9 +2,9 @@
  * Loco ios export: Xcode Strings (legacy)
  * Project: kMail
  * Locale: es, Spanish
- * Tagged: ios, !ios-info-plist, !ios-stringsdict
+ * Tagged: ios
  * Exported by: Baptiste Griva
- * Exported at: Thu, 10 Jul 2025 08:54:20 +0200
+ * Exported at: Mon, 14 Jul 2025 15:34:34 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -944,7 +944,10 @@
 "inboxFolder" = "Bandeja de entrada";
 
 /* loco:686f61f2208a37e573055822 */
-"lastEventOccurrence" = "Evento recurrente, última aparición el";
+"lastEventOccurrence" = "Evento recurrente, última ocurrencia el";
+
+/* loco:687503336839bcc4f60e4612 */
+"lastNearEventOccurrence" = "Evento recurrente, última ocurrencia";
 
 /* loco:672398789bd6d8d56802d212 */
 "lastSelectedSchedule" = "Último horario seleccionado";
@@ -1085,10 +1088,13 @@
 "newMessagePlaceholderTitle" = "Escriba su mensaje";
 
 /* loco:67c6c5212e72fc8285013f82 */
-"nextEventOccurrence" = "Evento recurrente, próxima aparición el";
+"nextEventOccurrence" = "Evento recurrente, próxima ocurrencia el";
 
 /* loco:67238d29fe561f9d0a0f5732 */
 "nextMonday" = "El lunes próximo";
+
+/* loco:68750361d21ac07cbe018c02 */
+"nextNearEventOccurrence" = "Evento recurrente, próxima ocurrencia";
 
 /* loco:62fb875a6743ac5a237b07e3 */
 "noBodyTitle" = "Este mensaje está vacío.";
@@ -1749,6 +1755,9 @@
 
 /* loco:67238cec47b13a82520c0245 */
 "tomorrowMorning" = "Mañana por la mañana";
+
+/* loco:687507257e48e5ee2f0414e5 */
+"tomorrowString" = "Mañana";
 
 /* loco:641db88f88b1f63cb05aad52 */
 "tooManyRecipients" = "No puede añadir esta dirección porque ha alcanzado el límite de destinatarios";
