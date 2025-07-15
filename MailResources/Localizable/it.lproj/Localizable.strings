@@ -1064,7 +1064,10 @@
 "kSuiteProQuotasAlertFullTitle" = "Lo spazio di archiviazione di Mail è pieno";
 
 /* loco:686f61f2208a37e573055822 */
-"lastEventOccurrence" = "Evento ricorrente, ultima ricorrenza il";
+"lastEventOccurrence" = "Evento ricorrente, ultima occorrenza il";
+
+/* loco:687503336839bcc4f60e4612 */
+"lastNearEventOccurrence" = "Evento ricorrente, ultima occorrenza";
 
 /* loco:672398789bd6d8d56802d212 */
 "lastSelectedSchedule" = "Ultimo programma selezionato";
@@ -1194,6 +1197,9 @@
 
 /* loco:67238d29fe561f9d0a0f5732 */
 "nextMonday" = "Lunedì prossimo";
+
+/* loco:68750361d21ac07cbe018c02 */
+"nextNearEventOccurrence" = "Evento ricorrente, prossima occorrenza";
 
 /* loco:62fb875a6743ac5a237b07e3 */
 "noBodyTitle" = "Questo messaggio è vuoto.";
@@ -1836,6 +1842,9 @@
 
 /* loco:67238cec47b13a82520c0245 */
 "tomorrowMorning" = "Domani mattina";
+
+/* loco:687507257e48e5ee2f0414e5 */
+"tomorrowString" = "Domani";
 
 /* loco:641db88f88b1f63cb05aad52 */
 "tooManyRecipients" = "Non è possibile aggiungere questo indirizzo perché è stato raggiunto il limite di destinatari";
