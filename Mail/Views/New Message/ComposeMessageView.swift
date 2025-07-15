@@ -182,7 +182,7 @@ struct ComposeMessageView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 if platformDetector.isMac && featureFlagsManager.isEnabled(.mailComposeEncrypted) {
-                    EncryptionButton(draft: draft, isShowingEncryptStatePanel: $isShowingEncryptStatePanel)
+                    EncryptionButton(isShowingEncryptStatePanel: $isShowingEncryptStatePanel, draft: draft)
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {

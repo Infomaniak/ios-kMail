@@ -22,6 +22,8 @@ import RealmSwift
 import SwiftUI
 
 struct EncryptionButton: View {
+    static let encryptionEnabledForeground = MailResourcesAsset.sovereignBlueColor.swiftUIColor
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var isShowingEncryptAdPanel = false
@@ -29,8 +31,9 @@ struct EncryptionButton: View {
 
     @State private var isLoadingRecipientsAutoEncrypt = false
 
-    let draft: Draft
     @Binding var isShowingEncryptStatePanel: Bool
+
+    let draft: Draft
 
     private var count: Int? {
         guard draft.encrypted && draft.encryptionPassword.isEmpty else { return nil }
@@ -42,35 +45,38 @@ struct EncryptionButton: View {
     private let badgeWidth: CGFloat = 16
 
     var body: some View {
-        Button {
-            didTapEncrypt()
-        } label: {
-            draft.encrypted ?
-                MailResourcesAsset.lockSquare.swiftUIImage : MailResourcesAsset.unlockSquare.swiftUIImage
-        }
-        .foregroundColor(draft.encrypted ?
-            MailResourcesAsset.sovereignBlueColor.swiftUIColor : MailResourcesAsset.textSecondaryColor.swiftUIColor)
-        .overlay {
-            if count != nil || isLoadingRecipientsAutoEncrypt {
-                Circle()
-                    .fill(MailResourcesAsset.orangeColor.swiftUIColor)
-                    .overlay {
-                        if let count {
-                            Text(count, format: .cappedCount(maximum: 9, placement: .before))
-                                .font(.system(size: 8))
-                                .foregroundStyle(MailResourcesAsset.backgroundTertiaryColor.swiftUIColor)
-                                .animation(.default, value: count)
-                        } else if isLoadingRecipientsAutoEncrypt {
-                            Circle()
-                                .fill(Color.white)
-                                .frame(width: 2)
+        Button(action: didTapEncrypt) {
+            Label {
+                Text(MailResourcesStrings.Localizable.encryptedStatePanelTitle)
+            } icon: {
+                draft.encrypted ?
+                    MailResourcesAsset.lockSquare.swiftUIImage : MailResourcesAsset.unlockSquare.swiftUIImage
+            }
+            .labelStyle(.iconOnly)
+            .overlay {
+                if count != nil || isLoadingRecipientsAutoEncrypt {
+                    Circle()
+                        .fill(MailResourcesAsset.orangeColor.swiftUIColor)
+                        .overlay {
+                            if let count {
+                                Text(count, format: .cappedCount(maximum: 9, placement: .before))
+                                    .monospacedDigit()
+                                    .font(.system(size: 8))
+                                    .foregroundStyle(MailResourcesAsset.backgroundTertiaryColor.swiftUIColor)
+                                    .animation(.default, value: count)
+                            } else if isLoadingRecipientsAutoEncrypt {
+                                Circle()
+                                    .fill(.white)
+                                    .frame(width: 2)
+                            }
                         }
-                    }
-                    .frame(width: badgeWidth)
-                    .frame(maxHeight: .infinity, alignment: .top)
-                    .offset(x: badgeWidth / 2)
+                        .frame(width: badgeWidth)
+                        .frame(maxHeight: .infinity, alignment: .top)
+                        .offset(x: badgeWidth / 2)
+                }
             }
         }
+        .foregroundColor(draft.encrypted ? Self.encryptionEnabledForeground : MailResourcesAsset.textSecondaryColor.swiftUIColor)
         .task(id: "\(draft.encrypted)-\(draft.allRecipients.count)") {
             guard draft.encrypted, !draft.allRecipients.isEmpty else { return }
 
@@ -129,5 +135,5 @@ struct EncryptionButton: View {
 @available(iOS 17.0, *)
 #Preview {
     @Previewable @State var isShowingEncryptStatePanel = false
-    EncryptionButton(draft: Draft(), isShowingEncryptStatePanel: $isShowingEncryptStatePanel)
+    EncryptionButton(isShowingEncryptStatePanel: $isShowingEncryptStatePanel, draft: Draft())
 }
