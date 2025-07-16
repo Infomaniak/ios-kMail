@@ -132,7 +132,7 @@ public extension ContactManager {
             partial
         }
 
-        let mergedContactIds = Array(mergedContacts.compactMap { $0.remoteAddressBookId })
+        let mergedContactIds = Array(mergedContacts.flatMap { $0.remoteAddressBookId })
 
         var lazyResults = fetchResults(ofType: AddressBook.self) { partial in
             partial.where { $0.id.in(mergedContactIds) }

@@ -51,7 +51,7 @@ public final class MergedContact: Object, Identifiable, Correspondent {
     /// Remote
     @Persisted public var remoteAvatarURL: String?
     @Persisted public var remoteIdentifier: String?
-    @Persisted public var remoteAddressBookId: Int?
+    @Persisted public var remoteAddressBookId: List<Int>
     @Persisted public var remoteGroupContactId: List<Int>
     @Persisted public var remoteContactedTimes: Int?
     @Persisted public var remoteOther: Bool
@@ -128,7 +128,8 @@ public final class MergedContact: Object, Identifiable, Correspondent {
         }
         remoteAvatarURL = contact.avatar
         remoteIdentifier = contact.id
-        remoteAddressBookId = contact.addressbookId
+        remoteAddressBookId = List<Int>()
+        remoteAddressBookId.append(objectsIn: contact.addressbookIds ?? [])
         remoteGroupContactId = List<Int>()
         remoteGroupContactId.append(objectsIn: contact.groupIds ?? [])
         remoteContactedTimes = contact.contactedTimes
