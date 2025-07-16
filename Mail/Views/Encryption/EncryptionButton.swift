@@ -132,6 +132,7 @@ struct EncryptionButton: View {
             liveDraft.encrypted = false
             liveDraft.encryptionPassword = ""
         }
+        snackbarPresenter.show(message: MailResourcesStrings.Localizable.encryptedMessageSnackbarEncryptionDisabled)
     }
 
     private func showEncryptionSnackbarIfNeeded(for recipientsCount: Int) {
