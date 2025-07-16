@@ -16,6 +16,8 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreCommonUI
+import InfomaniakDI
 import MailCore
 import MailResources
 import RealmSwift
@@ -26,10 +28,14 @@ struct EncryptionButton: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @InjectService var snackbarPresenter: SnackBarPresentable
+
     @State private var isShowingEncryptAdPanel = false
     @State private var isShowingEncryptPasswordPanel = false
 
     @State private var isLoadingRecipientsAutoEncrypt = false
+
+    @State private var justActivatedEncryption = false
 
     @Binding var isShowingEncryptStatePanel: Bool
 
@@ -78,13 +84,9 @@ struct EncryptionButton: View {
         }
         .foregroundColor(draft.encrypted ? Self.encryptionEnabledForeground : MailResourcesAsset.textSecondaryColor.swiftUIColor)
         .task(id: "\(draft.encrypted)-\(draft.allRecipients.count)") {
-            guard draft.encrypted, !draft.allRecipients.isEmpty else { return }
-
-            isLoadingRecipientsAutoEncrypt = true
-
-            try? await mailboxManager.updateRecipientsAutoEncrypt(draft: draft)
-
-            isLoadingRecipientsAutoEncrypt = false
+            guard draft.encrypted else { return }
+            let recipientsCount = await loadRecipientsAutoEncryptIfNeeded()
+            showEncryptionSnackbarIfNeeded(for: recipientsCount)
         }
         .sheet(isPresented: $isShowingEncryptAdPanel) {
             EncryptionAdView { enableEncryption() }
@@ -118,6 +120,7 @@ struct EncryptionButton: View {
 
     private func enableEncryption() {
         guard let liveDraft = draft.thaw() else { return }
+        justActivatedEncryption = true
         try? liveDraft.realm?.write {
             liveDraft.encrypted = true
         }
@@ -129,6 +132,38 @@ struct EncryptionButton: View {
             liveDraft.encrypted = false
             liveDraft.encryptionPassword = ""
         }
+    }
+
+    private func showEncryptionSnackbarIfNeeded(for recipientsCount: Int) {
+        let action = IKSnackBar.Action(title: MailResourcesStrings.Localizable.encryptedMessageSnackbarProtectAction) {
+            isShowingEncryptPasswordPanel = true
+        }
+
+        if recipientsCount == 1 {
+            snackbarPresenter.show(
+                message: MailResourcesStrings.Localizable.encryptedMessageIncompleteUser(recipientsCount),
+                action: action
+            )
+        } else if justActivatedEncryption {
+            if recipientsCount > 0 {
+                snackbarPresenter.show(
+                    message: MailResourcesStrings.Localizable.encryptedMessageIncompleteUser(recipientsCount),
+                    action: action
+                )
+            } else {
+                snackbarPresenter.show(message: MailResourcesStrings.Localizable.encryptedMessageSnackbarEncryptionActivated)
+            }
+        }
+
+        justActivatedEncryption = false
+    }
+
+    private func loadRecipientsAutoEncryptIfNeeded() async -> Int {
+        guard !draft.allRecipients.isEmpty else { return 0 }
+        isLoadingRecipientsAutoEncrypt = true
+        let recipientsCount = try? await mailboxManager.updateRecipientsAutoEncrypt(draft: draft)
+        isLoadingRecipientsAutoEncrypt = false
+        return recipientsCount ?? 0
     }
 }
 
