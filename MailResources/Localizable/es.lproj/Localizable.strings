@@ -767,13 +767,19 @@
 "encryptedMessagePasswordConcernedUserTitle" = "Usuarios afectados";
 
 /* loco:682dc2113c2020dcd20b82f2 */
-"encryptedMessagePasswordLabel" = "Comparta esta contraseña de forma segura (kPaste, kChat, SMS…). No podrás copiarla una vez enviada.";
+"encryptedMessagePasswordLabel" = "Comparte esta contraseña por mensaje privado. No podrás copiarla una vez que la hayas enviado.";
 
-/* loco:68305ea640206c98380caf72 */
+/* loco:6877a03a5b42fa4d5f0f9882 */
 "encryptedMessageSnackbarEncryptionActivated" = "Se ha activado el cifrado";
 
 /* loco:68590818100485901e03f8c2 */
 "encryptedMessageSnackbarEncryptionDisabled" = "Se ha desactivado el cifrado";
+
+/* loco:68779ae099c3ce2b380a2c03 */
+"encryptedMessageSnackbarProtectAction" = "Proteja";
+
+/* loco:68622a761d6dd808720712e2 */
+"encryptedMessageSnackbarScheduledUnavailable" = "Los correos electrónicos programados no están disponibles para los mensajes cifrados";
 
 /* loco:6835723d74a32502720135c2 */
 "encryptedMessageUpdatePasswordButton" = "Cambiar contraseña";
