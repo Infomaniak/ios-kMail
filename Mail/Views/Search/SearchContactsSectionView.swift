@@ -24,6 +24,9 @@ import MailResources
 import SwiftUI
 
 struct SearchContactsSectionView: View {
+    @Environment(\.currentUser) private var currentUser
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
 
     let viewModel: SearchViewModel
@@ -32,7 +35,7 @@ struct SearchContactsSectionView: View {
         if viewModel.searchState == .results {
             Section {
                 ForEach(viewModel.frozenContacts) { contact in
-                    RecipientCell(recipient: contact)
+                    RecipientCell(recipient: contact, contextUser: currentUser.value, contextMailboxManager: mailboxManager)
                         .onTapGesture {
                             viewModel.matomo.track(eventWithCategory: .search, name: "selectContact")
                             viewModel.addCurrentSearchTermToHistoryIfNeeded()

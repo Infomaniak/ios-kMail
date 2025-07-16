@@ -20,6 +20,7 @@ import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import MailCore
+import MailResources
 import SwiftUI
 
 public struct RecipientCellModifier: ViewModifier {
@@ -46,25 +47,41 @@ public struct RecipientCell: View {
     let avatarConfiguration: ContactConfiguration
 
     let highlight: String?
+    let bimi: Bimi?
 
-    public init(recipient: Recipient, contactConfiguration: ContactConfiguration = .emptyContact, highlight: String? = nil) {
+    public init(
+        recipient: Recipient,
+        highlight: String? = nil,
+        bimi: Bimi? = nil,
+        contextUser: UserProfile,
+        contextMailboxManager: MailboxManager
+    ) {
         title = recipient.name
         subtitle = recipient.email
-        avatarConfiguration = contactConfiguration
+        avatarConfiguration =
+            .correspondent(
+                correspondent: recipient,
+                associatedBimi: bimi,
+                contextUser: contextUser,
+                contextMailboxManager: contextMailboxManager
+            )
         self.highlight = highlight
+        self.bimi = bimi
     }
 
     public init(
-        contactConfiguration: ContactConfiguration = .emptyContact,
-        highlight: String? = nil,
+        contactConfiguration: ContactConfiguration,
         title: String,
-        subtitle: String
+        subtitle: String,
+        highlight: String? = nil,
+        bimi: Bimi? = nil
     ) {
         self.title = title
         self.subtitle = subtitle
         avatarConfiguration = contactConfiguration
 
         self.highlight = highlight
+        self.bimi = bimi
     }
 
     public var body: some View {
@@ -76,19 +93,29 @@ public struct RecipientCell: View {
             )
             .accessibilityHidden(true)
 
-            if title.isEmpty {
-                Text(highlightedAttributedString(from: subtitle))
-                    .textStyle(.bodyMedium)
+            if title.isEmpty || title == subtitle {
+                header(subtitle)
             } else {
-                VStack(alignment: .leading) {
-                    Text(highlightedAttributedString(from: title))
-                        .textStyle(.bodyMedium)
+                VStack(alignment: .leading, spacing: 0) {
+                    header(title)
                     Text(highlightedAttributedString(from: subtitle))
                         .textStyle(.bodySecondary)
                 }
             }
         }
         .recipientCellModifier()
+    }
+
+    private func header(_ title: String) -> some View {
+        HStack(spacing: IKPadding.mini) {
+            Text(highlightedAttributedString(from: title))
+                .textStyle(.bodyMedium)
+
+            if bimi?.shouldDisplayBimi == true {
+                MailResourcesAsset.checkmarkAuthentication
+                    .iconSize(.medium)
+            }
+        }
     }
 
     private func highlightedAttributedString(from data: String) -> AttributedString {
@@ -103,9 +130,9 @@ public struct RecipientCell: View {
 }
 
 #Preview {
-    RecipientCell(recipient: PreviewHelper.sampleRecipient1, contactConfiguration: .emptyContact)
-}
-
-#Preview {
-    RecipientCell(recipient: PreviewHelper.sampleRecipient3, contactConfiguration: .emptyContact)
+    RecipientCell(
+        recipient: PreviewHelper.sampleRecipient1,
+        contextUser: PreviewHelper.sampleUser,
+        contextMailboxManager: PreviewHelper.sampleMailboxManager
+    )
 }
