@@ -16,9 +16,13 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
 import SwiftUI
 
 struct ReactionsList: View {
+    @Environment(\.currentUser) private var currentUser
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     let reactions: [UIMessageReaction]
 
     init(reactions: [UIMessageReaction]) {
@@ -35,7 +39,7 @@ struct ReactionsList: View {
                 ForEach(reactions) { reaction in
                     ForEach(reaction.recipients) { recipient in
                         HStack {
-                            RecipientCell(recipient: recipient)
+                            RecipientCell(recipient: recipient, contextUser: currentUser.value, contextMailboxManager: mailboxManager)
                             Text(reaction.emoji)
                         }
                     }
