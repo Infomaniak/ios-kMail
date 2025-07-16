@@ -51,19 +51,26 @@ public struct RecipientCell: View {
 
     public init(
         recipient: Recipient,
-        contactConfiguration: ContactConfiguration = .emptyContact,
         highlight: String? = nil,
-        bimi: Bimi? = nil
+        bimi: Bimi? = nil,
+        contextUser: UserProfile,
+        contextMailboxManager: MailboxManager
     ) {
         title = recipient.name
         subtitle = recipient.email
-        avatarConfiguration = contactConfiguration
+        avatarConfiguration =
+            .correspondent(
+                correspondent: recipient,
+                associatedBimi: bimi,
+                contextUser: contextUser,
+                contextMailboxManager: contextMailboxManager
+            )
         self.highlight = highlight
         self.bimi = bimi
     }
 
     public init(
-        contactConfiguration: ContactConfiguration = .emptyContact,
+        contactConfiguration: ContactConfiguration,
         title: String,
         subtitle: String,
         highlight: String? = nil,
@@ -86,9 +93,7 @@ public struct RecipientCell: View {
             )
             .accessibilityHidden(true)
 
-            if title.isEmpty {
-                Text(highlightedAttributedString(from: subtitle))
-                    .textStyle(.bodyMedium)
+            if title.isEmpty || title == subtitle {
                 header(subtitle)
             } else {
                 VStack(alignment: .leading, spacing: 0) {
@@ -125,9 +130,9 @@ public struct RecipientCell: View {
 }
 
 #Preview {
-    RecipientCell(recipient: PreviewHelper.sampleRecipient1, contactConfiguration: .emptyContact)
-}
-
-#Preview {
-    RecipientCell(recipient: PreviewHelper.sampleRecipient3, contactConfiguration: .emptyContact)
+    RecipientCell(
+        recipient: PreviewHelper.sampleRecipient1,
+        contextUser: PreviewHelper.sampleUser,
+        contextMailboxManager: PreviewHelper.sampleMailboxManager
+    )
 }

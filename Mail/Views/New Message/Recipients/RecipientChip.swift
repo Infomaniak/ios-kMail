@@ -42,7 +42,7 @@ struct RecipientChip: View {
             $0.originAnchor = .topLeft
             $0.popoverAnchor = .topLeft
         } content: {
-            RecipientCell(recipient: recipient)
+            RecipientCell(recipient: recipient, contextUser: currentUser.value, contextMailboxManager: mailboxManager)
                 .padding(.vertical, value: .mini)
                 .padding(.horizontal, value: .medium)
                 .frame(maxWidth: 600)

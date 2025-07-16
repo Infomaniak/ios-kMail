@@ -29,6 +29,9 @@ struct BlockSenderView: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.currentUser) private var currentUser
+
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var selectedRecipient: Recipient?
     @State private var recipients = [Recipient]()
@@ -43,7 +46,7 @@ struct BlockSenderView: View {
                     selectedRecipient = recipient
                     matomo.track(eventWithCategory: .blockUserAction, name: "selectUser")
                 } label: {
-                    RecipientCell(recipient: recipient)
+                    RecipientCell(recipient: recipient, contextUser: currentUser.value, contextMailboxManager: mailboxManager)
                         .padding(.horizontal, value: .medium)
                         .padding(.vertical, value: .mini)
                 }

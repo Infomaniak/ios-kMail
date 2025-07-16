@@ -24,8 +24,6 @@ import MailResources
 import SwiftUI
 
 struct ContactActionsHeaderView: View {
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
     let displayablePerson: CommonContact
     let bimi: Bimi?
 
