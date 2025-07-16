@@ -36,22 +36,13 @@ struct ContactActionsHeaderView: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.large) {
-            HStack {
-                AvatarView(mailboxManager: mailboxManager, contactConfiguration: .contact(contact: displayablePerson), size: 40)
-                    .accessibilityHidden(true)
-                VStack(alignment: .leading) {
-                    HStack {
-                        Text(displayablePerson, format: .displayablePerson())
-                            .textStyle(.bodyMedium)
-                        if let bimi, bimi.shouldDisplayBimi {
-                            MailResourcesAsset.checkmarkAuthentication
-                                .iconSize(.medium)
-                        }
-                    }
-                    Text(displayablePerson.email)
-                        .textStyle(.bodySecondary)
-                }
-            }
+            RecipientCell(
+                contactConfiguration: .contact(contact: displayablePerson),
+                title: displayablePerson.fullName,
+                subtitle: displayablePerson.email,
+                bimi: bimi
+            )
+
             if let bimi, bimi.shouldDisplayBimi {
                 HStack {
                     MailResourcesAsset.checkmarkAuthentication

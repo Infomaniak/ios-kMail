@@ -20,6 +20,7 @@ import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import MailCore
+import MailResources
 import SwiftUI
 
 public struct RecipientCellModifier: ViewModifier {
@@ -46,25 +47,34 @@ public struct RecipientCell: View {
     let avatarConfiguration: ContactConfiguration
 
     let highlight: String?
+    let bimi: Bimi?
 
-    public init(recipient: Recipient, contactConfiguration: ContactConfiguration = .emptyContact, highlight: String? = nil) {
+    public init(
+        recipient: Recipient,
+        contactConfiguration: ContactConfiguration = .emptyContact,
+        highlight: String? = nil,
+        bimi: Bimi? = nil
+    ) {
         title = recipient.name
         subtitle = recipient.email
         avatarConfiguration = contactConfiguration
         self.highlight = highlight
+        self.bimi = bimi
     }
 
     public init(
         contactConfiguration: ContactConfiguration = .emptyContact,
-        highlight: String? = nil,
         title: String,
-        subtitle: String
+        subtitle: String,
+        highlight: String? = nil,
+        bimi: Bimi? = nil
     ) {
         self.title = title
         self.subtitle = subtitle
         avatarConfiguration = contactConfiguration
 
         self.highlight = highlight
+        self.bimi = bimi
     }
 
     public var body: some View {
@@ -79,16 +89,28 @@ public struct RecipientCell: View {
             if title.isEmpty {
                 Text(highlightedAttributedString(from: subtitle))
                     .textStyle(.bodyMedium)
+                header(subtitle)
             } else {
-                VStack(alignment: .leading) {
-                    Text(highlightedAttributedString(from: title))
-                        .textStyle(.bodyMedium)
+                VStack(alignment: .leading, spacing: 0) {
+                    header(title)
                     Text(highlightedAttributedString(from: subtitle))
                         .textStyle(.bodySecondary)
                 }
             }
         }
         .recipientCellModifier()
+    }
+
+    private func header(_ title: String) -> some View {
+        HStack(spacing: IKPadding.mini) {
+            Text(highlightedAttributedString(from: title))
+                .textStyle(.bodyMedium)
+
+            if bimi?.shouldDisplayBimi == true {
+                MailResourcesAsset.checkmarkAuthentication
+                    .iconSize(.medium)
+            }
+        }
     }
 
     private func highlightedAttributedString(from data: String) -> AttributedString {

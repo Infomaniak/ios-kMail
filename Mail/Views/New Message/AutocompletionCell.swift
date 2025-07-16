@@ -95,10 +95,12 @@ struct AutocompletionCell: View {
                 if unknownRecipient {
                     UnknownRecipientCell(email: autocompletion.autocompletableName)
                 } else {
-                    RecipientCell(contactConfiguration: contactConfiguration,
-                                  highlight: highlight,
-                                  title: title,
-                                  subtitle: subtitle)
+                    RecipientCell(
+                        contactConfiguration: contactConfiguration,
+                        title: title,
+                        subtitle: subtitle,
+                        highlight: highlight
+                    )
                 }
             }
             .allowsHitTesting(!alreadyAppend || unknownRecipient)
