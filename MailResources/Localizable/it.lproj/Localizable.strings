@@ -767,13 +767,19 @@
 "encryptedMessagePasswordConcernedUserTitle" = "Utenti interessati";
 
 /* loco:682dc2113c2020dcd20b82f2 */
-"encryptedMessagePasswordLabel" = "Condividere questa password in modo sicuro (kPaste, kChat, SMS…). Non sarà possibile copiarla una volta inviata.";
+"encryptedMessagePasswordLabel" = "Condividete questa password tramite messaggio privato. Non sarà possibile copiarla una volta inviata.";
 
-/* loco:68305ea640206c98380caf72 */
+/* loco:6877a03a5b42fa4d5f0f9882 */
 "encryptedMessageSnackbarEncryptionActivated" = "La crittografia è stata attivata";
 
 /* loco:68590818100485901e03f8c2 */
 "encryptedMessageSnackbarEncryptionDisabled" = "La crittografia è stata disattivata";
+
+/* loco:68779ae099c3ce2b380a2c03 */
+"encryptedMessageSnackbarProtectAction" = "Proteggere";
+
+/* loco:68622a761d6dd808720712e2 */
+"encryptedMessageSnackbarScheduledUnavailable" = "Email programmate non disponibili per i messaggi criptati";
 
 /* loco:6835723d74a32502720135c2 */
 "encryptedMessageUpdatePasswordButton" = "Modifica della password";
