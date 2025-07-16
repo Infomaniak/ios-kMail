@@ -16,34 +16,28 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import MailCore
 import SwiftUI
 
-struct ReactionsList: View {
+struct ReactionCell: View {
+    @Environment(\.currentUser) private var currentUser
+    @EnvironmentObject private var mailboxManager: MailboxManager
 
-    let reactions: [UIMessageReaction]
-
-    init(reactions: [UIMessageReaction]) {
-        self.reactions = reactions
-    }
-
-    init(reaction: UIMessageReaction) {
-        self.init(reactions: [reaction])
-    }
+    let emoji: String
+    let recipient: Recipient
 
     var body: some View {
-        ScrollView {
-            VStack {
-                ForEach(reactions) { reaction in
-                    ForEach(reaction.recipients) { recipient in
-                        ReactionCell(emoji: reaction.emoji, recipient: recipient)
-                    }
-                }
-            }
+        HStack(spacing: IKPadding.mini) {
+            RecipientCell(recipient: recipient, contextUser: currentUser.value, contextMailboxManager: mailboxManager)
+            Text(emoji)
+                .font(.system(size: 24))
         }
+        .padding(.horizontal, value: .medium)
+        .padding(.vertical, value: .mini)
     }
 }
 
 #Preview {
-    ReactionsList(reactions: PreviewHelper.uiReactions)
+    ReactionCell(emoji: "🙂", recipient: PreviewHelper.sampleRecipient1)
 }
