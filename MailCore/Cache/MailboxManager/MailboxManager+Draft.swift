@@ -209,12 +209,12 @@ public extension MailboxManager {
         return draft.freeze()
     }
 
-    func updateRecipientsAutoEncrypt(draft: Draft) async throws {
+    func updateRecipientsAutoEncrypt(draft: Draft) async throws -> Int {
         let recipients = draft.to
         recipients.append(objectsIn: draft.cc)
         recipients.append(objectsIn: draft.bcc)
 
-        guard !recipients.isEmpty else { return }
+        guard !recipients.isEmpty else { return 0 }
 
         let result = try await apiFetcher.mailHosted(for: recipients.map(\.email))
 
@@ -238,5 +238,7 @@ public extension MailboxManager {
             }
             liveDraft.bcc = updatedBCC
         }
+
+        return result.filter { !$0.isInfomaniakHosted }.count
     }
 }
