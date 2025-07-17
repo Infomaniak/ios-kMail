@@ -70,10 +70,8 @@ public struct ReactionsListView: View {
         .sheet(isPresented: $isShowingReactionsBottomSheet) {
             if #available(iOS 16, *) {
                 ReactionsDetailsView(reactions: reactions)
-                    .presentationDetents([.medium, .large])
             } else {
-                ReactionsDetailsView(reactions: reactions)
-                    .backport.presentationDetents([.medium, .large])
+                ReactionsDetailsBackportView(reactions: reactions)
             }
         }
     }
