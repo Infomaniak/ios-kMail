@@ -110,7 +110,7 @@ struct ComposeMessageView: View {
     }
 
     private var isScheduleSendButtonDisabled: Bool {
-        return draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded || draft.encrypted
+        return draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded
     }
 
     // MARK: - Init
@@ -189,7 +189,12 @@ struct ComposeMessageView: View {
             ToolbarItem(placement: .navigationBarTrailing) {
                 if featureFlagsManager.isEnabled(.scheduleSendDraft) {
                     Button {
-                        isShowingSchedulePanel = true
+                        if draft.encrypted {
+                            snackbarPresenter
+                                .show(message: MailResourcesStrings.Localizable.encryptedMessageSnackbarScheduledUnavailable)
+                        } else {
+                            isShowingSchedulePanel = true
+                        }
                     } label: {
                         Label(
                             MailResourcesStrings.Localizable.scheduleSendingTitle,
