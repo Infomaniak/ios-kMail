@@ -41,6 +41,11 @@ public extension UIMessageReaction {
             return "\(value.emoji) \(value.recipients.count)"
         }
     }
+
+    func formatted() -> String {
+        let formatStyle = ReactionFormatStyle()
+        return formatStyle.format(self)
+    }
 }
 
 public extension FormatStyle where Self == UIMessageReaction.ReactionFormatStyle {
