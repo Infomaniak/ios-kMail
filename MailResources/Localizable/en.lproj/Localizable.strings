@@ -1261,6 +1261,9 @@
 /* loco:64a3d65f003e64f9790f5ed2 */
 "popupDetachMailboxTitle" = "Detach mailbox";
 
+/* loco:6878f028dad01eb6460e7a92 */
+"reactionsTitle" = "Reactions";
+
 /* loco:664ef6e5f66217322302f962 */
 "readFAQ" = "Read FAQ";
 

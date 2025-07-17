@@ -16,34 +16,72 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreSwiftUI
+import MailResources
 import SwiftUI
 
-extension ReactionsDetailsView {
-    enum SelectionType: Hashable {
-        case all
-        case reaction(UIMessageReaction)
-    }
+enum ReactionSelectionType: Hashable {
+    case all
+    case reaction(UIMessageReaction)
 }
 
+@available(iOS 16.0, *)
 struct ReactionsDetailsView: View {
-    @State private var selectedReaction: SelectionType? = .all
+    @State private var selectedReaction: ReactionSelectionType? = .all
+    @State private var currentDetent = PresentationDetent.medium
 
     let reactions: [UIMessageReaction]
-    var initialSelection: SelectionType?
+    var initialSelection: ReactionSelectionType?
 
     var body: some View {
-        VStack(spacing: 0) {
-            ReactionsDetailsButtonsView(currentSelection: $selectedReaction, reactions: reactions)
-            ReactionsListTabView(selectedReaction: $selectedReaction, reactions: reactions)
-        }
-        .onAppear {
-            if let initialSelection {
-                selectedReaction = initialSelection
+        IKFloatingPanelView(
+            currentDetent: $currentDetent,
+            title: MailResourcesStrings.Localizable.reactionsTitle,
+            bottomPadding: 0,
+            detents: Set([.medium, .large]),
+            dragIndicator: .visible
+        ) {
+            VStack(spacing: 0) {
+                ReactionsDetailsButtonsView(currentSelection: $selectedReaction, reactions: reactions)
+                ReactionsListTabView(selectedReaction: $selectedReaction, reactions: reactions)
+            }
+            .onAppear {
+                if let initialSelection {
+                    selectedReaction = initialSelection
+                }
             }
         }
     }
 }
 
+@available(iOS, introduced: 15, deprecated: 16, message: "Use native way")
+struct ReactionsDetailsBackportView: View {
+    @State private var selectedReaction: ReactionSelectionType? = .all
+
+    let reactions: [UIMessageReaction]
+    var initialSelection: ReactionSelectionType?
+
+    var body: some View {
+        IKFloatingPanelBackportView(
+            title: MailResourcesStrings.Localizable.reactionsTitle,
+            bottomPadding: 0,
+            detents: Set([.medium, .large]),
+            dragIndicator: .visible
+        ) {
+            VStack(spacing: 0) {
+                ReactionsDetailsButtonsView(currentSelection: $selectedReaction, reactions: reactions)
+                ReactionsListTabView(selectedReaction: $selectedReaction, reactions: reactions)
+            }
+            .onAppear {
+                if let initialSelection {
+                    selectedReaction = initialSelection
+                }
+            }
+        }
+    }
+}
+
+@available(iOS 16.0, *)
 #Preview {
     ReactionsDetailsView(reactions: PreviewHelper.uiReactions)
 }
