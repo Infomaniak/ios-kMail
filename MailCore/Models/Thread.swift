@@ -339,7 +339,7 @@ public extension Thread {
         isLastMessageFromFolderSnoozed = lastMessageFromFolder.isSnoozed
 
         var messagesById = [String: Message]()
-        var reactionsByMessageId = [String: Map<String, RecipientsList?>]()
+        var reactionsByMessageId = [String: [String: [Recipient]]]()
 
         for message in messages {
             if let messageId = message.messageId {
@@ -350,7 +350,7 @@ public extension Thread {
             from.append(objectsIn: message.from.detached())
             to.append(objectsIn: message.to.detached())
 
-            message.reactions = Map()
+            message.reactions = List()
 
             if !message.seen {
                 unseenMessages += 1
@@ -414,7 +414,7 @@ public extension Thread {
         snoozeEndDate = nil
     }
 
-    private func getReaction(from message: Message, reactions: inout [String: Map<String, RecipientsList?>]) {
+    private func getReaction(from message: Message, reactions: inout [String: [String: [Recipient]]]) {
         guard let emojiReaction = message.emojiReaction, let messageTargets = message.inReplyTo?.parseMessageIds() else {
             return
         }
@@ -422,25 +422,22 @@ public extension Thread {
         for messageTarget in messageTargets {
             let recipients = message.from.detached().toArray()
 
-            if let reactions = reactions[messageTarget] {
-                if let recipientsList = reactions[emojiReaction], let recipientsList {
-                    recipientsList.append(recipients: recipients)
-                } else {
-                    reactions.updateValue(RecipientsList(recipients: recipients), forKey: emojiReaction)
-                }
-            } else {
-                let reactionsDictionnary = Map<String, RecipientsList?>()
-                reactionsDictionnary.updateValue(RecipientsList(recipients: recipients), forKey: emojiReaction)
+            var messageTargetReactions = reactions[messageTarget] ?? [:]
+            var reactingRecipients = messageTargetReactions[emojiReaction] ?? []
+            reactingRecipients.append(contentsOf: recipients)
+            messageTargetReactions[emojiReaction] = reactingRecipients
 
-                reactions[messageTarget] = reactionsDictionnary
-            }
+            reactions[messageTarget] = messageTargetReactions
         }
     }
 
-    private func updateReactionsForMessages(_ reactions: [String: Map<String, RecipientsList?>], messagesById: [String: Message]) {
+    private func updateReactionsForMessages(_ reactions: [String: [String: [Recipient]]], messagesById: [String: Message]) {
         for (messageId, reactions) in reactions {
             guard let message = messagesById[messageId] else { continue }
-            message.reactions = reactions
+
+            for (emojiReaction, recipients) in reactions {
+                message.reactions.append(MessageReaction(reaction: emojiReaction, recipients: recipients))
+            }
         }
     }
 

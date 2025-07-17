@@ -42,7 +42,7 @@ public enum RecipientError: Error {
 }
 
 public final class RecipientsList: EmbeddedObject, Encodable {
-    @Persisted private var recipients: RealmSwift.List<Recipient>
+    @Persisted private(set) var recipients: RealmSwift.List<Recipient>
 
     public var count: Int {
         recipients.count

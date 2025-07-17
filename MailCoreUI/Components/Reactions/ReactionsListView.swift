@@ -24,43 +24,30 @@ import RealmSwift
 import SwiftUI
 
 public struct ReactionsListView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
+    @State private var isShowingReactionsBottomSheet = false
     @State private var isShowingEmojiPicker = false
+    @State private var selectedEmoji: Emoji?
 
-    @Binding var selectedEmoji: Emoji?
+    let reactions: [UIMessageReaction]
+    let localReactions: Set<String>
+    let addReaction: (String) -> Void
 
-    let reactions: [String]
-
-    let reactionsCountForEmoji: (String) -> Int
-    let isReactionEnabled: (String) -> Bool
-
-    let didTapReaction: (String) -> Void
-    let didLongPressReaction: (String) -> Void
-
-    public init(
-        selectedEmoji: Binding<Emoji?>,
-        reactions: [String],
-        reactionsCountForEmoji: @escaping (String) -> Int,
-        isReactionEnabled: @escaping (String) -> Bool,
-        didTapReaction: @escaping (String) -> Void,
-        didLongPressReaction: @escaping (String) -> Void
-    ) {
-        _selectedEmoji = selectedEmoji
-        
+    public init(reactions: [UIMessageReaction], localReactions: Set<String>, addReaction: @escaping (String) -> Void) {
         self.reactions = reactions
-        self.reactionsCountForEmoji = reactionsCountForEmoji
-        self.isReactionEnabled = isReactionEnabled
-        self.didTapReaction = didTapReaction
-        self.didLongPressReaction = didLongPressReaction
+        self.localReactions = localReactions
+        self.addReaction = addReaction
     }
 
     public var body: some View {
         BackportedFlowLayout(verticalSpacing: IKPadding.mini, horizontalSpacing: IKPadding.mini) {
-            ForEach(reactions, id: \.self) { emoji in
+            ForEach(reactions) { reaction in
                 ReactionButton(
-                    emoji: emoji,
-                    count: reactionsCountForEmoji(emoji),
-                    hasReacted: isReactionEnabled(emoji),
-                    didTapButton: didTapReaction,
+                    emoji: reaction.emoji,
+                    count: emojiCount(for: reaction),
+                    hasReacted: hasCurrentUserReacted(to: reaction),
+                    didTapButton: addReaction,
                     didLongPressButton: didLongPressReaction
                 )
             }
@@ -68,22 +55,55 @@ public struct ReactionsListView: View {
             Button {
                 isShowingEmojiPicker = true
             } label: {
-                MailResourcesAsset.faceSlightlySmilingCirclePlusSvg.swiftUIImage
-                    .iconSize(.large)
+                Label {
+                    Text(MailResourcesStrings.Localizable.contentDescriptionAddReaction)
+                } icon: {
+                    MailResourcesAsset.faceSlightlySmilingCirclePlus.swiftUIImage
+                        .iconSize(.large)
+                }
+                .labelStyle(.iconOnly)
             }
             .buttonStyle(.reaction(isEnabled: false, padding: EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)))
             .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $selectedEmoji)
+            .onChange(of: selectedEmoji, perform: selectEmojiFromPicker)
         }
+        .sheet(isPresented: $isShowingReactionsBottomSheet) {
+            if #available(iOS 16, *) {
+                ReactionsDetailsView(reactions: reactions)
+            } else {
+                ReactionsDetailsBackportView(reactions: reactions)
+            }
+        }
+    }
+
+    private func emojiCount(for reaction: UIMessageReaction) -> Int {
+        var count = reaction.recipients.count
+        if localReactions.contains(reaction.emoji) && !reaction.hasUserReacted {
+            count += 1
+        }
+
+        return count
+    }
+
+    private func selectEmojiFromPicker(_ reaction: Emoji?) {
+        guard let reaction else { return }
+
+        addReaction(reaction.emoji)
+        selectedEmoji = nil
+    }
+
+    private func didLongPressReaction(_ reaction: String) {
+        isShowingReactionsBottomSheet = true
+    }
+
+    private func hasCurrentUserReacted(to reaction: UIMessageReaction) -> Bool {
+        return localReactions.contains(reaction.emoji) || reaction.hasUserReacted
     }
 }
 
 #Preview {
     ReactionsListView(
-        selectedEmoji: .constant(nil),
-        reactions: ["😄", "😂"],
-        reactionsCountForEmoji: { _ in 0 },
-        isReactionEnabled: { _ in false },
-        didTapReaction: { _ in },
-        didLongPressReaction: { _ in }
-    )
+        reactions: PreviewHelper.uiReactions,
+        localReactions: Set()
+    ) { _ in }
 }

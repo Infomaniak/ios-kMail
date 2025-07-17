@@ -208,10 +208,13 @@ public enum PreviewHelper {
         state: .no
     )
 
-    public static let reactions: MessageReactions = {
-        let reactions = MessageReactions()
-        reactions.updateValue(RecipientsList(recipients: [sampleRecipient1, sampleRecipient2]), forKey: "❤️")
-        reactions.updateValue(RecipientsList(recipients: [sampleRecipient1]), forKey: "✌️")
-        return reactions
-    }()
+
+    public static let reactions = [
+        MessageReaction(reaction: "🙂", recipients: sampleRecipients),
+        MessageReaction(reaction: "😊", recipients: [sampleRecipient1])
+    ].toRealmList()
+    public static let uiReactions = [
+        UIMessageReaction(reaction: "🙂", recipients: sampleRecipients, hasUserReacted: true),
+        UIMessageReaction(reaction: "😊", recipients: [sampleRecipient1], hasUserReacted: false)
+    ]
 }

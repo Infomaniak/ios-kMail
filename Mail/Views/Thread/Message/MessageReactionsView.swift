@@ -16,77 +16,62 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import ElegantEmojiPicker
 import InfomaniakDI
 import MailCore
 import MailCoreUI
-import OrderedCollections
 import RealmSwift
 import SwiftUI
 
+extension UIMessageReaction {
+    init(messageReaction: MessageReaction, hasUserReacted: Bool) {
+        self.init(
+            reaction: messageReaction.reaction,
+            recipients: messageReaction.recipients.toArray(),
+            hasUserReacted: hasUserReacted
+        )
+    }
+}
+
 struct MessageReactionsView: View {
+    @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var localReactions = OrderedSet<String>()
-    @State private var selectedEmoji: Emoji?
+    @State private var reactions = [UIMessageReaction]()
+    @State private var localReactions = Set<String>()
 
-    let message: Message
+    let messageUid: String
+    let messageReactions: RealmSwift.List<MessageReaction>
 
     var body: some View {
-        ReactionsListView(
-            selectedEmoji: $selectedEmoji,
-            reactions: message.reactions.keys,
-            reactionsCountForEmoji: reactionsCount,
-            isReactionEnabled: isReactionEnabled,
-            didTapReaction: didTapReaction,
-            didLongPressReaction: didLongPressReaction
-        )
-        .padding(.top, value: .small)
-        .padding([.horizontal, .bottom], value: .medium)
-        .onChange(of: selectedEmoji) { newValue in
-            guard let newValue else { return }
-            didTapReaction(newValue.emoji)
-
-            selectedEmoji = nil
-        }
+        ReactionsListView(reactions: reactions, localReactions: localReactions, addReaction: addReaction)
+            .padding(.top, value: .small)
+            .padding([.horizontal, .bottom], value: .medium)
+            .task(id: messageReactions) {
+                reactions = messageReactions.map { reaction in
+                    let hasReacted = reaction.recipients.contains { $0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) }
+                    return UIMessageReaction(messageReaction: reaction, hasUserReacted: hasReacted)
+                }
+            }
     }
 
-    private func reactionsCount(for reaction: String) -> Int {
-        var count = message.reactions[reaction]??.count ?? 0
-        if localReactions.contains(reaction) && !hasCurrentUserRemotelyReacted(reaction) {
-            count += 1
-        }
-
-        return count
-    }
-
-    private func isReactionEnabled(_ reaction: String) -> Bool {
-        return localReactions.contains(reaction) || hasCurrentUserRemotelyReacted(reaction)
-    }
-
-    private func didTapReaction(_ reaction: String) {
-        withAnimation {
-            _ = localReactions.append(reaction)
-        }
+    private func addReaction(_ reaction: String) {
+        _ = localReactions.insert(reaction)
 
         Task {
             await createReactingDraft(reaction)
 
             @InjectService var draftManager: DraftManager
             draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: true)
+
+            // TODO: If it fails, remove from localReactions
         }
     }
 
-    private func didLongPressReaction(_ reaction: String) {
-        // TODO: Handle in next PR
-    }
-
-    private func hasCurrentUserRemotelyReacted(_ reaction: String) -> Bool {
-        return message.reactions[reaction]??.contains { $0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) } ?? false
-    }
-
     private func createReactingDraft(_ reaction: String) async {
-        let messageReply = MessageReply(frozenMessage: message.freezeIfNeeded(), replyMode: .reply)
+        guard let liveMessage = mailboxManager.transactionExecutor.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)
+        else { return }
+
+        let messageReply = MessageReply(frozenMessage: liveMessage.freezeIfNeeded(), replyMode: .reply)
 
         let draft = Draft.reacting(with: reaction, reply: messageReply, currentMailboxEmail: mailboxManager.mailbox.email)
         try? mailboxManager.writeTransaction { realm in
@@ -103,6 +88,6 @@ struct MessageReactionsView: View {
 }
 
 #Preview {
-    MessageReactionsView(message: PreviewHelper.sampleMessage)
+    MessageReactionsView(messageUid: "", messageReactions: PreviewHelper.reactions)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }

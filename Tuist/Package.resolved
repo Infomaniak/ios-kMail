@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "af3eb31bdc21ce2603f5bc88f92d73158b7ddb66",
-        "version" : "19.3.0"
+        "branch" : "feat/floating-panel-ui",
+        "revision" : "f33b1cc887081215b9e5d59f85e585dd49f8c698"
       }
     },
     {

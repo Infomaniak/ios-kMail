@@ -48,27 +48,41 @@ struct ReactionButton: View {
 
     var body: some View {
         Button {} label: {
-            HStack(spacing: IKPadding.micro) {
+            HStack(spacing: 2) {
                 Text(verbatim: emoji)
                 Text(verbatim: "\(count)")
                     .monospacedDigit()
                     .backportNumericContentTransition()
+                    .animation(.default, value: count)
             }
         }
         .buttonStyle(.reaction(isEnabled: hasReacted))
         .simultaneousGesture(
-            TapGesture().onEnded { _ in didTapButton(emoji) }
+            TapGesture()
+                .onEnded { _ in didTapButton(emoji) }
         )
         .simultaneousGesture(
-            LongPressGesture().onEnded { _ in didLongPressButton(emoji) }
+            LongPressGesture()
+                .onEnded { _ in didLongPressButton(emoji) }
         )
     }
 }
 
 #Preview {
     HStack {
-        ReactionButton(emoji: "😄", count: 1, hasReacted: false, didTapButton: { _ in }, didLongPressButton: { _ in })
-        ReactionButton(emoji: "❤️", count: 12, hasReacted: true, didTapButton: { _ in }, didLongPressButton: { _ in })
-        ReactionButton(emoji: "🤯", count: 2, hasReacted: false, didTapButton: { _ in }, didLongPressButton: { _ in })
+        ReactionButton(
+            emoji: "😄",
+            count: 2,
+            hasReacted: false,
+            didTapButton: { _ in },
+            didLongPressButton: { _ in }
+        )
+        ReactionButton(
+            emoji: "❤️",
+            count: 4,
+            hasReacted: true,
+            didTapButton: { _ in },
+            didLongPressButton: { _ in }
+        )
     }
 }

@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: it, Italian
  * Tagged: ios
- * Exported by: Baptiste Griva
- * Exported at: Mon, 30 Jun 2025 14:44:13 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Thu, 17 Jul 2025 08:45:10 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -310,6 +310,9 @@
 /* loco:66a9f94b98b834125d06aa46 */
 "buttonAddExistingAddress" = "Aggiungi un indirizzo esistente";
 
+/* loco:6877a25d3abbe0c0c403fba2 */
+"buttonAllReactions" = "Tutte";
+
 /* loco:6437c062dd576a7631052413 */
 "buttonAttachMailbox" = "Aggiungi l’indirizzo e-mail";
 
@@ -574,6 +577,9 @@
 /* loco:62ed16680ed9e562702a5ab2 */
 "contactsSearch" = "Contatti";
 
+/* loco:683ed907ce58d366270b42a3 */
+"contentDescriptionAddReaction" = "Aggiungi una reazione";
+
 /* loco:628c9d1654bb544229106572 */
 "contentDescriptionButtonBack" = "Indietro";
 
@@ -705,6 +711,39 @@
 
 /* loco:64243b2f0c473e027779afc4 */
 "emailWithoutSubjectTitle" = "Oggetto vuoto";
+
+/* loco:683e9613fc7545b414016b64 */
+"emojiPickerCategoryActivities" = "Attività";
+
+/* loco:683e95cffc7545b414016b62 */
+"emojiPickerCategoryAnimalsAndNature" = "Animali e natura";
+
+/* loco:683e96446098e5506408c7e2 */
+"emojiPickerCategoryFlags" = "Bandiere";
+
+/* loco:683e95e2bc133f5a8e04f803 */
+"emojiPickerCategoryFoodAndDrink" = "Cibo e bevande";
+
+/* loco:683e9623bc133f5a8e04f809 */
+"emojiPickerCategoryObjects" = "Oggetti";
+
+/* loco:683e9589ea5e56d5540cb632 */
+"emojiPickerCategoryPeopleAndBody" = "Persone e corpi";
+
+/* loco:6840584159b65ad4a4099ff3 */
+"emojiPickerCategoryRecentlyUsed" = "Utilizzato di recente";
+
+/* loco:683e957223e8d17078053832 */
+"emojiPickerCategorySmileysAndEmotion" = "Faccine ed emozioni";
+
+/* loco:683e963722d760019c02cf82 */
+"emojiPickerCategorySymbols" = "Simboli";
+
+/* loco:683e9600bc133f5a8e04f807 */
+"emojiPickerCategoryTravelAndPlaces" = "Viaggi e luoghi";
+
+/* loco:683ea3e0df4d9547cb0e54e2 */
+"emojiPickerResultsTitle" = "Risultati";
 
 /* loco:6348008e331e743e77176522 */
 "emptyStateFolderDescription" = "Non c’è nulla da vedere qui.";
@@ -1222,6 +1261,9 @@
 /* loco:64a3d65f003e64f9790f5ed2 */
 "popupDetachMailboxTitle" = "Staccare l’indirizzo";
 
+/* loco:6878f028dad01eb6460e7a92 */
+"reactionsTitle" = "Reazioni";
+
 /* loco:664ef6e5f66217322302f962 */
 "readFAQ" = "Leggi le FAQ";
 
@@ -1623,6 +1665,9 @@
 
 /* loco:651ebe4a1a15bf27e204db22 */
 "snackbarPasswordCopied" = "La password è stata copiata";
+
+/* loco:6858ff00a459db58890629f2 */
+"snackbarReactionSent" = "Reazione %@ inviata";
 
 /* loco:62ab4ae387f65e26e577dd42 */
 "snackbarReportPhishingConfirmation" = "Segnalato con successo";
