@@ -65,6 +65,12 @@ struct CalendarBodyDetailsView: View {
         return event.isAnInvitation && !event.isCancelled && iAmInvited
     }
 
+    func relativeDateString(from date: Date) -> String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.dateTimeStyle = .named
+        return formatter.localizedString(for: date, relativeTo: Date())
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.medium) {
             if let warning = event.warning {
@@ -78,27 +84,29 @@ struct CalendarBodyDetailsView: View {
                 if let nextOccurrence {
                     let startOfCurrentDate = Date().startOfDay
                     let startOfNextDate = nextOccurrence.startOfDay
+                    let relativeDateString = relativeDateString(from: nextOccurrence)
+
                     switch Calendar.current.dateComponents([.day], from: startOfCurrentDate, to: startOfNextDate).day {
                     case 0:
                         if nextOccurrence < Date() {
                             Label(
-                                "\(MailResourcesStrings.Localizable.lastNearEventOccurrence) \(MailResourcesStrings.Localizable.threadListSectionToday)",
+                                "\(MailResourcesStrings.Localizable.lastNearEventOccurrence) \(relativeDateString)",
                                 asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
                             )
                         } else {
                             Label(
-                                "\(MailResourcesStrings.Localizable.nextNearEventOccurrence) \(MailResourcesStrings.Localizable.threadListSectionToday)",
+                                "\(MailResourcesStrings.Localizable.nextNearEventOccurrence) \(relativeDateString)",
                                 asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
                             )
                         }
                     case 1:
                         Label(
-                            "\(MailResourcesStrings.Localizable.nextNearEventOccurrence) \(MailResourcesStrings.Localizable.tomorrowString)",
+                            "\(MailResourcesStrings.Localizable.nextNearEventOccurrence) \(relativeDateString)",
                             asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
                         )
                     case -1:
                         Label(
-                            "\(MailResourcesStrings.Localizable.lastNearEventOccurrence) \(MailResourcesStrings.Localizable.messageDetailsYesterday)",
+                            "\(MailResourcesStrings.Localizable.lastNearEventOccurrence) \(relativeDateString)",
                             asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
                         )
                     default:
