@@ -42,7 +42,7 @@ public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
         recipient: Recipient,
         type: RecipientChipType = .default,
         removeHandler: (() -> Void)? = nil,
-        switchFocusHandler: (() -> Void)? = nil,
+        switchFocusHandler: (() -> Void)? = nil
     ) {
         self.recipient = recipient
         self.type = type
