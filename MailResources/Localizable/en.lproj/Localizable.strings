@@ -304,6 +304,9 @@
 /* loco:66a9f94b98b834125d06aa46 */
 "buttonAddExistingAddress" = "Add an existing address";
 
+/* loco:6877a25d3abbe0c0c403fba2 */
+"buttonAllReactions" = "All";
+
 /* loco:6437c062dd576a7631052413 */
 "buttonAttachMailbox" = "Add this email address";
 
