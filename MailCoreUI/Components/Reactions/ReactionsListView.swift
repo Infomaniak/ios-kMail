@@ -68,7 +68,13 @@ public struct ReactionsListView: View {
             .onChange(of: selectedEmoji, perform: selectEmojiFromPicker)
         }
         .sheet(isPresented: $isShowingReactionsBottomSheet) {
-            ReactionsDetailsView(reactions: reactions)
+            if #available(iOS 16, *) {
+                ReactionsDetailsView(reactions: reactions)
+                    .presentationDetents([.medium, .large])
+            } else {
+                ReactionsDetailsView(reactions: reactions)
+                    .backport.presentationDetents([.medium, .large])
+            }
         }
     }
 
