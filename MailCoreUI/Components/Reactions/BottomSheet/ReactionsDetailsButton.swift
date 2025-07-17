@@ -19,7 +19,7 @@
 import MailResources
 import SwiftUI
 
-extension ReactionsDetailsView.SelectionType {
+extension ReactionSelectionType {
     var buttonLabel: String {
         switch self {
         case .all:
@@ -31,9 +31,9 @@ extension ReactionsDetailsView.SelectionType {
 }
 
 struct ReactionsDetailsButton: View {
-    @Binding var currentSelection: ReactionsDetailsView.SelectionType?
+    @Binding var currentSelection: ReactionSelectionType?
 
-    let selectionType: ReactionsDetailsView.SelectionType
+    let selectionType: ReactionSelectionType
     let namespace: Namespace.ID
 
     private var isSelected: Bool {

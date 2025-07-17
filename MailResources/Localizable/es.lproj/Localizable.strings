@@ -1261,6 +1261,9 @@
 /* loco:64a3d65f003e64f9790f5ed2 */
 "popupDetachMailboxTitle" = "Separar dirección";
 
+/* loco:6878f028dad01eb6460e7a92 */
+"reactionsTitle" = "Reacciones";
+
 /* loco:664ef6e5f66217322302f962 */
 "readFAQ" = "Lea las preguntas frecuentes";
 
