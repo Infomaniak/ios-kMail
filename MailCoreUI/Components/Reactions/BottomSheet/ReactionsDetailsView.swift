@@ -26,20 +26,14 @@ extension ReactionsDetailsView {
 }
 
 struct ReactionsDetailsView: View {
+    @State private var selectedReaction = SelectionType.all
+
     let reactions: [UIMessageReaction]
     var initialSelection: SelectionType?
 
-    @State private var selectedReaction = SelectionType.all
-
     var body: some View {
-        VStack {
-            ScrollView(.horizontal) {
-                HStack {
-                    ForEach(reactions) { reaction in
-                        Text(reaction, format: .reaction)
-                    }
-                }
-            }
+        VStack(spacing: 0) {
+            ReactionsDetailsButtonsView(currentSelection: $selectedReaction, reactions: reactions)
 
             TabView(selection: $selectedReaction) {
                 ReactionsList(reactions: reactions)
