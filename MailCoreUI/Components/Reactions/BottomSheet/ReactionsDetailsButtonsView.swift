@@ -22,7 +22,7 @@ import SwiftUI
 struct ReactionsDetailsButtonsView: View {
     @Namespace private var animation
 
-    @Binding var currentSelection: ReactionsDetailsView.SelectionType
+    @Binding var currentSelection: ReactionsDetailsView.SelectionType?
 
     let reactions: [UIMessageReaction]
 
