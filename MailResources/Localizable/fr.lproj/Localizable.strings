@@ -1282,6 +1282,9 @@
 /* loco:64a3d65f003e64f9790f5ed2 */
 "popupDetachMailboxTitle" = "Détacher l’adresse";
 
+/* loco:6878f028dad01eb6460e7a92 */
+"reactionsTitle" = "Réactions";
+
 /* loco:664ef6e5f66217322302f962 */
 "readFAQ" = "Consulter les FAQ";
 

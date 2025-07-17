@@ -22,7 +22,7 @@ import SwiftUI
 struct ReactionsDetailsButtonsView: View {
     @Namespace private var animation
 
-    @Binding var currentSelection: ReactionsDetailsView.SelectionType?
+    @Binding var currentSelection: ReactionSelectionType?
 
     let reactions: [UIMessageReaction]
 
@@ -36,14 +36,14 @@ struct ReactionsDetailsButtonsView: View {
                 ScrollView(.horizontal) {
                     HStack {
                         ReactionsDetailsButton(currentSelection: $currentSelection, selectionType: .all, namespace: animation)
-                            .id(ReactionsDetailsView.SelectionType.all)
+                            .id(ReactionSelectionType.all)
                         ForEach(reactions) { reaction in
                             ReactionsDetailsButton(
                                 currentSelection: $currentSelection,
                                 selectionType: .reaction(reaction),
                                 namespace: animation
                             )
-                            .id(ReactionsDetailsView.SelectionType.reaction(reaction))
+                            .id(ReactionSelectionType.reaction(reaction))
                         }
                     }
                     .padding(.horizontal, value: .micro)
