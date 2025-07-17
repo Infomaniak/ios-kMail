@@ -20,10 +20,10 @@
 import SwiftUI
 
 struct ReactionsListTabView: View {
-    @Binding var selectedReaction: ReactionsDetailsView.SelectionType?
+    @Binding var selectedReaction: ReactionSelectionType?
 
     let reactions: [UIMessageReaction]
-    var initialSelection: ReactionsDetailsView.SelectionType?
+    var initialSelection: ReactionSelectionType?
 
     // We need to use a ScrollView because the TabView wrapped inside a sheet is broken.
     // The component struggles to ignore the safe area.
@@ -33,11 +33,11 @@ struct ReactionsListTabView: View {
                 LazyHStack(spacing: 0) {
                     ReactionsList(reactions: reactions)
                         .containerRelativeFrame(.horizontal)
-                        .id(ReactionsDetailsView.SelectionType.all)
+                        .id(ReactionSelectionType.all)
                     ForEach(reactions) { reaction in
                         ReactionsList(reaction: reaction)
                             .containerRelativeFrame(.horizontal)
-                            .id(ReactionsDetailsView.SelectionType.reaction(reaction))
+                            .id(ReactionSelectionType.reaction(reaction))
                     }
                 }
                 .scrollTargetLayout()
@@ -47,10 +47,10 @@ struct ReactionsListTabView: View {
         } else {
             TabView(selection: Binding(get: { selectedReaction ?? .all }, set: { selectedReaction = $0 })) {
                 ReactionsList(reactions: reactions)
-                    .tag(ReactionsDetailsView.SelectionType.all)
+                    .tag(ReactionSelectionType.all)
                 ForEach(reactions) { reaction in
                     ReactionsList(reaction: reaction)
-                        .tag(ReactionsDetailsView.SelectionType.reaction(reaction))
+                        .tag(ReactionSelectionType.reaction(reaction))
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
