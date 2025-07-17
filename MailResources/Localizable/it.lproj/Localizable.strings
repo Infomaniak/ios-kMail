@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: it, Italian
  * Tagged: ios
- * Exported by: Baptiste Griva
- * Exported at: Mon, 30 Jun 2025 14:44:13 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Thu, 17 Jul 2025 08:45:10 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -309,6 +309,9 @@
 
 /* loco:66a9f94b98b834125d06aa46 */
 "buttonAddExistingAddress" = "Aggiungi un indirizzo esistente";
+
+/* loco:6877a25d3abbe0c0c403fba2 */
+"buttonAllReactions" = "Tutte";
 
 /* loco:6437c062dd576a7631052413 */
 "buttonAttachMailbox" = "Aggiungi l’indirizzo e-mail";
