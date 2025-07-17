@@ -26,7 +26,7 @@ struct EncryptionConcernedRecipientsView: View {
     let message: Message
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             ForEach(message.autoEncryptDisabledRecipients) { recipient in
                 RecipientCell(recipient: recipient)
                     .padding(.horizontal, value: .medium)
