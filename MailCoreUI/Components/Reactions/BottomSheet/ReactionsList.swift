@@ -20,7 +20,6 @@ import MailCore
 import SwiftUI
 
 struct ReactionsList: View {
-
     let reactions: [UIMessageReaction]
 
     init(reactions: [UIMessageReaction]) {
