@@ -32,18 +32,27 @@ struct ReactionsDetailsButtonsView: View {
                 .fill(MailResourcesAsset.elementsColor.swiftUIColor)
                 .frame(height: 1)
 
-            ScrollView(.horizontal) {
-                HStack {
-                    ReactionsDetailsButton(currentSelection: $currentSelection, selectionType: .all, namespace: animation)
-                    ForEach(reactions) { reaction in
-                        ReactionsDetailsButton(
-                            currentSelection: $currentSelection,
-                            selectionType: .reaction(reaction),
-                            namespace: animation
-                        )
+            ScrollViewReader { proxy in
+                ScrollView(.horizontal) {
+                    HStack {
+                        ReactionsDetailsButton(currentSelection: $currentSelection, selectionType: .all, namespace: animation)
+                            .id(ReactionsDetailsView.SelectionType.all)
+                        ForEach(reactions) { reaction in
+                            ReactionsDetailsButton(
+                                currentSelection: $currentSelection,
+                                selectionType: .reaction(reaction),
+                                namespace: animation
+                            )
+                            .id(ReactionsDetailsView.SelectionType.reaction(reaction))
+                        }
+                    }
+                    .padding(.horizontal, value: .micro)
+                }
+                .onChange(of: currentSelection) { newValue in
+                    withAnimation(.default) {
+                        proxy.scrollTo(newValue)
                     }
                 }
-                .padding(.horizontal, value: .micro)
             }
         }
     }
