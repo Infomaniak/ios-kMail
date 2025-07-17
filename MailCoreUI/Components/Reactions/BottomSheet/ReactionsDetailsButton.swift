@@ -31,7 +31,7 @@ extension ReactionsDetailsView.SelectionType {
 }
 
 struct ReactionsDetailsButton: View {
-    @Binding var currentSelection: ReactionsDetailsView.SelectionType
+    @Binding var currentSelection: ReactionsDetailsView.SelectionType?
 
     let selectionType: ReactionsDetailsView.SelectionType
     let namespace: Namespace.ID

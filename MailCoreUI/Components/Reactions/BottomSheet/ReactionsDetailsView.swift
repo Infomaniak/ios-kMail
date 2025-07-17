@@ -26,7 +26,7 @@ extension ReactionsDetailsView {
 }
 
 struct ReactionsDetailsView: View {
-    @State private var selectedReaction = SelectionType.all
+    @State private var selectedReaction: SelectionType? = .all
 
     let reactions: [UIMessageReaction]
     var initialSelection: SelectionType?
@@ -34,16 +34,7 @@ struct ReactionsDetailsView: View {
     var body: some View {
         VStack(spacing: 0) {
             ReactionsDetailsButtonsView(currentSelection: $selectedReaction, reactions: reactions)
-
-            TabView(selection: $selectedReaction) {
-                ReactionsList(reactions: reactions)
-                    .tag(SelectionType.all)
-                ForEach(reactions) { reaction in
-                    ReactionsList(reaction: reaction)
-                        .tag(SelectionType.reaction(reaction))
-                }
-            }
-            .tabViewStyle(.page)
+            ReactionsListTabView(selectedReaction: $selectedReaction, reactions: reactions)
         }
         .onAppear {
             if let initialSelection {
