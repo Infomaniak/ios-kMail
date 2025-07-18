@@ -17,11 +17,14 @@
  */
 
 import AuthenticationServices
+import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCreateAccount
+import InfomaniakDeviceCheck
 import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakOnboarding
+import InterAppLogin
 import Lottie
 import MailCore
 import MailCoreUI
@@ -98,9 +101,15 @@ extension Slide {
     }
 }
 
+enum MultiLoginResult {
+    case success(token: ApiToken, mailboxes: [Mailbox], apiFetcher: ApiFetcher)
+    case error(Error)
+}
+
 @MainActor
 final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
     @LazyInjectService private var loginService: InfomaniakLoginable
+    @LazyInjectService private var tokenService: InfomaniakNetworkLoginable
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var remoteNotificationRegistrer: RemoteNotificationRegistrable
     @LazyInjectService private var accountManager: AccountManager
@@ -149,6 +158,58 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
                 self?.loginSuccessful(code: result.code, codeVerifier: result.verifier)
             case .failure(let error):
                 self?.loginFailed(error: error)
+            }
+        }
+    }
+
+    func loginWith(accounts: [ConnectedAccount]) {
+        isLoading = true
+        Task {
+            let loginResults = await withTaskGroup(of: MultiLoginResult.self, returning: [MultiLoginResult].self) { group in
+                for account in accounts {
+                    group.addTask { [self] in
+                        do {
+                            let derivatedToken = try await tokenService.derivateApiToken(for: account)
+
+                            let (apiFetcher, mailboxes) = try await accountManager.createAccount(token: derivatedToken)
+                            return .success(token: derivatedToken, mailboxes: mailboxes, apiFetcher: apiFetcher)
+                        } catch {
+                            return .error(error)
+                        }
+                    }
+                }
+
+                return await group.reduce(into: [MultiLoginResult]()) { partialResult, result in
+                    partialResult.append(result)
+                }
+            }
+
+            for result in loginResults {
+                if case .success(let token, let mailboxes, let apiFetcher) = result {
+                    try await accountManager.setCurrentAccount(
+                        token: token,
+                        mailboxes: mailboxes,
+                        apiFetcher: apiFetcher
+                    )
+
+                    isLoading = false
+                    return
+                }
+            }
+
+            // TODO: Check if we want to stop at first error / success
+            for result in loginResults {
+                if case .error(let error) = result {
+                    if (error as? MailError) == MailError.noMailbox {
+                        shouldShowEmptyMailboxesView = true
+                    } else {
+                        snackbarPresenter.show(message: error.localizedDescription)
+                        SentryDebug.loginError(error: error, step: "createAndSetCurrentAccount")
+                    }
+
+                    isLoading = false
+                    return
+                }
             }
         }
     }
