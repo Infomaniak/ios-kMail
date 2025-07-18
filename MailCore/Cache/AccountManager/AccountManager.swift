@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DeviceAssociation
 import Foundation
 import InfomaniakBugTracker
 import InfomaniakCore
@@ -33,6 +34,7 @@ import SwiftUI
 extension InfomaniakCore.UserProfile: Identifiable {}
 
 public final class AccountManager: RefreshTokenDelegate, ObservableObject {
+    @LazyInjectService var deviceManager: DeviceManagerable
     @LazyInjectService var networkLoginService: InfomaniakNetworkLoginable
     @LazyInjectService var tokenStore: TokenStore
     @LazyInjectService var bugTracker: BugTracker
@@ -190,6 +192,9 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     public func createAccount(token: ApiToken) async throws -> (ApiFetcher, [Mailbox]) {
         let apiFetcher = MailApiFetcher(token: token, delegate: self)
+
+        attachDeviceToApiToken(token, apiFetcher: apiFetcher)
+
         let user = try await userProfileStore.updateUserProfile(with: apiFetcher)
 
         let mailboxesResponse = try await apiFetcher.mailboxes()
@@ -237,6 +242,9 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
 
         let apiFetcher = getApiFetcher(for: account.userId, token: token)
+
+        attachDeviceToApiToken(token, apiFetcher: apiFetcher)
+
         let user = try await userProfileStore.updateUserProfile(with: apiFetcher)
 
         let fetchedMailboxes = try await apiFetcher.mailboxes()
@@ -267,6 +275,17 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         if currentMailboxManager?.mailbox.isAvailable == false {
             switchToFirstValidMailboxManager()
+        }
+    }
+
+    private func attachDeviceToApiToken(_ token: ApiToken, apiFetcher: ApiFetcher) {
+        Task {
+            do {
+                let device = try await deviceManager.getOrCreateCurrentDevice()
+                try await deviceManager.attachDeviceIfNeeded(device, to: token, apiFetcher: apiFetcher)
+            } catch {
+                SentryDebug.asyncCapture(message: "failedToAttachDeviceError", context: ["error": error], level: .error)
+            }
         }
     }
 
@@ -440,6 +459,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         mailboxManagers.removeAll()
         contactManagers.removeAll()
         apiFetchers.removeAll()
+        deviceManager.forgetLocalDeviceHash(forUserId: userId)
 
         Task {
             @InjectService var mainViewStateStore: MainViewStateStore
