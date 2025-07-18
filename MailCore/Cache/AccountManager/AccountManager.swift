@@ -281,7 +281,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         Task {
             do {
                 let device = try await deviceManager.getOrCreateCurrentDevice()
-                try await deviceManager.attachDevice(device, to: token, apiFetcher: apiFetcher)
+                try await deviceManager.attachDeviceIfNeeded(device, to: token, apiFetcher: apiFetcher)
             } catch {
                 SentryDebug.asyncCapture(message: "failedToAttachDeviceError", context: ["error": error], level: .error)
             }
@@ -458,6 +458,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         mailboxManagers.removeAll()
         contactManagers.removeAll()
         apiFetchers.removeAll()
+        deviceManager.forgetLocalDeviceHash(forUserId: userId)
 
         Task {
             @InjectService var mainViewStateStore: MainViewStateStore
