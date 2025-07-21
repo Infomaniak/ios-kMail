@@ -26,7 +26,8 @@ import SwiftUI
 public struct ReactionsListView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @State private var isShowingReactionsBottomSheet = false
+    @State private var selectedReactionToDisplay: ReactionSelectionType?
+
     @State private var isShowingEmojiPicker = false
     @State private var selectedEmoji: Emoji?
 
@@ -46,10 +47,12 @@ public struct ReactionsListView: View {
                 ReactionButton(
                     emoji: reaction.emoji,
                     count: emojiCount(for: reaction),
-                    hasReacted: hasCurrentUserReacted(to: reaction),
-                    didTapButton: addReaction,
-                    didLongPressButton: didLongPressReaction
-                )
+                    hasReacted: hasCurrentUserReacted(to: reaction)
+                ) {
+                    addReaction(reaction.emoji)
+                } didLongPressButton: {
+                    didLongPressReaction(reaction)
+                }
             }
 
             Button {
@@ -67,11 +70,11 @@ public struct ReactionsListView: View {
             .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $selectedEmoji)
             .onChange(of: selectedEmoji, perform: selectEmojiFromPicker)
         }
-        .sheet(isPresented: $isShowingReactionsBottomSheet) {
+        .sheet(item: $selectedReactionToDisplay) { selectedReaction in
             if #available(iOS 16, *) {
-                ReactionsDetailsView(reactions: reactions)
+                ReactionsDetailsView(reactions: reactions, initialSelection: selectedReaction)
             } else {
-                ReactionsDetailsBackportView(reactions: reactions)
+                ReactionsDetailsBackportView(reactions: reactions, initialSelection: selectedReaction)
             }
         }
     }
@@ -92,8 +95,8 @@ public struct ReactionsListView: View {
         selectedEmoji = nil
     }
 
-    private func didLongPressReaction(_ reaction: String) {
-        isShowingReactionsBottomSheet = true
+    private func didLongPressReaction(_ reaction: UIMessageReaction) {
+        selectedReactionToDisplay = .reaction(reaction)
     }
 
     private func hasCurrentUserReacted(to reaction: UIMessageReaction) -> Bool {

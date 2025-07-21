@@ -40,7 +40,7 @@ struct ReactionsDetailsButton: View {
         currentSelection == selectionType
     }
 
-    private let animation = Animation.default
+    private let animation = Animation.default.speed(2)
 
     var body: some View {
         Button {
@@ -52,6 +52,7 @@ struct ReactionsDetailsButton: View {
                 .textStyle(.bodyMedium)
                 .padding(.horizontal, value: .small)
                 .padding(.vertical, value: .mini)
+                .frame(minWidth: 56)
         }
         .overlay(alignment: .bottom) {
             if currentSelection == selectionType {

@@ -43,8 +43,8 @@ struct ReactionButton: View {
     let count: Int
     let hasReacted: Bool
 
-    let didTapButton: (String) -> Void
-    let didLongPressButton: (String) -> Void
+    let didTapButton: () -> Void
+    let didLongPressButton: () -> Void
 
     var body: some View {
         Button {} label: {
@@ -59,11 +59,11 @@ struct ReactionButton: View {
         .buttonStyle(.reaction(isEnabled: hasReacted))
         .simultaneousGesture(
             TapGesture()
-                .onEnded { _ in didTapButton(emoji) }
+                .onEnded { _ in didTapButton() }
         )
         .simultaneousGesture(
             LongPressGesture()
-                .onEnded { _ in didLongPressButton(emoji) }
+                .onEnded { _ in didLongPressButton() }
         )
     }
 }
@@ -74,15 +74,15 @@ struct ReactionButton: View {
             emoji: "😄",
             count: 2,
             hasReacted: false,
-            didTapButton: { _ in },
-            didLongPressButton: { _ in }
+            didTapButton: { },
+            didLongPressButton: { }
         )
         ReactionButton(
             emoji: "❤️",
             count: 4,
             hasReacted: true,
-            didTapButton: { _ in },
-            didLongPressButton: { _ in }
+            didTapButton: { },
+            didLongPressButton: { }
         )
     }
 }
