@@ -45,14 +45,18 @@ public struct RecipientCell: View {
     let title: String
     let subtitle: String
     let avatarConfiguration: ContactConfiguration
+    let avatarSize: CGFloat
 
     let highlight: String?
     let bimi: Bimi?
+
+    public static let defaultAvatarSize: CGFloat = 40
 
     public init(
         recipient: Recipient,
         highlight: String? = nil,
         bimi: Bimi? = nil,
+        avatarSize: CGFloat = Self.defaultAvatarSize,
         contextUser: UserProfile,
         contextMailboxManager: MailboxManager
     ) {
@@ -67,6 +71,7 @@ public struct RecipientCell: View {
             )
         self.highlight = highlight
         self.bimi = bimi
+        self.avatarSize = avatarSize
     }
 
     public init(
@@ -74,7 +79,8 @@ public struct RecipientCell: View {
         title: String,
         subtitle: String,
         highlight: String? = nil,
-        bimi: Bimi? = nil
+        bimi: Bimi? = nil,
+        avatarSize: CGFloat = Self.defaultAvatarSize,
     ) {
         self.title = title
         self.subtitle = subtitle
@@ -82,6 +88,7 @@ public struct RecipientCell: View {
 
         self.highlight = highlight
         self.bimi = bimi
+        self.avatarSize = avatarSize
     }
 
     public var body: some View {
@@ -89,7 +96,7 @@ public struct RecipientCell: View {
             AvatarView(
                 mailboxManager: mailboxManager,
                 contactConfiguration: avatarConfiguration,
-                size: 40
+                size: avatarSize
             )
             .accessibilityHidden(true)
 
