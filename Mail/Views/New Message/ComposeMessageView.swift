@@ -104,7 +104,7 @@ struct ComposeMessageView: View {
     private let htmlAttachments: [HTMLAttachable]
 
     private var isSendButtonDisabled: Bool {
-        let encryptionReady = draft.encrypted ? draft.allRecipients.allSatisfy { $0.canAutoEncrypt != nil } : true
+        let encryptionReady = draft.encrypted ? draft.allRecipients.allSatisfy { $0.canAutoEncrypt } : true
         return draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded || !encryptionReady
     }
 
