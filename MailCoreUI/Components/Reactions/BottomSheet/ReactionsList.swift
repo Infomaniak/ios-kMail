@@ -39,6 +39,7 @@ struct ReactionsList: View {
                     }
                 }
             }
+            .padding(.vertical, value: .mini)
         }
     }
 }
