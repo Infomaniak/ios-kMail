@@ -19,6 +19,24 @@
 import MailResources
 import SwiftUI
 
+public extension View {
+    func backportScrollBounceBasedOnSize() -> some View {
+        if #available(iOS 16.4, *) {
+            return scrollBounceBehavior(.basedOnSize)
+        } else {
+            return self
+        }
+    }
+
+    func backportScrollIndicatorsHidden() -> some View {
+        if #available(iOS 16.4, *) {
+            return scrollIndicators(.hidden)
+        } else {
+            return self
+        }
+    }
+}
+
 struct ReactionsDetailsButtonsView: View {
     @Namespace private var animation
 
@@ -48,9 +66,14 @@ struct ReactionsDetailsButtonsView: View {
                     }
                     .padding(.horizontal, value: .micro)
                 }
+                .backportScrollBounceBasedOnSize()
+                .backportScrollIndicatorsHidden()
+                .onAppear {
+                    proxy.scrollTo(currentSelection, anchor: .center)
+                }
                 .onChange(of: currentSelection) { newValue in
                     withAnimation(.default) {
-                        proxy.scrollTo(newValue)
+                        proxy.scrollTo(newValue, anchor: .center)
                     }
                 }
             }
