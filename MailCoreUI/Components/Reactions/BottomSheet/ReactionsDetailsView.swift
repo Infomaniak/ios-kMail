@@ -20,18 +20,24 @@ import InfomaniakCoreSwiftUI
 import MailResources
 import SwiftUI
 
-enum ReactionSelectionType: Hashable {
+enum ReactionSelectionType: Identifiable, Hashable {
     case all
     case reaction(UIMessageReaction)
+
+    var id: Int { hashValue }
 }
 
 @available(iOS 16.0, *)
 struct ReactionsDetailsView: View {
-    @State private var selectedReaction: ReactionSelectionType? = .all
+    @State private var selectedReaction: ReactionSelectionType?
     @State private var currentDetent = PresentationDetent.medium
 
-    let reactions: [UIMessageReaction]
-    var initialSelection: ReactionSelectionType?
+    private let reactions: [UIMessageReaction]
+
+    init(reactions: [UIMessageReaction], initialSelection: ReactionSelectionType? = nil) {
+        _selectedReaction = State(wrappedValue: initialSelection ?? .all)
+        self.reactions = reactions
+    }
 
     var body: some View {
         IKFloatingPanelView(
@@ -44,11 +50,6 @@ struct ReactionsDetailsView: View {
             VStack(spacing: 0) {
                 ReactionsDetailsButtonsView(currentSelection: $selectedReaction, reactions: reactions)
                 ReactionsListTabView(selectedReaction: $selectedReaction, reactions: reactions)
-            }
-            .onAppear {
-                if let initialSelection {
-                    selectedReaction = initialSelection
-                }
             }
         }
     }
