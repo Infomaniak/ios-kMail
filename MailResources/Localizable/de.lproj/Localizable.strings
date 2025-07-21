@@ -1742,7 +1742,7 @@
 "snackbarMoveCancelled" = "Umzug abgesagt";
 
 /* loco:651ebe4a1a15bf27e204db22 */
-"snackbarPasswordCopied" = "Das Passwort wurde kopiert";
+"snackbarPasswordCopied" = "Passwort kopiert";
 
 /* loco:6858ff00a459db58890629f2 */
 "snackbarReactionSent" = "Reaktion %@ gesendet";
@@ -1767,9 +1767,6 @@
 
 /* loco:67ea70102a2bbfe96e02d072 */
 "snackbarSnoozeSuccess" = "Sie erhalten eine Erinnerung an diese Nachricht %@";
-
-/* loco:67ea722654038d4994095fc2 */
-"snackbarSnoozeSuccess-plural-many" = "";
 
 /* loco:653fa9122f7b384757074432 */
 "snackbarSubjectCopiedToClipboard" = "Betreff in die Zwischenablage kopiert";

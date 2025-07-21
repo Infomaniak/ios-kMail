@@ -380,7 +380,6 @@ public extension Thread {
                 numberOfScheduledDraft += 1
             }
             if message.isReaction {
-                reactionsCount += 1
                 getReaction(from: message, reactions: &reactionsByMessageId)
             }
 
@@ -404,7 +403,6 @@ public extension Thread {
 
         unseenMessages = 0
         numberOfScheduledDraft = 0
-        reactionsCount = 0
 
         flagged = false
         hasAttachments = false

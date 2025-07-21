@@ -4,7 +4,7 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Thu, 17 Jul 2025 08:45:10 +0200
+ * Exported at: Mon, 21 Jul 2025 16:54:32 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1229,7 +1229,7 @@
 "newMessagePlaceholderTitle" = "Digitare il messaggio";
 
 /* loco:67c6c5212e72fc8285013f82 */
-"nextEventOccurrence" = "Evento ricorrente, prossima ricorrenza il";
+"nextEventOccurrence" = "Evento ricorrente, prossima occorrenza il";
 
 /* loco:67238d29fe561f9d0a0f5732 */
 "nextMonday" = "Lunedì prossimo";
@@ -1739,7 +1739,7 @@
 "snackbarMoveCancelled" = "Spostamento annullato";
 
 /* loco:651ebe4a1a15bf27e204db22 */
-"snackbarPasswordCopied" = "La password è stata copiata";
+"snackbarPasswordCopied" = "Password copiata";
 
 /* loco:6858ff00a459db58890629f2 */
 "snackbarReactionSent" = "Reazione %@ inviata";
@@ -1764,9 +1764,6 @@
 
 /* loco:67ea70102a2bbfe96e02d072 */
 "snackbarSnoozeSuccess" = "Riceverai un promemoria per questo messaggio %@";
-
-/* loco:67ea722654038d4994095fc2 */
-"snackbarSnoozeSuccess-plural-many" = "";
 
 /* loco:653fa9122f7b384757074432 */
 "snackbarSubjectCopiedToClipboard" = "Soggetto copiato negli appunti";
