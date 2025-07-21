@@ -29,7 +29,13 @@ struct ReactionCell: View {
 
     var body: some View {
         HStack(spacing: IKPadding.mini) {
-            RecipientCell(recipient: recipient, contextUser: currentUser.value, contextMailboxManager: mailboxManager)
+            RecipientCell(
+                recipient: recipient,
+                avatarSize: 32,
+                contextUser: currentUser.value,
+                contextMailboxManager: mailboxManager
+            )
+
             Text(emoji)
                 .font(.system(size: 24))
         }
