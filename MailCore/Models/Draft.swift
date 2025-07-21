@@ -92,7 +92,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
 
     public var autoEncryptDisabledRecipients: [Recipient] {
         return allRecipients.filter { recipient in
-            if !(recipient.isInfomaniakHosted ?? true) {
+            if !recipient.canAutoEncrypt {
                 return true
             }
             return false

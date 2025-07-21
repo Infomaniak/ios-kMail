@@ -59,7 +59,7 @@ public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
         if type == .encrypted {
-            label.updateAccessoryViewIfNeeded(EncryptedChipAccessoryUIView(isEncrypted: recipient.isInfomaniakHosted == true))
+            label.updateAccessoryViewIfNeeded(EncryptedChipAccessoryUIView(isEncrypted: recipient.canAutoEncrypt == true))
         }
 
         return label
@@ -71,7 +71,7 @@ public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
         uiLabel.isUserInteractionEnabled = isEnabled
 
         if type == .encrypted {
-            uiLabel.updateAccessoryViewIfNeeded(EncryptedChipAccessoryUIView(isEncrypted: recipient.isInfomaniakHosted == true))
+            uiLabel.updateAccessoryViewIfNeeded(EncryptedChipAccessoryUIView(isEncrypted: recipient.canAutoEncrypt == true))
         } else {
             uiLabel.updateAccessoryViewIfNeeded(nil)
         }

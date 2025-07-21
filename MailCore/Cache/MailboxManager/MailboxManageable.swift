@@ -47,7 +47,6 @@ public protocol MailboxManagerMessageable {
     func move(messages: [Message], to folderRole: FolderRole, origin: Folder?) async throws -> UndoAction
     func move(messages: [Message], to folder: Folder, origin: Folder?) async throws -> UndoAction
     func delete(messages: [Message]) async throws
-    func updateRecipientsAutoEncrypt(message: Message) async throws
 }
 
 /// An abstract interface on the `MailboxManager` related to drafts

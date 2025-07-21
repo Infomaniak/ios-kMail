@@ -162,7 +162,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     public var autoEncryptDisabledRecipients: [Recipient] {
         let result = to.toArray() + cc.toArray() + bcc.toArray()
         return result.filter { recipient in
-            if !(recipient.isInfomaniakHosted ?? true) {
+            if !recipient.canAutoEncrypt {
                 return true
             }
             return false
