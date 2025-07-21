@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: en, English
  * Tagged: ios
- * Exported by: Matthieu Déglon
- * Exported at: Wed, 30 Jul 2025 08:50:31 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Mon, 21 Jul 2025 16:54:32 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -51,6 +51,9 @@
 
 /* loco:62ab21e14956e9775f391ca4 */
 "actionNonSpam" = "Report as not spam";
+
+/* loco:629f0fa6da208e4d4539cdd2 */
+"actionOpenIn" = "Open in";
 
 /* loco:629f0f6557b1a86b24759543 */
 "actionPhishing" = "Report phishing";
@@ -253,6 +256,9 @@
 /* loco:6437e8f60dad565a51542b62 */
 "attachMailboxTitle" = "Add email address";
 
+/* loco:62b47f7819800f7e7f520e62 */
+"attachmentActionCamera" = "Camera";
+
 /* loco:62b47ed7bd878067784e6f62 */
 "attachmentActionFile" = "Attach a file";
 
@@ -282,6 +288,9 @@
 
 /* loco:62cd641b15742c678d4c30e2 */
 "buttonAccept" = "Accept";
+
+/* loco:628215d524fcfb2f2d1a8a84 */
+"buttonAccountAssociatedEmailAddresses" = "Email addresses associated with this account";
 
 /* loco:628216026aae4d7bc05773c3 */
 "buttonAccountDelete" = "Delete account";
@@ -316,6 +325,9 @@
 /* loco:65957dd2d9c7e2750204c382 */
 "buttonAttendees" = "Attendees";
 
+/* loco:62befec91b3e0d24437119b3 */
+"buttonAvailableSoon" = "Available soon";
+
 /* loco:651ebd40ccc14ebdca0313a5 */
 "buttonBackToApp" = "Back to the Mail application";
 
@@ -324,6 +336,9 @@
 
 /* loco:62b2d43771635f1d1f0da462 */
 "buttonBold" = "Bold";
+
+/* loco:62b2dda49d1c850fb016c612 */
+"buttonBulletPoint" = "Bullet point";
 
 /* loco:62b2e3ddf30bc656eb06a442 */
 "buttonCamera" = "Take a picture";
@@ -385,6 +400,9 @@
 /* loco:62567a5b3e928d1b5930fc02 */
 "buttonFolders" = "Folders";
 
+/* loco:67a9bc304b02c0c7bc094dc2 */
+"buttonFreeTrial" = "Try for free";
+
 /* loco:651ebfd6a9604ddb660b5e12 */
 "buttonGoToSettings" = "Go to settings";
 
@@ -423,6 +441,9 @@
 
 /* loco:6284fd623d98060ac31f76d5 */
 "buttonMore" = "More";
+
+/* loco:62567be2708ef36f6e378df2 */
+"buttonMoreStorage" = "Get more storage";
 
 /* loco:66ea743a97d41ebaaa0536f4 */
 "buttonMultiselect" = "Select";
@@ -649,6 +670,12 @@
 /* loco:62b1c12cc1df8a35281faba4 */
 "createFolderName" = "Name of the folder";
 
+/* loco:62b1c15d9ced2854214f09f2 */
+"createFolderNoParent" = "None";
+
+/* loco:62b1c1491ea473352a4fb205 */
+"createFolderParent" = "Parent folder";
+
 /* loco:6723a25570ccbbb9b709fb62 */
 "datePickerTitle" = "Choose a date and time";
 
@@ -759,6 +786,9 @@
 
 /* loco:67dbdf7f34b99ad4f10b70e2 */
 "enableFilterButton" = "Enable filter";
+
+/* loco:667bac4f2a74996e510ce652 */
+"enableMultiSelection" = "Enable multiple selection";
 
 /* loco:685127b16bc6041b980c7ff2 */
 "encryptedButtonSeeConcernedRecipients" = "See relevant recipients";
@@ -1087,6 +1117,9 @@
 /* loco:67e26d1c96ffb194f70925b2 */
 "macUsageDisclaimerTitle" = "This app works on macOS, but is optimized for mobile and tablet use.";
 
+/* loco:67d9641e50cf5243690a8f23 */
+"mailApiUnavailable" = "Loading error. Try again, or check the service status if the problem persists.";
+
 /* loco:6639ec5faf37f28888054ea2 */
 "manageSignatures" = "Manage my signatures";
 
@@ -1138,8 +1171,20 @@
 /* loco:66334ad612173107a60187e4 */
 "moreInfo" = "More information";
 
+/* loco:62bdb0cc6a325e7949729c03 */
+"moreStorageText1" = "Your mailbox is full and you can‘t receive any more messages 🥲";
+
+/* loco:62befb1c9eaa4c1d85178522 */
+"moreStorageText2" = "You will soon be able to unblock the limits of your ik.me email address (storage limit, sending, forwarding, …)";
+
+/* loco:62bdb04cdf5d4469a92796d2 */
+"moreStorageTitle" = "Is your box full? Get more storage!";
+
 /* loco:67dbdfb8dbef6f1af2084412 */
 "moveInSpamButton" = "Move in Spam";
+
+/* loco:62b1c0a1e915206f7e2d5764 */
+"moveTitle" = "Which folder do you want to move your email to?";
 
 /* loco:67a9ba0103b091bbbc0837c2 */
 "myKSuiteQuotasAlertDescription" = "Once you have reached this limit, you will no longer be able to send or receive messages. Free up space or upgrade to my kSuite+.";
@@ -1216,6 +1261,9 @@
 /* loco:6419645b21b6617fba4a8dc2 */
 "noUpdatedAt" = "Never updated";
 
+/* loco:648b1287231f4ec587052ef2 */
+"noValidMailboxTitle" = "No valid mailbox found. Can only be fixed on the webmail for now.";
+
 /* loco:62baab4c017b586c23177d62 */
 "notificationGeneralChannelName" = "General notifications";
 
@@ -1272,6 +1320,9 @@
 
 /* loco:67a9f9906c6c8012a50b7782 */
 "otherOrganisation" = "Other";
+
+/* loco:62a9db9c563de5001402e482 */
+"pendingMessagesFolder" = "Pending messages";
 
 /* loco:62c424189aacc248962d6224 */
 "pickerNoSelection" = "No selection";
@@ -1528,8 +1579,17 @@
 /* loco:627a3d72da7e600e226ddca2 */
 "settingsSecurityAdsFilter" = "Ads and social networks filter";
 
+/* loco:62c6ec7e7d532f473370e902 */
+"settingsSecurityApprovedOption" = "Approved";
+
+/* loco:62c6ec1bfdc46c4e9c7c5d82 */
+"settingsSecurityBlockedOption" = "Blocked";
+
 /* loco:627a3df94e4a1b1eff6c77a2 */
 "settingsSecurityBlockedRecipients" = "Blocked / authorised recipients";
+
+/* loco:62c6ebd44e5adc4b6d1d9822 */
+"settingsSecurityBlockedRecipientsDescription" = "You can specify senders to approve or block for our Anti-Spam protection to process them for you.";
 
 /* loco:627a3daeda7e600e226ddca4 */
 "settingsSecuritySpamFilter" = "Spam filter";
@@ -1618,6 +1678,12 @@
 /* loco:668cdbc1a27f04dd51065022 */
 "shareEmail" = "Share email";
 
+/* loco:6538a602e0eb783378001bb2 */
+"shortcutNextAction" = "Next";
+
+/* loco:6538a626e0eb783378001bb4 */
+"shortcutPreviousAction" = "Previous";
+
 /* loco:6538a4daa986575986004e72 */
 "shortcutRefreshAction" = "Refresh";
 
@@ -1675,7 +1741,6 @@
 /* loco:651ebe4a1a15bf27e204db22 */
 "snackbarPasswordCopied" = "Password copied";
 
-
 /* loco:6858ff00a459db58890629f2 */
 "snackbarReactionSent" = "Reaction %@ sent";
 
@@ -1730,6 +1795,9 @@
 /* loco:65ba2326ef9447c160013bf2 */
 "superCollapsedBlock" = "See all (%d)";
 
+/* loco:6655c3b29b769d05b20834c4 */
+"swissTransferAttachmentDescription" = "The sender has attached one or more large files, available via the SwissTransfer link.";
+
 /* loco:653112b14b84af451706ef56 */
 "syncCalendarsAndContactsDescription" = "View your contacts and calendar directly from your device.";
 
@@ -1777,6 +1845,9 @@
 
 /* loco:67238c432a68eb6c2600fc52 */
 "thisEvening" = "This evening";
+
+/* loco:6412e19cf8d74923f83fd492 */
+"threadListEmptyDraftButton" = "Empty drafts";
 
 /* loco:63eddb9871489a3042032122 */
 "threadListEmptyFolderAlertDescription" = "Are you sure you want to permanently delete all the messages in this folder?";
