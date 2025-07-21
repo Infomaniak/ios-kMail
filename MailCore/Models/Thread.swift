@@ -19,6 +19,7 @@
 import Foundation
 import InfomaniakDI
 import MailResources
+import OrderedCollections
 import RealmSwift
 
 public struct ThreadResult: Decodable {
@@ -323,6 +324,9 @@ public class Thread: Object, Decodable, Identifiable {
 }
 
 public extension Thread {
+    typealias MessageId = String
+    typealias RecipientsByReaction = OrderedDictionary<String, [Recipient]>
+
     /// Re-generate `Thread` properties given the messages it contains.
     func recomputeOrFail() throws {
         messages = messages.sorted { $0.internalDate.compare($1.internalDate) == .orderedAscending }.toRealmList()
@@ -338,8 +342,8 @@ public extension Thread {
         date = lastMessageFromFolder.date
         isLastMessageFromFolderSnoozed = lastMessageFromFolder.isSnoozed
 
-        var messagesById = [String: Message]()
-        var reactionsByMessageId = [String: [String: [Recipient]]]()
+        var messagesById = [MessageId: Message]()
+        var reactionsByMessageId = [MessageId: RecipientsByReaction]()
 
         for message in messages {
             if let messageId = message.messageId {
@@ -414,7 +418,7 @@ public extension Thread {
         snoozeEndDate = nil
     }
 
-    private func getReaction(from message: Message, reactions: inout [String: [String: [Recipient]]]) {
+    private func getReaction(from message: Message, reactions: inout [MessageId: RecipientsByReaction]) {
         guard let emojiReaction = message.emojiReaction, let messageTargets = message.inReplyTo?.parseMessageIds() else {
             return
         }
@@ -422,16 +426,16 @@ public extension Thread {
         for messageTarget in messageTargets {
             let recipients = message.from.detached().toArray()
 
-            var messageTargetReactions = reactions[messageTarget] ?? [:]
-            var reactingRecipients = messageTargetReactions[emojiReaction] ?? []
+            var messageReactions = reactions[messageTarget] ?? [:]
+            var reactingRecipients = messageReactions[emojiReaction] ?? []
             reactingRecipients.append(contentsOf: recipients)
-            messageTargetReactions[emojiReaction] = reactingRecipients
+            messageReactions[emojiReaction] = reactingRecipients
 
-            reactions[messageTarget] = messageTargetReactions
+            reactions[messageTarget] = messageReactions
         }
     }
 
-    private func updateReactionsForMessages(_ reactions: [String: [String: [Recipient]]], messagesById: [String: Message]) {
+    private func updateReactionsForMessages(_ reactions: [MessageId: RecipientsByReaction], messagesById: [MessageId: Message]) {
         for (messageId, reactions) in reactions {
             guard let message = messagesById[messageId] else { continue }
 
