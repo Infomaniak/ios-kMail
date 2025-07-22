@@ -36,6 +36,7 @@ struct EncryptionButton: View {
     @State private var isLoadingRecipientsAutoEncrypt = false
 
     @State private var justActivatedEncryption = false
+    @State private var canShowIncompleteUserSnackbar = true
 
     @Binding var isShowingEncryptStatePanel: Bool
 
@@ -140,11 +141,12 @@ struct EncryptionButton: View {
             isShowingEncryptPasswordPanel = true
         }
 
-        if recipientsCount == 1 {
+        if recipientsCount == 1 && canShowIncompleteUserSnackbar {
             snackbarPresenter.show(
                 message: MailResourcesStrings.Localizable.encryptedMessageIncompleteUser(recipientsCount),
                 action: action
             )
+            canShowIncompleteUserSnackbar = false
         } else if justActivatedEncryption {
             if recipientsCount > 0 {
                 snackbarPresenter.show(
