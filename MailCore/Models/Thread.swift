@@ -38,7 +38,7 @@ public struct ThreadResult: Decodable {
 public class Thread: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var uid: String
     @Persisted public var messages: List<Message>
-    @Persisted private var messagesWithoutReactions: List<Message>
+    @Persisted private var messagesToDisplay: List<Message>
     @Persisted public var unseenMessages: Int
     @Persisted public var from: List<Recipient>
     @Persisted public var to: List<Recipient>
@@ -78,7 +78,7 @@ public class Thread: Object, Decodable, Identifiable {
     public var displayMessages: List<Message> {
         @InjectService var featureAvailableProvider: FeatureAvailableProvider
         if featureAvailableProvider.isAvailable(.emojiReaction) {
-            return messagesWithoutReactions
+            return messagesToDisplay
         } else {
             return messages
         }
@@ -329,7 +329,7 @@ public extension Thread {
     /// Re-generate `Thread` properties given the messages it contains.
     func recomputeOrFail() throws {
         messages = messages.sortedByDate().toRealmList()
-        messagesWithoutReactions = List()
+        messagesToDisplay = List()
 
         guard let lastMessageFromFolder else {
             throw MailError.threadHasNoMessageInFolder
@@ -381,6 +381,8 @@ public extension Thread {
             }
             if message.isReaction {
                 getReaction(from: message, reactions: &reactionsByMessageId)
+            } else {
+                messagesToDisplay.append(message)
             }
 
             updateSnooze(from: message)
