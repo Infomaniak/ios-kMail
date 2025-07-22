@@ -4,7 +4,7 @@
  * Locale: de, German
  * Tagged: ios
  * Exported by: Baptiste Griva
- * Exported at: Tue, 01 Jul 2025 13:41:04 +0200
+ * Exported at: Tue, 22 Jul 2025 13:57:58 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -77,7 +77,7 @@
 "actionReportJunk" = "Spam melden";
 
 /* loco:62e13281cd9a910e235d06d2 */
-"actionShortMarkAsRead" = "Lesen Sie";
+"actionShortMarkAsRead" = "Gelesen";
 
 /* loco:62e14b027e61d3640a5bf7e3 */
 "actionShortMarkAsUnread" = "Ungelesen";
