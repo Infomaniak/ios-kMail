@@ -21,12 +21,16 @@ import MailCoreUI
 import SwiftUI
 
 struct EncryptionConcernedRecipientsView: View {
+    @Environment(\.currentUser) private var currentUser
+
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     let recipients: [Recipient]
 
     var body: some View {
         VStack(spacing: 0) {
             ForEach(recipients) { recipient in
-                RecipientCell(recipient: recipient)
+                RecipientCell(recipient: recipient, contextUser: currentUser.value, contextMailboxManager: mailboxManager)
                     .padding(.horizontal, value: .medium)
                     .padding(.vertical, value: .small)
 
