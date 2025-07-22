@@ -70,7 +70,7 @@ struct MessageEncryptionHeaderView: View {
             title: MailResourcesStrings.Localizable
                 .encryptedRecipientRequiringPasswordTitle(message.autoEncryptDisabledRecipients.count)
         ) {
-            EncryptionConcernedRecipientsView(message: message)
+            EncryptionConcernedRecipientsView(recipients: message.autoEncryptDisabledRecipients)
         }
     }
 }
