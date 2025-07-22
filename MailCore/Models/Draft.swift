@@ -63,7 +63,6 @@ public struct DraftResponse: Codable {
 
 public final class Draft: Object, Codable, ObjectKeyIdentifiable {
     public static let reactionPlaceholder = "<div>__REACTION_PLACEMENT__<br></div>"
-    private static let reactionDelay = 5
 
     @Persisted(primaryKey: true) public var localUUID = UUID().uuidString
     @Persisted public var remoteUUID = ""
@@ -296,7 +295,6 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
     public static func reacting(with reaction: String, reply: MessageReply, currentMailboxEmail: String) -> Draft {
         let replyingDraft = Draft.replying(reply: reply, currentMailboxEmail: currentMailboxEmail)
 
-        replyingDraft.delay = Self.reactionDelay
         replyingDraft.action = .sendReaction
         replyingDraft.emojiReaction = reaction
 
