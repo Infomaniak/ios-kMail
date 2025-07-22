@@ -28,7 +28,7 @@ struct EncryptionButton: View {
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
-    @InjectService var snackbarPresenter: SnackBarPresentable
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
     @State private var isShowingEncryptAdPanel = false
     @State private var isShowingEncryptPasswordPanel = false
@@ -134,6 +134,8 @@ struct EncryptionButton: View {
             liveDraft.encryptionPassword = ""
         }
         snackbarPresenter.show(message: MailResourcesStrings.Localizable.encryptedMessageSnackbarEncryptionDisabled)
+
+        canShowIncompleteUserSnackbar = true
     }
 
     private func showEncryptionSnackbarIfNeeded(for recipientsCount: Int) {
