@@ -21,18 +21,16 @@ import MailCoreUI
 import SwiftUI
 
 struct EncryptionConcernedRecipientsView: View {
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
-    let message: Message
+    let recipients: [Recipient]
 
     var body: some View {
         VStack(spacing: 0) {
-            ForEach(message.autoEncryptDisabledRecipients) { recipient in
+            ForEach(recipients) { recipient in
                 RecipientCell(recipient: recipient)
                     .padding(.horizontal, value: .medium)
                     .padding(.vertical, value: .small)
 
-                if let lastRecipient = message.autoEncryptDisabledRecipients.last, lastRecipient != recipient {
+                if let lastRecipient = recipients.last, lastRecipient != recipient {
                     IKDivider()
                 }
             }
@@ -41,5 +39,5 @@ struct EncryptionConcernedRecipientsView: View {
 }
 
 #Preview {
-    EncryptionConcernedRecipientsView(message: PreviewHelper.sampleMessage)
+    EncryptionConcernedRecipientsView(recipients: PreviewHelper.sampleMessage.autoEncryptDisabledRecipients)
 }
