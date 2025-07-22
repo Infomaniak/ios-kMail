@@ -197,7 +197,6 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
                 }
             }
 
-            // TODO: Check if we want to stop at first error / success
             for result in loginResults {
                 if case .error(let error) = result {
                     if (error as? MailError) == MailError.noMailbox {
