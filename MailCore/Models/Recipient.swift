@@ -83,15 +83,10 @@ public final class Recipient: EmbeddedObject, Correspondent, Codable {
         return recipients
     }
 
-    public static func isSameDestination(contact: any ContactAutocompletable, alreadyAppend: RealmSwift.List<Recipient>) -> Bool {
+    public func isEquivalent(to contact: any ContactAutocompletable) -> Bool {
         guard let contactRecipient = contact as? MergedContact else { return false }
 
-        for appendedRecipient in alreadyAppend {
-            if contactRecipient.email == appendedRecipient.email {
-                return true
-            }
-        }
-        return false
+        return contactRecipient.email == email
     }
 
     private static let mailerDeamonRegex = Regex(pattern: "mailer-daemon@(?:.+.)?infomaniak.ch")
@@ -130,9 +125,5 @@ extension Recipient: ContactAutocompletable {
 
     public var autocompletableName: String {
         return name
-    }
-
-    public func isSameContactAutocompletable(as contactAutoCompletable: any ContactAutocompletable) -> Bool {
-        return contactId == contactAutoCompletable.contactId
     }
 }

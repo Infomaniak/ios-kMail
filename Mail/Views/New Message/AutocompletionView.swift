@@ -49,7 +49,7 @@ struct AutocompletionView: View {
                         addRecipient: addRecipient,
                         autocompletion: contact,
                         highlight: textDebounce.text,
-                        alreadyAppend: Recipient.isSameDestination(contact: contact, alreadyAppend: addedRecipients),
+                        alreadyAppend: addedRecipients.contains { $0.isEquivalent(to: contact) },
                         unknownRecipient: isUserProposal
                     )
 
