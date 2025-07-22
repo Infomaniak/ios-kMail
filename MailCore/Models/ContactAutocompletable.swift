@@ -28,6 +28,6 @@ public protocol ContactAutocompletable {
 
 public extension ContactAutocompletable {
     func isSameContactAutocompletable(as contactAutoCompletable: any ContactAutocompletable) -> Bool {
-        return false
+        return contactId == contactAutoCompletable.contactId
     }
 }

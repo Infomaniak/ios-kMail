@@ -83,6 +83,17 @@ public final class Recipient: EmbeddedObject, Correspondent, Codable {
         return recipients
     }
 
+    public static func isSameDestination(contact: any ContactAutocompletable, alreadyAppend: RealmSwift.List<Recipient>) -> Bool {
+        guard let contactRecipient = contact as? MergedContact else { return false }
+
+        for appendedRecipient in alreadyAppend {
+            if contactRecipient.email == appendedRecipient.email {
+                return true
+            }
+        }
+        return false
+    }
+
     private static let mailerDeamonRegex = Regex(pattern: "mailer-daemon@(?:.+.)?infomaniak.ch")
 
     public func isExternal(mailboxManager: MailboxManager) -> Bool {
@@ -109,10 +120,6 @@ public final class Recipient: EmbeddedObject, Correspondent, Codable {
         let isContact = !(mailboxManager.contactManager.frozenContacts(matching: email, fetchLimit: nil, sorted: nil)).isEmpty
 
         return !isKnownDomain && !isMailerDeamon && !isAnAlias && !isContact
-    }
-
-    public func isSameRecipient(recipient: Recipient) -> Bool {
-        return email == recipient.email
     }
 }
 

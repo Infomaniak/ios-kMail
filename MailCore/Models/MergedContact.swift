@@ -144,14 +144,10 @@ public final class MergedContact: Object, Identifiable, Correspondent {
 
 extension MergedContact: ContactAutocompletable {
     public var contactId: String {
-        return String(id)
+        return "MergedContact-\(id)"
     }
 
     public var autocompletableName: String {
         return name
-    }
-
-    public func isSameContactAutocompletable(as contactAutoCompletable: any ContactAutocompletable) -> Bool {
-        return contactId == contactAutoCompletable.contactId
     }
 }
