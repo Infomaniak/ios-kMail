@@ -155,6 +155,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted(originProperty: "messages") private var folders: LinkingObjects<Folder>
     @Persisted(originProperty: "duplicates") var threadsDuplicatedIn: LinkingObjects<Thread>
 
+    @Persisted public var isDisplayable = true
+
     @Persisted public var fullyDownloaded = false
     @Persisted public var fromSearch = false
     @Persisted public var inTrash = false

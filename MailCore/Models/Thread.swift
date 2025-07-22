@@ -381,6 +381,7 @@ public extension Thread {
             }
             if message.isReaction {
                 getReaction(from: message, reactions: &reactionsByMessageId)
+                message.isDisplayable = false
             } else {
                 messagesToDisplay.append(message)
             }
