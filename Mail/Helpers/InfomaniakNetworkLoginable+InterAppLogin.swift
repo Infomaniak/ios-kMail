@@ -40,7 +40,7 @@ extension InfomaniakNetworkLoginable {
             .generateAttestationFor(
                 targetUrl: TargetAssembly.loginConfig.loginURL.appendingPathComponent("token"),
                 bundleId: TargetAssembly.bundleId,
-                bypassValidation: deviceCheckEnvironment == .prod ? false : true
+                bypassValidation: !(deviceCheckEnvironment == .prod)
             )
 
         let derivatedToken = try await derivateApiToken(
