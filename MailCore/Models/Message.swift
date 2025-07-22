@@ -159,6 +159,16 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         return Array(to) + Array(cc)
     }
 
+    public var autoEncryptDisabledRecipients: [Recipient] {
+        let result = to.toArray() + cc.toArray() + bcc.toArray()
+        return result.filter { recipient in
+            if !recipient.canAutoEncrypt {
+                return true
+            }
+            return false
+        }
+    }
+
     public var isSpam: Bool {
         headers?.xInfomaniakSpam == "spam"
     }

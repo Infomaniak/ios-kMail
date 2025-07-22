@@ -16,15 +16,28 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import MailCore
+import MailCoreUI
 import SwiftUI
 
 struct EncryptionConcernedRecipientsView: View {
+    let recipients: [Recipient]
+
     var body: some View {
-        // TODO: - Get recipient list
-        Text("Recipient list")
+        VStack(spacing: 0) {
+            ForEach(recipients) { recipient in
+                RecipientCell(recipient: recipient)
+                    .padding(.horizontal, value: .medium)
+                    .padding(.vertical, value: .small)
+
+                if let lastRecipient = recipients.last, lastRecipient != recipient {
+                    IKDivider()
+                }
+            }
+        }
     }
 }
 
 #Preview {
-    EncryptionConcernedRecipientsView()
+    EncryptionConcernedRecipientsView(recipients: PreviewHelper.sampleMessage.autoEncryptDisabledRecipients)
 }

@@ -39,7 +39,8 @@ struct MessageEncryptionHeaderView: View {
             return MailResourcesStrings.Localizable.encryptedMessageHeader
         }
 
-        if let passwordValidity = message.cryptPasswordValidity {
+        if !message.autoEncryptDisabledRecipients.isEmpty,
+           let passwordValidity = message.cryptPasswordValidity {
             let date = passwordValidity.formatted(date: .numeric, time: .omitted)
             return MailResourcesStrings.Localizable.encryptedMessageHeaderPasswordExpiryDate(date)
         }
@@ -56,7 +57,7 @@ struct MessageEncryptionHeaderView: View {
             iconColor: MailResourcesAsset.iconSovereignBlueColor.swiftUIColor,
             textColor: MailResourcesAsset.textHeaderSovereignBlueColor.swiftUIColor
         ) {
-            if message.cryptPasswordValidity != nil {
+            if !message.autoEncryptDisabledRecipients.isEmpty {
                 Button(MailResourcesStrings.Localizable.encryptedButtonSeeConcernedRecipients) {
                     isShowingRecipients = true
                 }
@@ -66,9 +67,10 @@ struct MessageEncryptionHeaderView: View {
         .background(MailResourcesAsset.backgroundSovereignBlueColor.swiftUIColor)
         .mailFloatingPanel(
             isPresented: $isShowingRecipients,
-            title: MailResourcesStrings.Localizable.encryptedRecipientRequiringPasswordTitle(0)
+            title: MailResourcesStrings.Localizable
+                .encryptedRecipientRequiringPasswordTitle(message.autoEncryptDisabledRecipients.count)
         ) {
-            EncryptionConcernedRecipientsView()
+            EncryptionConcernedRecipientsView(recipients: message.autoEncryptDisabledRecipients)
         }
     }
 }
