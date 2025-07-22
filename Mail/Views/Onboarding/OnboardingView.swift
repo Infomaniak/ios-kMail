@@ -17,6 +17,7 @@
  */
 
 import AuthenticationServices
+import InfomaniakConcurrency
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCreateAccount
@@ -165,22 +166,14 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
     func loginWith(accounts: [ConnectedAccount]) {
         isLoading = true
         Task {
-            let loginResults = await withTaskGroup(of: MultiLoginResult.self, returning: [MultiLoginResult].self) { group in
-                for account in accounts {
-                    group.addTask { [self] in
-                        do {
-                            let derivatedToken = try await tokenService.derivateApiToken(for: account)
+            let loginResults: [MultiLoginResult] = await accounts.asyncMap { account in
+                do {
+                    let derivatedToken = try await self.tokenService.derivateApiToken(for: account)
 
-                            let (apiFetcher, mailboxes) = try await accountManager.createAccount(token: derivatedToken)
-                            return .success(token: derivatedToken, mailboxes: mailboxes, apiFetcher: apiFetcher)
-                        } catch {
-                            return .error(error)
-                        }
-                    }
-                }
-
-                return await group.reduce(into: [MultiLoginResult]()) { partialResult, result in
-                    partialResult.append(result)
+                    let (apiFetcher, mailboxes) = try await self.accountManager.createAccount(token: derivatedToken)
+                    return .success(token: derivatedToken, mailboxes: mailboxes, apiFetcher: apiFetcher)
+                } catch {
+                    return .error(error)
                 }
             }
 
