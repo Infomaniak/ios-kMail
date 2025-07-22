@@ -166,6 +166,8 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
     func loginWith(accounts: [ConnectedAccount]) {
         isLoading = true
         Task {
+            defer { isLoading = false }
+
             let loginResults: [MultiLoginResult] = await accounts.asyncMap { account in
                 do {
                     let derivatedToken = try await self.tokenService.derivateApiToken(for: account)
@@ -177,31 +179,32 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
                 }
             }
 
-            for result in loginResults {
-                if case .success(let token, let mailboxes, let apiFetcher) = result {
-                    try await accountManager.setCurrentAccount(
-                        token: token,
-                        mailboxes: mailboxes,
-                        apiFetcher: apiFetcher
-                    )
+            await loginWithSuccess(loginResults: loginResults)
+            loginWithErrors(loginResults: loginResults)
+        }
+    }
 
-                    isLoading = false
-                    return
-                }
+    private func loginWithSuccess(loginResults: [MultiLoginResult]) async {
+        await loginResults.asyncForEach { loginResult in
+            guard case .success(let token, let mailboxes, let apiFetcher) = loginResult else { return }
+            try? await self.accountManager.setCurrentAccount(token: token, mailboxes: mailboxes, apiFetcher: apiFetcher)
+        }
+    }
+
+    private func loginWithErrors(loginResults: [MultiLoginResult]) {
+        let errors: [Error] = loginResults.compactMap {
+            if case .error(let error) = $0 {
+                return error
             }
+            return nil
+        }
 
-            for result in loginResults {
-                if case .error(let error) = result {
-                    if (error as? MailError) == MailError.noMailbox {
-                        shouldShowEmptyMailboxesView = true
-                    } else {
-                        snackbarPresenter.show(message: error.localizedDescription)
-                        SentryDebug.loginError(error: error, step: "createAndSetCurrentAccount")
-                    }
-
-                    isLoading = false
-                    return
-                }
+        for error in errors {
+            if (error as? MailError) == MailError.noMailbox {
+                shouldShowEmptyMailboxesView = true
+            } else {
+                snackbarPresenter.show(message: error.localizedDescription)
+                SentryDebug.loginError(error: error, step: "createAndSetCurrentAccount")
             }
         }
     }
