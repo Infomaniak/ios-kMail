@@ -187,7 +187,7 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
     private func loginWithSuccess(loginResults: [MultiLoginResult]) async {
         await loginResults.asyncForEach { loginResult in
             guard case .success(let token, let mailboxes, let apiFetcher) = loginResult else { return }
-            try? await self.accountManager.setCurrentAccount(token: token, mailboxes: mailboxes, apiFetcher: apiFetcher)
+            await self.accountManager.setCurrentAccount(token: token, mailboxes: mailboxes, apiFetcher: apiFetcher)
         }
     }
 

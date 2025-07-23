@@ -181,7 +181,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         do {
             let (apiFetcher, mailboxes) = try await createAccount(token: token)
-            try await setCurrentAccount(token: token, mailboxes: mailboxes, apiFetcher: apiFetcher)
+            await setCurrentAccount(token: token, mailboxes: mailboxes, apiFetcher: apiFetcher)
         } catch {
             removeTokenAndAccountFor(userId: token.userId)
             throw error
@@ -214,7 +214,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         return (apiFetcher, mailboxesResponse)
     }
 
-    public func setCurrentAccount(token: ApiToken, mailboxes: [Mailbox], apiFetcher: ApiFetcher) async throws {
+    public func setCurrentAccount(token: ApiToken, mailboxes: [Mailbox], apiFetcher: ApiFetcher) async {
         let availableMailboxes = mailboxes.filter { $0.isAvailable }
         guard let mainMailbox = (availableMailboxes.first(where: { $0.isPrimary }) ?? availableMailboxes.first)?.freezeIfNeeded()
         else {
