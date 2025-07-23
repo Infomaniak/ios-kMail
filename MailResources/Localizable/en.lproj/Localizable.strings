@@ -758,7 +758,7 @@
 "encryptedMessageAddPasswordButton" = "Protect with a password";
 
 /* loco:6858f3e7b8bbc61d660d8072 */
-"encryptedMessageAddPasswordInformation" = "A password is only required for non-Infomaniak users. For them, the message will expire 30 days after sending.";
+"encryptedMessageAddPasswordInformation" = "A password is only required for non-Infomaniak recipients. For them, the message will expire 30 days after sending.";
 
 /* loco:682dc12a45ce97ce870a4524 */
 "encryptedMessageDisableEncryptionButton" = "Disable encryption";
@@ -770,7 +770,7 @@
 "encryptedMessageHeaderPasswordExpiryDate" = "This message has been encrypted and will expire on %@ only for recipients unable to benefit from automatic encryption.";
 
 /* loco:68402c39c8e3201f22066632 */
-"encryptedMessagePasswordConcernedUserTitle" = "Users concerned";
+"encryptedMessagePasswordConcernedUserTitle" = "Recipients concerned";
 
 /* loco:682dc2113c2020dcd20b82f2 */
 "encryptedMessagePasswordLabel" = "Share this password by private message. You won’t be able to copy it once you’ve sent it.";
@@ -800,7 +800,7 @@
 "encryptedProtectionAdDescription1" = "The message subject remains visible, but the content is completely secure.";
 
 /* loco:682da39ee3005f6c3e0a9802 */
-"encryptedProtectionAdDescription2" = "A password will be required for non-Infomaniak users.";
+"encryptedProtectionAdDescription2" = "A password will be required for non-Infomaniak recipients.";
 
 /* loco:682d9e1bb014002f5400a212 */
 "encryptedProtectionAdTitle" = "Encrypt your confidential messages";

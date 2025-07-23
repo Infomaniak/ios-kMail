@@ -6,7 +6,7 @@
  Locale: de, German
  Tagged: ios-stringsdict
  Exported by: Ambroise Decouttere
- Exported at: Thu, 26 Jun 2025 15:15:52 +0200
+ Exported at: Wed, 23 Jul 2025 10:34:22 +0200
 -->
 <plist version="1.0">
   <dict>
@@ -69,9 +69,9 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Die Verschlüsselung wird von %d Benutzer nicht unterstützt.</string>
+        <string>Die Verschlüsselung wird von %d Empfänger nicht unterstützt.</string>
         <key>other</key>
-        <string>Die Verschlüsselung wird von %d Benutzern nicht unterstützt.</string>
+        <string>Die Verschlüsselung wird von %d Empfängern nicht unterstützt.</string>
       </dict>
     </dict>
     <key>fileQuantity</key>

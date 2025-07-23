@@ -758,7 +758,7 @@
 "encryptedMessageAddPasswordButton" = "Mit einem Passwort schützen";
 
 /* loco:6858f3e7b8bbc61d660d8072 */
-"encryptedMessageAddPasswordInformation" = "Ein Passwort ist nur für Benutzer ausserhalb von Infomaniak erforderlich. Für sie verfällt die Nachricht 30 Tage nach dem Absenden.";
+"encryptedMessageAddPasswordInformation" = "Ein Passwort ist nur für Empfänger ausserhalb von Infomaniak erforderlich. Für sie verfällt die Nachricht 30 Tage nach dem Absenden.";
 
 /* loco:682dc12a45ce97ce870a4524 */
 "encryptedMessageDisableEncryptionButton" = "Verschlüsselung deaktivieren";
@@ -770,7 +770,7 @@
 "encryptedMessageHeaderPasswordExpiryDate" = "Diese Nachricht wurde verschlüsselt und läuft am %@ nur bei Empfängern ab, die nicht von der automatischen Verschlüsselung profitieren können.";
 
 /* loco:68402c39c8e3201f22066632 */
-"encryptedMessagePasswordConcernedUserTitle" = "Betroffene Nutzer";
+"encryptedMessagePasswordConcernedUserTitle" = "Betroffene Adressaten";
 
 /* loco:682dc2113c2020dcd20b82f2 */
 "encryptedMessagePasswordLabel" = "Teilen Sie dieses Passwort per privater Nachricht mit. Sie können es nicht mehr kopieren, sobald Sie es gesendet haben.";
@@ -800,7 +800,7 @@
 "encryptedProtectionAdDescription1" = "Der Betreff der Nachricht bleibt sichtbar, aber der Inhalt ist vollständig gesichert.";
 
 /* loco:682da39ee3005f6c3e0a9802 */
-"encryptedProtectionAdDescription2" = "Für Nutzer ausserhalb von Infomaniak wird ein Passwort benötigt.";
+"encryptedProtectionAdDescription2" = "Für Empfänger ausserhalb von Infomaniak wird ein Passwort benötigt.";
 
 /* loco:682d9e1bb014002f5400a212 */
 "encryptedProtectionAdTitle" = "Verschlüsseln Sie Ihre vertraulichen Nachrichten";
