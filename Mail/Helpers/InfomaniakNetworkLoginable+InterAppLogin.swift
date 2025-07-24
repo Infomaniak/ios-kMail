@@ -30,8 +30,6 @@ extension InfomaniakNetworkLoginable {
             return .prod
         case .preprod:
             return .preprod
-        default:
-            fatalError("Unknown environment")
         }
     }
 
