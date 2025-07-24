@@ -21,7 +21,7 @@ import SwiftUI
 import UIKit
 
 final class EncryptedChipAccessoryUIView: UIView {
-    public let isEncrypted: Bool
+    public var isEncrypted: Bool
     private let badgeWidth: CGFloat = 8.0
     private let iconSize = CGSize(width: 16, height: 16)
 

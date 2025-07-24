@@ -17,12 +17,14 @@
  */
 
 import DesignSystem
+import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
 
 struct EncryptionAdView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.openURL) private var openURL
 
     let enableEncryption: () -> Void
 
@@ -49,7 +51,7 @@ struct EncryptionAdView: View {
                         }
 
                         Button {
-                            // TODO: Add FAQ link
+                            openURL(URLConstants.encryptionFAQ.url)
                         } label: {
                             Text(MailResourcesStrings.Localizable.moreInfo)
                         }
