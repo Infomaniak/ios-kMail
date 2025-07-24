@@ -47,6 +47,7 @@ struct EncryptionStateView: View {
                         MailResourcesStrings.Localizable.settingsEnabled :
                         MailResourcesStrings.Localizable.encryptedStatePanelStatePartialLabel)
                         .padding(value: .micro)
+                        .foregroundStyle(MailResourcesAsset.onTagExternalColor.swiftUIColor)
                         .background(isEncryptionEnabled ?
                             MailResourcesAsset.greenColor.swiftUIColor : MailResourcesAsset.yellowColor.swiftUIColor)
                         .clipShape(RoundedRectangle(cornerRadius: IKRadius.small))
