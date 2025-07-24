@@ -17,12 +17,17 @@
  */
 
 import MailResources
+import SwiftUI
 import UIKit
 
 final class EncryptedChipAccessoryUIView: UIView {
     public let isEncrypted: Bool
     private let badgeWidth: CGFloat = 8.0
     private let iconSize = CGSize(width: 16, height: 16)
+
+    override var intrinsicContentSize: CGSize {
+        return iconSize
+    }
 
     private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
@@ -81,6 +86,22 @@ final class EncryptedChipAccessoryUIView: UIView {
             widthAnchor.constraint(equalToConstant: iconSize.width),
             heightAnchor.constraint(equalToConstant: iconSize.height)
         ])
+    }
+}
+
+struct EncryptedChipAccessorySwiftUIView: UIViewRepresentable {
+    let isEncrypted: Bool
+
+    func makeUIView(context: Context) -> EncryptedChipAccessoryUIView {
+        let view = EncryptedChipAccessoryUIView(isEncrypted: isEncrypted)
+        view.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        view.setContentHuggingPriority(.defaultHigh, for: .vertical)
+        view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        return view
+    }
+
+    func updateUIView(_ uiView: EncryptedChipAccessoryUIView, context: Context) {
+        uiView.isEncrypted = isEncrypted
     }
 }
 
