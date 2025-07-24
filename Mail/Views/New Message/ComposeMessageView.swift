@@ -156,7 +156,9 @@ struct ComposeMessageView: View {
                     autocompletionType: $autocompletionType,
                     currentSignature: $currentSignature
                 )
-                .environment(\.isDraftEncrypted, draft.encrypted)
+                .environment(\.draftEncryption, draft.encrypted ?
+                    .encrypted(passwordSecured: !draft.encryptionPassword.isEmpty) :
+                    .none)
 
                 if autocompletionType == nil && !isLoadingContent {
                     ComposeMessageBodyView(
