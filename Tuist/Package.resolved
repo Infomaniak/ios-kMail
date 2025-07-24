@@ -73,12 +73,21 @@
       }
     },
     {
+      "identity" : "ios-device-check",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/ios-device-check",
+      "state" : {
+        "revision" : "15355528c3bc15a3acda78b6b040fde7a743eb8b",
+        "version" : "1.1.0"
+      }
+    },
+    {
       "identity" : "ios-features",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
-        "revision" : "ec4b313088284d97b731d95fcc56cf5143a50726",
-        "version" : "2.0.0"
+        "revision" : "d96dff2b6cec8a1480b7a18b3337d56c7fe71f49",
+        "version" : "2.1.0"
       }
     },
     {
@@ -86,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-login",
       "state" : {
-        "revision" : "d3c8fa9dd7ea7e44a1a741b58d1036d4a7989588",
-        "version" : "7.2.0"
+        "revision" : "96cdc1803a52ae39c8301034d5c4917b63e6181d",
+        "version" : "7.3.0"
       }
     },
     {

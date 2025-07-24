@@ -175,19 +175,20 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
-    public func createAndSetCurrentAccount(code: String, codeVerifier: String) async throws -> ApiToken {
+    public func createAndSetCurrentAccount(code: String, codeVerifier: String) async throws {
         let token = try await networkLoginService.apiTokenUsing(code: code, codeVerifier: codeVerifier)
         SentryDebug.setUserId(token.userId)
 
         do {
-            return try await createAndSetCurrentAccount(token: token)
+            let (apiFetcher, mailboxes) = try await createAccount(token: token)
+            await setCurrentAccount(token: token, mailboxes: mailboxes, apiFetcher: apiFetcher)
         } catch {
             removeTokenAndAccountFor(userId: token.userId)
             throw error
         }
     }
 
-    private func createAndSetCurrentAccount(token: ApiToken) async throws -> ApiToken {
+    public func createAccount(token: ApiToken) async throws -> (ApiFetcher, [Mailbox]) {
         let apiFetcher = MailApiFetcher(token: token, delegate: self)
         let user = try await userProfileStore.updateUserProfile(with: apiFetcher)
 
@@ -209,17 +210,23 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         await fetchMailboxesMetadata(mailboxes: mailboxesResponse, apiFetcher: apiFetcher)
 
         await mailboxInfosManager.storeMailboxes(user: user, mailboxes: mailboxesResponse)
-        let availableMailboxes = mailboxesResponse.filter { $0.isAvailable }
-        if let mainMailbox = (availableMailboxes.first(where: { $0.isPrimary }) ?? availableMailboxes.first)?.freezeIfNeeded() {
-            await notificationService.updateTopicsIfNeeded([mainMailbox.notificationTopicName], userApiFetcher: apiFetcher)
-            let currentMailboxManager = getMailboxManager(for: mainMailbox)
-            try? await currentMailboxManager?.refreshAllFolders()
 
-            setCurrentAccount(account: token)
-            setCurrentMailboxForCurrentAccount(mailbox: mainMailbox)
+        return (apiFetcher, mailboxesResponse)
+    }
+
+    public func setCurrentAccount(token: ApiToken, mailboxes: [Mailbox], apiFetcher: ApiFetcher) async {
+        let availableMailboxes = mailboxes.filter { $0.isAvailable }
+        guard let mainMailbox = (availableMailboxes.first(where: { $0.isPrimary }) ?? availableMailboxes.first)?.freezeIfNeeded()
+        else {
+            return
         }
 
-        return token
+        await notificationService.updateTopicsIfNeeded([mainMailbox.notificationTopicName], userApiFetcher: apiFetcher)
+        let currentMailboxManager = getMailboxManager(for: mainMailbox)
+        try? await currentMailboxManager?.refreshAllFolders()
+
+        setCurrentAccount(account: token)
+        setCurrentMailboxForCurrentAccount(mailbox: mainMailbox)
     }
 
     public func updateUser(for account: ApiToken?) async throws {

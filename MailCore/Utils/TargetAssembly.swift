@@ -27,11 +27,6 @@ import MyKSuite
 import Nuke
 import OSLog
 
-private let realmRootPath = "mailboxes"
-private let appGroupIdentifier = "group.com.infomaniak.mail"
-
-private let loginConfig = InfomaniakLogin.Config(clientId: "E90BC22D-67A8-452C-BE93-28DA33588CA4", accessType: nil)
-
 extension [Factory] {
     func registerFactoriesInDI() {
         forEach { SimpleResolver.sharedResolver.store(factory: $0) }
@@ -40,9 +35,21 @@ extension [Factory] {
 
 /// Each target should subclass `TargetAssembly` and override `getTargetServices` to provide additional, target related, services.
 open class TargetAssembly {
+    private static let apiEnvironment: ApiEnvironment = .prod
+    private static let realmRootPath = "mailboxes"
+    private static let appGroupIdentifier = "group.\(bundleId)"
+
+    public static let bundleId = "com.infomaniak.mail"
+    public static let loginConfig = InfomaniakLogin.Config(
+        clientId: "E90BC22D-67A8-452C-BE93-28DA33588CA4",
+        loginURL: URL(string: "https://login.\(apiEnvironment.host)/")!,
+        accessType: nil
+    )
+
     public init() {
         // Setup debug stack early
         Logging.initLogging()
+        ApiEnvironment.current = Self.apiEnvironment
 
         // setup DI ASAP
         Self.setupDI()

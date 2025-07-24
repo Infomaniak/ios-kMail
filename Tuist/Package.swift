@@ -13,6 +13,7 @@ let packageSettings = PackageSettings(
         "DesignSystem": .framework,
         "InfomaniakBugTracker": .framework,
         "InfomaniakConcurrency": .staticFramework,
+        "InfomaniakDeviceCheck": .staticFramework,
         "InfomaniakCoreCommonUI": .framework,
         "InfomaniakCoreDB": .framework,
         "InfomaniakCoreSwiftUI": .framework,
@@ -20,6 +21,7 @@ let packageSettings = PackageSettings(
         "InfomaniakCore": .framework,
         "InfomaniakCreateAccount": .framework,
         "InfomaniakDI": .framework,
+        "InterAppLogin": .framework,
         "InfomaniakLogin": .framework,
         "InfomaniakNotifications": .framework,
         "InfomaniakOnboarding": .framework,
@@ -51,7 +53,7 @@ let package = Package(
     name: "Dependencies",
     dependencies: [
         .package(url: "https://github.com/apple/swift-algorithms", .upToNextMajor(from: "1.2.0")),
-        .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "7.1.0")),
+        .package(url: "https://github.com/Infomaniak/ios-login", .upToNextMajor(from: "7.3.0")),
         .package(url: "https://github.com/Infomaniak/ios-dependency-injection", .upToNextMajor(from: "2.0.4")),
         .package(url: "https://github.com/Infomaniak/swift-concurrency", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-core", .upToNextMajor(from: "15.3.0")),
@@ -60,7 +62,8 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/ios-create-account", .upToNextMajor(from: "18.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-bug-tracker", .upToNextMajor(from: "12.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-version-checker", .upToNextMajor(from: "11.0.0")),
-        .package(url: "https://github.com/Infomaniak/ios-features", .upToNextMajor(from: "2.0.0")),
+        .package(url: "https://github.com/Infomaniak/ios-device-check", .upToNextMajor(from: "1.1.0")),
+        .package(url: "https://github.com/Infomaniak/ios-features", .upToNextMajor(from: "2.1.0")),
         .package(url: "https://github.com/Infomaniak/ios-onboarding", .upToNextMajor(from: "1.1.0")),
         .package(url: "https://github.com/Infomaniak/swift-modal-presentation", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/Infomaniak/SwiftSoup", .upToNextMajor(from: "1.3.0")),
@@ -78,7 +81,7 @@ let package = Package(
         .package(url: "https://github.com/shaps80/SwiftUIBackports", .upToNextMajor(from: "1.15.1")),
         .package(url: "https://github.com/httpswift/swifter", .upToNextMajor(from: "1.5.0")),
         .package(url: "https://github.com/SVGKit/SVGKit.git", branch: "3.x"),
-        .package(url: "https://github.com/Infomaniak/swift-rich-html-editor.git", .upToNextMajor(from: "2.1.0")),
+        .package(url: "https://github.com/Infomaniak/swift-rich-html-editor", .upToNextMajor(from: "2.1.0")),
         .package(url: "https://github.com/apple/swift-collections", .upToNextMajor(from: "1.1.4"))
     ]
 )
