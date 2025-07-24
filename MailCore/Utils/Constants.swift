@@ -62,6 +62,7 @@ public struct URLConstants {
     public static let githubRepository = URLConstants(urlString: "https://github.com/Infomaniak/ios-kMail")
     public static let chatbot = URLConstants(urlString: "https://www.infomaniak.com/chatbot")
     public static let ikMe = URLConstants(urlString: "https://www.ik.me")
+    public static let encryptionFAQ = URLConstants(urlString: "https://faq.infomaniak.com/1582")
 
     public static func calendarEvent(_ event: CalendarEvent) -> URLConstants {
         let startDate = Calendar.current.firstDayOfTheWeek(of: event.start) ?? .now

@@ -26,8 +26,6 @@ import SwiftUIBackports
 import WrappingHStack
 
 struct EncryptionPasswordView: View {
-    private static let faqURL = URL(string: "https://faq.infomaniak.com/1582")!
-
     @Environment(\.dismiss) private var dismiss
     @Environment(\.openURL) private var openURL
 
@@ -45,7 +43,7 @@ struct EncryptionPasswordView: View {
                                 .textStyle(.bodySecondary)
 
                             Button {
-                                openURL(Self.faqURL)
+                                openURL(URLConstants.encryptionFAQ.url)
                             } label: {
                                 Text(MailResourcesStrings.Localizable.moreInfo)
                                     .font(MailTextStyle.bodyMedium.font)
