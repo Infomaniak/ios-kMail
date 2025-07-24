@@ -25,7 +25,7 @@ import SwiftUI
 
 struct RecipientChip: View {
     @Environment(\.currentUser) private var currentUser
-    @Environment(\.isDraftEncrypted) private var isDraftEncrypted: Bool
+    @Environment(\.draftEncryption) private var draftEncryption: DraftEncryption
 
     @EnvironmentObject private var mailboxManager: MailboxManager
 
@@ -39,8 +39,8 @@ struct RecipientChip: View {
     var switchFocusHandler: (() -> Void)?
 
     private var recipientChipType: RecipientChipType {
-        if isDraftEncrypted {
-            return .encrypted
+        if case .encrypted(let passwordSecured) = draftEncryption {
+            return .encrypted(passwordSecured: passwordSecured)
         } else {
             return recipient.isExternal(mailboxManager: mailboxManager) ? .external : .default
         }

@@ -26,7 +26,12 @@ import UIKit
 
 public extension EnvironmentValues {
     @Entry
-    var isDraftEncrypted = false
+    var draftEncryption: DraftEncryption = .none
+}
+
+public enum DraftEncryption {
+    case none
+    case encrypted(passwordSecured: Bool)
 }
 
 public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
@@ -58,8 +63,10 @@ public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
         label.setContentHuggingPriority(.defaultHigh, for: .vertical)
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
-        if type == .encrypted {
-            label.updateAccessoryViewIfNeeded(EncryptedChipAccessoryUIView(isEncrypted: recipient.canAutoEncrypt == true))
+        if case .encrypted(let passwordSecured) = type {
+            label
+                .updateAccessoryViewIfNeeded(EncryptedChipAccessoryUIView(isEncrypted: recipient
+                        .canAutoEncrypt || passwordSecured))
         }
 
         return label
@@ -70,8 +77,10 @@ public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
         uiLabel.type = type
         uiLabel.isUserInteractionEnabled = isEnabled
 
-        if type == .encrypted {
-            uiLabel.updateAccessoryViewIfNeeded(EncryptedChipAccessoryUIView(isEncrypted: recipient.canAutoEncrypt == true))
+        if case .encrypted(let passwordSecured) = type {
+            uiLabel
+                .updateAccessoryViewIfNeeded(EncryptedChipAccessoryUIView(isEncrypted: recipient
+                        .canAutoEncrypt || passwordSecured))
         } else {
             uiLabel.updateAccessoryViewIfNeeded(nil)
         }
@@ -131,7 +140,7 @@ struct RecipientChipTheme {
 public enum RecipientChipType: Equatable {
     case `default`
     case external
-    case encrypted
+    case encrypted(passwordSecured: Bool)
 
     var theme: RecipientChipTheme {
         switch self {

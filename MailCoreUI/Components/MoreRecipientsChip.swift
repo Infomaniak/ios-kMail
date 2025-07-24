@@ -31,9 +31,16 @@ public extension EdgeInsets {
 public struct MoreRecipientsChip: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
-    @Environment(\.isDraftEncrypted) private var isDraftEncrypted
+    @Environment(\.draftEncryption) private var draftEncryption
 
     let count: Int
+
+    private var isDraftEncrypted: Bool {
+        if case .encrypted(let passwordSecured) = draftEncryption {
+            return true
+        }
+        return false
+    }
 
     public init(count: Int) {
         self.count = count

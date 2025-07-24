@@ -61,7 +61,7 @@ struct EncryptionPasswordView: View {
                                                  horizontalSpacing: IKPadding.mini) { recipient in
                                 RecipientChipLabelView(
                                     recipient: recipient,
-                                    type: .encrypted,
+                                    type: .encrypted(passwordSecured: false),
                                     removeHandler: nil,
                                     switchFocusHandler: nil
                                 )
