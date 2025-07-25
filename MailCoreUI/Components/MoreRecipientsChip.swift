@@ -49,7 +49,7 @@ public struct MoreRecipientsChip: View {
     public var body: some View {
         HStack(spacing: IKPadding.micro) {
             if case .encrypted(let passwordSecured) = chipType {
-                EncryptedChipAccessorySwiftUIView(isEncrypted: passwordSecured)
+                EncryptedChipAccessoryView(isEncrypted: passwordSecured)
             }
 
             Text("+\(count)")
