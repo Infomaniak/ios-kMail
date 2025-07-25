@@ -21,7 +21,11 @@ import SwiftUI
 import UIKit
 
 final class EncryptedChipAccessoryUIView: UIView {
-    public var isEncrypted: Bool
+    public var isEncrypted: Bool {
+        didSet {
+            setEncryptState()
+        }
+    }
     private let badgeWidth: CGFloat = 8.0
     private let iconSize = CGSize(width: 16, height: 16)
 
@@ -41,7 +45,6 @@ final class EncryptedChipAccessoryUIView: UIView {
         view.backgroundColor = MailResourcesAsset.orangeColor.color
         view.layer.cornerRadius = badgeWidth / 2
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.isHidden = isEncrypted
         return view
     }()
 
@@ -64,13 +67,7 @@ final class EncryptedChipAccessoryUIView: UIView {
         addSubview(imageView)
         addSubview(badgeView)
 
-        if isEncrypted {
-            imageView.image = MailResourcesAsset.lockSquareFill.image
-            imageView.tintColor = MailResourcesAsset.iconSovereignBlueColor.color
-        } else {
-            imageView.image = MailResourcesAsset.unlockSquareFill.image
-            imageView.tintColor = MailResourcesAsset.textSecondaryColor.color
-        }
+        setEncryptState()
 
         NSLayoutConstraint.activate([
             imageView.centerXAnchor.constraint(equalTo: centerXAnchor),
@@ -86,6 +83,18 @@ final class EncryptedChipAccessoryUIView: UIView {
             widthAnchor.constraint(equalToConstant: iconSize.width),
             heightAnchor.constraint(equalToConstant: iconSize.height)
         ])
+    }
+
+    private func setEncryptState() {
+        if isEncrypted {
+            imageView.image = MailResourcesAsset.lockSquareFill.image
+            imageView.tintColor = MailResourcesAsset.iconSovereignBlueColor.color
+        } else {
+            imageView.image = MailResourcesAsset.unlockSquareFill.image
+            imageView.tintColor = MailResourcesAsset.textSecondaryColor.color
+        }
+
+        badgeView.isHidden = isEncrypted
     }
 }
 
