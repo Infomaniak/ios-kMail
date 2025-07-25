@@ -135,6 +135,13 @@ public class RecipientChipLabel: UIView, UIKeyInput {
 
     override public var canBecomeFirstResponder: Bool { return isUserInteractionEnabled }
 
+    override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
+            updateColors(isFirstResponder: false)
+        }
+    }
+
     public var hasText = false
 
     private let label: UILabel = {
