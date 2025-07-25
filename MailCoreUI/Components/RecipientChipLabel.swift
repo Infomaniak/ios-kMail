@@ -135,13 +135,6 @@ public class RecipientChipLabel: UIView, UIKeyInput {
 
     override public var canBecomeFirstResponder: Bool { return isUserInteractionEnabled }
 
-    override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        if traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
-            updateColors(isFirstResponder: false)
-        }
-    }
-
     public var hasText = false
 
     private let label: UILabel = {
@@ -178,6 +171,13 @@ public class RecipientChipLabel: UIView, UIKeyInput {
     override public func resignFirstResponder() -> Bool {
         updateColors(isFirstResponder: false)
         return super.resignFirstResponder()
+    }
+
+    override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if traitCollection.userInterfaceStyle != previousTraitCollection?.userInterfaceStyle {
+            updateColors(isFirstResponder: isFirstResponder)
+        }
     }
 
     public func insertText(_ text: String) {
