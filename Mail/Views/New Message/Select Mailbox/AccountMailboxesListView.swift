@@ -51,4 +51,5 @@ struct AccountMailboxesListView: View {
         user: PreviewHelper.sampleUser,
         selectedMailbox: PreviewHelper.sampleMailbox
     ) { _ in }
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

@@ -73,6 +73,7 @@ struct AttendeeAvatarView: View {
         AttendeeAvatarView(attendee: PreviewHelper.sampleAttendee4)
     }
     .environmentObject(PreviewHelper.sampleMailboxManager)
+    .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
     .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background(MailResourcesAsset.textFieldColor.swiftUIColor)
 }

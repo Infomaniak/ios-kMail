@@ -441,4 +441,5 @@ struct ComposeMessageView: View {
         draft: Draft(),
         mailboxManager: PreviewHelper.sampleMailboxManager
     )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }

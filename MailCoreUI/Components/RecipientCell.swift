@@ -135,4 +135,5 @@ public struct RecipientCell: View {
         contextUser: PreviewHelper.sampleUser,
         contextMailboxManager: PreviewHelper.sampleMailboxManager
     )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }

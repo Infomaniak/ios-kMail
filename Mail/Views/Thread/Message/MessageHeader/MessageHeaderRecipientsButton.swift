@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -65,9 +66,11 @@ struct MessageHeaderRecipientsButton: View {
 #Preview("Header Expanded") {
     MessageHeaderRecipientsButton(isHeaderExpanded: .constant(true), recipients: [PreviewHelper.sampleRecipient1])
         .environmentObject(PreviewHelper.sampleMailboxManager)
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }
 
 #Preview("Header Collapsed") {
     MessageHeaderRecipientsButton(isHeaderExpanded: .constant(false), recipients: [PreviewHelper.sampleRecipient1])
         .environmentObject(PreviewHelper.sampleMailboxManager)
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

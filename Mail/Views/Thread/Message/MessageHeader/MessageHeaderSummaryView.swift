@@ -177,6 +177,7 @@ struct MessageHeaderSummaryView: View {
         isHeaderExpanded: .constant(false)
     ) {}
         .environmentObject(PreviewHelper.sampleMailboxManager)
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }
 
 @available(iOS 17.0, *)
@@ -187,4 +188,5 @@ struct MessageHeaderSummaryView: View {
         isHeaderExpanded: .constant(false)
     ) {}
         .environmentObject(PreviewHelper.sampleMailboxManager)
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

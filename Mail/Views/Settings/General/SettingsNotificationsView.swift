@@ -169,4 +169,6 @@ struct SettingsNotificationsView: View {
 
 #Preview {
     SettingsNotificationsView()
+        .environmentObject(PreviewHelper.sampleMailboxManager)
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

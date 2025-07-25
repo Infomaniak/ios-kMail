@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -177,4 +178,5 @@ struct AppVersionView: View {
     MenuDrawerView()
         .environmentObject(PreviewHelper.sampleMailboxManager)
         .environmentObject(NavigationDrawerState())
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

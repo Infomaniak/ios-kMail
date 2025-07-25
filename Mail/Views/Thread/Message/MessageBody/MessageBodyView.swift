@@ -65,4 +65,5 @@ struct MessageBodyView: View {
         isRemoteContentBlocked: false,
         messageUid: PreviewHelper.sampleMessage.uid
     )
+    .environmentObject(MessagesWorker(mailboxManager: PreviewHelper.sampleMailboxManager))
 }

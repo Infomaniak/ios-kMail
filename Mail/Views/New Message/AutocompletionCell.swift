@@ -136,4 +136,5 @@ struct AutocompletionCell: View {
         unknownRecipient: false
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
+    .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }
