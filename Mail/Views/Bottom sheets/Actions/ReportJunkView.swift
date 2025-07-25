@@ -76,4 +76,5 @@ struct ReportJunkView: View {
         origin: .floatingPanel(source: .threadList)
     ) { _ in }
         .accentColor(AccentColor.pink.primary.swiftUIColor)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

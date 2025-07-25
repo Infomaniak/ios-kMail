@@ -109,4 +109,6 @@ struct RecipientField: View {
 
 #Preview {
     RecipientField(currentText: .constant(""), recipients: .constant(PreviewHelper.sampleRecipientsList), type: .to)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

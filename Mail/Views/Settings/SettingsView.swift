@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import InfomaniakPrivacyManagement
 import MailCore
@@ -284,4 +285,5 @@ struct SettingsView: View {
 
 #Preview {
     SettingsView()
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

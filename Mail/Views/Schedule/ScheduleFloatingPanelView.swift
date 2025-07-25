@@ -79,4 +79,5 @@ struct ScheduleFloatingPanelView: View {
         type: .scheduledDraft,
         initialDate: nil
     ) { _ in }
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

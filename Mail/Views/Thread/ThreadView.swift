@@ -97,4 +97,5 @@ struct ThreadView: View {
 #Preview {
     ThreadView(thread: PreviewHelper.sampleThread)
         .environmentObject(PreviewHelper.sampleMailboxManager)
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

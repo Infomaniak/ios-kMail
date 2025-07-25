@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCore
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -56,4 +57,5 @@ struct SettingsNavigationView: View {
 
 #Preview {
     SettingsNavigationView(baseNavigationPath: [])
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

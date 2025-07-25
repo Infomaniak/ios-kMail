@@ -214,4 +214,5 @@ struct ComposeMessageCellRecipients: View {
         isRecipientLimitExceeded: false
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
+    .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

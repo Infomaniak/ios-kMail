@@ -51,4 +51,5 @@ struct MessageSubHeaderView: View {
 
 #Preview {
     MessageSubHeaderView(message: PreviewHelper.sampleMessage, displayContentBlockedActionView: .constant(false))
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

@@ -71,4 +71,5 @@ struct ContactActionsView: View {
 #Preview {
     ContactActionsView(recipient: PreviewHelper.sampleRecipient1, bimi: nil)
         .environmentObject(PreviewHelper.sampleMailboxManager)
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

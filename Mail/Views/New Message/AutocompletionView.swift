@@ -141,4 +141,5 @@ struct AutocompletionView: View {
         autocompletion: .constant([]),
         addedRecipients: .constant(PreviewHelper.sampleRecipientsList)
     ) { _ in /* Preview */ }
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

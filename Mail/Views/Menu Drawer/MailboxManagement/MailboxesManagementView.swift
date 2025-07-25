@@ -136,4 +136,6 @@ struct MailboxesManagementView: View {
     MailboxesManagementView()
         .environmentObject(PreviewHelper.sampleMailboxManager)
         .accentColor(UserDefaults.shared.accentColor.primary.swiftUIColor)
+        .environmentObject(NavigationDrawerState())
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

@@ -229,4 +229,5 @@ struct DownloadAllAttachmentsButtonView: View {
 
 #Preview {
     AttachmentsView(message: PreviewHelper.sampleMessage, attachments: [])
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

@@ -73,4 +73,6 @@ struct FullRecipientsList: View {
 
 #Preview {
     FullRecipientsList(recipients: .constant(PreviewHelper.sampleRecipientsList), type: .to)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

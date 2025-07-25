@@ -18,6 +18,7 @@
 
 import InfomaniakCore
 import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -81,4 +82,6 @@ struct BlockSenderView: View {
         origin: .floatingPanel(source: .threadList)
     )
     .accentColor(AccentColor.pink.primary.swiftUIColor)
+    .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }

@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
@@ -77,4 +78,6 @@ struct RecipientChip: View {
     } switchFocusHandler: {
         /* Preview */
     }
+    .environmentObject(PreviewHelper.sampleMailboxManager)
+    .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }
