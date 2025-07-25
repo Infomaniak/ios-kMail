@@ -32,9 +32,10 @@ struct ShortRecipientsList: View {
         guard case .encrypted(let passwordSecured) = draftEncryption else { return .default }
 
         if !passwordSecured {
-            return .encrypted(passwordSecured: !recipients.contains {
-                !$0.canAutoEncrypt && $0 != recipients.first
-            })
+            let containsNotAutoEncryptedRecipients = recipients.dropFirst().contains {
+                !$0.canAutoEncrypt
+            }
+            return .encrypted(passwordSecured: !containsNotAutoEncryptedRecipients)
         }
         return .encrypted(passwordSecured: true)
     }
