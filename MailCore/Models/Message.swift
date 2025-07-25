@@ -51,6 +51,12 @@ public extension String {
     }
 }
 
+public extension Collection where Element == Message {
+    func sortedByDate() -> [Message] {
+        sorted { $0.internalDate.compare($1.internalDate) == .orderedAscending }
+    }
+}
+
 /// Class used to get a page of shortUids
 public final class MessageUidsResult: Decodable {
     public let messageShortUids: [String]
@@ -148,6 +154,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted(originProperty: "messages") var threads: LinkingObjects<Thread>
     @Persisted(originProperty: "messages") private var folders: LinkingObjects<Folder>
     @Persisted(originProperty: "duplicates") var threadsDuplicatedIn: LinkingObjects<Thread>
+
+    @Persisted public var isDisplayable = true
 
     @Persisted public var fullyDownloaded = false
     @Persisted public var fromSearch = false

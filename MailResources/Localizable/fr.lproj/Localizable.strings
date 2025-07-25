@@ -4,7 +4,7 @@
  * Locale: fr, French
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Thu, 17 Jul 2025 08:45:10 +0200
+ * Exported at: Mon, 21 Jul 2025 16:54:32 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1739,7 +1739,7 @@
 "snackbarMoveCancelled" = "Déplacement annulé";
 
 /* loco:651ebe4a1a15bf27e204db22 */
-"snackbarPasswordCopied" = "Le mot de passe a bien été copié";
+"snackbarPasswordCopied" = "Mot de passe copié";
 
 /* loco:6858ff00a459db58890629f2 */
 "snackbarReactionSent" = "Réaction %@ envoyée";
@@ -1764,9 +1764,6 @@
 
 /* loco:67ea70102a2bbfe96e02d072 */
 "snackbarSnoozeSuccess" = "Vous recevrez un rappel de ce message %@";
-
-/* loco:67ea722654038d4994095fc2 */
-"snackbarSnoozeSuccess-plural-many" = "Vous recevrez un rappel de ces messages %@";
 
 /* loco:653fa9122f7b384757074432 */
 "snackbarSubjectCopiedToClipboard" = "Objet copié dans le presse-papiers";
@@ -1871,7 +1868,7 @@
 "threadListHeaderUnreadCount-plural" = "%@ non lus";
 
 /* loco:638f6f782bdb800e9d6c3682 */
-"threadListHeaderUnreadCount-plural-many" = "%s non lus";
+"threadListHeaderUnreadCount-plural-many" = "%@ non lus";
 
 /* loco:671f821cbd4358e9af00c172 */
 "threadListHeaderUpdating" = "Récupération en cours";

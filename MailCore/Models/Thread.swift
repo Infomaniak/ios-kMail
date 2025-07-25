@@ -38,6 +38,7 @@ public struct ThreadResult: Decodable {
 public class Thread: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var uid: String
     @Persisted public var messages: List<Message>
+    @Persisted private var messagesToDisplay: List<Message>
     @Persisted public var unseenMessages: Int
     @Persisted public var from: List<Recipient>
     @Persisted public var to: List<Recipient>
@@ -65,8 +66,6 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var snoozeEndDate: Date?
     @Persisted public var isLastMessageFromFolderSnoozed = false
 
-    @Persisted public var reactionsCount = 0
-
     /// This property is used to remove threads from list before network call is finished
     @Persisted public var isMovedOutLocally = false
 
@@ -74,6 +73,15 @@ public class Thread: Object, Decodable, Identifiable {
 
     public var id: String {
         return uid
+    }
+
+    public var displayMessages: List<Message> {
+        @InjectService var featureAvailableProvider: FeatureAvailableProvider
+        if featureAvailableProvider.isAvailable(.emojiReaction) {
+            return messagesToDisplay
+        } else {
+            return messages
+        }
     }
 
     public var lastAction: ThreadLastAction? {
@@ -93,15 +101,6 @@ public class Thread: Object, Decodable, Identifiable {
             return .snoozed(snoozeEndDate)
         } else {
             return .normal(date)
-        }
-    }
-
-    public var displayMessagesCount: Int {
-        @InjectService var featureAvailableProvider: FeatureAvailableProvider
-        if featureAvailableProvider.isAvailable(.emojiReaction) {
-            return messages.count - reactionsCount
-        } else {
-            return messages.count
         }
     }
 
@@ -329,7 +328,8 @@ public extension Thread {
 
     /// Re-generate `Thread` properties given the messages it contains.
     func recomputeOrFail() throws {
-        messages = messages.sorted { $0.internalDate.compare($1.internalDate) == .orderedAscending }.toRealmList()
+        messages = messages.sortedByDate().toRealmList()
+        messagesToDisplay = List()
 
         guard let lastMessageFromFolder else {
             throw MailError.threadHasNoMessageInFolder
@@ -380,8 +380,10 @@ public extension Thread {
                 numberOfScheduledDraft += 1
             }
             if message.isReaction {
-                reactionsCount += 1
                 getReaction(from: message, reactions: &reactionsByMessageId)
+                message.isDisplayable = false
+            } else {
+                messagesToDisplay.append(message)
             }
 
             updateSnooze(from: message)
@@ -404,7 +406,6 @@ public extension Thread {
 
         unseenMessages = 0
         numberOfScheduledDraft = 0
-        reactionsCount = 0
 
         flagged = false
         hasAttachments = false

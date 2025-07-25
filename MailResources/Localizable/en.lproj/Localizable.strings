@@ -4,7 +4,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Valentin Perignon
- * Exported at: Thu, 17 Jul 2025 08:45:10 +0200
+ * Exported at: Mon, 21 Jul 2025 16:54:32 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1739,7 +1739,7 @@
 "snackbarMoveCancelled" = "Move cancelled";
 
 /* loco:651ebe4a1a15bf27e204db22 */
-"snackbarPasswordCopied" = "The password has been copied";
+"snackbarPasswordCopied" = "Password copied";
 
 /* loco:6858ff00a459db58890629f2 */
 "snackbarReactionSent" = "Reaction %@ sent";
@@ -1764,9 +1764,6 @@
 
 /* loco:67ea70102a2bbfe96e02d072 */
 "snackbarSnoozeSuccess" = "You will receive a reminder for this message %@";
-
-/* loco:67ea722654038d4994095fc2 */
-"snackbarSnoozeSuccess-plural-many" = "";
 
 /* loco:653fa9122f7b384757074432 */
 "snackbarSubjectCopiedToClipboard" = "Subject copied to the clipboard";

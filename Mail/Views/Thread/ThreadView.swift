@@ -59,7 +59,7 @@ struct ThreadView: View {
                     SnoozedThreadHeaderView(date: snoozeEndDate, messages: thread.messages.toArray(), folder: thread.folder)
                 }
 
-                MessageListView(messages: thread.messages.toArray(), mailboxManager: mailboxManager)
+                MessageListView(messages: thread.displayMessages.toArray(), mailboxManager: mailboxManager)
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
