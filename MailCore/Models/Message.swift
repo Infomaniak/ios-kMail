@@ -88,6 +88,17 @@ public class MessageHeaders: EmbeddedObject, Codable {
     }
 }
 
+public final class MessageReaction: EmbeddedObject {
+    @Persisted public var reaction: String
+    @Persisted public var recipients: List<Recipient>
+
+    public convenience init(reaction: String, recipients: [Recipient]) {
+        self.init()
+        self.reaction = reaction
+        self.recipients = recipients.toRealmList()
+    }
+}
+
 /// A Message has :
 /// - Many threads
 /// - One originalThread: parent thread
@@ -151,6 +162,11 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var snoozeUuid: String?
     @Persisted public var snoozeEndDate: Date?
 
+    @Persisted public var emojiReaction: String?
+    @Persisted public var emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason?
+
+    @Persisted public var reactions: List<MessageReaction>
+
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
     }
@@ -190,6 +206,14 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     public var isSnoozed: Bool {
         snoozeState == .snoozed && snoozeEndDate != nil && snoozeUuid != nil
+    }
+
+    public var isReaction: Bool {
+        return emojiReaction?.isEmpty == false
+    }
+
+    public var hasReactions: Bool {
+        return !reactions.isEmpty
     }
 
     public var formattedFrom: String {
@@ -313,6 +337,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case snoozeState
         case snoozeUuid
         case snoozeEndDate
+        case emojiReaction
+        case emojiReactionNotAllowedReason
         case encrypted
         case encryptionPassword
         case cryptPasswordValidity
@@ -386,9 +412,17 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         snoozeState = try? values.decodeIfPresent(SnoozeState.self, forKey: .snoozeState)
         snoozeUuid = try? values.decodeIfPresent(String.self, forKey: .snoozeUuid)
         snoozeEndDate = try values.decodeIfPresent(Date.self, forKey: .snoozeEndDate)
+
+        emojiReaction = try values.decodeIfPresent(String.self, forKey: .emojiReaction)
+        emojiReactionNotAllowedReason = try values.decodeIfPresent(
+            EmojiReactionNotAllowedReason.self,
+            forKey: .emojiReactionNotAllowedReason
+        )
+
         encrypted = try values.decodeIfPresent(Bool.self, forKey: .encrypted) ?? false
         encryptionPassword = try values.decodeIfPresent(String.self, forKey: .encryptionPassword) ?? ""
         cryptPasswordValidity = try values.decodeIfPresent(Date.self, forKey: .cryptPasswordValidity)
+
         headers = try? values.decodeIfPresent(MessageHeaders.self, forKey: .headers)
     }
 
@@ -427,7 +461,9 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         bimi: Bimi? = nil,
         snoozeState: SnoozeState? = nil,
         snoozeUuid: String? = nil,
-        snoozeEndDate: Date? = nil
+        snoozeEndDate: Date? = nil,
+        emojiReaction: String? = nil,
+        emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason? = nil
     ) {
         self.init()
 
@@ -467,6 +503,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         self.snoozeState = snoozeState
         self.snoozeUuid = snoozeUuid
         self.snoozeEndDate = snoozeEndDate
+        self.emojiReaction = emojiReaction
+        self.emojiReactionNotAllowedReason = emojiReactionNotAllowedReason
     }
 
     public func toThread() -> Thread {

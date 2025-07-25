@@ -41,6 +41,31 @@ public enum RecipientError: Error {
     case duplicateContact
 }
 
+public final class RecipientsList: EmbeddedObject, Encodable {
+    @Persisted private(set) var recipients: RealmSwift.List<Recipient>
+
+    public var count: Int {
+        recipients.count
+    }
+
+    override public init() {
+        super.init()
+    }
+
+    public convenience init(recipients: [Recipient]) {
+        self.init()
+        self.recipients = recipients.toRealmList()
+    }
+
+    public func append(recipients: [Recipient]) {
+        self.recipients.append(objectsIn: recipients)
+    }
+
+    public func contains(where predicate: (Recipient) -> Bool) -> Bool {
+        return recipients.contains(where: predicate)
+    }
+}
+
 public final class Recipient: EmbeddedObject, Correspondent, Codable {
     @Persisted public var email: String
     @Persisted public var name: String

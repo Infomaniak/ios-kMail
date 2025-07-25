@@ -25,16 +25,6 @@ import MailResources
 import SwiftModalPresentation
 import SwiftUI
 
-extension View {
-    func backportScrollBounceBasedOnSize() -> some View {
-        if #available(iOS 16.4, *) {
-            return scrollBounceBehavior(.basedOnSize)
-        } else {
-            return self
-        }
-    }
-}
-
 struct MobileFormattingToolbarView: View {
     @ModalState(context: ContextKeys.compose) private var isShowingLinkAlert = false
 

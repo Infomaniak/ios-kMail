@@ -28,6 +28,15 @@
       }
     },
     {
+      "identity" : "elegant-emoji-picker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Infomaniak/Elegant-Emoji-Picker",
+      "state" : {
+        "revision" : "f5a3a70c362e20dfe16f42b1d2dea6e6ea52f832",
+        "version" : "1.1.0"
+      }
+    },
+    {
       "identity" : "ios-bug-tracker",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-bug-tracker",
@@ -50,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "af3eb31bdc21ce2603f5bc88f92d73158b7ddb66",
-        "version" : "19.3.0"
+        "revision" : "b3570c1c906e605cb9a798deef1081a42ef6636f",
+        "version" : "19.5.0"
       }
     },
     {

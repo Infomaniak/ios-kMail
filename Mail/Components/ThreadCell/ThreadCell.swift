@@ -175,7 +175,7 @@ struct ThreadCell: View {
                         contextMailboxManager: mailboxManager,
                         style: dataHolder.isInWrittenByMeFolder ? .to : .from
                     ),
-                    messageCount: thread.messages.count,
+                    messageCount: thread.displayMessagesCount,
                     prominentMessageCount: thread.hasUnseenMessages,
                     displayDate: thread.displayDate,
                     showDraftPrefix: thread.hasDrafts

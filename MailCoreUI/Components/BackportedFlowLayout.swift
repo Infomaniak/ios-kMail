@@ -20,36 +20,59 @@ import InfomaniakCoreSwiftUI
 import SwiftUI
 import WrappingHStack
 
-public struct BackportedFlowLayout<Collection: RandomAccessCollection, Content: View>: View
-    where Collection.Element: Identifiable {
-    let elements: Collection
+public struct BackportedFlowLayout<Content: View>: View {
     let verticalSpacing: CGFloat
     let horizontalSpacing: CGFloat
+    @ViewBuilder let content: () -> Content
 
-    let content: (Collection.Element) -> Content
-
-    public init(
-        _ elements: Collection,
-        verticalSpacing: CGFloat,
-        horizontalSpacing: CGFloat,
-        @ViewBuilder content: @escaping (Collection.Element) -> Content
-    ) {
-        self.elements = elements
+    public init(verticalSpacing: CGFloat, horizontalSpacing: CGFloat, @ViewBuilder content: @escaping () -> Content) {
         self.verticalSpacing = verticalSpacing
         self.horizontalSpacing = horizontalSpacing
         self.content = content
     }
 
+    public init<Data, RowContent>(
+        _ data: Data,
+        verticalSpacing: CGFloat,
+        horizontalSpacing: CGFloat,
+        @ViewBuilder rowContent: @escaping (Data.Element) -> RowContent
+    ) where Content == ForEach<Data, Data.Element.ID, RowContent>, Data: RandomAccessCollection, RowContent: View,
+        Data.Element: Identifiable {
+        self.verticalSpacing = verticalSpacing
+        self.horizontalSpacing = horizontalSpacing
+
+        content = {
+            ForEach(data) { element in
+                rowContent(element)
+            }
+        }
+    }
+
+    public init<Data, ID, RowContent>(
+        _ data: Data,
+        id: KeyPath<Data.Element, ID>,
+        verticalSpacing: CGFloat,
+        horizontalSpacing: CGFloat,
+        @ViewBuilder rowContent: @escaping (Data.Element) -> RowContent
+    ) where Content == ForEach<Data, ID, RowContent>, Data: RandomAccessCollection, ID: Hashable, RowContent: View {
+        self.verticalSpacing = verticalSpacing
+        self.horizontalSpacing = horizontalSpacing
+
+        content = {
+            ForEach(data, id: id) { element in
+                rowContent(element)
+            }
+        }
+    }
+
     public var body: some View {
         if #available(iOS 16.0, *) {
             FlowLayout(alignment: .leading, verticalSpacing: verticalSpacing, horizontalSpacing: horizontalSpacing) {
-                ForEach(elements) { element in
-                    content(element)
-                }
+                content()
             }
         } else {
-            WrappingHStack(elements, spacing: .constant(horizontalSpacing), lineSpacing: verticalSpacing) { element in
-                content(element)
+            WrappingHStack(spacing: .constant(horizontalSpacing), lineSpacing: verticalSpacing) {
+                content()
             }
         }
     }

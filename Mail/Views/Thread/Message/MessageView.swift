@@ -69,11 +69,15 @@ struct MessageView: View {
                         displayContentBlockedActionView: $displayContentBlockedActionView
                     )
 
-                    MessageBodyView(
-                        displayContentBlockedActionView: $displayContentBlockedActionView,
-                        isRemoteContentBlocked: isRemoteContentBlocked,
-                        messageUid: message.uid
-                    )
+                    VStack(alignment: .leading, spacing: 0) {
+                        MessageBodyView(
+                            displayContentBlockedActionView: $displayContentBlockedActionView,
+                            isRemoteContentBlocked: isRemoteContentBlocked,
+                            messageUid: message.uid
+                        )
+
+                        MessageReactionsView(messageUid: message.uid, messageReactions: message.reactions)
+                    }
                 }
             }
         }
@@ -102,6 +106,7 @@ struct MessageView: View {
         threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .expanded]),
         message: PreviewHelper.sampleMessage
     )
-    .environmentObject(PreviewHelper.sampleMailboxManager)
     .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
+    .environmentObject(PreviewHelper.sampleMailboxManager)
+    .environmentObject(MessagesWorker(mailboxManager: PreviewHelper.sampleMailboxManager))
 }

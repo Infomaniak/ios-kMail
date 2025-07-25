@@ -26,44 +26,72 @@ import Sentry
 import SwiftSoup
 import UIKit
 
-actor DraftQueue {
-    private var taskQueue = [String: DispatchWorkItem]()
-    private var identifierQueue = [String: UIBackgroundTaskIdentifier]()
-
-    func cleanQueueElement(uuid: String) {
-        taskQueue[uuid]?.cancel()
-        endBackgroundTask(uuid: uuid)
-        taskQueue[uuid] = nil
-        identifierQueue[uuid] = .invalid
-    }
-
-    func beginBackgroundTask(withName name: String, for uuid: String) async {
-        let identifier = await UIApplication.shared.beginBackgroundTask(withName: name) { [self] in
-            Task {
-                await endBackgroundTask(uuid: uuid)
-            }
-        }
-        identifierQueue[uuid] = identifier
-    }
-
-    func endBackgroundTask(uuid: String) {
-        if let identifier = identifierQueue[uuid], identifier != .invalid {
-            Task {
-                await UIApplication.shared.endBackgroundTask(identifier)
-                identifierQueue[uuid] = .invalid
-            }
-        }
-    }
-}
-
 public final class DraftManager {
-    private let draftQueue = DraftQueue()
-
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var alertDisplayable: UserAlertDisplayable
 
     /// Used by DI only
     public init() {}
+
+    public func syncDraft(
+        mailboxManager: MailboxManager,
+        showSnackbar: Bool,
+        changeFolderAction: ((Folder) -> Void)? = nil,
+        myKSuiteUpgradeAction: (() -> Void)? = nil
+    ) {
+        let drafts = mailboxManager.draftWithPendingAction().freezeIfNeeded()
+
+        Task {
+            var backgroundTaskIdentifier = UIBackgroundTaskIdentifier.invalid
+            backgroundTaskIdentifier = await UIApplication.shared.beginBackgroundTask(withName: "Draft Sync") {
+                guard backgroundTaskIdentifier != .invalid else { return }
+                UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+                backgroundTaskIdentifier = .invalid
+            }
+
+            let latestSendDate = await withTaskGroup(of: Date?.self, returning: Date?.self) { group in
+                for draft in drafts {
+                    group.addTask {
+                        var sendDate: Date?
+                        switch draft.action {
+                        case .initialSave:
+                            await self.initialSaveRemotely(
+                                draft: draft,
+                                mailboxManager: mailboxManager,
+                                showSnackbar: showSnackbar
+                            )
+                        case .save:
+                            await self.saveDraftRemotely(draft: draft, mailboxManager: mailboxManager, showSnackbar: showSnackbar)
+                        case .send, .sendReaction, .schedule:
+                            sendDate = await self.sendOrSchedule(
+                                draft: draft,
+                                mailboxManager: mailboxManager,
+                                showSnackbar: showSnackbar,
+                                changeFolderAction: changeFolderAction,
+                                myKSuiteUpgradeAction: myKSuiteUpgradeAction
+                            )
+                        default:
+                            break
+                        }
+                        return sendDate
+                    }
+                }
+
+                var latestSendDate: Date?
+                for await result in group {
+                    latestSendDate = result
+                }
+                return latestSendDate
+            }
+
+            if backgroundTaskIdentifier != .invalid {
+                await UIApplication.shared.endBackgroundTask(backgroundTaskIdentifier)
+                backgroundTaskIdentifier = .invalid
+            }
+
+            try await refreshDraftFolder(latestSendDate: latestSendDate, mailboxManager: mailboxManager)
+        }
+    }
 
     /// Save a draft server side
     private func saveDraftRemotely(
@@ -73,9 +101,6 @@ public final class DraftManager {
         showSnackbar: Bool
     ) async {
         matomo.track(eventWithCategory: .newMessage, name: "saveDraft")
-
-        await draftQueue.cleanQueueElement(uuid: initialDraft.localUUID)
-        await draftQueue.beginBackgroundTask(withName: "Draft Saver", for: initialDraft.localUUID)
 
         let draft = updateSubjectIfNeeded(draft: initialDraft)
 
@@ -96,14 +121,11 @@ public final class DraftManager {
                     retry: false,
                     showSnackbar: showSnackbar
                 )
-            }
-            // show error if needed
-            else {
+            } else {
                 guard error.shouldDisplay else { return }
                 alertDisplayable.show(message: error.localizedDescription, shouldShow: showSnackbar)
             }
         }
-        await draftQueue.endBackgroundTask(uuid: draft.localUUID)
     }
 
     /// Set a default signature to a draft, from existing ones in DB
@@ -135,32 +157,28 @@ public final class DraftManager {
         changeFolderAction: ((Folder) -> Void)?,
         myKSuiteUpgradeAction: (() -> Void)? = nil
     ) async -> Date? {
-        if initialDraft.action == .schedule {
-            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarScheduling, shouldShow: showSnackbar)
-        } else {
-            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending, shouldShow: showSnackbar)
-        }
-
-        var sendDate: Date?
-        await draftQueue.cleanQueueElement(uuid: initialDraft.localUUID)
-        await draftQueue.beginBackgroundTask(withName: "Draft Sender", for: initialDraft.localUUID)
+        showWillSendSnackbar(action: initialDraft.action, showSnackbar: showSnackbar)
 
         let draft = updateSubjectIfNeeded(draft: initialDraft)
 
+        var sendDate: Date?
         do {
-            if draft.action == .send {
+            if draft.action == .send || draft.action == .sendReaction {
                 let sendResponse = try await mailboxManager.send(draft: draft)
                 sendDate = sendResponse.scheduledDate
-                alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent, shouldShow: showSnackbar)
+
+                showDidSendSnackbar(draft: draft, showSnackbar: showSnackbar)
             } else if draft.action == .schedule {
                 let draftWithoutDelay = removeDelay(draft: draft)
                 let scheduleResponse = try await mailboxManager.schedule(draft: draftWithoutDelay)
-                if showSnackbar, let date = draftWithoutDelay.scheduleDate, let changeFolderAction {
+
+                if let date = draftWithoutDelay.scheduleDate, let changeFolderAction {
                     showScheduledSnackBar(
                         date: date,
                         scheduleAction: scheduleResponse.scheduleAction,
                         mailboxManager: mailboxManager,
-                        changeFolderAction: changeFolderAction
+                        changeFolderAction: changeFolderAction,
+                        showSnackbar: showSnackbar
                     )
                 }
             }
@@ -183,7 +201,6 @@ public final class DraftManager {
             alertDisplayable.show(message: error.localizedDescription, shouldShow: showSnackbar)
         }
 
-        await draftQueue.endBackgroundTask(uuid: draft.localUUID)
         return sendDate
     }
 
@@ -246,58 +263,11 @@ public final class DraftManager {
         )
     }
 
-    public func syncDraft(
-        mailboxManager: MailboxManager,
-        showSnackbar: Bool,
-        changeFolderAction: ((Folder) -> Void)? = nil,
-        myKSuiteUpgradeAction: (() -> Void)? = nil
-    ) {
-        let drafts = mailboxManager.draftWithPendingAction().freezeIfNeeded()
-        Task {
-            let latestSendDate = await withTaskGroup(of: Date?.self, returning: Date?.self) { group in
-                for draft in drafts {
-                    group.addTask {
-                        var sendDate: Date?
-                        switch draft.action {
-                        case .initialSave:
-                            await self.initialSaveRemotely(
-                                draft: draft,
-                                mailboxManager: mailboxManager,
-                                showSnackbar: showSnackbar
-                            )
-                        case .save:
-                            await self.saveDraftRemotely(draft: draft, mailboxManager: mailboxManager, showSnackbar: showSnackbar)
-                        case .send, .schedule:
-                            sendDate = await self.sendOrSchedule(
-                                draft: draft,
-                                mailboxManager: mailboxManager,
-                                showSnackbar: showSnackbar,
-                                changeFolderAction: changeFolderAction,
-                                myKSuiteUpgradeAction: myKSuiteUpgradeAction
-                            )
-                        default:
-                            break
-                        }
-                        return sendDate
-                    }
-                }
-
-                var latestSendDate: Date?
-                for await result in group {
-                    latestSendDate = result
-                }
-                return latestSendDate
-            }
-
-            try await refreshDraftFolder(latestSendDate: latestSendDate, mailboxManager: mailboxManager)
-        }
-    }
-
     /// First save of a draft with the remote, if non empty.
     ///
     /// Present a message with a `delete draft`  action
     @discardableResult
-    public func initialSaveRemotely(draft: Draft, mailboxManager: MailboxManager, showSnackbar: Bool) async -> Bool {
+    private func initialSaveRemotely(draft: Draft, mailboxManager: MailboxManager, showSnackbar: Bool) async -> Bool {
         guard !draft.shouldBeSaved else {
             deleteEmptyDraft(draft: draft, for: mailboxManager)
             return false
@@ -372,12 +342,39 @@ public final class DraftManager {
         return liveDraft.freeze()
     }
 
+    private func showWillSendSnackbar(action: SaveDraftOption?, showSnackbar: Bool) {
+        switch action {
+        case .schedule:
+            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarScheduling, shouldShow: showSnackbar)
+        case .send:
+            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSending, shouldShow: showSnackbar)
+        default:
+            break
+        }
+    }
+
+    private func showDidSendSnackbar(draft: Draft, showSnackbar: Bool) {
+        switch draft.action {
+        case .send:
+            alertDisplayable.show(message: MailResourcesStrings.Localizable.snackbarEmailSent, shouldShow: showSnackbar)
+        case .sendReaction:
+            guard showSnackbar, let reaction = draft.emojiReaction else { return }
+            alertDisplayable
+                .show(message: MailResourcesStrings.Localizable.snackbarReactionSent(reaction), shouldShow: showSnackbar)
+        default:
+            break
+        }
+    }
+
     private func showScheduledSnackBar(
         date: Date,
         scheduleAction: String,
         mailboxManager: MailboxManager,
-        changeFolderAction: @escaping (Folder) -> Void
+        changeFolderAction: @escaping (Folder) -> Void,
+        showSnackbar: Bool
     ) {
+        guard showSnackbar else { return }
+
         let formattedDate = DateFormatter.localizedString(from: date, dateStyle: .medium, timeStyle: .short)
         let changeFolderAlertAction = UserAlertAction(MailResourcesStrings.Localizable.draftFolder) {
             guard let draftFolder = mailboxManager.getFolder(with: .draft) else {
