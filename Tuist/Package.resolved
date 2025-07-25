@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "branch" : "feat/interapp-login/devicemanager",
-        "revision" : "6200a6b9d981015d833c982a079bca5d70d458e3"
+        "revision" : "bbebf1c9a25e5c9c65b9a6a4dc929577cf903260",
+        "version" : "15.4.3"
       }
     },
     {
