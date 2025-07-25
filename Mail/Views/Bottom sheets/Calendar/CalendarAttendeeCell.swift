@@ -62,4 +62,5 @@ struct CalendarAttendeeCell: View {
     }
     .listStyle(.plain)
     .environmentObject(PreviewHelper.sampleMailboxManager)
+    .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

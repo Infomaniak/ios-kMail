@@ -19,7 +19,7 @@
 import MailResources
 import SwiftUI
 
-public enum SpamHeaderType {
+public enum SpamHeaderType: Equatable, Hashable {
     case moveInSpam
     case enableSpamFilter
     case unblockRecipient(String)
@@ -52,6 +52,19 @@ public enum SpamHeaderType {
             MailResourcesAsset.infoFill.swiftUIImage
         default:
             MailResourcesAsset.warningFill.swiftUIImage
+        }
+    }
+
+    public static func == (lhs: SpamHeaderType, rhs: SpamHeaderType) -> Bool {
+        switch (lhs, rhs) {
+        case (.moveInSpam, .moveInSpam):
+            return true
+        case (.enableSpamFilter, .enableSpamFilter):
+            return true
+        case (.unblockRecipient(let lhsRecipient), .unblockRecipient(let rhsRecipient)):
+            return lhsRecipient == rhsRecipient
+        default:
+            return false
         }
     }
 }

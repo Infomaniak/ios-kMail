@@ -137,4 +137,5 @@ struct ComposeMessageSenderMenu: View {
         type: .from,
         draft: draft
     )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }

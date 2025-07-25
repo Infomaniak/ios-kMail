@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -85,6 +86,8 @@ struct ComposeMessageView: View {
     @State private var initialAttachments = [Attachable]()
     @State private var isShowingSchedulePanel = false
 
+    @State private var isShowingEncryptStatePanel = false
+
     @Weak private var scrollView: UIScrollView?
 
     @StateObject private var draftContentManager: DraftContentManager
@@ -101,8 +104,13 @@ struct ComposeMessageView: View {
     private let htmlAttachments: [HTMLAttachable]
 
     private var isSendButtonDisabled: Bool {
-        let disabledState = draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded
-        return disabledState
+        let encryptionReady = (draft.encrypted && draft.encryptionPassword.isEmpty) ? draft.allRecipients
+            .allSatisfy { $0.canAutoEncrypt } : true
+        return draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded || !encryptionReady
+    }
+
+    private var isScheduleSendButtonDisabled: Bool {
+        return draft.recipientsAreEmpty || !attachmentsManager.allAttachmentsUploaded
     }
 
     // MARK: - Init
@@ -148,6 +156,9 @@ struct ComposeMessageView: View {
                     autocompletionType: $autocompletionType,
                     currentSignature: $currentSignature
                 )
+                .environment(\.draftEncryption, draft.encrypted ?
+                    .encrypted(passwordSecured: !draft.encryptionPassword.isEmpty) :
+                    .none)
 
                 if autocompletionType == nil && !isLoadingContent {
                     ComposeMessageBodyView(
@@ -173,16 +184,26 @@ struct ComposeMessageView: View {
         .baseComposeMessageToolbar(dismissHandler: didTouchDismiss)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
+                if platformDetector.isMac && featureFlagsManager.isEnabled(.mailComposeEncrypted) {
+                    EncryptionButton(isShowingEncryptStatePanel: $isShowingEncryptStatePanel, draft: draft)
+                }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
                 if featureFlagsManager.isEnabled(.scheduleSendDraft) {
                     Button {
-                        isShowingSchedulePanel = true
+                        if draft.encrypted {
+                            snackbarPresenter
+                                .show(message: MailResourcesStrings.Localizable.encryptedMessageSnackbarScheduledUnavailable)
+                        } else {
+                            isShowingSchedulePanel = true
+                        }
                     } label: {
                         Label(
                             MailResourcesStrings.Localizable.scheduleSendingTitle,
                             asset: MailResourcesAsset.clockPaperplane.swiftUIImage
                         )
                     }
-                    .disabled(isSendButtonDisabled)
+                    .disabled(isScheduleSendButtonDisabled)
                 }
             }
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -197,6 +218,7 @@ struct ComposeMessageView: View {
                 EditorMobileToolbarView(
                     textAttributes: textAttributes,
                     isShowingAI: $aiModel.isShowingPrompt,
+                    isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
                     draft: draft,
                     isEditorFocused: focusedField == .editor
                 )
@@ -372,6 +394,11 @@ struct ComposeMessageView: View {
     }
 
     private func didTouchSend() {
+        if draft.encrypted && draft.encryptionPassword.isEmpty && !draft.autoEncryptDisabledRecipients.isEmpty {
+            isShowingEncryptStatePanel = true
+            return
+        }
+
         guard !draft.subject.isEmpty else {
             matomo.track(eventWithCategory: .newMessage, name: "sendWithoutSubject")
             isShowingAlert = NewMessageAlert(type: .emptySubject(handler: sendDraft))
@@ -441,4 +468,5 @@ struct ComposeMessageView: View {
         draft: Draft(),
         mailboxManager: PreviewHelper.sampleMailboxManager
     )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }

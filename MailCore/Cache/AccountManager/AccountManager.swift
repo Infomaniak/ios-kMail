@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DeviceAssociation
 import Foundation
 import InfomaniakBugTracker
 import InfomaniakCore
@@ -33,6 +34,7 @@ import SwiftUI
 extension InfomaniakCore.UserProfile: Identifiable {}
 
 public final class AccountManager: RefreshTokenDelegate, ObservableObject {
+    @LazyInjectService var deviceManager: DeviceManagerable
     @LazyInjectService var networkLoginService: InfomaniakNetworkLoginable
     @LazyInjectService var tokenStore: TokenStore
     @LazyInjectService var bugTracker: BugTracker
@@ -175,20 +177,24 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
-    public func createAndSetCurrentAccount(code: String, codeVerifier: String) async throws -> ApiToken {
+    public func createAndSetCurrentAccount(code: String, codeVerifier: String) async throws {
         let token = try await networkLoginService.apiTokenUsing(code: code, codeVerifier: codeVerifier)
         SentryDebug.setUserId(token.userId)
 
         do {
-            return try await createAndSetCurrentAccount(token: token)
+            let (apiFetcher, mailboxes) = try await createAccount(token: token)
+            await setCurrentAccount(token: token, mailboxes: mailboxes, apiFetcher: apiFetcher)
         } catch {
             removeTokenAndAccountFor(userId: token.userId)
             throw error
         }
     }
 
-    private func createAndSetCurrentAccount(token: ApiToken) async throws -> ApiToken {
+    public func createAccount(token: ApiToken) async throws -> (ApiFetcher, [Mailbox]) {
         let apiFetcher = MailApiFetcher(token: token, delegate: self)
+
+        attachDeviceToApiToken(token, apiFetcher: apiFetcher)
+
         let user = try await userProfileStore.updateUserProfile(with: apiFetcher)
 
         let mailboxesResponse = try await apiFetcher.mailboxes()
@@ -209,17 +215,23 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         await fetchMailboxesMetadata(mailboxes: mailboxesResponse, apiFetcher: apiFetcher)
 
         await mailboxInfosManager.storeMailboxes(user: user, mailboxes: mailboxesResponse)
-        let availableMailboxes = mailboxesResponse.filter { $0.isAvailable }
-        if let mainMailbox = (availableMailboxes.first(where: { $0.isPrimary }) ?? availableMailboxes.first)?.freezeIfNeeded() {
-            await notificationService.updateTopicsIfNeeded([mainMailbox.notificationTopicName], userApiFetcher: apiFetcher)
-            let currentMailboxManager = getMailboxManager(for: mainMailbox)
-            try? await currentMailboxManager?.refreshAllFolders()
 
-            setCurrentAccount(account: token)
-            setCurrentMailboxForCurrentAccount(mailbox: mainMailbox)
+        return (apiFetcher, mailboxesResponse)
+    }
+
+    public func setCurrentAccount(token: ApiToken, mailboxes: [Mailbox], apiFetcher: ApiFetcher) async {
+        let availableMailboxes = mailboxes.filter { $0.isAvailable }
+        guard let mainMailbox = (availableMailboxes.first(where: { $0.isPrimary }) ?? availableMailboxes.first)?.freezeIfNeeded()
+        else {
+            return
         }
 
-        return token
+        await notificationService.updateTopicsIfNeeded([mainMailbox.notificationTopicName], userApiFetcher: apiFetcher)
+        let currentMailboxManager = getMailboxManager(for: mainMailbox)
+        try? await currentMailboxManager?.refreshAllFolders()
+
+        setCurrentAccount(account: token)
+        setCurrentMailboxForCurrentAccount(mailbox: mainMailbox)
     }
 
     public func updateUser(for account: ApiToken?) async throws {
@@ -230,6 +242,9 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
 
         let apiFetcher = getApiFetcher(for: account.userId, token: token)
+
+        attachDeviceToApiToken(token, apiFetcher: apiFetcher)
+
         let user = try await userProfileStore.updateUserProfile(with: apiFetcher)
 
         let fetchedMailboxes = try await apiFetcher.mailboxes()
@@ -260,6 +275,17 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         if currentMailboxManager?.mailbox.isAvailable == false {
             switchToFirstValidMailboxManager()
+        }
+    }
+
+    private func attachDeviceToApiToken(_ token: ApiToken, apiFetcher: ApiFetcher) {
+        Task {
+            do {
+                let device = try await deviceManager.getOrCreateCurrentDevice()
+                try await deviceManager.attachDeviceIfNeeded(device, to: token, apiFetcher: apiFetcher)
+            } catch {
+                SentryDebug.asyncCapture(message: "failedToAttachDeviceError", context: ["error": error], level: .error)
+            }
         }
     }
 
@@ -433,6 +459,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         mailboxManagers.removeAll()
         contactManagers.removeAll()
         apiFetchers.removeAll()
+        deviceManager.forgetLocalDeviceHash(forUserId: userId)
 
         Task {
             @InjectService var mainViewStateStore: MainViewStateStore

@@ -60,4 +60,5 @@ struct CalendarAttendeesStack: View {
 #Preview {
     CalendarAttendeesStack(attendees: PreviewHelper.sampleAttendees)
         .environmentObject(PreviewHelper.sampleMailboxManager)
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

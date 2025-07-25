@@ -5,8 +5,8 @@
  Project: kMail
  Locale: es, Spanish
  Tagged: ios-stringsdict
- Exported by: Jordan Chapelle
- Exported at: Mon, 19 May 2025 12:42:50 +0200
+ Exported by: Ambroise Decouttere
+ Exported at: Wed, 23 Jul 2025 10:34:22 +0200
 -->
 <plist version="1.0">
   <dict>
@@ -58,6 +58,22 @@
         <string>Contraseñas bloqueadas</string>
       </dict>
     </dict>
+    <key>encryptedMessageIncompleteUser</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>El destinatario %d no admite el cifrado.</string>
+        <key>other</key>
+        <string>El cifrado no es compatible con %d destinatarios.</string>
+      </dict>
+    </dict>
     <key>fileQuantity</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
@@ -88,6 +104,22 @@
         <string>Dirección de correo electrónico bloqueada</string>
         <key>other</key>
         <string>Buzones de correo bloqueados</string>
+      </dict>
+    </dict>
+    <key>messageDeletionConfirmationAlertTitle</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Borrar %d mensaje</string>
+        <key>other</key>
+        <string>Borrar %d mensajes</string>
       </dict>
     </dict>
     <key>multipleSelectionCount</key>

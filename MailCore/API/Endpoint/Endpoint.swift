@@ -240,6 +240,17 @@ public extension Endpoint {
         return .resource(draftAction)
     }
 
+    static func mailHosted(for recipients: [String]) -> Endpoint {
+        var queryItems = [URLQueryItem]()
+        for recipient in recipients {
+            queryItems.append(URLQueryItem(name: "mailboxes[]", value: recipient))
+        }
+        return base.appending(
+            path: "/securedProxy/1/mail_hostings/mailboxes/exist",
+            queryItems: queryItems
+        )
+    }
+
     static func messageSeen(uuid: String) -> Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/message/seen")
     }

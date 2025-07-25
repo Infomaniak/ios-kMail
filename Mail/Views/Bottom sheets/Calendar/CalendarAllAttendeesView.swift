@@ -17,6 +17,7 @@
  */
 
 import InfomaniakCoreCommonUI
+import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
 import NavigationBackport
@@ -44,4 +45,5 @@ struct CalendarAllAttendeesView: View {
 #Preview {
     CalendarAllAttendeesView(attendees: PreviewHelper.sampleAttendees)
         .environmentObject(PreviewHelper.sampleMailboxManager)
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

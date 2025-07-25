@@ -49,6 +49,12 @@ struct MobileToolbarButtonStyle: ButtonStyle {
     }
 }
 
+extension ButtonStyle where Self == MobileToolbarButtonStyle {
+    static func mobileToolbar(isActivated: Bool, customTint: Color? = nil) -> Self {
+        return MobileToolbarButtonStyle(isActivated: isActivated, customTint: customTint)
+    }
+}
+
 struct MobileToolbarButton: View {
     let text: String
     let icon: Image
@@ -78,7 +84,7 @@ struct MobileToolbarButton: View {
                     .iconSize(MobileToolbarButtonStyle.iconSize)
             }
         }
-        .buttonStyle(MobileToolbarButtonStyle(isActivated: isActivated, customTint: customTint))
+        .buttonStyle(.mobileToolbar(isActivated: isActivated, customTint: customTint))
         .animation(nil, value: isActivated)
     }
 }

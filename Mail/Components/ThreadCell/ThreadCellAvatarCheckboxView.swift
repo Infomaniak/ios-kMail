@@ -66,4 +66,5 @@ struct ThreadCellAvatarCheckboxView: View {
         contactConfiguration: .emptyContact,
         avatarTapped: nil
     )
+    .environmentObject(PreviewHelper.sampleMailboxManager)
 }

@@ -150,7 +150,7 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(.resource(
             message.resource,
             queryItems: [
-                URLQueryItem(name: "with", value: "emoji_reactions_per_message"),
+                URLQueryItem(name: "with", value: "emoji_reactions_per_message,auto_uncrypt,recipient_provider_source"),
                 URLQueryItem(name: "prefered_format", value: "html")
             ]
         )))
@@ -208,5 +208,9 @@ public extension MailApiFetcher {
 
     func lastSyncDate() async throws -> String? {
         return try await perform(request: authenticatedRequest(.lastSyncDate()))
+    }
+
+    func mailHosted(for recipients: [String]) async throws -> [MailHosted] {
+        return try await perform(request: authenticatedRequest(.mailHosted(for: recipients)))
     }
 }

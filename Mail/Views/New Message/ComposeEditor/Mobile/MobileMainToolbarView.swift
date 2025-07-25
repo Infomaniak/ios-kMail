@@ -27,11 +27,12 @@ struct MobileMainToolbarView: View {
     @Binding var isShowingClassicOptions: Bool
     @Binding var isShowingFormattingOptions: Bool
     @Binding var isShowingAI: Bool
+    @Binding var isShowingEncryptStatePanel: Bool
 
     let draft: Draft
     let isEditorFocused: Bool
 
-    private let actions: [EditorToolbarAction] = {
+    private let leadingActions: [EditorToolbarAction] = {
         var availableOptions: [EditorToolbarAction] = [.editText, .addAttachment]
 
         @InjectService var featureFlagsManager: FeatureFlagsManageable
@@ -42,21 +43,46 @@ struct MobileMainToolbarView: View {
         return availableOptions
     }()
 
+    private let trailingActions: [EditorToolbarAction] = {
+        var availableOptions: [EditorToolbarAction] = []
+
+        @InjectService var featureFlagsManager: FeatureFlagsManageable
+        if featureFlagsManager.isEnabled(.mailComposeEncrypted) {
+            availableOptions.append(.encryption)
+        }
+
+        return availableOptions
+    }()
+
     var body: some View {
         HStack(spacing: IKPadding.mini) {
-            ForEach(actions) { action in
-                switch action {
-                case .addAttachment:
-                    AddAttachmentMenu(draft: draft)
-                default:
-                    MobileToolbarButton(toolbarAction: action, isActivated: false, customTint: action.customTint) {
-                        performToolbarAction(action)
-                    }
-                    .disabled(isDisabled(action))
-                }
-            }
+            forEachActions(leadingActions)
+            Spacer()
+            forEachActions(trailingActions)
         }
         .padding(.horizontal, value: .medium)
+    }
+
+    private func forEachActions(_ actions: [EditorToolbarAction]) -> some View {
+        ForEach(actions) { action in
+            switch action {
+            case .addAttachment:
+                AddAttachmentMenu(draft: draft)
+            case .encryption:
+                EncryptionButton(isShowingEncryptStatePanel: $isShowingEncryptStatePanel, draft: draft)
+                    .buttonStyle(
+                        .mobileToolbar(
+                            isActivated: false,
+                            customTint: draft.encrypted ? EncryptionButton.encryptionEnabledForeground : nil
+                        )
+                    )
+            default:
+                MobileToolbarButton(toolbarAction: action, isActivated: false, customTint: action.customTint) {
+                    performToolbarAction(action)
+                }
+                .disabled(isDisabled(action))
+            }
+        }
     }
 
     private func performToolbarAction(_ action: EditorToolbarAction) {
@@ -77,7 +103,7 @@ struct MobileMainToolbarView: View {
             isShowingAI = true
         case .link, .bold, .underline, .italic, .strikeThrough, .cancelFormat, .unorderedList:
             break
-        case .addAttachment, .addFile, .addPhoto, .takePhoto:
+        case .addAttachment, .addFile, .addPhoto, .takePhoto, .encryption:
             break
         }
     }
@@ -96,6 +122,7 @@ struct MobileMainToolbarView: View {
         isShowingClassicOptions: .constant(true),
         isShowingFormattingOptions: .constant(false),
         isShowingAI: .constant(false),
+        isShowingEncryptStatePanel: .constant(false),
         draft: Draft(),
         isEditorFocused: true
     )

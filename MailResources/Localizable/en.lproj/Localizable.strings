@@ -301,6 +301,9 @@
 /* loco:6282142ca5e6f61ada1c4014 */
 "buttonAccountSwitch" = "Change account";
 
+/* loco:683451bcff751ab780041822 */
+"buttonActivate" = "Activate";
+
 /* loco:6256793050618f7416758a32 */
 "buttonAddAccount" = "Add an account";
 
@@ -360,6 +363,9 @@
 
 /* loco:64245322f2b3ab37ed1b26b2 */
 "buttonContinue" = "Continue";
+
+/* loco:68402e5e1ac58935380ac5f2 */
+"buttonCopy" = "Copy";
 
 /* loco:651ebe26c0bfc1baa10da002 */
 "buttonCopyPassword" = "Copy password";
@@ -783,6 +789,75 @@
 
 /* loco:667bac4f2a74996e510ce652 */
 "enableMultiSelection" = "Enable multiple selection";
+
+/* loco:685127b16bc6041b980c7ff2 */
+"encryptedButtonSeeConcernedRecipients" = "See relevant recipients";
+
+/* loco:6853c6e1ae6f39008c06cf82 */
+"encryptedMessageAddPasswordButton" = "Protect with a password";
+
+/* loco:6858f3e7b8bbc61d660d8072 */
+"encryptedMessageAddPasswordInformation" = "A password is only required for non-Infomaniak recipients. For them, the message will expire 30 days after sending.";
+
+/* loco:682dc12a45ce97ce870a4524 */
+"encryptedMessageDisableEncryptionButton" = "Disable encryption";
+
+/* loco:682d92f160a12e1b880ca163 */
+"encryptedMessageHeader" = "This message is encrypted.";
+
+/* loco:68512749d747a03491057b24 */
+"encryptedMessageHeaderPasswordExpiryDate" = "This message has been encrypted and will expire on %@ only for recipients unable to benefit from automatic encryption.";
+
+/* loco:68402c39c8e3201f22066632 */
+"encryptedMessagePasswordConcernedUserTitle" = "Recipients concerned";
+
+/* loco:682dc2113c2020dcd20b82f2 */
+"encryptedMessagePasswordLabel" = "Share this password by private message. You won’t be able to copy it once you’ve sent it.";
+
+/* loco:6877a03a5b42fa4d5f0f9882 */
+"encryptedMessageSnackbarEncryptionActivated" = "Encryption has been activated";
+
+/* loco:68590818100485901e03f8c2 */
+"encryptedMessageSnackbarEncryptionDisabled" = "Encryption has been disabled";
+
+/* loco:68779ae099c3ce2b380a2c03 */
+"encryptedMessageSnackbarProtectAction" = "Protect";
+
+/* loco:68622a761d6dd808720712e2 */
+"encryptedMessageSnackbarScheduledUnavailable" = "Scheduled emails not available for encrypted messages";
+
+/* loco:6835723d74a32502720135c2 */
+"encryptedMessageUpdatePasswordButton" = "Change password";
+
+/* loco:684153188e32f600910fa672 */
+"encryptedPasswordProtectionTitle" = "Password protection";
+
+/* loco:68340a44f3083453f501d6e2 */
+"encryptedProtectionAdDescription" = "Protect your message from unauthorized access with Infomaniak encryption.";
+
+/* loco:682da1d759d5f52c5a0b4604 */
+"encryptedProtectionAdDescription1" = "The message subject remains visible, but the content is completely secure.";
+
+/* loco:682da39ee3005f6c3e0a9802 */
+"encryptedProtectionAdDescription2" = "A password will be required for non-Infomaniak recipients.";
+
+/* loco:682d9e1bb014002f5400a212 */
+"encryptedProtectionAdTitle" = "Encrypt your confidential messages";
+
+/* loco:68512825b90604276308c8a2 */
+"encryptedRecipientRequiringPasswordTitle" = "Recipients with password (%d)";
+
+/* loco:683569c055f8f2843602af12 */
+"encryptedStatePanelEnable" = "Your message is protected.";
+
+/* loco:683569e71158a95737058c73 */
+"encryptedStatePanelIncomplete" = "A password is required to finalize the sending.";
+
+/* loco:68356bbc13c86547d201b995 */
+"encryptedStatePanelStatePartialLabel" = "Partial";
+
+/* loco:68356b25c1fd44c3770940c2 */
+"encryptedStatePanelTitle" = "Encryption";
 
 /* loco:64a2b619946ed6ede60a85e2 */
 "enterPasswordDescription1" = "Your password has been changed. If you are not the cause, please contact your administrator.";

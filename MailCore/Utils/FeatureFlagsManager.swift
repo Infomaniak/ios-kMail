@@ -29,6 +29,7 @@ public enum FeatureFlag: String, Codable {
     case scheduleSendDraft = "schedule-send-draft"
     case mailSnooze = "mail-snooze"
     case mailEmojiReaction = "mail-emoji-reaction"
+    case mailComposeEncrypted = "mail-compose-encrypted"
     case unknown
 
     public init(from decoder: Decoder) throws {

@@ -17,11 +17,15 @@
  */
 
 import AuthenticationServices
+import InfomaniakConcurrency
+import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCreateAccount
+import InfomaniakDeviceCheck
 import InfomaniakDI
 import InfomaniakLogin
 import InfomaniakOnboarding
+import InterAppLogin
 import Lottie
 import MailCore
 import MailCoreUI
@@ -98,9 +102,15 @@ extension Slide {
     }
 }
 
+enum MultiLoginResult {
+    case success(token: ApiToken, mailboxes: [Mailbox], apiFetcher: ApiFetcher)
+    case error(Error)
+}
+
 @MainActor
 final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
     @LazyInjectService private var loginService: InfomaniakLoginable
+    @LazyInjectService private var tokenService: InfomaniakNetworkLoginable
     @LazyInjectService private var matomo: MatomoUtils
     @LazyInjectService private var remoteNotificationRegistrer: RemoteNotificationRegistrable
     @LazyInjectService private var accountManager: AccountManager
@@ -149,6 +159,52 @@ final class LoginHandler: InfomaniakLoginDelegate, ObservableObject {
                 self?.loginSuccessful(code: result.code, codeVerifier: result.verifier)
             case .failure(let error):
                 self?.loginFailed(error: error)
+            }
+        }
+    }
+
+    func loginWith(accounts: [ConnectedAccount]) {
+        isLoading = true
+        Task {
+            defer { isLoading = false }
+
+            let loginResults: [MultiLoginResult] = await accounts.asyncMap { account in
+                do {
+                    let derivatedToken = try await self.tokenService.derivateApiToken(for: account)
+
+                    let (apiFetcher, mailboxes) = try await self.accountManager.createAccount(token: derivatedToken)
+                    return .success(token: derivatedToken, mailboxes: mailboxes, apiFetcher: apiFetcher)
+                } catch {
+                    return .error(error)
+                }
+            }
+
+            await loginWithSuccess(loginResults: loginResults)
+            loginWithErrors(loginResults: loginResults)
+        }
+    }
+
+    private func loginWithSuccess(loginResults: [MultiLoginResult]) async {
+        await loginResults.asyncForEach { loginResult in
+            guard case .success(let token, let mailboxes, let apiFetcher) = loginResult else { return }
+            await self.accountManager.setCurrentAccount(token: token, mailboxes: mailboxes, apiFetcher: apiFetcher)
+        }
+    }
+
+    private func loginWithErrors(loginResults: [MultiLoginResult]) {
+        let errors: [Error] = loginResults.compactMap {
+            if case .error(let error) = $0 {
+                return error
+            }
+            return nil
+        }
+
+        for error in errors {
+            if (error as? MailError) == MailError.noMailbox {
+                shouldShowEmptyMailboxesView = true
+            } else {
+                snackbarPresenter.show(message: error.localizedDescription)
+                SentryDebug.loginError(error: error, step: "createAndSetCurrentAccount")
             }
         }
     }

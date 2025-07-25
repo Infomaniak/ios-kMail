@@ -94,4 +94,5 @@ struct ConfirmationBlockRecipientView: View {
         reportedMessages: [PreviewHelper.sampleMessage],
         origin: .floatingPanel(source: .threadList)
     )
+    .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

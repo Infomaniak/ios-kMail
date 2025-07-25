@@ -208,4 +208,37 @@ public extension MailboxManager {
 
         return draft.freeze()
     }
+
+    func updateRecipientsAutoEncrypt(draft: Draft) async throws -> Int {
+        let recipients = draft.to
+        recipients.append(objectsIn: draft.cc)
+        recipients.append(objectsIn: draft.bcc)
+
+        guard !recipients.isEmpty else { return 0 }
+
+        let result = try await apiFetcher.mailHosted(for: recipients.map(\.email))
+
+        try writeTransaction { realm in
+            guard let liveDraft = realm.object(ofType: Draft.self, forPrimaryKey: draft.localUUID) else { return }
+            let updatedTo = liveDraft.to.detached()
+            for recipient in updatedTo {
+                recipient.isInfomaniakHosted = result.first { $0.email == recipient.email }?.isInfomaniakHosted
+            }
+            liveDraft.to = updatedTo
+
+            let updatedCC = liveDraft.cc.detached()
+            for recipient in updatedCC {
+                recipient.isInfomaniakHosted = result.first { $0.email == recipient.email }?.isInfomaniakHosted
+            }
+            liveDraft.cc = updatedCC
+
+            let updatedBCC = liveDraft.bcc.detached()
+            for recipient in updatedBCC {
+                recipient.isInfomaniakHosted = result.first { $0.email == recipient.email }?.isInfomaniakHosted
+            }
+            liveDraft.bcc = updatedBCC
+        }
+
+        return result.filter { !$0.isInfomaniakHosted }.count
+    }
 }

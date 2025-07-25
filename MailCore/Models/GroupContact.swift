@@ -23,15 +23,11 @@ public final class GroupContact: Object, Codable {
     @Persisted(primaryKey: true) public var id: Int
 
     @Persisted public var name: String
-
-    public func isSameContactAutocompletable(as contactAutoCompletable: any ContactAutocompletable) -> Bool {
-        return name == contactAutoCompletable.autocompletableName
-    }
 }
 
 extension GroupContact: ContactAutocompletable {
     public var contactId: String {
-        return String(id)
+        return "GroupContact-\(id)"
     }
 
     public var autocompletableName: String {

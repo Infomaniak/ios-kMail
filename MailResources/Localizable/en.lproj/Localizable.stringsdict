@@ -5,8 +5,8 @@
  Project: kMail
  Locale: en, English
  Tagged: ios-stringsdict
- Exported by: Jordan Chapelle
- Exported at: Mon, 19 May 2025 12:42:50 +0200
+ Exported by: Ambroise Decouttere
+ Exported at: Wed, 23 Jul 2025 10:34:22 +0200
 -->
 <plist version="1.0">
   <dict>
@@ -58,6 +58,22 @@
         <string>Blocked passwords</string>
       </dict>
     </dict>
+    <key>encryptedMessageIncompleteUser</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Encryption is not supported by %d recipient.</string>
+        <key>other</key>
+        <string>Encryption is not supported by %d recipients.</string>
+      </dict>
+    </dict>
     <key>fileQuantity</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
@@ -88,6 +104,22 @@
         <string>Blocked mailbox</string>
         <key>other</key>
         <string>Blocked mailboxes</string>
+      </dict>
+    </dict>
+    <key>messageDeletionConfirmationAlertTitle</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Delete %d message</string>
+        <key>other</key>
+        <string>Delete %d messages</string>
       </dict>
     </dict>
     <key>multipleSelectionCount</key>

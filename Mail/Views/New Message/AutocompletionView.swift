@@ -49,7 +49,7 @@ struct AutocompletionView: View {
                         addRecipient: addRecipient,
                         autocompletion: contact,
                         highlight: textDebounce.text,
-                        alreadyAppend: addedRecipients.contains { $0.id == contact.contactId },
+                        alreadyAppend: addedRecipients.contains { $0.isEquivalent(to: contact) },
                         unknownRecipient: isUserProposal
                     )
 
@@ -141,4 +141,5 @@ struct AutocompletionView: View {
         autocompletion: .constant([]),
         addedRecipients: .constant(PreviewHelper.sampleRecipientsList)
     ) { _ in /* Preview */ }
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }

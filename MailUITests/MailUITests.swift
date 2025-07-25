@@ -64,7 +64,7 @@ class MailUITests: XCTestCase {
         login()
         writeTestMessage()
 
-        app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage].buttons[MailResourcesStrings.Localizable.send]
+        app.navigationBars.buttons[MailResourcesStrings.Localizable.send]
             .firstMatch.tap()
         _ = app.collectionViews.firstMatch.waitForExistence(timeout: defaultTimeOut)
 
@@ -86,8 +86,7 @@ class MailUITests: XCTestCase {
         let subject = "\(MailUITests.testSubject) - \(Date().timeIntervalSince1970)"
         writeTestMessage(subject: subject)
 
-        app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage]
-            .buttons[MailResourcesStrings.Localizable.buttonClose].firstMatch.tap()
+        app.navigationBars.buttons[MailResourcesStrings.Localizable.buttonClose].firstMatch.tap()
 
         tapMenuButton()
 
@@ -255,8 +254,7 @@ class MailUITests: XCTestCase {
 
         wait(delay: 15)
 
-        app.navigationBars[MailResourcesStrings.Localizable.buttonNewMessage]
-            .buttons[MailResourcesStrings.Localizable.buttonClose].firstMatch.tap()
+        app.navigationBars.buttons[MailResourcesStrings.Localizable.buttonClose].firstMatch.tap()
 
         let deleteDraftButton = app.buttons[MailResourcesStrings.Localizable.actionDelete].firstMatch
         _ = deleteDraftButton.waitForExistence(timeout: defaultTimeOut)

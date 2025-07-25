@@ -89,6 +89,7 @@ struct MessageHeaderView: View {
         isMessageExpanded: .constant(false)
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
+    .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }
 
 #Preview("Message expanded") {
@@ -97,6 +98,7 @@ struct MessageHeaderView: View {
         isMessageExpanded: .constant(true)
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
+    .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }
 
 #Preview("Message Header View") {
@@ -105,4 +107,5 @@ struct MessageHeaderView: View {
         isMessageExpanded: .constant(true)
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
+    .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

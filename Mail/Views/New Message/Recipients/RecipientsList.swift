@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
 import RealmSwift
@@ -43,4 +44,6 @@ struct RecipientsList: View {
 
 #Preview {
     RecipientsList(recipients: .constant(PreviewHelper.sampleRecipientsList), isCurrentFieldFocused: true, type: .to)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
+        .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

@@ -143,4 +143,5 @@ struct AttachmentPreview: View {
 
 #Preview {
     AttachmentPreview(attachment: PreviewHelper.sampleAttachment)
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }
