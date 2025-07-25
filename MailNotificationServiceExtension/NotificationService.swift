@@ -102,6 +102,8 @@ final class NotificationService: UNNotificationServiceExtension {
                 incompleteNotification: bestAttemptContent
             )
 
+            await NotificationsHelper.prepareCleanPreview(message: fetchedMessage, with: mailboxManager)
+
             await NotificationsHelper.clearAlreadyReadNotifications(shouldWait: true)
 
             if let fromRecipient = fetchedMessage.from.first,

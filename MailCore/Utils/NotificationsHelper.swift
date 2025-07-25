@@ -269,6 +269,18 @@ public enum NotificationsHelper {
         }
     }
 
+    public static func prepareCleanPreview(message: Message, with mailboxManager: MailboxManager) async {
+        let cleanBody = await NotificationsHelper.getCleanBodyFrom(message: message)
+
+        try? mailboxManager.writeTransaction { realm in
+            guard let liveMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else {
+                return
+            }
+
+            liveMessage.preview = cleanBody
+        }
+    }
+
     private static func getCleanBodyFrom(message: Message) async -> String {
         guard let fullBody = message.body?.value,
               let bodyType = message.body?.type else {
