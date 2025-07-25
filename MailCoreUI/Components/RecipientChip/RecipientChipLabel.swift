@@ -24,39 +24,49 @@ import MailResources
 import SwiftUI
 import UIKit
 
+public extension EnvironmentValues {
+    @Entry
+    var draftEncryption: DraftEncryption = .none
+}
+
+public enum DraftEncryption {
+    case none
+    case encrypted(passwordSecured: Bool)
+}
+
 public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
     @Environment(\.isEnabled) private var isEnabled: Bool
-    @EnvironmentObject private var mailboxManager: MailboxManager
 
     let recipient: Recipient
+    var type: RecipientChipType
 
     let removeHandler: (() -> Void)?
     let switchFocusHandler: (() -> Void)?
 
-    let accessory: Accessory?
-
     public init(
         recipient: Recipient,
+        type: RecipientChipType = .default,
         removeHandler: (() -> Void)? = nil,
-        switchFocusHandler: (() -> Void)? = nil,
-        @ViewBuilder accessory: () -> Accessory
+        switchFocusHandler: (() -> Void)? = nil
     ) {
         self.recipient = recipient
+        self.type = type
         self.removeHandler = removeHandler
         self.switchFocusHandler = switchFocusHandler
-        self.accessory = accessory()
     }
 
     public func makeUIView(context: Context) -> RecipientChipLabel {
-        let label = RecipientChipLabel(recipient: recipient, external: recipient.isExternal(mailboxManager: mailboxManager))
+        let label = RecipientChipLabel(recipient: recipient, type: type)
         label.removeHandler = removeHandler
         label.switchFocusHandler = switchFocusHandler
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         label.setContentHuggingPriority(.defaultHigh, for: .vertical)
         label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
-        if let accessory {
-            label.accessoryView = transformAccessoryForUIKit(accessory)
+        if case .encrypted(let passwordSecured) = type {
+            label
+                .updateAccessoryViewIfNeeded(EncryptedChipAccessoryUIView(isEncrypted: recipient
+                        .canAutoEncrypt || passwordSecured))
         }
 
         return label
@@ -64,34 +74,83 @@ public struct RecipientChipLabelView<Accessory: View>: UIViewRepresentable {
 
     public func updateUIView(_ uiLabel: RecipientChipLabel, context: Context) {
         uiLabel.text = recipient.name.isEmpty ? recipient.email : recipient.name
-        uiLabel.isExternal = recipient.isExternal(mailboxManager: mailboxManager)
+        uiLabel.type = type
         uiLabel.isUserInteractionEnabled = isEnabled
 
-        if let accessory {
-            uiLabel.accessoryView = transformAccessoryForUIKit(accessory)
+        if case .encrypted(let passwordSecured) = type {
+            uiLabel
+                .updateAccessoryViewIfNeeded(EncryptedChipAccessoryUIView(isEncrypted: recipient
+                        .canAutoEncrypt || passwordSecured))
         } else {
-            uiLabel.accessoryView = nil
+            uiLabel.updateAccessoryViewIfNeeded(nil)
         }
-        uiLabel.invalidateIntrinsicContentSize()
-    }
-
-    private func transformAccessoryForUIKit<Content: View>(_ view: Content) -> UIView? {
-        let uiView = UIHostingController(rootView: view).view
-        uiView?.backgroundColor = .clear
-        return uiView
     }
 }
 
 public extension RecipientChipLabelView where Accessory == Never {
     init(
         recipient: Recipient,
+        type: RecipientChipType,
         removeHandler: (() -> Void)? = nil,
         switchFocusHandler: (() -> Void)? = nil
     ) {
         self.recipient = recipient
+        self.type = type
         self.removeHandler = removeHandler
         self.switchFocusHandler = switchFocusHandler
-        accessory = nil
+    }
+}
+
+struct RecipientChipTheme {
+    let textColor: UIColor
+    let firstResponderTextColor: UIColor
+    let borderColor: UIColor
+    let firstResponderBorderColor: UIColor
+    let backgroundColor: UIColor
+    let firstResponderBackgroundColor: UIColor
+
+    static let `default` = RecipientChipTheme(
+        textColor: .tintColor,
+        firstResponderTextColor: UserDefaults.shared.accentColor.secondary.color,
+        borderColor: UserDefaults.shared.accentColor.secondary.color,
+        firstResponderBorderColor: .tintColor,
+        backgroundColor: UserDefaults.shared.accentColor.secondary.color,
+        firstResponderBackgroundColor: .tintColor
+    )
+
+    static let external = RecipientChipTheme(
+        textColor: MailResourcesAsset.textPrimaryColor.color,
+        firstResponderTextColor: MailResourcesAsset.onTagExternalColor.color,
+        borderColor: MailResourcesAsset.yellowColor.color,
+        firstResponderBorderColor: MailResourcesAsset.yellowColor.color,
+        backgroundColor: MailResourcesAsset.textFieldColor.color,
+        firstResponderBackgroundColor: MailResourcesAsset.yellowColor.color
+    )
+
+    static let encrypted = RecipientChipTheme(
+        textColor: MailResourcesAsset.textSovereignBlueColor.color,
+        firstResponderTextColor: MailResourcesAsset.backgroundSovereignBlueColor.color,
+        borderColor: MailResourcesAsset.backgroundSovereignBlueColor.color,
+        firstResponderBorderColor: MailResourcesAsset.textSovereignBlueColor.color,
+        backgroundColor: MailResourcesAsset.backgroundSovereignBlueColor.color,
+        firstResponderBackgroundColor: MailResourcesAsset.textSovereignBlueColor.color
+    )
+}
+
+public enum RecipientChipType: Equatable {
+    case `default`
+    case external
+    case encrypted(passwordSecured: Bool)
+
+    var theme: RecipientChipTheme {
+        switch self {
+        case .default:
+            return .default
+        case .external:
+            return .external
+        case .encrypted:
+            return .encrypted
+        }
     }
 }
 
@@ -101,15 +160,15 @@ public class RecipientChipLabel: UIView, UIKeyInput {
         set { label.text = newValue }
     }
 
-    var accessoryView: UIView? {
-        willSet {
-            toggleAccessoryView(accessoryView, newValue)
-        }
-    }
+    private var accessoryView: EncryptedChipAccessoryUIView?
 
     var spacing: CGFloat = 4.0
 
-    var isExternal = false
+    var type: RecipientChipType {
+        didSet {
+            updateColors(isFirstResponder: isFirstResponder)
+        }
+    }
 
     var removeHandler: (() -> Void)?
     var switchFocusHandler: (() -> Void)?
@@ -120,7 +179,7 @@ public class RecipientChipLabel: UIView, UIKeyInput {
         labelSize.width += IKPadding.recipientChip.left + IKPadding.recipientChip.right
 
         var accessoryViewSize = CGSize.zero
-        if let accessoryViewIntrinsicSize = accessoryView?.intrinsicContentSize, accessoryViewIntrinsicSize != .zero {
+        if let accessoryViewIntrinsicSize = accessoryView?.frame.size, accessoryViewIntrinsicSize != .zero {
             accessoryViewSize = CGSize(
                 width: accessoryViewIntrinsicSize.width + spacing,
                 height: accessoryViewIntrinsicSize.height
@@ -147,12 +206,12 @@ public class RecipientChipLabel: UIView, UIKeyInput {
 
     private var accessoryViewConstraints = [NSLayoutConstraint]()
 
-    public init(recipient: Recipient, external: Bool) {
+    public init(recipient: Recipient, type: RecipientChipType) {
+        self.type = type
         super.init(frame: .zero)
 
         label.text = recipient.name.isEmpty ? recipient.email : recipient.name
 
-        isExternal = external
         updateColors(isFirstResponder: false)
 
         setupView()
@@ -165,11 +224,13 @@ public class RecipientChipLabel: UIView, UIKeyInput {
 
     override public func becomeFirstResponder() -> Bool {
         updateColors(isFirstResponder: true)
+        accessoryView?.setFocused(true)
         return super.becomeFirstResponder()
     }
 
     override public func resignFirstResponder() -> Bool {
         updateColors(isFirstResponder: false)
+        accessoryView?.setFocused(false)
         return super.resignFirstResponder()
     }
 
@@ -191,17 +252,13 @@ public class RecipientChipLabel: UIView, UIKeyInput {
     }
 
     private func updateColors(isFirstResponder: Bool) {
-        if isExternal {
-            label.textColor = isFirstResponder ? MailResourcesAsset.onTagExternalColor.color : MailResourcesAsset.textPrimaryColor
-                .color
-            borderColor = MailResourcesAsset.yellowColor.color
-            backgroundColor = isFirstResponder ? MailResourcesAsset.yellowColor.color : MailResourcesAsset.textFieldColor.color
-        } else {
-            label.textColor = isFirstResponder ? UserDefaults.shared.accentColor.secondary.color : .tintColor
-            borderColor = isFirstResponder ? UserDefaults.shared.accentColor.primary.color : UserDefaults.shared.accentColor
-                .secondary.color
-            backgroundColor = isFirstResponder ? .tintColor : UserDefaults.shared.accentColor.secondary.color
-        }
+        setTheme(type.theme, isFirstResponder: isFirstResponder)
+    }
+
+    private func setTheme(_ theme: RecipientChipTheme, isFirstResponder: Bool) {
+        label.textColor = isFirstResponder ? theme.firstResponderTextColor : theme.textColor
+        borderColor = isFirstResponder ? theme.firstResponderBorderColor : theme.borderColor
+        backgroundColor = isFirstResponder ? theme.firstResponderBackgroundColor : theme.backgroundColor
     }
 
     private func setupView() {
@@ -219,7 +276,15 @@ public class RecipientChipLabel: UIView, UIKeyInput {
         ])
     }
 
-    private func toggleAccessoryView(_ oldValue: UIView?, _ newValue: UIView?) {
+    func updateAccessoryViewIfNeeded(_ newValue: EncryptedChipAccessoryUIView?) {
+        guard accessoryView?.isEncrypted != newValue?.isEncrypted else { return }
+
+        toggleAccessoryView(accessoryView, newValue)
+        accessoryView = newValue
+        invalidateIntrinsicContentSize()
+    }
+
+    private func toggleAccessoryView(_ oldValue: EncryptedChipAccessoryUIView?, _ newValue: EncryptedChipAccessoryUIView?) {
         if let oldValue {
             willRemoveSubview(oldValue)
             oldValue.removeFromSuperview()
@@ -234,6 +299,7 @@ public class RecipientChipLabel: UIView, UIKeyInput {
 
             accessoryViewConstraints = getConstraints(forAccessory: newValue)
             NSLayoutConstraint.activate(accessoryViewConstraints)
+            newValue.layoutIfNeeded()
         }
     }
 
@@ -251,21 +317,17 @@ public class RecipientChipLabel: UIView, UIKeyInput {
     @Previewable @State var isShowingAccessory = true
 
     VStack {
-        RecipientChipLabelView(recipient: PreviewHelper.sampleRecipient1) {} switchFocusHandler: {}
+        RecipientChipLabelView(recipient: PreviewHelper.sampleRecipient1, type: .default) {} switchFocusHandler: {}
 
-        RecipientChipLabelView(recipient: PreviewHelper.sampleRecipient1) {} switchFocusHandler: {} accessory: {
-            if isShowingAccessory {
-                Image(systemName: "lock")
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundStyle(.tint)
-                    .frame(width: 12, height: 12)
-            }
-        }
+        RecipientChipLabelView(
+            recipient: PreviewHelper.sampleRecipient1,
+            type: .default,
+            removeHandler: {},
+            switchFocusHandler: {}
+        )
         .onTapGesture {
             isShowingAccessory.toggle()
         }
     }
-    .environmentObject(PreviewHelper.sampleMailboxManager)
     .tint(UserDefaults.shared.accentColor.primary.swiftUIColor)
 }

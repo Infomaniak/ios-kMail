@@ -35,14 +35,31 @@ struct MessageHeaderActionView<Content: View>: View {
     let iconSize: CGFloat = 16
     let icon: Image
     let message: String
-    let isFirst: Bool
+    var showTopSeparator = true
+    let showBottomSeparator: Bool
+    var iconColor = MailResourcesAsset.textSecondaryColor.swiftUIColor
+    var textColor = MailResourcesAsset.textSecondaryColor.swiftUIColor
     var shouldDisplayActions = true
 
     @ViewBuilder var actions: () -> Content
 
+    private var topPadding: CGFloat {
+        guard showTopSeparator || showBottomSeparator else {
+            return IKPadding.mini
+        }
+        return showTopSeparator ? IKPadding.micro : 0
+    }
+
+    private var bottomPadding: CGFloat {
+        guard showTopSeparator || showBottomSeparator else {
+            return IKPadding.mini
+        }
+        return showBottomSeparator ? IKPadding.micro : 0
+    }
+
     var body: some View {
         VStack(alignment: .leading) {
-            if isFirst {
+            if showTopSeparator {
                 IKDivider()
             }
 
@@ -52,27 +69,29 @@ struct MessageHeaderActionView<Content: View>: View {
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(width: iconSize)
-                        .foregroundStyle(MailResourcesAsset.textSecondaryColor)
+                        .foregroundStyle(iconColor)
                     Text(message)
-                        .textStyle(.labelSecondary)
+                        .font(MailTextStyle.label.font)
+                        .foregroundStyle(textColor)
                         .fixedSize(horizontal: false, vertical: true)
                 }
 
                 if shouldDisplayActions {
-                    HStack {
-                        actions()
-                    }
-                    .buttonStyle(.ikBorderless(isInlined: true))
-                    .controlSize(.small)
-                    .padding(.leading, iconSize + IKPadding.small)
+                    actions()
+                        .buttonStyle(.ikBorderless(isInlined: true))
+                        .controlSize(.small)
+                        .padding(.leading, iconSize + IKPadding.small)
                 }
             }
-            .padding(.bottom, value: .micro)
-            .padding(.top, isFirst ? IKPadding.micro : 0)
+            .padding(.bottom, bottomPadding)
+            .padding(.top, topPadding)
             .padding(.horizontal, value: .medium)
 
-            IKDivider()
+            if showBottomSeparator {
+                IKDivider()
+            }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -81,7 +100,7 @@ struct MessageHeaderActionView<Content: View>: View {
         MessageHeaderActionView(
             icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
             message: MailResourcesStrings.Localizable.alertBlockedImagesDescription,
-            isFirst: true
+            showBottomSeparator: false
         ) {
             Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
                 .buttonStyle(.ikBorderless(isInlined: true))
@@ -91,11 +110,22 @@ struct MessageHeaderActionView<Content: View>: View {
         MessageHeaderActionView(
             icon: MailResourcesAsset.emailActionWarning.swiftUIImage,
             message: MailResourcesStrings.Localizable.alertBlockedImagesDescription,
-            isFirst: false
+            showBottomSeparator: false
         ) {
             Button(MailResourcesStrings.Localizable.alertBlockedImagesDisplayContent) { /* Preview */ }
                 .buttonStyle(.ikBorderless(isInlined: true))
                 .controlSize(.small)
+        }
+
+        MessageHeaderActionView(
+            icon: MailResourcesAsset.lockSquareFill.swiftUIImage,
+            message: MailResourcesStrings.Localizable.encryptedMessageHeaderPasswordExpiryDate(Date()),
+            showTopSeparator: false,
+            showBottomSeparator: false,
+            iconColor: MailResourcesAsset.iconSovereignBlueColor.swiftUIColor,
+            textColor: MailResourcesAsset.textHeaderSovereignBlueColor.swiftUIColor
+        ) {
+            Button(MailResourcesStrings.Localizable.encryptedButtonSeeConcernedRecipients) { /* Preview */ }
         }
     }
 }

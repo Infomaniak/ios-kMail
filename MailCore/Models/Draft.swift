@@ -83,6 +83,21 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
     @Persisted public var delay: Int?
     @Persisted public var rawSignature: String?
     @Persisted public var scheduleDate: Date?
+    @Persisted public var encrypted: Bool
+    @Persisted public var encryptionPassword: String
+
+    public var allRecipients: [Recipient] {
+        return to.toArray() + cc.toArray() + bcc.toArray()
+    }
+
+    public var autoEncryptDisabledRecipients: [Recipient] {
+        return allRecipients.filter { recipient in
+            if !recipient.canAutoEncrypt {
+                return true
+            }
+            return false
+        }
+    }
 
     /// Public facing "body", wrapping `bodyData`
     public var body: String {
@@ -134,6 +149,8 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         case action
         case delay
         case scheduleDate
+        case encrypted
+        case encryptionPassword
     }
 
     override public init() { /* Realm needs an empty constructor */ }
@@ -164,6 +181,8 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         swissTransferUuid = try values.decodeIfPresent(String.self, forKey: .swissTransferUuid)
         attachments = try values.decode(List<Attachment>.self, forKey: .attachments)
         scheduleDate = try values.decodeIfPresent(Date.self, forKey: .scheduleDate)
+        encrypted = try values.decodeIfPresent(Bool.self, forKey: .encrypted) ?? false
+        encryptionPassword = try values.decodeIfPresent(String.self, forKey: .encryptionPassword) ?? ""
     }
 
     public convenience init(localUUID: String = UUID().uuidString,
@@ -208,6 +227,8 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         self.swissTransferUuid = swissTransferUuid
         self.attachments = attachments?.toRealmList() ?? List()
         self.action = action
+        encrypted = false
+        encryptionPassword = ""
     }
 
     public static func mailTo(urlComponents: URLComponents) -> Draft {
@@ -288,6 +309,8 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         try container.encode(action, forKey: .action)
         try container.encodeIfPresent(delay, forKey: .delay)
         try container.encodeIfPresent(scheduleDate, forKey: .scheduleDate)
+        try container.encode(encrypted, forKey: .encrypted)
+        try container.encode(encryptionPassword, forKey: .encryptionPassword)
     }
 }
 

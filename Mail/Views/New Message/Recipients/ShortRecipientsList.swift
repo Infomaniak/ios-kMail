@@ -23,8 +23,22 @@ import RealmSwift
 import SwiftUI
 
 struct ShortRecipientsList: View {
+    @Environment(\.draftEncryption) private var draftEncryption
+
     let recipients: RealmSwift.List<Recipient>
     let type: ComposeViewFieldType
+
+    private var chipType: RecipientChipType {
+        guard case .encrypted(let passwordSecured) = draftEncryption else { return .default }
+
+        if !passwordSecured {
+            let containsNotAutoEncryptedRecipients = recipients.dropFirst().contains {
+                !$0.canAutoEncrypt
+            }
+            return .encrypted(passwordSecured: !containsNotAutoEncryptedRecipients)
+        }
+        return .encrypted(passwordSecured: true)
+    }
 
     var body: some View {
         HStack(spacing: 8) {
@@ -34,7 +48,7 @@ struct ShortRecipientsList: View {
             }
 
             if recipients.count > 1 {
-                MoreRecipientsChip(count: recipients.count - 1)
+                MoreRecipientsChip(count: recipients.count - 1, chipType: chipType)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

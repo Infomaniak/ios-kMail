@@ -24,28 +24,96 @@ import RealmSwift
 import SwiftUI
 
 struct MessageSubHeaderView: View {
+    @Environment(\.isMessageInteractive) private var isMessageInteractive
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @ObservedRealmObject var message: Message
 
     @Binding var displayContentBlockedActionView: Bool
 
+    private var banners: [MessageBanner] {
+        var result = [MessageBanner]()
+
+        if let isScheduledDraft = message.isScheduledDraft,
+           isScheduledDraft,
+           let scheduleDate = message.scheduleDate,
+           let draftResource = message.draftResource {
+            result.append(.schedule(scheduleDate: scheduleDate, draftResource: draftResource))
+        }
+
+        if let spamType = spamTypeFor(message: message) {
+            result.append(.spam(spamType: spamType))
+        }
+
+        if isRemoteContentBlocked && displayContentBlockedActionView {
+            result.append(.displayContent)
+        }
+
+        if message.encrypted {
+            result.append(.encrypted)
+        }
+
+        return result
+    }
+
+    private var isRemoteContentBlocked: Bool {
+        return (UserDefaults.shared.displayExternalContent == .askMe || message.folder?.role == .spam)
+            && !message.localSafeDisplay
+    }
+
     var body: some View {
-        MessageBannerHeaderView(
-            message: message,
-            mailbox: mailboxManager.mailbox,
-            displayContentBlockedActionView: $displayContentBlockedActionView
-        )
+        if isMessageInteractive {
+            MessageBannerHeaderView(
+                banners: banners,
+                message: message,
+                mailbox: mailboxManager.mailbox
+            )
 
-        if let event = message.calendarEventResponse?.frozenEvent, event.type == .event {
-            CalendarView(event: event)
-                .padding(.horizontal, value: .medium)
+            if let event = message.calendarEventResponse?.frozenEvent, event.type == .event {
+                CalendarView(event: event)
+                    .padding(.horizontal, value: .medium)
+            }
+
+            if !message.notInlineAttachments.isEmpty
+                || message.swissTransferUuid != nil {
+                AttachmentsView(message: message, attachments: Array(message.notInlineAttachments))
+            }
+        }
+    }
+
+    private func spamTypeFor(message: Message) -> SpamHeaderType? {
+        if message.folder?.role != .spam,
+           message.isSpam && !isSenderApproved(sender: message.from.first?.email) {
+            if mailboxManager.mailbox.isSpamFilter {
+                return .moveInSpam
+            } else {
+                return .enableSpamFilter
+            }
         }
 
-        if !message.notInlineAttachments.isEmpty
-            || message.swissTransferUuid != nil {
-            AttachmentsView(message: message, attachments: Array(message.notInlineAttachments))
+        if message.folder?.role == .spam,
+           let sender = message.from.first, !message.isSpam && isSenderBlocked(sender: sender.email) {
+            return .unblockRecipient(sender.email)
         }
+
+        return nil
+    }
+
+    private func isSenderApproved(sender: String?) -> Bool {
+        guard let sender,
+              let sendersRestrictions = mailboxManager.mailbox.sendersRestrictions else {
+            return false
+        }
+        return sendersRestrictions.authorizedSenders.contains { $0.email == sender }
+    }
+
+    private func isSenderBlocked(sender: String?) -> Bool {
+        guard let sender,
+              let sendersRestrictions = mailboxManager.mailbox.sendersRestrictions else {
+            return false
+        }
+        return sendersRestrictions.blockedSenders.contains { $0.email == sender }
     }
 }
 

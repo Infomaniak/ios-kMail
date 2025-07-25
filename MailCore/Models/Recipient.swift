@@ -45,10 +45,17 @@ public final class Recipient: EmbeddedObject, Correspondent, Codable {
     @Persisted public var email: String
     @Persisted public var name: String
     @Persisted public var isAddedByMe = false
+    @Persisted public var hasExternalProvider: Bool?
+    @Persisted public var isInfomaniakHosted: Bool?
+
+    public var canAutoEncrypt: Bool {
+        return (isInfomaniakHosted ?? false) || !(hasExternalProvider ?? true)
+    }
 
     enum CodingKeys: String, CodingKey {
         case email
         case name
+        case hasExternalProvider
     }
 
     public convenience init(email: String, name: String) {
@@ -100,7 +107,7 @@ public final class Recipient: EmbeddedObject, Correspondent, Codable {
 
         let trustedDomains = externalMailInfo.domains
         let isKnownDomain = trustedDomains.contains { domain in
-            return email.hasSuffix(domain)
+            email.hasSuffix(domain)
         }
 
         let isMailerDeamon: Bool

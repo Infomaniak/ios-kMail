@@ -28,6 +28,7 @@ public enum FeatureFlag: String, Codable {
     case bimi
     case scheduleSendDraft = "schedule-send-draft"
     case mailSnooze = "mail-snooze"
+    case mailComposeEncrypted = "mail-compose-encrypted"
     case unknown
 
     public init(from decoder: Decoder) throws {

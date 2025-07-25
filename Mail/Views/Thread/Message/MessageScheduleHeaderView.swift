@@ -30,6 +30,7 @@ struct MessageScheduleHeaderView: View {
 
     let scheduleDate: Date
     let draftResource: String
+    let showBottomSeparator: Bool
 
     var body: some View {
         MessageHeaderActionView(
@@ -39,16 +40,18 @@ struct MessageScheduleHeaderView: View {
                 dateStyle: .full,
                 timeStyle: .short
             )),
-            isFirst: true
+            showBottomSeparator: showBottomSeparator
         ) {
-            Button(MailResourcesStrings.Localizable.buttonReschedule) {
-                isShowingReschedulePanel = true
-            }
+            HStack {
+                Button(MailResourcesStrings.Localizable.buttonReschedule) {
+                    isShowingReschedulePanel = true
+                }
 
-            MessageHeaderDivider()
+                MessageHeaderDivider()
 
-            Button(MailResourcesStrings.Localizable.buttonModify) {
-                mainViewState.modifiedScheduleDraftResource = ModifiedScheduleDraftResource(draftResource: draftResource)
+                Button(MailResourcesStrings.Localizable.buttonModify) {
+                    mainViewState.modifiedScheduleDraftResource = ModifiedScheduleDraftResource(draftResource: draftResource)
+                }
             }
         }
         .scheduleFloatingPanel(

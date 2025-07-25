@@ -65,6 +65,7 @@ public protocol MailboxManagerDraftable {
     func deleteLocally(draft: Draft) async throws
     func deleteLocally(drafts: [Draft]) async throws
     func deleteOrphanDrafts() async
+    func updateRecipientsAutoEncrypt(draft: Draft) async throws -> Int
 }
 
 /// An abstract interface on the `MailboxManager` related to Folders

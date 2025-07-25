@@ -150,7 +150,8 @@ public extension MailApiFetcher {
         try await perform(request: authenticatedRequest(.resource(
             message.resource,
             queryItems: [
-                URLQueryItem(name: "prefered_format", value: "html")
+                URLQueryItem(name: "prefered_format", value: "html"),
+                URLQueryItem(name: "with", value: "auto_uncrypt,recipient_provider_source")
             ]
         )))
     }
@@ -207,5 +208,9 @@ public extension MailApiFetcher {
 
     func lastSyncDate() async throws -> String? {
         return try await perform(request: authenticatedRequest(.lastSyncDate()))
+    }
+
+    func mailHosted(for recipients: [String]) async throws -> [MailHosted] {
+        return try await perform(request: authenticatedRequest(.mailHosted(for: recipients)))
     }
 }

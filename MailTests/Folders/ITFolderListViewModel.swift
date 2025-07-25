@@ -101,6 +101,10 @@ struct MCKMailboxManageable_FolderListViewModel: MailboxManageable, MCKTransacti
         fatalError("Unexpected")
     }
 
+    func updateRecipientsAutoEncrypt(draft: MailCore.Draft) async throws -> Int {
+        fatalError("Unexpected")
+    }
+
     func clearSearchResults() async {}
 
     func searchThreads(

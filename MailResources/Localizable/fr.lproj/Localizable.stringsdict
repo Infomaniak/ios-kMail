@@ -5,8 +5,8 @@
  Project: kMail
  Locale: fr, French
  Tagged: ios-stringsdict
- Exported by: Jordan Chapelle
- Exported at: Mon, 19 May 2025 12:42:50 +0200
+ Exported by: Ambroise Decouttere
+ Exported at: Wed, 23 Jul 2025 10:34:22 +0200
 -->
 <plist version="1.0">
   <dict>
@@ -64,6 +64,22 @@
         <string>Mots de passe bloqués</string>
       </dict>
     </dict>
+    <key>encryptedMessageIncompleteUser</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Le chiffrement n’est pas pris en charge par %d destinataire.</string>
+        <key>other</key>
+        <string>Le chiffrement n’est pas pris en charge par %d destinataires.</string>
+      </dict>
+    </dict>
     <key>fileQuantity</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
@@ -98,6 +114,24 @@
         <string>Adresses mail bloquées</string>
         <key>many</key>
         <string>Adresses mail bloquées</string>
+      </dict>
+    </dict>
+    <key>messageDeletionConfirmationAlertTitle</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@value@</string>
+      <key>value</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Supprimer %d message</string>
+        <key>other</key>
+        <string>Supprimer %d messages</string>
+        <key>many</key>
+        <string>Supprimer %d de messages</string>
       </dict>
     </dict>
     <key>multipleSelectionCount</key>

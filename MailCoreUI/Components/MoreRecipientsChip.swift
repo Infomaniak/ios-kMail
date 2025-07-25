@@ -19,6 +19,7 @@
 import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailCore
+import MailResources
 import SwiftUI
 
 public extension EdgeInsets {
@@ -31,22 +32,40 @@ public struct MoreRecipientsChip: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
     let count: Int
+    let chipType: RecipientChipType
 
-    public init(count: Int) {
+    private var isEncrypted: Bool {
+        if case .encrypted = chipType {
+            return true
+        }
+        return false
+    }
+
+    public init(count: Int, chipType: RecipientChipType) {
         self.count = count
+        self.chipType = chipType
     }
 
     public var body: some View {
-        Text("+\(count)")
-            .textStyle(.bodyAccent)
-            .padding(EdgeInsets(uiEdgeInsets: IKPadding.recipientChip))
-            .background(
-                RoundedRectangle(cornerRadius: 50)
-                    .fill(accentColor.secondary.swiftUIColor)
-            )
+        HStack(spacing: IKPadding.micro) {
+            if case .encrypted(let passwordSecured) = chipType {
+                EncryptedChipAccessoryView(isEncrypted: passwordSecured)
+            }
+
+            Text("+\(count)")
+                .foregroundStyle(isEncrypted ? MailResourcesAsset.textSovereignBlueColor
+                    .swiftUIColor : .accentColor)
+                .textStyle(.bodyAccent)
+        }
+        .padding(EdgeInsets(uiEdgeInsets: IKPadding.recipientChip))
+        .background(
+            RoundedRectangle(cornerRadius: 50)
+                .fill(isEncrypted ? MailResourcesAsset.backgroundSovereignBlueColor.swiftUIColor : accentColor.secondary
+                    .swiftUIColor)
+        )
     }
 }
 
 #Preview {
-    MoreRecipientsChip(count: 42)
+    MoreRecipientsChip(count: 42, chipType: .encrypted(passwordSecured: false))
 }
