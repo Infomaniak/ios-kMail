@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DeviceAssociation
 import Foundation
 import InfomaniakBugTracker
 import InfomaniakCore
@@ -117,6 +118,9 @@ open class TargetAssembly {
                 }
 
                 return provider
+            },
+            Factory(type: DeviceManagerable.self) { _, _ in
+                DeviceManager(appGroupIdentifier: appGroupIdentifier)
             },
             Factory(type: TokenStore.self) { _, _ in
                 TokenStore()
