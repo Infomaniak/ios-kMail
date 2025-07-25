@@ -74,7 +74,7 @@ public final class AddressBook: Object, Decodable, ObjectKeyIdentifiable {
 
 extension AddressBook: ContactAutocompletable {
     public var contactId: String {
-        return String(id)
+        return "AddressBook-\(id)"
     }
 
     public var autocompletableName: String {

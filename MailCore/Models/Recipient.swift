@@ -83,6 +83,12 @@ public final class Recipient: EmbeddedObject, Correspondent, Codable {
         return recipients
     }
 
+    public func isEquivalent(to contact: any ContactAutocompletable) -> Bool {
+        guard let contactRecipient = contact as? MergedContact else { return false }
+
+        return contactRecipient.email == email
+    }
+
     private static let mailerDeamonRegex = Regex(pattern: "mailer-daemon@(?:.+.)?infomaniak.ch")
 
     public func isExternal(mailboxManager: MailboxManager) -> Bool {
@@ -110,10 +116,6 @@ public final class Recipient: EmbeddedObject, Correspondent, Codable {
 
         return !isKnownDomain && !isMailerDeamon && !isAnAlias && !isContact
     }
-
-    public func isSameRecipient(recipient: Recipient) -> Bool {
-        return email == recipient.email
-    }
 }
 
 extension Recipient: ContactAutocompletable {
@@ -123,9 +125,5 @@ extension Recipient: ContactAutocompletable {
 
     public var autocompletableName: String {
         return name
-    }
-
-    public func isSameContactAutocompletable(as contactAutoCompletable: any ContactAutocompletable) -> Bool {
-        return contactId == contactAutoCompletable.contactId
     }
 }
