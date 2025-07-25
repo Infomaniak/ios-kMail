@@ -89,7 +89,7 @@ final class EncryptedChipAccessoryUIView: UIView {
     }
 }
 
-struct EncryptedChipAccessorySwiftUIView: UIViewRepresentable {
+struct EncryptedChipAccessoryView: UIViewRepresentable {
     let isEncrypted: Bool
 
     func makeUIView(context: Context) -> EncryptedChipAccessoryUIView {
