@@ -1,2 +1,3 @@
-- Correction d'un crash à la déconnexion
-- Affichage du contenu des notifications plus dense
+- Envoi de mails chiffrés
+- Connexion simplifiée à partir des autres apps Infomaniak installées
+- Corrections de bugs et améliorations
