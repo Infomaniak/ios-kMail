@@ -1,2 +1,3 @@
-- Fix disconnect crash
-- Improve notification content density
+- Encrypted email sending
+- Simplified login from other installed Infomaniak apps
+- Bug fixes and improvements
