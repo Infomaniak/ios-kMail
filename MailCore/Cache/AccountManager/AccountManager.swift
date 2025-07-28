@@ -83,7 +83,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     public var accounts: [ApiToken] {
         return Array(tokenStore.getAllTokens().values)
     }
-    
+
     public var accountIds: [Int] {
         return accounts.map { $0.userId }
     }
