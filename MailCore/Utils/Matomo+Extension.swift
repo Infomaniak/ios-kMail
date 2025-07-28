@@ -18,8 +18,6 @@
 
 import Foundation
 import InfomaniakCoreCommonUI
-import InfomaniakDI
-import SwiftUI
 
 // MARK: - Views and Categories
 
@@ -119,26 +117,5 @@ public extension MatomoUtils {
         } else if messagesCount > 1 {
             track(eventWithCategory: .userInfo, action: .data, name: "multipleMessagesInThread", value: messagesCount)
         }
-    }
-}
-
-// MARK: - Track views
-
-struct MatomoView: ViewModifier {
-    @LazyInjectService var matomo: MatomoUtils
-
-    let view: [String]
-
-    func body(content: Content) -> some View {
-        content
-            .onAppear {
-                matomo.track(view: view)
-            }
-    }
-}
-
-public extension View {
-    func matomoView(view: [String]) -> some View {
-        modifier(MatomoView(view: view))
     }
 }
