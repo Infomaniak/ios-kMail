@@ -83,6 +83,10 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     public var accounts: [ApiToken] {
         return Array(tokenStore.getAllTokens().values)
     }
+    
+    public var accountIds: [Int] {
+        return accounts.map { $0.userId }
+    }
 
     public let userProfileStore = UserProfileStore()
     private let mailboxManagers = SendableDictionary<String, MailboxManager>()
