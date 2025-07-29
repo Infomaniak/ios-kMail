@@ -18,6 +18,7 @@
 
 import DesignSystem
 import InfomaniakCoreSwiftUI
+import InfomaniakDI
 import InterAppLogin
 import MailCore
 import MailCoreUI
@@ -26,6 +27,8 @@ import SwiftModalPresentation
 import SwiftUI
 
 struct OnboardingBottomButtonsView: View {
+    @InjectService private var accountManager: AccountManager
+
     @EnvironmentObject private var navigationState: RootViewState
 
     @ModalState(context: ContextKeys.onboarding) private var isPresentingCreateAccount = false
@@ -42,7 +45,7 @@ struct OnboardingBottomButtonsView: View {
 
     var body: some View {
         VStack(spacing: IKPadding.mini) {
-            ContinueWithAccountView(isLoading: loginHandler.isLoading) {
+            ContinueWithAccountView(isLoading: loginHandler.isLoading, excludingUserIds: accountManager.accountIds) {
                 Task { @MainActor in
                     // We have to wait for closing animation before opening the login WebView modally
                     try? await Task.sleep(nanoseconds: 500_000_000)
