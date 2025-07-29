@@ -1,3 +1,3 @@
-- Encrypted email sending
 - Simplified login from other installed Infomaniak apps
+- Encrypted email sending
 - Bug fixes and improvements
