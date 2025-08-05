@@ -31,6 +31,16 @@ public extension ApiEnvironment {
     }
 }
 
+extension Endpoint {
+    func alsoMoveReactions(_ moveReactions: Bool) -> Endpoint {
+        guard moveReactions else {
+            return self
+        }
+
+        return appending(path: "", queryItems: [URLQueryItem(name: "move_reactions", value: "1")])
+    }
+}
+
 // MARK: - Endpoints
 
 public extension Endpoint {
@@ -259,12 +269,12 @@ public extension Endpoint {
         return .mailbox(uuid: uuid).appending(path: "/message/unseen")
     }
 
-    static func moveMessages(uuid: String) -> Endpoint {
-        return .mailbox(uuid: uuid).appending(path: "/message/move")
+    static func moveMessages(uuid: String, alsoMoveReactions: Bool) -> Endpoint {
+        return .mailbox(uuid: uuid).appending(path: "/message/move").alsoMoveReactions(alsoMoveReactions)
     }
 
-    static func deleteMessages(uuid: String) -> Endpoint {
-        return .mailbox(uuid: uuid).appending(path: "/message/delete")
+    static func deleteMessages(uuid: String, alsoMoveReactions: Bool) -> Endpoint {
+        return .mailbox(uuid: uuid).appending(path: "/message/delete").alsoMoveReactions(alsoMoveReactions)
     }
 
     static func star(uuid: String) -> Endpoint {
