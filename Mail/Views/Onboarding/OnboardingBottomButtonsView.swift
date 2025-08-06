@@ -46,11 +46,7 @@ struct OnboardingBottomButtonsView: View {
     var body: some View {
         VStack(spacing: IKPadding.mini) {
             ContinueWithAccountView(isLoading: loginHandler.isLoading, excludingUserIds: accountManager.accountIds) {
-                Task { @MainActor in
-                    // We have to wait for closing animation before opening the login WebView modally
-                    try? await Task.sleep(nanoseconds: 500_000_000)
-                    loginHandler.login()
-                }
+                loginHandler.login()
             } onLoginWithAccountsPressed: { accounts in
                 loginHandler.loginWith(accounts: accounts)
             } onCreateAccountPressed: {

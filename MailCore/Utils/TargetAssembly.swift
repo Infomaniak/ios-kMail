@@ -39,6 +39,7 @@ open class TargetAssembly {
     private static let apiEnvironment: ApiEnvironment = .prod
     private static let realmRootPath = "mailboxes"
     private static let appGroupIdentifier = "group.\(bundleId)"
+    private static let sharedAppGroupName = "group.com.infomaniak"
 
     public static let bundleId = "com.infomaniak.mail"
     public static let loginConfig = InfomaniakLogin.Config(
@@ -120,7 +121,7 @@ open class TargetAssembly {
                 return provider
             },
             Factory(type: DeviceManagerable.self) { _, _ in
-                DeviceManager(appGroupIdentifier: appGroupIdentifier)
+                DeviceManager(appGroupIdentifier: sharedAppGroupName)
             },
             Factory(type: TokenStore.self) { _, _ in
                 TokenStore()
