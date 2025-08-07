@@ -36,7 +36,7 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
     case trash = "TRASH"
     case unknown
 
-    public var localizedName: String {
+    public var localizedName: String? {
         switch self {
         case .archive:
             return MailResourcesStrings.Localizable.archiveFolder
@@ -59,7 +59,7 @@ public enum FolderRole: String, Codable, PersistableEnum, CaseIterable {
         case .trash:
             return MailResourcesStrings.Localizable.trashFolder
         case .unknown:
-            return ""
+            return nil
         }
     }
 
