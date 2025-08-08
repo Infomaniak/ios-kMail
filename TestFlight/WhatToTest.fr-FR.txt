@@ -1,3 +1,1 @@
-- Connexion simplifiée à partir des autres apps Infomaniak installées
-- Envoi de mails chiffrés
-- Corrections de bugs et améliorations
+- Connexion simplifiée à partir des autres apps Infomaniak installées (corrections)
