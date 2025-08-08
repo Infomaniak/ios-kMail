@@ -34,6 +34,8 @@ public protocol MailApiCommonFetchable {
 
     func detachMailbox(mailbox: Mailbox) async throws -> Bool
 
+    func checkAPIStatus() async throws -> Empty
+
     func listBackups(mailbox: Mailbox) async throws -> BackupsList
 
     func restoreBackup(mailbox: Mailbox, date: String) async throws -> Bool
