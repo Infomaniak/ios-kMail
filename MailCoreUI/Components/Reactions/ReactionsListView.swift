@@ -32,12 +32,10 @@ public struct ReactionsListView: View {
     @State private var selectedEmoji: Emoji?
 
     let reactions: [UIMessageReaction]
-    let localReactions: Set<String>
     let addReaction: (String) -> Void
 
-    public init(reactions: [UIMessageReaction], localReactions: Set<String>, addReaction: @escaping (String) -> Void) {
+    public init(reactions: [UIMessageReaction], addReaction: @escaping (String) -> Void) {
         self.reactions = reactions
-        self.localReactions = localReactions
         self.addReaction = addReaction
     }
 
@@ -81,10 +79,6 @@ public struct ReactionsListView: View {
 
     private func emojiCount(for reaction: UIMessageReaction) -> Int {
         var count = reaction.authors.count
-        if localReactions.contains(reaction.emoji) && !reaction.hasUserReacted {
-            count += 1
-        }
-
         return count
     }
 
@@ -100,13 +94,10 @@ public struct ReactionsListView: View {
     }
 
     private func hasCurrentUserReacted(to reaction: UIMessageReaction) -> Bool {
-        return localReactions.contains(reaction.emoji) || reaction.hasUserReacted
+        return reaction.hasUserReacted
     }
 }
 
 #Preview {
-    ReactionsListView(
-        reactions: PreviewHelper.uiReactions,
-        localReactions: Set()
-    ) { _ in }
+    ReactionsListView(reactions: PreviewHelper.uiReactions) { _ in }
 }

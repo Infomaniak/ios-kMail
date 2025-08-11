@@ -221,5 +221,5 @@ public enum PreviewHelper {
         )
     ].toRealmList()
 
-    public static let uiReactions = reactions.map { UIMessageReaction(messageReaction: $0) }.toArray()
+    public static let uiReactions = reactions.map { UIMessageReaction(messageReaction: $0, hasUserReacted: false) }.toArray()
 }
