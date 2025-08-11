@@ -25,12 +25,13 @@ struct ReactionCell: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     let emoji: String
-    let recipient: Recipient
+    let author: UIReactionAuthor
 
     var body: some View {
         HStack(spacing: IKPadding.mini) {
             RecipientCell(
-                recipient: recipient,
+                recipient: author.recipient,
+                bimi: author.bimi,
                 avatarSize: 32,
                 contextUser: currentUser.value,
                 contextMailboxManager: mailboxManager
@@ -45,5 +46,5 @@ struct ReactionCell: View {
 }
 
 #Preview {
-    ReactionCell(emoji: "🙂", recipient: PreviewHelper.sampleRecipient1)
+    ReactionCell(emoji: "🙂", author: UIReactionAuthor(recipient: PreviewHelper.sampleRecipient1, bimi: nil))
 }
