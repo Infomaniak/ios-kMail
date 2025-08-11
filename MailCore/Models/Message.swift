@@ -94,18 +94,27 @@ public class MessageHeaders: EmbeddedObject, Codable {
     }
 }
 
-public final class MessageReaction: EmbeddedObject {
-    @Persisted public var reaction: String
-    @Persisted public var recipients: List<Recipient>
-    @Persisted public var hasUserReacted: Bool
+public final class ReactionAuthor: EmbeddedObject {
+    @Persisted public var recipient: Recipient?
     @Persisted public var bimi: Bimi?
 
-    public convenience init(reaction: String, recipients: [Recipient], hasUserReacted: Bool, bimi: Bimi?) {
+    public convenience init(recipient: Recipient, bimi: Bimi?) {
+        self.init()
+        self.recipient = recipient
+        self.bimi = bimi
+    }
+}
+
+public final class MessageReaction: EmbeddedObject {
+    @Persisted public var reaction: String
+    @Persisted public var authors: List<ReactionAuthor>
+    @Persisted public var hasUserReacted: Bool
+
+    public convenience init(reaction: String, authors: [ReactionAuthor], hasUserReacted: Bool) {
         self.init()
         self.reaction = reaction
-        self.recipients = recipients.toRealmList()
+        self.authors = authors.toRealmList()
         self.hasUserReacted = hasUserReacted
-        self.bimi = bimi
     }
 }
 

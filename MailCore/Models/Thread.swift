@@ -324,7 +324,7 @@ public class Thread: Object, Decodable, Identifiable {
 
 public extension Thread {
     typealias MessageId = String
-    typealias RecipientsByReaction = OrderedDictionary<String, [Recipient]>
+    typealias SourceMessagesByReaction = OrderedDictionary<String, [MessageId]>
 
     /// Re-generate `Thread` properties given the messages it contains.
     func recomputeOrFail() throws {
@@ -343,7 +343,7 @@ public extension Thread {
         isLastMessageFromFolderSnoozed = lastMessageFromFolder.isSnoozed
 
         var messagesById = [MessageId: Message]()
-        var reactionsByMessageId = [MessageId: RecipientsByReaction]()
+        var reactionsByMessageId = [MessageId: SourceMessagesByReaction]()
 
         for message in messages {
             if let messageId = message.messageId {
@@ -380,7 +380,7 @@ public extension Thread {
                 numberOfScheduledDraft += 1
             }
             if message.isReaction {
-                getReaction(from: message, reactions: &reactionsByMessageId)
+                getReactionMessage(message, reactions: &reactionsByMessageId)
                 message.isDisplayable = false
             } else {
                 messagesToDisplay.append(message)
@@ -396,7 +396,7 @@ public extension Thread {
             updateSnooze(from: duplicate)
         }
 
-        updateReactionsForMessages(reactionsByMessageId, messagesById: messagesById)
+        computeReactionsForMessages(reactionsByMessageId, messagesById: messagesById)
     }
 
     private func resetThread() {
@@ -419,35 +419,38 @@ public extension Thread {
         snoozeEndDate = nil
     }
 
-    private func getReaction(from message: Message, reactions: inout [MessageId: RecipientsByReaction]) {
-        guard let emojiReaction = message.emojiReaction, let messageTargets = message.inReplyTo?.parseMessageIds() else {
-            return
-        }
+    private func getReactionMessage(_ message: Message, reactions: inout [MessageId: SourceMessagesByReaction]) {
+        guard let emojiReaction = message.emojiReaction,
+              let targetMessageIds = message.inReplyTo?.parseMessageIds(),
+              let sourceMessageId = message.messageId
+        else { return }
 
-        for messageTarget in messageTargets {
-            let recipients = message.from.detached().toArray()
+        for targetMessageId in targetMessageIds {
+            var reactionsForTarget = reactions[targetMessageId] ?? [:]
+            var sourceMessageIds = reactionsForTarget[emojiReaction] ?? []
+            sourceMessageIds.append(sourceMessageId)
 
-            var messageReactions = reactions[messageTarget] ?? [:]
-            var reactingRecipients = messageReactions[emojiReaction] ?? []
-            reactingRecipients.append(contentsOf: recipients)
-            messageReactions[emojiReaction] = reactingRecipients
-
-            reactions[messageTarget] = messageReactions
+            reactionsForTarget[emojiReaction] = sourceMessageIds
+            reactions[targetMessageId] = reactionsForTarget
         }
     }
 
-    private func updateReactionsForMessages(_ reactions: [MessageId: RecipientsByReaction], messagesById: [MessageId: Message]) {
-        for (messageId, reactions) in reactions {
-            guard let message = messagesById[messageId] else { continue }
+    private func computeReactionsForMessages(_ reactions: [MessageId: SourceMessagesByReaction], messagesById: [MessageId: Message]) {
+        for (targetMessageId, reactions) in reactions {
+            guard let targetMessage = messagesById[targetMessageId] else { continue }
 
-            for (emojiReaction, recipients) in reactions {
-                let messageReaction = MessageReaction(
-                    reaction: emojiReaction,
-                    recipients: recipients,
-                    hasUserReacted: false,
-                    bimi: nil
-                )
-                message.reactions.append(messageReaction)
+            for (emojiReaction, sourceMessageIds) in reactions {
+                var hasUserReacted = false
+                var authors = [ReactionAuthor]()
+                for sourceMessageId in sourceMessageIds {
+                    guard let sourceMessage = messagesById[sourceMessageId] else { continue }
+                    for recipient in sourceMessage.from {
+                        authors.append(ReactionAuthor(recipient: recipient.detached(), bimi: sourceMessage.bimi?.detached()))
+                    }
+                }
+
+                let messageReaction = MessageReaction(reaction: emojiReaction, authors: authors, hasUserReacted: hasUserReacted)
+                targetMessage.reactions.append(messageReaction)
             }
         }
     }

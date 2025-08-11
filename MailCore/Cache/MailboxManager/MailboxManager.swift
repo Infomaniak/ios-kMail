@@ -140,7 +140,8 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 File.self,
                 MessageUid.self,
                 MessageHeaders.self,
-                MessageReaction.self
+                MessageReaction.self,
+                ReactionAuthor.self
             ]
         )
 
