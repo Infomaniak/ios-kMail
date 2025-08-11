@@ -277,7 +277,7 @@ public enum NotificationsHelper {
                 return
             }
 
-            liveMessage.preview = cleanBody
+            liveMessage.preview = String(cleanBody.prefix(512))
         }
     }
 
