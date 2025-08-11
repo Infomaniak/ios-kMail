@@ -11,6 +11,7 @@ let packageSettings = PackageSettings(
         "Algorithms": .staticFramework,
         "Atlantis": .staticFramework,
         "DesignSystem": .framework,
+        "DeviceAssociation": .framework,
         "InfomaniakBugTracker": .framework,
         "InfomaniakConcurrency": .staticFramework,
         "InfomaniakDeviceCheck": .staticFramework,
