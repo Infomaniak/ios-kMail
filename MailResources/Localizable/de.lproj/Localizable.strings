@@ -1066,9 +1066,6 @@
 /* loco:686f61f2208a37e573055822 */
 "lastEventOccurrence" = "Wiederkehrendes Ereignis, letztes Auftreten am";
 
-/* loco:687503336839bcc4f60e4612 */
-"lastNearEventOccurrence" = "Wiederkehrendes Ereignis, letztes Auftreten";
-
 /* loco:672398789bd6d8d56802d212 */
 "lastSelectedSchedule" = "Zuletzt ausgewählter Zeitplan";
 
@@ -1197,9 +1194,6 @@
 
 /* loco:67238d29fe561f9d0a0f5732 */
 "nextMonday" = "Nächsten Montag";
-
-/* loco:68750361d21ac07cbe018c02 */
-"nextNearEventOccurrence" = "Wiederkehrendes Ereignis, nächstes Auftreten";
 
 /* loco:62fb875a6743ac5a237b07e3 */
 "noBodyTitle" = "Diese Nachricht ist leer.";
@@ -1842,9 +1836,6 @@
 
 /* loco:67238cec47b13a82520c0245 */
 "tomorrowMorning" = "Morgen früh";
-
-/* loco:687507257e48e5ee2f0414e5 */
-"tomorrowString" = "Morgen";
 
 /* loco:641db88f88b1f63cb05aad52 */
 "tooManyRecipients" = "Sie können diese Adresse nicht hinzufügen, da Sie die Höchstzahl an Empfängern erreicht haben";

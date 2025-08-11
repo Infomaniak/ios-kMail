@@ -82,45 +82,16 @@ struct CalendarBodyDetailsView: View {
                 Label(event.formattedDateTime, asset: MailResourcesAsset.calendarBadgeClock.swiftUIImage)
 
                 if let nextOccurrence {
-                    let startOfCurrentDate = Date().startOfDay
-                    let startOfNextDate = nextOccurrence.startOfDay
-                    let relativeDateString = relativeDateString(from: nextOccurrence)
-
-                    switch Calendar.current.dateComponents([.day], from: startOfCurrentDate, to: startOfNextDate).day {
-                    case 0:
-                        if nextOccurrence < Date() {
-                            Label(
-                                "\(MailResourcesStrings.Localizable.lastNearEventOccurrence) \(relativeDateString)",
-                                asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
-                            )
-                        } else {
-                            Label(
-                                "\(MailResourcesStrings.Localizable.nextNearEventOccurrence) \(relativeDateString)",
-                                asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
-                            )
-                        }
-                    case 1:
+                    if nextOccurrence > .now {
                         Label(
-                            "\(MailResourcesStrings.Localizable.nextNearEventOccurrence) \(relativeDateString)",
+                            "\(MailResourcesStrings.Localizable.nextEventOccurrence) \(nextOccurrence.formatted(.calendarDateFull))",
                             asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
                         )
-                    case -1:
+                    } else {
                         Label(
-                            "\(MailResourcesStrings.Localizable.lastNearEventOccurrence) \(relativeDateString)",
+                            "\(MailResourcesStrings.Localizable.lastEventOccurrence) \(nextOccurrence.formatted(.calendarDateFull))",
                             asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
                         )
-                    default:
-                        if nextOccurrence < Date() {
-                            Label(
-                                "\(MailResourcesStrings.Localizable.lastEventOccurrence) \(nextOccurrence.formatted(.calendarDateFull))",
-                                asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
-                            )
-                        } else {
-                            Label(
-                                "\(MailResourcesStrings.Localizable.nextEventOccurrence) \(nextOccurrence.formatted(.calendarDateFull))",
-                                asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
-                            )
-                        }
                     }
                 }
 
