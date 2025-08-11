@@ -80,7 +80,7 @@ public struct ReactionsListView: View {
     }
 
     private func emojiCount(for reaction: UIMessageReaction) -> Int {
-        var count = reaction.recipients.count
+        var count = reaction.authors.count
         if localReactions.contains(reaction.emoji) && !reaction.hasUserReacted {
             count += 1
         }
