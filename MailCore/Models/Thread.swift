@@ -441,7 +441,13 @@ public extension Thread {
             guard let message = messagesById[messageId] else { continue }
 
             for (emojiReaction, recipients) in reactions {
-                message.reactions.append(MessageReaction(reaction: emojiReaction, recipients: recipients))
+                let messageReaction = MessageReaction(
+                    reaction: emojiReaction,
+                    recipients: recipients,
+                    hasUserReacted: false,
+                    bimi: nil
+                )
+                message.reactions.append(messageReaction)
             }
         }
     }

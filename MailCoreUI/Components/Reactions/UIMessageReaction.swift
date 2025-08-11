@@ -25,11 +25,22 @@ public struct UIMessageReaction: Identifiable, Equatable, Hashable {
     public let emoji: String
     public let recipients: [Recipient]
     public let hasUserReacted: Bool
+    public let bimi: Bimi?
 
-    public init(reaction: String, recipients: [Recipient], hasUserReacted: Bool) {
+    public init(reaction: String, recipients: [Recipient], hasUserReacted: Bool = false, bimi: Bimi? = nil) {
         emoji = reaction
         self.recipients = recipients
         self.hasUserReacted = hasUserReacted
+        self.bimi = bimi
+    }
+
+    public init(messageReaction: MessageReaction) {
+        self.init(
+            reaction: messageReaction.reaction,
+            recipients: messageReaction.recipients.toArray(),
+            hasUserReacted: messageReaction.hasUserReacted,
+            bimi: messageReaction.bimi
+        )
     }
 }
 
