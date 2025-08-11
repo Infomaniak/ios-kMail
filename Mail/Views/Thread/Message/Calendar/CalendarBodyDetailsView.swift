@@ -87,7 +87,7 @@ struct CalendarBodyDetailsView: View {
                     let relativeDateString = relativeDateString(from: nextOccurrence)
 
                     switch Calendar.current.dateComponents([.day], from: startOfCurrentDate, to: startOfNextDate).day {
-                    case 0:
+                    case 0, 1, -1:
                         if nextOccurrence < Date() {
                             Label(
                                 "\(MailResourcesStrings.Localizable.lastNearEventOccurrence) \(relativeDateString)",
@@ -99,16 +99,6 @@ struct CalendarBodyDetailsView: View {
                                 asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
                             )
                         }
-                    case 1:
-                        Label(
-                            "\(MailResourcesStrings.Localizable.nextNearEventOccurrence) \(relativeDateString)",
-                            asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
-                        )
-                    case -1:
-                        Label(
-                            "\(MailResourcesStrings.Localizable.lastNearEventOccurrence) \(relativeDateString)",
-                            asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
-                        )
                     default:
                         if nextOccurrence < Date() {
                             Label(
