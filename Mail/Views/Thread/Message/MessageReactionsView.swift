@@ -22,16 +22,6 @@ import MailCoreUI
 import RealmSwift
 import SwiftUI
 
-extension UIMessageReaction {
-    init(messageReaction: MessageReaction, hasUserReacted: Bool) {
-        self.init(
-            reaction: messageReaction.reaction,
-            recipients: messageReaction.recipients.toArray(),
-            hasUserReacted: hasUserReacted
-        )
-    }
-}
-
 struct MessageReactionsView: View {
     @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -47,10 +37,7 @@ struct MessageReactionsView: View {
             .padding(.top, value: .small)
             .padding([.horizontal, .bottom], value: .medium)
             .task(id: messageReactions) {
-                reactions = messageReactions.map { reaction in
-                    let hasReacted = reaction.recipients.contains { $0.isMe(currentMailboxEmail: mailboxManager.mailbox.email) }
-                    return UIMessageReaction(messageReaction: reaction, hasUserReacted: hasReacted)
-                }
+                reactions = messageReactions.map { UIMessageReaction(messageReaction: $0) }
             }
     }
 
