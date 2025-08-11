@@ -16,33 +16,81 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import InfomaniakCore
 import InfomaniakDI
 import MailCore
 import MailCoreUI
+import OrderedCollections
 import RealmSwift
 import SwiftUI
+
+extension Recipient {
+    convenience init(user: InfomaniakCore.UserProfile) {
+        self.init(email: user.displayName, name: user.email)
+    }
+}
 
 struct MessageReactionsView: View {
     @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var reactions = [UIMessageReaction]()
-    @State private var localReactions = Set<String>()
+    @State private var localReactions = OrderedSet<String>()
 
     let messageUid: String
     let messageReactions: RealmSwift.List<MessageReaction>
 
     var body: some View {
-        ReactionsListView(reactions: reactions, localReactions: localReactions, addReaction: addReaction)
+        ReactionsListView(reactions: reactions, addReaction: addReaction)
             .padding(.top, value: .small)
             .padding([.horizontal, .bottom], value: .medium)
             .task(id: messageReactions) {
-                reactions = messageReactions.map { UIMessageReaction(messageReaction: $0) }
+                await computeUIReactions()
+            }
+            .onChange(of: localReactions) { _ in
+                Task {
+                    await computeUIReactions()
+                }
             }
     }
 
+    private func computeUIReactions() async {
+        var computedReactions = [UIMessageReaction]()
+        var handledLocalReactions = localReactions
+        for messageReaction in messageReactions {
+            var authors = messageReaction.authors.compactMap { UIReactionAuthor(author: $0) }.toArray()
+            var hasUserReacted = messageReaction.hasUserReacted
+
+            if !hasUserReacted && localReactions.contains(messageReaction.reaction) {
+                authors.append(UIReactionAuthor(recipient: Recipient(user: currentUser.value), bimi: nil))
+                hasUserReacted = true
+            }
+            handledLocalReactions.remove(messageReaction.reaction)
+
+            computedReactions.append(
+                UIMessageReaction(
+                    reaction: messageReaction.reaction,
+                    authors: authors,
+                    hasUserReacted: hasUserReacted
+                )
+            )
+        }
+
+        for reaction in handledLocalReactions {
+            computedReactions.append(
+                UIMessageReaction(
+                    reaction: reaction,
+                    authors: [UIReactionAuthor(recipient: Recipient(user: currentUser.value), bimi: nil)],
+                    hasUserReacted: true
+                )
+            )
+        }
+
+        reactions = computedReactions
+    }
+
     private func addReaction(_ reaction: String) {
-        _ = localReactions.insert(reaction)
+        _ = localReactions.append(reaction)
 
         Task {
             await createReactingDraft(reaction)
