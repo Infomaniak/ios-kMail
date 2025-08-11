@@ -327,7 +327,7 @@ public extension Thread {
     typealias SourceMessagesByReaction = OrderedDictionary<String, [MessageId]>
 
     /// Re-generate `Thread` properties given the messages it contains.
-    func recomputeOrFail() throws {
+    func recomputeOrFail(currentAccountEmail: String) throws {
         messages = messages.sortedByDate().toRealmList()
         messagesToDisplay = List()
 
@@ -396,7 +396,7 @@ public extension Thread {
             updateSnooze(from: duplicate)
         }
 
-        computeReactionsForMessages(reactionsByMessageId, messagesById: messagesById)
+        computeReactionsForMessages(reactionsByMessageId, messagesById: messagesById, currentAccountEmail: currentAccountEmail)
     }
 
     private func resetThread() {
@@ -435,7 +435,11 @@ public extension Thread {
         }
     }
 
-    private func computeReactionsForMessages(_ reactions: [MessageId: SourceMessagesByReaction], messagesById: [MessageId: Message]) {
+    private func computeReactionsForMessages(
+        _ reactions: [MessageId: SourceMessagesByReaction],
+        messagesById: [MessageId: Message],
+        currentAccountEmail: String
+    ) {
         for (targetMessageId, reactions) in reactions {
             guard let targetMessage = messagesById[targetMessageId] else { continue }
 
@@ -444,8 +448,12 @@ public extension Thread {
                 var authors = [ReactionAuthor]()
                 for sourceMessageId in sourceMessageIds {
                     guard let sourceMessage = messagesById[sourceMessageId] else { continue }
+
                     for recipient in sourceMessage.from {
                         authors.append(ReactionAuthor(recipient: recipient.detached(), bimi: sourceMessage.bimi?.detached()))
+                        if recipient.isCurrentUser(currentAccountEmail: currentAccountEmail) {
+                            hasUserReacted = true
+                        }
                     }
                 }
 

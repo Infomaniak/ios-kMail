@@ -23,21 +23,40 @@ public struct UIMessageReaction: Identifiable, Equatable, Hashable {
     public var id: String { emoji }
 
     public let emoji: String
-    public let recipients: [Recipient]
+    public let authors: [UIReactionAuthor]
     public let hasUserReacted: Bool
 
-    public init(reaction: String, recipients: [Recipient], hasUserReacted: Bool = false) {
+    public init(reaction: String, authors: [UIReactionAuthor], hasUserReacted: Bool = false) {
         emoji = reaction
-        self.recipients = recipients
+        self.authors = authors
         self.hasUserReacted = hasUserReacted
     }
 
     public init(messageReaction: MessageReaction) {
         self.init(
             reaction: messageReaction.reaction,
-            recipients: [],
+            authors: messageReaction.authors.compactMap { UIReactionAuthor(author: $0) },
             hasUserReacted: messageReaction.hasUserReacted
         )
+    }
+}
+
+public struct UIReactionAuthor: Identifiable, Equatable, Hashable {
+    public var id: String { recipient.id }
+
+    public let recipient: Recipient
+    public let bimi: Bimi?
+
+    init(recipient: Recipient, bimi: Bimi?) {
+        self.recipient = recipient
+        self.bimi = bimi
+    }
+
+    init?(author: ReactionAuthor) {
+        guard let recipient = author.recipient else { return nil }
+
+        self.recipient = recipient
+        bimi = author.bimi
     }
 }
 
@@ -46,7 +65,7 @@ public struct UIMessageReaction: Identifiable, Equatable, Hashable {
 public extension UIMessageReaction {
     struct ReactionFormatStyle: FormatStyle {
         public func format(_ value: UIMessageReaction) -> String {
-            return "\(value.emoji) \(value.recipients.count)"
+            return "\(value.emoji) \(value.authors.count)"
         }
     }
 

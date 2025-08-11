@@ -34,8 +34,8 @@ struct ReactionsList: View {
         ScrollView {
             VStack {
                 ForEach(reactions) { reaction in
-                    ForEach(reaction.recipients) { recipient in
-                        ReactionCell(emoji: reaction.emoji, recipient: recipient)
+                    ForEach(reaction.authors) { author in
+                        ReactionCell(emoji: reaction.emoji, author: author)
                     }
                 }
             }
