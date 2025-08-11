@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "bbebf1c9a25e5c9c65b9a6a4dc929577cf903260",
-        "version" : "15.4.3"
+        "revision" : "dbf91f33e75016dd1e3b2b0c2417362a5e35959e",
+        "version" : "15.4.4"
       }
     },
     {
@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "b1d5907d4e990f6f203db6d0287dc11c6ff543a3",
-        "version" : "19.6.0"
+        "revision" : "f22cd064eac066cf8edf616b6ce7dd9044a1ec3c",
+        "version" : "19.6.1"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
-        "revision" : "97e3d08dd95b92cc57548577d14f6313a8535b98",
-        "version" : "2.2.1"
+        "revision" : "e08a43b64c22b690d713175eb53b7797baa85ec9",
+        "version" : "2.2.2"
       }
     },
     {
@@ -300,7 +300,7 @@
     {
       "identity" : "swift-rich-html-editor",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/swift-rich-html-editor.git",
+      "location" : "https://github.com/Infomaniak/swift-rich-html-editor",
       "state" : {
         "revision" : "53f400840ca3afb3ed16676715f1b69e4abe4f6b",
         "version" : "2.1.0"
@@ -347,8 +347,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/siteline/SwiftUI-Introspect",
       "state" : {
-        "revision" : "d2987affc5482a94d94aa730914aa26b124648a6",
-        "version" : "1.4.0-beta.3"
+        "revision" : "9bedf1e79c7b7c34b35b74bef126f56d2400ef7f",
+        "version" : "1.4.0-beta.4"
       }
     },
     {

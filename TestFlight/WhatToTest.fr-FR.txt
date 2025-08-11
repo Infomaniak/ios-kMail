@@ -1,1 +1,1 @@
-- Connexion simplifiée à partir des autres apps Infomaniak installées (corrections)
+- Connexion simplifiée à partir des autres apps Infomaniak installées (corrections 2)

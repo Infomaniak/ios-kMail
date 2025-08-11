@@ -1,1 +1,1 @@
-- Simplified login from other installed Infomaniak apps (fixes)
+- Simplified login from other installed Infomaniak apps (fixes 2)
