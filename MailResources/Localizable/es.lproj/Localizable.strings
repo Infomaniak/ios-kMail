@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Tue, 19 Aug 2025 14:29:39 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Thu, 21 Aug 2025 09:45:11 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1189,9 +1189,6 @@
 /* loco:67238d29fe561f9d0a0f5732 */
 "nextMonday" = "El lunes próximo";
 
-/* loco:68750361d21ac07cbe018c02 */
-"nextNearEventOccurrence" = "Evento recurrente, próxima ocurrencia";
-
 /* loco:62fb875a6743ac5a237b07e3 */
 "noBodyTitle" = "Este mensaje está vacío.";
 
@@ -1833,9 +1830,6 @@
 
 /* loco:67238cec47b13a82520c0245 */
 "tomorrowMorning" = "Mañana por la mañana";
-
-/* loco:687507257e48e5ee2f0414e5 */
-"tomorrowString" = "Mañana";
 
 /* loco:641db88f88b1f63cb05aad52 */
 "tooManyRecipients" = "No puede añadir esta dirección porque ha alcanzado el límite de destinatarios";
