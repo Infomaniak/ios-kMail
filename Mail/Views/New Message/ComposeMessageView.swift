@@ -310,8 +310,13 @@ struct ComposeMessageView: View {
                 showSnackbar: shouldShowSnackbar,
                 changeFolderAction: changeSelectedFolder
             ) {
-                mainViewState.isShowingMyKSuiteUpgrade = true
-                matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "dailyLimitReachedUpgrade")
+                if mailboxManager.mailbox.isKsuiteEssential {
+                    mainViewState.isShowingKSuiteProUpgrade = true
+                    matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: "dailyLimitReachedUpgrade")
+                } else {
+                    mainViewState.isShowingMyKSuiteUpgrade = true
+                    matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "dailyLimitReachedUpgrade")
+                }
             }
         }
         .mailCustomAlert(item: $isShowingAlert) { alert in
