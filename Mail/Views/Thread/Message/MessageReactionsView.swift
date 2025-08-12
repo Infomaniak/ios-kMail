@@ -116,7 +116,8 @@ struct MessageReactionsView: View {
         do {
             try ensureUserCanReact(reaction: reaction)
         } catch {
-            snackbarPresenter.show(message: error.localizedDescription)
+            snackbarPresenter.show(message: error.errorDescription)
+            return
         }
 
         localReactions.append(reaction)
@@ -142,7 +143,11 @@ struct MessageReactionsView: View {
         }
 
         if allUserReactions.count >= 5 {
-            throw ReactionError(errorDescription: MailApiError.emojiReactionMaxRecipient.errorDescription)
+            throw ReactionError(errorDescription: MailApiError.emojiReactionMaxReactionReached.errorDescription)
+        }
+
+        if ReachabilityListener.instance.currentStatus == .offline {
+            throw ReactionError(errorDescription: MailResourcesStrings.Localizable.noConnection)
         }
     }
 
