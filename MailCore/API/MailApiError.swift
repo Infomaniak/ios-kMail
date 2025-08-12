@@ -126,6 +126,17 @@ public class MailApiError: MailError {
         shouldDisplay: true
     )
 
+    public static let emojiReactionMaxReactionReached = MailApiError(
+        code: "emoji_reaction__max_reaction_reached",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionMaxReactionReached,
+        shouldDisplay: true
+    )
+    public static let emojiReactionAlreadyUsed = MailApiError(
+        code: "emoji_reaction__already_used",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionAlreadyUsed,
+        shouldDisplay: true
+    )
+
     static let allErrors: [MailApiError] = [
         // General
         MailApiError(code: "not_authorized"),
@@ -249,16 +260,8 @@ public class MailApiError: MailError {
         emojiReactionMaxRecipient,
         emojiReactionRecipientNotAllowed,
         emojiReactionMessageInReplyToEncrypted,
-        MailApiError(
-            code: "emoji_reaction__max_reaction_reached",
-            localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionMaxReactionReached,
-            shouldDisplay: true
-        ),
-        MailApiError(
-            code: "emoji_reaction__already_used",
-            localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionAlreadyUsed,
-            shouldDisplay: true
-        )
+        emojiReactionMaxReactionReached,
+        emojiReactionAlreadyUsed
     ]
 
     static func mailApiErrorFromCode(_ code: String) -> MailApiError? {
