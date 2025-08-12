@@ -44,15 +44,25 @@ struct MessageReactionsView: View {
     @State private var localReactions = OrderedSet<String>()
 
     let messageUid: String
+    let emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason?
     let messageReactions: RealmSwift.List<MessageReaction>
 
+    private var addButtonState: ReactionsListView.AddButtonState {
+        if emojiReactionNotAllowedReason != nil {
+            return .hidden
+        }
+        return .visible
+    }
+
     var body: some View {
-        ReactionsListView(reactions: reactions, addReaction: addReaction)
-            .padding(.top, value: .small)
-            .padding([.horizontal, .bottom], value: .medium)
-            .task(id: messageReactions) {
-                computeUIReactions()
-            }
+        if addButtonState != .hidden || !reactions.isEmpty {
+            ReactionsListView(reactions: reactions, addButtonState: addButtonState, addReaction: addReaction)
+                .padding(.top, value: .small)
+                .padding([.horizontal, .bottom], value: .medium)
+                .task(id: messageReactions) {
+                    computeUIReactions()
+                }
+        }
     }
 
     private func computeUIReactions() {
@@ -117,6 +127,6 @@ struct MessageReactionsView: View {
 }
 
 #Preview {
-    MessageReactionsView(messageUid: "", messageReactions: PreviewHelper.reactions)
+    MessageReactionsView(messageUid: "", emojiReactionNotAllowedReason: nil, messageReactions: PreviewHelper.reactions)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }
