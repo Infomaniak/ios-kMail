@@ -39,7 +39,9 @@ public class Mailbox: Object, Codable, Identifiable {
     @Persisted public var isSpamFilter: Bool
     @Persisted public var isLimited: Bool
     @Persisted public var isFree: Bool
+    @Persisted public var isKsuiteEssential: Bool
     @Persisted public var dailyLimit: Int
+    @Persisted public var ownerOrAdmin: Bool
     @Persisted public var unseenMessages = 0
     @Persisted public var remoteUnseenMessages: Int
     @Persisted public var aliases: List<String>
@@ -89,7 +91,9 @@ public class Mailbox: Object, Codable, Identifiable {
         case isSpamFilter
         case isLimited
         case isFree
+        case isKsuiteEssential
         case dailyLimit
+        case ownerOrAdmin
         case remoteUnseenMessages = "unseenMessages"
         case aliases
     }
@@ -152,7 +156,9 @@ public class Mailbox: Object, Codable, Identifiable {
         isSpamFilter = try container.decode(Bool.self, forKey: .isSpamFilter)
         isLimited = try container.decode(Bool.self, forKey: .isLimited)
         isFree = try container.decode(Bool.self, forKey: .isFree)
+        isKsuiteEssential = try container.decode(Bool.self, forKey: .isKsuiteEssential)
         dailyLimit = try container.decode(Int.self, forKey: .dailyLimit)
+        ownerOrAdmin = try container.decode(Bool.self, forKey: .ownerOrAdmin)
         remoteUnseenMessages = try container.decode(Int.self, forKey: .remoteUnseenMessages)
         // Waiting for WS issue #5508 to remove this and go back to default initializer
         aliases = (try? container.decode(List<String>.self, forKey: .aliases)) ?? List<String>()
