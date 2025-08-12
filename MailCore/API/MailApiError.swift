@@ -248,6 +248,7 @@ public class MailApiError: MailError {
         emojiReactionMessageInReplyToNotValid,
         emojiReactionMaxRecipient,
         emojiReactionRecipientNotAllowed,
+        emojiReactionMessageInReplyToEncrypted,
         MailApiError(
             code: "emoji_reaction__max_reaction_reached",
             localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionMaxReactionReached,
