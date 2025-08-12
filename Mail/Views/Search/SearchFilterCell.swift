@@ -25,8 +25,8 @@ import RealmSwift
 import SwiftUI
 
 struct SearchFilterCell: View {
-    public var title: String
-    public var isSelected: Bool
+    var title: String
+    var isSelected: Bool
 
     var body: some View {
         HStack(spacing: IKPadding.searchFolderCellSpacing) {

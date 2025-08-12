@@ -56,9 +56,9 @@ public final class Body: BodyContent {
 /// Proxy class to preprocess JSON of a Body object
 /// Preprocessing body to remain within Realm limitations
 final class ProxyBody: Codable {
-    public var value: String?
-    public var type: BodyType?
-    public var subBody: [ProxySubBody]?
+    var value: String?
+    var type: BodyType?
+    var subBody: [ProxySubBody]?
 
     var allSubBodies: [SubBody] {
         guard let subBody else {
@@ -72,7 +72,7 @@ final class ProxyBody: Codable {
     }
 
     /// Generate a new persisted realm object on the fly
-    public func realmObject() -> Body {
+    func realmObject() -> Body {
         // truncate message if needed
         let truncatedValue = value?.truncatedForRealmIfNeeded
 
@@ -121,17 +121,17 @@ public final class SubBody: BodyContent {
 }
 
 final class ProxySubBody: Codable {
-    public var body: ProxyBody
+    var body: ProxyBody
 
-    public var name: String?
-    public var type: String?
-    public var date: Date?
-    public var subject: String?
-    public var from = [Recipient]()
-    public var to = [Recipient]()
-    public var partId: String?
+    var name: String?
+    var type: String?
+    var date: Date?
+    var subject: String?
+    var from = [Recipient]()
+    var to = [Recipient]()
+    var partId: String?
 
-    public func realmObject() -> SubBody {
+    func realmObject() -> SubBody {
         // truncate message if needed
         let truncatedValue = body.value?.truncatedForRealmIfNeeded
 
@@ -159,7 +159,7 @@ final class ProxySubBody: Codable {
         case partId
     }
 
-    public required init(from decoder: Decoder) throws {
+    required init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         body = try values.decode(ProxyBody.self, forKey: .body)
 

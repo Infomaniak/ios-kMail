@@ -24,7 +24,7 @@ import SwiftUI
 
 @MainActor
 enum DraftUtils {
-    public static func editDraft(
+    static func editDraft(
         from thread: Thread,
         mailboxManager: MailboxManageable,
         composeMessageIntent: Binding<ComposeMessageIntent?>
@@ -34,7 +34,7 @@ enum DraftUtils {
         DraftUtils.editDraft(from: message, mailboxManager: mailboxManager, composeMessageIntent: composeMessageIntent)
     }
 
-    public static func editDraft(
+    static func editDraft(
         from message: Message,
         mailboxManager: MailboxManageable,
         composeMessageIntent: Binding<ComposeMessageIntent?>
@@ -53,7 +53,7 @@ enum DraftUtils {
         }
     }
 
-    public static func editDraft(
+    static func editDraft(
         from draft: Draft,
         mailboxManager: MailboxManageable,
         composeMessageIntent: Binding<ComposeMessageIntent?>

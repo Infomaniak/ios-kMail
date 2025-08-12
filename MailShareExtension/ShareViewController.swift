@@ -41,7 +41,7 @@ final class ShareNavigationViewController: UIViewController {
         SimpleResolver.sharedResolver.store(factory: urlOpener)
     }
 
-    override public func viewDidLoad() {
+    override func viewDidLoad() {
         super.viewDidLoad()
 
         overrideSnackBarPresenter(contextView: view)

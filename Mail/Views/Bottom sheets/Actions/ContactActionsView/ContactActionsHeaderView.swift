@@ -27,12 +27,12 @@ struct ContactActionsHeaderView: View {
     let displayablePerson: CommonContact
     let bimi: Bimi?
 
-    public init(displayablePerson: CommonContact, bimi: Bimi?) {
+    init(displayablePerson: CommonContact, bimi: Bimi?) {
         self.displayablePerson = displayablePerson
         self.bimi = bimi
     }
 
-    public var body: some View {
+    var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.large) {
             RecipientCell(
                 contactConfiguration: .contact(contact: displayablePerson),

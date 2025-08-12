@@ -20,12 +20,12 @@ import MailCore
 import SwiftUI
 
 struct ThreadCellTextView: View {
-    public enum ThreadCellTextType {
+    enum ThreadCellTextType {
         case email
         case subject
         case preview
 
-        public var style: MailTextStyle {
+        var style: MailTextStyle {
             switch self {
             case .email, .subject:
                 return .body

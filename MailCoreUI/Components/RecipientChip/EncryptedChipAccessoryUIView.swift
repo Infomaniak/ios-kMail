@@ -21,7 +21,7 @@ import SwiftUI
 import UIKit
 
 final class EncryptedChipAccessoryUIView: UIView {
-    public var isEncrypted: Bool {
+    var isEncrypted: Bool {
         didSet {
             setEncryptState()
         }
@@ -60,7 +60,7 @@ final class EncryptedChipAccessoryUIView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public func setFocused(_ focused: Bool) {
+    func setFocused(_ focused: Bool) {
         overrideUserInterfaceStyle = focused ? .dark : .light
     }
 
