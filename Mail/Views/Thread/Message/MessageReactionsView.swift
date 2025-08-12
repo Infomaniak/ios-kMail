@@ -40,6 +40,8 @@ struct MessageReactionsView: View {
     @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
     @State private var reactions = [UIMessageReaction]()
     @State private var localReactions = OrderedSet<String>()
 
@@ -55,7 +57,7 @@ struct MessageReactionsView: View {
     }
 
     var body: some View {
-        if addButtonState != .hidden || !reactions.isEmpty {
+        if addButtonState != .hidden || !messageReactions.isEmpty {
             ReactionsListView(reactions: reactions, addButtonState: addButtonState, addReaction: addReaction)
                 .padding(.top, value: .small)
                 .padding([.horizontal, .bottom], value: .medium)
@@ -93,6 +95,11 @@ struct MessageReactionsView: View {
     }
 
     private func addReaction(_ reaction: String) {
+        if let emojiReactionNotAllowedReason {
+            snackbarPresenter.show(message: emojiReactionNotAllowedReason.localizedDescription)
+            return
+        }
+
         localReactions.append(reaction)
         computeUIReactions()
 
