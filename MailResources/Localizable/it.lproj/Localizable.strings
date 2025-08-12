@@ -1054,6 +1054,8 @@
 /* loco:627a3c64f10f5f31f53e1c02 */
 "inboxFolder" = "Posta in arrivo";
 
+/* loco:689b0743529cb447290d77c4 */
+"kSuiteSentLimitAlert" = "Avete raggiunto il vostro limite di invio giornaliero.";
 /* loco:672398789bd6d8d56802d212 */
 "lastSelectedSchedule" = "Ultimo programma selezionato";
 
