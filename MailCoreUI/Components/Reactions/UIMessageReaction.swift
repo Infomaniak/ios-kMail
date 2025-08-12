@@ -31,14 +31,6 @@ public struct UIMessageReaction: Identifiable, Equatable, Hashable {
         self.authors = authors
         self.hasUserReacted = hasUserReacted
     }
-
-    public init(messageReaction: MessageReaction, hasUserReacted: Bool) {
-        self.init(
-            reaction: messageReaction.reaction,
-            authors: messageReaction.authors.compactMap { UIReactionAuthor(author: $0) },
-            hasUserReacted: messageReaction.hasUserReacted || hasUserReacted
-        )
-    }
 }
 
 public struct UIReactionAuthor: Identifiable, Equatable, Hashable {
@@ -50,13 +42,6 @@ public struct UIReactionAuthor: Identifiable, Equatable, Hashable {
     public init(recipient: Recipient, bimi: Bimi?) {
         self.recipient = recipient
         self.bimi = bimi
-    }
-
-    public init?(author: ReactionAuthor) {
-        guard let recipient = author.recipient else { return nil }
-
-        self.recipient = recipient
-        bimi = author.bimi
     }
 }
 

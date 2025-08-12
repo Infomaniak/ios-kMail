@@ -19,22 +19,14 @@
 import MailResources
 import SwiftUI
 
-extension ReactionSelectionType {
-    var buttonLabel: String {
-        switch self {
-        case .all:
-            return MailResourcesStrings.Localizable.buttonAllReactions
-        case .reaction(let uIMessageReaction):
-            return uIMessageReaction.formatted()
-        }
-    }
-}
-
 struct ReactionsDetailsButton: View {
     @Binding var currentSelection: ReactionSelectionType?
 
+    let label: String
     let selectionType: ReactionSelectionType
     let namespace: Namespace.ID
+
+    private static let geometryEffect = "SelectedCapsule"
 
     private var isSelected: Bool {
         currentSelection == selectionType
@@ -48,7 +40,7 @@ struct ReactionsDetailsButton: View {
                 currentSelection = selectionType
             }
         } label: {
-            Text(selectionType.buttonLabel)
+            Text(label)
                 .textStyle(.bodyMedium)
                 .padding(.horizontal, value: .small)
                 .padding(.vertical, value: .mini)
@@ -59,7 +51,7 @@ struct ReactionsDetailsButton: View {
                 Capsule()
                     .fill(Color.accentColor)
                     .frame(height: 2)
-                    .matchedGeometryEffect(id: "SelectedCapsule", in: namespace)
+                    .matchedGeometryEffect(id: Self.geometryEffect, in: namespace)
             }
         }
         .animation(animation, value: currentSelection)
@@ -69,5 +61,5 @@ struct ReactionsDetailsButton: View {
 @available(iOS 17.0, *)
 #Preview {
     @Previewable @Namespace var animation
-    ReactionsDetailsButton(currentSelection: .constant(.all), selectionType: .all, namespace: animation)
+    ReactionsDetailsButton(currentSelection: .constant(.all), label: "all", selectionType: .all, namespace: animation)
 }

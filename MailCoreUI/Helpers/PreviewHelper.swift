@@ -221,5 +221,16 @@ public enum PreviewHelper {
         )
     ].toRealmList()
 
-    public static let uiReactions = reactions.map { UIMessageReaction(messageReaction: $0, hasUserReacted: false) }.toArray()
+    public static let uiReactions = [
+        UIMessageReaction(
+            reaction: "🙂",
+            authors: [UIReactionAuthor(recipient: sampleRecipient1, bimi: nil)],
+            hasUserReacted: true
+        ),
+        UIMessageReaction(
+            reaction: "😊",
+            authors: [UIReactionAuthor(recipient: sampleRecipient1, bimi: nil)],
+            hasUserReacted: false
+        )
+    ]
 }

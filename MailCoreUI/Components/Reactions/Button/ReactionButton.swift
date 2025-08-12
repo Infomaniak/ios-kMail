@@ -39,9 +39,7 @@ extension View {
 }
 
 struct ReactionButton: View {
-    let emoji: String
-    let count: Int
-    let hasReacted: Bool
+    let reaction: UIMessageReaction
 
     let didTapButton: () -> Void
     let didLongPressButton: () -> Void
@@ -49,14 +47,14 @@ struct ReactionButton: View {
     var body: some View {
         Button {} label: {
             HStack(spacing: 2) {
-                Text(verbatim: emoji)
-                Text(verbatim: "\(count)")
+                Text(verbatim: reaction.emoji)
+                Text(verbatim: "\(reaction.authors.count)")
                     .monospacedDigit()
                     .backportNumericContentTransition()
-                    .animation(.default, value: count)
+                    .animation(.default, value: reaction.authors.count)
             }
         }
-        .buttonStyle(.reaction(isEnabled: hasReacted))
+        .buttonStyle(.reaction(isEnabled: reaction.hasUserReacted))
         .simultaneousGesture(
             TapGesture()
                 .onEnded { _ in didTapButton() }
@@ -71,16 +69,12 @@ struct ReactionButton: View {
 #Preview {
     HStack {
         ReactionButton(
-            emoji: "😄",
-            count: 2,
-            hasReacted: false,
+            reaction: UIMessageReaction(reaction: "😄", authors: [], hasUserReacted: false),
             didTapButton: { },
             didLongPressButton: { }
         )
         ReactionButton(
-            emoji: "❤️",
-            count: 4,
-            hasReacted: true,
+            reaction: UIMessageReaction(reaction: "❤️", authors: [], hasUserReacted: true),
             didTapButton: { },
             didLongPressButton: { }
         )
