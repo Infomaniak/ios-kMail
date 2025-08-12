@@ -259,6 +259,8 @@ public extension DraftContentManager {
                 if shouldAddSignatureText {
                     liveIncompleteDraft.rawSignature = signature.content
                     liveIncompleteDraft.body = signature.appendSignature(to: completeBody)
+                } else {
+                    liveIncompleteDraft.body = completeBody
                 }
             } else {
                 liveIncompleteDraft.body = completeBody

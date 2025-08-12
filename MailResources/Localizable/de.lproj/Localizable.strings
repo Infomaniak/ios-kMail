@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: de, German
  * Tagged: ios
- * Exported by: Matthieu Déglon
- * Exported at: Wed, 30 Jul 2025 08:50:31 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Wed, 13 Aug 2025 13:20:56 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1285,6 +1285,9 @@
 /* loco:64a3d65f003e64f9790f5ed2 */
 "popupDetachMailboxTitle" = "Adresse abtrennen";
 
+/* loco:68834dbb822d3b0955074bd2 */
+"reactionsAll" = "Alle";
+
 /* loco:6878f028dad01eb6460e7a92 */
 "reactionsTitle" = "Reaktionen";
 
@@ -1336,7 +1339,7 @@
 /* loco:62a9db4ae45f1e29371ff802 */
 "scheduledMessagesFolder" = "Geplante Nachrichten";
 
-/* loco:660bfde7e7a382d89e07fe92 */
+/* loco:689c74ed1f7e2310d80077d2 */
 "searchAction" = "Suche";
 
 /* loco:640836aa0f09a82bfa0da572 */
@@ -1779,9 +1782,6 @@
 
 /* loco:67238c432a68eb6c2600fc52 */
 "thisEvening" = "Heute Abend";
-
-/* loco:6412e19cf8d74923f83fd492 */
-"threadListEmptyDraftButton" = "Leere Entwürfe";
 
 /* loco:63eddb9871489a3042032122 */
 "threadListEmptyFolderAlertDescription" = "Sind Sie sicher, dass Sie alle Nachrichten in diesem Ordner dauerhaft löschen wollen?";
