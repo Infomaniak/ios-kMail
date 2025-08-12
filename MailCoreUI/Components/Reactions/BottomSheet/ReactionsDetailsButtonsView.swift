@@ -53,15 +53,22 @@ struct ReactionsDetailsButtonsView: View {
             ScrollViewReader { proxy in
                 ScrollView(.horizontal) {
                     HStack {
-                        ReactionsDetailsButton(currentSelection: $currentSelection, selectionType: .all, namespace: animation)
-                            .id(ReactionSelectionType.all)
+                        ReactionsDetailsButton(
+                            currentSelection: $currentSelection,
+                            label: MailResourcesStrings.Localizable.buttonAllReactions,
+                            selectionType: .all,
+                            namespace: animation
+                        )
+                        .id(ReactionSelectionType.all)
+
                         ForEach(reactions) { reaction in
                             ReactionsDetailsButton(
                                 currentSelection: $currentSelection,
-                                selectionType: .reaction(reaction),
+                                label: reaction.formatted(),
+                                selectionType: .reaction(reaction.emoji),
                                 namespace: animation
                             )
-                            .id(ReactionSelectionType.reaction(reaction))
+                            .id(ReactionSelectionType.reaction(reaction.emoji))
                         }
                     }
                     .padding(.horizontal, value: .micro)

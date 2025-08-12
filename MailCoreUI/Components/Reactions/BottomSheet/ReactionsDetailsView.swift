@@ -22,7 +22,7 @@ import SwiftUI
 
 enum ReactionSelectionType: Identifiable, Hashable {
     case all
-    case reaction(UIMessageReaction)
+    case reaction(String)
 
     var id: Int { hashValue }
 }
