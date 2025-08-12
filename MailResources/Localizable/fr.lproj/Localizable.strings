@@ -1054,8 +1054,6 @@
 /* loco:627a3c64f10f5f31f53e1c02 */
 "inboxFolder" = "Boîte de réception";
 
-/* loco:689b0743529cb447290d77c4 */
-"kSuiteSentLimitAlert" = "Vous avez atteint votre limite d’envois journaliers.";
 /* loco:672398789bd6d8d56802d212 */
 "lastSelectedSchedule" = "Dernier horaire choisi";
 
