@@ -37,7 +37,7 @@ struct ReactionsListTabView: View {
                     ForEach(reactions) { reaction in
                         ReactionsList(reaction: reaction)
                             .containerRelativeFrame(.horizontal)
-                            .id(ReactionSelectionType.reaction(reaction))
+                            .id(ReactionSelectionType.reaction(reaction.emoji))
                     }
                 }
                 .scrollTargetLayout()
@@ -50,7 +50,7 @@ struct ReactionsListTabView: View {
                     .tag(ReactionSelectionType.all)
                 ForEach(reactions) { reaction in
                     ReactionsList(reaction: reaction)
-                        .tag(ReactionSelectionType.reaction(reaction))
+                        .tag(ReactionSelectionType.reaction(reaction.emoji))
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: .never))

@@ -24,9 +24,15 @@ import OrderedCollections
 import RealmSwift
 import SwiftUI
 
-extension Recipient {
-    convenience init(user: InfomaniakCore.UserProfile) {
-        self.init(email: user.displayName, name: user.email)
+public extension UIReactionAuthor {
+    init?(author: ReactionAuthor) {
+        guard let recipient = author.recipient else { return nil }
+        self.init(recipient: recipient, bimi: author.bimi)
+    }
+
+    init(user: InfomaniakCore.UserProfile) {
+        let recipient = Recipient(email: user.email, name: user.displayName)
+        self.init(recipient: recipient, bimi: nil)
     }
 }
 
@@ -45,44 +51,31 @@ struct MessageReactionsView: View {
             .padding(.top, value: .small)
             .padding([.horizontal, .bottom], value: .medium)
             .task(id: messageReactions) {
-                await computeUIReactions()
-            }
-            .onChange(of: localReactions) { _ in
-                Task {
-                    await computeUIReactions()
-                }
+                computeUIReactions()
             }
     }
 
-    private func computeUIReactions() async {
+    private func computeUIReactions() {
         var computedReactions = [UIMessageReaction]()
-        var handledLocalReactions = localReactions
+        var notHandledLocalReactions = localReactions
         for messageReaction in messageReactions {
             var authors = messageReaction.authors.compactMap { UIReactionAuthor(author: $0) }.toArray()
             var hasUserReacted = messageReaction.hasUserReacted
 
             if !hasUserReacted && localReactions.contains(messageReaction.reaction) {
-                authors.append(UIReactionAuthor(recipient: Recipient(user: currentUser.value), bimi: nil))
+                authors.append(UIReactionAuthor(user: currentUser.value))
                 hasUserReacted = true
             }
-            handledLocalReactions.remove(messageReaction.reaction)
+            notHandledLocalReactions.remove(messageReaction.reaction)
 
             computedReactions.append(
-                UIMessageReaction(
-                    reaction: messageReaction.reaction,
-                    authors: authors,
-                    hasUserReacted: hasUserReacted
-                )
+                UIMessageReaction(reaction: messageReaction.reaction, authors: authors, hasUserReacted: hasUserReacted)
             )
         }
 
-        for reaction in handledLocalReactions {
+        for reaction in notHandledLocalReactions {
             computedReactions.append(
-                UIMessageReaction(
-                    reaction: reaction,
-                    authors: [UIReactionAuthor(recipient: Recipient(user: currentUser.value), bimi: nil)],
-                    hasUserReacted: true
-                )
+                UIMessageReaction(reaction: reaction, authors: [UIReactionAuthor(user: currentUser.value)], hasUserReacted: true)
             )
         }
 
@@ -90,7 +83,8 @@ struct MessageReactionsView: View {
     }
 
     private func addReaction(_ reaction: String) {
-        _ = localReactions.append(reaction)
+        localReactions.append(reaction)
+        computeUIReactions()
 
         Task {
             await createReactingDraft(reaction)

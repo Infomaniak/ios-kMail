@@ -42,11 +42,7 @@ public struct ReactionsListView: View {
     public var body: some View {
         BackportedFlowLayout(verticalSpacing: IKPadding.mini, horizontalSpacing: IKPadding.mini) {
             ForEach(reactions) { reaction in
-                ReactionButton(
-                    emoji: reaction.emoji,
-                    count: emojiCount(for: reaction),
-                    hasReacted: hasCurrentUserReacted(to: reaction)
-                ) {
+                ReactionButton(reaction: reaction) {
                     addReaction(reaction.emoji)
                 } didLongPressButton: {
                     didLongPressReaction(reaction)
@@ -77,11 +73,6 @@ public struct ReactionsListView: View {
         }
     }
 
-    private func emojiCount(for reaction: UIMessageReaction) -> Int {
-        var count = reaction.authors.count
-        return count
-    }
-
     private func selectEmojiFromPicker(_ reaction: Emoji?) {
         guard let reaction else { return }
 
@@ -90,11 +81,7 @@ public struct ReactionsListView: View {
     }
 
     private func didLongPressReaction(_ reaction: UIMessageReaction) {
-        selectedReactionToDisplay = .reaction(reaction)
-    }
-
-    private func hasCurrentUserReacted(to reaction: UIMessageReaction) -> Bool {
-        return reaction.hasUserReacted
+        selectedReactionToDisplay = .reaction(reaction.emoji)
     }
 }
 
