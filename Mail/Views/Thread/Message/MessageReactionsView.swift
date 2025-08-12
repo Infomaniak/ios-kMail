@@ -64,8 +64,11 @@ struct MessageReactionsView: View {
     private var addButtonState: ReactionsListView.AddButtonState {
         if emojiReactionNotAllowedReason != nil {
             return .hidden
+        } else if allUserReactions.count >= 5 {
+            return .disabled
+        } else {
+            return .visible
         }
-        return .visible
     }
 
     var body: some View {
