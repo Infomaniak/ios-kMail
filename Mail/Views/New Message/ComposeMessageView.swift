@@ -412,7 +412,7 @@ struct ComposeMessageView: View {
 
         let mailbox = mailboxManager.mailbox
         let mailboxIsFull = mailbox.quotas?.progression ?? 0 >= 1
-        if mailbox.isMyKSuiteFree && mailboxIsFull {
+        if (mailbox.isMyKSuiteFree || mailbox.isKsuiteEssential) && mailboxIsFull {
             matomo.track(eventWithCategory: .newMessage, name: "trySendingWithMailboxFull")
             Task {
                 if let liveDraft = draft.thaw() {
@@ -424,8 +424,13 @@ struct ComposeMessageView: View {
             snackbarPresenter.show(
                 message: MailResourcesStrings.Localizable.myKSuiteSpaceFullAlert,
                 action: IKSnackBar.Action(title: MailResourcesStrings.Localizable.buttonUpgrade) {
-                    mainViewState.isShowingMyKSuiteUpgrade = true
-                    matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
+                    if mailbox.isKsuiteEssential {
+                        mainViewState.isShowingKSuiteProUpgrade = true
+                        matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
+                    } else {
+                        mainViewState.isShowingMyKSuiteUpgrade = true
+                        matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
+                    }
                 }
             )
             return
