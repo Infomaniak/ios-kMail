@@ -20,6 +20,7 @@ import InfomaniakCore
 import InfomaniakDI
 import MailCore
 import MailCoreUI
+import MailResources
 import OrderedCollections
 import RealmSwift
 import SwiftUI
@@ -36,6 +37,16 @@ public extension UIReactionAuthor {
     }
 }
 
+extension MessageReactionsView {
+    struct ReactionError: LocalizedError {
+        let errorDescription: String
+
+        init(errorDescription: String?) {
+            self.errorDescription = errorDescription ?? MailResourcesStrings.Localizable.errorUnknown
+        }
+    }
+}
+
 struct MessageReactionsView: View {
     @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
@@ -44,6 +55,7 @@ struct MessageReactionsView: View {
 
     @State private var reactions = [UIMessageReaction]()
     @State private var localReactions = OrderedSet<String>()
+    @State private var allUserReactions = Set<String>()
 
     let messageUid: String
     let emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason?
@@ -70,6 +82,7 @@ struct MessageReactionsView: View {
     private func computeUIReactions() {
         var computedReactions = [UIMessageReaction]()
         var notHandledLocalReactions = localReactions
+        var userReactions = Set<String>()
         for messageReaction in messageReactions {
             var authors = messageReaction.authors.compactMap { UIReactionAuthor(author: $0) }.toArray()
             var hasUserReacted = messageReaction.hasUserReacted
@@ -79,6 +92,10 @@ struct MessageReactionsView: View {
                 hasUserReacted = true
             }
             notHandledLocalReactions.remove(messageReaction.reaction)
+
+            if hasUserReacted {
+                userReactions.insert(messageReaction.reaction)
+            }
 
             computedReactions.append(
                 UIMessageReaction(reaction: messageReaction.reaction, authors: authors, hasUserReacted: hasUserReacted)
@@ -92,12 +109,14 @@ struct MessageReactionsView: View {
         }
 
         reactions = computedReactions
+        allUserReactions = userReactions
     }
 
     private func addReaction(_ reaction: String) {
-        if let emojiReactionNotAllowedReason {
-            snackbarPresenter.show(message: emojiReactionNotAllowedReason.localizedDescription)
-            return
+        do {
+            try ensureUserCanReact(reaction: reaction)
+        } catch {
+            snackbarPresenter.show(message: error.localizedDescription)
         }
 
         localReactions.append(reaction)
@@ -110,6 +129,20 @@ struct MessageReactionsView: View {
             draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: true)
 
             // TODO: If it fails, remove from localReactions
+        }
+    }
+
+    private func ensureUserCanReact(reaction: String) throws(ReactionError) {
+        if let emojiReactionNotAllowedReason {
+            throw ReactionError(errorDescription: emojiReactionNotAllowedReason.localizedDescription)
+        }
+
+        if allUserReactions.contains(reaction) {
+            throw ReactionError(errorDescription: MailApiError.emojiReactionAlreadyUsed.localizedDescription)
+        }
+
+        if allUserReactions.count >= 5 {
+            throw ReactionError(errorDescription: MailApiError.emojiReactionMaxRecipient.errorDescription)
         }
     }
 
