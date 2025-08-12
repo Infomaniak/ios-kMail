@@ -24,6 +24,12 @@ import RealmSwift
 import SwiftUI
 
 public struct ReactionsListView: View {
+    public enum AddButtonState {
+        case visible
+        case hidden
+        case disabled
+    }
+
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var selectedReactionToDisplay: ReactionSelectionType?
@@ -32,10 +38,12 @@ public struct ReactionsListView: View {
     @State private var selectedEmoji: Emoji?
 
     let reactions: [UIMessageReaction]
+    let addButtonState: AddButtonState
     let addReaction: (String) -> Void
 
-    public init(reactions: [UIMessageReaction], addReaction: @escaping (String) -> Void) {
+    public init(reactions: [UIMessageReaction], addButtonState: AddButtonState, addReaction: @escaping (String) -> Void) {
         self.reactions = reactions
+        self.addButtonState = addButtonState
         self.addReaction = addReaction
     }
 
@@ -49,20 +57,22 @@ public struct ReactionsListView: View {
                 }
             }
 
-            Button {
-                isShowingEmojiPicker = true
-            } label: {
-                Label {
-                    Text(MailResourcesStrings.Localizable.contentDescriptionAddReaction)
-                } icon: {
-                    MailResourcesAsset.faceSlightlySmilingCirclePlus.swiftUIImage
-                        .iconSize(.large)
+            if addButtonState != .hidden {
+                Button {
+                    isShowingEmojiPicker = true
+                } label: {
+                    Label {
+                        Text(MailResourcesStrings.Localizable.contentDescriptionAddReaction)
+                    } icon: {
+                        MailResourcesAsset.faceSlightlySmilingCirclePlus.swiftUIImage
+                            .iconSize(.large)
+                    }
+                    .labelStyle(.iconOnly)
                 }
-                .labelStyle(.iconOnly)
+                .buttonStyle(.reaction(isEnabled: false, padding: EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)))
+                .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $selectedEmoji)
+                .onChange(of: selectedEmoji, perform: selectEmojiFromPicker)
             }
-            .buttonStyle(.reaction(isEnabled: false, padding: EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)))
-            .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $selectedEmoji)
-            .onChange(of: selectedEmoji, perform: selectEmojiFromPicker)
         }
         .sheet(item: $selectedReactionToDisplay) { selectedReaction in
             if #available(iOS 16, *) {
@@ -86,5 +96,5 @@ public struct ReactionsListView: View {
 }
 
 #Preview {
-    ReactionsListView(reactions: PreviewHelper.uiReactions) { _ in }
+    ReactionsListView(reactions: PreviewHelper.uiReactions, addButtonState: .visible) { _ in }
 }
