@@ -55,32 +55,28 @@ struct MessageReactionsView: View {
 
     @State private var reactions = [UIMessageReaction]()
     @State private var localReactions = OrderedSet<String>()
-    @State private var allUserReactions = Set<String>()
+    @State private var userReactions = Set<String>()
 
     let messageUid: String
     let emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason?
     let messageReactions: RealmSwift.List<MessageReaction>
 
-    private var openEmojiPickerButtonState: ReactionsListView.OpenEmojiPickerButtonState {
-        if emojiReactionNotAllowedReason != nil {
-            return .hidden
-        } else if allUserReactions.count >= 5 {
-            return .disabled
-        } else {
-            return .visible
-        }
+    private var displayReactions: Bool {
+        return !messageReactions.isEmpty
+    }
+
+    private var emojiPickerButtonIsDisabled: Bool {
+        return emojiReactionNotAllowedReason != nil || userReactions.count >= 5
     }
 
     var body: some View {
-        if openEmojiPickerButtonState != .hidden || !messageReactions.isEmpty {
+        if displayReactions {
             ReactionsListView(
                 reactions: reactions,
-                openEmojiPickerButtonState: openEmojiPickerButtonState,
+                emojiPickerButtonIsDisabled: emojiPickerButtonIsDisabled,
                 addReaction: addReaction,
                 disabledOpenEmojiPickerButtonCompletion: didTapDisabledEmojiPickerButton
             )
-            .padding(.top, value: .small)
-            .padding([.horizontal, .bottom], value: .medium)
             .task(id: messageReactions) {
                 computeUIReactions()
             }
@@ -90,7 +86,8 @@ struct MessageReactionsView: View {
     private func computeUIReactions() {
         var computedReactions = [UIMessageReaction]()
         var notHandledLocalReactions = localReactions
-        var userReactions = Set<String>()
+        var computedUserReactions = Set<String>()
+
         for messageReaction in messageReactions {
             var authors = messageReaction.authors.compactMap { UIReactionAuthor(author: $0) }.toArray()
             var hasUserReacted = messageReaction.hasUserReacted
@@ -102,9 +99,8 @@ struct MessageReactionsView: View {
             notHandledLocalReactions.remove(messageReaction.reaction)
 
             if hasUserReacted {
-                userReactions.insert(messageReaction.reaction)
+                computedUserReactions.insert(messageReaction.reaction)
             }
-
             computedReactions.append(
                 UIMessageReaction(reaction: messageReaction.reaction, authors: authors, hasUserReacted: hasUserReacted)
             )
@@ -117,7 +113,7 @@ struct MessageReactionsView: View {
         }
 
         reactions = computedReactions
-        allUserReactions = userReactions
+        userReactions = computedUserReactions
     }
 
     private func addReaction(_ reaction: String) {
@@ -154,11 +150,11 @@ struct MessageReactionsView: View {
             throw ReactionError(errorDescription: emojiReactionNotAllowedReason.localizedDescription)
         }
 
-        if let reaction, allUserReactions.contains(reaction) {
+        if let reaction, userReactions.contains(reaction) {
             throw ReactionError(errorDescription: MailApiError.emojiReactionAlreadyUsed.localizedDescription)
         }
 
-        if allUserReactions.count >= 5 {
+        if userReactions.count >= 5 {
             throw ReactionError(errorDescription: MailApiError.emojiReactionMaxReactionReached.errorDescription)
         }
 
