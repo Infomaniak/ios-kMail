@@ -24,12 +24,6 @@ import RealmSwift
 import SwiftUI
 
 public struct ReactionsListView: View {
-    public enum OpenEmojiPickerButtonState {
-        case visible
-        case hidden
-        case disabled
-    }
-
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @State private var selectedReactionToDisplay: ReactionSelectionType?
@@ -38,18 +32,18 @@ public struct ReactionsListView: View {
     @State private var selectedEmoji: Emoji?
 
     let reactions: [UIMessageReaction]
-    let openEmojiPickerButtonState: OpenEmojiPickerButtonState
+    let emojiPickerButtonIsDisabled: Bool
     let addReaction: (String) -> Void
     let disabledOpenEmojiPickerButtonCompletion: (() -> Void)?
 
     public init(
         reactions: [UIMessageReaction],
-        openEmojiPickerButtonState: OpenEmojiPickerButtonState,
+        emojiPickerButtonIsDisabled: Bool,
         addReaction: @escaping (String) -> Void,
         disabledOpenEmojiPickerButtonCompletion: (() -> Void)? = nil
     ) {
         self.reactions = reactions
-        self.openEmojiPickerButtonState = openEmojiPickerButtonState
+        self.emojiPickerButtonIsDisabled = emojiPickerButtonIsDisabled
         self.addReaction = addReaction
         self.disabledOpenEmojiPickerButtonCompletion = disabledOpenEmojiPickerButtonCompletion
     }
@@ -64,20 +58,18 @@ public struct ReactionsListView: View {
                 }
             }
 
-            if openEmojiPickerButtonState != .hidden {
-                Button(action: openEmojiPicker) {
-                    Label {
-                        Text(MailResourcesStrings.Localizable.contentDescriptionAddReaction)
-                    } icon: {
-                        MailResourcesAsset.faceSlightlySmilingCirclePlus.swiftUIImage
-                            .iconSize(.large)
-                    }
-                    .labelStyle(.iconOnly)
+            Button(action: openEmojiPicker) {
+                Label {
+                    Text(MailResourcesStrings.Localizable.contentDescriptionAddReaction)
+                } icon: {
+                    MailResourcesAsset.faceSlightlySmilingCirclePlus.swiftUIImage
+                        .iconSize(.large)
                 }
-                .buttonStyle(.reaction(isEnabled: false, padding: EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)))
-                .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $selectedEmoji)
-                .onChange(of: selectedEmoji, perform: selectEmojiFromPicker)
+                .labelStyle(.iconOnly)
             }
+            .buttonStyle(.reaction(isEnabled: false, padding: EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)))
+            .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $selectedEmoji)
+            .onChange(of: selectedEmoji, perform: selectEmojiFromPicker)
         }
         .sheet(item: $selectedReactionToDisplay) { selectedReaction in
             if #available(iOS 16, *) {
@@ -89,7 +81,7 @@ public struct ReactionsListView: View {
     }
 
     private func openEmojiPicker() {
-        if openEmojiPickerButtonState == .disabled {
+        if emojiPickerButtonIsDisabled {
             disabledOpenEmojiPickerButtonCompletion?()
             return
         }
@@ -110,5 +102,5 @@ public struct ReactionsListView: View {
 }
 
 #Preview {
-    ReactionsListView(reactions: PreviewHelper.uiReactions, openEmojiPickerButtonState: .visible) { _ in }
+    ReactionsListView(reactions: PreviewHelper.uiReactions, emojiPickerButtonIsDisabled: false) { _ in }
 }
