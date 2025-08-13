@@ -1054,6 +1054,11 @@
 /* loco:627a3c64f10f5f31f53e1c02 */
 "inboxFolder" = "Posteingang";
 
+/* loco:689c766a433c6c94c70e1742 */
+"kSuiteProQuotasAlertDescription" = "Der Speicherplatz in Ihrer Mail ist bald voll. Ändern Sie Ihr Angebot auf unbegrenzten Speicherplatz und schalten Sie neue Funktionen frei.";
+
+/* loco:689c76e6a75a2c10bb0ec9a2 */
+"kSuiteProQuotasAlertFullDescription" = "Der Speicherplatz in Ihrer Mail ist voll. Ändern Sie Ihr Angebot auf unbegrenzten Speicherplatz und schalten Sie neue Funktionen frei.";
 /* loco:672398789bd6d8d56802d212 */
 "lastSelectedSchedule" = "Zuletzt ausgewählter Zeitplan";
 
