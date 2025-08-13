@@ -30,13 +30,13 @@ public extension Color {
 }
 
 public extension ButtonStyle where Self == ReactionButtonStyle {
-    static func reaction(isEnabled: Bool, padding: EdgeInsets? = nil) -> ReactionButtonStyle {
-        return ReactionButtonStyle(isEnabled: isEnabled, padding: padding)
+    static func reaction(isEnabled: Bool) -> ReactionButtonStyle {
+        return ReactionButtonStyle(isEnabled: isEnabled)
     }
 }
 
 public struct ReactionButtonStyle: ButtonStyle {
-    private static let defaultPaddings: EdgeInsets = .init(
+    private static let padding: EdgeInsets = .init(
         top: IKPadding.micro,
         leading: IKPadding.small,
         bottom: IKPadding.micro,
@@ -56,17 +56,11 @@ public struct ReactionButtonStyle: ButtonStyle {
     }
 
     let isEnabled: Bool
-    let padding: EdgeInsets
-
-    init(isEnabled: Bool, padding: EdgeInsets?) {
-        self.isEnabled = isEnabled
-        self.padding = padding ?? Self.defaultPaddings
-    }
 
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .textStyle(textStyle)
-            .padding(padding)
+            .padding(Self.padding)
             .frame(minHeight: 32)
             .background(backgroundColor, in: .capsule)
             .overlay {
@@ -79,12 +73,12 @@ public struct ReactionButtonStyle: ButtonStyle {
 
 #Preview {
     HStack {
-        Button(action: { /* Empty */ }) {
+        Button { /* Empty */ } label: {
             Text("😄 1")
         }
         .buttonStyle(.reaction(isEnabled: false))
 
-        Button(action: { /* Empty */ }) {
+        Button { /* Empty */ } label: {
             Text("🗽 3")
         }
         .buttonStyle(.reaction(isEnabled: true))
