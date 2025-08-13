@@ -42,14 +42,22 @@ class ThreadListHeaderFolderObserver: ObservableObject {
     @Published private(set) var unreadCount: Int
 
     init(folder: Folder) {
+        assert(folder.isFrozen, "Folder should always be frozen")
+
         lastUpdateText = ThreadListHeaderFolderObserver.formatLastUpdate(date: folder.lastUpdate)
         unreadCount = folder.unreadCount
 
         timerObservation = timer
-            .receive(on: RunLoop.main)
+            .receive(on: DispatchQueue.global(qos: .default))
             .sink { [weak self] _ in
-                withAnimation {
-                    self?.lastUpdateText = ThreadListHeaderFolderObserver.formatLastUpdate(date: folder.lastUpdate)
+                guard let updatedFolder = folder.thaw(),
+                      let lastUpdate = updatedFolder.lastUpdate else {
+                    return
+                }
+                Task { @MainActor in
+                    withAnimation {
+                        self?.lastUpdateText = ThreadListHeaderFolderObserver.formatLastUpdate(date: lastUpdate)
+                    }
                 }
             }
 
