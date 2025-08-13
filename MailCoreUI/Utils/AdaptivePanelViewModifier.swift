@@ -44,10 +44,12 @@ struct AdaptivePanelViewModifier<Item: Identifiable, PanelContent: View>: ViewMo
             .popover(item: $item, arrowEdge: popoverArrowEdge) { item in
                 if isCompactWindow {
                     if #available(iOS 16.0, *) {
-                        panelContent(item).modifier(SelfSizingPanelViewModifier(bottomPadding: IKPadding.medium))
+                        panelContent(item).modifier(SelfSizingPanelViewModifier(topPadding: IKPadding.large,
+                                                                                bottomPadding: IKPadding.medium))
                             .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
                     } else {
-                        panelContent(item).modifier(SelfSizingPanelBackportViewModifier(bottomPadding: IKPadding.medium))
+                        panelContent(item).modifier(SelfSizingPanelBackportViewModifier(topPadding: IKPadding.large,
+                                                                                        bottomPadding: IKPadding.medium))
                             .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
                     }
                 } else {
