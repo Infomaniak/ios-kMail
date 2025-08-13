@@ -86,8 +86,8 @@ final class NotificationCenterDelegate: NSObject, UNUserNotificationCenterDelega
         }
     }
 
-    public func userNotificationCenter(_ center: UNUserNotificationCenter,
-                                       didReceive response: UNNotificationResponse) async {
+    func userNotificationCenter(_ center: UNUserNotificationCenter,
+                                didReceive response: UNNotificationResponse) async {
         Task {
             await handleMailAction(for: response.actionIdentifier, content: response.notification.request.content)
         }

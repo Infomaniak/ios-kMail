@@ -25,7 +25,7 @@ struct BodyImageProcessor {
     private let bodyImageMutator = BodyImageMutator()
 
     /// Download and encode all images for the current chunk in parallel.
-    public func fetchBase64Images(
+    func fetchBase64Images(
         _ attachments: ArraySlice<Attachment>,
         mailboxManager: MailboxManager
     ) async -> [ImageBase64AndMime?] {
@@ -84,7 +84,7 @@ struct BodyImageProcessor {
     }
 
     /// Inject base64 images in a body
-    public func injectImagesInBody(
+    func injectImagesInBody(
         body: String?,
         attachments: ArraySlice<Attachment>,
         base64Images: [ImageBase64AndMime?]

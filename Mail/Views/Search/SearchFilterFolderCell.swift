@@ -26,7 +26,7 @@ import SwiftUI
 
 struct SearchFilterFolderCell: View {
     var folders: [Folder]
-    @Binding public var selectedFolderId: String
+    @Binding var selectedFolderId: String
 
     init(selection: Binding<String>, folders: [Folder]) {
         self.folders = folders

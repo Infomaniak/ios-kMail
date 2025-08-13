@@ -33,12 +33,19 @@ opt_in_rules:
  - unneeded_parentheses_in_closure_argument
 analyzer_rules:
  - unused_import
-excluded:
- - Derived/Sources/*
- - DerivedData/
- - Derived/
- - Tuist/.build/
- - Tuist/DerivedData/
+included:
+ - Mail
+ - MailAppIntentsExtension
+ - MailCore
+ - MailCoreUI
+ - MailNotificationContentExtension
+ - MailNotificationServiceExtension
+ - MailShareExtension
+ - MailTests
+ - MailUITests
+ - Project.swift
+ - Tuist/Package.swift
+ - Tuist/ProjectDescriptionHelpers
 custom_rules:
   private_state:
     included:

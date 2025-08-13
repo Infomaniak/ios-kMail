@@ -26,8 +26,8 @@ import SwiftUI
 struct ExternalRecipientView: View {
     @Environment(\.dismiss) private var dismiss
 
-    public var externalTagSate: DisplayExternalRecipientStatus.State
-    public var isDraft: Bool
+    var externalTagSate: DisplayExternalRecipientStatus.State
+    var isDraft: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
