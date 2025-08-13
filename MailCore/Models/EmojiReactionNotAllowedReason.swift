@@ -42,7 +42,7 @@ public enum EmojiReactionNotAllowedReason: String, Decodable, PersistableEnum {
         self = EmojiReactionNotAllowedReason(rawValue: rawString) ?? .unknown
     }
 
-    public var description: String {
+    public var localizedDescription: String {
         guard let message = associatedError?.errorDescription else {
             return MailResourcesStrings.Localizable.errorUnknown
         }
