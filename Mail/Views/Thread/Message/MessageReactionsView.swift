@@ -147,7 +147,7 @@ struct MessageReactionsView: View {
 
     private func ensureUserCanReact(reaction: String? = nil) throws(ReactionError) {
         if let emojiReactionNotAllowedReason {
-            throw ReactionError(errorDescription: emojiReactionNotAllowedReason.description)
+            throw ReactionError(errorDescription: emojiReactionNotAllowedReason.localizedDescription)
         }
 
         if let reaction, userReactions.contains(reaction) {
