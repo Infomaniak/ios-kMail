@@ -222,12 +222,12 @@ public enum PreviewHelper {
     ].toRealmList()
 
     public static let uiReactions = [
-        UIMessageReaction(
+        UIReaction(
             reaction: "🙂",
             authors: [UIReactionAuthor(recipient: sampleRecipient1, bimi: nil)],
             hasUserReacted: true
         ),
-        UIMessageReaction(
+        UIReaction(
             reaction: "😊",
             authors: [UIReactionAuthor(recipient: sampleRecipient1, bimi: nil)],
             hasUserReacted: false

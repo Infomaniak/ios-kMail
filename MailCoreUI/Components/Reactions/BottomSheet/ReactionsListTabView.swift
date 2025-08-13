@@ -22,7 +22,7 @@ import SwiftUI
 struct ReactionsListTabView: View {
     @Binding var selectedReaction: ReactionSelectionType?
 
-    let reactions: [UIMessageReaction]
+    let reactions: [UIReaction]
     var initialSelection: ReactionSelectionType?
 
     // We need to use a ScrollView because the TabView wrapped inside a sheet is broken.

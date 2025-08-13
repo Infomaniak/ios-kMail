@@ -39,7 +39,7 @@ extension View {
 }
 
 struct ReactionButton: View {
-    let reaction: UIMessageReaction
+    let reaction: UIReaction
 
     let didTapButton: () -> Void
     let didLongPressButton: () -> Void
@@ -69,12 +69,12 @@ struct ReactionButton: View {
 #Preview {
     HStack {
         ReactionButton(
-            reaction: UIMessageReaction(reaction: "😄", authors: [], hasUserReacted: false),
+            reaction: UIReaction(reaction: "😄", authors: [], hasUserReacted: false),
             didTapButton: { },
             didLongPressButton: { }
         )
         ReactionButton(
-            reaction: UIMessageReaction(reaction: "❤️", authors: [], hasUserReacted: true),
+            reaction: UIReaction(reaction: "❤️", authors: [], hasUserReacted: true),
             didTapButton: { },
             didLongPressButton: { }
         )

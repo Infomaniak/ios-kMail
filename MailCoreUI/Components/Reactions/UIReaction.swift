@@ -19,7 +19,7 @@
 import Foundation
 import MailCore
 
-public struct UIMessageReaction: Identifiable, Equatable, Hashable {
+public struct UIReaction: Identifiable, Equatable, Hashable {
     public var id: String { emoji }
 
     public let emoji: String
@@ -47,9 +47,9 @@ public struct UIReactionAuthor: Identifiable, Equatable, Hashable {
 
 // MARK: - FormatStyle
 
-public extension UIMessageReaction {
+public extension UIReaction {
     struct ReactionFormatStyle: FormatStyle {
-        public func format(_ value: UIMessageReaction) -> String {
+        public func format(_ value: UIReaction) -> String {
             return "\(value.emoji) \(value.authors.count)"
         }
     }
@@ -60,8 +60,8 @@ public extension UIMessageReaction {
     }
 }
 
-public extension FormatStyle where Self == UIMessageReaction.ReactionFormatStyle {
+public extension FormatStyle where Self == UIReaction.ReactionFormatStyle {
     static var reaction: Self {
-        UIMessageReaction.ReactionFormatStyle()
+        UIReaction.ReactionFormatStyle()
     }
 }
