@@ -147,11 +147,11 @@ struct MessageReactionsView: View {
 
     private func ensureUserCanReact(reaction: String? = nil) throws(ReactionError) {
         if let emojiReactionNotAllowedReason {
-            throw ReactionError(errorDescription: emojiReactionNotAllowedReason.localizedDescription)
+            throw ReactionError(errorDescription: emojiReactionNotAllowedReason.description)
         }
 
         if let reaction, userReactions.contains(reaction) {
-            throw ReactionError(errorDescription: MailApiError.emojiReactionAlreadyUsed.localizedDescription)
+            throw ReactionError(errorDescription: MailApiError.emojiReactionAlreadyUsed.errorDescription)
         }
 
         if userReactions.count >= 5 {
