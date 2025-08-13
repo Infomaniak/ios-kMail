@@ -24,7 +24,7 @@ import RealmSwift
 import SwiftUI
 
 public struct ReactionsListView: View {
-    public enum AddButtonState {
+    public enum OpenEmojiPickerButtonState {
         case visible
         case hidden
         case disabled
@@ -38,13 +38,20 @@ public struct ReactionsListView: View {
     @State private var selectedEmoji: Emoji?
 
     let reactions: [UIMessageReaction]
-    let addButtonState: AddButtonState
+    let openEmojiPickerButtonState: OpenEmojiPickerButtonState
     let addReaction: (String) -> Void
+    let disabledOpenEmojiPickerButtonCompletion: (() -> Void)?
 
-    public init(reactions: [UIMessageReaction], addButtonState: AddButtonState, addReaction: @escaping (String) -> Void) {
+    public init(
+        reactions: [UIMessageReaction],
+        openEmojiPickerButtonState: OpenEmojiPickerButtonState,
+        addReaction: @escaping (String) -> Void,
+        disabledOpenEmojiPickerButtonCompletion: (() -> Void)? = nil
+    ) {
         self.reactions = reactions
-        self.addButtonState = addButtonState
+        self.openEmojiPickerButtonState = openEmojiPickerButtonState
         self.addReaction = addReaction
+        self.disabledOpenEmojiPickerButtonCompletion = disabledOpenEmojiPickerButtonCompletion
     }
 
     public var body: some View {
@@ -57,10 +64,8 @@ public struct ReactionsListView: View {
                 }
             }
 
-            if addButtonState != .hidden {
-                Button {
-                    isShowingEmojiPicker = true
-                } label: {
+            if openEmojiPickerButtonState != .hidden {
+                Button(action: openEmojiPicker) {
                     Label {
                         Text(MailResourcesStrings.Localizable.contentDescriptionAddReaction)
                     } icon: {
@@ -83,6 +88,15 @@ public struct ReactionsListView: View {
         }
     }
 
+    private func openEmojiPicker() {
+        if openEmojiPickerButtonState == .disabled {
+            disabledOpenEmojiPickerButtonCompletion?()
+            return
+        }
+
+        isShowingEmojiPicker = true
+    }
+
     private func selectEmojiFromPicker(_ reaction: Emoji?) {
         guard let reaction else { return }
 
@@ -96,5 +110,5 @@ public struct ReactionsListView: View {
 }
 
 #Preview {
-    ReactionsListView(reactions: PreviewHelper.uiReactions, addButtonState: .visible) { _ in }
+    ReactionsListView(reactions: PreviewHelper.uiReactions, openEmojiPickerButtonState: .visible) { _ in }
 }
