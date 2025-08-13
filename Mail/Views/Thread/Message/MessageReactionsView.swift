@@ -61,7 +61,7 @@ struct MessageReactionsView: View {
     let emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason?
     let messageReactions: RealmSwift.List<MessageReaction>
 
-    private var addButtonState: ReactionsListView.AddButtonState {
+    private var openEmojiPickerButtonState: ReactionsListView.OpenEmojiPickerButtonState {
         if emojiReactionNotAllowedReason != nil {
             return .hidden
         } else if allUserReactions.count >= 5 {
@@ -72,13 +72,18 @@ struct MessageReactionsView: View {
     }
 
     var body: some View {
-        if addButtonState != .hidden || !messageReactions.isEmpty {
-            ReactionsListView(reactions: reactions, addButtonState: addButtonState, addReaction: addReaction)
-                .padding(.top, value: .small)
-                .padding([.horizontal, .bottom], value: .medium)
-                .task(id: messageReactions) {
-                    computeUIReactions()
-                }
+        if openEmojiPickerButtonState != .hidden || !messageReactions.isEmpty {
+            ReactionsListView(
+                reactions: reactions,
+                openEmojiPickerButtonState: openEmojiPickerButtonState,
+                addReaction: addReaction,
+                disabledOpenEmojiPickerButtonCompletion: didTapDisabledEmojiPickerButton
+            )
+            .padding(.top, value: .small)
+            .padding([.horizontal, .bottom], value: .medium)
+            .task(id: messageReactions) {
+                computeUIReactions()
+            }
         }
     }
 
@@ -136,12 +141,20 @@ struct MessageReactionsView: View {
         }
     }
 
-    private func ensureUserCanReact(reaction: String) throws(ReactionError) {
+    private func didTapDisabledEmojiPickerButton() {
+        do {
+            try ensureUserCanReact()
+        } catch {
+            snackbarPresenter.show(message: error.errorDescription)
+        }
+    }
+
+    private func ensureUserCanReact(reaction: String? = nil) throws(ReactionError) {
         if let emojiReactionNotAllowedReason {
             throw ReactionError(errorDescription: emojiReactionNotAllowedReason.localizedDescription)
         }
 
-        if allUserReactions.contains(reaction) {
+        if let reaction, allUserReactions.contains(reaction) {
             throw ReactionError(errorDescription: MailApiError.emojiReactionAlreadyUsed.localizedDescription)
         }
 
