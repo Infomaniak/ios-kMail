@@ -20,6 +20,7 @@ import InfomaniakCore
 import InfomaniakDI
 import MailCore
 import MailCoreUI
+import MailResources
 import OrderedCollections
 import RealmSwift
 import SwiftUI
@@ -36,28 +37,57 @@ public extension UIReactionAuthor {
     }
 }
 
+extension MessageReactionsView {
+    struct ReactionError: LocalizedError {
+        let errorDescription: String
+
+        init(errorDescription: String?) {
+            self.errorDescription = errorDescription ?? MailResourcesStrings.Localizable.errorUnknown
+        }
+    }
+}
+
 struct MessageReactionsView: View {
     @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @LazyInjectService private var snackbarPresenter: SnackBarPresentable
+
     @State private var reactions = [UIMessageReaction]()
     @State private var localReactions = OrderedSet<String>()
+    @State private var userReactions = Set<String>()
 
     let messageUid: String
+    let emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason?
     let messageReactions: RealmSwift.List<MessageReaction>
 
+    private var displayReactions: Bool {
+        return !messageReactions.isEmpty
+    }
+
+    private var emojiPickerButtonIsDisabled: Bool {
+        return emojiReactionNotAllowedReason != nil || userReactions.count >= 5
+    }
+
     var body: some View {
-        ReactionsListView(reactions: reactions, addReaction: addReaction)
-            .padding(.top, value: .small)
-            .padding([.horizontal, .bottom], value: .medium)
+        if displayReactions {
+            ReactionsListView(
+                reactions: reactions,
+                emojiPickerButtonIsDisabled: emojiPickerButtonIsDisabled,
+                addReaction: addReaction,
+                disabledOpenEmojiPickerButtonCompletion: didTapDisabledEmojiPickerButton
+            )
             .task(id: messageReactions) {
                 computeUIReactions()
             }
+        }
     }
 
     private func computeUIReactions() {
         var computedReactions = [UIMessageReaction]()
         var notHandledLocalReactions = localReactions
+        var computedUserReactions = Set<String>()
+
         for messageReaction in messageReactions {
             var authors = messageReaction.authors.compactMap { UIReactionAuthor(author: $0) }.toArray()
             var hasUserReacted = messageReaction.hasUserReacted
@@ -68,6 +98,9 @@ struct MessageReactionsView: View {
             }
             notHandledLocalReactions.remove(messageReaction.reaction)
 
+            if hasUserReacted {
+                computedUserReactions.insert(messageReaction.reaction)
+            }
             computedReactions.append(
                 UIMessageReaction(reaction: messageReaction.reaction, authors: authors, hasUserReacted: hasUserReacted)
             )
@@ -80,9 +113,17 @@ struct MessageReactionsView: View {
         }
 
         reactions = computedReactions
+        userReactions = computedUserReactions
     }
 
     private func addReaction(_ reaction: String) {
+        do {
+            try ensureUserCanReact(reaction: reaction)
+        } catch {
+            snackbarPresenter.show(message: error.errorDescription)
+            return
+        }
+
         localReactions.append(reaction)
         computeUIReactions()
 
@@ -93,6 +134,32 @@ struct MessageReactionsView: View {
             draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: true)
 
             // TODO: If it fails, remove from localReactions
+        }
+    }
+
+    private func didTapDisabledEmojiPickerButton() {
+        do {
+            try ensureUserCanReact()
+        } catch {
+            snackbarPresenter.show(message: error.errorDescription)
+        }
+    }
+
+    private func ensureUserCanReact(reaction: String? = nil) throws(ReactionError) {
+        if let emojiReactionNotAllowedReason {
+            throw ReactionError(errorDescription: emojiReactionNotAllowedReason.localizedDescription)
+        }
+
+        if let reaction, userReactions.contains(reaction) {
+            throw ReactionError(errorDescription: MailApiError.emojiReactionAlreadyUsed.errorDescription)
+        }
+
+        if userReactions.count >= 5 {
+            throw ReactionError(errorDescription: MailApiError.emojiReactionMaxReactionReached.errorDescription)
+        }
+
+        if ReachabilityListener.instance.currentStatus == .offline {
+            throw ReactionError(errorDescription: MailResourcesStrings.Localizable.noConnection)
         }
     }
 
@@ -117,6 +184,6 @@ struct MessageReactionsView: View {
 }
 
 #Preview {
-    MessageReactionsView(messageUid: "", messageReactions: PreviewHelper.reactions)
+    MessageReactionsView(messageUid: "", emojiReactionNotAllowedReason: nil, messageReactions: PreviewHelper.reactions)
         .environmentObject(PreviewHelper.sampleMailboxManager)
 }

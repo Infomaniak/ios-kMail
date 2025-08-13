@@ -32,11 +32,20 @@ public struct ReactionsListView: View {
     @State private var selectedEmoji: Emoji?
 
     let reactions: [UIMessageReaction]
+    let emojiPickerButtonIsDisabled: Bool
     let addReaction: (String) -> Void
+    let disabledOpenEmojiPickerButtonCompletion: (() -> Void)?
 
-    public init(reactions: [UIMessageReaction], addReaction: @escaping (String) -> Void) {
+    public init(
+        reactions: [UIMessageReaction],
+        emojiPickerButtonIsDisabled: Bool,
+        addReaction: @escaping (String) -> Void,
+        disabledOpenEmojiPickerButtonCompletion: (() -> Void)? = nil
+    ) {
         self.reactions = reactions
+        self.emojiPickerButtonIsDisabled = emojiPickerButtonIsDisabled
         self.addReaction = addReaction
+        self.disabledOpenEmojiPickerButtonCompletion = disabledOpenEmojiPickerButtonCompletion
     }
 
     public var body: some View {
@@ -49,9 +58,7 @@ public struct ReactionsListView: View {
                 }
             }
 
-            Button {
-                isShowingEmojiPicker = true
-            } label: {
+            Button(action: openEmojiPicker) {
                 Label {
                     Text(MailResourcesStrings.Localizable.contentDescriptionAddReaction)
                 } icon: {
@@ -73,6 +80,15 @@ public struct ReactionsListView: View {
         }
     }
 
+    private func openEmojiPicker() {
+        if emojiPickerButtonIsDisabled {
+            disabledOpenEmojiPickerButtonCompletion?()
+            return
+        }
+
+        isShowingEmojiPicker = true
+    }
+
     private func selectEmojiFromPicker(_ reaction: Emoji?) {
         guard let reaction else { return }
 
@@ -86,5 +102,5 @@ public struct ReactionsListView: View {
 }
 
 #Preview {
-    ReactionsListView(reactions: PreviewHelper.uiReactions) { _ in }
+    ReactionsListView(reactions: PreviewHelper.uiReactions, emojiPickerButtonIsDisabled: false) { _ in }
 }

@@ -42,7 +42,14 @@ public enum EmojiReactionNotAllowedReason: String, Decodable, PersistableEnum {
         self = EmojiReactionNotAllowedReason(rawValue: rawString) ?? .unknown
     }
 
-    public var error: MailApiError? {
+    public var localizedDescription: String {
+        guard let message = associatedError?.errorDescription else {
+            return MailResourcesStrings.Localizable.errorUnknown
+        }
+        return message
+    }
+
+    private var associatedError: MailApiError? {
         switch self {
         case .folderNotAllowedDraft:
             return .emojiReactionFolderNotAllowedDraft
@@ -65,12 +72,5 @@ public enum EmojiReactionNotAllowedReason: String, Decodable, PersistableEnum {
         case .unknown:
             return nil
         }
-    }
-
-    public var localizedDescription: String {
-        guard let errorDescription = error?.errorDescription else {
-            return MailResourcesStrings.Localizable.errorUnknown
-        }
-        return errorDescription
     }
 }
