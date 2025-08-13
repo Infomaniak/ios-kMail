@@ -33,6 +33,14 @@ public final class DraftManager {
     /// Used by DI only
     public init() {}
 
+    public enum ErrorDomain: Error {
+        case draftNotFound
+        case invalidDraftAction
+        case sendQuota
+        case cannotSendDraft
+        case missingIdentity
+    }
+
     public func syncDraft(
         mailboxManager: MailboxManager,
         showSnackbar: Bool,
@@ -63,7 +71,7 @@ public final class DraftManager {
                         case .save:
                             await self.saveDraftRemotely(draft: draft, mailboxManager: mailboxManager, showSnackbar: showSnackbar)
                         case .send, .sendReaction, .schedule:
-                            sendDate = await self.sendOrSchedule(
+                            sendDate = try? await self.sendOrSchedule(
                                 draft: draft,
                                 mailboxManager: mailboxManager,
                                 showSnackbar: showSnackbar,
@@ -90,6 +98,26 @@ public final class DraftManager {
             }
 
             try await refreshDraftFolder(latestSendDate: latestSendDate, mailboxManager: mailboxManager)
+        }
+    }
+
+    public func sendDraft(localUUID: String, mailboxManager: MailboxManager) async throws {
+        guard let liveDraft = mailboxManager.fetchObject(ofType: Draft.self, forPrimaryKey: localUUID) else {
+            throw ErrorDomain.draftNotFound
+        }
+
+        guard liveDraft.action == .send || liveDraft.action == .sendReaction else {
+            throw ErrorDomain.invalidDraftAction
+        }
+
+        let sendDate = try await sendOrSchedule(
+            draft: liveDraft.freezeIfNeeded(),
+            mailboxManager: mailboxManager,
+            showSnackbar: true
+        )
+
+        Task {
+            try? await refreshDraftFolder(latestSendDate: sendDate, mailboxManager: mailboxManager)
         }
     }
 
@@ -154,20 +182,21 @@ public final class DraftManager {
         mailboxManager: MailboxManager,
         retry: Bool = true,
         showSnackbar: Bool,
-        changeFolderAction: ((Folder) -> Void)?,
-        myKSuiteUpgradeAction: (() -> Void)? = nil
-    ) async -> Date? {
+        changeFolderAction: ((Folder) -> Void)? = nil,
+        myKSuiteUpgradeAction: (() -> Void)? = nil,
+    ) async throws -> Date? {
         showWillSendSnackbar(action: initialDraft.action, showSnackbar: showSnackbar)
 
         let draft = updateSubjectIfNeeded(draft: initialDraft)
 
-        var sendDate: Date?
         do {
             if draft.action == .send || draft.action == .sendReaction {
                 let sendResponse = try await mailboxManager.send(draft: draft)
-                sendDate = sendResponse.scheduledDate
+                let sendDate = sendResponse.scheduledDate
 
                 showDidSendSnackbar(draft: draft, showSnackbar: showSnackbar)
+
+                return sendDate
             } else if draft.action == .schedule {
                 let draftWithoutDelay = removeDelay(draft: draft)
                 let scheduleResponse = try await mailboxManager.schedule(draft: draftWithoutDelay)
@@ -181,6 +210,8 @@ public final class DraftManager {
                         showSnackbar: showSnackbar
                     )
                 }
+
+                return nil
             }
         } catch let error as MailApiError where error == .sentLimitReached {
             await handleSentQuotaError(
@@ -189,8 +220,9 @@ public final class DraftManager {
                 showSnackbar: showSnackbar,
                 myKSuiteUpgradeAction: myKSuiteUpgradeAction
             )
+            throw ErrorDomain.sendQuota
         } catch let error as MailApiError where error == .apiIdentityNotFound {
-            sendDate = await handleIdentityNotFoundError(
+            return try await handleIdentityNotFoundError(
                 failingDraft: draft,
                 mailboxManager: mailboxManager,
                 retry: retry,
@@ -199,9 +231,10 @@ public final class DraftManager {
             )
         } catch {
             alertDisplayable.show(message: error.localizedDescription, shouldShow: showSnackbar)
+            throw ErrorDomain.cannotSendDraft
         }
 
-        return sendDate
+        return nil
     }
 
     private func handleSentQuotaError(failingDraft draft: Draft,
@@ -227,19 +260,19 @@ public final class DraftManager {
                                              mailboxManager: MailboxManager,
                                              retry: Bool,
                                              showSnackbar: Bool,
-                                             changeFolderAction: ((Folder) -> Void)?) async -> Date? {
+                                             changeFolderAction: ((Folder) -> Void)?) async throws -> Date? {
         // Refresh signatures and retry with default signature on missing identity
         guard retry else {
             alertDisplayable.show(message: MailApiError.apiIdentityNotFound.localizedDescription, shouldShow: showSnackbar)
-            return nil
+            throw ErrorDomain.missingIdentity
         }
 
         try? await mailboxManager.refreshAllSignatures()
         guard let updatedDraft = await setDefaultSignature(draft: draft, mailboxManager: mailboxManager) else {
-            return nil
+            throw ErrorDomain.missingIdentity
         }
 
-        return await sendOrSchedule(
+        return try await sendOrSchedule(
             draft: updatedDraft,
             mailboxManager: mailboxManager,
             retry: false,

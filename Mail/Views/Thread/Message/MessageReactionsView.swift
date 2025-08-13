@@ -62,7 +62,7 @@ struct MessageReactionsView: View {
     let messageReactions: RealmSwift.List<MessageReaction>
 
     private var displayReactions: Bool {
-        return !messageReactions.isEmpty
+        return !messageReactions.isEmpty || emojiReactionNotAllowedReason == nil
     }
 
     private var emojiPickerButtonIsDisabled: Bool {
@@ -128,12 +128,17 @@ struct MessageReactionsView: View {
         computeUIReactions()
 
         Task {
-            await createReactingDraft(reaction)
+            guard let draft = await createReactingDraft(reaction) else {
+                cancelLocalReaction(reaction)
+                return
+            }
 
-            @InjectService var draftManager: DraftManager
-            draftManager.syncDraft(mailboxManager: mailboxManager, showSnackbar: true)
-
-            // TODO: If it fails, remove from localReactions
+            do {
+                @InjectService var draftManager: DraftManager
+                try await draftManager.sendDraft(localUUID: draft.localUUID, mailboxManager: mailboxManager)
+            } catch {
+                cancelLocalReaction(reaction)
+            }
         }
     }
 
@@ -163,9 +168,9 @@ struct MessageReactionsView: View {
         }
     }
 
-    private func createReactingDraft(_ reaction: String) async {
+    private func createReactingDraft(_ reaction: String) async -> Draft? {
         guard let liveMessage = mailboxManager.transactionExecutor.fetchObject(ofType: Message.self, forPrimaryKey: messageUid)
-        else { return }
+        else { return nil }
 
         let messageReply = MessageReply(frozenMessage: liveMessage.freezeIfNeeded(), replyMode: .reply)
 
@@ -180,6 +185,13 @@ struct MessageReactionsView: View {
             mailboxManager: mailboxManager
         )
         _ = try? await draftContentManager.prepareCompleteDraft(incompleteDraft: draft.freezeIfNeeded())
+
+        return draft
+    }
+
+    private func cancelLocalReaction(_ reaction: String) {
+        localReactions.remove(reaction)
+        computeUIReactions()
     }
 }
 
