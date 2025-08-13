@@ -55,7 +55,8 @@ public extension Endpoint {
     }
 
     private static var mailHost: Endpoint {
-        return Endpoint(hostKeypath: \.mailHost, path: "")
+        return Endpoint(host: "mail-mr-6689.preprod.dev.infomaniak.ch", path: "")
+//        return Endpoint(hostKeypath: \.mailHost, path: "")
     }
 
     private static var base: Endpoint {
