@@ -32,9 +32,9 @@ struct ReactionsDetailsView: View {
     @State private var selectedReaction: ReactionSelectionType?
     @State private var currentDetent = PresentationDetent.medium
 
-    private let reactions: [UIMessageReaction]
+    private let reactions: [UIReaction]
 
-    init(reactions: [UIMessageReaction], initialSelection: ReactionSelectionType? = nil) {
+    init(reactions: [UIReaction], initialSelection: ReactionSelectionType? = nil) {
         _selectedReaction = State(wrappedValue: initialSelection ?? .all)
         self.reactions = reactions
     }
@@ -59,7 +59,7 @@ struct ReactionsDetailsView: View {
 struct ReactionsDetailsBackportView: View {
     @State private var selectedReaction: ReactionSelectionType? = .all
 
-    let reactions: [UIMessageReaction]
+    let reactions: [UIReaction]
     var initialSelection: ReactionSelectionType?
 
     var body: some View {

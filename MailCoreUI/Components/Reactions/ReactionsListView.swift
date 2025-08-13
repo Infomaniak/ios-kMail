@@ -24,20 +24,18 @@ import RealmSwift
 import SwiftUI
 
 public struct ReactionsListView: View {
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
     @State private var selectedReactionToDisplay: ReactionSelectionType?
 
     @State private var isShowingEmojiPicker = false
     @State private var selectedEmoji: Emoji?
 
-    let reactions: [UIMessageReaction]
+    let reactions: [UIReaction]
     let emojiPickerButtonIsDisabled: Bool
     let addReaction: (String) -> Void
     let disabledOpenEmojiPickerButtonCompletion: (() -> Void)?
 
     public init(
-        reactions: [UIMessageReaction],
+        reactions: [UIReaction],
         emojiPickerButtonIsDisabled: Bool,
         addReaction: @escaping (String) -> Void,
         disabledOpenEmojiPickerButtonCompletion: (() -> Void)? = nil
@@ -62,12 +60,13 @@ public struct ReactionsListView: View {
                 Label {
                     Text(MailResourcesStrings.Localizable.contentDescriptionAddReaction)
                 } icon: {
-                    MailResourcesAsset.faceSlightlySmilingCirclePlus.swiftUIImage
+                    MailResourcesAsset.faceSlightlySmilingCirclePlus
                         .iconSize(.large)
                 }
                 .labelStyle(.iconOnly)
+                .padding(value: .micro)
             }
-            .buttonStyle(.reaction(isEnabled: false, padding: EdgeInsets(top: 4, leading: 8, bottom: 4, trailing: 8)))
+            .tint(emojiPickerButtonIsDisabled ? MailResourcesAsset.textTertiaryColor.swiftUIColor : Color.accentColor)
             .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $selectedEmoji)
             .onChange(of: selectedEmoji, perform: selectEmojiFromPicker)
         }
@@ -96,7 +95,7 @@ public struct ReactionsListView: View {
         selectedEmoji = nil
     }
 
-    private func didLongPressReaction(_ reaction: UIMessageReaction) {
+    private func didLongPressReaction(_ reaction: UIReaction) {
         selectedReactionToDisplay = .reaction(reaction.emoji)
     }
 }

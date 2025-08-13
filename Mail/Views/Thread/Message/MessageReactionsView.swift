@@ -53,7 +53,7 @@ struct MessageReactionsView: View {
 
     @LazyInjectService private var snackbarPresenter: SnackBarPresentable
 
-    @State private var reactions = [UIMessageReaction]()
+    @State private var reactions = [UIReaction]()
     @State private var localReactions = OrderedSet<String>()
     @State private var userReactions = Set<String>()
 
@@ -84,7 +84,7 @@ struct MessageReactionsView: View {
     }
 
     private func computeUIReactions() {
-        var computedReactions = [UIMessageReaction]()
+        var computedReactions = [UIReaction]()
         var notHandledLocalReactions = localReactions
         var computedUserReactions = Set<String>()
 
@@ -102,13 +102,13 @@ struct MessageReactionsView: View {
                 computedUserReactions.insert(messageReaction.reaction)
             }
             computedReactions.append(
-                UIMessageReaction(reaction: messageReaction.reaction, authors: authors, hasUserReacted: hasUserReacted)
+                UIReaction(reaction: messageReaction.reaction, authors: authors, hasUserReacted: hasUserReacted)
             )
         }
 
         for reaction in notHandledLocalReactions {
             computedReactions.append(
-                UIMessageReaction(reaction: reaction, authors: [UIReactionAuthor(user: currentUser.value)], hasUserReacted: true)
+                UIReaction(reaction: reaction, authors: [UIReactionAuthor(user: currentUser.value)], hasUserReacted: true)
             )
         }
 

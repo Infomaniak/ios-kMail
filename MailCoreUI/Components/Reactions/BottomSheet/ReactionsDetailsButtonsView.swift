@@ -42,7 +42,7 @@ struct ReactionsDetailsButtonsView: View {
 
     @Binding var currentSelection: ReactionSelectionType?
 
-    let reactions: [UIMessageReaction]
+    let reactions: [UIReaction]
 
     var body: some View {
         ZStack(alignment: .bottom) {
