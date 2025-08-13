@@ -71,7 +71,7 @@ struct MessageView: View {
                         displayContentBlockedActionView: $displayContentBlockedActionView
                     )
 
-                    VStack(alignment: .leading, spacing: 0) {
+                    VStack(alignment: .leading, spacing: IKPadding.small) {
                         MessageBodyView(
                             displayContentBlockedActionView: $displayContentBlockedActionView,
                             isRemoteContentBlocked: isRemoteContentBlocked,
@@ -84,6 +84,7 @@ struct MessageView: View {
                                 emojiReactionNotAllowedReason: message.emojiReactionNotAllowedReason,
                                 messageReactions: message.reactions
                             )
+                            .padding([.horizontal, .bottom], value: .medium)
                         }
                     }
                 }
