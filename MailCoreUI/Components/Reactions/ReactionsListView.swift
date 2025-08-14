@@ -18,7 +18,6 @@
 
 import DesignSystem
 import ElegantEmojiPicker
-import MailCore
 import MailResources
 import RealmSwift
 import SwiftUI
