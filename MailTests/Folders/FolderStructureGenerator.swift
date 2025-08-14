@@ -209,7 +209,8 @@ final class InMemoryRealmAccessor: RealmAccessible {
             File.self,
             MessageUid.self,
             MessageHeaders.self,
-            MessageReactions.self
+            MessageReaction.self,
+            ReactionAuthor.self
         ])
 
         // It's a unit test
