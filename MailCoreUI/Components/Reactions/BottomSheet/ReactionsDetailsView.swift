@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreSwiftUI
 import MailResources
 import SwiftUI
@@ -43,6 +44,7 @@ struct ReactionsDetailsView: View {
         IKFloatingPanelView(
             currentDetent: $currentDetent,
             title: MailResourcesStrings.Localizable.reactionsTitle,
+            topPadding: IKPadding.large,
             bottomPadding: 0,
             detents: Set([.medium, .large]),
             dragIndicator: .visible
@@ -65,6 +67,7 @@ struct ReactionsDetailsBackportView: View {
     var body: some View {
         IKFloatingPanelBackportView(
             title: MailResourcesStrings.Localizable.reactionsTitle,
+            topPadding: IKPadding.large,
             bottomPadding: 0,
             detents: Set([.medium, .large]),
             dragIndicator: .visible
