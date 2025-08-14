@@ -104,23 +104,19 @@ final class NotificationService: UNNotificationServiceExtension {
 
             await NotificationsHelper.clearAlreadyReadNotifications(shouldWait: true)
 
-            if let fromRecipient = fetchedMessage.from.first,
-               let communicationNotification = await NotificationsHelper.generateCommunicationNotificationFor(
-                   message: fetchedMessage,
-                   fromRecipient: fromRecipient,
-                   mailboxManager: mailboxManager,
-                   incompleteNotification: bestAttemptContent
-               ) {
-                accountManager.removeCachedProperties()
-                contentHandler(communicationNotification)
-            } else {
-                let normalNotification = await NotificationsHelper.generateNotificationFor(
-                    message: fetchedMessage,
-                    incompleteNotification: bestAttemptContent
-                )
-                accountManager.removeCachedProperties()
-                contentHandler(normalNotification)
-            }
+            let completeNotification = await NotificationsHelper.generateCompleteNotification(
+                fetchedMessage: fetchedMessage,
+                mailboxManager: mailboxManager,
+                incompleteNotification: bestAttemptContent
+            )
+
+            await NotificationsHelper.updateMessagePreview(
+                with: completeNotification,
+                message: fetchedMessage,
+                mailboxManager: mailboxManager
+            )
+            accountManager.removeCachedProperties()
+            contentHandler(completeNotification)
         }
     }
 
