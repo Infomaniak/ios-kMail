@@ -19,6 +19,7 @@
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreDB
+import InfomaniakDI
 import MailResources
 import RealmSwift
 import Sentry
@@ -272,6 +273,16 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     public var isMovable: Bool {
         return !isDraft && !(isScheduledDraft ?? false)
+    }
+
+    public var canExecuteAction: Bool {
+        var canExecuteAction = !isDraft
+        @InjectService var featureAvailableProvider: FeatureAvailableProvider
+        if featureAvailableProvider.isAvailable(.emojiReaction) {
+            canExecuteAction = canExecuteAction && isDisplayable == true
+        }
+
+        return canExecuteAction
     }
 
     public func fromMe(currentMailboxEmail: String) -> Bool {
