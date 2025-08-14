@@ -63,10 +63,15 @@ public extension Endpoint {
     }
 
     static var mailboxes: Endpoint {
-        return .base.appending(
-            path: "/mailbox",
+        return Endpoint(
+            host: "mail-mr-6962.preprod.dev.infomaniak.ch",
+            path: "/api/mailbox",
             queryItems: [URLQueryItem(name: "with", value: "unseen,aliases")]
         )
+//        return .base.appending(
+//            path: "/mailbox",
+//            queryItems: [URLQueryItem(name: "with", value: "unseen,aliases")]
+//        )
     }
 
     internal static func mailbox(uuid: String) -> Endpoint {

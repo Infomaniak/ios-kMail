@@ -44,7 +44,8 @@ let packageSettings = PackageSettings(
         "SwiftUIIntrospect": .framework,
         "VersionChecker": .framework,
         "WrappingHStack": .framework,
-        "MyKSuite": .framework
+        "MyKSuite": .framework,
+        "KSuite": .framework
     ]
 )
 
@@ -64,7 +65,7 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/ios-bug-tracker", .upToNextMajor(from: "13.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-version-checker", .upToNextMajor(from: "12.0.0")),
         .package(url: "https://github.com/Infomaniak/ios-device-check", .upToNextMajor(from: "1.1.0")),
-        .package(url: "https://github.com/Infomaniak/ios-features", .upToNextMajor(from: "3.0.0")),
+        .package(url: "https://github.com/Infomaniak/ios-features", branch: "ksuite"),
         .package(url: "https://github.com/Infomaniak/ios-onboarding", .upToNextMajor(from: "1.1.0")),
         .package(url: "https://github.com/Infomaniak/swift-modal-presentation", .upToNextMajor(from: "1.0.0")),
         .package(url: "https://github.com/Infomaniak/SwiftSoup", .upToNextMajor(from: "1.3.0")),
