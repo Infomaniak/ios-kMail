@@ -18,6 +18,7 @@
 
 import DesignSystem
 import InfomaniakCoreSwiftUI
+import Lottie
 import MailCore
 import MailCoreUI
 import MailResources
@@ -33,8 +34,9 @@ struct AIHeaderView: View {
     var body: some View {
         HStack(spacing: IKPadding.mini) {
             if style == .bottomSheet {
-                MailResourcesAsset.aiWriter
-                    .iconSize(.large)
+                LottieView(animation: LottieAnimation.named("Euria", bundle: MailResourcesResources.bundle))
+                    .playing(loopMode: .loop)
+                    .frame(width: 24, height: 24)
                     .foregroundStyle(MailResourcesAsset.aiColor)
             }
 
