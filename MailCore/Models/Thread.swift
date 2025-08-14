@@ -324,7 +324,6 @@ public class Thread: Object, Decodable, Identifiable {
 
 public extension Thread {
     typealias MessageId = String
-    typealias SourceMessagesByReaction = OrderedDictionary<String, [MessageId]>
 
     /// Re-generate `Thread` properties given the messages it contains.
     func recomputeOrFail(currentAccountEmail: String) throws {
@@ -342,14 +341,9 @@ public extension Thread {
         date = lastMessageFromFolder.date
         isLastMessageFromFolderSnoozed = lastMessageFromFolder.isSnoozed
 
-        var messagesById = [MessageId: Message]()
-        var reactionsByMessageId = [MessageId: SourceMessagesByReaction]()
+        let messagesById = getMessageById(messages: messages)
 
         for message in messages {
-            if let messageId = message.messageId {
-                messagesById[messageId] = message
-            }
-
             messageIds.insert(objectsIn: message.linkedUids)
             from.append(objectsIn: message.from.detached())
             to.append(objectsIn: message.to.detached())
@@ -379,8 +373,11 @@ public extension Thread {
             if message.isScheduledDraft == true {
                 numberOfScheduledDraft += 1
             }
-            if message.isReaction {
-                getReactionMessage(message, reactions: &reactionsByMessageId)
+            if message.isReaction && applyReactionIfPossible(
+                from: message,
+                messagesById: messagesById,
+                currentAccountEmail: currentAccountEmail
+            ) {
                 message.isDisplayable = false
             } else {
                 messagesToDisplay.append(message)
@@ -395,8 +392,6 @@ public extension Thread {
             }
             updateSnooze(from: duplicate)
         }
-
-        computeReactionsForMessages(reactionsByMessageId, messagesById: messagesById, currentAccountEmail: currentAccountEmail)
     }
 
     private func resetThread() {
@@ -419,48 +414,41 @@ public extension Thread {
         snoozeEndDate = nil
     }
 
-    private func getReactionMessage(_ message: Message, reactions: inout [MessageId: SourceMessagesByReaction]) {
+    private func applyReactionIfPossible(from message: Message, messagesById: [MessageId: Message],
+                                         currentAccountEmail: String) -> Bool {
         guard let emojiReaction = message.emojiReaction,
-              let targetMessageIds = message.inReplyTo?.parseMessageIds(),
-              let sourceMessageId = message.messageId
-        else { return }
+              let targetMessageIds = message.inReplyTo?.parseMessageIds()
+        else { return false }
 
+        var hasBeenApplied = false
         for targetMessageId in targetMessageIds {
-            var reactionsForTarget = reactions[targetMessageId] ?? [:]
-            var sourceMessageIds = reactionsForTarget[emojiReaction] ?? []
-            sourceMessageIds.append(sourceMessageId)
+            guard let targetMessage = messagesById[targetMessageId] else {
+                continue
+            }
 
-            reactionsForTarget[emojiReaction] = sourceMessageIds
-            reactions[targetMessageId] = reactionsForTarget
-        }
-    }
-
-    private func computeReactionsForMessages(
-        _ reactions: [MessageId: SourceMessagesByReaction],
-        messagesById: [MessageId: Message],
-        currentAccountEmail: String
-    ) {
-        for (targetMessageId, reactions) in reactions {
-            guard let targetMessage = messagesById[targetMessageId] else { continue }
-
-            for (emojiReaction, sourceMessageIds) in reactions {
-                var hasUserReacted = false
-                var authors = [ReactionAuthor]()
-                for sourceMessageId in sourceMessageIds {
-                    guard let sourceMessage = messagesById[sourceMessageId] else { continue }
-
-                    for recipient in sourceMessage.from {
-                        authors.append(ReactionAuthor(recipient: recipient.detached(), bimi: sourceMessage.bimi?.detached()))
-                        if recipient.isCurrentUser(currentAccountEmail: currentAccountEmail) {
-                            hasUserReacted = true
-                        }
-                    }
+            var hasUserReacted = false
+            var authors = [ReactionAuthor]()
+            for recipient in message.from {
+                authors.append(ReactionAuthor(recipient: recipient.detached(), bimi: message.bimi?.detached()))
+                if recipient.isCurrentUser(currentAccountEmail: currentAccountEmail) {
+                    hasUserReacted = true
                 }
+            }
 
+            if let emojiReaction = targetMessage.reactions.where({ $0.reaction == emojiReaction }).first {
+                emojiReaction.authors.append(objectsIn: authors)
+                if hasUserReacted {
+                    emojiReaction.hasUserReacted = true
+                }
+            } else {
                 let messageReaction = MessageReaction(reaction: emojiReaction, authors: authors, hasUserReacted: hasUserReacted)
                 targetMessage.reactions.append(messageReaction)
             }
+
+            hasBeenApplied = true
         }
+
+        return hasBeenApplied
     }
 
     private func updateSnooze(from message: Message) {
@@ -469,6 +457,16 @@ public extension Thread {
         snoozeState = messageSnoozeState
         snoozeUuid = message.snoozeUuid
         snoozeEndDate = message.snoozeEndDate
+    }
+
+    private func getMessageById(messages: List<Message>) -> [MessageId: Message] {
+        var messageById = [MessageId: Message]()
+        for message in messages {
+            guard let messageId = message.messageId else { continue }
+            messageById[messageId] = message
+        }
+
+        return messageById
     }
 }
 
