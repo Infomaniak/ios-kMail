@@ -25,11 +25,11 @@ import SwiftUI
 
 struct MobileMainToolbarView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
-    @EnvironmentObject private var mainViewState: MainViewState
 
     @Binding var isShowingClassicOptions: Bool
     @Binding var isShowingFormattingOptions: Bool
     @Binding var isShowingAI: Bool
+    @Binding var isShowingKSuiteProPanel: Bool
     @Binding var isShowingEncryptStatePanel: Bool
 
     let draft: Draft
@@ -108,7 +108,7 @@ struct MobileMainToolbarView: View {
             }
         case .ai:
             if mailboxManager.mailbox.isKsuiteEssential {
-                mainViewState.isShowingKSuiteProUpgrade = true
+                isShowingKSuiteProPanel = true
             } else {
                 isShowingAI = true
             }
@@ -133,6 +133,7 @@ struct MobileMainToolbarView: View {
         isShowingClassicOptions: .constant(true),
         isShowingFormattingOptions: .constant(false),
         isShowingAI: .constant(false),
+        isShowingKSuiteProPanel: .constant(false),
         isShowingEncryptStatePanel: .constant(false),
         draft: Draft(),
         isEditorFocused: true

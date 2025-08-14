@@ -22,6 +22,7 @@ import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import InfomaniakRichHTMLEditor
+import KSuite
 import MailCore
 import MailCoreUI
 import MailResources
@@ -85,6 +86,7 @@ struct ComposeMessageView: View {
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
     @State private var isShowingSchedulePanel = false
+    @State private var isShowingKSuiteProPanel = false
 
     @State private var isShowingEncryptStatePanel = false
 
@@ -218,6 +220,7 @@ struct ComposeMessageView: View {
                 EditorMobileToolbarView(
                     textAttributes: textAttributes,
                     isShowingAI: $aiModel.isShowingPrompt,
+                    isShowingKSuiteProPanel: $isShowingKSuiteProPanel,
                     isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
                     draft: draft,
                     isEditorFocused: focusedField == .editor
@@ -346,6 +349,11 @@ struct ComposeMessageView: View {
         .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {
             AIPromptView(aiModel: aiModel)
         }
+        .kSuitePanel(
+            isPresented: $isShowingKSuiteProPanel,
+            configuration: .standard,
+            isAdmin: mailboxManager.mailbox.ownerOrAdmin
+        )
         .sheet(isPresented: $aiModel.isShowingProposition) {
             AIPropositionView(aiModel: aiModel)
         }
