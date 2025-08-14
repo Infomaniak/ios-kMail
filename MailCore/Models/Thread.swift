@@ -373,11 +373,12 @@ public extension Thread {
             if message.isScheduledDraft == true {
                 numberOfScheduledDraft += 1
             }
-            if message.isReaction && applyReactionIfPossible(
-                from: message,
-                messagesById: messagesById,
-                currentAccountEmail: currentAccountEmail
-            ) {
+            if message.isReaction,
+               message.isDraft || applyReactionIfPossible(
+                   from: message,
+                   messagesById: messagesById,
+                   currentAccountEmail: currentAccountEmail
+               ) {
                 message.isDisplayable = false
             } else {
                 messagesToDisplay.append(message)
