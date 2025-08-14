@@ -31,7 +31,7 @@ public protocol FeatureAvailableProvider: Sendable {
 struct FeatureAvailableService: FeatureAvailableProvider {
     @LazyInjectService private var featureFlagManageable: FeatureFlagsManageable
 
-    public func isAvailable(_ feature: AppFeature) -> Bool {
+    func isAvailable(_ feature: AppFeature) -> Bool {
         switch feature {
         case .snooze:
             return isSnoozeAvailable()

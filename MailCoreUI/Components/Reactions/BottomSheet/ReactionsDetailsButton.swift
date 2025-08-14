@@ -16,7 +16,6 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import MailResources
 import SwiftUI
 
 struct ReactionsDetailsButton: View {
@@ -27,10 +26,6 @@ struct ReactionsDetailsButton: View {
     let namespace: Namespace.ID
 
     private static let geometryEffect = "SelectedCapsule"
-
-    private var isSelected: Bool {
-        currentSelection == selectionType
-    }
 
     private let animation = Animation.default.speed(2)
 

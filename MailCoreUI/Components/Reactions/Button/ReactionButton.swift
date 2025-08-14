@@ -17,7 +17,6 @@
  */
 
 import DesignSystem
-import MailCore
 import MailResources
 import SwiftUI
 
@@ -70,13 +69,13 @@ struct ReactionButton: View {
     HStack {
         ReactionButton(
             reaction: UIReaction(reaction: "😄", authors: [], hasUserReacted: false),
-            didTapButton: { },
-            didLongPressButton: { }
+            didTapButton: {},
+            didLongPressButton: {}
         )
         ReactionButton(
             reaction: UIReaction(reaction: "❤️", authors: [], hasUserReacted: true),
-            didTapButton: { },
-            didLongPressButton: { }
+            didTapButton: {},
+            didLongPressButton: {}
         )
     }
 }

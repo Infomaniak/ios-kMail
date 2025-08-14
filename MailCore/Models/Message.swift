@@ -52,7 +52,7 @@ public extension String {
     }
 }
 
-public extension Collection where Element == Message {
+public extension Collection<Message> {
     func sortedByDate() -> [Message] {
         sorted { $0.internalDate.compare($1.internalDate) == .orderedAscending }
     }
