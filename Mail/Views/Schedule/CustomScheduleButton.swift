@@ -19,6 +19,7 @@
 import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakDI
+import KSuite
 import MailCore
 import MailCoreUI
 import MailResources
@@ -33,6 +34,7 @@ struct CustomScheduleButton: View {
 
     @Binding var isShowingCustomScheduleAlert: Bool
     @Binding var isShowingMyKSuiteUpgrade: Bool
+    @Binding var isShowingKSuiteProUpgrade: Bool
 
     let type: ScheduleType
 
@@ -48,6 +50,8 @@ struct CustomScheduleButton: View {
 
                 if mailboxManager.mailbox.isMyKSuiteFree {
                     MyKSuitePlusChip()
+                } else if mailboxManager.mailbox.isKsuiteEssential {
+                    KSuiteProUpgradeChip()
                 }
 
                 ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor)
@@ -61,6 +65,10 @@ struct CustomScheduleButton: View {
             let eventName = type == .scheduledDraft ? "scheduledCustomDate" : "snoozeCustomDate"
             matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: eventName)
             isShowingMyKSuiteUpgrade = true
+        } else if mailboxManager.mailbox.isKsuiteEssential {
+            let eventName = type == .scheduledDraft ? "scheduledCustomDate" : "snoozeCustomDate"
+            matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: eventName)
+            isShowingKSuiteProUpgrade = true
         } else {
             matomo.track(eventWithCategory: type.matomoCategory, name: "customSchedule")
             isShowingCustomScheduleAlert = true
@@ -74,6 +82,7 @@ struct CustomScheduleButton: View {
     CustomScheduleButton(
         isShowingCustomScheduleAlert: .constant(true),
         isShowingMyKSuiteUpgrade: .constant(false),
+        isShowingKSuiteProUpgrade: .constant(false),
         type: .scheduledDraft
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
