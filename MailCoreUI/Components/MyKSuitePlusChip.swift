@@ -24,7 +24,7 @@ public struct MyKSuitePlusChip: View {
     public init() {}
 
     public var body: some View {
-        MyKSuiteResources.Assets.myKSuitePlusLogo.swiftUIImage
+        MyKSuiteResources.myKSuitePlusLogo.swiftUIImage
             .padding(.horizontal, value: .mini)
             .padding(.vertical, value: .micro)
             .background(MailResourcesAsset.myKSuiteBackgroundColor.swiftUIColor)
