@@ -12,21 +12,25 @@ let packageSettings = PackageSettings(
         "Atlantis": .staticFramework,
         "DesignSystem": .framework,
         "DeviceAssociation": .framework,
+        "ElegantEmojiPicker": .framework,
         "InfomaniakBugTracker": .framework,
         "InfomaniakConcurrency": .staticFramework,
-        "InfomaniakDeviceCheck": .staticFramework,
         "InfomaniakCoreCommonUI": .framework,
         "InfomaniakCoreDB": .framework,
         "InfomaniakCoreSwiftUI": .framework,
         "InfomaniakCoreUIKit": .framework,
         "InfomaniakCore": .framework,
         "InfomaniakCreateAccount": .framework,
+        "InfomaniakDeviceCheck": .staticFramework,
         "InfomaniakDI": .framework,
-        "InterAppLogin": .framework,
         "InfomaniakLogin": .framework,
         "InfomaniakNotifications": .framework,
         "InfomaniakOnboarding": .framework,
         "InfomaniakRichHTMLEditor": .framework,
+        "InterAppLogin": .framework,
+        "KSuiteUtils": .framework,
+        "KSuite": .framework,
+        "MyKSuite": .framework,
         "NavigationBackport": .framework,
         "NukeUI": .framework,
         "Nuke": .framework,
@@ -44,9 +48,7 @@ let packageSettings = PackageSettings(
         "SwiftUIBackports": .framework,
         "SwiftUIIntrospect": .framework,
         "VersionChecker": .framework,
-        "WrappingHStack": .framework,
-        "MyKSuite": .framework,
-        "ElegantEmojiPicker": .framework
+        "WrappingHStack": .framework
     ]
 )
 
