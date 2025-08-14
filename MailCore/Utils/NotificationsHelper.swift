@@ -217,6 +217,28 @@ public enum NotificationsHelper {
         return incompleteNotification
     }
 
+    public static func generateCompleteNotification(
+        fetchedMessage: Message,
+        mailboxManager: MailboxManager,
+        incompleteNotification: UNMutableNotificationContent
+    ) async -> UNNotificationContent {
+        if let fromRecipient = fetchedMessage.from.first,
+           let communicationNotification = await generateCommunicationNotificationFor(
+               message: fetchedMessage,
+               fromRecipient: fromRecipient,
+               mailboxManager: mailboxManager,
+               incompleteNotification: incompleteNotification
+           ) {
+            return communicationNotification
+        } else {
+            let normalNotification = await generateNotificationFor(
+                message: fetchedMessage,
+                incompleteNotification: incompleteNotification
+            )
+            return normalNotification
+        }
+    }
+
     public static func generateCommunicationNotificationFor(
         message: Message,
         fromRecipient: Recipient,
@@ -269,15 +291,17 @@ public enum NotificationsHelper {
         }
     }
 
-    public static func prepareCleanPreview(message: Message, with mailboxManager: MailboxManager) async {
-        let cleanBody = await NotificationsHelper.getCleanBodyFrom(message: message)
-
+    public static func updateMessagePreview(
+        with notification: UNNotificationContent,
+        message: Message,
+        mailboxManager: MailboxManager
+    ) async {
         try? mailboxManager.writeTransaction { realm in
             guard let liveMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else {
                 return
             }
 
-            liveMessage.preview = String(cleanBody.prefix(512))
+            liveMessage.preview = String(notification.body.prefix(512))
         }
     }
 
