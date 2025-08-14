@@ -43,12 +43,6 @@ struct AIHeaderView: View {
             Text(MailResourcesStrings.Localizable.aiPromptTitle)
                 .font(style == .bottomSheet ? MailTextStyle.header2.font : .headline)
                 .foregroundStyle(MailTextStyle.header2.color)
-
-            Text(MailResourcesStrings.Localizable.aiPromptTag)
-                .tagModifier(
-                    foregroundColor: MailResourcesAsset.backgroundSecondaryColor,
-                    backgroundColor: MailResourcesAsset.aiColor
-                )
         }
     }
 }

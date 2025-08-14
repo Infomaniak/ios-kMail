@@ -193,8 +193,7 @@
 /* loco:6501840ef58ecb8b620adb23 */
 "aiPromptPlaceholder" = "Comunica all’assistente di scrittura cosa vuoi scrivere. Ad esempio, \"%@\".";
 
-/* loco:6501834aa4abf8d77708b7b5 */
-"aiPromptTag" = "Beta";
+
 
 /* loco:65017fa44f4fa3e3b902d043 */
 "aiPromptTitle" = "Euria";
