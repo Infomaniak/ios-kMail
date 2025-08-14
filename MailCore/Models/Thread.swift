@@ -373,7 +373,8 @@ public extension Thread {
             if message.isScheduledDraft == true {
                 numberOfScheduledDraft += 1
             }
-            if message.isReaction,
+            if UserDefaults.shared.threadMode == .conversation,
+               message.isReaction,
                message.isDraft || applyReactionIfPossible(
                    from: message,
                    messagesById: messagesById,
