@@ -24,6 +24,9 @@ import MailCoreUI
 import SwiftUI
 
 struct MobileMainToolbarView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+    @EnvironmentObject private var mainViewState: MainViewState
+
     @Binding var isShowingClassicOptions: Bool
     @Binding var isShowingFormattingOptions: Bool
     @Binding var isShowingAI: Bool
@@ -104,7 +107,11 @@ struct MobileMainToolbarView: View {
                 isShowingFormattingOptions = true
             }
         case .ai:
-            isShowingAI = true
+            if mailboxManager.mailbox.isKsuiteEssential {
+                mainViewState.isShowingKSuiteProUpgrade = true
+            } else {
+                isShowingAI = true
+            }
         case .link, .bold, .underline, .italic, .strikeThrough, .cancelFormat, .unorderedList:
             break
         case .addAttachment, .addFile, .addPhoto, .takePhoto, .encryption:
