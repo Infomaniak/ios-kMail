@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2024 Infomaniak Network SA
+ Copyright (C) 2025 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -17,32 +17,22 @@
  */
 
 import DesignSystem
-import InfomaniakCoreSwiftUI
 import Lottie
-import MailCore
 import MailResources
 import SwiftUI
 
-struct AIHeaderView: View {
-    enum Style {
-        case bottomSheet, sheet
-    }
-
-    let style: Style
+struct EuriaAnimationView: View {
+    var size = IKIconSize.large
 
     var body: some View {
-        HStack(spacing: IKPadding.mini) {
-            if style == .bottomSheet {
-                EuriaAnimationView()
-            }
-
-            Text(MailResourcesStrings.Localizable.aiPromptTitle)
-                .font(style == .bottomSheet ? MailTextStyle.header2.font : .headline)
-                .foregroundStyle(MailTextStyle.header2.color)
+        LottieView {
+            try await LottieAnimationSource.dotLottieFile(.named("euria", bundle: MailResourcesResources.bundle))
         }
+        .playing(loopMode: .loop)
+        .frame(width: size.rawValue, height: size.rawValue)
     }
 }
 
 #Preview {
-    AIHeaderView(style: .bottomSheet)
+    EuriaAnimationView()
 }

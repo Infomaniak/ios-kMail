@@ -19,29 +19,18 @@
 import DesignSystem
 import InfomaniakCoreSwiftUI
 import Lottie
-import MailResources
 import SwiftUI
 
 struct AIToolbarButton: View {
     let action: @MainActor () -> Void
-    
+
     var body: some View {
         Button(action: action) {
-            Label {
-                Text(MailResourcesStrings.Localizable.aiDiscoveryTitle)
-            } icon: {
-                LottieView(animation: LottieAnimation.named("Euria", bundle: MailResourcesResources.bundle))
-                    .playing(loopMode: .loop)
-                    .frame(width: MobileToolbarButtonStyle.iconSize.rawValue, height: MobileToolbarButtonStyle.iconSize.rawValue)
-            }
+            EuriaAnimationView(size: MobileToolbarButtonStyle.iconSize)
         }
-        .buttonStyle(.mobileToolbar(isActivated: false, customTint: MailResourcesAsset.aiColor.swiftUIColor))
-        .animation(nil, value: false)
     }
 }
 
 #Preview {
-    AIToolbarButton {
-        // Preview action
-    }
+    AIToolbarButton {}
 }

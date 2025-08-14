@@ -80,7 +80,6 @@ struct MobileMainToolbarView: View {
                 AIToolbarButton {
                     performToolbarAction(action)
                 }
-                .disabled(isDisabled(action))
             default:
                 MobileToolbarButton(toolbarAction: action, isActivated: false, customTint: action.customTint) {
                     performToolbarAction(action)
