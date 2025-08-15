@@ -18,6 +18,8 @@
 
 import DesignSystem
 import ElegantEmojiPicker
+import InfomaniakCoreCommonUI
+import InfomaniakDI
 import MailResources
 import RealmSwift
 import SwiftUI
@@ -49,7 +51,7 @@ public struct ReactionsListView: View {
         BackportedFlowLayout(verticalSpacing: IKPadding.mini, horizontalSpacing: IKPadding.mini) {
             ForEach(reactions) { reaction in
                 ReactionButton(reaction: reaction) {
-                    addReaction(reaction.emoji)
+                    didTapReactionButton(reaction)
                 } didLongPressButton: {
                     didLongPressReaction(reaction)
                 }
@@ -78,7 +80,19 @@ public struct ReactionsListView: View {
         }
     }
 
+    private func didTapReactionButton(_ reaction: UIReaction) {
+        @InjectService var matomo: MatomoUtils
+        let eventName = reaction.hasUserReacted ? "alreadyUsedReaction" : "addReactionFromChip"
+        matomo.track(eventWithCategory: .emojiReactions, name: eventName)
+
+        addReaction(reaction.emoji)
+    }
+
     private func openEmojiPicker() {
+        @InjectService var matomo: MatomoUtils
+        let eventName = emojiPickerButtonIsDisabled ? "openEmojiPickerDisabled" : "openEmojiPicker"
+        matomo.track(eventWithCategory: .emojiReactions, name: eventName)
+
         if emojiPickerButtonIsDisabled {
             disabledOpenEmojiPickerButtonCompletion?()
             return
@@ -90,11 +104,16 @@ public struct ReactionsListView: View {
     private func selectEmojiFromPicker(_ reaction: Emoji?) {
         guard let reaction else { return }
 
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .emojiReactions, name: "addReactionFromPicker")
+
         addReaction(reaction.emoji)
         selectedEmoji = nil
     }
 
     private func didLongPressReaction(_ reaction: UIReaction) {
+        @InjectService var matomo: MatomoUtils
+        matomo.track(eventWithCategory: .emojiReactions, action: .longPress, name: "showReactionsBottomSheet")
         selectedReactionToDisplay = .reaction(reaction.emoji)
     }
 }
