@@ -47,7 +47,7 @@ struct EmojiPickerViewModifier: ViewModifier {
             .RecentlyUsed: MailResourcesStrings.Localizable.emojiPickerCategoryRecentlyUsed,
             .SmileysAndEmotion: MailResourcesStrings.Localizable.emojiPickerCategorySmileysAndEmotion,
             .PeopleAndBody: MailResourcesStrings.Localizable.emojiPickerCategoryPeopleAndBody,
-            .AnimalsAndNature: MailResourcesStrings.Localizable.emojiPickerCategoryPeopleAndBody,
+            .AnimalsAndNature: MailResourcesStrings.Localizable.emojiPickerCategoryAnimalsAndNature,
             .FoodAndDrink: MailResourcesStrings.Localizable.emojiPickerCategoryFoodAndDrink,
             .TravelAndPlaces: MailResourcesStrings.Localizable.emojiPickerCategoryTravelAndPlaces,
             .Activities: MailResourcesStrings.Localizable.emojiPickerCategoryActivities,
