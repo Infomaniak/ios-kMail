@@ -75,7 +75,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 45,
+            schemaVersion: 46,
             migrationBlock: { migration, oldSchemaVersion in
                 // No migration needed from 0 to 16
                 if oldSchemaVersion < 17 {
@@ -117,6 +117,11 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                            let snoozeAction = oldObject?["snoozeAction"] as? String {
                             newObject?["snoozeUuid"] = snoozeUUIDParser.parse(resource: snoozeAction)
                         }
+                    }
+                }
+                if oldSchemaVersion < 46 {
+                    migration.enumerateObjects(ofType: Thread.className()) { oldObject, newObject in
+                        newObject?["messagesToDisplay"] = oldObject?["messages"]
                     }
                 }
             },
