@@ -207,4 +207,30 @@ public enum PreviewHelper {
         isOrganizer: false,
         state: .no
     )
+
+    public static let reactions = [
+        MessageReaction(
+            reaction: "🙂",
+            authors: [ReactionAuthor(recipient: sampleRecipient1, bimi: nil)],
+            hasUserReacted: true
+        ),
+        MessageReaction(
+            reaction: "😊",
+            authors: [ReactionAuthor(recipient: sampleRecipient1, bimi: nil)],
+            hasUserReacted: false
+        )
+    ].toRealmList()
+
+    public static let uiReactions = [
+        UIReaction(
+            reaction: "🙂",
+            authors: [UIReactionAuthor(recipient: sampleRecipient1, bimi: nil)],
+            hasUserReacted: true
+        ),
+        UIReaction(
+            reaction: "😊",
+            authors: [UIReactionAuthor(recipient: sampleRecipient1, bimi: nil)],
+            hasUserReacted: false
+        )
+    ]
 }

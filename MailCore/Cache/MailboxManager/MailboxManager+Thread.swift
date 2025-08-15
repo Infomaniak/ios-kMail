@@ -522,7 +522,7 @@ public extension MailboxManager {
     }
 
     private func upsertMessage(_ message: Message, oldMessage: Message, threadsToUpdate: inout Set<Thread>, using realm: Realm) {
-        keepCacheAttributes(forLiveMessage: message, keepProperties: .standard, using: realm)
+        keepCacheAttributes(for: message, keepProperties: .standard, using: realm)
         realm.add(message, update: .modified)
 
         threadsToUpdate.formUnion(oldMessage.threads)
@@ -582,10 +582,10 @@ public extension MailboxManager {
                 message.snoozeEndDate = nil
             }
 
-            try? freshThread.recomputeOrFail()
+            try? freshThread.recomputeOrFail(currentAccountEmail: mailbox.email)
             let duplicatesThreads = Set(freshThread.duplicates.flatMap { $0.threads })
             for duplicateThread in duplicatesThreads {
-                try? duplicateThread.recomputeOrFail()
+                try? duplicateThread.recomputeOrFail(currentAccountEmail: mailbox.email)
             }
         }
     }
@@ -652,7 +652,7 @@ public extension MailboxManager {
 
         let recomputedThreads = threadsToRecompute.filter { thread in
             do {
-                try thread.recomputeOrFail()
+                try thread.recomputeOrFail(currentAccountEmail: mailbox.email)
                 return true
             } catch {
                 realm.delete(thread)
@@ -751,7 +751,7 @@ public extension MailboxManager {
                 guard let liveMessage = writableRealm.object(ofType: Message.self, forPrimaryKey: messageUid) else {
                     continue
                 }
-                self.keepCacheAttributes(forLiveMessage: liveMessage, keepProperties: .standard, using: writableRealm)
+                self.keepCacheAttributes(for: liveMessage, keepProperties: .standard, using: writableRealm)
                 writableRealm.add(liveMessage, update: .modified)
             }
 

@@ -107,8 +107,9 @@ public extension MailApiFetcher {
                                                         parameters: ["uids": messages.map(\.uid)]))
     }
 
-    func move(mailboxUuid: String, messages: [Message], destinationId: String) async throws -> UndoResponse {
-        try await perform(request: authenticatedRequest(.moveMessages(uuid: mailboxUuid),
+    func move(mailboxUuid: String, messages: [Message], destinationId: String,
+              alsoMoveReactions: Bool) async throws -> UndoResponse {
+        try await perform(request: authenticatedRequest(.moveMessages(uuid: mailboxUuid, alsoMoveReactions: alsoMoveReactions),
                                                         method: .post,
                                                         parameters: [
                                                             "uids": messages.map(\.uid),
@@ -117,11 +118,13 @@ public extension MailApiFetcher {
     }
 
     @discardableResult
-    func delete(mailbox: Mailbox, messages: [Message]) async throws -> [Empty] {
+    func delete(mailbox: Mailbox, messages: [Message], alsoMoveReactions: Bool) async throws -> [Empty] {
         try await batchOver(values: messages.map(\.uid), chunkSize: Constants.apiLimit) { chunk in
-            try await self.perform(request: self.authenticatedRequest(.deleteMessages(uuid: mailbox.uuid),
-                                                                      method: .post,
-                                                                      parameters: ["uids": chunk]))
+            try await self.perform(request: self.authenticatedRequest(
+                .deleteMessages(uuid: mailbox.uuid, alsoMoveReactions: alsoMoveReactions),
+                method: .post,
+                parameters: ["uids": chunk]
+            ))
         }
     }
 
@@ -151,7 +154,7 @@ public extension MailApiFetcher {
             message.resource,
             queryItems: [
                 URLQueryItem(name: "prefered_format", value: "html"),
-                URLQueryItem(name: "with", value: "auto_uncrypt,recipient_provider_source")
+                URLQueryItem(name: "with", value: "auto_uncrypt,recipient_provider_source,emoji_reactions_per_message")
             ]
         )))
     }

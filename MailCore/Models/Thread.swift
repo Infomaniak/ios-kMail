@@ -17,7 +17,9 @@
  */
 
 import Foundation
+import InfomaniakDI
 import MailResources
+import OrderedCollections
 import RealmSwift
 
 public struct ThreadResult: Decodable {
@@ -36,6 +38,7 @@ public struct ThreadResult: Decodable {
 public class Thread: Object, Decodable, Identifiable {
     @Persisted(primaryKey: true) public var uid: String
     @Persisted public var messages: List<Message>
+    @Persisted private var messagesToDisplay: List<Message>
     @Persisted public var unseenMessages: Int
     @Persisted public var from: List<Recipient>
     @Persisted public var to: List<Recipient>
@@ -47,7 +50,6 @@ public class Thread: Object, Decodable, Identifiable {
     @Persisted public var flagged: Bool
     @Persisted public var answered: Bool
     @Persisted public var forwarded: Bool
-    @Persisted public var lastAction: ThreadLastAction?
     @Persisted public var folderId = ""
     @Persisted(originProperty: "threads") private var folders: LinkingObjects<Folder>
     @Persisted public var fromSearch = false
@@ -71,6 +73,25 @@ public class Thread: Object, Decodable, Identifiable {
 
     public var id: String {
         return uid
+    }
+
+    public var displayMessages: List<Message> {
+        @InjectService var featureAvailableProvider: FeatureAvailableProvider
+        if featureAvailableProvider.isAvailable(.emojiReaction) {
+            return messagesToDisplay
+        } else {
+            return messages
+        }
+    }
+
+    public var lastAction: ThreadLastAction? {
+        if answered {
+            return .reply
+        } else if forwarded {
+            return .forward
+        } else {
+            return nil
+        }
     }
 
     public var displayDate: DisplayDate {
@@ -156,59 +177,6 @@ public class Thread: Object, Decodable, Identifiable {
             let parentFolder = realm.object(ofType: Folder.self, forPrimaryKey: message.folderId)
             searchFolderName = parentFolder?.localizedName
         }
-    }
-
-    /// Re-generate `Thread` properties given the messages it contains.
-    public func recomputeOrFail() throws {
-        messageIds = messages.flatMap(\.linkedUids).toRealmSet()
-        updateUnseenMessages()
-        from = messages.flatMap { $0.from.detached() }.toRealmList()
-        hasAttachments = messages.contains { $0.hasAttachments }
-        hasDrafts = messages.map(\.isDraft).contains(true)
-        updateFlagged()
-        answered = messages.map(\.answered).contains(true)
-        forwarded = messages.map(\.forwarded).contains(true)
-
-        // Re-ordering of messages in a thread
-        messages = messages.sorted {
-            $0.date.compare($1.date) == .orderedAscending
-        }.toRealmList()
-
-        if let lastMessageFromFolder {
-            internalDate = lastMessageFromFolder.internalDate
-            date = lastMessageFromFolder.date
-        } else {
-            throw MailError.incoherentThreadDate
-        }
-
-        numberOfScheduledDraft = messages.count { $0.isScheduledDraft == true }
-
-        lastAction = getLastAction()
-
-        subject = messages.first?.subject
-
-        updateSnooze()
-    }
-
-    private func updateSnooze() {
-        let lastSnoozedMessage = messagesAndDuplicates.last { $0.snoozeState != nil }
-
-        snoozeState = lastSnoozedMessage?.snoozeState
-        snoozeUuid = lastSnoozedMessage?.snoozeUuid
-        snoozeEndDate = lastSnoozedMessage?.snoozeEndDate
-
-        isLastMessageFromFolderSnoozed = lastMessageFromFolder?.isSnoozed == true
-    }
-
-    private func getLastAction() -> ThreadLastAction? {
-        guard let lastMessage = messages.last(where: { message in
-            message.forwarded || message.answered
-        }) else { return nil }
-
-        if lastMessage.answered {
-            return .reply
-        }
-        return .forward
     }
 
     func addMessageIfNeeded(newMessage: Message, using realm: Realm) {
@@ -355,6 +323,156 @@ public class Thread: Object, Decodable, Identifiable {
 }
 
 public extension Thread {
+    typealias MessageId = String
+
+    /// Re-generate `Thread` properties given the messages it contains.
+    func recomputeOrFail(currentAccountEmail: String) throws {
+        messages = messages.sortedByDate().toRealmList()
+        messagesToDisplay = List()
+
+        guard let lastMessageFromFolder else {
+            throw MailError.threadHasNoMessageInFolder
+        }
+
+        resetThread()
+
+        subject = messages.first?.subject
+        internalDate = lastMessageFromFolder.internalDate
+        date = lastMessageFromFolder.date
+        isLastMessageFromFolderSnoozed = lastMessageFromFolder.isSnoozed
+
+        let messagesById = getMessageById(messages: messages)
+
+        for message in messages {
+            messageIds.insert(objectsIn: message.linkedUids)
+            from.append(objectsIn: message.from.detached())
+            to.append(objectsIn: message.to.detached())
+
+            message.reactions = List()
+
+            if !message.seen {
+                unseenMessages += 1
+            }
+            if message.flagged {
+                flagged = true
+            }
+            if message.hasAttachments {
+                hasAttachments = true
+            }
+            if message.isDraft {
+                hasDrafts = true
+            }
+            if message.answered {
+                answered = true
+                forwarded = false
+            }
+            if message.forwarded {
+                answered = false
+                forwarded = true
+            }
+            if message.isScheduledDraft == true {
+                numberOfScheduledDraft += 1
+            }
+            if UserDefaults.shared.threadMode == .conversation,
+               message.isReaction,
+               message.isDraft || applyReactionIfPossible(
+                   from: message,
+                   messagesById: messagesById,
+                   currentAccountEmail: currentAccountEmail
+               ) {
+                message.isDisplayable = false
+            } else {
+                messagesToDisplay.append(message)
+            }
+
+            updateSnooze(from: message)
+        }
+
+        for duplicate in duplicates {
+            if !duplicate.seen {
+                unseenMessages += 1
+            }
+            updateSnooze(from: duplicate)
+        }
+    }
+
+    private func resetThread() {
+        messageIds = MutableSet()
+        from = List()
+        to = List()
+
+        unseenMessages = 0
+        numberOfScheduledDraft = 0
+
+        flagged = false
+        hasAttachments = false
+        hasDrafts = false
+        answered = false
+        forwarded = false
+        isLastMessageFromFolderSnoozed = false
+
+        snoozeState = nil
+        snoozeUuid = nil
+        snoozeEndDate = nil
+    }
+
+    private func applyReactionIfPossible(from message: Message, messagesById: [MessageId: Message],
+                                         currentAccountEmail: String) -> Bool {
+        guard let emojiReaction = message.emojiReaction,
+              let targetMessageIds = message.inReplyTo?.parseMessageIds()
+        else { return false }
+
+        var hasBeenApplied = false
+        for targetMessageId in targetMessageIds {
+            guard let targetMessage = messagesById[targetMessageId] else {
+                continue
+            }
+
+            var hasUserReacted = false
+            var authors = [ReactionAuthor]()
+            for recipient in message.from {
+                authors.append(ReactionAuthor(recipient: recipient.detached(), bimi: message.bimi?.detached()))
+                if recipient.isCurrentUser(currentAccountEmail: currentAccountEmail) {
+                    hasUserReacted = true
+                }
+            }
+
+            if let emojiReaction = targetMessage.reactions.where({ $0.reaction == emojiReaction }).first {
+                emojiReaction.authors.append(objectsIn: authors)
+                if hasUserReacted {
+                    emojiReaction.hasUserReacted = true
+                }
+            } else {
+                let messageReaction = MessageReaction(reaction: emojiReaction, authors: authors, hasUserReacted: hasUserReacted)
+                targetMessage.reactions.append(messageReaction)
+            }
+
+            hasBeenApplied = true
+        }
+
+        return hasBeenApplied
+    }
+
+    private func updateSnooze(from message: Message) {
+        guard let messageSnoozeState = message.snoozeState else { return }
+
+        snoozeState = messageSnoozeState
+        snoozeUuid = message.snoozeUuid
+        snoozeEndDate = message.snoozeEndDate
+    }
+
+    private func getMessageById(messages: List<Message>) -> [MessageId: Message] {
+        var messageById = [MessageId: Message]()
+        for message in messages {
+            guard let messageId = message.messageId else { continue }
+            messageById[messageId] = message
+        }
+
+        return messageById
+    }
+}
+
+public extension Thread {
     /// Compute if the thread has external recipients
     func displayExternalRecipientState(mailboxManager: MailboxManager,
                                        recipientsList: List<Recipient>) -> DisplayExternalRecipientStatus.State {
@@ -405,7 +523,7 @@ public enum SearchCondition: Equatable {
     case attachments(Bool)
 }
 
-public enum ThreadLastAction: String, PersistableEnum {
+public enum ThreadLastAction: Sendable {
     case forward
     case reply
 }

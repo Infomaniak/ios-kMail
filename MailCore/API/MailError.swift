@@ -74,7 +74,7 @@ public class MailError: LocalizedError, Encodable {
                                                               localizedDescription: MailResourcesStrings.Localizable
                                                                   .attachmentFileLimitReached,
                                                               shouldDisplay: true)
-    public static let incoherentThreadDate = MailError(code: "incoherentThreadDate")
+    public static let threadHasNoMessageInFolder = MailError(code: "threadHasNoMessageInFolder")
 
     public static let noConnection = MailError(code: "noConnection",
                                                localizedDescription: MailResourcesStrings.Localizable.noConnection,

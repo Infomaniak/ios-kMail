@@ -33,6 +33,8 @@ extension EnvironmentValues {
 
 /// Something that can display an email
 struct MessageView: View {
+    @LazyInjectService private var featureAvailableProvider: FeatureAvailableProvider
+
     @Environment(\.isMessageInteractive) private var isMessageInteractive
 
     @State private var displayContentBlockedActionView = false
@@ -69,11 +71,22 @@ struct MessageView: View {
                         displayContentBlockedActionView: $displayContentBlockedActionView
                     )
 
-                    MessageBodyView(
-                        displayContentBlockedActionView: $displayContentBlockedActionView,
-                        isRemoteContentBlocked: isRemoteContentBlocked,
-                        messageUid: message.uid
-                    )
+                    VStack(alignment: .leading, spacing: IKPadding.small) {
+                        MessageBodyView(
+                            displayContentBlockedActionView: $displayContentBlockedActionView,
+                            isRemoteContentBlocked: isRemoteContentBlocked,
+                            messageUid: message.uid
+                        )
+
+                        if featureAvailableProvider.isAvailable(.emojiReaction) {
+                            MessageReactionsView(
+                                messageUid: message.uid,
+                                emojiReactionNotAllowedReason: message.emojiReactionNotAllowedReason,
+                                messageReactions: message.reactions
+                            )
+                            .padding([.horizontal, .bottom], value: .medium)
+                        }
+                    }
                 }
             }
         }
@@ -102,6 +115,8 @@ struct MessageView: View {
         threadForcedExpansion: .constant([PreviewHelper.sampleMessage.uid: .expanded]),
         message: PreviewHelper.sampleMessage
     )
+    .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
     .environmentObject(PreviewHelper.sampleMailboxManager)
+    .environmentObject(MessagesWorker(mailboxManager: PreviewHelper.sampleMailboxManager))
     .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }

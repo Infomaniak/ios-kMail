@@ -72,7 +72,8 @@ func mainTargetWith(name: String, destinations: [Destination]) -> Target {
                 .external(name: "SwiftUIBackports"),
                 .external(name: "SwiftUIIntrospect"),
                 .external(name: "VersionChecker"),
-                .external(name: "WrappingHStack")
+                .external(name: "WrappingHStack"),
+                .external(name: "ElegantEmojiPicker")
             ],
             settings: .settings(base: Constants.baseSettings))
 }
@@ -352,7 +353,8 @@ let project = Project(name: "Mail",
                                       .external(name: "Shimmer"),
                                       .external(name: "SwiftUIBackports"),
                                       .external(name: "SwiftUIIntrospect-Static"),
-                                      .external(name: "WrappingHStack")
+                                      .external(name: "WrappingHStack"),
+                                      .external(name: "ElegantEmojiPicker")
                                   ],
                                   settings: .settings(base: Constants.baseSettings))
                       ],

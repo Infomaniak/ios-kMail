@@ -79,6 +79,9 @@ open class TargetAssembly {
             Factory(type: FeatureFlagsManageable.self) { _, _ in
                 FeatureFlagsManager()
             },
+            Factory(type: FeatureAvailableProvider.self) { _, _ in
+                FeatureAvailableService()
+            },
             Factory(type: BugTracker.self) { _, _ in
                 BugTracker(info: BugTrackerInfo(project: "app-mobile-mail"))
             },

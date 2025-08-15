@@ -16,7 +16,7 @@
 			<key>UIApplicationShortcutItemType</key>
 			<string>search</string>
 			<key>UIApplicationShortcutItemTitle</key>
-			<string>shortcutSearchTitle</string>
+			<string>searchAction</string>
 			<key>UIApplicationShortcutItemIconSymbolName</key>
 			<string>magnifyingglass</string>
 		</dict>

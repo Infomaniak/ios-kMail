@@ -19,6 +19,7 @@
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreDB
+import InfomaniakDI
 import MailResources
 import RealmSwift
 import Sentry
@@ -48,6 +49,12 @@ public extension String {
         } else {
             return input
         }
+    }
+}
+
+public extension Collection<Message> {
+    func sortedByDate() -> [Message] {
+        sorted { $0.internalDate.compare($1.internalDate) == .orderedAscending }
     }
 }
 
@@ -85,6 +92,30 @@ public class MessageHeaders: EmbeddedObject, Codable {
 
     private enum CodingKeys: String, CodingKey {
         case xInfomaniakSpam = "x-infomaniak-spam"
+    }
+}
+
+public final class ReactionAuthor: EmbeddedObject {
+    @Persisted public var recipient: Recipient?
+    @Persisted public var bimi: Bimi?
+
+    public convenience init(recipient: Recipient, bimi: Bimi?) {
+        self.init()
+        self.recipient = recipient
+        self.bimi = bimi
+    }
+}
+
+public final class MessageReaction: EmbeddedObject {
+    @Persisted public var reaction: String
+    @Persisted public var authors: List<ReactionAuthor>
+    @Persisted public var hasUserReacted: Bool
+
+    public convenience init(reaction: String, authors: [ReactionAuthor], hasUserReacted: Bool) {
+        self.init()
+        self.reaction = reaction
+        self.authors = authors.toRealmList()
+        self.hasUserReacted = hasUserReacted
     }
 }
 
@@ -138,6 +169,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted(originProperty: "messages") private var folders: LinkingObjects<Folder>
     @Persisted(originProperty: "duplicates") var threadsDuplicatedIn: LinkingObjects<Thread>
 
+    @Persisted public var isDisplayable = true
+
     @Persisted public var fullyDownloaded = false
     @Persisted public var fromSearch = false
     @Persisted public var inTrash = false
@@ -150,6 +183,11 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var snoozeState: SnoozeState?
     @Persisted public var snoozeUuid: String?
     @Persisted public var snoozeEndDate: Date?
+
+    @Persisted public var emojiReaction: String?
+    @Persisted public var emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason?
+
+    @Persisted public var reactions: List<MessageReaction>
 
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
@@ -192,6 +230,14 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         snoozeState == .snoozed && snoozeEndDate != nil && snoozeUuid != nil
     }
 
+    public var isReaction: Bool {
+        return emojiReaction?.isEmpty == false
+    }
+
+    public var hasReactions: Bool {
+        return !reactions.isEmpty
+    }
+
     public var formattedFrom: String {
         from.first?.htmlDescription ?? MailResourcesStrings.Localizable.unknownRecipientTitle
     }
@@ -227,6 +273,15 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
 
     public var isMovable: Bool {
         return !isDraft && !(isScheduledDraft ?? false)
+    }
+
+    public var canExecuteAction: Bool {
+        @InjectService var featureAvailableProvider: FeatureAvailableProvider
+        if featureAvailableProvider.isAvailable(.emojiReaction) {
+            return !isDraft && isDisplayable
+        }
+
+        return !isDraft
     }
 
     public func fromMe(currentMailboxEmail: String) -> Bool {
@@ -316,6 +371,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         case encrypted
         case encryptionPassword
         case cryptPasswordValidity
+        case emojiReaction
+        case emojiReactionNotAllowedReason
         case headers
     }
 
@@ -389,6 +446,13 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         encrypted = try values.decodeIfPresent(Bool.self, forKey: .encrypted) ?? false
         encryptionPassword = try values.decodeIfPresent(String.self, forKey: .encryptionPassword) ?? ""
         cryptPasswordValidity = try values.decodeIfPresent(Date.self, forKey: .cryptPasswordValidity)
+
+        emojiReaction = try values.decodeIfPresent(String.self, forKey: .emojiReaction)
+        emojiReactionNotAllowedReason = try values.decodeIfPresent(
+            EmojiReactionNotAllowedReason.self,
+            forKey: .emojiReactionNotAllowedReason
+        )
+
         headers = try? values.decodeIfPresent(MessageHeaders.self, forKey: .headers)
     }
 
@@ -427,7 +491,9 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         bimi: Bimi? = nil,
         snoozeState: SnoozeState? = nil,
         snoozeUuid: String? = nil,
-        snoozeEndDate: Date? = nil
+        snoozeEndDate: Date? = nil,
+        emojiReaction: String? = nil,
+        emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason? = nil
     ) {
         self.init()
 
@@ -467,6 +533,8 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         self.snoozeState = snoozeState
         self.snoozeUuid = snoozeUuid
         self.snoozeEndDate = snoozeEndDate
+        self.emojiReaction = emojiReaction
+        self.emojiReactionNotAllowedReason = emojiReactionNotAllowedReason
     }
 
     public func toThread() -> Thread {

@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: fr, French
  * Tagged: ios
- * Exported by: Matthieu Déglon
- * Exported at: Wed, 30 Jul 2025 08:50:31 +0200
+ * Exported by: Valentin Perignon
+ * Exported at: Wed, 13 Aug 2025 13:20:56 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -304,6 +304,9 @@
 /* loco:66a9f94b98b834125d06aa46 */
 "buttonAddExistingAddress" = "Ajouter une adresse existante";
 
+/* loco:6877a25d3abbe0c0c403fba2 */
+"buttonAllReactions" = "Toutes";
+
 /* loco:6437c062dd576a7631052413 */
 "buttonAttachMailbox" = "Ajouter l’adresse mail";
 
@@ -559,6 +562,9 @@
 /* loco:62ed16680ed9e562702a5ab2 */
 "contactsSearch" = "Contacts";
 
+/* loco:683ed907ce58d366270b42a3 */
+"contentDescriptionAddReaction" = "Ajouter une réaction";
+
 /* loco:628c9d1654bb544229106572 */
 "contentDescriptionButtonBack" = "Retour";
 
@@ -684,6 +690,39 @@
 
 /* loco:64243b2f0c473e027779afc4 */
 "emailWithoutSubjectTitle" = "Objet vide";
+
+/* loco:683e9613fc7545b414016b64 */
+"emojiPickerCategoryActivities" = "Activités";
+
+/* loco:683e95cffc7545b414016b62 */
+"emojiPickerCategoryAnimalsAndNature" = "Animaux et nature";
+
+/* loco:683e96446098e5506408c7e2 */
+"emojiPickerCategoryFlags" = "Drapeaux";
+
+/* loco:683e95e2bc133f5a8e04f803 */
+"emojiPickerCategoryFoodAndDrink" = "Alimentation et boissons";
+
+/* loco:683e9623bc133f5a8e04f809 */
+"emojiPickerCategoryObjects" = "Objets";
+
+/* loco:683e9589ea5e56d5540cb632 */
+"emojiPickerCategoryPeopleAndBody" = "Personnes et corps";
+
+/* loco:6840584159b65ad4a4099ff3 */
+"emojiPickerCategoryRecentlyUsed" = "Récemment utilisés";
+
+/* loco:683e957223e8d17078053832 */
+"emojiPickerCategorySmileysAndEmotion" = "Smileys et émotions";
+
+/* loco:683e963722d760019c02cf82 */
+"emojiPickerCategorySymbols" = "Symboles";
+
+/* loco:683e9600bc133f5a8e04f807 */
+"emojiPickerCategoryTravelAndPlaces" = "Voyages et lieux";
+
+/* loco:683ea3e0df4d9547cb0e54e2 */
+"emojiPickerResultsTitle" = "Résultats";
 
 /* loco:6348008e331e743e77176522 */
 "emptyStateFolderDescription" = "Il n’y a rien à voir par ici.";
@@ -1226,7 +1265,7 @@
 "onBoardingTitle3" = "Appuyez quelques secondes sur un message pour en sélectionner plusieurs";
 
 /* loco:62c2ef4a24eb9878221dcd63 */
-"onBoardingTitle4" = "Lancez vous !";
+"onBoardingTitle4" = "Lancez-vous !";
 
 /* loco:67986c43729fae7515071032 */
 "organizationName" = "Organisation : %@";
@@ -1245,6 +1284,12 @@
 
 /* loco:64a3d65f003e64f9790f5ed2 */
 "popupDetachMailboxTitle" = "Détacher l’adresse";
+
+/* loco:68834dbb822d3b0955074bd2 */
+"reactionsAll" = "Toutes";
+
+/* loco:6878f028dad01eb6460e7a92 */
+"reactionsTitle" = "Réactions";
 
 /* loco:664ef6e5f66217322302f962 */
 "readFAQ" = "Consulter les FAQ";
@@ -1293,6 +1338,9 @@
 
 /* loco:62a9db4ae45f1e29371ff802 */
 "scheduledMessagesFolder" = "Messages programmés";
+
+/* loco:689c74ed1f7e2310d80077d2 */
+"searchAction" = "Rechercher";
 
 /* loco:640836aa0f09a82bfa0da572 */
 "searchAllMessages" = "Tous les messages";
@@ -1633,6 +1681,8 @@
 /* loco:651ebe4a1a15bf27e204db22 */
 "snackbarPasswordCopied" = "Mot de passe copié";
 
+/* loco:6858ff00a459db58890629f2 */
+"snackbarReactionSent" = "Réaction %@ envoyée";
 
 /* loco:62ab4ae387f65e26e577dd42 */
 "snackbarReportPhishingConfirmation" = "Signalement effectué avec succès";
@@ -1733,9 +1783,6 @@
 /* loco:67238c432a68eb6c2600fc52 */
 "thisEvening" = "Ce soir";
 
-/* loco:6412e19cf8d74923f83fd492 */
-"threadListEmptyDraftButton" = "Vider les brouillons";
-
 /* loco:63eddb9871489a3042032122 */
 "threadListEmptyFolderAlertDescription" = "Êtes-vous sûr de vouloir supprimer définitivement tous les messages de ce dossier ?";
 
@@ -1755,7 +1802,7 @@
 "threadListHeaderUnreadCount-plural" = "%@ non lus";
 
 /* loco:638f6f782bdb800e9d6c3682 */
-"threadListHeaderUnreadCount-plural-many" = "%s non lus";
+"threadListHeaderUnreadCount-plural-many" = "%@ non lus";
 
 /* loco:671f821cbd4358e9af00c172 */
 "threadListHeaderUpdating" = "Récupération en cours";

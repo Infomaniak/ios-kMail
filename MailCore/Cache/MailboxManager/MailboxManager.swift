@@ -75,7 +75,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         let realmName = "\(mailbox.userId)-\(mailbox.mailboxId).realm"
         realmConfiguration = Realm.Configuration(
             fileURL: MailboxManager.constants.rootDocumentsURL.appendingPathComponent(realmName),
-            schemaVersion: 45,
+            schemaVersion: 46,
             migrationBlock: { migration, oldSchemaVersion in
                 // No migration needed from 0 to 16
                 if oldSchemaVersion < 17 {
@@ -119,6 +119,11 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                         }
                     }
                 }
+                if oldSchemaVersion < 46 {
+                    migration.deleteData(forType: Folder.className())
+                    migration.deleteData(forType: Thread.className())
+                    migration.deleteData(forType: Message.className())
+                }
             },
             objectTypes: [
                 Folder.self,
@@ -128,6 +133,7 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 SubBody.self,
                 Attachment.self,
                 Recipient.self,
+                RecipientsList.self,
                 Draft.self,
                 Signature.self,
                 SearchHistory.self,
@@ -138,7 +144,9 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                 SwissTransferAttachment.self,
                 File.self,
                 MessageUid.self,
-                MessageHeaders.self
+                MessageHeaders.self,
+                MessageReaction.self,
+                ReactionAuthor.self
             ]
         )
 
@@ -176,33 +184,37 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
         static let body = MessagePropertiesOptions(rawValue: 1 << 1)
         static let attachments = MessagePropertiesOptions(rawValue: 1 << 2)
         static let localSafeDisplay = MessagePropertiesOptions(rawValue: 1 << 3)
+        static let reactions = MessagePropertiesOptions(rawValue: 1 << 4)
 
-        static let standard: MessagePropertiesOptions = [.fullyDownloaded, .body, .attachments, .localSafeDisplay]
+        static let standard: MessagePropertiesOptions = [.fullyDownloaded, .body, .attachments, .localSafeDisplay, .reactions]
     }
 
     func keepCacheAttributes(
-        forLiveMessage liveMessage: Message,
+        for message: Message,
         keepProperties: MessagePropertiesOptions,
         using realm: Realm
     ) {
-        guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: liveMessage.uid) else {
+        guard let savedMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else {
             return
         }
-        liveMessage.inTrash = savedMessage.inTrash
+        message.inTrash = savedMessage.inTrash
         if keepProperties.contains(.fullyDownloaded) {
-            liveMessage.fullyDownloaded = savedMessage.fullyDownloaded
+            message.fullyDownloaded = savedMessage.fullyDownloaded
         }
         if keepProperties.contains(.body), let body = savedMessage.body {
-            liveMessage.body = body.detached()
+            message.body = body.detached()
         }
         if keepProperties.contains(.localSafeDisplay) {
-            liveMessage.localSafeDisplay = savedMessage.localSafeDisplay
+            message.localSafeDisplay = savedMessage.localSafeDisplay
         }
         if keepProperties.contains(.attachments) {
             let attachments = savedMessage.attachments.map { $0.detached() }
             let attachmentsList = List<Attachment>()
             attachmentsList.append(objectsIn: attachments)
-            liveMessage.attachments = attachmentsList
+            message.attachments = attachmentsList
+        }
+        if keepProperties.contains(.reactions) {
+            message.reactions = savedMessage.reactions.detached()
         }
     }
 

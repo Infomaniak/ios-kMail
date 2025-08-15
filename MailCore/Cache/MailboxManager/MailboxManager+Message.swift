@@ -41,6 +41,7 @@ public extension MailboxManager {
 
         // Update message in Realm
         try? writeTransaction { writableRealm in
+            keepCacheAttributes(for: completedMessage, keepProperties: .reactions, using: writableRealm)
             writableRealm.add(completedMessage, update: .modified)
         }
     }
@@ -100,8 +101,13 @@ public extension MailboxManager {
     }
 
     func move(messages: [Message], to folder: Folder, origin: Folder? = nil) async throws -> UndoAction {
-        return try await performMoveAction(messages: messages, from: origin, to: folder) { uuid, chunk in
-            try await self.apiFetcher.move(mailboxUuid: uuid, messages: chunk, destinationId: folder.remoteId)
+        return try await performMoveAction(messages: messages, from: origin, to: folder) { uuid, chunk, alsoMoveReactions in
+            try await self.apiFetcher.move(
+                mailboxUuid: uuid,
+                messages: chunk,
+                destinationId: folder.remoteId,
+                alsoMoveReactions: alsoMoveReactions
+            )
         }
     }
 
@@ -112,7 +118,7 @@ public extension MailboxManager {
             messages: messages,
             from: origin,
             to: spamFolder
-        ) { uuid, chunk in
+        ) { uuid, chunk, _ in
             try await self.apiFetcher.reportSpams(mailboxUuid: uuid, messages: chunk)
         }
     }
@@ -121,13 +127,16 @@ public extension MailboxManager {
         messages: [Message],
         from origin: Folder?,
         to destination: Folder,
-        action: @escaping (String, [Message]) async throws -> UndoResponse
+        action: @escaping (String, [Message], Bool) async throws -> UndoResponse
     ) async throws -> UndoAction {
         await markMovedLocallyIfNecessary(true, messages: messages, folder: origin)
 
+        @InjectService var featureAvailableProvider: FeatureAvailableProvider
+        let alsoMoveReactions = featureAvailableProvider.isAvailable(.emojiReaction)
+
         let response = await apiFetcher.batchOver(values: messages, chunkSize: Constants.apiLimit) { chunk in
             do {
-                return try await action(self.mailbox.uuid, chunk)
+                return try await action(self.mailbox.uuid, chunk, alsoMoveReactions)
             } catch {
                 await self.markMovedLocallyIfNecessary(false, messages: messages, folder: origin)
             }
@@ -141,7 +150,10 @@ public extension MailboxManager {
     }
 
     func delete(messages: [Message]) async throws {
-        try await apiFetcher.delete(mailbox: mailbox, messages: messages)
+        @InjectService var featureAvailableProvider: FeatureAvailableProvider
+        let alsoMoveReactions = featureAvailableProvider.isAvailable(.emojiReaction)
+
+        try await apiFetcher.delete(mailbox: mailbox, messages: messages, alsoMoveReactions: alsoMoveReactions)
         Task {
             try await refreshFolder(from: messages, additionalFolder: nil)
         }

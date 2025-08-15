@@ -78,6 +78,65 @@ public class MailApiError: MailError {
         shouldDisplay: true
     )
 
+    public static let emojiReactionFolderNotAllowedDraft = MailApiError(
+        code: "emoji_reaction__folder_not_allowed_draft",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionFolderNotAllowedDraft,
+        shouldDisplay: true
+    )
+    public static let emojiReactionFolderNotAllowedScheduledDraft = MailApiError(
+        code: "emoji_reaction__folder_not_allowed_scheduled_draft",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionFolderNotAllowedScheduledDraft,
+        shouldDisplay: true
+    )
+    public static let emojiReactionFolderNotAllowedSpam = MailApiError(
+        code: "emoji_reaction__folder_not_allowed_spam",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionFolderNotAllowedSpam,
+        shouldDisplay: true
+    )
+    public static let emojiReactionFolderNotAllowedTrash = MailApiError(
+        code: "emoji_reaction__folder_not_allowed_scheduled_trash",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionFolderNotAllowedTrash,
+        shouldDisplay: true
+    )
+
+    public static let emojiReactionMessageInReplyToNotAllowed = MailApiError(
+        code: "emoji_reaction__message_in_reply_to_not_allowed",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionMessageInReplyToNotAllowed,
+        shouldDisplay: true
+    )
+    public static let emojiReactionMessageInReplyToNotValid = MailApiError(
+        code: "emoji_reaction__message_in_reply_to_not_valid",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionMessageInReplyToNotValid,
+        shouldDisplay: true
+    )
+    public static let emojiReactionMessageInReplyToEncrypted = MailApiError(
+        code: "emoji_reaction__message_in_reply_to_encrypted",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionMessageInReplyEncrypted,
+        shouldDisplay: true
+    )
+
+    public static let emojiReactionMaxRecipient = MailApiError(
+        code: "emoji_reaction__max_recipient",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionMaxRecipient,
+        shouldDisplay: true
+    )
+    public static let emojiReactionRecipientNotAllowed = MailApiError(
+        code: "emoji_reaction__recipient_not_allowed",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionRecipientNotAllowed,
+        shouldDisplay: true
+    )
+
+    public static let emojiReactionMaxReactionReached = MailApiError(
+        code: "emoji_reaction__max_reaction_reached",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionMaxReactionReached,
+        shouldDisplay: true
+    )
+    public static let emojiReactionAlreadyUsed = MailApiError(
+        code: "emoji_reaction__already_used",
+        localizedDescription: MailResourcesStrings.Localizable.errorEmojiReactionAlreadyUsed,
+        shouldDisplay: true
+    )
+
     static let allErrors: [MailApiError] = [
         // General
         MailApiError(code: "not_authorized"),
@@ -189,7 +248,20 @@ public class MailApiError: MailError {
             code: "mail__message_cannot_be_snooze",
             localizedDescription: MailResourcesStrings.Localizable.errorMessageCannotBeSnoozed,
             shouldDisplay: true
-        )
+        ),
+
+        // Emoji Reaction
+        emojiReactionFolderNotAllowedDraft,
+        emojiReactionFolderNotAllowedScheduledDraft,
+        emojiReactionFolderNotAllowedSpam,
+        emojiReactionFolderNotAllowedTrash,
+        emojiReactionMessageInReplyToNotAllowed,
+        emojiReactionMessageInReplyToNotValid,
+        emojiReactionMaxRecipient,
+        emojiReactionRecipientNotAllowed,
+        emojiReactionMessageInReplyToEncrypted,
+        emojiReactionMaxReactionReached,
+        emojiReactionAlreadyUsed
     ]
 
     static func mailApiErrorFromCode(_ code: String) -> MailApiError? {
