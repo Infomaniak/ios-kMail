@@ -1,1 +1,2 @@
-- Connexion simplifiée à partir des autres apps Infomaniak installées (corrections 2)
+- Réaction aux messages
+- Correction de bugs
