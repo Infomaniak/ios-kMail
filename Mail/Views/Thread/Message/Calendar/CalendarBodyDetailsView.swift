@@ -17,6 +17,7 @@
  */
 
 import DesignSystem
+import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import MailCore
 import MailCoreUI
@@ -48,6 +49,8 @@ struct CalendarLabelStyle: LabelStyle {
 struct CalendarBodyDetailsView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
+    @State private var nextOccurrence: Date?
+
     let event: CalendarEvent
 
     private var frozenMe: Attendee? {
@@ -62,6 +65,12 @@ struct CalendarBodyDetailsView: View {
         return event.isAnInvitation && !event.isCancelled && iAmInvited
     }
 
+    func relativeDateString(from date: Date) -> String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.dateTimeStyle = .named
+        return formatter.localizedString(for: date, relativeTo: Date())
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.medium) {
             if let warning = event.warning {
@@ -71,9 +80,46 @@ struct CalendarBodyDetailsView: View {
 
             Group {
                 Label(event.formattedDateTime, asset: MailResourcesAsset.calendarBadgeClock.swiftUIImage)
-                if let location = event.location, !location.isEmpty {
+
+                if let nextOccurrence {
+                    let startOfCurrentDate = Date().startOfDay
+                    let startOfNextDate = nextOccurrence.startOfDay
+                    let relativeDateString = relativeDateString(from: nextOccurrence)
+
+                    switch Calendar.current.dateComponents([.day], from: startOfCurrentDate, to: startOfNextDate).day {
+                    case 0, 1, -1:
+                        if nextOccurrence < Date() {
+                            Label(
+                                "\(MailResourcesStrings.Localizable.lastNearEventOccurrence) \(relativeDateString)",
+                                asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
+                            )
+                        } else {
+                            Label(
+                                "\(MailResourcesStrings.Localizable.nextNearEventOccurrence) \(relativeDateString)",
+                                asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
+                            )
+                        }
+                    default:
+                        if nextOccurrence < Date() {
+                            Label(
+                                "\(MailResourcesStrings.Localizable.lastEventOccurrence) \(nextOccurrence.formatted(.calendarDateFull))",
+                                asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
+                            )
+                        } else {
+                            Label(
+                                "\(MailResourcesStrings.Localizable.nextEventOccurrence) \(nextOccurrence.formatted(.calendarDateFull))",
+                                asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
+                            )
+                        }
+                    }
+                }
+
+                if let bookableResource = event.bookableResource {
+                    Label(bookableResource.name, asset: MailResourcesAsset.door.swiftUIImage)
+                } else if let location = event.location, !location.isEmpty {
                     Label(location, asset: MailResourcesAsset.pin.swiftUIImage)
                 }
+
                 if !iAmInvited && !event.attendees.isEmpty {
                     Label(MailResourcesStrings.Localizable.calendarNotInvited, asset: MailResourcesAsset.socialMedia.swiftUIImage)
                 }
@@ -85,6 +131,14 @@ struct CalendarBodyDetailsView: View {
             }
         }
         .padding(.horizontal, value: .medium)
+        .task {
+            guard let rrule = event.rrule,
+                  let rule = try? RecurrenceRule(rrule),
+                  let nextOccurrence = try? rule.getNextOccurrence(event.start) else {
+                return
+            }
+            self.nextOccurrence = nextOccurrence
+        }
     }
 }
 
