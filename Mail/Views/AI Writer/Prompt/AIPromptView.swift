@@ -88,8 +88,6 @@ struct AIPromptView: View {
             }
 
             HStack {
-                AIEngineLabel()
-
                 Spacer()
 
                 Button(MailResourcesStrings.Localizable.aiPromptValidateButton) {
