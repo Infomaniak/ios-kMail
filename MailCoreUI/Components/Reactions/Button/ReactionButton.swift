@@ -17,7 +17,6 @@
  */
 
 import DesignSystem
-import MailResources
 import SwiftUI
 
 struct BackportNumericContentTransition: ViewModifier {
