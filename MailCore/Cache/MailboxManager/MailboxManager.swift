@@ -120,9 +120,9 @@ public final class MailboxManager: ObservableObject, MailboxManageable {
                     }
                 }
                 if oldSchemaVersion < 46 {
-                    migration.enumerateObjects(ofType: Thread.className()) { oldObject, newObject in
-                        newObject?["messagesToDisplay"] = oldObject?["messages"]
-                    }
+                    migration.deleteData(forType: Folder.className())
+                    migration.deleteData(forType: Thread.className())
+                    migration.deleteData(forType: Message.className())
                 }
             },
             objectTypes: [
