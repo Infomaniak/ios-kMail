@@ -17,7 +17,9 @@
  */
 
 import DesignSystem
+import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
+import InfomaniakDI
 import MailResources
 import SwiftUI
 
@@ -53,6 +55,11 @@ struct ReactionsDetailsView: View {
                 ReactionsDetailsButtonsView(currentSelection: $selectedReaction, reactions: reactions)
                 ReactionsListTabView(selectedReaction: $selectedReaction, reactions: reactions)
             }
+        }
+        .onChange(of: selectedReaction) { newValue in
+            @InjectService var matomo: MatomoUtils
+            let eventName = newValue == .all ? "switchReactionTabToAll" : "switchReactionTab"
+            matomo.track(eventWithCategory: .emojiReactions, name: eventName)
         }
     }
 }
