@@ -276,13 +276,12 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     }
 
     public var canExecuteAction: Bool {
-        var messageCanExecuteAction = !isDraft
         @InjectService var featureAvailableProvider: FeatureAvailableProvider
         if featureAvailableProvider.isAvailable(.emojiReaction) {
-            messageCanExecuteAction = messageCanExecuteAction && isDisplayable
+            return !isDraft && isDisplayable
         }
 
-        return messageCanExecuteAction
+        return !isDraft
     }
 
     public func fromMe(currentMailboxEmail: String) -> Bool {
