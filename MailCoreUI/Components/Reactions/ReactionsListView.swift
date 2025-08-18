@@ -114,6 +114,10 @@ public struct ReactionsListView: View {
     private func didLongPressReaction(_ reaction: UIReaction) {
         @InjectService var matomo: MatomoUtils
         matomo.track(eventWithCategory: .emojiReactions, action: .longPress, name: "showReactionsBottomSheet")
+
+        let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+        feedbackGenerator.impactOccurred()
+
         selectedReactionToDisplay = .reaction(reaction.emoji)
     }
 }
