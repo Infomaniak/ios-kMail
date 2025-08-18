@@ -66,6 +66,7 @@ struct ComposeMessageIntentView: View, IntentViewable {
                             attachments: attachments,
                             htmlAttachments: htmlAttachments
                         )
+                        .navigationBarTitleDisplayMode(.inline)
                         .environmentObject(resolvedIntent.mailboxManager)
                         .environmentObject(resolvedIntent.mainViewState)
                         .environment(\.currentUser, MandatoryEnvironmentContainer(value: resolvedIntent.currentUser))

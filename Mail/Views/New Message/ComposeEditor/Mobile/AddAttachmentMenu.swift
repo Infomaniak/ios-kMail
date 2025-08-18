@@ -40,20 +40,32 @@ struct AddAttachmentMenu: View {
 
     var body: some View {
         Menu {
-            Button {
-                isShowingCamera = true
-            } label: {
-                Label(CoreUILocalizable.buttonUploadFromCamera, asset: EditorToolbarAction.takePhoto.icon.swiftUIImage)
-            }
-            Button {
-                isShowingPhotoLibrary = true
-            } label: {
-                Label(CoreUILocalizable.buttonUploadFromGallery, asset: EditorToolbarAction.addPhoto.icon.swiftUIImage)
-            }
-            Button {
-                isShowingFileSelection = true
-            } label: {
-                Label(CoreUILocalizable.buttonUploadFromFiles, asset: EditorToolbarAction.addFile.icon.swiftUIImage)
+            if #available(iOS 16.0, *) {
+                Button {
+                    isShowingCamera = true
+                } label: {
+                    Label(CoreUILocalizable.buttonUploadFromCamera, asset: EditorToolbarAction.takePhoto.icon.swiftUIImage)
+                }
+                Button {
+                    isShowingPhotoLibrary = true
+                } label: {
+                    Label(CoreUILocalizable.buttonUploadFromGallery, asset: EditorToolbarAction.addPhoto.icon.swiftUIImage)
+                }
+                Button {
+                    isShowingFileSelection = true
+                } label: {
+                    Label(CoreUILocalizable.buttonUploadFromFiles, asset: EditorToolbarAction.addFile.icon.swiftUIImage)
+                }
+            } else {
+                Button(CoreUILocalizable.buttonUploadFromCamera) {
+                    isShowingCamera = true
+                }
+                Button(CoreUILocalizable.buttonUploadFromGallery) {
+                    isShowingPhotoLibrary = true
+                }
+                Button(CoreUILocalizable.buttonUploadFromFiles) {
+                    isShowingFileSelection = true
+                }
             }
         } label: {
             Label {
@@ -62,6 +74,7 @@ struct AddAttachmentMenu: View {
                 action.icon.swiftUIImage
                     .iconSize(MobileToolbarButtonStyle.iconSize)
             }
+            .labelStyle(.iconOnly)
         }
         .buttonStyle(.mobileToolbar(isActivated: false))
         .onChange(of: selectedImage) { newImage in
