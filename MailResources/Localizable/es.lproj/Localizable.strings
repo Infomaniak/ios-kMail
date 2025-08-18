@@ -4,7 +4,7 @@
  * Locale: es, Spanish
  * Tagged: ios
  * Exported by: Philippe Weidmann
- * Exported at: Tue, 19 Aug 2025 14:29:39 +0200
+ * Exported at: Mon, 18 Aug 2025 14:06:09 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -192,8 +192,6 @@
 
 /* loco:6501840ef58ecb8b620adb23 */
 "aiPromptPlaceholder" = "Dígale al asistente de redacción lo que quiere escribir. Por ejemplo, \"%@\".";
-
-
 
 /* loco:65017fa44f4fa3e3b902d043 */
 "aiPromptTitle" = "Euria";
