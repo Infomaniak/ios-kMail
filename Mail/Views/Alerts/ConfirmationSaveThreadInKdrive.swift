@@ -20,6 +20,7 @@ import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreSwiftUI
 import MailCore
+import MailCoreUI
 import MailResources
 import SwiftUI
 
@@ -29,7 +30,7 @@ struct ConfirmationSaveThreadInKdrive: View {
     let targetMessages: [Message]
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(alignment: .leading, spacing: 0) {
             Text(Action.saveThreadInkDrive.title)
                 .textStyle(.bodyMedium)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -45,4 +46,9 @@ struct ConfirmationSaveThreadInKdrive: View {
             }
         }
     }
+}
+
+#Preview {
+    ConfirmationSaveThreadInKdrive(targetMessages: [])
+        .environmentObject(PreviewHelper.sampleMailboxManager)
 }
