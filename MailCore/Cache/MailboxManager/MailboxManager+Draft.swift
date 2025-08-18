@@ -210,7 +210,8 @@ public extension MailboxManager {
     }
 
     func updateRecipientsAutoEncrypt(draft: Draft) async throws -> Int {
-        let recipients = draft.to
+        let recipients = List<Recipient>()
+        recipients.append(objectsIn: draft.to)
         recipients.append(objectsIn: draft.cc)
         recipients.append(objectsIn: draft.bcc)
 
