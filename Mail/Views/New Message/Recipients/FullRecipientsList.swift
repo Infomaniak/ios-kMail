@@ -28,7 +28,9 @@ import SwiftUI
 struct FullRecipientsList: View {
     @LazyInjectService private var matomo: MatomoUtils
 
+    @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
+
     @Binding var recipients: RealmSwift.List<Recipient>
 
     @FocusState var focusedField: ComposeViewFieldType?
@@ -44,6 +46,7 @@ struct FullRecipientsList: View {
             }
             .focused($focusedField, equals: .chip(type.hashValue, recipient))
             .environmentObject(mailboxManager)
+            .environment(\.currentUser, currentUser)
         }
     }
 
