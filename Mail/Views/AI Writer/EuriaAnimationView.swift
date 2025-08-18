@@ -28,7 +28,7 @@ struct EuriaAnimationView: View {
         LottieView {
             try await LottieAnimationSource.dotLottieFile(.named("euria", bundle: MailResourcesResources.bundle))
         }
-        .playing(loopMode: .loop)
+        .playing(loopMode: .autoReverse)
         .frame(width: size.rawValue, height: size.rawValue)
     }
 }
