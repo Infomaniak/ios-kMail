@@ -76,6 +76,10 @@ struct MobileMainToolbarView: View {
                             customTint: draft.encrypted ? EncryptionButton.encryptionEnabledForeground : nil
                         )
                     )
+            case .ai:
+                AIToolbarButton {
+                    performToolbarAction(action)
+                }
             default:
                 MobileToolbarButton(toolbarAction: action, isActivated: false, customTint: action.customTint) {
                     performToolbarAction(action)
