@@ -221,8 +221,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",
       "state" : {
-        "revision" : "ca92efeb24b10052cd2a79e5205f42c5a16770ec",
-        "version" : "8.53.2"
+        "revision" : "3c2eee7773df58bdfb9e10e72d9a4be44253e0d9",
+        "version" : "8.55.0"
       }
     },
     {
@@ -249,7 +249,7 @@
       "location" : "https://github.com/SVGKit/SVGKit.git",
       "state" : {
         "branch" : "3.x",
-        "revision" : "82a7eb339bdb01c1c243b64fd4ce61116ebceaef"
+        "revision" : "596192a28785a31f00ba2e05167317fc98bd6685"
       }
     },
     {
