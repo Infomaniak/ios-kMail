@@ -4,7 +4,7 @@
  * Locale: it, Italian
  * Tagged: ios
  * Exported by: Philippe Weidmann
- * Exported at: Mon, 18 Aug 2025 14:06:09 +0200
+ * Exported at: Tue, 19 Aug 2025 15:19:42 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -170,7 +170,7 @@
 "aiMenuShorten" = "Accorcia";
 
 /* loco:6553342162ddfaef2c06b5a2 */
-"aiPromptAnswer" = "Dica all’assistente come può aiutarti a rispondere a questa e-mail.";
+"aiPromptAnswer" = "Spiegate a Euria come ottenere aiuto per rispondere a questa e-mail.";
 
 /* loco:651bc83def57493b22006342 */
 "aiPromptExample1" = "un’e-mail di ringraziamento per un regalo di benvenuto";
@@ -188,10 +188,10 @@
 "aiPromptExample5" = "un’e-mail di richiesta di incontro con un cliente importante";
 
 /* loco:65042259ab599c0ca6094172 */
-"aiPromptGenerationLoader" = "L’assistente sta scrivendo…";
+"aiPromptGenerationLoader" = "Euria sta scrivendo…";
 
 /* loco:6501840ef58ecb8b620adb23 */
-"aiPromptPlaceholder" = "Comunica all’assistente di scrittura cosa vuoi scrivere. Ad esempio, \"%@\".";
+"aiPromptPlaceholder" = "Indicare a Euria cosa si desidera scrivere. Ad esempio \"%@\".";
 
 /* loco:65017fa44f4fa3e3b902d043 */
 "aiPromptTitle" = "Euria";
@@ -203,7 +203,7 @@
 "aiReplaceSubjectDescription" = "Il soggetto diventerà:\n\n%@";
 
 /* loco:65323a4677722095b50538e2 */
-"aiReplaceSubjectTitle" = "Sostituire il soggetto attuale con la proposta dell’assistente?";
+"aiReplaceSubjectTitle" = "Sostituire l’oggetto attuale con la proposta di Euria?";
 
 /* loco:650afa5b0b0204386e077c94 */
 "aiReplacementDialogDescription" = "Facendo clic su \"Sostituisci\", il contenuto preesistente andrà perso.";
