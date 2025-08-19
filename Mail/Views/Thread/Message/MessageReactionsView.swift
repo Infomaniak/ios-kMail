@@ -110,6 +110,7 @@ struct MessageReactionsView: View {
             computedReactions.append(
                 UIReaction(reaction: reaction, authors: [UIReactionAuthor(user: currentUser.value)], hasUserReacted: true)
             )
+            computedUserReactions.insert(reaction)
         }
 
         reactions = computedReactions
