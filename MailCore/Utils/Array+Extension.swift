@@ -55,6 +55,14 @@ public extension LazyFilterSequence {
     }
 }
 
+public extension LazyFilterSequence where Element: RealmCollectionValue {
+    func toRealmList() -> List<Element> {
+        let list = List<Element>()
+        list.append(objectsIn: self)
+        return list
+    }
+}
+
 public extension LazyMapSequence {
     func toArray() -> [Element] {
         return Array(self)
