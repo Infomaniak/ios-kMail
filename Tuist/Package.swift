@@ -33,6 +33,7 @@ let packageSettings = PackageSettings(
         "Popovers": .framework,
         "RealmSwift": .framework,
         "Realm": .framework,
+        "Sentry-Dynamic": .framework,
         "Shimmer": .staticFramework,
         "SnackBar": .framework,
         "SVGKit": .framework,
