@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: fr, French
  * Tagged: ios
- * Exported by: Valentin Perignon
- * Exported at: Wed, 13 Aug 2025 13:20:56 +0200
+ * Exported by: Philippe Weidmann
+ * Exported at: Tue, 19 Aug 2025 14:29:39 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -275,7 +275,7 @@
 "blockAnExpeditorTitle" = "Bloquer un expéditeur";
 
 /* loco:66dee0ef5c6d656046044445 */
-"blockExpeditorTitle" = "Bloquer %s";
+"blockExpeditorTitle" = "Bloquer %@";
 
 /* loco:67cff9495697ef40dc013633 */
 "blockMultipleExpeditorsTitle" = "Bloquer %d expéditeurs";
@@ -542,7 +542,7 @@
 "confirmLogoutTitle" = "Me déconnecter";
 
 /* loco:66db00746332bbedae01f2f2 */
-"confirmationToBlockAnExpeditorText" = "Tous les futurs messages de %s seront déplacés dans le dossier Courrier indésirable.";
+"confirmationToBlockAnExpeditorText" = "Tous les futurs messages de %@ seront déplacés dans le dossier Courrier indésirable.";
 
 /* loco:67cffa6132f76065a6002bd2 */
 "confirmationToBlockMultipleExpeditorsText" = "Tous les futurs messages de ces expéditeurs seront déplacés dans le dossier Courrier indésirable.";
