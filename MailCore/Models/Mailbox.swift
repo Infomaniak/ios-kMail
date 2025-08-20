@@ -20,6 +20,31 @@ import Foundation
 import InfomaniakCore
 import RealmSwift
 
+public enum LocalPack {
+    case myKSuiteFree
+    case myKSuitePlus
+    case kSuiteFree // = kSuite Essential
+    case kSuitePaid // = kSuite Standard | Business | Enterprise
+
+    init?(mailbox: Mailbox) {
+        if mailbox.isFree {
+            if mailbox.isLimited {
+                self = .myKSuiteFree
+            } else {
+                self = .myKSuitePlus
+            }
+        } else if mailbox.isPartOfKSuite {
+            if mailbox.isKSuiteEssential {
+                self = .kSuiteFree
+            } else {
+                self = .kSuitePaid
+            }
+        }
+
+        return nil
+    }
+}
+
 public class Mailbox: Object, Codable, Identifiable {
     @Persisted(primaryKey: true) public var objectId = ""
     /*
@@ -39,7 +64,8 @@ public class Mailbox: Object, Codable, Identifiable {
     @Persisted public var isSpamFilter: Bool
     @Persisted public var isLimited: Bool
     @Persisted public var isFree: Bool
-    @Persisted public var isKsuiteEssential: Bool
+    @Persisted public var isPartOfKSuite: Bool
+    @Persisted public var isKSuiteEssential: Bool
     @Persisted public var dailyLimit: Int
     @Persisted public var ownerOrAdmin: Bool
     @Persisted public var unseenMessages = 0
@@ -72,8 +98,8 @@ public class Mailbox: Object, Codable, Identifiable {
         return "mailbox-\(mailboxId)"
     }
 
-    public var isMyKSuiteFree: Bool {
-        return isFree && isLimited
+    public var pack: LocalPack? {
+        return LocalPack(mailbox: self)
     }
 
     enum CodingKeys: String, CodingKey {
@@ -91,7 +117,8 @@ public class Mailbox: Object, Codable, Identifiable {
         case isSpamFilter
         case isLimited
         case isFree
-        case isKsuiteEssential
+        case isKSuiteEssential = "isKsuiteEssential"
+        case isPartOfKSuite = "isPartOfKsuite"
         case dailyLimit
         case ownerOrAdmin
         case remoteUnseenMessages = "unseenMessages"
@@ -156,7 +183,8 @@ public class Mailbox: Object, Codable, Identifiable {
         isSpamFilter = try container.decode(Bool.self, forKey: .isSpamFilter)
         isLimited = try container.decode(Bool.self, forKey: .isLimited)
         isFree = try container.decode(Bool.self, forKey: .isFree)
-        isKsuiteEssential = try container.decode(Bool.self, forKey: .isKsuiteEssential)
+        isKSuiteEssential = try container.decode(Bool.self, forKey: .isKSuiteEssential)
+        isPartOfKSuite = try container.decode(Bool.self, forKey: .isPartOfKSuite)
         dailyLimit = try container.decode(Int.self, forKey: .dailyLimit)
         ownerOrAdmin = try container.decode(Bool.self, forKey: .ownerOrAdmin)
         remoteUnseenMessages = try container.decode(Int.self, forKey: .remoteUnseenMessages)

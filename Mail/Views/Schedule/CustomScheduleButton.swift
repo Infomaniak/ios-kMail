@@ -48,9 +48,9 @@ struct CustomScheduleButton: View {
                     .textStyle(.body)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                if mailboxManager.mailbox.isMyKSuiteFree {
+                if mailboxManager.mailbox.pack == .myKSuiteFree {
                     MyKSuitePlusChip()
-                } else if mailboxManager.mailbox.isKsuiteEssential {
+                } else if mailboxManager.mailbox.pack == .kSuiteFree {
                     KSuiteProUpgradeChip()
                 }
 
@@ -61,11 +61,11 @@ struct CustomScheduleButton: View {
     }
 
     private func showCustomSchedulePicker() {
-        if mailboxManager.mailbox.isMyKSuiteFree {
+        if mailboxManager.mailbox.pack == .myKSuiteFree {
             let eventName = type == .scheduledDraft ? "scheduledCustomDate" : "snoozeCustomDate"
             matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: eventName)
             isShowingMyKSuiteUpgrade = true
-        } else if mailboxManager.mailbox.isKsuiteEssential {
+        } else if mailboxManager.mailbox.pack == .kSuiteFree {
             let eventName = type == .scheduledDraft ? "scheduledCustomDate" : "snoozeCustomDate"
             matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: eventName)
             isShowingKSuiteProUpgrade = true

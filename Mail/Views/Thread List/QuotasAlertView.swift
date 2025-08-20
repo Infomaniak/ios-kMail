@@ -35,17 +35,16 @@ struct QuotasAlertView: View {
     private let nextShowCounter = 10
 
     private var type: AlertType? {
-        let myKSuiteAlert = mailbox.isFree && mailbox.isLimited
-        let kSuiteProAlert = mailbox.isKsuiteEssential
-
-        guard myKSuiteAlert || kSuiteProAlert, let quotas = mailbox.quotas else {
+        guard let pack = mailbox.pack,
+              pack == .myKSuiteFree || pack == .kSuiteFree,
+              let quotas = mailbox.quotas else {
             return nil
         }
 
         if quotas.progression >= 1.0 {
-            return .full(isPro: !myKSuiteAlert)
+            return .full(isPro: pack == .myKSuitePlus || pack == .kSuitePaid)
         } else if quotas.progression > 0.85 && nextShowQuotasAlert < appLaunchCounter.value {
-            return .almostFull(isPro: !myKSuiteAlert)
+            return .almostFull(isPro: pack == .myKSuitePlus || pack == .kSuitePaid)
         }
         return nil
     }
