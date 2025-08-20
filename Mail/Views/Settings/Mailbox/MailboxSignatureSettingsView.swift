@@ -35,7 +35,7 @@ struct MailboxSignatureSettingsView: View {
     let mailboxManager: MailboxManager
 
     private var isKSuiteLimited: Bool {
-        signatures.defaultSignature != nil && mailboxManager.mailbox.isMyKSuiteFree
+        signatures.defaultSignature != nil && mailboxManager.mailbox.pack == .myKSuiteFree
     }
 
     init(mailboxManager: MailboxManager) {

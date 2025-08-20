@@ -45,7 +45,7 @@ public final class DraftManager {
         mailboxManager: MailboxManager,
         showSnackbar: Bool,
         changeFolderAction: ((Folder) -> Void)? = nil,
-        myKSuiteUpgradeAction: (() -> Void)? = nil
+        kSuiteUpgradeAction: ((LocalPack) -> Void)? = nil
     ) {
         let drafts = mailboxManager.draftWithPendingAction().freezeIfNeeded()
 
@@ -76,7 +76,7 @@ public final class DraftManager {
                                 mailboxManager: mailboxManager,
                                 showSnackbar: showSnackbar,
                                 changeFolderAction: changeFolderAction,
-                                myKSuiteUpgradeAction: myKSuiteUpgradeAction
+                                kSuiteUpgradeAction: kSuiteUpgradeAction
                             )
                         default:
                             break
@@ -183,7 +183,7 @@ public final class DraftManager {
         retry: Bool = true,
         showSnackbar: Bool,
         changeFolderAction: ((Folder) -> Void)? = nil,
-        myKSuiteUpgradeAction: (() -> Void)? = nil,
+        kSuiteUpgradeAction: ((LocalPack) -> Void)? = nil,
     ) async throws -> Date? {
         showWillSendSnackbar(action: initialDraft.action, showSnackbar: showSnackbar)
 
@@ -218,7 +218,7 @@ public final class DraftManager {
                 failingDraft: draft,
                 mailboxManager: mailboxManager,
                 showSnackbar: showSnackbar,
-                myKSuiteUpgradeAction: myKSuiteUpgradeAction
+                kSuiteUpgradeAction: kSuiteUpgradeAction
             )
             throw ErrorDomain.sendQuota
         } catch let error as MailApiError where error == .apiIdentityNotFound {
@@ -240,12 +240,13 @@ public final class DraftManager {
     private func handleSentQuotaError(failingDraft draft: Draft,
                                       mailboxManager: MailboxManager,
                                       showSnackbar: Bool,
-                                      myKSuiteUpgradeAction: (() -> Void)?) async {
-        if mailboxManager.mailbox.isMyKSuiteFree || mailboxManager.mailbox.isKsuiteEssential {
+                                      kSuiteUpgradeAction: ((LocalPack) -> Void)?) async {
+        if let pack = mailboxManager.mailbox.pack,
+           pack == .myKSuiteFree || pack == .kSuiteFree {
             alertDisplayable.show(
                 message: MailResourcesStrings.Localizable.errorSendLimitExceeded,
                 action: (MailResourcesStrings.Localizable.buttonUpgrade, {
-                    myKSuiteUpgradeAction?()
+                    kSuiteUpgradeAction?(pack)
                 })
             )
             matomo.track(eventWithCategory: .newMessage, name: "trySendingWithDailyLimitReached")

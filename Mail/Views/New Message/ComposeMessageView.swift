@@ -312,11 +312,11 @@ struct ComposeMessageView: View {
                 mailboxManager: mailboxManager,
                 showSnackbar: shouldShowSnackbar,
                 changeFolderAction: changeSelectedFolder
-            ) {
-                if mailboxManager.mailbox.isKsuiteEssential {
+            ) { currentPack in
+                if currentPack == .kSuiteFree {
                     mainViewState.isShowingKSuiteProUpgrade = true
                     matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: "dailyLimitReachedUpgrade")
-                } else {
+                } else if currentPack == .myKSuiteFree {
                     mainViewState.isShowingMyKSuiteUpgrade = true
                     matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "dailyLimitReachedUpgrade")
                 }
@@ -420,7 +420,9 @@ struct ComposeMessageView: View {
 
         let mailbox = mailboxManager.mailbox
         let mailboxIsFull = mailbox.quotas?.progression ?? 0 >= 1
-        if (mailbox.isMyKSuiteFree || mailbox.isKsuiteEssential) && mailboxIsFull {
+        if mailboxIsFull,
+           let pack = mailbox.pack,
+           pack == .myKSuiteFree || pack == .kSuiteFree {
             matomo.track(eventWithCategory: .newMessage, name: "trySendingWithMailboxFull")
             Task {
                 if let liveDraft = draft.thaw() {
@@ -432,10 +434,10 @@ struct ComposeMessageView: View {
             snackbarPresenter.show(
                 message: MailResourcesStrings.Localizable.myKSuiteSpaceFullAlert,
                 action: IKSnackBar.Action(title: MailResourcesStrings.Localizable.buttonUpgrade) {
-                    if mailbox.isKsuiteEssential {
+                    if pack == .kSuiteFree {
                         mainViewState.isShowingKSuiteProUpgrade = true
                         matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
-                    } else {
+                    } else if pack == .myKSuiteFree {
                         mainViewState.isShowingMyKSuiteUpgrade = true
                         matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
                     }

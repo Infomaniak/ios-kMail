@@ -107,7 +107,7 @@ struct MobileMainToolbarView: View {
                 isShowingFormattingOptions = true
             }
         case .ai:
-            if mailboxManager.mailbox.isKsuiteEssential {
+            if mailboxManager.mailbox.pack == .kSuiteFree {
                 isShowingKSuiteProPanel = true
             } else {
                 isShowingAI = true
