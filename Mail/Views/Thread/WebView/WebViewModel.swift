@@ -69,18 +69,18 @@ final class WebViewModel: NSObject, ObservableObject {
         loadScripts()
     }
 
-    func loadBody(presentableBody: PresentableBody, blockRemoteContent: Bool, messageUid: String) async -> LoadResult {
+    func loadBody(presentableBody: PresentableBody, blockRemoteContent: Bool) async -> LoadResult {
         var messageBody = showBlockQuote ? presentableBody.body?.value : presentableBody.compactBody
 
         if messageBody != nil, let subBodies = presentableBody.body?.subBody {
-            messageBody! += formatSubBodyContent(subBodies: subBodies, messageUid: messageUid)
+            messageBody! += formatSubBodyContent(subBodies: subBodies)
         }
 
         let loadResult = await loadHTMLString(value: messageBody, blockRemoteContent: blockRemoteContent)
         return loadResult
     }
 
-    private func formatSubBodyContent(subBodies: List<SubBody>, messageUid: String) -> String {
+    private func formatSubBodyContent(subBodies: List<SubBody>) -> String {
         let subBodiesContent = subBodies.reduce("") {
             var partialResult = $0
 
