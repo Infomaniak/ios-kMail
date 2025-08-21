@@ -99,12 +99,7 @@ struct MessageBodyContentView: View {
         guard let presentableBody else { return }
 
         Task {
-            let loadResult = await model.loadBody(
-                presentableBody: presentableBody,
-                blockRemoteContent: blockRemoteContent,
-                messageUid: messageUid
-            )
-
+            let loadResult = await model.loadBody(presentableBody: presentableBody, blockRemoteContent: blockRemoteContent)
             displayContentBlockedActionView = (loadResult == .remoteContentBlocked)
         }
     }
