@@ -1,2 +1,2 @@
-- React to messages
+- Fix message display in search
 - Bug fixes
