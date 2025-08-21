@@ -94,10 +94,6 @@ final class WebViewModel: NSObject, ObservableObject {
             return partialResult + "<blockquote>\(bodyValue)</blockquote>"
         }
 
-        if !subBodiesContent.isEmpty {
-            SentryDebug.sendSubBodiesTrigger(messageUid: messageUid)
-        }
-
         return subBodiesContent
     }
 
