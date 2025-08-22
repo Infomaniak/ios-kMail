@@ -41,6 +41,7 @@ struct EditorMobileToolbarView: View {
     @ObservedObject var textAttributes: TextAttributes
 
     @Binding var isShowingAI: Bool
+    @Binding var isShowingKSuiteProPanel: Bool
     @Binding var isShowingEncryptStatePanel: Bool
 
     let draft: Draft
@@ -55,6 +56,7 @@ struct EditorMobileToolbarView: View {
                     isShowingClassicOptions: $isShowingClassicOptions,
                     isShowingFormattingOptions: $isShowingFormattingOptions,
                     isShowingAI: $isShowingAI,
+                    isShowingKSuiteProPanel: $isShowingKSuiteProPanel,
                     isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
                     draft: draft,
                     isEditorFocused: isEditorFocused
@@ -86,6 +88,7 @@ struct EditorMobileToolbarView: View {
     EditorMobileToolbarView(
         textAttributes: TextAttributes(),
         isShowingAI: .constant(false),
+        isShowingKSuiteProPanel: .constant(false),
         isShowingEncryptStatePanel: .constant(false),
         draft: Draft(),
         isEditorFocused: true
