@@ -181,10 +181,10 @@ public class Mailbox: Object, Codable, Identifiable {
         isValidInLDAP = try container.decode(Bool.self, forKey: .isValidInLDAP)
         isLocked = try container.decode(Bool.self, forKey: .isLocked)
         isSpamFilter = try container.decode(Bool.self, forKey: .isSpamFilter)
-        isLimited = try container.decode(Bool.self, forKey: .isLimited)
-        isFree = try container.decode(Bool.self, forKey: .isFree)
-        isKSuiteEssential = try container.decode(Bool.self, forKey: .isKSuiteEssential)
-        isPartOfKSuite = try container.decode(Bool.self, forKey: .isPartOfKSuite)
+        isLimited = try container.decodeIfPresent(Bool.self, forKey: .isLimited) ?? false
+        isFree = try container.decodeIfPresent(Bool.self, forKey: .isFree) ?? false
+        isKSuiteEssential = try container.decodeIfPresent(Bool.self, forKey: .isKSuiteEssential) ?? false
+        isPartOfKSuite = try container.decodeIfPresent(Bool.self, forKey: .isPartOfKSuite) ?? false
         dailyLimit = try container.decode(Int.self, forKey: .dailyLimit)
         ownerOrAdmin = try container.decode(Bool.self, forKey: .ownerOrAdmin)
         remoteUnseenMessages = try container.decode(Int.self, forKey: .remoteUnseenMessages)
