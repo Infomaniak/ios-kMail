@@ -118,7 +118,7 @@ extension Action: CaseIterable {
         let archive = message.folder?.role != .archive
         let unread = !message.seen
         let star = message.flagged
-        let print = origin.type == .floatingPanel(source: .messageList)
+        let print = origin.type == .floatingPanel(source: .message)
         let tempListActions: [Action?] = [
             .openMovePanel,
             spamAction,
