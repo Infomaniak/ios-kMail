@@ -95,6 +95,7 @@ struct ThreadListHeader: View {
     @StateObject private var folderObserver: ThreadListHeaderFolderObserver
 
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
+    @ObservedObject private var apiStatusManager = APIStatusManager.shared
 
     let isMultipleSelectionEnabled: Bool
 
@@ -116,7 +117,7 @@ struct ThreadListHeader: View {
             VStack(alignment: .leading) {
                 if !networkMonitor.isConnected {
                     NoNetworkView()
-                } else if showNoMailServersAvailableView {
+                } else if !apiStatusManager.status.isOnWorking {
                     NoMailServersAvailableView()
                 }
 
@@ -131,9 +132,6 @@ struct ThreadListHeader: View {
                     Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
                         .textStyle(.bodySmallSecondary)
                 }
-            }
-            .onChange(of: isRefreshing) { _ in
-                checkMailApiAvailability()
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -155,21 +153,6 @@ struct ThreadListHeader: View {
         .padding(.bottom, value: .small)
         .padding([.leading, .trailing], value: .medium)
         .background(accentColor.navBarBackground.swiftUIColor)
-    }
-
-    private func checkMailApiAvailability() {
-        Task {
-            do {
-                if !networkMonitor.isConnected {
-                    try await mailboxManager.apiFetcher.checkAPIStatus()
-                    showNoMailServersAvailableView = false
-                }
-            } catch {
-                if networkMonitor.isConnected {
-                    showNoMailServersAvailableView = true
-                }
-            }
-        }
     }
 }
 
