@@ -261,6 +261,28 @@ class MailUITests: XCTestCase {
         deleteDraftButton.tap()
     }
 
+    func testSearchBar() {
+        launchAppFromScratch()
+        login()
+        writeTestMessage()
+
+        app.navigationBars.buttons[MailResourcesStrings.Localizable.send]
+            .firstMatch.tap()
+        _ = app.collectionViews.firstMatch.waitForExistence(timeout: defaultTimeOut)
+
+        refreshThreadList()
+
+        app.buttons[MailResourcesStrings.Localizable.searchAction].tap()
+        app.staticTexts[MailResourcesStrings.Localizable.searchFilterUnread].tap()
+        app.collectionViews.cells.element(boundBy: 1).tap()
+
+        let matchingSubject = app.staticTexts[MailUITests.testSubject]
+        XCTAssertTrue(matchingSubject.waitForExistence(timeout: defaultTimeOut))
+        let webView = app.webViews.firstMatch
+        XCTAssertTrue(webView.waitForExistence(timeout: defaultTimeOut))
+        app.buttons[MailResourcesStrings.Localizable.actionDelete].tap()
+    }
+
     func refreshThreadList() {
         let threadList = app.collectionViews.firstMatch
         _ = threadList.waitForExistence(timeout: defaultTimeOut)
