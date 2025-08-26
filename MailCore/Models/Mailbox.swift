@@ -39,9 +39,9 @@ public enum LocalPack {
             } else {
                 self = .kSuitePaid
             }
+        } else {
+            return nil
         }
-
-        return nil
     }
 }
 
