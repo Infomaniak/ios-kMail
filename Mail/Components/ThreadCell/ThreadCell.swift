@@ -69,7 +69,9 @@ struct ThreadCellDataHolder {
             content = thread.messages.last?.preview
         }
 
-        if let content, !content.isEmpty {
+        if thread.messages.last?.encrypted == true {
+            preview = MailResourcesStrings.Localizable.encryptedMessageHeader
+        } else if let content, !content.isEmpty {
             preview = content
         } else {
             preview = MailResourcesStrings.Localizable.noBodyTitle
