@@ -12,6 +12,7 @@ This repository contains the source code for the Infomaniak Mail iOS application
 - **CI/CD**: Uses custom shell scripts in `ci_scripts/`, and validation checks via GitHub Actions and/or external CI systems (e.g., Xcode Cloud).
 - **Dependency Management**: Swift Package Manager via Tuist/Package.swift
 - **Testing**: Extensive Unit and UI tests under `MailTests/` and `MailUITests/`
+- **Conventional Commits**: Follow the Conventional Commits specification for commit messages.
 
 ---
 
@@ -127,8 +128,6 @@ Don't do: `.padding(16)`
 
 Do: `RoundedRectangle(cornerRadius: IKRadius.large)`
 Don't do: `RoundedRectangle(cornerRadius: 12)`
-
-Sample
 
 ---
 
