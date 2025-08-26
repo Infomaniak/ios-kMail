@@ -107,7 +107,7 @@ final class SearchViewModel: ObservableObject, ThreadListable {
 
     var searchValueType: SearchFieldValueType = .threadsAndContacts
 
-    var selectedThread: Thread?
+    var selectedThreadOwner: SelectedThreadOwnable
 
     /// The searchFolders, stored Frozen.
     let frozenSearchFolder: Folder
@@ -122,7 +122,8 @@ final class SearchViewModel: ObservableObject, ThreadListable {
 
     let observeQueue = DispatchQueue(label: "com.infomaniak.observation.SearchViewModel", qos: .userInteractive)
 
-    init(mailboxManager: MailboxManager, folder: Folder) {
+    init(mailboxManager: MailboxManager, folder: Folder, selectedThreadOwner: SelectedThreadOwnable) {
+        self.selectedThreadOwner = selectedThreadOwner
         self.mailboxManager = mailboxManager
         frozenRealFolder = folder.freezeIfNeeded()
         frozenSearchFolder = mailboxManager.initSearchFolder().freezeIfNeeded()
@@ -235,7 +236,7 @@ final class SearchViewModel: ObservableObject, ThreadListable {
     }
 
     func onTapCell(thread: Thread) {
-        selectedThread = thread
+        // Required by ThreadListable for direction detection but not used, we always go back in search
     }
 
     func refreshSearchIfNeeded(action: Action) {

@@ -81,6 +81,11 @@ extension SearchViewModel {
             partial.filter(containAnyOf)
         }
 
+        if let selectedThreadUID = selectedThreadOwner.selectedThread?.uid,
+           !allThreadsUIDs.contains(selectedThreadUID) {
+            selectedThreadOwner.selectedThread = nil
+        }
+
         observationSearchResultsChangesToken = allThreads.observe(on: observeQueue) { [weak self] changes in
             guard let self else {
                 return

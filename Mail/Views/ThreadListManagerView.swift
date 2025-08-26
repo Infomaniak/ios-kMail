@@ -38,7 +38,9 @@ struct ThreadListManagerView: View {
     var body: some View {
         ZStack {
             if mainViewState.isShowingSearch {
-                SearchView(mailboxManager: mailboxManager, folder: mainViewState.selectedFolder)
+                SearchView(mailboxManager: mailboxManager,
+                           folder: mainViewState.selectedFolder,
+                           selectedThreadOwner: mainViewState)
                     .id(threadListViewHash)
             } else {
                 ThreadListView(

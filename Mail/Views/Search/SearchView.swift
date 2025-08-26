@@ -30,8 +30,12 @@ struct SearchView: View {
     @StateObject private var viewModel: SearchViewModel
     @StateObject private var multipleSelectionViewModel: MultipleSelectionViewModel
 
-    init(mailboxManager: MailboxManager, folder: Folder) {
-        _viewModel = StateObject(wrappedValue: SearchViewModel(mailboxManager: mailboxManager, folder: folder))
+    init(mailboxManager: MailboxManager, folder: Folder, selectedThreadOwner: SelectedThreadOwnable) {
+        _viewModel = StateObject(wrappedValue: SearchViewModel(
+            mailboxManager: mailboxManager,
+            folder: folder,
+            selectedThreadOwner: selectedThreadOwner
+        ))
         _multipleSelectionViewModel = StateObject(wrappedValue: MultipleSelectionViewModel())
     }
 
@@ -62,17 +66,21 @@ struct SearchView: View {
         .toolbarAppStyle()
         .searchToolbar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .onDisappear {
-            if viewModel.selectedThread == nil {
+            if mainViewState.selectedThread == nil {
                 viewModel.stopObserveSearch()
             }
         }
         .onAppear {
-            viewModel.selectedThread = nil
+            mainViewState.selectedThread = nil
         }
         .matomoView(view: ["SearchView"])
     }
 }
 
 #Preview {
-    SearchView(mailboxManager: PreviewHelper.sampleMailboxManager, folder: PreviewHelper.sampleFolder)
+    SearchView(
+        mailboxManager: PreviewHelper.sampleMailboxManager,
+        folder: PreviewHelper.sampleFolder,
+        selectedThreadOwner: PreviewHelper.mockSelectedThreadOwner
+    )
 }
