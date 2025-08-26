@@ -274,7 +274,7 @@ class MailUITests: XCTestCase {
 
         app.buttons[MailResourcesStrings.Localizable.searchAction].tap()
         app.staticTexts[MailResourcesStrings.Localizable.searchFilterUnread].tap()
-        app.collectionViews.cells.element(boundBy: 1).tap()
+        app.collectionViews.cells.element.firstMatch.tap()
 
         let matchingSubject = app.staticTexts[MailUITests.testSubject]
         XCTAssertTrue(matchingSubject.waitForExistence(timeout: defaultTimeOut))
