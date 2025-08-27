@@ -60,18 +60,27 @@ struct ThreadCellDataHolder {
 
         isInWrittenByMeFolder = FolderRole.writtenByMeFolders.contains { $0 == thread.folder?.role }
 
-        let content: String?
+        let contentMessage: Message?
         if isInWrittenByMeFolder {
             recipientToDisplay = lastMessageNotFromSent?.to.first
-            content = (thread.lastMessageFromFolder ?? thread.messages.last)?.preview
+            contentMessage = thread.lastMessageFromFolder ?? thread.messages.last
         } else {
             recipientToDisplay = lastMessageNotFromSent?.from.first
-            content = thread.messages.last?.preview
+            contentMessage = thread.messages.last
         }
 
-        if thread.messages.last?.encrypted == true {
-            preview = MailResourcesStrings.Localizable.encryptedMessageHeader
-        } else if let content, !content.isEmpty {
+        let content: String?
+        if let message = contentMessage {
+            if message.encrypted {
+                content = MailResourcesStrings.Localizable.encryptedMessageHeader
+            } else {
+                content = message.preview
+            }
+        } else {
+            content = nil
+        }
+
+        if let content, !content.isEmpty {
             preview = content
         } else {
             preview = MailResourcesStrings.Localizable.noBodyTitle
