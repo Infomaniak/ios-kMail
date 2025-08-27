@@ -1,2 +1,1 @@
-- Fix message display in search
-- Bug fixes
+- Fix actions in search view
