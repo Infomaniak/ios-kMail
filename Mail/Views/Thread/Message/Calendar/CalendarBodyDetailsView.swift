@@ -73,11 +73,10 @@ struct CalendarBodyDetailsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.medium) {
-            if let warning = event.warning {
-                if nextOccurrence == nil || nextOccurrence! < .now || ((nextOccurrence != nil) && warning == .isCancelled) {
-                    Label { Text(warning.label) } icon: { MailResourcesAsset.warningFill.iconSize(.large) }
-                        .labelStyle(.calendar(warning))
-                }
+            if let warning = event.warning,
+               nextOccurrence == nil || nextOccurrence! < .now || ((nextOccurrence != nil) && warning == .isCancelled) {
+                Label { Text(warning.label) } icon: { MailResourcesAsset.warningFill.iconSize(.large) }
+                    .labelStyle(.calendar(warning))
             }
 
             Group {
