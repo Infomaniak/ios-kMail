@@ -19,6 +19,7 @@
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreDB
+import InfomaniakDI
 import RealmSwift
 
 // MARK: - Search
@@ -103,6 +104,7 @@ public extension MailboxManager {
 
     func searchThreadsOffline(searchFolder: Folder?, filterFolderId: String,
                               searchFilters: [SearchCondition]) async {
+        @InjectService var featureAvailableProvider: FeatureAvailableProvider
         try? writeTransaction { writableRealm in
             guard let searchFolder = searchFolder?.fresh(using: writableRealm) else {
                 self.logError(.missingFolder)
@@ -151,27 +153,29 @@ public extension MailboxManager {
 
             // Update thread in Realm
             for message in filteredMessages {
-                let newMessage = message.detached()
-                newMessage.uid = "offline\(newMessage.uid)"
-                newMessage.fromSearch = true
+                if !(featureAvailableProvider.isAvailable(.emojiReaction) && message.emojiReaction != nil) {
+                    let newMessage = message.detached()
+                    newMessage.uid = "offline\(newMessage.uid)"
+                    newMessage.fromSearch = true
 
-                let newThread = Thread(
-                    uid: "offlineThread\(message.uid)",
-                    messages: [newMessage],
-                    unseenMessages: 0,
-                    from: Array(message.from.detached()),
-                    to: Array(message.to.detached()),
-                    internalDate: newMessage.internalDate,
-                    date: newMessage.date,
-                    hasAttachments: newMessage.hasAttachments,
-                    hasDrafts: newMessage.isDraft,
-                    flagged: newMessage.flagged,
-                    answered: newMessage.answered,
-                    forwarded: newMessage.forwarded
-                )
-                newThread.makeFromSearch(using: writableRealm)
-                newThread.subject = message.subject
-                searchFolder.threads.insert(newThread)
+                    let newThread = Thread(
+                        uid: "offlineThread\(message.uid)",
+                        messages: [newMessage],
+                        unseenMessages: 0,
+                        from: Array(message.from.detached()),
+                        to: Array(message.to.detached()),
+                        internalDate: newMessage.internalDate,
+                        date: newMessage.date,
+                        hasAttachments: newMessage.hasAttachments,
+                        hasDrafts: newMessage.isDraft,
+                        flagged: newMessage.flagged,
+                        answered: newMessage.answered,
+                        forwarded: newMessage.forwarded
+                    )
+                    newThread.makeFromSearch(using: writableRealm)
+                    newThread.subject = message.subject
+                    searchFolder.threads.insert(newThread)
+                }
             }
         }
     }

@@ -16,14 +16,12 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
 import SwiftUI
 
 struct SearchThreadsSectionView: View {
-    @LazyInjectService private var featureAvailableProvider: FeatureAvailableProvider
     @EnvironmentObject private var mainViewState: MainViewState
 
     @AppStorage(UserDefaults.shared.key(.threadDensity)) private var threadDensity = DefaultPreferences.threadDensity
@@ -36,23 +34,21 @@ struct SearchThreadsSectionView: View {
         if viewModel.searchState == .results {
             Section {
                 ForEach(viewModel.frozenThreads) { thread in
-                    if !(featureAvailableProvider.isAvailable(.emojiReaction) && thread.messages.first?.emojiReaction != nil) {
-                        // ZStack is needed for lazy ForEach on iOS 18t
-                        ZStack {
-                            ThreadListCell(
-                                viewModel: viewModel,
-                                multipleSelectionViewModel: multipleSelectionViewModel,
-                                thread: thread,
-                                threadDensity: threadDensity,
-                                accentColor: accentColor,
-                                isSelected: mainViewState.selectedThread?.uid == thread.uid,
-                                isMultiSelected: multipleSelectionViewModel.selectedItems[thread.uid] != nil
-                            )
-                        }
-                        .threadListCellAppearance()
-                        .onAppear {
-                            viewModel.loadNextPageIfNeeded(currentItem: thread)
-                        }
+                    // ZStack is needed for lazy ForEach on iOS 18t
+                    ZStack {
+                        ThreadListCell(
+                            viewModel: viewModel,
+                            multipleSelectionViewModel: multipleSelectionViewModel,
+                            thread: thread,
+                            threadDensity: threadDensity,
+                            accentColor: accentColor,
+                            isSelected: mainViewState.selectedThread?.uid == thread.uid,
+                            isMultiSelected: multipleSelectionViewModel.selectedItems[thread.uid] != nil
+                        )
+                    }
+                    .threadListCellAppearance()
+                    .onAppear {
+                        viewModel.loadNextPageIfNeeded(currentItem: thread)
                     }
                 }
             } header: {
