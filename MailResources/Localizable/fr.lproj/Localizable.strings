@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: fr, French
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Tue, 19 Aug 2025 15:19:42 +0200
+ * Exported by: Matthieu Déglon
+ * Exported at: Wed, 27 Aug 2025 08:21:20 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -134,7 +134,7 @@
 "aiDiscoveryDescription" = "Simplifier la rédaction de vos messages à l’aide de l’Intelligence Artificielle.";
 
 /* loco:651584a40e0b9f6c680ced32 */
-"aiDiscoveryTitle" = "Rédiger vos e-mails avec l’IA";
+"aiDiscoveryTitle" = "Rédiger vos e-mails avec Euria";
 
 /* loco:6555e85e5cfcd5053e081e92 */
 "aiErrorContextMaxTokenReached" = "L’e-mail auquel vous répondez est trop long pour que l’IA puisse actuellement générer une réponse.\n\nRésumez ce que vous souhaitez dire pour obtenir son aide.";
@@ -147,9 +147,6 @@
 
 /* loco:65129c4db1cb64db900f6a02 */
 "aiErrorUnknown" = "Une erreur s’est produite. Si cette erreur persiste, veuillez contacter notre service d’assistance.\nMerci pour votre patience.";
-
-/* loco:653a132b3b8d3a1f740e06f2 */
-"aiGenerationTitlePrompt" = "Généré avec";
 
 /* loco:651549fc352ff768af054453 */
 "aiMenuEditRequest" = "Modifier ma demande";
@@ -203,7 +200,7 @@
 "aiReplaceSubjectDescription" = "L’objet actuel deviendra :\n\n%@";
 
 /* loco:65323a4677722095b50538e2 */
-"aiReplaceSubjectTitle" = "Remplacer l’objet actuel par la proposition de Euria ?";
+"aiReplaceSubjectTitle" = "Remplacer l’objet actuel par la proposition d’Euria ?";
 
 /* loco:650afa5b0b0204386e077c94 */
 "aiReplacementDialogDescription" = "En cliquant sur \"Remplacer\", le contenu pré-existant sera perdu.";

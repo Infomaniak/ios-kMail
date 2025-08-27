@@ -57,10 +57,10 @@
     {
       "identity" : "ios-core-ui",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/ios-core-ui",
+      "location" : "https://github.com/Infomaniak/ios-core-ui/",
       "state" : {
-        "revision" : "f30394a548b36cdb2ee0ad67bf70cdaf0529294b",
-        "version" : "21.0.0"
+        "branch" : "refactor/discovery-item-with-lottie",
+        "revision" : "e1b163e16cbd206faafe5f6cc29d5cddfe9ca75f"
       }
     },
     {
