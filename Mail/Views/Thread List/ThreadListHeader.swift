@@ -87,11 +87,8 @@ class ThreadListHeaderFolderObserver: ObservableObject {
 struct ThreadListHeader: View {
     @LazyInjectService private var matomo: MatomoUtils
 
-    @EnvironmentObject private var mailboxManager: MailboxManager
-
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
 
-    @State private var showNoMailServersAvailableView = false
     @StateObject private var folderObserver: ThreadListHeaderFolderObserver
 
     @ObservedObject private var networkMonitor = NetworkMonitor.shared

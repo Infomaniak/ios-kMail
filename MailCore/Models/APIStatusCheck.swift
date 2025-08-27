@@ -38,6 +38,6 @@ public final class APIStatusManager: ObservableObject {
     @Published public var status: APIStatus
 
     private init() {
-        self.status = APIStatus(isOnWorking: true, lastCheck: .now)
+        status = APIStatus(isOnWorking: true, lastCheck: .now)
     }
 }
