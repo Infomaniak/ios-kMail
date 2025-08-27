@@ -34,7 +34,7 @@ struct SearchThreadsSectionView: View {
         if viewModel.searchState == .results {
             Section {
                 ForEach(viewModel.frozenThreads) { thread in
-                    // ZStack is needed for lazy ForEach on iOS 18t
+                    // ZStack is needed for lazy ForEach on iOS 18
                     ZStack {
                         ThreadListCell(
                             viewModel: viewModel,
