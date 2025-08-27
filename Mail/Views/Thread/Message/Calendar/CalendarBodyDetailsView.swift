@@ -65,12 +65,6 @@ struct CalendarBodyDetailsView: View {
         return event.isAnInvitation && !event.isCancelled && iAmInvited
     }
 
-    func relativeDateString(from date: Date) -> String {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.dateTimeStyle = .named
-        return formatter.localizedString(for: date, relativeTo: Date())
-    }
-
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.medium) {
             if let warning = event.warning,
