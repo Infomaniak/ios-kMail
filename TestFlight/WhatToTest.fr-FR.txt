@@ -1,2 +1,1 @@
-- Correction de l'affichage des messages dans la recherche
-- Correction de bugs
+- Correction des actions dans la recherche
