@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Tue, 19 Aug 2025 14:29:39 +0200
+ * Exported by: Matthieu Déglon
+ * Exported at: Wed, 27 Aug 2025 08:21:20 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -134,7 +134,7 @@
 "aiDiscoveryDescription" = "Simplifique la redacción de sus mensajes con Inteligencia Artificial.";
 
 /* loco:651584a40e0b9f6c680ced32 */
-"aiDiscoveryTitle" = "Escriba sus correos electrónicos utilizando IA";
+"aiDiscoveryTitle" = "Escriba sus correos electrónicos utilizando Euria";
 
 /* loco:6555e85e5cfcd5053e081e92 */
 "aiErrorContextMaxTokenReached" = "El correo electrónico al que estás respondiendo es demasiado largo para que la IA pueda generar una respuesta en este momento.\n\nResume lo que quieres decir para obtener su ayuda.";
@@ -147,9 +147,6 @@
 
 /* loco:65129c4db1cb64db900f6a02 */
 "aiErrorUnknown" = "Se ha producido un error. Si este error persiste, póngase en contacto con nuestro servicio de asistencia.\nGracias por su paciencia.";
-
-/* loco:653a132b3b8d3a1f740e06f2 */
-"aiGenerationTitlePrompt" = "Generado con";
 
 /* loco:651549fc352ff768af054453 */
 "aiMenuEditRequest" = "Editar mi solicitud";
@@ -170,7 +167,7 @@
 "aiMenuShorten" = "Acortar";
 
 /* loco:6553342162ddfaef2c06b5a2 */
-"aiPromptAnswer" = "Dígale al asistente cómo puede ayudarle a responder a este correo electrónico.";
+"aiPromptAnswer" = "Explica a Euria cómo obtener ayuda para responder a este correo electrónico.";
 
 /* loco:651bc83def57493b22006342 */
 "aiPromptExample1" = "un correo electrónico de agradecimiento por un regalo de bienvenida";
@@ -188,16 +185,13 @@
 "aiPromptExample5" = "un correo electrónico solicitando una reunión con un cliente importante";
 
 /* loco:65042259ab599c0ca6094172 */
-"aiPromptGenerationLoader" = "El asistente está escribiendo…";
+"aiPromptGenerationLoader" = "Euria está escribiendo…";
 
 /* loco:6501840ef58ecb8b620adb23 */
-"aiPromptPlaceholder" = "Dígale al asistente de redacción lo que quiere escribir. Por ejemplo, \"%@\".";
-
-/* loco:6501834aa4abf8d77708b7b5 */
-"aiPromptTag" = "Beta";
+"aiPromptPlaceholder" = "Dígale a Euria lo que quiere escribir. Por ejemplo \"%@\".";
 
 /* loco:65017fa44f4fa3e3b902d043 */
-"aiPromptTitle" = "Asistente de redacción";
+"aiPromptTitle" = "Euria";
 
 /* loco:65019254a2948ddd0d0e0ca3 */
 "aiPromptValidateButton" = "Genere";
@@ -206,7 +200,7 @@
 "aiReplaceSubjectDescription" = "El tema será:\n\n%@";
 
 /* loco:65323a4677722095b50538e2 */
-"aiReplaceSubjectTitle" = "¿Sustituir el tema actual por la propuesta del asistente?";
+"aiReplaceSubjectTitle" = "¿Sustituir el asunto actual por la propuesta de Euria?";
 
 /* loco:650afa5b0b0204386e077c94 */
 "aiReplacementDialogDescription" = "Al pulsar \"Sustituir\", se perderá el contenido preexistente.";

@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: en, English
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Tue, 19 Aug 2025 14:29:39 +0200
+ * Exported by: Matthieu Déglon
+ * Exported at: Wed, 27 Aug 2025 08:21:19 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -134,7 +134,7 @@
 "aiDiscoveryDescription" = "Simplify your message writing with Artificial Intelligence.";
 
 /* loco:651584a40e0b9f6c680ced32 */
-"aiDiscoveryTitle" = "Write your emails using AI";
+"aiDiscoveryTitle" = "Write your emails using Euria";
 
 /* loco:6555e85e5cfcd5053e081e92 */
 "aiErrorContextMaxTokenReached" = "The email you’re replying to is too long for the AI to generate a response.\n\nSummarize what you want to say to get its help.";
@@ -147,9 +147,6 @@
 
 /* loco:65129c4db1cb64db900f6a02 */
 "aiErrorUnknown" = "An error has occurred. If this error persists, please contact our helpdesk.\nThank you for your patience.";
-
-/* loco:653a132b3b8d3a1f740e06f2 */
-"aiGenerationTitlePrompt" = "Generated with";
 
 /* loco:651549fc352ff768af054453 */
 "aiMenuEditRequest" = "Edit my request";
@@ -170,7 +167,7 @@
 "aiMenuShorten" = "Shorten";
 
 /* loco:6553342162ddfaef2c06b5a2 */
-"aiPromptAnswer" = "Tell the assistant how it can help you reply to this email.";
+"aiPromptAnswer" = "Explain to Euria how to get help replying to this email.";
 
 /* loco:651bc83def57493b22006342 */
 "aiPromptExample1" = "a thank-you email for a welcome gift";
@@ -188,16 +185,13 @@
 "aiPromptExample5" = "an email requesting an appointment with an important customer";
 
 /* loco:65042259ab599c0ca6094172 */
-"aiPromptGenerationLoader" = "The AI writing assistant is composing…";
+"aiPromptGenerationLoader" = "Euria is writing…";
 
 /* loco:6501840ef58ecb8b620adb23 */
-"aiPromptPlaceholder" = "Tell the AI writing assistant what you want to write. For example, \"%@\".";
-
-/* loco:6501834aa4abf8d77708b7b5 */
-"aiPromptTag" = "Beta";
+"aiPromptPlaceholder" = "Tell Euria what you want to write. For example \"%@\".";
 
 /* loco:65017fa44f4fa3e3b902d043 */
-"aiPromptTitle" = "The AI writing assistant";
+"aiPromptTitle" = "Euria";
 
 /* loco:65019254a2948ddd0d0e0ca3 */
 "aiPromptValidateButton" = "Generate";
@@ -206,7 +200,7 @@
 "aiReplaceSubjectDescription" = "The subject will become:\n\n%@";
 
 /* loco:65323a4677722095b50538e2 */
-"aiReplaceSubjectTitle" = "Replace the current subject with the assistant’s proposal?";
+"aiReplaceSubjectTitle" = "Replace the current subject with Euria’s proposal?";
 
 /* loco:650afa5b0b0204386e077c94 */
 "aiReplacementDialogDescription" = "By clicking on \"Replace\", pre-existing content will be lost.";

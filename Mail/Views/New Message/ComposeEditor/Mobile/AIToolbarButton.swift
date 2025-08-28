@@ -1,6 +1,6 @@
 /*
  Infomaniak Mail - iOS App
- Copyright (C) 2024 Infomaniak Network SA
+ Copyright (C) 2025 Infomaniak Network SA
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -17,19 +17,20 @@
  */
 
 import DesignSystem
-import MailResources
+import InfomaniakCoreSwiftUI
+import Lottie
 import SwiftUI
 
-struct AIEngineLabel: View {
+struct AIToolbarButton: View {
+    let action: @MainActor () -> Void
+
     var body: some View {
-        HStack(spacing: IKPadding.mini) {
-            Text(MailResourcesStrings.Localizable.aiGenerationTitlePrompt)
-                .foregroundStyle(MailResourcesAsset.textPrimaryColor)
-            MailResourcesAsset.aiLogo.swiftUIImage
+        Button(action: action) {
+            EuriaAnimationView(size: MobileToolbarButtonStyle.iconSize)
         }
     }
 }
 
 #Preview {
-    AIEngineLabel()
+    AIToolbarButton {}
 }

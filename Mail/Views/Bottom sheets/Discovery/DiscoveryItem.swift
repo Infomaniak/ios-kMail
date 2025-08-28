@@ -22,7 +22,11 @@ import SwiftUI
 
 public extension DiscoveryItem {
     static let aiDiscovery = DiscoveryItem(
-        image: MailResourcesAsset.aiIllustration.swiftUIImage,
+        content: .lottie(
+            lightName: "discoveryIllustrationEuria",
+            darkName: "discoveryIllustrationEuriaDark",
+            bundle: MailResourcesResources.bundle
+        ),
         title: MailResourcesStrings.Localizable.aiDiscoveryTitle,
         description: MailResourcesStrings.Localizable.aiDiscoveryDescription,
         primaryButtonLabel: MailResourcesStrings.Localizable.buttonTry,
@@ -30,7 +34,7 @@ public extension DiscoveryItem {
     )
 
     static let syncDiscovery = DiscoveryItem(
-        image: MailResourcesAsset.syncIllustration.swiftUIImage,
+        content: .image(MailResourcesAsset.syncIllustration.swiftUIImage),
         title: MailResourcesStrings.Localizable.syncCalendarsAndContactsTitle,
         description: MailResourcesStrings.Localizable.syncCalendarsAndContactsDescription,
         primaryButtonLabel: MailResourcesStrings.Localizable.buttonStart,
@@ -38,7 +42,7 @@ public extension DiscoveryItem {
     )
 
     static let updateDiscovery = DiscoveryItem(
-        image: MailResourcesAsset.logoMailWithStar.swiftUIImage,
+        content: .image(MailResourcesAsset.logoMailWithStar.swiftUIImage),
         title: MailResourcesStrings.Localizable.updateAvailableTitle,
         description: MailResourcesStrings.Localizable.updateAvailableDescription,
         primaryButtonLabel: MailResourcesStrings.Localizable.buttonUpdate,
@@ -46,7 +50,7 @@ public extension DiscoveryItem {
     )
 
     static let setAsDefaultAppDiscovery = DiscoveryItem(
-        image: UserDefaults.shared.accentColor.defaultApp.swiftUIImage,
+        content: .image(UserDefaults.shared.accentColor.defaultApp.swiftUIImage),
         title: MailResourcesStrings.Localizable.setAsDefaultAppTitle,
         description: MailResourcesStrings.Localizable.setAsDefaultAppDescription,
         primaryButtonLabel: MailResourcesStrings.Localizable.buttonSetNow,
@@ -54,7 +58,7 @@ public extension DiscoveryItem {
     )
 
     static let scheduleDiscovery = DiscoveryItem(
-        image: MailResourcesAsset.updateRequired.swiftUIImage,
+        content: .image(MailResourcesAsset.updateRequired.swiftUIImage),
         title: MailResourcesStrings.Localizable.disabledFeatureFlagTitle,
         description: MailResourcesStrings.Localizable.disabledFeatureFlagDescription,
         primaryButtonLabel: MailResourcesStrings.Localizable.buttonClose,

@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: it, Italian
  * Tagged: ios
- * Exported by: Philippe Weidmann
- * Exported at: Tue, 19 Aug 2025 14:29:39 +0200
+ * Exported by: Matthieu Déglon
+ * Exported at: Wed, 27 Aug 2025 08:21:20 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -134,7 +134,7 @@
 "aiDiscoveryDescription" = "Semplifica la scrittura dei messaggi con l’intelligenza artificiale.";
 
 /* loco:651584a40e0b9f6c680ced32 */
-"aiDiscoveryTitle" = "Scrivi le tue e-mail utilizzando l’IA";
+"aiDiscoveryTitle" = "Scrivi le tue e-mail utilizzando Euria";
 
 /* loco:6555e85e5cfcd5053e081e92 */
 "aiErrorContextMaxTokenReached" = "L’e-mail a cui stai rispondendo è troppo lunga perché l’intelligenza artificiale sia in grado di generare una risposta al momento.\n\nRiassumi ciò che vuoi dire per ottenere il suo aiuto.";
@@ -147,9 +147,6 @@
 
 /* loco:65129c4db1cb64db900f6a02 */
 "aiErrorUnknown" = "Si è verificato un errore. Se l’errore persiste, si prega di contattare il nostro helpdesk.\nGrazie per la pazienza.";
-
-/* loco:653a132b3b8d3a1f740e06f2 */
-"aiGenerationTitlePrompt" = "Generato con";
 
 /* loco:651549fc352ff768af054453 */
 "aiMenuEditRequest" = "Modifica la mia richiesta";
@@ -170,7 +167,7 @@
 "aiMenuShorten" = "Accorcia";
 
 /* loco:6553342162ddfaef2c06b5a2 */
-"aiPromptAnswer" = "Dica all’assistente come può aiutarti a rispondere a questa e-mail.";
+"aiPromptAnswer" = "Spiegate a Euria come ottenere aiuto per rispondere a questa e-mail.";
 
 /* loco:651bc83def57493b22006342 */
 "aiPromptExample1" = "un’e-mail di ringraziamento per un regalo di benvenuto";
@@ -188,16 +185,13 @@
 "aiPromptExample5" = "un’e-mail di richiesta di incontro con un cliente importante";
 
 /* loco:65042259ab599c0ca6094172 */
-"aiPromptGenerationLoader" = "L’assistente sta scrivendo…";
+"aiPromptGenerationLoader" = "Euria sta scrivendo…";
 
 /* loco:6501840ef58ecb8b620adb23 */
-"aiPromptPlaceholder" = "Comunica all’assistente di scrittura cosa vuoi scrivere. Ad esempio, \"%@\".";
-
-/* loco:6501834aa4abf8d77708b7b5 */
-"aiPromptTag" = "Beta";
+"aiPromptPlaceholder" = "Communica a Euria cosa si desidera scrivere. Ad esempio \"%@\".";
 
 /* loco:65017fa44f4fa3e3b902d043 */
-"aiPromptTitle" = "Assistente di scrittura";
+"aiPromptTitle" = "Euria";
 
 /* loco:65019254a2948ddd0d0e0ca3 */
 "aiPromptValidateButton" = "Genera";
@@ -206,7 +200,7 @@
 "aiReplaceSubjectDescription" = "Il soggetto diventerà:\n\n%@";
 
 /* loco:65323a4677722095b50538e2 */
-"aiReplaceSubjectTitle" = "Sostituire il soggetto attuale con la proposta dell’assistente?";
+"aiReplaceSubjectTitle" = "Sostituire l’oggetto attuale con la proposta di Euria?";
 
 /* loco:650afa5b0b0204386e077c94 */
 "aiReplacementDialogDescription" = "Facendo clic su \"Sostituisci\", il contenuto preesistente andrà perso.";
