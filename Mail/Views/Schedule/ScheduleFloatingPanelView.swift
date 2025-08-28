@@ -25,6 +25,7 @@ import SwiftUI
 struct ScheduleFloatingPanelView: View {
     @Binding var isShowingCustomScheduleAlert: Bool
     @Binding var isShowingMyKSuiteUpgrade: Bool
+    @Binding var isShowingKSuiteProUpgrade: Bool
 
     let type: ScheduleType
     let initialDate: Date?
@@ -66,6 +67,7 @@ struct ScheduleFloatingPanelView: View {
             CustomScheduleButton(
                 isShowingCustomScheduleAlert: $isShowingCustomScheduleAlert,
                 isShowingMyKSuiteUpgrade: $isShowingMyKSuiteUpgrade,
+                isShowingKSuiteProUpgrade: $isShowingKSuiteProUpgrade,
                 type: type
             )
         }
@@ -76,6 +78,7 @@ struct ScheduleFloatingPanelView: View {
     ScheduleFloatingPanelView(
         isShowingCustomScheduleAlert: .constant(false),
         isShowingMyKSuiteUpgrade: .constant(false),
+        isShowingKSuiteProUpgrade: .constant(false),
         type: .scheduledDraft,
         initialDate: nil
     ) { _ in }

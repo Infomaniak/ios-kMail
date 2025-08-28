@@ -19,6 +19,7 @@
 import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakDI
+import KSuite
 import MailCore
 import MailCoreUI
 import MailResources
@@ -33,6 +34,7 @@ struct CustomScheduleButton: View {
 
     @Binding var isShowingCustomScheduleAlert: Bool
     @Binding var isShowingMyKSuiteUpgrade: Bool
+    @Binding var isShowingKSuiteProUpgrade: Bool
 
     let type: ScheduleType
 
@@ -46,8 +48,10 @@ struct CustomScheduleButton: View {
                     .textStyle(.body)
                     .frame(maxWidth: .infinity, alignment: .leading)
 
-                if mailboxManager.mailbox.isMyKSuiteFree {
+                if mailboxManager.mailbox.pack == .myKSuiteFree {
                     MyKSuitePlusChip()
+                } else if mailboxManager.mailbox.pack == .kSuiteFree {
+                    KSuiteProUpgradeChip()
                 }
 
                 ChevronIcon(direction: .right, shapeStyle: MailResourcesAsset.textSecondaryColor.swiftUIColor)
@@ -57,10 +61,14 @@ struct CustomScheduleButton: View {
     }
 
     private func showCustomSchedulePicker() {
-        if mailboxManager.mailbox.isMyKSuiteFree {
+        if mailboxManager.mailbox.pack == .myKSuiteFree {
             let eventName = type == .scheduledDraft ? "scheduledCustomDate" : "snoozeCustomDate"
             matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: eventName)
             isShowingMyKSuiteUpgrade = true
+        } else if mailboxManager.mailbox.pack == .kSuiteFree {
+            let eventName = type == .scheduledDraft ? "scheduledCustomDate" : "snoozeCustomDate"
+            matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: eventName)
+            isShowingKSuiteProUpgrade = true
         } else {
             matomo.track(eventWithCategory: type.matomoCategory, name: "customSchedule")
             isShowingCustomScheduleAlert = true
@@ -74,6 +82,7 @@ struct CustomScheduleButton: View {
     CustomScheduleButton(
         isShowingCustomScheduleAlert: .constant(true),
         isShowingMyKSuiteUpgrade: .constant(false),
+        isShowingKSuiteProUpgrade: .constant(false),
         type: .scheduledDraft
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)

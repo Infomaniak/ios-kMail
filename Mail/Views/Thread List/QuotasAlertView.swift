@@ -34,21 +34,23 @@ struct QuotasAlertView: View {
     let mailbox: Mailbox
     private let nextShowCounter = 10
 
-    private var type: AlertType {
-        guard mailbox.isFree && mailbox.isLimited, let quotas = mailbox.quotas else {
-            return .none
+    private var type: AlertType? {
+        guard let pack = mailbox.pack,
+              pack == .myKSuiteFree || pack == .kSuiteFree,
+              let quotas = mailbox.quotas else {
+            return nil
         }
 
         if quotas.progression >= 1.0 {
-            return .full
+            return .full(isPro: pack == .myKSuitePlus || pack == .kSuitePaid)
         } else if quotas.progression > 0.85 && nextShowQuotasAlert < appLaunchCounter.value {
-            return .almostFull
+            return .almostFull(isPro: pack == .myKSuitePlus || pack == .kSuitePaid)
         }
-        return .none
+        return nil
     }
 
     var body: some View {
-        if type != .none {
+        if let type {
             HStack(alignment: .top, spacing: IKPadding.small) {
                 MailResourcesAsset.warningFill.swiftUIImage
                     .iconSize(.medium)
@@ -63,7 +65,7 @@ struct QuotasAlertView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                if type == .almostFull {
+                if case .almostFull = type {
                     Button {
                         nextShowQuotasAlert = appLaunchCounter.value + nextShowCounter
                         matomo.track(eventWithCategory: .myKSuite, name: "closeStorageWarningBanner")
@@ -81,15 +83,14 @@ struct QuotasAlertView: View {
     }
 
     enum AlertType {
-        case full
-        case almostFull
-        case none
+        case full(isPro: Bool)
+        case almostFull(isPro: Bool)
 
         var iconColor: Color {
             switch self {
             case .full:
                 return MailResourcesAsset.redColor.swiftUIColor
-            default:
+            case .almostFull:
                 return MailResourcesAsset.orangeColor.swiftUIColor
             }
         }
@@ -98,17 +99,21 @@ struct QuotasAlertView: View {
             switch self {
             case .full:
                 return MailResourcesStrings.Localizable.myKSuiteQuotasAlertFullTitle
-            default:
+            case .almostFull:
                 return MailResourcesStrings.Localizable.myKSuiteQuotasAlertTitle
             }
         }
 
         var description: String {
             switch self {
-            case .full:
-                return MailResourcesStrings.Localizable.myKSuiteQuotasAlertFullDescription
-            default:
-                return MailResourcesStrings.Localizable.myKSuiteQuotasAlertDescription
+            case .full(let pro):
+                return pro ?
+                    MailResourcesStrings.Localizable.kSuiteProQuotasAlertFullDescription :
+                    MailResourcesStrings.Localizable.myKSuiteQuotasAlertFullDescription
+            case .almostFull(let pro):
+                return pro ?
+                    MailResourcesStrings.Localizable.kSuiteProQuotasAlertDescription :
+                    MailResourcesStrings.Localizable.myKSuiteQuotasAlertDescription
             }
         }
     }

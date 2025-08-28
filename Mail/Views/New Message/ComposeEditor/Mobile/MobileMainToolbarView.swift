@@ -24,9 +24,12 @@ import MailCoreUI
 import SwiftUI
 
 struct MobileMainToolbarView: View {
+    @EnvironmentObject private var mailboxManager: MailboxManager
+
     @Binding var isShowingClassicOptions: Bool
     @Binding var isShowingFormattingOptions: Bool
     @Binding var isShowingAI: Bool
+    @Binding var isShowingKSuiteProPanel: Bool
     @Binding var isShowingEncryptStatePanel: Bool
 
     let draft: Draft
@@ -104,7 +107,11 @@ struct MobileMainToolbarView: View {
                 isShowingFormattingOptions = true
             }
         case .ai:
-            isShowingAI = true
+            if mailboxManager.mailbox.pack == .kSuiteFree {
+                isShowingKSuiteProPanel = true
+            } else {
+                isShowingAI = true
+            }
         case .link, .bold, .underline, .italic, .strikeThrough, .cancelFormat, .unorderedList:
             break
         case .addAttachment, .addFile, .addPhoto, .takePhoto, .encryption:
@@ -126,6 +133,7 @@ struct MobileMainToolbarView: View {
         isShowingClassicOptions: .constant(true),
         isShowingFormattingOptions: .constant(false),
         isShowingAI: .constant(false),
+        isShowingKSuiteProPanel: .constant(false),
         isShowingEncryptStatePanel: .constant(false),
         draft: Draft(),
         isEditorFocused: true

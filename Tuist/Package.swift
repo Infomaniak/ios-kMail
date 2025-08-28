@@ -46,6 +46,8 @@ let packageSettings = PackageSettings(
         "VersionChecker": .framework,
         "WrappingHStack": .framework,
         "MyKSuite": .framework,
+        "KSuite": .framework,
+        "KSuiteUtils": .framework,
         "ElegantEmojiPicker": .framework
     ]
 )
