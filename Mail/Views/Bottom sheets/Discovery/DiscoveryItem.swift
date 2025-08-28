@@ -22,7 +22,11 @@ import SwiftUI
 
 public extension DiscoveryItem {
     static let aiDiscovery = DiscoveryItem(
-        content: .lottie(name: "discoveryIllustrationEuria", bundle: MailResourcesResources.bundle),
+        content: .lottie(
+            lightName: "discoveryIllustrationEuria",
+            darkName: "discoveryIllustrationEuriaDark",
+            bundle: MailResourcesResources.bundle
+        ),
         title: MailResourcesStrings.Localizable.aiDiscoveryTitle,
         description: MailResourcesStrings.Localizable.aiDiscoveryDescription,
         primaryButtonLabel: MailResourcesStrings.Localizable.buttonTry,
