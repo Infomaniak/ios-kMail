@@ -20,6 +20,7 @@ import DesignSystem
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
+import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
@@ -137,6 +138,8 @@ struct QuickActionView: View {
 }
 
 struct MessageActionView: View {
+    @LazyInjectService private var matomo: MatomoUtils
+
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject private var actionsManager: ActionsManager
 
@@ -156,6 +159,12 @@ struct MessageActionView: View {
                         origin: origin
                     )
                     completionHandler?(action)
+
+                    if origin.type == .floatingPanel(source: .message) {
+                        matomo.track(eventWithCategory: .bottomSheetMessageActions, name: action.matomoName)
+                    } else {
+                        matomo.track(eventWithCategory: .bottomSheetThreadActions, name: action.matomoName)
+                    }
                 }
             }
         } label: {
