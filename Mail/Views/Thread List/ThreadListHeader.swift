@@ -88,8 +88,11 @@ struct ThreadListHeader: View {
     @LazyInjectService private var matomo: MatomoUtils
 
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     @StateObject private var folderObserver: ThreadListHeaderFolderObserver
+
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
+    @ObservedObject private var apiStatusManager = APIStatusManager.shared
 
     let isMultipleSelectionEnabled: Bool
 
@@ -111,7 +114,10 @@ struct ThreadListHeader: View {
             VStack(alignment: .leading) {
                 if !networkMonitor.isConnected {
                     NoNetworkView()
+                } else if !apiStatusManager.status.isOnWorking {
+                    NoMailServersAvailableView()
                 }
+
                 if isRefreshing {
                     HStack(spacing: IKPadding.mini) {
                         ProgressView()
@@ -119,11 +125,9 @@ struct ThreadListHeader: View {
                         Text(MailResourcesStrings.Localizable.threadListHeaderUpdating)
                             .textStyle(.bodySmallSecondary)
                     }
-                } else {
-                    if let lastUpdateText = folderObserver.lastUpdateText {
-                        Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
-                            .textStyle(.bodySmallSecondary)
-                    }
+                } else if let lastUpdateText = folderObserver.lastUpdateText {
+                    Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
+                        .textStyle(.bodySmallSecondary)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
