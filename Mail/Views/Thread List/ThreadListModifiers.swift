@@ -175,6 +175,8 @@ struct ThreadListToolbar: ViewModifier {
                                 }
                                 .accessibilityLabel(action.title)
                                 .accessibilityAddTraits(.isButton)
+
+                                OldToolbarSpacer()
                             }
                         }
                     }

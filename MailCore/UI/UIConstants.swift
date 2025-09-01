@@ -63,15 +63,4 @@ public extension UIConstants {
     static func isCompact(horizontalSizeClass: UserInterfaceSizeClass?, verticalSizeClass: UserInterfaceSizeClass?) -> Bool {
         return horizontalSizeClass == .compact || verticalSizeClass == .compact
     }
-
-    static func applyComposeViewStyle(to toolbar: UIToolbar) {
-        toolbar.isTranslucent = false
-
-        toolbar.setShadowImage(UIImage(), forToolbarPosition: .any)
-        toolbar.layer.shadowColor = UIColor.black.cgColor
-        toolbar.layer.shadowOpacity = 0.1
-        toolbar.layer.shadowOffset = CGSize(width: 1, height: 1)
-        toolbar.layer.shadowRadius = 2
-        toolbar.layer.masksToBounds = false
-    }
 }

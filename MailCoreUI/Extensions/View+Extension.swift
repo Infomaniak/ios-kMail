@@ -79,13 +79,6 @@ public extension View {
         }
     }
 
-    func toolbarAppStyle() -> some View {
-        return onAppear {
-            UIToolbar.appearance().standardAppearance = BarAppearanceConstants.threadViewToolbarAppearance
-            UIToolbar.appearance().scrollEdgeAppearance = BarAppearanceConstants.threadViewToolbarAppearance
-        }
-    }
-
     func emptyState<T>(isEmpty: Bool, @ViewBuilder emptyView: () -> T) -> some View where T: View {
         overlay {
             if isEmpty {
