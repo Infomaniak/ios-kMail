@@ -293,8 +293,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/swift-modal-presentation",
       "state" : {
-        "revision" : "a1a390be6808466c2ed6081cbf728b2fafb94345",
-        "version" : "1.0.0"
+        "branch" : "fix/ios-26-modal-presentation",
+        "revision" : "307ef3cb200bbd0a576bb319f8b434d582da8891"
       }
     },
     {
