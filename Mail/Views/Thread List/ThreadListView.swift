@@ -184,7 +184,6 @@ struct ThreadListView: View {
         .id("\(accentColor.rawValue) \(threadDensity.rawValue)")
         .backButtonDisplayMode(.minimal)
         .navigationBarThreadListStyle()
-        .toolbarAppStyle()
         .refreshable {
             withAnimation {
                 isRefreshing = true

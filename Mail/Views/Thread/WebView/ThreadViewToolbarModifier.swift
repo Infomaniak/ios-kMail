@@ -74,6 +74,10 @@ struct ThreadViewToolbarModifier: ViewModifier {
         }
     }
 
+    private var showMoreButton: Bool {
+        return frozenFolder?.role != .scheduledDrafts
+    }
+
     init(frozenThread: Thread) {
         self.frozenThread = frozenThread
 
@@ -95,7 +99,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
             }
             .toolbar {
                 ToolbarItem(placement: .bottomBar) {
-                    if frozenFolder?.role != .scheduledDrafts {
+                    if showMoreButton {
                         ActionsPanelButton(
                             messages: frozenMessages,
                             originFolder: frozenFolder,
@@ -131,11 +135,12 @@ struct ThreadViewToolbarModifier: ViewModifier {
                                     .sheetViewStyle()
                             }
                         }
+
+                        if action != toolbarActions.last || showMoreButton {
+                            OldToolbarSpacer()
+                        }
                     }
                 }
-
-                // TODO: Add a `ToolbarSpacer` when we drop iOS 15 support
-                // ToolbarItem is an iOS 26 feature, but using condition in a ToolbarContentBuilder is only supported on iOS 16+
             }
             .mailCustomAlert(item: $destructiveAlert) { item in
                 DestructiveActionAlertView(destructiveAlert: item)

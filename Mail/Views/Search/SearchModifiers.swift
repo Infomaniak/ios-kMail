@@ -154,6 +154,8 @@ struct SearchToolbar: ViewModifier {
                             } label: {
                                 Label(action.shortTitle ?? action.title, asset: action.icon)
                             }
+
+                            OldToolbarSpacer()
                         }
                     }
                 }
