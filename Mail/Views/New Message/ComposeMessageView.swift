@@ -279,11 +279,10 @@ struct ComposeMessageView: View {
             )
             initialAttachments = []
 
-            if let messageReply, messageReply.frozenMessage.encrypted == true {
-                if let liveDraft = draft.thaw() {
-                    try? liveDraft.realm?.write {
-                        liveDraft.encrypted = true
-                    }
+            if let messageReply, messageReply.frozenMessage.encrypted,
+               let liveDraft = draft.thaw() {
+                try? liveDraft.realm?.write {
+                    liveDraft.encrypted = true
                 }
             }
 
