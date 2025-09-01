@@ -102,8 +102,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                             panelSource: .messageList,
                             popoverArrowEdge: .bottom
                         ) {
-                            ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
-                                               icon: MailResourcesAsset.plusActions.swiftUIImage)
+                            Label(MailResourcesStrings.Localizable.buttonMore, asset: MailResourcesAsset.plusActions.swiftUIImage)
                         }
                     }
                 }
