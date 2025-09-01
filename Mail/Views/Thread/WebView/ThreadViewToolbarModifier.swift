@@ -29,14 +29,14 @@ extension View {
         modifier(ThreadViewToolbarModifier(frozenThread: frozenThread))
     }
 
-
     @available(iOS, deprecated: 16, message: "ToolbarContentBuilder supports conditional branches")
-    @ViewBuilder func toolbarSpacer(placement: ToolbarItemPlacement) -> some View {
+    @ViewBuilder func toolbarSpacer(placement: ToolbarItemPlacement, isVisible: Bool = true) -> some View {
         if #available(iOS 26.0, *) {
-            self
-                .toolbar {
+            toolbar {
+                if isVisible {
                     ToolbarSpacer(.flexible, placement: placement)
                 }
+            }
         } else {
             self
         }
