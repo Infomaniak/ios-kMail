@@ -306,6 +306,20 @@ public enum NotificationsHelper {
     }
 
     private static func getCleanBodyFrom(message: Message) async -> String {
+        if let emojiReaction = message.emojiReaction {
+            let name: String
+            if let senderName = message.from.first?.name, !senderName.isEmpty {
+                name = senderName
+            } else if let senderMail = message.from.first?.email, !senderMail.isEmpty {
+                name = senderMail
+            } else {
+                name = ""
+            }
+
+            let preview = MailResourcesStrings.Localizable.previewReaction(name, emojiReaction)
+            return preview
+        }
+
         guard let fullBody = message.body?.value,
               let bodyType = message.body?.type else {
             return message.preview
