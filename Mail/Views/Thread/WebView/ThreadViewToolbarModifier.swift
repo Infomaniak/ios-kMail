@@ -28,6 +28,19 @@ extension View {
     func threadViewToolbar(frozenThread: Thread) -> some View {
         modifier(ThreadViewToolbarModifier(frozenThread: frozenThread))
     }
+
+
+    @available(iOS, deprecated: 16, message: "ToolbarContentBuilder supports conditional branches")
+    @ViewBuilder func toolbarSpacer(placement: ToolbarItemPlacement) -> some View {
+        if #available(iOS 26.0, *) {
+            self
+                .toolbar {
+                    ToolbarSpacer(.flexible, placement: placement)
+                }
+        } else {
+            self
+        }
+    }
 }
 
 struct ThreadViewToolbarModifier: ViewModifier {
@@ -80,36 +93,50 @@ struct ThreadViewToolbarModifier: ViewModifier {
                     }
                 }
             }
-            .bottomBar {
-                ForEach(toolbarActions) { action in
-                    if action == .reply {
-                        ToolbarButton(text: action.title, icon: action.icon) {
-                            didTap(action: action)
-                        }
-                        .adaptivePanel(item: $replyOrReplyAllMessage, popoverArrowEdge: .bottom) { message in
-                            ReplyActionsView(message: message)
-                        }
-                    } else {
-                        ToolbarButton(text: action.title, icon: action.icon) {
-                            didTap(action: action)
-                        }
-                        .sheet(item: $messagesToMove) { messages in
-                            MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: frozenFolder)
-                                .sheetViewStyle()
+            .toolbar {
+                ToolbarItem(placement: .bottomBar) {
+                    if frozenFolder?.role != .scheduledDrafts {
+                        ActionsPanelButton(
+                            messages: frozenMessages,
+                            originFolder: frozenFolder,
+                            panelSource: .messageList,
+                            popoverArrowEdge: .bottom
+                        ) {
+                            ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
+                                               icon: MailResourcesAsset.plusActions.swiftUIImage)
                         }
                     }
                 }
-                if frozenFolder?.role != .scheduledDrafts {
-                    ActionsPanelButton(
-                        messages: frozenMessages,
-                        originFolder: frozenFolder,
-                        panelSource: .messageList,
-                        popoverArrowEdge: .bottom
-                    ) {
-                        ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
-                                           icon: MailResourcesAsset.plusActions.swiftUIImage)
+            }
+            .toolbarSpacer(placement: .bottomBar)
+            .toolbar {
+                ToolbarItemGroup(placement: .bottomBar) {
+                    ForEach(toolbarActions) { action in
+                        if action == .reply {
+                            Button {
+                                didTap(action: action)
+                            } label: {
+                                Label(action.title, asset: action.icon)
+                            }
+                            .adaptivePanel(item: $replyOrReplyAllMessage, popoverArrowEdge: .bottom) { message in
+                                ReplyActionsView(message: message)
+                            }
+                        } else {
+                            Button {
+                                didTap(action: action)
+                            } label: {
+                                Label(action.title, asset: action.icon)
+                            }
+                            .sheet(item: $messagesToMove) { messages in
+                                MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: frozenFolder)
+                                    .sheetViewStyle()
+                            }
+                        }
                     }
                 }
+
+                // TODO: Add a `ToolbarSpacer` when we drop iOS 15 support
+                // ToolbarItem is an iOS 26 feature, but using condition in a ToolbarContentBuilder is only supported on iOS 16+
             }
             .mailCustomAlert(item: $destructiveAlert) { item in
                 DestructiveActionAlertView(destructiveAlert: item)
