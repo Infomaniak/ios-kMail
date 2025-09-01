@@ -34,7 +34,7 @@ extension View {
         modifier(ThreadListToolbar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel))
     }
 
-    @ViewBuilder func bottomBarVisibility(visibility: Visibility) -> some View {
+    @ViewBuilder public func bottomBarVisibility(visibility: Visibility) -> some View {
         if #available(iOS 18.0, *) {
             toolbarVisibility(visibility, for: .bottomBar)
         } else {
