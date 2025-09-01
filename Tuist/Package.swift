@@ -71,7 +71,7 @@ let package = Package(
         .package(url: "https://github.com/Infomaniak/ios-device-check", .upToNextMajor(from: "1.1.0")),
         .package(url: "https://github.com/Infomaniak/ios-features", .upToNextMajor(from: "6.0.2")),
         .package(url: "https://github.com/Infomaniak/ios-onboarding", .upToNextMajor(from: "1.1.0")),
-        .package(url: "https://github.com/Infomaniak/swift-modal-presentation", .upToNextMajor(from: "1.0.0")),
+        .package(url: "https://github.com/Infomaniak/swift-modal-presentation", branch: "fix/ios-26-modal-presentation"),
         .package(url: "https://github.com/Infomaniak/SwiftSoup", .upToNextMajor(from: "1.3.0")),
         .package(url: "https://github.com/ProxymanApp/atlantis", .upToNextMajor(from: "1.21.0")),
         .package(url: "https://github.com/Alamofire/Alamofire", .upToNextMajor(from: "5.2.2")),
