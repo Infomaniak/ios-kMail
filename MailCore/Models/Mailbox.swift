@@ -186,7 +186,7 @@ public class Mailbox: Object, Codable, Identifiable {
         isKSuiteEssential = try container.decodeIfPresent(Bool.self, forKey: .isKSuiteEssential) ?? false
         isPartOfKSuite = try container.decodeIfPresent(Bool.self, forKey: .isPartOfKSuite) ?? false
         dailyLimit = try container.decode(Int.self, forKey: .dailyLimit)
-        ownerOrAdmin = try container.decode(Bool.self, forKey: .ownerOrAdmin)
+        ownerOrAdmin = try container.decodeIfPresent(Bool.self, forKey: .ownerOrAdmin) ?? false
         remoteUnseenMessages = try container.decode(Int.self, forKey: .remoteUnseenMessages)
         // Waiting for WS issue #5508 to remove this and go back to default initializer
         aliases = (try? container.decode(List<String>.self, forKey: .aliases)) ?? List<String>()
