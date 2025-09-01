@@ -27,3 +27,26 @@ public struct OldToolbarSpacer: View {
         }
     }
 }
+
+public extension View {
+    @ViewBuilder func bottomBarVisibility(visibility: Visibility) -> some View {
+        if #available(iOS 18.0, *) {
+            toolbarVisibility(visibility, for: .bottomBar)
+        } else {
+            self
+        }
+    }
+
+    @available(iOS, deprecated: 16, message: "ToolbarContentBuilder supports conditional branches")
+    @ViewBuilder func toolbarSpacer(placement: ToolbarItemPlacement, isVisible: Bool = true) -> some View {
+        if #available(iOS 26.0, *) {
+            toolbar {
+                if isVisible {
+                    ToolbarSpacer(.flexible, placement: placement)
+                }
+            }
+        } else {
+            self
+        }
+    }
+}

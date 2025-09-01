@@ -33,14 +33,6 @@ extension View {
     func threadListToolbar(viewModel: ThreadListViewModel, multipleSelectionViewModel: MultipleSelectionViewModel) -> some View {
         modifier(ThreadListToolbar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel))
     }
-
-    @ViewBuilder public func bottomBarVisibility(visibility: Visibility) -> some View {
-        if #available(iOS 18.0, *) {
-            toolbarVisibility(visibility, for: .bottomBar)
-        } else {
-            self
-        }
-    }
 }
 
 struct ThreadListCellAppearance: ViewModifier {
@@ -128,7 +120,10 @@ struct ThreadListToolbar: ViewModifier {
                             Button {
                                 multipleSelectedMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
                             } label: {
-                                Label(MailResourcesStrings.Localizable.buttonMore, asset: MailResourcesAsset.plusActions.swiftUIImage)
+                                Label(
+                                    MailResourcesStrings.Localizable.buttonMore,
+                                    asset: MailResourcesAsset.plusActions.swiftUIImage
+                                )
                             }
                             .accessibilityLabel(MailResourcesStrings.Localizable.buttonMore)
                             .accessibilityAddTraits(.isButton)
