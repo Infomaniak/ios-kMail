@@ -52,7 +52,7 @@ struct AIPromptView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.medium) {
             HStack(spacing: IKPadding.medium) {
-                AIHeaderView(style: .bottomSheet)
+                AIHeaderView()
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 CloseButton(size: .medium, dismissAction: dismiss)

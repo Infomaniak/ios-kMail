@@ -37,6 +37,14 @@ struct AIPropositionView: View {
 
     @Namespace private var errorID
 
+    private var secondaryButtonsTint: Color {
+        if #available(iOS 26, *) {
+            return .primary
+        } else {
+            return MailResourcesAsset.textSecondaryColor.swiftUIColor
+        }
+    }
+
     var body: some View {
         NavigationView {
             ScrollViewReader { proxy in
@@ -68,6 +76,7 @@ struct AIPropositionView: View {
                     }
                 }
             }
+            .navigationTitle(MailResourcesStrings.Localizable.aiPromptTitle)
             .task {
                 await aiModel.createConversation()
             }
@@ -78,51 +87,44 @@ struct AIPropositionView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
+                ToolbarItem(placement: .cancellationAction) {
                     CloseButton {
                         matomo.track(eventWithCategory: .aiWriter, name: "dismissProposition")
                         dismiss()
                     }
-                    .tint(MailResourcesAsset.textSecondaryColor)
-                }
-
-                ToolbarItem(placement: .principal) {
-                    AIHeaderView(style: .sheet)
+                    .tint(secondaryButtonsTint)
                 }
 
                 ToolbarItemGroup(placement: .bottomBar) {
                     if aiModel.currentStyle == .standard || aiModel.currentStyle == .error {
                         AIPropositionMenu(aiModel: aiModel)
+                            .tint(secondaryButtonsTint)
                     }
 
                     Spacer()
 
                     switch aiModel.currentStyle {
                     case .loading:
-                        Text(MailResourcesStrings.Localizable.aiPromptGenerationLoader)
-                            .textStyle(.bodyMediumTertiary)
+                        if #available(iOS 26.0, *) {
+                            Text(MailResourcesStrings.Localizable.aiPromptGenerationLoader)
+                                .textStyle(.bodyMediumTertiary)
+                        }
                     case .standard, .error:
-                        Button {
-                            Task {
-                                await aiModel.didTapInsert()
-                            }
-                        } label: {
-                            Label {
-                                Text(MailResourcesStrings.Localizable.aiButtonInsert)
-                            } icon: {
-                                MailResourcesAsset.plus
-                                    .iconSize(.medium)
-                            }
+                        if #available(iOS 26.0, *) {
+                            insertButton
+                                .buttonStyle(.borderedProminent)
+                        } else {
+                            insertButton
+                                .buttonStyle(.ikBorderedProminent)
                         }
-                        .buttonStyle(.ikBorderedProminent)
                     case .loadingError:
-                        Button(MailResourcesStrings.Localizable.aiButtonRetry) {
-                            matomo.track(eventWithCategory: .aiWriter, name: "retry")
-                            aiModel.keepConversationWhenPropositionIsDismissed = true
-                            willShowAIPrompt = true
-                            dismiss()
+                        if #available(iOS 26.0, *) {
+                            retryButton
+                                .buttonStyle(.borderedProminent)
+                        } else {
+                            retryButton
+                                .buttonStyle(.ikBorderedProminent)
                         }
-                        .buttonStyle(.ikBorderedProminent)
                     }
                 }
             }
@@ -147,6 +149,30 @@ struct AIPropositionView: View {
             .ikButtonTheme(.aiWriter)
             .tint(MailResourcesAsset.aiColor.swiftUIColor)
             .matomoView(view: ["AI", "Proposition"])
+        }
+    }
+
+    private var insertButton: some View {
+        Button {
+            Task {
+                await aiModel.didTapInsert()
+            }
+        } label: {
+            Label {
+                Text(MailResourcesStrings.Localizable.aiButtonInsert)
+            } icon: {
+                MailResourcesAsset.plus
+                    .iconSize(.medium)
+            }
+        }
+    }
+
+    private var retryButton: some View {
+        Button(MailResourcesStrings.Localizable.aiButtonRetry) {
+            matomo.track(eventWithCategory: .aiWriter, name: "retry")
+            aiModel.keepConversationWhenPropositionIsDismissed = true
+            willShowAIPrompt = true
+            dismiss()
         }
     }
 }

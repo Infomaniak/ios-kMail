@@ -72,7 +72,6 @@ struct AIPropositionMenu: View {
         .simultaneousGesture(TapGesture().onEnded {
             matomo.track(eventWithCategory: .aiWriter, name: "refine")
         })
-        .tint(MailResourcesAsset.textSecondaryColor.swiftUIColor)
         .modifier(FixedMenuOrderModifier())
         .disabled(buttonShouldBeDisabled)
     }
