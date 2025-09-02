@@ -61,7 +61,7 @@ struct AttachmentPreview: View {
             .navigationBarTitle(attachment.name, displayMode: .inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    CloseButton(dismissAction: dismiss)
+                    ToolbarCloseButton(dismissAction: dismiss)
                 }
 
                 ToolbarItemGroup(placement: .bottomBar) {

@@ -41,7 +41,7 @@ struct SettingsNavigationView: View {
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
                         if !platformDetector.isMac || platformDetector.isLegacyMacCatalyst {
-                            CloseButton(dismissAction: dismiss)
+                            ToolbarCloseButton(dismissAction: dismiss)
                         }
                     }
                 }
