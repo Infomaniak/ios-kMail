@@ -114,7 +114,7 @@ public extension MailboxManager {
             self.clearSearchResults(searchFolder: searchFolder, writableRealm: writableRealm)
 
             var predicates: [NSPredicate] = []
-            if featureAvailableProvider.isAvailable(.emojiReaction) {
+            if featureAvailableProvider.isAvailable(.emojiReaction) && UserDefaults.shared.threadMode == .conversation {
                 predicates.append(NSPredicate(format: "emojiReaction = nil"))
             }
             for searchFilter in searchFilters {
