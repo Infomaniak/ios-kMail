@@ -91,40 +91,39 @@ struct AIPropositionView: View {
                 }
 
                 ToolbarItemGroup(placement: .bottomBar) {
-                    Group {
-                        if aiModel.currentStyle == .standard || aiModel.currentStyle == .error {
-                            AIPropositionMenu(aiModel: aiModel)
-                        }
-
-                        Spacer()
-
-                        switch aiModel.currentStyle {
-                        case .loading:
-                            Text(MailResourcesStrings.Localizable.aiPromptGenerationLoader)
-                                .textStyle(.bodyMediumTertiary)
-                        case .standard, .error:
-                            Button {
-                                Task {
-                                    await aiModel.didTapInsert()
-                                }
-                            } label: {
-                                Label { Text(MailResourcesStrings.Localizable.aiButtonInsert) } icon: {
-                                    MailResourcesAsset.plus
-                                        .iconSize(.medium)
-                                }
-                            }
-                            .buttonStyle(.ikBorderedProminent)
-                        case .loadingError:
-                            Button(MailResourcesStrings.Localizable.aiButtonRetry) {
-                                matomo.track(eventWithCategory: .aiWriter, name: "retry")
-                                aiModel.keepConversationWhenPropositionIsDismissed = true
-                                willShowAIPrompt = true
-                                dismiss()
-                            }
-                            .buttonStyle(.ikBorderedProminent)
-                        }
+                    if aiModel.currentStyle == .standard || aiModel.currentStyle == .error {
+                        AIPropositionMenu(aiModel: aiModel)
                     }
-                    .padding(.bottom, value: .micro)
+
+                    Spacer()
+
+                    switch aiModel.currentStyle {
+                    case .loading:
+                        Text(MailResourcesStrings.Localizable.aiPromptGenerationLoader)
+                            .textStyle(.bodyMediumTertiary)
+                    case .standard, .error:
+                        Button {
+                            Task {
+                                await aiModel.didTapInsert()
+                            }
+                        } label: {
+                            Label {
+                                Text(MailResourcesStrings.Localizable.aiButtonInsert)
+                            } icon: {
+                                MailResourcesAsset.plus
+                                    .iconSize(.medium)
+                            }
+                        }
+                        .buttonStyle(.ikBorderedProminent)
+                    case .loadingError:
+                        Button(MailResourcesStrings.Localizable.aiButtonRetry) {
+                            matomo.track(eventWithCategory: .aiWriter, name: "retry")
+                            aiModel.keepConversationWhenPropositionIsDismissed = true
+                            willShowAIPrompt = true
+                            dismiss()
+                        }
+                        .buttonStyle(.ikBorderedProminent)
+                    }
                 }
             }
             .mailCustomAlert(isPresented: $aiModel.isShowingReplaceBodyAlert) {
