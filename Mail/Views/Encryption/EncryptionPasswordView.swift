@@ -134,7 +134,7 @@ struct EncryptionPasswordView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    CloseButton(dismissAction: dismiss)
+                    ToolbarCloseButton(dismissAction: dismiss)
                 }
             }
             .navigationTitle(MailResourcesStrings.Localizable.encryptedPasswordProtectionTitle)
