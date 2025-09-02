@@ -19,6 +19,7 @@
 import Foundation
 import InfomaniakCore
 import InfomaniakCoreDB
+import InfomaniakDI
 import RealmSwift
 
 // MARK: - Search
@@ -103,6 +104,7 @@ public extension MailboxManager {
 
     func searchThreadsOffline(searchFolder: Folder?, filterFolderId: String,
                               searchFilters: [SearchCondition]) async {
+        @InjectService var featureAvailableProvider: FeatureAvailableProvider
         try? writeTransaction { writableRealm in
             guard let searchFolder = searchFolder?.fresh(using: writableRealm) else {
                 self.logError(.missingFolder)
@@ -112,6 +114,9 @@ public extension MailboxManager {
             self.clearSearchResults(searchFolder: searchFolder, writableRealm: writableRealm)
 
             var predicates: [NSPredicate] = []
+            if featureAvailableProvider.isAvailable(.emojiReaction) && UserDefaults.shared.threadMode == .conversation {
+                predicates.append(NSPredicate(format: "emojiReaction = nil"))
+            }
             for searchFilter in searchFilters {
                 switch searchFilter {
                 case .filter(let filter):
