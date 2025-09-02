@@ -41,7 +41,7 @@ public struct SheetViewModifier: ViewModifier {
             content
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        CloseButton(dismissAction: dismiss)
+                        ToolbarCloseButton(dismissAction: dismiss)
                     }
                 }
         }
