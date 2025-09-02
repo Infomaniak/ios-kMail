@@ -351,6 +351,7 @@ struct ComposeMessageView: View {
         }
         .kSuitePanel(
             isPresented: $isShowingKSuiteProPanel,
+            backgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
             configuration: .standard,
             isAdmin: mailboxManager.mailbox.ownerOrAdmin
         )

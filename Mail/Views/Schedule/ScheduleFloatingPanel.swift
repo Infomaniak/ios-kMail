@@ -115,6 +115,7 @@ struct ScheduleFloatingPanel: ViewModifier {
             .mailMyKSuiteFloatingPanel(isPresented: $isShowingMyKSuiteUpgrade, configuration: .mail)
             .kSuitePanel(
                 isPresented: $isShowingKSuiteProUpgrade,
+                backgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
                 configuration: .standard,
                 isAdmin: mailboxManager.mailbox.ownerOrAdmin
             )

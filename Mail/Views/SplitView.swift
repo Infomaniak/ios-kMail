@@ -165,8 +165,9 @@ struct SplitView: View {
         .mailMyKSuiteFloatingPanel(isPresented: $mainViewState.isShowingMyKSuiteUpgrade, configuration: .mail)
         .kSuitePanel(
             isPresented: $mainViewState.isShowingKSuiteProUpgrade,
+            backgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
             configuration: .standard, // Always standard on Mail
-            isAdmin: mailboxManager.mailbox.ownerOrAdmin
+            isAdmin: mailboxManager.mailbox.ownerOrAdmin,
         )
         .fullScreenCover(isPresented: $mainViewState.isShowingSyncProfile) {
             SyncProfileNavigationView()
