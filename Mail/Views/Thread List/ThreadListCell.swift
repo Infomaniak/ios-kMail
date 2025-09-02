@@ -115,6 +115,20 @@ struct ThreadListCell: View {
                 mainViewState.selectedThread = thread
             }
         }
+        if thread.hasUnseenMessages {
+            for message in thread.messages.filter({ !$0.seen }) {
+                if message.emojiReaction != nil {
+                    let originalMessageId = message.inReplyTo?.trimmingCharacters(in: .init(charactersIn: "<>"))
+                    let originalMessage = thread.messages.first { $0.messageId == originalMessageId }
+
+                    if let liveOriginalMessage = originalMessage?.thaw() {
+                        try? liveOriginalMessage.realm?.write {
+                            liveOriginalMessage.seen = false
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private func toggleMultipleSelection(withImpact: Bool = false) {
