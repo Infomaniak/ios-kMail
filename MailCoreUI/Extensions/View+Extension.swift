@@ -60,11 +60,15 @@ public extension View {
     }
 
     func navigationBarThreadViewStyle(appearance: UINavigationBarAppearance) -> some View {
-        return modifier(NavigationBarStyleViewModifier(
-            standardAppearance: appearance,
-            scrollEdgeAppearance: appearance,
-            compactAppearance: appearance
-        ))
+        if #available(iOS 26.0, *) {
+            return self
+        } else {
+            return modifier(NavigationBarStyleViewModifier(
+                standardAppearance: appearance,
+                scrollEdgeAppearance: appearance,
+                compactAppearance: appearance
+            ))
+        }
     }
 
     func navigationBarSearchListStyle() -> some View {

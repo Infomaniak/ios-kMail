@@ -18,10 +18,30 @@
 
 import SwiftUI
 
-struct ScrollOffsetPreferenceKey: PreferenceKey {
-    static var defaultValue: CGFloat = .zero
+struct TitlePosition: Equatable {
+    let isFullyBellowNavigationBar: Bool
+    let offsetProgress: Double
 
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+    init() {
+        isFullyBellowNavigationBar = false
+        offsetProgress = 0
+    }
+
+    init(proxy: GeometryProxy) {
+        let globalFrame = proxy.frame(in: .global)
+        let localFrame = proxy.frame(in: .named("scrollView"))
+
+        isFullyBellowNavigationBar = localFrame.maxY <= 0
+
+        let initialYPosition = globalFrame.minY - localFrame.minY
+        offsetProgress = max(0, min(1, (initialYPosition - globalFrame.minY) / initialYPosition))
+    }
+}
+
+struct ScrollOffsetPreferenceKey: PreferenceKey {
+    static var defaultValue = TitlePosition()
+
+    static func reduce(value: inout TitlePosition, nextValue: () -> TitlePosition) {
         // No need to implement it
     }
 }
@@ -42,10 +62,7 @@ struct ThreadTitleModifier: ViewModifier {
             .overlay {
                 GeometryReader { proxy in
                     Color.clear
-                        .preference(
-                            key: ScrollOffsetPreferenceKey.self,
-                            value: proxy.frame(in: .named("scrollView")).maxY
-                        )
+                        .preference(key: ScrollOffsetPreferenceKey.self, value: TitlePosition(proxy: proxy))
                 }
             }
     }
