@@ -279,13 +279,6 @@ struct ComposeMessageView: View {
             )
             initialAttachments = []
 
-            if let messageReply, messageReply.frozenMessage.encrypted,
-               let liveDraft = draft.thaw() {
-                try? liveDraft.realm?.write {
-                    liveDraft.encrypted = true
-                }
-            }
-
             if featureFlagsManager.isEnabled(.aiMailComposer)
                 && UserDefaults.shared.shouldPresentAIFeature
                 && !platformDetector.isRunningUITests {
