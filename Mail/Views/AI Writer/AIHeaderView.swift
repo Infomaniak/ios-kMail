@@ -24,25 +24,17 @@ import MailResources
 import SwiftUI
 
 struct AIHeaderView: View {
-    enum Style {
-        case bottomSheet, sheet
-    }
-
-    let style: Style
-
     var body: some View {
         HStack(spacing: IKPadding.mini) {
-            if style == .bottomSheet {
-                EuriaAnimationView()
-            }
+            EuriaAnimationView()
 
             Text(MailResourcesStrings.Localizable.aiPromptTitle)
-                .font(style == .bottomSheet ? MailTextStyle.header2.font : .headline)
+                .font(MailTextStyle.header2.font)
                 .foregroundStyle(MailTextStyle.header2.color)
         }
     }
 }
 
 #Preview {
-    AIHeaderView(style: .bottomSheet)
+    AIHeaderView()
 }

@@ -63,7 +63,6 @@ struct SearchView: View {
         .emptyState(isEmpty: viewModel.searchState == .noResults) {
             EmptyStateView.emptySearch
         }
-        .toolbarAppStyle()
         .searchToolbar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .onDisappear {
             if mainViewState.selectedThread == nil {

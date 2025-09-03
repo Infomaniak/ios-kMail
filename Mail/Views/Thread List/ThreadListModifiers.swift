@@ -66,6 +66,18 @@ struct ThreadListToolbar: ViewModifier {
         }
     }
 
+    private var isBottomBarVisible: Bool {
+        return multipleSelectionViewModel.isEnabled
+    }
+
+    private var isShowingBottomBarItems: Bool {
+        if #available(iOS 18.0, *) {
+            return true
+        } else {
+            return isBottomBarVisible
+        }
+    }
+
     func body(content: Content) -> some View {
         GeometryReader { geometry in
             content
@@ -102,61 +114,83 @@ struct ThreadListToolbar: ViewModifier {
                         }
                     }
                 }
-                .bottomBar(isVisible: multipleSelectionViewModel.isEnabled) {
-                    ForEach(multipleSelectionViewModel.toolbarActions) { action in
-                        ToolbarButton(
-                            text: action.shortTitle ?? action.title,
-                            icon: action.icon
-                        ) {
-                            let allMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
-                            multipleSelectionViewModel.disable()
-                            let originFolder = viewModel.frozenFolder
-                            Task {
-                                matomo.trackBulkEvent(
-                                    eventWithCategory: .threadActions,
-                                    name: action.matomoName.capitalized,
-                                    numberOfItems: multipleSelectionViewModel.selectedItems.count
-                                )
-
-                                try await actionsManager.performAction(
-                                    target: allMessages,
-                                    action: action,
-                                    origin: .multipleSelection(
-                                        originFolder: originFolder,
-                                        nearestDestructiveAlert: $mainViewState.destructiveAlert,
-                                        nearestMessagesToMoveSheet: nil
-                                    )
-                                )
-                            }
+                .toolbar {
+                    ToolbarItem(placement: .bottomBar) {
+                        if #available(iOS 16.0, *), isShowingBottomBarItems {
+                            moreButton
                         }
-                        .accessibilityLabel(action.title)
-                        .accessibilityAddTraits(.isButton)
-                    }
-
-                    ToolbarButton(
-                        text: MailResourcesStrings.Localizable.buttonMore,
-                        icon: MailResourcesAsset.plusActions.swiftUIImage
-                    ) {
-                        multipleSelectedMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
-                    }
-                    .accessibilityLabel(MailResourcesStrings.Localizable.buttonMore)
-                    .accessibilityAddTraits(.isButton)
-                    .actionsPanel(
-                        messages: $multipleSelectedMessages,
-                        originFolder: viewModel.frozenFolder,
-                        panelSource: .threadList,
-                        popoverArrowEdge: .bottom
-                    ) { action in
-                        guard action.shouldDisableMultipleSelection else { return }
-                        multipleSelectionViewModel.disable()
                     }
                 }
+                .toolbarSpacer(placement: .bottomBar, isVisible: isShowingBottomBarItems)
+                .toolbar {
+                    ToolbarItemGroup(placement: .bottomBar) {
+                        if isShowingBottomBarItems {
+                            ForEach(multipleSelectionViewModel.toolbarActions) { action in
+                                Button {
+                                    let allMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
+                                    multipleSelectionViewModel.disable()
+                                    let originFolder = viewModel.frozenFolder
+                                    Task {
+                                        matomo.trackBulkEvent(
+                                            eventWithCategory: .threadActions,
+                                            name: action.matomoName.capitalized,
+                                            numberOfItems: multipleSelectionViewModel.selectedItems.count
+                                        )
+
+                                        try await actionsManager.performAction(
+                                            target: allMessages,
+                                            action: action,
+                                            origin: .multipleSelection(
+                                                originFolder: originFolder,
+                                                nearestDestructiveAlert: $mainViewState.destructiveAlert,
+                                                nearestMessagesToMoveSheet: nil
+                                            )
+                                        )
+                                    }
+                                } label: {
+                                    Label(action.shortTitle ?? action.title, asset: action.icon)
+                                }
+                                .accessibilityLabel(action.title)
+                                .accessibilityAddTraits(.isButton)
+
+                                OldToolbarSpacer()
+                            }
+
+                            if #unavailable(iOS 16.0), isShowingBottomBarItems {
+                                moreButton
+                            }
+                        }
+                    }
+                }
+                .bottomBarVisibility(visibility: isBottomBarVisible ? .visible : .hidden)
                 .navigationTitle(
                     multipleSelectionViewModel.isEnabled
                         ? MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count)
                         : ""
                 )
                 .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+
+    private var moreButton: some View {
+        Button {
+            multipleSelectedMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
+        } label: {
+            Label(
+                MailResourcesStrings.Localizable.buttonMore,
+                asset: MailResourcesAsset.plusActions.swiftUIImage
+            )
+        }
+        .accessibilityLabel(MailResourcesStrings.Localizable.buttonMore)
+        .accessibilityAddTraits(.isButton)
+        .actionsPanel(
+            messages: $multipleSelectedMessages,
+            originFolder: viewModel.frozenFolder,
+            panelSource: .threadList,
+            popoverArrowEdge: .bottom
+        ) { action in
+            guard action.shouldDisableMultipleSelection else { return }
+            multipleSelectionViewModel.disable()
         }
     }
 
