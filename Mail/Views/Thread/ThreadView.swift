@@ -34,6 +34,7 @@ struct ThreadView: View {
     @EnvironmentObject private var actionsManager: ActionsManager
 
     @State private var displayNavigationTitle = false
+    @State private var messagesToExpand: [String] = []
 
     @ObservedRealmObject var thread: Thread
 
@@ -59,7 +60,11 @@ struct ThreadView: View {
                     SnoozedThreadHeaderView(date: snoozeEndDate, messages: thread.messages.toArray(), folder: thread.folder)
                 }
 
-                MessageListView(messages: thread.displayMessages.toArray(), mailboxManager: mailboxManager)
+                MessageListView(
+                    messages: thread.displayMessages.toArray(),
+                    mailboxManager: mailboxManager,
+                    messagesToExpand: $messagesToExpand
+                )
             }
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
@@ -68,6 +73,7 @@ struct ThreadView: View {
             displayNavigationTitle = offset < 0
         }
         .onAppear {
+            getMessagesToExpand()
             matomo.trackThreadInfo(of: thread)
         }
         .task {
@@ -91,6 +97,18 @@ struct ThreadView: View {
             action: .markAsRead,
             origin: .toolbar(originFolder: originFolder)
         )
+    }
+
+    private func getMessagesToExpand() {
+        if thread.hasUnseenMessages {
+            for message in thread.messages.filter({ !$0.seen }) {
+                if message.emojiReaction != nil,
+                   let originalMessageId = message.inReplyTo?.parseMessageIds(),
+                   let originalMessage = thread.messages.first(where: { $0.messageId == originalMessageId.first }) {
+                    messagesToExpand.append(originalMessage.uid)
+                }
+            }
+        }
     }
 }
 
