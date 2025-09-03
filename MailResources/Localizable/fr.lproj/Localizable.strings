@@ -1059,6 +1059,9 @@
 
 /* loco:689c76e6a75a2c10bb0ec9a2 */
 "kSuiteProQuotasAlertFullDescription" = "L’espace de stockage de votre Mail est plein. Modifiez votre offre pour avoir un stockage illimité et débloquez de nouvelles fonctionnalités.";
+
+/* loco:68b81c7e6d7071739307e662 */
+"kSuiteProQuotasAlertFullTitle" = "Votre espace de stockage Mail est plein";
 /* loco:672398789bd6d8d56802d212 */
 "lastSelectedSchedule" = "Dernier horaire choisi";
 

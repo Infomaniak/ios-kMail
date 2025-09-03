@@ -1060,6 +1060,8 @@
 /* loco:689c76e6a75a2c10bb0ec9a2 */
 "kSuiteProQuotasAlertFullDescription" = "Tu espacio de almacenamiento de Mail está lleno. Modifica tu oferta para conseguir almacenamiento ilimitado y desbloquear nuevas funciones.";
 
+/* loco:68b81c7e6d7071739307e662 */
+"kSuiteProQuotasAlertFullTitle" = "Tu espacio de almacenamiento de Mail está lleno";
 /* loco:686f61f2208a37e573055822 */
 "lastEventOccurrence" = "Evento recurrente, última ocurrencia el";
 

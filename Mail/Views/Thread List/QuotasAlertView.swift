@@ -97,8 +97,9 @@ struct QuotasAlertView: View {
 
         var title: String {
             switch self {
-            case .full:
-                return MailResourcesStrings.Localizable.myKSuiteQuotasAlertFullTitle
+            case .full(let pro):
+                return pro ? MailResourcesStrings.Localizable.kSuiteProQuotasAlertFullTitle : MailResourcesStrings.Localizable
+                    .myKSuiteQuotasAlertFullTitle
             case .almostFull:
                 return MailResourcesStrings.Localizable.myKSuiteQuotasAlertTitle
             }
