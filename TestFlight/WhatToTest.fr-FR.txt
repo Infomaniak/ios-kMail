@@ -1,1 +1,2 @@
-- Correction des actions dans la recherche
+- kSuite Pro
+- Correction de bugs
