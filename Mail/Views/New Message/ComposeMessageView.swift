@@ -22,6 +22,7 @@ import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import InfomaniakRichHTMLEditor
+import KSuite
 import MailCore
 import MailCoreUI
 import MailResources
@@ -85,6 +86,7 @@ struct ComposeMessageView: View {
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
     @State private var isShowingSchedulePanel = false
+    @State private var isShowingKSuiteProPanel = false
 
     @State private var isShowingEncryptStatePanel = false
 
@@ -218,6 +220,7 @@ struct ComposeMessageView: View {
                 EditorMobileToolbarView(
                     textAttributes: textAttributes,
                     isShowingAI: $aiModel.isShowingPrompt,
+                    isShowingKSuiteProPanel: $isShowingKSuiteProPanel,
                     isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
                     draft: draft,
                     isEditorFocused: focusedField == .editor
@@ -309,9 +312,14 @@ struct ComposeMessageView: View {
                 mailboxManager: mailboxManager,
                 showSnackbar: shouldShowSnackbar,
                 changeFolderAction: changeSelectedFolder
-            ) {
-                mainViewState.isShowingMyKSuiteUpgrade = true
-                matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "dailyLimitReachedUpgrade")
+            ) { currentPack in
+                if currentPack == .kSuiteFree {
+                    mainViewState.isShowingKSuiteProUpgrade = true
+                    matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: "dailyLimitReachedUpgrade")
+                } else if currentPack == .myKSuiteFree {
+                    mainViewState.isShowingMyKSuiteUpgrade = true
+                    matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "dailyLimitReachedUpgrade")
+                }
             }
         }
         .mailCustomAlert(item: $isShowingAlert) { alert in
@@ -341,6 +349,12 @@ struct ComposeMessageView: View {
         .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {
             AIPromptView(aiModel: aiModel)
         }
+        .kSuitePanel(
+            isPresented: $isShowingKSuiteProPanel,
+            backgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,
+            configuration: .standard,
+            isAdmin: mailboxManager.mailbox.ownerOrAdmin
+        )
         .sheet(isPresented: $aiModel.isShowingProposition) {
             AIPropositionView(aiModel: aiModel)
         }
@@ -407,7 +421,9 @@ struct ComposeMessageView: View {
 
         let mailbox = mailboxManager.mailbox
         let mailboxIsFull = mailbox.quotas?.progression ?? 0 >= 1
-        if mailbox.isMyKSuiteFree && mailboxIsFull {
+        if mailboxIsFull,
+           let pack = mailbox.pack,
+           pack == .myKSuiteFree || pack == .kSuiteFree {
             matomo.track(eventWithCategory: .newMessage, name: "trySendingWithMailboxFull")
             Task {
                 if let liveDraft = draft.thaw() {
@@ -419,8 +435,13 @@ struct ComposeMessageView: View {
             snackbarPresenter.show(
                 message: MailResourcesStrings.Localizable.myKSuiteSpaceFullAlert,
                 action: IKSnackBar.Action(title: MailResourcesStrings.Localizable.buttonUpgrade) {
-                    mainViewState.isShowingMyKSuiteUpgrade = true
-                    matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
+                    if pack == .kSuiteFree {
+                        mainViewState.isShowingKSuiteProUpgrade = true
+                        matomo.track(eventWithCategory: .kSuiteProUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
+                    } else if pack == .myKSuiteFree {
+                        mainViewState.isShowingMyKSuiteUpgrade = true
+                        matomo.track(eventWithCategory: .myKSuiteUpgradeBottomSheet, name: "notEnoughStorageUpgrade")
+                    }
                 }
             )
             return

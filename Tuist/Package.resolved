@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/ProxymanApp/atlantis",
       "state" : {
-        "revision" : "16808ff5535c607feb16eddc815201da80fb973e",
-        "version" : "1.29.2"
+        "revision" : "faad61d6f227531f8fa97ed49ef5732f7eee55d2",
+        "version" : "1.30.0"
       }
     },
     {
@@ -50,17 +50,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "3cc3b2be6b8f938564a8dbd3ecbf9f80324f5a96",
-        "version" : "16.0.0"
+        "revision" : "d2dfb4c434816bae2b1e12dc748e72c15f12ef27",
+        "version" : "16.0.1"
       }
     },
     {
       "identity" : "ios-core-ui",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/ios-core-ui/",
+      "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "e4192ab70e0d776d0a48dad56e63bb9536d41f75",
-        "version" : "22.1.0"
+        "revision" : "8dd5b29dc548876613ebe4de00023ba9ca219432",
+        "version" : "22.2.1"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
-        "revision" : "acebfa42fba38174104625082c106edd8a4618ed",
-        "version" : "6.0.0"
+        "revision" : "15adc4415e42459c1e503f568e9e5aea159ecdcc",
+        "version" : "6.0.2"
       }
     },
     {
@@ -302,8 +302,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-numerics.git",
       "state" : {
-        "revision" : "e0ec0f5f3af6f3e4d5e7a19d2af26b481acb6ba8",
-        "version" : "1.0.3"
+        "revision" : "bbadd4b853a33fd78c4ae977d17bb2af15eb3f2a",
+        "version" : "1.1.0"
       }
     },
     {
