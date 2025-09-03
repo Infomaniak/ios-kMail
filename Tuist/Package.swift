@@ -47,6 +47,7 @@ let packageSettings = PackageSettings(
         "SwiftSoup": .framework,
         "SwiftUIBackports": .framework,
         "SwiftUIIntrospect": .framework,
+        "_LottieStub": .framework,
         "VersionChecker": .framework,
         "WrappingHStack": .framework
     ]
