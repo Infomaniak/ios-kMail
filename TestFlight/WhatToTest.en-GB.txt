@@ -1,1 +1,2 @@
-- Fix actions in search view
+- kSuite Pro
+- Bug fixes
