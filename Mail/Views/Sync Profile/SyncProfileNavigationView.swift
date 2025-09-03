@@ -51,7 +51,7 @@ struct SyncProfileNavigationView: View {
                 }
                 .toolbar {
                     ToolbarItem(placement: .cancellationAction) {
-                        CloseButton(dismissAction: dismiss)
+                        ToolbarCloseButton(dismissAction: dismiss)
                     }
                 }
                 .backButtonDisplayMode(.minimal)

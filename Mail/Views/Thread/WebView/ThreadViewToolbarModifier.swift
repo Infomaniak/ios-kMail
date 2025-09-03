@@ -65,6 +65,14 @@ struct ThreadViewToolbarModifier: ViewModifier {
         return frozenFolder?.role != .scheduledDrafts
     }
 
+    private var flaggedTint: Color {
+        if #available(iOS 26.0, *) {
+            return isFlagged ? MailResourcesAsset.yellowColor.swiftUIColor : .primary
+        } else {
+            return isFlagged ? MailResourcesAsset.yellowColor.swiftUIColor : .accentColor
+        }
+    }
+
     init(frozenThread: Thread) {
         self.frozenThread = frozenThread
 
@@ -80,8 +88,8 @@ struct ThreadViewToolbarModifier: ViewModifier {
                     Button(action: didTapFlag) {
                         (isFlagged ? MailResourcesAsset.starFull : MailResourcesAsset.star)
                             .swiftUIImage
-                            .foregroundStyle(isFlagged ? MailResourcesAsset.yellowColor.swiftUIColor : .accentColor)
                     }
+                    .tint(flaggedTint)
                 }
             }
             .toolbar {
