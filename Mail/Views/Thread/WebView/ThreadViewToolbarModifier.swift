@@ -86,15 +86,8 @@ struct ThreadViewToolbarModifier: ViewModifier {
             }
             .toolbar {
                 ToolbarItem(placement: .bottomBar) {
-                    if showMoreButton {
-                        ActionsPanelButton(
-                            messages: frozenMessages,
-                            originFolder: frozenFolder,
-                            panelSource: .messageList,
-                            popoverArrowEdge: .bottom
-                        ) {
-                            Label(MailResourcesStrings.Localizable.buttonMore, asset: MailResourcesAsset.plusActions.swiftUIImage)
-                        }
+                    if #available(iOS 16.0, *), showMoreButton {
+                        moreButton
                     }
                 }
             }
@@ -127,11 +120,26 @@ struct ThreadViewToolbarModifier: ViewModifier {
                             OldToolbarSpacer()
                         }
                     }
+
+                    if #unavailable(iOS 16.0), showMoreButton {
+                        moreButton
+                    }
                 }
             }
             .mailCustomAlert(item: $destructiveAlert) { item in
                 DestructiveActionAlertView(destructiveAlert: item)
             }
+    }
+
+    private var moreButton: some View {
+        ActionsPanelButton(
+            messages: frozenMessages,
+            originFolder: frozenFolder,
+            panelSource: .messageList,
+            popoverArrowEdge: .bottom
+        ) {
+            Label(MailResourcesStrings.Localizable.buttonMore, asset: MailResourcesAsset.plusActions.swiftUIImage)
+        }
     }
 
     private func didTapFlag() {

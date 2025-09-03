@@ -116,26 +116,8 @@ struct ThreadListToolbar: ViewModifier {
                 }
                 .toolbar {
                     ToolbarItem(placement: .bottomBar) {
-                        if isShowingBottomBarItems {
-                            Button {
-                                multipleSelectedMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
-                            } label: {
-                                Label(
-                                    MailResourcesStrings.Localizable.buttonMore,
-                                    asset: MailResourcesAsset.plusActions.swiftUIImage
-                                )
-                            }
-                            .accessibilityLabel(MailResourcesStrings.Localizable.buttonMore)
-                            .accessibilityAddTraits(.isButton)
-                            .actionsPanel(
-                                messages: $multipleSelectedMessages,
-                                originFolder: viewModel.frozenFolder,
-                                panelSource: .threadList,
-                                popoverArrowEdge: .bottom
-                            ) { action in
-                                guard action.shouldDisableMultipleSelection else { return }
-                                multipleSelectionViewModel.disable()
-                            }
+                        if #available(iOS 16.0, *), isShowingBottomBarItems {
+                            moreButton
                         }
                     }
                 }
@@ -173,6 +155,10 @@ struct ThreadListToolbar: ViewModifier {
 
                                 OldToolbarSpacer()
                             }
+
+                            if #unavailable(iOS 16.0), isShowingBottomBarItems {
+                                moreButton
+                            }
                         }
                     }
                 }
@@ -183,6 +169,28 @@ struct ThreadListToolbar: ViewModifier {
                         : ""
                 )
                 .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+
+    private var moreButton: some View {
+        Button {
+            multipleSelectedMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
+        } label: {
+            Label(
+                MailResourcesStrings.Localizable.buttonMore,
+                asset: MailResourcesAsset.plusActions.swiftUIImage
+            )
+        }
+        .accessibilityLabel(MailResourcesStrings.Localizable.buttonMore)
+        .accessibilityAddTraits(.isButton)
+        .actionsPanel(
+            messages: $multipleSelectedMessages,
+            originFolder: viewModel.frozenFolder,
+            panelSource: .threadList,
+            popoverArrowEdge: .bottom
+        ) { action in
+            guard action.shouldDisableMultipleSelection else { return }
+            multipleSelectionViewModel.disable()
         }
     }
 
