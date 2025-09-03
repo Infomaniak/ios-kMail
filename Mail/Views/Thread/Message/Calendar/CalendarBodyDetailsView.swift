@@ -65,10 +65,19 @@ struct CalendarBodyDetailsView: View {
         return event.isAnInvitation && !event.isCancelled && iAmInvited
     }
 
+    private var lastOccurrenceLabel: String? {
+        guard let nextOccurrence else { return nil }
+
+        if nextOccurrence > .now {
+            return MailResourcesStrings.Localizable.nextEventOccurrence
+        } else {
+            return MailResourcesStrings.Localizable.lastEventOccurrence
+        }
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: IKPadding.medium) {
-            if let warning = event.warning,
-               nextOccurrence == nil || nextOccurrence! < .now || ((nextOccurrence != nil) && warning == .isCancelled) {
+            if let warning = event.warning, shouldDisplayWarning(warning) {
                 Label { Text(warning.label) } icon: { MailResourcesAsset.warningFill.iconSize(.large) }
                     .labelStyle(.calendar(warning))
             }
@@ -76,18 +85,11 @@ struct CalendarBodyDetailsView: View {
             Group {
                 Label(event.formattedDateTime, asset: MailResourcesAsset.calendarBadgeClock.swiftUIImage)
 
-                if let nextOccurrence {
-                    if nextOccurrence > .now {
-                        Label(
-                            "\(MailResourcesStrings.Localizable.nextEventOccurrence) \(nextOccurrence.formatted(.calendarDateFull))",
-                            asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
-                        )
-                    } else {
-                        Label(
-                            "\(MailResourcesStrings.Localizable.lastEventOccurrence) \(nextOccurrence.formatted(.calendarDateFull))",
-                            asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
-                        )
-                    }
+                if let nextOccurrence, let label = lastOccurrenceLabel {
+                    Label(
+                        "\(label) \(nextOccurrence.formatted(.calendarDateFull))",
+                        asset: MailResourcesAsset.clockCounterclockwise.swiftUIImage
+                    )
                 }
 
                 if let bookableResource = event.bookableResource {
@@ -108,13 +110,30 @@ struct CalendarBodyDetailsView: View {
         }
         .padding(.horizontal, value: .medium)
         .task {
-            guard let rrule = event.rrule,
-                  let rule = try? RecurrenceRule(rrule),
-                  let nextOccurrence = try? rule.getNextOccurrence(event.start) else {
-                return
-            }
-            self.nextOccurrence = nextOccurrence
+            computeNextOccurrence()
         }
+    }
+
+    private func computeNextOccurrence() {
+        guard let rawRecurrenceRule = event.rrule,
+              let recurrenceRule = try? RecurrenceRule(rawRecurrenceRule),
+              let nextOccurrence = try? recurrenceRule.getNextOccurrence(event.start) else {
+            return
+        }
+
+        self.nextOccurrence = nextOccurrence
+    }
+
+    private func shouldDisplayWarning(_ warning: CalendarEventWarning) -> Bool {
+        guard let nextOccurrence else {
+            return true
+        }
+
+        guard warning != .isCancelled else {
+            return true
+        }
+
+        return nextOccurrence < .now
     }
 }
 
