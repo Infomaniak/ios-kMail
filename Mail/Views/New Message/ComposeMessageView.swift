@@ -185,12 +185,13 @@ struct ComposeMessageView: View {
         }
         .baseComposeMessageToolbar(dismissHandler: didTouchDismiss)
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .topBarTrailing) {
                 if platformDetector.isMac && featureFlagsManager.isEnabled(.mailComposeEncrypted) {
                     EncryptionButton(isShowingEncryptStatePanel: $isShowingEncryptStatePanel, draft: draft)
                 }
             }
-            ToolbarItem(placement: .navigationBarTrailing) {
+
+            ToolbarItem(placement: .topBarTrailing) {
                 if featureFlagsManager.isEnabled(.scheduleSendDraft) {
                     Button {
                         if draft.encrypted {
@@ -208,7 +209,8 @@ struct ComposeMessageView: View {
                     .disabled(isScheduleSendButtonDisabled)
                 }
             }
-            ToolbarItem(placement: .navigationBarTrailing) {
+
+            ToolbarItem(placement: .confirmationAction) {
                 Button(action: didTouchSend) {
                     Label(MailResourcesStrings.Localizable.send, asset: MailResourcesAsset.send.swiftUIImage)
                 }

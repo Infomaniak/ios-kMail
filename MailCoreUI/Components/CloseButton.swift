@@ -25,7 +25,7 @@ public struct ToolbarCloseButton: View {
     let dismissHandler: () -> Void
 
     public init(dismissAction: DismissAction) {
-        self.dismissHandler = dismissAction.callAsFunction
+        dismissHandler = dismissAction.callAsFunction
     }
 
     public init(dismissHandler: @escaping () -> Void) {

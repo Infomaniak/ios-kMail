@@ -35,7 +35,7 @@ struct BaseComposeMessageToolbarModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
+                ToolbarItem(placement: .cancellationAction) {
                     if !platformDetector.isMac || platformDetector.isInExtension || platformDetector.isLegacyMacCatalyst {
                         ToolbarCloseButton(dismissHandler: dismissHandler)
                     }
