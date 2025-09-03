@@ -31,11 +31,13 @@ struct MessageListView: View {
     @StateObject private var messagesWorker: MessagesWorker
     @State private var messageExpansion = [String: MessageExpansionType]()
 
+    @Binding var messagesToExpand: [String]
     let messages: [Message]
 
-    init(messages: [Message], mailboxManager: MailboxManager) {
+    init(messages: [Message], mailboxManager: MailboxManager, messagesToExpand: Binding<[String]>) {
         _messagesWorker = StateObject(wrappedValue: MessagesWorker(mailboxManager: mailboxManager))
         self.messages = messages
+        _messagesToExpand = messagesToExpand
     }
 
     var body: some View {
@@ -81,7 +83,12 @@ struct MessageListView: View {
         var toSuperCollapse = [String]()
 
         for message in messageList {
-            messageExpansion[message.uid] = expansion(for: message, from: messageList)
+            if messagesToExpand.contains(message.uid) {
+                messageExpansion[message.uid] = .expanded
+            } else {
+                messageExpansion[message.uid] = expansion(for: message, from: messageList)
+            }
+
             guard message != messageList.first && message != messageList.last else { continue }
             guard messageExpansion[message.uid] != .expanded else {
                 superCollapseIfNeeded(toSuperCollapse)
