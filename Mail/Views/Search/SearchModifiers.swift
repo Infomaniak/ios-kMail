@@ -116,12 +116,8 @@ struct SearchToolbar: ViewModifier {
             }
             .toolbar {
                 ToolbarItem(placement: .bottomBar) {
-                    if isShowingBottomBarItems {
-                        Button {
-                            multipleSelectedMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
-                        } label: {
-                            Label(MailResourcesStrings.Localizable.buttonMore, asset: MailResourcesAsset.plusActions.swiftUIImage)
-                        }
+                    if #available(iOS 16.0, *), isShowingBottomBarItems {
+                        moreButton
                     }
                 }
             }
@@ -157,6 +153,10 @@ struct SearchToolbar: ViewModifier {
 
                             OldToolbarSpacer()
                         }
+
+                        if #unavailable(iOS 16.0), isShowingBottomBarItems {
+                            moreButton
+                        }
                     }
                 }
             }
@@ -176,5 +176,13 @@ struct SearchToolbar: ViewModifier {
                     : ""
             )
             .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var moreButton: some View {
+        Button {
+            multipleSelectedMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
+        } label: {
+            Label(MailResourcesStrings.Localizable.buttonMore, asset: MailResourcesAsset.plusActions.swiftUIImage)
+        }
     }
 }
