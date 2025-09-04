@@ -63,7 +63,7 @@ struct ThreadView: View {
                 MessageListView(
                     messages: thread.displayMessages.toArray(),
                     mailboxManager: mailboxManager,
-                    messagesToExpand: $messagesToExpand
+                    messagesToExpand: messagesToExpand
                 )
             }
         }
@@ -73,10 +73,10 @@ struct ThreadView: View {
             displayNavigationTitle = offset < 0
         }
         .onAppear {
-            getMessagesToExpand()
             matomo.trackThreadInfo(of: thread)
         }
         .task {
+            getMessagesToExpand()
             await markThreadAsReadIfNeeded(thread: thread)
         }
         .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
@@ -100,13 +100,14 @@ struct ThreadView: View {
     }
 
     private func getMessagesToExpand() {
-        if thread.hasUnseenMessages {
-            for message in thread.messages.filter({ !$0.seen }) {
-                if message.emojiReaction != nil,
-                   let originalMessageId = message.inReplyTo?.parseMessageIds(),
-                   let originalMessage = thread.messages.first(where: { $0.messageId == originalMessageId.first }) {
-                    messagesToExpand.append(originalMessage.uid)
-                }
+        guard thread.hasUnseenMessages else {
+            return
+        }
+
+        for message in thread.messages.where({ !$0.seen && $0.emojiReaction != nil }) {
+            if let originalMessageId = message.inReplyTo?.parseMessageIds(),
+               let originalMessage = thread.messages.first(where: { $0.messageId == originalMessageId.first }) {
+                messagesToExpand.append(originalMessage.uid)
             }
         }
     }

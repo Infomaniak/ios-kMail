@@ -31,13 +31,13 @@ struct MessageListView: View {
     @StateObject private var messagesWorker: MessagesWorker
     @State private var messageExpansion = [String: MessageExpansionType]()
 
-    @Binding var messagesToExpand: [String]
+    var messagesToExpand: [String]
     let messages: [Message]
 
-    init(messages: [Message], mailboxManager: MailboxManager, messagesToExpand: Binding<[String]>) {
+    init(messages: [Message], mailboxManager: MailboxManager, messagesToExpand: [String]) {
         _messagesWorker = StateObject(wrappedValue: MessagesWorker(mailboxManager: mailboxManager))
         self.messages = messages
-        _messagesToExpand = messagesToExpand
+        self.messagesToExpand = messagesToExpand
     }
 
     var body: some View {
@@ -74,12 +74,15 @@ struct MessageListView: View {
                     }
                 }
             }
+            .onChange(of: messagesToExpand) { newValue in
+                computeExpansion(from: messages, messagesToExpand: newValue)
+            }
             .environmentObject(messagesWorker)
             .id(messages.id)
         }
     }
 
-    private func computeExpansion(from messageList: [Message]) {
+    private func computeExpansion(from messageList: [Message], messagesToExpand: [String] = []) {
         var toSuperCollapse = [String]()
 
         for message in messageList {
