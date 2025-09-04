@@ -1059,6 +1059,9 @@
 
 /* loco:689c76e6a75a2c10bb0ec9a2 */
 "kSuiteProQuotasAlertFullDescription" = "Your Mail storage space is full. Upgrade to unlimited storage and unlock new features.";
+
+/* loco:68b81c7e6d7071739307e662 */
+"kSuiteProQuotasAlertFullTitle" = "Your Mail storage space is full";
 /* loco:672398789bd6d8d56802d212 */
 "lastSelectedSchedule" = "Last selected schedule";
 

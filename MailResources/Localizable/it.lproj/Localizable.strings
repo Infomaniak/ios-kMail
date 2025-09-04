@@ -1059,6 +1059,9 @@
 
 /* loco:689c76e6a75a2c10bb0ec9a2 */
 "kSuiteProQuotasAlertFullDescription" = "Lo spazio di archiviazione della posta è esaurito. Modificate la vostra offerta per ottenere uno spazio di archiviazione illimitato e sbloccare nuove funzionalità.";
+
+/* loco:68b81c7e6d7071739307e662 */
+"kSuiteProQuotasAlertFullTitle" = "Lo spazio di archiviazione di Mail è pieno";
 /* loco:672398789bd6d8d56802d212 */
 "lastSelectedSchedule" = "Ultimo programma selezionato";
 

@@ -1059,6 +1059,9 @@
 
 /* loco:689c76e6a75a2c10bb0ec9a2 */
 "kSuiteProQuotasAlertFullDescription" = "Der Speicherplatz in Ihrer Mail ist voll. Ändern Sie Ihr Angebot auf unbegrenzten Speicherplatz und schalten Sie neue Funktionen frei.";
+
+/* loco:68b81c7e6d7071739307e662 */
+"kSuiteProQuotasAlertFullTitle" = "Ihr Mail-Speicherplatz ist voll";
 /* loco:672398789bd6d8d56802d212 */
 "lastSelectedSchedule" = "Zuletzt ausgewählter Zeitplan";
 
