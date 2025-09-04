@@ -32,7 +32,8 @@ func mainTargetWith(name: String, destinations: [Destination]) -> Target {
                 "Mail/**/LaunchScreen.storyboard",
                 "Mail/Assets.xcassets", // Needed for AppIcon
                 "MailResources/**/PrivacyInfo.xcprivacy",
-                "Mail/Localizable/**/InfoPlist.strings"
+                "Mail/Localizable/**/InfoPlist.strings",
+                "Mail/AppIcon.icon"
             ],
             entitlements: "MailResources/Mail.entitlements",
             scripts: [
