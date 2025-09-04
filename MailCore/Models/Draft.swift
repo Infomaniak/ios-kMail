@@ -215,7 +215,8 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
                             swissTransferUuid: String? = nil,
                             attachments: [Attachment]? = nil,
                             action: SaveDraftOption? = nil,
-                            emojiReaction: String? = nil) {
+                            emojiReaction: String? = nil,
+                            encrypted: Bool = false) {
         self.init()
 
         self.localUUID = localUUID
@@ -239,7 +240,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
         self.attachments = attachments?.toRealmList() ?? List()
         self.action = action
         self.emojiReaction = emojiReaction
-        encrypted = false
+        self.encrypted = encrypted
         encryptionPassword = ""
     }
 
@@ -263,6 +264,7 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
     public static func replying(reply: MessageReply, currentMailboxEmail: String) -> Draft {
         let message = reply.frozenMessage
         let mode = reply.replyMode
+        let encrypted = message.encrypted
         var subject = "\(message.formattedSubject)"
         switch mode {
         case .reply, .replyAll:
@@ -289,7 +291,8 @@ public final class Draft: Object, Codable, ObjectKeyIdentifiable {
                      subject: subject,
                      body: "",
                      to: recipientHolder.to,
-                     cc: recipientHolder.cc)
+                     cc: recipientHolder.cc,
+                     encrypted: encrypted)
     }
 
     public static func reacting(with reaction: String, reply: MessageReply, currentMailboxEmail: String) -> Draft {
