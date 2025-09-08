@@ -305,7 +305,27 @@ public enum NotificationsHelper {
         }
     }
 
-    private static func getCleanBodyFrom(message: Message) async -> String {
+    public static func getCleanEmojiPreviewFrom(message: Message) -> String {
+        guard let emojiReaction = message.emojiReaction, let firstFrom = message.from.first else {
+            return message.preview
+        }
+
+        let name: String
+        if !firstFrom.name.isEmpty {
+            name = firstFrom.name
+        } else {
+            name = firstFrom.email
+        }
+
+        let preview = MailResourcesStrings.Localizable.previewReaction(name, emojiReaction)
+        return preview
+    }
+
+    public static func getCleanBodyFrom(message: Message) async -> String {
+        if message.emojiReaction != nil {
+            return getCleanEmojiPreviewFrom(message: message)
+        }
+
         guard let fullBody = message.body?.value,
               let bodyType = message.body?.type else {
             return message.preview
