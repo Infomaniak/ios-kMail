@@ -113,4 +113,5 @@ struct CalendarAttendeesView: View {
         attendees: [PreviewHelper.sampleAttendee1, PreviewHelper.sampleAttendee2]
     )
     .environmentObject(PreviewHelper.sampleMailboxManager)
+    .environment(\.currentUser, MandatoryEnvironmentContainer(value: PreviewHelper.sampleUser))
 }
