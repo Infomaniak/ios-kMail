@@ -34,7 +34,7 @@ struct ThreadView: View {
     @EnvironmentObject private var actionsManager: ActionsManager
 
     @State private var displayNavigationTitle = false
-    @State private var navigationTitleOpacity = 0.0
+    @State private var navigationTitleOpacity = 1.0
 
     @ObservedRealmObject var thread: Thread
 
