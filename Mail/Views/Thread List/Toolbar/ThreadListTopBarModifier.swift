@@ -40,8 +40,6 @@ extension View {
 struct ThreadListTopBarModifier: ViewModifier {
     @Environment(\.isCompactWindow) private var isCompactWindow
 
-    @StateObject private var folderObserver: ThreadListHeaderFolderObserver
-
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
     @ObservedObject var networkMonitor = NetworkMonitor.shared
@@ -54,22 +52,6 @@ struct ThreadListTopBarModifier: ViewModifier {
         }
     }
 
-    private var navigationSubtitle: String {
-        guard !multipleSelectionViewModel.isEnabled else {
-            return ""
-        }
-
-        if !networkMonitor.isConnected {
-            return MailResourcesStrings.Localizable.noNetwork
-        } else if viewModel.isRefreshing {
-            return MailResourcesStrings.Localizable.threadListHeaderUpdating
-        } else if let lastUpdateText = folderObserver.lastUpdateText {
-            return MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText)
-        } else {
-            return ""
-        }
-    }
-
     private var selectAllButtonTitle: String {
         if multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count {
             return MailResourcesStrings.Localizable.buttonUnselectAll
@@ -78,21 +60,12 @@ struct ThreadListTopBarModifier: ViewModifier {
         }
     }
 
-    init(viewModel: ThreadListViewModel, multipleSelectionViewModel: MultipleSelectionViewModel) {
-        _viewModel = ObservedObject(wrappedValue: viewModel)
-        _multipleSelectionViewModel = ObservedObject(wrappedValue: multipleSelectionViewModel)
-
-        _folderObserver = StateObject(wrappedValue: ThreadListHeaderFolderObserver(folder: viewModel.frozenFolder))
-    }
-
     func body(content: Content) -> some View {
         content
             .scrollEdgeEffectStyle(.hard, for: .top)
             .navigationTitle(navigationTitle)
-            .navigationSubtitle(navigationSubtitle)
             .toolbarTitleDisplayMode(.inline)
-            .toolbarBackground(UserDefaults.shared.accentColor.navBarBackground.swiftUIColor, for: .navigationBar)
-            .toolbarBackgroundVisibility(.visible, for: .navigationBar)
+            .navigationBarThreadListStyle()
             .toolbar {
                 if !multipleSelectionViewModel.isEnabled {
                     if isCompactWindow {

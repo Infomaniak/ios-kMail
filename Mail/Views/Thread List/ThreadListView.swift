@@ -97,15 +97,13 @@ struct ThreadListView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if #unavailable(iOS 26.0) {
-                ThreadListHeader(
-                    isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
-                    folder: viewModel.frozenFolder,
-                    unreadFilterOn: $viewModel.filterUnreadOn,
-                    isRefreshing: viewModel.isRefreshing
-                )
-                .id(viewModel.frozenFolder.id)
-            }
+            ThreadListHeader(
+                isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
+                folder: viewModel.frozenFolder,
+                unreadFilterOn: $viewModel.filterUnreadOn,
+                isRefreshing: viewModel.isRefreshing
+            )
+            .id(viewModel.frozenFolder.id)
 
             QuotasAlertView(mailbox: viewModel.mailboxManager.mailbox)
 
