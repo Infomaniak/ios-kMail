@@ -79,6 +79,7 @@ struct ThreadView: View {
             await markThreadAsReadIfNeeded(thread: thread)
         }
         .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
+        .navigationBarTitleDisplayMode(.inline)
         .navigationBarThreadViewStyle(appearance: displayNavigationTitle ? BarAppearanceConstants
             .threadViewNavigationBarScrolledAppearance : BarAppearanceConstants.threadViewNavigationBarAppearance)
         .backButtonDisplayMode(.minimal)

@@ -151,7 +151,7 @@ struct SearchToolbar: ViewModifier {
                                 Label(action.shortTitle ?? action.title, asset: action.icon)
                             }
 
-                            OldToolbarSpacer()
+                            LegacyToolbarSpacer()
                         }
 
                         if #unavailable(iOS 16.0), isShowingBottomBarItems {

@@ -66,7 +66,7 @@ struct ThreadListView: View {
     }
 
     private var shouldDisplayOSVersionWarning: Bool {
-        return Constants.isUsingABreakableOSVersion && !hasDismissedUpdateVersionView && viewModel.frozenFolder·.role == .inbox
+        return Constants.isUsingABreakableOSVersion && !hasDismissedUpdateVersionView && viewModel.frozenFolder.role == .inbox
     }
 
     private var selection: Binding<Thread?>? {
@@ -193,7 +193,6 @@ struct ThreadListView: View {
         }
         .id("\(accentColor.rawValue) \(threadDensity.rawValue)")
         .backButtonDisplayMode(.minimal)
-        .navigationBarThreadListStyle()
         .refreshable {
             withAnimation {
                 isRefreshing = true
@@ -207,7 +206,8 @@ struct ThreadListView: View {
                 isRefreshing = false
             }
         }
-        .threadListToolbar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
+        .threadListTopBar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
+        .threadListBottomBar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage,

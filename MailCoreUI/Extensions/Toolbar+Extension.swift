@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-public struct OldToolbarSpacer: View {
+public struct LegacyToolbarSpacer: View {
     public init() {}
 
     public var body: some View {

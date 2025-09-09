@@ -125,7 +125,7 @@ struct ThreadViewToolbarModifier: ViewModifier {
                         }
 
                         if action != toolbarActions.last || showMoreButton {
-                            OldToolbarSpacer()
+                            LegacyToolbarSpacer()
                         }
                     }
 
