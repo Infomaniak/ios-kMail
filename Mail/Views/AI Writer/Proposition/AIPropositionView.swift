@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
@@ -105,7 +106,7 @@ struct AIPropositionView: View {
 
                     switch aiModel.currentStyle {
                     case .loading:
-                        if #available(iOS 26.0, *) {
+                        if #unavailable(iOS 26.0) {
                             Text(MailResourcesStrings.Localizable.aiPromptGenerationLoader)
                                 .textStyle(.bodyMediumTertiary)
                         }
