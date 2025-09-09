@@ -85,16 +85,16 @@ class ThreadListHeaderFolderObserver: ObservableObject {
 }
 
 struct ThreadListHeader: View {
-    @LazyInjectService private var matomo: MatomoUtils
-
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     @StateObject private var folderObserver: ThreadListHeaderFolderObserver
+
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
-    let isMultipleSelectionEnabled: Bool
-
     @Binding var unreadFilterOn: Bool
-    private var isRefreshing: Bool
+
+    let isMultipleSelectionEnabled: Bool
+    let isRefreshing: Bool
 
     init(isMultipleSelectionEnabled: Bool,
          folder: Folder,
@@ -136,6 +136,7 @@ struct ThreadListHeader: View {
                 .toggleStyle(.unread)
                 .onChange(of: unreadFilterOn) { newValue in
                     if newValue {
+                        @InjectService var matomo: MatomoUtils
                         matomo.track(eventWithCategory: .threadList, name: "unreadFilter")
                     }
                 }
