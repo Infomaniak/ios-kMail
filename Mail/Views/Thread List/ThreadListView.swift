@@ -61,6 +61,14 @@ struct ThreadListView: View {
         !networkMonitor.isConnected && viewModel.sections == nil
     }
 
+    private var shouldDisplayFlushHeader: Bool {
+        return !viewModel.isEmpty && (viewModel.frozenFolder.role == .trash || viewModel.frozenFolder.role == .spam)
+    }
+
+    private var shouldDisplayOSVersionWarning: Bool {
+        return Constants.isUsingABreakableOSVersion && !hasDismissedUpdateVersionView && viewModel.frozenFolder·.role == .inbox
+    }
+
     private var selection: Binding<Thread?>? {
         if #available(iOS 16.4, *) {
             return Binding(get: {
@@ -90,10 +98,12 @@ struct ThreadListView: View {
     var body: some View {
         VStack(spacing: 0) {
             if #unavailable(iOS 26.0) {
-                ThreadListHeader(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
-                                 folder: viewModel.frozenFolder,
-                                 unreadFilterOn: $viewModel.filterUnreadOn,
-                                 isRefreshing: viewModel.loadingPageTaskId != nil)
+                ThreadListHeader(
+                    isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
+                    folder: viewModel.frozenFolder,
+                    unreadFilterOn: $viewModel.filterUnreadOn,
+                    isRefreshing: viewModel.loadingPageTaskId != nil
+                )
                 .id(viewModel.frozenFolder.id)
             }
 
@@ -101,8 +111,7 @@ struct ThreadListView: View {
 
             ScrollViewReader { proxy in
                 List(selection: selection) {
-                    if !viewModel.isEmpty,
-                       viewModel.frozenFolder.role == .trash || viewModel.frozenFolder.role == .spam {
+                    if shouldDisplayFlushHeader {
                         FlushFolderView(
                             folder: viewModel.frozenFolder,
                             mailboxManager: viewModel.mailboxManager,
@@ -115,8 +124,7 @@ struct ThreadListView: View {
                         ListVerticalInsetView(height: IKPadding.micro)
                     }
 
-                    if Constants.isUsingABreakableOSVersion && !hasDismissedUpdateVersionView && viewModel.frozenFolder
-                        .role == .inbox {
+                    if shouldDisplayOSVersionWarning {
                         MailUpdateVersionView(isShowingUpdateAlert: $isShowingUpdateAlert)
                             .threadListCellAppearance()
                     }
