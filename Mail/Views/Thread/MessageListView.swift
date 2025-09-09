@@ -31,10 +31,10 @@ struct MessageListView: View {
     @StateObject private var messagesWorker: MessagesWorker
     @State private var messageExpansion = [String: MessageExpansionType]()
 
-    var messagesToExpand: [String]
+    var messagesToExpand: Set<String>
     let messages: [Message]
 
-    init(messages: [Message], mailboxManager: MailboxManager, messagesToExpand: [String]) {
+    init(messages: [Message], mailboxManager: MailboxManager, messagesToExpand: Set<String>) {
         _messagesWorker = StateObject(wrappedValue: MessagesWorker(mailboxManager: mailboxManager))
         self.messages = messages
         self.messagesToExpand = messagesToExpand
@@ -82,7 +82,7 @@ struct MessageListView: View {
         }
     }
 
-    private func computeExpansion(from messageList: [Message], messagesToExpand: [String] = []) {
+    private func computeExpansion(from messageList: [Message], messagesToExpand: Set<String> = []) {
         var toSuperCollapse = [String]()
 
         for message in messageList {

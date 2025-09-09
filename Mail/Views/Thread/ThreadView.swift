@@ -34,7 +34,7 @@ struct ThreadView: View {
     @EnvironmentObject private var actionsManager: ActionsManager
 
     @State private var displayNavigationTitle = false
-    @State private var messagesToExpand: [String] = []
+    @State private var messagesToExpand: Set<String> = []
 
     @ObservedRealmObject var thread: Thread
 
@@ -107,7 +107,7 @@ struct ThreadView: View {
         for message in thread.messages.where({ !$0.seen && $0.emojiReaction != nil }) {
             if let originalMessageId = message.inReplyTo?.parseMessageIds(),
                let originalMessage = thread.messages.first(where: { $0.messageId == originalMessageId.first }) {
-                messagesToExpand.append(originalMessage.uid)
+                messagesToExpand.insert(originalMessage.uid)
             }
         }
     }
