@@ -102,7 +102,7 @@ struct ThreadListView: View {
                     isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
                     folder: viewModel.frozenFolder,
                     unreadFilterOn: $viewModel.filterUnreadOn,
-                    isRefreshing: viewModel.loadingPageTaskId != nil
+                    isRefreshing: viewModel.isRefreshing
                 )
                 .id(viewModel.frozenFolder.id)
             }

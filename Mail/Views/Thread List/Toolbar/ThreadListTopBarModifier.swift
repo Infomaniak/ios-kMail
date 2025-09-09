@@ -40,14 +40,33 @@ extension View {
 struct ThreadListTopBarModifier: ViewModifier {
     @Environment(\.isCompactWindow) private var isCompactWindow
 
+    @StateObject private var folderObserver: ThreadListHeaderFolderObserver
+
     @ObservedObject var viewModel: ThreadListViewModel
     @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
+    @ObservedObject var networkMonitor = NetworkMonitor.shared
 
     private var navigationTitle: String {
         if multipleSelectionViewModel.isEnabled {
             return MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count)
         } else {
             return viewModel.frozenFolder.localizedName
+        }
+    }
+
+    private var navigationSubtitle: String {
+        guard !multipleSelectionViewModel.isEnabled else {
+            return ""
+        }
+
+        if !networkMonitor.isConnected {
+            return MailResourcesStrings.Localizable.noNetwork
+        } else if viewModel.isRefreshing {
+            return MailResourcesStrings.Localizable.threadListHeaderUpdating
+        } else if let lastUpdateText = folderObserver.lastUpdateText {
+            return MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText)
+        } else {
+            return ""
         }
     }
 
@@ -59,10 +78,18 @@ struct ThreadListTopBarModifier: ViewModifier {
         }
     }
 
+    init(viewModel: ThreadListViewModel, multipleSelectionViewModel: MultipleSelectionViewModel) {
+        _viewModel = ObservedObject(wrappedValue: viewModel)
+        _multipleSelectionViewModel = ObservedObject(wrappedValue: multipleSelectionViewModel)
+
+        _folderObserver = StateObject(wrappedValue: ThreadListHeaderFolderObserver(folder: viewModel.frozenFolder))
+    }
+
     func body(content: Content) -> some View {
         content
             .scrollEdgeEffectStyle(.hard, for: .top)
             .navigationTitle(navigationTitle)
+            .navigationSubtitle(navigationSubtitle)
             .toolbarTitleDisplayMode(.inline)
             .toolbarBackground(UserDefaults.shared.accentColor.navBarBackground.swiftUIColor, for: .navigationBar)
             .toolbarBackgroundVisibility(.visible, for: .navigationBar)

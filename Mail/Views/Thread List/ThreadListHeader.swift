@@ -112,6 +112,7 @@ struct ThreadListHeader: View {
                 if !networkMonitor.isConnected {
                     NoNetworkView()
                 }
+                
                 if isRefreshing {
                     HStack(spacing: IKPadding.mini) {
                         ProgressView()
@@ -119,11 +120,9 @@ struct ThreadListHeader: View {
                         Text(MailResourcesStrings.Localizable.threadListHeaderUpdating)
                             .textStyle(.bodySmallSecondary)
                     }
-                } else {
-                    if let lastUpdateText = folderObserver.lastUpdateText {
-                        Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
-                            .textStyle(.bodySmallSecondary)
-                    }
+                } else if let lastUpdateText = folderObserver.lastUpdateText {
+                    Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
+                        .textStyle(.bodySmallSecondary)
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
