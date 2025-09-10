@@ -59,7 +59,7 @@ struct MoveEmailView: View {
                 }
                 listOfFolders(nestableFolders: viewModel.userFolders)
             }
-            .searchable(text: $viewModel.searchQuery, placement: .navigationBarDrawer(displayMode: .always))
+            .searchable(text: $viewModel.searchQuery)
         }
         .navigationTitle(MailResourcesStrings.Localizable.actionMove)
         .navigationBarTitleDisplayMode(.inline)
