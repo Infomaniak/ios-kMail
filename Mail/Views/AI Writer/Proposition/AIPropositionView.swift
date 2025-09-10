@@ -162,7 +162,7 @@ struct AIPropositionView: View {
             Label {
                 Text(MailResourcesStrings.Localizable.aiButtonInsert)
             } icon: {
-                MailResourcesAsset.plus
+                MailResourcesAsset.check
                     .iconSize(.medium)
             }
         }
