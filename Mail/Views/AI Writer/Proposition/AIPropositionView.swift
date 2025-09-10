@@ -89,7 +89,7 @@ struct AIPropositionView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    CloseButton {
+                    ToolbarCloseButton {
                         matomo.track(eventWithCategory: .aiWriter, name: "dismissProposition")
                         dismiss()
                     }
