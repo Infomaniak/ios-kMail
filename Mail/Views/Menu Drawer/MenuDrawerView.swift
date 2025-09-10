@@ -30,6 +30,16 @@ class NavigationDrawerState: ObservableObject {
     @Published private(set) var isOpen = false
     @Published var showMailboxes = false
 
+    var useNativeToolbar: Bool {
+        if #available(iOS 26, *) {
+            return true
+        } else if InjectService<PlatformDetectable>().wrappedValue.isMac {
+            return true
+        } else {
+            return false
+        }
+    }
+
     func close() {
         withAnimation {
             isOpen = false
@@ -126,44 +136,40 @@ struct MenuDrawerView: View {
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     var body: some View {
-        VStack(spacing: 0) {
-            MenuHeaderView()
-                .zIndex(1)
+        ScrollView {
+            VStack(spacing: 0) {
+                MailboxesManagementView()
 
-            ScrollView {
-                VStack(spacing: 0) {
-                    MailboxesManagementView()
+                IKDivider(type: .menu)
 
+                FolderListView(mailboxManager: mailboxManager)
+
+                IKDivider(type: .menu)
+
+                MenuDrawerItemsAdvancedListView(
+                    mailboxCanRestoreEmails: mailboxManager.mailbox.permissions?.canRestoreEmails == true
+                )
+
+                IKDivider(type: .menu)
+
+                MenuDrawerItemsHelpListView()
+
+                if mailboxManager.mailbox.isLimited, let quotas = mailboxManager.mailbox.quotas {
                     IKDivider(type: .menu)
 
-                    FolderListView(mailboxManager: mailboxManager)
-
-                    IKDivider(type: .menu)
-
-                    MenuDrawerItemsAdvancedListView(
-                        mailboxCanRestoreEmails: mailboxManager.mailbox.permissions?.canRestoreEmails == true
-                    )
-
-                    IKDivider(type: .menu)
-
-                    MenuDrawerItemsHelpListView()
-
-                    if mailboxManager.mailbox.isLimited, let quotas = mailboxManager.mailbox.quotas {
-                        IKDivider(type: .menu)
-
-                        MailboxQuotaView(quotas: quotas)
-                    }
-
-                    IKDivider(type: .menu)
-
-                    AppVersionView()
+                    MailboxQuotaView(quotas: quotas)
                 }
-                .padding(.vertical, value: .mini)
-                .padding(.leading, value: .mini)
+
+                IKDivider(type: .menu)
+
+                AppVersionView()
             }
+            .padding(.vertical, value: .mini)
+            .padding(.leading, value: .mini)
         }
-        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor.ignoresSafeArea())
+        .menuHeader()
         .environment(\.folderCellType, .menuDrawer)
+        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor.ignoresSafeArea())
     }
 }
 
