@@ -19,8 +19,6 @@
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakDI
-import MailCore
-import MailCoreUI
 import MailResources
 import SwiftModalPresentation
 import SwiftUI
@@ -28,10 +26,6 @@ import SwiftUI
 extension View {
     func threadListCellAppearance() -> some View {
         modifier(ThreadListCellAppearance())
-    }
-
-    func threadListToolbar(viewModel: ThreadListViewModel, multipleSelectionViewModel: MultipleSelectionViewModel) -> some View {
-        modifier(ThreadListToolbar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel))
     }
 }
 
@@ -41,136 +35,5 @@ struct ThreadListCellAppearance: ViewModifier {
             .listRowSeparator(.hidden)
             .listRowInsets(.init())
             .listRowBackground(MailResourcesAsset.backgroundColor.swiftUIColor)
-    }
-}
-
-struct ThreadListToolbar: ViewModifier {
-    @LazyInjectService private var matomo: MatomoUtils
-
-    @Environment(\.isCompactWindow) private var isCompactWindow
-
-    @EnvironmentObject private var actionsManager: ActionsManager
-    @EnvironmentObject private var mainViewState: MainViewState
-
-    @State private var multipleSelectedMessages: [Message]?
-
-    @ObservedObject var viewModel: ThreadListViewModel
-    @ObservedObject var multipleSelectionViewModel: MultipleSelectionViewModel
-
-    private var selectAllButtonTitle: String {
-        if multipleSelectionViewModel.selectedItems.count == viewModel.filteredThreads.count {
-            return MailResourcesStrings.Localizable.buttonUnselectAll
-
-        } else {
-            return MailResourcesStrings.Localizable.buttonSelectAll
-        }
-    }
-
-    func body(content: Content) -> some View {
-        GeometryReader { geometry in
-            content
-                .toolbar {
-                    ToolbarItemGroup(placement: .navigationBarLeading) {
-                        if multipleSelectionViewModel.isEnabled {
-                            Button(MailResourcesStrings.Localizable.buttonCancel) {
-                                matomo.track(eventWithCategory: .multiSelection, name: "cancel")
-                                multipleSelectionViewModel.disable()
-                            }
-                        } else {
-                            if isCompactWindow {
-                                MenuDrawerButton()
-                            }
-
-                            Text(viewModel.frozenFolder.localizedName)
-                                .textStyle(.header1)
-                                .frame(maxWidth: maxTextWidth(geometry), alignment: .leading)
-                        }
-                    }
-
-                    ToolbarItemGroup(placement: .navigationBarTrailing) {
-                        if multipleSelectionViewModel.isEnabled {
-                            Button(selectAllButtonTitle) {
-                                withAnimation(.default.speed(2)) {
-                                    multipleSelectionViewModel.selectAll(threads: viewModel.filteredThreads)
-                                }
-                            }
-                            .animation(nil, value: multipleSelectionViewModel.selectedItems)
-                        } else {
-                            SearchButton()
-
-                            AccountButton()
-                        }
-                    }
-                }
-                .bottomBar(isVisible: multipleSelectionViewModel.isEnabled) {
-                    ForEach(multipleSelectionViewModel.toolbarActions) { action in
-                        ToolbarButton(
-                            text: action.shortTitle ?? action.title,
-                            icon: action.icon
-                        ) {
-                            let allMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
-                            multipleSelectionViewModel.disable()
-                            let originFolder = viewModel.frozenFolder
-                            Task {
-                                matomo.trackBulkEvent(
-                                    eventWithCategory: .threadActions,
-                                    name: action.matomoName.capitalized,
-                                    numberOfItems: multipleSelectionViewModel.selectedItems.count
-                                )
-
-                                try await actionsManager.performAction(
-                                    target: allMessages,
-                                    action: action,
-                                    origin: .multipleSelection(
-                                        originFolder: originFolder,
-                                        nearestDestructiveAlert: $mainViewState.destructiveAlert,
-                                        nearestMessagesToMoveSheet: nil
-                                    )
-                                )
-                            }
-                        }
-                        .accessibilityLabel(action.title)
-                        .accessibilityAddTraits(.isButton)
-                    }
-
-                    ToolbarButton(
-                        text: MailResourcesStrings.Localizable.buttonMore,
-                        icon: MailResourcesAsset.plusActions.swiftUIImage
-                    ) {
-                        multipleSelectedMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
-                    }
-                    .accessibilityLabel(MailResourcesStrings.Localizable.buttonMore)
-                    .accessibilityAddTraits(.isButton)
-                    .actionsPanel(
-                        messages: $multipleSelectedMessages,
-                        originFolder: viewModel.frozenFolder,
-                        panelSource: .threadList,
-                        popoverArrowEdge: .bottom
-                    ) { action in
-                        guard action.shouldDisableMultipleSelection else { return }
-                        multipleSelectionViewModel.disable()
-                    }
-                }
-                .navigationTitle(
-                    multipleSelectionViewModel.isEnabled
-                        ? MailResourcesStrings.Localizable.multipleSelectionCount(multipleSelectionViewModel.selectedItems.count)
-                        : ""
-                )
-                .navigationBarTitleDisplayMode(.inline)
-        }
-    }
-
-    private func maxTextWidth(_ proxy: GeometryProxy) -> CGFloat {
-        guard isCompactWindow else {
-            return 215
-        }
-
-        let safeAreaHorizontalInsets = proxy.safeAreaInsets.leading + proxy.safeAreaInsets.trailing
-
-        let toolbarIconSize: CGFloat = 24
-        let toolbarIconPadding: CGFloat = 16
-        let toolbarIconsSpace = toolbarIconSize * 3 + (toolbarIconPadding * 5)
-
-        return max(0, proxy.size.width - safeAreaHorizontalInsets - toolbarIconsSpace)
     }
 }

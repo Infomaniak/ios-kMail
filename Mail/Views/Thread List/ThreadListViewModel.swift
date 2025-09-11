@@ -161,6 +161,10 @@ final class ThreadListViewModel: ObservableObject, ThreadListable {
         }
     }
 
+    var isRefreshing: Bool {
+        return loadingPageTaskId != nil
+    }
+
     private var movingUp = false
 
     // MARK: Init

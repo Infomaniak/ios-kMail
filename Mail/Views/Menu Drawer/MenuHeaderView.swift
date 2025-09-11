@@ -24,40 +24,59 @@ import MailResources
 import SwiftUI
 import UIKit
 
-struct MenuHeaderView: View {
-    @InjectService private var platformDetector: PlatformDetectable
+extension View {
+    func menuHeader() -> some View {
+        modifier(MenuHeaderViewModifier())
+    }
+}
 
+struct MenuHeaderViewModifier: ViewModifier {
+    @Environment(\.isCompactWindow) private var isCompactWindow
     @EnvironmentObject private var mainViewState: MainViewState
+    @EnvironmentObject private var navigationDrawerState: NavigationDrawerState
 
     private var menuDrawerLogoHeight: CGFloat {
-        platformDetector.isMac ? 48 : 32
+        @InjectService var platformDetector: PlatformDetectable
+        return platformDetector.isMac ? 48 : 32
     }
 
-    var body: some View {
-        if platformDetector.isMac {
-            ZStack {}
+    func body(content: Content) -> some View {
+        if navigationDrawerState.useNativeToolbar && !isCompactWindow {
+            content
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
-                        logoImage(Image(uiImage: MailResourcesAsset.logoText.image))
+                        if #available(iOS 26.0, *) {
+                            MailResourcesAsset.logoMail.swiftUIImage
+                                .resizable()
+                                .scaledToFit()
+                                .padding(2)
+                        } else {
+                            logoImage(Image(uiImage: MailResourcesAsset.logoText.image))
+                        }
                     }
+
                     ToolbarItem(placement: .topBarTrailing) {
                         settingsButton
                     }
                 }
         } else {
-            HStack {
-                logoImage(MailResourcesAsset.logoText.swiftUIImage)
+            VStack(spacing: 0) {
+                HStack {
+                    logoImage(MailResourcesAsset.logoText.swiftUIImage)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
-                Spacer()
+                    settingsButton
+                }
+                .padding(.vertical, value: .medium)
+                .padding(.leading, value: .large)
+                .padding(.trailing, value: .micro)
+                .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
+                .clipped()
+                .shadow(color: MailResourcesAsset.menuDrawerShadowColor.swiftUIColor, radius: 1, x: 0, y: 2)
+                .zIndex(1)
 
-                settingsButton
+                content
             }
-            .padding(.vertical, value: .medium)
-            .padding(.leading, value: .large)
-            .padding(.trailing, value: .micro)
-            .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
-            .clipped()
-            .shadow(color: MailResourcesAsset.menuDrawerShadowColor.swiftUIColor, radius: 1, x: 0, y: 2)
         }
     }
 
@@ -80,8 +99,4 @@ struct MenuHeaderView: View {
         .frame(width: menuDrawerLogoHeight, height: menuDrawerLogoHeight)
         .contentShape(Rectangle())
     }
-}
-
-#Preview {
-    MenuHeaderView()
 }

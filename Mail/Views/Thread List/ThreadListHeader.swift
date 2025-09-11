@@ -84,22 +84,43 @@ class ThreadListHeaderFolderObserver: ObservableObject {
     }
 }
 
-struct ThreadListHeader: View {
-    @LazyInjectService private var matomo: MatomoUtils
+private struct UnreadToggle: View {
+    @Binding var unreadFilterOn: Bool
 
+    let unreadCount: Int
+
+    var body: some View {
+        Toggle(isOn: $unreadFilterOn) {
+            Text(MailResourcesStrings.Localizable.threadListHeaderUnreadCount(unreadCount.formatted(.indicatorCappedCount)))
+                .monospacedDigit()
+        }
+        .toggleStyle(.unread)
+        .onChange(of: unreadFilterOn) { newValue in
+            if newValue {
+                @InjectService var matomo: MatomoUtils
+                matomo.track(eventWithCategory: .threadList, name: "unreadFilter")
+            }
+        }
+    }
+}
+
+struct ThreadListHeader: View {
     @AppStorage(UserDefaults.shared.key(.accentColor)) private var accentColor = DefaultPreferences.accentColor
+
     @StateObject private var folderObserver: ThreadListHeaderFolderObserver
+
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
 
-    let isMultipleSelectionEnabled: Bool
-
     @Binding var unreadFilterOn: Bool
-    private var isRefreshing: Bool
 
-    init(isMultipleSelectionEnabled: Bool,
-         folder: Folder,
-         unreadFilterOn: Binding<Bool>,
-         isRefreshing: Bool) {
+    let isMultipleSelectionEnabled: Bool
+    let isRefreshing: Bool
+
+    private var isShowingToggle: Bool {
+        return folderObserver.unreadCount > 0 && !isMultipleSelectionEnabled
+    }
+
+    init(isMultipleSelectionEnabled: Bool, folder: Folder, unreadFilterOn: Binding<Bool>, isRefreshing: Bool) {
         self.isMultipleSelectionEnabled = isMultipleSelectionEnabled
         _unreadFilterOn = unreadFilterOn
         self.isRefreshing = isRefreshing
@@ -112,6 +133,7 @@ struct ThreadListHeader: View {
                 if !networkMonitor.isConnected {
                     NoNetworkView()
                 }
+
                 if isRefreshing {
                     HStack(spacing: IKPadding.mini) {
                         ProgressView()
@@ -119,31 +141,25 @@ struct ThreadListHeader: View {
                         Text(MailResourcesStrings.Localizable.threadListHeaderUpdating)
                             .textStyle(.bodySmallSecondary)
                     }
-                } else {
-                    if let lastUpdateText = folderObserver.lastUpdateText {
-                        Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
-                            .textStyle(.bodySmallSecondary)
-                    }
+                } else if let lastUpdateText = folderObserver.lastUpdateText {
+                    Text(MailResourcesStrings.Localizable.threadListHeaderLastUpdate(lastUpdateText))
+                        .textStyle(.bodySmallSecondary)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
 
-            if folderObserver.unreadCount > 0 && !isMultipleSelectionEnabled {
-                Toggle(isOn: $unreadFilterOn) {
-                    Text(MailResourcesStrings.Localizable
-                        .threadListHeaderUnreadCount(folderObserver.unreadCount.formatted(.indicatorCappedCount)))
+            ZStack {
+                if isShowingToggle {
+                    UnreadToggle(unreadFilterOn: $unreadFilterOn, unreadCount: folderObserver.unreadCount)
                 }
-                .toggleStyle(.unread)
-                .onChange(of: unreadFilterOn) { newValue in
-                    if newValue {
-                        matomo.track(eventWithCategory: .threadList, name: "unreadFilter")
-                    }
-                }
-                .frame(maxWidth: .infinity, alignment: .trailing)
+
+                UnreadToggle(unreadFilterOn: $unreadFilterOn, unreadCount: folderObserver.unreadCount)
+                    .opacity(0)
             }
+            .frame(maxWidth: .infinity, alignment: .trailing)
         }
-        .padding(.top, value: .mini)
-        .padding(.bottom, value: .small)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.top, value: .micro)
+        .padding(.bottom, value: .mini)
         .padding([.leading, .trailing], value: .medium)
         .background(accentColor.navBarBackground.swiftUIColor)
     }

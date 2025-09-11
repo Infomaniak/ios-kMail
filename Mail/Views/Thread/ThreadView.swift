@@ -34,6 +34,7 @@ struct ThreadView: View {
     @EnvironmentObject private var actionsManager: ActionsManager
 
     @State private var displayNavigationTitle = false
+    @State private var navigationTitleOpacity = 1.0
 
     @ObservedRealmObject var thread: Thread
 
@@ -50,6 +51,7 @@ struct ThreadView: View {
                 VStack(alignment: .leading, spacing: IKPadding.mini) {
                     Text(thread.formattedSubject)
                         .threadTitle()
+                        .opacity(navigationTitleOpacity)
 
                     ThreadTagsListView(externalTag: externalTag, searchFolderName: thread.searchFolderName)
                 }
@@ -64,8 +66,11 @@ struct ThreadView: View {
         }
         .background(MailResourcesAsset.backgroundColor.swiftUIColor)
         .coordinateSpace(name: "scrollView")
-        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
-            displayNavigationTitle = offset < 0
+        .onPreferenceChange(ScrollOffsetPreferenceKey.self) { titlePosition in
+            if #available(iOS 26.0, *) {
+                navigationTitleOpacity = 1 - titlePosition.offsetProgress
+            }
+            displayNavigationTitle = titlePosition.isFullyBellowNavigationBar
         }
         .onAppear {
             matomo.trackThreadInfo(of: thread)
@@ -74,6 +79,7 @@ struct ThreadView: View {
             await markThreadAsReadIfNeeded(thread: thread)
         }
         .navigationTitle(displayNavigationTitle ? thread.formattedSubject : "")
+        .navigationBarTitleDisplayMode(.inline)
         .navigationBarThreadViewStyle(appearance: displayNavigationTitle ? BarAppearanceConstants
             .threadViewNavigationBarScrolledAppearance : BarAppearanceConstants.threadViewNavigationBarAppearance)
         .backButtonDisplayMode(.minimal)

@@ -61,6 +61,14 @@ struct ThreadListView: View {
         !networkMonitor.isConnected && viewModel.sections == nil
     }
 
+    private var shouldDisplayFlushHeader: Bool {
+        return !viewModel.isEmpty && (viewModel.frozenFolder.role == .trash || viewModel.frozenFolder.role == .spam)
+    }
+
+    private var shouldDisplayOSVersionWarning: Bool {
+        return Constants.isUsingABreakableOSVersion && !hasDismissedUpdateVersionView && viewModel.frozenFolder.role == .inbox
+    }
+
     private var selection: Binding<Thread?>? {
         if #available(iOS 16.4, *) {
             return Binding(get: {
@@ -89,18 +97,19 @@ struct ThreadListView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ThreadListHeader(isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
-                             folder: viewModel.frozenFolder,
-                             unreadFilterOn: $viewModel.filterUnreadOn,
-                             isRefreshing: viewModel.loadingPageTaskId != nil)
-                .id(viewModel.frozenFolder.id)
+            ThreadListHeader(
+                isMultipleSelectionEnabled: multipleSelectionViewModel.isEnabled,
+                folder: viewModel.frozenFolder,
+                unreadFilterOn: $viewModel.filterUnreadOn,
+                isRefreshing: viewModel.isRefreshing
+            )
+            .id(viewModel.frozenFolder.id)
 
             QuotasAlertView(mailbox: viewModel.mailboxManager.mailbox)
 
             ScrollViewReader { proxy in
                 List(selection: selection) {
-                    if !viewModel.isEmpty,
-                       viewModel.frozenFolder.role == .trash || viewModel.frozenFolder.role == .spam {
+                    if shouldDisplayFlushHeader {
                         FlushFolderView(
                             folder: viewModel.frozenFolder,
                             mailboxManager: viewModel.mailboxManager,
@@ -113,8 +122,7 @@ struct ThreadListView: View {
                         ListVerticalInsetView(height: IKPadding.micro)
                     }
 
-                    if Constants.isUsingABreakableOSVersion && !hasDismissedUpdateVersionView && viewModel.frozenFolder
-                        .role == .inbox {
+                    if shouldDisplayOSVersionWarning {
                         MailUpdateVersionView(isShowingUpdateAlert: $isShowingUpdateAlert)
                             .threadListCellAppearance()
                     }
@@ -183,8 +191,6 @@ struct ThreadListView: View {
         }
         .id("\(accentColor.rawValue) \(threadDensity.rawValue)")
         .backButtonDisplayMode(.minimal)
-        .navigationBarThreadListStyle()
-        .toolbarAppStyle()
         .refreshable {
             withAnimation {
                 isRefreshing = true
@@ -198,7 +204,8 @@ struct ThreadListView: View {
                 isRefreshing = false
             }
         }
-        .threadListToolbar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
+        .threadListTopBar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
+        .threadListBottomBar(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel)
         .floatingActionButton(isEnabled: !multipleSelectionViewModel.isEnabled,
                               icon: MailResourcesAsset.pencilPlain,
                               title: MailResourcesStrings.Localizable.buttonNewMessage,

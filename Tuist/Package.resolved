@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "8dd5b29dc548876613ebe4de00023ba9ca219432",
-        "version" : "22.2.1"
+        "revision" : "4f08bb397d260e5b96f91a229578697e79a4e41d",
+        "version" : "22.2.3"
       }
     },
     {
@@ -293,8 +293,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/swift-modal-presentation",
       "state" : {
-        "revision" : "a1a390be6808466c2ed6081cbf728b2fafb94345",
-        "version" : "1.0.0"
+        "branch" : "fix/ios-26-modal-presentation",
+        "revision" : "307ef3cb200bbd0a576bb319f8b434d582da8891"
       }
     },
     {

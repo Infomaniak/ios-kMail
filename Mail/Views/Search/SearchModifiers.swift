@@ -56,6 +56,18 @@ struct SearchToolbar: ViewModifier {
         }
     }
 
+    private var isBottomBarVisible: Bool {
+        return multipleSelectionViewModel.isEnabled
+    }
+
+    private var isShowingBottomBarItems: Bool {
+        if #available(iOS 18.0, *) {
+            return true
+        } else {
+            return isBottomBarVisible
+        }
+    }
+
     func body(content: Content) -> some View {
         content
             .toolbar {
@@ -102,42 +114,53 @@ struct SearchToolbar: ViewModifier {
                     }
                 }
             }
-            .bottomBar(isVisible: multipleSelectionViewModel.isEnabled) {
-                ForEach(multipleSelectionViewModel.toolbarActions) { action in
-                    ToolbarButton(
-                        text: action.shortTitle ?? action.title,
-                        icon: action.icon
-                    ) {
-                        let allMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
-                        multipleSelectionViewModel.disable()
-                        Task {
-                            matomo.trackBulkEvent(
-                                eventWithCategory: .threadActions,
-                                name: action.matomoName.capitalized,
-                                numberOfItems: multipleSelectionViewModel.selectedItems.count
-                            )
+            .toolbar {
+                ToolbarItem(placement: .bottomBar) {
+                    if #available(iOS 16.0, *), isShowingBottomBarItems {
+                        moreButton
+                    }
+                }
+            }
+            .toolbarSpacer(placement: .bottomBar, isVisible: isShowingBottomBarItems)
+            .toolbar {
+                ToolbarItemGroup(placement: .bottomBar) {
+                    if isShowingBottomBarItems {
+                        ForEach(multipleSelectionViewModel.toolbarActions) { action in
+                            Button {
+                                let allMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
+                                multipleSelectionViewModel.disable()
+                                Task {
+                                    matomo.trackBulkEvent(
+                                        eventWithCategory: .threadActions,
+                                        name: action.matomoName.capitalized,
+                                        numberOfItems: multipleSelectionViewModel.selectedItems.count
+                                    )
 
-                            try await actionsManager.performAction(
-                                target: allMessages,
-                                action: action,
-                                origin: .multipleSelection(
-                                    originFolder: viewModel.frozenSearchFolder,
-                                    nearestMessagesToMoveSheet: $messagesToMove
-                                )
-                            )
+                                    try await actionsManager.performAction(
+                                        target: allMessages,
+                                        action: action,
+                                        origin: .multipleSelection(
+                                            originFolder: viewModel.frozenSearchFolder,
+                                            nearestMessagesToMoveSheet: $messagesToMove
+                                        )
+                                    )
 
-                            viewModel.refreshSearchIfNeeded(action: action)
+                                    viewModel.refreshSearchIfNeeded(action: action)
+                                }
+                            } label: {
+                                Label(action.shortTitle ?? action.title, asset: action.icon)
+                            }
+
+                            LegacyToolbarSpacer()
+                        }
+
+                        if #unavailable(iOS 16.0), isShowingBottomBarItems {
+                            moreButton
                         }
                     }
                 }
-
-                ToolbarButton(
-                    text: MailResourcesStrings.Localizable.buttonMore,
-                    icon: MailResourcesAsset.plusActions.swiftUIImage
-                ) {
-                    multipleSelectedMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
-                }
             }
+            .bottomBarVisibility(visibility: isBottomBarVisible ? .visible : .hidden)
             .actionsPanel(
                 messages: $multipleSelectedMessages,
                 originFolder: viewModel.frozenSearchFolder,
@@ -153,5 +176,13 @@ struct SearchToolbar: ViewModifier {
                     : ""
             )
             .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var moreButton: some View {
+        Button {
+            multipleSelectedMessages = multipleSelectionViewModel.selectedItems.values.flatMap(\.messages)
+        } label: {
+            Label(MailResourcesStrings.Localizable.buttonMore, asset: MailResourcesAsset.plusActions.swiftUIImage)
+        }
     }
 }

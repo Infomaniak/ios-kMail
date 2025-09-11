@@ -61,6 +61,18 @@ struct ThreadViewToolbarModifier: ViewModifier {
         }
     }
 
+    private var showMoreButton: Bool {
+        return frozenFolder?.role != .scheduledDrafts
+    }
+
+    private var flaggedTint: Color {
+        if #available(iOS 26.0, *) {
+            return isFlagged ? MailResourcesAsset.yellowColor.swiftUIColor : .primary
+        } else {
+            return isFlagged ? MailResourcesAsset.yellowColor.swiftUIColor : .accentColor
+        }
+    }
+
     init(frozenThread: Thread) {
         self.frozenThread = frozenThread
 
@@ -76,44 +88,66 @@ struct ThreadViewToolbarModifier: ViewModifier {
                     Button(action: didTapFlag) {
                         (isFlagged ? MailResourcesAsset.starFull : MailResourcesAsset.star)
                             .swiftUIImage
-                            .foregroundStyle(isFlagged ? MailResourcesAsset.yellowColor.swiftUIColor : .accentColor)
+                    }
+                    .tint(flaggedTint)
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .bottomBar) {
+                    if #available(iOS 16.0, *), showMoreButton {
+                        moreButton
                     }
                 }
             }
-            .bottomBar {
-                ForEach(toolbarActions) { action in
-                    if action == .reply {
-                        ToolbarButton(text: action.title, icon: action.icon) {
-                            didTap(action: action)
+            .toolbarSpacer(placement: .bottomBar)
+            .toolbar {
+                ToolbarItemGroup(placement: .bottomBar) {
+                    ForEach(toolbarActions) { action in
+                        if action == .reply {
+                            Button {
+                                didTap(action: action)
+                            } label: {
+                                Label(action.title, asset: action.icon)
+                            }
+                            .adaptivePanel(item: $replyOrReplyAllMessage, popoverArrowEdge: .bottom) { message in
+                                ReplyActionsView(message: message)
+                            }
+                        } else {
+                            Button {
+                                didTap(action: action)
+                            } label: {
+                                Label(action.title, asset: action.icon)
+                            }
+                            .sheet(item: $messagesToMove) { messages in
+                                MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: frozenFolder)
+                                    .sheetViewStyle()
+                            }
                         }
-                        .adaptivePanel(item: $replyOrReplyAllMessage, popoverArrowEdge: .bottom) { message in
-                            ReplyActionsView(message: message)
-                        }
-                    } else {
-                        ToolbarButton(text: action.title, icon: action.icon) {
-                            didTap(action: action)
-                        }
-                        .sheet(item: $messagesToMove) { messages in
-                            MoveEmailView(mailboxManager: mailboxManager, movedMessages: messages, originFolder: frozenFolder)
-                                .sheetViewStyle()
+
+                        if action != toolbarActions.last || showMoreButton {
+                            LegacyToolbarSpacer()
                         }
                     }
-                }
-                if frozenFolder?.role != .scheduledDrafts {
-                    ActionsPanelButton(
-                        messages: frozenMessages,
-                        originFolder: frozenFolder,
-                        panelSource: .messageList,
-                        popoverArrowEdge: .bottom
-                    ) {
-                        ToolbarButtonLabel(text: MailResourcesStrings.Localizable.buttonMore,
-                                           icon: MailResourcesAsset.plusActions.swiftUIImage)
+
+                    if #unavailable(iOS 16.0), showMoreButton {
+                        moreButton
                     }
                 }
             }
             .mailCustomAlert(item: $destructiveAlert) { item in
                 DestructiveActionAlertView(destructiveAlert: item)
             }
+    }
+
+    private var moreButton: some View {
+        ActionsPanelButton(
+            messages: frozenMessages,
+            originFolder: frozenFolder,
+            panelSource: .messageList,
+            popoverArrowEdge: .bottom
+        ) {
+            Label(MailResourcesStrings.Localizable.buttonMore, asset: MailResourcesAsset.plusActions.swiftUIImage)
+        }
     }
 
     private func didTapFlag() {

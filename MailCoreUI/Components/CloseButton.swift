@@ -21,6 +21,31 @@ import InfomaniakCoreSwiftUI
 import MailResources
 import SwiftUI
 
+public struct ToolbarCloseButton: View {
+    let dismissHandler: () -> Void
+
+    public init(dismissAction: DismissAction) {
+        dismissHandler = dismissAction.callAsFunction
+    }
+
+    public init(dismissHandler: @escaping () -> Void) {
+        self.dismissHandler = dismissHandler
+    }
+
+    public var body: some View {
+        if #available(iOS 26.0, *) {
+            Button(role: .cancel, action: dismissHandler)
+                .keyboardShortcut(.cancelAction)
+        } else {
+            Button(action: dismissHandler) {
+                Label(MailResourcesStrings.Localizable.buttonClose, systemImage: "xmark")
+            }
+            .labelStyle(.iconOnly)
+            .keyboardShortcut(.cancelAction)
+        }
+    }
+}
+
 public struct CloseButton: View {
     let size: IKIconSize?
     let dismissHandler: () -> Void

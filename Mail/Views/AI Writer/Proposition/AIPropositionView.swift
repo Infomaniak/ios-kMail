@@ -16,6 +16,7 @@
  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import DesignSystem
 import InfomaniakCoreCommonUI
 import InfomaniakDI
 import MailCore
@@ -36,6 +37,14 @@ struct AIPropositionView: View {
     @ObservedObject var aiModel: AIModel
 
     @Namespace private var errorID
+
+    private var secondaryButtonsTint: Color {
+        if #available(iOS 26, *) {
+            return .primary
+        } else {
+            return MailResourcesAsset.textSecondaryColor.swiftUIColor
+        }
+    }
 
     var body: some View {
         NavigationView {
@@ -68,6 +77,7 @@ struct AIPropositionView: View {
                     }
                 }
             }
+            .navigationTitle(MailResourcesStrings.Localizable.aiPromptTitle)
             .task {
                 await aiModel.createConversation()
             }
@@ -78,58 +88,46 @@ struct AIPropositionView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    CloseButton {
+                ToolbarItem(placement: .cancellationAction) {
+                    ToolbarCloseButton {
                         matomo.track(eventWithCategory: .aiWriter, name: "dismissProposition")
                         dismiss()
                     }
-                    .tint(MailResourcesAsset.textSecondaryColor)
-                }
-
-                ToolbarItem(placement: .principal) {
-                    AIHeaderView(style: .sheet)
+                    .tint(secondaryButtonsTint)
                 }
 
                 ToolbarItemGroup(placement: .bottomBar) {
-                    Group {
-                        if aiModel.currentStyle == .standard || aiModel.currentStyle == .error {
-                            AIPropositionMenu(aiModel: aiModel)
-                        }
+                    if aiModel.currentStyle == .standard || aiModel.currentStyle == .error {
+                        AIPropositionMenu(aiModel: aiModel)
+                            .tint(secondaryButtonsTint)
+                    }
 
-                        Spacer()
+                    Spacer()
 
-                        switch aiModel.currentStyle {
-                        case .loading:
+                    switch aiModel.currentStyle {
+                    case .loading:
+                        if #unavailable(iOS 26.0) {
                             Text(MailResourcesStrings.Localizable.aiPromptGenerationLoader)
                                 .textStyle(.bodyMediumTertiary)
-                        case .standard, .error:
-                            Button {
-                                Task {
-                                    await aiModel.didTapInsert()
-                                }
-                            } label: {
-                                Label { Text(MailResourcesStrings.Localizable.aiButtonInsert) } icon: {
-                                    MailResourcesAsset.plus
-                                        .iconSize(.medium)
-                                }
-                            }
-                            .buttonStyle(.ikBorderedProminent)
-                        case .loadingError:
-                            Button(MailResourcesStrings.Localizable.aiButtonRetry) {
-                                matomo.track(eventWithCategory: .aiWriter, name: "retry")
-                                aiModel.keepConversationWhenPropositionIsDismissed = true
-                                willShowAIPrompt = true
-                                dismiss()
-                            }
-                            .buttonStyle(.ikBorderedProminent)
+                        }
+                    case .standard, .error:
+                        if #available(iOS 26.0, *) {
+                            insertButton
+                                .buttonStyle(.borderedProminent)
+                        } else {
+                            insertButton
+                                .buttonStyle(.ikBorderedProminent)
+                        }
+                    case .loadingError:
+                        if #available(iOS 26.0, *) {
+                            retryButton
+                                .buttonStyle(.borderedProminent)
+                        } else {
+                            retryButton
+                                .buttonStyle(.ikBorderedProminent)
                         }
                     }
-                    .padding(.bottom, value: .micro)
                 }
-            }
-            .introspect(.viewController, on: .iOS(.v15, .v16, .v17, .v18, .v26)) { viewController in
-                guard let toolbar = viewController.navigationController?.toolbar else { return }
-                UIConstants.applyComposeViewStyle(to: toolbar)
             }
             .mailCustomAlert(isPresented: $aiModel.isShowingReplaceBodyAlert) {
                 ReplaceMessageBodyView {
@@ -152,6 +150,30 @@ struct AIPropositionView: View {
             .ikButtonTheme(.aiWriter)
             .tint(MailResourcesAsset.aiColor.swiftUIColor)
             .matomoView(view: ["AI", "Proposition"])
+        }
+    }
+
+    private var insertButton: some View {
+        Button {
+            Task {
+                await aiModel.didTapInsert()
+            }
+        } label: {
+            Label {
+                Text(MailResourcesStrings.Localizable.aiButtonInsert)
+            } icon: {
+                MailResourcesAsset.check
+                    .iconSize(.medium)
+            }
+        }
+    }
+
+    private var retryButton: some View {
+        Button(MailResourcesStrings.Localizable.aiButtonRetry) {
+            matomo.track(eventWithCategory: .aiWriter, name: "retry")
+            aiModel.keepConversationWhenPropositionIsDismissed = true
+            willShowAIPrompt = true
+            dismiss()
         }
     }
 }

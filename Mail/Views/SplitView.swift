@@ -69,7 +69,7 @@ struct SplitView: View {
 
     @Weak private var splitViewController: UISplitViewController?
 
-    @StateObject private var navigationDrawerController = NavigationDrawerState()
+    @StateObject private var navigationDrawerState = NavigationDrawerState()
     @StateObject private var splitViewManager = SplitViewManager()
 
     let mailboxManager: MailboxManager
@@ -80,7 +80,7 @@ struct SplitView: View {
                 ZStack {
                     NBNavigationStack(path: $mainViewState.threadPath) {
                         ThreadListManagerView()
-                            .accessibilityHidden(navigationDrawerController.isOpen)
+                            .accessibilityHidden(navigationDrawerState.isOpen)
                             .nbNavigationDestination(for: Thread.self) { thread in
                                 ThreadView(thread: thread)
                             }
@@ -93,7 +93,7 @@ struct SplitView: View {
             } else {
                 NavigationView {
                     MenuDrawerView()
-                        .navigationBarHidden(!platformDetector.isMac)
+                        .navigationBarHidden(!navigationDrawerState.useNativeToolbar || isCompactWindow)
 
                     ThreadListManagerView()
 
@@ -239,7 +239,7 @@ struct SplitView: View {
             )
         }
         .environmentObject(splitViewManager)
-        .environmentObject(navigationDrawerController)
+        .environmentObject(navigationDrawerState)
         .environmentObject(mailboxManager)
         .environmentObject(ActionsManager(mailboxManager: mailboxManager, mainViewState: mainViewState))
         .environment(\.realmConfiguration, mailboxManager.realmConfiguration)
@@ -342,7 +342,7 @@ struct SplitView: View {
     typealias NotificationPublisher = Publishers.ReceiveOn<NotificationCenter.Publisher, DispatchQueue>.Output
     // periphery:ignore:parameters notification - Needed for signature calling in .onReceive
     private func handleCloseDrawer(_ notification: NotificationPublisher) {
-        navigationDrawerController.close()
+        navigationDrawerState.close()
     }
 
     private func handleApplicationShortcut(_ notification: NotificationPublisher) {
