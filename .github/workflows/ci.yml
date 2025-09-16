@@ -23,6 +23,7 @@ jobs:
       - name: Create test env
         env:
           ENV_PATH: "MailTests/Env.swift"
+          UI_ENV_PATH: "MailUITests/Env.swift"
           ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
           USER_ID: ${{ secrets.USER_ID }}
           MAILBOX_ID: ${{ secrets.MAILBOX_ID }}
@@ -30,6 +31,8 @@ jobs:
         run: |
           touch $ENV_PATH
           echo -e "enum Env {\n static let token = \"$ACCESS_TOKEN\"\n static let userId = $USER_ID\n static let mailboxId = $MAILBOX_ID\n static let mailboxUuid = \"$MAILBOX_UUID\"\n}" > $ENV_PATH
+          touch $UI_ENV_PATH
+          echo -e "enum Env {\n static let testAccountEmail = \"\"\n static let testAccountPassword = \"\"\n}" > $UI_ENV_PATH
       - name: Generate
         run: tuist install && tuist generate
       - name: Check implicit imports
@@ -37,4 +40,4 @@ jobs:
       - name: Build
         run: tuist build --clean "Infomaniak Mail"
       - name: Unit and Integration Tests
-        run: tuist test Mail-Workspace --skip-ui-tests
+        run: tuist test Mail-Workspace --skip-test-targets MailUITests/MailUITests

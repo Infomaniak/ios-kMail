@@ -24,7 +24,6 @@ import InfomaniakDI
 import MailCore
 import MailCoreUI
 import MailResources
-import NavigationBackport
 import SwiftUI
 
 struct CurrentComposeMailboxView: View {

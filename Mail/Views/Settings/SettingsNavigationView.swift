@@ -36,21 +36,40 @@ struct SettingsNavigationView: View {
     }
 
     var body: some View {
-        NBNavigationStack(path: $navigationPath) {
-            SettingsView()
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        if !platformDetector.isMac || platformDetector.isLegacyMacCatalyst {
-                            ToolbarCloseButton(dismissAction: dismiss)
+        if #available(iOS 16.0, *) {
+            NavigationStack(path: $navigationPath) {
+                SettingsView()
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            if !platformDetector.isMac || platformDetector.isLegacyMacCatalyst {
+                                ToolbarCloseButton(dismissAction: dismiss)
+                            }
                         }
                     }
-                }
-                .nbNavigationDestination(for: SettingsDestination.self) { _ in
-                    SettingsNotificationsView()
-                }
-        }
-        .environment(\.dismissModal) {
-            dismiss()
+                    .navigationDestination(for: SettingsDestination.self) { _ in
+                        SettingsNotificationsView()
+                    }
+            }
+            .environment(\.dismissModal) {
+                dismiss()
+            }
+        } else {
+            NBNavigationStack(path: $navigationPath) {
+                SettingsView()
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            if !platformDetector.isMac || platformDetector.isLegacyMacCatalyst {
+                                ToolbarCloseButton(dismissAction: dismiss)
+                            }
+                        }
+                    }
+                    .nbNavigationDestination(for: SettingsDestination.self) { _ in
+                        SettingsNotificationsView()
+                    }
+            }
+            .environment(\.dismissModal) {
+                dismiss()
+            }
         }
     }
 }

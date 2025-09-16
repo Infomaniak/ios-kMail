@@ -22,7 +22,6 @@ import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailCoreUI
-import NavigationBackport
 import SwiftUI
 
 struct ComposeMessageIntentView: View, IntentViewable {
