@@ -350,6 +350,7 @@ public extension Thread {
             to.append(objectsIn: message.to.detached())
 
             message.reactions = List()
+            message.reactionMessages = List()
 
             if !message.seen {
                 unseenMessages += 1
@@ -374,14 +375,14 @@ public extension Thread {
             if message.isScheduledDraft == true {
                 numberOfScheduledDraft += 1
             }
-            if UserDefaults.shared.threadMode == .conversation,
-               message.isReaction,
-               message.isDraft || applyReactionIfPossible(
-                   from: message,
-                   messagesById: messagesById,
-                   currentAccountEmail: currentAccountEmail
-               ) {
-                message.isDisplayable = false
+            if UserDefaults.shared.threadMode == .conversation && message.isReaction {
+                let hasAppliedReaction = applyReactionIfPossible(
+                    from: message,
+                    messagesById: messagesById,
+                    currentAccountEmail: currentAccountEmail
+                )
+
+                message.isDisplayable = !(hasAppliedReaction || message.isDraft)
             } else {
                 messagesToDisplay.append(message)
             }
@@ -447,6 +448,7 @@ public extension Thread {
                 let messageReaction = MessageReaction(reaction: emojiReaction, authors: authors, hasUserReacted: hasUserReacted)
                 targetMessage.reactions.append(messageReaction)
             }
+            targetMessage.reactionMessages.append(message)
 
             hasBeenApplied = true
         }

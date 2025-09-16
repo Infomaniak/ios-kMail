@@ -29,15 +29,14 @@ enum MessageExpansionType: Equatable {
 
 struct MessageListView: View {
     @StateObject private var messagesWorker: MessagesWorker
+
     @State private var messageExpansion = [String: MessageExpansionType]()
 
-    var messagesToExpand: Set<String>
     let messages: [Message]
 
-    init(messages: [Message], mailboxManager: MailboxManager, messagesToExpand: Set<String>) {
+    init(messages: [Message], mailboxManager: MailboxManager) {
         _messagesWorker = StateObject(wrappedValue: MessagesWorker(mailboxManager: mailboxManager))
         self.messages = messages
-        self.messagesToExpand = messagesToExpand
     }
 
     var body: some View {
@@ -60,7 +59,7 @@ struct MessageListView: View {
                     }
                 }
             }
-            .onAppear {
+            .task {
                 computeExpansion(from: messages)
 
                 guard messages.count > 1, let firstExpandedUid = firstExpanded()?.uid else {
@@ -74,32 +73,25 @@ struct MessageListView: View {
                     }
                 }
             }
-            .onChange(of: messagesToExpand) { newValue in
-                computeExpansion(from: messages, messagesToExpand: newValue)
-            }
             .environmentObject(messagesWorker)
             .id(messages.id)
         }
     }
 
-    private func computeExpansion(from messageList: [Message], messagesToExpand: Set<String> = []) {
+    private func computeExpansion(from messageList: [Message]) {
         var toSuperCollapse = [String]()
 
         for message in messageList {
-            if messagesToExpand.contains(message.uid) {
-                messageExpansion[message.uid] = .expanded
-            } else {
-                messageExpansion[message.uid] = expansion(for: message, from: messageList)
-            }
+            messageExpansion[message.uid] = expansion(for: message, from: messageList)
 
             guard message != messageList.first && message != messageList.last else { continue }
-            guard messageExpansion[message.uid] != .expanded else {
+
+            if messageExpansion[message.uid] == .expanded {
                 superCollapseIfNeeded(toSuperCollapse)
                 toSuperCollapse.removeAll()
-                continue
+            } else {
+                toSuperCollapse.append(message.uid)
             }
-
-            toSuperCollapse.append(message.uid)
         }
 
         superCollapseIfNeeded(toSuperCollapse)
@@ -155,7 +147,8 @@ struct MessageListView: View {
     }
 
     private func isExpanded(message: Message, from messageList: [Message]) -> Bool {
-        return ((messageList.last?.uid == message.uid) && !message.isDraft) || !message.seen
+        let isLastMessage = messageList.last?.uid == message.uid
+        return (isLastMessage && !message.isDraft) || !message.seen || message.hasUnseenReactions
     }
 
     /// Function used to give a first value to a message expansion before trying to superCollapse it
