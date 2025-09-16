@@ -86,6 +86,7 @@ struct ComposeMessageView: View {
     @State private var currentSignature: Signature?
     @State private var initialAttachments = [Attachable]()
     @State private var isShowingSchedulePanel = false
+    @State private var isShowingMyKSuitePanel = false
     @State private var isShowingKSuiteProPanel = false
 
     @State private var isShowingEncryptStatePanel = false
@@ -223,6 +224,7 @@ struct ComposeMessageView: View {
                     textAttributes: textAttributes,
                     isShowingAI: $aiModel.isShowingPrompt,
                     isShowingKSuiteProPanel: $isShowingKSuiteProPanel,
+                    isShowingMyKSuitePanel: $isShowingMyKSuitePanel,
                     isShowingEncryptStatePanel: $isShowingEncryptStatePanel,
                     draft: draft,
                     isEditorFocused: focusedField == .editor
@@ -351,6 +353,7 @@ struct ComposeMessageView: View {
         .aiPromptPresenter(isPresented: $aiModel.isShowingPrompt) {
             AIPromptView(aiModel: aiModel)
         }
+        .mailMyKSuiteFloatingPanel(isPresented: $isShowingMyKSuitePanel, configuration: .mail)
         .kSuitePanel(
             isPresented: $isShowingKSuiteProPanel,
             backgroundColor: MailResourcesAsset.backgroundSecondaryColor.swiftUIColor,

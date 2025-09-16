@@ -30,6 +30,7 @@ struct MobileMainToolbarView: View {
     @Binding var isShowingFormattingOptions: Bool
     @Binding var isShowingAI: Bool
     @Binding var isShowingKSuiteProPanel: Bool
+    @Binding var isShowingMyKSuitePanel: Bool
     @Binding var isShowingEncryptStatePanel: Bool
 
     let draft: Draft
@@ -109,6 +110,8 @@ struct MobileMainToolbarView: View {
         case .ai:
             if mailboxManager.mailbox.pack == .kSuiteFree {
                 isShowingKSuiteProPanel = true
+            } else if mailboxManager.mailbox.pack == .myKSuiteFree {
+                isShowingMyKSuitePanel = true
             } else {
                 isShowingAI = true
             }
@@ -134,6 +137,7 @@ struct MobileMainToolbarView: View {
         isShowingFormattingOptions: .constant(false),
         isShowingAI: .constant(false),
         isShowingKSuiteProPanel: .constant(false),
+        isShowingMyKSuitePanel: .constant(false),
         isShowingEncryptStatePanel: .constant(false),
         draft: Draft(),
         isEditorFocused: true
