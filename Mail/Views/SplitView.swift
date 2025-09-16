@@ -76,31 +76,60 @@ struct SplitView: View {
 
     var body: some View {
         Group {
-            if isCompactWindow {
-                ZStack {
-                    NBNavigationStack(path: $mainViewState.threadPath) {
-                        ThreadListManagerView()
-                            .accessibilityHidden(navigationDrawerState.isOpen)
-                            .nbNavigationDestination(for: Thread.self) { thread in
-                                ThreadView(thread: thread)
-                            }
-                    }
-                    .nbUseNavigationStack(.whenAvailable)
-                    .navigationViewStyle(.stack)
+            if #available(iOS 16.0, *) {
+                if isCompactWindow {
+                    ZStack {
+                        NavigationStack(path: $mainViewState.threadPath) {
+                            ThreadListManagerView()
+                                .accessibilityHidden(navigationDrawerState.isOpen)
+                                .navigationDestination(for: Thread.self) { thread in
+                                    ThreadView(thread: thread)
+                                }
+                        }
 
-                    NavigationDrawer()
+                        NavigationDrawer()
+                    }
+                } else {
+                    NavigationSplitView {
+                        MenuDrawerView()
+                            .navigationBarHidden(!navigationDrawerState.useNativeToolbar || isCompactWindow)
+                    } content: {
+                        ThreadListManagerView()
+                    } detail: {
+                        if let thread = mainViewState.selectedThread {
+                            ThreadView(thread: thread)
+                        } else {
+                            EmptyStateView.emptyThread(from: mainViewState.selectedFolder)
+                        }
+                    }
                 }
             } else {
-                NavigationView {
-                    MenuDrawerView()
-                        .navigationBarHidden(!navigationDrawerState.useNativeToolbar || isCompactWindow)
+                if isCompactWindow {
+                    ZStack {
+                        NBNavigationStack(path: $mainViewState.threadPath) {
+                            ThreadListManagerView()
+                                .accessibilityHidden(navigationDrawerState.isOpen)
+                                .nbNavigationDestination(for: Thread.self) { thread in
+                                    ThreadView(thread: thread)
+                                }
+                        }
+                        .nbUseNavigationStack(.whenAvailable)
+                        .navigationViewStyle(.stack)
 
-                    ThreadListManagerView()
+                        NavigationDrawer()
+                    }
+                } else {
+                    NavigationView {
+                        MenuDrawerView()
+                            .navigationBarHidden(!navigationDrawerState.useNativeToolbar || isCompactWindow)
 
-                    if let thread = mainViewState.selectedThread {
-                        ThreadView(thread: thread)
-                    } else {
-                        EmptyStateView.emptyThread(from: mainViewState.selectedFolder)
+                        ThreadListManagerView()
+
+                        if let thread = mainViewState.selectedThread {
+                            ThreadView(thread: thread)
+                        } else {
+                            EmptyStateView.emptyThread(from: mainViewState.selectedFolder)
+                        }
                     }
                 }
             }

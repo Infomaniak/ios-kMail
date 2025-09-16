@@ -32,31 +32,59 @@ struct SyncProfileNavigationView: View {
     @State private var navigationPath: [SyncProfileStep] = []
 
     var body: some View {
-        NBNavigationStack(path: $navigationPath) {
-            SyncWelcomeView(navigationPath: $navigationPath)
-                .nbNavigationDestination(for: SyncProfileStep.self) { step in
-                    Group {
-                        switch step {
-                        case .downloadProfile:
-                            SyncDownloadProfileView(navigationPath: $navigationPath)
-                        case .copyPassword:
-                            SyncCopyPasswordView(navigationPath: $navigationPath)
-                        case .installProfile:
-                            SyncInstallProfileTutorialView()
+        if #available(iOS 16.0, *) {
+            NavigationStack(path: $navigationPath) {
+                SyncWelcomeView(navigationPath: $navigationPath)
+                    .navigationDestination(for: SyncProfileStep.self) { step in
+                        Group {
+                            switch step {
+                            case .downloadProfile:
+                                SyncDownloadProfileView(navigationPath: $navigationPath)
+                            case .copyPassword:
+                                SyncCopyPasswordView(navigationPath: $navigationPath)
+                            case .installProfile:
+                                SyncInstallProfileTutorialView()
+                            }
+                        }
+                        .backButtonDisplayMode(.minimal)
+                        .navigationBarTitleDisplayMode(.inline)
+                        .environment(\.dismissModal) { dismiss() }
+                    }
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            ToolbarCloseButton(dismissAction: dismiss)
                         }
                     }
                     .backButtonDisplayMode(.minimal)
-                    .navigationBarTitleDisplayMode(.inline)
-                    .environment(\.dismissModal) { dismiss() }
-                }
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        ToolbarCloseButton(dismissAction: dismiss)
+            }
+            .nbUseNavigationStack(.whenAvailable)
+        } else {
+            NBNavigationStack(path: $navigationPath) {
+                SyncWelcomeView(navigationPath: $navigationPath)
+                    .nbNavigationDestination(for: SyncProfileStep.self) { step in
+                        Group {
+                            switch step {
+                            case .downloadProfile:
+                                SyncDownloadProfileView(navigationPath: $navigationPath)
+                            case .copyPassword:
+                                SyncCopyPasswordView(navigationPath: $navigationPath)
+                            case .installProfile:
+                                SyncInstallProfileTutorialView()
+                            }
+                        }
+                        .backButtonDisplayMode(.minimal)
+                        .navigationBarTitleDisplayMode(.inline)
+                        .environment(\.dismissModal) { dismiss() }
                     }
-                }
-                .backButtonDisplayMode(.minimal)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            ToolbarCloseButton(dismissAction: dismiss)
+                        }
+                    }
+                    .backButtonDisplayMode(.minimal)
+            }
+            .nbUseNavigationStack(.whenAvailable)
         }
-        .nbUseNavigationStack(.whenAvailable)
     }
 }
 

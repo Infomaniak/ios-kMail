@@ -56,8 +56,14 @@ struct DeepLinkSettingsSubMenuCell: View {
     let value: SettingsDestination
 
     var body: some View {
-        NBNavigationLink(value: value) {
-            SettingsSubMenuLabel(title: title, subtitle: subtitle, icon: icon)
+        if #available(iOS 16.0, *) {
+            NavigationLink(value: value) {
+                SettingsSubMenuLabel(title: title, subtitle: subtitle, icon: icon)
+            }
+        } else {
+            NBNavigationLink(value: value) {
+                SettingsSubMenuLabel(title: title, subtitle: subtitle, icon: icon)
+            }
         }
     }
 }
