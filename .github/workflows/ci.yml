@@ -37,4 +37,4 @@ jobs:
       - name: Build
         run: tuist build --clean "Infomaniak Mail"
       - name: Unit and Integration Tests
-        run: tuist test Mail-Workspace --skip-ui-tests
+        run: tuist test Mail-Workspace --skip-test-targets MailUITests/MailUITests
