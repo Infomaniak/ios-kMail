@@ -366,11 +366,6 @@ public extension MailboxManager {
             messageUids: shortUids
         )
 
-        for message in messageByUidsResult.messages {
-            let cleanPreview = NotificationsHelper.getCleanEmojiPreviewFrom(message: message)
-            message.preview = cleanPreview
-        }
-
         var impactedThreadUids = Set<String>()
         try? writeTransaction { writableRealm in
             guard let folder = folder.fresh(using: writableRealm) else { return }
