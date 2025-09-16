@@ -188,6 +188,7 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
     @Persisted public var emojiReactionNotAllowedReason: EmojiReactionNotAllowedReason?
 
     @Persisted public var reactions: List<MessageReaction>
+    @Persisted public var reactionMessages: List<Message>
 
     public var shortUid: Int? {
         return Int(Constants.shortUid(from: uid))
@@ -282,6 +283,10 @@ public final class Message: Object, Decodable, ObjectKeyIdentifiable {
         }
 
         return !isDraft
+    }
+
+    public var hasUnseenReactions: Bool {
+        return !reactionMessages.where { $0.seen == false }.isEmpty
     }
 
     public func fromMe(currentMailboxEmail: String) -> Bool {
