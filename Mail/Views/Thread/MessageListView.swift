@@ -66,11 +66,8 @@ struct MessageListView: View {
                     return
                 }
 
-                // TODO: listen for last message `.isFullyLoaded` to be exact
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    withAnimation {
-                        proxy.scrollTo(firstExpandedUid, anchor: .top)
-                    }
+                withAnimation {
+                    proxy.scrollTo(firstExpandedUid, anchor: .top)
                 }
             }
             .environmentObject(messagesWorker)
