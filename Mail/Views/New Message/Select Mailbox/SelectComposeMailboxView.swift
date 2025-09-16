@@ -23,7 +23,6 @@ import InfomaniakCoreSwiftUI
 import InfomaniakDI
 import MailCore
 import MailResources
-import NavigationBackport
 import SwiftUI
 
 struct SelectComposeMailboxView: View {
