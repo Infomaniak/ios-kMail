@@ -105,7 +105,7 @@ public struct ReactionsListView: View {
         guard let reaction else { return }
 
         @InjectService var matomo: MatomoUtils
-        matomo.track(eventWithCategory: .emojiReactions, name: "addReactionFromPicker")
+        matomo.track(eventWithCategory: .emojiReactions, name: "addReactionFromEmojiPicker")
 
         addReaction(reaction.emoji)
         selectedEmoji = nil
