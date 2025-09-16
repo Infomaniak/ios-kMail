@@ -226,19 +226,24 @@ public class RecipientChipLabel: UIView, UIKeyInput {
     override public func layoutSubviews() {
         super.layoutSubviews()
 
-        let availableWidth = bounds.width
+        var availableWidth = bounds.width
             - IKPadding.recipientChip.left
             - IKPadding.recipientChip.right
-            - (accessoryView?.frame.width ?? 0)
-            - (accessoryView != nil ? spacing : 0)
+
+        if let accessoryView {
+            availableWidth -= accessoryView.frame.width + spacing
+        }
+
+        if !labelLengthConstraint.isEmpty {
+            NSLayoutConstraint.deactivate(labelLengthConstraint)
+            labelLengthConstraint = []
+        }
 
         if label.intrinsicContentSize.width > availableWidth {
             labelLengthConstraint = [
                 label.widthAnchor.constraint(equalToConstant: availableWidth)
             ]
             NSLayoutConstraint.activate(labelLengthConstraint)
-        } else {
-            NSLayoutConstraint.deactivate(labelLengthConstraint)
         }
     }
 
@@ -291,7 +296,6 @@ public class RecipientChipLabel: UIView, UIKeyInput {
         addSubview(label)
 
         NSLayoutConstraint.activate([
-            label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -IKPadding.recipientChip.right),
             label.centerYAnchor.constraint(equalTo: centerYAnchor),
             label.leadingAnchor.constraint(
                 greaterThanOrEqualTo: leadingAnchor,
