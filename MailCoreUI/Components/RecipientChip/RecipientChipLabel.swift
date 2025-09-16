@@ -205,6 +205,7 @@ public class RecipientChipLabel: UIView, UIKeyInput {
     }()
 
     private var accessoryViewConstraints = [NSLayoutConstraint]()
+    private var labelLengthConstraint = [NSLayoutConstraint]()
 
     public init(recipient: Recipient, type: RecipientChipType) {
         self.type = type
@@ -220,6 +221,30 @@ public class RecipientChipLabel: UIView, UIKeyInput {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override public func layoutSubviews() {
+        super.layoutSubviews()
+
+        var availableWidth = bounds.width
+            - IKPadding.recipientChip.left
+            - IKPadding.recipientChip.right
+
+        if let accessoryView {
+            availableWidth -= accessoryView.frame.width + spacing
+        }
+
+        if !labelLengthConstraint.isEmpty {
+            NSLayoutConstraint.deactivate(labelLengthConstraint)
+            labelLengthConstraint = []
+        }
+
+        if label.intrinsicContentSize.width > availableWidth {
+            labelLengthConstraint = [
+                label.widthAnchor.constraint(equalToConstant: availableWidth)
+            ]
+            NSLayoutConstraint.activate(labelLengthConstraint)
+        }
     }
 
     override public func becomeFirstResponder() -> Bool {
@@ -271,8 +296,11 @@ public class RecipientChipLabel: UIView, UIKeyInput {
         addSubview(label)
 
         NSLayoutConstraint.activate([
-            label.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -IKPadding.recipientChip.right),
-            label.centerYAnchor.constraint(equalTo: centerYAnchor)
+            label.centerYAnchor.constraint(equalTo: centerYAnchor),
+            label.leadingAnchor.constraint(
+                greaterThanOrEqualTo: leadingAnchor,
+                constant: IKPadding.recipientChip.left
+            )
         ])
     }
 
