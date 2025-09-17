@@ -4,7 +4,7 @@
  * Locale: en, English
  * Tagged: ios
  * Exported by: Baptiste Griva
- * Exported at: Mon, 01 Sep 2025 08:53:51 +0200
+ * Exported at: Wed, 17 Sep 2025 10:49:36 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1196,7 +1196,7 @@
 "nextMonday" = "Next monday";
 
 /* loco:62fb875a6743ac5a237b07e3 */
-"noBodyTitle" = "This message is empty.";
+"noBodyDescription" = "This message is empty.";
 
 /* loco:65016e82bd99726dde081533 */
 "noConnection" = "No connection";

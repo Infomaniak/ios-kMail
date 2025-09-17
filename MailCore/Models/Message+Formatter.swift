@@ -25,7 +25,7 @@ public extension Message {
     }
 
     struct PreviewFormatStyle: Foundation.FormatStyle {
-        public static let noPreview = MailResourcesStrings.Localizable.noBodyTitle
+        public static let noPreview = MailResourcesStrings.Localizable.noBodyDescription
         public func format(_ value: Message) -> String {
             if value.encrypted {
                 return MailResourcesStrings.Localizable.encryptedMessageHeader
