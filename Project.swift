@@ -355,7 +355,7 @@ let project = Project(name: "Mail",
                                       .external(name: "RealmSwift"),
                                       .external(name: "Shimmer"),
                                       .external(name: "SwiftUIBackports"),
-                                      .external(name: "SwiftUIIntrospect-Static"),
+                                      .external(name: "SwiftUIIntrospect"),
                                       .external(name: "WrappingHStack"),
                                       .external(name: "ElegantEmojiPicker")
                                   ],

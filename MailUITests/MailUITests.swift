@@ -244,7 +244,7 @@ class MailUITests: XCTestCase {
 
         app.buttons[CoreUILocalizable.buttonUploadFromGallery].firstMatch.tap()
 
-        let firstPhoto = app.otherElements["photos_layout"].images.firstMatch
+        let firstPhoto = app.otherElements["photos_layout"].images["Photo, 08 août 2012, 23:55"]
         _ = firstPhoto.waitForExistence(timeout: defaultTimeOut)
         firstPhoto.tap()
 
