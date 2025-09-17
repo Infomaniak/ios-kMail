@@ -204,7 +204,7 @@ public enum NotificationsHelper {
                                            NotificationsHelper.UserInfoKeys.messageUid: message.uid]
     }
 
-    public static func generateNotificationFor(message: Message,
+    public static func generateNotificationFor(message: Message, mailboxManager: MailboxManager,
                                                incompleteNotification: UNMutableNotificationContent)
         async -> UNMutableNotificationContent {
         if !message.from.isEmpty {
@@ -213,7 +213,7 @@ public enum NotificationsHelper {
             incompleteNotification.title = MailResourcesStrings.Localizable.unknownRecipientTitle
         }
         incompleteNotification.subtitle = message.formattedSubject
-        incompleteNotification.body = await getCleanBodyFrom(message: message)
+        incompleteNotification.body = await getCleanBodyFrom(message: message, mailboxManager: mailboxManager)
         return incompleteNotification
     }
 
@@ -232,7 +232,7 @@ public enum NotificationsHelper {
             return communicationNotification
         } else {
             let normalNotification = await generateNotificationFor(
-                message: fetchedMessage,
+                message: fetchedMessage, mailboxManager: mailboxManager,
                 incompleteNotification: incompleteNotification
             )
             return normalNotification
@@ -263,7 +263,7 @@ public enum NotificationsHelper {
                                  customIdentifier: nil,
                                  isMe: true)
 
-        let body = await getCleanBodyFrom(message: message)
+        let body = await getCleanBodyFrom(message: message, mailboxManager: mailboxManager)
         let subtitle = message.formattedSubject
         incompleteNotification.body = body
 
@@ -291,8 +291,8 @@ public enum NotificationsHelper {
         }
     }
 
-    public static func updateMessagePreview(
-        with notification: UNNotificationContent,
+    private static func updateMessagePreview(
+        messagePreview: String,
         message: Message,
         mailboxManager: MailboxManager
     ) async {
@@ -301,11 +301,25 @@ public enum NotificationsHelper {
                 return
             }
 
-            liveMessage.preview = String(notification.body.prefix(512))
+            liveMessage.preview = String(messagePreview.prefix(512))
         }
     }
 
-    public static func getCleanBodyFrom(message: Message) async -> String {
+    public static func getCleanBodyFrom(message: Message, mailboxManager: MailboxManager) async -> String {
+        let computedBody = await getComputedBody(message: message)
+        await updateMessagePreview(messagePreview: computedBody, message: message, mailboxManager: mailboxManager)
+
+        var cleanedPreview = computedBody
+        guard let liveMessage = message.thaw() else {
+            return cleanedPreview
+        }
+
+        cleanedPreview = liveMessage.formatted(.preview)
+
+        return cleanedPreview
+    }
+
+    public static func getComputedBody(message: Message) async -> String {
         guard let fullBody = message.body?.value,
               let bodyType = message.body?.type else {
             return message.preview
