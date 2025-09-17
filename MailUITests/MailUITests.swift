@@ -86,7 +86,7 @@ class MailUITests: XCTestCase {
         let subject = "\(MailUITests.testSubject) - \(Date().timeIntervalSince1970)"
         writeTestMessage(subject: subject)
 
-        app.navigationBars.buttons[MailResourcesStrings.Localizable.buttonClose].firstMatch.tap()
+        app.navigationBars.buttons[MailResourcesStrings.Localizable.buttonCancel].firstMatch.tap()
 
         tapMenuButton()
 
@@ -102,7 +102,7 @@ class MailUITests: XCTestCase {
         let bodyText = app.staticTexts[MailResourcesStrings.Localizable.aiPromptExample1]
         XCTAssertTrue(bodyText.waitForExistence(timeout: defaultTimeOut))
 
-        app.buttons[MailResourcesStrings.Localizable.buttonClose].firstMatch.tap()
+        app.buttons[MailResourcesStrings.Localizable.buttonCancel].firstMatch.tap()
 
         wait(delay: 15)
 
@@ -254,7 +254,7 @@ class MailUITests: XCTestCase {
 
         wait(delay: 15)
 
-        app.navigationBars.buttons[MailResourcesStrings.Localizable.buttonClose].firstMatch.tap()
+        app.navigationBars.buttons[MailResourcesStrings.Localizable.buttonCancel].firstMatch.tap()
 
         let deleteDraftButton = app.buttons[MailResourcesStrings.Localizable.actionDelete].firstMatch
         _ = deleteDraftButton.waitForExistence(timeout: defaultTimeOut)
