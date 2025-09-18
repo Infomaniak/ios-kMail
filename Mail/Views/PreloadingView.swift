@@ -76,6 +76,8 @@ struct PreloadingView: View {
             return
         }
 
+        await TokenMigrator().migrateTokensIfNeeded()
+
         guard let currentAccount = accountManager.getCurrentAccount() else {
             rootViewState.transitionToRootViewState(.onboarding)
             return
