@@ -101,6 +101,7 @@ struct AIPromptView: View {
             }
         }
         .padding(isCompactWindow ? IKPadding.medium : 0)
+        .background(MailResourcesAsset.backgroundSecondaryColor.swiftUIColor)
         .onAppear {
             if aiModel.keepConversationWhenPropositionIsDismissed,
                let initialMessage = aiModel.conversation.first(where: { $0.type == .user }) {

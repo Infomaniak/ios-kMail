@@ -31,4 +31,4 @@ jobs:
       - name: Setup
         run: tuist install && tuist generate --no-open
       - name: UITest
-        run: tuist test Mail-Workspace --device "iPhone 17 Pro" --test-targets "MailUITests/MailUITests"
+        run: tuist test Mail-Workspace --device "iPhone 17 Pro" --test-targets "MailUITests/MailUITests" --no-selective-testing
