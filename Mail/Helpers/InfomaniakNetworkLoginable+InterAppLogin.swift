@@ -36,6 +36,10 @@ extension InfomaniakNetworkLoginable {
     }
 
     func derivateApiToken(for account: ConnectedAccount) async throws -> ApiToken {
+        try await derivateApiToken(account.token)
+    }
+
+    func derivateApiToken(_ token: ApiToken) async throws -> ApiToken {
         let attestationToken = try await InfomaniakDeviceCheck(environment: deviceCheckEnvironment)
             .generateAttestationFor(
                 targetUrl: TargetAssembly.loginConfig.loginURL.appendingPathComponent("token"),
@@ -44,7 +48,7 @@ extension InfomaniakNetworkLoginable {
             )
 
         let derivatedToken = try await derivateApiToken(
-            using: account.token,
+            using: token,
             attestationToken: attestationToken
         )
 

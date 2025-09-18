@@ -93,7 +93,7 @@ final class SyncedAuthenticator: OAuthAuthenticator {
         for session: Session,
         completion: @escaping (Result<OAuthAuthenticator.Credential, Error>) -> Void
     ) {
-        let storedToken = tokenStore.tokenFor(userId: credential.userId, fetchLocation: .keychain)
+        let storedToken = tokenStore.tokenFor(userId: credential.userId, fetchLocation: .keychain)?.apiToken
 
         Log.tokenAuthentication(
             "Refreshing token - Starting",
