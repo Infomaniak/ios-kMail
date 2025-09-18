@@ -38,7 +38,7 @@ public final class URLSchemeHandler: NSObject, WKURLSchemeHandler {
         }
 
         guard let currentAccount = accountManager.getCurrentAccount(),
-              let currentAccessToken = tokenStore.tokenFor(userId: currentAccount.userId)?.accessToken else {
+              let currentAccessToken = tokenStore.tokenFor(userId: currentAccount.userId)?.apiToken.accessToken else {
             urlSchemeTask.didFailWithError(MailError.unknownError)
             return
         }

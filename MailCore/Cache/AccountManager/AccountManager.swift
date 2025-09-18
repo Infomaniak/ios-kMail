@@ -81,7 +81,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
     }
 
     public var accounts: [ApiToken] {
-        return Array(tokenStore.getAllTokens().values)
+        return tokenStore.getAllTokens().values.map { $0.apiToken }
     }
 
     public var accountIds: [Int] {
@@ -152,6 +152,10 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
+    public func getApiFetcher(for userId: Int, token: AssociatedApiToken) -> MailApiFetcher {
+        getApiFetcher(for: userId, token: token.apiToken)
+    }
+
     public func getApiFetcher(for userId: Int, token: ApiToken) -> MailApiFetcher {
         if let apiFetcher = apiFetchers[userId] {
             return apiFetcher
@@ -164,7 +168,10 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     public func didUpdateToken(newToken: ApiToken, oldToken: ApiToken) {
         SentryDebug.logTokenMigration(newToken: newToken, oldToken: oldToken)
-        tokenStore.addToken(newToken: newToken)
+        Task {
+            let deviceId = try await deviceManager.getOrCreateCurrentDevice().uid
+            tokenStore.addToken(newToken: newToken, associatedDeviceId: deviceId)
+        }
     }
 
     public func didFailRefreshToken(_ token: ApiToken) {
@@ -208,7 +215,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
         matomo.track(eventWithCategory: .userInfo, action: .data, name: "nbMailboxes", value: Float(mailboxesResponse.count))
 
-        addAccount(token: token)
+        try await addAccount(token: token)
 
         async let _ = fetchExtras(
             hasFreeMailbox: mailboxesResponse.contains { $0.isFree },
@@ -240,14 +247,14 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
 
     public func updateUser(for account: ApiToken?) async throws {
         guard let account,
-              let token = tokenStore.tokenFor(userId: account.userId) else {
+              let associatedToken = tokenStore.tokenFor(userId: account.userId) else {
             SentryDebug.captureNoTokenError(account: account)
             throw MailError.noToken
         }
 
-        let apiFetcher = getApiFetcher(for: account.userId, token: token)
+        let apiFetcher = getApiFetcher(for: account.userId, token: associatedToken.apiToken)
 
-        attachDeviceToApiToken(token, apiFetcher: apiFetcher)
+        attachDeviceToApiToken(associatedToken.apiToken, apiFetcher: apiFetcher)
 
         let user = try await userProfileStore.updateUserProfile(with: apiFetcher)
 
@@ -444,11 +451,13 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
-    public func addAccount(token: ApiToken) {
+    public func addAccount(token: ApiToken) async throws {
         if accounts.contains(where: { $0.userId == token.userId }) {
             removeAccountFor(userId: token.userId)
         }
-        tokenStore.addToken(newToken: token)
+
+        let deviceId = try await deviceManager.getOrCreateCurrentDevice().uid
+        tokenStore.addToken(newToken: token, associatedDeviceId: deviceId)
     }
 
     public func removeAccountFor(userId: Int) {

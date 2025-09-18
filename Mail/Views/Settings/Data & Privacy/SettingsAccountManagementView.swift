@@ -85,7 +85,7 @@ struct SettingsAccountManagementView: View {
 
                 Button {
                     matomo.track(eventWithCategory: .account, name: Action.deleteAccount.matomoName)
-                    presentedAccountDeletionToken = tokenStore.tokenFor(userId: user.id)
+                    presentedAccountDeletionToken = tokenStore.tokenFor(userId: user.id)?.apiToken
                 } label: {
                     ActionButtonLabel(action: Action.deleteAccount)
                 }
