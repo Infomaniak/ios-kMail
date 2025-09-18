@@ -1,2 +1,1 @@
-- UI improvements
 - Bug fixes
