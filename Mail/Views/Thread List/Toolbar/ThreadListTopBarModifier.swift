@@ -24,12 +24,18 @@ import MailResources
 import SwiftUI
 
 extension View {
-    @ViewBuilder func threadListTopBar(viewModel: ThreadListViewModel,
-                                       multipleSelectionViewModel: MultipleSelectionViewModel) -> some View {
+    func threadListTopBar(viewModel: ThreadListViewModel,
+                          multipleSelectionViewModel: MultipleSelectionViewModel) -> some View {
         if #available(iOS 26.0, *) {
-            modifier(ThreadListTopBarModifier(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel))
+            return modifier(ThreadListTopBarModifier(
+                viewModel: viewModel,
+                multipleSelectionViewModel: multipleSelectionViewModel
+            ))
         } else {
-            modifier(LegacyThreadListTopBarModifier(viewModel: viewModel, multipleSelectionViewModel: multipleSelectionViewModel))
+            return modifier(LegacyThreadListTopBarModifier(
+                viewModel: viewModel,
+                multipleSelectionViewModel: multipleSelectionViewModel
+            ))
         }
     }
 }

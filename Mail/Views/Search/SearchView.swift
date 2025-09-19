@@ -24,6 +24,16 @@ import MailResources
 import RealmSwift
 import SwiftUI
 
+extension View {
+    func backportHardScrollEdgeEffect() -> some View {
+        if #available(iOS 26.0, *) {
+            return scrollEdgeEffectStyle(.hard, for: .top)
+        } else {
+            return self
+        }
+    }
+}
+
 struct SearchView: View {
     @EnvironmentObject private var mainViewState: MainViewState
 
@@ -54,6 +64,7 @@ struct SearchView: View {
                     multipleSelectionViewModel.disable()
                     await viewModel.fetchThreads()
                 }
+                .backportHardScrollEdgeEffect()
         }
         .accessibilityAction(.escape) {
             mainViewState.isShowingSearch = false
