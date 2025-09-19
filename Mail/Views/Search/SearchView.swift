@@ -25,11 +25,11 @@ import RealmSwift
 import SwiftUI
 
 extension View {
-    @ViewBuilder func backportHardScrollEdgeEffect() -> some View {
+    func backportHardScrollEdgeEffect() -> some View {
         if #available(iOS 26.0, *) {
-            scrollEdgeEffectStyle(.hard, for: .top)
+            return scrollEdgeEffectStyle(.hard, for: .top)
         } else {
-            self
+            return self
         }
     }
 }
