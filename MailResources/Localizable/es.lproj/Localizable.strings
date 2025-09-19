@@ -3,8 +3,8 @@
  * Project: kMail
  * Locale: es, Spanish
  * Tagged: ios
- * Exported by: Matthieu Déglon
- * Exported at: Wed, 27 Aug 2025 08:21:20 +0200
+ * Exported by: Baptiste Griva
+ * Exported at: Wed, 17 Sep 2025 10:49:36 +0200
  */
 
 /* loco:62bb154d7513e127cb2e9c94 */
@@ -1198,7 +1198,7 @@
 "nextMonday" = "El lunes próximo";
 
 /* loco:62fb875a6743ac5a237b07e3 */
-"noBodyTitle" = "Este mensaje está vacío.";
+"noBodyDescription" = "Este mensaje está vacío.";
 
 /* loco:65016e82bd99726dde081533 */
 "noConnection" = "Sin conexión";
@@ -1292,6 +1292,9 @@
 
 /* loco:64a3d65f003e64f9790f5ed2 */
 "popupDetachMailboxTitle" = "Separar dirección";
+
+/* loco:68b05985327f49a8eb0936b2 */
+"previewReaction" = "%1$@ reaccionó con %2$@";
 
 /* loco:68834dbb822d3b0955074bd2 */
 "reactionsAll" = "Todas";

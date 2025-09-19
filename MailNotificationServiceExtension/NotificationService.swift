@@ -110,11 +110,6 @@ final class NotificationService: UNNotificationServiceExtension {
                 incompleteNotification: bestAttemptContent
             )
 
-            await NotificationsHelper.updateMessagePreview(
-                with: completeNotification,
-                message: fetchedMessage,
-                mailboxManager: mailboxManager
-            )
             accountManager.removeCachedProperties()
             contentHandler(completeNotification)
         }

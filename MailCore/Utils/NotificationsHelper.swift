@@ -204,7 +204,7 @@ public enum NotificationsHelper {
                                            NotificationsHelper.UserInfoKeys.messageUid: message.uid]
     }
 
-    public static func generateNotificationFor(message: Message,
+    public static func generateNotificationFor(message: Message, mailboxManager: MailboxManager,
                                                incompleteNotification: UNMutableNotificationContent)
         async -> UNMutableNotificationContent {
         if !message.from.isEmpty {
@@ -213,7 +213,7 @@ public enum NotificationsHelper {
             incompleteNotification.title = MailResourcesStrings.Localizable.unknownRecipientTitle
         }
         incompleteNotification.subtitle = message.formattedSubject
-        incompleteNotification.body = await getCleanBodyFrom(message: message)
+        incompleteNotification.body = await getMessagePreview(from: message, mailboxManager: mailboxManager)
         return incompleteNotification
     }
 
@@ -232,7 +232,7 @@ public enum NotificationsHelper {
             return communicationNotification
         } else {
             let normalNotification = await generateNotificationFor(
-                message: fetchedMessage,
+                message: fetchedMessage, mailboxManager: mailboxManager,
                 incompleteNotification: incompleteNotification
             )
             return normalNotification
@@ -263,7 +263,7 @@ public enum NotificationsHelper {
                                  customIdentifier: nil,
                                  isMe: true)
 
-        let body = await getCleanBodyFrom(message: message)
+        let body = await getMessagePreview(from: message, mailboxManager: mailboxManager)
         let subtitle = message.formattedSubject
         incompleteNotification.body = body
 
@@ -291,40 +291,41 @@ public enum NotificationsHelper {
         }
     }
 
-    public static func updateMessagePreview(
-        with notification: UNNotificationContent,
-        message: Message,
-        mailboxManager: MailboxManager
-    ) async {
-        try? mailboxManager.writeTransaction { realm in
-            guard let liveMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else {
-                return
-            }
-
-            liveMessage.preview = String(notification.body.prefix(512))
+    public static func getMessagePreview(from message: Message, mailboxManager: MailboxManager) async -> String {
+        if let cleanedBody = try? await computeCleanMessageBody(of: message) {
+            try? await updateMessagePreview(preview: cleanedBody, message: message, mailboxManager: mailboxManager)
         }
+
+        guard let liveMessage = message.thaw() else {
+            return message.preview
+        }
+        return liveMessage.formatted(.preview)
     }
 
-    private static func getCleanBodyFrom(message: Message) async -> String {
-        guard let fullBody = message.body?.value,
-              let bodyType = message.body?.type else {
-            return message.preview
+    public static func computeCleanMessageBody(of message: Message) async throws -> String? {
+        guard let fullBody = message.body?.value, let bodyType = message.body?.type else {
+            return nil
         }
 
         guard bodyType != .textPlain else {
-            return compactBody(from: fullBody) ?? message.preview
+            return compactBody(from: fullBody)
         }
 
-        do {
-            let body = await MessageBodyUtils.splitBodyAndQuote(messageBody: fullBody).messageBody
-            let cleanedDocument = try await SwiftSoupUtils(fromHTML: body).cleanBody()
-            guard let extractedBody = cleanedDocument.body() else { return message.preview }
+        let body = await MessageBodyUtils.splitBodyAndQuote(messageBody: fullBody).messageBody
+        let cleanedDocument = try await SwiftSoupUtils(fromHTML: body).cleanBody()
+        guard let extractedBody = cleanedDocument.body() else { return message.preview }
 
-            let rawText = try extractedBody.text(trimAndNormaliseWhitespace: false)
+        let rawText = try extractedBody.text(trimAndNormaliseWhitespace: false)
 
-            return compactBody(from: rawText) ?? message.preview
-        } catch {
-            return message.preview
+        return compactBody(from: rawText)
+    }
+
+    private static func updateMessagePreview(preview: String, message: Message, mailboxManager: MailboxManager) async throws {
+        try mailboxManager.writeTransaction { realm in
+            guard let liveMessage = realm.object(ofType: Message.self, forPrimaryKey: message.uid) else {
+                return
+            }
+            liveMessage.preview = String(preview.prefix(512))
         }
     }
 

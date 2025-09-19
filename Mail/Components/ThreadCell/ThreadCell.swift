@@ -70,15 +70,9 @@ struct ThreadCellDataHolder {
         }
 
         if let previewMessage {
-            if previewMessage.encrypted {
-                preview = MailResourcesStrings.Localizable.encryptedMessageHeader
-            } else if !previewMessage.preview.isEmpty {
-                preview = previewMessage.preview
-            } else {
-                preview = MailResourcesStrings.Localizable.noBodyTitle
-            }
+            preview = previewMessage.formatted(.preview)
         } else {
-            preview = MailResourcesStrings.Localizable.noBodyTitle
+            preview = Message.PreviewFormatStyle.noPreview
         }
     }
 
