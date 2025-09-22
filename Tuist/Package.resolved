@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-device-check",
       "state" : {
-        "revision" : "15355528c3bc15a3acda78b6b040fde7a743eb8b",
-        "version" : "1.1.0"
+        "revision" : "d20a4959683e7c19faec674b1fd269e3167e5133",
+        "version" : "1.1.1"
       }
     },
     {
@@ -309,7 +309,7 @@
     {
       "identity" : "swift-rich-html-editor",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/swift-rich-html-editor",
+      "location" : "https://github.com/Infomaniak/swift-rich-html-editor.git",
       "state" : {
         "revision" : "53f400840ca3afb3ed16676715f1b69e4abe4f6b",
         "version" : "2.1.0"
