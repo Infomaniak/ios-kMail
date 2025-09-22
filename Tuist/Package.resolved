@@ -192,10 +192,10 @@
     {
       "identity" : "popovers",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/aheze/Popovers",
+      "location" : "https://github.com/Infomaniak/Popovers",
       "state" : {
-        "revision" : "de44c4dd7271ec6413fe350f7efadb14e5e18dce",
-        "version" : "1.3.2"
+        "revision" : "9dcc7906ac04c24235650e04f9f2b46a0080341a",
+        "version" : "1.3.3"
       }
     },
     {
@@ -309,7 +309,7 @@
     {
       "identity" : "swift-rich-html-editor",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Infomaniak/swift-rich-html-editor.git",
+      "location" : "https://github.com/Infomaniak/swift-rich-html-editor",
       "state" : {
         "revision" : "53f400840ca3afb3ed16676715f1b69e4abe4f6b",
         "version" : "2.1.0"
