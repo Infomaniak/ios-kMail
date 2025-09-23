@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "1d0fe5f625c811e86c30fa764744733bf68b2ff1",
-        "version" : "23.0.0"
+        "revision" : "511484322ea2a73bba8ac26807735f7493155e2b",
+        "version" : "23.0.1"
       }
     },
     {
@@ -246,10 +246,10 @@
     {
       "identity" : "svgkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SVGKit/SVGKit.git",
+      "location" : "https://github.com/SVGKit/SVGKit",
       "state" : {
         "branch" : "3.x",
-        "revision" : "a26fb848b01bd9580f2980d191923b7ca02fd8be"
+        "revision" : "70f05461bfedfab3374cba0e83dce15e31b4d666"
       }
     },
     {
