@@ -4,6 +4,7 @@ set -e
 # CI_APP_STORE_SIGNED_APP_PATH - The path to the signed app in the Xcode Cloud runner.
 # CI_BUILD_NUMBER - The build number assigned by Xcode Cloud.
 # CI_PRIMARY_REPOSITORY_PATH - The location of the source code in the Xcode Cloud runner.
+# CI_PRODUCT - The name of the product being built.
 #
 # GIT_EMAIL - The email address associated with the Xcode Cloud bot user.
 # GIT_GPG_KEY - The GPG key ID used to sign the git tag.
@@ -18,11 +19,11 @@ set -e
 # MARK: - Push Git Tag
 
 # Get version from the built app
-VERSION=$(/usr/libexec/PlistBuddy -c "Print ApplicationProperties:CFBundleShortVersionString" "${CI_APP_STORE_SIGNED_APP_PATH}/Info.plist" 2>/dev/null || echo "")
+VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "${CI_APP_STORE_SIGNED_APP_PATH}/Info.plist" 2>/dev/null || echo "")
 
 # Ensure VERSION is not empty
 if [ -z "$VERSION" ]; then
-    echo "⚠️  Error while retrieving version from Info.plist"
+    echo "⚠️ Error while retrieving version from Info.plist"
     exit 1
 fi
 
@@ -37,11 +38,13 @@ git config user.email "$GIT_EMAIL"
 git config user.signingkey "$GIT_GPG_KEY"
 git config tag.gpgSign true
 
+git remote set-url origin https://$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY_OWNER/$GITHUB_REPOSITORY_NAME.git
+
 # Check if tag already exists then create it and push it
 if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
-    echo "⚠️  Tag $TAG_NAME already exists, skipping..."
+    echo "⚠️ Tag $TAG_NAME already exists, skipping..."
 else
-    git tag -s "$TAG_NAME"
+    git tag -s "$TAG_NAME" -m "Beta Release $TAG_NAME"
     git push origin "$TAG_NAME"
 fi
 
@@ -59,8 +62,8 @@ RELEASE_PAYLOAD=$(cat <<EOF
 EOF
 )
 
-GITHUB_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPOSITORY_NAME}/releases"
-RESPONSE=$(curl -s -w "HTTPSTATUS:%{http_code}" \
+GITHUB_API_URL="https://api.github.com/repos/$GITHUB_REPOSITORY_OWNER/$GITHUB_REPOSITORY_NAME/releases"
+RESPONSE=$(curl -s -w "\n%{http_code}" \
     -X POST \
     -H "Authorization: Bearer $GITHUB_TOKEN" \
     -H "Accept: application/vnd.github+json" \
@@ -69,14 +72,14 @@ RESPONSE=$(curl -s -w "HTTPSTATUS:%{http_code}" \
     "$GITHUB_API_URL")
 
 # Check GitHub response
-HTTP_STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
+HTTP_STATUS=$(echo "$RESPONSE" | tail -n1)
 if [ "$HTTP_STATUS" -ne 201 ]; then
-    echo "Error while pushing GitHub release: $HTTP_STATUS"
+    echo "⚠️ Error while pushing GitHub release: $HTTP_STATUS"
     exit 1
 fi
 
-HTTP_BODY=$(echo "$RESPONSE" | sed -e 's/HTTPSTATUS\:.*//g')
-RELEASE_URL=$(echo "$HTTP_BODY" | jq -r '.html_url')
+HTTP_BODY=$(echo "$RESPONSE" | sed '$d')
+RELEASE_URL=$(echo "$HTTP_BODY" | tr -d '\000-\037' | jq -r '.html_url')
 
 # MARK: - kChat Notification
 
@@ -84,17 +87,19 @@ AAPL_LOGO=$(((RANDOM % 120) + 1))
 TESTFLIGHT_RELEASE_NOTE=$(cat "$CI_PRIMARY_REPOSITORY_PATH/TestFlight/WhatToTest.en-GB.txt")
 
 MESSAGE=$(cat <<EOF
-### $KCHAT_PRODUCT_ICON $CI_PRODUCT
-**Version $TAG_NAME available on TestFlight :aapl-$AAPL_LOGO: :testflight:**
- 
+#### :aapl-$AAPL_LOGO::$KCHAT_PRODUCT_ICON: $CI_PRODUCT
+##### :testflight: Version $VERSION-b$CI_BUILD_NUMBER available on TestFlight
+
 $TESTFLIGHT_RELEASE_NOTE
- 
+
+
 :github:  [See changelog]($RELEASE_URL)
 EOF
 )
 
-MESSAGE_JSON=$(jq -n --arg text "$MESSAGE" '{text: $text}')
+MESSAGE_JSON=$(printf '%s' "$MESSAGE" | jq -Rs '{text: .}')
 curl -i -X POST \
     -H 'Content-Type: application/json' \
     -d "$MESSAGE_JSON" \
     "$KCHAT_WEBHOOK_URL"
+    
