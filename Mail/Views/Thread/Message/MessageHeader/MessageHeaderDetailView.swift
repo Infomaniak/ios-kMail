@@ -79,6 +79,7 @@ struct MessageHeaderDetailView: View {
 }
 
 struct RecipientLabel: View {
+    @Environment(\.currentUser) private var currentUser
     @EnvironmentObject private var mailboxManager: MailboxManager
 
     @Binding var labelWidth: CGFloat
@@ -120,7 +121,8 @@ struct RecipientLabel: View {
             .adaptivePanel(item: $contactViewRecipient) { recipient in
                 ContactActionsView(recipient: recipient, bimi: bimi)
                     .environmentObject(mailboxManager)
-                // We need to manually pass environmentObject because of a bug with SwiftUI end popovers on macOS
+                    .environment(\.currentUser, currentUser)
+                // We need to manually pass environment and environmentObject because of a bug with SwiftUI end popovers on macOS
             }
         }
         .padding(.bottom, 2)
