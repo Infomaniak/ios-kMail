@@ -22,7 +22,7 @@ VERSION=$(/usr/libexec/PlistBuddy -c "Print ApplicationProperties:CFBundleShortV
 
 # Ensure VERSION is not empty
 if [ -z "$VERSION" ]; then
-    echo "⚠️  Error while retrieving version from Info.plist"
+    echo "⚠️ Error while retrieving version from Info.plist"
     exit 1
 fi
 
@@ -37,9 +37,11 @@ git config user.email "$GIT_EMAIL"
 git config user.signingkey "$GIT_GPG_KEY"
 git config tag.gpgSign true
 
+git remote set-url origin https://$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY_OWNER/$GITHUB_REPOSITORY_NAME.git
+
 # Check if tag already exists then create it and push it
 if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
-    echo "⚠️  Tag $TAG_NAME already exists, skipping..."
+    echo "⚠️ Tag $TAG_NAME already exists, skipping..."
 else
     git tag -s "$TAG_NAME"
     git push origin "$TAG_NAME"
@@ -59,7 +61,7 @@ RELEASE_PAYLOAD=$(cat <<EOF
 EOF
 )
 
-GITHUB_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY_OWNER}/${GITHUB_REPOSITORY_NAME}/releases"
+GITHUB_API_URL="https://api.github.com/repos/$GITHUB_REPOSITORY_OWNER/$GITHUB_REPOSITORY_NAME/releases"
 RESPONSE=$(curl -s -w "HTTPSTATUS:%{http_code}" \
     -X POST \
     -H "Authorization: Bearer $GITHUB_TOKEN" \
@@ -71,7 +73,7 @@ RESPONSE=$(curl -s -w "HTTPSTATUS:%{http_code}" \
 # Check GitHub response
 HTTP_STATUS=$(echo "$RESPONSE" | tr -d '\n' | sed -e 's/.*HTTPSTATUS://')
 if [ "$HTTP_STATUS" -ne 201 ]; then
-    echo "Error while pushing GitHub release: $HTTP_STATUS"
+    echo "⚠️ Error while pushing GitHub release: $HTTP_STATUS"
     exit 1
 fi
 
@@ -98,3 +100,4 @@ curl -i -X POST \
     -H 'Content-Type: application/json' \
     -d "$MESSAGE_JSON" \
     "$KCHAT_WEBHOOK_URL"
+    
