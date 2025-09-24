@@ -16,6 +16,8 @@ set -e
 # KCHAT_PRODUCT_ICON - The icon to use for the product in the kChat message.
 # KCHAT_WEBHOOK_URL - The webhook URL for the kChat channel.
 
+brew install gnupg
+
 # MARK: - Import GPG Key and Deduce Key ID
 
 echo "$GIT_GPG_KEY" | gpg --batch --import
