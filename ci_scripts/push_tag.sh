@@ -7,7 +7,7 @@ set -e
 # CI_PRODUCT - The name of the product being built.
 #
 # GIT_EMAIL - The email address associated with the Xcode Cloud bot user.
-# GIT_GPG_KEY - The ASCII-armored private GPG key to import and use for signing.
+# GIT_GPG_KEY_PASSPHRASE - The passphrase for the GPG private key.
 #
 # GITHUB_REPOSITORY_OWNER - The owner of the GitHub repository.
 # GITHUB_REPOSITORY_NAME - The name of the GitHub repository.
@@ -20,7 +20,7 @@ brew install gnupg
 
 # MARK: - Import GPG Key and Deduce Key ID
 
-echo "$GIT_GPG_KEY" | gpg --batch --import
+echo "$GIT_GPG_KEY_PASSPHRASE" | openssl enc -aes-256-cbc -d -in ci_scripts/gpg-key.txt.encrypted -pass stdin | gpg --batch --import
 
 # Get key ID of the imported private key (first one found)
 GIT_GPG_KEY_ID=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec:/ {print $5; exit}')
