@@ -68,6 +68,7 @@ public class Mailbox: Object, Codable, Identifiable {
     @Persisted public var isKSuiteEssential: Bool
     @Persisted public var dailyLimit: Int
     @Persisted public var ownerOrAdmin: Bool
+    @Persisted public var maxStorage: Int64?
     @Persisted public var unseenMessages = 0
     @Persisted public var remoteUnseenMessages: Int
     @Persisted public var aliases: List<String>
@@ -121,6 +122,7 @@ public class Mailbox: Object, Codable, Identifiable {
         case isPartOfKSuite = "isPartOfKsuite"
         case dailyLimit
         case ownerOrAdmin
+        case maxStorage
         case remoteUnseenMessages = "unseenMessages"
         case aliases
     }
@@ -187,6 +189,8 @@ public class Mailbox: Object, Codable, Identifiable {
         isPartOfKSuite = try container.decodeIfPresent(Bool.self, forKey: .isPartOfKSuite) ?? false
         dailyLimit = try container.decode(Int.self, forKey: .dailyLimit)
         ownerOrAdmin = try container.decodeIfPresent(Bool.self, forKey: .ownerOrAdmin) ?? false
+        let maxStorageValue = try container.decodeIfPresent(Int64.self, forKey: .maxStorage)
+        maxStorage = maxStorageValue != 0 ? maxStorageValue : nil
         remoteUnseenMessages = try container.decode(Int.self, forKey: .remoteUnseenMessages)
         // Waiting for WS issue #5508 to remove this and go back to default initializer
         aliases = (try? container.decode(List<String>.self, forKey: .aliases)) ?? List<String>()

@@ -322,6 +322,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
                     if mailbox.isLimited {
                         async let quotas = apiFetcher.quotas(mailbox: mailbox)
                         mailbox.quotas = try? await quotas
+                        mailbox.quotas?.maxStorage = mailbox.maxStorage
                     }
 
                     mailbox.permissions = try? await permissions
