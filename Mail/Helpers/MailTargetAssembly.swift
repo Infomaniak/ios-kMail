@@ -17,6 +17,7 @@
  */
 
 import Foundation
+import InAppTwoFactorAuthentication
 import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakCoreCommonUI
@@ -59,6 +60,9 @@ open class CommonAppAndShareTargetAssembly: TargetAssembly {
 class MailTargetAssembly: CommonAppAndShareTargetAssembly {
     override class func getTargetServices() -> [Factory] {
         return super.getTargetServices() + [
+            Factory(type: InAppTwoFactorAuthenticationManagerable.self) { _, _ in
+                InAppTwoFactorAuthenticationManager()
+            },
             Factory(type: RefreshAppBackgroundTask.self) { _, _ in
                 RefreshAppBackgroundTask()
             },

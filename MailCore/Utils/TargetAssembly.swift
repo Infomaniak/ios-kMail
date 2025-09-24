@@ -124,7 +124,10 @@ open class TargetAssembly {
                 return provider
             },
             Factory(type: DeviceManagerable.self) { _, _ in
-                DeviceManager(appGroupIdentifier: sharedAppGroupName)
+                let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String? ?? "x.x"
+                return DeviceManager(appGroupIdentifier: sharedAppGroupName,
+                                     appMarketingVersion: version,
+                                     capabilities: ["2fa:push_challenge:approval"])
             },
             Factory(type: TokenStore.self) { _, _ in
                 TokenStore()

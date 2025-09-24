@@ -17,6 +17,7 @@
  */
 
 import Combine
+import InAppTwoFactorAuthentication
 import InfomaniakCore
 import InfomaniakCoreCommonUI
 import InfomaniakCoreSwiftUI
@@ -33,7 +34,6 @@ import RealmSwift
 import SwiftModalPresentation
 import SwiftUI
 import VersionChecker
-
 @_spi(Advanced) import SwiftUIIntrospect
 
 public class SplitViewManager: ObservableObject {
@@ -286,9 +286,31 @@ struct SplitView: View {
             Task {
                 try await mailboxManager.refreshAllSignatures()
             }
+            Task {
+                await checkTwoFAChallenges()
+            }
+
             guard !platformDetector.isDebug else { return }
             mainViewState.isShowingSyncDiscovery = platformDetector.isMac ? false : await shouldShowSync()
         }
+    }
+
+    private func checkTwoFAChallenges() async {
+        let accountManager = InjectService<AccountManager>().wrappedValue
+
+        let sessions: [InAppTwoFactorAuthenticationSession] = await accountManager.accounts.asyncCompactMap { account in
+            guard let user = await accountManager.userProfileStore.getUserProfile(id: account.userId) else {
+                return nil
+            }
+
+            let apiFetcher = accountManager.getApiFetcher(for: account.userId, token: account)
+
+            let session = InAppTwoFactorAuthenticationSession(user: user, apiFetcher: apiFetcher)
+            return session
+        }
+
+        @InjectService var inAppTwoFactorAuthenticationManager: InAppTwoFactorAuthenticationManagerable
+        inAppTwoFactorAuthenticationManager.checkConnectionAttempts(using: sessions)
     }
 
     private func setupBehaviour(orientation: UIInterfaceOrientation) {
