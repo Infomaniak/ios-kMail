@@ -1,1 +1,2 @@
+- Fix background crash iPad
 - Bug fixes
