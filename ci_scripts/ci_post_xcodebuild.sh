@@ -25,8 +25,9 @@ if [[ -n $CI_ARCHIVE_PATH ]]; then
 
     if [ $retries -eq $max_retries ]; then
         echo "sentry-cli failed after $max_retries attempts."
-        exit 1
     fi
 else
     echo "Archive path isn't available. Unable to run dSYMs uploading script."
 fi
+
+./push_tag.sh
