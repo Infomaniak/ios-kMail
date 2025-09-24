@@ -7,7 +7,7 @@ set -e
 # CI_PRODUCT - The name of the product being built.
 #
 # GIT_EMAIL - The email address associated with the Xcode Cloud bot user.
-# GIT_GPG_KEY - The GPG key ID used to sign the git tag.
+# GIT_GPG_KEY - The ASCII-armored private GPG key to import and use for signing.
 #
 # GITHUB_REPOSITORY_OWNER - The owner of the GitHub repository.
 # GITHUB_REPOSITORY_NAME - The name of the GitHub repository.
@@ -15,6 +15,18 @@ set -e
 #
 # KCHAT_PRODUCT_ICON - The icon to use for the product in the kChat message.
 # KCHAT_WEBHOOK_URL - The webhook URL for the kChat channel.
+
+# MARK: - Import GPG Key and Deduce Key ID
+
+echo "$GIT_GPG_KEY" | gpg --batch --import
+
+# Get key ID of the imported private key (first one found)
+GIT_GPG_KEY_ID=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec:/ {print $5; exit}')
+
+if [ -z "$GIT_GPG_KEY_ID" ]; then
+    echo "⚠️ Error: Failed to import GPG private key or detect key ID."
+    exit 1
+fi
 
 # MARK: - Push Git Tag
 
@@ -35,7 +47,7 @@ cd "$CI_PRIMARY_REPOSITORY_PATH"
 # Configure git
 git config user.name "Xcode Cloud"
 git config user.email "$GIT_EMAIL"
-git config user.signingkey "$GIT_GPG_KEY"
+git config user.signingkey "$GIT_GPG_KEY_ID"
 git config tag.gpgSign true
 
 git remote set-url origin https://$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY_OWNER/$GITHUB_REPOSITORY_NAME.git
@@ -102,4 +114,3 @@ curl -i -X POST \
     -H 'Content-Type: application/json' \
     -d "$MESSAGE_JSON" \
     "$KCHAT_WEBHOOK_URL"
-    
