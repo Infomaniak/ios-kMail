@@ -30,4 +30,4 @@ else
     echo "Archive path isn't available. Unable to run dSYMs uploading script."
 fi
 
-./push_tag.sh
+ci_scripts/push_tag.sh
