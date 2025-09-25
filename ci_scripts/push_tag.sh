@@ -16,19 +16,29 @@ set -e
 # KCHAT_PRODUCT_ICON - The icon to use for the product in the kChat message.
 # KCHAT_WEBHOOK_URL - The webhook URL for the kChat channel.
 
-brew install gnupg
+# Install only if missing
+command -v gpg >/dev/null 2>&1 || brew install gnupg
+command -v jq  >/dev/null 2>&1 || brew install jq
+
+[ -f ~/.gpg-agent-info ] && source ~/.gpg-agent-info
+if [ -S "${GPG_AGENT_INFO%%:*}" ]; then
+  export GPG_AGENT_INFO
+else
+  eval $( gpg-agent --daemon --write-env-file ~/.gpg-agent-info )
+fi
+export GPG_TTY=`tty`
 
 # MARK: - Import GPG Key and Deduce Key ID
 
-echo "$GIT_GPG_KEY_PASSPHRASE" | openssl enc -aes-256-cbc -d -in ci_scripts/gpg-key.txt.encrypted -pass stdin | gpg --batch --import
+echo "$GIT_GPG_KEY_PASSPHRASE" | \
+  openssl enc -aes-256-cbc -d -in ci_scripts/gpg-key.txt.encrypted -pass stdin | \
+  gpg --batch --import
 
 # Get key ID of the imported private key (first one found)
-GIT_GPG_KEY_ID=$(gpg --list-secret-keys --with-keygrip --with-colons | awk -F: '/^sec:/ {print $5; exit}')
-GIT_GPG_KEY_GRIP=$(gpg --list-secret-keys --with-keygrip --with-colons "$GIT_GPG_KEY_ID" | awk -F= '/^grp/ {print $2; exit}')
-
-if [ -z "$GIT_GPG_KEY_ID" ]; then
-    echo "⚠️ Error: Failed to import GPG private key or detect key ID."
-    exit 1
+GIT_GPG_KEY_FPR=$(gpg --list-secret-keys --with-colons "$GIT_EMAIL" | awk -F: '/^fpr:/ {print $10; exit}')
+if [ -z "$GIT_GPG_KEY_FPR" ]; then
+  echo "⚠️ Error: No GPG secret key found for $GIT_EMAIL"
+  exit 1
 fi
 
 # MARK: - Push Git Tag
@@ -47,15 +57,11 @@ fi
 
 TAG_NAME="Beta-$VERSION-b$CI_BUILD_NUMBER"
 
-# Preset GPG passphras
-export GPG_TTY=$(tty)
-echo "$GIT_GPG_KEY_PASSPHRASE" | gpg-preset-passphrase --preset $GIT_GPG_KEY_GRIP
-
 # Configure git
 git config user.name "Xcode Cloud"
 git config user.email "$GIT_EMAIL"
-git config user.signingkey "$GIT_GPG_KEY_ID"
-git config tag.gpgSign true
+git config user.signingkey "$GIT_GPG_KEY_FPR"
+git config --unset tag.gpgSign || true
 
 git remote set-url origin https://$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY_OWNER/$GITHUB_REPOSITORY_NAME.git
 
