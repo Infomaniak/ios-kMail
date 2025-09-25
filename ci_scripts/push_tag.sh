@@ -32,8 +32,10 @@ fi
 
 # MARK: - Push Git Tag
 
+# Navigate to the repository
+cd "$CI_PRIMARY_REPOSITORY_PATH"
+
 # Get version from the built app
-cd "$CI_ARCHIVE_PATH"
 VERSION=$(xcodebuild -showBuildSettings | grep MARKETING_VERSION | awk '{print $3}')
 
 # Ensure VERSION is not empty
@@ -43,9 +45,6 @@ if [ -z "$VERSION" ]; then
 fi
 
 TAG_NAME="Beta-$VERSION-b$CI_BUILD_NUMBER"
-
-# Navigate to the repository
-cd "$CI_PRIMARY_REPOSITORY_PATH"
 
 # Configure git
 git config user.name "Xcode Cloud"
