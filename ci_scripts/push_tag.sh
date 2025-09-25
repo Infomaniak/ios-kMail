@@ -23,7 +23,8 @@ brew install gnupg
 echo "$GIT_GPG_KEY_PASSPHRASE" | openssl enc -aes-256-cbc -d -in ci_scripts/gpg-key.txt.encrypted -pass stdin | gpg --batch --import
 
 # Get key ID of the imported private key (first one found)
-GIT_GPG_KEY_ID=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec:/ {print $5; exit}')
+GIT_GPG_KEY_ID=$(gpg --list-secret-keys --with-keygrip --with-colons | awk -F: '/^sec:/ {print $5; exit}')
+GIT_GPG_KEY_GRIP=$(gpg --list-secret-keys --with-keygrip --with-colons "$GIT_GPG_KEY_ID" | awk -F= '/^grp/ {print $2; exit}')
 
 if [ -z "$GIT_GPG_KEY_ID" ]; then
     echo "⚠️ Error: Failed to import GPG private key or detect key ID."
@@ -46,10 +47,10 @@ fi
 
 TAG_NAME="Beta-$VERSION-b$CI_BUILD_NUMBER"
 
-# Tell gpg-agent to allow loopback pinentry
-echo "allow-loopback-pinentry" >> ~/.gnupg/gpg.conf
-echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+# Preset GPG passphras
 export GPG_TTY=$(tty)
+gpg-agent --daemon --allow-preset-passphrase --default-cache-ttl 7200
+echo "$GIT_GPG_KEY_PASSPHRASE" | gpg-preset-passphrase --preset $GIT_GPG_KEY_GRIP
 
 # Configure git
 git config user.name "Xcode Cloud"
@@ -63,11 +64,7 @@ git remote set-url origin https://$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY_OW
 if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
     echo "⚠️ Tag $TAG_NAME already exists, skipping..."
 else
-    git tag -s "$TAG_NAME" -m "Beta Release $TAG_NAME" \
-        --local-user "$GIT_GPG_KEY_ID" \
-        --sign --force \
-        --command="gpg --batch --yes --pinentry-mode loopback --passphrase $GIT_GPG_KEY_PASSPHRASE"
-
+    git tag -s "$TAG_NAME" -m "Beta Release $TAG_NAME"
     git push origin "$TAG_NAME"
 fi
 
