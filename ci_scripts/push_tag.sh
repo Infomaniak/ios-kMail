@@ -22,11 +22,6 @@ brew install gnupg
 
 echo "$GIT_GPG_KEY_PASSPHRASE" | openssl enc -aes-256-cbc -d -in ci_scripts/gpg-key.txt.encrypted -pass stdin | gpg --batch --import
 
-# Tell gpg-agent to allow loopback pinentry
-echo "allow-loopback-pinentry" >> ~/.gnupg/gpg.conf
-echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
-export GPG_TTY=$(tty)
-
 # Get key ID of the imported private key (first one found)
 GIT_GPG_KEY_ID=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec:/ {print $5; exit}')
 
@@ -50,6 +45,11 @@ if [ -z "$VERSION" ]; then
 fi
 
 TAG_NAME="Beta-$VERSION-b$CI_BUILD_NUMBER"
+
+# Tell gpg-agent to allow loopback pinentry
+echo "allow-loopback-pinentry" >> ~/.gnupg/gpg.conf
+echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+export GPG_TTY=$(tty)
 
 # Configure git
 git config user.name "Xcode Cloud"
