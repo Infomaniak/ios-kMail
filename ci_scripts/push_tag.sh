@@ -22,6 +22,11 @@ brew install gnupg
 
 echo "$GIT_GPG_KEY_PASSPHRASE" | openssl enc -aes-256-cbc -d -in ci_scripts/gpg-key.txt.encrypted -pass stdin | gpg --batch --import
 
+# Tell gpg-agent to allow loopback pinentry
+echo "allow-loopback-pinentry" >> ~/.gnupg/gpg.conf
+echo "pinentry-mode loopback" >> ~/.gnupg/gpg.conf
+export GPG_TTY=$(tty)
+
 # Get key ID of the imported private key (first one found)
 GIT_GPG_KEY_ID=$(gpg --list-secret-keys --with-colons | awk -F: '/^sec:/ {print $5; exit}')
 
@@ -58,7 +63,11 @@ git remote set-url origin https://$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY_OW
 if git rev-parse "$TAG_NAME" >/dev/null 2>&1; then
     echo "⚠️ Tag $TAG_NAME already exists, skipping..."
 else
-    git tag -s "$TAG_NAME" -m "Beta Release $TAG_NAME"
+    git tag -s "$TAG_NAME" -m "Beta Release $TAG_NAME" \
+        --local-user "$GIT_GPG_KEY_ID" \
+        --sign --force \
+        --command="gpg --batch --yes --pinentry-mode loopback --passphrase $GIT_GPG_KEY_PASSPHRASE"
+
     git push origin "$TAG_NAME"
 fi
 
