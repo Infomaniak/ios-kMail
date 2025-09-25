@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-# CI_APP_STORE_SIGNED_APP_PATH - The path to the signed app in the Xcode Cloud runner.
+# CI_ARCHIVE_PATH - The path to the signed app in the Xcode Cloud runner.
 # CI_BUILD_NUMBER - The build number assigned by Xcode Cloud.
 # CI_PRIMARY_REPOSITORY_PATH - The location of the source code in the Xcode Cloud runner.
 # CI_PRODUCT - The name of the product being built.
@@ -33,7 +33,8 @@ fi
 # MARK: - Push Git Tag
 
 # Get version from the built app
-VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "${CI_APP_STORE_SIGNED_APP_PATH}/Info.plist" 2>/dev/null || echo "")
+ls "$CI_ARCHIVE_PATH"
+VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "$CI_ARCHIVE_PATH/Info.plist" 2>/dev/null || echo "")
 
 # Ensure VERSION is not empty
 if [ -z "$VERSION" ]; then
