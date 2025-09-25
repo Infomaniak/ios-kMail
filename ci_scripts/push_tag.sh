@@ -49,7 +49,6 @@ TAG_NAME="Beta-$VERSION-b$CI_BUILD_NUMBER"
 
 # Preset GPG passphras
 export GPG_TTY=$(tty)
-gpg-agent --daemon --allow-preset-passphrase --default-cache-ttl 7200
 echo "$GIT_GPG_KEY_PASSPHRASE" | gpg-preset-passphrase --preset $GIT_GPG_KEY_GRIP
 
 # Configure git
