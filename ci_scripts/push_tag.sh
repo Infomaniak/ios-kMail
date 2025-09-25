@@ -33,8 +33,8 @@ fi
 # MARK: - Push Git Tag
 
 # Get version from the built app
-ls "$CI_ARCHIVE_PATH"
-VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" "$CI_ARCHIVE_PATH/Info.plist" 2>/dev/null || echo "")
+cd "$CI_ARCHIVE_PATH"
+VERSION=$(xcodebuild -showBuildSettings | grep MARKETING_VERSION | awk '{print $3}')
 
 # Ensure VERSION is not empty
 if [ -z "$VERSION" ]; then
