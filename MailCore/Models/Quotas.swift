@@ -22,18 +22,27 @@ import RealmSwift
 public class Quotas: EmbeddedObject, Codable {
     @Persisted public var size: Int
     @Persisted public var sizeCheckedAt: Int64
+    @Persisted public var maxStorage: Int64?
 
     public var byteSize: Double {
         Double(size * 1024)
     }
 
     public var progression: Double {
-        let currentProgression = byteSize / Double(Constants.sizeLimit)
+        guard let maxStorage else {
+            return Constants.minimumQuotasProgressionToDisplay
+        }
+        let currentProgression = byteSize / Double(maxStorage)
         return max(Constants.minimumQuotasProgressionToDisplay, currentProgression)
     }
 
     override public init() {
         super.init()
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case size
+        case sizeCheckedAt
     }
 
     public required init(from decoder: Decoder) throws {
