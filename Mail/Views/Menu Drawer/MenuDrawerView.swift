@@ -154,7 +154,7 @@ struct MenuDrawerView: View {
 
                 MenuDrawerItemsHelpListView()
 
-                if mailboxManager.mailbox.isLimited, let quotas = mailboxManager.mailbox.quotas {
+                if mailboxManager.mailbox.isLimited, let quotas = mailboxManager.mailbox.quotas, quotas.maxStorage != nil {
                     IKDivider(type: .menu)
 
                     MailboxQuotaView(quotas: quotas)
