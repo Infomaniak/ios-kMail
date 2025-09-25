@@ -83,6 +83,7 @@ public actor RefreshActor {
 
     public func refreshFolderContent(_ folder: Folder) async {
         await cancelRefresh()
+        await ensureAPIWorks()
 
         refreshTask = Task {
             await tryOrDisplayError {
@@ -146,6 +147,29 @@ public actor RefreshActor {
             writableRealm.add(signaturesToUpdate, update: .modified)
             writableRealm.delete(signaturesToDelete)
             writableRealm.add(signaturesToAdd, update: .modified)
+        }
+    }
+
+    private func ensureAPIWorks() async {
+        guard let mailboxManager else { return }
+
+        let currentStatus = APIStatusManager.shared.status
+
+        guard currentStatus.isLastCheckClose(to: Date.now) else {
+            return
+        }
+
+        do {
+            _ = try await mailboxManager.apiFetcher.checkAPIStatus()
+
+            Task { @MainActor in
+                APIStatusManager.shared.status = APIStatus(isOnWorking: true, lastCheck: Date.now)
+            }
+        } catch {
+            Task { @MainActor in
+                APIStatusManager.shared.status = APIStatus(isOnWorking: false, lastCheck: Date.now)
+            }
+            await cancelRefresh()
         }
     }
 }
