@@ -1,13 +1,10 @@
 #!/bin/sh
 set -e
 
-# CI_ARCHIVE_PATH - The path to the signed app in the Xcode Cloud runner.
 # CI_BUILD_NUMBER - The build number assigned by Xcode Cloud.
 # CI_PRIMARY_REPOSITORY_PATH - The location of the source code in the Xcode Cloud runner.
 # CI_PRODUCT - The name of the product being built.
 #
-# GITHUB_REPOSITORY_OWNER - The owner of the GitHub repository.
-# GITHUB_REPOSITORY_NAME - The name of the GitHub repository.
 # GITHUB_LOCAL_TOKEN - A GitHub token with permissions to create releases.
 #
 # KCHAT_PRODUCT_ICON - The icon to use for the product in the kChat message.

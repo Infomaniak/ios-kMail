@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-#./check_preconditions.sh
+./check_preconditions.sh
 
 cd ..
 
