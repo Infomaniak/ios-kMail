@@ -1,2 +1,2 @@
 - Correction d'un crash en arrière-plan sur iPad
-- Correction de bugs.
+- Correction de bugs
