@@ -204,7 +204,8 @@ public extension Endpoint {
         var queryItems = [
             URLQueryItem(name: "offset", value: "\(offset)"),
             URLQueryItem(name: "thread", value: isDraftFolder ? "off" : "on"),
-            URLQueryItem(name: "filters", value: filter)
+            URLQueryItem(name: "filters", value: filter),
+            URLQueryItem(name: "with", value: "emoji_reactions_per_message")
         ]
         queryItems.append(contentsOf: searchFilters)
         return .folders(uuid: uuid).appending(path: "/\(folderId)/message", queryItems: queryItems)
