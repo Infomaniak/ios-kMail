@@ -4,11 +4,17 @@ set -e
 # CI_BUILD_NUMBER - The build number assigned by Xcode Cloud.
 # CI_PRIMARY_REPOSITORY_PATH - The location of the source code in the Xcode Cloud runner.
 # CI_PRODUCT - The name of the product being built.
+# CI_PRODUCT_PLATFORM - The platform of the product being built (e.g., iOS, macOS).
 #
 # GITHUB_LOCAL_TOKEN - A GitHub token with permissions to create releases.
 #
 # KCHAT_PRODUCT_ICON - The icon to use for the product in the kChat message.
 # KCHAT_WEBHOOK_URL - The webhook URL for the kChat channel.
+
+if [[ "$CI_PRODUCT_PLATFORM" == "macOS" ]]; then
+    echo "This script is intended for iOS builds only."
+    exit 0
+fi
 
 # Install only if missing
 command -v gh >/dev/null 2>&1 || brew install gh
