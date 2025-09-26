@@ -1,2 +1,2 @@
 - Fix background crash iPad
-- Bug fixes.
+- Bug fixes
