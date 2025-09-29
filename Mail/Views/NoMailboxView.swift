@@ -38,17 +38,10 @@ struct NoMailboxView: View {
 
     var body: some View {
         WaveView(slides: [slide], selectedSlide: .constant(0)) { _ in
-            VStack(spacing: IKPadding.mini) {
-                Button(MailResourcesStrings.Localizable.buttonAddEmailAddress) {
-                    openURL(URLConstants.ikMe.url)
-                }
-                .buttonStyle(.ikBorderedProminent)
-
-                Button(MailResourcesStrings.Localizable.buttonLogInDifferentAccount) {
-                    isShowingLoginView = true
-                }
-                .buttonStyle(.ikBorderless)
+            Button(MailResourcesStrings.Localizable.buttonLogInDifferentAccount) {
+                isShowingLoginView = true
             }
+            .buttonStyle(.ikBorderless)
             .controlSize(.large)
             .ikButtonFullWidth(true)
             .padding(.horizontal, value: .large)
