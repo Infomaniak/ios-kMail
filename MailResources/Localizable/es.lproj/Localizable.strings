@@ -295,8 +295,6 @@
 /* loco:62cbe10de2840a0cdc2be0d2 */
 "buttonAddEmailAddress" = "Añadir una dirección de correo electrónico";
 
-/* loco:66a9f94b98b834125d06aa46 */
-"buttonAddExistingAddress" = "Añadir una dirección existente";
 
 /* loco:6877a25d3abbe0c0c403fba2 */
 "buttonAllReactions" = "Todas";
@@ -1210,7 +1208,7 @@
 "noFolderTitle" = "Aún no tienes ninguna carpeta…";
 
 /* loco:62cbe0be9251f174a43c5202 */
-"noMailboxDescription" = "No tiene ninguna dirección de correo electrónico asociada a su cuenta Infomaniak. Para añadir una dirección, pulse el botón siguiente.";
+"noMailboxDescription" = "No tiene ninguna dirección de correo electrónico asociada a su cuenta Infomaniak.";
 
 /* loco:62cbdde9f492421f63253c52 */
 "noMailboxTitle" = "No hay dirección de correo electrónico asociada a esta cuenta";
