@@ -102,12 +102,6 @@ struct SettingsView: View {
                         }
                     }
 
-                    SettingsSubMenuCell(
-                        title: MailResourcesStrings.Localizable.buttonAddExistingAddress
-                    ) {
-                        AddMailboxView()
-                    }
-
                     IKDivider()
                 }
 
