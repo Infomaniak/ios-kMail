@@ -28,7 +28,7 @@ public struct InfomaniakContact: Codable {
     public var addressbookIds: Set<Int>?
     public var avatar: String?
     public var groupIds: Set<Int>?
-    public var contactedTimes: Int?
+    public var contactedTimes: [String: Int]?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -60,10 +60,6 @@ public struct InfomaniakContact: Codable {
             self.groupIds = Set(groupIds)
         }
 
-        if let rawContactedTimes = try? values.decodeIfPresent([String: Int].self, forKey: .contactedTimes) {
-            contactedTimes = rawContactedTimes.reduce(into: 0) { result, element in
-                result += element.value
-            }
-        }
+        contactedTimes = try values.decodeIfPresent([String: Int].self, forKey: .contactedTimes)
     }
 }

@@ -132,7 +132,7 @@ public final class MergedContact: Object, Identifiable, Correspondent {
         remoteAddressBookId.append(objectsIn: contact.addressbookIds ?? [])
         remoteGroupContactId = List<Int>()
         remoteGroupContactId.append(objectsIn: contact.groupIds ?? [])
-        remoteContactedTimes = contact.contactedTimes
+        remoteContactedTimes = contact.contactedTimes?[email]
         remoteOther = contact.other
     }
 
