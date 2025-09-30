@@ -110,6 +110,7 @@ struct ThreadListHeader: View {
     @StateObject private var folderObserver: ThreadListHeaderFolderObserver
 
     @ObservedObject private var networkMonitor = NetworkMonitor.shared
+    @ObservedObject private var apiStatusManager = APIStatusManager.shared
 
     @Binding var unreadFilterOn: Bool
 
@@ -132,6 +133,8 @@ struct ThreadListHeader: View {
             VStack(alignment: .leading) {
                 if !networkMonitor.isConnected {
                     NoNetworkView()
+                } else if !apiStatusManager.status.isOnWorking {
+                    NoMailServersAvailableView()
                 }
 
                 if isRefreshing {
