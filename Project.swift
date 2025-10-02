@@ -48,6 +48,7 @@ func mainTargetWith(name: String, destinations: [Destination]) -> Target {
                 .target(name: "MailNotificationContentExtension"),
                 .target(name: "MailShareExtension"),
                 .target(name: "MailAppIntentsExtension"),
+                .external(name: "InAppTwoFactorAuthentication"),
                 .external(name: "InfomaniakBugTracker"),
                 .external(name: "InfomaniakCoreCommonUI"),
                 .external(name: "InfomaniakCoreDB"),

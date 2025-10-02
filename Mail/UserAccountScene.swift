@@ -17,6 +17,7 @@
  */
 
 import Contacts
+import InAppTwoFactorAuthentication
 import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakCoreCommonUI

@@ -50,8 +50,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core",
       "state" : {
-        "revision" : "1614c4604999356dfb580e1d568ad69e704e374c",
-        "version" : "17.1.0"
+        "branch" : "feat/device-manager-capabilities",
+        "revision" : "f757f04094ef73b86c65f51c4cb505971030c124"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-core-ui",
       "state" : {
-        "revision" : "549c208b043dfe04c4f4238255aaaec90378af16",
-        "version" : "23.1.0"
+        "revision" : "298079322ab92798f20e683483693d1aa14c3405",
+        "version" : "23.1.1"
       }
     },
     {
@@ -95,8 +95,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Infomaniak/ios-features",
       "state" : {
-        "revision" : "2cdd8b08e143144c850ad8590e918c1135d51c61",
-        "version" : "7.0.0"
+        "branch" : "feat/inapp2fa-i18n",
+        "revision" : "fb334c2d3c7d027d41aac7a1e889ad84e06fca81"
       }
     },
     {
@@ -249,7 +249,7 @@
       "location" : "https://github.com/SVGKit/SVGKit",
       "state" : {
         "branch" : "3.x",
-        "revision" : "70f05461bfedfab3374cba0e83dce15e31b4d666"
+        "revision" : "f39398b056aa177e62b9f24cc647ef446c2927ff"
       }
     },
     {
@@ -266,8 +266,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections",
       "state" : {
-        "revision" : "8c0c0a8b49e080e54e5e328cc552821ff07cd341",
-        "version" : "1.2.1"
+        "revision" : "7b847a3b7008b2dc2f47ca3110d8c782fb2e5c7e",
+        "version" : "1.3.0"
       }
     },
     {

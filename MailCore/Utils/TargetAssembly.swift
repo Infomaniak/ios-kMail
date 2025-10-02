@@ -36,7 +36,7 @@ extension [Factory] {
 
 /// Each target should subclass `TargetAssembly` and override `getTargetServices` to provide additional, target related, services.
 open class TargetAssembly {
-    private static let apiEnvironment: ApiEnvironment = .prod
+    private static let apiEnvironment: ApiEnvironment = .customHost("staging-2fa-push-challenge.dev.infomaniak.ch")
     private static let realmRootPath = "mailboxes"
     private static let appGroupIdentifier = "group.\(bundleId)"
     private static let sharedAppGroupName = "group.com.infomaniak"
@@ -124,7 +124,10 @@ open class TargetAssembly {
                 return provider
             },
             Factory(type: DeviceManagerable.self) { _, _ in
-                DeviceManager(appGroupIdentifier: sharedAppGroupName)
+                let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String? ?? "x.x"
+                return DeviceManager(appGroupIdentifier: sharedAppGroupName,
+                                     appMarketingVersion: version,
+                                     capabilities: ["2fa:push_challenge:approval"])
             },
             Factory(type: TokenStore.self) { _, _ in
                 TokenStore()
