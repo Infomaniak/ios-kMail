@@ -141,7 +141,18 @@ struct AttachmentPreview: View {
     }
 }
 
+public extension View {
+    func pagePresentationSizing() -> some View {
+        if #available(iOS 18.0, *) {
+            return presentationSizing(.page)
+        } else {
+            return self
+        }
+    }
+}
+
 #Preview {
     AttachmentPreview(attachment: PreviewHelper.sampleAttachment)
         .environmentObject(PreviewHelper.sampleMailboxManager)
+        .pagePresentationSizing()
 }

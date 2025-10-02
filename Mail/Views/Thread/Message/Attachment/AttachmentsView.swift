@@ -119,6 +119,7 @@ struct AttachmentsView: View {
         .sheet(item: $previewedAttachment) { previewedAttachment in
             AttachmentPreview(attachment: previewedAttachment)
                 .environmentObject(mailboxManager)
+                .pagePresentationSizing()
         }
         .sheet(item: $attachmentsURL) { attachmentsURL in
             DocumentPicker(pickerType: .exportContent(attachmentsURL.urls))

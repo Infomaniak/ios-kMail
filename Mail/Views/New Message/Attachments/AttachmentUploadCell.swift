@@ -69,6 +69,7 @@ struct AttachmentUploadCell: View {
         .sheet(item: $previewedAttachment) { previewedAttachment in
             AttachmentPreview(attachment: previewedAttachment)
                 .environmentObject(mailboxManager)
+                .pagePresentationSizing()
         }
     }
 
