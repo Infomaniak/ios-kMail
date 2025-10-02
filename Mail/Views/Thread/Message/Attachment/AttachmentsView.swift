@@ -117,14 +117,9 @@ struct AttachmentsView: View {
             try? await mailboxManager.swissTransferAttachment(message: message)
         }
         .sheet(item: $previewedAttachment) { previewedAttachment in
-            if #available(iOS 18.0, *) {
-                AttachmentPreview(attachment: previewedAttachment)
-                    .environmentObject(mailboxManager)
-                    .presentationSizing(.page)
-            } else {
-                AttachmentPreview(attachment: previewedAttachment)
-                    .environmentObject(mailboxManager)
-            }
+            AttachmentPreview(attachment: previewedAttachment)
+                .environmentObject(mailboxManager)
+                .pagePresentationSizing()
         }
         .sheet(item: $attachmentsURL) { attachmentsURL in
             DocumentPicker(pickerType: .exportContent(attachmentsURL.urls))
