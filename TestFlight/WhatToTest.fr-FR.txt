@@ -1,2 +1,2 @@
-- Correction d'un crash en arrière-plan sur iPad
+- Amélioration de l'affichage des pièces jointes sur iPadOS et macOS
 - Correction de bugs
