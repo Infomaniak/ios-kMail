@@ -34,7 +34,6 @@ struct UnavailableMailboxesView: View {
     @Environment(\.openURL) private var openURL
 
     @State private var presentedSwitchAccountUser: UserProfile?
-    @State private var isShowingAddMailboxView = false
     @State private var currentUser: UserProfile?
 
     let currentUserId: Int
@@ -67,35 +66,12 @@ struct UnavailableMailboxesView: View {
                 }
                 .safeAreaInset(edge: .bottom) {
                     VStack(spacing: IKPadding.mini) {
-                        if let currentUser {
-                            NavigationLink(isActive: $isShowingAddMailboxView) {
-                                AddMailboxView()
-                                    .environment(\.currentUser, MandatoryEnvironmentContainer(value: currentUser))
-                            } label: {
-                                Text(MailResourcesStrings.Localizable.buttonAddEmailAddress)
-                            }
-                            .buttonStyle(.ikBorderedProminent)
-                            .simultaneousGesture(
-                                TapGesture()
-                                    .onEnded {
-                                        matomo.track(eventWithCategory: .noValidMailboxes, name: "addMailbox")
-                                        isShowingAddMailboxView = true
-                                    }
-                            )
-
-                            Button(MailResourcesStrings.Localizable.buttonAccountSwitch) {
-                                presentedSwitchAccountUser = currentUser
-                                matomo.track(eventWithCategory: .noValidMailboxes, name: "switchAccount")
-                            }
-                            .buttonStyle(.ikBorderless)
-                        } else {
-                            Button(MailResourcesStrings.Localizable.buttonAccountLogOut) {
-                                accountManager.removeAccountFor(userId: currentUserId)
-                            }
-                            .buttonStyle(.ikBorderless)
-                            .task {
-                                currentUser = await accountManager.userProfileStore.getUserProfile(id: currentUserId)
-                            }
+                        Button(MailResourcesStrings.Localizable.buttonAccountLogOut) {
+                            accountManager.removeAccountFor(userId: currentUserId)
+                        }
+                        .buttonStyle(.ikBorderless)
+                        .task {
+                            currentUser = await accountManager.userProfileStore.getUserProfile(id: currentUserId)
                         }
                     }
                     .controlSize(.large)
