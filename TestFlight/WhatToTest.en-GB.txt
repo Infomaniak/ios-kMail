@@ -1,2 +1,2 @@
-- Fix background crash iPad
+- Improved attachment display on iPadOS and macOS
 - Bug fixes
