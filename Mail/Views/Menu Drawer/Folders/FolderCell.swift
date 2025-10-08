@@ -98,7 +98,7 @@ struct FolderCell: View {
 
             if (folder.frozenContent.isExpanded && folder.frozenContent.hasSubFolders) || cellType == .move {
                 ForEach(folder.children) { child in
-                    if child.frozenContent.role == nil || child.frozenContent.hasSubFolders {
+                    if child.frozenContent.role == nil {
                         FolderCell(
                             folder: child,
                             level: level + 1,
