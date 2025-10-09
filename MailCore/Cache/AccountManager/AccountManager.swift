@@ -71,7 +71,7 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         if let currentMailboxManager = getMailboxManager(for: currentMailboxId, userId: currentUserId) {
             return currentMailboxManager
         } else if let newCurrentMailbox = mailboxInfosManager.getMailboxes(for: currentUserId)
-            .sorted(by: { lhs, _ in return lhs.isPrimary })
+            .sorted(by: { lhs, _ in lhs.isPrimary })
             .first(where: \.isAvailable) {
             setCurrentMailboxForCurrentAccount(mailbox: newCurrentMailbox)
             return getMailboxManager(for: newCurrentMailbox)
@@ -386,25 +386,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         }
     }
 
-    public func addMailbox(for userId: Int, mail: String, password: String) async throws {
-        guard let token = tokenStore.tokenFor(userId: userId) else {
-            return
-        }
-
-        let apiFetcher = getApiFetcher(for: userId, token: token)
-
-        try await apiFetcher.addMailbox(mail: mail, password: password)
-        try await updateUser(for: currentAccount)
-
-        let mailboxes = mailboxInfosManager.getMailboxes(for: currentUserId)
-        guard let addedMailbox = mailboxes.first(where: { $0.email == mail }) else {
-            return
-        }
-
-        matomo.track(eventWithCategory: .account, name: "addMailboxConfirm")
-        switchMailbox(newMailbox: addedMailbox)
-    }
-
     public func updateMailboxPassword(for userId: Int, mailbox: Mailbox, password: String) async throws {
         guard let token = tokenStore.tokenFor(userId: userId) else {
             return
@@ -424,17 +405,6 @@ public final class AccountManager: RefreshTokenDelegate, ObservableObject {
         let apiFetcher = getApiFetcher(for: userId, token: token)
 
         try await apiFetcher.askMailboxPassword(mailbox: mailbox)
-    }
-
-    public func detachMailbox(for userId: Int, mailbox: Mailbox) async throws {
-        guard let token = tokenStore.tokenFor(userId: userId) else {
-            return
-        }
-
-        let apiFetcher = getApiFetcher(for: userId, token: token)
-
-        _ = try await apiFetcher.detachMailbox(mailbox: mailbox)
-        try await updateUser(for: currentAccount)
     }
 
     public func setCurrentAccount(account: ApiToken) {

@@ -28,11 +28,7 @@ public typealias MailApiFetchable = MailApiAIFetchable & MailApiCalendarFetchabl
 public protocol MailApiCommonFetchable {
     func mailboxes() async throws -> [Mailbox]
 
-    func addMailbox(mail: String, password: String) async throws -> MailboxLinkedResult
-
     func updateMailboxPassword(mailbox: Mailbox, password: String) async throws -> Bool
-
-    func detachMailbox(mailbox: Mailbox) async throws -> Bool
 
     func listBackups(mailbox: Mailbox) async throws -> BackupsList
 

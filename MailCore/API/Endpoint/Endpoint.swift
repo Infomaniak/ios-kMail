@@ -123,10 +123,6 @@ public extension Endpoint {
         return .base.appending(path: "/pim/contact")
     }
 
-    static var addMailbox: Endpoint {
-        return .base.appending(path: "/securedProxy/profile/workspace/mailbox")
-    }
-
     static func updateMailboxPassword(mailboxId: Int) -> Endpoint {
         return .base
             .appending(path: "/securedProxy/cache/invalidation/profile/workspace/mailbox/\(mailboxId)/update_password")
@@ -153,10 +149,6 @@ public extension Endpoint {
 
     static func askMailboxPassword(hostingId: Int, mailboxName: String) -> Endpoint {
         return .baseManagerMailbox(hostingId: hostingId, mailboxName: mailboxName).appending(path: "/ask_password")
-    }
-
-    static func detachMailbox(mailboxId: Int) -> Endpoint {
-        return addMailbox.appending(path: "/\(mailboxId)")
     }
 
     static func backups(hostingId: Int, mailboxName: String) -> Endpoint {
