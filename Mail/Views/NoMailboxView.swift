@@ -24,8 +24,6 @@ import MailResources
 import SwiftUI
 
 struct NoMailboxView: View {
-    @Environment(\.openURL) private var openURL
-
     @State private var isShowingLoginView = false
 
     private let slide = Slide(backgroundImage: MailResourcesAsset.onboardingBackground3.image,

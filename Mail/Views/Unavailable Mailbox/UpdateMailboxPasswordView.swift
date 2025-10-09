@@ -38,7 +38,6 @@ struct UpdateMailboxPasswordView: View {
     @State private var updatedMailboxPassword = ""
     @State private var isShowingError = false
     @State private var isLoading = false
-    @ModalState(context: ContextKeys.detachMailbox) private var isShowingDetachMailboxAlertView = false
     @State private var snackBarAwareModifier = SnackBarAwareModifier(inset: 0)
 
     private var disableButton: Bool {
@@ -58,18 +57,6 @@ struct UpdateMailboxPasswordView: View {
                         .textStyle(.bodySecondary)
                     Text(MailResourcesStrings.Localizable.enterPasswordDescription2(mailbox.email))
                         .textStyle(.bodySecondary)
-
-                    HStack(spacing: IKPadding.micro) {
-                        Text(MailResourcesStrings.Localizable.enterPasswordOrDescription)
-                            .textStyle(.bodySecondary)
-
-                        Button(MailResourcesStrings.Localizable.buttonDetachMailbox) {
-                            matomo.track(eventWithCategory: .invalidPasswordMailbox, name: "detachMailbox")
-                            isShowingDetachMailboxAlertView = true
-                        }
-                        .buttonStyle(.ikBorderless(isInlined: true))
-                        .disabled(isLoading)
-                    }
                 }
 
                 VStack(alignment: .leading) {
@@ -135,9 +122,6 @@ struct UpdateMailboxPasswordView: View {
         .navigationTitle(MailResourcesStrings.Localizable.enterPasswordTitle)
         .sheetViewStyle()
         .matomoView(view: ["UpdateMailboxPasswordView"])
-        .mailCustomAlert(isPresented: $isShowingDetachMailboxAlertView) {
-            DetachMailboxConfirmationView(mailbox: mailbox)
-        }
     }
 
     func updateMailboxPassword() {
