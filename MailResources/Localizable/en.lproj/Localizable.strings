@@ -827,9 +827,6 @@
 /* loco:64aba64bdb705f66d6043b03 */
 "enterPasswordDescription2" = "Please enter the new password for the email address %@";
 
-/* loco:64a8005d6a8d4403460c9c42 */
-"enterPasswordOrDescription" = "or";
-
 /* loco:64a2b5254093e7708d0de5b2 */
 "enterPasswordTitle" = "Enter password";
 
@@ -1282,12 +1279,6 @@
 
 /* loco:64ca16484dbf65eb9b0ea862 */
 "pleaseLogInFirst" = "Please login in the Infomaniak Mail app first.";
-
-/* loco:64a695f87730509b39030ae2 */
-"popupDetachMailboxDescription" = "Are you sure you want to detach the %@ address?";
-
-/* loco:64a3d65f003e64f9790f5ed2 */
-"popupDetachMailboxTitle" = "Detach mailbox";
 
 /* loco:68b05985327f49a8eb0936b2 */
 "previewReaction" = "%1$@ reacted with %2$@";
