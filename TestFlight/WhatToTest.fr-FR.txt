@@ -1,2 +1,1 @@
-- Amélioration de l'affichage des pièces jointes sur iPadOS et macOS
-- Correction de bugs
+- Correction affichage des dossiers
