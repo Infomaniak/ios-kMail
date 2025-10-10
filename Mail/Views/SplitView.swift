@@ -296,7 +296,7 @@ struct SplitView: View {
     }
 
     private func checkTwoFAChallenges() async {
-        let accountManager = InjectService<AccountManager>().wrappedValue
+        @InjectService var accountManager: AccountManager
 
         let sessions: [InAppTwoFactorAuthenticationSession] = await accountManager.accounts.asyncCompactMap { account in
             guard let user = await accountManager.userProfileStore.getUserProfile(id: account.userId) else {
