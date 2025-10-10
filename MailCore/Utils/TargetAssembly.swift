@@ -18,6 +18,7 @@
 
 import DeviceAssociation
 import Foundation
+import InAppTwoFactorAuthentication
 import InfomaniakBugTracker
 import InfomaniakCore
 import InfomaniakCoreCommonUI
@@ -127,7 +128,7 @@ open class TargetAssembly {
                 let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as! String? ?? "x.x"
                 return DeviceManager(appGroupIdentifier: sharedAppGroupName,
                                      appMarketingVersion: version,
-                                     capabilities: ["2fa:push_challenge:approval"])
+                                     capabilities: [.twoFactorAuthenticationChallengeApproval])
             },
             Factory(type: TokenStore.self) { _, _ in
                 TokenStore()

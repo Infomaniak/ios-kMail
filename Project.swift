@@ -307,6 +307,7 @@ let project = Project(name: "Mail",
                                       .external(name: "Collections"),
                                       .external(name: "DesignSystem"),
                                       .external(name: "DeviceAssociation"),
+                                      .external(name: "InAppTwoFactorAuthentication"),
                                       .external(name: "InfomaniakBugTracker"),
                                       .external(name: "InfomaniakConcurrency"),
                                       .external(name: "InfomaniakCoreCommonUI"),
@@ -314,13 +315,13 @@ let project = Project(name: "Mail",
                                       .external(name: "InfomaniakCoreSwiftUI"),
                                       .external(name: "InfomaniakCoreUIKit"),
                                       .external(name: "InfomaniakCore"),
-                                      .external(name: "MyKSuite"),
-                                      .external(name: "KSuite"),
                                       .external(name: "InfomaniakCreateAccount"),
                                       .external(name: "InfomaniakDI"),
                                       .external(name: "InfomaniakLogin"),
                                       .external(name: "InfomaniakNotifications"),
                                       .external(name: "InfomaniakRichHTMLEditor"),
+                                      .external(name: "KSuite"),
+                                      .external(name: "MyKSuite"),
                                       .external(name: "NukeUI"),
                                       .external(name: "Nuke"),
                                       .external(name: "RealmSwift"),
@@ -371,8 +372,10 @@ let project = Project(name: "Mail",
                                   testAction: .targets(["MailTests", "MailUITests"]),
                                   runAction: .runAction(executable: "Infomaniak Mail",
                                                         arguments: .arguments(environmentVariables: [
-                                                            "hostname": .environmentVariable(value: "\(ProcessInfo.processInfo.hostName).",
-                                                                                             isEnabled: true)
+                                                            "hostname": .environmentVariable(
+                                                                value: "\(ProcessInfo.processInfo.hostName).",
+                                                                isEnabled: true
+                                                            )
                                                         ])))
                       ],
                       fileHeaderTemplate: .file("file-header-template.txt"))
